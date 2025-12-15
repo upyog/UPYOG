@@ -26,11 +26,7 @@ public class RequestServiceQueryBuilder {
                     "ursbd.lastmodifiedtime, ursbd.tenant_id " +
                     "FROM public.upyog_rs_water_tanker_booking_details ursbd"
     );
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> master-LTS
     private static final String WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY = (
             "SELECT ursbd.booking_id, ursbd.booking_no, ursbd.applicant_uuid, ursbd.mobile_number, ursbd.locality_code, ursbd.tanker_type, ursbd.water_type, ursbd.tanker_quantity, ursbd.water_quantity, ursbd.description, " +
                     "ursbd.delivery_date, ursbd.delivery_time, ursbd.extra_charge, ursbd.vendor_id, ursbd.vehicle_id, ursbd.driver_id, ursbd.vehicle_type, ursbd.payment_receipt_filestore_id, " +
@@ -51,11 +47,7 @@ public class RequestServiceQueryBuilder {
                     "urmt.lastModifiedby, urmt.createdtime, urmt.lastmodifiedtime, urmt.tenant_id " +
                     "FROM public.upyog_rs_mobile_toilet_booking_details urmt"
     );
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> master-LTS
     private static final String MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY = (
             "SELECT urmt.booking_id, urmt.booking_no, urmt.applicant_uuid, urmt.no_of_mobile_toilet, urmt.mobile_number, urmt.locality_code, " +
                     "urmt.description, urmt.delivery_from_date, urmt.delivery_to_date, urmt.delivery_from_time, urmt.delivery_to_time, urmt.vendor_id, " +

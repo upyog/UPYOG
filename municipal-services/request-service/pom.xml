@@ -47,7 +47,6 @@
         <dependency>
            <groupId>org.postgresql</groupId>
            <artifactId>postgresql</artifactId>
-
            <version>42.7.1</version>
         </dependency>
          <dependency>
@@ -121,7 +120,7 @@
             <artifactId>owasp-java-html-sanitizer</artifactId>
             <version>20240325.1</version>
 		</dependency>
-        
+
     </dependencies>
     <repositories>
         <repository>
