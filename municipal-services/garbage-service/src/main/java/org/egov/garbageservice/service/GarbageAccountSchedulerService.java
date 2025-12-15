@@ -415,7 +415,7 @@ public class GarbageAccountSchedulerService {
 					grbgBillTrackers.add(grbgBillTracker);
 					
 	//				triggerNotifications
-//					notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),generateBillRequest.getRequestInfo(),grbgBillTracker);
+					notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),onDemandBillRequest.getRequestInfo(),grbgBillTracker);
 					message = "Bill Generated";
 				}else {
 					message = "Bill Could Not Be Generated";

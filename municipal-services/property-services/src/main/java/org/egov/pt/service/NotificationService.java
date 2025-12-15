@@ -572,7 +572,8 @@ public class NotificationService {
 //		LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
 
 		body = body.replace(MONTH_PLACEHOLDER,  monthFormat.format(propertyTracker.getFromDate())+" / "+monthFormat.format(propertyTracker.getToDate()));
-		body = body.replace(RECIPINTS_NAME_PLACEHOLDER, StringUtils.isEmpty(bill.getPayerName())?"N/A":bill.getPayerName());
+
+		body = body.replace(RECIPINTS_NAME_PLACEHOLDER, StringUtils.isEmpty(bill.getBillDetails().get(0).getAdditionalDetails().get("ownerName").asText())?"N/A":bill.getBillDetails().get(0).getAdditionalDetails().get("name").asText());
 		//		body = body.replace(YEAR_PLACEHOLDER, propertyTracker.getFinancialYear());
 		body = body.replace(BILL_NO_PLACEHOLDER, bill.getBillNumber());
 //		if (!CollectionUtils.isEmpty(garbageAccount.getAddresses())) {

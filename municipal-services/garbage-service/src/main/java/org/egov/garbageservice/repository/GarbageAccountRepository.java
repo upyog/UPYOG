@@ -486,7 +486,7 @@ public class GarbageAccountRepository {
                     preparedStatementValues)).append(" )");
         }
         
-        
+        if(searchCriteriaGarbageAccount.getUserType() != null) {
         if(searchCriteriaGarbageAccount.getUserType().equalsIgnoreCase(GrbgConstants.USER_TYPE_EMPLOYEE)) {
             if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
                 isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
@@ -512,6 +512,8 @@ public class GarbageAccountRepository {
              			preparedStatementValues)).append(" )");
              }
         }
+        }
+        
 
 //        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
 //            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
@@ -532,11 +534,11 @@ public class GarbageAccountRepository {
                     preparedStatementValues)).append(" )");
         }
         
-//        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
-//        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-//        	whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
-//        			preparedStatementValues)).append(" )");
-//        }
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+        	whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
+        			preparedStatementValues)).append(" )");
+        }
         
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
         	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
