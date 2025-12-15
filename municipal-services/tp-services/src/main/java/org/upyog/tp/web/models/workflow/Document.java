@@ -58,13 +58,7 @@ public class Document   {
    * system id of the Document.
    * @return id
   **/
-<<<<<<< HEAD
   @Schema(description = "system id of the Document.")
-
-=======
-  @ApiModelProperty(value = "system id of the Document.")
-  
->>>>>>> master-LTS
   @Size(max=64)   public String getId() {
     return id;
   }
