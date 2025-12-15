@@ -82,7 +82,6 @@ public class RbacFilterHelper implements RewriteFunction<Map, Map> {
 
         exchange.getAttributes().put(CURRENT_REQUEST_TENANTID, String.join(",", tenantIds));
 
-<<<<<<< HEAD
         // Log roles being sent for authorization
         log.info("RBAC CHECK: User {} has {} roles for URI {}",
                 user.getUuid(), user.getRoles() != null ? user.getRoles().size() : 0, requestUri);
@@ -93,24 +92,19 @@ public class RbacFilterHelper implements RewriteFunction<Map, Map> {
             );
         }
 
-=======
->>>>>>> master-LTS
         AuthorizationRequest request = AuthorizationRequest.builder()
                 .roles(new HashSet<>(user.getRoles()))
                 .uri(requestUri)
                 .tenantIds(tenantIds)
                 .build();
 
-<<<<<<< HEAD
         log.info("RBAC CHECK: Calling access-control service at {} with {} roles for URI {}",
                 applicationProperties.getAuthorizationUrl(), request.getRoles().size(), requestUri);
 
         boolean isUriAuthorised = isUriAuthorized(request, requestInfo, exchange);
 
         log.info("RBAC CHECK: Authorization result for URI {} : {}", requestUri, isUriAuthorised);
-=======
-        boolean isUriAuthorised = isUriAuthorized(request , exchange);
->>>>>>> master-LTS
+
 
         if(!isUriAuthorised) {
             throw new CustomException(HttpStatus.UNAUTHORIZED.toString(), "You are not authorized to access this resource");
@@ -118,17 +112,12 @@ public class RbacFilterHelper implements RewriteFunction<Map, Map> {
 
     }
 
-<<<<<<< HEAD
     private boolean isUriAuthorized(AuthorizationRequest authorizationRequest, RequestInfo requestInfo, ServerWebExchange exchange) {
 
         // Use the RequestInfo from the incoming request which includes authToken for authentication
         // This ensures external access-control services can authenticate the request
         AuthorizationRequestWrapper authorizationRequestWrapper = new AuthorizationRequestWrapper(requestInfo, authorizationRequest);
-=======
-    private boolean isUriAuthorized(AuthorizationRequest authorizationRequest , ServerWebExchange exchange) {
 
-        AuthorizationRequestWrapper authorizationRequestWrapper = new AuthorizationRequestWrapper(new RequestInfo(), authorizationRequest);
->>>>>>> master-LTS
 
         final HttpHeaders headers = new HttpHeaders();
 
@@ -144,7 +133,6 @@ public class RbacFilterHelper implements RewriteFunction<Map, Map> {
             ResponseEntity<Void> responseEntity = restTemplate.postForEntity(applicationProperties.getAuthorizationUrl(), httpEntity, Void
                     .class);
 
-<<<<<<< HEAD
             log.info("RBAC CHECK: Access-control service returned status: {}", responseEntity.getStatusCode());
             return responseEntity.getStatusCode().equals(HttpStatus.OK);
         } catch (HttpClientErrorException e) {
@@ -155,14 +143,7 @@ public class RbacFilterHelper implements RewriteFunction<Map, Map> {
         } catch (Exception e) {
             log.error("RBAC CHECK: Unknown exception occurred while calling access-control for URI: {}",
                     authorizationRequest.getUri(), e);
-=======
-            return responseEntity.getStatusCode().equals(HttpStatus.OK);
-        } catch (HttpClientErrorException e) {
-            log.warn("Exception while attempting to authorize via access control", e);
-            return false;
-        } catch (Exception e) {
-            log.error("Unknown exception occurred while attempting to authorize via access control", e);
->>>>>>> master-LTS
+
             return false;
         }
 

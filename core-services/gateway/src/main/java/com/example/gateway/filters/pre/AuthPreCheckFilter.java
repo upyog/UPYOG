@@ -46,7 +46,6 @@ public class AuthPreCheckFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
         else {
-<<<<<<< HEAD
             String contentType = exchange.getRequest().getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
 
             // Skip body modification for multipart/form-data and application/x-www-form-urlencoded
@@ -58,8 +57,7 @@ public class AuthPreCheckFilter implements GlobalFilter, Ordered {
                 return chain.filter(exchange);
             }
 
-=======
->>>>>>> master-LTS
+
             return modifyRequestBodyFilter.apply(new ModifyRequestBodyGatewayFilterFactory.Config()
                             .setRewriteFunction(Map.class, Map.class, authPreCheckFilterHelper))
                             .filter(exchange, chain);

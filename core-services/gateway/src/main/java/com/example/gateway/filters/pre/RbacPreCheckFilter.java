@@ -40,7 +40,6 @@ public class RbacPreCheckFilter implements GlobalFilter, Ordered {
 
         String endPointPath = exchange.getRequest().getPath().value();
 
-<<<<<<< HEAD
         // CRITICAL FIX: Check AUTH_BOOLEAN_FLAG_NAME to determine if RBAC should run
         // RBAC requires user enrichment from AuthFilter. If Auth is skipped, RBAC must be skipped too.
         // This fixes mixed-mode endpoints where AUTH=false but RBAC was incorrectly set to true.
@@ -60,14 +59,7 @@ public class RbacPreCheckFilter implements GlobalFilter, Ordered {
         else {
             exchange.getAttributes().put(RBAC_BOOLEAN_FLAG_NAME, true);
             log.info("RBAC PRE-CHECK: {} - RBAC ENABLED (protected endpoint)", endPointPath);
-=======
-        if(applicationProperties.getOpenEndpointsWhitelist().contains(endPointPath) || anonymousEndpointsWhitelist.contains(endPointPath)){
-            exchange.getAttributes().put(RBAC_BOOLEAN_FLAG_NAME, false);
-            log.info(SKIP_RBAC, endPointPath);
-        }
-        else {
-            exchange.getAttributes().put(RBAC_BOOLEAN_FLAG_NAME, true);
->>>>>>> master-LTS
+
         }
         return  chain.filter(exchange);
 

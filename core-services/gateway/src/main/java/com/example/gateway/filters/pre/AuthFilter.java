@@ -34,7 +34,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         Boolean doAuth = exchange.getAttribute(AUTH_BOOLEAN_FLAG_NAME);
 
         if(doAuth) {
-<<<<<<< HEAD
+
             String contentType = exchange.getRequest().getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
 
             // Skip body modification for multipart/form-data and application/x-www-form-urlencoded
@@ -44,8 +44,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
                 return chain.filter(exchange);
             }
 
-=======
->>>>>>> master-LTS
+
             return modifyRequestBodyFilter.apply(new ModifyRequestBodyGatewayFilterFactory.Config()
                             .setRewriteFunction(Map.class, Map.class, authCheckFilterHelper))
                     .filter(exchange, chain);
