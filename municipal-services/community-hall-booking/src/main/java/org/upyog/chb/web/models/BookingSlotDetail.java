@@ -3,11 +3,7 @@ package org.upyog.chb.web.models;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-<<<<<<< HEAD
 import jakarta.validation.constraints.NotBlank;
-=======
-import javax.validation.constraints.NotBlank;
->>>>>>> master-LTS
 
 import org.upyog.chb.util.CommunityHallBookingUtil;
 
