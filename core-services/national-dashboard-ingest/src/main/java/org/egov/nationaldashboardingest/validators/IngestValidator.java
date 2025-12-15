@@ -519,6 +519,7 @@ public class IngestValidator {
 
     	return isUsageCategoryInvalid;
     }
+	 }
 	
 	public Boolean verifyPayment(Data ingestData, Set < String > paymentChannelList) {
 
