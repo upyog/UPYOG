@@ -51,15 +51,6 @@ const EngagementCard = () => {
     "code": [],
     "module": ["engagement"],
   }
-<<<<<<< HEAD
-
-  const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria});
-
-  const totalDocsCount = useMemo(() => (isLoadingDocs ? "-" : documentsCount), [isLoadingDocs, documentsCount]);
-  const totalEventsCount = useMemo(() => (isLoadingEvents ? "-" : totalEvents), [isLoadingEvents, totalEvents]);
-  const totalMessagesCount = useMemo(() => (isLoadingMessages ? "-" : MessagesCount), [isLoadingMessages, MessagesCount]);
-  const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount.TotalCount), [isLoadingSurveys, surveysCount]);
-=======
 
   const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria});
 
@@ -67,7 +58,6 @@ const EngagementCard = () => {
   // const totalEventsCount = useMemo(() => (isLoadingEvents ? "-" : totalEvents), [isLoadingEvents, totalEvents]);
   // const totalMessagesCount = useMemo(() => (isLoadingMessages ? "-" : MessagesCount), [isLoadingMessages, MessagesCount]);
   // const totalSurveysCount = useMemo(() => (isLoadingSurveys ? "-" : surveysCount?.TotalCount || 0), [isLoadingSurveys, surveysCount]);
->>>>>>> master-LTS
 
   const { t } = useTranslation();
   let result = null;

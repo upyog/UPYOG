@@ -66,11 +66,7 @@ DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
 
 ## License
 
-<<<<<<< HEAD
-MIT © [jagankumar-egov](https://github.com/jagankumar-egov)
-=======
 MIT © [Shivank-NIUA](https://github.com/ShivankShuklaa)
->>>>>>> master-LTS
 
 
 ![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)

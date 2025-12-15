@@ -1,10 +1,6 @@
 import React, {useEffect, useRef} from "react";
 import { useTranslation } from "react-i18next";
-<<<<<<< HEAD
-import { SubmitBar, ActionBar, Menu } from "@upyog/digit-ui-react-components";
-=======
 import { SubmitBar, ActionBar, Menu, CardLabel } from "@upyog/digit-ui-react-components";
->>>>>>> master-LTS
 
 function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix,ActionBarStyle={},MenuStyle={},isAction,applicationDetails }) {
   const { t } = useTranslation();

@@ -23,7 +23,7 @@ const TopBar = ({
   const { pathname } = useLocation();
 
   // const showHaburgerorBackButton = () => {
-  //   if (pathname === "/digit-ui/citizen" || pathname === "/digit-ui/citizen/" || pathname === "/digit-ui/citizen/select-language") {
+  //   if (pathname === "/upyog-ui/citizen" || pathname === "/upyog-ui/citizen/" || pathname === "/upyog-ui/citizen/select-language") {
   //     return <Hamburger handleClick={toggleSidebar} />;
   //   } else {
   //     return <BackButton className="top-back-btn" />;
@@ -34,7 +34,7 @@ const TopBar = ({
       <div className="center-container back-wrapper" style={{display:"flex",marginRight:"2rem",marginLeft:"2rem",justifyContent:"space-between"}}>
         <div className="hambuger-back-wrapper" style={{display:"flex"}}>
           {window.innerWidth <= 660  && <Hamburger handleClick={toggleSidebar} />}
-          <a href={window.location.href.includes("citizen")?"/digit-ui/citizen":"/digit-ui/employee"}><img
+          <a href={window.location.href.includes("citizen")?"/upyog-ui/citizen":"/upyog-ui/employee"}><img
             className="city"
             id="topbar-logo"
             src={"https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" || "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"}

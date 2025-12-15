@@ -42,11 +42,7 @@ export const newConfig =[
               },
               "key": "address",
               "nextStep": "street",
-<<<<<<< HEAD
-              "isMandatory": true,
-=======
              
->>>>>>> master-LTS
               "type": "component"
           },
           {
@@ -84,10 +80,7 @@ export const newConfig =[
               "route": "proof",
               "component": "Proof",
               "withoutLabel": true,
-<<<<<<< HEAD
-=======
               "isMandatory": true,
->>>>>>> master-LTS
               "texts": {
                   "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
                   "header": "PT_PROOF_OF_ADDRESS_HEADER",
@@ -192,10 +185,6 @@ export const newConfig =[
                 {
                     "type": "component",
                     "route": "electricity-number",
-<<<<<<< HEAD
-                    "isMandatory": true,
-=======
->>>>>>> master-LTS
                     "component": "Electricity",
                     "key": "electricity",
                     "withoutLabel": true,
@@ -214,11 +203,7 @@ export const newConfig =[
                 {
                     "type": "component",
                     "route": "PropertyStructureDetails",
-<<<<<<< HEAD
-                    "isMandatory": true,
-=======
                   
->>>>>>> master-LTS
                     "component": "PropertyStructureDetails",
                     "key": "propertyStructureDetails",
                     "withoutLabel": true,
@@ -233,11 +218,7 @@ export const newConfig =[
                 {
                     "type": "component",
                     "route": "uid",
-<<<<<<< HEAD
-                    "isMandatory": true,
-=======
                     
->>>>>>> master-LTS
                     "component": "UID",
                     "texts": {
                         "headerCaption": "",
@@ -255,11 +236,7 @@ export const newConfig =[
           },
           {
               "type": "component",
-<<<<<<< HEAD
-              "isMandatory": true,
-=======
              
->>>>>>> master-LTS
               "component": "Area",
               "key": "landarea",
               "withoutLabel": true
@@ -283,11 +260,7 @@ export const newConfig =[
           {
               "type": "component",
               "route": "landarea",
-<<<<<<< HEAD
-              "isMandatory": true,
-=======
               
->>>>>>> master-LTS
               "component": "PTLandArea",
               "texts": {
                   "headerCaption": "",
@@ -399,11 +372,7 @@ export const newConfig =[
           {
               "type": "component",
               "route": "units",
-<<<<<<< HEAD
-              "isMandatory": true,
-=======
               
->>>>>>> master-LTS
               "component": "SelectPTUnits",
               "texts": {
                   "headerCaption": "",

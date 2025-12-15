@@ -194,11 +194,7 @@ console.log("fields",fields)
       return (
         <React.Fragment>
           <LabelFieldPair key={0}>
-<<<<<<< HEAD
-          <CardLabel>{`${t("PT_STRUCTURE_TYPE")}*`}</CardLabel>
-=======
           <CardLabel>{`${t("PT_STRUCTURE_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
->>>>>>> master-LTS
             <div className="field">
             <Dropdown
                   t={t}
@@ -213,11 +209,7 @@ console.log("fields",fields)
             </div>
           </LabelFieldPair>
           <LabelFieldPair key={1}>
-<<<<<<< HEAD
-          <CardLabel>{`${t("PT_AGE_OF_PROPERTY")}*`}</CardLabel>
-=======
           <CardLabel>{`${t("PT_AGE_OF_PROPERTY")}`}<span className="check-page-link-button"> *</span></CardLabel>
->>>>>>> master-LTS
             <div className="field">
             <Dropdown
                   t={t}
@@ -265,11 +257,7 @@ console.log("fields",fields)
               /> */}
               {formData?.PropertyType?.code === "VACANT"? 
               <div>
-<<<<<<< HEAD
-              <CardLabel>{`${t("PT_FORM2_USAGE_TYPE")}*`}</CardLabel>
-=======
               <CardLabel>{`${t("PT_FORM2_USAGE_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
->>>>>>> master-LTS
               <Dropdown
                 t={t}
                 optionKey="i18nKey"
@@ -279,11 +267,7 @@ console.log("fields",fields)
                 select={(e) => selectUsageCategory(0, e)}
               />
               </div>:""}
-<<<<<<< HEAD
-              <CardLabel>{`${t("PT_STRUCTURE_TYPE")}*`}</CardLabel>
-=======
               <CardLabel>{`${t("PT_STRUCTURE_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
->>>>>>> master-LTS
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown
                   t={t}
@@ -295,11 +279,7 @@ console.log("fields",fields)
                   select={(e) => selectstructureType(1, e)}
                 />
               </div>
-<<<<<<< HEAD
-              <CardLabel>{`${t("PT_AGE_OF_PROPERTY")}*`}</CardLabel>
-=======
               <CardLabel>{`${t("PT_AGE_OF_PROPERTY")}`}<span className="check-page-link-button"> *</span></CardLabel>
->>>>>>> master-LTS
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown
                   t={t}

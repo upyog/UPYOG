@@ -12,7 +12,7 @@ const useBillAmendmentInbox = ({ tenantId, filters, config = {} }) => {
     offset = 0;
   }
 
-  if (!window.location.href.includes("digit-ui/employee/")) {
+  if (!window.location.href.includes("upyog-ui/employee/")) {
     moduleName = moduleName;
   } else {
     if (window.location.href.includes("/ws/water/bill-amendment/inbox")) moduleName = "bsWs-service";

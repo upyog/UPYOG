@@ -55,7 +55,7 @@ const Response = (props) => {
             <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
               <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onClick={() => sessionStorage.removeItem("isCreateEnabled")} />
             </Link> :
-            // <Link to={`upyog-ui/employee/payment/collect/TL/${state?.data?.[0]?.applicationNumber}/${state?.data?.[0]?.tenantId}`} style={{ marginRight: "1rem" }}>
+            // <Link to={`digit-ui/employee/payment/collect/TL/${state?.data?.[0]?.applicationNumber}/${state?.data?.[0]?.tenantId}`} style={{ marginRight: "1rem" }}>
             <div onClick={routeToPaymentScreen}>
                 <SubmitBar label={t("TL_COLLECT_PAYMENT")} />
             </div> 

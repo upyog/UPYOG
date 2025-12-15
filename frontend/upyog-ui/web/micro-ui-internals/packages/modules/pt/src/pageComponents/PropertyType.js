@@ -7,10 +7,7 @@ import {
   Loader,
   RadioButtons,
 } from "@upyog/digit-ui-react-components";
-<<<<<<< HEAD
-=======
 import  FormStep  from "../../../../react-components/src/molecules/FormStep";
->>>>>>> master-LTS
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";

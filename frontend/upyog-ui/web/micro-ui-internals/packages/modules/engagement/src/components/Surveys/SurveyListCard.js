@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { Clock } from '@upyog/digit-ui-react-components'
-=======
 import { Clock } from "@upyog/digit-ui-react-components"
->>>>>>> master-LTS
 import React from 'react'
 import {format, formatDistanceToNow} from "date-fns";
 import { useTranslation } from 'react-i18next';

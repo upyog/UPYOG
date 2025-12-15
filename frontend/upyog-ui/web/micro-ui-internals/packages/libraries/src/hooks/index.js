@@ -14,10 +14,7 @@ import {
   useDemandSearch,
   useRecieptSearch,
   useRecieptSearchNew,
-<<<<<<< HEAD
-=======
   useAssetQrCode,
->>>>>>> master-LTS
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
@@ -231,11 +228,7 @@ import WSuseSearch from "./ws/useSearch";
 import useOldValue from "./ws/useOldValue";
 import useSewSearch from "./ws/useSewSearch";
 import useSearchWS from "./ws/useSearchWS";
-<<<<<<< HEAD
-import useBulkSearchWS from "./ws/useBulkSearchWS"
-=======
 import useBulkSearchWS from "./ws/useBulkSearchWS";
->>>>>>> master-LTS
 import useMypaymentWS from "./ws/useMypaymentWS";
 import useWSDetailsPage from "./ws/useWSDetailsPage";
 import useWSApplicationActions from "./ws/useApplicationActions";
@@ -286,12 +279,6 @@ import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
 import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
 import useMyPetPayments from "./ptr/useMyPetPayments";
 import useTenantsPTR from "./ptr/useTenants";
-<<<<<<< HEAD
-
-
-import createTokenAPI from "./digiLockerApi/createTokenAPI";
-
-=======
 import { usePetColors } from "./ptr/usePetColors";
 //adding asset hooks here
 import useAssetClassification from "./asset/useAssetClassification";
@@ -368,7 +355,6 @@ import useSelectedMDMS from "./useSelectedMDMS";
 import useRouteSubscription from "./useRouteSubscription";
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 
->>>>>>> master-LTS
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -393,7 +379,6 @@ const pgrAi={
   useFilterEmployee,
   useApplicationDetails
 }
-
 
 
 const fsm = {
@@ -448,22 +433,6 @@ const ptr = {
   useMyPetPayments,
   useTenants: useTenantsPTR,
   usePetColors
- 
-};
-const ptr = {
-  usePetMDMS,
-  usePTRPetMDMS,
-  useBreedTypeMDMS,
-  usePTRCreateAPI,
-  usePTRApplicationAction,
-  usePTRGenderMDMS,
-  usePTRSearch,
-  usePtrApplicationDetail,
-  // useTenantsPTR,
-  useServiceSearchPTR,
-  usePetDocumentSearch,
-  useMyPetPayments,
-  useTenants: useTenantsPTR
  
 };
 
@@ -809,9 +778,6 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
-<<<<<<< HEAD
-  createTokenAPI
-=======
   createTokenAPI,
   asset,
   sv,
@@ -827,7 +793,6 @@ const Hooks = {
   useCustomBackNavigation,
   pgrAi,
   useInbox
->>>>>>> master-LTS
 };
 
 export default Hooks;

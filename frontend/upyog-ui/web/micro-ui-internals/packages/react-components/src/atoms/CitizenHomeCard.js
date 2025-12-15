@@ -21,11 +21,7 @@ const CitizenHomeCard = ({ header, links = [], state, Icon, Info, isInfo = false
       </div>
 
       <div className="links">
-<<<<<<< HEAD
-        {links.map((e, i) => (
-=======
         {updatedData.map((e, i) => (
->>>>>>> master-LTS
           <div className="linksWrapper" style={{paddingLeft:"10px"}}>
             {(e?.parentModule?.toUpperCase() == "BIRTH" ||
               e?.parentModule?.toUpperCase() == "DEATH" ||

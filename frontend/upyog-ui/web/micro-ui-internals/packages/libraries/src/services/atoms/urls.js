@@ -104,11 +104,6 @@ const Urls = {
     payment_search: "/collection-services/payments/pet-services/_search",
     
   },
-<<<<<<< HEAD
-
-
-=======
->>>>>>> master-LTS
   dss: {
     dashboardConfig: "/dashboard-analytics/dashboard/getDashboardConfig",
     getCharts: "/dashboard-analytics/dashboard/getChartV2",
@@ -208,15 +203,6 @@ const Urls = {
     disconnection_notice: "/pdf-service/v1/_createnosave",
     meter_search:"/ws-calculator/meterConnection/_search"
   },
-<<<<<<< HEAD
-digiLocker:{
-  authorization:"/requester-services-dx/user/authorization/url",
-  register :"/requester-services-dx/user/authorization/url/citizen",
-  token:"/requester-services-dx/user/token/citizen",
-  issueDoc:"/requester-services-dx/user/issuedfiles",
-  uri:"/requester-services-dx/user/file"
-},
-=======
 
    asset: {
     create: "/asset-services/v1/assets/_create",
@@ -285,7 +271,6 @@ eSign:{
   pdfUrl:"/requester-services-dx/eSign/process",
   fileStoreSearch:"/requester-services-dx/eSign/filestoreId/v1/_search"
   },
->>>>>>> master-LTS
   engagement: {
     document: {
       search: "/egov-document-uploader/egov-du/document/_search",

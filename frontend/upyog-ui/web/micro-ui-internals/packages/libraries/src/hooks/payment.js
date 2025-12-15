@@ -4,11 +4,7 @@ import { PaymentService } from "../services/elements/Payment";
 export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...filters }, config = {}) => {
   const queryClient = useQueryClient();
   const { mobileNumber, tenantId } = Digit.UserService.getUser()?.info || {};
-<<<<<<< HEAD
-  const tenant = Digit.ULBService.getCitizenCurrentTenant()
-=======
   const tenant = Digit.ULBService.getCitizenCurrentTenant();
->>>>>>> master-LTS
   const params = { mobileNumber, businessService, ...filters };
   if (!params["mobileNumber"]) delete params["mobileNumber"];
 

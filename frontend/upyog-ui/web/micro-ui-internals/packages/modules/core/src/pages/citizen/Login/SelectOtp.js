@@ -8,10 +8,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   const TYPE_LOGIN = { type: "login" };
   const [errorRegister, setErrorRegister]= useState(false)
   const getUserType = () => Digit.UserService.getType();
-<<<<<<< HEAD
-=======
   const [digilockerAuthentication,setdigilockerAuthentication]=useState(false)
->>>>>>> master-LTS
   let newData={}
   useInterval(
     () => {
@@ -25,34 +22,6 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   {
     let code =window.location.href.split("=")[1].split("&")[0]
     let TokenReq = {
-<<<<<<< HEAD
-      code_verifier: sessionStorage.getItem("code_verfier_register"),
-      code: code, module: "REGISTER",
-      redirect_uri: "https://upyog.niua.org/upyog-ui/citizen/login/otp",
-    }
-    console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier_register"))
-    const data = await Digit.DigiLockerService.token({TokenReq })
-    registerUser(data)
-  // fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
-  //   method: 'POST',
-  //   mode: 'cors',
-  //   headers: {
-  //     'Content-Type': 'application/x-www-form-urlencoded',
-  //     "Access-Control-Allow-Origin": "*",
-  //     "Access-Control-Allow-Methods": "PUT, DELETE,POST"
-  //   },
-  //   body: new URLSearchParams({
-  //     'code': code,
-  //     'grant_type': "authorization_code",
-  //     'client_id': "YN77ADDADE",
-  //     "client_secret": "71abd480b5811ab72277",
-  //     "redirect_uri": "https://upyog.niua.org/upyog-ui/citizen/login/otp",
-  //     "code_verifier": sessionStorage.getItem("code_verfier_register")
-  //   })
-  // }) .then(response =>
-  //   {response.json().then(data => (
-
-=======
       code_verifier: localStorage.getItem('code_verfier_register'),
       code: code, module: "SSO",
       redirect_uri: "https://upyog-test.niua.org/upyog-ui/citizen/login/otp",
@@ -128,7 +97,6 @@ if(authData){
   // }) .then(response =>
   //   {response.json().then(data => (
 
->>>>>>> master-LTS
       
     
 
@@ -205,12 +173,7 @@ if(authData){
       )}
       {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
       {errorRegister && <CardLabelError>{t("CS_ALREADY_REGISTERED")}</CardLabelError>}
-<<<<<<< HEAD
-    </FormStep>
-  );
-=======
     </FormStep>)
->>>>>>> master-LTS
 };
 
 export default SelectOtp;

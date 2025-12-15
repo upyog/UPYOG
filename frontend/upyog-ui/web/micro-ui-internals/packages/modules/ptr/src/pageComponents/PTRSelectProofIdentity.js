@@ -1,71 +1,3 @@
-<<<<<<< HEAD
-import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@upyog/digit-ui-react-components";
-import Timeline from "../components/PTRTimeline";
-
-const PTRSelectProofIdentity = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
-  const tenantId = Digit.ULBService.getStateId();
-  const [documents, setDocuments] = useState(formData?.documents?.documents || []);
-  const [error, setError] = useState(null);
-  const [enableSubmit, setEnableSubmit] = useState(true);
-  const [checkRequiredFields, setCheckRequiredFields] = useState(false);
-
-  // const tenantId = Digit.ULBService.getCurrentTenantId();
-    const stateId = Digit.ULBService.getStateId();
-  
-
-  const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");
-  
-
-  const handleSubmit = () => {
-    let document = formData.documents;
-    let documentStep;
-    documentStep = { ...document, documents: documents };
-    onSelect(config.key, documentStep);
-  };
-  const onSkip = () => onSelect();
-  function onAdd() {}
-
-  useEffect(() => {
-    let count = 0;
-    data?.PetService?.Documents.map((doc) => {
-      doc.hasDropdown = true;
-      
-      let isRequired = false;
-      documents.map((data) => {
-        if (doc.required && data?.documentType.includes(doc.code)) isRequired = true;
-      });
-      if (!isRequired && doc.required) count = count + 1;
-    });
-    if ((count == "0" || count == 0) && documents.length > 0) setEnableSubmit(false);
-    else setEnableSubmit(true);
-  }, [documents, checkRequiredFields]);
-
- 
-
-  return (
-    <div>
-      <Timeline currentStep={4} />
-      {!isLoading ? (
-        <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
-          {data?.PetService?.Documents?.map((document, index) => {
-            return (
-              <PTRSelectDocument
-                key={index}
-                document={document}
-                t={t}
-                error={error}
-                setError={setError}
-                setDocuments={setDocuments}
-                documents={documents}
-                setCheckRequiredFields={setCheckRequiredFields}
-              />
-            );
-          })}
-          {error && <Toast label={error} onClose={() => setError(null)} error />}
-        </FormStep>
-      ) : (
-=======
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 // Importing required components and hooks from React and digit-ui
@@ -186,7 +118,6 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
         </FormStep>
       ) : (
         // Show loader while fetching the data
->>>>>>> master-LTS
         <Loader />
       )}
     </div>
@@ -194,11 +125,8 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
 };
 
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> master-LTS
 function PTRSelectDocument({
   t,
   document: doc,
@@ -207,45 +135,6 @@ function PTRSelectDocument({
   documents,
   action,
   formData,
-<<<<<<< HEAD
-  
-  id,
-  
-}) {
-  const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
-  
-
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [selectedDocument, setSelectedDocument] = useState(
-    filteredDocument
-      ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType }
-      : doc?.dropdownData?.length === 1
-      ? doc?.dropdownData[0]
-      : {}
-  );
-
-  const [file, setFile] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.filestoreId || null);
-
-  const handlePTRSelectDocument = (value) => setSelectedDocument(value);
-
-  function selectfile(e) {
-    setFile(e.target.files[0]);
-  }
-  const { dropdownData } = doc;
-  
-  var dropDownData = dropdownData;
-   
-  const [isHidden, setHidden] = useState(false);
-
-  
-
-  useEffect(() => {
-    if (selectedDocument?.code) {
-      setDocuments((prev) => {
-        const filteredDocumentsByDocumentType = prev?.filter((item) => item?.documentType !== selectedDocument?.code);
-
-=======
   id,
   renewApplication,
   user
@@ -328,7 +217,6 @@ function PTRSelectDocument({
         const filteredDocumentsByDocumentType = prev?.filter((item) => item?.documentType !== selectedDocument?.code);
 
         // If no file is uploaded, remove the document from the list
->>>>>>> master-LTS
         if (uploadedFile?.length === 0 || uploadedFile === null) {
           return filteredDocumentsByDocumentType;
         }
@@ -344,42 +232,14 @@ function PTRSelectDocument({
         ];
       });
     }
-<<<<<<< HEAD
-    
-  }, [uploadedFile, selectedDocument]);
-
-  useEffect(() => {
-    if (action === "update") {
-      const originalDoc = formData?.originalData?.documents?.filter((e) => e.documentType.includes(doc?.code))[0];
-      const docType = dropDownData
-        .filter((e) => e.code === originalDoc?.documentType)
-        .map((e) => ({ ...e, i18nKey: e?.code?.replaceAll(".", "_") }))[0];
-      if (!docType) setHidden(true);
-      else {
-        setSelectedDocument(docType);
-        setUploadedFile(originalDoc?.fileStoreId);
-      }
-    } else if (action === "create") {
-    }
-  }, []);
-
-=======
   }, [uploadedFile, selectedDocument]);
 
   // Effect to handle file uploads and validation
->>>>>>> master-LTS
   useEffect(() => {
     (async () => {
       setError(null);
       if (file) {
         if (file.size >= 5242880) {
-<<<<<<< HEAD
-          setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-          // if (!formState.errors[config.key]) setFormError(config.key, { type: doc?.code });
-        } else {
-          try {
-            setUploadedFile(null);
-=======
           // Set error if file size exceeds 5MB
           setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
         } else {
@@ -387,7 +247,6 @@ function PTRSelectDocument({
             setUploadedFile(null);
             setIsUploading(true);
             // Upload the selected file and update the uploadedFile state
->>>>>>> master-LTS
             const response = await Digit.UploadServices.Filestorage("PTR", file, Digit.ULBService.getStateId());
             if (response?.data?.files?.length > 0) {
               setUploadedFile(response?.data?.files[0]?.fileStoreId);
@@ -397,34 +256,19 @@ function PTRSelectDocument({
           } catch (err) {
             setError(t("CS_FILE_UPLOAD_ERROR"));
           }
-<<<<<<< HEAD
-=======
           finally {setIsUploading(false)};
->>>>>>> master-LTS
         }
       }
     })();
   }, [file]);
 
-<<<<<<< HEAD
-=======
   // Effect to handle isHidden state change
->>>>>>> master-LTS
   useEffect(() => {
     if (isHidden) setUploadedFile(null);
   }, [isHidden]);
 
   return (
     <div style={{ marginBottom: "24px" }}>
-<<<<<<< HEAD
-      {doc?.hasDropdown ? (
-        <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
-          <Dropdown
-            className="form-field"
-            selected={selectedDocument}
-            style={{ width: "100%" }}
-=======
       {/* Render document dropdown if the document has dropdown */}
       {doc?.hasDropdown ? (
         <LabelFieldPair>
@@ -433,16 +277,12 @@ function PTRSelectDocument({
             className="form-field"
             selected={selectedDocument}
             style={{width: user?.type==="EMPLOYEE"?"50%":"100%"}}
->>>>>>> master-LTS
             option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
             select={handlePTRSelectDocument}
             optionKey="i18nKey"
             t={t}
           />
         </LabelFieldPair>
-<<<<<<< HEAD
-      ) : null}
-=======
       ) : (
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_"))} <span className="astericColor">*</span></CardLabel>
@@ -450,7 +290,6 @@ function PTRSelectDocument({
       )
       }
       {/* Render file upload field */}
->>>>>>> master-LTS
       <LabelFieldPair>
         <CardLabel className="card-label-smaller"></CardLabel>
         <div className="field">
@@ -460,12 +299,6 @@ function PTRSelectDocument({
               setUploadedFile(null);
             }}
             id={id}
-<<<<<<< HEAD
-            message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
-            textStyles={{ width: "100%" }}
-            inputStyles={{ width: "280px" }}
-            accept=".pdf, .jpeg, .jpg, .png"   //  to accept document of all kind
-=======
             message={isUploading ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <LoadingSpinner />
@@ -475,7 +308,6 @@ function PTRSelectDocument({
             textStyles={{ width: "100%" }}
             inputStyles={{ width: "280px" }}
             accept=".pdf, .jpeg, .jpg, .png"   // Acceptable file formats
->>>>>>> master-LTS
             buttonType="button"
             error={!uploadedFile}
           />
@@ -485,8 +317,4 @@ function PTRSelectDocument({
   );
 }
 
-<<<<<<< HEAD
 export default PTRSelectProofIdentity;
-=======
-export default PTRSelectProofIdentity;
->>>>>>> master-LTS
