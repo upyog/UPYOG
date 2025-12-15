@@ -1,0 +1,76 @@
+serviceMaps:
+  serviceName: tobacco-services
+  mappings:
+    - version: 1.0
+      description: Persists tobacco license applications in eg_tobacco_license table
+      fromTopic: save-tobacco-application
+      isTransaction: true
+      queryMaps:
+        - query: >
+            INSERT INTO eg_tobacco_license(
+              establishment_name,
+              establishment_village,
+              establishment_town,
+              establishment_city,
+              establishment_block,
+              establishment_district,
+              establishment_state,
+              establishment_pin_code,
+              establishment_telephone,
+              establishment_mobile,
+              establishment_email,
+              owner_name,
+              owner_village,
+              owner_town,
+              owner_city,
+              owner_block,
+              owner_district,
+              owner_state,
+              owner_pin_code,
+              owner_telephone,
+              owner_mobile,
+              owner_email,
+              application_type,
+              previous_registration_number,
+              payment_mode,
+              amount,
+              payment_details,
+              receipt_number,
+              acknowledgment_number,
+              status,
+              created_time,
+              updated_time
+            ) VALUES (
+              :establishmentName,
+              :establishmentVillage,
+              :establishmentTown,
+              :establishmentCity,
+              :establishmentBlock,
+              :establishmentDistrict,
+              :establishmentState,
+              :establishmentPinCode,
+              :establishmentTelephone,
+              :establishmentMobile,
+              :establishmentEmail,
+              :owner.name,
+              :owner.village,
+              :owner.town,
+              :owner.city,
+              :owner.block,
+              :owner.district,
+              :owner.state,
+              :owner.pinCode,
+              :owner.telephone,
+              :owner.mobile,
+              :owner.email,
+              :applicationType,
+              :previousRegistrationNumber,
+              :paymentMode,
+              :amount,
+              :paymentDetails,
+              :receiptNumber,
+              :acknowledgmentNumber,
+              'INITIATED',
+              now(),
+              now()
+            );

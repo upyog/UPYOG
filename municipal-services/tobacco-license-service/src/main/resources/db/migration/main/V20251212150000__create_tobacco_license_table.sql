@@ -1,0 +1,38 @@
+CREATE TABLE eg_tobacco_license (
+    id SERIAL PRIMARY KEY,
+    establishment_name VARCHAR(255) NOT NULL,
+    establishment_village VARCHAR(100),
+    establishment_town VARCHAR(100),
+    establishment_city VARCHAR(100),
+    establishment_block VARCHAR(100),
+    establishment_district VARCHAR(100),
+    establishment_state VARCHAR(100),
+    establishment_pin_code VARCHAR(20),
+    establishment_telephone VARCHAR(20),
+    establishment_mobile VARCHAR(20),
+    establishment_email VARCHAR(100),
+    
+    owner_name VARCHAR(255) NOT NULL,
+    owner_village VARCHAR(100),
+    owner_town VARCHAR(100),
+    owner_city VARCHAR(100),
+    owner_block VARCHAR(100),
+    owner_district VARCHAR(100),
+    owner_state VARCHAR(100),
+    owner_pin_code VARCHAR(20),
+    owner_telephone VARCHAR(20),
+    owner_mobile VARCHAR(20),
+    owner_email VARCHAR(100),
+
+    application_type VARCHAR(20) NOT NULL, 
+    previous_registration_number VARCHAR(50),
+    payment_mode VARCHAR(50),
+    amount NUMERIC(12,2),
+    payment_details VARCHAR(255),
+    receipt_number VARCHAR(50),
+
+    acknowledgment_number VARCHAR(50) UNIQUE,
+    status VARCHAR(50) DEFAULT 'INITIATED',
+    created_time TIMESTAMP DEFAULT NOW(),
+    updated_time TIMESTAMP DEFAULT NOW()
+);
