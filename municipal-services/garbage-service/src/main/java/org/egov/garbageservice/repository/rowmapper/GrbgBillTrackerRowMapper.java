@@ -27,6 +27,7 @@ public class GrbgBillTrackerRowMapper implements RowMapper<GrbgBillTracker> {
 				.toDate(rs.getString("to_date")).grbgBillAmount(rs.getBigDecimal("grbg_bill_amount"))
 				.billId(rs.getString("bill_id"))
 				.type(rs.getString("type"))
+				.smsStatus(rs.getBoolean("sms_status"))
 				.auditDetails(auditDetails).build();
 	}
 

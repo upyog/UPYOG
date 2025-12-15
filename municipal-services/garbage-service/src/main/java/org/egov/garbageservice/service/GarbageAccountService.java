@@ -2451,5 +2451,20 @@ public class GarbageAccountService {
 
 		return fyStartYear + "-" + (fyEndYear % 100); // e.g., "2023-24"
 	}
+	
+	public List<GrbgBillTracker> fetchPendingSms(int limit, int offset) {
+	    return garbageBillTrackerRepository.fetchPendingSms(limit, offset);
+	}
+	
+	public void markSmsAsSent(GrbgBillTracker tracker) {
+	    garbageBillTrackerRepository.markSmsAsSent(tracker);
+	}
+
+	
+	
+
+	
+
+
 
 }

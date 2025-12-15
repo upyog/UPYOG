@@ -37,10 +37,13 @@ import org.egov.garbageservice.model.UserSearchRequest;
 import org.egov.garbageservice.model.contract.OwnerInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
+import org.egov.garbageservice.contract.bill.BillSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.egov.garbageservice.util.GrbgConstants;
+import org.egov.common.contract.request.RequestInfo;
+
 
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -79,6 +82,75 @@ public class GarbageAccountSchedulerService {
 	
 	@Autowired
 	private GrbgConstants properties;
+	
+public void processPendingBillSms(RequestInfo requestInfo) {
+
+    int batchSize = 1000;
+    int offset = 0;
+    List<GrbgBillTracker> trackers;
+
+    do {
+        trackers = garbageAccountService.fetchPendingSms(batchSize, offset);
+        log.info("Processing {} pending SMS records", trackers.size());
+
+        for (GrbgBillTracker tracker : trackers) {
+            try {
+            	SearchCriteriaGarbageAccountRequest searchRequest = SearchCriteriaGarbageAccountRequest.builder()
+            	        .requestInfo(requestInfo)
+            	        .searchCriteriaGarbageAccount(
+            	                SearchCriteriaGarbageAccount.builder()
+            	                        .applicationNumber(Collections.singletonList(tracker.getGrbgApplicationId()))
+            	                        .tenantId(tracker.getTenantId())
+            	                        .isMonthlyBilling(true)
+            	                        .status(Collections.singletonList("APPROVED"))
+            	                        .isActiveAccount(true)
+            	                        .isActiveSubAccount(true)
+            	                        .build()
+            	        )
+            	        .isSchedulerCall(true)
+            	        .build();
+
+            	GarbageAccountResponse response = garbageAccountService.searchGarbageAccounts(searchRequest, false);
+
+            	if (CollectionUtils.isEmpty(response.getGarbageAccounts())) {
+            	    log.error("Garbage account not found for applicationId {}", tracker.getGrbgApplicationId());
+            	    continue;
+            	}
+
+            	GarbageAccount garbageAccount = response.getGarbageAccounts().get(0);
+
+
+                // Build BillSearchCriteria using tracker billId
+                BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+                        .tenantId(tracker.getTenantId())
+                        .billId(Collections.singleton(tracker.getBillId()))
+                        .build();
+
+                BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfo);
+
+                if (billResponse == null || CollectionUtils.isEmpty(billResponse.getBill())) {
+                    log.error("Bill not found for billId {}", tracker.getBillId());
+                    continue; 
+                }
+
+                // Trigger notification
+                notificationService.triggerNotificationsGenerateBill(
+                        garbageAccount,
+                        billResponse.getBill().get(0),
+                        requestInfo,
+                        tracker
+                );
+                
+                garbageAccountService.markSmsAsSent(tracker);
+                log.info("Marked sms_status=true for trackerId {}", tracker.getBillId());
+
+            } catch (Exception e) {
+                log.error("Failed to process SMS for trackerId {}", tracker.getBillId(), e);
+            }
+        }
+        offset += batchSize;
+    } while (!CollectionUtils.isEmpty(trackers));
+}
 
 	public GrbgBillTrackerResponse generateBill(GenerateBillRequest generateBillRequest) {
 
@@ -116,8 +188,14 @@ public class GarbageAccountSchedulerService {
 //							GrbgBillFailure grbgBillFailure	= garbageAccountService.enrichGrbgBillFailure(garbageAccount, generateBillRequest,billResponse,errorList);
 //							garbageAccountService.removeGarbageBillFailure(grbgBillFailure);
 //							triggerNotifications
-							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
-								generateBillRequest.getRequestInfo(),grbgBillTracker);
+//							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
+//								generateBillRequest.getRequestInfo(),grbgBillTracker);
+							
+							//calling bill_sms query to get all false sms_status
+							
+							
+							
+							
 						}else {
 							errorList.add("Issues In Bill Generation Probably Demand Already Exists");
 							createFailureLog(garbageAccount, generateBillRequest,billResponse,errorList);

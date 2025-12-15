@@ -290,4 +290,40 @@ public class GarbageBillTrackerRepository {
 		}
 		namedParameterJdbcTemplate.update(query.toString(), new HashMap<>());
 	}
+	
+	//adding fetch for where sms_status is false
+	 private static final String FETCH_PENDING_SMS = 
+		        "SELECT * FROM eg_grbg_bill_tracker " +
+		        "WHERE sms_status = false " +
+		        "ORDER BY created_time ASC " +
+		        "LIMIT :limit OFFSET :offset";
+
+	 public List<GrbgBillTracker> fetchPendingSms(int limit, int offset) {
+		    String sql = "SELECT * FROM eg_grbg_bill_tracker " +
+		                 "WHERE sms_status = false " +
+		                 "ORDER BY created_time ASC " +
+		                 "LIMIT " + limit + " OFFSET " + offset;
+
+		    return namedParameterJdbcTemplate.query(
+		        sql,
+		        grbgBillTrackerRowMapper
+		    );
+		}
+	 
+	 private static final String UPDATE_SMS_STATUS = 
+		        "UPDATE eg_grbg_bill_tracker " +
+		        "SET sms_status = true, last_modified_time = :lastModifiedTime, last_modified_by = :lastModifiedBy " +
+		        "WHERE uuid = :uuid";
+
+		public void markSmsAsSent(GrbgBillTracker tracker) {
+		    Map<String, Object> params = new HashMap<>();
+		    params.put("uuid", tracker.getUuid());
+		    params.put("lastModifiedTime", tracker.getAuditDetails().getLastModifiedDate());
+		    params.put("lastModifiedBy", tracker.getAuditDetails().getLastModifiedBy());
+
+		    namedParameterJdbcTemplate.update(UPDATE_SMS_STATUS, params);
+		}
+
+
+
 }
