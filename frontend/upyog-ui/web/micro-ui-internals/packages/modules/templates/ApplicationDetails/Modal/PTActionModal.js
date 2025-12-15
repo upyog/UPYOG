@@ -72,7 +72,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     setFile(e.target.files[0]);
   }
   function sortFinancialYears(data) {
-    return data.sort((a, b) => a.startingDate - b.startingDate);
+    console.log("datadatadatadatadata",data)
+    return data?.["egf-master"]?.FinancialYear.sort((a, b) => a.startingDate - b.startingDate);
   }
 
   useEffect(() => {
