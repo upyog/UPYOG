@@ -55,6 +55,8 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import jakarta.annotation.PostConstruct;
+
 @SpringBootApplication
 @Import(TracerConfiguration.class)
 public class UserEventsApp {
