@@ -366,24 +366,7 @@ public class UserService {
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
 
         User persistedNewUser = persistNewUser(user);
-
-        // CRITICAL FIX: Create RequestInfo with the newly created user as context for "Self" decryption
-        // This matches the fix applied for citizen login - the newly created user IS decrypting their own data
-        // Without this, the admin/employee in original RequestInfo causes ABAC to deny decryption
-        RequestInfo decryptRequestInfo = RequestInfo.builder()
-            .userInfo(org.egov.common.contract.request.User.builder()
-                .uuid(persistedNewUser.getUuid())
-                .id(persistedNewUser.getId())
-                .type(persistedNewUser.getType() != null ? persistedNewUser.getType().name() : null)
-                .tenantId(persistedNewUser.getTenantId())
-                .build())
-            .action("create")
-            .ts(System.currentTimeMillis())
-            .build();
-
-        log.debug("createUser: Decrypting user with UserSelf key. User UUID: {}, Type: {}",
-                  persistedNewUser.getUuid(), persistedNewUser.getType());
-        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, decryptRequestInfo);
+        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
 
         /* decrypt here  because encrypted data coming from DB*/
 
@@ -529,24 +512,7 @@ public class UserService {
         User encryptedUpdatedUserfromDB, decryptedupdatedUserfromDB;
 
             encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
-
-            // CRITICAL FIX: Create RequestInfo with the updated user as context for "Self" decryption
-            // This matches the fix applied for citizen login - the updated user IS decrypting their own data
-            // Without this, the admin/employee in original RequestInfo causes ABAC to deny decryption
-            RequestInfo decryptRequestInfo = RequestInfo.builder()
-                .userInfo(org.egov.common.contract.request.User.builder()
-                    .uuid(encryptedUpdatedUserfromDB.getUuid())
-                    .id(encryptedUpdatedUserfromDB.getId())
-                    .type(encryptedUpdatedUserfromDB.getType() != null ? encryptedUpdatedUserfromDB.getType().name() : null)
-                    .tenantId(encryptedUpdatedUserfromDB.getTenantId())
-                    .build())
-                .action("update")
-                .ts(System.currentTimeMillis())
-                .build();
-
-            log.debug("updateWithoutOtpValidation: Decrypting user with UserSelf key. User UUID: {}, Type: {}",
-                      encryptedUpdatedUserfromDB.getUuid(), encryptedUpdatedUserfromDB.getType());
-            decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, decryptRequestInfo);
+            decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
             return decryptedupdatedUserfromDB;
     }
 
@@ -604,21 +570,8 @@ public class UserService {
         User updatedUser = getUserByUuid(user.getUuid());
 
         /* decrypt here */
-        // CRITICAL FIX: Create RequestInfo with the updated user as context for "Self" decryption
-        // This is for partialUpdate which is used for profile updates - user updating their own data
-        RequestInfo decryptRequestInfo = RequestInfo.builder()
-            .userInfo(org.egov.common.contract.request.User.builder()
-                .uuid(updatedUser.getUuid())
-                .id(updatedUser.getId())
-                .type(updatedUser.getType() != null ? updatedUser.getType().name() : null)
-                .tenantId(updatedUser.getTenantId())
-                .build())
-            .action("update")
-            .ts(System.currentTimeMillis())
-            .build();
-
-        existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "UserSelf", User.class, decryptRequestInfo);
-        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "UserSelf", User.class, decryptRequestInfo);
+        existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "UserSelf", User.class, requestInfo);
+        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "UserSelf", User.class, requestInfo);
 
         //setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
         String oldEmail = existingUser.getEmailId();
@@ -1044,21 +997,8 @@ public class UserService {
         // Persist the validated and encrypted user in the database
         User persistedNewUser = persistNewUserWithAddressV2(user);
 
-        // CRITICAL FIX: Create RequestInfo with the newly created user as context for "Self" decryption
-        // This matches the fix applied for citizen login - the newly created user IS decrypting their own data
-        RequestInfo decryptRequestInfo = RequestInfo.builder()
-            .userInfo(org.egov.common.contract.request.User.builder()
-                .uuid(persistedNewUser.getUuid())
-                .id(persistedNewUser.getId())
-                .type(persistedNewUser.getType() != null ? persistedNewUser.getType().name() : null)
-                .tenantId(persistedNewUser.getTenantId())
-                .build())
-            .action("create")
-            .ts(System.currentTimeMillis())
-            .build();
-
         // Decrypt the persisted user before returning the response
-        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, decryptRequestInfo);
+        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
     }
 
     /**
@@ -1100,20 +1040,7 @@ public class UserService {
 
         User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
 
-        // CRITICAL FIX: Create RequestInfo with the updated user as context for "Self" decryption
-        // This matches the fix applied for citizen login - the updated user IS decrypting their own data
-        RequestInfo decryptRequestInfo = RequestInfo.builder()
-            .userInfo(org.egov.common.contract.request.User.builder()
-                .uuid(encryptedUpdatedUserfromDB.getUuid())
-                .id(encryptedUpdatedUserfromDB.getId())
-                .type(encryptedUpdatedUserfromDB.getType() != null ? encryptedUpdatedUserfromDB.getType().name() : null)
-                .tenantId(encryptedUpdatedUserfromDB.getTenantId())
-                .build())
-            .action("update")
-            .ts(System.currentTimeMillis())
-            .build();
-
-        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, decryptRequestInfo);
+        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
         return decryptedupdatedUserfromDB;
     }
 
