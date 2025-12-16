@@ -243,7 +243,7 @@ public class GarbageAccountSchedulerService {
 							
 							smsTrackerRequest.put("ownerMobileNo", garbageAccount.getMobileNumber());
 							smsTrackerRequest.put("ownerName", garbageAccount.getName());
-							smsTrackerRequest.put("smsRequest",smsRequestJson.toString());  
+							smsTrackerRequest.put("smsRequest",smsRequestJson);  
 							smsTrackerRequest.put("smsResponse", null); 
 							
 							
