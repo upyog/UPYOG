@@ -56,10 +56,6 @@ public class Vendor {
 	@Valid
 	private List<Driver> drivers;
 
-	@JsonProperty("workers")
-	@Valid
-	private List<VendorWorker> workers;
-
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 
