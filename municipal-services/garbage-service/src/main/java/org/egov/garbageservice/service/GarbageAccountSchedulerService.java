@@ -208,19 +208,18 @@ public class GarbageAccountSchedulerService {
 							StringBuilder smsTrackerUri = new StringBuilder();
 							smsTrackerUri.append(smsHost).append(smsTrackerCreateEndpoint);
 							
-							ObjectNode smsRequestJson = objectMapper.createObjectNode();
-							smsRequestJson.put("mobileNumber", garbageAccount.getMobileNumber());
-							smsRequestJson.put("templateCode", "GB_BILL_GEN");
+							
+							
+							ObjectNode smsRequestJson =
+							        notificationService.buildGenerateBillSmsRequest(
+							                garbageAccount,
+							                billResponse.getBill().get(0),
+							                grbgBillTracker
+							        );
 
-							ObjectNode params = objectMapper.createObjectNode();
-							params.put("name", garbageAccount.getName());
-							params.put("amount", billAmount.toPlainString());
-							params.put("billId", billResponse.getBill().get(0).getId());
-							params.put("month", generateBillRequest.getMonth());
-							smsRequestJson.set("params", params);
+							
 							
 							SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-
 							String fromDateStr = formatter.format(generateBillRequest.getFromDate());
 							String toDateStr = formatter.format(generateBillRequest.getToDate());
 							
@@ -244,7 +243,7 @@ public class GarbageAccountSchedulerService {
 							
 							smsTrackerRequest.put("ownerMobileNo", garbageAccount.getMobileNumber());
 							smsTrackerRequest.put("ownerName", garbageAccount.getName());
-							smsTrackerRequest.put("smsRequest", smsRequestJson.toString());  
+							smsTrackerRequest.put("smsRequest",smsRequestJson.toString());  
 							smsTrackerRequest.put("smsResponse", null); 
 							
 							
