@@ -93,7 +93,7 @@ public class NotificationService {
 		SMSSentRequest smsRequest = SMSSentRequest.builder().message(message).mobileNumber(mobileNumber)
 				.category(SMSCategory.NOTIFICATION).templateName(SMS_TEMPLATE_BILL_NOTIFICATION).build();
 
-		kafkaTemplate.send(smsTopic, smsRequest);
+		//kafkaTemplate.send(smsTopic, smsRequest);
 	}
 
 	private void sendEmail(String emailBody, List<String> emailIds, RequestInfo requestInfo,

@@ -32,6 +32,4 @@ public class GrbgBillTracker {
 	private AuditDetails auditDetails;
 	@JsonProperty("additionaldetail")
 	private JsonNode additionaldetail;
-	@Builder.Default
-	private Boolean smsStatus = false;
 }

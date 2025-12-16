@@ -26,13 +26,6 @@ public class GarbageAccountSchedulerController {
 //		return ResponseEntity.ok("Bill generated successfully!!!");
 		return ResponseEntity.ok(service.generateBill(generateBillRequest));
 	}
-	
-	@PostMapping("/pending-sms/trigger")
-	public ResponseEntity<?> triggerPendingSms(
-	        @RequestBody RequestInfo requestInfo) {
-	    service.processPendingBillSms(requestInfo);
-	    return ResponseEntity.ok("Pending bill SMS processed successfully");
-	}
 
 	
 	@PostMapping("/on-demand-generation")
