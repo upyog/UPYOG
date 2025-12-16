@@ -471,5 +471,8 @@ public class PropertyConfiguration {
 	//DashBoard Details
 	@Value("${dashboard.user.pass}")
 	private String dashbordUserPass;
+	
+	@Value("${egov.usr.events.view.application}")
+	private String applicationViewFromNotif;
 	    
 }
