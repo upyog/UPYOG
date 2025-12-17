@@ -58,7 +58,9 @@ public class SecurityConfig {
                 .requestMatchers("/_details", "/_search", "/v1/_search",
                                "/citizen/_create", "/users/_createnovalidate",
                                "/users/_updatenovalidate", "/profile/_update",
-                               "/digilocker/oauth/token").permitAll()
+                               "/digilocker/oauth/token",
+                               "/users/v2/_create", "/users/v2/_search", "/users/v2/_update",
+                               "/_createAddress", "/_getAddress", "/_updateAddress").permitAll()
                 // Password Controller endpoints
                 .requestMatchers("/password/_update", "/password/nologin/_update").permitAll()
                 // Logout Controller endpoints
