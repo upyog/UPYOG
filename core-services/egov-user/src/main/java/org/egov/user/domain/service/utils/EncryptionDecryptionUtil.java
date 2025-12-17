@@ -139,6 +139,18 @@ public class EncryptionDecryptionUtil {
         }
 
         try {
+            // CRITICAL FIX: Track if we need to unwrap after decryption (mirroring origin/master behavior)
+            boolean objectToDecryptNotList = false;
+
+            // CRITICAL FIX: Wrap single objects in List before passing to encryption service
+            // This ensures consistent ABAC policy evaluation (same as origin/master branch)
+            // The encryption service handles Lists differently than single objects for ABAC
+            if (!(objectToDecrypt instanceof List)) {
+                objectToDecryptNotList = true;
+                objectToDecrypt = Collections.singletonList(objectToDecrypt);
+                log.debug("Wrapped single object in List for encryption service");
+            }
+
             // Get the appropriate key and purpose for decryption based on user context
             String purpose = null;
             if (requestInfo != null && requestInfo.getUserInfo() != null) {
@@ -185,16 +197,16 @@ public class EncryptionDecryptionUtil {
                     .build();
             }
 
-            // CRITICAL FIX: Pass purpose (not stateLevelTenantId) as 4th parameter
+            // CRITICAL FIX: Pass List to encryption service for consistent ABAC evaluation
             // The encryptionService.decryptJson signature is: (RequestInfo, Object, String model, String purpose, Class)
             Object decryptedObject = encryptionService.decryptJson(safeRequestInfo, objectToDecrypt, key, purpose, classType);
 
-            // Handle case where encryption service returns a List even for single objects
-            if (decryptedObject instanceof List && !(objectToDecrypt instanceof List)) {
+            // CRITICAL FIX: Unwrap if we wrapped it earlier (restore original object type)
+            if (objectToDecryptNotList && decryptedObject instanceof List) {
                 List<?> decryptedList = (List<?>) decryptedObject;
                 if (!decryptedList.isEmpty()) {
                     decryptedObject = decryptedList.get(0);
-                    log.info("Unwrapped single object from list returned by encryption service");
+                    log.debug("Unwrapped single object from List after decryption");
                 }
             }
 
