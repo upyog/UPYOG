@@ -62,7 +62,7 @@ public class NotificationService {
 			+", your "+GARBAGE_PLACEHOLDER+" bill vide " + GARBAGE_PLACEHOLDER +" id "+GARBAGE_NO_PLACEHOLDER+" for the period "
 			+ MONTH_PLACEHOLDER + "/" + YEAR_PLACEHOLDER +" amounting to Rs "+AMOUNT_PLACEHOLDER
 			+" has been generated on CitizenSeva portal. Please pay on CitizenSeva Portal or using link "
-			+GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER+".  CitizenSeva H.P. ";
+			+GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER+" .  CitizenSeva H.P.";
 
 	private static final String EMAIL_SUBJECT_GENERATE_BILL = "Your Garbage Collection Bill for " + MONTH_PLACEHOLDER
 			+ "/" + YEAR_PLACEHOLDER + " with " + GARBAGE_NO_PLACEHOLDER;
