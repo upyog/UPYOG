@@ -71,7 +71,7 @@ public class NotificationService {
 
 	private static final String SMS_BODY_GENERATE_BILL = "Dear "+RECIPINTS_NAME_PLACEHOLDER+", your "+PROPERTY_PLACEHOLDER+" bill vide  "+PROPERTY_PLACEHOLDER+" id "
 			+ PROPERTY_ID_PLACEHOLDER+" for the period "+MONTH_PLACEHOLDER+" amounting to Rs "+AMOUNT_PLACEHOLDER+" has been generated on CitizenSeva portal. "
-			+ "Please pay on CitizenSeva Portal or using link "+LINK_PLACEHOLDER+". CitizenSeva H.P.";
+			+ "Please pay on CitizenSeva Portal or using link "+LINK_PLACEHOLDER+" .  CitizenSeva H.P.";
 	
 	private static final String EMAIL_SUBJECT_GENERATE_BILL = "Your Property Collection Bill for " + MONTH_PLACEHOLDER
 			+ "/" + " with " + PROPERTY_ID_PLACEHOLDER;
