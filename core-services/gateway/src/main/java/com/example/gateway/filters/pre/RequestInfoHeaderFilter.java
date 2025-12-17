@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.Optional;
-
 @Slf4j
 @Component
 public class RequestInfoHeaderFilter implements GlobalFilter, Ordered {
@@ -25,22 +23,27 @@ public class RequestInfoHeaderFilter implements GlobalFilter, Ordered {
 
         HttpHeaders headers = exchange.getRequest().getHeaders();
 
-        // If RequestInfo already exists, do nothing
+        // If already present, skip
         if (headers.containsKey("X-Request-Info")) {
             return chain.filter(exchange);
         }
 
-        // Build minimal RequestInfo
+        String tenantId = exchange.getRequest()
+                .getQueryParams()
+                .getFirst("tenantId");
+
+        User user = null;
+
+        if (tenantId != null) {
+            user = new User();
+            user.setTenantId(tenantId);
+        }
+
         RequestInfo requestInfo = RequestInfo.builder()
                 .apiId("gateway")
                 .ver("1.0")
-                .userInfo(null) // PUBLIC / INTERNAL
+                .userInfo(user)   // tenantId lives here
                 .build();
-
-        String tenantId = exchange.getRequest().getQueryParams().getFirst("tenantId");
-        if (tenantId != null) {
-            requestInfo.setTenantId(tenantId);
-        }
 
         try {
             String requestInfoJson = objectMapper.writeValueAsString(requestInfo);
@@ -52,13 +55,13 @@ public class RequestInfoHeaderFilter implements GlobalFilter, Ordered {
             return chain.filter(mutatedExchange);
 
         } catch (Exception e) {
-            log.error("Failed to create RequestInfo", e);
+            log.error("Failed to inject RequestInfo header", e);
             return chain.filter(exchange);
         }
     }
 
     @Override
     public int getOrder() {
-        return 3; // BEFORE Auth & RBAC filters
+        return 3;
     }
 }
