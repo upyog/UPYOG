@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Build-Jdk-Spec: 21
+Implementation-Title: pt-services-dx
+Implementation-Version: 1.1.6-SNAPSHOT
+Created-By: Maven Integration for Eclipse
+
