@@ -75,7 +75,7 @@ public class CorrelationIdFilterHelper implements RewriteFunction<Map, Map> {
         log.debug(RECEIVED_REQUEST_MESSAGE, requestURI);
         
         if(body==null)
-        	Mono.empty();
+        	return Mono.empty();
 
         return Mono.just(body);
     }
