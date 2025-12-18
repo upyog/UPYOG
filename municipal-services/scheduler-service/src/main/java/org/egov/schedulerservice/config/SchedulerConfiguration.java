@@ -96,4 +96,5 @@ public class SchedulerConfiguration {
 	@Value("${egov.notification.sms.endpoint.send-notification-sms}")
 	private String sendNotificationSmsEndpoint;
 	
+	
 }
