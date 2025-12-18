@@ -70,9 +70,8 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
         	else {            
             HttpHeaders httpHeader=exchange.getRequest().getHeaders();
             authToken=httpHeader.get("Auth-Token").get(0);
-            log.info("headers", httpHeader);
+           
         	}
-            log.info("Auth Tokennnnn",authToken);
 
         } catch (Exception e) {
             log.error(AUTH_TOKEN_RETRIEVE_FAILURE_MESSAGE, e);
@@ -100,7 +99,8 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
             exchange.getAttributes().put(AUTH_BOOLEAN_FLAG_NAME, Boolean.TRUE);
 
         }
-
+        if(body==null)
+        	return Mono.empty();
         return Mono.just(body);
     }
 }
