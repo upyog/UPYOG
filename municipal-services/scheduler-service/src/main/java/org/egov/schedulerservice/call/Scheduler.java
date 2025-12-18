@@ -155,7 +155,7 @@ public class Scheduler {
 	public void pushUmeedDashboardMetricsForPGR() {
 		log.info("pushUmeedDashboardMetricsForPGR CRON JOB Starts");
 		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
-		umeedDashboardService.pushUmeedDashboardMetricsForPGR(requestInfo);
+//		umeedDashboardService.pushUmeedDashboardMetricsForPGR(requestInfo);
 		log.info("pushUmeedDashboardMetricsForPGR CRON JOB Ends");
 	}
 	
