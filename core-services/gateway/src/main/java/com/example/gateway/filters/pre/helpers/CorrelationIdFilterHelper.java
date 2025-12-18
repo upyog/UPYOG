@@ -73,6 +73,9 @@ public class CorrelationIdFilterHelper implements RewriteFunction<Map, Map> {
         MDC.put(CORRELATION_ID_KEY, correlationId);
         exchange.getAttributes().put(CORRELATION_ID_KEY, correlationId);
         log.debug(RECEIVED_REQUEST_MESSAGE, requestURI);
+        
+        if(body==null)
+        	Mono.empty();
 
         return Mono.just(body);
     }
