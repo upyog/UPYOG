@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.egov.garbageservice.repository.BillSmsView;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
 import java.util.List;
@@ -23,6 +25,12 @@ public class GarbageSmsService {
 
     @Autowired
     private SmsTrackerRepository smsTrackerRepository;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
+    
+    @Autowired
+    private NotificationService notificationService;
 
     /**
      * Fetch pending bills from eg_grbg_bill_tracker
@@ -53,10 +61,15 @@ public class GarbageSmsService {
                 sms.setMonth(bill.getMonth());
                 sms.setYear(bill.getYear());
                 
-                String smsJson = "{"
-                        + "\"mobileNumber\":\"" + bill.getMobileNumber() + "\","
-                        + "\"message\":\"" + generateMessage(bill) + "\""
-                        + "}";
+                ObjectNode smsJsonNode = objectMapper.createObjectNode();
+                smsJsonNode.put("mobileNumber", bill.getMobileNumber());
+                smsJsonNode.put("message", generateMessage(bill)); 
+                smsJsonNode.put("category", "NOTIFICATION");
+                smsJsonNode.put("templateName", "BILL-NOTIFICATION");
+
+                String smsJson = smsJsonNode.toString();
+
+
                 String additionalDetail = "{"
                 	    + "\"billId\":\"" + bill.getBillId() + "\","
                 	    + "\"source\":\"GARBAGE_SERVICE\""
@@ -102,16 +115,23 @@ public class GarbageSmsService {
         }
     }
 
-    private String generateMessage(BillSmsView  bill) {
-        return String.format(
-            "Your garbage bill %s for the period %s/%s amounting to Rs %.2f "
-                + "has been generated on CitizenSeva portal. Please pay online.",
-            bill.getGrbgApplicationId(),
-            bill.getMonth(),
-            bill.getYear(),
-            bill.getGrbgBillAmount() != null
-                ? bill.getGrbgBillAmount().doubleValue()
-                : 0.0
-        );
-    }
+    private String generateMessage(BillSmsView bill) {
+    String billId = bill.getGrbgApplicationId();
+
+    return String.format(
+        "Dear %s, your garbage bill vide garbage id %s for the period %s/%s "
+        + "amounting to Rs %.1f has been generated on CitizenSeva portal. "
+        + "Please pay on CitizenSeva Portal or using link %s .  CitizenSeva H.P.",
+        bill.getOwnerName(),
+        billId,
+        bill.getMonth(),
+        bill.getYear(),
+        bill.getGrbgBillAmount() != null ? bill.getGrbgBillAmount().doubleValue() : 0.0,
+        "https://citizenseva.hp.gov.in/egov-url-shortening?id=nob"
+    );
+}
+
+
+
+
 }
