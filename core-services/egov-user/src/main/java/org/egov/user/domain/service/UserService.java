@@ -568,7 +568,7 @@ public class UserService {
         validatePassword(user.getPassword());
         userRepository.update(user, existingUser,requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid() );
         User updatedUser = getUserByUuid(user.getUuid());
-        
+
         /* decrypt here */
         existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "UserSelf", User.class, requestInfo);
         updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "UserSelf", User.class, requestInfo);
@@ -996,6 +996,7 @@ public class UserService {
 
         // Persist the validated and encrypted user in the database
         User persistedNewUser = persistNewUserWithAddressV2(user);
+
         // Decrypt the persisted user before returning the response
         return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
     }
@@ -1038,6 +1039,7 @@ public class UserService {
             resetFailedLoginAttempts(user);
 
         User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
+
         User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
         return decryptedupdatedUserfromDB;
     }
