@@ -114,6 +114,7 @@ public class CommonUtils {
                         if (tenant != null && !tenant.equalsIgnoreCase("null"))
                             tenantIds.add(tenant);
                     });
+                    
                 } else {
                     setTenantIdsFromQueryParams(request.getQueryParams(), tenantIds);
                 }
@@ -141,7 +142,8 @@ public class CommonUtils {
                 tenantIds.add(tenantId);
             }
         } else {
-            throw new CustomException("TENANT_ID_MANDATORY", "TenantId is mandatory in URL for non json requests");
+        	tenantIds.add("pg");
+            //throw new CustomException("TENANT_ID_MANDATORY", "TenantId is mandatory in URL for non json requests");
         }
 
     }
