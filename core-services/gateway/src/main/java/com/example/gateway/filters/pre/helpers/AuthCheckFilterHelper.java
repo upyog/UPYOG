@@ -1,8 +1,10 @@
 package com.example.gateway.filters.pre.helpers;
 
-import com.example.gateway.utils.UserUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import static com.example.gateway.constants.GatewayConstants.REQUEST_INFO_FIELD_NAME_PASCAL_CASE;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -11,9 +13,12 @@ import org.springframework.cloud.gateway.filter.factory.rewrite.RewriteFunction;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
+
+import com.example.gateway.utils.UserUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
-import java.util.Map;
-import static com.example.gateway.constants.GatewayConstants.REQUEST_INFO_FIELD_NAME_PASCAL_CASE;
 
 @Slf4j
 @Component
@@ -60,6 +65,10 @@ public class AuthCheckFilterHelper implements RewriteFunction<Map, Map> {
             }
 
             requestInfo.setUserInfo(user);
+            
+            if(body==null) {
+            	body= new HashMap<>();
+            }
 
             body.put(REQUEST_INFO_FIELD_NAME_PASCAL_CASE, requestInfo);
             return Mono.just(body);
