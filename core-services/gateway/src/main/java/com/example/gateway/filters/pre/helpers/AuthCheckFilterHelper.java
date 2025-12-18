@@ -8,6 +8,7 @@ import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.factory.rewrite.RewriteFunction;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -29,9 +30,22 @@ public class AuthCheckFilterHelper implements RewriteFunction<Map, Map> {
 
     @Override
     public Publisher<Map> apply(ServerWebExchange serverWebExchange, Map body) {
+    	String authToken=null;
+    	 RequestInfo requestInfo= new RequestInfo();
+    	
         try {
-            RequestInfo requestInfo = objectMapper.convertValue(body.get(REQUEST_INFO_FIELD_NAME_PASCAL_CASE), RequestInfo.class);
-            User user = userUtils.getUser(requestInfo.getAuthToken());
+        	if(body!=null)
+        	{
+           
+            requestInfo = objectMapper.convertValue(body.get(REQUEST_INFO_FIELD_NAME_PASCAL_CASE), RequestInfo.class);
+            authToken = requestInfo.getAuthToken();
+        	}
+        	else
+        	{
+        		HttpHeaders httpHeader=serverWebExchange.getRequest().getHeaders();
+                authToken=httpHeader.get("Auth-Token").get(0);
+        	}
+            User user = userUtils.getUser(authToken);
 
             // Log user info received from /_details endpoint
             log.info("AUTH CHECK: Received user from /_details - UUID: {}, userName: {}, roles: {}",
