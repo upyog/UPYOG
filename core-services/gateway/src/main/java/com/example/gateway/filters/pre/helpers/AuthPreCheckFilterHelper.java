@@ -1,22 +1,27 @@
 package com.example.gateway.filters.pre.helpers;
 
-import com.example.gateway.utils.UserUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
-import org.reactivestreams.Publisher;
-import org.springframework.cloud.gateway.filter.factory.rewrite.RewriteFunction;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import static com.example.gateway.constants.GatewayConstants.AUTH_BOOLEAN_FLAG_NAME;
+import static com.example.gateway.constants.GatewayConstants.OPEN_ENDPOINT_MESSAGE;
+import static com.example.gateway.constants.GatewayConstants.REQUEST_INFO_FIELD_NAME_PASCAL_CASE;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.example.gateway.constants.GatewayConstants.*;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
+import org.reactivestreams.Publisher;
+import org.springframework.cloud.gateway.filter.factory.rewrite.RewriteFunction;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.server.ServerWebExchange;
+
+import com.example.gateway.utils.UserUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
@@ -58,8 +63,17 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
         // If extraction fails, authToken remains null and we check mixed-mode whitelist before throwing
 
         try {
-            RequestInfo requestInfo = objectMapper.convertValue(body.get(REQUEST_INFO_FIELD_NAME_PASCAL_CASE), RequestInfo.class);
-            authToken = requestInfo.getAuthToken();
+        	RequestInfo requestInfo=new RequestInfo();
+        	if(body!=null) {
+            requestInfo = objectMapper.convertValue(body.get(REQUEST_INFO_FIELD_NAME_PASCAL_CASE), RequestInfo.class);
+            authToken = requestInfo.getAuthToken();}
+        	else {            
+            HttpHeaders httpHeader=exchange.getRequest().getHeaders();
+            authToken=httpHeader.get("Auth-Token").get(0);
+            log.info("headers", httpHeader);
+        	}
+            log.info("Auth Tokennnnn",authToken);
+
         } catch (Exception e) {
             log.error(AUTH_TOKEN_RETRIEVE_FAILURE_MESSAGE, e);
             // Don't throw immediately - check if this is a mixed-mode endpoint first
