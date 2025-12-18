@@ -268,7 +268,7 @@ const handleClick=()=>{
   }
   const closeModal = () => {
     console.log("closeModal")
-    setshowModal(true)
+    setshowModal(false)
   };
 
   const closeWarningPopup = () => {
