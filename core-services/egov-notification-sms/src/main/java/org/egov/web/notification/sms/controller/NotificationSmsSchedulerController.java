@@ -22,6 +22,6 @@ public class NotificationSmsSchedulerController {
 
     	smsProcessing.processPendingSms();
 
-        return ResponseEntity.ok().body("SMS processing triggered");
+        return ResponseEntity.ok().body("The SMS processing triggered");
     }
 }
