@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS sms_tracker (
+CREATE TABLE IF NOT EXISTS eg_notification_sms_tracker (
     uuid  VARCHAR(255) PRIMARY KEY,
     amount  NUMERIC(10, 2) NOT NULL,
     application_no  VARCHAR(255) NOT NULL,

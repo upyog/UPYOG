@@ -67,7 +67,7 @@ public class SMSTemplateQueryBuilder {
 	
 	
 	 public static final String INSERT_SMS_TRACKER = 
-		        "INSERT INTO sms_tracker (" +
+		        "INSERT INTO eg_notification_sms_tracker (" +
 		        "uuid, amount, application_no, tenant_id, service, month, year, financial_year, " +
 		        "from_date, to_date, created_by, created_time, last_modified_by, last_modified_time, " +
 		        "ward, bill_id, additional_detail, sms_status, sms_request, sms_response, owner_mobile_no, owner_name" +

@@ -81,13 +81,13 @@ public class SmsTrackerRepository {
    
    public List<SmsTracker> fetchPendingSms() {
 
-	    String query = "SELECT * FROM sms_tracker WHERE sms_status = false LIMIT 2000";
+	    String query = "SELECT * FROM eg_notification_sms_tracker WHERE sms_status = false LIMIT 2000";
 
 	    return jdbcTemplate.query(query, new SmsTrackerRowMapper());
 	}
    
    public void updateSmsStatus(SmsTracker tracker) {
-       String query = "UPDATE sms_tracker SET sms_status = true, sms_response = ? WHERE uuid = ?";
+       String query = "UPDATE eg_notification_sms_tracker SET sms_status = true, sms_response = ? WHERE uuid = ?";
        PGobject smsResponseJson = null;
        try {
            if (tracker.getSmsResponse() != null) {
