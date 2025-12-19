@@ -16,7 +16,7 @@ public interface SmsTrackerRepository extends JpaRepository<SmsTracker, String> 
 	@Modifying
 	@Transactional
 	@Query(
-		    value = "INSERT INTO sms_tracker(" +
+		    value = "INSERT INTO eg_notification_sms_tracker(" +
 		            "uuid, tenant_id, amount, application_no, service, month, year, from_date, to_date, " +
 		            "financial_year, created_by, created_time, last_modified_by, last_modified_time, ward, bill_id, additional_detail, " +
 		            "owner_mobile_no, owner_name, sms_request, sms_response, sms_status) " +

@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "sms_tracker")
+@Table(name = "eg_notification_sms_tracker")
 public class SmsTracker {
 
     @Id

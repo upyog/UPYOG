@@ -364,6 +364,17 @@ public class PropertySchedulerService {
                     String fromDateStr = formatter.format(calculateTaxRequest.getFromDate());
                     String toDateStr = formatter.format(calculateTaxRequest.getToDate());
                     
+                    
+                    String ward = null;
+                    if (property.getAddress() != null
+                            && property.getAddress().getAdditionalDetails() != null) {
+                        JsonNode wardNumberNode = addressAdditionalDetails.get("wardNumber");
+
+                        if (wardNumberNode != null && !wardNumberNode.isNull()) {
+                            ward = wardNumberNode.asText();
+                        }
+                    }
+                    
                     Map<String, Object> smsTrackerRequest = new HashMap<>();
                     smsTrackerRequest.put("uuid", UUID.randomUUID().toString());
                     smsTrackerRequest.put("amount", finalPropertyTax);
@@ -381,7 +392,7 @@ public class PropertySchedulerService {
                     smsTrackerRequest.put("ownerName", property.getOwners().get(0).getName());
                     smsTrackerRequest.put("smsRequest", smsRequestMap);
                     smsTrackerRequest.put("smsResponse", null);
-                    smsTrackerRequest.put("ward", "Bharari");
+                    smsTrackerRequest.put("ward", ward);
                     
 
                     Object response = restCallRepository.fetchResult(smsTrackerUri, smsTrackerRequest);
