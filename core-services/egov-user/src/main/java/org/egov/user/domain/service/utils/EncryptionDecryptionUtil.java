@@ -181,21 +181,36 @@ public class EncryptionDecryptionUtil {
 
             // Create a safe RequestInfo for encryption service to avoid null user info issues
             RequestInfo safeRequestInfo = requestInfo;
-            if (requestInfo != null && requestInfo.getUserInfo() == null) {
-                // Create a minimal RequestInfo to avoid NPE in EncryptionServiceImpl
+
+            // FIX: Handle both null requestInfo AND null userInfo (matching master branch behavior)
+            // Changed from && to || to handle case when requestInfo itself is null
+            if (requestInfo == null || requestInfo.getUserInfo() == null) {
+                // Create default user info when missing (same as master branch)
+                User userInfo = User.builder()
+                    .uuid("no uuid")
+                    .type("EMPLOYEE")
+                    .roles(new ArrayList<>())
+                    .build();
+
+                // Create RequestInfo with default user
                 safeRequestInfo = RequestInfo.builder()
-                    .apiId(requestInfo.getApiId())
-                    .ver(requestInfo.getVer())
-                    .ts(requestInfo.getTs())
-                    .action(requestInfo.getAction())
-                    .did(requestInfo.getDid())
-                    .key(requestInfo.getKey())
-                    .msgId(requestInfo.getMsgId())
-                    .authToken(requestInfo.getAuthToken())
-                    .correlationId(requestInfo.getCorrelationId())
-                    .userInfo(User.builder().roles(new ArrayList<>()).build()) // Empty user with empty roles list instead of null
+                    .apiId(requestInfo != null ? requestInfo.getApiId() : "user-service")
+                    .ver(requestInfo != null ? requestInfo.getVer() : null)
+                    .ts(requestInfo != null ? requestInfo.getTs() : null)
+                    .action(requestInfo != null ? requestInfo.getAction() : null)
+                    .did(requestInfo != null ? requestInfo.getDid() : null)
+                    .key(requestInfo != null ? requestInfo.getKey() : null)
+                    .msgId(requestInfo != null ? requestInfo.getMsgId() : null)
+                    .authToken(requestInfo != null ? requestInfo.getAuthToken() : null)
+                    .correlationId(requestInfo != null ? requestInfo.getCorrelationId() : null)
+                    .userInfo(userInfo)
                     .build();
             }
+
+            // CRITICAL FIX: Enrich userInfo with roles before decryption (same as master branch)
+            // This ensures proper role-based access control during decryption
+            final User enrichedUserInfo = getEncrichedandCopiedUserInfo(safeRequestInfo.getUserInfo());
+            safeRequestInfo.setUserInfo(enrichedUserInfo);
 
             // CRITICAL FIX: Pass List to encryption service for consistent ABAC evaluation
             // The encryptionService.decryptJson signature is: (RequestInfo, Object, String model, String purpose, Class)
