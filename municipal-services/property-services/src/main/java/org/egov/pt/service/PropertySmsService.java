@@ -1,14 +1,14 @@
-package org.egov.garbageservice.service;
+package org.egov.pt.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.garbageservice.model.EgGrbgBillTracker;
-import org.egov.garbageservice.model.SmsTracker;
-import org.egov.garbageservice.repository.EgGrbgBillTrackerRepository;
-import org.egov.garbageservice.repository.SmsTrackerRepository;
+import org.egov.pt.models.PtBillTracker;
+import org.egov.pt.models.SmsTracker;
+import org.egov.pt.repository.PtBillTrackerRepository;
+import org.egov.pt.repository.SmsTrackerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.egov.garbageservice.repository.BillSmsView;
+import org.egov.pt.repository.BillSmsView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -18,10 +18,10 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class GarbageSmsService {
+public class PropertySmsService {
 
     @Autowired
-    private EgGrbgBillTrackerRepository billTrackerRepository;
+    private PtBillTrackerRepository billTrackerRepository;
 
     @Autowired
     private SmsTrackerRepository smsTrackerRepository;
@@ -33,7 +33,7 @@ public class GarbageSmsService {
     private NotificationService notificationService;
 
     /**
-     * Fetch pending bills from eg_grbg_bill_tracker
+     * Fetch pending bills from eg_pt_bill_tracker
      * and insert into sms_tracker
      */
     @Transactional
@@ -43,26 +43,29 @@ public class GarbageSmsService {
     	        billTrackerRepository.fetchActiveBillsForSms(100, 0);
 
         if (pendingBills == null || pendingBills.isEmpty()) {
-            log.info("No pending garbage bills found for SMS processing");
+            log.info("No pending property bills found for SMS processing");
             return;
         }
 
         for (BillSmsView bill : pendingBills) {
             try {
                 SmsTracker sms = new SmsTracker();
-                String mobile = bill.getMobileNumber(); 
+                String mobile = bill.getContactNumber(); 
                 
                 sms.setUuid(UUID.randomUUID().toString());
                 sms.setMobileNumber(mobile);
                 sms.setTenantId(bill.getTenantId());
                 sms.setAmount(bill.getGrbgBillAmount());
                 sms.setApplicationNo(bill.getGrbgApplicationId());
-                sms.setService("Gb");
+                sms.setService("Property");
                 sms.setMonth(bill.getMonth());
                 sms.setYear(bill.getYear());
+                sms.setWard(bill.getWard());
+                sms.setOwnerName(bill.getOwnerName());
+                sms.setMobileNumber(bill.getContactNumber());
                 
                 ObjectNode smsJsonNode = objectMapper.createObjectNode();
-                smsJsonNode.put("mobileNumber", bill.getMobileNumber());
+                smsJsonNode.put("mobileNumber", bill.getContactNumber());
                 smsJsonNode.put("message", generateMessage(bill)); 
                 smsJsonNode.put("category", "NOTIFICATION");
                 smsJsonNode.put("templateName", "BILL-NOTIFICATION");
@@ -72,7 +75,7 @@ public class GarbageSmsService {
 
                 String additionalDetail = "{"
                 	    + "\"billId\":\"" + bill.getBillId() + "\","
-                	    + "\"source\":\"GARBAGE_SERVICE\""
+                	    + "\"source\":\"PROPERTY_SERVICE\""
                 	    + "}";                sms.setSmsRequest(smsJson);
                 
                 smsTrackerRepository.insertSmsTracker(
@@ -80,21 +83,21 @@ public class GarbageSmsService {
                 	    bill.getTenantId(),
                 	    bill.getGrbgBillAmount(),
                 	    bill.getGrbgApplicationId(),
-                	    "Gb",
+                	    "Property",
                 	    bill.getMonth(),
                 	    bill.getYear(),
                 	    bill.getFromDate(),
                 	    bill.getToDate(),
-                	    null,                     // financialYear
+                	    bill.getFinancialYear(),     // financialYear
                 	    "SYSTEM",                 // createdBy
                 	    System.currentTimeMillis(), // createdTime
                 	    bill.getLastModifiedBy(),    // lastModifiedBy
                 	    System.currentTimeMillis(), // lastModifiedTime
-                	    bill.getWard(),                        // ward
+                	   bill.getWard(),                        // ward
                 	    bill.getBillId(),         // billId
                 	    additionalDetail,         // additionalDetail
-                	    bill.getMobileNumber(),   // mobileNumber
-                	    bill.getOwnerName(),                   // ownerName
+                	    bill.getContactNumber(),   // mobileNumber
+                	    bill.getOwnerName(),       // ownerName
                 	    smsJson,                  // smsRequest
                 	    "{}",                     // smsResponse
                 	    false                     // smsStatus
@@ -119,19 +122,15 @@ public class GarbageSmsService {
     String billId = bill.getGrbgApplicationId();
 
     return String.format(
-        "Dear %s, your garbage bill vide garbage id %s for the period %s/%s "
+        "Dear %s, your property bill vide property id %s for the period %s/%s "
         + "amounting to Rs %.1f has been generated on CitizenSeva portal. "
         + "Please pay on CitizenSeva Portal or using link %s .  CitizenSeva H.P.",
         bill.getOwnerName(),
         billId,
-        bill.getMonth(),
-        bill.getYear(),
+        bill.getFromDate(),
+        bill.getToDate(),
         bill.getGrbgBillAmount() != null ? bill.getGrbgBillAmount().doubleValue() : 0.0,
         "https://citizenseva.hp.gov.in/egov-url-shortening?id=nob"
     );
 }
-
-
-
-
 }
