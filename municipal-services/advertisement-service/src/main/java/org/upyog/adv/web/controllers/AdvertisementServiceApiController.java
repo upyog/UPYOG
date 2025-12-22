@@ -126,7 +126,29 @@ public class AdvertisementServiceApiController {
 	        advResponse.addNewBookingApplication(bookingDetail);
 	        return new ResponseEntity<AdvertisementResponse>(advResponse, HttpStatus.OK);
 	    }
-	 
+
+	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
+	public ResponseEntity<AdvertisementResponse> v1SearchAdvertisement(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+	        @Valid @ModelAttribute AdvertisementSearchCriteria criteria) {
+		
+		List<BookingDetail> applications = null;
+		Integer count = 0;
+		if ("true".equals(criteria.getIsDraftApplication())) {
+			applications = bookingService.getAdvertisementDraftApplicationDetails(
+					requestInfoWrapper.getRequestInfo(), criteria);
+			count = applications != null ? applications.size() : 0;
+		} else {
+			applications = bookingService.getBookingDetails(criteria, requestInfoWrapper.getRequestInfo());					
+			count = bookingService.getBookingCount(criteria, requestInfoWrapper.getRequestInfo());
+		}
+		
+		ResponseInfo info = BookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), BookingConstants.ADVERTISEMENT_BOOKING_LIST,
+				StatusEnum.SUCCESSFUL);
+		AdvertisementResponse response = AdvertisementResponse.builder().bookingApplication(applications).count(count)
+				.responseInfo(info).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
 	 //This calculates the estimate amount to be paid for the advetisement booking :
 	 // Gets the demand 
 	 @Operation(summary = "Get Cost Estimate", description = "Generates a cost estimate for the selected advertisement slot before booking")
@@ -155,4 +177,5 @@ public class AdvertisementServiceApiController {
 		}
 	 
 	
+
 }
