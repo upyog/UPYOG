@@ -155,12 +155,12 @@ public class TLValidator {
                     owner -> {
                         if (owner.getGender() == null)
                             throw new CustomException("NULL_USERGENDER", " User gender cannot be null");
+//
+//                        if (owner.getEmailId() == null)
+//                            throw new CustomException("NULL_USEREMAIL", " User EmailId cannot be null");
 
-                        if (owner.getEmailId() == null)
-                            throw new CustomException("NULL_USEREMAIL", " User EmailId cannot be null");
-
-                        if (owner.getPermanentAddress() == null)
-                            throw new CustomException("NULL_PERMANENTADDRESS", " User Permanent Address cannot be null");
+//                        if (owner.getPermanentAddress() == null)
+//                            throw new CustomException("NULL_PERMANENTADDRESS", " User Permanent Address cannot be null");
 //
 //                        if (owner.getCorrespondenceAddress() == null)
 //                            throw new CustomException("NULL_CORRESPONDANCEADDRESS", " User Correspondance address cannot be null");
