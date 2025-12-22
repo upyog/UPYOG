@@ -80,6 +80,7 @@ public class EnrichmentService {
                 .build()
                 .toUriString();
         transaction.setCallbackUrl(uri);
+        log.info("callback uri: "+uri);
 
         AuditDetails auditDetails = AuditDetails.builder()
                 .createdBy(requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null)
