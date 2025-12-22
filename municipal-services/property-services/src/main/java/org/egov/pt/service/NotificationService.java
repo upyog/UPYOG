@@ -566,7 +566,7 @@ public class NotificationService {
 					emailSubject);
 		}
 		if (!StringUtils.isEmpty(bill.getMobileNumber())) {
-			sendSms(smsBody, bill.getMobileNumber());
+			//sendSms(smsBody, bill.getMobileNumber());
 		}
 
 	}
@@ -697,7 +697,7 @@ public class NotificationService {
 		SMSSentRequest smsRequest = SMSSentRequest.builder().message(message).mobileNumber(mobileNumber)
 				.category(SMSCategory.NOTIFICATION).templateName(SMS_TEMPLATE_BILL_NOTIFICATION).build();
 
-		kafkaTemplate.send(smsTopic, smsRequest);
+		//kafkaTemplate.send(smsTopic, smsRequest);
 	}
 	
 	private void sendEmailforGenerateBill(String emailBody, List<String> emailIds, RequestInfo requestInfo,

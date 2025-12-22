@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 
 
 @RestController
-@RequestMapping("/property/sms")
+@RequestMapping("/property-sms")
 @Slf4j
 public class PtPendingSmsController {
 

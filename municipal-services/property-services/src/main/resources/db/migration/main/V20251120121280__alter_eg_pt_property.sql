@@ -1,0 +1,1 @@
+ALTER TABLE public.eg_pt_property ADD COLUMN isbilling BOOLEAN DEFAULT TRUE;
