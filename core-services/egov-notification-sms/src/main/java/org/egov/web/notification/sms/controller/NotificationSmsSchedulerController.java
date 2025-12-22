@@ -23,18 +23,21 @@ public class NotificationSmsSchedulerController {
     @Autowired
 	private SmsTrackerService smsTrackerService;
 
-    @PostMapping(value = "/send-sms")
-    public ResponseEntity<?> sendSMS(@RequestBody(required = false) SMSSentRequest smsSentRequest,
-                                     @RequestParam(value = "billId", required = false) String billId) {
+    @PostMapping("/send-sms")
+    public ResponseEntity<?> sendSMS(
+            @RequestBody(required = false) SMSSentRequest smsSentRequest) {
 
-        if (billId != null && !billId.isEmpty()) {
+        String billId = smsSentRequest != null ? smsSentRequest.getBillId() : null;
+
+        if (billId != null && !billId.trim().isEmpty()) {
             smsProcessing.processSmsForBill(billId);
-            return ResponseEntity.ok().body("SMS processing triggered for billId: " + billId);
+            return ResponseEntity.ok("SMS processing triggered for billId: " + billId);
         } else {
             smsProcessing.processPendingSms();
-            return ResponseEntity.ok().body("SMS processing triggered for all pending messages");
+            return ResponseEntity.ok("SMS processing triggered for all pending messages");
         }
     }
+
     
 	 @PostMapping("/resend-counter")
 	 public ResponseEntity<?> getResendCounter(@RequestBody SmsTracker tracker) {
