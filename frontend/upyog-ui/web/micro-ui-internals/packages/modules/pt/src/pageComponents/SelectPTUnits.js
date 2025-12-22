@@ -102,6 +102,7 @@ const rentedMonths =
      },  
   ]
 const formatUnits = (units = [], currentFloor, isFloor) => {
+  console.log("isFloorisFloor",isFloor,units)
   if (!units || units.length == 0) {
     return [
       {
@@ -140,6 +141,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
   const rentedMonthsCodes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
 
   useEffect(() => {
+    console.log("formDataformData",formData)
     setFields(() => formatUnits(isFloor ? formData?.units?.filter((ee) => ee.floorNo == currentFloor) : formData?.units, currentFloor, isFloor));
     return () => {
       setFields(null);

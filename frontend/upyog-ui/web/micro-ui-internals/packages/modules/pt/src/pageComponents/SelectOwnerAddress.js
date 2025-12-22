@@ -73,7 +73,7 @@ const SelectOwnerAddress = ({ t, config, onSelect, userType, formData, ownerInde
       goNext();
     }
   }, [permanentAddress]);
-
+console.log("permanentAddresspermanentAddress",permanentAddress)
   if (userType === "employee") {
     return (
       <LabelFieldPair key={index}>
@@ -102,7 +102,7 @@ const SelectOwnerAddress = ({ t, config, onSelect, userType, formData, ownerInde
           name="address"
           onChange={setOwnerPermanentAddress}
           value={permanentAddress}
-          disable={isUpdateProperty || isEditProperty}
+          //disable={isUpdateProperty || isEditProperty}
         />
         {/* <CardLabel>{t("PT_OWNER_S_ADDRESS")}</CardLabel> */}
         <CheckBox
@@ -111,7 +111,7 @@ const SelectOwnerAddress = ({ t, config, onSelect, userType, formData, ownerInde
           value={isCorrespondenceAddress}
           checked={isCorrespondenceAddress || false}
           style={{ paddingTop: "10px" }}
-          disable={isUpdateProperty || isEditProperty}
+          //disable={isUpdateProperty || isEditProperty}
         />
       </FormStep>
     </React.Fragment>
