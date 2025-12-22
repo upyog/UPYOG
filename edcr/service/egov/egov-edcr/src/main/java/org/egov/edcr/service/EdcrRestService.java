@@ -935,7 +935,9 @@ public class EdcrRestService {
             errorDetails.add(new ErrorDetail(BPA_07, REQ_BODY_REQUIRED));
         else if (edcrRequest.getRequestInfo().getUserInfo() == null
                 || (edcrRequest.getRequestInfo().getUserInfo() != null
-                        && isBlank(edcrRequest.getRequestInfo().getUserInfo().getUuid())))
+                        && isBlank(edcrRequest.getRequestInfo().getUserInfo().getUuid()))
+				|| (edcrRequest.getRequestInfo().getUserInfo() != null
+                        && isBlank(edcrRequest.getRequestInfo().getUserInfo().getId())))
             errorDetails.add(new ErrorDetail("BPA-08", USER_ID_IS_MANDATORY));
 
         if (isBlank(edcrRequest.getTransactionNumber()))
@@ -1080,4 +1082,5 @@ public class EdcrRestService {
         return cal1.getTime();
     }
 }
+
 
