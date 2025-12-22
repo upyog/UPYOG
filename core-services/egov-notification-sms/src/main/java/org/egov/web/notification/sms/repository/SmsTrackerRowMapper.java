@@ -37,7 +37,7 @@ public class SmsTrackerRowMapper implements RowMapper<SmsTracker> {
                     .additionalDetail(rs.getString("additional_detail") != null? objectMapper.readTree(rs.getString("additional_detail")): null)
                     .smsRequest(rs.getString("sms_request") != null? objectMapper.readTree(rs.getString("sms_request")): null)
                     .smsResponse(rs.getString("sms_response") != null? objectMapper.readTree(rs.getString("sms_response")): null)
-                    
+                    .resendCounter(rs.getShort("resend_counter"))
                     .smsStatus(rs.getBoolean("sms_status"))
                     .ownerMobileNo(rs.getString("owner_mobile_no"))
                     .ownerName(rs.getString("owner_name"))

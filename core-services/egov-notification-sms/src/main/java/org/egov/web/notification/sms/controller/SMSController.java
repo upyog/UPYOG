@@ -6,6 +6,7 @@ import org.egov.web.notification.sms.models.SMSSentRequest;
 import org.egov.web.notification.sms.service.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.egov.web.notification.sms.models.SmsTracker;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.web.notification.sms.service.SmsTrackerService;
+
 
 
 @Slf4j
@@ -48,5 +50,5 @@ public class SMSController {
 	        smsTrackerService.createSmsTracker(tracker);
 	        return ResponseEntity.ok("SMS Tracker entry created successfully");
 	    }
-
+	 
 }
