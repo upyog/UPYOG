@@ -10,7 +10,12 @@ import { checkArrayLength, stringReplaceAll,getSuperBuiltUpareafromob } from "..
 
 const getPropertyEditDetails = (data = { }) => {
   // converting owners details
-
+  const getDocumentTypeCode = (documentType) => {
+    if (typeof documentType === "string") return documentType;
+    if (typeof documentType === "object") return documentType?.code;
+    return "";
+  };
+  
   if((data?.propertyType === "BUILTUP.INDEPENDENTPROPERTY" && data.units.length == 0))
     {
       data.units = [{
@@ -79,7 +84,10 @@ const getPropertyEditDetails = (data = { }) => {
   data.address.pincode = data?.address?.pincode;
   data.address.city = { code: data?.tenantId, i18nKey: `TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}` };
   data.address.locality.i18nkey = data?.tenantId.replace(".", "_").toUpperCase() + "_" + "REVENUE" + "_" + data?.address?.locality?.code;
-  let addressDocs = data?.documents?.filter((doc) => doc?.documentType?.includes("ADDRESSPROOF"));
+  let addressDocs = data?.documents?.filter((doc) =>
+  getDocumentTypeCode(doc?.documentType)?.includes("ADDRESSPROOF")
+);
+
   if (checkArrayLength(addressDocs)) {
     addressDocs[0].documentType = { code: addressDocs[0]?.documentType, i18nKey: stringReplaceAll(addressDocs[0]?.documentType, ".", "_") };
   }

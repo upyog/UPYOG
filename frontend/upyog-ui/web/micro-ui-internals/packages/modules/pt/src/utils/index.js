@@ -738,6 +738,7 @@ export const setUpdatedDocumentDetails = (data) => {
   return data;
 };
 export const convertToUpdateProperty = (data = {}, t) => {
+  console.log("convertToUpdateProperty",data)
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -795,7 +796,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
         structureType:data?.propertyStructureDetails?.structureType,
       },
 
-      creationReason: getCreationReason(data),
+      creationReason: window.location.href.includes("edit-application")?"UPDATE":getCreationReason(data),
       source: "MUNICIPAL_RECORDS",
       channel: "CITIZEN",
       workflow: getWorkflow(data),

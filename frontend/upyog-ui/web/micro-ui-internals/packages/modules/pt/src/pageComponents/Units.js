@@ -201,9 +201,11 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
   useEffect(() => {
     if (!isLoading && presentInModifyApplication && Menu) {
       // usage subUsage unit Occupancy
+      console.log("formDataformDataformDataformData",formData)
       let defaultUnits = formData?.originalData?.units
         ?.filter((e) => e.active)
         ?.map((unit, index) => {
+          console.log("unitunit",unit,formData.originalData.additionalDetails)
           let { occupancyType, usageCategory: uc, constructionDetail, floorNo, arv } = unit;
           occupancyType = occupencyOptions.filter((e) => e?.code === occupancyType)[0];
           let usageCategory = usageCategoryMajorMenu(usagecat).filter((e) => e?.code === uc)[0];
@@ -219,6 +221,16 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
             order,
             builtUpArea,
             existingUsageCategory: uc,
+            NonRentedMonthsUsage:
+            nonrentedusage.find(
+              (e) => e.code === formData.originalData.additionalDetails.unit[index].NonRentedMonthsUsage
+            ) || null,
+          
+          RentedMonths:
+            rentedmonths.find(
+              (e) => e.code === formData.originalData.additionalDetails.unit[index].RentedMonths
+            ) || null,
+          
             arv,
           };
         });
@@ -517,7 +529,7 @@ function Unit({
 
   const { errors } = localFormState;
   const errorStyle = isMobile ? {width: "70%", marginLeft: "4%", fontSize: "12px"} : { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
-
+console.log("formValueformValue",formValue,unit)
   return (
     <div style={{ marginBottom: "16px" }}>
       <div className="label-field-pair">
