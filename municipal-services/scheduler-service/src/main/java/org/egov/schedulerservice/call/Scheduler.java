@@ -3,6 +3,7 @@ package org.egov.schedulerservice.call;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.schedulerservice.service.BillService;
 import org.egov.schedulerservice.service.GarbageService;
+import org.egov.schedulerservice.service.NotificationSmsService;
 import org.egov.schedulerservice.service.PGRService;
 import org.egov.schedulerservice.service.PgService;
 import org.egov.schedulerservice.service.PropertyService;
@@ -42,6 +43,9 @@ public class Scheduler {
 
 	@Autowired
 	private UmeedDashboardService umeedDashboardService;
+	
+	@Autowired
+	private NotificationSmsService notificationSmsService;
 
 	@Scheduled(cron = "${cron.job.default.garbage.bill.generator}", zone = "IST")
 	public void generateGarbageBills() {
@@ -145,6 +149,23 @@ public class Scheduler {
 		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
 		umeedDashboardService.pushUmeedDashboardMetricsForTL(requestInfo);
 		log.info("pushUmeedDashboardMetricsForTL CRON JOB Ends");
+	}
+	
+	//@Scheduled(cron = "${cron.job.default.umeed.dashboard.tl.data.matrics.sender}", zone = "IST")
+	public void pushUmeedDashboardMetricsForPGR() {
+		log.info("pushUmeedDashboardMetricsForPGR CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+//		umeedDashboardService.pushUmeedDashboardMetricsForPGR(requestInfo);
+		log.info("pushUmeedDashboardMetricsForPGR CRON JOB Ends");
+	}
+	
+	
+	//@Scheduled(cron = "${cron.job.default.adrvcanopy.site.booking.change.site.status}", zone = "IST")
+	public void sendSmsNotification() {
+		log.info("sendSmsNotification CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		notificationSmsService.sendSmsNotification(requestInfo);
+		log.info("sendSmsNotification CRON JOB Ends");
 	}
 
 }

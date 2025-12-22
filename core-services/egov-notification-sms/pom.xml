@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
+			<version>42.2.2.jre7</version>
 		</dependency>
 
         <dependency>

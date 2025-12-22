@@ -8,22 +8,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.egov.web.notification.sms.service.SmsProcessing;
 
 @RestController
 @RequestMapping()
 public class NotificationSmsSchedulerController {
 
 	@Autowired
-	SMSService smsService;
+	private SmsProcessing smsProcessing;
 
+    @PostMapping(value = "/send-sms")
+    public ResponseEntity<?> sendSMS(@RequestBody SMSSentRequest smsSentRequest) {
 
+    	smsProcessing.processPendingSms();
 
-	@PostMapping(value = "/send-sms")
-	public ResponseEntity<?> sendSMS(@RequestBody SMSSentRequest smsSentRequest) {
-
-		
-
-		return ResponseEntity.ok().body("Message sent successfully");
-	}
-
+        return ResponseEntity.ok().body("The SMS processing triggered");
+    }
 }

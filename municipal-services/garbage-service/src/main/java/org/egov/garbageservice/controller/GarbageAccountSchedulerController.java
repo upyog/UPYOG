@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.egov.common.contract.request.RequestInfo;
+
+
 
 @RestController
 @RequestMapping("/garbage-accounts-scheduler")
@@ -23,6 +26,7 @@ public class GarbageAccountSchedulerController {
 //		return ResponseEntity.ok("Bill generated successfully!!!");
 		return ResponseEntity.ok(service.generateBill(generateBillRequest));
 	}
+
 	
 	@PostMapping("/on-demand-generation")
 	public ResponseEntity<?> demandGeneration(@RequestBody OnDemandBillRequest onDemandBillRequest) {

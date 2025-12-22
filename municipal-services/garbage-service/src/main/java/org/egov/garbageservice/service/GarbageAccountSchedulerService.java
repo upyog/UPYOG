@@ -37,10 +37,16 @@ import org.egov.garbageservice.model.UserSearchRequest;
 import org.egov.garbageservice.model.contract.OwnerInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
+import org.egov.garbageservice.contract.bill.BillSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.egov.garbageservice.util.GrbgConstants;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.garbageservice.util.RestCallRepository;
+import org.springframework.beans.factory.annotation.Value;
+
+
 
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -79,6 +85,85 @@ public class GarbageAccountSchedulerService {
 	
 	@Autowired
 	private GrbgConstants properties;
+	
+	@Autowired
+	private RestCallRepository restCallRepository;
+	
+	@Value("${egov.sms.host}")
+	private String smsHost;
+
+	@Value("${egov.sms.tracker.create.endpoint}")
+	private String smsTrackerCreateEndpoint;
+
+	
+//public void processPendingBillSms(RequestInfo requestInfo) {
+//
+//    int batchSize = 1000;
+//    int offset = 0;
+//    List<GrbgBillTracker> trackers;
+//
+//    do {
+//        trackers = garbageAccountService.fetchPendingSms(batchSize, offset);
+//        log.info("Processing {} pending SMS records", trackers.size());
+//
+//        for (GrbgBillTracker tracker : trackers) {
+//            try {
+//            	SearchCriteriaGarbageAccountRequest searchRequest = SearchCriteriaGarbageAccountRequest.builder()
+//            	        .requestInfo(requestInfo)
+//            	        .searchCriteriaGarbageAccount(
+//            	                SearchCriteriaGarbageAccount.builder()
+//            	                        .applicationNumber(Collections.singletonList(tracker.getGrbgApplicationId()))
+//            	                        .tenantId(tracker.getTenantId())
+//            	                        .isMonthlyBilling(true)
+//            	                        .status(Collections.singletonList("APPROVED"))
+//            	                        .isActiveAccount(true)
+//            	                        .isActiveSubAccount(true)
+//            	                        .build()
+//            	        )
+//            	        .isSchedulerCall(true)
+//            	        .build();
+//
+//            	GarbageAccountResponse response = garbageAccountService.searchGarbageAccounts(searchRequest, false);
+//
+//            	if (CollectionUtils.isEmpty(response.getGarbageAccounts())) {
+//            	    log.error("Garbage account not found for applicationId {}", tracker.getGrbgApplicationId());
+//            	    continue;
+//            	}
+//
+//            	GarbageAccount garbageAccount = response.getGarbageAccounts().get(0);
+//
+//
+//                // Build BillSearchCriteria using tracker billId
+//                BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+//                        .tenantId(tracker.getTenantId())
+//                        .billId(Collections.singleton(tracker.getBillId()))
+//                        .build();
+//
+//                BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfo);
+//
+//                if (billResponse == null || CollectionUtils.isEmpty(billResponse.getBill())) {
+//                    log.error("Bill not found for billId {}", tracker.getBillId());
+//                    continue; 
+//                }
+//
+//                // Trigger notification
+//                notificationService.triggerNotificationsGenerateBill(
+//                        garbageAccount,
+//                        billResponse.getBill().get(0),
+//                        requestInfo,
+//                        tracker
+//                );
+//                
+//                garbageAccountService.markSmsAsSent(tracker);
+//                log.info("Marked sms_status=true for trackerId {}", tracker.getBillId());
+//
+//            } catch (Exception e) {
+//                log.error("Failed to process SMS for trackerId {}", tracker.getBillId(), e);
+//            }
+//        }
+//        offset += batchSize;
+//    } while (!CollectionUtils.isEmpty(trackers));
+//}
 
 	public GrbgBillTrackerResponse generateBill(GenerateBillRequest generateBillRequest) {
 
@@ -118,6 +203,56 @@ public class GarbageAccountSchedulerService {
 //							triggerNotifications
 							notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
 								generateBillRequest.getRequestInfo(),grbgBillTracker);
+							//getting 
+							//calling sms_TRACKER call to make a push to sms_tracker
+							StringBuilder smsTrackerUri = new StringBuilder();
+							smsTrackerUri.append(smsHost).append(smsTrackerCreateEndpoint);
+							
+							
+							
+							ObjectNode smsRequestJson =
+							        notificationService.buildGenerateBillSmsRequest(
+							                garbageAccount,
+							                billResponse.getBill().get(0),
+							                grbgBillTracker
+							        );
+
+							
+							
+							SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+							String fromDateStr = formatter.format(generateBillRequest.getFromDate());
+							String toDateStr = formatter.format(generateBillRequest.getToDate());
+							
+							Map<String, Object> smsTrackerRequest = new HashMap<>();
+							smsTrackerRequest.put("uuid", java.util.UUID.randomUUID().toString());
+							smsTrackerRequest.put("amount", billAmount);
+							smsTrackerRequest.put("applicationNo", garbageAccount.getGrbgApplicationNumber());
+							smsTrackerRequest.put("tenantId", garbageAccount.getTenantId());
+							smsTrackerRequest.put("service", "GARBAGE");
+							smsTrackerRequest.put("month", generateBillRequest.getMonth());
+							smsTrackerRequest.put("year", generateBillRequest.getYear());
+//							smsTrackerRequest.put("financialYear", generateBillRequest.getFinancialYear());
+							smsTrackerRequest.put("fromDate", fromDateStr);
+							smsTrackerRequest.put("toDate", toDateStr);
+							smsTrackerRequest.put("createdBy", "system");
+							smsTrackerRequest.put("createdTime", System.currentTimeMillis());
+							smsTrackerRequest.put("ward", garbageAccount.getAddresses().get(0).getWardName());
+							smsTrackerRequest.put("billId", billResponse.getBill().get(0).getId());
+							smsTrackerRequest.put("smsStatus", false);
+							smsTrackerRequest.put("additionalDetail", calculationBreakdown);
+							
+							smsTrackerRequest.put("ownerMobileNo", garbageAccount.getMobileNumber());
+							smsTrackerRequest.put("ownerName", garbageAccount.getName());
+							smsTrackerRequest.put("smsRequest",smsRequestJson);  
+							smsTrackerRequest.put("smsResponse", null); 
+							
+							
+							try {
+							    restCallRepository.fetchResult(smsTrackerUri, smsTrackerRequest);
+							    log.info("SMS tracker entry created for billId {}", billResponse.getBill().get(0).getId());
+							} catch (Exception e) {
+							    log.error("Failed to create SMS tracker entry for billId {}", billResponse.getBill().get(0).getId(), e);
+							}
 						}else {
 							errorList.add("Issues In Bill Generation Probably Demand Already Exists");
 							createFailureLog(garbageAccount, generateBillRequest,billResponse,errorList);

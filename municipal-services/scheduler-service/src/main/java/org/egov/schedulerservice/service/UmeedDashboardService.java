@@ -26,6 +26,9 @@ public class UmeedDashboardService {
 
 	@Autowired
 	private TLService tlService;
+	
+	@Autowired
+	private PGRService pgrService;
 
 	@Autowired
 	private UmeedDashboardClientService umeedDashboardClientService;
@@ -65,6 +68,39 @@ public class UmeedDashboardService {
 		return ingestResponse;
 	}
 
+	public Object pushUmeedDashboardMetricsForPGR(RequestInfo requestInfo) {
+
+		String ingestResponse = "";
+
+		// Step 1: Build request info for Umeed Dashboard
+		RequestInfo umeedDashboardRequestInfo = buildRequestInfo();
+
+		// Step 2: Fetch Trade License dashboard metrics
+		Object umeedDashboardDataMatrics = tlService.getUmeedDashbaordDataMatrics(requestInfo);
+
+		if (null != umeedDashboardDataMatrics
+				&& null != objectMapper.valueToTree(umeedDashboardDataMatrics).get("Data")) {
+			UmeedDashboardRequest umeedDashboardRequest = UmeedDashboardRequest.builder()
+					.requestInfo(umeedDashboardRequestInfo)
+					.data(objectMapper.valueToTree(umeedDashboardDataMatrics).get("Data")).build();
+
+			log.info("Request Payload {}", umeedDashboardRequest);
+			// Step 3: call umeed dashboard api to push data
+			ingestResponse = umeedDashboardClientService.sendMetrics(umeedDashboardRequest);
+			log.info("Response Paylaod {}" ,ingestResponse);
+			
+			Object umeedDashboardLog = ummedDashboardLoggerService.saveUmeedDashbaordLog(requestInfo,ingestResponse , umeedDashboardRequest);
+
+			 
+		} else {
+			ingestResponse = "No Data from PGR Service";
+		}
+
+		
+		return ingestResponse;
+	}
+	
+	
 	private RequestInfo buildRequestInfo() {
 		RequestInfo requestInfo = RequestInfo.builder().build();
 

@@ -28,6 +28,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -75,6 +78,10 @@ public class NotificationService {
 
 	@Autowired
 	private GrbgUtils grbgUtils;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
+
 
 	@Autowired
 	private KafkaTemplate<String, Object> kafkaTemplate;
@@ -93,7 +100,7 @@ public class NotificationService {
 		SMSSentRequest smsRequest = SMSSentRequest.builder().message(message).mobileNumber(mobileNumber)
 				.category(SMSCategory.NOTIFICATION).templateName(SMS_TEMPLATE_BILL_NOTIFICATION).build();
 
-		kafkaTemplate.send(smsTopic, smsRequest);
+		//kafkaTemplate.send(smsTopic, smsRequest);
 	}
 
 	private void sendEmail(String emailBody, List<String> emailIds, RequestInfo requestInfo,
@@ -137,6 +144,43 @@ public class NotificationService {
 			}
 //		}
 	}
+	
+//	public String buildGenerateBillSms(
+//	        GarbageAccount garbageAccount,
+//	        Bill bill,
+//	        GrbgBillTracker grbgBillTracker) {
+//
+//	    String smsBody = SMS_BODY_GENERATE_BILL;
+//	    return populateNotificationPlaceholders(
+//	            smsBody,
+//	            garbageAccount,
+//	            bill,
+//	            grbgBillTracker
+//	    );
+//	}
+	public ObjectNode buildGenerateBillSmsRequest(
+        GarbageAccount garbageAccount,
+        Bill bill,
+        GrbgBillTracker grbgBillTracker) {
+
+    String smsBody = populateNotificationPlaceholders(
+            SMS_BODY_GENERATE_BILL,
+            garbageAccount,
+            bill,
+            grbgBillTracker
+    );
+
+    ObjectNode smsRequest = objectMapper.createObjectNode();
+    smsRequest.put("mobileNumber", garbageAccount.getMobileNumber());
+    smsRequest.put("message", smsBody);
+    smsRequest.put("category", SMSCategory.NOTIFICATION.name());
+    smsRequest.put("templateName", SMS_TEMPLATE_BILL_NOTIFICATION);
+
+    return smsRequest;
+}
+
+
+
 
 	private String populateNotificationPlaceholders(String body, GarbageAccount garbageAccount, Bill bill,GrbgBillTracker grbgBillTracker) {
 
