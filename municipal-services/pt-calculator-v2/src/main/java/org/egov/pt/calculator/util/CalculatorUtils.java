@@ -1128,5 +1128,33 @@ public class CalculatorUtils {
 		}
 		return isTaxPeriodPresent;
 	}
+	
+	public Boolean isBetweenMonths(LocalDate date, String assessmentYear) {
+	    LocalDate startDate;
+	    LocalDate endDate;
+
+	    int currentYear = date.getYear();
+	    int currentFinancialYearStart = (date.getMonthValue() >= 4) ? currentYear : currentYear - 1;
+
+	    String[] parts = assessmentYear.split("-");
+	    int assessmentYearStart = (parts[0].length() == 2)
+	            ? Integer.parseInt("20" + parts[0])
+	            : Integer.parseInt(parts[0]);
+
+	    if (assessmentYearStart < currentFinancialYearStart) {
+	        return true;
+	    }
+
+	    if (date.getMonthValue() >= 7) { // July or later
+	        startDate = LocalDate.of(date.getYear(), 7, 1);
+	        endDate = LocalDate.of(date.getYear() + 1, 3, 31);
+	    } else { // Before July
+	        startDate = LocalDate.of(date.getYear() - 1, 7, 1);
+	        endDate = LocalDate.of(date.getYear(), 3, 31);
+	    }
+
+	    return (!date.isBefore(startDate)) && (!date.isAfter(endDate));
+	}
+
 
 }

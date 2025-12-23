@@ -118,7 +118,7 @@ public class AssessmentNotificationService {
              }
         }
         Boolean dueNotif = true;
-        if(state.equalsIgnoreCase("APPROVED")) {
+        if(state.equalsIgnoreCase("APPROVED") || assessmentRequest.getAssessment().getStatus().equals(Status.ACTIVE)) {
         	 billResponse = billingService.fetchBill(property, requestInfo,assessment);
               dueAmount=BigDecimal.ZERO;
              if(billResponse!=null &&!billResponse.getBill().isEmpty())

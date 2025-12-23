@@ -134,7 +134,9 @@ const AssessmentDetails = () => {
             {
               setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
               setTimeout(closeToast, 5000);
-              history.push(`/digit-ui/citizen/pt-home`);
+              setTimeout(() => {
+                history.push(`/digit-ui/citizen/pt-home`);
+              }, 2000);
             }
             else{
               proceeedToPay()
@@ -441,11 +443,11 @@ const Penality_menu=[
                 title: "PT_ASSESMENT_INFO_SUB_HEADER",
                 values: [
                   { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: getPropertyTypeLocale(applicationDetails?.applicationData?.propertyType) },
-                  { title: "PT_ASSESMENT_INFO_USAGE_TYPE", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
-                  { title: "PT_ASSESMENT_INFO_PLOT_SIZE", value: applicationDetails?.applicationData?.landArea },
+                  { title: "Usage Type", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
+                  { title: "Plot Area (sq ft)", value: applicationDetails?.applicationData?.landArea },
                   { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: applicationDetails?.applicationData?.noOfFloors },
                   { title: "Vacant Land Usage Type", value: (ptCalculationEstimateData?.Calculation[0]?.vacantland[0] && ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype) ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype : ''},
-                  { title: "Vacant Land Tax Amount", value: ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandamount }
+                  { title: "APV of Vacant Land", value: ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandamount }
                 ],
                 additionalDetails: {
                   floors: ptCalculationEstimateData?.Calculation[0]?.units
@@ -473,12 +475,12 @@ const Penality_menu=[
                           value: unit?.occupancyType,
                         },
                         {
-                          title: "PT_FORM2_BUILT_AREA",
+                          title: "Built Up Area (sq ft)",
                           value: unit?.unitArea
                           // value: unit?.constructionDetail?.builtUpArea,
                         },
                         {
-                          title: "Tax Amount",
+                          title: "APV of Covered Area",
                           value: unit?.taxamount || 0,
                         },
                       ];

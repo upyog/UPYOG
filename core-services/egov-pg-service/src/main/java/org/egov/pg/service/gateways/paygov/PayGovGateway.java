@@ -158,9 +158,11 @@ public class PayGovGateway implements Gateway {
         Date currentDate = new Date();
         queryMap.put(REQUEST_DATE_TIME_KEY, format.format(currentDate));
         String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
-
-        queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
-        //queryMap.put(SERVICE_ID_KEY,"MMPTBTEST01");
+        
+        //for production need TO CHANGE
+        //queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
+        //for dev need TO CHANGE
+        queryMap.put(SERVICE_ID_KEY,"MMPTBTEST01");
         String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
         String citizenReturnURL = returnUrl.split(domainName)[1];
        // citizenReturnURL = EGOV_SERVER_HOSTNAME+citizenReturnURL;
@@ -439,7 +441,7 @@ public class PayGovGateway implements Gateway {
             // create auth credentials
             String authStr = PAYGOV_MERCHENT_USER+":"+PAYGOV_MERCHENT_PASSWORD;
             String base64Creds = Base64.getEncoder().encodeToString(authStr.getBytes());
-
+            log.info("Cridentials::"+authStr);
             // create headers
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Basic " + base64Creds);
@@ -452,6 +454,7 @@ public class PayGovGateway implements Gateway {
             log.debug("Auth Info : "+ authStr);
             log.debug("requestmsg : "+ requestmsg);
             // make a request
+            log.info("RequestBody Sent to PayGov: {}",entity);
             ResponseEntity<String> response = new RestTemplate().exchange(GATEWAY_TRANSACTION_STATUS_URL, HttpMethod.POST, entity, String.class);
             HttpStatus statusCode = response.getStatusCode();
             if(statusCode.equals(HttpStatus.OK)) {
@@ -464,9 +467,10 @@ public class PayGovGateway implements Gateway {
                 throw new CustomException(UNABLE_TO_FETCH_STATUS, UNABLE_TO_FETCH_STATUS_FROM_PAY_GOV_GATEWAY);
             }
         }catch (HttpStatusCodeException ex) {
-            log.error("tx input "+ currentStatus);
-            log.error("Error code "+ex.getStatusCode());
-            log.error("Error getResponseBodyAsString code "+ex.getResponseBodyAsString());
+        	log.info("Exception:::"+ex);
+            log.info("tx input "+ currentStatus);
+            log.info("Error code "+ex.getStatusCode());
+            log.info("Error getResponseBodyAsString code "+ex.getResponseBodyAsString());
             try {
                 PayGovGatewayStatusResponse errorResponse = new ObjectMapper().readValue(ex.getResponseBodyAsString(),PayGovGatewayStatusResponse.class);
                 //Error 404 --> No Data Found for given Request and 408 --> Session Time Out Error if not transaction has been initiated for 15 min
@@ -526,7 +530,7 @@ public class PayGovGateway implements Gateway {
 
             //Validate the response against the checksum
             PayGovUtils.validateTransaction(resp, secretKey);
-
+        	//resp ="I|UATSCBSG0000000207|PG_PG_2025_10_24_000612_22|SecuChhawani||ORDER_INITIATED|2020-07-22 10:27:28.312|481313839";
             String[] splitArray = resp.split("[|]");
             Transaction txStatus=null;
             PayGovGatewayStatusResponse statusResponse = new PayGovGatewayStatusResponse(splitArray[0]);
@@ -700,7 +704,7 @@ public class PayGovGateway implements Gateway {
 
             //Validate the response against the checksum
             PayGovUtils.validateTransaction(resp, secretKey);
-
+        //	resp = "I|UATSCBSG0000000207|PB_PG_2020_07_22_000168_45|SecuChhawani||ORDER_INITIATED|2020-07-22 10:27:28.312|481313839";
             String[] splitArray = resp.split("[|]");
             Transaction txStatus=null;
             PayGovGatewayStatusResponse statusResponse = new PayGovGatewayStatusResponse(splitArray[0]);

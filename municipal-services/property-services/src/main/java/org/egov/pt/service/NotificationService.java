@@ -400,7 +400,6 @@ public class NotificationService {
 	private String getMsgForCreate(Property property, String msgCode, String completeMsgs, 
 			String createUpdateReplaceString,PropertyRequest propertyRequest,String state) {
 		String return_message = "";
-
 		Set<String> role = propertyRequest.getRequestInfo().getUserInfo().getRoles().stream().map(x->x.getCode()).collect(Collectors.toSet());
 		if(state.equalsIgnoreCase(WF_STATUS_REJECTED) ||state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
 
@@ -419,7 +418,7 @@ public class NotificationService {
 			}
 
 			else if(state.equalsIgnoreCase(PT_CORRECTION_PENDING)) {
-				return_message = notifUtil.getMessageTemplate(MUTATION_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT, completeMsgs);	
+				return_message = notifUtil.getMessageTemplate(CREATE_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT, completeMsgs);	
 			}
 		}
 		else {

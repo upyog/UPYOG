@@ -162,7 +162,8 @@ public class BillRepositoryV2 {
 				ps.setInt(33, billDetail.getInterestfornoofdays());
 				ps.setBoolean(34, billDetail.isPreviousYearAssesment());
 				ps.setBigDecimal(35, billDetail.getTotalAmountForIntCal());
-				
+				ps.setLong(36, billDetail.getPayPeriodFrom());
+				ps.setLong(37, billDetail.getPayPeriodTo());
 			}
 
 			@Override

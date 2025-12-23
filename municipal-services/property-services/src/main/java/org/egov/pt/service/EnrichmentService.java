@@ -304,7 +304,7 @@ public class EnrichmentService {
 		if (!CollectionUtils.isEmpty(property.getUnits())) {
 			property.getUnits().forEach(unit -> {
 
-				if (unit.getId() == null) {
+				if (unit.getId() == null || ObjectUtils.isEmpty(unit.getId())) {
 					unit.setId(UUID.randomUUID().toString());
 					unit.setActive(true);
 				}
@@ -751,6 +751,10 @@ public class EnrichmentService {
 		else {
 			pId=getPorpertyIdForAmBiMt(requestInfo,property);
 		}
+		
+		
+		
+		
 		property.setPropertyId(pId);
 		property.setId(UUID.randomUUID().toString());
 		property.setAcknowldgementNumber(ackNo);
