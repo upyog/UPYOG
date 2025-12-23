@@ -922,7 +922,7 @@ public class EnrichmentService {
 						Arrays.asList("tenants"));
 		Map<String, List<String>> codes = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
 						"[?(@.city.districtTenantCode== '"+tenantId+"')].city.code", "$.MdmsRes.tenant", requestInfo);
-		String cityCode = codes.get("tenants").get(0);
+		//String cityCode = codes.get("tenants").get(0);
 		//ackNo=ackNo.replace("MN-AC", cityCode);
 		appeal.setAppealId(pId);
 		appeal.setAcknowldgementNumber(ackNo);

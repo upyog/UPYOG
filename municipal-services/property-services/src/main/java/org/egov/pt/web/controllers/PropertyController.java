@@ -249,6 +249,21 @@ public class PropertyController {
 	 * 
 	 * return new ResponseEntity<>(dashboardReportResponse,HttpStatus.OK); }
 	 */
+	
+	@PostMapping("/_applicationData")
+	public ResponseEntity<PropertyResponse> searchApplication(
+            @Valid @RequestBody DashboardRequest dashboardRequest)
+	{
+		PropertyResponse response = PropertyResponse.builder()
+        		.responseInfo(
+                        responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true))
+        		.properties(dashboardDataService.applicationData(dashboardRequest.getDashboardDataSearch(), dashboardRequest.getRequestInfo()))
+        		.count(0)
+                .build();
+        
+        return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
 		 
 	
 	
