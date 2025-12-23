@@ -132,6 +132,7 @@
   margin-right: 16px !important; }
 .header-wrap {
   @apply flex mb-md;
+  background: #daf6ed;
 
   .header-start {
     margin-right: auto;
@@ -168,7 +169,7 @@
 
 .submit-bar-disabled {
   @apply h-10 bg-primary-main text-center w-full outline-none opacity-50;
-  background-color: #882636 !important;
+  background-color: #0f4f9e !important;
 
   &:focus {
     @apply outline-none;
@@ -184,7 +185,7 @@
   .submit-bar,
   .submit-bar-disabled {
     width: 240px;
-    background-color: #882636 !important;
+    background-color: #0f4f9e !important;
     height: 2rem !important
   }
 
@@ -396,5 +397,5 @@
 }
 
 .language-selector .submit-bar, .submit-bar-disabled{
-  background-color: #5a1166 !important;
+  background-color: #0f4f9e !important;
 }

@@ -89,6 +89,11 @@ public class UserTypeQueryBuilder {
             "'false' WHERE user_uuid = :user_uuid";
 
     private static final String SELECT_USER_ROLE_QUERY = "SELECT distinct(user_id) from eg_userrole_v1 ur";
+    
+    
+    public static final  String INSERT_LOGIN_ATTEMPT_AUDIT = "INSERT INTO public.eg_user_login_attempt_audit " + 
+    "(uuid, attempt_date, ip, username, user_uuid, attempt_status, user_agent, referrer, url, session_details, process_id, corelation_id) "+
+    "VALUES(:uuid, :attempt_date, :ip, :user_name,:user_uuid, :attempt_status, :user_agent, :referrer, :url, :session_details::jsonb, :process_id, :corelation_id)";
 
     @SuppressWarnings("rawtypes")
     public String getQuery(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
@@ -302,6 +307,10 @@ public class UserTypeQueryBuilder {
 
     public String getUserPresentByUserNameAndTenant() {
         return "select count(*) from eg_user where username =:userName and tenantId =:tenantId and type = :userType ";
+    }
+    
+    public String getUserPresentByMobileAndTenant() {
+        return "select count(*) from eg_user where mobilenumber =:mobileNumber and tenantId =:tenantId and type = :userType ";
     }
 
 }

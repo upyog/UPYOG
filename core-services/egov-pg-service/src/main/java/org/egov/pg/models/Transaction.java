@@ -189,10 +189,9 @@ public class Transaction {
      */
     public enum TxnStatusEnum {
         SUCCESS("SUCCESS"),
-
         FAILURE("FAILURE"),
-
-        PENDING("PENDING");
+        PENDING("PENDING"),
+    	INITIATED("INITIATED");
 
         private String value;
 

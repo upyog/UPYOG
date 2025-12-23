@@ -10,7 +10,7 @@ import {
   Rating,
   ShareIcon,
   WhatsappIcon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { format } from "date-fns";
 import React, { useMemo, useRef, useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
@@ -412,7 +412,7 @@ const Home = ({ stateCode }) => {
                         {item?.charts?.[0]?.chartType == "map" && (
                           <div className="dss-card-header" style={{ width: "45%" }}>
                             {Icon(row.vizArray?.[1]?.name)}
-                            <p style={{ marginLeft: "20px", fontSize: "24px", fontFamily: "Roboto, sans-serif", fontWeight: 500, color: "#000000" }}>
+                            <p style={{ marginLeft: "20px", fontSize: "16px", fontFamily: "Roboto, sans-serif", fontWeight: 500, color: "#000000" }}>
                               {selectedState === ""
                                 ? t(row.vizArray?.[1]?.name)
                                 : t(`${Digit.Utils.locale.getTransformedLocale(selectedState)}_${row.vizArray?.[1]?.name}`)}
@@ -475,7 +475,7 @@ const Home = ({ stateCode }) => {
                             style={{
                               float: "right",
                               textAlign: "right",
-                              color: "#a82227",
+                              color: "#0f4f9e",
                               fontSize: 16,
                               fontWeight: "bold",
                               display: "flex",

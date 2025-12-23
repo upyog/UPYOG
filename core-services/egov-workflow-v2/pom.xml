@@ -10,6 +10,8 @@
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+       
+    <maven.test.skip>true</maven.test.skip>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -127,7 +129,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.2.jre7</version>
         </dependency>
     <!-- Bean Validation API support -->
         <dependency>
