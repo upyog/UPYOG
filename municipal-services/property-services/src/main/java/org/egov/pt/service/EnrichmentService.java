@@ -737,7 +737,6 @@ public class EnrichmentService {
 		Map<String, List<String>> codes = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
 						"[?(@.city.districtTenantCode== '"+property.getTenantId()+"')].city.code", "$.MdmsRes.tenant", requestInfo);
 		String cityCode = codes.get("tenants").get(0);
-				
 		if (isMutation) {
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getMutationIdGenName(), config.getMutationIdGenFormat(), 1).get(0);
 			//ackNo=ackNo.replace("MN-MT", cityCode);
@@ -747,8 +746,6 @@ public class EnrichmentService {
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
 			ackNo=ackNo.replace("MN-AC", cityCode);
 		}
-			
-
 		if(property.getCreationReason().equals(CreationReason.UPDATE))
 			pId = property.getPropertyId();
 		else {
@@ -810,6 +807,7 @@ public class EnrichmentService {
 
 		String ackNo;
 		ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getBifurcationIdGenName(), config.getBifurcationIdGenFormat(), 1).get(0);
+
 		//removing mn-ac from acknowledgement number adding city code in place of it
 		List<String> masterNames = new ArrayList<>(
 						Arrays.asList("tenants"));
@@ -917,12 +915,13 @@ public class EnrichmentService {
 
 		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getAppealidname(), config.getAppealidformat(), 1).get(0);
 		String ackNo = propertyutil.getIdList(requestInfo, tenantId, config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
+
 		//removing mn-ac from acknowledgement number adding city code in place of it
 		List<String> masterNames = new ArrayList<>(
 						Arrays.asList("tenants"));
 		Map<String, List<String>> codes = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
 						"[?(@.city.districtTenantCode== '"+tenantId+"')].city.code", "$.MdmsRes.tenant", requestInfo);
-		//String cityCode = codes.get("tenants").get(0);
+		String cityCode = codes.get("tenants").get(0);
 		//ackNo=ackNo.replace("MN-AC", cityCode);
 		appeal.setAppealId(pId);
 		appeal.setAcknowldgementNumber(ackNo);
