@@ -8,7 +8,9 @@ import { newConfig } from "../../../config/Create/config";
 
 import { checkArrayLength, stringReplaceAll,getSuperBuiltUpareafromob } from "../../../utils";
 
-const getPropertyEditDetails = (data = { }) => {
+const getPropertyEditDetails = (inputData = {}) => {
+  const data = JSON.parse(JSON.stringify(inputData)); 
+  console.log("datadatagetPropertyEditDetails",data)
   // converting owners details
   const getDocumentTypeCode = (documentType) => {
     if (typeof documentType === "string") return documentType;
@@ -18,6 +20,7 @@ const getPropertyEditDetails = (data = { }) => {
   
   if((data?.propertyType === "BUILTUP.INDEPENDENTPROPERTY" && data.units.length == 0))
     {
+      console.log("runnnnnssssss")
       data.units = [{
         constructionDetail:{builtUpArea: data?.superBuiltUpArea},
         floorNo: 0,
@@ -89,6 +92,7 @@ const getPropertyEditDetails = (data = { }) => {
 );
 
   if (checkArrayLength(addressDocs)) {
+    console.log("addressDocsaddressDocs",addressDocs)
     addressDocs[0].documentType = { code: addressDocs[0]?.documentType, i18nKey: stringReplaceAll(addressDocs[0]?.documentType, ".", "_") };
   }
   if(!data.documents)
@@ -430,37 +434,50 @@ const EditProperty = ({ parentRoute }) => {
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const acknowledgementIds = window.location.href.split("/").pop();
-  const propertyIds = window.location.href.split("/").pop();
+  //const propertyIds = window.location.href.split("/").pop();
   let application = { };
-  const updateProperty = window.location.href.includes("action=UPDATE");
+  const updateProperty = window.location.href.includes("edit-application");
   const typeOfProperty = window.location.href.includes("UPDATE") ? true : false;
   const ptProperty = JSON.parse(sessionStorage.getItem("pt-property")) || { };
+  const propertyIds = ptProperty.propertyId;
+  console.log("propertyIdspropertyIds",propertyIds,acknowledgementIds,ptProperty)
   //const data = { Properties: [ptProperty] };
-    const { isLoading: isPTloading, isError, error, data } = Digit.Hooks.pt.usePropertySearch(
-    { filters: updateProperty ? { propertyIds, isSearchInternal:true  } : { acknowledgementIds, isSearchInternal:true  } },
+  const { isLoading: isPTloading, isError, error, data } =
+  Digit.Hooks.pt.usePropertySearch(
     {
-      filters: updateProperty ? { propertyIds, isSearchInternal:true  } : { acknowledgementIds, isSearchInternal:true  },
+      tenantId,
+      filters: { propertyIds, isSearchInternal: true },
+      searchedFrom: "myPropertyCitizen",
+    },
+    {
+      enabled: true,
     }
-  ); 
+  );
+
+console.log("property search data", data);
+
+  console.log("datadatadatadatadatadatadatadatadata",data)
   sessionStorage.setItem("isEditApplication", false);
 
   useEffect(() => {
-    application = data?.Properties && data.Properties[0] && data.Properties[0];
-    if (data && application && data?.Properties?.length > 0) {
-      application = data?.Properties[0];
-      if (updateProperty) {
-        application.isUpdateProperty = true;
-        application.isEditProperty = false;
-      } else {
-        application.isUpdateProperty = typeOfProperty;
-        application.isEditProperty = true;
-      }
-      sessionStorage.setItem("propertyInitialObject", JSON.stringify({ ...application }));
-      let propertyEditDetails = getPropertyEditDetails(application);
-      console.log("propertyEditDetails",propertyEditDetails)
-      setParams({ ...params, ...propertyEditDetails });
-    }
-  }, [data]);
+    if (!data?.Properties?.length) return;
+  
+    const clonedProperty = JSON.parse(JSON.stringify(data.Properties[0]));
+  
+    clonedProperty.isUpdateProperty = updateProperty;
+    clonedProperty.isEditProperty = !updateProperty;
+  
+    sessionStorage.setItem(
+      "propertyInitialObject",
+      JSON.stringify(clonedProperty)
+    );
+  
+    const propertyEditDetails = getPropertyEditDetails(clonedProperty);
+    console.log("clonedProperty",clonedProperty,propertyEditDetails)
+    propertyEditDetails.units =clonedProperty.units
+    setParams((prev) => ({ ...prev, ...propertyEditDetails }));
+  }, [data, updateProperty]);
+  
 
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),

@@ -223,12 +223,18 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
             existingUsageCategory: uc,
             NonRentedMonthsUsage:
             nonrentedusage.find(
-              (e) => e.code === formData.originalData.additionalDetails.unit[index].NonRentedMonthsUsage
+              (e) =>
+                e.code ===
+                formData?.originalData?.additionalDetails?.unit?.[index]
+                  ?.NonRentedMonthsUsage
             ) || null,
           
           RentedMonths:
             rentedmonths.find(
-              (e) => e.code === formData.originalData.additionalDetails.unit[index].RentedMonths
+              (e) =>
+                e.code ===
+                formData?.originalData?.additionalDetails?.unit?.[index]
+                  ?.RentedMonths
             ) || null,
           
             arv,
