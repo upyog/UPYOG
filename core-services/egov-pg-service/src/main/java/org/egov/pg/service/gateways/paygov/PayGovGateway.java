@@ -433,7 +433,7 @@ public class PayGovGateway implements Gateway {
             log.debug("Auth Info : "+ authStr);
             log.debug("requestmsg : "+ requestmsg);
             // make a request
-            ResponseEntity<String> response = new RestTemplate().exchange(GATEWAY_TRANSACTION_STATUS_URL, HttpMethod.POST, entity, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(GATEWAY_TRANSACTION_STATUS_URL, HttpMethod.POST, entity, String.class);
             HttpStatusCode statusCode = response.getStatusCode();
             if(statusCode.equals(HttpStatus.OK)) {
                 Transaction resp = transformRawResponse(response.getBody(), currentStatus, PAYGOV_MERCHENT_SECERET_KEY);
