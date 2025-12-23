@@ -737,8 +737,12 @@ export const setUpdatedDocumentDetails = (data) => {
   data.documents = documents;
   return data;
 };
+
 export const convertToUpdateProperty = (data = {}, t) => {
+  //const units = data?.additionalDetails?.unit || [];
   console.log("convertToUpdateProperty",data)
+  data.isUpdateProperty =true
+  data.isEditProperty=false
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
