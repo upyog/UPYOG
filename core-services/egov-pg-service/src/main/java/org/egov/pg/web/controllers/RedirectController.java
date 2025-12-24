@@ -64,12 +64,12 @@ public class RedirectController {
     	if(formData.get(PgConstants.PG_TXN_IN_LABEL)!=null)
     	{
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
-    		if(txnId==null && returnURL != null)
+    		if(txnId==null && returnURL != null && returnURL.contains(PgConstants.PG_TXN_IN_LABEL+"="))
     			txnId=returnURL.split(PgConstants.PG_TXN_IN_LABEL+"=")[1];
     	}
     	else if(formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA)!=null)
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA).get(0);
-    	else if(returnURL != null)
+    	else if(returnURL != null && returnURL.contains(PgConstants.PG_TXN_IN_LABEL+"="))
     	{
     		txnId=returnURL.split(PgConstants.PG_TXN_IN_LABEL+"=")[1];
     	}
