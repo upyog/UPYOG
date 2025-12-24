@@ -1,5 +1,6 @@
 package org.egov.pg.web.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.pg.constants.PgConstants;
@@ -47,32 +48,36 @@ public class RedirectController {
     @PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> method(
             @RequestBody MultiValueMap<String, String> formData,
-            @RequestParam(value = "originalreturnurl", required = false) String originalReturnUrlParam) {
+            @RequestParam(value = "originalreturnurl", required = false) String originalReturnUrlParam,
+            @RequestParam(value = "eg_pg_txnid", required = false) String txnIdParam) {
 
         log.info("formData in redirect::::"+formData);
         log.info("originalReturnUrlParam from query::::"+originalReturnUrlParam);
-
+        log.info("txnIdParam from query::::"+txnIdParam);
     	// Spring Boot 3 fix: Try query param first, then formData for backward compatibility
     	String returnURL = originalReturnUrlParam;
+    	String txnId=txnIdParam;
     	if(returnURL == null && formData.get(returnUrlKey) != null) {
     		returnURL = formData.get(returnUrlKey).get(0);
     	}
 
     	log.info("returnURL resolved::::"+returnURL);
 
-    	String txnId=null;
-    	if(formData.get(PgConstants.PG_TXN_IN_LABEL)!=null)
+    	
+    	if(formData.get(PgConstants.PG_TXN_IN_LABEL)!=null && txnId==null)
     	{
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
     		if(txnId==null && returnURL != null && returnURL.contains(PgConstants.PG_TXN_IN_LABEL+"="))
     			txnId=returnURL.split(PgConstants.PG_TXN_IN_LABEL+"=")[1];
     	}
-    	else if(formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA)!=null)
+    	else if(formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA)!=null && txnId==null)
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA).get(0);
-    	else if(returnURL != null && returnURL.contains(PgConstants.PG_TXN_IN_LABEL+"="))
+
+    	else if(returnURL != null && returnURL.contains(PgConstants.PG_TXN_IN_LABEL) && txnId==null)
     	{
     		txnId=returnURL.split(PgConstants.PG_TXN_IN_LABEL+"=")[1];
     	}
+    	
 
         //MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
         log.info("returnUrl in redirect::::"+returnURL);
