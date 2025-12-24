@@ -27,29 +27,29 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RedirectController {
 
-    @Value("${egov.default.citizen.url}")
-    private String defaultURL;
+	@Value("${egov.default.citizen.url}")
+	private String defaultURL;
 
-    @Value("${paygov.original.return.url.key}")
-    private String returnUrlKey;
+	@Value("${paygov.original.return.url.key}")
+	private String returnUrlKey;
 
-    @Value("${paygov.citizen.redirect.domain.name}")
-    private String citizenRedirectDomain;
+	@Value("${paygov.citizen.redirect.domain.name}")
+	private String citizenRedirectDomain;
 
+	private final TransactionService transactionService;
 
-    private final TransactionService transactionService;
+	@Autowired
+	public RedirectController(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
 
-
-    @Autowired
-    public RedirectController(TransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
-
-    @PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> method(
             @RequestBody MultiValueMap<String, String> formData,
             @RequestParam(value = "originalreturnurl", required = false) String originalReturnUrlParam,
-            @RequestParam(value = "eg_pg_txnid", required = false) String txnIdParam) {
+            @RequestParam(value = "eg_pg_txnid", required = false) String txnIdParam,
+    @RequestParam(value = "amp;eg_pg_txnid", required = false) String txnIdParamNTT) 
+{
 
         log.info("formData in redirect::::"+formData);
         log.info("originalReturnUrlParam from query::::"+originalReturnUrlParam);
@@ -57,6 +57,9 @@ public class RedirectController {
     	// Spring Boot 3 fix: Try query param first, then formData for backward compatibility
     	String returnURL = originalReturnUrlParam;
     	String txnId=txnIdParam;
+    	if(txnId==null)
+    		txnId=txnIdParamNTT;
+    		
     	if(returnURL == null && formData.get(returnUrlKey) != null) {
     		returnURL = formData.get(returnUrlKey).get(0);
     	}
@@ -105,15 +108,17 @@ public class RedirectController {
          * https://test.org/pg-service/transaction/v1/_redirect?originalreturnurl=/digit-ui/citizen/payment/success/PT/PG-PT-2022-03-10-006063/pg.citya?eg_pg_txnid=PB_PG_2022_07_12_002082_48
          * Here we are reading originalreturnurl value and then forming redirect URL with domain name.
          */
+        StringBuilder redirectURL = new StringBuilder();
+
         if(gateway != null && gateway.equalsIgnoreCase("PAYGOV")) {
-            StringBuilder redirectURL = new StringBuilder();
             redirectURL.append(returnURL);
+            if(returnURL != null) 
+                returnURL=returnURL + "&eg_pg_txnid="+txnId;
             formData.remove(returnUrlKey);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
         }
         else if(gateway != null && gateway.equalsIgnoreCase("NTTDATA")) {
-            StringBuilder redirectURL = new StringBuilder();
             if(returnURL != null) {
                 returnURL=returnURL + "&eg_pg_txnid="+txnId;
                 redirectURL.append(returnURL);
@@ -139,12 +144,12 @@ public class RedirectController {
         return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleError(Exception e) {
-        log.error("EXCEPTION_WHILE_REDIRECTING", e);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(defaultURL).build().encode().toUri());
-        return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
-    }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Object> handleError(Exception e) {
+		log.error("EXCEPTION_WHILE_REDIRECTING", e);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(defaultURL).build().encode().toUri());
+		return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
+	}
 
 }
