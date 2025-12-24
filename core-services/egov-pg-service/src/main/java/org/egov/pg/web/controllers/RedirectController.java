@@ -17,6 +17,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,21 +45,31 @@ public class RedirectController {
     }
 
     @PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
-        
-        log.info("formData in redirect::::"+formData);
+    public ResponseEntity<Object> method(
+            @RequestBody MultiValueMap<String, String> formData,
+            @RequestParam(value = "originalreturnurl", required = false) String originalReturnUrlParam) {
 
-    	String returnURL = formData.get(returnUrlKey).get(0); 
+        log.info("formData in redirect::::"+formData);
+        log.info("originalReturnUrlParam from query::::"+originalReturnUrlParam);
+
+    	// Spring Boot 3 fix: Try query param first, then formData for backward compatibility
+    	String returnURL = originalReturnUrlParam;
+    	if(returnURL == null && formData.get(returnUrlKey) != null) {
+    		returnURL = formData.get(returnUrlKey).get(0);
+    	}
+
+    	log.info("returnURL resolved::::"+returnURL);
+
     	String txnId=null;
     	if(formData.get(PgConstants.PG_TXN_IN_LABEL)!=null)
     	{
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
-    		if(txnId==null)
+    		if(txnId==null && returnURL != null)
     			txnId=returnURL.split(PgConstants.PG_TXN_IN_LABEL+"=")[1];
     	}
     	else if(formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA)!=null)
-    		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA).get(0); 
-    	else
+    		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA).get(0);
+    	else if(returnURL != null)
     	{
     		txnId=returnURL.split(PgConstants.PG_TXN_IN_LABEL+"=")[1];
     	}
@@ -95,11 +106,16 @@ public class RedirectController {
             formData.remove(returnUrlKey);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
-        } 
+        }
         else if(gateway != null && gateway.equalsIgnoreCase("NTTDATA")) {
             StringBuilder redirectURL = new StringBuilder();
-            returnURL=returnURL + "&eg_pg_txnid="+txnId;
-            redirectURL.append(returnURL);
+            if(returnURL != null) {
+                returnURL=returnURL + "&eg_pg_txnid="+txnId;
+                redirectURL.append(returnURL);
+            } else {
+                // Fallback to default URL if returnURL is null
+                redirectURL.append(defaultURL);
+            }
             formData.remove(returnUrlKey);
             formData.remove("encData");
             formData.remove("merchId");
@@ -108,7 +124,10 @@ public class RedirectController {
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
         }else {
-            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
+            // Use returnURL if available, otherwise fall back to formData, then defaultURL
+            String fallbackUrl = returnURL != null ? returnURL :
+                                (formData.get(returnUrlKey) != null ? formData.get(returnUrlKey).get(0) : defaultURL);
+            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(fallbackUrl)
                     .queryParams(formData).build().encode().toUri());
         }
 
