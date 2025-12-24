@@ -118,14 +118,14 @@ public class FileStoreUtils {
             if (fileStoreMapper.isPresent()) {
                 Path file = getFileAsPath(fileStoreId, moduleName);
                 byte[] fileBytes = Files.readAllBytes(file);
-                return ResponseEntity
-                        .ok()
-                        .contentType(MediaType.parseMediaType(fileStoreMapper.get().getContentType()))
-                        .cacheControl(CacheControl.noCache())
-                        .contentLength(fileBytes.length)
-                        .header(CONTENT_DISPOSITION, format(toSave ? CONTENT_DISPOSITION_ATTACH : CONTENT_DISPOSITION_INLINE,
-                                fileStoreMapper.get().getFileName())).
-                                body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
+                // return ResponseEntity
+                //         .ok()
+                //         .contentType(MediaType.parseMediaType(fileStoreMapper.get().getContentType()))
+                //         .cacheControl(CacheControl.noCache())
+                //         .contentLength(fileBytes.length)
+                //         .header(CONTENT_DISPOSITION, format(toSave ? CONTENT_DISPOSITION_ATTACH : CONTENT_DISPOSITION_INLINE,
+                //                 fileStoreMapper.get().getFileName())).
+                //                 body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
 
 
                 return ResponseEntity.ok().contentType(parseMediaType(defaultIfBlank(contentType, JPG_MIME_TYPE)))
