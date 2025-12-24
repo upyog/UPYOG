@@ -51,10 +51,6 @@ public class RedirectController {
     @RequestParam(value = "amp;eg_pg_txnid", required = false) String txnIdParamNTT) 
 {
 
-        log.info("formData in redirect::::"+formData);
-        log.info("originalReturnUrlParam from query::::"+originalReturnUrlParam);
-        log.info("txnIdParam from query::::"+txnIdParam);
-    	// Spring Boot 3 fix: Try query param first, then formData for backward compatibility
     	String returnURL = originalReturnUrlParam;
     	String txnId=txnIdParam;
     	if(txnId==null)
@@ -64,9 +60,6 @@ public class RedirectController {
     		returnURL = formData.get(returnUrlKey).get(0);
     	}
 
-    	log.info("returnURL resolved::::"+returnURL);
-
-    	
     	if(formData.get(PgConstants.PG_TXN_IN_LABEL)!=null && txnId==null)
     	{
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
@@ -82,7 +75,7 @@ public class RedirectController {
     	}
     	
 
-        //MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
+
         log.info("returnUrl in redirect::::"+returnURL);
         log.info("txn Id"+txnId);
         /*
@@ -115,6 +108,7 @@ public class RedirectController {
             if(returnURL != null) 
                 returnURL=returnURL + "&eg_pg_txnid="+txnId;
             formData.remove(returnUrlKey);
+            formData.add("eg_pg_txnid", txnId);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
         }
