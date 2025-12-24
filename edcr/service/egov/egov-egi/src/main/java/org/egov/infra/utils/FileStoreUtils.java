@@ -128,7 +128,7 @@ public class FileStoreUtils {
                 //                 body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
 
 
-                return ResponseEntity.ok().contentType(parseMediaType(defaultIfBlank(contentType, JPG_MIME_TYPE)))
+                return ResponseEntity.ok().contentType(MediaType.parseMediaType(fileStoreMapper.get().getContentType()))
 						.cacheControl(CacheControl.noCache()).contentLength(fileBytes.length)
 						.header(CONTENT_DISPOSITION,
 								format(toSave ? CONTENT_DISPOSITION_ATTACH : CONTENT_DISPOSITION_INLINE,
