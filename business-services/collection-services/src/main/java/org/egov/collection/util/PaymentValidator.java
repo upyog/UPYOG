@@ -448,7 +448,7 @@ public class PaymentValidator {
             throw new CustomException(errorMap);
         
         Boolean isRequesterEmployee=false;
-        if(requestInfo.getUserInfo()==null)
+        if(requestInfo.getUserInfo()!=null)
         	isRequesterEmployee = requestInfo.getUserInfo().getType()
 				.equalsIgnoreCase(CollectionServiceConstants.EMPLOYEE_TYPE);
 		if (isRequesterEmployee && applicationProperties.getIsModuleNameMandatoryInSearchUriForEmployee()
