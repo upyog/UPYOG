@@ -443,11 +443,13 @@ public class PaymentValidator {
     public void validateAndUpdateSearchRequestFromConfig(PaymentSearchCriteria paymentSearchCriteria, RequestInfo requestInfo, String moduleName) {
     	
     	Map<String, String> errorMap = new HashMap<>();
-    	validateUserInfo(requestInfo, errorMap);
+    	//validateUserInfo(requestInfo, errorMap);
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
-    	
-		Boolean isRequesterEmployee = requestInfo.getUserInfo().getType()
+        
+        Boolean isRequesterEmployee=false;
+        if(requestInfo.getUserInfo()==null)
+        	isRequesterEmployee = requestInfo.getUserInfo().getType()
 				.equalsIgnoreCase(CollectionServiceConstants.EMPLOYEE_TYPE);
 		if (isRequesterEmployee && applicationProperties.getIsModuleNameMandatoryInSearchUriForEmployee()
 				&& null == moduleName)
