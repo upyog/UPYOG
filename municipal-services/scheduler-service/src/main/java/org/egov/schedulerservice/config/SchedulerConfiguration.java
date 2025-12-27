@@ -90,4 +90,11 @@ public class SchedulerConfiguration {
 	@Value("${egov.umeed.dashboard.logger.create}")
 	private String umeedDashboardLoggerCreateEndpoint;
 	
+	@Value("${egov.notification.sms.context.host}")
+	private String notificationSmsHostUrl;
+
+	@Value("${egov.notification.sms.endpoint.send-notification-sms}")
+	private String sendNotificationSmsEndpoint;
+	
+	
 }

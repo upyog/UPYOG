@@ -1,6 +1,7 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -8,10 +9,13 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.PropertyAccount;
+//import org.egov.pt.models.PtBillTracker;
 import org.egov.pt.models.collection.Bill;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
@@ -71,7 +75,7 @@ public class NotificationService {
 
 	private static final String SMS_BODY_GENERATE_BILL = "Dear "+RECIPINTS_NAME_PLACEHOLDER+", your "+PROPERTY_PLACEHOLDER+" bill vide  "+PROPERTY_PLACEHOLDER+" id "
 			+ PROPERTY_ID_PLACEHOLDER+" for the period "+MONTH_PLACEHOLDER+" amounting to Rs "+AMOUNT_PLACEHOLDER+" has been generated on CitizenSeva portal. "
-			+ "Please pay on CitizenSeva Portal or using link "+LINK_PLACEHOLDER+". CitizenSeva H.P.";
+			+ "Please pay on CitizenSeva Portal or using link "+LINK_PLACEHOLDER+" .  CitizenSeva H.P.";
 	
 	private static final String EMAIL_SUBJECT_GENERATE_BILL = "Your Property Collection Bill for " + MONTH_PLACEHOLDER
 			+ "/" + " with " + PROPERTY_ID_PLACEHOLDER;
@@ -90,6 +94,9 @@ public class NotificationService {
 	
 	@Autowired
 	private KafkaTemplate<String, Object> kafkaTemplate;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Value("${kafka.topics.email.service.topic.name}")
 	private String emailTopic;
@@ -559,10 +566,49 @@ public class NotificationService {
 					emailSubject);
 		}
 		if (!StringUtils.isEmpty(bill.getMobileNumber())) {
-			sendSms(smsBody, bill.getMobileNumber());
+			//sendSms(smsBody, bill.getMobileNumber());
 		}
 
 	}
+	
+	public ObjectNode buildGeneratePropertyBillSmsRequest(
+        Property property,
+        Bill bill,
+        PtTaxCalculatorTracker tracker) {
+
+    ObjectNode smsRequest = objectMapper.createObjectNode();
+
+    if (property == null
+            || CollectionUtils.isEmpty(property.getOwners())
+            || bill == null) {
+        log.warn("Insufficient data to build SMS request");
+        return smsRequest;
+    }
+
+    String smsBody;
+    try {
+        smsBody = populateNotificationPlaceholders(
+                SMS_BODY_GENERATE_BILL,
+                property,
+                bill,
+                tracker
+        );
+    } catch (Exception e) {
+        log.error("Failed to populate SMS placeholders", e);
+        smsBody = SMS_BODY_GENERATE_BILL; // fallback
+    }
+
+    smsRequest.put("mobileNumber",
+            property.getOwners().get(0).getMobileNumber());
+    smsRequest.put("message", smsBody);
+    smsRequest.put("category", SMSCategory.NOTIFICATION.name());
+    smsRequest.put("templateName", SMS_TEMPLATE_BILL_NOTIFICATION);
+
+    return smsRequest;
+}
+
+
+
 	
 	private String populateNotificationPlaceholders(String body, PtTaxCalculatorTracker propertyTracker, Bill bill) {
 
@@ -598,12 +644,60 @@ public class NotificationService {
 		return body;
 	}
 	
+	private String populateNotificationPlaceholders(
+	        String body,
+	        Property property,
+	        Bill bill,
+	        PtTaxCalculatorTracker tracker) {
+
+	    SimpleDateFormat monthFormat = new SimpleDateFormat("dd MMMM - yyyy");
+
+	    body = body.replace(
+	            MONTH_PLACEHOLDER,
+	            monthFormat.format(tracker.getFromDate()) + " / "
+	                    + monthFormat.format(tracker.getToDate())
+	    );
+
+	    body = body.replace(
+	            RECIPINTS_NAME_PLACEHOLDER,
+	            property.getOwners().get(0).getName()
+	    );
+
+	    body = body.replace(
+	            PROPERTY_ID_PLACEHOLDER,
+	            property.getPropertyId()
+	    );
+
+	    body = body.replace(
+	            BILL_NO_PLACEHOLDER,
+	            bill.getBillNumber()
+	    );
+
+	    body = body.replace(
+	            AMOUNT_PLACEHOLDER,
+	            String.valueOf(bill.getTotalAmount())
+	    );
+
+	    body = body.replace(
+	            LINK_PLACEHOLDER,
+	            "https://citizenseva.hp.gov.in/hp-udd/"
+	    );
+
+	    body = body.replace(
+	            PROPERTY_PAY_NOW_BILL_URL_PLACEHOLDER,
+	            frontEndUri
+	    );
+
+	    return body;
+	}
+
+	
 	public void sendSms(String message, String mobileNumber) {
 
 		SMSSentRequest smsRequest = SMSSentRequest.builder().message(message).mobileNumber(mobileNumber)
 				.category(SMSCategory.NOTIFICATION).templateName(SMS_TEMPLATE_BILL_NOTIFICATION).build();
 
-		kafkaTemplate.send(smsTopic, smsRequest);
+		//kafkaTemplate.send(smsTopic, smsRequest);
 	}
 	
 	private void sendEmailforGenerateBill(String emailBody, List<String> emailIds, RequestInfo requestInfo,
