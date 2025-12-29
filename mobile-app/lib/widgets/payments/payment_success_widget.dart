@@ -184,7 +184,6 @@ class _BuildButton extends StatelessWidget {
                 isLoading: fileController.isLoading.value,
                 circularColor: BaseConfig.appThemeColor1,
                 onPressed: () async {
-                  //TODO: Download Reciept
                   fileController.isLoading.value = true;
                   try {
                     final token = authController.token?.accessToken!;

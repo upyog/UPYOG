@@ -45,7 +45,6 @@ class _WsViewAllScreenState extends State<WsViewAllScreen> {
     TenantTenant tenant = await getCityTenant();
     _waterController.isLoading.value = true;
 
-    // Fetch water applications
     var ws = await _waterController.getWaterMyApplicationsFuture(
       tenantId: tenant.code!,
       mobileNumber:
@@ -53,7 +52,6 @@ class _WsViewAllScreenState extends State<WsViewAllScreen> {
       token: _authController.token!.accessToken!,
     );
 
-    // Fetch sewerage applications
     var sw = await _waterController.getSewerageMyApplicationsFuture(
       tenantId: tenant.code!,
       mobileNumber:
@@ -61,11 +59,9 @@ class _WsViewAllScreenState extends State<WsViewAllScreen> {
       token: _authController.token!.accessToken!,
     );
 
-    // Combine both lists into one
     _swList.addAll(ws?.waterConnection ?? []);
     _swList.addAll(sw?.sewerageConnections ?? []);
 
-    // Update the total length
     totalLength.value = (ws?.totalCount ?? 0) + (sw?.totalCount ?? 0);
 
     _waterController.isLoading.value = false;
@@ -139,7 +135,7 @@ class _WsViewAllScreenState extends State<WsViewAllScreen> {
                               '${i18.waterSewerage.WS_APPLICATION_TYPE_}${item.applicationType}',
                               module: Modules.WS,
                             ),
-                            id: 'Application No: ${item.applicationNo}',
+                            id: '${getLocalizedString(i18.waterSewerage.APPLICATION_NO, module: Modules.WS)}: ${item.applicationNo}',
                             date:
                                 'Date: ${item.auditDetails!.createdTime.toCustomDateFormat()}',
                             onTap: () {

@@ -44,25 +44,25 @@ class ResponseInfo {
 
 @JsonSerializable()
 class Property {
-  @JsonKey(name: 'id')
+  @JsonKey(name: 'id', includeIfNull: false)
   String? id;
-  @JsonKey(name: 'propertyId')
+  @JsonKey(name: 'propertyId', includeIfNull: false)
   String? propertyId;
-  @JsonKey(name: 'surveyId')
+  @JsonKey(name: 'surveyId', includeIfNull: false)
   dynamic surveyId;
-  @JsonKey(name: 'linkedProperties')
+  @JsonKey(name: 'linkedProperties', includeIfNull: false)
   dynamic linkedProperties;
   @JsonKey(name: 'tenantId')
   String? tenantId;
-  @JsonKey(name: 'accountId')
+  @JsonKey(name: 'accountId', includeIfNull: false)
   String? accountId;
-  @JsonKey(name: 'oldPropertyId')
+  @JsonKey(name: 'oldPropertyId', includeIfNull: false)
   dynamic oldPropertyId;
-  @JsonKey(name: 'status')
+  @JsonKey(name: 'status', includeIfNull: false)
   String? status;
   @JsonKey(name: 'address')
   Address? address;
-  @JsonKey(name: 'acknowldgementNumber')
+  @JsonKey(name: 'acknowldgementNumber', includeIfNull: false)
   String? acknowledgementNumber;
   @JsonKey(name: 'propertyType')
   String? propertyType;
@@ -70,12 +70,16 @@ class Property {
   String? ownershipCategory;
   @JsonKey(name: 'owners')
   List<Owner>? owners;
-  @JsonKey(name: 'institution')
+  @JsonKey(name: 'institution', includeIfNull: false)
   dynamic institution;
   @JsonKey(name: 'creationReason')
   String? creationReason;
   @JsonKey(name: 'usageCategory')
   String? usageCategory;
+  @JsonKey(name: 'usageCategoryMajor', includeIfNull: false)
+  String? usageCategoryMajor;
+  @JsonKey(name: 'usageCategoryMinor', includeIfNull: false)
+  String? usageCategoryMinor;
   @JsonKey(name: 'noOfFloors')
   int? noOfFloors;
   @JsonKey(name: 'landArea')
@@ -90,20 +94,22 @@ class Property {
   List<Document>? documents;
   @JsonKey(name: 'units')
   List<Unit>? units;
-  @JsonKey(name: 'dueAmount')
+  @JsonKey(name: 'dueAmount', includeIfNull: false)
   dynamic dueAmount;
-  @JsonKey(name: 'dueAmountYear')
+  @JsonKey(name: 'dueAmountYear', includeIfNull: false)
   dynamic dueAmountYear;
   @JsonKey(name: 'additionalDetails')
   PropertyAdditionalDetails? additionalDetails;
-  @JsonKey(name: 'auditDetails')
+  @JsonKey(name: 'auditDetails', includeIfNull: false)
   AuditDetails? auditDetails;
-  @JsonKey(name: 'workflow')
+  @JsonKey(name: 'workflow', includeIfNull: false)
   Workflow? workflow;
-  @JsonKey(name: 'AlternateUpdated')
+  @JsonKey(name: 'AlternateUpdated', includeIfNull: false)
   bool? alternateUpdated;
-  @JsonKey(name: 'isOldDataEncryptionRequest')
+  @JsonKey(name: 'isOldDataEncryptionRequest', includeIfNull: false)
   bool? isOldDataEncryptionRequest;
+  @JsonKey(name: 'applicationStatus', includeIfNull: false)
+  String? applicationStatus;
 
   Property();
 
@@ -136,7 +142,7 @@ class PropertyAdditionalDetails {
   // @JsonKey(name: 'ageOfProperty')
   // AgeOfProperty? ageOfProperty;
   @JsonKey(name: 'structureType', includeIfNull: false)
-  dynamic structureType;
+  AgeOfProperty? structureType;
   @JsonKey(name: 'noOofBasements', includeIfNull: false)
   NoO? noOofBasements;
   @JsonKey(name: 'heightAbove36Feet', includeIfNull: false)
@@ -151,6 +157,32 @@ class PropertyAdditionalDetails {
   String? applicationStatus;
   @JsonKey(name: 'isRainwaterHarvesting', includeIfNull: false)
   bool? isRainwaterHarvesting;
+
+  //emp property form
+  @JsonKey(name: 'primaryOwner', includeIfNull: false)
+  String? primaryOwner;
+  @JsonKey(name: 'unit', includeIfNull: false)
+  List<Unit>? unit;
+  @JsonKey(name: 'ageOfProperty', includeIfNull: false)
+  AgeOfProperty? ageOfProperty;
+  @JsonKey(name: 'caseDetails', includeIfNull: false)
+  String? caseDetails;
+  @JsonKey(name: 'marketValue', includeIfNull: false)
+  int? marketValue;
+  @JsonKey(name: 'documentDate', includeIfNull: false)
+  int? documentDate;
+  @JsonKey(name: 'documentValue', includeIfNull: false)
+  String? documentValue;
+  @JsonKey(name: 'documentNumber', includeIfNull: false)
+  String? documentNumber;
+  @JsonKey(name: 'isMutationInCourt', includeIfNull: false)
+  String? isMutationInCourt;
+  @JsonKey(name: 'reasonForTransfer', includeIfNull: false)
+  String? reasonForTransfer;
+  @JsonKey(name: 'previousPropertyUuid', includeIfNull: false)
+  String? previousPropertyUuid;
+  @JsonKey(name: 'isPropertyUnderGovtPossession', includeIfNull: false)
+  String? isPropertyUnderGovtPossession;
 
   PropertyAdditionalDetails();
 
@@ -272,20 +304,20 @@ class GeoLocation {
 class Locality {
   @JsonKey(name: 'code')
   String? code;
-  @JsonKey(name: 'name')
+  @JsonKey(name: 'name', includeIfNull: false)
   String? name;
-  @JsonKey(name: 'label')
+  @JsonKey(name: 'label', includeIfNull: false)
   String? label;
-  @JsonKey(name: 'latitude')
+  @JsonKey(name: 'latitude', includeIfNull: false)
   dynamic latitude;
-  @JsonKey(name: 'longitude')
+  @JsonKey(name: 'longitude', includeIfNull: false)
   dynamic longitude;
 
   @JsonKey(name: 'area')
   String? area;
-  @JsonKey(name: 'children')
+  @JsonKey(name: 'children', includeIfNull: false)
   List<dynamic>? children;
-  @JsonKey(name: 'materializedPath')
+  @JsonKey(name: 'materializedPath', includeIfNull: false)
   dynamic materializedPath;
 
   Locality();
@@ -359,6 +391,15 @@ class OwnerAd {
   @JsonKey(name: 'sameAsPropertyAddress')
   bool? sameAsPropertyAddress;
 
+  @JsonKey(name: 'gender', includeIfNull: false)
+  String? gender;
+  @JsonKey(name: 'emailId', includeIfNull: false)
+  String? emailId;
+  @JsonKey(name: 'correspondenceAddress', includeIfNull: false)
+  dynamic correspondenceAddress;
+  @JsonKey(name: 'relationship', includeIfNull: false)
+  String? relationship;
+
   OwnerAd();
 
   factory OwnerAd.fromJson(Map<String, dynamic> json) =>
@@ -384,15 +425,15 @@ class OwnerAdditionalDetailsPt {
 
 @JsonSerializable()
 class Owner {
-  @JsonKey(name: 'id')
+  @JsonKey(name: 'id', includeIfNull: false)
   dynamic id;
-  @JsonKey(name: 'uuid')
+  @JsonKey(name: 'uuid', includeIfNull: false)
   String? uuid;
-  @JsonKey(name: 'userName')
+  @JsonKey(name: 'userName', includeIfNull: false)
   String? userName;
-  @JsonKey(name: 'password')
+  @JsonKey(name: 'password', includeIfNull: false)
   dynamic password;
-  @JsonKey(name: 'salutation')
+  @JsonKey(name: 'salutation', includeIfNull: false)
   dynamic salutation;
   @JsonKey(name: 'name')
   String? name;
@@ -402,71 +443,71 @@ class Owner {
   String? mobileNumber;
   @JsonKey(name: 'emailId')
   String? emailId;
-  @JsonKey(name: 'altContactNumber')
+  @JsonKey(name: 'altContactNumber', includeIfNull: false)
   dynamic altContactNumber;
-  @JsonKey(name: 'pan')
+  @JsonKey(name: 'pan', includeIfNull: false)
   dynamic pan;
-  @JsonKey(name: 'aadhaarNumber')
+  @JsonKey(name: 'aadhaarNumber', includeIfNull: false)
   dynamic aadhaarNumber;
   @JsonKey(name: 'permanentAddress')
   String? permanentAddress;
-  @JsonKey(name: 'permanentCity')
+  @JsonKey(name: 'permanentCity', includeIfNull: false)
   dynamic permanentCity;
-  @JsonKey(name: 'permanentPinCode')
+  @JsonKey(name: 'permanentPinCode', includeIfNull: false)
   dynamic permanentPinCode;
-  @JsonKey(name: 'correspondenceCity')
+  @JsonKey(name: 'correspondenceCity', includeIfNull: false)
   dynamic correspondenceCity;
-  @JsonKey(name: 'correspondencePinCode')
+  @JsonKey(name: 'correspondencePinCode', includeIfNull: false)
   dynamic correspondencePinCode;
   @JsonKey(name: 'correspondenceAddress')
   dynamic correspondenceAddress;
-  @JsonKey(name: 'active')
+  @JsonKey(name: 'active', includeIfNull: false)
   bool? active;
-  @JsonKey(name: 'dob')
+  @JsonKey(name: 'dob', includeIfNull: false)
   dynamic dob;
-  @JsonKey(name: 'pwdExpiryDate')
+  @JsonKey(name: 'pwdExpiryDate', includeIfNull: false)
   int? pwdExpiryDate;
-  @JsonKey(name: 'locale')
+  @JsonKey(name: 'locale', includeIfNull: false)
   dynamic locale;
-  @JsonKey(name: 'type')
+  @JsonKey(name: 'type', includeIfNull: false)
   String? type;
-  @JsonKey(name: 'signature')
+  @JsonKey(name: 'signature', includeIfNull: false)
   dynamic signature;
-  @JsonKey(name: 'accountLocked')
+  @JsonKey(name: 'accountLocked', includeIfNull: false)
   bool? accountLocked;
-  @JsonKey(name: 'roles')
+  @JsonKey(name: 'roles', includeIfNull: false)
   List<Role>? roles;
   @JsonKey(name: 'fatherOrHusbandName')
   String? fatherOrHusbandName;
-  @JsonKey(name: 'bloodGroup')
+  @JsonKey(name: 'bloodGroup', includeIfNull: false)
   dynamic bloodGroup;
-  @JsonKey(name: 'identificationMark')
+  @JsonKey(name: 'identificationMark', includeIfNull: false)
   dynamic identificationMark;
-  @JsonKey(name: 'photo')
+  @JsonKey(name: 'photo', includeIfNull: false)
   dynamic photo;
-  @JsonKey(name: 'createdBy')
+  @JsonKey(name: 'createdBy', includeIfNull: false)
   String? createdBy;
-  @JsonKey(name: 'createdDate')
+  @JsonKey(name: 'createdDate', includeIfNull: false)
   int? createdDate;
-  @JsonKey(name: 'lastModifiedBy')
+  @JsonKey(name: 'lastModifiedBy', includeIfNull: false)
   String? lastModifiedBy;
-  @JsonKey(name: 'lastModifiedDate')
+  @JsonKey(name: 'lastModifiedDate', includeIfNull: false)
   int? lastModifiedDate;
-  @JsonKey(name: 'tenantId')
+  @JsonKey(name: 'tenantId', includeIfNull: false)
   String? tenantId;
-  @JsonKey(name: 'alternatemobilenumber')
+  @JsonKey(name: 'alternatemobilenumber', includeIfNull: false)
   dynamic alternatemobilenumber;
-  @JsonKey(name: 'ownerInfoUuid')
+  @JsonKey(name: 'ownerInfoUuid', includeIfNull: false)
   String? ownerInfoUuid;
-  @JsonKey(name: 'isPrimaryOwner')
+  @JsonKey(name: 'isPrimaryOwner', includeIfNull: false)
   dynamic isPrimaryOwner;
-  @JsonKey(name: 'ownerShipPercentage')
+  @JsonKey(name: 'ownerShipPercentage', includeIfNull: false)
   dynamic ownerShipPercentage;
   @JsonKey(name: 'ownerType')
   String? ownerType;
-  @JsonKey(name: 'institutionId')
+  @JsonKey(name: 'institutionId', includeIfNull: false)
   dynamic institutionId;
-  @JsonKey(name: 'status')
+  @JsonKey(name: 'status', includeIfNull: false)
   String? status;
   @JsonKey(name: 'documents')
   List<Document>? documents;
@@ -517,30 +558,35 @@ class Role {
 
 @JsonSerializable()
 class Unit {
-  @JsonKey(name: 'id')
+  @JsonKey(name: 'id', includeIfNull: false)
   String? id;
-  @JsonKey(name: 'tenantId')
+  @JsonKey(name: 'tenantId', includeIfNull: false)
   dynamic tenantId;
-  @JsonKey(name: 'floorNo')
+  @JsonKey(name: 'floorNo', includeIfNull: false)
   int? floorNo;
-  @JsonKey(name: 'unitType')
+  @JsonKey(name: 'unitType', includeIfNull: false)
   dynamic unitType;
-  @JsonKey(name: 'usageCategory')
+  @JsonKey(name: 'usageCategory', includeIfNull: false)
   String? usageCategory;
-  @JsonKey(name: 'occupancyType')
+  @JsonKey(name: 'occupancyType', includeIfNull: false)
   String? occupancyType;
-  @JsonKey(name: 'active')
+  @JsonKey(name: 'active', includeIfNull: false)
   bool? active;
-  @JsonKey(name: 'occupancyDate')
+  @JsonKey(name: 'occupancyDate', includeIfNull: false)
   int? occupancyDate;
-  @JsonKey(name: 'constructionDetail')
+  @JsonKey(name: 'constructionDetail', includeIfNull: false)
   ConstructionDetail? constructionDetail;
-  @JsonKey(name: 'additionalDetails')
+  @JsonKey(name: 'additionalDetails', includeIfNull: false)
   dynamic additionalDetails;
-  @JsonKey(name: 'auditDetails')
+  @JsonKey(name: 'auditDetails', includeIfNull: false)
   dynamic auditDetails;
-  @JsonKey(name: 'arv')
+  @JsonKey(name: 'arv', includeIfNull: false)
   dynamic arv;
+
+  @JsonKey(name: 'RentedMonths', includeIfNull: false)
+  dynamic rentedMonths;
+  @JsonKey(name: 'NonRentedMonthsUsage', includeIfNull: false)
+  dynamic nonRentedMonthsUsage;
 
   Unit();
 

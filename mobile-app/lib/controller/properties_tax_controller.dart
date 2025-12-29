@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:mobile_app/config/base_config.dart';
@@ -7,11 +8,16 @@ import 'package:mobile_app/model/citizen/bill/bill_info.dart';
 import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/model/citizen/payments/payment.dart';
 import 'package:mobile_app/model/citizen/properties_tax/my_properties.dart';
+import 'package:mobile_app/model/employee/emp_mdms_model/emp_mdms_model.dart';
 import 'package:mobile_app/model/employee/emp_pt_model/emp_pt_model.dart';
+import 'package:mobile_app/model/request/emp_property_action_request/emp_property_action_request_model.dart';
+import 'package:mobile_app/model/request/emp_property_request/property_request_model.dart';
+import 'package:mobile_app/repository/core_repository.dart';
 import 'package:mobile_app/repository/inbox_repository.dart';
 import 'package:mobile_app/repository/payment_repository.dart';
 import 'package:mobile_app/repository/propertytax_repository.dart';
 import 'package:mobile_app/services/mdms_service.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/enums/emp_enums.dart';
 import 'package:mobile_app/utils/errors/error_handler.dart';
@@ -29,6 +35,8 @@ class PropertiesTaxController extends GetxController {
   BillInfo? billInfo;
   late EmpPtModel empPtModel;
   late Property property;
+  PropertyActionRequest? propertyActionRequest;
+  EmpMdmsResModel? empMdmsResModel;
 
   RxInt length = 0.obs;
   int limit = 10, offset = 0;
@@ -314,24 +322,70 @@ class PropertiesTaxController extends GetxController {
   /*                                For Employee                                */
   /* -------------------------------------------------------------------------- */
 
-  //Check roles for fieldInspection
-  bool checkRolesForPtFieldInspection() {
+  // EMP - PT Form - Mdms service call
+  Future<void> getEmpMdmsPTForm() async {
+    try {
+      const ptStorageKey =
+          'Digit.MDMS.${BaseConfig.STATE_TENANT_ID}.PropertyTax';
+
+      final ptTaxLocal = await storage.getString(ptStorageKey);
+      final ptDecode = jsonDecode(ptTaxLocal ?? '{}');
+
+      // if (isNotNullOrEmpty(ptDecode['PropertyTax']) == false) {
+      //   dPrint('PT1: Delete called');
+      //   await storage.delete(ptStorageKey);
+      // }
+
+      if (isNotNullOrEmpty(ptDecode)) {
+        dPrint('PT1: Local Data');
+        empMdmsResModel = EmpMdmsResModel.fromJson(ptDecode);
+        return;
+      }
+
+      final query = {
+        'tenantId': BaseConfig.STATE_TENANT_ID,
+      };
+
+      final empRes = await CoreRepository.getMdmsPgrData(
+        query: query,
+        body: getEmpMdmsBodyPTRegForm(),
+      );
+
+      dPrint('PT1: EMP MDMS API');
+
+      empMdmsResModel = EmpMdmsResModel.fromJson(empRes);
+      await storage.setString(
+        ptStorageKey,
+        jsonEncode(empMdmsResModel?.toJson()),
+      );
+    } catch (e, s) {
+      dPrint('getEmpMdmsPTForm Error: $e');
+      ErrorHandler.allExceptionsHandler(e, s);
+    }
+  }
+
+  //Check roles for Field Inspection and Approver Inspection
+  bool checkRolesForPtInspection() {
     final roles = Get.find<AuthController>().token?.userRequest?.roles;
     if (roles == null) return false;
 
     return roles.any(
-      (element) => element.code == InspectorType.PT_FIELD_INSPECTOR.name,
+      (role) =>
+          role.code == InspectorType.PT_FIELD_INSPECTOR.name ||
+          role.code == InspectorType.PT_APPROVER_INSPECTOR.name,
     );
   }
 
   /// Get PT inbox applications for employee
   Future<void> getEmpPtInboxApplications({
-    required String? token,
+    required String token,
     required String tenantId,
     bool isFilter = false,
     List? locality,
+    String? applicationNumber,
+    String? propertyId,
+    String? mobileNumber,
   }) async {
-    if (token == null && token!.isEmpty) return;
     try {
       final body = getEmpBodyFilter(
         isFilter: isFilter,
@@ -345,28 +399,39 @@ class PropertiesTaxController extends GetxController {
           BusinessServicesEmp.PT_MUTATION,
           BusinessServicesEmp.PT_UPDATE,
         ],
+        applicationNumber: applicationNumber,
+        propertyId: propertyId,
+        mobileNumber: mobileNumber,
       );
 
       final empRes = await InboxRepository.getInboxApplications(
         token: token,
         body: body,
       );
+
       empPtModel = EmpPtModel.fromJson(empRes);
 
-      //Check employee permission for field inspection
-      final isFieldInspector = checkRolesForPtFieldInspection();
+      //Check employee permission for field inspection and approver
+      final inspectorHasPermission = checkRolesForPtInspection();
 
-      // Filter wsItems for PENDING_FIELD_INSPECTION status
-      final filteredItems = empPtModel.items
-          ?.where(
-            (item) =>
-                (item.processInstance?.state?.state ==
-                    InboxStatus.DOC_VERIFIED.name) &&
-                isFieldInspector,
-          )
-          .toList();
+      empPtModel.items = empPtModel.items?.where((item) {
+        final state = item.processInstance?.state?.state;
+        if (state == null) return false;
 
-      empPtModel.items = filteredItems;
+        final isDocVerified = (state == InboxStatus.DOC_VERIFIED.name);
+
+        final isMutation = (item.processInstance?.businessService ==
+                BusinessServicesEmp.PT_MUTATION.name &&
+            state == 'PAID');
+
+        final isPtCreate = (item.processInstance?.businessService ==
+                BusinessServicesEmp.PT_CREATE.name &&
+            state == InboxStatus.FIELD_VERIFIED.name);
+
+        return (isDocVerified && inspectorHasPermission) ||
+            (isMutation && inspectorHasPermission) ||
+            (isPtCreate && inspectorHasPermission);
+      }).toList();
 
       length.value = empPtModel.items?.length ?? 0;
       streamCtrl.add(empPtModel);
@@ -378,14 +443,165 @@ class PropertiesTaxController extends GetxController {
     }
   }
 
+  /// Get PT new applications form uses for employee
+  List<String> getPropertyAssessmentUse() {
+    final useTypes = empMdmsResModel?.mdmsResEmp?.propertyTax?.usageCategory
+        ?.where(
+          (e) => e.code!.split('.').length <= 2 && e.code != "NONRESIDENTIAL",
+        )
+        .map((owner) {
+          List<String> parts = owner.code!.split(".");
+          if (parts.length == 2) {
+            return parts[1];
+          } else {
+            return owner.code;
+          }
+        })
+        .toSet()
+        .cast<String>()
+        .toList();
+
+    return useTypes ?? [];
+  }
+
+  String rawUsesTypeEmp(String useType) {
+    final useTypes = empMdmsResModel?.mdmsResEmp?.propertyTax?.usageCategory
+            ?.where(
+              (e) =>
+                  (e.code?.split('.').length ?? 0) <= 2 &&
+                  e.code != "NONRESIDENTIAL",
+            )
+            .map((owner) {
+              final code = owner.code;
+              if (code == null) return null;
+
+              if (code.contains('.')) {
+                List<String> parts = code.split('.');
+                return (parts.last == useType) ? code : null;
+              } else {
+                return (code == useType) ? code : null;
+              }
+            })
+            .whereType<String>()
+            .toList() ??
+        [];
+
+    return useTypes.isNotEmpty ? useTypes.first : '';
+  }
+
+  /// Get PT new applications form propertyTypes for employee
+  List<String> getPropertyAssessmentType() {
+    final propertyTypes = empMdmsResModel?.mdmsResEmp?.propertyTax?.propertyType
+        ?.map((e) => e.code as String)
+        .map((code) {
+      if (code.contains(".")) {
+        final parts = code.replaceAll(".", '_');
+        return parts.toUpperCase();
+      }
+      return code;
+    }).toList();
+    return propertyTypes ?? [];
+  }
+
+  /// Get PT new applications form property floors for employee
+  List<String> getPropertyAssessmentFloors() {
+    final floors = empMdmsResModel?.mdmsResEmp?.propertyTax?.floor
+        ?.map((e) => e.code as String)
+        .map((code) {
+      if (code.contains("-")) {
+        final parts = code.replaceAll("-", '_');
+        return parts;
+      }
+
+      return code;
+    }).toList();
+
+    return floors ?? [];
+  }
+
+  /// Get PT new applications form unit uses types for employee
+  List<String> getPropertyAssessmentUnitUsesTypes({required String useType}) {
+    final unitUses = empMdmsResModel?.mdmsResEmp?.propertyTax?.usageCategory
+        ?.where((e) => e.code != null)
+        .map((e) => e.code!)
+        .where((code) {
+          final parts = code.split(".");
+          if (parts.length > 3) {
+            // dPrint('Code: $code');
+            return parts[1] == useType;
+          }
+          return false;
+        })
+        .map((code) => code.replaceAll('.', '_').toUpperCase())
+        .toList();
+
+    return unitUses ?? [];
+  }
+
+  /// Get PT new applications form Provide_Ownership_Details for employee
+  List<String> getProvideOwnershipDetails() {
+    final useTypes = empMdmsResModel?.mdmsResEmp?.propertyTax?.ownerShipCategory
+        ?.where(
+          (e) => e.code!.split('.').length <= 2,
+        )
+        .map((owner) {
+          List<String> parts = owner.code!.split(".");
+          if (parts.length == 2) {
+            return parts[1];
+          } else {
+            return owner.code;
+          }
+        })
+        .toSet()
+        .cast<String>()
+        .toList();
+    return useTypes ?? [];
+  }
+
+  String getRawSingleOwner(String selectedOwner) {
+    final owners = empMdmsResModel?.mdmsResEmp?.propertyTax?.ownerShipCategory
+            ?.where(
+              (e) => e.code!.split('.').length <= 2,
+            )
+            .map((owner) {
+              final code = owner.code;
+              if (code == null) return null;
+
+              if (code.contains('.')) {
+                List<String> parts = code.split('.');
+                return (parts.last == selectedOwner) ? code : null;
+              } else {
+                return (code == selectedOwner) ? code : null;
+              }
+            })
+            .whereType<String>()
+            .toList() ??
+        [];
+
+    return owners.isNotEmpty ? owners.first : '';
+  }
+
   /// Load more my properties
   Future<void> loadMoreEmp({
     required String token,
     required String tenantId,
+    List? locality,
+    String? applicationNumber,
+    String? propertyId,
+    String? mobileNumber,
+    bool isFilter = false,
   }) async {
     isLoading.value = true;
     limit = limit + 10;
-    await getEmpPtInboxApplications(token: token, tenantId: tenantId);
+    await getEmpPtInboxApplications(
+      token: token,
+      tenantId: tenantId,
+      isFilter: isFilter,
+      locality: locality,
+      applicationNumber: applicationNumber,
+      propertyId: propertyId,
+      mobileNumber: mobileNumber,
+    );
     isLoading.value = false;
   }
 
@@ -413,6 +629,8 @@ class PropertiesTaxController extends GetxController {
 
       myProperties = PtMyProperties.fromJson(res);
       property = myProperties!.properties!.first;
+      propertyActionRequest =
+          PropertyActionRequest.fromJson(res['Properties'][0]);
       dPrint('getMyPropertiesEmp: $res');
     } catch (e, s) {
       dPrint('getPropertiesEmpError: $e');
@@ -426,16 +644,14 @@ class PropertiesTaxController extends GetxController {
     required ModulesEmp module,
   }) async {
     try {
-      var body = {
-        'Property': property.toJson(),
+      final body = {
+        'Property': propertyActionRequest?.toJson(),
       };
-
       final empRes = await InboxRepository.actionUpdate(
         token: token,
         body: body,
         type: module,
       );
-
       myProperties = PtMyProperties.fromJson(empRes);
       dPrint('------Action Update------');
       dPrint(myProperties!.toJson());
@@ -445,12 +661,36 @@ class PropertiesTaxController extends GetxController {
           myProperties?.properties?.firstOrNull?.acknowledgementNumber
         );
       }
-
       return (false, null);
     } catch (e, s) {
       dPrint('PT_UpdateEmpPTActionError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
       return (false, null);
     }
+  }
+
+  // EMP - PT Form crate
+  Future<Property?> createNewPTApplicationEmp({
+    required String token,
+    required PropertyRequest property,
+  }) async {
+    try {
+      dPrint('Property: ${property.toJson()}');
+      final body = {
+        'Property': property.toJson(),
+      };
+      final res = await PropertyTaxRepository.createProperties(
+        token: token,
+        body: body,
+      );
+
+      final propertyRes = PtMyProperties.fromJson(res).properties?.first;
+      return propertyRes;
+    } catch (e, s) {
+      Get.back();
+      dPrint('createNewPTApplicationEmpError: $e');
+      await ErrorHandler.allExceptionsHandler(e, s);
+    }
+    return null;
   }
 }

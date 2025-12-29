@@ -91,7 +91,7 @@ class _WsMyBillsScreenState extends State<WsMyBillsScreen> {
 
       _paymentController.isLoading.value = false;
     } catch (e) {
-      print("WS Error: $e");
+      dPrint("WS Error: $e");
     }
   }
 
@@ -233,7 +233,6 @@ class _WsMyBillsScreenState extends State<WsMyBillsScreen> {
             subtitle: _subTitleBuildCard(
               bill: bill,
               onPressed: () {
-                //TODO: Navigate to Bill Details Screen
                 goPayment(bill);
               },
             ),

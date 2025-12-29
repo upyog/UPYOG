@@ -166,7 +166,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
   }
 
   Future<void> _getProperties() async {
-    TenantTenant tenantCity = await getCityTenantEmployee();
+    TenantTenant tenantCity = await getCityTenant();
     _propertyFuture = _propertyController.getPropertiesByID(
       token: _authController.token!.accessToken!,
       propertyId: _waterController.sewerageConnection!.propertyId!,
@@ -220,7 +220,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
                               ),
                             ),
                           ),
-                          icon: MediumTextNotoSans(
+                          icon: MediumSelectableTextNotoSans(
                             text: getLocalizedString(i18.common.TAKE_ACTION),
                             size: o == Orientation.portrait ? 14.sp : 8.sp,
                             color: BaseConfig.mainBackgroundColor,
@@ -238,7 +238,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
                                 ?.map(
                                   (action) => PopupMenuItem<String>(
                                     value: action.action,
-                                    child: SmallTextNotoSans(
+                                    child: SmallSelectableTextNotoSans(
                                       text: LocalizeUtils.getTakeActionLocal(
                                         action.action,
                                         workflowCode:
@@ -260,7 +260,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
                             actionsList?.add(
                               PopupMenuItem<String>(
                                 value: 'edit',
-                                child: SmallTextNotoSans(
+                                child: SmallSelectableTextNotoSans(
                                   text: getLocalizedString(
                                     '${i18.common.WF_EMPLOYEE}${statusMap.businessService!}_EDIT'
                                         .toUpperCase(),
@@ -537,7 +537,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BigTextNotoSans(
+          BigSelectableTextNotoSans(
             text: getLocalizedString(
               i18.waterSewerage.APPLICATION_CHARGE,
               module: Modules.WS,
@@ -630,7 +630,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
               text: connection?.noOfToilets.toString() ?? 'N/A',
             ).paddingOnly(left: 7.0),
             SizedBox(height: 10.h),
-            BigTextNotoSans(
+            BigSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.waterSewerage.PLUMBER_DETAILS,
                 module: Modules.WS,
@@ -647,7 +647,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
               text: connection?.additionalDetails?.detailsProvidedBy ?? 'N/A',
             ).paddingOnly(left: 7.0),
             SizedBox(height: 10.h),
-            BigTextNotoSans(
+            BigSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.waterSewerage.ROAD_CUTTING_DETAILS,
                 module: Modules.WS,
@@ -663,7 +663,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
                 decoration: isRoadCuttingLengthBigger
                     ? BoxDecoration(
                         borderRadius: BorderRadius.circular(10.r),
-                        color: BaseConfig.borderColor.withOpacity(0.3),
+                        color: BaseConfig.borderColor.withValues(alpha: 0.3),
                         border: Border.all(
                           color: BaseConfig.borderColor,
                           width: 1,
@@ -731,7 +731,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BigTextNotoSans(
+            BigSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.waterSewerage.PROPERTY_DETAILS,
                 module: Modules.WS,
@@ -767,8 +767,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
           alignment: Alignment.centerLeft,
           child: TextButton(
             onPressed: () async {
-              final TenantTenant tenant = await getCityTenantEmployee();
-              //TODO: Details page
+              final TenantTenant tenant = await getCityTenant();
               Get.toNamed(
                 AppRoutes.WATER_PROPERTY_INFO,
                 arguments: {
@@ -829,7 +828,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            BigTextNotoSans(
+            BigSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.waterSewerage.WS_CONN_HOLDER_SAME_AS_OWNER_DETAILS,
                 module: Modules.WS,
@@ -988,7 +987,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
   //     child: Column(
   //       crossAxisAlignment: CrossAxisAlignment.start,
   //       children: [
-  //         BigTextNotoSans(
+  //         BigSelectableTextNotoSans(
   //           text: getLocalizedString(
   //             i18.waterSewerage.FEE_DETAILS_HEADER,
   //             module: Modules.WS,

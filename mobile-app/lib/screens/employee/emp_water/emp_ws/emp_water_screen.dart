@@ -69,7 +69,7 @@ class _EmpWaterScreenState extends State<EmpWaterScreen> {
   }
 
   Future<void> _fetchInbox() async {
-    tenantCity = await getCityTenantEmployee();
+    tenantCity = await getCityTenant();
     await _waterController.getEmpWsInboxApplications(
       token: _authController.token!.accessToken!,
       tenantId: '${tenantCity.code}',
@@ -150,7 +150,6 @@ class _EmpWaterScreenState extends State<EmpWaterScreen> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      //TODO: Implement filter functionality
                                       _openFilterBottomSheet(isSelected, o);
                                     },
                                     icon: SvgPicture.asset(
@@ -260,7 +259,6 @@ class _EmpWaterScreenState extends State<EmpWaterScreen> {
                       statusBackColor: BaseConfig.statusPendingBackColor,
                       o: o,
                       onTap: () {
-                        //TODO: GO to details page
                         Get.toNamed(
                           AppRoutes.EMP_WS_DETAILS,
                           arguments: {
@@ -308,18 +306,14 @@ class _EmpWaterScreenState extends State<EmpWaterScreen> {
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //TODO: Assigned Filter Widget
                 const AssignedFilter(),
                 SizedBox(height: 16.h),
-
                 MediumTextNotoSans(
                   text: '${getLocalizedString(i18.inbox.LOCALITY)}:',
                   fontWeight: FontWeight.w500,
                   size: o == Orientation.portrait ? 14.sp : 8.sp,
                 ),
                 SizedBox(height: 16.h),
-
-                //TODO: Locality Selection Widget
                 const LocalitySelectionWidget(),
               ],
             ),

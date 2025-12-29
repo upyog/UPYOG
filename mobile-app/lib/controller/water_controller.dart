@@ -13,8 +13,8 @@ import 'package:mobile_app/model/employee/emp_ws_model/emp_ws_model.dart';
 import 'package:mobile_app/repository/core_repository.dart';
 import 'package:mobile_app/repository/inbox_repository.dart';
 import 'package:mobile_app/repository/water_repository.dart';
-import 'package:mobile_app/services/hive_services.dart';
 import 'package:mobile_app/services/mdms_service.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/enums/emp_enums.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
@@ -246,7 +246,7 @@ class WaterController extends GetxController {
       water = Water.fromJson(res);
       length.value = water?.waterConnection?.length ?? 0;
     } catch (e, s) {
-      print('getWaterMyApplicationsFuture Error: $e');
+      dPrint('getWaterMyApplicationsFuture Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
     return water;
@@ -276,7 +276,7 @@ class WaterController extends GetxController {
       consumption = Consumption.fromJson(res);
       length.value = consumption?.meterReadings?.length ?? 0;
     } catch (e, s) {
-      print('getWaterConsumptionDetailsFuture Error: $e');
+      dPrint('getWaterConsumptionDetailsFuture Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
 
@@ -322,7 +322,7 @@ class WaterController extends GetxController {
       sewerageStreamCtrl.add(sewerage);
     } catch (e, s) {
       sewerageStreamCtrl.add('getSewerageMyApplications Error');
-      print('getSewerageMyApplications Error: $e');
+      dPrint('getSewerageMyApplications Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }
@@ -365,7 +365,7 @@ class WaterController extends GetxController {
 
       sewerageStreamCtrl.add(sewerage);
     } catch (e, s) {
-      print('getSewerageMyApplications Error: $e');
+      dPrint('getSewerageMyApplications Error: $e');
       sewerageStreamCtrl.add('Error fetching sewerage applications');
       ErrorHandler.allExceptionsHandler(e, s);
     }
@@ -438,7 +438,7 @@ class WaterController extends GetxController {
       dPrint('EMP WS: ${empWsModel.wsItems!.length}');
       streamCtrl.add(empWsModel);
     } catch (e, s) {
-      print('GetEmpWsInboxError: $e');
+      dPrint('GetEmpWsInboxError: $e');
       streamCtrl.add('Emp WS Inbox Error');
       ErrorHandler.allExceptionsHandler(e, s);
     }
@@ -494,7 +494,7 @@ class WaterController extends GetxController {
       dPrint('EMP SW: ${empWsModel.wsItems!.length}');
       streamCtrl.add(empWsModel);
     } catch (e, s) {
-      print('GetEmpSwInboxError: $e');
+      dPrint('GetEmpSwInboxError: $e');
       streamCtrl.add('Emp SW Inbox Error');
       ErrorHandler.allExceptionsHandler(e, s);
     }
@@ -557,7 +557,7 @@ class WaterController extends GetxController {
         }
       }
     } catch (e, s) {
-      print('getWaterConnection Error: $e');
+      dPrint('getWaterConnection Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }
@@ -600,7 +600,7 @@ class WaterController extends GetxController {
 
       estimate = Estimate.fromJson(estimateRes);
     } catch (e, s) {
-      print('getEstimateCharge Error: $e');
+      dPrint('getEstimateCharge Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }
@@ -638,16 +638,16 @@ class WaterController extends GetxController {
 
       if (module == ModulesEmp.WS_SERVICES) {
         water = Water.fromJson(empRes);
-        print('------Action Update------');
-        print(waterConnection?.toJson());
+        dPrint('------Action Update------');
+        dPrint(waterConnection?.toJson());
         if (water!.responseInfo!.status == 'successful') {
           return (true, water?.waterConnection?.firstOrNull?.applicationNo);
         }
       }
       if (module == ModulesEmp.SW_SERVICES) {
         sewerage = Sewerage.fromJson(empRes);
-        print('------Action Update------');
-        print(sewerage?.toJson());
+        dPrint('------Action Update------');
+        dPrint(sewerage?.toJson());
         if (sewerage!.responseInfo!.status == 'successful') {
           return (
             true,
@@ -658,7 +658,7 @@ class WaterController extends GetxController {
 
       return (false, null);
     } catch (e, s) {
-      print('WS/WS_UpdateEmpTlActionError: $e');
+      dPrint('WS/WS_UpdateEmpTlActionError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
       return (false, null);
     }
@@ -678,7 +678,7 @@ class WaterController extends GetxController {
 
       empMdmsResModel = EmpMdmsResModel.fromJson(empRes);
     } catch (e, s) {
-      print('GetMdmsWsSw Error: $e');
+      dPrint('GetMdmsWsSw Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }
@@ -738,8 +738,8 @@ class WaterController extends GetxController {
   /// Check WS/SW additional details for EMP
   Future<bool> checkEditWaterDetailsLocalData(String value) async {
     if (value == 'VERIFY_AND_FORWARD') {
-      final editAppData = await HiveService.getData(
-        HiveConstants.WS_SESSION_APPLICATION_DETAILS,
+      final editAppData = await storage.getString(
+        SecureStorageConstants.WS_SESSION_APPLICATION_DETAILS,
       );
 
       dPrint('Edit App Data: $editAppData');
@@ -753,7 +753,7 @@ class WaterController extends GetxController {
 
   /// Clear edit water details data
   Future<void> clearEditWaterDetailsLocalData() async {
-    await HiveService.deleteData(HiveConstants.WS_SESSION_APPLICATION_DETAILS);
+    await storage.delete(SecureStorageConstants.WS_SESSION_APPLICATION_DETAILS);
     editSewerageConnection.value = null;
     editWaterConnection.value = null;
 
@@ -762,14 +762,15 @@ class WaterController extends GetxController {
 
   /// Update edit water details data for emp ws/sw
   void updateEditApplicationFormData({Modules module = Modules.WS}) async {
-    final data =
-        await HiveService.getData(HiveConstants.WS_SESSION_APPLICATION_DETAILS);
+    final data = await storage
+        .getString(SecureStorageConstants.WS_SESSION_APPLICATION_DETAILS);
     if (isNotNullOrEmpty(data) && module == Modules.WS) {
-      editWaterConnection.value = WaterConnection.fromJson(jsonDecode(data));
+      editWaterConnection.value =
+          WaterConnection.fromJson(jsonDecode(data ?? ''));
     }
     if (isNotNullOrEmpty(data) && module == Modules.SW) {
       editSewerageConnection.value =
-          SewerageConnection.fromJson(jsonDecode(data));
+          SewerageConnection.fromJson(jsonDecode(data ?? ''));
     }
   }
 }

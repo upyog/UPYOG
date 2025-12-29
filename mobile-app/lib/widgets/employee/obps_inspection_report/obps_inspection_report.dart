@@ -93,7 +93,7 @@ class _ObpsInspectionReportState extends State<ObpsInspectionReport> {
   }
 
   addImage(String section, int index) async {
-    var pickFile = await _fileController.selectAndPickFile();
+    final pickFile = await _fileController.selectAndPickFile(isPop: false);
     if (pickFile.$1 == null) return;
 
     final fileType = _fileController.getFileTypeString(pickFile.$1!.path);
@@ -104,12 +104,10 @@ class _ObpsInspectionReportState extends State<ObpsInspectionReport> {
       module: BusinessServicesEmp.BPA.name,
     );
 
-    if (fireId == null) {
-      return snackBar('Error', 'File upload issue', BaseConfig.redColor);
-    }
+    if (fireId == null) return;
 
     final newDoc = CustomDoc(
-      name: '', // fileName,
+      name: '',
       filePath: pickFile.$1!.path,
       docType: fileType.$2.name,
       sectionName: section,
@@ -482,7 +480,6 @@ class _ObpsInspectionReportState extends State<ObpsInspectionReport> {
                             BaseConfig.mainBackgroundColor.withAlpha(50),
                       ),
                       onPressed: () {
-                        //TODO: Delete photo
                         removeImage(sectionName, fileDoc.name);
                       },
                       icon: Icon(

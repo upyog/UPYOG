@@ -280,7 +280,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
   Widget _buildBottomBarTakeAction({required Orientation o}) {
     return Obx(
       () => Container(
-        color: BaseConfig.shadeAmberColor.withOpacity(0.3),
+        color: BaseConfig.shadeAmberColor.withValues(alpha: 0.3),
         height:
             _timelineController.isTermsConditionsAccepted.value ? 120.h : 60.h,
         child: Column(
@@ -334,7 +334,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                 child: SingleChildScrollView(
                                   child: Column(
                                     children: [
-                                      MediumTextNotoSans(
+                                      MediumSelectableTextNotoSans(
                                         text: getLocalizedString(
                                           i18.building.TERMS_AND_CONDITIONS,
                                           module: Modules.BPA,
@@ -342,7 +342,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                       const Divider(),
-                                      SmallTextNotoSans(
+                                      SmallSelectableTextNotoSans(
                                         text: '${getLocalizedString(
                                           i18.building
                                               .CITIZEN_DECLARATION_LABEL_1,
@@ -393,7 +393,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                             ),
                           ),
                         ),
-                        icon: MediumTextNotoSans(
+                        icon: MediumSelectableTextNotoSans(
                           text: getLocalizedString(i18.common.TAKE_ACTION),
                           size: o == Orientation.portrait ? 14.sp : 8.sp,
                           color: BaseConfig.mainBackgroundColor,
@@ -412,7 +412,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                             .map(
                               (action) => PopupMenuItem<String>(
                                 value: action.action,
-                                child: SmallTextNotoSans(
+                                child: SmallSelectableTextNotoSans(
                                   text: LocalizeUtils.getTakeActionLocal(
                                     action.action,
                                     workflowCode: newBpaData.businessService!
@@ -433,7 +433,6 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                             )
                             .toList(),
                         onSelected: (value) async {
-                          //TODO: Take Action
                           dPrint(value);
 
                           // Get the next state of the action
@@ -536,7 +535,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                   tenantId: newBpaData.tenantId!,
                                 );
                               },
-                              child: MediumText(
+                              child: MediumSelectableTextNotoSans(
                                 text: getLocalizedString(
                                   i18.common.TIMELINE,
                                   module: Modules.BPA,
@@ -558,7 +557,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                       color: BaseConfig.redColor1,
                                     ),
                                     const SizedBox(width: 5),
-                                    MediumText(
+                                    MediumSelectableTextNotoSans(
                                       text: getLocalizedString(
                                         i18.common.DOWNLOAD,
                                       ),
@@ -588,7 +587,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                       value: getLocalizedString(
                                         i18.common.BPA_APP_FEE_RECEIPT,
                                       ),
-                                      child: MediumText(
+                                      child: MediumSelectableTextNotoSans(
                                         text: getLocalizedString(
                                           i18.common.BPA_APP_FEE_RECEIPT,
                                         ),
@@ -673,7 +672,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                       value: getLocalizedString(
                                         i18.common.BPA_APP_FEE_RECEIPT,
                                       ),
-                                      child: MediumText(
+                                      child: MediumSelectableTextNotoSans(
                                         text: getLocalizedString(
                                           i18.common.BPA_APP_FEE_RECEIPT,
                                         ),
@@ -708,7 +707,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                             isNotNullOrEmpty(
                                               payment?.fileStoreId,
                                             )) {
-                                          print('BPA_OC');
+                                          dPrint('BPA_OC');
                                           final newFileStore =
                                               await _fileController.getFiles(
                                             fileStoreIds: payment!.fileStoreId!,
@@ -752,7 +751,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                           if (isNotNullOrEmpty(
                                             pdfFileStoreId,
                                           )) {
-                                            print('BPA_LOW');
+                                            dPrint('BPA_LOW');
                                             final newFileStore =
                                                 await _fileController.getFiles(
                                               fileStoreIds: pdfFileStoreId,
@@ -869,7 +868,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                       value: getLocalizedString(
                                         i18.common.BPA_PERMIT_ORDER,
                                       ),
-                                      child: MediumText(
+                                      child: MediumSelectableTextNotoSans(
                                         text: getLocalizedString(
                                           i18.common.BPA_PERMIT_ORDER,
                                         ),
@@ -918,7 +917,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                                         i18.building.SAN_FEE_RECEIPT,
                                         module: Modules.BPA,
                                       ),
-                                      child: MediumText(
+                                      child: MediumSelectableTextNotoSans(
                                         text: getLocalizedString(
                                           i18.building.SAN_FEE_RECEIPT,
                                           module: Modules.BPA,
@@ -1388,7 +1387,6 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              //TODO: Noc
                               BuildExpansion(
                                 title: getLocalizedString(
                                   i18.building.NOC_DETAILS,
@@ -1468,7 +1466,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
               final feeData = snapshot.data;
               if (feeData is PaymentModel && feeData.payments!.isNotEmpty) {
                 if (!isNotNullOrEmpty(feeData.payments)) {
-                  return MediumTextNotoSans(
+                  return MediumSelectableTextNotoSans(
                     text: getLocalizedString(i18.common.NO_DATA),
                   );
                 } else {
@@ -1594,7 +1592,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BigTextNotoSans(
+          BigSelectableTextNotoSans(
             text: getLocalizedString(
               i18.building.BASIC_DETAILS,
               module: Modules.BPA,
@@ -1747,544 +1745,534 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
 
   //Scrutiny Detail Widget
   Widget _scrutinyDetails() {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      color: BaseConfig.mainBackgroundColor,
-      child: Column(
-        children: [
-          MediumText(
-            text: getLocalizedString(
-              i18.building.EDCR_DETAILS,
-              module: Modules.BPA,
-            ),
-            fontWeight: FontWeight.bold,
+    return Column(
+      children: [
+        MediumSelectableTextNotoSans(
+          text: getLocalizedString(
+            i18.building.EDCR_DETAILS,
+            module: Modules.BPA,
           ),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.building.EDCR_NUMBER,
-              module: Modules.BPA,
-            ),
-            text: newBpaData.edcrNumber ?? "N/A",
+          fontWeight: FontWeight.bold,
+        ),
+        ColumnHeaderText(
+          label: getLocalizedString(
+            i18.building.EDCR_NUMBER,
+            module: Modules.BPA,
           ),
-          const SizedBox(
-            height: 10,
+          text: newBpaData.edcrNumber ?? "N/A",
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        MediumSelectableTextNotoSans(
+          text: getLocalizedString(
+            i18.building.UPLOADED_PLAN_DIAG,
+            module: Modules.BPA,
           ),
-          MediumText(
-            text: getLocalizedString(
-              i18.building.UPLOADED_PLAN_DIAG,
-              module: Modules.BPA,
-            ),
-            fontWeight: FontWeight.bold,
-          ),
-          if (isNotNullOrEmpty(_edrcData?.planReport))
-            Column(
-              children: [
-                Container(
-                  width: Get.width,
-                  decoration: BoxDecoration(
-                    color: BaseConfig.greyColor2,
-                    // border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      _fileController.getFileType(_edrcData!.planReport!).$1,
-                      size: 40.sp,
-                      color: BaseConfig.greyColor3,
-                    ),
+          fontWeight: FontWeight.bold,
+        ),
+        if (isNotNullOrEmpty(_edrcData?.planReport))
+          Column(
+            children: [
+              Container(
+                width: Get.width,
+                decoration: BoxDecoration(
+                  color: BaseConfig.greyColor2,
+                  // border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    _fileController.getFileType(_edrcData!.planReport!).$1,
+                    size: 40.sp,
+                    color: BaseConfig.greyColor3,
                   ),
                 ),
-                SizedBox(height: 10.h),
-              ],
-            ).ripple(() {
-              dPrint(_edrcData!.updatedDxfFile!);
-              final fileType =
-                  _fileController.getFileType(_edrcData!.updatedDxfFile!).$2;
-              dPrint('FileType: ${fileType.name}');
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ).ripple(() {
+            dPrint(_edrcData!.updatedDxfFile!);
+            final fileType =
+                _fileController.getFileType(_edrcData!.updatedDxfFile!).$2;
+            dPrint('FileType: ${fileType.name}');
 
-              if (fileType.name == FileExtType.pdf.name) {
-                showTypeDialogue(
-                  context,
-                  url: _edrcData!.updatedDxfFile!,
-                  isPdf: true,
-                  title: getLocalizedString(
-                    i18.building.UPLOADED_PLAN_DIAG,
-                    module: Modules.BPA,
-                  ),
-                );
-              } else if (fileType.name == FileExtType.dxf.name) {
-                launchURL(_edrcData!.updatedDxfFile!);
-                //TODO: DXF file download
-              } else {
-                launchURL(_edrcData!.updatedDxfFile!);
-              }
-            }),
-          const SizedBox(
-            height: 10,
+            if (fileType.name == FileExtType.pdf.name) {
+              showTypeDialogue(
+                context,
+                url: _edrcData!.updatedDxfFile!,
+                isPdf: true,
+                title: getLocalizedString(
+                  i18.building.UPLOADED_PLAN_DIAG,
+                  module: Modules.BPA,
+                ),
+              );
+            } else if (fileType.name == FileExtType.dxf.name) {
+              launchURL(_edrcData!.updatedDxfFile!);
+            } else {
+              launchURL(_edrcData!.updatedDxfFile!);
+            }
+          }),
+        const SizedBox(
+          height: 10,
+        ),
+        MediumSelectableTextNotoSans(
+          text: getLocalizedString(
+            i18.building.SCRUNITY_REPORT_OUTPUT,
+            module: Modules.BPA,
           ),
-          MediumText(
-            text: getLocalizedString(
-              i18.building.SCRUNITY_REPORT_OUTPUT,
-              module: Modules.BPA,
-            ),
-            fontWeight: FontWeight.bold,
-          ),
-          if (isNotNullOrEmpty(_edrcData?.planReport))
-            Column(
-              children: [
-                Container(
-                  width: Get.width,
-                  decoration: BoxDecoration(
-                    color: BaseConfig.greyColor2,
-                    // border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      _fileController.getFileType(_edrcData!.planReport!).$1,
-                      size: 40,
-                      color: BaseConfig.greyColor3,
-                    ),
+          fontWeight: FontWeight.bold,
+        ),
+        if (isNotNullOrEmpty(_edrcData?.planReport))
+          Column(
+            children: [
+              Container(
+                width: Get.width,
+                decoration: BoxDecoration(
+                  color: BaseConfig.greyColor2,
+                  // border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    _fileController.getFileType(_edrcData!.planReport!).$1,
+                    size: 40,
+                    color: BaseConfig.greyColor3,
                   ),
                 ),
-                const SizedBox(height: 10),
-              ],
-            ).ripple(() {
-              final fileType =
-                  _fileController.getFileType(_edrcData!.planReport!).$2;
-              dPrint('FileType: ${fileType.name}');
-              if (fileType.name == FileExtType.pdf.name) {
-                showTypeDialogue(
-                  context,
-                  url: _edrcData!.planReport!,
-                  isPdf: true,
-                  title: getLocalizedString(
-                    i18.building.SCRUNITY_REPORT_OUTPUT,
-                    module: Modules.BPA,
-                  ),
-                );
-              } else if (fileType.name == FileExtType.dxf.name) {
-                launchURL(_edrcData!.planReport!);
-              } else {
-                launchURL(_edrcData!.planReport!);
-              }
-            }),
-        ],
-      ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ).ripple(() {
+            final fileType =
+                _fileController.getFileType(_edrcData!.planReport!).$2;
+            dPrint('FileType: ${fileType.name}');
+            if (fileType.name == FileExtType.pdf.name) {
+              showTypeDialogue(
+                context,
+                url: _edrcData!.planReport!,
+                isPdf: true,
+                title: getLocalizedString(
+                  i18.building.SCRUNITY_REPORT_OUTPUT,
+                  module: Modules.BPA,
+                ),
+              );
+            } else if (fileType.name == FileExtType.dxf.name) {
+              launchURL(_edrcData!.planReport!);
+            } else {
+              launchURL(_edrcData!.planReport!);
+            }
+          }),
+      ],
     );
   }
 
   Widget _blockOccupancy() {
-    return Container(
-      color: BaseConfig.mainBackgroundColor,
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          MediumText(
-            text: getLocalizedString(
-              i18.building.BLOCK_SUBHEADER,
-              module: Modules.BPA,
-            ),
-            fontWeight: FontWeight.bold,
+    return Column(
+      children: [
+        MediumSelectableTextNotoSans(
+          text: getLocalizedString(
+            i18.building.BLOCK_SUBHEADER,
+            module: Modules.BPA,
           ),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.building.SUB_OCCUPANCY,
-              module: Modules.BPA,
-            ),
-            text: "NA",
+          fontWeight: FontWeight.bold,
+        ),
+        ColumnHeaderText(
+          label: getLocalizedString(
+            i18.building.SUB_OCCUPANCY,
+            module: Modules.BPA,
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          if (_edrcData?.planDetail?.blocks != null)
-            SizedBox(
-              height: Get.height * 0.2,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: _edrcData?.planDetail?.blocks?.length,
-                itemBuilder: (context, index) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Table(
-                      defaultColumnWidth: const IntrinsicColumnWidth(),
-                      border: TableBorder.all(
-                        color: Colors.grey.shade300,
-                      ),
-                      children: [
-                        TableRow(
-                          children: [
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Center(
-                                  child: MediumText(
-                                    text: getLocalizedString(
-                                      i18.building.FLOOR,
-                                      module: Modules.BPA,
-                                    ),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Center(
-                                  child: MediumText(
-                                    text: getLocalizedString(
-                                      i18.building.LEVEL,
-                                      module: Modules.BPA,
-                                    ),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Center(
-                                  child: MediumText(
-                                    text: getLocalizedString(
-                                      i18.building.OCCUPANCY_TABLE,
-                                      module: Modules.BPA,
-                                    ),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Center(
-                                  child: MediumText(
-                                    text: getLocalizedString(
-                                      i18.building.BUILDUP,
-                                      module: Modules.BPA,
-                                    ),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Center(
-                                  child: MediumText(
-                                    text: getLocalizedString(
-                                      i18.building.FLOORAREA,
-                                      module: Modules.BPA,
-                                    ),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Center(
-                                  child: MediumText(
-                                    text: getLocalizedString(
-                                      i18.building.CARPETAREA,
-                                      module: Modules.BPA,
-                                    ),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        ..._edrcData!
-                            .planDetail!.blocks![index].building!.floors!
-                            .map((item) {
-                              return TableRow(
-                                decoration: BoxDecoration(
-                                  color: getRowColor(item.number ?? 0),
-                                ),
-                                children: [
-                                  TableCell(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Center(
-                                        child: SmallText(
-                                          text: getLocalizedString(
-                                            '${i18.building.BPA_FLOOR_NAME}${item.number}',
-                                            module: Modules.BPA,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Center(
-                                        child: SmallText(
-                                          text: '${item.number ?? "N/A"}',
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Center(
-                                        child: SmallText(
-                                          text: item.occupancies?[index]
-                                                  .typeHelper?.type?.name ??
-                                              "N/A",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Center(
-                                        child: SmallText(
-                                          text:
-                                              "${item.occupancies?[index].builtUpArea ?? "N/A"}",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Center(
-                                        child: SmallText(
-                                          text:
-                                              "${item.occupancies?[index].floorArea ?? "N/A"}",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Center(
-                                        child: SmallText(
-                                          text:
-                                              "${item.occupancies?[index].carpetArea ?? "N/A"}",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            })
-                            .toList()
-                            .reversed,
-                      ],
+          text: "NA",
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        if (_edrcData?.planDetail?.blocks != null)
+          SizedBox(
+            height: Get.height * 0.2,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _edrcData?.planDetail?.blocks?.length,
+              itemBuilder: (context, index) {
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Table(
+                    defaultColumnWidth: const IntrinsicColumnWidth(),
+                    border: TableBorder.all(
+                      color: Colors.grey.shade300,
                     ),
-                  );
-                },
-              ),
+                    children: [
+                      TableRow(
+                        children: [
+                          TableCell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Center(
+                                child: MediumSelectableTextNotoSans(
+                                  text: getLocalizedString(
+                                    i18.building.FLOOR,
+                                    module: Modules.BPA,
+                                  ),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Center(
+                                child: MediumSelectableTextNotoSans(
+                                  text: getLocalizedString(
+                                    i18.building.LEVEL,
+                                    module: Modules.BPA,
+                                  ),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Center(
+                                child: MediumSelectableTextNotoSans(
+                                  text: getLocalizedString(
+                                    i18.building.OCCUPANCY_TABLE,
+                                    module: Modules.BPA,
+                                  ),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Center(
+                                child: MediumSelectableTextNotoSans(
+                                  text: getLocalizedString(
+                                    i18.building.BUILDUP,
+                                    module: Modules.BPA,
+                                  ),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Center(
+                                child: MediumSelectableTextNotoSans(
+                                  text: getLocalizedString(
+                                    i18.building.FLOORAREA,
+                                    module: Modules.BPA,
+                                  ),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          TableCell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Center(
+                                child: MediumSelectableTextNotoSans(
+                                  text: getLocalizedString(
+                                    i18.building.CARPETAREA,
+                                    module: Modules.BPA,
+                                  ),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      ..._edrcData!.planDetail!.blocks![index].building!.floors!
+                          .map((item) {
+                            return TableRow(
+                              decoration: BoxDecoration(
+                                color: getRowColor(item.number ?? 0),
+                              ),
+                              children: [
+                                TableCell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Center(
+                                      child: SmallSelectableTextNotoSans(
+                                        text: getLocalizedString(
+                                          '${i18.building.BPA_FLOOR_NAME}${item.number}',
+                                          module: Modules.BPA,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TableCell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Center(
+                                      child: SmallSelectableTextNotoSans(
+                                        text: '${item.number ?? "N/A"}',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TableCell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Center(
+                                      child: SmallSelectableTextNotoSans(
+                                        text: item.occupancies?[index]
+                                                .typeHelper?.type?.name ??
+                                            "N/A",
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TableCell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Center(
+                                      child: SmallSelectableTextNotoSans(
+                                        text:
+                                            "${item.occupancies?[index].builtUpArea ?? "N/A"}",
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TableCell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Center(
+                                      child: SmallSelectableTextNotoSans(
+                                        text:
+                                            "${item.occupancies?[index].floorArea ?? "N/A"}",
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TableCell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Center(
+                                      child: SmallSelectableTextNotoSans(
+                                        text:
+                                            "${item.occupancies?[index].carpetArea ?? "N/A"}",
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          })
+                          .toList()
+                          .reversed,
+                    ],
+                  ),
+                );
+              },
             ),
-          // if (_edrcData?.planDetail?.blocks?.first.building?.floors != null)
-          //   SingleChildScrollView(
-          //     scrollDirection: Axis.horizontal,
-          //     child: Table(
-          //       defaultColumnWidth: const IntrinsicColumnWidth(),
-          //       border: TableBorder.all(
-          //         color: Colors.grey.shade300,
-          //       ),
-          //       children: [
-          //         TableRow(
-          //           children: [
-          //             TableCell(
-          //               child: Padding(
-          //                 padding: const EdgeInsets.all(5.0),
-          //                 child: Center(
-          //                   child: MediumText(
-          //                     text: getLocalizedString(i18.common.FLOOR),
-          //                     fontWeight: FontWeight.bold,
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             TableCell(
-          //               child: Padding(
-          //                 padding: const EdgeInsets.all(5.0),
-          //                 child: Center(
-          //                   child: MediumText(
-          //                     text: getLocalizedString(i18.common.LEVEL),
-          //                     fontWeight: FontWeight.bold,
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             TableCell(
-          //               child: Padding(
-          //                 padding: const EdgeInsets.all(5.0),
-          //                 child: Center(
-          //                   child: MediumText(
-          //                     text: getLocalizedString(
-          //                       i18.building.OCCUPANCY_TABLE,
-          //                       module: Modules.BPA,
-          //                     ),
-          //                     fontWeight: FontWeight.bold,
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             TableCell(
-          //               child: Padding(
-          //                 padding: const EdgeInsets.all(5.0),
-          //                 child: Center(
-          //                   child: MediumText(
-          //                     text: getLocalizedString(
-          //                       i18.building.BUILDUP,
-          //                       module: Modules.BPA,
-          //                     ),
-          //                     fontWeight: FontWeight.bold,
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             TableCell(
-          //               child: Padding(
-          //                 padding: const EdgeInsets.all(5.0),
-          //                 child: Center(
-          //                   child: MediumText(
-          //                     text: getLocalizedString(
-          //                       i18.building.FLOORAREA,
-          //                       module: Modules.BPA,
-          //                     ),
-          //                     fontWeight: FontWeight.bold,
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             TableCell(
-          //               child: Padding(
-          //                 padding: const EdgeInsets.all(5.0),
-          //                 child: Center(
-          //                   child: MediumText(
-          //                     text: getLocalizedString(
-          //                       i18.building.CARPETAREA,
-          //                       module: Modules.BPA,
-          //                     ),
-          //                     fontWeight: FontWeight.bold,
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //           ],
-          //         ),
-          //         ..._edrcData!.planDetail!.blocks!.first.building!.floors!
-          //             .map((item) {
-          //               return TableRow(
-          //                 decoration: BoxDecoration(
-          //                   color: _bpaController.getRowColor(item.number ?? 0),
-          //                 ),
-          //                 children: [
-          //                   TableCell(
-          //                     child: Padding(
-          //                       padding: const EdgeInsets.all(5.0),
-          //                       child: Center(
-          //                         child: SmallText(
-          //                           text: getLocalizedString('${i18.building.BPA_FLOOR_NAME}${item.number}',
-          //                           module: Modules.BPA
-          //                           ),
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   ),
-          //                   TableCell(
-          //                     child: Padding(
-          //                       padding: const EdgeInsets.all(5.0),
-          //                       child: Center(
-          //                         child: SmallText(
-          //                           text: '${item.number ?? "N/A"}',
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   ),
-          //                   TableCell(
-          //                     child: Padding(
-          //                       padding: const EdgeInsets.all(5.0),
-          //                       child: Center(
-          //                         child: SmallText(
-          //                           text: item.occupancies?.first.typeHelper
-          //                                   ?.type?.name ??
-          //                               "N/A",
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   ),
-          //                   TableCell(
-          //                     child: Padding(
-          //                       padding: const EdgeInsets.all(5.0),
-          //                       child: Center(
-          //                         child: SmallText(
-          //                           text:
-          //                               "${item.occupancies?.first.builtUpArea ?? "N/A"}",
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   ),
-          //                   TableCell(
-          //                     child: Padding(
-          //                       padding: const EdgeInsets.all(5.0),
-          //                       child: Center(
-          //                         child: SmallText(
-          //                           text:
-          //                               "${item.occupancies?.first.floorArea ?? "N/A"}",
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   ),
-          //                   TableCell(
-          //                     child: Padding(
-          //                       padding: const EdgeInsets.all(5.0),
-          //                       child: Center(
-          //                         child: SmallText(
-          //                           text:
-          //                               "${item.occupancies?.first.carpetArea ?? "N/A"}",
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   ),
-          //                 ],
-          //               );
-          //             })
-          //             .toList()
-          //             .reversed,
-          //       ],
-          //     ),
-          //   ),
-          const SizedBox(
-            height: 10,
           ),
-          MediumText(
-            text: getLocalizedString(
-              i18.building.DEMOLITION_DETAILS,
-              module: Modules.BPA,
-            ),
-            fontWeight: FontWeight.bold,
+        // if (_edrcData?.planDetail?.blocks?.first.building?.floors != null)
+        //   SingleChildScrollView(
+        //     scrollDirection: Axis.horizontal,
+        //     child: Table(
+        //       defaultColumnWidth: const IntrinsicColumnWidth(),
+        //       border: TableBorder.all(
+        //         color: Colors.grey.shade300,
+        //       ),
+        //       children: [
+        //         TableRow(
+        //           children: [
+        //             TableCell(
+        //               child: Padding(
+        //                 padding: const EdgeInsets.all(5.0),
+        //                 child: Center(
+        //                   child: MediumText(
+        //                     text: getLocalizedString(i18.common.FLOOR),
+        //                     fontWeight: FontWeight.bold,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             TableCell(
+        //               child: Padding(
+        //                 padding: const EdgeInsets.all(5.0),
+        //                 child: Center(
+        //                   child: MediumText(
+        //                     text: getLocalizedString(i18.common.LEVEL),
+        //                     fontWeight: FontWeight.bold,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             TableCell(
+        //               child: Padding(
+        //                 padding: const EdgeInsets.all(5.0),
+        //                 child: Center(
+        //                   child: MediumText(
+        //                     text: getLocalizedString(
+        //                       i18.building.OCCUPANCY_TABLE,
+        //                       module: Modules.BPA,
+        //                     ),
+        //                     fontWeight: FontWeight.bold,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             TableCell(
+        //               child: Padding(
+        //                 padding: const EdgeInsets.all(5.0),
+        //                 child: Center(
+        //                   child: MediumText(
+        //                     text: getLocalizedString(
+        //                       i18.building.BUILDUP,
+        //                       module: Modules.BPA,
+        //                     ),
+        //                     fontWeight: FontWeight.bold,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             TableCell(
+        //               child: Padding(
+        //                 padding: const EdgeInsets.all(5.0),
+        //                 child: Center(
+        //                   child: MediumText(
+        //                     text: getLocalizedString(
+        //                       i18.building.FLOORAREA,
+        //                       module: Modules.BPA,
+        //                     ),
+        //                     fontWeight: FontWeight.bold,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             TableCell(
+        //               child: Padding(
+        //                 padding: const EdgeInsets.all(5.0),
+        //                 child: Center(
+        //                   child: MediumText(
+        //                     text: getLocalizedString(
+        //                       i18.building.CARPETAREA,
+        //                       module: Modules.BPA,
+        //                     ),
+        //                     fontWeight: FontWeight.bold,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //         ..._edrcData!.planDetail!.blocks!.first.building!.floors!
+        //             .map((item) {
+        //               return TableRow(
+        //                 decoration: BoxDecoration(
+        //                   color: _bpaController.getRowColor(item.number ?? 0),
+        //                 ),
+        //                 children: [
+        //                   TableCell(
+        //                     child: Padding(
+        //                       padding: const EdgeInsets.all(5.0),
+        //                       child: Center(
+        //                         child: SmallText(
+        //                           text: getLocalizedString('${i18.building.BPA_FLOOR_NAME}${item.number}',
+        //                           module: Modules.BPA
+        //                           ),
+        //                         ),
+        //                       ),
+        //                     ),
+        //                   ),
+        //                   TableCell(
+        //                     child: Padding(
+        //                       padding: const EdgeInsets.all(5.0),
+        //                       child: Center(
+        //                         child: SmallText(
+        //                           text: '${item.number ?? "N/A"}',
+        //                         ),
+        //                       ),
+        //                     ),
+        //                   ),
+        //                   TableCell(
+        //                     child: Padding(
+        //                       padding: const EdgeInsets.all(5.0),
+        //                       child: Center(
+        //                         child: SmallText(
+        //                           text: item.occupancies?.first.typeHelper
+        //                                   ?.type?.name ??
+        //                               "N/A",
+        //                         ),
+        //                       ),
+        //                     ),
+        //                   ),
+        //                   TableCell(
+        //                     child: Padding(
+        //                       padding: const EdgeInsets.all(5.0),
+        //                       child: Center(
+        //                         child: SmallText(
+        //                           text:
+        //                               "${item.occupancies?.first.builtUpArea ?? "N/A"}",
+        //                         ),
+        //                       ),
+        //                     ),
+        //                   ),
+        //                   TableCell(
+        //                     child: Padding(
+        //                       padding: const EdgeInsets.all(5.0),
+        //                       child: Center(
+        //                         child: SmallText(
+        //                           text:
+        //                               "${item.occupancies?.first.floorArea ?? "N/A"}",
+        //                         ),
+        //                       ),
+        //                     ),
+        //                   ),
+        //                   TableCell(
+        //                     child: Padding(
+        //                       padding: const EdgeInsets.all(5.0),
+        //                       child: Center(
+        //                         child: SmallText(
+        //                           text:
+        //                               "${item.occupancies?.first.carpetArea ?? "N/A"}",
+        //                         ),
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ],
+        //               );
+        //             })
+        //             .toList()
+        //             .reversed,
+        //       ],
+        //     ),
+        //   ),
+        const SizedBox(
+          height: 10,
+        ),
+        MediumSelectableTextNotoSans(
+          text: getLocalizedString(
+            i18.building.DEMOLITION_DETAILS,
+            module: Modules.BPA,
           ),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.building.DEMOLITION_AREA,
-              module: Modules.BPA,
-            ),
-            text:
-                '${_edrcData?.planDetail?.planInformation?.demolitionArea} sq.mtrs',
+          fontWeight: FontWeight.bold,
+        ),
+        ColumnHeaderText(
+          label: getLocalizedString(
+            i18.building.DEMOLITION_AREA,
+            module: Modules.BPA,
           ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
+          text:
+              '${_edrcData?.planDetail?.planInformation?.demolitionArea} sq.mtrs',
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+      ],
     );
   }
 
@@ -2304,7 +2292,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: BaseConfig.greyColor2.withOpacity(0.2),
+        color: BaseConfig.greyColor2.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: BaseConfig.borderColor),
       ),
@@ -2313,7 +2301,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: MediumText(
+            child: MediumSelectableTextNotoSans(
               text:
                   "${getLocalizedString(i18.building.INSPECTION_REPORT, module: Modules.BPA)} - ${index + 1}",
               fontWeight: FontWeight.bold,
@@ -2496,50 +2484,45 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
   }
 
   Widget _buildingProposedAbstractWidget() {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      color: BaseConfig.mainBackgroundColor,
-      child: Column(
-        children: [
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.building.TOTAL_BUILDUP_AREA,
-              module: Modules.BPA,
-            ),
-            text:
-                '${_edrcData?.planDetail?.virtualBuilding?.totalBuitUpArea} sq.mtrs',
+    return Column(
+      children: [
+        ColumnHeaderText(
+          label: getLocalizedString(
+            i18.building.TOTAL_BUILDUP_AREA,
+            module: Modules.BPA,
           ),
-          const SizedBox(
-            height: 10,
+          text:
+              '${_edrcData?.planDetail?.virtualBuilding?.totalBuitUpArea} sq.mtrs',
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        ColumnHeaderText(
+          label: getLocalizedString(
+            i18.building.NUMBER_FLOOR,
+            module: Modules.BPA,
           ),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.building.NUMBER_FLOOR,
-              module: Modules.BPA,
-            ),
-            text: _edrcData
-                    ?.planDetail?.blocks?.first.building?.floorsAboveGround
-                    .toString() ??
-                "N/A",
+          text: _edrcData?.planDetail?.blocks?.first.building?.floorsAboveGround
+                  .toString() ??
+              "N/A",
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        ColumnHeaderText(
+          label: getLocalizedString(
+            i18.building.HEIGHT_FROM_GROUND,
+            module: Modules.BPA,
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.building.HEIGHT_FROM_GROUND,
-              module: Modules.BPA,
-            ),
-            text: _edrcData
-                    ?.planDetail?.blocks?.first.building?.declaredBuildingHeight
-                    .toString() ??
-                "N/A",
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
+          text: _edrcData
+                  ?.planDetail?.blocks?.first.building?.declaredBuildingHeight
+                  .toString() ??
+              "N/A",
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+      ],
     );
   }
 
@@ -2572,7 +2555,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MediumText(
+          MediumSelectableTextNotoSans(
             text: getLocalizedString(
               'BPA_${nocElement.nocType}_HEADER',
               module: Modules.BPA,
@@ -2656,7 +2639,9 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
               ],
             )
           else
-            Text(getLocalizedString(i18.common.BPA_NO_DOCUMENT)),
+            MediumSelectableTextNotoSans(
+              text: getLocalizedString(i18.common.BPA_NO_DOCUMENT),
+            ),
         ],
       ),
     );
@@ -2671,7 +2656,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BigTextNotoSans(
+          BigSelectableTextNotoSans(
             text: getLocalizedString(
               i18.building.BPA_FEE_DETAILS,
               module: Modules.BPA,
@@ -2679,7 +2664,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
             fontWeight: FontWeight.w600,
             size: 16.sp,
           ).paddingOnly(top: 10),
-          MediumText(
+          MediumSelectableTextNotoSans(
             text: getLocalizedString(
               i18.building.BPA_APPL_FEES,
               module: Modules.BPA,
@@ -2721,7 +2706,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
           const SizedBox(
             height: 10,
           ),
-          MediumText(
+          MediumSelectableTextNotoSans(
             text: getLocalizedString(
               i18.building.BPA_FEES_DETAILS,
               module: Modules.BPA,

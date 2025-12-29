@@ -16,6 +16,7 @@ import 'package:mobile_app/controller/bpa_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/file_controller.dart';
 import 'package:mobile_app/controller/fire_noc_controller.dart';
+import 'package:mobile_app/controller/grievance_controller.dart';
 import 'package:mobile_app/controller/obps_dynamic_form_controller.dart';
 import 'package:mobile_app/controller/properties_tax_controller.dart';
 import 'package:mobile_app/controller/timeline_controller.dart';
@@ -23,13 +24,13 @@ import 'package:mobile_app/controller/trade_license_controller.dart';
 import 'package:mobile_app/controller/water_controller.dart';
 import 'package:mobile_app/model/citizen/bpa_model/bpa_model.dart' as bp;
 import 'package:mobile_app/model/citizen/fire_noc/fire_noc.dart' as noc;
-import 'package:mobile_app/model/citizen/properties_tax/my_properties.dart'
-    as pt;
+import 'package:mobile_app/model/citizen/grievance/grievance.dart' as gr;
 import 'package:mobile_app/model/citizen/trade_license/trade_license.dart';
 import 'package:mobile_app/model/citizen/water_sewerage/sewerage.dart' as s;
 import 'package:mobile_app/model/citizen/water_sewerage/water.dart' as w;
 import 'package:mobile_app/model/employee/employee_model/employees_model.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/model/request/emp_property_action_request/emp_property_action_request_model.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/enums/emp_enums.dart';
@@ -59,6 +60,24 @@ class InboxController extends GetxController {
     commentsController.dispose();
   }
 
+  //Emp Grievance action
+  List<Employee>? filterAssigneesPGR() {
+    final grievanceController = Get.find<GrievanceController>();
+    final serviceCode =
+        grievanceController.serviceWrapper?.service?.serviceCode;
+    final service = grievanceController.getDepartment(serviceCode ?? '');
+
+    return timelineController.employeeModel?.employees
+        ?.where(
+          (emp) =>
+              emp.assignments?.any(
+                (assignment) => assignment.department == service?.department,
+              ) ??
+              false,
+        )
+        .toList();
+  }
+
   // Action dialog for all modules
   actionDialogue(
     context, {
@@ -72,6 +91,7 @@ class InboxController extends GetxController {
   }) {
     isLoading.value = false;
     dPrint('Localize Module: ${module.name}');
+    dPrint('${i18.common.CS_COMMON}$action');
     showDialog(
       context: context,
       useSafeArea: false,
@@ -112,24 +132,40 @@ class InboxController extends GetxController {
                         size: 17,
                       ),
                     )
-                  : SizedBox(
-                      width: 200,
-                      child: Center(
-                        child: Tooltip(
+                  : sectionType == ModulesEmp.PGR_SERVICES
+                      ? Tooltip(
                           message: getLocalizedString(
-                            'WF_${action}_APPLICATION',
+                            i18.grievance.EMP_ASSIGN,
+                            module: module,
                           ),
                           child: MediumTextNotoSans(
                             text: getLocalizedString(
-                              'WF_${action}_APPLICATION',
+                              i18.grievance.EMP_ASSIGN,
+                              module: module,
                             ),
-                            textOverflow: TextOverflow.ellipsis,
                             fontWeight: FontWeight.w600,
+                            textOverflow: TextOverflow.ellipsis,
                             size: 17,
                           ),
+                        )
+                      : SizedBox(
+                          width: 200,
+                          child: Center(
+                            child: Tooltip(
+                              message: getLocalizedString(
+                                'WF_${action}_APPLICATION',
+                              ),
+                              child: MediumTextNotoSans(
+                                text: getLocalizedString(
+                                  'WF_${action}_APPLICATION',
+                                ),
+                                textOverflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.w600,
+                                size: 17,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
             ),
           ],
         ),
@@ -141,7 +177,6 @@ class InboxController extends GetxController {
               isLoading: isLoading.value,
               circularColor: BaseConfig.mainBackgroundColor,
               onPressed: () async {
-                //TODO: Forward update api call
                 try {
                   FocusScope.of(context).unfocus();
 
@@ -232,11 +267,15 @@ class InboxController extends GetxController {
                       'BPA_${action}_BUTTON'.toUpperCase(),
                       module: module,
                     )
-                  : getLocalizedString(
-                      '${i18.common.WF_EMPLOYEE}${workFlowId}_$action'
-                          .toUpperCase(),
-                      module: module,
-                    ),
+                  : sectionType == ModulesEmp.PGR_SERVICES
+                      ? getLocalizedString(
+                          '${i18.common.CS_COMMON}$action'.toUpperCase(),
+                        )
+                      : getLocalizedString(
+                          '${i18.common.WF_EMPLOYEE}${workFlowId}_$action'
+                              .toUpperCase(),
+                          module: module,
+                        ),
             ),
           ),
         ],
@@ -249,14 +288,26 @@ class InboxController extends GetxController {
                   if (action != BaseAction.reject.name &&
                       action != BaseAction.sendBackToCitizen.name &&
                       action != BaseAction.revocate.name &&
-                      !isCitizen) ...[
+                      action != BaseAction.resolve.name &&
+                      !isCitizen &&
+                      isNotNullOrEmpty(
+                        timelineController.employeeModel?.employees,
+                      )) ...[
                     dropDownButton<Employee>(
                       context,
-                      hinText: 'Assignee name',
+                      hinText: sectionType == ModulesEmp.PGR_SERVICES
+                          ? getLocalizedString(
+                              i18.grievance.EMP_EMPLOYEE_NAME,
+                              module: module,
+                            )
+                          : 'Assignee name',
                       radius: 6.r,
                       contentPadding: EdgeInsets.all(10.w),
-                      items:
-                          timelineController.employeeModel.employees?.map((e) {
+                      items: (sectionType == ModulesEmp.PGR_SERVICES
+                              ? filterAssigneesPGR()
+                              : timelineController.employeeModel?.employees ??
+                                  [])
+                          ?.map((e) {
                         return DropdownMenuItem(
                           value: e,
                           child: SmallTextNotoSans(text: e.user?.name ?? 'N/A'),
@@ -285,9 +336,14 @@ class InboxController extends GetxController {
                                   .toUpperCase(),
                               module: module,
                             )}*'
-                          : '${getLocalizedString(
-                              i18.common.COMMENTS.toUpperCase(),
-                            )}*',
+                          : sectionType == ModulesEmp.PGR_SERVICES
+                              ? '${getLocalizedString(
+                                  i18.grievance.EMP_EMPLOYEE_COMMENTS,
+                                  module: module,
+                                )}*'
+                              : '${getLocalizedString(
+                                  i18.common.COMMENTS.toUpperCase(),
+                                )}*',
                       radius: 6.r,
                       keyboardType: TextInputType.multiline,
                     ),
@@ -303,7 +359,6 @@ class InboxController extends GetxController {
                       color: BaseConfig.appThemeColor1,
                     ),
                     onPressed: () {
-                      //TODO: Choose file
                       openBottomSheet(
                         title: 'Choose image source',
                         onTabImageGallery: () {
@@ -325,7 +380,6 @@ class InboxController extends GetxController {
                               SizedBox(
                                 height: 80.h,
                                 width: 80.w,
-                                //TODO: File Image
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10.r),
                                   child: Image.file(
@@ -345,7 +399,6 @@ class InboxController extends GetxController {
                                       backgroundColor: Colors.black54,
                                     ),
                                     onPressed: () {
-                                      //TODO: Delete photo
                                       fileController.removeSelectedImage();
                                     },
                                     icon: Icon(
@@ -377,7 +430,6 @@ class InboxController extends GetxController {
     required bool isCitizen,
   }) async {
     switch (module) {
-      //TODO: TL update action
       case ModulesEmp.TL_SERVICES:
         final tlController = Get.find<TradeLicenseController>();
         if (fileController.isSelectedFile.value) {
@@ -408,7 +460,7 @@ class InboxController extends GetxController {
           license: tlController.tradeLicense.licenses!.first,
         );
 
-      //TODO: WS update action
+      //WS update action
       case ModulesEmp.WS_SERVICES:
         final waterController = Get.find<WaterController>();
         final process = waterController.waterConnection?.processInstance;
@@ -440,11 +492,11 @@ class InboxController extends GetxController {
 
         if (action == BaseAction.forward.name ||
             action == BaseAction.verifyForward.name) {
-          final data = await HiveService.getData(
-            HiveConstants.WS_SESSION_APPLICATION_DETAILS,
+          final data = await storage.getString(
+            SecureStorageConstants.WS_SESSION_APPLICATION_DETAILS,
           );
           w.WaterConnection editWaterConnection =
-              w.WaterConnection.fromJson(jsonDecode(data));
+              w.WaterConnection.fromJson(jsonDecode(data ?? '{}'));
 
           waterController.waterConnection
             ?..plumberInfo = editWaterConnection.plumberInfo
@@ -481,7 +533,7 @@ class InboxController extends GetxController {
           module: module,
         );
 
-      //TODO: SW update action
+      // SW update action
       case ModulesEmp.SW_SERVICES:
         final waterController = Get.find<WaterController>();
         final process = waterController.sewerageConnection?.processInstance;
@@ -513,12 +565,12 @@ class InboxController extends GetxController {
 
         if (action == BaseAction.forward.name ||
             action == BaseAction.verifyForward.name) {
-          final data = await HiveService.getData(
-            HiveConstants.WS_SESSION_APPLICATION_DETAILS,
+          final data = await storage.getString(
+            SecureStorageConstants.WS_SESSION_APPLICATION_DETAILS,
           );
 
           s.SewerageConnection editSewerageConnection =
-              s.SewerageConnection.fromJson(jsonDecode(data));
+              s.SewerageConnection.fromJson(jsonDecode(data ?? '{}'));
 
           waterController.sewerageConnection
             ?..plumberInfo = editSewerageConnection.plumberInfo
@@ -552,7 +604,8 @@ class InboxController extends GetxController {
           sewerageConnection: waterController.sewerageConnection,
           module: module,
         );
-      //TODO: BPA update action
+
+      // BPA update action
       case ModulesEmp.BPA_SERVICES:
         final bpaController = Get.find<BpaController>();
         final dynamicFormController = Get.find<ObpsDynamicFormController>();
@@ -649,22 +702,22 @@ class InboxController extends GetxController {
           module: module,
         );
 
-      //TODO: PT update action
+      // PT update action
       case ModulesEmp.PT_SERVICES:
         final ptController = Get.find<PropertiesTaxController>();
-        ptController.property.workflow ??= pt.Workflow()
+        ptController.propertyActionRequest?.workflow ??= Workflow()
           ..action = action
           ..moduleName = module.name
           ..businessService = workflowId
           ..comment = commentsController.text;
 
         if (fileController.isSelectedFile.value) {
-          var wfDocs = pt.WorkflowDocument()
+          var wfDocs = WorkflowDocument()
             ..fileStoreId = fileId
             ..documentType = '$action DOC'
             ..fileName = fileController.fileName;
 
-          ptController.property.workflow!.wfDocuments = [
+          ptController.propertyActionRequest?.workflow?.documents = [
             wfDocs,
           ];
         }
@@ -672,11 +725,11 @@ class InboxController extends GetxController {
         if (assigneeUuid.isNotEmpty &&
             action != BaseAction.reject.name &&
             action != BaseAction.sendBackToCitizen.name) {
-          var assignee = pt.Assignee()
+          var assignee = Assignee()
             ..name = assigneeName
             ..uuid = assigneeUuid;
 
-          ptController.property.workflow!.assignees = [
+          ptController.propertyActionRequest?.workflow?.assignes = [
             assignee,
           ];
         }
@@ -685,7 +738,7 @@ class InboxController extends GetxController {
           token: authController.token!.accessToken!,
           module: module,
         );
-      //TODO: FireNoc update action
+      //FireNoc update action
       case ModulesEmp.FIRE_NOC:
         final fireNocController = Get.find<FireNocController>();
         fireNocController.fireNoc?.fireNocDetails?.action = action;
@@ -735,6 +788,72 @@ class InboxController extends GetxController {
         return await fireNocController.empActionUpdate(
           token: authController.token!.accessToken!,
           module: module,
+        );
+
+      case ModulesEmp.PGR_SERVICES:
+        final grievanceController = Get.find<GrievanceController>();
+
+        grievanceController.serviceWrapper?.workflow?.action = action;
+        grievanceController.serviceWrapper?.workflow?.comments =
+            commentsController.text;
+        grievanceController.serviceWrapper?.workflow?.verificationDocuments =
+            [];
+
+        if (fileController.isSelectedFile.value) {
+          var wfDocs = gr.VerificationDocument()
+            ..fileStoreId = fileId
+            ..documentType = 'PHOTO'
+            ..documentUid = '';
+
+          grievanceController.serviceWrapper?.workflow?.verificationDocuments =
+              [
+            wfDocs,
+          ];
+        }
+
+        final city = grievanceController
+            .serviceWrapper?.service?.address?.tenantId
+            ?.replaceAll('.', '_')
+            .toUpperCase();
+
+        final serviceDef = grievanceController.getDepartment(
+          grievanceController.serviceWrapper?.service?.serviceCode ?? '',
+        );
+
+        final detailsReq = {
+          "CS_COMPLAINT_DETAILS_COMPLAINT_NO":
+              grievanceController.serviceWrapper?.service?.serviceRequestId ??
+                  '',
+          "CS_COMPLAINT_DETAILS_APPLICATION_STATUS":
+              "CS_COMMON_${grievanceController.serviceWrapper?.service?.applicationStatus}",
+          "CS_ADDCOMPLAINT_COMPLAINT_TYPE":
+              "SERVICEDEFS.${serviceDef?.menuPath?.toUpperCase()}",
+          "CS_ADDCOMPLAINT_COMPLAINT_SUB_TYPE":
+              "SERVICEDEFS.${grievanceController.serviceWrapper?.service?.serviceCode?.toUpperCase()}",
+          "CS_ADDCOMPLAINT_PRIORITY_LEVEL":
+              grievanceController.serviceWrapper?.service?.priority ?? '',
+          "CS_COMPLAINT_ADDTIONAL_DETAILS":
+              grievanceController.serviceWrapper?.service?.description ?? '',
+          "CS_COMPLAINT_FILED_DATE": grievanceController
+                  .serviceWrapper?.service?.auditDetails?.createdTime
+                  .toCustomDateFormat() ??
+              '',
+          "ES_CREATECOMPLAINT_ADDRESS": [
+            grievanceController.serviceWrapper?.service?.address?.landmark ??
+                '',
+            "${city}_ADMIN_${grievanceController.serviceWrapper?.service?.address?.locality?.code}",
+            "${grievanceController.serviceWrapper?.service?.address?.city}",
+            "${grievanceController.serviceWrapper?.service?.address?.pinCode}",
+          ],
+        };
+
+        final service = grievanceController.serviceWrapper
+          ?..details = detailsReq;
+
+        return await grievanceController.empActionUpdate(
+          token: authController.token!.accessToken!,
+          module: module,
+          serviceWrapperRequest: service,
         );
       default:
         return (false, null);

@@ -91,7 +91,8 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                             bottom: 8.w,
                           ),
                           decoration: BoxDecoration(
-                            color: BaseConfig.appThemeColor1.withOpacity(0.1),
+                            color: BaseConfig.appThemeColor1
+                                .withValues(alpha: 0.1),
                           ),
                           child: const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,7 +293,9 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SmallTextNotoSans(
-                                text: 'Call Center / Helpline',
+                                text: getLocalizedString(
+                                  i18.common.CALL_CENTER_HELPLINE,
+                                ),
                                 size: o == Orientation.portrait ? 10.sp : 6.sp,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -385,14 +388,18 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   SmallTextNotoSans(
-                                    text: 'Citizen Service Center',
+                                    text: getLocalizedString(
+                                      i18.common.CITIZEN_SERVICE_CENTER,
+                                    ),
                                     size: o == Orientation.portrait
                                         ? 10.sp
                                         : 6.sp,
                                     fontWeight: FontWeight.w500,
                                   ),
                                   TextButtonNotoSans(
-                                    text: 'View on Map',
+                                    text: getLocalizedString(
+                                      i18.common.VIEW_ON_MAP,
+                                    ),
                                     fontSize: o == Orientation.portrait
                                         ? 10.sp
                                         : 6.sp,
@@ -509,7 +516,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                             Obx(
                               () => BenefitPoint(
                                 text:
-                                    '${issuedValue.value} Application issued in last 12 months',
+                                    '${issuedValue.value} ${getLocalizedString(i18.propertyTax.PROPERTIES_REGISTERED,module: Modules.PT)}',
                                 o: o,
                               ),
                             ),
@@ -517,20 +524,20 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                             Obx(
                               () => BenefitPoint(
                                 text:
-                                    '${renewedValue.value} Application renewed in last 12 months',
+                                    '${renewedValue.value} ${getLocalizedString(i18.propertyTax.APPLICATION_PROCESSED,module: Modules.PT)}',
                                 o: o,
                               ),
                             ),
                             SizedBox(height: 12.h),
                             BenefitPoint(
                               text:
-                                  'Average time of processing an application is less than ${(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData != null && _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.isNotEmpty) ? _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.first.pt?.staticDataOne ?? "-" : "-"}',
+                                  '${getLocalizedString(i18.propertyTax.APPLICATION_PROCESSING,module: Modules.PT)} ${(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData != null && _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.isNotEmpty) ? _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.first.pt?.staticDataOne ?? "-" : "-"} ${getLocalizedString(i18.propertyTax.PT_COMMON_DAYS,module: Modules.PT)}',
                               o: o,
                             ),
                             SizedBox(height: 12.h),
                             BenefitPoint(
                               text:
-                                  'Total fee collected for application processing is about Rs ${(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData != null && _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.isNotEmpty) ? _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.first.pt?.staticDataTwo ?? "-" : "-"}',
+                                  '${getLocalizedString(i18.propertyTax.APPLICATION_PROCESSING_FEE,module: Modules.PT)} ${(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData != null && _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.isNotEmpty) ? _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.first.pt?.staticDataTwo ?? "-" : "-"}',
                               o: o,
                             ),
                           ],

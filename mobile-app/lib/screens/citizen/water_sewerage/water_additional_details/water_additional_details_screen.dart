@@ -210,8 +210,9 @@ class WaterAdditionalDetailsScreen extends StatelessWidget {
                 i18.waterSewerage.PLUMBER_PROVIDED_BY,
                 module: module,
               )}:',
-              text: sewerageConnection?.additionalDetails?.detailsProvidedBy !=
-                      null
+              text: isNotNullOrEmpty(
+                sewerageConnection?.additionalDetails?.detailsProvidedBy,
+              )
                   ? (sewerageConnection!.additionalDetails?.detailsProvidedBy ==
                           "ULB")
                       ? getLocalizedString(
@@ -229,8 +230,9 @@ class WaterAdditionalDetailsScreen extends StatelessWidget {
                               i18.waterSewerage.PLUMBER_SELF,
                               module: module,
                             )
-                  : waterConnection?.additionalDetails?.detailsProvidedBy !=
-                          null
+                  : isNotNullOrEmpty(
+                      waterConnection?.additionalDetails?.detailsProvidedBy,
+                    )
                       ? (waterConnection!
                                   .additionalDetails?.detailsProvidedBy ==
                               "ULB")
@@ -304,12 +306,14 @@ class WaterAdditionalDetailsScreen extends StatelessWidget {
                 module: module,
               )}:',
               text: isNotNullOrEmpty(
-                sewerageConnection?.roadCuttingInfo?.first.roadCuttingArea,
+                sewerageConnection
+                    ?.roadCuttingInfo?.firstOrNull?.roadCuttingArea,
               )
                   ? sewerageConnection!.roadCuttingInfo!.first.roadCuttingArea
                       .toString()
                   : isNotNullOrEmpty(
-                      waterConnection?.roadCuttingInfo?.first.roadCuttingArea,
+                      waterConnection
+                          ?.roadCuttingInfo?.firstOrNull?.roadCuttingArea,
                     )
                       ? waterConnection!.roadCuttingInfo!.first.roadCuttingArea
                           .toString()

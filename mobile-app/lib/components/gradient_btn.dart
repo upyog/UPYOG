@@ -11,7 +11,7 @@ Widget gradientBtn({
   Function()? onPressed,
   required String text,
   bool isLoading = false,
-  double fontSize = 18.0,
+  double? fontSize,
   FontWeight fontWeight = FontWeight.w700,
   Color buttonColor = BaseConfig.appThemeColor1,
   Color textColor = Colors.white,
@@ -35,12 +35,18 @@ Widget gradientBtn({
         ),
         // minimumSize:
         //     MaterialStateProperty.all(Size(Get.width, 50)),
-        backgroundColor: WidgetStateProperty.all(Colors.transparent),
+        backgroundColor: WidgetStateProperty.resolveWith(
+          (states) {
+            return states.contains(WidgetState.pressed)
+                ? BaseConfig.appThemeColor2.withValues(alpha: 0.1)
+                : buttonColor;
+          },
+        ),
         shadowColor: WidgetStateProperty.all(Colors.transparent),
         overlayColor: WidgetStateProperty.resolveWith(
           (states) {
             return states.contains(WidgetState.pressed)
-                ? BaseConfig.appThemeColor1.withOpacity(0.5)
+                ? BaseConfig.appThemeColor1.withValues(alpha: 0.5)
                 : null;
           },
         ),
@@ -55,7 +61,7 @@ Widget gradientBtn({
           : BigTextNotoSans(
               text: text,
               color: textColor,
-              size: fontSize,
+              size: fontSize ?? 18.sp,
               fontWeight: fontWeight,
               textOverflow: TextOverflow.ellipsis,
             ),

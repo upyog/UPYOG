@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_app/model/citizen/files/file_store.dart';
 import 'package:mobile_app/model/citizen/token/token.dart';
-import 'package:mobile_app/model/citizen/user_profile/user_profile.dart';
+import 'package:mobile_app/utils/utils.dart';
 
 extension OnPressed on Widget {
   Widget ripple(
-    Function onPressed,
-  ) =>
+    Function onPressed, {
+    ShapeBorder? customBorder,
+  }) =>
       InkWell(
         onTap: () {
           onPressed();
         },
+        customBorder: customBorder,
         child: this,
       );
 
@@ -25,7 +28,7 @@ extension OnPressed on Widget {
         color: Colors.transparent,
         child: InkWell(
           radius: radiusSiz,
-          splashColor: rippleColor.withOpacity(0.5), // Ripple color
+          splashColor: rippleColor.withValues(alpha: 0.5), // Ripple color
           highlightColor: Colors.transparent,
           splashFactory: InkRipple.splashFactory,
           borderRadius: BorderRadius.circular(borderRadius),
@@ -62,13 +65,14 @@ extension DobValidator on String {
   }
 }
 
-extension UserProfileExtensions on UserProfile? {
-  String? getUserPhoto() {
-    if (this?.user != null && this!.user!.isNotEmpty) {
-      if (this?.user?.first.photo == null) return null;
-      return this!.user!.first.photo!.split(',').first;
+extension UserProfileExtensions on FileStore? {
+  String getUserPhoto() {
+    if (isNotNullOrEmpty(this) &&
+        this?.fileStoreIds != null &&
+        this!.fileStoreIds!.isNotEmpty) {
+      return this!.fileStoreIds!.first.url!.split(',').first;
     }
-    return null;
+    return '';
   }
 }
 

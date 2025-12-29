@@ -8,7 +8,7 @@ import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/model/citizen/localization/mdms_static_data.dart'
     as mdms;
 import 'package:mobile_app/model/request/emp_challan_request/taxt_head_model.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/utils.dart';
@@ -19,23 +19,19 @@ class CityController extends GetxController {
   Position? position;
   var cityName = ''.obs;
 
-  ///UC-Challans
   RxString selectedServiceCategory = ''.obs, selectedServiceType = ''.obs;
   RxList<mdms.BusinessService> filteredBusinessService =
       <mdms.BusinessService>[].obs;
   RxList<mdms.TaxHeadMaster> filteredTaxHead = <mdms.TaxHeadMaster>[].obs;
   List<TaxHeadModel> taxHeadAmounts = [];
 
-  //Popular Cities Start
-  final List<TenantTenant> allCities = []; // List of all cities
+  final List<TenantTenant> allCities = [];
   final RxList<TenantTenant> remainingCities = <TenantTenant>[].obs;
 
-  ///UC-Challans
   void setSelectedServiceCategoryUC(String serviceCategory) {
     selectedServiceCategory.value = serviceCategory;
   }
 
-  /// UC-Challans
   void clearUc() {
     selectedServiceCategory.value = '';
     selectedServiceType.value = '';
@@ -46,27 +42,28 @@ class CityController extends GetxController {
 
   Future<void> setSelectedCity(TenantTenant tenant) async {
     selectedCity.value = tenant.code!;
-    await HiveService.setData(Constants.HOME_CITY, jsonEncode(tenant));
+    await storage.setString(Constants.HOME_CITY, jsonEncode(tenant));
     update();
   }
 
   Future<void> setEmpSelectedCity(TenantTenant tenant) async {
     empSelectedCity.value = tenant.code!;
-    await HiveService.setData(Constants.HOME_CITY_EMP, jsonEncode(tenant));
+    await storage.setString(Constants.HOME_CITY_EMP, jsonEncode(tenant));
   }
 
   Future<void> fetchSelectedCity() async {
-    final userType = await HiveService.getData(Constants.USER_TYPE);
+    final userType = await storage.getString(Constants.USER_TYPE);
     if (userType == UserType.CITIZEN.name) {
-      final city = await HiveService.getData(Constants.HOME_CITY);
+      final city = await storage.getString(Constants.HOME_CITY);
       if (city != null) {
-        final jsonData = TenantTenant.fromJson(jsonDecode(city));
-        selectedCity.value = jsonData.code!;
+        final cityTenant = TenantTenant.fromJson(jsonDecode(city));
+        selectedCity.value = cityTenant.code!;
+        cityName.value = cityTenant.name!;
       }
       return;
     }
-    TenantTenant jsonData = await getCityTenantEmployee();
-    empSelectedCity.value = jsonData.code!;
+    TenantTenant empTenant = await getCityTenant();
+    empSelectedCity.value = empTenant.code!;
   }
 
   Future<void> fetchPosition() async {
@@ -101,10 +98,10 @@ class CityController extends GetxController {
 
   Future<void> getCityName(Position position) async {
     try {
-      List<Placemark> placemarks =
+      List<Placemark> placemark =
           await placemarkFromCoordinates(position.latitude, position.longitude);
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[0];
+      if (placemark.isNotEmpty) {
+        Placemark place = placemark[0];
         cityName.value = place.locality!;
         selectedCity.value = place.locality!;
         getFindCityFromLocation(place.locality!);

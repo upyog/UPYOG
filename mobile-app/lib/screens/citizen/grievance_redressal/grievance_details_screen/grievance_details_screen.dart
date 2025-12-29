@@ -6,6 +6,7 @@ import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/grievance_controller.dart';
 import 'package:mobile_app/model/citizen/grievance/grievance.dart';
+import 'package:mobile_app/model/citizen/localization/mdms_static_data.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/extension/extension.dart';
@@ -32,6 +33,7 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
   final pageController = PageController(viewportFraction: 1.05, keepPage: true);
   final _isLoading = false.obs;
   ServiceWrapper? serviceWrapper;
+  RainmakerPgr? rainmaker;
 
   @override
   void initState() {
@@ -43,12 +45,12 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
     try {
       serviceWrapper = Get.arguments['serviceWrappers'];
 
-      _grievanceController.timelineServiceWrapper = serviceWrapper!;
+      _grievanceController.serviceWrapper = serviceWrapper!;
 
       if (_authController.isValidUser) {
         _isLoading.value = true;
 
-        await Get.find<CommonController>().fetchLabels(modules: Modules.PT);
+        rainmaker = await _grievanceController.getMdmsPgr();
 
         await _grievanceController.getIndividualGrievance(
           token: _authController.token!.accessToken!,
@@ -78,105 +80,120 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
             height: Get.height,
             width: Get.width,
             padding: EdgeInsets.all(o == Orientation.portrait ? 16.w : 12.w),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          width: Get.width * 0.5.w,
-                          child: Tooltip(
-                            message: isNotNullOrEmpty(
-                              serviceWrapper?.service?.serviceCode,
-                            )
-                                ? getLocalizedString(
-                                    '${i18.common.SERVICE_DEFS}${serviceWrapper?.service?.serviceCode}'
-                                        .toUpperCase(),
-                                    module: Modules.PGR,
-                                  )
-                                : 'N/A',
-                            child: MediumTextNotoSans(
-                              text: isNotNullOrEmpty(
-                                serviceWrapper?.service?.serviceCode,
-                              )
-                                  ? getLocalizedString(
-                                      '${i18.common.SERVICE_DEFS}${serviceWrapper?.service?.serviceCode}'
-                                          .toUpperCase(),
-                                      module: Modules.PGR,
+            child: Obx(
+              () => _isLoading.value
+                  ? showCircularIndicator()
+                  : SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  width: Get.width * 0.5.w,
+                                  child: Tooltip(
+                                    message: isNotNullOrEmpty(
+                                      serviceWrapper?.service?.serviceCode,
                                     )
-                                  : 'N/A',
-                              fontWeight: FontWeight.w700,
-                              size: o == Orientation.portrait ? 14.sp : 8.sp,
-                              maxLine: 2,
-                              textOverflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Card(
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: getGrievanceStatusTextColor(
-                                serviceWrapper?.service?.applicationStatus ??
-                                    '',
-                              ),
-                              width: 1.w,
-                            ),
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          color: getGrievanceStatusBackColor(
-                            serviceWrapper?.service?.applicationStatus ?? '',
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 14.w,
-                              vertical: 8.h,
-                            ),
-                            child: Center(
-                              child: MediumTextNotoSans(
-                                text: getLocalizedString(
-                                  '${i18.common.CS_COMMON}${serviceWrapper?.service?.applicationStatus}',
-                                  module: Modules.PGR,
+                                        ? getLocalizedString(
+                                            '${i18.common.SERVICE_DEFS}${serviceWrapper?.service?.serviceCode}'
+                                                .toUpperCase(),
+                                            module: Modules.PGR,
+                                          )
+                                        : 'N/A',
+                                    child: MediumTextNotoSans(
+                                      text: isNotNullOrEmpty(
+                                        serviceWrapper?.service?.serviceCode,
+                                      )
+                                          ? getLocalizedString(
+                                              '${i18.common.SERVICE_DEFS}${serviceWrapper?.service?.serviceCode}'
+                                                  .toUpperCase(),
+                                              module: Modules.PGR,
+                                            )
+                                          : 'N/A',
+                                      fontWeight: FontWeight.w700,
+                                      size: o == Orientation.portrait
+                                          ? 14.sp
+                                          : 8.sp,
+                                      maxLine: 2,
+                                      textOverflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                 ),
-                                color: getGrievanceStatusTextColor(
-                                  serviceWrapper?.service?.applicationStatus ??
-                                      '',
-                                ),
-                                size: o == Orientation.portrait ? 12.sp : 8.sp,
-                                maxLine: 1,
-                                textOverflow: TextOverflow.ellipsis,
                               ),
-                            ),
+                              Expanded(
+                                child: Card(
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                      color: getGrievanceStatusTextColor(
+                                        serviceWrapper
+                                                ?.service?.applicationStatus ??
+                                            '',
+                                      ),
+                                      width: 1.w,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                  color: getGrievanceStatusBackColor(
+                                    serviceWrapper
+                                            ?.service?.applicationStatus ??
+                                        '',
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 14.w,
+                                      vertical: 8.h,
+                                    ),
+                                    child: Center(
+                                      child: MediumTextNotoSans(
+                                        text: getLocalizedString(
+                                          '${i18.common.CS_COMMON}${serviceWrapper?.service?.applicationStatus}',
+                                          module: Modules.PGR,
+                                        ),
+                                        color: getGrievanceStatusTextColor(
+                                          serviceWrapper?.service
+                                                  ?.applicationStatus ??
+                                              '',
+                                        ),
+                                        size: o == Orientation.portrait
+                                            ? 12.sp
+                                            : 8.sp,
+                                        maxLine: 1,
+                                        textOverflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
+                          SizedBox(height: 16.h),
+                          _DetailsBody(
+                            o: o,
+                            serviceWrapper: serviceWrapper,
+                            rainmaker: rainmaker,
+                          ),
+                          SizedBox(height: 16.h),
+                          const Divider(
+                            color: BaseConfig.borderColor,
+                          ),
+                          if (isNotNullOrEmpty(serviceWrapper?.service)) ...[
+                            SizedBox(height: 16.h),
+                            TimelineWidget2(
+                              modules: Modules.PGR,
+                              tenantId: serviceWrapper!.service!.tenantId!,
+                              businessIds:
+                                  serviceWrapper!.service!.serviceRequestId!,
+                              status:
+                                  serviceWrapper!.service!.applicationStatus!,
+                            ),
+                          ],
+                        ],
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  _DetailsBody(
-                    o: o,
-                    serviceWrapper: serviceWrapper,
-                  ),
-                  SizedBox(height: 16.h),
-                  const Divider(
-                    color: BaseConfig.borderColor,
-                  ),
-                  if (isNotNullOrEmpty(serviceWrapper?.service)) ...[
-                    SizedBox(height: 16.h),
-                    TimelineWidget2(
-                      modules: Modules.PGR,
-                      tenantId: serviceWrapper!.service!.tenantId!,
-                      businessIds: serviceWrapper!.service!.serviceRequestId!,
-                      status: serviceWrapper!.service!.applicationStatus!,
                     ),
-                  ],
-                ],
-              ),
             ),
           );
         },
@@ -189,13 +206,20 @@ class _DetailsBody extends StatelessWidget {
   const _DetailsBody({
     this.o = Orientation.portrait,
     this.serviceWrapper,
+    this.rainmaker,
   });
   final ServiceWrapper? serviceWrapper;
   final Orientation o;
+  final RainmakerPgr? rainmaker;
 
   @override
   Widget build(BuildContext context) {
     final grievanceController = Get.find<GrievanceController>();
+
+    final grievanceType = rainmaker?.serviceDefs?.firstWhereOrNull((e) {
+      return e.serviceCode == serviceWrapper?.service?.serviceCode;
+    });
+
     return Obx(
       () => ViewMore(
         isMore: grievanceController.isMore.value,
@@ -225,10 +249,12 @@ class _DetailsBody extends StatelessWidget {
                 i18.grievance.DETAILS_TYPE,
                 module: Modules.PGR,
               )}: ',
-              text: getLocalizedString(
-                '${i18.common.SERVICE_DEFS}GARBAGE',
-                module: Modules.PGR,
-              ),
+              text: isNotNullOrEmpty(grievanceType?.menuPath)
+                  ? getLocalizedString(
+                      '${i18.common.SERVICE_DEFS}${grievanceType!.menuPath!.toUpperCase()}',
+                      module: Modules.PGR,
+                    )
+                  : 'N/A',
               o: o,
             ),
             SizedBox(height: 8.h),
@@ -296,10 +322,12 @@ class _DetailsBody extends StatelessWidget {
                 i18.grievance.DETAILS_TYPE,
                 module: Modules.PGR,
               )}: ',
-              text: getLocalizedString(
-                '${i18.common.SERVICE_DEFS}GARBAGE',
-                module: Modules.PGR,
-              ),
+              text: isNotNullOrEmpty(grievanceType)
+                  ? getLocalizedString(
+                      '${i18.common.SERVICE_DEFS}${grievanceType!.menuPath!.toUpperCase()}',
+                      module: Modules.PGR,
+                    )
+                  : 'N/A',
               o: o,
             ),
             SizedBox(height: 8.h),

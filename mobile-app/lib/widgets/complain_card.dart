@@ -15,7 +15,7 @@ class ComplainCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.id,
-    required this.date,
+    this.date,
     required this.onTap,
     required this.status,
     required this.statusColor,
@@ -35,7 +35,7 @@ class ComplainCard extends StatelessWidget {
 
   final String title;
   final String id;
-  final String date;
+  final String? date;
   final String status;
   final String? address, sla, ulbOfficial, viewDetails, subtext, name, date2;
   final void Function() onTap;
@@ -101,14 +101,14 @@ class ComplainCard extends StatelessWidget {
                   color: BaseConfig.borderColor,
                 ),
                 SizedBox(height: 4.h),
-                SmallTextNotoSans(
+                SmallSelectableTextNotoSans(
                   text: id,
                   fontWeight: FontWeight.w400,
                   size: o == Orientation.portrait ? 12.sp : 7.sp,
                 ),
                 if (subtext != null) ...[
                   SizedBox(height: 4.h),
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: subtext ?? '',
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,
@@ -116,7 +116,7 @@ class ComplainCard extends StatelessWidget {
                 ],
                 if (name != null) ...[
                   SizedBox(height: 4.h),
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: name ?? '',
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,
@@ -124,22 +124,24 @@ class ComplainCard extends StatelessWidget {
                 ],
                 if (date2 != null) ...[
                   SizedBox(height: 4.h),
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: date2!,
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,
                   ),
                 ],
-                SizedBox(height: 4.h),
-                SmallTextNotoSans(
-                  text: date,
-                  fontWeight: FontWeight.w400,
-                  size: o == Orientation.portrait ? 12.sp : 7.sp,
-                ),
+                if (date != null) ...[
+                  SizedBox(height: 4.h),
+                  SmallSelectableTextNotoSans(
+                    text: date!,
+                    fontWeight: FontWeight.w400,
+                    size: o == Orientation.portrait ? 12.sp : 7.sp,
+                  ),
+                ],
 
                 if (address != null) ...[
                   SizedBox(height: 4.h),
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: address ?? '',
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,
@@ -148,7 +150,7 @@ class ComplainCard extends StatelessWidget {
 
                 if (ulbOfficial != null) ...[
                   SizedBox(height: 4.h),
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: ulbOfficial ?? '',
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,
@@ -156,7 +158,7 @@ class ComplainCard extends StatelessWidget {
                 ],
                 if (sla != null) ...[
                   SizedBox(height: 4.h),
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: sla ?? '',
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,
@@ -168,7 +170,7 @@ class ComplainCard extends StatelessWidget {
                   Row(
                     children: [
                       SizedBox(height: 4.h),
-                      SmallTextNotoSans(
+                      SmallSelectableTextNotoSans(
                         text: 'Rate:',
                         fontWeight: FontWeight.w400,
                         size: o == Orientation.portrait ? 12.sp : 7.sp,
@@ -193,7 +195,7 @@ class ComplainCard extends StatelessWidget {
                         color: statusColor,
                       ),
                       SizedBox(width: 8.w),
-                      SmallTextNotoSans(
+                      SmallSelectableTextNotoSans(
                         text: 'You have a new comment from Lorem',
                         fontWeight: FontWeight.w500,
                         size: o == Orientation.portrait ? 12.sp : 7.sp,
@@ -215,12 +217,19 @@ class ComplainCard extends StatelessWidget {
                   bottomRight: Radius.circular(12.r),
                 ),
               ),
-              child: MediumText(
-                text: status,
-                color: statusColor,
-                fontWeight: FontWeight.w600,
-                size: o == Orientation.portrait ? 14.sp : 8.sp,
-                textOverflow: TextOverflow.ellipsis,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Tooltip(
+                  message: status,
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: MediumTextNotoSans(
+                    text: status,
+                    color: statusColor,
+                    fontWeight: FontWeight.w600,
+                    size: o == Orientation.portrait ? 14.sp : 8.sp,
+                    textOverflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
             ),
           ],

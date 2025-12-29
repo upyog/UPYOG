@@ -42,7 +42,7 @@ class TimelineHistoryApp {
                   children: [
                     SizedBox(height: 10.w),
                     Expanded(
-                      child: MediumTextNotoSans(
+                      child: MediumSelectableTextNotoSans(
                         text: getLocalizedString(
                           i18.tradeLicense.APPLICATION_TIMELINE,
                         ),
@@ -108,7 +108,7 @@ class TimelineHistoryApp {
 
         !isNotNullOrEmpty(timelineData)
             ? const Center(
-                child: MediumTextNotoSans(text: 'No data found!'),
+                child: MediumSelectableTextNotoSans(text: 'No data found!'),
               ).marginOnly(top: 50.h)
             : SizedBox(
                 height: MediaQuery.sizeOf(context).height * 0.6,
@@ -200,12 +200,12 @@ class TimelineHistoryApp {
       }
     }
 
-    var isEmp = authController.userType?.value == UserType.EMPLOYEE.name;
+    final isEmp = authController.userType?.value == UserType.EMPLOYEE.name;
 
     dPrint(isEmp.toString());
-    print(timeData!.moduleName);
-    print("----------------------------");
-    print(timeData.state!.state);
+    dPrint(timeData!.moduleName);
+    dPrint("----------------------------");
+    dPrint(timeData.state!.state);
 
     return Padding(
       padding: const EdgeInsets.all(10.0),
@@ -214,7 +214,7 @@ class TimelineHistoryApp {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           if (timeData.state?.state != null)
-            MediumText(
+            MediumSelectableTextNotoSans(
               text: timeData.moduleName == ModulesEmp.SW_SERVICES.name
                   ? getLocalizedString(
                       'CS_${timeData.state!.state}'.toUpperCase(),
@@ -237,7 +237,7 @@ class TimelineHistoryApp {
                                   : Modules.COMMON,
                     ),
             ),
-          SmallText(
+          SmallSelectableTextNotoSans(
             text: timeData.auditDetails?.createdTime
                     .toCustomDateFormat(pattern: 'dd/MM/yyyy') ??
                 '',
@@ -246,33 +246,36 @@ class TimelineHistoryApp {
           if (timeData.assignes != null
               // && timeData!.state!.state == TimelineStateType.PENDINGATLME.name
               )
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SmallText(
-                  text: timeData.assignes!.first.name!,
-                  color: BaseConfig.textColor,
-                ),
-                Wrap(
-                  children: [
-                    Icon(
-                      Icons.phone,
-                      color: BaseConfig.textColor,
-                      size: 12.sp,
-                    ),
-                    SizedBox(width: 5.w),
-                    SmallTextNotoSans(
-                      text: timeData.assignes!.first.mobileNumber!,
-                      fontWeight: FontWeight.w400,
-                      size: 10.sp,
-                    ),
-                  ],
-                ).ripple(() async {
-                  await launchPhoneDialer(
-                    timeData!.assignes!.first.mobileNumber!,
-                  );
-                }),
-              ],
+            ...timeData.assignes!.map(
+              (assign) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SmallSelectableTextNotoSans(
+                    text: assign.name ?? '',
+                    color: BaseConfig.textColor,
+                  ),
+                  Wrap(
+                    children: [
+                      Icon(
+                        Icons.phone,
+                        color: BaseConfig.textColor,
+                        size: 12.sp,
+                      ),
+                      SizedBox(width: 5.w),
+                      SmallSelectableTextNotoSans(
+                        text: assign.mobileNumber ?? '',
+                        fontWeight: FontWeight.w400,
+                        size: 10.sp,
+                      ),
+                    ],
+                  ).ripple(() async {
+                    if (!isNotNullOrEmpty(assign.mobileNumber)) return;
+                    await launchPhoneDialer(
+                      assign.mobileNumber!,
+                    );
+                  }),
+                ],
+              ),
             ),
           if (timeData.comment != null) _buildComment(timeData),
           if (timeData.documents != null) ...[
@@ -316,8 +319,10 @@ class TimelineHistoryApp {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            MediumText(text: '${getLocalizedString(i18.common.COMMENTS)}:'),
-            SmallTextNotoSans(
+            MediumSelectableTextNotoSans(
+              text: '${getLocalizedString(i18.common.COMMENTS)}:',
+            ),
+            SmallSelectableTextNotoSans(
               text: timeData!.comment!,
               color: BaseConfig.textColor,
             ),
@@ -344,7 +349,7 @@ class TimelineHistoryApp {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const MediumText(text: 'Documents'),
+            const MediumSelectableTextNotoSans(text: 'Documents'),
             const SizedBox(height: 5),
             FutureBuilder(
               future: Get.find<FileController>().getFiles(

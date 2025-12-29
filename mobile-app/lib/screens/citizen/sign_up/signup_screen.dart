@@ -227,9 +227,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                   inputFormatters: [
                                                     LengthLimitingTextInputFormatter(
                                                       10,
-                                                    ), // Limit to 10 digits
+                                                    ), 
                                                     FilteringTextInputFormatter
-                                                        .digitsOnly, // Allow only digits
+                                                        .digitsOnly, 
                                                   ],
                                                   onChange: (value) {
                                                     //_authController.mobileNoController.value.text = value;
@@ -505,8 +505,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 )) {
                                                   return BaseConfig
                                                       .appThemeColor1
-                                                      .withOpacity(
-                                                    0.4,
+                                                      .withValues(
+                                                    alpha: 0.4,
                                                   ); // Color when the button is disabled
                                                 }
                                                 return BaseConfig
@@ -967,8 +967,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               WidgetState.disabled,
                                             )) {
                                               return BaseConfig.appThemeColor1
-                                                  .withOpacity(
-                                                0.4,
+                                                  .withValues(
+                                                alpha: 0.4,
                                               ); // Color when the button is disabled
                                             }
                                             return BaseConfig

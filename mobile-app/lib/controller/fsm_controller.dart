@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/model/citizen/fsm/fsm.dart';
-import 'package:mobile_app/repository/fsm_repoository.dart';
+import 'package:mobile_app/repository/fsm_repository.dart';
 import 'package:mobile_app/utils/errors/error_handler.dart';
 import 'package:mobile_app/utils/utils.dart';
 

@@ -145,7 +145,7 @@ import {
                 <StatusTable>
                 <Row
                     label={t("AST_DESIGNATION")}
-                    text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetAssignment?.designation))}`}
+                    text={`${t("COMMON_MASTERS_DESIGNATION_"+checkForNA(applicationDetails?.applicationData?.applicationData?.assetAssignment?.designation))}`}
                 />
                 </StatusTable>
                 <StatusTable>

@@ -69,12 +69,12 @@ class _TradeLicenseApprovedState extends State<TradeLicenseApproved> {
             stream: _tlController.streamCtrlApproved.stream,
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                final TradeLicense tl = snapshot.data;
+                var tl = snapshot.data;
 
                 if (snapshot.data is String || !isNotNullOrEmpty(tl.licenses)) {
                   return const NoApplicationFoundWidget();
                 }
-                return _buildTlApplication(tl);
+                return _buildTlApplication(tl as TradeLicense);
               } else if (snapshot.hasError) {
                 return networkErrorPage(
                   context,
@@ -217,7 +217,7 @@ class _TradeLicenseApprovedState extends State<TradeLicenseApproved> {
                               color: BaseConfig.borderColor,
                             ),
                             SizedBox(height: 4.h),
-                            SmallTextNotoSans(
+                            SmallSelectableTextNotoSans(
                               text: license.applicationNumber ?? "N/A",
                               fontWeight: FontWeight.w400,
                               size: o == Orientation.portrait ? 12.sp : 7.sp,

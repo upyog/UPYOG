@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart'
+    as image_compress;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -13,12 +15,13 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/env/app_config.dart';
+import 'package:mobile_app/main.dart';
 import 'package:mobile_app/model/citizen/date_filter_model.dart';
 import 'package:mobile_app/model/citizen/fsm/fsm.dart';
 import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/model/employee/status_map/status_map.dart';
 import 'package:mobile_app/routes/routes.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/api_constants.dart';
 import 'package:mobile_app/utils/constants/constants.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
@@ -33,27 +36,45 @@ String formatDate(DateTime date, {required String format}) {
 
 snackBar(String txt1, String txt2, Color color, {int seconds = 3}) {
   if (txt1.isEmpty && txt2.isEmpty) return;
-  Get.snackbar(
-    txt1,
-    txt2,
-    borderRadius: 0,
-    backgroundColor: color,
-    colorText: Colors.white,
-    maxWidth: double.infinity,
-    margin: EdgeInsets.zero,
-    padding: const EdgeInsets.all(12),
-    duration: Duration(seconds: seconds),
-    snackPosition: SnackPosition.BOTTOM,
+  if (scaffoldMessengerKey.currentState == null) return;
+  scaffoldMessengerKey.currentState?.showSnackBar(
+    SnackBar(
+      backgroundColor: color,
+      content: AnimatedContainer(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SmallTextNotoSans(
+              text: txt1,
+              fontWeight: FontWeight.w600,
+              size: 14,
+              color: Colors.white,
+            ),
+            const SizedBox(height: 5),
+            SmallTextNotoSans(
+              text: txt2,
+              fontWeight: FontWeight.w400,
+              size: 12,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+      duration: Duration(seconds: seconds),
+    ),
   );
 }
 
-dPrint(Object? value, {bool enableLog = false}) {
+dPrint(Object? value, {StackTrace? stackTrace, bool enableLog = false}) {
   if (kDebugMode) {
     if (enableLog) {
-      log('$value');
+      log('$value', stackTrace: stackTrace);
       return;
     }
-    print(value);
+    print('$value${stackTrace != null ? ' - $stackTrace' : ''}');
   }
 }
 
@@ -75,28 +96,20 @@ showWebViewDialogue(
 }) {
   dPrint('Privacy Url: $url');
 
-  InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
-    crossPlatform: InAppWebViewOptions(
-      useShouldOverrideUrlLoading: true,
-      mediaPlaybackRequiresUserGesture: false,
-      transparentBackground: true,
-      javaScriptEnabled: true,
-      cacheEnabled: true,
-      userAgent: Platform.isIOS
-          ? "Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/117.0.5938.108 Mobile/15E148 Safari/604.1"
-          : "",
-      supportZoom: true,
-      useOnLoadResource: true,
-    ),
-    android: AndroidInAppWebViewOptions(
-      useHybridComposition: true,
-    ),
-    ios: IOSInAppWebViewOptions(
-      allowsInlineMediaPlayback: true,
-    ),
+  InAppWebViewSettings options = InAppWebViewSettings(
+    useShouldOverrideUrlLoading: true,
+    mediaPlaybackRequiresUserGesture: false,
+    transparentBackground: true,
+    userAgent: Platform.isIOS
+        ? "Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/117.0.5938.108 Mobile/15E148 Safari/604.1"
+        : "",
+    useOnLoadResource: true,
+    allowsInlineMediaPlayback: true,
   );
 
   RxDouble progressVal = 0.0.obs;
+
+  const titleSize = '''window.document.getElementsByTagName('h1')[0].style.fontSize = "24px"''';
 
   return showAdaptiveDialog(
     context: context,
@@ -124,16 +137,20 @@ showWebViewDialogue(
               child: Stack(
                 children: [
                   InAppWebView(
-                    initialOptions: options,
-                    initialUrlRequest: URLRequest(url: Uri.parse(url)),
+                    initialSettings: options,
+                    initialUrlRequest:
+                        URLRequest(url: WebUri.uri(Uri.parse(url))),
                     onLoadStop: (controller, url) async {
-                      // Only for privacy policy
                       if (enablePrivacyTitleSize) {
-                        const titleSize =
-                            '''window.document.getElementsByTagName('h1')[0].style.fontSize = "24px"''';
                         await controller.evaluateJavascript(source: titleSize);
                       }
                       progressVal.value = 1.0;
+                    },
+                    onUpdateVisitedHistory: (controller, url, isReload) async {
+                      progressVal.value = 1.0;
+                      if (enablePrivacyTitleSize) {
+                        await controller.evaluateJavascript(source: titleSize);
+                      }
                     },
                     onProgressChanged: (controller, progress) {
                       progressVal.value = progress / 100;
@@ -141,7 +158,7 @@ showWebViewDialogue(
                   ),
                   Obx(
                     () => progressVal.value != 1.0
-                        ? Center(child: showCircularIndicator())
+                        ? showCircularIndicator()
                         : const SizedBox.shrink(),
                   ),
                 ],
@@ -225,23 +242,16 @@ String convertDateFormat(String? inputDate) {
 }
 
 Future<dynamic> getCityTenant() async {
-  final jsonData = await HiveService.getData(Constants.HOME_CITY);
-  if (jsonData == null) {
-    await clearData();
-    // return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-    return Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
-  }
-  final json = jsonDecode(jsonData);
-  final tenant = TenantTenant.fromJson(json);
-  return tenant;
-}
+  final userType = await storage.getString(Constants.USER_TYPE);
 
-Future<dynamic> getCityTenantEmployee() async {
-  final jsonData = await HiveService.getData(Constants.HOME_CITY_EMP);
+  final jsonData = userType == UserType.CITIZEN.name
+      ? await storage.getString(Constants.HOME_CITY)
+      : await storage.getString(Constants.HOME_CITY_EMP);
+
   if (jsonData == null) {
     await clearData();
-    // return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-    return Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+    return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+    // return Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
   }
   final json = jsonDecode(jsonData);
   final tenant = TenantTenant.fromJson(json);
@@ -375,18 +385,18 @@ launchURL(String url, {LaunchMode mode = LaunchMode.platformDefault}) async {
 // get the user type from the local storage [CITIZEN or EMPLOYEE]
 Future<String> getUserType() async {
   final String userType =
-      await HiveService.getData(Constants.USER_TYPE) ?? UserType.CITIZEN.name;
+      await storage.getString(Constants.USER_TYPE) ?? UserType.CITIZEN.name;
   return userType;
 }
 
 // Clear the data from the local storage
 Future<void> clearData() async {
-  await HiveService.deleteData(HiveConstants.LOGIN_KEY);
-  await HiveService.deleteData(HiveConstants.EMP_LOGIN_KEY);
+  await storage.delete(SecureStorageConstants.LOGIN_KEY);
+  await storage.delete(SecureStorageConstants.EMP_LOGIN_KEY);
 }
 
 Future<void> skipButton() async {
-  await HiveService.setData(HiveConstants.SKIP_BUTTON, true);
+  await storage.setBool(SecureStorageConstants.SKIP_BUTTON, true);
   Get.offAllNamed(AppRoutes.BOTTOM_NAV);
 }
 
@@ -483,7 +493,11 @@ bool isNotNullOrEmpty(dynamic value) {
     return value.isNotEmpty;
   }
 
-  if (value is Iterable || value is List || value is Set || value is Map) {
+  if (value is Iterable ||
+      value is List ||
+      value is List<dynamic> ||
+      value is Set ||
+      value is Map) {
     return value.isNotEmpty;
   }
 
@@ -588,6 +602,7 @@ BusinessService getBusinessServiceByStatus(String service) {
         BusinessService.COLLECTION_AND_DEMOLITION_WASTE_CHALLAN_FEE,
     'FSM.TRIP_CHARGES': BusinessService.FSM_TRIP_CHARGES,
     'FIRENOC': BusinessService.FIRENOC,
+    'RT.Parking_Fee': BusinessService.RT_PARKING_FEE,
   };
 
   if (serviceMap.containsKey(service)) {
@@ -662,7 +677,7 @@ String getRiskType(String wfState) {
 }
 
 //Error Pop-up
-void showErrorDialog(String statusCode, message, url) {
+void showErrorDialog(String? message, String? url) {
   if (Get.isDialogOpen == true) {
     Get.back();
   }
@@ -722,14 +737,14 @@ void showErrorDialog(String statusCode, message, url) {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SmallTextNotoSans(
-                          text: message,
+                          text: message ?? '',
                           fontWeight: FontWeight.w600,
                           size: 15.h,
                           color: BaseConfig.redColor,
                         ),
                         const Divider(),
                         SmallTextNotoSans(
-                          text: url,
+                          text: url ?? '',
                           fontWeight: FontWeight.w400,
                           size: 14.h,
                           color: BaseConfig.redColor,
@@ -870,10 +885,86 @@ Future<void> showDatePickerModal({
 
 /// Get local
 Future<String> getLocal() async {
-  final local = await HiveService.getData(
-    Constants.LOCALE,
+  final local = await storage.getString(Constants.LANGUAGE);
+
+  return local ?? '';
+}
+
+/// Modify the string by removing the last part after the underscore
+/// and replacing the underscore with a hyphen and adding a hyphen at the start
+/// Example: 'ROPERTYTAX_FLOOR_12' => '12' or 'ROPERTYTAX_FLOOR__4' => '-4'
+String modifyUnderscoreAndAddedMinus(String input) {
+  if (input.contains("__")) {
+    final parts = input.split('__').last;
+    return '-$parts';
+  } else if (input.contains("_")) {
+    return input.split('_').last;
+  }
+  return input;
+}
+
+/// Modify the string by removing the last part after the underscore
+/// and replacing the underscore with a hyphen and adding a hyphen at the start
+/// Example: 'ROPERTYTAX_FLOOR_12' => '12' or 'ROPERTYTAX_FLOOR__4' => '-4'
+String modifyUnderscoreMinusToUnderscore(String input) {
+  if (input.contains("-")) {
+    final parts = input.replaceAll('-', '__');
+    return parts;
+  } else {
+    return '_$input';
+  }
+}
+
+/// Compress the image file to reduce its size if 5mb or more.
+/// Image compression quality 80%.
+Future<File> compressImage(File imageFile, {int quality = 90}) async {
+  int fileSize = await imageFile.length();
+  dPrint(
+    'Original image size: ${(fileSize / (1024 * 1024)).toStringAsFixed(2)}MB',
   );
 
-  dPrint(local.toString());
-  return local ?? '';
+  if (fileSize >= BaseConfig.MAX_FILE_SIZE_BYTES) {
+    final tempDir = Directory.systemTemp;
+    final targetPath =
+        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
+
+    image_compress.XFile? compressedFile;
+
+    while (quality >= 30) {
+      compressedFile =
+          await image_compress.FlutterImageCompress.compressAndGetFile(
+        imageFile.path,
+        targetPath,
+        quality: quality,
+        format: image_compress.CompressFormat.jpeg,
+      );
+
+      if (compressedFile != null) {
+        int compressedSize = await compressedFile.length();
+        dPrint(
+          'Compressed image size (quality $quality%): ${(compressedSize / (1024 * 1024)).toStringAsFixed(2)} MB',
+        );
+
+        if (compressedSize <= 4 * 1024 * 1024) {
+          imageFile = File(compressedFile.path);
+          break;
+        } else {
+          quality -= 10;
+        }
+      } else {
+        quality -= 10;
+      }
+    }
+  }
+  return imageFile;
+}
+
+bool isImageFile(File file) {
+  final String extension = file.path.split('.').last.toLowerCase();
+  final List<String> imageExtensions = [
+    'jpg',
+    'jpeg',
+    'png',
+  ];
+  return imageExtensions.contains(extension);
 }

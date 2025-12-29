@@ -32,24 +32,15 @@ FireNoc _$FireNocFromJson(Map<String, dynamic> json) => FireNoc()
       : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>)
   ..provisionFireNocNumber = json['provisionFireNOCNumber'] as String?;
 
-Map<String, dynamic> _$FireNocToJson(FireNoc instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'tenantId': instance.tenantId,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('fireNOCNumber', instance.fireNocNumber);
-  val['fireNOCDetails'] = instance.fireNocDetails;
-  val['auditDetails'] = instance.auditDetails;
-  writeNotNull('provisionFireNOCNumber', instance.provisionFireNocNumber);
-  return val;
-}
+Map<String, dynamic> _$FireNocToJson(FireNoc instance) => <String, dynamic>{
+      'id': instance.id,
+      'tenantId': instance.tenantId,
+      if (instance.fireNocNumber case final value?) 'fireNOCNumber': value,
+      'fireNOCDetails': instance.fireNocDetails,
+      'auditDetails': instance.auditDetails,
+      if (instance.provisionFireNocNumber case final value?)
+        'provisionFireNOCNumber': value,
+    };
 
 AuditDetails _$AuditDetailsFromJson(Map<String, dynamic> json) => AuditDetails()
   ..createdBy = json['createdBy'] as String?
@@ -99,36 +90,27 @@ FireNocDetails _$FireNocDetailsFromJson(Map<String, dynamic> json) =>
           ? null
           : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$FireNocDetailsToJson(FireNocDetails instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'applicationNumber': instance.applicationNumber,
-    'status': instance.status,
-    'fireNOCType': instance.fireNocType,
-    'firestationId': instance.firestationId,
-    'applicationDate': instance.applicationDate,
-    'financialYear': instance.financialYear,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('issuedDate', instance.issuedDate);
-  writeNotNull('validFrom', instance.validFrom);
-  writeNotNull('validTo', instance.validTo);
-  val['action'] = instance.action;
-  val['channel'] = instance.channel;
-  val['noOfBuildings'] = instance.noOfBuildings;
-  val['buildings'] = instance.buildings;
-  val['propertyDetails'] = instance.propertyDetails;
-  val['applicantDetails'] = instance.applicantDetails;
-  val['additionalDetail'] = instance.additionalDetail;
-  val['auditDetails'] = instance.auditDetails;
-  return val;
-}
+Map<String, dynamic> _$FireNocDetailsToJson(FireNocDetails instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'applicationNumber': instance.applicationNumber,
+      'status': instance.status,
+      'fireNOCType': instance.fireNocType,
+      'firestationId': instance.firestationId,
+      'applicationDate': instance.applicationDate,
+      'financialYear': instance.financialYear,
+      if (instance.issuedDate case final value?) 'issuedDate': value,
+      if (instance.validFrom case final value?) 'validFrom': value,
+      if (instance.validTo case final value?) 'validTo': value,
+      'action': instance.action,
+      'channel': instance.channel,
+      'noOfBuildings': instance.noOfBuildings,
+      'buildings': instance.buildings,
+      'propertyDetails': instance.propertyDetails,
+      'applicantDetails': instance.applicantDetails,
+      'additionalDetail': instance.additionalDetail,
+      'auditDetails': instance.auditDetails,
+    };
 
 AdditionalDetail _$AdditionalDetailFromJson(Map<String, dynamic> json) =>
     AdditionalDetail()
@@ -146,23 +128,14 @@ AdditionalDetail _$AdditionalDetailFromJson(Map<String, dynamic> json) =>
           : DitionalDetail.fromJson(
               json['ownerAuditionalDetail'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$AdditionalDetailToJson(AdditionalDetail instance) {
-  final val = <String, dynamic>{
-    'comment': instance.comment,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('assignee', instance.assignee);
-  val['documents'] = instance.documents;
-  val['wfDocuments'] = instance.wfDocuments;
-  val['ownerAuditionalDetail'] = instance.ownerAuditionalDetail;
-  return val;
-}
+Map<String, dynamic> _$AdditionalDetailToJson(AdditionalDetail instance) =>
+    <String, dynamic>{
+      'comment': instance.comment,
+      if (instance.assignee case final value?) 'assignee': value,
+      'documents': instance.documents,
+      'wfDocuments': instance.wfDocuments,
+      'ownerAuditionalDetail': instance.ownerAuditionalDetail,
+    };
 
 PurpleDocument _$PurpleDocumentFromJson(Map<String, dynamic> json) =>
     PurpleDocument()
@@ -192,23 +165,15 @@ DitionalDetail _$DitionalDetailFromJson(Map<String, dynamic> json) =>
       ..telephoneNumber = json['telephoneNumber'] as String?
       ..institutionDesignation = json['institutionDesignation'] as String?;
 
-Map<String, dynamic> _$DitionalDetailToJson(DitionalDetail instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'documents': instance.documents,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('institutionName', instance.institutionName);
-  writeNotNull('telephoneNumber', instance.telephoneNumber);
-  writeNotNull('institutionDesignation', instance.institutionDesignation);
-  return val;
-}
+Map<String, dynamic> _$DitionalDetailToJson(DitionalDetail instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'documents': instance.documents,
+      if (instance.institutionName case final value?) 'institutionName': value,
+      if (instance.telephoneNumber case final value?) 'telephoneNumber': value,
+      if (instance.institutionDesignation case final value?)
+        'institutionDesignation': value,
+    };
 
 OwnerAuditionalDetailDocument _$OwnerAuditionalDetailDocumentFromJson(
         Map<String, dynamic> json) =>
@@ -273,44 +238,35 @@ Owner _$OwnerFromJson(Map<String, dynamic> json) => Owner()
   ..pan = json['pan'] as String?
   ..permanentAddress = json['permanentAddress'] as String?;
 
-Map<String, dynamic> _$OwnerToJson(Owner instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'userName': instance.userName,
-    'useruuid': instance.useruuid,
-    'active': instance.active,
-    'ownerType': instance.ownerType,
-    'tenantId': instance.tenantId,
-    'name': instance.name,
-    'mobileNumber': instance.mobileNumber,
-    'emailId': instance.emailId,
-    'type': instance.type,
-    'accountLocked': instance.accountLocked,
-    'accountLockedDate': instance.accountLockedDate,
-    'createdBy': instance.createdBy,
-    'lastModifiedBy': instance.lastModifiedBy,
-    'roles': instance.roles,
-    'uuid': instance.uuid,
-    'createdDate': instance.createdDate,
-    'lastModifiedDate': instance.lastModifiedDate,
-    'dob': instance.dob,
-    'pwdExpiryDate': instance.pwdExpiryDate,
-    'relationship': instance.relationship,
-    'fatherOrHusbandName': instance.fatherOrHusbandName,
-    'gender': instance.gender,
-    'correspondenceAddress': instance.correspondenceAddress,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('pan', instance.pan);
-  writeNotNull('permanentAddress', instance.permanentAddress);
-  return val;
-}
+Map<String, dynamic> _$OwnerToJson(Owner instance) => <String, dynamic>{
+      'id': instance.id,
+      'userName': instance.userName,
+      'useruuid': instance.useruuid,
+      'active': instance.active,
+      'ownerType': instance.ownerType,
+      'tenantId': instance.tenantId,
+      'name': instance.name,
+      'mobileNumber': instance.mobileNumber,
+      'emailId': instance.emailId,
+      'type': instance.type,
+      'accountLocked': instance.accountLocked,
+      'accountLockedDate': instance.accountLockedDate,
+      'createdBy': instance.createdBy,
+      'lastModifiedBy': instance.lastModifiedBy,
+      'roles': instance.roles,
+      'uuid': instance.uuid,
+      'createdDate': instance.createdDate,
+      'lastModifiedDate': instance.lastModifiedDate,
+      'dob': instance.dob,
+      'pwdExpiryDate': instance.pwdExpiryDate,
+      'relationship': instance.relationship,
+      'fatherOrHusbandName': instance.fatherOrHusbandName,
+      'gender': instance.gender,
+      'correspondenceAddress': instance.correspondenceAddress,
+      if (instance.pan case final value?) 'pan': value,
+      if (instance.permanentAddress case final value?)
+        'permanentAddress': value,
+    };
 
 Role _$RoleFromJson(Map<String, dynamic> json) => Role()
   ..code = json['code'] as String?
@@ -334,25 +290,15 @@ Building _$BuildingFromJson(Map<String, dynamic> json) => Building()
   ..uomsMap = json['uomsMap'] as Map<String, dynamic>?
   ..applicationDocuments = json['applicationDocuments'] as List<dynamic>?;
 
-Map<String, dynamic> _$BuildingToJson(Building instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'tenantId': instance.tenantId,
-    'name': instance.name,
-    'usageType': instance.usageType,
-    'uoms': instance.uoms,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('uomsMap', instance.uomsMap);
-  val['applicationDocuments'] = instance.applicationDocuments;
-  return val;
-}
+Map<String, dynamic> _$BuildingToJson(Building instance) => <String, dynamic>{
+      'id': instance.id,
+      'tenantId': instance.tenantId,
+      'name': instance.name,
+      'usageType': instance.usageType,
+      'uoms': instance.uoms,
+      if (instance.uomsMap case final value?) 'uomsMap': value,
+      'applicationDocuments': instance.applicationDocuments,
+    };
 
 Uom _$UomFromJson(Map<String, dynamic> json) => Uom()
   ..id = json['id'] as String?
@@ -377,21 +323,12 @@ PropertyDetails _$PropertyDetailsFromJson(Map<String, dynamic> json) =>
           : Address.fromJson(json['address'] as Map<String, dynamic>)
       ..propertyId = json['propertyId'] as String?;
 
-Map<String, dynamic> _$PropertyDetailsToJson(PropertyDetails instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'address': instance.address,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('propertyId', instance.propertyId);
-  return val;
-}
+Map<String, dynamic> _$PropertyDetailsToJson(PropertyDetails instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'address': instance.address,
+      if (instance.propertyId case final value?) 'propertyId': value,
+    };
 
 Address _$AddressFromJson(Map<String, dynamic> json) => Address()
   ..tenantId = json['tenantId'] as String?
@@ -404,25 +341,15 @@ Address _$AddressFromJson(Map<String, dynamic> json) => Address()
   ..street = json['street'] as String?
   ..pincode = json['pincode'] as String?;
 
-Map<String, dynamic> _$AddressToJson(Address instance) {
-  final val = <String, dynamic>{
-    'tenantId': instance.tenantId,
-    'city': instance.city,
-    'locality': instance.locality,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('doorNo', instance.doorNo);
-  writeNotNull('buildingName', instance.buildingName);
-  writeNotNull('street', instance.street);
-  writeNotNull('pincode', instance.pincode);
-  return val;
-}
+Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
+      'tenantId': instance.tenantId,
+      'city': instance.city,
+      'locality': instance.locality,
+      if (instance.doorNo case final value?) 'doorNo': value,
+      if (instance.buildingName case final value?) 'buildingName': value,
+      if (instance.street case final value?) 'street': value,
+      if (instance.pincode case final value?) 'pincode': value,
+    };
 
 Locality _$LocalityFromJson(Map<String, dynamic> json) =>
     Locality()..code = json['code'] as String?;

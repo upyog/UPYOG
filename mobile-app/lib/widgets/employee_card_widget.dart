@@ -11,14 +11,15 @@ class EmployeeCardWidget extends StatelessWidget {
   final String nSla;
   final Function() inbox;
   final Function() searchApp;
-  const EmployeeCardWidget(
-      {super.key,
-      required this.header,
-      required this.icon,
-      required this.count,
-      required this.nSla,
-      required this.inbox,
-      required this.searchApp,});
+  const EmployeeCardWidget({
+    super.key,
+    required this.header,
+    required this.icon,
+    required this.count,
+    required this.nSla,
+    required this.inbox,
+    required this.searchApp,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +109,7 @@ class EmployeeCardWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     spreadRadius: 3,
                     blurRadius: 10,
                     offset: const Offset(0, 0),

@@ -6,7 +6,7 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/routes/routes.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/constants.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
@@ -59,7 +59,9 @@ class _HomeSelectLanguageState extends State<HomeSelectLanguage> {
                         if (snapshot.hasData && snapshot.data != 'error') {
                           List<StateInfo> stateInfo = snapshot.data;
                           return _buildView(
-                              stateInfo.first, _languageController,);
+                            stateInfo.first,
+                            _languageController,
+                          );
                         } else if (snapshot.hasError) {
                           return networkErrorPage(
                             context,
@@ -108,13 +110,13 @@ class _HomeSelectLanguageState extends State<HomeSelectLanguage> {
                 onChanged: (value) async {
                   if (value != null) {
                     langCtrl.selectedAppLanguage.value = value;
-                    await HiveService.setData(
+                    await storage.setInt(
                       Constants.LANG_SELECTION_INDEX,
                       i,
                     );
-                    await HiveService.setData(
+                    await storage.setString(
                       Constants.TENANT_ID,
-                      stateInfo.code,
+                      stateInfo.code!,
                     );
                     langCtrl.onSelectionOfLanguage(
                       stateInfo.languages![i],

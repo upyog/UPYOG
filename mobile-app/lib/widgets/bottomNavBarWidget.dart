@@ -58,7 +58,7 @@ class _NavBarState extends State<NavBar> {
               backgroundColor: BaseConfig.shadeAmber,
               selectedItemColor: BaseConfig.appThemeColor1,
               unselectedItemColor: BaseConfig.appThemeColor1,
-              selectedLabelStyle: GoogleFonts.notoSans.call().copyWith(
+              selectedLabelStyle: GoogleFonts.notoSans().copyWith(
                     fontWeight: FontWeight.bold,
                   ),
               items: [

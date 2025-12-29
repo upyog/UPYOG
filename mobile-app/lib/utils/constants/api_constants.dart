@@ -2,14 +2,17 @@
 
 class Url {
   static const String MDMS = 'egov-mdms-service/v1/_search';
+  static const String MDMS_PGR = 'mdms-v2/v1/_search';
   static const String LOCALIZATION = 'localization/messages/v1/_search';
   static const String GRIEVANCES = 'pgr-services/v2/request/_search';
+  static const String GRIEVANCES_FORM = 'pgr-services/v2/request/_create';
   static const String TIMELINE_HISTORY =
       'egov-workflow-v2/egov-wf/process/_search';
   static const String FILES = 'filestore/v1/files';
   static const String FILES_URL = 'filestore/v1/files/url';
   static const String TL_SERVICES = 'tl-services/v1/_search';
   static const String PROPERTY = 'property-services/property/_search';
+  static const String PROPERTY_CREATE = 'property-services/property/_create';
   static const String FETCH_BILL = 'billing-service/bill/v2/_fetchbill';
   static const String SEARCH_BILL = 'billing-service/bill/v2/_search';
   static const String DEMAND_BILL = 'billing-service/demand/_search';
@@ -53,6 +56,7 @@ class Url {
   static const String EMP_SW_ACTION_UPDATE = 'sw-services/swc/_update';
   static const String BPA_ACTION_UPDATE = 'bpa-services/v1/bpa/_update';
   static const String NOC_ACTION_UPDATE = 'firenoc-services/v1/_update';
+  static const String PGR_ACTION_UPDATE = 'pgr-services/v2/request/_update';
   static const String WORKFLOW_BUSINESS_SERVICES =
       'egov-workflow-v2/egov-wf/businessservice/_search';
   static const String EMP_PT_UPDATE = 'property-services/property/_update';
@@ -67,10 +71,17 @@ class Url {
       'sw-calculator/sewerageCalculator/_estimate';
 
   //Challans
-  static const String CHALLAN_CREATE_URL = 'echallan-services/eChallan/v1/_create';
+  static const String CHALLANS_CREATE_URL =
+      'echallan-services/eChallan/v1/_create';
+
+  static const String CHALLANS_SEARCH_URL =
+      'echallan-services/eChallan/v1/_search';
+  
+  static const String UC_CHALLAN_DOWNLOAD_URL = 'egov-pdf/download/UC/mcollect-challan';
 
   //EMP-FireNoc
-  static const String EMP_FIRE_NOC_LOCALITY = 'egov-searcher/locality/fireNoc/_get';
+  static const String EMP_FIRE_NOC_LOCALITY =
+      'egov-searcher/locality/fireNoc/_get';
 }
 
 class UserUrl {
@@ -79,4 +90,8 @@ class UserUrl {
   static const String AUTHENTICATE = 'user/oauth/token';
   static const String USER_PROFILE = 'user/_search';
   static const String USER_PROFILE_UPDATE = 'user/profile/_update';
+  static const String MERI_PAHCHAN_REQUESTER =
+      'requester-services-dx/digilocker/authorization/url/citizen';
+  static const String MERI_PAHCHAN_AUTHENTICATE =
+      'requester-services-dx/digilocker/token/citizen';
 }

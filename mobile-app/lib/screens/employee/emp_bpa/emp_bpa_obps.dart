@@ -57,9 +57,11 @@ class _EmpBpaObpsScreenState extends State<EmpBpaObpsScreen> {
     try {
       isLoading.value = true;
       _bpaController.setDefaultLimit();
-      await _commonController.fetchLabels(modules: Modules.BPA);
-      await _commonController.fetchLabels(modules: Modules.BPAREG);
-      await _commonController.fetchLabels(modules: Modules.PG);
+      Future.wait([
+        _commonController.fetchLabels(modules: Modules.BPA),
+        _commonController.fetchLabels(modules: Modules.BPAREG),
+        _commonController.fetchLabels(modules: Modules.PG),
+      ]);
       isLoading.value = false;
       await _fetchInbox();
     } catch (e) {
@@ -69,7 +71,7 @@ class _EmpBpaObpsScreenState extends State<EmpBpaObpsScreen> {
   }
 
   Future<void> _fetchInbox() async {
-    tenantCity = await getCityTenantEmployee();
+    tenantCity = await getCityTenant();
     await _bpaController.getEmpBpaInboxApplications(
       token: _authController.token!.accessToken!,
       tenantId: '${tenantCity.code}',
@@ -215,7 +217,7 @@ class _EmpBpaObpsScreenState extends State<EmpBpaObpsScreen> {
                         ),
                       )
                     : Center(
-                        child: SmallTextNotoSans(
+                        child: SmallSelectableTextNotoSans(
                           text: getLocalizedString(i18.inbox.NO_APPLICATION),
                           color: BaseConfig.greyColor3,
                         ),
@@ -279,7 +281,6 @@ class _EmpBpaObpsScreenState extends State<EmpBpaObpsScreen> {
                       statusBackColor: BaseConfig.statusPendingBackColor,
                       o: o,
                       onTap: () {
-                        //TODO: GO to details page
                         Get.toNamed(
                           AppRoutes.EMP_BPA_OBPS_DETAILS,
                           arguments: {

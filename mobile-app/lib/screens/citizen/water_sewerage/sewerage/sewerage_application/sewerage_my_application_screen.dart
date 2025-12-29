@@ -175,9 +175,9 @@ class _SewerageMyApplicationsScreenState
                                       '${i18.waterSewerage.WS_APPLICATION_TYPE_}${item.applicationType}',
                                       module: Modules.WS,
                                     ),
-                                    id: 'Application No: ${item.applicationNo}',
+                                    id: '${getLocalizedString(i18.waterSewerage.APPLICATION_NO, module: Modules.WS)}: ${item.applicationNo}',
                                     date:
-                                        'Date: ${item.auditDetails!.createdTime!.toCustomDateFormat()}',
+                                        'Date: ${item.auditDetails?.createdTime?.toCustomDateFormat() ?? 'N/A'}',
                                     onTap: () {
                                       Get.toNamed(
                                         AppRoutes

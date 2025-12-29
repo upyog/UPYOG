@@ -20,6 +20,7 @@ import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/extension/extension.dart';
 import 'package:mobile_app/utils/localization/localize_utils.dart';
+import 'package:mobile_app/utils/platforms/platforms.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/build_card.dart';
 import 'package:mobile_app/widgets/build_expansion.dart';
@@ -187,7 +188,7 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
                           ),
                         ),
                       ),
-                      icon: MediumTextNotoSans(
+                      icon: MediumSelectableTextNotoSans(
                         text: getLocalizedString(i18.common.TAKE_ACTION),
                         size: o == Orientation.portrait ? 14.sp : 8.sp,
                         color: BaseConfig.mainBackgroundColor,
@@ -206,7 +207,7 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
                           .map(
                             (action) => PopupMenuItem<String>(
                               value: action.action,
-                              child: SmallTextNotoSans(
+                              child: SmallSelectableTextNotoSans(
                                 text: LocalizeUtils.getTakeActionLocal(
                                   action.action,
                                   workflowCode: _timelineController
@@ -262,7 +263,7 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
         height: Get.height,
         width: Get.width,
         child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: AppPlatforms.platformPhysics(),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -421,10 +422,9 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 BuildCard(
+                  padding: 0,
                   child: Column(
                     children: [
                       BuildExpansion(
@@ -446,7 +446,7 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
                                   final billData = snapshot.data;
                                   if (billData is b.BillInfo) {
                                     if (!isNotNullOrEmpty(billData.bill)) {
-                                      return MediumTextNotoSans(
+                                      return MediumSelectableTextNotoSans(
                                         text: getLocalizedString(
                                           i18.common.NO_DATA,
                                         ),
@@ -494,7 +494,7 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
                                   final feeData = snapshot.data;
                                   if (feeData is PaymentModel) {
                                     if (!isNotNullOrEmpty(feeData.payments)) {
-                                      return MediumTextNotoSans(
+                                      return MediumSelectableTextNotoSans(
                                         text: getLocalizedString(
                                           i18.common.NO_DATA,
                                         ),
@@ -561,7 +561,7 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SmallTextNotoSans(
+        SmallSelectableTextNotoSans(
           text: getLocalizedString(
             i18.noc.NOC_TOTAL_AMOUNT,
           ),
@@ -572,13 +572,13 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
               Icons.currency_rupee_outlined,
               size: 15,
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: "${billELement.totalAmount ?? "N/A"}",
               fontWeight: FontWeight.w600,
             ),
           ],
         ),
-        MediumTextNotoSans(
+        MediumSelectableTextNotoSans(
           text: getLocalizedString(i18.noc.NOC_NOT_PAID, module: Modules.NOC),
           color: BaseConfig.redColor,
         ),
@@ -591,13 +591,13 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.noc.FIRENOC_ROUNDOFF,
                 module: Modules.NOC,
               ),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: billELement.billDetails!.first.billAccountDetails!
                   .firstWhere(
                     (e) => e.taxHeadCode == "FIRENOC_ROUNDOFF",
@@ -610,11 +610,11 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text:
                   getLocalizedString(i18.noc.FIRENOC_FEES, module: Modules.NOC),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: billELement.billDetails!.first.billAccountDetails!
                   .firstWhere((e) => e.taxHeadCode == "FIRENOC_FEES")
                   .amount
@@ -625,13 +625,13 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.noc.FIRENOC_TAXES,
                 module: Modules.NOC,
               ),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: billELement.billDetails!.first.billAccountDetails!
                   .firstWhere((e) => e.taxHeadCode == "FIRENOC_TAXES")
                   .amount
@@ -645,11 +645,11 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(i18.noc.NOC_TOTAL_AMOUNT),
               fontWeight: FontWeight.w600,
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: billELement.totalAmount.toString(),
               fontWeight: FontWeight.w600,
             ),
@@ -668,7 +668,7 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SmallTextNotoSans(
+        SmallSelectableTextNotoSans(
           text: getLocalizedString(i18.noc.NOC_TOTAL_AMOUNT),
         ),
         Row(
@@ -677,13 +677,13 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
               Icons.currency_rupee_outlined,
               size: 15,
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: "${feeELement.totalAmountPaid ?? "N/A"}",
               fontWeight: FontWeight.w600,
             ),
           ],
         ),
-        MediumTextNotoSans(
+        MediumSelectableTextNotoSans(
           text:
               getLocalizedString(i18.noc.NOC_PAID_SUCCESS, module: Modules.NOC),
           color: BaseConfig.statusGreenColor,
@@ -697,13 +697,13 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.noc.FIRENOC_ROUNDOFF,
                 module: Modules.NOC,
               ),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: feeELement.paymentDetails!.first.bill!.billDetails!.first
                   .billAccountDetails!
                   .firstWhere(
@@ -717,11 +717,11 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text:
                   getLocalizedString(i18.noc.FIRENOC_FEES, module: Modules.NOC),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: feeELement.paymentDetails!.first.bill!.billDetails!.first
                   .billAccountDetails!
                   .firstWhere((e) => e.taxHeadCode == "FIRENOC_FEES")
@@ -733,13 +733,13 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.noc.FIRENOC_TAXES,
                 module: Modules.NOC,
               ),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: feeELement.paymentDetails!.first.bill!.billDetails!.first
                   .billAccountDetails!
                   .firstWhere((e) => e.taxHeadCode == "FIRENOC_TAXES")
@@ -754,11 +754,11 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(i18.noc.NOC_TOTAL_AMOUNT),
               fontWeight: FontWeight.w600,
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: feeELement.totalAmountPaid.toString(),
               fontWeight: FontWeight.w600,
             ),
@@ -772,15 +772,11 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
   }
 
   Widget _buildExpansion() {
-    return ExpansionTile(
-      title: MediumTextNotoSans(
-        text: getLocalizedString(
-          i18.noc.NOC_PROPERTY_HEADER,
-          module: Modules.NOC,
-        ),
-        fontWeight: FontWeight.w600,
+    return BuildExpansion(
+      title: getLocalizedString(
+        i18.noc.NOC_PROPERTY_HEADER,
+        module: Modules.NOC,
       ),
-      expandedCrossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ColumnHeaderText(
           label: getLocalizedString(
@@ -816,12 +812,9 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
   }
 
   Widget _buildApplicant() {
-    return ExpansionTile(
-      title: MediumTextNotoSans(
-        text: getLocalizedString(
-          i18.common.NOC_APPLICANT_DETAILS,
-        ),
-        fontWeight: FontWeight.w600,
+    return BuildExpansion(
+      title: getLocalizedString(
+        i18.common.NOC_APPLICANT_DETAILS,
       ),
       children: [
         ColumnHeaderText(
@@ -897,13 +890,10 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
   }
 
   Widget _propertyLocationDetails() {
-    return ExpansionTile(
-      title: MediumTextNotoSans(
-        text: getLocalizedString(
-          i18.noc.NOC_PROPERTY_LOCATION,
-          module: Modules.NOC,
-        ),
-        fontWeight: FontWeight.w600,
+    return BuildExpansion(
+      title: getLocalizedString(
+        i18.noc.NOC_PROPERTY_LOCATION,
+        module: Modules.NOC,
       ),
       children: [
         ColumnHeaderText(
@@ -975,13 +965,10 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
   }
 
   Widget _buildDoc() {
-    return ExpansionTile(
-      title: MediumTextNotoSans(
-        text: getLocalizedString(
-          i18.noc.NOC_SUMMARY_DOCUMENTS,
-          module: Modules.NOC,
-        ),
-        fontWeight: FontWeight.w600,
+    return BuildExpansion(
+      title: getLocalizedString(
+        i18.noc.NOC_SUMMARY_DOCUMENTS,
+        module: Modules.NOC,
       ),
       children: [
         FutureBuilder(

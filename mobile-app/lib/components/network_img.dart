@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -21,31 +22,21 @@ class NetworkImg extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(
-      imgUrl,
+    return CachedNetworkImage(
+      imageUrl: imgUrl,
       height: height,
       width: width,
       fit: fit,
-      loadingBuilder: (
-        BuildContext context,
-        Widget child,
-        ImageChunkEvent? loadingProgress,
-      ) {
-        if (loadingProgress == null) {
-          return child;
-        }
-        return showCircularIndicator(strokeWidth: 3).paddingAll(2.w);
-      },
-      errorBuilder: (context, error, stackTrace) {
-        return Container(
-          height: height,
-          width: width,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(errorBorderRadius),
-          ),
-          child: showErrorIcon(),
-        );
-      },
+      placeholder: (context, url) =>
+          showCircularIndicator(strokeWidth: 3).paddingAll(2.w),
+      errorWidget: (context, url, error) => Container(
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(errorBorderRadius),
+        ),
+        child: showErrorIcon(),
+      ),
     );
   }
 }

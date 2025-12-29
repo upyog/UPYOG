@@ -136,6 +136,7 @@ enum FileExtType {
   jpeg,
   xml,
   docs,
+  heic,
   none,
 }
 
@@ -165,8 +166,11 @@ enum BusinessService {
   UNIPOLLS,
   WALL_PAINT_ADVERTISEMENT,
   PARKING_FEE,
+  RT_PARKING_FEE,
   SANTITATION_DUMPING_GARBAGE,
   COLLECTION_AND_DEMOLITION_WASTE_CHALLAN_FEE,
+
+  PGR,
 
   //noc
   FIRE_NOC,
@@ -201,6 +205,7 @@ extension BusinessServiceExtension on BusinessService {
     BusinessService.UNIPOLLS: 'ADVT.Unipolls',
     BusinessService.WALL_PAINT_ADVERTISEMENT: 'ADVT.Wall_Paint_Advertisement',
     BusinessService.PARKING_FEE: 'ADVT.Parking_Fee',
+    BusinessService.RT_PARKING_FEE: 'RT.Parking_Fee',
     BusinessService.SANTITATION_DUMPING_GARBAGE:
         'CH.Santitation_dumping_garbage',
     BusinessService.COLLECTION_AND_DEMOLITION_WASTE_CHALLAN_FEE:
@@ -208,6 +213,7 @@ extension BusinessServiceExtension on BusinessService {
 
     //noc
     BusinessService.FIRE_NOC: 'FIRENOC',
+    BusinessService.PGR: 'PGR',
   };
 
   String get name => actionName[this]!;
@@ -276,6 +282,13 @@ enum GrievanceStatus {
   CLOSED_SOLUTION,
   CLOSED_REJECTION,
   REJECTED,
+
+  //PGR
+  PENDING_FOR_ASSIGNMENT,
+  PENDING_FOR_REASSIGNMENT,
+  PENDING_AT_LME,
+  RESOLVED_SUPERVISOR,
+  CANCELLED,
 }
 
 // PENDINGATSUPERVISOR
@@ -290,6 +303,11 @@ extension GrievanceStatusExtension on GrievanceStatus {
     GrievanceStatus.CLOSED_SOLUTION: 'CLOSEDAFTERRESOLUTION',
     GrievanceStatus.CLOSED_REJECTION: 'CLOSEDAFTERREJECTION',
     GrievanceStatus.REJECTED: 'REJECTED',
+    GrievanceStatus.PENDING_FOR_ASSIGNMENT: 'PENDINGFORASSIGNMENT',
+    GrievanceStatus.PENDING_FOR_REASSIGNMENT: 'PENDINGFORREASSIGNMENT',
+    GrievanceStatus.PENDING_AT_LME: 'PENDINGATLME',
+    GrievanceStatus.RESOLVED_SUPERVISOR: 'RESOLVEDBYSUPERVISOR',
+    GrievanceStatus.CANCELLED: 'CANCELLED',
   };
 
   String get name => actionName[this]!;

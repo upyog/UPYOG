@@ -6,8 +6,10 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/locality_controller.dart';
+import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/model/common/locality/locality_model.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
+import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/small_text.dart';
 
@@ -15,12 +17,15 @@ class LocalitySelectionWidget extends StatefulWidget {
   final bool isMultiple;
   final String? Function(Boundary?)? validatorSingle;
   final String? Function(List<Boundary>?)? validatorList;
+  final bool isPgr, isEmpPgr;
 
   const LocalitySelectionWidget({
     super.key,
     this.isMultiple = true,
     this.validatorSingle,
     this.validatorList,
+    this.isPgr = false,
+    this.isEmpPgr = false,
   });
 
   @override
@@ -31,6 +36,17 @@ class LocalitySelectionWidget extends StatefulWidget {
 class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
   final _localityController = Get.find<LocalityController>();
   final _authController = Get.find<AuthController>();
+  TenantTenant? tenant;
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  init() async {
+    if (widget.isPgr || widget.isEmpPgr) tenant = await getCityTenant();
+  }
 
   final border = OutlineInputBorder(
     borderRadius: BorderRadius.circular(12.r),
@@ -53,7 +69,8 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
 
   Widget _buildSingleSelectionDropdown() {
     return DropdownSearch<Boundary>(
-      items: _localityController.locality?.tenantBoundary?.firstOrNull?.boundary
+      items: _localityController
+              .locality.value?.tenantBoundary?.firstOrNull?.boundary
               ?.toList() ??
           [],
       selectedItem: _localityController.selectedLocalityList.isNotEmpty
@@ -63,7 +80,12 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
         dropdownSearchDecoration: InputDecoration(
           focusedBorder: border,
           enabledBorder: border,
-          hintText: getLocalizedString(i18.inbox.LOCALITY),
+          hintText: widget.isEmpPgr
+              ? getLocalizedString(
+                  i18.grievance.PGR_LOCALITY,
+                  module: Modules.PGR,
+                )
+              : getLocalizedString(i18.inbox.LOCALITY),
           contentPadding: EdgeInsets.symmetric(
             horizontal: 15.w,
             vertical: 15.h,
@@ -86,19 +108,31 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(width: 10.w),
-              SmallTextNotoSans(
-                text: getLocalizedString(i18.inbox.LOCALITY),
+              SmallSelectableTextNotoSans(
+                text: widget.isEmpPgr
+                    ? getLocalizedString(
+                        i18.grievance.PGR_LOCALITY,
+                        module: Modules.PGR,
+                      )
+                    : getLocalizedString(i18.inbox.LOCALITY),
               ),
             ],
           );
         }
-        return SmallTextNotoSans(
-          text: getLocalizedString(
-            (_authController.token!.userRequest!.tenantId!.contains(".")
-                    ? '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId!.split('.').last}_REVENUE_${selectedItem.code}'
-                    : '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId}_REVENUE_${selectedItem.code}')
-                .toUpperCase(),
-          ),
+        return SmallSelectableTextNotoSans(
+          text: widget.isPgr
+              ? getLocalizedString(
+                  (tenant!.code!.contains(".")
+                          ? '${BaseConfig.STATE_TENANT_ID}_${tenant!.code!.split('.').last}_ADMIN_${selectedItem.code}'
+                          : '${BaseConfig.STATE_TENANT_ID}_${tenant!.code}_ADMIN_${selectedItem.code}')
+                      .toUpperCase(),
+                )
+              : getLocalizedString(
+                  (_authController.token!.userRequest!.tenantId!.contains(".")
+                          ? '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId!.split('.').last}_REVENUE_${selectedItem.code}'
+                          : '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId}_REVENUE_${selectedItem.code}')
+                      .toUpperCase(),
+                ),
           fontWeight: FontWeight.w400,
         );
       },
@@ -128,20 +162,30 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
         ),
         itemBuilder: (context, item, isSelected) {
           final locality = _localityController
-              .locality?.tenantBoundary?.firstOrNull?.boundary
+              .locality.value?.tenantBoundary?.firstOrNull?.boundary
               ?.firstWhere(
             (element) => element.code == item.code,
             orElse: () => Boundary(),
           );
 
           return ListTile(
-            title: SmallTextNotoSans(
-              text: getLocalizedString(
-                (_authController.token!.userRequest!.tenantId!.contains(".")
-                        ? '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId!.split('.').last}_REVENUE_${locality!.code}'
-                        : '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId}_REVENUE_${locality!.code}')
-                    .toUpperCase(),
-              ),
+            title: SmallSelectableTextNotoSans(
+              text: widget.isPgr
+                  ? isNotNullOrEmpty(tenant?.code)
+                      ? getLocalizedString(
+                          (tenant!.code!.contains(".")
+                                  ? '${BaseConfig.STATE_TENANT_ID}_${tenant!.code!.split('.').last}_ADMIN_${locality!.code}'
+                                  : '${BaseConfig.STATE_TENANT_ID}_${tenant!.code}_ADMIN_${locality!.code}')
+                              .toUpperCase(),
+                        )
+                      : ''
+                  : getLocalizedString(
+                      (_authController.token!.userRequest!.tenantId!
+                                  .contains(".")
+                              ? '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId!.split('.').last}_REVENUE_${locality!.code}'
+                              : '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId}_REVENUE_${locality!.code}')
+                          .toUpperCase(),
+                    ),
               fontWeight: FontWeight.w400,
             ),
           );
@@ -163,7 +207,8 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
 
   Widget _buildMultiSelectionDropdown() {
     return DropdownSearch<Boundary>.multiSelection(
-      items: _localityController.locality?.tenantBoundary?.firstOrNull?.boundary
+      items: _localityController
+              .locality.value?.tenantBoundary?.firstOrNull?.boundary
               ?.toList() ??
           [],
       selectedItems: _localityController.selectedLocalityList,
@@ -171,7 +216,12 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
         dropdownSearchDecoration: InputDecoration(
           focusedBorder: border,
           enabledBorder: border,
-          hintText: getLocalizedString(i18.inbox.LOCALITY),
+          hintText: widget.isEmpPgr
+              ? getLocalizedString(
+                  i18.grievance.PGR_LOCALITY,
+                  module: Modules.PGR,
+                )
+              : getLocalizedString(i18.inbox.LOCALITY),
           contentPadding: EdgeInsets.symmetric(
             horizontal: 10.w,
             vertical: 10.h,
@@ -188,8 +238,13 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(width: 10.w),
-              SmallTextNotoSans(
-                text: getLocalizedString(i18.inbox.LOCALITY),
+              SmallSelectableTextNotoSans(
+                text: widget.isEmpPgr
+                    ? getLocalizedString(
+                        i18.grievance.PGR_LOCALITY,
+                        module: Modules.PGR,
+                      )
+                    : getLocalizedString(i18.inbox.LOCALITY),
               ),
             ],
           );
@@ -197,7 +252,7 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
 
         List<Widget> selectedChips = selectedItems.map((selectedItem) {
           var locality = _localityController
-              .locality?.tenantBoundary?.firstOrNull?.boundary
+              .locality.value?.tenantBoundary?.firstOrNull?.boundary
               ?.firstWhere(
             (element) =>
                 getLocalizedString(
@@ -221,7 +276,7 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
               width: 1.0,
             ),
             backgroundColor: BaseConfig.mainBackgroundColor,
-            label: SmallTextNotoSans(
+            label: SmallSelectableTextNotoSans(
               text: getLocalizedString(
                 (_authController.token!.userRequest!.tenantId!.contains(".")
                         ? '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId!.split('.').last}_REVENUE_${locality!.code}'
@@ -264,7 +319,7 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
         ),
         itemBuilder: (context, item, isSelected) {
           var locality = _localityController
-              .locality?.tenantBoundary?.firstOrNull?.boundary
+              .locality.value?.tenantBoundary?.firstOrNull?.boundary
               ?.firstWhere(
             (element) =>
                 getLocalizedString(
@@ -282,7 +337,7 @@ class _LocalitySelectionWidgetState extends State<LocalitySelectionWidget> {
           );
 
           return ListTile(
-            title: SmallTextNotoSans(
+            title: SmallSelectableTextNotoSans(
               text: getLocalizedString(
                 (_authController.token!.userRequest!.tenantId!.contains(".")
                         ? '${BaseConfig.STATE_TENANT_ID}_${_authController.token!.userRequest!.tenantId!.split('.').last}_REVENUE_${locality!.code}'

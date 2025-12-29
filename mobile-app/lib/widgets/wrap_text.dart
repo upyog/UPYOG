@@ -19,17 +19,17 @@ class WrapText extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SmallTextNotoSans(
+        SmallSelectableTextNotoSans(
           text: title,
           fontWeight: FontWeight.w400,
           size: o == Orientation.portrait ? 12.sp : 6.sp,
         ),
         Expanded(
-          child: SmallTextNotoSans(
+          child: SmallSelectableTextNotoSans(
             text: text,
             fontWeight: FontWeight.w600,
             size: o == Orientation.portrait ? 12.sp : 6.sp,
-            maxLine: 2,
+            // maxLine: 2,
           ),
         ),
       ],
