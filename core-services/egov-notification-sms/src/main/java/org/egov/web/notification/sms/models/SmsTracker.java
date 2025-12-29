@@ -35,4 +35,7 @@ public class SmsTracker {
     private JsonNode smsResponse;
     private String ownerMobileNo;
     private String ownerName;
+    
+    private Short resendCounter;
+
 }
