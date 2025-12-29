@@ -34,10 +34,10 @@ class IconRow extends StatelessWidget {
             color: iconColor ?? Colors.grey.shade500,
             size: iconSize,
           ),
-           SizedBox(width: 10.w),
+          SizedBox(width: 10.w),
         ],
         Expanded(
-          child: MediumTextNotoSans(
+          child: MediumSelectableTextNotoSans(
             text: text,
             color: textColor,
             size: textSize,

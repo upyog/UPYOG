@@ -15,6 +15,7 @@ import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/extension/extension.dart';
+import 'package:mobile_app/utils/platforms/platforms.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/medium_text.dart';
 import 'package:mobile_app/widgets/small_text.dart';
@@ -180,7 +181,7 @@ class TimelineScreen extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             primary: true,
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: AppPlatforms.platformPhysics(),
             child: Stack(
               children: [
                 tl.FixedTimeline.tileBuilder(
@@ -204,8 +205,7 @@ class TimelineScreen extends StatelessWidget {
                         //Only for PGR
                         if (index == 0 && isPGR) {
                           final pgrServiceWrapper =
-                              Get.find<GrievanceController>()
-                                  .timelineServiceWrapper;
+                              Get.find<GrievanceController>().serviceWrapper;
                           return Padding(
                             padding: EdgeInsets.only(
                               left: 16.w,
@@ -216,7 +216,7 @@ class TimelineScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SmallTextNotoSans(
+                                SmallSelectableTextNotoSans(
                                   text: getLocalizedString(
                                     i18.common.COMPLAINT_FILED,
                                     module: Modules.PT,
@@ -228,12 +228,12 @@ class TimelineScreen extends StatelessWidget {
                                       ? TextAlign.end
                                       : TextAlign.start,
                                 ),
-                                SmallTextNotoSans(
+                                SmallSelectableTextNotoSans(
                                   text: isNotNullOrEmpty(
                                     pgrServiceWrapper
-                                        .service?.auditDetails?.createdTime,
+                                        ?.service?.auditDetails?.createdTime,
                                   )
-                                      ? pgrServiceWrapper
+                                      ? pgrServiceWrapper!
                                           .service!.auditDetails!.createdTime
                                           .toCustomDateFormat(
                                           pattern: 'd/MM/yyyy',
@@ -246,11 +246,11 @@ class TimelineScreen extends StatelessWidget {
                                       ? TextAlign.end
                                       : TextAlign.start,
                                 ),
-                                SmallTextNotoSans(
+                                SmallSelectableTextNotoSans(
                                   text: isNotNullOrEmpty(
-                                    pgrServiceWrapper.service?.citizen?.name,
+                                    pgrServiceWrapper?.service?.citizen?.name,
                                   )
-                                      ? pgrServiceWrapper
+                                      ? pgrServiceWrapper!
                                           .service!.citizen!.name!
                                       : getLocalizedString(i18.common.NA),
                                   fontWeight: FontWeight.w400,
@@ -260,12 +260,12 @@ class TimelineScreen extends StatelessWidget {
                                       ? TextAlign.end
                                       : TextAlign.start,
                                 ),
-                                SmallTextNotoSans(
+                                SmallSelectableTextNotoSans(
                                   text: isNotNullOrEmpty(
                                     pgrServiceWrapper
-                                        .service?.citizen?.mobileNumber,
+                                        ?.service?.citizen?.mobileNumber,
                                   )
-                                      ? pgrServiceWrapper
+                                      ? pgrServiceWrapper!
                                           .service!.citizen!.mobileNumber!
                                       : getLocalizedString(i18.common.NA),
                                   fontWeight: FontWeight.w400,
@@ -275,12 +275,12 @@ class TimelineScreen extends StatelessWidget {
                                       ? TextAlign.end
                                       : TextAlign.start,
                                 ),
-                                SmallTextNotoSans(
+                                SmallSelectableTextNotoSans(
                                   text: isNotNullOrEmpty(
-                                    pgrServiceWrapper.service?.source,
+                                    pgrServiceWrapper?.service?.source,
                                   )
                                       ? getLocalizedString(
-                                          '${i18.common.FILED_VIA}${pgrServiceWrapper.service!.source!}'
+                                          '${i18.common.FILED_VIA}${pgrServiceWrapper!.service!.source!}'
                                               .toUpperCase(),
                                           module: Modules.PT,
                                         )
@@ -364,7 +364,7 @@ class TimelineScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.w),
                       ),
                       child: Center(
-                        child: SmallTextNotoSans(
+                        child: SmallSelectableTextNotoSans(
                           text: closedStatusList.contains(status)
                               ? 'Closed'
                               : resolvedStatusList.contains(status)
@@ -413,7 +413,7 @@ class TimelineItem extends StatelessWidget {
           index.isOdd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         if (timeData?.state?.state != null)
-          SmallTextNotoSans(
+          SmallSelectableTextNotoSans(
             text: getLocalizedString(
               timeData!.state!.state ==
                       TimelineStateType.CLOSEDAFTERRESOLUTION.name
@@ -452,7 +452,7 @@ class TimelineItem extends StatelessWidget {
                           size: o == Orientation.portrait ? 12.sp : 5.sp,
                         ),
                         SizedBox(width: 5.w),
-                        SmallTextNotoSans(
+                        SmallSelectableTextNotoSans(
                           text: e.mobileNumber!,
                           fontWeight: FontWeight.w400,
                           size: o == Orientation.portrait ? 10.sp : 5.sp,
@@ -467,13 +467,13 @@ class TimelineItem extends StatelessWidget {
           Wrap(
             alignment: index.isOdd ? WrapAlignment.end : WrapAlignment.start,
             children: [
-              SmallTextNotoSans(
+              SmallSelectableTextNotoSans(
                 text: '${getLocalizedString(i18.common.COMMENTS)}: ',
                 fontWeight: FontWeight.w400,
                 size: o == Orientation.portrait ? 10.sp : 5.sp,
                 textAlign: index.isOdd ? TextAlign.end : TextAlign.start,
               ),
-              SmallTextNotoSans(
+              SmallSelectableTextNotoSans(
                 text: timeData!.comment!,
                 fontWeight: FontWeight.w400,
                 size: o == Orientation.portrait ? 10.sp : 5.sp,
@@ -499,13 +499,13 @@ class TimelineItem extends StatelessWidget {
             child: Wrap(
               alignment: index.isOdd ? WrapAlignment.end : WrapAlignment.start,
               children: [
-                SmallTextNotoSans(
+                SmallSelectableTextNotoSans(
                   text: timeData!.assigner!.name!.capitalize!,
                   fontWeight: FontWeight.w400,
                   size: o == Orientation.portrait ? 10.sp : 5.sp,
                   textAlign: index.isOdd ? TextAlign.end : TextAlign.start,
                 ),
-                SmallTextNotoSans(
+                SmallSelectableTextNotoSans(
                   text: '-${timeData!.assigner!.mobileNumber!}',
                   fontWeight: FontWeight.w400,
                   size: o == Orientation.portrait ? 10.sp : 5.sp,
@@ -527,7 +527,7 @@ class TimelineItem extends StatelessWidget {
               direction: Axis.horizontal,
               alignment: index.isOdd ? WrapAlignment.end : WrapAlignment.start,
               children: [
-                SmallTextNotoSans(
+                SmallSelectableTextNotoSans(
                   text:
                       '${getLocalizedString(i18.common.YOU_RATED, module: modules)}:',
                   fontWeight: FontWeight.w400,
@@ -546,7 +546,7 @@ class TimelineItem extends StatelessWidget {
         ],
         if (timeData?.auditDetails?.createdTime != null) ...[
           const SizedBox(height: 4.0),
-          SmallTextNotoSans(
+          SmallSelectableTextNotoSans(
             text: timeData!.auditDetails!.createdTime!.toCustomDateFormat()!,
             fontWeight: FontWeight.w400,
             size: o == Orientation.portrait ? 10.sp : 5.sp,
@@ -581,7 +581,7 @@ class TimelineDocumentPhoto extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SmallTextNotoSans(
+          SmallSelectableTextNotoSans(
             text: '${getLocalizedString(i18.common.DOCUMENTS)}:',
             fontWeight: FontWeight.w400,
             size: o == Orientation.portrait ? 10.sp : 5.sp,
@@ -670,7 +670,7 @@ class TimelineDocumentPhoto extends StatelessWidget {
                 );
               } else {
                 return Center(
-                  child: SmallTextNotoSans(
+                  child: SmallSelectableTextNotoSans(
                     text: snapshot.error.toString(),
                     color: BaseConfig.redColor1,
                   ),

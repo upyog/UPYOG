@@ -82,7 +82,7 @@ class ComplainCardBilling extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SmallTextNotoSans(
+                        SmallSelectableTextNotoSans(
                           text:
                               '( ${getLocalizedString(i18.propertyTax.PAYMENT_OVERDUE, module: Modules.PT)} $overDueDate ${getLocalizedString(i18.propertyTax.COMMON_DAYS, module: Modules.PT)})',
                           color: BaseConfig.redColor1,
@@ -108,35 +108,35 @@ class ComplainCardBilling extends StatelessWidget {
                   color: BaseConfig.borderColor,
                 ),
                 SizedBox(height: 4.h),
-                SmallTextNotoSans(
+                SmallSelectableTextNotoSans(
                   text: id,
                   fontWeight: FontWeight.w400,
                   size: o == Orientation.portrait ? 12.sp : 7.sp,
                 ),
                 SizedBox(height: 4.h),
                 if (ownerName != null)
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: ownerName ?? '',
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,
                   ),
                 SizedBox(height: 4.h),
                 if (address != null)
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: address ?? '',
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,
                   ),
                 SizedBox(height: 4.h),
                 if (billingCycle != null)
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: billingCycle ?? '',
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,
                   ),
                 SizedBox(height: 4.h),
                 if (dueDate != null)
-                  SmallTextNotoSans(
+                  SmallSelectableTextNotoSans(
                     text: dueDate ?? '',
                     fontWeight: FontWeight.w400,
                     size: o == Orientation.portrait ? 12.sp : 7.sp,

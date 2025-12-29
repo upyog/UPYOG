@@ -15,6 +15,7 @@ class FilterBottomSheet extends StatelessWidget {
   final bool isDismissible;
   final bool enableDrag;
   final Orientation orientation;
+  final String? actionText;
 
   const FilterBottomSheet({
     super.key,
@@ -25,6 +26,7 @@ class FilterBottomSheet extends StatelessWidget {
     this.isDismissible = true,
     this.enableDrag = true,
     required this.orientation,
+    this.actionText,
   });
 
   @override
@@ -96,7 +98,7 @@ class FilterBottomSheet extends StatelessWidget {
               Expanded(
                 child: FilledButtonApp(
                   fontSize: orientation == Orientation.portrait ? 14.sp : 7.sp,
-                  text: getLocalizedString(i18.common.APPLY),
+                  text: actionText ?? getLocalizedString(i18.common.APPLY),
                   onPressed: onApply,
                 ),
               ),

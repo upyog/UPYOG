@@ -10,7 +10,7 @@ import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/water_controller.dart';
 import 'package:mobile_app/model/citizen/water_sewerage/sewerage.dart' as sw;
 import 'package:mobile_app/model/citizen/water_sewerage/water.dart' as ws;
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/platforms/platforms.dart';
@@ -33,6 +33,7 @@ class EmpWaterEditApplicationScreen extends StatefulWidget {
 
 class _EmpWaterEditApplicationScreenState
     extends State<EmpWaterEditApplicationScreen> {
+
   final _waterController = Get.find<WaterController>();
 
   final List<_RoadCuttingWidget> _roadCuttingWidgets = [];
@@ -162,12 +163,12 @@ class _EmpWaterEditApplicationScreenState
 
       final formDataEncode = jsonEncode(_waterConnection!.toJson());
 
-      await HiveService.setData(
-        HiveConstants.WS_SESSION_APPLICATION_DETAILS,
+      await storage.setString(
+        SecureStorageConstants.WS_SESSION_APPLICATION_DETAILS,
         formDataEncode,
       );
 
-      print(formDataEncode);
+      dPrint(formDataEncode);
       _waterController.updateEditApplicationFormData();
     }
 
@@ -200,12 +201,12 @@ class _EmpWaterEditApplicationScreenState
 
       final formDataEncode = jsonEncode(_sewerageConnection!.toJson());
 
-      await HiveService.setData(
-        HiveConstants.WS_SESSION_APPLICATION_DETAILS,
+      await storage.setString(
+        SecureStorageConstants.WS_SESSION_APPLICATION_DETAILS,
         formDataEncode,
       );
 
-      print(formDataEncode);
+      dPrint(formDataEncode);
       _waterController.updateEditApplicationFormData(module: Modules.SW);
     }
 
@@ -293,7 +294,7 @@ class _EmpWaterEditApplicationScreenState
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BigTextNotoSans(
+              BigSelectableTextNotoSans(
                 text: getLocalizedString(
                   i18.waterSewerage.CONNECTION_DETAIL,
                   module: Modules.WS,
@@ -546,7 +547,7 @@ class _EmpWaterEditApplicationScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        BigTextNotoSans(
+        BigSelectableTextNotoSans(
           text: getLocalizedString(
             i18.waterSewerage.PLUMBER_DETAILS,
             module: Modules.WS,
@@ -638,7 +639,7 @@ class _EmpWaterEditApplicationScreenState
           hintText: '',
           prefixIcon: Padding(
             padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-            child: MediumTextNotoSans(
+            child: MediumSelectableTextNotoSans(
               text: '+91',
               fontWeight: FontWeight.w600,
               size: 14.sp,
@@ -667,7 +668,7 @@ class _EmpWaterEditApplicationScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        BigTextNotoSans(
+        BigSelectableTextNotoSans(
           text: getLocalizedString(
             i18.waterSewerage.EMP_ROAD_CUTTING_DETAILS,
             module: Modules.WS,
@@ -779,7 +780,7 @@ class __RoadCuttingWidgetState extends State<_RoadCuttingWidget> {
                 children: [
                   Row(
                     children: [
-                      SmallTextNotoSans(
+                      SmallSelectableTextNotoSans(
                         text: widget.index >= 1
                             ? '${getLocalizedString(
                                 i18.waterSewerage.EMP_ROAD_CUTTING_DETAILS,

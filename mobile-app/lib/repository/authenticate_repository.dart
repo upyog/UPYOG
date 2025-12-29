@@ -24,14 +24,24 @@ class AuthenticateRepository {
   }
 
   static Future<dynamic> validateOtp({
+    bool isMeripehchaanLogin = false,
     required Map body,
-    required Map<String, String> headers,
+    Map<String, String>? headers,
   }) async {
+    final local = await getLocal();
     final response = await _baseService.makeRequest(
-      url: UserUrl.AUTHENTICATE,
+      url: isMeripehchaanLogin
+          ? UserUrl.MERI_PAHCHAN_AUTHENTICATE
+          : UserUrl.AUTHENTICATE,
       body: body,
       headers: headers,
       method: RequestType.POST,
+      requestInfo: isMeripehchaanLogin
+          ? RequestInfo(
+              local: local,
+              authToken: null,
+            )
+          : null,
     );
 
     if (response != null) {
@@ -75,4 +85,18 @@ class AuthenticateRepository {
     }
   }
 
+  static Future<dynamic> getMeriPahchanUrl({
+    required Map<String, String> query,
+  }) async {
+    final response = await _baseService.makeRequest(
+      url: UserUrl.MERI_PAHCHAN_REQUESTER,
+      method: RequestType.POST,
+      body: {},
+      queryParameters: query,
+    );
+
+    if (response != null) {
+      return response;
+    }
+  }
 }

@@ -8,10 +8,11 @@ Widget drawerItem({
   Widget? icon,
   double? textSize,
   Color textColor = BaseConfig.textColor,
+  EdgeInsetsGeometry padding = const EdgeInsets.all(10),
 }) {
   textSize ??= 14.sp;
   return Padding(
-    padding: const EdgeInsets.all(10),
+    padding: padding,
     child: Row(
       children: [
         icon ?? const SizedBox(),

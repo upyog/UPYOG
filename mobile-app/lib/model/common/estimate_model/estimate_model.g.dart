@@ -35,32 +35,24 @@ Calculation _$CalculationFromJson(Map<String, dynamic> json) => Calculation()
   ..sewerageConnection = json['sewerageConnection']
   ..connectionNo = json['connectionNo'];
 
-Map<String, dynamic> _$CalculationToJson(Calculation instance) {
-  final val = <String, dynamic>{
-    'tenantId': instance.tenantId,
-    'totalAmount': instance.totalAmount,
-    'charge': instance.charge,
-    'taxAmount': instance.taxAmount,
-    'fee': instance.fee,
-    'exemption': instance.exemption,
-    'rebate': instance.rebate,
-    'penalty': instance.penalty,
-    'taxHeadEstimates': instance.taxHeadEstimates,
-    'applicationNo': instance.applicationNo,
-    'billingSlabIds': instance.billingSlabIds,
-    'waterConnection': instance.waterConnection,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('sewerageConnection', instance.sewerageConnection);
-  val['connectionNo'] = instance.connectionNo;
-  return val;
-}
+Map<String, dynamic> _$CalculationToJson(Calculation instance) =>
+    <String, dynamic>{
+      'tenantId': instance.tenantId,
+      'totalAmount': instance.totalAmount,
+      'charge': instance.charge,
+      'taxAmount': instance.taxAmount,
+      'fee': instance.fee,
+      'exemption': instance.exemption,
+      'rebate': instance.rebate,
+      'penalty': instance.penalty,
+      'taxHeadEstimates': instance.taxHeadEstimates,
+      'applicationNo': instance.applicationNo,
+      'billingSlabIds': instance.billingSlabIds,
+      'waterConnection': instance.waterConnection,
+      if (instance.sewerageConnection case final value?)
+        'sewerageConnection': value,
+      'connectionNo': instance.connectionNo,
+    };
 
 TaxHeadEstimate _$TaxHeadEstimateFromJson(Map<String, dynamic> json) =>
     TaxHeadEstimate()

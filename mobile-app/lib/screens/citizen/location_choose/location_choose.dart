@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:mobile_app/components/city_not_found/city_not_found.dart';
 import 'package:mobile_app/components/gradient_btn.dart';
 import 'package:mobile_app/components/text_formfield_normal.dart';
 import 'package:mobile_app/config/base_config.dart';
+import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/controller/location_controller.dart';
 import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/routes/routes.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/medium_text.dart';
@@ -25,6 +27,7 @@ class LocationChooseScreen extends StatefulWidget {
 class _LocationChooseScreenState extends State<LocationChooseScreen> {
   final CityController cityController = Get.put(CityController());
   final _languageCtrl = Get.find<LanguageController>();
+  final _authController = Get.find<AuthController>();
   final TextEditingController _searchController = TextEditingController();
   List<TenantTenant> filteredPopularCities = [];
   List<TenantTenant> filteredOtherCities = [];
@@ -82,355 +85,144 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        return Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              onPressed: () {
-                Get.offAndToNamed(AppRoutes.LOGIN);
-              },
-              icon: const Icon(
-                Icons.arrow_back_ios,
-              ),
-            ),
+    final o = MediaQuery.of(context).orientation;
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Get.offAndToNamed(AppRoutes.LOGIN);
+            _authController.otpEditingController.value.text = '';
+            _authController.disableNumberField.value = false;
+            _authController.mobileNoController.value.text = '';
+            _authController.isNumberValid.value = false;
+            _authController.isOtpValid.value = false;
+          },
+          icon: const Icon(
+            Icons.arrow_back_ios,
           ),
-          body: GetBuilder<LanguageController>(
-            builder: (languageController) {
-              // if (orientation == Orientation.portrait) {
-              return SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: Container(
-                  height: Get.height,
+        ),
+      ),
+      body:
+          // if (orientation == Orientation.portrait) {
+          SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: SizedBox(
+          height: Get.height,
+          width: Get.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              textFormFieldNormal(
+                controller: _searchController,
+                context,
+                getLocalizedString(i18.common.SEARCH),
+                hintTextColor: BaseConfig.greyColor1,
+                prefixIcon: const Icon(Icons.search),
+                textInputAction: TextInputAction.search,
+                //onChange: _onSearchChanged,
+              ).marginOnly(left: 20.w, right: 20.w, top: 20.h),
+
+              //Don't delete this comment
+              // TextButtonApp(
+              //   height: 36.h,
+              //   backgroundColor:
+              //   BaseConfig.appThemeColor1.withValues(alpha:0.1),
+              //   child: Row(
+              //     children: [
+              //       const Icon(
+              //         Icons.location_on_outlined,
+              //         color: BaseConfig.appThemeColor1,
+              //       ).paddingSymmetric(horizontal: 8.w),
+              //       SmallTextNotoSans(
+              //         text: "Detect my Location",
+              //         fontWeight: FontWeight.w600,
+              //         size: 12.h,
+              //         color: BaseConfig.appThemeColor1,
+              //       ),
+              //     ],
+              //   ),
+              //   onPressed: () {
+              //     WidgetsBinding.instance.addPostFrameCallback((_) => _detectLocation());
+              //   },
+              // ),
+              // SizedBox(
+              //   height: 16.h,
+              // ),
+              Obx(() {
+                cityController.selectedCity.value;
+                cityController.cityName.value;
+                return PopularCityWidget(
+                  languageController: _languageCtrl,
+                  cityController: cityController,
+                  filteredPopularCities: filteredPopularCities,
+                  noResultsFound: noResultsFound,
+                  selectedCity: cityController.selectedCity.value,
+                  cityName: cityController.cityName.value,
+                  onCityTap: (tenant) async {
+                    dPrint(
+                      "Selected City: ${tenant.code}",
+                    );
+                    cityController.selectedCity.value = tenant.code!;
+                    cityController.cityName.value = tenant.name!;
+                    await cityController.setSelectedCity(tenant);
+                  },
+                );
+              }),
+              if (!noResultsFound)
+                Obx(() {
+                  cityController.selectedCity.value;
+                  cityController.cityName.value;
+                  return OtherCityWidget(
+                    o: o,
+                    languageController: _languageCtrl,
+                    cityController: cityController,
+                    filteredOtherCities: filteredOtherCities,
+                    tenants: _languageCtrl.mdmsResTenant.tenants
+                            ?.where((city) => city.isPopular == false)
+                            .toList() ??
+                        [],
+                    onCityTap: (tenant) async {
+                      dPrint(
+                        "Selected City: ${tenant.code}",
+                      );
+                      cityController.selectedCity.value = tenant.code!;
+                      cityController.cityName.value = tenant.name!;
+                      await cityController.setSelectedCity(tenant);
+                    },
+                  );
+                }),
+              SizedBox(
+                height: 20.h,
+              ),
+              if (!noResultsFound)
+                gradientBtn(
+                  height: 44.h,
+                  horizonPadding: 0,
+                  radius: 12.r,
                   width: Get.width,
-                  padding: EdgeInsets.all(20.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      textFormFieldNormal(
-                        controller: _searchController,
-                        context,
-                        getLocalizedString(i18.common.SEARCH),
-                        hintTextColor: BaseConfig.greyColor1,
-                        prefixIcon: const Icon(Icons.search),
-                        textInputAction: TextInputAction.search,
-                        //onChange: _onSearchChanged,
-                      ),
-                      SizedBox(
-                        height: 8.h,
-                      ),
-                      //Don't delete this comment
-                      // TextButtonApp(
-                      //   height: 36.h,
-                      //   backgroundColor:
-                      //   BaseConfig.appThemeColor1.withOpacity(0.1),
-                      //   child: Row(
-                      //     children: [
-                      //       const Icon(
-                      //         Icons.location_on_outlined,
-                      //         color: BaseConfig.appThemeColor1,
-                      //       ).paddingSymmetric(horizontal: 8.w),
-                      //       SmallTextNotoSans(
-                      //         text: "Detect my Location",
-                      //         fontWeight: FontWeight.w600,
-                      //         size: 12.h,
-                      //         color: BaseConfig.appThemeColor1,
-                      //       ),
-                      //     ],
-                      //   ),
-                      //   onPressed: () {
-                      //     WidgetsBinding.instance.addPostFrameCallback((_) => _detectLocation());
-                      //   },
-                      // ),
-                      // SizedBox(
-                      //   height: 16.h,
-                      // ),
-                      const Divider(),
-                      MediumTextNotoSans(
-                        text: getLocalizedString(i18.common.SELECT_CITY),
-                        fontWeight: FontWeight.w700,
-                        size: 16.h,
-                      ),
-                      const Divider(),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (noResultsFound)
-                            SizedBox(
-                              height: Get.height * 0.4,
-                              child:
-                                  const Center(child: Text('No Cities Found')),
-                            ),
-                          if (!noResultsFound) ...[
-                            if (isNotNullOrEmpty(
-                              _languageCtrl.popularCities,
-                            )) ...[
-                              SmallTextNotoSans(
-                                text: getLocalizedString(
-                                  i18.common.POPULAR_CITIES,
-                                ),
-                                fontWeight: FontWeight.w600,
-                                size: 12.h,
-                                color: BaseConfig.greyColor4,
-                              ),
-                              SizedBox(
-                                height: 16.h,
-                              ),
-                              SizedBox(
-                                width: Get.width,
-                                height: 110.h,
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount:
-                                      isNotNullOrEmpty(filteredPopularCities)
-                                          ? filteredPopularCities.length
-                                          : _languageCtrl.popularCities?.length,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    final popularCity =
-                                        isNotNullOrEmpty(filteredPopularCities)
-                                            ? filteredPopularCities[index]
-                                            : _languageCtrl
-                                                .popularCities![index];
-
-                                    return Obx(() {
-                                      bool isSelected =
-                                          cityController.selectedCity.value ==
-                                                  popularCity.name ||
-                                              cityController.cityName.value ==
-                                                  popularCity.name;
-                                      return InkWell(
-                                        onTap: () async {
-                                          dPrint(
-                                            "Selected City: ${popularCity.code}",
-                                          );
-                                          cityController.selectedCity.value =
-                                              popularCity.code!;
-                                          cityController.cityName.value =
-                                              popularCity.name!;
-                                          await cityController
-                                              .setSelectedCity(popularCity);
-                                        },
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(50.r),
-                                                color:
-                                                    BaseConfig.lightIndigoColor,
-                                              ),
-                                              width: 60.w,
-                                              height: 60.h,
-                                              child: const Icon(
-                                                Icons.business_outlined,
-                                                color:
-                                                    BaseConfig.appThemeColor1,
-                                                size: 26,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 8.h,
-                                            ),
-                                            SizedBox(
-                                              width: 60.w,
-                                              child: Tooltip(
-                                                message: getLocalizedString(
-                                                  '${i18.common.LOCATION_PREFIX}${BaseConfig.STATE_TENANT_ID}_${popularCity.code!.split('.').last}'
-                                                      .toUpperCase(),
-                                                ),
-                                                child: SmallTextNotoSans(
-                                                  text: getLocalizedString(
-                                                    '${i18.common.LOCATION_PREFIX}${BaseConfig.STATE_TENANT_ID}_${popularCity.code!.split('.').last}'
-                                                        .toUpperCase(),
-                                                  ),
-                                                  fontWeight: FontWeight.w600,
-                                                  size: 12.h,
-                                                  maxLine: 2,
-                                                  textAlign: TextAlign.center,
-                                                  textOverflow:
-                                                      TextOverflow.ellipsis,
-                                                  color: isSelected
-                                                      ? BaseConfig
-                                                          .appThemeColor1
-                                                      : BaseConfig.greyColor4,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 4.h,
-                                            ),
-                                            if (isSelected)
-                                              Container(
-                                                width: 8.w,
-                                                height: 8.h,
-                                                decoration: const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: BaseConfig
-                                                      .appThemeColor1, // Or any color you prefer for the dot
-                                                ),
-                                              ),
-                                          ],
-                                        ).marginOnly(right: 10),
-                                      );
-                                    });
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                height: 25.h,
-                              ),
-                            ],
-                            SmallTextNotoSans(
-                              text: getLocalizedString(i18.common.OTHER_CITIES),
-                              fontWeight: FontWeight.w600,
-                              size: 12.h,
-                              color: BaseConfig.greyColor4,
-                            ),
-                            SizedBox(
-                              height: 16.h,
-                            ),
-                            SizedBox(
-                              width: Get.width,
-                              child: _buildView(
-                                languageController.mdmsResTenant.tenants
-                                    ?.where((city) => city.isPopular == false)
-                                    .toList(),
-                                languageController,
-                                orientation,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                      SizedBox(
-                        height: isNotNullOrEmpty(
-                          _languageCtrl.popularCities,
-                        )
-                            ? 21.h
-                            : 40,
-                      ),
-                      gradientBtn(
-                        height: 44.h,
-                        horizonPadding: 0,
-                        radius: 12.r,
-                        width: Get.width,
-                        text: getLocalizedString(i18.common.CONTINUE),
-                        onPressed: () async {
-                          if (cityController.selectedCity.value.isEmpty) {
-                            snackBar(
-                              'Required',
-                              'City required',
-                              Colors.red,
-                            );
-                            return;
-                          }
-                          HiveService.setData(
-                            HiveConstants.FIRST_TIME_USER,
-                            true,
-                          );
-                          Get.offNamed(AppRoutes.BOTTOM_NAV);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+                  text: getLocalizedString(i18.common.CONTINUE),
+                  onPressed: () async {
+                    if (cityController.selectedCity.value.isEmpty) {
+                      snackBar(
+                        'Required',
+                        'City required',
+                        Colors.red,
+                      );
+                      return;
+                    }
+                    await storage.setBool(
+                      SecureStorageConstants.FIRST_TIME_USER,
+                      true,
+                    );
+                    await Get.find<AuthController>().initValidUser();
+                    Get.offNamed(AppRoutes.BOTTOM_NAV);
+                  },
+                ).marginSymmetric(horizontal: 20.w),
+            ],
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildView(
-    List<TenantTenant>? tenants,
-    LanguageController languageController,
-    orientation,
-  ) {
-    return SizedBox(
-      width: Get.width,
-      height: isNotNullOrEmpty(
-        _languageCtrl.popularCities,
-      )
-          ? 0.65.sw
-          : Get.height * 0.5,
-      child: Column(
-        children: [
-          if (noResultsFound)
-            const Center(child: Text('No Other Cities Found')),
-          if (isNotNullOrEmpty(tenants) && !noResultsFound) ...[
-            SizedBox(
-              width: Get.width,
-              height: isNotNullOrEmpty(
-                _languageCtrl.popularCities,
-              )
-                  ? 0.65.sw
-                  : Get.height * 0.5,
-              child: ListView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: isNotNullOrEmpty(filteredOtherCities)
-                    ? filteredOtherCities.length
-                    : tenants!.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  TenantTenant tenant = isNotNullOrEmpty(filteredOtherCities)
-                      ? filteredOtherCities[index]
-                      : tenants![index];
-                  return _buildTenant(tenant, orientation);
-                },
-              ),
-            ),
-          ],
-        ],
+        ),
       ),
     );
-  }
-
-  Widget _buildTenant(TenantTenant tenant, Orientation orientation) {
-    return Obx(() {
-      bool isSelected = (cityController.selectedCity.value == tenant.name) ||
-          (cityController.cityName.value == tenant.name);
-
-      return Column(
-        children: [
-          ListTile(
-            minVerticalPadding: 2,
-            dense: true,
-            title: MediumTextNotoSans(
-              text: getCityName(tenant.code ?? 'N/A'),
-              fontWeight: FontWeight.w600,
-              size: orientation == Orientation.portrait ? 12.sp : 7.sp,
-              color: isSelected
-                  ? BaseConfig.appThemeColor1
-                  : BaseConfig.greyColor4,
-            ),
-            contentPadding: EdgeInsets.zero,
-            trailing: isSelected
-                ? Container(
-                    width: 10.w,
-                    height: 10.h,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: BaseConfig.appThemeColor1, // Dot color
-                    ),
-                  )
-                : null,
-            onTap: () async {
-              cityController.selectedCity.value = tenant.code!;
-              cityController.cityName.value = tenant.name!;
-              await cityController.setSelectedCity(tenant);
-              dPrint("------------Checking tenant pg district code");
-              dPrint('${tenant.city!.districtCode}');
-            },
-          ),
-          const Divider(color: Colors.grey), // Keep the divider
-        ],
-      );
-    });
   }
 
   /** 
@@ -666,4 +458,295 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
   }
 
   **/
+}
+
+class PopularCityWidget extends StatelessWidget {
+  const PopularCityWidget({
+    super.key,
+    this.noResultsFound = false,
+    required this.languageController,
+    required this.cityController,
+    required this.filteredPopularCities,
+    required this.onCityTap,
+    required this.selectedCity,
+    required this.cityName,
+  });
+
+  final bool noResultsFound;
+  final LanguageController languageController;
+  final CityController cityController;
+  final List<TenantTenant> filteredPopularCities;
+  final String selectedCity, cityName;
+  final Function(TenantTenant) onCityTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final popularCities = isNotNullOrEmpty(filteredPopularCities)
+        ? filteredPopularCities
+        : languageController.popularCities ?? [];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Divider(),
+            MediumTextNotoSans(
+              text: getLocalizedString(i18.common.SELECT_CITY),
+              fontWeight: FontWeight.w700,
+              size: 16.h,
+            ),
+            const Divider(),
+            SizedBox(
+              height: 15.h,
+            ),
+            if (noResultsFound) const CityNotFound(),
+          ],
+        ).marginSymmetric(horizontal: 20.w),
+        if (!noResultsFound) ...[
+          if (isNotNullOrEmpty(
+            languageController.popularCities,
+          )) ...[
+            SmallTextNotoSans(
+              text: getLocalizedString(
+                i18.common.POPULAR_CITIES,
+              ),
+              fontWeight: FontWeight.w600,
+              size: 14.h,
+              color: BaseConfig.greyColor4,
+            ).marginSymmetric(horizontal: 20.w),
+            SizedBox(
+              height: 16.h,
+            ),
+            SizedBox(
+              height: 120.h,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: popularCities.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  final popularCity = popularCities[index];
+
+                  final isSelected = (selectedCity == popularCity.name) ||
+                      (cityName == popularCity.name);
+
+                  return InkWell(
+                    customBorder: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.r),
+                      ),
+                    ),
+                    onTap: () {
+                      onCityTap(popularCity);
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50.r),
+                            color: BaseConfig.lightIndigoColor,
+                          ),
+                          width: 55.w,
+                          height: 55.h,
+                          child: Icon(
+                            Icons.business_outlined,
+                            color: BaseConfig.appThemeColor1,
+                            size: 26.sp,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8.h,
+                        ),
+                        SizedBox(
+                          width: 60.w,
+                          child: Tooltip(
+                            message: getLocalizedString(
+                              '${i18.common.LOCATION_PREFIX}${BaseConfig.STATE_TENANT_ID}_${popularCity.code!.split('.').last}'
+                                  .toUpperCase(),
+                            ),
+                            child: SmallTextNotoSans(
+                              text: getLocalizedString(
+                                '${i18.common.LOCATION_PREFIX}${BaseConfig.STATE_TENANT_ID}_${popularCity.code!.split('.').last}'
+                                    .toUpperCase(),
+                              ),
+                              fontWeight: FontWeight.w600,
+                              size: 12.h,
+                              maxLine: 2,
+                              textAlign: TextAlign.center,
+                              textOverflow: TextOverflow.ellipsis,
+                              color: isSelected
+                                  ? BaseConfig.appThemeColor1
+                                  : BaseConfig.greyColor4,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 4.h,
+                        ),
+                        if (isSelected)
+                          Container(
+                            width: 8.w,
+                            height: 8.h,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: BaseConfig.appThemeColor1,
+                            ),
+                          ),
+                      ],
+                    ).paddingAll(4),
+                  ).marginOnly(right: 6);
+                },
+              ),
+            ).marginSymmetric(horizontal: 10.w),
+            SizedBox(
+              height: 10.h,
+            ),
+          ],
+        ],
+      ],
+    );
+  }
+}
+
+class OtherCityWidget extends StatelessWidget {
+  const OtherCityWidget({
+    super.key,
+    required this.o,
+    required this.languageController,
+    required this.tenants,
+    required this.cityController,
+    required this.filteredOtherCities,
+    required this.onCityTap,
+  });
+  final Orientation o;
+  final LanguageController languageController;
+  final CityController cityController;
+  final List<TenantTenant> tenants;
+  final List<TenantTenant> filteredOtherCities;
+  final Function(TenantTenant) onCityTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: Get.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SmallTextNotoSans(
+            text: getLocalizedString(i18.common.OTHER_CITIES),
+            fontWeight: FontWeight.w600,
+            size: 14.h,
+            color: BaseConfig.greyColor4,
+          ).marginSymmetric(horizontal: 20.w),
+          SizedBox(
+            height: 16.h,
+          ),
+          TenantListView(
+            tenants: tenants,
+            filteredOtherCities: filteredOtherCities,
+            languageController: languageController,
+            orientation: o,
+            selectedCity: cityController.selectedCity.value,
+            cityName: cityController.cityName.value,
+            onCityTap: onCityTap,
+          ),
+          SizedBox(
+            height: isNotNullOrEmpty(
+              languageController.popularCities,
+            )
+                ? 21.h
+                : 40,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TenantListView extends StatelessWidget {
+  final List<TenantTenant>? tenants;
+  final List<TenantTenant>? filteredOtherCities;
+  final LanguageController languageController;
+  final Orientation orientation;
+  final String? selectedCity;
+  final String? cityName;
+  final Function(TenantTenant) onCityTap;
+
+  const TenantListView({
+    super.key,
+    required this.tenants,
+    required this.languageController,
+    required this.orientation,
+    this.filteredOtherCities,
+    this.selectedCity,
+    this.cityName,
+    required this.onCityTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isPopularCitiesAvailable =
+        isNotNullOrEmpty(languageController.popularCities);
+    final listHeight = isPopularCitiesAvailable ? 0.65.sw : Get.height * 0.5;
+
+    return SizedBox(
+      width: Get.width,
+      height: listHeight,
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: isNotNullOrEmpty(filteredOtherCities)
+            ? filteredOtherCities!.length
+            : tenants!.length,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          TenantTenant tenant = isNotNullOrEmpty(filteredOtherCities)
+              ? filteredOtherCities![index]
+              : tenants![index];
+          return _buildTenant(tenant);
+        },
+      ),
+    );
+  }
+
+  Widget _buildTenant(TenantTenant tenant) {
+    final isSelected =
+        (selectedCity == tenant.name) || (cityName == tenant.name);
+
+    return Column(
+      children: [
+        ListTile(
+          minVerticalPadding: 2,
+          dense: true,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          title: MediumTextNotoSans(
+            text: getCityName(tenant.code ?? 'N/A'),
+            fontWeight: FontWeight.w600,
+            size: orientation == Orientation.portrait ? 12.sp : 7.sp,
+            color:
+                isSelected ? BaseConfig.appThemeColor1 : BaseConfig.greyColor4,
+          ).paddingSymmetric(horizontal: 10.w),
+          contentPadding: EdgeInsets.zero,
+          trailing: isSelected
+              ? Container(
+                  width: 10.w,
+                  height: 10.h,
+                  margin: const EdgeInsets.only(right: 10),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: BaseConfig.appThemeColor1,
+                  ),
+                )
+              : null,
+          onTap: () {
+            onCityTap(tenant);
+          },
+        ),
+        const Divider(color: Colors.grey).marginSymmetric(horizontal: 10.w),
+      ],
+    ).marginSymmetric(horizontal: 10.w);
+  }
 }

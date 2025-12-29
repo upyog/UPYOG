@@ -14,19 +14,11 @@ PaymentModel _$PaymentModelFromJson(Map<String, dynamic> json) => PaymentModel()
       ?.map((e) => Payment.fromJson(e as Map<String, dynamic>))
       .toList();
 
-Map<String, dynamic> _$PaymentModelToJson(PaymentModel instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('ResponseInfo', instance.responseInfo);
-  val['Payments'] = instance.payments;
-  return val;
-}
+Map<String, dynamic> _$PaymentModelToJson(PaymentModel instance) =>
+    <String, dynamic>{
+      if (instance.responseInfo case final value?) 'ResponseInfo': value,
+      'Payments': instance.payments,
+    };
 
 ResponseInfo _$ResponseInfoFromJson(Map<String, dynamic> json) => ResponseInfo()
   ..apiId = json['apiId'] as String?
@@ -169,33 +161,25 @@ PaymentDetail _$PaymentDetailFromJson(Map<String, dynamic> json) =>
           ? null
           : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$PaymentDetailToJson(PaymentDetail instance) {
-  final val = <String, dynamic>{
-    'paymentId': instance.paymentId,
-    'id': instance.id,
-    'tenantId': instance.tenantId,
-    'totalDue': instance.totalDue,
-    'totalAmountPaid': instance.totalAmountPaid,
-    'receiptNumber': instance.receiptNumber,
-    'manualReceiptNumber': instance.manualReceiptNumber,
-    'manualReceiptDate': instance.manualReceiptDate,
-    'receiptDate': instance.receiptDate,
-    'receiptType': instance.receiptType,
-    'businessService': instance.businessService,
-    'billId': instance.billId,
-    'bill': instance.bill,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('additionalDetails', instance.additionalDetails);
-  val['auditDetails'] = instance.auditDetails;
-  return val;
-}
+Map<String, dynamic> _$PaymentDetailToJson(PaymentDetail instance) =>
+    <String, dynamic>{
+      'paymentId': instance.paymentId,
+      'id': instance.id,
+      'tenantId': instance.tenantId,
+      'totalDue': instance.totalDue,
+      'totalAmountPaid': instance.totalAmountPaid,
+      'receiptNumber': instance.receiptNumber,
+      'manualReceiptNumber': instance.manualReceiptNumber,
+      'manualReceiptDate': instance.manualReceiptDate,
+      'receiptDate': instance.receiptDate,
+      'receiptType': instance.receiptType,
+      'businessService': instance.businessService,
+      'billId': instance.billId,
+      'bill': instance.bill,
+      if (instance.additionalDetails case final value?)
+        'additionalDetails': value,
+      'auditDetails': instance.auditDetails,
+    };
 
 AdditionalDetailsClass _$AdditionalDetailsClassFromJson(
         Map<String, dynamic> json) =>
@@ -209,20 +193,12 @@ AdditionalDetailsClass _$AdditionalDetailsClassFromJson(
           .toList();
 
 Map<String, dynamic> _$AdditionalDetailsClassToJson(
-    AdditionalDetailsClass instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('assessmentYears', instance.assessmentYears);
-  writeNotNull('arrearArray', instance.arrearArray);
-  writeNotNull('taxArray', instance.taxArray);
-  return val;
-}
+        AdditionalDetailsClass instance) =>
+    <String, dynamic>{
+      if (instance.assessmentYears case final value?) 'assessmentYears': value,
+      if (instance.arrearArray case final value?) 'arrearArray': value,
+      if (instance.taxArray case final value?) 'taxArray': value,
+    };
 
 Array _$ArrayFromJson(Map<String, dynamic> json) => Array()
   ..year = json['year'] as String?

@@ -1,5 +1,7 @@
 import 'package:mobile_app/config/base_config.dart';
+import 'package:mobile_app/screens/citizen/grievance_redressal/new_grievance_form/new_grievance_form.dart';
 import 'package:mobile_app/utils/enums/emp_enums.dart';
+import 'package:mobile_app/utils/utils.dart';
 
 Map initRequestBody({
   required String tenantId,
@@ -106,6 +108,9 @@ Map getEmpBodyFilter({
   bool isFilter = false,
   List? locality,
   String? assigneeUid,
+  String? applicationNumber,
+  String? propertyId,
+  String? mobileNumber,
 }) {
   return {
     "inbox": {
@@ -114,9 +119,10 @@ Map getEmpBodyFilter({
         if (module == ModulesEmp.BPA_SERVICES) "assignee": "",
         "moduleName": module.name,
         "businessService": isFilter
-            ? module != ModulesEmp.PT_SERVICES
-                ? businessServices.map((e) => e.name).toList()
-                : ["ptr"]
+            ? businessServices.map((e) => e.name).toList()
+            // ? module != ModulesEmp.PT_SERVICES
+            //     ? businessServices.map((e) => e.name).toList()
+            //     : ["ptr"]
             : businessServices.map((e) => e.name).toList(),
         if (assigneeUid != null &&
             (module == ModulesEmp.PT_SERVICES ||
@@ -125,6 +131,9 @@ Map getEmpBodyFilter({
           "assignee": assigneeUid,
       },
       "moduleSearchCriteria": {
+        if (applicationNumber != null) "applicationNumber": applicationNumber,
+        if (propertyId != null) "propertyId": propertyId,
+        if (mobileNumber != null) "mobileNumber": mobileNumber,
         if (assigneeUid != null &&
             (module != ModulesEmp.PT_SERVICES ||
                 module != ModulesEmp.TL_SERVICES ||
@@ -227,6 +236,184 @@ Map getEmpMdmsBodyWsSw() {
           ],
         }
       ],
+    },
+  };
+}
+
+/// Emp PT mdms service request for property tax form
+/// mdms/v2 service request
+Map getEmpMdmsBodyPTRegForm() {
+  return {
+    "MdmsCriteria": {
+      "tenantId": BaseConfig.STATE_TENANT_ID,
+      "moduleDetails": [
+        {
+          "moduleName": "PropertyTax",
+          "masterDetails": [
+            {
+              "name": "UsageCategory",
+            },
+            {
+              "name": "PropertyType",
+            },
+            {
+              "name": "Floor",
+            },
+            {
+              "name": "OccupancyType",
+            },
+            {
+              "name": "UsageCategory",
+            },
+            {
+              "name": "Floor",
+            },
+            {
+              "name": "UsageCategory",
+            },
+            {
+              "name": "OccupancyType",
+            },
+            {
+              "name": "Floor",
+            },
+            {
+              "name": "OwnerType",
+            },
+            {
+              "name": "OwnerShipCategory",
+            },
+            {
+              "name": "Documents",
+            },
+            {
+              "name": "SubOwnerShipCategory",
+            },
+            {
+              "name": "OwnerShipCategory",
+            },
+            {
+              "name": "SubOwnerShipCategory",
+            },
+            {
+              "name": "OwnerShipCategory",
+            },
+            {
+              "name": "UsageCategory",
+            },
+            {
+              "name": "OccupancyType",
+            },
+            {
+              "name": "Floor",
+            },
+            {
+              "name": "OwnerType",
+            },
+            {
+              "name": "OwnerShipCategory",
+            },
+            {
+              "name": "Documents",
+            },
+            {
+              "name": "SubOwnerShipCategory",
+            },
+            {
+              "name": "OwnerShipCategory",
+            },
+            {
+              "name": "MutationDocuments",
+            }
+          ],
+        },
+        {
+          "moduleName": "common-masters",
+          "masterDetails": [
+            {
+              "name": "GenderType",
+            }
+          ],
+        }
+      ],
+    },
+  };
+}
+
+/// Citizen PGR mdms/v2 service request
+Map getCitizenMdmsBodyPgr() {
+  return {
+    "MdmsCriteria": {
+      "tenantId": BaseConfig.STATE_TENANT_ID,
+      "moduleDetails": [
+        {
+          "moduleName": "RAINMAKER-PGR",
+          "masterDetails": [
+            {"name": "ServiceDefs"},
+          ],
+        },
+      ],
+    },
+  };
+}
+
+/// Emp PGR mdms/LME service request
+Map getEmpMdmsBodyPGR(String tenantId) {
+  return {
+    "MdmsCriteria": {
+      "tenantId": tenantId,
+      "moduleDetails": [
+        {
+          "moduleName": "RAINMAKER-PGR",
+          "masterDetails": [
+            {
+              "name": "ServiceDefs",
+            }
+          ],
+        }
+      ],
+    },
+  };
+}
+
+Map sendGrievanceFormValue({
+  required String grievanceSubType,
+  required String grievancePriority,
+  required String landmark,
+  required String additionalDetails,
+  required String localityCode,
+  required String localityName,
+  required String city,
+  required String district,
+  required String region,
+  required String tenantId,
+  required String pinCode,
+  required List<VerificationDocumentPGR> verificationDocuments,
+}) {
+  return {
+    "service": {
+      "tenantId": tenantId,
+      "serviceCode": grievanceSubType,
+      "priority": grievancePriority,
+      "description": additionalDetails,
+      "additionalDetail": {},
+      "source": "mobile",
+      "address": {
+        "landmark": landmark,
+        "city": city,
+        "district": district,
+        "region": region,
+        "state": "Demo",
+        if (isNotNullOrEmpty(pinCode)) "pincode": pinCode,
+        "locality": {"code": localityCode, "name": localityName},
+        "geoLocation": {},
+      },
+    },
+    "workflow": {
+      "action": "APPLY",
+      if (isNotNullOrEmpty(verificationDocuments))
+        "verificationDocuments":
+            verificationDocuments.map((doc) => doc.toJson()).toList(),
     },
   };
 }

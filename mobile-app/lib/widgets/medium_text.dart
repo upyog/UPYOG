@@ -66,16 +66,57 @@ class MediumTextNotoSans extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.notoSans.call().copyWith(
-            fontSize: size ?? 14.sp,
-            fontWeight: fontWeight,
-            decoration: textDecoration,
-            decorationColor: color,
-            color: color,
-          ),
+      style: GoogleFonts.notoSans().copyWith(
+        fontSize: size ?? 14.sp,
+        fontWeight: fontWeight,
+        decoration: textDecoration,
+        decorationColor: color,
+        color: color,
+      ),
       maxLines: maxLine,
       textAlign: textAlign,
       overflow: textOverflow,
+    );
+  }
+}
+
+class MediumSelectableTextNotoSans extends StatelessWidget {
+  const MediumSelectableTextNotoSans({
+    super.key,
+    required this.text,
+    this.color = BaseConfig.textColor,
+    this.size,
+    this.fontWeight,
+    this.textDecoration,
+    this.textAlign,
+    this.maxLine,
+    this.overflow,
+  });
+
+  final String text;
+  final Color color;
+  final double? size;
+  final FontWeight? fontWeight;
+  final TextDecoration? textDecoration;
+  final TextAlign? textAlign;
+  final int? maxLine;
+  final TextOverflow? overflow;
+
+  @override
+  Widget build(BuildContext context) {
+    return SelectableText(
+      text,
+      style: GoogleFonts.notoSans().copyWith(
+        fontSize: size ?? 14.sp,
+        fontWeight: fontWeight,
+        decoration: textDecoration,
+        decorationColor: color,
+        color: color,
+        overflow: overflow,
+      ),
+      maxLines: maxLine,
+      textAlign: textAlign,
+      
     );
   }
 }

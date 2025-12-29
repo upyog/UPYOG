@@ -19,7 +19,7 @@ import 'package:mobile_app/model/request/transaction_model.dart' as reqTran;
 import 'package:mobile_app/repository/payment_repository.dart';
 import 'package:mobile_app/screens/citizen/ntt_data_aipay_payment/atom_pay_helper.dart';
 import 'package:mobile_app/screens/citizen/ntt_data_aipay_payment/web_view_container.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/enums/ntt_payment_enum.dart';
 import 'package:mobile_app/utils/errors/error_handler.dart';
@@ -198,7 +198,8 @@ class PaymentController extends GetxController {
         ..mobileNumber = _editProfileController.user.mobileNumber
         ..tenantId = cityTenantId;
 
-      final String module = await HiveService.getData(HiveConstants.MODULES);
+      final String module =
+          await storage.getString(SecureStorageConstants.MODULES) ?? '';
 
       // Get call back url
       final callbackUrl = getPaymentCallbackUrl(
@@ -389,7 +390,7 @@ class PaymentController extends GetxController {
       String authEncryptedString = result.toString();
       _getAtomTokenId(authEncryptedString, payments, data: data);
     } on PlatformException catch (e) {
-      debugPrint("Failed to get encryption string: '${e.message}'.");
+      dPrint("Failed to get encryption string: '${e.message}'.");
     }
   }
 
@@ -424,12 +425,12 @@ class PaymentController extends GetxController {
             'text': splitTwo[1].toString(),
             'encKey': ntt.responseDecryptionKey,
           });
-          debugPrint(result.toString()); // to read full response
+          dPrint(result.toString()); // to read full response
           var respJsonStr = result.toString();
           Map<String, dynamic> jsonInput = jsonDecode(respJsonStr);
           if (jsonInput["responseDetails"]["txnStatusCode"] == 'OTS0000') {
             final atomTokenId = jsonInput["atomTokenId"].toString();
-            debugPrint("atomTokenId: $atomTokenId");
+            dPrint("atomTokenId: $atomTokenId");
             final String payDetails =
                 '{"atomTokenId" : "$atomTokenId","merchId": "${ntt.login}","emailId": "${ntt.email}","mobileNumber":"${ntt.mobile}", "returnUrl":"$paymentReturnUrl"}';
 
@@ -443,10 +444,10 @@ class PaymentController extends GetxController {
               ),
             );
           } else {
-            debugPrint("Problem in auth API response");
+            dPrint("Problem in auth API response");
           }
         } on PlatformException catch (e) {
-          debugPrint("Failed to decrypt: '${e.message}'.");
+          dPrint("Failed to decrypt: '${e.message}'.");
         }
       }
     }
@@ -458,7 +459,7 @@ class PaymentController extends GetxController {
     return jsonPayLoadData;
   }
 
-  //TODO: Check NTT payment status
+  // Check NTT payment status
   Future<void> checkTransactionPayment({
     required NttTransactionResult nttTransactionResult,
     dynamic response,
@@ -491,7 +492,7 @@ class PaymentController extends GetxController {
         if (paymentRes != null) {
           if (paymentRes.paymentStatus == PaymentStatus.DEPOSITED.name) {
             final String module =
-                await HiveService.getData(HiveConstants.MODULES);
+                await storage.getString(SecureStorageConstants.MODULES) ?? '';
 
             snackBar('Success', 'Payment complete', Colors.green);
             isPaymentConditionEnabled1.value = false;

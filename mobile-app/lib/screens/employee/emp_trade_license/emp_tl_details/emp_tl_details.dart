@@ -156,7 +156,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
 
   Future<void> _getProperties() async {
     try {
-      TenantTenant tenantCity = await getCityTenantEmployee();
+      TenantTenant tenantCity = await getCityTenant();
       _property = await _propertyController.getPropertiesByID(
         token: _authController.token!.accessToken!,
         propertyId: _item!
@@ -217,7 +217,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
                               ),
                             ),
                           ),
-                          icon: MediumTextNotoSans(
+                          icon: MediumSelectableTextNotoSans(
                             text: getLocalizedString(i18.common.TAKE_ACTION),
                             size: o == Orientation.portrait ? 14.sp : 8.sp,
                             color: BaseConfig.mainBackgroundColor,
@@ -234,7 +234,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
                               .map(
                                 (action) => PopupMenuItem<String>(
                                   value: action.action,
-                                  child: SmallTextNotoSans(
+                                  child: SmallSelectableTextNotoSans(
                                     text: LocalizeUtils.getTakeActionLocal(
                                       action.action,
                                       workflowCode: statusMap.businessService!,
@@ -250,7 +250,6 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
                               )
                               .toList(),
                           onSelected: (value) async {
-                            //TODO: Take Action
                             dPrint(value);
 
                             // Get the next state of the action
@@ -563,7 +562,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
           },
           child: Row(
             children: [
-              SmallTextNotoSans(
+              SmallSelectableTextNotoSans(
                 text: '${getLocalizedString(
                   i18.tlProperty.VIEW_DETAILS_BTN,
                 )}: ',
@@ -586,7 +585,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
   Widget _buildAddress(Orientation o, tl.Item item) {
     return Wrap(
       children: [
-        SmallTextNotoSans(
+        SmallSelectableTextNotoSans(
           text: '${getLocalizedString(
             i18.tlProperty.ADDRESS,
           )}: ',
@@ -598,49 +597,49 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
             if (isNotNullOrEmpty(
               item.businessObject?.tradeLicenseDetail?.address?.doorNo,
             )) ...[
-              SmallTextNotoSans(
+              SmallSelectableTextNotoSans(
                 text: item.businessObject!.tradeLicenseDetail!.address!.doorNo!,
                 maxLine: 4,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
               ),
-              const SmallTextNotoSans(text: ', '),
+              const SmallSelectableTextNotoSans(text: ', '),
             ],
             if (isNotNullOrEmpty(
               item.businessObject?.tradeLicenseDetail?.address?.street,
             )) ...[
-              SmallTextNotoSans(
+              SmallSelectableTextNotoSans(
                 text: item.businessObject!.tradeLicenseDetail!.address!.street!,
                 maxLine: 4,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
               ),
-              const SmallTextNotoSans(text: ', '),
+              const SmallSelectableTextNotoSans(text: ', '),
             ],
             if (isNotNullOrEmpty(
               item.businessObject?.tradeLicenseDetail?.address?.landmark,
             )) ...[
-              SmallTextNotoSans(
+              SmallSelectableTextNotoSans(
                 text:
                     item.businessObject!.tradeLicenseDetail!.address!.landmark!,
                 maxLine: 4,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
               ),
-              const SmallTextNotoSans(text: ', '),
+              const SmallSelectableTextNotoSans(text: ', '),
             ],
             if (isNotNullOrEmpty(
               item.businessObject?.tradeLicenseDetail?.address?.locality?.name,
             )) ...[
-              SmallTextNotoSans(
+              SmallSelectableTextNotoSans(
                 text: item.businessObject!.tradeLicenseDetail!.address!
                     .locality!.name!,
                 maxLine: 4,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
               ),
-              const SmallTextNotoSans(text: ', '),
+              const SmallSelectableTextNotoSans(text: ', '),
             ],
             if (isNotNullOrEmpty(
               item.businessObject?.tradeLicenseDetail?.address?.city,
             )) ...[
-              SmallTextNotoSans(
+              SmallSelectableTextNotoSans(
                 text: item.businessObject!.tradeLicenseDetail!.address!.city!,
                 maxLine: 4,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
@@ -705,7 +704,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
           children: [
             Wrap(
               children: [
-                BigTextNotoSans(
+                BigSelectableTextNotoSans(
                   text: getLocalizedString(
                     i18.tradeLicense.UNIT,
                     module: Modules.TL,
@@ -714,7 +713,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
                   fontWeight: FontWeight.w600,
                   color: const Color.fromRGBO(80, 90, 95, 1.0),
                 ),
-                BigTextNotoSans(
+                BigSelectableTextNotoSans(
                   text: ' - $index',
                   size: 16.sp,
                   fontWeight: FontWeight.w600,
@@ -780,7 +779,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
                 'N/A',
           ),
           SizedBox(height: 8.h),
-          MediumTextNotoSans(
+          MediumSelectableTextNotoSans(
             text: getLocalizedString(i18.common.EMP_TR_DETAILS),
             fontWeight: FontWeight.w600,
             size: o == Orientation.portrait ? 14.sp : 7.sp,

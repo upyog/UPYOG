@@ -60,7 +60,7 @@ class EmpAcknowledgeScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              MediumTextNotoSans(
+                              MediumSelectableTextNotoSans(
                                 text: mainTitle,
                                 fontWeight: FontWeight.bold,
                                 textAlign: TextAlign.center,
@@ -70,7 +70,7 @@ class EmpAcknowledgeScreen extends StatelessWidget {
                                 SizedBox(
                                   height: 10.h,
                                 ),
-                                SmallTextNotoSans(
+                                SmallSelectableTextNotoSans(
                                   text: subTitle!,
                                   textAlign: TextAlign.center,
                                   color: BaseConfig.mainBackgroundColor,
@@ -87,7 +87,7 @@ class EmpAcknowledgeScreen extends StatelessWidget {
                               SizedBox(
                                 height: 20.h,
                               ),
-                              SmallTextNotoSans(
+                              SmallSelectableTextNotoSans(
                                 text: appIdName,
                                 textAlign: TextAlign.center,
                                 color: BaseConfig.mainBackgroundColor,
@@ -95,7 +95,7 @@ class EmpAcknowledgeScreen extends StatelessWidget {
                               SizedBox(
                                 height: 10.h,
                               ),
-                              MediumTextNotoSans(
+                              MediumSelectableTextNotoSans(
                                 text: applicationNo,
                                 textAlign: TextAlign.center,
                                 color: BaseConfig.mainBackgroundColor,
@@ -111,7 +111,7 @@ class EmpAcknowledgeScreen extends StatelessWidget {
                             color: BaseConfig.statusResolvedBackColor,
                             borderRadius: BorderRadius.circular(8.r),
                           ),
-                          child: SmallTextNotoSans(
+                          child: SmallSelectableTextNotoSans(
                             text: message,
                             textAlign: TextAlign.center,
                             // color: BaseConfig.mainBackgroundColor,

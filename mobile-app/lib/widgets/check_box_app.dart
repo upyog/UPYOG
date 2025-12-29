@@ -61,7 +61,7 @@ class CheckBoxApp extends StatelessWidget {
               child: SmallTextNotoSans(
                 text: title.capitalize!,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xFF232323).withOpacity(0.6),
+                color: const Color(0xFF232323).withValues(alpha: 0.6),
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
                 maxLine: 2,
                 textOverflow: TextOverflow.ellipsis,

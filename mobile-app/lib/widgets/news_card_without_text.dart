@@ -60,9 +60,8 @@ class NewsCardWithoutText extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 7.w),
-                  SizedBox(
-                    width: 270,
-                    child: MediumText(
+                  Expanded(
+                    child: MediumTextNotoSans(
                       text: imgText,
                       size: orientation == Orientation.portrait ? 15.sp : 7.sp,
                       fontWeight: FontWeight.w500,

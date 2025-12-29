@@ -38,10 +38,12 @@ class MdmsStaticData {
 class MdmsRes {
   CommonMasters? commonMasters;
   BillingService? billingService;
+  RainmakerPgr? rainmakerPgr;
 
   MdmsRes({
     this.commonMasters,
     this.billingService,
+    this.rainmakerPgr,
   });
 
   factory MdmsRes.fromJson(Map<String, dynamic> json) => MdmsRes(
@@ -51,11 +53,15 @@ class MdmsRes {
         billingService: json["BillingService"] == null
             ? null
             : BillingService.fromJson(json["BillingService"]),
+        rainmakerPgr: json["RAINMAKER-PGR"] == null
+            ? null
+            : RainmakerPgr.fromJson(json["RAINMAKER-PGR"]),
       );
 
   Map<String, dynamic> toJson() => {
         "common-masters": commonMasters?.toJson(),
         "BillingService": billingService?.toJson(),
+        "RAINMAKER-PGR": rainmakerPgr?.toJson(),
       };
 }
 
@@ -67,13 +73,17 @@ class CommonMasters {
   });
 
   factory CommonMasters.fromJson(Map<String, dynamic> json) => CommonMasters(
-        staticData: List<StaticDatum>.from(
-          json["StaticData"].map((x) => StaticDatum.fromJson(x)),
-        ),
+        staticData: json["StaticData"] != null
+            ? List<StaticDatum>.from(
+                json["StaticData"].map((x) => StaticDatum.fromJson(x)),
+              )
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
-        "StaticData": List<dynamic>.from(staticData!.map((x) => x.toJson())),
+        "StaticData": staticData != null
+            ? List<dynamic>.from(staticData!.map((x) => x.toJson()))
+            : [],
       };
 }
 
@@ -389,5 +399,71 @@ class TaxPeriod {
         "service": service,
         "code": code,
         "financialYear": financialYear,
+      };
+}
+
+//Rainmaker-pgr
+class RainmakerPgr {
+  List<ServiceDef>? serviceDefs;
+
+  RainmakerPgr({
+    this.serviceDefs,
+  });
+
+  factory RainmakerPgr.fromJson(Map<String, dynamic> json) => RainmakerPgr(
+        serviceDefs: json["ServiceDefs"] == null
+            ? []
+            : List<ServiceDef>.from(
+                json["ServiceDefs"]!.map((x) => ServiceDef.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "ServiceDefs": serviceDefs == null
+            ? []
+            : List<dynamic>.from(serviceDefs!.map((x) => x.toJson())),
+      };
+}
+
+class ServiceDef {
+  String? name;
+  bool? active;
+  String? keywords;
+  String? menuPath;
+  int? slaHours;
+  String? department;
+  String? serviceCode;
+  int? order;
+
+  ServiceDef({
+    this.name,
+    this.active,
+    this.keywords,
+    this.menuPath,
+    this.slaHours,
+    this.department,
+    this.serviceCode,
+    this.order,
+  });
+
+  factory ServiceDef.fromJson(Map<String, dynamic> json) => ServiceDef(
+        name: json["name"],
+        active: json["active"],
+        keywords: json["keywords"],
+        menuPath: json["menuPath"],
+        slaHours: json["slaHours"],
+        department: json["department"],
+        serviceCode: json["serviceCode"],
+        order: json["order"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "active": active,
+        "keywords": keywords,
+        "menuPath": menuPath,
+        "slaHours": slaHours,
+        "department": department,
+        "serviceCode": serviceCode,
+        "order": order,
       };
 }

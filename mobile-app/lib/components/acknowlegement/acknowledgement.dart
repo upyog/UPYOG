@@ -13,10 +13,18 @@ import 'package:mobile_app/widgets/small_text.dart';
 class AcknowledgementWidget extends StatelessWidget {
   final String applicationNo;
   final Modules module;
+  final String headerText;
+  final String subText;
+  final String bottomText;
+  final bool isPgr;
   const AcknowledgementWidget({
     super.key,
     required this.applicationNo,
     this.module = Modules.COMMON,
+    this.headerText = 'New Building Plant Application Reviewed Successfully',
+    this.subText = 'New Building Plant Permit Application',
+    this.bottomText = '',
+    this.isPgr = false,
   });
 
   @override
@@ -55,9 +63,8 @@ class AcknowledgementWidget extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const MediumTextNotoSans(
-                              text:
-                                  'New Building Plant Application Reviewed Successfully',
+                            MediumSelectableTextNotoSans(
+                              text: headerText,
                               fontWeight: FontWeight.bold,
                               textAlign: TextAlign.center,
                               color: BaseConfig.mainBackgroundColor,
@@ -66,22 +73,24 @@ class AcknowledgementWidget extends StatelessWidget {
                               height: 20.h,
                             ),
                             Icon(
-                              Icons.check_circle,
+                              isPgr
+                                  ? Icons.thumb_up_alt_outlined
+                                  : Icons.check_circle,
                               color: BaseConfig.mainBackgroundColor,
                               size: 50.sp,
                             ),
                             SizedBox(
                               height: 20.h,
                             ),
-                            const SmallTextNotoSans(
-                              text: 'New Building Plant Permit Application',
+                            SmallSelectableTextNotoSans(
+                              text: subText,
                               textAlign: TextAlign.center,
                               color: BaseConfig.mainBackgroundColor,
                             ),
                             SizedBox(
                               height: 10.h,
                             ),
-                            MediumTextNotoSans(
+                            MediumSelectableTextNotoSans(
                               text: applicationNo,
                               textAlign: TextAlign.center,
                               color: BaseConfig.mainBackgroundColor,
@@ -90,7 +99,15 @@ class AcknowledgementWidget extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const Spacer(),
+                      // SizedBox(
+                      //   height: 10.h,
+                      // ),
+                      SmallSelectableTextNotoSans(
+                        text: bottomText,
+                        textAlign: TextAlign.center,
+                      ),
+
+                      // const Spacer(),
                       FilledButtonApp(
                         width: Get.width,
                         text: getLocalizedString(i18.common.GO_TO_HOME),

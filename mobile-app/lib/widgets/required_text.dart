@@ -24,7 +24,7 @@ class RequiredText extends StatelessWidget {
         children: [
           TextSpan(
             text: text,
-            style: GoogleFonts.notoSans.call().copyWith(
+            style: GoogleFonts.notoSans().copyWith(
                   fontSize: fontSize ?? 12.sp,
                   fontWeight: fontWeight,
                   color: BaseConfig.textColor,
@@ -33,7 +33,7 @@ class RequiredText extends StatelessWidget {
           if (required)
             TextSpan(
               text: '*',
-              style: GoogleFonts.notoSans.call().copyWith(
+              style: GoogleFonts.notoSans().copyWith(
                     fontSize: fontSize ?? 12.sp,
                     fontWeight: fontWeight,
                     color: BaseConfig.redColor,

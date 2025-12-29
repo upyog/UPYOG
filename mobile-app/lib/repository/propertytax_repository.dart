@@ -24,6 +24,21 @@ class PropertyTaxRepository {
     return response;
   }
 
+  static Future<dynamic> createProperties({
+    required String token,
+    Map<String, dynamic>? body,
+  }) async {
+    final local = await getLocal();
+    final response = await _baseService.makeRequest(
+      url: Url.PROPERTY_CREATE,
+      method: RequestType.POST,
+      body: body ?? {},
+      requestInfo: RequestInfo(authToken: token, local: local),
+    );
+
+    return response;
+  }
+
   static Future<dynamic> getPtApplicationHistory({
     required String token,
     required query,

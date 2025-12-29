@@ -8,12 +8,12 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/edit_profile_controller.dart';
-import 'package:mobile_app/model/citizen/user_profile/user_profile.dart';
+import 'package:mobile_app/model/citizen/files/file_store.dart';
 import 'package:mobile_app/routes/routes.dart';
 import 'package:mobile_app/services/notification_service.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/dashboard_icon_role.dart';
-import 'package:mobile_app/utils/enums/modules.dart';
+import 'package:mobile_app/utils/extension/extension.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/big_text.dart';
 import 'package:mobile_app/widgets/news_card.dart';
@@ -30,7 +30,6 @@ class _EmpDashboardState extends State<EmpDashboard> {
   final _authController1 = Get.find<AuthController>();
   final _editProfileController = Get.find<EditProfileController>();
   // final _notificationController = Get.find<NotificationController>();
-  final _commonController = Get.find<CommonController>();
 
   late PageController _pageController;
   Timer? _autoPlayTimer;
@@ -191,10 +190,9 @@ class _EmpDashboardState extends State<EmpDashboard> {
                                   padding: EdgeInsets.all(12.w),
                                 ),
                                 onPressed: () async {
-                                  //TODO: Navigate to respective screen
                                   if (!_authController1.isValidUser) {
-                                    // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-                                    Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+                                    Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+                                    // Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
                                     return;
                                   }
 
@@ -239,10 +237,11 @@ class _EmpDashboardState extends State<EmpDashboard> {
                                     Get.toNamed(AppRoutes.EMP_FIRE_NOC);
                                   }
                                   if (service.title == i18.common.UC_COLLECT) {
-                                    await _commonController.fetchLabels(
-                                      modules: Modules.UC,
-                                    );
-                                    Get.toNamed(AppRoutes.EMP_UC_COLLECT);
+                                    Get.toNamed(AppRoutes.EMP_UC_CHALLANS);
+                                  }
+                                  if (service.title ==
+                                      i18.common.HELP_GRIEVANCE) {
+                                    Get.toNamed(AppRoutes.EMP_GRIEVANCES);
                                   }
                                 },
                                 icon: Icon(
@@ -352,7 +351,7 @@ class _EmpDashboardState extends State<EmpDashboard> {
               padding: EdgeInsets.only(left: 12.w, right: 12.w),
               child: Icon(
                 Icons.mic_none_outlined,
-                color: BaseConfig.mainBackgroundColor.withOpacity(0.7),
+                color: BaseConfig.mainBackgroundColor.withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -403,36 +402,48 @@ class _EmpDashboardState extends State<EmpDashboard> {
                 icon: CircleAvatar(
                   radius: 20.r,
                   backgroundColor: Colors.transparent,
-                  child: StreamBuilder(
-                    stream: _editProfileController.streamCtrl.stream,
+                  child: FutureBuilder<FileStore?>(
+                    future: _editProfileController.getCacheProfileFIleStore(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return showCircularIndicator();
                       }
                       if (snapshot.hasData && !snapshot.hasError) {
                         if (snapshot.data is String || snapshot.data == null) {
-                          return const Center(
-                            child: Text(""),
+                          return CircleAvatar(
+                            backgroundColor: BaseConfig.greyColor2,
+                            radius: 20.r,
+                            child: const Icon(
+                              Icons.person,
+                              size: 30,
+                            ),
                           );
                         }
-                        final user = snapshot.data as User;
+                        final fileStore = snapshot.data;
                         return ImagePlaceHolder(
                           radius: 20.r,
                           iconSize: 30,
                           height: 155.h,
                           width: 155.w,
                           padding: EdgeInsets.zero,
-                          iconColor: BaseConfig.greyColor1,
-                          photoUrl: user.photo?.split(',').first,
+                          iconColor: Colors.white,
+                          backgroundColor: BaseConfig.appThemeColor1,
+                          photoUrl: fileStore?.getUserPhoto(),
                         );
                       } else {
                         return CircleAvatar(
                           backgroundColor: BaseConfig.greyColor2,
                           radius: 20.r,
                           child: const Icon(
-                            Icons.account_circle_outlined,
+                            Icons.person,
+                            color: BaseConfig.mainBackgroundColor,
                             size: 30,
                           ),
+                          // child: const Icon(
+                          //   BaseConfig.headerProfilePlaceholderIcon,
+                          //   color: BaseConfig.greyColor1,
+                          //   size: 30,
+                          // ),
                         );
                       }
                     },

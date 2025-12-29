@@ -92,7 +92,7 @@ class _SewerageBillScreenState extends State<SewerageBillScreen> {
       _paymentController.isLoading.value = false;
     } catch (e) {
       _paymentController.isLoading.value = false;
-      print("SW Error: $e");
+      dPrint("SW Error: $e");
     }
   }
 
@@ -227,7 +227,7 @@ class _SewerageBillScreenState extends State<SewerageBillScreen> {
             subtitle: _subTitleBuildCard(
               bill: bill,
               onPressed: () =>
-                  goPayment(bill), //TODO: Navigate to Bill Details Screen
+                  goPayment(bill), 
             ),
           ),
         ),

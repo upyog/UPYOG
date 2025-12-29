@@ -89,6 +89,8 @@ final List<DashboardIcon> serviceNames = [
     flutterIcon: Icons.business_outlined,
     roles: [
       InspectorType.PT_FIELD_INSPECTOR.name,
+      InspectorType.PT_CEMP_INSPECTOR.name,
+      InspectorType.PT_APPROVER_INSPECTOR.name,
     ],
   ),
   DashboardIcon(
@@ -127,6 +129,14 @@ final List<DashboardIcon> serviceNames = [
     icon: BaseConfig.ucCollectIconSvg,
     roles: [
       InspectorType.UC_EMP_INSPECTOR.name,
+    ],
+  ),
+  DashboardIcon(
+    title: i18.common.HELP_GRIEVANCE,
+    flutterIcon: Icons.feedback,
+    icon: BaseConfig.helpGrievanceSvgIcon,
+    roles: [
+      InspectorType.PGR_LME_INSPECTOR.name,
     ],
   ),
 ];

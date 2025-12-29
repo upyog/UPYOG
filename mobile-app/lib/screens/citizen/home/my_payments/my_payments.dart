@@ -54,12 +54,12 @@ class _HomeMyPaymentsState extends State<HomeMyPayments> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListTile(
-                        title: BigTextNotoSans(
+                        title: BigSelectableTextNotoSans(
                           text: 'Property Tax',
                           fontWeight: FontWeight.w600,
                           size: 16.sp,
                         ),
-                        subtitle: const SmallTextNotoSans(
+                        subtitle: const SmallSelectableTextNotoSans(
                           text: 'My Payments',
                           fontWeight: FontWeight.w400,
                         ),
@@ -69,12 +69,12 @@ class _HomeMyPaymentsState extends State<HomeMyPayments> {
                         },
                       ),
                       ListTile(
-                        title: BigTextNotoSans(
+                        title: BigSelectableTextNotoSans(
                           text: 'Water',
                           fontWeight: FontWeight.w600,
                           size: 16.sp,
                         ),
-                        subtitle: const SmallTextNotoSans(
+                        subtitle: const SmallSelectableTextNotoSans(
                           text: 'My Payments',
                           fontWeight: FontWeight.w400,
                         ),
@@ -84,12 +84,12 @@ class _HomeMyPaymentsState extends State<HomeMyPayments> {
                         },
                       ),
                       ListTile(
-                        title: BigTextNotoSans(
+                        title: BigSelectableTextNotoSans(
                           text: 'Sewerage',
                           fontWeight: FontWeight.w600,
                           size: 16.sp,
                         ),
-                        subtitle: const SmallTextNotoSans(
+                        subtitle: const SmallSelectableTextNotoSans(
                           text: 'My Payments',
                           fontWeight: FontWeight.w400,
                         ),

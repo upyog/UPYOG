@@ -232,7 +232,7 @@ class _BpaCertificateState extends State<BpaCertificate> {
                                           color: BaseConfig.borderColor,
                                         ),
                                         SizedBox(height: 4.h),
-                                        SmallTextNotoSans(
+                                        SmallSelectableTextNotoSans(
                                           text: bpaItem.applicationNo ?? "N/A",
                                           fontWeight: FontWeight.w400,
                                           size: o == Orientation.portrait

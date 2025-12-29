@@ -235,7 +235,7 @@ class _WaterMyCertifiicatesState extends State<WaterMyCertificates> {
                                                 color: BaseConfig.borderColor,
                                               ),
                                               SizedBox(height: 4.h),
-                                              SmallTextNotoSans(
+                                              SmallSelectableTextNotoSans(
                                                 text: waterConnection
                                                         .applicationNo ??
                                                     "N/A",

@@ -35,24 +35,26 @@ MdmsResEmp _$MdmsResEmpFromJson(Map<String, dynamic> json) => MdmsResEmp()
   ..wsServicesCalculation = json['ws-services-calculation'] == null
       ? null
       : WsServicesCalculation.fromJson(
-          json['ws-services-calculation'] as Map<String, dynamic>);
+          json['ws-services-calculation'] as Map<String, dynamic>)
+  ..rainmakerPgr = json['RAINMAKER-PGR'] == null
+      ? null
+      : RainmakerPgr.fromJson(json['RAINMAKER-PGR'] as Map<String, dynamic>)
+  ..propertyTax = json['PropertyTax'] == null
+      ? null
+      : PropertyTax.fromJson(json['PropertyTax'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$MdmsResEmpToJson(MdmsResEmp instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('BPA', instance.bpaObps);
-  writeNotNull('NOC', instance.nocObps);
-  writeNotNull('common-masters', instance.commonMastersObps);
-  writeNotNull('ws-services-masters', instance.wsServicesMasters);
-  writeNotNull('ws-services-calculation', instance.wsServicesCalculation);
-  return val;
-}
+Map<String, dynamic> _$MdmsResEmpToJson(MdmsResEmp instance) =>
+    <String, dynamic>{
+      if (instance.bpaObps case final value?) 'BPA': value,
+      if (instance.nocObps case final value?) 'NOC': value,
+      if (instance.commonMastersObps case final value?) 'common-masters': value,
+      if (instance.wsServicesMasters case final value?)
+        'ws-services-masters': value,
+      if (instance.wsServicesCalculation case final value?)
+        'ws-services-calculation': value,
+      if (instance.rainmakerPgr case final value?) 'RAINMAKER-PGR': value,
+      if (instance.propertyTax case final value?) 'PropertyTax': value,
+    };
 
 BpaObps _$BpaObpsFromJson(Map<String, dynamic> json) => BpaObps()
   ..checkList = (json['CheckList'] as List<dynamic>?)
@@ -113,11 +115,15 @@ CommonMastersObps _$CommonMastersObpsFromJson(Map<String, dynamic> json) =>
     CommonMastersObps()
       ..documentType = (json['DocumentType'] as List<dynamic>?)
           ?.map((e) => DocumentType.fromJson(e as Map<String, dynamic>))
+          .toList()
+      ..genderType = (json['GenderType'] as List<dynamic>?)
+          ?.map((e) => GenderType.fromJson(e as Map<String, dynamic>))
           .toList();
 
 Map<String, dynamic> _$CommonMastersObpsToJson(CommonMastersObps instance) =>
     <String, dynamic>{
-      'DocumentType': instance.documentType,
+      if (instance.documentType case final value?) 'DocumentType': value,
+      if (instance.genderType case final value?) 'GenderType': value,
     };
 
 DocumentType _$DocumentTypeFromJson(Map<String, dynamic> json) => DocumentType()
@@ -134,6 +140,16 @@ Map<String, dynamic> _$DocumentTypeToJson(DocumentType instance) =>
       'active': instance.active,
       'allowedFormat': instance.allowedFormat,
       'maxFileSize': instance.maxFileSize,
+    };
+
+GenderType _$GenderTypeFromJson(Map<String, dynamic> json) => GenderType()
+  ..code = json['code'] as String?
+  ..active = json['active'] as bool?;
+
+Map<String, dynamic> _$GenderTypeToJson(GenderType instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'active': instance.active,
     };
 
 NocObps _$NocObpsFromJson(Map<String, dynamic> json) => NocObps()
@@ -241,5 +257,293 @@ Map<String, dynamic> _$ConnectionTypeToJson(ConnectionType instance) =>
     <String, dynamic>{
       'name': instance.name,
       'code': instance.code,
+      'active': instance.active,
+    };
+
+RainmakerPgr _$RainmakerPgrFromJson(Map<String, dynamic> json) => RainmakerPgr()
+  ..serviceDefs = (json['ServiceDefs'] as List<dynamic>?)
+      ?.map((e) => ServiceDef.fromJson(e as Map<String, dynamic>))
+      .toList();
+
+Map<String, dynamic> _$RainmakerPgrToJson(RainmakerPgr instance) =>
+    <String, dynamic>{
+      'ServiceDefs': instance.serviceDefs,
+    };
+
+ServiceDef _$ServiceDefFromJson(Map<String, dynamic> json) => ServiceDef()
+  ..serviceCode = json['serviceCode'] as String?
+  ..name = json['name'] as String?
+  ..keywords = json['keywords'] as String?
+  ..department = json['department'] as String?
+  ..slaHours = (json['slaHours'] as num?)?.toInt()
+  ..menuPath = json['menuPath'] as String?
+  ..active = json['active'] as bool?
+  ..order = (json['order'] as num?)?.toInt();
+
+Map<String, dynamic> _$ServiceDefToJson(ServiceDef instance) =>
+    <String, dynamic>{
+      'serviceCode': instance.serviceCode,
+      'name': instance.name,
+      'keywords': instance.keywords,
+      'department': instance.department,
+      'slaHours': instance.slaHours,
+      'menuPath': instance.menuPath,
+      'active': instance.active,
+      'order': instance.order,
+    };
+
+PropertyTax _$PropertyTaxFromJson(Map<String, dynamic> json) => PropertyTax()
+  ..usageCategory = (json['UsageCategory'] as List<dynamic>?)
+      ?.map((e) => OwnerType.fromJson(e as Map<String, dynamic>))
+      .toList()
+  ..floor = (json['Floor'] as List<dynamic>?)
+      ?.map((e) => Floor.fromJson(e as Map<String, dynamic>))
+      .toList()
+  ..ownerType = (json['OwnerType'] as List<dynamic>?)
+      ?.map((e) => OwnerType.fromJson(e as Map<String, dynamic>))
+      .toList()
+  ..occupancyType = (json['OccupancyType'] as List<dynamic>?)
+      ?.map((e) => Floor.fromJson(e as Map<String, dynamic>))
+      .toList()
+  ..ownerShipCategory = (json['OwnerShipCategory'] as List<dynamic>?)
+      ?.map((e) => OwnerShipCategory.fromJson(e as Map<String, dynamic>))
+      .toList()
+  ..mutationDocuments = (json['MutationDocuments'] as List<dynamic>?)
+      ?.map((e) => MutationDocument.fromJson(e as Map<String, dynamic>))
+      .toList()
+  ..subOwnerShipCategory = (json['SubOwnerShipCategory'] as List<dynamic>?)
+      ?.map((e) => Floor.fromJson(e as Map<String, dynamic>))
+      .toList()
+  ..documents = (json['Documents'] as List<dynamic>?)
+      ?.map((e) => Document.fromJson(e as Map<String, dynamic>))
+      .toList()
+  ..propertyType = (json['PropertyType'] as List<dynamic>?)
+      ?.map((e) => PropertyType.fromJson(e as Map<String, dynamic>))
+      .toList();
+
+Map<String, dynamic> _$PropertyTaxToJson(PropertyTax instance) =>
+    <String, dynamic>{
+      'UsageCategory': instance.usageCategory,
+      'Floor': instance.floor,
+      'OwnerType': instance.ownerType,
+      'OccupancyType': instance.occupancyType,
+      'OwnerShipCategory': instance.ownerShipCategory,
+      'MutationDocuments': instance.mutationDocuments,
+      'SubOwnerShipCategory': instance.subOwnerShipCategory,
+      'Documents': instance.documents,
+      'PropertyType': instance.propertyType,
+    };
+
+Document _$DocumentFromJson(Map<String, dynamic> json) => Document()
+  ..code = json['code'] as String?
+  ..active = json['active'] as bool?
+  ..required = json['required'] as bool?
+  ..description = json['description'] as String?
+  ..hasDropdown = json['hasDropdown'] as bool?
+  ..documentType = json['documentType'] as String?
+  ..dropdownData = (json['dropdownData'] as List<dynamic>?)
+      ?.map((e) => DocumentDropdownDatum.fromJson(e as Map<String, dynamic>))
+      .toList()
+  ..digitCitizen = json['digit-citizen'] as bool?
+  ..additionalDetails = json['additionalDetails'] == null
+      ? null
+      : AdditionalDetails.fromJson(
+          json['additionalDetails'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$DocumentToJson(Document instance) => <String, dynamic>{
+      'code': instance.code,
+      'active': instance.active,
+      'required': instance.required,
+      'description': instance.description,
+      'hasDropdown': instance.hasDropdown,
+      'documentType': instance.documentType,
+      'dropdownData': instance.dropdownData,
+      'digit-citizen': instance.digitCitizen,
+      'additionalDetails': instance.additionalDetails,
+    };
+
+AdditionalDetails _$AdditionalDetailsFromJson(Map<String, dynamic> json) =>
+    AdditionalDetails()
+      ..dropdownFilter = json['dropdownFilter'] == null
+          ? null
+          : DropdownFilter.fromJson(
+              json['dropdownFilter'] as Map<String, dynamic>)
+      ..enabledActions = json['enabledActions'] == null
+          ? null
+          : EnabledActions.fromJson(
+              json['enabledActions'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$AdditionalDetailsToJson(AdditionalDetails instance) =>
+    <String, dynamic>{
+      'dropdownFilter': instance.dropdownFilter,
+      'enabledActions': instance.enabledActions,
+    };
+
+DropdownFilter _$DropdownFilterFromJson(Map<String, dynamic> json) =>
+    DropdownFilter()
+      ..formDataPath = (json['formDataPath'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..parentJsonpath = json['parentJsonpath'] as String?;
+
+Map<String, dynamic> _$DropdownFilterToJson(DropdownFilter instance) =>
+    <String, dynamic>{
+      'formDataPath': instance.formDataPath,
+      'parentJsonpath': instance.parentJsonpath,
+    };
+
+EnabledActions _$EnabledActionsFromJson(Map<String, dynamic> json) =>
+    EnabledActions()
+      ..assess = json['assess'] == null
+          ? null
+          : Assess.fromJson(json['assess'] as Map<String, dynamic>)
+      ..create = json['create'] == null
+          ? null
+          : Assess.fromJson(json['create'] as Map<String, dynamic>)
+      ..update = json['update'] == null
+          ? null
+          : Assess.fromJson(json['update'] as Map<String, dynamic>)
+      ..reassess = json['reassess'] == null
+          ? null
+          : Assess.fromJson(json['reassess'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$EnabledActionsToJson(EnabledActions instance) =>
+    <String, dynamic>{
+      'assess': instance.assess,
+      'create': instance.create,
+      'update': instance.update,
+      'reassess': instance.reassess,
+    };
+
+Assess _$AssessFromJson(Map<String, dynamic> json) => Assess()
+  ..disableUpload = json['disableUpload'] as bool?
+  ..disableDropdown = json['disableDropdown'] as bool?;
+
+Map<String, dynamic> _$AssessToJson(Assess instance) => <String, dynamic>{
+      'disableUpload': instance.disableUpload,
+      'disableDropdown': instance.disableDropdown,
+    };
+
+DocumentDropdownDatum _$DocumentDropdownDatumFromJson(
+        Map<String, dynamic> json) =>
+    DocumentDropdownDatum()
+      ..code = json['code'] as String?
+      ..active = json['active'] as bool?
+      ..parentValue = json['parentValue'] as List<dynamic>?;
+
+Map<String, dynamic> _$DocumentDropdownDatumToJson(
+        DocumentDropdownDatum instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'active': instance.active,
+      if (instance.parentValue case final value?) 'parentValue': value,
+    };
+
+Floor _$FloorFromJson(Map<String, dynamic> json) => Floor()
+  ..code = json['code'] as String?
+  ..name = json['name'] as String?
+  ..active = json['active'] as bool?
+  ..description = json['description'] as String?
+  ..propertyType = json['propertyType'] as String?
+  ..ownerShipCategory = json['ownerShipCategory'] as String?;
+
+Map<String, dynamic> _$FloorToJson(Floor instance) => <String, dynamic>{
+      'code': instance.code,
+      'name': instance.name,
+      'active': instance.active,
+      'description': instance.description,
+      'propertyType': instance.propertyType,
+      'ownerShipCategory': instance.ownerShipCategory,
+    };
+
+PropertyType _$PropertyTypeFromJson(Map<String, dynamic> json) => PropertyType()
+  ..code = json['code'] as String?
+  ..name = json['name'] as String?
+  ..active = json['active'] as bool?
+  ..propertyType = json['propertyType'] as String?;
+
+Map<String, dynamic> _$PropertyTypeToJson(PropertyType instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'name': instance.name,
+      'active': instance.active,
+      'propertyType': instance.propertyType,
+    };
+
+MutationDocument _$MutationDocumentFromJson(Map<String, dynamic> json) =>
+    MutationDocument()
+      ..code = json['code'] as String?
+      ..active = json['active'] as bool?
+      ..required = json['required'] as bool?
+      ..description = json['description'] as String?
+      ..hasDropdown = json['hasDropdown'] as bool?
+      ..documentType = json['documentType'] as String?
+      ..dropdownData = (json['dropdownData'] as List<dynamic>?)
+          ?.map((e) =>
+              MutationDocumentDropdownDatum.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+Map<String, dynamic> _$MutationDocumentToJson(MutationDocument instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'active': instance.active,
+      'required': instance.required,
+      'description': instance.description,
+      'hasDropdown': instance.hasDropdown,
+      'documentType': instance.documentType,
+      'dropdownData': instance.dropdownData,
+    };
+
+MutationDocumentDropdownDatum _$MutationDocumentDropdownDatumFromJson(
+        Map<String, dynamic> json) =>
+    MutationDocumentDropdownDatum()
+      ..code = json['code'] as String?
+      ..active = json['active'] as bool?;
+
+Map<String, dynamic> _$MutationDocumentDropdownDatumToJson(
+        MutationDocumentDropdownDatum instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'active': instance.active,
+    };
+
+OwnerType _$OwnerTypeFromJson(Map<String, dynamic> json) => OwnerType()
+  ..code = json['code'] as String?
+  ..name = json['name'] as String?
+  ..active = json['active']
+  ..fromFy = json['fromFY'] as String?
+  ..exemption = json['exemption'] == null
+      ? null
+      : Exemption.fromJson(json['exemption'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$OwnerTypeToJson(OwnerType instance) => <String, dynamic>{
+      'code': instance.code,
+      'name': instance.name,
+      'active': instance.active,
+      'fromFY': instance.fromFy,
+      'exemption': instance.exemption,
+    };
+
+Exemption _$ExemptionFromJson(Map<String, dynamic> json) => Exemption()
+  ..rate = (json['rate'] as num?)?.toInt()
+  ..maxAmount = (json['maxAmount'] as num?)?.toInt()
+  ..flatAmount = (json['flatAmount'] as num?)?.toInt();
+
+Map<String, dynamic> _$ExemptionToJson(Exemption instance) => <String, dynamic>{
+      'rate': instance.rate,
+      'maxAmount': instance.maxAmount,
+      'flatAmount': instance.flatAmount,
+    };
+
+OwnerShipCategory _$OwnerShipCategoryFromJson(Map<String, dynamic> json) =>
+    OwnerShipCategory()
+      ..code = json['code'] as String?
+      ..name = json['name'] as String?
+      ..active = json['active'] as bool?;
+
+Map<String, dynamic> _$OwnerShipCategoryToJson(OwnerShipCategory instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'name': instance.name,
       'active': instance.active,
     };

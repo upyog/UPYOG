@@ -32,12 +32,14 @@ ServiceWrapper _$ServiceWrapperFromJson(Map<String, dynamic> json) =>
           : Service.fromJson(json['service'] as Map<String, dynamic>)
       ..workflow = json['workflow'] == null
           ? null
-          : Workflow.fromJson(json['workflow'] as Map<String, dynamic>);
+          : Workflow.fromJson(json['workflow'] as Map<String, dynamic>)
+      ..details = json['details'];
 
 Map<String, dynamic> _$ServiceWrapperToJson(ServiceWrapper instance) =>
     <String, dynamic>{
       'service': instance.service,
       'workflow': instance.workflow,
+      if (instance.details case final value?) 'details': value,
     };
 
 Service _$ServiceFromJson(Map<String, dynamic> json) => Service()
@@ -219,7 +221,8 @@ Map<String, dynamic> _$WorkflowToJson(Workflow instance) => <String, dynamic>{
       'action': instance.action,
       'assignes': instance.assignes,
       'comments': instance.comments,
-      'verificationDocuments': instance.verificationDocuments,
+      'verificationDocuments':
+          _variationDocumentsToJson(instance.verificationDocuments),
     };
 
 VerificationDocument _$VerificationDocumentFromJson(
@@ -234,7 +237,7 @@ VerificationDocument _$VerificationDocumentFromJson(
 Map<String, dynamic> _$VerificationDocumentToJson(
         VerificationDocument instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      if (instance.id case final value?) 'id': value,
       'documentType': instance.documentType,
       'fileStoreId': instance.fileStoreId,
       'documentUid': instance.documentUid,

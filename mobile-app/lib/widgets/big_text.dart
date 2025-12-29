@@ -68,7 +68,7 @@ class InterText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.inter.call().copyWith(
+      style: GoogleFonts.inter().copyWith(
             fontSize: size ?? 22.sp,
             fontWeight: fontWeight,
             color: color,
@@ -108,7 +108,7 @@ class BigTextNotoSans extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.notoSans.call().copyWith(
+      style: GoogleFonts.notoSans().copyWith(
             fontSize: size ?? 22.sp,
             fontWeight: fontWeight,
             color: color,
@@ -117,6 +117,42 @@ class BigTextNotoSans extends StatelessWidget {
       maxLines: maxLine,
       textAlign: textAlign,
       overflow: textOverflow,
+    );
+  }
+}
+
+class BigSelectableTextNotoSans extends StatelessWidget {
+  const BigSelectableTextNotoSans({
+    super.key,
+    required this.text,
+    this.color = BaseConfig.textColor,
+    this.size,
+    this.fontWeight,
+    this.textAlign,
+    this.maxLine,
+    this.fontString,
+  });
+
+  final String text;
+  final String? fontString;
+  final Color color;
+  final double? size;
+  final FontWeight? fontWeight;
+  final TextAlign? textAlign;
+  final int? maxLine;
+
+  @override
+  Widget build(BuildContext context) {
+    return SelectableText(
+      text,
+      style: GoogleFonts.notoSans().copyWith(
+        fontSize: size ?? 22.sp,
+        fontWeight: fontWeight,
+        color: color,
+        fontFamily: fontString,
+      ),
+      maxLines: maxLine,
+      textAlign: textAlign,
     );
   }
 }

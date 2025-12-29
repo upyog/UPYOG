@@ -232,7 +232,7 @@ class _FsmApplicationDetailsState extends State<FsmApplicationDetails> {
                                   tenantId: fsm.tenantId!,
                                 );
                               },
-                              child: MediumText(
+                              child: MediumSelectableTextNotoSans(
                                 text: getLocalizedString(
                                   i18.common.TIMELINE,
                                 ),
@@ -257,7 +257,7 @@ class _FsmApplicationDetailsState extends State<FsmApplicationDetails> {
                                       color: BaseConfig.redColor1,
                                     ),
                                     const SizedBox(width: 5),
-                                    MediumText(
+                                    MediumSelectableTextNotoSans(
                                       text: getLocalizedString(
                                         i18.common.DOWNLOAD,
                                       ),
@@ -273,7 +273,7 @@ class _FsmApplicationDetailsState extends State<FsmApplicationDetails> {
                                   ))
                                     PopupMenuItem<String>(
                                       value: 'Final Payment Receipt',
-                                      child: const MediumText(
+                                      child: const MediumSelectableTextNotoSans(
                                         text: 'Final Payment Receipt',
                                       ),
                                       onTap: () async {
@@ -356,7 +356,7 @@ class _FsmApplicationDetailsState extends State<FsmApplicationDetails> {
                                       (payments?.length ?? 0) > 1)
                                     PopupMenuItem<String>(
                                       value: 'Advance Payment Receipt',
-                                      child: const MediumText(
+                                      child: const MediumSelectableTextNotoSans(
                                         text: 'Advance Payment Receipt',
                                       ),
                                       onTap: () async {
@@ -442,7 +442,7 @@ class _FsmApplicationDetailsState extends State<FsmApplicationDetails> {
                                       (payments?.length ?? 0) == 1)
                                     PopupMenuItem<String>(
                                       value: 'Advance Payment Receipt',
-                                      child: const MediumText(
+                                      child: const MediumSelectableTextNotoSans(
                                         text: 'Advance Payment Receipt',
                                       ),
                                       onTap: () async {
@@ -755,9 +755,10 @@ class _FsmApplicationDetailsState extends State<FsmApplicationDetails> {
                                   text:
                                       "${fsm.pitDetail?.length}m x ${fsm.pitDetail?.width}m x ${fsm.pitDetail?.height}m",
                                 ),
-                                SmallTextNotoSans(
+                                SmallSelectableTextNotoSans(
                                   text:
                                       "(${getLocalizedString(i18.fsmLocal.FSM_LENGTH, module: Modules.FSM)} x ${getLocalizedString(i18.fsmLocal.FSM_BREADTH, module: Modules.FSM)} x ${getLocalizedString(i18.fsmLocal.FSM_DEPTH, module: Modules.FSM)})",
+                                  color: BaseConfig.greyColor3,
                                 ),
                                 const SizedBox(
                                   height: 10,
