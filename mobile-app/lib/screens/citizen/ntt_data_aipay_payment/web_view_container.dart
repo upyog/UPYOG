@@ -62,12 +62,8 @@ class _WebViewContainerState extends State<WebViewContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (popResult) {
-        if (popResult) return;
-        _handleBackButtonAction(context);
-      },
+    return WillPopScope(
+      onWillPop: () => _handleBackButtonAction(context),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -80,15 +76,20 @@ class _WebViewContainerState extends State<WebViewContainer> {
             // initialUrl: 'about:blank',
             key: UniqueKey(),
             onWebViewCreated: (InAppWebViewController inAppWebViewController) {
-              _controllerCompleter.future.then((value) => _controller = value);
-              _controllerCompleter.complete(inAppWebViewController);
+              try {
+                _controllerCompleter.future
+                    .then((value) => _controller = value);
+                _controllerCompleter.complete(inAppWebViewController);
 
-              dPrint("payDetails from webview $payDetails");
-              _loadHtmlFromAssets(mode);
+                dPrint("payDetails from webview $payDetails");
+                _loadHtmlFromAssets(mode);
+              } catch (e) {
+                dPrint("Error in webview creation: $e");
+              }
             },
             shouldOverrideUrlLoading: (controller, navigationAction) async {
-              String url = navigationAction.request.url as String;
-              var uri = navigationAction.request.url!;
+              String url = navigationAction.request.url.toString();
+              var uri = Uri.parse(url);
               if (url.startsWith("upi://")) {
                 dPrint("upi url started loading");
                 try {
@@ -202,10 +203,12 @@ class _WebViewContainerState extends State<WebViewContainer> {
     String fileText = await rootBundle.loadString(localUrl);
     _controller.loadUrl(
       urlRequest: URLRequest(
-        url: Uri.dataFromString(
-          fileText,
-          mimeType: 'text/html',
-          encoding: Encoding.getByName('utf-8'),
+        url: WebUri.uri(
+          Uri.dataFromString(
+            fileText,
+            mimeType: 'text/html',
+            encoding: Encoding.getByName('utf-8'),
+          ),
         ),
       ),
     );
@@ -227,7 +230,7 @@ class _WebViewContainerState extends State<WebViewContainer> {
     Navigator.pop(context);
   }
 
-  Future<void> _handleBackButtonAction(BuildContext context) async {
+  Future<bool> _handleBackButtonAction(BuildContext context) async {
     dPrint("_handleBackButtonAction called");
     showDialog(
       context: context,
@@ -241,7 +244,7 @@ class _WebViewContainerState extends State<WebViewContainer> {
             },
             child: const Text('No'),
           ),
-
+          // ignore: deprecated_member_use
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
@@ -259,5 +262,6 @@ class _WebViewContainerState extends State<WebViewContainer> {
         ],
       ),
     );
+    return Future.value(true);
   }
 }

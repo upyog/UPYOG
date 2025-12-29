@@ -62,7 +62,7 @@ Widget textFormFieldNormal(
       suffixIcon: suffixIcon,
       prefixIcon: prefixIcon,
       contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-      hintStyle: GoogleFonts.notoSans.call().copyWith(
+      hintStyle: GoogleFonts.notoSans().copyWith(
             color: hintTextColor,
           ),
       border: OutlineInputBorder(
@@ -71,7 +71,10 @@ Widget textFormFieldNormal(
       ),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(opacity),
+          color: Theme.of(context)
+              .colorScheme
+              .secondary
+              .withValues(alpha: opacity),
         ),
         borderRadius: borderRadius ?? BorderRadius.circular(8.r),
       ),

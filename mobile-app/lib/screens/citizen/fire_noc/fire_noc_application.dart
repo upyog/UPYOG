@@ -27,6 +27,8 @@ class _FireNocState extends State<FireNocApplication> {
   final _fireNocController = Get.find<FireNocController>();
   final _commonController = Get.find<CommonController>();
 
+  final RxBool _isLoading = false.obs;
+
   @override
   void initState() {
     super.initState();
@@ -36,10 +38,12 @@ class _FireNocState extends State<FireNocApplication> {
 
   void getFireNoc() async {
     if (!_authController.isValidUser) return;
+    _isLoading.value = true;
     await _commonController.fetchLabels(modules: Modules.NOC);
     await _fireNocController.getFireNocApplications(
       token: _authController.token!.accessToken!,
     );
+    _isLoading.value = false;
   }
 
   @override
@@ -47,17 +51,19 @@ class _FireNocState extends State<FireNocApplication> {
     return Scaffold(
       appBar: HeaderTop(
         titleWidget: Obx(
-          () => Wrap(
-            children: [
-              Text(
-                getLocalizedString(
-                  i18.noc.NOC_APPLICATION,
-                  module: Modules.NOC,
-                ),
-              ),
-              Text(' (${_fireNocController.length.value})'),
-            ],
-          ),
+          () => !_isLoading.value
+              ? Wrap(
+                  children: [
+                    Text(
+                      getLocalizedString(
+                        i18.noc.NOC_APPLICATION,
+                        module: Modules.NOC,
+                      ),
+                    ),
+                    Text(' (${_fireNocController.length.value})'),
+                  ],
+                )
+              : const SizedBox.shrink(),
         ),
         onPressed: () => Navigator.of(context).pop(),
       ),
@@ -82,18 +88,18 @@ class _FireNocState extends State<FireNocApplication> {
                       final fireNocList = myFireNoc.fireNoCs;
                       fireNocList?.sort(
                         (a, b) => DateTime.fromMillisecondsSinceEpoch(
-                          b.auditDetails!.createdTime!,
+                          b.auditDetails?.createdTime ?? 0,
                         ).compareTo(
                           DateTime.fromMillisecondsSinceEpoch(
-                            a.auditDetails!.createdTime!,
+                            a.auditDetails?.createdTime ?? 0,
                           ),
                         ),
                       );
-                      if (fireNocList!.isNotEmpty) {
+                      if (isNotNullOrEmpty(fireNocList)) {
                         return ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: fireNocList.length >= 10
+                          itemCount: fireNocList!.length >= 10
                               ? fireNocList.length + 1
                               : fireNocList.length,
                           itemBuilder: (context, index) {

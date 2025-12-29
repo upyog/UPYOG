@@ -156,22 +156,14 @@ RoadCuttingInfo _$RoadCuttingInfoFromJson(Map<String, dynamic> json) =>
       ..auditDetails = json['auditDetails']
       ..status = json['status'] as String?;
 
-Map<String, dynamic> _$RoadCuttingInfoToJson(RoadCuttingInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('id', instance.id);
-  val['roadType'] = instance.roadType;
-  val['roadCuttingArea'] = instance.roadCuttingArea;
-  writeNotNull('auditDetails', instance.auditDetails);
-  writeNotNull('status', instance.status);
-  return val;
-}
+Map<String, dynamic> _$RoadCuttingInfoToJson(RoadCuttingInfo instance) =>
+    <String, dynamic>{
+      if (instance.id case final value?) 'id': value,
+      'roadType': instance.roadType,
+      'roadCuttingArea': instance.roadCuttingArea,
+      if (instance.auditDetails case final value?) 'auditDetails': value,
+      if (instance.status case final value?) 'status': value,
+    };
 
 PlumberInfo _$PlumberInfoFromJson(Map<String, dynamic> json) => PlumberInfo()
   ..id = json['id'] as String?
@@ -185,27 +177,22 @@ PlumberInfo _$PlumberInfoFromJson(Map<String, dynamic> json) => PlumberInfo()
   ..additionalDetails = json['additionalDetails']
   ..auditDetails = json['auditDetails'];
 
-Map<String, dynamic> _$PlumberInfoToJson(PlumberInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('id', instance.id);
-  val['name'] = instance.name;
-  val['licenseNo'] = instance.licenseNo;
-  val['mobileNumber'] = instance.mobileNumber;
-  writeNotNull('gender', instance.gender);
-  writeNotNull('fatherOrHusbandName', instance.fatherOrHusbandName);
-  writeNotNull('correspondenceAddress', instance.correspondenceAddress);
-  writeNotNull('relationship', instance.relationship);
-  writeNotNull('additionalDetails', instance.additionalDetails);
-  writeNotNull('auditDetails', instance.auditDetails);
-  return val;
-}
+Map<String, dynamic> _$PlumberInfoToJson(PlumberInfo instance) =>
+    <String, dynamic>{
+      if (instance.id case final value?) 'id': value,
+      'name': instance.name,
+      'licenseNo': instance.licenseNo,
+      'mobileNumber': instance.mobileNumber,
+      if (instance.gender case final value?) 'gender': value,
+      if (instance.fatherOrHusbandName case final value?)
+        'fatherOrHusbandName': value,
+      if (instance.correspondenceAddress case final value?)
+        'correspondenceAddress': value,
+      if (instance.relationship case final value?) 'relationship': value,
+      if (instance.additionalDetails case final value?)
+        'additionalDetails': value,
+      if (instance.auditDetails case final value?) 'auditDetails': value,
+    };
 
 AdditionalDetails _$AdditionalDetailsFromJson(Map<String, dynamic> json) =>
     AdditionalDetails()

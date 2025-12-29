@@ -9,17 +9,17 @@ import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/edit_profile_controller.dart';
 import 'package:mobile_app/controller/notification_controller.dart';
-import 'package:mobile_app/model/citizen/user_profile/user_profile.dart';
+import 'package:mobile_app/model/citizen/files/file_store.dart';
 import 'package:mobile_app/routes/routes.dart';
 import 'package:mobile_app/services/notification_service.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/dashboard_icon_role.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
+import 'package:mobile_app/utils/extension/extension.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/big_text.dart';
 import 'package:mobile_app/widgets/news_card.dart';
 import 'package:mobile_app/widgets/small_text.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return services[index];
                                 },
                                 onPageChanged: (index) {
-                                  print(index);
+                                  dPrint(index);
                                   setState(() {
                                     _currentPage = index;
                                   });
@@ -150,31 +150,33 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                 ),
               ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.endDocked,
-              floatingActionButton: Padding(
-                padding: const EdgeInsets.only(bottom: 80.0),
-                child: Obx(() {
-                  if (_authController1.isValidUser) {
-                    return IconButton(
-                      onPressed: () async {
-                        const url =
-                            'https://upyog.niua.org/digit-ui/citizen/login';
+              // floatingActionButtonLocation:
+              //     FloatingActionButtonLocation.endDocked,
+              // floatingActionButton: Padding(
+              //   padding: const EdgeInsets.only(bottom: 80.0),
+              //   child: Obx(() {
+              //     if (_authController1.isValidUser) {
+              //       return IconButton(
+              //         onPressed: () async {
+              //           const url =
+              //               'https://upyog.niua.org/digit-ui/citizen/login';
 
-                        await launchURL(url,
-                            mode: LaunchMode.externalApplication);
-                      },
-                      icon: Icon(
-                        Icons.add_circle_outline,
-                        size: 40,
-                        color: BaseConfig.appThemeColor1,
-                      ),
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                }),
-              ),
+              //           await launchURL(
+              //             url,
+              //             mode: LaunchMode.externalApplication,
+              //           );
+              //         },
+              //         icon: const Icon(
+              //           Icons.add_circle_outline,
+              //           size: 40,
+              //           color: BaseConfig.appThemeColor1,
+              //         ),
+              //       );
+              //     } else {
+              //       return const SizedBox();
+              //     }
+              //   }),
+              // ),
             );
           },
         );
@@ -235,10 +237,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             onPressed: () async {
                               dPrint(service.title);
-                              // TODO: Navigate to respective screen
                               if (!_authController1.isValidUser) {
-                                // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-                                Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+                                Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+                                // Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
                                 return;
                               }
                               if (service.title == i18.common.HELP_GRIEVANCE) {
@@ -643,7 +644,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.only(left: 12.w, right: 12.w),
               child: Icon(
                 Icons.mic_none_outlined,
-                color: BaseConfig.mainBackgroundColor.withOpacity(0.7),
+                color: BaseConfig.mainBackgroundColor.withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -726,8 +727,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: CircleAvatar(
                       radius: 20.r,
                       backgroundColor: Colors.transparent,
-                      child: StreamBuilder(
-                        stream: _editProfileController.streamCtrl.stream,
+                      child: FutureBuilder<FileStore?>(
+                        future:
+                            _editProfileController.getCacheProfileFIleStore(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -736,7 +738,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           if (snapshot.hasData && !snapshot.hasError) {
                             if (snapshot.data is String ||
                                 snapshot.data == null) {
-                              CircleAvatar(
+                              return CircleAvatar(
                                 backgroundColor: BaseConfig.greyColor2,
                                 radius: 20.r,
                                 child: const Icon(
@@ -745,7 +747,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               );
                             }
-                            final user = snapshot.data as User;
+                            final fileStore = snapshot.data;
                             return ImagePlaceHolder(
                               radius: 20.r,
                               iconSize: 30,
@@ -754,7 +756,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: EdgeInsets.zero,
                               iconColor: Colors.white,
                               backgroundColor: BaseConfig.appThemeColor1,
-                              photoUrl: user.photo?.split(',').first,
+                              photoUrl: fileStore?.getUserPhoto(),
                             );
                           } else {
                             return CircleAvatar(
@@ -762,6 +764,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               radius: 20.r,
                               child: const Icon(
                                 Icons.person,
+                                color: BaseConfig.mainBackgroundColor,
                                 size: 30,
                               ),
                               // child: const Icon(

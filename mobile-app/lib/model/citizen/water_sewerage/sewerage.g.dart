@@ -102,54 +102,45 @@ SewerageConnection _$SewerageConnectionFromJson(Map<String, dynamic> json) =>
           .toList()
       ..action = json['action'] as String?;
 
-Map<String, dynamic> _$SewerageConnectionToJson(SewerageConnection instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'tenantId': instance.tenantId,
-    'propertyId': instance.propertyId,
-    'applicationNo': instance.applicationNo,
-    'applicationStatus': instance.applicationStatus,
-    'status': instance.status,
-    'connectionNo': instance.connectionNo,
-    'oldConnectionNo': instance.oldConnectionNo,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('documents', instance.documents);
-  writeNotNull('plumberInfo', instance.plumberInfo);
-  val['roadType'] = instance.roadType;
-  val['roadCuttingArea'] = instance.roadCuttingArea;
-  writeNotNull('roadCuttingInfo', instance.roadCuttingInfo);
-  val['connectionExecutionDate'] = instance.connectionExecutionDate;
-  val['connectionCategory'] = instance.connectionCategory;
-  val['connectionType'] = instance.connectionType;
-  val['additionalDetails'] = instance.additionalDetails;
-  val['processInstance'] = instance.processInstance;
-  val['auditDetails'] = instance.auditDetails;
-  val['connectionHolders'] = instance.connectionHolders;
-  val['applicationType'] = instance.applicationType;
-  val['dateEffectiveFrom'] = instance.dateEffectiveFrom;
-  val['oldApplication'] = instance.oldApplication;
-  val['channel'] = instance.channel;
-  val['disconnectionExecutionDate'] = instance.disconnectionExecutionDate;
-  val['proposedWaterClosets'] = instance.proposedWaterClosets;
-  val['proposedToilets'] = instance.proposedToilets;
-  val['noOfWaterClosets'] = instance.noOfWaterClosets;
-  val['noOfToilets'] = instance.noOfToilets;
-  val['isDisconnectionTemporary'] = instance.isDisconnectionTemporary;
-  val['disconnectionReason'] = instance.disconnectionReason;
-  writeNotNull('comment', instance.comment);
-  writeNotNull('assignes', instance.assignes);
-  writeNotNull('assignee', instance.assignee);
-  writeNotNull('wfDocuments', instance.wfDocuments);
-  writeNotNull('action', instance.action);
-  return val;
-}
+Map<String, dynamic> _$SewerageConnectionToJson(SewerageConnection instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'tenantId': instance.tenantId,
+      'propertyId': instance.propertyId,
+      'applicationNo': instance.applicationNo,
+      'applicationStatus': instance.applicationStatus,
+      'status': instance.status,
+      'connectionNo': instance.connectionNo,
+      'oldConnectionNo': instance.oldConnectionNo,
+      if (instance.documents case final value?) 'documents': value,
+      if (instance.plumberInfo case final value?) 'plumberInfo': value,
+      'roadType': instance.roadType,
+      'roadCuttingArea': instance.roadCuttingArea,
+      if (instance.roadCuttingInfo case final value?) 'roadCuttingInfo': value,
+      'connectionExecutionDate': instance.connectionExecutionDate,
+      'connectionCategory': instance.connectionCategory,
+      'connectionType': instance.connectionType,
+      'additionalDetails': instance.additionalDetails,
+      'processInstance': instance.processInstance,
+      'auditDetails': instance.auditDetails,
+      'connectionHolders': instance.connectionHolders,
+      'applicationType': instance.applicationType,
+      'dateEffectiveFrom': instance.dateEffectiveFrom,
+      'oldApplication': instance.oldApplication,
+      'channel': instance.channel,
+      'disconnectionExecutionDate': instance.disconnectionExecutionDate,
+      'proposedWaterClosets': instance.proposedWaterClosets,
+      'proposedToilets': instance.proposedToilets,
+      'noOfWaterClosets': instance.noOfWaterClosets,
+      'noOfToilets': instance.noOfToilets,
+      'isDisconnectionTemporary': instance.isDisconnectionTemporary,
+      'disconnectionReason': instance.disconnectionReason,
+      if (instance.comment case final value?) 'comment': value,
+      if (instance.assignes case final value?) 'assignes': value,
+      if (instance.assignee case final value?) 'assignee': value,
+      if (instance.wfDocuments case final value?) 'wfDocuments': value,
+      if (instance.action case final value?) 'action': value,
+    };
 
 PlumberInfo _$PlumberInfoFromJson(Map<String, dynamic> json) => PlumberInfo()
   ..id = json['id'] as String?
@@ -163,27 +154,22 @@ PlumberInfo _$PlumberInfoFromJson(Map<String, dynamic> json) => PlumberInfo()
   ..additionalDetails = json['additionalDetails']
   ..auditDetails = json['auditDetails'];
 
-Map<String, dynamic> _$PlumberInfoToJson(PlumberInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('id', instance.id);
-  val['name'] = instance.name;
-  val['licenseNo'] = instance.licenseNo;
-  val['mobileNumber'] = instance.mobileNumber;
-  writeNotNull('gender', instance.gender);
-  writeNotNull('fatherOrHusbandName', instance.fatherOrHusbandName);
-  writeNotNull('correspondenceAddress', instance.correspondenceAddress);
-  writeNotNull('relationship', instance.relationship);
-  writeNotNull('additionalDetails', instance.additionalDetails);
-  writeNotNull('auditDetails', instance.auditDetails);
-  return val;
-}
+Map<String, dynamic> _$PlumberInfoToJson(PlumberInfo instance) =>
+    <String, dynamic>{
+      if (instance.id case final value?) 'id': value,
+      'name': instance.name,
+      'licenseNo': instance.licenseNo,
+      'mobileNumber': instance.mobileNumber,
+      if (instance.gender case final value?) 'gender': value,
+      if (instance.fatherOrHusbandName case final value?)
+        'fatherOrHusbandName': value,
+      if (instance.correspondenceAddress case final value?)
+        'correspondenceAddress': value,
+      if (instance.relationship case final value?) 'relationship': value,
+      if (instance.additionalDetails case final value?)
+        'additionalDetails': value,
+      if (instance.auditDetails case final value?) 'auditDetails': value,
+    };
 
 RoadCuttingInfoElement _$RoadCuttingInfoElementFromJson(
         Map<String, dynamic> json) =>
@@ -195,22 +181,14 @@ RoadCuttingInfoElement _$RoadCuttingInfoElementFromJson(
       ..status = json['status'] as String?;
 
 Map<String, dynamic> _$RoadCuttingInfoElementToJson(
-    RoadCuttingInfoElement instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('id', instance.id);
-  val['roadType'] = instance.roadType;
-  val['roadCuttingArea'] = instance.roadCuttingArea;
-  writeNotNull('auditDetails', instance.auditDetails);
-  writeNotNull('status', instance.status);
-  return val;
-}
+        RoadCuttingInfoElement instance) =>
+    <String, dynamic>{
+      if (instance.id case final value?) 'id': value,
+      'roadType': instance.roadType,
+      'roadCuttingArea': instance.roadCuttingArea,
+      if (instance.auditDetails case final value?) 'auditDetails': value,
+      if (instance.status case final value?) 'status': value,
+    };
 
 Assignes _$AssignesFromJson(Map<String, dynamic> json) =>
     Assignes()..uuid = json['uuid'] as String?;
@@ -312,27 +290,19 @@ ProcessInstance _$ProcessInstanceFromJson(Map<String, dynamic> json) =>
           ?.map((e) => Assignes.fromJson(e as Map<String, dynamic>))
           .toList();
 
-Map<String, dynamic> _$ProcessInstanceToJson(ProcessInstance instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('id', instance.id);
-  writeNotNull('tenantId', instance.tenantId);
-  writeNotNull('businessService', instance.businessService);
-  writeNotNull('businessId', instance.businessId);
-  val['action'] = instance.action;
-  writeNotNull('moduleName', instance.moduleName);
-  writeNotNull('state', instance.state);
-  val['comment'] = instance.comment;
-  val['documents'] = instance.documents;
-  writeNotNull('assignes', instance.assignes);
-  return val;
-}
+Map<String, dynamic> _$ProcessInstanceToJson(ProcessInstance instance) =>
+    <String, dynamic>{
+      if (instance.id case final value?) 'id': value,
+      if (instance.tenantId case final value?) 'tenantId': value,
+      if (instance.businessService case final value?) 'businessService': value,
+      if (instance.businessId case final value?) 'businessId': value,
+      'action': instance.action,
+      if (instance.moduleName case final value?) 'moduleName': value,
+      if (instance.state case final value?) 'state': value,
+      'comment': instance.comment,
+      'documents': instance.documents,
+      if (instance.assignes case final value?) 'assignes': value,
+    };
 
 ConnectionHolder _$ConnectionHolderFromJson(Map<String, dynamic> json) =>
     ConnectionHolder()

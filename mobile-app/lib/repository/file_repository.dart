@@ -1,7 +1,7 @@
-import 'package:mobile_app/utils/constants/api_constants.dart';
-import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/model/request/request_info_model.dart';
 import 'package:mobile_app/services/base_service.dart';
+import 'package:mobile_app/utils/constants/api_constants.dart';
+import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/utils.dart';
 
 class FileRepository {
@@ -26,8 +26,6 @@ class FileRepository {
     }
   }
 
-
-  //Abhis TL DOWNLOAD
   static Future<dynamic> getPdfService({
     required body,
     required query,
@@ -47,4 +45,22 @@ class FileRepository {
     }
   }
 
+  //Download Challan PDF - EMP - UC
+  static Future<dynamic> getChallanPdfService({
+    required query,
+    required String token,
+  }) async {
+    final local = await getLocal();
+    final response = await _baseService.makeRequest(
+      url: Url.UC_CHALLAN_DOWNLOAD_URL,
+      body: {},
+      method: RequestType.POST,
+      requestInfo: RequestInfo(authToken: token, local: local),
+      queryParameters: query,
+    );
+
+    if (response != null) {
+      return response;
+    }
+  }
 }

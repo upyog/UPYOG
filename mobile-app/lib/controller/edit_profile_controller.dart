@@ -1,13 +1,20 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/config/base_config.dart';
+import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
+import 'package:mobile_app/controller/file_controller.dart';
+import 'package:mobile_app/model/citizen/files/file_store.dart';
 import 'package:mobile_app/model/citizen/token/token.dart';
 import 'package:mobile_app/model/citizen/user_profile/user_profile.dart';
 import 'package:mobile_app/repository/profile_repository.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
+import 'package:mobile_app/utils/constants/constants.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
+import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/errors/error_handler.dart';
 import 'package:mobile_app/utils/utils.dart';
 
@@ -178,6 +185,57 @@ class EditProfileController extends GetxController {
         BaseConfig.redColor1,
       );
       ErrorHandler.logError(e.toString(), s);
+    }
+  }
+
+  Future<FileStore?> getCacheProfileFIleStore() async {
+    try {
+      final userType = await storage.getString(Constants.USER_TYPE);
+      final cacheKey = userType == UserType.EMPLOYEE.name
+          ? Constants.PROFILE_FILESTORE_EMP
+          : Constants.PROFILE_FILESTORE_CITIZEN;
+
+      final cachedFileStore = await storage.getString(cacheKey);
+      final cachedFileStoreData =
+          FileStore.fromJson(jsonDecode(cachedFileStore ?? '{}'));
+      final cachedFileStoreId =
+          cachedFileStoreData.fileStoreIds?.firstOrNull?.id;
+
+      final currentUserPhotoId = userProfile.user?.firstOrNull?.photo;
+
+      if (!isNotNullOrEmpty(currentUserPhotoId)) {
+        dPrint('User has no profile photo');
+        return null;
+      }
+
+      if (cachedFileStoreId != null &&
+          cachedFileStoreId == currentUserPhotoId &&
+          isNotNullOrEmpty(
+            cachedFileStoreData.fileStoreIds?.firstOrNull?.url,
+          )) {
+        dPrint('Using cached filestore data');
+        return cachedFileStoreData;
+      }
+
+      dPrint('Photo ID mismatch or cache invalid - fetching from API');
+      dPrint('Cached ID: $cachedFileStoreId, Current ID: $currentUserPhotoId');
+
+      final fileStore = await Get.find<FileController>().getFiles(
+        tenantId: userProfile.user!.first.tenantId!,
+        token: Get.find<AuthController>().token!.accessToken!,
+        fileStoreIds: currentUserPhotoId!,
+      );
+
+      if (fileStore != null && fileStore.fileStoreIds!.isNotEmpty) {
+        await storage.setString(cacheKey, jsonEncode(fileStore.toJson()));
+        dPrint('Profile image cache updated from API');
+        return fileStore;
+      }
+
+      return null;
+    } catch (e) {
+      dPrint('Error in getImageFromFilestoreId: $e');
+      return null;
     }
   }
 }

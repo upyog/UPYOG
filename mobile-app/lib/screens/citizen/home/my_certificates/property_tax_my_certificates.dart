@@ -229,7 +229,7 @@ class _PropertyMyCertificatesState extends State<PropertyMyCertificates> {
                                                 color: BaseConfig.borderColor,
                                               ),
                                               SizedBox(height: 4.h),
-                                              SmallTextNotoSans(
+                                              SmallSelectableTextNotoSans(
                                                 text: propertyData.propertyId ??
                                                     "N/A",
                                                 fontWeight: FontWeight.w400,

@@ -5,10 +5,10 @@ import 'package:mobile_app/utils/constants/api_constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/utils.dart';
 
-class ChallanRepository {
+class ChallansRepository {
   static final BaseService _baseService = BaseService();
 
-  static Future<Challans> createChallan({
+  static Future<Challans> createChallans({
     required String token,
     dynamic body,
     query,
@@ -16,7 +16,7 @@ class ChallanRepository {
     late Challans challans;
     final local = await getLocal();
     final response = await _baseService.makeRequest(
-      url: Url.CHALLAN_CREATE_URL,
+      url: Url.CHALLANS_CREATE_URL,
       method: RequestType.POST,
       body: body ?? {},
       requestInfo: RequestInfo(authToken: token, local: local),
@@ -27,5 +27,22 @@ class ChallanRepository {
       challans = Challans.fromJson(response);
     }
     return challans;
+  }
+
+  static Future<dynamic> getChallans({
+    required String token,
+    query,
+  }) async {
+    final local = await getLocal();
+    final response = await _baseService.makeRequest(
+      url: Url.CHALLANS_SEARCH_URL,
+      method: RequestType.POST,
+      requestInfo: RequestInfo(authToken: token, local: local),
+      queryParameters: query,
+    );
+
+    if (response != null) {
+      return response;
+    }
   }
 }

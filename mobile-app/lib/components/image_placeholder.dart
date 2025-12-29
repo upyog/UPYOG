@@ -1,8 +1,9 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_app/components/network_img.dart';
 import 'package:mobile_app/config/base_config.dart';
+import 'package:mobile_app/utils/utils.dart';
 
 class ImagePlaceHolder extends StatelessWidget {
   const ImagePlaceHolder({
@@ -37,7 +38,7 @@ class ImagePlaceHolder extends StatelessWidget {
       child: CircleAvatar(
         backgroundColor: backgroundColor,
         radius: radius,
-        child: photoUrl != null && photoUrl!.isNotEmpty
+        child: isNotNullOrEmpty(photoUrl)
             ? isFile
                 ? ClipOval(
                     child: Image.file(
@@ -48,10 +49,10 @@ class ImagePlaceHolder extends StatelessWidget {
                     ),
                   )
                 : ClipOval(
-                    child: NetworkImg(
+                    child: CachedNetworkImage(
                       height: height,
                       width: width,
-                      imgUrl: photoUrl!,
+                      imageUrl: photoUrl!,
                       fit: BoxFit.cover,
                     ),
                   )

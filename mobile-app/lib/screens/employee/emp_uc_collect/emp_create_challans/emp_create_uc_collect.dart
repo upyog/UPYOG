@@ -26,20 +26,21 @@ import 'package:mobile_app/widgets/colum_header_text.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
 import 'package:mobile_app/widgets/medium_text.dart';
 
-class EmpUcCollectScreen extends StatefulWidget {
-  const EmpUcCollectScreen({super.key});
+class EmpCreateUcCollectScreen extends StatefulWidget {
+  const EmpCreateUcCollectScreen({super.key});
 
   @override
-  State<EmpUcCollectScreen> createState() => _EmpUcCollectScreenState();
+  State<EmpCreateUcCollectScreen> createState() =>
+      _EmpCreateUcCollectScreenState();
 }
 
-class _EmpUcCollectScreenState extends State<EmpUcCollectScreen> {
+class _EmpCreateUcCollectScreenState extends State<EmpCreateUcCollectScreen> {
   final _authController = Get.find<AuthController>();
   final _commonController = Get.find<CommonController>();
   final _languageController = Get.find<LanguageController>();
   final _localityController = Get.put(LocalityController());
   final _cityController = Get.find<CityController>();
-  final _challanController = Get.find<ChallanController>();
+  final _challansController = Get.find<ChallansController>();
   final _key = GlobalKey<FormState>();
 
   late TenantTenant tenant;
@@ -68,7 +69,7 @@ class _EmpUcCollectScreenState extends State<EmpUcCollectScreen> {
 
   void _init() async {
     isLoading.value = true;
-    tenant = await getCityTenantEmployee();
+    tenant = await getCityTenant();
 
     await Future.wait([
       _localityController.fetchLocality(hierarchyTypeCode: "ADMIN"),
@@ -131,7 +132,7 @@ class _EmpUcCollectScreenState extends State<EmpUcCollectScreen> {
       amount: amountList,
     );
 
-    final challanId = await _challanController.createChallan(
+    final challanId = await _challansController.createChallan(
       tenantId: challan.tenantId,
       token: _authController.token!.accessToken!,
       body: challan.toJson(),
@@ -229,7 +230,7 @@ class _EmpUcCollectScreenState extends State<EmpUcCollectScreen> {
             : Padding(
                 padding: EdgeInsets.all(16.w),
                 child: FilledButtonApp(
-                  isLoading: _challanController.isLoading.value,
+                  isLoading: _challansController.isLoading.value,
                   circularColor: BaseConfig.mainBackgroundColor,
                   onPressed: () => validate(),
                   text: getLocalizedString(i18.common.UC_SUBMIT),
@@ -430,14 +431,18 @@ class _EmpUcCollectScreenState extends State<EmpUcCollectScreen> {
                                 i18.challans.MOHALLA,
                                 module: Modules.UC,
                               ),
-                              options: _localityController.locality
+                              options: _localityController.locality.value
                                       ?.tenantBoundary?.firstOrNull?.boundary
                                       ?.map((e) => e.name ?? '')
                                       .toList() ??
                                   [],
                               onChanged: (value) {
-                                final locality = _localityController.locality
-                                    ?.tenantBoundary?.firstOrNull?.boundary
+                                final locality = _localityController
+                                    .locality
+                                    .value
+                                    ?.tenantBoundary
+                                    ?.firstOrNull
+                                    ?.boundary
                                     ?.firstWhereOrNull(
                                   (element) => element.name == value,
                                 );

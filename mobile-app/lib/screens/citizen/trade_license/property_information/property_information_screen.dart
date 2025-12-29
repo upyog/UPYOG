@@ -83,19 +83,25 @@ class PropertyInformationScreen extends StatelessWidget {
             const SizedBox(height: 10),
             ColumnHeaderText(
               label: getLocalizedString(i18.tlProperty.ID, module: Modules.PT),
-              text: properties.properties?.first.propertyId ?? 'NA',
+              text: isNotNullOrEmpty(
+                properties.properties?.firstOrNull?.propertyId,
+              )
+                  ? properties.properties!.first.propertyId!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
               label:
                   getLocalizedString(i18.tlProperty.NAME, module: Modules.PT),
-              text: getOwnersName(_tradeLicenseDetail.owners) ?? 'NA',
+              text: getOwnersName(_tradeLicenseDetail.owners) ?? 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
               label:
                   getLocalizedString(i18.tlProperty.STATUS, module: Modules.PT),
-              text: properties.properties!.first.status ?? 'NA',
+              text: isNotNullOrEmpty(properties.properties?.firstOrNull?.status)
+                  ? properties.properties!.first.status!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             BigTextNotoSans(
@@ -112,13 +118,21 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.PINCODE,
                 module: Modules.PT,
               ),
-              text: properties.properties!.first.address?.pinCode ?? 'NA',
+              text: isNotNullOrEmpty(
+                properties.properties?.firstOrNull?.address?.pinCode,
+              )
+                  ? properties.properties!.first.address!.pinCode!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
               label:
                   getLocalizedString(i18.tlProperty.CITY, module: Modules.PT),
-              text: properties.properties!.first.address?.city ?? 'NA',
+              text: isNotNullOrEmpty(
+                properties.properties?.firstOrNull?.address?.city,
+              )
+                  ? properties.properties!.first.address!.city!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -126,8 +140,11 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.MOHALLA,
                 module: Modules.PT,
               ),
-              text:
-                  properties.properties!.first.address?.locality?.name ?? 'NA',
+              text: isNotNullOrEmpty(
+                properties.properties?.firstOrNull?.address?.locality?.name,
+              )
+                  ? properties.properties!.first.address!.locality!.name!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -135,7 +152,11 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.HOUSE_NO,
                 module: Modules.PT,
               ),
-              text: properties.properties!.first.address?.doorNo ?? 'NA',
+              text: isNotNullOrEmpty(
+                properties.properties?.firstOrNull?.address?.doorNo,
+              )
+                  ? properties.properties!.first.address!.doorNo!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -143,7 +164,11 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.STREET_NAME,
                 module: Modules.PT,
               ),
-              text: properties.properties!.first.address?.street ?? 'NA',
+              text: isNotNullOrEmpty(
+                properties.properties?.firstOrNull?.address?.street,
+              )
+                  ? properties.properties!.first.address!.street!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             BigTextNotoSans(
@@ -160,20 +185,25 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.PROPERTY_TYPE,
                 module: Modules.PT,
               ),
-              text: properties.properties!.first.propertyType ?? 'NA',
+              text: isNotNullOrEmpty(
+                properties.properties?.firstOrNull?.propertyType,
+              )
+                  ? properties.properties!.first.propertyType!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
               label: getLocalizedString(i18.tlProperty.USE, module: Modules.PT),
-              text: 'NA',
+              text: 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
               label:
                   getLocalizedString(i18.tlProperty.AREA, module: Modules.PT),
-              text: properties.properties!.first.landArea != null
-                  ? '${properties.properties!.first.landArea}'
-                  : 'NA',
+              text:
+                  isNotNullOrEmpty(properties.properties?.firstOrNull?.landArea)
+                      ? '${properties.properties!.first.landArea}'
+                      : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -181,10 +211,11 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.NO_OF_FLOOR,
                 module: Modules.PT,
               ),
-              text: properties.properties!.first.noOfFloors != null &&
-                      properties.properties!.first.noOfFloors != 0
+              text: isNotNullOrEmpty(
+                properties.properties?.firstOrNull?.noOfFloors,
+              )
                   ? '${properties.properties!.first.noOfFloors}'
-                  : 'NA',
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             BuildExpansion(
@@ -282,7 +313,7 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.OWNERSHIP_INFO_NAME,
                 module: Modules.PT,
               ),
-              text: owner.name ?? 'NA',
+              text: isNotNullOrEmpty(owner.name) ? owner.name! : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -290,7 +321,7 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.OWNERSHIP_INFO_GENDER,
                 module: Modules.PT,
               ),
-              text: owner.gender ?? 'NA',
+              text: isNotNullOrEmpty(owner.gender) ? owner.gender! : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -298,7 +329,9 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.OWNERSHIP_INFO_MOBILE_NO,
                 module: Modules.PT,
               ),
-              text: owner.mobileNumber ?? 'NA',
+              text: isNotNullOrEmpty(owner.mobileNumber)
+                  ? owner.mobileNumber!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -306,7 +339,8 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.SPECIAL_CATEGORY,
                 module: Modules.PT,
               ),
-              text: owner.ownerType ?? 'NA',
+              text:
+                  isNotNullOrEmpty(owner.ownerType) ? owner.ownerType! : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -314,7 +348,9 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.GUARDIAN_NAME,
                 module: Modules.PT,
               ),
-              text: owner.fatherOrHusbandName ?? 'NA',
+              text: isNotNullOrEmpty(owner.fatherOrHusbandName)
+                  ? owner.fatherOrHusbandName!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -322,7 +358,7 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.OWNERSHIP_INFO_EMAIL_ID,
                 module: Modules.PT,
               ),
-              text: owner.emailId ?? 'NA',
+              text: isNotNullOrEmpty(owner.emailId) ? owner.emailId! : 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -330,7 +366,9 @@ class PropertyInformationScreen extends StatelessWidget {
                 i18.tlProperty.OWNERSHIP_ADDRESS,
                 module: Modules.PT,
               ),
-              text: owner.permanentAddress ?? 'NA',
+              text: isNotNullOrEmpty(owner.permanentAddress)
+                  ? owner.permanentAddress!
+                  : 'N/A',
             ),
             const SizedBox(height: 10),
           ],

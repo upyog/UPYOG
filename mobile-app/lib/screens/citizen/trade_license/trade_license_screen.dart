@@ -46,9 +46,12 @@ class _TradeLicenseApplicationScreenState
   }
 
   void getTlApplication() async {
-    await _commonController.fetchLabels(modules: Modules.TL);
+    final future = await Future.wait([
+      _commonController.fetchLabels(modules: Modules.TL),
+      getCityTenant(),
+    ]);
 
-    TenantTenant tenant = await getCityTenant();
+    TenantTenant tenant = future[1] as TenantTenant;
 
     _tlController.getTlApplications(
       token: _authController.token!.accessToken!,
@@ -89,7 +92,8 @@ class _TradeLicenseApplicationScreenState
                             bottom: 8.w,
                           ),
                           decoration: BoxDecoration(
-                            color: BaseConfig.appThemeColor1.withOpacity(0.1),
+                            color: BaseConfig.appThemeColor1
+                                .withValues(alpha: 0.1),
                           ),
                         ),
                         Positioned(
@@ -187,7 +191,9 @@ class _TradeLicenseApplicationScreenState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SmallTextNotoSans(
-                                text: 'Call Center / Helpline',
+                                text: getLocalizedString(
+                                  i18.common.CALL_CENTER_HELPLINE,
+                                ),
                                 size: o == Orientation.portrait ? 10.sp : 6.sp,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -200,18 +206,10 @@ class _TradeLicenseApplicationScreenState
                                   ),
                                   SizedBox(width: 8.w),
                                   SmallTextNotoSans(
-                                    text: (_languageController
-                                                    .mdmsStaticData
-                                                    ?.mdmsRes
-                                                    ?.commonMasters
-                                                    ?.staticData !=
-                                                null &&
-                                            _languageController
-                                                .mdmsStaticData!
-                                                .mdmsRes!
-                                                .commonMasters!
-                                                .staticData!
-                                                .isNotEmpty)
+                                    text: (isNotNullOrEmpty(
+                                      _languageController.mdmsStaticData
+                                          ?.mdmsRes?.commonMasters?.staticData,
+                                    ))
                                         ? _languageController
                                                 .mdmsStaticData!
                                                 .mdmsRes!
@@ -240,18 +238,10 @@ class _TradeLicenseApplicationScreenState
                                   ),
                                   SizedBox(width: 8.w),
                                   SmallTextNotoSans(
-                                    text: (_languageController
-                                                    .mdmsStaticData
-                                                    ?.mdmsRes
-                                                    ?.commonMasters
-                                                    ?.staticData !=
-                                                null &&
-                                            _languageController
-                                                .mdmsStaticData!
-                                                .mdmsRes!
-                                                .commonMasters!
-                                                .staticData!
-                                                .isNotEmpty)
+                                    text: (isNotNullOrEmpty(
+                                      _languageController.mdmsStaticData
+                                          ?.mdmsRes?.commonMasters?.staticData,
+                                    ))
                                         ? _languageController
                                                 .mdmsStaticData!
                                                 .mdmsRes!
@@ -280,31 +270,30 @@ class _TradeLicenseApplicationScreenState
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   SmallTextNotoSans(
-                                    text: 'Citizen Service Center',
+                                    text: getLocalizedString(
+                                      i18.common.CITIZEN_SERVICE_CENTER,
+                                    ),
                                     size: o == Orientation.portrait
                                         ? 10.sp
                                         : 6.sp,
                                     fontWeight: FontWeight.w500,
                                   ),
                                   TextButtonNotoSans(
-                                    text: 'View on Map',
+                                    text: getLocalizedString(
+                                      i18.common.VIEW_ON_MAP,
+                                    ),
                                     fontSize: o == Orientation.portrait
                                         ? 10.sp
                                         : 6.sp,
                                     onPressed: () async {
                                       Uri googleUrl = Uri.parse(
-                                        (_languageController
-                                                        .mdmsStaticData
-                                                        ?.mdmsRes
-                                                        ?.commonMasters
-                                                        ?.staticData !=
-                                                    null &&
-                                                _languageController
-                                                    .mdmsStaticData!
-                                                    .mdmsRes!
-                                                    .commonMasters!
-                                                    .staticData!
-                                                    .isNotEmpty)
+                                        (isNotNullOrEmpty(
+                                          _languageController
+                                              .mdmsStaticData
+                                              ?.mdmsRes
+                                              ?.commonMasters
+                                              ?.staticData,
+                                        ))
                                             ? _languageController
                                                     .mdmsStaticData!
                                                     .mdmsRes!
@@ -342,18 +331,13 @@ class _TradeLicenseApplicationScreenState
                                   SizedBox(width: 8.w),
                                   Expanded(
                                     child: SmallTextNotoSans(
-                                      text: (_languageController
-                                                      .mdmsStaticData
-                                                      ?.mdmsRes
-                                                      ?.commonMasters
-                                                      ?.staticData !=
-                                                  null &&
-                                              _languageController
-                                                  .mdmsStaticData!
-                                                  .mdmsRes!
-                                                  .commonMasters!
-                                                  .staticData!
-                                                  .isNotEmpty)
+                                      text: (isNotNullOrEmpty(
+                                        _languageController
+                                            .mdmsStaticData
+                                            ?.mdmsRes
+                                            ?.commonMasters
+                                            ?.staticData,
+                                      ))
                                           ? _languageController
                                                   .mdmsStaticData!
                                                   .mdmsRes!
@@ -424,20 +408,20 @@ class _TradeLicenseApplicationScreenState
                                         children: [
                                           BenefitPoint(
                                             text:
-                                                '${tlLicense.applicationsIssued ?? 0} Trade Licenses issued in the last 12 months',
+                                                '${tlLicense.applicationsIssued ?? 0} ${getLocalizedString(i18.common.TL_ISSUED_12_MONTH)}',
                                             o: o,
                                           ),
                                           SizedBox(height: 12.h),
                                           BenefitPoint(
                                             text:
-                                                '${tlLicense.applicationsRenewed ?? 0} Trade Licenses renewed in the last 12 months',
+                                                '${tlLicense.applicationsRenewed ?? 0} ${getLocalizedString(i18.common.TL_RENEWED_12_MONTH)}',
                                             o: o,
                                           ),
                                           SizedBox(height: 12.h),
                                           BenefitPoint(
                                             o: o,
                                             text:
-                                                'Trade License validity is ${tlLicense.applicationValidity ?? 0} year',
+                                                '${getLocalizedString(i18.common.TL_VALIDITY)} ${tlLicense.applicationValidity ?? 0} ${getLocalizedString(i18.common.COMMON_YEAR)}',
                                           ),
                                         ],
                                       ),

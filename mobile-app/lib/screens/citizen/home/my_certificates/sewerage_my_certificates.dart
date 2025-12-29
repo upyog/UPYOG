@@ -235,7 +235,7 @@ class _SewerageMyCertificatesState extends State<SewerageMyCertificates> {
                                                 color: BaseConfig.borderColor,
                                               ),
                                               SizedBox(height: 4.h),
-                                              SmallTextNotoSans(
+                                              SmallSelectableTextNotoSans(
                                                 text: sewerageConnection
                                                         .applicationNo ??
                                                     "N/A",

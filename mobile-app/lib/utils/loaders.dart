@@ -28,7 +28,7 @@ class Loaders {
                       const SizedBox(height: 10),
                       MediumText(
                         text: label ?? 'Loading...',
-                        color: const Color(0xffFFFFFF),
+                        color: BaseConfig.mainBackgroundColor,
                         size: 16,
                         fontWeight: FontWeight.w700,
                       ),

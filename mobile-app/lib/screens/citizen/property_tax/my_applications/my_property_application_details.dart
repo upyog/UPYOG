@@ -30,6 +30,11 @@ import 'package:mobile_app/widgets/colum_header_text.dart';
 import 'package:mobile_app/widgets/file_dialogue/file_dilaogue.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
 import 'package:mobile_app/widgets/medium_text.dart';
+import 'package:mobile_app/widgets/mutation_widget/mutation_details_widget.dart';
+import 'package:mobile_app/widgets/mutation_widget/mutation_price_widget.dart';
+import 'package:mobile_app/widgets/mutation_widget/registration_details_widget.dart';
+import 'package:mobile_app/widgets/owner_card/owner_card_widget.dart';
+import 'package:mobile_app/widgets/small_text.dart';
 import 'package:mobile_app/widgets/timeline_widget.dart/timeline_wdget.dart';
 
 class MyPropertyApplicationDetails extends StatefulWidget {
@@ -177,7 +182,6 @@ class _MyPropertyApplicationDetailsState
                               if (!_isTimelineFetch) {
                                 await _getTimeline();
                               }
-                              //TODO: Show timeline history
                               TimelineHistoryApp.buildTimelineDialogue(
                                 context,
                                 tenantId: properties.tenantId!,
@@ -258,8 +262,13 @@ class _MyPropertyApplicationDetailsState
               // module: Modules.PT) ?? 'N/A',
             ).paddingOnly(left: 7),
             const SizedBox(height: 10),
-            if (property.creationReason == CreationReason.MUTATION.name) ...[
-              _buildMutationPrice(property),
+            if (property.creationReason == CreationReason.MUTATION.name &&
+                isNotNullOrEmpty(property.workflow?.businessService)) ...[
+              MutationPriceWidget(
+                property: property,
+                token: _authController.token!.accessToken!,
+                service: property.workflow!.businessService!,
+              ),
             ],
             BigTextNotoSans(
               text: getLocalizedString(
@@ -308,7 +317,42 @@ class _MyPropertyApplicationDetailsState
                   module: Modules.PT,
                 ),
                 children: [
-                  _buildOwnerDetails(property, property.owners!.first),
+                  ListView.builder(
+                    itemCount: property.owners!.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return OwnerCardWidget(
+                        property: property,
+                        owner: property.owners![index],
+                        index: index,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+            if (property.creationReason == CreationReason.MUTATION.name) ...[
+              BuildExpansion(
+                title: getLocalizedString(
+                  i18.propertyTax.PT_MUTATION_DETAILS,
+                  module: Modules.PT,
+                ),
+                tilePadding: EdgeInsets.only(left: 7.w),
+                children: [
+                  MutationDetailsWidget(property: property)
+                      .paddingOnly(left: 7),
+                ],
+              ),
+              BuildExpansion(
+                title: getLocalizedString(
+                  i18.propertyTax.PT_REGISTRATION_DETAILS,
+                  module: Modules.PT,
+                ),
+                tilePadding: EdgeInsets.only(left: 7.w),
+                children: [
+                  RegistrationDetailsWidget(property: property)
+                      .paddingOnly(left: 7),
                 ],
               ),
             ],
@@ -362,144 +406,6 @@ class _MyPropertyApplicationDetailsState
             ),
           ],
         ),
-      );
-
-  Widget _buildMutationPrice(Property property) {
-    return FutureBuilder(
-      future: _paymentController.searchBillById(
-        tenantId: property.tenantId!,
-        token: _authController.token!.accessToken!,
-        service: property.workflow!.businessService!,
-        consumerCode: property.acknowledgementNumber!,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final billData = snapshot.data!;
-
-          final bill = billData.bill?.firstOrNull;
-
-          return isNotNullOrEmpty(bill)
-              ? Column(
-                  children: [
-                    ColumnHeaderText(
-                      label: getLocalizedString(
-                        i18.propertyTax.PT_FEE_AMOUNT,
-                        module: Modules.PT,
-                      ),
-                      text: isNotNullOrEmpty(bill?.totalAmount)
-                          ? '₹ ${bill!.totalAmount}'
-                          : 'N/A',
-                      fontWeight: FontWeight.w600,
-                    ).paddingOnly(left: 7),
-                    const SizedBox(height: 10),
-                    ColumnHeaderText(
-                      label: getLocalizedString(
-                        i18.propertyTax.PT_PAYMENT_STATUS,
-                        module: Modules.PT,
-                      ),
-                      text: getLocalizedString(
-                        '${i18.propertyTax.PT_MUT_BILL}${bill?.status}',
-                        module: Modules.PT,
-                      ),
-                    ).paddingOnly(left: 7),
-                    const SizedBox(height: 10),
-                  ],
-                )
-              : const SizedBox.shrink();
-        } else if (snapshot.hasError) {
-          return networkErrorPage(
-            context,
-            () => _fileController.getFiles(
-              tenantId: property.tenantId!,
-              token: _authController.token!.accessToken!,
-              fileStoreIds: getFileStoreIds(),
-            ),
-          );
-        } else {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return showCircularIndicator();
-            case ConnectionState.active:
-              return showCircularIndicator();
-            default:
-              return const SizedBox.shrink();
-          }
-        }
-      },
-    );
-  }
-
-  Widget _buildOwnerDetails(Property property, Owner owner) => Column(
-        children: [
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.OWNER_NAME,
-              module: Modules.PT,
-            ),
-            text: owner.name ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.GUARDIAN_NAME,
-              module: Modules.PT,
-            ),
-            text: owner.fatherOrHusbandName ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.OWNER_GENDER,
-              module: Modules.PT,
-            ),
-            text: owner.gender ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.tlProperty.OWNERSHIP_TYPE,
-              module: Modules.PT,
-            ),
-            text: getLocalizedString(
-              '${i18.propertyTax.PT_OWNERSHIP}${property.ownershipCategory}',
-              module: Modules.PT,
-            ),
-            //text: property.ownershipCategory ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.MOBILE_NUMBER,
-              module: Modules.PT,
-            ),
-            text: owner.mobileNumber ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.OWNER_EMAIL,
-              module: Modules.PT,
-            ),
-            text: owner.emailId ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.TRANSFEROR_SPECIAL_CATEGORY,
-              module: Modules.PT,
-            ),
-            text: owner.ownerType ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.tlProperty.OWNERSHIP_ADDRESS,
-              module: Modules.PT,
-            ),
-            text: owner.permanentAddress ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-        ],
       );
 
   Widget _buildPropertyAssessment(Property property) => Column(
@@ -628,7 +534,7 @@ class _MyPropertyApplicationDetailsState
                     color: const Color.fromRGBO(80, 90, 95, 1.0),
                   ),
                   BigTextNotoSans(
-                    text: ' $index',
+                    text: ' - $index',
                     size: 16.sp,
                     fontWeight: FontWeight.w600,
                     color: const Color.fromRGBO(80, 90, 95, 1.0),
@@ -642,8 +548,8 @@ class _MyPropertyApplicationDetailsState
                   module: Modules.PT,
                 ),
                 text: getLocalizedString(
-                  '${i18.propertyTax.SUB_TYPE_RES}${unit.usageCategory!.replaceAll('.', '_')}',
-                  //module: Modules.PT,
+                  '${i18.propertyTax.COMMON_PROPUSGTYPE}${unit.usageCategory!.replaceAll('.', '_')}',
+                  module: Modules.PT,
                 ),
               ),
               const SizedBox(height: 10),
@@ -652,7 +558,10 @@ class _MyPropertyApplicationDetailsState
                   i18.propertyTax.UNIT_OCCUPANY_TYPE,
                   module: Modules.PT,
                 ),
-                text: unit.occupancyType ?? 'N/A',
+                text: getLocalizedString(
+                  '${i18.propertyTax.PROPERTYTAX_OCCUPANCYTYPE}${unit.occupancyType}',
+                  module: Modules.PT,
+                ),
               ),
               const SizedBox(height: 10),
               ColumnHeaderText(
@@ -724,7 +633,7 @@ class _MyPropertyApplicationDetailsState
                               docType!.documentType,
                               module: Modules.PT,
                             ),
-                            child: MediumText(
+                            child: SmallTextNotoSans(
                               text: getLocalizedString(
                                 docType.documentType,
                                 module: Modules.PT,

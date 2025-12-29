@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:mobile_app/components/bottom_sheet.dart';
 import 'package:mobile_app/components/drodown_button.dart';
 import 'package:mobile_app/components/error_page/network_error.dart';
 import 'package:mobile_app/components/filled_button_app.dart';
+import 'package:mobile_app/components/image_placeholder.dart';
 import 'package:mobile_app/components/profile_widget.dart';
 import 'package:mobile_app/components/text_formfield_normal.dart';
 import 'package:mobile_app/config/base_config.dart';
@@ -17,9 +19,10 @@ import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/edit_profile_controller.dart';
 import 'package:mobile_app/controller/file_controller.dart';
+import 'package:mobile_app/model/citizen/files/file_store.dart';
 import 'package:mobile_app/model/citizen/user_profile/user_profile.dart';
 import 'package:mobile_app/routes/routes.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/constants.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/extension/extension.dart';
@@ -28,7 +31,6 @@ import 'package:mobile_app/utils/platforms/platforms.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
 import 'package:mobile_app/widgets/medium_text.dart';
-import 'package:photo_view/photo_view.dart';
 
 class EmpProfileScreen extends StatefulWidget {
   const EmpProfileScreen({super.key});
@@ -82,9 +84,12 @@ class _ProfileScreenState extends State<EmpProfileScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _editProfileController.getProfile(token: _authController.token!),
-    );
+    init();
+  }
+
+  Future<void> init() async {
+    if (!_authController.isValidUser) return;
+    await _editProfileController.getProfile(token: _authController.token!);
   }
 
   Future<void> selectDate(BuildContext context, User user) async {
@@ -109,7 +114,7 @@ class _ProfileScreenState extends State<EmpProfileScreen> {
       setState(() {
         selectedDate = picked;
         formattedDate = formatDate(picked, format: 'dd-MM-yyyy');
-        print(formattedDate);
+        dPrint(formattedDate);
         user.dobCtrl.text = formattedDate;
       });
     }
@@ -138,8 +143,6 @@ class _ProfileScreenState extends State<EmpProfileScreen> {
         enableLog: true,
       );
 
-      await HiveService.setData(Constants.PROFILE_FILESTORE_ID, fileId);
-
       if (fileId != null) {
         final fileStore = await _fileController.getFiles(
           tenantId: tenantId,
@@ -148,21 +151,34 @@ class _ProfileScreenState extends State<EmpProfileScreen> {
         );
         if (fileStore != null) {
           user.photo = fileStore.fileStoreIds!.first.id;
+          await storage.setString(
+            Constants.PROFILE_FILESTORE_EMP,
+            jsonEncode(fileStore.toJson()),
+          );
         }
       }
     }
 
-    if (fileId == null) {
-      var imgId = await HiveService.getData(Constants.PROFILE_FILESTORE_ID);
-      user.photo = imgId ?? "";
+    if (fileId == null && !isDelete) {
+      final cacheFileStore =
+          await storage.getString(Constants.PROFILE_FILESTORE_EMP);
+      final oldFileStoreId =
+          FileStore.fromJson(jsonDecode(cacheFileStore ?? '{}'))
+              .fileStoreIds
+              ?.firstOrNull
+              ?.id;
+      user.photo = oldFileStoreId;
     }
 
     if (isDelete) {
       user.photo = null;
+      await storage.setString(Constants.PROFILE_FILESTORE_EMP, '{}');
     }
+
     _editProfileController.user.getText();
-    print("-----------User Details Chk--------");
-    print(user.toJson());
+    dPrint("-----------User Details Chk--------");
+    dPrint(user.toJson());
+
     await _editProfileController
         .updateProfile(
       token: token!,
@@ -172,6 +188,26 @@ class _ProfileScreenState extends State<EmpProfileScreen> {
       () async {
         _fileController.removeSelectedImage();
         await _editProfileController.getProfile(token: _authController.token!);
+
+        if (fileId != null && !isDelete) {
+          try {
+            final updatedFileStore = await _fileController.getFiles(
+              tenantId: tenantId,
+              token: token,
+              fileStoreIds: fileId,
+            );
+            if (updatedFileStore != null) {
+              await storage.setString(
+                Constants.PROFILE_FILESTORE_EMP,
+                jsonEncode(updatedFileStore.toJson()),
+              );
+              dPrint('Employee profile cache updated after profile refresh');
+            }
+          } catch (e) {
+            dPrint('Error updating employee profile cache: $e');
+          }
+        }
+
         Navigator.of(context).pop();
       },
     );
@@ -274,38 +310,50 @@ class _ProfileScreenState extends State<EmpProfileScreen> {
           Center(
             child: GetBuilder<FileController>(
               builder: (fileController) {
-                return ProfileWidget(
-                  imageUrl: fileController.imageFile != null
-                      ? fileController.imageFile!.path
-                      : _editProfileController.userProfile.getUserPhoto() ?? '',
-                  size: 150.0,
-                  iconSize: 100,
-                  svgSize: 30,
-                  isFile: fileController.imageFile != null ? true : false,
-                  onPressed: () {
-                    fileController.removeSelectedImage();
-                    openBottomSheet(
-                      onTabImageGallery: () {
-                        _fileController.selectAndPickImage();
-                      },
-                      onTabImageCamera: () {
-                        _fileController.selectAndPickImage(
-                          imageSource: ImageSource.camera,
+                return FutureBuilder(
+                  future: _editProfileController.getCacheProfileFIleStore(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return showCircularIndicator();
+                    }
+                    final imageData = snapshot.data;
+
+                    return ProfileWidget(
+                      imageUrl: fileController.imageFile != null
+                          ? fileController.imageFile!.path
+                          : imageData.getUserPhoto(),
+                      size: 150.0,
+                      iconSize: 100,
+                      svgSize: 30,
+                      isFile: fileController.imageFile != null ? true : false,
+                      onPressed: () {
+                        fileController.removeSelectedImage();
+                        openBottomSheet(
+                          onTabImageGallery: () {
+                            _fileController.selectAndPickImage();
+                          },
+                          onTabImageCamera: () {
+                            _fileController.selectAndPickImage(
+                              imageSource: ImageSource.camera,
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                  imgClick: () {
-                    dPrint('Click: ${fileController.imageFile}');
-                    if (fileController.imageFile == null &&
-                        _editProfileController.userProfile.user?.first.photo ==
-                            null) {
-                      return;
-                    }
-                    _showDeleteDialogue(
-                      context,
-                      fileController.imageFile,
-                      user,
+                      imgClick: () {
+                        dPrint('Click: ${fileController.imageFile}');
+                        if (fileController.imageFile == null &&
+                            _editProfileController
+                                    .userProfile.user?.first.photo ==
+                                null) {
+                          {}
+                          return;
+                        }
+                        _showDeleteDialogue(
+                          context,
+                          fileController.imageFile,
+                          user,
+                        );
+                      },
                     );
                   },
                 );
@@ -566,19 +614,35 @@ class _ProfileScreenState extends State<EmpProfileScreen> {
               SizedBox(
                 width: Get.width,
                 height: Get.height * 0.5,
-                child: PhotoView(
-                  backgroundDecoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  imageProvider: img != null
-                      ? Image.file(
-                          img,
-                        ).image
-                      : NetworkImage(
-                          _editProfileController.userProfile.getUserPhoto() ??
-                              '',
-                        ),
+                child: FutureBuilder<FileStore?>(
+                  future: _editProfileController.getCacheProfileFIleStore(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return showCircularIndicator();
+                    }
+                    final imageData = snapshot.data;
+                    return ImagePlaceHolder(
+                      photoUrl:
+                          img != null ? img.path : imageData.getUserPhoto(),
+                      height: 300,
+                      width: Get.width,
+                      isFile: img != null,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
+                    );
+                    // return PhotoView(
+                    //   backgroundDecoration: BoxDecoration(
+                    //     color: Theme.of(context).colorScheme.surface,
+                    //     borderRadius: BorderRadius.circular(10),
+                    //   ),
+                    //   imageProvider: img != null
+                    //       ? Image.file(
+                    //           img,
+                    //         ).image
+                    //       : NetworkImage(
+                    //           imageData.getUserPhoto(),
+                    //         ),
+                    // );
+                  },
                 ),
               ),
               IconButton(

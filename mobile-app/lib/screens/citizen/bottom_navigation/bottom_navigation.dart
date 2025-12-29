@@ -5,7 +5,7 @@ import 'package:mobile_app/components/drawer/citizen/drawer_widget.dart';
 import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/location_controller.dart';
 import 'package:mobile_app/screens/citizen/home/home_screen.dart';
-import 'package:mobile_app/screens/citizen/home/my_certificates/my_certificates.dart';
+import 'package:mobile_app/screens/citizen/home/home_my_certificates.dart';
 import 'package:mobile_app/screens/citizen/home_location_choose/home_location_choose.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/bottomNavBarWidget.dart';

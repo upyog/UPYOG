@@ -8,6 +8,7 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
+import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/required_text.dart';
 import 'package:mobile_app/widgets/small_text.dart';
 
@@ -35,7 +36,7 @@ class ColumnHeaderText extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SmallTextNotoSans(
+        SmallSelectableTextNotoSans(
           text: label,
           fontWeight: fontWeightHeader ?? FontWeight.w600,
         ),
@@ -194,6 +195,8 @@ class ColumnHeaderDropdownSearch extends StatelessWidget {
     this.trailingIcon = Icons.check,
     this.enableLocal = false,
     this.validator,
+    this.enable = true,
+    this.isServiceDef = false,
   });
 
   final String label;
@@ -206,8 +209,9 @@ class ColumnHeaderDropdownSearch extends StatelessWidget {
   final ValueChanged<String?> onChanged;
   final bool isRequired;
   final Modules module;
-  final bool enableLocal;
+  final bool enableLocal, enable;
   final String? Function(String?)? validator;
+  final bool isServiceDef;
 
   @override
   Widget build(BuildContext context) {
@@ -219,10 +223,14 @@ class ColumnHeaderDropdownSearch extends StatelessWidget {
           fontWeight: fontWeight,
           required: isRequired,
         ),
+        const SizedBox(
+          height: 5,
+        ),
         DropdownSearch<String>(
           key: key,
           items: options,
           selectedItem: selectedValue,
+          enabled: enable,
           dropdownDecoratorProps: DropDownDecoratorProps(
             dropdownSearchDecoration: InputDecoration(
               suffixIconColor: BaseConfig.appThemeColor1,
@@ -240,8 +248,10 @@ class ColumnHeaderDropdownSearch extends StatelessWidget {
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   width: 1.5,
-                  color:
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .secondary
+                      .withValues(alpha: 0.4),
                 ),
                 borderRadius: BorderRadius.circular(8.r),
               ),
@@ -277,10 +287,18 @@ class ColumnHeaderDropdownSearch extends StatelessWidget {
               : item == selectedItem,
           dropdownBuilder: (context, selectedItem) {
             final isUc = selectedItem?.contains('ADVT') ?? false;
+            final selectedItemServiceDef = isNotNullOrEmpty(selectedItem)
+                ? isServiceDef
+                    ? '${i18.common.SERVICE_DEFS}${selectedItem ?? ''}'
+                    : selectedItem
+                : '';
+
             return SmallTextNotoSans(
               text: enableLocal
                   ? getLocalizedString(
-                      selectedItem,
+                      isServiceDef
+                          ? selectedItemServiceDef!.toUpperCase()
+                          : selectedItemServiceDef,
                       module: isUc ? Modules.UC : module,
                     )
                   : selectedItem ?? '',
@@ -291,12 +309,17 @@ class ColumnHeaderDropdownSearch extends StatelessWidget {
             showSearchBox: true,
             itemBuilder: (context, item, isSelected) {
               final isUc = item.contains('ADVT');
+              final selectedItemServiceDef = isNotNullOrEmpty(item)
+                  ? isServiceDef
+                      ? '${i18.common.SERVICE_DEFS}$item'
+                      : item
+                  : '';
               return ListTile(
                 trailing: trailingIcon != null && item == selectedValue
                     ? CircleAvatar(
                         radius: 14.w,
                         backgroundColor:
-                            BaseConfig.appThemeColor1.withOpacity(0.1),
+                            BaseConfig.appThemeColor1.withValues(alpha: 0.1),
                         child: Icon(
                           trailingIcon,
                           color: BaseConfig.appThemeColor1,
@@ -307,16 +330,18 @@ class ColumnHeaderDropdownSearch extends StatelessWidget {
                 title: SmallTextNotoSans(
                   text: enableLocal
                       ? getLocalizedString(
-                          item,
+                          isServiceDef
+                              ? selectedItemServiceDef.toUpperCase()
+                              : selectedItemServiceDef,
                           module: isUc ? Modules.UC : module,
                         )
-                      : item,
-                  color: item == selectedValue
+                      : selectedItemServiceDef,
+                  color: selectedItemServiceDef == selectedValue
                       ? BaseConfig.appThemeColor1
                       : BaseConfig.textColor,
                 ),
                 onTap: () {
-                  onChanged(item);
+                  onChanged(selectedItemServiceDef);
                 },
               );
             },

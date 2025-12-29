@@ -62,7 +62,22 @@ class CoreRepository {
       method: RequestType.POST,
       requestInfo: RequestInfo(local: local),
     );
+    return response;
+  }
 
+  //Mdms-PGR v2
+  static Future<dynamic> getMdmsPgrData({
+    Map? body,
+    query,
+  }) async {
+    final local = await getLocal();
+    final response = await _baseService.makeRequest(
+      queryParameters: query,
+      url: Url.MDMS_PGR,
+      body: body,
+      method: RequestType.POST,
+      requestInfo: RequestInfo(local: local),
+    );
     return response;
   }
 }

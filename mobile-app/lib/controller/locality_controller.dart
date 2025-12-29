@@ -14,7 +14,8 @@ class LocalityController extends GetxController {
   //Stream controller
   var streamCtrl = StreamController.broadcast();
 
-  LocalityModel? locality;
+  //LocalityModel? locality;
+  Rxn<LocalityModel> locality = Rxn<LocalityModel>();
 
   RxBool isLoading = false.obs;
   RxList<Boundary> selectedLocalityList = <Boundary>[].obs;
@@ -40,13 +41,15 @@ class LocalityController extends GetxController {
   // Fetch Locality on page load
   Future<void> fetchLocality({
     String hierarchyTypeCode = 'REVENUE',
+    String? tenantId,
   }) async {
     isLoading.value = true;
+
     try {
       final query = {
         "hierarchyTypeCode": hierarchyTypeCode,
         "boundaryType": "Locality",
-        "tenantId": _authController.token!.userRequest!.tenantId,
+        "tenantId": tenantId ?? _authController.token!.userRequest!.tenantId,
       };
 
       final localityRes = await LocalityRepository.getLocality(
@@ -54,13 +57,14 @@ class LocalityController extends GetxController {
         query: query,
       );
 
-      locality = LocalityModel.fromJson(localityRes);
+      locality.value = LocalityModel.fromJson(localityRes);
       streamCtrl.add(locality);
       isLoading.value = false;
     } catch (e, s) {
       isLoading.value = false;
       dPrint('fetchLocality Error: ${e.toString()}');
-      streamCtrl.addError('Locality Error');
+      streamCtrl.isClosed ? null : streamCtrl.addError('Locality Error');
+      // streamCtrl.addError('Locality Error');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }

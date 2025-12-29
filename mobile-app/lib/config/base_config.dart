@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/utils/dashboard_icon_role.dart';
 
 class BaseConfig {
-  static const String APP_NAME = "MyCity";
+  static const String APP_NAME = "UPYOG";
+
+  //run command: flutter pub get
 
   //App Logo can be changed following the below path from pubspec.yaml
   // and run command: dart run flutter_launcher_icons:generate
@@ -13,9 +15,9 @@ class BaseConfig {
   // image: "assets/images/launcherIcon1.png"
   // branding: "assets/images/niuaWithName.png"
 
-  static const String PROD_URL = "https://upyog.niua.org/";
-  static const String DEV_URL = "https://upyog-test.niua.org/";
-  static const String STAGE_URL = "https://upyog-sandbox.niua.org/";
+  static const String BACKEND_URL = "https://upyog.niua.org/";
+  // static const String DEV_URL = "https://upyog-test.niua.org/";
+  // static const String STAGE_URL = "https://upyog-sandbox.niua.org/";
 
   static const String STATE_TENANT_ID = 'pg';
 
@@ -40,10 +42,16 @@ class BaseConfig {
       "assets/images/ministry_splash_logo.png";
   static const String SPLASH_BOTTOM_NIUA_LOGO = "assets/images/niuaLogo.png";
 
+  //--------------------- File upload limit ---------------------//
+  static const int MAX_IMAGE_SIZE_MB = 5;
+  static int get MAX_FILE_SIZE_BYTES => MAX_IMAGE_SIZE_MB * 1024 * 1024;
+
   //--------------------- Base payment URL ---------------------//
   static const String NTT_RELEASE_URL =
       'https://payment1.atomtech.in/ots/aipay/auth';
   static const String NTT_DEV_URL = 'https://caller.atomtech.in/ots/aipay/auth';
+
+  //https://caller.atomtech.in/ots/aipay/mconfig?encData=Va1pXOMCJbph0kA497UHM4/Iidj4wjGLi26grQAW9FdApdOsUgE57tyDrr/rRjviFTd4ORvmTfoVznMLRO7PyVBV0tXv3Ss2BReBWU3Z1WCbxaO8YwkgphcH+s/a/RC+Mp+z2erwClTVGWC46C2Rf44r+1XMqbeWE13V1YEQsX8=&merchId=446442&info1=15696063574b225af4d7bf6d70165ba7&info2=20f0fad850653db04ba83a766f6bf2e9
 
   //--------------------- Base payment return URL ---------------------//
   static const String NTT_RELEASE_RETURN_URL =
@@ -52,7 +60,6 @@ class BaseConfig {
       'https://pgtest.atomtech.in/mobilesdk/param';
 
   //----------------- Ntt Data Payment Config -----------------//
-  static const String NTT_MERCHANT_ID = '317156';
   static const String NTT_MERCHANT_PASSWORD = 'Test@123';
   static const String NTT_PROD_ID = 'NSE';
   static const String NTT_REQUEST_HASH_KEY = 'KEY123657234';
@@ -65,6 +72,8 @@ class BaseConfig {
   static const String NTT_TXN_CURRENCY = 'INR';
   static const String NTT_MCC_CODE = '5499';
   static const String NTT_MERCHANT_TYPE = 'R';
+
+  static const String helpLineNo = '2565425632';
 
   //-------------------- App Colors --------------------//
   static const Color appThemeColor1 = Color(0xFFC55637);
@@ -90,6 +99,7 @@ class BaseConfig {
 
   static const Color selectedNavColor = Color.fromARGB(255, 214, 75, 37);
   static const Color borderColor = Color(0xFFE9E9E9);
+  static const Color borderColor1 = Color(0xFF8C8C8C);
   static const Color deepGreenColor = Color(0xFF0C8F5C);
   static const Color statusGreenColor = Color(0xFF00703C);
   static const Color shadeAmberColor = Color(0xFFEFC5BB);
@@ -181,6 +191,8 @@ class BaseConfig {
   static const String homeUiCardFnIcon = "assets/images/fire_noc.svg";
   static const String homeUiCardMcIcon = "assets/images/miscellaneous.svg";
   static const String profileStartCameraIcon = "assets/images/star_camera.svg";
+  static const String meriPehchaanButtonLogoIcon =
+      "assets/images/meripehchaan_logo.svg";
 
   /* -------------------------------------------------------------------------- */
   /*                        ULB Service Management Icons                        */

@@ -6,6 +6,7 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/routes/routes.dart';
+import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/benefit_point.dart';
@@ -70,7 +71,8 @@ class _BdPlanApproveApplicationState extends State<BdPlanApproveApplication> {
                             bottom: 8.w,
                           ),
                           decoration: BoxDecoration(
-                            color: BaseConfig.appThemeColor1.withOpacity(0.1),
+                            color: BaseConfig.appThemeColor1
+                                .withValues(alpha: 0.1),
                           ),
                         ),
                         Positioned(
@@ -170,7 +172,9 @@ class _BdPlanApproveApplicationState extends State<BdPlanApproveApplication> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SmallTextNotoSans(
-                                text: 'Call Center / Helpline',
+                                text: getLocalizedString(
+                                  i18.common.CALL_CENTER_HELPLINE,
+                                ),
                                 size: o == Orientation.portrait ? 10.sp : 6.sp,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -247,14 +251,18 @@ class _BdPlanApproveApplicationState extends State<BdPlanApproveApplication> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   SmallTextNotoSans(
-                                    text: 'Citizen Service Center',
+                                    text: getLocalizedString(
+                                      i18.common.CITIZEN_SERVICE_CENTER,
+                                    ),
                                     size: o == Orientation.portrait
                                         ? 10.sp
                                         : 6.sp,
                                     fontWeight: FontWeight.w500,
                                   ),
                                   TextButtonNotoSans(
-                                    text: 'View on Map',
+                                    text: getLocalizedString(
+                                      i18.common.VIEW_ON_MAP,
+                                    ),
                                     fontSize: o == Orientation.portrait
                                         ? 10.sp
                                         : 6.sp,

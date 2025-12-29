@@ -131,17 +131,17 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
 
   List<TableRow> _buildTableHeader() {
     List<Widget> headers = [
-      SmallTextNotoSans(
+      SmallSelectableTextNotoSans(
         text: getLocalizedString(
           i18.propertyTax.CS_BILL_PERIOD,
         ),
       ),
-      SmallTextNotoSans(
+      SmallSelectableTextNotoSans(
         text: getLocalizedString(
           i18.common.BILL_NO,
         ),
       ),
-      SmallTextNotoSans(
+      SmallSelectableTextNotoSans(
         text: getLocalizedString(
           i18.common.BILL_DUE_DATE,
         ),
@@ -152,7 +152,7 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
       var isSw = taxHeadCode.contains('SW') || taxHeadCode.contains('WS');
 
       headers.add(
-        SmallTextNotoSans(
+        SmallSelectableTextNotoSans(
           text: getLocalizedString(
             taxHeadCode,
             module: isSw
@@ -166,7 +166,7 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
     }
 
     headers.add(
-      SmallTextNotoSans(
+      SmallSelectableTextNotoSans(
         text: getLocalizedString(
           i18.propertyTax.TL_COMMON_TOTAL_AMT,
         ),
@@ -199,7 +199,7 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
       List<Widget> cells = [
         Padding(
           padding: EdgeInsets.all(8.w),
-          child: SmallTextNotoSans(
+          child: SmallSelectableTextNotoSans(
             text: isSw
                 ? '${year.fromPeriod.toCustomDateFormat(pattern: 'M/d/yyyy')}-\n${year.toPeriod.toCustomDateFormat(pattern: 'M/d/yyyy')}'
                 : 'FY${year.fromPeriod.toCustomDateFormat(pattern: 'yyyy')}-${year.toPeriod.toCustomDateFormat(pattern: 'yy')}',
@@ -207,13 +207,13 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
         ),
         Padding(
           padding: EdgeInsets.all(8.w),
-          child: SmallTextNotoSans(
+          child: SmallSelectableTextNotoSans(
             text: year.billId,
           ),
         ),
         Padding(
           padding: EdgeInsets.all(8.w),
-          child: SmallTextNotoSans(
+          child: SmallSelectableTextNotoSans(
             text: year.dueDate,
           ),
         ),
@@ -227,7 +227,7 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
         cells.add(
           Padding(
             padding: EdgeInsets.all(8.w),
-            child: SmallTextNotoSans(text: '₹ ${taxDetail.amount}'),
+            child: SmallSelectableTextNotoSans(text: '₹ ${taxDetail.amount}'),
           ),
         );
       }
@@ -235,7 +235,7 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
       cells.add(
         Padding(
           padding: EdgeInsets.all(8.w),
-          child: SmallTextNotoSans(text: '₹ ${year.totalAmount}'),
+          child: SmallSelectableTextNotoSans(text: '₹ ${year.totalAmount}'),
         ),
       );
 
@@ -464,7 +464,7 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
                                         borderRadius:
                                             BorderRadius.circular(10.r),
                                         color: BaseConfig.greyColor2
-                                            .withOpacity(0.3),
+                                            .withValues(alpha: 0.3),
                                       ),
                                       child: ListView.builder(
                                         itemCount: billData.billDetails!.first
@@ -593,13 +593,13 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
                                           SizedBox(height: 10.h),
                                           Row(
                                             children: [
-                                              MediumTextNotoSans(
+                                              MediumSelectableTextNotoSans(
                                                 text: getLocalizedString(
                                                   i18.common
                                                       .COMMON_ARREARS_TOTAL,
                                                 ),
                                               ),
-                                              MediumTextNotoSans(
+                                              MediumSelectableTextNotoSans(
                                                 text:
                                                     ': ₹ ${billData.totalAmount}',
                                               ),

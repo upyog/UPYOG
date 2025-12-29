@@ -7,9 +7,8 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/edit_profile_controller.dart';
 import 'package:mobile_app/controller/payment_controller.dart';
 import 'package:mobile_app/env/ntt_payment_config.dart';
-import 'package:mobile_app/model/citizen/transaction/transaction.dart';
 import 'package:mobile_app/model/request/payment_request_model.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
@@ -81,22 +80,18 @@ class PaymentScreen extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 10,
               children: [
-                const MediumTextNotoSans(text: 'Total Amount Due: '),
+                const MediumSelectableTextNotoSans(text: 'Total Amount Due: '),
                 // _buildPrice(),
-                Wrap(
-                  children: [
-                    const MediumTextNotoSans(
-                      text: '₹',
-                      fontWeight: FontWeight.bold,
-                    ),
-                    const SizedBox(width: 5),
-                    MediumTextNotoSans(
-                      text:
-                          isNotNullOrEmpty(totalAmount) ? totalAmount! : 'N/A',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ],
+                MediumSelectableTextNotoSans(
+                  text: isNotNullOrEmpty(totalAmount)
+                      ? '₹ ${totalAmount!}'
+                      : 'N/A',
+                  fontWeight: FontWeight.bold,
+                  maxLine: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -116,7 +111,7 @@ class PaymentScreen extends StatelessWidget {
                     value: 'NTTDATA',
                     groupValue: 'NTTDATA',
                     onChanged: (String? value) {
-                      print(value);
+                      dPrint('Selected Payment Mode: $value');
                     },
                   ),
                 ),
@@ -159,29 +154,22 @@ class PaymentScreen extends StatelessWidget {
                               'businessService': businessService.name,
                             };
 
-                            String login =
-                                BaseConfig.NTT_MERCHANT_ID; //mandatory
-                            String password =
-                                BaseConfig.NTT_MERCHANT_PASSWORD; //mandatory
-                            String prodId = BaseConfig.NTT_PROD_ID; //mandatory
+                            // String login =
+                            //     BaseConfig.NTT_MERCHANT_ID; //mandatory
+                            String password = BaseConfig.NTT_MERCHANT_PASSWORD;
+                            String prodId = BaseConfig.NTT_PROD_ID;
                             String requestHashKey =
-                                BaseConfig.NTT_REQUEST_HASH_KEY; //mandatory
+                                BaseConfig.NTT_REQUEST_HASH_KEY;
                             String responseHashKey =
-                                BaseConfig.NTT_RESPONSE_HASH_KEY; //mandatory
+                                BaseConfig.NTT_RESPONSE_HASH_KEY;
                             String requestEncryptionKey =
-                                BaseConfig.NTT_REQUEST_RESPONSE_KEY; //mandatory
-                            String responseDecryptionKey = BaseConfig
-                                .NTT_REQUEST_DECRYPTION_KEY; //mandatory
-                            // String txnid = 'test240223'; // mandatory // this should be unique each time
-                            String clientCode =
-                                BaseConfig.NTT_CLIENT_CODE; //mandatory
-                            String txncurr =
-                                BaseConfig.NTT_TXN_CURRENCY; //mandatory
-                            String mccCode =
-                                BaseConfig.NTT_MCC_CODE; //mandatory
-                            String merchType =
-                                BaseConfig.NTT_MERCHANT_TYPE; //mandatory
-                            // String amount = "1.00"; //mandatory
+                                BaseConfig.NTT_REQUEST_RESPONSE_KEY;
+                            String responseDecryptionKey =
+                                BaseConfig.NTT_REQUEST_DECRYPTION_KEY;
+                            String clientCode = BaseConfig.NTT_CLIENT_CODE;
+                            String txncurr = BaseConfig.NTT_TXN_CURRENCY;
+                            String mccCode = BaseConfig.NTT_MCC_CODE;
+                            String merchType = BaseConfig.NTT_MERCHANT_TYPE;
                             String mode = paymentMode;
 
                             // String custFirstName = 'test'; //optional
@@ -191,12 +179,12 @@ class PaymentScreen extends StatelessWidget {
                             // String address = 'mumbai'; //optional
                             // String custacc = '639827'; //optional
 
-                            await HiveService.setData(
-                              HiveConstants.MODULES,
+                            await storage.setString(
+                              SecureStorageConstants.MODULES,
                               module,
                             );
 
-                            (Transaction?, bool isError) transactionRes =
+                            final (transactionRes, isError) =
                                 await _paymentController.createPayment(
                               token: token,
                               cityTenantId: cityTenantId,
@@ -207,21 +195,27 @@ class PaymentScreen extends StatelessWidget {
                             );
 
                             // If true prevent ntt payment call
-                            if (transactionRes.$2) {
+                            if (isError) {
                               _paymentController.isLoading.value = false;
                               return;
                             }
 
+                            final redirectUri =
+                                Uri.parse(transactionRes!.redirectUrl!);
+
+                            final merchantId =
+                                redirectUri.queryParameters['merchId'];
+
                             _paymentController
                                 .nttModelResponse = PaymentRequestModel()
-                              ..login = login
+                              ..login = merchantId
                               ..password = password
                               ..prodid = prodId
                               ..requestHashKey = requestHashKey
                               ..responseHashKey = responseHashKey
                               ..requestEncryptionKey = requestEncryptionKey
                               ..responseDecryptionKey = responseDecryptionKey
-                              ..txnid = transactionRes.$1!.txnId
+                              ..txnid = transactionRes.txnId
                               ..clientcode = clientCode
                               ..txncurr = txncurr
                               ..mccCode = mccCode
@@ -238,12 +232,16 @@ class PaymentScreen extends StatelessWidget {
                               ..custacc = _editProfileController.user.uuid;
 
                             _paymentController.transactionResponse =
-                                transactionRes.$1;
+                                transactionRes;
 
                             log('-------------transactionResponse-------------');
-                            dPrint('${transactionRes.$1?.toJson()}');
+                            dPrint('${transactionRes.toJson()}');
+                            dPrint(
+                              'return url: ${transactionRes.redirectUrl}',
+                              enableLog: true,
+                            );
 
-                            if (transactionRes.$1 != null) {
+                            if (transactionRes.txnId != null) {
                               data['txnid'] =
                                   _paymentController.nttModelResponse!.txnid!;
                               _paymentController.initNdpsPayment(

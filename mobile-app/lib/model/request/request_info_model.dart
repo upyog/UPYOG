@@ -21,22 +21,6 @@ class RequestInfo {
     this.isPgUpdate = false,
   });
 
-  // Map<String, dynamic> toJson() => {
-  //       "apiId": apiId ?? 'Rainmaker',
-  //       "msgId": msgId ?? '20170310130900|en_IN',
-  //       "ver": ".01",
-  //       "action": "_create",
-  //       "did": '1',
-  //       "key": "",
-  //       "requesterId": "",
-  //       if (isEmpFireNoc) "action": '_search',
-  //       if (isEmpFireNoc) "did": '1',
-  //       if (isEmpFireNoc) "ver": ".01",
-  //       "authToken": authToken,
-  //       if (!isComparison)
-  //         "plainAccessRequest": plainAccessRequest?.toJson() ?? {},
-  //     };
-
   Map<String, dynamic> toJson() => {
         "apiId": apiId ?? 'Rainmaker',
         "msgId": msgId ?? '${DateTime.now().millisecondsSinceEpoch}|$local',

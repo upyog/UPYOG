@@ -31,6 +31,10 @@ import 'package:mobile_app/widgets/colum_header_text.dart';
 import 'package:mobile_app/widgets/file_dialogue/file_dilaogue.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
 import 'package:mobile_app/widgets/medium_text.dart';
+import 'package:mobile_app/widgets/mutation_widget/mutation_details_widget.dart';
+import 'package:mobile_app/widgets/mutation_widget/mutation_price_widget.dart';
+import 'package:mobile_app/widgets/mutation_widget/registration_details_widget.dart';
+import 'package:mobile_app/widgets/owner_card/owner_card_widget.dart';
 import 'package:mobile_app/widgets/small_text.dart';
 import 'package:mobile_app/widgets/timeline_widget.dart/timeline_wdget.dart';
 
@@ -178,7 +182,7 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
                           ),
                         ),
                       ),
-                      icon: MediumTextNotoSans(
+                      icon: MediumSelectableTextNotoSans(
                         text: getLocalizedString(i18.common.TAKE_ACTION),
                         size: o == Orientation.portrait ? 14.sp : 8.sp,
                         color: BaseConfig.mainBackgroundColor,
@@ -195,7 +199,7 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
                           .map(
                             (action) => PopupMenuItem<String>(
                               value: action.action,
-                              child: SmallTextNotoSans(
+                              child: SmallSelectableTextNotoSans(
                                 text: LocalizeUtils.getTakeActionLocal(
                                   action.action,
                                   workflowCode: statusMap.businessService!,
@@ -210,7 +214,6 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
                           )
                           .toList(),
                       onSelected: (value) async {
-                        //TODO: Take Action
                         dPrint("Action $value");
                         dPrint("Work Flow Id ${statusMap.businessService!}");
 
@@ -289,7 +292,7 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
                                   tenantId: BaseConfig.STATE_TENANT_ID,
                                 );
                               },
-                              child: MediumTextNotoSans(
+                              child: MediumSelectableTextNotoSans(
                                 text: getLocalizedString(
                                   i18.common.TIMELINE,
                                   module: Modules.PT,
@@ -335,10 +338,22 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
                 i18.propertyTax.APPLICATION_CHANNEL_LABEL,
                 module: Modules.PT,
               ),
-              text: _ptController.property.channel ?? 'N/A',
+              text: isNotNullOrEmpty(_ptController.property.channel)
+                  ? _ptController.property.channel!.capitalize!
+                  : 'N/A',
             ).paddingOnly(left: 7),
             const SizedBox(height: 10),
-            BigTextNotoSans(
+            if (_ptController.property.creationReason ==
+                CreationReason.MUTATION.name) ...[
+              MutationPriceWidget(
+                property: _ptController.property,
+                token: _authController.token!.accessToken!,
+                service: _item?.businessObject?.businessService ??
+                    _item?.processInstance?.businessService ??
+                    '',
+              ),
+            ],
+            BigSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.tlProperty.ADDRESS_HEADER,
                 module: Modules.PT,
@@ -384,7 +399,7 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
                 ],
               ),
             ],
-            if (_ptController.property.owners != null) ...[
+            if (isNotNullOrEmpty(_ptController.property.owners)) ...[
               BuildExpansion(
                 title: getLocalizedString(
                   i18.propertyTax.OWNERSHIP_DETAILS_HEADER,
@@ -392,10 +407,44 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
                 ),
                 tilePadding: EdgeInsets.only(left: 7.w),
                 children: [
-                  _buildOwnerDetails(
-                    _ptController.myProperties!.properties!.first,
-                    _ptController.myProperties!.properties!.first.owners!.first,
-                  ).paddingOnly(left: 7),
+                  ListView.builder(
+                    itemCount: _ptController.property.owners!.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final owner = _ptController.property.owners![index];
+                      return OwnerCardWidget(
+                        property: _ptController.property,
+                        owner: owner,
+                        index: index,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+            if (_item?.processInstance?.businessService ==
+                BusinessService.PT_MUTATION.name) ...[
+              BuildExpansion(
+                title: getLocalizedString(
+                  i18.propertyTax.PT_MUTATION_DETAILS,
+                  module: Modules.PT,
+                ),
+                tilePadding: EdgeInsets.only(left: 7.w),
+                children: [
+                  MutationDetailsWidget(property: _ptController.property)
+                      .paddingOnly(left: 7),
+                ],
+              ),
+              BuildExpansion(
+                title: getLocalizedString(
+                  i18.propertyTax.PT_REGISTRATION_DETAILS,
+                  module: Modules.PT,
+                ),
+                tilePadding: EdgeInsets.only(left: 7.w),
+                children: [
+                  RegistrationDetailsWidget(property: _ptController.property)
+                      .paddingOnly(left: 7),
                 ],
               ),
             ],
@@ -441,78 +490,6 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
             ],
           ],
         ),
-      );
-
-  Widget _buildOwnerDetails(Property property, Owner owner) => Column(
-        children: [
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.OWNER_NAME,
-              module: Modules.PT,
-            ),
-            text: owner.name ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.GUARDIAN_NAME,
-              module: Modules.PT,
-            ),
-            text: owner.fatherOrHusbandName ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.OWNER_GENDER,
-              module: Modules.PT,
-            ),
-            text: owner.gender ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.tlProperty.OWNERSHIP_TYPE,
-              module: Modules.PT,
-            ),
-            text: getLocalizedString(
-              '${i18.propertyTax.PT_OWNERSHIP}${property.ownershipCategory}',
-              module: Modules.PT,
-            ),
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.MOBILE_NUMBER,
-              module: Modules.PT,
-            ),
-            text: owner.mobileNumber ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.OWNER_EMAIL,
-              module: Modules.PT,
-            ),
-            text: owner.emailId ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.TRANSFEROR_SPECIAL_CATEGORY,
-              module: Modules.PT,
-            ),
-            text: owner.ownerType ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.tlProperty.OWNERSHIP_ADDRESS,
-              module: Modules.PT,
-            ),
-            text: owner.permanentAddress ?? 'N/A',
-          ),
-          const SizedBox(height: 10),
-        ],
       );
 
   Widget _buildPropertyAssessment(Property property) => Column(
@@ -569,20 +546,6 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
             text: property.additionalDetails?.uid ?? 'N/A',
           ),
           const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.STRUCTURE_TYPE_LABEL,
-            ),
-            text: 'undefined',
-          ),
-          const SizedBox(height: 10),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.AGE_OF_PROPERTY_LABEL,
-            ),
-            text: 'undefined',
-          ),
-          const SizedBox(height: 10),
         ],
       );
 
@@ -627,7 +590,11 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
       );
 
   Widget _buildGroundFloorCard(Unit unit, int index) {
-    final unitUsageType = unit.usageCategory!.split('.')[1];
+    final unitUsageType =
+        (unit.usageCategory != null && unit.usageCategory!.contains('.'))
+            ? unit.usageCategory!.split('.')[1]
+            : unit.usageCategory;
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
@@ -640,7 +607,7 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
           children: [
             Wrap(
               children: [
-                BigTextNotoSans(
+                BigSelectableTextNotoSans(
                   text: getLocalizedString(
                     i18.propertyTax.UNIT,
                     module: Modules.PT,
@@ -649,7 +616,7 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
                   fontWeight: FontWeight.w600,
                   color: const Color.fromRGBO(80, 90, 95, 1.0),
                 ),
-                BigTextNotoSans(
+                BigSelectableTextNotoSans(
                   text: ' $index',
                   size: 16.sp,
                   fontWeight: FontWeight.w600,

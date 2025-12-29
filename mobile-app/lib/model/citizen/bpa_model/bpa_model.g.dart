@@ -58,39 +58,30 @@ BpaElement _$BpaElementFromJson(Map<String, dynamic> json) => BpaElement()
       ?.map((e) => WfDocument.fromJson(e as Map<String, dynamic>))
       .toList();
 
-Map<String, dynamic> _$BpaElementToJson(BpaElement instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'applicationNo': instance.applicationNo,
-    'approvalNo': instance.approvalNo,
-    'accountId': instance.accountId,
-    'edcrNumber': instance.edcrNumber,
-    'riskType': instance.riskType,
-    'businessService': instance.businessService,
-    'landId': instance.landId,
-    'tenantId': instance.tenantId,
-    'approvalDate': instance.approvalDate,
-    'applicationDate': instance.applicationDate,
-    'status': instance.status,
-    'documents': instance.documents,
-    'landInfo': instance.landInfo,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('workflow', instance.workflow);
-  val['auditDetails'] = instance.auditDetails;
-  val['additionalDetails'] = instance.additionalDetails;
-  writeNotNull('comment', instance.comment);
-  writeNotNull('action', instance.action);
-  writeNotNull('assignee', instance.assignee);
-  writeNotNull('wfDocuments', instance.wfDocuments);
-  return val;
-}
+Map<String, dynamic> _$BpaElementToJson(BpaElement instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'applicationNo': instance.applicationNo,
+      'approvalNo': instance.approvalNo,
+      'accountId': instance.accountId,
+      'edcrNumber': instance.edcrNumber,
+      'riskType': instance.riskType,
+      'businessService': instance.businessService,
+      'landId': instance.landId,
+      'tenantId': instance.tenantId,
+      'approvalDate': instance.approvalDate,
+      'applicationDate': instance.applicationDate,
+      'status': instance.status,
+      'documents': instance.documents,
+      'landInfo': instance.landInfo,
+      if (instance.workflow case final value?) 'workflow': value,
+      'auditDetails': instance.auditDetails,
+      'additionalDetails': instance.additionalDetails,
+      if (instance.comment case final value?) 'comment': value,
+      if (instance.action case final value?) 'action': value,
+      if (instance.assignee case final value?) 'assignee': value,
+      if (instance.wfDocuments case final value?) 'wfDocuments': value,
+    };
 
 Workflow _$WorkflowFromJson(Map<String, dynamic> json) => Workflow()
   ..comments = json['comments'] as String?
@@ -102,24 +93,15 @@ Workflow _$WorkflowFromJson(Map<String, dynamic> json) => Workflow()
       ?.map((e) => VerificationDocument.fromJson(e as Map<String, dynamic>))
       .toList();
 
-Map<String, dynamic> _$WorkflowToJson(Workflow instance) {
-  final val = <String, dynamic>{
-    'comments': instance.comments,
-    'comment': instance.comment,
-    'assignee': instance.assignee,
-    'assignes': instance.assignes,
-    'action': instance.action,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('varificationDocuments', instance.verificationDocuments);
-  return val;
-}
+Map<String, dynamic> _$WorkflowToJson(Workflow instance) => <String, dynamic>{
+      'comments': instance.comments,
+      'comment': instance.comment,
+      'assignee': instance.assignee,
+      'assignes': instance.assignes,
+      'action': instance.action,
+      if (instance.verificationDocuments case final value?)
+        'varificationDocuments': value,
+    };
 
 VerificationDocument _$VerificationDocumentFromJson(
         Map<String, dynamic> json) =>
@@ -163,33 +145,28 @@ BpaAdditionalDetails _$BpaAdditionalDetailsFromJson(
       ..boundaryWallLength = json['boundaryWallLength'] as String?;
 
 Map<String, dynamic> _$BpaAdditionalDetailsToJson(
-    BpaAdditionalDetails instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('propertyID', instance.propertyId);
-  writeNotNull('serviceType', instance.serviceType);
-  writeNotNull('GISPlaceName', instance.gisPlaceName);
-  writeNotNull('applicationType', instance.applicationType);
-  writeNotNull('typeOfArchitect', instance.typeOfArchitect);
-  writeNotNull('fieldinspection_pending', instance.fieldInspectionPending);
-  writeNotNull(
-      'propertyAcknowldgementNumber', instance.propertyAcknowledgementNumber);
-  writeNotNull('holdingNo', instance.holdingNo);
-  writeNotNull('registrationDetails', instance.registrationDetails);
-  writeNotNull('validityDate', instance.validityDate);
-  writeNotNull('pendingapproval', instance.pendingApproval);
-  writeNotNull('landId', instance.landId);
-  writeNotNull('permitNumber', instance.permitNumber);
-  writeNotNull('remarks', instance.remarks);
-  writeNotNull('boundaryWallLength', instance.boundaryWallLength);
-  return val;
-}
+        BpaAdditionalDetails instance) =>
+    <String, dynamic>{
+      if (instance.propertyId case final value?) 'propertyID': value,
+      if (instance.serviceType case final value?) 'serviceType': value,
+      if (instance.gisPlaceName case final value?) 'GISPlaceName': value,
+      if (instance.applicationType case final value?) 'applicationType': value,
+      if (instance.typeOfArchitect case final value?) 'typeOfArchitect': value,
+      if (instance.fieldInspectionPending case final value?)
+        'fieldinspection_pending': value,
+      if (instance.propertyAcknowledgementNumber case final value?)
+        'propertyAcknowldgementNumber': value,
+      if (instance.holdingNo case final value?) 'holdingNo': value,
+      if (instance.registrationDetails case final value?)
+        'registrationDetails': value,
+      if (instance.validityDate case final value?) 'validityDate': value,
+      if (instance.pendingApproval case final value?) 'pendingapproval': value,
+      if (instance.landId case final value?) 'landId': value,
+      if (instance.permitNumber case final value?) 'permitNumber': value,
+      if (instance.remarks case final value?) 'remarks': value,
+      if (instance.boundaryWallLength case final value?)
+        'boundaryWallLength': value,
+    };
 
 FieldInspectionPending _$FieldInspectionPendingFromJson(
         Map<String, dynamic> json) =>
@@ -242,20 +219,11 @@ Question _$QuestionFromJson(Map<String, dynamic> json) => Question()
   ..question = json['question'] as String?
   ..value = json['value'] as String?;
 
-Map<String, dynamic> _$QuestionToJson(Question instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('remarks', instance.remarks);
-  val['question'] = instance.question;
-  val['value'] = instance.value;
-  return val;
-}
+Map<String, dynamic> _$QuestionToJson(Question instance) => <String, dynamic>{
+      if (instance.remarks case final value?) 'remarks': value,
+      'question': instance.question,
+      'value': instance.value,
+    };
 
 AuditDetails _$AuditDetailsFromJson(Map<String, dynamic> json) => AuditDetails()
   ..createdBy = json['createdBy'] as String?
@@ -284,26 +252,17 @@ Document _$DocumentFromJson(Map<String, dynamic> json) => Document()
           json['additionalDetails'] as Map<String, dynamic>)
   ..auditDetails = json['auditDetails'] as String?;
 
-Map<String, dynamic> _$DocumentToJson(Document instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'title': instance.title,
-    'documentType': instance.documentType,
-    'fileStoreId': instance.fileStoreId,
-    'documentUid': instance.documentUid,
-    'url': instance.url,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('additionalDetails', instance.additionalDetails);
-  writeNotNull('auditDetails', instance.auditDetails);
-  return val;
-}
+Map<String, dynamic> _$DocumentToJson(Document instance) => <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'documentType': instance.documentType,
+      'fileStoreId': instance.fileStoreId,
+      'documentUid': instance.documentUid,
+      'url': instance.url,
+      if (instance.additionalDetails case final value?)
+        'additionalDetails': value,
+      if (instance.auditDetails case final value?) 'auditDetails': value,
+    };
 
 DocumentAdditionalDetails _$DocumentAdditionalDetailsFromJson(
         Map<String, dynamic> json) =>
@@ -343,33 +302,23 @@ LandInfo _$LandInfoFromJson(Map<String, dynamic> json) => LandInfo()
       ? null
       : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$LandInfoToJson(LandInfo instance) {
-  final val = <String, dynamic>{
-    'id': instance.id,
-    'landUId': instance.landUId,
-    'landUniqueRegNo': instance.landUniqueRegNo,
-    'tenantId': instance.tenantId,
-    'status': instance.status,
-    'address': instance.address,
-    'ownershipCategory': instance.ownershipCategory,
-    'owners': instance.owners,
-    'institution': instance.institution,
-    'source': instance.source,
-    'channel': instance.channel,
-    'documents': instance.documents,
-    'unit': instance.unit,
-    'additionalDetails': instance.additionalDetails,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('auditDetails', instance.auditDetails);
-  return val;
-}
+Map<String, dynamic> _$LandInfoToJson(LandInfo instance) => <String, dynamic>{
+      'id': instance.id,
+      'landUId': instance.landUId,
+      'landUniqueRegNo': instance.landUniqueRegNo,
+      'tenantId': instance.tenantId,
+      'status': instance.status,
+      'address': instance.address,
+      'ownershipCategory': instance.ownershipCategory,
+      'owners': instance.owners,
+      'institution': instance.institution,
+      'source': instance.source,
+      'channel': instance.channel,
+      'documents': instance.documents,
+      'unit': instance.unit,
+      'additionalDetails': instance.additionalDetails,
+      if (instance.auditDetails case final value?) 'auditDetails': value,
+    };
 
 Address _$AddressFromJson(Map<String, dynamic> json) => Address()
   ..tenantId = json['tenantId'] as String?
@@ -396,35 +345,25 @@ Address _$AddressFromJson(Map<String, dynamic> json) => Address()
       ? null
       : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$AddressToJson(Address instance) {
-  final val = <String, dynamic>{
-    'tenantId': instance.tenantId,
-    'doorNo': instance.doorNo,
-    'plotNo': instance.plotNo,
-    'id': instance.id,
-    'landmark': instance.landmark,
-    'city': instance.city,
-    'district': instance.district,
-    'region': instance.region,
-    'state': instance.state,
-    'country': instance.country,
-    'pincode': instance.pincode,
-    'additionDetails': instance.additionDetails,
-    'buildingName': instance.buildingName,
-    'street': instance.street,
-    'locality': instance.locality,
-    'geoLocation': instance.geoLocation,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('auditDetails', instance.auditDetails);
-  return val;
-}
+Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
+      'tenantId': instance.tenantId,
+      'doorNo': instance.doorNo,
+      'plotNo': instance.plotNo,
+      'id': instance.id,
+      'landmark': instance.landmark,
+      'city': instance.city,
+      'district': instance.district,
+      'region': instance.region,
+      'state': instance.state,
+      'country': instance.country,
+      'pincode': instance.pincode,
+      'additionDetails': instance.additionDetails,
+      'buildingName': instance.buildingName,
+      'street': instance.street,
+      'locality': instance.locality,
+      'geoLocation': instance.geoLocation,
+      if (instance.auditDetails case final value?) 'auditDetails': value,
+    };
 
 WfDocument _$WfDocumentFromJson(Map<String, dynamic> json) => WfDocument()
   ..documentType = json['documentType'] as String?

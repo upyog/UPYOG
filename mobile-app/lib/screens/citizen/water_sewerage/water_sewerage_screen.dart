@@ -6,7 +6,9 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/routes/routes.dart';
+import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
+import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/benefit_point.dart';
 import 'package:mobile_app/widgets/grid_card.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
@@ -70,7 +72,8 @@ class _WaterSewerageScreenState extends State<WaterSewerageScreen> {
                             bottom: 8.w,
                           ),
                           decoration: BoxDecoration(
-                            color: BaseConfig.appThemeColor1.withOpacity(0.1),
+                            color: BaseConfig.appThemeColor1
+                                .withValues(alpha: 0.1),
                           ),
                         ),
                         Positioned(
@@ -127,7 +130,8 @@ class _WaterSewerageScreenState extends State<WaterSewerageScreen> {
                                           text: 'My\nConnections',
                                           onPressed: () {
                                             Get.toNamed(
-                                                AppRoutes.WATER_MY_CONNECTION,);
+                                              AppRoutes.WATER_MY_CONNECTION,
+                                            );
                                           },
                                           icon: const Icon(Icons.apartment),
                                         ),
@@ -211,7 +215,8 @@ class _WaterSewerageScreenState extends State<WaterSewerageScreen> {
                                   text: 'My\nConnections',
                                   onPressed: () {
                                     Get.toNamed(
-                                        AppRoutes.SEWERAGE_MY_CONNECTION,);
+                                      AppRoutes.SEWERAGE_MY_CONNECTION,
+                                    );
                                   },
                                   icon: const Icon(Icons.apartment),
                                 ),
@@ -268,7 +273,9 @@ class _WaterSewerageScreenState extends State<WaterSewerageScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SmallTextNotoSans(
-                                text: 'Call Center / Helpline',
+                                text: getLocalizedString(
+                                  i18.common.CALL_CENTER_HELPLINE,
+                                ),
                                 size: o == Orientation.portrait ? 10.sp : 6.sp,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -361,14 +368,18 @@ class _WaterSewerageScreenState extends State<WaterSewerageScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   SmallTextNotoSans(
-                                    text: 'Citizen Service Center',
+                                    text: getLocalizedString(
+                                      i18.common.CITIZEN_SERVICE_CENTER,
+                                    ),
                                     size: o == Orientation.portrait
                                         ? 10.sp
                                         : 6.sp,
                                     fontWeight: FontWeight.w500,
                                   ),
                                   TextButtonNotoSans(
-                                    text: 'View on Map',
+                                    text: getLocalizedString(
+                                      i18.common.VIEW_ON_MAP,
+                                    ),
                                     fontSize: o == Orientation.portrait
                                         ? 10.sp
                                         : 6.sp,
@@ -488,13 +499,25 @@ class _WaterSewerageScreenState extends State<WaterSewerageScreen> {
                                   children: [
                                     BenefitPoint(
                                       text:
-                                          'Pay Water charges by ${(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData != null && _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.isNotEmpty) ? _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.first.ws?.staticDataOne ?? "-" : "-"} days of bill generation to avoid late fee.',
+                                          '${getLocalizedString(
+                          i18.common.PAY_WATER_CHARGES,
+                        )} ${isNotNullOrEmpty(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData) ? _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.first.ws?.staticDataOne ?? "-" : "-"} '
+
+                                              '${getLocalizedString(
+                                            i18.common.COMMON_DAYS,
+                                          )} ${getLocalizedString(
+                                            i18.common.OF_BILL_GEN_TO_AVOID,
+                                          )}',
                                       o: o,
                                     ),
                                     SizedBox(height: 12.h),
                                     BenefitPoint(
                                       text:
-                                          'Average time of processing an application is less than ${(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData != null && _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.isNotEmpty) ? _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.first.ws?.staticDataTwo ?? "-" : "-"} days',
+                                          '${getLocalizedString(
+                                            i18.common.WS_APPLICATION_PROCESSING,
+                                          )} ${isNotNullOrEmpty(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData) ? _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.first.ws?.staticDataTwo ?? "-" : "-"} ${getLocalizedString(
+                                            i18.common.COMMON_DAYS,
+                                          )}',
                                       o: o,
                                     ),
                                   ],

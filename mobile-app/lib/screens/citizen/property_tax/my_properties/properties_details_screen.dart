@@ -30,6 +30,7 @@ import 'package:mobile_app/widgets/colum_header_text.dart';
 import 'package:mobile_app/widgets/file_dialogue/file_dilaogue.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
 import 'package:mobile_app/widgets/medium_text.dart';
+import 'package:mobile_app/widgets/owner_card/owner_card_widget.dart';
 import 'package:mobile_app/widgets/small_text.dart';
 
 class MyPropertyDetailsScreen extends StatefulWidget {
@@ -390,16 +391,27 @@ class _MyPropertyDetailsScreenState extends State<MyPropertyDetailsScreen>
                 ],
               ),
             ],
-            BuildExpansion(
-              title: getLocalizedString(
-                i18.propertyTax.OWNERSHIP_DETAILS_HEADER,
-                module: Modules.PT,
+            if (isNotNullOrEmpty(property?.owners))
+              BuildExpansion(
+                title: getLocalizedString(
+                  i18.propertyTax.OWNERSHIP_DETAILS_HEADER,
+                  module: Modules.PT,
+                ),
+                children: [
+                  ListView.builder(
+                    itemCount: property!.owners!.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return OwnerCardWidget(
+                        property: property,
+                        owner: property.owners![index],
+                        index: index,
+                      );
+                    },
+                  ),
+                ],
               ),
-              children: [
-                _buildOwnerDetails(context, property?.owners?.first, property)
-                    .paddingOnly(left: 7.w),
-              ],
-            ),
             BuildExpansion(
               title: getLocalizedString(i18.common.DOCUMENTS),
               children: [
@@ -768,7 +780,7 @@ class _MyPropertyDetailsScreenState extends State<MyPropertyDetailsScreen>
     ];
 
     final filteredAddressParts =
-        addressParts.where((part) => part != null && part.isNotEmpty).toList();
+        addressParts.where((part) => isNotNullOrEmpty(part)).toList();
     final finalAddress = filteredAddressParts.join(', ');
     return showAdaptiveDialog(
       context: context,
@@ -802,85 +814,96 @@ class _MyPropertyDetailsScreenState extends State<MyPropertyDetailsScreen>
           width: Get.width,
           height: Get.height * 0.6,
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.propertyTax.PT_DATE_OF_TRANSFER,
-                    module: Modules.PT,
-                  ),
-                  text: property?.auditDetails?.createdTime
-                          .toCustomDateFormat(pattern: 'dd/MMM/yyyy') ??
-                      'N/A',
-                ),
-                const Divider(),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.propertyTax.OWNER_NAME,
-                  ),
-                  text: property?.owners?.first.name ?? 'N/A',
-                ),
-                const Divider(),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.propertyTax.OWNER_GENDER,
-                    module: Modules.PT,
-                  ),
-                  text: property?.owners?.first.gender ?? 'N/A',
-                ),
-                const Divider(),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.propertyTax.MOBILE_NUMBER,
-                    module: Modules.PT,
-                  ),
-                  text: property?.owners?.first.mobileNumber ?? 'N/A',
-                ),
-                const Divider(),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.propertyTax.GUARDIAN_NAME,
-                    module: Modules.PT,
-                  ),
-                  text: property?.owners?.first.fatherOrHusbandName ?? 'N/A',
-                ),
-                const Divider(),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.propertyTax.RELATIONSHIP,
-                    module: Modules.PT,
-                  ),
-                  text: property?.owners?.first.relationship ?? 'N/A',
-                ),
-                const Divider(),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.propertyTax.PT_SPECIAL_OWNER_CATEGORY,
-                    module: Modules.PT,
-                  ),
-                  text: property?.owners?.first.ownerType ?? 'N/A',
-                ),
-                const Divider(),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.propertyTax.OWNER_EMAIL,
-                    module: Modules.PT,
-                  ),
-                  text:
-                      (isNotNullOrEmpty(property?.owners?.firstOrNull?.emailId))
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: BaseConfig.borderColor),
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(10.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ColumnHeaderText(
+                      label: getLocalizedString(
+                        i18.propertyTax.PT_DATE_OF_TRANSFER,
+                        module: Modules.PT,
+                      ),
+                      text: property?.auditDetails?.createdTime
+                              .toCustomDateFormat(pattern: 'dd/MMM/yyyy') ??
+                          'N/A',
+                    ),
+                    const Divider(),
+                    ColumnHeaderText(
+                      label: getLocalizedString(
+                        i18.propertyTax.OWNER_NAME,
+                      ),
+                      text: property?.owners?.first.name ?? 'N/A',
+                    ),
+                    const Divider(),
+                    ColumnHeaderText(
+                      label: getLocalizedString(
+                        i18.propertyTax.OWNER_GENDER,
+                        module: Modules.PT,
+                      ),
+                      text: property?.owners?.first.gender ?? 'N/A',
+                    ),
+                    const Divider(),
+                    ColumnHeaderText(
+                      label: getLocalizedString(
+                        i18.propertyTax.MOBILE_NUMBER,
+                        module: Modules.PT,
+                      ),
+                      text: property?.owners?.first.mobileNumber ?? 'N/A',
+                    ),
+                    const Divider(),
+                    ColumnHeaderText(
+                      label: getLocalizedString(
+                        i18.propertyTax.GUARDIAN_NAME,
+                        module: Modules.PT,
+                      ),
+                      text:
+                          property?.owners?.first.fatherOrHusbandName ?? 'N/A',
+                    ),
+                    const Divider(),
+                    ColumnHeaderText(
+                      label: getLocalizedString(
+                        i18.propertyTax.RELATIONSHIP,
+                        module: Modules.PT,
+                      ),
+                      text: property?.owners?.first.relationship ?? 'N/A',
+                    ),
+                    const Divider(),
+                    ColumnHeaderText(
+                      label: getLocalizedString(
+                        i18.propertyTax.PT_SPECIAL_OWNER_CATEGORY,
+                        module: Modules.PT,
+                      ),
+                      text: property?.owners?.first.ownerType ?? 'N/A',
+                    ),
+                    const Divider(),
+                    ColumnHeaderText(
+                      label: getLocalizedString(
+                        i18.propertyTax.OWNER_EMAIL,
+                        module: Modules.PT,
+                      ),
+                      text: (isNotNullOrEmpty(
+                        property?.owners?.firstOrNull?.emailId,
+                      ))
                           ? property!.owners!.first.emailId!
                           : 'N/A',
+                    ),
+                    const Divider(),
+                    ColumnHeaderText(
+                      label: getLocalizedString(
+                        i18.tlProperty.OWNERSHIP_ADDRESS,
+                        module: Modules.PT,
+                      ),
+                      text: finalAddress,
+                    ),
+                  ],
                 ),
-                const Divider(),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.tlProperty.OWNERSHIP_ADDRESS,
-                    module: Modules.PT,
-                  ),
-                  text: finalAddress,
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -888,108 +911,107 @@ class _MyPropertyDetailsScreenState extends State<MyPropertyDetailsScreen>
     );
   }
 
-  Widget _buildOwnerDetails(
-    BuildContext context,
-    Owner? owner,
-    Property? property,
-  ) =>
-      Column(
-        children: [
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.OWNER_NAME,
-              module: Modules.PT,
-            ),
-            text: owner?.name?.capitalize ?? 'N/A',
-          ),
-          SizedBox(height: 10.h),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.OWNER_GENDER,
-              module: Modules.PT,
-            ),
-            text: owner?.gender?.capitalize ?? 'N/A',
-          ),
-          SizedBox(height: 10.h),
-          Row(
-            children: [
-              Expanded(
-                child: ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.propertyTax.MOBILE_NUMBER,
-                    module: Modules.PT,
-                  ),
-                  text: owner?.mobileNumber ?? 'N/A',
-                ),
-              ),
-              // SizedBox(
-              //   // width: 10,
-              //   child: IconButton(
-              //     onPressed: () {
-              //       //TODO: Show edit dialogue
-              //       _editPhoneNoDialogue(context, owner);
-              //     },
-              //     icon: const Icon(Icons.edit),
-              //   ),
-              // ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.GUARDIAN_NAME,
-              module: Modules.PT,
-            ),
-            text: owner?.fatherOrHusbandName?.capitalize ?? 'N/A',
-          ),
-          SizedBox(height: 10.h),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.tlProperty.OWNERSHIP_TYPE,
-              module: Modules.PT,
-            ),
-            text: getLocalizedString(
-              '${i18.propertyTax.PT_OWNERSHIP}${property?.ownershipCategory}',
-              module: Modules.PT,
-            ),
-          ),
-          SizedBox(height: 10.h),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.RELATIONSHIP,
-              module: Modules.PT,
-            ),
-            text: owner?.relationship?.capitalize ?? 'N/A',
-          ),
-          SizedBox(height: 10.h),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.OWNER_EMAIL,
-              module: Modules.PT,
-            ),
-            text: (owner?.emailId != null && owner!.emailId!.isNotEmpty)
-                ? owner.emailId!
-                : 'N/A',
-          ),
-          SizedBox(height: 10.h),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.tlProperty.OWNERSHIP_ADDRESS,
-              module: Modules.PT,
-            ),
-            text: owner?.permanentAddress ?? 'N/A',
-          ),
-          SizedBox(height: 10.h),
-          ColumnHeaderText(
-            label: getLocalizedString(
-              i18.propertyTax.SPECIAL_CATEGORY,
-              module: Modules.PT,
-            ),
-            text: owner?.ownerType ?? 'N/A',
-          ),
-          SizedBox(height: 10.h),
-        ],
-      );
+  // Widget _buildOwnerDetails(
+  //   BuildContext context,
+  //   Owner? owner,
+  //   Property? property,
+  // ) =>
+  //     Column(
+  //       children: [
+  //         ColumnHeaderText(
+  //           label: getLocalizedString(
+  //             i18.propertyTax.OWNER_NAME,
+  //             module: Modules.PT,
+  //           ),
+  //           text: owner?.name?.capitalize ?? 'N/A',
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         ColumnHeaderText(
+  //           label: getLocalizedString(
+  //             i18.propertyTax.OWNER_GENDER,
+  //             module: Modules.PT,
+  //           ),
+  //           text: owner?.gender?.capitalize ?? 'N/A',
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         Row(
+  //           children: [
+  //             Expanded(
+  //               child: ColumnHeaderText(
+  //                 label: getLocalizedString(
+  //                   i18.propertyTax.MOBILE_NUMBER,
+  //                   module: Modules.PT,
+  //                 ),
+  //                 text: owner?.mobileNumber ?? 'N/A',
+  //               ),
+  //             ),
+  //             // SizedBox(
+  //             //   // width: 10,
+  //             //   child: IconButton(
+  //             //     onPressed: () {
+  //             //       _editPhoneNoDialogue(context, owner);
+  //             //     },
+  //             //     icon: const Icon(Icons.edit),
+  //             //   ),
+  //             // ),
+  //           ],
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         ColumnHeaderText(
+  //           label: getLocalizedString(
+  //             i18.propertyTax.GUARDIAN_NAME,
+  //             module: Modules.PT,
+  //           ),
+  //           text: owner?.fatherOrHusbandName?.capitalize ?? 'N/A',
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         ColumnHeaderText(
+  //           label: getLocalizedString(
+  //             i18.tlProperty.OWNERSHIP_TYPE,
+  //             module: Modules.PT,
+  //           ),
+  //           text: getLocalizedString(
+  //             '${i18.propertyTax.PT_OWNERSHIP}${property?.ownershipCategory}',
+  //             module: Modules.PT,
+  //           ),
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         ColumnHeaderText(
+  //           label: getLocalizedString(
+  //             i18.propertyTax.RELATIONSHIP,
+  //             module: Modules.PT,
+  //           ),
+  //           text: owner?.relationship?.capitalize ?? 'N/A',
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         ColumnHeaderText(
+  //           label: getLocalizedString(
+  //             i18.propertyTax.OWNER_EMAIL,
+  //             module: Modules.PT,
+  //           ),
+  //           text: (owner?.emailId != null && owner!.emailId!.isNotEmpty)
+  //               ? owner.emailId!
+  //               : 'N/A',
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         ColumnHeaderText(
+  //           label: getLocalizedString(
+  //             i18.tlProperty.OWNERSHIP_ADDRESS,
+  //             module: Modules.PT,
+  //           ),
+  //           text: owner?.permanentAddress ?? 'N/A',
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         ColumnHeaderText(
+  //           label: getLocalizedString(
+  //             i18.propertyTax.SPECIAL_CATEGORY,
+  //             module: Modules.PT,
+  //           ),
+  //           text: owner?.ownerType ?? 'N/A',
+  //         ),
+  //         SizedBox(height: 10.h),
+  //       ],
+  //     );
 
   // _editPhoneNoDialogue(BuildContext context, Owner? owner) {
   //   return showAdaptiveDialog(
@@ -1103,7 +1125,7 @@ class _MyPropertyDetailsScreenState extends State<MyPropertyDetailsScreen>
   //                           length: 6,
   //                           width: MediaQuery.of(context).size.width,
   //                           fieldWidth: 35.w,
-  //                           style: GoogleFonts.notoSans.call().copyWith(
+  //                           style: GoogleFonts.notoSans().copyWith(
   //                                 fontSize: 16.sp,
   //                                 fontWeight: FontWeight.w500,
   //                               ),

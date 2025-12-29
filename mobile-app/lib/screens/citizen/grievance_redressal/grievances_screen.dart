@@ -11,6 +11,7 @@ import 'package:mobile_app/controller/edit_profile_controller.dart';
 import 'package:mobile_app/controller/grievance_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/model/citizen/grievance/grievance.dart' as gr;
+import 'package:mobile_app/model/citizen/grievance/grievance.dart';
 import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/routes/routes.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
@@ -42,9 +43,8 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
   final _commonController = Get.find<CommonController>();
   final _languageController = Get.find<LanguageController>();
 
-  bool get isValidToken => _authController.token?.accessToken != null;
-
   final _selectedIndex = 0.obs;
+  final isLoading = false.obs;
 
   @override
   void initState() {
@@ -53,9 +53,11 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
   }
 
   Future<void> _fetchLabelsAsync() async {
+    isLoading.value = true;
     _grievanceController.length.value = 0;
     await _commonController.fetchLabels(modules: Modules.PGR);
     await _fetchGrievance();
+    isLoading.value = false;
   }
 
   Future<void> _fetchGrievance() async {
@@ -143,7 +145,7 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: BaseConfig.appThemeColor1
-                                        .withOpacity(0.1),
+                                        .withValues(alpha: 0.1),
                                   ),
                                 ),
                                 Positioned(
@@ -186,7 +188,10 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               SmallTextNotoSans(
-                                                text: 'Call Center / Helpline',
+                                                text: getLocalizedString(
+                                                  i18.common
+                                                      .CALL_CENTER_HELPLINE,
+                                                ),
                                                 size: o == Orientation.portrait
                                                     ? 10.sp
                                                     : 6.sp,
@@ -278,8 +283,10 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                                         .spaceBetween,
                                                 children: [
                                                   SmallTextNotoSans(
-                                                    text:
-                                                        'Citizen Service Center',
+                                                    text: getLocalizedString(
+                                                      i18.common
+                                                          .CITIZEN_SERVICE_CENTER,
+                                                    ),
                                                     size: o ==
                                                             Orientation.portrait
                                                         ? 10.sp
@@ -287,7 +294,9 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                   TextButtonNotoSans(
-                                                    text: 'View on Map',
+                                                    text: getLocalizedString(
+                                                      i18.common.VIEW_ON_MAP,
+                                                    ),
                                                     fontSize: o ==
                                                             Orientation.portrait
                                                         ? 10.sp
@@ -510,6 +519,27 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
               },
             ),
           ),
+          floatingActionButton: Obx(
+            () => isLoading.value
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.only(bottom: 80.0),
+                    child: _authController.isValidUser
+                        ? IconButton(
+                            onPressed: () {
+                              Get.toNamed(
+                                AppRoutes.GRIEVANCES_FORM,
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.add_circle_outline,
+                              size: 40,
+                              color: BaseConfig.appThemeColor1,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+          ),
         );
       },
     );
@@ -518,8 +548,16 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
   Widget _buildTabBar({
     required Orientation o,
     openGrievanceList,
-    closedGrievanceList,
+    List<ServiceWrapper>? closedGrievanceList,
   }) {
+    final tabs = [
+      const Tab(
+        text: 'Open Requests',
+      ),
+      const Tab(
+        text: 'Closed Requests',
+      ),
+    ];
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight:
@@ -527,8 +565,7 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
       ),
       child: TabBarWidget(
         tabHeight: o == Orientation.portrait ? null : 70.h,
-        tabText1: 'Open Requests',
-        tabText2: 'Closed Requests',
+        tabs: tabs,
         onTap: (index) {
           dPrint('TabBarWidget onTap: $index');
           _selectedIndex.value = index;
@@ -562,23 +599,25 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
           Obx(
             () => _grievanceController.isLoading.value
                 ? showCircularIndicator()
-                : SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: ListView.builder(
-                      itemCount: closedGrievanceList?.length ?? 0,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, i) {
-                        final serviceWrappers = closedGrievanceList?[i];
-                        return isNotNullOrEmpty(serviceWrappers)
-                            ? ClosedRequestWidget(
-                                serviceWrapper: serviceWrappers,
-                                o: o,
-                              )
-                            : const SizedBox.shrink();
-                      },
-                    ),
-                  ),
+                : isNotNullOrEmpty(closedGrievanceList)
+                    ? SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: ListView.builder(
+                          itemCount: closedGrievanceList?.length ?? 0,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, i) {
+                            final serviceWrappers = closedGrievanceList?[i];
+                            return isNotNullOrEmpty(serviceWrappers)
+                                ? ClosedRequestWidget(
+                                    serviceWrapper: serviceWrappers!,
+                                    o: o,
+                                  )
+                                : const SizedBox.shrink();
+                          },
+                        ),
+                      )
+                    : const NoApplicationFoundWidget(),
           ),
         ],
       ),
@@ -677,3 +716,288 @@ class ClosedRequestWidget extends StatelessWidget {
     ).paddingOnly(bottom: 16);
   }
 }
+
+// void showFormBottomSheet({required RainmakerPgr rainmaker}) {
+//   Get.bottomSheet(
+//     GrievanceFormBottomSheet(rainmaker: rainmaker),
+//     isScrollControlled: true,
+//   );
+// }
+
+// void showFormBottomSheet({required RainmakerPgr rainmaker}) {
+//
+//   final languageController = Get.find<LanguageController>();
+//   final localityController = Get.put(LocalityController());
+//   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+//   var selectedGrievanceType = ''.obs;
+//   String selectedGrievanceSubType = '';
+//   String selectedGrievancePriority = '';
+//   String selectedGrievanceCity = '';
+//   String selectedGrievanceLocality = '';
+//   RxList<String> grievanceSubtypes = <String>[].obs;
+//   TextEditingController pinCode = TextEditingController();
+//   TextEditingController locality = TextEditingController();
+//   TextEditingController additionalDetails = TextEditingController();
+//
+//   final ImagePicker _picker = ImagePicker();
+//   List<File> _selectedImages = [];
+//
+//   Future<void> _pickImage() async {
+//     try {
+//       final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+//       if (pickedImage != null) {
+//         setState(() {
+//           _selectedImages.add(File(pickedImage.path));
+//         });
+//       }
+//     } catch (e) {
+//       print('Error picking image: $e');
+//     }
+//   }
+//   void updateGrievanceType(String? type, List<ServiceDef> serviceDefs) {
+//     selectedGrievanceType.value = type ?? '';
+//     grievanceSubtypes.value = serviceDefs
+//         .where((e) => e.menuPath == type)
+//         .map((e) => e.serviceCode!)
+//         .toList();
+//   }
+//
+//   Get.bottomSheet(
+//     Container(
+//       decoration: BoxDecoration(
+//         color: BaseConfig.mainBackgroundColor,
+//         borderRadius: BorderRadius.only(
+//           topLeft: Radius.circular(16.r),
+//           topRight: Radius.circular(16.r),
+//         ),
+//       ),
+//       child: LayoutBuilder(
+//         builder: (context, constraints) {
+//           return SingleChildScrollView(
+//             child: ConstrainedBox(
+//               constraints: BoxConstraints(
+//                 minHeight: constraints.maxHeight, // Full height of the screen
+//               ),
+//               child: Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: <Widget>[
+//                     SizedBox(
+//                       height: constraints.maxHeight * 0.9,
+//                       child: SingleChildScrollView(
+//                         child: Form(
+//                           key: _formKey,
+//                           child: Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               SizedBox(height: 30.h),
+//                               Center(
+//                                 child: BigTextNotoSans(
+//                                   text: "New Grievance",
+//                                   fontWeight: FontWeight.w600,
+//                                   size: 16.h,
+//                                   textAlign: TextAlign.center,
+//                                   color: BaseConfig.appThemeColor1,
+//                                 ),
+//                               ),
+//                               SizedBox(height: 10.h),
+//                               BigTextNotoSans(
+//                                 text: "Grievance Details",
+//                                 fontWeight: FontWeight.w600,
+//                                 color: BaseConfig.appThemeColor1,
+//                                 size: 14.h,
+//                               ),
+//                               const SizedBox(height: 10),
+//                               ColumnHeaderDropdownSearch(
+//                                 label: "Grievance Type",
+//                                 options: rainmaker.serviceDefs!
+//                                     .map((e) => e.menuPath!)
+//                                     .toList()
+//                                     .where((menuPath) => menuPath
+//                                         .isNotEmpty) // Filter out any empty or null entries
+//                                     .toSet() // Use Set to remove duplicates
+//                                     .toList(),
+//                                 onChanged: (value) {
+//                                   updateGrievanceType(
+//                                       value, rainmaker.serviceDefs!);
+//                                   dPrint('Selected Grievance Type: $selectedGrievanceType');
+//                                 },
+//                                 textSize: 14.sp,
+//                                 isRequired: true,
+//                                 enableLocal: true,
+//                                 validator: (val) {
+//                                   if (!isNotNullOrEmpty(val)) {
+//                                     return 'Required Field';
+//                                   }
+//                                   return null;
+//                                 },
+//                               ),
+//                               const SizedBox(height: 10),
+//                               ColumnHeaderDropdownSearch(
+//                                 label: "Grievance Subtype",
+//                                 options: grievanceSubtypes,
+//                                 onChanged: (value) {
+//                                   selectedGrievanceSubType = value!;
+//                                   dPrint('Selected Grievance Subtype: $selectedGrievanceSubType');
+//                                 },
+//                                 textSize: 14.sp,
+//                                 isRequired: true,
+//                                 enableLocal: true,
+//                                 validator: (val) {
+//                                   if (!isNotNullOrEmpty(val)) {
+//                                     return 'Required Field';
+//                                   }
+//                                   return null;
+//                                 },
+//                               ),
+//                               const SizedBox(height: 10),
+//                               ColumnHeaderDropdownSearch(
+//                                 label: "Grievance Priority",
+//                                 options: const ['LOW', 'MEDIUM', 'HIGH'],
+//                                 onChanged: (value) {
+//                                   selectedGrievancePriority = value!;
+//                                   dPrint('value: $selectedGrievancePriority');
+//                                 },
+//                                 textSize: 14.sp,
+//                                 isRequired: true,
+//                                 enableLocal: true,
+//                                 validator: (val) {
+//                                   if (!isNotNullOrEmpty(val)) {
+//                                     return 'Required Field';
+//                                   }
+//                                   return null;
+//                                 },
+//                               ),
+//                               const SizedBox(height: 20),
+//                               BigTextNotoSans(
+//                                 text: "Grievance Location",
+//                                 fontWeight: FontWeight.w600,
+//                                 color: BaseConfig.appThemeColor1,
+//                                 size: 14.h,
+//                               ),
+//                               const SizedBox(height: 10),
+//                                 SizedBox(
+//                                 height: 50,
+//                                 child: TextFormFieldApp(
+//                                   hintText: 'Pincode',
+//                                   keyboardType: TextInputType.phone,
+//                                   controller: pinCode,
+//                                 ),
+//                               ),
+//                               const SizedBox(height: 10),
+//                               ColumnHeaderDropdownSearch(
+//                                 label: "City",
+//                                 options: languageController
+//                                     .mdmsResTenant.tenants!
+//                                     .map((tenant) {
+//                                   return '${tenant.city?.name}';
+//                                 }).toList(),
+//                                 onChanged: (value) {
+//                                   selectedGrievanceCity = value!;
+//                                   dPrint('value: $selectedGrievanceCity');
+//                                 },
+//                                 textSize: 14.sp,
+//                                 isRequired: true,
+//                                 enableLocal: true,
+//                                 validator: (val) {
+//                                   if (!isNotNullOrEmpty(val)) {
+//                                     return 'Required Field';
+//                                   }
+//                                   return null;
+//                                 },
+//                               ),
+//                               const SizedBox(height: 10),
+//                               ColumnHeaderDropdownSearch(
+//                                 label: "Locality/Mohalla",
+//                                 options: localityController.locality
+//                                         ?.tenantBoundary?.firstOrNull?.boundary!
+//                                         .map((e) {
+//                                       return '${e.name}';
+//                                     }).toList() ??
+//                                     [],
+//                                 onChanged: (value) {
+//                                   selectedGrievanceLocality = value!;
+//                                   dPrint('value: $selectedGrievanceLocality');
+//                                 },
+//                                 textSize: 14.sp,
+//                                 isRequired: true,
+//                                 enableLocal: true,
+//                                 validator: (val) {
+//                                   if (!isNotNullOrEmpty(val)) {
+//                                     return 'Required Field';
+//                                   }
+//                                   return null;
+//                                 },
+//                               ),
+//                               const SizedBox(height: 10),
+//                               SizedBox(
+//                                 height: 50,
+//                                 child: TextFormFieldApp(
+//                                   hintText: 'Landmark',
+//                                   controller: locality,
+//                                 ),
+//                               ),
+//                               const SizedBox(height: 20),
+//                               BigTextNotoSans(
+//                                 text: "Additional Details",
+//                                 fontWeight: FontWeight.w600,
+//                                 color: BaseConfig.appThemeColor1,
+//                                 size: 14.h,
+//                               ),
+//                               const SizedBox(height: 10),
+//                               TextFormFieldApp(
+//                                 hintText: 'Additional Details',
+//                                 controller: additionalDetails,
+//                                 maxLine: 5,
+//                               ),
+//                               // const SizedBox(height: 10),
+//                               // IconButton.filled(
+//                               //   style: ButtonStyle(
+//                               //     backgroundColor:
+//                               //         const WidgetStatePropertyAll<Color>(
+//                               //       BaseConfig.appThemeColor1,
+//                               //     ),
+//                               //     shape: WidgetStatePropertyAll<OutlinedBorder>(
+//                               //       RoundedRectangleBorder(
+//                               //         borderRadius: BorderRadius.circular(10.r),
+//                               //       ),
+//                               //     ),
+//                               //   ),
+//                               //   icon: const Icon(
+//                               //     Icons.image,
+//                               //     color: BaseConfig.mainBackgroundColor,
+//                               //   ),
+//                               //   onPressed: () {
+//                               //     //addImage(doc.code!, index);
+//                               //   },
+//                               // ),
+//                               const SizedBox(height: 20),
+//                               gradientBtn(
+//                                 height: 44.h,
+//                                 horizonPadding: 0,
+//                                 radius: 12.r,
+//                                 width: Get.width,
+//                                 text: "FILE GRIEVANCE",
+//                                 onPressed: () async {
+//                                   _formKey.currentState!.validate();
+//                                   //Get.offNamed(AppRoutes.BOTTOM_NAV);
+//                                 },
+//                               ).marginSymmetric(horizontal: 10.w),
+//                             ],
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     ),
+//     isScrollControlled: true,
+//   );
+// }

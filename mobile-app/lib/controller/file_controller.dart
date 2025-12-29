@@ -9,6 +9,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:mime/mime.dart';
+import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/env/app_config.dart';
 import 'package:mobile_app/model/citizen/bpa_model/bpa_model.dart';
 import 'package:mobile_app/model/citizen/files/file_store.dart';
@@ -54,8 +55,22 @@ class FileController extends GetxController {
     imageFile = null;
     var pickedFile = await FileService.selectImage(imageSource: imageSource);
     if (pickedFile != null) {
-      imageFile = pickedFile;
-      fileName = imageFile!.path.split('/').last;
+      fileName = pickedFile.path.split('/').last;
+      imageFile = await compressImage(pickedFile);
+
+      int compressedLength = await imageFile!.length();
+      dPrint('File size: $compressedLength');
+      if (compressedLength >= BaseConfig.MAX_FILE_SIZE_BYTES) {
+        dPrint('File size is too large: $compressedLength');
+        removeSelectedImage();
+        snackBar(
+          'File size is too large',
+          'Please select a file smaller than ${BaseConfig.MAX_IMAGE_SIZE_MB}MB',
+          BaseConfig.redColor,
+        );
+        return;
+      }
+
       isSelectedFile.value = true;
       dPrint('ImageFilePath: ${imageFile!.path}');
       Get.back();
@@ -66,7 +81,7 @@ class FileController extends GetxController {
   }
 
   /// Any file selector
-  Future<(File?, String)> selectAndPickFile() async {
+  Future<(File?, String)> selectAndPickFile({bool isPop = true}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.any,
     );
@@ -74,10 +89,32 @@ class FileController extends GetxController {
     if (result != null && result.files.single.path != null) {
       File pickedFile = File(result.files.single.path!);
 
-      imageFile = pickedFile;
-      fileName = pickedFile.path.split('/').last;
+      final file = isImageFile(pickedFile)
+          ? await compressImage(pickedFile)
+          : pickedFile;
 
-      return (pickedFile, fileName);
+      int compressedLength = await file.length();
+      dPrint('File size: $compressedLength');
+      if (compressedLength >= BaseConfig.MAX_FILE_SIZE_BYTES) {
+        dPrint('File size is too large: $compressedLength');
+        removeSelectedImage();
+        snackBar(
+          'File size is too large',
+          'Please select a file smaller than ${BaseConfig.MAX_IMAGE_SIZE_MB}MB',
+          BaseConfig.redColor,
+        );
+        return (null, '');
+      }
+
+      imageFile = file;
+      isSelectedFile.value = true;
+
+      fileName = file.path.split('/').last;
+     if (isPop) {
+        Get.back();
+      }
+
+      return (imageFile, fileName);
     }
 
     return (null, '');
@@ -125,14 +162,16 @@ class FileController extends GetxController {
     required String token,
     required String tenantId,
     required String module,
+    String? customFileName,
+    String? customFileImage,
   }) async {
     try {
       final url = apiBaseUrl + Url.FILES;
       final mimeType = lookupMimeType(imageFile!.path);
       dio.FormData formData = dio.FormData.fromMap({
         "file": await dio.MultipartFile.fromFile(
-          imageFile!.path,
-          filename: fileName,
+          customFileImage ?? imageFile!.path,
+          filename: customFileName ?? fileName,
           contentType: MediaType.parse(mimeType!),
         ),
         "tenantId": tenantId,
@@ -148,21 +187,22 @@ class FileController extends GetxController {
           },
         ),
       );
-
       var data = response.data['files'] as List<dynamic>;
       var fileId = data.firstOrNull['fileStoreId'];
-
       return fileId;
     } catch (e, s) {
       dPrint('postFileError - $e');
-      ErrorHandler.allExceptionsHandler(e, s);
+      Get.back();
+      await ErrorHandler.allExceptionsHandler(e, s);
     }
     return null;
   }
 
   /// Return icon by filetype
   (IconData, FileExtType) getFileType(String url) {
-    String fileType = url.split('?').first.split('/').last.split('.').last;
+    String fileType = url.contains('?')
+        ? url.split('?').first.split('/').last.split('.').last
+        : url.split('.').last;
     switch (fileType.toLowerCase()) {
       case 'jpeg':
         return (Icons.image, FileExtType.jpeg);
@@ -170,6 +210,8 @@ class FileController extends GetxController {
         return (Icons.image, FileExtType.jpg);
       case 'png':
         return (Icons.image, FileExtType.png);
+      case 'heic':
+        return (Icons.image, FileExtType.heic);
       case 'pdf':
         return (Icons.picture_as_pdf, FileExtType.pdf);
       case 'dxf':
@@ -259,6 +301,31 @@ class FileController extends GetxController {
       return newFileStoreId;
     } catch (e, s) {
       dPrint('getPdf Error: ${e.toString()}');
+      ErrorHandler.allExceptionsHandler(e, s);
+    }
+    return null;
+  }
+
+  /// Get the `getChallanPdfService`
+  Future<dynamic> getChallanPdf({
+    required String tenantId,
+    required String token,
+    required String challanNo,
+  }) async {
+    try {
+      final query = {
+        'tenantId': tenantId,
+        'challanNo': challanNo,
+      };
+
+      final fileRes = await FileRepository.getChallanPdfService(
+        query: query,
+        token: token,
+      );
+
+      return fileRes;
+    } catch (e, s) {
+      dPrint('getChallanPdf Error: ${e.toString()}');
       ErrorHandler.allExceptionsHandler(e, s);
     }
     return null;

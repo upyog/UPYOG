@@ -8,6 +8,7 @@ class HeaderTop extends StatelessWidget implements PreferredSizeWidget {
   final Function()? onPressed;
   final bool automaticallyImplyLeading;
   final Orientation orientation;
+  final List<Widget>? actions;
 
   const HeaderTop({
     super.key,
@@ -17,6 +18,7 @@ class HeaderTop extends StatelessWidget implements PreferredSizeWidget {
     this.titleWidget,
     this.automaticallyImplyLeading = false,
     this.orientation = Orientation.portrait,
+    this.actions,
   });
 
   @override
@@ -30,6 +32,7 @@ class HeaderTop extends StatelessWidget implements PreferredSizeWidget {
         iconSize: orientation == Orientation.portrait ? 24.sp : 16.sp,
         onPressed: onPressed,
       ),
+      actions: actions,
     );
   }
 

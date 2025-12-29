@@ -130,6 +130,7 @@ class TradeLicenseController extends GetxController {
       final licenseFiltered = tlResponse.licenses!
           .where((value) => value.applicationNumber == applicationNo)
           .toList();
+          
       if (licenseFiltered.isNotEmpty) {
         propertyId = licenseFiltered
                 .first.tradeLicenseDetail?.additionalDetail?.propertyId ??
