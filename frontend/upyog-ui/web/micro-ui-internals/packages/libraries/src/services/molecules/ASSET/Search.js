@@ -113,8 +113,8 @@ export const ASSETSearch = {
     const assignListRows = getAssignAsset?.assetAssignments?.map((row) => (
       [
         row.assignedUserName,
-        `${t(row.department)}`,
-        row.designation,
+        `${t("COMMON_MASTERS_DEPARTMENT_"+row.department)}`,
+        `${t("COMMON_MASTERS_DESIGNATION_"+row.designation)}`,
         row.employeeCode,
         convertTimestampToDate(row.returnDate),
         convertTimestampToDate(row.assignedDate)
@@ -167,7 +167,7 @@ export const ASSETSearch = {
             values: [
               // { title: "AST_EMP_CODE", value: response?.assetAssignment?.employeeCode },
               { title: "AST_ASSIGNED_USER", value: response?.assetAssignment?.assignedUserName },
-              { title: "AST_DEPARTMENT", value: response?.assetAssignment?.department },
+              { title: "AST_DEPARTMENT", value: "COMMON_MASTERS_DEPARTMENT_" + response?.assetAssignment?.department },
               { title: "AST_ASSIGNED_DATE", value: formatDate(response?.assetAssignment?.assignedDate) },
               // { title: "AST_DESIGNATION", value: response?.assetAssignment?.designation },
             ],
