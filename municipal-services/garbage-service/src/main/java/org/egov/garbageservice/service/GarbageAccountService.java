@@ -2119,7 +2119,7 @@ public class GarbageAccountService {
 	}
 
 	public ResponseEntity<Resource> generateGrbgTaxBillReceipt(RequestInfoWrapper requestInfoWrapper,
-			@Valid String grbgId, @Valid String billid) {
+			@Valid String grbgId, @Valid String billid, @Valid String status) {
 
 		List<GarbageAccount> garbageAccounts = Collections
 				.singletonList(GarbageAccount.builder().grbgApplicationNumber(grbgId).build());
@@ -2152,8 +2152,11 @@ public class GarbageAccountService {
 		int conut = 1;
 		List<String> slNos = new ArrayList<>();
 		Set<String> garbapplicationNos = new HashSet<>();
+		Set<String> reqbillIds = new HashSet<>();
+		
 
 		garbapplicationNos.add(grbAccount.getGrbgApplicationNumber());
+		reqbillIds.add(grbAccount.getGrbgApplicationNumber());
 
 		for (GarbageAccount childGrbgAccount : grbAccount.getChildGarbageAccounts()) {
 			slNos.add(String.valueOf(conut++));
@@ -2175,9 +2178,22 @@ public class GarbageAccountService {
 		Set<String> billIds = grbgTaxCalculatorTracker.stream().map(GrbgBillTracker::getBillId)
 				.collect(Collectors.toSet());
 
-		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
-				.tenantId(grbgTaxCalculatorMonthTracker.getTenantId()).service(grbAccount.getBusinessService())
-				.billId(billIds).build();
+		BillSearchCriteria.BillSearchCriteriaBuilder builder = BillSearchCriteria.builder()
+		        .tenantId(grbgTaxCalculatorMonthTracker.getTenantId())
+		        .service(grbAccount.getBusinessService())
+		        .billId(billIds);
+
+		
+		if (status != null && !status.trim().isEmpty()) {
+		     
+		        Demand.StatusEnum dynamicStatus = Demand.StatusEnum.valueOf(status.trim().toUpperCase());
+		        builder.status(dynamicStatus);
+		   
+		}
+
+
+		BillSearchCriteria billSearchCriteria = builder.build();
+
 
 		BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfoWrapper.getRequestInfo());
 
