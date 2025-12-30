@@ -6,12 +6,20 @@ pipeline {
     REPO = "upyoguddhp"
   }
 
-  parameters {
-      string(name: "SERVICE_NAME", defaultValue: "scheduler-services",
-             description: "Image name from build-config.yml (example: scheduler-services)")
-      string(name: "VERSION", defaultValue: "",
-             description: "Version tag (leave empty to auto generate timestamp)")
+ parameters {
+  activeChoiceParam('SERVICE_NAME') {
+      description('Select service to build')
+      choiceType('SINGLE_SELECT')
+      groovyScript("""
+          def yaml = new File("build/build-config.yml").text
+          def data = new org.yaml.snakeyaml.Yaml().load(yaml)
+
+          return data.config.collect { it.build[0]['image-name'] }
+      """)
   }
+
+  string(name: "VERSION", defaultValue: "", description: "Version")
+}
 
   stages {
 
