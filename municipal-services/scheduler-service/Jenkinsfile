@@ -2,9 +2,8 @@ pipeline {
   agent any
 
   environment {
-    REGISTRY = "https://index.docker.io/v1/"
+    REGISTRY = "docker.io"
     REPO = "upyoguddhp"
-    IMAGE = "scheduler-service"
   }
 
   stages {
@@ -17,25 +16,27 @@ pipeline {
       }
     }
 
-    stage('Maven Build') {
+    stage('Build Scheduler Service') {
       steps {
         dir('municipal-services/scheduler-service') {
-          sh 'mvn -B clean package -DskipTests'
+          sh 'mvn clean package -DskipTests'
         }
       }
     }
 
     stage('Docker Build & Push') {
       steps {
-        withDockerRegistry([ credentialsId: 'docker-creds', url: env.REGISTRY ]) {
-          dir('municipal-services/scheduler-service') {
+        script {
+          docker.withRegistry("https://${env.REGISTRY}", "docker-creds") {
             sh """
-              docker build -t ${REPO}/${IMAGE}:latest -f docker/Dockerfile .
-              docker push ${REPO}/${IMAGE}:latest
+              cd municipal-services/scheduler-service
+              docker build -t ${env.REPO}/scheduler-service -f build/maven/Dockerfile .
+              docker push ${env.REPO}/scheduler-service
             """
           }
         }
       }
     }
+
   }
 }
