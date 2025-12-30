@@ -6,20 +6,30 @@ pipeline {
     REPO = "upyoguddhp"
   }
 
- parameters {
-  activeChoiceParam('SERVICE_NAME') {
+  parameters {
+
+    activeChoiceParam('SERVICE_NAME') {
       description('Select service to build')
       choiceType('SINGLE_SELECT')
+
       groovyScript("""
-          def yaml = new File("build/build-config.yml").text
-          def data = new org.yaml.snakeyaml.Yaml().load(yaml)
+          @Grab('org.yaml:snakeyaml:1.33')
+          import org.yaml.snakeyaml.*
+
+          def url = new URL("https://raw.githubusercontent.com/upyoguddhp/UPYOG/master/build/build-config.yml")
+          def yamlText = url.text
+          def data = new Yaml().load(yamlText)
 
           return data.config.collect { it.build[0]['image-name'] }
       """)
-  }
+    }
 
-  string(name: "VERSION", defaultValue: "", description: "Version")
-}
+    string(
+      name: 'SEMVER',
+      defaultValue: '0.0.1',
+      description: 'Semantic Version (e.g., 0.0.1)'
+    )
+  }
 
   stages {
 
@@ -60,8 +70,9 @@ pipeline {
       steps {
         script {
 
-          def tag = params.VERSION?.trim()
-          if(!tag) tag = new Date().format("yyyyMMddHHmm")
+          def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+          def buildNo = env.BUILD_NUMBER
+          def tag = "v${params.SEMVER}-${commit}-${buildNo}"
 
           withCredentials([usernamePassword(credentialsId: 'docker-creds',
                     usernameVariable: 'USER',
@@ -72,11 +83,13 @@ pipeline {
               """
 
               targets.each { t ->
+
                   def workDir = t['work-dir']
                   def image = "${REGISTRY}/${REPO}/${t['image-name']}:${tag}"
-                  def dockerfile = t['dockerfile'] ?: "Dockerfile"
+                  def dockerfile = t['dockerfile'] ?: "build/maven/Dockerfile"
 
                   echo "Building ${image}"
+
                   sh """
                     docker build \
                       --build-arg WORK_DIR=${workDir} \
