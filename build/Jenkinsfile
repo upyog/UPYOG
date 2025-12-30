@@ -55,10 +55,10 @@ node {
     }
 
     stage("Find Service Entry") {
-        echo "Selected Service: ${SERVICE_NAME}"
+        echo "Selected Service: ${params.SERVICE_NAME}"
 
         def entry = config.config.find { svc ->
-            svc.build.any { it['image-name'] == SERVICE_NAME }
+            svc.build.any { it['image-name'] == params.SERVICE_NAME }
         }
 
         if(!entry){
