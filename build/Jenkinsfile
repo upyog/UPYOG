@@ -1,111 +1,113 @@
-pipeline {
-  agent any
+#!groovy
 
-  environment {
-    REGISTRY = "docker.io"
-    REPO = "upyoguddhp"
-  }
+/**
+ * Jenkins Scripted Pipeline for UPYOG Docker CI
+ * - Reads build-config.yml
+ * - Dynamic Active Choice parameter
+ * - Builds selected service
+ * - Docker Hub push
+ */
 
-  parameters {
+import org.yaml.snakeyaml.Yaml
 
-    activeChoiceParam('SERVICE_NAME') {
-      description('Select service to build')
-      choiceType('SINGLE_SELECT')
+// ------------ PARAMETERS (Active Choices) ----------------
+properties([
+  parameters([
+    [$class: 'CascadeChoiceParameter',
+      choiceType: 'SINGLE_SELECT',
+      name: 'SERVICE_NAME',
+      description: 'Select service to build',
+      script: [$class: 'GroovyScript',
+        script: [sandbox: true, script: """
+              def url = new URL("https://raw.githubusercontent.com/upyoguddhp/UPYOG/master/build/build-config.yml")
+              def yaml = new org.yaml.snakeyaml.Yaml().load(url.text)
+              return yaml.config.collect { it.build[0]['image-name'] }
+        """]
+      ]
+    ],
 
-      groovyScript("""
-          @Grab('org.yaml:snakeyaml:1.33')
-          import org.yaml.snakeyaml.*
+    string(name: 'SEMVER', defaultValue: '0.0.1',
+      description: 'Semantic version (e.g. 0.0.1)')
+  ])
+])
 
-          def url = new URL("https://raw.githubusercontent.com/upyoguddhp/UPYOG/master/build/build-config.yml")
-          def yamlText = url.text
-          def data = new Yaml().load(yamlText)
+// --------------- SCRIPTED PIPELINE START ------------------
+node {
 
-          return data.config.collect { it.build[0]['image-name'] }
-      """)
-    }
+    def REGISTRY = "docker.io"
+    def REPO = "upyoguddhp"
+    def config
+    def targets
 
-    string(
-      name: 'SEMVER',
-      defaultValue: '0.0.1',
-      description: 'Semantic Version (e.g., 0.0.1)'
-    )
-  }
-
-  stages {
-
-    stage('Checkout') {
-      steps {
-        git branch: 'master',
-            url: 'https://github.com/upyoguddhp/UPYOG.git',
-            credentialsId: 'git-creds'
-      }
+    stage("Checkout") {
+        checkout([
+            $class: 'GitSCM',
+            branches: [[name: "*/master"]],
+            userRemoteConfigs: [[
+                url: "https://github.com/upyoguddhp/UPYOG.git",
+                credentialsId: "git-creds"
+            ]]
+        ])
     }
 
     stage("Read YAML") {
-      steps {
-        script {
-          config = readYaml file: "build/build-config.yml"
-        }
-      }
+        config = readYaml file: "build/build-config.yml"
     }
 
     stage("Find Service Entry") {
-      steps {
-        script {
-          entry = config.config.find { svc ->
-            svc.build.any { it['image-name'] == params.SERVICE_NAME }
-          }
+        echo "Selected Service: ${SERVICE_NAME}"
 
-          if(!entry) {
-            error "Service ${params.SERVICE_NAME} not found in build-config.yml"
-          }
-
-          targets = entry.build
-          echo "Selected: ${targets}"
+        def entry = config.config.find { svc ->
+            svc.build.any { it['image-name'] == SERVICE_NAME }
         }
-      }
+
+        if(!entry){
+            error "Service ${SERVICE_NAME} not found in YAML"
+        }
+
+        targets = entry.build
+        echo "Build Target → ${targets}"
     }
 
     stage("Build & Push") {
-      steps {
-        script {
 
-          def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-          def buildNo = env.BUILD_NUMBER
-          def tag = "v${params.SEMVER}-${commit}-${buildNo}"
+        def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+        def buildNo = env.BUILD_NUMBER
+        def tag = "v${SEMVER}-${commit}-${buildNo}"
 
-          withCredentials([usernamePassword(credentialsId: 'docker-creds',
-                    usernameVariable: 'USER',
-                    passwordVariable: 'PASS')]) {
+        echo "FINAL TAG → ${tag}"
 
-              sh """
-                echo $PASS | docker login -u $USER --password-stdin
-              """
+        withCredentials([
+          usernamePassword(
+            credentialsId: 'docker-creds',
+            usernameVariable: 'USER',
+            passwordVariable: 'PASS'
+          )
+        ]) {
 
-              targets.each { t ->
+            sh """
+              echo $PASS | docker login -u $USER --password-stdin
+            """
 
-                  def workDir = t['work-dir']
-                  def image = "${REGISTRY}/${REPO}/${t['image-name']}:${tag}"
-                  def dockerfile = t['dockerfile'] ?: "build/maven/Dockerfile"
+            targets.each { t ->
 
-                  echo "Building ${image}"
+                def workDir = t['work-dir']
+                def dockerfile = t['dockerfile'] ?: "build/maven/Dockerfile"
+                def image = "${REGISTRY}/${REPO}/${t['image-name']}:${tag}"
 
-                  sh """
-                    docker build \
-                      --build-arg WORK_DIR=${workDir} \
-                      -f ${dockerfile} \
-                      -t ${image} .
-                    docker push ${image}
-                  """
-              }
-          }
+                echo "Building Image: ${image}"
+                echo "WORK_DIR: ${workDir}"
+                echo "Dockerfile: ${dockerfile}"
+
+                sh """
+                  docker build \
+                    --build-arg WORK_DIR=${workDir} \
+                    -f ${dockerfile} \
+                    -t ${image} .
+                  
+                  docker push ${image}
+                """
+            }
         }
-      }
     }
-  }
-
-  post {
-    success { echo "Build Success" }
-    failure { echo "Build Failed" }
-  }
 }
