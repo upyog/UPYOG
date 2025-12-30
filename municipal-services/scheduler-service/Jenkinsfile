@@ -16,19 +16,19 @@ pipeline {
       }
     }
 
-    stage('Build Docker Image') {
-      steps {
-        script {
-          dir('municipal-services/scheduler-service') {
-            sh """
-              echo Building scheduler-service
-              docker build -t ${REGISTRY}/${REPO}/scheduler-service:latest \
-               -f build/maven/Dockerfile .
-            """
-          }
-        }
-      }
+   stage('Build Docker Image') {
+  steps {
+    script {
+      sh """
+        echo Building scheduler-service
+        docker build \
+         --build-arg WORK_DIR=municipal-services/scheduler-service \
+         -t ${REGISTRY}/${REPO}/scheduler-service:latest \
+         -f build/maven/Dockerfile .
+      """
     }
+  }
+}
 
     stage('Push to Docker Hub') {
       steps {
