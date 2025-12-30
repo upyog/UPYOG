@@ -10,33 +10,34 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        git url: 'https://github.com/upyoguddhp/UPYOG.git',
-            branch: 'master',
+        git branch: 'master',
+            url: 'https://github.com/upyoguddhp/UPYOG.git',
             credentialsId: 'git-creds'
       }
     }
 
-    stage('Build Scheduler Service') {
-      steps {
-        dir('municipal-services/scheduler-service') {
-          sh 'mvn clean package -DskipTests'
-        }
-      }
-    }
-
-    stage('Docker Build & Push') {
+    stage('Build Docker Image') {
       steps {
         script {
-          docker.withRegistry("https://${env.REGISTRY}", "docker-creds") {
+          dir('municipal-services/scheduler-service') {
             sh """
-              cd municipal-services/scheduler-service
-              docker build -t ${env.REPO}/scheduler-service -f build/maven/Dockerfile .
-              docker push ${env.REPO}/scheduler-service
+              echo Building scheduler-service
+              docker build -t ${REGISTRY}/${REPO}/scheduler-service:latest \
+               -f build/maven/Dockerfile .
             """
           }
         }
       }
     }
 
+    stage('Push to Docker Hub') {
+      steps {
+        script {
+          docker.withRegistry("https://${env.REGISTRY}", "docker-creds") {
+            sh "docker push ${REGISTRY}/${REPO}/scheduler-service:latest"
+          }
+        }
+      }
+    }
   }
 }
