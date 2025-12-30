@@ -1,0 +1,90 @@
+pipeline {
+  agent any
+
+  environment {
+    REGISTRY = "docker.io"
+    REPO = "upyoguddhp"
+  }
+
+  parameters {
+      string(name: "SERVICE_NAME", defaultValue: "scheduler-services",
+             description: "Image name from build-config.yml (example: scheduler-services)")
+      string(name: "VERSION", defaultValue: "",
+             description: "Version tag (leave empty to auto generate timestamp)")
+  }
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        git branch: 'master',
+            url: 'https://github.com/upyoguddhp/UPYOG.git',
+            credentialsId: 'git-creds'
+      }
+    }
+
+    stage("Read YAML") {
+      steps {
+        script {
+          config = readYaml file: "build/build-config.yml"
+        }
+      }
+    }
+
+    stage("Find Service Entry") {
+      steps {
+        script {
+          entry = config.config.find { svc ->
+            svc.build.any { it['image-name'] == params.SERVICE_NAME }
+          }
+
+          if(!entry) {
+            error "Service ${params.SERVICE_NAME} not found in build-config.yml"
+          }
+
+          targets = entry.build
+          echo "Selected: ${targets}"
+        }
+      }
+    }
+
+    stage("Build & Push") {
+      steps {
+        script {
+
+          def tag = params.VERSION?.trim()
+          if(!tag) tag = new Date().format("yyyyMMddHHmm")
+
+          withCredentials([usernamePassword(credentialsId: 'docker-creds',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS')]) {
+
+              sh """
+                echo $PASS | docker login -u $USER --password-stdin
+              """
+
+              targets.each { t ->
+                  def workDir = t['work-dir']
+                  def image = "${REGISTRY}/${REPO}/${t['image-name']}:${tag}"
+                  def dockerfile = t['dockerfile'] ?: "Dockerfile"
+
+                  echo "Building ${image}"
+                  sh """
+                    docker build \
+                      --build-arg WORK_DIR=${workDir} \
+                      -f ${dockerfile} \
+                      -t ${image} .
+                    docker push ${image}
+                  """
+              }
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    success { echo "Build Success" }
+    failure { echo "Build Failed" }
+  }
+}
