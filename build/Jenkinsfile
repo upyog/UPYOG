@@ -73,7 +73,7 @@ node {
 
         def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
         def buildNo = env.BUILD_NUMBER
-        def tag = "v${SEMVER}-${commit}-${buildNo}"
+        def tag = "v${params.SEMVER}-${commit}-${buildNo}"
 
         echo "FINAL TAG → ${tag}"
 
