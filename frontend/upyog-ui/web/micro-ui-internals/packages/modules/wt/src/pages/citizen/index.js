@@ -19,7 +19,7 @@ const App = () => {
 
   const getInboxInitialState = (service) => ({
     searchParams: {
-      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
+      uuid: { code: "ASSIGNED_TO_ME", name: "ES_INBOX_ASSIGNED_TO_ALL" },
       services: [service],
       applicationStatus: [],
       locality: [],
