@@ -1,0 +1,41 @@
+pipeline {
+  agent any
+
+  environment {
+    REGISTRY = "https://index.docker.io/v1/"
+    REPO = "upyoguddhp"
+    IMAGE = "scheduler-service"
+  }
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        git url: 'https://github.com/upyoguddhp/UPYOG.git',
+            branch: 'master',
+            credentialsId: 'git-creds'
+      }
+    }
+
+    stage('Maven Build') {
+      steps {
+        dir('municipal-services/scheduler-service') {
+          sh 'mvn -B clean package -DskipTests'
+        }
+      }
+    }
+
+    stage('Docker Build & Push') {
+      steps {
+        withDockerRegistry([ credentialsId: 'docker-creds', url: env.REGISTRY ]) {
+          dir('municipal-services/scheduler-service') {
+            sh """
+              docker build -t ${REPO}/${IMAGE}:latest -f docker/Dockerfile .
+              docker push ${REPO}/${IMAGE}:latest
+            """
+          }
+        }
+      }
+    }
+  }
+}
