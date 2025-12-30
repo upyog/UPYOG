@@ -118,10 +118,24 @@ public class TransactionServiceV2 {
 				paymentsService.registerPayment(
 						TransactionRequest.builder().transaction(transaction).requestInfo(requestInfo).build());
 			}
-			else if(transaction.getGateway().equalsIgnoreCase("OFFLINE")){
-				transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
-				paymentsService.registerPayment(
-						TransactionRequest.builder().transaction(transaction).requestInfo(requestInfo).build());
+			else if (transaction.getGateway().equalsIgnoreCase("OFFLINE")) {
+
+			    transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
+			    
+			    enrichmentService.enrichUpdateTransaction(
+			        TransactionRequest.builder()
+			            .transaction(transaction)
+			            .requestInfo(requestInfo)
+			            .build(),
+			        transaction
+			    );
+
+			    paymentsService.registerPayment(
+			        TransactionRequest.builder()
+			            .transaction(transaction)
+			            .requestInfo(requestInfo)
+			            .build()
+			    );
 			}
 			else {
 				URI uri = gatewayService.initiateTxn(transaction);
@@ -227,7 +241,7 @@ public class TransactionServiceV2 {
 
 			if (validator.skipGateway(currentTxnStatus)) {
 				newTxn = currentTxnStatus;
-
+				
 			} else {
 				newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
 
