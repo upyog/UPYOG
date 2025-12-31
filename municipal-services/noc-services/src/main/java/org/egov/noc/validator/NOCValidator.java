@@ -38,10 +38,11 @@ public class NOCValidator {
 	 */
 	public void validateCreate(NocRequest nocRequest, Object mdmsData) {
 		mdmsValidator.validateMdmsData(nocRequest, mdmsData);
-		if (!ObjectUtils.isEmpty(nocRequest.getNoc().getDocuments())) {
-			validateAttachedDocumentTypes(nocRequest.getNoc(), mdmsData);
-			validateDuplicateDocuments(nocRequest.getNoc());
-		}
+		//disabeling document check 
+//		if (!ObjectUtils.isEmpty(nocRequest.getNoc().getDocuments())) {
+//			validateAttachedDocumentTypes(nocRequest.getNoc(), mdmsData);
+//			validateDuplicateDocuments(nocRequest.getNoc());
+//		}
 	}
 
 	/**
@@ -78,16 +79,16 @@ public class NOCValidator {
 
 			if ((noc.getWorkflow().getAction().equalsIgnoreCase(NOCConstants.ACTION_APPROVE) && mode.equals(NOCConstants.ONLINE_MODE)) || (mode.equals(NOCConstants.OFFLINE_MODE)
 					&& noc.getWorkflow().getAction().equalsIgnoreCase(NOCConstants.ACTION_AUTO_APPROVE) && nocConfiguration.getNocOfflineDocRequired())) {
-				validateRequiredDocuments(noc, mdmsData);
+//				validateRequiredDocuments(noc, mdmsData);
 			} else if (!noc.getWorkflow().getAction().equalsIgnoreCase(NOCConstants.ACTION_REJECT) && !noc.getWorkflow().getAction().equalsIgnoreCase(NOCConstants.ACTION_VOID)
 					&& !ObjectUtils.isEmpty(noc.getDocuments())) {
-				validateAttachedDocumentTypes(noc, mdmsData);
+//				validateAttachedDocumentTypes(noc, mdmsData);
 			}
 
 			if (noc.getWorkflow().getAction().equalsIgnoreCase(NOCConstants.ACTION_REJECT) && StringUtils.isEmpty(noc.getWorkflow().getComment()))
 				errorMap.put("NOC_UPDATE_ERROR_COMMENT_REQUIRED", "Comment is mandaotory, please provide the comments ");
 		} else if (!ObjectUtils.isEmpty(noc.getDocuments())) {
-			validateAttachedDocumentTypes(noc, mdmsData);
+//			validateAttachedDocumentTypes(noc, mdmsData);
 		}
 
 		if (!CollectionUtils.isEmpty(errorMap))
