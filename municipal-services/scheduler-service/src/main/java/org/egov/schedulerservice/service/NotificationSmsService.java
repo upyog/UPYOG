@@ -27,13 +27,11 @@ public class NotificationSmsService {
 		try {
 			StringBuilder url = new StringBuilder(applicationConfig.getNotificationSmsHostUrl());
 			url.append(applicationConfig.getSendNotificationSmsEndpoint());
-			log.info("url {}" ,url);			// Make the POST request
-
+			
 			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
 			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url.toString(), requestInfoWrapper,
 					String.class);
-			log.info("Response {}" ,responseEntity);
 			
 			return responseEntity.getBody();
 		} catch (Exception e) {
