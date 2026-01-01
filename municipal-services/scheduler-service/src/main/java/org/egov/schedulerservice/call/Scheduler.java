@@ -160,7 +160,7 @@ public class Scheduler {
 	}
 	
 	
-	//@Scheduled(cron = "${cron.job.default.adrvcanopy.site.booking.change.site.status}", zone = "IST")
+	@Scheduled(cron = "${cron.job.default.send.sms.notification}", zone = "IST")
 	public void sendSmsNotification() {
 		log.info("sendSmsNotification CRON JOB Starts");
 		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
