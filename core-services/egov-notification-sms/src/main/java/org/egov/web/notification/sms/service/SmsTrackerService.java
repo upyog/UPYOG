@@ -14,4 +14,9 @@ public class SmsTrackerService {
     public void createSmsTracker(SmsTracker tracker) {
         repository.insert(tracker);
     }
+    
+    public Short getResendCounterByBillId(String billId) {
+        return repository.fetchResendCounterByBillId(billId);
+    }
+
 }

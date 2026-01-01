@@ -41,6 +41,17 @@ public class SMSSentRequest {
 	private String templateId;
 
 	private String templateName;
+	
+	private String billId;
+	
+	public String getBillId() {
+	        return billId;
+	 }
+
+	 public void setBillId(String billId) {
+	        this.billId = billId;
+	 }
+	    
 
 	public boolean isValid() {
 		return isNotEmpty(mobileNumber) && isNotEmpty(message) && isNotEmpty(templateName);
