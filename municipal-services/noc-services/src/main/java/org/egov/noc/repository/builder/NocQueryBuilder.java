@@ -55,6 +55,16 @@ public class NocQueryBuilder {
 			log.info(criteria.getTenantId());
 		}
 
+		List<String> accountIds = criteria.getAccountId();
+		if (!CollectionUtils.isEmpty(accountIds)) {
+		    addClauseIfRequired(builder);
+		    builder.append(" noc.accountid IN (")
+		           .append(createQuery(accountIds))
+		           .append(")");
+		    addToPreparedStatement(preparedStmtList, accountIds);
+		}
+
+
 		List<String> ids = criteria.getIds();
 		if (!CollectionUtils.isEmpty(ids)) {
 			addClauseIfRequired(builder);
@@ -123,12 +133,15 @@ public class NocQueryBuilder {
                         log.info(nocType);
                 }
                 
-                List<String> status = criteria.getStatus();
-                if (status!=null) {
-                        addClauseIfRequired(builder);
-                        builder.append(" noc.status IN (").append(createQuery(status)).append(")");
-                        addToPreparedStatement(preparedStmtList, status);
-                }
+		List<String> status = criteria.getStatus();
+		if (!CollectionUtils.isEmpty(status)) {
+		    addClauseIfRequired(builder);
+		    builder.append(" noc.applicationstatus IN (")
+		           .append(createQuery(status))
+		           .append(")");
+		    addToPreparedStatement(preparedStmtList, status);
+		}
+
 
 		
 		log.info(criteria.toString());

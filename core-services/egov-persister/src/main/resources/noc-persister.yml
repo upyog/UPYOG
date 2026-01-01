@@ -177,10 +177,11 @@ serviceMaps:
 
         - query: >
             UPDATE eg_noc
-            SET additionaldetails = ?, lastmodifiedby = ?, lastmodifiedtime = ?
+            SET  applicationStatus = ?, additionaldetails = ?, lastmodifiedby = ?, lastmodifiedtime = ?
             WHERE id = ?;
           basePath: Noc
           jsonMaps:
+            - jsonPath: $.Noc.applicationStatus
             - jsonPath: $.Noc.additionalDetails
               type: JSON
               dbType: JSONB
