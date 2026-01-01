@@ -96,7 +96,20 @@ node {
                  // If DB image → use DB Dockerfile
                 if(t['image-name'].endsWith("-db")) {
                    dockerfile = "${workDir}/Dockerfile"
+                   def contextPath = "${env.WORKSPACE}/${workDir}"
                    echo "Detected DB Image → Using service DB Dockerfile"
+                   echo "DB Build Context  : ${contextPath}"
+                   echo "DB Dockerfile Path: ${dockerfile}"
+                  sh """
+                      ls -R ${contextPath}
+                
+                      docker build \
+                        -f ${dockerfile} \
+                        -t ${image} \
+                        ${contextPath}
+                
+                      docker push ${image}
+                    """
                 } 
 
                 def image = "${REGISTRY}/${REPO}/${t['image-name']}:${tag}"
