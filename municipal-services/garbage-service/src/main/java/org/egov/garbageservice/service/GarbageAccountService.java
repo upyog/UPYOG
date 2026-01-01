@@ -2375,7 +2375,7 @@ public class GarbageAccountService {
 				.builder().requestInfo(genrateArrearRequest.getRequestInfo())
 				.searchCriteriaGarbageAccount(searchCriteriaGarbageAccount).build();
 		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchCriteriaGarbageAccountRequest,
-				true);
+				false);
 		if (!CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {
 			GarbageAccount garbageAccount = garbageAccountResponse.getGarbageAccounts().get(0);
 //			checkPropertyArears(genrateArrearRequest.getDemands(), properties.get(0));
