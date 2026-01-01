@@ -91,42 +91,44 @@ node {
 
             targets.each { t ->
 
-                def workDir = t['work-dir']
-                def dockerfile = t['dockerfile'] ?: "build/maven/Dockerfile"
-                 // If DB image → use DB Dockerfile
-                if(t['image-name'].endsWith("-db")) {
-                   dockerfile = "${workDir}/Dockerfile"
-                   def contextPath = "${env.WORKSPACE}/${workDir}"
-                   echo "Detected DB Image → Using service DB Dockerfile"
-                   echo "DB Build Context  : ${contextPath}"
-                   echo "DB Dockerfile Path: ${dockerfile}"
+              def workDir = t['work-dir']
+
+              // 👇 define image here so BOTH branches can use it
+              def image = "${REGISTRY}/${REPO}/${t['image-name']}:${tag}"
+
+              if (t['image-name'].endsWith("-db")) {
+
+                  dockerfile = "${workDir}/Dockerfile"
+                  def contextPath = "${env.WORKSPACE}/${workDir}"
+
+                  echo "Detected DB Image → Using service DB Dockerfile"
+                  echo "DB Build Context  : ${contextPath}"
+                  echo "DB Dockerfile Path: ${dockerfile}"
+
                   sh """
-                      ls -R ${contextPath}
-                
-                      docker build \
-                        -f ${dockerfile} \
-                        -t ${image} \
-                        ${contextPath}
-                
-                      docker push ${image}
-                    """
-                } 
+                    ls -R ${contextPath}
 
-                def image = "${REGISTRY}/${REPO}/${t['image-name']}:${tag}"
+                    docker build \
+                      -f ${dockerfile} \
+                      -t ${image} \
+                      ${contextPath}
 
-                echo "Building Image: ${image}"
-                echo "WORK_DIR: ${workDir}"
-                echo "Dockerfile: ${dockerfile}"
+                    docker push ${image}
+                  """
 
-                sh """
-                  docker build \
-                    --build-arg WORK_DIR=${workDir} \
-                    -f ${dockerfile} \
-                    -t ${image} .
-                  
-                  docker push ${image}
-                """
-            }
+              } else {
+                  dockerfile = t['dockerfile'] ?: "build/maven/Dockerfile"
+
+                  sh """
+                    docker build \
+                      --build-arg WORK_DIR=${workDir} \
+                      -f ${dockerfile} \
+                      -t ${image} .
+                    docker push ${image}
+                  """
+              }
+          }
+
         }
     }
 }
