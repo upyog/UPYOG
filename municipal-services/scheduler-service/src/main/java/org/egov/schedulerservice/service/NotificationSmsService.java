@@ -27,15 +27,15 @@ public class NotificationSmsService {
 		try {
 			StringBuilder url = new StringBuilder(applicationConfig.getNotificationSmsHostUrl());
 			url.append(applicationConfig.getSendNotificationSmsEndpoint());
-			// Make the POST request
-
+			
 			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
 			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url.toString(), requestInfoWrapper,
 					String.class);
+			
 			return responseEntity.getBody();
 		} catch (Exception e) {
-			log.error("Error occured while changing Site status request.", e);
+			log.error("Error occured while changing Send Notification request.", e);
 			throw new SchedulerServiceException(ErrorConstants.ERR_ADRVCANOPY_SITE_BOOKING_SERVICE_ERROR,
 					"Error occured while changing Site status request. Message: " + e.getMessage());
 		}
