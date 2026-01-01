@@ -95,7 +95,7 @@ node {
                 def dockerfile = t['dockerfile'] ?: "build/maven/Dockerfile"
                  // If DB image → use DB Dockerfile
                 if(t['image-name'].endsWith("-db")) {
-                   dockerfile = "${workDir}/src/main/resources/db/Dockerfile"
+                   dockerfile = "${workDir}/Dockerfile"
                    echo "Detected DB Image → Using service DB Dockerfile"
                 } 
 
