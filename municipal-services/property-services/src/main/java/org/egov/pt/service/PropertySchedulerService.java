@@ -523,8 +523,16 @@ public class PropertySchedulerService {
 		finalProperty = properties.stream().filter(property -> {
 			List<PtTaxCalculatorTracker> trackers = ptTaxCalculatorTrackerMap.get(property.getPropertyId());
 
-			return trackers == null || trackers.stream().noneMatch(tracker -> isOverlapping(tracker.getFromDate(),
-					tracker.getToDate(), calculateTaxRequest.getFromDate(), calculateTaxRequest.getToDate()));
+			return trackers == null || trackers.stream().noneMatch(tracker ->
+		    tracker.getBillStatus() != BillStatus.CANCELLED &&
+		    isOverlapping(
+		        tracker.getFromDate(),
+		        tracker.getToDate(),
+		        calculateTaxRequest.getFromDate(),
+		        calculateTaxRequest.getToDate()
+		    )
+		);
+
 		}).collect(Collectors.toList());
 
 		return finalProperty;

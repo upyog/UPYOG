@@ -1089,20 +1089,31 @@ public class PropertyService {
 		billService.updateBillStatus(updateBillCriteria, cancelRequest.getRequestInfo());
 		
 		// UPDATE PT TRACKER STATUS
-		PtTaxCalculatorTracker tracker = PtTaxCalculatorTracker.builder()
-		        .tenantId(bill.getTenantId())
-		        .billId(bill.getId())
-		        .billStatus(BillStatus.CANCELLED)
-		        .build();
+		PtTaxCalculatorTrackerSearchCriteria trackerSearchCriteria =
+		        PtTaxCalculatorTrackerSearchCriteria.builder()
+		                .tenantId(bill.getTenantId())
+		                .billId(bill.getId())
+		                .limit(1)
+		                .build();
 
-		PtTaxCalculatorTrackerRequest trackerRequest = PtTaxCalculatorTrackerRequest.builder()
-		        .requestInfo(cancelRequest.getRequestInfo())
-		        .ptTaxCalculatorTracker(tracker)
-		        .build();
+		List<PtTaxCalculatorTracker> trackers =
+				repository.getTaxCalculatedProperties(trackerSearchCriteria);
 
-		propertyService.saveToPtTaxCalculatorTracker(trackerRequest);
+		if (!CollectionUtils.isEmpty(trackers)) {
+		    PtTaxCalculatorTracker tracker = trackers.get(0);
+		    tracker.setBillStatus(BillStatus.CANCELLED);
 
-		return true;
+		    PtTaxCalculatorTrackerRequest trackerRequest =
+		            PtTaxCalculatorTrackerRequest.builder()
+		                    .requestInfo(cancelRequest.getRequestInfo())
+		                    .ptTaxCalculatorTracker(tracker)
+		                    .build();
+
+		    propertyService.updatePtTaxCalculatorTracker(trackerRequest);
+		} else {
+		    log.warn("PT tracker not found for billId {}", bill.getId());
+		}
+		 return true;  
 	}
 
 	public Map<String, Integer> getUlbDaysMap(MdmsResponse mdmsResponse) {
