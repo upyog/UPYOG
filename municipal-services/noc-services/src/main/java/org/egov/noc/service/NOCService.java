@@ -150,24 +150,33 @@ public class NOCService {
 		            .map(Role::getCode)
 		            .collect(Collectors.toList());
 		    
-		    log.info("Employee roles: {}", roleCodes);
-
-
 		    if ("CITIZEN".equalsIgnoreCase(userType)) {
 		        criteria.setAccountId(Collections.singletonList(user.getUuid()));
 		        criteria.setStatus(null);
 		    }
 		  else if ("EMPLOYEE".equalsIgnoreCase(userType)) {
+			  
+			  List<Role> tenantRoles = user.getRoles().stream()
+					    .filter(role -> criteria.getTenantId().equals(role.getTenantId()))
+					    .collect(Collectors.toList());
+
+					if (tenantRoles.isEmpty()) {
+					    throw new CustomException(
+					        "UNAUTHORIZED",
+					        "Employee not authorized for this tenant"
+					    );
+					}
 
 			    Set<String> statuses = new HashSet<>();
 			
-			    if (roleCodes.contains("NOC_NODAL")) {
+			    if (tenantRoles.stream().anyMatch(r -> "NOC_NODAL".equals(r.getCode()))) {
 			        statuses.add("PENDINGFORVERIFICATION");
 			        statuses.add("PENDINGFORMODIFICATION");
 			    }
-			
-			    if (roleCodes.contains("NOC_APPROVER")) {
+
+			    if (tenantRoles.stream().anyMatch(r -> "NOC_APPROVER".equals(r.getCode()))) {
 			        statuses.add("PENDINGFORAPPROVAL");
+			        statuses.add("APPROVED");
 			    }
 			
 			    if (statuses.isEmpty()) {
@@ -199,7 +208,6 @@ public class NOCService {
 		                .append(config.getWfProcessPath())
 		                .append("?businessIds=").append(noc.getApplicationNo())
 		                .append("&tenantId=").append(noc.getTenantId());
-		        log.info("WF Process URL => {}", url.toString());
 		        Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
 		        ProcessInstanceResponse response;
 		        try {
