@@ -3,16 +3,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/edit_profile_controller.dart';
 import 'package:mobile_app/controller/location_controller.dart';
+import 'package:mobile_app/model/citizen/meripehchaan/meripehchaan_model.dart';
 import 'package:mobile_app/model/citizen/token/token.dart';
 import 'package:mobile_app/model/custom_exception_model.dart';
 import 'package:mobile_app/repository/authenticate_repository.dart';
 import 'package:mobile_app/routes/routes.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
+import 'package:mobile_app/utils/enums/emp_enums.dart';
 import 'package:mobile_app/utils/utils.dart';
 
 class AuthController extends GetxController {
@@ -23,7 +24,13 @@ class AuthController extends GetxController {
   final passwordController = TextEditingController().obs;
   final nameController = TextEditingController().obs;
   final dobController = TextEditingController().obs;
+
+  // Add reactive variables to track text values
+  final RxString usernameText = ''.obs;
+  final RxString passwordText = ''.obs;
+
   Token? token;
+  UserRequest? userRequest;
   RxString? userType = UserType.CITIZEN.name.obs;
   RxString selectedCity = "".obs;
   RxBool isButtonEnabled = false.obs;
@@ -33,6 +40,38 @@ class AuthController extends GetxController {
       isNumberValid = false.obs,
       termsCondition = false.obs,
       isOtpValid = false.obs;
+
+  //Check user validity
+  String? _userData;
+  String? _empUserData;
+  Meripehchaan? meripehchaan;
+
+  @override
+  void onReady() {
+    super.onReady();
+    initValidUser();
+    getUserLocalData();
+
+    // Add listeners to sync reactive variables with text controllers
+    userNameController.value.addListener(() {
+      usernameText.value = userNameController.value.text.trim();
+    });
+
+    passwordController.value.addListener(() {
+      passwordText.value = passwordController.value.text.trim();
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    mobileNoController.value.dispose();
+    userNameController.value.dispose();
+    passwordController.value.dispose();
+    nameController.value.dispose();
+    dobController.value.dispose();
+    otpEditingController.value.dispose();
+  }
 
   void onTermsConditionChanged(bool value) {
     termsCondition.value = value;
@@ -54,19 +93,21 @@ class AuthController extends GetxController {
 
   //Check user valid data
   bool _isValidUser() {
-    box = Hive.box(HiveConstants.appBox);
-    final userData = box.get(HiveConstants.LOGIN_KEY);
-    final empUserData = box.get(HiveConstants.EMP_LOGIN_KEY);
-
     if (token == null) {
       return false;
     }
 
     if (userType?.value == UserType.CITIZEN.name) {
-      return (userData != null && isNotNullOrEmpty(token?.accessToken));
+      return (_userData != null && isNotNullOrEmpty(token?.accessToken));
     } else {
-      return (empUserData != null && isNotNullOrEmpty(token?.accessToken));
+      return (_empUserData != null && isNotNullOrEmpty(token?.accessToken));
     }
+  }
+
+  Future<void> initValidUser() async {
+    _userData = await storage.getString(SecureStorageConstants.LOGIN_KEY);
+    _empUserData =
+        await storage.getString(SecureStorageConstants.EMP_LOGIN_KEY);
   }
 
   void validateNumber(String value) {
@@ -89,23 +130,6 @@ class AuthController extends GetxController {
       isButtonEnabled.value = false;
     }
     isButtonEnabled.value = isOtpValid.value && termsCondition.value;
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-    getUserLocalData();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-    mobileNoController.value.dispose();
-    userNameController.value.dispose();
-    passwordController.value.dispose();
-    nameController.value.dispose();
-    dobController.value.dispose();
-    otpEditingController.value.dispose();
   }
 
   //Clear employee login field
@@ -181,6 +205,7 @@ class AuthController extends GetxController {
         disableNumberField.value = true;
         isButtonEnabled.value = false;
         otpEditingController.value.text = '';
+
         // Get.toNamed(AppRoutes.OTP_VERIFY);
       }
     } on CustomException catch (e) {
@@ -198,7 +223,7 @@ class AuthController extends GetxController {
         "otp": {
           "mobileNumber": mobile,
           "tenantId": BaseConfig.STATE_TENANT_ID,
-          "userType": "citizen",
+          "userType": UserType.CITIZEN.name,
           "type": "login",
         },
       };
@@ -249,13 +274,13 @@ class AuthController extends GetxController {
       if (otpRes != null) {
         dPrint('OTP: $otpRes', enableLog: true);
         disableNumberField.value = false;
-        // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-        Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+        Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+        // Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
       }
     } on CustomException catch (e) {
       if (e.statusCode == 400 && e.exceptionType == ExceptionType.FETCHDATA) {
         snackBar('Invalid', 'Invalid OTP', Colors.red);
-        //await HiveService.clearBox();
+        // await storage.clearAll();
       }
     }
   }
@@ -266,25 +291,39 @@ class AuthController extends GetxController {
     String? otp,
     bool isSignUp = true,
     required UserType userType,
+    bool isMeripehchaanLogin = false,
   }) async {
     try {
-      var headers = {
-        HttpHeaders.contentTypeHeader: 'application/x-www-form-urlencoded',
-        "Access-Control-Allow-Origin": "*",
-        "authorization": "Basic ${BaseConfig.AUTHORIZATION_KEY}",
-      };
+      final headers = isMeripehchaanLogin
+          ? null
+          : {
+              HttpHeaders.contentTypeHeader:
+                  'application/x-www-form-urlencoded',
+              "Access-Control-Allow-Origin": "*",
+              "authorization": "Basic ${BaseConfig.AUTHORIZATION_KEY}",
+            };
 
-      Map<String, String> body;
+      Map<String, dynamic> body;
 
       if (userType == UserType.CITIZEN) {
-        body = {
-          "username": phoneNo!,
-          "password": otp!,
-          "scope": "read",
-          "grant_type": "password",
-          "tenantId": BaseConfig.STATE_TENANT_ID,
-          "userType": userType.name,
-        };
+        if (isMeripehchaanLogin) {
+          body = {
+            "TokenReq": {
+              "dlReqRef": meripehchaan!.dlReqRef,
+              "code": otp,
+              "module": "SSO",
+            },
+          };
+        } else {
+          body = {
+            "username": phoneNo!,
+            "password": otp!,
+            "scope": "read",
+            "grant_type": "password",
+            "tenantId": BaseConfig.STATE_TENANT_ID,
+            "userType": userType.name,
+          };
+        }
       } else {
         body = {
           "username": userNameController.value.text,
@@ -296,30 +335,56 @@ class AuthController extends GetxController {
         };
       }
 
+      // disableNumberField.value = false;
+
       final otpRes = await AuthenticateRepository.validateOtp(
+        isMeripehchaanLogin: isMeripehchaanLogin,
         headers: headers,
         body: body,
       );
-
       if (otpRes != null) {
         token = Token.fromJson(otpRes);
+
+        if (termsCondition.value) {
+          Future.delayed(const Duration(seconds: 1), () {
+            termsCondition.value = false;
+          });
+        }
 
         if (userType.name == UserType.EMPLOYEE.name) {
           clearEmployeeLoginFields();
 
-          HiveService.setData(
-            HiveConstants.FIRST_TIME_USER,
+          bool checkRole = InspectorType.values.any(
+            (element) =>
+                token?.userRequest?.roles
+                    ?.any((role) => role.code == element.name) ??
+                false,
+          );
+
+          if (!checkRole) {
+            snackBar(
+              'User ${token?.userRequest?.userName} does not have the required role to use the Mobile App.',
+              'Allowed Roles are: ${InspectorType.values.map((e) => e.name).toList().join(', ')}',
+              Colors.red,
+              seconds: 5,
+            );
+            return;
+          }
+
+          storage.setBool(
+            SecureStorageConstants.FIRST_TIME_USER,
             true,
           );
 
-          await HiveService.setData(
-            HiveConstants.EMP_LOGIN_KEY,
+          await storage.setString(
+            SecureStorageConstants.EMP_LOGIN_KEY,
             jsonEncode(token?.toJson()),
           );
+          await initValidUser();
           Get.offAllNamed(AppRoutes.EMP_BOTTOM_NAV);
         } else {
-          await HiveService.setData(
-            HiveConstants.LOGIN_KEY,
+          await storage.setString(
+            SecureStorageConstants.LOGIN_KEY,
             jsonEncode(token?.toJson()),
           );
           if (isSignUp) {
@@ -328,7 +393,9 @@ class AuthController extends GetxController {
         }
       }
     } on CustomException catch (e) {
-      if (e.statusCode == 400 && e.exceptionType == ExceptionType.FETCHDATA) {
+      if (e.statusCode == 400 &&
+          e.exceptionType == ExceptionType.FETCHDATA &&
+          !isMeripehchaanLogin) {
         snackBar(
           'Invalid',
           userType == UserType.CITIZEN
@@ -336,7 +403,7 @@ class AuthController extends GetxController {
               : 'Invalid login credentials',
           Colors.red,
         );
-        await HiveService.deleteData(HiveConstants.LOGIN_KEY);
+        await storage.delete(SecureStorageConstants.LOGIN_KEY);
       } else if (e.statusCode == 429) {
         snackBar(
           'Rate limit exceeded',
@@ -345,10 +412,42 @@ class AuthController extends GetxController {
               : 'RateLimitExceededException',
           Colors.red,
         );
-        await HiveService.deleteData(HiveConstants.LOGIN_KEY);
+        await storage.delete(SecureStorageConstants.LOGIN_KEY);
       }
     }
   }
+
+  //MeriPahchan Login
+  Future<String?> getMeriPahchanUrl() async {
+    try {
+      final query = {'module': 'SSO'};
+      final res = await AuthenticateRepository.getMeriPahchanUrl(query: query);
+      meripehchaan = meripehchaanFromJson(res);
+      return meripehchaan!.redirectUrl!;
+    } catch (e) {
+      dPrint('getMeriPahchanUrl Error: $e', enableLog: true);
+      return null;
+    }
+  }
+
+  //MeriPahchan Login
+  // Future<void> meriPahchanLogin(String code) async {
+  //   try {
+  //     final query = {
+  //       'code': code,
+  //       'codeVerifier': await storage.getString(SecureStorageConstants.CODE_VERIFIER),
+  //     };
+  //     final res = await AuthenticateRepository.meriPahchanLogin(query: query);
+  //     token = Token.fromJson(res);
+  //     await HiveService.setData(
+  //       HiveConstants.LOGIN_KEY,
+  //       jsonEncode(token?.toJson()),
+  //     );
+  //     Get.offAllNamed(AppRoutes.LOCATION_CHOOSE);
+  //   } catch (e) {
+  //     dPrint('meriPahchanLogin Error: $e', enableLog: true);
+  //   }
+  // }
 
   Future<void> getUserLocalData() async {
     // if (!isValidUser) return;
@@ -363,7 +462,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> citizenLocalData() async {
-    var data = await HiveService.getData(HiveConstants.LOGIN_KEY);
+    var data = await storage.getString(SecureStorageConstants.LOGIN_KEY);
     if (data != null && data.isNotEmpty) {
       var decodeData = jsonDecode(data);
       token = Token.fromJson(decodeData);
@@ -375,7 +474,8 @@ class AuthController extends GetxController {
   }
 
   Future<void> employeeLocalData() async {
-    var dataEmployee = await HiveService.getData(HiveConstants.EMP_LOGIN_KEY);
+    var dataEmployee =
+        await storage.getString(SecureStorageConstants.EMP_LOGIN_KEY);
     if (dataEmployee != null && dataEmployee.isNotEmpty) {
       var decodeData = jsonDecode(dataEmployee);
       token = Token.fromJson(decodeData);

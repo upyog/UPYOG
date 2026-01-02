@@ -132,7 +132,7 @@ class _OfficialHomeScreenState extends State<OfficialHomeScreen> {
   //             padding: EdgeInsets.only(left: 12.w, right: 12.w),
   //             child: Icon(
   //               Icons.mic_none_outlined,
-  //               color: BaseConfig.mainBackgroundColor.withOpacity(0.7),
+  //               color: BaseConfig.mainBackgroundColor.withValues(alpha:0.7),
   //             ),
   //           ),
   //         ),

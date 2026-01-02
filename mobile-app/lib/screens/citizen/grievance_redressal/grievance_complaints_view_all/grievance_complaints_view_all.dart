@@ -224,7 +224,6 @@ class _GrievanceComplaintsViewAllState
                               ),
                             ),
                             onPressed: () {
-                              //TODO: Implement filter functionality
                               _openFilterBottomSheet(isSelected, o);
                             },
                             icon: SvgPicture.asset(
@@ -475,8 +474,10 @@ class _GrievanceComplaintsViewAllState
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: dateOpened.isSelected
-                                    ? BaseConfig.appThemeColor1.withOpacity(0.1)
-                                    : BaseConfig.greyColor2.withOpacity(0.2),
+                                    ? BaseConfig.appThemeColor1
+                                        .withValues(alpha: 0.1)
+                                    : BaseConfig.greyColor2
+                                        .withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: SmallTextNotoSans(

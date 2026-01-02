@@ -12,7 +12,7 @@ class TimelineController extends GetxController {
   final timelineStreamCtrl = BehaviorSubject<Timeline?>();
   Timeline? timeline;
   late WorkflowBusinessServices workflowBusinessServices;
-  late EmployeeModel employeeModel;
+  EmployeeModel? employeeModel;
 
   RxBool isTermsConditionsAccepted = false.obs;
   int countApiCall = 0;
@@ -70,16 +70,17 @@ class TimelineController extends GetxController {
   String getWorkflowRoles(String uuid, {bool empNoc = false}) {
     if (empNoc) return uuid;
     final roles = <String>[];
-    for (var service in workflowBusinessServices.businessServices!) {
-      for (var state in service.states!) {
-        if (state.uuid == uuid) {
+    for (var service in workflowBusinessServices.businessServices ?? []) {
+      for (var state in service.states ?? []) {
+        if (state.uuid == uuid && isNotNullOrEmpty(state.actions)) {
           for (var action in state.actions!) {
-            roles.addAll(action.roles!);
+            dPrint('ACTION: ${action.roles?.join(',')}');
+            roles.addAll(action.roles ?? []);
           }
         }
       }
     }
-    return roles.join(',');
+    return roles.isNotEmpty ? roles.join(',') : '';
   }
 
   /// Get Employees
@@ -89,25 +90,25 @@ class TimelineController extends GetxController {
     required String uuid,
     bool empNoc = false,
   }) async {
-    try {
-      final roles = getWorkflowRoles(uuid, empNoc: empNoc);
-      if (roles.isEmpty) return;
+    // try {
+    final roles = getWorkflowRoles(uuid, empNoc: empNoc);
+    if (roles.isEmpty) return;
 
-      dPrint('WORKFLOW ROLES: $roles');
+    dPrint('WORKFLOW ROLES: $roles');
 
-      final query = {
-        "isActive": 'true',
-        "roles": roles,
-        'tenantId': tenantId,
-      };
-      final empRes = await EmployeeRepository.getEmployees(
-        token: token,
-        query: query,
-      );
-      employeeModel = empRes;
-    } catch (e, s) {
-      dPrint('Employees Error: $e');
-      ErrorHandler.allExceptionsHandler(e, s);
-    }
+    final query = {
+      "isActive": 'true',
+      "roles": roles,
+      'tenantId': tenantId,
+    };
+    final empRes = await EmployeeRepository.getEmployees(
+      token: token,
+      query: query,
+    );
+    employeeModel = empRes;
+    // } catch (e, s) {
+    //   dPrint('Employees Error: $e');
+    //   ErrorHandler.allExceptionsHandler(e, s);
+    // }
   }
 }

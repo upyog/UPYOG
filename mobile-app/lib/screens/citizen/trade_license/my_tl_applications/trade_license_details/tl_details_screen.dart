@@ -513,9 +513,10 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
                                           .accessories!.length,
                                       physics: AppPlatforms.platformPhysics(),
                                       itemBuilder: (context, index) {
-                                        var accessory = license
+                                        final accessory = license
                                             .tradeLicenseDetail!
                                             .accessories?[index];
+
                                         return _buildAccessories(
                                           accessory!,
                                           index + 1,
@@ -604,7 +605,6 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
                                               alignment: Alignment.centerLeft,
                                               child: TextButton(
                                                 onPressed: () {
-                                                  //TODO: Details page
                                                   Get.toNamed(
                                                     AppRoutes.PROPERTY_INFO,
                                                     arguments: {
@@ -653,7 +653,8 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
                                         switch (snapshot.connectionState) {
                                           case ConnectionState.waiting ||
                                                 ConnectionState.active:
-                                            return showCircularIndicator();
+                                            return showCircularIndicator()
+                                                .paddingAll(4);
 
                                           default:
                                             return const SizedBox.shrink();
@@ -800,87 +801,100 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
   Widget _buildEvidenceCard(FileStore fileStore) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: GridView.builder(
-        itemCount: fileStore.fileStoreIds!.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 10.w,
-          mainAxisSpacing: 10.h,
-          mainAxisExtent: 110.0, //110
-        ),
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          final fileUrl = fileStore.fileStoreIds![index].url!.split(',').first;
-          final docType = appDocuments
-              .where(
-                (element) =>
-                    element.fileStoreId == fileStore.fileStoreIds![index].id,
-              )
-              .toList()
-              .firstOrNull;
-          return isNotNullOrEmpty(docType)
-              ? Column(
-                  children: [
-                    Container(
-                      width: Get.width,
-                      decoration: BoxDecoration(
-                        color: BaseConfig.greyColor2,
-                        // border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          _fileController.getFileType(fileUrl).$1,
-                          size: 40,
-                          color: Colors.grey.shade600,
+      child: isNotNullOrEmpty(fileStore.fileStoreIds)
+          ? GridView.builder(
+              itemCount: fileStore.fileStoreIds!.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 10.w,
+                mainAxisSpacing: 10.h,
+                mainAxisExtent: 110.0, //110
+              ),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final fileUrl =
+                    fileStore.fileStoreIds![index].url!.split(',').first;
+                final docType = appDocuments
+                    .where(
+                      (element) =>
+                          element.fileStoreId ==
+                          fileStore.fileStoreIds![index].id,
+                    )
+                    .toList()
+                    .firstOrNull;
+                return isNotNullOrEmpty(docType)
+                    ? Column(
+                        children: [
+                          Container(
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                              color: BaseConfig.greyColor2,
+                              // border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                _fileController.getFileType(fileUrl).$1,
+                                size: 40,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Tooltip(
+                            message: getLocalizedString(
+                              docType!.documentType,
+                              module: Modules.TL,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: SmallTextNotoSans(
+                                text: getLocalizedString(
+                                  docType.documentType,
+                                  module: Modules.TL,
+                                ),
+                                color: Colors.grey.shade600,
+                                maxLine: 2,
+                                textOverflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ).ripple(
+                        () {
+                          final fileType =
+                              _fileController.getFileType(fileUrl).$2;
+                          dPrint('FileType: ${fileType.name}');
+                          if (fileType.name == FileExtType.pdf.name) {
+                            showTypeDialogue(
+                              context,
+                              url: fileUrl,
+                              isPdf: true,
+                              title: getLocalizedString(
+                                docType.documentType,
+                                module: Modules.TL,
+                              ),
+                            );
+                          } else {
+                            showTypeDialogue(
+                              context,
+                              url: fileUrl,
+                              title: getLocalizedString(
+                                docType.documentType,
+                                module: Modules.TL,
+                              ),
+                            );
+                          }
+                        },
+                        customBorder: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Tooltip(
-                      message: getLocalizedString(
-                        docType!.documentType,
-                        module: Modules.TL,
-                      ),
-                      child: SmallTextNotoSans(
-                        text: getLocalizedString(
-                          docType.documentType,
-                          module: Modules.TL,
-                        ),
-                        color: Colors.grey.shade600,
-                        maxLine: 2,
-                        textOverflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ).ripple(() {
-                  final fileType = _fileController.getFileType(fileUrl).$2;
-                  dPrint('FileType: ${fileType.name}');
-                  if (fileType.name == FileExtType.pdf.name) {
-                    showTypeDialogue(
-                      context,
-                      url: fileUrl,
-                      isPdf: true,
-                      title: getLocalizedString(
-                        docType.documentType,
-                        module: Modules.TL,
-                      ),
-                    );
-                  } else {
-                    showTypeDialogue(
-                      context,
-                      url: fileUrl,
-                      title: getLocalizedString(
-                        docType.documentType,
-                        module: Modules.TL,
-                      ),
-                    );
-                  }
-                })
-              : const SizedBox.shrink();
-        },
-      ),
+                      )
+                    : const SizedBox.shrink();
+              },
+            )
+          : const SizedBox.shrink(),
     );
   }
 

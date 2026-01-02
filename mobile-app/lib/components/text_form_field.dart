@@ -39,6 +39,7 @@ class TextFormFieldApp extends StatelessWidget {
     this.onSubmitted,
     this.hintFontSize,
     this.radius,
+    this.borderColor = BaseConfig.greyColor1,
   });
 
   final String? hintText;
@@ -73,6 +74,7 @@ class TextFormFieldApp extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final double? hintFontSize;
   final double? radius;
+  final Color borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +83,7 @@ class TextFormFieldApp extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius ?? 15.r),
         border: Border.all(
-          color: BaseConfig.greyColor1,
+          color: borderColor,
         ),
       ),
       alignment: Alignment.center,
@@ -107,9 +109,9 @@ class TextFormFieldApp extends StatelessWidget {
         minLines: minLines,
         decoration: InputDecoration(
           filled: true,
-          fillColor: fillColor.withOpacity(opacity),
+          fillColor: fillColor.withValues(alpha: opacity),
           label: label,
-          labelStyle: GoogleFonts.notoSans.call().copyWith(
+          labelStyle: GoogleFonts.notoSans().copyWith(
                 fontSize: hintFontSize ?? 14.sp,
                 fontWeight: FontWeight.w400,
                 color: BaseConfig.greyColor3,
@@ -119,7 +121,7 @@ class TextFormFieldApp extends StatelessWidget {
           prefixIconColor: prefixIconColor,
           suffixIconColor: suffixIconColor,
           hintText: hintText,
-          hintStyle: GoogleFonts.notoSans.call().copyWith(
+          hintStyle: GoogleFonts.notoSans().copyWith(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
                 color: BaseConfig.greyColor3,

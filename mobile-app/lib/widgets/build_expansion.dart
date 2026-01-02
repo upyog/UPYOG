@@ -9,7 +9,7 @@ class BuildExpansion extends StatelessWidget {
     required this.children,
     this.initiallyExpanded = false,
     this.onExpansionChanged,
-    this.childrenPadding = const EdgeInsets.symmetric(horizontal: 10),
+    this.childrenPadding = const EdgeInsets.symmetric(horizontal: 16),
     this.tilePadding,
   });
 
@@ -27,7 +27,7 @@ class BuildExpansion extends StatelessWidget {
       initiallyExpanded: initiallyExpanded,
       onExpansionChanged: onExpansionChanged,
       tilePadding: tilePadding,
-      title: BigTextNotoSans(
+      title: BigSelectableTextNotoSans(
         text: title,
         fontWeight: FontWeight.w600,
         size: 16.sp,

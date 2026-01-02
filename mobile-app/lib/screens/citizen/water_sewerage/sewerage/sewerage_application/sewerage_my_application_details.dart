@@ -162,7 +162,7 @@ class _SewerageMyApplicationDetailsState
                     module: Modules.WS,
                   ),
                   text: isNotNullOrEmpty(
-                    billInfo.bill!.first.totalAmount,
+                    billInfo.bill?.firstOrNull?.totalAmount,
                   )
                       ? '₹ ${billInfo.bill!.first.totalAmount}'
                       : 'N/A',
@@ -702,7 +702,6 @@ class _SewerageMyApplicationDetailsState
           alignment: Alignment.centerLeft,
           child: TextButton(
             onPressed: () {
-              //TODO: Details page
               Get.toNamed(
                 AppRoutes.WATER_PROPERTY_INFO,
                 arguments: {

@@ -89,6 +89,20 @@ class LocalizeUtils {
           module: module,
         );
 
+      case 'REASSIGN':
+        return isCitizen
+            ? getLocalizedString(
+                'CS_ACTION_$action'.toUpperCase(),
+                module: module,
+              )
+            : 'Not Available';
+      case 'RESOLVE':
+        return isCitizen
+            ? getLocalizedString(
+                'CS_ACTION_$action'.toUpperCase(),
+                module: module,
+              )
+            : 'Not Available';
       default:
         return 'N/A';
     }

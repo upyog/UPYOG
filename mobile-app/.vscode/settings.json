@@ -1,3 +1,7 @@
 {
-    "files.autoSave": "afterDelay"
+    "files.autoSave": "afterDelay",
+    "cSpell.words": [
+        "Challan"
+    ],
+    "editor.codeActions.triggerOnFocusChange": true
 }

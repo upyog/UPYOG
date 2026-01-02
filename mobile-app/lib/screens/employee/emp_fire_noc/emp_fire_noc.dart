@@ -53,7 +53,7 @@ class _EmpFireNocScreenState extends State<EmpFireNocScreen> {
   }
 
   Future<void> _fetchInbox() async {
-    tenantCity = await getCityTenantEmployee();
+    tenantCity = await getCityTenant();
     await _fireNocController.getFireNocApplicationsEmp(
       token: _authController.token!.accessToken!,
       tenantId: '${tenantCity.code}',
@@ -212,7 +212,6 @@ class _EmpFireNocScreenState extends State<EmpFireNocScreen> {
 
   //               SizedBox(height: 16.h),
 
-  //               //TODO: Locality Selection Widget
   //               const LocalitySelectionWidget(),
   //             ],
   //           ),

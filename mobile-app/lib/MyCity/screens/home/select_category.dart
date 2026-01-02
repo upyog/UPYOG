@@ -14,7 +14,7 @@ import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/routes/routes.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/constants.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
@@ -43,14 +43,13 @@ class _SelectCategoryState extends State<SelectCategory> {
   }
 
   Future<void> checkUserType() async {
-    final String? userType =
-        await HiveService.getData(Constants.USER_TYPE) as String?;
+    final String? userType = await storage.getString(Constants.USER_TYPE);
 
     final user = userType ?? UserType.CITIZEN.name;
 
     _authController.userType?.value = user;
 
-    await HiveService.setData(
+    await storage.setString(
       Constants.USER_TYPE,
       _authController.userType!.value,
     );
@@ -111,7 +110,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                   //         child: Icon(
                   //           Icons.mic_none_outlined,
                   //           color:
-                  //               BaseConfig.mainBackgroundColor.withOpacity(0.7),
+                  //               BaseConfig.mainBackgroundColor.withValues(alpha:0.7),
                   //         ),
                   //       ),
                   //     ),
@@ -134,16 +133,17 @@ class _SelectCategoryState extends State<SelectCategory> {
                       Expanded(
                         child: InkWell(
                           onTap: () async {
-                            await HiveService.deleteData(
-                              HiveConstants.EMP_LOGIN_KEY, //Token Delete
+                            await storage.delete(
+                              SecureStorageConstants.EMP_LOGIN_KEY,
                             );
 
                             _authController.userType?.value =
                                 UserType.CITIZEN.name;
 
-                            await HiveService.setData(
+                            await storage.setString(
                               Constants.USER_TYPE,
-                              _authController.userType?.value,
+                              _authController.userType?.value ??
+                                  UserType.CITIZEN.name,
                             );
 
                             Get.toNamed(AppRoutes.CITIZEN_HOME);
@@ -193,16 +193,17 @@ class _SelectCategoryState extends State<SelectCategory> {
                       Expanded(
                         child: InkWell(
                           onTap: () async {
-                            await HiveService.deleteData(
-                              HiveConstants.EMP_LOGIN_KEY, //Token Delete
+                            await storage.delete(
+                              SecureStorageConstants.EMP_LOGIN_KEY,
                             );
 
                             _authController.userType?.value =
                                 UserType.EMPLOYEE.name;
 
-                            await HiveService.setData(
+                            await storage.setString(
                               Constants.USER_TYPE,
-                              _authController.userType?.value,
+                              _authController.userType?.value ??
+                                  UserType.EMPLOYEE.name,
                             );
 
                             Get.toNamed(AppRoutes.BUSINESS_HOME);
@@ -254,16 +255,17 @@ class _SelectCategoryState extends State<SelectCategory> {
                       Expanded(
                         child: InkWell(
                           onTap: () async {
-                            await HiveService.deleteData(
-                              HiveConstants.EMP_LOGIN_KEY, //Token Delete
+                            await storage.delete(
+                              SecureStorageConstants.EMP_LOGIN_KEY,
                             );
 
                             _authController.userType?.value =
                                 UserType.CITIZEN.name;
 
-                            await HiveService.setData(
+                            await storage.setString(
                               Constants.USER_TYPE,
-                              _authController.userType?.value,
+                              _authController.userType?.value ??
+                                  UserType.CITIZEN.name,
                             );
 
                             Get.toNamed(AppRoutes.VISITOR);
@@ -311,16 +313,17 @@ class _SelectCategoryState extends State<SelectCategory> {
                       Expanded(
                         child: InkWell(
                           onTap: () async {
-                            await HiveService.deleteData(
-                              HiveConstants.EMP_LOGIN_KEY, //Token Delete
+                            await storage.delete(
+                              SecureStorageConstants.EMP_LOGIN_KEY,
                             );
 
                             _authController.userType?.value =
                                 UserType.EMPLOYEE.name;
 
-                            await HiveService.setData(
+                            await storage.setString(
                               Constants.USER_TYPE,
-                              _authController.userType?.value,
+                              _authController.userType?.value ??
+                                  UserType.EMPLOYEE.name,
                             );
 
                             Get.toNamed(AppRoutes.OFFICIAL);
@@ -375,13 +378,12 @@ class _SelectCategoryState extends State<SelectCategory> {
   }
 
   Future<void> _selectLanguage() async {
-    // Check if a language has been previously selected
     final selectedLanguageIndex =
-        await HiveService.getData(Constants.LANG_SELECTION_INDEX);
+        await storage.getInt(Constants.LANG_SELECTION_INDEX);
+
     dPrint("Retrieved language index: $selectedLanguageIndex");
-    // If a language is already selected, skip showing the dialog
+
     if (selectedLanguageIndex != null) {
-      dPrint("Language already selected, skipping dialog.");
       return;
     }
 
@@ -492,13 +494,13 @@ class _SelectCategoryState extends State<SelectCategory> {
                                                 .selectedAppLanguage.value,
                                       );
                                       if (selectedLanguageIndex != -1) {
-                                        await HiveService.setData(
+                                        await storage.setInt(
                                           Constants.LANG_SELECTION_INDEX,
                                           selectedLanguageIndex,
                                         );
-                                        await HiveService.setData(
+                                        await storage.setString(
                                           Constants.TENANT_ID,
-                                          stateInfo.first.code,
+                                          stateInfo.first.code!,
                                         );
                                         _languageController
                                             .onSelectionOfLanguage(
@@ -510,8 +512,8 @@ class _SelectCategoryState extends State<SelectCategory> {
                                         _languageController
                                             .getLocalizationData();
                                       }
-                                      print("Selected language index value");
-                                      print(selectedLanguageIndex);
+                                      dPrint("Selected language index value");
+                                      dPrint(selectedLanguageIndex);
                                       Get.back();
                                     },
                                   ),

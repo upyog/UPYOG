@@ -2,6 +2,11 @@
 
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
@@ -12,23 +17,30 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>  <!-- FOR ANDROID 13  -->
 
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+
     <!-- Provide required visibility configuration for API level 30 and above -->
     <queries>
-    <!-- If your app checks for call support -->
-    <intent>
-        <action android:name="android.intent.action.VIEW" />
-        <data android:scheme="tel" />
-    </intent>
-    <!-- If your application checks for inAppBrowserView launch mode support -->
-    <intent>
-        <action android:name="android.support.customtabs.action.CustomTabsService" />
-    </intent>
+        <!-- If your app checks for call support -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="tel" />
+        </intent>
+        <!-- If your application checks for inAppBrowserView launch mode support -->
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
     </queries>
     
     <application
-        android:label="MyCity"
+        android:label="UPYOG"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon1">
+        android:icon="@mipmap/launcher_icon1"
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

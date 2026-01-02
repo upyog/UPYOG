@@ -64,7 +64,7 @@ class SmallTextNotoSans extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: GoogleFonts.notoSans.call().copyWith(
+      style: GoogleFonts.notoSans().copyWith(
             fontSize: size ?? 12.sp,
             fontWeight: fontWeight,
             color: color,
@@ -72,6 +72,39 @@ class SmallTextNotoSans extends StatelessWidget {
       maxLines: maxLine,
       textAlign: textAlign,
       overflow: textOverflow,
+    );
+  }
+}
+
+class SmallSelectableTextNotoSans extends StatelessWidget {
+  const SmallSelectableTextNotoSans({
+    super.key,
+    required this.text,
+    this.color = BaseConfig.textColor,
+    this.size,
+    this.fontWeight,
+    this.textAlign,
+    this.maxLine,
+  });
+
+  final String text;
+  final Color color;
+  final double? size;
+  final FontWeight? fontWeight;
+  final TextAlign? textAlign;
+  final int? maxLine;
+
+  @override
+  Widget build(BuildContext context) {
+    return SelectableText(
+      text,
+      style: GoogleFonts.notoSans().copyWith(
+            fontSize: size ?? 12.sp,
+            fontWeight: fontWeight,
+            color: color,
+          ),
+      maxLines: maxLine,
+      textAlign: textAlign,
     );
   }
 }

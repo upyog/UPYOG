@@ -11,7 +11,7 @@ import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/edit_profile_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/routes/routes.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/constants.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/extension/extension.dart';
@@ -56,7 +56,7 @@ class EmpDrawerWidget extends StatelessWidget {
           const Divider(),
         ],
         drawerItem(
-          label: "Home",
+          label: getLocalizedString(i18.common.HOME),
           icon: const Icon(
             Icons.home,
             size: 25,
@@ -66,8 +66,7 @@ class EmpDrawerWidget extends StatelessWidget {
         ).ripple(() {
           Navigator.of(context).pop();
         }),
-        if (_languageController.stateInfo != null &&
-            _languageController.stateInfo!.languages!.isNotEmpty)
+        if (isNotNullOrEmpty(_languageController.stateInfo?.languages))
           ListTile(
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -81,7 +80,8 @@ class EmpDrawerWidget extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                Row(
+                Wrap(
+                  runSpacing: 10,
                   children: [
                     for (int i = 0;
                         i < _languageController.stateInfo!.languages!.length;
@@ -91,18 +91,18 @@ class EmpDrawerWidget extends StatelessWidget {
                           return LanguageCard(
                             language:
                                 _languageController.stateInfo!.languages![i],
-                            widthRect: o == Orientation.portrait ? 75 : 150,
+                            widthRect: o == Orientation.portrait ? 70 : 150,
                             cPadding: 6,
                             margin: const EdgeInsets.only(right: 8),
                             onTap: () async {
-                              await HiveService.setData(
+                              await storage.setInt(
                                 Constants.LANG_SELECTION_INDEX,
                                 i,
                               );
 
-                              await HiveService.setData(
+                              await storage.setString(
                                 Constants.TENANT_ID,
-                                _languageController.stateInfo!.code,
+                                _languageController.stateInfo!.code!,
                               );
 
                               langCtrl.onSelectionOfLanguage(
@@ -126,7 +126,7 @@ class EmpDrawerWidget extends StatelessWidget {
             ),
           ),
         drawerItem(
-          label: "Edit Profile",
+          label: getLocalizedString(i18.common.EDIT_PROFILE),
           icon: const Icon(
             Icons.edit,
             size: 25,
@@ -134,7 +134,6 @@ class EmpDrawerWidget extends StatelessWidget {
           ),
           textSize: 12.sp,
         ).ripple(() {
-          //TODO: Implement click function
           Get.toNamed(
             AppRoutes.EMP_PROFILE,
             arguments: {
@@ -143,7 +142,9 @@ class EmpDrawerWidget extends StatelessWidget {
           );
         }),
         drawerItem(
-          label: _authController.isValidUser ? "Logout" : "Login",
+          label: _authController.isValidUser
+              ? getLocalizedString(i18.common.LOGOUT)
+              : getLocalizedString(i18.common.LOGIN),
           icon: const Icon(
             Icons.login,
             size: 25,
@@ -154,26 +155,31 @@ class EmpDrawerWidget extends StatelessWidget {
           if (_authController.isValidUser) {
             return showLogoutDialog();
           } else {
-            // return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-            return Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+            return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+            // return Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
           }
         }),
         drawerItem(
-          label: "HelpLine",
+          label: getLocalizedString(i18.common.HELPLINE),
           icon: const Icon(
             Icons.phone,
             size: 25,
             color: BaseConfig.appThemeColor1,
           ),
           textSize: 12.sp,
+          padding: const EdgeInsets.only(left: 10, top: 10),
         ),
         MediumTextNotoSans(
-          text: "2565425632",
+          text: BaseConfig.helpLineNo,
           color: BaseConfig.redColor2,
           size: 12.sp,
-        ).ripple(() async {
-          await launchPhoneDialer('2565425632');
-        }).paddingOnly(left: 55),
+        ).paddingSymmetric(horizontal: 6, vertical: 4).ripple(
+          () async {
+            await launchPhoneDialer(BaseConfig.helpLineNo);
+          },
+          customBorder:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+        ).paddingOnly(left: 49),
         const SizedBox(height: 100),
       ],
     );
@@ -186,8 +192,17 @@ class EmpDrawerWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ImagePlaceHolder(
-            photoUrl: _editProfileController.userProfile.getUserPhoto(),
+          FutureBuilder(
+            future: _editProfileController.getCacheProfileFIleStore(),
+            builder: (context, snapshot) {
+              // if (snapshot.connectionState == ConnectionState.waiting) {
+              //   return showCircularIndicator();
+              // }
+              final imageData = snapshot.data;
+              return ImagePlaceHolder(
+                photoUrl: imageData?.getUserPhoto(),
+              );
+            },
           ),
           if (_editProfileController.userProfile.user?.first.name != null)
             Tooltip(
@@ -299,8 +314,8 @@ class EmpDrawerWidget extends StatelessWidget {
                             clearData();
                             _authController.nameController.value.text = '';
                             _authController.passwordController.value.text = '';
-                            // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-                            Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+                            Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+                            // Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
                           },
                         ),
                       ),

@@ -8,6 +8,7 @@ import 'package:mobile_app/model/custom_exception_model.dart';
 import 'package:mobile_app/model/request/request_info_model.dart';
 import 'package:mobile_app/utils/constants/constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
+import 'package:mobile_app/utils/utils.dart';
 
 class BaseService {
   Future<dynamic> makeRequest({
@@ -73,7 +74,7 @@ class BaseService {
           response = await http.delete(uri, body: json.encode(body));
       }
       log("Body Request: $body");
-      print('''
+      dPrint('''
             API URL INFO:
             URL: $uri\n
             Method: $method\n
@@ -83,10 +84,10 @@ class BaseService {
       log("Response Request: ${_response(response)}");
       return _response(response);
     } on CustomException catch (e) {
-      print(e);
+      dPrint(e);
       rethrow;
     } catch (e) {
-      print(e);
+      dPrint(e);
       throw CustomException(
         e.toString(),
         502,
@@ -105,7 +106,7 @@ class BaseService {
     final contentType = response.headers['content-type'];
     if (contentType != null && contentType.contains('text/html')) {
       final htmlContent = utf8.decode(response.bodyBytes);
-      print('Received HTML response: $htmlContent');
+      dPrint('Received HTML response: $htmlContent');
       throw CustomException(
         'Received HTML response instead of JSON.',
         response.statusCode,
@@ -143,10 +144,10 @@ class BaseService {
     }
 
     var errorList = data?['Errors'] ?? [];
-    print('Request URL: $requestUrl');
-    print('MakeRequest Response Error Code: $errorCode');
-    print('MakeRequest Response Error Message: $errorMessage');
-    print('MakeRequest Response Error List: $errorList');
+    dPrint('Request URL: $requestUrl');
+    dPrint('MakeRequest Response Error Code: $errorCode');
+    dPrint('MakeRequest Response Error Message: $errorMessage');
+    dPrint('MakeRequest Response Error List: $errorList');
 
     switch (response.statusCode) {
       case 200:

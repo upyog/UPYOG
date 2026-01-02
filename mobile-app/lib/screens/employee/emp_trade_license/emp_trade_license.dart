@@ -65,7 +65,7 @@ class _EmpTradeLicenseState extends State<EmpTradeLicense> {
     await _commonController.fetchLabels(modules: Modules.TL).then((_) {
       moduleLoaded.value = true;
     });
-    tenantCity = await getCityTenantEmployee();
+    tenantCity = await getCityTenant();
     await _tlController.getEmpTlInboxApplications(
       token: _authController.token!.accessToken!,
       tenantId: '${tenantCity.code}',
@@ -284,7 +284,6 @@ class _EmpTradeLicenseState extends State<EmpTradeLicense> {
                       statusBackColor: BaseConfig.statusPendingBackColor,
                       o: o,
                       onTap: () {
-                        //TODO: GO to details page
                         Get.toNamed(
                           AppRoutes.EMP_TRADE_LICENSE_DETAILS,
                           arguments: {
@@ -332,18 +331,14 @@ class _EmpTradeLicenseState extends State<EmpTradeLicense> {
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //TODO: Assigned Filter Widget
                 const AssignedFilter(),
                 SizedBox(height: 16.h),
-
                 MediumTextNotoSans(
                   text: '${getLocalizedString(i18.inbox.LOCALITY)}:',
                   fontWeight: FontWeight.w500,
                   size: o == Orientation.portrait ? 14.sp : 8.sp,
                 ),
                 SizedBox(height: 16.h),
-
-                //TODO: Locality Selection Widget
                 const LocalitySelectionWidget(),
               ],
             ),

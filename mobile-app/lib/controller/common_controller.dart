@@ -7,10 +7,9 @@ import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/model/citizen/localization/localization_label.dart';
 import 'package:mobile_app/repository/core_repository.dart';
-import 'package:mobile_app/services/hive_services.dart';
+import 'package:mobile_app/services/secure_storage_service.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
-import 'package:mobile_app/utils/localization/app_translation.dart';
 import 'package:mobile_app/utils/utils.dart';
 
 // Get Localized String
@@ -99,7 +98,6 @@ String getLocalizedString(String? label, {Modules module = Modules.COMMON}) {
 }
 
 class CommonController extends GetxController {
-  late AppTranslations appTranslations;
   RxBool isLabelsLoading = false.obs;
 
   Map<String, Map<String, String>> commonLocalizedLabels = {};
@@ -117,12 +115,15 @@ class CommonController extends GetxController {
   Map<String, Map<String, String>> ucLocalizedLabels = {};
   Map<String, Map<String, String>> nocLocalizedLabels = {};
 
-  Future<void> fetchLabels({Modules modules = Modules.COMMON}) async {
+  Future<void> fetchLabels({
+    Modules modules = Modules.COMMON,
+  }) async {
     final languageCtrl = Get.find<LanguageController>();
 
     try {
       if (languageCtrl.stateInfo != null) {
         final languages = languageCtrl.stateInfo!.languages!;
+
         List<List<LocalizationLabel>> commonLabelRes = [];
         List<List<LocalizationLabel>> pgrLabelRes = [];
         List<List<LocalizationLabel>> tlLabelRes = [];
@@ -141,7 +142,7 @@ class CommonController extends GetxController {
         for (var lang in languages) {
           final isLabelsAvailable =
               await areLabelsAvailableForModule(lang.value!, modules);
-          dPrint('isLabelsAvailable: $isLabelsAvailable');
+          dPrint('isLabelsAvailable: $isLabelsAvailable - ${lang.value}');
           if (isLabelsAvailable) {
             final allLabels = await getLocalLabels(lang.value!, modules);
             if (modules == Modules.COMMON) {
@@ -190,7 +191,7 @@ class CommonController extends GetxController {
             final moduleLabels = await getLabelsByLanguage(
               language: lang.value!,
               modules: modules,
-              token: modules == Modules.BPA
+              token: (modules == Modules.BPA || modules == Modules.UC)
                   ? Get.find<AuthController>().token?.accessToken
                   : null,
             );
@@ -287,13 +288,11 @@ class CommonController extends GetxController {
         updateTranslations();
       }
     } catch (e) {
-      dPrint(e.toString());
+      dPrint('Fetch Labels Error: $e');
     }
   }
 
   void updateTranslations() {
-    // final translations = AppTranslations(languages: localizedLabels);
-    // appTranslations.update(labels);
     Get.updateLocale(Get.find<LanguageController>().locale);
     update();
   }
@@ -303,8 +302,8 @@ class CommonController extends GetxController {
     Modules module,
   ) async {
     final labelsJson =
-        await HiveService.getData('Citizen.$language.${module.name}');
-    return decodeLocalizationLabels(labelsJson);
+        await storage.getString('Citizen.$language.${module.name}');
+    return decodeLocalizationLabels(labelsJson ?? '[]');
   }
 
   List<LocalizationLabel> decodeLocalizationLabels(String jsonString) {
@@ -316,10 +315,10 @@ class CommonController extends GetxController {
 
   Future<bool> areLabelsAvailableForModule(
     String language,
-    Modules module,
+    Modules modules,
   ) async {
-    final labels =
-        await HiveService.getData('Citizen.$language.${module.name}');
+    dPrint('Checking if labels are available for $language - ${modules.name}');
+    final labels = await storage.getString('Citizen.$language.${modules.name}');
     return labels != null && labels != '[]';
   }
 
@@ -329,14 +328,15 @@ class CommonController extends GetxController {
     String? token,
   }) async {
     try {
-      var query = {
+      final query = {
         'module': modules.name,
         'locale': language,
         'tenantId': BaseConfig.STATE_TENANT_ID,
       };
 
-      var response = await CoreRepository.getLocalization(query, token: token);
-      setLocalizationLabelList(
+      final response =
+          await CoreRepository.getLocalization(query, token: token);
+      await setLocalizationLabelList(
         response,
         'Citizen.$language.${modules.name}',
       );
@@ -364,9 +364,12 @@ class CommonController extends GetxController {
     return mergedResponse;
   }
 
-  setLocalizationLabelList(List<LocalizationLabel> labels, String key) async {
+  Future setLocalizationLabelList(
+    List<LocalizationLabel> labels,
+    String key,
+  ) async {
     try {
-      await HiveService.setData(
+      await storage.setString(
         key,
         jsonEncode(labels),
       );

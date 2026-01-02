@@ -99,8 +99,6 @@ class _CitizenHomeState extends State<CitizenHome> {
       extendBody: true,
       floatingActionButton: IconButton(
         onPressed: () async {
-          //TODO: Implement add functionality
-
           const url = 'https://upyog.niua.org/digit-ui/citizen/login';
 
           await launchURL(url, mode: LaunchMode.externalApplication);
@@ -151,7 +149,7 @@ class _CitizenHomeState extends State<CitizenHome> {
                   //         child: Icon(
                   //           Icons.mic_none_outlined,
                   //           color:
-                  //               BaseConfig.mainBackgroundColor.withOpacity(0.7),
+                  //               BaseConfig.mainBackgroundColor.withValues(alpha:0.7),
                   //         ),
                   //       ),
                   //     ),

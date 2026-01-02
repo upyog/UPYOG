@@ -106,7 +106,7 @@ class _CalenderHomeScreenState extends State<CalenderHomeScreen> {
             ),
             todayTextStyle: const TextStyle(color: BaseConfig.appThemeColor1),
             todayDecoration: BoxDecoration(
-              // color: BaseConfig.appThemeColor1.withOpacity(0.6),
+              // color: BaseConfig.appThemeColor1.withValues(alpha:0.6),
               // shape: BoxShape.circle,
               border: Border.all(color: BaseConfig.appThemeColor1, width: 2),
             ),
@@ -127,7 +127,8 @@ class _CalenderHomeScreenState extends State<CalenderHomeScreen> {
               color: BaseConfig.appThemeColor1,
               shape: BoxShape.circle,
             ),
-            rangeHighlightColor: BaseConfig.appThemeColor1.withOpacity(0.2),
+            rangeHighlightColor:
+                BaseConfig.appThemeColor1.withValues(alpha: 0.2),
           ),
           onDaySelected: _onDaySelected,
           onRangeSelected: _onRangeSelected,

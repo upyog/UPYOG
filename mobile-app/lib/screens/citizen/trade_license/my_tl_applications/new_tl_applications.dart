@@ -31,6 +31,7 @@ class _NewTlApplicationsState extends State<NewTlApplications> {
   final _authController = Get.find<AuthController>();
   final _tlController = Get.find<TradeLicenseController>();
   final _paymentController = Get.find<PaymentController>();
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -40,14 +41,20 @@ class _NewTlApplicationsState extends State<NewTlApplications> {
   }
 
   void getTlApplication() async {
+    if (!_isLoading) {
+      setState(() => _isLoading = true);
+    }
+
     _tlController.length.value = 0;
     TenantTenant tenant = await getCityTenant();
 
-    _tlController.getTlApplications(
+    await _tlController.getTlApplications(
       token: _authController.token!.accessToken!,
       tenantId: tenant.code,
       renewalTlApp: TradeAppType.NEW.name,
     );
+
+    setState(() => _isLoading = false);
   }
 
   void goPayment(tl.License license) async {
@@ -76,9 +83,9 @@ class _NewTlApplicationsState extends State<NewTlApplications> {
 
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(
-      builder: (context, o) {
-        return Scaffold(
+    final o = MediaQuery.of(context).orientation;
+    
+    return Scaffold(
           appBar: HeaderTop(
             orientation: o,
             onPressed: () {
@@ -101,6 +108,10 @@ class _NewTlApplicationsState extends State<NewTlApplications> {
               child: StreamBuilder(
                 stream: _tlController.streamCtrl.stream,
                 builder: (context, AsyncSnapshot snapshot) {
+                  if (_isLoading) {
+                    return showCircularIndicator();
+                  }
+
                   if (snapshot.hasData) {
                     if (snapshot.data is String || snapshot.data == null) {
                       return const NoApplicationFoundWidget();
@@ -109,14 +120,14 @@ class _NewTlApplicationsState extends State<NewTlApplications> {
                     final tl.TradeLicense tlLicense = snapshot.data;
                     tlLicense.licenses?.sort(
                       (a, b) => DateTime.fromMillisecondsSinceEpoch(
-                        b.auditDetails!.createdTime!,
+                        b.auditDetails?.createdTime ?? 0,
                       ).compareTo(
                         DateTime.fromMillisecondsSinceEpoch(
-                          a.auditDetails!.createdTime!,
+                          a.auditDetails?.createdTime ?? 0,
                         ),
                       ),
                     );
-                    if (tlLicense.licenses!.isNotEmpty) {
+                    if (isNotNullOrEmpty(tlLicense.licenses)) {
                       return SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         child: ListView.builder(
@@ -187,8 +198,7 @@ class _NewTlApplicationsState extends State<NewTlApplications> {
             ),
           ),
         );
-      },
-    );
+     
   }
 
   Widget _subTitleBuildCard({

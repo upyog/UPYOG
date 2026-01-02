@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/components/error_page/network_error.dart';
 import 'package:mobile_app/components/no_application_found/no_application_found.dart';
@@ -17,10 +16,8 @@ import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/utils.dart';
+import 'package:mobile_app/widgets/complain_card.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
-import 'package:mobile_app/widgets/medium_text.dart';
-import 'package:mobile_app/widgets/small_text.dart';
-import 'package:mobile_app/widgets/text_button_noto_sans.dart';
 
 class WaterConnectionApplications extends StatefulWidget {
   const WaterConnectionApplications({super.key});
@@ -174,134 +171,29 @@ class _WaterConnectionApplicationsState
                                   );
                                 } else {
                                   final item = water.waterConnection![index];
-                                  return Container(
-                                    width: Get.width,
-                                    padding: EdgeInsets.only(bottom: 16.h),
-                                    child: Card(
-                                      elevation: 3,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.r),
-                                        side: BorderSide(
-                                          color: BaseConfig.borderColor,
-                                          width: 1.w,
-                                        ),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  SizedBox(
-                                                    width: Get.width * 0.5,
-                                                    child: Tooltip(
-                                                      message:
-                                                          getLocalizedString(
-                                                        '${i18.waterSewerage.WS_APPLICATION_TYPE_}${item.applicationType}',
-                                                        module: Modules.WS,
-                                                      ),
-                                                      child: MediumTextNotoSans(
-                                                        text:
-                                                            getLocalizedString(
-                                                          '${i18.waterSewerage.WS_APPLICATION_TYPE_}${item.applicationType}',
-                                                          module: Modules.WS,
-                                                        ),
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        //size: o == Orientation.portrait ? 14.sp : 8.sp,
-                                                        maxLine: 2,
-                                                        textOverflow:
-                                                            TextOverflow
-                                                                .ellipsis,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  TextButtonNotoSans(
-                                                    text: getLocalizedString(
-                                                      i18.waterSewerage
-                                                          .VIEW_DETAILS_LABEL,
-                                                      module: Modules.WS,
-                                                    ),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 4.w,
-                                                      vertical: 2.h,
-                                                    ),
-                                                    //fontSize: o == Orientation.portrait ? 12.sp : 7.sp,
-                                                    onPressed: () {
-                                                      Get.toNamed(
-                                                        AppRoutes
-                                                            .WATER_MY_CONNECTION_DETAILS,
-                                                        arguments: {
-                                                          'water': item,
-                                                        },
-                                                      );
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons.chevron_right,
-                                                      color: BaseConfig
-                                                          .appThemeColor1,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Divider(
-                                                color: BaseConfig.borderColor,
-                                              ),
-                                              SizedBox(height: 4.h),
-                                              SmallTextNotoSans(
-                                                text:
-                                                    '${getLocalizedString(i18.waterSewerage.MYCONNECTIONS_CONSUMER_NO, module: Modules.WS)}: ${item.connectionNo}',
-                                                fontWeight: FontWeight.w400,
-                                                //size: o == Orientation.portrait ? 12.sp : 7.sp,
-                                              ),
-                                              SizedBox(height: 4.h),
-                                              if (item.connectionHolders !=
-                                                  null)
-                                                SmallTextNotoSans(
-                                                  text:
-                                                      '${getLocalizedString(i18.waterSewerage.CONSUMER_NAME, module: Modules.WS)}: ${item.connectionHolders?.first.name}',
-                                                  fontWeight: FontWeight.w400,
-                                                  //size: o == Orientation.portrait ? 12.sp : 7.sp,
-                                                ),
-                                              SizedBox(height: 4.h),
-                                            ],
-                                          ).paddingAll(16.w),
-                                          Container(
-                                            height: 45.h,
-                                            width: Get.width,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: getStatusBackColor(
-                                                '${item.status}',
-                                              ),
-                                              borderRadius: BorderRadius.only(
-                                                bottomLeft:
-                                                    Radius.circular(12.r),
-                                                bottomRight:
-                                                    Radius.circular(12.r),
-                                              ),
-                                            ),
-                                            child: MediumText(
-                                              text: item.status ?? 'N/A',
-                                              color: getStatusColor(
-                                                '${item.status}',
-                                              ),
-                                              fontWeight: FontWeight.w600,
-                                              //size: o == Orientation.portrait ? 14.sp : 8.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                  return ComplainCard(
+                                    title: getLocalizedString(
+                                      '${i18.waterSewerage.WS_APPLICATION_TYPE_}${item.applicationType}',
+                                      module: Modules.WS,
                                     ),
+                                    id: '${getLocalizedString(i18.waterSewerage.MYCONNECTIONS_CONSUMER_NO, module: Modules.WS)}: ${item.connectionNo}',
+                                    onTap: () {
+                                      Get.toNamed(
+                                        AppRoutes.WATER_MY_CONNECTION_DETAILS,
+                                        arguments: {
+                                          'water': item,
+                                        },
+                                      );
+                                    },
+                                    status: item.status ?? 'N/A',
+                                    statusColor: getStatusColor(
+                                      '${item.status}',
+                                    ),
+                                    statusBackColor: getStatusBackColor(
+                                      '${item.status}',
+                                    ),
+                                  ).paddingOnly(
+                                    bottom: 16,
                                   );
                                 }
                               },

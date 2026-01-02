@@ -131,7 +131,7 @@ class _VisitorHomeScreenState extends State<VisitorHomeScreen> {
   //             padding: EdgeInsets.only(left: 12.w, right: 12.w),
   //             child: Icon(
   //               Icons.mic_none_outlined,
-  //               color: BaseConfig.mainBackgroundColor.withOpacity(0.7),
+  //               color: BaseConfig.mainBackgroundColor.withValues(alpha:0.7),
   //             ),
   //           ),
   //         ),
@@ -195,7 +195,7 @@ class _VisitorHomeScreenState extends State<VisitorHomeScreen> {
                             (states) {
                               if (states.contains(WidgetState.pressed)) {
                                 return const BorderSide(
-                                   color: BaseConfig.appThemeColor1,
+                                  color: BaseConfig.appThemeColor1,
                                   width: 3,
                                 );
                               }
@@ -208,7 +208,6 @@ class _VisitorHomeScreenState extends State<VisitorHomeScreen> {
                         ),
                         onPressed: () async {
                           dPrint(service.title);
-                          // TODO: Implement Navigation
                           // Get.toNamed(AppRoutes.LOGIN);
                         },
                         child:

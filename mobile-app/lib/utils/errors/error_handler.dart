@@ -7,7 +7,7 @@ import 'package:mobile_app/utils/utils.dart';
 
 class ErrorHandler {
   static void logError(String error, [StackTrace? stackTrace]) {
-    dPrint(error);
+    dPrint(error, stackTrace: stackTrace);
   }
 
   static Future<bool> handleApiException(
@@ -17,8 +17,8 @@ class ErrorHandler {
     switch (e.exceptionType) {
       case ExceptionType.UNAUTHORIZED:
         await clearData();
-        // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-        Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+        Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+        // Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
         // final userType = await getUserType();
         // if (userType == UserType.CITIZEN.name) {
         //   await clearData();
@@ -52,7 +52,7 @@ class ErrorHandler {
     var status = false;
     if (e is CustomException) {
       if (await ErrorHandler.handleApiException(e, stackTrace)) {
-        showErrorDialog(e.code.toString(), e.message, e.requestUrl);
+        showErrorDialog(e.message, e.requestUrl);
         //snackBar('ERROR', e.message, Colors.red);
       }
       status = true;
@@ -60,22 +60,21 @@ class ErrorHandler {
       status = true;
       ErrorHandler.logError(e.toString(), stackTrace);
       showErrorDialog(
-        e.response?.statusCode.toString() ?? '',
         e.message,
         e.response?.requestOptions.uri.toString() ?? '',
       );
     } else if (e is String || e is int?) {
       status = true;
       ErrorHandler.logError(e.toString(), stackTrace);
-      showErrorDialog('Error', e.toString(), "");
+      showErrorDialog(e.toString(), "");
     } else if (e is Map<String, dynamic>) {
       status = true;
       ErrorHandler.logError(e.toString(), stackTrace);
-      showErrorDialog('Error', e.toString(), "");
+      showErrorDialog(e.toString(), "");
     } else {
       status = true;
       ErrorHandler.logError(e.toString(), stackTrace);
-      showErrorDialog(e.toString(), e.toString(), "");
+      showErrorDialog(e.toString(), "");
       //snackBar('ERROR', e.toString(), Colors.red);
     }
     return status;

@@ -4,6 +4,6 @@ import 'package:mobile_app/controller/challan_controller.dart';
 class ChallanBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => ChallanController());
+    Get.lazyPut(() => ChallansController());
   }
 }

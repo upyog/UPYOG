@@ -70,7 +70,7 @@ class _MiscCollectionsState extends State<MiscCollections> {
                         bottom: 8.w,
                       ),
                       decoration: BoxDecoration(
-                        color: BaseConfig.appThemeColor1.withOpacity(0.1),
+                        color: BaseConfig.appThemeColor1.withValues(alpha: 0.1),
                       ),
                     ),
                     Positioned(
@@ -155,7 +155,9 @@ class _MiscCollectionsState extends State<MiscCollections> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SmallTextNotoSans(
-                            text: 'Call Center / Helpline',
+                            text: getLocalizedString(
+                              i18.common.CALL_CENTER_HELPLINE,
+                            ),
                             size: o == Orientation.portrait ? 10.sp : 6.sp,
                             fontWeight: FontWeight.w500,
                           ),
@@ -227,12 +229,16 @@ class _MiscCollectionsState extends State<MiscCollections> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               SmallTextNotoSans(
-                                text: 'Citizen Service Center',
+                                text: getLocalizedString(
+                                  i18.common.CITIZEN_SERVICE_CENTER,
+                                ),
                                 size: o == Orientation.portrait ? 10.sp : 6.sp,
                                 fontWeight: FontWeight.w500,
                               ),
                               TextButtonNotoSans(
-                                text: 'View on Map',
+                                text: getLocalizedString(
+                                  i18.common.VIEW_ON_MAP,
+                                ),
                                 fontSize:
                                     o == Orientation.portrait ? 10.sp : 6.sp,
                                 onPressed: () async {

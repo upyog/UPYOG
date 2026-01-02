@@ -29,7 +29,7 @@ class FirebaseService {
         'Fcm token doc added to ${profileController.userProfile.user!.first.mobileNumber}',
       );
     } catch (e) {
-      print('saveFcmToken error: $e');
+      dPrint('saveFcmToken error: $e');
     }
   }
 }

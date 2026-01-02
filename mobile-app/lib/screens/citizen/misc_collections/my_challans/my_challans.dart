@@ -104,6 +104,9 @@ class _MyChallansState extends State<MyChallans> {
                     final BillInfo billInfo = snapshot.data;
 
                     if (isNotNullOrEmpty(billInfo.bills)) {
+                      billInfo.bills!.sort((a, b) {
+                        return b.billDate!.compareTo(a.billDate!);
+                      });
                       return Obx(
                         () => !ucModuleLoaded.value
                             ? showCircularIndicator()

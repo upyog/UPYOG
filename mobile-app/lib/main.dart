@@ -10,7 +10,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/bpa_controller.dart';
@@ -33,11 +32,12 @@ import 'package:mobile_app/env/app_config.dart';
 import 'package:mobile_app/env/ntt_payment_config.dart';
 import 'package:mobile_app/routes/routes.dart';
 import 'package:mobile_app/screens/splash/splash_screen.dart';
-import 'package:mobile_app/services/hive_services.dart';
 import 'package:mobile_app/services/notification_service.dart';
 import 'package:mobile_app/utils/errors/error_handler.dart';
 import 'package:mobile_app/utils/firebase_configurations/firebase_options.dart';
 import 'package:mobile_app/utils/utils.dart';
+
+final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 // Listen background changes notification
 Future _firebaseBackgroundMessage(RemoteMessage message) async {
@@ -49,7 +49,7 @@ Future _firebaseBackgroundMessage(RemoteMessage message) async {
 
     notificationBadgeCount(notification);
 
-    print('''
+    dPrint('''
       Notification received in background...
       title: ${message.notification!.title}
       body: ${message.notification!.body}
@@ -96,9 +96,6 @@ Future main() async {
       //Initialize local notification
       await NotificationService.localNotificationInit();
 
-      //Init Hive
-      await initHive();
-
       //Controller
       Get.put(CommonController());
       Get.put(LanguageController());
@@ -118,14 +115,6 @@ Future main() async {
       Get.put(InboxController());
       Get.put(ObpsDynamicFormController());
 
-      //Get all localization from api or local
-      final languageCtrl = Get.find<LanguageController>();
-      await languageCtrl.getLocalizationData();
-
-      //Convert all labels to language based map for translations
-      final commonCtrl = Get.find<CommonController>();
-      await commonCtrl.fetchLabels();
-
       //Listen background notification
       FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundMessage);
 
@@ -138,8 +127,8 @@ Future main() async {
           if (authController.isValidUser) {
             Get.offAllNamed(AppRoutes.BOTTOM_NAV);
           } else {
-            // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-            Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+            Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+            // Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
           }
         }
       });
@@ -183,13 +172,6 @@ Future main() async {
   );
 }
 
-//Hive Initialization
-Future<void> initHive() async {
-  await Hive.initFlutter();
-  await Hive.openBox(HiveConstants.appBox);
-  await Hive.openBox<List<String>>('searchHistoryBox');
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -222,6 +204,7 @@ class MyApp extends StatelessWidget {
             return OrientationBuilder(
               builder: (context, o) {
                 return GetMaterialApp(
+                  scaffoldMessengerKey: scaffoldMessengerKey,
                   title: BaseConfig.APP_NAME,
                   theme: ThemeData(
                     textTheme: GoogleFonts.notoSansTextTheme(),
@@ -233,12 +216,12 @@ class MyApp extends StatelessWidget {
                       elevation: 4,
                       backgroundColor: BaseConfig.mainBackgroundColor,
                       surfaceTintColor: BaseConfig.mainBackgroundColor,
-                      shadowColor: Colors.black.withOpacity(0.5),
-                      titleTextStyle: GoogleFonts.notoSans.call().copyWith(
-                            fontSize: o == Orientation.portrait ? 16.sp : 9.sp,
-                            color: BaseConfig.textColor2,
-                            fontWeight: FontWeight.w800,
-                          ),
+                      shadowColor: Colors.black.withValues(alpha: 0.5),
+                      titleTextStyle: GoogleFonts.notoSans().copyWith(
+                        fontSize: o == Orientation.portrait ? 16.sp : 9.sp,
+                        color: BaseConfig.textColor2,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     dividerTheme: const DividerThemeData(
                       color: BaseConfig.borderColor,

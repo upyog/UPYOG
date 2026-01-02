@@ -220,7 +220,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                               .map(
                                 (action) => PopupMenuItem<String>(
                                   value: action.action,
-                                  child: SmallTextNotoSans(
+                                  child: SmallSelectableTextNotoSans(
                                     text: LocalizeUtils.getTakeActionLocal(
                                       action.action,
                                       workflowCode: statusMap.businessService!,
@@ -236,7 +236,6 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                               )
                               .toList(),
                           onSelected: (value) async {
-                            //TODO: Take Action
                             dPrint(value);
 
                             final isValid =
@@ -329,7 +328,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                   tenantId: BaseConfig.STATE_TENANT_ID,
                                 );
                               },
-                              child: MediumText(
+                              child: MediumTextNotoSans(
                                 text: getLocalizedString(
                                   i18.common.TIMELINE,
                                 ),
@@ -736,7 +735,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BigTextNotoSans(
+          BigSelectableTextNotoSans(
             text: getLocalizedString(
               i18.building.BASIC_DETAILS,
               module: Modules.BPA,
@@ -897,7 +896,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
       color: BaseConfig.mainBackgroundColor,
       child: Column(
         children: [
-          MediumText(
+          MediumSelectableTextNotoSans(
             text: getLocalizedString(
               i18.building.EDCR_DETAILS,
               module: Modules.BPA,
@@ -914,7 +913,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
           SizedBox(
             height: 10.h,
           ),
-          MediumText(
+          MediumSelectableTextNotoSans(
             text: getLocalizedString(
               i18.building.UPLOADED_PLAN_DIAG,
               module: Modules.BPA,
@@ -969,7 +968,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
           SizedBox(
             height: 10.h,
           ),
-          MediumText(
+          MediumSelectableTextNotoSans(
             text: getLocalizedString(
               i18.building.SCRUNITY_REPORT_OUTPUT,
               module: Modules.BPA,
@@ -1032,7 +1031,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
       padding: const EdgeInsets.all(10),
       child: Column(
         children: [
-          MediumText(
+          MediumSelectableTextNotoSans(
             text: getLocalizedString(
               i18.building.BLOCK_SUBHEADER,
               module: Modules.BPA,
@@ -1063,7 +1062,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Center(
-                          child: MediumText(
+                          child: MediumSelectableTextNotoSans(
                             text: getLocalizedString(
                               i18.building.FLOOR,
                               module: Modules.BPA,
@@ -1077,7 +1076,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Center(
-                          child: MediumText(
+                          child: MediumTextNotoSans(
                             text: getLocalizedString(
                               i18.building.LEVEL,
                               module: Modules.BPA,
@@ -1091,7 +1090,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Center(
-                          child: MediumText(
+                          child: MediumTextNotoSans(
                             text: getLocalizedString(
                               i18.building.OCCUPANCY_TABLE,
                               module: Modules.BPA,
@@ -1105,7 +1104,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Center(
-                          child: MediumText(
+                          child: MediumTextNotoSans(
                             text: getLocalizedString(
                               i18.building.BUILDUP,
                               module: Modules.BPA,
@@ -1119,7 +1118,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Center(
-                          child: MediumText(
+                          child: MediumTextNotoSans(
                             text: getLocalizedString(
                               i18.building.FLOORAREA,
                               module: Modules.BPA,
@@ -1133,7 +1132,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Center(
-                          child: MediumText(
+                          child: MediumTextNotoSans(
                             text: getLocalizedString(
                               i18.building.CARPETAREA,
                               module: Modules.BPA,
@@ -1231,7 +1230,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
           SizedBox(
             height: 10.h,
           ),
-          MediumText(
+          MediumTextNotoSans(
             text: getLocalizedString(
               i18.building.DEMOLITION_DETAILS,
               module: Modules.BPA,
@@ -1276,7 +1275,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              MediumText(
+              MediumTextNotoSans(
                 text: "Inspection Report ${index + 1}",
                 fontWeight: FontWeight.bold,
               ),
@@ -1404,7 +1403,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
               const SizedBox(height: 10),
               Tooltip(
                 message: getLocalizedString(docType?.documentType),
-                child: MediumText(
+                child: MediumTextNotoSans(
                   text: getLocalizedString(docType?.documentType),
                   color: Colors.grey.shade600,
                   maxLine: 2,
@@ -1545,7 +1544,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MediumText(
+          MediumTextNotoSans(
             text: getLocalizedString(
               'BPA_${nocElement.nocType}_HEADER',
               module: Modules.BPA,
@@ -1711,7 +1710,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MediumText(
+              MediumTextNotoSans(
                 text: getLocalizedString(
                   i18.building.BPA_APPL_FEES_DETAILS,
                   module: Modules.BPA,

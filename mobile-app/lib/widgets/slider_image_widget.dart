@@ -17,7 +17,7 @@ class SliderImageWidget extends StatelessWidget {
       indicatorColor: Colors.white,
       indicatorBackgroundColor: Colors.white,
       onPageChanged: (value) {
-        // print('Page changed: $value');
+        // dPrint('Page changed: $value');
       },
       autoPlayInterval: 3000,
       isLoop: true,

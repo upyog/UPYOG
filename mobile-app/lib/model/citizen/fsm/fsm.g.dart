@@ -211,20 +211,10 @@ Village _$VillageFromJson(Map<String, dynamic> json) => Village()
   ..code = json['code'] as String?
   ..name = json['name'] as String?;
 
-Map<String, dynamic> _$VillageToJson(Village instance) {
-  final val = <String, dynamic>{
-    'code': instance.code,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('name', instance.name);
-  return val;
-}
+Map<String, dynamic> _$VillageToJson(Village instance) => <String, dynamic>{
+      'code': instance.code,
+      if (instance.name case final value?) 'name': value,
+    };
 
 AuditDetails _$AuditDetailsFromJson(Map<String, dynamic> json) => AuditDetails()
   ..createdBy = json['createdBy'] as String?

@@ -21,7 +21,7 @@ Widget cardButton({
         padding:
             o == Orientation.portrait ? EdgeInsets.all(8.w) : EdgeInsets.zero,
         child: CircleAvatar(
-          backgroundColor: colorIcon.withOpacity(0.1),
+          backgroundColor: colorIcon.withValues(alpha: 0.1),
           radius: o == Orientation.portrait ? 20.r : 30.r,
           child: Padding(
             padding: o == Orientation.portrait
@@ -29,7 +29,7 @@ Widget cardButton({
                 : EdgeInsets.zero,
             child: Icon(
               newIcon,
-              color: colorIcon.withOpacity(0.8),
+              color: colorIcon.withValues(alpha: 0.8),
             ),
           ),
         ),

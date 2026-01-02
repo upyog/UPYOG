@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobile_app/model/citizen/token/token.dart';
+
 part 'grievance.g.dart';
 
 @JsonSerializable()
@@ -29,6 +30,8 @@ class ServiceWrapper {
   Service? service;
   @JsonKey(name: 'workflow')
   Workflow? workflow;
+  @JsonKey(name: 'details', includeIfNull: false)
+  dynamic details;
 
   ServiceWrapper();
 
@@ -239,7 +242,7 @@ class Workflow {
   dynamic assignes;
   @JsonKey(name: 'comments')
   dynamic comments;
-  @JsonKey(name: 'verificationDocuments')
+  @JsonKey(name: 'verificationDocuments', toJson: _variationDocumentsToJson)
   List<VerificationDocument>? verificationDocuments;
 
   Workflow();
@@ -250,9 +253,14 @@ class Workflow {
   Map<String, dynamic> toJson() => _$WorkflowToJson(this);
 }
 
+_variationDocumentsToJson(List<VerificationDocument>? verificationDocuments) {
+  if (verificationDocuments == null || verificationDocuments.isEmpty) return [];
+  return verificationDocuments.map((e) => e.toJson()).toList();
+}
+
 @JsonSerializable()
 class VerificationDocument {
-  @JsonKey(name: 'id')
+  @JsonKey(name: 'id', includeIfNull: false)
   String? id;
   @JsonKey(name: 'documentType')
   String? documentType;

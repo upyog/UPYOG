@@ -9,6 +9,7 @@ enum InboxStatus {
   IN_WORKFLOW,
   FIELDINSPECTION_PENDING, //BPA state
   DOC_VERIFIED, // PT
+  FIELD_VERIFIED
 }
 
 extension InboxStatusExtension on InboxStatus {
@@ -19,6 +20,7 @@ extension InboxStatusExtension on InboxStatus {
     InboxStatus.IN_WORKFLOW: "INWORKFLOW",
     InboxStatus.FIELDINSPECTION_PENDING: "FIELDINSPECTION_PENDING",
     InboxStatus.DOC_VERIFIED: "DOCVERIFIED",
+    InboxStatus.FIELD_VERIFIED: "FIELDVERIFIED",
   };
   String get name => actionNames[this]!;
 }
@@ -31,6 +33,7 @@ enum ModulesEmp {
   PT_SERVICES,
   WS_CONSUMPTION,
   FIRE_NOC,
+  PGR_SERVICES,
 }
 
 extension ModulesEmpExtension on ModulesEmp {
@@ -42,6 +45,7 @@ extension ModulesEmpExtension on ModulesEmp {
     ModulesEmp.PT_SERVICES: "PT",
     ModulesEmp.WS_CONSUMPTION: "ws-calculator",
     ModulesEmp.FIRE_NOC: "fireNoc",
+    ModulesEmp.PGR_SERVICES: "pgr-services",
   };
   String get name => actionNames[this]!;
 }
@@ -111,6 +115,9 @@ enum InspectorType {
   WS_FIELD_INSPECTOR,
   SW_FIELD_INSPECTOR,
   UC_EMP_INSPECTOR,
+  PGR_LME_INSPECTOR,
+  PT_CEMP_INSPECTOR,
+  PT_APPROVER_INSPECTOR,
 }
 
 extension InspectorTypeExtension on InspectorType {
@@ -122,6 +129,9 @@ extension InspectorTypeExtension on InspectorType {
     InspectorType.WS_FIELD_INSPECTOR: "WS_FIELD_INSPECTOR",
     InspectorType.SW_FIELD_INSPECTOR: "SW_FIELD_INSPECTOR",
     InspectorType.UC_EMP_INSPECTOR: "UC_EMP",
+    InspectorType.PGR_LME_INSPECTOR: "PGR_LME",
+    InspectorType.PT_CEMP_INSPECTOR: "PT_CEMP",
+    InspectorType.PT_APPROVER_INSPECTOR: "PT_APPROVER",
   };
   String get name => actionNames[this]!;
 }
@@ -133,7 +143,9 @@ enum BaseAction {
   approve,
   reject,
   revocate,
-  verifyForward
+  verifyForward,
+  reassign,
+  resolve,
 }
 
 extension BaseActionExtension on BaseAction {
@@ -145,6 +157,15 @@ extension BaseActionExtension on BaseAction {
     BaseAction.reject: "REJECT",
     BaseAction.revocate: "REVOCATE",
     BaseAction.verifyForward: "VERIFY_AND_FORWARD",
+    BaseAction.reassign: "REASSIGN",
+    BaseAction.resolve: "RESOLVE",
   };
   String get name => actionNames[this]!;
+}
+
+//UC
+enum UCStatus {
+  PAID,
+  CANCELLED,
+  ACTIVE,
 }

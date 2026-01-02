@@ -124,19 +124,12 @@ AdditionalDetails _$AdditionalDetailsFromJson(Map<String, dynamic> json) =>
               .toList()
       ..propertyId = json['propertyId'] as String?;
 
-Map<String, dynamic> _$AdditionalDetailsToJson(AdditionalDetails instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('calculationDescription', instance.calculationDescription);
-  writeNotNull('propertyId', instance.propertyId);
-  return val;
-}
+Map<String, dynamic> _$AdditionalDetailsToJson(AdditionalDetails instance) =>
+    <String, dynamic>{
+      if (instance.calculationDescription case final value?)
+        'calculationDescription': value,
+      if (instance.propertyId case final value?) 'propertyId': value,
+    };
 
 BillAccountDetail _$BillAccountDetailFromJson(Map<String, dynamic> json) =>
     BillAccountDetail()

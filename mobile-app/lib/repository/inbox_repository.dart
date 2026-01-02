@@ -37,7 +37,8 @@ class InboxRepository {
       url: _getUrlString(type),
       method: RequestType.POST,
       body: body,
-      requestInfo: RequestInfo(authToken: token, isEmpFireNoc: isEmpFireNoc, local: local),
+      requestInfo: RequestInfo(
+          authToken: token, isEmpFireNoc: isEmpFireNoc, local: local),
       queryParameters: query,
     );
     return response;
@@ -57,6 +58,8 @@ class InboxRepository {
         return Url.BPA_ACTION_UPDATE;
       case ModulesEmp.FIRE_NOC:
         return Url.NOC_ACTION_UPDATE;
+      case ModulesEmp.PGR_SERVICES:
+        return Url.PGR_ACTION_UPDATE;
       default:
         return null;
     }

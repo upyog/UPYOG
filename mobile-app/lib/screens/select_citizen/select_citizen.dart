@@ -250,8 +250,8 @@
 //                     _authController.isOtpValid.value = false;
 //                     _authController.isNumberValid.value = false;
 //                     _authController.disableNumberField.value = false;
-//                     print("Testing OTP Text field");
-//                     print(_authController.otpEditingController.value.text);
+//                     dPrint("Testing OTP Text field");
+//                     dPrint(_authController.otpEditingController.value.text);
 //                     Get.toNamed(AppRoutes.LOGIN);
 //                   } else {
 //                     Get.toNamed(AppRoutes.EMP_LOGIN);
@@ -392,10 +392,10 @@
 //     // Check if a language has been previously selected
 //     final selectedLanguageIndex =
 //         await HiveService.getData(Constants.LANG_SELECTION_INDEX);
-//     print("Retrieved language index: $selectedLanguageIndex");
+//     dPrint("Retrieved language index: $selectedLanguageIndex");
 //     // If a language is already selected, skip showing the dialog
 //     if (selectedLanguageIndex != null) {
-//       print("Language already selected, skipping dialog.");
+//       dPrint("Language already selected, skipping dialog.");
 //       return;
 //     }
 //
@@ -524,8 +524,8 @@
 //                                         _languageController
 //                                             .getLocalizationData();
 //                                       }
-//                                       print("Selected language index value");
-//                                       print(selectedLanguageIndex);
+//                                       dPrint("Selected language index value");
+//                                       dPrint(selectedLanguageIndex);
 //                                       Get.back();
 //                                     },
 //                                   ),

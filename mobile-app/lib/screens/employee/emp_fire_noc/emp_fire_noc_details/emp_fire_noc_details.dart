@@ -63,7 +63,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
 
   _init() async {
     _isLoading.value = true;
-    tenant = await getCityTenantEmployee();
+    tenant = await getCityTenant();
     await _fireNocController.getFireNocApplicationById(
       token: _authController.token!.accessToken!,
       tenantId: tenant.code!,
@@ -197,7 +197,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                           ),
                         ),
                       ),
-                      icon: MediumTextNotoSans(
+                      icon: MediumSelectableTextNotoSans(
                         text: getLocalizedString(i18.common.TAKE_ACTION),
                         size: o == Orientation.portrait ? 14.sp : 8.sp,
                         color: BaseConfig.mainBackgroundColor,
@@ -207,7 +207,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                           .map(
                             (action) => PopupMenuItem<String>(
                               value: action.action,
-                              child: SmallTextNotoSans(
+                              child: SmallSelectableTextNotoSans(
                                 text: LocalizeUtils.getTakeActionLocal(
                                   action.action,
                                   workflowCode: process.businessService!,
@@ -222,7 +222,6 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                           )
                           .toList(),
                       onSelected: (value) async {
-                        //TODO: Take Action
                         dPrint(value);
 
                         // Get the next state of the action
@@ -400,7 +399,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                                             if (!isNotNullOrEmpty(
                                               billData.bill,
                                             )) {
-                                              return MediumTextNotoSans(
+                                              return MediumSelectableTextNotoSans(
                                                 text: getLocalizedString(
                                                   i18.common.NO_DATA,
                                                 ),
@@ -453,7 +452,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                                             if (!isNotNullOrEmpty(
                                               feeData.payments,
                                             )) {
-                                              return MediumTextNotoSans(
+                                              return MediumSelectableTextNotoSans(
                                                 text: getLocalizedString(
                                                   i18.common.NO_DATA,
                                                 ),
@@ -528,7 +527,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SmallTextNotoSans(
+        SmallSelectableTextNotoSans(
           text: getLocalizedString(
             i18.noc.NOC_TOTAL_AMOUNT,
           ),
@@ -539,13 +538,13 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
               Icons.currency_rupee_outlined,
               size: 15,
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: "${billELement.totalAmount ?? "N/A"}",
               fontWeight: FontWeight.w600,
             ),
           ],
         ),
-        MediumTextNotoSans(
+        MediumSelectableTextNotoSans(
           text: getLocalizedString(i18.noc.NOC_NOT_PAID, module: Modules.NOC),
           color: BaseConfig.redColor,
         ),
@@ -558,13 +557,13 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.noc.FIRENOC_ROUNDOFF,
                 module: Modules.NOC,
               ),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: billELement.billDetails!.first.billAccountDetails!
                   .firstWhere(
                     (e) => e.taxHeadCode == "FIRENOC_ROUNDOFF",
@@ -577,11 +576,11 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text:
                   getLocalizedString(i18.noc.FIRENOC_FEES, module: Modules.NOC),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: billELement.billDetails!.first.billAccountDetails!
                   .firstWhere((e) => e.taxHeadCode == "FIRENOC_FEES")
                   .amount
@@ -592,13 +591,13 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.noc.FIRENOC_TAXES,
                 module: Modules.NOC,
               ),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: billELement.billDetails!.first.billAccountDetails!
                   .firstWhere((e) => e.taxHeadCode == "FIRENOC_TAXES")
                   .amount
@@ -612,11 +611,11 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(i18.noc.NOC_TOTAL_AMOUNT),
               fontWeight: FontWeight.w600,
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: billELement.totalAmount.toString(),
               fontWeight: FontWeight.w600,
             ),
@@ -635,7 +634,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SmallTextNotoSans(
+        SmallSelectableTextNotoSans(
           text: getLocalizedString(i18.noc.NOC_TOTAL_AMOUNT),
         ),
         Row(
@@ -644,13 +643,13 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
               Icons.currency_rupee_outlined,
               size: 15,
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: "${feeELement.totalAmountPaid ?? "N/A"}",
               fontWeight: FontWeight.w600,
             ),
           ],
         ),
-        MediumTextNotoSans(
+        MediumSelectableTextNotoSans(
           text:
               getLocalizedString(i18.noc.NOC_PAID_SUCCESS, module: Modules.NOC),
           color: BaseConfig.statusGreenColor,
@@ -664,13 +663,13 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.noc.FIRENOC_ROUNDOFF,
                 module: Modules.NOC,
               ),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: feeELement.paymentDetails!.first.bill!.billDetails!.first
                   .billAccountDetails!
                   .firstWhere(
@@ -684,11 +683,11 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text:
                   getLocalizedString(i18.noc.FIRENOC_FEES, module: Modules.NOC),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: feeELement.paymentDetails!.first.bill!.billDetails!.first
                   .billAccountDetails!
                   .firstWhere((e) => e.taxHeadCode == "FIRENOC_FEES")
@@ -700,13 +699,13 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(
                 i18.noc.FIRENOC_TAXES,
                 module: Modules.NOC,
               ),
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: feeELement.paymentDetails!.first.bill!.billDetails!.first
                   .billAccountDetails!
                   .firstWhere((e) => e.taxHeadCode == "FIRENOC_TAXES")
@@ -721,11 +720,11 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: getLocalizedString(i18.noc.NOC_TOTAL_AMOUNT),
               fontWeight: FontWeight.w600,
             ),
-            MediumTextNotoSans(
+            MediumSelectableTextNotoSans(
               text: feeELement.totalAmountPaid.toString(),
               fontWeight: FontWeight.w600,
             ),

@@ -126,7 +126,7 @@ class WaterPropertyInformationScreen extends StatelessWidget {
                 module: Modules.PT,
               ),
               text: isNotNullOrEmpty(
-                properties.properties?.first.address?.locality,
+                properties.properties?.firstOrNull?.address?.locality,
               )
                   ? getLocalizedString(
                       getLocality(
@@ -208,10 +208,11 @@ class WaterPropertyInformationScreen extends StatelessWidget {
                     i18.tlProperty.NO_OF_FLOOR,
                     module: Modules.PT,
                   ),
-                  text:
-                      isNotNullOrEmpty(properties.properties?.first.noOfFloors)
-                          ? '${properties.properties!.first.noOfFloors}'
-                          : 'N/A',
+                  text: isNotNullOrEmpty(
+                    properties.properties?.firstOrNull?.noOfFloors,
+                  )
+                      ? '${properties.properties!.first.noOfFloors}'
+                      : 'N/A',
                 ),
               ],
             ),

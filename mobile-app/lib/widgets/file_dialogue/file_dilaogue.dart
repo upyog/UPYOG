@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,6 +13,7 @@ showTypeDialogue(
   context, {
   required String url,
   required String title,
+  bool isLocalPdf = false,
   bool isPdf = false,
   double height = 0.6,
 }) {
@@ -43,9 +46,11 @@ showTypeDialogue(
         width: Get.width,
         height: Get.height * height,
         child: isPdf
-            ? SfPdfViewer.network(
-                url,
-              )
+            ? isLocalPdf
+                ? SfPdfViewer.file(File(url))
+                : SfPdfViewer.network(
+                    url,
+                  )
             : PhotoView(
                 loadingBuilder: (context, event) => showCircularIndicator(),
                 backgroundDecoration: BoxDecoration(

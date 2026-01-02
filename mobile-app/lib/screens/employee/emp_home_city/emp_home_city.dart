@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:mobile_app/components/city_not_found/city_not_found.dart';
 import 'package:mobile_app/components/text_formfield_normal.dart';
 import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/auth_controller.dart';
@@ -68,9 +69,7 @@ class _EmpHomeCityScreenState extends State<EmpHomeCityScreen> {
         _noResultsFound = _filteredRoles.isEmpty;
       }
 
-      if (mounted) {
-        setState(() {});
-      }
+      setState(() {});
     });
   }
 
@@ -88,67 +87,57 @@ class _EmpHomeCityScreenState extends State<EmpHomeCityScreen> {
           ),
         ),
       ),
-      body: GetBuilder<LanguageController>(
-        builder: (languageController) {
-          return SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
-            child: Container(
-              height: Get.height,
-              width: Get.width,
-              padding: EdgeInsets.all(20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  textFormFieldNormal(
-                    context,
-                    getLocalizedString(i18.common.SEARCH),
-                    hintTextColor: BaseConfig.greyColor1,
-                    prefixIcon: const Icon(Icons.search),
-                    textInputAction: TextInputAction.search,
-                    //onChange: _onSearchChanged,
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  MediumTextNotoSans(
-                    text: getLocalizedString(i18.common.SELECT_CITY),
-                    fontWeight: FontWeight.w700,
-                    size: 16.h,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  SizedBox(
-                    height: 1.25.sw,
-                    width: Get.width,
-                    child: _buildView(
-                      _authController.token?.userRequest?.roles!
-                          .removeDuplicates(),
-                      o,
-                    ),
-                  ),
-                ],
+      body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: SizedBox(
+          height: Get.height,
+          width: Get.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              textFormFieldNormal(
+                context,
+                controller: _searchController,
+                getLocalizedString(i18.common.SEARCH),
+                hintTextColor: BaseConfig.greyColor1,
+                prefixIcon: const Icon(Icons.search),
+                textInputAction: TextInputAction.search,
+                //onChange: _onSearchChanged,
+              ).marginOnly(left: 20.w, right: 20.w, top: 20.h),
+              SizedBox(
+                height: 20.h,
               ),
-            ),
-          );
-        },
+              MediumTextNotoSans(
+                text: getLocalizedString(i18.common.SELECT_CITY),
+                fontWeight: FontWeight.w700,
+                size: 16.h,
+              ).marginSymmetric(horizontal: 20.w),
+              SizedBox(
+                height: 8.h,
+              ),
+              SizedBox(
+                height: 1.25.sw,
+                width: Get.width,
+                child: _buildView(
+                  _authController.token?.userRequest?.roles!.removeDuplicates(),
+                  o,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildView(List<Role>? roles, Orientation o) {
     _roles = roles;
-    _filterRoles();
 
     return SizedBox(
       height: Get.height * 0.7.h,
       child: Column(
         children: [
-          if (_noResultsFound)
-            SizedBox(
-              height: Get.height * 0.4,
-              child: const Center(child: Text('No Cities Found')),
-            ),
+          if (_noResultsFound) const CityNotFound(),
           if (!_noResultsFound) ...[
             Expanded(
               child: ListView.builder(
@@ -177,6 +166,9 @@ class _EmpHomeCityScreenState extends State<EmpHomeCityScreen> {
     return Column(
       children: [
         ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.r),
+          ),
           minVerticalPadding: 2,
           dense: true,
           title: MediumTextNotoSans(
@@ -189,15 +181,16 @@ class _EmpHomeCityScreenState extends State<EmpHomeCityScreen> {
             size: o == Orientation.portrait ? 12.sp : 7.sp,
             color:
                 isSelected ? BaseConfig.appThemeColor1 : BaseConfig.greyColor4,
-          ),
+          ).marginSymmetric(horizontal: 10.w),
           contentPadding: EdgeInsets.zero,
           trailing: isSelected
               ? Container(
                   width: 10.w,
                   height: 10.h,
+                  margin: const EdgeInsets.only(right: 10),
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: BaseConfig.appThemeColor1, // Dot color
+                    color: BaseConfig.appThemeColor1,
                   ),
                 )
               : null,
@@ -210,8 +203,8 @@ class _EmpHomeCityScreenState extends State<EmpHomeCityScreen> {
             await _cityController.setEmpSelectedCity(tenant);
           },
         ),
-        const Divider(),
+        const Divider(color: Colors.grey).marginSymmetric(horizontal: 10.w),
       ],
-    );
+    ).marginSymmetric(horizontal: 10.w);
   }
 }

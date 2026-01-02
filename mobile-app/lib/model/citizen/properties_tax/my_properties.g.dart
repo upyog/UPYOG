@@ -62,6 +62,8 @@ Property _$PropertyFromJson(Map<String, dynamic> json) => Property()
   ..institution = json['institution']
   ..creationReason = json['creationReason'] as String?
   ..usageCategory = json['usageCategory'] as String?
+  ..usageCategoryMajor = json['usageCategoryMajor'] as String?
+  ..usageCategoryMinor = json['usageCategoryMinor'] as String?
   ..noOfFloors = (json['noOfFloors'] as num?)?.toInt()
   ..landArea = (json['landArea'] as num?)?.toDouble()
   ..superBuiltUpArea = json['superBuiltUpArea']
@@ -86,25 +88,32 @@ Property _$PropertyFromJson(Map<String, dynamic> json) => Property()
       ? null
       : Workflow.fromJson(json['workflow'] as Map<String, dynamic>)
   ..alternateUpdated = json['AlternateUpdated'] as bool?
-  ..isOldDataEncryptionRequest = json['isOldDataEncryptionRequest'] as bool?;
+  ..isOldDataEncryptionRequest = json['isOldDataEncryptionRequest'] as bool?
+  ..applicationStatus = json['applicationStatus'] as String?;
 
 Map<String, dynamic> _$PropertyToJson(Property instance) => <String, dynamic>{
-      'id': instance.id,
-      'propertyId': instance.propertyId,
-      'surveyId': instance.surveyId,
-      'linkedProperties': instance.linkedProperties,
+      if (instance.id case final value?) 'id': value,
+      if (instance.propertyId case final value?) 'propertyId': value,
+      if (instance.surveyId case final value?) 'surveyId': value,
+      if (instance.linkedProperties case final value?)
+        'linkedProperties': value,
       'tenantId': instance.tenantId,
-      'accountId': instance.accountId,
-      'oldPropertyId': instance.oldPropertyId,
-      'status': instance.status,
+      if (instance.accountId case final value?) 'accountId': value,
+      if (instance.oldPropertyId case final value?) 'oldPropertyId': value,
+      if (instance.status case final value?) 'status': value,
       'address': instance.address,
-      'acknowldgementNumber': instance.acknowledgementNumber,
+      if (instance.acknowledgementNumber case final value?)
+        'acknowldgementNumber': value,
       'propertyType': instance.propertyType,
       'ownershipCategory': instance.ownershipCategory,
       'owners': instance.owners,
-      'institution': instance.institution,
+      if (instance.institution case final value?) 'institution': value,
       'creationReason': instance.creationReason,
       'usageCategory': instance.usageCategory,
+      if (instance.usageCategoryMajor case final value?)
+        'usageCategoryMajor': value,
+      if (instance.usageCategoryMinor case final value?)
+        'usageCategoryMinor': value,
       'noOfFloors': instance.noOfFloors,
       'landArea': instance.landArea,
       'superBuiltUpArea': instance.superBuiltUpArea,
@@ -112,13 +121,17 @@ Map<String, dynamic> _$PropertyToJson(Property instance) => <String, dynamic>{
       'channel': instance.channel,
       'documents': instance.documents,
       'units': instance.units,
-      'dueAmount': instance.dueAmount,
-      'dueAmountYear': instance.dueAmountYear,
+      if (instance.dueAmount case final value?) 'dueAmount': value,
+      if (instance.dueAmountYear case final value?) 'dueAmountYear': value,
       'additionalDetails': instance.additionalDetails,
-      'auditDetails': instance.auditDetails,
-      'workflow': instance.workflow,
-      'AlternateUpdated': instance.alternateUpdated,
-      'isOldDataEncryptionRequest': instance.isOldDataEncryptionRequest,
+      if (instance.auditDetails case final value?) 'auditDetails': value,
+      if (instance.workflow case final value?) 'workflow': value,
+      if (instance.alternateUpdated case final value?)
+        'AlternateUpdated': value,
+      if (instance.isOldDataEncryptionRequest case final value?)
+        'isOldDataEncryptionRequest': value,
+      if (instance.applicationStatus case final value?)
+        'applicationStatus': value,
     };
 
 PropertyAdditionalDetails _$PropertyAdditionalDetailsFromJson(
@@ -135,7 +148,10 @@ PropertyAdditionalDetails _$PropertyAdditionalDetailsFromJson(
           ? null
           : PropertyType.fromJson(json['propertyType'] as Map<String, dynamic>)
       ..subusagetype = json['subusagetype']
-      ..structureType = json['structureType']
+      ..structureType = json['structureType'] == null
+          ? null
+          : AgeOfProperty.fromJson(
+              json['structureType'] as Map<String, dynamic>)
       ..noOofBasements = json['noOofBasements'] == null
           ? null
           : NoO.fromJson(json['noOofBasements'] as Map<String, dynamic>)
@@ -146,38 +162,68 @@ PropertyAdditionalDetails _$PropertyAdditionalDetailsFromJson(
           ?.map((e) => OwnerAd.fromJson(e as Map<String, dynamic>))
           .toList()
       ..applicationStatus = json['applicationStatus'] as String?
-      ..isRainwaterHarvesting = json['isRainwaterHarvesting'] as bool?;
+      ..isRainwaterHarvesting = json['isRainwaterHarvesting'] as bool?
+      ..primaryOwner = json['primaryOwner'] as String?
+      ..unit = (json['unit'] as List<dynamic>?)
+          ?.map((e) => Unit.fromJson(e as Map<String, dynamic>))
+          .toList()
+      ..ageOfProperty = json['ageOfProperty'] == null
+          ? null
+          : AgeOfProperty.fromJson(
+              json['ageOfProperty'] as Map<String, dynamic>)
+      ..caseDetails = json['caseDetails'] as String?
+      ..marketValue = (json['marketValue'] as num?)?.toInt()
+      ..documentDate = (json['documentDate'] as num?)?.toInt()
+      ..documentValue = json['documentValue'] as String?
+      ..documentNumber = json['documentNumber'] as String?
+      ..isMutationInCourt = json['isMutationInCourt'] as String?
+      ..reasonForTransfer = json['reasonForTransfer'] as String?
+      ..previousPropertyUuid = json['previousPropertyUuid'] as String?
+      ..isPropertyUnderGovtPossession =
+          json['isPropertyUnderGovtPossession'] as String?;
 
 Map<String, dynamic> _$PropertyAdditionalDetailsToJson(
-    PropertyAdditionalDetails instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('uid', instance.uid);
-  writeNotNull('basement1', instance.basement1);
-  writeNotNull('basement2', instance.basement2);
-  writeNotNull('noOfFloors', instance.noOfFloors);
-  writeNotNull('builtUpArea', instance.builtUpArea);
-  writeNotNull('electricity', instance.electricity);
-  writeNotNull('inflammable', instance.inflammable);
-  writeNotNull('propertyType', instance.propertyType);
-  writeNotNull('subusagetype', instance.subusagetype);
-  writeNotNull('structureType', instance.structureType);
-  writeNotNull('noOofBasements', instance.noOofBasements);
-  writeNotNull('heightAbove36Feet', instance.heightAbove36Feet);
-  writeNotNull('Subusagetypeofrentedarea', instance.subusagetypeofrentedarea);
-  writeNotNull('IsAnyPartOfThisFloorUnOccupied',
-      instance.isAnyPartOfThisFloorUnOccupied);
-  writeNotNull('owners', instance.owners);
-  writeNotNull('applicationStatus', instance.applicationStatus);
-  writeNotNull('isRainwaterHarvesting', instance.isRainwaterHarvesting);
-  return val;
-}
+        PropertyAdditionalDetails instance) =>
+    <String, dynamic>{
+      if (instance.uid case final value?) 'uid': value,
+      if (instance.basement1 case final value?) 'basement1': value,
+      if (instance.basement2 case final value?) 'basement2': value,
+      if (instance.noOfFloors case final value?) 'noOfFloors': value,
+      if (instance.builtUpArea case final value?) 'builtUpArea': value,
+      if (instance.electricity case final value?) 'electricity': value,
+      if (instance.inflammable case final value?) 'inflammable': value,
+      if (instance.propertyType case final value?) 'propertyType': value,
+      if (instance.subusagetype case final value?) 'subusagetype': value,
+      if (instance.structureType case final value?) 'structureType': value,
+      if (instance.noOofBasements case final value?) 'noOofBasements': value,
+      if (instance.heightAbove36Feet case final value?)
+        'heightAbove36Feet': value,
+      if (instance.subusagetypeofrentedarea case final value?)
+        'Subusagetypeofrentedarea': value,
+      if (instance.isAnyPartOfThisFloorUnOccupied case final value?)
+        'IsAnyPartOfThisFloorUnOccupied': value,
+      if (instance.owners case final value?) 'owners': value,
+      if (instance.applicationStatus case final value?)
+        'applicationStatus': value,
+      if (instance.isRainwaterHarvesting case final value?)
+        'isRainwaterHarvesting': value,
+      if (instance.primaryOwner case final value?) 'primaryOwner': value,
+      if (instance.unit case final value?) 'unit': value,
+      if (instance.ageOfProperty case final value?) 'ageOfProperty': value,
+      if (instance.caseDetails case final value?) 'caseDetails': value,
+      if (instance.marketValue case final value?) 'marketValue': value,
+      if (instance.documentDate case final value?) 'documentDate': value,
+      if (instance.documentValue case final value?) 'documentValue': value,
+      if (instance.documentNumber case final value?) 'documentNumber': value,
+      if (instance.isMutationInCourt case final value?)
+        'isMutationInCourt': value,
+      if (instance.reasonForTransfer case final value?)
+        'reasonForTransfer': value,
+      if (instance.previousPropertyUuid case final value?)
+        'previousPropertyUuid': value,
+      if (instance.isPropertyUnderGovtPossession case final value?)
+        'isPropertyUnderGovtPossession': value,
+    };
 
 AgeOfProperty _$AgeOfPropertyFromJson(Map<String, dynamic> json) =>
     AgeOfProperty()
@@ -276,13 +322,14 @@ Locality _$LocalityFromJson(Map<String, dynamic> json) => Locality()
 
 Map<String, dynamic> _$LocalityToJson(Locality instance) => <String, dynamic>{
       'code': instance.code,
-      'name': instance.name,
-      'label': instance.label,
-      'latitude': instance.latitude,
-      'longitude': instance.longitude,
+      if (instance.name case final value?) 'name': value,
+      if (instance.label case final value?) 'label': value,
+      if (instance.latitude case final value?) 'latitude': value,
+      if (instance.longitude case final value?) 'longitude': value,
       'area': instance.area,
-      'children': instance.children,
-      'materializedPath': instance.materializedPath,
+      if (instance.children case final value?) 'children': value,
+      if (instance.materializedPath case final value?)
+        'materializedPath': value,
     };
 
 AuditDetails _$AuditDetailsFromJson(Map<String, dynamic> json) => AuditDetails()
@@ -328,7 +375,11 @@ OwnerAd _$OwnerAdFromJson(Map<String, dynamic> json) => OwnerAd()
       : OwnerAdditionalDetailsPt.fromJson(
           json['additionalDetails'] as Map<String, dynamic>)
   ..fatherOrHusbandName = json['fatherOrHusbandName'] as String?
-  ..sameAsPropertyAddress = json['sameAsPropertyAddress'] as bool?;
+  ..sameAsPropertyAddress = json['sameAsPropertyAddress'] as bool?
+  ..gender = json['gender'] as String?
+  ..emailId = json['emailId'] as String?
+  ..correspondenceAddress = json['correspondenceAddress']
+  ..relationship = json['relationship'] as String?;
 
 Map<String, dynamic> _$OwnerAdToJson(OwnerAd instance) => <String, dynamic>{
       'name': instance.name,
@@ -340,6 +391,11 @@ Map<String, dynamic> _$OwnerAdToJson(OwnerAd instance) => <String, dynamic>{
       'additionalDetails': instance.additionalDetails,
       'fatherOrHusbandName': instance.fatherOrHusbandName,
       'sameAsPropertyAddress': instance.sameAsPropertyAddress,
+      if (instance.gender case final value?) 'gender': value,
+      if (instance.emailId case final value?) 'emailId': value,
+      if (instance.correspondenceAddress case final value?)
+        'correspondenceAddress': value,
+      if (instance.relationship case final value?) 'relationship': value,
     };
 
 OwnerAdditionalDetailsPt _$OwnerAdditionalDetailsPtFromJson(
@@ -410,48 +466,56 @@ Owner _$OwnerFromJson(Map<String, dynamic> json) => Owner()
   ..relationship = json['relationship'] as String?;
 
 Map<String, dynamic> _$OwnerToJson(Owner instance) => <String, dynamic>{
-      'id': instance.id,
-      'uuid': instance.uuid,
-      'userName': instance.userName,
-      'password': instance.password,
-      'salutation': instance.salutation,
+      if (instance.id case final value?) 'id': value,
+      if (instance.uuid case final value?) 'uuid': value,
+      if (instance.userName case final value?) 'userName': value,
+      if (instance.password case final value?) 'password': value,
+      if (instance.salutation case final value?) 'salutation': value,
       'name': instance.name,
       'gender': instance.gender,
       'mobileNumber': instance.mobileNumber,
       'emailId': instance.emailId,
-      'altContactNumber': instance.altContactNumber,
-      'pan': instance.pan,
-      'aadhaarNumber': instance.aadhaarNumber,
+      if (instance.altContactNumber case final value?)
+        'altContactNumber': value,
+      if (instance.pan case final value?) 'pan': value,
+      if (instance.aadhaarNumber case final value?) 'aadhaarNumber': value,
       'permanentAddress': instance.permanentAddress,
-      'permanentCity': instance.permanentCity,
-      'permanentPinCode': instance.permanentPinCode,
-      'correspondenceCity': instance.correspondenceCity,
-      'correspondencePinCode': instance.correspondencePinCode,
+      if (instance.permanentCity case final value?) 'permanentCity': value,
+      if (instance.permanentPinCode case final value?)
+        'permanentPinCode': value,
+      if (instance.correspondenceCity case final value?)
+        'correspondenceCity': value,
+      if (instance.correspondencePinCode case final value?)
+        'correspondencePinCode': value,
       'correspondenceAddress': instance.correspondenceAddress,
-      'active': instance.active,
-      'dob': instance.dob,
-      'pwdExpiryDate': instance.pwdExpiryDate,
-      'locale': instance.locale,
-      'type': instance.type,
-      'signature': instance.signature,
-      'accountLocked': instance.accountLocked,
-      'roles': instance.roles,
+      if (instance.active case final value?) 'active': value,
+      if (instance.dob case final value?) 'dob': value,
+      if (instance.pwdExpiryDate case final value?) 'pwdExpiryDate': value,
+      if (instance.locale case final value?) 'locale': value,
+      if (instance.type case final value?) 'type': value,
+      if (instance.signature case final value?) 'signature': value,
+      if (instance.accountLocked case final value?) 'accountLocked': value,
+      if (instance.roles case final value?) 'roles': value,
       'fatherOrHusbandName': instance.fatherOrHusbandName,
-      'bloodGroup': instance.bloodGroup,
-      'identificationMark': instance.identificationMark,
-      'photo': instance.photo,
-      'createdBy': instance.createdBy,
-      'createdDate': instance.createdDate,
-      'lastModifiedBy': instance.lastModifiedBy,
-      'lastModifiedDate': instance.lastModifiedDate,
-      'tenantId': instance.tenantId,
-      'alternatemobilenumber': instance.alternatemobilenumber,
-      'ownerInfoUuid': instance.ownerInfoUuid,
-      'isPrimaryOwner': instance.isPrimaryOwner,
-      'ownerShipPercentage': instance.ownerShipPercentage,
+      if (instance.bloodGroup case final value?) 'bloodGroup': value,
+      if (instance.identificationMark case final value?)
+        'identificationMark': value,
+      if (instance.photo case final value?) 'photo': value,
+      if (instance.createdBy case final value?) 'createdBy': value,
+      if (instance.createdDate case final value?) 'createdDate': value,
+      if (instance.lastModifiedBy case final value?) 'lastModifiedBy': value,
+      if (instance.lastModifiedDate case final value?)
+        'lastModifiedDate': value,
+      if (instance.tenantId case final value?) 'tenantId': value,
+      if (instance.alternatemobilenumber case final value?)
+        'alternatemobilenumber': value,
+      if (instance.ownerInfoUuid case final value?) 'ownerInfoUuid': value,
+      if (instance.isPrimaryOwner case final value?) 'isPrimaryOwner': value,
+      if (instance.ownerShipPercentage case final value?)
+        'ownerShipPercentage': value,
       'ownerType': instance.ownerType,
-      'institutionId': instance.institutionId,
-      'status': instance.status,
+      if (instance.institutionId case final value?) 'institutionId': value,
+      if (instance.status case final value?) 'status': value,
       'documents': instance.documents,
       'additionalDetails': instance.additionalDetails,
       'relationship': instance.relationship,
@@ -498,21 +562,28 @@ Unit _$UnitFromJson(Map<String, dynamic> json) => Unit()
           json['constructionDetail'] as Map<String, dynamic>)
   ..additionalDetails = json['additionalDetails']
   ..auditDetails = json['auditDetails']
-  ..arv = json['arv'];
+  ..arv = json['arv']
+  ..rentedMonths = json['RentedMonths']
+  ..nonRentedMonthsUsage = json['NonRentedMonthsUsage'];
 
 Map<String, dynamic> _$UnitToJson(Unit instance) => <String, dynamic>{
-      'id': instance.id,
-      'tenantId': instance.tenantId,
-      'floorNo': instance.floorNo,
-      'unitType': instance.unitType,
-      'usageCategory': instance.usageCategory,
-      'occupancyType': instance.occupancyType,
-      'active': instance.active,
-      'occupancyDate': instance.occupancyDate,
-      'constructionDetail': instance.constructionDetail,
-      'additionalDetails': instance.additionalDetails,
-      'auditDetails': instance.auditDetails,
-      'arv': instance.arv,
+      if (instance.id case final value?) 'id': value,
+      if (instance.tenantId case final value?) 'tenantId': value,
+      if (instance.floorNo case final value?) 'floorNo': value,
+      if (instance.unitType case final value?) 'unitType': value,
+      if (instance.usageCategory case final value?) 'usageCategory': value,
+      if (instance.occupancyType case final value?) 'occupancyType': value,
+      if (instance.active case final value?) 'active': value,
+      if (instance.occupancyDate case final value?) 'occupancyDate': value,
+      if (instance.constructionDetail case final value?)
+        'constructionDetail': value,
+      if (instance.additionalDetails case final value?)
+        'additionalDetails': value,
+      if (instance.auditDetails case final value?) 'auditDetails': value,
+      if (instance.arv case final value?) 'arv': value,
+      if (instance.rentedMonths case final value?) 'RentedMonths': value,
+      if (instance.nonRentedMonthsUsage case final value?)
+        'NonRentedMonthsUsage': value,
     };
 
 ConstructionDetail _$ConstructionDetailFromJson(Map<String, dynamic> json) =>
@@ -548,24 +619,14 @@ Workflow _$WorkflowFromJson(Map<String, dynamic> json) => Workflow()
       ?.map((e) => WorkflowDocument.fromJson(e as Map<String, dynamic>))
       .toList();
 
-Map<String, dynamic> _$WorkflowToJson(Workflow instance) {
-  final val = <String, dynamic>{
-    'action': instance.action,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('comment', instance.comment);
-  val['businessService'] = instance.businessService;
-  val['moduleName'] = instance.moduleName;
-  writeNotNull('assignes', instance.assignees);
-  writeNotNull('documents', instance.wfDocuments);
-  return val;
-}
+Map<String, dynamic> _$WorkflowToJson(Workflow instance) => <String, dynamic>{
+      'action': instance.action,
+      if (instance.comment case final value?) 'comment': value,
+      'businessService': instance.businessService,
+      'moduleName': instance.moduleName,
+      if (instance.assignees case final value?) 'assignes': value,
+      if (instance.wfDocuments case final value?) 'documents': value,
+    };
 
 Assignee _$AssigneeFromJson(Map<String, dynamic> json) => Assignee()
   ..uuid = json['uuid'] as String?
