@@ -78,7 +78,7 @@ public class GarbageAccountController {
 	public ResponseEntity<?> payNowGrbgBill(@RequestBody PayNowRequest payNowRequest) {
 
 		GarbageAccountActionResponse response = null;
-		response = service.payNowGrbgBill(payNowRequest);
+		response = service.payNowGrbgBill(payNowRequest,true);
 
 		return new ResponseEntity(response, HttpStatus.OK);
 	}

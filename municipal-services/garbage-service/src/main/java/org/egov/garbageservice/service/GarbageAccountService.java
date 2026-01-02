@@ -1666,8 +1666,14 @@ public class GarbageAccountService {
 		}
 
 	}
+	
 
 	public GarbageAccountActionResponse getApplicationDetails(GarbageAccountActionRequest garbageAccountActionRequest) {
+
+		
+		boolean skipValidation =
+		        Boolean.TRUE.equals(garbageAccountActionRequest.getSkipValidation());
+
 
 		SearchCriteriaGarbageAccount criteria = SearchCriteriaGarbageAccount.builder().build();
 		GarbageAccountActionResponse garbageAccountActionResponse = GarbageAccountActionResponse.builder()
@@ -1681,7 +1687,7 @@ public class GarbageAccountService {
 					&& !StringUtils.isEmpty(garbageAccountActionRequest.getRequestInfo().getUserInfo().getUuid())) {
 				criteria.setUser_uuid(Collections
 						.singletonList(garbageAccountActionRequest.getRequestInfo().getUserInfo().getUuid()));
-			} else {
+			} else if (!skipValidation) {
 				throw new CustomException("INVALID REQUEST", "Provide Application Number.");
 			}
 		} else {
@@ -1897,23 +1903,28 @@ public class GarbageAccountService {
 		return roleCodes;
 	}
 
-	public GarbageAccountActionResponse payNowGrbgBill(PayNowRequest payNowRequest) {
-
-		if (StringUtils.isEmpty(payNowRequest.getUserUuid())) {
-			throw new CustomException("INVALID REQUEST", "Please Provide User Uuid.");
-		}
+	public GarbageAccountActionResponse payNowGrbgBill(PayNowRequest payNowRequest, Boolean skipValidation) {
+		
+		 if (!skipValidation) {
+		        if (StringUtils.isEmpty(payNowRequest.getUserUuid())) {
+		            throw new CustomException("INVALID REQUEST", "Please Provide User Uuid.");
+		        }
+		    }
 
 		// validate user
 		UserSearchResponse userSearchResponse = userService.searchUser(payNowRequest.getUserUuid());
 
+		if (!skipValidation) {
 		if (null == userSearchResponse || CollectionUtils.isEmpty(userSearchResponse.getUserSearchResponseContent())) {
 			throw new CustomException("USER NOT FOUND", "User not found for given user uuid.");
+		}
 		}
 
 		GarbageAccountActionRequest garbageAccountActionRequest = GarbageAccountActionRequest.builder()
 				.applicationNumbers(payNowRequest.getGarbageApplicationNumbers())
 				.billStatus(payNowRequest.getBillStatus()).month(payNowRequest.getMonth()).year(payNowRequest.getYear())
 				.propertyIds(payNowRequest.getPropertyIds()).garbageUuid(payNowRequest.getGarbageUuid())
+				.skipValidation(skipValidation)
 				.requestInfo(RequestInfo.builder().userInfo(User.builder().uuid(payNowRequest.getUserUuid()).build())
 						.build())
 				.build();

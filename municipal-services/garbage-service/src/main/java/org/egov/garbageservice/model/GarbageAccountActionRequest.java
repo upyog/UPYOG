@@ -30,6 +30,9 @@ public class GarbageAccountActionRequest {
 	private List<String> propertyIds;
 	
 	private List<String> garbageUuid;
+	
+	@Builder.Default
+	private Boolean skipValidation = false;
 
 	@Builder.Default
 	private Boolean isEmptyBillFilter = false;
