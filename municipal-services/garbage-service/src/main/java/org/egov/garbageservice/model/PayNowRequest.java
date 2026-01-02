@@ -31,7 +31,6 @@ public class PayNowRequest {
 	
 	private List<Long> garbageIds;
 
-
 	@Builder.Default
 	private Boolean isEmptyBillFilter = false;
 
