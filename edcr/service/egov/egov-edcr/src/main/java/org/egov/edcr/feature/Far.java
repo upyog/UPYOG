@@ -543,9 +543,85 @@ public class Far extends FeatureProcess {
 	    blk.setSingleFamilyBuilding(!otherTypePresent && singleFamilyPresent);
 
 	    blk.setResidentialBuilding(isOnlyOfType(listOfOccupancies, A));
-	    blk.setResidentialOrCommercialBuilding(isOnlyOfType(listOfOccupancies, A, F));
+	    blk.setResidentialOrCommercialBuilding(isOnlyOfType(listOfOccupancies, A, F)); 
+	     LOG.info(
+            	    "Starting floors above ground calculation | Block: {} | Floors received: {}",
+            	    blk.getNumber(),
+            	    blk.getBuilding().getFloors().size()
+            	);
+
+	        calculateAndSetFloorDetails(blk);
+
 	}
 
+	/**
+	 * Calculates and sets floor-related details for a given Block.
+	 *
+	 * <p>
+	 * This method determines:
+	 * <ul>
+	 *   <li>Total number of floors present in the building</li>
+	 *   <li>Number of floors above ground level (floor number ≥ 0)</li>
+	 *   <li>Maximum floor above ground</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * If a terrace floor is present, it is excluded from the above-ground floor count.
+	 * The calculated values are set directly on the {@link Building} object associated
+	 * with the provided {@link Block}.
+	 *
+	 * <p>
+	 * If the block, building, or floors are not available, the calculation is skipped
+	 * safely and a log entry is recorded.
+	 *
+	 * @param blk the {@link Block} for which floor details need to be calculated;
+	 *            must contain a non-null {@link Building} with floor information
+	 */
+
+	private void calculateAndSetFloorDetails(Block blk) {
+
+	    if (blk == null 
+	            || blk.getBuilding() == null 
+	            || blk.getBuilding().getFloors() == null 
+	            || blk.getBuilding().getFloors().isEmpty()) {
+	        LOG.info("No floors found for Block: {}. Skipping floor calculation.",
+	                blk != null ? blk.getNumber() : "UNKNOWN");
+	        return;
+	    }
+
+	    LOG.info("Calculating floors for Block: {}", blk.getNumber());
+
+	    BigDecimal noOfFloorsAboveGround = BigDecimal.ZERO;
+
+	    for (Floor floor : blk.getBuilding().getFloors()) {
+	        if (floor.getNumber() != null && floor.getNumber() >= 0) {
+	            noOfFloorsAboveGround = noOfFloorsAboveGround.add(BigDecimal.ONE);
+	        }
+	    }
+
+	    boolean hasTerrace = blk.getBuilding().getFloors().stream()
+	            .anyMatch(floor -> Boolean.TRUE.equals(floor.getTerrace()));
+
+	    if (hasTerrace) {
+	        noOfFloorsAboveGround = noOfFloorsAboveGround.subtract(BigDecimal.ONE);
+	        LOG.info("Terrace detected for Block {}. Excluding terrace from floor count.",
+	                blk.getNumber());
+	    }
+
+	    blk.getBuilding().setMaxFloor(noOfFloorsAboveGround);
+	    blk.getBuilding().setFloorsAboveGround(noOfFloorsAboveGround);
+	    blk.getBuilding().setTotalFloors(
+	            BigDecimal.valueOf(blk.getBuilding().getFloors().size())
+	    );
+
+	    LOG.info(
+	        "Final Floor Details for Block {} → Total Floors: {}, Floors Above Ground: {}, Max Floor: {}",
+	        blk.getNumber(),
+	        blk.getBuilding().getTotalFloors(),
+	        blk.getBuilding().getFloorsAboveGround(),
+	        blk.getBuilding().getMaxFloor()
+	    );
+	}
 	
 	/**
 	 * Checks whether the given occupancies only belong to the specified allowed type codes.
