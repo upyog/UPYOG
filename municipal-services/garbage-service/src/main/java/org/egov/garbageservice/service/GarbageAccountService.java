@@ -1667,10 +1667,6 @@ public class GarbageAccountService {
 
 	}
 	
-	private boolean shouldSkipValidation(Boolean flag) {
-	    return Boolean.TRUE.equals(flag);
-	}
-
 
 	public GarbageAccountActionResponse getApplicationDetails(GarbageAccountActionRequest garbageAccountActionRequest) {
 
@@ -1907,10 +1903,8 @@ public class GarbageAccountService {
 		return roleCodes;
 	}
 
-	public GarbageAccountActionResponse payNowGrbgBill(PayNowRequest payNowRequest) {
+	public GarbageAccountActionResponse payNowGrbgBill(PayNowRequest payNowRequest, Boolean skipValidation) {
 		
-		 boolean skipValidation = shouldSkipValidation(payNowRequest.getSkipUserValidation());
-		 
 		 if (!skipValidation) {
 		        if (StringUtils.isEmpty(payNowRequest.getUserUuid())) {
 		            throw new CustomException("INVALID REQUEST", "Please Provide User Uuid.");

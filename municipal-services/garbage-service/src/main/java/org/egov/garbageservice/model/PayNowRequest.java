@@ -30,8 +30,6 @@ public class PayNowRequest {
 	private List<String> propertyIds;
 	
 	private List<Long> garbageIds;
-	
-	private Boolean skipUserValidation;
 
 	@Builder.Default
 	private Boolean isEmptyBillFilter = false;
