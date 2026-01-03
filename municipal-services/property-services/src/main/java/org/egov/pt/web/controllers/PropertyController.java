@@ -360,10 +360,10 @@ public class PropertyController {
 	@PostMapping("/_generatePropertyTaxBillReceipt")
 	public ResponseEntity<Resource> generatePropertyTaxBillReceipt(
 			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam String propertyId,
-			@RequestParam(required = false) String billId) {
+			@RequestParam(required = false) String billId, @RequestParam(required = false) String status) {
 
 		ResponseEntity<Resource> response = propertyService.generatePropertyTaxBillReceipt(requestInfoWrapper,
-				propertyId, billId);
+				propertyId, billId, status);
 
 		return response;
 	}

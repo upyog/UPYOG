@@ -173,7 +173,19 @@
 						"value": {
 							"path": "$.paymentDate"
 						}
-					}
+					},
+					{
+						"variable": "mobileNumber",
+						"value": {
+						"path": "$.mobileNumber"
+						}
+					},
+					{
+						"variable": "billDueDate",
+						"value": {
+						"path": "$.billDueDate"
+						}
+				}
 				]
 			}
 		]

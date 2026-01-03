@@ -996,7 +996,7 @@ public class PropertyService {
 	}
 
 	public ResponseEntity<Resource> generatePropertyTaxBillReceipt(RequestInfoWrapper requestInfoWrapper,
-			@Valid String propertyId, @Valid String billId) {
+			@Valid String propertyId, @Valid String billId, String status) {
 
 		PropertyCriteria propertyCriteria = PropertyCriteria.builder().isSchedulerCall(true)
 				.propertyIds(Collections.singleton(propertyId)).build();
@@ -1019,9 +1019,20 @@ public class PropertyService {
 			return null;
 		}
 
-		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
-				.tenantId(ptTaxCalculatorTracker.getTenantId())
-				.billId(Collections.singleton(ptTaxCalculatorTracker.getBillId())).build();
+		BillSearchCriteria.BillSearchCriteriaBuilder builder =
+		        BillSearchCriteria.builder()
+		                .tenantId(ptTaxCalculatorTracker.getTenantId())
+		                .billId(Collections.singleton(ptTaxCalculatorTracker.getBillId()));
+		
+		if (status != null && !status.trim().isEmpty()) {
+		    Demand.StatusEnum dynamicStatus =
+		            Demand.StatusEnum.valueOf(status.trim().toUpperCase());
+		    builder.status(dynamicStatus);
+		}
+		
+		BillSearchCriteria billSearchCriteria = builder.build();
+		
+	
 
 		BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfoWrapper.getRequestInfo());
 

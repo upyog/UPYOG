@@ -47,6 +47,14 @@ public class PDFRequestGenerator {
 		ptbr.put("ulbType", addressAdditionalDetails.get("ulbType").asText());
 		ptbr.put("ulbName", addressAdditionalDetails.get("ulbName").asText());
 		ptbr.put("billNo", bill.getBillNumber());
+		ptbr.put("mobileNumber", bill.getMobileNumber());
+		ptbr.put(
+			    "billDueDate",
+			    Instant.ofEpochMilli(bill.getBillDetails().get(0).getExpiryDate())
+			        .atZone(ZoneId.systemDefault())
+			        .toLocalDate()
+			        .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+			);
 
 		ptbr.put("date",
 				Instant.ofEpochMilli(ptTaxCalculatorTracker.getAuditDetails().getCreatedTime())

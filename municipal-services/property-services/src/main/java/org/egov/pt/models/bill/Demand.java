@@ -84,7 +84,9 @@ public class Demand {
 
 		ADJUSTED("ADJUSTED"),
 
-		EXPIRED("EXPIRED");
+		EXPIRED("EXPIRED"),
+		
+		PAID("PAID");
 
 		private String value;
 
