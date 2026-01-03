@@ -47,32 +47,10 @@ public class Main {
 
     @Bean
     @Profile("!test")
-//    public CacheManager cacheManager(){
-//        return new SpringCache2kCacheManager().addCaches(b->b.name("businessService").expireAfterWrite(workflowExpiry, TimeUnit.MINUTES)
-//                .entryCapacity(10)).addCaches(b->b.name("roleTenantAndStatusesMapping").expireAfterWrite(workflowExpiry, TimeUnit.MINUTES)
-//                .entryCapacity(10));
-//    }
-    
-    //creating the cache only when needed 
-    public CacheManager cacheManager() {
-        SpringCache2kCacheManager cacheManager = new SpringCache2kCacheManager();
-
-        // businessService cache
-        if (!cacheManager.getCacheNames().contains("businessService")) {
-            cacheManager.addCaches(b -> b.name("businessService")
-                .expireAfterWrite(workflowExpiry, TimeUnit.MINUTES)
+    public CacheManager cacheManager(){
+        return new SpringCache2kCacheManager().addCaches(b->b.name("businessService").expireAfterWrite(workflowExpiry, TimeUnit.MINUTES)
+                .entryCapacity(10)).addCaches(b->b.name("roleTenantAndStatusesMapping").expireAfterWrite(workflowExpiry, TimeUnit.MINUTES)
                 .entryCapacity(10));
-        }
-
-        // roleTenantAndStatusesMapping cache
-        if (!cacheManager.getCacheNames().contains("roleTenantAndStatusesMapping")) {
-            cacheManager.addCaches(b -> b.name("roleTenantAndStatusesMapping")
-                .expireAfterWrite(workflowExpiry, TimeUnit.MINUTES)
-                .entryCapacity(10));
-        }
-
-        return cacheManager;
     }
-
 
 }
