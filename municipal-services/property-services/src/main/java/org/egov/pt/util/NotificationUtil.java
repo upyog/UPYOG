@@ -47,7 +47,9 @@ public class NotificationUtil {
 
 
 
-    private ServiceRequestRepository serviceRequestRepository;
+   
+
+	private ServiceRequestRepository serviceRequestRepository;
 
     private PropertyConfiguration config;
 
@@ -449,9 +451,12 @@ public class NotificationUtil {
                List<ActionItem> items = new ArrayList<>();
                String msg = smsRequests.get(0).getMessage();
                String actionLink = "";
-               if(msg.contains(PT_CORRECTION_PENDING)){
+               if(property.getWorkflow().getAction().equals(CITIZEN_SENDBACK_ACTION)){
             	   
 					String url = config.getApplicationViewFromNotif();//config.getUserEventViewPropertyLink();
+					log.info("CONFIG URL FOR APPLICATION IN LINK::::::"+config.getApplicationViewFromNotif());
+			
+					log.info( "URL FOR APPLICATION IN LINK:::::::::::"+url );
 					if (property.getCreationReason().equals(CreationReason.MUTATION)) {
 						url = config.getUserEventViewMutationLink();
 					}
