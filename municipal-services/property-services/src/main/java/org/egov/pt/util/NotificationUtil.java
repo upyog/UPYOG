@@ -451,7 +451,9 @@ public class NotificationUtil {
                String actionLink = "";
                if(msg.contains(PT_CORRECTION_PENDING)){
             	   
+            	   System.out.println("CONFIG URL FOR APPLICATION IN LINK::::::"+config.getApplicationViewFromNotif());
 					String url = config.getApplicationViewFromNotif();//config.getUserEventViewPropertyLink();
+					log.info( "URL FOR APPLICATION IN LINK:::::::::::"+url );
 					if (property.getCreationReason().equals(CreationReason.MUTATION)) {
 						url = config.getUserEventViewMutationLink();
 					}
