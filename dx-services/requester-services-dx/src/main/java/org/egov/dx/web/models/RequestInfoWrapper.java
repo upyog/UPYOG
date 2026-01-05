@@ -20,6 +20,12 @@ public class RequestInfoWrapper {
 	
 	@JsonProperty("Transaction")
 	private Transaction transaction;
+	
+	@JsonProperty("consumerCode")
+	private String consumerCode;
+	
+	@JsonProperty("module")
+	private String module;
 
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
