@@ -303,6 +303,7 @@ const uploadFiles = async (
       var data = Buffer.concat(chunks);
       fileStoreAPICall(filename, tenantId, data)
         .then((result) => {
+          logger.info('In Filestore call response');
           listOfFilestoreIds.push(result);
           if (!isconsolidated) {
             dbInsertSingleRecords.push({
@@ -911,6 +912,7 @@ export const createAndSave = async (
       moduleName
     ).catch((err) => {
       logger.error(err.stack || err);
+      logger.info('In Created PDF Binay Error');
       errorCallback({
         message: "error occurred in createPdfBinary call: " + (typeof err === "string") ?
           err :

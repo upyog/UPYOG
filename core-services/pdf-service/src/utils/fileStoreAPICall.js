@@ -29,6 +29,8 @@ export const fileStoreAPICall = async function(filename, tenantId, fileData) {
       ...form.getHeaders()
     }
   });
+
+  logger.info('After filestore response');
   return get(response.data, "files[0].fileStoreId");
 };
 
