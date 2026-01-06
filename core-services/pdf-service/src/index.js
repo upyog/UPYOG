@@ -282,6 +282,8 @@ const uploadFiles = async (
     objectCopy.footer = convertFooterStringtoFunctionIfExist(
       formatconfig.footer
     );
+
+     logger.info('In PDF Next Generate');
     const doc = printer.createPdfKitDocument(objectCopy);
     let fileNameAppend = "-" + new Date().getTime();
     // let filename="src/pdfs/"+key+" "+fileNameAppend+".pdf"
@@ -411,8 +413,7 @@ app.post(
       //
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(400);
-      return res.json({
+      return res.status(400).json({
         ResponseInfo: requestInfo,
         message: "some unknown error while creating: " + error.message,
       });
@@ -476,8 +477,7 @@ app.post(
       }
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(400);
-      return res.json({
+      return res.status(400).json({
         message: "some unknown error while creating: " + error.message,
       });
     }
@@ -498,8 +498,7 @@ app.post(
         (jobid == undefined || jobid.trim() == "") &&
         (entityid == undefined || entityid.trim() == "")
       ) {
-        res.status(400);
-        res.json({
+        return res.status(400).json({
           ResponseInfo: requestInfo,
           message: "jobid and entityid both can not be empty",
         });
@@ -521,7 +520,7 @@ app.post(
             // doc successfully created
             res.status(responseBody.status);
             delete responseBody.status;
-            res.json({
+            return res.json({
               ResponseInfo: requestInfo,
               ...responseBody
             });
@@ -530,8 +529,7 @@ app.post(
       }
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(400);
-      res.json({
+      return res.status(400).json({
         ResponseInfo: requestInfo,
         message: "some unknown error while searching: " + error.message,
       });
@@ -545,15 +543,13 @@ app.post(
     let requestInfo;
     try {
       requestInfo = get(req.body, "RequestInfo");
-      res.status(200);
-      res.json({
+      return res.status(200).json({
           ResponseInfo: requestInfo,
           unregisteredLocalisationCodes: unregisteredLocalisationCodes,
         });
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(400);
-      res.json({
+      return res.status(400).json({
         ResponseInfo: requestInfo,
         message: "Error while retreving the codes",
       });
@@ -581,15 +577,13 @@ app.post(
           unregisteredLocalisationCodes.splice(index, 1);
         }
       });
-      res.status(200);
-      res.json({
+      return res.status(200).json({
           ResponseInfo: requestInfo,
           unregisteredLocalisationCodes: unregisteredLocalisationCodes,
         });
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(400);
-      res.json({
+      return res.status(400).json({
         ResponseInfo: requestInfo,
         message: "Error while retreving the codes",
       });
@@ -611,15 +605,13 @@ app.post(
 
       let data = await getBulkPdfRecordsDetails(uuid, offset, limit, jobId);
       if(data.length<=0){
-        res.status(400);
-        res.json({
+        return res.status(400).json({
             ResponseInfo: requestInfo,
             message: `Group bill pdf records details are not present for the employee ${requestInfo.userInfo.name} .Please trigger a bulk bill creation process`,
           });
       }
       else{
-        res.status(200);
-        res.json({
+        return res.status(200).json({
             ResponseInfo: requestInfo,
             groupBillrecords: data,
           });
@@ -628,8 +620,7 @@ app.post(
       
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(400);
-      res.json({
+      return res.status(400).json({
         ResponseInfo: requestInfo,
         message: "Error while retreving the details",
       });
@@ -663,15 +654,13 @@ app.post(
         }
       }
       
-      res.status(200);
-      res.json({
+     return res.status(200).json({
             ResponseInfo: requestInfo,
             Message: "Bulk PDF records details are clear",
       });
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(400);
-      res.json({
+      return res.status(400).json({
         ResponseInfo: requestInfo,
         message: "Error while clearing the Bulk PDF records details",
       });
@@ -689,8 +678,7 @@ app.post(
     try {
 
       if( !jobId || !uuid){
-        res.status(400);
-        res.json({
+        return res.status(400).json({
           ResponseInfo: requestInfo,
           message: "jobid or userid can not be empty",
         });
@@ -698,15 +686,13 @@ app.post(
       else{
         let errorMap = await cancelBulkPdfProcess(requestInfo, jobId, uuid);
         if(errorMap != undefined && errorMap.length>=1){
-          res.status(400);
-          res.json({
+          return res.status(400).json({
               ResponseInfo: requestInfo,
               errorMessage: errorMap,
         });
         }
         else{
-          res.status(200);
-          res.json({
+          return res.status(200).json({
                 ResponseInfo: requestInfo,
                 Message: `Bulk PDF process with job id: ${jobId} is cancel`,
           });
@@ -715,8 +701,7 @@ app.post(
       }
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(400);
-      res.json({
+      return res.status(400).json({
         ResponseInfo: requestInfo,
         message: "Error while clearing the Bulk PDF records details",
       });
@@ -738,15 +723,13 @@ app.post(
 
       let data = await getDefaulterPdfRecordsDetails(uuid, offset, limit, jobId);
       if(data.length<=0){
-        res.status(400);
-        res.json({
+       return res.status(400).json({
             ResponseInfo: requestInfo,
             message: `Defaulter Notice pdf records details are not present for the employee ${requestInfo.userInfo.name} .Please trigger a bulk bill creation process`,
           });
       }
       else{
-        res.status(200);
-        res.json({
+        return res.status(200).json({
             ResponseInfo: requestInfo,
             groupBillrecords: data,
           });
@@ -755,8 +738,7 @@ app.post(
       
     } catch (error) {
       logger.error(error.stack || error);
-      res.status(400);
-      res.json({
+      return res.status(400).json({
         ResponseInfo: requestInfo,
         message: "Error while retreving the details",
       });
@@ -1196,8 +1178,7 @@ const validateRequest = (req, res, key, tenantId, requestInfo) => {
     errorMessage += ` no config found for key ${key}`;
   }
   if (res && errorMessage !== "") {
-    res.status(400);
-    res.json({
+    return res.status(400).json({
       message: errorMessage,
       ResponseInfo: requestInfo,
     });
