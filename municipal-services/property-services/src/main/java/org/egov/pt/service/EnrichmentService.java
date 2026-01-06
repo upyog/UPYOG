@@ -102,7 +102,8 @@ public class EnrichmentService {
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
 
-
+    @Value("${state.level.tenant.id}")
+    private String statetenantid;
 
 
 
@@ -231,7 +232,7 @@ public class EnrichmentService {
 		appeal.setId(UUID.randomUUID().toString());
 		appeal.setAuditDetails(propertyAuditDetails);
 		appeal.setPropertyTenantID(appeal.getTenantId());
-		appeal.setTenantId("mn");
+		appeal.setTenantId(statetenantid);
 		
 		if (!CollectionUtils.isEmpty(appeal.getDocuments()))
 			appeal.getDocuments().forEach(doc -> {
