@@ -69,6 +69,7 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 						.groundofappeal(rs.getString("groundofappeal"))
 						.creationReason(CreationReason.fromValue(rs.getString("creationReason")))
 						.auditDetails(auditdetails)
+						.propertyTenantID(rs.getString("propertytenantid"))
 						.build();
 
 				addDocToAppeal(rs, currentAppeal);
