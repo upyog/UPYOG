@@ -329,7 +329,7 @@ const uploadFiles = async (
             listOfFilestoreIds.length == noOfDefinitions
           ) {
             // insertStoreIds("",);
-            // logger.info("PDF uploaded to filestore");
+             logger.info("PDF uploaded to filestore");
             dbInsertBulkRecords.push({
               jobid,
               id: uuidv4(),
