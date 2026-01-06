@@ -188,7 +188,7 @@ const createPdfBinary = async (
       var dbInsertBulkRecords = [];
       // instead of awaiting the promise, use process.nextTick to asynchronously upload the receipt
       //
-        logger.info('In PDF Generate');
+        //logger.info('In PDF Generate');
       process.nextTick(function () {
         uploadFiles(
             dbInsertSingleRecords,
@@ -283,7 +283,7 @@ const uploadFiles = async (
       formatconfig.footer
     );
 
-     logger.info('In PDF Next Generate');
+     //logger.info('In PDF Next Generate');
     const doc = printer.createPdfKitDocument(objectCopy);
     let fileNameAppend = "-" + new Date().getTime();
     // let filename="src/pdfs/"+key+" "+fileNameAppend+".pdf"
@@ -303,7 +303,7 @@ const uploadFiles = async (
       var data = Buffer.concat(chunks);
       fileStoreAPICall(filename, tenantId, data)
         .then((result) => {
-          logger.info('In Filestore call response');
+          //logger.info('In Filestore call response');
           listOfFilestoreIds.push(result);
           if (!isconsolidated) {
             dbInsertSingleRecords.push({
@@ -329,7 +329,7 @@ const uploadFiles = async (
             listOfFilestoreIds.length == noOfDefinitions
           ) {
             // insertStoreIds("",);
-             logger.info("PDF uploaded to filestore");
+            // logger.info("PDF uploaded to filestore");
             dbInsertBulkRecords.push({
               jobid,
               id: uuidv4(),

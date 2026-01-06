@@ -15,10 +15,7 @@ let externalHost = envVariables.EGOV_EXTERNAL_HOST;
  * @param {*} tenantId - tenantID
  */
 export const fileStoreAPICall = async function(filename, tenantId, fileData) {
-  //logger.info('In Filestore call Generate');
-  
-  // Constructing the URL
-  const url = `${egovFileHost}filestore/v1/files?tenantId=${tenantId}&module=pdfgen&tag=00040-2017-QR`;
+   const url = `${egovFileHost}filestore/v1/files?tenantId=${tenantId}&module=pdfgen&tag=00040-2017-QR`;
 
   // Prepare form data
   const form = new FormData();
@@ -39,9 +36,6 @@ export const fileStoreAPICall = async function(filename, tenantId, fileData) {
       },
     });
 
-    //logger.info('After filestore response');
-
-    // Return the fileStoreId from the response data
     return get(response.data, 'files[0].fileStoreId');
 
   } catch (error) {
