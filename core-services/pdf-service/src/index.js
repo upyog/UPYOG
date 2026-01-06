@@ -188,6 +188,7 @@ const createPdfBinary = async (
       var dbInsertBulkRecords = [];
       // instead of awaiting the promise, use process.nextTick to asynchronously upload the receipt
       //
+        logger.info('In PDF Generate');
       process.nextTick(function () {
         uploadFiles(
             dbInsertSingleRecords,
