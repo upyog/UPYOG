@@ -102,7 +102,8 @@ public class EnrichmentService {
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
 
-
+    @Value("${state.level.tenant.id}")
+    private String statetenantid;
 
 
 
@@ -230,7 +231,9 @@ public class EnrichmentService {
 		AuditDetails propertyAuditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		appeal.setId(UUID.randomUUID().toString());
 		appeal.setAuditDetails(propertyAuditDetails);
-
+		appeal.setPropertyTenantID(appeal.getTenantId());
+		appeal.setTenantId(statetenantid);
+		
 		if (!CollectionUtils.isEmpty(appeal.getDocuments()))
 			appeal.getDocuments().forEach(doc -> {
 				doc.setId(UUID.randomUUID().toString());
@@ -910,7 +913,7 @@ public class EnrichmentService {
 	private void setIdgenIdsForAppeal(AppealRequest request) {
 
 		Appeal appeal = request.getAppeal();
-		String tenantId = appeal.getTenantId();
+		String tenantId = appeal.getPropertyTenantID();
 		RequestInfo requestInfo = request.getRequestInfo();
 
 		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getAppealidname(), config.getAppealidformat(), 1).get(0);
