@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.DashboardDataSearch;
+import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.repository.builder.DashboardDataQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -117,5 +120,24 @@ public class DashboardDataRepository {
 		String query=dashboardDataQueryBuilder.getAdvanceShareQuery(dashboardDataSearch);
 		BigDecimal result = jdbcTemplate.queryForObject(query, BigDecimal.class);
 		return result != null ? result : BigDecimal.ZERO;
+	}
+	
+	public PropertyCriteria getApplicationData(DashboardDataSearch dashboardDataSearch,RequestInfo requestInfo)
+	{
+		PropertyCriteria propertyCriteria=new PropertyCriteria();
+		Map<String, String> resultMap = new HashMap<>();
+		String query = dashboardDataQueryBuilder.getApplicationData(dashboardDataSearch, requestInfo);
+		jdbcTemplate.query(query, rs -> {
+	        while (rs.next()) {
+	            String propertyid = rs.getString("propertyid");
+	            String tenantId = rs.getString("tenantid");
+	            resultMap.put(propertyid, tenantId);
+	        }
+	        return resultMap;
+	    });
+		propertyCriteria.setPropertyIds(resultMap.keySet());
+		propertyCriteria.setTenantIds(new HashSet<String>(resultMap.values()));
+		
+		return propertyCriteria;
 	}
 }

@@ -1276,12 +1276,14 @@ public class EstimationService {
 
 		}
 
-		if (detail.getPropertyType().equals(PT_TYPE_VACANT_LAND) && Boolean.FALSE.equals(commercial.get(0))) {
-			estimates.stream().filter(t -> t.getTaxHeadCode().equalsIgnoreCase(PT_MANDATORY_PAYMENT)).findFirst()
-					.ifPresent(t -> t.setEstimateAmount(BigDecimal.ZERO));
-			totalAmount = totalAmount.subtract(MunicipalLowerLimit);
-			MunicipalLowerLimit = BigDecimal.ZERO;
-		}
+		/*
+		 * if (detail.getPropertyType().equals(PT_TYPE_VACANT_LAND) &&
+		 * Boolean.FALSE.equals(commercial.get(0))) { estimates.stream().filter(t ->
+		 * t.getTaxHeadCode().equalsIgnoreCase(PT_MANDATORY_PAYMENT)).findFirst()
+		 * .ifPresent(t -> t.setEstimateAmount(BigDecimal.ZERO)); totalAmount =
+		 * totalAmount.subtract(MunicipalLowerLimit); MunicipalLowerLimit =
+		 * BigDecimal.ZERO; }
+		 */
 		// false in the argument represents that the demand shouldn't be updated from
 		// this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo, criteria);

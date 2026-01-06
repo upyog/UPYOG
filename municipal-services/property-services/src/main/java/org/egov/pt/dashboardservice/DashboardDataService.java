@@ -453,6 +453,9 @@ public class DashboardDataService {
 	 * // Autosize columns for readability for (int i = 0; i < 5; i++) {
 	 * sheet.autoSizeColumn(i); } }
 	 */
-
+	public List<Property> applicationData(DashboardDataSearch dashboardDataSearch,RequestInfo requestInfo)
+	{
+		return propertyService.searchProperty(dashboardDataRepository.getApplicationData(dashboardDataSearch, requestInfo), requestInfo);
+	}
 
 }

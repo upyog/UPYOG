@@ -454,9 +454,7 @@ public class NotificationUtil {
                if(property.getWorkflow().getAction().equals(CITIZEN_SENDBACK_ACTION)){
             	   
 					String url = config.getApplicationViewFromNotif();//config.getUserEventViewPropertyLink();
-					log.info("CONFIG URL FOR APPLICATION IN LINK::::::"+config.getApplicationViewFromNotif());
-			
-					log.info( "URL FOR APPLICATION IN LINK:::::::::::"+url );
+
 					if (property.getCreationReason().equals(CreationReason.MUTATION)) {
 						url = config.getUserEventViewMutationLink();
 					}
