@@ -386,8 +386,7 @@ app.post(
         res,
         (response) => {
           // doc successfully created
-          res.status(201);
-          res.json({
+          return res.status(201).json({
             ResponseInfo: requestInfo,
             message: response.message,
             filestoreIds: response.filestoreIds,
@@ -402,9 +401,7 @@ app.post(
           });
         },
         (error) => {
-          res.status(400);
-          // doc creation error
-          res.json({
+          return res.status(400).json({
             ResponseInfo: requestInfo,
             message: "error in createPdfBinary " + error.message,
           });
@@ -414,7 +411,7 @@ app.post(
     } catch (error) {
       logger.error(error.stack || error);
       res.status(400);
-      res.json({
+      return res.json({
         ResponseInfo: requestInfo,
         message: "some unknown error while creating: " + error.message,
       });
@@ -479,7 +476,7 @@ app.post(
     } catch (error) {
       logger.error(error.stack || error);
       res.status(400);
-      res.json({
+      return res.json({
         message: "some unknown error while creating: " + error.message,
       });
     }
