@@ -15,7 +15,7 @@
   <description>egov indexer framework</description>
   <url>http://maven.apache.org</url>
   <properties>
-    <log4j2.version>2.17.1</log4j2.version>
+    <log4j2.version>2.21.1</log4j2.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,7 +46,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.4</version>
+      <version>3.14.0</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
-      <version>9.22.3</version>
+      <version>10.7.1</version>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>

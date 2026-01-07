@@ -7,7 +7,7 @@
     <version>2.9.0-SNAPSHOT</version>
     <properties>
         <kafka.version>3.1.1</kafka.version>
-        <log4j2.version>2.17.1</log4j2.version>
+        <log4j2.version>2.21.1</log4j2.version>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
