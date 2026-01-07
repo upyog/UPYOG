@@ -117,6 +117,12 @@ public class eMudraController {
     @RequestMapping(value = "/filestoreId/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<TransactionResponse> searchSignedFilestore(@RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam Map<String, String> params) {
 
+    	Transaction transaction=new Transaction();
+    	if(requestInfoWrapper.getTransaction()==null) {
+    		transaction.setConsumerCode(requestInfoWrapper.getConsumerCode());
+    		transaction.setModule(requestInfoWrapper.getModule());
+			requestInfoWrapper.setTransaction(transaction);
+    	}
 		List<Transaction> transactions = esignService.getSignedFilestore(requestInfoWrapper.getRequestInfo(), requestInfoWrapper.getTransaction());
 		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), null);
 
@@ -126,4 +132,5 @@ public class eMudraController {
 
     }
 }
+
     
