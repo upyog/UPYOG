@@ -3,8 +3,10 @@ package org.egov.waterconnection.web.models;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.*;
 
 /**
  * ConnectionCategory

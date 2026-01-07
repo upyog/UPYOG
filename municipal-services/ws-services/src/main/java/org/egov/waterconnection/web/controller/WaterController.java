@@ -1,8 +1,6 @@
 package org.egov.waterconnection.web.controller;
 
 import java.util.List;
-import javax.validation.Valid;
-
 import org.egov.tracer.model.CustomException;
 import org.egov.waterconnection.service.WaterEncryptionService;
 import org.egov.waterconnection.web.models.RequestInfoWrapper;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

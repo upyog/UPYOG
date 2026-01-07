@@ -7,7 +7,6 @@ import org.egov.tl.web.models.AuditDetails;
 import org.egov.tl.web.models.Document;
 import org.egov.tl.web.models.Institution;
 import org.egov.tl.web.models.OwnerInfo;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 
 import javax.validation.Valid;
@@ -29,15 +28,15 @@ import java.util.List;
 public class Property {
 
 	@JsonProperty("acknowldgementNumber")
-	@SafeHtml
+	                 
 	private String acknowldgementNumber;
 
 	@JsonProperty("propertyType")
-	@SafeHtml
+	                 
 	private String propertyType;
 
 	@JsonProperty("ownershipCategory")
-	@SafeHtml
+	                 
 	private String ownershipCategory;
 
 	@JsonProperty("owners")
@@ -48,7 +47,7 @@ public class Property {
 	private Institution institution;
 
 	@JsonProperty("usageCategory")
-	@SafeHtml
+	                 
 	private String usageCategory;
 
 	@Max(value = 500)

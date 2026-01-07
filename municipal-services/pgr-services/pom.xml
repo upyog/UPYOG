@@ -6,7 +6,7 @@
     <name>pgr-services</name>
     <version>2.9.0-Snapshot</version>
     <properties>
-        <log4j2.version>2.17.1</log4j2.version>
+        <log4j2.version>2.21.1</log4j2.version>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>6.0.16.Final</version>
+            <version>8.0.1.Final</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.10.2</version>
+            <version>1.17.2</version>
         </dependency>
         <dependency>
             <groupId>org.egov.services</groupId>

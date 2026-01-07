@@ -1,15 +1,13 @@
 package org.egov.waterconnection.web.models.workflow;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
 import org.egov.waterconnection.web.models.AuditDetails;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModel;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -38,17 +36,17 @@ import java.util.List;
 public class State   {
 
         @Size(max=256)
-        @SafeHtml
+          
         @JsonProperty("uuid")
         private String uuid;
 
         @Size(max=256)
-        @SafeHtml
+          
         @JsonProperty("tenantId")
         private String tenantId;
 
         @Size(max=256)
-        @SafeHtml
+          
         @JsonProperty("businessServiceId")
         private String businessServiceId;
 
@@ -56,12 +54,12 @@ public class State   {
         private Long sla;
 
         @Size(max=256)
-        @SafeHtml
+          
         @JsonProperty("state")
         private String state;
 
         @Size(max=256)
-        @SafeHtml
+          
         @JsonProperty("applicationStatus")
         private String applicationStatus;
 
