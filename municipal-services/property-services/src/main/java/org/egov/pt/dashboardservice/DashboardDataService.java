@@ -109,6 +109,7 @@ public class DashboardDataService {
 		revenue.setPenaltyShare(dashboardDataRepository.getPenaltyShareAmount(dashboardDataSearch));
 		revenue.setInterestShare(dashboardDataRepository.getInterestShareAmount(dashboardDataSearch));
 		revenue.setAdvanceShare(dashboardDataRepository.getAdvanceShareAmount(dashboardDataSearch));
+		revenue.setTaxCollectedProperties(dashboardDataRepository.getTotalTaxCollectedProperties(dashboardDataSearch));
 		
 		dashboardData.setServices(services);
 		dashboardData.setRevenue(revenue);
