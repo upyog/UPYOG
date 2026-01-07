@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.bpa.web.model.AuditDetails.AuditDetailsBuilder;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -36,19 +35,19 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @Builder
 public class LandInfo   {
-  @SafeHtml
+
   @JsonProperty("id")
   private String id = null;
 
-  @SafeHtml
+
   @JsonProperty("landUId")
   private String landUId = null;
 
-  @SafeHtml
+
   @JsonProperty("landUniqueRegNo")
   private String landUniqueRegNo = null;
 
-  @SafeHtml
+
   @JsonProperty("tenantId")
   private String tenantId = null;
 
@@ -58,7 +57,7 @@ public class LandInfo   {
   @JsonProperty("address")
   private Address address = null;
 
-  @SafeHtml
+
   @JsonProperty("ownershipCategory")
   private String ownershipCategory = null;
 

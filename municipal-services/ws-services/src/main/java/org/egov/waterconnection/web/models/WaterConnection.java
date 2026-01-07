@@ -2,10 +2,7 @@ package org.egov.waterconnection.web.models;
 
 import java.util.Objects;
 
-import javax.validation.constraints.Size;
-
 import lombok.*;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,11 +23,11 @@ public class WaterConnection extends Connection {
 
 
 
-	@SafeHtml
+	                      
 	@JsonProperty("waterSource")
 	private String waterSource = null;
 
-	@SafeHtml
+	                      
 	@JsonProperty("meterId")
 	private String meterId = null;
 

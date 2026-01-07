@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.web.model.AuditDetails.AuditDetailsBuilder;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,23 +26,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Boundary   {
-  @SafeHtml
+
   @JsonProperty("code")
   private String code = null;
 
-  @SafeHtml
+
   @JsonProperty("name")
   private String name = null;
 
-  @SafeHtml
+
   @JsonProperty("label")
   private String label = null;
 
-  @SafeHtml
+
   @JsonProperty("latitude")
   private String latitude = null;
 
-  @SafeHtml
+
   @JsonProperty("longitude")
   private String longitude = null;
 
@@ -51,7 +50,7 @@ public class Boundary   {
   @Valid
   private List<Boundary> children = null;
 
-  @SafeHtml
+
   @JsonProperty("materializedPath")
   private String materializedPath = null;
 

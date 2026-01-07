@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.egov.bpa.web.model.landInfo.LandInfo;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,43 +29,43 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class BPA   {
-  @SafeHtml
+ 
   @JsonProperty("id")
   private String id = null;
 
-  @SafeHtml
+
   @JsonProperty("applicationNo")
   private String applicationNo = null;
 
-  @SafeHtml
+
   @JsonProperty("approvalNo")
   private String approvalNo = null;
 
-  @SafeHtml
+
   @JsonProperty("accountId")
   private String accountId = null;
 
-  @SafeHtml
+
   @JsonProperty("edcrNumber")
   private String edcrNumber = null;
 
-  @SafeHtml
+
   @JsonProperty("applicationType")
   private String applicationType = null;
 
-  @SafeHtml
+
   @JsonProperty("riskType")
   private String riskType = null;
   
-  @SafeHtml
+
   @JsonProperty("businessService")
   private String businessService = null;
 
-  @SafeHtml
+
   @JsonProperty("landId")
   private String landId = null;
 
-  @SafeHtml
+
   @JsonProperty("tenantId")
   private String tenantId = null;
 
@@ -76,7 +75,7 @@ public class BPA   {
   @JsonProperty("applicationDate")
   private Long applicationDate = null;
   
-  @SafeHtml
+ 
   @JsonProperty("status")
   private String status = null;
 

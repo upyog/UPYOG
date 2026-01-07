@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.egov.tl.web.models.AuditDetails;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -28,7 +27,7 @@ import javax.validation.constraints.*;
 public class Document   {
 
         @Size(max=64)
-        @SafeHtml
+                          
         @JsonProperty("id")
         private String id;
 
@@ -36,22 +35,22 @@ public class Document   {
         private Boolean active;
 
         @Size(max=64)
-        @SafeHtml
+                          
         @JsonProperty("tenantId")
         private String tenantId = null;
 
         @Size(max=64)
-        @SafeHtml
+                          
         @JsonProperty("documentType")
         private String documentType = null;
 
         @Size(max=64)
-        @SafeHtml
+                          
         @JsonProperty("fileStoreId")
         private String fileStoreId = null;
 
         @Size(max=64)
-        @SafeHtml
+                          
         @JsonProperty("documentUid")
         private String documentUid;
 

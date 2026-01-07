@@ -2,12 +2,11 @@ package org.egov.waterconnection.web.models;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.egov.common.contract.response.ResponseInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
