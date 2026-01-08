@@ -104,12 +104,38 @@ public class StorageService {
 		List<Artifact> artifacts = new ArrayList<>();
 		Artifact artifact = null;
 		for (MultipartFile file : files) {
-			String randomString = RandomStringUtils.random(filenameLength, useLetters, useNumbers);
-			String orignalFileName = file.getOriginalFilename();
-			String imagetype = FilenameUtils.getExtension(orignalFileName);
-			String fileName = folderName + orignalFileName+System.currentTimeMillis() + randomString + "." +imagetype;
+			/*
+			 * String randomString = RandomStringUtils.random(filenameLength, useLetters,
+			 * useNumbers); String orignalFileName = file.getOriginalFilename(); String
+			 * imagetype = FilenameUtils.getExtension(orignalFileName); String fileName =
+			 * folderName + orignalFileName.split("\\.")[0]+System.currentTimeMillis() +
+			 * randomString + "." +imagetype;
+			 */
+			
+			String randomString = RandomStringUtils.random(
+	                filenameLength, useLetters, useNumbers);
+
+	        String originalFileName = file.getOriginalFilename();
+	        if (originalFileName == null) {
+	            originalFileName = "file";
+	        }
+
+	        // Extract base name safely (handles multiple dots)
+	        String baseName = FilenameUtils.getBaseName(originalFileName);
+	        baseName = baseName.replaceAll("[^a-zA-Z0-9_-]", "_");
+
+	        String imagetype = FilenameUtils.getExtension(originalFileName);
+
+	        String fileName = folderName
+	                + baseName
+	                + "_"
+	                + System.currentTimeMillis()
+	                + "_"
+	                + randomString
+	                + (imagetype.isEmpty() ? "" : "." + imagetype);
+
 			log.info("::::::::randomString:::::::::"+randomString);
-			log.info("::::::::orignalFileName:::::::::"+orignalFileName);
+			log.info("::::::::orignalFileName:::::::::"+originalFileName);
 			log.info("::::::::imagetype:::::::::"+imagetype);
 			log.info("::::::::fileName:::::::::"+fileName)
 			;
