@@ -67,6 +67,11 @@
       <artifactId>spring-boot-starter-test</artifactId>
     </dependency>
     <dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.0</version>
@@ -74,12 +79,12 @@
     <dependency>
       <groupId>org.egov</groupId>
       <artifactId>mdms-client</artifactId>
-      <version>2.9.0-SNAPSHOT</version>
+      <version>0.0.3-SNAPSHOT</version>
     </dependency>
       <dependency>
           <groupId>org.egov.services</groupId>
           <artifactId>tracer</artifactId>
-          <version>2.9.0-SNAPSHOT</version>
+          <version>1.1.5-SNAPSHOT</version>
           <scope>compile</scope>
       </dependency>
   </dependencies>
