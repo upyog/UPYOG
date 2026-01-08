@@ -87,6 +87,17 @@ public class eMudraController {
     @RequestMapping("/process")
     public ResponseEntity<String> processPDF(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) throws URISyntaxException {
         try {
+			Transaction transaction=new Transaction();
+        	if(requestInfoWrapper.getTransaction()==null) {
+        		transaction.setConsumerCode(requestInfoWrapper.getConsumerCode());
+        		transaction.setModule(requestInfoWrapper.getModule());
+        		transaction.setFileStoreId(requestInfoWrapper.getFileStoreId());
+           		transaction.setPdfUrl(requestInfoWrapper.getPdfUrl());
+        		transaction.setTenantId(requestInfoWrapper.getTenantId());
+        		transaction.setRedirectUrl(requestInfoWrapper.getRedirectUrl());
+        		requestInfoWrapper.setTransaction(transaction);
+
+        	}
             String responseUrl = esignService.processPDF(requestInfoWrapper);
             return new ResponseEntity<>(responseUrl, HttpStatus.OK);
         } catch (IOException e) {
