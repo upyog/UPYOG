@@ -498,7 +498,7 @@ public class PropertyService {
 			throw new CustomException("EG_PT_PROPERTY_AUDIT_ERROR", "Audit can only be provided for a single propertyId");
 		}
 
-		if (!criteria.getIsRequestForDuplicatePropertyValidation() && (criteria.getDoorNo() != null || criteria.getOldPropertyId() != null)) {
+		if (!criteria.getIsRequestForDuplicatePropertyValidation() && ( criteria.getOldPropertyId() != null)) {
 			properties = fuzzySearchService.getProperties(requestInfo, criteria);
 		} else {
 			if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
