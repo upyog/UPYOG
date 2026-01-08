@@ -107,8 +107,13 @@ public class StorageService {
 			String randomString = RandomStringUtils.random(filenameLength, useLetters, useNumbers);
 			String orignalFileName = file.getOriginalFilename();
 			String imagetype = FilenameUtils.getExtension(orignalFileName);
-			//String fileName = folderName + System.currentTimeMillis() + randomString + "." +imagetype;
-			String fileName = orignalFileName;
+			String fileName = folderName + orignalFileName+System.currentTimeMillis() + randomString + "." +imagetype;
+			log.info("::::::::randomString:::::::::"+randomString);
+			log.info("::::::::orignalFileName:::::::::"+orignalFileName);
+			log.info("::::::::imagetype:::::::::"+imagetype);
+			log.info("::::::::fileName:::::::::"+fileName)
+			;
+		//	String fileName = orignalFileName;
 			String fileSource = null;
 			String id = this.idGeneratorService.getId();
 			if(isAlfrescoEnabled) {
