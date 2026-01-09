@@ -14,8 +14,7 @@
     "packages/modules/engagement",
     "packages/modules/fsm",
     "packages/modules/vendor",
-    "packages/modules/pt",
-    "packages/modules/asset"
+    "packages/modules/pt"
   ],
   "license": "MIT",
   "private": true,
@@ -60,7 +59,7 @@
     "dev:pgrai": "cd packages/modules/pgrai && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
-    "build:asset": "cd packages/modules/asset && yarn build",
+    "buildD:asset": "cd packages/modules/asset && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
     "build:pt": "cd packages/modules/pt && yarn build",

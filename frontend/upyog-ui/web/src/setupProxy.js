@@ -26,7 +26,8 @@ module.exports = function (app) {
     "/asset-services/v1/disposal/_create",
     "/requester-services-dx",
     "/bpa-services/v1/preapprovedplan/_search",
-    "/bpa-calculator/_estimate"
+    "/bpa-calculator/_estimate",
+    "/requester-services-dx/eSign/filestoreId/v1/_search"
   ].forEach((location) =>
     app.use(location, createProxy)
   );
