@@ -77,7 +77,7 @@ import org.springframework.util.CollectionUtils;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.context.annotation.Lazy;
 @Data
 @Slf4j
 @Service
@@ -93,6 +93,7 @@ public class UserEventsService {
 	private ResponseInfoFactory responseInfo;
 
 	@Autowired
+	@Lazy
 	private UserEventsValidator validator;
 
 	@Autowired
