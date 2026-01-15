@@ -84,6 +84,7 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
             // CRITICAL FIX: Check mixed-mode whitelist before throwing 401
             // This matches Zuul behavior where mixed-mode endpoints allow anonymous access
         	log.info("Mixed endpoints: "+mixedModeEndpointsWhitelist.toString());
+        	log.info("endPointPath: "+endPointPath);
             if (mixedModeEndpointsWhitelist.contains(endPointPath)) {
                 log.info(ROUTING_TO_ANONYMOUS_ENDPOINT_MESSAGE, endPointPath);
                 exchange.getAttributes().put(AUTH_BOOLEAN_FLAG_NAME, Boolean.FALSE);
