@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.example.gateway.config.ApplicationProperties;
 import com.example.gateway.utils.UserUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,7 +27,9 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
-
+	
+	private ApplicationProperties applicationProperties;
+	
     public static final String AUTH_TOKEN_RETRIEVE_FAILURE_MESSAGE = "Retrieving of auth token failed";
     public static final String ROUTING_TO_ANONYMOUS_ENDPOINT_MESSAGE = "Routing to anonymous endpoint: {}";
     public static final String ROUTING_TO_PROTECTED_ENDPOINT_RESTRICTED_MESSAGE =
@@ -38,11 +41,14 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
     private ObjectMapper objectMapper;
 
     private UserUtils userUtils;
-    public AuthPreCheckFilterHelper(List<String> openEndpointsWhitelist, List<String> mixedModeEndpointsWhitelist,
-                                    ObjectMapper objectMapper, UserUtils userUtils) {
+    public AuthPreCheckFilterHelper(ApplicationProperties applicationProperties, List<String> openEndpointsWhitelist, 
+    		List<String> mixedModeEndpointsWhitelist, ObjectMapper objectMapper, UserUtils userUtils) {
 
-        this.openEndpointsWhitelist = openEndpointsWhitelist;
-        this.mixedModeEndpointsWhitelist = mixedModeEndpointsWhitelist;
+//        this.openEndpointsWhitelist = openEndpointsWhitelist;
+//        this.mixedModeEndpointsWhitelist = mixedModeEndpointsWhitelist;
+    	this.applicationProperties = applicationProperties;
+        this.openEndpointsWhitelist = applicationProperties.getOpenEndpointsWhitelist();
+        this.mixedModeEndpointsWhitelist = applicationProperties.getMixedModeEndpointsWhitelist();
         this.objectMapper = objectMapper;
     }
 
