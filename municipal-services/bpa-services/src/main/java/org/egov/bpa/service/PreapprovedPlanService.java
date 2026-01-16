@@ -65,7 +65,7 @@ public class PreapprovedPlanService {
 	 * @return List of bpa for the given criteria
 	 */
 	public List<PreapprovedPlan> getPreapprovedPlanFromCriteria(PreapprovedPlanSearchCriteria criteria) {
-		criteria.setTenantId(stateLevelTenantID);
+		criteria.setTenantId(null);
 		List<PreapprovedPlan> preapprovedPlans = repository.getPreapprovedPlansData(criteria);
 		if (preapprovedPlans.isEmpty())
 			return Collections.emptyList();
