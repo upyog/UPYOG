@@ -40,6 +40,9 @@ import FloatingButton from "./FloatingButton";
 import Receipt from "./Receipt";
 import ShareButton from "./ShareButton";
 import Tooltip from "./Tooltip";
+import UsernameFieldWithIcon from "./UsernameFieldWithIcon";
+import MobileNumberFieldNew from "./MobileNumberFieldNew";
+import TextFieldNew from "egov-ui-kit/components/TextFieldNew";
 
 export {
   Label,
@@ -85,5 +88,8 @@ export {
   ShareButton,
   CommonShare,
   FloatingButton,
+  UsernameFieldWithIcon,
+  MobileNumberFieldNew,
+  TextFieldNew
 };
 

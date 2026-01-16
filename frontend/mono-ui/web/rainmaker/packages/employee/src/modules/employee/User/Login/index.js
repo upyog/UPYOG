@@ -4,12 +4,14 @@ import { Banner } from "modules/common";
 import LoginForm from "./components/LoginForm";
 import { connect } from "react-redux";
 import get from "lodash/get";
+import { banner1, banner2, banner3, banner4 } from "egov-ui-kit/common/common/Header/components/AppBar/bannerImages";
 
 const LoginFormHOC = formHoc({ formKey: "employeeLogin" })(LoginForm);
 
 const Login = ({ bannerUrl, logoUrl }) => {
+  let allImages = [banner1, banner2, banner3, banner4];
   return (
-    <Banner hideBackButton={false} bannerUrl={bannerUrl} logoUrl={logoUrl}>
+    <Banner hideBackButton={false} bannerUrl={allImages} logoUrl={logoUrl}>
       <LoginFormHOC logoUrl={logoUrl} />
     </Banner>
   );
