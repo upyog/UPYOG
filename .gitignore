@@ -8,7 +8,7 @@ core-services/egov-user/src/main/resources/application.properties
 *.properties
 core-services/zuul/src/main/resources/routes.properties
 core-services/zuul/src/main/resources/routes.properties
-
+build/build-config.yml
 ######ADDED FOR STAGE ISSUE SHOULD BE REMOVED IN PROD##########################
 /build/
 *.xml

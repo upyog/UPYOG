@@ -99,6 +99,18 @@ public class DashboardDataQueryBuilder {
 			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n"
 			+ "WHERE ept.txn_status = 'SUCCESS' AND epp.status = 'ACTIVE'";
 	
+	public static final String TOTAL_TAX_COLLECTED_PROPERTIES ="SELECT \r\n"
+			+ "   ept.txn_id , ept.txn_amount , ept.consumer_code , ept.tenant_id \r\n"
+			+ "FROM eg_pt_property epp\r\n"
+			+ "JOIN eg_pt_address epa \r\n"
+			+ "    ON epp.id = epa.propertyid\r\n"
+			+ "JOIN eg_pg_transactions ept \r\n"
+			+ "    ON epp.propertyid = ept.consumer_code\r\n"
+			+ "JOIN egcl_payment ep \r\n"
+			+ "    ON ept.txn_id = ep.transactionnumber\r\n"
+			+ "WHERE ept.txn_status = 'SUCCESS'\r\n"
+			+ "  AND epp.status = 'ACTIVE'";
+	
 	public static final String PROPERTY_TAX_SHARE="SELECT SUM(ep.totalamountpaid) * 5.0 / 8 as PROPERTY_TAX\r\n"
 			+ "FROM eg_pt_property epp\r\n"
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
@@ -451,6 +463,40 @@ public class DashboardDataQueryBuilder {
 	public String getTotalTaxCollectedQuery(DashboardDataSearch dashboardDataSearch) {
 
 		StringBuilder stringBuilder = new StringBuilder(TOTAL_TAX_COLLECTED);
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		stringBuilder.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
+			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
+			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			stringBuilder.append(" AND epa.ward_no != ''");
+		}
+
+		return stringBuilder.toString();
+	}
+	
+	public String getTotalTaxCollectedPropertiesQuery(DashboardDataSearch dashboardDataSearch) {
+
+		StringBuilder stringBuilder = new StringBuilder(TOTAL_TAX_COLLECTED_PROPERTIES);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
