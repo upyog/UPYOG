@@ -14,6 +14,7 @@ import org.apache.http.HttpRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.user.config.PasswordChangeProperties;
 import org.egov.user.domain.exception.*;
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
@@ -132,6 +133,9 @@ public class UserService {
 
 	@Autowired
 	private RedisTemplate<String, String> redisTemplate;
+	 @Autowired
+	 private  PasswordChangeProperties passChangeProperties;
+	   
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -530,6 +534,8 @@ public class UserService {
 		String newDecryptedPass = null;
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 		updatePasswordRequest.validate();
+		//if(!updatePasswordRequest.isSelfUpdate())
+		//validateUserPassUpdateRole(updatePasswordRequest);
 		final User user = getUniqueUser(updatePasswordRequest.getUserName(), updatePasswordRequest.getTenantId(),
 				updatePasswordRequest.getType());
 
@@ -539,6 +545,10 @@ public class UserService {
 			throw new InvalidUpdatePasswordRequestException();
 
 		try {
+			//LOCAL
+			//existingDecryptedPass = updatePasswordRequest.getExistingPassword();//decrypt(updatePasswordRequest.getExistingPassword(), null);
+			//newDecryptedPass = updatePasswordRequest.getNewPassword();//decrypt(updatePasswordRequest.getNewPassword(), null);
+			
 			existingDecryptedPass = decrypt(updatePasswordRequest.getExistingPassword(), null);
 			newDecryptedPass = decrypt(updatePasswordRequest.getNewPassword(), null);
 		} catch (Exception e) {
@@ -562,6 +572,18 @@ public class UserService {
 
 		user.updatePassword(encryptPwd(loggedInUserUpdatePasswordRequest.getNewPassword()));
 		userRepository.update(user, user, user.getId(), user.getUuid());
+	}
+	
+	private void validateUserPassUpdateRole(LoggedInUserUpdatePasswordRequest updatePasswordRequest) {
+		
+		List<String> userRoles = updatePasswordRequest.getRequestInfo().getUserInfo().getRoles().stream()
+				.filter(r -> "MN".equalsIgnoreCase(r.getTenantId())).map(r -> r.getCode()).collect(Collectors.toList());
+		boolean allowed = userRoles.stream().anyMatch(r -> passChangeProperties.getAllowedRoles().contains(r));
+
+		if (!allowed) {
+			throw new CustomException("INVALID_ROLE", "User not allowed to change password for another user");
+		}
+		 
 	}
 
 	/**

@@ -50,4 +50,10 @@ public class PasswordController {
 
         return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
     }
+    
+    @PostMapping("/_updateEmployee")
+    public UpdatePasswordResponse _updateEmployee(@RequestBody @Valid LoggedInUserUpdatePasswordRequest request) {
+        userService.updatePasswordForLoggedInUser(request.toDomain());
+        return new UpdatePasswordResponse(ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build());
+    }
 }
