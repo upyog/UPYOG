@@ -280,9 +280,9 @@ public class DashboardDataQueryBuilder {
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			stringBuilder.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			stringBuilder.append(" AND epadd.ward_no != ''");
 		}
 		
 		String finalQuery = PROPERTIES_APPROVED.replace("/*FILTER_CONDITIONS*/", stringBuilder.toString());
