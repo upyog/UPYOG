@@ -110,8 +110,8 @@ const Notifications = ({ notifications = [], history }) => {
                     return (
                       <div
                         onClick={() => {
-                          if(button.route.includes("digit-ui")){
-                            window.location.href=`${button.route.startsWith('digit-ui')?'/':""}${button.route}`;
+                          if(button.route.includes("upyog-ui")){
+                            window.location.href=`${button.route.startsWith('upyog-ui')?'/':""}${button.route}`;
                           }else{
                             history.push(button.route);
                           }
