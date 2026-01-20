@@ -12,12 +12,12 @@ const enabledModulesInDigitUI = ["fsm","mCollect","ws","noc","obps","national-fi
 const useStyles = makeStyles(styles);
 
 function handleNavigation(page) {
-  if (page && page.includes && page.includes('digit-ui')) {
-    window.location.href = page.startsWith('/digit') ? page : `/${page}`;
+  if (page && page.includes && page.includes('upyog-ui')) {
+    window.location.href = page.startsWith('/upyog') ? page : `/${page}`;
     return;
   } else if (page && page.includes && enabledModulesInDigitUI.includes(page)) {
     let homeWindow=window.parent;
-    homeWindow.open(`/digit-ui/employee/dss/dashboard/${page}`, '_self')
+    homeWindow.open(`/upyog-ui/employee/dss/dashboard/${page}`, '_self')
     return;
   } else {
     history.push(`${process.env.PUBLIC_URL}/` + page);
