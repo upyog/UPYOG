@@ -294,7 +294,7 @@ public class DashboardDataQueryBuilder {
 		stringBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			stringBuilder.append(" AND ep.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
@@ -330,7 +330,7 @@ public class DashboardDataQueryBuilder {
 		stringBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			stringBuilder.append(" AND ep.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
