@@ -111,7 +111,7 @@
 					<artifactId>kafka-clients</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency> 
 		
 		 
 			
