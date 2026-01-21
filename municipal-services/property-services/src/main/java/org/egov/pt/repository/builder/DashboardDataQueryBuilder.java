@@ -67,7 +67,7 @@ public class DashboardDataQueryBuilder {
 	
 	public static final String PROPERTIES_REJECTED = "WITH approved AS (\r\n"
 			+ "  SELECT \r\n"
-			+ "    COUNT(ewpv.businessid) AS approved_count,\r\n"
+			+ "    COUNT(ewpv.businessid) AS rejected_count,\r\n"
 			+ "    ep.tenantid,\r\n"
 			+ "    epadd.ward_no\r\n"
 			+ "  FROM eg_wf_processinstance_v2 ewpv\r\n"
@@ -80,7 +80,7 @@ public class DashboardDataQueryBuilder {
 			+ "  /*FILTER_CONDITIONS*/\n" 
 			+ "  GROUP BY ep.tenantid, epadd.ward_no\r\n"
 			+ ")\r\n"
-			+ "SELECT SUM(approved.approved_count) AS total_approved_count\r\n"
+			+ "SELECT SUM(approved.rejected_count) AS total_rejected_count\r\n"
 			+ "FROM approved";
 
 	public static final String PROPERTIES_SELF_ASSESSED = "select COUNT(epp.propertyid) AS count\r\n"
