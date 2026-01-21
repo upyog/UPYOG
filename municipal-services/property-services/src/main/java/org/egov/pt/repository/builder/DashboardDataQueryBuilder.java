@@ -80,7 +80,7 @@ public class DashboardDataQueryBuilder {
 			+ "  /*FILTER_CONDITIONS*/\n" 
 			+ "  GROUP BY ep.tenantid, epadd.ward_no\r\n"
 			+ ")\r\n"
-			+ "SELECT SUM(approved.rejected_count) AS total_rejected_count\r\n"
+			+ "SELECT SUM(rejected.rejected_count) AS total_rejected_count\r\n"
 			+ "FROM rejected";
 
 	public static final String PROPERTIES_SELF_ASSESSED = "select COUNT(epp.propertyid) AS count\r\n"
