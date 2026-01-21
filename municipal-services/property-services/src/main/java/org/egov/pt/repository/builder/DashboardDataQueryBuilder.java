@@ -274,7 +274,7 @@ public class DashboardDataQueryBuilder {
 	
 	public String getTotalPropertyApprovedQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(PROPERTIES_APPROVED);
+		StringBuilder stringBuilder = new StringBuilder();
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -310,7 +310,7 @@ public class DashboardDataQueryBuilder {
 	
 	public String getTotalPropertyRejectedQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(PROPERTIES_REJECTED);
+		StringBuilder stringBuilder = new StringBuilder();
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
