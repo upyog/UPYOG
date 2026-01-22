@@ -232,7 +232,7 @@ public class EnrichmentService {
 		appeal.setId(UUID.randomUUID().toString());
 		appeal.setAuditDetails(propertyAuditDetails);
 		appeal.setPropertyTenantID(appeal.getTenantId());
-		appeal.setTenantId(statetenantid);
+		//appeal.setTenantId(statetenantid);
 		
 		if (!CollectionUtils.isEmpty(appeal.getDocuments()))
 			appeal.getDocuments().forEach(doc -> {
@@ -913,7 +913,8 @@ public class EnrichmentService {
 	private void setIdgenIdsForAppeal(AppealRequest request) {
 
 		Appeal appeal = request.getAppeal();
-		String tenantId = appeal.getPropertyTenantID();
+		//String tenantId = appeal.getPropertyTenantID();
+		String tenantId = appeal.getTenantId();
 		RequestInfo requestInfo = request.getRequestInfo();
 
 		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getAppealidname(), config.getAppealidformat(), 1).get(0);
