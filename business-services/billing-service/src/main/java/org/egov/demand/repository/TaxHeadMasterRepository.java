@@ -11,7 +11,12 @@ import static org.egov.demand.util.Constants.TAXHEADMASTER_ISDEBIT_FILTER;
 import static org.egov.demand.util.Constants.TAXHEADMASTER_NAME_FILTER;
 import static org.egov.demand.util.Constants.TAXHEADMASTER_SERVICE_FILTER;
 import static org.egov.demand.util.Constants.TAXHEAD_MASTERNAME;
-
+import static org.egov.demand.util.Constants.FINANCE_TAXHEADMASTER_SERVICE_FILTER;
+import static org.egov.demand.util.Constants.FINANCE_MODULE_NAME;
+import static org.egov.demand.util.Constants.FINANCE_TAXHEAD_MASTERNAME;
+import static org.egov.demand.util.Constants.FINANCE_TAXHEADMASTER_NAME_FILTER;
+import static org.egov.demand.util.Constants.FINANCE_TAXHEADMASTER_EXPRESSION;
+import static org.egov.demand.util.Constants.FINANCE_MDMS_NO_FILTER_TAXHEADMASTER;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.demand.model.TaxHeadMaster;
 import org.egov.demand.model.TaxHeadMasterCriteria;
+import org.egov.demand.model.TaxHeadMasterFinance;
 import org.egov.demand.util.Util;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +108,66 @@ public class TaxHeadMasterRepository {
 			jsonPath = MDMS_NO_FILTER_TAXHEADMASTER;
 
 		return mapper.convertValue(documentContext.read(jsonPath), new TypeReference<List<TaxHeadMaster>>() {
+		});
+	}
+	
+	public List<TaxHeadMasterFinance> getTaxHeadMasterFinance(RequestInfo requestInfo, TaxHeadMasterCriteria taxHeadMasterCriteria) {
+
+		String filter = null;
+		if (null != taxHeadMasterCriteria.getService())
+			filter = FINANCE_TAXHEADMASTER_SERVICE_FILTER.replace("{}", taxHeadMasterCriteria.getService());
+
+		MdmsCriteriaReq mdmsCriteriaReq = util.prepareMdMsRequest(taxHeadMasterCriteria.getTenantId(), FINANCE_MODULE_NAME,
+				Collections.singletonList(FINANCE_TAXHEAD_MASTERNAME), filter, requestInfo);
+
+		DocumentContext documentContext = util.getAttributeValues(mdmsCriteriaReq);
+
+		StringBuilder filterExpression = new StringBuilder();
+
+		if (taxHeadMasterCriteria.getName() != null) {
+			filterExpression.append(FINANCE_TAXHEADMASTER_NAME_FILTER.replace("VAL", taxHeadMasterCriteria.getName()));
+		}
+
+		if (taxHeadMasterCriteria.getId() != null && !taxHeadMasterCriteria.getId().isEmpty()) {
+			if (filterExpression.length() != 0)
+				filterExpression.append(" && ");
+			filterExpression
+					.append(TAXHEADMASTER_IDS_FILTER.replace("VAL", util.getStringVal(taxHeadMasterCriteria.getId())));
+		}
+		if (!CollectionUtils.isEmpty(taxHeadMasterCriteria.getCode())) {
+			if (filterExpression.length() != 0)
+				filterExpression.append(" && ");
+			filterExpression.append(
+					FINANCE_TAXHEADMASTER_NAME_FILTER.replace("VAL", util.getStringVal(taxHeadMasterCriteria.getCode())));
+		}
+
+		if (!StringUtils.isEmpty(taxHeadMasterCriteria.getCategory())) {
+			if (filterExpression.length() != 0)
+				filterExpression.append(" && ");
+			filterExpression.append(TAXHEADMASTER_CATEGORY_FILTER.replace("VAL", taxHeadMasterCriteria.getCategory()));
+		}
+
+		if (taxHeadMasterCriteria.getIsActualDemand() != null) {
+			if (filterExpression.length() != 0)
+				filterExpression.append(" && ");
+			filterExpression.append(TAXHEADMASTER_ISACTUALAMOUNT_FILTER.replace("VAL",
+					taxHeadMasterCriteria.getIsActualDemand().toString()));
+		}
+
+		if (taxHeadMasterCriteria.getIsDebit() != null) {
+			if (filterExpression.length() != 0)
+				filterExpression.append(" && ");
+			filterExpression
+					.append(TAXHEADMASTER_ISDEBIT_FILTER.replace("VAL", taxHeadMasterCriteria.getIsDebit().toString()));
+		}
+
+		String jsonPath;
+		if (filterExpression.length() != 0)
+			jsonPath = FINANCE_TAXHEADMASTER_EXPRESSION.replace("EXPRESSION", filterExpression.toString());
+		else
+			jsonPath = FINANCE_MDMS_NO_FILTER_TAXHEADMASTER;
+
+		return mapper.convertValue(documentContext.read(jsonPath), new TypeReference<List<TaxHeadMasterFinance>>() {
 		});
 	}
 }

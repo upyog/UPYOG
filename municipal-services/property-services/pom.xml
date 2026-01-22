@@ -111,23 +111,43 @@
 					<artifactId>kafka-clients</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency> 
+		
+		 
+		
+			
+			<!-- for sheduler-->
+			<dependency>
+		      <groupId>org.quartz-scheduler</groupId>
+		      <artifactId>quartz</artifactId>
+		     <!-- <version>2.3.0</version> -->
+	    </dependency>
+	    <dependency>
+		      <groupId>org.quartz-scheduler</groupId>
+		      <artifactId>quartz-jobs</artifactId>
+		    <!--  <version>2.3.0</version> -->
+	    </dependency>
+	        <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency> 
+		<!-- end for sheduler-->
 	</dependencies>
 	<repositories>
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov ERP Releases Repository</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+			<url>https://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
 		</repository>
 		<repository>
 			<id>repo.egovernments.org.snapshots</id>
 			<name>eGov ERP Releases Repository</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+			<url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>repo.egovernments.org.public</id>
 			<name>eGov Public Repository Group</name>
-			<url>https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>
+			<url>https://nexus-repo.digit.org/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 	<build>

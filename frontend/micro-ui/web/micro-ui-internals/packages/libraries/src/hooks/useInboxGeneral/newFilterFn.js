@@ -35,7 +35,7 @@ export const filterFunctions = {
       workflowFilters.businessService = services;
     }
     searchFilters["isInboxSearch"] = true;
-    searchFilters["creationReason"] = ["CREATE", "MUTATION", "UPDATE"];
+    searchFilters["creationReason"] = ["CREATE","MUTATION", "UPDATE", "AMALGAMATION","BIFURCATION"]; //, "MUTATION", "UPDATE"
     workflowFilters["moduleName"] = "PT";
 
     // if (limit) {

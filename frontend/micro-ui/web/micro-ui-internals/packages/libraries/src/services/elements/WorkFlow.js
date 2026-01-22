@@ -118,8 +118,8 @@ export const WorkflowService = {
     if (workflow && workflow.ProcessInstances) {
       const processInstances = workflow.ProcessInstances;
       const nextStates = processInstances[0]?.nextActions.map((action) => ({ action: action?.action, nextState: processInstances[0]?.state.uuid }));
-      const nextActions = nextStates.map((id) => ({
-        action: id.action,
+      const nextActions = nextStates?.map((id) => ({
+        action: id?.action,
         state: businessServiceResponse?.find((state) => state.uuid === id.nextState),
       }));
 

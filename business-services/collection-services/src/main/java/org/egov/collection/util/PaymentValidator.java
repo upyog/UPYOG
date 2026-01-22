@@ -86,6 +86,10 @@ public class PaymentValidator {
     public Payment validatePaymentForCreate(PaymentRequest paymentRequest) {
         Map<String, String> errorMap = new HashMap<>();
         Payment payment = paymentRequest.getPayment();
+	log.info("payment request time {}",System.currentTimeMillis());
+        log.info("payment request {}",paymentRequest.getPayment().getTransactionNumber());
+        log.info("payment request {}",paymentRequest);    
+
         List<PaymentDetail> paymentDetails = paymentRequest.getPayment().getPaymentDetails();
         validateUserInfo(paymentRequest.getRequestInfo(), errorMap);
         validateInstrument(paymentRequest.getPayment(),errorMap);
@@ -95,7 +99,7 @@ public class PaymentValidator {
                 .offset(0).limit(applicationProperties.getReceiptsSearchDefaultLimit()).billIds(billIds).build();
 
         List<Payment> payments = paymentRepository.fetchPayments(criteria);
-        if (!payments.isEmpty()) {
+        if (!CollectionUtils.isEmpty(payments)) {
             validateIPaymentForBillPresent(payments,errorMap);
         }
 
@@ -144,7 +148,7 @@ public class PaymentValidator {
      * @param errorMap   Map of errors occurred during validations
      */
     private void validateIPaymentForBillPresent(List<Payment> payments, Map<String, String> errorMap) {
-        log.info("receipt present");
+        log.info("receipt present:::"+payments);
         for (Payment payment : payments) {
             String paymentStatus = payment.getInstrumentStatus().toString();
             if (paymentStatus.equalsIgnoreCase(APPROVED.toString())
@@ -392,9 +396,12 @@ public class PaymentValidator {
             errorMap.put("INVALID_PAYMENTDETAIL", "The amount to be paid is less than amount due");
 
         // In case of advance payment checks if it is allowed in bill
-        if ((bill.getIsAdvanceAllowed() == null || !bill.getIsAdvanceAllowed())
-                && paymentDetail.getTotalAmountPaid().compareTo(bill.getTotalAmount()) == 1)
-            errorMap.put("INVALID_PAYMENTDETAIL", "The amount to be paid is more than amount due");
+		/*
+		 * if ((bill.getIsAdvanceAllowed() == null || !bill.getIsAdvanceAllowed()) &&
+		 * paymentDetail.getTotalAmountPaid().compareTo(bill.getTotalAmount()) == 1)
+		 * errorMap.put("INVALID_PAYMENTDETAIL",
+		 * "The amount to be paid is more than amount due");
+		 */
 
         // Checks if the payment mode is allowed by the bill
         if (!CollectionUtils.isEmpty(bill.getCollectionModesNotAllowed())

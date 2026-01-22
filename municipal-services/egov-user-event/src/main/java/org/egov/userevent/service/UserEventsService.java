@@ -54,6 +54,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.userevent.*;
 import org.egov.userevent.config.PropertiesManager;
 import org.egov.userevent.model.AuditDetails;
 import org.egov.userevent.model.LATWrapper;
@@ -70,10 +71,14 @@ import org.egov.userevent.web.contract.EventRequest;
 import org.egov.userevent.web.contract.EventResponse;
 import org.egov.userevent.web.contract.EventSearchCriteria;
 import org.egov.userevent.web.contract.NotificationCountResponse;
+import org.egov.userevent.web.contract.User;
 import org.egov.userevent.web.validator.UserEventsValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -82,6 +87,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserEventsService {
+
+
+	private final RestTemplate restTemplate;
+
+	@Value("${egov.user.details.endpoint}")
+	private String authServiceUri;
+
+	@Value("${egov.user.host}")
+	private String authServiceHost;
 
 	@Autowired
 	private PropertiesManager properties;
@@ -291,7 +305,7 @@ public class UserEventsService {
 			if (types.size() == 1 && types.contains(UserEventsConstants.MEN_MDMS_EVENTSONGROUND_CODE)) {
 				Collections.sort(events, Event.getFromDateComparatorForEvents()); // on fromDate - custom comparator.
 			} // searching for only EVENTSONGROUND which returns events and their
-				// counter-events with a different sorted order.
+			// counter-events with a different sorted order.
 		} else {
 			List<Event> counterEvents = events.stream().filter(obj -> !StringUtils.isEmpty(obj.getReferenceId()))
 					.collect(Collectors.toList());
@@ -336,7 +350,7 @@ public class UserEventsService {
 							tobeAdded = true;
 						}
 					}
-					
+
 					if((null != event.getEventDetails().getFromDate()) && (null != event.getEventDetails().getToDate())) {
 						if(event.getEventDetails().getFromDate().equals(event.getEventDetails().getToDate())) {
 							Long dateInSecs = event.getEventDetails().getFromDate() / 1000;
@@ -353,7 +367,7 @@ public class UserEventsService {
 						}// UI sends EOD epoch, which makes fromDate and toDate same incase of 1 day event, which is why the range is manually calculated. Fix at UI needed.
 					}
 				}// BROADCASTs are ACTIVE only between the given from and to date, they're INACTIVE beyond that.
-				
+
 				else {
 					if(null != event.getEventDetails().getToDate()) {
 						if((event.getEventDetails().getToDate() < new Date().getTime())) {
@@ -362,7 +376,7 @@ public class UserEventsService {
 						}
 					}
 				}
-				
+
 				if(tobeAdded) {
 					event.setInternallyUpdted(true);
 					eventsTobeUpdated.add(event);
@@ -509,7 +523,7 @@ public class UserEventsService {
 				auditDetails.setLastModifiedBy(request.getRequestInfo().getUserInfo().getUuid());
 				auditDetails.setLastModifiedTime(new Date().getTime());
 			}
-			
+
 
 			event.setAuditDetails(auditDetails);
 
@@ -562,6 +576,36 @@ public class UserEventsService {
 				utils.buildRecepientListForSearch(criteria);
 			}
 		}
+		
+		if(requestInfo.getUserInfo()==null)
+		{
+			String authToken=requestInfo.getAuthToken();
+			String authURL = String.format("%s%s", authServiceHost, authServiceUri);
+			final HttpHeaders headers = new HttpHeaders();
+			headers.add("access_token", authToken);
+			User user=restTemplate.postForObject(authURL, headers, User.class);
+			System.out.println(user);
+			org.egov.common.contract.request.User u = new org.egov.common.contract.request.User();
+			u.setEmailId(user.getEmailId());
+			u.setId(user.getId());
+			u.setMobileNumber(user.getMobileNumber());
+			u.setName(user.getName());
+			List<Role> r = new ArrayList<>();
+			for(org.egov.userevent.web.contract.Role rl : user.getRoles()) {
+				Role rln = new Role();
+				rln.setCode(rl.getCode());
+				//rln.setId(rl.getCode());
+				rln.setName(rl.getName());
+				r.add(rln);
+			}
+			u.setRoles(r);
+			u.setType(user.getType());
+			requestInfo.setUserInfo(u);
+			String userid=user.getId().toString();
+			List<String> userids = new ArrayList<String>(Arrays.asList(userid));
+			criteria.setUserids(userids);
+		}
+		
 
 		log.info("recepeients: " + criteria.getRecepients());
 		log.info("Search Criteria: " + criteria);
