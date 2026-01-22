@@ -58,6 +58,13 @@ public class DashboardDataRepository {
 		return result != null ? result : BigInteger.ZERO;
 	}
 	
+	public BigInteger getTotalPropertyRejectedCount(DashboardDataSearch dashboardDataSearch)
+	{
+		String query=dashboardDataQueryBuilder.getTotalPropertyRejectedQuery(dashboardDataSearch);
+		BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
+		return result != null ? result : BigInteger.ZERO;
+	}
+	
 	public BigInteger getTotalPropertySelfassessedCount(DashboardDataSearch dashboardDataSearch)
 	{
 		String query=dashboardDataQueryBuilder.getTotalPropertySelfassessedQuery(dashboardDataSearch);
