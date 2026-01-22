@@ -26,6 +26,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.common.entity.edcr.PlanInformation;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
@@ -105,6 +106,9 @@ public class EdcrApplication extends AbstractAuditable {
     private transient Map<String, List<Object>> mdmsMasterData;
 
     private transient String deviationStatus;
+
+    @SafeHtml
+    private String tenantId;
 
     @Override
     public Long getId() {
@@ -314,6 +318,12 @@ public class EdcrApplication extends AbstractAuditable {
 
     public void setDeviationStatus(String deviationStatus) {
         this.deviationStatus = deviationStatus;
+    }
+      public String getTenantId() {
+        return tenantId;
+    }
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
 }
