@@ -29,7 +29,7 @@ class EGFFinance extends Component {
     finEnv = this.globalConfigExists() ? window.globalConfigs.getConfig("FIN_ENV") : process.env.REACT_APP_FIN_ENV;
     // Preparing finance subdomain url using the above environment name and the domain url
     subdomainurl = !!(finEnv) ? "-" + finEnv + "." + domainurl : "." + domainurl;
-    erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + subdomainurl + menuUrl;
+    erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + "." + hostname + menuUrl;
 
     return (
       <div>
