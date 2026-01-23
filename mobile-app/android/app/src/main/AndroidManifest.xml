@@ -38,7 +38,7 @@
     <application
         android:label="UPYOG"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon1"
+        android:icon="@mipmap/launcher_icon"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
         <activity
