@@ -42,6 +42,7 @@ import CommonShareContainer from "./CommonShareContainer";
 import UpdateMobile from 'egov-ui-kit/common/propertyTax/UpdateMobile/updateMobile';
 import VerifyMobile  from 'egov-ui-kit/common/propertyTax/AlternateMobile';
 import WarningPopup  from 'egov-ui-kit/common/propertyTax/AlternateMobile/warningPopup';
+import UsernameFieldWithIcon from "egov-ui-kit/components/UsernameFieldWithIcon";
 
 
 export {
@@ -90,5 +91,6 @@ export {
   Receipt,
   ShareButton,
   CommonShareContainer,
+  UsernameFieldWithIcon
 };
 
