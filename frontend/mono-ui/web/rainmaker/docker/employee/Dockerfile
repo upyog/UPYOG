@@ -1,8 +1,8 @@
 
-FROM upyogio/alpine-node-builder-12:yarn AS build
+FROM node:14.20.0-alpine AS build
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=1792"
+ENV NODE_OPTIONS "--max-old-space-size=8192"
 
 # copy the project files
 COPY ${WORK_DIR} .
