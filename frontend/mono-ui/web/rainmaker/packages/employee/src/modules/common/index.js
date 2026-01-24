@@ -1,6 +1,7 @@
 //common components
 import Banner from "egov-ui-kit/common/common/Banner";
 import CityPicker from "egov-ui-kit/common/common/CityPicker";
+import CityPickerNew from "egov-ui-kit/common/common/CityPickerNew";
 import ErrorScreen from "egov-ui-kit/common/common/ErrorScreen";
 import Footer from "egov-ui-kit/common/common/Footer";
 import Header from "egov-ui-kit/common/common/Header";
@@ -48,6 +49,7 @@ import YearDialogue from "egov-ui-kit/common/propertyTax/YearDialogue";
 export {
   Banner,
   CityPicker,
+  CityPickerNew,
   ErrorScreen,
   Footer,
   Header,
