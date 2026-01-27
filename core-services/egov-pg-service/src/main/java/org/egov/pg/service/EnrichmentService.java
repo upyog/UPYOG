@@ -5,17 +5,27 @@ import static java.util.Collections.singletonMap;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
+
+import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.constants.TransactionAdditionalFields;
 import org.egov.pg.models.AuditDetails;
 import org.egov.pg.models.BankAccount;
+import org.egov.pg.models.Refund;
+import org.egov.pg.models.Refund.RefundStatusEnum;
+import org.egov.pg.models.RefundRequest;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.BankAccountRepository;
+import org.egov.pg.repository.TransactionRepository;
+import org.egov.pg.web.models.TransactionCriteria;
 import org.egov.pg.web.models.TransactionRequest;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -34,13 +44,15 @@ public class EnrichmentService {
     private BankAccountRepository bankAccountRepository;
     private ObjectMapper objectMapper;
     private UserService userService;
+    private TransactionRepository transactionRepository;
 
     @Autowired
-    EnrichmentService(IdGenService idGenService, BankAccountRepository bankAccountRepository, ObjectMapper objectMapper, UserService userService) {
+    EnrichmentService(IdGenService idGenService, BankAccountRepository bankAccountRepository, ObjectMapper objectMapper, UserService userService,TransactionRepository transactionRepository) {
         this.idGenService = idGenService;
         this.bankAccountRepository = bankAccountRepository;
         this.objectMapper = objectMapper;
         this.userService = userService;
+        this.transactionRepository=transactionRepository;
     }
 
     void enrichCreateTransaction(TransactionRequest transactionRequest) {
@@ -107,5 +119,41 @@ public class EnrichmentService {
         newTxn.setReceipt(currentTxnStatus.getReceipt());
 
     }
+
+	public void enrichInitiateRefundRequest(@Valid RefundRequest refundRequest) {
+		 RequestInfo requestInfo = refundRequest.getRequestInfo();
+		 Refund refund = refundRequest.getRefund();
+		 
+		 refund.setId(UUID.randomUUID().toString());
+		 // Generate ID from ID Gen service and assign to refund object
+		 setIdFromIdGen(refundRequest);
+		 setConsumerCode(refund);
+		 refund.setStatus(Refund.RefundStatusEnum.PENDING);
+		 
+		 AuditDetails auditDetails = AuditDetails.builder()
+	                .createdBy(requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null)
+	                .createdTime(System.currentTimeMillis())
+	                .build();
+	        refund.setAuditDetails(auditDetails);
+	}
+
+	private void setConsumerCode(Refund refund) {
+		TransactionCriteria criteria = TransactionCriteria.builder().txnId(refund.getOriginalTxnId()).build();
+		List<Transaction> statuses = transactionRepository.fetchTransactions(criteria);
+
+		if (statuses == null || statuses.isEmpty()) {
+		    throw new CustomException("TXN_NOT_FOUND", "No transaction found for given criteria");
+		}
+
+		String consumerCode = statuses.get(0).getConsumerCode();
+        refund.setConsumerCode(consumerCode);
+
+	}
+
+	private void setIdFromIdGen(@Valid RefundRequest refundRequest) {
+		// TODO Auto-generated method stub
+		String refundId = idGenService.generateRefundId(refundRequest);
+		refundRequest.getRefund().setRefundId(refundId);
+	}
 
 }

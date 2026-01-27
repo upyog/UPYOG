@@ -1,10 +1,14 @@
 package org.egov.pg.service.gateways.nttdata;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.egov.pg.models.Refund;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
 import org.egov.tracer.model.CustomException;
@@ -39,6 +43,9 @@ public class NttdataGateway implements Gateway {
 
     private final String ORIGINAL_RETURN_URL_KEY;
     private final String REDIRECT_URL;
+    private final String REFUND_API;
+    private final String REFUND_MERCHANT_ID;
+    private final String ATOM_TRANSACTION_ID;
     private RestTemplate restTemplate;
 
     @Autowired
@@ -53,7 +60,9 @@ public class NttdataGateway implements Gateway {
         MERCHANT_PATH_STATUS = environment.getRequiredProperty("nttdata.gateway.url.status");
         REDIRECT_URL = environment.getRequiredProperty("nttdata.redirect.url");
         ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("nttdata.original.return.url.key");
-        
+        REFUND_API = environment.getRequiredProperty("nttdata.refund.url");
+        REFUND_MERCHANT_ID=environment.getRequiredProperty("nttdata.refund.merchant.id");
+        ATOM_TRANSACTION_ID=environment.getRequiredProperty("nttdata.refund.atom.txn.id");
     }
 
     public ResponseParser decryptData(String encData)
@@ -347,5 +356,105 @@ public class NttdataGateway implements Gateway {
         // TODO Auto-generated method stub
         return null;
     }
+
+    
+    @Override
+	public Refund initiateRefund(Refund refundRequest) {
+		try {
+			Gson gson = new Gson();
+			String password = "Test@123";
+			String atomTxnId = ATOM_TRANSACTION_ID;
+			String merchantId = REFUND_MERCHANT_ID;
+			String currency = "INR";
+			String api = "REFUNDINIT";
+			String source = "OTS";
+			String merchantTxnId = refundRequest.getOriginalTxnId();
+
+			MerchDetails merchDetails = new MerchDetails();
+			merchDetails.setMerchId(merchantId);
+			merchDetails.setMerchTxnId(merchantTxnId);
+			merchDetails.setPassword(password);
+			merchDetails.setAtomTxnId(atomTxnId);
+
+			PayDetails payDetails = new PayDetails();
+			payDetails.setTxnCurrency(currency);
+			List<ProdDetails> prodDetailsList = new ArrayList<>();
+			ProdDetails prodDetails = new ProdDetails();
+			prodDetails.setProdRefundId(refundRequest.getRefundId());
+			prodDetails.setProdName(refundRequest.getConsumerCode());
+			prodDetails.setProdRefundAmount(Double.valueOf((refundRequest.getRefundAmount())));
+			prodDetailsList.add(prodDetails);
+			payDetails.setProdDetails(prodDetailsList);
+			double totalRefundAmount = calculateTotalRefundAmount(prodDetailsList);
+			payDetails.setTotalRefundAmount(totalRefundAmount);
+
+			// merchId + password + merchTxnId + total amount + txnCurrency + api
+			String signature = merchantId + password + merchantTxnId + totalRefundAmount + currency + api;
+			payDetails.setSignature(AtomSignature.generateSignature("KEY1234567234", signature));
+
+			HeadDetails headDetails = new HeadDetails();
+			headDetails.setApi(api);
+			headDetails.setSource(source);
+
+			PayInstrument payInstrument = new PayInstrument();
+
+			payInstrument.setMerchDetails(merchDetails);
+			payInstrument.setPayDetails(payDetails);
+			payInstrument.setHeadDetails(headDetails);
+
+			RefundTransaction refundTxn = new RefundTransaction();
+			refundTxn.setPayInstrument(payInstrument);
+
+			String refundJson = gson.toJson(refundTxn);
+			// Encrypt
+			String encryptedData, decryptedData = "";
+			String decryptResponsee = "";
+			String serverResp = "";
+			encryptedData = AuthEncryption.getAuthEncrypted(refundJson, "7813E3E5E93548B096675AC27FE2C850");
+
+			serverResp = AipayService.processRefund(merchantId, encryptedData, REFUND_API);
+			if ((serverResp != null) && (serverResp.startsWith("encData"))) {
+				decryptResponsee = serverResp.split("\\&merchId=")[0];
+				String decryptResponse = decryptResponsee.split("encData=")[1];
+
+				System.out.println("serrResp---: " + decryptResponse);
+
+				decryptedData = AuthEncryption.getAuthDecrypted(decryptResponse, "58BE879B7DD635698764745511C704AB");
+				System.out.println("DecryptedData------: " + decryptedData);
+				if (!decryptedData.contains("OTS0000"))
+					throw new CustomException(null, "Response from Fetch API is " + decryptedData);
+				ResponseParser resp = objectMapper.readValue(decryptedData, ResponseParser.class);
+				return transformRawRefundResponse(resp, refundRequest);
+
+			} else {
+				String errorDescription = "Something Went Wrong!";
+				System.out.println(errorDescription);
+				throw new CustomException(null, "Auth API response is not Valid!! ");
+
+			}
+
+		} catch (Exception e) {
+			log.error("Refund failed", e);
+			throw new CustomException("REFUND_ERROR", "Refund initiation failed");
+		}
+	}
+	
+	private Refund transformRawRefundResponse(ResponseParser resp, Refund refundRequest) {
+		
+		return null;
+	}
+
+	private double calculateTotalRefundAmount(List<ProdDetails> prodDetailsList) {
+
+		if (prodDetailsList == null || prodDetailsList.isEmpty()) {
+			throw new CustomException("TOTAL_REFUND_AMOUNT_ERROR", "Product refund details cannot be empty");
+		}
+		BigDecimal total = prodDetailsList.stream().map(ProdDetails::getProdRefundAmount).map(BigDecimal::valueOf)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		return total.doubleValue();
+	}
+
+
 
 }

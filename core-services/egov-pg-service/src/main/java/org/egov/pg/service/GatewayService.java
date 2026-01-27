@@ -3,6 +3,7 @@ package org.egov.pg.service;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.GatewayStatus;
+import org.egov.pg.models.Refund;
 import org.egov.pg.models.Transaction;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +115,14 @@ public class GatewayService {
         log.info(GATEWAY_MAP.toString());
         log.info(TXN_IDS_KEY_SET.toString());
     }
+
+	public Refund initiateRefund(Refund refundTxn) {
+		 if (!isGatewayActive(refundTxn.getGateway()))
+	            throw new CustomException("INVALID_PAYMENT_GATEWAY", "Invalid or inactive payment gateway provided");
+		 Gateway gateway = getGateway(refundTxn.getGateway());
+		 return gateway.initiateRefund(refundTxn);
+		
+	}
 
 
 }
