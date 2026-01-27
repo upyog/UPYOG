@@ -1582,8 +1582,10 @@ public class CreateVoucher {
         Fund fundByCode = fundDAO.fundByCode(headerdetails.get(VoucherConstant.FUNDCODE).toString());
         cVoucherHeader.setFundId(fundByCode);
 
+		LOGGER.info("======================Voucher Number====================");
+		LOGGER.info(headerdetails.get(VoucherConstant.VOUCHERNUMBER));
         // Generate voucher number if not provided
-        if (headerdetails.get(VoucherConstant.VOUCHERNUMBER) != null)
+        if (headerdetails.get(VoucherConstant.VOUCHERNUMBER) != null && headerdetails.get(VoucherConstant.VOUCHERNUMBER) != "")
             cVoucherHeader.setVoucherNumber(headerdetails.get(VoucherConstant.VOUCHERNUMBER).toString());
         else {
             VouchernumberGenerator v = beanResolver.getAutoNumberServiceFor(VouchernumberGenerator.class);
