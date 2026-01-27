@@ -84,7 +84,7 @@ public class VouchernumberGeneratorImpl implements VouchernumberGenerator {
         sequenceName = "sq_" + vh.getFundId().getIdentifier() + "_" + vh.getVoucherNumberPrefix() + "_" + fiscalPeriod.getName();
         final Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 
-        voucherNumber = String.format("%s/%s/%08d/%02d/%s", vh.getFundId().getIdentifier(), vh.getVoucherNumberPrefix(),
+        voucherNumber = String.format("%s/%s/%08d/%02d/%s", vh.getFundId().getId(), vh.getVoucherNumberPrefix(),
                 nextSequence, vh.getVoucherDate().getMonth() + 1, fiscalPeriod.getcFinancialYear().getFinYearRange());
 
         return voucherNumber;
