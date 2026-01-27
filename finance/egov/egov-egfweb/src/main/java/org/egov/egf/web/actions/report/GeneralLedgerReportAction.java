@@ -224,13 +224,9 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 			glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?",
 					generalLedgerReportBean.getGlCode1());
 			if (generalLedgerReportBean.getFund_id().isEmpty()) {
-<<<<<<< HEAD
+
 				fund = (Fund) persistenceService.find("from Fund where id = ?",Long.valueOf("0"));
-=======
 
-				fund = (Fund) persistenceService.find("from Fund where id = ?", Long.valueOf("0"));
-
->>>>>>> master-LTS
 			} else
 				fund = (Fund) persistenceService.find("from Fund where id = ?",
 						Long.valueOf(generalLedgerReportBean.getFund_id()));
@@ -333,3 +329,4 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         }
 
 }
+
