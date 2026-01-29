@@ -60,4 +60,6 @@ public interface Gateway {
     String generateRedirectFormData(Transaction transaction );
     
     Refund initiateRefund(Refund refundTxn);
+
+	Refund fetchRefundStatus(Refund refundRequest);
 }

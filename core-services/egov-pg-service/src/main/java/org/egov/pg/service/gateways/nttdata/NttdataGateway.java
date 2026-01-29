@@ -5,6 +5,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class NttdataGateway implements Gateway {
     private final String REDIRECT_URL;
     private final String REFUND_API;
     private final String REFUND_MERCHANT_ID;
-    private final String ATOM_TRANSACTION_ID;
+    private final String REFUND_STATUS_API;
     private RestTemplate restTemplate;
 
     @Autowired
@@ -62,7 +63,7 @@ public class NttdataGateway implements Gateway {
         ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("nttdata.original.return.url.key");
         REFUND_API = environment.getRequiredProperty("nttdata.refund.url");
         REFUND_MERCHANT_ID=environment.getRequiredProperty("nttdata.refund.merchant.id");
-        ATOM_TRANSACTION_ID=environment.getRequiredProperty("nttdata.refund.atom.txn.id");
+        REFUND_STATUS_API=environment.getRequiredProperty("nttdata.refund.url.status");
     }
 
     public ResponseParser decryptData(String encData)
@@ -363,7 +364,7 @@ public class NttdataGateway implements Gateway {
 		try {
 			Gson gson = new Gson();
 			String password = "Test@123";
-			String atomTxnId = ATOM_TRANSACTION_ID;
+			String atomTxnId = refundRequest.getOriginalTxnId();
 			String merchantId = REFUND_MERCHANT_ID;
 			String currency = "INR";
 			String api = "REFUNDINIT";
@@ -440,8 +441,198 @@ public class NttdataGateway implements Gateway {
 	}
 	
 	private Refund transformRawRefundResponse(ResponseParser resp, Refund refundRequest) {
-		
-		return null;
+		Refund.RefundStatusEnum status;
+
+		if (resp != null && resp.getPayInstrument() != null) {
+			if (resp.getPayInstrument().get(0).getResponseDetails().getStatusCode().equals("OTS0000")
+					|| resp.getPayInstrument().get(0).getResponseDetails().getStatusCode().equals("OTS0001")) {
+				status = Refund.RefundStatusEnum.SUCCESS;
+
+				return Refund.builder().refundId(refundRequest.getRefundId()).status(status)
+						.refundAmount(
+								String.valueOf(resp.getPayInstrument().get(0).getPayDetails().getTotalRefundAmount()))
+						.originalTxnId(refundRequest.getOriginalTxnId())
+						.gatewayStatusCode(resp.getPayInstrument().get(0).getResponseDetails().getStatusCode())
+						.gatewayTxnId(resp.getPayInstrument().get(0).getPayDetails().getAtomTxnId())
+						.gatewayStatusMsg(resp.getPayInstrument().get(0).getResponseDetails().getDescription())
+						.build();
+			} else {
+				if (resp.getPayInstrument().get(0).getResponseDetails().getStatusCode().equals("OTS0551"))
+					status = Refund.RefundStatusEnum.PENDING;
+				 else 
+					status = Refund.RefundStatusEnum.FAILURE;
+				return Refund.builder().refundId(refundRequest.getRefundId()).status(status)
+						.refundAmount(
+								String.valueOf(resp.getPayInstrument().get(0).getPayDetails().getTotalRefundAmount()))
+						.originalTxnId(refundRequest.getOriginalTxnId())
+						.gatewayStatusCode(resp.getPayInstrument().get(0).getResponseDetails().getStatusCode())
+						.gatewayTxnId(resp.getPayInstrument().get(0).getPayDetails().getAtomTxnId())
+						.gatewayStatusMsg(resp.getPayInstrument().get(0).getResponseDetails().getDescription())
+						.build();
+			}
+		} else {
+			log.error("Some Error Occured in Status API Call");
+			throw new CustomException(null, "Some Error Occured in token API Call");
+		}
+	}
+	
+	@Override
+	public Refund fetchRefundStatus(Refund refundRequest) {
+
+	    try {
+	        Gson gson = new Gson();
+
+	        String merchantId = REFUND_MERCHANT_ID;
+	        String api = "REFUNDSTATUS";
+	        String source = "OTS_ARS";
+
+	        // Atom transaction id (original payment txn id)
+	        String atomTxnId = refundRequest.getOriginalTxnId();
+
+	        
+	        String password = "Test@123";
+	        String encodedPassword = generateBase64Password(password);
+
+	      
+	        MerchDetails merchDetails = new MerchDetails();
+	        merchDetails.setMerchId(merchantId);
+	        merchDetails.setPassword(encodedPassword);
+
+	        ProdDetails prodDetails = new ProdDetails();
+	        prodDetails.setProdName(refundRequest.getConsumerCode());
+
+	        List<ProdDetails> prodDetailsList = new ArrayList<>();
+	        prodDetailsList.add(prodDetails);
+
+	        PayDetails payDetails = new PayDetails();
+	        payDetails.setAtomTxnId(atomTxnId);
+	        payDetails.setProdDetails(prodDetailsList);
+	       
+	        HeadDetails headDetails = new HeadDetails();
+	        headDetails.setApi(api);
+	        headDetails.setSource(source);
+	       
+	        PayInstrument payInstrument = new PayInstrument();
+	        payInstrument.setHeadDetails(headDetails);
+	        payInstrument.setMerchDetails(merchDetails);
+	        payInstrument.setPayDetails(payDetails);
+	       
+	        RefundTransaction refundTxn = new RefundTransaction();
+	        refundTxn.setPayInstrument(payInstrument);
+
+	        String statusRequestJson = gson.toJson(refundTxn);
+	        log.info("Refund Status Request JSON: {}", statusRequestJson);
+
+	        
+	        String encryptedData = AuthEncryption.getAuthEncrypted(
+	                statusRequestJson,
+	                "7813E3E5E93548B096675AC27FE2C850"
+	        );
+
+	       
+	        String serverResp = AipayService.getTransactionStatus(
+	                merchantId,
+	                encryptedData,
+	                REFUND_STATUS_API
+	        );
+
+	        if (serverResp == null || !serverResp.startsWith("encData")) {
+	            throw new CustomException(null, "Invalid response from Refund Status API");
+	        }
+
+	     
+	        String encData = serverResp.split("\\&merchId=")[0]
+	                .replace("encData=", "");
+
+	        String decryptedData = AuthEncryption.getAuthDecrypted(
+	                encData,
+	                "58BE879B7DD635698764745511C704AB"
+	        );
+
+	        log.info("Refund Status Decrypted Response: {}", decryptedData);
+
+	        ResponseParser response =
+	                objectMapper.readValue(decryptedData, ResponseParser.class);
+
+	        return transformRefundStatusResponse(response, refundRequest);
+
+	    } catch (Exception e) {
+	        log.error("Refund status fetch failed", e);
+	        throw new CustomException("REFUND_STATUS_ERROR", "Failed to fetch refund status");
+	    }
+	}
+
+
+	private Refund transformRefundStatusResponse(ResponseParser resp, Refund currentRefund) {
+
+	    if (resp == null || resp.getPayInstrument() == null) {
+	        log.error("Null response received from Refund Status API");
+	        throw new CustomException(null, "Invalid response from Refund Status API");
+	    }
+
+	    Refund.RefundStatusEnum status;
+	    String statusCode = resp.getPayInstrument().get(0).getResponseDetails().getStatusCode();
+	    String statusMsg = resp.getPayInstrument().get(0).getResponseDetails().getMessage();
+
+	    // Status mapping
+	    if ("OTS0000".equalsIgnoreCase(statusCode)) {
+	        status = Refund.RefundStatusEnum.SUCCESS;
+
+	    } else if ("OTS0551".equalsIgnoreCase(statusCode)) {
+
+	        status = Refund.RefundStatusEnum.PENDING;
+
+	    } else {
+	        status = Refund.RefundStatusEnum.FAILURE;
+	    }
+
+	   
+	    String refundTxnId = null;
+	    String refundAmt = null;
+
+	    try {
+	        if (resp.getPayInstrument().get(0).getRefundStatusDetails() != null
+	                && resp.getPayInstrument().get(0).getRefundStatusDetails().getRefundDetails() != null
+	                && !resp.getPayInstrument().get(0).getRefundStatusDetails().getRefundDetails().isEmpty()) {
+
+	            RefundDetails refundDetails =
+	                    resp.getPayInstrument().get(0).getRefundStatusDetails().getRefundDetails().get(0);
+
+	            if (refundDetails.getRefundStatus() != null
+	                    && !refundDetails.getRefundStatus().isEmpty()) {
+
+	                RefundStatus refundStatus = refundDetails.getRefundStatus().get(0);
+
+	                refundTxnId = String.valueOf(resp.getPayInstrument().get(0).getPayDetails().getAtomTxnId());
+	                refundAmt = String.valueOf(refundStatus.getRefundAmt());
+	            }
+	        }
+	    } catch (Exception e) {
+	        log.warn("Unable to parse refundTxnId or refundAmt from refund status response", e);
+	    }
+
+	    return Refund.builder()
+	            .id(currentRefund.getId())
+	            .tenantId(currentRefund.getTenantId())
+	            .refundId(currentRefund.getRefundId())
+	            .originalTxnId(currentRefund.getOriginalTxnId())
+	            .serviceCode(currentRefund.getServiceCode())
+	            .originalAmount(currentRefund.getOriginalAmount())
+	            .refundAmount(refundAmt != null ? refundAmt : currentRefund.getRefundAmount())
+	            .gateway(currentRefund.getGateway())
+	            .consumerCode(currentRefund.getConsumerCode())
+	            .gatewayTxnId(refundTxnId)
+	            .gatewayStatusCode(statusCode)
+	            .gatewayStatusMsg(statusMsg)
+	            .status(status)
+	            .auditDetails(currentRefund.getAuditDetails())
+	            .build();
+	}
+
+
+	private String generateBase64Password(String password) {
+		return Base64.getEncoder()
+                .encodeToString(password.getBytes());
 	}
 
 	private double calculateTotalRefundAmount(List<ProdDetails> prodDetailsList) {

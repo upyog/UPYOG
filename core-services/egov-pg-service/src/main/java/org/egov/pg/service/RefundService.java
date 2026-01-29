@@ -1,6 +1,8 @@
 package org.egov.pg.service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -13,6 +15,7 @@ import org.egov.pg.producer.Producer;
 import org.egov.pg.repository.RefundRepository;
 import org.egov.pg.validator.RefundValidator;
 import org.egov.pg.web.models.RefundCriteria;
+import org.egov.pg.web.models.TransactionRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -33,13 +36,14 @@ public class RefundService {
 
 	@Autowired
 	public RefundService(RefundValidator refundValidator, EnrichmentService enrichmentService,
-			RefundRepository refundRepository, Producer producer, AppProperties appProperties,GatewayService gatewayService) {
+			RefundRepository refundRepository, Producer producer, AppProperties appProperties,
+			GatewayService gatewayService) {
 		this.refundValidator = refundValidator;
 		this.enrichmentService = enrichmentService;
 		this.refundRepository = refundRepository;
 		this.producer = producer;
 		this.appProperties = appProperties;
-		this.gatewayService=gatewayService;
+		this.gatewayService = gatewayService;
 	}
 
 	public Refund initiateRefund(@Valid RefundRequest refundRequest) {
@@ -50,7 +54,7 @@ public class RefundService {
 		enrichmentService.enrichInitiateRefundRequest(refundRequest);
 
 		producer.push(appProperties.getSaveRefundTxnsTopic(), new RefundRequest(requestInfo, refund));
-        Refund gatewayResponse =  gatewayService.initiateRefund(refund);
+		Refund gatewayResponse = gatewayService.initiateRefund(refund);
 		producer.push(appProperties.getSaveRefundTxnsTopic(), new RefundRequest(requestInfo, gatewayResponse));
 		return gatewayResponse;
 	}
@@ -64,6 +68,26 @@ public class RefundService {
 			throw new CustomException("FETCH_REFUND_FAILED", "Unable to fetch refund transaction from store");
 		}
 
+	}
+
+	public List<Refund> updateRefundTransaction(RequestInfo requestInfo, Map<String, String> requestParams) {
+		Refund currentRefund = refundValidator.validateUpdateRefundTransaction(requestParams);
+
+		Refund newRefundTxn = null;
+		if (refundValidator.skipGateway(currentRefund)) {
+			newRefundTxn = currentRefund;
+
+		} else {
+			newRefundTxn = gatewayService.getRefundLiveStatus(currentRefund);
+
+			// Enrich the new Refund transaction status before persisting
+			enrichmentService.enrichUpdateRefundTransaction(new RefundRequest(requestInfo, currentRefund),
+					newRefundTxn);
+		}
+
+		producer.push(appProperties.getUpdateRefundTxnsTopic(), new RefundRequest(requestInfo, newRefundTxn));
+
+		return Collections.singletonList(newRefundTxn);
 	}
 
 }

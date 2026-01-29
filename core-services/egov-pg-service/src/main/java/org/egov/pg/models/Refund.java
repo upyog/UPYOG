@@ -1,18 +1,11 @@
 package org.egov.pg.models;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.egov.pg.constants.TransactionAdditionalFields;
-import org.egov.pg.models.Transaction.TxnStatusEnum;
-import org.egov.pg.web.models.User;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -53,6 +46,12 @@ public class Refund {
 
 	@JsonProperty("gatewayTxnId")
 	private String gatewayTxnId;
+
+    @JsonProperty("gatewayStatusCode")
+    private String gatewayStatusCode;
+
+    @JsonProperty("gatewayStatusMsg")
+    private String gatewayStatusMsg;
 
 	@SafeHtml
 	@JsonProperty("gateway")

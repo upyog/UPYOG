@@ -104,6 +104,8 @@ public class AppProperties {
     
     private final String saveRefundTxnsTopic;
     
+    private final String updateRefundTxnsTopic;
+    
 
     @Autowired
     public AppProperties(Environment environment){
@@ -152,6 +154,7 @@ public class AppProperties {
         this.idGenRefundName = environment.getRequiredProperty("egov.idgen.ref.name");
         this.idGenRefundFormat = environment.getRequiredProperty("egov.idgen.ref.format");
         this.saveRefundTxnsTopic = environment.getRequiredProperty("persister.save.pg.refund");
+        this.updateRefundTxnsTopic = environment.getRequiredProperty("persister.update.pg.refund");
     }
 
 }

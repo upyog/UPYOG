@@ -15,6 +15,7 @@ import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.service.GatewayService;
 import org.egov.pg.web.models.RefundCriteria;
 import org.egov.pg.web.models.TransactionCriteria;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,10 +40,11 @@ public class RefundValidator {
 	public void validateInitiateRefundRequest(@Valid RefundRequest refundRequest) {
 		Refund refundTxn = refundRequest.getRefund();
 		Map<String, String> errorMap = new HashMap<>();
+		validateTxnId(refundTxn, errorMap);
 		validateRefundAmount(refundRequest, errorMap);
 		isGatewayActive(refundRequest.getRefund(), errorMap);
 		validateRefundStatus(refundTxn, errorMap);
-		validateTxnId(refundTxn, errorMap);
+		
 	}
 
 	private void validateTxnId(Refund refundTxn, Map<String, String> errorMap) {
@@ -57,8 +59,8 @@ public class RefundValidator {
 
 	private void validateRefundStatus(Refund refundTxn, Map<String, String> errorMap) {
 		RefundCriteria criteria = RefundCriteria.builder().originalTxnId(refundTxn.getOriginalTxnId()).build();
-		List<Refund> fetchRefundTransactions = repository.fetchRefundTransactions(criteria);
-		for (Refund refund : fetchRefundTransactions) {
+		List<Refund> refundTransactions = repository.fetchRefundTransactions(criteria);
+		for (Refund refund : refundTransactions) {
 			if (refund.getStatus().equals(Refund.RefundStatusEnum.SUCCESS.toString())) {
 				errorMap.put("REFUND_ALREADY_PAID", "Refund has already been paid");
 			}
@@ -87,6 +89,26 @@ public class RefundValidator {
 	private void isGatewayActive(Refund refund, Map<String, String> errorMap) {
 		if (!gatewayService.isGatewayActive(refund.getGateway()))
 			errorMap.put("INVALID_PAYMENT_GATEWAY", "Invalid or inactive payment gateway provided");
+	}
+
+	public Refund validateUpdateRefundTransaction(Map<String, String> params) {
+		String refundId = params.get("refundId");
+		if (refundId == null || refundId.isEmpty()) {
+			throw new CustomException("INVALID_REQUEST", "refundId is mandatory");
+		}
+		RefundCriteria criteria = RefundCriteria.builder().originalTxnId(refundId).build();
+		List<Refund> refundTransactions = repository.fetchRefundTransactions(criteria);
+		if (refundTransactions == null || refundTransactions.isEmpty()) {
+			throw new CustomException("REFUND_ID_NOT_FOUND", "No refund transaction found for given criteria");
+
+		}
+
+		return refundTransactions.get(0);
+	}
+
+	public boolean skipGateway(Refund currentRefund) {
+		
+		return new BigDecimal(currentRefund.getRefundAmount()).compareTo(BigDecimal.ZERO) == 0;
 	}
 
 }

@@ -124,5 +124,10 @@ public class GatewayService {
 		
 	}
 
+	public Refund getRefundLiveStatus(Refund currentRefund) {
+		Gateway gateway = getGateway(currentRefund.getGateway());
+        return gateway.fetchRefundStatus(currentRefund);
+	}
+
 
 }

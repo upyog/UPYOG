@@ -156,4 +156,30 @@ public class EnrichmentService {
 		refundRequest.getRefund().setRefundId(refundId);
 	}
 
+	public void enrichUpdateRefundTransaction(RefundRequest refundRequest, Refund newRefundTxn) {
+			RequestInfo requestInfo = refundRequest.getRequestInfo();
+			Refund currentRefund = refundRequest.getRefund();
+		AuditDetails auditDetails = AuditDetails.builder()
+                .createdBy(currentRefund.getAuditDetails().getCreatedBy())
+                .createdTime(currentRefund.getAuditDetails().getCreatedTime())
+                .lastModifiedBy(requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null)
+                .lastModifiedTime(System.currentTimeMillis()).build();
+		newRefundTxn.setAuditDetails(auditDetails);
+		
+		 newRefundTxn.setRefundId(currentRefund.getRefundId());
+		    newRefundTxn.setOriginalTxnId(currentRefund.getOriginalTxnId());
+		    newRefundTxn.setServiceCode(currentRefund.getServiceCode());
+		    newRefundTxn.setOriginalAmount(currentRefund.getOriginalAmount());
+		    newRefundTxn.setRefundAmount(currentRefund.getRefundAmount());
+		    newRefundTxn.setGatewayTxnId(currentRefund.getGatewayTxnId());
+		    newRefundTxn.setGatewayStatusCode(currentRefund.getGatewayStatusCode());
+		    newRefundTxn.setGatewayStatusMsg(currentRefund.getGatewayStatusMsg());
+		    newRefundTxn.setGateway(currentRefund.getGateway());
+		    newRefundTxn.setConsumerCode(currentRefund.getConsumerCode());
+		    newRefundTxn.setStatus(currentRefund.getStatus());
+		    newRefundTxn.setAdditionalDetails(currentRefund.getAdditionalDetails());
+		
+		
+	}
+
 }

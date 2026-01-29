@@ -328,4 +328,10 @@ public class AxisGateway implements Gateway {
 		return null;
 	}
 
+	@Override
+	public Refund fetchRefundStatus(Refund refundRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
