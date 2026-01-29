@@ -1,0 +1,180 @@
+serviceMaps:
+  serviceName: legal-module
+  mappings:
+    - version: 1
+      description: Persists case registry data into the database
+      fromTopic: save-case-registry
+      isTransaction: true
+      queryMaps:
+        - query: >-
+            INSERT INTO eg_lm_case (id,caseid, tenantid, casetype, casecategory,
+            title, description, department, courttype, courtname,
+            nexthearingdate,status, createdby, createdtime, lastmodifiedby,
+            lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+            ?,?) ON CONFLICT (caseid) DO NOTHING;
+          basePath: case
+          jsonMaps:
+            - jsonPath: $.case.id
+            - jsonPath: $.case.caseId
+            - jsonPath: $.case.tenantId
+            - jsonPath: $.case.caseType
+            - jsonPath: $.case.caseCategory
+            - jsonPath: $.case.title
+            - jsonPath: $.case.description
+            - jsonPath: $.case.department
+            - jsonPath: $.case.courtType
+            - jsonPath: $.case.courtName
+            - jsonPath: $.case.nextHearingDate
+            - jsonPath: $.case.workflow.action
+            - jsonPath: $.case.auditDetails.createdBy
+            - jsonPath: $.case.auditDetails.createdTime
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+        - query: >-
+            INSERT INTO eg_lm_case_petitioner (petitionerid, caseId, name,
+            mobileNumber,type,email, createdBy, createdTime, lastModifiedBy,
+            lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?) ON CONFLICT
+            (petitionerid) DO NOTHING;
+          basePath: case.petitioners.*
+          jsonMaps:
+            - jsonPath: $.case.petitioners.*.petitionerId
+            - jsonPath: $.case.caseId
+            - jsonPath: $.case.petitioners.*.name
+            - jsonPath: $.case.petitioners.*.mobileNumber
+            - jsonPath: $.case.petitioners.*.type
+            - jsonPath: $.case.petitioners.*.email
+            - jsonPath: $.case.auditDetails.createdBy
+            - jsonPath: $.case.auditDetails.createdTime
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+        - query: >-
+            INSERT INTO eg_lm_case_respondent (respondentId, caseId, name,
+            mobileNumber, department, address, type,email, createdBy,
+            createdTime, lastModifiedBy, lastModifiedTime) VALUES (?, ?, ?, ?,
+            ?, ?, ?, ?, ?, ?, ?,?)  ON CONFLICT (respondentId) DO NOTHING;
+          basePath: case.respondents.*
+          jsonMaps:
+            - jsonPath: $.case.respondents.*.respondentId
+            - jsonPath: $.case.caseId
+            - jsonPath: $.case.respondents.*.name
+            - jsonPath: $.case.respondents.*.mobileNumber
+            - jsonPath: $.case.respondents.*.department
+            - jsonPath: $.case.respondents.*.address
+            - jsonPath: $.case.respondents.*.type
+            - jsonPath: $.case.respondents.*.email
+            - jsonPath: $.case.auditDetails.createdBy
+            - jsonPath: $.case.auditDetails.createdTime
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+        - query: >-
+            INSERT INTO eg_lm_case_document (id, caseId, documentType,
+            fileStoreId, status, createdBy, createdTime, lastModifiedBy,
+            lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: case.documents.*
+          jsonMaps:
+            - jsonPath: $.case.documents.*.documentUid
+            - jsonPath: $.case.caseId
+            - jsonPath: $.case.documents.*.documentType
+            - jsonPath: $.case.documents.*.fileStoreId
+            - jsonPath: $.case.documents.*.status
+            - jsonPath: $.case.auditDetails.createdBy
+            - jsonPath: $.case.auditDetails.createdTime
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+    - version: 1
+      description: Updates case registry data into the database
+      fromTopic: update-case-registry
+      isTransaction: true
+      queryMaps:
+        - query: >
+            UPDATE eg_lm_case SET casetype = ?, casecategory = ?, title = ?,
+            description = ?, department = ?,
+                courttype = ?, courtname = ?, nexthearingdate = ?,
+                lastmodifiedby = ?, lastmodifiedtime = ?
+            WHERE caseid = ? AND tenantid = ?;
+          basePath: case
+          jsonMaps:
+            - jsonPath: $.case.caseType
+            - jsonPath: $.case.caseCategory
+            - jsonPath: $.case.title
+            - jsonPath: $.case.description
+            - jsonPath: $.case.department
+            - jsonPath: $.case.courtType
+            - jsonPath: $.case.courtName
+            - jsonPath: $.case.nextHearingDate
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+            - jsonPath: $.case.caseId
+            - jsonPath: $.case.tenantId
+        - query: |
+            UPDATE eg_lm_case_advocate SET name = ?, mobileNumber = ?, type = ?,
+                email = ?, lastModifiedBy = ?, lastModifiedTime = ?
+            WHERE caseId = ? AND advocateId = ?;
+          basePath: case.advocates.*
+          jsonMaps:
+            - jsonPath: $.case.advocates.*.name
+            - jsonPath: $.case.advocates.*.mobileNumber
+            - jsonPath: $.case.advocates.*.type
+            - jsonPath: $.case.advocates.*.email
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+            - jsonPath: $.case.caseId
+            - jsonPath: $.case.advocates.*.advocateId
+        - query: >
+            UPDATE eg_lm_case_petitioner SET name = ?, mobileNumber = ?, type =
+            ?, email = ?,
+                lastModifiedBy = ?, lastModifiedTime = ?
+            WHERE petitionerid = ? AND caseId = ?;
+          basePath: case.petitioners.*
+          jsonMaps:
+            - jsonPath: $.case.petitioners.*.name
+            - jsonPath: $.case.petitioners.*.mobileNumber
+            - jsonPath: $.case.petitioners.*.type
+            - jsonPath: $.case.petitioners.*.email
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+            - jsonPath: $.case.petitioners.*.petitionerId
+            - jsonPath: $.case.caseId
+        - query: >
+            UPDATE eg_lm_case_respondent SET name = ?, mobileNumber = ?,
+            department = ?, address = ?, type = ?, email = ?,
+                lastModifiedBy = ?, lastModifiedTime = ?
+            WHERE respondentId = ? AND caseId = ?;
+          basePath: case.respondents.*
+          jsonMaps:
+            - jsonPath: $.case.respondents.*.name
+            - jsonPath: $.case.respondents.*.mobileNumber
+            - jsonPath: $.case.respondents.*.department
+            - jsonPath: $.case.respondents.*.address
+            - jsonPath: $.case.respondents.*.type
+            - jsonPath: $.case.respondents.*.email
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+            - jsonPath: $.case.respondents.*.respondentId
+            - jsonPath: $.case.caseId
+        - query: >
+            UPDATE eg_lm_case_document SET documentType = ?, fileStoreId = ?,
+            status = ?,
+                lastModifiedBy = ?, lastModifiedTime = ?
+            WHERE id = ? AND caseId = ?;
+          basePath: case.documents.*
+          jsonMaps:
+            - jsonPath: $.case.documents.*.documentType
+            - jsonPath: $.case.documents.*.fileStoreId
+            - jsonPath: $.case.documents.*.status
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+            - jsonPath: $.case.documents.*.documentUid
+            - jsonPath: $.case.caseId
+        - query: |
+            UPDATE eg_lm_judgement SET remark = ?, orderDetail = ?,
+                lastModifiedBy = ?, lastModifiedTime = ?
+            WHERE judgementId = ? AND caseId = ?;
+          basePath: case.judgement
+          jsonMaps:
+            - jsonPath: $.case.judgement.remark
+            - jsonPath: $.case.judgement.orderDetail
+            - jsonPath: $.case.auditDetails.lastModifiedBy
+            - jsonPath: $.case.auditDetails.lastModifiedTime
+            - jsonPath: $.case.judgement.judgementId
+            - jsonPath: $.case.caseId

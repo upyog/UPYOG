@@ -364,6 +364,7 @@ export async function getDefaulterPdfRecordsDetails(userid, offset, limit, jobId
 
     query = query + 'limit $2 offset $3';
 
+    logger.info("Query===========" + query);
     const result = await pool.query(query, [param, limit, offset]);
     if(result.rowCount>=1){
       
