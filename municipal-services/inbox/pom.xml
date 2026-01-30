@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -36,7 +36,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
+		<!-- http://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
@@ -94,7 +94,7 @@
 			<version>1.5.18</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<!-- http://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -159,7 +159,7 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/cz.habarta.typescript-generator/typescript-generator-maven-plugin -->
+		<!-- http://mvnrepository.com/artifact/cz.habarta.typescript-generator/typescript-generator-maven-plugin -->
 		<dependency>
 			<groupId>cz.habarta.typescript-generator</groupId>
 			<artifactId>typescript-generator-maven-plugin</artifactId>
@@ -185,17 +185,17 @@
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov ERP Releases Repository</name>
-			<url>https://myinternal-nexus.ddns.net/nexus/content/repositories/releases/</url>
+			<url>http://myinternal-nexus.ddns.net/nexus/content/repositories/releases/</url>
 		</repository>
 		<repository>
 			<id>repo.egovernments.org.snapshots</id>
 			<name>eGov ERP Releases Repository</name>
-			<url>https://myinternal-nexus.ddns.net/nexus/content/repositories/snapshots/</url>
+			<url>http://myinternal-nexus.ddns.net/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>repo.egovernments.org.public</id>
 			<name>eGov Public Repository Group</name>
-			<url>https://myinternal-nexus.ddns.net/nexus/content/groups/public/</url>
+			<url>http://myinternal-nexus.ddns.net/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 	<build>

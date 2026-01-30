@@ -99,12 +99,12 @@
  		<repository>
 			<id>repo.digit.org</id>
 			<name>eGov DIGIT Releases Repository</name>
-			<url>https://myinternal-nexus.ddns.net/nexus/content/repositories/snapshots/</url>
+			<url>http://myinternal-nexus.ddns.net/nexus/content/repositories/snapshots/</url>
 		</repository>
     <repository>
       <id>repo.egovernments.org</id>
       <name>eGov ERP Releases Repository</name>
-      <url>https://myinternal-nexus.ddns.net/nexus/content/repositories/releases/</url>
+      <url>http://myinternal-nexus.ddns.net/nexus/content/repositories/releases/</url>
     </repository>
   </repositories>
   <build>

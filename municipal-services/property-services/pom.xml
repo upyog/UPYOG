@@ -47,7 +47,7 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.javers/javers-core -->
+		<!-- http://mvnrepository.com/artifact/org.javers/javers-core -->
 		<dependency>
 			<groupId>org.javers</groupId>
 			<artifactId>javers-core</artifactId>
@@ -117,7 +117,7 @@
 		<repository>
 			<id>repo.digit.org</id>
 			<name>eGov DIGIT Releases Repository</name>
-			<url>https://myinternal-nexus.ddns.net/nexus/content/repositories/snapshots/</url>
+			<url>http://myinternal-nexus.ddns.net/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 	<build>
