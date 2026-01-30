@@ -169,7 +169,7 @@
     <repositories>
         <repository>
             <id>org.egov.common</id>
-            <url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+            <url>https://myinternal-nexus.ddns.net/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
