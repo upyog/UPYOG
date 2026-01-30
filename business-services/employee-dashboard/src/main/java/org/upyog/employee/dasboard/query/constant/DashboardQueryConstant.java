@@ -400,7 +400,6 @@ public class DashboardQueryConstant {
 			+ "    AND pi.createdtime < EXTRACT(EPOCH FROM DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year') * 1000 \n"
 			+ "     AND pi.tenantid = ?");
 
-
 	public static StringBuilder SV_DASHBOARD_QUERY_ = new StringBuilder(
 			"SELECT \n"
 					+ "    COUNT(DISTINCT wf.application_no) AS Total_Applications_Received,\n"
@@ -447,9 +446,4 @@ public class DashboardQueryConstant {
 					+ "      END) * 1000\n"
 					+ "    AND wf.tenant_id = ?"
 	);
-
-	
-	
-	
-
 }

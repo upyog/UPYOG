@@ -17,19 +17,19 @@ export default ({ config, db }) => resource({
 
 	/** GET / - List all entities */
 	index({ params }, res) {
-		res.json(facets);
+		return res.json(facets);
 	},
 
 	/** POST / - Create a new entity */
 	create({ body }, res) {
 		body.id = facets.length.toString(36);
 		facets.push(body);
-		res.json(body);
+		return res.json(body);
 	},
 
 	/** GET /:id - Return a given entity */
 	read({ facet }, res) {
-		res.json(facet);
+		return res.json(facet);
 	},
 
 	/** PUT /:id - Update a given entity */

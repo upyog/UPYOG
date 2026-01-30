@@ -1,6 +1,7 @@
 package org.egov.commons.persistence.repository;
 
 import org.egov.commons.model.Department;
+import org.egov.commons.repository.BusinessDetailsRepository;
 import org.egov.commons.repository.DepartmentRepository;
 import org.egov.commons.repository.builder.DepartmentQueryBuilder;
 import org.egov.commons.repository.rowmapper.DepartmentRowMapper;
@@ -11,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +23,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
+@ContextConfiguration(classes = DepartmentRepository.class)
+
 public class DepartmentRepositoryTest {
 
     @Mock

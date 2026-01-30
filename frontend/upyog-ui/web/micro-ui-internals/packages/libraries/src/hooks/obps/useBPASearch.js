@@ -16,14 +16,23 @@ const mapWfBybusinessId = (workflowData) => {
 
 const combineResponse = (applications, workflowData) => {
   const workflowInstances = mapWfBybusinessId(workflowData);
-  return applications.map(application => ({
-    ...application,
-    assignee: workflowInstances[application?.applicationNo]?.assignes?.[0]?.name,
-    sla: application?.status.match(/^(APPROVED)$/) ? "CS_NA" : convertMillisecondsToDays(workflowInstances[application?.applicationNo].businesssServiceSla),
-    state: workflowInstances[application?.applicationNo]?.state?.state,
-    action: workflowInstances[application?.applicationNo]?.action
-  }))
-}
+
+  return applications.map(application => {
+    const wf = workflowInstances?.[application?.applicationNo];
+    const isApproved = application?.status === "APPROVED";
+    return {
+      ...application,
+      assignee: wf?.assignes?.[0]?.name || "-",
+      sla: isApproved
+        ? "CS_NA"
+        : wf?.businesssServiceSla != null
+          ? convertMillisecondsToDays(wf.businesssServiceSla)
+          : "CS_NA",
+      state: wf?.state?.state || application?.status,
+      action: wf?.action || "-"
+    };
+  });
+};
 
 const useBPASearch = (tenantId, filters = {}, config = {}) => {
   if (window.location.href.includes("search/application")) {

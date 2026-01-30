@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +19,7 @@ import lombok.Builder;
  */
 @ApiModel(description = "Contract class to receive request. Array of  items are used in case of create, whereas single  item is used for update")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-08-20T09:30:27.617+05:30")
-
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-08-20T09:30:27.617+05:30")
 @Getter
 @Setter
 @AllArgsConstructor

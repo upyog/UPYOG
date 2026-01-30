@@ -45,7 +45,7 @@ public class IngestService {
 
     public List<Integer> ingestData(IngestRequest ingestRequest) {
 
-        ingestValidator.validateMaxDataListSize(ingestRequest); //Validates size of data list to avoid overloading.
+        ingestValidator.validateMaxDataListSize(ingestRequest);
 
         List<Integer> responseHash = new ArrayList<>();
 
@@ -55,19 +55,18 @@ public class IngestService {
         String uuid = ingestRequest.getRequestInfo().getUserInfo().getUuid();
         
         Map<String,String> userUUID=applicationProperties.getNationalDashboardUser();
-        if(!userUUID.get("SUPERUUID").equalsIgnoreCase(uuid)) { //	Verifies that the request's user UUID is allowed (checks for SUPERUUID).
+        if(!userUUID.get("SUPERUUID").equalsIgnoreCase(uuid)) {
         Boolean isUlbValid=ingestValidator.verifyTenant(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
-        if(!isUlbValid) //Ensures ULB/state matches the one already migrated.
+        if(!isUlbValid)
             throw new CustomException("EG_DS_SAME_RECORD_ERR", "State/ ULB name in request is not in sync with migrated tenant!!");
     }
 
-         //Validates that incoming data has acceptable usage and payment channels.
          Set<String> usageList = ingestValidator.verifyPropertyType(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
          Set<String> paymentChannelList = ingestValidator.verifyPaymentChannel(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
 
 //       
         
-        // Validate if record for the day is already present. The verification logic will always use module name + date to determine the uniqueness of a set of records.
+        // Validate if record for the day is already present
         IngestAckData dataToDb = ingestValidator.verifyIfDataAlreadyIngested(ingestRequest.getIngestData());
         // IngestAckData dataToDb =null;
         
@@ -83,7 +82,7 @@ public class IngestService {
                 throw new CustomException("EG_DS_INVALID_PAYMENT_ERR", "Invalid Payment Channel!!");
 
             // Validates whether the fields configured for a given module are present in payload
-            ingestValidator.verifyDataStructure(data);    // one of major method most of the error will come in thsi place
+            ingestValidator.verifyDataStructure(data);
 
             String moduleCode = data.getModule();
 
@@ -137,7 +136,6 @@ public class IngestService {
         // Validates whether the fields configured for a given module are present in payload
         ingestValidator.verifyMasterDataStructure(masterDataRequest.getMasterData());
 
-        // The verification logic will always use module name + financialYear to determine the uniqueness of a set of records.
         ingestValidator.verifyIfMasterDataAlreadyIngested(masterDataRequest.getMasterData());
 
         Map<String, List<String>> indexNameVsDocumentsToBeIndexed = new HashMap<>();

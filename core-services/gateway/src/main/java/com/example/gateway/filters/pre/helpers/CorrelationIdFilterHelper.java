@@ -73,6 +73,9 @@ public class CorrelationIdFilterHelper implements RewriteFunction<Map, Map> {
         MDC.put(CORRELATION_ID_KEY, correlationId);
         exchange.getAttributes().put(CORRELATION_ID_KEY, correlationId);
         log.debug(RECEIVED_REQUEST_MESSAGE, requestURI);
+        
+        if(body==null)
+        	return Mono.empty();
 
         return Mono.just(body);
     }
@@ -107,6 +110,9 @@ public class CorrelationIdFilterHelper implements RewriteFunction<Map, Map> {
                         if (tenant != null && !tenant.equalsIgnoreCase("null"))
                             tenantIds.add(tenant);
                     });
+                    
+                    if(tenantIds.isEmpty())
+                    	tenantIds.add("pg");
                 } else {
                     setTenantIdsFromQueryParams(request.getQueryParams(), tenantIds);
                 }
@@ -135,7 +141,8 @@ public class CorrelationIdFilterHelper implements RewriteFunction<Map, Map> {
                 tenantIds.add(tenantId);
             }
         } else {
-            throw new CustomException("TENANT_ID_MANDATORY", "TenantId is mandatory in URL for non json requests");
+        	tenantIds.add("pg");
+            //throw new CustomException("TENANT_ID_MANDATORY", "TenantId is mandatory in URL for non json requests");
         }
 
     }

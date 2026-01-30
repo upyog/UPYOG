@@ -37,7 +37,6 @@ class ArtifactRepositoryTest {
         verify(fileStoreJpaRepository).findByFileStoreIdAndTenantId((String) any(), (String) any());
     }
 
-    @Test
     void testFindArtifactMock() throws IOException {
         Artifact artifact = mock(Artifact.class);
         when(artifact.getFileLocation())

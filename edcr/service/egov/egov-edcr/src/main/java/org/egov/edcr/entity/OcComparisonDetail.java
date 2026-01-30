@@ -170,5 +170,4 @@ public class OcComparisonDetail extends AbstractAuditable {
     public void setPermitDcr(EdcrApplicationDetail permitDcr) {
         this.permitDcr = permitDcr;
     }
-
 }

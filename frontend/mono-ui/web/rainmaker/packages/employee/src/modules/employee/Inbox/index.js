@@ -32,7 +32,7 @@ class Inbox extends Component {
   constructor(props){
     super(props);
     /* RAIN-7250 Always Navigate to new UI Incase user clicks on Home  */
-    window.location.href="/digit-ui/employee";
+    window.location.href="/upyog-ui/employee";
   }
   componentDidMount = () => {
     const { fetchLocalizationLabel } = this.props
@@ -124,7 +124,7 @@ class Inbox extends Component {
           if (obj.navigationURL === "tradelicence/apply") {
             this.props.setRequiredDocumentFlag();
           }
-          if (obj.navigationURL && obj.navigationURL.includes('digit-ui')) {
+          if (obj.navigationURL && obj.navigationURL.includes('upyog-ui')) {
             window.location.href = obj.navigationURL;
             return;
           } else {

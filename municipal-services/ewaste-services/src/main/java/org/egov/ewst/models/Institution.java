@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.validator.constraints.SafeHtml;
 
 /**
  * Institution
@@ -22,27 +21,21 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Builder
 public class Institution {
 
-	@SafeHtml
 	@JsonProperty("id")
 	private String id;
 
-	@SafeHtml
 	@JsonProperty("tenantId")
 	private String tenantId;
 
-	@SafeHtml
 	@JsonProperty("name")
 	private String name;
 
-	@SafeHtml
 	@JsonProperty("type")
 	private String type;
 
-	@SafeHtml
 	@JsonProperty("designation")
 	private String designation;
 
-	@SafeHtml
 	@JsonProperty("nameOfAuthorizedPerson")
 	private String nameOfAuthorizedPerson;
 

@@ -1,23 +1,22 @@
 package org.upyog.pgrai.web.models.workflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.upyog.pgrai.web.models.AuditDetails;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A Object holds the basic data for a Trade License
  */
-@ApiModel(description = "A Object holds the basic data for a Trade License")
+@Schema(description = "A Object holds the basic data for a Trade License")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
-
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
 @Getter
 @Setter
 @AllArgsConstructor

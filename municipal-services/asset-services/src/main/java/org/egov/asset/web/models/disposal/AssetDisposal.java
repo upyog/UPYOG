@@ -6,10 +6,10 @@ import lombok.*;
 import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.Document;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.validation.Valid;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.validation.Valid;
 import java.util.List;
 
 
@@ -75,7 +75,6 @@ public class AssetDisposal {
     @Valid
     private List<Document> documents;
 
-    @JsonIgnore
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

@@ -2,6 +2,7 @@ package org.egov.fsm.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -62,12 +63,31 @@ public class UserService {
 			userDetailResponse = userExists(applicant);
 
 			if (userDetailResponse != null || !userDetailResponse.getUser().isEmpty()) {
-
+				//log.info("User Exists!!!"  + userDetailResponse);
 				if (!userDetailResponse.getUser().isEmpty()) {
-					Boolean foundUser = Boolean.FALSE;
+					Boolean foundUser = Boolean.FALSE, isCitizenRegisteredOnCitizPortal = Boolean.FALSE;
+					for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
+						User user = userDetailResponse.getUser().get(j);
+						if (user.getUserName().equalsIgnoreCase(user.getMobileNumber())
+								&& user.getName().equalsIgnoreCase(applicant.getName())) {
+							// found user with mobilenumber and username same and name as equal
+							//condition gets executed when logged-in citizen applies for application.
+
+							if (applicant != null && applicant.getGender() != null) {
+								user.setGender(applicant.getGender());
+							}
+
+							applicant = user;
+							foundUser = Boolean.TRUE;
+							isCitizenRegisteredOnCitizPortal = Boolean.TRUE;
+							break;
+						}
+					}
+					if (!isCitizenRegisteredOnCitizPortal) {
 					for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
 						User user = userDetailResponse.getUser().get(j);
 						if (!user.getUserName().equalsIgnoreCase(user.getMobileNumber())
+							&& user.getMobileNumber().equalsIgnoreCase(applicant.getMobileNumber())
 								&& user.getName().equalsIgnoreCase(applicant.getName())) {
 							// found user with mobilenumber and username not same and name as equal to the
 							// applicnat name provided by ui
@@ -80,9 +100,10 @@ public class UserService {
 							break;
 						}
 					}
+					}
 					// users exists with mobile number but non of them have the same name, then
 					// create new user
-					if (foundUser) {
+					if (!foundUser) {
 						applicantDetailResponse = createApplicant(applicant, fsmRequest.getRequestInfo(),
 								Boolean.FALSE);
 						applicant = applicantDetailResponse.getUser().get(0);
@@ -212,7 +233,7 @@ public class UserService {
 
 	/**
 	 * Returns UserDetailResponse by calling user service with given uri and object
-	 * 
+	 *
 	 * @param userRequest Request object for user service
 	 * @param uri         The address of the end point
 	 * @return Response from user service as parsed as userDetailResponse
@@ -227,10 +248,52 @@ public class UserService {
 			dobFormat = "dd/MM/yyyy";
 		try {
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
-			parseResponse(responseMap, dobFormat);
-			return mapper.convertValue(responseMap, UserDetailResponse.class);
+
+			// Handle update endpoint response differently
+			if (uri.toString().contains(config.getUserUpdateEndpoint())) {
+				return handleUpdateResponse(responseMap, dobFormat);
+			} else {
+				parseResponse(responseMap, dobFormat);
+				return mapper.convertValue(responseMap, UserDetailResponse.class);
+			}
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
+		}
+	}
+
+	/**
+	 * Handles the response from user update endpoint which returns UpdateResponse
+	 * instead of UserDetailResponse
+	 *
+	 * @param responseMap Response map from update endpoint
+	 * @param dobFormat Date format for parsing
+	 * @return UserDetailResponse converted from UpdateResponse
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private UserDetailResponse handleUpdateResponse(LinkedHashMap responseMap, String dobFormat) {
+		try {
+			// Parse date strings to Long before deserialization
+			parseResponse(responseMap, dobFormat);
+
+			// Parse the response as UpdateResponse
+			org.egov.fsm.web.model.user.UpdateResponse updateResponse =
+					mapper.convertValue(responseMap, org.egov.fsm.web.model.user.UpdateResponse.class);
+
+			// Convert UpdateRequest list to User list
+			List<User> users = new ArrayList<>();
+			if (updateResponse.getUser() != null) {
+				for (org.egov.fsm.web.model.user.UpdateRequest updateRequest : updateResponse.getUser()) {
+					users.add(updateRequest.toUser());
+				}
+			}
+
+			// Create and return UserDetailResponse
+			return new UserDetailResponse(updateResponse.getResponseInfo(), users);
+
+		} catch (IllegalArgumentException e) {
+			log.error("Error converting UpdateResponse to UserDetailResponse", e);
+			throw new CustomException("IllegalArgumentException",
+					"ObjectMapper not able to convertValue in handleUpdateResponse: " + e.getMessage());
 		}
 	}
 

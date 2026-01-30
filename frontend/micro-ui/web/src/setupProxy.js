@@ -23,10 +23,14 @@ module.exports = function (app) {
     "/vendor",
     "/property-services",
     "/fsm-calculator/v1/billingSlab/_search",
+<<<<<<< HEAD
+    "/requester-services-dx"
+=======
     "/asset-services/v1/disposal/_create",
     "/requester-services-dx",
     "/bpa-services/v1/preapprovedplan/_search",
     "/bpa-calculator/_estimate"
+>>>>>>> master-LTS
   ].forEach((location) =>
     app.use(location, createProxy)
   );

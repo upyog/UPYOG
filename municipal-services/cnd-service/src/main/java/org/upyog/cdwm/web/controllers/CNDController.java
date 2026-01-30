@@ -2,16 +2,15 @@ package org.upyog.cdwm.web.controllers;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.upyog.cdwm.constants.CNDConstants;
 import org.upyog.cdwm.service.impl.CNDServiceImpl;
 import org.upyog.cdwm.util.CNDServiceUtil;
@@ -26,15 +25,16 @@ import org.upyog.cdwm.web.models.ResponseInfo.StatusEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.RequestInfoWrapper;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Controller for handling Construction and Demolition (CND) service requests.
  */
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-02-12T16:11:18.767+05:30")
-@Controller
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-02-12T16:11:18.767+05:30")
+@RestController
 @Slf4j
+@Tag(name = "Cnd Service", description = "APIs for Cnd service operations")
 public class CNDController {
 
     private final ObjectMapper objectMapper;
@@ -62,8 +62,8 @@ public class CNDController {
      * @return ResponseEntity with application response details
      */
     @PostMapping(value = "/v1/_create")
+    @Operation(summary = "Create application details", description = "Creates a new Construction and Demolition (CND) application with the provided details.")
     public ResponseEntity<CNDApplicationResponse> createConstructionDemolitionRequest(
-        @ApiParam(value = "Details for the CND application, payment, and documents", required = true)
         @Valid @RequestBody CNDApplicationRequest cndApplicationRequest) {
         
         log.info("Received CND Application Request: {}", cndApplicationRequest);
@@ -89,8 +89,8 @@ public class CNDController {
      * @return ResponseEntity with search results
      */
     @PostMapping("/v1/_search")
+    @Operation(summary = "Search application details", description = "Search (CND) application with the provided details.")
     public ResponseEntity<CNDServiceSearchResponse> searchCNDApplicationDetails(
-        @ApiParam(value = "Details for the CND application time, payment, and documents", required = true)
         @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
         @ModelAttribute CNDServiceSearchCriteria cndServiceSearchCriteria) {
 
@@ -114,8 +114,8 @@ public class CNDController {
     }
     
     @PostMapping("/v1/_update")
+    @Operation(summary = "Update application details", description = "Update (CND) application with the provided details.")
 	public ResponseEntity<CNDApplicationResponse> updateCNDApplicationUpdate(
-			@ApiParam(value = "Updated CND details and RequestInfo meta data.", required = true)
 			@RequestBody CNDApplicationRequest cndApplicationRequest) {
 		
 		CNDApplicationDetail cndApplicationDetail = cndService.updateCNDApplicationDetails(cndApplicationRequest, null, null);

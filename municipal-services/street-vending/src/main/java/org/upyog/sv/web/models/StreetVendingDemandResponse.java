@@ -8,7 +8,7 @@ import org.upyog.sv.web.models.common.ResponseInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +19,7 @@ import lombok.Setter;
 /**
  * Generate demands response for renewal
  */
-@ApiModel(description = "Demand Response")
+@Schema(description = "Demand Response")
 @Validated
 @Getter
 @Setter

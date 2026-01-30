@@ -37,12 +37,22 @@ let propertyStructureDetails= {"usageCategory":"","structureType":applicationDat
   sessionStorage.setItem("PropertyInitials",JSON.stringify(defaultValues?.originalData));
 
   const onFormValueChange = (setValue, formData, formState) => {
+    unitValues.length = 0;
+    if (formData?.units && Array.isArray(formData.units)) {
+        formData.units.forEach((unit) => {
+          unitValues.push({
+            RentedMonths: unit?.RentedMonths || null,
+            NonRentedMonthsUsage: unit?.NonRentedMonthsUsage || null,
+            floorNo: unit?.floorNo?.code || null,
+          });
+        });
+      }
     if(Object.keys(formState.errors).length==1 && formState.errors.documents)
     setSubmitValve(true);
     else 
     setSubmitValve(!Object.keys(formState.errors).length);
   };
-
+  const unitValues = [];
   const onSubmit = (data) => {
     console.log("dataaaa",data)
     const formData = {     
@@ -61,7 +71,7 @@ let propertyStructureDetails= {"usageCategory":"","structureType":applicationDat
       landArea: Number(data?.landarea),
       superBuiltUpArea: Number(data?.landarea),
       additionalDetails:{...data.originalData.additionalDetails, electricity:data.electricity,uid:data.uid,ageOfProperty:data?.propertyStructureDetails?.ageOfProperty,
-        structureType:data?.propertyStructureDetails?.structureType},
+        structureType:data?.propertyStructureDetails?.structureType,  unit: unitValues },
       //electricity:data?.electricity,
       source: "MUNICIPAL_RECORDS", // required
       channel: "CFC_COUNTER", // required

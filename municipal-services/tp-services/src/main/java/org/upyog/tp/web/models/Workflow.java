@@ -2,15 +2,12 @@ package org.upyog.tp.web.models;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.upyog.tp.web.models.workflow.Document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,9 +18,10 @@ import lombok.Setter;
  * Represents a workflow object used for tracking actions, status, and related details
  * in the Tree Pruning booking process.
  */
-@ApiModel(description = "Represents a workflow object used for tracking actions, status, and related details in the Tree Pruning booking process.")
+
+@Schema(description = "Represents a workflow object used for tracking actions, status, and related details in the Tree Pruning booking process.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:52:32.717Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:52:32.717Z[GMT]")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -49,10 +47,8 @@ public class Workflow {
 
 	@JsonProperty("businessService")
 	private String businessService = null;
-	
 	@JsonProperty("moduleName")
 	private String moduleName = null;
-	
 	public Workflow addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();
@@ -60,7 +56,7 @@ public class Workflow {
 		this.documents.add(documentsItem);
 		return this;
 	}
-	
+
 	@JsonProperty("rating")
 	private Integer rating = null;
 

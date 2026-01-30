@@ -67,6 +67,7 @@ public class TransactionService {
      * @return Redirect URI to the gateway for the particular transaction
      */
     public Transaction initiateTransaction(TransactionRequest transactionRequest) {
+    	log.info("Request received: "+transactionRequest.toString());
         validator.validateCreateTxn(transactionRequest);
 
         // Enrich transaction by generating txnid, audit details, default status

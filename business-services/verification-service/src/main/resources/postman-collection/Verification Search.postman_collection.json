@@ -1,0 +1,613 @@
+{
+	"info": {
+		"_postman_id": "d7ed586d-cb40-4a49-9f54-1fd432ea20b0",
+		"name": "Verification Search",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33631355"
+	},
+	"item": [
+		{
+			"name": "AdvertisementSearch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/citizen/verificationsearch-home"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"38dea3e7-da87-4388-a509-59943c4e39ab\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1750935142359|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/verification-service/validity/_search?tenantId=pg.citya&moduleName=advertisement&applicationNumber=ADV-1013-000504&_=1750935142359",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"verification-service",
+						"validity",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "moduleName",
+							"value": "advertisement"
+						},
+						{
+							"key": "applicationNumber",
+							"value": "ADV-1013-000504"
+						},
+						{
+							"key": "_",
+							"value": "1750935142359"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Community hall",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/citizen/verificationsearch-home"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"f02787f1-8d4c-41e4-91ee-58726932eb1f\",\"userInfo\":{\"id\":893,\"uuid\":\"1d19970b-e1c7-46dd-a554-d2353a2c2965\",\"userName\":\"9999999999\",\"name\":\"sma\",\"mobileNumber\":\"9999999999\",\"emailId\":null,\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1751348912615|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://niuatt.niua.in/verification-service/validity/_search?tenantId=pg.mohali&moduleName=communityhall&applicationNumber=CHB-1508-000648&_=1751348912615",
+					"protocol": "https",
+					"host": [
+						"niuatt",
+						"niua",
+						"in"
+					],
+					"path": [
+						"verification-service",
+						"validity",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.mohali"
+						},
+						{
+							"key": "moduleName",
+							"value": "communityhall"
+						},
+						{
+							"key": "applicationNumber",
+							"value": "CHB-1508-000648"
+						},
+						{
+							"key": "_",
+							"value": "1751348912615"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ewaste",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/citizen/verificationsearch-home"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"38dea3e7-da87-4388-a509-59943c4e39ab\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1750935142359|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pet Registration",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/citizen/verificationsearch-home"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": null,\n        \"userInfo\": null,\n        \"msgId\": \"1751367846644|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/verification-service/validity/_search?tenantId=pg.citya&moduleName=pet&applicationNumber=PG-PTR-2025-07-01-000220&_=1751367846644",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"verification-service",
+						"validity",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "moduleName",
+							"value": "pet"
+						},
+						{
+							"key": "applicationNumber",
+							"value": "PG-PTR-2025-07-01-000220"
+						},
+						{
+							"key": "_",
+							"value": "1751367846644"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Trade Licence",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/citizen/verificationsearch-home"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"31a6b073-fe07-4c9a-bfbe-6154dbc2a8a6\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1751370557478|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/verification-service/validity/_search?tenantId=pg.citya&moduleName=tradelicense&applicationNumber=APP-000238&_=1751370557478",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"verification-service",
+						"validity",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "moduleName",
+							"value": "tradelicense"
+						},
+						{
+							"key": "applicationNumber",
+							"value": "APP-000238"
+						},
+						{
+							"key": "_",
+							"value": "1751370557478"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BPA",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/citizen/verificationsearch-home"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"0a3d3b8e-c8c6-4154-8895-c666e0f6d879\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1751432510165|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/verification-service/validity/_search?tenantId=pg.citya&moduleName=bpa&applicationNumber=PG-BP-2025-05-30-000013&_=1751432510165",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"verification-service",
+						"validity",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "moduleName",
+							"value": "bpa"
+						},
+						{
+							"key": "applicationNumber",
+							"value": "PG-BP-2025-05-30-000013"
+						},
+						{
+							"key": "_",
+							"value": "1751432510165"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

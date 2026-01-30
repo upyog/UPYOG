@@ -3,6 +3,11 @@ package org.upyog.sv;
 
 import java.util.TimeZone;
 
+/* here i have used javax instead of jakarta as shedlock still uses javax
+Jakarta namespace (jakarta.*) was introduced for Jakarta EE (Servlets, JPA, etc.),
+but not for JDBC classes like DataSource. JDBC is part of Java SE, not Jakarta EE.
+It will compile and work fine, since DataSource is part of the JDK.
+*/
 import javax.sql.DataSource;
 
 import org.egov.encryption.config.EncryptionConfiguration;

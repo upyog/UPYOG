@@ -29,6 +29,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -49,6 +50,7 @@ public class CalculationService {
 	private MDMSService mdmsService;
 
 	@Autowired
+	@Lazy
 	private DemandService demandService;
 
 	@Autowired

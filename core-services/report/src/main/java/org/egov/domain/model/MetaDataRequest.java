@@ -1,11 +1,10 @@
 package org.egov.domain.model;
 
-import javax.validation.constraints.NotNull;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.egov.common.contract.request.RequestInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

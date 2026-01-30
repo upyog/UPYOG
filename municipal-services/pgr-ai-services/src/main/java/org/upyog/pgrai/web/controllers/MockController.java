@@ -20,8 +20,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Controller for handling mock API requests.

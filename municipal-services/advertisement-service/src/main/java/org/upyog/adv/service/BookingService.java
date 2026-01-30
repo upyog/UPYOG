@@ -1,8 +1,10 @@
 package org.upyog.adv.service;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
-import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.adv.enums.BookingStatusEnum;

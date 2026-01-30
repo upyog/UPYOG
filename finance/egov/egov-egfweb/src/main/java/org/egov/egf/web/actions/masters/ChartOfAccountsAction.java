@@ -127,6 +127,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     boolean budgetCheckRequired = false;
     Long coaId;
     Long parentId;
+
     @Autowired
     AppConfigValueService appConfigValuesService;
     @Autowired
@@ -283,6 +284,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setFunctionReqd(functionRequired);
         model.setBudgetCheckReq(budgetCheckRequired);
         dropdownData.put("mappedAccountDetailTypeList", accountDetailType);
+
         setPurposeOnCoa();
         populateAccountCodePurpose();
         chartOfAccountsService.persist(model);

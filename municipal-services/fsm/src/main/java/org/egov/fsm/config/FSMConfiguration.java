@@ -1,7 +1,12 @@
 package org.egov.fsm.config;
 
 import java.util.TimeZone;
-import javax.annotation.PostConstruct;
+
+import jakarta.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -288,11 +293,11 @@ public class FSMConfiguration {
 		@Value("${fsm.event.kafka.topic}")
 		private String fsmEventTopic;
 
-		@Value("${persister.create.fsm.worker.topic}")
-		private String createFsmWorkerTopic;
-
-		@Value("${persister.update.fsm.worker.topic}")
-		private String updateFsmWorkerTopic;
+//		@Value("${persister.create.fsm.worker.topic}")
+//		private String createFsmWorkerTopic;
+//
+//		@Value("${persister.update.fsm.worker.topic}")
+//		private String updateFsmWorkerTopic;
 
 		// inbox Config
 		@Value("${fsm.event.index.kafka.topic}")

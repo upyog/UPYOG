@@ -1,5 +1,36 @@
-
+# Changelog
 All notable changes to this module will be documented in this file.
+## 2.0.0 - 2024-06-30
+
+### Added
+- Added Swagger/OpenAPI documentation using springdoc-openapi-starter-webmvc-ui
+- Added Postman collection for API testing and documentation
+- Added OWASP HTML Sanitizer for Java 17 (version 20240325.1)
+
+### Changed
+- Changed `javax` to `jakarta`
+- Upgraded to `spring-boot-starter-web:3.2.2`
+- Upgraded to `spring-beans:6.1.4(internally)`
+- Upgraded to `commons-lang3:3.14.0`
+- Upgraded to `spring-boot-starter-jdbc:3.2.2`
+- Upgraded to `spring-kafka:3.1.1`
+- Upgraded to `spring-boot-devtools:3.2.2`
+- Upgraded to `postgresql:42.7.1`
+- Upgraded to `lombok:1.18.32`
+- Upgraded to `spring-boot-starter-test:3.2.2`
+- Upgraded to `mdms-client:2.9.0-SNAPSHOT`
+- Upgraded to `tracer:2.9.0-SNAPSHOT`
+- Upgraded to `flyway-core:9.22.3`
+- Upgraded to `hibernate-validator:8.0.1.Final`
+- Upgraded to `jsoup:1.17.2`
+
+### Removed
+- Deprecated `commons-lang:2.6`
+
+### Fixed
+- Resolved compatibility issues with Spring Boot 3.x
+- Resolved dependency conflicts and version mismatches
+
 ## 1.3.5 - 2023-02-01
 
 - Transition from 1.3.5-beta version to 1.3.5 version

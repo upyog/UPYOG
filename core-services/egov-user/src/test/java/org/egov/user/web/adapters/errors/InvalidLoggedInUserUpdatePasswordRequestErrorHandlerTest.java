@@ -4,20 +4,22 @@ import org.egov.common.contract.response.Error;
 import org.egov.common.contract.response.ErrorField;
 import org.egov.common.contract.response.ErrorResponse;
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 public class InvalidLoggedInUserUpdatePasswordRequestErrorHandlerTest {
 
     private InvalidLoggedInUserUpdatePasswordRequestErrorHandler errorHandler;
 
-    @Before
+    @BeforeEach
     public void before() {
         errorHandler = new InvalidLoggedInUserUpdatePasswordRequestErrorHandler();
     }

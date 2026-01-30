@@ -1,8 +1,9 @@
 package org.upyog.adv.config;
 
+import jakarta.annotation.PostConstruct;
+
 import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
 
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;

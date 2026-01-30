@@ -1,5 +1,5 @@
 ALTER TABLE public.eg_user_address
-ADD COLUMN status character varying(50);
+ADD COLUMN IF NOT EXISTS status character varying(50);
 
 ALTER TABLE public.eg_user_address
 DROP CONSTRAINT IF EXISTS eg_user_address_type_unique;

@@ -225,7 +225,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 					generalLedgerReportBean.getGlCode1());
 			if (generalLedgerReportBean.getFund_id().isEmpty()) {
 
-				fund = (Fund) persistenceService.find("from Fund where id = ?", Long.valueOf("0"));
+				fund = (Fund) persistenceService.find("from Fund where id = ?",Long.valueOf("0"));
 
 			} else
 				fund = (Fund) persistenceService.find("from Fund where id = ?",
@@ -329,3 +329,4 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         }
 
 }
+

@@ -27,6 +27,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [emailId, setEmail] = useState(formData?.owners?.emailId || "");
     const [showToast, setShowToast] = useState(null);
     const [isDisable, setIsDisable] = useState(false);
+    const [propertyData, setPropertyData] = useState(null);
     const [ownerRoleCheck, setownerRoleCheck] = useState({});
     let Webview = !Digit.Utils.browser.isMobile();
     const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot||formData?.businessService==="BPA-PAP"    ? "PRE_APPROVE":"";
@@ -344,9 +345,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
             if(usersResponse?.user?.[0]?.dob){ 
                 usersResponse.user[0].dob = convertDateToEpoch(usersResponse?.user?.[0]?.dob);}
-            if(usersResponse?.user?.[0]?.gender===null ||usersResponse?.user?.[0]?.gender===undefined){
-                usersResponse.user[0].gender=gender;
-            }
+                if (!usersResponse.user[0].gender && field?.gender?.code) {
+                    usersResponse.user[0].gender = field.gender.code;
+                  }
             if (usersResponse?.user?.[0]?.createdDate) {
                     usersResponse.user[0].createdDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.createdDate);
                     usersResponse.user[0].lastModifiedDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.lastModifiedDate);
@@ -363,6 +364,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 setIsDisable(true);
                 //for owners conversion
                 let conversionOwners = [];
+                console.log("ownerStepownerStep",ownerStep)
                 ownerStep?.owners?.map(owner => {
                     conversionOwners.push({
                         ...owner,
@@ -370,7 +372,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         name: owner.name,
                         mobileNumber: owner.mobileNumber,
                         isPrimaryOwner: ownerStep?.owners.length>1 ?owner.isPrimaryOwner:true,
-                        gender: owner.gender?.code || owner.gender,
+                        gender: normalizeGender(owner.gender),
                         emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"
                     })
@@ -529,34 +531,41 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         else
         return true;
     }
-let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
-if(propertyData?.owners)
-{
-    console.log("propertyData",propertyData)
-fields =propertyData?.owners.map((owner) =>{
-    let gender
-    if (owner.gender =="FEMALE")
-    {
-        gender={
-            "code": "FEMALE",
-            "active": true,
-            "i18nKey": "COMMON_GENDER_FEMALE"
-        }
-        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner, "emailId":owner.emailId}
+// let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
+useEffect(() => {
+    const storedProperty = JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"));
+    setPropertyData(storedProperty);
+  
+    if (storedProperty?.owners) {
+      const mappedOwners = storedProperty.owners.map(owner => {
+        const genderObj = owner.gender
+          ? {
+              code: owner.gender,
+              active: true,
+              i18nKey: `COMMON_GENDER_${owner.gender}`,
+            }
+          : null;
+  
+        return {
+          name: owner.name,
+          mobileNumber: owner.mobileNumber,
+          gender: genderObj,
+          isPrimaryOwner: owner.isPrimaryOwner ?? true,
+          emailId: owner.emailId,
+        };
+      });
+  
+      setFeilds(mappedOwners);
     }
-    else if (owner.gender =="MALE")
-    {
-        gender={
-            "code": "MALE",
-            "active": true,
-            "i18nKey": "COMMON_GENDER_MALE"
-        }
-        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner, "emailId":owner.emailId}
-    }
-
-})
-}
-
+  }, []);
+  
+  
+  const normalizeGender = (gender) => {
+    if (!gender) return null;
+    if (typeof gender === "string") return gender;
+    return gender.code || null;
+  };
+  
 useEffect(()=>{
     let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
     if(propertyData?.owners?.length == 1)

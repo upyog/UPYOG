@@ -1,6 +1,6 @@
 package org.upyog.sv.web.models;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.sv.util.StreetVendingUtil;
@@ -9,6 +9,7 @@ import org.upyog.sv.web.models.common.AuditDetails;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

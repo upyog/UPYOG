@@ -47,6 +47,7 @@ public class EDCRService {
 
 		if (CollectionUtils.isEmpty(responseMap))
 			throw new CustomException(BPACalculatorConstants.EDCR_ERROR, "The response from EDCR service is empty or null");
+        System.out.println(responseMap);
 
 		return responseMap;
 	}

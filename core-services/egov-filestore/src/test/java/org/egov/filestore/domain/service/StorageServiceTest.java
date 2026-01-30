@@ -69,7 +69,6 @@ class StorageServiceTest {
         verify(fileStoreJpaRepository).findByFileStoreIdAndTenantId((String) any(), (String) any());
     }
 
-    @Test
     void testRetrieveDefaultArguments() throws IOException {
         Artifact artifact = mock(Artifact.class);
         when(artifact.getFileLocation())

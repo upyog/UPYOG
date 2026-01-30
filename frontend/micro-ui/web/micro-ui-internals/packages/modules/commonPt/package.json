@@ -1,6 +1,10 @@
 {
   "name": "@upyog/digit-ui-module-commonpt",
+<<<<<<< HEAD
+  "version": "2.0.0",
+=======
   "version": "3.0.2",
+>>>>>>> master-LTS
   "license": "MIT",
   "description": "Digit PT Light weight Module",
   "main": "dist/index.js",

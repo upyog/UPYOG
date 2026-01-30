@@ -110,6 +110,8 @@ public class MDMSService {
 		JSONArray applicationType = null;
         try {
             List jsonOutput = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_CALCULATIONTYPE_PATH);
+            System.out.println("in the loop");
+
             if (BPACalculatorConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessService)) {
         		//fetch preapproved plan-
         		PreapprovedPlan preapprovedPlan = fetchPreapprovedPlanFromDrawingNo(bpa.getEdcrNumber());
@@ -128,6 +130,8 @@ public class MDMSService {
             else {
             responseMap = edcrService.getEDCRDetails(requestInfo, bpa);
             }
+            System.out.println("out of the loop");
+
             String jsonString = new JSONObject(responseMap).toString();
     		DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
             if (BPACalculatorConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessService)) {
@@ -148,8 +152,8 @@ public class MDMSService {
     		additionalDetails.put("serviceType", serviceType.get(0).toString());
     		additionalDetails.put("applicationType", applicationType.get(0).toString());
             }            
-            log.debug("applicationType is " + additionalDetails.get("applicationType"));
-            log.debug("serviceType is " + additionalDetails.get("serviceType"));
+            log.info("applicationType is " + additionalDetails.get("applicationType"));
+            log.info("serviceType is " + additionalDetails.get("serviceType"));
             String filterExp = "$.[?((@.applicationType == '"+ additionalDetails.get("applicationType")+"' || @.applicationType === 'ALL' ) &&  @.feeType == '"+feeType+"')]";
             List<Object> calTypes = JsonPath.read(jsonOutput, filterExp);
             

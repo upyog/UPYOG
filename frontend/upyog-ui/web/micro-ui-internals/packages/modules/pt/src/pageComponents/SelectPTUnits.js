@@ -101,7 +101,8 @@ const rentedMonths =
      "active": true
      },  
   ]
-const formatUnits = (units = [], currentFloor, isFloor) => {
+const formatUnits = (units = [], currentFloor, isFloor,formData) => {
+  console.log("isFloorisFloor",isFloor,units,formData)
   if (!units || units.length == 0) {
     return [
       {
@@ -114,13 +115,23 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
       },
     ];
   }
-  return units.map((unit) => {
+  return units.map((unit,index) => {
+    console.log("unitunit",unit,formData)
     let usageCategory = unit?.usageCategory && !(unit?.usageCategory?.includes("NONRESIDENTIAL")) ?  "RESIDENTIAL" : getUsageCategory(unit?.usageCategory)?.usageCategoryMinor;
     return {
       ...unit,
       builtUpArea: unit?.constructionDetail?.builtUpArea,
-      rentedMonths:rentedMonths.find(month => month.code === unit?.rentedMonths),
-      nonRentedMonthsUsage: nonRentedMonthsUsage.find(month =>  month.code === unit?.nonRentedMonthsUsage),
+      rentedMonths: rentedMonths.find(
+        month =>
+          month.code ===
+          formData?.additionalDetails?.unit?.[index]?.RentedMonths
+      ) || null,
+      
+      nonRentedMonthsUsage: nonRentedMonthsUsage.find(
+        month =>
+          month.code ===
+          formData?.additionalDetails?.unit?.[index]?.NonRentedMonthsUsage
+      ) || null,      
       ageOfProperty: unit?.ageOfProperty,
       structureType: unit?.structureType,
       usageCategory: usageCategory ? { code: usageCategory, i18nKey: `PROPERTYTAX_BILLING_SLAB_${usageCategory}` } : {},
@@ -131,16 +142,18 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
   });
 };
 const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) => {
+  console.log("formDataformData11",formData)
   let path = window.location.pathname.split("/");
   let currentFloor = Number(path[path.length - 1]);
   let isFloor = window.location.pathname.includes("new-application/units") || window.location.pathname.includes("/edit-application/units");
   const [fields, setFields] = useState(
-    formatUnits(isFloor ? formData?.units?.filter((ee) => ee.floorNo == currentFloor) : formData?.units, currentFloor, isFloor)
+    formatUnits(isFloor ? formData?.units?.filter((ee) => ee.floorNo == currentFloor) : formData?.units, currentFloor, isFloor,formData)
   );
   const rentedMonthsCodes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
 
   useEffect(() => {
-    setFields(() => formatUnits(isFloor ? formData?.units?.filter((ee) => ee.floorNo == currentFloor) : formData?.units, currentFloor, isFloor));
+    console.log("formDataformData",formData)
+    setFields(() => formatUnits(isFloor ? formData?.units?.filter((ee) => ee.floorNo == currentFloor) : formData?.units, currentFloor, isFloor,formData));
     return () => {
       setFields(null);
     };

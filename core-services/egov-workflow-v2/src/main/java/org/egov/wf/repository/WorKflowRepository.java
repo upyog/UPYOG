@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.wf.repository.querybuilder.WorkflowQueryBuilder;
 import org.egov.wf.repository.rowmapper.WorkflowRowMapper;
+import org.egov.wf.util.WorkflowUtil;
 import org.egov.wf.web.models.ProcessInstance;
 import org.egov.wf.web.models.ProcessInstanceSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;

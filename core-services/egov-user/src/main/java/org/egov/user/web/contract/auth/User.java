@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
@@ -21,8 +22,20 @@ public class User implements Serializable {
     private String emailId;
     private String locale;
     private String type;
-    private Set<Role> roles;
+    @Builder.Default
+    private Set<Role> roles = new HashSet<>();
     private boolean active;
     private String tenantId;
     private String permanentCity;
+
+    /**
+     * CRITICAL: Override getRoles to ensure it never returns null
+     * This prevents validation errors in gateway RBAC filter
+     */
+    public Set<Role> getRoles() {
+        if (roles == null) {
+            roles = new HashSet<>();
+        }
+        return roles;
+    }
 }

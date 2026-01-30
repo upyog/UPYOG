@@ -40,7 +40,7 @@ const CustomSelectWidget = (props) => {
     params: {},
     body: {
       MdmsCriteria: {
-        tenantId: tenantId,
+        tenantId: tenantId ? tenantId : Digit.ULBService.getCurrentTenantId(),
         schemaCode: schemaCode,
         limit: 200,
         offset: 0
@@ -65,7 +65,7 @@ const CustomSelectWidget = (props) => {
   };
 
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(reqCriteriaForData);
-  const optionsList = data || options?.enumOptions || options || [];
+  const optionsList = options?.enumOptions || options || [];
 
   const formattedOptions = React.useMemo(
     () => optionsList.map((e) => ({ label: t(Digit.Utils.locale.getTransformedLocale(`${schemaCode}_${e?.label}`)), value: e.value })),

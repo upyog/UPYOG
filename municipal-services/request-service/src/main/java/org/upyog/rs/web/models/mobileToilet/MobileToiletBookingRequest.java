@@ -1,14 +1,14 @@
 package org.upyog.rs.web.models.mobileToilet;
 
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,9 +18,9 @@ import lombok.Setter;
 /**
  * Details for new booking of Mobile Toilet
  */
-@ApiModel(description = "Request object for creating new booking of mobile Toilet")
+@Schema(description = "Request object for creating new booking of mobile Toilet")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
 
 @Getter
 @Setter

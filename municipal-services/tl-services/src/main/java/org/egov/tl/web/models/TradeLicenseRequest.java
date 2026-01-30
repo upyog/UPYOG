@@ -21,7 +21,7 @@ import lombok.Builder;
  */
 @ApiModel(description = "Contract class to receive request. Array of tradelicense items are used in case of create, whereas single tradelicense item is used for update")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-18T17:06:11.263+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-18T17:06:11.263+05:30")
 
 @Getter
 @Setter

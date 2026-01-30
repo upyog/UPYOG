@@ -83,7 +83,7 @@ class App extends Component {
     if (authenticated) {
       if (mobileNumber === citizenMobileNo||(mobileNumber&&typeof mobileNumber=="string"&&mobileNumber.includes(citizenMobileNo))) {
         let redirectionURL = redirectionLink(href);
-        if (redirectionURL && redirectionURL.includes && redirectionURL.includes('digit-ui')) {
+        if (redirectionURL && redirectionURL.includes && redirectionURL.includes('upyog-ui')) {
           window.location.href = redirectionURL.startsWith('/digit') ? redirectionURL.split('&')[0] : `/${redirectionURL.split('&')[0]}`;
           return;
         } else {

@@ -122,7 +122,7 @@ class Inbox extends Component {
           if (obj.navigationURL === "tradelicence/apply") {
             this.props.setRequiredDocumentFlag();
           }
-          if (obj.navigationURL && obj.navigationURL.includes('digit-ui')) {
+          if (obj.navigationURL && obj.navigationURL.includes('upyog-ui')) {
             window.location.href = obj.navigationURL;
             return;
           } else {

@@ -27,6 +27,7 @@ import org.egov.vendor.web.model.user.UserDetailResponse;
 import org.egov.vendor.web.model.vehicle.Vehicle;
 import org.egov.vendor.web.model.vehicle.VehicleSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -50,6 +51,7 @@ public class VendorService {
 	private VendorRepository repository;
 
 	@Autowired
+	@Lazy
 	private EnrichmentService enrichmentService;
 
 	@Autowired
@@ -71,6 +73,12 @@ public class VendorService {
 		vendorValidator.validateCreateOrUpdateRequest(vendorRequest, mdmsData, true, requestInfo);
 		enrichmentService.enrichCreate(vendorRequest);
 		vendorRepository.save(vendorRequest);
+
+		// Enrich owner details with decrypted data before returning response
+		List<Vendor> vendorList = new ArrayList<>();
+		vendorList.add(vendorRequest.getVendor());
+		enrichmentService.enrichVendorSearch(vendorList, requestInfo, vendorRequest.getVendor().getTenantId());
+
 		return vendorRequest.getVendor();
 
 	}
@@ -132,6 +140,11 @@ public class VendorService {
 		vendorValidator.validateCreateOrUpdateRequest(vendorRequest, mdmsData, false, requestInfo);
 		enrichmentService.enrichUpdate(vendorRequest);
 		updateVendor(vendorRequest, tenantId);
+
+		// Enrich owner details with decrypted data before returning response
+		List<Vendor> vendorList = new ArrayList<>();
+		vendorList.add(vendorRequest.getVendor());
+		enrichmentService.enrichVendorSearch(vendorList, requestInfo, vendorRequest.getVendor().getTenantId());
 
 		return vendorRequest.getVendor();
 

@@ -3,7 +3,7 @@ package org.egov.ptr.models.event;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @Validated

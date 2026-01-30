@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Objects;
@@ -15,13 +14,13 @@ import java.util.Objects;
  * GeoLocation
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:34:12.238Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:34:12.238Z[GMT]")
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class GeoLocation {
 
-	@SafeHtml
 	@JsonProperty("id")
 	private String id = null;
 

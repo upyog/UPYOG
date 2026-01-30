@@ -1,9 +1,11 @@
 package org.upyog.adv.web.models.billing;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.upyog.adv.web.models.AuditDetails;
 import org.upyog.adv.web.models.GlCodeMaster;

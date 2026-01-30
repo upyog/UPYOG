@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minidev.json.JSONArray;
 import org.egov.MDMSApplicationRunnerImpl;
 import org.egov.infra.mdms.utils.MDMSConstants;
 import org.egov.mdms.model.MasterDetail;
@@ -11,12 +12,12 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 
 @Service
 @Slf4j

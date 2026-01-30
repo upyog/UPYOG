@@ -2,6 +2,14 @@
 
 All notable changes to this module will be documented in this file.
 
+## 2.0.0 - 2025-09-25
+
+- Upgraded the Service to LTS
+- Upgraded java 8 to Java 17
+- Upgraded Springboot 2.x.x to Springboot 3.x.x
+- Upgraded all the dependencies as per Java 17
+- Upgraded from Javax to jakarta
+
 ## 1.1.4 - 2023-02-02
 
 - Transition from 1.1.4-beta version to 1.1.4 version

@@ -12,7 +12,7 @@ import org.egov.common.contract.response.ResponseInfo;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Getter
 @Setter

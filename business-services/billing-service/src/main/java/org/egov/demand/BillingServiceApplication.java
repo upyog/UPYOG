@@ -42,6 +42,7 @@ package org.egov.demand;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -51,6 +52,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 @SpringBootApplication
+@Slf4j
 @Import({ TracerConfiguration.class })
 public class BillingServiceApplication {
 
@@ -74,6 +76,7 @@ public class BillingServiceApplication {
 	}
 
 	public static void main(String[] args) {
+		log.info("Billing Service is running with latest LTS upgrades 2.0.0!");
 		SpringApplication.run(BillingServiceApplication.class, args);
 	}
 }

@@ -33,6 +33,16 @@ public class RbacFilter implements GlobalFilter , Ordered {
         Boolean rbacFlag = exchange.getAttribute(RBAC_BOOLEAN_FLAG_NAME);
 
         if(rbacFlag) {
+            String contentType = exchange.getRequest().getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
+
+            // Skip body modification for multipart/form-data and application/x-www-form-urlencoded
+            // These content types cannot be parsed as Map and should pass through unchanged
+            if (contentType != null && (contentType.contains("multipart/form-data") ||
+                contentType.contains("application/x-www-form-urlencoded"))) {
+                return chain.filter(exchange);
+            }
+
+
             return modifyRequestBodyFilter.apply(new ModifyRequestBodyGatewayFilterFactory.Config()
                     .setRewriteFunction(Map.class, Map.class, rbacFilterHelper))
                     .filter(exchange, chain);

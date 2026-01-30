@@ -18,6 +18,7 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -52,6 +53,7 @@ public class NotificationUtil {
 	private CNDConfiguration config;
 	
 	@Autowired
+	@Lazy
 	private MessageServiceImpl messageService;
 
 	private Producer producer;

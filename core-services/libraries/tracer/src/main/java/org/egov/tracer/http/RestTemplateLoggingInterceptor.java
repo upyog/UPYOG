@@ -1,7 +1,17 @@
 package org.egov.tracer.http;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.IOUtils;
+import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_HEADER;
+import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_MDC;
+import static org.egov.tracer.constants.TracerConstants.TENANTID_MDC;
+import static org.egov.tracer.constants.TracerConstants.TENANT_ID_HEADER;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import org.egov.tracer.config.TracerProperties;
 import org.slf4j.MDC;
 import org.springframework.http.HttpMessage;
@@ -10,13 +20,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.util.CollectionUtils;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_HEADER;
-import static org.egov.tracer.constants.TracerConstants.CORRELATION_ID_MDC;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class RestTemplateLoggingInterceptor implements ClientHttpRequestInterceptor {
@@ -53,6 +59,11 @@ public class RestTemplateLoggingInterceptor implements ClientHttpRequestIntercep
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         try {
             request.getHeaders().add(CORRELATION_ID_HEADER, MDC.get(CORRELATION_ID_MDC));
+            
+			List<String> tenantId = request.getHeaders().get(TENANT_ID_HEADER);
+			if (CollectionUtils.isEmpty(tenantId))
+				request.getHeaders().add(TENANT_ID_HEADER, MDC.get(TENANTID_MDC));
+
             logRequest(request, body);
 
             final ClientHttpResponse rawResponse = execution.execute(request, body);
@@ -102,7 +113,9 @@ public class RestTemplateLoggingInterceptor implements ClientHttpRequestIntercep
     private String getBodyString(ClientHttpResponse response) {
         try {
             if (response != null && response.getBody() != null) {
-                return IOUtils.toString(response.getBody(), UTF_8);
+                InputStream bodyStream = response.getBody();
+                return new String(bodyStream.readAllBytes(), StandardCharsets.UTF_8);
+                //return IOUtils.toString(response.getBody(), UTF_8);
             } else {
                 return EMPTY_BODY;
             }

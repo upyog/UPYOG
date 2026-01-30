@@ -1,0 +1,377 @@
+{
+	"info": {
+		"_postman_id": "4706cf9a-1a9e-4eb3-bbb9-277e8e176a9f",
+		"name": "Advertisement-Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33631355"
+	},
+	"item": [
+		{
+			"name": "Slot Search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/ads/bookad/searchads"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"advertisementSlotSearchCriteria\": [\n        {\n            \"bookingId\": \"\",\n            \"addType\": \"UNIPOLAR\",\n            \"bookingStartDate\": \"2025-08-28\",\n            \"bookingEndDate\": \"2025-10-27\",\n            \"faceArea\": \"UNIPOLE_12_X_8\",\n            \"tenantId\": \"pg.citya\",\n            \"location\": \"Green Park\",\n            \"nightLight\": \"true\",\n            \"isTimerRequired\": false\n        }\n    ],\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"dd5749f2-72ea-4fb3-b367-30f7ae21d18f\",\n        \"userInfo\": {\n            \"id\": 811,\n            \"uuid\": \"f789d679-352d-4aec-8198-4d61af1e0566\",\n            \"userName\": \"8010012414\",\n            \"name\": \"OWNER\",\n            \"mobileNumber\": \"8010012414\",\n            \"emailId\": \"cghvjbnk@gmail.com\",\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1756274738396|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8222/adv-services/booking/v1/_slot-search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8222",
+					"path": [
+						"adv-services",
+						"booking",
+						"v1",
+						"_slot-search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Booking Estimate",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/ads/bookad/applicant-details"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"tenantId\":\"pg.citya\",\"cartDetails\":[{\"addType\":\"UNIPOLAR\",\"faceArea\":\"UNIPOLE_12_X_8\",\"location\":\"Green Park\",\"nightLight\":true,\"bookingDate\":\"2025-08-28\",\"bookingFromTime\":\"06:00\",\"bookingToTime\":\"05:59\",\"status\":\"BOOKING_CREATED\"}],\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"dd5749f2-72ea-4fb3-b367-30f7ae21d18f\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756287603094|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8222/adv-services/booking/v1/_estimate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8222",
+					"path": [
+						"adv-services",
+						"booking",
+						"v1",
+						"_estimate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/ads/bookad/acknowledgement"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"bookingApplication\":{\"tenantId\":\"pg.citya\",\"draftId\":\"2f4da785-c7fe-4685-94d5-e0425049ac47\",\"applicantDetail\":{\"applicantName\":\"jhnk\",\"applicantMobileNo\":\"8010012414\",\"applicantAlternateMobileNo\":\"\",\"applicantEmailId\":\"jknM@mail.xo\"},\"address\":{\"pincode\":\"143001\",\"city\":\"City A\",\"cityCode\":\"1013\",\"locality\":\"Main Road Abadpura\",\"localityCode\":\"JLC476\",\"streetName\":\"Strret\",\"addressLine1\":\"line\",\"addressLine2\":\"\",\"houseNo\":\"310\",\"landmark\":\"temple\"},\"documents\":[{\"documentType\":\"APPLICANT.ADVERTISEMENT.SAMPLE.DOC\",\"fileStoreId\":\"ccbba1cc-a13e-4aeb-99fa-fcf00d43ceab\",\"documentUid\":\"ccbba1cc-a13e-4aeb-99fa-fcf00d43ceab\"},{\"documentType\":\"APPLICANT.ADDRESSPROOF.ELECTRICITYBILL\",\"fileStoreId\":\"212250ce-cec2-47c9-9c75-d4ca5c6436ad\",\"documentUid\":\"212250ce-cec2-47c9-9c75-d4ca5c6436ad\"},{\"documentType\":\"APPLICANT.IDENTITYPROOF.AADHAAR\",\"fileStoreId\":\"e429f267-0f31-4d5c-bfe5-3c4cd5826fe0\",\"documentUid\":\"e429f267-0f31-4d5c-bfe5-3c4cd5826fe0\"}],\"bookingStatus\":\"BOOKING_CREATED\",\"cartDetails\":[{\"addType\":\"UNIPOLAR\",\"faceArea\":\"UNIPOLE_12_X_8\",\"location\":\"Green Park\",\"nightLight\":true,\"bookingDate\":\"2025-09-01\",\"bookingFromTime\":\"06:00\",\"bookingToTime\":\"05:59\",\"status\":\"BOOKING_CREATED\"},{\"addType\":\"UNIPOLAR\",\"faceArea\":\"UNIPOLE_12_X_8\",\"location\":\"Green Park\",\"nightLight\":true,\"bookingDate\":\"2025-09-02\",\"bookingFromTime\":\"06:00\",\"bookingToTime\":\"05:59\",\"status\":\"BOOKING_CREATED\"}],\"workflow\":null},\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"16b33fd7-d404-4f32-9f7d-39fd110d4e15\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756358513029|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8222/adv-services/booking/v1/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8222",
+					"path": [
+						"adv-services",
+						"booking",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/citizen/ads/mybookings"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1866793165.1747538221; _clck=7xvixy%7C2%7Cfw0%7C0%7C1964; _ga_E39TFV5YXM=GS2.1.s1747538268$o1$g1$t1747538317$j0$l0$h0; _ga_VZ9TNBTB3X=GS2.1.s1747538221$o1$g1$t1747538338$j0$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\":{\"apiId\":\"Rainmaker\",\"authToken\":\"16b33fd7-d404-4f32-9f7d-39fd110d4e15\",\"userInfo\":{\"id\":811,\"uuid\":\"f789d679-352d-4aec-8198-4d61af1e0566\",\"userName\":\"8010012414\",\"name\":\"OWNER\",\"mobileNumber\":\"8010012414\",\"emailId\":\"cghvjbnk@gmail.com\",\"locale\":null,\"type\":\"CITIZEN\",\"roles\":[{\"name\":\"Citizen\",\"code\":\"CITIZEN\",\"tenantId\":\"pg\"}],\"active\":true,\"tenantId\":\"pg\",\"permanentCity\":null},\"msgId\":\"1756370905053|en_IN\",\"plainAccessRequest\":{}}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8222/adv-services/booking/v1/_search?_=1756370905053",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8222",
+					"path": [
+						"adv-services",
+						"booking",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "1756370905053"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

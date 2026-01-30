@@ -2,8 +2,8 @@ package org.egov.asset.calculator.web.controllers;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.egov.asset.calculator.services.CalculationService;
 import org.egov.asset.calculator.services.ProcessDepreciation;
@@ -18,10 +18,13 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/v1")
 @Slf4j
+@Tag(name = "Asset Calculator", description = "APIs for Asset Calculator operations")
 public class CalculatorController {
 
 	private final ProcessDepreciation depreciationService;
@@ -44,6 +47,7 @@ public class CalculatorController {
 	 * @return CalculationRes with calculated results.
 	 */
 	@PostMapping("/depreciation/_calculate")
+	@Operation(summary = "Asset Depriciation Calculate", description = "Calculated the depreciation for the given asset")
 	public ResponseEntity<CalculationRes> calculate(@Valid @RequestBody CalculationReq calculationReq) {
 		CalculationRes calculationRes = calculationService.calculate(calculationReq);
 		log.info("Depreciation calculation response: {}", calculationRes.getMessage());
@@ -63,6 +67,7 @@ public class CalculatorController {
 	 * @return List of depreciation details for the provided assetId.
 	 */
 	@GetMapping("/depreciation/{assetId}/details")
+	@Operation(summary = "Asset Depriciation Calculate", description = "Calculated the depreciation for the given assetid")
 	public ResponseEntity<DepreciationRes> getDepreciationDetails(@PathVariable String assetId) {
 		List<DepreciationDetail> depreciationDetails = depreciationService.getDepreciationDetails(assetId);
 		// Build the response object

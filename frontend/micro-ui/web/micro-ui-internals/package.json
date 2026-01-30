@@ -7,6 +7,15 @@
     "packages/css",
     "example",
     "packages/react-components",
+<<<<<<< HEAD
+    "packages/modules/common",
+    "packages/modules/pt",
+    "packages/modules/core",
+    "packages/modules/commonPt",
+    "packages/modules/dss",
+    "packages/modules/fsm",
+    "packages/modules/obps"
+=======
     "packages/modules/ptr",
     "packages/modules/core",
     "packages/modules/dss",
@@ -15,6 +24,7 @@
     "packages/modules/commonPt",
     "packages/modules/common",
     "packages/modules/pt"
+>>>>>>> master-LTS
   ],
   "license": "MIT",
   "private": true,
@@ -62,12 +72,21 @@
     "buildD:asset": "cd packages/modules/asset && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
+<<<<<<< HEAD
+    "build:pt": "cd packages/modules/pt && yarn build",
+    "buildD:ptr": "cd packages/modules/ptr && yarn build",
+    "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
+    "build:core": "cd packages/modules/core && yarn build",
+    "buildD:pgr": "cd packages/modules/pgr && yarn build",
+    "build:fsm": "cd packages/modules/fsm && yarn build",
+=======
     "buildD:pt": "cd packages/modules/pt && yarn build",
     "build:ptr": "cd packages/modules/ptr && yarn build",
     "build:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
     "buildD:pgr": "cd packages/modules/pgr && yarn build",
     "buildD:fsm": "cd packages/modules/fsm && yarn build",
+>>>>>>> master-LTS
     "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
@@ -75,7 +94,11 @@
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "build:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
+<<<<<<< HEAD
+    "buildD:noc": "cd packages/modules/noc && yarn build",
+=======
     "build:noc": "cd packages/modules/noc && yarn build",
+>>>>>>> master-LTS
     "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildD:chb": "cd packages/modules/chb && yarn build",
@@ -108,7 +131,11 @@
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
     "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+<<<<<<< HEAD
+    "**/styled-components": "5.0.0"
+=======
     "minimatch": "^3.1.2",
     "glob":"7.2.3"
+>>>>>>> master-LTS
   }
 }

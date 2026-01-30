@@ -1031,7 +1031,7 @@ class ShowField extends Component {
   //let redirectingUrl=url.split("report")[0] +"digit-ui/employee/pgr/complaint/details/"
 
   //comment below line for local host environment   
-  let redirectingUrl=url.split("employee")[0]+"digit-ui/employee/pgr/complaint/details/"  
+  let redirectingUrl=url.split("employee")[0]+"upyog-ui/employee/pgr/complaint/details/"  
   
   function redirectToPage(e,grievanceId){
     e.preventDefault()

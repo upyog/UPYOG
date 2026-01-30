@@ -1,10 +1,10 @@
 package org.upyog.tp.web.models.treePruning;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,10 +14,9 @@ import org.upyog.tp.web.models.ResponseInfo;
 /**
  * A Object holds the Tree Pruning for booking
  */
-@ApiModel(description = "A Object holds the tree Pruning for booking")
+@Schema(description = "A Object holds the tree Pruning for booking")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
-
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -32,4 +31,3 @@ public class TreePruningBookingResponse {
 	private TreePruningBookingDetail treePruningBookingApplication;
 
 }
-

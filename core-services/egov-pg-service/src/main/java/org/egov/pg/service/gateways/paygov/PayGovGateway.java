@@ -27,6 +27,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -433,8 +434,8 @@ public class PayGovGateway implements Gateway {
             log.debug("Auth Info : "+ authStr);
             log.debug("requestmsg : "+ requestmsg);
             // make a request
-            ResponseEntity<String> response = new RestTemplate().exchange(GATEWAY_TRANSACTION_STATUS_URL, HttpMethod.POST, entity, String.class);
-            HttpStatus statusCode = response.getStatusCode();
+            ResponseEntity<String> response = restTemplate.exchange(GATEWAY_TRANSACTION_STATUS_URL, HttpMethod.POST, entity, String.class);
+            HttpStatusCode statusCode = response.getStatusCode();
             if(statusCode.equals(HttpStatus.OK)) {
                 Transaction resp = transformRawResponse(response.getBody(), currentStatus, PAYGOV_MERCHENT_SECERET_KEY);
                 log.debug("RESPONSE ON SUCCESS "+resp);

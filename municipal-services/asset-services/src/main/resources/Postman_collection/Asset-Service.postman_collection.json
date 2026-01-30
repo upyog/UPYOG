@@ -1,0 +1,1166 @@
+{
+	"info": {
+		"_postman_id": "4baca689-6ab2-4cd0-a893-94395a84295e",
+		"name": "Asset-Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38080935"
+	},
+	"item": [
+		{
+			"name": "assets/depreciation/_process",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/asset/assetservice/my-asset"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "locale=en_IN; _ga=GA1.1.559242739.1756447705; _clck=19weqns%5E2%5Efyv%5E0%5E2067; _ga_VZ9TNBTB3X=GS2.1.s1756447704$o1$g1$t1756447780$j59$l0$h0; _ga_E39TFV5YXM=GS2.1.s1756447709$o1$g1$t1756448684$j60$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Asset\": {\n        \"tenantId\": \"pg.citya\",\n        \"id\": \"d0a27556-c2e3-4a08-b898-c291959afac2\",\n        \"accountId\": \"\"\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757669988361|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/assets/depreciation/_process",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"assets",
+						"depreciation",
+						"_process"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/assignment/_search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/asset/assetservice/assign-response"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "locale=en_IN; _ga=GA1.1.559242739.1756447705; _clck=19weqns%5E2%5Efyv%5E0%5E2067; _ga_VZ9TNBTB3X=GS2.1.s1756447704$o1$g1$t1756447780$j59$l0$h0; _ga_E39TFV5YXM=GS2.1.s1756447709$o1$g1$t1756448684$j60$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Asset\": {\n        \"id\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n        \"tenantId\": \"pg.citya\"\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757667814971|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/assets/assignment/_search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"assets",
+						"assignment",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assets/assignment/_update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/asset/assetservice/assign-response"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "locale=en_IN; _ga=GA1.1.559242739.1756447705; _clck=19weqns%5E2%5Efyv%5E0%5E2067; _ga_VZ9TNBTB3X=GS2.1.s1756447704$o1$g1$t1756447780$j59$l0$h0; _ga_E39TFV5YXM=GS2.1.s1756447709$o1$g1$t1756448684$j60$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Asset\": {\n        \"id\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n        \"tenantId\": \"pg.citya\",\n        \"applicationNo\": \"PG-1013-2025-I-001236\",\n        \"assetAssignment\": {\n            \"assignmentId\": \"34566d7a-e49f-45a2-8673-7c412546ebdd\",\n            \"assetApplicaltionNo\": \"PG-1013-2025-I-001236\",\n            \"assetId\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n            \"assignedUserName\": \"Kunal Gaurav - Updated\",\n            \"designation\": \"DESIG_02\",\n            \"department\": \"DEPT_2\",\n            \"assignedDate\": 1756924200000,\n            \"returnDate\": 1757529000000,\n            \"isAssigned\": false,\n            \"allocatedDepartment\": \"DEPT_2\",\n            \"employeeCode\": \"EMP-002\",\n            \"auditDetails\": {\n                \"createdBy\": \"admin\",\n                \"lastModifiedBy\": \"admin\",\n                \"createdTime\": 1672531200000,\n                \"lastModifiedTime\": 1672534800000\n            }\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757667814971|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/assets/assignment/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"assets",
+						"assignment",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assets/assignment/_create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/asset/assetservice/assign-response"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "locale=en_IN; _ga=GA1.1.559242739.1756447705; _clck=19weqns%5E2%5Efyv%5E0%5E2067; _ga_VZ9TNBTB3X=GS2.1.s1756447704$o1$g1$t1756447780$j59$l0$h0; _ga_E39TFV5YXM=GS2.1.s1756447709$o1$g1$t1756448684$j60$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Asset\": {\n        \"id\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n        \"tenantId\": \"pg.citya\",\n        \"applicationNo\": \"PG-1013-2025-I-001236\",\n        \"assetAssignment\": {\n            \"assignmentId\": \"\",\n            \"assetApplicaltionNo\": \"\",\n            \"assetId\": \"\",\n            \"assignedUserName\": \"Kunal Gaurav\",\n            \"designation\": \"DESIG_01\",\n            \"department\": \"DEPT_1\",\n            \"assignedDate\": 1756924200000,\n            \"isAssigned\": true,\n            \"allocatedDepartment\": \"DEPT_1\",\n            \"employeeCode\": \"EMP-001\",\n            \"auditDetails\": {\n                \"createdBy\": \"\",\n                \"lastModifiedBy\": \"\",\n                \"createdTime\": \"\",\n                \"lastModifiedTime\": \"\"\n            }\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757667814971|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/assets/assignment/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"assets",
+						"assignment",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "maintenance/v1/_search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "Referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/asset/assetservice/maintenance"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not(A:Brand\";v=\"99\", \"Google Chrome\";v=\"133\", \"Chromium\";v=\"133\""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"AssetMaintenanceSearchCriteria\": {\n        \"tenantId\": \"pg.citya\",\n        \"assetId\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n        \"maintenanceId\": \"45d9c743-54c5-41c7-8211-53bb329df78e\",\n        \"maintenanceType\": \"CORRECTIVE\",\n        \"offset\": 0,\n        \"limit\": 10\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757659710772|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/maintenance/v1/_search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"maintenance",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "maintenance/v1/_update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "Referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/asset/assetservice/maintenance"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not(A:Brand\";v=\"99\", \"Google Chrome\";v=\"133\", \"Chromium\";v=\"133\""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"AssetMaintenance\": {\n        \"maintenanceId\": \"45d9c743-54c5-41c7-8211-53bb329df78e\",\n        \"assetId\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n        \"tenantId\": \"pg.citya\",\n        \"warrantyStatus\": \"IN_AMC\",\n        \"assetWarrantyDescription\": \"sdfdsf\",\n        \"amcDetails\": \"sdfsd\",\n        \"assetMaintenanceDate\": 1756771200,\n        \"assetNextMaintenanceDate\": null,\n        \"maintenanceType\": \"CORRECTIVE\",\n        \"paymentType\": \"BANK_TRANSFER\",\n        \"costOfMaintenance\": \"\",\n        \"description\": \"warranty\",\n        \"vendor\": \"Kunal Gaurav\",\n        \"maintenanceCycle\": \"QUARTERLY\",\n        \"partsAddedOrReplaced\": \"sdfsdf\",\n        \"preConditionRemarks\": \"dfsdf\",\n        \"postConditionRemarks\": \"dsfsdf\",\n        \"isAMCExpired\": true,\n        \"isWarrantyExpired\": false,\n        \"isLifeOfAssetAffected\": \"TRUE\",\n        \"assetMaintenanceIncreasedYear\": \"2\",\n        \"documents\": [\n            {\n                \"documentType\": \"ASSET.MAINTENANCE.DOC3\",\n                \"fileStoreId\": \"16ce3c83-a416-4e60-b6ff-1eaa1a47c278\",\n                \"documentUid\": \"16ce3c83-a416-4e60-b6ff-1eaa1a47c278\",\n                \"documentId\": \"1\"\n            },\n            {\n                \"documentType\": \"ASSET.MAINTENANCE.DOC1\",\n                \"fileStoreId\": \"ba1ca218-ca65-438c-9a2e-519acf799f3e\",\n                \"documentUid\": \"ba1ca218-ca65-438c-9a2e-519acf799f3e\",\n                \"documentId\": \"1\"\n            },\n            {\n                \"documentType\": \"ASSET.MAINTENANCE.DOC2\",\n                \"fileStoreId\": \"48e2932e-432b-4f83-8b0a-09229f107fbc\",\n                \"documentUid\": \"48e2932e-432b-4f83-8b0a-09229f107fbc\",\n                \"documentId\": \"1\"\n            }\n        ],\n        \"auditDetails\": {\n            \"createdBy\": \"\",\n            \"createdTime\": \"\",\n            \"lastModifiedBy\": \"\",\n            \"lastModifiedTime\": \"\"\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757659710772|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/maintenance/v1/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"maintenance",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "maintenance/v1/_create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "Referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/asset/assetservice/maintenance"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not(A:Brand\";v=\"99\", \"Google Chrome\";v=\"133\", \"Chromium\";v=\"133\""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"AssetMaintenance\": {\n        \"maintenanceId\": \"\",\n        \"assetId\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n        \"tenantId\": \"pg.citya\",\n        \"warrantyStatus\": \"IN_AMC\",\n        \"assetWarrantyDescription\": \"sdfdsf\",\n        \"amcDetails\": \"sdfsd\",\n        \"assetMaintenanceDate\": 1756771200,\n        \"assetNextMaintenanceDate\": null,\n        \"maintenanceType\": \"CORRECTIVE\",\n        \"paymentType\": \"BANK_TRANSFER\",\n        \"costOfMaintenance\": \"\",\n        \"description\": \"warranty\",\n        \"vendor\": \"dsfs\",\n        \"maintenanceCycle\": \"QUARTERLY\",\n        \"partsAddedOrReplaced\": \"sdfsdf\",\n        \"preConditionRemarks\": \"dfsdf\",\n        \"postConditionRemarks\": \"dsfsdf\",\n        \"isAMCExpired\": true,\n        \"isWarrantyExpired\": false,\n        \"isLifeOfAssetAffected\": \"TRUE\",\n        \"assetMaintenanceIncreasedYear\": \"2\",\n        \"documents\": [\n            {\n                \"documentType\": \"ASSET.MAINTENANCE.DOC3\",\n                \"fileStoreId\": \"16ce3c83-a416-4e60-b6ff-1eaa1a47c278\",\n                \"documentUid\": \"16ce3c83-a416-4e60-b6ff-1eaa1a47c278\"\n            },\n            {\n                \"documentType\": \"ASSET.MAINTENANCE.DOC1\",\n                \"fileStoreId\": \"ba1ca218-ca65-438c-9a2e-519acf799f3e\",\n                \"documentUid\": \"ba1ca218-ca65-438c-9a2e-519acf799f3e\"\n            },\n            {\n                \"documentType\": \"ASSET.MAINTENANCE.DOC2\",\n                \"fileStoreId\": \"48e2932e-432b-4f83-8b0a-09229f107fbc\",\n                \"documentUid\": \"48e2932e-432b-4f83-8b0a-09229f107fbc\"\n            }\n        ],\n        \"auditDetails\": {\n            \"createdBy\": \"\",\n            \"createdTime\": \"\",\n            \"lastModifiedBy\": \"\",\n            \"lastModifiedTime\": \"\"\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757659710772|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/maintenance/v1/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"maintenance",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "disposal/_search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/employee/asset/assetservice/dispose-assets/"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "locale=en_IN; _ga=GA1.1.559242739.1756447705; _clck=19weqns%5E2%5Efyv%5E0%5E2067; _ga_VZ9TNBTB3X=GS2.1.s1756447704$o1$g1$t1756447780$j59$l0$h0; _ga_E39TFV5YXM=GS2.1.s1756447709$o1$g1$t1756448684$j60$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"searchCriteria\": {\n        \"tenantId\": \"pg.citya\",\n        \"assetId\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n        \"assetDisposalStatus\": \"DISPOSED\",\n        \"offset\": 0,\n        \"limit\": 10\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757656020981|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/disposal/_search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"disposal",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "disposal/_update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/employee/asset/assetservice/dispose-assets/PG-1013-2025-I-001236"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "locale=en_IN; _ga=GA1.1.559242739.1756447705; _clck=19weqns%5E2%5Efyv%5E0%5E2067; _ga_VZ9TNBTB3X=GS2.1.s1756447704$o1$g1$t1756447780$j59$l0$h0; _ga_E39TFV5YXM=GS2.1.s1756447709$o1$g1$t1756448684$j60$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"AssetDisposal\": {\n        \"disposalId\": \"d2e7d64f-b39a-4f20-908c-ea0c0497710e\",\n        \"assetId\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n        \"tenantId\": \"pg.citya\",\n        \"lifeOfAsset\": \"6\",\n        \"isAssetDisposedInFacility\": true,\n        \"currentAgeOfAsset\": 2,\n        \"disposalDate\": 1756924200000,\n        \"reasonForDisposal\": \"Others\",\n        \"amountReceived\": 500,\n        \"purchaserName\": \"\",\n        \"paymentMode\": \"\",\n        \"comments\": \"ertwrtwe-UPDATED\",\n        \"glCode\": \"111111\",\n        \"assetDisposalStatus\": \"DISPOSED\",\n        \"additionalDetails\": {\n            \"approvalNumber\": \"APPROVAL202501\",\n            \"disposedBy\": \"Jane Smith\"\n        },\n        \"auditDetail\": {\n            \"createdBy\": \"admin\",\n            \"createdTime\": 1672531200000,\n            \"lastModifiedBy\": \"admin\",\n            \"lastModifiedTime\": 1672534800000\n        },\n        \"documents\": [\n            {\n                \"documentType\": \"OWNER.RECIEPTPHOTO\",\n                \"fileStoreId\": \"ba740edc-006d-4a34-98d7-96dd2947c795\",\n                \"documentUid\": \"ba740edc-006d-4a34-98d7-96dd2947c795\",\n                \"latitude\": null,\n                \"longitude\": null\n            }\n        ]\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757656020981|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/disposal/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"disposal",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "disposal/_create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/upyog-ui/employee/asset/assetservice/dispose-assets/PG-1013-2025-I-001236"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "locale=en_IN; _ga=GA1.1.559242739.1756447705; _clck=19weqns%5E2%5Efyv%5E0%5E2067; _ga_VZ9TNBTB3X=GS2.1.s1756447704$o1$g1$t1756447780$j59$l0$h0; _ga_E39TFV5YXM=GS2.1.s1756447709$o1$g1$t1756448684$j60$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"AssetDisposal\": {\n        \"disposalId\": \"\",\n        \"assetId\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\n        \"tenantId\": \"pg.citya\",\n        \"lifeOfAsset\": \"5\",\n        \"isAssetDisposedInFacility\": true,\n        \"currentAgeOfAsset\": 2,\n        \"disposalDate\": 1756924200000,\n        \"reasonForDisposal\": \"Others\",\n        \"amountReceived\": 500,\n        \"purchaserName\": \"\",\n        \"paymentMode\": \"\",\n        \"comments\": \"for assest\",\n        \"glCode\": \"111111\",\n        \"assetDisposalStatus\": \"DISPOSED\",\n        \"additionalDetails\": {\n            \"approvalNumber\": \"APPROVAL-2020\",\n            \"disposedBy\": \"Kunal Gaurav\"\n        },\n        \"auditDetail\": {\n            \"createdBy\": \"admin\",\n            \"createdTime\": 1672531200000,\n            \"lastModifiedBy\": \"admin\",\n            \"lastModifiedTime\": 1672534800000\n        },\n        \"documents\": [\n            {\n                \"documentType\": \"OWNER.RECIEPTPHOTO\",\n                \"fileStoreId\": \"ba740edc-006d-4a34-98d7-96dd2947c795\",\n                \"documentUid\": \"ba740edc-006d-4a34-98d7-96dd2947c795\",\n                \"latitude\": null,\n                \"longitude\": null\n            }\n        ]\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757656020981|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/disposal/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"disposal",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/assets/_update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-US,en;q=0.9,hi;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/digit-ui/employee/asset/assetservice/edit-response"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Asset\": {\r\n        \"accountId\": \"ab5db0ed-b3ae-4fb8-bd93-f9913a0fa5da\",\r\n        \"tenantId\": \"pg.citya\",\r\n        \"assetBookRefNo\": \"HP/20022/Ref_No/2222\",\r\n        \"assetName\": \"Chair for NIUA - UPDATED\",\r\n        \"description\": \"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since UPdate - UPDATED\",\r\n        \"assetClassification\": \"MOVABLE\",\r\n        \"assetParentCategory\": \"FURNITURE\",\r\n        \"assetCategory\": \"HOME_EQUIPMENT\",\r\n        \"assetSubCategory\": \"SITTER\",\r\n        \"department\": \"DEPT_2\",\r\n        \"financialYear\": \"2024-25\",\r\n        \"sourceOfFinance\": \"AMRUT\",\r\n        \"applicationNo\": \"PG-1013-2025-I-001235\",\r\n        \"approvalDate\": \"\",\r\n        \"id\": \"292c3bd8-4060-4efa-9f0d-d1fc81926625\",\r\n        \"applicationDate\": \"\",\r\n        \"status\": \"Employee Action Pending\",\r\n        \"action\": \"\",\r\n        \"businessService\": \"asset-create\",\r\n        \"addressDetails\": {\r\n            \"addressLine1\": null,\r\n            \"addressLine2\": null,\r\n            \"buildingName\": null,\r\n            \"doorNo\": null,\r\n            \"street\": null,\r\n            \"pincode\": null,\r\n            \"city\": \"City A\",\r\n            \"locality\": {\r\n                \"code\": \"JLC254\",\r\n                \"latitude\": 0,\r\n                \"longitude\": 0\r\n            }\r\n        },\r\n        \"documents\": [\r\n            {\r\n                \"documentId\": \"bd2d05d5-5462-4dde-a096-fed7df2c7b02\",\r\n                \"documentType\": \"OWNER.RECIEPTPHOTO\",\r\n                \"fileStoreId\": \"f0d569d7-8c71-4d6d-81a1-1ec93eb91981\",\r\n                \"documentUid\": \"6c5e4398-8a2f-4489-8459-611fa5ecc42c\",\r\n                \"docDetails\": null\r\n            },\r\n            {\r\n                \"documentId\": \"e82c5649-0591-44fe-b5f3-363e88e54505\",\r\n                \"documentType\": \"OWNER.ANYSUPPORTINGDOCUMENT\",\r\n                \"fileStoreId\": \"bee8e2cc-5d72-4abc-bc98-18b2e1223c64\",\r\n                \"documentUid\": \"77235dfb-3758-400c-8b00-10a8d711387b\",\r\n                \"docDetails\": null\r\n            },\r\n            {\r\n                \"documentId\": \"25f96703-2005-4b90-b696-b14601c4407a\",\r\n                \"documentType\": \"OWNER.ASSETPHOTO\",\r\n                \"fileStoreId\": \"769d03cd-4f95-4b86-ab3d-ceec1b741f88\",\r\n                \"documentUid\": \"845e0cc3-0aa2-4d03-b1a0-290726e7da60\",\r\n                \"docDetails\": null\r\n            }\r\n        ],\r\n        \"workflow\": {\r\n            \"action\": \"VERIFY\",\r\n            \"businessService\": \"asset-create\",\r\n            \"moduleName\": \"asset-services\"\r\n        },\r\n        \"additionalDetails\": {\r\n            \"key\": 1733743796659,\r\n            \"brand\": \"LG Brand UPdate\",\r\n            \"manufacturer\": \"LG Manufacturer UPdate\",\r\n            \"warranty\": {\r\n                \"code\": \"1_YEAR\",\r\n                \"name\": \"warranty\",\r\n                \"value\": \"1 Year\",\r\n                \"i18nKey\": \"1 Year\"\r\n            },\r\n            \"acquisitionProcessionDetails\": {}\r\n        }\r\n    },\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"authToken\": \"2f302a1f-161a-4d9e-8c02-7fbad9b98f0f\",\r\n        \"userInfo\": {\r\n            \"id\": 194,\r\n            \"uuid\": \"ab5db0ed-b3ae-4fb8-bd93-f9913a0fa5da\",\r\n            \"userName\": \"ASSET_INITIATOR\",\r\n            \"name\": \"Asset Initiator\",\r\n            \"mobileNumber\": \"9999075991\",\r\n            \"emailId\": null,\r\n            \"locale\": null,\r\n            \"type\": \"EMPLOYEE\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Asset Initiator Employee\",\r\n                    \"code\": \"ASSET_INITIATOR\",\r\n                    \"tenantId\": \"pg.citya\"\r\n                },\r\n                {\r\n                    \"name\": \"Asset Approver\",\r\n                    \"code\": \"ASSET_APPROVER\",\r\n                    \"tenantId\": \"pg.citya\"\r\n                },\r\n                {\r\n                    \"name\": \"Asset Document Verifier\",\r\n                    \"code\": \"ASSET_VERIFIER\",\r\n                    \"tenantId\": \"pg.citya\"\r\n                }\r\n\r\n\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pg.citya\",\r\n            \"permanentCity\": null\r\n        },\r\n        \"msgId\": \"1733743900982|en_IN\",\r\n        \"plainAccessRequest\": {}\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/assets/_update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"assets",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assets/_search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-US,en;q=0.9,hi;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/digit-ui/employee/asset/assetservice/my-asset"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"eceb5456-e376-4fe0-9598-b710bfb741d6\",\n        \"userInfo\": {\n            \"id\": 194,\n            \"uuid\": \"a9c4c021-f97b-49d2-8339-969ca2c376f8\",\n            \"userName\": \"BimalAAI2\",\n            \"name\": \"BimalAAITow\",\n            \"mobileNumber\": \"9912722222\",\n            \"emailId\": \"BimalAAITow^@gmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Initiator Employee\",\n                    \"code\": \"ASSET_INITIATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1732600268762|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/assets/_search?tenantId=pg.citya&fromDate=1717180200000&toDate=1732645799000&limit=10&sortBy=commencementDate&sortOrder=DESC&_=1732600268762",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"assets",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "pg.citya"
+						},
+						{
+							"key": "fromDate",
+							"value": "1717180200000"
+						},
+						{
+							"key": "toDate",
+							"value": "1732645799000"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "commencementDate"
+						},
+						{
+							"key": "sortOrder",
+							"value": "DESC"
+						},
+						{
+							"key": "_",
+							"value": "1732600268762"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assets/_create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-US,en;q=0.9,hi;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/digit-ui/employee/asset/assetservice/new-assets/acknowledgement"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Asset\": {\r\n        \"accountId\": \"\",\r\n        \"tenantId\": \"pg.citya\",\r\n        \"assetBookRefNo\": \"Refence/2024\",\r\n        \"assetName\": \"Chair for NIUA\",\r\n        \"description\": \"Description Lorem Ipsum data is coming from Lorem ipsum offical site\",\r\n        \"assetClassification\": \"MOVABLE\",\r\n        \"assetParentCategory\": \"IT\",\r\n        \"assetCategory\": \"STORAGE_DEVICES\",\r\n        \"assetSubCategory\": \"HARD_DRIVES_HDDS\",\r\n        \"department\": \"DEPT_5\",\r\n        \"assetType\": \"INFRASTRUCTURE_ASSET\",\r\n        \"assetUsage\": \"DISPOSED\",\r\n        \"financialYear\": \"2024-25\",\r\n        \"sourceOfFinance\": \"MUNICIPAL_FUNDS\",\r\n        \"applicationNo\": \"\",\r\n        \"approvalDate\": \"\",\r\n        \"applicationDate\": \"\",\r\n        \"status\": \"\",\r\n        \"modeOfPossessionOrAcquisition\": \"AST_LEASED\",\r\n        \"invoiceDate\": 1730419200,\r\n        \"invoiceNumber\": \"Invoice _nuuuuu33333\",\r\n        \"purchaseDate\": 1730419200,\r\n        \"purchaseOrderNumber\": \"2331232213\",\r\n        \"warranty\": \"15_YEAR\",\r\n        \"assetAge\": \"1 MONTH\",\r\n        \"location\": \"28.590213, 77.2257146\",\r\n        \"purchaseCost\": 222222,\r\n        \"acquisitionCost\": 33333,\r\n        \"bookValue\": 255555,\r\n        \"action\": \"\",\r\n        \"businessService\": \"asset-create\",\r\n        \"addressDetails\": {\r\n            \"city\": \"City A\",\r\n            \"locality\": {\r\n                \"code\": \"JLC414\",\r\n                \"area\": \"Area1\"\r\n            }\r\n        },\r\n        \"documents\": [\r\n            {\r\n                \"documentType\": \"OWNER.RECIEPTPHOTO\",\r\n                \"fileStoreId\": \"bd4932e3-d199-48a0-b1a7-db4c5a804551\",\r\n                \"documentUid\": \"bd4932e3-d199-48a0-b1a7-db4c5a804551\",\r\n                \"latitude\": null,\r\n                \"longitude\": null\r\n            },\r\n            {\r\n                \"documentType\": \"OWNER.ASSETPHOTO\",\r\n                \"fileStoreId\": \"2a776858-784a-4673-b32c-bdf20e5d3bc6\",\r\n                \"documentUid\": \"2a776858-784a-4673-b32c-bdf20e5d3bc6\",\r\n                \"latitude\": null,\r\n                \"longitude\": null\r\n            }\r\n        ],\r\n        \"workflow\": {\r\n            \"action\": \"INITIATE\",\r\n            \"businessService\": \"asset-create\",\r\n            \"moduleName\": \"asset-services\"\r\n        },\r\n        \"additionalDetails\": {\r\n            \"assetParentCategory\": \"IT\",\r\n            \"warranty\": {\r\n                \"i18nKey\": \"15_YEAR\",\r\n                \"code\": \"15_YEAR\",\r\n                \"name\": \"warranty\"\r\n            },\r\n            \"modeOfPossessionOrAcquisition\": {\r\n                \"i18nKey\": \"AST_LEASED\",\r\n                \"code\": \"AST_LEASED\",\r\n                \"name\": \"modeOfPossessionOrAcquisition\"\r\n            },\r\n            \"brand\": \"Brand \",\r\n            \"manufacturer\": \"Manufacturer \"\r\n        }\r\n    },\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"authToken\": \"98902e75-6108-4ca5-b6ac-c2fc42c7816f\",\r\n        \"userInfo\": {\r\n            \"id\": 194,\r\n            \"uuid\": \"ab5db0ed-b3ae-4fb8-bd93-f9913a0fa5da\",\r\n            \"userName\": \"ASSET_INITIATOR\",\r\n            \"name\": \"Asset Initiator\",\r\n            \"mobileNumber\": \"9999075991\",\r\n            \"emailId\": null,\r\n            \"locale\": null,\r\n            \"type\": \"EMPLOYEE\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Asset Initiator Employee\",\r\n                    \"code\": \"ASSET_INITIATOR\",\r\n                    \"tenantId\": \"pg.citya\"\r\n                },\r\n                {\r\n                    \"name\": \"Asset Approver\",\r\n                    \"code\": \"ASSET_APPROVER\",\r\n                    \"tenantId\": \"pg.citya\"\r\n                }\r\n\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pg.citya\",\r\n            \"permanentCity\": null\r\n        },\r\n        \"msgId\": \"1734002475778|en_IN\",\r\n        \"plainAccessRequest\": {}\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/assets/_create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"assets",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assets/depreciation/list",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "origin",
+						"value": "https://niuatt.niua.in"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i"
+					},
+					{
+						"key": "referer",
+						"value": "https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/PG-1013-2025-I-001237"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"macOS\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Cookie",
+						"value": "locale=en_IN; _ga=GA1.1.559242739.1756447705; _clck=19weqns%5E2%5Efyv%5E0%5E2067; _ga_VZ9TNBTB3X=GS2.1.s1756447704$o1$g1$t1756447780$j59$l0$h0; _ga_E39TFV5YXM=GS2.1.s1756447709$o1$g1$t1756448684$j60$l0$h0"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Asset\": {\n        \"tenantId\": \"pg.citya\",\n        \"id\": \"d0a27556-c2e3-4a08-b898-c291959afac2\",\n        \"accountId\": \"\"\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"54552937-0eb8-4cec-910a-182918416f7f\",\n        \"userInfo\": {\n            \"id\": 909,\n            \"uuid\": \"491381fb-858c-4582-a8cd-24ea08394bb8\",\n            \"userName\": \"ASSET_APPROVER\",\n            \"name\": \"Asset Approver\",\n            \"mobileNumber\": \"8448489439\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Asset Approver\",\n                    \"code\": \"ASSET_APPROVER\",\n                    \"tenantId\": \"pg.citya\"\n                },\n                {\n                    \"name\": \"Asset Allocator\",\n                    \"code\": \"ASSET_ALLOCATOR\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1757670044190|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8087/asset-services/v1/assets/depreciation/list",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"asset-services",
+						"v1",
+						"assets",
+						"depreciation",
+						"list"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

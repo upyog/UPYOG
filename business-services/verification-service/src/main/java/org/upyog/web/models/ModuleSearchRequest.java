@@ -1,6 +1,7 @@
 package org.upyog.web.models;
 
-import javax.validation.Valid;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
@@ -18,20 +19,20 @@ import lombok.Setter;
  * whereas single item is used for update
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
-
+@Schema(description = "Contract class to receive request. Array of items are used in case of create, whereas single item is used for update")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-07T15:40:06.365+05:30")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class ModuleSearchRequest {
-    @JsonProperty("RequestInfo")
-    private RequestInfo requestInfo = null;
+	@JsonProperty("RequestInfo")
+	private RequestInfo requestInfo = null;
 
-    @JsonProperty("ModuleSearchCriteria")
-    @Valid
-    private ModuleSearchCriteria moduleSearchCriteria = null;
+	@JsonProperty("ModuleSearchCriteria")
+	@Valid
+	private ModuleSearchCriteria moduleSearchCriteria = null;
 
 
 }

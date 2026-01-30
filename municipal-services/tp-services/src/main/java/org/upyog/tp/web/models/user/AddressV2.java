@@ -10,7 +10,7 @@ import java.util.Date;
  * AddressV2 is a model class that represents the structure of an address
  * in the system. It includes various fields to capture detailed address
  * information and methods to validate the address data.
- * 
+ *
  * Key Fields:
  * - pinCode: The postal code of the address.
  * - city: The city where the address is located.
@@ -28,11 +28,11 @@ import java.util.Date;
  * - streetName: The name of the street.
  * - landmark: A landmark near the address.
  * - locality: The locality or neighborhood of the address.
- * 
+ *
  * Key Methods:
  * - isInvalid(): Validates the address fields and checks if any are invalid.
  * - isNotEmpty(): Checks if any of the key address fields are not empty.
- * 
+ *
  * Annotations:
  * - @Getter: Automatically generates getter methods for all fields.
  * - @Setter: Automatically generates setter methods for all fields.

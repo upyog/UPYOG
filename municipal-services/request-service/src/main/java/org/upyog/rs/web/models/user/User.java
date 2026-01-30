@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import org.egov.common.contract.request.Role;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.upyog.rs.validation.*;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,88 +38,89 @@ public class User   {
         private Long id;
 
         @Size(max=64)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("uuid")
         private String uuid;
 
         @Size(max=64)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("userName")
         private String userName;
 
         @Size(max=64)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("password")
         private String password;
 
         @JsonProperty("salutation")
-        @SafeHtml
+
+        @SanitizeHtml
         private String salutation;
 
         @NotNull
-        @SafeHtml
+        @SanitizeHtml
         @Size(max=100)
        // @Pattern(regexp = "^[^\\$\"'<>?\\\\~`!@#$%^()+={}\\[\\]*,:;“”‘’]*$", message = "Invalid name. Only alphabets and special characters -, ',`, .")
         @JsonProperty("name")
         private String name;
 
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("gender")
         private String gender;
 
        // @Pattern(regexp = "(^[6-9][0-9]{9}$)", message = "Inavlid mobile number, should start with 6-9 and contain ten digits of 0-9")
         @NotNull
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("mobileNumber")
         private String mobileNumber;
 
         @Size(max=128)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("emailId")
         private String emailId;
 
         @Size(max=50)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("altContactNumber")
         private String altContactNumber;
 
         @Size(max=10)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("pan")
         private String pan;
 
-        @SafeHtml
+        @SanitizeHtml
         @Pattern(regexp = "^[0-9]{12}$", message = "AdharNumber should be 12 digit number")
         @JsonProperty("aadhaarNumber")
         private String aadhaarNumber;
 
         @Size(max=300)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("permanentAddress")
         private String permanentAddress;
 
         @Size(max=300)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("permanentCity")
         private String permanentCity;
 
         @Size(max=10)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("permanentPinCode")
         private String permanentPincode;
 
         @Size(max=300)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("correspondenceCity")
         private String correspondenceCity;
 
         @Size(max=10)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("correspondencePinCode")
         private String correspondencePincode;
 
         @Size(max=300)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("correspondenceAddress")
         private String correspondenceAddress;
 
@@ -133,17 +134,17 @@ public class User   {
         private Long pwdExpiryDate;
 
         @Size(max=16)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("locale")
         private String locale;
 
         @Size(max=50)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("type")
         private String type;
 
         @Size(max=36)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("signature")
         private String signature;
 
@@ -155,27 +156,27 @@ public class User   {
         private List<Role> roles;
 
         @Size(max=100)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("fatherOrHusbandName")
         private String fatherOrHusbandName;
 
         @Size(max=32)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("bloodGroup")
         private String bloodGroup;
 
         @Size(max=300)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("identificationMark")
         private String identificationMark;
 
         @Size(max=36)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("photo")
         private String photo;
 
         @Size(max=64)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("createdBy")
         private String createdBy;
 
@@ -183,7 +184,7 @@ public class User   {
         private Long createdDate;
 
         @Size(max=64)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("lastModifiedBy")
         private String lastModifiedBy;
 
@@ -191,12 +192,12 @@ public class User   {
         private Long lastModifiedDate;
 
         @Size(max=256)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("tenantId")
         private String tenantId;
         
         @Size(max=50)
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("alternatemobilenumber")
         private String alternatemobilenumber;
 

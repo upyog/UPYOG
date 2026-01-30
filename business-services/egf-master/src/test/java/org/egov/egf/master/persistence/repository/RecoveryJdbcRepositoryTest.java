@@ -6,10 +6,10 @@ import org.egov.egf.master.domain.model.ChartOfAccount;
 import org.egov.egf.master.domain.model.Recovery;
 import org.egov.egf.master.domain.model.RecoverySearch;
 import org.egov.egf.master.persistence.entity.RecoveryEntity;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
@@ -17,8 +17,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,18 +27,18 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Ignore
+@Disabled
 public class RecoveryJdbcRepositoryTest {
 
 	private RecoveryJdbcRepository recoveryJdbcRepository;
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		recoveryJdbcRepository = new RecoveryJdbcRepository(namedParameterJdbcTemplate);
 	}
@@ -60,14 +60,15 @@ public class RecoveryJdbcRepositoryTest {
 
 	}
 
-	@Test(expected = DataIntegrityViolationException.class)
+	@Test
 	@Sql(scripts = { "/sql/clearRecovery.sql" })
 	public void test_create_with_tenantId_null() {
 
 		RecoveryEntity recovery = RecoveryEntity.builder().id("2374257").code("code").name("name").active(true)
 				.mode('M').accountNumber("30492234547").flat(100.00).ifscCode("ifsccode").chartOfAccountId("1").remittanceMode('M').remitted("test").build();
-		recoveryJdbcRepository.create(recovery);
-
+		assertThrows(DataIntegrityViolationException.class, () -> {
+			recoveryJdbcRepository.create(recovery);
+		});
 	}
 
 	@Test
@@ -123,14 +124,15 @@ public class RecoveryJdbcRepositoryTest {
 
 	}
 
-	@Test(expected = InvalidDataException.class)
+	@Test
 	@Sql(scripts = { "/sql/clearRecovery.sql", "/sql/insertRecoveryData.sql" })
 	public void test_search_invalid_sort_option() {
 
 		RecoverySearch search = getRecoverySearch();
 		search.setSortBy("desc");
-		recoveryJdbcRepository.search(search);
-
+		assertThrows(InvalidDataException.class, () -> {
+			recoveryJdbcRepository.search(search);
+		});
 	}
 
 	@Test

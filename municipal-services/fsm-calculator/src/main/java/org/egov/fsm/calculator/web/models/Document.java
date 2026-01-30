@@ -17,7 +17,7 @@ import lombok.ToString;
  */
 @ApiModel(description = "This object holds list of documents attached during the transaciton for a property")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:54:07.373Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-23T05:54:07.373Z[GMT]")
 @Getter
 @Setter
 @AllArgsConstructor

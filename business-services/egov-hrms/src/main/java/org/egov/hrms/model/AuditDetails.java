@@ -2,7 +2,7 @@ package org.egov.hrms.model;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 
 @AllArgsConstructor

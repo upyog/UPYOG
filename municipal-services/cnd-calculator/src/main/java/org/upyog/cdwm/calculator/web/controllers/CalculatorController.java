@@ -3,8 +3,10 @@ package org.upyog.cdwm.calculator.web.controllers;
 import java.util.Collections;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,7 @@ import org.upyog.cdwm.calculator.web.models.demand.DemandResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.swagger.annotations.ApiParam;
+//import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
+@Tag(name = "Cnd Calculator", description = "Cnd Calculator operations")
 public class CalculatorController {
 
 	private ObjectMapper objectMapper;
@@ -74,8 +77,8 @@ public class CalculatorController {
      * @return A ResponseEntity containing a list of DemandResponse objects.
      */
 	@PostMapping(value = "/v1/_calculate")
+	@Operation(summary = "Calculate Fee", description = "Calculate the Fee and genearte the Demand")
 	public ResponseEntity<DemandResponse> calculate(
-			@ApiParam(value = "Details for the CND application, payment", required = true)
 	        @Valid @RequestBody CalculationRequest calculationReq)
 	        {
 

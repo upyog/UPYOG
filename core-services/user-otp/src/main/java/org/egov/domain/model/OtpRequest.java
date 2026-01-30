@@ -4,7 +4,7 @@ import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.domain.exception.InvalidOtpRequestException;
 
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Getter
 @AllArgsConstructor

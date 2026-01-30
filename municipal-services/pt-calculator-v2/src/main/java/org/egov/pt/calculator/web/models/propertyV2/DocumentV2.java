@@ -1,10 +1,11 @@
 package org.egov.pt.calculator.web.models.propertyV2;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.*;
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor

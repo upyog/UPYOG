@@ -1,6 +1,10 @@
 {
   "name": "@upyog/digit-ui-module-pt",
+<<<<<<< HEAD
+  "version": "2.0.0",
+=======
   "version": "3.0.1",
+>>>>>>> master-LTS
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",

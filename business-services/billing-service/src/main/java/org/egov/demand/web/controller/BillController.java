@@ -1,6 +1,6 @@
 package org.egov.demand.web.controller;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.response.ErrorResponse;
 import org.egov.demand.model.BillSearchCriteria;
