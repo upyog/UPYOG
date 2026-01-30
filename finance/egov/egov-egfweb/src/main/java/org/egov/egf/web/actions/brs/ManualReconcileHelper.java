@@ -291,7 +291,7 @@ public class ManualReconcileHelper {
                 .append(" case when rec.transactionType= 'Cr' then 'Payment' else 'Receipt' end    as \"type\" , insType.type as instrumentType ")
                 .append(" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,")
                 .append(" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv, egf_instrumenttype insType WHERE   ih.bankAccountId = BANK.ID")
-                .append(" AND bank.id = :bankAccId  AND IH.transactiondate <= :toDate ")
+                .append(" AND bank.id = :bankAccId AND IH.transactiondate >=:fromDate and IH.transactiondate <= :toDate ")
                 .append(instrumentCondition)
                 .append(" AND v.ID= iv.voucherheaderid and v.STATUS not in  (")
                 .append(voucherExcludeStatuses)
