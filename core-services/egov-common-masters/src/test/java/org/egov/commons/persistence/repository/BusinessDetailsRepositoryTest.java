@@ -14,6 +14,7 @@ import org.egov.commons.model.BusinessCategory;
 import org.egov.commons.model.BusinessDetails;
 import org.egov.commons.model.BusinessDetailsCommonModel;
 import org.egov.commons.model.BusinessDetailsCriteria;
+import org.egov.commons.repository.BusinessCategoryRepository;
 import org.egov.commons.repository.BusinessDetailsRepository;
 import org.egov.commons.repository.builder.BusinessDetailsQueryBuilder;
 import org.egov.commons.repository.rowmapper.BusinessAccountDetailsRowMapper;
@@ -28,8 +29,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
+@ContextConfiguration(classes = BusinessDetailsRepository.class)
 public class BusinessDetailsRepositoryTest {
 	@Mock
 	JdbcTemplate jdbcTemplate;

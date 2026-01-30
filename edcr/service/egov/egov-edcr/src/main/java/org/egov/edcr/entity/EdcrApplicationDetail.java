@@ -115,6 +115,8 @@ public class EdcrApplicationDetail extends AbstractAuditable {
     @Length(min = 1, max = 128)
     private String comparisonDcrNumber;
 
+
+
 	@Override
     public Long getId() {
         return id;

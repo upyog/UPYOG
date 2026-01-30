@@ -42,7 +42,6 @@ package org.egov;
 
 import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
 
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +54,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
 @Import(TracerConfiguration.class)

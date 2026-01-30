@@ -5,11 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.upyog.pgrai.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +19,7 @@ import lombok.Builder;
  * Boundary
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2020-07-15T11:35:33.568+05:30")
-
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2020-07-15T11:35:33.568+05:30")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,23 +28,23 @@ import lombok.Builder;
 public class Boundary   {
 
         @NotNull
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("code")
         private String code = null;
 
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("name")
         private String name = null;
 
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("label")
         private String label = null;
 
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("latitude")
         private String latitude = null;
 
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("longitude")
         private String longitude = null;
 
@@ -54,7 +52,7 @@ public class Boundary   {
         @Valid
         private List<Boundary> children = null;
 
-        @SafeHtml
+        @SanitizeHtml
         @JsonProperty("materializedPath")
         private String materializedPath = null;
 

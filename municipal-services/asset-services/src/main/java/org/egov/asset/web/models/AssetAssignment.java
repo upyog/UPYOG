@@ -2,7 +2,7 @@ package org.egov.asset.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -10,9 +10,9 @@ import org.springframework.validation.annotation.Validated;
 /**
  * Representation of a asset assignment . Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case.
  */
-@ApiModel(description = "Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case. ")
+@Schema(description = "Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case. ")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -41,7 +41,6 @@ public class AssetAssignment {
     @JsonProperty("department")
     private String department;
 
-    @JsonIgnore
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

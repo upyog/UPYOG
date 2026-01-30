@@ -4,7 +4,6 @@ package org.egov.ptr.web.controllers;
 import java.util.Collections;
 import java.util.List;
 
-import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.ptr.models.PetApplicationSearchCriteria;
@@ -18,22 +17,24 @@ import org.egov.ptr.web.contracts.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 
 /**
  * Controller for handling pet registration-related operations.
  */
-@Controller
+@Tag(name = "Pet Registration", description = "APIs for pet registration operations")
+@RestController
 @RequestMapping("/pet-registration")
 public class PetController {
 
@@ -52,9 +53,10 @@ public class PetController {
 	 * @param petRegistrationRequest The request containing application details and metadata.
 	 * @return Response containing the created applications and response info.
 	 */
-	@RequestMapping(value = "/_create", method = RequestMethod.POST)
+	@Operation(summary = "Create pet registration application", description = "Creates a new pet registration application")
+	@RequestMapping("/_create")
 	public ResponseEntity<PetRegistrationResponse> petRegistrationCreate(
-			@ApiParam(value = "Details for the new Pet Registration Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest)
+			@Valid @RequestBody PetRegistrationRequest petRegistrationRequest)
 			throws JsonMappingException, JsonProcessingException {
 		List<PetRegistrationApplication> applications = petRegistrationService
 				.registerPtrRequest(petRegistrationRequest);
@@ -73,7 +75,8 @@ public class PetController {
 	 * @param petApplicationSearchCriteria The search criteria for filtering applications.
 	 * @return Response containing the matching applications.
 	 */
-	@RequestMapping(value = "/_search", method = RequestMethod.POST)
+	@Operation(summary = "Search pet registration applications", description = "Searches for pet registration applications based on criteria")
+	@RequestMapping("/_search")
 	public ResponseEntity<PetRegistrationResponse> petRegistrationSearch(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute PetApplicationSearchCriteria petApplicationSearchCriteria) {
@@ -93,9 +96,10 @@ public class PetController {
 	 * @param petRegistrationRequest The request containing updated application details.
 	 * @return Response containing the updated application.
 	 */
-	@RequestMapping(value = "/_update", method = RequestMethod.POST)
+	@Operation(summary = "Update pet registration application", description = "Updates an existing pet registration application")
+	@RequestMapping("/_update")
 	public ResponseEntity<PetRegistrationResponse> petRegistrationUpdate(
-			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest)
+			@Valid @RequestBody PetRegistrationRequest petRegistrationRequest)
 			throws JsonMappingException, JsonProcessingException {
 		PetRegistrationApplication application = petRegistrationService.updatePtrApplication(petRegistrationRequest);
 
@@ -112,7 +116,8 @@ public class PetController {
 	 *
 	 * @return Response indicating the status of the scheduler trigger.
 	 */
-	@RequestMapping(value = "/trigger-expire-petapplications", method = RequestMethod.POST)
+	@Operation(summary = "Trigger pet application expiration", description = "Triggers the expiration process for pet applications")
+	@RequestMapping("/trigger-expire-petapplications")
 	public ResponseEntity<String> triggerWorkflowUpdate() {
 		try {
 			petSchedulerService.expirePetApplications();
@@ -129,7 +134,8 @@ public class PetController {
 	 *
 	 * @return Response indicating the status of the notification trigger.
 	 */
-	@RequestMapping(value = "/trigger-advance-notification", method = RequestMethod.POST)
+	@Operation(summary = "Trigger advance notification", description = "Triggers advance notification for upcoming pet application expirations")
+	@RequestMapping("/trigger-advance-notification")
 	public ResponseEntity<String> triggerAdvanceNotification() {
 		try {
 			petSchedulerService.sendNotificationBeforeExpiration();

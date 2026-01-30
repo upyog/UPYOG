@@ -1,8 +1,8 @@
 package org.upyog.rs.validator;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
 import java.util.Set;
 import java.util.stream.Collectors;
 

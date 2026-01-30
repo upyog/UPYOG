@@ -27,7 +27,6 @@ import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
 		"org.egov.ptr.repository" })
 @Import({ TracerConfiguration.class })
 @EnableScheduling
-@EnableSchedulerLock(defaultLockAtMostFor = "PT30M")
 public class PetApplication {
 
 	@Value("${app.timezone}")

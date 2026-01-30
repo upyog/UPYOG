@@ -3,21 +3,19 @@ package org.egov.waterconnection.web.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.egov.common.contract.request.Role;
 import org.egov.waterconnection.web.models.users.User;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Getter
 @Setter
@@ -26,24 +24,24 @@ import org.hibernate.validator.constraints.SafeHtml;
 @NoArgsConstructor
 public class OwnerInfo extends User{
 
-	@SafeHtml
+	
 	@JsonProperty("ownerInfoUuid")
 	private String ownerInfoUuid;
 	
 	@NotNull
-	@SafeHtml
+	
 	@JsonProperty("mobileNumber")
 	private String mobileNumber;
 
-	@SafeHtml
+	
 	@JsonProperty("gender")
 	private String gender;
 
-	@SafeHtml
+	
 	@JsonProperty("fatherOrHusbandName")
 	private String fatherOrHusbandName;
 
-	@SafeHtml
+	
 	@JsonProperty("correspondenceAddress")
 	private String correspondenceAddress;
 
@@ -54,11 +52,11 @@ public class OwnerInfo extends User{
 	private Double ownerShipPercentage;
 
 	@NotNull
-	@SafeHtml
+	
 	@JsonProperty("ownerType")
 	private String ownerType;
 
-	@SafeHtml
+	
 	@JsonProperty("institutionId")
 	private String institutionId;
 	

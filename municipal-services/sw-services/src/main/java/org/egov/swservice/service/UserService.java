@@ -10,6 +10,7 @@ import org.egov.swservice.web.models.users.UserDetailResponse;
 import org.egov.swservice.web.models.users.UserSearchRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -32,6 +33,7 @@ public class UserService {
 	@Autowired
 	private ObjectMapper mapper;
 
+	@Lazy
 	@Autowired
 	private EnrichmentService enrichmentService;
 

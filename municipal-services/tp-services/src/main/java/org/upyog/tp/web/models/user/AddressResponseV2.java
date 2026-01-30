@@ -13,7 +13,7 @@ import java.util.List;
  * - responseInfo: Contains metadata about the response, such as status and messages.
  * - address: A list of AddressV2 objects representing the address details in the response.
  * 
- * Annotations:
+ *   Annotations:
  * - @AllArgsConstructor: Automatically generates a constructor with all fields.
  * - @Getter: Automatically generates getter methods for all fields.
  * - @JsonProperty: Maps JSON properties to Java fields for serialization/deserialization.

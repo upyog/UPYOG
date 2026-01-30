@@ -57,6 +57,11 @@
 			<id>JBoss Repository</id>
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
+		<!--<repository>
+			<id>AsposeJavaAPI</id>
+			<name>Aspose Java API</name>
+			<url>https://repository.aspose.com/repo/</url>
+		</repository>-->
 		<repository>
 			<id>AsposeJavaAPI</id>
 			<name>Aspose Java API</name>
@@ -210,8 +215,6 @@
 				</exclusions>
 			</dependency>
 
-			<!--		Below dependency is commented out to avoid jenkinds build issue -->
-		
 			<dependency>
 				<groupId>org.egov.edcr</groupId>
 				<artifactId>egov-egi</artifactId>

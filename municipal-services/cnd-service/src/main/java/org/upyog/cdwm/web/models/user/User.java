@@ -8,8 +8,8 @@ import org.hibernate.validator.constraints.Email;
 import org.springframework.util.CollectionUtils;
 import org.upyog.cdwm.web.models.user.enums.UserType;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.*;
 
 import static org.springframework.util.ObjectUtils.isEmpty;

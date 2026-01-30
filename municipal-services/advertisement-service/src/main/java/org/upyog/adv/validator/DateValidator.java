@@ -1,11 +1,12 @@
 package org.upyog.adv.validator;
 
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 import org.upyog.adv.util.BookingUtil;
 

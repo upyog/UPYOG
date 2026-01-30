@@ -3,7 +3,7 @@ package org.egov.ewst.web.controllers;
 
 import java.util.Collections;
 import java.util.List;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.ewst.models.EwasteApplication;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
 
 /**
  * Controller class for handling e-waste application requests.
@@ -44,6 +45,7 @@ public class EwasteController {
 	 * @param ewasteRegistrationRequest The request payload containing e-waste application details.
 	 * @return ResponseEntity containing the created e-waste application and response information.
 	 */
+	@Operation(summary = "Create E-waste Application", description = "Creates a new e-waste application request")
 	@RequestMapping(value = "/_create", method = RequestMethod.POST)
 	public ResponseEntity<EwasteRegistrationResponse> ewasteRequestCreate(
 			@ApiParam(value = "Details for the new e-waste request + RequestInfo meta data.", required = true) @Valid @RequestBody EwasteRegistrationRequest ewasteRegistrationRequest) {
@@ -66,6 +68,7 @@ public class EwasteController {
 	 * @param ewasteApplicationSearchCriteria The search criteria for e-waste applications.
 	 * @return ResponseEntity containing the list of matching e-waste applications and response information.
 	 */
+	@Operation(summary = "Search E-waste Applications", description = "Search for e-waste applications based on criteria")
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
 	public ResponseEntity<EwasteRegistrationResponse> ewasteRegistrationSearch(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
@@ -89,6 +92,7 @@ public class EwasteController {
 	 * @param ewasteRegistrationRequest The request payload containing updated e-waste application details.
 	 * @return ResponseEntity containing the updated e-waste application and response information.
 	 */
+	@Operation(summary = "Update E-waste Application", description = "Updates an existing e-waste application request")
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<EwasteRegistrationResponse> ewasteRequestUpdate(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody EwasteRegistrationRequest ewasteRegistrationRequest) {

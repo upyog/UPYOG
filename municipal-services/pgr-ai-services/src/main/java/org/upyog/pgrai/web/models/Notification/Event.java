@@ -4,8 +4,8 @@ import lombok.*;
 import org.upyog.pgrai.web.models.Status;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Represents an event in the notification system.

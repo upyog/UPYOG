@@ -60,12 +60,27 @@ const EDCRAcknowledgement = (props) => {
 }, [!homePageUrlLinksLoading]);
 
 
-  const printReciept = async () => {
-    var win = window.open(edcrData.planReport, '_blank');
+const printReciept = () => {
+  try {
+    let fileUrl = edcrData?.planReport;
+
+    if (!fileUrl) return;
+
+    // Force HTTPS only if it is HTTP
+    if (fileUrl.startsWith("http://")) {
+      fileUrl = fileUrl.replace(/^http:\/\//i, "https://");
+    }
+
+    const win = window.open(fileUrl, "_blank", "noopener,noreferrer");
+
     if (win) {
       win.focus();
     }
-  };
+  } catch (e) {
+    console.error("EDCR download failed", e);
+    alert("Unable to download scrutiny report. Please try again.");
+  }
+};
 
   const routeToBPAScreen = async () => {
     history.push(

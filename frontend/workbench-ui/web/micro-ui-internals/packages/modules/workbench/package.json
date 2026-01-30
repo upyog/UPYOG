@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
+  "name": "@egovernments/digit-ui-module-workbench",
+  "version": "1.0.6",
+=======
   "name": "@nudmcdgnpm/digit-ui-module-workbench",
   "version": "1.0.0",
+>>>>>>> master-LTS
   "description": "Workbench",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",

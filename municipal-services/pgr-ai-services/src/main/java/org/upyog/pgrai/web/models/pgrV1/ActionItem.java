@@ -3,7 +3,7 @@ package org.upyog.pgrai.web.models.pgrV1;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Represents an action item in the system.

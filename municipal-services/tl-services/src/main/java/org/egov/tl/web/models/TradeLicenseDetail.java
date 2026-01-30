@@ -17,7 +17,6 @@ import org.egov.tl.web.models.AuditDetails;
 import org.egov.tl.web.models.Document;
 import org.egov.tl.web.models.OwnerInfo;
 import org.egov.tl.web.models.TradeUnit;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -32,7 +31,7 @@ import lombok.Builder;
  */
 @ApiModel(description = "A Object holds the basic data for a Trade License")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-18T17:06:11.263+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-18T17:06:11.263+05:30")
 
 @Getter
 @Setter
@@ -42,22 +41,22 @@ import lombok.Builder;
 public class TradeLicenseDetail   {
 
         @JsonProperty("id")
-        @SafeHtml
+                         
         @Size(max=64)
         private String id;
 
         @JsonProperty("surveyNo")
-        @SafeHtml
+                         
         @Size(max=64)
         private String surveyNo = null;
 
         @Size(max=64)
-        @SafeHtml
+                         
         @JsonProperty("subOwnerShipCategory")
         private String subOwnerShipCategory = null;
 
         @Size(max=64)
-        @SafeHtml
+                         
         @JsonProperty("structureType")
         private String structureType;
 
@@ -74,12 +73,12 @@ public class TradeLicenseDetail   {
         private BigDecimal adhocPenalty;
 
         @Size(max=1024)
-        @SafeHtml
+                         
         @JsonProperty("adhocExemptionReason")
         private String adhocExemptionReason;
 
         @Size(max=1024)
-        @SafeHtml
+                         
         @JsonProperty("adhocPenaltyReason")
         private String adhocPenaltyReason;
 

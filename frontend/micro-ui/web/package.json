@@ -6,6 +6,14 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
+<<<<<<< HEAD
+    "micro-ui-internals/packages/modules/fsm",
+    "micro-ui-internals/packages/modules/common",
+    "micro-ui-internals/packages/modules/pt",
+    "micro-ui-internals/packages/modules/core",
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/obps"
+=======
     "micro-ui-internals/packages/modules/ptr",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/dss",
@@ -14,11 +22,34 @@
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/pt"
+>>>>>>> master-LTS
   ],
   "engines": {
     "node": ">=14"
   },
   "dependencies": {
+<<<<<<< HEAD
+    "@upyog-niua/upyog-css": "1.0.10",
+    "@upyog/digit-ui-libraries": "1.8.0",
+    "@upyog/digit-ui-module-bills": "1.8.0",
+    "@upyog/digit-ui-module-common": "2.0.0",
+    "@upyog/digit-ui-module-core": "1.8.2",
+    "@upyog/digit-ui-module-engagement": "1.8.0",
+    "@upyog/digit-ui-module-dss": "1.8.11",
+    "@upyog/digit-ui-module-fsm": "2.0.0",
+    "@upyog/digit-ui-module-hrms": "1.8.0",
+    "@upyog/digit-ui-module-mcollect": "2.0.0",
+    "@upyog/digit-ui-module-commonpt":"2.0.0",
+    "@upyog/digit-ui-module-obps": "2.0.2",
+    "@upyog/digit-ui-module-noc": "1.8.0",
+    "@upyog/digit-ui-module-pgr": "1.8.4",
+    "@upyog/digit-ui-module-pt": "2.0.0",
+    "@upyog/digit-ui-module-receipts": "1.8.0",
+    "@upyog/digit-ui-module-tl": "2.0.0",
+    "@upyog/digit-ui-module-ws": "1.8.16",
+    "@upyog/digit-ui-react-components": "1.8.0",
+    "@upyog-niua/upyog-ui-module-ptr": "1.8.0",
+=======
     "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
     "@nudmcdgnpm/digit-ui-react-components": "1.2.6",
     "@nudmcdgnpm/upyog-css": "1.2.8",
@@ -49,6 +80,7 @@
     "@nudmcdgnpm/upyog-ui-module-wt":"1.0.1",
     "@nudmcdgnpm/upyog-ui-module-pgrai":"1.0.0",
     "@nudmcdgnpm/upyog-ui-module-vendor":"1.2.2",
+>>>>>>> master-LTS
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -65,8 +97,12 @@
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
     "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+<<<<<<< HEAD
+    "**/styled-components": "5.0.0"
+=======
     "minimatch": "^3.1.2",
     "glob":"7.2.3"
+>>>>>>> master-LTS
   },
   "scripts": {
     "start": "react-scripts start",

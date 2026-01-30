@@ -47,7 +47,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.collection.model.enums.CollectionType;
 import org.egov.collection.model.enums.ReceiptType;

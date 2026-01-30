@@ -4,6 +4,34 @@
 
 The E-Waste Management Service is a microservice designed to facilitate the management of e-waste in urban local bodies. It provides functionalities for booking, tracking, and managing e-waste disposal requests.
 This service is part of the larger e-Governance framework and integrates with various other services for user management, notifications, and billing.
+
+## Java 17 Migration
+
+This service has been upgraded from Java 8 to Java 17 with Spring Boot 3.2.2.
+
+### Requirements
+- **Java 17** or higher
+- Maven 3.6+
+
+### Key Changes
+- **Spring Boot**: Upgraded to 3.2.2
+- **jakarta.* → jakarta.***: Servlet API, Validation API, Annotations
+- **SpringFox → SpringDoc**: OpenAPI 2.3.0 for Swagger
+- **Dependencies Updated**: Hibernate Validator 8.0.1.Final, JSoup 1.17.2, Lombok 1.18.32
+- **Circular Dependency**: Fixed between EwasteService and EwasteRequestValidator
+
+### Build & Run
+```bash
+# Ensure Java 17
+java -version
+
+# Build
+mvn clean install
+
+# Run
+java -jar target/ewaste-services-2.0.0-SNAPSHOT.jar
+```
+
 ---
 
 ## Service Dependencies

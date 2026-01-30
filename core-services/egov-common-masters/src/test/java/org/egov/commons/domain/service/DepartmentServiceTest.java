@@ -3,6 +3,7 @@ package org.egov.commons.domain.service;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.commons.model.Department;
+import org.egov.commons.repository.BusinessCategoryRepository;
 import org.egov.commons.repository.DepartmentRepository;
 import org.egov.commons.service.DepartmentService;
 import org.egov.commons.web.contract.DepartmentGetRequest;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
@@ -27,6 +29,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @WebMvcTest(DepartmentService.class)
+@ContextConfiguration(classes = DepartmentService.class)
+
 @WebAppConfiguration
 public class DepartmentServiceTest {
     @Mock

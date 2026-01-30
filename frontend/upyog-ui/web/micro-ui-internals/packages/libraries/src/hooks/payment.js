@@ -105,7 +105,19 @@ export const useFetchPayment = ({ tenantId, consumerCode, businessService }, con
     else return failureCount < 3;
   };
 
-  const queryData = useQuery(["paymentFetchDetails", tenantId, consumerCode, businessService], () => fetchBill(), { retry, ...config });
+  const queryData = useQuery(
+    ["paymentFetchDetails", tenantId, consumerCode, businessService],
+    fetchBill,
+    {
+      ...config,
+      retry,
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: "always",
+      refetchOnWindowFocus: false,
+    }
+  );
+  
 
   return {
     ...queryData,

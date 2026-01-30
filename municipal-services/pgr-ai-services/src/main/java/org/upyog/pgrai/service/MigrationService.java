@@ -22,7 +22,7 @@ import org.upyog.pgrai.web.models.workflow.ProcessInstance;
 import org.upyog.pgrai.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.pgrai.web.models.workflow.State;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.*;
 
 import static org.upyog.pgrai.util.PGRConstants.IMAGE_DOCUMENT_TYPE;

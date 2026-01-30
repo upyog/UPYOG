@@ -41,9 +41,10 @@
 package org.egov.pg.models;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.NotNull;
 
 @Builder
 @Getter

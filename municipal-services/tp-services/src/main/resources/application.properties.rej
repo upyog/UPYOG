@@ -1,0 +1,28 @@
+diff a/municipal-services/tp-services/src/main/resources/application.properties b/municipal-services/tp-services/src/main/resources/application.properties	(rejected hunks)
+@@ -32,7 +32,7 @@ spring.kafka.consumer.properties.spring.json.use.type.headers=false
+ persister.create.tree-pruning.topic=create-tree-pruning-booking
+ persister.create.tree-pruning.with.profile.topic=create-tree-pruning-booking-with-profile
+ persister.update.tree-pruning.topic=update-tree-pruning-booking
+-isUserProfileEnabled=true
++isUserProfileEnabled=false
+ 
+ # KAFKA CONSUMER CONFIGURATIONS
+ kafka.consumer.config.auto_commit=true
+@@ -86,7 +86,7 @@ egov.hrms.host=https://dev.digit.org
+ egov.hrms.search.endpoint=/egov-hrms/employees/_search
+ 
+ #User config
+-egov.user.host=http://localhost:8181
++egov.user.host=http://localhost:6161
+ egov.user.context.path=/user/users
+ egov.user.create.path=/_createnovalidate
+ egov.user.search.path=/user/_search
+@@ -96,7 +96,7 @@ egov.user.v2.search.path=/user/users/v2/_search
+ egov.user.create.address.endpointv2=/user/_createAddress
+ 
+ #Idgen Config
+-egov.idgen.host=http://localhost:8087
++egov.idgen.host=http://localhost:8087/
+ egov.idgen.path=egov-idgen/id/_generate
+ 
+ # Tree Pruning booking idFormat config

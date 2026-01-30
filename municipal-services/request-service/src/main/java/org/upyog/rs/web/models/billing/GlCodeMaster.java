@@ -1,6 +1,6 @@
 package org.upyog.rs.web.models.billing;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;

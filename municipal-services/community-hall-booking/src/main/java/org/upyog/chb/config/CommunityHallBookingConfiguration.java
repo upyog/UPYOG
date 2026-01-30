@@ -2,7 +2,7 @@ package org.upyog.chb.config;
 
 import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -208,15 +208,7 @@ public class CommunityHallBookingConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
-
-	@Value("${internal.microservice.user.username}")
-	private String internalMicroserviceUserName;
-
-	@Value("${internal.microservice.user.type}")
-	private String internalMicroserviceUserType;
-
-	@Value("${state.level.tenant.id}")
-	private String stateLevelTenantId;
+	
 	
 	//Module and business name
 	@Value("${chb.module.name}")
@@ -240,5 +232,14 @@ public class CommunityHallBookingConfiguration {
  	 
     @Value("${egov.usr.events.pay.now.link}")
     private String payNowLink;
+
+    @Value("${internal.microservice.user.username}")
+    private String internalMicroserviceUserName;
+
+    @Value("${internal.microservice.user.type}")
+    private String internalMicroserviceUserType;
+
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
 
 }

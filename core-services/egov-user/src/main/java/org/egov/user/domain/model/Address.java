@@ -12,7 +12,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"id","pinCode","city","address","type","address2","houseNumber","houseName","streetName","landmark","locality"})
+@EqualsAndHashCode(of = {"id"})
 public class Address {
     private String pinCode;
     private String city;

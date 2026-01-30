@@ -1,27 +1,35 @@
 package com.example.gateway.filters.pre.helpers;
 
-import com.example.gateway.utils.UserUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
-import org.reactivestreams.Publisher;
-import org.springframework.cloud.gateway.filter.factory.rewrite.RewriteFunction;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import static com.example.gateway.constants.GatewayConstants.AUTH_BOOLEAN_FLAG_NAME;
+import static com.example.gateway.constants.GatewayConstants.OPEN_ENDPOINT_MESSAGE;
+import static com.example.gateway.constants.GatewayConstants.REQUEST_INFO_FIELD_NAME_PASCAL_CASE;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.example.gateway.constants.GatewayConstants.*;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
+import org.reactivestreams.Publisher;
+import org.springframework.cloud.gateway.filter.factory.rewrite.RewriteFunction;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.server.ServerWebExchange;
+
+import com.example.gateway.config.ApplicationProperties;
+import com.example.gateway.utils.UserUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
 public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
-
+	
+	private ApplicationProperties applicationProperties;
+	
     public static final String AUTH_TOKEN_RETRIEVE_FAILURE_MESSAGE = "Retrieving of auth token failed";
     public static final String ROUTING_TO_ANONYMOUS_ENDPOINT_MESSAGE = "Routing to anonymous endpoint: {}";
     public static final String ROUTING_TO_PROTECTED_ENDPOINT_RESTRICTED_MESSAGE =
@@ -33,11 +41,14 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
     private ObjectMapper objectMapper;
 
     private UserUtils userUtils;
-    public AuthPreCheckFilterHelper(List<String> openEndpointsWhitelist, List<String> mixedModeEndpointsWhitelist,
-                                    ObjectMapper objectMapper, UserUtils userUtils) {
+    public AuthPreCheckFilterHelper(ApplicationProperties applicationProperties, List<String> openEndpointsWhitelist, 
+    		List<String> mixedModeEndpointsWhitelist, ObjectMapper objectMapper, UserUtils userUtils) {
 
-        this.openEndpointsWhitelist = openEndpointsWhitelist;
-        this.mixedModeEndpointsWhitelist = mixedModeEndpointsWhitelist;
+//        this.openEndpointsWhitelist = openEndpointsWhitelist;
+//        this.mixedModeEndpointsWhitelist = mixedModeEndpointsWhitelist;
+    	this.applicationProperties = applicationProperties;
+        this.openEndpointsWhitelist = applicationProperties.getOpenEndpointsWhitelist();
+        this.mixedModeEndpointsWhitelist = applicationProperties.getMixedModeEndpointsWhitelist();
         this.objectMapper = objectMapper;
     }
 
@@ -45,7 +56,7 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
     @Override
     public Publisher<Map> apply(ServerWebExchange exchange, Map body) {
 
-        String authToken;
+        String authToken = null;
         String endPointPath = exchange.getRequest().getPath().value();
 
         if (openEndpointsWhitelist.contains(endPointPath)) {
@@ -54,15 +65,32 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
             return Mono.just(body);
         }
 
+        // CRITICAL FIX: Extract authToken gracefully, similar to Zuul's approach
+        // If extraction fails, authToken remains null and we check mixed-mode whitelist before throwing
+
         try {
-            RequestInfo requestInfo = objectMapper.convertValue(body.get(REQUEST_INFO_FIELD_NAME_PASCAL_CASE), RequestInfo.class);
-            authToken = requestInfo.getAuthToken();
+        	RequestInfo requestInfo=new RequestInfo();
+        	if(body!=null) {
+            requestInfo = objectMapper.convertValue(body.get(REQUEST_INFO_FIELD_NAME_PASCAL_CASE), RequestInfo.class);
+            authToken = requestInfo.getAuthToken();}
+        	else {            
+            HttpHeaders httpHeader=exchange.getRequest().getHeaders();
+            authToken=httpHeader.get("Auth-Token").get(0);
+           
+        	}
+
         } catch (Exception e) {
             log.error(AUTH_TOKEN_RETRIEVE_FAILURE_MESSAGE, e);
-            throw new CustomException(AUTH_TOKEN_RETRIEVE_FAILURE_MESSAGE, e.getMessage());
+            // Don't throw immediately - check if this is a mixed-mode endpoint first
+            authToken = null;
         }
 
+        // Check authorization based on authToken presence
         if (ObjectUtils.isEmpty(authToken)) {
+            // CRITICAL FIX: Check mixed-mode whitelist before throwing 401
+            // This matches Zuul behavior where mixed-mode endpoints allow anonymous access
+        	log.info("Mixed endpoints: "+mixedModeEndpointsWhitelist.toString());
+        	log.info("endPointPath: "+endPointPath);
             if (mixedModeEndpointsWhitelist.contains(endPointPath)) {
                 log.info(ROUTING_TO_ANONYMOUS_ENDPOINT_MESSAGE, endPointPath);
                 exchange.getAttributes().put(AUTH_BOOLEAN_FLAG_NAME, Boolean.FALSE);
@@ -78,7 +106,8 @@ public class AuthPreCheckFilterHelper implements RewriteFunction<Map, Map> {
             exchange.getAttributes().put(AUTH_BOOLEAN_FLAG_NAME, Boolean.TRUE);
 
         }
-
+        if(body==null)
+        	return Mono.empty();
         return Mono.just(body);
     }
 }

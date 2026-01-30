@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.encryption.config.EncProperties;
 import org.egov.encryption.web.contract.EncReqObject;
 import org.egov.encryption.web.contract.EncryptionRequest;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

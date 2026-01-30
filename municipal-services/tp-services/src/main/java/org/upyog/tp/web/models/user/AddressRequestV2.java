@@ -9,14 +9,14 @@ import org.upyog.tp.web.models.ApplicantDetail;
 /**
  * This class represents the AddressRequestV2 model used for handling
  * address-related requests in the system.
- * 
+ *
  * Key Components:
  * - requestInfo: Contains metadata about the request, such as user and request details.
  * - address: Represents the address details being requested or updated.
  * - applicantDetails: Holds information about the applicant making the request.
  * - userUuid: A unique identifier for the user associated with the request.
  * - addressId: A unique identifier for the address being referenced.
- * 
+ *
  * Annotations:
  * - @AllArgsConstructor: Automatically generates a constructor with all fields.
  * - @NoArgsConstructor: Automatically generates a no-argument constructor.

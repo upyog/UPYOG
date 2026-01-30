@@ -2,12 +2,12 @@ package org.upyog.tp.web.controllers;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,13 +24,15 @@ import org.upyog.tp.web.models.treePruning.TreePruningSearchResponse;
 import org.upyog.tp.web.models.ResponseInfo.StatusEnum;
 
 import digit.models.coremodels.RequestInfoWrapper;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-01-16T15:46:56.897+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2025-01-16T15:46:56.897+05:30")
 
 @Controller
 @Slf4j
+@Tag(name = "Tree Pruning", description = "APIs for Tree Pruning")
 public class TreePruningController {
 
     @Autowired
@@ -40,8 +42,8 @@ public class TreePruningController {
     private ValidatorService validatorService;
 
     @PostMapping("/tree-pruning/v1/_create")
+    @Operation(summary = "Create application details", description = "Create application details")
     public ResponseEntity<TreePruningBookingResponse> createTreePruningBooking(
-            @ApiParam(value = "Details for the Tree Pruning booking time, payment and documents", required = true)
             @RequestBody TreePruningBookingRequest treePruningbookingRequest) {
         log.info("treePruningbookingRequest : {}" , treePruningbookingRequest);
         validatorService.validateRequest(treePruningbookingRequest);
@@ -55,8 +57,9 @@ public class TreePruningController {
     }
 
     @PostMapping("/tree-pruning/v1/_search")
+    @Operation(summary = "Search application details", description = "Search application details")
     public ResponseEntity<TreePruningSearchResponse> searchTreePruningBookingDetails(
-            @ApiParam(value = "Details for the Tree Pruning booking time, payment and documents", required = true) @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+            @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @ModelAttribute TreePruningBookingSearchCriteria treePruningBookingSearchCriteria) {
 
         List<TreePruningBookingDetail> applications = null;
@@ -84,8 +87,8 @@ public class TreePruningController {
     }
 
     @PostMapping("/tree-pruning/v1/_update")
+    @Operation(summary = "Update application details", description = "Update application details")
     public ResponseEntity<TreePruningBookingResponse> treePruningUpdate(
-            @ApiParam(value = "Updated Tree Pruning details and RequestInfo meta data.", required = true)
             @RequestBody TreePruningBookingRequest treePruningRequest) {
 
         TreePruningBookingDetail treePruningDetail = treePruningService.updateTreePruningBooking(treePruningRequest, null);

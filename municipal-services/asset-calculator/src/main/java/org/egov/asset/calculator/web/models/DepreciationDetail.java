@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
@@ -40,7 +40,7 @@ public class DepreciationDetail {
     @Column(name = "book_value", nullable = false)
     private Double bookValue;
 
-    @Column(name = "depreciationMethod")
+    @Column(name = "depreciation_method")
     private String depreciationMethod;
 
     @Column(name = "rate", nullable = false)

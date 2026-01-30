@@ -5,8 +5,8 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.Map;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @Validated
 @AllArgsConstructor

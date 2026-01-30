@@ -90,7 +90,7 @@ class ServiceList extends React.Component {
                 <Card
                   className={classes.paper}
                   onClick={(e) => {
-                    if (service.navigationURL && service.navigationURL.includes('digit-ui')) {
+                    if (service.navigationURL && service.navigationURL.includes('upyog-ui')) {
                       window.location.href = service.navigationURL;
                       return;
                     } else {
@@ -118,7 +118,7 @@ class ServiceList extends React.Component {
                 <Card
                   className={`${classes.paper} service-module-style`}
                   onClick={(e) => {
-                    if (service.navigationURL && service.navigationURL.includes('digit-ui')) {
+                    if (service.navigationURL && service.navigationURL.includes('upyog-ui')) {
                       window.location.href = service.navigationURL;
                       return;
                     } else {

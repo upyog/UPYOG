@@ -14,6 +14,8 @@ import org.egov.bpa.web.model.PreapprovedPlanSearchCriteria;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -32,8 +34,12 @@ public class PreapprovedPlanService {
 	@Autowired
 	private BPAConfiguration config;
 	
-	@Autowired
+	@Autowired	
+	@Lazy
 	EnrichmentService enrichmentService;
+	
+	@Value("${state.level.tenant.id}")
+	private String stateLevelTenantID;
 
 	/**
 	 * does all the validations required to create BPA Record in the system
@@ -59,6 +65,7 @@ public class PreapprovedPlanService {
 	 * @return List of bpa for the given criteria
 	 */
 	public List<PreapprovedPlan> getPreapprovedPlanFromCriteria(PreapprovedPlanSearchCriteria criteria) {
+		criteria.setTenantId(null);
 		List<PreapprovedPlan> preapprovedPlans = repository.getPreapprovedPlansData(criteria);
 		if (preapprovedPlans.isEmpty())
 			return Collections.emptyList();

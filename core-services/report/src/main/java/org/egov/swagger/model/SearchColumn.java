@@ -3,11 +3,7 @@ package org.egov.swagger.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * This is the column definition for the purpose of defining the search columns

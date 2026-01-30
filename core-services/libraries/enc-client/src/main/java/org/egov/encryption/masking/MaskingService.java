@@ -1,13 +1,15 @@
 package org.egov.encryption.masking;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import jakarta.annotation.PostConstruct;
+
 import org.egov.encryption.models.Attribute;
 import org.egov.encryption.util.JSONBrowseUtil;
 import org.egov.encryption.util.JacksonUtils;
 import org.reflections.Reflections;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Service

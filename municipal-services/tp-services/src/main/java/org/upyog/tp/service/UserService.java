@@ -25,7 +25,7 @@ import org.upyog.tp.web.models.treePruning.TreePruningBookingRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Slf4j
 @Service

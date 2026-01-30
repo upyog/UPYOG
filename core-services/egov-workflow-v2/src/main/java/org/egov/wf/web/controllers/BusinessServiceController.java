@@ -2,6 +2,7 @@ package org.egov.wf.web.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.egov.wf.service.BusinessMasterService;
 import org.egov.wf.util.ResponseInfoFactory;
 import org.egov.wf.web.models.*;
@@ -10,9 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/egov-wf")

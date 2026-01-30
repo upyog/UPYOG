@@ -87,10 +87,4 @@ public class StreetVendingSearchCriteria {
 	@JsonProperty("certificateNo")
 	private String certificateNo;
 	
-	@JsonProperty("paymentStatus")
-	private String paymentStatus;
-	
-	@JsonProperty("renewalStatus")
-	private String renewalStatus;
-	
 }

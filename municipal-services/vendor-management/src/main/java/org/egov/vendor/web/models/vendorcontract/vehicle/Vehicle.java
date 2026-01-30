@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
 import org.egov.vendor.web.models.AuditDetails;
 import org.egov.vendor.web.models.vendorcontract.user.User;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -19,7 +18,7 @@ import org.springframework.validation.annotation.Validated;
  */
 //@Schema(description = "Instance of Service request raised for a particular service. As per extension propsed in the Service definition \"attributes\" carry the input values requried by metadata definition in the structure as described by the corresponding schema.  * Any one of 'address' or '(lat and lang)' or 'addressid' is mandatory ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:37:21.257Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:37:21.257Z[GMT]")
 @AllArgsConstructor
 @EqualsAndHashCode
 @Getter
@@ -32,30 +31,24 @@ public class Vehicle {
 	@JsonProperty("owner")
 	private User owner = null;
 
-	@SafeHtml
 	@JsonProperty("id")
 	private String id = null;
 
-	@SafeHtml
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
-	@SafeHtml
 	@JsonProperty("registrationNumber")
 	private String registrationNumber = null;
 
-	@SafeHtml
 	@JsonProperty("model")
 	private String model = null;
 
-	@SafeHtml
 	@JsonProperty("type")
 	private String type = null;
 
 	@JsonProperty("tankCapacity")
 	private Long tankCapicity = null;
 
-	@SafeHtml
 	@JsonProperty("suctionType")
 	private String suctionType = null;
 
@@ -77,7 +70,6 @@ public class Vehicle {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails = null;
 
-	@SafeHtml
 	@JsonProperty("source")
 	private String source = null;
 

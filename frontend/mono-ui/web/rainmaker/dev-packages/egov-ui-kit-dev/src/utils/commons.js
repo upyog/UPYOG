@@ -719,7 +719,7 @@ export const hasTokenExpired = (status, data) => {
 };
 
 const getEndpointfromUrl = (url, name) => {
-  if(url&&url.includes("digit-ui")  )
+  if(url&&url.includes("upyog-ui")  )
   {
     return url;
   }

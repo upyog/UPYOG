@@ -111,3 +111,8 @@ Constraints: a. Open Search is enabled only for a set of users. Currently it is 
     - **update-hrms-employee** :- This topic is used to update the existing employee in the systen.
     - **egov.core.notification.sms** :- This topic is used to send noification to the phone number of the employee who has been created in the system.
 
+## Documentation
+
+- [Local Setup Guide](LOCALSETUP.md)
+- [API Documentation](http://localhost:9999/egov-hrms/swagger-ui/index.html)
+- [Postman Collection](src/main/resources/postman-collection/)

@@ -2,14 +2,13 @@ package org.egov.waterconnection.web.models.collection;
 
 import java.math.BigDecimal;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.egov.waterconnection.web.models.AuditDetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

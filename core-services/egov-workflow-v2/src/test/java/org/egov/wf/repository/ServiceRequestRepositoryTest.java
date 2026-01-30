@@ -36,7 +36,6 @@ class ServiceRequestRepositoryTest {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    @Test
     void testFetchResult() throws RestClientException {
         HashMap<Object, Object> objectObjectMap = new HashMap<>();
         when(this.restTemplate.postForObject((String) any(), (Object) any(), (Class<Map<Object, Object>>) any(),

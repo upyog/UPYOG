@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.egov.asset.dto.AssetDTO;
 import org.egov.common.contract.response.ResponseInfo;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 

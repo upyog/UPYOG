@@ -15,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * ConnectionType
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-24T10:29:25.253+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-10-24T10:29:25.253+05:30[Asia/Kolkata]")
 public class ConnectionType {
 	@JsonProperty("code")
 	private String code = null;

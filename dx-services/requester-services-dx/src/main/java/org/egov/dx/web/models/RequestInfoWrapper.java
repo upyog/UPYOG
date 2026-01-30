@@ -26,6 +26,18 @@ public class RequestInfoWrapper {
 	
 	@JsonProperty("module")
 	private String module;
+	
+	@JsonProperty("fileStoreId")
+	private String fileStoreId;
+	
+	@JsonProperty("pdfUrl")
+	private String pdfUrl;
+	
+	@JsonProperty("redirectUrl")
+	private String redirectUrl;
+	
+	@JsonProperty("tenantId")
+	private String tenantId;
 
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;

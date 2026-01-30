@@ -2,6 +2,7 @@ package org.egov.encryption.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
+import java.util.List;
 
 @Getter
 @Setter

@@ -27,9 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 @Slf4j
+@Lazy
 public class UserEventsValidator {
 
 	@Autowired

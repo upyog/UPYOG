@@ -128,12 +128,19 @@ public class FileStoreUtils {
 				byte[] fileBytes = Files.readAllBytes(file);
 				String contentType = isBlank(fileStoreMapper.get().getContentType()) ? Files.probeContentType(file)
 						: fileStoreMapper.get().getContentType();
+				// return ResponseEntity.ok().contentType(parseMediaType(defaultIfBlank(contentType, JPG_MIME_TYPE)))
+				// 		.cacheControl(CacheControl.noCache()).contentLength(fileBytes.length)
+				// 		.header(CONTENT_DISPOSITION,
+				// 				format(toSave ? CONTENT_DISPOSITION_ATTACH : CONTENT_DISPOSITION_INLINE,
+				// 						fileStoreMapper.get().getFileName()))
+				// 		.body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
 				return ResponseEntity.ok().contentType(parseMediaType(defaultIfBlank(contentType, JPG_MIME_TYPE)))
-						.cacheControl(CacheControl.noCache()).contentLength(fileBytes.length)
-						.header(CONTENT_DISPOSITION,
-								format(toSave ? CONTENT_DISPOSITION_ATTACH : CONTENT_DISPOSITION_INLINE,
-										fileStoreMapper.get().getFileName()))
-						.body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
+    					.cacheControl(CacheControl.noCache()).contentLength(fileBytes.length)
+    					.header(CONTENT_DISPOSITION,
+        						format(toSave ? CONTENT_DISPOSITION_ATTACH : CONTENT_DISPOSITION_INLINE,
+               							fileStoreMapper.get().getFileName()))
+    					.header("Access-Control-Expose-Headers", "Content-Disposition")
+    					.body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
 			}
 			return ResponseEntity.notFound().build();
 		} catch (IOException e) {

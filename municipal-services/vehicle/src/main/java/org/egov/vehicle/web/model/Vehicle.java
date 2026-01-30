@@ -1,7 +1,7 @@
 package org.egov.vehicle.web.model;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 
 import org.egov.vehicle.web.model.user.User;
 import org.springframework.validation.annotation.Validated;
@@ -9,8 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.hibernate.validator.constraints.SafeHtml;
-
+import org.egov.vehicle.validation.SanitizeHtml;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -21,7 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:37:21.257Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T05:37:21.257Z[GMT]")
 @AllArgsConstructor
 @EqualsAndHashCode
 @Getter
@@ -31,28 +30,28 @@ import lombok.ToString;
 @Builder
 public class Vehicle {
 
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("id")
     private String id = null;
 
 	@Size(max=64)
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("tenantId")
     private String tenantId = null;
 
     @NonNull
-    @SafeHtml
+    @SanitizeHtml
 	@Size(max=64)
     @JsonProperty("registrationNumber")
     private String registrationNumber  = null;
 
-    @SafeHtml
+    @SanitizeHtml
 	@Size(max=64)
     @JsonProperty("model")
     private String model = null;
 
     @NonNull
-    @SafeHtml
+    @SanitizeHtml
 	@Size(max=64)
     @JsonProperty("type")
     private String type = null;
@@ -61,11 +60,11 @@ public class Vehicle {
     @JsonProperty("tankCapacity")
     private Double tankCapacity;
     
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("suctionType")
     private String suctionType = null;
     
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("vehicleOwner")
     private String vehicleOwner = null;
 
@@ -87,11 +86,11 @@ public class Vehicle {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("source")
     private String source = null;
 
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("ownerId")
     private String ownerId = null; 
 

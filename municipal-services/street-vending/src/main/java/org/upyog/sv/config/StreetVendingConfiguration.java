@@ -1,6 +1,6 @@
 package org.upyog.sv.config;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,8 +89,8 @@ public class StreetVendingConfiguration {
 	@Value("${sv.service.quaterly.name}")
 	private String serviceNameQuaterly;
 
-	@Value("${sv.payment.business.service.name}")
-	private String paymentBusinessServiceName;
+//	@Value("${sv.payment.business.service.name}")
+//	private String paymentBusinessServiceName;
 
 	@Value("${sv.business.service.name}")
 	private String businessServiceName;
@@ -161,16 +161,16 @@ public class StreetVendingConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String shortenerEndpoint;
 
-	@Value("${chb.claculation.tax.applicable}")
-	private String applicableTaxes;
+//	@Value("${chb.claculation.tax.applicable}")
+//	private String applicableTaxes;
 
 	// Billing-Service
 
-	@Value("${egbs.host}")
-	private String egbsHost;
-
-	@Value("${egbs.fetchbill.endpoint}")
-	private String egbsFetchBill;
+//	@Value("${egbs.host}")
+//	private String egbsHost;
+//
+//	@Value("${egbs.fetchbill.endpoint}")
+//	private String egbsFetchBill;
 
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
@@ -220,8 +220,8 @@ public class StreetVendingConfiguration {
 	@Value("${egov.localization.search.endpoint}")
 	private String localizationSearchEndpoint;
 
-	@Value("${egov.localization.fallback.locale}")
-	private String fallBackLocale;
+//	@Value("${egov.localization.fallback.locale}")
+//	private String fallBackLocale;
  	
  	 @Value("${egov.download.receipt.link}")
      private String downloadReceiptLink;

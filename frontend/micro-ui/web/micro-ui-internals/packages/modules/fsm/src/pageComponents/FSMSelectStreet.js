@@ -14,6 +14,7 @@ if (property !== "undefined")
 {
   property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
 }
+console.log("propertyproperty",property)
   const {
     control,
     formState: localFormState,

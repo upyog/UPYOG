@@ -1,3 +1,4 @@
+
 package org.upyog.request.service;
 
 import org.springframework.context.annotation.Bean;
@@ -13,4 +14,5 @@ public class TestConfiguration {
     public KafkaTemplate<String, Object> kafkaTemplate() {
         return mock(KafkaTemplate.class);
     }
+
 }

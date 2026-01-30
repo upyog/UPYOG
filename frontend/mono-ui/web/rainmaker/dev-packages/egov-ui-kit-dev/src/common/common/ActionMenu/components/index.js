@@ -343,7 +343,7 @@ class ActionMenuComp extends Component {
                         }
 
                         document.title = item.name;
-                        if (item.navigationURL && item.navigationURL.includes('digit-ui')) {
+                        if (item.navigationURL && item.navigationURL.includes('upyog-ui')) {
                           window.location.href = item.navigationURL
                           e.preventDefault()
                           return;
@@ -434,7 +434,7 @@ class ActionMenuComp extends Component {
                         id={item.name.toUpperCase().replace(/[\s]/g, "-") + "-" + index}
                         onClick={(e) => {
                           document.title = item.displayName;
-                          if (item.navigationURL && item.navigationURL.includes('digit-ui')) {
+                          if (item.navigationURL && item.navigationURL.includes('upyog-ui')) {
                             window.location.href = item.navigationURL
                             e.preventDefault()
                             return;

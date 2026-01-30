@@ -39,7 +39,7 @@
  */
 package org.egov.pt.calculator.web.models.demand;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import lombok.Builder;
 import org.egov.pt.calculator.web.models.property.AuditDetails;

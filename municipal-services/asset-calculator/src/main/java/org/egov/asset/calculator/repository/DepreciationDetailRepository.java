@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface DepreciationDetailRepository extends JpaRepository<DepreciationDetail, Long> {
 
     List<DepreciationDetail> findByAssetId(String assetId);
-    Optional<DepreciationDetail> findByAssetIdAndFromDate(Long assetId, LocalDate fromDate);
+    Optional<DepreciationDetail> findByAssetIdAndFromDate(String assetId, LocalDate fromDate);
 
     Optional<DepreciationDetail> findByAssetIdAndFromDateAndToDate(String id, LocalDate startDate, LocalDate endDate);
 }

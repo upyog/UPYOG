@@ -89,7 +89,6 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                         documentDetails.add(documentDetail);
                         bookingDetail.setDocumentDetails(documentDetails);
                     }
-                    
                     /*
                      * Extract applicant and address details only when isUserProfileEnabled=false.
                      * When user profile is disabled, booking needs complete applicant and address info
@@ -101,7 +100,6 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                         bookingDetail.setApplicantDetail(applicantDetail);
                         bookingDetail.getApplicantDetail().setAuditDetails(auditDetails);
                     }
-                    
                     Address address = extractAddressDetails(tp);
                     if (address != null) {
                         bookingDetail.setAddress(address);
@@ -173,7 +171,8 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                 .auditDetails(bookingDetail.getAuditDetails())
                 .build();
     }
-    
+
+
     /**
      * Extracts applicant details from the ResultSet.
      * Returns null if no applicant details are available.
@@ -187,7 +186,7 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
             if (applicantId == null) {
                 return null; // No applicant details available
             }
-            
+
             ApplicantDetail applicantDetail = new ApplicantDetail();
             applicantDetail.setApplicantId(applicantId);
             applicantDetail.setName(tp.getString("name"));
@@ -201,7 +200,7 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
             return null;
         }
     }
-    
+
     /**
      * Extracts address details from the ResultSet.
      * Returns null if no address details are available.

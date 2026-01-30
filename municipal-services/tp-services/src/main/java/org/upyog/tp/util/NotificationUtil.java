@@ -384,14 +384,14 @@ public class NotificationUtil {
     }
 
     /**
-     * Constructs an MDMS (Master Data Management System) criteria request for retrieving 
+     * Constructs an MDMS (Master Data Management System) criteria request for retrieving
      * the channel list based on the specified module and action.
      *
      * @param requestInfo The request information containing metadata about the request.
      * @param tenantId    The tenant ID for which the channel list is to be retrieved.
      * @param moduleName  The module name for filtering the data.
      * @param action      The specific action used to filter the channel list.
-     * @return An {@link MdmsCriteriaReq} object containing the criteria for fetching 
+     * @return An {@link MdmsCriteriaReq} object containing the criteria for fetching
      *         the channel list from MDMS.
      *
      * This method:

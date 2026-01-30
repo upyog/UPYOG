@@ -21,7 +21,7 @@ class CitizenDashboard extends Component {
   constructor(props){
     super(props);
     /* RAIN-7250 Always Navigate to new UI Incase user clicks on Home  */
-    window.location.href="/digit-ui/citizen";
+    window.location.href="/upyog-ui/citizen";
   }
   componentWillReceiveProps = (nextProps) => {
     const { cityUpdateDialog } = nextProps;

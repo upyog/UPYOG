@@ -3,15 +3,16 @@ package org.upyog.rs.web.models.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.rs.web.models.AuditDetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -23,9 +24,9 @@ import lombok.ToString;
 /**
  * A Object holds the basic data for a water tanker booking
  */
-@ApiModel(description = "A Object holds the basic data for a water tanker booking")
+@Schema(description = "A Object holds the basic data for a water tanker booking")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
 
 @Getter
 @Setter

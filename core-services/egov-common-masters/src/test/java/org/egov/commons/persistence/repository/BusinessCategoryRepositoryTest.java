@@ -13,14 +13,17 @@ import org.egov.commons.model.BusinessCategoryCriteria;
 import org.egov.commons.repository.BusinessCategoryRepository;
 import org.egov.commons.repository.builder.BusinessCategoryQueryBuilder;
 import org.egov.commons.repository.rowmapper.BusinessCategoryRowMapper;
+import org.egov.commons.web.controller.DepartmentController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
+@ContextConfiguration(classes = BusinessCategoryRepository.class)
 public class BusinessCategoryRepositoryTest {
 
 	@Mock

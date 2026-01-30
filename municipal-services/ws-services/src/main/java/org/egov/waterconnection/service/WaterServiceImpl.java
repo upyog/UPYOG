@@ -30,6 +30,7 @@ import org.egov.waterconnection.workflow.WorkflowIntegrator;
 import org.egov.waterconnection.workflow.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -91,6 +92,7 @@ public class WaterServiceImpl implements WaterService {
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
 
 	@Autowired
+	@Lazy
 	private PaymentUpdateService paymentUpdateService;
 
 	@Autowired
