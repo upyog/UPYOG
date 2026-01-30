@@ -275,7 +275,7 @@ public class ManualReconcileHelper {
                 .append(" to_char(ih.instrumentdate,'dd/mm/yyyy') as \"chequeDate\" ,ih.instrumentAmount as \"chequeAmount\",rec.transactiontype as \"txnType\" , ")
                 .append(" case when rec.transactionType='Cr' then  'Payment' else 'Receipt' end as \"type\", insType.type as instrumentType FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,")
                 .append(" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv, egf_instrumenttype insType	WHERE ")
-                .append("  ih.bankAccountId = BANK.ID AND bank.id =:bankAccId   AND IH.INSTRUMENTDATE <= :toDate  ")
+                .append("  ih.bankAccountId = BANK.ID AND bank.id =:bankAccId AND ih.instrumentdate >=:fromDate  AND IH.INSTRUMENTDATE <= :toDate  ")
                 .append(" AND v.ID= iv.voucherheaderid  and v.STATUS not in  (")
                 .append(voucherExcludeStatuses)
                 .append(")")
