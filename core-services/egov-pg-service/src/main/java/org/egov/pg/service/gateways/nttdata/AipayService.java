@@ -75,4 +75,25 @@ public class AipayService {
 	    return result;
 	  }
 	  
+	  public static String processRefund(String merchantId, String encryptedData, String refundUrl) {
+		  String result = "";
+		    try
+		    {
+		    	System.out.println("in fetch Status method Merchant Id ="+merchantId+ "&&&&&& Encypted text ="+ encryptedData);
+		      WebClient.Builder webClientBuilder=WebClient.builder();
+		      webClientBuilder=getCertificateSkippedRestObject();
+		      result=webClientBuilder.build().post()
+		    		  .uri(refundUrl+"merchId=" + merchantId + "&encData=" + encryptedData)
+		    		  .contentType(MediaType.APPLICATION_JSON)
+		    		  .retrieve()
+		    		  .bodyToMono(String.class)
+		    		  .block();
+		    	System.out.println("Server result----------: " + result);
+		    } catch (Exception e) {
+		      e.getStackTrace();
+		    }
+
+		    return result;
+	  }
+	  
 }

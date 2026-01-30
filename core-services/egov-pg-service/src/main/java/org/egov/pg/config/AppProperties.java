@@ -97,6 +97,15 @@ public class AppProperties {
     private final String internalMicroserviceUserMobilenumber;
 
     private final String internalMicroserviceUserType;
+    
+    private final String idGenRefundName;
+    
+    private final String idGenRefundFormat;
+    
+    private final String saveRefundTxnsTopic;
+    
+    private final String updateRefundTxnsTopic;
+    
 
     @Autowired
     public AppProperties(Environment environment){
@@ -142,6 +151,10 @@ public class AppProperties {
         this.internalMicroserviceUserUsername = environment.getRequiredProperty("internal.microservice.user.username");
         this.internalMicroserviceUserMobilenumber = environment.getRequiredProperty("internal.microservice.user.mobilenumber");
         this.internalMicroserviceUserType = environment.getRequiredProperty("internal.microservice.user.type");
+        this.idGenRefundName = environment.getRequiredProperty("egov.idgen.ref.name");
+        this.idGenRefundFormat = environment.getRequiredProperty("egov.idgen.ref.format");
+        this.saveRefundTxnsTopic = environment.getRequiredProperty("persister.save.pg.refund");
+        this.updateRefundTxnsTopic = environment.getRequiredProperty("persister.update.pg.refund");
     }
 
 }
