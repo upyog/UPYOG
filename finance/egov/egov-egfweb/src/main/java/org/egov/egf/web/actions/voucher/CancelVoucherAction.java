@@ -340,7 +340,7 @@ public class CancelVoucherAction extends BaseFormAction {
 
 			final Query editModeQueryThree = persistenceService.getSession()
 					.createQuery(editModeQuery3.concat(filterQry));
-			editModeQueryThree.setParameter("phStatus", Arrays.asList(FinancialConstants.CREATEDVOUCHERSTATUS,
+			editModeQueryThree.setParameterList("phStatus", Arrays.asList(FinancialConstants.CREATEDVOUCHERSTATUS,
 					FinancialConstants.PREAPPROVEDVOUCHERSTATUS));
 			params.entrySet().forEach(entry -> editModeQueryThree.setParameter(entry.getKey(), entry.getValue()));
 

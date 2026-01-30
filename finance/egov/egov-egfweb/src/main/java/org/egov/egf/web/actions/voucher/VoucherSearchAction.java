@@ -380,7 +380,7 @@ public class VoucherSearchAction extends BaseFormAction {
 		if (FinancialConstants.CANCELLEDVOUCHERSTATUS.equals(status))
 			return "Cancelled";
 		if (FinancialConstants.PREAPPROVEDVOUCHERSTATUS.equals(status))
-			return "Preapproved";
+			return "Created";
 		return "";
 	}
 
