@@ -329,7 +329,9 @@ public class ManualReconcileHelper {
 			createSQLQuery.setParameter("limit", reconBean.getLimit(), IntegerType.INSTANCE);
 		
 		createSQLQuery.setLong("bankAccId", reconBean.getAccountId());
-		createSQLQuery.setDate("toDate", reconBean.getReconciliationDate());
+		//createSQLQuery.setDate("toDate", reconBean.getReconciliationDate());
+		createSQLQuery.setDate("fromDate", reconBean.getFromDate());
+		createSQLQuery.setDate("toDate", reconBean.getToDate());
 		createSQLQuery.addScalar("voucherNumber",StringType.INSTANCE);
 		createSQLQuery.addScalar("ihId",StringType.INSTANCE);
 		createSQLQuery.addScalar("chequeDate",StringType.INSTANCE);
