@@ -117,7 +117,7 @@
 	YAHOO.example.BasicLocal = function() { 
 		    var oDS = new YAHOO.util.LocalDataSource(allGlcodes); 
 		    // Optional to define fields for single-dimensional array 
-		    oDS.responseSchema = {fields : ["state"]}; 
+		    oDS.responseSchema = {fields : ["value"]}; 
 		 
 		    var oAC = new YAHOO.widget.AutoComplete("glCode", "myContainer", oDS); 
 		    oAC.prehighlightClassName = "yui-ac-prehighlight"; 
@@ -125,7 +125,17 @@
 		    oAC.useShadow = true;
 			oAC.useIFrame = true; 
 			oAC.maxResultsDisplayed = 10;
-		     
+		    oAC.filterResultsFunction = function (query, results) {
+        	query = query.toLowerCase();
+
+        	return YAHOO.widget.AutoComplete.filterResults(
+            query,
+            results,
+            function (item) {
+                return item.toLowerCase().indexOf(query) !== -1;
+            }
+        );
+    };
 		    return { 
 		        oDS: oDS, 
 		        oAC: oAC 

@@ -150,6 +150,29 @@
     </div>
 
 </form:form>
+<script>
+function restrictTwoDecimals(input) {
+    let value = input.value;
+
+    // Allow only numbers and one decimal point
+    value = value.replace(/[^0-9.]/g, '');
+
+    // Allow only one decimal
+    if (value.indexOf('.') !== value.lastIndexOf('.')) {
+        value = value.slice(0, -1);
+    }
+
+    // Restrict to 2 digits after decimal
+    if (value.includes('.')) {
+        let parts = value.split('.');
+        parts[1] = parts[1].substring(0, 2);
+        value = parts.join('.');
+    }
+
+    input.value = value;
+}
+</script>
+
 <script
         src="<cdn:url value='/resources/app/js/i18n/jquery.i18n.properties.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>
 <script

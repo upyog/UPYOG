@@ -78,8 +78,7 @@
 							<input type="text" id="creditDetails[0].creditAccountHead" name="creditDetails[0].creditAccountHead"  class="form-control creditdetailname" disabled>  
 						</td>
 						<td>
-							<form:input path="creditDetails[0].creditamount" id="creditDetails[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12"  />
-						</td> 
+							<form:input path="creditDetails[0].creditamount" id="creditDetails[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" oninput="restrictTwoDecimals(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12"  />						</td> 
 						<td class="text-center"><span style="cursor:pointer;" onclick="addCreditDetailsRow();"><i class="fa fa-plus"></i></span>
 						 <span class="add-padding credit-delete-row" onclick="deleteCreditDetailsRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 					</tr>

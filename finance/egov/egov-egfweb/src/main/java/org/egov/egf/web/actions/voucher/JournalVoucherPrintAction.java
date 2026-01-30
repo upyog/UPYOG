@@ -314,21 +314,21 @@ public class JournalVoucherPrintAction extends BaseFormAction {
         String nextAction;
 
         for (final StateHistory historyState : voucher.getStateHistory()) {
-            pos = historyState.getSenderName().concat(" / ").concat(historyState.getSenderName());
+            pos = historyState.getSenderName();
             nextAction = historyState.getNextAction();
             if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
                 inboxHistoryItem = new WorkFlowHistoryItem(
-                        getFormattedDate(historyState.getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction,
+                        getFormattedDate(historyState.getLastModifiedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction,
                         historyState.getValue(),
                         historyState.getComments() != null ? removeSpecialCharacters(historyState.getComments()) : "");
                 inboxHistory.add(inboxHistoryItem);
             }
 
         }
-        pos = voucher.getState().getSenderName().concat(" / ").concat(voucher.getState().getSenderName());
+        pos = voucher.getState().getSenderName();
         nextAction = voucher.getState().getNextAction();
         inboxHistoryItem = new WorkFlowHistoryItem(
-                getFormattedDate(voucher.getState().getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction,
+                getFormattedDate(voucher.getState().getLastModifiedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction,
                 voucher.getState().getValue(), voucher.getState().getComments() != null
                         ? removeSpecialCharacters(voucher.getState().getComments()) : "");
         inboxHistory.add(inboxHistoryItem);
