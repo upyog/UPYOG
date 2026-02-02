@@ -120,6 +120,7 @@
 		    oDS.responseSchema = {fields : ["value"]}; 
 		 
 		    var oAC = new YAHOO.widget.AutoComplete("glCode", "myContainer", oDS); 
+			oAC.queryMatchContains = true
 		    oAC.prehighlightClassName = "yui-ac-prehighlight"; 
 			oAC.queryDelay = 0;
 		    oAC.useShadow = true;
