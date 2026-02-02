@@ -133,7 +133,10 @@
             query,
             results,
             function (item) {
-                return item.toLowerCase().indexOf(query) !== -1;
+                return (
+                item.glcode.toLowerCase().indexOf(query) !== -1 ||
+                item.name.toLowerCase().indexOf(query) !== -1
+            );
             }
         );
     };
