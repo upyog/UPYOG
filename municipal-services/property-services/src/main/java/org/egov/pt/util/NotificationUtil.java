@@ -47,7 +47,9 @@ public class NotificationUtil {
 
 
 
-    private ServiceRequestRepository serviceRequestRepository;
+   
+
+	private ServiceRequestRepository serviceRequestRepository;
 
     private PropertyConfiguration config;
 
@@ -177,6 +179,16 @@ public class NotificationUtil {
         }
         return smsRequest;
     }
+    
+  public List<SMSRequest> createSMSRequestNew(String message, Map<String, String> mobileNumberToOwnerName,String templateId) {
+    	
+        List<SMSRequest> smsRequest = new LinkedList<>();
+        for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
+            String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
+            smsRequest.add(new SMSRequest(entryset.getKey(), customizedMsg,templateId));
+        }
+        return smsRequest;
+    }
 
 
     /**
@@ -191,7 +203,7 @@ public class NotificationUtil {
             if (CollectionUtils.isEmpty(smsRequestList))
                 log.info("Messages from localization couldn't be fetched!");
             for (SMSRequest smsRequest : smsRequestList) {
-                producer.push(config.getSmsNotifTopic(), smsRequest);
+            	producer.push(config.getSmsNotifTopic(), smsRequest);
                 log.info("Sending SMS notification: ");
                 log.info("MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
             }
@@ -406,7 +418,7 @@ public class NotificationUtil {
     */
    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Property property, Boolean isActionReq){
 
-		List<Event> events = new ArrayList<>();
+	   List<Event> events = new ArrayList<>();
        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
        Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
 
@@ -426,6 +438,7 @@ public class NotificationUtil {
            log.error("UUIDs Not found for Mobilenumbers");
        }
 
+
        Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
        mobileNumbers.forEach(mobileNumber -> {
        	
@@ -438,9 +451,10 @@ public class NotificationUtil {
                List<ActionItem> items = new ArrayList<>();
                String msg = smsRequests.get(0).getMessage();
                String actionLink = "";
-               if(msg.contains(PT_CORRECTION_PENDING)){
+               if(property.getWorkflow().getAction().equals(CITIZEN_SENDBACK_ACTION)){
             	   
-					String url = config.getUserEventViewPropertyLink();
+					String url = config.getApplicationViewFromNotif();//config.getUserEventViewPropertyLink();
+
 					if (property.getCreationReason().equals(CreationReason.MUTATION)) {
 						url = config.getUserEventViewMutationLink();
 					}
@@ -523,6 +537,47 @@ public class NotificationUtil {
 		});
 		return events;
 	}
+   
+   
+   public List<Event> enrichEventNew(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Property property, Boolean isActionReq){
+
+	   List<Event> events = new ArrayList<>();
+      Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
+      Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
+
+      for(String mobileNumber:mobileNumbers) {
+          UserDetailResponse userDetailResponse = fetchUserByUUID(mobileNumber, requestInfo, property.getTenantId());
+          try
+          {
+              OwnerInfo user= (OwnerInfo) userDetailResponse.getUser().get(0);
+              mapOfPhnoAndUUIDs.put(user.getMobileNumber(),user.getUuid());
+          }
+          catch(Exception e) {
+              log.error("Exception while fetching user object: ",e);
+          }
+      }
+
+      if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
+          log.error("UUIDs Not found for Mobilenumbers");
+      }
+
+      Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+      mobileNumbers.forEach(mobileNumber -> {
+      	
+          List<String> toUsers = new ArrayList<>();
+          toUsers.add(mapOfPhnoAndUUIDs.get(mobileNumber));
+          Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+          Action action = null;
+          String description = removeForInAppMessage(mobileNumberToMsg.get(mobileNumber));
+          events.add(Event.builder().tenantId(tenantId).description(description)
+                  .eventType(USREVENTS_EVENT_TYPE).name(USREVENTS_EVENT_NAME)
+                  .postedBy(USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+                  .eventDetails(null).actions(action).build());
+
+		});
+		return events;
+	}
+
 
     /**
      * Method to remove certain lines from SMS templates
@@ -722,6 +777,15 @@ public class NotificationUtil {
         return getMessageTemplate(msgCode, completeMsgs)
                 .replace(NOTIFICATION_PROPERTYID, property.getPropertyId()).replace(NOTIFICATION_APPID,
                         property.getAcknowldgementNumber()).replace(FEEDBACK_URL, getShortenedUrl(feedbackUrl));
+
+    }
+    
+    
+    public String getMsgForMutaiotnNotification(Property property, String completeMsgs, String serviceType,String msgCode) {
+
+        String feedbackUrl = config.getUiAppHost()+config.getCitizenFeedbackLink();
+        return getMessageTemplate(msgCode, completeMsgs);
+        
 
     }
 

@@ -19,6 +19,9 @@ public class Configurations {
 	
 	@Value("${kafka.topics.billing-slab.update.service}")
 	public String billingSlabUpdatePersisterTopic;
+	
+	@Value("${isRentCalck}")
+	public Boolean isrentcalc;
 
 	@Value("${kafka.topics.mutation-billing-slab.save.service}")
 	public String mutationbillingSlabSavePersisterTopic;
@@ -80,6 +83,11 @@ public class Configurations {
 	@Value("${egov.payment.search.endpoint}")
 	private String	PaymentSearchEndpoint;
 	
+	/*
+	 * @Value("${egov.collection.service.search.endpoint}") private String
+	 * collectionSeriviceSearch;
+	 */
+	
 	// billing slab configs
 		
 	@Value("${billingslab.value.all}")
@@ -137,6 +145,11 @@ public class Configurations {
 	@Value("${pt.mutation.minpayable.amount}")
 	private BigDecimal ptMutationMinPayable;
 	
-
+	@Value("${egov.bill.search.endpoint}")
+	private String BillSearchEndpoint;
+	
+	//Notice
+	@Value("${egov.notice.search.endpoint}")
+	private String noticeSearchEndpoint; 
 
 }

@@ -17,7 +17,7 @@ import {
   Modal,
   CardText,
   Dropdown,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { useQueryClient } from "react-query";
 
@@ -28,7 +28,7 @@ const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 const Close = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
     <path d="M0 0h24v24H0V0z" fill="none" />
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
   </svg>
@@ -322,10 +322,10 @@ const VendorDetails = (props) => {
                               </h2>
                               <div style={{ display: "flex" }}>
                                 <span onClick={() => onEdit(data, detail.type, data.id)}>
-                                  <EditIcon style={{ cursor: "pointer", marginRight: "20px" }} className="edit" fill="#a82227" />
+                                  <EditIcon style={{ cursor: "pointer", marginRight: "20px" }} className="edit" fill="#0f4f9e" />
                                 </span>
                                 <span onClick={() => onDelete(data, detail.type, data.id)}>
-                                  <DeleteIcon style={{ cursor: "pointer" }} className="delete" fill="#a82227" />
+                                  <DeleteIcon style={{ cursor: "pointer" }} className="delete" fill="#0f4f9e" />
                                 </span>
                               </div>
                             </div>
@@ -345,7 +345,7 @@ const VendorDetails = (props) => {
                       })}
                       {detail.type && (
                         <div
-                          style={{ color: "#a82227", cursor: "pointer", marginLeft: "16px" }}
+                          style={{ color: "#0f4f9e", cursor: "pointer", marginLeft: "16px" }}
                           onClick={() => onActionSelect(detail.type === "ES_FSM_REGISTRY_DETAILS_TYPE_DRIVER" ? "ADD_DRIVER" : "ADD_VEHICLE")}
                         >
                           {t(`${detail.type}_ADD`)}

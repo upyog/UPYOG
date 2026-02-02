@@ -1,5 +1,5 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
-import React ,{Fragment}from "react";
+import { Loader } from "@upyog/digit-ui-react-components";
+import React ,{Fragment, useState}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -10,13 +10,20 @@ const CreateProperty = ({ parentRoute }) => {
   const match = useRouteMatch();
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const  location = useLocation();
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
+  const [amalgamationState, setAmalgamationState] = useState(location?.state ? location.state : null);
+  // let amalgamationState = null;
+  // if(location.state) {
+  //   setAmalgamationState(location.state)
+  // }
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {} );
+
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
   const goNext = (skipStep, index, isAddMultiple, key) => {
-    let currentPath = pathname.split("/").pop(),
+     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
@@ -51,7 +58,7 @@ const CreateProperty = ({ parentRoute }) => {
       } else if (nextStep[sessionStorage.getItem("area")]) {
         // nextStep = `${nextStep[sessionStorage.getItem("area")]}/${index}`;
 
-        if (`${nextStep[sessionStorage.getItem("area")]}` !== "map") {
+        if (`${nextStep[sessionStorage.getItem("area")]}` !== "pincode") {
           nextStep = `${nextStep[sessionStorage.getItem("area")]}/${index}`;
         } else {
           nextStep = `${nextStep[sessionStorage.getItem("area")]}`;
@@ -66,7 +73,7 @@ const CreateProperty = ({ parentRoute }) => {
     if (typeof nextStep == "object" && nextStep != null && isMultiple == false) {
       if (
         nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] &&
-        (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "map" ||
+        (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "pincode" ||
           nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "un-occupied-area")
       ) {
         nextStep = `${nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")]}`;
@@ -98,7 +105,7 @@ const CreateProperty = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     } else {
-      nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
+      nextPage = isMultiple && nextStep !== "pincode" && nextStep !== "usageCategory" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
@@ -110,9 +117,17 @@ const CreateProperty = ({ parentRoute }) => {
       queryClient.invalidateQueries("PT_CREATE_PROPERTY");
     }
 
-  const createProperty = async () => {
+  const createProperty = async (key, data, skipStep, index, isAddMultiple = false) => {
+    setParams({ ...params, ...{ [key]: data } });
     history.push(`${match.path}/acknowledgement`);
   };
+  // if(amalgamationState && amalgamationState?.action=='Amalgamation') {
+  //   // handleSelect('amalgamationDetails', amalgamationState, undefined, undefined,false)
+  //   debugger
+  //   if(params && !params['amalgamationDetails'])
+  //   setParams({ ...params, ...{ ['amalgamationDetails']: { ...params['amalgamationDetails'], ...amalgamationState } } });
+  //   // setParams({ ...params, ...{ ['amalgamationDetails']: { ...params['amalgamationDetails'], amalgamationState }} });
+  // }
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "owners") {
@@ -126,7 +141,7 @@ const CreateProperty = ({ parentRoute }) => {
 
       setParams({ ...params, units });
     } else {
-      setParams({ ...params, ...{ [key]: { ...params[key], ...data } } });
+      setParams({ ...params, ...{ [key]: { ...params[key], ...data } } });      
     }
     goNext(skipStep, index, isAddMultiple, key);
   }
@@ -151,14 +166,19 @@ const CreateProperty = ({ parentRoute }) => {
   config.indexRoute = "info";
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
+
   return (
-    <Switch>
+    <div>
+      <Switch>
+      
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+            { amalgamationState && <Component config={{ texts, inputs, key, amalgamationState }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} /> }
+            { !amalgamationState && <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} /> }
+
           </Route>
         );
       })}
@@ -172,6 +192,8 @@ const CreateProperty = ({ parentRoute }) => {
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>
     </Switch>
+    </div>
+    
   );
 };
 

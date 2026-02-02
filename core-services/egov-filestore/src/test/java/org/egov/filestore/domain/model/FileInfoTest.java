@@ -9,7 +9,7 @@ class FileInfoTest {
 
     @Test
     void testConstructor() {
-        FileLocation fileLocation = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source");
+        FileLocation fileLocation = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source",null);
 
         FileInfo actualFileInfo = new FileInfo("text/plain", fileLocation, "42");
 

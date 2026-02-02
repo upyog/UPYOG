@@ -3,7 +3,7 @@ import {
   Card,
   SubmitBar,
   CardText
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -29,7 +29,7 @@ const Acknowledgement = (props) => {
           info={bpaBusinessService == "BPA" ? t("BPA_PERMIT_APPLICATION_NUMBER_LABEL") : t("BPA_OCCUPANCY_CERTIFICATE_APPLICATION_NUMBER_LABEL")}
           successful={true}
           style={{ padding: "10px" }}
-          headerStyles={{fontSize: "32px"}}
+          headerStyles={{fontSize: "16px"}}
         />
         <CardText>{getAppAction == "BPA_SUBMIT_APP" ? t(`BPA_SUBMIT_SUB_HEADER_${bpaBusinessService}_${bpaAction}_${typeOfArchitect ? typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus," ","_").toUpperCase()}`) : t(`BPA_SUB_HEADER_${bpaBusinessService}_${bpaAction}_${typeOfArchitect ? typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus," ","_").toUpperCase()}`)}</CardText>
         <div style={{ marginTop: "12px", padding: "10px" }}>

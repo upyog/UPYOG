@@ -12,7 +12,7 @@ import {
   SubmitBar,
   CardText,
   CitizenInfoLabel,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Timeline from "../../../components/TLTimelineInFSM";

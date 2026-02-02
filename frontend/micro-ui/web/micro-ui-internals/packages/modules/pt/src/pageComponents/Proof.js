@@ -1,11 +1,14 @@
-import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { stringReplaceAll } from "../utils";
+import { checkArrayLength, stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
 
 const Proof = ({ t, config, onSelect, userType, formData }) => {
+  // console.log("address====",formData)
   //let index = window.location.href.charAt(window.location.href.length - 1);
+ const Self_Declaration = "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Self_Declaration.pdf"
+ 
   const { pathname: url } = useLocation();
   const isMutation = url.includes("property-mutation");
 
@@ -27,13 +30,32 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
   const docs = Documentsob?.PropertyTax?.Documents;
-  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
+  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("IDENTITYPROOF"));
   if (proofOfAddress.length > 0) {
     dropdownData = proofOfAddress[0]?.dropdownData;
     dropdownData.forEach((data) => {
       data.i18nKey = stringReplaceAll(data.code, ".", "_");
     });
   }
+
+  // useEffect(()=>{
+  //   if(formData && formData?.documents?.length>0){
+  //     let addressDocs = formData?.documents?.filter((doc) => doc?.documentType?.includes("ADDRESSPROOF"));
+  //     if (checkArrayLength(addressDocs) && !isMutation) {
+  //       setDropdownValue({ code: addressDocs[0]?.documentType, i18nKey: stringReplaceAll(addressDocs[0]?.documentType, ".", "_") })
+  //       setUploadedFile(addressDocs[0]?.fileStoreId)
+  //       // addressDocs[0].documentType = { code: addressDocs[0]?.documentType, i18nKey: stringReplaceAll(addressDocs[0]?.documentType, ".", "_") };
+  //     }
+  //     // console.log("addressDocs22===",addressDocs)
+  //     // let obj = formData?.documents.find(o => o.documentType.includes("ADDRESSPROOF")) || null;
+  //     // if(obj && !isMutation) {
+
+  //     //   setBuildingPermissionRequired({code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"});
+  //     //   setFile(obj);
+  //     //   setUploadedFile(obj?.fileStoreId)
+  //     // }
+  //   }
+  // },[])
 
   function setTypeOfDropdownValue(dropdownValue) {
     setDropdownValue(dropdownValue);
@@ -45,10 +67,11 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
     if (fileDetails) fileDetails.documentType = dropdownValue;
     if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
     let address = !isMutation ? formData?.address : {};
+    // console.log("address====",formData)
     if (address && address.documents) {
       address.documents["ProofOfAddress"] = fileDetails;
     } else {
-      address["documents"] = [];
+      address["documents"] = {};
       address.documents["ProofOfAddress"] = fileDetails;
     }
     if (!isMutation) onSelect(config.key, address, "", index);
@@ -95,8 +118,11 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
         t={t}
         isDisabled={isUpdateProperty || isEditProperty ? false : !uploadedFile || !dropdownValue || error}
       >
-        <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
-        <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
+        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic", marginBottom: "0px"}}>{t(`PT_UPLOAD_PATTA_JAMABANDI_DAG_CHITHA_TYPES`)}</CardLabelDesc>
+        <span style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic", marginBottom: "5px"}}>Download the self declaration <a href={Self_Declaration} download={'Self_Declaration.pdf'} target="_blank" style={{fontWeight: "600", color: "blue", cursor: "pointer", textDecoration: "underline"}} >here</a> </span>
+        
+        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic"}}>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
+        
         <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
         <Dropdown
           t={t}
@@ -117,6 +143,7 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
           }}
           message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
           error={error}
+          hasFile={uploadedFile ? true : false}
         />
         {error ? <div style={{ height: "20px", width: "100%", fontSize: "20px", color: "red", marginTop: "5px" }}>{error}</div> : ""}
         <div style={{ disabled: "true", height: "20px", width: "100%" }}></div>

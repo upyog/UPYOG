@@ -2,6 +2,7 @@ package org.egov.web.controller;
 
 import org.egov.domain.model.Token;
 import org.egov.domain.service.TokenService;
+import org.egov.web.contract.OtpListResponse;
 import org.egov.web.contract.OtpRequest;
 import org.egov.web.contract.OtpResponse;
 import org.egov.web.contract.OtpValidateRequest;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -43,6 +46,18 @@ public class OtpController {
     public OtpResponse search(@RequestBody OtpRequest request) {
         final Token token = tokenService.search(request.toSearchCriteria());
         return new OtpResponse(token);
+    }
+    
+    @PostMapping("v1/_checkResend")
+    public OtpResponse checkResend(@RequestBody OtpRequest request) {
+        final Token token = tokenService.checkResend(request.getTokenRequest());
+        return new OtpResponse(token);
+    }
+    
+    @PostMapping("v1/_resendCount")
+    public OtpListResponse checkResendCount(@RequestBody OtpRequest request) {
+        final List<Token> token = tokenService.checkResendCount(request.getTokenRequest());
+        return new OtpListResponse(token);
     }
 }
 

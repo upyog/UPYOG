@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
+import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory, Link, useLocation, useRouteMatch } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -216,7 +216,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
             <KeyNote
               keyValue={t("PT_AMOUNT_DUE")}
               note={`₹ ${modalData?.total_due?.toLocaleString("en-IN")}`}
-              noteStyle={{ fontSize: "24px", fontWeight: "bold" }}
+              noteStyle={{ fontSize: "16px", fontWeight: "bold" }}
             />
             <p>
               {t("PT_YOU_HAVE") +

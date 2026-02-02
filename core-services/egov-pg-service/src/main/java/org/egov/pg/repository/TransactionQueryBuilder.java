@@ -12,6 +12,9 @@ class TransactionQueryBuilder {
             "pg.gateway_status_code, pg.gateway_status_msg, pg.receipt, pg.additional_details,  pg.created_by, pg" +
             ".created_time, pg.last_modified_by, pg.last_modified_time " +
             "FROM eg_pg_transactions pg ";
+    
+    public final static String INSERT_PUSHRESPONSE_DATA_LOG = "INSERT INTO pushresponse_data_log"
+			+ "(id,date,time, request, response, transactionid, transactionammount, status_code)" + "VALUES(?,?,?,?,?,?,?,?)";
 
     private TransactionQueryBuilder() {
     }
@@ -24,7 +27,7 @@ class TransactionQueryBuilder {
     }
 
     static String getPaymentSearchQueryByCreatedTimeRange(TransactionCriteria transactionCriteria, Long startTime, Long endTime, List<Object> preparedStmtList) {
-        return buildQueryForTimeRange(transactionCriteria, startTime, endTime, preparedStmtList);
+        return buildQueryForLastModifiedTimeRange(transactionCriteria, startTime, endTime, preparedStmtList);
     }
 
     private static String buildQueryForTimeRange(TransactionCriteria transactionCriteria, Long startTime, Long endTime, List<Object> preparedStmtList) {
@@ -41,6 +44,26 @@ class TransactionQueryBuilder {
         preparedStmtList.add(startTime);
         builder.append(" AND ");
         builder.append(" pg.created_time <= ? ");
+        preparedStmtList.add(endTime);
+
+        return builder.toString();
+    }
+    
+    
+    private static String buildQueryForLastModifiedTimeRange(TransactionCriteria transactionCriteria, Long startTime, Long endTime, List<Object> preparedStmtList) {
+        String preparedQuery = buildQuery(transactionCriteria, preparedStmtList);
+
+        StringBuilder builder = new StringBuilder(preparedQuery);
+
+        if (!preparedQuery.contains("WHERE"))
+            builder.append(" WHERE ");
+        else
+            builder.append(" AND ");
+
+        builder.append(" pg.last_modified_time >= ? ");
+        preparedStmtList.add(startTime);
+        builder.append(" AND ");
+        builder.append(" pg.last_modified_time <= ? ");
         preparedStmtList.add(endTime);
 
         return builder.toString();

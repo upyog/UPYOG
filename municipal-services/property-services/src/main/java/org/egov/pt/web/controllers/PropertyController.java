@@ -10,6 +10,11 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.config.scheduler.DashboardDataPush;
+import org.egov.pt.dashboardservice.DashboardDataService;
+import org.egov.pt.models.DashboardData;
+import org.egov.pt.models.DashboardDataSearch;
+import org.egov.pt.models.DashboardReport;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
@@ -19,6 +24,9 @@ import org.egov.pt.service.PropertyEncryptionService;
 import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.DashboardReportResponse;
+import org.egov.pt.web.contracts.DashboardRequest;
+import org.egov.pt.web.contracts.DashboardResponse;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
@@ -57,6 +65,12 @@ public class PropertyController {
 
     @Autowired
     PropertyEncryptionService propertyEncryptionService;
+    
+    @Autowired
+    DashboardDataService dashboardDataService;
+    
+    @Autowired
+    DashboardDataPush dashBoardIngestService;
 
     @PostMapping("/_create")
     public ResponseEntity<PropertyResponse> create(@Valid @RequestBody PropertyRequest propertyRequest) {
@@ -193,5 +207,66 @@ public class PropertyController {
 //                .build();
 //        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
 
+    @RequestMapping(value = "/_dashboardDataSearch", method = RequestMethod.POST)
+    public ResponseEntity<DashboardResponse> dashboardDataSearch(@Valid @RequestBody DashboardRequest dashboardRequest) {
+    	
+    	List<DashboardData> dashboardDatas=dashboardDataService.dashboardDatas(dashboardRequest.getDashboardDataSearch());
+    	DashboardResponse dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).responseInfo(
+    			responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true)).build();
+    	
+    	return new ResponseEntity<>(dashboardResponse,HttpStatus.OK);
+    }
+	 
+    
+    
+    //IT SHOULD OPENENDPOINT WILL HIT ONLY ONCE 
+	@RequestMapping(value = "/_dashboardIngestForLegacy", method = RequestMethod.POST)
+	public ResponseEntity<?> dashboardDataSearch(){
+
+		return new ResponseEntity<>(dashBoardIngestService.datapushFromAPi(), HttpStatus.OK);
+	}
+	
+	
+	/*
+	 * @RequestMapping(value = "/_dashboardPropertyReports", method =
+	 * RequestMethod.POST) public ResponseEntity<?>
+	 * dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest
+	 * dashboardRequest) throws Exception {
+	 * 
+	 * DashboardReport
+	 * dashboardDatas=dashboardDataService.dashboardDatasWithProperties(
+	 * dashboardRequest);
+	 * //if(dashboardRequest.getDashboardDataSearch().getIsReportDownload()) {
+	 * 
+	 * //return dashboardDataService.generateExcelResponse(dashboardDatas,
+	 * "dashboard-report.xlsx"); //} DashboardReportResponse
+	 * dashboardReportResponse=DashboardReportResponse.builder().dashboardReport(
+	 * dashboardDatas).
+	 * responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(
+	 * dashboardRequest.getRequestInfo(), true)).build();
+	 * 
+	 * return new ResponseEntity<>(dashboardReportResponse,HttpStatus.OK); }
+	 */
+	
+	@PostMapping("/_applicationData")
+	public ResponseEntity<PropertyResponse> searchApplication(
+            @Valid @RequestBody DashboardRequest dashboardRequest)
+	{
+		PropertyResponse response = PropertyResponse.builder()
+        		.responseInfo(
+                        responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true))
+        		.properties(dashboardDataService.applicationData(dashboardRequest.getDashboardDataSearch(), dashboardRequest.getRequestInfo()))
+        		.count(0)
+                .build();
+        
+        return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+		 
+	
+	
+	
+	 
 }

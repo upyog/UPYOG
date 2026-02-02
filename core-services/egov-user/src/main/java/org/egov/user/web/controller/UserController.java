@@ -17,12 +17,16 @@ import org.egov.user.web.contract.*;
 import org.egov.user.web.contract.auth.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,6 +39,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import static org.egov.tracer.http.HttpUtils.isInterServiceCall;
@@ -79,6 +85,7 @@ public class UserController {
         User user = createUserRequest.toDomain(true);
         user.setOtpValidationMandatory(IsValidationMandatory);
         if (isRegWithLoginEnabled) {
+        	System.out.println("YSerr------------------------->>>>"+user);
             Object object = userService.registerWithLogin(user, createUserRequest.getRequestInfo());
             return new ResponseEntity<>(object, HttpStatus.OK);
         }
@@ -215,4 +222,13 @@ public class UserController {
         return true;
     }
 
+    @PostMapping("/users/_generateCaptcha")
+    public ResponseEntity<CaptchaResponse> generateCaptcha() {
+
+    	CaptchaResponse captchaResponse = new CaptchaResponse();
+    	ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+    	captchaResponse=userService.createCaptcha(responseInfo);	
+        return ResponseEntity.ok().body(captchaResponse);
+    	//return new ResponseEntity<>(captchaResponse.getCaptcha().getUuid(), HttpStatus.OK);
+    }
 }

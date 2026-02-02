@@ -30,6 +30,14 @@ public class CalculatorConstants {
 	public static final String PT_UNIT_USAGE_EXEMPTION = "PT_UNIT_USAGE_EXEMPTION";
 
 	public static final String PT_OWNER_EXEMPTION = "PT_OWNER_EXEMPTION";
+	
+	public static final String  PT_SPECIAL_EXEMPTION ="PT_SPECIAL_EXEMPTION";
+	
+	public static final String  PT_ROAD_TYPE_TAX ="PT_ROAD_TYPE_TAX";
+	
+	public static final String  PT_STRUCTURE_TYPE_TAX ="PT_STRUCTURE_TYPE_TAX";
+	
+	public static final String PT_AGE_FACTOR_TAX="PT_AGE_FACTOR_TAX";
 
 	public static final String PT_TIME_REBATE = "PT_TIME_REBATE";
 
@@ -38,6 +46,11 @@ public class CalculatorConstants {
 	public static final String PT_TIME_INTEREST = "PT_TIME_INTEREST";
 
 	public static final String PT_ADVANCE_CARRYFORWARD = "PT_ADVANCE_CARRYFORWARD";
+	
+	public static final String PT_PASTDUE_CARRYFORWARD = "PT_PASTDUE_CARRYFORWARD";
+	public static final String PT_PAST_DUE_PENALTY = "PT_PAST_DUE_PENALTY";
+	
+	public static final String PT_ADVANCE_REBATE="PT_ADVANCE_REBATE";
 
 	public static final String PT_FIRE_CESS = "PT_FIRE_CESS";
 
@@ -46,6 +59,21 @@ public class CalculatorConstants {
 	public static final String PT_ADHOC_PENALTY = "PT_ADHOC_PENALTY";
 
 	public static final String PT_ADHOC_REBATE = "PT_ADHOC_REBATE";
+	
+	public static final String PT_ROAD_TYPE = "PT_ROAD_TYPE";
+	
+	public static final String PT_COMPLEMENTARY_REBATE="PT_COMPLEMENTARY_REBATE";
+	
+	public static final String PT_MODEOFPAYMENT_REBATE="PT_MODEOFPAYMENT_REBATE";
+	
+	public static final String PT_VACANT_LAND_EXEMPTION="PT_VACANT_LAND_EXEMPTION";
+	
+	public static final String PT_MANDATORY_PAYMENT="PT_MANDATORY_PAYMENT";
+	
+	public static final String CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT = "CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT";
+
+	public static final String CALCULTED_ROAD_TYPE_TAX = "CALCULTED_ROAD_TYPE_TAX";
+	
 
 //	public static final String PT_DECIMAL_CEILING_CREDIT = "PT_DECIMAL_CEILING_CREDIT";
 	
@@ -99,6 +127,8 @@ public class CalculatorConstants {
 	public static final String FINANCIAL_YEAR_MASTER = "FinancialYear";
 
 	public static final String OWNER_TYPE_MASTER = "OwnerType";
+	
+	public static final String SPECIAL_EXCEMPTION = "SpecialExemption";
 
 	public static final String REBATE_MASTER = "Rebate";
 
@@ -109,9 +139,14 @@ public class CalculatorConstants {
 	public static final String CANCER_CESS_MASTER = "CancerCess";
 
 	public static final String INTEREST_MASTER = "Interest";
+	public static final String ROAD_TYPE_RATES = "RoadTypeRates";
+	public static final String STRUCTURE_TYPE_RATES = "StructureTypeRates";
+	public static final String AGE_OF_PROPERTY_RATES ="AgeOfPropertyRates";
+	public static final String USAGE_OWNER_CATEGORY_RATES ="UsageCategoryRates";
+
 
 	public static final List<String> PROPERTY_BASED_EXEMPTION_MASTERS = Collections.unmodifiableList(Arrays.asList(
-			USAGE_MAJOR_MASTER, USAGE_MINOR_MASTER, USAGE_SUB_MINOR_MASTER, USAGE_DETAIL_MASTER, OWNER_TYPE_MASTER));
+			USAGE_MAJOR_MASTER, USAGE_MINOR_MASTER, USAGE_SUB_MINOR_MASTER, USAGE_DETAIL_MASTER, OWNER_TYPE_MASTER,ROAD_TYPE_RATES,STRUCTURE_TYPE_RATES,AGE_OF_PROPERTY_RATES,SPECIAL_EXCEMPTION,USAGE_OWNER_CATEGORY_RATES));
 	
 	public static final List<Category> DEBIT_CATEGORIES = Collections.unmodifiableList(Arrays.asList(Category.REBATE, Category.EXEMPTION));
 
@@ -336,4 +371,58 @@ public class CalculatorConstants {
 
 	public static final String TAX_PERIOD_SEARCH_FAILED = "EGPT_CALCULATOR_TAX_PERIOD_SEARCH_ERROR";
 	public static final String TAX_PERIOD_SEARCH_FAILED_MSG = "Tax period for current financial year is not present. Please add the tax period details";
+	
+	public static final String MONTH_31_03 = "31/03/";
+
+	public static final String MONTH_01_01 = "01/01/";
+
+	public static final String MONTH_31_12 = "31/12/";
+
+	public static final String MONTH_01_10 = "01/10/";
+
+	public static final String MONTH_30_09 = "30/09/";
+
+	public static final String MONTH_01_07 = "01/07/";
+
+	public static final String MONTH_30_06 = "30/06/";
+
+	public static final String MONTH_01_04 = "01/04/";
+
+	public static final String DD_MM_YYYY = "dd/MM/yyyy";
+
+	public static final int CALCULATION_1 = 1;
+
+	public static final int CALCULATION_4 = 4;
+
+	public static final int PENALTY_20000 = 20000;
+
+	public static final double CALCULATION_0_027 = 0.027;
+
+	public static final int CALCULATION_15 = 15;
+
+	public static final int CALCULATION_20 = 20;
+
+	public static final int CALCULATION_75 = 75;
+
+	public static final int CALCULATION_10 = 10;
+
+	public static final int CALCULATION_6 = 6;
+
+	public static final int CALCULATION_3 = 3;
+
+	public static final int CALCULATION_100 = 100;
+
+	public static final int CALCULATION_92 = 92;
+
+	public static final int CALCULATION_2 = 2;
+
+	public static final String YEARLY = "YEARLY";
+
+	public static final String HALFYEARLY = "HALFYEARLY";
+
+	public static final String QUARTERLY = "QUARTERLY";
+
+	public static final String INDEPENDENTPROPERTY = "INDEPENDENTPROPERTY";
+
+	public static final String HERITAGE_PROPERTY = "HERITAGE_PROPERTY";
 }

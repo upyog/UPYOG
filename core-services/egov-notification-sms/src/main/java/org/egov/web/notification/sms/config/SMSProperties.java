@@ -60,7 +60,7 @@ public class SMSProperties {
     private String verifyResponseContains;
 
 
-    @Value("${sms.verify.ssl:true}")
+    @Value("${sms.verify.ssl:false}")
     private boolean verifySSL;
 
     @Value("${sms.blacklist.numbers}")
@@ -69,7 +69,7 @@ public class SMSProperties {
     @Value("${sms.whitelist.numbers}")
     private List<String> whitelistNumbers;
 
-    @Value("${sms.verify.certificate:false}")
+    @Value("${sms.verify.certificate}")
     private boolean verifyCertificate;
 
     @Value("${sms.msg.append}")

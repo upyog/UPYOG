@@ -109,6 +109,7 @@ async function search_workflow(applicationNumber, tenantId, requestinfo) {
 }
 
 async function search_payment(consumerCodes, tenantId, requestinfo, bussinessService, receiptNumbers) {
+  console.log("search_payment==",consumerCodes, tenantId, requestinfo, bussinessService, receiptNumbers)
   var params = {
     tenantId: tenantId,
     consumerCodes: consumerCodes,
@@ -404,7 +405,7 @@ async function create_pdf_and_upload(tenantId, key, data, requestinfo) {
 }
 
 function checkIfCitizen(requestinfo) {
-  if (requestinfo.RequestInfo.userInfo.type == "CITIZEN") {
+  if (requestinfo?.RequestInfo?.userInfo?.type == "CITIZEN") {
     return true;
   } else {
     return false;

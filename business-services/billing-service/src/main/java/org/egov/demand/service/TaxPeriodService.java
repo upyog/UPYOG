@@ -75,6 +75,7 @@ public class TaxPeriodService {
         final TaxPeriodResponse taxPeriodResponse = new TaxPeriodResponse();
         taxPeriodResponse.setTaxPeriods(taxPeriods);
         taxPeriodResponse.setResponseInfo(responseInfoFactory.getResponseInfo(requestInfo, HttpStatus.OK));
+        System.out.println("taxPeriodResponse::"+taxPeriodResponse);
         return taxPeriodResponse;
     }
 }

@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 import java.util.*;
 
 @Slf4j
@@ -58,7 +60,9 @@ public class BusinessServiceRepository {
         if(!CollectionUtils.isEmpty(criteria.getBusinessServices())){
 
             criteria.getBusinessServices().forEach(businessService -> {
-                if(stateLevelMapping.get(businessService)==null || stateLevelMapping.get(businessService))
+            	//Condition Change for Manipur Implementation for Teneant Business Service Issue
+            	//if(stateLevelMapping.get(businessService)==null || stateLevelMapping.get(businessService))
+                if(stateLevelMapping.get(businessService)!=null)
                     stateLevelBusinessServices.add(businessService);
                 else
                     tenantBusinessServices.add(businessService);
@@ -69,6 +73,7 @@ public class BusinessServiceRepository {
 
         if(!CollectionUtils.isEmpty(stateLevelBusinessServices)){
             BusinessServiceSearchCriteria stateLevelCriteria = new BusinessServiceSearchCriteria();
+            System.out.println(criteria.getTenantId().split("\\.")[0]);
             stateLevelCriteria.setTenantId(criteria.getTenantId().split("\\.")[0]);
             stateLevelCriteria.setBusinessServices(stateLevelBusinessServices);
             List<Object> stateLevelPreparedStmtList = new ArrayList<>();
@@ -155,10 +160,10 @@ public class BusinessServiceRepository {
 
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getBusinessServices(new BusinessServiceSearchCriteria(), preparedStmtList);
-
+        
         List<BusinessService> businessServices = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
         List<BusinessService> filterBusinessServices = filterBusinessServices((businessServices));
-
+        
         return filterBusinessServices;
     }
 
@@ -172,15 +177,16 @@ public class BusinessServiceRepository {
 
         Map<String, Boolean> stateLevelMapping = mdmsService.getStateLevelMapping();
         List<BusinessService> filteredBusinessService = new LinkedList<>();
-
+        Boolean isStatelevel=true;
+        
         for(BusinessService businessService : businessServices){
 
             String code = businessService.getBusinessService();
             String tenantId = businessService.getTenantId();
-            Boolean isStatelevel = stateLevelMapping.get(code);
+            isStatelevel = stateLevelMapping.get(code);
 
-            if(isStatelevel == null){
-                isStatelevel = true;
+            if(isStatelevel==null){
+                isStatelevel = false;
                // throw new CustomException("INVALID_MDMS_CONFIG","The master data is missing for businessService: "+code);
             }
 

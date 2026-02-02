@@ -1,4 +1,4 @@
-import { Card, PropertyHouse } from "@egovernments/digit-ui-react-components";
+import { Card, PropertyHouse } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -53,7 +53,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
     // <Card style={{ paddingRight: 0, marginTop: 0 }} className="employeeCard filter inboxLinks">
     <Card className="employeeCard filter inboxLinks">
       <div className="complaint-links-container">
-        {GetLogo()}
+        {/* {GetLogo()} */}
         {/* <div style={{ marginLeft: "unset", paddingLeft: "0px" }} className="body"> */}
         <div className="body">
           {links.map(({ link, text, hyperlink = false, roles = [] }, index) => {

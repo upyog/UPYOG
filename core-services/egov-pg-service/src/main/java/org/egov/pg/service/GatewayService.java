@@ -1,13 +1,19 @@
 package org.egov.pg.service;
 
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.GatewayStatus;
 import org.egov.pg.models.Transaction;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 
@@ -25,6 +31,10 @@ public class GatewayService {
         this.gateways = Collections.unmodifiableList(gateways);
         initialize();
     }
+    
+  
+    
+    
 
     /**
      * Get the transaction id from the raw request
@@ -84,6 +94,19 @@ public class GatewayService {
         Gateway gateway = getGateway(currentStatus.getGateway());
         return gateway.fetchStatus(currentStatus, params);
     }
+    
+    
+    Transaction getTransanformedTransaction(String resp, Transaction currentStatus, String secretKey) throws JsonParseException, JsonMappingException, IOException {
+ 
+        Gateway gateway = getGateway(currentStatus.getGateway());
+       
+			return gateway.getTransformedTransaction( resp,  currentStatus,  secretKey);
+		
+		
+    }
+    
+    
+  
 
 
     public boolean isGatewayActive(String gateway) {

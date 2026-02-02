@@ -9,17 +9,20 @@ import {
   Row,
   StatusTable,
   SubmitBar,
-} from "@egovernments/digit-ui-react-components";
+  LinkLabel
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
 import PropertyDocument from "../../../pageComponents/PropertyDocument";
 import { getCityLocale, getPropertyTypeLocale, stringReplaceAll } from "../../../utils";
-
-const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
+import ActionModal from "../../../../../templates/ApplicationDetails/Modal/index"
+import ArrearSummary from "../../../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary";
+const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData,updateAssessmentData) => {
   const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
   let billData = {};
   if (assessmentData?.Assessments?.length > 0) {
+    updateAssessmentData(assessmentData?.Assessments)
     billData = await Digit.PaymentService.fetchBill(tenantId, {
       businessService: "PT",
       consumerCode: propertyIds,
@@ -34,17 +37,47 @@ const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCan
 };
 
 const getBillAmount = (fetchBillData = null) => {
-  if (fetchBillData == null) return "CS_NA";
+  if (fetchBillData == null || Object.keys(fetchBillData)?.length==0) return "CS_NA";
   return fetchBillData ? (fetchBillData?.Bill && fetchBillData.Bill[0] ? fetchBillData.Bill[0]?.totalAmount : "0") : "0";
+};
+const checkBillExpiry = (fetchBillData = null) => {
+  if (fetchBillData == null || Object.keys(fetchBillData)?.length==0) return "CS_NA";
+  if(fetchBillData && fetchBillData?.Bill?.length>0 && fetchBillData?.Bill[0]?.billDetails?.length>0 && fetchBillData?.Bill[0]?.billDetails[0]?.expiryDate) {
+    const expiryTimestamp = fetchBillData?.Bill[0]?.billDetails[0]?.expiryDate; // e.g., milliseconds
+    const expiryDate = new Date(expiryTimestamp);
+    const today = new Date();
+
+    const isExpired = expiryDate < today;
+    // console.log("isExpired==",isExpired)
+    return isExpired
+  }
+  // return fetchBillData ? (fetchBillData?.Bill && fetchBillData.Bill[0] ? fetchBillData.Bill[0]?.totalAmount : "0") : "0";
 };
 
 const PropertyInformation = () => {
   const { t } = useTranslation();
   const { propertyIds } = useParams();
-
+const [showModal,setshowModal] = useState(false)
   var isMobile = window.Digit.Utils.browser.isMobile();
   const [enableAudit, setEnableAudit] = useState(false);
-
+const moduleCode="PT"
+const history = useHistory();
+const selectedAction =    {
+  action: "ASSESS_PROPERTY",
+  forcedName: "PT_ASSESS",
+  showFinancialYearsModal: true,
+  customFunctionToExecute: (data) => {
+    //const history = useHistory();
+    delete data.customFunctionToExecute;
+    history.replace({ pathname: `/digit-ui/citizen/pt/assessment-details/${property.propertyId}`, state: { ...data } });
+  },
+  tenantId: Digit.ULBService.getStateId(),
+}
+const { id: applicationNumber } = useParams();
+const [isEnableLoader, setIsEnableLoader] = useState(false);
+const [isWarningPop, setWarningPopUp] = useState(false);
+const businessService="PT"
+const state = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: UpdateNumberConfig } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(),"PropertyTax",["UpdateNumber"],{
     select: (data) => {
@@ -76,6 +109,7 @@ const PropertyInformation = () => {
   });
 
   const [fetchBillData, updatefetchBillData] = useState({});
+  const [fetchAssessmentData, updateAssessmentData] = useState(null);
 
   const [property, setProperty] = useState(() => data?.Properties[0] || " ");
   const mutation = Digit.Hooks.pt.usePropertyAPI(property?.tenantId, false);
@@ -99,7 +133,17 @@ const PropertyInformation = () => {
       setProperty(property);
     }
   }, [enableAudit, auditData]);
+const handleClick=()=>{
 
+  setshowModal(true)
+}
+const onBifurcate = () =>{
+  history.push({pathname: "/digit-ui/citizen/pt/property/new-application", state: {propertyDetails: property, action: 'BIFURCATION'}})
+}
+const onAppeal =()=>{
+  history.push(`/digit-ui/citizen/pt/property/appeal/${property?.propertyId}`);
+
+}
   sessionStorage.setItem("pt-property", JSON.stringify(property));
   let docs = [];
   docs = property?.documents;
@@ -141,7 +185,7 @@ const PropertyInformation = () => {
       loaded: false,
       canLoad: true,
     });
-    setBillData(property?.tenantId || tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData);
+    setBillData(property?.tenantId || tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData,updateAssessmentData);
   }
 
   let flrno,
@@ -156,6 +200,109 @@ const PropertyInformation = () => {
     return <LinkButton style={style} label={t("PT_OWNER_HISTORY")} className="check-page-link-button" onClick={routeTo} />;
   };
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("UpdateNumber");
+ 
+  const submitAction = async (data, nocData = false, isOBPS = {}) => {
+
+      setIsEnableLoader(true);
+      if (typeof data?.customFunctionToExecute === "function") {
+       
+        data?.customFunctionToExecute({ ...data });
+       
+      }
+      if (nocData !== false && nocMutation) {
+        const nocPrmomises = nocData?.map((noc) => {
+          return nocMutation?.mutateAsync(noc);
+        });
+        try {
+          setIsEnableLoader(true);
+          const values = await Promise.all(nocPrmomises);
+          values &&
+            values.map((ob) => {
+              Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
+            });
+        } catch (err) {
+          setIsEnableLoader(false);
+          let errorValue = err?.response?.data?.Errors?.[0]?.code
+            ? t(err?.response?.data?.Errors?.[0]?.code)
+            : err?.response?.data?.Errors?.[0]?.message || err;
+          closeModal();
+          setShowToast({ key: "error", error: { message: errorValue } });
+          setTimeout(closeToast, 5000);
+          return;
+        }
+      }
+      // if (mutate) {
+      //   setIsEnableLoader(true);
+      //   mutate(data, {
+      //     onError: (error, variables) => {
+      //       setIsEnableLoader(false);
+      //       setShowToast({ key: "error", error });
+      //       setTimeout(closeToast, 5000);
+      //     },
+      //     onSuccess: (data, variables) => {
+      //       sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
+      //       setIsEnableLoader(false);
+      //       if (isOBPS?.bpa) {
+      //         data.selectedAction = selectedAction;
+      //         history.replace(`/digit-ui/employee/obps/response`, { data: data });
+      //       }
+      //       if (isOBPS?.isStakeholder) {
+      //         data.selectedAction = selectedAction;
+      //         history.push(`/digit-ui/employee/obps/stakeholder-response`, { data: data });
+      //       }
+      //       if (isOBPS?.isNoc) {
+      //         history.push(`/digit-ui/employee/noc/response`, { data: data });
+      //       }
+      //       if (data?.Amendments?.length > 0 ){
+      //         //RAIN-6981 instead just show a toast here with appropriate message
+      //       //show toast here and return 
+      //         //history.push("/digit-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
+              
+      //         if(variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS")})
+      //         } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
+      //         } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
+      //         }
+      //         else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
+      //         }            
+      //         return
+      //       }
+      //       setShowToast({ key: "success", action: selectedAction });
+      //       clearDataDetails && setTimeout(clearDataDetails, 3000);
+      //       setTimeout(closeToast, 5000);
+      //       queryClient.clear();
+      //       queryClient.refetchQueries("APPLICATION_SEARCH");
+      //       //push false status when reject
+            
+      //     },
+      //   });
+      // }
+  
+      closeModal();
+ 
+  };
+  if (isLoading || isEnableLoader) {
+    return <Loader />;
+  }
+  const closeModal = () => {
+    setshowModal(false)
+  };
+
+  const closeWarningPopup = () => {
+    setWarningPopUp(false);
+  };
+  const handleClickOnPtPgr=()=>{
+  sessionStorage.setItem("type","PT" );
+  sessionStorage.setItem("pincode", data.Properties[0].address.pincode);
+  sessionStorage.setItem("tenantId", data.Properties[0].address.tenantId);
+  sessionStorage.setItem("localityCode", data.Properties[0].address.locality.code);
+  sessionStorage.setItem("landmark", data.Properties[0].address.landmark); 
+  sessionStorage.setItem("propertyid",data.Properties[0].propertyId)  ;
+  history.push(`/digit-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`);
+  }
   return (
     <React.Fragment>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>
@@ -163,17 +310,177 @@ const PropertyInformation = () => {
         <Card>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_PTUID")} text={`${property.propertyId || t("CS_NA")}`} /* textStyle={{ whiteSpace: "pre" }} */ />
-            <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={`₹${t(getBillAmount(fetchBillData))}`} />
+            <Row
+              className="border-none"
+              label={t("Creation Reason")}
+              text={t(`${property?.creationReason}`)}
+            />
+            <Row
+              className="border-none"
+              label={t("Apportioned Property")}
+              text={property?.isPartOfProperty ? t("PT_COMMON_YES") : t("PT_COMMON_NO")}
+            />
+            <Row className="border-none" label={t("Assessment Status")} text={fetchAssessmentData==null ? 'NA' : fetchAssessmentData?.[0]?.status} />
+
+            <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={getBillAmount(fetchBillData)=='CS_NA' ? 'NA' : `₹${t(getBillAmount(fetchBillData))}`} />
+            {/* {getBillAmount(fetchBillData)!=='CS_NA' && <LinkLabel
+            onClick={() => history.push({ pathname: `/digit-ui/citizen/pt/payment-details/${property?.propertyId}`})}
+            style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
+          >
+            {t("PT_VIEW_PAYMENT")}
+          </LinkLabel>} */}
           </StatusTable>
-          <CardSubHeader>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
+          <ArrearSummary bill={fetchBillData.Bill?.[0]} />
+          {property?.creationReason =="AMALGAMATION" && (
+            <React.Fragment>
+              <div style={{border: "1px solid", borderRadius: "8px", padding: "10px"}}>
+                <CardSubHeader style={{color: 'rgb(15, 79, 158)', marginBottom: '10px'}}>{t("Amalgamation Details")}</CardSubHeader>
+                {property?.amalgamatedProperty && property?.amalgamatedProperty.length>0 &&  
+                property.amalgamatedProperty.map((amalgamatePropertyDetails)=>(
+                  <div style={{border: "1px solid", padding: "10px", marginBottom: "10px", borderRadius: "8px"}}>
+                    <StatusTable>
+                        <Row
+                          className="border-none"
+                          label={t("PT_SEARCHPROPERTY_TABEL_PTUID")}
+                          text={amalgamatePropertyDetails?.propertyId} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Property Type")}
+                          text={t(`${getPropertyTypeLocale(amalgamatePropertyDetails?.property?.propertyType)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Land Area")}
+                          text={(amalgamatePropertyDetails?.property?.landArea && `${t(`${amalgamatePropertyDetails?.property?.landArea} sq.ft`)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Property Address: </h3>
+                        <Row className="border-none" label={t("PT_COMMON_CITY")} text={amalgamatePropertyDetails?.property?.address?.city || t("CS_NA")} />
+                        <Row
+                          className="border-none"
+                          label={t("PT_COMMON_LOCALITY_OR_MOHALLA")}
+                          text=/* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */ {t(`${amalgamatePropertyDetails?.property?.address?.locality?.name}`) || t("CS_NA")}
+                        />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={amalgamatePropertyDetails?.property?.address?.street || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_DOOR_OR_HOUSE")} text={amalgamatePropertyDetails?.property?.address?.doorNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_DAG_NO")} text={amalgamatePropertyDetails?.property?.address?.dagNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PATTA_NO")} text={`${amalgamatePropertyDetails?.property?.address?.pattaNo || t("CS_NA")}`} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD")} text={`${amalgamatePropertyDetails?.property?.address?.principalRoadName || t("CS_NA")}`} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_NAME_OF_SUB_ROAD")} text={`${amalgamatePropertyDetails?.property?.address?.subSideRoadName || t("CS_NA")}`} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_TYPE_OF_ROAD")} text={`${t(amalgamatePropertyDetails?.property?.address?.typeOfRoad?.code) || t("CS_NA")}`} />
+
+                        {
+                          amalgamatePropertyDetails?.property?.owners?.length>0 && (
+                            <React.Fragment>
+                              <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Owner Details: </h3>
+                              {
+                                amalgamatePropertyDetails.property.owners.map((amalgamatedPropertyOwner)=>(
+                                  <StatusTable>
+                                    <Row className="border-none" label={t("Owner Name")} text={amalgamatedPropertyOwner?.name || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Mobile")} text={amalgamatedPropertyOwner?.mobileNumber || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Address")} text={amalgamatedPropertyOwner?.permanentAddress || t("CS_NA")} />
+                                  </StatusTable>
+                                ))
+                              }
+                              
+                            </React.Fragment>
+                            
+                          )
+                        }
+                      </StatusTable>
+                  </div>
+                  
+                ))
+                }
+                
+              </div>
+              
+            </React.Fragment>
+          )}
+          {property?.creationReason =="BIFURCATION" && (
+            <React.Fragment>
+              <div style={{border: "1px solid", borderRadius: "8px", padding: "10px"}}>
+                <CardSubHeader style={{color: 'rgb(15, 79, 158)', marginBottom: '10px'}}>{t("Separated Property Details")}</CardSubHeader>
+                {property?.additionalDetails?.parentProperty && 
+                  <div style={{border: "1px solid", padding: "10px", marginBottom: "10px", borderRadius: "8px"}}>
+                    <StatusTable>
+                        <Row
+                          className="border-none"
+                          label={t("PT_SEARCHPROPERTY_TABEL_PTUID")}
+                          text={property?.additionalDetails?.parentProperty?.propertyId} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Property Type")}
+                          text={t(`${getPropertyTypeLocale(property?.additionalDetails?.parentProperty?.propertyType)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Land Area")}
+                          text={(property?.additionalDetails?.parentProperty?.landArea && `${t(`${property?.additionalDetails?.parentProperty?.landArea} sq.ft`)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Property Address: </h3>
+                        <Row className="border-none" label={t("PT_COMMON_CITY")} text={property?.additionalDetails?.parentProperty?.address?.city || t("CS_NA")} />
+                        <Row
+                          className="border-none"
+                          label={t("PT_COMMON_LOCALITY_OR_MOHALLA")}
+                          text=/* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */ {t(`${property?.additionalDetails?.parentProperty?.address?.locality?.name}`) || t("CS_NA")}
+                        />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={property?.additionalDetails?.parentProperty?.address?.street || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_DOOR_OR_HOUSE")} text={property?.additionalDetails?.parentProperty?.address?.doorNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_DAG_NO")} text={property?.additionalDetails?.parentProperty?.address?.dagNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PATTA_NO")} text={`${property?.additionalDetails?.parentProperty?.address?.pattaNo || t("CS_NA")}`} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD")} text={`${property?.additionalDetails?.parentProperty?.address?.principalRoadName || t("CS_NA")}`} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_NAME_OF_SUB_ROAD")} text={`${property?.additionalDetails?.parentProperty?.address?.subSideRoadName || t("CS_NA")}`} />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_TYPE_OF_ROAD")} text={`${t(property?.additionalDetails?.parentProperty?.address?.typeOfRoad?.code) || t("CS_NA")}`} />
+
+
+                        {
+                          property?.additionalDetails?.parentProperty?.owners?.length>0 && (
+                            <React.Fragment>
+                              <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Owner Details: </h3>
+                              {
+                                property?.additionalDetails?.parentProperty?.owners.map((separatedPropertyOwner)=>(
+                                  <StatusTable>
+                                    <Row className="border-none" label={t("Owner Name")} text={separatedPropertyOwner?.name || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Mobile")} text={separatedPropertyOwner?.mobileNumber || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Address")} text={separatedPropertyOwner?.permanentAddress || t("CS_NA")} />
+                                  </StatusTable>
+                                ))
+                              }
+                              
+                            </React.Fragment>
+                            
+                          )
+                        }
+                      </StatusTable>
+                  </div>
+                  
+                // ))
+                }
+                
+              </div>
+              
+            </React.Fragment>
+          )}
+          <CardSubHeader style={{color: 'rgb(15, 79, 158)', marginBottom: '10px'}}>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={`${property.address?.pincode || t("CS_NA")}`} />
             <Row className="border-none" label={t("PT_COMMON_CITY")} text={`${t(getCityLocale(property?.tenantId)) || t("CS_NA")}`} />
             <Row className="border-none" label={t("PT_COMMON_LOCALITY_OR_MOHALLA")} text={`${t(property?.address?.locality?.name)}` || t("CS_NA")} />
             <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={`${property.address?.street || t("CS_NA")}`} />
             <Row className="border-none" label={t("PT_PROPERTY_ADDR_DOOR_HOUSE_NO")} text={`${property.address?.doorNo || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_DAG_NO")} text={`${property.address?.dagNo || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PATTA_NO")} text={`${property.address?.pattaNo || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_CMN_NAME_OF_BUILDING")} text={`${property?.address?.commonNameOfBuilding || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD")} text={`${property.address?.principalRoadName || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_NAME_OF_SUB_ROAD")} text={`${property.address?.subSideRoadName || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_TYPE_OF_ROAD")} text={`${t("PROPERTYTAX_ROADTYPE_"+property.address?.typeOfRoad?.code) || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_LANDMARK")} text={`${property.address?.landmark || t("CS_NA")}`} />
+
+
           </StatusTable>
-          <CardSubHeader>{t("PT_PROPERTY_ASSESSMENT_DETAILS_HEADER")}</CardSubHeader>
+          <CardSubHeader style={{color: 'rgb(15, 79, 158)', marginBottom: '10px'}}>{t("PT_PROPERTY_ASSESSMENT_DETAILS_HEADER")}</CardSubHeader>
           <StatusTable>
             {/* <Row 
               className="border-none" 
@@ -188,6 +495,8 @@ const PropertyInformation = () => {
             <Row className="border-none" label={t("PT_COMMON_PROPERTY_TYPE")} text={`${t(getPropertyTypeLocale(property?.propertyType))}` || t("CS_NA")} />
             <Row className="border-none" label={t("PT_ASSESMENT1_PLOT_SIZE")} text={`${property.landArea} sq.ft` || t("CS_NA")} />
             <Row className="border-none" label={t("PT_ASSESMENT_INFO_NO_OF_FLOOR")} text={`${property.noOfFloors || t("CS_NA")}`} />
+            {/* <Row className="border-none" label={t("PT_ASSESSMENT1_ELECTRICITY")} text={`${property?.additionalDetails?.electricity || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_ASSESSMENT1_UID")} text={`${property?.additionalDetails?.uid || t("CS_NA")}`} /> */}
           </StatusTable>
           <div>
             {Array.isArray(units) &&
@@ -195,10 +504,10 @@ const PropertyInformation = () => {
               units.map((unit, index) => (
                 <div key={index}>
                   {(flrno !== unit?.floorNo ? (i = 1) : (i = i + 1)) && i === 1 && (
-                    <CardSubHeader>{t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)}</CardSubHeader>
+                    <CardSubHeader style={{color: 'rgb(15, 79, 158)', marginBottom: '10px'}}>{t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)}</CardSubHeader>
                   )}
-                  <div style={{ border: "groove", marginBottom:"10px" }}>
-                    <CardSubHeader>
+                  <div style={{ border: "groove", marginBottom:"10px", borderRadius: "6px" }}>
+                    <CardSubHeader style={{color: 'rgb(15, 79, 158)', marginBottom: '10px'}}>
                       {t("ES_APPLICATION_DETAILS_UNIT")} {i}
                     </CardSubHeader>
                     {(flrno = unit?.floorNo) > -5 && (
@@ -207,14 +516,17 @@ const PropertyInformation = () => {
                           className="border-none" 
                           label={t("PT_ASSESSMENT_UNIT_USAGE_TYPE")}
                           text={
-                            `${t(
-                              (property.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPUSGTYPE_") +
-                                (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property.usageCategory) 
+                            `${t("COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+unit?.usageCategory
+                              // (property.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPUSGTYPE_") +
+                              //   (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property.usageCategory) 
                                 /* (property.usageCategory !== "RESIDENTIAL" ? "_" + unit?.usageCategory.split(".").pop() : "") */
                             )}` || t("CS_NA")
                           }
                         />
                         <Row className="border-none" label={t("PT_OCCUPANY_TYPE_LABEL")} text={`${t("PROPERTYTAX_OCCUPANCYTYPE_" + unit?.occupancyType)}` || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_STRUCTURE_TYPE")} text={`${t("PROPERTYTAX_STRUCTURETYPE_" + unit?.structureType)}` || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_AGE_OF_PROPERTY")} text={`${t("PROPERTYTAX_AGEOFPROPERTY_" + unit?.ageOfProperty)}` || t("CS_NA")} />
+
                         <Row className="border-none" label={t("PT_BUILTUP_AREA_LABEL")} text={`${`${unit?.constructionDetail?.builtUpArea} sq.ft` || t("CS_NA")}`} />
                         {unit.occupancyType == "RENTED" && (
                           <Row className="border-none" label={t("PT_FORM2_TOTAL_ANNUAL_RENT")} text={`${(unit?.arv && `₹${unit?.arv}`) || t("CS_NA")}`} />
@@ -225,15 +537,23 @@ const PropertyInformation = () => {
                 </div>
               ))}
           </div>
-          <CardSubHeader>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
-          <div>
+          <CardSubHeader style={{color: 'rgb(15, 79, 158)', marginBottom: '10px'}}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
+          <div className="owner-details">
+            <StatusTable>
+              <Row 
+                className="border-none" 
+                label={t("PT_FORM3_OWNERSHIP_TYPE")}
+                text={`${property?.ownershipCategory ? t(`PT_OWNERSHIP_${property?.ownershipCategory}`) : t("CS_NA")}`}
+              />
+            </StatusTable>
+            
             {Array.isArray(owners) &&
-              owners.map((owner, index) => (
-                <div key={index}>
-                  <CardSubHeader>
+              owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
+                <div key={index} className="owner-details-child" style={{ border: "groove", padding: "7px", marginBottom: "10px", borderRadius: "6px" }}>
+                  <CardSubHeader style={{color: 'rgb(15, 79, 158)', marginBottom: '10px'}}>
                     {owners.length != 1 && (
                       <span>
-                        {t("PT_OWNER_SUB_HEADER")} - {index + 1}{" "}
+                        {t("PT_ACK_LOCALIZATION_OWNER")} - {index + 1}{" "}
                       </span>
                     )}
                   </CardSubHeader>
@@ -243,44 +563,51 @@ const PropertyInformation = () => {
                     <Row 
                       className="border-none" 
                       label={t("PT_COMMON_APPLICANT_NAME_LABEL")}
-                      textStyle={isMobile?{marginLeft:"27%",marginRight:"5%",wordBreak:"break-word"}:{marginLeft:"18%"}}
+                      textStyle={isMobile?{marginLeft:"27%",marginRight:"5%",wordBreak:"break-word"}:{marginLeft:"2%"}}
                       text={`${owner?.name || t("CS_NA")}`}
                       actionButtonStyle={{marginRight:"-10px"}}
                       actionButton={
                         <ActionButton style={{marginRight:"-10px"}} jumpTo={`/digit-ui/citizen/pt/property/owner-history/${property.tenantId}/${property.propertyId}`} />
                       }
                     />
-                    <Row className="border-none"  label={t("PT_COMMON_GENDER_LABEL")} text={`${owner?.gender ? owner?.gender.toLowerCase() : t("CS_NA")}`} />
-                    {property?.institution && <Row className="border-none" label={t("PT_LANDLINE_NUMBER_FLOATING_LABEL")} text={`${owner?.altContactNumber || t("CS_NA")}`} />}
-                    <Row 
-                    className="border-none" 
-                    label={t("PT_FORM3_MOBILE_NUMBER")}
-                    text={`${t(owner?.mobileNumber)}` || t("CS_NA")}
-                    textStyle={isMobile?{marginLeft:"16%"}:{marginLeft:"12%"}}
-                    actionButton={
-                    property?.status === "ACTIVE"&&owner?.mobileNumber&&Digit.UserService.getUser()?.info?.mobileNumber&&owner.mobileNumber===Digit.UserService.getUser()?.info?.mobileNumber&&<div onClick={() => showPopup({ name: owner?.name, mobileNumber: owner?.mobileNumber, ownerIndex: index })}>
-                    <EditIcon />
-                    </div>
-                    }
-                    />         
-                    {property?.institution && property?.institution?.designation && <Row className="border-none"  label={t("Designation")} text={`${property?.institution?.designation || t("CS_NA")}`} />}
-                    <Row className="border-none" label={t("PT_FORM3_GUARDIAN_NAME")} text={`${owner?.fatherOrHusbandName || t("CS_NA")}`} />
+                    {property?.ownershipCategory !=='INSTITUTIONALPRIVATE' && <Row className="border-none"  label={t("PT_COMMON_GENDER_LABEL")} text={`${owner?.gender ? owner?.gender.toLowerCase() : t("CS_NA")}`} /> }
                     <Row 
                       className="border-none" 
-                      label={t("PT_FORM3_OWNERSHIP_TYPE")}
-                      text={`${property?.ownershipCategory ? t(`PT_OWNERSHIP_${property?.ownershipCategory}`) : t("CS_NA")}`}
-                    />
-                    <Row className="border-none"  label={t("PT_FORM3_RELATIONSHIP")} text={`${owner?.relationship || t("CS_NA")}`} />
-                    {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_TYPE")} text={`${t(stringReplaceAll(specialCategoryDoc[index]?.documentType,".","_"))}` || t("NA")} />}
-                    {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_ID")} text={`${t(specialCategoryDoc[index]?.id)}` || t("CS_NA")} />}
-                    <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId ? owner?.emailId:`${(t("CS_NA"))}`} />
-                    <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={`${t(owner?.correspondenceAddress)}` || t("CS_NA")} />
-                    {specialCategoryDoc?.length == 0 && <Row className="border-none"  label={t("PT_SPL_CAT")} text={t("CS_NONE")} /> }
+                      label={t("PT_FORM3_MOBILE_NUMBER")}
+                      text={`${t(owner?.mobileNumber)}` || t("CS_NA")}
+                      textStyle={isMobile?{marginLeft:"16%"}:{marginLeft:"0%"}}
+                      actionButton={
+                      property?.status === "ACTIVE"&& !enableAudit &&owner?.mobileNumber&&Digit.UserService.getUser()?.info?.mobileNumber&&owner.mobileNumber===Digit.UserService.getUser()?.info?.mobileNumber&&
+                      <div onClick={() => showPopup({ name: owner?.name, mobileNumber: owner?.mobileNumber, ownerIndex: index })}>
+                      <EditIcon />
+                      </div>
+                      }
+                    /> 
+                    {property?.institution && <Row className="border-none" label={t("PT_LANDLINE_NUMBER_FLOATING_LABEL")} text={`${owner?.altContactNumber || t("CS_NA")}`} />}
+                            
+                    {property?.institution && property?.institution?.designation && <Row className="border-none"  label={t("Designation")} text={`${property?.institution?.designation || t("CS_NA")}`} />}
+                    {property?.ownershipCategory !=='INSTITUTIONALPRIVATE' && <Row className="border-none" label={t("PT_FORM3_GUARDIAN_NAME")} text={`${owner?.fatherOrHusbandName || t("CS_NA")}`} />}
+                    
+                    {property?.ownershipCategory !=='INSTITUTIONALPRIVATE' && <Row className="border-none"  label={t("PT_FORM3_RELATIONSHIP")} text={`${owner?.relationship ? t('PT_RELATION_'+owner?.relationship) : t("CS_NA")}`} /> }
+                    {/* {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_ID")} text={`${t(specialCategoryDoc[index]?.id)}` || t("CS_NA")} />} */}
+                    {/* <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId ? owner?.emailId:`${(t("CS_NA"))}`} /> */}
+                    <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || owner?.permanentAddress || t("CS_NA")} />
+                    {specialCategoryDoc && specialCategoryDoc?.length > 0 && owner?.ownerType!=='NONE' && <Row className="border-none"  label={t("PT_SPL_CAT")} text={`${owner?.ownerType=='NONE' ? 'NA' : t(owner?.ownerType)}` || t("NA")} /> }
+                    {/* {specialCategoryDoc && specialCategoryDoc.length>0 && owner?.ownerType!=='NONE' && <Row className="border-none" label={t("PT_SPL_CAT_DOC_TYPE")} text={`${t(stringReplaceAll(specialCategoryDoc[index]?.documentType,".","_"))}` || t("NA")} />} */}
+
+                    <h2 style={{fontWeight: '700'}}> Owner Documents</h2>
+                    {Array.isArray(owner?.documents) ? (
+                      owner?.documents.length > 0 && <PropertyDocument property={owner}></PropertyDocument>
+                    ) : (
+                      <StatusTable>
+                        <Row className="border-none" text={t("PT_NO_DOCUMENTS_MSG")} />
+                      </StatusTable>
+                    )}
                   </StatusTable>
                 </div>
               ))}
           </div>
-          <CardSubHeader>{t("PT_COMMON_DOCS")}</CardSubHeader>
+          <CardSubHeader style={{color: 'rgb(15, 79, 158)', marginBottom: '10px'}}>{t("PT_COMMON_DOCS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
               docs.length > 0 && <PropertyDocument property={property}></PropertyDocument>
@@ -291,11 +618,40 @@ const PropertyInformation = () => {
             )}
           </div>
           <div>
-            {property?.status === "ACTIVE" && !enableAudit && (
+          {/* {property?.status === "ACTIVE" && !enableAudit && (
+            <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>               
+            <button className="submit-bar" type="button" onClick={handleClickOnPtPgr} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>
+            </div>              
+            )} */}
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                 <Link to={{ pathname: `/digit-ui/citizen/pt/property/edit-application/action=UPDATE/${property.propertyId}` }}>
                   <SubmitBar label={t("PT_UPDATE_PROPERTY_BUTTON")} />
                 </Link>
+              </div>
+            )}
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA" || checkBillExpiry(fetchBillData)) && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") &&  (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+               
+                  {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
+                  <button className="submit-bar" type="button" onClick={handleClick} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_SELF_ASSES_PROPERTY")}</button>
+               
+              </div>
+            )}
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") && (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+               
+                  {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
+                  <button className="submit-bar" type="button" onClick={onBifurcate} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("Separation of Ownership")}</button>
+               
+              </div>
+            )}
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") && (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+               
+                  {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
+                  <button className="submit-bar" type="button" onClick={onAppeal} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("Appeal")}</button>
+               
               </div>
             )}
           </div>
@@ -330,6 +686,23 @@ const PropertyInformation = () => {
               ></UpdatePropertyNumberComponent>
             </PopUp>
           )}
+           {showModal ? (
+            <ActionModal
+              t={t}
+              action={selectedAction}
+              tenantId={tenantId}
+              state={state}
+              id={property.propertyId}
+              applicationDetails={property}
+              applicationData={property}
+              closeModal={closeModal}
+              submitAction={submitAction}
+         
+              businessService={businessService}
+             
+              moduleCode={moduleCode}
+            />
+          ) : null}
         </Card>
       </div>
     </React.Fragment>

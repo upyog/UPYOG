@@ -10,11 +10,13 @@ import {
   BreadCrumb,
   BackButton,
   Loader,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import UploadDrawer from "./ImageUpload/UploadDrawer";
+import CryptoJS from "crypto-js";
+
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -50,7 +52,8 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [name, setName] = useState(userInfo?.name ? userInfo.name : "");
   const [email, setEmail] = useState(userInfo?.emailId ? userInfo.emailId : "");
   const [gender, setGender] = useState(userDetails?.gender);
-  const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails.name);
+  // console.log("cityDetails===",cityDetails)
+  const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails?.name ? cityDetails.name : '');
   const [mobileNumber, setMobileNo] = useState(userInfo?.mobileNumber ? userInfo.mobileNumber : "");
   const [profilePic, setProfilePic] = useState(null);
   const [profileImg, setProfileImg] = useState("");
@@ -175,6 +178,21 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
     }, duration);
   };
 
+   const secretKey = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_SECRET_KEY); // Ensure 16 bytes key
+    const generateIV = () => CryptoJS.lib.WordArray.random(16);
+    
+    const encryptPassword = (plainText) => {
+      const iv = generateIV();
+      const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
+        mode: CryptoJS.mode.CBC, // Matches Java ECB Mode
+        padding: CryptoJS.pad.Pkcs7, // Matches Java PKCS5Padding
+        iv: iv, 
+      });
+      return iv.toString(CryptoJS.enc.Base64) + ":" + encrypted.toString();
+    
+      // return encrypted.toString(); // Returns Base64 encoded encrypted text
+    };
+
   const updateProfile = async () => {
     setLoading(true);
     try {
@@ -232,6 +250,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       }
 
       if (currentPassword.length && newPassword.length && confirmPassword.length) {
+        
         const requestData = {
           existingPassword: currentPassword,
           newPassword: newPassword,
@@ -243,6 +262,13 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
         if (newPassword === confirmPassword) {
           try {
+            const existingPass = encryptPassword(currentPassword);
+            const newPass = encryptPassword(newPassword);
+            const confPass = encryptPassword(confirmPassword);
+            requestData.newPassword = newPass;
+            requestData.confirmPassword = confPass;
+            requestData.existingPassword = existingPass;
+            
             const res = await Digit.UserService.changePassword(requestData, tenant);
 
             const { responseInfo: changePasswordResponseInfo } = res;
@@ -303,7 +329,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   if (loading) return <Loader></Loader>;
 
   return (
-    <div className="user-profile">
+    <div className="user-profile container" style={{marginTop: "50px"}}>
       <section style={{ margin: userType === "citizen" ? "8px" : "24px",position:"relative" }}>
         {userType === "citizen" ? (
           <BackButton></BackButton>
@@ -453,7 +479,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                 onClick={updateProfile}
                 style={{
                   marginTop: "24px",
-                  backgroundColor: "#a82227",
+                  backgroundColor: "#0f4f9e",
                   width: "100%",
                   height: "40px",
                   color: "white",
@@ -572,7 +598,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
               <LabelFieldPair>
                 <div>
-                  <a style={{ color: "#a82227", cursor: "default", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
+                  <a style={{ color: "#0f4f9e", cursor: "default", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
                     {t("CORE_COMMON_CHANGE_PASSWORD")}
                   </a>
                   {changepassword ? (
@@ -649,7 +675,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
             onClick={updateProfile}
             style={{
               marginTop: "24px",
-              backgroundColor: "#a82227",
+              backgroundColor: "#0f4f9e",
               width: windowWidth < 768 ? "100%" : "248px",
               height: "40px",
               float: "right",

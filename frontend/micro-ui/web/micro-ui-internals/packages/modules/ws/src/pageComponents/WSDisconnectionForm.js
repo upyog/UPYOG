@@ -20,7 +20,7 @@ import {
   ActionBar,
   Dropdown,
   InfoIcon
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import DisconnectTimeline from "../components/DisconnectTimeline";
@@ -299,7 +299,7 @@ if(userType === 'citizen') {
 
   return (
     <div style={{ margin: "16px" }}>
-    <Header styles={{fontSize: "32px", marginLeft: "18px"}}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
+    <Header styles={{fontSize: "16px", marginLeft: "18px"}}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
     <FormStep
           config={config}
           onSelect={handleEmployeeSubmit}

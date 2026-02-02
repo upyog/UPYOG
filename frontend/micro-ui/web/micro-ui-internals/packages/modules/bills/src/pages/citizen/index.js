@@ -1,4 +1,4 @@
-import { AppContainer, BackButton, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import Inbox from "../../pages/citizen/SearchBill/Inbox";

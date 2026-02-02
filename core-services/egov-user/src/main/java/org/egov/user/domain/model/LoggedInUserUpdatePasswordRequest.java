@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
+
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.user.domain.exception.InvalidLoggedInUserUpdatePasswordRequestException;
 import org.egov.user.domain.model.enums.UserType;
 
@@ -20,7 +23,8 @@ public class LoggedInUserUpdatePasswordRequest {
     private UserType type;
     private String existingPassword;
     private String newPassword;
-
+    private boolean selfUpdate;
+    private  RequestInfo requestInfo;
     public void validate() {
         if (isUsernameAbsent() || isTenantAbsent() || isUserTypeAbsent() || isExistingPasswordAbsent() ||
                 isNewPasswordAbsent()) {

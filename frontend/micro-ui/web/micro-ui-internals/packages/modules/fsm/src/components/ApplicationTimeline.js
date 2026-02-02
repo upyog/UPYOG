@@ -13,7 +13,7 @@ import {
   LinkButton,
   Loader,
   Rating,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import TLCaption from "./TLCaption";
 
 export const ApplicationTimeline = (props) => {

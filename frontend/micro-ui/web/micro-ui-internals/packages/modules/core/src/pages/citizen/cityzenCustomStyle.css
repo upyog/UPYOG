@@ -1,0 +1,11 @@
+.citizen-main {
+    position: fixed;
+    left: 3%;
+    right: 3%;
+    top: 5%;
+    bottom: 5%;
+    box-shadow: -1px 0px 5px 2px rgb(119 120 120);
+    /* background-image: linear-gradient(to bottom, #eaf5f7, #cff5f9, #b1f4f8, #90f4f4, #6af3ec, #56efea, #3cece8, #00e8e6, #00e1eb, #00daef, #00d2f1, #10caf1); */
+    background-image: linear-gradient(to right, #0c759f, #0083a7, #0091ab, #009fad, #00acac, #16b6aa, #2fc0a6, #47c9a0, #56d299, #69da90, #7ee185, #95e879);
+    border-radius: 10px;
+}

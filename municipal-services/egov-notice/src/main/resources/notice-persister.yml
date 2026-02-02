@@ -1,0 +1,92 @@
+serviceMaps:
+  serviceName: Notice-services
+  mappings:
+  - version: 1.0
+    description: Persists assessment details to eg_pt_asmt_assessment table
+    fromTopic: save-pt-notice
+    isTransaction: true
+    queryMaps:
+
+    - query: INSERT INTO eg_pt_notice(noticeType,tenantId,uuid,noticeNumber,name,address,propertyId,assessmentYear,acknowledgementNumber,dateOfAnnualRet,entryDate,entryTime,place,perticulars,asreturnfiled,aspermunispality,resolutionon,dated,designation,authorisedpersonname,mobilenumber,penaltyamount,appealno,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+      basePath: $.Notice
+      jsonMaps:
+
+      - jsonPath: $.Notice.noticeType
+
+      - jsonPath: $.Notice.tenantId
+
+      - jsonPath: $.Notice.noticeuuid
+
+      - jsonPath: $.Notice.noticeNumber
+
+      - jsonPath: $.Notice.name
+
+      - jsonPath: $.Notice.address
+
+      - jsonPath: $.Notice.propertyId
+
+      - jsonPath: $.Notice.assessmentYear
+
+      - jsonPath: $.Notice.acknowledgementNumber
+
+      - jsonPath: $.Notice.dateOfAnnualRet
+
+      - jsonPath: $.Notice.entryDate
+
+      - jsonPath: $.Notice.entryTime
+
+      - jsonPath: $.Notice.place
+
+      - jsonPath: $.Notice.particulars
+
+      - jsonPath: $.Notice.asreturnFiled
+
+      - jsonPath: $.Notice.asperMunispality
+
+      - jsonPath: $.Notice.resolutionOn
+
+      - jsonPath: $.Notice.dated
+
+      - jsonPath: $.Notice.designation
+
+      - jsonPath: $.Notice.authorisedpersonName
+
+      - jsonPath: $.Notice.mobilenumber
+
+      - jsonPath: $.Notice.penaltyAmount
+
+      - jsonPath: $.Notice.appealNo
+      
+      - jsonPath: $.Notice.auditDetails.createdBy
+
+      - jsonPath: $.Notice.auditDetails.createdTime
+
+      - jsonPath: $.Notice.auditDetails.lastModifiedBy
+
+      - jsonPath: $.Notice.auditDetails.lastModifiedTime
+
+
+
+    - query: INSERT INTO eg_pt_notice_comment (uuid,noticeid,comment,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?,?,?,?,?,?,?);
+      basePath: Notice.NoticeComment.*
+      jsonMaps:
+
+      - jsonPath: $.Notice.NoticeComment.*.uuid
+
+      - jsonPath: $.Notice.noticeuuid
+
+      - jsonPath: $.Notice.NoticeComment.*.comment
+      
+      - jsonPath: $.Notice.NoticeComment.*.auditDetails.createdBy
+
+      - jsonPath: $.Notice.NoticeComment.*.auditDetails.createdTime
+
+      - jsonPath: $.Notice.NoticeComment.*.auditDetails.lastModifiedBy
+
+      - jsonPath: $.Notice.NoticeComment.*.auditDetails.lastModifiedTime
+
+      
+
+      
+
+

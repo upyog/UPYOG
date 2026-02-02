@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header } from "@egovernments/digit-ui-react-components";
+import { Header } from "@upyog/digit-ui-react-components";
 
 import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
@@ -56,6 +56,7 @@ const Inbox = ({
         middlewaresWf,
         middlewareSearch,
       });
+
 
   useEffect(() => {
     setPageOffset(0);

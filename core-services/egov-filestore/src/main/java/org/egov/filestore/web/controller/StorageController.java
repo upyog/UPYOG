@@ -63,10 +63,10 @@ public class StorageController {
 			// TODO Auto-generated catch block
 			logger.error("Error while retrieving file: " + e.getMessage());
 		}
-		String fileName=resource.getFileName().substring(resource.getFileName().lastIndexOf('/')+1,resource.getFileName().length());
+		String fileName=resource.getFileName();
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +fileName  + "\"")
-				.header(HttpHeaders.CONTENT_TYPE, resource.getContentType()).body(resource.getResource());
+				.header(HttpHeaders.CONTENT_TYPE,resource.getContentType()).body(resource.getResource());
 	}
 
 	@GetMapping("/metadata")

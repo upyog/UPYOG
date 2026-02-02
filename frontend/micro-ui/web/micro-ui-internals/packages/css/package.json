@@ -1,6 +1,6 @@
 {
   "name": "@upyog-niua/upyog-css",
-  "version": "1.0.6",
+  "version": "1.2.3",
   "license": "MIT",
   "main": "dist/index.css",
   "engines": {
@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "gulp build",
-    "build:prod": "NODE_ENV=production gulp build",
+    "build:prod": "SET NODE_ENV=production && gulp build",
     "prepublish": "yarn build:prod",
     "deploy": "gulp && cp -R svg example && cp -R img example && gh-pages -d example"
   },
@@ -34,7 +34,7 @@
     "gulp-clean": "^0.4.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-livereload": "^4.0.2",
-    "gulp-postcss": "^9.0.1",
+    "gulp-postcss": "9.0.1",
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^4.1.1",
     "postcss": "8.4.12",

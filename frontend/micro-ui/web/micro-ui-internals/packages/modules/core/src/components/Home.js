@@ -11,9 +11,10 @@ import {
   PTIcon,
   TLIcon,
   WSICon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import  EmployeeDashboard  from "@upyog/digit-ui-module-pt/src/pages/employee/EmployeeDashboard";
 
 /* 
 Feature :: Citizen All service screen cards
@@ -127,12 +128,14 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
 };
 
 const EmployeeHome = ({ modules }) => {
+  console.log("modules in home==",modules);
   if(window.Digit.SessionStorage.get("PT_CREATE_EMP_TRADE_NEW_FORM")) window.Digit.SessionStorage.set("PT_CREATE_EMP_TRADE_NEW_FORM",{})
   return (
     <div className="employee-app-container">
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
         {modules.map(({ code }, index) => {
           const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
+          console.log("Card==",Card);
           return <Card key={index} />;
         })}
       </div>
@@ -140,9 +143,17 @@ const EmployeeHome = ({ modules }) => {
   );
 };
 
-export const AppHome = ({ userType, modules, getCitizenMenu, fetchedCitizen, isLoading }) => {
+export const AppHome = ({ userType, modules, userInfo, getCitizenMenu, fetchedCitizen, isLoading }) => {
+  // console.log("AppHome==",modules,userType,userInfo)
+  let userRole = userInfo?.roles && userInfo?.roles?.length>0 ? userInfo?.roles.find((e)=> e?.code === "MANIPUR_LEADER" || e?.code === "MNPTB_DIRECTOR") : null;
   if (userType === "citizen") {
     return <CitizenHome modules={modules} getCitizenMenu={getCitizenMenu} fetchedCitizen={fetchedCitizen} isLoading={isLoading} />;
   }
-  return <EmployeeHome modules={modules} />;
+  if(userType === "employee") {
+    if(userRole && (userRole?.code === 'MANIPUR_LEADER' || userRole?.code ==="MNPTB_DIRECTOR")) {
+      return <EmployeeDashboard modules={modules} />;
+    }
+    return <EmployeeHome modules={modules} />;
+  }
+  
 };

@@ -31,7 +31,7 @@ class FileLocationTest {
 
     @Test
     void testConstructorDefault() {
-        FileLocation actualFileLocation = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source");
+        FileLocation actualFileLocation = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source",null);
         actualFileLocation.setFileName("foo.txt");
         actualFileLocation.setFileSource("File Source");
         actualFileLocation.setFileStoreId("42");

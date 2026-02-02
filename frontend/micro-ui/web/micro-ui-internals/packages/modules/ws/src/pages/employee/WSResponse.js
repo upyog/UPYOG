@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, SubmitBar, ActionBar } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, SubmitBar, ActionBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import getPDFData from "../../utils/getWSAcknowledgementData";
@@ -102,20 +102,20 @@ const WSResponse = (props) => {
           infoOne={filters?.applicationNumber1 ? t("WS_SEWERAGE_APPLICATION_NUMBER_LABEL") : ""}
           successful={true}
           style={{ padding: "10px" }}
-          headerStyles={{ fontSize: "32px" }}
+          headerStyles={{ fontSize: "16px" }}
           infoOneStyles={{ paddingTop: "20px" }}
         />
         <CardText style={{ paddingBottom: "10px", marginBottom: "10px" }}>{t("WS_MESSAGE_SUB_DESCRIPTION_LABEL")}</CardText>
         <div style={{ display: "flex" }}>
           {filters?.applicationNumber && <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={handleAckPdfDownloadWater}>
             <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#a82227" />
+              <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#0f4f9e" />
             </svg>
             {t("WS_PRINT_WATER_APPLICATION_LABEL")}
           </div>}
           {filters?.applicationNumber1 && <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={handleAckPdfDownloadSew}>
             <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#a82227" />
+              <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#0f4f9e" />
             </svg>
             {t("WS_PRINT_SEWERAGE_APPLICATION_LABEL")}
           </div>}

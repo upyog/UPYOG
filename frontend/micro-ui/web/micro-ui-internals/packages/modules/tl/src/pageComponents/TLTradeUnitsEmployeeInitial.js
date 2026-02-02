@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
@@ -106,7 +106,7 @@ const TLTradeUnitsEmployeeInitial = ({ config, onSelect, userType, formData, set
             {units.map((unit, index) => (
                 <TradeUnitForm key={unit.key} index={index} unit={unit} {...commonProps} />
             ))}
-            <LinkButton label={t("TL_ADD_TRADE_UNIT")} onClick={addNewUnits} style={{ color: "#a82227", width: "fit-content" }} />
+            <LinkButton label={t("TL_ADD_TRADE_UNIT")} onClick={addNewUnits} style={{ color: "#0f4f9e", width: "fit-content" }} />
         </React.Fragment>
     );
 };

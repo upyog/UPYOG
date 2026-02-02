@@ -37,7 +37,7 @@ public class StorageService {
 
 	@Autowired
 	private CloudFileMgrUtils util;
-	
+
 	private FileStoreConfig configs;
 
 	@Autowired
@@ -52,7 +52,7 @@ public class StorageService {
 	private FileStoreConfig fileStoreConfig;
 
 	private StorageValidator storageValidator;
-	
+
 	private MinioConfig minioConfig;
 
 	@Value("${filename.length}")
@@ -64,9 +64,20 @@ public class StorageService {
 	@Value("${filename.usenumbers}")
 	private Boolean useNumbers;
 
+	@Value("${isAlfrescoEnabled}")
+	private boolean isAlfrescoEnabled;
+	
+	
+	@Value("${isS3Enabled}")
+	private boolean isS3Enabled;
+	
+	
+	@Value("${minio.source}")
+	private String minioSource;
 
-	
-	
+
+
+
 
 	@Autowired
 	public StorageService(ArtifactRepository artifactRepository, IdGeneratorService idGeneratorService,
@@ -93,12 +104,53 @@ public class StorageService {
 		List<Artifact> artifacts = new ArrayList<>();
 		Artifact artifact = null;
 		for (MultipartFile file : files) {
-			String randomString = RandomStringUtils.random(filenameLength, useLetters, useNumbers);
-			String orignalFileName = file.getOriginalFilename();
-			String imagetype = FilenameUtils.getExtension(orignalFileName);
-			String fileName = folderName + System.currentTimeMillis() + randomString + "." +imagetype;
+			/*
+			 * String randomString = RandomStringUtils.random(filenameLength, useLetters,
+			 * useNumbers); String orignalFileName = file.getOriginalFilename(); String
+			 * imagetype = FilenameUtils.getExtension(orignalFileName); String fileName =
+			 * folderName + orignalFileName.split("\\.")[0]+System.currentTimeMillis() +
+			 * randomString + "." +imagetype;
+			 */
+			
+			String randomString = RandomStringUtils.random(
+	                filenameLength, useLetters, useNumbers);
+
+	        String originalFileName = file.getOriginalFilename();
+	        if (originalFileName == null) {
+	            originalFileName = "file";
+	        }
+
+	        // Extract base name safely (handles multiple dots)
+	        String baseName = FilenameUtils.getBaseName(originalFileName);
+	        baseName = baseName.replaceAll("[^a-zA-Z0-9_-]", "_");
+
+	        String imagetype = FilenameUtils.getExtension(originalFileName);
+
+	        String fileName = folderName
+	                + baseName
+	                + "_"
+	                + System.currentTimeMillis()
+	                + "_"
+	                + randomString
+	                + (imagetype.isEmpty() ? "" : "." + imagetype);
+
+			log.info("::::::::randomString:::::::::"+randomString);
+			log.info("::::::::orignalFileName:::::::::"+originalFileName);
+			log.info("::::::::imagetype:::::::::"+imagetype);
+			log.info("::::::::fileName:::::::::"+fileName)
+			;
+		//	String fileName = orignalFileName;
+			String fileSource = null;
 			String id = this.idGeneratorService.getId();
-			FileLocation fileLocation = new FileLocation(id, module, tag, tenantId, fileName, null);
+			if(isAlfrescoEnabled) {
+				fileSource = "alfresco";
+			}
+			if(isS3Enabled) {
+				fileSource = minioSource;
+			}
+			
+			
+			FileLocation fileLocation = new FileLocation(id, module, tag, tenantId, fileName, fileSource,null);
 			try {
 				inputStreamAsString = IOUtils.toString(file.getInputStream(), fileStoreConfig.getImageCharsetType());
 				artifact = Artifact.builder().fileContentInString(inputStreamAsString).multipartFile(file)
@@ -110,7 +162,7 @@ public class StorageService {
 				log.error("IO Exception while mapping files to artifact: " + e.getMessage());
 			}
 			storageValidator.validate(artifact);
-			
+
 			if (fileStoreConfig.getImageFormats().contains(FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename())))
 				setThumbnailImages(artifact);
 		}
@@ -119,7 +171,7 @@ public class StorageService {
 	}
 
 	private void setThumbnailImages(Artifact artifact) {
-		
+
 		String completeName = artifact.getFileLocation().getFileName();
 		int index = completeName.indexOf('/');
 		String fileNameWithPath = completeName.substring(index + 1, completeName.length());
@@ -159,8 +211,7 @@ public class StorageService {
 	}
 
 	public Map<String, String> getUrls(String tenantId, List<String> fileStoreIds) {
-		Map<String, String> urlMap = getUrlMap(
-				artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
+		Map<String, String> urlMap = getUrlMap(artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
 		return urlMap;
 	}
 
@@ -170,8 +221,8 @@ public class StorageService {
 
 	private String getFolderName(String module, String tenantId, Calendar calendar) {
 		return tenantId + "/" + module + "/" + calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)
-				+ "/" + calendar.get(Calendar.DATE) + "/";
+		+ "/" + calendar.get(Calendar.DATE) + "/";
 	}
 
-	
+
 }

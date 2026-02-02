@@ -1,4 +1,4 @@
-import { getPropertySubtypeLocale, getPropertyTypeLocale } from "../../../utils/pt";
+import { getPropertySubtypeLocale, getPropertyTypeLocale2, getPropertyTypeLocale } from "../../../utils/pt";
 import { PTService } from "../../elements/PT";
 
 export const PTSearch = {
@@ -65,6 +65,22 @@ export const PTSearch = {
             },
           },
         },
+        {
+          title: "PT_PROPERTY_ADDRESS_DAG_NO",
+          value: response?.address?.dagNo,
+        },
+        {
+          title: "PT_PROPERTY_ADDRESS_PATTA_NO",
+          value: response?.address?.pattaNo,
+        },
+        {
+          title: "PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD",
+          value: response?.address?.principalRoadName,
+        },
+        {
+          title: "PT_PROPERTY_ADDRESS_TYPE_OF_ROAD",
+          value: `PROPERTYTAX_ROADTYPE_${response?.address?.typeOfRoad?.code}`,
+        }
       ],
     };
     const assessmentDetails = {
@@ -183,8 +199,18 @@ export const PTSearch = {
           }),
       },
     };
+    const exemptionDetails = {
+      title: "PT_EXEMPTION_DETAILS",
+      asSectionHeader: true,
+      values: [
+        {
+          title: "PT_EXEMPTION_TYPE",
+          value: response?.exemption ? `PT_EXEMPTION_TYPE_${response?.exemption}` : "N/A",
+        }
+      ],
+    }
 
-    const applicationDetails = [propertyDetail, addressDetails, assessmentDetails, ownerdetails];
+    const applicationDetails = [propertyDetail, addressDetails, assessmentDetails, ownerdetails, exemptionDetails];
     return {
       tenantId: property?.tenantId,
       applicationDetails,
@@ -241,13 +267,41 @@ export const PTSearch = {
               },
             },
           },
+          {
+            title: "PT_PROPERTY_ADDRESS_DAG_NO",
+            value: response?.address?.dagNo,
+          },
+          {
+            title: "PT_PROPERTY_ADDRESS_PATTA_NO",
+            value: response?.address?.pattaNo,
+          },
+          {
+            title: "PT_PROPERTY_ADDRESS_CMN_NAME_OF_BUILDING",
+            value: response?.address?.commonNameOfBuilding || t("CS_NA"),
+          },          
+          {
+            title: "PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD",
+            value: response?.address?.principalRoadName,
+          },
+          {
+            title: "PT_PROPERTY_ADDRESS_NAME_OF_SUB_ROAD",
+            value: response.address?.subSideRoadName || t("CS_NA"),
+          },
+          {
+            title: "PT_PROPERTY_ADDRESS_TYPE_OF_ROAD",
+            value: `PROPERTYTAX_ROADTYPE_${response?.address?.typeOfRoad?.code}`,
+          },
+          {
+            title: "PT_PROPERTY_ADDRESS_LANDMARK",
+            value: response.address?.landmark || t("CS_NA"),
+          },
         ],
       },
       {
         title: "PT_ASSESMENT_INFO_SUB_HEADER",
         values: [
-          { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: getPropertyTypeLocale(response?.propertyType) },
-          { title: "PT_ASSESMENT_INFO_USAGE_TYPE", value: response?.usageCategory ? getPropertySubtypeLocale(response?.usageCategory) : `N/A` },
+          { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: t(getPropertyTypeLocale2(response?.propertyType)) },
+          { title: "PT_COMMONS_PROPERTY_USAGE_TYPE", value: response?.usageCategory ? t(getPropertySubtypeLocale(response?.usageCategory)) : `N/A` },
           { title: "PT_ASSESMENT_INFO_PLOT_SIZE", value: response?.landArea },
           { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: response?.noOfFloors },
         ],
@@ -261,8 +315,16 @@ export const PTSearch = {
                 {
                   title: "PT_ASSESSMENT_UNIT_USAGE_TYPE",
                   value: `PROPERTYTAX_BILLING_SLAB_${
-                    unit?.usageCategory != "RESIDENTIAL" ? unit?.usageCategory?.split(".")[1] : unit?.usageCategory
+                    unit?.usageCategory
                   }`,
+                },
+                {
+                  title: "PT_STRUCTURE_TYPE",
+                  value: t("PROPERTYTAX_STRUCTURETYPE_" + unit?.structureType),
+                },
+                {
+                  title: "PT_AGE_OF_PROPERTY",
+                  value: t("PROPERTYTAX_AGEOFPROPERTY_" + unit?.ageOfProperty),
                 },
                 {
                   title: "PT_ASSESMENT_INFO_OCCUPLANCY",
@@ -294,8 +356,22 @@ export const PTSearch = {
           owners: response?.owners?.map((owner, index) => {
             return {
               status: owner.status,
-              title: "ES_OWNER",
+              title: "PT_ACK_LOCALIZATION_OWNER",
               values: [
+                { title: "PT_FORM3_OWNERSHIP_TYPE", value: t(response?.ownershipCategory) },
+
+                ...(response?.institution && response?.institution?.name
+                ? [{
+                    title: "PT_INSTITUTION_NAME",
+                    value: t(response?.institution?.name)
+                  }]
+                : []),
+                ...(response?.institution && response?.institution?.type
+                ? [{
+                    title: "PT_INSTITUTION_TYPE",
+                    value: t(`COMMON_MASTERS_OWNERSHIPCATEGORY_${response?.institution?.type}`)
+                  }]
+                : []),
                 {
                   title: "PT_OWNERSHIP_INFO_NAME",
                   value: owner?.name,
@@ -306,14 +382,25 @@ export const PTSearch = {
                   */
                   // privacy: { uuid: owner?.uuid, fieldName: "name", model: "User" },
                 },
-                { title: "PT_OWNERSHIP_INFO_GENDER", value: owner?.gender, privacy: { uuid: owner?.uuid, fieldName: "gender", model: "User",showValue: false,
-                  loadData: {
-                    serviceName: "/property-services/property/_search",
-                    requestBody: {},
-                    requestParam: { tenantId:response?.tenantId, propertyIds:response?.propertyId },
-                    jsonPath: "Properties[0].owners[0].gender",
-                    isArray: false,
-                  }, } },
+                ...(owner?.gender && owner?.gender !== "NA"
+                ? [{
+                    title: "PT_OWNERSHIP_INFO_GENDER",
+                    value: t(owner?.gender),
+                    privacy: {
+                      uuid: owner?.uuid,
+                      fieldName: "gender",
+                      model: "User",
+                      showValue: false,
+                      loadData: {
+                        serviceName: "/property-services/property/_search",
+                        requestBody: {},
+                        requestParam: { tenantId:response?.tenantId, propertyIds:response?.propertyId },
+                        jsonPath: "Properties[0].owners[0].gender",
+                        isArray: false,
+                      },
+                    },
+                  }]
+                : []),
                 {
                   title: "PT_OWNERSHIP_INFO_MOBILE_NO",
                   value: owner?.mobileNumber,
@@ -326,9 +413,34 @@ export const PTSearch = {
                     isArray: false,
                   }, },
                 },
+                ...(response?.institution && owner?.altContactNumber
+                ? [{
+                    title: "PT_LANDLINE_NUMBER_FLOATING_LABEL",
+                    value: owner?.altContactNumber || 'NA',
+                    privacy: {
+                      uuid: owner?.uuid,
+                      fieldName: "altContactNumber",
+                      model: "User",
+                      showValue: false,
+                      loadData: {
+                        serviceName: "/property-services/property/_search",
+                        requestBody: {},
+                        requestParam: { tenantId:response?.tenantId, propertyIds:response?.propertyId },
+                        jsonPath: "Properties[0].owners[0].altContactNumber",
+                        isArray: false,
+                      },
+                    },
+                  }]
+                : []),
+                ...(response?.institution && response?.institution?.designation
+                ? [{
+                    title: "Designation",
+                    value: response?.institution?.designation || t("CS_NA")
+                  }]
+                : []),
                 {
                   title: "PT_OWNERSHIP_INFO_USER_CATEGORY",
-                  value: `COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}` || "NA",
+                  value: (!owner?.ownerType || owner?.ownerType=='NONE') ? 'NA' : `COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}` || "NA",
                   privacy: { uuid: owner?.uuid, fieldName: "ownerType", model: "User",showValue: false,
                   loadData: {
                     serviceName: "/property-services/property/_search",
@@ -339,31 +451,39 @@ export const PTSearch = {
                     isArray: false,
                   }, },
                 },
-                {
-                  title: "PT_SEARCHPROPERTY_TABEL_GUARDIANNAME",
-                  value: owner?.fatherOrHusbandName,
-                  privacy: { uuid: owner?.uuid, fieldName: "guardian", model: "User",showValue: false,
-                  loadData: {
-                    serviceName: "/property-services/property/_search",
-                    requestBody: {},
-                    requestParam: { tenantId:response?.tenantId, propertyIds:response?.propertyId },
-                    jsonPath: "Properties[0].owners[0].fatherOrHusbandName",
-                    isArray: false,
-                  }, },
-                },
-                { title: "PT_FORM3_OWNERSHIP_TYPE", value: response?.ownershipCategory },
-                {
-                  title: "PT_OWNERSHIP_INFO_EMAIL_ID",
-                  value: owner?.emailId,
-                  privacy: { uuid: owner?.uuid, fieldName: "emailId", model: "User", hide: !(owner?.emailId && owner?.emailId !== "NA"),showValue: false,
-                  loadData: {
-                    serviceName: "/property-services/property/_search",
-                    requestBody: {},
-                    requestParam: { tenantId:response?.tenantId, propertyIds:response?.propertyId },
-                    jsonPath: "Properties[0].owners[0].emailId",
-                    isArray: false,
-                  }, },
-                },
+                ...(owner?.fatherOrHusbandName
+                ? [{
+                    title: "PT_SEARCHPROPERTY_TABEL_GUARDIANNAME",
+                    value: owner?.fatherOrHusbandName,
+                    privacy: { uuid: owner?.uuid, fieldName: "guardian", model: "User",showValue: false,
+                    loadData: {
+                      serviceName: "/property-services/property/_search",
+                      requestBody: {},
+                      requestParam: { tenantId:response?.tenantId, propertyIds:response?.propertyId },
+                      jsonPath: "Properties[0].owners[0].fatherOrHusbandName",
+                      isArray: false,
+                    }},
+                  }]
+                : []),
+                ...(owner?.relationship
+                ? [{
+                    title: "PT_FORM3_RELATIONSHIP",
+                    value: owner?.relationship ? t('PT_RELATION_'+owner?.relationship) : t("CS_NA")
+                  }]
+                : []),
+
+                // {
+                //   title: "PT_OWNERSHIP_INFO_EMAIL_ID",
+                //   value: owner?.emailId,
+                //   privacy: { uuid: owner?.uuid, fieldName: "emailId", model: "User", hide: !(owner?.emailId && owner?.emailId !== "NA"),showValue: false,
+                //   loadData: {
+                //     serviceName: "/property-services/property/_search",
+                //     requestBody: {},
+                //     requestParam: { tenantId:response?.tenantId, propertyIds:response?.propertyId },
+                //     jsonPath: "Properties[0].owners[0].emailId",
+                //     isArray: false,
+                //   }, },
+                // },
                 {
                   title: "PT_OWNERSHIP_INFO_CORR_ADDR",
                   value: owner?.correspondenceAddress || owner?.permanentAddress,
@@ -381,6 +501,20 @@ export const PTSearch = {
                       isArray: false,
                     },
                   },
+                },
+                {
+                  title: "Owner Documents",
+                  value: owner?.documents
+                    // ?.filter((e) => e.status === "ACTIVE")
+                    ?.map((document) => {
+                      return {
+                        title: `PT_${document?.documentType.replace(".", "_")}`,
+                        documentType: document?.documentType,
+                        documentUid: document?.documentUid,
+                        fileStoreId: document?.fileStoreId,
+                        status: document.status,
+                      };
+                    }),
                 },
               ],
             };
@@ -403,6 +537,16 @@ export const PTSearch = {
           ],
         },
       },
+      {
+        title: "PT_EXEMPTION_DETAILS",
+        asSectionHeader: true,
+        values: [
+          {
+            title: "PT_EXEMPTION_TYPE",
+            value: response?.exemption ? `PT_EXEMPTION_TYPE_${response?.exemption}` : "N/A",
+          }
+        ],
+      }
     ];
   },
   applicationDetails: async (t, tenantId, propertyIds, userType, args) => {

@@ -87,7 +87,6 @@
   }
   margin-top: -25px;
   img {
-    height: 33vw;
     background: linear-gradient(#000000,#000000);
     @apply w-full object-cover;
   }
@@ -128,7 +127,7 @@
         padding: 0 15px 0 15px;
       }
       img {
-        height: 20vw;
+        height: 33vw;
       }
     }
 
@@ -143,8 +142,7 @@
   }
   .moduleLinkHomePage {
     img {
-      min-width: 100vw;
-      height: 20vw;
+      min-width: 70vw;
     }
     h1 {
       top: calc(10vw + 40px);

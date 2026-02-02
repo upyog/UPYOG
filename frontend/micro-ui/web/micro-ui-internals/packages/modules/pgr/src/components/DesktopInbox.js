@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Card, Loader } from "@egovernments/digit-ui-react-components";
+import { Card, Loader } from "@upyog/digit-ui-react-components";
 import ComplaintsLink from "./inbox/ComplaintLinks";
 import ComplaintTable from "./inbox/ComplaintTable";
 import Filter from "./inbox/Filter";

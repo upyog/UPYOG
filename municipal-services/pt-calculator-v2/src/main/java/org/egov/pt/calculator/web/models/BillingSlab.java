@@ -109,5 +109,11 @@ public class BillingSlab   {
         
         @JsonProperty("auditDetails")
         private AuditDetails auditDetails;
+        
+        @JsonProperty("validFrom")
+        private String validFrom;
+        
+        @JsonProperty("validTo")
+		private String validTo;
 }
 

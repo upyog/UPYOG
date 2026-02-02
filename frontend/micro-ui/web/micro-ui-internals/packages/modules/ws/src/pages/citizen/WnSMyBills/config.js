@@ -9,7 +9,7 @@ export const config = [
           label: "WNS_COMMON_TABLE_COL_AMT_DUE_LABEL",
           key: "AmountDue",
           noteStyle: {
-            fontSize: "24px",
+            fontSize: "16px",
             fontWeight: "bold",
           },
           notePrefix: "₹ ",

@@ -1,6 +1,7 @@
 package org.egov.search.repository;
 
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,12 +43,15 @@ public class SearchRepository {
 
 	@Autowired
 	private BillRowMapper rowMapper;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 			
 	public List<String> fetchData(SearchRequest searchRequest, Definition definition) {
         Map<String, Object> preparedStatementValues = new HashMap<>();
         String query = searchUtils.buildQuery(searchRequest, definition.getSearchParams(), definition.getQuery(), preparedStatementValues);
 		log.info("Final Query: " + query);
-		//log.debug("preparedStatementValues: " + preparedStatementValues);
+		log.info("preparedStatementValues: " + preparedStatementValues);
 		List<PGobject> maps = namedParameterJdbcTemplate.queryForList(query, preparedStatementValues, PGobject.class);
 
 		return searchUtils.convertPGOBjects(maps);

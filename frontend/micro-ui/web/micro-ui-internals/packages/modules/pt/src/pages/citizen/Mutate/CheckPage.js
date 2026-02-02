@@ -10,7 +10,7 @@ import {
   SubmitBar,
   Header,
   EditIcon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -63,7 +63,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     landArea,
     UnOccupiedArea
    } = property;
-
+   console.log("property===",property)
    useEffect(async ()=>{
       const res = await Digit.PaymentService.searchBill(tenantId, {Service: "PT.MUTATION", consumerCode: property?.acknowldgementNumber});
       if(! res.Bill.length) {
@@ -94,7 +94,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   }
 
   const getCardSubHeadrStyles = () => {
-    return { fontSize: "24px", fontWeight: "700", lineHeight: "28px", margin: "20px 0px 16px 0px" }
+    return { fontSize: "16px", fontWeight: "700", lineHeight: "28px", margin: "20px 0px 16px 0px" }
   }
 
   let documentDate = t("CS_NA");
@@ -113,8 +113,8 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   
   return (
     <React.Fragment>
-    {window.location.href.includes("/citizen") ? <Timeline currentStep={4}/> : null}
-    <Header styles={{fontSize:"32px", marginLeft: "8px"}}>{t("WS_COMMON_SUMMARY")}</Header>
+    {window.location.href.includes("/citizen") ? <Timeline currentStep={6}/> : null}
+    <Header styles={{fontSize:"24px", marginLeft: "8px"}}>{t("WS_COMMON_SUMMARY")}</Header>
     <Card style={{paddingRight:"16px"}}>
     <StatusTable>
         <Row className="border-none" label={t("PT_APPLICATION_NUMBER_LABEL")} text={property?.acknowldgementNumber} textStyle={{ whiteSpace: "pre" }} />
@@ -274,7 +274,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         )}
       </div>
       <CheckBox
-        label={t("PT_MUTATION_FINAL_DECLARATION_MESSAGE")}
+        label={t("I hereby declare and affirm that the above-furnished information is true and correct and nothing has been concealed therefrom. I am also aware of the fact that in case this information is found false/incorrect, the authorities are at liberty to initiate recovery of amount / interest / penalty / fine as provided in Manipur Municipality Act 1994 or Manipur Municipality (Property Tax) Rules 2019.")}
         onChange={setdeclarationhandler}
         styles={{ height: "auto", margin: '2rem 0' }}
       />

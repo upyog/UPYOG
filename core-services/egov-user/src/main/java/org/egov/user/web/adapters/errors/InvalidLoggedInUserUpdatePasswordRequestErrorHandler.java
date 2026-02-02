@@ -33,6 +33,10 @@ public class InvalidLoggedInUserUpdatePasswordRequestErrorHandler implements
     private static final String USER_TYPE_MANDATORY_MESSAGE = "User Type is mandatory";
 
     private static final String PASSWORD_UPDATE_FAILED_MESSAGE = "Password update failed.";
+    
+    private static final String PASSWORD_USED_PREVIOUSLY_CODE="PASSWORD_USED_PREVIOUSLY";
+    private static final String PASSWORD_USED_PREVIOUSLY_MESSAGE="Password Already Used Previously";
+    private static final String PASSWORD_USED_PREVIOUSLY_FIELD="newPassword";
 
     @Override
     public ErrorResponse adapt(LoggedInUserUpdatePasswordRequest model) {
@@ -49,11 +53,12 @@ public class InvalidLoggedInUserUpdatePasswordRequestErrorHandler implements
 
     private List<ErrorField> getErrorFields(LoggedInUserUpdatePasswordRequest model) {
         final ArrayList<ErrorField> errorFields = new ArrayList<>();
-        addUserIdMandatoryError(model, errorFields);
-        addExistingPasswordMandatoryError(model, errorFields);
-        addNewPasswordMandatoryError(model, errorFields);
-        addTenantIdMandatoryError(model, errorFields);
-        addUserTypeMandatoryError(model, errorFields);
+      //  addUserIdMandatoryError(model, errorFields);
+      //  addExistingPasswordMandatoryError(model, errorFields);
+      //  addNewPasswordMandatoryError(model, errorFields);
+       // addTenantIdMandatoryError(model, errorFields);
+       // addUserTypeMandatoryError(model, errorFields);
+        passwordUsedPreviously(model, errorFields);
         return errorFields;
     }
 
@@ -113,6 +118,18 @@ public class InvalidLoggedInUserUpdatePasswordRequestErrorHandler implements
                 .code(USER_TYPE_MANDATORY_CODE)
                 .field(USER_TYPE_MANDATORY_FIELD)
                 .message(USER_TYPE_MANDATORY_MESSAGE)
+                .build();
+        errorFields.add(errorField);
+    }
+    
+    private void passwordUsedPreviously(LoggedInUserUpdatePasswordRequest model, ArrayList<ErrorField> errorFields) {
+        if (model.getNewPassword()==null) {
+            return;
+        }
+        final ErrorField errorField = ErrorField.builder()
+                .code(PASSWORD_USED_PREVIOUSLY_CODE)
+                .field(PASSWORD_USED_PREVIOUSLY_FIELD)
+                .message(PASSWORD_USED_PREVIOUSLY_MESSAGE)
                 .build();
         errorFields.add(errorField);
     }

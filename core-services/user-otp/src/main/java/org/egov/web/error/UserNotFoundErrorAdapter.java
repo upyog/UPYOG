@@ -11,7 +11,7 @@ import java.util.List;
 public class UserNotFoundErrorAdapter implements ErrorAdapter<Void> {
 
 	private static final String UNKNOWN_MOBILE_NUMBER_CODE = "OTP.UNKNOWN_MOBILE_NUMBER";
-	private static final String UNKNOWN_MOBILE_NUMBER_MESSAGE = "Mobile number is unknown.";
+	private static final String UNKNOWN_MOBILE_NUMBER_MESSAGE = "Invalid Login Cridential";//chnaged for audit report Mobile number is unknown.
 	private static final String UNKNOWN_MOBILE_NUMBER_FIELD = "otp.mobileNumber";
 	private static final String MESSAGE = "OTP request for password reset failed";
 

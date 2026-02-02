@@ -77,7 +77,7 @@ public class UserService {
 			Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream().collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
 
 			if (CollectionUtils.isEmpty(existingUsersFromService)) {
-
+				
 				ownerFromRequest.setUserName(UUID.randomUUID().toString());
 				userDetailResponse = createUser(requestInfo, ownerFromRequest);
 				
@@ -517,6 +517,8 @@ public class UserService {
 			StringBuilder uri = new StringBuilder(userHost);
 			 
 				owner.setId(userDetailResponse.getUser().get(0).getId());
+				owner.setCreatedBy(userDetailResponse.getUser().get(0).getCreatedBy());
+				owner.setLastModifiedBy(userDetailResponse.getUser().get(0).getLastModifiedBy());
 				uri = uri.append(userContextPath).append(userUpdateEndpoint);
 			
 			userDetailResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);

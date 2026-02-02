@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { CardLabel, FormStep, LabelFieldPair, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -11,9 +11,15 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
 
 
   function setPropertyfloorarea(e) {
-    setfloorarea(e.target.value);
-  }
+    let value = e.target.value;
 
+    // Allow only numbers with up to 2 decimals
+    value = value.replace(/^(\d+(\.\d{0,2})?).*$/, "$1");
+    setfloorarea(value);
+  }
+  // const onBlurArea = (e) => {
+  //   setfloorarea((prev) => (prev ? parseFloat(prev).toFixed(2) : ""));
+  // }
   const goNext = () => {
       onSelect("landArea", { floorarea });
   };
@@ -42,7 +48,7 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
       isDisabled={unitareaerror  || !floorarea}
       showErrorBelowChildren={true}
     >
-      <CardLabel>{`${t("PT_PLOT_SIZE_SQUARE_FEET_LABEL")}`}</CardLabel>
+      <CardLabel>{`${t("Land Area(sq ft)")}`}</CardLabel>
       <TextInput
         t={t}
         type={"number"}
@@ -50,7 +56,9 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
         optionKey="i18nKey"
         name="floorarea"
         value={floorarea}
+        step="0.01"
         onChange={setPropertyfloorarea}
+        // onBlur={onBlurArea}
         {...(validation = { pattern: "^([0-9]){0,8}$", type: "number", title: t("PT_PLOT_SIZE_ERROR_MESSAGE") })}
       />
     </FormStep>

@@ -1,4 +1,4 @@
-import { Card, Loader, Header, CardSubHeader } from "@egovernments/digit-ui-react-components";
+import { Card, Loader, Header, CardSubHeader } from "@upyog/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 const About = () => {
@@ -20,7 +20,7 @@ const About = () => {
       <Header styles={{ marginLeft: "15px", paddingTop: "10px", fontSize: "36px" }}>{t("DSS_ABOUT_DASHBOARD")}</Header>
       <Card>{moduleAbout.map((obj) => (
         <div>
-          <CardSubHeader style={{ marginBottom: "0", fontSize: "24px" , marginBottom:"10px"}} >{t(obj?.titleHeader)}</CardSubHeader>
+          <CardSubHeader style={{ marginBottom: "0", fontSize: "16px" , marginBottom:"10px"}} >{t(obj?.titleHeader)}</CardSubHeader>
           <div style={{ fontSize: "16px" ,marginBottom:"20px"}}>{definitionlist(obj?.define)}</div>
           {obj?.definePoints && obj?.titleHeader === "KEY_TERMS"  ?
              <div>

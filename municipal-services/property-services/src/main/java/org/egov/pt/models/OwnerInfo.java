@@ -69,11 +69,18 @@ public class OwnerInfo extends User {
 
 	@JsonProperty("relationship")
 	private Relationship relationship;
+	
+	
+	@JsonProperty("isOwnerdead")
+	private Boolean isOwnerdead;
+	@JsonProperty("dateofdeath")
+	private String dateofDeath;
 
 	public OwnerInfo addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();
 		}
+		if(null!=this.documents)
 		this.documents.add(documentsItem);
 		return this;
 	}
@@ -117,6 +124,7 @@ public class OwnerInfo extends User {
 		this.setPhoto(user.getPhoto());
 		this.setTenantId(user.getTenantId());
 		this.setAlternatemobilenumber(user.getAlternatemobilenumber());
+		this.setId(user.getId());
 	}
 
 	@Builder()

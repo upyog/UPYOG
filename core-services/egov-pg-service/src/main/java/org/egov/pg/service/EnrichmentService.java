@@ -51,7 +51,7 @@ public class EnrichmentService {
         String txnId = idGenService.generateTxnId(transactionRequest);
         transaction.setTxnId(txnId);
         transaction.setUser(userService.createOrSearchUser(transactionRequest));
-        transaction.setTxnStatus(Transaction.TxnStatusEnum.PENDING);
+        transaction.setTxnStatus(Transaction.TxnStatusEnum.INITIATED);
         transaction.setTxnStatusMsg(PgConstants.TXN_INITIATED);
 
         if(Objects.isNull(transaction.getAdditionalDetails())){
@@ -65,12 +65,15 @@ public class EnrichmentService {
             transaction.setAdditionalDetails(objectMapper.convertValue(additionDetailsMap,Object.class));
         }
         
+        //String[] callbackurl=transaction.getCallbackUrl().split("\\?");
+        
         String uri = UriComponentsBuilder
                 .fromHttpUrl(transaction.getCallbackUrl())
                 .queryParams(new LinkedMultiValueMap<>(singletonMap(PgConstants.PG_TXN_IN_LABEL,
                         Collections.singletonList(txnId))))
                 .build()
                 .toUriString();
+        //uri= uri.concat("&").concat(callbackurl[1]);
         transaction.setCallbackUrl(uri);
 
         AuditDetails auditDetails = AuditDetails.builder()

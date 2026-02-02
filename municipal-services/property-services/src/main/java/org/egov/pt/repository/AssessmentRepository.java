@@ -39,6 +39,7 @@ public class AssessmentRepository {
 		log.info("Query: "+query);
 		log.debug("preparedStatementValues: "+preparedStatementValues);
 		assessments = namedParameterJdbcTemplate.query(query, preparedStatementValues, rowMapper);
+		System.out.println("assessments::"+assessments);
 		return assessments;
 	}
 

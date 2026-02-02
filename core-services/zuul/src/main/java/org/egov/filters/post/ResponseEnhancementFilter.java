@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import static org.egov.constants.RequestContextConstants.CORRELATION_ID_KEY;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * Sets the correlation id to the response header.
@@ -14,8 +16,18 @@ import static org.egov.constants.RequestContextConstants.CORRELATION_ID_KEY;
 @Component
 public class ResponseEnhancementFilter extends ZuulFilter {
 
-    private static final String CORRELATION_HEADER_NAME = "x-correlation-id";
+    private static final String CONTENT_SECURITY_POLICY = "Content-Security-Policy";
+	private static final String X_XSS_PROTECTION = "x-xss-protection";
+	private static final String X_FRAME_OPTIONS = "x-frame-options";
+	private static final String X_CONTENT_TYPE_OPTIONS = "x-content-type-options";
+	private static final String EXPIRES = "expires";
+	private static final String STRICT_TRANSPORT_SECURITY = "strict-transport-security";
+	private static final String REFERRER_POLICY = "Referrer-Policy";
+	private static final String PRAGMA = "pragma";
+	private static final String CACHE_CONTROL = "Cache-Control";
+	private static final String CORRELATION_HEADER_NAME = "x-correlation-id";
     private static final String RECEIVED_RESPONSE_MESSAGE = "Received response code: {} from upstream URI {}";
+    private static final String PERMISSIONS_POLICY="Permissions-Policy";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
@@ -37,8 +49,59 @@ public class ResponseEnhancementFilter extends ZuulFilter {
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
         ctx.addZuulResponseHeader(CORRELATION_HEADER_NAME, getCorrelationId());
-        ctx.addZuulResponseHeader("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
-
+        ctx.addZuulResponseHeader(CACHE_CONTROL, "no-cache, no-store, max-age=0, must-revalidate");
+        ctx.addZuulResponseHeader(PRAGMA,"no-cache");
+        ctx.addZuulResponseHeader(REFERRER_POLICY,"strict-origin-when-cross-origin");
+        ctx.addZuulResponseHeader(STRICT_TRANSPORT_SECURITY,"max-age=15724800; includeSubDomains");
+        ctx.addZuulResponseHeader(EXPIRES,"0");
+        ctx.addZuulResponseHeader(X_CONTENT_TYPE_OPTIONS,"nosniff");
+        ctx.addZuulResponseHeader(X_FRAME_OPTIONS,"DENY");
+        ctx.addZuulResponseHeader(X_XSS_PROTECTION,"1; mode=block");
+        
+      //  ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY, "default-src 'self'");
+       final String fontgoogleApiUrl= "https://fonts.googleapis.com; ";
+       final String fontstaticUrl= " https://fonts.gstatic.com data:; ";
+       final String teraformUrl= "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com; ";
+       final String southUrl= "https://s3.ap-south-1.amazonaws.com;";
+       
+        ctx.addZuulResponseHeader(PERMISSIONS_POLICY, "geolocation=(self)");
+        final SecureRandom SECURE_RANDOM = new SecureRandom();
+        byte[] nonceBytes = new byte[16];
+        SECURE_RANDOM.nextBytes(nonceBytes);
+        String nonce = Base64.getEncoder().encodeToString(nonceBytes);
+ 
+        // Set CSP header dynamically with nonce
+       /* ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY,
+                "default-src 'self'; " +
+                "script-src 'self' ' nonce-" + nonce + "'; " +
+                "style-src 'self' ' nonce-" + nonce + "'"+ fontgoogleApiUrl+
+                "font-src 'self'"+ fontstaticUrl+
+                "img-src 'self' "+ teraformUrl+
+                "frame-ancestors 'none';");*/
+        
+		/*
+		 * ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY, "default-src 'self'; " +
+		 * "script-src 'self' 'nonce-" + nonce +"' "+southUrl+" "+
+		 * "style-src 'self' 'nonce-" + nonce + "' "+ fontgoogleApiUrl+
+		 * "font-src 'self'"+ fontstaticUrl+ "img-src 'self' "+ teraformUrl+
+		 * "frame-ancestors 'none';");
+		 */
+        
+        
+        ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY,
+                "default-src 'self'; " +
+                "script-src 'self' "+southUrl+" "+
+                "style-src 'self'; "+
+                "font-src 'self'; "+
+                "img-src 'self' "+ teraformUrl+
+                "frame-ancestors 'none';");
+      
+    	
+      
+        ctx.addZuulRequestHeader ("cspNonce", nonce);
+        ctx.getRequest().setAttribute("cspNonce", nonce);
+        
+        
         return null;
     }
 

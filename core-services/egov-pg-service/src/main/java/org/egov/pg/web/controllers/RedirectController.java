@@ -1,5 +1,7 @@
 package org.egov.pg.web.controllers;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 import org.egov.pg.constants.PgConstants;
@@ -46,8 +48,12 @@ public class RedirectController {
     @PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
         String returnURL = formData.get(returnUrlKey).get(0);
+        System.out.println("formData::"+formData);
+        System.out.println("returnURL::"+returnURL);
         MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
-
+        
+        
+     
         /*
          * From redirect URL get transaction id.
          * And using transaction id fetch transaction details.
@@ -55,12 +61,16 @@ public class RedirectController {
          */
         String gateway = null;
         if(!params.isEmpty()) {
-            List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
+        	//TEst
+           // List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
             TransactionCriteria critria = new TransactionCriteria();
-            critria.setTxnId(txnId.get(0));
+            String txn = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
+            System.out.println("txn::"+txn);
+            critria.setTxnId(txn);
             List<Transaction> transactions = transactionService.getTransactions(critria);
             if(!transactions.isEmpty())
                 gateway = transactions.get(0).getGateway();
+            System.out.println("gateway::"+gateway);
         }
         HttpHeaders httpHeaders = new HttpHeaders();
         /*
@@ -75,11 +85,14 @@ public class RedirectController {
             StringBuilder redirectURL = new StringBuilder();
             redirectURL.append(citizenRedirectDomain).append(returnURL);
             formData.remove(returnUrlKey);
+            System.out.println("inside if redirectURL::"+redirectURL);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
         } else {
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
                     .queryParams(formData).build().encode().toUri());
+            
+            System.out.println("inside else redirectURL::"+formData.get(returnUrlKey).get(0));
         }
 
         return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);

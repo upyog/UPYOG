@@ -1,7 +1,7 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader
-  } from "@egovernments/digit-ui-react-components";
+  } from "@upyog/digit-ui-react-components";
   import React from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch, Link } from "react-router-dom";
@@ -47,7 +47,7 @@ import {
   return(
     <React.Fragment>
     <Timeline currentStep={4} />
-    <Header styles={{fontSize:"32px"}}>{t("WS_COMMON_SUMMARY")}</Header>
+    <Header styles={{fontSize:"24px"}}>{t("WS_COMMON_SUMMARY")}</Header>
     <Card style={{paddingRight:"16px"}}>
     <CardHeader styles={{fontSize:"28px"}}>{t(`WS_BASIC_DETAILS_HEADER`)}</CardHeader>
         <StatusTable>

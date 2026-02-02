@@ -1,12 +1,14 @@
 import {
   BackButton, CardSubHeader, CardText, FormComposer, Toast
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
 import SelectOtp from "../../citizen/Login/SelectOtp";
+import CryptoJS from "crypto-js";
+
 
 const ChangePasswordComponent = ({ config: propsConfig, t }) => {
   const [user, setUser] = useState(null);
@@ -45,18 +47,35 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
 
     try {
       await Digit.UserService.sendOtp(requestData, tenantId);
-      setShowToast(t("ES_OTP_RESEND"));
+      setShowToast(t("OTP send successfully"));
     } catch (err) {
       setShowToast(err?.response?.data?.error_description || t("ES_INVALID_LOGIN_CREDENTIALS"));
     }
     setTimeout(closeToast, 5000);
   };
-
+  const secretKey = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_SECRET_KEY); // Ensure 16 bytes key
+  const generateIV = () => CryptoJS.lib.WordArray.random(16);
+  
+  const encryptPassword = (plainText) => {
+    const iv = generateIV();
+    const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
+      mode: CryptoJS.mode.CBC, // Matches Java ECB Mode
+      padding: CryptoJS.pad.Pkcs7, // Matches Java PKCS5Padding
+      iv: iv, 
+    });
+    return iv.toString(CryptoJS.enc.Base64) + ":" + encrypted.toString();
+  
+    // return encrypted.toString(); // Returns Base64 encoded encrypted text
+  };
   const onChangePassword = async (data) => {
     try {
       if (data.newPassword !== data.confirmPassword) {
         return setShowToast(t("ERR_PASSWORD_DO_NOT_MATCH"));
       }
+      const newPassword = encryptPassword(data?.newPassword);
+      const confPassword = encryptPassword(data?.confirmPassword);
+      data.newPassword = newPassword;
+      data.confirmPassword = confPassword;
       const requestData = {
         ...data,
         otpReference: otp,
@@ -150,18 +169,18 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
 
       <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
         <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
+          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
           <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span>
           <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
 
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize:"12px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize:"12px" }} >|</span> */}
+          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2024 Manipur Municipality Property Tax Board</span>
           
           {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
 
         </div>
         <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2024 Manipur Municipality Property Tax Board</span>
           </div>
       </div>
     </Background>

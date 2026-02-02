@@ -110,7 +110,7 @@ export const TableConfig = (t) => ({
         mobileCell: (original) => GetMobCell(original?.searchData?.["owners"]?.[0].name),
       },
       {
-        Header: t("ES_INBOX_APPLICATION_TYPE"),
+        Header: t("Application Type"),
         Cell: ({ row }) => {
           const map = {
             "PT.CREATE": "ES_PT_NEW_PROPERTY",
@@ -130,23 +130,191 @@ export const TableConfig = (t) => ({
         },
       },
       {
-        Header: t("ES_INBOX_STATUS"),
+        Header: t("Application Status"),
         Cell: ({ row }) => {
           const wf = row.original?.workflowData;
           return GetCell(t(`ES_PT_COMMON_STATUS_${wf?.state?.["state"]}`));
         },
         mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
       },
+      // {
+      //   Header: t("ES_INBOX_SLA_DAYS_REMAINING"),
+      //   accessor: "createdTime",
+      //   Cell: ({ row }) => {
+      //     const wf = row.original.workflowData;
+      //     const math = Math.round((wf?.businesssServiceSla || 0) / (24 * 60 * 60 * 1000)) || "-";
+      //     return GetSlaCell(math);
+      //   },
+      //   mobileCell: (original) => GetSlaCell(Math.round((original?.workflowData?.["businesssServiceSla"] || 0) / (24 * 60 * 60 * 1000))),
+      // },
+    ],
+    inboxColumnsAssessment: (props) => [
       {
-        Header: t("ES_INBOX_SLA_DAYS_REMAINING"),
-        accessor: "createdTime",
+        Header: t("Assessment ID"),
         Cell: ({ row }) => {
-          const wf = row.original.workflowData;
-          const math = Math.round((wf?.businesssServiceSla || 0) / (24 * 60 * 60 * 1000)) || "-";
-          return GetSlaCell(math);
+          return (
+            <div>
+              <span className="link">
+                <Link to={`${props.parentRoute}/assessment-details-workflow/` + row.original?.searchData?.["assessmentNumber"]}>
+                  {row.original?.searchData?.["assessmentNumber"]}
+                </Link>
+              </span>
+            </div>
+          );
         },
-        mobileCell: (original) => GetSlaCell(Math.round((original?.workflowData?.["businesssServiceSla"] || 0) / (24 * 60 * 60 * 1000))),
+        mobileCell: (original) => GetMobCell(original?.searchData?.["assessmentNumber"]),
       },
+      {
+        Header: t("ES_INBOX_UNIQUE_PROPERTY_ID"),
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.searchData?.["propertyId"]}`);
+        },
+        mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
+      },
+      // {
+      //   Header: t("ES_INBOX_UNIQUE_PROPERTY_ID"),
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <div>
+      //         <span className="link">
+      //           <Link to={`${props.parentRoute}/application-details/` + row.original?.searchData?.["propertyId"]}>
+      //             {row.original?.searchData?.["propertyId"]}
+      //           </Link>
+      //         </span>
+      //       </div>
+      //     );
+      //   },
+      //   mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
+      // },
+      {
+        Header: t("Assessment Year"),
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.searchData?.["financialYear"]}`);
+        },
+        mobileCell: (original) => GetMobCell(original?.searchData?.["financialYear"]),
+      },
+      {
+        Header: t("ES_INBOX_OWNER"),
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.searchData?.["owners"]?.[0].name}`);
+        },
+        mobileCell: (original) => GetMobCell(original?.searchData?.["owners"]?.[0].name),
+      },
+      {
+        Header: t("Application Type"),
+        Cell: ({ row }) => {
+          const map = {
+            "ASMT": "Assessment",
+          };
+          return GetCell(t(`${map[row.original?.workflowData?.businessService]}`));
+        },
+        mobileCell: (original) => {
+          const map = {
+            "ASMT": "Assessment",
+          };
+
+          return GetMobCell(t(map[original?.workflowData?.businessService]));
+        },
+      },
+      {
+        Header: t("Application Status"),
+        Cell: ({ row }) => {
+          const wf = row.original?.workflowData;
+          return GetCell(t(`${wf?.state?.["state"]}`));
+        },
+        mobileCell: (original) => GetMobCell(t(`${original?.workflowData?.state?.["state"]}`)),
+      },
+      // {
+      //   Header: t("ES_INBOX_SLA_DAYS_REMAINING"),
+      //   accessor: "createdTime",
+      //   Cell: ({ row }) => {
+      //     const wf = row.original.workflowData;
+      //     const math = Math.round((wf?.businesssServiceSla || 0) / (24 * 60 * 60 * 1000)) || "-";
+      //     return GetSlaCell(math);
+      //   },
+      //   mobileCell: (original) => GetSlaCell(Math.round((original?.workflowData?.["businesssServiceSla"] || 0) / (24 * 60 * 60 * 1000))),
+      // },
+    ],
+    inboxColumnsAppeal: (props) => [
+      {
+        Header: t("Appeal ID"),
+        Cell: ({ row }) => {
+          return (
+            <div>
+              <span className="link">
+                <Link to={`${props.parentRoute}/appeal-details-workflow/` + row.original?.searchData?.["appealId"]}>
+                  {row.original?.searchData?.["appealId"]}
+                </Link>
+              </span>
+            </div>
+          );
+        },
+        mobileCell: (original) => GetMobCell(original?.searchData?.["appealId"]),
+      },
+      {
+        Header: t("ES_INBOX_UNIQUE_PROPERTY_ID"),
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.searchData?.["propertyId"]}`);
+        },
+        mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
+      },
+      // {
+      //   Header: t("ES_INBOX_UNIQUE_PROPERTY_ID"),
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <div>
+      //         <span className="link">
+      //           <Link to={`${props.parentRoute}/application-details/` + row.original?.searchData?.["propertyId"]}>
+      //             {row.original?.searchData?.["propertyId"]}
+      //           </Link>
+      //         </span>
+      //       </div>
+      //     );
+      //   },
+      //   mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
+      // },
+      {
+        Header: t("Assessment Year"),
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.searchData?.["assessmentYear"]}`);
+        },
+        mobileCell: (original) => GetMobCell(original?.searchData?.["assessmentYear"]),
+      },
+      
+      {
+        Header: t("Application Type"),
+        Cell: ({ row }) => {
+          const map = {
+            "PT.APPEAL": "Appeal",
+          };
+          return GetCell(t(`${map[row.original?.workflowData?.businessService]}`));
+        },
+        mobileCell: (original) => {
+          const map = {
+            "PT.APPEAL": "Appeal",
+          };
+
+          return GetMobCell(t(map[original?.workflowData?.businessService]));
+        },
+      },
+      {
+        Header: t("Application Status"),
+        Cell: ({ row }) => {
+          const wf = row.original?.workflowData;
+          return GetCell(t(`${wf?.state?.["state"]}`));
+        },
+        mobileCell: (original) => GetMobCell(t(`${original?.workflowData?.state?.["state"]}`)),
+      },
+      // {
+      //   Header: t("ES_INBOX_SLA_DAYS_REMAINING"),
+      //   accessor: "createdTime",
+      //   Cell: ({ row }) => {
+      //     const wf = row.original.workflowData;
+      //     const math = Math.round((wf?.businesssServiceSla || 0) / (24 * 60 * 60 * 1000)) || "-";
+      //     return GetSlaCell(math);
+      //   },
+      //   mobileCell: (original) => GetSlaCell(Math.round((original?.workflowData?.["businesssServiceSla"] || 0) / (24 * 60 * 60 * 1000))),
+      // },
     ],
     serviceRequestIdKey: (original) => original?.[t("ES_INBOX_UNIQUE_PROPERTY_ID")]?.props?.children,
   },

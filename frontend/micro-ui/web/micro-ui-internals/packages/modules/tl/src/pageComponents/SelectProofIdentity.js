@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelDesc, FormStep, UploadFile } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/TLTimeline";
 import { getOwnersfromProperty } from "../utils";
@@ -16,7 +16,7 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { data: Documentsob = { } } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
   const docs = Documentsob?.PropertyTax?.Documents;
-  const proofOfIdentity = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
+  const proofOfIdentity = Array.isArray(docs) && docs.filter((doc) => doc?.code.includes("ADDRESSPROOF"));
   // if (proofOfIdentity.length > 0) {
   //   dropdownData = proofOfIdentity[0]?.dropdownData;
   //   dropdownData.forEach((data) => {

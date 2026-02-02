@@ -68,7 +68,6 @@ public class QuartzConfig {
         try {
             propertiesFactoryBean.afterPropertiesSet();
             properties = propertiesFactoryBean.getObject();
-
         } catch (IOException e) {
             log.warn("Cannot load quartz.properties.");
         }

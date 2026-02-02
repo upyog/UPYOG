@@ -147,7 +147,7 @@ public class PaymentNotificationService {
             }
 
             if(configuredChannelNames.contains(CHANNEL_NAME_SMS)) {
-                util.sendSMS(smsRequests);
+               // util.sendSMS(smsRequests);
             }
 
             if(configuredChannelNames.contains(CHANNEL_NAME_EVENT)) {
@@ -260,7 +260,7 @@ public class PaymentNotificationService {
         }
 
         if(configuredChannelNames.contains(CHANNEL_NAME_SMS)) {
-            util.sendSMS(smsRequests);
+           // util.sendSMS(smsRequests);
         }
 
         if(configuredChannelNames.contains(CHANNEL_NAME_EVENT)) {
@@ -462,7 +462,7 @@ public class PaymentNotificationService {
         message = message.replace("{insert amount paid}",valMap.get("amountPaid"));
         message = message.replace("{insert payment transaction id from PG}",valMap.get("transactionId"));
         message = message.replace("{insert Property Tax Assessment ID}",valMap.get("propertyId"));
-        message = message.replace("{pt due}.",valMap.get("amountDue"));
+    //    message = message.replace("{pt due}.",valMap.get("amountDue"));
     //    message = message.replace("{FY}",valMap.get("financialYear"));
         return message;
     }

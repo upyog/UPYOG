@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
@@ -202,7 +202,7 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
   
   return (
     <>
-      <Header styles={{ fontSize: "32px" }}>{businessService === "WS" ? t("WS_WATER_SEARCH_APPLICATION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_APPLICATION_SUB_HEADER")}</Header>
+      <Header styles={{ fontSize: "16px" }}>{businessService === "WS" ? t("WS_WATER_SEARCH_APPLICATION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_APPLICATION_SUB_HEADER")}</Header>
       < Card className={"card-search-heading"}>
         <span style={{ color: "#505A5F" }}>{t("WS_INFO_VALIDATION")}</span>
       </Card>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CardText, FormStep, CitizenConsentForm, Loader, CheckBox } from "@egovernments/digit-ui-react-components";
+import { CardText, FormStep, CitizenConsentForm, Loader, CheckBox } from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config, canSubmit }) => {
@@ -38,7 +38,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         return <span>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
-          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#a82227", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
+          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#0f4f9e", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
           {data?.linkPostfix && <span>{t(`${data?.linkPostfix}_`)}</span>}
           {(index == isCCFEnabled?.checkBoxLabels?.length - 1) && t("LABEL")}
         </span>
@@ -66,8 +66,8 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           label={checkLabels()}
           value={isCheckBox}
           checked={isCheckBox}
-          style={{ marginTop: "5px", marginLeft: "55px" }}
-          styles={{marginBottom: "30px"}}
+          style={{ marginTop: "8px", marginLeft: "40px" }}
+          styles={{marginBottom: "15px"}}
           onChange={setTermsAndPolicyDetails}
         />
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
@@ -112,7 +112,7 @@ const TLAccessoriesEmployee = ({ config, onSelect, userType, formData, setError,
             {accessoriesList.map((accessor, index) => (
                 <AccessoriersForm key={accessor.key} index={index} accessor={accessor} {...commonProps} />
             ))}
-            <LinkButton label={`${t("TL_NEW_TRADE_DETAILS_NEW_ACCESSORIES")}`} onClick={addAccessories} style={{ color: "#a82227", width: "fit-content" }} />
+            <LinkButton label={`${t("TL_NEW_TRADE_DETAILS_NEW_ACCESSORIES")}`} onClick={addAccessories} style={{ color: "#0f4f9e", width: "fit-content" }} />
 
         </React.Fragment>
     );
