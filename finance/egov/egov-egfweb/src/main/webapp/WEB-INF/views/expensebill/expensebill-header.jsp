@@ -55,40 +55,42 @@
 	<div class="panel-heading">
 		
 	</div>
-	<div class="form-group">
+	  <div class="form-group">
 		<c:choose>
 			<c:when test="${!billNumberGenerationAuto}">
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" text="Bill Number"/>
-					<span class="mandatory"></span>
+					<span class="mandatory"></span>  
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" />
 					<form:errors path="billnumber" cssClass="add-margin error-msg" />
 				</div>
 				
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>
+				<!--  <label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>-->
 				<span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" />
+					<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" readonly="readonly" style="display:none;" />
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
 			</c:when>
 			<c:otherwise>
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>
+				<!--  <label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>-->
 				<span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" />
+					<form:input path="billdate" id="billdate"
+									class="form-control datepicker" style="display:none;" data-date-end-date="0d"
+									required="required" readonly="readonly" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"></label>
 				<div class="col-sm-3 add-margin">
 				</div>
 			</c:otherwise>
-		</c:choose>
+		</c:choose> 
 		
-	</div>
+	</div> 
 	
 	
 	<jsp:include page="expense-trans-filter.jsp"/>

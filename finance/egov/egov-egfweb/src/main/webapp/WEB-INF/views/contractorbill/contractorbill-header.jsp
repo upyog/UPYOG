@@ -65,28 +65,28 @@
 					<form:errors path="billnumber" cssClass="add-margin error-msg" />
 				</div>
 				
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate" text="Bill Date"/><span class="mandatory"></span>
-				</label>
+				 <%-- <label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate" text="Bill Date"/><span class="mandatory"></span>
+				</label> --%>
 				<div class="col-sm-3 add-margin">
  					<form:input path="billdate" id="billdate"
 									class="form-control datepicker" data-date-end-date="0d"
-									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
+									required="required" style="display:none;" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
 			</c:when>
 			<c:otherwise>
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" text="Bill Date" /><span class="mandatory"></span>
-				</label>
+				<%-- <label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" text="Bill Date" /><span class="mandatory"></span>
+				</label> --%>
 				<div class="col-sm-3 add-margin">
 					<form:input path="billdate" id="billdate"
 									class="form-control datepicker" data-date-end-date="0d"
-									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
+									required="required" readonly="readonly" style="display:none;" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"></label>
 				<div class="col-sm-3 add-margin">
 				</div>
-			</c:otherwise>
+			</c:otherwise> 
 		</c:choose>
 		
 	</div>
