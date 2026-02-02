@@ -212,7 +212,7 @@ public class PropertyController {
     @RequestMapping(value = "/_dashboardDataSearch", method = RequestMethod.POST)
     public ResponseEntity<DashboardResponse> dashboardDataSearch(@Valid @RequestBody DashboardRequest dashboardRequest) {
     	
-    	List<DashboardData> dashboardDatas=dashboardDataService.dashboardDatas(dashboardRequest.getDashboardDataSearch());
+    	List<DashboardData> dashboardDatas=dashboardDataService.dashboardDatas(dashboardRequest.getDashboardDataSearch(),dashboardRequest.getRequestInfo());
     	DashboardResponse dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).responseInfo(
     			responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true)).build();
     	

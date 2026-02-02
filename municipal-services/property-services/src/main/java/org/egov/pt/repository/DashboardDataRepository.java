@@ -3,10 +3,12 @@ package org.egov.pt.repository;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.DashboardDataSearch;
@@ -51,6 +53,23 @@ public class DashboardDataRepository {
 	    });
 	}
 	
+	public Map<String, Set<String>> getPropertiesPendingWithMap(DashboardDataSearch dashboardDataSearch) {
+
+	    String query = dashboardDataQueryBuilder.getTotalPropertyPendingWithQueryForPropertyList(dashboardDataSearch);
+
+	    return jdbcTemplate.query(query, rs -> {
+	        Map<String, Set<String>> resultMap = new HashMap<>();
+	        while (rs.next()) {
+	            String action = rs.getString("action_st");
+	            String prop = rs.getString("propid");
+
+	            // add property to the set for this action
+	            resultMap.computeIfAbsent(action, k -> new HashSet<>()).add(prop);
+	        }
+	        return resultMap;
+	    });
+	}
+
 	public BigInteger getTotalPropertyApprovedCount(DashboardDataSearch dashboardDataSearch)
 	{
 		String query=dashboardDataQueryBuilder.getTotalPropertyApprovedQuery(dashboardDataSearch);

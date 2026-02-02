@@ -45,6 +45,53 @@ public class DashboardDataQueryBuilder {
 		    "FROM latest_actions\n" +
 		    "WHERE rn = 1\n" +
 		    "GROUP BY action_st";
+	public static final String PROPERTIES_PENDING_WITH_PROPERTY_LIST = 
+			"WITH latest_actions AS (\r\n"
+			+ "    SELECT\r\n"
+			+ "        ewpv.businessid,\r\n"
+			+ "        ewpv.\"action\",\r\n"
+			+ "        epp.id AS property_id,\r\n"
+			+ "        epp.propertyid as propid,\r\n"
+			+ "        epp.tenantid as tenantid,\r\n"
+			+ "        ROW_NUMBER() OVER (\r\n"
+			+ "            PARTITION BY ewpv.businessid\r\n"
+			+ "            ORDER BY ewpv.lastmodifiedtime DESC\r\n"
+			+ "        ) AS rn\r\n"
+			+ "    FROM eg_wf_processinstance_v2 ewpv\r\n"
+			+ "    JOIN eg_pt_property epp\r\n"
+			+ "        ON epp.acknowldgementnumber = ewpv.businessid\r\n"
+			+ "    WHERE ewpv.\"action\" IS NOT NULL\r\n"
+			+ "      AND ewpv.\"action\" <> ''\r\n"
+			+ "      AND epp.status = 'INWORKFLOW'\r\n"
+			+ "      /* FILTER_CONDITIONS */\r\n"
+			+ "      and epp.tenantid ='mn.kakching'\r\n"
+			+ "      AND ewpv.lastmodifiedtime BETWEEN 1769990416000 AND 1770076799999\r\n"
+			+ ")\r\n"
+			+ "\r\n"
+			+ "SELECT\r\n"
+			+ "    property_id,propid,tenantid,\r\n"
+			+ "    CASE\r\n"
+			+ "        WHEN action = 'SENDBACKTOCITIZEN'\r\n"
+			+ "            THEN 'PENDINGWITHCITIZEN'\r\n"
+			+ "        WHEN action IN (\r\n"
+			+ "            'REOPEN',\r\n"
+			+ "            'SENDBACKTODOCKVERIFIER',\r\n"
+			+ "            'SENDBACKTODOCVERIFIER',\r\n"
+			+ "            'OPEN'\r\n"
+			+ "        )\r\n"
+			+ "            THEN 'PENDINGWITHDOCVERIFIER'\r\n"
+			+ "        WHEN action = 'VERIFY'\r\n"
+			+ "            THEN 'PENDINGWITHFILEDVERIFIER'\r\n"
+			+ "        WHEN action = 'REJECT'\r\n"
+			+ "            THEN 'REJECTED'\r\n"
+			+ "        WHEN action = 'FORWARD'\r\n"
+			+ "            THEN 'PENDINGWITHAPPROVER'\r\n"
+			+ "        WHEN action = 'APPROVE'\r\n"
+			+ "            THEN 'APPROVED'\r\n"
+			+ "    END AS action_st\r\n"
+			+ "FROM latest_actions\r\n"
+			+ "WHERE rn = 1;\r\n"
+			+ "";
 
 
 	public static final String PROPERTIES_APPROVED = "WITH approved AS (\r\n"
@@ -268,6 +315,40 @@ public class DashboardDataQueryBuilder {
 
 	    
 	    String finalQuery = PROPERTIES_PENDING_WITH.replace("/*FILTER_CONDITIONS*/", filterBuilder.toString());
+	    return finalQuery;
+	}
+	
+	
+	public String getTotalPropertyPendingWithQueryForPropertyList(DashboardDataSearch dashboardDataSearch) {
+	    StringBuilder filterBuilder = new StringBuilder();
+
+	   
+	    long fromEpoch, toEpoch;
+	    if (StringUtils.hasText(dashboardDataSearch.getFromDate()) && StringUtils.hasText(dashboardDataSearch.getToDate())) {
+	        fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+	        toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+	    } else {
+	        fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+	        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+	        toEpoch = getEndOfDayEpochMillis(today);
+	    }
+	    filterBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+	    
+	    if (StringUtils.hasText(dashboardDataSearch.getTenantid())) {
+	        filterBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+	    }
+
+	    
+	    if (StringUtils.hasText(dashboardDataSearch.getWard())) {
+	        filterBuilder.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+	    } else {
+	        filterBuilder.append(" AND epadd.ward_no != ''");
+	    }
+
+	    
+	    String finalQuery = PROPERTIES_PENDING_WITH_PROPERTY_LIST.replace("/*FILTER_CONDITIONS*/", filterBuilder.toString());
+	    System.out.println(finalQuery);
 	    return finalQuery;
 	}
 

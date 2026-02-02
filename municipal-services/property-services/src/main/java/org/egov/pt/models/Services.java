@@ -1,6 +1,16 @@
 package org.egov.pt.models;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
@@ -10,6 +20,10 @@ public class Services {
 	private BigInteger totalPropertiesRegistered=BigInteger.ZERO;
 	private BigInteger propertiesPendingWithDocVerifier=BigInteger.ZERO;
 	private BigInteger propertiesPendingWithFieldInspector=BigInteger.ZERO;
+	@JsonIgnore
+	private Set<String> propertiesPendingWithDocVerifierMap = new HashSet();
+	@JsonIgnore
+	private List<Property> propertiesPendingWithDocVerifierList = new ArrayList<>();
 	private BigInteger propertiesPendingWithApprover=BigInteger.ZERO;
 	private BigInteger propertiesRejected=BigInteger.ZERO;
 	private BigInteger propertiesApproved=BigInteger.ZERO;

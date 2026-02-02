@@ -26,6 +26,7 @@ import org.egov.pt.models.Services;
 import org.egov.pt.repository.DashboardDataRepository;
 import org.egov.pt.repository.DashboardReportRepository;
 import org.egov.pt.service.PropertyService;
+import org.egov.pt.util.PropertyRedisCache;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.DashboardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,10 @@ public class DashboardDataService {
 	@Autowired
 	PropertyConfiguration config;
 	
-	public List<DashboardData> dashboardDatas(DashboardDataSearch dashboardDataSearch)
+	@Autowired
+	PropertyRedisCache propertyRedisCache;
+	
+	public List<DashboardData> dashboardDatas(DashboardDataSearch dashboardDataSearch,RequestInfo requestInfo)
 	{
 		List<DashboardData> dashboardDatas=new ArrayList<DashboardData>();
 		DashboardData dashboardData=new DashboardData();
@@ -74,7 +78,7 @@ public class DashboardDataService {
 		if(!StringUtils.isEmpty(dashboardDataSearch.getTenantid()))
 		{
 			dashboardData.setUlb(dashboardDataSearch.getTenantid());
-			RequestInfo requestInfo = new RequestInfo();
+			//RequestInfo requestInfo = new RequestInfo();
 			List<String> masterNames = Collections.singletonList("tenants");
 			Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(),
 					"tenant", masterNames,
@@ -94,6 +98,7 @@ public class DashboardDataService {
 		
 		services.setTotalPropertiesRegistered(dashboardDataRepository.getTotalPropertyRegisteredCount(dashboardDataSearch));
 		services.setPropertiesPendingWithDocVerifier(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault("PENDINGWITHDOCVERIFIER", BigInteger.ZERO));
+		services.setPropertiesPendingWithDocVerifierMap(dashboardDataRepository.getPropertiesPendingWithMap(dashboardDataSearch).get("PENDINGWITHDOCVERIFIER"));
 		services.setPropertiesPendingWithFieldInspector(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault("PENDINGWITHFILEDVERIFIER",BigInteger.ZERO));
 		services.setPropertiesPendingWithApprover(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault("PENDINGWITHAPPROVER",BigInteger.ZERO));
 		services.setPropertiesRejected(dashboardDataRepository.getTotalPropertyRejectedCount(dashboardDataSearch));
@@ -109,8 +114,12 @@ public class DashboardDataService {
 		revenue.setPenaltyShare(dashboardDataRepository.getPenaltyShareAmount(dashboardDataSearch));
 		revenue.setInterestShare(dashboardDataRepository.getInterestShareAmount(dashboardDataSearch));
 		revenue.setAdvanceShare(dashboardDataRepository.getAdvanceShareAmount(dashboardDataSearch));
-		//revenue.setTaxCollectedProperties(dashboardDataRepository.getTotalTaxCollectedProperties(dashboardDataSearch));
+		revenue.setTaxCollectedProperties(dashboardDataRepository.getTotalTaxCollectedProperties(dashboardDataSearch));
 		
+		Map<String, Property> mapPendingProperty =  getPropertiesWithCache(dashboardDataSearch.getTenantid(),services.getPropertiesPendingWithDocVerifierMap(),requestInfo);
+		services.setPropertiesPendingWithDocVerifierList(
+		        new ArrayList<>(mapPendingProperty.values())
+		);
 		dashboardData.setServices(services);
 		dashboardData.setRevenue(revenue);
 		dashboardDatas.add(dashboardData);
@@ -458,5 +467,50 @@ public class DashboardDataService {
 	{
 		return propertyService.searchProperty(dashboardDataRepository.getApplicationData(dashboardDataSearch, requestInfo), requestInfo);
 	}
+	
+	
+	 public Map<String, Property> getPropertiesWithCache(
+	            String tenantId,
+	           Set<String> propertiesPendingWithDocVerifierMap,RequestInfo requestInfo ){
+	        List<String> allPropertyIds =
+	                new ArrayList<>(propertiesPendingWithDocVerifierMap);
+
+	        // 1️⃣ Fetch from Redis (batch)
+	        Map<String, Property> cachedMap =
+	                propertyRedisCache.multiGet(tenantId, allPropertyIds);
+
+	        // 2️⃣ Find misses
+	        Set<String> missedPropertyIds = allPropertyIds.stream()
+	                .filter(id -> !cachedMap.containsKey(id))
+	                .collect(Collectors.toSet());
+
+	        // 3️⃣ Call search API ONLY if misses exist
+	        if (!missedPropertyIds.isEmpty()) {
+
+	        	PropertyCriteria criteria = PropertyCriteria.builder()
+	        			.tenantId(tenantId)
+	        			.propertyIds(missedPropertyIds)
+	        			.build();
+	                    
+
+	        	List<Property> searchResponse =propertyService.searchProperty(criteria,requestInfo);
+
+	            if (!CollectionUtils.isEmpty(searchResponse)) {
+
+	                for (Property property : searchResponse) {
+
+	                    String propertyId = property.getPropertyId();
+
+	                    // cache each property
+	                    propertyRedisCache.put(tenantId, propertyId, property);
+
+	                    // add to result
+	                    cachedMap.put(propertyId, property);
+	                }
+	            }
+	        }
+
+	        return cachedMap;
+	    }
 
 }
