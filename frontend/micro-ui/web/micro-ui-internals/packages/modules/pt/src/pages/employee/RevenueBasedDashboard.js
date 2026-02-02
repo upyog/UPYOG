@@ -80,11 +80,11 @@ export const RevenueBasedDashboard = ({ dashboardData }) => {
     // };
 
     const pieData = {
-        labels: ['Property Tax', 'Interest', 'Penalty', 'Advance', 'Arrears'],
+        labels: ['Total Tax Collected', 'Interest', 'Penalty', 'Advance', 'Arrears'],
         datasets: [
             {
             data: [
-                taxData.propertyTax,
+                taxData.totalTaxCollected,
                 taxData.interest,
                 taxData.penalty,
                 taxData.advance,
@@ -96,12 +96,12 @@ export const RevenueBasedDashboard = ({ dashboardData }) => {
     };
 
     const barData = {
-        labels: ['Property Tax', 'Interest', 'Penalty', 'Advance', 'Arrears', 'Refund'],
+        labels: ['Total Tax Collected', 'Interest', 'Penalty', 'Advance', 'Arrears', 'Refund'],
         datasets: [
             {
             label: 'Tax Amount (INR)',
             data: [
-                taxData.propertyTax,
+                taxData.totalTaxCollected,
                 taxData.interest,
                 taxData.penalty,
                 taxData.advance,
@@ -135,7 +135,10 @@ export const RevenueBasedDashboard = ({ dashboardData }) => {
                 {/* style={{ marginTop: "40px" }} */}
                 <h3 style={{paddingTop: "0px", fontWeight: "600", textDecoration: "underline"}}>Revenue KPI Cards</h3>
                 <div style={{ gap: "15px", flexWrap: "wrap", paddingTop: "10px" }}>
-                {Object.entries(taxData).map(([key, value]) => (
+                {Object.entries(taxData).map(([key, value]) => {
+                    if(key === "propertyTax") return null;
+                    
+                    return (
                     <div
                     key={key}
                     style={{
@@ -165,7 +168,8 @@ export const RevenueBasedDashboard = ({ dashboardData }) => {
                         key.toLocaleLowerCase().includes("paid") ? "#4caf50" :
                         "#333", fontWeight: "600" }}>{value}</div>
                     </div>
-                ))}
+                    );
+                })}
                 </div>
             </div>
         </div>

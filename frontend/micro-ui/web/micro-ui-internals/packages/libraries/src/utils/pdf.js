@@ -337,7 +337,253 @@ const generateBillAmendPDF = async ({ tenantId, bodyDetails, headerDetails, logo
   downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
 }
 
-export default { generate: jsPdfGenerator, generatev1: jsPdfGeneratorv1, generateModifyPdf: jsPdfGeneratorForModifyPDF, generateBillAmendPDF };
+/**
+ * Custom PDF generator for Property Tax Assessment
+ */
+const generateAssessmentPDF = async ({ tenantId, logo, name, email, phoneNumber, heading, details, t = (text) => text }) => {
+  const emailLeftMargin = 
+    email?.length <= 15
+      ? 190
+      : email?.length <= 20
+      ? 150
+      : email?.length <= 25
+      ? 130
+      : email?.length <= 30
+      ? 90
+      : email?.length <= 35
+      ? 50
+      : email?.length <= 40
+      ? 10
+      : email?.length <= 45
+      ? 0
+      : email?.length <= 50
+      ? -20
+      : email?.length <= 55
+      ? -70
+      : email?.length <= 60
+      ? -100
+      : -60;
+  const dd = {
+    pageMargins: [40, 80, 40, 30],
+    header: {
+      columns: [
+        {
+          image: logo || getBase64Image(tenantId) || defaultLogo,
+          width: 50,
+          margin: [10, 10],
+        },
+        {
+          text: name,
+          margin: [20, 25],
+          font: "Hind",
+          fontSize: 14,
+        },
+        {
+          text: email,
+          margin: [emailLeftMargin, 25, 0, 25],
+          font: "Hind",
+          fontSize: 11,
+          color: "#464747",
+        },
+        {
+          text: phoneNumber,
+          color: "#6f777c",
+          font: "Hind",
+          fontSize: 11,
+          margin: [-65, 45, 0, 25],
+        },
+      ],
+    },
+    footer: function (currentPage, pageCount) {
+      return {
+        columns: [
+          { text: `${name} / ${heading}`, margin: [15, 0, 0, 0], fontSize: 11, color: "#6f777c", width: 400, font: "Hind" },
+          { text: `Page ${currentPage}`, alignment: "right", margin: [0, 0, 25, 0], fontSize: 11, color: "#6f777c", font: "Hind" },
+        ],
+      };
+    },
+    content: createAssessmentContent(details, t),
+    defaultStyle: {
+      font: "Hind",
+    },
+  };
+  pdfMake.vfs = Fonts;
+  let locale = Digit.SessionStorage.get("locale") || "en_IN";
+  let Hind = pdfFonts[locale] || pdfFonts["Hind"];
+  pdfMake.fonts = { Hind: { ...Hind } };
+  const generatedPDF = pdfMake.createPdf(dd);
+  downloadPDFFileUsingBase64(generatedPDF, "Property_Tax_Assessment.pdf");
+};
+
+function createAssessmentContent(details, t) {
+  let content = [];
+  
+  content.push({
+    text: t("Assessment Details"),
+    font: "Hind",
+    fontSize: 20,
+    bold: true,
+    margin: [0, 0, 0, 15],
+  });
+
+  details?.forEach((section, sectionIndex) => {
+    if (section?.title) {
+      content.push({
+        text: section?.title,
+        color: "#0f4f9e",
+        fontSize: 13,
+        bold: true,
+        margin: [0, 12, 0, 8],
+      });
+    }
+
+    if (Array.isArray(section?.values)) {
+      // Check if values contains nested arrays (like Unit Details with array of arrays)
+      const hasNestedArrays = section?.values?.some(item => Array.isArray(item));
+      
+      if (hasNestedArrays) {
+        // Handle nested arrays (Unit Details)
+        section?.values?.forEach((unitArray, unitIndex) => {
+          if (Array.isArray(unitArray)) {
+            const rows = [];
+            unitArray.forEach((item, itemIndex) => {
+              if (item?.title) {
+                if (item?.value !== undefined) {
+                  // Regular key-value pair
+                  rows.push([
+                    {
+                      text: item?.title,
+                      bold: itemIndex === 0,
+                      fontSize: item?.value === undefined ? 11 : 10,
+                      color: itemIndex === 0 ? "#0f4f9e" : "#333",
+                    },
+                    {
+                      text: String(item?.value || ""),
+                      fontSize: 10,
+                      color: "#555",
+                    },
+                  ]);
+                } else {
+                  // Unit header (no value)
+                  rows.push([
+                    {
+                      text: item?.title,
+                      bold: true,
+                      fontSize: 11,
+                      color: "#0f4f9e",
+                      colSpan: 2,
+                    },
+                    {}
+                  ]);
+                }
+              }
+            });
+
+            if (rows.length > 0) {
+              content.push({
+                style: "tableExample",
+                table: {
+                  widths: ["50%", "50%"],
+                  body: rows,
+                },
+                layout: {
+                  hLineWidth: function (i, node) {
+                    return i === 0 || i === node.table.body.length ? 0 : 0.5;
+                  },
+                  vLineWidth: function () {
+                    return 0;
+                  },
+                  hLineColor: function () {
+                    return "#e0e0e0";
+                  },
+                  paddingLeft: function () {
+                    return 8;
+                  },
+                  paddingRight: function () {
+                    return 8;
+                  },
+                  paddingTop: function () {
+                    return 6;
+                  },
+                  paddingBottom: function () {
+                    return 6;
+                  },
+                },
+                margin: [0, 0, 0, 10],
+              });
+            }
+          }
+        });
+      } else {
+        // Handle regular flat arrays (key-value pairs)
+        const rows = [];
+        section?.values?.forEach((item) => {
+          if (item?.title && item?.value !== undefined) {
+            rows.push([
+              {
+                text: item?.title,
+                bold: true,
+                fontSize: 10,
+                color: "#333",
+              },
+              {
+                text: String(item?.value || "NA"),
+                fontSize: 10,
+                color: "#555",
+              },
+            ]);
+          }
+        });
+
+        if (rows.length > 0) {
+          content.push({
+            style: "tableExample",
+            table: {
+              widths: ["50%", "50%"],
+              body: rows,
+            },
+            layout: {
+              hLineWidth: function (i, node) {
+                return i === 0 || i === node.table.body.length ? 0 : 0.5;
+              },
+              vLineWidth: function () {
+                return 0;
+              },
+              hLineColor: function () {
+                return "#e0e0e0";
+              },
+              paddingLeft: function () {
+                return 8;
+              },
+              paddingRight: function () {
+                return 8;
+              },
+              paddingTop: function () {
+                return 6;
+              },
+              paddingBottom: function () {
+                return 6;
+              },
+            },
+            margin: [0, 0, 0, 10],
+          });
+        }
+      }
+    }
+  });
+
+  content.push({
+    text: t("PDF_SYSTEM_GENERATED_ACKNOWLEDGEMENT"),
+    font: "Hind",
+    fontSize: 11,
+    color: "#6f777c",
+    margin: [0, 32, 0, 0],
+  });
+
+  return content;
+}
+
+export default { generate: jsPdfGenerator, generatev1: jsPdfGeneratorv1, generateModifyPdf: jsPdfGeneratorForModifyPDF, generateBillAmendPDF, generateAssessmentPDF };
 
 const createBodyContentBillAmend = (table,t) => {
   let bodyData = []

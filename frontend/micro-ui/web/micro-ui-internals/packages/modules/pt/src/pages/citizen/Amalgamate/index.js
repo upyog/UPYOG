@@ -70,6 +70,7 @@ const AmalgamationCitizen = (props) => {
       bil_due__date: payment[property?.propertyId]?.bil_due__date || t("N/A"),
       total_due: payment[property?.propertyId]?.total_due || 0,
       tenantId: property?.tenantId,
+      property_full_address: addr,
     };
   });
 
@@ -111,6 +112,7 @@ const AmalgamationCitizen = (props) => {
       return;
     } else {
       let pDetails = propertyDetails || [];
+      console.log("data", data);
       pDetails.push(data);
       setPropertyDetails(pDetails);
       closeModal()
@@ -122,16 +124,44 @@ const AmalgamationCitizen = (props) => {
   const closeErrorToast = () => {
     setShowErrorToast(null);
   };
-  setTimeout(() => {
-    closeErrorToast();
-  }, 10000);
+
+  useEffect(() => {
+    if(showErrorToast) {
+      const timer = setTimeout(() => {
+        closeErrorToast();
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [showErrorToast]);
   
   const onAmalgamate = () =>{
-    if(propertyDetails.length>=2) {
-      history.push({pathname: "/digit-ui/citizen/pt/property/new-application", state: {propertyDetails: propertyDetails, action: 'Amalgamation'}})
-    }else {
+    console.log("propertyDetails", propertyDetails);
+    
+    if(propertyDetails.length < 2) {
       setShowErrorToast(() => ({  error: true, label: `${t("Please select atleast two properties for amalgamation")}` }))
+      return;
     }
+
+    // Check if all properties have same city, locality.code, and wardNo
+    const firstProperty = propertyDetails[0]?.property_full_address;
+    const firstCity = firstProperty?.city;
+    const firstLocalityCode = firstProperty?.locality?.code;
+    const firstWardNo = firstProperty?.wardNo;
+
+    for(let i = 1; i < propertyDetails.length; i++){
+      const currentProperty = propertyDetails[i]?.property_full_address;
+      const currentCity = currentProperty?.city;
+      const currentLocalityCode = currentProperty?.locality?.code;
+      const currentWardNo = currentProperty?.wardNo;
+
+      if(currentCity !== firstCity || currentLocalityCode !== firstLocalityCode || currentWardNo !== firstWardNo) {
+        setShowErrorToast(() => ({  error: true, label: `${t("All properties must have the same city, locality, and ward for amalgamation")}` }))
+        return;
+      }
+    }
+
+    // All validations passed, proceed with amalgamation
+    history.push({pathname: "/digit-ui/citizen/pt/property/new-application", state: {propertyDetails: propertyDetails, action: 'Amalgamation'}})
   }
   const removeProperty = (result, index)=> {
     propertyDetails.splice(index, 1);
@@ -229,7 +259,7 @@ const AmalgamationCitizen = (props) => {
           {/* <FormComposer config={config?.form} noBoxShadow inline disabled={true} childrenAtTheBottom onSubmit={submit} formId="modal-action" /> */}
         </Modal> }
       </div>
-      {showErrorToast && <Toast error={true} label={showErrorToast?.label} onClose={closeErrorToast} />}
+      {showErrorToast && <Toast error={true} isDleteBtn={true} label={showErrorToast?.label} onClose={closeErrorToast} closeOnTimeout={true} />}
 
     </React.Fragment>
   );

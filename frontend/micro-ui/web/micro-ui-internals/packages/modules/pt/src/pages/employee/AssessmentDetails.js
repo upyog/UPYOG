@@ -1,13 +1,18 @@
 import React, { useEffect, useState,useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
-
+import getPTAcknowledgementData from "../../getPTAcknowledgementData";
 import { useParams, useLocation, useHistory } from "react-router-dom";
 import { ActionBar, Header, Loader, SubmitBar,Card,CardSubHeader,CardSectionHeader,LinkLabel, CardLabel, CardHeader, CardText} from "@upyog/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import _, { first, update } from "lodash";
-import { Modal,Dropdown, Row, StatusTable } from "@upyog/digit-ui-react-components";
+import { Modal,Dropdown, Row, StatusTable, MultiLink } from "@upyog/digit-ui-react-components";
 import {convertEpochToDate} from "../../utils/index";
+import { getPropertyTypeLocale2 } from "../../../../../libraries/src/utils/pt";
+import getPTAssessmentData from "../../getPTAssessmentData";
+
+// import html2canvas from "html2canvas";
+// import jsPDF from "jspdf";
 
 
 const AssessmentDetails = () => {
@@ -22,10 +27,18 @@ const AssessmentDetails = () => {
   const history = useHistory();
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const isMobile = window.Digit.Utils.browser.isMobile();
+
+   const [showOptions, setShowOptions] = useState(false);
   
   const [popup,showPopUp]=useState(false);
   const [selectedPenalityReason,setSelectedPenalityReason]=useState(null);
   const [selectedRebateReason,setSelectedRebateReason]=useState(null);
+  let dowloadOptions = [{
+    label:  t("Download Assessment PDF"),
+    onClick: () => getAssessmentData(),
+  }]
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants } = storeData || {};
 
 
   const first_temp=useRef();
@@ -158,10 +171,10 @@ const AssessmentDetails = () => {
 
 let address_to_display=applicationDetails?.applicationData?.address;
 if(address_to_display?.doorNo){
-    address_to_display=address_to_display?.doorNo+','+address_to_display?.locality?.area+','+address_to_display?.city;
+    address_to_display=address_to_display?.doorNo+','+address_to_display?.principalRoadName+','+t("PROPERTYTAX_ROADTYPE_"+address_to_display?.typeOfRoad?.code)+','+address_to_display?.locality?.name+','+address_to_display?.city;
 }
 else{
-    address_to_display=address_to_display?.locality?.area+','+address_to_display?.city;
+    address_to_display=address_to_display?.principalRoadName+','+t("PROPERTYTAX_ROADTYPE_"+address_to_display?.typeOfRoad?.code)+','+address_to_display?.locality?.name+','+address_to_display?.city;
 }
 
 
@@ -312,6 +325,53 @@ const Penality_menu=[
   const selectRebateReason=(reason)=>{
     setSelectedRebateReason(reason);
   }
+  const downloadAssessmentPDF = async () => {
+    try {
+      const applications = appDetailsToShow?.applicationData || {};
+      const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+      let billingPeriod = location?.state?.Assessment?.financialYear;
+      let calculationData = ptCalculationEstimateDataCopy;
+      
+      const acknowldgementDataAPI = await getPTAssessmentData({ ...applications }, billingPeriod, calculationData, tenantInfo, t);
+      
+      // Use the new Assessment PDF generator
+      Digit.Utils.pdf.generateAssessmentPDF({
+        tenantId: tenantInfo?.code,
+        logo: null,
+        name: acknowldgementDataAPI?.name,
+        email: acknowldgementDataAPI?.email,
+        phoneNumber: acknowldgementDataAPI?.phoneNumber,
+        heading: acknowldgementDataAPI?.heading,
+        details: acknowldgementDataAPI?.details,
+        t: t
+      });
+      
+      setShowToast({ key: "success", action: t("PDF downloaded successfully"), error: false });
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      setShowToast({ key: "error", action: t("Failed to download PDF"), error: { message: error.message } });
+    }
+  };
+  const getAssessmentData = async () => {
+    console.log("getAssessmentData called==", appDetailsToShow);
+    const applications = appDetailsToShow?.applicationData || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+    let billingPeriod=location?.state?.Assessment?.financialYear;
+    let calculationData=ptCalculationEstimateDataCopy;
+    const acknowldgementDataAPI = await getPTAssessmentData({ ...applications}, billingPeriod, calculationData, tenantInfo, t);
+    console.log("getAssessmentData===",acknowldgementDataAPI)
+    Digit.Utils.pdf.generateAssessmentPDF({
+      tenantId: tenantInfo?.code,
+      logo: null,
+      name: acknowldgementDataAPI?.name,
+      email: acknowldgementDataAPI?.email,
+      phoneNumber: acknowldgementDataAPI?.phoneNumber,
+      heading: acknowldgementDataAPI?.heading,
+      details: acknowldgementDataAPI?.details,
+      t: t
+    });
+    //setAcknowldgementData(acknowldgementDataAPI);
+  };
 /* const RebatePenalityPoPup=() =>{
   return (
     <Modal
@@ -403,247 +463,263 @@ const Penality_menu=[
 } */
   return (
     <div>
-      <Header>{t("PT_TX_ASSESSMENT")}</Header>
-      <ApplicationDetailsTemplate
-        applicationDetails={
-          {
-            applicationDetails:[
-            {
-              title: "PT_ESTIMATE_DETAILS_HEADER",
-              values: [ 
-                {
-                  title: "PT_PROPERTY_PTUID",
-                  value: propertyId,  
-                },
-                {
-                  title: "PT_ADDRESS",
-                  value: address_to_display,
-                },
-                {
-                  title: "ES_PT_TITLE_BILLING_PERIOD",
-                  value: location?.state?.Assessment?.financialYear,
-                },
-                {
-                  title:"PT_BILLING_DUE_DATE",
-                  //value:date.getDate()+'-'+date.getMonth()+'-'+date.getFullYear(),
-                  value:convertEpochToDate(paymentDetails?.data?.Bill?.[0]?.billDetails?.[0]?.expiryDate,"PT") || t("CS_NA"),
-                },
-              ],
-              },
-              {
-                title:"PT_TAX_ESTIMATION_HEADER",
-                additionalDetails: {
-                  taxHeadEstimatesCalculation: ptCalculationEstimateData?.Calculation[0],
-                },
-              },
-              // {
-              //   belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#0f4f9e",marginLeft:"0px"} : {color:"#0f4f9e"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
-              // },
-              {
-                title: "PT_ASSESMENT_INFO_SUB_HEADER",
-                values: [
-                  { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: getPropertyTypeLocale(applicationDetails?.applicationData?.propertyType) },
-                  { title: "Usage Type", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
-                  { title: "Plot Area (sq ft)", value: applicationDetails?.applicationData?.landArea },
-                  { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: applicationDetails?.applicationData?.noOfFloors },
-                  { title: "Vacant Land Usage Type", value: (ptCalculationEstimateData?.Calculation[0]?.vacantland[0] && ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype) ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype : ''},
-                  { title: "APV of Vacant Land", value: ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandamount }
-                ],
-                additionalDetails: {
-                  floors: ptCalculationEstimateData?.Calculation[0]?.units
-                    // ?.filter((e) => e.active)
-                    ?.sort?.((a, b) => a.floorNo - b.floorNo)
-                    ?.map((unit, index) => {
-                      let floorName = `PROPERTYTAX_FLOOR_${unit.floorNo}`;
-                      const values = [
-                        {
-                          title: `${t("ES_APPLICATION_DETAILS_UNIT")} ${index + 1}`,
-                          value: "",
-                        },
-                        {
-                          title: "Floor No",
-                          value: unit?.floorNo,
-                        },
-                        {
-                          title: "PT_ASSESSMENT_UNIT_USAGE_TYPE",
-                          // value: `PROPERTYTAX_${ unit?.usageCategory
-                          value: `PROPERTYTAX_${ unit?.usageCategoryMajor
-                          }`,
-                        },
-                        {
-                          title: "PT_ASSESMENT_INFO_OCCUPLANCY",
-                          value: unit?.occupancyType,
-                        },
-                        {
-                          title: "Built Up Area (sq ft)",
-                          value: unit?.unitArea
-                          // value: unit?.constructionDetail?.builtUpArea,
-                        },
-                        {
-                          title: "APV of Covered Area",
-                          value: unit?.taxamount || 0,
-                        },
-                      ];
-        
-                      // if (unit.occupancyType === "RENTED") values.push({ title: "PT_FORM2_TOTAL_ANNUAL_RENT", value: unit.arv });
-        
-                      return {
-                        //title: floorName,
-                        title:"",
-                        values: [
-                          {
-                            title: "",
-                            values,
-                          },
-                        ],
-                      };
-                    }),
-                },
-              },
-            // {
-            //   belowComponent:()=>{
-            //     return (
-            //       <div style={{marginTop:"19px"}}>
-            //       <CardSubHeader style={{marginBottom:"8px",color:"#0B0C0C",fontSize:"24px"}}>
-            //       {t("PT_CALC_DETAILS")}<br/>
-            //       </CardSubHeader>
-            //       <CardSectionHeader style={{marginBottom:"16px",color:"#0B0C0C",fontSize:"16px",marginTop:"revert"}}>{t("PT_CALC_LOGIC_HEADER")}</CardSectionHeader>
-            //       <CardText style={{fontSize:"16px"}}>{t("PT_CALC_LOGIC")}</CardText>
-                    
-            //         <div style={{ border: "1px solid #D6D5D4", padding: "16px", marginTop: "8px", borderRadius: "4px", background: "#FAFAFA" }}>
-            //         <div className="row border-none"><h2>{t("PT_APPLICABLE_CHARGE_SLABS")}</h2></div>
-                    
-            //         <StatusTable>
-            //         {applicationDetails?.applicationData?.units
-            //         ?.filter((e) => e.active)
-            //         ?.sort?.((a, b) => a.floorNo - b.floorNo)
-            //         ?.map((unit, index) => (
-            //         <Row label={`${t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)} ${t(`PT_UNIT`)} - ${index+1}`} text={ChargeSlabsMenu?.PropertyTax && ChargeSlabsMenu?.PropertyTax?.ChargeSlabs?.filter((ob) => ob.floorNo == unit.floorNo)?.[0]?.name} />
-            //         ))}
-            //         </StatusTable>
-            //        </div>
-            //       </div>
-                  
-            //     )
-            //   }
-            // }
-          ]}
-        }
-        showTimeLine={false}
-        isLoading={isLoading}
-        isDataLoading={isLoading}
-        applicationData={appDetailsToShow?.applicationData}
-        mutate={null}
-        workflowDetails={
-          queryClient.getQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear])
-            ? { ...workflowDetails, data: { ...workflowDetails.data, nextActions: [] } }
-            : workflowDetails
-        }
-        businessService="PT"
-        assessmentMutate={assessmentMutate}
-        ptCalculationEstimateMutate={ptCalculationEstimateMutate}
-        showToast={showToast}
-        setShowToast={setShowToast}
-        closeToast={closeToast}
-        timelineStatusPrefix={"ES_PT_COMMON_STATUS_"}
-        forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"}
-      />
-      {/* {popup && (<RebatePenalityPoPup/>)} */}
-      {  popup && <Modal
-          headerBarMain={<Heading label={t("PT_ADD_REBATE_PENALITY")}/>}
-          headerBarEnd={<CloseBtn onClick={()=> {showPopUp(false), ptCalculationEstimateData.Calculation[0] = ptCalculationEstimateDataCopy; setSelectedPenalityReason(null); setSelectedRebateReason(null);}}/>}
-          actionCancelLabel={t("PT_CANCEL")}
-          actionCancelOnSubmit={()=>{ptCalculationEstimateData.Calculation[0] = ptCalculationEstimateDataCopy; setSelectedPenalityReason(null);setSelectedRebateReason(null); showPopUp(false)}}
-          actionSaveLabel={t("PT_ADD")}
-          actionSaveOnSubmit={()=>(change())}
-          hideSubmit={false}
-          >
-      {
-      <div>
-        <Card>
-        <CardSectionHeader>{t("PT_AD_PENALTY")}</CardSectionHeader>
-            <CardLabel>
-            {t("PT_TX_HEADS")}
-            </CardLabel>
-            <div className="field">
-              <div className="field-container">
-                <div className="text-input field">
-                <Dropdown
-                 isMandatory
-                 option={Penality_menu}
-                 optionKey="value"
-                 select={selectPenalityReason}
-                 selected={selectedPenalityReason}
-                 isPropertyAssess={true}
-                 t={t}
-                 />
-                </div>
-              </div>
-            </div>  
-            {selectedPenalityReason && selectedPenalityReason.value==="Others" && <div className="field">
-            <CardLabel>{t("PT_REASON")}</CardLabel>
-              <div className="field-container">
-                <div className="text-input field">
-                <input type="type" className="employee-card-input false focus-visible undefined" ref={fourth_temp}/>
-                </div>
-              </div>
-            </div>}      
-            <CardLabel>{t("PT_HEAD_AMT")}</CardLabel>
-            <div className="field">
-              <div className="field-container">
-                <div className="text-input field">
-                <input key="firstTemp" type="number" className="employee-card-input false focus-visible undefined" ref={first_temp}/>
-                </div>
-                {/* <TextInput
-                t={t}
-                type={"text"}
-                isMandatory={false}
-                optionKey="i18nKey"
-                name="first_temp"
-                value={first_temp}
-                onChange={setFirstTemp}
-                />  */}
-              </div>
-            </div>                  
-        </Card>
-        <Card>
-        <CardSectionHeader>{t("PT_AD_REBATE")}</CardSectionHeader>
-            <CardLabel>{t("PT_TX_HEADS")}</CardLabel>
-            <div className="field">
-              <div className="field-container">
-                <div className="text-input field">
-                <Dropdown
-                 isMandatory
-                 option={Rebate_menu}
-                 optionKey="value"
-                 select={selectRebateReason}
-                 selected={selectedRebateReason}
-                 isPropertyAssess={true}
-                 t={t}
-                 />
-                </div>
-              </div>
-            </div>    
-            {selectedRebateReason && selectedRebateReason.value==="Others" && <div className="field">
-            <CardLabel>{t("PT_REASON")}</CardLabel>
-              <div className="field-container">
-                <div className="text-input field">
-                <input type="type" className="employee-card-input false focus-visible undefined" ref={third_temp}/>
-                </div>
-              </div>
-            </div>}  
-            <CardLabel>{t("PT_HEAD_AMT")}</CardLabel>
-            <div className="field">
-              <div className="field-container">
-                <div className="text-input field">
-                <input type="number" className="employee-card-input false focus-visible undefined" ref={second_temp}/>
-                </div>
-              </div>
-            </div> 
-        </Card>
+      {/* <Header>{t("PT_TX_ASSESSMENT")}</Header> */}
+      <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
+        <Header styles={{ fontSize: "16px" }}>{t("PT_TX_ASSESSMENT")}</Header>
+        {dowloadOptions && dowloadOptions.length > 0 && (
+          <MultiLink
+            className="multilinkWrapper"
+            onHeadClick={() => setShowOptions(!showOptions)}
+            displayOptions={showOptions}
+            options={dowloadOptions}
+          />
+        )}
       </div>
-    }
-    </Modal>}
+      <div id="Assessment-download-section" className="assessment-details-v1">
+        <ApplicationDetailsTemplate
+          applicationDetails={
+            {
+              applicationDetails:[
+              {
+                title: "PT_ESTIMATE_DETAILS_HEADER",
+                values: [ 
+                  {
+                    title: "PT_PROPERTY_PTUID",
+                    value: propertyId,  
+                  },
+                  {
+                    title: "PT_ADDRESS",
+                    value: address_to_display,
+                  },
+                  {
+                    title: "ES_PT_TITLE_BILLING_PERIOD",
+                    value: location?.state?.Assessment?.financialYear,
+                  },
+                  {
+                    title:"PT_BILLING_DUE_DATE",
+                    //value:date.getDate()+'-'+date.getMonth()+'-'+date.getFullYear(),
+                    value:convertEpochToDate(paymentDetails?.data?.Bill?.[0]?.billDetails?.[0]?.expiryDate,"PT") || t("CS_NA"),
+                  },
+                ],
+                },
+                {
+                  title:"PT_TAX_ESTIMATION_HEADER",
+                  additionalDetails: {
+                    taxHeadEstimatesCalculation: ptCalculationEstimateData?.Calculation[0],
+                  },
+                },
+                // {
+                //   belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#0f4f9e",marginLeft:"0px"} : {color:"#0f4f9e"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
+                // },
+                {
+                  title: "PT_ASSESMENT_INFO_SUB_HEADER",
+                  values: [
+                    { title: "PT_ASSESMENT_INFO_TYPE_OF_BUILDING", value: getPropertyTypeLocale2(applicationDetails?.applicationData?.propertyType) },
+                    { title: "Usage Type", value: getPropertySubtypeLocale(applicationDetails?.applicationData?.usageCategory) },
+                    { title: "Plot Area (sq ft)", value: applicationDetails?.applicationData?.landArea },
+                    { title: "PT_ASSESMENT_INFO_NO_OF_FLOOR", value: applicationDetails?.applicationData?.noOfFloors },
+                    { title: "Vacant Land Usage Type", value: (ptCalculationEstimateData?.Calculation[0]?.vacantland[0] && ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype) ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandtype : ''},
+                    { title: "APV of Vacant Land", value: ptCalculationEstimateData?.Calculation[0]?.vacantland[0]?.vacantlandamount }
+                  ],
+                  additionalDetails: {
+                    floors: ptCalculationEstimateData?.Calculation[0]?.units
+                      // ?.filter((e) => e.active)
+                      ?.sort?.((a, b) => a.floorNo - b.floorNo)
+                      ?.map((unit, index) => {
+                        let floorName = `PROPERTYTAX_FLOOR_${unit.floorNo}`;
+                        const values = [
+                          {
+                            title: `${t("ES_APPLICATION_DETAILS_UNIT")} ${index + 1}`,
+                          },
+                          {
+                            title: "Floor No",
+                            value: floorName,
+                          },
+                          {
+                            title: "PT_ASSESSMENT_UNIT_USAGE_TYPE",
+                            // value: `PROPERTYTAX_${ unit?.usageCategory
+                            value: `PROPERTYTAX_${ unit?.usageCategoryMajor
+                            }`,
+                          },
+                          {
+                            title: "PT_STRUCTURE_TYPE",
+                            value: `PROPERTYTAX_STRUCTURETYPE_${ unit?.structureType}`,
+                          },
+                          {
+                            title: "PT_ASSESMENT_INFO_OCCUPLANCY",
+                            value: `PROPERTYTAX_OCCUPANCYTYPE_${unit?.occupancyType}`,
+                          },
+                          {
+                            title: "Built Up Area (sq ft)",
+                            value: unit?.unitArea
+                            // value: unit?.constructionDetail?.builtUpArea,
+                          },
+                          {
+                            title: "APV of Covered Area",
+                            value: unit?.taxamount || 0,
+                          },
+                        ];
+          
+                        // if (unit.occupancyType === "RENTED") values.push({ title: "PT_FORM2_TOTAL_ANNUAL_RENT", value: unit.arv });
+          
+                        return {
+                          //title: floorName,
+                          title:"",
+                          values: [
+                            {
+                              title: "",
+                              values,
+                            },
+                          ],
+                        };
+                      }),
+                  },
+                },
+              // {
+              //   belowComponent:()=>{
+              //     return (
+              //       <div style={{marginTop:"19px"}}>
+              //       <CardSubHeader style={{marginBottom:"8px",color:"#0B0C0C",fontSize:"24px"}}>
+              //       {t("PT_CALC_DETAILS")}<br/>
+              //       </CardSubHeader>
+              //       <CardSectionHeader style={{marginBottom:"16px",color:"#0B0C0C",fontSize:"16px",marginTop:"revert"}}>{t("PT_CALC_LOGIC_HEADER")}</CardSectionHeader>
+              //       <CardText style={{fontSize:"16px"}}>{t("PT_CALC_LOGIC")}</CardText>
+                      
+              //         <div style={{ border: "1px solid #D6D5D4", padding: "16px", marginTop: "8px", borderRadius: "4px", background: "#FAFAFA" }}>
+              //         <div className="row border-none"><h2>{t("PT_APPLICABLE_CHARGE_SLABS")}</h2></div>
+                      
+              //         <StatusTable>
+              //         {applicationDetails?.applicationData?.units
+              //         ?.filter((e) => e.active)
+              //         ?.sort?.((a, b) => a.floorNo - b.floorNo)
+              //         ?.map((unit, index) => (
+              //         <Row label={`${t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)} ${t(`PT_UNIT`)} - ${index+1}`} text={ChargeSlabsMenu?.PropertyTax && ChargeSlabsMenu?.PropertyTax?.ChargeSlabs?.filter((ob) => ob.floorNo == unit.floorNo)?.[0]?.name} />
+              //         ))}
+              //         </StatusTable>
+              //        </div>
+              //       </div>
+                    
+              //     )
+              //   }
+              // }
+            ]}
+          }
+          showTimeLine={false}
+          isLoading={isLoading}
+          isDataLoading={isLoading}
+          applicationData={appDetailsToShow?.applicationData}
+          mutate={null}
+          workflowDetails={
+            queryClient.getQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear])
+              ? { ...workflowDetails, data: { ...workflowDetails.data, nextActions: [] } }
+              : workflowDetails
+          }
+          businessService="PT"
+          assessmentMutate={assessmentMutate}
+          ptCalculationEstimateMutate={ptCalculationEstimateMutate}
+          showToast={showToast}
+          setShowToast={setShowToast}
+          closeToast={closeToast}
+          timelineStatusPrefix={"ES_PT_COMMON_STATUS_"}
+          forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"}
+        />
+        {  popup && <Modal
+            headerBarMain={<Heading label={t("PT_ADD_REBATE_PENALITY")}/>}
+            headerBarEnd={<CloseBtn onClick={()=> {showPopUp(false), ptCalculationEstimateData.Calculation[0] = ptCalculationEstimateDataCopy; setSelectedPenalityReason(null); setSelectedRebateReason(null);}}/>}
+            actionCancelLabel={t("PT_CANCEL")}
+            actionCancelOnSubmit={()=>{ptCalculationEstimateData.Calculation[0] = ptCalculationEstimateDataCopy; setSelectedPenalityReason(null);setSelectedRebateReason(null); showPopUp(false)}}
+            actionSaveLabel={t("PT_ADD")}
+            actionSaveOnSubmit={()=>(change())}
+            hideSubmit={false}
+            >
+        {
+        <div>
+          <Card>
+          <CardSectionHeader>{t("PT_AD_PENALTY")}</CardSectionHeader>
+              <CardLabel>
+              {t("PT_TX_HEADS")}
+              </CardLabel>
+              <div className="field">
+                <div className="field-container">
+                  <div className="text-input field">
+                  <Dropdown
+                  isMandatory
+                  option={Penality_menu}
+                  optionKey="value"
+                  select={selectPenalityReason}
+                  selected={selectedPenalityReason}
+                  isPropertyAssess={true}
+                  t={t}
+                  />
+                  </div>
+                </div>
+              </div>  
+              {selectedPenalityReason && selectedPenalityReason.value==="Others" && <div className="field">
+              <CardLabel>{t("PT_REASON")}</CardLabel>
+                <div className="field-container">
+                  <div className="text-input field">
+                  <input type="type" className="employee-card-input false focus-visible undefined" ref={fourth_temp}/>
+                  </div>
+                </div>
+              </div>}      
+              <CardLabel>{t("PT_HEAD_AMT")}</CardLabel>
+              <div className="field">
+                <div className="field-container">
+                  <div className="text-input field">
+                  <input key="firstTemp" type="number" className="employee-card-input false focus-visible undefined" ref={first_temp}/>
+                  </div>
+                  {/* <TextInput
+                  t={t}
+                  type={"text"}
+                  isMandatory={false}
+                  optionKey="i18nKey"
+                  name="first_temp"
+                  value={first_temp}
+                  onChange={setFirstTemp}
+                  />  */}
+                </div>
+              </div>                  
+          </Card>
+          <Card>
+          <CardSectionHeader>{t("PT_AD_REBATE")}</CardSectionHeader>
+              <CardLabel>{t("PT_TX_HEADS")}</CardLabel>
+              <div className="field">
+                <div className="field-container">
+                  <div className="text-input field">
+                  <Dropdown
+                  isMandatory
+                  option={Rebate_menu}
+                  optionKey="value"
+                  select={selectRebateReason}
+                  selected={selectedRebateReason}
+                  isPropertyAssess={true}
+                  t={t}
+                  />
+                  </div>
+                </div>
+              </div>    
+              {selectedRebateReason && selectedRebateReason.value==="Others" && <div className="field">
+              <CardLabel>{t("PT_REASON")}</CardLabel>
+                <div className="field-container">
+                  <div className="text-input field">
+                  <input type="type" className="employee-card-input false focus-visible undefined" ref={third_temp}/>
+                  </div>
+                </div>
+              </div>}  
+              <CardLabel>{t("PT_HEAD_AMT")}</CardLabel>
+              <div className="field">
+                <div className="field-container">
+                  <div className="text-input field">
+                  <input type="number" className="employee-card-input false focus-visible undefined" ref={second_temp}/>
+                  </div>
+                </div>
+              </div> 
+          </Card>
+        </div>
+      }
+      </Modal>}
+    </div>
+
       {!queryClient.getQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear]) ? (
         <ActionBar>
           <SubmitBar style={{float: "right"}} label={t("PT_ASSESS_PROPERTY_BUTTON")} onSubmit={handleAssessment} />

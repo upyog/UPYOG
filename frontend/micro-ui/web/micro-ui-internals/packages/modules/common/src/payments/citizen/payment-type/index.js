@@ -12,6 +12,7 @@ import {
   Loader,
   Toast,
   CardText,
+  Modal,
 } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
@@ -36,6 +37,7 @@ export const SelectPaymentType = (props) => {
   const tenantId = state?.tenantId || __tenantId || Digit.ULBService.getCurrentTenantId();
   const propertyId = state?.propertyId;
   const stateTenant = Digit.ULBService.getStateId();
+  const [showModal, setShowModal] = useState(false);
   const { control, handleSubmit } = useForm();
   const { data: menu, isLoading } = Digit.Hooks.useCommonMDMS(stateTenant, "DIGIT-UI", "PaymentGateway");
   const { data: paymentdetails, isLoading: paymentLoading } = Digit.Hooks.useFetchPayment(
@@ -55,8 +57,15 @@ export const SelectPaymentType = (props) => {
   const { name, mobileNumber } = state;
 
   const billDetails = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
-
+  const [paymentType, setPaymentType] = useState(null);
+  const confirmPayment = (data) => {
+    setPaymentType(data?.paymentType);
+    setShowModal(true);
+  }
   const onSubmit = async (d) => {
+    console.log("payment type selected==", d);
+
+    setShowModal(false);
     setIsSubmit(true)
     const filterData = {
       Transaction: {
@@ -66,7 +75,7 @@ export const SelectPaymentType = (props) => {
         billId: billDetails.id,
         consumerCode: consumerCode,
         productInfo: "Common Payment",
-        gateway: d?.paymentType || "AXIS",
+        gateway: paymentType || "AXIS",
         taxAndPayments: [
           {
             billId: billDetails.id,
@@ -192,7 +201,7 @@ export const SelectPaymentType = (props) => {
   return (
     <React.Fragment>
       <BackButton>{t("CS_COMMON_BACK")}</BackButton>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(confirmPayment)}>
         <Header>{t("PAYMENT_CS_HEADER")}</Header>
         <Card>
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
@@ -221,6 +230,38 @@ export const SelectPaymentType = (props) => {
           }}
         />
       )}
+      {showModal && (
+        <Modal
+          header="Confirm Payment"
+          onClose={() => setShowModal(false)}
+          actionCancelOnSubmit={() => setShowModal(false)}
+          actionSaveOnSubmit={onSubmit}
+          actionCancelLabel="Cancel"
+          actionCancelOnClick={() => setShowModal(false)}
+          actionSaveLabel="Proceed"
+          actionSaveOnClick={onSubmit}
+        >
+          <p style={{padding: "10px"}}>Are you sure you want to proceed with payment?</p>
+        </Modal>
+        // <div className="modal-overlay">
+        //   <div className="modal">
+        //     <div className="modal-header">
+        //       <h4 className="modal-title">Confirm Payment</h4>
+        //       <button onClick={() => setShowModal(false)}>×</button>
+        //     </div>
+
+        //     <div className="modal-body">
+        //       <p>Are you sure you want to proceed with payment?</p>
+        //     </div>
+
+        //     <div className="modal-footer">
+        //       <button onClick={() => setShowModal(false)}>Cancel</button>
+        //       <button onClick={handleConfirmPayment}>Ok</button>
+        //     </div>
+        //   </div>
+        // </div>
+      )}
+
     </React.Fragment>
   );
 };
