@@ -1,16 +1,28 @@
 package org.egov.user.web.contract;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.user.config.UserServiceConstants;
-import org.egov.user.domain.model.enums.UserType;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@AllArgsConstructor
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
+import org.egov.user.config.PasswordChangeProperties;
+import org.egov.user.config.UserServiceConstants;
+import org.egov.user.domain.model.enums.UserType;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
 @Setter
@@ -25,19 +37,30 @@ LoggedInUserUpdatePasswordRequest {
     @Size(max = 256)
     private String tenantId;
     private UserType type;
-
+    private boolean selfUpdate= true;
+    private String userName;
+ 
     public org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest toDomain() {
         return org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest.builder()
                 .existingPassword(existingPassword)
                 .newPassword(newPassword)
                 .userName(getUsername())
                 .tenantId(tenantId)
+                .selfUpdate(selfUpdate)
                 .type(type)
+                .requestInfo(requestInfo)
                 .build();
     }
 
     private String getUsername() {
-        return requestInfo == null || requestInfo.getUserInfo() == null ? null : requestInfo.getUserInfo().getUserName();
+    	String retUserName = null;
+    	//update for other user in case of department updates specifice user eg. admin
+    	if(selfUpdate)	
+    		retUserName =  requestInfo == null || requestInfo.getUserInfo() == null ? null : requestInfo.getUserInfo().getUserName();
+    	else {
+    		retUserName =  userName ==  null ? null: userName ;
+    	}
+    	return retUserName;
     }
 }
 

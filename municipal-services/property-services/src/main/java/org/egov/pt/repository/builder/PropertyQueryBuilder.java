@@ -33,7 +33,7 @@ public class PropertyQueryBuilder {
 	public final static String INSERT_DASHBOARD_DATA_LOG = "INSERT INTO dashboard_datapush_log"
 			+ "(date,time, request, response, status, exception_message)" + "VALUES(?, ? , ? ::jsonb, ? ::jsonb,?,?)";
 
-	public final static String appealselectvalue = "appeal.id as id, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber,appeal.appealid,(CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, appeal.tenantid as tenantid,appeal.propertyaddress,appeal.assesmnetyear,appeal.nameofassigningofficer,appeal.designation,appeal.ruleunderorderpassed,appeal.dateoforder,appeal.dateofservice,appeal.dateofpayment,appeal.ownername,appeal.applicantaddress,appeal.reliefclaimed,appeal.statementoffacts,appeal.groundofappeal,appeal.createdby,appeal.lastmodifiedby,appeal.createdtime,appeal.lastmodifiedtime,";
+	public final static String appealselectvalue = "appeal.id as id, appeal.propertyid, appeal.status, appeal.creationreason, appeal.acknowldgementnumber,appeal.appealid,(CASE WHEN appeal.status='ACTIVE' then 0 WHEN appeal.status='INWORKFLOW' then 1 WHEN appeal.status='INACTIVE' then 2 ELSE 3 END) as statusorder, appeal.tenantid as tenantid,appeal.propertyaddress,appeal.assesmnetyear,appeal.nameofassigningofficer,appeal.designation,appeal.ruleunderorderpassed,appeal.dateoforder,appeal.dateofservice,appeal.dateofpayment,appeal.ownername,appeal.applicantaddress,appeal.reliefclaimed,appeal.statementoffacts,appeal.groundofappeal,appeal.createdby,appeal.lastmodifiedby,appeal.createdtime,appeal.lastmodifiedtime,appeal.propertytenantid,";
 
 	private static String PROEPRTY_AUDIT_QUERY = "select property from eg_pt_property_audit where propertyid=?";
 
@@ -866,7 +866,10 @@ public class PropertyQueryBuilder {
 		String tenantId = appealCriteria.getTenantId();
 		if (tenantId != null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append("appeal.tenantid= ?");
+			//if(tenantId.contains("mn."))
+				//builder.append("appeal.propertytenantid= ?");
+			//else
+				builder.append("appeal.tenantid= ?");
 			preparedStmtList.add(tenantId);
 		}
 		Set<String> propertyId = appealCriteria.getPropertyIds();

@@ -106,6 +106,8 @@ public class Appeal {
 	@JsonProperty("groundOfAppeal")
 	private String groundofappeal;
 	
+	private String propertyTenantID;
+	
 	public Appeal addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();

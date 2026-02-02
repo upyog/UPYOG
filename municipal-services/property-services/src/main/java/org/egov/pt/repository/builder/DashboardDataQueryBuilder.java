@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.DashboardDataSearch;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -13,7 +14,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class DashboardDataQueryBuilder {
 
-	public static final String TOTAL_PROPERTIES_REGISTERED = "select count(epp.propertyid) from eg_pt_property epp join eg_pt_address epa on epp.id=epa.propertyid where 1=1";
+	public static final String TOTAL_PROPERTIES_REGISTERED = "select count(epp.propertyid) from eg_pt_property epp join eg_pt_address epa on epp.id=epa.propertyid where epp.status in ('ACTIVE','INWORKFLOW')";
 
 	public static final String PROPERTIES_PENDING_WITH =
 		    "WITH latest_actions AS (\n" +
@@ -28,6 +29,7 @@ public class DashboardDataQueryBuilder {
 		    "  JOIN eg_pt_property epp ON epp.acknowldgementnumber = ewpv.businessid\n" +
 		    "  JOIN eg_pt_address epadd ON epp.id = epadd.propertyid\n" +
 		    "  WHERE ewpv.\"action\" != ''\n" +
+		    "  AND epp.status = 'INWORKFLOW'\n "+
 		    "  /*FILTER_CONDITIONS*/\n" +
 		    ")\n" +
 		    "SELECT \n" +
@@ -56,52 +58,83 @@ public class DashboardDataQueryBuilder {
 			+ "  JOIN eg_pt_address epadd \r\n"
 			+ "    ON ep.id = epadd.propertyid\r\n"
 			+ "  WHERE ewpv.\"action\" = 'APPROVE' \r\n"
+			+ "  AND ep.status = 'ACTIVE' \r\n"
 			+ "  /*FILTER_CONDITIONS*/\n" 
 			+ "  GROUP BY ep.tenantid, epadd.ward_no\r\n"
 			+ ")\r\n"
 			+ "SELECT SUM(approved.approved_count) AS total_approved_count\r\n"
 			+ "FROM approved";
+	
+	public static final String PROPERTIES_REJECTED = "WITH rejected AS (\r\n"
+			+ "  SELECT \r\n"
+			+ "    COUNT(ewpv.businessid) AS rejected_count,\r\n"
+			+ "    ep.tenantid,\r\n"
+			+ "    epadd.ward_no\r\n"
+			+ "  FROM eg_wf_processinstance_v2 ewpv\r\n"
+			+ "  JOIN eg_pt_property ep \r\n"
+			+ "    ON ep.acknowldgementnumber = ewpv.businessid\r\n"
+			+ "  JOIN eg_pt_address epadd \r\n"
+			+ "    ON ep.id = epadd.propertyid\r\n"
+			+ "  WHERE ewpv.\"action\" = 'REJECT' \r\n"
+			+ "  AND ep.status = 'INACTIVE' \r\n"
+			+ "  /*FILTER_CONDITIONS*/\n" 
+			+ "  GROUP BY ep.tenantid, epadd.ward_no\r\n"
+			+ ")\r\n"
+			+ "SELECT SUM(rejected.rejected_count) AS total_rejected_count\r\n"
+			+ "FROM rejected";
 
 	public static final String PROPERTIES_SELF_ASSESSED = "select COUNT(epp.propertyid) AS count\r\n"
 			+ "FROM eg_pt_asmt_assessment epaa\r\n" + "JOIN eg_pt_property epp ON epaa.propertyid = epp.propertyid\r\n"
-			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n" + "WHERE 1=1";
-
+			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n" + "WHERE epp.status = 'ACTIVE'";
+	
 	public static final String PROPERTIES_PENDING_SELF_ASSESSMENT = "select COUNT(epp.propertyid) AS count\r\n"
 			+ "from eg_pt_property epp \r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
-			+ "WHERE epp.propertyid not in (select distinct epaa.propertyid from eg_pt_asmt_assessment epaa)";
+			+ "WHERE epp.propertyid not in (select distinct epaa.propertyid from eg_pt_asmt_assessment epaa) AND epp.status = 'ACTIVE'";
 
 	public static final String PROPERTIES_PAID = "SELECT COUNT(epp.propertyid) AS count\r\n"
 			+ "FROM eg_pg_transactions ept\r\n"
 			+ "JOIN eg_pt_property epp ON ept.consumer_code = epp.propertyid\r\n"
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN egcl_payment ep on ept.txn_id =ep.transactionnumber \r\n"
-			+ "where 1=1";
+			+ "where epp.status = 'ACTIVE'";
 
 	public static final String PROPERTIES_WITH_APPEAL_SUBMITTED = "SELECT COUNT(epp.propertyid) AS count\r\n"
 			+ "FROM  eg_pt_property epp \r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid \r\n"
 			+ "join eg_pt_property_appeal eppa on epp.propertyid =eppa.propertyid \r\n"
 			+ "join eg_wf_processinstance_v2 ewpv on epp.acknowldgementnumber =ewpv.businessid \r\n"
-			+ "where ewpv.\"action\" ='OPEN'";
+			+ "where ewpv.\"action\" ='OPEN' AND epp.status = 'ACTIVE'";
 
 	public static final String APPEALS_PENDING = "SELECT COUNT(epp.propertyid) AS count\r\n"
 			+ "FROM  eg_pt_property epp \r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid \r\n"
 			+ "join eg_pt_property_appeal eppa on epp.propertyid =eppa.propertyid \r\n"
 			+ "join eg_wf_processinstance_v2 ewpv on epp.acknowldgementnumber =ewpv.businessid \r\n"
-			+ "where ewpv.\"action\" ='OPEN'";
+			+ "where ewpv.\"action\" ='OPEN' AND epp.status = 'ACTIVE'";
 	
 	public static final String TOTAL_TAX_COLLECTED="SELECT SUM(ep.totalamountpaid) AS todayscollection\r\n"
 			+ "FROM eg_pt_property epp\r\n"
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pg_transactions ept ON epp.propertyid = ept.consumer_code\r\n"
 			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n"
-			+ "WHERE ept.txn_status = 'SUCCESS'";
+			+ "WHERE ept.txn_status = 'SUCCESS' AND epp.status = 'ACTIVE'";
+	
+	public static final String TOTAL_TAX_COLLECTED_PROPERTIES ="SELECT \r\n"
+			+ "   ept.txn_id , ept.txn_amount , ept.consumer_code , ept.tenant_id \r\n"
+			+ "FROM eg_pt_property epp\r\n"
+			+ "JOIN eg_pt_address epa \r\n"
+			+ "    ON epp.id = epa.propertyid\r\n"
+			+ "JOIN eg_pg_transactions ept \r\n"
+			+ "    ON epp.propertyid = ept.consumer_code\r\n"
+			+ "JOIN egcl_payment ep \r\n"
+			+ "    ON ept.txn_id = ep.transactionnumber\r\n"
+			+ "WHERE ept.txn_status = 'SUCCESS'\r\n"
+			+ "  AND epp.status = 'ACTIVE'";
 	
 	public static final String PROPERTY_TAX_SHARE="SELECT SUM(ep.totalamountpaid) * 5.0 / 8 as PROPERTY_TAX\r\n"
 			+ "FROM eg_pt_property epp\r\n"
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pg_transactions ept ON epp.propertyid = ept.consumer_code\r\n"
 			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n"
-			+ "WHERE ept.txn_status = 'SUCCESS'";
+			+ "WHERE ept.txn_status = 'SUCCESS' AND epp.status = 'ACTIVE'";
 	
 	public static final String PENALTY_SHARE = 
 			"WITH paid_bills AS ( " +
@@ -112,7 +145,7 @@ public class DashboardDataQueryBuilder {
 			"    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"+
 			"    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code " +
 			"    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber " +
-			"    WHERE t.txn_status = 'SUCCESS' and b.status = 'PAID' {DATE_FILTER} {TENANT_FILTER} {WARD_FILTER} " +
+			"    WHERE t.txn_status = 'SUCCESS' AND p.status = 'ACTIVE' and b.status = 'PAID' {DATE_FILTER} {TENANT_FILTER} {WARD_FILTER} " +
 			"    GROUP BY bd.demandid HAVING SUM(bd.totalamount) > 0 " +
 			"), " +
 			"total_demand AS ( " +
@@ -123,7 +156,7 @@ public class DashboardDataQueryBuilder {
 			"    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"+
 			"    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code " +
 			"    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber " +
-			"    WHERE t.txn_status = 'SUCCESS' {DATE_FILTER} {TENANT_FILTER} {WARD_FILTER} " +
+			"    WHERE t.txn_status = 'SUCCESS' AND p.status = 'ACTIVE' {DATE_FILTER} {TENANT_FILTER} {WARD_FILTER} " +
 			"    GROUP BY d.id HAVING SUM(dd.taxamount) > 0 " +
 			"), " +
 			"penalty_demand AS ( " +
@@ -135,7 +168,7 @@ public class DashboardDataQueryBuilder {
 			"    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code " +
 			"    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber " +
 			"    WHERE dd.taxheadcode IN ('PT_PAST_DUE_PENALTY', 'PT_TIME_PENALTY') " +
-			"    AND dd.taxamount > 0 AND t.txn_status = 'SUCCESS' {DATE_FILTER} {TENANT_FILTER} {WARD_FILTER} " +
+			"    AND dd.taxamount > 0 AND t.txn_status = 'SUCCESS' AND p.status = 'ACTIVE' {DATE_FILTER} {TENANT_FILTER} {WARD_FILTER} " +
 			"    GROUP BY d.id " +
 			") " +
 			"SELECT SUM(todaypenaltycollection) AS total_penalty\r\n"
@@ -155,7 +188,7 @@ public class DashboardDataQueryBuilder {
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pg_transactions t ON epp.propertyid = t.consumer_code\r\n"
 			+ "JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
-			+ "WHERE t.txn_status = 'SUCCESS' AND ebv.status = 'PAID' AND ebv2.interestonamount > 0";
+			+ "WHERE t.txn_status = 'SUCCESS' AND ebv.status = 'PAID' AND ebv2.interestonamount > 0 AND epp.status = 'ACTIVE'";
 	
 	public static final String ADVANCE_SHARE="SELECT sum(edv.advanceamount) as totalAdvance \r\n"
 			+ "from egbs_demand_v1 edv \r\n"
@@ -165,8 +198,13 @@ public class DashboardDataQueryBuilder {
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pg_transactions t ON epp.propertyid = t.consumer_code\r\n"
 			+ "JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
-			+ "WHERE t.txn_status = 'SUCCESS' AND ebv.status = 'PAID' AND edv.advanceamount > 0\r\n"
+			+ "WHERE t.txn_status = 'SUCCESS' AND ebv.status = 'PAID' AND edv.advanceamount > 0 AND epp.status = 'ACTIVE'\r\n"
 			+ "";
+
+	public static final String APPLICATION_DATA ="SELECT epp.propertyid, epp.tenantid \r\n"
+		    +"FROM eg_pt_property epp \r\n"
+		    +"JOIN eg_wf_processinstance_v2 ewpv \r\n"
+		    +"ON epp.acknowldgementnumber = ewpv.businessid where 1=1 \r\n";
 
 	public String getTotalPropertyRegisteredQuery(DashboardDataSearch dashboardDataSearch) {
 
@@ -236,7 +274,7 @@ public class DashboardDataQueryBuilder {
 	
 	public String getTotalPropertyApprovedQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(PROPERTIES_APPROVED);
+		StringBuilder stringBuilder = new StringBuilder();
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -256,16 +294,52 @@ public class DashboardDataQueryBuilder {
 		stringBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			stringBuilder.append(" AND ep.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			stringBuilder.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			stringBuilder.append(" AND epadd.ward_no != ''");
 		}
 		
 		String finalQuery = PROPERTIES_APPROVED.replace("/*FILTER_CONDITIONS*/", stringBuilder.toString());
+		System.out.println("finalQuery::"+finalQuery);
+		return finalQuery;
+	}
+	
+	public String getTotalPropertyRejectedQuery(DashboardDataSearch dashboardDataSearch) {
+
+		StringBuilder stringBuilder = new StringBuilder();
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		stringBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
+			stringBuilder.append(" AND ep.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
+			stringBuilder.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			stringBuilder.append(" AND epadd.ward_no != ''");
+		}
+		
+		String finalQuery = PROPERTIES_REJECTED.replace("/*FILTER_CONDITIONS*/", stringBuilder.toString());
 		System.out.println("finalQuery::"+finalQuery);
 		return finalQuery;
 	}
@@ -474,6 +548,40 @@ public class DashboardDataQueryBuilder {
 		return stringBuilder.toString();
 	}
 	
+	public String getTotalTaxCollectedPropertiesQuery(DashboardDataSearch dashboardDataSearch) {
+
+		StringBuilder stringBuilder = new StringBuilder(TOTAL_TAX_COLLECTED_PROPERTIES);
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		stringBuilder.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
+			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
+			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			stringBuilder.append(" AND epa.ward_no != ''");
+		}
+
+		return stringBuilder.toString();
+	}
+	
 	public String getPropertyTaxShareQuery(DashboardDataSearch dashboardDataSearch) {
 
 		StringBuilder stringBuilder = new StringBuilder(PROPERTY_TAX_SHARE);
@@ -600,6 +708,33 @@ public class DashboardDataQueryBuilder {
 			stringBuilder.append(" AND epa.ward_no != ''");
 		}
 
+		return stringBuilder.toString();
+	}
+	
+	public String getApplicationData(DashboardDataSearch dashboardDataSearch,RequestInfo requestInfo)
+	{
+		StringBuilder stringBuilder = new StringBuilder(APPLICATION_DATA);
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		//stringBuilder.append(" AND ewpv.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		stringBuilder.append(" AND ewpv.assigner ='").append(requestInfo.getUserInfo().getUuid()).append("'");
+		if(!StringUtils.isEmpty(dashboardDataSearch.getStatus()))
+			stringBuilder.append(" AND ewpv.\"action\" ='").append(dashboardDataSearch.getStatus()).append("'");
+		
 		return stringBuilder.toString();
 	}
 

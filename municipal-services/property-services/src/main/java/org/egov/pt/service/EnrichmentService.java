@@ -102,7 +102,8 @@ public class EnrichmentService {
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
 
-
+    @Value("${state.level.tenant.id}")
+    private String statetenantid;
 
 
 
@@ -230,7 +231,9 @@ public class EnrichmentService {
 		AuditDetails propertyAuditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		appeal.setId(UUID.randomUUID().toString());
 		appeal.setAuditDetails(propertyAuditDetails);
-
+		appeal.setPropertyTenantID(appeal.getTenantId());
+		//appeal.setTenantId(statetenantid);
+		
 		if (!CollectionUtils.isEmpty(appeal.getDocuments()))
 			appeal.getDocuments().forEach(doc -> {
 				doc.setId(UUID.randomUUID().toString());
@@ -304,7 +307,7 @@ public class EnrichmentService {
 		if (!CollectionUtils.isEmpty(property.getUnits())) {
 			property.getUnits().forEach(unit -> {
 
-				if (unit.getId() == null) {
+				if (unit.getId() == null || ObjectUtils.isEmpty(unit.getId())) {
 					unit.setId(UUID.randomUUID().toString());
 					unit.setActive(true);
 				}
@@ -737,7 +740,6 @@ public class EnrichmentService {
 		Map<String, List<String>> codes = propertyutil.getAttributeValues(config.getStateLevelTenantId(), "tenant", masterNames,
 						"[?(@.city.districtTenantCode== '"+property.getTenantId()+"')].city.code", "$.MdmsRes.tenant", requestInfo);
 		String cityCode = codes.get("tenants").get(0);
-				
 		if (isMutation) {
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getMutationIdGenName(), config.getMutationIdGenFormat(), 1).get(0);
 			//ackNo=ackNo.replace("MN-MT", cityCode);
@@ -747,8 +749,6 @@ public class EnrichmentService {
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
 			ackNo=ackNo.replace("MN-AC", cityCode);
 		}
-			
-
 		if(property.getCreationReason().equals(CreationReason.UPDATE))
 			pId = property.getPropertyId();
 		else {
@@ -810,6 +810,7 @@ public class EnrichmentService {
 
 		String ackNo;
 		ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getBifurcationIdGenName(), config.getBifurcationIdGenFormat(), 1).get(0);
+
 		//removing mn-ac from acknowledgement number adding city code in place of it
 		List<String> masterNames = new ArrayList<>(
 						Arrays.asList("tenants"));
@@ -912,11 +913,13 @@ public class EnrichmentService {
 	private void setIdgenIdsForAppeal(AppealRequest request) {
 
 		Appeal appeal = request.getAppeal();
+		//String tenantId = appeal.getPropertyTenantID();
 		String tenantId = appeal.getTenantId();
 		RequestInfo requestInfo = request.getRequestInfo();
 
 		String pId = propertyutil.getIdList(requestInfo, tenantId, config.getAppealidname(), config.getAppealidformat(), 1).get(0);
 		String ackNo = propertyutil.getIdList(requestInfo, tenantId, config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
+
 		//removing mn-ac from acknowledgement number adding city code in place of it
 		List<String> masterNames = new ArrayList<>(
 						Arrays.asList("tenants"));

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -44,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.xml.BeanDefinitionDocumentReader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -560,15 +562,13 @@ public class PropertyService {
 		PropertyRequest amalPropertiesToBeCheckedRequest = null;
 		Property propertyForAmalgamation = null;
 		Property propertyFromSearchAmalgamation = null;
+		validateAdjacentForAmalgamation(request);
 		for (AmalgamatedProperty a : request.getProperty().getAmalgamatedProperty()) {
 			amalPropertiesToBeCheckedRequest = new PropertyRequest();
 			propertyForAmalgamation = new Property();
 			propertyFromSearchAmalgamation = new Property();
-
 			propertyForAmalgamation.setPropertyId(a.getPropertyId());
 			propertyForAmalgamation.setTenantId(a.getTenantId());
-			;
-
 			amalPropertiesToBeCheckedRequest.setProperty(propertyForAmalgamation);
 			amalPropertiesToBeCheckedRequest.setRequestInfo(request.getRequestInfo());
 
@@ -599,6 +599,74 @@ public class PropertyService {
 		request.getProperty().setAdditionalDetails(node);
 	}
 
+
+	private void validateAdjacentForAmalgamation(PropertyRequest request) {
+		List<AmalgamatedProperty> amalgamatedProperty  = request.getProperty().getAmalgamatedProperty();
+		
+		
+	    Set<String> tenantIds = amalgamatedProperty.stream()
+	            .map(AmalgamatedProperty::getTenantId)
+	            .collect(Collectors.toSet());
+
+	    if (tenantIds.size() != 1 || tenantIds.contains(null)) {
+	        throw new CustomException(
+	                "INVALID_TENANT", "All amalgamated properties must belong to the same tenant" );
+	    }
+	    if (amalgamatedProperty.stream()
+	            .anyMatch(p -> ObjectUtils.isEmpty(p.getPropertyId()))) {
+	        throw new CustomException("PROPERTY_ID_MISSING","PropertyId is mandatory for all amalgamated properties");
+	    }
+		
+		Property requestProperty  = request.getProperty();
+		long distinctTenants = amalgamatedProperty.stream()
+		        .map(AmalgamatedProperty::getTenantId)
+		        .filter(Objects::nonNull)
+		        .distinct()
+		        .count();
+
+		if (distinctTenants > 1) {
+		    throw new CustomException("INVALID_TENANT","All amalgamated properties must belong to the same tenant" );
+		}
+		PropertyCriteria criteria = PropertyCriteria.builder()
+				.propertyIds(amalgamatedProperty.stream().map(AmalgamatedProperty::getPropertyId).collect(Collectors.toSet()))
+				.tenantId(amalgamatedProperty.get(0).getTenantId())
+				.build();
+		List<Property> amalgatedSearchProperty =  searchProperty( criteria, request.getRequestInfo());
+		if(ObjectUtils.isEmpty(amalgatedSearchProperty)) {
+			throw new CustomException("INVALID_PROPERTY","No Property found for amagalamation" );
+		}
+		Set<String> requestedPropertyIds = amalgamatedProperty.stream()
+		        .map(AmalgamatedProperty::getPropertyId)
+		        .collect(Collectors.toSet());
+		Set<String> fetchedPropertyIds = amalgatedSearchProperty.stream()
+		        .map(Property::getPropertyId)
+		        .collect(Collectors.toSet());
+		Set<String> missingPropertyIds = new HashSet<>(requestedPropertyIds);
+		missingPropertyIds.removeAll(fetchedPropertyIds);
+		if (!missingPropertyIds.isEmpty()) {
+		    throw new CustomException("PROPERTY_NOT_FOUND", "Amalgamated properties not found: " + missingPropertyIds);
+		}
+		
+		List<Property> allProperties  = new ArrayList<>();
+		allProperties.addAll(amalgatedSearchProperty);
+		allProperties.add(requestProperty);
+		Set<String> localityKeySet = new HashSet<>();
+		for(Property p:allProperties) {
+			 if (p.getAddress() == null || p.getAddress().getLocality() == null) {
+		            throw new CustomException(
+		                    "INVALID_ADDRESS", "Property address/locality is mandatory for amalgamation");
+		        }
+		        String localityKey =
+		                p.getTenantId() + "|" +
+		                p.getAddress().getLocality().getCode() + "|" +
+		                p.getAddress().getLocality().getName();
+
+		        localityKeySet.add(localityKey);
+		}
+		  if (localityKeySet.size() != 1) {
+		        throw new CustomException("INVALID_TENANT_WARD_VILLAGE","All amalgamated properties must belong to the same tenant, ward and village" );
+		    }
+	}
 
 	private void processPropertyUpdateForAmalgamation(PropertyRequest request, Property propertyFromSearch) {
 
