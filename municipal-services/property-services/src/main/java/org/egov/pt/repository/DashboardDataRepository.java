@@ -38,6 +38,12 @@ public class DashboardDataRepository {
 		BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
 		return result != null ? result : BigInteger.ZERO;
 	}
+	public List<String> getTotalPropertyRegisteredMap(DashboardDataSearch dashboardDataSearch)
+	{
+		String query=dashboardDataQueryBuilder.getTotalPropertyRegisteredQueryPropertyList(dashboardDataSearch);
+		//BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
+		return jdbcTemplate.queryForList(query,String.class);
+	}
 	
 	public Map<String, BigInteger> getPropertiesPendingWithCount(DashboardDataSearch dashboardDataSearch) {
 	    String query = dashboardDataQueryBuilder.getTotalPropertyPendingWithQuery(dashboardDataSearch);

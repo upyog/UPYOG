@@ -15,7 +15,9 @@ import org.springframework.util.StringUtils;
 public class DashboardDataQueryBuilder {
 
 	public static final String TOTAL_PROPERTIES_REGISTERED = "select count(epp.propertyid) from eg_pt_property epp join eg_pt_address epa on epp.id=epa.propertyid where epp.status in ('ACTIVE','INWORKFLOW')";
+	public static final String TOTAL_PROPERTIES_REGISTERED_PROPERTY_LIST = "select epp.propertyid from eg_pt_property epp join eg_pt_address epa on epp.id=epa.propertyid where epp.status in ('ACTIVE','INWORKFLOW')";
 
+	
 	public static final String PROPERTIES_PENDING_WITH =
 		    "WITH latest_actions AS (\n" +
 		    "  SELECT \n" +
@@ -256,6 +258,39 @@ public class DashboardDataQueryBuilder {
 	public String getTotalPropertyRegisteredQuery(DashboardDataSearch dashboardDataSearch) {
 
 		StringBuilder stringBuilder = new StringBuilder(TOTAL_PROPERTIES_REGISTERED);
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		stringBuilder.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
+			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
+			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			stringBuilder.append(" AND epa.ward_no != ''");
+		}
+		return stringBuilder.toString();
+	}
+	
+	public String getTotalPropertyRegisteredQueryPropertyList(DashboardDataSearch dashboardDataSearch) {
+
+		StringBuilder stringBuilder = new StringBuilder(TOTAL_PROPERTIES_REGISTERED_PROPERTY_LIST);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
