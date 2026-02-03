@@ -20,10 +20,6 @@ public class Services {
 	private BigInteger totalPropertiesRegistered=BigInteger.ZERO;
 	private BigInteger propertiesPendingWithDocVerifier=BigInteger.ZERO;
 	private BigInteger propertiesPendingWithFieldInspector=BigInteger.ZERO;
-	@JsonIgnore
-	private Set<String> propertiesPendingWithDocVerifierMap = new HashSet();
-	@JsonIgnore
-	private List<Property> propertiesPendingWithDocVerifierList = new ArrayList<>();
 	private BigInteger propertiesPendingWithApprover=BigInteger.ZERO;
 	private BigInteger propertiesRejected=BigInteger.ZERO;
 	private BigInteger propertiesApproved=BigInteger.ZERO;
