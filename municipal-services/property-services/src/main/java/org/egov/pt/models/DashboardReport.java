@@ -2,6 +2,8 @@ package org.egov.pt.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
@@ -14,7 +16,8 @@ public class DashboardReport {
 	private String state;
 	private String module;
 	private String region;
+	@JsonProperty("data")
 	private List<ServiceWithProperties> services;
-	private List<ServiceWithProperties> revenue;
+	//private List<ServiceWithProperties> revenue;
 
 }

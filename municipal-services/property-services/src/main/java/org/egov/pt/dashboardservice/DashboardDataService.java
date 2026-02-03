@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.DashboardData;
@@ -29,10 +30,13 @@ import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.PropertyRedisCache;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.DashboardRequest;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import io.netty.util.internal.ObjectUtil;
 
 @Service
 public class DashboardDataService {
@@ -141,6 +145,11 @@ public class DashboardDataService {
 	
 	public DashboardReport dashboardDatasWithProperties(DashboardRequest dashboardRequest)
 	{
+		
+		
+		if(ObjectUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getSearchKey())) {
+			throw new CustomException("PROVIDE_DATA_SEARCH_KEY","No valid search key provided");
+		}
 		List<ServiceWithProperties> service = new ArrayList<ServiceWithProperties>();
 		List<ServiceWithProperties> revenue = new ArrayList<ServiceWithProperties>();
 		DashboardReport dashboardData=new DashboardReport();
@@ -178,111 +187,73 @@ public class DashboardDataService {
 			dashboardData.setWard(dashboardRequest.getDashboardDataSearch().getWard());
 		else
 			dashboardData.setWard("MN");
-		service.add(buildService(
-			    "totalPropertiesRegistered",
-			    dashboardReportRepository.getTotalPropertyRegisteredCount(dashboardRequest)
-			));
-		
-		service.add(buildService(
-			    "propertiesPendingWithDocVerifier",
-			    dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest,PENDINGWITHDOCVERIFIER)
-			));
-		
-		
-		service.add(buildService(
-			    "propertiesPendingWithFieldInspector",
-			    dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest,PENDINGWITHFILEDVERIFIER)
-			));	
-		
-		
-		service.add(buildService(
-			    "propertiesPendingWithApprover",
-			    dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest,PENDINGWITHAPPROVER)
-			));	
-		
-	
-		service.add(buildService(
-			    "propertiesApproved",
-			    dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest,APPROVED)
-			));	
-		
-		
-		service.add(buildService(
-			    "propertiesRejected",
-			    dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest,REJECTED)
-			));	
-		
-		
-		
-		service.add(buildService(
-			    "propertiesSelfAssessed",
-			    dashboardReportRepository.getTotalPropertySelfassessedCount(dashboardRequest)
-			));	
-		
-		
-		
-		service.add(buildService(
-			    "propertiesPendingSelfAssessment",
-			    dashboardReportRepository.getTotalPropertyPendingselfAssessedCount(dashboardRequest)
-			));	
 		
 		
 		
 		
-		service.add(buildService(
-			    "propertiesPaid",
-			    dashboardReportRepository.getTotalPropertyPaidCount(dashboardRequest)
-			));	
-		
-		
-		
-		service.add(buildService(
-			    "propertiesWithAppealSubmitted",
-			    dashboardReportRepository.getTotalPropertyAppealSubmitedCount(dashboardRequest)
-			));
-		
-	
-		
-		service.add(buildService(
-			    "appealsPending",
-			    dashboardReportRepository.getTotalPropertyAppealPendingCount(dashboardRequest)
-			));
-		
-		
-		revenue.add(buildService(
-			    "totalTaxCollected",
-			    dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest)
-			));
-			
-		revenue.add(buildService(
-			    "propertyTax",
-			    dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest)
-			));
-		
-		
+		String key = dashboardRequest.getDashboardDataSearch().getSearchKey();
+		List<Property> value;
+
+		switch (key) {
+		    case "totalPropertiesRegistered":
+		        value = dashboardReportRepository.getTotalPropertyRegisteredCount(dashboardRequest);
+		        break;
+		    case "propertiesPendingWithDocVerifier":
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PENDINGWITHDOCVERIFIER);
+		        break;
+		    case "propertiesPendingWithFieldInspector":
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PENDINGWITHFILEDVERIFIER);
+		        break;
+		    case "propertiesPendingWithApprover":
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PENDINGWITHAPPROVER);
+		        break;
+		    case "propertiesApproved":
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, APPROVED);
+		        break;
+		    case "propertiesRejected":
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, REJECTED);
+		        break;
+		    case "propertiesSelfAssessed":
+		        value = dashboardReportRepository.getTotalPropertySelfassessedCount(dashboardRequest);
+		        break;
+		    case "propertiesPendingSelfAssessment":
+		        value = dashboardReportRepository.getTotalPropertyPendingselfAssessedCount(dashboardRequest);
+		        break;
+		    case "propertiesPaid":
+		        value = dashboardReportRepository.getTotalPropertyPaidCount(dashboardRequest);
+		        break;
+		    case "propertiesWithAppealSubmitted":
+		        value = dashboardReportRepository.getTotalPropertyAppealSubmitedCount(dashboardRequest);
+		        break;
+		    case "appealsPending":
+		        value = dashboardReportRepository.getTotalPropertyAppealPendingCount(dashboardRequest);
+		        break;
+		    case "totalTaxCollected":
+		    	 value = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
+			      break;
+		    case "propertyTax":
+		        value = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
+		        break;
+		    case "penalty":
+		        value = dashboardReportRepository.getPenaltyShareAmount(dashboardRequest);
+		        break;
+		    case "interest":
+		        value = dashboardReportRepository.getInterestShareAmount(dashboardRequest);
+		        break;
+		    case "advance":
+		        value =  dashboardReportRepository.getAdvanceShareAmount(dashboardRequest);
+		        break;
+		    default:
+		        throw new IllegalArgumentException("Unknown key: " + key);
+		}
+
+		// Now add to service
+		service.add(buildService(key, value));
+
 			/*
 			 * revenue.add(buildService( "refund",
 			 * dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest) ));
 			 */
-	
-		
-		revenue.add(buildService(
-			    "penalty",
-			    dashboardReportRepository.getPenaltyShareAmount(dashboardRequest)
-			));
-		
-		
-		
-		revenue.add(buildService(
-			    "interest",
-			    dashboardReportRepository.getInterestShareAmount(dashboardRequest)
-			));
-		
-		revenue.add(buildService(
-			    "advance",
-			    dashboardReportRepository.getAdvanceShareAmount(dashboardRequest)
-			));
-		
 
 			/*
 			 * revenue.add(buildService( "arrears",
@@ -290,7 +261,7 @@ public class DashboardDataService {
 			 */
 		
 		dashboardData.setServices(service);
-		dashboardData.setRevenue(revenue);
+		
 		
 		return dashboardData;
 	}

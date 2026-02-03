@@ -52,9 +52,10 @@ public class DashboardReportRepository {
 		Set<String> propertyIds = new HashSet<>(propertyIdList);
 		PropertyCriteria criteria = new PropertyCriteria();
 		criteria.setPropertyIds(propertyIds);
-		List<Property> properties=new ArrayList<>();
+		List<Property> properties=null;
 		if(!CollectionUtils.isEmpty(propertyIds))
-			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+			properties=  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+		
 		
 		return properties;
 		
