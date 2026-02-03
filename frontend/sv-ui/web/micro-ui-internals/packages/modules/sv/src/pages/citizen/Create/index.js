@@ -1,5 +1,5 @@
 
-import React ,{Children, Fragment}from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -32,6 +32,13 @@ const SVCreate = ({ parentRoute }) => {
         enabled: vendingApplicationNo?true:false
     },
   );
+  // addin the Ids of both spouse and dependent if both exist so that while updating the data we can send the Ids to update the correct details
+  const vendorSpouseDetails = vendingApplicationData?.SVDetail?.[0]?.vendorDetail?.find((item)=>item.relationshipType==="SPOUSE") || {};
+  const vendorDependentDetails = vendingApplicationData?.SVDetail?.[0]?.vendorDetail?.filter(item => item.relationshipType === "DEPENDENT") || [];  const spouseId = vendorSpouseDetails?.id; 
+  const dependentIds = vendorDependentDetails.map(dep => dep.id);
+
+  sessionStorage.setItem("spouseId",spouseId) || null;
+  sessionStorage.setItem("dependentIds",JSON.stringify(dependentIds));  
   const vendingData=vendingApplicationData?.SVDetail?.[0]
 
   const { data: vendingDraftData } = Digit.Hooks.sv.useSvSearchApplication(
@@ -137,6 +144,8 @@ const SVCreate = ({ parentRoute }) => {
     sessionStorage.removeItem("vendorIds");
     sessionStorage.removeItem("bankIds");
     sessionStorage.removeItem("venId");
+    sessionStorage.removeItem("spouseId");
+    sessionStorage.removeItem("dependentIds");
   };
   
   let commonFields = Config;
