@@ -60,6 +60,7 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.egov.commons.dao.FunctionDAO;
 
 @Service
 public class ExpenseBillNumberGeneratorImpl implements ExpenseBillNumberGenerator {
@@ -69,6 +70,9 @@ public class ExpenseBillNumberGeneratorImpl implements ExpenseBillNumberGenerato
 
     @Autowired
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
+
+     @Autowired
+    private FunctionDAO functionDAO;
 
     /**
      * 
@@ -87,7 +91,7 @@ public class ExpenseBillNumberGeneratorImpl implements ExpenseBillNumberGenerato
             throw new ValidationException(FinancialConstants.EMPTY_STRING, "Financial Year is not defined for the voucher date" );
         sequenceName = "seq_expense_billnumber_" + financialYear.getFinYearRange();
         Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
-        expenseBillNumber = String.format("%s/%s/%04d/%s", br.getEgBillregistermis().getDepartmentcode(), "EJV",nextSequence, financialYear.getFinYearRange());
+        expenseBillNumber = String.format("%s/%s/%s/%04d",financialYear.getFinYearRange(), br.getEgBillregistermis().getDepartmentName(), br.getEgBillregistermis().getFunction().getCode(),nextSequence);
         return expenseBillNumber;
     }
 }
