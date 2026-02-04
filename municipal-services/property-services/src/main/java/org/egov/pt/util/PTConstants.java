@@ -563,6 +563,13 @@ public class PTConstants {
 	public static final String DASHBOARD_APPLICATION_STATUS = "applicationStatus";
 	public static final String DASHBOARD_FINANCIAL_YEAR = "financialYear";
 	public static final String DASHBOARD_USAGE_CATEGORY = "usageCategory";
+	
+	public static final String PENDINGWITHDOCVERIFIER = "PENDINGWITHDOCVERIFIER";
+	public static final String PENDINGWITHFILEDVERIFIER = "PENDINGWITHFILEDVERIFIER";
+	public static final String REJECTED = "REJECTED";
+	public static final String APPROVED = "APPROVED";
+	public static final String PENDINGWITHAPPROVER = "PENDINGWITHAPPROVER";
+	
     
 
 }

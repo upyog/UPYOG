@@ -37,19 +37,11 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import io.netty.util.internal.ObjectUtil;
-
+import org.egov.pt.util.PTConstants;
 @Service
 public class DashboardDataService {
 	
-	private static final String PENDINGWITHDOCVERIFIER = "PENDINGWITHDOCVERIFIER";
-
-	private static final String PENDINGWITHFILEDVERIFIER = "PENDINGWITHFILEDVERIFIER";
-
-	private static final String REJECTED = "REJECTED";
-
-	private static final String APPROVED = "APPROVED";
-
-	private static final String PENDINGWITHAPPROVER = "PENDINGWITHAPPROVER";
+	
 
 	@Autowired
 	DashboardDataRepository dashboardDataRepository;
@@ -111,10 +103,10 @@ public class DashboardDataService {
 			dashboardData.setWard("MN");
 		
 		services.setTotalPropertiesRegistered(dashboardDataRepository.getTotalPropertyRegisteredCount(dashboardDataSearch));
-		services.setPropertiesPendingWithDocVerifier(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault(PENDINGWITHDOCVERIFIER, BigInteger.ZERO));
+		services.setPropertiesPendingWithDocVerifier(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault(PTConstants.PENDINGWITHDOCVERIFIER, BigInteger.ZERO));
 		//services.setPropertiesPendingWithDocVerifierMap(dashboardDataRepository.getPropertiesPendingWithMap(dashboardDataSearch).get("PENDINGWITHDOCVERIFIER"));
-		services.setPropertiesPendingWithFieldInspector(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault(PENDINGWITHFILEDVERIFIER,BigInteger.ZERO));
-		services.setPropertiesPendingWithApprover(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault(PENDINGWITHAPPROVER,BigInteger.ZERO));
+		services.setPropertiesPendingWithFieldInspector(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault(PTConstants.PENDINGWITHFILEDVERIFIER,BigInteger.ZERO));
+		services.setPropertiesPendingWithApprover(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault(PTConstants.PENDINGWITHAPPROVER,BigInteger.ZERO));
 		services.setPropertiesRejected(dashboardDataRepository.getTotalPropertyRejectedCount(dashboardDataSearch));
 		services.setPropertiesApproved(dashboardDataRepository.getTotalPropertyApprovedCount(dashboardDataSearch));
 		services.setPropertiesSelfAssessed(dashboardDataRepository.getTotalPropertySelfassessedCount(dashboardDataSearch));
@@ -199,19 +191,19 @@ public class DashboardDataService {
 		        value = dashboardReportRepository.getTotalPropertyRegisteredCount(dashboardRequest);
 		        break;
 		    case "propertiesPendingWithDocVerifier":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PENDINGWITHDOCVERIFIER);
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.PENDINGWITHDOCVERIFIER);
 		        break;
 		    case "propertiesPendingWithFieldInspector":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PENDINGWITHFILEDVERIFIER);
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.PENDINGWITHFILEDVERIFIER);
 		        break;
 		    case "propertiesPendingWithApprover":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PENDINGWITHAPPROVER);
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.PENDINGWITHAPPROVER);
 		        break;
 		    case "propertiesApproved":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, APPROVED);
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.APPROVED);
 		        break;
 		    case "propertiesRejected":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, REJECTED);
+		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.REJECTED);
 		        break;
 		    case "propertiesSelfAssessed":
 		        value = dashboardReportRepository.getTotalPropertySelfassessedCount(dashboardRequest);
