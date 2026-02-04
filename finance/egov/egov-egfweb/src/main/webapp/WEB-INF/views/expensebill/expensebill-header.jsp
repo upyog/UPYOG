@@ -66,9 +66,9 @@
 					<form:errors path="billnumber" cssClass="add-margin error-msg" />
 				</div>
 				
-				<!--  <label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>-->
-				<span class="mandatory"></span>
-				</label>
+				<!--  <label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>
+				  <span class="mandatory"></span>
+				</label>-->
 				<div class="col-sm-3 add-margin">
 					<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" readonly="readonly" style="display:none;" />
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
