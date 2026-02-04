@@ -2552,8 +2552,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         List<Department> departmentList = masterDataCache.get("egi-department");
         Map<String,String> deptMap = new HashMap<>();
         for(Department dep : departmentList){
-            deptMap.put(dep.getCode(), dep.getName());
-        }
+			deptMap.put(dep.getId().toString(), dep.getName());       
+		}
         
         Collections.sort(budgetDetails, (o1, o2) -> deptMap.get(o1.getExecutingDepartment()).toUpperCase()
                 .compareTo(deptMap.get(o2.getExecutingDepartment()).toUpperCase()));
