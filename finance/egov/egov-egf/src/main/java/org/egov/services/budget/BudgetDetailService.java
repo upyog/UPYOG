@@ -2552,7 +2552,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         List<Department> departmentList = masterDataCache.get("egi-department");
         Map<String,String> deptMap = new HashMap<>();
         for(Department dep : departmentList){
-			deptMap.put(dep.getId().toString(), dep.getName());       
+			deptMap.put(dep.getCode(), dep.getName());       
 		}
         
         Collections.sort(budgetDetails, (o1, o2) -> deptMap.get(o1.getExecutingDepartment()).toUpperCase()
