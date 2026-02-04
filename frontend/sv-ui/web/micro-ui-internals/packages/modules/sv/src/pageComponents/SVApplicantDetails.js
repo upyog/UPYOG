@@ -2,8 +2,9 @@ import { CardLabel, FormStep,RadioButtons, TextInput, CheckBox, LinkButton, Mobi
 import React, { useState,useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/Timeline";
-import { calculateAge } from "../utils";
+import { calculateAge, formatToInputDate } from "../utils";
 import { useLocation } from "react-router-dom";
+import { UPYOG_CONSTANTS } from "../utils";
 
 /**
  * Component will render Applicant Details both citizen and employee side 
@@ -28,19 +29,19 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
     }
   };
   const Objectconvert = (String) => String ? { i18nKey: String, code: String, value: String } : null;
-  const [vendorName, setvendorName] = useState(formData?.owner?.units?.vendorName || formData?.owner?.vendorName || "");
-  const [userCategory, setownerTypeCategory] = useState(formData?.owner?.units?.userCategory||formData?.owner?.userCategory||"");
-  const [vendorDateOfBirth, setvendorDateOfBirth] = useState(formData?.owner?.units?.vendorDateOfBirth || formData?.owner?.vendorDateOfBirth || "");
-  const [gender, setgender] = useState(formData?.owner?.units?.gender || formData?.owner?.gender || "");
-  const [fatherName, setfatherName] = useState(editdata?.vendorDetail?.[0]?.fatherName||formData?.owner?.units?.fatherName || formData?.owner?.fatherName || "");
-  const [spouseName, setspouseName] = useState(formData?.owner?.units?.spouseName || formData?.owner?.spouseName || "");
+  const [vendorName, setvendorName] = useState(formData?.owner?.vendorDetails?.vendorName || formData?.owner?.vendorName || "");
+  const [userCategory, setownerTypeCategory] = useState(formData?.owner?.vendorDetails?.userCategory||formData?.owner?.userCategory||"");
+  const [vendorDateOfBirth, setvendorDateOfBirth] = useState(formData?.owner?.vendorDetails?.vendorDateOfBirth || formData?.owner?.vendorDateOfBirth || "");
+  const [gender, setgender] = useState(formData?.owner?.vendorDetails?.gender || formData?.owner?.gender || "");
+  const [fatherName, setfatherName] = useState(editdata?.vendorDetail?.[0]?.fatherName||formData?.owner?.vendorDetails?.fatherName || formData?.owner?.fatherName || "");
+  const [spouseName, setspouseName] = useState(formData?.owner?.spouseDetails?.spouseName || formData?.owner?.spouseName || "");
   const [spousedependent, setspousedependent] = useState(false)
-  const [mobileNumber, setmobileNumber] = useState(formData?.owner?.units?.mobileNumber || formData?.owner?.mobileNumber || "");
-  const [spouseDateBirth, setspouseDateBirth] = useState(formData?.owner?.units?.spouseDateBirth || formData?.owner?.spouseDateBirth || "");
-  const [dependentName, setdependentName] = useState(formData?.owner?.units?.dependentName || formData?.owner?.dependentName || "");
-  const [dependentDateBirth, setdependentDateBirth] = useState(formData?.owner?.units?.dependentDateBirth || formData?.owner?.dependentDateBirth || "");
-  const [dependentGender, setdependentGender] = useState(formData?.owner?.units?.dependentGender || formData?.owner?.dependentGender || "");
-  const [email, setemail] = useState(formData?.owner?.units?.email || formData?.owner?.email || "");
+  const [mobileNumber, setmobileNumber] = useState(formData?.owner?.vendorDetails?.mobileNumber || formData?.owner?.mobileNumber || "");
+  const [spouseDateBirth, setspouseDateBirth] = useState(formData?.owner?.spouseDetails?.spouseDateBirth || formData?.owner?.spouseDateBirth || "");
+  const [dependentName, setdependentName] = useState(formData?.owner?.dependentDetails?.dependentName || formData?.owner?.dependentName || "");
+  const [dependentDateBirth, setdependentDateBirth] = useState(formData?.owner?.dependentDetails?.dependentDateBirth || formData?.owner?.dependentDateBirth || "");
+  const [dependentGender, setdependentGender] = useState(formData?.owner?.dependentDetails?.dependentGender || formData?.owner?.dependentGender || "");
+  const [email, setemail] = useState(formData?.owner?.vendorDetails?.email || formData?.owner?.email || "");
   const [tradeNumber, settradeNumber] = useState(formData?.owner?.units?.tradeNumber || formData?.owner?.tradeNumber || "");
   const [error, setError] = useState(null);
 
@@ -49,29 +50,63 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
   const inputStyles = user.type === "EMPLOYEE" ? "50%" : "86%";
   const [showToast, setShowToast] = useState(null);
   const { control } = useForm();
+  
+   // Extracting details based on relationship type because vendorDetail is an array of objects
+    const vendorPersonalDetails = previousData?.vendorDetail?.find((item)=>item.relationshipType===UPYOG_CONSTANTS.VENDOR) || editdata?.vendorDetail?.find((item)=>item.relationshipType===UPYOG_CONSTANTS.VENDOR)|| {};
+    const vendorSpouseDetails = previousData?.vendorDetail?.find((item)=>item.relationshipType===UPYOG_CONSTANTS.SPOUSE) || editdata?.vendorDetail?.find((item)=>item.relationshipType===UPYOG_CONSTANTS.SPOUSE)|| {};
+    const vendorDependentDetails = previousData?.vendorDetail?.filter((item) => item.relationshipType === UPYOG_CONSTANTS.DEPENDENT) || editdata?.vendorDetail?.filter((item) => item.relationshipType === UPYOG_CONSTANTS.DEPENDENT) || [];
+    const [vendorDetails, setVendorDetails] = useState(()=> 
+     formData?.owner?.vendorDetails || {
+      vendorName: (vendorPersonalDetails?.name ||(user?.type==="CITIZEN"?user?.name:"") || ""),
+      userCategory:(Objectconvert(vendorPersonalDetails?.userCategory)||""), 
+      vendorDateOfBirth:formatToInputDate(vendorPersonalDetails?.dob|| ""), 
+      gender: (convertToObject(vendorPersonalDetails?.gender)||""), 
+      fatherName: (vendorPersonalDetails?.fatherName||""), 
+      email:(vendorPersonalDetails?.emailId||(user?.type==="CITIZEN"?user?.emailId:"") || ""), 
+      mobileNumber: (vendorPersonalDetails?.mobileNo||(user?.type==="CITIZEN"?user?.mobileNumber:"") || "")
+    });
 
-  const [fields, setFeilds] = useState(
-    (formData?.owner && formData?.owner?.units) || [{ 
-      vendorName: (previousData?.vendorDetail?.[0]?.name ||editdata?.vendorDetail?.[0]?.name ||(user?.type==="CITIZEN"?user?.name:"") || ""),
-      userCategory:(Objectconvert(previousData?.vendorDetail?.[0]?.userCategory||editdata?.vendorDetail?.[0]?.userCategory)||""), 
-      vendorDateOfBirth:(previousData?.vendorDetail?.[0]?.dob||editdata?.vendorDetail?.[0]?.dob|| ""), 
-      gender: convertToObject(previousData?.vendorDetail?.[0]?.gender||editdata?.vendorDetail?.[0]?.gender)||"", 
-      fatherName: (previousData?.vendorDetail?.[0]?.fatherName||editdata?.vendorDetail?.[0]?.fatherName||""), 
-      spouseName: (previousData?.vendorDetail?.[1]?.name||editdata?.vendorDetail?.[1]?.name||""), 
-      mobileNumber: (previousData?.vendorDetail?.[0]?.mobileNo||editdata?.vendorDetail?.[0]?.mobileNo||(user?.type==="CITIZEN"?user?.mobileNumber:"") || ""), 
-      spouseDateBirth: (previousData?.vendorDetail?.[1]?.dob||editdata?.vendorDetail?.[1]?.dob|| ""), 
-      dependentName: (previousData?.vendorDetail?.[2]?.name||editdata?.vendorDetail?.[2]?.name||""), 
-      dependentDateBirth: (previousData?.vendorDetail?.[2]?.dob||editdata?.vendorDetail?.[2]?.dob||""), 
-      dependentGender: (convertToObject(previousData?.vendorDetail?.[2]?.gender||editdata?.vendorDetail?.[2]?.gender)||""), 
-      email:(previousData?.vendorDetail?.[0]?.emailId||editdata?.vendorDetail?.[0]?.emailId||(user?.type==="CITIZEN"?user?.emailId:"") || ""), 
-      tradeNumber:(previousData?.vendorDetail?.[0]?.tradeNumber||editdata?.vendorDetail?.[0]?.tradeNumber||"")
-    }]);
+    const [spouseDetails, setSpouseDetails] = useState(()=>
+      formData?.owner?.spouseDetails || {
+      spouseName: (vendorSpouseDetails?.name||""),
+      spouseDateBirth: formatToInputDate(vendorSpouseDetails?.dob|| ""),
+    });
+
+    const [dependentDetails, setDependentDetails] = useState(() => {
+      // Priority 1: already filled form data
+      if (
+        Array.isArray(formData?.owner?.dependentDetails) &&
+        formData.owner.dependentDetails.length > 0
+      ) {
+        return formData.owner.dependentDetails;
+      }
+
+      // Priority 2: backend data (edit / previous)
+      if (vendorDependentDetails.length > 0) {
+        return vendorDependentDetails.map((dep) => ({
+          dependentName: dep?.name || "",
+          dependentDateBirth: formatToInputDate(dep?.dob || ""),
+          dependentGender: convertToObject(dep?.gender) || "",
+        }));
+      }
+
+      // Priority 3: default empty row
+      return [
+        {
+          dependentName: "",
+          dependentDateBirth: "",
+          dependentGender: "",
+        },
+      ];
+    });
+
 
   function handleAdd() {
-    const values = [...fields];
-    values.push({ vendorName: "", userCategory:"",vendorDateOfBirth: "", gender: "", fatherName: "", spouseName: "", mobileNumber: "", spouseDateBirth: "", dependentName: "", dependentDateBirth: "", dependentGender: "", email:"", tradeNumber:""});
-    setFeilds(values);
+    const values = [...dependentDetails];
+    values.push({ dependentName: "", dependentDateBirth: "", dependentGender: ""});
+    setDependentDetails(values);
   }
+
   const validateEmail = (value) => {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|org|in)$/;
     if (value === "") {
@@ -86,10 +121,10 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
   }
 
   function handleRemove(index) {
-    const values = [...fields];
+    const values = [...dependentDetails];
     if (values.length != 1) {
       values.splice(index, 1);
-      setFeilds(values);
+      setDependentDetails(values);
     }
   }
 
@@ -172,70 +207,70 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
     if (/\d/.test(e.target.value)) {
       setShowToast({ error: true, label: t("SV_CITIZEN_VALIDATION_FORMAT") });
     }
-    let units = [...fields];
-    units[i].vendorName = e.target.value;
+    let units = {...vendorDetails};
+    units.vendorName = e.target.value;
     setvendorName(e.target.value);
-    setFeilds(units);
+    setVendorDetails(units);
   }
-  function selectvendorDateOfBirth(i, e) {
-    let units = [...fields];
-    units[i].vendorDateOfBirth = e.target.value;
+  function selectvendorDateOfBirth(e) {
+    let units = {...vendorDetails};
+    units.vendorDateOfBirth = e.target.value;
     setvendorDateOfBirth(e.target.value);
-    setFeilds(units);
+    setVendorDetails(units);
     validateAge(e.target.value, "vendor");
   }
-  function selectgender(i, value) {
-    let units = [...fields];
-    units[i].gender = value;
+  function selectgender(value) {
+    let units = {...vendorDetails};
+    units.gender = value;
     setgender(value);
-    setFeilds(units);
+    setVendorDetails(units);
   }
-  function selectownertype(i, value) {
-    let units = [...fields];
-    units[i].userCategory = value;
+  function selectownertype(value) {
+    let units = {...vendorDetails};
+    units.userCategory = value;
     setownerTypeCategory(value);
-    setFeilds(units);
+    setVendorDetails(units);
   }
-  function selectfatherName(i, e) {
+  function selectfatherName(e) {
     if (/\d/.test(e.target.value)) {
       setShowToast({ error: true, label: t("SV_CITIZEN_VALIDATION_FORMAT") });
     }
-    let units = [...fields];
-    units[i].fatherName = e.target.value;
+    let units = {...vendorDetails};
+    units.fatherName = e.target.value;
     setfatherName(e.target.value);
-    setFeilds(units);
+    setVendorDetails(units);
   }
 
-  function selectspouseName(i, e) {
+  function selectspouseName(e) {
     if (/\d/.test(e.target.value)) {
       setShowToast({ error: true, label: t("SV_CITIZEN_VALIDATION_FORMAT") });
     }
-    let units = [...fields];
-    units[i].spouseName = e.target.value;
+    let units = {...spouseDetails};
+    units.spouseName = e.target.value;
     setspouseName(e.target.value);
-    setFeilds(units);
+    setSpouseDetails(units);
   }
 
-  function selectmobileNumber(i, e) {
-    let units = [...fields];
-    units[i].mobileNumber = e;
+  function selectmobileNumber(e) {
+    let units = {...vendorDetails};
+    units.mobileNumber = e;
     setmobileNumber(e);
-    setFeilds(units);
+    setVendorDetails(units);
   }
 
-  function selectspouseDateBirth(i, e) {
-    let units = [...fields];
-    units[i].spouseDateBirth = e.target.value;
+  function selectspouseDateBirth(e) {
+    let units = {...spouseDetails};
+    units.spouseDateBirth = e.target.value;
     setspouseDateBirth(e.target.value);
-    setFeilds(units);
+    setSpouseDetails(units);
     validateAge(e.target.value, "spouse");
   }
 
   function selectdependentDateBirth(i, e) {
-    let units = [...fields];
+    let units = [...dependentDetails];
     units[i].dependentDateBirth = e.target.value;
     setdependentDateBirth(e.target.value);
-    setFeilds(units);
+    setDependentDetails(units);
     validateAge(e.target.value, "dependent");
   }
 
@@ -243,43 +278,34 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
     if (/\d/.test(e.target.value)) {
       setShowToast({ error: true, label: t("SV_CITIZEN_VALIDATION_FORMAT") });
     }
-    let units = [...fields];
+    let units = [...dependentDetails];
     units[i].dependentName = e.target.value;
     setdependentName(e.target.value);
-    setFeilds(units);
+    setDependentDetails(units);
   }
 
   function selectdependentGender(i, value) {
-    let units = [...fields];
+    let units = [...dependentDetails];
     units[i].dependentGender = value;
     setdependentGender(value);
-    setFeilds(units);
+    setDependentDetails(units);
   }
 
-  function selectemail(i, e) {
-    let units = [...fields];
-    units[i].email = e.target.value;
+  function selectemail(e) {
+    let units = {...vendorDetails};
+    units.email = e.target.value;
     const value = e.target.value
     setemail(e.target.value);
     validateEmail(value);
-    setFeilds(units);
+    setVendorDetails(units);
   }
-  
-
-  function selecttradeNumber(i, e) {
-    let units = [...fields];
-    units[i].tradeNumber = e.target.value;
-    settradeNumber(e.target.value);
-    setFeilds(units);
-  }
-
 
   //Custom function fo rthe payload whic we can use while goint to next
 
   const handleSaveasDraft=()=>{
     let vendordetails = [];
     let tenantId=Digit.ULBService.getCitizenCurrentTenant(true);
-  const createVendorObject = (fields) => ({
+  const createVendorObject = (vendorDetails) => ({
     applicationId: "",
     auditDetails: {
       createdBy: "",
@@ -287,19 +313,19 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: fields?.[0]?.vendorDateOfBirth,
-    userCategory:fields?.[0]?.userCategory?.code,
-    emailId: fields?.[0]?.email,
-    fatherName: fields?.[0]?.fatherName,
-    gender: fields?.[0]?.gender?.code.charAt(0),
+    dob: vendorDetails?.vendorDateOfBirth,
+    userCategory:vendorDetails?.userCategory?.code,
+    emailId: vendorDetails?.email,
+    fatherName: vendorDetails?.fatherName,
+    gender: vendorDetails?.gender?.code.charAt(0),
     id: "",
-    mobileNo: fields?.[0]?.mobileNumber,
-    name: fields?.[0]?.vendorName,
+    mobileNo: vendorDetails?.mobileNumber,
+    name: vendorDetails?.vendorName,
     relationshipType: "VENDOR",
     vendorId: null
   });
 
-  const createSpouseObject = (fields) => ({
+  const createSpouseObject = (spouseDetails) => ({
     applicationId: "",
     auditDetails: {
       createdBy: "",
@@ -307,20 +333,20 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: fields?.[0]?.spouseDateBirth,
-    userCategory:fields?.[0]?.userCategory?.code,
+    dob: spouseDetails?.spouseDateBirth,
+    userCategory: spouseDetails?.userCategory?.code,
     emailId: "",
-    isInvolved: fields?.spouseDependentChecked,
+    isInvolved: spouseDetails?.spouseDependentChecked,
     fatherName: "",
     gender: "O",
     id: "",
     mobileNo: "",
-    name: fields?.[0]?.spouseName,
+    name: spouseDetails?.spouseName,
     relationshipType: "SPOUSE",
     vendorId: null
   });
 
-  const createDependentObject = (fields) => ({
+  const createDependentObject = (dependent) => ({
     applicationId: "",
     auditDetails: {
       createdBy: "",
@@ -328,44 +354,52 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: fields?.[0]?.dependentDateBirth,
-    userCategory:fields?.[0]?.userCategory?.code,
+    dob: dependent?.dependentDateBirth,
+    userCategory: dependent?.userCategory?.code,
     emailId: "",
-    isInvolved: fields?.dependentNameChecked,
+    isInvolved: dependentNameChecked,
     fatherName: "",
-    gender: fields?.[0]?.dependentGender?.code.charAt(0),
+    gender: dependent?.dependentGender?.code?.charAt(0),
     id: "",
     mobileNo: "",
-    name: fields?.[0]?.dependentName,
+    name: dependent?.dependentName,
     relationshipType: "DEPENDENT",
     vendorId: null
-  });
+});
 
   // Helper function to check if a string is empty or undefined
   const isEmpty = (str) => !str || str.trim() === '';
 
   // Main logic
-  if (!isEmpty(fields?.[0]?.vendorName)) {
-    const spouseName = fields?.[0]?.spouseName;
-    const dependentName = fields?.[0]?.dependentName;
+  if (!isEmpty(vendorDetails?.vendorName)) {
+    const spouseName = spouseDetails?.spouseName;
+    const dependentName = dependentDetails?.[0]?.dependentName;
 
     if (isEmpty(spouseName) && isEmpty(dependentName)) {
       // Case 1: Only vendor exists
-      vendordetails = [createVendorObject(fields)];
+      vendordetails = [createVendorObject(vendorDetails)];
     } else if (!isEmpty(spouseName) && isEmpty(dependentName)) {
       // Case 2: Both vendor and spouse exist
       vendordetails = [
-        createVendorObject(fields),
-        createSpouseObject(fields)
+        createVendorObject(vendorDetails),
+        createSpouseObject(spouseDetails)
       ];
-    } else if (!isEmpty(spouseName) && !isEmpty(dependentName)) {
-      // Case 3: All three exist (vendor, spouse, and dependent)
-      vendordetails = [
-        createVendorObject(fields),
-        createSpouseObject(fields),
-        createDependentObject(fields)
-      ];
-    }
+    } else if (!isEmpty(spouseName) && dependentDetails.length > 0) {
+        const validDependents = dependentDetails.filter(
+          (d) => !isEmpty(d.dependentName)
+        );
+
+        const dependentPayload = validDependents.map((dep) =>
+          createDependentObject(dep)
+        );
+
+        vendordetails = [
+          createVendorObject(vendorDetails),
+          createSpouseObject(spouseDetails),
+          ...dependentPayload
+        ];
+      }
+
   }
 
   const api_response = sessionStorage.getItem("Response");
@@ -464,7 +498,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       localAuthorityName: "",
       tenantId: tenantId,
       termsAndCondition: "Y",
-      tradeLicenseNo: fields?.[0]?.tradeNumber,
+      tradeLicenseNo: vendorDetails?.[0]?.tradeNumber,
       vendingActivity: "",
       vendingArea: "0",
       vendingLicenseCertificateId: "",
@@ -522,9 +556,6 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
 
   };
 
-
-
-
   const goNext = () => {
 
     if (error) {
@@ -533,9 +564,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
   }
 
     // Validate all applicable dates before proceeding
-    const isVendorAgeValid = validateAge(fields[0].vendorDateOfBirth, "vendor");
-    const isSpouseAgeValid = !spouseDependentChecked || validateAge(fields[0].spouseDateBirth, "spouse");
-    const isDependentAgeValid = !dependentNameChecked || validateAge(fields[0].dependentDateBirth, "dependent");
+    const isVendorAgeValid = validateAge(vendorDetails.vendorDateOfBirth, "vendor");
+    const isSpouseAgeValid = !spouseDependentChecked || validateAge(spouseDetails.spouseDateBirth, "spouse");
+    const isDependentAgeValid = !dependentNameChecked || validateAge(dependentDetails[0].dependentDateBirth, "dependent");
 
     if (!isVendorAgeValid || !isSpouseAgeValid || !isDependentAgeValid) {
       return;
@@ -544,7 +575,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
     let ownerDetails = formData.owner || {};
     let ownerStep = {
       ...ownerDetails,
-      units: fields,
+      vendorDetails,
+      spouseDetails,
+      dependentDetails,
       spouseDependentChecked,
       dependentNameChecked
     };
@@ -562,11 +595,10 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={!fields[0].vendorName || !fields[0].userCategory|| !fields[0].vendorDateOfBirth || !fields[0].gender || !fields[0].fatherName || (spouseDependentChecked && !fields[0].spouseName) || (dependentNameChecked && !fields[0].dependentName)}
+          isDisabled={!vendorDetails.vendorName || !vendorDetails.userCategory|| !vendorDetails.vendorDateOfBirth || !vendorDetails.gender || !vendorDetails.fatherName || (spouseDependentChecked && !spouseDetails.spouseName) || (dependentNameChecked && !dependentDetails[0].dependentName)}
         >
-          {fields.map((field, index) => {
-            return (
-              <div key={`${field}-${index}`}>
+          <div>
+             
                 <div
                   style={{
                     border: "solid",
@@ -580,37 +612,15 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                   }}
                 >
                 <CardLabel>{`${t("SV_VENDOR_NAME")}`} <span className="astericColor">*</span></CardLabel>
-                <LinkButton
-                  label={
-                    <div>
-                      <span>
-                        <svg
-                          style={{ float: "right", position: "relative", bottom: "32px" }}
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z"
-                            fill={!(fields.length == 1) ? "#494848" : "#FAFAFA"}
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                  }
-                  style={{ width: "100px", display: "inline" }}
-                  onClick={(e) => handleRemove(index)}
-                />
+
                 <TextInput
                   style={{ background: "#FAFAFA" }}
                   type={"text"}
                   isMandatory={false}
                   optionKey="i18nKey"
                   name="vendorName"
-                  value={field?.vendorName}
-                  onChange={(e) => selectvendorName(index, e)}
+                  value={vendorDetails?.vendorName}
+                  onChange={(e) => selectvendorName(e)}
                   disable={false}
                   ValidationRequired={true}
                   {...(validation = {
@@ -623,15 +633,15 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                 <CardLabel>{`${t("SV_OWNER_CATEGORY")}`} <span className="astericColor">*</span></CardLabel>
                 <Controller
                   control={control}
-                  name={`userCategory-${index}`}
+                  name={`userCategory`}
                   defaultValue={userCategory}
                   rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                   render={(props) => (
                     <Dropdown
                       className="form-field"
                       style={{width:"100%"}}
-                      selected={field?.userCategory}
-                      select={(e) => selectownertype(index, e)}
+                      selected={vendorDetails?.userCategory}
+                      select={(e) => selectownertype(e)}
                       option={category_Options}
                       optionKey="i18nKey"
                       t={t}
@@ -643,9 +653,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                 <CardLabel>{`${t("SV_REGISTERED_MOB_NUMBER")}`} <span className="astericColor">*</span></CardLabel>
                 <MobileNumber
                   style={{ background: "#FAFAFA" }}
-                  value={field?.mobileNumber}
+                  value={vendorDetails?.mobileNumber}
                   name="mobileNumber"
-                  onChange={(e) => selectmobileNumber(index, e)}
+                  onChange={(e) => selectmobileNumber(e)}
                   {...{
                     required: true,
                     pattern: "[6-9]{1}[0-9]{9}",
@@ -662,8 +672,8 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                   isMandatory={false}
                   optionKey="i18nKey"
                   name="email"
-                  value={field?.email}
-                  onChange={(e) => selectemail(index, e)}
+                  value={vendorDetails?.email}
+                  onChange={(e) => selectemail(e)}
                   disable={false}
                 />
                 {error && <p style={{ color: "red", fontSize: "12px" }}>{error}</p>}
@@ -676,8 +686,8 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                   isMandatory={false}
                   optionKey="i18nKey"
                   name="vendorDateOfBirth"
-                  value={field?.vendorDateOfBirth}
-                  onChange={(e) => selectvendorDateOfBirth(index, e)}
+                  value={vendorDetails?.vendorDateOfBirth}
+                  onChange={(e) => selectvendorDateOfBirth(e)}
                   disable={false}
                   max={new Date().toISOString().split('T')[0]}
                   rules={{
@@ -692,10 +702,10 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                   style={{ display: "flex", flexWrap: "wrap", maxHeight: "30px" }}
                   innerStyles={{ minWidth: "24%" }}
                   optionsKey="i18nKey"
-                  name={`gender-${index}`}
-                  value={field?.gender}
-                  selectedOption={field?.gender}
-                  onSelect={(e) => selectgender(index, e)}
+                  name={`gender`}
+                  value={vendorDetails?.gender}
+                  selectedOption={vendorDetails?.gender}
+                  onSelect={(e) => selectgender(e)}
                   labelKey="i18nKey"
                   isPTFlow={true}
                 />
@@ -707,8 +717,8 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                   isMandatory={false}
                   optionKey="i18nKey"
                   name="fatherName"
-                  value={field?.fatherName}
-                  onChange={(e) => selectfatherName(index, e)}
+                  value={vendorDetails?.fatherName}
+                  onChange={(e) => selectfatherName(e)}
                   disable={false}
                   ValidationRequired={true}
                   {...(validation = {
@@ -718,7 +728,6 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                     title: t("SV_ENTER_CORRECT_NAME"),
                   })}
                 />
-
                 </div>
 
                 <div
@@ -750,8 +759,8 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                       isMandatory={false}
                       optionKey="i18nKey"
                       name="spouseName"
-                      value={field?.spouseName}
-                      onChange={(e) => selectspouseName(index, e)}
+                      value={spouseDetails?.spouseName}
+                      onChange={(e) => selectspouseName(e)}
                       disable={false}
                       ValidationRequired={spouseDependentChecked}
                       {...(validation = {
@@ -771,8 +780,8 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                     isMandatory={false}
                     optionKey="i18nKey"
                     name="spouseDateBirth"
-                    value={field?.spouseDateBirth}
-                    onChange={(e) => selectspouseDateBirth(index, e)}
+                    value={spouseDetails?.spouseDateBirth}
+                    onChange={(e) => selectspouseDateBirth(e)}
                     disable={false}
                     max={new Date().toISOString().split('T')[0]}
                     rules={{
@@ -783,6 +792,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                 </div>
 
                 {/* <div style={{ border: "1px solid black", borderRadius: "3px", padding: "5px" }}> */}
+                {dependentDetails.map((field, index) => {
+            return (
+               <div key={`${field}-${index}`}>
                 <div
                   style={{
                     border: "solid",
@@ -798,12 +810,37 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                   <div>
                     <div style={{ display: "flex", gap: "22px" }}>
                       <CardLabel>{`${t("SV_DEPENDENT_NAME")}`} {dependentNameChecked && <span className="astericColor">*</span>}</CardLabel>
-                      <CheckBox
-                        label={t("SV_INVOLVED_IN_VENDING")}
-                        onChange={setDependentNameHandler}
-                        checked={dependentNameChecked}
-                      />
+                      {index === 0 && (
+                        <CheckBox
+                          label={t("SV_INVOLVED_IN_VENDING")}
+                          checked={dependentNameChecked}
+                          onChange={() => setDependentNameChecked(!dependentNameChecked)}
+                        />
+                      )}
                     </div>
+                    <LinkButton
+                  label={
+                    <div>
+                      <span>
+                        <svg
+                          style={{ float: "right", position: "relative", bottom: "32px" }}
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z"
+                            fill={!(dependentDetails.length == 1) ? "#494848" : "#FAFAFA"}
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  }
+                  style={{ width: "100px", display: "inline" }}
+                  onClick={(e) => handleRemove(index)}
+                />
                     <TextInput
                       style={{ background: "#FAFAFA" }}
                       t={t}
@@ -811,7 +848,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                       isMandatory={false}
                       optionKey="i18nKey"
                       name="dependentName"
-                      value={field?.dependentName}
+                      value={dependentDetails?.[index]?.dependentName}
                       onChange={(e) => selectdependentName(index, e)}
                       disable={false}
                       ValidationRequired={dependentNameChecked}
@@ -832,7 +869,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                     isMandatory={false}
                     optionKey="i18nKey"
                     name="dependentDateBirth"
-                    value={field?.dependentDateBirth}
+                    value={dependentDetails?.[index]?.dependentDateBirth}
                     onChange={(e) => selectdependentDateBirth(index, e)}
                     disable={false}
                     max={new Date().toISOString().split('T')[0]}
@@ -849,57 +886,30 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                     innerStyles={{ minWidth: "24%" }}
                     optionsKey="i18nKey"
                     name={`dependentGender-${index}`}
-                    value={field?.dependentGender}
-                    selectedOption={field?.dependentGender}
+                    value={dependentDetails?.[index]?.dependentGender}
+                    selectedOption={dependentDetails?.[index]?.dependentGender}
                     onSelect={(e) => selectdependentGender(index, e)}
                     labelKey="i18nKey"
                     isPTFlow={true}
                   />
 
                 </div>
-                
-                {/* <div
-                  style={{
-                    border: "solid",
-                    borderRadius: "5px",
-                    padding: "10px",
-                    paddingTop: "20px",
-                    marginTop: "10px",
-                    borderColor: "#f3f3f3",
-                    background: "#FAFAFA",
-                    width: inputStyles,
-                  }}
-                >
-                <CardLabel>{`${t("SV_TRADE_NUMBER")}`}</CardLabel>
-                <TextInput
-                  style={{ background: "#FAFAFA" }}
-                  t={t}
-                  type={"text"}
-                  isMandatory={false}
-                  optionKey="i18nKey"
-                  name="tradeNumber"
-                  value={field?.tradeNumber}
-                  onChange={(e) => selecttradeNumber(index, e)}
-                  disable={false}
-                  ValidationRequired={true}
-                  {...(validation = {
-                    isRequired: false,
-                    pattern: "^[a-zA-Z0-9-/ ]+$",
-                    type: "text",
-                    title: t("SV_ENTER_CORRECT_NAME"),
-                  })}
-                /> */}
 
+            </div>
+          );
+        })}
+
+        {dependentDetails.length<4 &&
                 <div className="astericColor" style={{ display: "flex", paddingBottom: "15px", color: "#FF8C00", marginTop: "10px" }}>
                   <button type="button" style={{ paddingTop: "10px" }} onClick={() => handleAdd()}>
                     {`${t("SV_ADD_DEPENDENT")}`}
                   </button>
                 </div>
+        }
               
               <br/>
-            </div>
-          );
-        })}
+
+        </div>
 
 
       </FormStep>
