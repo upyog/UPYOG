@@ -262,7 +262,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
             billRegistermis = (EgBillregistermis) persistenceService
                     .find("from EgBillregistermis where voucherHeader.id=?", voucher.getId());
         final StringBuilder cityName = new StringBuilder(100);
-        cityName.append(cityWebsite.getName().toUpperCase());
+        cityName.append(cityWebsite.getName()!=null?cityWebsite.getName().toUpperCase():"NA");
         paramMap.put("cityName", cityName.toString());
         paramMap.put("voucherName", billType.toUpperCase().concat(" JOURNAL VOUCHER"));
         paramMap.put("budgetAppropriationDetailJasper",
