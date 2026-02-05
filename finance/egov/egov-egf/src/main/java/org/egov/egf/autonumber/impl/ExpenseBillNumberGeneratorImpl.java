@@ -91,7 +91,7 @@ public class ExpenseBillNumberGeneratorImpl implements ExpenseBillNumberGenerato
             throw new ValidationException(FinancialConstants.EMPTY_STRING, "Financial Year is not defined for the voucher date" );
         sequenceName = "seq_expense_billnumber_" + financialYear.getFinYearRange();
         Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
-        expenseBillNumber = String.format("%s/%s/%s/%04d",financialYear.getFinYearRange(), br.getEgBillregistermis().getDepartmentName(), br.getEgBillregistermis().getFunction().getCode(),nextSequence);
+        expenseBillNumber = String.format("%s/%s/%s/%06d",financialYear.getFinYearRange(), br.getEgBillregistermis().getDepartmentcode(), br.getEgBillregistermis().getFunction().getCode(),nextSequence);
         return expenseBillNumber;
     }
 }

@@ -86,7 +86,7 @@ public class SupplierBillNumberGeneratorImpl implements SupplierBillNumberGenera
                 throw new ValidationException(FinancialConstants.EMPTY_STRING, "Financial Year is not defined for the voucher date" );
         sequenceName = "seq_supplier_billnumber_" + financialYear.getFinYearRange();
         Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
-        supplierBillNumber = String.format("%s/%s/%s/%04d",financialYear.getFinYearRange(), br.getEgBillregistermis().getDepartmentName(), br.getEgBillregistermis().getFunction().getCode(),nextSequence);
+        supplierBillNumber = String.format("%s/%s/%s/%06d",financialYear.getFinYearRange(), br.getEgBillregistermis().getDepartmentcode(), br.getEgBillregistermis().getFunction().getCode(),nextSequence);
         return supplierBillNumber;
     }
 }
