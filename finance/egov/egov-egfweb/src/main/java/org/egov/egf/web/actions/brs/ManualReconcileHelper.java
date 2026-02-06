@@ -291,7 +291,7 @@ public class ManualReconcileHelper {
                 .append(" case when rec.transactionType= 'Cr' then 'Payment' else 'Receipt' end    as \"type\" , insType.type as instrumentType ")
                 .append(" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,")
                 .append(" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv, egf_instrumenttype insType WHERE   ih.bankAccountId = BANK.ID")
-                .append(" AND bank.id = :bankAccId AND ih.instrumentdate >=:fromDate and ih.instrumentdate <= :toDate and ih.transactiondate <= :reconDate ")
+                .append(" AND bank.id = :bankAccId  AND ih.instrumentdate >=:fromDate and ih.instrumentdate <= :toDate and ih.transactiondate<= :reconDate ")
                 .append(instrumentCondition)
                 .append(" AND v.ID= iv.voucherheaderid and v.STATUS not in  (")
                 .append(voucherExcludeStatuses)
@@ -329,10 +329,11 @@ public class ManualReconcileHelper {
 			createSQLQuery.setParameter("limit", reconBean.getLimit(), IntegerType.INSTANCE);
 		
 		createSQLQuery.setLong("bankAccId", reconBean.getAccountId());
-		//createSQLQuery.setDate("toDate", reconBean.getReconciliationDate());
 		createSQLQuery.setDate("fromDate", reconBean.getFromDate());
+
 		createSQLQuery.setDate("toDate", reconBean.getToDate());
 		createSQLQuery.setDate("reconDate", reconBean.getReconciliationDate());
+
 		createSQLQuery.addScalar("voucherNumber",StringType.INSTANCE);
 		createSQLQuery.addScalar("ihId",StringType.INSTANCE);
 		createSQLQuery.addScalar("chequeDate",StringType.INSTANCE);

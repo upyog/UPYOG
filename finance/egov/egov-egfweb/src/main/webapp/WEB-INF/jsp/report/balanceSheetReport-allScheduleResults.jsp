@@ -182,7 +182,8 @@
 													<s:iterator value="balanceSheet.funds" status="stat">
 														<td class="blueborderfortd">
 															<div align="right">
-																<s:property value="fundWiseAmount[name]" />
+																<%-- <s:property value="fundWiseAmount[name]" /> --%>
+																<s:text name="%{getText('{0,number,0.00}', {fundWiseAmount[name]})}" />
 																&nbsp;
 															</div>
 														</td>
@@ -192,14 +193,14 @@
 													<div align="right">
 														<s:if test='%{displayBold == true}'>
 															<strong><s:if test='%{currentYearTotal != 0}'>
-																	<s:property value="currentYearTotal" />
-																</s:if> <s:else>0.0</s:else></strong>
+																	<s:text name="%{getText('{0,number,0.00}', {currentYearTotal})}" />
+																</s:if> <s:else>0.00</s:else></strong>
 														</s:if>
 														<s:else>
 															<s:if test='%{currentYearTotal != 0}'>
-																<s:property value="currentYearTotal" />
+																<s:text name="%{getText('{0,number,0.00}', {currentYearTotal})}" />
 															</s:if>
-															<s:else>0.0</s:else>
+															<s:else>0.00</s:else>
 														</s:else>
 														&nbsp;
 													</div>
@@ -208,14 +209,15 @@
 													<div align="right">
 														<s:if test='%{displayBold == true}'>
 															<strong><s:if test='%{previousYearTotal != 0}'>
-																	<s:property value="previousYearTotal" />
-																</s:if> <s:else>0.0</s:else></strong>
+																	<s:text name="%{getText('{0,number,0.00}', {previousYearTotal})}" />
+																</s:if> <s:else>0.00</s:else></strong>
 														</s:if>
 														<s:else>
 															<s:if test='%{previousYearTotal != 0}'>
-																<s:property value="previousYearTotal" />
+																<%-- <s:property value="previousYearTotal" /> --%>
+																<s:text name="%{getText('{0,number,0.00}', {previousYearTotal})}" />
 															</s:if>
-															<s:else>0.0</s:else>
+															<s:else>0.00</s:else>
 														</s:else>
 														&nbsp;
 													</div>
@@ -233,7 +235,6 @@
 						<s:text name="report.export.options" />
 						: <a
 							href='/services/EGF/report/balanceSheetReport-generateScheduleXls.action?showDropDown=false&model.period=<s:property value="model.period"/>&model.currency=<s:property value="model.currency"/>&model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.fund.id=<s:property value="model.fund.id"/>&model.asOndate=<s:property value="model.asOndate"/>&model.function.id=<s:property value="model.function.id"/>&model.functionary.id=<s:property value="model.functionary.id"/>&model.field.id=<s:property value="model.field.id"/>&majorCode=<s:property value="#parameters['majorCode']" />'>Excel</a>
-
 						| <a
 							href='/services/EGF/report/balanceSheetReport-generateSchedulePdf.action?showDropDown=false&model.period=<s:property value="model.period"/>&model.currency=<s:property value="model.currency"/>&model.financialYear.id=<s:property value="model.financialYear.id"/>&model.department.id=<s:property value="model.department.id"/>&model.fund.id=<s:property value="model.fund.id"/>&model.asOndate=<s:property value="model.asOndate"/>&model.function.id=<s:property value="model.function.id"/>&model.functionary.id=<s:property value="model.functionary.id"/>&model.field.id=<s:property value="model.field.id"/>&majorCode=<s:property value="#parameters['majorCode']" />'>PDF</a>
 					</div>

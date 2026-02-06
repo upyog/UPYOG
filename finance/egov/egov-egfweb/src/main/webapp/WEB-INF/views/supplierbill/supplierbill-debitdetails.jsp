@@ -95,7 +95,8 @@
 									<input type="text" id="debitDetails[${item.index }].debitAccountHead" name="debitDetails[${item.index }].debitAccountHead" class="form-control debitdetailname" disabled value="${billDeatils.chartOfAccounts.name }">  
 								</td>
 								<td>
-									<form:input path="debitDetails[${item.index }].debitamount" id="debitDetails[${item.index }].debitamount"  data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" oninput="restrictTwoDecimals(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right debitAmount"   maxlength="12" value="${billDeatils.creditamount }" />								</td> 
+									<form:input path="debitDetails[${item.index }].debitamount" id="debitDetails[${item.index }].debitamount"  data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" oninput="restrictTwoDecimals(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right debitAmount"   maxlength="12" value="${billDeatils.creditamount }" />
+								</td> 
 								<td class="text-center"><span style="cursor:pointer;" onclick="addDebitDetailsRow();"><i class="fa fa-plus" aria-hidden="true"></i></span>
 								 <span class="add-padding debit-delete-row" onclick="deleteDebitDetailsRow(this);"><i class="fa fa-trash"  aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 							</tr>

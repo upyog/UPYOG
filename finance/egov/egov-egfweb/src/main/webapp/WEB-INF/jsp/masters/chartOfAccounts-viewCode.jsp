@@ -126,7 +126,7 @@
 		    oAC.useShadow = true;
 			oAC.useIFrame = true; 
 			oAC.maxResultsDisplayed = 10;
-		     oAC.filterResultsFunction = function (query, results) {
+			oAC.filterResultsFunction = function (query, results) {
 	        	query = query.toLowerCase();
 
 	        	return YAHOO.widget.AutoComplete.filterResults(
@@ -140,6 +140,7 @@
 	            }
 	        );
 	    };
+		     
 		    return { 
 		        oDS: oDS, 
 		        oAC: oAC 

@@ -189,8 +189,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(voucherHeaderId));
         final Map<String, Object> vhInfoMap = voucherService.getVoucherInfo(voucherHeader.getId());
         voucherHeader = (CVoucherHeader) vhInfoMap.get(Constants.VOUCHERHEADER);
-        // if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), voucherHeader))
-        //     return UNAUTHORIZED;
+//        if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), voucherHeader))
+//            return UNAUTHORIZED;
         try {
             if (voucherHeader != null && voucherHeader.getState() != null)
                 if (voucherHeader.getState().getValue().contains("Rejected")) {

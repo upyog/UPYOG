@@ -146,10 +146,12 @@
 												<td class="blueborderfortd">
 													<div align="right">
 														<s:if test='%{displayBold == true}'>
-															<strong><s:property value="fundWiseAmount[name]" />&nbsp;</strong>
+															<%-- <strong><s:property value="fundWiseAmount[name]" />&nbsp;</strong> --%>
+															<strong><s:property value="%{getText('{0,number,0.00}', {fundWiseAmount[name]})}" />&nbsp;</strong>
 														</s:if>
 														<s:else>
-															<s:property value="fundWiseAmount[name]" />&nbsp;</s:else>
+															<%-- <s:property value="fundWiseAmount[name]" />&nbsp; --%>
+															<s:property value="%{getText('{0,number,0.00}', {fundWiseAmount[name]})}" />&nbsp;</s:else>
 													</div>
 												</td>
 											</s:iterator>
@@ -158,15 +160,17 @@
 											<div align="right">
 												<s:if test='%{displayBold == true}'>
 													<strong><s:if test='%{currentYearTotal != 0}'>
-															<s:property value="currentYearTotal" />
+															<%-- <s:property value="currentYearTotal" /> --%>
+															<s:property value="%{getText('{0,number,0.00}', {currentYearTotal})}" />
 														</s:if>
-														<s:else>0.0</s:else></strong>
+														<s:else>0.00</s:else></strong>
 												</s:if>
 												<s:else>
 													<s:if test='%{currentYearTotal != 0}'>
-														<s:property value="currentYearTotal" />
+														<%-- <s:property value="currentYearTotal" /> --%>
+														<s:property value="%{getText('{0,number,0.00}', {currentYearTotal})}" />
 													</s:if>
-													<s:else>0.0</s:else>
+													<s:else>0.00</s:else>
 												</s:else>
 												&nbsp;
 											</div>
@@ -175,15 +179,17 @@
 											<div align="right">
 												<s:if test='%{displayBold == true}'>
 													<strong><s:if test='%{previousYearTotal != 0}'>
-															<s:property value="previousYearTotal" />
+															<%-- <s:property value="previousYearTotal" /> --%>
+															<s:property value="%{getText('{0,number,0.00}', {previousYearTotal})}" />
 														</s:if>
-														<s:else>0.0</s:else></strong>
+														<s:else>0.00</s:else></strong>
 												</s:if>
 												<s:else>
 													<s:if test='%{previousYearTotal != 0}'>
-														<s:property value="previousYearTotal" />
+														<%-- <s:property value="previousYearTotal" /> --%>
+														<s:property value="%{getText('{0,number,0.00}', {previousYearTotal})}" />
 													</s:if>
-													<s:else>0.0</s:else>
+													<s:else>0.00</s:else>
 												</s:else>
 												&nbsp;
 											</div>

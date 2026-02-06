@@ -193,7 +193,8 @@ function showPreviousYearDetails(glcode)
 													<s:iterator value="balanceSheet.funds" status="stat">
 														<td class="blueborderfortd">
 															<div align="right">
-																<s:property value="fundWiseAmount[name]" />
+																<%-- <s:property value="fundWiseAmount[name]" /> --%>
+																<s:property value="%{getText('{0,number,0.00}', {fundWiseAmount[name]})}" />
 																&nbsp;
 															</div>
 														</td>
@@ -203,17 +204,17 @@ function showPreviousYearDetails(glcode)
 													<div align="right">
 														<s:if test='%{displayBold == true}'>
 															<strong><s:if test='%{currentYearTotal != 0}'>
-																	<s:property value="currentYearTotal" />
+																	<%-- <s:property value="currentYearTotal" /> --%>
+																	<s:property value="%{getText('{0,number,0.00}', {currentYearTotal})}" />
 																</s:if>
-																<s:else>0.0</s:else></strong>
+																<s:else>0.00</s:else></strong>
 														</s:if>
 														<s:else>
 															<s:if test='%{currentYearTotal != 0}'>
 																<a href="javascript:void(0);"
-																	onclick='return showDetails(<s:property value="glCode"/>)'><s:property
-																		value="currentYearTotal" /></a>
+																	onclick='return showDetails(<s:property value="glCode"/>)'><s:property value="%{getText('{0,number,0.00}', {currentYearTotal})}" /></a>
 															</s:if>
-															<s:else>0.0</s:else>
+															<s:else>0.00</s:else>
 														</s:else>
 														&nbsp;
 													</div>
@@ -222,17 +223,17 @@ function showPreviousYearDetails(glcode)
 													<div align="right">
 														<s:if test='%{displayBold == true}'>
 															<strong><s:if test='%{previousYearTotal != 0}'>
-																	<s:property value="previousYearTotal" />
+																	<%-- <s:property value="previousYearTotal" /> --%>
+																	<s:property value="%{getText('{0,number,0.00}', {previousYearTotal})}" />
 																</s:if>
-																<s:else>0.0</s:else></strong>
+																<s:else>0.00</s:else></strong>
 														</s:if>
 														<s:else>
 															<s:if test='%{previousYearTotal != 0}'>
 																<a href="javascript:void(0);"
-																	onclick='return showPreviousYearDetails(<s:property value="glCode"/>)'><s:property
-																		value="previousYearTotal" /></a>
+																	onclick='return showPreviousYearDetails(<s:property value="glCode"/>)'><s:property value="%{getText('{0,number,0.00}', {previousYearTotal})}" /></a>
 															</s:if>
-															<s:else>0.0</s:else>
+															<s:else>0.00</s:else>
 														</s:else>
 														&nbsp;
 													</div>

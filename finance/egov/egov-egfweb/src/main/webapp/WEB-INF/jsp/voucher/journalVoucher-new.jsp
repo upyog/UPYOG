@@ -284,7 +284,10 @@
 			document.getElementById('voucherDate').focus();
 			return false;
 		}
-			if(document.getElementById('vouchermis.function').value == -1){
+
+		/* adding this line for testing */
+		
+		if(document.getElementById('vouchermis.function').value == -1){
 		    document.getElementById('lblError').innerHTML = "Please select function";
 		    return false;
 		}

@@ -130,12 +130,14 @@
 									test='%{accountName == "Total" || accountName == "Schedule Total"}'>
 									<td class="blueborderfortd">
 										<div align="right">
-											<strong><s:property value="netAmount[name]" /></strong>
+											<%-- <strong><s:property value="netAmount[name]" /></strong> --%>
+											<strong><s:property value="%{getText('{0,number,0.00}', {netAmount[name]})}" /></strong>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<strong><s:property value="previousYearAmount[name]" /></strong>
+											<%-- <strong><s:property value="previousYearAmount[name]" /></strong> --%>
+											<strong><s:property value="%{getText('{0,number,0.00}', {previousYearAmount[name]})}" /></strong>
 										</div>
 									</td>
 								</s:if>
@@ -143,15 +145,13 @@
 									<td class="blueborderfortd">
 										<div align="right">
 											<a href="javascript:void(0);"
-												onclick='return showDetail(<s:property value="glCode"/>,"<s:property value="id"/>","<s:property value="currentYearToDate"/>","<s:property value="currentYearFromDate"/>")'><s:property
-													value="netAmount[name]" /></a>&nbsp;
+												onclick='return showDetail(<s:property value="glCode"/>,"<s:property value="id"/>","<s:property value="currentYearToDate"/>","<s:property value="currentYearFromDate"/>")'><s:property value="%{getText('{0,number,0.00}', {netAmount[name]})}" /></a>&nbsp;
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
 											<a href="javascript:void(0);"
-												onclick='return showDetail(<s:property value="glCode"/>,"<s:property value="id"/>","<s:property value="previousYearToDate"/>","<s:property value="previousYearFromDate"/>")'><s:property
-													value="previousYearAmount[name]" /></a>&nbsp;
+												onclick='return showDetail(<s:property value="glCode"/>,"<s:property value="id"/>","<s:property value="previousYearToDate"/>","<s:property value="previousYearFromDate"/>")'><s:property value="%{getText('{0,number,0.00}', {previousYearAmount[name]})}" /></a>&nbsp;
 										</div>
 									</td>
 								</s:else>
