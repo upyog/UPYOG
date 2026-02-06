@@ -218,6 +218,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 		}
 		setOneFunctionCenterValue();
 		mandatoryFields.add("voucherdate");
+
+//		add this line for testing purpose
+		mandatoryFields.add("function");
 	}
 
 	public void populateWorkflowBean() {

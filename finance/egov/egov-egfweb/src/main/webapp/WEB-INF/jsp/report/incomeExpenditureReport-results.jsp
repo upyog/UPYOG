@@ -182,22 +182,41 @@
 										status="stat">
 										<td class="blueborderfortd">
 											<div align="right">
+														
+													<s:if test='%{displayBold == true}'>
+													  <strong>
+													    <s:text name="%{getText('{0,number,0.00}', {netAmount[name]})}" />&nbsp;
+													  </strong>
+													</s:if>
+													<s:else>
+													  <s:text name="%{getText('{0,number,0.00}', {netAmount[name]})}" />&nbsp;
+													</s:else>
 
-												<s:if test='%{displayBold == true}'>
+												<%-- <s:if test='%{displayBold == true}'>
 													<strong><s:property value="netAmount[name]" />&nbsp;</strong>
 												</s:if>
 												<s:else>
-													<s:property value="netAmount[name]" />&nbsp;</s:else>
+													<s:property value="netAmount[name]" />&nbsp;</s:else> --%>
 											</div>
 										</td>
 										<td class="blueborderfortd">
 											<div align="right">
-												<s:if test='%{displayBold == true}'>
+												
+													<s:if test='%{displayBold == true}'>
+													  <strong>
+													    <s:text name="%{getText('{0,number,0.00}', {previousYearAmount[name]})}" />&nbsp;
+													  </strong>
+													</s:if>
+													<s:else>
+													  <s:text name="%{getText('{0,number,0.00}', {previousYearAmount[name]})}" />&nbsp;
+													</s:else>
+												
+												<%-- <s:if test='%{displayBold == true}'>
 													<strong><s:property
 															value="previousYearAmount[name]" />&nbsp;</strong>
 												</s:if>
 												<s:else>
-													<s:property value="previousYearAmount[name]" />&nbsp;</s:else>
+													<s:property value="previousYearAmount[name]" />&nbsp;</s:else> --%>
 											</div>
 										</td>
 

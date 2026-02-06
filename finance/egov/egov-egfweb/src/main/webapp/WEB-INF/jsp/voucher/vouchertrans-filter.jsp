@@ -171,7 +171,7 @@
 		<td class="bluebox"><s:select name="vouchermis.function"
 				id="vouchermis.function" list="dropdownData.functionList"
 				listKey="id" listValue="name" headerKey="-1"
-				headerValue="%{getText('lbl.choose.options')}" value="%{vouchermis.function.id}" /></td>
+				headerValue="%{getText('lbl.choose.options')}" value="%{vouchermis.function.id}"  required="required"/></td>
 	</s:if>
 
 	<s:else>
@@ -280,7 +280,8 @@ function validateMIS(){
 				 }
 			</s:if>
 			<s:if test="%{isFieldMandatory('function')}">                     
-				 if(null!= document.getElementById('functionId') && document.getElementById('functionId').value == -1){
+				 /* if(null!= document.getElementById('functionId') && document.getElementById('functionId').value == -1){ */
+				 if(null!= document.getElementById('vouchermis.function') && document.getElementById('vouchermis.function').value == -1){
 					document.getElementById('lblError').innerHTML = "<s:text name='msg.please.select.function'/>";                                   
 					return false;
 				 }            
