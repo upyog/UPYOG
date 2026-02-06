@@ -369,17 +369,11 @@ public class BudgetReAppropriationAction extends BaseFormAction {
 			 * [0] + "|" + userId, budgetReAppropriationList, null, financialYear, beRe,
 			 * misc, parameters.get("appropriationMisc.reAppropriationDate")[0]);
 			 */
-            
-            reAppropriationCreated = budgetReAppropriationService.createReAppropriation(
-                    parameters.get(ACTIONNAME)[0] + "|" + userId,
-                    budgetReAppropriationList,
-                    null,
-                    financialYear,
-                    beRe,
-                    misc,
-                    parameters.get("appropriationMisc.fromDate")[0],   
-                    parameters.get("appropriationMisc.toDate")[0]      
-            );
+
+			reAppropriationCreated =
+			  budgetReAppropriationService.createReAppropriation(parameters.get(ACTIONNAME)[0] + "|" + userId, budgetReAppropriationList, null, financialYear, beRe,
+			  misc, parameters.get("appropriationMisc.reAppropriationDate")[0]);
+           
 
             removeEmptyReAppropriation(newBudgetReAppropriationList);
             reAppForNewBudgetCreated = budgetReAppropriationService.createReAppropriationForNewBudgetDetail(
