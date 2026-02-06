@@ -132,6 +132,10 @@
       <artifactId>spring-context-support</artifactId>
     </dependency> 
 		<!-- end for sheduler-->
+			<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
