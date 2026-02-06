@@ -103,10 +103,14 @@
 											<th class="bluebgheadtd"><s:property value="name" /></th>
 										</s:iterator>
 									</s:if>
-									<th class="bluebgheadtd"><s:property
+									<%-- <th class="bluebgheadtd"><s:property
 											value="currentYearToDate" /></th>
 									<th class="bluebgheadtd"><s:property
-											value="previousYearToDate" /></th>
+											value="previousYearToDate" /></th> --%>
+											<th class="bluebgheadtd"><s:property value="currentYearRange" /></th>
+											<th class="bluebgheadtd"><s:property value="previousYearRange" /></th>
+											
+											
 								</tr>
 								<s:iterator value="balanceSheet.entries" status="stat">
 									<tr>

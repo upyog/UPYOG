@@ -396,9 +396,17 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
         } else {
             // receiptPayment.setFunds(rpService.getfundMaster());
         }
-        if (receiptPayment.getAsOndate() != null)
-            header.append(" as on " + DDMMYYYYFORMATS.format(receiptPayment.getAsOndate()));
-        header.toString();
+		/*
+		 * if (receiptPayment.getAsOndate() != null) header.append(" as on " +
+		 * DDMMYYYYFORMATS.format(receiptPayment.getAsOndate())); header.toString();
+		 */
+        
+        if (receiptPayment.getFromDate() != null)
+            header.append(" From " + DDMMYYYYFORMATS.format(receiptPayment.getFromDate()));
+
+        if (receiptPayment.getToDate() != null)
+            header.append(" To " + DDMMYYYYFORMATS.format(receiptPayment.getToDate()));
+
     }
 
     public String exportReceiptPaymentScheduleXls() throws ColumnBuilderException, ClassNotFoundException, JRException, IOException{

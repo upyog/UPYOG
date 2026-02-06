@@ -121,7 +121,9 @@ public class BalanceSheetReportAction extends BaseFormAction {
  @Autowired
     private EgovMasterDataCaching masterDataCache;
 
-    private Date asOnDate;
+	/* private Date asOnDate; */
+    private Date fromDate;
+    private Date toDate;
     
     public FinancialYearDAO getFinancialYearDAO() {
 		return financialYearDAO;
@@ -262,9 +264,18 @@ public class BalanceSheetReportAction extends BaseFormAction {
                     balanceSheet.getFunctionary().getId()));
             header.append(" in " + balanceSheet.getFunctionary().getName());
         }*/
-        if (balanceSheet.getAsOndate() != null)
-            header.append(" as on " + DDMMYYYYFORMATS.format(balanceSheet.getAsOndate()));
-        header.toString();
+	/*
+	 * if (balanceSheet.getAsOndate() != null) header.append(" as on " +
+	 * DDMMYYYYFORMATS.format(balanceSheet.getAsOndate())); header.toString();
+	 */
+        
+        if ("Date".equals(balanceSheet.getPeriod()) &&
+        	    (balanceSheet.getFromDate() == null || balanceSheet.getToDate() == null)) {
+
+        	    addActionError(getText("msg.please.enter.from.Date"));
+        	    addActionError(getText("msg.please.enter.to.Date"));
+        	}
+
     }
 
     @Override
@@ -285,8 +296,14 @@ public class BalanceSheetReportAction extends BaseFormAction {
 			if (!"Date".equals(balanceSheet.getPeriod()) && (balanceSheet.getFinancialYear() == null
 					|| balanceSheet.getFinancialYear().getId() == null || balanceSheet.getFinancialYear().getId() == 0))
 				addActionError(getText("msg.please.select.financial.year"));
-			if ("Date".equals(balanceSheet.getPeriod()) && balanceSheet.getAsOndate() == null) {
-				addActionError(getText("msg.please.enter.as.onDate"));
+			/*
+			 * if ("Date".equals(balanceSheet.getPeriod()) && balanceSheet.getAsOndate() ==
+			 * null) { addActionError(getText("msg.please.enter.as.onDate")); }
+			 */
+			
+			if ("Date".equals(balanceSheet.getPeriod()) && balanceSheet.getFromDate() == null && balanceSheet.getToDate() == null) {
+				addActionError(getText("msg.please.enter.from.Date"));
+				addActionError(getText("msg.please.enter.to.Date"));
 			}
 		}
 		if (StringUtils.isEmpty(balanceSheet.getCurrency())) {
@@ -298,7 +315,9 @@ public class BalanceSheetReportAction extends BaseFormAction {
     @Action(value = "/report/balanceSheetReport-generateBalanceSheetSubReport")
     public String generateBalanceSheetSubReport() {
         populateDataSourceForSchedule();
-        asOnDate=balanceSheet.getAsOndate();
+		/* asOnDate=balanceSheet.getAsOndate(); */
+        fromDate= balanceSheet.getFromDate();
+        toDate = balanceSheet.getToDate();
         return "scheduleResults";
     }
 
@@ -375,10 +394,22 @@ public class BalanceSheetReportAction extends BaseFormAction {
     @Action(value = "/report/balanceSheetReport-generateBalanceSheetPdf")
     public String generateBalanceSheetPdf() throws JRException, IOException {
         populateDataSource();
-        final JasperPrint jasper = reportHelper.generateFinancialStatementReportJasperPrint(balanceSheet,
-                getText("report.heading"),
-                header.toString(),
-                getCurrentYearToDate(), getPreviousYearToDate(), true);
+		/*
+		 * final JasperPrint jasper =
+		 * reportHelper.generateFinancialStatementReportJasperPrint(balanceSheet,
+		 * getText("report.heading"), header.toString(), getCurrentYearToDate(),
+		 * getPreviousYearToDate(), true);
+		 */
+        
+        final JasperPrint jasper =
+        	    reportHelper.generateFinancialStatementReportJasperPrint(
+        	        balanceSheet,
+        	        getText("report.heading"),
+        	        header.toString(),
+        	        getCurrentPeriodLabel(),
+        	        getPreviousPeriodLabel(),
+        	        true
+        	    );
         inputStream = reportHelper.exportPdf(inputStream, jasper);
         return BALANCE_SHEET_PDF;
     }
@@ -404,10 +435,22 @@ public class BalanceSheetReportAction extends BaseFormAction {
     @Action(value = "/report/balanceSheetReport-generateSchedulePdf")
     public String generateSchedulePdf() throws JRException, IOException {
         populateDataSourceForAllSchedules();
-        final JasperPrint jasper = reportHelper.generateFinancialStatementReportJasperPrint(balanceSheet,
-                getText("report.heading"),
-                header.toString(),
-                getCurrentYearToDate(), getPreviousYearToDate(), false);
+		/*
+		 * final JasperPrint jasper =
+		 * reportHelper.generateFinancialStatementReportJasperPrint(balanceSheet,
+		 * getText("report.heading"), header.toString(), getCurrentYearToDate(),
+		 * getPreviousYearToDate(), false);
+		 */
+        
+        final JasperPrint jasper =
+        	    reportHelper.generateFinancialStatementReportJasperPrint(
+        	        balanceSheet,
+        	        getText("report.heading"),
+        	        header.toString(),
+        	        getCurrentPeriodLabel(),
+        	        getPreviousPeriodLabel(),
+        	        true
+        	    );
         inputStream = reportHelper.exportPdf(inputStream, jasper);
         return BALANCE_SHEET_PDF;
     }
@@ -416,10 +459,22 @@ public class BalanceSheetReportAction extends BaseFormAction {
     @Action(value = "/report/balanceSheetReport-generateScheduleXls")
     public String generateScheduleXls() throws JRException, IOException {
         populateDataSourceForAllSchedules();
-        final JasperPrint jasper = reportHelper.generateFinancialStatementReportJasperPrint(balanceSheet,
-                getText("report.heading"),
-                header.toString(),
-                getCurrentYearToDate(), getPreviousYearToDate(), false);
+		/*
+		 * final JasperPrint jasper =
+		 * reportHelper.generateFinancialStatementReportJasperPrint(balanceSheet,
+		 * getText("report.heading"), header.toString(), getCurrentYearToDate(),
+		 * getPreviousYearToDate(), false);
+		 */
+        
+        final JasperPrint jasper =
+        	    reportHelper.generateFinancialStatementReportJasperPrint(
+        	        balanceSheet,
+        	        getText("report.heading"),
+        	        header.toString(),
+        	        getCurrentPeriodLabel(),
+        	        getPreviousPeriodLabel(),
+        	        true
+        	    );
         inputStream = reportHelper.exportXls(inputStream, jasper);
         return BALANCE_SHEET_XLS;
     }
@@ -496,6 +551,29 @@ public class BalanceSheetReportAction extends BaseFormAction {
                 .getToDate(balanceSheet)));
     }
 
+	/* From this line i have changed */
+    public String getCurrentYearRange() {
+        Date from = balanceSheetService.getFromDate(balanceSheet);
+        Date to = balanceSheetService.getToDate(balanceSheet);
+
+        return balanceSheetService.getFormattedDate(from)
+                + " To "
+                + balanceSheetService.getFormattedDate(to);
+    }
+
+    public String getPreviousYearRange() {
+        Date from = balanceSheetService.getPreviousYearFor(
+                balanceSheetService.getFromDate(balanceSheet));
+
+        Date to = balanceSheetService.getPreviousYearFor(
+                balanceSheetService.getToDate(balanceSheet));
+
+        return balanceSheetService.getFormattedDate(from)
+                + " To "
+                + balanceSheetService.getFormattedDate(to);
+    }
+
+
     public Date getTodayDate() {
         return todayDate;
     }
@@ -511,12 +589,25 @@ public class BalanceSheetReportAction extends BaseFormAction {
     public void setHeader(final StringBuffer header) {
         this.header = header;
     }
-
-    public Date getAsOnDate() {
-        return asOnDate;
+//    this is for fromDate and toDate 
+    public String getCurrentPeriodLabel() {
+        if ("Date".equalsIgnoreCase(balanceSheet.getPeriod())) {
+            return getCurrentYearRange();
+        }
+        return getCurrentYearToDate();
     }
 
-    public void setAsOnDate(Date asOnDate) {
-        this.asOnDate = asOnDate;
+    public String getPreviousPeriodLabel() {
+        if ("Date".equalsIgnoreCase(balanceSheet.getPeriod())) {
+            return getPreviousYearRange();
+        }
+        return getPreviousYearToDate();
     }
+    
+
+	/*
+	 * public Date getAsOnDate() { return asOnDate; }
+	 * 
+	 * public void setAsOnDate(Date asOnDate) { this.asOnDate = asOnDate; }
+	 */
 }

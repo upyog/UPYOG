@@ -59,34 +59,26 @@
 </style>
 
 <script>
-/* wrapped into disableAsOnDate() */
-function disablefromDate(){
-	if(document.getElementById('period').value != "Date"){
-		document.getElementById('fromdate').disabled = true;
-		document.getElementById('financialYear').disabled = false;
-	}else{
-		document.getElementById('financialYear').disabled = true;
-		document.getElementById('fromdate').disabled = false;
-	}
-}
 
-function disabletoDate(){
-	if(document.getElementById('period').value != "Date"){
-		document.getElementById('todate').disabled = true;
-		document.getElementById('financialYear').disabled = false;
-	}else{
-		document.getElementById('financialYear').disabled = true;
-		document.getElementById('todate').disabled = false;
-	}
-}
+function disableAsOnDate() {
+
+    var period = document.getElementById('period').value;
+    var row = document.getElementById('dateRow');
 
 
-function disableAsOnDate(){
-	disablefromDate();
-	disabletoDate();
-}
+    if (period === "Date") {
+        row.style.display = "table-row";   
+        document.getElementById('fromDate').disabled = false;
+        document.getElementById('toDate').disabled = false;
+    } else {
+        row.style.display = "none";       
+        document.getElementById('fromDate').disabled = true;
+        document.getElementById('toDate').disabled = true;
+    }
 
-function validateMandatoryFields(){
+}  
+
+ function validateMandatoryFields(){
 	if(document.getElementById('period').value=="Select")
 	{
 		bootbox.alert('<s:text name="msg.please.select.period"/>');
@@ -101,11 +93,11 @@ function validateMandatoryFields(){
 	}
 
 	if(document.getElementById('period').value=="Date"){
-		if(document.getElementById('fromdate').value==""){
+		if(document.getElementById('fromDate').value==""){
 			bootbox.alert('<s:text name="msg.please.enter.fromDate"/>');
 			return false;
 		}
-		if(document.getElementById('todate').value==""){
+		if(document.getElementById('toDate').value==""){
 			bootbox.alert('<s:text name="msg.please.enter.toDate"/>');
 			return false;
 		}
@@ -113,7 +105,7 @@ function validateMandatoryFields(){
 	return true;
 }
 
-	function balanceSheetReportSubmit()
+function balanceSheetReportSubmit()
 	{
 		if(validateMandatoryFields()){
 			document.balanceSheetReport.action='/services/EGF/report/balanceSheetReport-printBalanceSheetReport.action';
@@ -129,7 +121,7 @@ function validateMandatoryFields(){
 
 }
 
-	function showAllSchedules(){
+function showAllSchedules(){
 		if(validateMandatoryFields()){
 	 		window.open(
 	 			'/services/EGF/report/balanceSheetReport-generateScheduleReport.action'
@@ -140,8 +132,8 @@ function validateMandatoryFields(){
 	 			+ '&model.department.code=' + document.getElementById('department').value
 	 			+ '&model.fund.id=' + document.getElementById('fund').value
 	 			+ '&model.function.id=' + document.getElementById('function').value
-	 			+ '&model.fromdate=' + document.getElementById('fromdate').value
-	 			+ '&model.todate=' + document.getElementById('todate').value,
+	 			+ '&model.fromDate=' + document.getElementById('fromDate').value
+	 			+ '&model.toDate=' + document.getElementById('toDate').value,
 	 			'',
 	 			'resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no'
 	 		);
@@ -165,8 +157,8 @@ function showAllSchedulesDetailed(){
 /* 		var field=document.getElementById('field').value;
 		var functionary=document.getElementById('functionary').value;
  */		
-		var fromdate=document.getElementById('fromdate').value;
-		var todate=document.getElementById('todate').value;
+		var fromDate=document.getElementById('fromDate').value;
+		var toDate=document.getElementById('toDate').value;
 
 
 	 	window.open(
@@ -178,8 +170,8 @@ function showAllSchedulesDetailed(){
 	 		+ "&model.department.code=" + department
 	 		+ "&model.fund.id=" + fund
 	 		+ "&model.function.id=" + functionId
-	 		+ "&model.fromdate=" + fromdate
-	 		+ "&model.todate=" + todate,
+	 		+ "&model.fromDate=" + fromDate
+	 		+ "&model.toDate=" + toDate,
 	 		'',
 	 		'resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no'
 	 	);
@@ -248,7 +240,7 @@ th.bluebgheadtd {
 					<td width="22%" class="bluebox"><s:select name="period"
 							id="period"
 							list="#{'Select':'---Choose---','Date':'Date','Yearly':'Yearly','Half Yearly':'Half Yearly'}"
-							onclick="disableAsOnDate()" value="%{model.period}" /></td>
+							onchange="disableAsOnDate()" value="%{model.period}" /></td>
 					<td class="bluebox" width="12%"><s:text
 							name="report.financialYear" />:<span class="mandatory1">*</span></td>
 					<td width="41%" class="bluebox"><s:select name="financialYear"
@@ -257,20 +249,20 @@ th.bluebgheadtd {
 							headerValue="%{getText('lbl.choose.options')}" value="%{model.financialYear.id}" />
 					</td>
 				</tr>
-				<tr>
+				<tr id="dateRow">
 					<td class="greybox">&nbsp;</td>
 					<td class="greybox"><s:text name="report.fromDate"/>:</td>
 					<td class="greybox">
-						<s:textfield name="fromdate" id="fromdate" cssStyle="width:100px"/>
-						<a href="javascript:show_calendar('incomeExpenditureReport.fromdate');"
+						<s:textfield name="fromDate" id="fromDate" cssStyle="width:100px"/>
+						<a href="javascript:show_calendar('balanceSheetReport.fromDate');"
 						   style="text-decoration:none">
 							<img src="/services/egi/resources/erp2/images/calendaricon.gif" border="0"/>
 						</a>(dd/mm/yyyy)
 					</td>
 					<td class="greybox"><s:text name="report.toDate"/>:</td>
 					<td class="greybox">
-						<s:textfield name="todate" id="todate" cssStyle="width:100px"/>
-						<a href="javascript:show_calendar('incomeExpenditureReport.todate');"
+						<s:textfield name="toDate" id="toDate" cssStyle="width:100px"/>
+						<a href="javascript:show_calendar('balanceSheetReport.toDate');"
 						   style="text-decoration:none">
 							<img src="/services/egi/resources/erp2/images/calendaricon.gif" border="0"/>
 						</a>(dd/mm/yyyy)

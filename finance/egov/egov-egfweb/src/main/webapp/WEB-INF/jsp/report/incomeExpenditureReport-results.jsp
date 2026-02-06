@@ -112,9 +112,14 @@
 									<s:iterator value="incomeExpenditureStatement.funds"
 										status="stat">
 										<th class="bluebgheadtd" width="15%" align="center"
-											colspan="1"><s:property value="currentYearToDate" />(Rs)</th>
+											colspan="1">
+											<%-- <s:property value="currentYearToDate" />(Rs)</th> --%>
+											<s:property value="currentPeriodLabel" />(Rs)
 										<th class="bluebgheadtd" width="15%" align="center"
-											colspan="1"><s:property value="previousYearToDate" />(Rs)</th>
+											colspan="1">
+											<%-- <s:property value="previousYearToDate" />(Rs)</th> --%>
+											
+											<s:property value="previousPeriodLabel" />(Rs)
 									</s:iterator>
 								</s:if>
 								<s:else>
@@ -191,12 +196,6 @@
 													<s:else>
 													  <s:text name="%{getText('{0,number,0.00}', {netAmount[name]})}" />&nbsp;
 													</s:else>
-
-												<%-- <s:if test='%{displayBold == true}'>
-													<strong><s:property value="netAmount[name]" />&nbsp;</strong>
-												</s:if>
-												<s:else>
-													<s:property value="netAmount[name]" />&nbsp;</s:else> --%>
 											</div>
 										</td>
 										<td class="blueborderfortd">

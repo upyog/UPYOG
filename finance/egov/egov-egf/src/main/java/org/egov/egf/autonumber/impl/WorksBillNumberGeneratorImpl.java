@@ -87,7 +87,7 @@ public class WorksBillNumberGeneratorImpl implements WorksBillNumberGenerator {
                 throw new ValidationException(FinancialConstants.EMPTY_STRING, "Financial Year is not defined for the voucher date" );
         sequenceName = "seq_works_billnumber_" + financialYear.getFinYearRange();
         final Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
-        worksBillNumber = String.format("%s/%s/%04d/%s",br.getEgBillregistermis().getDepartmentcode(), "WBILL", nextSequence, financialYear.getFinYearRange());
+        worksBillNumber = String.format("%s/%s/%s/%06d",financialYear.getFinYearRange(), br.getEgBillregistermis().getDepartmentcode(), br.getEgBillregistermis().getFunction().getCode(),nextSequence);
         return worksBillNumber;
     }
 }
