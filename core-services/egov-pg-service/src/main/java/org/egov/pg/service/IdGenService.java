@@ -1,13 +1,8 @@
 package org.egov.pg.service;
 
 import lombok.extern.slf4j.Slf4j;
-
-import javax.validation.Valid;
-
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.models.IdGenerationResponse;
-import org.egov.pg.models.Refund;
-import org.egov.pg.models.RefundRequest;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.IdGenRepository;
 import org.egov.pg.repository.TransactionRepository;
@@ -48,16 +43,6 @@ public class IdGenService {
         return txnId;
 
     }
-
-	public String generateRefundId(@Valid RefundRequest refundRequest) {
-		Refund refund = refundRequest.getRefund();
-		IdGenerationResponse response = idGenRepository.getId(refundRequest.getRequestInfo(), refund.getTenantId(),
-                appProperties.getIdGenRefundName(), appProperties.getIdGenRefundFormat(), 1);
-		
-		String refundId = response.getIdResponses().get(0).getId();
-        log.info("Refund ID Generated: " + refundId); 
-		return refundId;
-	}
 
 
 }
