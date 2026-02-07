@@ -1,6 +1,5 @@
 package org.egov.pg.service;
 
-import org.egov.pg.models.Refund;
 import org.egov.pg.models.Transaction;
 
 import java.net.URI;
@@ -58,8 +57,4 @@ public interface Gateway {
     String transactionIdKeyInResponse();
 
     String generateRedirectFormData(Transaction transaction );
-    
-    Refund initiateRefund(Refund refundTxn);
-
-	Refund fetchRefundStatus(Refund refundRequest);
 }
