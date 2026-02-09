@@ -24,6 +24,7 @@ import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.Revenue;
 import org.egov.pt.models.ServiceWithProperties;
 import org.egov.pt.models.Services;
+import org.egov.pt.models.collection.Payment;
 import org.egov.pt.repository.DashboardDataRepository;
 import org.egov.pt.repository.DashboardReportRepository;
 import org.egov.pt.service.PropertyService;
@@ -185,7 +186,7 @@ public class DashboardDataService {
 		
 		String key = dashboardRequest.getDashboardDataSearch().getSearchKey();
 		List<Property> value;
-
+		Map<String, List<Payment>> payments  = new HashMap<>();
 		switch (key) {
 		    case "totalPropertiesRegistered":
 		        value = dashboardReportRepository.getTotalPropertyRegisteredCount(dashboardRequest);
@@ -213,6 +214,16 @@ public class DashboardDataService {
 		        break;
 		    case "propertiesPaid":
 		        value = dashboardReportRepository.getTotalPropertyPaidCount(dashboardRequest);
+		        Map<String, String> propertyTenantMap =
+		                value.stream()
+		                     .filter(p -> p.getPropertyId() != null && p.getTenantId() != null)
+		                     .collect(Collectors.toMap(
+		                             Property::getPropertyId,
+		                             Property::getTenantId,
+		                             (oldVal, newVal) -> oldVal // avoid duplicate key crash
+		                     ));
+		        payments =  dashboardReportRepository.getCacheDataForPaymentReport(propertyTenantMap);
+		        
 		        break;
 		    case "propertiesWithAppealSubmitted":
 		        value = dashboardReportRepository.getTotalPropertyAppealSubmitedCount(dashboardRequest);
@@ -241,7 +252,8 @@ public class DashboardDataService {
 
 		// Now add to service
 		service.add(buildService(key, value));
-
+		if(!ObjectUtils.isEmpty(payments))
+			dashboardData.setPayments(payments);
 			/*
 			 * revenue.add(buildService( "refund",
 			 * dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest) ));
@@ -253,8 +265,6 @@ public class DashboardDataService {
 			 */
 		
 		dashboardData.setServices(service);
-		
-		
 		return dashboardData;
 	}
 	

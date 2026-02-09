@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -17,12 +18,14 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.DashboardDataSearch;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.collection.Payment;
 import org.egov.pt.repository.builder.DashboardReportQueryBuilder;
 import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.PropertyRedisCache;
 import org.egov.pt.web.contracts.DashboardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -88,7 +91,7 @@ public class DashboardReportRepository {
 		//criteria.setPropertyIds(propertyIdList.stream().collect(Collectors.toSet()));
 		List<Property> properties=null;
 		if(!CollectionUtils.isEmpty(propertyTenantMap))
-			properties=  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest.getRequestInfo()));
+			properties=  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
 		
 		
 		return properties;
@@ -138,7 +141,7 @@ public class DashboardReportRepository {
 	                  arr -> arr[1]  // tenantId
 	              ));
 		if(!CollectionUtils.isEmpty(propertyTenantMap))
-			return getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest.getRequestInfo()));
+			return getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
 		
 		return null;
 	}
@@ -163,7 +166,7 @@ public class DashboardReportRepository {
 				);
 		List<Property> properties=null;
 		if(!CollectionUtils.isEmpty(propertyTenantMap))
-			properties=  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest.getRequestInfo()));
+			properties=  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
 			
 		return properties;
 
@@ -189,7 +192,7 @@ public class DashboardReportRepository {
 				);
 		List<Property> properties=null;
 		if(!CollectionUtils.isEmpty(propertyTenantMap))
-			properties=  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest.getRequestInfo()));
+			properties=  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
 			
 		return properties;
 
@@ -197,19 +200,26 @@ public class DashboardReportRepository {
 	
 	public List<Property> getTotalPropertySelfassessedCount(DashboardRequest dashboardRequest)
 	{
+		Map<String, String> propertyTenantMap = new HashMap<>();
 		String query=reportQueryBuilder.getTotalPropertySelfassessedQuery(dashboardRequest.getDashboardDataSearch());
-		List<String> propertyIdList = jdbcTemplate.query(
+		propertyTenantMap = jdbcTemplate.query(
 			    query,
-			    (rs, rowNum) -> rs.getString("propertyid")  
+			    rs -> {
+			        Map<String, String> map = new HashMap<>();
+			        while (rs.next()) {
+			            map.put(
+			                rs.getString("propertyid"),
+			                rs.getString("tenantid")
+			            );
+			        }
+			        return map;
+			    }
 			);
-		Set<String> propertyIds = new HashSet<>(propertyIdList);
-		PropertyCriteria criteria = new PropertyCriteria();
-		criteria.setPropertyIds(propertyIds);
-		List<Property> properties=null;
 		
 		
-		//if(!CollectionUtils.isEmpty(propertyIds))
-			//properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+		List<Property> properties = null;
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			properties =  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
 		
 		return properties;
 	}
@@ -231,26 +241,59 @@ public class DashboardReportRepository {
 		return properties;
 	}
 	
-	public List<Property> getTotalPropertyPaidCount(DashboardRequest dashboardRequest)
-	{
-		String query=reportQueryBuilder.getTotalPropertyPaidQuery(dashboardRequest.getDashboardDataSearch());
-		List<String> propertyIdList = jdbcTemplate.query(
-			    query,
-			    (rs, rowNum) -> rs.getString("propertyid")  
-			);
-		Set<String> propertyIds = new HashSet<>(propertyIdList);
-		PropertyCriteria criteria = new PropertyCriteria();
-		criteria.setPropertyIds(propertyIds);
-		List<Property> properties=null;
-		//if(!CollectionUtils.isEmpty(propertyIds))
-			//properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
-		//if(!CollectionUtils.isEmpty(propertyIds))
-		//	properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
-		return properties;
-		
-	
+	public List<Property> getTotalPropertyPaidCount(
+	        DashboardRequest dashboardRequest) {
+
+	    String query =
+	            reportQueryBuilder.getTotalPropertyPaidQuery(
+	                    dashboardRequest.getDashboardDataSearch());
+
+	    Map<String, String> propertyTenantMap = new HashMap<>();
+
+	    // Redis payload
+	    Map<String, List<Payment>> redisPayload = new HashMap<>();
+
+	    // Track unique transactions per property
+	    Map<String, Set<String>> txnTracker = new HashMap<>();
+
+	    jdbcTemplate.query(query, (RowCallbackHandler) rs -> {
+	            String propertyId = rs.getString("propertyid");
+	            String tenantId   = rs.getString("tenantid");
+	            String txnNo      = rs.getString("txn_id");
+
+	            propertyTenantMap.put(propertyId, tenantId);
+
+	            String redisKey =
+	                    propertyRedisCache.PREFIX_PAYMENT
+	                            + tenantId + ":" + propertyId;
+
+	            // init trackers
+	            txnTracker.computeIfAbsent(redisKey, k -> new HashSet<>());
+
+	            // skip duplicate transaction
+	            if (!txnTracker.get(redisKey).add(txnNo)) {
+	                return; // duplicate → skip
+	            }
+	            Payment payment = Payment.builder()
+	                    .transactionNumber(txnNo)
+	                    .totalAmountPaid(rs.getBigDecimal("txn_amount"))
+	                    .build();
+
+	            redisPayload
+	                .computeIfAbsent(redisKey, k -> new ArrayList<>())
+	                .add(payment);
+	        
+	    });
+	    redisPayload.forEach((key, payments) ->
+	        propertyRedisCache.put(key,payments)
+	        
+	    );
+
+	    return getPropertiesList(
+	            getPropertiesWithCache(
+	                    propertyTenantMap, dashboardRequest));
 	}
-	
+
 	public List<Property> getTotalPropertyAppealSubmitedCount(DashboardRequest dashboardRequest)
 	{
 		String query=reportQueryBuilder.getTotalPropertyAppealSubmitedQuery(dashboardRequest.getDashboardDataSearch());
@@ -376,13 +419,15 @@ public class DashboardReportRepository {
 	
 
 	 public Map<String, Property> getPropertiesWithCache(
-			 Map<String, String> propertyTenantMap,RequestInfo requestInfo ){
+			 Map<String, String> propertyTenantMap,DashboardRequest dashboardRequest ){
 	        List<String> allPropertyIds =
 	                new ArrayList<>(propertyTenantMap.keySet().stream().collect(Collectors.toList()));
 
 	        // 1️⃣ Fetch from Redis (batch)
 	        Map<String, Property> cachedMap =
 	                propertyRedisCache.multiGet(propertyTenantMap);
+	        
+	       
 
 	        // 2️⃣ Find misses
 	        Set<String> missedPropertyIds = allPropertyIds.stream()
@@ -396,14 +441,12 @@ public class DashboardReportRepository {
 	        			.tenantIds(propertyTenantMap.values().stream().collect(Collectors.toSet()))
 	        			.propertyIds(missedPropertyIds)
 	        			.build();
-	                    
-
-	        	List<Property> searchResponse =propertyService.searchProperty(criteria,requestInfo);
-
+	          
+	        	
+	        	List<Property> searchResponse =propertyService.searchProperty(criteria,dashboardRequest.getRequestInfo());
 	            if (!CollectionUtils.isEmpty(searchResponse)) {
 
 	                for (Property property : searchResponse) {
-
 	                    String propertyId = property.getPropertyId();
 	                    propertyRedisCache.put(property.getTenantId(), propertyId, property);
 	                    cachedMap.put(propertyId, property);
@@ -420,4 +463,11 @@ public class DashboardReportRepository {
 		    }
 		    return new ArrayList<>(propertiesPendingWithCount.values());
 		}
+	 
+	 
+	 
+	 
+	 public Map<String,List<Payment>>getCacheDataForPaymentReport(Map<String, String> propertyTenantMap){
+		 return propertyRedisCache.multiGetPayment(propertyTenantMap);
+	 } 
 }

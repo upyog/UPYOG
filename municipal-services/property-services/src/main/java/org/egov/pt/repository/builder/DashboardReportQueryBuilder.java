@@ -61,19 +61,19 @@ public class DashboardReportQueryBuilder {
 			+ "GROUP BY\r\n"
 			+ "    ep.propertyid,ep.tenantid;";
 
-	public static final String PROPERTIES_SELF_ASSESSED = "SELECT epp.propertyid AS propertyid\r\n"
+	public static final String PROPERTIES_SELF_ASSESSED = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid\r\n"
 			+ "FROM eg_pt_asmt_assessment epaa\r\n" + "JOIN eg_pt_property epp ON epaa.propertyid = epp.propertyid\r\n"
-			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n" + "WHERE 1=1";
+			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n" + "WHERE epp.status = 'ACTIVE'";
 
 	public static final String PROPERTIES_PENDING_SELF_ASSESSMENT = "SELECT epp.propertyid AS propertyid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "WHERE epp.propertyid NOT IN (\r\n" + "    SELECT DISTINCT epaa.propertyid\r\n"
 			+ "    FROM eg_pt_asmt_assessment epaa\r\n" + ")";
 
-	public static final String PROPERTIES_PAID = "SELECT epp.propertyid AS propertyid\r\n"
+	public static final String PROPERTIES_PAID = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid,ept.txn_id as txn_id ,ept.txn_amount as txn_amount\r\n"
 			+ "FROM eg_pg_transactions ept\r\n" + "JOIN eg_pt_property epp ON ept.consumer_code = epp.propertyid\r\n"
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
-			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n" + "WHERE 1=1";
+			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n" + "WHERE epp.status = 'ACTIVE' ";
 
 	public static final String PROPERTIES_WITH_APPEAL_SUBMITTED = "SELECT epp.propertyid AS propertyid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"

@@ -1,6 +1,9 @@
 package org.egov.pt.models;
 
 import java.util.List;
+import java.util.Map;
+
+import org.egov.pt.models.collection.Payment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,6 +21,8 @@ public class DashboardReport {
 	private String region;
 	@JsonProperty("data")
 	private List<ServiceWithProperties> services;
+	private Map<String, List<Payment>> assesments;
+	private Map<String, List<Payment>> payments;
 	//private List<ServiceWithProperties> revenue;
 
 }
