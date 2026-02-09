@@ -203,7 +203,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
     setDependentNameChecked(!dependentNameChecked);
   };
 
-  function selectvendorName(i, e) {
+  function selectvendorName(e) {
     if (/\d/.test(e.target.value)) {
       setShowToast({ error: true, label: t("SV_CITIZEN_VALIDATION_FORMAT") });
     }
