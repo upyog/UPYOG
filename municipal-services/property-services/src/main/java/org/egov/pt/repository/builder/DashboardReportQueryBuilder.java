@@ -33,10 +33,33 @@ public class DashboardReportQueryBuilder {
 			+ "  STRING_AGG(latest_actions.propertyid || ':' || latest_actions.tenantid,', ') AS property_ids\r\n" + "FROM latest_actions\r\n"
 			+ "WHERE rn = 1\r\n" + "GROUP BY action_st";
 
-	public static final String PROPERTIES_APPROVED = "SELECT count(ewpv.businessid) ,ep.tenantid,epadd.ward_no\r\n"
+	public static final String PROPERTIES_APPROVED = "SELECT\r\n"
+			+ "    ep.propertyid,\r\n"
+			+ "    ep.tenantid\r\n"
 			+ "FROM eg_wf_processinstance_v2 ewpv\r\n"
-			+ "JOIN eg_pt_property ep ON ep.acknowldgementnumber = ewpv.businessid\r\n"
-			+ "JOIN eg_pt_address epadd ON ep.id = epadd.propertyid\r\n" + "WHERE ewpv.\"action\" ='APPROVE'\r\n";
+			+ "JOIN eg_pt_property ep\r\n"
+			+ "    ON ep.acknowldgementnumber = ewpv.businessid\r\n"
+			+ "JOIN eg_pt_address epadd\r\n"
+			+ "    ON ep.id = epadd.propertyid\r\n"
+			+ "WHERE ewpv.\"action\" = 'APPROVE'\r\n"
+			+ "  AND ep.status = 'ACTIVE'\r\n"
+			+ "  /*FILTER_CONDITIONS*/\n" 
+			+ "GROUP BY\r\n"
+			+ "    ep.propertyid,ep.tenantid;";
+	
+	public static final String PROPERTIES_REJECTED = "SELECT\r\n"
+			+ "    ep.propertyid,\r\n"
+			+ "    ep.tenantid\r\n"
+			+ "FROM eg_wf_processinstance_v2 ewpv\r\n"
+			+ "JOIN eg_pt_property ep\r\n"
+			+ "    ON ep.acknowldgementnumber = ewpv.businessid\r\n"
+			+ "JOIN eg_pt_address epadd\r\n"
+			+ "    ON ep.id = epadd.propertyid\r\n"
+			+ "WHERE ewpv.\"action\" = 'REJECT'\r\n"
+			+ "  AND ep.status = 'INACTIVE'\r\n"
+			+ "  /*FILTER_CONDITIONS*/\n" 
+			+ "GROUP BY\r\n"
+			+ "    ep.propertyid,ep.tenantid;";
 
 	public static final String PROPERTIES_SELF_ASSESSED = "SELECT epp.propertyid AS propertyid\r\n"
 			+ "FROM eg_pt_asmt_assessment epaa\r\n" + "JOIN eg_pt_property epp ON epaa.propertyid = epp.propertyid\r\n"
@@ -165,7 +188,7 @@ public class DashboardReportQueryBuilder {
 
 	public String getTotalPropertyApprovedQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(PROPERTIES_APPROVED);
+		StringBuilder stringBuilder = new StringBuilder();
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -189,12 +212,48 @@ public class DashboardReportQueryBuilder {
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			stringBuilder.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			stringBuilder.append(" AND epadd.ward_no != ''");
 		}
 
 		String finalQuery = PROPERTIES_APPROVED.replace("/*FILTER_CONDITIONS*/", stringBuilder.toString());
+		System.out.println("finalQuery::" + finalQuery);
+		return finalQuery;
+	}
+	
+	public String getTotalPropertyRejectedQuery(DashboardDataSearch dashboardDataSearch) {
+
+		StringBuilder stringBuilder = new StringBuilder();
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		stringBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
+			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
+			stringBuilder.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			stringBuilder.append(" AND epadd.ward_no != ''");
+		}
+
+		String finalQuery = PROPERTIES_REJECTED.replace("/*FILTER_CONDITIONS*/", stringBuilder.toString());
 		System.out.println("finalQuery::" + finalQuery);
 		return finalQuery;
 	}

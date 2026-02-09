@@ -143,11 +143,56 @@ public class DashboardReportRepository {
 		return null;
 	}
 	
-	public BigInteger getTotalPropertyApprovedCount(DashboardDataSearch dashboardDataSearch)
+	public List<Property> getTotalPropertyApprovedCount(DashboardRequest dashboardRequest)
 	{
-		String query=reportQueryBuilder.getTotalPropertyApprovedQuery(dashboardDataSearch);
-		BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
-		return result != null ? result : BigInteger.ZERO;
+		String query = reportQueryBuilder.getTotalPropertyApprovedQuery(dashboardRequest.getDashboardDataSearch());
+		Map<String, String> propertyTenantMap = new HashMap<>();
+		 List<String> propertyIdList = null;
+			propertyTenantMap = jdbcTemplate.query(
+				    query,
+				    rs -> {
+				        Map<String, String> map = new HashMap<>();
+				        while (rs.next()) {
+				            map.put(
+				                rs.getString("propertyid"),
+				                rs.getString("tenantid")
+				            );
+				        }
+				        return map;
+				    }
+				);
+		List<Property> properties=null;
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			properties=  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest.getRequestInfo()));
+			
+		return properties;
+
+	}
+	
+	public List<Property> getTotalPropertyRejectedCount(DashboardRequest dashboardRequest)
+	{
+		String query = reportQueryBuilder.getTotalPropertyRejectedQuery(dashboardRequest.getDashboardDataSearch());
+		Map<String, String> propertyTenantMap = new HashMap<>();
+		 List<String> propertyIdList = null;
+			propertyTenantMap = jdbcTemplate.query(
+				    query,
+				    rs -> {
+				        Map<String, String> map = new HashMap<>();
+				        while (rs.next()) {
+				            map.put(
+				                rs.getString("propertyid"),
+				                rs.getString("tenantid")
+				            );
+				        }
+				        return map;
+				    }
+				);
+		List<Property> properties=null;
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			properties=  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest.getRequestInfo()));
+			
+		return properties;
+
 	}
 	
 	public List<Property> getTotalPropertySelfassessedCount(DashboardRequest dashboardRequest)

@@ -200,10 +200,10 @@ public class DashboardDataService {
 		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.PENDINGWITHAPPROVER);
 		        break;
 		    case "propertiesApproved":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.APPROVED);
+		        value = dashboardReportRepository.getTotalPropertyApprovedCount(dashboardRequest);
 		        break;
 		    case "propertiesRejected":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.REJECTED);
+		        value = dashboardReportRepository.getTotalPropertyRejectedCount(dashboardRequest);
 		        break;
 		    case "propertiesSelfAssessed":
 		        value = dashboardReportRepository.getTotalPropertySelfassessedCount(dashboardRequest);
