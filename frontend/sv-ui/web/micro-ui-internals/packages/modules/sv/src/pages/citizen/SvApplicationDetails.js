@@ -133,7 +133,7 @@ const SvApplicationDetails = () => {
       onClick: () => printIdCard(),
     });
 
-
+    const vendorPersonalDetails = streetVendingDetails?.vendorDetail?.find((item)=>item.relationshipType==="VENDOR") || {};
 
   return (
     <React.Fragment>
@@ -170,11 +170,11 @@ const SvApplicationDetails = () => {
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("SV_VENDOR_PERSONAL_DETAILS")}</CardSubHeader>
           <StatusTable>
-            <Row className="border-none" label={t("SV_VENDOR_NAME")} text={streetVendingDetails?.vendorDetail?.[0]?.name || t("CS_NA")} />
-            <Row className="border-none" label={t("SV_FATHER_NAME")} text={streetVendingDetails?.vendorDetail?.[0]?.fatherName || t("CS_NA")} />
-            <Row className="border-none" label={t("SV_REGISTERED_MOB_NUMBER")} text={streetVendingDetails?.vendorDetail?.[0]?.mobileNo || t("CS_NA")} />
-            <Row className="border-none" label={t("SV_DATE_OF_BIRTH")} text={streetVendingDetails?.vendorDetail?.[0]?.dob || t("CS_NA")} />
-            <Row className="border-none" label={t("SV_EMAIL")} text={streetVendingDetails?.vendorDetail?.[0]?.emailId || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_VENDOR_NAME")} text={vendorPersonalDetails?.name || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_FATHER_NAME")} text={vendorPersonalDetails?.fatherName || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_REGISTERED_MOB_NUMBER")} text={vendorPersonalDetails?.mobileNo || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_DATE_OF_BIRTH")} text={vendorPersonalDetails?.dob || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_EMAIL")} text={vendorPersonalDetails?.emailId || t("CS_NA")} />
           </StatusTable>
           <CardSubHeader style={{ fontSize: "24px" }}>{t("SV_ADDRESS_DETAILS")}</CardSubHeader>
           <StatusTable>

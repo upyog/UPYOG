@@ -16,7 +16,10 @@ export const UPYOG_CONSTANTS = {
   PM: "PM",
   DOCUMENT:"CategoryDocument",
   NOT_APPLICABLE:"NA",
-  renewalStatus:"EligibleToRenew"
+  renewalStatus:"EligibleToRenew",
+  VENDOR:"VENDOR",
+  SPOUSE:"SPOUSE",
+  DEPENDENT:"DEPENDENT"
 };
 
 export const RENEWAL_CONSTANTS = {
@@ -45,6 +48,13 @@ export const checkForNA = (value = "") => {
 export const formatTime = (time) => {
   const hour = parseInt(time);
   return `${time} ${hour >= 12 ? UPYOG_CONSTANTS.PM : UPYOG_CONSTANTS.AM}`;
+};
+
+// helper function to format date from DD-MM-YYYY to YYYY-MM-DD
+export const formatToInputDate = (dateStr) => {
+  if (!dateStr) return "";
+  const [dd, mm, yyyy] = dateStr.split("-");
+  return `${yyyy}-${mm}-${dd}`;
 };
 
 /**
@@ -177,16 +187,16 @@ export const svPayloadData = (data) =>{
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: data?.owner?.units?.[0]?.vendorDateOfBirth,
-    userCategory:data?.owner?.units?.[0]?.userCategory?.code,
-    emailId: data?.owner?.units?.[0]?.email,
-    fatherName: data?.owner?.units?.[0]?.fatherName,
+    dob: data?.owner?.vendorDetails?.vendorDateOfBirth,
+    userCategory:data?.owner?.vendorDetails?.userCategory?.code,
+    emailId: data?.owner?.vendorDetails?.email,
+    fatherName: data?.owner?.vendorDetails?.fatherName,
     specialCategory: data?.specialCategoryData?.ownerCategory?.code,
-    gender: data?.owner?.units?.[0]?.gender?.code.charAt(0),
+    gender: data?.owner?.vendorDetails?.gender?.code.charAt(0),
     id: "",
     isInvolved: true,
-    mobileNo: data?.owner?.units?.[0]?.mobileNumber,
-    name: data?.owner?.units?.[0]?.vendorName,
+    mobileNo: data?.owner?.vendorDetails?.mobileNumber,
+    name: data?.owner?.vendorDetails?.vendorName,
     relationshipType: "VENDOR",
     vendorId: null
   });
@@ -199,8 +209,8 @@ export const svPayloadData = (data) =>{
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: data?.owner?.units?.[0]?.spouseDateBirth,
-    userCategory:data?.owner?.units?.[0]?.userCategory?.code,
+    dob: data?.owner?.spouseDetails?.spouseDateBirth,
+    userCategory:data?.owner?.vendorDetails?.userCategory?.code,
     emailId: "",
     specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     isInvolved: data?.owner?.spouseDependentChecked,
@@ -208,40 +218,39 @@ export const svPayloadData = (data) =>{
     gender: "O",
     id: "",
     mobileNo: "",
-    name: data?.owner?.units?.[0]?.spouseName,
+    name: data?.owner?.spouseDetails?.spouseName,
     relationshipType: "SPOUSE",
     vendorId: null
   });
 
-  const createDependentObject = (data) => ({
-    applicationId: "",
-    auditDetails: {
-      createdBy: "",
-      createdTime: 0,
-      lastModifiedBy: "",
-      lastModifiedTime: 0
-    },
-    dob: data?.owner?.units?.[0]?.dependentDateBirth,
-    userCategory:data?.owner?.units?.[0]?.userCategory?.code,
-    emailId: "",
-    isInvolved: data?.owner?.dependentNameChecked,
-    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
-    fatherName: "",
-    gender: data?.owner?.units?.[0]?.dependentGender?.code.charAt(0),
-    id: "",
-    mobileNo: "",
-    name: data?.owner?.units?.[0]?.dependentName,
-    relationshipType: "DEPENDENT",
-    vendorId: null
-  });
+  const createDependentObject = (dependent) => ({
+      applicationId: "",
+      auditDetails: {
+        createdBy: "",
+        createdTime: 0,
+        lastModifiedBy: "",
+        lastModifiedTime: 0
+      },
+      dob: dependent?.dependentDateBirth,
+      userCategory: dependent?.userCategory?.code,
+      emailId: "",
+      isInvolved: data?.owner?.dependentNameChecked,
+      fatherName: "",
+      gender: dependent?.dependentGender?.code?.charAt(0),
+      id: "",
+      mobileNo: "",
+      name: dependent?.dependentName,
+      relationshipType: "DEPENDENT",
+      vendorId: null
+});
 
   // Helper function to check if a string is empty or undefined
   const isEmpty = (str) => !str || str.trim() === '';
 
   // Main logic
-  if (!isEmpty(data?.owner?.units?.[0]?.vendorName)) {
-    const spouseName = data?.owner?.units?.[0]?.spouseName;
-    const dependentName = data?.owner?.units?.[0]?.dependentName;
+  if (!isEmpty(data?.owner?.vendorDetails?.vendorName)) {
+    const spouseName = data?.owner?.spouseDetails?.spouseName;
+    const dependentName = data?.owner?.dependentDetails?.[0]?.dependentName;
 
     if (isEmpty(spouseName) && isEmpty(dependentName)) {
       // Case 1: Only vendor exists
@@ -252,12 +261,18 @@ export const svPayloadData = (data) =>{
         createVendorObject(data),
         createSpouseObject(data)
       ];
-    } else if (!isEmpty(spouseName) && !isEmpty(dependentName)) {
+    } else if (!isEmpty(spouseName) && data?.owner?.dependentDetails?.length > 0) {
       // Case 3: All three exist (vendor, spouse, and dependent)
+      const validDependents = data?.owner?.dependentDetails.filter(
+          (d) => !isEmpty(d.dependentName)
+        );
+        const dependentPayload = validDependents.map((dep) =>
+          createDependentObject(dep)
+        );
       vendordetails = [
         createVendorObject(data),
         createSpouseObject(data),
-        createDependentObject(data)
+        ...dependentPayload
       ];
     }
   }
@@ -405,6 +420,7 @@ export const svPayloadData = (data) =>{
 
 export const svUpdatePayload = (data) =>{
   let vendordetails = [];
+  const dependentIds = JSON.parse(sessionStorage.getItem("dependentIds")) || [];
 
   const createVendorObject = (data) => ({
     applicationId: sessionStorage.getItem("ApplicationId"),
@@ -414,15 +430,15 @@ export const svUpdatePayload = (data) =>{
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: data?.owner?.units?.[0]?.vendorDateOfBirth,
-    userCategory:data?.owner?.units?.[0]?.userCategory?.code,
-    emailId: data?.owner?.units?.[0]?.email,
-    fatherName: data?.owner?.units?.[0]?.fatherName,
+    dob: data?.owner?.vendorDetails?.vendorDateOfBirth,
+    userCategory:data?.owner?.vendorDetails?.userCategory?.code,
+    emailId: data?.owner?.vendorDetails?.email,
+    fatherName: data?.owner?.vendorDetails?.fatherName,
     specialCategory: data?.specialCategoryData?.ownerCategory?.code,
-    gender: data?.owner?.units?.[0]?.gender?.code.charAt(0),
+    gender: data?.owner?.vendorDetails?.gender?.code.charAt(0),
     id: sessionStorage.getItem("venId"),
-    mobileNo: data?.owner?.units?.[0]?.mobileNumber,
-    name: data?.owner?.units?.[0]?.vendorName,
+    mobileNo: data?.owner?.vendorDetails?.mobileNumber,
+    name: data?.owner?.vendorDetails?.vendorName,
     relationshipType: "VENDOR",
     vendorId: null
   });
@@ -435,49 +451,49 @@ export const svUpdatePayload = (data) =>{
       lastModifiedBy: "",
       lastModifiedTime: 0
     },
-    dob: data?.owner?.units?.[0]?.spouseDateBirth,
-    userCategory:data?.owner?.units?.[0]?.userCategory?.code,
+    dob: data?.owner?.spouseDetails?.spouseDateBirth,
+    userCategory:data?.owner?.vendorDetails?.userCategory?.code,
     emailId: "",
+    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     isInvolved: data?.owner?.spouseDependentChecked,
     fatherName: "",
-    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     gender: "O",
-    id: sessionStorage.getItem("venId"),
+    id: sessionStorage.getItem("spouseId"),
     mobileNo: "",
-    name: data?.owner?.units?.[0]?.spouseName,
+    name: data?.owner?.spouseDetails?.spouseName,
     relationshipType: "SPOUSE",
     vendorId: null
   });
 
-  const createDependentObject = (data) => ({
-    applicationId: sessionStorage.getItem("ApplicationId"),
-    auditDetails: {
-      createdBy: "",
-      createdTime: 0,
-      lastModifiedBy: "",
-      lastModifiedTime: 0
-    },
-    dob: data?.owner?.units?.[0]?.dependentDateBirth,
-    userCategory:data?.owner?.units?.[0]?.userCategory?.code,
-    emailId: "",
-    isInvolved: data?.owner?.dependentNameChecked,
-    fatherName: "",
-    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
-    gender: data?.owner?.units?.[0]?.dependentGender?.code.charAt(0),
-    id: sessionStorage.getItem("venId"),
-    mobileNo: "",
-    name: data?.owner?.units?.[0]?.dependentName,
-    relationshipType: "DEPENDENT",
-    vendorId: null
-  });
+  const createDependentObject = (dependent,index) => ({
+      applicationId: sessionStorage.getItem("ApplicationId"),
+      auditDetails: {
+        createdBy: "",
+        createdTime: 0,
+        lastModifiedBy: "",
+        lastModifiedTime: 0
+      },
+      dob: dependent?.dependentDateBirth,
+      userCategory: dependent?.userCategory?.code,
+      emailId: "",
+      isInvolved: data?.owner?.dependentNameChecked,
+      fatherName: "",
+      specialCategory: data?.specialCategoryData?.ownerCategory?.code,
+      gender: dependent?.dependentGender?.code?.charAt(0),
+      id: dependentIds[index] || "",
+      mobileNo: "",
+      name: dependent?.dependentName,
+      relationshipType: "DEPENDENT",
+      vendorId: null
+});
 
   // Helper function to check if a string is empty or undefined
   const isEmpty = (str) => !str || str.trim() === '';
 
   // Main logic
-  if (!isEmpty(data?.owner?.units?.[0]?.vendorName)) {
-    const spouseName = data?.owner?.units?.[0]?.spouseName;
-    const dependentName = data?.owner?.units?.[0]?.dependentName;
+  if (!isEmpty(data?.owner?.vendorDetails?.vendorName)) {
+    const spouseName = data?.owner?.spouseDetails?.spouseName;
+    const dependentName = data?.owner?.dependentDetails?.[0]?.dependentName;
 
     if (isEmpty(spouseName) && isEmpty(dependentName)) {
       // Case 1: Only vendor exists
@@ -488,12 +504,18 @@ export const svUpdatePayload = (data) =>{
         createVendorObject(data),
         createSpouseObject(data)
       ];
-    } else if (!isEmpty(spouseName) && !isEmpty(dependentName)) {
+    } else if (!isEmpty(spouseName) && data?.owner?.dependentDetails?.length > 0) {
       // Case 3: All three exist (vendor, spouse, and dependent)
+      const validDependents = data?.owner?.dependentDetails.filter(
+          (d) => !isEmpty(d.dependentName)
+        );
+        const dependentPayload = validDependents.map((dep,index) =>
+          createDependentObject(dep,index)
+        );
       vendordetails = [
         createVendorObject(data),
         createSpouseObject(data),
-        createDependentObject(data)
+        ...dependentPayload
       ];
     }
   }
@@ -721,3 +743,10 @@ export function SVDocumnetPreview({documents, titleStyles, isSendBackFlow = fals
     </div>
   );
 }
+
+
+// helper function to validate pincode
+export const pinCodeValidation = (value) => {
+  // allows empty string or up to 6 digits
+  return /^\d{0,6}$/.test(value);
+};

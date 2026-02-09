@@ -30,17 +30,28 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   const [showToast, setShowToast] = useState(null);
   const [isSameForAll, setIsSameForAll] = useState(previousData?.vendingOperationTimeDetails?.length === 7 || editdata?.vendingOperationTimeDetails?.length === 7 ? true : false || formData?.businessDetails?.isSameForAll); // Flag to check if same for all days 
+ 
   const [daysOfOperation, setDaysOfOperation] = useState( // Array to store selected days of operation
-    formData?.businessDetails?.daysOfOperation || [
-      { name: "Monday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[0]?.fromTime || editdata?.vendingOperationTimeDetails?.[0]?.fromTime || "", endTime: previousData?.vendingOperationTimeDetails?.[0]?.toTime || editdata?.vendingOperationTimeDetails?.[0]?.toTime || "" },
-      { name: "Tuesday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[1]?.fromTime || editdata?.vendingOperationTimeDetails?.[1]?.fromTime || "", endTime: previousData?.vendingOperationTimeDetails?.[1]?.toTime || editdata?.vendingOperationTimeDetails?.[1]?.toTime || "" },
-      { name: "Wednesday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[2]?.fromTime || editdata?.vendingOperationTimeDetails?.[2]?.fromTime || "", endTime: previousData?.vendingOperationTimeDetails?.[2]?.toTime || editdata?.vendingOperationTimeDetails?.[2]?.toTime || "" },
-      { name: "Thursday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[3]?.fromTime || editdata?.vendingOperationTimeDetails?.[3]?.fromTime || "", endTime: previousData?.vendingOperationTimeDetails?.[3]?.toTime || editdata?.vendingOperationTimeDetails?.[3]?.toTime || "" },
-      { name: "Friday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[4]?.fromTime || editdata?.vendingOperationTimeDetails?.[4]?.fromTime || "", endTime: previousData?.vendingOperationTimeDetails?.[4]?.toTime || editdata?.vendingOperationTimeDetails?.[4]?.toTime || "" },
-      { name: "Saturday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[5]?.fromTime || editdata?.vendingOperationTimeDetails?.[5]?.fromTime || "", endTime: previousData?.vendingOperationTimeDetails?.[5]?.toTime || editdata?.vendingOperationTimeDetails?.[5]?.toTime || "" },
-      { name: "Sunday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[6]?.fromTime || editdata?.vendingOperationTimeDetails?.[6]?.fromTime || "", endTime: previousData?.vendingOperationTimeDetails?.[6]?.toTime || editdata?.vendingOperationTimeDetails?.[6]?.toTime || "" },
-    ]
-  );
+  formData?.businessDetails?.daysOfOperation || (() => {
+    const operationTimeDetails = previousData?.vendingOperationTimeDetails || editdata?.vendingOperationTimeDetails || [];
+    
+    // Create a map for quick lookup by dayOfWeek
+    const dayMap = {};
+    operationTimeDetails.forEach(detail => {
+      dayMap[detail.dayOfWeek] = detail;
+    });
+    
+    return [
+      { name: "Monday", isSelected: !!dayMap["MONDAY"], startTime: dayMap["MONDAY"]?.fromTime || "", endTime: dayMap["MONDAY"]?.toTime || "" },
+      { name: "Tuesday", isSelected: !!dayMap["TUESDAY"], startTime: dayMap["TUESDAY"]?.fromTime || "", endTime: dayMap["TUESDAY"]?.toTime || "" },
+      { name: "Wednesday", isSelected: !!dayMap["WEDNESDAY"], startTime: dayMap["WEDNESDAY"]?.fromTime || "", endTime: dayMap["WEDNESDAY"]?.toTime || "" },
+      { name: "Thursday", isSelected: !!dayMap["THURSDAY"], startTime: dayMap["THURSDAY"]?.fromTime || "", endTime: dayMap["THURSDAY"]?.toTime || "" },
+      { name: "Friday", isSelected: !!dayMap["FRIDAY"], startTime: dayMap["FRIDAY"]?.fromTime || "", endTime: dayMap["FRIDAY"]?.toTime || "" },
+      { name: "Saturday", isSelected: !!dayMap["SATURDAY"], startTime: dayMap["SATURDAY"]?.fromTime || "", endTime: dayMap["SATURDAY"]?.toTime || "" },
+      { name: "Sunday", isSelected: !!dayMap["SUNDAY"], startTime: dayMap["SUNDAY"]?.fromTime || "", endTime: dayMap["SUNDAY"]?.toTime || "" },
+    ];
+  })()
+);
   const [backupDays, setBackupDays] = useState(formData?.businessDetails?.backupDays || [...daysOfOperation]); // Backup array to store original days of operation
 
 
@@ -343,14 +354,14 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
         lastModifiedBy: "",
         lastModifiedTime: 0
       },
-      dob: formData?.owner?.units?.[0]?.vendorDateOfBirth,
-      userCategory: formData?.owner?.units?.[0]?.userCategory?.code,
-      emailId: formData?.owner?.units?.[0]?.email,
-      fatherName: formData?.owner?.units?.[0]?.fatherName,
-      gender: formData?.owner?.units?.[0]?.gender?.code.charAt(0),
+      dob: formData?.vendorDateOfBirth,
+      userCategory: formData?.userCategory?.code,
+      emailId: formData?.email,
+      fatherName: formData?.fatherName,
+      gender: formData?.gender?.code.charAt(0),
       id: "",
-      mobileNo: formData?.owner?.units?.[0]?.mobileNumber,
-      name: formData?.owner?.units?.[0]?.vendorName,
+      mobileNo: formData?.mobileNumber,
+      name: formData?.vendorName,
       relationshipType: "VENDOR",
       vendorId: null
     });
@@ -363,20 +374,20 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
         lastModifiedBy: "",
         lastModifiedTime: 0
       },
-      dob: formData?.owner?.units?.[0]?.spouseDateBirth,
-      userCategory: formData?.owner?.units?.[0]?.userCategory?.code,
+      dob: formData?.spouseDateBirth,
+      userCategory: formData?.userCategory?.code,
       emailId: "",
-      isInvolved: formData?.owner?.spouseDependentChecked,
+      isInvolved: formData?.spouseDependentChecked,
       fatherName: "",
       gender: "O",
       id: "",
       mobileNo: "",
-      name: formData?.owner?.units?.[0]?.spouseName,
+      name: formData?.spouseName,
       relationshipType: "SPOUSE",
       vendorId: null
     });
 
-    const createDependentObject = (formData) => ({
+     const createDependentObject = (dependent) => ({
       applicationId: "",
       auditDetails: {
         createdBy: "",
@@ -384,42 +395,48 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
         lastModifiedBy: "",
         lastModifiedTime: 0
       },
-      dob: formData?.owner?.units?.[0]?.dependentDateBirth,
-      userCategory: formData?.owner?.units?.[0]?.userCategory?.code,
+      dob: dependent?.dependentDateBirth,
+      userCategory: dependent?.userCategory?.code,
       emailId: "",
-      isInvolved: formData?.owner?.dependentNameChecked,
+      isInvolved: formData?.dependentNameChecked,
       fatherName: "",
-      gender: formData?.owner?.units?.[0]?.dependentGender?.code.charAt(0),
+      gender: dependent?.dependentGender?.code?.charAt(0),
       id: "",
       mobileNo: "",
-      name: formData?.owner?.units?.[0]?.dependentName,
+      name: dependent?.dependentName,
       relationshipType: "DEPENDENT",
       vendorId: null
-    });
+});
 
     // Helper function to check if a string is empty or undefined
     const isEmpty = (str) => !str || str.trim() === '';
 
     // Main logic
-    if (!isEmpty(formData?.owner?.units?.[0]?.vendorName)) {
-      const spouseName = formData?.owner?.units?.[0]?.spouseName;
-      const dependentName = formData?.owner?.units?.[0]?.dependentName;
+    if (!isEmpty(formData?.owner?.vendorDetails?.vendorName)) {
+      const spouseName = formData?.owner?.spouseDetails?.spouseName;
+      const dependentName = formData?.owner?.dependentDetails?.[0]?.dependentName;
 
       if (isEmpty(spouseName) && isEmpty(dependentName)) {
         // Case 1: Only vendor exists
-        vendordetails = [createVendorObject(formData)];
+        vendordetails = [createVendorObject(formData?.owner?.vendorDetails)];
       } else if (!isEmpty(spouseName) && isEmpty(dependentName)) {
         // Case 2: Both vendor and spouse exist
         vendordetails = [
-          createVendorObject(formData),
-          createSpouseObject(formData)
+          createVendorObject(formData?.owner?.vendorDetails),
+          createSpouseObject(formData?.owner?.spouseDetails)
         ];
-      } else if (!isEmpty(spouseName) && !isEmpty(dependentName)) {
+      } else if (!isEmpty(spouseName) && formData?.owner?.dependentDetails?.length > 0) {
         // Case 3: All three exist (vendor, spouse, and dependent)
+        const validDependents = formData?.owner?.dependentDetails.filter(
+          (d) => !isEmpty(d.dependentName)
+        );
+        const dependentPayload = validDependents.map((dep) =>
+          createDependentObject(dep)
+        );
         vendordetails = [
-          createVendorObject(formData),
-          createSpouseObject(formData),
-          createDependentObject(formData)
+            createVendorObject(formData?.owner?.vendorDetails),
+            createSpouseObject(formData?.owner?.spouseDetails),
+          ...dependentPayload
         ];
       }
 

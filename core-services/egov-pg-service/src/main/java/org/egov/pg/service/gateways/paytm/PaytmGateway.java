@@ -2,8 +2,6 @@ package org.egov.pg.service.gateways.paytm;
 
 import com.paytm.pg.merchant.*;
 import lombok.extern.slf4j.Slf4j;
-
-import org.egov.pg.models.Refund;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
@@ -164,16 +162,4 @@ public class PaytmGateway implements Gateway {
         // TODO Auto-generated method stub
         return null;
     }
-
-	@Override
-	public Refund initiateRefund(Refund refundTxn) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Refund fetchRefundStatus(Refund refundRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

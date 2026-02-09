@@ -8,14 +8,7 @@ public class MerchDetails {
 	private String merchType;
 	private String mccCode;
 	private String merchTxnDate;
-	private String atomTxnId;
 	
-	public String getAtomTxnId() {
-		return atomTxnId;
-	}
-	public void setAtomTxnId(String atomTxnId) {
-		this.atomTxnId = atomTxnId;
-	}
 	public String getMerchId() {
 		return merchId;
 	}
@@ -62,7 +55,7 @@ public class MerchDetails {
 	public String toString() {
 		return "MerchDetails [merchId=" + merchId + ", userId=" + userId + ", password=" + password + ", merchTxnId="
 				+ merchTxnId + ", merchType=" + merchType + ", mccCode=" + mccCode + ", merchTxnDate=" + merchTxnDate
-				+ ", getMerchId()=" + getMerchId() + ",atomTxnId = "+atomTxnId + ",getAtomTxnId ="+ getAtomTxnId()+ ", getUserId()=" + getUserId() + ", getPassword()=" + getPassword()
+				+ ", getMerchId()=" + getMerchId() + ", getUserId()=" + getUserId() + ", getPassword()=" + getPassword()
 				+ ", getMerchTxnId()=" + getMerchTxnId() + ", getMerchType()=" + getMerchType() + ", getMccCode()="
 				+ getMccCode() + ", getMerchTxnDate()=" + getMerchTxnDate() + ", getClass()=" + getClass()
 				+ ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";

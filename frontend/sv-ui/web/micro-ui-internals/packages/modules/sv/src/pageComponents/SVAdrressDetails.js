@@ -3,6 +3,7 @@ import { FormStep, TextInput, CardLabel, CardHeader, Dropdown, TextArea, CheckBo
 import { useForm, Controller } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/Timeline";
+import { pinCodeValidation } from "../utils";
 
 /**
  * SVAdrressDetails Component
@@ -88,7 +89,12 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
   }
 
   const setAddressPincode = (e) => {
-    setPincode(e.target.value);
+    const value = e.target.value;
+    // Allow numbers between 0 and 999999 (1 to 6 digits)
+    if (pinCodeValidation(value)) {
+      setPincode(value);
+    }
+    // setPincode(e.target.value);
   };
 
   const sethouseNo = (e) => {
@@ -109,7 +115,11 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
   }
 
   const setcAddressPincode = (e) => {
-    setCPincode(e.target.value);
+    const value = e.target.value;
+    // Allow numbers between 0 and 999999 (1 to 6 digits)
+    if (pinCodeValidation(value)) {
+      setCPincode(value);
+    }
   };
 
   const setchouseNo = (e) => {
@@ -140,14 +150,14 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
         lastModifiedBy: "",
         lastModifiedTime: 0
       },
-      dob: formData?.owner?.units?.[0]?.vendorDateOfBirth,
-      userCategory: formData?.owner?.units?.[0]?.userCategory?.code,
-      emailId: formData?.owner?.units?.[0]?.email,
-      fatherName: formData?.owner?.units?.[0]?.fatherName,
-      gender: formData?.owner?.units?.[0]?.gender?.code.charAt(0),
+      dob: formData?.vendorDateOfBirth,
+      userCategory: formData?.userCategory?.code,
+      emailId: formData?.email,
+      fatherName: formData?.fatherName,
+      gender: formData?.gender?.code.charAt(0),
       id: "",
-      mobileNo: formData?.owner?.units?.[0]?.mobileNumber,
-      name: formData?.owner?.units?.[0]?.vendorName,
+      mobileNo: formData?.mobileNumber,
+      name: formData?.vendorName,
       relationshipType: "VENDOR",
       vendorId: null
     });
@@ -160,20 +170,20 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
         lastModifiedBy: "",
         lastModifiedTime: 0
       },
-      dob: formData?.owner?.units?.[0]?.spouseDateBirth,
-      userCategory: formData?.owner?.units?.[0]?.userCategory?.code,
+      dob: formData?.spouseDateBirth,
+      userCategory: formData?.userCategory?.code,
       emailId: "",
-      isInvolved: formData?.owner?.spouseDependentChecked,
+      isInvolved: formData?.spouseDependentChecked,
       fatherName: "",
       gender: "O",
       id: "",
       mobileNo: "",
-      name: formData?.owner?.units?.[0]?.spouseName,
+      name: formData?.spouseName,
       relationshipType: "SPOUSE",
       vendorId: null
     });
 
-    const createDependentObject = (formData) => ({
+     const createDependentObject = (dependent) => ({
       applicationId: "",
       auditDetails: {
         createdBy: "",
@@ -181,44 +191,51 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
         lastModifiedBy: "",
         lastModifiedTime: 0
       },
-      dob: formData?.owner?.units?.[0]?.dependentDateBirth,
-      userCategory: formData?.owner?.units?.[0]?.userCategory?.code,
+      dob: dependent?.dependentDateBirth,
+      userCategory: dependent?.userCategory?.code,
       emailId: "",
-      isInvolved: formData?.owner?.dependentNameChecked,
+      isInvolved: formData?.dependentNameChecked,
       fatherName: "",
-      gender: formData?.owner?.units?.[0]?.dependentGender?.code.charAt(0),
+      gender: dependent?.dependentGender?.code?.charAt(0),
       id: "",
       mobileNo: "",
-      name: formData?.owner?.units?.[0]?.dependentName,
+      name: dependent?.dependentName,
       relationshipType: "DEPENDENT",
       vendorId: null
-    });
+});
 
     // Helper function to check if a string is empty or undefined
     const isEmpty = (str) => !str || str.trim() === '';
 
     // Main logic
-    if (!isEmpty(formData?.owner?.units?.[0]?.vendorName)) {
-      const spouseName = formData?.owner?.units?.[0]?.spouseName;
-      const dependentName = formData?.owner?.units?.[0]?.dependentName;
+    if (!isEmpty(formData?.owner?.vendorDetails?.vendorName)) {
+      const spouseName = formData?.owner?.spouseDetails?.spouseName;
+      const dependentName = formData?.owner?.dependentDetails?.[0]?.dependentName;
 
       if (isEmpty(spouseName) && isEmpty(dependentName)) {
         // Case 1: Only vendor exists
-        vendordetails = [createVendorObject(formData)];
+        vendordetails = [createVendorObject(formData?.owner?.vendorDetails)];
       } else if (!isEmpty(spouseName) && isEmpty(dependentName)) {
         // Case 2: Both vendor and spouse exist
         vendordetails = [
-          createVendorObject(formData),
-          createSpouseObject(formData)
+          createVendorObject(formData?.owner?.vendorDetails),
+          createSpouseObject(formData?.owner?.spouseDetails)
         ];
-      } else if (!isEmpty(spouseName) && !isEmpty(dependentName)) {
+      } else if (!isEmpty(spouseName) && formData?.owner?.dependentDetails?.length > 0) {
         // Case 3: All three exist (vendor, spouse, and dependent)
+        const validDependents = formData?.owner?.dependentDetails.filter(
+          (d) => !isEmpty(d.dependentName)
+        );
+        const dependentPayload = validDependents.map((dep) =>
+          createDependentObject(dep)
+        );
         vendordetails = [
-          createVendorObject(formData),
-          createSpouseObject(formData),
-          createDependentObject(formData)
+            createVendorObject(formData?.owner?.vendorDetails),
+            createSpouseObject(formData?.owner?.spouseDetails),
+          ...dependentPayload
         ];
       }
+
     }
 
     const daysOfOperations = formData?.businessDetails?.daysOfOperation;
@@ -540,7 +557,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
             <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
-              type="tel"
+              type="number"
               isMandatory={false}
               optionKey="i18nKey"
               name="pincode"
@@ -700,7 +717,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
             <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
-              type="tel"
+              type="number"
               isMandatory={false}
               optionKey="i18nKey"
               name="cpincode"
@@ -712,7 +729,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               validation={{
                 required: true,
                 pattern: "^[0-9]{6}$",
-                type: "tel",
+                type: "number",
                 title: t("SV_ADDRESS_PINCODE_INVALID"),
               }}
               minLength={6}

@@ -10,7 +10,8 @@ RUN cd ${WORK_DIR} \
 #RUN chmod +x ./${WORK_DIR}/entrypoint.sh && ./${WORK_DIR}/entrypoint.sh
 
 # Create runtime image
-FROM egovio/wildfly:1-helm-fin-e6312078
+#FROM egovio/wildfly:1-helm-fin-e6312078
+FROM egovio/wildfly:wildfly-docker-9371e7becf-5
 
 COPY --from=build /app/egov/egov-ear/target/*.ear /opt/jboss/wildfly/standalone/deployments/
 USER jboss

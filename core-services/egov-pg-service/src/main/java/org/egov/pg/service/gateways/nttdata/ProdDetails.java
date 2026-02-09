@@ -3,12 +3,12 @@ package org.egov.pg.service.gateways.nttdata;
 public class ProdDetails {
 	private String prodName ;
 	private String prodAmount;
-	private Double prodRefundAmount;
+	private String prodRefundAmount;
 	private String prodRefundId;
-	public Double getProdRefundAmount() {
+	public String getProdRefundAmount() {
 		return prodRefundAmount;
 	}
-	public void setProdRefundAmount(Double prodRefundAmount) {
+	public void setProdRefundAmount(String prodRefundAmount) {
 		this.prodRefundAmount = prodRefundAmount;
 	}
 	public String getProdRefundId() {
