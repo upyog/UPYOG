@@ -331,8 +331,8 @@ public class DashboardDataService {
 	                new ArrayList<>(propertiesPendingWithDocVerifierMap);
 
 	        // 1️⃣ Fetch from Redis (batch)
-	        Map<String, Property> cachedMap =
-	                propertyRedisCache.multiGet(tenantId, allPropertyIds);
+	        Map<String, Property> cachedMap =null;
+	                //propertyRedisCache.multiGet(tenantId, allPropertyIds);
 
 	        // 2️⃣ Find misses
 	        Set<String> missedPropertyIds = allPropertyIds.stream()

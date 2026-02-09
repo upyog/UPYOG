@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class DashboardReportQueryBuilder {
 
-	public static final String TOTAL_PROPERTIES_REGISTERED = "select epp.propertyid from eg_pt_property epp join eg_pt_address epa on epp.id=epa.propertyid where 1=1";
+	public static final String TOTAL_PROPERTIES_REGISTERED = "select epp.propertyid,epp.tenantid from eg_pt_property epp join eg_pt_address epa on epp.id=epa.propertyid where epp.status in ('ACTIVE','INWORKFLOW') ";
 
 	public static final String PROPERTIES_PENDING_WITH = "WITH latest_actions AS (\r\n" + "  SELECT \r\n"
 			+ "    ewpv.businessid,\r\n" + "    ewpv.\"action\",\r\n" + "    ewpv.tenantid,\r\n"
@@ -22,7 +22,7 @@ public class DashboardReportQueryBuilder {
 			+ "      ORDER BY ewpv.lastmodifiedtime DESC\r\n" + "    ) AS rn\r\n"
 			+ "  FROM eg_wf_processinstance_v2 ewpv\r\n" + "  JOIN eg_pt_property epp \r\n"
 			+ "    ON epp.acknowldgementnumber = ewpv.businessid\r\n" + "  JOIN eg_pt_address epadd \r\n"
-			+ "    ON epp.id = epadd.propertyid\r\n" + "  WHERE ewpv.\"action\" != ''\r\n"
+			+ "    ON epp.id = epadd.propertyid\r\n" + "  WHERE ewpv.\"action\" != '' and epp.status = 'INWORKFLOW' \r\n "
 			+ "  /*FILTER_CONDITIONS*/\r\n" + ")\r\n" + "\r\n" + "SELECT \r\n" + "  CASE\r\n"
 			+ "    WHEN action IN ('SENDBACKTOCITIZEN') THEN 'PENDINGWITHCITIZEN'\r\n"
 			+ "    WHEN action IN ('REOPEN', 'SENDBACKTODOCKVERIFIER', 'SENDBACKTODOCVERIFIER', 'OPEN') THEN 'PENDINGWITHDOCVERIFIER'\r\n"
@@ -30,7 +30,7 @@ public class DashboardReportQueryBuilder {
 			+ "    WHEN action = 'REJECT' THEN 'REJECTED'\r\n"
 			+ "    WHEN action = 'FORWARD' THEN 'PENDINGWITHAPPROVER'\r\n"
 			+ "    WHEN action = 'APPROVE' THEN 'APPROVED'\r\n" + "  END AS action_st,\r\n"
-			+ "  STRING_AGG(latest_actions.propertyid, ', ') AS property_ids\r\n" + "FROM latest_actions\r\n"
+			+ "  STRING_AGG(latest_actions.propertyid || ':' || latest_actions.tenantid,', ') AS property_ids\r\n" + "FROM latest_actions\r\n"
 			+ "WHERE rn = 1\r\n" + "GROUP BY action_st";
 
 	public static final String PROPERTIES_APPROVED = "SELECT count(ewpv.businessid) ,ep.tenantid,epadd.ward_no\r\n"

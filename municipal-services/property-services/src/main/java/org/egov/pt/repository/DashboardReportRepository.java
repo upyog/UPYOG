@@ -9,8 +9,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.DashboardDataSearch;
 import org.egov.pt.models.Property;
@@ -24,6 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import io.netty.util.internal.ObjectUtil;
 
 @Repository
 public class DashboardReportRepository {
@@ -43,18 +47,48 @@ public class DashboardReportRepository {
 	public List<Property> getTotalPropertyRegisteredCount(DashboardRequest dashboardRequest)
 	{
 		String query = reportQueryBuilder.getTotalPropertyRegisteredQuery(dashboardRequest.getDashboardDataSearch());
-
-		List<String> propertyIdList = jdbcTemplate.query(
-		    query,
-		    (rs, rowNum) -> rs.getString("propertyid")  
-		);
-
-		Set<String> propertyIds = new HashSet<>(propertyIdList);
-		PropertyCriteria criteria = new PropertyCriteria();
-		criteria.setPropertyIds(propertyIds);
+		Map<String, String> propertyTenantMap = new HashMap<>();
+		 List<String> propertyIdList = null;
+		if(!ObjectUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getTenantid())) {
+			 propertyTenantMap = jdbcTemplate.query(query, rs -> {
+			        Map<String, String> map = new HashMap<>();
+			        while (rs.next()) {
+			            map.put(
+			                rs.getString("propertyid"),
+			                dashboardRequest.getDashboardDataSearch().getTenantid()
+			            );
+			        }
+			        return map;
+			    });
+		 
+		}
+		else {
+			propertyTenantMap = jdbcTemplate.query(
+				    query,
+				    rs -> {
+				        Map<String, String> map = new HashMap<>();
+				        while (rs.next()) {
+				            map.put(
+				                rs.getString("propertyid"),
+				                rs.getString("tenantid")
+				            );
+				        }
+				        return map;
+				    }
+				);
+			//propertyIdList =
+			      //  propertyTenantMap.keySet().stream().collect(Collectors.toList());
+		}
+		
+		
+		 
+		
+		
+		//PropertyCriteria criteria = new PropertyCriteria();
+		//criteria.setPropertyIds(propertyIdList.stream().collect(Collectors.toSet()));
 		List<Property> properties=null;
-		if(!CollectionUtils.isEmpty(propertyIds))
-			properties=  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			properties=  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest.getRequestInfo()));
 		
 		
 		return properties;
@@ -77,6 +111,7 @@ public class DashboardReportRepository {
 	    Set<String> propertyIds = new HashSet<>();
 		String propertyIdstring =null;
 		propertyIds = new HashSet<>();
+		Map<String, String> propertyTenantMap = new HashMap<>();
 		if(pendingString.equals("PENDINGWITHDOCVERIFIER")) {
 			propertyIdstring = queryResult.getOrDefault("PENDINGWITHDOCVERIFIER", null);
 		}
@@ -93,14 +128,17 @@ public class DashboardReportRepository {
 			propertyIdstring = queryResult.getOrDefault("REJECTED", null);
 		}
 		if(!StringUtils.isEmpty(propertyIdstring))
-			propertyIds.addAll(
-				    Arrays.stream(propertyIdstring.split(","))
-				          .map(String::trim)
-				          .collect(Collectors.toSet()));
-		PropertyCriteria criteria = new PropertyCriteria();
-		criteria.setPropertyIds(propertyIds);
-		if(!CollectionUtils.isEmpty(propertyIds))
-			return getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+			 propertyTenantMap =
+	        Arrays.stream(propertyIdstring.split(","))
+	              .map(String::trim)
+	              .map(s -> s.split(":"))
+	              .filter(arr -> arr.length == 2)
+	              .collect(Collectors.toMap(
+	                  arr -> arr[0], // propertyId
+	                  arr -> arr[1]  // tenantId
+	              ));
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			return getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest.getRequestInfo()));
 		
 		return null;
 	}
@@ -125,8 +163,8 @@ public class DashboardReportRepository {
 		List<Property> properties=null;
 		
 		
-		if(!CollectionUtils.isEmpty(propertyIds))
-			properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+		//if(!CollectionUtils.isEmpty(propertyIds))
+			//properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
 		
 		return properties;
 	}
@@ -142,8 +180,8 @@ public class DashboardReportRepository {
 		PropertyCriteria criteria = new PropertyCriteria();
 		criteria.setPropertyIds(propertyIds);
 		List<Property> properties=null;
-		if(!CollectionUtils.isEmpty(propertyIds))
-			properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+		//if(!CollectionUtils.isEmpty(propertyIds))
+		//	properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
 		
 		return properties;
 	}
@@ -161,8 +199,8 @@ public class DashboardReportRepository {
 		List<Property> properties=null;
 		//if(!CollectionUtils.isEmpty(propertyIds))
 			//properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
-		if(!CollectionUtils.isEmpty(propertyIds))
-			properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+		//if(!CollectionUtils.isEmpty(propertyIds))
+		//	properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
 		return properties;
 		
 	
@@ -184,8 +222,8 @@ public class DashboardReportRepository {
 		 * =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
 		 */
 		
-		if(!CollectionUtils.isEmpty(propertyIds))
-			properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+		//if(!CollectionUtils.isEmpty(propertyIds))
+			//properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
 		return properties;
 	}
 	
@@ -293,14 +331,13 @@ public class DashboardReportRepository {
 	
 
 	 public Map<String, Property> getPropertiesWithCache(
-	            String tenantId,
-	           Set<String> propertiesPendingWithDocVerifierMap,RequestInfo requestInfo ){
+			 Map<String, String> propertyTenantMap,RequestInfo requestInfo ){
 	        List<String> allPropertyIds =
-	                new ArrayList<>(propertiesPendingWithDocVerifierMap);
+	                new ArrayList<>(propertyTenantMap.keySet().stream().collect(Collectors.toList()));
 
 	        // 1️⃣ Fetch from Redis (batch)
 	        Map<String, Property> cachedMap =
-	                propertyRedisCache.multiGet(tenantId, allPropertyIds);
+	                propertyRedisCache.multiGet(propertyTenantMap);
 
 	        // 2️⃣ Find misses
 	        Set<String> missedPropertyIds = allPropertyIds.stream()
@@ -311,7 +348,7 @@ public class DashboardReportRepository {
 	        if (!missedPropertyIds.isEmpty()) {
 
 	        	PropertyCriteria criteria = PropertyCriteria.builder()
-	        			.tenantId(tenantId)
+	        			.tenantIds(propertyTenantMap.values().stream().collect(Collectors.toSet()))
 	        			.propertyIds(missedPropertyIds)
 	        			.build();
 	                    
@@ -323,7 +360,7 @@ public class DashboardReportRepository {
 	                for (Property property : searchResponse) {
 
 	                    String propertyId = property.getPropertyId();
-	                    propertyRedisCache.put(tenantId, propertyId, property);
+	                    propertyRedisCache.put(property.getTenantId(), propertyId, property);
 	                    cachedMap.put(propertyId, property);
 	                }
 	            }

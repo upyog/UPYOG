@@ -1,6 +1,7 @@
 package org.egov.pt.util;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,23 +27,26 @@ public class PropertyRedisCache {
         this.redisTemplate = redisTemplate;
     }
 
-    public Map<String, Property> multiGet(
-            String tenantId, List<String> propertyIds) {
+    public Map<String, Property> multiGet(Map<String, String> propertyTenantMap) {
 
-    	List<String> keys = propertyIds.stream()
-    	        .map(id -> PREFIX + tenantId + ":" + id)
+    	List<String> keys = propertyTenantMap.entrySet().stream()
+    	        .map(e -> PREFIX + e.getValue() + ":" + e.getKey())
     	        .collect(Collectors.toList());
-
+    	
+    	 List<Map.Entry<String, String>> entries =
+    	            new ArrayList<>(propertyTenantMap.entrySet());
         List<Object> values = redisTemplate.opsForValue().multiGet(keys);
 
         Map<String, Property> result = new HashMap<>();
 
-        for (int i = 0; i < keys.size(); i++) {
-            Object val = values.get(i);
-            if (val != null) {
-                String propertyId = propertyIds.get(i);
-                result.put(propertyId, (Property) val);   
-                redisTemplate.expire(keys.get(i),TTL.toMinutes() , TimeUnit.MINUTES);
+        if (values != null) {
+            for (int i = 0; i < values.size(); i++) {
+                Object val = values.get(i);
+                if (val != null) {
+                    String propertyId = entries.get(i).getKey();
+                    result.put(propertyId, (Property) val);
+                    redisTemplate.expire(keys.get(i), TTL.toMinutes(), TimeUnit.MINUTES);
+                }
             }
         }
         return result;
