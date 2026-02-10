@@ -527,41 +527,19 @@ public class BalanceSheetReportAction extends BaseFormAction {
         return BALANCE_SHEET_XLS;
     }
 
-//    protected void populateDataSource() {
-//    	
-//    	setRelatedEntitesOn();
-//        
-//        if (balanceSheet.getFund() != null && balanceSheet.getFund().getId() != null) {
-//            final List<Fund> selFund = new ArrayList<Fund>();
-//            selFund.add(balanceSheet.getFund());
-//            balanceSheet.setFunds(selFund);
-//        } else
-//            balanceSheet.setFunds(balanceSheetService.getFunds());
-//        balanceSheetService.populateBalanceSheet(balanceSheet);
-//    }
-
     protected void populateDataSource() {
-
-        header.setLength(0);
-        setRelatedEntitesOn();
-
-        if (!"Date".equalsIgnoreCase(balanceSheet.getPeriod())
-                && balanceSheet.getFinancialYear() != null) {
-            header.append(" for the Financial Year ")
-                  .append(balanceSheet.getFinancialYear().getFinYearRange());
-        }
-
+    	
+    	setRelatedEntitesOn();
+        
         if (balanceSheet.getFund() != null && balanceSheet.getFund().getId() != null) {
             final List<Fund> selFund = new ArrayList<Fund>();
             selFund.add(balanceSheet.getFund());
             balanceSheet.setFunds(selFund);
-        } else {
+        } else
             balanceSheet.setFunds(balanceSheetService.getFunds());
-        }
-
         balanceSheetService.populateBalanceSheet(balanceSheet);
     }
-    
+
     //TODO- This table is not used. Check reference and remove
   
     public String getCurrentYearToDate() {

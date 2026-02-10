@@ -559,8 +559,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
             if (detailList.size() == 1) {
                 final BudgetDetail budgetDetail = detailList.get(0);
                 final Map<String, Object> paramMap = budgetDetailHelper.constructParamMap(getValueStack(), budgetDetail);
-                paramMap.put(Constants.FROMDATE, appropriationMisc.getReAppropriationDate());
-                paramMap.put(Constants.TODATE, appropriationMisc.getReAppropriationDate());
+                paramMap.put(Constants.ASONDATE, appropriationMisc.getReAppropriationDate());
                 budgetDetail.getBudgetReAppropriations().stream().forEach(app -> {
                     LOGGER.info("app.getStatus()  :: "+app.getStatus());
                 });

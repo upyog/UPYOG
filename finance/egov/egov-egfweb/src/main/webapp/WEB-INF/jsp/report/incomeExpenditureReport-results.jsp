@@ -127,10 +127,10 @@
 										status="stat">
 										<th class="bluebgheadtd" width="15%" align="center"
 											colspan="1"><s:text name="report.currentTotals" />
-											<s:property value="currentPeriodLabel" /></th>
+											<s:property value="currentYearToDate" /></th>
 										<th class="bluebgheadtd" width="15%" align="center"
 											colspan="1"><s:text name="report.previousTotals" />
-											<s:property value="previousPeriodLabel" /></th>
+											<s:property value="previousYearToDate" /></th>
 									</s:iterator>
 								</s:else>
 							</tr>

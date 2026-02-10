@@ -181,9 +181,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     }
 
     protected void setRelatedEntitesOn() {
-//        setTodayDate(new Date());
-		/* used report to date, not system date */
-    	setTodayDate(incomeExpenditureService.getToDate(incomeExpenditureStatement));
+        setTodayDate(new Date());
         if (incomeExpenditureStatement.getFund() != null && incomeExpenditureStatement.getFund().getId() != null
                 && incomeExpenditureStatement.getFund().getId() != 0) {
             incomeExpenditureStatement.setFund((Fund) getPersistenceService().find("from Fund where id=?",
@@ -379,12 +377,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
 
         setRelatedEntitesOn();
 
-		/*
-		 * statementheading.append("Income And Expenditure Statement").append(heading);
-		 * 
-		 */
-        heading.append(" for the Financial Year "
-                + incomeExpenditureStatement.getFinancialYear().getFinYearRange());
+        statementheading.append("Income And Expenditure Statement").append(heading);
         if (incomeExpenditureStatement.getFund() != null && incomeExpenditureStatement.getFund().getId() != null
                 && incomeExpenditureStatement.getFund().getId() != 0) {
             final List<Fund> fundlist = new ArrayList<Fund>();
@@ -513,15 +506,9 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     @Action(value = "/report/incomeExpenditureReport-generateSchedulePdf")
     public String generateSchedulePdf() throws JRException, IOException {
         populateDataSourceForAllSchedules();
-        final JasperPrint jasper =
-        	    reportHelper.generateFinancialStatementReportJasperPrint(
-        	        incomeExpenditureStatement,
-        	        getText("report.ie.heading"),
-        	        heading.toString(),
-        	        getPreviousPeriodLabel(),  
-        	        getCurrentPeriodLabel(),    
-        	        false
-        	    );
+        final JasperPrint jasper = reportHelper.generateFinancialStatementReportJasperPrint(incomeExpenditureStatement,
+                getText("report.ie.heading"), heading.toString(),
+                getPreviousYearToDate(), getCurrentYearToDate(), false);
         inputStream = reportHelper.exportPdf(inputStream, jasper);
         return INCOME_EXPENSE_PDF;
     }
@@ -530,15 +517,9 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     @Action(value = "/report/incomeExpenditureReport-generateScheduleXls")
     public String generateScheduleXls() throws JRException, IOException {
         populateDataSourceForAllSchedules();
-        final JasperPrint jasper =
-        	    reportHelper.generateFinancialStatementReportJasperPrint(
-        	        incomeExpenditureStatement,
-        	        getText("report.ie.heading"),
-        	        heading.toString(),
-        	        getPreviousPeriodLabel(),  
-        	        getCurrentPeriodLabel(),  
-        	        false
-        	    );
+        final JasperPrint jasper = reportHelper.generateFinancialStatementReportJasperPrint(incomeExpenditureStatement,
+                getText("report.ie.heading"), heading.toString(),
+                getPreviousYearToDate(), getCurrentYearToDate(), false);
         inputStream = reportHelper.exportXls(inputStream, jasper);
         return INCOME_EXPENSE_XLS;
     }
@@ -550,15 +531,8 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         final String heading = ReportUtil.getCityName() +" "+(cityService.getCityGrade()==null ? "" :cityService.getCityGrade()) + "\\n" + scheduleheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate())
                 + "                                             ";
-        final JasperPrint jasper =
-        	    reportHelper.generateIncomeExpenditureReportJasperPrint(
-        	        incomeExpenditureStatement,
-        	        heading,
-        	        getPreviousPeriodLabel(),   
-        	        getCurrentPeriodLabel(), 
-        	        subtitle,
-        	        false
-        	    );
+        final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
+                getPreviousYearToDate(), getCurrentYearToDate(), subtitle, false);
         inputStream = reportHelper.exportPdf(inputStream, jasper);
         return INCOME_EXPENSE_PDF;
     }
@@ -570,15 +544,8 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         final String heading = ReportUtil.getCityName() +" "+(cityService.getCityGrade()==null ? "" :cityService.getCityGrade()) + "\\n" + scheduleheading.toString();
         // Blank space for space didvidion between left and right corner
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate()) + "					  						 ";
-        final JasperPrint jasper =
-        	    reportHelper.generateIncomeExpenditureReportJasperPrint(
-        	        incomeExpenditureStatement,
-        	        heading,
-        	        getPreviousPeriodLabel(),  
-        	        getCurrentPeriodLabel(),    
-        	        subtitle,
-        	        false
-        	    );
+        final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
+                getPreviousYearToDate(), getCurrentYearToDate(), subtitle, false);
         inputStream = reportHelper.exportXls(inputStream, jasper);
         return INCOME_EXPENSE_XLS;
     }

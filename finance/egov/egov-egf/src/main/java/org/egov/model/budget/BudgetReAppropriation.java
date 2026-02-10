@@ -64,24 +64,6 @@ public class BudgetReAppropriation extends StateAware {
 	private BigDecimal anticipatoryAmount = new BigDecimal("0.0");
 	private EgwStatus status;
 	private Date asOnDate;
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	private Date fromDate;
-	private Date toDate;
 	private BudgetReAppropriationMisc reAppropriationMisc;
 
 	public EgwStatus getStatus() {

@@ -344,9 +344,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             paramMap.put("boundaryid", budgetDetail.getBoundary().getId());
         paramMap.put("budgetheadid", budgetDetail.getBudgetGroup().getId());
         paramMap.put("glcodeid", budgetDetail.getBudgetGroup().getMinCode().getId());
-//        paramMap.put(Constants.ASONDATE, appropriation.getAsOnDate());
-        paramMap.put(Constants.FROMDATE, appropriation.getFromDate());
-        paramMap.put(Constants.TODATE, appropriation.getToDate());
+        paramMap.put(Constants.ASONDATE, appropriation.getAsOnDate());
         final BigDecimal actualBudgetUtilized = budgetDetailsDAO.getActualBudgetUtilized(paramMap);
         final BigDecimal billAmount = budgetDetailsDAO.getBillAmountForBudgetCheck(paramMap);
         BigDecimal approvedAmount = appropriation.getBudgetDetail().getApprovedAmount();
@@ -515,7 +513,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     public boolean createReAppropriation(final String actionName,
             final List<BudgetReAppropriationView> budgetReAppropriationList,
             final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
-            final String fromDate, final String toDate) {
+            final String asOnDate) {
         try {
             if (budgetReAppropriationList.isEmpty()
                     || !rowsToAddForExistingDetails(budgetReAppropriationList))
@@ -524,7 +522,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             final List<BudgetReAppropriationView> addedList = new ArrayList<BudgetReAppropriationView>();
             for (final BudgetReAppropriationView appropriation : budgetReAppropriationList) {
                 validateDuplicates(addedList, appropriation);
-                saveAndStartWorkFlowForExistingdetails(actionName, appropriation, position, financialYear, beRe, misc, fromDate, toDate);
+                saveAndStartWorkFlowForExistingdetails(actionName, appropriation, position, financialYear, beRe, misc, asOnDate);
                 addedList.add(appropriation);
             }
         } catch (final ValidationException e)
@@ -542,7 +540,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     @Transactional
     public void saveAndStartWorkFlowForExistingdetails(final String actionName, final BudgetReAppropriationView reAppView,
             final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
-            final String fromDate, final String toDate) {
+            final String asOnDate) {
         final BudgetReAppropriation appropriation = new BudgetReAppropriation();
         EgwStatus status = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved");
         reAppView.getBudgetDetail().setStatus(status);
@@ -555,9 +553,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
         appropriation.setReAppropriationMisc(misc);
         appropriation.setAnticipatoryAmount(reAppView.getAnticipatoryAmount());
         try {
-			/* appropriation.setAsOnDate(Constants.DDMMYYYYFORMAT2.parse(asOnDate)); */
-        	 appropriation.setFromDate(Constants.DDMMYYYYFORMAT2.parse(fromDate));
-        	 appropriation.setToDate(Constants.DDMMYYYYFORMAT2.parse(toDate));
+            appropriation.setAsOnDate(Constants.DDMMYYYYFORMAT2.parse(asOnDate));
         } catch (final ParseException e) {
             LOGGER.error("Error while parsing date");
         }
