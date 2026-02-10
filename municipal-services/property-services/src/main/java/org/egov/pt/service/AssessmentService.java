@@ -49,6 +49,7 @@ import org.egov.pt.web.contracts.NoticeRequest;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -91,6 +92,8 @@ public class AssessmentService {
 	@Autowired
 	BillingService billingService;
 	
+	 @Autowired
+	  private  RedisTemplate<String, Object> redisTemplate;
 	
 	 @Value("${cuurrent.year.asmt.srch.val}")
 	 private String asmtSearchFor;
@@ -199,7 +202,7 @@ public class AssessmentService {
 		}
 		
 		producer.push(props.getCreateAssessmentTopic(), request);
-
+		//redisTemplate.delete("pt:assessment:byProperty:" + request.getAssessment().getPropertyId());
 		return request.getAssessment();
 	}
 
