@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.config.scheduler.DashboardDataPush;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/property")
@@ -232,9 +234,14 @@ public class PropertyController {
 	
 	@RequestMapping(value = "/_dashboardPropertyReports", method =
 	  RequestMethod.POST) public ResponseEntity<?>
-	  dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest
+	  dashboardDataSearchProperties(@RequestParam(defaultValue = "20") Long pageLimit,@RequestParam(defaultValue = "10") Long offset ,@Valid @RequestBody DashboardRequest
 	  dashboardRequest) throws Exception {
 	  
+		if(!ObjectUtils.isEmpty(pageLimit) && !ObjectUtils.isEmpty(offset))
+		{
+			dashboardRequest.getDashboardDataSearch().setLimit(pageLimit);
+			dashboardRequest.getDashboardDataSearch().setOffset(offset);
+		}
 	  DashboardReport
 	  dashboardDatas=dashboardDataService.dashboardDatasWithProperties(dashboardRequest);
 	//  if(dashboardRequest.getDashboardDataSearch().getIsReportDownload()) {

@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.egov.pt.models.DashboardDataSearch;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -32,6 +33,65 @@ public class DashboardReportQueryBuilder {
 			+ "    WHEN action = 'APPROVE' THEN 'APPROVED'\r\n" + "  END AS action_st,\r\n"
 			+ "  STRING_AGG(latest_actions.propertyid || ':' || latest_actions.tenantid,', ') AS property_ids\r\n" + "FROM latest_actions\r\n"
 			+ "WHERE rn = 1\r\n" + "GROUP BY action_st";
+	
+	
+
+	public static final String PROPERTIES_PENDING_WITH_NEW = 
+	        "WITH latest_actions AS (\r\n"
+	        	      + "  SELECT \r\n"
+	        	      + "    ewpv.businessid,\r\n"
+	        	      + "    ewpv.\"action\",\r\n"
+	        	      + "    ewpv.tenantid,\r\n"
+	        	      + "    epp.id AS property_id,\r\n"
+	        	      + "    epp.propertyid AS propertyid,\r\n"
+	        	      + "    epadd.ward_no,\r\n"
+	        	      + "    ROW_NUMBER() OVER (\r\n"
+	        	      + "      PARTITION BY ewpv.businessid \r\n"
+	        	      + "      ORDER BY ewpv.lastmodifiedtime DESC\r\n"
+	        	      + "    ) AS rn\r\n"
+	        	      + "  FROM eg_wf_processinstance_v2 ewpv\r\n"
+	        	      + "  JOIN eg_pt_property epp \r\n"
+	        	      + "    ON epp.acknowldgementnumber = ewpv.businessid\r\n"
+	        	      + "  JOIN eg_pt_address epadd \r\n"
+	        	      + "    ON epp.id = epadd.propertyid\r\n"
+	        	      + "  WHERE ewpv.\"action\" != '' AND epp.status = 'INWORKFLOW'\r\n"
+	        	      + "  /*FILTER_CONDITIONS*/\r\n"
+	        	      + "),\r\n"
+	        	      + "mapped_actions AS (\r\n"
+	        	      + "  SELECT \r\n"
+	        	      + "    CASE\r\n"
+	        	      + "      WHEN action = 'SENDBACKTOCITIZEN' THEN 'PENDINGWITHCITIZEN'\r\n"
+	        	      + "      WHEN action IN ('REOPEN', 'SENDBACKTODOCKVERIFIER', 'SENDBACKTODOCVERIFIER', 'OPEN') THEN 'PENDINGWITHDOCVERIFIER'\r\n"
+	        	      + "      WHEN action = 'VERIFY' THEN 'PENDINGWITHFILEDVERIFIER'\r\n"
+	        	      + "      WHEN action = 'REJECT' THEN 'REJECTED'\r\n"
+	        	      + "      WHEN action = 'FORWARD' THEN 'PENDINGWITHAPPROVER'\r\n"
+	        	      + "      WHEN action = 'APPROVE' THEN 'APPROVED'\r\n"
+	        	      + "    END AS action_st,\r\n"
+	        	      + "    propertyid,\r\n"
+	        	      + "    tenantid,\r\n"
+	        	      + "    ROW_NUMBER() OVER (\r\n"
+	        	      + "      PARTITION BY\r\n"
+	        	      + "        CASE\r\n"
+	        	      + "          WHEN action = 'SENDBACKTOCITIZEN' THEN 'PENDINGWITHCITIZEN'\r\n"
+	        	      + "          WHEN action IN ('REOPEN', 'SENDBACKTODOCKVERIFIER', 'SENDBACKTODOCVERIFIER', 'OPEN') THEN 'PENDINGWITHDOCVERIFIER'\r\n"
+	        	      + "          WHEN action = 'VERIFY' THEN 'PENDINGWITHFILEDVERIFIER'\r\n"
+	        	      + "          WHEN action = 'REJECT' THEN 'REJECTED'\r\n"
+	        	      + "          WHEN action = 'FORWARD' THEN 'PENDINGWITHAPPROVER'\r\n"
+	        	      + "          WHEN action = 'APPROVE' THEN 'APPROVED'\r\n"
+	        	      + "        END\r\n"
+	        	      + "      ORDER BY propertyid\r\n"
+	        	      + "    ) AS action_rn\r\n"
+	        	      + "  FROM latest_actions\r\n"
+	        	      + "  WHERE rn = 1\r\n"
+	        	      + ")\r\n"
+	        	      + "SELECT \r\n"
+	        	      + "  action_st,\r\n"
+	        	      + "  STRING_AGG(propertyid || ':' || tenantid, ', ') AS property_ids\r\n"
+	        	      + "FROM mapped_actions\r\n"
+	        	      + "WHERE action_rn > :offset\r\n"
+	        	      + "  AND action_rn <= (:offset + :limit)\r\n"
+	        	      + "GROUP BY action_st";
+;
 
 	public static final String PROPERTIES_APPROVED = "SELECT\r\n"
 			+ "    ep.propertyid,\r\n"
@@ -45,7 +105,7 @@ public class DashboardReportQueryBuilder {
 			+ "  AND ep.status = 'ACTIVE'\r\n"
 			+ "  /*FILTER_CONDITIONS*/\n" 
 			+ "GROUP BY\r\n"
-			+ "    ep.propertyid,ep.tenantid;";
+			+ "    ep.propertyid,ep.tenantid";
 	
 	public static final String PROPERTIES_REJECTED = "SELECT\r\n"
 			+ "    ep.propertyid,\r\n"
@@ -59,7 +119,7 @@ public class DashboardReportQueryBuilder {
 			+ "  AND ep.status = 'INACTIVE'\r\n"
 			+ "  /*FILTER_CONDITIONS*/\n" 
 			+ "GROUP BY\r\n"
-			+ "    ep.propertyid,ep.tenantid;";
+			+ "    ep.propertyid,ep.tenantid ";
 
 	public static final String PROPERTIES_SELF_ASSESSED = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid\r\n"
 			+ "FROM eg_pt_asmt_assessment epaa\r\n" + "JOIN eg_pt_property epp ON epaa.propertyid = epp.propertyid\r\n"
@@ -126,7 +186,7 @@ public class DashboardReportQueryBuilder {
 
 	public String getTotalPropertyRegisteredQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(TOTAL_PROPERTIES_REGISTERED);
+		StringBuilder filter = new StringBuilder(TOTAL_PROPERTIES_REGISTERED);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -143,18 +203,25 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
-		return stringBuilder.toString();
+		
+		if(!ObjectUtils.isEmpty(dashboardDataSearch.getLimit()) && !ObjectUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET  "+dashboardDataSearch.getOffset());
+			filter.append(" LIMIT "+dashboardDataSearch.getLimit());
+		}
+		
+		return filter.toString();
 	}
 
 	public String getTotalPropertyPendingWithQuery(DashboardDataSearch dashboardDataSearch) {
@@ -181,14 +248,21 @@ public class DashboardReportQueryBuilder {
 		} else {
 			filterBuilder.append(" AND epadd.ward_no != ''");
 		}
+		
+		String finalQuery = PROPERTIES_PENDING_WITH_NEW.replace("/*FILTER_CONDITIONS*/", filterBuilder.toString());
+		if(!ObjectUtils.isEmpty(dashboardDataSearch.getLimit()) && !ObjectUtils.isEmpty(dashboardDataSearch.getOffset()))
+		finalQuery = finalQuery
+		        .replace(":offset", String.valueOf(dashboardDataSearch.getOffset()))
+		        .replace(":limit", String.valueOf(dashboardDataSearch.getLimit()));
 
-		String finalQuery = PROPERTIES_PENDING_WITH.replace("/*FILTER_CONDITIONS*/", filterBuilder.toString());
+		
+		
 		return finalQuery;
 	}
 
 	public String getTotalPropertyApprovedQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder();
+		StringBuilder filter = new StringBuilder();
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -205,26 +279,38 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epadd.ward_no != ''");
+			filter.append(" AND epadd.ward_no != ''");
 		}
 
-		String finalQuery = PROPERTIES_APPROVED.replace("/*FILTER_CONDITIONS*/", stringBuilder.toString());
-		System.out.println("finalQuery::" + finalQuery);
-		return finalQuery;
+		
+		 StringBuilder finalQuery = new StringBuilder(
+		            PROPERTIES_APPROVED.replace("/*FILTER_CONDITIONS*/", filter.toString())
+		    );
+
+		   
+		    if (dashboardDataSearch.getLimit() != null
+		            && dashboardDataSearch.getOffset() != null) {
+
+		        finalQuery.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+		        finalQuery.append(" LIMIT ").append(dashboardDataSearch.getLimit());
+		    }
+
+		    System.out.println("finalQuery:: " + finalQuery);
+		    return finalQuery.toString();
 	}
 	
 	public String getTotalPropertyRejectedQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder();
+		StringBuilder filter = new StringBuilder();
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -241,26 +327,40 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND ewpv.lastmodifiedtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epadd.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epadd.ward_no != ''");
+			filter.append(" AND epadd.ward_no != ''");
 		}
+		
+		 StringBuilder finalQuery = new StringBuilder(
+		            PROPERTIES_REJECTED.replace("/*FILTER_CONDITIONS*/", filter.toString())
+		    );
 
-		String finalQuery = PROPERTIES_REJECTED.replace("/*FILTER_CONDITIONS*/", stringBuilder.toString());
-		System.out.println("finalQuery::" + finalQuery);
-		return finalQuery;
+		   
+		    if (dashboardDataSearch.getLimit() != null
+		            && dashboardDataSearch.getOffset() != null) {
+
+		        finalQuery.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+		        finalQuery.append(" LIMIT ").append(dashboardDataSearch.getLimit());
+		    }
+
+		    System.out.println("finalQuery:: " + finalQuery);
+		   
+		
+		
+		return finalQuery.toString();
 	}
 
 	public String getTotalPropertySelfassessedQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(PROPERTIES_SELF_ASSESSED);
+		StringBuilder filter = new StringBuilder(PROPERTIES_SELF_ASSESSED);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -277,24 +377,24 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND epaa.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND epaa.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
 
-		return stringBuilder.toString();
+		return filter.toString();
 	}
 
 	public String getTotalPropertyPendingselfAssessmentQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(PROPERTIES_PENDING_SELF_ASSESSMENT);
+		StringBuilder filter = new StringBuilder(PROPERTIES_PENDING_SELF_ASSESSMENT);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -311,24 +411,24 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
 
-		return stringBuilder.toString();
+		return filter.toString();
 	}
 
 	public String getTotalPropertyPaidQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(PROPERTIES_PAID);
+		StringBuilder filter = new StringBuilder(PROPERTIES_PAID);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -345,24 +445,24 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
 
-		return stringBuilder.toString();
+		return filter.toString();
 	}
 
 	public String getTotalPropertyAppealSubmitedQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(PROPERTIES_WITH_APPEAL_SUBMITTED);
+		StringBuilder filter = new StringBuilder(PROPERTIES_WITH_APPEAL_SUBMITTED);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -379,24 +479,24 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND ewpv.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND ewpv.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
 
-		return stringBuilder.toString();
+		return filter.toString();
 	}
 
 	public String getTotalPropertyAppealPendingQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(APPEALS_PENDING);
+		StringBuilder filter = new StringBuilder(APPEALS_PENDING);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -413,24 +513,24 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND ewpv.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND ewpv.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
 
-		return stringBuilder.toString();
+		return filter.toString();
 	}
 
 	public String getTotalTaxCollectedQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(TOTAL_TAX_COLLECTED);
+		StringBuilder filter = new StringBuilder(TOTAL_TAX_COLLECTED);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -447,24 +547,24 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
 
-		return stringBuilder.toString();
+		return filter.toString();
 	}
 
 	public String getPropertyTaxShareQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(PROPERTY_TAX_SHARE);
+		StringBuilder filter = new StringBuilder(PROPERTY_TAX_SHARE);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -481,19 +581,19 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
 
-		return stringBuilder.toString();
+		return filter.toString();
 	}
 
 	public String getPenaltyShareQuery(DashboardDataSearch dashboardDataSearch) {
@@ -526,7 +626,7 @@ public class DashboardReportQueryBuilder {
 
 	public String getInterestShareQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(INTEREST_SHARE);
+		StringBuilder filter = new StringBuilder(INTEREST_SHARE);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -543,24 +643,24 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
 
-		return stringBuilder.toString();
+		return filter.toString();
 	}
 
 	public String getAdvanceShareQuery(DashboardDataSearch dashboardDataSearch) {
 
-		StringBuilder stringBuilder = new StringBuilder(ADVANCE_SHARE);
+		StringBuilder filter = new StringBuilder(ADVANCE_SHARE);
 
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
@@ -577,19 +677,19 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		stringBuilder.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
-			stringBuilder.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
 		}
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
-			stringBuilder.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
-			stringBuilder.append(" AND epa.ward_no != ''");
+			filter.append(" AND epa.ward_no != ''");
 		}
 
-		return stringBuilder.toString();
+		return filter.toString();
 	}
 
 	public static long getStartOfDayEpochMillis(String dateStr) {

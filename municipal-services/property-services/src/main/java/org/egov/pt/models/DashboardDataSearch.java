@@ -15,5 +15,7 @@ public class DashboardDataSearch {
 	private String status;
 	
 	private String searchKey;
+	private Long limit;
+	private Long offset;
 
 }
