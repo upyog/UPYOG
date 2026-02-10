@@ -75,19 +75,19 @@ public class DashboardReportQueryBuilder {
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n" + "WHERE epp.status = 'ACTIVE' ";
 
-	public static final String PROPERTIES_WITH_APPEAL_SUBMITTED = "SELECT epp.propertyid AS propertyid\r\n"
+	public static final String PROPERTIES_WITH_APPEAL_SUBMITTED = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pt_property_appeal eppa ON epp.propertyid = eppa.propertyid\r\n"
 			+ "JOIN eg_wf_processinstance_v2 ewpv ON epp.acknowldgementnumber = ewpv.businessid\r\n"
 			+ "WHERE ewpv.\"action\" = 'OPEN'\r\n" + "";
 
-	public static final String APPEALS_PENDING = "SELECT epp.propertyid AS propertyid\r\n"
+	public static final String APPEALS_PENDING = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pt_property_appeal eppa ON epp.propertyid = eppa.propertyid\r\n"
 			+ "JOIN eg_wf_processinstance_v2 ewpv ON epp.acknowldgementnumber = ewpv.businessid\r\n"
 			+ "WHERE ewpv.\"action\" = 'OPEN'\r\n" + "";
 
-	public static final String TOTAL_TAX_COLLECTED = "SELECT epp.propertyid as propertyid\r\n"
+	public static final String TOTAL_TAX_COLLECTED = "SELECT epp.propertyid as propertyid,epp.tenantid as tenantid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pg_transactions ept ON epp.propertyid = ept.consumer_code\r\n"
 			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n" + "WHERE ept.txn_status = 'SUCCESS'";
@@ -97,7 +97,7 @@ public class DashboardReportQueryBuilder {
 			+ "JOIN eg_pg_transactions ept ON epp.propertyid = ept.consumer_code\r\n"
 			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n" + "WHERE ept.txn_status = 'SUCCESS'";
 
-	public static final String PENALTY_SHARE = "SELECT \r\n" + "        d.consumercode AS consumercode\r\n"
+	public static final String PENALTY_SHARE = "SELECT \r\n" + "  p.propertyid as  propertyid,p.tenantid as tenantid,     d.consumercode AS consumercode\r\n"
 			+ "    FROM egbs_demand_v1 d\r\n" + "    JOIN egbs_demanddetail_v1 dd ON d.id = dd.demandid\r\n"
 			+ "    JOIN eg_pt_property p ON p.propertyid = d.consumercode\r\n"
 			+ "    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"

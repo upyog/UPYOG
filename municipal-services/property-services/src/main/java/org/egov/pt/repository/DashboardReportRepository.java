@@ -299,55 +299,79 @@ public class DashboardReportRepository {
 
 	public List<Property> getTotalPropertyAppealSubmitedCount(DashboardRequest dashboardRequest)
 	{
+		Map<String, String> propertyTenantMap = new HashMap<>();
 		String query=reportQueryBuilder.getTotalPropertyAppealSubmitedQuery(dashboardRequest.getDashboardDataSearch());
-		List<String> propertyIdList = jdbcTemplate.query(
+		propertyTenantMap = jdbcTemplate.query(
 			    query,
-			    (rs, rowNum) -> rs.getString("propertyid")  
+			    rs -> {
+			        Map<String, String> map = new HashMap<>();
+			        while (rs.next()) {
+			            map.put(
+			                rs.getString("propertyid"),
+			                rs.getString("tenantid")
+			            );
+			        }
+			        return map;
+			    }
 			);
-		Set<String> propertyIds = new HashSet<>(propertyIdList);
-		PropertyCriteria criteria = new PropertyCriteria();
-		criteria.setPropertyIds(propertyIds);
-		List<Property> properties=null;
-		/*
-		 * if(!CollectionUtils.isEmpty(propertyIds)) properties
-		 * =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
-		 */
 		
-		//if(!CollectionUtils.isEmpty(propertyIds))
-			//properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+		List<Property> properties=null;
+		
+		
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			properties =  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
 		return properties;
 	}
 	
 	public List<Property> getTotalPropertyAppealPendingCount(DashboardRequest dashboardRequest)
 	{
+		Map<String, String> propertyTenantMap = new HashMap<>();
 		String query=reportQueryBuilder.getTotalPropertyAppealPendingQuery(dashboardRequest.getDashboardDataSearch());
-		List<String> propertyIdList = jdbcTemplate.query(
+		propertyTenantMap = jdbcTemplate.query(
 			    query,
-			    (rs, rowNum) -> rs.getString("propertyid")  
+			    rs -> {
+			        Map<String, String> map = new HashMap<>();
+			        while (rs.next()) {
+			            map.put(
+			                rs.getString("propertyid"),
+			                rs.getString("tenantid")
+			            );
+			        }
+			        return map;
+			    }
 			);
-		Set<String> propertyIds = new HashSet<>(propertyIdList);
-		PropertyCriteria criteria = new PropertyCriteria();
-		criteria.setPropertyIds(propertyIds);
-		List<Property> properties=new ArrayList<>();
-		if(!CollectionUtils.isEmpty(propertyIds))
-			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		List<Property> properties=null;
+		
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			properties  =  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
 		
 		return properties;
 	}
 	
 	public List<Property> getTotalTaxCollectedAmount(DashboardRequest dashboardRequest)
 	{
+		Map<String, String> propertyTenantMap = new HashMap<>();
 		String query=reportQueryBuilder.getTotalTaxCollectedQuery(dashboardRequest.getDashboardDataSearch());
-		List<String> propertyIdList = jdbcTemplate.query(
+		propertyTenantMap = jdbcTemplate.query(
 			    query,
-			    (rs, rowNum) -> rs.getString("propertyid")  
+			    rs -> {
+			        Map<String, String> map = new HashMap<>();
+			        while (rs.next()) {
+			            map.put(
+			                rs.getString("propertyid"),
+			                rs.getString("tenantid")
+			            );
+			        }
+			        return map;
+			    }
 			);
-		Set<String> propertyIds = new HashSet<>(propertyIdList);
-		PropertyCriteria criteria = new PropertyCriteria();
-		criteria.setPropertyIds(propertyIds);
-		List<Property> properties=new ArrayList<>();
-		if(!CollectionUtils.isEmpty(propertyIds))
-			properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		
+		List<Property> properties=null;
+		
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			properties  =  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
+		
 		
 		return properties;
 	}
@@ -371,17 +395,27 @@ public class DashboardReportRepository {
 
 	public List<Property> getPenaltyShareAmount(DashboardRequest dashboardRequest)
 	{
+		Map<String, String> propertyTenantMap = new HashMap<>();
 		String query=reportQueryBuilder.getPenaltyShareQuery(dashboardRequest.getDashboardDataSearch());
-		 List<String> propertyIdList = jdbcTemplate.query(
-				    query,
-				    (rs, rowNum) -> rs.getString("consumercode")  
-				);
-			Set<String> propertyIds = new HashSet<>(propertyIdList);
-			PropertyCriteria criteria = new PropertyCriteria();
-			criteria.setPropertyIds(propertyIds);
-			List<Property> properties=new ArrayList<>();
-			if(!CollectionUtils.isEmpty(propertyIds))
-				properties =propertyService.searchProperty(criteria, dashboardRequest.getRequestInfo());
+		propertyTenantMap = jdbcTemplate.query(
+			    query,
+			    rs -> {
+			        Map<String, String> map = new HashMap<>();
+			        while (rs.next()) {
+			            map.put(
+			                rs.getString("propertyid"),
+			                rs.getString("tenantid")
+			            );
+			        }
+			        return map;
+			    }
+			);
+		
+		List<Property> properties=null;
+		
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			properties  =  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
+		
 			
 			return properties;
 	}
