@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.Assessment;
 import org.egov.pt.models.DashboardDataSearch;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
@@ -202,6 +204,7 @@ public class DashboardReportRepository {
 	{
 		Map<String, String> propertyTenantMap = new HashMap<>();
 		String query=reportQueryBuilder.getTotalPropertySelfassessedQuery(dashboardRequest.getDashboardDataSearch());
+		
 		propertyTenantMap = jdbcTemplate.query(
 			    query,
 			    rs -> {
@@ -465,9 +468,12 @@ public class DashboardReportRepository {
 		}
 	 
 	 
-	 
-	 
 	 public Map<String,List<Payment>>getCacheDataForPaymentReport(Map<String, String> propertyTenantMap){
 		 return propertyRedisCache.multiGetPayment(propertyTenantMap);
 	 } 
+	 
+	 public Map<String, List<Assessment>>getCacheDataForAssesmentReport(Set<String> propertyIds,RequestInfo requestInfo)
+	 {
+		 return propertyRedisCache.getAssessmentsForProperties(propertyIds, requestInfo);
+	 }
 }

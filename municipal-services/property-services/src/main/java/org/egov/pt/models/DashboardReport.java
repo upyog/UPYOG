@@ -21,7 +21,7 @@ public class DashboardReport {
 	private String region;
 	@JsonProperty("data")
 	private List<ServiceWithProperties> services;
-	private Map<String, List<Payment>> assesments;
+	private Map<String, List<Assessment>> assesments;
 	private Map<String, List<Payment>> payments;
 	//private List<ServiceWithProperties> revenue;
 
