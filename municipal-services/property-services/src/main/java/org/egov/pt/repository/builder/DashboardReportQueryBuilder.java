@@ -304,7 +304,6 @@ public class DashboardReportQueryBuilder {
 		        finalQuery.append(" LIMIT ").append(dashboardDataSearch.getLimit());
 		    }
 
-		    System.out.println("finalQuery:: " + finalQuery);
 		    return finalQuery.toString();
 	}
 	
@@ -350,11 +349,6 @@ public class DashboardReportQueryBuilder {
 		        finalQuery.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 		        finalQuery.append(" LIMIT ").append(dashboardDataSearch.getLimit());
 		    }
-
-		    System.out.println("finalQuery:: " + finalQuery);
-		   
-		
-		
 		return finalQuery.toString();
 	}
 
