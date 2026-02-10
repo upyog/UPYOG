@@ -61,19 +61,16 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.egov.commons.dao.FunctionDAO;
 
 @Service
 public class ExpenseBillNumberGeneratorImpl implements ExpenseBillNumberGenerator {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
+    
 
     @Autowired
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
-
-     @Autowired
-    private FunctionDAO functionDAO;
 
     /**
      * 

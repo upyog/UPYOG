@@ -369,11 +369,17 @@ public class BudgetReAppropriationAction extends BaseFormAction {
 			 * [0] + "|" + userId, budgetReAppropriationList, null, financialYear, beRe,
 			 * misc, parameters.get("appropriationMisc.reAppropriationDate")[0]);
 			 */
-
-			reAppropriationCreated =
-			  budgetReAppropriationService.createReAppropriation(parameters.get(ACTIONNAME)[0] + "|" + userId, budgetReAppropriationList, null, financialYear, beRe,
-			  misc, parameters.get("appropriationMisc.reAppropriationDate")[0]);
-           
+            
+            reAppropriationCreated = budgetReAppropriationService.createReAppropriation(
+                    parameters.get(ACTIONNAME)[0] + "|" + userId,
+                    budgetReAppropriationList,
+                    null,
+                    financialYear,
+                    beRe,
+                    misc,
+                    parameters.get("appropriationMisc.fromDate")[0],   
+                    parameters.get("appropriationMisc.toDate")[0]      
+            );
 
             removeEmptyReAppropriation(newBudgetReAppropriationList);
             reAppForNewBudgetCreated = budgetReAppropriationService.createReAppropriationForNewBudgetDetail(
@@ -553,7 +559,8 @@ public class BudgetReAppropriationAction extends BaseFormAction {
             if (detailList.size() == 1) {
                 final BudgetDetail budgetDetail = detailList.get(0);
                 final Map<String, Object> paramMap = budgetDetailHelper.constructParamMap(getValueStack(), budgetDetail);
-                paramMap.put(Constants.ASONDATE, appropriationMisc.getReAppropriationDate());
+                paramMap.put(Constants.FROMDATE, appropriationMisc.getReAppropriationDate());
+                paramMap.put(Constants.TODATE, appropriationMisc.getReAppropriationDate());
                 budgetDetail.getBudgetReAppropriations().stream().forEach(app -> {
                     LOGGER.info("app.getStatus()  :: "+app.getStatus());
                 });

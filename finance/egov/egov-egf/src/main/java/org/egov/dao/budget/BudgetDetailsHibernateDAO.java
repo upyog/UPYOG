@@ -971,7 +971,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         Long fundid = null;
         Long budgetheadid = null;
         Date fromdate = null;
-        Date asondate = null;
+//        Date asondate = null;
+        Date todate = null;
+        
 
         String query = EMPTY_STRING, select = EMPTY_STRING;
         BudgetGroup budgetgroup = null;
@@ -992,21 +994,32 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
             if (paramMap.get(BUDGETHEADID) != null)
                 budgetheadid = (Long) paramMap.get(BUDGETHEADID);
-            if (paramMap.get(Constants.ASONDATE) != null)
-                asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
+            if (paramMap.get(Constants.FROMDATE) != null)
+                fromdate = (java.util.Date) paramMap.get(Constants.FROMDATE);
+            if (paramMap.get(Constants.TODATE) != null)
+                todate = (java.util.Date) paramMap.get(Constants.TODATE);
                 LOGGER.info("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
                         + ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
-                        + ",budgetheadid=" + budgetheadid + ",asondate=" + asondate);
+                        + ",budgetheadid=" + budgetheadid + ", fromdate=" + fromdate + ", todate=" + todate);
 
-            if (asondate == null)
-                throw new ValidationException(EMPTY_STRING, "As On Date is null");
+				/*
+				 * if (asondate == null) throw new ValidationException(EMPTY_STRING,
+				 * "As On Date is null");
+				 */
+                if (fromdate == null || todate == null)
+                    throw new ValidationException(EMPTY_STRING, "From Date or To Date is null");
+
 
             final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
 
-            final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
+			/*
+			 * final CFinancialYear finyear =
+			 * financialYearHibDAO.getFinancialYearByDate(asondate);
+			 */
+            final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(todate);
             if (finyear == null)
                 throw new ValidationException(EMPTY_STRING,
-                        "Financial year is not fefined for this date [" + sdf.format(asondate) + "]");
+                        "Financial year is not fefined for this date [" + sdf.format(todate) + "]");
             fromdate = finyear.getStartingDate();
 
             query = query + getQuery(CFunction.class, functionid, " and gl.functionId=");
@@ -1066,7 +1079,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("loadActualBudget query============" + query);
-            final Object ob = persistenceService.find(query, fromdate, asondate);
+            final Object ob = persistenceService.find(query, fromdate, todate);
             if (ob == null)
                 return BigDecimal.ZERO;
             else
@@ -1117,7 +1130,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         Long fundid = null;
         final Long budgetheadid = null;
         Date fromdate = null;
-        Date asondate = null;
+//        Date asondate = null;
+        Date todate = null;
 
         String query = EMPTY_STRING, select = EMPTY_STRING;
         try {
@@ -1139,23 +1153,26 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
              * if(paramMap.get(BUDGETHEADID)!=null) budgetheadid =
              * (Long)paramMap.get(BUDGETHEADID);
              */
-            if (paramMap.get(Constants.ASONDATE) != null)
-                asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
+            if (paramMap.get(Constants.FROMDATE) != null)
+                fromdate = (java.util.Date) paramMap.get(Constants.FROMDATE);
+            if (paramMap.get(Constants.TODATE) != null)
+                todate = (java.util.Date) paramMap.get(Constants.TODATE);
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
                         + ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
-                        + ",budgetheadid=" + budgetheadid + ",asondate=" + asondate);
+                        + ",budgetheadid=" + budgetheadid + ", fromdate=" + fromdate + ", todate=" + todate);
 
-            if (asondate == null)
-                throw new ValidationException(EMPTY_STRING, "As On Date is null");
+            if (fromdate == null || todate == null)
+                throw new ValidationException(EMPTY_STRING, "From Date / To Date is null");
+
 
             final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
 
-            final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
+            final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(todate);
             if (finyear == null)
                 throw new ValidationException(EMPTY_STRING,
-                        "Financial year is not fefined for this date [" + sdf.format(asondate) + "]");
+                        "Financial year is not fefined for this date [" + sdf.format(todate) + "]");
             fromdate = finyear.getStartingDate();
 
             final List<AppConfigValues> budgetGrouplist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
@@ -1215,7 +1232,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     + query;
 
                 LOGGER.info("loadActualBudget query============" + query);
-            final Object ob = persistenceService.find(query, fromdate, asondate);
+            final Object ob = persistenceService.find(query, fromdate, todate);
             if (ob == null)
                 return BigDecimal.ZERO;
             else
@@ -1765,6 +1782,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		BigDecimal txnAmt = null;
 		java.util.Date asondate = null;
 		java.util.Date fromdate = null;
+		Date todate = null;
 
 		try {
 			if (paramMap.get("txnAmt") != null)
@@ -1773,8 +1791,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 				txnType = paramMap.get("txnType").toString();
 			if (paramMap.get("glcode") != null)
 				glCode = paramMap.get("glcode").toString();
-			if (paramMap.get(Constants.ASONDATE) != null)
-				asondate = (Date) paramMap.get(Constants.ASONDATE);
+			if (paramMap.get(Constants.FROMDATE) != null)
+				fromdate = (Date) paramMap.get(Constants.TODATE);
+			if (paramMap.get(Constants.TODATE) != null)
+				todate = (Date) paramMap.get(Constants.TODATE);
 
 			if (glCode == null)
 				throw new ValidationException(EMPTY_STRING, "glcode is null");
@@ -1782,9 +1802,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 				throw new ValidationException(EMPTY_STRING, "txnAmt is null");
 			if (txnType == null)
 				throw new ValidationException(EMPTY_STRING, "txnType is null");
-			if (asondate == null)
-				throw new ValidationException(EMPTY_STRING, "As On Date is null");
-
+			if (fromdate == null || todate == null)
+	            throw new ValidationException(EMPTY_STRING, "From Date / To Date is null");
 			// check the account code needs budget checking
 
 			final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
@@ -1817,7 +1836,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 				// Here as on date is overridden by Financialyear ending date to
 				// check all budget appropriation irrespective of
 				// date
-				paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
+				paramMap.put(Constants.FROMDATE, finyear.getEndingDate());
+				paramMap.put(Constants.TODATE, finyear.getEndingDate());
+				
 				paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
 
 				paramMap.put(BUDGETHEADID, budgetHeadListByGlcode);
@@ -2097,8 +2118,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		BigDecimal creditAmt = null;
 		BigDecimal txnAmt = null;
 		String glCode = "";
-		Date asondate = null;
+//		Date asondate = null;
 		Date fromdate = null;
+		Date todate = null;
 		try {
 			String budgetCheckConfig = budgetCheckConfigService.getConfigValue();
 			if (budgetCheckConfig.equals(BudgetControlType.BudgetCheckOption.NONE.toString())) {
@@ -2152,8 +2174,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
 				if (paramMap.get("glcode") != null)
 					glCode = paramMap.get("glcode").toString();
-				if (paramMap.get(Constants.ASONDATE) != null)
-					asondate = (Date) paramMap.get(Constants.ASONDATE);
+				if (paramMap.get(Constants.FROMDATE) != null)
+					fromdate = (Date) paramMap.get(Constants.FROMDATE);
+				if (paramMap.get(Constants.TODATE) != null)
+					todate = (Date) paramMap.get(Constants.TODATE);
+
 
 				if (glCode == null)
 					throw new ValidationException(EMPTY_STRING, "glcode is null");
@@ -2161,8 +2186,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 					throw new ValidationException(EMPTY_STRING, "txnAmt is null");
 				if (txnType == null)
 					throw new ValidationException(EMPTY_STRING, "txnType is null");
-				if (asondate == null)
-					throw new ValidationException(EMPTY_STRING, "As On Date is null");
+				if (fromdate == null || todate == null)
+		            throw new ValidationException(EMPTY_STRING, "From Date / To Date is null");
 
 				// check the account code needs budget checking
 				final CChartOfAccounts coa = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(glCode);
@@ -2179,17 +2204,18 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 					}
 
 					// get the financialyear from asondate
-					final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
+					final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(todate);
 					final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
 					if (finyear == null)
 						throw new ValidationException(EMPTY_STRING,
-								"Financial year is not defined for this date [" + sdf.format(asondate) + "]");
+								"Financial year is not defined for this date [" + sdf.format(todate) + "]");
 					fromdate = finyear.getStartingDate();
 
 					paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
 					paramMap.put(BUDGETHEADID, budgetHeadListByGlcode);
 					paramMap.put("fromdate", fromdate);
-					paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
+					paramMap.put(Constants.FROMDATE, finyear.getEndingDate());
+					paramMap.put(Constants.TODATE, finyear.getEndingDate());
 
 					paramMap.put(GLCODEID, coa.getId());
 					if (LOGGER.isDebugEnabled())
@@ -2293,7 +2319,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     Long fundid = null;
     Long glcodeid = null;
     Date fromdate = null;
-    Date asondate = null;
+//    Date asondate = null;
+    Date todate = null;
     BigDecimal totalBillUtilized = new BigDecimal(0);
 
     String query = EMPTY_STRING;
@@ -2315,31 +2342,35 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
         if (paramMap.get(GLCODEID) != null)
             glcodeid = (Long) paramMap.get(GLCODEID);
-        if (paramMap.get(Constants.ASONDATE) != null)
-            asondate = (java.util.Date) paramMap.get(Constants.ASONDATE);
+        if (paramMap.get(Constants.FROMDATE) != null)
+            fromdate = (java.util.Date) paramMap.get(Constants.FROMDATE);
+        if (paramMap.get(Constants.TODATE) != null)
+            todate = (java.util.Date) paramMap.get(Constants.TODATE);
         if (paramMap.get("fromdate") != null)
             fromdate = (java.util.Date) paramMap.get("fromdate");
 
         // get the financialyear from asondate
-        final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(asondate);
+        final CFinancialYear finyear = financialYearHibDAO.getFinancialYearByDate(todate);
         final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
         if (finyear == null)
             throw new ValidationException(EMPTY_STRING,
-                    "Financial year is not defined for this date [" + sdf.format(asondate) + "]");
+                    "Financial year is not defined for this date [" + sdf.format(todate) + "]");
         fromdate = finyear.getStartingDate();
 
         paramMap.put("financialyearid", Long.valueOf(finyear.getId()));
         paramMap.put("fromdate", fromdate);
-        paramMap.put(Constants.ASONDATE, finyear.getEndingDate());
+        paramMap.put(Constants.FROMDATE, finyear.getEndingDate());
+        paramMap.put(Constants.TODATE, finyear.getEndingDate());
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("deptCode=" + deptCode + ",functionid=" + functionid + ",functionaryid=" + functionaryid
                     + ",schemeid=" + schemeid + ",subschemeid=" + subschemeid + ",boundaryid=" + boundaryid
-                    + ",glcodeid=" + glcodeid + ",asondate=" + asondate);
+                    + ",glcodeid=" + glcodeid + ", fromdate=" + fromdate + ", todate=" + todate);
 
-        if (asondate == null)
-            throw new ValidationException(EMPTY_STRING, "As On Date is null");
 
+        if (fromdate == null || todate == null)
+            throw new ValidationException(EMPTY_STRING, "From Date / To Date is null");
+       
         final List<AppConfigValues> budgetGrouplist = appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
                 BUDGETARY_CHECK_GROUPBY_VALUES);
         if (budgetGrouplist.isEmpty())
@@ -2388,10 +2419,12 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     throw new ValidationException(EMPTY_STRING,
                             "budgetaryCheck_groupby_values is not matching=" + value);
         }
-        if (asondate != null)
-            query = query + " and br.billdate <=? ";
-        if (fromdate != null)
-            query = query + " and  br.billdate>=? ";
+     //  Date range condition (fromDate → toDate)
+        if (fromdate != null && todate != null)
+            query = query + " and br.billdate >= ? and br.billdate <= ? ";
+		/*
+		 * if (fromdate != null) query = query + " and  br.billdate>=? ";
+		 */
 
         query = query + " and bd.glcodeid='" + glcodeid + "'";
         query1 = "select sum(case when bd.debitamount is null then 0 ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end)  "
@@ -2403,12 +2436,12 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             LOGGER.debug("getBillAmountForBudgetCheck query============" + query1);
         Object ob = null;
         if (fromdate != null)
-            ob = persistenceService.find(query1, asondate, fromdate);
+            ob = persistenceService.find(query1, fromdate, todate);
         else
-            ob = persistenceService.find(query1, asondate);
+            ob = persistenceService.find(query1, fromdate, todate);
 
         final BigDecimal billAmountWhereCancelledVouchers = getBillAmountWhereCancelledVouchers(query, fromdate,
-                asondate);
+                todate);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Total Amount from all bills where vouchers are cancelled is : "
                     + billAmountWhereCancelledVouchers);

@@ -296,13 +296,19 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                                                  final String functionName) {
         final Map<String, Object> budgetApprDetailsMap = new HashMap<>();
         budgetDataMap.put(Constants.FUNCTIONID, Long.valueOf(billDetail.getFunctionid().toString()));
-        if (cbill.getEgBillregistermis().getVoucherHeader() != null)
-            budgetDataMap.put(Constants.ASONDATE, cbill.getEgBillregistermis().getVoucherHeader().getVoucherDate());// this date
+        if (cbill.getEgBillregistermis().getVoucherHeader() != null) {
+            budgetDataMap.put(Constants.FROMDATE,
+                    cbill.getEgBillregistermis().getVoucherHeader().getVoucherDate());
+            budgetDataMap.put(Constants.TODATE,
+                    cbill.getEgBillregistermis().getVoucherHeader().getVoucherDate());
+            // this date
             // plays
             // important
             // roles
-        else
-            budgetDataMap.put(Constants.ASONDATE, cbill.getBilldate());
+        } else {
+            budgetDataMap.put(Constants.FROMDATE, cbill.getBilldate());
+            budgetDataMap.put(Constants.TODATE, cbill.getBilldate());
+        }
 
         Date billDate = cbill.getBilldate();
         final CFinancialYear financialYearById = financialYearDAO.getFinYearByDate(billDate);
@@ -328,7 +334,8 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         // amount
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("actualAmtFromVoucher .............................. " + actualAmtFromVoucher);
-        budgetDataMap.put(Constants.ASONDATE, cbill.getBilldate());
+        budgetDataMap.put(Constants.FROMDATE, cbill.getBilldate());
+        budgetDataMap.put(Constants.TODATE, cbill.getBilldate());
         final BigDecimal actualAmtFromBill = budgetDetailsDAO.getBillAmountForBudgetCheck(budgetDataMap); // get actual amount
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("actualAmtFromBill .............................. " + actualAmtFromBill);

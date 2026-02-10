@@ -288,7 +288,9 @@ public class BudgetAppropriationService extends PersistenceService {
 			budgetDataMap.put(Constants.SUBSCHEMEID, cbill.getEgBillregistermis().getSubScheme().getId());
 		budgetDataMap.put(Constants.FUNDID, cbill.getEgBillregistermis().getFund().getId());
 		budgetDataMap.put(Constants.BOUNDARYID, cbill.getDivision());
-		budgetDataMap.put(Constants.ASONDATE, cbill.getBilldate());
+//		budgetDataMap.put(Constants.ASONDATE, cbill.getBilldate());
+		budgetDataMap.put(Constants.FROMDATE, financialYear.getStartingDate());
+		budgetDataMap.put(Constants.TODATE, cbill.getBilldate());
 		budgetDataMap.put(Constants.FUNCTIONID, function.getId());
 		budgetDataMap.put("fromdate", financialYear.getStartingDate());
 		budgetDataMap.put("glcode", coa.getGlcode());
@@ -312,7 +314,9 @@ public class BudgetAppropriationService extends PersistenceService {
 		budgetDataMap.put(Constants.FUNDID, voucher.getFundId().getId());
 		if (voucher.getVouchermis().getDivisionid() != null)
 			budgetDataMap.put(Constants.BOUNDARYID, voucher.getVouchermis().getDivisionid().getBndryId());
-		budgetDataMap.put(Constants.ASONDATE, voucher.getVoucherDate());
+//		budgetDataMap.put(Constants.ASONDATE, voucher.getVoucherDate());
+		budgetDataMap.put(Constants.FROMDATE, financialYear.getStartingDate());
+		budgetDataMap.put(Constants.TODATE, voucher.getVoucherDate());
 		if (function != null)
 			budgetDataMap.put(Constants.FUNCTIONID, function.getId());
 		budgetDataMap.put("fromdate", financialYear.getStartingDate());

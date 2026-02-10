@@ -93,10 +93,22 @@ public class BudgetDetailHelper {
                 detail.remove();
     }
 
+	/*
+	 * public String getActualsFor(final Map<String, Object> paramMap, final Date
+	 * asOn) { paramMap.put(Constants.ASONDATE, asOn); try { return
+	 * budgetDetailsDAO.getActualBudgetUtilized(paramMap).setScale(0,
+	 * BigDecimal.ROUND_CEILING).toString(); } catch (final ValidationException e) {
+	 * return "0.0"; } catch (final ArithmeticException e) { return "0.0"; } }
+	 */
     public String getActualsFor(final Map<String, Object> paramMap, final Date asOn) {
-        paramMap.put(Constants.ASONDATE, asOn);
         try {
-            return budgetDetailsDAO.getActualBudgetUtilized(paramMap).setScale(0, BigDecimal.ROUND_CEILING).toString();
+            final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(asOn);
+
+            paramMap.put(Constants.FROMDATE, finYear.getStartingDate());
+            paramMap.put(Constants.TODATE, asOn);
+
+            return budgetDetailsDAO.getActualBudgetUtilized(paramMap)
+                    .setScale(0, BigDecimal.ROUND_CEILING).toString();
         } catch (final ValidationException e) {
             return "0.0";
         } catch (final ArithmeticException e) {
@@ -105,10 +117,24 @@ public class BudgetDetailHelper {
     }
 
     // gives actuals from bill and voucher
+	/*
+	 * public BigDecimal getTotalActualsFor(final Map<String, Object> paramMap,
+	 * final Date asOn) { BigDecimal actuals = BigDecimal.ZERO;
+	 * paramMap.put(Constants.ASONDATE, asOn); try { actuals =
+	 * budgetDetailsDAO.getActualBudgetUtilized(paramMap); actuals = actuals == null
+	 * ? BigDecimal.ZERO : actuals; actuals =
+	 * actuals.add(budgetDetailsDAO.getBillAmountForBudgetCheck(paramMap)); } catch
+	 * (final ValidationException e) { return BigDecimal.ZERO; } return actuals; }
+	 */
+
     public BigDecimal getTotalActualsFor(final Map<String, Object> paramMap, final Date asOn) {
         BigDecimal actuals = BigDecimal.ZERO;
-        paramMap.put(Constants.ASONDATE, asOn);
         try {
+            final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(asOn);
+
+            paramMap.put(Constants.FROMDATE, finYear.getStartingDate());
+            paramMap.put(Constants.TODATE, asOn);
+
             actuals = budgetDetailsDAO.getActualBudgetUtilized(paramMap);
             actuals = actuals == null ? BigDecimal.ZERO : actuals;
             actuals = actuals.add(budgetDetailsDAO.getBillAmountForBudgetCheck(paramMap));
@@ -117,7 +143,6 @@ public class BudgetDetailHelper {
         }
         return actuals;
     }
-
     public void populateData(final BudgetAmountView amountDisplay, final Map<String, Object> paramMap, final Date asOnDate,
             final boolean isRe) {
         final Date previousYear = subtractYear(asOnDate);

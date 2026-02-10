@@ -251,7 +251,7 @@ th.bluebgheadtd {
 				</tr>
 				<tr id="dateRow">
 					<td class="greybox">&nbsp;</td>
-					<td class="greybox"><s:text name="report.fromDate"/>:</td>
+					<td class="greybox"><s:text name="from.date"/>:</td>
 					<td class="greybox">
 						<s:textfield name="fromDate" id="fromDate" cssStyle="width:100px"/>
 						<a href="javascript:show_calendar('balanceSheetReport.fromDate');"
@@ -259,7 +259,7 @@ th.bluebgheadtd {
 							<img src="/services/egi/resources/erp2/images/calendaricon.gif" border="0"/>
 						</a>(dd/mm/yyyy)
 					</td>
-					<td class="greybox"><s:text name="report.toDate"/>:</td>
+					<td class="greybox"><s:text name="to.date"/>:</td>
 					<td class="greybox">
 						<s:textfield name="toDate" id="toDate" cssStyle="width:100px"/>
 						<a href="javascript:show_calendar('balanceSheetReport.toDate');"
