@@ -14,7 +14,15 @@ import org.springframework.util.StringUtils;
 @Component
 public class DashboardReportQueryBuilder {
 
-	public static final String TOTAL_PROPERTIES_REGISTERED = "select epp.propertyid,epp.tenantid from eg_pt_property epp join eg_pt_address epa on epp.id=epa.propertyid where epp.status in ('ACTIVE','INWORKFLOW') ";
+	public static final String TOTAL_PROPERTIES_REGISTERED = "SELECT \r\n"
+			+ "    epp.propertyid,\r\n"
+			+ "    epp.tenantid\r\n"
+			+ "FROM eg_pt_property epp\r\n"
+			+ "JOIN eg_pt_address epa \r\n"
+			+ "    ON epp.id = epa.propertyid\r\n"
+			+ "WHERE epp.status IN ('ACTIVE', 'INWORKFLOW')\r\n"
+			+ "order by epp.lastmodifiedtime desc\r\n"
+			+ "";
 
 	public static final String PROPERTIES_PENDING_WITH = "WITH latest_actions AS (\r\n" + "  SELECT \r\n"
 			+ "    ewpv.businessid,\r\n" + "    ewpv.\"action\",\r\n" + "    ewpv.tenantid,\r\n"
@@ -54,6 +62,7 @@ public class DashboardReportQueryBuilder {
 	        	      + "    ON epp.id = epadd.propertyid\r\n"
 	        	      + "  WHERE ewpv.\"action\" != '' AND epp.status = 'INWORKFLOW'\r\n"
 	        	      + "  /*FILTER_CONDITIONS*/\r\n"
+	        	      + "  order by ewpv.lastmodifiedtime desc\r\n"
 	        	      + "),\r\n"
 	        	      + "mapped_actions AS (\r\n"
 	        	      + "  SELECT \r\n"
@@ -90,19 +99,28 @@ public class DashboardReportQueryBuilder {
 	        	      + "  AND action_rn <= (:offset + :limit)\r\n"
 	        	      + "GROUP BY action_st";
 
-	public static final String PROPERTIES_APPROVED = "SELECT\r\n"
-			+ "    ep.propertyid,\r\n"
-			+ "    ep.tenantid\r\n"
-			+ "FROM eg_wf_processinstance_v2 ewpv\r\n"
-			+ "JOIN eg_pt_property ep\r\n"
-			+ "    ON ep.acknowldgementnumber = ewpv.businessid\r\n"
-			+ "JOIN eg_pt_address epadd\r\n"
-			+ "    ON ep.id = epadd.propertyid\r\n"
-			+ "WHERE ewpv.\"action\" = 'APPROVE'\r\n"
-			+ "  AND ep.status = 'ACTIVE'\r\n"
-			+ "  /*FILTER_CONDITIONS*/\n" 
-			+ "GROUP BY\r\n"
-			+ "    ep.propertyid,ep.tenantid";
+	public static final String PROPERTIES_APPROVED = "select\r\n"
+			+ "	ep.propertyid,\r\n"
+			+ "	ep.tenantid\r\n"
+			+ "from\r\n"
+			+ "	eg_wf_processinstance_v2 ewpv\r\n"
+			+ "join eg_pt_property ep\r\n"
+			+ "    on\r\n"
+			+ "	ep.acknowldgementnumber = ewpv.businessid\r\n"
+			+ "join eg_pt_address epadd\r\n"
+			+ "    on\r\n"
+			+ "	ep.id = epadd.propertyid\r\n"
+			+ "where\r\n"
+			+ "	ewpv.\"action\" = 'APPROVE'\r\n"
+			+ "	and ep.status = 'ACTIVE'\r\n"
+			+ "  /*FILTER_CONDITIONS*/\r\n"
+			+ "group by\r\n"
+			+ "	ep.propertyid,\r\n"
+			+ "	ep.tenantid,\r\n"
+			+ "	ep.lastmodifiedtime\r\n"
+			+ "order by\r\n"
+			+ "	ep.lastmodifiedtime desc\r\n"
+			+ "";
 	
 	public static final String PROPERTIES_REJECTED = "SELECT\r\n"
 			+ "    ep.propertyid,\r\n"
@@ -114,9 +132,13 @@ public class DashboardReportQueryBuilder {
 			+ "    ON ep.id = epadd.propertyid\r\n"
 			+ "WHERE ewpv.\"action\" = 'REJECT'\r\n"
 			+ "  AND ep.status = 'INACTIVE'\r\n"
-			+ "  /*FILTER_CONDITIONS*/\n" 
+			+ "  /*FILTER_CONDITIONS*/\r\n"
 			+ "GROUP BY\r\n"
-			+ "    ep.propertyid,ep.tenantid ";
+			+ "    ep.propertyid,\r\n"
+			+ "    ep.tenantid,\r\n"
+			+ "    ewpv.lastmodifiedtime \r\n"
+			+ "order by ewpv.lastmodifiedtime desc\r\n"
+			+ "";
 
 	public static final String PROPERTIES_SELF_ASSESSED = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid\r\n"
 			+ "FROM eg_pt_asmt_assessment epaa\r\n" + "JOIN eg_pt_property epp ON epaa.propertyid = epp.propertyid\r\n"
@@ -157,7 +179,7 @@ public class DashboardReportQueryBuilder {
 	public static final String PENALTY_SHARE = "WITH paid_bills AS (\r\n"
 			+ "    SELECT \r\n"
 			+ "        bd.demandid, \r\n"
-			+ "        SUM(bd.totalamount) AS billsum,b.consumercode,b.tenantid\r\n"
+			+ "        SUM(bd.totalamount) AS billsum,b.consumercode,b.tenantid,pay.lastmodifiedtime\r\n"
 			+ "    FROM egbs_bill_v1 b\r\n"
 			+ "    JOIN egbs_billdetail_v1 bd ON b.id = bd.billid\r\n"
 			+ "    JOIN eg_pt_property p ON p.propertyid = bd.consumercode\r\n"
@@ -170,7 +192,7 @@ public class DashboardReportQueryBuilder {
 			+ "     {DATE_FILTER}\r\n"
 			+ "      {TENANT_FILTER}\r\n"
 			+ "      {WARD_FILTER} \r\n"
-			+ "    GROUP BY bd.demandid,b.consumercode,b.tenantid\r\n"
+			+ "    GROUP BY bd.demandid,b.consumercode,b.tenantid,pay.lastmodifiedtime\r\n"
 			+ "    HAVING SUM(bd.totalamount) > 0\r\n"
 			+ "),\r\n"
 			+ "\r\n"
@@ -213,7 +235,7 @@ public class DashboardReportQueryBuilder {
 			+ "    GROUP BY d.id\r\n"
 			+ ")\r\n"
 			+ "\r\n"
-			+ "SELECT filtered.consumercode AS consumercode, filtered.tenantid\r\n"
+			+ "SELECT filtered.consumercode AS propertyid, filtered.tenantid, todaypenaltycollection\r\n"
 			+ "FROM (\r\n"
 			+ "    SELECT \r\n"
 			+ "        SUM(pd.penalty_amount) AS todaypenaltycollection,\r\n"
@@ -221,12 +243,12 @@ public class DashboardReportQueryBuilder {
 			+ "        pb.demandid,\r\n"
 			+ "        td.demandid,\r\n"
 			+ "        pb.consumercode,\r\n"
-			+ "        pb.tenantid\r\n"
+			+ "        pb.tenantid,pb.lastmodifiedtime\r\n"
 			+ "    FROM penalty_demand pd\r\n"
 			+ "    JOIN paid_bills pb ON pd.demandid = pb.demandid\r\n"
 			+ "    JOIN total_demand td ON pd.demandid = td.demandid\r\n"
-			+ "    GROUP BY pd.demandid, pb.demandid, td.demandid ,pb.consumercode,pb.tenantid\r\n"
-			+ "    HAVING SUM(pb.billsum) >= SUM(td.demandsum)\r\n"
+			+ "    GROUP BY pd.demandid, pb.demandid, td.demandid ,pb.consumercode,pb.tenantid,pb.lastmodifiedtime\r\n"
+			+ "    HAVING SUM(pb.billsum) >= SUM(td.demandsum) order by pb.lastmodifiedtime\r\n"
 			+ ") AS filtered";
 
 	public static final String INTEREST_SHARE = "SELECT ebv2.consumercode AS consumercode\r\n"
@@ -445,12 +467,13 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
+		filter.append(" order by epaa.lastmodifiedtime desc ");
 		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
 		}
-
+		
 		return filter.toString();
 	}
 
@@ -485,6 +508,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
+		filter.append("order by epp.lastmodifiedtime desc");
 		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -525,6 +549,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
+		filter.append("order by ep.lastmodifiedtime desc");
 		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -565,6 +590,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
+		filter.append("order by eppa.lastmodifiedtime desc");
 		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -605,6 +631,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
+		filter.append("order by eppa.lastmodifiedtime desc");
 		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -645,6 +672,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
+		filter.append("order by ep.lastmodifiedtime desc");
 		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -759,6 +787,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
+		filter.append(" order by pay.lastmodifiedtime desc ");
 		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -799,6 +828,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 
+		filter.append(" order by pay.lastmodifiedtime desc ");
 		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
