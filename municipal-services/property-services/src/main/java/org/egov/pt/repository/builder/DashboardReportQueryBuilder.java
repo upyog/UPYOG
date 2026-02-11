@@ -21,7 +21,6 @@ public class DashboardReportQueryBuilder {
 			+ "JOIN eg_pt_address epa \r\n"
 			+ "    ON epp.id = epa.propertyid\r\n"
 			+ "WHERE epp.status IN ('ACTIVE', 'INWORKFLOW')\r\n"
-			+ "order by epp.lastmodifiedtime desc\r\n"
 			+ "";
 
 	public static final String PROPERTIES_PENDING_WITH = "WITH latest_actions AS (\r\n" + "  SELECT \r\n"
@@ -299,6 +298,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
+		filter.append(" order by epp.lastmodifiedtime desc ");
 		if(!ObjectUtils.isEmpty(dashboardDataSearch.getLimit()) && !ObjectUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET  "+dashboardDataSearch.getOffset());
