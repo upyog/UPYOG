@@ -1,5 +1,6 @@
 package org.egov.pt.repository;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import org.egov.pt.models.DashboardDataSearch;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.collection.Payment;
+import org.egov.pt.models.collection.RevenuDataBucket;
 import org.egov.pt.repository.builder.DashboardReportQueryBuilder;
 import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.PropertyRedisCache;
@@ -396,20 +398,33 @@ public class DashboardReportRepository {
 	public List<Property> getPenaltyShareAmount(DashboardRequest dashboardRequest)
 	{
 		Map<String, String> propertyTenantMap = new HashMap<>();
+	    Map<String, List<RevenuDataBucket>> redisPayload = new HashMap<>();
+
+
 		String query=reportQueryBuilder.getPenaltyShareQuery(dashboardRequest.getDashboardDataSearch());
-		propertyTenantMap = jdbcTemplate.query(
-			    query,
-			    rs -> {
-			        Map<String, String> map = new HashMap<>();
-			        while (rs.next()) {
-			            map.put(
-			                rs.getString("propertyid"),
-			                rs.getString("tenantid")
-			            );
-			        }
-			        return map;
-			    }
-			);
+		jdbcTemplate.query(query, rs -> {
+            String propertyId = rs.getString("propertyid");
+            String tenantId   = rs.getString("tenantid");
+            BigDecimal penaltyamount      = rs.getBigDecimal("penalty");
+            String redisKey = propertyRedisCache.PREFIX_PENALTY
+                    + tenantId + ":" + propertyId;
+            
+            propertyTenantMap.put(propertyId, tenantId);
+            RevenuDataBucket bucket = RevenuDataBucket.builder()
+                    .amount(penaltyamount)
+                    .propertyId(propertyId)
+                    .tenantId(tenantId)
+                    .build();
+
+            redisPayload
+                .computeIfAbsent(redisKey, k -> new ArrayList<>())
+                .add(bucket);
+        
+    });
+    redisPayload.forEach((key, payments) ->
+        propertyRedisCache.put(key,payments)
+        
+    );
 		
 		List<Property> properties=null;
 		

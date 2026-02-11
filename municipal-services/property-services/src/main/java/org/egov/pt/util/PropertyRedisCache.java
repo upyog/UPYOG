@@ -18,6 +18,7 @@ import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.collection.Payment;
+import org.egov.pt.models.collection.RevenuDataBucket;
 import org.egov.pt.service.AssessmentService;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class PropertyRedisCache {
 
     public static final String PREFIX = "PROPERTY:";
     public static final String PREFIX_PAYMENT = "PAYMENT:";
+    public static final String PREFIX_PENALTY = "PENALTY:";
     private static final Duration TTL = Duration.ofMinutes(30);
     
     @Autowired
@@ -163,10 +165,11 @@ public class PropertyRedisCache {
     }
     
     
-    public void put(String key, List<Payment> payments) {
+    public  <T> void put(String key, List<T> data) {
   
-        redisTemplate.opsForValue().set(key, payments, TTL);
+        redisTemplate.opsForValue().set(key, data, TTL);
     }
+  
     
    
 

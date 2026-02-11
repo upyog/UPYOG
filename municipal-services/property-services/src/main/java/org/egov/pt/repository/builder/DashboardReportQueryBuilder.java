@@ -234,7 +234,7 @@ public class DashboardReportQueryBuilder {
 			+ "    GROUP BY d.id\r\n"
 			+ ")\r\n"
 			+ "\r\n"
-			+ "SELECT filtered.consumercode AS propertyid, filtered.tenantid, todaypenaltycollection\r\n"
+			+ "SELECT filtered.consumercode AS propertyid, filtered.tenantid as tenantid, todaypenaltycollection as penalty\r\n"
 			+ "FROM (\r\n"
 			+ "    SELECT \r\n"
 			+ "        SUM(pd.penalty_amount) AS todaypenaltycollection,\r\n"
