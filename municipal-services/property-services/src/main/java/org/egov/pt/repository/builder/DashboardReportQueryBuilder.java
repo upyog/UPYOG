@@ -34,8 +34,6 @@ public class DashboardReportQueryBuilder {
 			+ "  STRING_AGG(latest_actions.propertyid || ':' || latest_actions.tenantid,', ') AS property_ids\r\n" + "FROM latest_actions\r\n"
 			+ "WHERE rn = 1\r\n" + "GROUP BY action_st";
 	
-	
-
 	public static final String PROPERTIES_PENDING_WITH_NEW = 
 	        "WITH latest_actions AS (\r\n"
 	        	      + "  SELECT \r\n"
@@ -91,7 +89,6 @@ public class DashboardReportQueryBuilder {
 	        	      + "WHERE action_rn > :offset\r\n"
 	        	      + "  AND action_rn <= (:offset + :limit)\r\n"
 	        	      + "GROUP BY action_st";
-;
 
 	public static final String PROPERTIES_APPROVED = "SELECT\r\n"
 			+ "    ep.propertyid,\r\n"
@@ -128,7 +125,7 @@ public class DashboardReportQueryBuilder {
 	public static final String PROPERTIES_PENDING_SELF_ASSESSMENT = "SELECT epp.propertyid AS propertyid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "WHERE epp.propertyid NOT IN (\r\n" + "    SELECT DISTINCT epaa.propertyid\r\n"
-			+ "    FROM eg_pt_asmt_assessment epaa\r\n" + ")";
+			+ "    FROM eg_pt_asmt_assessment epaa AND epp.status = 'ACTIVE'\r\n" + ")";
 
 	public static final String PROPERTIES_PAID = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid,ept.txn_id as txn_id ,ept.txn_amount as txn_amount\r\n"
 			+ "FROM eg_pg_transactions ept\r\n" + "JOIN eg_pt_property epp ON ept.consumer_code = epp.propertyid\r\n"
@@ -139,33 +136,98 @@ public class DashboardReportQueryBuilder {
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pt_property_appeal eppa ON epp.propertyid = eppa.propertyid\r\n"
 			+ "JOIN eg_wf_processinstance_v2 ewpv ON epp.acknowldgementnumber = ewpv.businessid\r\n"
-			+ "WHERE ewpv.\"action\" = 'OPEN'\r\n" + "";
+			+ "WHERE ewpv.\"action\" = 'OPEN' AND epp.status = 'ACTIVE'\r\n" + "";
 
 	public static final String APPEALS_PENDING = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pt_property_appeal eppa ON epp.propertyid = eppa.propertyid\r\n"
 			+ "JOIN eg_wf_processinstance_v2 ewpv ON epp.acknowldgementnumber = ewpv.businessid\r\n"
-			+ "WHERE ewpv.\"action\" = 'OPEN'\r\n" + "";
+			+ "WHERE ewpv.\"action\" = 'OPEN' AND epp.status = 'ACTIVE'\r\n" + "";
 
 	public static final String TOTAL_TAX_COLLECTED = "SELECT epp.propertyid as propertyid,epp.tenantid as tenantid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pg_transactions ept ON epp.propertyid = ept.consumer_code\r\n"
-			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n" + "WHERE ept.txn_status = 'SUCCESS'";
+			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n" + "WHERE ept.txn_status = 'SUCCESS' AND epp.status = 'ACTIVE'";
 
 	public static final String PROPERTY_TAX_SHARE = "SELECT SUM(ep.totalamountpaid) * 5.0 / 8 as PROPERTY_TAX\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pg_transactions ept ON epp.propertyid = ept.consumer_code\r\n"
 			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n" + "WHERE ept.txn_status = 'SUCCESS'";
 
-	public static final String PENALTY_SHARE = "SELECT \r\n" + "  p.propertyid as  propertyid,p.tenantid as tenantid,     d.consumercode AS consumercode\r\n"
-			+ "    FROM egbs_demand_v1 d\r\n" + "    JOIN egbs_demanddetail_v1 dd ON d.id = dd.demandid\r\n"
+	public static final String PENALTY_SHARE = "WITH paid_bills AS (\r\n"
+			+ "    SELECT \r\n"
+			+ "        bd.demandid, \r\n"
+			+ "        SUM(bd.totalamount) AS billsum,b.consumercode,b.tenantid\r\n"
+			+ "    FROM egbs_bill_v1 b\r\n"
+			+ "    JOIN egbs_billdetail_v1 bd ON b.id = bd.billid\r\n"
+			+ "    JOIN eg_pt_property p ON p.propertyid = bd.consumercode\r\n"
+			+ "    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"
+			+ "    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code\r\n"
+			+ "    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
+			+ "    WHERE t.txn_status = 'SUCCESS'\r\n"
+			+ "      AND p.status = 'ACTIVE'\r\n"
+			+ "      AND b.status = 'PAID'\r\n"
+			+ "     {DATE_FILTER}\r\n"
+			+ "      {TENANT_FILTER}\r\n"
+			+ "      {WARD_FILTER} \r\n"
+			+ "    GROUP BY bd.demandid,b.consumercode,b.tenantid\r\n"
+			+ "    HAVING SUM(bd.totalamount) > 0\r\n"
+			+ "),\r\n"
+			+ "\r\n"
+			+ "total_demand AS (\r\n"
+			+ "    SELECT \r\n"
+			+ "        d.id AS demandid, \r\n"
+			+ "        SUM(dd.taxamount) AS demandsum\r\n"
+			+ "    FROM egbs_demand_v1 d\r\n"
+			+ "    JOIN egbs_demanddetail_v1 dd ON d.id = dd.demandid\r\n"
+			+ "    JOIN eg_pt_property p ON p.propertyid = d.consumercode\r\n"
+			+ "    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"
+			+ "    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code\r\n"
+			+ "    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
+			+ "    WHERE t.txn_status = 'SUCCESS'\r\n"
+			+ "      AND p.status = 'ACTIVE'\r\n"
+			+ "     {DATE_FILTER}\r\n"
+			+ "      {TENANT_FILTER}\r\n"
+			+ "      {WARD_FILTER} \r\n"
+			+ "    GROUP BY d.id\r\n"
+			+ "    HAVING SUM(dd.taxamount) > 0\r\n"
+			+ "),\r\n"
+			+ "\r\n"
+			+ "penalty_demand AS (\r\n"
+			+ "    SELECT \r\n"
+			+ "        d.id AS demandid, \r\n"
+			+ "        SUM(dd.taxamount) AS penalty_amount\r\n"
+			+ "    FROM egbs_demand_v1 d\r\n"
+			+ "    JOIN egbs_demanddetail_v1 dd ON d.id = dd.demandid\r\n"
 			+ "    JOIN eg_pt_property p ON p.propertyid = d.consumercode\r\n"
 			+ "    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"
 			+ "    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code\r\n"
 			+ "    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
 			+ "    WHERE dd.taxheadcode IN ('PT_PAST_DUE_PENALTY', 'PT_TIME_PENALTY')\r\n"
-			+ "      AND dd.taxamount > 0 \r\n" + "      AND t.txn_status = 'SUCCESS' \r\n"
-			+ "      {DATE_FILTER} {TENANT_FILTER} {WARD_FILTER}\r\n" + "    GROUP BY d.consumercode";
+			+ "      AND dd.taxamount > 0\r\n"
+			+ "      AND t.txn_status = 'SUCCESS'\r\n"
+			+ "      AND p.status = 'ACTIVE'\r\n"
+			+ "      {DATE_FILTER}\r\n"
+			+ "      {TENANT_FILTER}\r\n"
+			+ "      {WARD_FILTER}\r\n"
+			+ "    GROUP BY d.id\r\n"
+			+ ")\r\n"
+			+ "\r\n"
+			+ "SELECT filtered.consumercode AS consumercode, filtered.tenantid\r\n"
+			+ "FROM (\r\n"
+			+ "    SELECT \r\n"
+			+ "        SUM(pd.penalty_amount) AS todaypenaltycollection,\r\n"
+			+ "        pd.demandid,\r\n"
+			+ "        pb.demandid,\r\n"
+			+ "        td.demandid,\r\n"
+			+ "        pb.consumercode,\r\n"
+			+ "        pb.tenantid\r\n"
+			+ "    FROM penalty_demand pd\r\n"
+			+ "    JOIN paid_bills pb ON pd.demandid = pb.demandid\r\n"
+			+ "    JOIN total_demand td ON pd.demandid = td.demandid\r\n"
+			+ "    GROUP BY pd.demandid, pb.demandid, td.demandid ,pb.consumercode,pb.tenantid\r\n"
+			+ "    HAVING SUM(pb.billsum) >= SUM(td.demandsum)\r\n"
+			+ ") AS filtered";
 
 	public static final String INTEREST_SHARE = "SELECT ebv2.consumercode AS consumercode\r\n"
 			+ "FROM egbs_bill_v1 ebv\r\n" + "JOIN egbs_billdetail_v1 ebv2 ON ebv.id = ebv2.billid\r\n"
@@ -173,7 +235,7 @@ public class DashboardReportQueryBuilder {
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pg_transactions t ON epp.propertyid = t.consumer_code\r\n"
 			+ "JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n" + "WHERE t.txn_status = 'SUCCESS'\r\n"
-			+ "  AND ebv.status = 'PAID'\r\n" + "  AND ebv2.interestonamount > 0";
+			+ "  AND ebv.status = 'PAID'\r\n" + "  AND ebv2.interestonamount > 0 AND epp.status = 'ACTIVE'";
 
 	public static final String ADVANCE_SHARE = "SELECT edv.consumercode as consumercode\r\n"
 			+ "FROM egbs_demand_v1 edv\r\n" + "JOIN egbs_billdetail_v1 ebv2 ON edv.id = ebv2.demandid\r\n"
@@ -182,7 +244,7 @@ public class DashboardReportQueryBuilder {
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "JOIN eg_pg_transactions t ON epp.propertyid = t.consumer_code\r\n"
 			+ "JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n" + "WHERE t.txn_status = 'SUCCESS'\r\n"
-			+ "  AND ebv.status = 'PAID'\r\n" + "  AND edv.advanceamount > 0";
+			+ "  AND ebv.status = 'PAID'\r\n" + "  AND edv.advanceamount > 0 AND epp.status = 'ACTIVE'";
 
 	public String getTotalPropertyRegisteredQuery(DashboardDataSearch dashboardDataSearch) {
 
@@ -382,6 +444,12 @@ public class DashboardReportQueryBuilder {
 		} else {
 			filter.append(" AND epa.ward_no != ''");
 		}
+		
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
+		}
 
 		return filter.toString();
 	}
@@ -415,6 +483,12 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
 			filter.append(" AND epa.ward_no != ''");
+		}
+		
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
 		}
 
 		return filter.toString();
@@ -450,6 +524,12 @@ public class DashboardReportQueryBuilder {
 		} else {
 			filter.append(" AND epa.ward_no != ''");
 		}
+		
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
+		}
 
 		return filter.toString();
 	}
@@ -483,6 +563,12 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
 			filter.append(" AND epa.ward_no != ''");
+		}
+		
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
 		}
 
 		return filter.toString();
@@ -518,6 +604,12 @@ public class DashboardReportQueryBuilder {
 		} else {
 			filter.append(" AND epa.ward_no != ''");
 		}
+		
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
+		}
 
 		return filter.toString();
 	}
@@ -551,6 +643,12 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
 			filter.append(" AND epa.ward_no != ''");
+		}
+		
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
 		}
 
 		return filter.toString();
@@ -586,6 +684,12 @@ public class DashboardReportQueryBuilder {
 		} else {
 			filter.append(" AND epa.ward_no != ''");
 		}
+		
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
+		}
 
 		return filter.toString();
 	}
@@ -615,6 +719,12 @@ public class DashboardReportQueryBuilder {
 		query = query.replace("{DATE_FILTER}", dateFilter).replace("{TENANT_FILTER}", tenantFilter)
 				.replace("{WARD_FILTER}", wardFilter);
 
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			query.concat(" OFFSET "+dashboardDataSearch.getOffset());
+			query.concat(" LIMIT "+dashboardDataSearch.getLimit());
+		}
+		
 		return query;
 	}
 
@@ -647,6 +757,12 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
 		} else {
 			filter.append(" AND epa.ward_no != ''");
+		}
+		
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
 		}
 
 		return filter.toString();
@@ -683,6 +799,12 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 
+		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
+		}
+		
 		return filter.toString();
 	}
 

@@ -38,12 +38,6 @@ public class DashboardDataRepository {
 		BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
 		return result != null ? result : BigInteger.ZERO;
 	}
-	public List<String> getTotalPropertyRegisteredMap(DashboardDataSearch dashboardDataSearch)
-	{
-		String query=dashboardDataQueryBuilder.getTotalPropertyRegisteredQueryPropertyList(dashboardDataSearch);
-		//BigInteger result = jdbcTemplate.queryForObject(query, BigInteger.class);
-		return jdbcTemplate.queryForList(query,String.class);
-	}
 	
 	public Map<String, BigInteger> getPropertiesPendingWithCount(DashboardDataSearch dashboardDataSearch) {
 	    String query = dashboardDataQueryBuilder.getTotalPropertyPendingWithQuery(dashboardDataSearch);
@@ -59,23 +53,6 @@ public class DashboardDataRepository {
 	    });
 	}
 	
-	public Map<String, Set<String>> getPropertiesPendingWithMap(DashboardDataSearch dashboardDataSearch) {
-
-	    String query = dashboardDataQueryBuilder.getTotalPropertyPendingWithQueryForPropertyList(dashboardDataSearch);
-
-	    return jdbcTemplate.query(query, rs -> {
-	        Map<String, Set<String>> resultMap = new HashMap<>();
-	        while (rs.next()) {
-	            String action = rs.getString("action_st");
-	            String prop = rs.getString("propid");
-
-	            // add property to the set for this action
-	            resultMap.computeIfAbsent(action, k -> new HashSet<>()).add(prop);
-	        }
-	        return resultMap;
-	    });
-	}
-
 	public BigInteger getTotalPropertyApprovedCount(DashboardDataSearch dashboardDataSearch)
 	{
 		String query=dashboardDataQueryBuilder.getTotalPropertyApprovedQuery(dashboardDataSearch);
