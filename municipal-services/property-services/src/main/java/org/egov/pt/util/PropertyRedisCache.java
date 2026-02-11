@@ -106,6 +106,45 @@ public class PropertyRedisCache {
         }
         return result;
     }
+    
+    
+    public Map<String, List<RevenuDataBucket>> multiGetPenalty(
+            Map<String, String> propertyTenantMap) {
+
+        List<Map.Entry<String, String>> entries =
+                new ArrayList<>(propertyTenantMap.entrySet());
+
+        List<String> keys = entries.stream()
+                .map(e -> PREFIX_PENALTY + e.getValue() + ":" + e.getKey())
+                .collect(Collectors.toList());
+
+        List<Object> values = redisTemplate.opsForValue().multiGet(keys);
+
+        Map<String, List<RevenuDataBucket>> result = new HashMap<>();
+
+        if (values != null) {
+            for (int i = 0; i < values.size(); i++) {
+                Object val = values.get(i);
+
+                if (val instanceof List<?>) {
+                    String propertyId = entries.get(i).getKey();
+
+                    @SuppressWarnings("unchecked")
+                    List<RevenuDataBucket> datalist = (List<RevenuDataBucket>) val;
+
+                    result.put(propertyId, datalist);
+
+                    redisTemplate.expire(
+                            keys.get(i),
+                            TTL.toMinutes(),
+                            TimeUnit.MINUTES
+                    );
+                }
+            }
+        }
+        return result;
+    }
+
 
     @SuppressWarnings("unchecked")
     public Map<String, List<Assessment>> getAssessmentsForProperties(Set<String> propertyIds,RequestInfo requestInfo) {

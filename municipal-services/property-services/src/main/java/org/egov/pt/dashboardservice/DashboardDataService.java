@@ -26,6 +26,7 @@ import org.egov.pt.models.Revenue;
 import org.egov.pt.models.ServiceWithProperties;
 import org.egov.pt.models.Services;
 import org.egov.pt.models.collection.Payment;
+import org.egov.pt.models.collection.RevenuDataBucket;
 import org.egov.pt.repository.DashboardDataRepository;
 import org.egov.pt.repository.DashboardReportRepository;
 import org.egov.pt.service.PropertyService;
@@ -188,6 +189,7 @@ public class DashboardDataService {
 		String key = dashboardRequest.getDashboardDataSearch().getSearchKey();
 		List<Property> value;
 		Map<String, List<Payment>> payments  = new HashMap<>();
+		Map<String, List<RevenuDataBucket>> penalty  = new HashMap<>();
 		Map<String, List<Assessment>> assesments  = new HashMap<>();
 		switch (key) {
 		    case "totalPropertiesRegistered":
@@ -219,6 +221,7 @@ public class DashboardDataService {
 		        break;
 		    case "propertiesPaid":
 		        value = dashboardReportRepository.getTotalPropertyPaidCount(dashboardRequest);
+		        if(!ObjectUtils.isEmpty(value)) {
 		        //Map<String, String> propertyTenantMap =
 		                value.stream()
 		                     .filter(p -> p.getPropertyId() != null && p.getTenantId() != null)
@@ -228,7 +231,7 @@ public class DashboardDataService {
 		                             (oldVal, newVal) -> oldVal // avoid duplicate key crash
 		                     ));
 		        //payments =  dashboardReportRepository.getCacheDataForPaymentReport(propertyTenantMap);
-		        
+		        }
 		        break;
 		    case "propertiesWithAppealSubmitted":
 		        value = dashboardReportRepository.getTotalPropertyAppealSubmitedCount(dashboardRequest);
@@ -244,7 +247,19 @@ public class DashboardDataService {
 		        break;
 		    case "penalty":
 		        value = dashboardReportRepository.getPenaltyShareAmount(dashboardRequest);
-		        break;
+		       if(!ObjectUtils.isEmpty(value)) {
+			      Map<String, String> propertyTenantMap =
+	                value.stream()
+	                     .filter(p -> p.getPropertyId() != null && p.getTenantId() != null)
+	                     .collect(Collectors.toMap(
+	                             Property::getPropertyId,
+	                             Property::getTenantId,
+	                             (oldVal, newVal) -> oldVal // avoid duplicate key crash
+	                     ));
+			      penalty =  dashboardReportRepository.getCacheDataForPenaltyReport(propertyTenantMap);
+		       }
+		      
+		      break;
 		    case "interest":
 		        value = dashboardReportRepository.getInterestShareAmount(dashboardRequest);
 		        break;
@@ -261,6 +276,9 @@ public class DashboardDataService {
 			dashboardData.setPayments(payments);
 		if(!ObjectUtils.isEmpty(assesments))
 			dashboardData.setAssesments(assesments);
+		
+		if(!ObjectUtils.isEmpty(penalty))
+			dashboardData.setPenalty(penalty);
 			/*
 			 * revenue.add(buildService( "refund",
 			 * dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest) ));

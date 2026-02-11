@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.pt.models.collection.Payment;
+import org.egov.pt.models.collection.RevenuDataBucket;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -23,6 +24,7 @@ public class DashboardReport {
 	private List<ServiceWithProperties> services;
 	private Map<String, List<Assessment>> assesments;
 	private Map<String, List<Payment>> payments;
+	private Map<String, List<RevenuDataBucket>> penalty;
 	//private List<ServiceWithProperties> revenue;
 
 }

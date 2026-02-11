@@ -525,4 +525,9 @@ public class DashboardReportRepository {
 	 {
 		 return propertyRedisCache.getAssessmentsForProperties(propertyIds, requestInfo);
 	 }
+	 
+	 public Map<String, List<RevenuDataBucket>>getCacheDataForPenaltyReport(Map<String, String> propertyTenantMap)
+	 {
+		 return propertyRedisCache.multiGetPenalty(propertyTenantMap);
+	 }
 }
