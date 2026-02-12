@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -20,10 +19,15 @@ import org.egov.pt.models.Property;
 import org.egov.pt.models.collection.Payment;
 import org.egov.pt.models.collection.RevenuDataBucket;
 import org.egov.pt.service.AssessmentService;
-import org.egov.pt.web.contracts.PropertyResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.types.Expiration;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class PropertyRedisCache {
@@ -38,6 +42,8 @@ public class PropertyRedisCache {
     
     @Autowired
     AssessmentService assessmentService;
+    
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public PropertyRedisCache(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -208,8 +214,52 @@ public class PropertyRedisCache {
   
         redisTemplate.opsForValue().set(key, data, TTL);
     }
-  
     
-   
+    public void putAll(Map<String, List<RevenuDataBucket>> data) {
 
+        if (data == null || data.isEmpty()) return;
+        
+        List<String> keys = new ArrayList<>(data.keySet());
+        List<Object> existingValues = redisTemplate.opsForValue().multiGet(keys);
+        Map<String, List<RevenuDataBucket>> missingKeys = new HashMap<>();
+        
+        if (existingValues != null) {
+            for (int i = 0; i < keys.size(); i++) {
+                if (existingValues.get(i) == null) {
+                    missingKeys.put(keys.get(i), data.get(keys.get(i)));
+                }
+            }
+        } else {
+            missingKeys.putAll(data);
+        }
+
+        if (missingKeys.isEmpty()) {
+            return;
+        }
+
+        long ttlSeconds = TTL.getSeconds();
+        
+        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+
+            RedisSerializer<String> keySerializer = redisTemplate.getStringSerializer();
+            @SuppressWarnings("unchecked")
+            RedisSerializer<Object> valueSerializer = (RedisSerializer<Object>) redisTemplate.getValueSerializer();
+
+            for (Map.Entry<String, List<RevenuDataBucket>> entry : missingKeys.entrySet()) {
+
+                byte[] key = keySerializer.serialize(entry.getKey());
+                byte[] value = valueSerializer.serialize(entry.getValue());
+
+                connection.set(
+                        key,
+                        value,
+                        Expiration.seconds(ttlSeconds),
+                        RedisStringCommands.SetOption.UPSERT
+                );
+            }
+
+            return null;
+        });
+    }
+    
 }

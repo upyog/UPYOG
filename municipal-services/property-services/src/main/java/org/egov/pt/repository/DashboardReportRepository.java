@@ -353,22 +353,35 @@ public class DashboardReportRepository {
 	
 	public List<Property> getTotalTaxCollectedAmount(DashboardRequest dashboardRequest)
 	{
-		Map<String, String> propertyTenantMap = new HashMap<>();
-		String query=reportQueryBuilder.getTotalTaxCollectedQuery(dashboardRequest.getDashboardDataSearch());
-		propertyTenantMap = jdbcTemplate.query(
-			    query,
-			    rs -> {
-			        Map<String, String> map = new HashMap<>();
-			        while (rs.next()) {
-			            map.put(
-			                rs.getString("propertyid"),
-			                rs.getString("tenantid")
-			            );
-			        }
-			        return map;
-			    }
-			);
+	    Map<String, String> propertyTenantMap = new HashMap<>();
+	    Map<String, List<RevenuDataBucket>> redisPayload = new HashMap<>();
+
+	    String query = reportQueryBuilder.getTotalTaxCollectedQuery(dashboardRequest.getDashboardDataSearch());
+	    jdbcTemplate.query(query, rs -> {
+	        while (rs.next()) {
+	            String propertyId = rs.getString("propertyid");
+	            String tenantId = rs.getString("tenantid");
+	            BigDecimal totalAmount = rs.getBigDecimal("totalamount");
+
+	            propertyTenantMap.put(propertyId, tenantId);
+
+	            String redisKey = "PROPERTY_TOTAL:" + tenantId + ":" + propertyId;
+	            
+	            	RevenuDataBucket bucket = RevenuDataBucket.builder()
+		                    .amount(totalAmount)
+		                    .propertyId(propertyId)
+		                    .tenantId(tenantId)
+		                    .build();
+
+		            redisPayload.computeIfAbsent(redisKey, k -> new ArrayList<>()).add(bucket);
+	        }
+	        return null;
+	    });
 		
+	    if (!redisPayload.isEmpty()) {
+	        propertyRedisCache.putAll(redisPayload);
+	    }
+	    
 		List<Property> properties=null;
 		
 		if(!CollectionUtils.isEmpty(propertyTenantMap))

@@ -188,9 +188,7 @@ public class DashboardReportQueryBuilder {
 			+ "    WHERE t.txn_status = 'SUCCESS'\r\n"
 			+ "      AND p.status = 'ACTIVE'\r\n"
 			+ "      AND b.status = 'PAID'\r\n"
-			+ "     {DATE_FILTER}\r\n"
-			+ "      {TENANT_FILTER}\r\n"
-			+ "      {WARD_FILTER} \r\n"
+			+ "     /*FILTER_CONDITIONS*/\r\n"
 			+ "    GROUP BY bd.demandid,b.consumercode,b.tenantid,pay.lastmodifiedtime\r\n"
 			+ "    HAVING SUM(bd.totalamount) > 0\r\n"
 			+ "),\r\n"
@@ -207,9 +205,7 @@ public class DashboardReportQueryBuilder {
 			+ "    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
 			+ "    WHERE t.txn_status = 'SUCCESS'\r\n"
 			+ "      AND p.status = 'ACTIVE'\r\n"
-			+ "     {DATE_FILTER}\r\n"
-			+ "      {TENANT_FILTER}\r\n"
-			+ "      {WARD_FILTER} \r\n"
+			+ "     /*FILTER_CONDITIONS*/\r\n"
 			+ "    GROUP BY d.id\r\n"
 			+ "    HAVING SUM(dd.taxamount) > 0\r\n"
 			+ "),\r\n"
@@ -228,9 +224,7 @@ public class DashboardReportQueryBuilder {
 			+ "      AND dd.taxamount > 0\r\n"
 			+ "      AND t.txn_status = 'SUCCESS'\r\n"
 			+ "      AND p.status = 'ACTIVE'\r\n"
-			+ "      {DATE_FILTER}\r\n"
-			+ "      {TENANT_FILTER}\r\n"
-			+ "      {WARD_FILTER}\r\n"
+			+ "      /*FILTER_CONDITIONS*/\r\n"
 			+ "    GROUP BY d.id\r\n"
 			+ ")\r\n"
 			+ "\r\n"
@@ -468,7 +462,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append(" order by epaa.lastmodifiedtime desc ");
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
@@ -509,7 +503,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append("order by epp.lastmodifiedtime desc");
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
@@ -550,7 +544,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append("order by ep.lastmodifiedtime desc");
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
@@ -591,7 +585,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append("order by eppa.lastmodifiedtime desc");
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
@@ -632,7 +626,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append("order by eppa.lastmodifiedtime desc");
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
@@ -673,7 +667,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append("order by ep.lastmodifiedtime desc");
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
@@ -713,7 +707,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
@@ -723,9 +717,8 @@ public class DashboardReportQueryBuilder {
 	}
 
 	public String getPenaltyShareQuery(DashboardDataSearch dashboardDataSearch) {
-
-		String query = PENALTY_SHARE;
-
+		
+		StringBuilder filterBuilder = new StringBuilder();
 		long fromEpoch, toEpoch;
 		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
 				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
@@ -735,22 +728,39 @@ public class DashboardReportQueryBuilder {
 			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
 			toEpoch = getEndOfDayEpochMillis(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 		}
+		
+		filterBuilder.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
-		String dateFilter = " AND pay.createdtime BETWEEN " + fromEpoch + " AND " + toEpoch;
-		String tenantFilter = !StringUtils.isEmpty(dashboardDataSearch.getTenantid())
-				? " AND p.tenantid = '" + dashboardDataSearch.getTenantid() + "'"
-				: "";
-		String wardFilter = !StringUtils.isEmpty(dashboardDataSearch.getWard())
-				? " AND a.ward_no = '" + dashboardDataSearch.getWard() + "'"
-				: " AND a.ward_no != ''";
+		if (StringUtils.hasText(dashboardDataSearch.getTenantid())) {
+			filterBuilder.append(" AND p.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
 
-		query = query.replace("{DATE_FILTER}", dateFilter).replace("{TENANT_FILTER}", tenantFilter)
-				.replace("{WARD_FILTER}", wardFilter);
+		if (StringUtils.hasText(dashboardDataSearch.getWard())) {
+			filterBuilder.append(" AND a.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			filterBuilder.append(" AND a.ward_no != ''");
+		}
 
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		/*
+		 * String dateFilter = " AND pay.createdtime BETWEEN " + fromEpoch + " AND " +
+		 * toEpoch; String tenantFilter =
+		 * !StringUtils.isEmpty(dashboardDataSearch.getTenantid()) ?
+		 * " AND p.tenantid = '" + dashboardDataSearch.getTenantid() + "'" : ""; String
+		 * wardFilter = !StringUtils.isEmpty(dashboardDataSearch.getWard()) ?
+		 * " AND a.ward_no = '" + dashboardDataSearch.getWard() + "'" :
+		 * " AND a.ward_no != ''";
+		 */
+
+		//query = query.replace("{DATE_FILTER}", "/*{DATE_FILTER}*/").replace("{TENANT_FILTER}", "/*{DATE_FILTER}*/")
+			//	.replace("{WARD_FILTER}", "/*{DATE_FILTER}*/");
+		//query = query.replace("{DATE_FILTER}", dateFilter).replace("{TENANT_FILTER}", tenantFilter)
+			//	.replace("{WARD_FILTER}", wardFilter);
+		
+		String query = PENALTY_SHARE.replace("/*FILTER_CONDITIONS*/", filterBuilder.toString());
+	 
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
-			query.concat(" OFFSET "+dashboardDataSearch.getOffset());
-			query.concat(" LIMIT "+dashboardDataSearch.getLimit());
+			query = query + " OFFSET " + dashboardDataSearch.getOffset() + " LIMIT " + dashboardDataSearch.getLimit();
 		}
 		
 		return query;
@@ -788,7 +798,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append(" order by pay.lastmodifiedtime desc ");
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
@@ -829,7 +839,7 @@ public class DashboardReportQueryBuilder {
 		}
 
 		filter.append(" order by pay.lastmodifiedtime desc ");
-		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
 			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
