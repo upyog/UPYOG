@@ -17,6 +17,9 @@ public class RevenuDataBucket {
 	
 	private String propertyId;
 	private String tenantId;
-	private BigDecimal amount;
+	private BigDecimal penaltyamount;
+	private BigDecimal totalBillAmount;
+	private String transactionNumber;
+	private Long creationTime; 
 	
 }
