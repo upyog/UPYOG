@@ -178,7 +178,8 @@ public class DashboardReportQueryBuilder {
 	public static final String PENALTY_SHARE = "WITH paid_bills AS (\r\n"
 			+ "    SELECT \r\n"
 			+ "        bd.demandid, \r\n"
-			+ "        SUM(bd.totalamount) AS billsum,b.consumercode,b.tenantid,pay.lastmodifiedtime\r\n"
+			+ "        SUM(bd.totalamount) AS billsum,b.consumercode,b.tenantid,pay.lastmodifiedtime, "
+			+ "     pay.transactionnumber as transactionnumber\r\n"
 			+ "    FROM egbs_bill_v1 b\r\n"
 			+ "    JOIN egbs_billdetail_v1 bd ON b.id = bd.billid\r\n"
 			+ "    JOIN eg_pt_property p ON p.propertyid = bd.consumercode\r\n"
@@ -191,7 +192,7 @@ public class DashboardReportQueryBuilder {
 			+ "     {DATE_FILTER}\r\n"
 			+ "      {TENANT_FILTER}\r\n"
 			+ "      {WARD_FILTER} \r\n"
-			+ "    GROUP BY bd.demandid,b.consumercode,b.tenantid,pay.lastmodifiedtime\r\n"
+			+ "    GROUP BY bd.demandid,b.consumercode,b.tenantid,pay.lastmodifiedtime, pay.transactionnumber\r\n"
 			+ "    HAVING SUM(bd.totalamount) > 0\r\n"
 			+ "),\r\n"
 			+ "\r\n"
@@ -234,19 +235,27 @@ public class DashboardReportQueryBuilder {
 			+ "    GROUP BY d.id\r\n"
 			+ ")\r\n"
 			+ "\r\n"
-			+ "SELECT filtered.consumercode AS propertyid, filtered.tenantid as tenantid, todaypenaltycollection as penalty\r\n"
+			+ "SELECT filtered.consumercode AS propertyid, filtered.tenantid as tenantid, "
+			+ " todaypenaltycollection as penalty, filtered.totalbill as totalbill,"
+			+ " filtered.lastmodifiedtime as paymentdate ,\r\n"
+			+ "  filtered.totalbill-filtered.todaypenaltycollection as actualbill,\r\n" 
+			+ "  filtered.transactionnumber as txn_num\r\n"
 			+ "FROM (\r\n"
 			+ "    SELECT \r\n"
-			+ "        SUM(pd.penalty_amount) AS todaypenaltycollection,\r\n"
+			+ "        SUM(pd.penalty_amount) AS todaypenaltycollection, "
+			+ "		  pb.billsum as  totalbill,pb.lastmodifiedtime as paymentdate,\r\n"
 			+ "        pd.demandid,\r\n"
 			+ "        pb.demandid,\r\n"
 			+ "        td.demandid,\r\n"
 			+ "        pb.consumercode,\r\n"
-			+ "        pb.tenantid,pb.lastmodifiedtime\r\n"
+			+ "        pb.tenantid,"
+			+ "		pb.lastmodifiedtime, pb.transactionnumber\r\n"
 			+ "    FROM penalty_demand pd\r\n"
 			+ "    JOIN paid_bills pb ON pd.demandid = pb.demandid\r\n"
 			+ "    JOIN total_demand td ON pd.demandid = td.demandid\r\n"
-			+ "    GROUP BY pd.demandid, pb.demandid, td.demandid ,pb.consumercode,pb.tenantid,pb.lastmodifiedtime\r\n"
+			+ "    GROUP BY pd.demandid, pb.demandid, td.demandid ,pb.consumercode, "
+			+ "	pb.tenantid,pb.lastmodifiedtime, pb.billsum,\r\n"
+			+ "  pb.transactionnumber\r\n"
 			+ "    HAVING SUM(pb.billsum) >= SUM(td.demandsum) order by pb.lastmodifiedtime\r\n"
 			+ ") AS filtered";
 
@@ -744,8 +753,11 @@ public class DashboardReportQueryBuilder {
 				? " AND a.ward_no = '" + dashboardDataSearch.getWard() + "'"
 				: " AND a.ward_no != ''";
 
-		query = query.replace("{DATE_FILTER}", dateFilter).replace("{TENANT_FILTER}", tenantFilter)
-				.replace("{WARD_FILTER}", wardFilter);
+		//query = query.replace("{DATE_FILTER}", dateFilter).replace("{TENANT_FILTER}", tenantFilter)
+//				//.replace("{WARD_FILTER}", wardFilter);
+		
+		query = query.replace("{DATE_FILTER}", " ").replace("{TENANT_FILTER}", " ")
+				.replace("{WARD_FILTER}", "");
 
 		if(StringUtils.isEmpty(dashboardDataSearch.getLimit()) && StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{

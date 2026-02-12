@@ -406,12 +406,18 @@ public class DashboardReportRepository {
             String propertyId = rs.getString("propertyid");
             String tenantId   = rs.getString("tenantid");
             BigDecimal penaltyamount      = rs.getBigDecimal("penalty");
+            BigDecimal billAmount      = rs.getBigDecimal("actualbill");
+            Long createdTime      = rs.getLong("paymentdate");
+            String txn_num = rs.getString("txn_num");
             String redisKey = propertyRedisCache.PREFIX_PENALTY
                     + tenantId + ":" + propertyId;
             
             propertyTenantMap.put(propertyId, tenantId);
             RevenuDataBucket bucket = RevenuDataBucket.builder()
-                    .amount(penaltyamount)
+                    .totalBillAmount(billAmount)
+                    .penaltyamount(penaltyamount)
+                    .creationTime(createdTime)
+                    .transactionNumber(txn_num)
                     .propertyId(propertyId)
                     .tenantId(tenantId)
                     .build();
