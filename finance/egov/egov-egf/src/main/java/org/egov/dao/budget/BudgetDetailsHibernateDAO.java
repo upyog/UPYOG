@@ -2195,6 +2195,18 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 					if (LOGGER.isDebugEnabled())
 						LOGGER.debug("************ BudgetCheck Details For bill *********************");
 					final BigDecimal budgetedAmt = getBudgetedAmtForYear(paramMap); // get
+					
+//					LOGGER.debug("Budgedeted Amount at line 2199 : "+budgetedAmt);
+//					LOGGER.debug("Credited Amount at line 2200 : "+creditAmt);
+//					LOGGER.debug("Debited Amount at line 2199 : "+debitAmt);
+//					LOGGER.debug("Transaction Amount at line 2199 : "+txnAmt);
+					
+					if (budgetedAmt.compareTo(debitAmt) < 0) {
+//						LOGGER.debug("In exception thow of budget check at line 2200");
+					    throw new ValidationException(EMPTY_STRING,
+					            "Transaction amount " + debitAmt + " is greater than budgeted amount "+budgetedAmt);
+					}
+					
 					// the
 					// budgetedamount
 

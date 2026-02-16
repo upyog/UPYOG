@@ -75,8 +75,8 @@
 				</div>
 			</c:when>
 			<c:otherwise>
-				<!--  <label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>-->
-				<span class="mandatory"></span>
+				<!--  <label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>
+				<span class="mandatory"></span>-->
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:input path="billdate" id="billdate"

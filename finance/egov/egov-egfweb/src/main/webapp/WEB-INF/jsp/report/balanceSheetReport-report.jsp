@@ -60,51 +60,54 @@
 
 <script>
 
-function disableAsOnDate() {
-
-    var period = document.getElementById('period').value;
-    var row = document.getElementById('dateRow');
-
-
-    if (period === "Date") {
-        row.style.display = "table-row";   
-        document.getElementById('fromDate').disabled = false;
-        document.getElementById('toDate').disabled = false;
-    } else {
-        row.style.display = "none";       
-        document.getElementById('fromDate').disabled = true;
-        document.getElementById('toDate').disabled = true;
+function disableAsOnDate(){
+	if(document.getElementById('period').value != "Date"){
+		//document.getElementById('asOndate').disabled = true;
+		document.getElementById('fromDate').disabled = true;
+		document.getElementById('toDate').disabled = true;
+		document.getElementById('financialYear').disabled = false;
+       // document.getElementById('asOndate').value= '';
+		document.getElementById('fromDate').value= '';
+		document.getElementById('toDate').value= '';
+		document.getElementById("dateinputs").style.display = 'none';
+    }else{
+		document.getElementById('financialYear').disabled = true;
+		//document.getElementById('asOndate').disabled = false;
+        document.getElementById("financialYear").selectedIndex = 0;
+    	document.getElementById('fromDate').disabled = false;
+		document.getElementById('toDate').disabled = false;
+		document.getElementById("dateinputs").style.display = '';
     }
-
-}  
-
- function validateMandatoryFields(){
-	if(document.getElementById('period').value=="Select")
-	{
-		bootbox.alert('<s:text name="msg.please.select.period"/>');
-		return false;
-	}
-
-	if(document.getElementById('period').value!="Date"){
-		if(document.getElementById('financialYear').value==0){
-			bootbox.alert('<s:text name="msg.please.select.financial.year"/>');
-			return false;
-		}
-	}
-
-	if(document.getElementById('period').value=="Date"){
-		if(document.getElementById('fromDate').value==""){
-			bootbox.alert('<s:text name="msg.please.enter.fromDate"/>');
-			return false;
-		}
-		if(document.getElementById('toDate').value==""){
-			bootbox.alert('<s:text name="msg.please.enter.toDate"/>');
-			return false;
-		}
-	}
-	return true;
 }
 
+
+ function validateMandatoryFields(){
+		if(document.getElementById('period').value=="Select")
+		{
+			bootbox.alert('<s:text name="msg.please.select.period"/>');
+			return false;
+		}
+		if(document.getElementById('period').value!="Date"){
+			if(document.getElementById('financialYear').value==0){
+				bootbox.alert('<s:text name="msg.please.select.financial.year"/>');
+				return false;
+			}
+		}
+
+		/*if(document.getElementById('period').value=="Date" && document.getElementById('asOndate').value==""){
+			bootbox.alert('<s:text name="msg.please.enter.as.onDate"/>');
+			return false;
+		}*/
+		if( document.getElementById('period').value=="Date" && document.getElementById('fromDate').value==""){
+			bootbox.alert('<s:text name="msg.please.select.from.date"/>');
+			return false;
+		}
+		if( document.getElementById('period').value=="Date" && document.getElementById('toDate').value==""){
+			bootbox.alert('<s:text name="msg.please.select.toDate"/>');
+			return false;
+		}
+		return true;
+	}
 function balanceSheetReportSubmit()
 	{
 		if(validateMandatoryFields()){
@@ -240,7 +243,7 @@ th.bluebgheadtd {
 					<td width="22%" class="bluebox"><s:select name="period"
 							id="period"
 							list="#{'Select':'---Choose---','Date':'Date','Yearly':'Yearly','Half Yearly':'Half Yearly'}"
-							onchange="disableAsOnDate()" value="%{model.period}" /></td>
+							onclick="disableAsOnDate()" value="%{model.period}" /></td>
 					<td class="bluebox" width="12%"><s:text
 							name="report.financialYear" />:<span class="mandatory1">*</span></td>
 					<td width="41%" class="bluebox"><s:select name="financialYear"

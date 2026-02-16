@@ -69,9 +69,9 @@
 <script src = "/services/EGF/resources/commonyui/build/treeview/treeview-min.js" ></script>
 </head>
 <body onload="treeInit()" >
-<h2>
+<h3>
 	<s:text name="lbl.chartofaccount"  />
-</h2>
+</h3>
  
 <div id="treeDiv1">
 <script>

@@ -158,7 +158,8 @@
 		<td id="functionnametext" class="bluebox"><s:text
 				name="voucher.function" /> <s:if
 				test="%{isFieldMandatory('function')}">
-				<span class="bluebox"></span>
+				<!--<span class="bluebox"></span>-->
+				<span class="mandatory1">*</span>
 			</s:if></td>
 		<td class="bluebox"><s:select name="vouchermis.function"
 				id="vouchermis.function" list="dropdownData.functionList"

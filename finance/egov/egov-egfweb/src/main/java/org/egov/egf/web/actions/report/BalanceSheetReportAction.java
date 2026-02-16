@@ -543,12 +543,25 @@ public class BalanceSheetReportAction extends BaseFormAction {
     //TODO- This table is not used. Check reference and remove
   
     public String getCurrentYearToDate() {
-        return balanceSheetService.getFormattedDate(balanceSheetService.getToDate(balanceSheet));
+//        return balanceSheetService.getFormattedDate(balanceSheetService.getToDate(balanceSheet));
+		if ("Date".equalsIgnoreCase(balanceSheet.getPeriod())) {
+			return balanceSheetService.getFormattedDate(balanceSheet.getFromDate()) + " To "
+					+ balanceSheetService.getFormattedDate(balanceSheet.getToDate());
+		} else {
+			return balanceSheetService.getFormattedDate(balanceSheetService.getToDate(balanceSheet));
+		}
     }
 
     public String getPreviousYearToDate() {
-        return balanceSheetService.getFormattedDate(balanceSheetService.getPreviousYearFor(balanceSheetService
-                .getToDate(balanceSheet)));
+		if ("Date".equalsIgnoreCase(balanceSheet.getPeriod())) {
+			return balanceSheetService
+					.getFormattedDate(balanceSheetService.getPreviousYearFor(balanceSheet.getFromDate())) + " To "
+					+ balanceSheetService
+							.getFormattedDate(balanceSheetService.getPreviousYearFor(balanceSheet.getToDate()));
+		} else {
+			return balanceSheetService.getFormattedDate(
+					balanceSheetService.getPreviousYearFor(balanceSheetService.getToDate(balanceSheet)));
+		}
     }
 
 	/* From this line i have changed */

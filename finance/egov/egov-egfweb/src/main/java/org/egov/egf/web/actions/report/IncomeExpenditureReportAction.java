@@ -102,7 +102,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     /**
      *
      */
-    private static final long serialVersionUID = 91711010096900620L;
+	private static final long serialVersionUID = 91711010096900620L;
     private static final String INCOME_EXPENSE_PDF = "PDF";
     private static final String INCOME_EXPENSE_XLS = "XLS";
     private static SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
@@ -116,6 +116,8 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     private String scheduleNo;
     private String financialYearId;
     // private String asOndate;
+    private String fromDate;
+    private String toDate;
     private Date todayDate;
     private String asOnDateRange;
     private String period;
@@ -146,8 +148,26 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     public void setReportHelper(final ReportHelper reportHelper) {
         this.reportHelper = reportHelper;
     }
+    
+    
 
-    public InputStream getInputStream() {
+    public String getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
+	}
+
+	public InputStream getInputStream() {
         return inputStream;
     }
 
@@ -314,53 +334,6 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
             incomeExpenditureScheduleService.populateDataForAllSchedules(incomeExpenditureStatement);
         }
     }
-    
-//    Adding for from date - to date:
-    public String getCurrentPeriodLabel() {
-
-        String period = incomeExpenditureStatement.getPeriod();
-
-        if ("Yearly".equalsIgnoreCase(period)) {
-            return "FY " + incomeExpenditureStatement
-                    .getFinancialYear()
-                    .getFinYearRange();
-        }
-
-        if ("Half Yearly".equalsIgnoreCase(period)) {
-            return "Half Year of FY " + incomeExpenditureStatement
-                    .getFinancialYear()
-                    .getFinYearRange();
-        }
-
-        // Date period
-        return incomeExpenditureService.getFormattedDate(
-                incomeExpenditureService.getFromDate(incomeExpenditureStatement))
-            + " to " +
-            incomeExpenditureService.getFormattedDate(
-                incomeExpenditureService.getToDate(incomeExpenditureStatement));
-    }
-    // for todate
-    public String getPreviousPeriodLabel() {
-
-        String period = incomeExpenditureStatement.getPeriod();
-
-        if ("Yearly".equalsIgnoreCase(period)) {
-            return "Previous FY";
-        }
-
-        if ("Half Yearly".equalsIgnoreCase(period)) {
-            return "Previous Half Year";
-        }
-
-        // Date period
-        return incomeExpenditureService.getFormattedDate(
-                incomeExpenditureService.getPreviousYearFor(
-                    incomeExpenditureService.getFromDate(incomeExpenditureStatement)))
-            + " to " +
-            incomeExpenditureService.getFormattedDate(
-                incomeExpenditureService.getPreviousYearFor(
-                    incomeExpenditureService.getToDate(incomeExpenditureStatement)));
-    }
 
     public String printIncomeExpenditureReport() {
         populateDataSource();
@@ -396,21 +369,8 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         populateDataSource();
         final String heading = ReportUtil.getCityName() +" "+(cityService.getCityGrade()==null ? "" :cityService.getCityGrade()) + "\\n" + statementheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate());
-		/*
-		 * final JasperPrint jasper =
-		 * reportHelper.generateIncomeExpenditureReportJasperPrint(
-		 * incomeExpenditureStatement, heading, getPreviousYearToDate(),
-		 * getCurrentYearToDate(), subtitle, true);
-		 */
-        final JasperPrint jasper =
-        	    reportHelper.generateIncomeExpenditureReportJasperPrint(
-        	        incomeExpenditureStatement,
-        	        heading,
-        	        getPreviousPeriodLabel(),
-        	        getCurrentPeriodLabel(),
-        	        subtitle,
-        	        true
-        	);
+        final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
+                getPreviousYearToDate(), getCurrentYearToDate(), subtitle, true);
         inputStream = reportHelper.exportPdf(inputStream, jasper);
         return INCOME_EXPENSE_PDF;
     }
@@ -421,21 +381,8 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         populateSchedulewiseDetailCodeReport();
         final String heading = ReportUtil.getCityName() +" "+(cityService.getCityGrade()==null ? "" :cityService.getCityGrade()) + "\\n" + statementheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate());
-		/*
-		 * final JasperPrint jasper =
-		 * reportHelper.generateIncomeExpenditureReportJasperPrint(
-		 * incomeExpenditureStatement, heading, getPreviousYearToDate(),
-		 * getCurrentYearToDate(), subtitle, true);
-		 */
-        final JasperPrint jasper =
-        	    reportHelper.generateIncomeExpenditureReportJasperPrint(
-        	        incomeExpenditureStatement,
-        	        heading,
-        	        getPreviousPeriodLabel(),
-        	        getCurrentPeriodLabel(),
-        	        subtitle,
-        	        true
-        	);
+        final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
+                getPreviousYearToDate(), getCurrentYearToDate(), subtitle, true);
         inputStream = reportHelper.exportPdf(inputStream, jasper);
         return INCOME_EXPENSE_PDF;
     }
@@ -447,21 +394,8 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         final String heading = ReportUtil.getCityName() +" "+(cityService.getCityGrade()==null ? "" :cityService.getCityGrade()) + "\\n" + statementheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate())
                 + "                                               ";
-		/*
-		 * final JasperPrint jasper =
-		 * reportHelper.generateIncomeExpenditureReportJasperPrint(
-		 * incomeExpenditureStatement, heading, getPreviousYearToDate(),
-		 * getCurrentYearToDate(), subtitle, true);
-		 */
-        final JasperPrint jasper =
-        	    reportHelper.generateIncomeExpenditureReportJasperPrint(
-        	        incomeExpenditureStatement,
-        	        heading,
-        	        getPreviousPeriodLabel(),
-        	        getCurrentPeriodLabel(),
-        	        subtitle,
-        	        true
-        	);
+        final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
+                getPreviousYearToDate(), getCurrentYearToDate(), subtitle, true);
         inputStream = reportHelper.exportXls(inputStream, jasper);
         return INCOME_EXPENSE_XLS;
     }
@@ -483,21 +417,8 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         final String heading = ReportUtil.getCityName() +" "+(cityService.getCityGrade()==null ? "" :cityService.getCityGrade()) + "\\n" + statementheading.toString();
         final String subtitle = "Report Run Date-" + FORMATDDMMYYYY.format(getTodayDate())
                 + "                                               ";
-		/*
-		 * final JasperPrint jasper =
-		 * reportHelper.generateIncomeExpenditureReportJasperPrint(
-		 * incomeExpenditureStatement, heading, getPreviousYearToDate(),
-		 * getCurrentYearToDate(), subtitle, true);
-		 */
-        final JasperPrint jasper =
-        	    reportHelper.generateIncomeExpenditureReportJasperPrint(
-        	        incomeExpenditureStatement,
-        	        heading,
-        	        getPreviousPeriodLabel(),
-        	        getCurrentPeriodLabel(),
-        	        subtitle,
-        	        true
-        	);
+        final JasperPrint jasper = reportHelper.generateIncomeExpenditureReportJasperPrint(incomeExpenditureStatement, heading,
+                getPreviousYearToDate(), getCurrentYearToDate(), subtitle, true);
         inputStream = reportHelper.exportXls(inputStream, jasper);
         return INCOME_EXPENSE_XLS;
     }
@@ -551,12 +472,23 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     }
 
     public String getCurrentYearToDate() {
-        return incomeExpenditureService.getFormattedDate(incomeExpenditureService.getToDate(incomeExpenditureStatement));
+ 	   if ("Date".equalsIgnoreCase(incomeExpenditureStatement.getPeriod()))
+ 	   {
+         return incomeExpenditureService.getFormattedDate(incomeExpenditureStatement.getFromDate())  +" To "+incomeExpenditureService.getFormattedDate(incomeExpenditureStatement.getToDate());
+ 	   }else {
+         return incomeExpenditureService.getFormattedDate(incomeExpenditureService.getToDate(incomeExpenditureStatement));
+     }
     }
 
     public String getPreviousYearToDate() {
+    	if ("Date".equalsIgnoreCase(incomeExpenditureStatement.getPeriod()))
+ 	   {
+    		  return incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(incomeExpenditureStatement.getFromDate())) + " To " +
+    				  incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(incomeExpenditureStatement.getToDate()));
+ 	   }else {
         return incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(incomeExpenditureService
                 .getToDate(incomeExpenditureStatement)));
+    }
     }
 
     public String getCurrentYearFromDate() {
@@ -568,12 +500,8 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
                 .getFromDate(incomeExpenditureStatement)));
     }
 
-	/*
-	 * public Date getTodayDate() { return todayDate; }
-	 */
     public Date getTodayDate() {
-        // Use report TO date instead of system date
-        return incomeExpenditureService.getToDate(incomeExpenditureStatement);
+        return todayDate;
     }
 
     public void setTodayDate(final Date todayDate) {
