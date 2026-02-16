@@ -105,19 +105,19 @@
     <repository>
       <id>repo.egovernments.org</id>
       <name>eGov ERP Releases Repository</name>
-      <url>https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+      <url>https://upyog-nexus.niua.org/nexus/content/repositories/releases/</url>
     </repository>
   </repositories>
   <distributionManagement>
     <repository>
       <id>repo.egovernments.org</id>
       <name>eGov ERP Releases Repository</name>
-      <url>https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+      <url>https://upyog-nexus.niua.org/nexus/content/repositories/releases/</url>
     </repository>
     <snapshotRepository>
       <id>repo.egovernments.org</id>
       <name>eGov ERP Snapshots Repository</name>
-      <url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+      <url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
   <build>
