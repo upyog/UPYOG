@@ -169,7 +169,7 @@
     <repositories>
         <repository>
             <id>org.egov.common</id>
-            <url>http://myinternal-nexus.ddns.net/nexus/content/repositories/snapshots/</url>
+            <url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
