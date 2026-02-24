@@ -41,91 +41,95 @@ import org.springframework.util.StringUtils;
 
 import io.netty.util.internal.ObjectUtil;
 import org.egov.pt.util.PTConstants;
+
 @Service
 public class DashboardDataService {
-	
-	
 
 	@Autowired
 	DashboardDataRepository dashboardDataRepository;
-	
+
 	@Autowired
 	DashboardReportRepository dashboardReportRepository;
-	
+
 	@Autowired
 	PropertyService propertyService;
-	
+
 	@Autowired
 	PropertyUtil propertyutil;
-	
+
 	@Autowired
 	PropertyConfiguration config;
-	
+
 	@Autowired
 	PropertyRedisCache propertyRedisCache;
-	
-	public List<DashboardData> dashboardDatas(DashboardDataSearch dashboardDataSearch,RequestInfo requestInfo)
-	{
-		List<DashboardData> dashboardDatas=new ArrayList<DashboardData>();
-		DashboardData dashboardData=new DashboardData();
-		Services services=new Services();
-		Revenue revenue=new Revenue();
+
+	public List<DashboardData> dashboardDatas(DashboardDataSearch dashboardDataSearch, RequestInfo requestInfo) {
+		List<DashboardData> dashboardDatas = new ArrayList<DashboardData>();
+		DashboardData dashboardData = new DashboardData();
+		Services services = new Services();
+		Revenue revenue = new Revenue();
 		LocalDate currentDate = LocalDate.now();
 		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		dashboardData.setState("MANIPUR");
 		dashboardData.setModule("PT");
-		if(!StringUtils.isEmpty(dashboardDataSearch.getFromDate()) && !StringUtils.isEmpty(dashboardDataSearch.getToDate()))
-		{
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
 			dashboardData.setFromdate(dashboardDataSearch.getFromDate());
 			dashboardData.setTodate(dashboardDataSearch.getToDate());
-		}
-		else
-		{
+		} else {
 			dashboardData.setFromdate("01-04-2025");
 			dashboardData.setTodate(formattedDate);
 		}
-		if(!StringUtils.isEmpty(dashboardDataSearch.getTenantid()))
-		{
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
 			dashboardData.setUlb(dashboardDataSearch.getTenantid());
-			//RequestInfo requestInfo = new RequestInfo();
+			// RequestInfo requestInfo = new RequestInfo();
 			List<String> masterNames = Collections.singletonList("tenants");
 			Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(),
 					"tenant", masterNames,
-					"[?(@.city.districtTenantCode== '" + dashboardData.getUlb() + "')].city.name",
-					"$.MdmsRes.tenant", requestInfo);
+					"[?(@.city.districtTenantCode== '" + dashboardData.getUlb() + "')].city.name", "$.MdmsRes.tenant",
+					requestInfo);
 			dashboardData.setRegion(regionName.get("tenants").get(0));
-		}
-		else
-		{
+		} else {
 			dashboardData.setUlb("MN");
 			dashboardData.setRegion("MN");
 		}
-		if(!StringUtils.isEmpty(dashboardDataSearch.getWard()))
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard()))
 			dashboardData.setWard(dashboardDataSearch.getWard());
 		else
 			dashboardData.setWard("MN");
-		
-		services.setTotalPropertiesRegistered(dashboardDataRepository.getTotalPropertyRegisteredCount(dashboardDataSearch));
-		services.setPropertiesPendingWithDocVerifier(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault(PTConstants.PENDINGWITHDOCVERIFIER, BigInteger.ZERO));
-		//services.setPropertiesPendingWithDocVerifierMap(dashboardDataRepository.getPropertiesPendingWithMap(dashboardDataSearch).get("PENDINGWITHDOCVERIFIER"));
-		services.setPropertiesPendingWithFieldInspector(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault(PTConstants.PENDINGWITHFILEDVERIFIER,BigInteger.ZERO));
-		services.setPropertiesPendingWithApprover(dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch).getOrDefault(PTConstants.PENDINGWITHAPPROVER,BigInteger.ZERO));
+
+		services.setTotalPropertiesRegistered(
+				dashboardDataRepository.getTotalPropertyRegisteredCount(dashboardDataSearch));
+		services.setPropertiesPendingWithDocVerifier(
+				dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch)
+						.getOrDefault(PTConstants.PENDINGWITHDOCVERIFIER, BigInteger.ZERO));
+		// services.setPropertiesPendingWithDocVerifierMap(dashboardDataRepository.getPropertiesPendingWithMap(dashboardDataSearch).get("PENDINGWITHDOCVERIFIER"));
+		services.setPropertiesPendingWithFieldInspector(
+				dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch)
+						.getOrDefault(PTConstants.PENDINGWITHFILEDVERIFIER, BigInteger.ZERO));
+		services.setPropertiesPendingWithApprover(
+				dashboardDataRepository.getPropertiesPendingWithCount(dashboardDataSearch)
+						.getOrDefault(PTConstants.PENDINGWITHAPPROVER, BigInteger.ZERO));
 		services.setPropertiesRejected(dashboardDataRepository.getTotalPropertyRejectedCount(dashboardDataSearch));
 		services.setPropertiesApproved(dashboardDataRepository.getTotalPropertyApprovedCount(dashboardDataSearch));
-		services.setPropertiesSelfAssessed(dashboardDataRepository.getTotalPropertySelfassessedCount(dashboardDataSearch));
-		services.setPropertiesPendingSelfAssessment(dashboardDataRepository.getTotalPropertyPendingselfAssessedCount(dashboardDataSearch));
-		services.setPropertiesWithAppealSubmitted(dashboardDataRepository.getTotalPropertyAppealSubmitedCount(dashboardDataSearch));
+		services.setPropertiesSelfAssessed(
+				dashboardDataRepository.getTotalPropertySelfassessedCount(dashboardDataSearch));
+		services.setPropertiesPendingSelfAssessment(
+				dashboardDataRepository.getTotalPropertyPendingselfAssessedCount(dashboardDataSearch));
+		services.setPropertiesWithAppealSubmitted(
+				dashboardDataRepository.getTotalPropertyAppealSubmitedCount(dashboardDataSearch));
 		services.setAppealsPending(dashboardDataRepository.getTotalPropertyAppealPendingCount(dashboardDataSearch));
 		services.setPropertiesPaid(dashboardDataRepository.getTotalPropertyPaidCount(dashboardDataSearch));
-		
+
 		revenue.setTotalTaxCollected(dashboardDataRepository.getTotalTaxCollectedAmount(dashboardDataSearch));
 		revenue.setPropertyTaxShare(dashboardDataRepository.getPropertyTaxShareAmount(dashboardDataSearch));
 		revenue.setPenaltyShare(dashboardDataRepository.getPenaltyShareAmount(dashboardDataSearch));
 		revenue.setInterestShare(dashboardDataRepository.getInterestShareAmount(dashboardDataSearch));
 		revenue.setAdvanceShare(dashboardDataRepository.getAdvanceShareAmount(dashboardDataSearch));
 		revenue.setTaxCollectedProperties(dashboardDataRepository.getTotalTaxCollectedProperties(dashboardDataSearch));
-		
-		//Map<String, Property> mapPendingProperty =  getPropertiesWithCache(dashboardDataSearch.getTenantid(),services.getPropertiesPendingWithDocVerifierMap(),requestInfo);
+
+		// Map<String, Property> mapPendingProperty =
+		// getPropertiesWithCache(dashboardDataSearch.getTenantid(),services.getPropertiesPendingWithDocVerifierMap(),requestInfo);
 		/*
 		 * services.setPropertiesPendingWithDocVerifierList( new
 		 * ArrayList<>(mapPendingProperty.values()) );
@@ -135,166 +139,154 @@ public class DashboardDataService {
 		dashboardDatas.add(dashboardData);
 		return dashboardDatas;
 	}
-	
-	
-	
-	public DashboardReport dashboardDatasWithProperties(DashboardRequest dashboardRequest)
-	{
-		
-		
-		if(ObjectUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getSearchKey())) {
-			throw new CustomException("PROVIDE_DATA_SEARCH_KEY","No valid search key provided");
+
+	public DashboardReport dashboardDatasWithProperties(DashboardRequest dashboardRequest) {
+
+		if (ObjectUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getSearchKey())) {
+			throw new CustomException("PROVIDE_DATA_SEARCH_KEY", "No valid search key provided");
 		}
 		List<ServiceWithProperties> service = new ArrayList<ServiceWithProperties>();
 		List<ServiceWithProperties> revenue = new ArrayList<ServiceWithProperties>();
-		DashboardReport dashboardData=new DashboardReport();
+		DashboardReport dashboardData = new DashboardReport();
 		LocalDate currentDate = LocalDate.now();
 		String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		dashboardData.setState("MANIPUR");
 		dashboardData.setModule("PT");
-		if(!StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getFromDate()) && !StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getToDate()))
-		{
+		if (!StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getFromDate())
+				&& !StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getToDate())) {
 			dashboardData.setFromdate(dashboardRequest.getDashboardDataSearch().getFromDate());
 			dashboardData.setTodate(dashboardRequest.getDashboardDataSearch().getToDate());
-		}
-		else
-		{
+		} else {
 			dashboardData.setFromdate("01-04-2025");
 			dashboardData.setTodate(formattedDate);
 		}
-		if(!StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getTenantid()))
-		{
+		if (!StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getTenantid())) {
 			dashboardData.setUlb(dashboardRequest.getDashboardDataSearch().getTenantid());
 			RequestInfo requestInfo = new RequestInfo();
 			List<String> masterNames = Collections.singletonList("tenants");
 			Map<String, List<String>> regionName = propertyutil.getAttributeValues(config.getStateLevelTenantId(),
 					"tenant", masterNames,
-					"[?(@.city.districtTenantCode== '" + dashboardData.getUlb() + "')].city.name",
-					"$.MdmsRes.tenant", requestInfo);
+					"[?(@.city.districtTenantCode== '" + dashboardData.getUlb() + "')].city.name", "$.MdmsRes.tenant",
+					requestInfo);
 			dashboardData.setRegion(regionName.get("tenants").get(0));
-		}
-		else
-		{
+		} else {
 			dashboardData.setUlb("MN");
 			dashboardData.setRegion("MN");
 		}
-		if(!StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getWard()))
+		if (!StringUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getWard()))
 			dashboardData.setWard(dashboardRequest.getDashboardDataSearch().getWard());
 		else
 			dashboardData.setWard("MN");
-		
-		
-		
-		
+
 		String key = dashboardRequest.getDashboardDataSearch().getSearchKey();
 		List<Property> value;
-		Map<String, List<Payment>> payments  = new HashMap<>();
-		Map<String, List<RevenuDataBucket>> penalty  = new HashMap<>();
-		Map<String, List<Assessment>> assesments  = new HashMap<>();
+		Map<String, List<Payment>> payments = new HashMap<>();
+		Map<String, List<RevenuDataBucket>> penalty = new HashMap<>();
+		Map<String, List<Assessment>> assesments = new HashMap<>();
 		switch (key) {
-		    case "totalPropertiesRegistered":
-		        value = dashboardReportRepository.getTotalPropertyRegisteredCount(dashboardRequest);
-		        break;
-		    case "propertiesPendingWithDocVerifier":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.PENDINGWITHDOCVERIFIER);
-		        break;
-		    case "propertiesPendingWithFieldInspector":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.PENDINGWITHFILEDVERIFIER);
-		        break;
-		    case "propertiesPendingWithApprover":
-		        value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest, PTConstants.PENDINGWITHAPPROVER);
-		        break;
-		    case "propertiesApproved":
-		        value = dashboardReportRepository.getTotalPropertyApprovedCount(dashboardRequest);
-		        break;
-		    case "propertiesRejected":
-		        value = dashboardReportRepository.getTotalPropertyRejectedCount(dashboardRequest);
-		        break;
-		    case "propertiesSelfAssessed":
-		        value = dashboardReportRepository.getTotalPropertySelfassessedCount(dashboardRequest);
-		       //Set<String> propertyIds=new HashSet<String>();
-		       // propertyIds = value.stream().map(Property::getPropertyId).collect(Collectors.toSet());
-		        //assesments = dashboardReportRepository.getCacheDataForAssesmentReport(propertyIds, dashboardRequest.getRequestInfo());
-		        break;
-		    case "propertiesPendingSelfAssessment":
-		        value = dashboardReportRepository.getTotalPropertyPendingselfAssessedCount(dashboardRequest);
-		        break;
-		    case "propertiesPaid":
-		        value = dashboardReportRepository.getTotalPropertyPaidCount(dashboardRequest);
-		        if(!ObjectUtils.isEmpty(value)) {
-		        //Map<String, String> propertyTenantMap =
-		                value.stream()
-		                     .filter(p -> p.getPropertyId() != null && p.getTenantId() != null)
-		                     .collect(Collectors.toMap(
-		                             Property::getPropertyId,
-		                             Property::getTenantId,
-		                             (oldVal, newVal) -> oldVal // avoid duplicate key crash
-		                     ));
-		        //payments =  dashboardReportRepository.getCacheDataForPaymentReport(propertyTenantMap);
-		        }
-		        break;
-		    case "propertiesWithAppealSubmitted":
-		        value = dashboardReportRepository.getTotalPropertyAppealSubmitedCount(dashboardRequest);
-		        break;
-		    case "appealsPending":
-		        value = dashboardReportRepository.getTotalPropertyAppealPendingCount(dashboardRequest);
-		        break;
-		    case "totalTaxCollected":
-		    	 value = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
-			      break;
-		    case "propertyTax":
-		        value = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
-		        break;
-		    case "penalty":
-		        value = dashboardReportRepository.getPenaltyShareAmount(dashboardRequest);
-		       if(!ObjectUtils.isEmpty(value)) {
-			      Map<String, String> propertyTenantMap =
-	                value.stream()
-	                     .filter(p -> p.getPropertyId() != null && p.getTenantId() != null)
-	                     .collect(Collectors.toMap(
-	                             Property::getPropertyId,
-	                             Property::getTenantId,
-	                             (oldVal, newVal) -> oldVal // avoid duplicate key crash
-	                     ));
-			      penalty =  dashboardReportRepository.getCacheDataForPenaltyReport(propertyTenantMap);
-		       }
-		      
-		      break;
-		    case "interest":
-		        value = dashboardReportRepository.getInterestShareAmount(dashboardRequest);
-		        break;
-		    case "advance":
-		        value =  dashboardReportRepository.getAdvanceShareAmount(dashboardRequest);
-		        break;
-		    default:
-		        throw new IllegalArgumentException("Unknown key: " + key);
+		case "totalPropertiesRegistered":
+			value = dashboardReportRepository.getTotalPropertyRegisteredCount(dashboardRequest);
+			break;
+		case "propertiesPendingWithDocVerifier":
+			value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest,
+					PTConstants.PENDINGWITHDOCVERIFIER);
+			break;
+		case "propertiesPendingWithFieldInspector":
+			value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest,
+					PTConstants.PENDINGWITHFILEDVERIFIER);
+			break;
+		case "propertiesPendingWithApprover":
+			value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest,
+					PTConstants.PENDINGWITHAPPROVER);
+			break;
+		case "propertiesApproved":
+			value = dashboardReportRepository.getTotalPropertyApprovedCount(dashboardRequest);
+			break;
+		case "propertiesRejected":
+			value = dashboardReportRepository.getTotalPropertyRejectedCount(dashboardRequest);
+			break;
+		case "propertiesSelfAssessed":
+			value = dashboardReportRepository.getTotalPropertySelfassessedCount(dashboardRequest);
+			Set<String> propertyIds = new HashSet<String>();
+			propertyIds = value.stream().map(Property::getPropertyId).collect(Collectors.toSet());
+			assesments = dashboardReportRepository.getCacheDataForAssesmentReport(propertyIds,
+					dashboardRequest.getRequestInfo());
+			break;
+		case "propertiesPendingSelfAssessment":
+			value = dashboardReportRepository.getTotalPropertyPendingselfAssessedCount(dashboardRequest);
+			break;
+		case "propertiesPaid":
+			value = dashboardReportRepository.getTotalPropertyPaidCount(dashboardRequest);
+			if (!ObjectUtils.isEmpty(value)) {
+				// Map<String, String> propertyTenantMap =
+				value.stream().filter(p -> p.getPropertyId() != null && p.getTenantId() != null).collect(
+						Collectors.toMap(Property::getPropertyId, Property::getTenantId, (oldVal, newVal) -> oldVal // avoid
+																													// duplicate
+																													// key
+																													// crash
+						));
+				// payments =
+				// dashboardReportRepository.getCacheDataForPaymentReport(propertyTenantMap);
+			}
+			break;
+		case "propertiesWithAppealSubmitted":
+			value = dashboardReportRepository.getTotalPropertyAppealSubmitedCount(dashboardRequest);
+			break;
+		case "appealsPending":
+			value = dashboardReportRepository.getTotalPropertyAppealPendingCount(dashboardRequest);
+			break;
+		case "totalTaxCollected":
+			value = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
+			break;
+		case "propertyTax":
+			value = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
+			break;
+		case "penalty":
+			value = dashboardReportRepository.getPenaltyShareAmount(dashboardRequest);
+			if (!ObjectUtils.isEmpty(value)) {
+				Map<String, String> propertyTenantMap = value.stream()
+						.filter(p -> p.getPropertyId() != null && p.getTenantId() != null).collect(Collectors
+								.toMap(Property::getPropertyId, Property::getTenantId, (oldVal, newVal) -> oldVal // avoid
+																													// duplicate
+																													// key
+																													// crash
+								));
+				penalty = dashboardReportRepository.getCacheDataForPenaltyReport(propertyTenantMap);
+			}
+
+			break;
+		case "interest":
+			value = dashboardReportRepository.getInterestShareAmount(dashboardRequest);
+			break;
+		case "advance":
+			value = dashboardReportRepository.getAdvanceShareAmount(dashboardRequest);
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown key: " + key);
 		}
 
 		// Now add to service
 		service.add(buildService(key, value));
-		if(!ObjectUtils.isEmpty(payments))
+		if (!ObjectUtils.isEmpty(payments))
 			dashboardData.setPayments(payments);
-		if(!ObjectUtils.isEmpty(assesments))
+		if (!ObjectUtils.isEmpty(assesments))
 			dashboardData.setAssesments(assesments);
-		
-		if(!ObjectUtils.isEmpty(penalty))
-			dashboardData.setPenalty(penalty);
-			/*
-			 * revenue.add(buildService( "refund",
-			 * dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest) ));
-			 */
 
-			/*
-			 * revenue.add(buildService( "arrears",
-			 * dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest) ));
-			 */
-		
+		if (!ObjectUtils.isEmpty(penalty))
+			dashboardData.setPenalty(penalty);
+		/*
+		 * revenue.add(buildService( "refund",
+		 * dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest) ));
+		 */
+
+		/*
+		 * revenue.add(buildService( "arrears",
+		 * dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest) ));
+		 */
+
 		dashboardData.setServices(service);
 		return dashboardData;
 	}
-	
-	
-
 
 	/*
 	 * public ResponseEntity<Resource> generateExcelResponse(DashboardReport
@@ -313,7 +305,6 @@ public class DashboardDataService {
 	 * "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
 	 * .body(resource); }
 	 */
-
 
 	/*
 	 * private void writeReportToExcel(Workbook workbook, DashboardReport report) {
@@ -353,71 +344,56 @@ public class DashboardDataService {
 	 * // Autosize columns for readability for (int i = 0; i < 5; i++) {
 	 * sheet.autoSizeColumn(i); } }
 	 */
-	public List<Property> applicationData(DashboardDataSearch dashboardDataSearch,RequestInfo requestInfo)
-	{
-		return propertyService.searchProperty(dashboardDataRepository.getApplicationData(dashboardDataSearch, requestInfo), requestInfo);
+	public List<Property> applicationData(DashboardDataSearch dashboardDataSearch, RequestInfo requestInfo) {
+		return propertyService.searchProperty(
+				dashboardDataRepository.getApplicationData(dashboardDataSearch, requestInfo), requestInfo);
 	}
-	
-	
-	 public Map<String, Property> getPropertiesWithCache(
-	            String tenantId,
-	           Set<String> propertiesPendingWithDocVerifierMap,RequestInfo requestInfo ){
-	        List<String> allPropertyIds =
-	                new ArrayList<>(propertiesPendingWithDocVerifierMap);
 
-	        // 1️⃣ Fetch from Redis (batch)
-	        Map<String, Property> cachedMap =null;
-	                //propertyRedisCache.multiGet(tenantId, allPropertyIds);
+	public Map<String, Property> getPropertiesWithCache(String tenantId,
+			Set<String> propertiesPendingWithDocVerifierMap, RequestInfo requestInfo) {
+		List<String> allPropertyIds = new ArrayList<>(propertiesPendingWithDocVerifierMap);
 
-	        // 2️⃣ Find misses
-	        Set<String> missedPropertyIds = allPropertyIds.stream()
-	                .filter(id -> !cachedMap.containsKey(id))
-	                .collect(Collectors.toSet());
+		// 1️⃣ Fetch from Redis (batch)
+		Map<String, Property> cachedMap = null;
+		// propertyRedisCache.multiGet(tenantId, allPropertyIds);
 
-	        // 3️⃣ Call search API ONLY if misses exist
-	        if (!missedPropertyIds.isEmpty()) {
+		// 2️⃣ Find misses
+		Set<String> missedPropertyIds = allPropertyIds.stream().filter(id -> !cachedMap.containsKey(id))
+				.collect(Collectors.toSet());
 
-	        	PropertyCriteria criteria = PropertyCriteria.builder()
-	        			.tenantId(tenantId)
-	        			.propertyIds(missedPropertyIds)
-	        			.build();
-	                    
+		// 3️⃣ Call search API ONLY if misses exist
+		if (!missedPropertyIds.isEmpty()) {
 
-	        	List<Property> searchResponse =propertyService.searchProperty(criteria,requestInfo);
+			PropertyCriteria criteria = PropertyCriteria.builder().tenantId(tenantId).propertyIds(missedPropertyIds)
+					.build();
 
-	            if (!CollectionUtils.isEmpty(searchResponse)) {
+			List<Property> searchResponse = propertyService.searchProperty(criteria, requestInfo);
 
-	                for (Property property : searchResponse) {
+			if (!CollectionUtils.isEmpty(searchResponse)) {
 
-	                    String propertyId = property.getPropertyId();
+				for (Property property : searchResponse) {
 
-	                    // cache each property
-	                    propertyRedisCache.put(tenantId, propertyId, property);
+					String propertyId = property.getPropertyId();
 
-	                    // add to result
-	                    cachedMap.put(propertyId, property);
-	                }
-	            }
-	        }
+					// cache each property
+					propertyRedisCache.put(tenantId, propertyId, property);
 
-	        return cachedMap;
-	    }
-	 
-	 private ServiceWithProperties buildService(
-		        String type,
-		        List<Property> properties) {
-
-		    ServiceWithProperties swp = new ServiceWithProperties();
-		    swp.setType(type);
-		    swp.setProperties(
-		        CollectionUtils.isEmpty(properties) ? 
-		        Collections.emptyList() : properties
-		    );
-		    swp.setTotal(
-		        CollectionUtils.isEmpty(properties) ? 0 : properties.size()
-		    );
-		    return swp;
+					// add to result
+					cachedMap.put(propertyId, property);
+				}
+			}
 		}
 
+		return cachedMap;
+	}
+
+	private ServiceWithProperties buildService(String type, List<Property> properties) {
+
+		ServiceWithProperties swp = new ServiceWithProperties();
+		swp.setType(type);
+		swp.setProperties(CollectionUtils.isEmpty(properties) ? Collections.emptyList() : properties);
+		swp.setTotal(CollectionUtils.isEmpty(properties) ? 0 : properties.size());
+		return swp;
+	}
 
 }
