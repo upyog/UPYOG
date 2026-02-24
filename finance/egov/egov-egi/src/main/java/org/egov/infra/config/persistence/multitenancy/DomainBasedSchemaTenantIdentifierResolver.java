@@ -49,18 +49,31 @@
 package org.egov.infra.config.persistence.multitenancy;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
+
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.springframework.beans.factory.annotation.Value;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
+import org.apache.log4j.Logger;
+
+
+
 public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
     @Value("${default.schema.name}")
     private String defaultSchema;
+    
+    private static final Logger LOGGER = Logger.getLogger(DomainBasedSchemaTenantIdentifierResolver.class);
 
     @Override
     public String resolveCurrentTenantIdentifier() {
+
+    	if(ApplicationThreadLocals.getTenantID()==null) {
+    		LOGGER.info("defaultSchema is lodded: "+defaultSchema);
+    	}else {
+    		LOGGER.info("Got TenantId from ApplicationThreadLocals: "+ApplicationThreadLocals.getTenantID());
+    	}
         return defaultIfBlank(ApplicationThreadLocals.getTenantID(), defaultSchema);
     }
 
@@ -68,5 +81,4 @@ public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantI
     public boolean validateExistingCurrentSessions() {
         return true;
     }
-
 }
