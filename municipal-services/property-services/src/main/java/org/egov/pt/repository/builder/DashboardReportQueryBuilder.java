@@ -304,8 +304,9 @@ public class DashboardReportQueryBuilder {
 		filter.append(" order by epp.lastmodifiedtime desc ");
 		if(!ObjectUtils.isEmpty(dashboardDataSearch.getLimit()) && !ObjectUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
-			filter.append(" OFFSET  "+dashboardDataSearch.getOffset());
 			filter.append(" LIMIT "+dashboardDataSearch.getLimit());
+			filter.append(" OFFSET  "+dashboardDataSearch.getOffset());
+			
 		}
 		
 		return filter.toString();

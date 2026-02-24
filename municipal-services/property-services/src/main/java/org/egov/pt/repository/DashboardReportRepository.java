@@ -5,9 +5,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -28,6 +30,7 @@ import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.PropertyRedisCache;
 import org.egov.pt.web.contracts.DashboardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
@@ -51,14 +54,15 @@ public class DashboardReportRepository {
 	@Autowired
 	PropertyRedisCache propertyRedisCache;
 	
+	
 	public List<Property> getTotalPropertyRegisteredCount(DashboardRequest dashboardRequest)
 	{
 		String query = reportQueryBuilder.getTotalPropertyRegisteredQuery(dashboardRequest.getDashboardDataSearch());
-		Map<String, String> propertyTenantMap = new HashMap<>();
+		Map<String, String> propertyTenantMap = new LinkedHashMap<String, String>();
 		 List<String> propertyIdList = null;
 		if(!ObjectUtils.isEmpty(dashboardRequest.getDashboardDataSearch().getTenantid())) {
 			 propertyTenantMap = jdbcTemplate.query(query, rs -> {
-			        Map<String, String> map = new HashMap<>();
+			        Map<String, String> map = new LinkedHashMap<>();
 			        while (rs.next()) {
 			            map.put(
 			                rs.getString("propertyid"),
@@ -73,7 +77,7 @@ public class DashboardReportRepository {
 			propertyTenantMap = jdbcTemplate.query(
 				    query,
 				    rs -> {
-				        Map<String, String> map = new HashMap<>();
+				        Map<String, String> map = new LinkedHashMap<>();
 				        while (rs.next()) {
 				            map.put(
 				                rs.getString("propertyid"),
@@ -86,11 +90,7 @@ public class DashboardReportRepository {
 			//propertyIdList =
 			      //  propertyTenantMap.keySet().stream().collect(Collectors.toList());
 		}
-		
-		
-		 
-		
-		
+			
 		//PropertyCriteria criteria = new PropertyCriteria();
 		//criteria.setPropertyIds(propertyIdList.stream().collect(Collectors.toSet()));
 		List<Property> properties=null;
@@ -101,6 +101,7 @@ public class DashboardReportRepository {
 		return properties;
 		
 	}
+	
 	
 	public List<Property>getPropertiesPendingWithCount(DashboardRequest dashboardRequest,String pendingString) {
 	    String query = reportQueryBuilder.getTotalPropertyPendingWithQuery(dashboardRequest.getDashboardDataSearch());
@@ -368,7 +369,7 @@ public class DashboardReportRepository {
 	            String redisKey = "PROPERTY_TOTAL:" + tenantId + ":" + propertyId;
 	            
 	            	RevenuDataBucket bucket = RevenuDataBucket.builder()
-		                    .amount(totalAmount)
+		                   // .amount(totalAmount)
 		                    .propertyId(propertyId)
 		                    .tenantId(tenantId)
 		                    .build();
@@ -525,7 +526,10 @@ public class DashboardReportRepository {
 	            }
 	        }
 
-	        return cachedMap;
+	        LinkedHashMap<String, Property> sortedMap=cachedMap.entrySet().stream().
+	        		sorted((p1,p2)->p2.getValue().getAuditDetails().getLastModifiedTime().compareTo(p1.getValue().getAuditDetails().getLastModifiedTime()))
+	        		.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,(p1,p2)->p1,LinkedHashMap::new));
+	        return sortedMap;
 	    }
 	 
 	 private List<Property> getPropertiesList(Map<String, Property> propertiesPendingWithCount) {
