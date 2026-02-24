@@ -211,41 +211,41 @@ config:
         dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/municipal-services/pet-services"
-      build:
-        - work-dir: "pet-services"
-          image-name: "pet-services"
-          dockerfile: "build/maven/Dockerfile"
-        - work-dir: "pet-services/src/main/resources/db"
-          image-name: "pet-services-db" 
+    build:
+      - work-dir: "pet-services"
+        image-name: "pet-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "pet-services/src/main/resources/db"
+        image-name: "pet-services-db" 
 
   - name: "builds/municipal-services/pqm"
-      build:
-        - work-dir: "pqm-service"
-          image-name: "pqm-service"
-          dockerfile: "build/maven/Dockerfile"
-        - work-dir: "pqm/src/main/resources/db"
-          image-name: "pqm-service-db" 
+    build:
+      - work-dir: "pqm-service"
+        image-name: "pqm-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "pqm/src/main/resources/db"
+        image-name: "pqm-service-db" 
           
    - name: "builds/municipal-services/pqm-anomaly-finder"
-      build:
-        - work-dir: "pqm-anomaly-finder"
-          image-name: "pqm-anomaly-finder"
-          dockerfile: "build/maven/Dockerfile"
-        - work-dir: "pqm-anomaly-finder/src/main/resources/db"
-          image-name: "pqm-anomaly-finder-db"
+    build:
+      - work-dir: "pqm-anomaly-finder"
+        image-name: "pqm-anomaly-finder"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "pqm-anomaly-finder/src/main/resources/db"
+        image-name: "pqm-anomaly-finder-db"
           
    - name: "build/municipal-services/community-hall-booking"
-      build:
-        - work-dir: "community-hall-booking"
-          image-name: "community-hall-booking"
-          dockerfile: "build/maven/Dockerfile"
-        - work-dir: "community-hall-booking/src/main/resources/db"
-          image-name: "community-hall-booking-db"
+     build:
+       - work-dir: "community-hall-booking"
+         image-name: "community-hall-booking"
+         dockerfile: "build/maven/Dockerfile"
+       - work-dir: "community-hall-booking/src/main/resources/db"
+         image-name: "community-hall-booking-db"
 
    - name: "builds/municipal-services/street-vending"
-      build:
-        - work-dir: "street-vending"
-          image-name: "street-vending"
-          dockerfile: "build/maven/Dockerfile"
-        - work-dir: "street-vending/src/main/resources/db"
-          image-name: "cstreet-vending-db"          
+     build:
+       - work-dir: "street-vending"
+         image-name: "street-vending"
+         dockerfile: "build/maven/Dockerfile"
+       - work-dir: "street-vending/src/main/resources/db"
+         image-name: "cstreet-vending-db"          
