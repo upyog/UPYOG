@@ -234,7 +234,7 @@ config:
         - work-dir: "pqm-anomaly-finder/src/main/resources/db"
           image-name: "pqm-anomaly-finder-db"
           
-   - name: "builds/municipal-services/community-hall-booking"
+   - name: "build/municipal-services/community-hall-booking"
       build:
         - work-dir: "community-hall-booking"
           image-name: "community-hall-booking"
