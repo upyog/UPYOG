@@ -237,7 +237,15 @@ config:
 - name: "builds/municipal-services/community-hall-booking"
       build:
         - work-dir: "community-hall-booking"
-          image-name: "pcommunity-hall-booking"
+          image-name: "community-hall-booking"
           dockerfile: "build/maven/Dockerfile"
         - work-dir: "community-hall-booking/src/main/resources/db"
           image-name: "community-hall-booking-db"
+
+- name: "builds/municipal-services/street-vending"
+      build:
+        - work-dir: "street-vending"
+          image-name: "street-vending"
+          dockerfile: "build/maven/Dockerfile"
+        - work-dir: "street-vending/src/main/resources/db"
+          image-name: "cstreet-vending-db"          
