@@ -227,12 +227,12 @@ config:
         image-name: "pqm-service-db" 
           
    - name: "builds/municipal-services/pqm-anomaly-finder"
-    build:
-      - work-dir: "pqm-anomaly-finder"
-        image-name: "pqm-anomaly-finder"
-        dockerfile: "build/maven/Dockerfile"
-      - work-dir: "pqm-anomaly-finder/src/main/resources/db"
-        image-name: "pqm-anomaly-finder-db"
+     build:
+       - work-dir: "pqm-anomaly-finder"
+         image-name: "pqm-anomaly-finder"
+         dockerfile: "build/maven/Dockerfile"
+       - work-dir: "pqm-anomaly-finder/src/main/resources/db"
+         image-name: "pqm-anomaly-finder-db"
           
    - name: "build/municipal-services/community-hall-booking"
      build:
@@ -248,4 +248,4 @@ config:
          image-name: "street-vending"
          dockerfile: "build/maven/Dockerfile"
        - work-dir: "street-vending/src/main/resources/db"
-         image-name: "cstreet-vending-db"          
+         image-name: "street-vending-db"
