@@ -91,5 +91,7 @@ public class NOCConstants {
 	public static final String BUILDING_TYPE = "BuildingType";
 	
 	public static final String BUILDING_CATEGORY = "BuildingCategory";
+	
+	public static final String ACTION_UPDATE_FEE = "UPDATE_FEE";
 
 }

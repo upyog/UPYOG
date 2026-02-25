@@ -273,7 +273,9 @@ public class NOCService {
 					((Map<String, Object>)nocRequest.getNoc().getNocDetails()
 							.getAdditionalDetails()).put("approvedOn", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 					getCalculation(nocRequest);
-				}
+				}else if (nocRequest.getNoc().getWorkflow().getAction().equalsIgnoreCase(NOCConstants.ACTION_UPDATE_FEE))
+					getCalculation(nocRequest);
+				
 				State currentState = workflowService.getCurrentState(noc.getApplicationStatus(), businessServicename);
 				String nextStateId = currentState.getActions().stream()
 						.filter(act -> act.getAction().equalsIgnoreCase(noc.getWorkflow().getAction()))

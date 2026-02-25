@@ -77,13 +77,16 @@ public class DemandService {
         //List that will contain Calculation for old demands
         List<Calculation> updateCalculations = new LinkedList<>();
 
+        List<Demand> searchedDemands = new LinkedList<>();
+        
         if(!CollectionUtils.isEmpty(calculations)){
 
             //Collect required parameters for demand search
             String tenantId = calculations.get(0).getTenantId();
             Set<String> applicationNos = calculations.stream().map(calculation -> calculation.getBpa().getApplicationNo()).collect(Collectors.toSet());
 //            Set<String> applicationNumbers = calculations.stream().map(calculation -> calculation.getBPA().getApplicationNo()).collect(Collectors.toSet());
-            List<Demand> demands = searchDemand(tenantId,applicationNos,requestInfo,calculations.get(0), "false");
+            searchedDemands = searchDemand(tenantId,applicationNos,requestInfo,calculations.get(0), "");
+            List<Demand> demands = searchedDemands.stream().filter(demand -> !demand.getIsPaymentCompleted()).collect(Collectors.toList());
             Set<String> applicationNumbersFromDemands = new HashSet<>();
             if(!CollectionUtils.isEmpty(demands))
                 applicationNumbersFromDemands = demands.stream().map(Demand::getConsumerCode).collect(Collectors.toSet());
@@ -98,10 +101,10 @@ public class DemandService {
         }
 
         if(!CollectionUtils.isEmpty(createCalculations))
-            createDemand(requestInfo,createCalculations,mdmsData);
+            createDemand(requestInfo,createCalculations, searchedDemands, mdmsData);
 
         if(!CollectionUtils.isEmpty(updateCalculations))
-            updateDemand(requestInfo,updateCalculations);
+            updateDemand(requestInfo,updateCalculations, searchedDemands);
     }
 
     /**
@@ -110,19 +113,20 @@ public class DemandService {
      * @param calculations List of calculation object
      * @return Demands that are updated
      */
-    private List<Demand> updateDemand(RequestInfo requestInfo,List<Calculation> calculations){
+    private List<Demand> updateDemand(RequestInfo requestInfo,List<Calculation> calculations, List<Demand> searchedDemands){
         List<Demand> demands = new LinkedList<>();
         for(Calculation calculation : calculations) {
 
-            List<Demand> searchResult = searchDemand(calculation.getTenantId(),Collections.singleton(calculation.getBpa().getApplicationNo())
-                    , requestInfo,calculation, "false");
-
-            if(CollectionUtils.isEmpty(searchResult))
+            if(CollectionUtils.isEmpty(searchedDemands))
                 throw new CustomException(BPACalculatorConstants.INVALID_UPDATE,"No demand exists for applicationNumber: "+calculation.getBpa().getApplicationNo());
 
-            Demand demand = searchResult.get(0);
-            List<DemandDetail> demandDetails = demand.getDemandDetails();
+            Demand demand = searchedDemands.stream().filter(d -> !d.getIsPaymentCompleted())
+            		.findFirst().orElse(searchedDemands.get(searchedDemands.size() -1 ));
+            List<DemandDetail> demandDetails = searchedDemands.stream().flatMap(d -> d.getDemandDetails().stream()).collect(Collectors.toList());
             List<DemandDetail> updatedDemandDetails = getUpdatedDemandDetails(calculation,demandDetails);
+            updatedDemandDetails = updatedDemandDetails.stream()
+            		.filter(demandDetail -> demandDetail.getDemandId() == null || demandDetail.getDemandId().equalsIgnoreCase(demand.getId()))
+            		.collect(Collectors.toList());
             demand.setDemandDetails(updatedDemandDetails);
             demands.add(demand);
         }
@@ -154,7 +158,22 @@ public class DemandService {
         List<DemandDetail> demandDetailList;
         BigDecimal total;
 
-        for(TaxHeadEstimate taxHeadEstimate : calculation.getTaxHeadEstimates()){
+        List<TaxHeadEstimate> allTaxHeadEstimates = new ArrayList<>();
+        
+        calculation.getTaxHeadEstimates().stream().forEach(taxHeadEstimate -> {
+        	allTaxHeadEstimates.add(taxHeadEstimate);
+        	
+        	if(taxHeadEstimate.getAdjustedAmount().compareTo(BigDecimal.ZERO) != 0 
+        			|| taxHeadToDemandDetail.containsKey(BPACalculatorConstants.BPA_ADJUSTMENT_TAX_HEAD_PREFIX + taxHeadEstimate.getTaxHeadCode())) {
+        		allTaxHeadEstimates.add(TaxHeadEstimate.builder()
+        				.taxHeadCode(BPACalculatorConstants.BPA_ADJUSTMENT_TAX_HEAD_PREFIX + taxHeadEstimate.getTaxHeadCode())
+        				.estimateAmount(taxHeadEstimate.getAdjustedAmount().negate())
+        				.category(taxHeadEstimate.getCategory())
+        				.build());
+            }
+        });
+        
+        for(TaxHeadEstimate taxHeadEstimate : allTaxHeadEstimates){
             if(!taxHeadToDemandDetail.containsKey(taxHeadEstimate.getTaxHeadCode()))
                 newDemandDetails.add(
                         DemandDetail.builder()
@@ -193,11 +212,13 @@ public class DemandService {
      */
     private List<Demand> searchDemand(String tenantId,Set<String> consumerCodes,RequestInfo requestInfo,Calculation calculation, String isPaymentCompleted){
     	String feeType = calculation.getFeeType();
-        String uri = utils.getDemandSearchURL();
+    	String uri = utils.getDemandSearchURL(isPaymentCompleted);
         uri = uri.replace("{1}",tenantId);
         uri = uri.replace("{2}",(utils.getBillingBusinessService(calculation.getBpa().getBusinessService(), feeType, calculation.getBpa().getApplicationType())));
         uri = uri.replace("{3}",StringUtils.join(consumerCodes, ','));
-        uri = uri.replace("{4}", isPaymentCompleted);
+        
+        if(!StringUtils.isEmpty(isPaymentCompleted))
+        	uri = uri.replace("{4}",isPaymentCompleted);
 
         Object result = serviceRequestRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
                                                       .requestInfo(requestInfo).build());
@@ -211,7 +232,7 @@ public class DemandService {
         }
 
         if(CollectionUtils.isEmpty(response.getDemands()))
-            return null;
+            return new ArrayList<>();
 
         else return response.getDemands();
 
@@ -224,7 +245,7 @@ public class DemandService {
      * @param calculations List of calculation object
      * @return Demands that are created
      */
-    private List<Demand> createDemand(RequestInfo requestInfo,List<Calculation> calculations,Object mdmsData){
+    private List<Demand> createDemand(RequestInfo requestInfo,List<Calculation> calculations, List<Demand> searchedDemands, Object mdmsData){
         List<Demand> demands = new LinkedList<>();
         for(Calculation calculation : calculations) {
             BPA bpa = null;
@@ -253,7 +274,7 @@ public class DemandService {
                         .tenantId(tenantId)
                         .build());
                 
-                if(taxHeadEstimate.getAdjustedAmount().compareTo(BigDecimal.ZERO) > 0) {
+                if(taxHeadEstimate.getAdjustedAmount().compareTo(BigDecimal.ZERO) != 0) {
                 	demandDetails.add(DemandDetail.builder().taxAmount(taxHeadEstimate.getAdjustedAmount().negate())
                             .taxHeadMasterCode(BPACalculatorConstants.BPA_ADJUSTMENT_TAX_HEAD_PREFIX + taxHeadEstimate.getTaxHeadCode())
                             .collectionAmount(BigDecimal.ZERO)
@@ -268,8 +289,7 @@ public class DemandService {
             
             Map<String, Object> taxPeriod = mdmsService.getTaxPeriods(mdmsData);
             
-            List<Demand> searchResult = searchDemand(calculation.getTenantId(),Collections.singleton(calculation.getBpa().getApplicationNo())
-                    , requestInfo,calculation, "true");
+            List<Demand> searchResult = searchedDemands.stream().filter(demand -> demand.getIsPaymentCompleted()).collect(Collectors.toList());
             
             if(!CollectionUtils.isEmpty(searchResult)) {
             	Demand latestDemand = searchResult.stream().max(Comparator.comparingLong(Demand::getTaxPeriodTo)).get();
@@ -295,6 +315,7 @@ public class DemandService {
                     .taxPeriodTo((Long)taxPeriod.get(BPACalculatorConstants.MDMS_ENDDATE))
                     .consumerType("BPA-" + BPACalculatorConstants.MDMS_CHARGES_TYPE_CODE)
                     .businessService(utils.getBillingBusinessService(bpa.getBusinessService(),calculation.getFeeType(), bpa.getApplicationType()))
+                    .isPaymentCompleted(false)
                     .build());
         }
         return demandRepository.saveDemand(requestInfo,demands);
