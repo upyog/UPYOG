@@ -23,6 +23,7 @@ public class DashboardReport {
 	@JsonProperty("data")
 	private List<ServiceWithProperties> services;
 	private Map<String, List<Assessment>> assesments;
+	private Map<String, List<Appeal>> appeals;
 	private Map<String, List<Payment>> payments;
 	private Map<String, List<RevenuDataBucket>> penalty;
 	//private List<ServiceWithProperties> revenue;

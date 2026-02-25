@@ -13,11 +13,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.Appeal;
+import org.egov.pt.models.AppealCriteria;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.collection.Payment;
 import org.egov.pt.models.collection.RevenuDataBucket;
+import org.egov.pt.service.AppealService;
 import org.egov.pt.service.AssessmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisStringCommands;
@@ -42,6 +45,9 @@ public class PropertyRedisCache {
     
     @Autowired
     AssessmentService assessmentService;
+    
+    @Autowired
+    AppealService appealService;
     
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -202,6 +208,58 @@ public class PropertyRedisCache {
 
         return assesments;
     }
+    
+    @SuppressWarnings("unchecked")
+    public Map<String, List<Appeal>> getAppealsForProperties(Set<String> propertyIds) {
+
+        Map<String, List<Appeal>> appeals = new LinkedHashMap<>();
+        Set<String> missingPropertyIds = new HashSet<String>();
+
+        
+        for (String propertyId : propertyIds) {
+            String key = "pt:appeal:byProperty:" + propertyId;
+            Object cachedObj = redisTemplate.opsForValue().get(key);
+
+            if (cachedObj != null) {
+                
+                List<Appeal> cached = (List<Appeal>) cachedObj;
+                appeals.put(propertyId, cached);
+            } else {
+                missingPropertyIds.add(propertyId);
+            }
+        }
+
+        if (!missingPropertyIds.isEmpty()) {
+        	
+        	 AppealCriteria appealCriteria=AppealCriteria.builder().propertyIds(missingPropertyIds).build();
+        	
+            List<Appeal> dbAppeals = appealService.searchAppeal(appealCriteria);
+            		//searchAssessments(missingPropertyIds);
+
+            // Group by propertyId
+            Map<String, List<Appeal>> grouped = dbAppeals.stream()
+                .collect(Collectors.groupingBy(Appeal::getPropertyId, LinkedHashMap::new, Collectors.toList()));
+
+            // 3️⃣ Populate Redis and result map
+            for (String pid : missingPropertyIds) {
+                List<Appeal> list = grouped.getOrDefault(pid, Collections.emptyList());
+
+                // Write-through cache
+                String key = "pt:appeal:byProperty:" + pid;
+                redisTemplate.opsForValue().set(key, list, TTL);
+
+                appeals.put(pid, list);
+            }
+        }
+
+        // 4️⃣ Ensure all propertyIds exist in map (even empty list)
+        for (String pid : propertyIds) {
+        	appeals.putIfAbsent(pid, Collections.emptyList());
+        }
+
+        return appeals;
+    }
+
 
 
     public void put(String tenantId, String propertyId, Property response) {

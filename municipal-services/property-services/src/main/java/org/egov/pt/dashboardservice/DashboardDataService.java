@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Appeal;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.DashboardData;
 import org.egov.pt.models.DashboardDataSearch;
@@ -183,6 +185,7 @@ public class DashboardDataService {
 		Map<String, List<Payment>> payments = new HashMap<>();
 		Map<String, List<RevenuDataBucket>> penalty = new HashMap<>();
 		Map<String, List<Assessment>> assesments = new HashMap<>();
+		Map<String, List<Appeal>> appeals= new LinkedHashMap<String, List<Appeal>>();
 		switch (key) {
 		case "totalPropertiesRegistered":
 			value = dashboardReportRepository.getTotalPropertyRegisteredCount(dashboardRequest);
@@ -207,10 +210,13 @@ public class DashboardDataService {
 			break;
 		case "propertiesSelfAssessed":
 			value = dashboardReportRepository.getTotalPropertySelfassessedCount(dashboardRequest);
-			Set<String> propertyIds = new HashSet<String>();
-			propertyIds = value.stream().map(Property::getPropertyId).collect(Collectors.toSet());
-			assesments = dashboardReportRepository.getCacheDataForAssesmentReport(propertyIds,
-					dashboardRequest.getRequestInfo());
+			if (!ObjectUtils.isEmpty(value))
+			{
+				Set<String> propertyIds = value.stream().map(Property::getPropertyId).collect(Collectors.toSet());
+				assesments = dashboardReportRepository.getCacheDataForAssesmentReport(propertyIds,
+						dashboardRequest.getRequestInfo());
+			}
+			
 			break;
 		case "propertiesPendingSelfAssessment":
 			value = dashboardReportRepository.getTotalPropertyPendingselfAssessedCount(dashboardRequest);
@@ -218,22 +224,28 @@ public class DashboardDataService {
 		case "propertiesPaid":
 			value = dashboardReportRepository.getTotalPropertyPaidCount(dashboardRequest);
 			if (!ObjectUtils.isEmpty(value)) {
-				// Map<String, String> propertyTenantMap =
+				Map<String, String> propertyTenantMap =
 				value.stream().filter(p -> p.getPropertyId() != null && p.getTenantId() != null).collect(
-						Collectors.toMap(Property::getPropertyId, Property::getTenantId, (oldVal, newVal) -> oldVal // avoid
-																													// duplicate
-																													// key
-																													// crash
+						Collectors.toMap(Property::getPropertyId, Property::getTenantId, (oldVal, newVal) -> oldVal 
 						));
-				// payments =
-				// dashboardReportRepository.getCacheDataForPaymentReport(propertyTenantMap);
+				payments =dashboardReportRepository.getCacheDataForPaymentReport(propertyTenantMap);
 			}
 			break;
 		case "propertiesWithAppealSubmitted":
 			value = dashboardReportRepository.getTotalPropertyAppealSubmitedCount(dashboardRequest);
+			if (!ObjectUtils.isEmpty(value))
+			{
+				Set<String> appealPropertyIds = value.stream().map(Property::getPropertyId).collect(Collectors.toSet());
+				appeals = dashboardReportRepository.getCacheDataForAppealReport(appealPropertyIds);
+			}
 			break;
 		case "appealsPending":
 			value = dashboardReportRepository.getTotalPropertyAppealPendingCount(dashboardRequest);
+			if (!ObjectUtils.isEmpty(value))
+			{
+				Set<String> appealPropertyIds = value.stream().map(Property::getPropertyId).collect(Collectors.toSet());
+				appeals = dashboardReportRepository.getCacheDataForAppealReport(appealPropertyIds);
+			}
 			break;
 		case "totalTaxCollected":
 			value = dashboardReportRepository.getTotalTaxCollectedAmount(dashboardRequest);
@@ -271,7 +283,8 @@ public class DashboardDataService {
 			dashboardData.setPayments(payments);
 		if (!ObjectUtils.isEmpty(assesments))
 			dashboardData.setAssesments(assesments);
-
+		if (!ObjectUtils.isEmpty(appeals))
+			dashboardData.setAppeals(appeals);
 		if (!ObjectUtils.isEmpty(penalty))
 			dashboardData.setPenalty(penalty);
 		/*

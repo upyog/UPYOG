@@ -19,7 +19,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.Appeal;
 import org.egov.pt.models.Assessment;
+import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.DashboardDataSearch;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
@@ -280,9 +282,12 @@ public class DashboardReportRepository {
 	            if (!txnTracker.get(redisKey).add(txnNo)) {
 	                return; // duplicate → skip
 	            }
+	            AuditDetails auditDetails= AuditDetails.builder().createdBy(rs.getString("createdby"))
+	            		.createdTime(rs.getLong("createdtime")).lastModifiedBy(rs.getString("lastmodifiedby")).lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
 	            Payment payment = Payment.builder()
 	                    .transactionNumber(txnNo)
 	                    .totalAmountPaid(rs.getBigDecimal("txn_amount"))
+	                    .auditDetails(auditDetails)
 	                    .build();
 
 	            redisPayload
@@ -547,6 +552,11 @@ public class DashboardReportRepository {
 	 public Map<String, List<Assessment>>getCacheDataForAssesmentReport(Set<String> propertyIds,RequestInfo requestInfo)
 	 {
 		 return propertyRedisCache.getAssessmentsForProperties(propertyIds, requestInfo);
+	 }
+	 
+	 public Map<String, List<Appeal>>getCacheDataForAppealReport(Set<String> propertyIds)
+	 {
+		 return propertyRedisCache.getAppealsForProperties(propertyIds);
 	 }
 	 
 	 public Map<String, List<RevenuDataBucket>>getCacheDataForPenaltyReport(Map<String, String> propertyTenantMap)
