@@ -74,6 +74,8 @@ import org.egov.infra.microservice.models.Receipt;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
 @Service
 public class PaymentUtils {
     @Autowired
@@ -91,6 +93,7 @@ public class PaymentUtils {
                 Receipt receipt = new Receipt();
                 receipt.setInstrument(instrument);
                 receipt.setPaymentId(payment.getId());
+                receipt.setAdditionalDetails(payment.getAdditionalDetails());
                 this.prepareReceipt(payment, paymentDetail, receipt);
                 businessServices.add(paymentDetail.getBusinessService());
                 receipts.add(receipt);

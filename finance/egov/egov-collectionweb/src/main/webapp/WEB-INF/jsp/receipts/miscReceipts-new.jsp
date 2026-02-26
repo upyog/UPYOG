@@ -46,41 +46,186 @@
   ~
   --%>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/MiscReceipts.js?rnd=${app_release_no}"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/MiscReceiptsService.js?rnd=${app_release_no}"></script> 
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>  
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/js/MiscReceipts.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/js/MiscReceiptsService.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>
 <style type="text/css">
-    #codescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-    #codescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-    #codescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-    #codescontainer ul {padding:5px 0;width:100%;}
-    #codescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-    #codescontainer li.yui-ac-highlight {background:#ff0;}
-    #codescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-    #rebatecodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-    #rebatecodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-    #rebatecodescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-    #rebatecodescontainer ul {padding:5px 0;width:100%;}
-    #rebatecodescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-    #rebatecodescontainer li.yui-ac-highlight {background:#ff0;}
-    #rebatecodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-    #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-    #bankcodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-    #bankcodescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-    #bankcodescontainer ul {padding:5px 0;width:100%;}
-    #bankcodescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-    #bankcodescontainer li.yui-ac-highlight {background:#ff0;}
-    #bankcodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-    #subledgercodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-    #subledgercodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-    #subledgercodescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-    #subledgercodescontainer ul {padding:5px 0;width:100%;}
-    #subledgercodescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-    #subledgercodescontainer li.yui-ac-highlight {background:#ff0;}
-    #subledgercodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-    
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+
+#rebatecodescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#rebatecodescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#rebatecodescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#rebatecodescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#rebatecodescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#rebatecodescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#rebatecodescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+
+#bankcodescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#bankcodescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#bankcodescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#bankcodescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#bankcodescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#bankcodescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#bankcodescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+
+#subledgercodescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#subledgercodescontainer .yui-ac-content {
+	position: absolute;
+	width: 350px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#subledgercodescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#subledgercodescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#subledgercodescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#subledgercodescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#subledgercodescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
 </style>
- 
+
 <script type="text/javascript">
 var billscount=0;
 var multiplepayee="false";
@@ -108,9 +253,10 @@ jQuery(document).ready(function(){
 	jQuery( "#voucherDate" ).datepicker({ 
    	 format: 'dd/mm/yyyy',
    	 autoclose:true,
-   	 onRender: function(date) {
+   	 endDate: new Date()
+  /* 	 onRender: function(date) {
       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
-      	  }
+      	  }*/
 	  }).on('changeDate', function(ev) {
 		  var string=jQuery(this).val();
 		  if(!(string.indexOf("_") > -1)){
@@ -734,75 +880,126 @@ var totaldbamt=0,totalcramt=0;
 	
 	}
 </script>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" >
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-  <tr><td>
-  
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
- 
- 
-     <tr>
-          <td width="4%" class="bluebox">&nbsp;</td>
-         <td width="21%" class="bluebox"><s:text name="viewReceipt.receiptdate" /><span class="mandatory"/></td>
-                  <s:date name="voucherDate" var="cdFormat" format="dd/MM/yyyy"/>
-          <td width="24%" class="bluebox">
-                <s:textfield id="voucherDate" name="voucherDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="validateVoucherDate(this)" data-inputmask="'mask': 'd/m/y'"/>
-                <div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
-          </td>
-            <td width="21%" class="bluebox"><s:text name="challan.narration"/></td>
-		    <td width="24%" class="bluebox"><s:textarea name="referenceDesc" id="referenceDesc" value="%{referenceDesc}" cols="18" rows="1" maxlength="125" onkeyup="return ismaxlength(this)"/></td>
-          </tr>
-	       <tr> <td width="4%" class="bluebox2">&nbsp;</td>
-		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="64" name="paidBy" value="%{payeeName}" /></td>
-		   <td width="21%" class="bluebox2"><s:text name="challan.payeeAddress"/></td>
-		   <td width="24%" class="bluebox2"><s:textarea name="payeeAddress" id="payeeAddress" value="%{payeeAddress}" cols="18" rows="1" maxlength="255" onkeyup="return ismaxlength(this)"/></td>
-	    </tr>
-	  <tr> 
-           <s:if test="%{shouldShowHeaderField('field')}">
-           <td width="21%" class="bluebox"><s:text name="miscreceipt.field"/><s:if test="%{isFieldMandatory('field')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
-          <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="boundaryId" id="boundaryId" cssClass="selectwk" list="dropdownData.fieldList" listKey="id" listValue="name"  /> </td>
-            </s:if>
-           <s:else>
-            <td colspan=2 class="bluebox"></td>
-            </s:else>
-         
-           <s:if test="%{shouldShowHeaderField('vouchernumber')}">
-           <td width="21%" class="bluebox"><s:text name="miscreceipt.voucher.number"/><span class="mandatory"/></td>
-        <td width="30%" class="bluebox"><s:textfield name="voucherNum" id="voucherNum" maxlength="16"/></td>
-        </s:if>
-        <s:else>
-        <td colspan=2 class="bluebox"></td>
-        </s:else>
-        
-        <tr>
-        <td width="4%" class="bluebox">&nbsp;</td>
-         
-        <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /><span class="mandatory"/> </td>
-        <td width="30%" class="bluebox">
-        	<s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory" id="serviceCategoryid" cssClass="selectwk" list="serviceCategoryNames" value="%{service.serviceCategory}" onChange="populateServiceType(this.value);" />
-       	</td>
-       	<td class="bluebox" colspan='2'>
-       	<table width="100%" id='serviceTable'>
-       	</table>
-       	</td>
-        </tr>
-    </table>
-  </td></tr>
-  <tr><td>
-      <s:hidden label="misctotalAmount" id="misctotalAmount"  name="misctotalAmount" value="0"/>
-    <div class="subheadsmallnew"><span class="subheadnew"><s:text name="billreceipt.billdetails.Credit"/></span></div>
-    
-    <div class="yui-skin-sam" align="center">
-       <div id="creditDetailTable"></div>
-       
-     </div>
-     <script>
+	<tr>
+		<td>
+
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<!--  <td width="4%" class="bluebox">&nbsp;</td>
+					<td width="21%" class="bluebox"><s:text
+							name="viewReceipt.receiptdate" /><span class="mandatory" /></td>
+					<s:date name="voucherDate" var="cdFormat" format="dd/MM/yyyy" />-->
+					<td width="24%" class="bluebox" style="display: none;"><s:textfield
+							id="voucherDate" name="voucherDate"
+							onfocus="javascript:vDateType='3';"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							onblur="validateVoucherDate(this)"
+							data-inputmask="'mask': 'd/m/y'" />
+						<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+				</tr>
+				<tr>
+					<td width="4%" class="bluebox2">&nbsp;</td>
+					<td class="bluebox" width="21%"><s:text
+							name="viewReceipt.fund" /><span class="mandatory1">*</span></td>
+					<td width="30%" class="bluebox" style="table-layout: fixed;"><s:select headerKey=""
+							headerValue="----Choose----" name="fund" id="fundId"
+							cssClass="selectwk" list="fundNames"
+							value="%{fund}" /></td>
+							
+					<td class="bluebox" width="21%"><s:text
+							name="billreceipt.counter.paidby" /><span class="mandatory1">*</span></td>
+					<td class="bluebox"><s:textfield label="paidBy" id="paidBy"
+							maxlength="64" name="paidBy" value="%{payeeName}" /></td>
+				</tr>
+				<tr>
+					<td width="4%" class="bluebox">&nbsp;</td>
+
+					<td width="21%" class="bluebox"><s:text
+							name="miscreceipt.service.category" /><span class="mandatory" />
+					</td>
+					<td width="30%" class="bluebox"><s:select headerKey="-1"
+							headerValue="----Choose----" name="serviceCategory"
+							id="serviceCategoryid" cssClass="selectwk"
+							list="serviceCategoryNames" value="%{service.serviceCategory}"
+							onChange="populateServiceType(this.value);" /></td>
+					<td class="bluebox" colspan='2'>
+						<table width="100%" id='serviceTable'>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td width="4%" class="bluebox2">&nbsp;</td>
+					<td class="bluebox" width="21%"><s:text
+							name="viewReceipt.Wardno" /><span class="mandatory1">*</span></td>
+					<td width="30%" class="bluebox"><s:select headerKey=""
+							headerValue="----Choose----" name="wardNo" id="wardNoCode"
+							cssClass="selectwk" list="dropdownData.wardNoList"
+							listKey="wardNoCode" listValue="wardNoName" value="%{wardNo}" /></td>
+					<td width="21%" class="bluebox2"><s:text
+							name="challan.payeeAddress" /></td>
+					<td width="24%" class="bluebox2"><s:textarea
+							name="payeeAddress" id="payeeAddress" value="%{payeeAddress}"
+							cols="23" rows="1" maxlength="255"
+							onkeyup="return ismaxlength(this)" /></td>
+				</tr>
+				<tr>
+					<s:if test="%{shouldShowHeaderField('field')}">
+						<td width="21%" class="bluebox"><s:text
+								name="miscreceipt.field" /> <s:if
+								test="%{isFieldMandatory('field')}">
+								<span class="bluebox"><span class="mandatory" />
+							</s:if></td>
+						<td width="24%" class="bluebox"><s:select headerKey="-1"
+								headerValue="%{getText('miscreceipt.select')}" name="boundaryId"
+								id="boundaryId" cssClass="selectwk"
+								list="dropdownData.fieldList" listKey="id" listValue="name" />
+						</td>
+					</s:if>
+					<s:else>
+						<td colspan=2 class="bluebox"></td>
+					</s:else>
+
+					<s:if test="%{shouldShowHeaderField('vouchernumber')}">
+						<td width="21%" class="bluebox"><s:text
+								name="miscreceipt.voucher.number" /><span class="mandatory" /></td>
+						<td width="30%" class="bluebox"><s:textfield
+								name="voucherNum" id="voucherNum" maxlength="16" /></td>
+					</s:if>
+					<s:else>
+						<td colspan=2 class="bluebox"></td>
+					</s:else>
+				</tr>
+				<tr>
+					<td width="4%" class="bluebox2">&nbsp;</td>
+					<td width="21%" class="bluebox"><s:text
+							name="challan.narration" /></td>
+					<td width="24%" class="bluebox"><s:textarea
+							name="referenceDesc" id="referenceDesc" value="%{referenceDesc}"
+							cols="23" rows="2" maxlength="125"
+							onkeyup="return ismaxlength(this)" /></td>
+				</tr>
+
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td><s:hidden label="misctotalAmount" id="misctotalAmount"
+				name="misctotalAmount" value="0" />
+			<div class="subheadsmallnew">
+				<span class="subheadnew"><s:text
+						name="billreceipt.billdetails.Credit" /></span>
+			</div>
+
+			<div class="yui-skin-sam" align="center">
+				<div id="creditDetailTable"></div>
+
+			</div> <script>
         
         makeCreditDetailTable();
         document.getElementById('creditDetailTable').getElementsByTagName('table')[0].width="100%";
-     </script>
-     <!-- <div id="codescontainer"></div>
+     </script> <!-- <div id="codescontainer"></div>
      <br/>
      <div id="rebateDetails">
     <div class="subheadsmallnew"><span class="subheadnew"><s:text name="billreceipt.billdetails.Rebate"/></span></div>
@@ -830,10 +1027,12 @@ var totaldbamt=0,totalcramt=0;
             
             //document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="100%";
         </script>
-<div id="subledgercodescontainer"></div>  -->
-  </td></tr>
+<div id="subledgercodescontainer"></div>  --></td>
+	</tr>
 
-      <tr>
-        <td colspan="5"></td>
-      </tr>
-    </table>
+
+
+	<tr>
+		<td colspan="5"></td>
+	</tr>
+</table>

@@ -153,6 +153,11 @@ public class ReceiptHeader extends StateAware implements Auditable {
     private String g8data;
     @SafeHtml
     private String paymentId;
+    @SafeHtml
+    private String wardNo;
+    @SafeHtml
+    private String fund;
+    
     public ReceiptHeader() {
     }
 
@@ -193,8 +198,26 @@ public class ReceiptHeader extends StateAware implements Auditable {
         this.referenceDesc = referenceDesc;
         this.totalAmount = totalAmount;
     }
+    
+    
 
-    public String getReferencenumber() {
+    public String getWardNo() {
+		return wardNo;
+	}
+
+	public void setWardNo(String wardNo) {
+		this.wardNo = wardNo;
+	}
+
+	public String getFund() {
+		return fund;
+	}
+
+	public void setFund(String fund) {
+		this.fund = fund;
+	}
+
+	public String getReferencenumber() {
         return referencenumber;
     }
 
