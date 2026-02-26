@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -18,12 +19,15 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Appeal;
+import org.egov.pt.models.AppealData;
 import org.egov.pt.models.Assessment;
+import org.egov.pt.models.AssessmentData;
 import org.egov.pt.models.DashboardData;
 import org.egov.pt.models.DashboardDataSearch;
 import org.egov.pt.models.DashboardReport;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.PropertyData;
 import org.egov.pt.models.Revenue;
 import org.egov.pt.models.ServiceWithProperties;
 import org.egov.pt.models.Services;
@@ -181,14 +185,15 @@ public class DashboardDataService {
 			dashboardData.setWard("MN");
 
 		String key = dashboardRequest.getDashboardDataSearch().getSearchKey();
-		List<Property> value;
-		Map<String, List<Payment>> payments = new HashMap<>();
+		List<PropertyData> value;
+		//Map<String, List<Payment>> payments = new HashMap<>();
 		Map<String, List<RevenuDataBucket>> penalty = new HashMap<>();
-		Map<String, List<Assessment>> assesments = new HashMap<>();
-		Map<String, List<Appeal>> appeals= new LinkedHashMap<String, List<Appeal>>();
+		//Map<String, List<Assessment>> assesments = new HashMap<>();
+		//Map<String, List<Appeal>> appeals= new LinkedHashMap<String, List<Appeal>>();
 		switch (key) {
 		case "totalPropertiesRegistered":
 			value = dashboardReportRepository.getTotalPropertyRegisteredCount(dashboardRequest);
+			
 			break;
 		case "propertiesPendingWithDocVerifier":
 			value = dashboardReportRepository.getPropertiesPendingWithCount(dashboardRequest,
@@ -212,9 +217,26 @@ public class DashboardDataService {
 			value = dashboardReportRepository.getTotalPropertySelfassessedCount(dashboardRequest);
 			if (!ObjectUtils.isEmpty(value))
 			{
-				Set<String> propertyIds = value.stream().map(Property::getPropertyId).collect(Collectors.toSet());
-				assesments = dashboardReportRepository.getCacheDataForAssesmentReport(propertyIds,
+				Set<String> propertyIds = value.stream().map(PropertyData::getPropertyId).collect(Collectors.toSet());
+				final Map<String, List<Assessment>> assesments  = dashboardReportRepository.getCacheDataForAssesmentReport(propertyIds,
 						dashboardRequest.getRequestInfo());
+				value.forEach(propertyData -> {
+			        List<Assessment> assessmentList = assesments.get(propertyData.getPropertyId());
+			        if (assessmentList == null || assessmentList.isEmpty()) return;
+			        assessmentList.sort(
+			        	    Comparator.comparing(
+			        	        (Assessment a) -> a.getAuditDetails().getLastModifiedTime()
+			        	    ).reversed()
+			        	);
+			 
+			        List<AssessmentData> assessmentDataList = assessmentList.stream()
+			                .map(a -> {
+			                	return AssessmentData.builder().auditDetails(a.getAuditDetails()).build();
+			                })
+			                .collect(Collectors.toList());
+			 
+			        propertyData.setAssessments(assessmentDataList);
+			    });
 			}
 			
 			break;
@@ -226,25 +248,70 @@ public class DashboardDataService {
 			if (!ObjectUtils.isEmpty(value)) {
 				Map<String, String> propertyTenantMap =
 				value.stream().filter(p -> p.getPropertyId() != null && p.getTenantId() != null).collect(
-						Collectors.toMap(Property::getPropertyId, Property::getTenantId, (oldVal, newVal) -> oldVal 
+						Collectors.toMap(PropertyData::getPropertyId, PropertyData::getTenantId, (oldVal, newVal) -> oldVal 
 						));
-				payments =dashboardReportRepository.getCacheDataForPaymentReport(propertyTenantMap);
+				Map<String, List<Payment>> payments  =dashboardReportRepository.getCacheDataForPaymentReport(propertyTenantMap);
+				
+				value.forEach(propertyData -> {
+			        List<Payment> paymentsList = payments.get(propertyData.getPropertyId());
+			        if (paymentsList == null || paymentsList.isEmpty()) return;
+			        paymentsList.sort(
+			        	    Comparator.comparing(
+			        	        (Payment a) -> a.getAuditDetails().getLastModifiedTime()
+			        	    ).reversed()
+			        	);
+			        propertyData.setPayments(paymentsList);
+			    });
 			}
 			break;
 		case "propertiesWithAppealSubmitted":
 			value = dashboardReportRepository.getTotalPropertyAppealSubmitedCount(dashboardRequest);
 			if (!ObjectUtils.isEmpty(value))
 			{
-				Set<String> appealPropertyIds = value.stream().map(Property::getPropertyId).collect(Collectors.toSet());
-				appeals = dashboardReportRepository.getCacheDataForAppealReport(appealPropertyIds);
+				Set<String> appealPropertyIds = value.stream().map(PropertyData::getPropertyId).collect(Collectors.toSet());
+				Map<String, List<Appeal>> appeals = dashboardReportRepository.getCacheDataForAppealReport(appealPropertyIds);
+				value.forEach(propertyData -> {
+			        List<Appeal> appealList = appeals.get(propertyData.getPropertyId());
+			        if (appealList == null || appealList.isEmpty()) return;
+			        appealList.sort(
+			        	    Comparator.comparing(
+			        	        (Appeal a) -> a.getAuditDetails().getLastModifiedTime()
+			        	    ).reversed()
+			        	);
+			        
+			        List<AppealData> appealDataList = appealList.stream()
+			                .map(a -> {
+			                	return AppealData.builder().auditDetails(a.getAuditDetails()).build();
+			                })
+			                .collect(Collectors.toList());
+			 
+			        propertyData.setAppealDatas(appealDataList);
+			    });
 			}
 			break;
 		case "appealsPending":
 			value = dashboardReportRepository.getTotalPropertyAppealPendingCount(dashboardRequest);
 			if (!ObjectUtils.isEmpty(value))
 			{
-				Set<String> appealPropertyIds = value.stream().map(Property::getPropertyId).collect(Collectors.toSet());
-				appeals = dashboardReportRepository.getCacheDataForAppealReport(appealPropertyIds);
+				Set<String> appealPropertyIds = value.stream().map(PropertyData::getPropertyId).collect(Collectors.toSet());
+				Map<String, List<Appeal>> appeals = dashboardReportRepository.getCacheDataForAppealReport(appealPropertyIds);
+				value.forEach(propertyData -> {
+			        List<Appeal> appealList = appeals.get(propertyData.getPropertyId());
+			        if (appealList == null || appealList.isEmpty()) return;
+			 
+			        appealList.sort(
+			        	    Comparator.comparing(
+			        	        (Appeal a) -> a.getAuditDetails().getLastModifiedTime()
+			        	    ).reversed()
+			        	);
+			        List<AppealData> appealDataList = appealList.stream()
+			                .map(a -> {
+			                	return AppealData.builder().auditDetails(a.getAuditDetails()).build();
+			                })
+			                .collect(Collectors.toList());
+			 
+			        propertyData.setAppealDatas(appealDataList);
+			    });
 			}
 			break;
 		case "totalTaxCollected":
@@ -258,10 +325,7 @@ public class DashboardDataService {
 			if (!ObjectUtils.isEmpty(value)) {
 				Map<String, String> propertyTenantMap = value.stream()
 						.filter(p -> p.getPropertyId() != null && p.getTenantId() != null).collect(Collectors
-								.toMap(Property::getPropertyId, Property::getTenantId, (oldVal, newVal) -> oldVal // avoid
-																													// duplicate
-																													// key
-																													// crash
+								.toMap(PropertyData::getPropertyId, PropertyData::getTenantId, (oldVal, newVal) -> oldVal 
 								));
 				penalty = dashboardReportRepository.getCacheDataForPenaltyReport(propertyTenantMap);
 			}
@@ -279,12 +343,12 @@ public class DashboardDataService {
 
 		// Now add to service
 		service.add(buildService(key, value));
-		if (!ObjectUtils.isEmpty(payments))
-			dashboardData.setPayments(payments);
-		if (!ObjectUtils.isEmpty(assesments))
-			dashboardData.setAssesments(assesments);
-		if (!ObjectUtils.isEmpty(appeals))
-			dashboardData.setAppeals(appeals);
+		//if (!ObjectUtils.isEmpty(payments))
+			//dashboardData.setPayments(payments);
+		//if (!ObjectUtils.isEmpty(assesments))
+			//dashboardData.setAssesments(assesments);
+		//if (!ObjectUtils.isEmpty(appeals))
+			//dashboardData.setAppeals(appeals);
 		if (!ObjectUtils.isEmpty(penalty))
 			dashboardData.setPenalty(penalty);
 		/*
@@ -400,12 +464,12 @@ public class DashboardDataService {
 		return cachedMap;
 	}
 
-	private ServiceWithProperties buildService(String type, List<Property> properties) {
+	private ServiceWithProperties buildService(String type, List<PropertyData> value) {
 
 		ServiceWithProperties swp = new ServiceWithProperties();
 		swp.setType(type);
-		swp.setProperties(CollectionUtils.isEmpty(properties) ? Collections.emptyList() : properties);
-		swp.setTotal(CollectionUtils.isEmpty(properties) ? 0 : properties.size());
+		swp.setProperties(CollectionUtils.isEmpty(value) ? Collections.emptyList() : value);
+		swp.setTotal(CollectionUtils.isEmpty(value) ? 0 : value.size());
 		return swp;
 	}
 

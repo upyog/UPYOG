@@ -15,6 +15,6 @@ import lombok.Setter;
 public class ServiceWithProperties {
 	private Integer total;
 	private String type = null;
-	private List<Property> properties;
+	private List<PropertyData> properties;
 
 }

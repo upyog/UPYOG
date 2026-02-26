@@ -18,6 +18,7 @@ import org.egov.pt.models.AppealCriteria;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.PropertyData;
 import org.egov.pt.models.collection.Payment;
 import org.egov.pt.models.collection.RevenuDataBucket;
 import org.egov.pt.service.AppealService;
@@ -35,7 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class PropertyRedisCache {
 
-    public static final String PREFIX = "PROPERTY:";
+    public static final String PREFIX = "PROPERTYDATA:";
     public static final String PREFIX_PAYMENT = "PAYMENT:";
     public static final String PREFIX_PENALTY = "PENALTY:";
     private static final Duration TTL = Duration.ofMinutes(30);
@@ -55,7 +56,7 @@ public class PropertyRedisCache {
         this.redisTemplate = redisTemplate;
     }
 
-    public Map<String, Property> multiGet(Map<String, String> propertyTenantMap) {
+    public Map<String, PropertyData> multiGet(Map<String, String> propertyTenantMap) {
 
     	List<String> keys = propertyTenantMap.entrySet().stream()
     	        .map(e -> PREFIX + e.getValue() + ":" + e.getKey())
@@ -65,14 +66,14 @@ public class PropertyRedisCache {
     	            new ArrayList<>(propertyTenantMap.entrySet());
         List<Object> values = redisTemplate.opsForValue().multiGet(keys);
 
-        Map<String, Property> result = new HashMap<>();
+        Map<String, PropertyData> result = new HashMap<>();
 
         if (values != null) {
             for (int i = 0; i < values.size(); i++) {
                 Object val = values.get(i);
                 if (val != null) {
                     String propertyId = entries.get(i).getKey();
-                    result.put(propertyId, (Property) val);
+                    result.put(propertyId, (PropertyData) val);
                     redisTemplate.expire(keys.get(i), TTL.toMinutes(), TimeUnit.MINUTES);
                 }
             }
