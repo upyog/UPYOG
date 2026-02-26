@@ -56,6 +56,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
+      <version>42.7.1</version>
     </dependency>
     <dependency>
     <groupId>com.google.guava</groupId>
@@ -157,12 +158,12 @@
     <repository>
       <id>repo.egovernments.org</id>
       <name>eGov ERP Releases Repository</name>
-      <url>https://nexus-repo.egovernments.org/nexus/content/repositories/releases/</url>
+      <url>https://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
     </repository>
     <repository>
       <id>repo.egovernments.org.snapshots</id>
       <name>eGov ERP Releases Repository</name>
-      <url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+      <url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
     </repository>
   </repositories>
   <build>
