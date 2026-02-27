@@ -4,7 +4,7 @@ import { Pie, Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 
 
-export const RevenueBasedDashboard = ({ dashboardData, filteredData }) => {
+export const RevenueBasedDashboard = ({ dashboardData, filteredData, resetTriggered }) => {
     
     const [tableList, setTableList] = useState([]);
     const [tableColumnList, setTableColumnList] = useState([]);
@@ -358,6 +358,34 @@ export const RevenueBasedDashboard = ({ dashboardData, filteredData }) => {
             // };
         });
     }
+
+    // Reset table-related state when parent `filteredData` changes (e.g., when Search is clicked)
+    useEffect(() => {
+      if (filteredData === null || filteredData === undefined) return;
+      setTableList([]);
+      setTableColumnList([]);
+      setPage(0);
+      setLimit(10);
+      setTotalCount(0);
+      setLoading(false);
+      setTableKey(undefined);
+      setIsShowTable(false);
+      setIsShowTableName(false);
+    }, [filteredData]);
+
+    // Also reset table when parent explicitly triggers a reset
+    useEffect(() => {
+      if (!resetTriggered) return;
+      setTableList([]);
+      setTableColumnList([]);
+      setPage(0);
+      setLimit(10);
+      setTotalCount(0);
+      setLoading(false);
+      setTableKey(undefined);
+      setIsShowTable(false);
+      setIsShowTableName(false);
+    }, [resetTriggered]);
 
     const totalPages = Math.ceil(totalCount / limit);
 

@@ -275,13 +275,13 @@ const EmployeeDashboard = (props) => {
                 <div className="tab-content">
                 {activeTab === "service" && (
                     <div className="tab-pane active" id="service">
-                        <ServiceBasedDashboard dashboardData={dashboardData} filteredData={filteredData} />
+                        <ServiceBasedDashboard dashboardData={dashboardData} filteredData={filteredData} resetTriggered={resetTriggered} />
                     </div>
                 )}
                 {activeTab === "revenue" && (
-                    <div className="tab-pane active" id="revenue">
-                        <RevenueBasedDashboard dashboardData={dashboardData} filteredData={filteredData} />
-                    </div>
+                  <div className="tab-pane active" id="revenue">
+                    <RevenueBasedDashboard dashboardData={dashboardData} filteredData={filteredData} resetTriggered={resetTriggered} />
+                  </div>
                 )}
                 </div>
             </div>
