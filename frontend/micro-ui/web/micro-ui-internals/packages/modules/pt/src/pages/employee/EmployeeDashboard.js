@@ -10,7 +10,7 @@ import { RevenueBasedDashboard } from "./RevenueBasedDashboard";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const EmployeeDashboard = (props) => {
-  console.log("EmployeeDashboard==", props);
+  // console.log("EmployeeDashboard==", props);
   let userRole = '';
   if(props?.userDetails && props?.userDetails.info && props?.userDetails.info?.roles) {
     props?.userDetails.info.roles.map((role)=>{
@@ -46,7 +46,7 @@ const EmployeeDashboard = (props) => {
     ],
   };
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
-  console.log("cities==", cities);
+  // console.log("cities==", cities);
   const [wardList, setWardList] = useState([]);
   const { t } = useTranslation();
   const [city, setCity] = useState(null);
@@ -60,18 +60,20 @@ const EmployeeDashboard = (props) => {
   const [dashboardData, setDashboardData] = useState(null);
   const [cityDisable, setCityDisable] = useState(false);
 
+  const [filteredData, setFilteredData] = useState(null);
+
   
 
   const formatDate = (data) => {
     const date = new Date(data);
     const formatted = date.toLocaleDateString("en-GB"); // dd/MM/yyyy
     const finalFormat = formatted.replaceAll("/", "-");
-    console.log(finalFormat); // "16-07-2025"
+    // console.log(finalFormat); // "16-07-2025"
     return finalFormat;
   };
   const onSearch = (e) => {
     e.preventDefault();
-    console.log("onSearch");
+    // console.log("onSearch");
     loadDashboardData();
   };
   const onReset = (e) => {
@@ -111,8 +113,9 @@ const EmployeeDashboard = (props) => {
         toDate: toDate ? formatDate(toDate) : null,
       };
       let dashboardData = await Digit.PTService.dashboardSearch(DashboardFilters);
-      console.log("dashboardData==", dashboardData);
+      // console.log("dashboardData==", dashboardData);
       setDashboardData(dashboardData?.Data)
+      setFilteredData(DashboardFilters)
       // if(wards?.TenantBoundary?.length>0)
       // setWardList(wards?.TenantBoundary[0]?.boundary || [])
     } catch (err) {
@@ -272,13 +275,13 @@ const EmployeeDashboard = (props) => {
                 <div className="tab-content">
                 {activeTab === "service" && (
                     <div className="tab-pane active" id="service">
-                        <ServiceBasedDashboard dashboardData={dashboardData} />
+                        <ServiceBasedDashboard dashboardData={dashboardData} filteredData={filteredData} resetTriggered={resetTriggered} />
                     </div>
                 )}
                 {activeTab === "revenue" && (
-                    <div className="tab-pane active" id="revenue">
-                        <RevenueBasedDashboard dashboardData={dashboardData} />
-                    </div>
+                  <div className="tab-pane active" id="revenue">
+                    <RevenueBasedDashboard dashboardData={dashboardData} filteredData={filteredData} resetTriggered={resetTriggered} />
+                  </div>
                 )}
                 </div>
             </div>
