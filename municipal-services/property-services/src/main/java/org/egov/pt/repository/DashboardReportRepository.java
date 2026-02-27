@@ -235,17 +235,26 @@ public class DashboardReportRepository {
 	
 	public List<PropertyData> getTotalPropertyPendingselfAssessedCount(DashboardRequest dashboardRequest)
 	{
+		Map<String, String> propertyTenantMap = new HashMap<>();
 		String query=reportQueryBuilder.getTotalPropertyPendingselfAssessmentQuery(dashboardRequest.getDashboardDataSearch());
-		List<String> propertyIdList = jdbcTemplate.query(
+		propertyTenantMap = jdbcTemplate.query(
 			    query,
-			    (rs, rowNum) -> rs.getString("propertyid")  
+			    rs -> {
+			        Map<String, String> map = new HashMap<>();
+			        while (rs.next()) {
+			            map.put(
+			                rs.getString("propertyid"),
+			                rs.getString("tenantid")
+			            );
+			        }
+			        return map;
+			    }
 			);
-		Set<String> propertyIds = new HashSet<>(propertyIdList);
-		PropertyCriteria criteria = new PropertyCriteria();
-		criteria.setPropertyIds(propertyIds);
-		List<PropertyData> properties=null;
-		//if(!CollectionUtils.isEmpty(propertyIds))
-		//	properties =  getPropertiesList (getPropertiesWithCache(dashboardRequest.getDashboardDataSearch().getTenantid(),propertyIds,dashboardRequest.getRequestInfo()));
+		
+		
+		List<PropertyData> properties = null;
+		if(!CollectionUtils.isEmpty(propertyTenantMap))
+			properties =  getPropertiesList (getPropertiesWithCache(propertyTenantMap,dashboardRequest));
 		
 		return properties;
 	}

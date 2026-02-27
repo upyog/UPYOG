@@ -143,7 +143,7 @@ public class DashboardReportQueryBuilder {
 			+ "FROM eg_pt_asmt_assessment epaa\r\n" + "JOIN eg_pt_property epp ON epaa.propertyid = epp.propertyid\r\n"
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n" + "WHERE epp.status = 'ACTIVE'";
 
-	public static final String PROPERTIES_PENDING_SELF_ASSESSMENT = "SELECT epp.propertyid AS propertyid\r\n"
+	public static final String PROPERTIES_PENDING_SELF_ASSESSMENT = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
 			+ "WHERE epp.propertyid NOT IN (\r\n" + "SELECT DISTINCT epaa.propertyid\r\n"
 			+ "    FROM eg_pt_asmt_assessment epaa WHERE epp.status = 'ACTIVE'\r\n" + ")";
