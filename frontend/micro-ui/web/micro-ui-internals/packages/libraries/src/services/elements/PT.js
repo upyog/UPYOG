@@ -152,6 +152,17 @@ export const PTService = {
           params: { },
         })
       },
+      dashboardPropertySearch: (filters, offset, pageLimit) => {
+        return  Request({
+          url: Urls.pt.dashboard_searchproperty,
+          data: { DashboardFilters: filters },
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          params: { offset, pageLimit},
+        })
+      },
   paymentsearch: ({ tenantId, filters, auth }) =>
     Request({
       url: Urls.pt.payment_search,

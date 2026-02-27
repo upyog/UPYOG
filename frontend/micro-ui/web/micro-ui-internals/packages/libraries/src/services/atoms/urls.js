@@ -93,6 +93,8 @@ const Urls = {
     notice_save: "/property-services/notice/_save",
     notice_search: "/property-services/notice/_search",
     dashboard_search: "/property-services/property/_dashboardDataSearch",
+    dashboard_searchproperty: "/property-services/property/_dashboardPropertyReports",
+    
   },
 
   dss: {
