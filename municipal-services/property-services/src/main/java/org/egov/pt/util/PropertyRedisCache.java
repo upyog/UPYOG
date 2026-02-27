@@ -36,7 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class PropertyRedisCache {
 
-    public static final String PREFIX = "PROPERTYDATA:";
+    public static final String PREFIX = "PROPERTYREPORT:";
     public static final String PREFIX_PAYMENT = "PAYMENT:";
     public static final String PREFIX_PENALTY = "PENALTY:";
     private static final Duration TTL = Duration.ofMinutes(30);
@@ -263,7 +263,7 @@ public class PropertyRedisCache {
 
 
 
-    public void put(String tenantId, String propertyId, Property response) {
+    public void put(String tenantId, String propertyId, PropertyData response) {
         String key = PREFIX + tenantId + ":" + propertyId;
         redisTemplate.opsForValue().set(key, response, TTL);
     }

@@ -451,9 +451,9 @@ public class DashboardDataService {
 				for (Property property : searchResponse) {
 
 					String propertyId = property.getPropertyId();
-
-					// cache each property
-					propertyRedisCache.put(tenantId, propertyId, property);
+					PropertyData propertyData= PropertyData.builder().propertyId(property.getPropertyId()).tenantId(property.getTenantId())
+                			.owners(property.getOwners()).address(property.getAddress()).auditDetails(property.getAuditDetails()).build();
+                    propertyRedisCache.put(property.getTenantId(), propertyId, propertyData);
 
 					// add to result
 					cachedMap.put(propertyId, property);

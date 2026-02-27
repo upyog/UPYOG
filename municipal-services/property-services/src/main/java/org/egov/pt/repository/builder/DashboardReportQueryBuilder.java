@@ -145,8 +145,8 @@ public class DashboardReportQueryBuilder {
 
 	public static final String PROPERTIES_PENDING_SELF_ASSESSMENT = "SELECT epp.propertyid AS propertyid\r\n"
 			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
-			+ "WHERE epp.propertyid NOT IN (\r\n" + "    SELECT DISTINCT epaa.propertyid\r\n"
-			+ "    FROM eg_pt_asmt_assessment epaa AND epp.status = 'ACTIVE'\r\n" + ")";
+			+ "WHERE epp.propertyid NOT IN (\r\n" + "SELECT DISTINCT epaa.propertyid\r\n"
+			+ "    FROM eg_pt_asmt_assessment epaa WHERE epp.status = 'ACTIVE'\r\n" + ")";
 
 	public static final String PROPERTIES_PAID = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid,ept.txn_id as txn_id ,ept.txn_amount as txn_amount,\r\n"
 			+ "ep.createdby as createdby,ep.createdtime as createdtime,ep.lastmodifiedby as lastmodifiedby,ep.lastmodifiedtime as lastmodifiedtime\r\n"

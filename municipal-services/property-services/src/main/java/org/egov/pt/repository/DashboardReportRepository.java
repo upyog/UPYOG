@@ -544,7 +544,7 @@ public class DashboardReportRepository {
 	                	PropertyData propertyData= PropertyData.builder().propertyId(property.getPropertyId()).tenantId(property.getTenantId())
 	                			.owners(property.getOwners()).address(property.getAddress()).auditDetails(property.getAuditDetails()).build();
 	                    String propertyId = property.getPropertyId();
-	                    propertyRedisCache.put(property.getTenantId(), propertyId, property);
+	                    propertyRedisCache.put(property.getTenantId(), propertyId, propertyData);
 	                    cachedMap.put(propertyId, propertyData);
 	                }
 	            }
