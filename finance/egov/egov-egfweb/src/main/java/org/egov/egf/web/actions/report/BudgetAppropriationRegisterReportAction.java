@@ -205,7 +205,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
                 dropdownData.put("executingDepartmentList", listOfDepartments);
 
-              List<CFunction> functionList =
+              List<BudgetDetail> functionList =
     budgetDetailService
         .getFunctionFromBudgetDetailByDepartmentId(
             department.getCode());
