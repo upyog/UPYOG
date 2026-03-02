@@ -185,7 +185,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             fund = (Fund) persistenceService.find(
                     "from Fund where id=?", fund.getId());
 
-            if (department.getCode() != null && !"-1".equals(department.getCode())) {
+            if (department.getCode() != null && !("-1".equals(department.getCode()))) {
 
                 department =
                     microserviceUtils.getDepartmentByCode(department.getCode());
@@ -206,7 +206,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                 dropdownData.put("executingDepartmentList", listOfDepartments);
 
               List<BudgetDetail> functionList =
-    budgetDetailService
+            		  	budgetDetailService
         .getFunctionFromBudgetDetailByDepartmentId(
             department.getCode());
 
@@ -396,7 +396,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
 	private String getDepartmentQuery(final String string) {
 		final String query = "";
-		if (department.getCode() != null && "-1".equals(department.getCode()))
+		if (department.getCode() != null && !("-1".equals(department.getCode())))
 			return " and " + string + " =:departmentcode ";
 		return query;
 	}
@@ -515,7 +515,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 			params.add(type);
 			params.add(Long.valueOf(budgetGroup.getId()));
 			params.add(Long.valueOf(financialYear.getId()));
-			if (department.getCode() != null && "-1".equals(department.getCode())) {
+			if (department.getCode() != null && !("-1".equals(department.getCode()))) {
 				query.append(" and bd.executingDepartment=?");
 				params.add(department.getCode());
 			}
