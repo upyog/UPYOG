@@ -1041,6 +1041,8 @@ function showHideMandataryMark(obj){
 	
 	if(obj.checked)
 	{
+		document.getElementById('manualReceiptNumber').style.backgroundColor = "";
+		document.getElementById('manualReceiptDate').style.backgroundColor = "";
 		document.getElementById('asteriskId').style.display="";
 		document.getElementById('manualReceiptNumber').disabled=false;
 		document.getElementById('manualReceiptDate').disabled=false;
@@ -1051,6 +1053,8 @@ function showHideMandataryMark(obj){
 	{
 		
 		document.getElementById('asteriskId').style.display="none";
+		document.getElementById('manualReceiptNumber').style.backgroundColor = "#eeeeee";
+		document.getElementById('manualReceiptDate').style.backgroundColor = "#eeeeee";
 		document.getElementById('manualReceiptNumber').value="";
 	    document.getElementById('manualReceiptDate').value="";
 		document.getElementById('manualReceiptNumber').disabled=true;
@@ -1064,7 +1068,7 @@ function showHideMandataryMark(obj){
 	<title><s:text name="billreceipt.pagetitle"/></title>
 </head>
 <!-- Area for error display -->
-<body><br>
+<body onload="showHideMandataryMark(document.getElementById('manualreceiptinfo'));"><br>
 
 
 <div class="errorstyle" id="receipt_error_area" style="display:none;"></div>
@@ -1211,9 +1215,9 @@ function showHideMandataryMark(obj){
 				<tr>
 				    <td class="bluebox" width="3%" ></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>
-					<td class="bluebox"><s:textfield label="manualReceiptNumber" id="manualReceiptNumber" maxlength="50" name="manualReceiptNumber" size="18" /></td>
+					<td class="bluebox" ><s:textfield style="background-color: #eeeeee;" label="manualReceiptNumber" id="manualReceiptNumber" maxlength="50" name="manualReceiptNumber" size="18" /></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptdate"/></td>
-					<td class="bluebox"><s:textfield id="manualReceiptDate" name="manualReceiptDate" cssClass="datepicker"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
+					<td class="bluebox" ><s:textfield style="background-color: #eeeeee;" id="manualReceiptDate" name="manualReceiptDate" size="18" cssClass="datepicker"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
 				</tr>
 			 </s:if>
 		

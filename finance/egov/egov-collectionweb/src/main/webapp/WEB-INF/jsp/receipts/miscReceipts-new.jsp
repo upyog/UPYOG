@@ -874,7 +874,11 @@ var totaldbamt=0,totalcramt=0;
         cell2.className='bluebox';
         cell2.width="50%";
         cell1.innerHTML = '<s:text name="miscreceipt.service" /><span class="mandatory"/>';
-        cell2.innerHTML = '<select name="serviceId" id="serviceId" onchange="loadFinDetails(this)"/>';
+        <!--cell2.innerHTML = '<select name="serviceId" id="serviceId" onchange="loadFinDetails(this)"/>';-->
+        cell2.innerHTML =
+            '<select name="serviceId" id="serviceId" class="selectwk" ' +
+            'style="width:100%" onchange="loadFinDetails(this)">' +
+            '</select>';
 		document.getElementById('serviceId').options.length=0;
 		document.getElementById('serviceId').options[0]= new Option('--------Choose--------','0');
 	
@@ -914,25 +918,9 @@ var totaldbamt=0,totalcramt=0;
 							maxlength="64" name="paidBy" value="%{payeeName}" /></td>
 				</tr>
 				<tr>
-					<td width="4%" class="bluebox">&nbsp;</td>
-
-					<td width="21%" class="bluebox"><s:text
-							name="miscreceipt.service.category" /><span class="mandatory" />
-					</td>
-					<td width="30%" class="bluebox"><s:select headerKey="-1"
-							headerValue="----Choose----" name="serviceCategory"
-							id="serviceCategoryid" cssClass="selectwk"
-							list="serviceCategoryNames" value="%{service.serviceCategory}"
-							onChange="populateServiceType(this.value);" /></td>
-					<td class="bluebox" colspan='2'>
-						<table width="100%" id='serviceTable'>
-						</table>
-					</td>
-				</tr>
-				<tr>
 					<td width="4%" class="bluebox2">&nbsp;</td>
 					<td class="bluebox" width="21%"><s:text
-							name="viewReceipt.Wardno" /><span class="mandatory1">*</span></td>
+							name="viewReceipt.wardno" /><span class="mandatory1">*</span></td>
 					<td width="30%" class="bluebox"><s:select headerKey=""
 							headerValue="----Choose----" name="wardNo" id="wardNoCode"
 							cssClass="selectwk" list="dropdownData.wardNoList"
@@ -943,6 +931,22 @@ var totaldbamt=0,totalcramt=0;
 							name="payeeAddress" id="payeeAddress" value="%{payeeAddress}"
 							cols="23" rows="1" maxlength="255"
 							onkeyup="return ismaxlength(this)" /></td>
+				</tr>
+				<tr>
+					<td width="4%" class="bluebox">&nbsp;</td>
+
+					<td width="21%" class="bluebox"><s:text
+							name="miscreceipt.service.category" /><span class="mandatory" />
+					</td>
+					<td width="30%" class="bluebox"><s:select headerKey="-1"
+							headerValue="----Choose----" name="serviceCategory"
+							id="serviceCategoryid" cssClass="selectwk"
+							list="serviceCategoryNames" value="%{service.serviceCategory}"
+							onChange="populateServiceType(this.value);" /></td>
+					<td class="bluebox2" colspan='2' cssClass="selectwk" >
+						<table width="100%" id='serviceTable'>
+						</table>
+					</td>
 				</tr>
 				<tr>
 					<s:if test="%{shouldShowHeaderField('field')}">

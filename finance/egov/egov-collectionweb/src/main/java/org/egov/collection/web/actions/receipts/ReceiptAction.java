@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -397,24 +398,20 @@ public class ReceiptAction extends BaseFormAction {
 				"receipt_ward_number");
 		
 		List<WardNumber> wardNos=new ArrayList<WardNumber>();
-		
 		for(AppConfigValues appValues: appConfigValuesList) {
 		  WardNumber wardNo=new WardNumber();
 		  wardNo.setWardNoCode(appValues.getValue());
 		  wardNo.setWardNoName(appValues.getValue());
 		  wardNos.add(wardNo);
 		}
-		
 		addDropdownData("wardNoList", wardNos);
-	
 	}
 
 	private void getFundList() {
 		List<Fund> funds=fundDAO.findAll();
 		  fundNames = funds.stream() .sorted(Comparator.comparing(fund ->
 		  fund.getName())) .collect(Collectors.toMap( fund -> fund.getName(), fund ->
-		  fund.getName(), (oldValue, newValue) -> oldValue, LinkedHashMap::new ));
-		 
+		  fund.getName(), (oldValue, newValue) -> oldValue, LinkedHashMap::new ));		 
 	}
 
 	private void getServiceCategoryList() {
@@ -439,6 +436,32 @@ public class ReceiptAction extends BaseFormAction {
 				serviceCategoryNames.put(splitSerCode[0], splitServName[0]);
 			}
 		}
+		serviceCategoryNames=serviceCategoryNames.entrySet()
+			                .stream()
+			                .sorted(Map.Entry.comparingByValue())
+			                .collect(Collectors.toMap(
+			                  Map.Entry::getKey,
+			                  Map.Entry::getValue,
+			                  (e1, e2) -> e1,
+			                  LinkedHashMap::new
+			       ));
+		
+		Map<String, Map<String, String>> sortedServiceTypeMap = new LinkedHashMap<>();
+		serviceTypeMap.forEach((outerKey, innerMap) -> {
+		    Map<String, String> sortedInner =
+		            innerMap.entrySet()
+		                    .stream()
+		                    .sorted(Map.Entry.comparingByValue()) 
+		                    .collect(Collectors.toMap(
+		                            Map.Entry::getKey,
+		                            Map.Entry::getValue,
+		                            (e1, e2) -> e1,
+		                            LinkedHashMap::new   
+		                    ));
+
+		    sortedServiceTypeMap.put(outerKey, sortedInner);
+		});
+		serviceTypeMap = sortedServiceTypeMap;
 	}
 
 	private String decodeBillXML() {
