@@ -16,7 +16,7 @@
   	<snapshotRepository>
       <id>repo.digit.org</id>
       <name>eGov ERP Snapshots Repository</name>
-      <url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
+      <url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
   <properties>
@@ -105,7 +105,7 @@
     <repository>
       <id>repo.digit.org</id>
       <name>eGov DIGIT Releases Repository</name>
-      <url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
+      <url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
     </repository>
   </repositories>
   <build>
