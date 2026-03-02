@@ -385,7 +385,7 @@ $('#subLedgerType').change(function () {
 					var responseObj = JSON.parse(response);
 					$.each(responseObj, function(index, value) {
 						var selected="";
-						$('#netPayableAccountCode').append($('<option '+ selected +'>').text(value.glcode + '-' +value.name + '~' + value.isSubLedger).attr('value', value.id));
+						$('#netPayableAccountCode').append($('<option '+ selected +'>').text(value.glcode + '-' +value.name ).attr('value', value.id));
 					});
 				});
 		
