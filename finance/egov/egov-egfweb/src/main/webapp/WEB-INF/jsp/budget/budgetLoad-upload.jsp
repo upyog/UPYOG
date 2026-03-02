@@ -107,7 +107,7 @@
                     const municipalityField = document.getElementById("municipalityName");
                     if (municipalityField) {
                         municipalityField.value = municipalityName;
-                        municipalityField.readOnly = true;   
+                        municipalityField.readOnly = false;   
                         municipalityField.style.background = "#edeaea"; 
                         municipalityField.style.cursor = "not-allowed";
                     }
@@ -406,7 +406,7 @@
 		    } 
 		    else if (current !== 0) {
 		    
-		    const change = ((current - last)) * 100;
+		    const change = ((current - last)) / 100;
 		        percentageInput.value = Math.round(change);
 		        
 		    } 
@@ -539,7 +539,7 @@
                     <div style="border: 2px solid #f3f0f0;  padding: 20px; margin-bottom: 20px; text-align: left;" >
                         <div class="form-group" style="text-align: left;">
                             <label for="municipalityName" >Name of Municipality</label><br>
-                            <input type="text" id="municipalityName" name="municipalityName" class="form-control" style="width:500px;" value=getMunicipality(); />
+                            <input type="text" id="municipalityName" name="municipalityName" class="form-control" style="width:500px;" />
                         </div>
                         <div class="form-group" style="text-align: left; margin-top: 10px;">
                             <label for="reYear">RE Year (YYYY-YY)</label><br>
