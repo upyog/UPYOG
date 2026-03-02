@@ -9,8 +9,8 @@ import { newConfig } from "../../../config/Create/config";
 import { checkArrayLength, stringReplaceAll,getSuperBuiltUpareafromob } from "../../../utils";
 
 const getPropertyEditDetails = (inputData = {}) => {
-  const data = JSON.parse(JSON.stringify(inputData)); 
-  console.log("datadatagetPropertyEditDetails",data)
+  let data = JSON.parse(JSON.stringify(inputData));
+  console.log("datadatagetPropertyEditDetails22222333",data)
   // converting owners details
   const getDocumentTypeCode = (documentType) => {
     if (typeof documentType === "string") return documentType;

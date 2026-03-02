@@ -7,12 +7,22 @@ const { Pool } = require('pg');
 const { log } = require("console");
 
 
+// const pool = new Pool({
+//   user: config.DB_USER,
+//   host: config.DB_HOST,
+//   database: config.DB_NAME,
+//   password: config.DB_PASSWORD,
+//   port: config.DB_PORT,
+// });
 const pool = new Pool({
   user: config.DB_USER,
   host: config.DB_HOST,
   database: config.DB_NAME,
   password: config.DB_PASSWORD,
   port: config.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 auth_token = config.auth_token;

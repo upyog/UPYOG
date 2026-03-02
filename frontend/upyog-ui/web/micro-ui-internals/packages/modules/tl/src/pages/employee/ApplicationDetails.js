@@ -274,6 +274,7 @@ const printCertificate = async () => {
     if (!licenseNumber) throw new Error("License not found");
 
     // Try DigiLocker (OPTIONAL)
+    let digiLockerSuccess = false;
     try {
       const tokenReq = { module: "TL", consumerCode: licenseNumber };
       const digiRes = await Digit.DigiLockerService.fileStoreSearch({ TokenReq: tokenReq });
@@ -289,6 +290,7 @@ const printCertificate = async () => {
         if (url) {
           window.open(url, "_blank");
           setIsDisplayDownloadMenu(false);
+          digiLockerSuccess = true;
           return; // SUCCESS via DigiLocker
         }
       }
@@ -296,25 +298,26 @@ const printCertificate = async () => {
       console.warn("DigiLocker lookup failed – falling back to local PDF", e);
     }
 
-    // Fallback path (always works)
-    const TLcertificatefile = await Digit.PaymentService.generatePdf(
-      tenantId,
-      { Licenses: res?.Licenses },
-      "tlcertificate"
-    );
+    // Fallback path: If DigiLocker failed or URL not available, download normally
+    if (!digiLockerSuccess) {
+      const TLcertificatefile = await Digit.PaymentService.generatePdf(
+        tenantId,
+        { Licenses: res?.Licenses },
+        "tlcertificate"
+      );
 
-    const receiptFile = await Digit.PaymentService.printReciept(
-      tenantId,
-      { fileStoreIds: TLcertificatefile.filestoreIds[0] }
-    );
+      const receiptFile = await Digit.PaymentService.printReciept(
+        tenantId,
+        { fileStoreIds: TLcertificatefile.filestoreIds[0] }
+      );
 
-    fetchDigiLockerDocuments(
-      receiptFile[TLcertificatefile.filestoreIds[0]],
-      TLcertificatefile.filestoreIds[0],
-      res
-    );
-
-    setIsDisplayDownloadMenu(false);
+      // Open the PDF directly in new tab
+      if (receiptFile[TLcertificatefile.filestoreIds[0]]) {
+        window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
+      }
+      
+      setIsDisplayDownloadMenu(false);
+    }
 
   } catch (err) {
     console.error("Certificate download failed completely", err);

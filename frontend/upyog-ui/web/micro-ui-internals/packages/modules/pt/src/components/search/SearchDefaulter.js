@@ -215,7 +215,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
     const records = Object.values(data?.Properties || {});
     if (!records.length) return;
 
-    const batches = chunkArray(records, 20);
+    const batches = chunkArray(records, 10);
 
     setJobStatus({
       running: true,

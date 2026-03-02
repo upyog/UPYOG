@@ -1132,7 +1132,7 @@ export const checkArrayLength = (obj = [], length = 0) => {
 export const getWorkflow = (data = {}) => {
   console.log("isEditPropertyisEditProperty",data.isEditProperty,getCreationReason(data))
   return {
-    action: data?.isEditProperty || getCreationReason(data) == "UPDATE"? "REOPEN" : "OPEN",
+    action: data?.isEditProperty || getCreationReason(data) == "UPDATE"? "OPEN" : "OPEN",
     businessService: `PT.${getCreationReason(data)}`,
     moduleName: "PT",
   };

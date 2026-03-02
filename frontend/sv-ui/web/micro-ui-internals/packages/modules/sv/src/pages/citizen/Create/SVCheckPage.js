@@ -147,7 +147,7 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
             />
             <Row
               label={t("SV_REGISTERED_MOB_NUMBER")}
-              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetails?.[0]?.mobileNo : owner?.vendorDetails?.mobileNo))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetails?.[0]?.mobileNo : owner?.vendorDetails?.mobileNumber))}`}
             />
 
             <Row
