@@ -248,6 +248,18 @@
             window.location = sUrl;
         }
 
+ function getMunicipality() {
+            try {
+                const tenantId = localStorage.getItem("tenant-id");
+                const empTenantId = localStorage.getItem("employee-tenant-id");
+                const municipalityName = empTenantId || tenantId || "";
+
+               return municipalityName;
+            } catch (err) {
+                console.error("Error populating Municipality Name:", err);
+            }
+        }
+
         function showEnterManually() {
             $('#enterManuallySection').show();
             $('#enterManuallyButton').hide();
@@ -388,12 +400,10 @@
 
             if (!percentageInput) return;
 
-            if (last !== 0) {
+            if (last !== 0 || current!=0) {
                 const change = ((current - last) / last) * 100;
                 //percentageInput.value = change.toFixed(2);
                 percentageInput.value = Math.round(change);  // No decimal points
-            } else if (current !== 0) {
-                percentageInput.value = "∞";
             } else {
                 percentageInput.value = "0";
             }
@@ -524,7 +534,7 @@
                     <div style="border: 2px solid #f3f0f0;  padding: 20px; margin-bottom: 20px; text-align: left;" >
                         <div class="form-group" style="text-align: left;">
                             <label for="municipalityName" >Name of Municipality</label><br>
-                            <input type="text" id="municipalityName" name="municipalityName" class="form-control" style="width:500px;" />
+                            <input type="text" id="municipalityName" name="municipalityName" class="form-control" style="width:500px;" value=getMunicipality(); />
                         </div>
                         <div class="form-group" style="text-align: left; margin-top: 10px;">
                             <label for="reYear">RE Year (YYYY-YY)</label><br>
