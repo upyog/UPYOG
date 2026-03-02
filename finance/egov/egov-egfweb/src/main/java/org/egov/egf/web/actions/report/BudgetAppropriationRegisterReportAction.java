@@ -211,13 +211,13 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                         .getFunctionFromBudgetDetailByDepartmentId(
                             department.getCode());
 
-                List<CFunction> functionList = new ArrayList<CFunction>();
+                List<BudgetDetail> functionList = new ArrayList<BudgetDetail>();
 
                 if (bdFunctionList != null && !bdFunctionList.isEmpty()) {
                     for (BudgetDetail bd : bdFunctionList) {
-                        if (bd.getFunction() != null
-                                && !functionList.contains(bd.getFunction())) {
-                            functionList.add(bd.getFunction());
+                        if (bd != null
+                                && !functionList.contains(bd)) {
+                            functionList.add(bd);
                         }
                     }
                 }
