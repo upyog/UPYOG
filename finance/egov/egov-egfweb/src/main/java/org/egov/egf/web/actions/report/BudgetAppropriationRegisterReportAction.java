@@ -205,24 +205,12 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
                 dropdownData.put("executingDepartmentList", listOfDepartments);
 
-                /* -------- Function dropdown -------- */
-                List<BudgetDetail> bdFunctionList =
-                    budgetDetailService
-                        .getFunctionFromBudgetDetailByDepartmentId(
-                            department.getCode());
+              List<CFunction> functionList =
+    budgetDetailService
+        .getFunctionFromBudgetDetailByDepartmentId(
+            department.getCode());
 
-                List<BudgetDetail> functionList = new ArrayList<BudgetDetail>();
-
-                if (bdFunctionList != null && !bdFunctionList.isEmpty()) {
-                    for (BudgetDetail bd : bdFunctionList) {
-                        if (bd != null
-                                && !functionList.contains(bd)) {
-                            functionList.add(bd);
-                        }
-                    }
-                }
-
-                dropdownData.put("functionList", functionList);
+				dropdownData.put("functionList", functionList);
                 if (function.getId() != null && function.getId() != -1) {
 
                     function = (CFunction) persistenceService.find(
