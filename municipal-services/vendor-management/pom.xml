@@ -162,7 +162,7 @@
     <repositories>
         <repository>
             <id>org.egov.common</id>
-            <url>https://nexus-repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+            <url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
@@ -175,3 +175,4 @@
         </plugins>
     </build>
 </project>
+
