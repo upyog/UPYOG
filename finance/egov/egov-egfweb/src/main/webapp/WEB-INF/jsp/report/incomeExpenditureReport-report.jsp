@@ -1,4 +1,3 @@
-
 <%--
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -162,6 +161,10 @@ function showSchedule(majorCode, scheduleNo){
 }
 </script>
 <style>
+/* Prevent misalignment caused by parent styles */
+		td.bluebox select {
+			width: 80% !important;
+		}
 th.bluebgheadtd {
 	padding: 0px;
 	margin: 0px;
@@ -182,16 +185,16 @@ th.bluebgheadtd {
 			<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="10%" class="bluebox">&nbsp;</td>
-					<td width="15%" class="bluebox"><s:text name="report.period" />:<span
+					<td width="5%" class="bluebox">&nbsp;</td>
+					<td width="8%" class="bluebox"><s:text name="report.period" />:<span
 						class="mandatory1">*</span></td>
 					<td width="22%" class="bluebox"><s:select name="period"
 							id="period"
 							list="#{'Select':'---Choose---','Date':'Date','Yearly':'Yearly','Half Yearly':'Half Yearly'}"
 							onclick="disableAsOnDate()" value="%{model.period}" /></td>
-					<td class="bluebox" width="12%"><s:text
+					<td class="bluebox" width="8%"><s:text
 							name="report.financialYear" />:<span class="mandatory1">*</span></td>
-					<td width="41%" class="bluebox"><s:select name="financialYear"
+					<td width="22%" class="bluebox"><s:select name="financialYear"
 							id="financialYear" list="dropdownData.financialYearList"
 							listKey="id" listValue="finYearRange" headerKey="0"
 							headerValue="%{getText('lbl.choose.options')}" value="%{model.financialYear.id}" />
@@ -208,16 +211,16 @@ th.bluebgheadtd {
 					</td> --%>
 					<td class="greybox"><s:text name="report.fromDate" />:</td>
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
-							cssStyle="width:100px" /><a
+							cssStyle="width:55%" /><a
 						href="javascript:show_calendar('incomeExpenditureReport.fromDate');"
-						style="text-decoration: none">&nbsp;<img
+						style="text-decoration: none; margin-left:15px; padding-right:7px;">&nbsp;<img
 							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
 					</td>
 					<td class="greybox"><s:text name="report.toDate" />:</td>
 					<td class="greybox"><s:textfield name="toDate" id="toDate"
-							cssStyle="width:100px" /><a
+							cssStyle="width:55%" /><a
 						href="javascript:show_calendar('incomeExpenditureReport.toDate');"
-						style="text-decoration: none">&nbsp;<img
+						style="text-decoration: none;  margin-left:15px; padding-right:7px;">&nbsp;<img
 							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
 					</td>
 					<%-- <td class="greybox"><s:text name="report.rupees" />:<span

@@ -248,18 +248,6 @@
             window.location = sUrl;
         }
 
- 		function getMunicipality() {
-            try {
-                const tenantId = localStorage.getItem("tenant-id");
-                const empTenantId = localStorage.getItem("employee-tenant-id");
-                const municipalityName = empTenantId || tenantId || "";
-
-               return municipalityName;
-            } catch (err) {
-                console.error("Error populating Municipality Name:", err);
-            }
-        }
-
         function showEnterManually() {
             $('#enterManuallySection').show();
             $('#enterManuallyButton').hide();
@@ -387,33 +375,55 @@
         });
 
 
-		function calculatePercentage(elem) {
-		    const row = elem.closest('tr');
-		    if (!row) return;
-		
-		    const lastInput = row.querySelector('[name$=".lastYearApproved"]');
-		    const currentInput = row.querySelector('[name$=".currentApproved"]');
-		    const percentageInput = row.querySelector('[name$=".percentageChange"]');
-		
-		    const last = parseFloat(lastInput?.value) || 0;
-		    const current = parseFloat(currentInput?.value) || 0;
-		
-		    if (!percentageInput) return;
-		
-		    if (last !== 0) {
-		        const change = ((current - last) / last) * 100;
-		        percentageInput.value = Math.round(change);
-		    } 
-		    else if (current !== 0) {
-		    
-		    const change = ((current - last)) / 100;
-		        percentageInput.value = Math.round(change);
-		        
-		    } 
-		    else {
-		        percentageInput.value = "0";
-		    }
-		}
+        function calculatePercentage(elem) {
+            const row = elem.closest('tr');
+            if (!row) return;
+
+            const lastInput = row.querySelector('[name$=".lastYearApproved"]');
+            const currentInput = row.querySelector('[name$=".currentApproved"]');
+            const percentageInput = row.querySelector('[name$=".percentageChange"]');
+            
+            // Getting the values 
+            const last = parseFloat(lastInput?.value) || 0;
+            const current = parseFloat(currentInput?.value) || 0;
+
+            if (!percentageInput) return;
+
+/*             if (last !== 0) {
+                const change = ((current - last) / last) * 100;
+                //percentageInput.value = change.toFixed(2);
+                percentageInput.value = Math.round(change);  // No decimal points
+            } else if (current !== 0) {
+                percentageInput.value = "∞";
+            } else {
+                percentageInput.value = "0";
+            } */
+
+            const lastValue = isNaN(last) ? 0 : last;
+            const currentValue = isNaN(current) ? 0 : current;
+
+            if (lastValue === 0 && currentValue === 0) {
+                percentageInput.value = "0";
+                return;
+            }
+
+            // Last year zero, current > 0 (new allocation)
+            if (lastValue === 0 && currentValue > 0) {
+                percentageInput.value = "100";
+                return;
+            }
+
+            // calculation
+            const change = ((currentValue - lastValue) / lastValue) * 100;
+
+            if (!isFinite(change) || isNaN(change)) {
+                percentageInput.value = "0";
+            } else {
+                percentageInput.value = Math.round(change);
+            }
+            
+        }
+
         function validateReYear(input) {
 			const errorMsg = document.getElementById('reYearError');
 			const submitBtn = document.getElementById('submitBtn');

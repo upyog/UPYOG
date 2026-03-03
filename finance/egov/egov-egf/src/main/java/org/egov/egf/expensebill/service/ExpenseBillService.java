@@ -226,14 +226,14 @@ public class ExpenseBillService {
         else
             egBillregister.getEgBillregistermis().setSubScheme(null);
 
-        if (isBillNumberGenerationAuto())
-            egBillregister.setBillnumber(getNextBillNumber(egBillregister));
-
         try {
             checkBudgetAndGenerateBANumber(egBillregister);
         } catch (final ValidationException e) {
             throw new ValidationException(e.getErrors());
         }
+        if (isBillNumberGenerationAuto())
+            egBillregister.setBillnumber(getNextBillNumber(egBillregister));
+
 
         final List<EgChecklists> checkLists = egBillregister.getCheckLists();
 

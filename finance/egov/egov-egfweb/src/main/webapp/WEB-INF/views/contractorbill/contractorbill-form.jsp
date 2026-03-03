@@ -52,9 +52,13 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <style>
+	.navbar-fixed-top{
+		background: #fff !important;
+	}
    .totals-bar {
-		  position: sticky;   
-		  top: 0;            
+		  position: fixed;   
+		  top: 50px; 
+		  width:97%;           
 		  z-index: 3;        
 		  display: flex;
 		  justify-content: flex-end;
