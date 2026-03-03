@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.config.scheduler.DashboardDataPush;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/property")
@@ -212,7 +214,7 @@ public class PropertyController {
     @RequestMapping(value = "/_dashboardDataSearch", method = RequestMethod.POST)
     public ResponseEntity<DashboardResponse> dashboardDataSearch(@Valid @RequestBody DashboardRequest dashboardRequest) {
     	
-    	List<DashboardData> dashboardDatas=dashboardDataService.dashboardDatas(dashboardRequest.getDashboardDataSearch());
+    	List<DashboardData> dashboardDatas=dashboardDataService.dashboardDatas(dashboardRequest.getDashboardDataSearch(),dashboardRequest.getRequestInfo());
     	DashboardResponse dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).responseInfo(
     			responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true)).build();
     	
@@ -229,26 +231,29 @@ public class PropertyController {
 	}
 	
 	
-	/*
-	 * @RequestMapping(value = "/_dashboardPropertyReports", method =
-	 * RequestMethod.POST) public ResponseEntity<?>
-	 * dashboardDataSearchProperties(@Valid @RequestBody DashboardRequest
-	 * dashboardRequest) throws Exception {
-	 * 
-	 * DashboardReport
-	 * dashboardDatas=dashboardDataService.dashboardDatasWithProperties(
-	 * dashboardRequest);
-	 * //if(dashboardRequest.getDashboardDataSearch().getIsReportDownload()) {
-	 * 
-	 * //return dashboardDataService.generateExcelResponse(dashboardDatas,
-	 * "dashboard-report.xlsx"); //} DashboardReportResponse
-	 * dashboardReportResponse=DashboardReportResponse.builder().dashboardReport(
-	 * dashboardDatas).
-	 * responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(
-	 * dashboardRequest.getRequestInfo(), true)).build();
-	 * 
-	 * return new ResponseEntity<>(dashboardReportResponse,HttpStatus.OK); }
-	 */
+	
+	@RequestMapping(value = "/_dashboardPropertyReports", method =
+	  RequestMethod.POST) public ResponseEntity<?>
+	  dashboardDataSearchProperties(@RequestParam(defaultValue = "20") Long pageLimit,@RequestParam(defaultValue = "10") Long offset ,@Valid @RequestBody DashboardRequest
+	  dashboardRequest) throws Exception {
+	  
+		if(!ObjectUtils.isEmpty(pageLimit) && !ObjectUtils.isEmpty(offset))
+		{
+			dashboardRequest.getDashboardDataSearch().setLimit(pageLimit);
+			dashboardRequest.getDashboardDataSearch().setOffset(offset);
+		}
+	  DashboardReport
+	  dashboardDatas=dashboardDataService.dashboardDatasWithProperties(dashboardRequest);
+	//  if(dashboardRequest.getDashboardDataSearch().getIsReportDownload()) {
+	  
+	  //return dashboardDataService.generateExcelResponse(dashboardDatas,"dashboard-report.xlsx"); //} 
+	  DashboardReportResponse  dashboardReportResponse=DashboardReportResponse.builder().dashboardReport(dashboardDatas).
+	  responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(
+	  dashboardRequest.getRequestInfo(), true)).build();
+	  
+	  return new ResponseEntity<>(dashboardReportResponse,HttpStatus.OK); 
+	  }
+	 
 	
 	@PostMapping("/_applicationData")
 	public ResponseEntity<PropertyResponse> searchApplication(

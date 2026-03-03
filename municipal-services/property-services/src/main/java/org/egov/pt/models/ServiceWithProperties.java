@@ -13,8 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceWithProperties {
-	private Integer total;
+	private BigInteger total;
 	private String type = null;
-	private List<Property> properties;
+	private List<PropertyData> properties;
 
 }
