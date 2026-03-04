@@ -47,46 +47,46 @@ const envVariables = {
     process.env.TRACER_ENABLE_REQUEST_LOGGING || false,
 
   //default host configurations
-  HOST_URL: process.env.HOST_URL || "https://dev.digit.org",
+  HOST_URL: process.env.HOST_URL || "https://dev.digit.org/",
 
   //logger configurations
   HTTP_CLIENT_DETAILED_LOGGING_ENABLED:
     process.env.HTTP_CLIENT_DETAILED_LOGGING_ENABLED || false,
 
   //workflow service configurations
-  EGOV_WORKFLOW_HOST: process.env.EGOV_WORKFLOW_HOST || "http://localhost:8089",
+  EGOV_WORKFLOW_HOST: process.env.EGOV_WORKFLOW_HOST || "http://localhost:8089/",
   // "https://dev.digit.org",
   EGOV_WORKFLOW_TRANSITION_ENDPOINT:
     process.env.EGOV_WORKFLOW_TRANSITION_PATH ||
-    "/egov-workflow-v2/egov-wf/process/_transition",
+    "egov-workflow-v2/egov-wf/process/_transition",
   BUSINESS_SERVICE: process.env.BUSINESS_SERVICE || "FIRENOC",
 
   //location service configurations
-  EGOV_LOCATION_HOST: process.env.EGOV_LOCATION_HOST || "http://localhost:8090",
+  EGOV_LOCATION_HOST: process.env.EGOV_LOCATION_HOST || "http://localhost:8090/",
   EGOV_LOCATION_CONTEXT_PATH:
-    process.env.EGOV_LOCATION_CONTEXT_PATH || "/egov-location/location/v11",
+    process.env.EGOV_LOCATION_CONTEXT_PATH || "egov-location/location/v11",
   EGOV_LOCATION_SEARCH_ENDPOINT:
-    process.env.EGOV_LOCATION_SEARCH_ENDPOINT || "/boundarys/_search",
+    process.env.EGOV_LOCATION_SEARCH_ENDPOINT || "boundarys/_search",
   EGOV_LOCATION_HIERARCHY_TYPE_CODE: process.env.EGOV_LOCATION || "REVENUE",
   EGOV_LOCATION_BOUNDARY_TYPE_CODE: process.env.EGOV_BOUNDARY || "Locality",
 
   //user service configurations
-  EGOV_USER_HOST: process.env.EGOV_USER_HOST || "http://localhost:8081",
+  EGOV_USER_HOST: process.env.EGOV_USER_HOST || "http://localhost:8081/",
   //"https://dev.digit.org",
-  EGOV_USER_CONTEXT_PATH: process.env.EGOV_USER_CONTEXT_PATH || "/user",
+  EGOV_USER_CONTEXT_PATH: process.env.EGOV_USER_CONTEXT_PATH || "user",
   EGOV_USER_CREATE_ENDPOINT:
-    process.env.EGOV_USER_CREATE_ENDPOINT || "/users/_createnovalidate",
+    process.env.EGOV_USER_CREATE_ENDPOINT || "users/_createnovalidate",
   EGOV_USER_SEARCH_ENDPOINT:
-    process.env.EGOV_USER_SEARCH_ENDPOINT || "/_search",
+    process.env.EGOV_USER_SEARCH_ENDPOINT || "_search",
   EGOV_USER_UPDATE_ENDPOINT:
-    process.env.EGOV_USER_UPDATE_ENDPOINT || "/users/_updatenovalidate",
+    process.env.EGOV_USER_UPDATE_ENDPOINT || "users/_updatenovalidate",
   EGOV_USER_USERNAME_PREFIX: process.env.EGOV_USER_USERNAME_PREFIX || "FN-",
 
   //idgen service configurations
-  EGOV_IDGEN_HOST: process.env.EGOV_IDGEN_HOST || "http://localhost:8087",
-  EGOV_IDGEN_CONTEXT_PATH: process.env.EGOV_IDGEN_CONTEXT_PATH || "/egov-idgen",
+  EGOV_IDGEN_HOST: process.env.EGOV_IDGEN_HOST || "http://localhost:8087/",
+  EGOV_IDGEN_CONTEXT_PATH: process.env.EGOV_IDGEN_CONTEXT_PATH || "egov-idgen",
   EGOV_IDGEN_GENERATE_ENPOINT:
-    process.env.EGOV_IDGEN_GENERATE_ENPOINT || "/id/_generate",
+    process.env.EGOV_IDGEN_GENERATE_ENPOINT || "id/_generate",
   EGOV_IDGEN_FN_APPLICATION_NO_NAME:
     process.env.EGOV_IDGEN_FN_APPLICATION_NO_NAME ||
     "fn.fireNOCDetails.applicationNumber",
@@ -99,45 +99,45 @@ const envVariables = {
 
   //mdms service configurations
   EGOV_MDMS_HOST:
-    process.env.EGOV_MDMS_HOST || "https://dev.digit.org",
+    process.env.EGOV_MDMS_HOST || "https://dev.digit.org/",
   EGOV_MDMS_CONTEXT_PATH:
-    process.env.EGOV_MDMS_CONTEXT_PATH || "/egov-mdms-service/v1",
-  EGOV_MDMS_SEARCH_ENPOINT: process.env.EGOV_MDMS_SEARCH_ENPOINT || "/_search",
+    process.env.EGOV_MDMS_CONTEXT_PATH || "egov-mdms-service/v1",
+  EGOV_MDMS_SEARCH_ENPOINT: process.env.EGOV_MDMS_SEARCH_ENPOINT || "_search",
 
   //event service configurations
   EGOV_EVENT_HOST:
-    process.env.EGOV_EVENT_HOST || "https://dev.digit.org",
+    process.env.EGOV_EVENT_HOST || "https://dev.digit.org/",
   EGOV_EVENT_CONTEXT_PATH:
-    process.env.EGOV_EVENT_CONTEXT_PATH || "/egov-user-event/v1/events",
+    process.env.EGOV_EVENT_CONTEXT_PATH || "egov-user-event/v1/events",
   EGOV_EVENT_CREATE_ENPOINT:
-    process.env.EGOV_EVENT_CREATE_ENPOINT || "/_create",
+    process.env.EGOV_EVENT_CREATE_ENPOINT || "_create",
 
   //firenoc calcultor service configurations
   EGOV_FN_CALCULATOR_HOST:
-    process.env.EGOV_FN_CALCULATOR_HOST || "http://localhost:8083",
+    process.env.EGOV_FN_CALCULATOR_HOST || "http://localhost:8083/",
   EGOV_FN_CALCULATOR_CONTEXT_PATH:
-    process.env.EGOV_FN_CALCULATOR_CONTEXT_PATH || "/firenoc-calculator/v1",
+    process.env.EGOV_FN_CALCULATOR_CONTEXT_PATH || "firenoc-calculator/v1",
   EGOV_FN_CALCULATOR_CALCULATOR_ENPOINT:
-    process.env.EGOV_FN_CALCULATOR_CALCULATOR_ENPOINT || "/_calculate",
+    process.env.EGOV_FN_CALCULATOR_CALCULATOR_ENPOINT || "_calculate",
   EGOV_FN_CALCULATOR_GETBILL_ENPOINT:
-    process.env.EGOV_FN_GETBILLE_CALCULATOR_ENPOINT || "/_getbill",
+    process.env.EGOV_FN_GETBILLE_CALCULATOR_ENPOINT || "_getbill",
 
   //property service configurations
   EGOV_PROPERTY_HOST:
-    process.env.EGOV_PROPERTY_HOST || "https://dev.digit.org",
+    process.env.EGOV_PROPERTY_HOST || "https://dev.digit.org/",
   EGOV_PROPERTY_CONTEXT_PATH:
-    process.env.EGOV_PROPERTY_CONTEXT_PATH || "/pt-services-v2/property",
+    process.env.EGOV_PROPERTY_CONTEXT_PATH || "pt-services-v2/property",
   EGOV_PROPERTY_SEARCH_ENPOINT:
-    process.env.EGOV_PROPERTY_SEARCH_ENPOINT || "/_search",
+    process.env.EGOV_PROPERTY_SEARCH_ENPOINT || "_search",
 
   //localization service configurations
   EGOV_LOCALIZATION_HOST:
     process.env.EGOV_LOCALIZATION_HOST ||
-    "https://dev.digit.org",
+    "https://dev.digit.org/",
   EGOV_LOCALIZATION_CONTEXT_PATH:
-    process.env.EGOV_LOCALIZATION_CONTEXT_PATH || "/localization/messages/v1",
+    process.env.EGOV_LOCALIZATION_CONTEXT_PATH || "localization/messages/v1",
   EGOV_LOCALIZATION_SEARCH_ENPOINT:
-    process.env.EGOV_LOCALIZATION_SEARCH_ENPOINT || "/_search",
+    process.env.EGOV_LOCALIZATION_SEARCH_ENPOINT || "_search",
   EGOV_LOCALIZATION_STATE_LEVEL:
     process.env.EGOV_LOCALIZATION_STATE_LEVEL || true,
 
