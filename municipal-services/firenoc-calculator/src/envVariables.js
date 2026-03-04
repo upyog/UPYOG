@@ -17,39 +17,39 @@ const envVariables = {
 
   //mdms urls
   EGOV_MDMS_HOST:
-    process.env.EGOV_MDMS_HOST || "https://dev.digit.org",
+    process.env.EGOV_MDMS_HOST || "https://dev.digit.org/",
   EGOV_MDMS_SEARCH_ENDPOINT:
-    process.env.EGOV_MDMS_SEARCH_ENDPOINT || "/egov-mdms-service/v1/_search",
+    process.env.EGOV_MDMS_SEARCH_ENDPOINT || "egov-mdms-service/v1/_search",
 
   BUSINESSSERVICE: process.env.BUSINESSSERVICE || "FIRENOC",
 
   //firenoc service
   EGOV_FIRENOC_SERVICE_HOST:
     process.env.EGOV_FIRENOC_SERVICE_HOST ||
-    "https://dev.digit.org",
+    "https://dev.digit.org/",
   EGOV_FIRENOC_SEARCH_ENDPOINT:
     process.env.EGOV_FIRENOC_SEARCH_ENDPOINT || "firenoc-services/v1/_search",
 
   //billing sercice urls
   EGOV_BILLINGSERVICE_HOST:
-    process.env.EGOV_BILLINGSERVICE_HOST || "http://localhost:8084",
+    process.env.EGOV_BILLINGSERVICE_HOST || "http://localhost:8084/",
   EGOV_TAXHEAD_SEARCH_ENDPOINT:
     process.env.EGOV_TAXHEAD_SEARCH_ENDPOINT ||
-    "/billing-service/taxheads/_search",
+    "billing-service/taxheads/_search",
   EGOV_TAXPERIOD_SEARCH_ENDPOINT:
     process.env.EGOV_TAXPERIOD_SEARCH_ENDPOINT ||
-    "/billing-service/taxperiods/_search",
+    "billing-service/taxperiods/_search",
   EGOV_DEMAND_CREATE_ENDPOINT:
     process.env.EGOV_DEMAND_CREATE_ENDPOINT ||
-    "/billing-service/demand/_create",
+    "billing-service/demand/_create",
   EGOV_DEMAND_UPDATE_ENDPOINT:
     process.env.EGOV_DEMAND_UPDATE_ENDPOINT ||
-    "/billing-service/demand/_update",
+    "billing-service/demand/_update",
   EGOV_DEMAND_SEARCH_ENDPOINT:
     process.env.EGOV_DEMAND_SEARCH_ENDPOINT ||
-    "/billing-service/demand/_search",
+    "billing-service/demand/_search",
   EGOV_BILL_GEN_ENDPOINT:
-    process.env.EGOV_BILL_GEN_ENDPOINT || "/billing-service/bill/_generate",
+    process.env.EGOV_BILL_GEN_ENDPOINT || "billing-service/bill/_generate",
   TAXABLE_TAXHEADS: process.env.TAXABLE_TAXHEADS || ["FIRENOC_FEES"],
   DEBIT_TAXHEADS: process.env.DEBIT_TAXHEADS || ["FIRENOC_ADHOC_REBATE"],
 
