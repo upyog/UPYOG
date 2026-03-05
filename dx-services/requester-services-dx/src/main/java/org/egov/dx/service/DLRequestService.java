@@ -45,6 +45,10 @@ import io.micrometer.core.ipc.http.HttpSender.Request;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.client.HttpClientErrorException;
+
 @Service
 @Slf4j
 public class DLRequestService {
@@ -228,8 +232,26 @@ public class DLRequestService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         
-        Object userOauth= restTemplate.postForEntity(configurations.getUserHost() + configurations.getUserEndpoint(), createUserRequest, Object.class).getBody();
-        return userOauth;
+//        Object userOauth= restTemplate.postForEntity(configurations.getUserHost() + configurations.getUserEndpoint(), createUserRequest, Object.class).getBody();
+//        return userOauth;
+        try {
+            String url = configurations.getUserHost() + configurations.getUserEndpoint();
+            log.info("Making POST request to URL: {}", url);
+            log.info("Request body: {}", createUserRequest);
+            Object userOauth = restTemplate.postForEntity(url, createUserRequest, Object.class).getBody();     
+            log.info("Received response: {}", userOauth);
+            return userOauth;
+            
+        } catch (HttpClientErrorException e) {
+            
+            log.error("HttpClientErrorException occurred while calling URL: {}", configurations.getUserHost() + configurations.getUserEndpoint());
+            log.error("Error response: {}", e.getResponseBodyAsString(), e);
+            throw e;  
+        } catch (Exception e) {
+            
+            log.error("An unexpected error occurred while calling URL: {}", configurations.getUserHost() + configurations.getUserEndpoint(), e);
+            throw e;  
+        }
     }
     
     public HttpEntity<String> decryptReq(List<String> decReqObject){
