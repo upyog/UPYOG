@@ -62,6 +62,14 @@
 	#bankcodescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
 	#bankcodescontainer li.yui-ac-highlight {background:#ff0;}
 	#bankcodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
+	.inputTd {
+    width: 220px;
+}
+
+.fixedInput {
+    width: 200px;
+    background-color: #eeeeee;
+}
 </style>
 <script type="text/javascript">
 

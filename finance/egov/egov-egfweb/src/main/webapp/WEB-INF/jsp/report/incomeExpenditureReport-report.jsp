@@ -162,19 +162,22 @@ function showSchedule(majorCode, scheduleNo){
 </script>
 <style>
 /* Prevent misalignment caused by parent styles */
-		td.bluebox select {
+		select {
 			width: 80% !important;
 		}
-th.bluebgheadtd {
-	padding: 0px;
-	margin: 0px;
-}
-
-.extracontent {
-	font-weight: bold;
-	font-size: xx-small;
-	color: #CC0000;
-}
+		input {
+		 width : 80% 
+		}
+		th.bluebgheadtd {
+			padding: 0px;
+			margin: 0px;
+		}
+		
+		.extracontent {
+			font-weight: bold;
+			font-size: xx-small;
+			color: #CC0000;
+		}
 </style>
 <div id="non-printable">
 	<s:form name="incomeExpenditureReport" action="incomeExpenditureReport"
@@ -210,18 +213,30 @@ th.bluebgheadtd {
 							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
 					</td> --%>
 					<td class="greybox"><s:text name="report.fromDate" />:</td>
-					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
-							cssStyle="width:55%" /><a
-						href="javascript:show_calendar('incomeExpenditureReport.fromDate');"
-						style="text-decoration: none; margin-left:15px; padding-right:7px;">&nbsp;<img
-							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
+					<td class="greybox">
+					    <s:textfield 
+					        id="fromDate"
+					        name="fromDate"
+					        value="%{incomeExpenditureReport.fromDate}"
+					        data-date-end-date="0d"
+					        onkeyup="DateFormat(this,this.value,event,false,'3')"
+					        placeholder="DD/MM/YYYY"
+					        cssClass="form-control datepicker"
+					        data-inputmask="'mask': 'd/m/y'"
+					        autocomplete="off"/>
 					</td>
 					<td class="greybox"><s:text name="report.toDate" />:</td>
-					<td class="greybox"><s:textfield name="toDate" id="toDate"
-							cssStyle="width:55%" /><a
-						href="javascript:show_calendar('incomeExpenditureReport.toDate');"
-						style="text-decoration: none;  margin-left:15px; padding-right:7px;">&nbsp;<img
-							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
+					<td class="greybox">
+					    <s:textfield 
+					        id="toDate"
+					        name="toDate"
+					        value="%{incomeExpenditureReport.toDate}"
+					        data-date-end-date="0d"
+					        onkeyup="DateFormat(this,this.value,event,false,'3')"
+					        placeholder="DD/MM/YYYY"
+					        cssClass="form-control datepicker"
+					        data-inputmask="'mask': 'd/m/y'"
+					        autocomplete="off"/>
 					</td>
 					<%-- <td class="greybox"><s:text name="report.rupees" />:<span
 						class="mandatory1">*</span></td>

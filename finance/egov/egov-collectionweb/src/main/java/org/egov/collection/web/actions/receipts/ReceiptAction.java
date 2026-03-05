@@ -409,7 +409,7 @@ public class ReceiptAction extends BaseFormAction {
 
 	private void getFundList() {
 		List<Fund> funds=fundDAO.findAll();
-		  fundNames = funds.stream() .sorted(Comparator.comparing(fund ->
+		  fundNames = funds.stream().filter(f->f.getIsactive()).sorted(Comparator.comparing(fund ->
 		  fund.getName())) .collect(Collectors.toMap( fund -> fund.getName(), fund ->
 		  fund.getName(), (oldValue, newValue) -> oldValue, LinkedHashMap::new ));		 
 	}

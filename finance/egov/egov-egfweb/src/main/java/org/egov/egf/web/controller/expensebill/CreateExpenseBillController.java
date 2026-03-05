@@ -80,6 +80,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.DocumentUpload;
 import org.egov.model.bills.EgBillregister;
@@ -91,6 +92,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -240,7 +242,14 @@ public class CreateExpenseBillController extends BaseBillController {
 				egBillregister.getBillPayeedetails().clear();
 				prepareBillDetailsForView(egBillregister);
 				prepareValidActionListByCutOffDate(model);
-				resultBinder.reject("", e.getErrors().get(0).getMessage());
+				for (ValidationError error : e.getErrors()) {
+
+			        resultBinder.addError(
+			                new ObjectError("egBillregister",
+			                        error.getMessage())
+			        );
+			    }
+				resultBinder.reject(null, e.getErrors().get(0).getMessage());
 				return EXPENSEBILL_FORM;
 			}
 			final String approverName = String.valueOf(request.getParameter("approverName"));

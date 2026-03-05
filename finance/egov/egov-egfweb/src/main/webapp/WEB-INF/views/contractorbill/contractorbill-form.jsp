@@ -58,7 +58,7 @@
    .totals-bar {
 		  position: fixed;   
 		  top: 50px; 
-		  width:97%;           
+		  width:96%;           
 		  z-index: 3;        
 		  display: flex;
 		  justify-content: flex-end;
@@ -111,7 +111,7 @@
 	    </div>
     </div>
 
-     <div class="tab-pane fade in active" id="contractorbillheader">
+     <div class="tab-pane fade in active" id="contractorbillheader" style="margin-top:60px">
          <jsp:include page="contractorbill-header.jsp"/>
          <div class="panel panel-primary" data-collapsed="0">
           <jsp:include page="contractor-accountcode-tempate.jsp"/>
