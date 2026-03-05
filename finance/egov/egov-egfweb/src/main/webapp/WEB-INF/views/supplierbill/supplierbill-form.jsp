@@ -51,36 +51,29 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<style>
-    .position_alert {
-        position: fixed;
-        z-index: 9999;
-        top: 50px;
-        right: 20px;
-        background: #F2DEDE;
-        padding: 10px 20px;
-        border-radius: 5px;
-    }
-
-    .position_alert1 {
-        position: fixed;
-        z-index: 9999;
-        top: 50px;
-        right: 520px;
-        background: #F2DEDE;
-        padding: 10px 20px;
-        border-radius: 5px;
-    }
-
-    .position_alert2 {
-        position: fixed;
-        z-index: 9999;
-        top: 50px;
-        right: 270px;
-        background: #F2DEDE;
-        padding: 10px 20px;
-        border-radius: 5px;
-    }
+<style>   
+		.navbar-fixed-top{
+			background: #fff !important;
+		}
+		.totals-bar {
+		  position: fixed;   
+		  top: 50;  
+		  width: 96%;          
+		  z-index: 3;        
+		  display: flex;
+		  justify-content: flex-end;
+		  gap: 16px;
+		  padding: 8px 12px;
+		  margin-bottom:5px;
+		  background: #fff;
+		}
+		
+		.total-box {
+		  background: #F2DEDE;
+		  padding: 8px 12px;
+		  border-radius: 5px;
+		  white-space: nowrap;
+		}
 </style>
     <form:form name="supplierBillForm" role="form" method="post" action="create" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 
@@ -90,21 +83,7 @@
 	</div>
 </c:if>
 	
-    <div class="position_alert">
-        <spring:message code="lbl.netpayable.amount" text="Net Payable Amount"/>
-        : &#8377 <span id="supplierNetPayableAmount"><c:out
-            value="${supplierNetPayableAmount}" default="0.0"></c:out></span>
-    </div>
-    <div class="position_alert1">
-        <spring:message code="lbl.total.debit.amount" text="Total Debit Amount"/>
-        : &#8377 <span id="supplierBillTotalDebitAmount"> <c:out
-            value="${supplierBillTotalDebitAmount}" default="0.0"></c:out></span>
-    </div>
-    <div class="position_alert2">
-        <spring:message code="lbl.total.deduction.amount" text="Total Deduction Amount"/>
-        : &#8377 <span id="supplierBillTotalCreditAmount"> <c:out
-            value="${supplierBillTotalCreditAmount}" default="0.0"></c:out></span>
-    </div>
+    
 
     <form:hidden path="" id="cutOffDate" value="${cutOffDate}"/>
     <form:hidden path="" name="mode" id="mode" value="${mode}"/>
@@ -122,8 +101,26 @@
             <br/>
         </div>
     </spring:hasBindErrors>
+    
+     <div class="totals-bar">
+	    	<div class="total-box">
+	        <spring:message code="lbl.total.debit.amount" text="Total Debit Amount"/>
+	        : &#8377; <span id="supplierBillTotalDebitAmount"> <c:out
+	            value="${supplierBillTotalDebitAmount}" default="0.0"></c:out></span>
+	    </div>
+	    <div class="total-box">
+	        <spring:message code="lbl.total.deduction.amount" text="Total Deduction Amount"/>
+	        : &#8377; <span id="supplierBillTotalCreditAmount"> <c:out
+	            value="${supplierBillTotalCreditAmount}" default="0.0"></c:out></span>
+	    </div>
+	    <div class="total-box">
+	        <spring:message code="lbl.netpayable.amount" text="Net Payable Amount"/>
+	        : &#8377; <span id="supplierNetPayableAmount"><c:out
+	            value="${supplierNetPayableAmount}" default="0.0"></c:out></span>
+	    </div>
+  	</div>
 
-     <div class="tab-pane fade in active" id="supplierbillheader">
+     <div class="tab-pane fade in active" id="supplierbillheader" style="margin-top:60px">
          <jsp:include page="supplierbill-header.jsp"/>
            <div class="panel panel-primary" data-collapsed="0">
            <jsp:include page="supplier-accountcodetemplate.jsp"/>    

@@ -12,6 +12,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Receipt {
     @SafeHtml
@@ -77,9 +78,22 @@ public class Receipt {
     @SafeHtml
     private String transactionNumber;
     
+    @JsonIgnore
+    @SafeHtml
+    @JsonProperty("additionalDetails")
+    private JsonNode additionalDetails;
+    
     private String service;
 
-    public String getService() {
+    public JsonNode getAdditionalDetails() {
+		return additionalDetails;
+	}
+
+	public void setAdditionalDetails(JsonNode additionalDetails) {
+		this.additionalDetails = additionalDetails;
+	}
+
+	public String getService() {
         return service;
     }
 

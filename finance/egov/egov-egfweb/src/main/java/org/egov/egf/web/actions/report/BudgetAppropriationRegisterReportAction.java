@@ -185,7 +185,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             fund = (Fund) persistenceService.find(
                     "from Fund where id=?", fund.getId());
 
-            if (department.getCode() != null && !"-1".equals(department.getCode())) {
+            if (department.getCode() != null && !("-1".equals(department.getCode()))) {
 
                 department =
                     microserviceUtils.getDepartmentByCode(department.getCode());
@@ -205,24 +205,12 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
                 dropdownData.put("executingDepartmentList", listOfDepartments);
 
-                /* -------- Function dropdown -------- */
-                List<BudgetDetail> bdFunctionList =
-                    budgetDetailService
-                        .getFunctionFromBudgetDetailByDepartmentId(
-                            department.getCode());
+              List<BudgetDetail> functionList =
+            		  	budgetDetailService
+        .getFunctionFromBudgetDetailByDepartmentId(
+            department.getCode());
 
-                List<CFunction> functionList = new ArrayList<CFunction>();
-
-                if (bdFunctionList != null && !bdFunctionList.isEmpty()) {
-                    for (BudgetDetail bd : bdFunctionList) {
-                        if (bd.getFunction() != null
-                                && !functionList.contains(bd.getFunction())) {
-                            functionList.add(bd.getFunction());
-                        }
-                    }
-                }
-
-                dropdownData.put("functionList", functionList);
+				dropdownData.put("functionList", functionList);
                 if (function.getId() != null && function.getId() != -1) {
 
                     function = (CFunction) persistenceService.find(
@@ -362,7 +350,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 					.append("  order by bdgApprNumber ");
 
 			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("BudgetAppropriationRegisterReportAction -- strsubQuery...." + strsubQuery);
+				LOGGER.info("BudgetAppropriationRegisterReportAction -- strsubQuery...." + strsubQuery);
 
 			query = persistenceService.getSession().createSQLQuery(strsubQuery.toString()).addScalar("bdgApprNumber")
 					.addScalar("voucherDate", StandardBasicTypes.DATE).addScalar("billDate", StandardBasicTypes.DATE)
@@ -408,7 +396,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
 	private String getDepartmentQuery(final String string) {
 		final String query = "";
-		if (department.getCode() != null && "-1".equals(department.getCode()))
+		if (department.getCode() != null && !("-1".equals(department.getCode())))
 			return " and " + string + " =:departmentcode ";
 		return query;
 	}
@@ -527,7 +515,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 			params.add(type);
 			params.add(Long.valueOf(budgetGroup.getId()));
 			params.add(Long.valueOf(financialYear.getId()));
-			if (department.getCode() != null && "-1".equals(department.getCode())) {
+			if (department.getCode() != null && !("-1".equals(department.getCode()))) {
 				query.append(" and bd.executingDepartment=?");
 				params.add(department.getCode());
 			}
@@ -620,9 +608,18 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 		if (fund.getId() != null && fund.getId() != -1) {
 			query.setParameter("fundId", Long.valueOf(fund.getId()), LongType.INSTANCE);
 		}
-		if (budgetGroup.getMinCode().getId() != null) {
-			query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), LongType.INSTANCE);
+		
+		
+		if (budgetGroup != null && budgetGroup.getMinCode() != null && budgetGroup.getMinCode().getId() != null) {
+
+		    query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), LongType.INSTANCE);
+
+		} else {
+
+		    throw new RuntimeException("glCodeId is mandatory but not found for Budget Group : " 
+		        + (budgetGroup != null ? budgetGroup.getName() : "NULL"));
 		}
+		
 		if (asOnDate != null) {
 			query.setParameter("strAODate", asOnDate, DateType.INSTANCE);
 		}

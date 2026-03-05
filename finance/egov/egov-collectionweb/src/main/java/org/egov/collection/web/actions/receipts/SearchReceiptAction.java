@@ -226,12 +226,15 @@ public class SearchReceiptAction extends SearchFormAction {
         
 
         for (Receipt receipt : receipts) {
-
+        	
+        	
             for (org.egov.infra.microservice.models.Bill bill : receipt.getBill()) {
 
                 for (BillDetail billDetail : bill.getBillDetails()) {
-
                     ReceiptHeader receiptHeader = new ReceiptHeader();
+                    JsonNode additionalDetails = receipt.getAdditionalDetails();
+                	receiptHeader.setWardNo(additionalDetails.get("wardNo").asText());
+                    receiptHeader.setFund(additionalDetails.get("fundName").asText());
                     receiptHeader.setPaymentId(receipt.getPaymentId());
                     receiptHeader.setReceiptnumber(billDetail.getReceiptNumber());
                     receiptHeader.setReceiptdate(new Date(billDetail.getReceiptDate()));

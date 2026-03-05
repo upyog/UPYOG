@@ -1633,6 +1633,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public List<Payment> generatePayments(ReceiptHeader receiptHeader, List<BillV2> billList) {
         List<PaymentDetail> paymentDetails = new ArrayList<>();
         ObjectNode emptyJsonNode = new ObjectMapper().createObjectNode();
+        emptyJsonNode.put("wardNo", receiptHeader.getWardNo());
+        emptyJsonNode.put("fundName", receiptHeader.getFund());
         billList.stream().forEach(bill -> {
             PaymentDetail pd = PaymentDetail.builder()
                     .billId(bill.getId())

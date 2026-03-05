@@ -101,13 +101,13 @@
             try {
                 const tenantId = localStorage.getItem("tenant-id");
                 const empTenantId = localStorage.getItem("employee-tenant-id");
-                const municipalityName = empTenantId || tenantId || "";
+                const municipalityName = empTenantId || tenantId || "Enter Name of ULB";
 
                 if (municipalityName) {
                     const municipalityField = document.getElementById("municipalityName");
                     if (municipalityField) {
                         municipalityField.value = municipalityName;
-                        municipalityField.readOnly = true;   
+                        municipalityField.readOnly = false;   
                         municipalityField.style.background = "#edeaea"; 
                         municipalityField.style.cursor = "not-allowed";
                     }
@@ -382,13 +382,14 @@
             const lastInput = row.querySelector('[name$=".lastYearApproved"]');
             const currentInput = row.querySelector('[name$=".currentApproved"]');
             const percentageInput = row.querySelector('[name$=".percentageChange"]');
-
+            
+            // Getting the values 
             const last = parseFloat(lastInput?.value) || 0;
             const current = parseFloat(currentInput?.value) || 0;
 
             if (!percentageInput) return;
 
-            if (last !== 0) {
+/*             if (last !== 0) {
                 const change = ((current - last) / last) * 100;
                 //percentageInput.value = change.toFixed(2);
                 percentageInput.value = Math.round(change);  // No decimal points
@@ -396,7 +397,31 @@
                 percentageInput.value = "∞";
             } else {
                 percentageInput.value = "0";
+            } */
+
+            const lastValue = isNaN(last) ? 0 : last;
+            const currentValue = isNaN(current) ? 0 : current;
+
+            if (lastValue === 0 && currentValue === 0) {
+                percentageInput.value = "0";
+                return;
             }
+
+            // Last year zero, current > 0 (new allocation)
+            if (lastValue === 0 && currentValue > 0) {
+                percentageInput.value = "100";
+                return;
+            }
+
+            // calculation
+            const change = ((currentValue - lastValue) / lastValue) * 100;
+
+            if (!isFinite(change) || isNaN(change)) {
+                percentageInput.value = "0";
+            } else {
+                percentageInput.value = Math.round(change);
+            }
+            
         }
 
         function validateReYear(input) {

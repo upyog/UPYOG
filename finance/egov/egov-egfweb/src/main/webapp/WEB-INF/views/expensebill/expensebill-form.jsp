@@ -52,53 +52,38 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <style>
-    .position_alert {
-        position: fixed;
-        z-index: 9999;
-        top: 85px;
-        right: 20px;
-        background: #F2DEDE;
-        padding: 10px 20px;
-        border-radius: 5px;
-    }
-
-    .position_alert1 {
-        position: fixed;
-        z-index: 9999;
-        top: 85px;
-        right: 520px;
-        background: #F2DEDE;
-        padding: 10px 20px;
-        border-radius: 5px;
-    }
-
-    .position_alert2 {
-        position: fixed;
-        z-index: 9999;
-        top: 85px;
-        right: 270px;
-        background: #F2DEDE;
-        padding: 10px 20px;
-        border-radius: 5px;
-    }
+		.navbar{
+			background-color:#fff !important;
+		 }
+		
+		.header-row {
+		  position: sticky;
+		  top: 50px;
+		  z-index: 3;
+		  display: flex;
+		  justify-content: space-between; 
+		  align-items: center;             
+		  gap: 16px;                      
+		  flex-wrap: wrap;                
+		  margin-bottom: 12px;   
+		  background: #fff;          
+		}
+		   
+		.totals-bar {       
+		  display: flex;
+		  justify-content: flex-end;
+		  gap: 16px;
+		  padding: 8px 12px;
+		}
+		
+		.total-box {
+		  background: #F2DEDE;
+		  padding: 8px 12px;
+		  border-radius: 5px;
+		  white-space: nowrap;
+		}
 </style>
     <form:form name="expenseBillForm" role="form" method="post" action="create" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	
-    <div class="position_alert">
-        <spring:message code="lbl.netpayable.amount" text="Net Payable Amount"/>
-        : &#8377 <span id="expenseNetPayableAmount"><c:out
-            value="${expenseNetPayableAmount}" default="0.0"></c:out></span>
-    </div>
-    <div class="position_alert1">
-        <spring:message code="lbl.total.debit.amount" text="Total Debit Amount"/>
-        : &#8377 <span id="expenseBillTotalDebitAmount"> <c:out
-            value="${expenseBillTotalDebitAmount}" default="0.0"></c:out></span>
-    </div>
-    <div class="position_alert2">
-        <spring:message code="lbl.total.credit.amount" text="Total Credit Amount"/>
-        : &#8377 <span id="expenseBillTotalCreditAmount"> <c:out
-            value="${expenseBillTotalCreditAmount}" default="0.0"></c:out></span>
-    </div>
 
     <form:hidden path="" id="cutOffDate" value="${cutOffDate}"/>
     <form:hidden path="" name="mode" id="mode" value="${mode}"/>
@@ -119,13 +104,36 @@
             <br/>
         </div>
     </spring:hasBindErrors>
-    <ul class="nav nav-tabs" id="settingstab">
-        <li class="active"><a data-toggle="tab" href="#expensebillheader"
-                              data-tabidx=0><spring:message code="lbl.header" text="Header"/></a></li>
-        <li><a data-toggle="tab" href="#checklist" data-tabidx=1><spring:message
-                code="lbl.checklist" text="CheckList"/> </a></li>
-    </ul>
-
+    <div class='header-row'>
+		    <ul class="nav nav-tabs" id="settingstab">
+		        <li class="active"><a data-toggle="tab" href="#expensebillheader"
+		                              data-tabidx=0><spring:message code="lbl.header" text="Header"/></a></li>
+		        <li><a data-toggle="tab" href="#checklist" data-tabidx=1><spring:message
+		                code="lbl.checklist" text="CheckList"/> </a></li>
+		   	 </ul>
+		   	 <div class="totals-bar">
+			    <div class="total-box">
+			      <spring:message code="lbl.total.debit.amount" text="Total Debit Amount"/>
+			      : &#8377; <span id="expenseBillTotalDebitAmount">
+			        <c:out value="${expenseBillTotalDebitAmount}" default="0.0"></c:out>
+			      </span>
+			    </div>
+			
+			    <div class="total-box">
+			      <spring:message code="lbl.total.credit.amount" text="Total Credit Amount"/>
+			      : &#8377; <span id="expenseBillTotalCreditAmount">
+			        <c:out value="${expenseBillTotalCreditAmount}" default="0.0"></c:out>
+			      </span>
+			    </div>
+			    <div class="total-box">
+			      <spring:message code="lbl.netpayable.amount" text="Net Payable Amount"/>
+			      : &#8377; <span id="expenseNetPayableAmount">
+			        <c:out value="${expenseNetPayableAmount}" default="0.0"></c:out>
+			      </span>
+			    </div>
+  			</div>
+    </div>
+    
     <div class="tab-content">
         <div class="tab-pane fade in active" id="expensebillheader">
             <jsp:include page="expensebill-header.jsp"/>

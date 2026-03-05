@@ -51,15 +51,19 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -68,6 +72,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.egov.collection.bean.WardNumber;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.ReceiptDetail;
@@ -109,6 +114,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -274,6 +280,9 @@ public class ReceiptAction extends BaseFormAction {
 	private String serviceCategory;
 	private String serviceIdText;
 	private String serviceTypeId;
+	
+	private String fund;
+    private String wardNo;
 
 	@Autowired
 	private transient FundHibernateDAO fundDAO;
@@ -312,9 +321,15 @@ public class ReceiptAction extends BaseFormAction {
 
 	@Autowired
 	protected transient EgovMasterDataCaching masterDataCache;
+	
+	@Autowired
+	private AppConfigValueService appConfigValuesService;
 
 	private transient Map<String, String> serviceCategoryNames = new HashMap<>();
 	private transient Map<String, Map<String, String>> serviceTypeMap = new HashMap<>();
+	private transient Map<String, String> fundNames = new HashMap<>();
+	private transient Map<String, String> wardNos = new HashMap<>();
+	
 	private String[] selectedPayments;
 
 	@Override
@@ -323,6 +338,8 @@ public class ReceiptAction extends BaseFormAction {
 		BillInfoImpl collDetails;
 		// populates model when request is from the billing system
 		this.getServiceCategoryList();
+		this.getFundList();
+		this.getWardNoList();
 		if (getCollectXML() != null && !getCollectXML().isEmpty()) {
 			final String decodedCollectXML = decodeBillXML();
 			try {
@@ -376,6 +393,27 @@ public class ReceiptAction extends BaseFormAction {
 			instrumentCount = instrumentProxyList.size();
 	}
 
+	private void getWardNoList() {
+		List<AppConfigValues> appConfigValuesList =appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+				"receipt_ward_number");
+		
+		List<WardNumber> wardNos=new ArrayList<WardNumber>();
+		for(AppConfigValues appValues: appConfigValuesList) {
+		  WardNumber wardNo=new WardNumber();
+		  wardNo.setWardNoCode(appValues.getValue());
+		  wardNo.setWardNoName(appValues.getValue());
+		  wardNos.add(wardNo);
+		}
+		addDropdownData("wardNoList", wardNos);
+	}
+
+	private void getFundList() {
+		List<Fund> funds=fundDAO.findAll();
+		  fundNames = funds.stream().filter(f->f.getIsactive()).sorted(Comparator.comparing(fund ->
+		  fund.getName())) .collect(Collectors.toMap( fund -> fund.getName(), fund ->
+		  fund.getName(), (oldValue, newValue) -> oldValue, LinkedHashMap::new ));		 
+	}
+
 	private void getServiceCategoryList() {
 		List<BusinessService> businessService = microserviceUtils.getBusinessService("Finance");
 		for (BusinessService bs : businessService) {
@@ -398,6 +436,32 @@ public class ReceiptAction extends BaseFormAction {
 				serviceCategoryNames.put(splitSerCode[0], splitServName[0]);
 			}
 		}
+		serviceCategoryNames=serviceCategoryNames.entrySet()
+			                .stream()
+			                .sorted(Map.Entry.comparingByValue())
+			                .collect(Collectors.toMap(
+			                  Map.Entry::getKey,
+			                  Map.Entry::getValue,
+			                  (e1, e2) -> e1,
+			                  LinkedHashMap::new
+			       ));
+		
+		Map<String, Map<String, String>> sortedServiceTypeMap = new LinkedHashMap<>();
+		serviceTypeMap.forEach((outerKey, innerMap) -> {
+		    Map<String, String> sortedInner =
+		            innerMap.entrySet()
+		                    .stream()
+		                    .sorted(Map.Entry.comparingByValue()) 
+		                    .collect(Collectors.toMap(
+		                            Map.Entry::getKey,
+		                            Map.Entry::getValue,
+		                            (e1, e2) -> e1,
+		                            LinkedHashMap::new   
+		                    ));
+
+		    sortedServiceTypeMap.put(outerKey, sortedInner);
+		});
+		serviceTypeMap = sortedServiceTypeMap;
 	}
 
 	private String decodeBillXML() {
@@ -673,6 +737,9 @@ public class ReceiptAction extends BaseFormAction {
 			receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
 			receiptHeader.setSource(Source.SYSTEM.toString());
 			receiptHeader.setModOfPayment(instrumentType);
+			receiptHeader.setWardNo(wardNo);
+			receiptHeader.setFund(fund);
+			
 
 			if (setInstrument) {
 				receiptInstrList = populateInstrumentDetails();
@@ -709,7 +776,7 @@ public class ReceiptAction extends BaseFormAction {
 		// billing system
 		ReceiptResponse receiptResponse = receiptHeaderService.populateAndPersistReceipts(receiptHeader,
 				receiptInstrList);
-
+        System.out.println(receiptResponse);
 		message = "Receipt created with receipt number: "
 				+ receiptResponse.getReceipts().get(0).getBill().get(0).getBillDetails().get(0).getReceiptNumber();
 		// populate all receipt header ids except the cancelled receipt
@@ -1028,7 +1095,9 @@ public class ReceiptAction extends BaseFormAction {
 				Arrays.asList(selectedReceipts));
 
 		receiptlist.stream().forEach(receipt -> {
-
+			JsonNode additionalDetails=receipt.getAdditionalDetails();
+			receiptHeader.setWardNo(additionalDetails.get("wardNo").asText());
+			receiptHeader.setFund(additionalDetails.get("fundName").asText());
 			receipt.getBill().forEach(bill -> {
 				LOGGER.info("bill:"+bill);
 				BigDecimal totalAmountPaid = BigDecimal.ZERO;
@@ -1437,8 +1506,18 @@ public class ReceiptAction extends BaseFormAction {
 	 *
 	 * @return
 	 */
+	
+	
 	public BigDecimal getMinimumAmount() {
 		return null;
+	}
+
+	public Map<String, String> getFundNames() {
+		return fundNames;
+	}
+
+	public void setFundNames(Map<String, String> fundNames) {
+		this.fundNames = fundNames;
 	}
 
 	public Boolean getOverrideAccountHeads() {
@@ -2051,4 +2130,22 @@ public class ReceiptAction extends BaseFormAction {
 	public void setServiceTypeId(final String serviceType) {
 		serviceTypeId = serviceType;
 	}
+
+	public String getFund() {
+		return fund;
+	}
+
+	public void setFund(String fund) {
+		this.fund = fund;
+	}
+
+	public String getWardNo() {
+		return wardNo;
+	}
+
+	public void setWardNo(String wardNo) {
+		this.wardNo = wardNo;
+	}
+	
+	
 }
