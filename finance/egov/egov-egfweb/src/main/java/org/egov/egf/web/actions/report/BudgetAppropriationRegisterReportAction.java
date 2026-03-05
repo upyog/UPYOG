@@ -610,16 +610,16 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 		}
 		
 		
+		if (budgetGroup != null && budgetGroup.getMinCode() != null && budgetGroup.getMinCode().getId() != null) {
 
-		if (budgetGroup != null && budgetGroup.getMinCode() != null)
-			{
-			LOGGER.info("Inside ==" + budgetGroup.getMinCode());
-			if(budgetGroup.getMinCode().getId() != null) {
-			LOGGER.info("Inside 2 ==");
+		    query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), LongType.INSTANCE);
 
-			query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), LongType.INSTANCE);
-			}
-			}
+		} else {
+
+		    throw new RuntimeException("glCodeId is mandatory but not found for Budget Group : " 
+		        + (budgetGroup != null ? budgetGroup.getName() : "NULL"));
+		}
+		
 		if (asOnDate != null) {
 			query.setParameter("strAODate", asOnDate, DateType.INSTANCE);
 		}
