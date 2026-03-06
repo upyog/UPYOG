@@ -33,7 +33,9 @@ const getStorage = (storageClass) => ({
       expiry: Date.now() + ttl * 1000,
     };
     if (localStoreSupport()) {
-      storageClass.setItem(k(key), JSON.stringify(item));
+      let stItem = JSON.stringify(item)
+     
+      storageClass.setItem(k(key), stItem);
     } else if (typeof window !== "undefined") {
       window.eGov = window.eGov || {};
       window.eGov.Storage = window.eGov.Storage || {};

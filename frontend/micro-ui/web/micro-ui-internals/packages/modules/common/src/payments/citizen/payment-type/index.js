@@ -12,7 +12,8 @@ import {
   Loader,
   Toast,
   CardText,
-} from "@egovernments/digit-ui-react-components";
+  Modal,
+} from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
@@ -22,8 +23,10 @@ import { makePayment } from "./payGov";
 
 export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
+  // console.log("SelectPaymentType==",state)
   const userInfo = Digit.UserService.getUser();
   const [showToast, setShowToast] = useState(null);
+  const [isSubmit, setIsSubmit] = useState(false)
   const { tenantId: __tenantId, authorization, workflow: wrkflow , consumerCode : connectionNo } = Digit.Hooks.useQueryParams();
   const paymentAmount = state?.paymentAmount;
   const { t } = useTranslation();
@@ -34,6 +37,7 @@ export const SelectPaymentType = (props) => {
   const tenantId = state?.tenantId || __tenantId || Digit.ULBService.getCurrentTenantId();
   const propertyId = state?.propertyId;
   const stateTenant = Digit.ULBService.getStateId();
+  const [showModal, setShowModal] = useState(false);
   const { control, handleSubmit } = useForm();
   const { data: menu, isLoading } = Digit.Hooks.useCommonMDMS(stateTenant, "DIGIT-UI", "PaymentGateway");
   const { data: paymentdetails, isLoading: paymentLoading } = Digit.Hooks.useFetchPayment(
@@ -53,8 +57,16 @@ export const SelectPaymentType = (props) => {
   const { name, mobileNumber } = state;
 
   const billDetails = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
-
+  const [paymentType, setPaymentType] = useState(null);
+  const confirmPayment = (data) => {
+    setPaymentType(data?.paymentType);
+    setShowModal(true);
+  }
   const onSubmit = async (d) => {
+    console.log("payment type selected==", d);
+
+    setShowModal(false);
+    setIsSubmit(true)
     const filterData = {
       Transaction: {
         tenantId: billDetails?.tenantId,
@@ -63,7 +75,7 @@ export const SelectPaymentType = (props) => {
         billId: billDetails.id,
         consumerCode: consumerCode,
         productInfo: "Common Payment",
-        gateway: d?.paymentType || "AXIS",
+        gateway: paymentType || "AXIS",
         taxAndPayments: [
           {
             billId: billDetails.id,
@@ -78,7 +90,8 @@ export const SelectPaymentType = (props) => {
         // success
         callbackUrl: window.location.href.includes("mcollect") || wrkflow === "WNS"
           ? `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
-          : `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${propertyId}`,
+          : `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${consumerCode}`,
+          // `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${propertyId}`,
         additionalDetails: {
           isWhatsapp: false,
         },
@@ -87,6 +100,8 @@ export const SelectPaymentType = (props) => {
 
     try {
       const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
+      // console.log("createCitizenReciept==",data,d)
+      // console.log("=========",JSON.stringify(data));
       const redirectUrl = data?.Transaction?.redirectUrl;
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
@@ -104,8 +119,9 @@ export const SelectPaymentType = (props) => {
               curr[d[0]] = d[1];
               return curr;
             }, {});
+            // console.log("gatewayParam==",JSON.stringify(gatewayParam))
           var newForm = $("<form>", {
-            action: gatewayParam.txURL,
+            action: gatewayParam?.txURL,
             method: "POST",
             target: "_top",
           });
@@ -139,7 +155,7 @@ export const SelectPaymentType = (props) => {
 
           // var formdata = new FormData();
 
-          for (var key of orderForNDSLPaymentSite) {
+          for (let key of orderForNDSLPaymentSite) {
 
             // formdata.append(key,gatewayParam[key]);
 
@@ -151,18 +167,17 @@ export const SelectPaymentType = (props) => {
               })
             );
           }
+          // console.log("newForm===",newForm)
           $(document.body).append(newForm);
           newForm.submit();
-
-
-          // makePayment(gatewayParam.txURL,formdata);
+          makePayment(gatewayParam.txURL,formdata);
 
         } catch (e) {
           console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
         }
       }
-      window.location = redirectUrl;
+      // window.location = redirectUrl;
     } catch (error) {
       let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
       if (error.response?.data?.Errors?.[0]) {
@@ -186,7 +201,7 @@ export const SelectPaymentType = (props) => {
   return (
     <React.Fragment>
       <BackButton>{t("CS_COMMON_BACK")}</BackButton>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(confirmPayment)}>
         <Header>{t("PAYMENT_CS_HEADER")}</Header>
         <Card>
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
@@ -202,7 +217,7 @@ export const SelectPaymentType = (props) => {
               render={(props) => <RadioButtons selectedOption={props.value} options={menu} onSelect={props.onChange} />}
             />
           )}
-          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} />}
+          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} disabled={isSubmit} />}
         </Card>
       </form>
       <InfoBanner label={t("CS_COMMON_INFO")} text={t("CS_PAYMENT_REDIRECT_NOTICE")} />
@@ -215,6 +230,38 @@ export const SelectPaymentType = (props) => {
           }}
         />
       )}
+      {showModal && (
+        <Modal
+          header="Confirm Payment"
+          onClose={() => setShowModal(false)}
+          actionCancelOnSubmit={() => setShowModal(false)}
+          actionSaveOnSubmit={onSubmit}
+          actionCancelLabel="Cancel"
+          actionCancelOnClick={() => setShowModal(false)}
+          actionSaveLabel="Proceed"
+          actionSaveOnClick={onSubmit}
+        >
+          <p style={{padding: "10px"}}>Are you sure you want to proceed with payment?</p>
+        </Modal>
+        // <div className="modal-overlay">
+        //   <div className="modal">
+        //     <div className="modal-header">
+        //       <h4 className="modal-title">Confirm Payment</h4>
+        //       <button onClick={() => setShowModal(false)}>×</button>
+        //     </div>
+
+        //     <div className="modal-body">
+        //       <p>Are you sure you want to proceed with payment?</p>
+        //     </div>
+
+        //     <div className="modal-footer">
+        //       <button onClick={() => setShowModal(false)}>Cancel</button>
+        //       <button onClick={handleConfirmPayment}>Ok</button>
+        //     </div>
+        //   </div>
+        // </div>
+      )}
+
     </React.Fragment>
   );
 };

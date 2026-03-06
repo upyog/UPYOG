@@ -1,6 +1,7 @@
 package org.egov.pt.calculator.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -395,6 +396,37 @@ public class PayService {
 					.taxHeadCode(CalculatorConstants.PT_ROUNDOFF).build();
 		else
 			return null;
+	}
+	
+	public TaxHeadEstimate calculateRoundOff(BigDecimal totalAmount) {
+	    BigDecimal roundOffPos = BigDecimal.ZERO;
+	    BigDecimal roundOffNeg = BigDecimal.ZERO;
+
+	    BigDecimal amount = totalAmount.setScale(2, RoundingMode.HALF_UP);
+
+	    BigDecimal ten = new BigDecimal("10");
+	    BigDecimal remainder = amount.remainder(ten);
+
+	    
+	    if (remainder.compareTo(new BigDecimal("5")) >= 0) {
+	        roundOffPos = ten.subtract(remainder);
+	    } else if (remainder.compareTo(BigDecimal.ZERO) > 0) {
+	        roundOffNeg = remainder.negate();
+	    }
+
+	    if (roundOffPos.compareTo(BigDecimal.ZERO) > 0) {
+	        return TaxHeadEstimate.builder()
+	                .estimateAmount(roundOffPos)
+	                .taxHeadCode(CalculatorConstants.PT_ROUNDOFF)
+	                .build();
+	    } else if (roundOffNeg.compareTo(BigDecimal.ZERO) < 0) {
+	        return TaxHeadEstimate.builder()
+	                .estimateAmount(roundOffNeg)
+	                .taxHeadCode(CalculatorConstants.PT_ROUNDOFF)
+	                .build();
+	    } else {
+	        return null;
+	    }
 	}
 
 	public TaxHeadEstimate roundOffDecimals(BigDecimal amount,BigDecimal totalRoundOffAmount) {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 
@@ -26,6 +26,8 @@ const ApplicationDetails = (props) => {
 
   const {
     applicationDetails,
+    assmentSearchData,
+    userRole,
     showToast,
     setShowToast,
     isLoading,
@@ -48,6 +50,8 @@ const ApplicationDetails = (props) => {
     isInfoLabel = false,
     clearDataDetails
   } = props;
+  console.log("applicationDetails===53---",applicationDetails);
+  console.log("workflowDetails===",workflowDetails)
   
   useEffect(() => {
     if (showToast) {
@@ -208,6 +212,8 @@ const ApplicationDetails = (props) => {
               state={state}
               id={applicationNumber}
               applicationDetails={applicationDetails}
+              assmentSearchData={assmentSearchData}
+              userRole={userRole}
               applicationData={applicationDetails?.applicationData}
               closeModal={closeModal}
               submitAction={submitAction}

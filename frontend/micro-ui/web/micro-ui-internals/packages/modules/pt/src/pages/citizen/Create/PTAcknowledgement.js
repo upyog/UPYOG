@@ -1,7 +1,7 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link,useHistory, useRouteMatch } from "react-router-dom";
 import getPTAcknowledgementData from "../../../getPTAcknowledgementData";
 import { convertToProperty, convertToUpdateProperty } from "../../../utils";
 
@@ -33,7 +33,11 @@ const BannerPicker = (props) => {
   );
 };
 
+let isBifurcation = false;
+let bifurcationDetails=null;
+
 const PTAcknowledgement = ({ data, onSuccess }) => {
+  // console.log("PTAcknowledgement===data==",data)
   const { t } = useTranslation();
   const isPropertyMutation = window.location.href.includes("property-mutation");
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -44,17 +48,23 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
+  const history = useHistory();
+  if(data && data?.bifurcationDetails?.action=="BIFURCATION") {
+    bifurcationDetails = data?.bifurcationDetails;
+    isBifurcation = true;
+    
+  }
+
 
   useEffect(() => {
     try {
       let tenantId = isPropertyMutation ? data.Property?.address.tenantId : data?.address?.city ? data.address?.city?.code : tenantId;
       data.tenantId = tenantId;
-      let formdata = !window.location.href.includes("edit-application")
-        ? isPropertyMutation
-          ? data
-          : convertToProperty(data)
-        : convertToUpdateProperty(data,t);
+      let formdata = !window.location.href.includes("edit-application") ? isPropertyMutation ? data : convertToProperty(data) : convertToUpdateProperty(data,t);
       formdata.Property.tenantId = formdata?.Property?.tenantId || tenantId;
+      console.log("isPropertyMutation==",isPropertyMutation,data)
+      console.log("formdata==========",formdata);
+      // return;
       mutation.mutate(formdata, {
         onSuccess,
       });
@@ -74,6 +84,10 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     const data = await getPTAcknowledgementData({ ...Property }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
+  const addMoreProperty = ()=> {
+    history.push({pathname: "/digit-ui/citizen/pt/property/new-application", state: bifurcationDetails})
+
+  }
 
   return mutation.isLoading || mutation.isIdle ? (
     <Loader />
@@ -87,7 +101,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
           label={
             <div className="response-download-button">
               <span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#a82227">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#0f4f9e">
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                 </svg>
               </span>
@@ -112,9 +126,17 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
           <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")}/>
       </Link>} */}
       {mutation.isSuccess && <SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
-      <Link to={`/digit-ui/citizen`}>
-        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>
+      {
+        isBifurcation && mutation?.data?.Properties[0]?.bifurcationCount<2 && <a href="javascript:void(0)" onClick={addMoreProperty}>
+          <LinkButton label={t("Add One More Property To Complete Separation of Ownership")} />
+        </a>
+      }
+      {
+        (!isBifurcation || mutation?.data?.Properties[0]?.bifurcationCount>1) && <Link to={`/digit-ui/citizen`}>
+          <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      }
+      
     </Card>
   );
 };

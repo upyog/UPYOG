@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Card, CardHeader, SubmitBar, CitizenInfoLabel, CardText, Loader, CardSubHeader, BackButton, BreadCrumb, Header, CardLabel, CardSectionHeader, CardCaption, ActionBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardHeader, SubmitBar, CitizenInfoLabel, CardText, Loader, CardSubHeader, BackButton, BreadCrumb, Header, CardLabel, CardSectionHeader, CardCaption, ActionBar } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
@@ -51,14 +51,14 @@ const WSDisconnectionDocsRequired = ({ userType }) => {
 
   return (
     <div style={{ margin: "16px" }}>
-      <Header styles={{fontSize: "32px", marginLeft: "18px"}}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
+      <Header styles={{fontSize: "16px", marginLeft: "18px"}}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
       <Card >
         {wsDocsLoading ?
           <Loader /> :
           <div id="documents-div">
             {wsDocs?.DisconnectionDocuments?.map((doc, index) => (
               <div key={index} style={{ marginTop: "16px" }}>
-                <CardSectionHeader style={{ marginBottom: "16px", lineHeight: "28px", fontSize: "24px" }}>{t(doc?.code.replace('.', '_'))}</CardSectionHeader>
+                <CardSectionHeader style={{ marginBottom: "16px", lineHeight: "28px", fontSize: "16px" }}>{t(doc?.code.replace('.', '_'))}</CardSectionHeader>
                 {doc.dropdownData && doc.dropdownData.length > 1 && <p style={{ lineHeight: "24px", fontSize: "16px" }}>{t(`${doc?.code.replace('.', '_')}_DESCRIPTION`)}</p>}
                 <div style={{ margin: "16px 0", lineHeight: "18px", fontSize: "16px" }}>
                   {doc?.dropdownData?.map((value, idx) => <p style={{ fontWeight: "bold", lineHeight: "32px" }}>{`${idx + 1}. ${t(value?.i18nKey)}`}</p>)}

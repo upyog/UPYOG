@@ -1,4 +1,4 @@
-import { Loader, PDFSvg } from "@egovernments/digit-ui-react-components";
+import { Loader, PDFSvg } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { pdfDocumentName, pdfDownloadLink } from "../utils";
