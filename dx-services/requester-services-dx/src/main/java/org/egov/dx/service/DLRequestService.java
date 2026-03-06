@@ -162,8 +162,16 @@ public class DLRequestService {
          HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                  headers);
          
-         TokenRes tokenRes = restTemplate.postForEntity(configurations.getApiHost() + configurations.getTokenOauthURI(), request, TokenRes.class).getBody();         
-         return tokenRes;
+//         TokenRes tokenRes = restTemplate.postForEntity(configurations.getApiHost() + configurations.getTokenOauthURI(), request, TokenRes.class).getBody();         
+//         return tokenRes;
+         try {
+        	    TokenRes tokenRes = restTemplate.postForEntity(configurations.getApiHost() + configurations.getTokenOauthURI(), request, TokenRes.class).getBody();
+        	    log.info("tokenRes: {}", tokenRes);  
+        	    return tokenRes;
+        	} catch (Exception e) {
+        	    log.error("Error occurred while fetching token", e);  
+        	    return null;  
+        	}
     }
     
     
@@ -229,6 +237,15 @@ public class DLRequestService {
         CreateUserRequest createUserRequest = new CreateUserRequest();
         createUserRequest.setRequestInfo(requestinfo);
         createUserRequest.setUser(user);
+        // Logging the data of user
+        log.info("tokenRes: {}", tokenRes.toString());
+        log.info("Creating User with the following details:");
+        log.info("Mobile Number: {}", user.getMobileNumber());
+        log.info("Name: {}", user.getName());
+        log.info("DigiLocker ID: {}", user.getDigilockerid());
+        log.info("Tenant ID: {}", user.getTenantId());
+        log.info("Access Token: {}", user.getAccess_token());
+        log.info("requestinfo: {}", requestinfo.toString());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         
@@ -236,6 +253,8 @@ public class DLRequestService {
 //        return userOauth;
         try {
             String url = configurations.getUserHost() + configurations.getUserEndpoint();
+            ObjectMapper mapper = new ObjectMapper();
+            log.info("CreateUserRequest JSON: {}", mapper.writeValueAsString(createUserRequest));
             log.info("Making POST request to URL: {}", url);
             log.info("Request body: {}", createUserRequest);
             Object userOauth = restTemplate.postForEntity(url, createUserRequest, Object.class).getBody();     
@@ -250,7 +269,7 @@ public class DLRequestService {
         } catch (Exception e) {
             
             log.error("An unexpected error occurred while calling URL: {}", configurations.getUserHost() + configurations.getUserEndpoint(), e);
-            throw e;  
+            return null; 
         }
     }
     
