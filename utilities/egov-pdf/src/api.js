@@ -757,7 +757,7 @@ async function create_bulk_pdf(kafkaData) {
          waterBillsData = waterBillsData.data.Bills;
           if (waterBillsData.length > 0) {
             for (let waterBill of waterBillsData) {
-                if (waterBill.status !== 'EXPIRED' || waterBill.totalAmount > 0){
+                if (waterBill.status === 'ACTIVE' && waterBill.totalAmount > 0){
                   consolidatedResult.Bill.push(waterBill);
                 }
             } 
@@ -776,7 +776,7 @@ async function create_bulk_pdf(kafkaData) {
          sewerageBillsData = sewerageBillsData.data.Bills;
           if (sewerageBillsData.length > 0) {
             for (let sewerageBill of sewerageBillsData) {
-                if (sewerageBill.status !== 'EXPIRED' || sewerageBill.totalAmount > 0){
+                if (sewerageBill.status === 'ACTIVE' || sewerageBill.totalAmount > 0){
                   consolidatedResult.Bill.push(sewerageBill);
                 }
             } 
