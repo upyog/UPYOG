@@ -17,16 +17,17 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class AssessmentUtils extends CommonUtils {
 
-
+	@Autowired
     private PropertyService propertyService;
     
+	@Autowired
     private UnmaskingUtil unmaskingUtil;
 
-    @Autowired
-    public AssessmentUtils(PropertyService propertyService, UnmaskingUtil unmaskingUtil) {
-        this.propertyService = propertyService;
-        this.unmaskingUtil = unmaskingUtil;
-    }
+	/*
+	 * @Autowired public AssessmentUtils(PropertyService propertyService,
+	 * UnmaskingUtil unmaskingUtil) { this.propertyService = propertyService;
+	 * this.unmaskingUtil = unmaskingUtil; }
+	 */
 
     public Property getPropertyForAssessment(AssessmentRequest assessmentRequest){
     	
