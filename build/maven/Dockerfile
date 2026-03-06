@@ -11,7 +11,7 @@ COPY ${WORK_DIR}/src ./src
 RUN mvn -B -f /app/pom.xml package
 
 # Runtime image – using a multi-arch base image
-FROM amazoncorretto:17-alpine
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /opt/egov
 
