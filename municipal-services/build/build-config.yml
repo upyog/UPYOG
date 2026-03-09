@@ -22,6 +22,14 @@ config:
         image-name: "pt-calculator-v2"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "pt-calculator-v2/src/main/resources/db"
+
+  - name: "builds/municipal-services/cnd-service"
+    build:
+      - work-dir: "cnd-service"
+        image-name: "cnd-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "cnd-service/src/main/resources/db"
+        image-name: "cnd-service-db"     
         image-name: "pt-calculator-v2-db"
 
   - name: "builds/municipal-services/pt-services-v2"
