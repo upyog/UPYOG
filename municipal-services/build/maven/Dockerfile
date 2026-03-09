@@ -21,20 +21,22 @@
 #RUN chmod +x /opt/egov/start.sh
 
 #CMD ["/opt/egov/start.sh"]
-FROM maven:3.9.6-amazoncorretto-17 AS build
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 ARG WORK_DIR
 WORKDIR /app
 
+# Copy project files
 COPY ${WORK_DIR}/pom.xml ./pom.xml
 COPY build/maven/start.sh ./start.sh
 COPY ${WORK_DIR}/src ./src
 
+# Build
 RUN mvn -B -f /app/pom.xml package -DskipTests
 
 
-# Runtime image (avoid alpine for Kaniko stability)
-FROM amazoncorretto:17
+# Runtime image (avoid alpine)
+FROM eclipse-temurin:17-jre
 
 WORKDIR /opt/egov
 
