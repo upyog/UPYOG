@@ -67,6 +67,7 @@ import org.egov.commons.dao.FunctionDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.microservice.models.Department;
@@ -212,6 +213,9 @@ public class BudgetLoadAction extends BaseFormAction {
     // }
     @Autowired
     protected BudgetDetailConfig budgetDetailConfig;
+    
+//    Doing for testing purpose 
+    private String municipalityName;
 
     @Override
     public Object getModel() {
@@ -230,6 +234,11 @@ public class BudgetLoadAction extends BaseFormAction {
         return Constants.LIST;
     }
 
+//    Generate Getter 
+    public String getMunicipalityName() {
+        return municipalityName;
+    }
+    
     public String getMode() {
         return mode;
     }
@@ -303,6 +312,19 @@ public class BudgetLoadAction extends BaseFormAction {
                 "from FileStoreMapper where fileName like '%budget_original%' order by id desc ").setMaxResults(5).list();
         outPutFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
                 "from FileStoreMapper where fileName like '%budget_output%' order by id desc ").setMaxResults(5).list();
+//        doing for the default ULB name coming
+        try {
+//        	Fetch muncipalityName form eg_city table
+			municipalityName = (String) persistenceService.getSession()
+					.createQuery("select ct.name from eg_city ct where ct.active = true")
+					.setMaxResults(1)
+					.uniqueResult();
+
+//        	municipalityName = ApplicationThreadLocals.getMunicipalityName();
+        }catch(Exception e) {
+        	LOGGER.error("Error fetching muncipality name");
+        }
+        
         return "upload";
     }
 

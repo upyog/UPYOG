@@ -56,9 +56,9 @@
 			background: #fff !important;
 		}
 		.totals-bar {
-		  position: fixed;   
-		  top: 50;  
-		  width: 96%;          
+		  position: fixed;
+		  top:50px;
+		  width: 97.3%;          
 		  z-index: 3;        
 		  display: flex;
 		  justify-content: flex-end;
@@ -73,6 +73,11 @@
 		  padding: 8px 12px;
 		  border-radius: 5px;
 		  white-space: nowrap;
+		}
+		.alert-danger {
+		    position: fixed;
+		    width: 97.3%;
+		    z-index: 10;
 		}
 </style>
     <form:form name="supplierBillForm" role="form" method="post" action="create" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
@@ -96,7 +101,7 @@
         <br/>
     </div>
     <spring:hasBindErrors name="egBillregister">
-        <div class="alert alert-danger" style="margin-top: 20px; margin-bottom: 10px;">
+        <div class="alert alert-danger" style="margin-top: 15px; margin-bottom: 10px;">
             <form:errors path="*"/>
             <br/>
         </div>

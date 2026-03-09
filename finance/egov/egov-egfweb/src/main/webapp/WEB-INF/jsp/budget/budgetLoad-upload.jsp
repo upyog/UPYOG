@@ -101,8 +101,7 @@
             try {
                 const tenantId = localStorage.getItem("tenant-id");
                 const empTenantId = localStorage.getItem("employee-tenant-id");
-                const municipalityName = empTenantId || tenantId || "Enter Name of ULB";
-
+                const municipalityName = empTenantId || tenantId || "";
                 if (municipalityName) {
                     const municipalityField = document.getElementById("municipalityName");
                     if (municipalityField) {
@@ -549,7 +548,7 @@
                     <div style="border: 2px solid #f3f0f0;  padding: 20px; margin-bottom: 20px; text-align: left;" >
                         <div class="form-group" style="text-align: left;">
                             <label for="municipalityName" >Name of Municipality</label><br>
-                            <input type="text" id="municipalityName" name="municipalityName" class="form-control" style="width:500px;" />
+                            <input type="text" id="municipalityName" name="municipalityName" value="<s:property value='municipalityName'/>" class="form-control" style="width:500px;" />
                         </div>
                         <div class="form-group" style="text-align: left; margin-top: 10px;">
                             <label for="reYear">RE Year (YYYY-YY)</label><br>

@@ -84,7 +84,7 @@ public class ApplicationTenantResolverFilter implements Filter {
     	
     	
     	HttpServletRequest req=(HttpServletRequest)request;
-    	HttpSession ses=req.getSession(false);
+    	HttpSession ses=req.getSession();
     	LOGGER.info(
     		    "[APPLICATION TENANAT RESOLVER FILTER START] thread=" + Thread.currentThread().getName()
     		    + ", sessionId=" + (ses != null ? ses.getId() : "NO_SESSION")
@@ -94,9 +94,9 @@ public class ApplicationTenantResolverFilter implements Filter {
         String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
         String domainName = extractRequestedDomainName(domainURL);
         String tenantId=null;
-        if(req.getSession(false) != null &&
+        if(req.getSession() != null &&
         		req.getSession(false).getAttribute("ulb") != null) {
-        	HttpSession session = req.getSession(false);
+        	HttpSession session = req.getSession();
             if (session != null) {
                 tenantId = (String) session.getAttribute("ulb");
             }
@@ -107,7 +107,7 @@ public class ApplicationTenantResolverFilter implements Filter {
         if (tenantId != null) {
         	req.getSession().setAttribute("ulb", tenantId);
         } else {
-            HttpSession session = req.getSession(false);
+            HttpSession session = req.getSession();
             if (session != null) {
                 tenantId = (String) session.getAttribute("ulb");
             }

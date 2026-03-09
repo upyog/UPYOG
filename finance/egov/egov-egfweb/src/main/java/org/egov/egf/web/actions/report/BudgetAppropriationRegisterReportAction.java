@@ -215,7 +215,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
                     function = (CFunction) persistenceService.find(
                             "from CFunction where id=?", function.getId());
-
+                    budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id=?", budgetGroup.getId());
                     List<BudgetDetail> budgetDetailList =
                         budgetDetailService
                             .getBudgetDetailByFunctionId(function.getId());
@@ -350,7 +350,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 					.append("  order by bdgApprNumber ");
 
 			if (LOGGER.isDebugEnabled())
-				LOGGER.info("BudgetAppropriationRegisterReportAction -- strsubQuery...." + strsubQuery);
+				LOGGER.debug("BudgetAppropriationRegisterReportAction -- strsubQuery...." + strsubQuery);
 
 			query = persistenceService.getSession().createSQLQuery(strsubQuery.toString()).addScalar("bdgApprNumber")
 					.addScalar("voucherDate", StandardBasicTypes.DATE).addScalar("billDate", StandardBasicTypes.DATE)
@@ -608,18 +608,10 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 		if (fund.getId() != null && fund.getId() != -1) {
 			query.setParameter("fundId", Long.valueOf(fund.getId()), LongType.INSTANCE);
 		}
-		
-		
+
 		if (budgetGroup != null && budgetGroup.getMinCode() != null && budgetGroup.getMinCode().getId() != null) {
-
-		    query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), LongType.INSTANCE);
-
-		} else {
-
-		    throw new RuntimeException("glCodeId is mandatory but not found for Budget Group : " 
-		        + (budgetGroup != null ? budgetGroup.getName() : "NULL"));
+			query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), LongType.INSTANCE);
 		}
-		
 		if (asOnDate != null) {
 			query.setParameter("strAODate", asOnDate, DateType.INSTANCE);
 		}
