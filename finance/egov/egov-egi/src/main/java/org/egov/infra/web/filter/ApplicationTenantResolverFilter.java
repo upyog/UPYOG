@@ -106,6 +106,14 @@ public class ApplicationTenantResolverFilter implements Filter {
 
 	        }
 	        
+	        if (tenantId != null) {
+	        	req.getSession().setAttribute("ulb", tenantId);
+	        } else {
+	            HttpSession session = req.getSession();
+	            if (session != null) {
+	                tenantId = (String) session.getAttribute("ulb");
+	            }
+	        }
 	              
 	    ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(tenantId));
 	    LOGGER.info(" *** Schema name  :"+ApplicationThreadLocals.getTenantID());

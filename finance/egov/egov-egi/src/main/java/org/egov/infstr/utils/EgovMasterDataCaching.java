@@ -120,7 +120,7 @@ public class EgovMasterDataCaching {
 
     public List get(final String sqlTagName) throws ApplicationRuntimeException {
         final String temp[] = sqlTagName.split("-");
-        final String domainName = ApplicationThreadLocals.getDomainName();
+        final String domainName = ApplicationThreadLocals.getTenantID();
         final String applName = temp[0];
         List<Object> dataList = null;
         HashMap<String, Object> cacheValuesHashMap = new HashMap<String, Object>();
@@ -191,7 +191,7 @@ public class EgovMasterDataCaching {
         Map dataMap = new HashMap();
         final String temp[] = sqlTagName.split("-");
         final String applName = temp[0];
-        final String domainName = ApplicationThreadLocals.getDomainName();
+        final String domainName = ApplicationThreadLocals.getTenantID();
         final String type = EGovConfig.getProperty(applName + CONFIG_FILE_SUFFIX, "type", EMPTY, SQL_TAG_PREFIX + sqlTagName)
                 .trim();
         try {
@@ -249,7 +249,7 @@ public class EgovMasterDataCaching {
     public static void removeFromCache(final String sqlTagName) throws ApplicationRuntimeException {
         try {
             final String temp[] = sqlTagName.split("-");
-            final String domainName = ApplicationThreadLocals.getDomainName();
+            final String domainName = ApplicationThreadLocals.getTenantID();
             final String applName = temp[0];
             CACHE_MANAGER.getCache().remove(applName + PATH_DELIM + domainName + PATH_DELIM + sqlTagName);
         } catch (final CacheException e) {
