@@ -776,7 +776,7 @@ async function create_bulk_pdf(kafkaData) {
          sewerageBillsData = sewerageBillsData.data.Bills;
           if (sewerageBillsData.length > 0) {
             for (let sewerageBill of sewerageBillsData) {
-                if (sewerageBill.status === 'ACTIVE' || sewerageBill.totalAmount > 0){
+                if (sewerageBill.status === 'ACTIVE' && sewerageBill.totalAmount > 0){
                   consolidatedResult.Bill.push(sewerageBill);
                 }
             } 
