@@ -355,7 +355,7 @@ config:
         image-name: "vehicle-db"
 
 
-  - name: "builds/upyog/upyog/municipal-services/vendor"
+  - name: "builds/upyog/municipal-services/vendor"
     build:
       - work-dir: "vendor"
         image-name: "vendor"
