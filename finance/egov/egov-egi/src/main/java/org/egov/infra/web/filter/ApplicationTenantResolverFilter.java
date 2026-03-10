@@ -61,12 +61,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
 import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
@@ -76,48 +71,56 @@ public class ApplicationTenantResolverFilter implements Filter {
 
     @Autowired
     private EnvironmentSettings environmentSettings;
+	
+		@SuppressWarnings({ "deprecation", "unchecked" })
+	private String readTenantId(HttpServletRequest request) {
+		LOGGER.info("Rest service - reading tenantId");
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+			mapper.setVisibilityChecker(
+					VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
+
+			String strReq = IOUtils.toString(request.getInputStream());
+			HashMap<Object, Object> reqMap = mapper.readValue(strReq, HashMap.class);
+			String tenantId = String.valueOf(reqMap.get("tenantId"));
+			if (tenantId == null || "null".equalsIgnoreCase(tenantId)) {
+				LOGGER.info("Trying to read tenantid in query string ");
+				tenantId = request.getParameter("tenantId");
+			}
+			if (tenantId == null || "null".equalsIgnoreCase(tenantId))
+				throw new NullPointerException("tenantId is not found");
+
+			return tenantId;
+		} catch (JsonParseException e) {
+			throw new ApplicationRuntimeException("Request parsing failed" + e.getMessage());
+		} catch (JsonMappingException e) {
+			throw new ApplicationRuntimeException("Request object Mapping failed" + e.getMessage());
+		} catch (IOException e) {
+			throw new ApplicationRuntimeException("Request processing failed" + e.getMessage());
+		}
+
+	}
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
     	
-    	
-    	
-    	HttpServletRequest req=(HttpServletRequest)request;
-    	HttpSession ses=req.getSession();
-    	LOGGER.info(
-    		    "[APPLICATION TENANAT RESOLVER FILTER START] thread=" + Thread.currentThread().getName()
-    		    + ", sessionId=" + (ses != null ? ses.getId() : "NO_SESSION")
-    		    + ", URI=" + ((HttpServletRequest) req).getRequestURI()
-    		);
-    	
         String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
         String domainName = extractRequestedDomainName(domainURL);
-        String tenantId=null;
-        if(req.getSession() != null &&
-        		req.getSession(false).getAttribute("ulb") != null) {
-        	HttpSession session = req.getSession();
-            if (session != null) {
-                tenantId = (String) session.getAttribute("ulb");
-            }
-        }else {
-        	tenantId=request.getParameter("ulb");
-        }
-        
-        if (tenantId != null) {
-        	req.getSession().setAttribute("ulb", tenantId);
-        } else {
-            HttpSession session = req.getSession();
-            if (session != null) {
-                tenantId = (String) session.getAttribute("ulb");
-            }
-        }
-
-        ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(tenantId));
-        LOGGER.info(" *** Schema name  :"+ApplicationThreadLocals.getTenantID());
+		String tenantId=null;
+		tenantId=request.getParameter("ulb");
+		
+		if(tenantId==null)
+			tenantId = readTenantId((HttpServletRequest) request);
+				
+						
+								
+										
+	ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(tenantId));
+        LOGGER.info(" *** Schema name  :"+environmentSettings.schemaName(tenantId) );
         LOGGER.info(" *** domainName  :"+domainName);
         LOGGER.info(" *** domainURL  :"+domainURL);
-        LOGGER.info(" *** ULB  :"+ApplicationThreadLocals.getTenantID());
         ApplicationThreadLocals.setCollectionVersion(environmentSettings.collectionVersion());
         ApplicationThreadLocals.setDomainName(domainName);
         ApplicationThreadLocals.setDomainURL(domainURL);

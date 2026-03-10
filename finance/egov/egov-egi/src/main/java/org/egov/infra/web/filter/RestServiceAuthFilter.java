@@ -155,24 +155,10 @@ public class RestServiceAuthFilter implements Filter {
 	}
 
 	private User getUserDetails(HttpServletRequest request) throws AuthorizationException {
-		
-		HttpServletRequest req=(HttpServletRequest)request;
-    	HttpSession ses=req.getSession(false);
-		LOGGER.info(
-    		    "[REST FILTER START] thread=" + Thread.currentThread().getName()
-    		    + ", sessionId=" + (ses != null ? ses.getId() : "NO_SESSION")
-    		    + ", URI=" + ((HttpServletRequest) req).getRequestURI()
-    		);
 
 		String tenantId = readTenantId(request);
 		String userToken = readAuthToken(request, tenantId);
 		setSchema(tenantId);
-//		String ulb=request.getParameter("ulb");
-//		request.getSession(false).setAttribute("ulb", ulb);
-//		if(ulb==null) {
-//			ulb=(String) request.getSession().getAttribute("ulb");
-//		}
-//		ApplicationThreadLocals.setTenantID(request.getParameter("ulb"));
 		if (userToken == null)
 			throw new AuthorizationException("AuthToken not found");
 		HttpSession session = request.getSession();
