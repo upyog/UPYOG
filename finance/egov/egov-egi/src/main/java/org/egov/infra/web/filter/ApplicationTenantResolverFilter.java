@@ -48,11 +48,11 @@
 
 package org.egov.infra.web.filter;
 
-import org.apache.log4j.Logger;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.config.security.repository.ApplicationSecurityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
+import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -61,10 +61,20 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
-import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
-import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 
 public class ApplicationTenantResolverFilter implements Filter {
 	private static final Logger LOGGER = Logger.getLogger(ApplicationTenantResolverFilter.class);
