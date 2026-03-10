@@ -70,7 +70,7 @@ public class Clu {
 
   @SafeHtml
   @NotNull(message = "Vasika Number is required")
-  @Size(min = 1, max = 15)
+//  @Size(min = 1, max = 15)
   @JsonProperty("vasikaNumber")
   private String vasikaNumber = null;
 

@@ -226,10 +226,7 @@ public class NOCService {
 					.findFirst().orElse(new Action()).getNextState();
 			State nextState = businessServicename.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
 
-			String action = noc.getWorkflow() != null ? noc.getWorkflow().getAction() : "";
-
-			if (nextState != null && nextState.getState().equalsIgnoreCase(NOCConstants.FI_STATUS)
-					&& (NOCConstants.ACTION_APPLY.equalsIgnoreCase(action) || NOCConstants.ACTION_RESUBMIT.equalsIgnoreCase(action))) {
+			if (nextState != null && CollectionUtils.isEmpty(noc.getWorkflow().getAssignes())) {
 				List<String> roles = new ArrayList<>();
 				nextState.getActions().forEach(stateAction -> {
 					roles.addAll(stateAction.getRoles());
