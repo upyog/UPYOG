@@ -392,7 +392,7 @@ config:
           image-name: "pet-services-db" 
 
   - name: "builds/municipal-services/pqm"
-      build:
+    build:
         - work-dir: "pqm-service"
           image-name: "pqm-service"
           dockerfile: "build/maven/Dockerfile"
@@ -400,7 +400,7 @@ config:
           image-name: "pqm-service-db" 
           
    - name: "builds/municipal-services/pqm-anomaly-finder"
-      build:
+     build:
         - work-dir: "pqm-anomaly-finder"
           image-name: "pqm-anomaly-finder"
           dockerfile: "build/maven/Dockerfile"
