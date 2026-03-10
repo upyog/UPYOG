@@ -371,7 +371,8 @@ config:
       - work-dir: "fsm-calculator/src/main/resources/db"
         image-name: "fsm-calculator-db"
         
-  - name: "builds/digit-impel-builds/municipal-services/turn-io-adapter"
+  - name: "builds/municipal-services/turn-io-adapter"
+    build:
       - work-dir: "turn-io-adapter"
         image-name: "turn-io-adapter"
         dockerfile: "build/maven/Dockerfile"
