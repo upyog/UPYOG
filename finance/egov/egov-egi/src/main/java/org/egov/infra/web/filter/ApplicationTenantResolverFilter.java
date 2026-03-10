@@ -52,7 +52,6 @@ import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
 import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -61,20 +60,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 
 public class ApplicationTenantResolverFilter implements Filter {
 	private static final Logger LOGGER = Logger.getLogger(ApplicationTenantResolverFilter.class);
@@ -83,52 +74,41 @@ public class ApplicationTenantResolverFilter implements Filter {
     private EnvironmentSettings environmentSettings;
 	
 		@SuppressWarnings({ "deprecation", "unchecked" })
-	private String readTenantId(HttpServletRequest request) {
-		LOGGER.info("Rest service - reading tenantId");
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-			mapper.setVisibilityChecker(
-					VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
 
-			String strReq = IOUtils.toString(request.getInputStream());
-			HashMap<Object, Object> reqMap = mapper.readValue(strReq, HashMap.class);
-			String tenantId = String.valueOf(reqMap.get("tenantId"));
-			if (tenantId == null || "null".equalsIgnoreCase(tenantId)) {
-				LOGGER.info("Trying to read tenantid in query string ");
-				tenantId = request.getParameter("tenantId");
-			}
-			if (tenantId == null || "null".equalsIgnoreCase(tenantId))
-				throw new NullPointerException("tenantId is not found");
-
-			return tenantId;
-		} catch (JsonParseException e) {
-			throw new ApplicationRuntimeException("Request parsing failed" + e.getMessage());
-		} catch (JsonMappingException e) {
-			throw new ApplicationRuntimeException("Request object Mapping failed" + e.getMessage());
-		} catch (IOException e) {
-			throw new ApplicationRuntimeException("Request processing failed" + e.getMessage());
-		}
-
-	}
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
     	
-        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
-        String domainName = extractRequestedDomainName(domainURL);
-		String tenantId=null;
-		tenantId=request.getParameter("ulb");
-		
-		if(tenantId==null)
-			tenantId = readTenantId((HttpServletRequest) request);
-				
-						
-								
-										
-	ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(tenantId));
-        LOGGER.info(" *** Schema name  :"+environmentSettings.schemaName(tenantId) );
+			HttpServletRequest req=(HttpServletRequest)request;
+	    	HttpSession ses=req.getSession();
+	    	LOGGER.info(
+	    		    "[APPLICATION TENANAT RESOLVER FILTER START] thread=" + Thread.currentThread().getName()
+	    		    + ", sessionId=" + (ses != null ? ses.getId() : "NO_SESSION")
+	    		    + ", URI=" + ((HttpServletRequest) req).getRequestURI()
+	    		);
+	    	
+	        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
+	        String domainName = extractRequestedDomainName(domainURL);
+	        String tenantId=null;
+	        if(req.getSession() != null &&
+	        		req.getSession(false).getAttribute("ulb") != null) {
+	        	HttpSession session = req.getSession();
+	            if (session != null) {
+	                tenantId = (String) session.getAttribute("ulb");
+	    	        LOGGER.info(" tenant Id in session :"+(String) session.getAttribute("ulb"));
+
+	            }
+	        }else {
+	        	tenantId=request.getParameter("ulb");
+	        	
+    	        LOGGER.info(" tenant Id in ulb parameter :"+ tenantId);
+
+	        }
+	        
+	              
+	    ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(tenantId));
+	    LOGGER.info(" *** Schema name  :"+ApplicationThreadLocals.getTenantID());
         LOGGER.info(" *** domainName  :"+domainName);
         LOGGER.info(" *** domainURL  :"+domainURL);
         ApplicationThreadLocals.setCollectionVersion(environmentSettings.collectionVersion());
