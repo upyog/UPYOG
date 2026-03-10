@@ -186,6 +186,7 @@ config:
         image-name: "pt-calculator-v2"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "pt-calculator-v2/src/main/resources/db"
+        image-name: "pt-calculator-v2-db"
 
   - name: "builds/municipal-services/cnd-service"
     build:
@@ -193,8 +194,7 @@ config:
         image-name: "cnd-service"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "cnd-service/src/main/resources/db"
-        image-name: "cnd-service-db"     
-        image-name: "pt-calculator-v2-db"
+        image-name: "cnd-service-db"
 
   - name: "builds/municipal-services/pt-services-v2"
     build:
@@ -399,7 +399,7 @@ config:
         - work-dir: "pqm/src/main/resources/db"
           image-name: "pqm-service-db" 
           
-   - name: "builds/municipal-services/pqm-anomaly-finder"
+  - name: "builds/municipal-services/pqm-anomaly-finder"
      build:
          - work-dir: "pqm-anomaly-finder"
            image-name: "pqm-anomaly-finder"
@@ -408,7 +408,7 @@ config:
            image-name: "pqm-anomaly-finder-db"
 
 
-   - name: "builds/municipal-services/community-hall-booking"
+  - name: "builds/municipal-services/community-hall-booking"
      build:
          - work-dir: "community-hall-booking"
            image-name: "community-hall-booking"
@@ -417,7 +417,7 @@ config:
            image-name: "community-hall-booking-db"
 
 
-   - name: 'builds/upyog/municipal-services/cnd-calculator'
+  - name: 'builds/upyog/municipal-services/cnd-calculator'
      build:
         - work-dir: 'municipal-services/cnd-calculator'
           image-name: 'cnd-calculator'
@@ -552,9 +552,9 @@ config:
 
   - name: builds/upyog/frontend/micro-ui/storybook
     build:
-    - work-dir: .
-      dockerfile: frontend/micro-ui/web/micro-ui-internals/packages/react-components/docker/Dockerfile
-      image-name: storybook
+      - work-dir: .
+        dockerfile: frontend/micro-ui/web/micro-ui-internals/packages/react-components/docker/Dockerfile
+        image-name: storybook
   - name: builds/upyog/frontend/micro-ui/workbench-ui
     build:
       - work-dir: frontend/workbench-ui/
