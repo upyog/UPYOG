@@ -177,7 +177,7 @@
     <repository>
       <id>repo.egovernments.org.public</id>
       <name>eGov Public Repository Group</name>
-      <url>https://nexus-repo.egovernments.org/nexus/content/groups/public/</url>
+      <url>https://upyog-nexus.niua.org/nexus/content/groups/public/</url>
     </repository>
   </repositories>
   <build>
