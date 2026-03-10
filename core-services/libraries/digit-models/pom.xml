@@ -12,7 +12,7 @@
         <repository>
             <id>repo.digit.org</id>
             <name>eGov ERP Releases Repository</name>
-            <url>https://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
+            <url>https://upyog-nexus.niua.org/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>repo.digit.org</id>
