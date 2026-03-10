@@ -138,7 +138,7 @@ config:
       - work-dir: "core-services/pdf-service"
         image-name: "pdf-service"
       - work-dir: "core-services/pdf-service/migration"
-        image-name: "pdf-service-db
+        image-name: "pdf-service-db"
 
 
   # Municipal Services
