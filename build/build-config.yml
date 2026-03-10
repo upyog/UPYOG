@@ -133,6 +133,13 @@ config:
       - work-dir: "core-services/egov-idgen/src/main/resources/db"
         image-name: "egov-idgen-db"
 
+  - name: "builds/upyog/core-services/pdf-service"
+    build:
+      - work-dir: "core-services/pdf-service"
+        image-name: "pdf-service"
+      - work-dir: "core-services/pdf-service/migration"
+        image-name: "pdf-service-db
+
 
   # Municipal Services
   - name: "builds/upyog/municipal-services/turn-io-adapter"
