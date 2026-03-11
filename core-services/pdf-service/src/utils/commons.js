@@ -60,6 +60,7 @@ export const getTransformedLocale = (label) => {
   
   
     let url = egovLocHost + egovLocSearchCall;
+    console.log("Localisation API URL:", url);
   
     let request = {
       RequestInfo: requestInfo,
