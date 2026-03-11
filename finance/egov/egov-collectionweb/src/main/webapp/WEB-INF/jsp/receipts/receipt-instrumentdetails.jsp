@@ -253,7 +253,10 @@ function showInstrumentDetails(obj){
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="cash";
 		document.getElementById('onlinedetails').style.display='none';
+		document.getElementById('payMode').style.paddingLeft = '10px';
+		document.getElementById('payModeInput').style.width="30%";
  		document.getElementById('instrHeaderCash.instrumentAmount').value=document.getElementById('totalamountdisplay').value;
+ 		
  		clearCardDetails();
 		clearChequeDDDetails();
 		clearBankDetails();
@@ -266,6 +269,9 @@ function showInstrumentDetails(obj){
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="";
+		document.getElementById('payMode').style.paddingLeft="8px";
+		document.getElementById('payMode').style.width="16%";
+		document.getElementById('payModeInput').style.width="30%";
 		document.getElementById('instrumentChequeAmount').value = document.getElementById('totalamountdisplay').value;
 		clearCashDetails();
 		clearCardDetails();
@@ -279,11 +285,14 @@ function showInstrumentDetails(obj){
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="";
+		ocument.getElementById('payMode').style.paddingLeft="8px";
+		document.getElementById('payMode').style.width="16%";
+		document.getElementById('payModeInput').style.width="30%";
 		document.getElementById('instrumentChequeAmount').value = document.getElementById('totalamountdisplay').value;
 		clearCashDetails();
 		clearCardDetails();
 		clearBankDetails();
-		//clearManualReceiptData();
+		//clearManualReceiptData();-----------------------------------------------------------
 	}
 	else if(obj.id=='cardradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
@@ -292,6 +301,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="card";
+		
 		document.getElementById('instrHeaderCard.instrumentAmount').value = document.getElementById('totalamountdisplay').value;
 		clearCashDetails();
 		clearBankDetails();
@@ -387,10 +397,10 @@ loadBankDetailFailureHandler = function(){
 }
 </script>
 <tr>
-	<td class="bluebox" width="3%"></td>
-	<td class="bluebox" width="22%"><s:text
+	<td class="bluebox2" style="width:5%">&nbsp;</td>
+	<td class="bluebox" style="width:15%" id="payMode"><s:text
 			name="billreceipt.payment.mode" />:<span class="mandatory1">*</span></td>
-	<td class="bluebox" colspan="2"><span style="float: left;"
+	<td class="bluebox" colspan="2" style="width:21%" id="payModeInput"><span style="float: left;"
 		id="cashradiobuttonspan"> <input
 			onClick="showInstrumentDetails(this);setinstrumenttypevalue(this);" type="radio" align="absmiddle"
 			value="cash" id="cashradiobutton" name="paytradiobutton" /> Cash &nbsp; <s:hidden
@@ -416,18 +426,20 @@ loadBankDetailFailureHandler = function(){
 			value="online" id="onlineradiobutton" name="paytradiobutton" /> SBI MOPS Bank
 			challan &nbsp;
 	</span></td>
+	<td class="bluebox2" style="width:50%">&nbsp;</td>
 </tr>
 
 <tr id="cashdetails">
-	<td class="bluebox" width="3%"></td>
-	<td class="bluebox" width="21%"><s:text
+	<td class="bluebox2" style="width:5%">&nbsp;</td>
+	<td class="bluebox" style="width:16%;padding-left:10px"><s:text
 			name="billreceipt.payment.instrumentAmount" /><span
 		class="mandatory1">*</span></td>
-	<td class="bluebox" colspan="3"><s:textfield
+	<td class="bluebox" colspan="3" style="width:30%"><s:textfield
 			label="instrumentAmount" id="instrHeaderCash.instrumentAmount"
 			name="instrHeaderCash.instrumentAmount" maxlength="14" size="18"
 			cssClass="form-control patternvalidation text-right"
-			data-pattern="number" placeholder="0" readonly='true'/></td>
+			data-pattern="number" placeholder="0" readonly='true' style="width:15%"/></td>
+	<td class="bluebox2" style="width:50%">&nbsp;</td>
 </tr>
 <tr>
 	<td colspan="5">
@@ -450,27 +462,27 @@ loadBankDetailFailureHandler = function(){
 								name="instrumentType" />
 							<!-- This row captures the cheque/DD No and the cheque/DD date -->
 							<tr id="chequedetailsrow">
-								<td class="bluebox" width="3%"></td>
-								<td class="bluebox" width="22%"><s:text
+								<td class="bluebox2" style="width:5%">&nbsp;</td>
+								<td class="bluebox" width="15%"><s:text
 										name="billreceipt.payment.chequeddno" /><span
 									class="mandatory1">*</span></td>
-								<td class="bluebox"><s:textfield label="instrumentNumber"
+								<td class="bluebox" style="width:30%"><s:textfield label="instrumentNumber"
 										id="instrumentChequeNumber" maxlength="6"
 										name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
-								<td class="bluebox"><s:text
+								<td class="bluebox" style="width:15%"><s:text
 										name="billreceipt.payment.chequedddate" /><span
 									class="mandatory1">*</span></td>
-								<td class="bluebox"><input type="text" id="instrumentDate"
+								<td class="bluebox" style="width:30%"><input type="text" id="instrumentDate"
 									name="instrumentProxyList[0].instrumentDate"
 									data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" /></td>
 							</tr>
 							<!-- This row captures the cheque/DD Bank and Branch names -->
 							<tr id="chequebankrow">
-								<td class="bluebox" width="3%"></td>
-								<td class="bluebox"><s:text
+								<td class="bluebox2" style="width:5%">&nbsp;</td>
+								<td class="bluebox" style="width:15%"><s:text
 										name="billreceipt.payment.ifsccode" /><span
 									class="mandatory1">*</span></td>
-								<td class="bluebox"><s:textfield
+								<td class="bluebox" style="width:30%"><s:textfield
 										label="instrumentIfscCode" id="instrumentIfscCode"
 										maxlength="50" name="instrumentProxyList[0].ifscCode"
 										size="18" placeholder='Search...'/>
@@ -479,27 +491,27 @@ loadBankDetailFailureHandler = function(){
 										</span>
 										<div id='bankExistenceResponseMessageId'></div>
 								</td>
-								<td class="bluebox"><s:text
+								<td class="bluebox" style="width:15%"><s:text
 										name="billreceipt.payment.bankname" /><span
 									class="mandatory1">*</span></td>
-								<td class="bluebox"><s:textfield id="bankName" type="text"
+								<td class="bluebox" style="width:30%"><s:textfield id="bankName" type="text"
 										name="instrumentProxyList[0].bankId.name" readonly="true"/> <s:hidden id="bankCode"
 										name="instrumentProxyList[0].bankId.code" />
 									<div id="bankcodescontainer"></div></td>
 							</tr>
 							<tr id="chequebankrow">
-								<td class="bluebox" width="3%"></td>
-								<td class="bluebox"><s:text
+								<td class="bluebox2" style="width:5%">&nbsp;</td>
+								<td class="bluebox" style="width:15%"><s:text
 										name="billreceipt.payment.branchname" /><span
 									class="mandatory1">*</span></td>
-								<td class="bluebox"><s:textfield
+								<td class="bluebox" style="width:30%"><s:textfield
 										label="instrumentBranchName" id="instrumentBranchName"
 										maxlength="50" name="instrumentProxyList[0].bankBranchName"
 										size="18" readonly="true"/></td>
-								<td class="bluebox"><s:text
+								<td class="bluebox" style="width:15%"><s:text
 										name="billreceipt.payment.instrumentAmount" /><span
 									class="mandatory1">*</span></td>
-								<td class="bluebox"><s:textfield label="instrumentAmount"
+								<td class="bluebox" style="width:30%"><s:textfield label="instrumentAmount"
 										id="instrumentChequeAmount" maxlength="14"
 										name="instrumentProxyList[0].instrumentAmount" size="18"
 										cssClass="form-control patternvalidation text-right"
@@ -534,22 +546,22 @@ loadBankDetailFailureHandler = function(){
 								status="instrstatus">
 								<s:hidden label="instrumentType" id="instrumentType"
 									name="instrumentType" />
-								<td class="bluebox" colspan="3">&nbsp;</td>
+								<td class="bluebox2" style="width:5%">&nbsp;</td>
 								</tr>
 								<!-- This row captures the cheque/DD No and the cheque/DD date -->
 								<tr id="chequedetailsrow">
-									<td class="bluebox2new"><s:text
+									<td class="bluebox2new" style="width:15%"><s:text
 											name="billreceipt.payment.chequeddno" /><span
 										class="mandatory1">*</span></td>
-									<td class="bluebox2" width="20%"><s:textfield
+									<td class="bluebox2" style="width:30%"><s:textfield
 											label="instrumentNumber" id="instrumentChequeNumber"
 											maxlength="6"
 											name="instrumentProxyList[%{#instrstatus.index}].instrumentNumber"
 											size="18" /></td>
-									<td class="bluebox2" width="23%"><s:text
+									<td class="bluebox2" style="width:15%"><s:text
 											name="billreceipt.payment.chequedddate" /><span
 										class="mandatory1">*</span></td>
-									<td class="bluebox2"><input type="text"
+									<td class="bluebox2" style="width:30%"><input type="text"
 										id="instrumentDate"
 										name="instrumentProxyList[%{#instrstatus.index}].instrumentDate"
 										data-inputmask="'mask': 'd/m/y'"
@@ -558,18 +570,18 @@ loadBankDetailFailureHandler = function(){
 								</tr>
 								<!-- This row captures the cheque/DD Bank and Branch names -->
 								<tr id="chequebankrow">
-									<td class="blueboxnew"><s:text
+									<td class="blueboxnew" style="width:15%"><s:text
 											name="billreceipt.payment.bankname" /><span
 										class="mandatory1">*</span></td>
-									<td class="bluebox"><s:textfield id="bankName" type="text"
+									<td class="bluebox" style="width:30%"><s:textfield id="bankName" type="text"
 											name="instrumentProxyList[%{#instrstatus.index}].bankId.name"
 											onkeyup='autocompletecodeBank(this,event)'
 											onblur='fillAfterSplitBank(this)' /> <s:hidden id="bankID"
 											name="instrumentProxyList[%{#instrstatus.index}].bankId.id" />
 										<div id="bankcodescontainer"></div></td>
-									<td class="bluebox"><s:text
+									<td class="bluebox" style="width:15%"><s:text
 											name="billreceipt.payment.branchname" /></td>
-									<td class="bluebox"><s:textfield
+									<td class="bluebox" style="width:30%"><s:textfield
 											label="instrumentBranchName" id="instrumentBranchName"
 											maxlength="50"
 											name="instrumentProxyList[%{#instrstatus.index}].bankBranchName"
@@ -577,10 +589,10 @@ loadBankDetailFailureHandler = function(){
 								</tr>
 								<!-- This row captures the cheque/DD Amount -->
 								<tr id="chequeamountrow">
-									<td class="bluebox2new"><s:text
+									<td class="bluebox2new" style="width:15%"><s:text
 											name="billreceipt.payment.instrumentAmount" /><span
 										class="mandatory1">*</span></td>
-									<td class="bluebox2"><s:textfield label="instrumentAmount"
+									<td class="bluebox2" style="width:30%"><s:textfield label="instrumentAmount"
 											id="instrumentChequeAmount" maxlength="14"
 											name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"
 											size="18"
@@ -627,35 +639,35 @@ loadBankDetailFailureHandler = function(){
 					<table width="100%" border="0" cellspacing="0" cellpadding="0"
 						name="cardgrid" id="cardgrid">
 						<tr id="carddetailsrow">
-							<td class="bluebox" width="3%"></td>
-							<td width="22%" class="bluebox"><s:text
+							<td class="bluebox2" style="width:5%">&nbsp;</td>
+							<td class="bluebox" style="width:10%"><s:text
 									name="billreceipt.payment.cardno" /><span class="mandatory1">*</span></td>
-							<td class="bluebox"><s:textfield
+							<td class="bluebox" style="width:20%"><s:textfield
 									label="instrHeaderCard.instrumentNumber"
 									id="instrHeaderCard.instrumentNumber" maxlength="4"
 									name="instrHeaderCard.instrumentNumber"
 									value="%{instrHeaderCard.instrumentNumber}" size="18" /></td>
-							<td class="bluebox"><s:text
+							<td class="bluebox" style="width:10%"><s:text
 									name="billreceipt.payment.transactionnumber" /><span
 								class="mandatory1">*</span></td>
-							<td class="bluebox"><s:textfield
+							<td class="bluebox" style="width:20%"><s:textfield
 									label="instrHeaderCard.transactionNumber"
 									id="instrHeaderCard.transactionNumber" maxlength="14"
 									name="instrHeaderCard.transactionNumber" size="18"
 									value="%{instrHeaderCard.transactionNumber}" onblur="validateTransactionNumber();" /></td>
-								<td class="bluebox"><s:text
+							<td class="bluebox" style="width:10%"><s:text
 									name="billreceipt.payment.reenter.transactionnumber" /><span
 								class="mandatory1">*</span></td>									
-							<td class="bluebos"> <s:password id="confirmtransactionNumber"  maxlength="14"
+							<td class="bluebox" style="width:20%"> <s:textfield id="confirmtransactionNumber"  maxlength="14"
 							                   name ="confirmtransactionNumber"  size="18" onblur="validateTransactionNumber();" /></td>		
 						</tr>
 
 						<tr id="carddetailsrow">
-							<td class="bluebox" width="3%"></td>
-							<td class="bluebox"><s:text
+							<td class="bluebox2" style="width:5%">&nbsp;</td>
+							<td class="bluebox" style="width:18%;padding-left:16px"><s:text
 									name="billreceipt.payment.instrumentAmount" /><span
 								class="mandatory1">*</span></td>
-							<td class="bluebox"><s:textfield
+							<td class="bluebox" style="width:30%"><s:textfield
 									label="instrHeaderCard.instrumentAmount"
 									id="instrHeaderCard.instrumentAmount" maxlength="14"
 									name="instrHeaderCard.instrumentAmount" size="18"

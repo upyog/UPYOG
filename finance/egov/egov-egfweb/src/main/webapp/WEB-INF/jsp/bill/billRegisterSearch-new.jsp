@@ -53,6 +53,28 @@
 <html>
 <head>
 <title><s:text name="bill.search.heading"></s:text></title>
+<style>
+
+/* Fix width of all form fields */
+select {
+    width:205px !important;
+}
+
+input[type="text"] {
+    width:205px !important;
+}
+/* Date fields */
+#billDateFrom,
+#billDateTo {
+    width:150px !important;
+}
+
+/* fixing datepicker*/
+.datepicker {
+    z-index: 9999 !important;
+}
+
+</style>
 </head>
 <body onload="changeMandatoryField()">
 	<s:form name="billRegisterForm" action="billRegisterSearch"

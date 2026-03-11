@@ -249,7 +249,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
                 reportHelper.getClass().getResourceAsStream("/reports/templates/workFlowHistoryReport.jasper"));
         final HttpServletRequest request = ServletActionContext.getRequest();
         final HttpSession session = request.getSession();
-        final City cityWebsite = cityService.getCityByURL((String) session.getAttribute("cityurl"));
+        final City cityWebsite = cityService.getCityByCode((String) session.getAttribute("ulb"));
         String billType = billsManager.getBillTypeforVoucher(voucher);
         if (isBlank(billType))
             billType = "General";

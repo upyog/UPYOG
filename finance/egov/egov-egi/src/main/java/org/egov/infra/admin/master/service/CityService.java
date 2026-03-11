@@ -144,7 +144,7 @@ public class CityService {
     public Map<String, Object> cityDataAsMap() {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         if (cityPrefs.isEmpty()) {
-            cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
+            cityPrefCache.putAll(cityPrefCacheKey(), getCityByCode(getTenantID()).toMap());
             cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         }
         return cityPrefs;

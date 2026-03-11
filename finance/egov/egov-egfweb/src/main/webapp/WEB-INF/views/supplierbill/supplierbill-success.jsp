@@ -51,6 +51,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<style>
+  @media print {
+    #printButton,
+    #closeButton {
+        display: none !important;
+    }
+}
+</style>
 <script>
 			function processRequest(){
 		
@@ -74,6 +82,16 @@
 			</div>
 		</div>
 	</div>			
-	<div class="text-center"><input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.parent.postMessage('close','*');window.close();"/></div>		
+	<div class="text-center">
+    <input type="button"
+           name="printButton"
+           id="printButton"
+           value="Print"
+           style="margin-right:10px;"
+           class="btn btn-primary"
+           onclick="window.print();" />	
+           
+           <input type="button" name="closeButton" id="closeButton" value='<spring:message code="lbl.close" text="Close"/>' class="btn btn-default" onclick="window.parent.postMessage('close','*');window.close();"/>
+    </div>		
 </div>					
 </div>

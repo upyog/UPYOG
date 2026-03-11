@@ -31,11 +31,12 @@ public class CustomConsumer {
 
 		DocumentContext documentContext = JsonPath.parse(record);
 		String sourceUri = documentContext.read(JsonPathConstant.signOutUriJsonPath);
+		String tenantId=documentContext.read("$.request.RequestInfo.userInfo.tenantId");
 		log.info("sourceUri: "+sourceUri);
 
 		if (sourceUri.equals(JsonPathConstant.signOutUri))
 			log.info("callFinanceForSignOut..");
-			signOutService.callFinanceForSignOut(documentContext);
+			signOutService.callFinanceForSignOut(documentContext, tenantId.split(".")[1]);
 
 	}
 

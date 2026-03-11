@@ -99,8 +99,17 @@
 			document.getElementById("billNumber").value="";
 		}
 	</script>
+	<style>
+		/* Default field width */
+		select {
+		    width:155px !important;
+		}
+		
+		input[type="text"] {
+		    width:155px !important;
+		}
+	</style>
 </head>
-
 <body onload="onloadtask();">
 	<s:form action="billVoucher" theme="simple" name="billVoucher">
 		<jsp:include page="../budget/budgetHeader.jsp">

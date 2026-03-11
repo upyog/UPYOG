@@ -53,177 +53,20 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>
 <style type="text/css">
-#codescontainer {
-	position: absolute;
-	left: 11em;
-	width: 9%;
-	text-align: left;
-}
-
-#codescontainer .yui-ac-content {
-	position: absolute;
-	width: 350px;
-	border: 1px solid #404040;
-	background: #fff;
-	overflow: hidden;
-	z-index: 9050;
-}
-
-#codescontainer .yui-ac-shadow {
-	position: absolute;
-	margin: .3em;
-	width: 300px;
-	background: #a0a0a0;
-	z-index: 9049;
-}
-
-#codescontainer ul {
-	padding: 5px 0;
-	width: 100%;
-}
-
-#codescontainer li {
-	padding: 0 5px;
-	cursor: default;
-	white-space: nowrap;
-}
-
-#codescontainer li.yui-ac-highlight {
-	background: #ff0;
-}
-
-#codescontainer li.yui-ac-prehighlight {
-	background: #FFFFCC;
-}
-
-#rebatecodescontainer {
-	position: absolute;
-	left: 11em;
-	width: 9%;
-	text-align: left;
-}
-
-#rebatecodescontainer .yui-ac-content {
-	position: absolute;
-	width: 350px;
-	border: 1px solid #404040;
-	background: #fff;
-	overflow: hidden;
-	z-index: 9050;
-}
-
-#rebatecodescontainer .yui-ac-shadow {
-	position: absolute;
-	margin: .3em;
-	width: 300px;
-	background: #a0a0a0;
-	z-index: 9049;
-}
-
-#rebatecodescontainer ul {
-	padding: 5px 0;
-	width: 100%;
-}
-
-#rebatecodescontainer li {
-	padding: 0 5px;
-	cursor: default;
-	white-space: nowrap;
-}
-
-#rebatecodescontainer li.yui-ac-highlight {
-	background: #ff0;
-}
-
-#rebatecodescontainer li.yui-ac-prehighlight {
-	background: #FFFFCC;
-}
-
-#bankcodescontainer {
-	position: absolute;
-	left: 11em;
-	width: 9%;
-	text-align: left;
-}
-
-#bankcodescontainer .yui-ac-content {
-	position: absolute;
-	width: 350px;
-	border: 1px solid #404040;
-	background: #fff;
-	overflow: hidden;
-	z-index: 9050;
-}
-
-#bankcodescontainer .yui-ac-shadow {
-	position: absolute;
-	margin: .3em;
-	width: 300px;
-	background: #a0a0a0;
-	z-index: 9049;
-}
-
-#bankcodescontainer ul {
-	padding: 5px 0;
-	width: 100%;
-}
-
-#bankcodescontainer li {
-	padding: 0 5px;
-	cursor: default;
-	white-space: nowrap;
-}
-
-#bankcodescontainer li.yui-ac-highlight {
-	background: #ff0;
-}
-
-#bankcodescontainer li.yui-ac-prehighlight {
-	background: #FFFFCC;
-}
-
-#subledgercodescontainer {
-	position: absolute;
-	left: 11em;
-	width: 9%;
-	text-align: left;
-}
-
-#subledgercodescontainer .yui-ac-content {
-	position: absolute;
-	width: 350px;
-	border: 1px solid #404040;
-	background: #fff;
-	overflow: hidden;
-	z-index: 9050;
-}
-
-#subledgercodescontainer .yui-ac-shadow {
-	position: absolute;
-	margin: .3em;
-	width: 300px;
-	background: #a0a0a0;
-	z-index: 9049;
-}
-
-#subledgercodescontainer ul {
-	padding: 5px 0;
-	width: 100%;
-}
-
-#subledgercodescontainer li {
-	padding: 0 5px;
-	cursor: default;
-	white-space: nowrap;
-}
-
-#subledgercodescontainer li.yui-ac-highlight {
-	background: #ff0;
-}
-
-#subledgercodescontainer li.yui-ac-prehighlight {
-	background: #FFFFCC;
-}
+	table {
+		width:100%;	
+	}
+	textarea,
+	select {
+	    width: 80% !important;
+	}
+	#serviceTable td:first-child {
+    width: 15%;
+	}
+	
+	#serviceTable td:nth-child(2) {
+	    width: 30%;
+	}
 </style>
 
 <script type="text/javascript">
@@ -884,78 +727,80 @@ var totaldbamt=0,totalcramt=0;
 	
 	}
 </script>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table border="0" cellspacing="0" cellpadding="0">
 
 	<tr>
 		<td>
 
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<!--  <td width="4%" class="bluebox">&nbsp;</td>
 					<td width="21%" class="bluebox"><s:text
 							name="viewReceipt.receiptdate" /><span class="mandatory" /></td>
 					<s:date name="voucherDate" var="cdFormat" format="dd/MM/yyyy" />-->
-					<td width="24%" class="bluebox" style="display: none;"><s:textfield
+					<td class="bluebox2" style="width:5%">&nbsp;</td>
+					<td class="bluebox" style="display: none;"><s:textfield
 							id="voucherDate" name="voucherDate"
 							onfocus="javascript:vDateType='3';"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							onblur="validateVoucherDate(this)"
 							data-inputmask="'mask': 'd/m/y'" />
-						<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+						<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
+					</td>
 				</tr>
 				<tr>
-					<td width="4%" class="bluebox2">&nbsp;</td>
-					<td class="bluebox" width="21%"><s:text
+					<td class="bluebox2" style="width:5%">&nbsp;</td>
+					<td class="bluebox" style="width:15%"><s:text
 							name="viewReceipt.fund" /><span class="mandatory1">*</span></td>
-					<td width="30%" class="bluebox" style="table-layout: fixed;"><s:select headerKey=""
+					<td class="bluebox" style="table-layout: fixed;width:30%"><s:select headerKey=""
 							headerValue="----Choose----" name="fund" id="fundId"
 							cssClass="selectwk" list="fundNames"
 							value="%{fund}" /></td>
 							
-					<td class="bluebox" width="21%"><s:text
+					<td class="bluebox" style="width:15%"><s:text
 							name="billreceipt.counter.paidby" /><span class="mandatory1">*</span></td>
-					<td class="bluebox"><s:textfield label="paidBy" id="paidBy"
-							maxlength="64" name="paidBy" value="%{payeeName}" /></td>
+					<td class="bluebox" style="width:30%"><s:textfield label="paidBy" id="paidBy"
+							maxlength="64" name="paidBy" value="%{payeeName}" style="width:80%"/></td>
 				</tr>
 				<tr>
-					<td width="4%" class="bluebox2">&nbsp;</td>
-					<td class="bluebox" width="21%"><s:text
+					<td class="bluebox2" style="width:5%">&nbsp;</td>
+					<td class="bluebox" style="width:15%"><s:text
 							name="viewReceipt.wardno" /><span class="mandatory1">*</span></td>
-					<td width="30%" class="bluebox"><s:select headerKey=""
+					<td class="bluebox" style="width:30%"><s:select headerKey=""
 							headerValue="----Choose----" name="wardNo" id="wardNoCode"
 							cssClass="selectwk" list="dropdownData.wardNoList"
 							listKey="wardNoCode" listValue="wardNoName" value="%{wardNo}" /></td>
-					<td width="21%" class="bluebox2"><s:text
+					<td class="bluebox2" style="width:15%"><s:text
 							name="challan.payeeAddress" /></td>
-					<td width="24%" class="bluebox2"><s:textarea
+					<td class="bluebox2" style="width:30%"><s:textarea
 							name="payeeAddress" id="payeeAddress" value="%{payeeAddress}"
 							cols="23" rows="1" maxlength="255"
 							onkeyup="return ismaxlength(this)" /></td>
 				</tr>
 				<tr>
-					<td width="4%" class="bluebox">&nbsp;</td>
+					<td class="bluebox" style="width:5%">&nbsp;</td>
 
-					<td width="21%" class="bluebox"><s:text
+					<td class="bluebox" style="width:15%"><s:text
 							name="miscreceipt.service.category" /><span class="mandatory" />
 					</td>
-					<td width="30%" class="bluebox"><s:select headerKey="-1"
+					<td class="bluebox" style="width:30%"><s:select headerKey="-1"
 							headerValue="----Choose----" name="serviceCategory"
 							id="serviceCategoryid" cssClass="selectwk"
 							list="serviceCategoryNames" value="%{service.serviceCategory}"
 							onChange="populateServiceType(this.value);" /></td>
 					<td class="bluebox2" colspan='2' cssClass="selectwk" >
-						<table width="100%" id='serviceTable'>
+						<table id='serviceTable'>
 						</table>
 					</td>
 				</tr>
 				<tr>
 					<s:if test="%{shouldShowHeaderField('field')}">
-						<td width="21%" class="bluebox"><s:text
+						<td class="bluebox"><s:text
 								name="miscreceipt.field" /> <s:if
 								test="%{isFieldMandatory('field')}">
 								<span class="bluebox"><span class="mandatory" />
 							</s:if></td>
-						<td width="24%" class="bluebox"><s:select headerKey="-1"
+						<td class="bluebox"><s:select headerKey="-1"
 								headerValue="%{getText('miscreceipt.select')}" name="boundaryId"
 								id="boundaryId" cssClass="selectwk"
 								list="dropdownData.fieldList" listKey="id" listValue="name" />
@@ -966,20 +811,20 @@ var totaldbamt=0,totalcramt=0;
 					</s:else>
 
 					<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-						<td width="21%" class="bluebox"><s:text
+						<td class="bluebox"><s:text
 								name="miscreceipt.voucher.number" /><span class="mandatory" /></td>
-						<td width="30%" class="bluebox"><s:textfield
+						<td class="bluebox"><s:textfield
 								name="voucherNum" id="voucherNum" maxlength="16" /></td>
 					</s:if>
 					<s:else>
 						<td colspan=2 class="bluebox"></td>
 					</s:else>
-				</tr>
+				</tr> 	
 				<tr>
-					<td width="4%" class="bluebox2">&nbsp;</td>
-					<td width="21%" class="bluebox"><s:text
+					<td class="bluebox2" style="width:5%">&nbsp;</td>
+					<td class="bluebox" style="width:15%"><s:text
 							name="challan.narration" /></td>
-					<td width="24%" class="bluebox"><s:textarea
+					<td class="bluebox" style="width:30%"><s:textarea
 							name="referenceDesc" id="referenceDesc" value="%{referenceDesc}"
 							cols="23" rows="2" maxlength="125"
 							onkeyup="return ismaxlength(this)" /></td>
@@ -999,11 +844,12 @@ var totaldbamt=0,totalcramt=0;
 			<div class="yui-skin-sam" align="center">
 				<div id="creditDetailTable"></div>
 
-			</div> <script>
-        
+			</div>
+	 <script>
         makeCreditDetailTable();
         document.getElementById('creditDetailTable').getElementsByTagName('table')[0].width="100%";
-     </script> <!-- <div id="codescontainer"></div>
+     </script> 
+     <!-- <div id="codescontainer"></div>
      <br/>
      <div id="rebateDetails">
     <div class="subheadsmallnew"><span class="subheadnew"><s:text name="billreceipt.billdetails.Rebate"/></span></div>
@@ -1031,11 +877,9 @@ var totaldbamt=0,totalcramt=0;
             
             //document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="100%";
         </script>
-<div id="subledgercodescontainer"></div>  --></td>
+        <div id="subledgercodescontainer"></div>  --></td>
 	</tr>
-
-
-
+	
 	<tr>
 		<td colspan="5"></td>
 	</tr>

@@ -28,7 +28,7 @@ public class SignOutService {
 	@Value("${egov.coexistence.singout.uri}")
 	private String coexistencelogoutUri;
 
-	public void callFinanceForSignOut(DocumentContext documentContext) {
+	public void callFinanceForSignOut(DocumentContext documentContext, String tenantId) {
 		log.info("Inside callFinanceForSignOut()");
 		ResponseEntity<?> response = null;
 		try {
@@ -41,9 +41,9 @@ public class SignOutService {
 			LinkedHashMap<String, Object> jsonRequest = documentContext.read(JsonPathConstant.request);
 			
 			
-			log.info("finance logout uri: "+coexistencehost + coexistencelogoutUri);
-	
-			response = restTemplate.exchange(coexistencehost + coexistencelogoutUri, HttpMethod.POST,
+			log.info("finance logout uri: "+coexistencehost + coexistencelogoutUri+"?ulb="+tenantId);
+
+			response = restTemplate.exchange(coexistencehost + coexistencelogoutUri+"?ulb="+tenantId, HttpMethod.POST,
 					new HttpEntity<>(jsonRequest), ResponseEntity.class);
 			log.info("SignOutService response :" + response.getStatusCode());
 

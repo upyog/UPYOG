@@ -55,21 +55,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/receiptinstrument.js?rnd=${app_release_no}"></script>
 <style type="text/css">
-#bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
-	#bankcodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
-	#bankcodescontainer .yui-ac-shadow {position:absolute;margin:.3em;width:300px;background:#a0a0a0;z-index:9049;}
-	#bankcodescontainer ul {padding:5px 0;width:100%;}
-	#bankcodescontainer li {padding:0 5px;cursor:default;white-space:nowrap;}
-	#bankcodescontainer li.yui-ac-highlight {background:#ff0;}
-	#bankcodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
-	.inputTd {
-    width: 220px;
-}
-
-.fixedInput {
-    width: 200px;
-    background-color: #eeeeee;
-}
+	
 </style>
 <script type="text/javascript">
 
@@ -1200,32 +1186,34 @@ function showHideMandataryMark(obj){
 	</table>
 	<!--  Table to hold all modes of payment -->
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" >
+	      <tr>
 			<%@include file="receipt-instrumentdetails.jsp" %>
+		  </tr>
 		<!-- Paid by details -->
 		<s:if test="%{!isBillSourcemisc()}">
 		<tr >
-		   <td class="bluebox" width="3%" ></td>
-		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
+		   <td class="bluebox2" style="width:5%">&nbsp;</td>
+		   <td class="bluebox" style="width:15%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
+		   <td class="bluebox" style="width:30%"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
 	    </s:if>
 		<table id="manualreceipt" >    
 		
 			<s:if test="%{manualReceiptNumberAndDateReq}">
 				<tr>
-					<td class="bluebox" width="3%" ></td>
-					<td class="bluebox"><s:text name="billreceipt.manualreceiptinfo"/><span id="asteriskId"  class="mandatory1">*</span></td>
-					 <td class="bluebox"><s:checkbox label="manualreceiptinfo" id="manualreceiptinfo" name="receiptInfo" onChange="showHideMandataryMark(this)"/></td>
+					<td class="bluebox2" style="width:5%">&nbsp;</td>
+					<td class="bluebox" style="width:15%"><s:text name="billreceipt.manualreceiptinfo"/><span id="asteriskId"  class="mandatory1">*</span></td>
+					 <td class="bluebox" style="width:30%"><s:checkbox label="manualreceiptinfo" id="manualreceiptinfo" name="receiptInfo" onChange="showHideMandataryMark(this)"/></td>
 				</tr>
 			 </s:if>
 			 
 			 <s:if test="%{manualReceiptNumberAndDateReq}">
 				<tr>
-				    <td class="bluebox" width="3%" ></td>
-					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>
-					<td class="bluebox" ><s:textfield style="background-color: #eeeeee;" label="manualReceiptNumber" id="manualReceiptNumber" maxlength="50" name="manualReceiptNumber" size="18" /></td>
-					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptdate"/></td>
-					<td class="bluebox" ><s:textfield style="background-color: #eeeeee;" id="manualReceiptDate" name="manualReceiptDate" size="18" cssClass="datepicker"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
+				    <td class="bluebox2" style="width:5%">&nbsp;</td>
+					<td class="bluebox inputTd" style="width:15%"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>
+					<td class="bluebox" style="width:30%"><s:textfield style="background-color: #eeeeee;" label="manualReceiptNumber" id="manualReceiptNumber" cssClass="fixedInput" maxlength="50" name="manualReceiptNumber" size="18" /></td>
+					<td class="bluebox inputTd" style="width:15%"><s:text name="billreceipt.manualreceipt.receiptdate"/></td>
+					<td class="bluebox" style="width:30%"><s:textfield style="background-color: #eeeeee;" id="manualReceiptDate" name="manualReceiptDate" size="18" cssClass="datepicker fixedInput"  styleId="manualReceiptDate" onblur="validateManualReceiptDate(this);" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div></td>
 				</tr>
 			 </s:if>
 		
@@ -1236,7 +1224,7 @@ function showHideMandataryMark(obj){
 
 			<table border="0" width="100%" border="0" cellpadding="0" cellspacing="0" align="center" style="padding:0px;margin:0px;">
 				<tr>
-			        	<td class="bluebox2new" width="21%"></td>
+			        	<td class="bluebox2new" style="width:30%"></td>
 			            	<td class="bluebox2"></td>
 					<td class="bluebox2">&nbsp;</td>
 					<td class="bluebox2">&nbsp;</td>	
@@ -1251,7 +1239,7 @@ function showHideMandataryMark(obj){
 			      <input name="button" type="button" class="button" id="button" value="<s:text name='lbl.reset'/>" onclick="checkreset();"/>
 			      &nbsp;
 			      <input name="button" type="button" class="button" id="buttonclose2" value="<s:text name='lbl.close'/>" onclick="window.close();" />
-				</div>
+			</div>
 
 <!-- <table width="100%" >
 

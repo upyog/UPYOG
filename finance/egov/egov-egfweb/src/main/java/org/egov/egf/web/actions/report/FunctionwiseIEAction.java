@@ -453,7 +453,7 @@ public class FunctionwiseIEAction extends ReportAction
     {
         // functionwiseIEService.setReportSearch(reportSearch);
         functionwiseIEService.populateData(functionwiseIE, reportSearch);
-        cityWebsite = cityService.getCityByURL((String) getSession().get("cityurl"));
+        cityWebsite = cityService.getCityByCode((String) getSession().get("ulb"));
         functionwiseIE.setCityName(cityWebsite.getName());
     }
 
@@ -464,7 +464,7 @@ public class FunctionwiseIEAction extends ReportAction
         else
             ieWithBudgetList = functionwiseIEService.populateIncomeDataWithBudget(functionwiseIE, reportSearch);
 
-        cityWebsite = cityService.getCityByURL((String) getSession().get("cityurl"));
+        cityWebsite = cityService.getCityByCode((String) getSession().get("ulb"));
         functionwiseIE.setCityName(cityWebsite.getName());
     }
 

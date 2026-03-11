@@ -91,7 +91,16 @@ public class ApplicationTenantResolverFilter implements Filter {
 	        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
 	        String domainName = extractRequestedDomainName(domainURL);
 	        String tenantId=null;
-	        if(req.getSession() != null &&
+	        if(request.getParameter("ulb")!=null)
+	        {
+	        	tenantId=request.getParameter("ulb");
+	        	
+    	        LOGGER.info(" tenant Id in ulb parameter :"+ tenantId);
+    	        req.getSession().setAttribute("ulb", tenantId);
+
+	        }
+	        else if     
+	        (req.getSession() != null &&
 	        		req.getSession(false).getAttribute("ulb") != null) {
 	        	HttpSession session = req.getSession();
 	            if (session != null) {
@@ -99,22 +108,9 @@ public class ApplicationTenantResolverFilter implements Filter {
 	    	        LOGGER.info(" tenant Id in session :"+(String) session.getAttribute("ulb"));
 
 	            }
-	        }else {
-	        	tenantId=request.getParameter("ulb");
-	        	
-    	        LOGGER.info(" tenant Id in ulb parameter :"+ tenantId);
-
 	        }
 	        
-	        if (tenantId != null) {
-	        	req.getSession().setAttribute("ulb", tenantId);
-	        } else {
-	            HttpSession session = req.getSession();
-	            if (session != null) {
-	                tenantId = (String) session.getAttribute("ulb");
-	            }
-	        }
-	              
+	     	              
 	    ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(tenantId));
 	    LOGGER.info(" *** Schema name  :"+ApplicationThreadLocals.getTenantID());
         LOGGER.info(" *** domainName  :"+domainName);

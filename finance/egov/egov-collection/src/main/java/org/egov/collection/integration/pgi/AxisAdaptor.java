@@ -411,7 +411,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
 				collectionApplicationProperties.axisAccessCode()));
 		formData.add(new BasicNameValuePair(CollectionConstants.AXIS_MERCHANT,
 				collectionApplicationProperties.axisMerchant()));
-		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+		final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getTenantID());
 		formData.add(new BasicNameValuePair(CollectionConstants.AXIS_MERCHANT_TXN_REF, cityWebsite.getCode()
 				+ CollectionConstants.SEPARATOR_HYPHEN + onlinePayment.getReceiptHeader().getId().toString()));
 		formData.add(new BasicNameValuePair(CollectionConstants.AXIS_OPERATOR_ID,

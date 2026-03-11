@@ -74,7 +74,7 @@
 	</s:if>
 </tr>
 <tr>
-	<td class="bluebox">&nbsp;</td>
+	<!-- <td class="bluebox">&nbsp;</td> -->
 	<s:if test="%{shouldShowHeaderField('scheme')}">
 		<egov:ajaxdropdown id="schemeid" fields="['Text','Value']"
 			dropdownId="schemeid" url="voucher/common!ajaxLoadSchemes.action" />

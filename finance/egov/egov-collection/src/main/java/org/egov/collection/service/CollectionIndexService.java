@@ -84,7 +84,7 @@ public class CollectionIndexService {
 
 	@Transactional
 	public CollectionIndex pushCollectionIndex(final CollectionIndex collectionIndex) {
-		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+		final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getTenantID());
 		collectionIndex.setCityName(cityWebsite.getName());
 		if (cityWebsite.getDistrictName() != null)
 			collectionIndex.setDistrictName(cityWebsite.getDistrictName());

@@ -107,6 +107,33 @@
 #codescontainer li.yui-ac-prehighlight {
 	background: #FFFFCC;
 }
+/* label column */
+#bankEntriesNotInBankBookform td.greybox:nth-child(2),
+#bankEntriesNotInBankBookform td.bluebox:nth-child(2),
+#bankEntriesNotInBankBookform td.greybox:nth-child(4),
+#bankEntriesNotInBankBookform td.bluebox:nth-child(4) {
+    width: 160px;   
+}
+/* field column */
+#bankEntriesNotInBankBookform td.greybox:nth-child(3),
+#bankEntriesNotInBankBookform td.bluebox:nth-child(3),
+#bankEntriesNotInBankBookform td.greybox:nth-child(5),
+#bankEntriesNotInBankBookform td.bluebox:nth-child(5) {
+    width: 240px;   
+}
+
+/* Make dropdowns consistent */
+#bankEntriesNotInBankBookform select,
+#bankEntriesNotInBankBookform input[type="text"] {
+    width: 200px !important;
+}
+
+/* For the table */
+#bankEntriesNotInBankBookTable input,
+#bankEntriesNotInBankBookTable select {
+    width: auto !important;
+}
+
 </style>
 <script>
 	path = "${pageContext.request.contextPath}";

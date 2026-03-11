@@ -201,7 +201,7 @@ public class TrialBalanceAction extends BaseFormAction {
 		try {
 			heading = generateHeading();
 			titleName = microserviceUtils.getHeaderNameForTenant().toUpperCase()+" \\n";
-			cityWebsite = cityService.getCityByURL((String) getSession().get("cityurl"));
+			cityWebsite = cityService.getCityByCode((String) getSession().get("ulb"));
 			if (rb.getExportType().equalsIgnoreCase("xls")) {
 				inputStream = reportHelper.exportXls(inputStream,
 						reportHelper.exportTBDateRange(al, titleName, rb, heading, fundList, "xls"));

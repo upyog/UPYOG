@@ -74,7 +74,7 @@ public class CollectionIndexUtils {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public CollectionIndex findByReceiptNumber(final String receiptNumber) {
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+		final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getTenantID());
         return collectionIndexRepository.findByReceiptNumberAndCityName(receiptNumber, cityWebsite.getName());
     }
 }

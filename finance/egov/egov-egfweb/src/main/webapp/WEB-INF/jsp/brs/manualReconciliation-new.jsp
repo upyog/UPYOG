@@ -84,6 +84,15 @@
 		})
 	}
 </script>
+<style>
+	/* Set consistent width for form inputs and dropdowns */
+	td.greybox input,
+	td.greybox select,
+	td.bluebox input,
+	td.bluebox select {
+	    width: 50% !important;
+	}
+</style>
 </head>
 <body>
 	<s:form action="autoReconciliation" theme="simple" name="mrform" id="mrform">

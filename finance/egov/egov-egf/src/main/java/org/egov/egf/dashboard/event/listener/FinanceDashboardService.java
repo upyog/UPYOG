@@ -101,7 +101,7 @@ public class FinanceDashboardService {
         if(isEsDashboardIndexingEnabled){
             String tenantId = microServiceUtil.getTenentId();
             String token = microServiceUtil.generateAdminToken(tenantId);
-            String domainName = ApplicationThreadLocals.getDomainName();
+            String domainName = ApplicationThreadLocals.getTenantID();
             FinanceDashboardEvent event = new FinanceDashboardEvent(this, data,eventType, tenantId, token, domainName);
             eventPublisher.publishEvent(event);
             LOG.info("EVENT : {} PUBLISHED TO ESK DASHBOARD , ",event);
@@ -195,7 +195,7 @@ public class FinanceDashboardService {
 
     private void prepareUlbDetails(List<EgBillRegisterData> egBillDataList, List<VoucherHeaderData> vhDataList) {
         String id = "";
-        City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+		City city = cityService.getCityByCode(ApplicationThreadLocals.getTenantID());
         if(city != null){
             if(egBillDataList != null && !egBillDataList.isEmpty()){
                 for(EgBillRegisterData egbd : egBillDataList){
