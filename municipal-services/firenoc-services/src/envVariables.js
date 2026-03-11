@@ -64,7 +64,7 @@ const envVariables = {
   //location service configurations
   EGOV_LOCATION_HOST: process.env.EGOV_LOCATION_HOST || "http://localhost:8090/",
   EGOV_LOCATION_CONTEXT_PATH:
-    process.env.EGOV_LOCATION_CONTEXT_PATH || "egov-location/location/v11",
+    process.env.EGOV_LOCATION_CONTEXT_PATH || "egov-location/location/v11/",
   EGOV_LOCATION_SEARCH_ENDPOINT:
     process.env.EGOV_LOCATION_SEARCH_ENDPOINT || "boundarys/_search",
   EGOV_LOCATION_HIERARCHY_TYPE_CODE: process.env.EGOV_LOCATION || "REVENUE",
@@ -73,7 +73,7 @@ const envVariables = {
   //user service configurations
   EGOV_USER_HOST: process.env.EGOV_USER_HOST || "http://localhost:8081/",
   //"https://dev.digit.org",
-  EGOV_USER_CONTEXT_PATH: process.env.EGOV_USER_CONTEXT_PATH || "user",
+  EGOV_USER_CONTEXT_PATH: process.env.EGOV_USER_CONTEXT_PATH || "user/",
   EGOV_USER_CREATE_ENDPOINT:
     process.env.EGOV_USER_CREATE_ENDPOINT || "users/_createnovalidate",
   EGOV_USER_SEARCH_ENDPOINT:
@@ -84,7 +84,7 @@ const envVariables = {
 
   //idgen service configurations
   EGOV_IDGEN_HOST: process.env.EGOV_IDGEN_HOST || "http://localhost:8087/",
-  EGOV_IDGEN_CONTEXT_PATH: process.env.EGOV_IDGEN_CONTEXT_PATH || "egov-idgen",
+  EGOV_IDGEN_CONTEXT_PATH: process.env.EGOV_IDGEN_CONTEXT_PATH || "egov-idgen/",
   EGOV_IDGEN_GENERATE_ENPOINT:
     process.env.EGOV_IDGEN_GENERATE_ENPOINT || "id/_generate",
   EGOV_IDGEN_FN_APPLICATION_NO_NAME:
@@ -101,14 +101,14 @@ const envVariables = {
   EGOV_MDMS_HOST:
     process.env.EGOV_MDMS_HOST || "https://dev.digit.org/",
   EGOV_MDMS_CONTEXT_PATH:
-    process.env.EGOV_MDMS_CONTEXT_PATH || "egov-mdms-service/v1",
+    process.env.EGOV_MDMS_CONTEXT_PATH || "egov-mdms-service/v1/",
   EGOV_MDMS_SEARCH_ENPOINT: process.env.EGOV_MDMS_SEARCH_ENPOINT || "_search",
 
   //event service configurations
   EGOV_EVENT_HOST:
     process.env.EGOV_EVENT_HOST || "https://dev.digit.org/",
   EGOV_EVENT_CONTEXT_PATH:
-    process.env.EGOV_EVENT_CONTEXT_PATH || "egov-user-event/v1/events",
+    process.env.EGOV_EVENT_CONTEXT_PATH || "egov-user-event/v1/events/",
   EGOV_EVENT_CREATE_ENPOINT:
     process.env.EGOV_EVENT_CREATE_ENPOINT || "_create",
 
@@ -116,7 +116,7 @@ const envVariables = {
   EGOV_FN_CALCULATOR_HOST:
     process.env.EGOV_FN_CALCULATOR_HOST || "http://localhost:8083/",
   EGOV_FN_CALCULATOR_CONTEXT_PATH:
-    process.env.EGOV_FN_CALCULATOR_CONTEXT_PATH || "firenoc-calculator/v1",
+    process.env.EGOV_FN_CALCULATOR_CONTEXT_PATH || "firenoc-calculator/v1/",
   EGOV_FN_CALCULATOR_CALCULATOR_ENPOINT:
     process.env.EGOV_FN_CALCULATOR_CALCULATOR_ENPOINT || "_calculate",
   EGOV_FN_CALCULATOR_GETBILL_ENPOINT:
@@ -126,7 +126,7 @@ const envVariables = {
   EGOV_PROPERTY_HOST:
     process.env.EGOV_PROPERTY_HOST || "https://dev.digit.org/",
   EGOV_PROPERTY_CONTEXT_PATH:
-    process.env.EGOV_PROPERTY_CONTEXT_PATH || "pt-services-v2/property",
+    process.env.EGOV_PROPERTY_CONTEXT_PATH || "pt-services-v2/property/",
   EGOV_PROPERTY_SEARCH_ENPOINT:
     process.env.EGOV_PROPERTY_SEARCH_ENPOINT || "_search",
 
@@ -135,7 +135,7 @@ const envVariables = {
     process.env.EGOV_LOCALIZATION_HOST ||
     "https://dev.digit.org/",
   EGOV_LOCALIZATION_CONTEXT_PATH:
-    process.env.EGOV_LOCALIZATION_CONTEXT_PATH || "localization/messages/v1",
+    process.env.EGOV_LOCALIZATION_CONTEXT_PATH || "localization/messages/v1/",
   EGOV_LOCALIZATION_SEARCH_ENPOINT:
     process.env.EGOV_LOCALIZATION_SEARCH_ENPOINT || "_search",
   EGOV_LOCALIZATION_STATE_LEVEL:
