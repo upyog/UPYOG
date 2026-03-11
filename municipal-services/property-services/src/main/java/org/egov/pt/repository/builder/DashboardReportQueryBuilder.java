@@ -698,7 +698,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append("order by ep.lastmodifiedtime desc");
+		filter.append(" order by ep.lastmodifiedtime desc");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -739,7 +739,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append("order by eppa.lastmodifiedtime desc");
+		filter.append(" order by eppa.lastmodifiedtime desc");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -780,7 +780,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append("order by eppa.lastmodifiedtime desc");
+		filter.append(" order by eppa.lastmodifiedtime desc");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -821,7 +821,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append("order by ep.lastmodifiedtime desc");
+		filter.append(" order by ep.lastmodifiedtime desc");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
