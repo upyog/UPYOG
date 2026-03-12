@@ -254,9 +254,17 @@ public class UserController {
 
         ResponseEntity<String> validationApiResponse;
         try {
+//        	validationApiResponse = restClient.post()
+//                    .uri(requesterServiceHost + requesterServiceEndpoint)
+//                    .headers(httpHeaders -> httpHeaders.addAll(headers))
+//                    .body(tokenRequest)
+//                    .retrieve()
+//                    .toEntity(String.class);
+        	
         	validationApiResponse = restClient.post()
                     .uri(requesterServiceHost + requesterServiceEndpoint)
-                    .headers(httpHeaders -> httpHeaders.addAll(headers))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .headers(h -> h.addAll(headers))
                     .body(tokenRequest)
                     .retrieve()
                     .toEntity(String.class);
