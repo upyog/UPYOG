@@ -101,6 +101,14 @@ config:
       - work-dir: "core-services/egov-common-masters/src/main/resources/db"
         image-name: "egov-common-masters-db"
 
+  - name: "builds/upyog/core-services/egov-user"
+    build:
+      - work-dir: "core-services/egov-user"
+        image-name: "egov-user"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/egov-user/src/main/resources/db"
+        image-name: "egov-user-db"      
+
   - name: "builds/upyog/core-services/egov-data-uploader"
     build:
       - work-dir: "core-services/egov-data-uploader"
