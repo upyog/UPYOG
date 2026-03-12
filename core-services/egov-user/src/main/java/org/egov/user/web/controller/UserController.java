@@ -264,7 +264,17 @@ public class UserController {
         	validationApiResponse = restClient.post()
                     .uri(requesterServiceHost + requesterServiceEndpoint)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .headers(h -> h.addAll(headers))
+                    .headers(h -> {
+                        headers.forEach((key, value) -> {
+                            if (!key.equalsIgnoreCase("content-length") &&
+                                !key.equalsIgnoreCase("transfer-encoding") &&
+                                !key.equalsIgnoreCase("host") &&
+                                !key.equalsIgnoreCase("connection")) {
+
+                                h.put(key, value);
+                            }
+                        });
+                    })
                     .body(tokenRequest)
                     .retrieve()
                     .toEntity(String.class);
