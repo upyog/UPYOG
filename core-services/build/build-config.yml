@@ -54,6 +54,12 @@ config:
       - work-dir: "egov-idgen/src/main/resources/db"
         image-name: "egov-idgen-db"
 
+  - name: "builds/core-services/egov-user-chatbot"
+    build:
+      - work-dir: "egov-user"
+        image-name: "egov-user-chatbot"
+        dockerfile: "build/maven/Dockerfile"      
+
   - name: "builds/core-services/egov-indexer"
     build:
       - work-dir: "egov-indexer"
