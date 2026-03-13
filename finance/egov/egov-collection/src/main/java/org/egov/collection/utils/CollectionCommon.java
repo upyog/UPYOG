@@ -108,6 +108,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -393,6 +394,8 @@ public class CollectionCommon {
             reportParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         else
             reportParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsBytes());
+            
+        reportParams.put("cityName", ReportUtil.getCityName());
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened
@@ -417,6 +420,7 @@ public class CollectionCommon {
         final String templateName = CollectionConstants.CHALLAN_TEMPLATE_NAME;
         final Map<String, Object> reportParams = new HashMap<>(0);
         reportParams.put("EGOV_COMMON", egovCommon);
+        reportParams.put("cityName", ReportUtil.getCityName());
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened

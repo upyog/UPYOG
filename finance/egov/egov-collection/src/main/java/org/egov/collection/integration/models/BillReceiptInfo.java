@@ -185,4 +185,13 @@ public interface BillReceiptInfo {
      * @return receipt created user
      */
     public abstract String getCreatedUser();
+    /**
+     * @return receipt wardNo 
+     */
+    public abstract String getWardNo();
+    /**
+     * @return receipt fund 
+     */
+    public abstract String getFund();
+   
 }

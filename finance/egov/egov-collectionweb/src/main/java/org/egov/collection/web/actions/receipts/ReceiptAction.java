@@ -1095,14 +1095,17 @@ public class ReceiptAction extends BaseFormAction {
 				Arrays.asList(selectedReceipts));
 
 		receiptlist.stream().forEach(receipt -> {
-			JsonNode additionalDetails=receipt.getAdditionalDetails();
-			receiptHeader.setWardNo(additionalDetails.get("wardNo").asText());
-			receiptHeader.setFund(additionalDetails.get("fundName").asText());
+			
 			receipt.getBill().forEach(bill -> {
 				LOGGER.info("bill:"+bill);
 				BigDecimal totalAmountPaid = BigDecimal.ZERO;
                 		for (BillDetail billDetail : bill.getBillDetails()) {
 					ReceiptHeader header = new ReceiptHeader();
+					JsonNode additionalDetails=receipt.getAdditionalDetails();
+					receiptHeader.setWardNo(additionalDetails.get("wardNo").asText());
+					receiptHeader.setFund(additionalDetails.get("fundName").asText());
+					header.setWardNo(additionalDetails.get("wardNo").asText());
+					header.setFund(additionalDetails.get("fundName").asText());
 					receiptHeader.setReceiptnumber(billDetail.getReceiptNumber());
 					receiptHeader.setReceiptdate(new Date(billDetail.getReceiptDate()));
 					String businessServiceCode = billDetail.getBusinessService();
