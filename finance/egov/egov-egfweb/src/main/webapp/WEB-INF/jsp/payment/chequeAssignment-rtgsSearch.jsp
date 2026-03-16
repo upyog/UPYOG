@@ -51,6 +51,25 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
+
+<style>
+
+/* Set consistent width for all form inputs and dropdowns */
+.formmainbox td.greybox input[type="text"],
+.formmainbox td.bluebox input[type="text"],
+.formmainbox td.greybox select,
+.formmainbox td.bluebox select {
+    width: 170px !important;
+}
+
+/* Ensure labels don't wrap */
+.formmainbox td.greybox,
+.formmainbox td.bluebox {
+    white-space: nowrap;
+}
+
+</style>
+
 <link rel="stylesheet" type="text/css"
 	href="/services/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title>RTGS Ref. No Assignment Search</title>

@@ -50,6 +50,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn"%>
+
+<style>
+	/* Set consistent width for form inputs and dropdowns */
+	#bankstatementsearchform select.form-control,
+	#bankstatementsearchform input.form-control {
+	    width: 60% !important;
+	}
+</style>
 <form:form role="form" action="search" modelAttribute="bankStatementUploadFile" id="bankstatementsearchform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<div class="row">
 		<div class="col-md-12">

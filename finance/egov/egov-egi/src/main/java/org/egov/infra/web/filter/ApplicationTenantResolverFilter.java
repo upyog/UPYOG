@@ -91,7 +91,16 @@ public class ApplicationTenantResolverFilter implements Filter {
 	        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
 	        String domainName = extractRequestedDomainName(domainURL);
 	        String tenantId=null;
-	        if(request.getParameter("ulb")!=null)
+	        
+	        if(request.getParameter("tenantId")!=null)
+	        {
+	        	tenantId=request.getParameter("tenantId").split("\\.")[1];
+	        	
+    	        LOGGER.info(" tenant Id in tenantId parameter :"+ tenantId);
+    	        req.getSession().setAttribute("ulb", tenantId);
+
+	        }
+	        else if(request.getParameter("ulb")!=null)
 	        {
 	        	tenantId=request.getParameter("ulb");
 	        	
