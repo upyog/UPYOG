@@ -50,9 +50,9 @@ export const UserService = {
       window.localStorage.clear();
       window.sessionStorage.clear();
       if (userType === "citizen") {
-        window.location.replace("/digit-ui/citizen");
+        window.location.replace("/digit-ui/citizen/login");
       } else {
-        window.location.replace("/digit-ui/employee/user/language-selection");
+        window.location.replace("/digit-ui/employee/user/login");
       }
     }
   },
@@ -63,6 +63,22 @@ export const UserService = {
       data: details,
       auth: false,
       params: { tenantId: stateCode },
+    }),
+  validateOtp: (details) => 
+    ServiceRequest({
+      serviceName: "validateOtp",
+      url: Urls.ValidateOTP,
+      data: details,
+      auth: true,
+      params: {  }
+    }),
+  generateCaptcha: (details) => 
+    ServiceRequest({
+      serviceName: "generateCaptcha",
+      url: Urls.GenerateCaptcha,
+      data: details,
+      auth: true,
+      params: {  }
     }),
   setUser: (data) => {
     return Digit.SessionStorage.set("User", data);

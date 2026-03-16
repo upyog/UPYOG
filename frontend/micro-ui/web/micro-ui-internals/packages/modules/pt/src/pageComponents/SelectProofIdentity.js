@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, UploadFile, CardLabelDesc, Dropdown, CardLabel } from "@egovernments/digit-ui-react-components";
+import { FormStep, UploadFile, CardLabelDesc, Dropdown, CardLabel } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll } from "../utils";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -25,7 +25,7 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerInd
   const stateId = Digit.ULBService.getStateId();
   const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
   const docs = Documentsob?.PropertyTax?.Documents;
-  const proofIdentity = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("IDENTITYPROOF"));
+  const proofIdentity = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
   if (proofIdentity.length > 0) {
     dropdownData = proofIdentity[0]?.dropdownData;
     dropdownData.forEach((data) => {
@@ -83,13 +83,14 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerInd
         else ownerDetails.documents["proofIdentity"] = { documentType: dropdownValue, fileStoreId };
       } else {
         if (!isMutation) {
-          ownerDetails["documents"] = [];
+          ownerDetails["documents"] = {};
           ownerDetails.documents["proofIdentity"] = fileDetails;
         } else {
           ownerDetails["documents"] = {};
           ownerDetails.documents["proofIdentity"] = { documentType: dropdownValue, fileStoreId };
         }
       }
+      // console.log("ownerDetails==",ownerDetails)
 
       onSelect(config.key, isMutation ? [ownerDetails] : ownerDetails, "", index);
     }
@@ -148,8 +149,8 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerInd
         onAdd={onAdd}
         isMultipleAllow={formData?.ownershipCategory?.value == "INDIVIDUAL.MULTIPLEOWNERS"}
       >
-        <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
-        <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
+        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic"}}>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
+        <CardLabelDesc style={{fontSize: "12px", fontFamily: "sans-serif", fontStyle:"italic"}}>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
         <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
         <Dropdown
           t={t}
@@ -170,6 +171,7 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerInd
           }}
           message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
           error={error}
+          hasFile={uploadedFile ? true : false}
         />
         {error ? <div style={{ height: "20px", width: "100%", fontSize: "20px", color: "red", marginTop: "5px" }}>{error}</div> : ""}
         <div style={{ disabled: "true", height: "20px", width: "100%" }}></div>

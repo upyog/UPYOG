@@ -31,16 +31,17 @@ public class EarlyReconciliationJobConfig {
     @Bean
     @Autowired
     CronTriggerFactoryBean earlyReconciliationTrigger(JobDetail earlyReconciliationJob) {
-        int runEvery = appProperties.getEarlyReconcileJobRunInterval();
+        int runEvery =  appProperties.getEarlyReconcileJobRunInterval();
         Integer runEveryMinutes, runEveryHours;
         runEveryHours = runEvery / 60;
         runEveryMinutes = runEvery % 60;
 
-
+        
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         cronTriggerFactoryBean.setJobDetail(earlyReconciliationJob);
 //        cronTriggerFactoryBean.setCronExpression("0 0/" + appProperties.getReconciliationTimeout().toString() + " * * * ?");
         cronTriggerFactoryBean.setCronExpression("0 " + runEveryHours + "/" + runEveryMinutes + " * * * ?");
+        //cronTriggerFactoryBean.setCronExpression("0 0/2 * * * ?");//TESTING EVERY 2 min
         cronTriggerFactoryBean.setGroup("status-update");
         return cronTriggerFactoryBean;
     }

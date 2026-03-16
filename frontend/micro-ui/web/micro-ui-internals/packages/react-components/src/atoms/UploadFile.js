@@ -41,7 +41,8 @@ const getCitizenStyles = (value) => {
         marginTop: "0px"
       },
       closeIconStyles: {
-        width : "20px"
+        width : "20px",
+        marginLeft: "10px"
       },
       containerStyles: {
         padding: "10px", 
@@ -114,10 +115,67 @@ const getCitizenStyles = (value) => {
         padding: "0px"
       },
       closeIconStyles: {
-        width : "20px"
+        width : "20px",
+        marginLeft: "10px"
       },
       uploadFile: {
         minHeight: "50px"
+      }
+    };
+  } else if (value == "citizenAppeal") {
+    citizenStyles = {
+      containerStyles: {
+        display: "flex", 
+        justifyContent: "flex-start", 
+        alignItems: "center", 
+        flexWrap: "wrap",
+        margin: "0px",
+        padding: "0px"
+      },
+      tagContainerStyles: {
+       margin: "0px",
+       padding: "0px",
+       width: "46%"
+      },
+      tagStyles: {
+        height: "auto", 
+        padding: "5px", 
+        margin: 0,
+        width: "100%",
+        margin: "5px"
+      },
+      textStyles: {
+        wordBreak: "break-word",
+        height: "auto",
+        lineHeight: "16px",
+        overflow: "hidden",
+        // minHeight: "35px",
+        maxHeight: "34px"
+      },   
+      inputStyles: {
+        width: "43%",
+        minHeight: "42px",
+        maxHeight: "42px",
+        top: "5px",
+        left: "5px"
+      },
+      buttonStyles: {
+        height: "auto",
+        minHeight: "25px",
+        width: "43%",
+        maxHeight: "25px",
+        margin: "5px",
+        padding: "1px !important"
+      },
+      closeIconStyles: {
+        width : "20px",
+        marginLeft: "10px"
+      },
+      uploadFile: {
+        minHeight: "37px",
+        maxHeight: "37px",
+        borderColor: "#cccccc",
+        background: "white"
       }
     };
   }
@@ -150,6 +208,9 @@ const UploadFile = (props) => {
 
   // for common aligmnent issues added common styles
   extraStyles = getCitizenStyles("OBPS");
+  if(props.extraStyleName=='citizenAppeal') {
+    extraStyles = getCitizenStyles("citizenAppeal");
+  }
 
   // if (window.location.href.includes("/obps") || window.location.href.includes("/noc")) {
   //   extraStyles = getCitizenStyles("OBPS");
@@ -210,7 +271,12 @@ const UploadFile = (props) => {
               </div>
             })}
           {!hasFile || props.error ? (
-            <h2 className="file-upload-status">{props.message}</h2>
+            <>
+              <h2 className="file-upload-status">{props.message}</h2>
+              { props?.hasFile && <span onClick={() => handleDelete()} style={extraStyles ? extraStyles?.closeIconStyles : null}>
+                <Close style={props.Multistyle} className="close" />
+              </span>}
+            </>
           ) : (
             <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
               <div className="tag" style={extraStyles ? extraStyles?.tagStyles : null}>

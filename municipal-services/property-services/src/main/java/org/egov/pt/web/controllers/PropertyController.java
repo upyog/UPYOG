@@ -8,8 +8,14 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.config.scheduler.DashboardDataPush;
+import org.egov.pt.dashboardservice.DashboardDataService;
+import org.egov.pt.models.DashboardData;
+import org.egov.pt.models.DashboardDataSearch;
+import org.egov.pt.models.DashboardReport;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
@@ -19,6 +25,9 @@ import org.egov.pt.service.PropertyEncryptionService;
 import org.egov.pt.service.PropertyService;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.DashboardReportResponse;
+import org.egov.pt.web.contracts.DashboardRequest;
+import org.egov.pt.web.contracts.DashboardResponse;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
@@ -32,6 +41,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/property")
@@ -57,6 +67,12 @@ public class PropertyController {
 
     @Autowired
     PropertyEncryptionService propertyEncryptionService;
+    
+    @Autowired
+    DashboardDataService dashboardDataService;
+    
+    @Autowired
+    DashboardDataPush dashBoardIngestService;
 
     @PostMapping("/_create")
     public ResponseEntity<PropertyResponse> create(@Valid @RequestBody PropertyRequest propertyRequest) {
@@ -193,5 +209,69 @@ public class PropertyController {
 //                .build();
 //        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
 
+    @RequestMapping(value = "/_dashboardDataSearch", method = RequestMethod.POST)
+    public ResponseEntity<DashboardResponse> dashboardDataSearch(@Valid @RequestBody DashboardRequest dashboardRequest) {
+    	
+    	List<DashboardData> dashboardDatas=dashboardDataService.dashboardDatas(dashboardRequest.getDashboardDataSearch(),dashboardRequest.getRequestInfo());
+    	DashboardResponse dashboardResponse=DashboardResponse.builder().dashboardDatas(dashboardDatas).responseInfo(
+    			responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true)).build();
+    	
+    	return new ResponseEntity<>(dashboardResponse,HttpStatus.OK);
+    }
+	 
+    
+    
+    //IT SHOULD OPENENDPOINT WILL HIT ONLY ONCE 
+	@RequestMapping(value = "/_dashboardIngestForLegacy", method = RequestMethod.POST)
+	public ResponseEntity<?> dashboardDataSearch(){
+
+		return new ResponseEntity<>(dashBoardIngestService.datapushFromAPi(), HttpStatus.OK);
+	}
+	
+	
+	
+	@RequestMapping(value = "/_dashboardPropertyReports", method =
+	  RequestMethod.POST) public ResponseEntity<?>
+	  dashboardDataSearchProperties(@RequestParam(defaultValue = "20") Long pageLimit,@RequestParam(defaultValue = "10") Long offset ,@Valid @RequestBody DashboardRequest
+	  dashboardRequest) throws Exception {
+	  
+		if(!ObjectUtils.isEmpty(pageLimit) && !ObjectUtils.isEmpty(offset))
+		{
+			dashboardRequest.getDashboardDataSearch().setLimit(pageLimit);
+			dashboardRequest.getDashboardDataSearch().setOffset(offset);
+		}
+	  DashboardReport
+	  dashboardDatas=dashboardDataService.dashboardDatasWithProperties(dashboardRequest);
+	//  if(dashboardRequest.getDashboardDataSearch().getIsReportDownload()) {
+	  
+	  //return dashboardDataService.generateExcelResponse(dashboardDatas,"dashboard-report.xlsx"); //} 
+	  DashboardReportResponse  dashboardReportResponse=DashboardReportResponse.builder().dashboardReport(dashboardDatas).
+	  responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(
+	  dashboardRequest.getRequestInfo(), true)).build();
+	  
+	  return new ResponseEntity<>(dashboardReportResponse,HttpStatus.OK); 
+	  }
+	 
+	
+	@PostMapping("/_applicationData")
+	public ResponseEntity<PropertyResponse> searchApplication(
+            @Valid @RequestBody DashboardRequest dashboardRequest)
+	{
+		PropertyResponse response = PropertyResponse.builder()
+        		.responseInfo(
+                        responseInfoFactory.createResponseInfoFromRequestInfo(dashboardRequest.getRequestInfo(), true))
+        		.properties(dashboardDataService.applicationData(dashboardRequest.getDashboardDataSearch(), dashboardRequest.getRequestInfo()))
+        		.count(0)
+                .build();
+        
+        return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+		 
+	
+	
+	
+	 
 }
