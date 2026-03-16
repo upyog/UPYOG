@@ -146,10 +146,18 @@ public class DashboardReportQueryBuilder {
 			+ "FROM eg_pt_asmt_assessment epaa\r\n" + "JOIN eg_pt_property epp ON epaa.propertyid = epp.propertyid\r\n"
 			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n" + "WHERE epp.status = 'ACTIVE'";
 
-	public static final String PROPERTIES_PENDING_SELF_ASSESSMENT = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid\r\n"
-			+ "FROM eg_pt_property epp\r\n" + "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
-			+ "WHERE epp.propertyid NOT IN (\r\n" + "SELECT DISTINCT epaa.propertyid\r\n"
-			+ "    FROM eg_pt_asmt_assessment epaa WHERE epp.status = 'ACTIVE'\r\n" + ")";
+	public static final String PROPERTIES_PENDING_SELF_ASSESSMENT = "SELECT \r\n"
+			+ "    epp.propertyid,\r\n"
+			+ "    epp.tenantid\r\n"
+			+ "FROM eg_pt_property epp\r\n"
+			+ "JOIN eg_pt_address epa \r\n"
+			+ "    ON epp.id = epa.propertyid\r\n"
+			+ "WHERE epp.status = 'ACTIVE'\r\n"
+			+ "AND NOT EXISTS (\r\n"
+			+ "    SELECT 1\r\n"
+			+ "    FROM eg_pt_asmt_assessment epaa\r\n"
+			+ "    WHERE epaa.propertyid = epp.propertyid\r\n"
+			+ ")";
 
 	public static final String PROPERTIES_PAID = "SELECT epp.propertyid AS propertyid,epp.tenantid as tenantid,ept.txn_id as txn_id ,ept.txn_amount as txn_amount,\r\n"
 			+ "ep.createdby as createdby,ep.createdtime as createdtime,ep.lastmodifiedby as lastmodifiedby,ep.lastmodifiedtime as lastmodifiedtime\r\n"
@@ -192,100 +200,220 @@ public class DashboardReportQueryBuilder {
 			+ "JOIN eg_pg_transactions ept ON epp.propertyid = ept.consumer_code\r\n"
 			+ "JOIN egcl_payment ep ON ept.txn_id = ep.transactionnumber\r\n" + "WHERE ept.txn_status = 'SUCCESS'";
 
-	public static final String PENALTY_SHARE = "WITH paid_bills AS (\r\n"
-			+ "    SELECT \r\n"
-			+ "        bd.demandid, \r\n"
-			+ "        SUM(bd.totalamount) AS billsum,b.consumercode,b.tenantid,pay.lastmodifiedtime, "
-			+ "     pay.transactionnumber as transactionnumber\r\n"
-			+ "    FROM egbs_bill_v1 b\r\n"
-			+ "    JOIN egbs_billdetail_v1 bd ON b.id = bd.billid\r\n"
-			+ "    JOIN eg_pt_property p ON p.propertyid = bd.consumercode\r\n"
-			+ "    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"
-			+ "    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code\r\n"
-			+ "    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
+	public static final String PENALTY_SHARE = "WITH base_data AS (\r\n"
+			+ "    SELECT\r\n"
+			+ "        p.propertyid AS consumercode,\r\n"
+			+ "        p.tenantid,\r\n"
+			+ "        d.id AS demandid,\r\n"
+			+ "        pay.createdby,\r\n"
+			+ "        pay.createdtime,\r\n"
+			+ "        pay.lastmodifiedby,\r\n"
+			+ "        pay.lastmodifiedtime,\r\n"
+			+ "        pay.transactionnumber\r\n"
+			+ "    FROM eg_pt_property p\r\n"
+			+ "    JOIN eg_pt_address a \r\n"
+			+ "        ON p.id = a.propertyid\r\n"
+			+ "    JOIN eg_pg_transactions t \r\n"
+			+ "        ON p.propertyid = t.consumer_code\r\n"
+			+ "    JOIN egcl_payment pay \r\n"
+			+ "        ON t.txn_id = pay.transactionnumber\r\n"
+			+ "    JOIN egbs_demand_v1 d \r\n"
+			+ "        ON d.consumercode = p.propertyid\r\n"
 			+ "    WHERE t.txn_status = 'SUCCESS'\r\n"
-			+ "      AND p.status = 'ACTIVE'\r\n"
-			+ "      AND b.status = 'PAID'\r\n"
-			+ "     /*FILTER_CONDITIONS*/\r\n"
-			+ "    GROUP BY bd.demandid,b.consumercode,b.tenantid,pay.lastmodifiedtime\r\n"
-			+ "    HAVING SUM(bd.totalamount) > 0\r\n"
-			+ "),\r\n"
-			+ "\r\n"
-			+ "total_demand AS (\r\n"
-			+ "    SELECT \r\n"
-			+ "        d.id AS demandid, \r\n"
-			+ "        SUM(dd.taxamount) AS demandsum\r\n"
-			+ "    FROM egbs_demand_v1 d\r\n"
-			+ "    JOIN egbs_demanddetail_v1 dd ON d.id = dd.demandid\r\n"
-			+ "    JOIN eg_pt_property p ON p.propertyid = d.consumercode\r\n"
-			+ "    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"
-			+ "    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code\r\n"
-			+ "    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
-			+ "    WHERE t.txn_status = 'SUCCESS'\r\n"
-			+ "      AND p.status = 'ACTIVE'\r\n"
-			+ "     /*FILTER_CONDITIONS*/\r\n"
-			+ "    GROUP BY d.id\r\n"
-			+ "    HAVING SUM(dd.taxamount) > 0\r\n"
-			+ "),\r\n"
-			+ "\r\n"
-			+ "penalty_demand AS (\r\n"
-			+ "    SELECT \r\n"
-			+ "        d.id AS demandid, \r\n"
-			+ "        SUM(dd.taxamount) AS penalty_amount\r\n"
-			+ "    FROM egbs_demand_v1 d\r\n"
-			+ "    JOIN egbs_demanddetail_v1 dd ON d.id = dd.demandid\r\n"
-			+ "    JOIN eg_pt_property p ON p.propertyid = d.consumercode\r\n"
-			+ "    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"
-			+ "    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code\r\n"
-			+ "    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
-			+ "    WHERE dd.taxheadcode IN ('PT_PAST_DUE_PENALTY', 'PT_TIME_PENALTY')\r\n"
-			+ "      AND dd.taxamount > 0\r\n"
-			+ "      AND t.txn_status = 'SUCCESS'\r\n"
 			+ "      AND p.status = 'ACTIVE'\r\n"
 			+ "      /*FILTER_CONDITIONS*/\r\n"
-			+ "    GROUP BY d.id\r\n"
+			+ "),\r\n"
+			+ "\r\n"
+			+ "bill_data AS (\r\n"
+			+ "    SELECT\r\n"
+			+ "        bd.demandid,\r\n"
+			+ "        SUM(bd.totalamount) AS billsum\r\n"
+			+ "    FROM egbs_billdetail_v1 bd\r\n"
+			+ "    JOIN egbs_bill_v1 b \r\n"
+			+ "        ON b.id = bd.billid\r\n"
+			+ "    WHERE b.status = 'PAID'\r\n"
+			+ "    GROUP BY bd.demandid\r\n"
+			+ "),\r\n"
+			+ "\r\n"
+			+ "demand_data AS (\r\n"
+			+ "    SELECT\r\n"
+			+ "        dd.demandid,\r\n"
+			+ "        SUM(dd.taxamount) AS demandsum\r\n"
+			+ "    FROM egbs_demanddetail_v1 dd\r\n"
+			+ "    GROUP BY dd.demandid\r\n"
+			+ "),\r\n"
+			+ "\r\n"
+			+ "penalty_data AS (\r\n"
+			+ "    SELECT\r\n"
+			+ "        dd.demandid,\r\n"
+			+ "        SUM(dd.taxamount) AS penalty\r\n"
+			+ "    FROM egbs_demanddetail_v1 dd\r\n"
+			+ "    WHERE dd.taxheadcode IN ('PT_PAST_DUE_PENALTY', 'PT_TIME_PENALTY')\r\n"
+			+ "      AND dd.taxamount > 0\r\n"
+			+ "    GROUP BY dd.demandid\r\n"
 			+ ")\r\n"
 			+ "\r\n"
-			+ "SELECT filtered.consumercode AS propertyid, filtered.tenantid as tenantid, "
-			+ " todaypenaltycollection as penalty, filtered.totalbill as totalbill,"
-			+ " filtered.lastmodifiedtime as paymentdate ,\r\n"
-			+ "  filtered.totalbill-filtered.todaypenaltycollection as actualbill,\r\n" 
-			+ "  filtered.transactionnumber as txn_num\r\n"
-			+ "FROM (\r\n"
-			+ "    SELECT \r\n"
-			+ "        SUM(pd.penalty_amount) AS todaypenaltycollection, "
-			+ "		  pb.billsum as  totalbill,pb.lastmodifiedtime as paymentdate,\r\n"
-			+ "        pd.demandid,\r\n"
-			+ "        pb.demandid,\r\n"
-			+ "        td.demandid,\r\n"
-			+ "        pb.consumercode,\r\n"
-			+ "        pb.tenantid,"
-			+ "		pb.lastmodifiedtime, pb.transactionnumber\r\n"
-			+ "    FROM penalty_demand pd\r\n"
-			+ "    JOIN paid_bills pb ON pd.demandid = pb.demandid\r\n"
-			+ "    JOIN total_demand td ON pd.demandid = td.demandid\r\n"
-			+ "    GROUP BY pd.demandid, pb.demandid, td.demandid ,pb.consumercode, "
-			+ "	pb.tenantid,pb.lastmodifiedtime, pb.billsum,\r\n"
-			+ "  pb.transactionnumber\r\n"
-			+ "    HAVING SUM(pb.billsum) >= SUM(td.demandsum) order by pb.lastmodifiedtime\r\n"
-			+ ") AS filtered";
+			+ "SELECT\r\n"
+			+ "    b.consumercode AS propertyid,\r\n"
+			+ "    b.tenantid,\r\n"
+			+ "    p.penalty,\r\n"
+			+ "    bd.billsum AS totalbill,\r\n"
+			+ "    b.createdby,\r\n"
+			+ "    b.createdtime,\r\n"
+			+ "    b.lastmodifiedby,\r\n"
+			+ "    b.lastmodifiedtime,\r\n"
+			+ "    bd.billsum - p.penalty AS actualbill,\r\n"
+			+ "    b.transactionnumber AS txn_num\r\n"
+			+ "FROM base_data b\r\n"
+			+ "JOIN bill_data bd \r\n"
+			+ "    ON bd.demandid = b.demandid\r\n"
+			+ "JOIN demand_data td \r\n"
+			+ "    ON td.demandid = b.demandid\r\n"
+			+ "JOIN penalty_data p \r\n"
+			+ "    ON p.demandid = b.demandid\r\n"
+			+ "WHERE bd.billsum >= td.demandsum\r\n"
+			+ "ORDER BY b.lastmodifiedtime";
+	
+	public static final String PENALTY_SHARE_COUNT = "WITH base_data AS (\r\n"
+			+ "    SELECT\r\n"
+			+ "        p.propertyid AS consumercode,\r\n"
+			+ "        d.id AS demandid\r\n"
+			+ "    FROM eg_pt_property p\r\n"
+			+ "    JOIN eg_pt_address a ON p.id = a.propertyid\r\n"
+			+ "    JOIN eg_pg_transactions t ON p.propertyid = t.consumer_code\r\n"
+			+ "    JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n"
+			+ "    JOIN egbs_demand_v1 d ON d.consumercode = p.propertyid\r\n"
+			+ "    WHERE t.txn_status = 'SUCCESS'\r\n"
+			+ "      AND p.status = 'ACTIVE'\r\n"
+			+ "      /*FILTER_CONDITIONS*/\r\n"
+			+ "),\r\n"
+			+ "\r\n"
+			+ "bill_data AS (\r\n"
+			+ "    SELECT\r\n"
+			+ "        bd.demandid,\r\n"
+			+ "        SUM(bd.totalamount) AS billsum\r\n"
+			+ "    FROM egbs_billdetail_v1 bd\r\n"
+			+ "    JOIN egbs_bill_v1 b ON b.id = bd.billid\r\n"
+			+ "    WHERE b.status = 'PAID'\r\n"
+			+ "    GROUP BY bd.demandid\r\n"
+			+ "),\r\n"
+			+ "\r\n"
+			+ "demand_data AS (\r\n"
+			+ "    SELECT\r\n"
+			+ "        dd.demandid,\r\n"
+			+ "        SUM(dd.taxamount) AS demandsum\r\n"
+			+ "    FROM egbs_demanddetail_v1 dd\r\n"
+			+ "    GROUP BY dd.demandid\r\n"
+			+ "),\r\n"
+			+ "\r\n"
+			+ "penalty_data AS (\r\n"
+			+ "    SELECT\r\n"
+			+ "        dd.demandid,\r\n"
+			+ "        SUM(dd.taxamount) AS penalty\r\n"
+			+ "    FROM egbs_demanddetail_v1 dd\r\n"
+			+ "    WHERE dd.taxheadcode IN ('PT_PAST_DUE_PENALTY','PT_TIME_PENALTY')\r\n"
+			+ "      AND dd.taxamount > 0\r\n"
+			+ "    GROUP BY dd.demandid\r\n"
+			+ ")\r\n"
+			+ "\r\n"
+			+ "SELECT COUNT(b.consumercode) AS property_count\r\n"
+			+ "FROM base_data b\r\n"
+			+ "JOIN bill_data bd ON bd.demandid = b.demandid\r\n"
+			+ "JOIN demand_data td ON td.demandid = b.demandid\r\n"
+			+ "JOIN penalty_data p ON p.demandid = b.demandid   \r\n"
+			+ "WHERE bd.billsum >= td.demandsum";
+	
+	public static final String INTEREST_SHARE = "SELECT \r\n"
+			+ "    ebv2.consumercode AS consumercode,\r\n"
+			+ "    ebv2.tenantid,\r\n"
+			+ "    SUM(ebv2.interestonamount) AS total_interest_amount,\r\n"
+			+ "    SUM(ebv2.totalamount) AS total_bill_amount,\r\n"
+			+ "    SUM(ebv2.totalamount) - SUM(ebv2.interestonamount) AS amount_without_interest,\r\n"
+			+ "    MAX(pay.createdby) AS createdby,\r\n"
+			+ "    MAX(pay.createdtime) AS createdtime,\r\n"
+			+ "    MAX(pay.lastmodifiedby) AS lastmodifiedby,\r\n"
+			+ "    MAX(pay.lastmodifiedtime) AS lastmodifiedtime\r\n"
+			+ "FROM \r\n"
+			+ "    egbs_bill_v1 ebv\r\n"
+			+ "JOIN \r\n"
+			+ "    egbs_billdetail_v1 ebv2 \r\n"
+			+ "        ON ebv.id = ebv2.billid\r\n"
+			+ "JOIN \r\n"
+			+ "    eg_pt_property epp \r\n"
+			+ "        ON epp.propertyid = ebv2.consumercode\r\n"
+			+ "JOIN \r\n"
+			+ "    eg_pt_address epa \r\n"
+			+ "        ON epp.id = epa.propertyid\r\n"
+			+ "JOIN \r\n"
+			+ "    eg_pg_transactions t \r\n"
+			+ "        ON epp.propertyid = t.consumer_code\r\n"
+			+ "JOIN \r\n"
+			+ "    egcl_payment pay \r\n"
+			+ "        ON t.txn_id = pay.transactionnumber\r\n"
+			+ "WHERE \r\n"
+			+ "    t.txn_status = 'SUCCESS'\r\n"
+			+ "    AND ebv.status = 'PAID'\r\n"
+			+ "    AND ebv2.interestonamount > 0\r\n"
+			+ "    AND epp.status = 'ACTIVE'\r\n";
 
-	public static final String INTEREST_SHARE = "SELECT ebv2.consumercode AS consumercode\r\n"
-			+ "FROM egbs_bill_v1 ebv\r\n" + "JOIN egbs_billdetail_v1 ebv2 ON ebv.id = ebv2.billid\r\n"
-			+ "JOIN eg_pt_property epp ON epp.propertyid = ebv2.consumercode\r\n"
-			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
-			+ "JOIN eg_pg_transactions t ON epp.propertyid = t.consumer_code\r\n"
-			+ "JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n" + "WHERE t.txn_status = 'SUCCESS'\r\n"
-			+ "  AND ebv.status = 'PAID'\r\n" + "  AND ebv2.interestonamount > 0 AND epp.status = 'ACTIVE'";
-
-	public static final String ADVANCE_SHARE = "SELECT edv.consumercode as consumercode\r\n"
-			+ "FROM egbs_demand_v1 edv\r\n" + "JOIN egbs_billdetail_v1 ebv2 ON edv.id = ebv2.demandid\r\n"
-			+ "JOIN egbs_bill_v1 ebv ON ebv.id = ebv2.billid\r\n"
-			+ "JOIN eg_pt_property epp ON epp.propertyid = ebv2.consumercode\r\n"
-			+ "JOIN eg_pt_address epa ON epp.id = epa.propertyid\r\n"
-			+ "JOIN eg_pg_transactions t ON epp.propertyid = t.consumer_code\r\n"
-			+ "JOIN egcl_payment pay ON t.txn_id = pay.transactionnumber\r\n" + "WHERE t.txn_status = 'SUCCESS'\r\n"
-			+ "  AND ebv.status = 'PAID'\r\n" + "  AND edv.advanceamount > 0 AND epp.status = 'ACTIVE'";
+	public static final String INTEREST_SHARE_COUNT = "SELECT COUNT(DISTINCT ebv2.consumercode) AS property_count\r\n"
+			+ "FROM egbs_bill_v1 ebv\r\n"
+			+ "JOIN egbs_billdetail_v1 ebv2 \r\n"
+			+ "    ON ebv.id = ebv2.billid\r\n"
+			+ "JOIN eg_pt_property epp \r\n"
+			+ "    ON epp.propertyid = ebv2.consumercode\r\n"
+			+ "JOIN eg_pt_address epa \r\n"
+			+ "    ON epp.id = epa.propertyid\r\n"
+			+ "JOIN eg_pg_transactions t \r\n"
+			+ "    ON epp.propertyid = t.consumer_code\r\n"
+			+ "JOIN egcl_payment pay \r\n"
+			+ "    ON t.txn_id = pay.transactionnumber\r\n"
+			+ "WHERE \r\n"
+			+ "    t.txn_status = 'SUCCESS'\r\n"
+			+ "    AND ebv.status = 'PAID'\r\n"
+			+ "    AND ebv2.interestonamount > 0\r\n"
+			+ "    AND epp.status = 'ACTIVE'";
+	
+	public static final String ADVANCE_SHARE = "SELECT \r\n"
+			+ "    edv.consumercode AS consumercode,edv.tenantid as tenantid,\r\n"
+			+ "    sum(edv.advanceamount) as advanceamount,sum(ebv2.totalamount) as dueamount,sum(pay.totalamountpaid) as collectedamount, \r\n"
+			+ "    MAX(pay.createdby) AS createdby,MAX(pay.createdtime) AS createdtime,MAX(pay.lastmodifiedby) AS lastmodifiedby,MAX(pay.lastmodifiedtime) AS lastmodifiedtime \r\n"
+			+ "FROM egbs_demand_v1 edv\r\n"
+			+ "JOIN egbs_billdetail_v1 ebv2 \r\n"
+			+ "    ON edv.id = ebv2.demandid\r\n"
+			+ "JOIN egbs_bill_v1 ebv \r\n"
+			+ "    ON ebv.id = ebv2.billid\r\n"
+			+ "JOIN eg_pt_property epp \r\n"
+			+ "    ON epp.propertyid = ebv2.consumercode\r\n"
+			+ "JOIN eg_pt_address epa \r\n"
+			+ "    ON epp.id = epa.propertyid\r\n"
+			+ "JOIN eg_pg_transactions t \r\n"
+			+ "    ON epp.propertyid = t.consumer_code\r\n"
+			+ "JOIN egcl_payment pay \r\n"
+			+ "    ON t.txn_id = pay.transactionnumber\r\n"
+			+ "WHERE t.txn_status = 'SUCCESS'\r\n"
+			+ "  AND ebv.status = 'PAID'\r\n"
+			+ "  AND edv.advanceamount > 0\r\n"
+			+ "  AND epp.status = 'ACTIVE'";
+	
+	public static final String ADVANCE_SHARE_COUNT = "SELECT count(distinct edv.consumercode) AS consumercodecount\r\n"
+			+ "FROM egbs_demand_v1 edv\r\n"
+			+ "JOIN egbs_billdetail_v1 ebv2 \r\n"
+			+ "    ON edv.id = ebv2.demandid\r\n"
+			+ "JOIN egbs_bill_v1 ebv \r\n"
+			+ "    ON ebv.id = ebv2.billid\r\n"
+			+ "JOIN eg_pt_property epp \r\n"
+			+ "    ON epp.propertyid = ebv2.consumercode\r\n"
+			+ "JOIN eg_pt_address epa \r\n"
+			+ "    ON epp.id = epa.propertyid\r\n"
+			+ "JOIN eg_pg_transactions t \r\n"
+			+ "    ON epp.propertyid = t.consumer_code\r\n"
+			+ "JOIN egcl_payment pay \r\n"
+			+ "    ON t.txn_id = pay.transactionnumber\r\n"
+			+ "WHERE t.txn_status = 'SUCCESS'\r\n"
+			+ "  AND ebv.status = 'PAID'\r\n"
+			+ "  AND edv.advanceamount > 0\r\n"
+			+ "  AND epp.status = 'ACTIVE'";
 
 	public String getTotalPropertyRegisteredQuery(DashboardDataSearch dashboardDataSearch) {
 
@@ -529,7 +657,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append("order by epp.lastmodifiedtime desc");
+		filter.append(" order by epp.lastmodifiedtime desc");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -570,7 +698,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append("order by ep.lastmodifiedtime desc");
+		filter.append(" order by ep.lastmodifiedtime desc");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -611,7 +739,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append("order by eppa.lastmodifiedtime desc");
+		filter.append(" order by eppa.lastmodifiedtime desc");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -652,7 +780,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append("order by eppa.lastmodifiedtime desc");
+		filter.append(" order by eppa.lastmodifiedtime desc");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -693,7 +821,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append("order by ep.lastmodifiedtime desc");
+		filter.append(" order by ep.lastmodifiedtime desc");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -827,6 +955,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
+		filter.append(" group by ebv2.consumercode,ebv2.tenantid");
 		filter.append(" order by pay.lastmodifiedtime desc ");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
@@ -867,7 +996,8 @@ public class DashboardReportQueryBuilder {
 		} else {
 			filter.append(" AND epa.ward_no != ''");
 		}
-
+		
+		filter.append(" group by edv.consumercode,edv.tenantid");
 		filter.append(" order by pay.lastmodifiedtime desc ");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
@@ -908,6 +1038,108 @@ public class DashboardReportQueryBuilder {
 		} else {
 			filter.append(" AND epa.ward_no != ''");
 		}
+		return filter.toString();
+	}
+	
+	public String getTotalPenaltyCollectedCount(DashboardDataSearch dashboardDataSearch) {
+		
+		StringBuilder filterBuilder = new StringBuilder();
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+			toEpoch = getEndOfDayEpochMillis(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		}
+		
+		filterBuilder.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (StringUtils.hasText(dashboardDataSearch.getTenantid())) {
+			filterBuilder.append(" AND p.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (StringUtils.hasText(dashboardDataSearch.getWard())) {
+			filterBuilder.append(" AND a.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			filterBuilder.append(" AND a.ward_no != ''");
+		}
+	
+		String query = PENALTY_SHARE_COUNT.replace("/*FILTER_CONDITIONS*/", filterBuilder.toString());
+	 
+		return query;
+	}
+	
+	public String getInterestCollectedCount(DashboardDataSearch dashboardDataSearch) {
+
+		StringBuilder filter = new StringBuilder(INTEREST_SHARE_COUNT);
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		filter.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			filter.append(" AND epa.ward_no != ''");
+		}
+		
+		filter.append(" order by pay.lastmodifiedtime desc ");
+		
+		return filter.toString();
+	}
+	
+	public String getAdvanceCollectedCount(DashboardDataSearch dashboardDataSearch) {
+
+		StringBuilder filter = new StringBuilder(ADVANCE_SHARE_COUNT);
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		filter.append(" AND pay.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			filter.append(" AND epa.ward_no != ''");
+		}
+		
+		filter.append(" order by pay.lastmodifiedtime desc ");
+		
 		return filter.toString();
 	}
 
