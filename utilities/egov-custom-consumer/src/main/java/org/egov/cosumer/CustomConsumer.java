@@ -35,9 +35,13 @@ public class CustomConsumer {
 		log.info("sourceUri: "+sourceUri);
 
 		if (sourceUri.equals(JsonPathConstant.signOutUri))
+		{
 			log.info("callFinanceForSignOut..");
-			signOutService.callFinanceForSignOut(documentContext, tenantId.split(".")[1]);
+			signOutService.callFinanceForSignOut(documentContext, tenantId.split("\\.")[1]);
+		}
 
 	}
 
 }
+
+
