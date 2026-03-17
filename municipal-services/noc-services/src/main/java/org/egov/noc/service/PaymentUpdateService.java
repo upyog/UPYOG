@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.noc.config.NOCConfiguration;
 import org.egov.noc.repository.NOCRepository;
+import org.egov.noc.service.notification.NOCNotificationService;
 import org.egov.noc.util.NOCConstants;
 import org.egov.noc.util.NOCUtil;
 import org.egov.noc.web.model.Workflow;
@@ -45,13 +46,15 @@ public class PaymentUpdateService {
 
 	private NOCUtil util;
 
+	private NOCNotificationService notificationService;
+	
 //	@Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
 //	private Boolean pickWFServiceNameFromTradeTypeOnly;
 
 	@Autowired
 	public PaymentUpdateService(NOCService service, NOCConfiguration config, NOCRepository repository,
                                 WorkflowIntegrator wfIntegrator, EnrichmentService enrichmentService, ObjectMapper mapper,
-                                WorkflowService workflowService, NOCUtil util) {
+                                WorkflowService workflowService, NOCUtil util, NOCNotificationService notificationService) {
 		this.nocService = service;
 		this.config = config;
 		this.repository = repository;
@@ -60,6 +63,7 @@ public class PaymentUpdateService {
 		this.mapper = mapper;
 		this.workflowService = workflowService;
 		this.util = util;
+		this.notificationService = notificationService;
 	}
 
 
@@ -69,7 +73,7 @@ public class PaymentUpdateService {
 	 * 
 	 * @param record The incoming message from receipt create consumer
 	 */
-	public void process(PaymentRequest record) {
+	public void process(PaymentRequest record, String rawRecord) {
 
 		log.info("Start PaymentUpdateService.process method.");
 		try {
@@ -116,7 +120,8 @@ public class PaymentUpdateService {
 					/*
 					 * calling repository to update the object in ndc tables
 					 */
-					nocService.update(updateRequest);
+//					nocService.update(updateRequest);
+					notificationService.process(updateRequest, rawRecord);
 			}
 		 }
 		} catch (Exception e) {
