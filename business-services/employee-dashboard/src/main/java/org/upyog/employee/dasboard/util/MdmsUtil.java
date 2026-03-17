@@ -22,7 +22,6 @@ import java.util.Map;
 @Component
 public class MdmsUtil {
 
-    @Autowired
     private RestTemplate restTemplate;
 
     @Value("${egov.mdms.host}")
@@ -37,6 +36,10 @@ public class MdmsUtil {
     @Value("${egov.mdms.module.name}")
     private String moduleName;
 
+    @Autowired
+    MdmsUtil(RestTemplate restTemplate) {
+    	this.restTemplate=restTemplate;
+    }
 
     public Integer fetchRegistrationChargesFromMdms(RequestInfo requestInfo, String tenantId) {
         StringBuilder uri = new StringBuilder();

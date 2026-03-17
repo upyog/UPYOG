@@ -60,6 +60,7 @@ export const getTransformedLocale = (label) => {
   
   
     let url = egovLocHost + egovLocSearchCall;
+    console.log("Localisation API URL:", url);
   
     let request = {
       RequestInfo: requestInfo,
@@ -70,6 +71,8 @@ export const getTransformedLocale = (label) => {
       }
     };
   
+    console.log("moduleList:", moduleList);
+    console.log("codeList:", codeList);
     request.messageSearchCriteria.module = moduleList.toString();
     request.messageSearchCriteria.codes = codeList.toString().split(",");
   
@@ -80,13 +83,36 @@ export const getTransformedLocale = (label) => {
       }
     };
   
-    let responseBody = await axios.post(url,request,headers)
+    // let responseBody = await axios.post(url,request,headers)
+    // .then(function (response) {
+    //   return response;
+    // })
+    // .catch((error) => {
+    //   throw error
+    //  });
+
+    console.log("----LOCALISATION API DEBUG----");
+    console.log("URL:", url);
+    console.log("Request Payload:", JSON.stringify(request, null, 2));
+    console.log("Headers:", headers);
+
+    let responseBody = await axios.post(url, request, headers)
     .then(function (response) {
+      console.log("Localisation API Success");
+      console.log("Response Data:", response.data);
       return response;
     })
     .catch((error) => {
-      throw error
-     });
+      console.log("Localisation API ERROR");
+
+      if (error.response) {
+        console.log("Status:", error.response.status);
+        console.log("Error Data:", error.response.data);
+      } else {
+        console.log("Error Message:", error.message);
+      }
+      throw error;
+    });
   
     if(pdfKey!=null)
       cache.set(pdfKey, responseBody.data);
