@@ -72,6 +72,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
+import io.jaegertracing.thriftjava.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class MicroServiceUtilImpl implements MicroServiceUtil{
 	private static final String FIN_MODULE_NAME = "FinanceModule";
@@ -97,6 +102,8 @@ public class MicroServiceUtilImpl implements MicroServiceUtil{
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 	
+	public static final Logger LOGGER = LoggerFactory.getLogger(MicroServiceUtilImpl.class);
+		
 	@Override
 	public List<BusinessService> getBusinessService(String tenantId, String code, RequestInfo requestInfo, FinanceMdmsModel finSerMdms) throws VoucherCustomException{
 		if(finSerMdms.getFinanceServiceMdmsData() == null){
@@ -149,8 +156,11 @@ public class MicroServiceUtilImpl implements MicroServiceUtil{
         try {
        		Map postForObject = mapper.convertValue(serviceRequestRepository.fetchResult(mdmsUrl, mdmsrequest, tenantId), Map.class);
        		finSerMdms.setFinanceServiceMdmsData(postForObject);
-        } catch (ServiceCallException e) {
-			
+        }  catch (ServiceCallException e) {
+            LOGGER.error("MDMS call failed for tenant: {}", tenantId, e);
+            throw new VoucherCustomException(
+                ProcessStatus.FAILED,"MDMS service call failed for URL: " + mdmsUrl
+            );
         } catch (Exception e) {
         	throw new VoucherCustomException(ProcessStatus.FAILED,"Error Occured While calling the URL : "+mdmsUrl);
 		}
@@ -243,12 +253,18 @@ public class MicroServiceUtilImpl implements MicroServiceUtil{
 		List<FinancialStatus> list = new ArrayList<>();
 		try {
 			if(finSerMdms.getFinanceServiceMdmsData() != null){
+				Object raw = JsonPath.read(finSerMdms.getFinanceServiceMdmsData(),"$.MdmsRes.FinanceModule.FinanceInstrumentStatusMapping");					
+				LOGGER.info("RAW TYPE: {}", raw.getClass());
+				LOGGER.info("RAW DATA: {}", raw);
 				list = mapper.convertValue(JsonPath.read(finSerMdms.getFinanceServiceMdmsData(), "$.MdmsRes.FinanceModule.FinanceInstrumentStatusMapping"),new TypeReference<List<FinancialStatus>>(){});
+				list.forEach(fs -> 
+			    LOGGER.info("Parsed FinancialStatus → code: [{}], object: {}", fs.getCode(), fs)
+			);
 			}
 		} catch (Exception e) {
 			throw new VoucherCustomException(ProcessStatus.FAILED,"Error while parsing mdms data for EgfInstrumentStatusMapping master. Check the EgfInstrumentStatusMapping.json file.");
 		}
-		List<FinancialStatus> collect = list.stream().filter(fs -> fs.getCode().equals(statusCode)).collect(Collectors.toList());
+		List<FinancialStatus> collect = list.stream().filter(fs -> fs.getCode() != null && fs.getCode().equals(statusCode)).collect(Collectors.toList());
 		return !collect.isEmpty() ? collect.get(0) : null;
 	}
 	
