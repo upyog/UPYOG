@@ -120,7 +120,7 @@ public class PaymentUpdateService {
 					/*
 					 * calling repository to update the object in ndc tables
 					 */
-//					nocService.update(updateRequest);
+					nocService.update(updateRequest);
 					notificationService.process(updateRequest, rawRecord);
 			}
 		 }
