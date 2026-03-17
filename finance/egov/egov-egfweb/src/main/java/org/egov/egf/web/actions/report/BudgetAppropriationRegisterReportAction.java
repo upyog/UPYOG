@@ -346,7 +346,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 					.append(" and  gl.glcodeid =:glCodeId ").append(" and  ")
 					.append(" (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and vh.status != 4 and vh.voucherdate  >=:strStDate")
 					.append(" and vh.voucherdate <=:strAODate").append(getFunctionQuery("gl.functionid"))
-					.append(getDepartmentQuery("vmis.departmentid")).append(getFundQuery("vh.fundid"))
+					.append(getDepartmentQuery("vmis.departmentcode")).append(getFundQuery("vh.fundid"))
 					.append("  order by bdgApprNumber ");
 
 			if (LOGGER.isDebugEnabled())
