@@ -184,6 +184,28 @@ public class InstrumentService {
 		LOGGER.info("FULL INSTRUMENT RESPONSE: {}", instruments);
 		if(instruments != null && !instruments.isEmpty()){
 			InstrumentContract instrumentContract = instruments.get(0);
+			FinancialStatus fs = instrumentContract.getFinancialStatus();
+			if (fs != null) {
+				try {
+					ObjectMapper mapper = new ObjectMapper();
+					LOGGER.info("FULL FinancialStatus JSON: {}", mapper.writeValueAsString(fs));
+				} catch (Exception e) {
+					LOGGER.error("Error converting FinancialStatus", e);
+				}
+
+				// 🔹 Field-wise logging with clear messages
+				LOGGER.info("FinancialStatus.code: {}", 
+					fs.getCode() != null ? fs.getCode() : "NULL (code not present)");
+
+				LOGGER.info("FinancialStatus.name: {}", 
+					fs.getName() != null ? fs.getName() : "NULL (name not present)");
+
+				LOGGER.info("FinancialStatus.description: {}", 
+					fs.getDescription() != null ? fs.getDescription() : "NULL (description not present)");
+
+			} else {
+				LOGGER.info("FinancialStatus object is NULL");
+			}
 			if (instrumentContract.getFinancialStatus() == null) {
 			    LOGGER.info("FinancialStatus is NULL");
 			} else if (instrumentContract.getFinancialStatus().getCode() == null) {
