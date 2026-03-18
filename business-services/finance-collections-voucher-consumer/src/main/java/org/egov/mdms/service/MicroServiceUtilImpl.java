@@ -103,7 +103,7 @@ public class MicroServiceUtilImpl implements MicroServiceUtil{
 	private ServiceRequestRepository serviceRequestRepository;
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(MicroServiceUtilImpl.class);
-		
+
 	@Override
 	public List<BusinessService> getBusinessService(String tenantId, String code, RequestInfo requestInfo, FinanceMdmsModel finSerMdms) throws VoucherCustomException{
 		if(finSerMdms.getFinanceServiceMdmsData() == null){
@@ -264,6 +264,7 @@ public class MicroServiceUtilImpl implements MicroServiceUtil{
 		} catch (Exception e) {
 			throw new VoucherCustomException(ProcessStatus.FAILED,"Error while parsing mdms data for EgfInstrumentStatusMapping master. Check the EgfInstrumentStatusMapping.json file.");
 		}
+		LOGGER.info("Incoming statusCode: {}", statusCode);
 		List<FinancialStatus> collect = list.stream().filter(fs -> fs.getCode() != null && fs.getCode().equals(statusCode)).collect(Collectors.toList());
 		return !collect.isEmpty() ? collect.get(0) : null;
 	}

@@ -181,8 +181,16 @@ public class InstrumentService {
 		FinancialStatus cancelStatus  = microServiceUtil.getFinancialStatusByCode(tenantId, requestInfo , finSerMdms, FINANCE_STATUS_CANCELLED);
 		FinancialStatus newStatus  = microServiceUtil.getFinancialStatusByCode(tenantId, requestInfo , finSerMdms, FINANCE_STATUS_NEW);
 		List<InstrumentContract> instruments = microServiceUtil.getInstruments(InstrumentSearchContract.builder().receiptIds(paymentId).build(), requestInfo, tenantId);
+		LOGGER.info("FULL INSTRUMENT RESPONSE: {}", instruments);
 		if(instruments != null && !instruments.isEmpty()){
 			InstrumentContract instrumentContract = instruments.get(0);
+			if (instrumentContract.getFinancialStatus() == null) {
+			    LOGGER.info("FinancialStatus is NULL");
+			} else if (instrumentContract.getFinancialStatus().getCode() == null) {
+			    LOGGER.info("FinancialStatus.code is NULL");
+			} else {
+			    LOGGER.info("FinancialStatus.code value: {}", instrumentContract.getFinancialStatus().getCode());
+			}
 			if(instrumentContract.getFinancialStatus().getCode().equalsIgnoreCase(newStatus.getCode())){
 				instrumentContract .setFinancialStatus(cancelStatus);
 			StringBuilder url = new StringBuilder(propertiesManager.getInstrumentHostUrl() + propertiesManager.getInstrumentCancel());
