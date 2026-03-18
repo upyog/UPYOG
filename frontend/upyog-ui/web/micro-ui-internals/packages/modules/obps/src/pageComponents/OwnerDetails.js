@@ -550,7 +550,7 @@ useEffect(() => {
           name: owner.name,
           mobileNumber: owner.mobileNumber,
           gender: genderObj,
-          isPrimaryOwner: owner.isPrimaryOwner ?? true,
+          isPrimaryOwner: owner.isPrimaryOwner != null ? owner.isPrimaryOwner : true,
           emailId: owner.emailId,
         };
       });
