@@ -167,7 +167,7 @@ public class DemandService {
         			|| taxHeadToDemandDetail.containsKey(BPACalculatorConstants.BPA_ADJUSTMENT_TAX_HEAD_PREFIX + taxHeadEstimate.getTaxHeadCode())) {
         		allTaxHeadEstimates.add(TaxHeadEstimate.builder()
         				.taxHeadCode(BPACalculatorConstants.BPA_ADJUSTMENT_TAX_HEAD_PREFIX + taxHeadEstimate.getTaxHeadCode())
-        				.estimateAmount(taxHeadEstimate.getAdjustedAmount().negate())
+        				.estimateAmount(taxHeadEstimate.getAdjustedAmount())
         				.category(taxHeadEstimate.getCategory())
         				.build());
             }
@@ -275,7 +275,7 @@ public class DemandService {
                         .build());
                 
                 if(taxHeadEstimate.getAdjustedAmount().compareTo(BigDecimal.ZERO) != 0) {
-                	demandDetails.add(DemandDetail.builder().taxAmount(taxHeadEstimate.getAdjustedAmount().negate())
+                	demandDetails.add(DemandDetail.builder().taxAmount(taxHeadEstimate.getAdjustedAmount())
                             .taxHeadMasterCode(BPACalculatorConstants.BPA_ADJUSTMENT_TAX_HEAD_PREFIX + taxHeadEstimate.getTaxHeadCode())
                             .collectionAmount(BigDecimal.ZERO)
                             .tenantId(tenantId)
