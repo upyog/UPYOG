@@ -192,28 +192,10 @@ public class InstrumentService {
 				} catch (Exception e) {
 					LOGGER.error("Error converting FinancialStatus", e);
 				}
-
-				// 🔹 Field-wise logging with clear messages
-				LOGGER.info("FinancialStatus.code: {}", 
-					fs.getCode() != null ? fs.getCode() : "NULL (code not present)");
-
-				LOGGER.info("FinancialStatus.name: {}", 
-					fs.getName() != null ? fs.getName() : "NULL (name not present)");
-
-				LOGGER.info("FinancialStatus.description: {}", 
-					fs.getDescription() != null ? fs.getDescription() : "NULL (description not present)");
-
 			} else {
 				LOGGER.info("FinancialStatus object is NULL");
 			}
-			if (instrumentContract.getFinancialStatus() == null) {
-			    LOGGER.info("FinancialStatus is NULL");
-			} else if (instrumentContract.getFinancialStatus().getCode() == null) {
-			    LOGGER.info("FinancialStatus.code is NULL");
-			} else {
-			    LOGGER.info("FinancialStatus.code value: {}", instrumentContract.getFinancialStatus().getCode());
-			}
-			if(instrumentContract.getFinancialStatus().getCode().equalsIgnoreCase(newStatus.getCode())){
+			if(instrumentContract.getFinancialStatus().getId().equalsIgnoreCase(newStatus.getCode())){
 				instrumentContract .setFinancialStatus(cancelStatus);
 			StringBuilder url = new StringBuilder(propertiesManager.getInstrumentHostUrl() + propertiesManager.getInstrumentCancel());
 				InstrumentRequest request = new InstrumentRequest();
