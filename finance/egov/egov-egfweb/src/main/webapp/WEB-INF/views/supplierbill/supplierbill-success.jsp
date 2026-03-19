@@ -59,12 +59,18 @@
     }
 }
 </style>
+<script type="text/javascript">
+function printBill() {
+	var billId = '${billId}';
+    var url = "${pageContext.request.contextPath}/supplierbill/view/" + billId;
+    var printWindow = window.open(url, "_blank");
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+}
+</script>
 <script>
-			function processRequest(){
-		
-				
-				
-				
+			function processRequest(){	
 		console.log('posted the message');
 	}
 </script>

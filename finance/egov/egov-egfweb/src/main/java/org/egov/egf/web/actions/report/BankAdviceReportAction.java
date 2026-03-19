@@ -471,7 +471,7 @@ public class BankAdviceReportAction extends BaseFormAction {
                 .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : " ")
                 .append("  under your bank to the following bank accounts:");
         reportParams.put("bankName", getBankName(bank.getId()));
-        final City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
+        final City city = cityService.getCityByCode(ApplicationThreadLocals.getTenantID());
         reportParams.put("ulbName", city.getName());
         reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
         reportParams.put("letterContext", letterContext.toString());

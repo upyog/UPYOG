@@ -203,7 +203,7 @@ public class CreateSupplierBillController extends BaseBillController {
 		model.addAttribute(NET_PAYABLE_CODES, chartOfAccountsService.getSupplierNetPayableAccountCodes());
 	}
 
-	@PostMapping(value = "/newform")
+	   @PostMapping(value = "/newform")
 	public String showNewForm(@ModelAttribute("egBillregister") final EgBillregister egBillregister, final Model model,
 			HttpServletRequest request) {
 		setDropDownValues(model);
@@ -302,7 +302,7 @@ public class CreateSupplierBillController extends BaseBillController {
 					savedEgBillregister.getState(), savedEgBillregister.getId(), approvalPosition, approverName);
 
 			return "redirect:/supplierbill/success?approverDetails=" + approverDetails + "&billNumber="
-					+ savedEgBillregister.getBillnumber();
+					+ savedEgBillregister.getBillnumber()+ "&billId=" + savedEgBillregister.getId(); 
 
 		}
 	}
@@ -434,7 +434,7 @@ public class CreateSupplierBillController extends BaseBillController {
 	}
 
 	@GetMapping(value = "/success")
-	public String showSuccessPage(@RequestParam("billNumber") @SafeHtml final String billNumber, final Model model,
+	public String showSuccessPage(@RequestParam("billNumber") @SafeHtml final String billNumber,@RequestParam String billId, final Model model,
 			final HttpServletRequest request) {
 		final String[] keyNameArray = request.getParameter(APPROVER_DETAILS).split(",");
 		Long id = 0L;
@@ -456,6 +456,8 @@ public class CreateSupplierBillController extends BaseBillController {
 		final String message = getMessageByStatus(supplierBill, approverName, nextDesign);
 
 		model.addAttribute("message", message);
+		model.addAttribute("billNumber", billNumber);
+		model.addAttribute("billId", billId);
 
 		return "supplierbill-success";
 	}

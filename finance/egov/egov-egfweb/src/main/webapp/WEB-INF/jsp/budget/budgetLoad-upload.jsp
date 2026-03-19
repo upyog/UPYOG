@@ -732,22 +732,22 @@
             </div>
 			
 			<!-- OR Separator -->
-            <center>
+        <!--      <center>
                 <div id="orSeparator2" style="margin-top: 20px; text-align: center;">
                     <hr />
                     <span><strong>OR</strong></span>
                 </div>
             </center>
 
-            <!-- Hide Enter Manually Section Button -->
+            Hide Enter Manually Section Button 
             <center>
                 <button type="button" id="hideEnterManuallyButton" onclick="hideEnterManually()" style="font-size: 12px;" class="btn btn-secondary" style="display:none;">Upload Budget File</button>
             </center>
 
-            <!-- Enter Manually Button -->
+            Enter Manually Button 
             <center>
                 <button type="button" id="enterManuallyButton" onclick="showEnterManually()" style="font-size: 12px;" class="btn btn-primary">Enter Manually</button>
-            </center>
+            </center>-->
 
 		</div>
 		</div>

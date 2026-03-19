@@ -1384,8 +1384,8 @@ function disableSelectedRows()
 									name="cash.consolidated.cheque" /></label><input name="paymentMode"
 							id="paymentModertgs" value="rtgs" type="radio"><label
 							for="paymentModertgs"><s:text name="lbl.rtgs"/></label>
-							<input name="paymentMode"  id="paymentModetreasury" value="treasury" type="radio">
-							<label for="paymentModetreasury">Treasury</label>
+							<!-- <input name="paymentMode"  id="paymentModetreasury" value="treasury" type="radio">
+							<label for="paymentModetreasury">Treasury</label> -->
 						</td>
 							
 					</tr>

@@ -127,7 +127,7 @@ public class ContraBTBAction extends BaseVoucherAction {
 	private SimpleDateFormat sqlformat = new SimpleDateFormat("dd-MMM-yyyy");
 	private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving Data";
 	private static final String MDC_CHEQUE = "cheque";
-	private static final String MDC_OTHER = "RTGS/NEFT";
+	private static final String MDC_OTHER = "RTGS/NEFT/TREASURY";
 	private static final String REVERSE = "reverse";
 	private static final long serialVersionUID = 1L;
 	private static final String TRANSACTION_FAILED = "Transaction failed";

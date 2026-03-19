@@ -51,21 +51,21 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<style>
-  @media print {
-    #printButton,
-    #closeButton {
-        display: none !important;
-    }
+
+
+<script type="text/javascript">
+function printBill() {
+	var billId = '${billId}';
+    var url = "${pageContext.request.contextPath}/expensebill/view/" + billId;
+    var printWindow = window.open(url, "_blank");
+    printWindow.onload = function() {
+        printWindow.print();
+    };
 }
-</style>
+</script>
 <script>
-			function processRequest(){
-		
-				
-				
-				
-		console.log('posted the message');
+function processRequest(){
+console.log('posted the message');
 	}
 </script>
 <div id="main">
@@ -89,7 +89,7 @@
            value="Print"
            style="margin-right:10px;"
            class="btn btn-primary"
-           onclick="window.print();" />	
+           onclick="printBill();" />	
            
            <input type="button" name="closeButton" id="closeButton" value='<spring:message code="lbl.close" text="Close"/>' class="btn btn-default" onclick="window.parent.postMessage('close','*');window.close();"/>
 </div>

@@ -54,6 +54,17 @@
 <link rel="stylesheet" type="text/css"
 	href="/services/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title><s:text name="surrender.rtgs.search" /></title>
+
+<style>
+/* Set consistent width for inputs and dropdowns on this page */
+#chequeAssignment td.greybox input[type="text"],
+#chequeAssignment td.bluebox input[type="text"],
+#chequeAssignment td.greybox select,
+#chequeAssignment td.bluebox select {
+    width: 50% !important;
+}
+</style>
+
 </head>
 <body>
 	<s:form action="chequeAssignment" theme="simple"

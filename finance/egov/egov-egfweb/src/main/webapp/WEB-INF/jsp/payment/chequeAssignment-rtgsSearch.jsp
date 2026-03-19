@@ -107,7 +107,7 @@
 					<td class="greybox"><s:text name="payment.mode" /><span
 						class="mandatory"></span></td>
 					<td class="greybox"><s:radio id="paymentMode"
-							name="paymentMode" list="#{'rtgs':'RTGS'}"
+							name="paymentMode" list="#{'rtgs':'RTGS/TREASURY'}"
 							onchange="enableOrDisableBillType(this)" value="%{paymentMode}" /></td>
 					<td class="greybox"><s:text
 							name="chq.assignment.paymentvoucherno" /></td>

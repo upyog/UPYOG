@@ -63,6 +63,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -404,6 +405,9 @@ public class ReceiptAction extends BaseFormAction {
 		  wardNo.setWardNoName(appValues.getValue());
 		  wardNos.add(wardNo);
 		}
+		wardNos.sort(Comparator.comparingInt(w -> 
+	    Integer.parseInt(w.getWardNoName().replaceAll("[^0-9]", ""))
+	    ));
 		addDropdownData("wardNoList", wardNos);
 	}
 

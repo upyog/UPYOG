@@ -100,6 +100,15 @@
 			<spring:message code="lbl.function"  text="Function"/>	<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
+			<select id="fundSource" name="egBillregistermis.function" id="function" data-first-option="false" required="required" class="form-control">
+							<option value="">Select</option>
+							<c:forEach items="${functions}" var="function">
+								<option value="${function.id}">${function.name}</option>
+							</c:forEach>
+			</select>
+		    <form:errors path="egBillregistermis.function" cssClass="add-margin error-msg" />
+		</div>
+		<%-- <div class="col-sm-3 add-margin">
 			<c:if test="${egBillregister.egBillregistermis.function != null}">
 				<form:input path="" name ="function" id="function" class="form-control" placeholder="Type first 3 letters of Function name" required="required" value="${egBillregister.egBillregistermis.function.code} - ${egBillregister.egBillregistermis.function.name}"/>
 			</c:if>
@@ -108,7 +117,7 @@
 			</c:if>
 			<form:hidden path="egBillregistermis.function" name="egBillregistermis.function" id="egBillregistermis.function" class="form-control table-input hidden-input cfunction"/>
 			<form:errors path="egBillregistermis.function" cssClass="add-margin error-msg" />
-		</div>
+		</div> --%>
 				
 		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.narration" text="Narration"/>
 		</label>

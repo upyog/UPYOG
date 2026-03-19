@@ -52,6 +52,31 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
+
+<style type="text/css">
+@media print {
+    #printButton       { display: none !important; }
+    #closeButton       { display: none !important; }
+    header             { display: none !important; }
+    footer             { display: none !important; }
+    nav                { display: none !important; }
+    .navbar            { display: none !important; }
+    .navbar-header     { display: none !important; }
+    .sidebar           { display: none !important; }
+    .left-panel        { display: none !important; }
+    .commontopyellowbg { display: none !important; }
+    .commontopbluebg   { display: none !important; }
+    .commontopbg       { display: none !important; }
+    .commonbottombg    { display: none !important; }
+    .footerfix         { display: none !important; }
+    .nav-tabs          { display: none !important; }
+    .position_alert    { display: none !important; }
+    .position_alert1   { display: none !important; }
+    .position_alert2   { display: none !important; }
+    @page { margin: 0; }
+    body  { margin: 1cm; }
+}
+</style>
 <form:form name="supplierBillForm" role="form" action="" modelAttribute="egBillregister" id="egBillregister"
            class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
     <div>
@@ -90,8 +115,15 @@
         <c:if test="${mode == 'readOnly'}">
             <div class="row">
                 <div class="col-sm-12 text-center">
-                    <input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default"
-                           onclick="window.close();"/>
+                    <input type="button" name="printButton" id="printButton"
+						value='<spring:message code="lbl.print" text="Print"/>'
+						class="btn btn-primary" style="margin-right: 10px;"
+						onclick="window.print();" /> 
+						
+					<input type="submit"
+						name="closeButton" id="closeButton"
+						value='<spring:message code="lbl.close" text="Close"/>'
+						class="btn btn-default" onclick="window.close();" />
                 </div>
             </div>
         </c:if>

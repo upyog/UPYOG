@@ -304,7 +304,7 @@ public class CreateContractorBillController extends BaseBillController {
 					savedEgBillregister.getState(), savedEgBillregister.getId(), approvalPosition, approverName);
 
 			return "redirect:/contractorbill/success?approverDetails=" + approverDetails + "&billNumber="
-					+ savedEgBillregister.getBillnumber();
+					+ savedEgBillregister.getBillnumber()+ "&billId=" + savedEgBillregister.getId(); 
 
 		}
 	}
@@ -433,7 +433,7 @@ public class CreateContractorBillController extends BaseBillController {
 	}
 
 	@GetMapping(value = "/success")
-	public String showSuccessPage(@RequestParam("billNumber") @SafeHtml final String billNumber, final Model model,
+	public String showSuccessPage(@RequestParam("billNumber") @SafeHtml final String billNumber,@RequestParam String billId, final Model model,
 			final HttpServletRequest request) {
 		final String[] keyNameArray = request.getParameter(APPROVER_DETAILS).split(",");
 		Long id = 0L;
@@ -456,6 +456,8 @@ public class CreateContractorBillController extends BaseBillController {
 		final String message = getMessageByStatus(contractorBill, approverName, nextDesign);
 
 		model.addAttribute("message", message);
+		model.addAttribute("billNumber", billNumber);
+		model.addAttribute("billId", billId);
 
 		return "contractorbill-success";
 	}

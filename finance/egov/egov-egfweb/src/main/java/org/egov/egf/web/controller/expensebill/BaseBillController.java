@@ -51,14 +51,18 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
+import org.egov.commons.CFunction;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.commons.service.ChartOfAccountsService;
+import org.egov.commons.service.FunctionService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
 import org.egov.egf.expensebill.service.ExpenseBillService;
@@ -101,6 +105,9 @@ public abstract class BaseBillController extends BaseVoucherController {
 
     @Autowired
     private ExpenseBillService expenseBillService;
+    
+    @Autowired
+    private FunctionService functionService;
 
     @Autowired
     @Qualifier("persistenceService")
@@ -121,6 +128,10 @@ public abstract class BaseBillController extends BaseVoucherController {
         model.addAttribute("billNumberGenerationAuto", expenseBillService.isBillNumberGenerationAuto());
         model.addAttribute("billSubTypes", getBillSubTypes());
         model.addAttribute("subLedgerTypes", accountdetailtypeService.findAll());
+        model.addAttribute("functions",
+        	    functionService.findAllActive().stream()
+        	        .sorted(Comparator.comparing(CFunction::getName, String.CASE_INSENSITIVE_ORDER))
+        	        .collect(Collectors.toList()));
         isBillDateDefaultValue = expenseBillService.isDefaultAutoPopulateCurrDateEnable();
     }
 
