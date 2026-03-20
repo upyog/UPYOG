@@ -140,11 +140,11 @@ const Inbox = ({ parentRoute }) => {
       //UM-5603 As requested by PO
       // {
       //   text: t("ACTION_TEST_REPORTS"),
-      //   link: "/upyog-ui/employee/ws/reports",
+      //   link: "/mycity-ui/employee/ws/reports",
       // },
       // {
       //   text: t("ACTION_TEST_DASHBOARD"),
-      //   link: "/upyog-ui/employee/ws/dashboards",
+      //   link: "/mycity-ui/employee/ws/dashboards",
       // },
     ],
   };

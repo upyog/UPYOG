@@ -19,7 +19,7 @@
               <div>
                 <span className="link">
                   
-                  <Link to={"/upyog-ui/employee/pgrai/complaint-details/" + `${row.original?.searchData?.service?.["serviceRequestId"]}`}>
+                  <Link to={"/mycity-ui/employee/pgrai/complaint-details/" + `${row.original?.searchData?.service?.["serviceRequestId"]}`}>
                     {row.original?.searchData?.service?.["serviceRequestId"]}
                   </Link>
                 </span>

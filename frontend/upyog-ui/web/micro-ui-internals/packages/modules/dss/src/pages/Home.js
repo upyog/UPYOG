@@ -582,7 +582,7 @@ const Home = ({ stateCode }) => {
                           : { backgroundColor: colors[index].light, padding: "20px", paddingBottom: "40px", position: "relative" }
                       }
                       key={index}
-                      // onClick={() => routeTo(`/upyog-ui/employee/dss/dashboard/${item.ref.url}`)}
+                      // onClick={() => routeTo(`/mycity-ui/employee/dss/dashboard/${item.ref.url}`)}
                     >
                       <div style={{ justifyContent: "space-between", display: "flex", flexDirection: "row" }}>
                         <div className="dss-card-header" style={{ marginBottom: "10px" }}>
@@ -619,7 +619,7 @@ const Home = ({ stateCode }) => {
                       </div>
                       {isLandingPage && <div
                         style={{ borderRadius: "0px 0px 4px 4px", position: "absolute", display: "flex", justifyContent: "center", alignItems: "center", bottom: "0px", left: "0px", width: "100%", background: item.vizType == "collection" || item.name.includes("PROJECT_STAUS") || item.name.includes("LIVE_ACTIVE_ULBS") ? colors?.[index]?.defaultColor : colors?.[index]?.dark }}
-                        onClick={() => routeTo(`/upyog-ui/employee/dss/dashboard/${item.ref.url}`)}
+                        onClick={() => routeTo(`/mycity-ui/employee/dss/dashboard/${item.ref.url}`)}
                       >
                         <div style={{ padding: "10px", display: "flex", justifyContent: "center", alignItems: "center", height: "40px" }}>
                           <span style={{ marginRight: "10px", color: "white" }}>

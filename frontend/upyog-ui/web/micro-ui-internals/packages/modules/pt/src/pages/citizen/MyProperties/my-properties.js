@@ -46,11 +46,11 @@ const MyProperty = ({ application }) => {
         }
       />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t("PT_COMMON_" + application.status)} />
-      <Link to={`/upyog-ui/citizen/pt/property/properties/${application.propertyId}`}>
+      <Link to={`/mycity-ui/citizen/pt/property/properties/${application.propertyId}`}>
         <SubmitBar label={t("PT_VIEW_DETAILS")} />
       </Link>
       {billData?.Bill.length > 0  ? (
-      <Link to={`/upyog-ui/citizen/payment/my-bills/PT/${application?.propertyId}`}>
+      <Link to={`/mycity-ui/citizen/payment/my-bills/PT/${application?.propertyId}`}>
     
         <div style={{marginTop:"10px"}}><SubmitBar label={t("COMMON_MAKE_PAYMENT")}/></div>
       </Link>

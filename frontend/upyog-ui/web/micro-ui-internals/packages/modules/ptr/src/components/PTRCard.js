@@ -57,16 +57,16 @@ const PTRCard = () => {
     {
       count: isLoading ? "-" : total?.totalCount,
       label: t("ES_COMMON_INBOX"),
-      link: `/upyog-ui/employee/ptr/petservice/inbox`,
+      link: `/mycity-ui/employee/ptr/petservice/inbox`,
     },
     {
       label: t("PTR_TITLE_NEW_PET_REGISTRATION"),
-      link: `/upyog-ui/employee/ptr/petservice/new-application`,
+      link: `/mycity-ui/employee/ptr/petservice/new-application`,
       role: "PTR_CEMP"
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/upyog-ui/employee/ptr/petservice/my-applications`,
+      link: `/mycity-ui/employee/ptr/petservice/my-applications`,
     },
   ]
   const PTR_CEMP = Digit.UserService.hasAccess(["PTR_APPROVER", "PTR_CEMP", "PTR_VERIFIER"]) || false;
@@ -77,7 +77,7 @@ const PTRCard = () => {
       {
         count: total?.totalCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/upyog-ui/employee/ptr/petservice/inbox`,
+        link: `/mycity-ui/employee/ptr/petservice/inbox`,
       },
     ],
     links:links.filter(link=>!link?.role||PTR_CEMP),

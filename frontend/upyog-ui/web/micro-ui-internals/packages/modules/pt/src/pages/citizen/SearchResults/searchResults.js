@@ -75,7 +75,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
   const history = useHistory();
 
   const proceedToPay = (data) => {
-    history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
+    history.push(`/mycity-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
 
   if (paymentDetails.isLoading || result.isLoading) {
@@ -96,7 +96,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
       if (Number(data.total_due) > 0) {
         setShowModal(data);
       } else onSelect(config.key, { data, property });
-    } else history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
+    } else history.push(`/mycity-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
 
   const payment = {};
@@ -175,7 +175,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               {t("PT_LOAD_MORE_MSG")}{" "}
-              <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/search-results?mobileNumber=${mobileNumber?mobileNumber:""}&propertyIds=${propertyIds?propertyIds:""}&oldPropertyIds=${oldPropertyIds?oldPropertyIds:""}&doorNo=${doorNo?doorNo:""}&name=${name?name:""}&city=${city?city:""}&locality=${locality?locality:""}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
+              <span className="link">{<Link to={`/mycity-ui/citizen/pt/property/search-results?mobileNumber=${mobileNumber?mobileNumber:""}&propertyIds=${propertyIds?propertyIds:""}&oldPropertyIds=${oldPropertyIds?oldPropertyIds:""}&doorNo=${doorNo?doorNo:""}&name=${name?name:""}&city=${city?city:""}&locality=${locality?locality:""}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
             </p>
           </div>
         )}

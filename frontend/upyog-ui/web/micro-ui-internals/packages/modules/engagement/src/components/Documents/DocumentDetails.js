@@ -45,7 +45,7 @@ const DocumentDetails = ({ location, match, history, }) => {
                 ...details
             }
             history.push({
-                pathname: `/upyog-ui/employee/engagement/documents/inbox/update`,
+                pathname: `/mycity-ui/employee/engagement/documents/inbox/update`,
                 state: { DocumentEntity }
             })
         }
@@ -61,7 +61,7 @@ const DocumentDetails = ({ location, match, history, }) => {
             ...details
         }
         history.push({
-            pathname: `/upyog-ui/employee/engagement/documents/delete-response`,
+            pathname: `/mycity-ui/employee/engagement/documents/delete-response`,
             state: { DocumentEntity }
         })
     }

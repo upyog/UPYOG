@@ -131,7 +131,7 @@ const convertStringToFloat = (amountString) => {
     };
     console.log('Form Data:- ', formData);
 
-    history.replace("/upyog-ui/employee/asset/assetservice/edit-response", { Assets: formData }); 
+    history.replace("/mycity-ui/employee/asset/assetservice/edit-response", { Assets: formData }); 
     
 
   };

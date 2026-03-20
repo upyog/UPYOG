@@ -363,7 +363,7 @@ const TLApplicationDetails = () => {
                     label={t("TL_VIEW_PROPERTY_DETAIL")}
                     onClick={() => {
                       history.push(
-                        `/upyog-ui/citizen/commonpt/view-property?propertyId=${PTData?.Properties?.[0]?.propertyId}&tenantId=${PTData?.Properties?.[0]?.tenantId}`
+                        `/mycity-ui/citizen/commonpt/view-property?propertyId=${PTData?.Properties?.[0]?.propertyId}&tenantId=${PTData?.Properties?.[0]?.tenantId}`
                       );
                     }}
                   ></LinkButton>
@@ -415,7 +415,7 @@ const TLApplicationDetails = () => {
               {application?.status === "CITIZENACTIONREQUIRED" ? (
                 <Link
                   to={{
-                    pathname: `/upyog-ui/citizen/tl/tradelicence/edit-application/${application?.applicationNumber}/${application?.tenantId}`,
+                    pathname: `/mycity-ui/citizen/tl/tradelicence/edit-application/${application?.applicationNumber}/${application?.tenantId}`,
                     state: {},
                   }}
                 >
@@ -427,7 +427,7 @@ const TLApplicationDetails = () => {
               {application?.status === "PENDINGPAYMENT" ? (
                 <Link
                   to={{
-                    pathname: `/upyog-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
+                    pathname: `/mycity-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
                     state: { bill, tenantId: tenantId },
                   }}
                 >

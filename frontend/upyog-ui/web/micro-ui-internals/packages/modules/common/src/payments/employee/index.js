@@ -27,9 +27,9 @@ const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
   return (
     <React.Fragment>
       <p className="breadcrumb" style={{ marginLeft: "15px" }}>
-        <Link to={`/upyog-ui/employee`}>{t("ES_COMMON_HOME")}</Link>
-        {isFsm ? <Link to={`/upyog-ui/employee/fsm/home`}>/ {t("ES_TITLE_FSM")} </Link> : null}
-        {isFsm ? <Link to={`/upyog-ui/employee/fsm/inbox`}>/ {t("ES_TITLE_INBOX")}</Link> : null}/ {link}
+        <Link to={`/mycity-ui/employee`}>{t("ES_COMMON_HOME")}</Link>
+        {isFsm ? <Link to={`/mycity-ui/employee/fsm/home`}>/ {t("ES_TITLE_FSM")} </Link> : null}
+        {isFsm ? <Link to={`/mycity-ui/employee/fsm/inbox`}>/ {t("ES_TITLE_INBOX")}</Link> : null}/ {link}
       </p>
       <Switch>
         <Route path={`${currentPath}/collect/:businessService/:consumerCode`}>

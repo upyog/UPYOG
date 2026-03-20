@@ -145,7 +145,7 @@ const SelectPaymentType = (props) => {
     if(wrkflow === "WNS")
     {
         let billPayerName=sessionStorage.getItem("payerName")
-        history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=WNS&consumerCode=${stringReplaceAll(consumerCode, "+", "/")}`, {
+        history.push(`/mycity-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=WNS&consumerCode=${stringReplaceAll(consumerCode, "+", "/")}`, {
         paymentAmount: paymentAmt,
         tenantId: billDetails.tenantId,
         name: paymentType?.code !== optionSecound?.code && ConsumerName !== "undefined" ? billPayerName : userInfo ? payersActiveName : payersName,
@@ -153,7 +153,7 @@ const SelectPaymentType = (props) => {
       });
     }
     else{
-    history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
+    history.push(`/mycity-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
       paymentAmount: paymentAmt,
       tenantId: billDetails.tenantId,
       name: paymentType?.code !== optionSecound?.code ? bill?.payerName : userInfo ? payersActiveName : payersName,

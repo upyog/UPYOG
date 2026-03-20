@@ -34,7 +34,7 @@ const TopBarSideBar = ({
     setShowDialog(false);
   }
   const userProfile = () => {
-    history.push("/upyog-ui/employee/user/profile");
+    history.push("/mycity-ui/employee/user/profile");
   };
   const userOptions = [
     { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },

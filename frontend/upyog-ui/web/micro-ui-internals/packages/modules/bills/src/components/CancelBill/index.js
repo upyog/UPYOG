@@ -37,7 +37,7 @@ const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => 
 
     
     const handleBillLinkClick = (row) => {
-        history.push(`/upyog-ui/employee/bills/bill-details?connectionNumber=${row?.consumerCode}&tenantId=${tenantId}&service=${row?.businessService}&from=ABG_CANCEL_BILL`,row)
+        history.push(`/mycity-ui/employee/bills/bill-details?connectionNumber=${row?.consumerCode}&tenantId=${tenantId}&service=${row?.businessService}&from=ABG_CANCEL_BILL`,row)
     }
 
     const getBillLink = (row) => {
@@ -155,7 +155,7 @@ const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => 
              }
         }
         //here do history.push to the response page and send filters there
-        history.push("/upyog-ui/employee/bills/response-cancelBill", {filters,currentBill});
+        history.push("/mycity-ui/employee/bills/response-cancelBill", {filters,currentBill});
         //call the cancel bill api from response page and show appropriate response
     }
 

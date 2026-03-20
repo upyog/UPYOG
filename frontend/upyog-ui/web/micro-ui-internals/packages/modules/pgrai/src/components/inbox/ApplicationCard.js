@@ -48,7 +48,7 @@ export const ApplicationCard = ({ data, onFilterChange, onSearch, serviceRequest
       </Card>
     );
   } else if (data && data?.length > 0) {
-    result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={"/upyog-ui/employee/pgr/complaint/details/"} />;
+    result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={"/mycity-ui/employee/pgr/complaint/details/"} />;
   } else {
     result = (
       <Card style={{ marginTop: 20 }}>

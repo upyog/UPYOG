@@ -21,7 +21,7 @@ const EventsListOnGround = ({ variant, parentRoute }) => {
   if (!Digit.UserService?.getUser()?.access_token) {
     localStorage.clear();
     sessionStorage.clear();
-    return <Redirect to={{ pathname: `/upyog-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
+    return <Redirect to={{ pathname: `/mycity-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
   }
 
   if (EventsDataLoading || !preVisitUnseenEventsCountLoaded) return <Loader />;

@@ -363,7 +363,7 @@ export const WSSearch = {
       additionalDetails: {
         redirectUrl: {
           title: t("WS_VIEW_PROPERTY_DETAILS"),
-          url: `/upyog-ui/employee/pt/property-details/${propertyDataDetails?.propertyId}?from=WS_APPLICATION_DETAILS_HEADER`,
+          url: `/mycity-ui/employee/pt/property-details/${propertyDataDetails?.propertyId}?from=WS_APPLICATION_DETAILS_HEADER`,
         },
       },
     };
@@ -752,7 +752,7 @@ export const WSSearch = {
       additionalDetails: {
         redirectUrl: {
           title: t("WS_VIEW_PROPERTY_DETAILS"),
-          url: `/upyog-ui/employee/pt/property-details/${propertyDataDetails?.propertyId}?from=WS_APPLICATION_DETAILS_HEADER`,
+          url: `/mycity-ui/employee/pt/property-details/${propertyDataDetails?.propertyId}?from=WS_APPLICATION_DETAILS_HEADER`,
         },
       },
     };
@@ -1573,7 +1573,7 @@ export const WSSearch = {
               { title: "WS_INITIAL_METER_READING_LABEL", value: wsDataDetails?.additionalDetails?.initialMeterReading || t("NA") },
               {
                 title: "WS_VIEW_CONSUMPTION_DETAIL",
-                to: `/upyog-ui/employee/ws/consumption-details?applicationNo=${wsDataDetails?.connectionNo}&tenantId=${wsDataDetails?.tenantId}&service=${serviceType}&from=${window.location.href.includes("bill-details") ? "ABG_BILL_DETAILS_HEADER" : "WS_COMMON_CONNECTION_DETAIL"}`,
+                to: `/mycity-ui/employee/ws/consumption-details?applicationNo=${wsDataDetails?.connectionNo}&tenantId=${wsDataDetails?.tenantId}&service=${serviceType}&from=${window.location.href.includes("bill-details") ? "ABG_BILL_DETAILS_HEADER" : "WS_COMMON_CONNECTION_DETAIL"}`,
                 value: "",
                 isLink: wsDataDetails?.connectionType ==="Metered" ? true:false,
               },
@@ -1624,7 +1624,7 @@ export const WSSearch = {
         },
         {
           title: "WS_VIEW_PROPERTY_DETAIL",
-          to: `/upyog-ui/employee/pt/property-details/${propertyDataDetails?.propertyId}?from=${window.location.href.includes("bill-details") ? "ABG_BILL_DETAILS_HEADER" : "WS_COMMON_CONNECTION_DETAIL"}`,
+          to: `/mycity-ui/employee/pt/property-details/${propertyDataDetails?.propertyId}?from=${window.location.href.includes("bill-details") ? "ABG_BILL_DETAILS_HEADER" : "WS_COMMON_CONNECTION_DETAIL"}`,
           value: "",
           isLink: true,
         },
@@ -1887,7 +1887,7 @@ export const WSSearch = {
       additionalDetails: {
         redirectUrl: {
           title: t("WS_VIEW_PROPERTY_DETAILS"),
-          url: `/upyog-ui/employee/pt/property-details/${propertyDataDetails?.propertyId}?from=WS_APPLICATION_DETAILS_HEADER`,
+          url: `/mycity-ui/employee/pt/property-details/${propertyDataDetails?.propertyId}?from=WS_APPLICATION_DETAILS_HEADER`,
         },
       },
     };

@@ -101,7 +101,7 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
       {mutation1.isSuccess && <CardText>{getCardText(t,mutation1.data)}</CardText>}
       {!mutation1.isSuccess && <CardText>{t(Digit.Utils.locale.getTransformedLocale(mutation1.error.message))}</CardText>}
       <Link to={{
-        pathname: `/upyog-ui/citizen`,
+        pathname: `/mycity-ui/citizen`,
       }}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>

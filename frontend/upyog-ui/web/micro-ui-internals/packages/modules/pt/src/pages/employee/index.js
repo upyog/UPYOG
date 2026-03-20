@@ -50,22 +50,22 @@ const EmployeeApp = ({ path, url, userType }) => {
   const searchMW = [{ combineTaxDueInSearchData }];
 
   const breadcrumbObj = {
-    ["/upyog-ui/employee/pt/inbox"]: "ES_TITLE_INBOX",
-    ["/upyog-ui/employee/pt/new-application"]: "ES_TITLE_NEW_PROPERTY_APPLICATION",
-    ["/upyog-ui/employee/pt/search"]: "PT_COMMON_SEARCH_PROPERTY_SUB_HEADER",
-    ["/upyog-ui/employee/pt/application-search"]: "ES_COMMON_APPLICATION_SEARCH",
-    ["/upyog-ui/employee/pt/Ulb-assesment"]: "ES_COMMON_ULB_ASSESSMENT",
+    ["/mycity-ui/employee/pt/inbox"]: "ES_TITLE_INBOX",
+    ["/mycity-ui/employee/pt/new-application"]: "ES_TITLE_NEW_PROPERTY_APPLICATION",
+    ["/mycity-ui/employee/pt/search"]: "PT_COMMON_SEARCH_PROPERTY_SUB_HEADER",
+    ["/mycity-ui/employee/pt/application-search"]: "ES_COMMON_APPLICATION_SEARCH",
+    ["/mycity-ui/employee/pt/Ulb-assesment"]: "ES_COMMON_ULB_ASSESSMENT",
   };
 
   const getBreadCrumb = () => {
     if (breadcrumbObj[location.pathname]) return t(breadcrumbObj[location.pathname]);
-    else if (location.pathname.includes("/upyog-ui/employee/pt/application-details/")) return t("PT_APPLICATION_TITLE");
-    else if (location.pathname.includes("/upyog-ui/employee/pt/property-details/")) return t("PT_PROPERTY_INFORMATION");
-    else if (location.pathname.includes("/upyog-ui/employee/pt/payment-details/")) return t("PT_PAYMENT_HISTORY");
-    else if (location.pathname.includes("/upyog-ui/employee/pt/assessment-details/")) return t("PT_ASSESS_PROPERTY");
-    else if (location.pathname.includes("upyog-ui/employee/pt/property-mutate-docs-required")) return t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP");
-    else if (location.pathname.includes("/upyog-ui/employee/pt/property-mutate/")) return t("ES_TITLE_MUTATE_PROPERTY");
-    else if (location.pathname.includes("/upyog-ui/employee/pt/modify-application/")) return t("PT_UPDATE_PROPERTY");
+    else if (location.pathname.includes("/mycity-ui/employee/pt/application-details/")) return t("PT_APPLICATION_TITLE");
+    else if (location.pathname.includes("/mycity-ui/employee/pt/property-details/")) return t("PT_PROPERTY_INFORMATION");
+    else if (location.pathname.includes("/mycity-ui/employee/pt/payment-details/")) return t("PT_PAYMENT_HISTORY");
+    else if (location.pathname.includes("/mycity-ui/employee/pt/assessment-details/")) return t("PT_ASSESS_PROPERTY");
+    else if (location.pathname.includes("mycity-ui/employee/pt/property-mutate-docs-required")) return t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP");
+    else if (location.pathname.includes("/mycity-ui/employee/pt/property-mutate/")) return t("ES_TITLE_MUTATE_PROPERTY");
+    else if (location.pathname.includes("/mycity-ui/employee/pt/modify-application/")) return t("PT_UPDATE_PROPERTY");
   };
 
   const PTBreadCrumbs = ({ location }) => {
@@ -75,17 +75,17 @@ const EmployeeApp = ({ path, url, userType }) => {
     const { from : fromScreen2 } = Digit.Hooks.useQueryParams();
     const crumbs = [
       {
-        path: "/upyog-ui/employee",
+        path: "/mycity-ui/employee",
         content: t("ES_COMMON_HOME"),
         show: true,
       },
       {
-        path: "/upyog-ui/employee/pt/inbox",
+        path: "/mycity-ui/employee/pt/inbox",
         content: t("ES_TITLE_INBOX"),
         show: location.pathname.includes("pt/inbox") ? true : false,
       },
       {
-        path: "/upyog-ui/employee/pt/search",
+        path: "/mycity-ui/employee/pt/search",
         content: t("PT_COMMON_SEARCH_PROPERTY_SUB_HEADER"),
         show: location.pathname.includes("/pt/search") || location.pathname.includes("/pt/ptsearch") ? true : false,
       },
@@ -95,51 +95,51 @@ const EmployeeApp = ({ path, url, userType }) => {
         show: location.pathname.includes("pt/property-mutate-docs-required") ? true : false,
       },
       {
-        path: "/upyog-ui/employee/pt/property-mutate/",
+        path: "/mycity-ui/employee/pt/property-mutate/",
         content: t("ES_TITLE_MUTATE_PROPERTY"),
         show: location.pathname.includes("pt/property-mutate/") ? true : false,
       },
       {
-        path: "/upyog-ui/employee/pt/modify-application/",
+        path: "/mycity-ui/employee/pt/modify-application/",
         content: t("PT_UPDATE_PROPERTY"),
         show: location.pathname.includes("pt/modify-application") ? true : false,
       },
       {
-        path: "/upyog-ui/employee/pt/application-search",
+        path: "/mycity-ui/employee/pt/application-search",
         content: t("ES_COMMON_APPLICATION_SEARCH"),
         show: location.pathname.includes("/pt/application-search") || location.pathname.includes("/pt/applicationsearch/application-details/") ? true : false,
       },
       {
-        path: "/upyog-ui/employee/pt/ulb-assesment",
+        path: "/mycity-ui/employee/pt/ulb-assesment",
         content: t("ES_COMMON_ULB_ASSESSMENT"),
         show: location.pathname.includes("/pt/ulb-assesment") || location.pathname.includes("/pt/ulb-assesment") ? true : false,
       },
       {
-        path: `/upyog-ui/employee/pt/ptsearch/property-details/${sessionStorage.getItem("propertyIdinPropertyDetail")}`,
+        path: `/mycity-ui/employee/pt/ptsearch/property-details/${sessionStorage.getItem("propertyIdinPropertyDetail")}`,
         content: fromScreen || fromScreen2 ? `${t(fromScreen || fromScreen2)} / ${t("PT_PROPERTY_INFORMATION")}`:t("PT_PROPERTY_INFORMATION"),
         show:  location.pathname.includes("/pt/ptsearch/property-details/") || location.pathname.includes("/pt/ptsearch/payment-details/") || location.pathname.includes("/pt/ptsearch/assessment-details/")  ? true : false,
         isBack:fromScreen && true,
       },
       {
-        path: `/upyog-ui/employee/pt/property-details/${sessionStorage.getItem("propertyIdinPropertyDetail")}?${fromScreen2?`from=${fromScreen2}` : ''}`,
+        path: `/mycity-ui/employee/pt/property-details/${sessionStorage.getItem("propertyIdinPropertyDetail")}?${fromScreen2?`from=${fromScreen2}` : ''}`,
         content: fromScreen || fromScreen2 ? `${t(fromScreen || fromScreen2)} / ${t("PT_PROPERTY_INFORMATION")}`:t("PT_PROPERTY_INFORMATION"),
         show: location.pathname.includes("/pt/property-details/") || location.pathname.includes("/pt/payment-details/") ? true : false,
         isBack:true,
       },
       {
-        path: `/upyog-ui/employee/pt/applicationsearch/application-details/${sessionStorage.getItem("applicationNoinAppDetails")}`,
+        path: `/mycity-ui/employee/pt/applicationsearch/application-details/${sessionStorage.getItem("applicationNoinAppDetails")}`,
         content: t("PT_APPLICATION_TITLE"),
         show: location.pathname.includes("/pt/application-details/") || location.pathname.includes("/pt/applicationsearch/application-details/") ? true : false,
       },
       {
-        path: "/upyog-ui/employee/pt/payment-details/",
+        path: "/mycity-ui/employee/pt/payment-details/",
         content: fromScreen ? `${t(fromScreen)} / ${t("PT_PAYMENT_HISTORY")
 } `: t("PT_PAYMENT_HISTORY"),
         show: location.pathname.includes("/pt/ptsearch/payment-details") || location.pathname.includes("/pt/payment-details") ? true : false,
         isBack:fromScreen && true,
       },
       {
-        path: "/upyog-ui/employee/pt/assessment-details/",
+        path: "/mycity-ui/employee/pt/assessment-details/",
         content: t("PT_ASSESS_PROPERTY"),
         show: location.pathname.includes("pt/ptsearch/assessment-details") ? true : false,
       },
@@ -164,7 +164,7 @@ const EmployeeApp = ({ path, url, userType }) => {
       <React.Fragment>
         <div className="ground-container">
           {/* <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : "revert" }}>
-            <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
+            <Link to="/mycity-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
               {t("ES_COMMON_HOME")}
             </Link>{" "}
             / <span>{getBreadCrumb()}</span>

@@ -25,10 +25,10 @@ const EmployeeChallan = (props) => {
       case "CANCEL_CHALLAN":
         return setShowModal(true);
       case "UPDATE_CHALLAN":
-        return history.push(`/upyog-ui/employee/mcollect/modify-challan/${challanno}`);
+        return history.push(`/mycity-ui/employee/mcollect/modify-challan/${challanno}`);
       case "BUTTON_PAY":
         return history.push(
-          `/upyog-ui/employee/payment/collect/${challanDetails?.businessService}/${challanno}/tenantId=${tenantId}?workflow=mcollect`
+          `/mycity-ui/employee/payment/collect/${challanDetails?.businessService}/${challanno}/tenantId=${tenantId}?workflow=mcollect`
         );
       default:
         break;
@@ -52,7 +52,7 @@ const EmployeeChallan = (props) => {
           const challan = result.challans[0];
           let LastModifiedTime = Digit.SessionStorage.set("isMcollectAppChanged", challan.challanNo);
           history.push(
-            `/upyog-ui/employee/mcollect/acknowledgement?purpose=challan&status=success&tenantId=${challan?.tenantId}&serviceCategory=${challan.businessService}&challanNumber=${challan.challanNo}&applicationStatus=${challan.applicationStatus}`,
+            `/mycity-ui/employee/mcollect/acknowledgement?purpose=challan&status=success&tenantId=${challan?.tenantId}&serviceCategory=${challan.businessService}&challanNumber=${challan.challanNo}&applicationStatus=${challan.applicationStatus}`,
             { from: url }
           );
         }

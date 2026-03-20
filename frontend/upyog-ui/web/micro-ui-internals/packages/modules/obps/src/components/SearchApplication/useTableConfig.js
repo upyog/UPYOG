@@ -22,7 +22,7 @@ const useSearchApplicationTableConfig = ({t}) => {
             return (
               <div>
                 <span className="link">
-                  <Link to={window.location.href.includes("/citizen")  ? `/upyog-ui/citizen/obps/${getRedirectionLink(row.original["businessService"]) || "--"}/${row.original["applicationNo"] || row.original["applicationNumber"]}` : `/upyog-ui/employee/obps/${getRedirectionLink(row.original["businessService"]) || "--"}/${row.original["applicationNo"] || row.original["applicationNumber"]}`}>
+                  <Link to={window.location.href.includes("/citizen")  ? `/mycity-ui/citizen/obps/${getRedirectionLink(row.original["businessService"]) || "--"}/${row.original["applicationNo"] || row.original["applicationNumber"]}` : `/mycity-ui/employee/obps/${getRedirectionLink(row.original["businessService"]) || "--"}/${row.original["applicationNo"] || row.original["applicationNumber"]}`}>
                     {row.original["applicationNo"] || row.original["applicationNumber"]}
                   </Link>
                 </span>

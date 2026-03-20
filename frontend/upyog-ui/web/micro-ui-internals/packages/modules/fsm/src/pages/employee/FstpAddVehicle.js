@@ -32,7 +32,7 @@ const FstpAddVehicle = ({ onSelect }) => {
   };
 
   const onSubmit = (data) => {
-    history.push(`/upyog-ui/employee/fsm/fstp-fsm-request/${data.vehicleNumber.trim()}`);
+    history.push(`/mycity-ui/employee/fsm/fstp-fsm-request/${data.vehicleNumber.trim()}`);
   };
 
   function onChange(e) {

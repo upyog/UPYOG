@@ -417,7 +417,7 @@ const FstpOperatorDetails = () => {
     setShowToast({ key: "success", action: `ES_FSM_DISPOSE_UPDATE_SUCCESS` });
     setTimeout(() => {
       closeToast();
-      history.push(`/upyog-ui/employee`);
+      history.push(`/mycity-ui/employee`);
     }, 5000);
   };
 

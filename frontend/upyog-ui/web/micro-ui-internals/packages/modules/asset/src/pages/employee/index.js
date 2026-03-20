@@ -31,12 +31,12 @@ const EmployeeApp = ({ path, url, userType }) => {
     const { from : fromScreen2 } = Digit.Hooks.useQueryParams();
     const crumbs = [
       {
-        path: "/upyog-ui/employee",
+        path: "/mycity-ui/employee",
         content: t("ES_COMMON_HOME"),
         show: true,
       },
       {
-        path: "/upyog-ui/employee/asset/assetservice/inbox",
+        path: "/mycity-ui/employee/asset/assetservice/inbox",
         content: t("ES_TITLE_INBOX"),
         show: location.pathname.includes("asset/assetservice/inbox") ? false : false,
       },

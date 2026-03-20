@@ -300,8 +300,8 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
 
     // This is use for Asset Assigned / Not Assigned menu
     let assetAssignableMenu = [
-      {i18nKey: 'YES', code: 'true', value: 'YES'},
-      {i18nKey: 'NO', code: 'false', value: 'NO'},
+      {i18nKey: 'YES', code: 'YES', value: 'YES'},
+      {i18nKey: 'NO', code: 'NO', value: 'NO'},
     ];
   
     
@@ -665,7 +665,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
                 selected={assetAssignable}
                 select={setAssetAssignable}
                 option={assetAssignableMenu}
-                optionKey="code"
+                optionKey="i18nKey"
                 placeholder={"Select"}
                 t={t}
               />

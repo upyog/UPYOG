@@ -114,7 +114,7 @@ const GetConnectionDetails = () => {
     }
     //here check if this connection have any active bills(don't allow to modify in this case)
 
-    let pathname = `/upyog-ui/employee/ws/modify-application?applicationNumber=${applicationDetails?.applicationData?.connectionNo}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}&from=WS_COMMON_CONNECTION_DETAIL`;
+    let pathname = `/mycity-ui/employee/ws/modify-application?applicationNumber=${applicationDetails?.applicationData?.connectionNo}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}&from=WS_COMMON_CONNECTION_DETAIL`;
 
     history.push(`${pathname}`, JSON.stringify({ data: applicationDetails }));
   };
@@ -145,7 +145,7 @@ const GetConnectionDetails = () => {
     }
 
     history.push(
-      `/upyog-ui/employee/ws/required-documents?connectionNumber=${applicationDetails?.applicationData?.connectionNo}&tenantId=${getTenantId}&service=${serviceType}`,
+      `/mycity-ui/employee/ws/required-documents?connectionNumber=${applicationDetails?.applicationData?.connectionNo}&tenantId=${getTenantId}&service=${serviceType}`,
       JSON.stringify({ data: applicationDetails })
     );
   };
@@ -161,7 +161,7 @@ const GetConnectionDetails = () => {
   Digit.Hooks.useClickOutside(actionMenuRef, closeActionMenu, displayMenu);
 
   const getDisconnectionButton = () => {
-    let pathname = `/upyog-ui/employee/ws/new-disconnection`;
+    let pathname = `/mycity-ui/employee/ws/new-disconnection`;
 
     if(!checkWorkflow){
       setshowActionToast({
@@ -182,7 +182,7 @@ const GetConnectionDetails = () => {
     }
   };
   const getRestorationButton = () => {
-    let pathname = `/upyog-ui/employee/ws/new-restoration`;
+    let pathname = `/mycity-ui/employee/ws/new-restoration`;
 
     if(!checkWorkflow){
       setshowActionToast({
@@ -351,7 +351,7 @@ const showActionRestoration = ["RESTORATION_BUTTON"]
             actionSaveLabel={t(`${"WS_COMMON_COLLECT_LABEL"}`)}
             actionSaveOnSubmit={() => {
               history.push(
-                `/upyog-ui/employee/payment/collect/${serviceType === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                `/mycity-ui/employee/payment/collect/${serviceType === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
                   applicationNumber
                 )}/${getTenantId}?tenantId=${getTenantId}&ISWSCON`
               );

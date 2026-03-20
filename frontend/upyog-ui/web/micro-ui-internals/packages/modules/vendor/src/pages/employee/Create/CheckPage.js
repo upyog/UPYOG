@@ -49,108 +49,108 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               <Row
                 label={t("VENDOR_ID")}
                 text={`${t(checkForNA(vendordet?.VendorId))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
               <Row
                 label={t("VENDOR_BANK_IFSC_CODE")}
                 text={`${t(checkForNA(vendordet?.IFSC))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
               <Row
                 label={t("VENDOR_BANK_NAME")}
                 text={`${t(checkForNA(vendordet?.Bank))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
               <Row
                 label={t("VENDOR_BANK_BRANCH")}
                 text={`${t(checkForNA(vendordet?.BankbranchName))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
               <Row
                 label={t("VENDOR_MICR_NO")}
                 text={`${t(checkForNA(vendordet?.micrNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
               <Row
                 label={t("BANK_ACCONT_NO")}
                 text={`${t(checkForNA(vendordet?.AccountNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
 
               {/* <Row
                 label={t("PHONE_NO")}
                 text={`${t(checkForNA(vendordet?.AccountNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
 
               <Row
                 label={t("CONTACT_PERSON")}
                 text={`${t(checkForNA(vendordet?.AccountNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
 
               <Row
                 label={t("COMPANY_NAME")}
                 text={`${t(checkForNA(vendordet?.AccountNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               /> */}
 
               <Row
                 label={t("PAN_NO")}
                 text={`${t(checkForNA(vendordet?.PanNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
               <Row
                 label={t("GST_NO")}
                 text={`${t(checkForNA(vendordet?.GstNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
               <Row
                 label={t("GST_REGISTERED_STATE/UT")}
                 text={`${t(checkForNA(vendordet?.GstState))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-detailss`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-detailss`} />}
               />
               <Row
                 label={t("REGISTRATION_NO")}
                 text={`${t(checkForNA(vendordet?.RegistrationNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
 
               <Row
                 label={t("EPF_NO")}
                 text={`${t(checkForNA(vendordet?.EpfNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
 
               <Row
                 label={t("ESI_NO")}
                 text={`${t(checkForNA(vendordet?.EsiNo))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
 
               <Row
                 label={t("VENDOR_TYPE")}
                 text={`${t(checkForNA(vendordet?.VendorType?.code))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
 
               <Row
                 label={t("VENDOR_CATEGORY")}
                 text={`${t(checkForNA(vendordet?.VendorCategory?.code))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
 
               <Row
                 label={t("VENDOR_STATUS")}
                 text={`${t(checkForNA(vendordet?.Status?.code))}`}
-                actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
               />
               {/* {formJson.map((row, index) => (
                 <Row
                   key={index}
                   label={t(row.code)}
                   text={`${extractValue(row.name)}`}
-                  actionButton={<ActionButton jumpTo={`/upyog-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
+                  actionButton={<ActionButton jumpTo={`/mycity-ui/employee/vendor/registry/additionaldetails/vendor-details`} />}
                 />
               ))} */}
             </React.Fragment>
@@ -167,7 +167,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                   ? documents.documents.map((doc, index) => (
                       <div key={index}>
                         <a
-                          href={`/upyog-ui/employee/vendor/registry/additionaldetails/documents/${doc.filestoreId}`}
+                          href={`/mycity-ui/employee/vendor/registry/additionaldetails/documents/${doc.filestoreId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

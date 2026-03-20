@@ -48,7 +48,7 @@ const BillDetailsv1 = (props) => {
                 reasonMessage: t(_data?.reason?.message)
             }
         }
-        history.push("/upyog-ui/employee/bills/response-cancelBill", { filters, bill });
+        history.push("/mycity-ui/employee/bills/response-cancelBill", { filters, bill });
     }
 
     const getTranslatedValues = (dataValue, isNotTranslated) => {

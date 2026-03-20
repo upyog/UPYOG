@@ -34,7 +34,7 @@ const Documents = () => {
       tenantIds: data.ULB.map((e) => e.code),
     };
 
-    history.push("/upyog-ui/employee/engagement/documents/response", { DocumentEntity });
+    history.push("/mycity-ui/employee/engagement/documents/response", { DocumentEntity });
   };
 
   return (

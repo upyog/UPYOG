@@ -77,11 +77,11 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
   function onActionSelect(action) {
     switch (action) {
       case "VENDOR":
-        return history.push("/upyog-ui/employee/vendor/registry/new-vendor");
+        return history.push("/mycity-ui/employee/vendor/registry/new-vendor");
       case "VEHICLE":
-        return history.push("/upyog-ui/employee/vendor/registry/new-vehicle");
+        return history.push("/mycity-ui/employee/vendor/registry/new-vehicle");
       case "DRIVER":
-        return history.push("/upyog-ui/employee/vendor/registry/new-driver");
+        return history.push("/mycity-ui/employee/vendor/registry/new-driver");
       default:
         break;
     }

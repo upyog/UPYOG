@@ -54,7 +54,7 @@ const ReceiptCancelModal = ({ t, action, tenantId, closeModal, submitAction, app
 
 
   function submit(data) {
-    history.replace("/upyog-ui/employee/receipts/response", {
+    history.replace("/mycity-ui/employee/receipts/response", {
       paymentWorkflow: {
         action: "CANCEL",
         additionalDetails: {...data.otherDetails,selectedReasonMessage:t(`CR_REASON_${selectedReason.code}`)},

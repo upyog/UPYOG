@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, PropertyHouse } from "@upyog/digit-ui-react-components";
+import { PropertyHouse } from "@upyog/digit-ui-react-components";
+import {EmployeeModuleCard} from "../../../../react-components/src/index"
 
 const CommonPTCard = () => {
   const { t } = useTranslation();
@@ -15,7 +16,7 @@ const CommonPTCard = () => {
     links: [
       {
         label: t("PT_SEARCH_AND_PAY"),
-        link: `/upyog-ui/employee/commonpt/search`,
+        link: `/mycity-ui/employee/commonpt/search`,
       }
     ],
   };
@@ -24,7 +25,7 @@ const CommonPTCard = () => {
   if (PT_CEMP && !propsForModuleCard.links?.[1]) {
     propsForModuleCard.links.push({
       label: t("PT_CREATE_PROPERTY"),
-      link: `/upyog-ui/employee/commonpt/new-application`,
+      link: `/mycity-ui/employee/commonpt/new-application`,
     });
   }
 

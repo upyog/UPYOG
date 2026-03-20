@@ -365,7 +365,7 @@ function ApplicationDetailsContent({
                               <span style={{ display: "inline-flex", gap: "10px", alignItems: "center" }}>
                                 <Link
                                   to={{
-                                    pathname: `/upyog-ui/employee/asset/assetservice/maintenance-edit/${applicationNo}`,
+                                    pathname: `/mycity-ui/employee/asset/assetservice/maintenance-edit/${applicationNo}`,
                                     state: { data: element.data },
                                   }}
                                 >

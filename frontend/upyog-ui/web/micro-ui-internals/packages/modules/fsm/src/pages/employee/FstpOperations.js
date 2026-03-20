@@ -13,7 +13,7 @@ const FstpOperations = () => {
     const module = [
         {
             name: "ES_FSM_ADD_NEW_BUTTON",
-            link: "/upyog-ui/employee/fsm/fstp-add-vehicle",
+            link: "/mycity-ui/employee/fsm/fstp-add-vehicle",
             icon: <AddNewIcon />
         },
         {
@@ -24,7 +24,7 @@ const FstpOperations = () => {
         },
         {
             name: "ES_COMMON_INBOX",
-            link: "/upyog-ui/employee/fsm/fstp-inbox",
+            link: "/mycity-ui/employee/fsm/fstp-inbox",
             icon: <InboxIcon />
         }
     ]

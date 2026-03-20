@@ -32,7 +32,7 @@ const NewEvents = () => {
         }
       ]
     }
-    history.push("/upyog-ui/employee/engagement/event/response", details)
+    history.push("/mycity-ui/employee/engagement/event/response", details)
   }
 
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_EVENT_MUTATION_HAPPENED", false);

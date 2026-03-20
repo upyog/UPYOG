@@ -28,7 +28,7 @@ const getPath = (path, params) => {
 const CheckPage = (props) => {
   if (localStorage.getItem("TLAppSubmitEnabled") !== "true") {
     // window.history.forward();
-    window.location.replace("/upyog-ui/citizen");
+    window.location.replace("/mycity-ui/citizen");
     return null;
   }
   return <WrapCheckPage {...props} />;
@@ -96,7 +96,7 @@ const WrapCheckPage = ({ onSubmit, value }) => {
   
 
   const typeOfApplication = !isEditProperty ? `new-application` : `renew-trade`;
-  let routeLink = `/upyog-ui/citizen/tl/tradelicence/${typeOfApplication}`;
+  let routeLink = `/mycity-ui/citizen/tl/tradelicence/${typeOfApplication}`;
   if (window.location.href.includes("edit-application") || window.location.href.includes("renew-trade")) {
     routeLink = `${getPath(match.path, match.params)}`;
     routeLink = routeLink.replace("/check", "");
@@ -201,7 +201,7 @@ const WrapCheckPage = ({ onSubmit, value }) => {
           )}
         </StatusTable>
         {/* <div style={{ textAlign: "left" }}>
-          <Link to={`/upyog-ui/citizen/commonpt/view-property?propertyId=${cpt?.details?.propertyId || cptId?.id || value?.tradeLicenseDetail?.additionalDetail?.propertyId}&tenantId=${cpt?.details?.tenantId || value?.tenantId}`}>
+          <Link to={`/mycity-ui/citizen/commonpt/view-property?propertyId=${cpt?.details?.propertyId || cptId?.id || value?.tradeLicenseDetail?.additionalDetail?.propertyId}&tenantId=${cpt?.details?.tenantId || value?.tenantId}`}>
             <LinkButton style={{ textAlign: "left" }} label={t("TL_VIEW_PROPERTY")} />
           </Link>
         </div> */}

@@ -39,7 +39,7 @@ const PTWFApplicationTimeline = (props) => {
     } else if (checkpoint.status === "ACTIVE" && props?.userType === 'citizen') {
       return (
         <div>
-          <Link to={`/upyog-ui/citizen/pt/property/properties/${props?.application?.propertyId}`}>
+          <Link to={`/mycity-ui/citizen/pt/property/properties/${props?.application?.propertyId}`}>
             <ActionLinks>{t("PT_VIEW_PROPERTY_DETAILS")}</ActionLinks>
           </Link>
         </div>
@@ -48,7 +48,7 @@ const PTWFApplicationTimeline = (props) => {
     // else if (checkpoint.state === "CORRECTIONPENDING") {
     //   return (
     //     <div>
-    //       <Link to={`/upyog-ui/citizen/pt/property/properties/${props?.application?.propertyId}`}>
+    //       <Link to={`/mycity-ui/citizen/pt/property/properties/${props?.application?.propertyId}`}>
     //         <ActionLinks>{t("EDIT_PROPERTY")}</ActionLinks>
     //       </Link>
     //     </div>
@@ -79,7 +79,7 @@ const PTWFApplicationTimeline = (props) => {
           ? (
           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
             <Link
-              to={{ pathname: `/upyog-ui/citizen/payment/my-bills/${businessService}/${props.id}`, state: { tenantId: props.application.tenantId, propertyId : props?.application?.propertyId } }}
+              to={{ pathname: `/mycity-ui/citizen/payment/my-bills/${businessService}/${props.id}`, state: { tenantId: props.application.tenantId, propertyId : props?.application?.propertyId } }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>
@@ -92,7 +92,7 @@ const PTWFApplicationTimeline = (props) => {
             {businessService != "PT.MUTATION" && (
               <Link
                 to={{
-                  pathname: `/upyog-ui/citizen/pt/property/edit-application/action=edit-${businessService}/${props.id}`,
+                  pathname: `/mycity-ui/citizen/pt/property/edit-application/action=edit-${businessService}/${props.id}`,
                   state: { tenantId: props.application.tenantId },
                 }}
               >
@@ -104,7 +104,7 @@ const PTWFApplicationTimeline = (props) => {
       case "SUBMIT_FEEDBACK":
         return (
           <div style={{ marginTop: "24px" }}>
-            <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
+            <Link to={`/mycity-ui/citizen/fsm/rate/${props.id}`}>
               <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
             </Link>
           </div>

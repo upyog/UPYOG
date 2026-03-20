@@ -77,7 +77,7 @@ const CreateOCEDCR = ({ parentRoute }) => {
         if (result?.data?.edcrDetail) {
           setParams(result?.data?.edcrDetail);
           history.replace(
-            `/upyog-ui/citizen/obps/edcrscrutiny/oc-apply/acknowledgement`,
+            `/mycity-ui/citizen/obps/edcrscrutiny/oc-apply/acknowledgement`,
             { data: result?.data?.edcrDetail }
           );
         }

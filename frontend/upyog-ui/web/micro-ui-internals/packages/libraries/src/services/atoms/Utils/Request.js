@@ -17,18 +17,18 @@ Axios.interceptors.response.use(
           localStorage.clear();
           sessionStorage.clear();
           window.location.href =
-            (isEmployee ? "/upyog-ui/employee/user/login" : "/upyog-ui/citizen/login") +
+            (isEmployee ? "/mycity-ui/employee/user/login" : "/mycity-ui/citizen/login") +
             `?from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (
           error?.message?.toLowerCase()?.includes("internal server error") ||
           error?.message?.toLowerCase()?.includes("some error occured")
         ) {
           window.location.href =
-            (isEmployee ? "/upyog-ui/employee/user/error" : "/upyog-ui/citizen/error") +
+            (isEmployee ? "/mycity-ui/employee/user/error" : "/mycity-ui/citizen/error") +
             `?type=maintenance&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (error.message.includes("ZuulRuntimeException")) {
           window.location.href =
-            (isEmployee ? "/upyog-ui/employee/user/error" : "/upyog-ui/citizen/error") +
+            (isEmployee ? "/mycity-ui/employee/user/error" : "/mycity-ui/citizen/error") +
             `?type=notfound&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         }
       }

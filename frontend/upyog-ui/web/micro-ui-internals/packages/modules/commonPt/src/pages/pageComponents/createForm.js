@@ -60,11 +60,11 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
           prevState:{...location?.state}
         });
       } else {
-        history.replace(`/upyog-ui/citizen/commonPt/property/citizen-otp`,
+        history.replace(`/mycity-ui/citizen/commonPt/property/citizen-otp`,
           {
             // from: getFromLocation(location.state, searchParams),
             mobileNumber: formValue?.owners?.[0]?.mobileNumber,
-            redirectBackTo: '/upyog-ui/citizen/commonPt/property/new-application/save-property',
+            redirectBackTo: '/mycity-ui/citizen/commonPt/property/new-application/save-property',
             redirectData: formValue,
           }
         );

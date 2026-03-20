@@ -17,20 +17,20 @@ const VENDORCard = () => {
     // {
     //   count: isLoading ? "0" : total?.totalCount,
     //   label: t("Inbox"),
-    //   link: `/upyog-ui/employee/asset/assetservice/inbox`,
+    //   link: `/mycity-ui/employee/asset/assetservice/inbox`,
     // },
     
     {
       label: t("SEARCH_VENDOR"),
-      link: `/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR`
+      link: `/mycity-ui/employee/vendor/search-vendor?selectedTabs=VENDOR`
     },
     // {
     //   label: t("MY_ASSET_APPLICATION"),
-    //   link: `/upyog-ui/employee/asset/assetservice/my-asset`,
+    //   link: `/mycity-ui/employee/asset/assetservice/my-asset`,
     // }
     // {
     //   label: t("AST_REPORT"),
-    //   link: `/upyog-ui/employee/asset/assetservice/report`,
+    //   link: `/mycity-ui/employee/asset/assetservice/report`,
     // }
    
   ]
@@ -45,7 +45,7 @@ const VENDORCard = () => {
       {
         count: total?.totalCount,
         label: t("Inbox"),
-        link: `/upyog-ui/employee/asset/assetservice/inbox`
+        link: `/mycity-ui/employee/asset/assetservice/inbox`
       },
       
     ],

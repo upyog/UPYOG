@@ -41,7 +41,7 @@ const MCollectAcknowledgement = () => {
             </div>
           ) : null}
           <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-            <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
+            <Link to={`/mycity-ui/employee`} style={{ marginRight: "1rem" }}>
               <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
             </Link>
           </ActionBar>
@@ -65,13 +65,13 @@ const MCollectAcknowledgement = () => {
             </div>
           ) : null}
           <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-            <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
+            <Link to={`/mycity-ui/employee`} style={{ marginRight: "1rem" }}>
               <LinkButton style={{ color: "#FF8C00" }} label={t("CORE_COMMON_GO_TO_HOME")} />
             </Link>
 
             <Link
               to={{
-                pathname: `/upyog-ui/employee/payment/collect/${params?.serviceCategory}/${params?.challanNumber}/tenantId=${params?.tenantId}?workflow=mcollect`,
+                pathname: `/mycity-ui/employee/payment/collect/${params?.serviceCategory}/${params?.challanNumber}/tenantId=${params?.tenantId}?workflow=mcollect`,
               }}
             >
               <SubmitBar label={t("UC_BUTTON_PAY")} />

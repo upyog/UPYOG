@@ -70,22 +70,22 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("PTR_APPLICANT_NAME")}
             text={`${t(checkForNA(ownerss?.applicantName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
         />
         <Row
             label={t("PTR_FATHER_HUSBAND_NAME")}
             text={`${t(checkForNA(ownerss?.fatherName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
         />
         <Row
             label={t("PTR_MOBILE_NUMBER")}
             text={`${t(checkForNA(ownerss?.mobileNumber))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
         />
         <Row
             label={t("PTR_EMAIL_ID")}
             text={`${t(checkForNA(ownerss?.emailId))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/owners`} />}
         />
         </StatusTable>
         <br></br>
@@ -95,65 +95,65 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("PTR_SEARCH_PET_TYPE")}
             text={`${t(checkForNA(pets?.petType?.value))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
 
         <Row
             label={t("PTR_SEARCH_BREED_TYPE")}
             text={`${t(checkForNA(pets?.breedType?.value))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
 
         <Row
             label={t("PTR_PET_NAME")}
             text={`${t(checkForNA(pets?.petName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
         <Row
             label={t("PTR_DOCTOR_NAME")}
             text={`${t(checkForNA(pets?.doctorName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
 
         <Row
             label={t("PTR_CLINIC_NAME")}
             text={`${t(checkForNA(pets?.clinicName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
         <Row
             label={t("PTR_VACCINATED_DATE")}
             text={`${t(checkForNA(pets?.lastVaccineDate))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
          <Row
             label={t("PTR_PET_AGE")}
             text={`${t(checkForNA(pets?.petAge + " Months"))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
          <Row
             label={t("PTR_PET_SEX")}
             text={`${t(checkForNA(pets?.petGender?.name))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
           <Row
             label={t("PTR_IDENTIFICATION_MARK")}
             text={`${t(checkForNA(pets?.identificationMark))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
           <Row
             label={t("PTR_PET_COLOR")}
             text={`${t(checkForNA(pets?.petColor?.code))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
           <Row
             label={t("PTR_VACCINATION_NUMBER")}
             text={`${t(checkForNA(pets?.vaccinationNumber))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
           <Row
             label={t("PTR_SEARCH_BIRTH_ADOPTION")}
             text={`${t(checkForNA(pets?.adoptionDate ? pets?.adoptionDate : pets?.birthDate))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
         />
 
         </StatusTable>
@@ -164,50 +164,50 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("PTR_HOUSE_NO")}
             text={`${t(checkForNA(address?.houseNo))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
         {/* If data in houseName, then only it will render */}
         {address?.houseName && <Row
             label={t("PTR_HOUSE_NAME")}
             text={`${t(checkForNA(address?.houseName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />}
          <Row
             label={t("PTR_STREET_NAME")}
             text={`${t(checkForNA(address?.streetName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
          <Row
             label={t("PTR_ADDRESS_LINE1")}
             text={`${t(checkForNA(address?.addressline1))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
 
         />
         {/* If data in addressline 2, then only it will render */}
         {address?.addressline2 && <Row
             label={t("PTR_ADDRESS_LINE2")}
             text={`${t(checkForNA(address?.addressline2))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />}
          <Row
             label={t("PTR_ADDRESS_PINCODE")}
             text={`${t(checkForNA(address?.pincode))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
          <Row
             label={t("MYCITY_CODE_LABEL")}
             text={`${t(checkForNA(address?.city?.name))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
          <Row
             label={t("PTR_LOCALITY")}
             text={`${t(checkForNA(address?.locality?.i18nKey))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
           <Row
             label={t("PTR_LANDMARK")}
             text={`${t(checkForNA(address?.landmark))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
         </StatusTable>
         <br></br>

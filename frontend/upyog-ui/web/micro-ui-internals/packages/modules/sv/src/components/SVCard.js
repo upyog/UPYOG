@@ -36,15 +36,15 @@ const SVCard = () => {
     {
       count: isLoading ? "-" : total?.totalCount,
       label: t("SV_INBOX"),
-      link: `/upyog-ui/employee/sv/inbox`,
+      link: `/mycity-ui/employee/sv/inbox`,
     },
     {
       label: t("SV_CREATE_APPLICATION"),
-      link: `/upyog-ui/employee/sv/apply`,
+      link: `/mycity-ui/employee/sv/apply`,
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/upyog-ui/employee/sv/my-applications`,
+      link: `/mycity-ui/employee/sv/my-applications`,
     },
   ]
   const SV_CEMP = Digit.UserService.hasAccess(["SV_VENDOR"]) || false;
@@ -55,7 +55,7 @@ const SVCard = () => {
     kpis: [{
       count: total?.totalCount,
       label: t("ES_TITLE_INBOX"),
-      link: `/upyog-ui/employee/sv/inbox`,
+      link: `/mycity-ui/employee/sv/inbox`,
   }],
     links: links.filter(link => !link?.role || SV_CEMP),
   };

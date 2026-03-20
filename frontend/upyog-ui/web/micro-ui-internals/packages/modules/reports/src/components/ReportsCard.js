@@ -13,32 +13,32 @@ const ReportsCard = () => {
     let links = [
         {
             label: t("ACTION_TEST_RECEIPTREGISTER"),
-            link: `/upyog-ui/employee/reports/search/pt-reports/PTReceiptRegister`,
+            link: `/mycity-ui/employee/reports/search/pt-reports/PTReceiptRegister`,
             roles: ["UC_EMP", "PT_CEMP"]
         },
         {
             label: t("ACTION_TEST_COLLECTION_REGISTER"),
-            link: `/upyog-ui/employee/reports/search/pt-reports/PTCollectionReport`,
+            link: `/mycity-ui/employee/reports/search/pt-reports/PTCollectionReport`,
             roles: ["PT_CEMP"]
         },
         {
             label: t("ACTION_TEST_DEFAULTER_REPORT"),
-            link: `/upyog-ui/employee/reports/search/pt-reports/DefaulterReport`,
+            link: `/mycity-ui/employee/reports/search/pt-reports/DefaulterReport`,
             roles: ["PT_COLLECTION_EMP",]
         },
         {
             label: t("ACTION_TEST_RECEIPTREGISTER"),
-            link: `/upyog-ui/employee/reports/search/rainmaker-wns/WnsReceiptRegisterReport`,
+            link: `/mycity-ui/employee/reports/search/rainmaker-wns/WnsReceiptRegisterReport`,
             roles: ["WS_CEMP", "WS_APPROVER", "SW_CEMP", "SW_APPROVER"]
         },
         {
             label: t("ACTION_TEST_DEFAULTER_REPORT"),
-            link: `/upyog-ui/employee/reports/search/rainmaker-wns/WnsDefaulterReport`,
+            link: `/mycity-ui/employee/reports/search/rainmaker-wns/WnsDefaulterReport`,
             roles: ["WS_CEMP"]
         },
         {
             label: t("ACTION_TEST_COLLECTION_REGISTER"),
-            link: `/upyog-ui/employee/reports/search/rainmaker-wns/WnsCollectionRegisterReport`,
+            link: `/mycity-ui/employee/reports/search/rainmaker-wns/WnsCollectionRegisterReport`,
             roles: ["WS_CEMP", "WS_APPROVER", "SW_CEMP", "SW_APPROVER"]
         },
     ]

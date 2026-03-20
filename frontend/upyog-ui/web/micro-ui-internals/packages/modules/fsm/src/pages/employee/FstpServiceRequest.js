@@ -129,7 +129,7 @@ const FstpServiceRequest = () => {
   }, []);
 
   // if (isSuccess && totalCount === 0 && !isLoading) {
-  //     history.push('/upyog-ui/employee/fsm/fstp/new-vehicle-entry/')
+  //     history.push('/mycity-ui/employee/fsm/fstp/new-vehicle-entry/')
   // }
 
   if (isLoading && !isSuccess && isSearchLoading && isVehiclesLoading && !isIdle && !isVehicleSearchCompleted) {
@@ -137,7 +137,7 @@ const FstpServiceRequest = () => {
   }
 
   if (vehicleLog?.length === 0 && tripDetails?.length === 0 && isSuccess && !isSearchLoading && tripDetail?.length === 0 && !isVehiclesLoading) {
-    history.push(`/upyog-ui/employee/fsm/fstp/new-vehicle-entry/${vehicleNumber}`);
+    history.push(`/mycity-ui/employee/fsm/fstp/new-vehicle-entry/${vehicleNumber}`);
   }
 
   let citizenInfo = [];
@@ -159,7 +159,7 @@ const FstpServiceRequest = () => {
           isFSMRequest={true}
           isLoading={isLoading}
           userRole={"FSM_EMP_FSTPO"}
-          linkPrefix={"/upyog-ui/employee/fsm/fstp-operator-details/"}
+          linkPrefix={"/mycity-ui/employee/fsm/fstp-operator-details/"}
           onSearch={onSearch}
           searchFields={searchFields}
           onSort={handleSort}
@@ -168,7 +168,7 @@ const FstpServiceRequest = () => {
         <span className="link" style={{ margin: "8px" }}>
           <Link
             to={{
-              pathname: "/upyog-ui/employee/fsm/fstp/new-vehicle-entry/",
+              pathname: "/mycity-ui/employee/fsm/fstp/new-vehicle-entry/",
             }}
           >
             {t("ES_FSM_FSTP_NEW_ENTRY")}
@@ -204,7 +204,7 @@ const FstpServiceRequest = () => {
         <span className="link" style={{ margin: "294px", padding: "2px" }}>
           <Link
             to={{
-              pathname: "/upyog-ui/employee/fsm/fstp/new-vehicle-entry/",
+              pathname: "/mycity-ui/employee/fsm/fstp/new-vehicle-entry/",
             }}
           >
             {t("ES_FSM_FSTP_NEW_ENTRY")}

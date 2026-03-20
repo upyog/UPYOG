@@ -62,7 +62,7 @@ const ApplicationDetails = () => {
         return {
           action: "PAY",
           forcedName: "SV_PAY",
-          redirectionUrl: { pathname: `/upyog-ui/employee/payment/collect/sv-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNo}` },
+          redirectionUrl: { pathname: `/mycity-ui/employee/payment/collect/sv-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNo}` },
         };
       }
       return act;

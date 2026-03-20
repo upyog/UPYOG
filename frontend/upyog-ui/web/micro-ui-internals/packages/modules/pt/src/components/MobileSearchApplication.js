@@ -128,7 +128,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         <DetailsCard
           {...{
             data: propsMobileInboxCards,
-            linkPrefix: `/upyog-ui/employee/pt/applicationsearch/application-details/`,
+            linkPrefix: `/mycity-ui/employee/pt/applicationsearch/application-details/`,
             serviceRequestIdKey: t("PT_SEARCHPROPERTY_TABEL_PID"),
           }}
         />

@@ -87,7 +87,7 @@ const MobileInbox = ({
               <span className="link">
                 <Link
                   to={{
-                    pathname: `/upyog-ui/employee/payment/collect/${original?.["businessService"]}/${original?.["challanNo"]}/tenantId=${original?.["tenantId"]}?workflow=mcollect`,
+                    pathname: `/mycity-ui/employee/payment/collect/${original?.["businessService"]}/${original?.["challanNo"]}/tenantId=${original?.["tenantId"]}?workflow=mcollect`,
                   }}
                 >
                   {t(`UC_${action}`)}
@@ -144,7 +144,7 @@ const MobileInbox = ({
           {!isSearch && <ApplicationLinks linkPrefix={parentRoute} allLinks = {[
           {
             text: t("UC_GENERATE_NEW_CHALLAN"),
-            link: "/upyog-ui/employee/mcollect/new-application",
+            link: "/mycity-ui/employee/mcollect/new-application",
             roles: [],
           }]} 
           headerText={t("ACTION_TEST_MCOLLECT")}

@@ -153,27 +153,27 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("CHB_APPLICANT_NAME")}
             text={`${t(checkForNA(ownerss?.applicantName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
 
         />
 
         <Row
             label={t("CHB_MOBILE_NUMBER")}
             text={`${t(checkForNA(ownerss?.mobileNumber))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
 
         />
         <Row
             label={t("CHB_ALT_MOBILE_NUMBER")}
             text={`${t(checkForNA(ownerss?.alternateNumber))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
 
         />
 
         <Row
             label={t("CHB_EMAIL_ID")}
             text={`${t(checkForNA(ownerss?.emailId))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/applicant-details`} />}
 
         />
         </StatusTable>
@@ -182,19 +182,19 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("CHB_COMMUNITY_HALL_NAME")}
             text={`${t(checkForNA(slotlist?.bookingSlotDetails[0]?.name))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/searchHall`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/searchHall`} />}
 
         />
         <Row
             label={t("CHB_BOOKING_DATE")}
             text={`${t(checkForNA(getBookingDateRange(slotlist?.bookingSlotDetails)))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/searchHall`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/searchHall`} />}
 
         />
        <Row
           label={t("CHB_BOOKING_TIME")} // Label for the row, presumably fetched from translations
           text={(checkForNA(getBookingTimeRange(slotlist?.bookingSlotDetails)))} // Text to display, likely the formatted time range
-          actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/searchHall`} />} // Action button component
+          actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/searchHall`} />} // Action button component
         />
         </StatusTable> */}
         <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_EVENT_DETAILS")}</CardSubHeader>
@@ -202,20 +202,20 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("CHB_SPECIAL_CATEGORY")}
             text={`${t(checkForNA(slots?.specialCategory?.value))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/event-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/event-details`} />}
 
         />
 
         <Row
             label={t("CHB_PURPOSE")}
             text={`${t(checkForNA(slots?.purpose?.value))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/event-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/event-details`} />}
 
         />
         <Row
             label={t("CHB_PURPOSE_DESCRIPTION")}
             text={`${t(checkForNA(slots?.purposeDescription))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/event-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/event-details`} />}
 
         />
 
@@ -225,36 +225,36 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("CHB_ACCOUNT_NUMBER")}
             text={`${t(checkForNA(bankdetails?.accountNumber))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
 
         />
          <Row
             label={t("CHB_CONFIRM_ACCOUNT_NUMBER")}
             text={`${t(checkForNA(bankdetails?.confirmAccountNumber))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
 
         />
          <Row
             label={t("CHB_IFSC_CODE")}
             text={`${t(checkForNA(bankdetails?.ifscCode))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
 
         />
          
          <Row
             label={t("CHB_BANK_NAME")}
             text={`${t(checkForNA(bankdetails?.bankName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
          <Row
             label={t("CHB_BANK_BRANCH_NAME")}
             text={`${t(checkForNA(bankdetails?.bankBranchName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
          <Row
             label={t("CHB_ACCOUNT_HOLDER_NAME")}
             text={`${t(checkForNA(bankdetails?.accountHolderName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/bank-details`} />}
         />
 
         </StatusTable>
@@ -263,36 +263,36 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row
             label={t("CHB_PINCODE")}
             text={`${t(checkForNA(address?.pincode))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/address-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/address-details`} />}
 
         />
          <Row
             label={t("CHB_CITY")}
             text={`${t(checkForNA(address?.city?.city?.name))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/address-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/address-details`} />}
 
         />
          <Row
             label={t("CHB_LOCALITY")}
             text={`${t(checkForNA(address?.locality?.name))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/address-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/address-details`} />}
 
         />
          
          <Row
             label={t("CHB_STREET_NAME")}
             text={`${t(checkForNA(address?.streetName))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/address-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/address-details`} />}
         />
          <Row
             label={t("CHB_HOUSE_NO")}
             text={`${t(checkForNA(address?.houseNo))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/address-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/address-details`} />}
         />
          <Row
             label={t("CHB_LANDMARK")}
             text={`${t(checkForNA(address?.landmark))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/chb/${typeOfApplication}/address-details`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/chb/${typeOfApplication}/address-details`} />}
         />
         </StatusTable>
         <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>

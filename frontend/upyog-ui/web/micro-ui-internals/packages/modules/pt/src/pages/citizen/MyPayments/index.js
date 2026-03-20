@@ -34,7 +34,7 @@ export const PTMyPayments = () => {
      {/*  <p style={{ marginLeft: "16px", marginTop: "16px" }}>
         {t("PT_TEXT_NOT_ABLE_TO_FIND_THE_PROPERTY")}{" "}
         <span className="link" style={{ display: "block" }}>
-          <Link to="/upyog-ui/citizen/pt/property/citizen-search">{t("PT_COMMON_CLICK_HERE_TO_SEARCH_THE_PROPERTY")}</Link>
+          <Link to="/mycity-ui/citizen/pt/property/citizen-search">{t("PT_COMMON_CLICK_HERE_TO_SEARCH_THE_PROPERTY")}</Link>
         </span>
       </p> */}
     </React.Fragment>

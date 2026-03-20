@@ -84,7 +84,7 @@ export const BillList = ({ billsList, currentPath, businessService }) => {
           >
             {t("PT_TEXT_NOT_ABLE_TO_FIND_THE_PROPERTY")}
             <span className="link">
-              <Link to="/upyog-ui/citizen/pt/property/citizen-search">{t("PT_COMMON_CLICK_HERE")}</Link>
+              <Link to="/mycity-ui/citizen/pt/property/citizen-search">{t("PT_COMMON_CLICK_HERE")}</Link>
             </span>
           </p>
         )}

@@ -111,7 +111,7 @@ const EditResponse = (props) => {
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}
       <ActionBar>
-        <Link to={`${props.parentRoute.includes("employee") ? `/upyog-ui/employee/asset/assetservice/applicationsearch/application-details/${mutation?.data?.Assets?.[0]?.applicationNo}` : false}`}>
+        <Link to={`${props.parentRoute.includes("employee") ? `/mycity-ui/employee/asset/assetservice/applicationsearch/application-details/${mutation?.data?.Assets?.[0]?.applicationNo}` : false}`}>
           <SubmitBar label={t("MY_APPLICATIONS")} />
         </Link>
       </ActionBar>

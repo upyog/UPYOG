@@ -435,12 +435,12 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
           <BreadCrumb
             crumbs={[
               {
-                path: "/upyog-ui/employee",
+                path: "/mycity-ui/employee",
                 content: t("ES_COMMON_HOME"),
                 show: true,
               },
               {
-                path: "/upyog-ui/employee/user/profile",
+                path: "/mycity-ui/employee/user/profile",
                 content: t("ES_COMMON_PAGE_1"),
                 show: url.includes("/user/profile"),
               },

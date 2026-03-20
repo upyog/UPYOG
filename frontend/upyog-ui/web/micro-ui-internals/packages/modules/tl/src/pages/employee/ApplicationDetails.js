@@ -87,7 +87,7 @@ const ApplicationDetails = () => {
     workflowDetails?.data?.actionState?.nextActions?.forEach(data => {
       if(data.action == "RESUBMIT") {
         data.redirectionUrl = {
-          pathname: `/upyog-ui/employee/tl/edit-application-details/${applicationNumber}`,
+          pathname: `/mycity-ui/employee/tl/edit-application-details/${applicationNumber}`,
           state: applicationDetails
         },
         data.tenantId = stateId
@@ -134,7 +134,7 @@ const ApplicationDetails = () => {
           isToast : allowedToNextYear == false || applicationDetails?.applicationData?.status === "CANCELLED" || (applicationDetails?.applicationData?.status === "MANUALEXPIRED" /* && latestRenewalYearofAPP */) ? true : false,
           toastMessage : getToastMessages(),
           redirectionUrl: {
-            pathname: `/upyog-ui/employee/tl/renew-application-details/${applicationNumber}`,
+            pathname: `/mycity-ui/employee/tl/renew-application-details/${applicationNumber}`,
             state: applicationDetails
           },
           tenantId: stateId,
@@ -150,7 +150,7 @@ const ApplicationDetails = () => {
       //         {
       //           action: "RENEWAL_SUBMIT_BUTTON",
       //           redirectionUrl: {
-      //             pathname: `/upyog-ui/employee/tl/renew-application-details/${applicationNumber}`,
+      //             pathname: `/mycity-ui/employee/tl/renew-application-details/${applicationNumber}`,
       //             state: applicationDetails
       //           },
       //           tenantId: stateId,
@@ -263,68 +263,31 @@ const ApplicationDetails = () => {
           console.log("res1res1res1res1res1",res1)
           window.location.href=res1
 }
-const printCertificate = async () => {
-  try {
-    const res = await Digit.TLService.TLsearch({
-      tenantId: applicationDetails?.tenantId,
-      filters: { applicationNumber: applicationDetails?.applicationData?.applicationNumber }
-    });
-
-    const licenseNumber = res?.Licenses?.[0]?.licenseNumber;
-    if (!licenseNumber) throw new Error("License not found");
-
-    // Try DigiLocker (OPTIONAL)
-    let digiLockerSuccess = false;
-    try {
-      const tokenReq = { module: "TL", consumerCode: licenseNumber };
-      const digiRes = await Digit.DigiLockerService.fileStoreSearch({ TokenReq: tokenReq });
-
-      if (digiRes?.Transaction?.length && digiRes.Transaction[0]?.signedFilestoreId) {
-        const tenant = Digit.ULBService.getStateId();
-        const fileRes = await Digit.UploadServices.Filefetch(
-          [digiRes.Transaction[0].signedFilestoreId],
-          tenant
-        );
-
-        const url = fileRes?.data?.fileStoreIds?.[0]?.url;
-        if (url) {
-          window.open(url, "_blank");
-          setIsDisplayDownloadMenu(false);
-          digiLockerSuccess = true;
-          return; // SUCCESS via DigiLocker
-        }
-      }
-    } catch (e) {
-      console.warn("DigiLocker lookup failed – falling back to local PDF", e);
+  const printCertificate = async () => {
+     let res = await Digit.TLService.TLsearch({ tenantId: applicationDetails?.tenantId, filters: { applicationNumber:applicationDetails?.applicationData?.applicationNumber } });
+     let TokenReq = {
+      module:"TL",
+      "consumerCode": res?.Licenses?.[0]?.licenseNumber
     }
-
-    // Fallback path: If DigiLocker failed or URL not available, download normally
-    if (!digiLockerSuccess) {
-      const TLcertificatefile = await Digit.PaymentService.generatePdf(
-        tenantId,
-        { Licenses: res?.Licenses },
-        "tlcertificate"
-      );
-
-      const receiptFile = await Digit.PaymentService.printReciept(
-        tenantId,
-        { fileStoreIds: TLcertificatefile.filestoreIds[0] }
-      );
-
-      // Open the PDF directly in new tab
-      if (receiptFile[TLcertificatefile.filestoreIds[0]]) {
-        window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
-      }
-      
-      setIsDisplayDownloadMenu(false);
+    const res1 = await Digit.DigiLockerService.fileStoreSearch({TokenReq})
+ console.log("res1res1res1",res1)
+    if(res1?.Transaction.length > 0 && res1?.Transaction?.[0]?.signedFilestoreId!==null)
+     {
+      const tenant = Digit.ULBService.getStateId()
+      const resneww = await Digit.UploadServices.Filefetch([res1?.Transaction?.[0]?.signedFilestoreId], tenant);
+    console.log("resneww",resneww)
+    console.log("resneww11",resneww,resneww?.data?.fileStoreIds?.[0]?.url)
+    window.open(resneww?.data?.fileStoreIds?.[0]?.url, "_blank");
     }
-
-  } catch (err) {
-    console.error("Certificate download failed completely", err);
-    alert("Unable to download certificate. Please try again.");
+    else{
+      const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, { Licenses: res?.Licenses }, "tlcertificate");
+      const receiptFile = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: TLcertificatefile.filestoreIds[0] });
+      console.log("resres",res)
+      fetchDigiLockerDocuments(receiptFile[TLcertificatefile.filestoreIds[0]],TLcertificatefile.filestoreIds[0],res)
+    }
+     
+     setIsDisplayDownloadMenu(false)
   }
-};
-
   const [isDisplayDownloadMenu, setIsDisplayDownloadMenu] = useState(false);
   const applicationStatus = applicationDetails?.applicationData?.status
   

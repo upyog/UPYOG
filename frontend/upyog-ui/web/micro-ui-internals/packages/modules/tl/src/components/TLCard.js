@@ -31,20 +31,20 @@ const TLCard = () => {
         {
             count: isLoading ? "-" : inboxData?.totalCount,
             label: t("ES_COMMON_INBOX"),
-            link: `/upyog-ui/employee/tl/inbox`,
+            link: `/mycity-ui/employee/tl/inbox`,
         },
         {
             label: t("TL_NEW_APPLICATION"),
-            link: "/upyog-ui/employee/tl/new-application",
+            link: "/mycity-ui/employee/tl/new-application",
             role: "TL_CEMP"
         },
         {
             label: t("TL_SEARCH_APPLICATIONS"),
-            link: `/upyog-ui/employee/tl/search/application`
+            link: `/mycity-ui/employee/tl/search/application`
         },
         {
             label: t("TL_SEARCH_LICENSE"),
-            link: `/upyog-ui/employee/tl/search/license`,
+            link: `/mycity-ui/employee/tl/search/license`,
             role: "TL_CEMP"
         }
     ]
@@ -58,12 +58,12 @@ const TLCard = () => {
             {
                 count: isLoading ? "-" : inboxData?.totalCount,
                 label: t("TOTAL_TL"),
-                link: `/upyog-ui/employee/tl/inbox`
+                link: `/mycity-ui/employee/tl/inbox`
             },
             {
                 count : isLoading ? "-" : inboxData?.nearingSlaCount,
                 label: t("TOTAL_NEARING_SLA"),
-                link: `/upyog-ui/employee/tl/inbox`
+                link: `/mycity-ui/employee/tl/inbox`
             }
         ],
         links: links

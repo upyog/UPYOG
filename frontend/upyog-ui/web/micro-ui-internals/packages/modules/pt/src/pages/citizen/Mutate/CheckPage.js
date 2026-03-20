@@ -158,7 +158,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_TRANSFEREE_DETAILS")}</CardSubHeader>
         <LinkButton
           label={<EditIcon/>}
-          onClick={() => routeTo(`/upyog-ui/citizen/pt/property/property-mutation/owner-ship-details@0`)}
+          onClick={() => routeTo(`/mycity-ui/citizen/pt/property/property-mutation/owner-ship-details@0`)}
         />
       </div>
       {
@@ -219,7 +219,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_DETAILS")}</CardSubHeader>
         <LinkButton
           label={<EditIcon/>}
-          onClick={() => routeTo(`/upyog-ui/citizen/pt/property/property-mutation/is-mutatation-pending`)}
+          onClick={() => routeTo(`/mycity-ui/citizen/pt/property/property-mutation/is-mutatation-pending`)}
         />
       </div>
       <div>
@@ -242,7 +242,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_REGISTRATION_DETAILS")}</CardSubHeader>
         <LinkButton
           label={<EditIcon/>}
-          onClick={() => routeTo(`/upyog-ui/citizen/pt/property/property-mutation/reason`)}
+          onClick={() => routeTo(`/mycity-ui/citizen/pt/property/property-mutation/reason`)}
         />
       </div>
       <StatusTable>
@@ -261,7 +261,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_COMMON_DOCS")}</CardSubHeader>
         <LinkButton
           label={<EditIcon/>}
-          onClick={() => routeTo(`/upyog-ui/citizen/pt/property/property-mutation/transfer-reason-doc`)}
+          onClick={() => routeTo(`/mycity-ui/citizen/pt/property/property-mutation/transfer-reason-doc`)}
         />
       </div>
       <div style={{marginTop:"0 important"}}>

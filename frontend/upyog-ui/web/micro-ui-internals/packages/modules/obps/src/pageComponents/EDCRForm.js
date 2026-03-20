@@ -71,7 +71,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
         }
         if (isShowToast) {
             history.replace(
-                `/upyog-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`,
+                `/mycity-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`,
                 { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR"}
               );
         }

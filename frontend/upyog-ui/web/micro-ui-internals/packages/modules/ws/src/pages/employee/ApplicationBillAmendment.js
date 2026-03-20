@@ -214,7 +214,7 @@ const ApplicationBillAmendment = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (goToAppDetailsPage) window.location.href = `${window.location.origin}/upyog-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${state?.data.applicationDetails.amendment.amendmentId}`
+      if (goToAppDetailsPage) window.location.href = `${window.location.origin}/mycity-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${state?.data.applicationDetails.amendment.amendmentId}`
     }, 5000);
     return () => clearTimeout(timer);
   }, [goToAppDetailsPage]);
@@ -283,7 +283,7 @@ const ApplicationBillAmendment = () => {
 
             setGoToAppDetailsPage(true)
 
-            // history?.push(`/upyog-ui/employee/ws/application-details-bill-amendment?applicationNumber=${data?.Amendments[0].amendmentId}`)
+            // history?.push(`/mycity-ui/employee/ws/application-details-bill-amendment?applicationNumber=${data?.Amendments[0].amendmentId}`)
             return
           }
         },
@@ -291,7 +291,7 @@ const ApplicationBillAmendment = () => {
       return
     }
 
-    history.push("/upyog-ui/employee/ws/response", data);
+    history.push("/mycity-ui/employee/ws/response", data);
   };
 
 

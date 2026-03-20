@@ -71,7 +71,7 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
               return (
                 <div>
                   <span className="link">
-                    <Link to={`/upyog-ui/employee/ads/applicationsearch/application-details/${row.original["bookingNo"]}`}>
+                    <Link to={`/mycity-ui/employee/ads/applicationsearch/application-details/${row.original["bookingNo"]}`}>
                       {row.original["bookingNo"]}
                     </Link>
                   </span>
@@ -169,7 +169,7 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
                       setShowToast({ error: true, label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED") });
                     } else {
                       history.push({
-                        pathname: `/upyog-ui/employee/payment/collect/${"adv-services"}/${application?.bookingNo}`,
+                        pathname: `/mycity-ui/employee/payment/collect/${"adv-services"}/${application?.bookingNo}`,
                         state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo, timerValue:timerValue, SlotSearchData:SlotSearchData },
                       });
                     }

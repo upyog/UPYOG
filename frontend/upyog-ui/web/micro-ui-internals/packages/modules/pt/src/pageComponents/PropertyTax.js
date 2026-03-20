@@ -98,7 +98,7 @@ if(window.location.href.includes("code"))
 {
   let code =window.location.href.split("=")[1].split("&")[0]
   let TokenReq = {
-    dlReqRef: sessionStorage.getItem("code_verfier"),
+    code_verifier: sessionStorage.getItem("code_verfier"),
     code: code, module: "PT"
   }
   console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier"))
@@ -137,7 +137,7 @@ if(window.location.href.includes("code"))
   //     'grant_type': "authorization_code",
   //     'client_id': "AT3053EB6D",
   //     "client_secret": "75fa589aa7c35b89e127",
-  //     "redirect_uri": "http://localhost:3000/upyog-ui/citizen/pt/property/new-application/info",
+  //     "redirect_uri": "http://localhost:3000/mycity-ui/citizen/pt/property/new-application/info",
   //     "code_verifier": getItemWithExpiry('DigiLocker.codeVerifier')
   //   })
   // }) .then(response =>

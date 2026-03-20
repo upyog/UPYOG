@@ -27,7 +27,7 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
     if(sessionStorage.getItem("isCreateEnabledEmployee") === "true")
     {
       sessionStorage.removeItem("isCreateEnabledEmployee");
-      history.replace("/upyog-ui/employee");
+      history.replace("/mycity-ui/employee");
     }
     else
     sessionStorage.removeItem("isCreateEnabledEmployee");

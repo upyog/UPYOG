@@ -135,7 +135,7 @@ const AddVendor = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("DSO_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push("/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR");
+          history.push("/mycity-ui/employee/vendor/search-vendor?selectedTabs=VENDOR");
         }, 5000);
                        
       },

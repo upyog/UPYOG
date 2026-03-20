@@ -29,10 +29,10 @@ import { Loader } from "@upyog/digit-ui-react-components";
 
 const formatNumbers = (amount) => {
   if (amount === null || amount === undefined) return '';
-  
+
   const num = Number(amount);
   const numStr = num.toString();
-  
+
   // If number has 5 digits or less, show exact value with Indian comma formatting
   if (numStr.length <= 5) {
     const lastThree = numStr.substring(numStr.length - 3);
@@ -40,7 +40,7 @@ const formatNumbers = (amount) => {
     const formatted = otherNums.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
     return otherNums ? formatted + ',' + lastThree : lastThree;
   }
-  
+
   // For numbers greater than 5 digits
   else if (num >= 10000000) { // 1 crore and above
     const crores = num / 10000000;
@@ -61,19 +61,19 @@ const formatNumbers = (amount) => {
       return `${(lakhs).toFixed(2)} Lakhs`;
     }
   }
-  
+
   // Fallback for edge cases
   return numStr;
 };
 
 const formatIndianCurrency = (amount) => {
   if (amount === null || amount === undefined) return '';
-  
+
   const formattedNumber = formatNumbers(amount);
   return `₹${formattedNumber}`;
 };
 
-const EmployeeDashboard = ({modules}) => {
+const EmployeeDashboard = ({ modules }) => {
   const { t } = useTranslation();
   const [cardData, setCardData] = useState([
     { title: "", count: null, color: "blue" },
@@ -89,7 +89,7 @@ const EmployeeDashboard = ({modules}) => {
           tenantId: tenantId,
           moduleName: "ALL"
         };
-        
+
         const response = await Digit.EmployeeDashboardService.search(payload);
         if (response && response.employeeDashboard) {
           setCardData([
@@ -108,25 +108,30 @@ const EmployeeDashboard = ({modules}) => {
 
   return (
     <React.Fragment>
-      <div style={{marginLeft:"42%", fontWeight:"bold", fontSize:"22px", marginBottom:"5px"}}>
+      <style>{
+        `.status-card.purple {
+  margin-right: 0px !important;
+}`
+      }</style>
+      <div style={{ marginLeft: "42%", fontWeight: "bold", fontSize: "22px", marginBottom: "5px" }}>
         {t("COMMON_ULB_DASHBOARD")}
       </div>
-      <div className="ground-container moduleCardWrapper gridModuleWrapper">
+      <div className="ground-container moduleCardWrapper gridModuleWrapper" style={{ marginBottom: "28px", paddingLeft: "32px", paddingRight: "57px" }}>
         {cardData.map(({ title, count, color, isAmount }, index) => (
-          <div key={index} className={`status-card ${color}`}>
+          <div key={index} className={`status-card ${color}`} style={{ width: "30%", marginRight: "30px" }}>
             <div className="card-content">
-            {count === null ? (
+              {count === null ? (
                 <div>
                   <Loader />
                 </div>
-            ) : (
-              <React.Fragment>    
-                <span className="count">
-                  {isAmount ? formatIndianCurrency(count) : formatNumbers(count)}
-                </span>
-                <span className="title">{title}</span>
-              </React.Fragment>  
-            )}
+              ) : (
+                <React.Fragment>
+                  <span className="count">
+                    {isAmount ? formatIndianCurrency(count) : formatNumbers(count)}
+                  </span>
+                  <span className="title">{title}</span>
+                </React.Fragment>
+              )}
             </div>
           </div>
         ))}

@@ -66,7 +66,7 @@ const UlbAssesmentSearch = ({tenantId, isLoading, t, onSubmit, data, count, setS
               return (
                 <div>
                   <span className="link">
-                    <Link to={`/upyog-ui/employee/pt/applicationsearch/application-details/${row.original["propertyId"]}`}>
+                    <Link to={`/mycity-ui/employee/pt/applicationsearch/application-details/${row.original["propertyId"]}`}>
                       {row.original["acknowldgementNumber"]}
                     </Link>
                   </span>

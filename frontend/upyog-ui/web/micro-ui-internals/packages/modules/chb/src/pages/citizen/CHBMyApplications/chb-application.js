@@ -115,7 +115,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
       setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
     } else {
       history.push({
-        pathname: `/upyog-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,
+        pathname: `/mycity-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,
         state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data.timerValue ,SlotSearchData:SlotSearchData },
       });
     }
@@ -150,7 +150,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
       <KeyNote keyValue={t("CHB_BOOKING_DATE")} note={getBookingDateRange(application?.bookingSlotDetails)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
       <div>
-        <Link to={`/upyog-ui/citizen/chb/application/${application?.bookingNo}/${application?.tenantId}`}>
+        <Link to={`/mycity-ui/citizen/chb/application/${application?.bookingNo}/${application?.tenantId}`}>
           <SubmitBar label={buttonLabel} />
         </Link> 
         {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED" || application.bookingStatus === "PENDING_FOR_PAYMENT") && (

@@ -737,12 +737,7 @@ export const setUpdatedDocumentDetails = (data) => {
   data.documents = documents;
   return data;
 };
-
 export const convertToUpdateProperty = (data = {}, t) => {
-  //const units = data?.additionalDetails?.unit || [];
-  console.log("convertToUpdateProperty",data)
-  data.isUpdateProperty =true
-  data.isEditProperty=false
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -800,7 +795,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
         structureType:data?.propertyStructureDetails?.structureType,
       },
 
-      creationReason: window.location.href.includes("edit-application")?"UPDATE":getCreationReason(data),
+      creationReason: getCreationReason(data),
       source: "MUNICIPAL_RECORDS",
       channel: "CITIZEN",
       workflow: getWorkflow(data),
@@ -1130,9 +1125,8 @@ export const checkArrayLength = (obj = [], length = 0) => {
 };
 
 export const getWorkflow = (data = {}) => {
-  console.log("isEditPropertyisEditProperty",data.isEditProperty,getCreationReason(data))
   return {
-    action: data?.isEditProperty || getCreationReason(data) == "UPDATE"? "OPEN" : "OPEN",
+    action: data?.isEditProperty ? "REOPEN" : "OPEN",
     businessService: `PT.${getCreationReason(data)}`,
     moduleName: "PT",
   };

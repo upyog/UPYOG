@@ -139,7 +139,7 @@ const TLAcknowledgement = ({ data, onSuccess, onUpdateSuccess }) => {
     <Card>
       <BannerPicker t={t} data={mutation.data || mutation1.data} isSuccess={mutation.isSuccess || mutation1.isSuccess} isLoading={(mutation?.isLoading || mutation1?.isLoading)} />
       {<CardText>{t("TL_FILE_TRADE_FAILED_RESPONSE")}</CardText>}
-      <Link to={`/upyog-ui/citizen`}>
+      <Link to={`/mycity-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
     </Card>)
@@ -170,12 +170,12 @@ const TLAcknowledgement = ({ data, onSuccess, onUpdateSuccess }) => {
           onClick={handleDownloadPdf}
         />)}
       {mutation2?.data?.Licenses[0]?.status === "PENDINGPAYMENT" && <Link to={{
-        pathname: `/upyog-ui/citizen/payment/collect/${mutation2.data.Licenses[0].businessService}/${mutation2.data.Licenses[0].applicationNumber}`,
+        pathname: `/mycity-ui/citizen/payment/collect/${mutation2.data.Licenses[0].businessService}/${mutation2.data.Licenses[0].applicationNumber}`,
         state: { tenantId: mutation2.data.Licenses[0].tenantId },
       }}>
         <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
       </Link>}
-      <Link to={`/upyog-ui/citizen`}>
+      <Link to={`/mycity-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
     </Card>

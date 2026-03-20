@@ -250,7 +250,7 @@ const NewApplication = () => {
               if (response?.Licenses?.length > 0) {
                 // setTimeout(() => window.location.reload());
                 sessionStorage.setItem("isCreateEnabledEmployee","true");
-                history.replace(`/upyog-ui/employee/tl/response`, { data: response?.Licenses });
+                history.replace(`/mycity-ui/employee/tl/response`, { data: response?.Licenses });
                 clearSessionFormData();
               }
             })
@@ -265,9 +265,9 @@ const NewApplication = () => {
         setError(e?.response?.data?.Errors[0]?.message || null);
       });
 
-    // history.replace("/upyog-ui/employee/tl/response", { Licenses: [formData], documents: applicationDocuments });
-    // history.push("/upyog-ui/employee/pt/response", { Property: formData });
-    // history.push("/upyog-ui/employee/pt/response", { Property: _formData });
+    // history.replace("/mycity-ui/employee/tl/response", { Licenses: [formData], documents: applicationDocuments });
+    // history.push("/mycity-ui/employee/pt/response", { Property: formData });
+    // history.push("/mycity-ui/employee/pt/response", { Property: _formData });
   };
   // let configs = newConfig;
   let configs = [];

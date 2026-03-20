@@ -112,7 +112,7 @@ const SearchApplicationMobileView = ({ SearchFormFieldsComponent, propsMobileInb
             {...{
                 data: propsMobileInboxCards,
                 isTwoDynamicPrefix: false,
-                linkPrefix: `/upyog-ui/employee/noc/search/application-overview/`,
+                linkPrefix: `/mycity-ui/employee/noc/search/application-overview/`,
                 serviceRequestIdKey: t("NOC_APP_NO_LABEL"),
             }}
             />

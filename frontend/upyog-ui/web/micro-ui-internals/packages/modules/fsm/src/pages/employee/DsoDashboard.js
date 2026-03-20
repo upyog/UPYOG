@@ -51,7 +51,7 @@ const DsoDashboard = () => {
   const links = useMemo(
     () => [
       {
-        link: "/upyog-ui/citizen/fsm/inbox",
+        link: "/mycity-ui/citizen/fsm/inbox",
         label: t("ES_TITLE_INBOX"),
         count: total,
       },
@@ -77,12 +77,12 @@ const DsoDashboard = () => {
       {
           count: inbox?.statuses.filter(e => e.applicationstatus === "DSO_INPROGRESS")[0]?.count || 0,
           label: t("ES_COMPLETION_PENDING"),
-          link: `/upyog-ui/citizen/fsm/inbox`
+          link: `/mycity-ui/citizen/fsm/inbox`
       },
       {
           count: inbox?.statuses.filter(e => e.applicationstatus === "PENDING_DSO_APPROVAL")[0]?.count || 0,
           label: t("ES_VEHICLE_ASSIGNMENT_PENDING"),
-          link: `/upyog-ui/citizen/fsm/inbox`
+          link: `/mycity-ui/citizen/fsm/inbox`
       }  
     ],
     links,

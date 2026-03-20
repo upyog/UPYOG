@@ -94,7 +94,7 @@ const CitizenInbox = ({ tableConfig, filterComponent, ...props }) => {
             <span className="link">
               <Link
                 to={{
-                  pathname: `/upyog-ui/citizen/payment/my-bills/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
+                  pathname: `/mycity-ui/citizen/payment/my-bills/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
                 }}
               >
                 {t(`${"ABG_PAY"}`)}
@@ -109,7 +109,7 @@ const CitizenInbox = ({ tableConfig, filterComponent, ...props }) => {
             <span className="link">
               <Link
                 to={{
-                  pathname: `/upyog-ui/citizen/payment/my-bills/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
+                  pathname: `/mycity-ui/citizen/payment/my-bills/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
                 }}
               >
                 {t(`${"ABG_GENERATE_NEW_BILL"}`)}

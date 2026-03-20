@@ -16,7 +16,6 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   const stateId = Digit.ULBService.getStateId();
   const [Pinerror, setPinerror] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [isPinTouched, setIsPinTouched] = useState(false);
   const [pincode, setPincode] = useState(currPincode || formData?.address?.pincode ||propertyData?.address?.pincode|| "");
   const [geoLocation, setgeoLocation] = useState(formData?.address?.geoLocation || "")
   const [tenantIdData, setTenantIdData] = useState(formData?.Scrutiny?.[0]?.tenantIdData);
@@ -32,31 +31,24 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   formData = { address: { ...formData?.address } };
   const isMobile = window.Digit.Utils.browser.isMobile();
   useEffect(() => {
-    if (!allCities || allCities.length === 0) return;
-  
     if (!selectedCity || !localities) {
-      let filteredCities =
-        userType === "employee"
-          ? allCities.filter(city => city.code === tenantId)
+      cities =
+      userType && userType === "employee"
+          ? allCities.filter((city) => city.code === tenantId)
           : pincode
-            ? allCities.filter(city =>
-                city?.pincode?.some(pin => pin == Number(pincode))
-              )
+            ? allCities.filter((city) => city?.pincode?.some((pin) => pin == Number(pincode)))
             : allCities;
-  
-      setcitiesopetions(filteredCities);
-  
-      const isFromPT = !!propertyData?.address?.pincode;
-  
-      if (!isFromPT && isPinTouched && pincode && filteredCities.length === 0) {
+      setcitiesopetions(cities);
+      if (cities?.length == 0) {
         setPinerror("BPA_PIN_NOT_VALID_ERROR");
-      } else {
-        setPinerror(null);
+      } else if ( cities.length == 1) {
+        let selectCity = selectedCity?.code ? selectedCity?.code : selectedCity ? selectedCity : "";
+        if (cities?.[0].code != selectCity) {
+          setPinerror("BPA_PIN_NOT_VALID_ERROR")
+        }
       }
     }
-  }, [pincode, allCities, isPinTouched]);
-  
-  
+  }, [pincode]);
 
 
   useEffect(() =>{
@@ -158,26 +150,21 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     setPinerror(null);
   }
   function selectPincode(e) {
-    setIsPinTouched(true); // ✅ ADD THIS
-  
     setPinerror(null);
-    const value = (typeof e === 'object' && e !== null) ? e.target.value : e;
-  
-    if (value !== "" && !value.match(/^[1-9][0-9]{5}$/)) {
+    if(((typeof e === 'object' && e !== null) ? e.target.value : e) !== "")
+    if(!(((typeof e === 'object' && e !== null) ? e.target.value : e).match(/^[1-9][0-9]{5}$/)))
+    {
       setPinerror("BPA_PIN_NOT_VALID_ERROR");
     }
-  
-    formData.address["pincode"] = value;
-    setPincode(value);
-  
-    sessionStorage.setItem("currentPincode", value);
+    formData.address["pincode"] = (typeof e === 'object' && e !== null) ? e.target.value : e;
+    setPincode((typeof e === 'object' && e !== null) ? e.target.value : e);
+    sessionStorage.setItem("currentPincode", (typeof e === 'object' && e !== null) ? e.target.value : e);
     sessionStorage.setItem("currentCity", JSON.stringify({ }));
     sessionStorage.setItem("currLocality", JSON.stringify({ }));
-  
     setSelectedLocality(null);
     setLocalities(null);
+    //setSelectedCity(null);
   }
-  
 
   function selectStreet(e) {
     setStreet(e.target.value)

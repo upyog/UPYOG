@@ -8,7 +8,7 @@ const EmptyResultInbox = (props) => {
   const history = useHistory();
 
   const addNewProprty = () => {
-    history.push("/upyog-ui/employee/pt/new-application");
+    history.push("/mycity-ui/employee/pt/new-application");
   };
 
   return (

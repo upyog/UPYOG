@@ -21,33 +21,33 @@ const BILLSBreadCrumbs = ({ location }) => {
 
   const crumbs = [
     {
-      path: "/upyog-ui/employee",
+      path: "/mycity-ui/employee",
       content: t("ES_COMMON_HOME"),
       show: true,
     },
     {
-      path: "/upyog-ui/employee/bills/cancel-bill",
+      path: "/mycity-ui/employee/bills/cancel-bill",
       content: t("ABG_CANCEL_BILL"),
       show: location.pathname.includes("/cancel-bill") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/bills/bill-details",
+      path: "/mycity-ui/employee/bills/bill-details",
       content: fromScreen ? `${t(fromScreen)} / ${t("ABG_BILL_DETAILS_HEADER")}` : t("ABG_BILL_DETAILS_HEADER"),
       show: location.pathname.includes("/bill-details") ? true : false,
       isBack: fromScreen && true,
     },
     {
-      path: "/upyog-ui/employee/bills/group-bill",
+      path: "/mycity-ui/employee/bills/group-bill",
       content: t("ABG_COMMON_HEADER"),
       show: location.pathname.includes("/group-bill") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/bills/inbox",
+      path: "/mycity-ui/employee/bills/inbox",
       content: t("ABG_SEARCH_BILL_COMMON_HEADER"),
       show: location.pathname.includes("/inbox") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/bills/download-bill-pdf",
+      path: "/mycity-ui/employee/bills/download-bill-pdf",
       content: t("ABG_VIEW_DOWNLOADS_HEADER"),
       show: location.pathname.includes("/download-bill-pdf") ? true : false,
     }

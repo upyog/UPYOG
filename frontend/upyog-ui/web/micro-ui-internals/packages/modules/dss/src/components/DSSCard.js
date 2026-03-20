@@ -36,16 +36,16 @@ const NDSSCard = () => {
     .filter((ele) => ele["nActive"] === true)
     .map((obj) => ({
       label: t(obj?.label),
-      link: `/upyog-ui/employee/dss/dashboard/${obj?.key}`,
-      link: obj?.others?`/upyog-ui/employee/dss/${obj?.key}`:`/upyog-ui/employee/dss/dashboard/${obj?.key}`,
+      link: `/mycity-ui/employee/dss/dashboard/${obj?.key}`,
+      link: obj?.others?`/mycity-ui/employee/dss/${obj?.key}`:`/mycity-ui/employee/dss/dashboard/${obj?.key}`,
     }));
 
   const propsForModuleCard = {
     headerStyle: { border: "none", height: "48px" },
     moduleName: t("ACTION_TEST_NATDASHBOARD"),
     subHeader: t("ACTION_TEST_NATDASHBOARD"),
-    // subHeaderLink: `/upyog-ui/employee/payment/integration/dss/NURT_DASHBOARD`,
-    subHeaderLink: `/upyog-ui/employee/dss/landing/NURT_DASHBOARD`,
+    // subHeaderLink: `/mycity-ui/employee/payment/integration/dss/NURT_DASHBOARD`,
+    subHeaderLink: `/mycity-ui/employee/dss/landing/NURT_DASHBOARD`,
     className: "employeeCard customEmployeeCard card-home full-width-card full-employee-card-height",
     links: [...links],
   };
@@ -64,15 +64,15 @@ const DSSCard = () => {
     .filter((ele) => ele["active"] === true)
     .map((obj) => ({
       label: t(obj?.label),
-      link: obj.active?`/upyog-ui/employee/dss/dashboard/${obj?.stateKey}`:`/employee/integration/dss/${obj?.stateKey}`,
+      link: obj.active?`/mycity-ui/employee/dss/dashboard/${obj?.stateKey}`:`/employee/integration/dss/${obj?.stateKey}`,
     }));
 
   const propsForModuleCard = {
     headerStyle: { border: "none", height: "48px" },
     moduleName: t("ES_TITLE_DSS"),
     subHeader: t("ACTION_TEST_SURE_DASHBOARD"),
-    // subHeaderLink: `/upyog-ui/employee/payment/integration/dss/home`,
-    subHeaderLink: `/upyog-ui/employee/dss/landing/home`,
+    // subHeaderLink: `/mycity-ui/employee/payment/integration/dss/home`,
+    subHeaderLink: `/mycity-ui/employee/dss/landing/home`,
     className: "employeeCard card-home customEmployeeCard full-width-card full-employee-card-height",
     links: [...links],
   };

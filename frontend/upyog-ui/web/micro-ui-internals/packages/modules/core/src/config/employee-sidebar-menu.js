@@ -20,11 +20,11 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("HR_HOME_SEARCH_RESULTS_HEADING"),
-        link: `/upyog-ui/employee/hrms/inbox`,
+        link: `/mycity-ui/employee/hrms/inbox`,
       },
       {
         label: t("HR_COMMON_CREATE_EMPLOYEE_HEADER"),
-        link: `/upyog-ui/employee/hrms/create`,
+        link: `/mycity-ui/employee/hrms/create`,
       },
     ],
   },
@@ -34,7 +34,7 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("ES_COMMON_INBOX"),
-        link: `/upyog-ui/employee/fsm/inbox`,
+        link: `/mycity-ui/employee/fsm/inbox`,
       },
     ],
   },
@@ -46,11 +46,11 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("UC_SEARCH_CHALLAN_LABEL"),
-        link: `/upyog-ui/employee/mcollect/inbox`,
+        link: `/mycity-ui/employee/mcollect/inbox`,
       },
       {
         label: t("UC_GENERATE_NEW_CHALLAN"),
-        link: `/upyog-ui/employee/mcollect/new-application`,
+        link: `/mycity-ui/employee/mcollect/new-application`,
       },
     ],
   },
@@ -65,11 +65,11 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("ES_TITLE_INBOX"),
-        link: `/upyog-ui/employee/engagement/messages/inbox`,
+        link: `/mycity-ui/employee/engagement/messages/inbox`,
       },
       {
         label: t("NEW_PUBLIC_MESSAGE_BUTTON_LABEL"),
-        link: `/upyog-ui/employee/engagement/messages/create`,
+        link: `/mycity-ui/employee/engagement/messages/create`,
       },
     ],
   },
@@ -79,11 +79,11 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("ES_TITLE_INBOX"),
-        link: `/upyog-ui/employee/engagement/surveys/inbox`,
+        link: `/mycity-ui/employee/engagement/surveys/inbox`,
       },
       {
         label: t("CS_COMMON_NEW_SURVEY"),
-        link: `/upyog-ui/employee/engagement/surveys/create`,
+        link: `/mycity-ui/employee/engagement/surveys/create`,
       },
     ],
   },
@@ -93,11 +93,11 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("ES_TITLE_INBOX"),
-        link: `/upyog-ui/employee/engagement/event/inbox`,
+        link: `/mycity-ui/employee/engagement/event/inbox`,
       },
       {
         label: t("ES_TITLE_NEW_EVENTS"),
-        link: `/upyog-ui/employee/engagement/event/new-event`,
+        link: `/mycity-ui/employee/engagement/event/new-event`,
       },
     ],
   },
@@ -107,11 +107,11 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("ES_TITLE_INBOX"),
-        link: `/upyog-ui/employee/engagement/documents/inbox`,
+        link: `/mycity-ui/employee/engagement/documents/inbox`,
       },
       {
         label: t("NEW_DOCUMENT_TEXT"),
-        link: `/upyog-ui/employee/engagement/documents/new-doc`,
+        link: `/mycity-ui/employee/engagement/documents/new-doc`,
       },
     ],
   },
@@ -122,7 +122,7 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("CR_SEARCH_COMMON_HEADER"),
-        link: `/upyog-ui/employee/receipts/inbox`,
+        link: `/mycity-ui/employee/receipts/inbox`,
       },
     ],
   },
@@ -138,11 +138,11 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("ES_COMMON_INBOX"),
-        link: `/upyog-ui/employee/noc/inbox`,
+        link: `/mycity-ui/employee/noc/inbox`,
       },
       {
         label: t("ES_COMMON_SEARCH"),
-        link: `/upyog-ui/employee/noc/search`,
+        link: `/mycity-ui/employee/noc/search`,
       },
     ],
   },
@@ -153,7 +153,7 @@ const EmployeeSideBarMenu = (t, HRMS, FSM, PT, mCollect, DSS, RECEIPTS, TL, NOC,
     links: [
       {
         label: t("ES_COMMON_INBOX"),
-        link: "/upyog-ui/employee/fsm/fstp-inbox",
+        link: "/mycity-ui/employee/fsm/fstp-inbox",
       },
     ],
   },

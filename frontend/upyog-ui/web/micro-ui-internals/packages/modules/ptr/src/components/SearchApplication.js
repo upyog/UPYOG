@@ -80,7 +80,7 @@
                 return (
                   <div>
                     <span className="link">
-                      <Link to={`/upyog-ui/employee/ptr/petservice/applicationsearch/application-details/${row.original["applicationNumber"]}`}>
+                      <Link to={`/mycity-ui/employee/ptr/petservice/applicationsearch/application-details/${row.original["applicationNumber"]}`}>
                         {row.original["applicationNumber"]}
                       </Link>
                     </span>

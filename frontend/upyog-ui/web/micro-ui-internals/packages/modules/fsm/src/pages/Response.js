@@ -120,7 +120,7 @@ const Response = (props) => {
         closeToast();
       }, 5000);
     } else {
-      history.push(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${state?.applicationData?.applicationNo || Data?.fsm?.[0].applicationNo}`);
+      history.push(`/mycity-ui/employee/payment/collect/FSM.TRIP_CHARGES/${state?.applicationData?.applicationNo || Data?.fsm?.[0].applicationNo}`);
     }
   };
 
@@ -180,9 +180,9 @@ const Response = (props) => {
   useEffect(() => {
     switch (selectedAction) {
       case "GO_TO_HOME":
-        return isCitizen ? history.push("/upyog-ui/citizen") : history.push("/upyog-ui/employee");
+        return isCitizen ? history.push("/mycity-ui/citizen") : history.push("/mycity-ui/employee");
       case "ASSIGN_TO_DSO":
-        return history.push(`/upyog-ui/employee/fsm/application-details/${getApplicationNo}`);
+        return history.push(`/mycity-ui/employee/fsm/application-details/${getApplicationNo}`);
       case "PAY":
         return handleResponse();
     }

@@ -132,11 +132,11 @@ const ApplicationDetails = (props) => {
       case "SUBMIT":
       case "FSM_SUBMIT":
         // case !DSO && "SCHEDULE":
-        return history.push("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
+        return history.push("/mycity-ui/employee/fsm/modify-application/" + applicationNumber);
       case "PAY":
       case "FSM_PAY":
       case "ADDITIONAL_PAY_REQUEST":
-        return history.push(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${applicationNumber}?workflow=FSM`);
+        return history.push(`/mycity-ui/employee/payment/collect/FSM.TRIP_CHARGES/${applicationNumber}?workflow=FSM`);
       default:
         break;
     }
@@ -220,7 +220,7 @@ const ApplicationDetails = (props) => {
       return (
         <div>
           <Rating withText={true} text={t(`ES_FSM_YOU_RATED`)} currentRating={checkpoint.rating} />
-          <Link to={`/upyog-ui/employee/fsm/rate-view/${applicationNumber}`}>
+          <Link to={`/mycity-ui/employee/fsm/rate-view/${applicationNumber}`}>
             <ActionLinks>{t("CS_FSM_RATE_VIEW")}</ActionLinks>
           </Link>
         </div>

@@ -20,17 +20,17 @@ const MCollectCard = () => {
       },
       // {
       //     label: t(""),
-      //     link: `/upyog-ui/employee/receipts/inbox`
+      //     link: `/mycity-ui/employee/receipts/inbox`
       // }  
     ],
     links: [
       {
         label: t("UC_SEARCH_CHALLAN_LABEL"),
-        link: `/upyog-ui/employee/mcollect/inbox`
+        link: `/mycity-ui/employee/mcollect/inbox`
       },
       {
         label: t("UC_GENERATE_NEW_CHALLAN"),
-        link: `/upyog-ui/employee/mcollect/new-application`
+        link: `/mycity-ui/employee/mcollect/new-application`
       },
     ]
   }

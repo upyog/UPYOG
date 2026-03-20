@@ -36,7 +36,7 @@ const TradeLicenseList = ({ application }) => {
     if (isrenewalspresent && Licenses) {
       alert(t("TL_RENEWAL_PRESENT_ERROR"));
     } else if (Licenses) {
-      history.push(`/upyog-ui/citizen/tl/tradelicence/edit-application/action-edit/${application.applicationNumber}`);
+      history.push(`/mycity-ui/citizen/tl/tradelicence/edit-application/action-edit/${application.applicationNumber}`);
     }
   }
 
@@ -134,7 +134,7 @@ useEffect(async ()=>{
     if(isrenewalspresent || allowedToNextYear == false || application?.status === "CANCELLED" || (application?.status === "MANUALEXPIRED" /* && latestRenewalYearofAPP */))
     getToastMessages();
     else
-    history.push(`/upyog-ui/citizen/tl/tradelicence/renew-trade/${application.licenseNumber}/${application.tenantId}`);
+    history.push(`/mycity-ui/citizen/tl/tradelicence/renew-trade/${application.licenseNumber}/${application.tenantId}`);
   };
   const ownersSequences=owners?.additionalDetails!==null ? owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence): owners
   return (

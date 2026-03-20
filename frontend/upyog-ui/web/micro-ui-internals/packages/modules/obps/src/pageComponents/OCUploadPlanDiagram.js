@@ -31,7 +31,7 @@ const OCUploadPlanDiagram = ({ t, config, onSelect, userType, formData, ownerInd
         }
         if (isShowToast) {
             history.push(
-                `/upyog-ui/citizen/obps/edcrscrutiny/oc-apply/acknowledgement`,
+                `/mycity-ui/citizen/obps/edcrscrutiny/oc-apply/acknowledgement`,
                 { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR"}
               );
         }

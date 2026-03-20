@@ -47,7 +47,7 @@ const CheckPage = ({ onSubmit, value }) => {
     }
   );
 
-  let routeLink = isopenlink ? `/upyog-ui/citizen/obps/openlink/stakeholder/apply` : `/upyog-ui/citizen/obps/stakeholder/apply`;
+  let routeLink = isopenlink ? `/mycity-ui/citizen/obps/openlink/stakeholder/apply` : `/mycity-ui/citizen/obps/stakeholder/apply`;
 
   function routeTo(jumpTo) {
     history.push(jumpTo);

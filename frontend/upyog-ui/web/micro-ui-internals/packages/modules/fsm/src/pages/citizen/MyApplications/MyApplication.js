@@ -13,7 +13,7 @@ const MyApplication = ({ application }) => {
       {/* Removed the application type as per Backend and Product Team */}
       {/* <KeyNote keyValue={t("CS_FSM_APPLICATION_TYPE")} note={t(`CS_FSM_APPLICATION_TYPE_${application.applicationType?.toUpperCase().replace(" ", "_")}`) || t("CS_FSM_APPLICATION_TYPE_DESLUDGING")} /> */}
       <KeyNote keyValue={t("CS_FSM_APPLICATION_DETAIL_STATUS")} note={t("CS_COMMON_" + application.applicationStatus)} />
-      <Link to={{ pathname: `/upyog-ui/citizen/fsm/application-details/${application.applicationNo}`, state: { tenantId: application.tenantId } }}>
+      <Link to={{ pathname: `/mycity-ui/citizen/fsm/application-details/${application.applicationNo}`, state: { tenantId: application.tenantId } }}>
         <SubmitBar label={t("CS_COMMON_VIEW")} />
       </Link>
     </Card>

@@ -2,33 +2,43 @@ import React from "react";
 
 const Option = ({ name, Icon, onClick, className }) => {
   return (
-    <div className={className || `CardBasedOptionsMainChildOption`} onClick={onClick}>
+    <div className={className || `CardBasedOptionsMainChildOption`} onClick={onClick}
+    style={{ background: "#fff",
+    borderRadius: "10px",
+    boxShadow: "0 0 8px rgba(0, 0, 0, 0.15)",
+    padding: "20px",
+    textAlign: "center",
+    cursor: "pointer", 
+    height: "150px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",}}>
       <div className="ChildOptionImageWrapper">{Icon}</div>
-      <p className="ChildOptionName">{name}</p>
+      <p className="ChildOptionName" style={{paddingBottom: "12px", fontSize: "14px"}}>{name}</p>
     </div>
   );
 };
 
-const CardBasedOptions = ({ header, sideOption, options, styles = {}, style={} }) => {
+const CardBasedOptions = ({ header, sideOption,type = "", options, styles = {}, style = {} }) => {
   return (
-    <div className="CardBasedOptions" style={style}>
-       <div className="employeeCustomCard" style={{ width: "100%", height: "80%", position: "relative",display:"flex",fontSize:"1.2rem",fontWeight:"700" }}>
-            <h2 style={{width:"70%",padding:"20px",height:"fit-content",color:"white"}}>{header}</h2>
-            {/* <p onClick={sideOption.onClick}></p> */}
-            <button type="button" class="inboxButton" onClick={sideOption.onClick}>
-            {sideOption.name}
-                      </button>
-            <div className="employee-card-banner">
-          <div className="body" style={{ margin: "0px", padding: "0px",height:"100%" }}>
-          <div className="mainContent citizenAllServiceGrid" style={{display:"flex"}}>
-            {options.map( (props, index) => 
-                <Option key={index} {...props} />
-            )}
-        </div>
-          </div>
-
-        </div>
-        </div>
+    <div className="CardBasedOptions" style={{
+      ...style,
+      background: "transparent", // ✅ invisible container
+      border: "none",
+      boxShadow: "none",
+    }}>
+    <div className="body" style={{ margin: "0px", padding: "0px", height: "100%" }}>
+      <div className="mainContent citizenAllServiceGrid"  style={{
+            display: "grid",
+            gridTemplateColumns: type === "Information&Updates" ? "repeat(4, 1fr)" : "repeat(6, 1fr)", // ✅ 4 items per row
+            gap: "16px", // spacing between items
+          }}>
+        {options.map((props, index) =>
+          <Option key={index} {...props} />
+        )}
+      </div>
+    </div>
     </div>
   );
 };

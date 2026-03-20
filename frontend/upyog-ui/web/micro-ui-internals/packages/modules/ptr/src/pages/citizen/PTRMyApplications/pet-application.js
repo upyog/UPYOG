@@ -30,7 +30,7 @@ const PetApplication = ({ application, tenantId, buttonLabel }) => {
   const handleRenewalClick = () => {
     sessionStorage.setItem("petId", application?.applicationNumber)
     application?.petToken && application?.petToken?.length > 0 ? sessionStorage.setItem("petToken",application?.petToken) : ""
-    history.push(`/upyog-ui/citizen/ptr/petservice/revised-application`);
+    history.push(`/mycity-ui/citizen/ptr/petservice/revised-application`);
   };
 
   return (
@@ -44,7 +44,7 @@ const PetApplication = ({ application, tenantId, buttonLabel }) => {
       {(application?.status == "Expired") && 
       <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} onSubmit={handleRenewalClick} />
 }
-      <Link to={`/upyog-ui/citizen/ptr/petservice/application/${application?.applicationNumber}/${application?.tenantId}`}>
+      <Link to={`/mycity-ui/citizen/ptr/petservice/application/${application?.applicationNumber}/${application?.tenantId}`}>
         <SubmitBar label={buttonLabel} />
       </Link>
     </Card>

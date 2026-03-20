@@ -198,14 +198,14 @@ const BpaApplicationDetail = () => {
   function onActionSelect(action) {
     let path = data?.applicationData?.businessService == "BPA_OC" ? "ocbpa" : "bpa";
     if(action === "FORWARD") {
-      history.replace(`/upyog-ui/citizen/obps/sendbacktocitizen/ocbpa/${data?.applicationData?.tenantId}/${data?.applicationData?.applicationNo}/check`, { data: data?.applicationData, edcrDetails: data?.edcrDetails });
+      history.replace(`/mycity-ui/citizen/obps/sendbacktocitizen/ocbpa/${data?.applicationData?.tenantId}/${data?.applicationData?.applicationNo}/check`, { data: data?.applicationData, edcrDetails: data?.edcrDetails });
     }
     if (action === "PAY") {
-      window.location.assign(`${window.location.origin}/upyog-ui/citizen/payment/collect/${`${getBusinessServices(data?.businessService, data?.applicationStatus)}/${id}/${data?.tenantId}?tenantId=${data?.tenantId}`}`);
+      window.location.assign(`${window.location.origin}/mycity-ui/citizen/payment/collect/${`${getBusinessServices(data?.businessService, data?.applicationStatus)}/${id}/${data?.tenantId}?tenantId=${data?.tenantId}`}`);
     }
     if (action === "SEND_TO_CITIZEN"){
       if (workflowDetails?.data?.processInstances?.length > 2) {
-        window.location.replace(`/upyog-ui/citizen/obps/editApplication/${path}/${data?.applicationData?.tenantId}/${data?.applicationData?.applicationNo}`)
+        window.location.replace(`/mycity-ui/citizen/obps/editApplication/${path}/${data?.applicationData?.tenantId}/${data?.applicationData?.applicationNo}`)
       } else {
         getBPAFormData(data?.applicationData, mdmsData, history, t)
       }
@@ -232,7 +232,7 @@ const BpaApplicationDetail = () => {
         },
         onSuccess: (data, variables) => {
           setIsEnableLoader(false);
-          history.replace(`/upyog-ui/citizen/obps/response`, { data: data });
+          history.replace(`/mycity-ui/citizen/obps/response`, { data: data });
           setShowModal(false);
           setShowToast({ key: "success", action: selectedAction });
           setTimeout(closeToast, 5000);

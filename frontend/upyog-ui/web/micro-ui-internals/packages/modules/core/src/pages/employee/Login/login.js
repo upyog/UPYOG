@@ -29,9 +29,9 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
   const history = useHistory();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
-  let   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
+  let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
   const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
-  
+
   useEffect(() => {
     if (!user) {
       return;
@@ -41,20 +41,20 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     if (user?.info?.roles?.length > 0) user.info.roles = filteredRoles;
     Digit.UserService.setUser(user);
     setEmployeeDetail(user?.info, user?.access_token);
-    let redirectPath = "/upyog-ui/employee";
+    let redirectPath = "/mycity-ui/employee";
 
     /* logic to redirect back to same screen where we left off  */
     if (window?.location?.href?.includes("from=")) {
-      redirectPath = decodeURIComponent(window?.location?.href?.split("from=")?.[1]) || "/upyog-ui/employee";
+      redirectPath = decodeURIComponent(window?.location?.href?.split("from=")?.[1]) || "/mycity-ui/employee";
     }
 
     /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
-    if (user?.info?.roles && user?.info?.roles?.length > 0 &&  user?.info?.roles?.every((e) => e.code === "NATADMIN")) {
-      redirectPath = "/upyog-ui/employee/dss/landing/NURT_DASHBOARD";
+    if (user?.info?.roles && user?.info?.roles?.length > 0 && user?.info?.roles?.every((e) => e.code === "NATADMIN")) {
+      redirectPath = "/mycity-ui/employee/dss/landing/NURT_DASHBOARD";
     }
     /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
     if (user?.info?.roles && user?.info?.roles?.length > 0 && user?.info?.roles?.every((e) => e.code === "STADMIN")) {
-      redirectPath = "/upyog-ui/employee/dss/landing/home";
+      redirectPath = "/mycity-ui/employee/dss/landing/home";
     }
 
     history.replace(redirectPath);
@@ -90,7 +90,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
   const onForgotPassword = () => {
     sessionStorage.getItem("User") && sessionStorage.removeItem("User")
-    history.push("/upyog-ui/employee/user/forgot-password");
+    history.push("/mycity-ui/employee/user/forgot-password");
   };
 
   const [userId, password, city] = propsConfig.inputs;
@@ -141,47 +141,57 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   return isLoading || isStoreLoading ? (
     <Loader />
   ) : (
-    <Background>
-      <div className="employeeBackbuttonAlign">
-        <BackButton variant="white" style={{ borderBottom: "none" }} />
-      </div>
-
-      <FormComposer
-        onSubmit={onLogin}
-        isDisabled={isDisabled || disable}
-        noBoxShadow
-        inline
-        submitInForm
-        config={config}
-        label={propsConfig.texts.submitButtonLabel}
-        secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
-        onSecondayActionClick={onForgotPassword}
-        heading={propsConfig.texts.header}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ margin: "auto", minWidth: "408px" }}
-        className="loginFormStyleEmployee"
-        buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166"}}
-      >
-        {/* <Header /> */}
-      </FormComposer>
-      {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
-
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize:"12px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
-
+    <React.Fragment>
+      <style>
+        {`@media (min-width: 780px) {
+    .banner .bannerCard, .loginFormStyleEmployee .employeeCard {
+        min-width: 270px !important;
+        background-color: ghostwhite !important;
+    }
+}`}
+      </style>
+      <Background>
+        <div className="employeeBackbuttonAlign">
+          <BackButton variant="white" style={{ borderBottom: "none" }} />
         </div>
-        <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+
+        <FormComposer
+          onSubmit={onLogin}
+          isDisabled={isDisabled || disable}
+          noBoxShadow
+          inline
+          submitInForm
+          config={config}
+          label={propsConfig.texts.submitButtonLabel}
+          secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
+          onSecondayActionClick={onForgotPassword}
+          heading={propsConfig.texts.header}
+          headingStyle={{ textAlign: "center" }}
+          cardStyle={{ margin: "auto", minWidth: "408px" }}
+          className="loginFormStyleEmployee"
+          buttonStyle={{ maxWidth: "100%", width: "100%", backgroundColor: "#5a1166" }}
+        >
+          <Header />
+        </FormComposer>
+        {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
+        <div style={{ width: '100%', position: 'fixed', bottom: 0, backgroundColor: "white", textAlign: "center" }}>
+          <div style={{ display: 'flex', justifyContent: 'center', color: "black" }}>
+            {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
+          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
+            <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile() ? "12px" : "12px", fontWeight: "400" }} href="#" target='_blank'>NagarSewa License</a>
+
+            <span className="upyog-copyright-footer" style={{ margin: "0 10px", fontSize: "12px" }} >|</span>
+            <span className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile() ? "12px" : "12px", fontWeight: "400" }} onClick={() => { window.open('https://niua.in/', '_blank').focus(); }} >Copyright © 2025 Government of Uttarakhand</span>
+
+            {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
+
           </div>
-      </div>
-    </Background>
+          <div className="upyog-copyright-footer-web">
+            <span className="" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile() ? "14px" : "16px", fontWeight: "400" }} onClick={() => { window.open('https://niua.in/', '_blank').focus(); }} >Copyright © 2025 Government of Uttarakhand</span>
+          </div>
+        </div>
+      </Background>
+    </React.Fragment>
   );
 };
 

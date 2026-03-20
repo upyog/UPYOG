@@ -27,7 +27,7 @@ const ReceiptsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         Cell: ({ row }) => {
           return (
             <span className="link">
-              <Link to={`/upyog-ui/employee/receipts/details/${row.original?.paymentDetails[0]?.businessService}/${encodeURIComponent(row.original?.paymentDetails[0]?.receiptNumber)}`}>{row.original?.paymentDetails[0]?.receiptNumber}</Link>
+              <Link to={`/mycity-ui/employee/receipts/details/${row.original?.paymentDetails[0]?.businessService}/${encodeURIComponent(row.original?.paymentDetails[0]?.receiptNumber)}`}>{row.original?.paymentDetails[0]?.receiptNumber}</Link>
             </span>
           );
         },
@@ -126,13 +126,13 @@ const ReceiptsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
             allLinks={[
               {
                 text: "CR_COMMON_DASHBOARD_HEADER",
-                link: "/upyog-ui/employee/receipts/inprogress",
+                link: "/mycity-ui/employee/receipts/inprogress",
                 businessService: "receipts",
                 roles: ["CR_PT"],
               },
               {
                 text: "CR_COMMON_REPORTS_HEADER",
-                link: "/upyog-ui/employee/receipts/inprogress",
+                link: "/mycity-ui/employee/receipts/inprogress",
                 businessService: "receipts",
                 roles: ["CR_PT"],
               }

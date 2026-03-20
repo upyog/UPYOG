@@ -31,11 +31,11 @@ console.log("DigitAppDigitAppDigitApp",stateCode, modules, appTenants, logoUrl, 
     if (!pathname?.includes("landing")) {
       Digit.SessionStorage.del("DSS_FILTERS_CUMILATIVETRANSACTIONS");
     }
-    if (pathname?.toString() === "/upyog-ui/employee") {
+    if (pathname?.toString() === "/mycity-ui/employee") {
       Digit.SessionStorage.del("SEARCH_APPLICATION_DETAIL");
       Digit.SessionStorage.del("WS_EDIT_APPLICATION_DETAILS");
     }
-    if (pathname?.toString() === "/upyog-ui/citizen" || pathname?.toString() === "/upyog-ui/employee") {
+    if (pathname?.toString() === "/mycity-ui/citizen" || pathname?.toString() === "/mycity-ui/employee") {
       Digit.SessionStorage.del("WS_DISCONNECTION");
     }
   }, [pathname]);
@@ -68,14 +68,14 @@ console.log("DigitAppDigitAppDigitApp",stateCode, modules, appTenants, logoUrl, 
   };
   return (
     <Switch>
-      <Route path="/upyog-ui/employee">
+      <Route path="/mycity-ui/employee">
         <EmployeeApp {...commonProps} />
       </Route>
-      <Route path="/upyog-ui/citizen">
+      <Route path="/mycity-ui/citizen">
         <CitizenApp {...commonProps} />
       </Route>
       <Route>
-        <Redirect to="/upyog-ui/citizen" />
+        <Redirect to="/mycity-ui/citizen" />
       </Route>
     </Switch>
   );

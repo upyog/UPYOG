@@ -95,7 +95,7 @@ const ViewTimeline = (props) => {
           ? (
           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
             <Link
-              to={{ pathname: `/upyog-ui/citizen/payment/my-bills/sv-services/${props?.application?.applicationNo}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNo } }}
+              to={{ pathname: `/mycity-ui/citizen/payment/my-bills/sv-services/${props?.application?.applicationNo}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNo } }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>

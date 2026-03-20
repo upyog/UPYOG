@@ -335,7 +335,7 @@ const ReNewApplication = (props) => {
         .then((result, err) => {
           if (result?.Licenses?.length > 0) {
             if (result?.Licenses?.length > 0) {
-              history.replace(`/upyog-ui/employee/tl/response`, { data: result?.Licenses });
+              history.replace(`/mycity-ui/employee/tl/response`, { data: result?.Licenses });
             }
           }
         })
@@ -402,7 +402,7 @@ const ReNewApplication = (props) => {
               .then((response) => {
                 Digit.SessionStorage.set("EditRenewalApplastModifiedTime", response?.Licenses[0]?.auditDetails?.lastModifiedTime);
                 if (response?.Licenses?.length > 0) {
-                  history.replace(`/upyog-ui/employee/tl/response`, { data: response?.Licenses });
+                  history.replace(`/mycity-ui/employee/tl/response`, { data: response?.Licenses });
                 }
               })
               .catch((e) => {

@@ -96,7 +96,7 @@ export const ApplicationCard = ({
    * Displays the application details when data is available.
    */
   else if (data && data?.length > 0) {
-    result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={linkPrefix ? linkPrefix : "/upyog-ui/employee/ew/"} />;
+    result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={linkPrefix ? linkPrefix : "/mycity-ui/employee/ew/"} />;
   }
 
   return (

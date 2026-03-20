@@ -70,7 +70,7 @@ const Inbox = ({ tenants }) => {
     const links = [
         {
             text: t('NEW_DOCUMENT_TEXT'),
-            link: "/upyog-ui/employee/engagement/documents/inbox/new-doc",
+            link: "/mycity-ui/employee/engagement/documents/inbox/new-doc",
         }
     ]
     if (isMobile) {

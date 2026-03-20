@@ -67,7 +67,7 @@ const SearchLicenseApplication = ({tenantId, t, onSubmit, data, count }) => {
             return (
               <div>
                 <span className="link">
-                  <Link to={`/upyog-ui/employee/tl/application-details/${row.original["applicationNumber"]}`}>
+                  <Link to={`/mycity-ui/employee/tl/application-details/${row.original["applicationNumber"]}`}>
                     {row.original["applicationNumber"]}
                   </Link>
                 </span>

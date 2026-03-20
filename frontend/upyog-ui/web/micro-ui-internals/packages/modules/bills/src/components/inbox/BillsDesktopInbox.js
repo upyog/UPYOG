@@ -28,7 +28,7 @@ const BillsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   };
 
   const columns = React.useMemo(() => {
-    if (window.location.href.includes("/upyog-ui/employee/bills/group-bill")) {
+    if (window.location.href.includes("/mycity-ui/employee/bills/group-bill")) {
       return [
         {
           Header: t("ABG_COMMON_TABLE_COL_BILL_NO"),
@@ -134,7 +134,7 @@ const BillsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   }, []);
 
   const getActionItem = (status, row) => {
-    if (window.location.href.includes("/upyog-ui/employee/bills/group-bill")) {
+    if (window.location.href.includes("/mycity-ui/employee/bills/group-bill")) {
       return null;
     }
     switch (status) {
@@ -144,7 +144,7 @@ const BillsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
             <span className="link">
               <Link
                 to={{
-                  pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
+                  pathname: `/mycity-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
                 }}
               >
                 {t(`${"ABG_COLLECT"}`)}{" "}
@@ -159,7 +159,7 @@ const BillsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
             <span className="link">
               <Link
                 to={{
-                  pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
+                  pathname: `/mycity-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
                 }}
               >
                 {t(`${"ABG_GENERATE_NEW_BILL"}`)}
@@ -222,14 +222,14 @@ const BillsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   }
 
   const dynamicRoutes = () => {
-    if (window.location.href.includes("/upyog-ui/employee/bills/group-bill")) {
+    if (window.location.href.includes("/mycity-ui/employee/bills/group-bill")) {
       return (
         <InboxLinks
           parentRoute={props.parentRoute}
           allLinks={[
             {
               text: "ABG_SEARCH_BILL_COMMON_HEADER",
-              link: "/upyog-ui/employee/bills/inbox",
+              link: "/mycity-ui/employee/bills/inbox",
             },
           ]}
           headerText={t("ACTION_TEST_BILLGENIE")}
@@ -243,7 +243,7 @@ const BillsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           allLinks={[
             {
               text: "ABG_COMMON_HEADER",
-              link: "/upyog-ui/employee/bills/group-bill",
+              link: "/mycity-ui/employee/bills/group-bill",
             },
           ]}
           headerText={t("ACTION_TEST_BILLGENIE")}

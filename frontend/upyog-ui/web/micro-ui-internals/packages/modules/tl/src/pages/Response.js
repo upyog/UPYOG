@@ -29,7 +29,7 @@ const Response = (props) => {
   };
 
   const routeToPaymentScreen = async () => {
-    window.location.assign(`${window.location.origin}/upyog-ui/employee/payment/collect/TL/${state?.data?.[0]?.applicationNumber}/${state?.data?.[0]?.tenantId}`);
+    window.location.assign(`${window.location.origin}/mycity-ui/employee/payment/collect/TL/${state?.data?.[0]?.applicationNumber}/${state?.data?.[0]?.tenantId}`);
   }
 
   return (
@@ -52,7 +52,7 @@ const Response = (props) => {
           </div>
           <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
           {state?.data?.[0]?.status !== "PENDINGPAYMENT" ?
-            <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
+            <Link to={`/mycity-ui/employee`} style={{ marginRight: "1rem" }}>
               <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onClick={() => sessionStorage.removeItem("isCreateEnabled")} />
             </Link> :
             // <Link to={`digit-ui/employee/payment/collect/TL/${state?.data?.[0]?.applicationNumber}/${state?.data?.[0]?.tenantId}`} style={{ marginRight: "1rem" }}>

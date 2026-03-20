@@ -13,19 +13,19 @@ const BillsCard = () => {
     links: [
       {
         label: t("ABG_SEARCH_BILL_COMMON_HEADER"),
-        link: `/upyog-ui/employee/bills/inbox`,
+        link: `/mycity-ui/employee/bills/inbox`,
       },
       {
         label: t("ACTION_TEST_GROUP_BILLS"),
-        link: `/upyog-ui/employee/bills/group-bill`,
+        link: `/mycity-ui/employee/bills/group-bill`,
       },
       {
         label: t("ACTION_TEST_CANCEL_BILL"),
-        link: `/upyog-ui/employee/bills/cancel-bill`,
+        link: `/mycity-ui/employee/bills/cancel-bill`,
       },
       {
         label: t("ACTION_TEST_DOWNLOAD_BILL_PDF"),
-        link: `/upyog-ui/employee/bills/download-bill-pdf`,
+        link: `/mycity-ui/employee/bills/download-bill-pdf`,
       }
     ],
   };

@@ -78,21 +78,21 @@ useEffect(() => {
       </StatusTable>
       {mutation.isSuccess && (
       <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-        {user.type==="EMPLOYEE" &&(<Link to={`/upyog-ui/employee`}>
+        {user.type==="EMPLOYEE" &&(<Link to={`/mycity-ui/employee`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
-         {user.type==="CITIZEN" &&(<Link to={`/upyog-ui/citizen`}>
+         {user.type==="CITIZEN" &&(<Link to={`/mycity-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
       </div>
     )}
     {!mutation.isSuccess && user.type==="CITIZEN" &&(
-      <Link to={`/upyog-ui/citizen`}>
+      <Link to={`/mycity-ui/citizen`}>
       <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
        </Link>
      )}
      {!mutation.isSuccess && user.type==="EMPLOYEE" &&(
-      <Link to={`/upyog-ui/employee`}>
+      <Link to={`/mycity-ui/employee`}>
       <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
        </Link>
      )}

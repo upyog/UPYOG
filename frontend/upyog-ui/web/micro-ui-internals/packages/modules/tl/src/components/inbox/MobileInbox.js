@@ -44,31 +44,31 @@ const MobileInbox = ({
                     allLinks={[
                       {
                         text: "TL_NEW_APPLICATION",
-                        link: "/upyog-ui/employee/tl/new-application",
+                        link: "/mycity-ui/employee/tl/new-application",
                         businessService: "TL",
                         roles: ["TL_CEMP"],
                       },
                       {
                         text: "TL_SEARCH_APPLICATIONS",
-                        link: "/upyog-ui/employee/tl/search/application",
+                        link: "/mycity-ui/employee/tl/search/application",
                         businessService: "TL",
                         roles: ["TL_FIELD_INSPECTOR","TL_APPROVER", "TL_DOC_VERIFIER","TL_CEMP"],
                       },
                       {
                         text: "TL_SEARCH_LICENSE",
-                        link: "/upyog-ui/employee/tl/search/license",
+                        link: "/mycity-ui/employee/tl/search/license",
                         businessService: "TL",
                         roles: ["TL_APPROVER", "TL_DOC_VERIFIER","TL_FIELD_INSPECTOR"],
                       },
                       {
                         text: "TL_RENEWAL_HEADER",
-                        link: "/upyog-ui/employee/tl/search/license",
+                        link: "/mycity-ui/employee/tl/search/license",
                         businessService: "TL",
                         roles: ["TL_CEMP"],
                       },
                       {
                         text: "ACTION_TEST_DASHBOARD",
-                        link: "/upyog-ui/employee/dss/dashboard/tradelicence",
+                        link: "/mycity-ui/employee/dss/dashboard/tradelicence",
                         businessService: "TL",
                         roles: ["STADMIN"],
                       },

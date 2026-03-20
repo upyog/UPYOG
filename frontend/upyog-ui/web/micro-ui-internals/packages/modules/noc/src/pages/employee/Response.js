@@ -11,7 +11,7 @@ const Response = (props) => {
   const nocData = state?.data?.Noc?.[0];
 
   const onSubmit = () => {
-    history.push(`/upyog-ui/employee`);
+    history.push(`/mycity-ui/employee`);
   }
 
   return (

@@ -9,24 +9,24 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   const allLinks = [
     {
       text: "ES_TITLE_NEW_REGISTRATION",
-      link: "/upyog-ui/employee/pt/new-application",
+      link: "/mycity-ui/employee/pt/new-application",
       businessService: "PT",
       roles: ["PT_CEMP"],
     },
     {
       text: "PT_SEARCH_PROPERTY",
-      link: `/upyog-ui/employee/pt/search`,
+      link: `/mycity-ui/employee/pt/search`,
       businessService: "PT",
       roles: [],
     },
     {
       text: "ES_COMMON_APPLICATION_SEARCH",
-      link: `/upyog-ui/employee/pt/application-search`,
+      link: `/mycity-ui/employee/pt/application-search`,
       businessService: "PT",
       roles: [],
     },
-    // { text: "PT_REPORTS", hyperLink: true, link: "/upyog-ui/employee/integration/dss/propertytax", roles: [], businessService: "PT" },
-    // { text: "PT_DASHBOARD", link: "/upyog-ui/employee/", roles: [], businessService: "PT" },
+    // { text: "PT_REPORTS", hyperLink: true, link: "/mycity-ui/employee/integration/dss/propertytax", roles: [], businessService: "PT" },
+    // { text: "PT_DASHBOARD", link: "/mycity-ui/employee/", roles: [], businessService: "PT" },
   ];
 
   const [links, setLinks] = useState([]);

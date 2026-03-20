@@ -25,7 +25,7 @@ const EwasteApplication = ({ application, tenantId, buttonLabel }) => {
       <KeyNote keyValue={t("EW_REQUEST_ID")} note={application?.requestId} />
       <KeyNote keyValue={t("EWASTE_APPLICANT_NAME")} note={application?.applicant?.applicantName} />
       <KeyNote keyValue={t("EW_STATUS")} note={application?.requestStatus} />
-      <Link to={`/upyog-ui/citizen/ew/application/${application?.requestId}/${application?.tenantId}`}>
+      <Link to={`/mycity-ui/citizen/ew/application/${application?.requestId}/${application?.tenantId}`}>
         <SubmitBar label={buttonLabel} />
       </Link>
     </Card>

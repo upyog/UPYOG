@@ -53,7 +53,7 @@ const ApplicationTimeline = ({ id, tenantId }) => {
         return (
           <div style={{ marginTop: "24px" }} className="action-bar-wrap">
             <Link
-              to={{ pathname: `/upyog-ui/citizen/payment/collect/${data?.processInstances?.[0]?.moduleName}/${data?.processInstances?.[0]?.businessId}`,
+              to={{ pathname: `/mycity-ui/citizen/payment/collect/${data?.processInstances?.[0]?.moduleName}/${data?.processInstances?.[0]?.businessId}`,
               state: { tenantId: data?.processInstances?.[0]?.tenantId },}}
             >
               <SubmitBar label={t("TL_COMMON_BUTTON_CITIZEN_MAKE_PAYMENT")} />
@@ -63,7 +63,7 @@ const ApplicationTimeline = ({ id, tenantId }) => {
       case "SUBMIT_FEEDBACK":
         return (
           <div style={{ marginTop: "24px" }}>
-            <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
+            <Link to={`/mycity-ui/citizen/fsm/rate/${props.id}`}>
               <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
             </Link>
           </div>

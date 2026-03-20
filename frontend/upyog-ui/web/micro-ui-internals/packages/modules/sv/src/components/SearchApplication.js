@@ -76,7 +76,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 return (
                     <div>
                         <span className="link">
-                            <Link to={`/upyog-ui/employee/sv/applicationsearch/application-details/${row.original["applicationNo"]}`}>
+                            <Link to={`/mycity-ui/employee/sv/applicationsearch/application-details/${row.original["applicationNo"]}`}>
                                 {row.original["applicationNo"]}
                             </Link>
                         </span>
