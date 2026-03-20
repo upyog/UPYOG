@@ -64,7 +64,7 @@ const Acknowledgement = (props) => {
           : null}
       </CardText>
       <ActionBar>
-        <Link to={"/upyog-ui/citizen/engagement/surveys/list"}>
+        <Link to={"/mycity-ui/citizen/engagement/surveys/list"}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

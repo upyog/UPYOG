@@ -176,7 +176,7 @@ const Inbox = ({ parentRoute }) => {
     headerText: "CS_COMMON_SURVEYS",
     links: [{
       text: t("CS_COMMON_NEW_SURVEY"),
-      link: "/upyog-ui/employee/engagement/surveys/inbox/create",
+      link: "/mycity-ui/employee/engagement/surveys/inbox/create",
     }]
   }
 

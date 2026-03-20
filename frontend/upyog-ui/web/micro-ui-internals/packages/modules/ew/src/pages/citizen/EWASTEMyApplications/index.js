@@ -85,7 +85,7 @@ export const EWASTEMyApplications = () => {
         {applicationsList?.length !== 0 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-              <span className="link">{<Link to={`/upyog-ui/citizen/ew/myApplication/${t1}`}>{t("EWASTE_LOAD_MORE_MSG")}</Link>}</span>
+              <span className="link">{<Link to={`/mycity-ui/citizen/ew/myApplication/${t1}`}>{t("EWASTE_LOAD_MORE_MSG")}</Link>}</span>
             </p>
           </div>
         )}
@@ -94,7 +94,7 @@ export const EWASTEMyApplications = () => {
       <p style={{ marginLeft: "16px", marginTop: "16px" }}>
         {t("EWASTE_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}{" "}
         <span className="link" style={{ display: "block" }}>
-          <Link to="/upyog-ui/citizen/ew/raiseRequest/productdetails">{t("EWASTE_COMMON_CLICK_HERE_TO_REGISTER_NEW_APPLICATION")}</Link>
+          <Link to="/mycity-ui/citizen/ew/raiseRequest/productdetails">{t("EWASTE_COMMON_CLICK_HERE_TO_REGISTER_NEW_APPLICATION")}</Link>
         </span>
       </p>
     </React.Fragment>

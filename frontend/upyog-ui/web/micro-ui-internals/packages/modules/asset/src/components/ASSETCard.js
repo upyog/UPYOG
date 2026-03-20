@@ -32,20 +32,20 @@ const ASSETCard = () => {
     {
       count: isLoading ? "0" : total?.totalCount,
       label: t("Inbox"),
-      link: `/upyog-ui/employee/asset/assetservice/inbox`,
+      link: `/mycity-ui/employee/asset/assetservice/inbox`,
     },
     {
       label: t("ASSET_ADD"),
-      link: `/upyog-ui/employee/asset/assetservice/new-assets`,
+      link: `/mycity-ui/employee/asset/assetservice/new-assets`,
       role: "ASSET_INITIATOR"
     },
     {
       label: t("MY_ASSET_APPLICATION"),
-      link: `/upyog-ui/employee/asset/assetservice/my-asset`,
+      link: `/mycity-ui/employee/asset/assetservice/my-asset`,
     }
     // {
     //   label: t("AST_REPORT"),
-    //   link: `/upyog-ui/employee/asset/assetservice/report`,
+    //   link: `/mycity-ui/employee/asset/assetservice/report`,
     // }
    
   ]
@@ -57,7 +57,7 @@ const ASSETCard = () => {
       {
         count: total?.totalCount,
         label: t("Inbox"),
-        link: `/upyog-ui/employee/asset/assetservice/inbox`
+        link: `/mycity-ui/employee/asset/assetservice/inbox`
       },
       
     ],

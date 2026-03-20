@@ -60,7 +60,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
       setSelectedProperty(val);
     } else {
       revalidate();
-      history.push(`/upyog-ui/employee/payment/collect/PT/${val?.["propertyId"]}`)
+      history.push(`/mycity-ui/employee/payment/collect/PT/${val?.["propertyId"]}`)
     }
 
   }
@@ -81,7 +81,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
   };
 
   const skipNContinue = () => {
-    history.push(`/upyog-ui/employee/payment/collect/PT/${selectedProperty?.['propertyId']}`)
+    history.push(`/mycity-ui/employee/payment/collect/PT/${selectedProperty?.['propertyId']}`)
   }
 
   const updateMobileNumber = () => {
@@ -104,7 +104,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
           return (
             <div>
               <span className="link">
-                <Link to={`/upyog-ui/employee/pt/ptsearch/property-details/${row.original["propertyId"]}`}>{row.original["propertyId"]}</Link>
+                <Link to={`/mycity-ui/employee/pt/ptsearch/property-details/${row.original["propertyId"]}`}>{row.original["propertyId"]}</Link>
               </span>
             </div>
           );

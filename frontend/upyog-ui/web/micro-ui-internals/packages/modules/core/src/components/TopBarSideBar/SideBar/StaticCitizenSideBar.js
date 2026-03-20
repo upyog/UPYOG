@@ -55,19 +55,19 @@ const defaultImage =
 Feature :: Citizen Webview sidebar
 */
 const Profile = ({ info, stateName, t, profilePhotoUrl }) => (
-  <div className="profile-section">
+  <div className="profile-section" style={{background: "#192771"}}>
     <div className="imageloader imageloader-loaded">
       <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} />
     </div>
     <div id="profile-name" className="label-container name-Profile">
-      <div className="label-text"> {info?.name} </div>
+      <div className="label-text" style={{color: "#FFFFFF"}}> {info?.name} </div>
     </div>
     <div id="profile-location" className="label-container loc-Profile">
-      <div className="label-text"> {info?.mobileNumber} </div>
+      <div className="label-text" style={{color: "#FFFFFF"}}> {info?.mobileNumber} </div>
     </div>
     {info?.emailId && (
       <div id="profile-emailid" className="label-container loc-Profile">
-        <div className="label-text"> {info.emailId} </div>
+        <div className="label-text" style={{color: "#FFFFFF"}}> {info.emailId} </div>
       </div>
     )}
     <div className="profile-divider"></div>
@@ -189,7 +189,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     }
     if (item.type === "link") {
       return (
-        <Link to={item?.link.replace("/digit-ui/","/upyog-ui/")}>
+        <Link to={item?.link.replace("/digit-ui/","/mycity-ui/")}>
           <Item />
         </Link>
       );
@@ -250,6 +250,36 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
 
   return (
     <React.Fragment>
+      <style>
+{`
+.drawer-desktop .sidebar-list.active .icon {
+  fill: #FFCDD2;
+}
+.drawer-desktop .sidebar-list.active .menu-label {
+  color: #FFCDD2;
+}
+.drawer-desktop .sidebar-list.active {
+  border-left: 5px solid #FF9935;
+  padding-left: 11px;
+}
+.drawer-desktop .menu-item {
+  color: #FFFFFF;
+}
+.drawer-desktop .menu-item .icon {
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
+
+.telephone-link {
+  color: #FFFFFF !important;
+  text-decoration: none;
+}
+
+.profile-section .profile-divider {
+  border-top: 2px solid #FFFFFF;
+}
+`}
+</style>
       <div>
         <div
           style={{
@@ -269,7 +299,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
           }}
         >
           {profileItem}
-          <div className="drawer-desktop" style={{"backgroundColor":"white"}}>
+          <div className="drawer-desktop" style={{"backgroundColor":"#192771"}}>
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
                 <MenuItem item={item} />

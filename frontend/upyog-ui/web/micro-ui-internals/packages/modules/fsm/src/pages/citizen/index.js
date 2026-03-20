@@ -30,13 +30,13 @@ const CitizenApp = ({ path }) => {
           <PrivateRoute
             path={`${path}/inbox`}
             component={() =>
-              Digit.UserService.hasAccess(["FSM_DSO"]) ? <Inbox parentRoute={path} isInbox={true} /> : <Redirect to="/upyog-ui/citizen" />
+              Digit.UserService.hasAccess(["FSM_DSO"]) ? <Inbox parentRoute={path} isInbox={true} /> : <Redirect to="/mycity-ui/citizen" />
             }
           />
           <PrivateRoute
             path={`${path}/search`}
             component={() =>
-              Digit.UserService.hasAccess(["FSM_DSO"]) ? <Inbox parentRoute={path} isSearch={true} /> : <Redirect to="/upyog-ui/citizen" />
+              Digit.UserService.hasAccess(["FSM_DSO"]) ? <Inbox parentRoute={path} isSearch={true} /> : <Redirect to="/mycity-ui/citizen" />
             }
           />
           <PrivateRoute path={`${path}/new-application`} component={() => <NewApplicationCitizen parentRoute={path} />} />

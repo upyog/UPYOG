@@ -110,7 +110,7 @@
                 return (
                   <div>
                     <span className="link">
-                      <Link to={`/upyog-ui/employee/chb/applicationsearch/application-details/${row.original["bookingNo"]}`}>
+                      <Link to={`/mycity-ui/employee/chb/applicationsearch/application-details/${row.original["bookingNo"]}`}>
                         {row.original["bookingNo"]}
                       </Link>
                     </span>
@@ -217,7 +217,7 @@
                     setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
                   } else {
                     history.push({
-                      pathname: `/upyog-ui/employee/payment/collect/${"chb-services"}/${application?.bookingNo}`,
+                      pathname: `/mycity-ui/employee/payment/collect/${"chb-services"}/${application?.bookingNo}`,
                       state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data.timerValue ,SlotSearchData:SlotSearchData },
                     });
                   }

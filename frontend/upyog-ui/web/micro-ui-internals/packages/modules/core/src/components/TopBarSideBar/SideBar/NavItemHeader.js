@@ -112,7 +112,7 @@ const NavItemHeader = props => {
             return (
               <NavLink
                 key={key}
-                to={item?.to?.includes("upyog-ui") ? item?.to : "/employee/" + item?.to}
+                to={item?.to?.includes("mycity-ui") ? item?.to : "/employee/" + item?.to}
                 className="custom-link"
                 activeClassName="actions"
                 style={{marginLeft:"40px", marginTop:"10px"}}

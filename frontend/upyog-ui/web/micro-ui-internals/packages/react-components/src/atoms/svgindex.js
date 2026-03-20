@@ -304,7 +304,8 @@ const RoundedCheck = ({ className }) => (
 const Calender = ({ className, onClick }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" className={className} onClick={onClick}>
     <path d="M0 0h24v24H0z" fill="none" />
-    <path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z" />
+    <path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"
+    fill="#FE7A51" />
   </svg>
 );
 
@@ -607,7 +608,7 @@ const RupeeIcon = ({ className }) => (
 );
 
 const ComplaintIcon = ({ className, styles }) => (
-  <svg style={{ ...styles }} className={className} viewBox="0 0 48 48" fill="#a82227" xmlns="http://www.w3.org/2000/svg">
+  <svg style={{ ...styles }} className={className} viewBox="0 0 48 48" fill="#192771" xmlns="http://www.w3.org/2000/svg">
     <path d="M42.6667 0.666748H5.33335C2.76669 0.666748 0.69002 2.76675 0.69002 5.33342L0.666687 47.3334L10 38.0001H42.6667C45.2334 38.0001 47.3334 35.9001 47.3334 33.3334V5.33342C47.3334 2.76675 45.2334 0.666748 42.6667 0.666748ZM26.3334 21.6667H21.6667V7.66675H26.3334V21.6667ZM26.3334 31.0001H21.6667V26.3334H26.3334V31.0001Z" />
   </svg>
 );
@@ -797,7 +798,7 @@ const NotificationBell = () => (
   <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M8 20C9.1 20 10 19.1 10 18H6C6 19.1 6.89 20 8 20ZM14 14V9C14 5.93 12.36 3.36 9.5 2.68V2C9.5 1.17 8.83 0.5 8 0.5C7.17 0.5 6.5 1.17 6.5 2V2.68C3.63 3.36 2 5.92 2 9V14L0 16V17H16V16L14 14Z"
-      fill="white"
+      fill="#192771"
     />
   </svg>
 );

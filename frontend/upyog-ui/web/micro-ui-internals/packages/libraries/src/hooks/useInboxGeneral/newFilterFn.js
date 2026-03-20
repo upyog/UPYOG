@@ -330,7 +330,7 @@ export const filterFunctions = {
     }
     searchFilters["isInboxSearch"] = true;
     searchFilters["creationReason"] = [""];
-    workflowFilters["moduleName"] = "request-service.water_tanker"; 
+    workflowFilters["moduleName"] = "request-service.water_tanker";    
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   MT: (filtersArg) => {
@@ -376,6 +376,7 @@ export const filterFunctions = {
     searchFilters["isInboxSearch"] = true;
     searchFilters["creationReason"] = [""];
     workflowFilters["moduleName"] = "request-service.mobile_toilet";
+    
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   TP: (filtersArg) => {

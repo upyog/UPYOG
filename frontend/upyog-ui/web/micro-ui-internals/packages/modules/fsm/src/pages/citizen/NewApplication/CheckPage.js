@@ -75,88 +75,88 @@ const CheckPage = ({ onSubmit, value }) => {
             <Row
               label={t("ES_FSM_ACTION_NUMBER_OF_TRIPS")}
               text={t(selectTripNo?.tripNo?.i18nKey)}
-              actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/select-trip-number" />}
+              actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/select-trip-number" />}
             />
           )}
           {selectTripNo && selectTripNo?.vehicleCapacity && (
             <Row
               label={t("ES_VEHICLE CAPACITY")}
               text={t(selectTripNo?.vehicleCapacity?.capacity)}
-              actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/select-trip-number" />}
+              actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/select-trip-number" />}
             />
           )}
           {selectGender && (
             <Row
               label={t("ES_FSM_ACTION_GENDER_TYPE")}
               text={t(selectGender?.i18nKey)}
-              actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/select-gender" />}
+              actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/select-gender" />}
             />
           )}
           <Row
             label={t("CS_CHECK_PROPERTY_ID")}
             text={value?.cptId?.id ? value?.cptId?.id : "NA"}
-            actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/know-your-property" />}
+            actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/know-your-property" />}
           />
           <Row
             label={t("CS_CHECK_PROPERTY_TYPE")}
             text={t(propertyType?.i18nKey)}
-            actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/property-type" />}
+            actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/property-type" />}
           />
           <Row
             label={t("CS_CHECK_PROPERTY_SUB_TYPE")}
             text={t(subtype?.i18nKey)}
-            actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/property-subtype" />}
+            actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/property-subtype" />}
           />
           <Row
             label={t("CS_CHECK_ADDRESS")}
             text={getAddress(address,t)}
-            actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/pincode" />}
+            actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/pincode" />}
           />
           {address?.landmark?.trim() && (
             <Row
               label={t("CS_CHECK_LANDMARK")}
               text={address?.landmark?.trim()}
-              actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/landmark" />}
+              actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/landmark" />}
             />
           )}
           {address?.slumArea?.code === true && (
             <Row
               label={t("CS_APPLICATION_DETAILS_SLUM_NAME")}
               text={t(address?.slumData?.i18nKey)}
-              actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/slum-details" />}
+              actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/slum-details" />}
             />
           )}
           {pitType && (
             <Row
               label={t("CS_CHECK_PIT_TYPE")}
               text={t(pitType.i18nKey)}
-              actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/pit-type" />}
+              actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/pit-type" />}
             />
           )}
            
           <Row
             label={t("CS_CHECK_ROAD_WIDTH")}
             text={t(roadWidth?.roadWidth)}
-            actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/road-details" />}
+            actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/road-details" />}
           />
           <Row
             label={t("CS_CHECK_DISTANCE_FROM_ROAD")}
             text={t(roadWidth?.distancefromroad)}
-            actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/road-details" />}
+            actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/road-details" />}
           />
 
           {pitMeasurement && (
             <Row
               label={t("CS_CHECK_SIZE")}
               text={[pitMeasurement]}
-              actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/tank-size" />}
+              actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/tank-size" />}
             />
           )}
           {(selectPaymentPreference?.advanceAmount || selectPaymentPreference?.advanceAmount === 0) && (
             <Row
               label={t("ADV_AMOUNT")}
               text={"₹ " + t(selectPaymentPreference?.advanceAmount)}
-              actionButton={<ActionButton jumpTo="/upyog-ui/citizen/fsm/new-application/select-payment-preference" />}
+              actionButton={<ActionButton jumpTo="/mycity-ui/citizen/fsm/new-application/select-payment-preference" />}
             />
           )}
         </StatusTable>

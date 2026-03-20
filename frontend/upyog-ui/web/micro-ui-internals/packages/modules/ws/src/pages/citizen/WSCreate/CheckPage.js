@@ -14,9 +14,9 @@ import {
     const match = useRouteMatch();
     let isMobile = window.Digit.Utils.browser.isMobile();
     const { ConnectionHolderDetails, plumberPreference, serviceName, waterConectionDetails, sewerageConnectionDetails, documents, cpt } = value;
-    let routeLink = `/upyog-ui/citizen/ws/create-application`;
+    let routeLink = `/mycity-ui/citizen/ws/create-application`;
     if(window.location.href.includes("/edit-application/"))
-    routeLink=`/upyog-ui/citizen/ws/edit-application/${value?.tenantId}`
+    routeLink=`/mycity-ui/citizen/ws/edit-application/${value?.tenantId}`
 
     function routeTo(jumpTo) {
         location.href=jumpTo;
@@ -59,7 +59,7 @@ import {
         </StatusTable>
         <div style={{ textAlign: "left" }}>
           <Link
-            to={`/upyog-ui/citizen/commonpt/view-property?propertyId=${cpt?.details?.propertyId}&tenantId=${cpt?.details?.tenantId}`}
+            to={`/mycity-ui/citizen/commonpt/view-property?propertyId=${cpt?.details?.propertyId}&tenantId=${cpt?.details?.tenantId}`}
           >
             <LinkButton style={{ textAlign: "left" }} label={t("PT_VIEW_PROPERTY")} />
           </Link>

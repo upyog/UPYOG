@@ -105,7 +105,7 @@ const ApplicationDetails = () => {
             {
               action: "VIEW_DETAILS",
               redirectionUrl: {
-                pathname: `/upyog-ui/employee/pt/property-details/${propertyId}`,
+                pathname: `/mycity-ui/employee/pt/property-details/${propertyId}`,
               },
               tenantId: Digit.ULBService.getStateId(),
             },
@@ -124,7 +124,7 @@ const ApplicationDetails = () => {
     workflowDetails?.data?.actionState?.nextActions.push({
       action: "UPDATE",
       redirectionUrl: {
-        pathname: `/upyog-ui/employee/pt/modify-application/${propertyId}`,
+        pathname: `/mycity-ui/employee/pt/modify-application/${propertyId}`,
         state: { workflow: { action: "REOPEN", moduleName: "PT", businessService } },
       },
       tenantId: Digit.ULBService.getStateId(),
@@ -151,7 +151,7 @@ const ApplicationDetails = () => {
         return {
           action: "PAY",
           forcedName: "WF_EMPLOYEE_PT.MUTATION_PAY",
-          redirectionUrl: { pathname: `/upyog-ui/employee/payment/collect/PT.MUTATION/${appDetailsToShow?.applicationData?.acknowldgementNumber}` },
+          redirectionUrl: { pathname: `/mycity-ui/employee/payment/collect/PT.MUTATION/${appDetailsToShow?.applicationData?.acknowldgementNumber}` },
         };
       }
       return act;

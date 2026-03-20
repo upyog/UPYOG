@@ -1,4 +1,5 @@
-import { Dropdown, Hamburger, TopBar as TopBarComponent } from "@upyog/digit-ui-react-components";
+import { Dropdown, Hamburger } from "@upyog/digit-ui-react-components";
+import { TopBar as TopBarComponent } from "../../../../../react-components/src/index"
 import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import ChangeCity from "../ChangeCity";
@@ -76,13 +77,13 @@ const TopBar = ({
   };
 
   function onNotificationIconClick() {
-    history.push("/upyog-ui/citizen/engagement/notifications");
+    history.push("/mycity-ui/citizen/engagement/notifications");
   }
 
   const urlsToDisableNotificationIcon = (pathname) =>
     !!Digit.UserService?.getUser()?.access_token
       ? false
-      : ["/upyog-ui/citizen/select-language", "/upyog-ui/citizen/select-location"].includes(pathname);
+      : ["/mycity-ui/citizen/select-language", "/mycity-ui/citizen/select-location"].includes(pathname);
 
   if (CITIZEN) {
     return (
@@ -106,24 +107,11 @@ const TopBar = ({
   }
   const loggedin = userDetails?.access_token ? true : false;
   return (
-    <div className="topbar">
+    <div className="topbar" style={{paddingTop: "12px", paddingBottom: "12px"}}>
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
-      <img className="city" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" />
+      <img className="city" src="https://upload.wikimedia.org/wikipedia/commons/9/99/Seal_of_Uttarakhand.svg" />
       <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-        {loggedin &&
-          (cityDetails?.city?.ulbGrade ? (
-            <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
-              {t(cityDetails?.i18nKey).toUpperCase()}{" "}
-              {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()}
-            </p>
-          ) : (
-            <img className="state" src={logoUrl} />
-          ))}
-        {!loggedin && (
-          <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
-            {t(`MYCITY_${stateInfo?.code?.toUpperCase()}_LABEL`)} {t(`MYCITY_STATECODE_LABEL`)}
-          </p>
-        )}
+        <strong><h3 style={{ color: "#000000", fontSize: "20px", marginLeft: "10px" }}>NagarSewa Portal<br /><p style={{ fontSize: "14px" }}>Government of Uttarakhand</p></h3></strong>
         {!mobileView && (
           <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={!loggedin ? { width: "80%" } : {}}>
             <div className="left">
@@ -152,7 +140,7 @@ const TopBar = ({
                 />
               </div>
             )}
-            <img className="state" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" />
+            {/* <img className="state" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" /> */}
           </div>
         )}
       </span>

@@ -76,7 +76,7 @@ const CheckPage = ({ onSubmit, value }) => {
   );
 
 
-  let routeLink = !isEditApplication?`/upyog-ui/citizen/obps/ocbpa/${additionalDetails?.applicationType.toLowerCase()}/${additionalDetails?.serviceType.toLowerCase()}`:`/upyog-ui/citizen/obps/editApplication/ocbpa/${value?.tenantId}/${value?.applicationNo}`;
+  let routeLink = !isEditApplication?`/mycity-ui/citizen/obps/ocbpa/${additionalDetails?.applicationType.toLowerCase()}/${additionalDetails?.serviceType.toLowerCase()}`:`/mycity-ui/citizen/obps/editApplication/ocbpa/${value?.tenantId}/${value?.applicationNo}`;
 
   const tableHeader = [
     {

@@ -45,7 +45,7 @@ const AcknowledgementCF = ({ data, onSuccess }) => {
       {location.state?.result?.Service?.[0] && <CardText style={{padding:"0px 10px 0px 10px"}}>{t("CS_CF_FEEDBACK_RESPONSE")}</CardText>}
       {!(location.state?.result?.Service?.[0]) && <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE")}</CardText>}
       <div style={{padding:"0px 10px 20px 10px"}}>
-      <Link to={`/upyog-ui/citizen`}>
+      <Link to={`/mycity-ui/citizen`}>
         <SubmitBar label={t("CS_COMMON_GO_BACK_TO_HOME")} />
       </Link>
       </div>

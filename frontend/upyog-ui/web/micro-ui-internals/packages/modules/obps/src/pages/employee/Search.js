@@ -20,7 +20,7 @@ const Search = ({ path }) => {
   const [searchData, setSearchData] = useState({});
 
   useEffect(()=>{
-    if (location.pathname === "/upyog-ui/citizen/obps/search/application" || location.pathname === "/upyog-ui/employee/obps/search/application") {
+    if (location.pathname === "/mycity-ui/citizen/obps/search/application" || location.pathname === "/mycity-ui/employee/obps/search/application") {
       Digit.SessionStorage.del("OBPS.INBOX")
       Digit.SessionStorage.del("STAKEHOLDER.INBOX")
     }

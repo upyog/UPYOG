@@ -55,7 +55,7 @@ const NoSurveyFoundPage = ({t}) => {
         <h style={{color:"#505A5F", fontWeight:"400", fontFamily:"Roboto", marginLeft:"10%", lineHeight:"3"}}>{t("SURVEY_ENDED_MESSAGE")}</h>
         </div>
         <ActionBar>
-        <Link to={"/upyog-ui/citizen"}>
+        <Link to={"/mycity-ui/citizen"}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
         </ActionBar>

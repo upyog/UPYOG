@@ -53,7 +53,7 @@ const Response = () => {
               {t("WS_PRINT_APPLICATION_LABEL")}
             </div>)}
             <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-                <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
+                <Link to={`/mycity-ui/employee`} style={{ marginRight: "1rem" }}>
                 <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
                 </Link> 
             </ActionBar>

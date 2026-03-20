@@ -108,7 +108,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               <Row
                 label={t("EWASTE_NET_PRICE")}
                 text={<div style={{ marginLeft: "295px" }}>{"₹ " + ewdet?.calculatedAmount}</div>}
-                actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/productdetails`}`} />}
+                actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/productdetails`}`} />}
               />
             </StatusTable>
           </div>
@@ -120,17 +120,17 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             <Row
               label={t("EWASTE_APPLICANT_NAME")}
               text={`${t(checkForNA(ownerKey?.applicantName))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/owner-details`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/owner-details`}`} />}
             />
             <Row
               label={t("EWASTE_MOBILE_NUMBER")}
               text={`${t(checkForNA(ownerKey?.mobileNumber))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/owner-details`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/owner-details`}`} />}
             />
             <Row
               label={t("EWASTE_EMAIL_ID")}
               text={`${t(checkForNA(ownerKey?.emailId))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/owner-details`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/owner-details`}`} />}
             />
           </StatusTable>
           <br />
@@ -142,42 +142,42 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             <Row
               label={t("EWASTE_SEARCH_PINCODE")}
               text={`${t(checkForNA(address?.pincode))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/pincode`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/pincode`}`} />}
             />
             <Row
               label={t("EWASTE_SEARCH_CITY")}
               text={`${t(checkForNA(address?.city?.name))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/address`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/address`}`} />}
             />
             <Row
               label={t("EWASTE_SEARCH_STREET_NAME")}
               text={`${t(checkForNA(address?.street))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/street`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/street`}`} />}
             />
             <Row
               label={t("EWASTE_SEARCH_HOUSE_NO")}
               text={`${t(checkForNA(address?.doorNo))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/street`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/street`}`} />}
             />
             <Row
               label={t("EWASTE_SEARCH_HOUSE_NAME")}
               text={`${t(checkForNA(address?.buildingName))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/street`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/street`}`} />}
             />
             <Row
               label={t("EWASTE_SEARCH_ADDRESS_LINE1")}
               text={`${t(checkForNA(address?.addressLine1))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/street`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/street`}`} />}
             />
             <Row
               label={t("EWASTE_SEARCH_ADDRESS_LINE2")}
               text={`${t(checkForNA(address?.addressLine2))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/street`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/street`}`} />}
             />
             <Row
               label={t("EWASTE_SEARCH_LANDMARK")}
               text={`${t(checkForNA(address?.landmark))}`}
-              actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/street`}`} />}
+              actionButton={<ActionButton jumpTo={`${`/mycity-ui/citizen/ew/raiseRequest/street`}`} />}
             />
           </StatusTable>
           <br />

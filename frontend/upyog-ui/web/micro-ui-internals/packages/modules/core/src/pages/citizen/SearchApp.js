@@ -103,7 +103,7 @@ const Search = ({ path }) => {
         {isMobile && data?.ElasticSearchData?.filter((e)=> !e.total)?.length && data?.ElasticSearchData?.filter((e)=> !e.total)?.length !== 0 && (
           <div>
             <p style={{ marginLeft: "16px",marginBottom:"40px"}}>
-              <span className="link">{<Link to={`/upyog-ui/citizen/Audit/${previousoffset}`}>{t("PT_LOAD_MORE_MSG")}</Link>}</span>
+              <span className="link">{<Link to={`/mycity-ui/citizen/Audit/${previousoffset}`}>{t("PT_LOAD_MORE_MSG")}</Link>}</span>
             </p>
           </div>
         )}

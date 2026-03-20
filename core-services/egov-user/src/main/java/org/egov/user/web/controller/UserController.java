@@ -24,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -40,6 +41,9 @@ public class UserController {
 
     private UserService userService;
     private TokenService tokenService;
+    
+    @Autowired
+    private RestClient restClient;
 
     @Value("${mobile.number.validation.workaround.enabled}")
     private String mobileValidationWorkaroundEnabled;
@@ -246,11 +250,35 @@ public class UserController {
                 .tokenReq(tokenReq)
                 .build();
 
-        HttpEntity<TokenRequest> entity = new HttpEntity<>(tokenRequest, headers);
+//        HttpEntity<TokenRequest> entity = new HttpEntity<>(tokenRequest, headers);
 
         ResponseEntity<String> validationApiResponse;
         try {
-        	validationApiResponse = restTemplate.exchange(requesterServiceHost + requesterServiceEndpoint , HttpMethod.POST, entity, String.class);
+//        	validationApiResponse = restClient.post()
+//                    .uri(requesterServiceHost + requesterServiceEndpoint)
+//                    .headers(httpHeaders -> httpHeaders.addAll(headers))
+//                    .body(tokenRequest)
+//                    .retrieve()
+//                    .toEntity(String.class);
+        	
+        	validationApiResponse = restClient.post()
+                    .uri(requesterServiceHost + requesterServiceEndpoint)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .headers(h -> {
+                        headers.forEach((key, value) -> {
+                            if (!key.equalsIgnoreCase("content-length") &&
+                                !key.equalsIgnoreCase("transfer-encoding") &&
+                                !key.equalsIgnoreCase("host") &&
+                                !key.equalsIgnoreCase("connection")) {
+
+                                h.put(key, value);
+                            }
+                        });
+                    })
+                    .body(tokenRequest)
+                    .retrieve()
+                    .toEntity(String.class);
+//        	validationApiResponse = restTemplate.exchange(requesterServiceHost + requesterServiceEndpoint , HttpMethod.POST, entity, String.class);
             //validationApiResponse = restTemplate.exchange(url, HttpMethod.POST, entity, Strings.class);
         } catch (HttpClientErrorException e) {
             throw new RuntimeException("Validation failed: " + e.getResponseBodyAsString(), e);

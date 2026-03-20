@@ -92,7 +92,7 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
                 setShowToast({ key: false, label: "PT_FEEDBACK_SUBMITTED_SUCCESSFULLY" });
             }
             else
-            history.push({pathname:"/upyog-ui/citizen/feedback-acknowledgement",
+            history.push({pathname:"/mycity-ui/citizen/feedback-acknowledgement",
                 state: {rating,comment,result}})
 
         }
@@ -157,7 +157,7 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
           </div>}
           <SubmitBar label={t(`${"PT"}_SUBMIT`)} onSubmit={onSubmit} disabled={getCommentCheck()} />
           {!popup && <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : {marginTop:"8px"}}>
-              <Link to={`/upyog-ui/citizen`}>{t("CS_GO_BACK_HOME")}</Link>
+              <Link to={`/mycity-ui/citizen`}>{t("CS_GO_BACK_HOME")}</Link>
           </div>}
         </Card>
         </form>

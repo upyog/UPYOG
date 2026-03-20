@@ -123,27 +123,27 @@ import {
           <Row
               label={t("ADS_APPLICANT_NAME")}
               text={`${t(checkForNA(applicant?.applicantName))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/applicant-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/applicant-details`} />}
   
           />
   
           <Row
               label={t("ADS_MOBILE_NUMBER")}
               text={`${t(checkForNA(applicant?.mobileNumber))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/applicant-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/applicant-details`} />}
   
           />
           <Row
               label={t("ADS_ALT_MOBILE_NUMBER")}
               text={`${t(checkForNA(applicant?.alternateNumber))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/applicant-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/applicant-details`} />}
   
           />
   
           <Row
               label={t("ADS_EMAIL_ID")}
               text={`${t(checkForNA(applicant?.emailId))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/applicant-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/applicant-details`} />}
   
           />
           </StatusTable>
@@ -153,52 +153,52 @@ import {
           <Row
               label={t("ADS_HOUSE_NO")}
               text={`${t(checkForNA(address?.houseNo))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/address-details`} />}
   
           />
           <Row
               label={t("ADS_HOUSE_NAME")}
               text={`${t(checkForNA(address?.houseName))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/address-details`} />}
   
           />
           <Row
               label={t("ADS_STREET_NAME")}
               text={`${t(checkForNA(address?.streetName))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/address-details`} />}
   
           />
           <Row
               label={t("ADS_ADDRESS_LINE1")}
               text={`${t(checkForNA(address?.addressline1))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/address-details`} />}
           />
           <Row
               label={t("ADS_ADDRESS_LINE2")}
               text={`${t(checkForNA(address?.addressline2))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/address-details`} />}
           />
            <Row
               label={t("ADS_LANDMARK")}
               text={`${t(checkForNA(address?.landmark))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/address-details`} />}
           />
            <Row
               label={t("ADS_CITY")}
               text={`${t(checkForNA(address?.city?.city?.name))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/address-details`} />}
   
           />
            <Row
               label={t("ADS_LOCALITY")}
               text={`${t(checkForNA(address?.locality?.i18nKey))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/address-details`} />}
   
           />
           <Row
               label={t("ADS_ADDRESS_PINCODE")}
               text={`${t(checkForNA(address?.pincode))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/ads/${typeOfApplication}/address-details`} />}
   
           />
           </StatusTable>

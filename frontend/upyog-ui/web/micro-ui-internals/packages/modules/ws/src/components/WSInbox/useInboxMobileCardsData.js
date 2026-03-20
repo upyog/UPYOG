@@ -19,7 +19,7 @@ const useInboxMobileCardsData = ({ parentRoute, table }) => {
     }
     return (
       <div>
-        <Link to={`/upyog-ui/employee/ws/${application}-details?applicationNumber=${value}&tenantId=${tenantId}&service=${service}`}>
+        <Link to={`/mycity-ui/employee/ws/${application}-details?applicationNumber=${value}&tenantId=${tenantId}&service=${service}`}>
           {" "}
           <span className="link">{value}</span>
         </Link>

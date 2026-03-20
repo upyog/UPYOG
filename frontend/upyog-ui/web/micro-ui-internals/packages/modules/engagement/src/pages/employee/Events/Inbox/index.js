@@ -41,7 +41,7 @@ const Inbox = ({ tenants, parentRoute }) => {
   const links = [
     {
       text: t("ES_TITLE_NEW_EVENTS"),
-      link: "/upyog-ui/employee/engagement/event/inbox/new-event",
+      link: "/mycity-ui/employee/engagement/event/inbox/new-event",
     }
   ]
 

@@ -89,7 +89,7 @@ const MaintenanceAssetApplication = () => {
       }
     };
     
-    history.replace("/upyog-ui/employee/asset/assetservice/maintenance", { AssetMaintenance: formData,  applicationNo});
+    history.replace("/mycity-ui/employee/asset/assetservice/maintenance", { AssetMaintenance: formData,  applicationNo});
 
   };
 

@@ -288,7 +288,7 @@ export const OBPSService = {
     sessionStorage.setItem("BPA_ARCHITECT_NAME", JSON.stringify(response?.BPA?.[0]?.additionalDetails?.typeOfArchitect ? response?.BPA?.[0]?.additionalDetails?.typeOfArchitect : "ARCHITECT"));
     const [BPA] = response?.BPA;
     const edcrResponse = await OBPSService.scrutinyDetails(BPA?.tenantId, { edcrNumber: BPA?.edcrNumber });
-    const preApprovedResponse = await PreApprovedPlanService.search({drawingNo:BPA?.edcrNumber,tenantId:BPA?.tenantId})
+    const preApprovedResponse = await PreApprovedPlanService.search({drawingNo:BPA?.edcrNumber})
     const [edcr] = edcrResponse?.edcrDetail||preApprovedResponse?.preapprovedPlan
     const mdmsRes = await MdmsService.getMultipleTypes(tenantId, "BPA", ["RiskTypeComputation", "CheckList"]);
     const riskType = Digit.Utils.obps.calculateRiskType(mdmsRes?.BPA?.RiskTypeComputation, edcr?.planDetail?.plot?.area, edcr?.planDetail?.blocks)||BPA?.riskType;
@@ -494,7 +494,7 @@ export const OBPSService = {
 
     if(BPA?.businessService.includes("BPA_OC"))
     {
-      applicationDetailsInfo["values"] = [...applicationDetailsInfo?.values,{ title: "BPA_PERMIT_APP_NUMBER", to:`/upyog-ui/${envCitizenName}/obps/bpa/${bpaResponse?.BPA?.[0]?.applicationNo}`, value:bpaResponse?.BPA?.[0]?.approvalNo, isLink:true },];
+      applicationDetailsInfo["values"] = [...applicationDetailsInfo?.values,{ title: "BPA_PERMIT_APP_NUMBER", to:`/mycity-ui/${envCitizenName}/obps/bpa/${bpaResponse?.BPA?.[0]?.applicationNo}`, value:bpaResponse?.BPA?.[0]?.approvalNo, isLink:true },];
       applicationDetailsInfo["values"] = [...applicationDetailsInfo?.values,{ title: "BPA_PERMIT_VALIDITY", value: bpaResponse?.BPA?.[0]?.additionalDetails?.validityDate ? `${ConvertEpochToValidityDate(bpaResponse?.BPA?.[0]?.additionalDetails?.validityDate)} - ${format(new Date(bpaResponse?.BPA?.[0]?.additionalDetails?.validityDate), 'dd/MM/yyyy')}` : "NA" },];
     }
 

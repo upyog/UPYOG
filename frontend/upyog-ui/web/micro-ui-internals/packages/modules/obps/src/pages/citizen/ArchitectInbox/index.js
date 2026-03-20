@@ -81,7 +81,7 @@ const Inbox = ({ tenants, parentRoute }) => {
   const links = [
     {
       text: t("NEW_PUBLIC_MESSAGE_BUTTON_LABEL"),
-      link: "/upyog-ui/employee/engagement/messages/create",
+      link: "/mycity-ui/employee/engagement/messages/create",
     }
   ]
 

@@ -130,7 +130,7 @@ const FstpInbox = () => {
           vehicleLog={vehicleLog}
           isLoading={isLoading}
           userRole={"FSM_EMP_FSTPO"}
-          linkPrefix={"/upyog-ui/employee/fsm/fstp-operator-details/"}
+          linkPrefix={"/mycity-ui/employee/fsm/fstp-operator-details/"}
           onSearch={onSearch}
           searchFields={searchFields}
           onSort={handleSort}

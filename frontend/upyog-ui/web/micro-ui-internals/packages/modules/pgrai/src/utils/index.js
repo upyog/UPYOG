@@ -78,7 +78,7 @@ export const fetchGrievanceCategories = async (prompt, t) => {
   }
 };
 
-  export const APPLICATION_PATH = "/upyog-ui";
+  export const APPLICATION_PATH = "/mycity-ui";
 
 export const DataConvert = (data,user) => {
    

@@ -9,29 +9,29 @@ const NOCBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: "/upyog-ui/employee",
+      path: "/mycity-ui/employee",
       content: t("ES_COMMON_HOME"),
       show: true,
     },
     {
-      path: "/upyog-ui/employee/noc/inbox",
+      path: "/mycity-ui/employee/noc/inbox",
       content: t("ES_COMMON_INBOX"),
       show: location.pathname.includes("noc/inbox") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/noc/inbox/application-overview/:id",
+      path: "/mycity-ui/employee/noc/inbox/application-overview/:id",
       content: t("NOC_APP_OVER_VIEW_HEADER"),
       show: location.pathname.includes("noc/inbox/application-overview") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/noc/search",
+      path: "/mycity-ui/employee/noc/search",
       content: t("ES_COMMON_APPLICATION_SEARCH"),
-      show: location.pathname.includes("/upyog-ui/employee/noc/search") ? true : false,
+      show: location.pathname.includes("/mycity-ui/employee/noc/search") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/noc/search/application-overview/:id",
+      path: "/mycity-ui/employee/noc/search/application-overview/:id",
       content: t("NOC_APP_OVER_VIEW_HEADER"),
-      show: location.pathname.includes("/upyog-ui/employee/noc/search/application-overview") ? true : false,
+      show: location.pathname.includes("/mycity-ui/employee/noc/search/application-overview") ? true : false,
     },
   ];
   return <BreadCrumb crumbs={crumbs} />;

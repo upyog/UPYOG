@@ -115,7 +115,7 @@ const ApplicationDetails = () => {
         return {
           action: "PAY",
           forcedName: "WF_PAY_APPLICATION",
-          redirectionUrl: { pathname: `/upyog-ui/employee/payment/collect/pet-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
+          redirectionUrl: { pathname: `/mycity-ui/employee/payment/collect/pet-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
         };
       }
       return act;
@@ -213,7 +213,7 @@ const ApplicationDetails = () => {
       />
 
       {/* link added for the renewal application */}
-      {(appDetailsToShow?.applicationData?.applicationData?.status == "Expired") && <Link to={`/upyog-ui/employee/ptr/petservice/revised-application`}  >
+      {(appDetailsToShow?.applicationData?.applicationData?.status == "Expired") && <Link to={`/mycity-ui/employee/ptr/petservice/revised-application`}  >
         <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} />
       </Link>}
 

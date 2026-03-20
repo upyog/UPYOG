@@ -195,7 +195,7 @@ const Response = ({ data, onSuccess }) => {
           className="w-full"
         />
       )}
-      <Link to={`/upyog-ui/citizen`}>
+      <Link to={`/mycity-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
     </Card>

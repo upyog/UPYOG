@@ -23,7 +23,7 @@ const ChallanSearchResults = ({ template, header, actionButtonLabel }) => {
 
 
   const onSubmit = (data) => {
- history.push(`/upyog-ui/citizen/payment/my-bills/${data?.businesService}/${data?.ChannelNo}?workflow=mcollect`);
+ history.push(`/mycity-ui/citizen/payment/my-bills/${data?.businesService}/${data?.ChannelNo}?workflow=mcollect`);
   };
 
   const payment = {};

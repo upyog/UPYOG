@@ -157,12 +157,12 @@ export const getBPAFormData = async (data, mdmsData, history, t) => {
   if (data?.businessService.includes("OC")) {
     sessionStorage.setItem("BPAintermediateValue", JSON.stringify({ ...data }));
     history.push(
-      `/upyog-ui/citizen/obps/ocbpa/${data?.additionalDetails?.applicationType.toLowerCase()}/${data?.additionalDetails?.serviceType.toLowerCase()}`
+      `/mycity-ui/citizen/obps/ocbpa/${data?.additionalDetails?.applicationType.toLowerCase()}/${data?.additionalDetails?.serviceType.toLowerCase()}`
     );
   } else {
     sessionStorage.setItem("BPAintermediateValue", JSON.stringify({ ...data }));
     history.push(
-      `/upyog-ui/citizen/obps/bpa/${data?.additionalDetails?.applicationType.toLowerCase()}/${data?.additionalDetails?.serviceType.toLowerCase()}`
+      `/mycity-ui/citizen/obps/bpa/${data?.additionalDetails?.applicationType.toLowerCase()}/${data?.additionalDetails?.serviceType.toLowerCase()}`
     );
   }
 };

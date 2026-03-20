@@ -190,7 +190,7 @@ const downloadQRReport = async () => {
   for (let i = 0; i < data.length; i += batchSize) {
     const batch = data.slice(i, i + batchSize);
     const qrPromises = batch.map(async (row, index) => {
-      const url = `https://niuatt.niua.in/upyog-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+      const url = `https://niuatt.niua.in/mycity-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
       const assetDetails = `
       Application No: ${row.applicationNo}
       Asset Classification: ${row.assetClassification}

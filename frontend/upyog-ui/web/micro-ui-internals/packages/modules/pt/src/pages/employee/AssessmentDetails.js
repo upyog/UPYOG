@@ -126,7 +126,7 @@ const AssessmentDetails = () => {
             // queryClient.setQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear], true);
             if(userType?.value?.info?.type == "CITIZEN")
             {
-              history.push(`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`);
+              history.push(`/mycity-ui/citizen/payment/my-bills/PT/${propertyId}`);
             }
             else{
               proceeedToPay()
@@ -139,7 +139,7 @@ const AssessmentDetails = () => {
   };
 
   const proceeedToPay = () => {
-    history.push(`/upyog-ui/employee/payment/collect/PT/${propertyId}`);
+    history.push(`/mycity-ui/employee/payment/collect/PT/${propertyId}`);
   };
 
   if (ptCalculationEstimateLoading || assessmentLoading||!applicationDetails?.applicationDetails) {

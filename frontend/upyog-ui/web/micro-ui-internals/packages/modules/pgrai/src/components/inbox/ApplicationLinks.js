@@ -7,7 +7,7 @@ const ApplicationLinks = ({ isMobile, data }) => {
   const { t } = useTranslation();
 
   const allLinks = [
-    { text: "ES_PGR_NEW_COMPLAINT", link: "/upyog-ui/employee/pgrai/complaint/create", accessTo: ["CSR"] },
+    { text: "ES_PGR_NEW_COMPLAINT", link: "/mycity-ui/employee/pgrai/complaint/create", accessTo: ["CSR"] },
   ];
 
   const [links, setLinks] = useState([]);

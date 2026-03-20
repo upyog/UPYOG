@@ -288,7 +288,7 @@ const FSMRegistry = () => {
     console.log("ddddddd",window.contextPath)
     setTab(tab);
     if (selectedTabs !== tab) {
-      history.push(`/upyog-ui/employee/fsm/registry?selectedTabs=${tab}`);
+      history.push(`/mycity-ui/employee/fsm/registry?selectedTabs=${tab}`);
     }
   };
 

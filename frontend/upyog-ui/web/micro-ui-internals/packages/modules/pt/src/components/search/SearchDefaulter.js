@@ -1,19 +1,13 @@
-import { DetailsCard, Loader, Table, Modal, SearchField, SubmitBar, SearchForm, Card, CardText, } from "@upyog/digit-ui-react-components";
+import { DetailsCard, Loader, Table, Modal,SearchField,SubmitBar,SearchForm } from "@upyog/digit-ui-react-components";
 import React, { memo, useEffect, useMemo, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import PropertyInvalidMobileNumber from "../../pages/citizen/MyProperties/PropertyInvalidMobileNumber";
 import { useQuery, useQueryClient } from "react-query";
 const GetCell = (value) => <span className="cell-text">{value}</span>;
 
-const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchConfig }) => {
+const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConfig }) => {
   const history = useHistory();
-  const [jobStatus, setJobStatus] = useState({
-    running: false,
-    done: 0,
-    total: 0,
-    message: ""
-  });
-
+  
   const [searchQuery, setSearchQuery] = useState({
     /* ...defaultValues,   to enable pagination */
     ...payload,
@@ -22,13 +16,13 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
   const [showUpdateNo, setShowUpdateNo] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [ownerInvalidMobileNumberIndex, setOwnerInvalidMobileNumberIndex] = useState(0);
-  const [showDownloads, setShowDownloads] = useState(false);
-  const [groupBillrecords, setGroupBillrecords] = useState([]);
-  console.log("payload", payload);
-  let filters = { ...payload, isDefaulterNoticeSearch: true }
-  const args = tenantId ? { tenantId, filters } : { filters };
-  const { isLoading, error, data, isSuccess } = useQuery(["propertySearchList", tenantId, filters], () => Digit.PTService.search(args));
-
+const [showDownloads, setShowDownloads] = useState(false);
+const [groupBillrecords, setGroupBillrecords] = useState([]);
+console.log("payload", payload);
+let filters={ ...payload,isDefaulterNoticeSearch:true }
+const args = tenantId ? { tenantId, filters } : { filters };
+const { isLoading, error, data, isSuccess } = useQuery(["propertySearchList", tenantId,filters ], () => Digit.PTService.search(args));
+  
 
   const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
 
@@ -49,25 +43,25 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
     owners = owners && owners.filter(owner => owner.status == "ACTIVE");
     owners && owners.map((owner, index) => {
       let number = owner.mobileNumber;
-
+      
       if (
-        (
-          (number == updateNumberConfig?.invalidNumber)
-          || !number.match(updateNumberConfig?.invalidPattern)
-          && number == JSON.parse(getUserInfo()).mobileNumber
-        )
-      ) {
+          (
+            (number == updateNumberConfig?.invalidNumber)
+            || !number.match(updateNumberConfig?.invalidPattern) 
+            && number == JSON.parse(getUserInfo()).mobileNumber
+          )
+        ) {
         isAtleastOneMobileNumberInvalid = true;
         setOwnerInvalidMobileNumberIndex(index);
       }
     })
 
-    if (isAtleastOneMobileNumberInvalid) {
+    if(isAtleastOneMobileNumberInvalid) {
       setShowModal(true);
       setSelectedProperty(val);
     } else {
       revalidate();
-      history.push(`/upyog-ui/employee/payment/collect/PT/${val?.["propertyId"]}`)
+      history.push(`/mycity-ui/employee/payment/collect/PT/${val?.["propertyId"]}`)
     }
 
   }
@@ -88,7 +82,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
   };
 
   const skipNContinue = () => {
-    history.push(`/upyog-ui/employee/payment/collect/PT/${selectedProperty?.['propertyId']}`)
+    history.push(`/mycity-ui/employee/payment/collect/PT/${selectedProperty?.['propertyId']}`)
   }
 
   const updateMobileNumber = () => {
@@ -101,13 +95,6 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
       index: ind,
     });
   }
-  const chunkArray = (arr, size) => {
-    const res = [];
-    for (let i = 0; i < arr.length; i += size) {
-      res.push(arr.slice(i, i + size));
-    }
-    return res;
-  };
 
   const columns = useMemo(
     () => [
@@ -118,7 +105,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
           return (
             <div>
               <span className="link">
-                <Link to={`/upyog-ui/employee/pt/ptsearch/property-details/${row.original["propertyId"]}`}>{row.original["propertyId"]}</Link>
+                <Link to={`/mycity-ui/employee/pt/ptsearch/property-details/${row.original["propertyId"]}`}>{row.original["propertyId"]}</Link>
               </span>
             </div>
           );
@@ -136,17 +123,17 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
       },
       {
         Header: t("PT_AMOUNT_DUE"),
-        Cell: ({ row }) => GetCell(row?.original?.dueAmount ? `₹ ${row?.original?.dueAmount}` : t("PT_NA")),
+        Cell: ({ row }) => GetCell(row?.original?.dueAmount?`₹ ${row?.original?.dueAmount}`:t("PT_NA")),
         disableSortBy: true,
       },
       {
         Header: t("PT_AMOUNT_YEAR"),
-        Cell: ({ row }) => GetCell(row?.original?.dueAmountYear ? `${row?.original?.dueAmountYear}` : t("PT_NA")),
+        Cell: ({ row }) => GetCell(row?.original?.dueAmountYear?`${row?.original?.dueAmountYear}`:t("PT_NA")),
         disableSortBy: true,
       },
       {
         Header: t("PT_PROPERTY_TYPE"),
-        Cell: ({ row }) => GetCell(t(row?.original?.propertyType ? `${row?.original?.propertyType}` : ("PT_NA"))),
+        Cell: ({ row }) => GetCell(row?.original?.propertyType?`${row?.original?.propertyType}`:t("PT_NA")),
         disableSortBy: true,
       }
     ],
@@ -154,7 +141,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
   );
   const columns2 = useMemo(
     () => [
-
+   
       {
         Header: t("ES_TOTAL_RECORD"),
         disableSortBy: true,
@@ -170,7 +157,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
         disableSortBy: true,
         Cell: ({ row }) => GetCell(t(row.original.status) || ""),
       },
-
+  
       {
         Header: t("ES_SEARCH_ACTION"),
         disableSortBy: true,
@@ -178,8 +165,8 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
           return (
             <div>
               {Digit.Utils.didEmployeeHasRole("PT_CEMP") ? (
-                <span className="link">
-                  <a style={{ textDecoration: 'none' }} onClick={() => downloadNotice(row.original)}>{t("ES_PT_COLLECT_TAX")}</a>
+                <span className="link"> 
+                  <a  style={{textDecoration:'none'}} onClick={() => downloadNotice(row.original)}>{t("ES_PT_COLLECT_TAX")}</a>
                 </span>
               ) : null}
             </div>
@@ -189,9 +176,9 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
     ],
     []
   );
-  const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
+   const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
     /* Need to enhance this util to return required format*/
-
+  
     let downloadLink = documents[fileStoreId] || "";
     let differentFormats = downloadLink?.split(",") || [];
     let fileURL = "";
@@ -203,87 +190,55 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
       });
     return fileURL;
   };
-  const downloadNotice = async (document) => {
-    console.log("document", document)
-    let fileStoreIds = [document.filestoreid]
+const downloadNotice = async (document) => {
+    console.log("document",document)
+    let fileStoreIds= [document.filestoreid]
     const res = await Digit.UploadServices.Filefetch([document?.filestoreid], tenantId);
-    console.log("ressss", res)
-    let documentLink = pdfDownloadLink(res.data, document?.filestoreid);
-    window.open(documentLink, "_blank");
+    console.log("ressss",res)
+   let documentLink = pdfDownloadLink(res.data, document?.filestoreid);
+   window.open(documentLink, "_blank");
   };
-  const onSubmit = async () => {
-    const records = Object.values(data?.Properties || {});
-    if (!records.length) return;
-
-    const batches = chunkArray(records, 10);
-
-    setJobStatus({
-      running: true,
-      done: 0,
-      total: batches.length,
-      message: "Processing defaulter notices. Please don’t refresh."
-    });
-
-    await new Promise(r => setTimeout(r, 100));   // 👈 allow first repaint
-
-    for (let i = 0; i < batches.length; i++) {
-      try {
-        await Digit.PTService.generateDefaulterNotice(tenantId, batches[i]);
-
-        setJobStatus(prev => ({
-          ...prev,
-          done: i + 1
-        }));
-
-        await new Promise(r => setTimeout(r, 50)); // 👈 allow UI repaint each batch
-
-      } catch (e) {
-        console.error("Batch failed", i, e);
-      }
-    }
-
-    setJobStatus({
-      running: false,
-      done: batches.length,
-      total: batches.length,
-      message: "All notice generation jobs completed successfully."
-    });
-  };
-
-
+  const onSubmit= async ()=>{
+  let key
+  let properties
+    let response = await Digit.PTService.generateDefaulterNotice(tenantId,properties =Object.values(data?.Properties || {}));
+    setShowToast({
+        label: `${t("GRP_JOB_INITIATED_STATUS")} ${response?.jobId}`
+    })  
+}
   let isMobile = window.Digit.Utils.browser.isMobile();
 
   if (isLoading) {
     showToast && setShowToast(null);
     return <Loader />;
   }
-  //   if (error) {
-  //     !showToast && setShowToast({ error: true, label: error?.response?.data?.Errors?.[0]?.code || error });
-  //     return null;
-  //   }
-  const onViewDownload = async () => {
-    let response = await Digit.PTService.getDefaulterNoticeStatus({ offset: 0, limit: 100 });
+//   if (error) {
+//     !showToast && setShowToast({ error: true, label: error?.response?.data?.Errors?.[0]?.code || error });
+//     return null;
+//   }
+const onViewDownload =async () =>{
+    let response = await Digit.PTService.getDefaulterNoticeStatus({offset:0,limit:100});
     setShowDownloads(true)
     setGroupBillrecords(response.groupBillrecords)
-    console.log("response", response)
-  }
+    console.log("response",response)
+}
   const PTEmptyResultInbox = memo(Digit.ComponentRegistryService.getComponent("PTEmptyResultInbox"));
   const getData = (tableData = []) => {
     return tableData?.map((dataObj) => {
       const obj = {};
       columns.forEach((el) => {
-        if (el.Cell) obj[el.Header] = el.Cell({ row: { original: dataObj } });
+        if (el.Cell) obj[el.Header] = el.Cell({row:{original:dataObj}});
       });
       return obj;
     });
   };
   const tableData = Object.values(data?.Properties || {}) || [];
-  if (ptSearchConfig?.ptSearchCount && payload.locality && tableData && tableData.length > ptSearchConfig?.ptSearchCount) {
-    // !showToast &&setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
+  if(ptSearchConfig?.ptSearchCount&&payload.locality&&tableData&&tableData.length>ptSearchConfig?.ptSearchCount){
+   // !showToast &&setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
     return null;
   }
   const tableData2 = Object.values(groupBillrecords || {}) || [];
-
+ 
   return (
     <React.Fragment>
       {data?.Properties?.length === 0 ? (
@@ -292,78 +247,61 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
         <DetailsCard data={getData(tableData)} t={t} />
       ) : (
         <div>
-          {jobStatus.running && (
-            <Card style={{ background: "#fff4e5", margin: "0px 0px 20px 0px !impportant" }}>
-              <CardText>
-                {jobStatus.message}
-                <br />
-                {`Processed ${jobStatus.done} of ${jobStatus.total} batches`}
-              </CardText>
-            </Card>
-          )}
 
-          {!jobStatus.running && jobStatus.done === jobStatus.total && jobStatus.total > 0 && (
-            <Card style={{ background: "#00703c", margin: "0px 0px 20px 0px !impportant" }}>
-              <CardText style={{fontWeight :"700",color:"white"}}>
-                All notice generation jobs completed successfully.
-              </CardText>
-            </Card>
-          )}
-
-
-          <Table
-            t={t}
-            data={tableData}
-            totalRecords={data?.Properties?.length}
-            columns={columns}
-            getCellProps={(cellInfo) => {
-              return {
-                style: {
-                  padding: "20px 18px",
-                  fontSize: "16px",
-                },
-              };
-            }}
-            manualPagination={false}
-            disableSort={true}
+       
+        <Table
+          t={t}
+          data={tableData}
+          totalRecords={data?.Properties?.length}
+          columns={columns}
+          getCellProps={(cellInfo) => {
+            return {
+              style: {
+                padding: "20px 18px",
+                fontSize: "16px",
+              },
+            };
+          }}
+          manualPagination={false}
+          disableSort={true}
+        />
+         {/* <SearchForm onSubmit={onSubmit} className={"pt-property-search"} handleSubmit={onSubmit}> */}
+         <div style={{display:"flex", flexDirection:"row-reverse"}}>   
+         <div style={{width:"inherit",marginLeft:"10px"}}>
+         <SearchField className="pt-search-action-submit" >
+          <SubmitBar
+            label={t("CS_COMMON_GENERATE_NOTICE")}
+            onSubmit={onSubmit}
           />
-          {/* <SearchForm onSubmit={onSubmit} className={"pt-property-search"} handleSubmit={onSubmit}> */}
-          <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-            <div style={{ width: "inherit", marginLeft: "10px" }}>
-              <SearchField className="pt-search-action-submit" >
-                <SubmitBar
-                  label={t("CS_COMMON_GENERATE_NOTICE")}
-                  onSubmit={onSubmit}
-                />
-              </SearchField>
-            </div>
-            <div style={{ width: "inherit", marginLeft: "10px" }}>
-              <SearchField className="pt-search-action-submit">
-                {/* <SubmitBar label={t("ES_COMMON_SEARCH")} submit /> */}
-                <SubmitBar
-                  label={t("CS_COMMON_DOWNLOADS")}
-                  onSubmit={onViewDownload}
-                />
-              </SearchField></div></div>
-
-          {showDownloads && (
-            <Table
-              t={t}
-              data={tableData2}
-              totalRecords={groupBillrecords?.length}
-              columns={columns2}
-              getCellProps={(cellInfo) => {
-                return {
-                  style: {
-                    padding: "20px 18px",
-                    fontSize: "16px",
-                  },
-                };
-              }}
-              manualPagination={false}
-              disableSort={true}
-            />)}
-        </div>
+        </SearchField>
+         </div>
+    <div style={{width:"inherit",marginLeft:"10px"}}>
+        <SearchField className="pt-search-action-submit">
+          {/* <SubmitBar label={t("ES_COMMON_SEARCH")} submit /> */}
+          <SubmitBar
+            label={t("CS_COMMON_DOWNLOADS")}
+            onSubmit={onViewDownload}
+          />
+        </SearchField></div></div>
+      
+        {showDownloads &&(
+        <Table
+          t={t}
+          data={tableData2}
+          totalRecords={groupBillrecords?.length}
+          columns={columns2}
+          getCellProps={(cellInfo) => {
+            return {
+              style: {
+                padding: "20px 18px",
+                fontSize: "16px",
+              },
+            };
+          }}
+          manualPagination={false}
+          disableSort={true}
+        />)}
+         </div>
       )}
 
     </React.Fragment>

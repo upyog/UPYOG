@@ -37,7 +37,7 @@ export const RatingAndFeedBack = {
         {
             module : "PT",
             bussinessService : "PT",
-            screenfrom : "upyog-ui/citizen/payment/success",
+            screenfrom : "mycity-ui/citizen/payment/success",
             cardHeader : "PT_RATE_HELP_TEXT_PAY",
             cardText : "PT_RATE_CARD_TEXT_PAY",
         }

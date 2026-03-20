@@ -76,7 +76,7 @@ const ApplicationDetails = (props) => {
           history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
         }
         else {
-          window.location.assign(`${window.location.origin}/upyog-ui/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
+          window.location.assign(`${window.location.origin}/mycity-ui/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
         }
       } else if (!action?.redirectionUrl) {
         setShowModal(true);
@@ -148,19 +148,19 @@ const ApplicationDetails = (props) => {
             setIsEnableLoader(false);
             if (isOBPS?.bpa) {
              // data.selectedAction = selectedAction;
-              history.replace(`/upyog-ui/employee/obps/response`, { data: data });
+              history.replace(`/mycity-ui/employee/obps/response`, { data: data });
             }
             if (isOBPS?.isStakeholder) {
              // data.selectedAction = selectedAction;
-              history.push(`/upyog-ui/employee/obps/stakeholder-response`, { data: data });
+              history.push(`/mycity-ui/employee/obps/stakeholder-response`, { data: data });
             }
             if (isOBPS?.isNoc) {
-              history.push(`/upyog-ui/employee/noc/response`, { data: data });
+              history.push(`/mycity-ui/employee/noc/response`, { data: data });
             }
             if (data?.Amendments?.length > 0) {
               //RAIN-6981 instead just show a toast here with appropriate message
               //show toast here and return 
-              //history.push("/upyog-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
+              //history.push("/mycity-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
   
               if (variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")) {
                 setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS") })

@@ -10,9 +10,9 @@ const Header = () => {
   if (isLoading) return <Loader/>;
 
   return (
-    <div className="bannerHeader">
-      {/* <img className="bannerLogo" src={stateInfo?.logoUrl} />
-      <p>{t(`TENANT_TENANTS_${stateInfo?.code.toUpperCase()}`)}</p> */}
+    <div className="bannerHeader" style={{paddingBottom: "10px", borderBottom: "1px solid #192771"}}>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Seal_of_Uttarakhand.svg" style={{width: "47px", height: "47px", marginRight: "8px"}} />
+      <h3 style={{ color: "#000000", fontSize: "20px", marginLeft: "10px" }}><strong>NagarSewa Portal</strong><br /><p style={{ fontSize: "14px" }}>Government of Uttarakhand</p></h3>
     </div>
   );
 }

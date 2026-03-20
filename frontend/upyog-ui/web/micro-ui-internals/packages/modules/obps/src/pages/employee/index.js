@@ -12,42 +12,42 @@ const OBPSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
     {
-      path: "/upyog-ui/employee",
+      path: "/mycity-ui/employee",
       content: t("ES_COMMON_HOME"),
       show: true,
     },
     {
-      path: "/upyog-ui/employee/obps/inbox",
+      path: "/mycity-ui/employee/obps/inbox",
       content: t("ES_COMMON_OBPS_INBOX_LABEL"),
       show: location.pathname.includes("obps/inbox") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/obps/stakeholder-inbox",
+      path: "/mycity-ui/employee/obps/stakeholder-inbox",
       content: t("ES_COMMON_STAKEHOLDER_INBOX_LABEL"),
       show: location.pathname.includes("obps/stakeholder-inbox") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/obps/inbox/bpa/:id",
+      path: "/mycity-ui/employee/obps/inbox/bpa/:id",
       content: t("ES_OBPS_SEARCH_BPA"),
       show: location.pathname.includes("obps/inbox/bpa") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/obps/inbox/stakeholder/:id",
+      path: "/mycity-ui/employee/obps/inbox/stakeholder/:id",
       content: t("ES_OBPS_SEARCH_BPA"),
       show: location.pathname.includes("obps/stakeholder-inbox/stakeholder") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/obps/search/application",
+      path: "/mycity-ui/employee/obps/search/application",
       content: t("ES_OBPS_SEARCH"),
       show: location.pathname.includes("/obps/search/application") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/obps/search/application/bpa/:id",
+      path: "/mycity-ui/employee/obps/search/application/bpa/:id",
       content: t("ES_OBPS_SEARCH_BPA"),
       show: location.pathname.includes("/obps/search/application/bpa") ? true : false,
     },
     {
-      path: "/upyog-ui/employee/obps/search/application/stakeholder/:id",
+      path: "/mycity-ui/employee/obps/search/application/stakeholder/:id",
       content: t("ES_OBPS_SEARCH_BPA"),
       show: location.pathname.includes("/obps/search/application/stakeholder/") ? true : false,
     },
@@ -64,7 +64,7 @@ const EmployeeApp = ({ path }) => {
   const ApplicationDetail = Digit.ComponentRegistryService.getComponent("ObpsEmpApplicationDetail");
   const BpaApplicationDetail = Digit.ComponentRegistryService.getComponent("ObpsEmployeeBpaApplicationDetail");
   const isLocation = window.location.href.includes("bpa") || window.location.href.includes("stakeholder-inbox/stakeholder") || window.location.href.includes("application");
-  const isFromNoc = window.location.href.includes("upyog-ui/employee/obps/bpa/");
+  const isFromNoc = window.location.href.includes("mycity-ui/employee/obps/bpa/");
   const isRes = window.location.href.includes("obps/response") || window.location.href.includes("obps/stakeholder-response");
   return (
     <Fragment>

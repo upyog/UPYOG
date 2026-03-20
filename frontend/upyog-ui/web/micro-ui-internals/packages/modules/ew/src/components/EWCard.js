@@ -24,12 +24,12 @@ const EWCard = () => {
   const links = [
     {
       label: t("INBOX"),
-      link: `/upyog-ui/employee/ew/inbox`,
+      link: `/mycity-ui/employee/ew/inbox`,
       role: "EW_CEMP",
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/upyog-ui/employee/ew/my-applications`,
+      link: `/mycity-ui/employee/ew/my-applications`,
     },
   ];
 

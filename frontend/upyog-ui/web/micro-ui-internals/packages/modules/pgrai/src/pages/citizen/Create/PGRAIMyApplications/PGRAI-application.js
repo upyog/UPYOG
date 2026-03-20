@@ -31,7 +31,7 @@ const PGRApplication = ({ application, tenantId, buttonLabel }) => {
         note={application?.service?.applicationStatus}  // Changed from application?.requestStatus
       />
       
-      <Link to={`/upyog-ui/citizen/pgrai/application/${application?.service?.serviceRequestId}/${application?.service?.tenantId}`}>
+      <Link to={`/mycity-ui/citizen/pgrai/application/${application?.service?.serviceRequestId}/${application?.service?.tenantId}`}>
         <SubmitBar label={buttonLabel} />
       </Link>
     </Card>

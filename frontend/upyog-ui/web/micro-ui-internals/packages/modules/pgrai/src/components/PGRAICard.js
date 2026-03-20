@@ -25,7 +25,7 @@ const PGRAICard = () => {
   let propsForCSR =[
     {
       label: t("ES_PGR_NEW_COMPLAINT"),
-      link: `/upyog-ui/employee/pgrai/complaint/create`,
+      link: `/mycity-ui/employee/pgrai/complaint/create`,
       role: "CSR"
     }
   ]
@@ -38,17 +38,17 @@ const PGRAICard = () => {
     kpis: [
         {
             label: t("TOTAL_PGR"),
-            link: `/upyog-ui/employee/pgrai/inbox`
+            link: `/mycity-ui/employee/pgrai/inbox`
         },
         {
             label: t("TOTAL_NEARING_SLA"),
-            link: `/upyog-ui/employee/pgrai/inbox`
+            link: `/mycity-ui/employee/pgrai/inbox`
         }
     ],
     links: [
     {
         label: t("ES_PGR_INBOXX"),
-        link: `/upyog-ui/employee/pgrai/inbox`
+        link: `/mycity-ui/employee/pgrai/inbox`
     },
     ...propsForCSR
     ]

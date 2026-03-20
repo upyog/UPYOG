@@ -161,7 +161,7 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
           onClick={handleDownloadPdf}
         />)} */}
       {/* {mutation2?.data?.Licenses[0]?.status === "PENDINGPAYMENT" && <Link to={{
-        pathname: `/upyog-ui/citizen/payment/collect/${mutation2.data.Licenses[0].businessService}/${mutation2.data.Licenses[0].applicationNumber}`,
+        pathname: `/mycity-ui/citizen/payment/collect/${mutation2.data.Licenses[0].businessService}/${mutation2.data.Licenses[0].applicationNumber}`,
         state: { tenantId: mutation2.data.Licenses[0].tenantId },
       }}>
         <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
@@ -195,7 +195,7 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
       onClick={handleDownloadPdfSewerage}
     />}
       <Link to={{
-        pathname: `/upyog-ui/citizen`,
+        pathname: `/mycity-ui/citizen`,
       }}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>

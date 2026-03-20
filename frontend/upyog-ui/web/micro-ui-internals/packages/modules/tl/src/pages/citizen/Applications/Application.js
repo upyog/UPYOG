@@ -37,13 +37,13 @@ const TLMyApplications = ({ view }) => {
                 ?.map((item) => (
                   <KeyNote keyValue={t(item)} note={t(application[item])} />
                 ))}
-              <Link to={`/upyog-ui/citizen/tl/tradelicence/application/${application?.raw?.applicationNumber}/${application.raw?.tenantId}`}>
+              <Link to={`/mycity-ui/citizen/tl/tradelicence/application/${application?.raw?.applicationNumber}/${application.raw?.tenantId}`}>
                 <SubmitBar label={t(application?.raw?.status != "PENDINGPAYMENT" ? "TL_VIEW_DETAILS" : "TL_VIEW_DETAILS_PAY")} />
               </Link>{" "}
               {application?.raw?.status === "PENDINGPAYMENT" ? (
                   <Link
                   to={{
-                    pathname : `/upyog-ui/citizen/payment/collect/${data?.[0]?.raw?.businessService}/${application?.raw?.applicationNumber}`,
+                    pathname : `/mycity-ui/citizen/payment/collect/${data?.[0]?.raw?.businessService}/${application?.raw?.applicationNumber}`,
                   }}>
                     <div style={{marginTop:"10px"}}>
                     <SubmitBar label ={t("COMMON_MAKE_PAYMENT")}/>

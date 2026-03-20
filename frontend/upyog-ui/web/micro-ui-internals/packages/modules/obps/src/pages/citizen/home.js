@@ -23,7 +23,7 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
   const [totalCount, setTotalCount] = useState("-");
 
   const closeToast = () => {
-    window.location.replace("/upyog-ui/citizen/all-services");
+    window.location.replace("/mycity-ui/citizen/all-services");
     setShowToast(null);
   };
 
@@ -70,7 +70,7 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
   });
 
   useEffect(()=>{
-    if (location.pathname === "/upyog-ui/citizen/obps/home"){
+    if (location.pathname === "/mycity-ui/citizen/obps/home"){
       Digit.SessionStorage.del("OBPS.INBOX")
       Digit.SessionStorage.del("STAKEHOLDER.INBOX")
     }
@@ -144,19 +144,19 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
         {
           count: !(bpaLoading || isEDCRInboxLoading) && totalCount && edcrCount ? totalCount + edcrCount : "-",
           label: t("BPA_PDF_TOTAL"),
-          link: `/upyog-ui/citizen/obps/bpa/inbox`,
+          link: `/mycity-ui/citizen/obps/bpa/inbox`,
         },
       ],
       links: [
         {
           count: !bpaLoading ? totalCount : "-",
           label: t("ES_COMMON_OBPS_INBOX_LABEL"),
-          link: `/upyog-ui/citizen/obps/bpa/inbox`,
+          link: `/mycity-ui/citizen/obps/bpa/inbox`,
         },
         {
           count: !isEDCRInboxLoading ? edcrCount : "-",
           label: t("ES_COMMON_EDCR_INBOX_LABEL"),
-          link: `/upyog-ui/citizen/obps/edcr/inbox`,
+          link: `/mycity-ui/citizen/obps/edcr/inbox`,
         },
       ],
       className: "CitizenHomeCard",

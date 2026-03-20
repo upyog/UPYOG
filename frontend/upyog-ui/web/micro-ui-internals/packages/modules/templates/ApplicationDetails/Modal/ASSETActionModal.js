@@ -77,7 +77,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
   useEffect(() => {
     if(action?.state==="INITIATED"){
-      history.push(`/upyog-ui/employee/asset/assetservice/edit/`+ `${applicationData?.applicationNo}`);
+      history.push(`/mycity-ui/employee/asset/assetservice/edit/`+ `${applicationData?.applicationNo}`);
     }
     else {
       setConfig(

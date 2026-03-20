@@ -44,7 +44,7 @@ const Inbox = () => {
         headerText: "CS_COMMON_TEXT",
         links: [{
             text: "TL_NEW_APPLICATION",
-            link: "/upyog-ui/employee/engagement/messages/create",
+            link: "/mycity-ui/employee/engagement/messages/create",
             businessService: "TL",
             roles: ["TL_CEMP"],
           }]

@@ -82,9 +82,9 @@ import {
       );
 
       const sendbacktocitizenApp = window.location.href.includes("sendbacktocitizen");
-      let routeLink = value?.businessService==="BPA-PAP" ? `/upyog-ui/citizen/obps/preApprovedPlan`:`/upyog-ui/citizen/obps/bpa/${additionalDetails?.applicationType.toLowerCase()}/${additionalDetails?.serviceType.toLowerCase()}`;
-      if (isEditApplication) routeLink = `/upyog-ui/citizen/obps/editApplication/bpa/${value?.tenantId}/${value?.applicationNo}`;
-      if( sendbacktocitizenApp ) routeLink = `/upyog-ui/citizen/obps/sendbacktocitizen/bpa/${value?.tenantId}/${value?.applicationNo}`;
+      let routeLink = value?.businessService==="BPA-PAP" ? `/mycity-ui/citizen/obps/preApprovedPlan`:`/mycity-ui/citizen/obps/bpa/${additionalDetails?.applicationType.toLowerCase()}/${additionalDetails?.serviceType.toLowerCase()}`;
+      if (isEditApplication) routeLink = `/mycity-ui/citizen/obps/editApplication/bpa/${value?.tenantId}/${value?.applicationNo}`;
+      if( sendbacktocitizenApp ) routeLink = `/mycity-ui/citizen/obps/sendbacktocitizen/bpa/${value?.tenantId}/${value?.applicationNo}`;
 
       const tableHeader = [
         {

@@ -91,7 +91,7 @@ const EWASTEWFApplicationTimeline = (props) => {
             <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
               <Link
                 to={{
-                  pathname: `/upyog-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`,
+                  pathname: `/mycity-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`,
                   state: { tenantId: props.application.tenantId, applicationNumber: props?.application?.applicationNumber },
                 }}
               >
@@ -104,7 +104,7 @@ const EWASTEWFApplicationTimeline = (props) => {
       case "SUBMIT_FEEDBACK":
         return (
           <div style={{ marginTop: "24px" }}>
-            <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
+            <Link to={`/mycity-ui/citizen/fsm/rate/${props.id}`}>
               <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
             </Link>
           </div>

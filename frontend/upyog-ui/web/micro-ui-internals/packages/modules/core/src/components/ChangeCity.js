@@ -29,8 +29,8 @@ const ChangeCity = (prop) => {
     Digit.SessionStorage.set("Employee.tenantId", city?.value);
     Digit.UserService.setUser(loggedInData);
     setDropDownData(city);
-    if (window.location.href.includes("/upyog-ui/employee/")) {
-      const redirectPath = location.state?.from || "/upyog-ui/employee";
+    if (window.location.href.includes("/mycity-ui/employee/")) {
+      const redirectPath = location.state?.from || "/mycity-ui/employee";
       history.replace(redirectPath);
     }
     window.location.reload();

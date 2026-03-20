@@ -153,7 +153,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
     else {
       submitData.Property.institution=null;
     }
-    history.replace("/upyog-ui/employee/pt/response", { Property: submitData.Property, key: "UPDATE", action: "SUBMIT" });
+    history.replace("/mycity-ui/employee/pt/response", { Property: submitData.Property, key: "UPDATE", action: "SUBMIT" });
   };
 
   const configs = newConfigMutate;

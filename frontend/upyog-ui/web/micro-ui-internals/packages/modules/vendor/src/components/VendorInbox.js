@@ -234,10 +234,10 @@ const VendorInbox = (props) => {
 
   const onActionSelect = (action, type, data) => {
     if (type === "VEHICLE") {
-      history.push("/upyog-ui/employee/vendor/registry/vehicle-details/" + action);
+      history.push("/mycity-ui/employee/vendor/registry/vehicle-details/" + action);
     } else {
       let driver = data.find((ele) => ele.name === action);
-      history.push("/upyog-ui/employee/vendor/registry/driver-details/" + driver?.id);
+      history.push("/mycity-ui/employee/vendor/registry/driver-details/" + driver?.id);
     }
   };
 
@@ -245,11 +245,11 @@ const VendorInbox = (props) => {
   const onSelectAdd = () => {
     switch (props.selectedTab) {
       case "VENDOR":
-        return history.push("/upyog-ui/employee/vendor/registry/new-vendor");
+        return history.push("/mycity-ui/employee/vendor/registry/new-vendor");
       case "VEHICLE":
-        return history.push("/upyog-ui/employee/vendor/registry/new-vehicle");
+        return history.push("/mycity-ui/employee/vendor/registry/new-vehicle");
       case "DRIVER":
-        return history.push("/upyog-ui/employee/vendor/registry/new-driver");
+        return history.push("/mycity-ui/employee/vendor/registry/new-driver");
       default:
         break;
     }
@@ -270,7 +270,7 @@ const VendorInbox = (props) => {
               return (
                 <div>
                   <span className="link">
-                    <Link to={"/upyog-ui/employee/vendor/registry/vendor-details/" + row.original["id"]}>
+                    <Link to={"/mycity-ui/employee/vendor/registry/vendor-details/" + row.original["id"]}>
                       <div>
                         {row.original.name}
                         <br />
@@ -314,7 +314,7 @@ const VendorInbox = (props) => {
           //     return (
           //       <div>
           //         {/* <span className="link">
-          //           <Link to={`/upyog-ui/employee/vendor/registry/new-vendor${row.original["id"] || ""}`}>
+          //           <Link to={`/mycity-ui/employee/vendor/registry/new-vendor${row.original["id"] || ""}`}>
           //             <div>
           //               {description}
           //               <br />
@@ -361,7 +361,7 @@ const VendorInbox = (props) => {
           //     return (
           //       <div>
           //         {/* <span className="link">
-          //           <Link to={`/upyog-ui/employee/vendor/registry/new-vendor${row.original["id"] || ""}`}>
+          //           <Link to={`/mycity-ui/employee/vendor/registry/new-vendor${row.original["id"] || ""}`}>
           //             <div>
           //               {row}
           //               <br />
@@ -403,7 +403,7 @@ const VendorInbox = (props) => {
           //     return (
           //       <div>
           //         <span className="link">
-          //           <Link to={"/upyog-ui/employee/vendor/registry/vendor-details/" + row.original["id"]}>
+          //           <Link to={"/mycity-ui/employee/vendor/registry/vendor-details/" + row.original["id"]}>
           //             <div>{description}
           //             <br />
           //             </div>
@@ -554,7 +554,7 @@ const VendorInbox = (props) => {
               return (
                 <div>
                   <span className="link">
-                    <Link to={"/upyog-ui/employee/vendor/registry/vehicle-details/" + row.original["registrationNumber"]}>
+                    <Link to={"/mycity-ui/employee/vendor/registry/vehicle-details/" + row.original["registrationNumber"]}>
                       <div>
                         {row.original.registrationNumber}
                         <br />
@@ -665,7 +665,7 @@ const VendorInbox = (props) => {
               return (
                 <div>
                   <span className="link">
-                    <Link to={"/upyog-ui/employee/vendor/registry/driver-details/" + row.original["id"]}>
+                    <Link to={"/mycity-ui/employee/vendor/registry/driver-details/" + row.original["id"]}>
                       <div>
                         {row.original.name}
                         <br />

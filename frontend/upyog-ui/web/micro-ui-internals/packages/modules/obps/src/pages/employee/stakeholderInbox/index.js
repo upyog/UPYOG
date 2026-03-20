@@ -108,7 +108,7 @@ const Inbox = ({ parentRoute }) => {
     headerText: "CS_COMMON_OBPS",
     links: [{
       text: t("BPA_SEARCH_PAGE_TITLE"),
-      link: "/upyog-ui/employee/obps/search/application",
+      link: "/mycity-ui/employee/obps/search/application",
       businessService: "BPA",
       roles: ["BPAREG_EMPLOYEE", "BPAREG_APPROVER", "BPAREG_DOC_VERIFIER", "BPAREG_DOC_VERIFIER"],
     }]
@@ -149,7 +149,7 @@ const Inbox = ({ parentRoute }) => {
     </Header>
     {Digit.Utils.browser.isMobile() &&
       <div style={{ marginLeft: "12px" }}>
-        <Link to={window.location.href.includes("/citizen") ? "/upyog-ui/citizen/obps/search/application" : "/upyog-ui/employee/obps/search/application"}>
+        <Link to={window.location.href.includes("/citizen") ? "/mycity-ui/citizen/obps/search/application" : "/mycity-ui/employee/obps/search/application"}>
           <span className="link">{t("BPA_SEARCH_PAGE_TITLE")}</span>
         </Link>
       </div>

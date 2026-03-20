@@ -242,7 +242,7 @@ const SearchVendor = () => {
 
   const onTabChange = (tab) => {
   setTab(tab);
-  history.push(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=${tab}`);
+  history.push(`/mycity-ui/employee/vendor/search-vendor?selectedTabs=${tab}`);
 };
 
   const refetchData = () => {

@@ -106,7 +106,7 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
         )}
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("EWASTE_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
-      <Link to={`/upyog-ui/citizen`}>
+      <Link to={`/mycity-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
     </Card>

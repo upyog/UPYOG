@@ -17,7 +17,7 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
     sessionStorage.setItem("vendorIds",application?.addressDetails?.[0]?.vendorId);
     sessionStorage.setItem("bankIds",application?.bankDetail?.id);
     sessionStorage.setItem("venId",application?.vendorDetail?.[0]?.id);
-    history.push(`/upyog-ui/citizen/sv/edit`);
+    history.push(`/mycity-ui/citizen/sv/edit`);
   };
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
       {(application?.applicationStatus == "CITIZENACTIONREQUIRED") && 
       <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_EDIT")} onSubmit={handleEditClick} />}
       <div style={{ display: "flex", gap: "5px" }}>
-        <Link to={isDraft ? `/upyog-ui/citizen/sv/apply/info` : `/upyog-ui/citizen/sv/application/${application?.applicationNo}/${application?.tenantId}`}>
+        <Link to={isDraft ? `/mycity-ui/citizen/sv/apply/info` : `/mycity-ui/citizen/sv/application/${application?.applicationNo}/${application?.tenantId}`}>
           <SubmitBar label={isDraft ?t("SV_CONTINUE"):buttonLabel} />
         </Link>
         {isDraft && <SubmitBar label={t("SV_DISCARD")} onSubmit={handleDiscard} />}

@@ -10,7 +10,7 @@ import SearchApplication from './Search';
 const DesktopInbox = (props) => {
   const { t } = useTranslation();
   const GetCell = (row) => <span className="link">
-    <Link to={`/upyog-ui/citizen/obps/bpa/${encodeURIComponent(row.applicationId)}`}>{row?.applicationId}</Link>
+    <Link to={`/mycity-ui/citizen/obps/bpa/${encodeURIComponent(row.applicationId)}`}>{row?.applicationId}</Link>
   </span>;
   const GetSlaCell = (value) => {
     if (isNaN(value)) return <span className="sla-cell-success">0</span>;
@@ -103,11 +103,11 @@ const DesktopInbox = (props) => {
             allLinks={[
               {
                 text: "OBPS_HOME",
-                link: "/upyog-ui/citizen/obps/home",   
+                link: "/mycity-ui/citizen/obps/home",   
               },
               {
                 text: "ES_COMMON_SEARCH_APPLICATION",
-                link: "/upyog-ui/citizen/obps/search/application",
+                link: "/mycity-ui/citizen/obps/search/application",
               },
             ]}
             headerText={t("ES_COMMON_OBPS_INBOX_LABEL")}

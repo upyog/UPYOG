@@ -64,7 +64,7 @@ const NewAssetApplication = () => {
       },   
     };
 
-    history.replace("/upyog-ui/employee/asset/assetservice/assign-response", { Assets: formData }); 
+    history.replace("/mycity-ui/employee/asset/assetservice/assign-response", { Assets: formData }); 
     
 
   };

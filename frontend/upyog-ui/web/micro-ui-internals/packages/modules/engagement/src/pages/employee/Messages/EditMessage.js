@@ -53,7 +53,7 @@ const EditMessage = () => {
         }
       ]
     }
-    history.push("/upyog-ui/employee/engagement/messages/response?update=true", details)
+    history.push("/mycity-ui/employee/engagement/messages/response?update=true", details)
   }
 
   const defaultValues = useMemo(() => {

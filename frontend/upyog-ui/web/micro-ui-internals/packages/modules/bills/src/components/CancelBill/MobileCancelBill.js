@@ -84,7 +84,7 @@ const MobileCancelBill = ({ Controller, register, control, t, reset, handleSubmi
             }
         }
         //here do history.push to the response page and send filters there
-        history.push("/upyog-ui/employee/bills/response-cancelBill", { filters, currentBill });
+        history.push("/mycity-ui/employee/bills/response-cancelBill", { filters, currentBill });
         //call the cancel bill api from response page and show appropriate response
     }
 
@@ -107,7 +107,7 @@ const MobileCancelBill = ({ Controller, register, control, t, reset, handleSubmi
     };
 
     const handleBillLinkClick = (row) => {
-        history.push(`/upyog-ui/employee/bills/bill-details?connectionNumber=${row?.consumerCode}&tenantId=${tenantId}&service=${row?.businessService}`, row)
+        history.push(`/mycity-ui/employee/bills/bill-details?connectionNumber=${row?.consumerCode}&tenantId=${tenantId}&service=${row?.businessService}`, row)
     }
     
     const GetCell = (value) => <span className="cell-text">{value}</span>;

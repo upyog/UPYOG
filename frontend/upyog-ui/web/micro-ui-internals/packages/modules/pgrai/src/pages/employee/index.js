@@ -27,7 +27,7 @@ const EmployeeApp = () => {
           <BackButton style={{marginTop:"15px"}}>Back</BackButton>
           <PrivateRoute path={`${path}/complaint/create`} component={PGRAICreate} />
           <PrivateRoute
-            path={`/upyog-ui/employee/pgrai/inbox`}
+            path={`/mycity-ui/employee/pgrai/inbox`}
             component={() => (
               <Inbox
                 useNewInboxAPI={true}

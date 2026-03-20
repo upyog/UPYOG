@@ -138,7 +138,7 @@ import Timeline from "../../../components/Timeline";
           <Row
               label={t("SV_VENDOR_NAME")}
               text={`${t(checkForNA(owner?.units?.[0]?.vendorName))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/sv/apply/applicant-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/sv/apply/applicant-details`} />}
           />
   
           <Row
@@ -228,7 +228,7 @@ import Timeline from "../../../components/Timeline";
           <Row
               label={t("SV_VENDING_TYPE")}
               text={`${t(checkForNA(businessDetails?.vendingType?.code))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/sv/apply/business-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/sv/apply/business-details`} />}
           />
           <Row
               label={t("SV_VENDING_ZONES")}
@@ -278,7 +278,7 @@ import Timeline from "../../../components/Timeline";
               <Row
               label={t("SV_ACCOUNT_NUMBER")}
               text={`${t(checkForNA(bankdetails?.accountNumber))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/sv/apply/bank-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/sv/apply/bank-details`} />}
               />
               <Row
               label={t("SV_IFSC_CODE")}
@@ -304,7 +304,7 @@ import Timeline from "../../../components/Timeline";
           <Row
               label={t("SV_ADDRESS_LINE1")}
               text={`${t(checkForNA(address?.addressline1))}`}
-              actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/sv/apply/address-details`} />}
+              actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/sv/apply/address-details`} />}
               />
               <Row
               label={t("SV_ADDRESS_LINE2")}
@@ -337,7 +337,7 @@ import Timeline from "../../../components/Timeline";
           <Row
             label={t("SV_CATEGORY")}
             text={`${t(checkForNA(specialCategoryData?.ownerCategory?.value))}`}
-            actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/sv/apply/special-category`} />}
+            actionButton={<ActionButton jumpTo={`/mycity-ui/citizen/sv/apply/special-category`} />}
             />
           {specialCategoryData?.beneficiary!==null?
           <Row

@@ -38,8 +38,8 @@ const CheckPage = ({ onSubmit, value }) => {
   const queryClient = useQueryClient();
   const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments, PrevStateNocDocuments, applicationNo } = value;
     
-  let routeLink = `/upyog-ui/citizen/obps/sendbacktocitizen/${value.businessService=="BPA_OC" ? "ocbpa" : "bpa"}/${value?.tenantId}/${value?.applicationNo}`;
-  if (value?.uiFlow?.flow === "OCBPA") routeLink = `/upyog-ui/citizen/obps/sendbacktocitizen/ocbpa/${value?.tenantId}/${value?.applicationNo}`;
+  let routeLink = `/mycity-ui/citizen/obps/sendbacktocitizen/${value.businessService=="BPA_OC" ? "ocbpa" : "bpa"}/${value?.tenantId}/${value?.applicationNo}`;
+  if (value?.uiFlow?.flow === "OCBPA") routeLink = `/mycity-ui/citizen/obps/sendbacktocitizen/ocbpa/${value?.tenantId}/${value?.applicationNo}`;
   if (value.businessService === "BPA_LOW") BusinessService = "BPA.LOW_RISK_PERMIT_FEE";
   else if (value.businessService === "BPA"||value.businessService ==="BPA-PAP") BusinessService = "BPA.NC_APP_FEE";
   else BusinessService = "BPA.NC_OC_APP_FEE";
@@ -111,7 +111,7 @@ const { data: preApprovedResponse} = usePreApprovedSearch({drawingNo:value?.edcr
           setTimeout(closeToast, 5000);
           queryClient.invalidateQueries("BPA_DETAILS_PAGE");
           queryClient.invalidateQueries("workFlowDetails");
-          history.replace(`/upyog-ui/citizen/obps/sendbacktocitizen/ocbpa/${value?.tenantId}/${value?.applicationNo}/acknowledgement`, { data: value?.applicationNo });
+          history.replace(`/mycity-ui/citizen/obps/sendbacktocitizen/ocbpa/${value?.tenantId}/${value?.applicationNo}/acknowledgement`, { data: value?.applicationNo });
         },
       }
     );

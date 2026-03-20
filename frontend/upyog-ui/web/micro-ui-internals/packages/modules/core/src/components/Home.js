@@ -17,6 +17,7 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 import EmployeeDashboard from "./EmployeeDashboard";
+import PTCard from "../../../pt/src/components/PTCard";
 
 /* 
 Feature :: Citizen All service screen cards
@@ -37,7 +38,7 @@ export const processLinkData = (newData, code, t) => {
     const roleBasedLoginRoutes = [
       {
         role: "FSM_DSO",
-        from: "/upyog-ui/citizen/fsm/dso-dashboard",
+        from: "/mycity-ui/citizen/fsm/dso-dashboard",
         dashoardLink: "CS_LINK_DSO_DASHBOARD",
         loginLink: "CS_LINK_LOGIN_DSO",
       },
@@ -51,7 +52,7 @@ export const processLinkData = (newData, code, t) => {
         });
       else
         newObj?.links?.push({
-          link: `/upyog-ui/citizen/login`,
+          link: `/mycity-ui/citizen/login`,
           state: { role: "FSM_DSO", from },
           i18nKey: t(loginLink),
         });
@@ -151,13 +152,14 @@ const EmployeeHome = ({ modules }) => {
         },
       }
     );
+    console.log("soumya", modules)
   return (
     <div className="employee-app-container">
       <br />
-      {(dashboardConfig && dashboardCemp)?<EmployeeDashboard modules={modules}/>:null}
+      {/* {(dashboardConfig && dashboardCemp)?<EmployeeDashboard modules={modules}/>:null} */}
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
         {modules.map(({ code }, index) => {
-          const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
+          const Card = (code === "PT") ? PTCard : Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
           return <Card key={index} />;
         })}
       </div>

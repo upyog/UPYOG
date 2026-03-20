@@ -143,7 +143,7 @@ if (isNonDraftLoading || isDraftLoading) {
         {applicationsList?.length !== 0 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-              <span className="link">{<Link to={`/upyog-ui/citizen/sv/my-applications/${t1}`}>{t("SV_LOAD_MORE_MSG")}</Link>}</span>
+              <span className="link">{<Link to={`/mycity-ui/citizen/sv/my-applications/${t1}`}>{t("SV_LOAD_MORE_MSG")}</Link>}</span>
             </p>
           </div>
         )}
@@ -152,7 +152,7 @@ if (isNonDraftLoading || isDraftLoading) {
       <p style={{ marginLeft: "16px", marginTop: "16px" }}>
         {t("SV_NO_APPLICATION_FOUND")}{" "}
         <span className="link" style={{ display: "block" }}>
-          <Link to="/upyog-ui/citizen/sv/apply/info">{t("SV_CLICK_TO_APPLY_NEW_APPLICATION")}</Link>
+          <Link to="/mycity-ui/citizen/sv/apply/info">{t("SV_CLICK_TO_APPLY_NEW_APPLICATION")}</Link>
         </span>
       </p>
     </React.Fragment>

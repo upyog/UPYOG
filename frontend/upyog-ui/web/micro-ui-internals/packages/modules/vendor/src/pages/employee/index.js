@@ -15,12 +15,12 @@ export const VendorBreadCrumb = ({ location }) => {
 
   const crumbs = [
     {
-      path: "/upyog-ui/employee",
+      path: "/mycity-ui/employee",
       content: t("ES_COMMON_HOME"),
       show: isVendor,
     },
     {
-      path: "/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR",
+      path: "/mycity-ui/employee/vendor/search-vendor?selectedTabs=VENDOR",
       content: "VENDOR",
       show: isVendor,
     },

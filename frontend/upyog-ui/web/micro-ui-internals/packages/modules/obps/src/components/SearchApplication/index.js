@@ -291,7 +291,7 @@ const OBPSSearchApplication = ({ tenantId, t, onSubmit, data, error, searchData,
             {...{
               data: propsMobileInboxCards,
               isTwoDynamicPrefix: true,
-              linkPrefix: window.location.href.includes("/citizen") ? `/upyog-ui/citizen/obps/` : `/upyog-ui/employee/obps/`,
+              linkPrefix: window.location.href.includes("/citizen") ? `/mycity-ui/citizen/obps/` : `/mycity-ui/employee/obps/`,
               getRedirectionLink: getRedirectionLink,
               serviceRequestIdKey: "applicationNo",
             }}

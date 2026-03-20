@@ -27,7 +27,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
     return <Loader />;
   }
   const onChallanSearch = async (data) => {
-    //history.push(`/upyog-ui/citizen/mcollect/search-results`);
+    //history.push(`/mycity-ui/citizen/mcollect/search-results`);
     if (!mobileNumber && !challanNo && !Servicecateogry && !city) {
       return alert("Provide at least one parameter");
     } else if (!Servicecateogry) {
@@ -38,7 +38,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
     }
      else {
       history.push(
-        `/upyog-ui/citizen/mcollect/search-results?mobileNumber=${mobileNumber}&challanNo=${challanNo}&Servicecategory=${
+        `/mycity-ui/citizen/mcollect/search-results?mobileNumber=${mobileNumber}&challanNo=${challanNo}&Servicecategory=${
           Servicecateogry ? Servicecateogry.code.replace("BILLINGSERVICE_BUSINESSSERVICE_","") : ""
         }&tenantId=${city.code}`
       );

@@ -26,12 +26,12 @@ import { newConfig as newConfigEDCR } from "../../config/edcrConfig";
 import CreateAnonymousEDCR from "./Home/EDCR";
 import EDCRAcknowledgement from "./Home/EDCR/EDCRAcknowledgement";
 const sidebarHiddenFor = [
-  "upyog-ui/citizen/register/name",
-  "/upyog-ui/citizen/select-language",
-  "/upyog-ui/citizen/select-location",
-  "/upyog-ui/citizen/login",
-  "/upyog-ui/citizen/register/otp",
-  // "/upyog-ui/citizen/verificationsearch-home" // route for verificationsearch component
+  "mycity-ui/citizen/register/name",
+  "/mycity-ui/citizen/select-language",
+  "/mycity-ui/citizen/select-location",
+  "/mycity-ui/citizen/login",
+  "/mycity-ui/citizen/register/otp",
+  // "/mycity-ui/citizen/verificationsearch-home" // route for verificationsearch component
 ];
 import { APPLICATION_PATH } from "./Home/EDCR/utils";
 const getTenants = (codes, tenants) => {
@@ -125,10 +125,52 @@ const Home = ({
     // }
     return (
       <React.Fragment>
+        <style>{
+          `.image-overlay {
+            position: relative;
+            display: inline-block;
+          }
+          
+          .image-overlay img {
+            width: 100%;
+            height: auto;
+            display: block;
+          }
+          
+          /* blue shade overlay */
+          .image-overlay::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(25, 39, 113, 0.4); /* blue with transparency */
+            mix-blend-mode: multiply; /* improves contrast */
+            pointer-events: none; /* allows clicking the image if needed */
+          }
+
+          @media (min-width: 780px) {
+            .moduleLinkHomePage h1 {
+                top: calc(8vw + 10px) !important;
+                left: calc(15.8rem - 5px) !important;
+            }
+          }
+
+          @media (min-width: 780px) {
+            .moduleLinkHomePage .moduleLinkHomePageBackButton {
+                top: calc(5vw + 19px) !important;
+                margin-left: 10px !important;
+            }
+          }
+          `
+          }</style>
         <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
           <div className="moduleLinkHomePage">
-            <img src={ "https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
-            <BackButton className="moduleLinkHomePageBackButton" />
+          <div className="image-overlay">
+            <img src={ "https://upload.wikimedia.org/wikipedia/commons/d/d9/Uttarakhand_Views.jpg"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
+           </div>
+           <BackButton className="moduleLinkHomePageBackButton" />
            {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1>{t("MODULE_" + code.toUpperCase())}</h1>}
             <div className="moduleLinkHomePageModuleLinks">
               {mdmsDataObj && (
@@ -150,7 +192,7 @@ const Home = ({
                   isInfo={code === "OBPS" ? true : false}
                 />
               )}
-              {/* <Links key={index} matchPath={`/upyog-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
+              {/* <Links key={index} matchPath={`/mycity-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
             </div>
             {code?.toUpperCase()==="ADS" && (
               <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
@@ -184,16 +226,6 @@ const Home = ({
 
   return (
     <div className={classname}>
-              <style>
-          {
-            `
-            .citizen-card-input .citizen-card-input--front
-            {
-              height:40px !important;
-            }
-            `
-          }
-        </style>
       <TopBarSideBar
         t={t}
         stateInfo={stateInfo}
@@ -208,9 +240,9 @@ const Home = ({
         islinkDataLoading={islinkDataLoading}
       />
 
-      <div className={`main center-container citizen-home-container mb-25`}>
+      <div className={`main center-container citizen-home-container mb-25`} style={{background: "ghostwhite"}}>
         {hideSidebar ? null : (
-          <div className="SideBarStatic">
+          <div className="SideBarStatic" style={{marginTop: "-8px", background: "#192771"}}>
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
           </div>
         )}
@@ -234,7 +266,7 @@ const Home = ({
             <ErrorComponent
               initData={initData}
               goToHome={() => {
-                history.push("/upyog-ui/citizen");
+                history.push("/mycity-ui/citizen");
               }}
             />
           </Route>
@@ -293,16 +325,16 @@ const Home = ({
         <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
           {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
           <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
+          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} href="#" target='_blank'>NagarSewa License</a>
 
           <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2025 Government of Uttarakhand</span>
           
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
+          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>NagarSewa License</a> */}
 
         </div>
         <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2025 Government of Uttarakhand</span>
           </div>
       </div>
     </div>

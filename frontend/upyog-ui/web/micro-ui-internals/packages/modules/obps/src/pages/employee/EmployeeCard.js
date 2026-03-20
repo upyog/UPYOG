@@ -87,7 +87,7 @@ const OBPSEmployeeHomeCard = () => {
   }, [dataOfBPA, dataOfStakeholder]);
 
   useEffect(()=>{
-    if (location.pathname === "/upyog-ui/employee"){
+    if (location.pathname === "/mycity-ui/employee"){
       Digit.SessionStorage.del("OBPS.INBOX")
       Digit.SessionStorage.del("STAKEHOLDER.INBOX")
     }
@@ -99,29 +99,29 @@ const OBPSEmployeeHomeCard = () => {
         {
             count: !isInboxLoading && !isInboxLoadingOfStakeholder ? totalCount : "",
             label: t("TOTAL_FSM"),
-            link: `/upyog-ui/employee/obps/inbox`
+            link: `/mycity-ui/employee/obps/inbox`
         },
         {   count:!isInboxLoading && !isInboxLoadingOfStakeholder ? totalCountEs : "",
             label: t("TOTAL_NEARING_SLA"),
-            link: `/upyog-ui/employee/obps/inbox`
+            link: `/mycity-ui/employee/obps/inbox`
         }  
       ],
       links: [
         {
           count: isInboxLoadingOfStakeholder ? "" : dataOfStakeholder?.totalCount ,
           label: t("ES_COMMON_STAKEHOLDER_INBOX_LABEL"),
-          link: `/upyog-ui/employee/obps/stakeholder-inbox`,
+          link: `/mycity-ui/employee/obps/stakeholder-inbox`,
           field: "STAKEHOLDER"
         },
         {
           count: isInboxLoading ? "" : dataOfBPA?.totalCount ,
           label: t("ES_COMMON_OBPS_INBOX_LABEL"),
-          link: `/upyog-ui/employee/obps/inbox`,
+          link: `/mycity-ui/employee/obps/inbox`,
           field: "BPA"
         },
         {
           label: t("ES_COMMON_SEARCH_APPLICATION"),
-          link: `/upyog-ui/employee/obps/search/application`
+          link: `/mycity-ui/employee/obps/search/application`
         },
       ]
     }),[isInboxLoading, isInboxLoadingOfStakeholder, dataOfStakeholder, dataOfBPA, totalCount, totalCountEs]);

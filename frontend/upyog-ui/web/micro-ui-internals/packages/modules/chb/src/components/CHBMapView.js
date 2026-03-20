@@ -342,7 +342,7 @@ const CHBMapView = () => {
     } 
     window.selectHall = (hallCode,hallId) => {
       history.push({
-        pathname: `/upyog-ui/citizen/chb/bookHall/searchhall`,
+        pathname: `/mycity-ui/citizen/chb/bookHall/searchhall`,
         selectedCommunityHall: {code: hallCode, value: hallCode, i18nKey: hallCode, communityHallId:hallId}
       });
     }

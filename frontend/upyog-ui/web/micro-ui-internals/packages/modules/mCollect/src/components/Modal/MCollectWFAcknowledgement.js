@@ -26,7 +26,7 @@ const MCollectWFAcknowledgement = () => {
           alignItems: "baseline",
         }}
       >
-        <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
+        <Link to={`/mycity-ui/employee`} style={{ marginRight: "1rem" }}>
           <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
         <SubmitBar label={t("UC_BUTTON_PAY")} onClick={proceedToPayment} />

@@ -111,7 +111,7 @@ const ReceiptAcknowledgement = (props) => {
           />
         </CardText>)}
       <ActionBar>
-        <Link to={`${props.parentRoute.includes("employee") ? "/upyog-ui/employee" : "/upyog-ui/citizen"}`}>
+        <Link to={`${props.parentRoute.includes("employee") ? "/mycity-ui/employee" : "/mycity-ui/citizen"}`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

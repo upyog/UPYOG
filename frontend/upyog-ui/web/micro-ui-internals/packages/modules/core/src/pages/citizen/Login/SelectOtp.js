@@ -24,7 +24,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     let TokenReq = {
       code_verifier: localStorage.getItem('code_verfier_register'),
       code: code, module: "SSO",
-      redirect_uri: "https://upyog-test.niua.org/upyog-ui/citizen/login/otp",
+      redirect_uri: "https://upyog-test.niua.org/mycity-ui/citizen/login/otp",
     }
    console.log("token",code,TokenReq,localStorage.getItem("code_verfier_register"))
     const data = await Digit.DigiLockerService.token({TokenReq })
@@ -76,7 +76,7 @@ if(authData){
         info:authData?.UserRequest
       }
       Digit.UserService.setUser(userInfo);
-      window.location.href="https://upyog-test.niua.org/upyog-ui/citizen"
+      window.location.href="https://upyog-test.niua.org/mycity-ui/citizen"
     }
   // fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
   //   method: 'POST',
@@ -91,7 +91,7 @@ if(authData){
   //     'grant_type': "authorization_code",
   //     'client_id': "YN77ADDADE",
   //     "client_secret": "71abd480b5811ab72277",
-  //     "redirect_uri": "https://upyog.niua.org/upyog-ui/citizen/login/otp",
+  //     "redirect_uri": "https://upyog.niua.org/mycity-ui/citizen/login/otp",
   //     "code_verifier": sessionStorage.getItem("code_verfier_register")
   //   })
   // }) .then(response =>

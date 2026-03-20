@@ -9,7 +9,7 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
   const allLinks = [
     {
       text: t("SV_TITLE_NEW_REGISTRATION"),
-      link: "/upyog-ui/employee/sv/apply",
+      link: "/mycity-ui/employee/sv/apply",
     }
   ];
 

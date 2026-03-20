@@ -15,13 +15,13 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   const allLinks = [
     {
       text: "ES_NEW_COMMUNITY_HALL_BOOKING",
-      link: "/upyog-ui/employee/chb/bookHall/searchhall",
+      link: "/mycity-ui/employee/chb/bookHall/searchhall",
       businessService: "booking-refund",
       roles: ["CHB_CEMP"],
     },
     {
       text: "ES_COMMON_APPLICATION_SEARCH",
-      link: `/upyog-ui/employee/chb/my-applications`,
+      link: `/mycity-ui/employee/chb/my-applications`,
       businessService: "booking-refund",
       roles: [],
     }

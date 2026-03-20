@@ -114,7 +114,7 @@ export const ADSMyApplications = () => {
               </div>
             </div>
           </div>
-          <Link to="/upyog-ui/citizen/ads/bookad/searchads">
+          <Link to="/mycity-ui/citizen/ads/bookad/searchads">
               <SubmitBar style={{borderRadius:"30px",width:"20%" }} label={t("ADS_NEW_BOOKING")+" +"} />
             </Link>
         </div>
@@ -134,7 +134,7 @@ export const ADSMyApplications = () => {
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">
-                <Link to={`/upyog-ui/citizen/ads/myBookings/${t1}`}>{t("ADS_LOAD_MORE_MSG")}</Link>
+                <Link to={`/mycity-ui/citizen/ads/myBookings/${t1}`}>{t("ADS_LOAD_MORE_MSG")}</Link>
               </span>
             </p>
           </div>

@@ -592,9 +592,9 @@ setCityCode(city.code);
       // beacuse of this commit 
       // https://github.com/egovernments/DIGIT-Dev/commit/2bae1c36dd1f8242bca30366da80c88d46b6aaaa#diff-3c34510e8b422f53eb9633d014f50024496ad79f952849e1b42fd61877562c4cR385
       // am adding one more condtion for this. 
-      if(redirectToUrl || window.location.href.includes("upyog-ui/citizen/commonpt/property/citizen-search")) {
+      if(redirectToUrl || window.location.href.includes("mycity-ui/citizen/commonpt/property/citizen-search")) {
         history.push(
-          `/upyog-ui/citizen/commonPt/property/search-results?${Object.keys(qs)
+          `/mycity-ui/citizen/commonPt/property/search-results?${Object.keys(qs)
             .map((key) => `${key}=${qs[key]}`)
             .join("&")}${redirectToUrl ? `&redirectToUrl=${redirectToUrl}` : ''}`
         );
@@ -652,13 +652,13 @@ setCityCode(city.code);
        <div style={{display:"flex"}}>
  
       {window.location.href.includes("/obps/bpa/") ?<span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
-        <Link to={"/upyog-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
+        <Link to={"/mycity-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
       </span>: window.location.href.includes("/fsm/new-application/") ? <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
-        <Link to={"/upyog-ui/citizen/fsm/new-application/property-type"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
+        <Link to={"/mycity-ui/citizen/fsm/new-application/property-type"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
       </span>:
            <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
        
-           <Link to={window.location.href.includes("/ws/")?"/upyog-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/upyog-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/fsm/")? "/upyog-ui/citizen/fsm/new-application/create-property":"/upyog-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
+           <Link to={window.location.href.includes("/ws/")?"/mycity-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/mycity-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/fsm/")? "/mycity-ui/citizen/fsm/new-application/create-property":"/mycity-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
          </span>}
       </div>
       {showToast && (

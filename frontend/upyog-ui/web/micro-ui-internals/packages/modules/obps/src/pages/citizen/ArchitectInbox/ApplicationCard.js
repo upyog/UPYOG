@@ -55,7 +55,7 @@ const ApplicationCard = ({
     );
   }
   else if (data && data?.length > 0) {
-    result = <DetailsCard data={data} handleSelect={(e) => {}} handleDetailCardClick={(e) => { history.push(`/upyog-ui/citizen/obps/bpa/${e?.[idKey]}`); }} />
+    result = <DetailsCard data={data} handleSelect={(e) => {}} handleDetailCardClick={(e) => { history.push(`/mycity-ui/citizen/obps/bpa/${e?.[idKey]}`); }} />
   }
 
   return (

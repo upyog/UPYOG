@@ -122,19 +122,19 @@ export const convertEpochToDate = (dateEpoch) => {
         />
         <CardText>{t("CS_PAYMENT_FAILURE_MESSAGE")}</CardText>
         {!(business_service?.includes("PT")) && !(business_service?.includes("TL")) ? (
-          <Link to={`/upyog-ui/citizen`}>
+          <Link to={`/mycity-ui/citizen`}>
             <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
         ) : (
           <React.Fragment>
-            <Link to={(applicationNo && `/upyog-ui/citizen/payment/my-bills/${business_service}/${applicationNo}`) || "/upyog-ui/citizen"}>
+            <Link to={(applicationNo && `/mycity-ui/citizen/payment/my-bills/${business_service}/${applicationNo}`) || "/mycity-ui/citizen"}>
               <SubmitBar label={t("CS_PAYMENT_TRY_AGAIN")} />
             </Link>
-            {/* {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/upyog-ui/citizen/feedback?redirectedFrom=${"digit-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
+            {/* {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/mycity-ui/citizen/feedback?redirectedFrom=${"digit-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
               <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")} />
             </Link></div>} */}
             <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
-              <Link to={`/upyog-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
+              <Link to={`/mycity-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
             </div>
           </React.Fragment>
         )}
@@ -954,7 +954,7 @@ export const convertEpochToDate = (dateEpoch) => {
           </div>
         ) : null}
       </div>
-      {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/upyog-ui/citizen/feedback?redirectedFrom=${"upyog-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
+      {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/mycity-ui/citizen/feedback?redirectedFrom=${"mycity-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
           <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")} />
       </Link></div>}
       {/* {business_service?.includes("PT") ? (
@@ -1048,31 +1048,31 @@ export const convertEpochToDate = (dateEpoch) => {
       {!(business_service?.includes("TL")) || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
       {!(business_service == "TL") || !(business_service?.includes("PT")) && (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
-          <Link to={`/upyog-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
+          <Link to={`/mycity-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
         </div>
       )}
       {/* {business_service == "TL" && (
-        <Link to={`/upyog-ui/citizen`}>
+        <Link to={`/mycity-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )} */}
       {business_service == "pet-services" && (
-        <Link to={`/upyog-ui/citizen`}>
+        <Link to={`/mycity-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}
       {business_service == "chb-services" && (
-        <Link to={`/upyog-ui/citizen`}>
+        <Link to={`/mycity-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}
       {business_service == "adv-services" && (
-        <Link to={`/upyog-ui/citizen`}>
+        <Link to={`/mycity-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}
       {business_service == "sv-services" && (
-        <Link to={`/upyog-ui/citizen`}>
+        <Link to={`/mycity-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
         </Link>
       )}

@@ -132,7 +132,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         <DetailsCard
           {...{
             data: propsMobileInboxCards,
-            linkPrefix: `/upyog-ui/employee/tl/application-details/`,
+            linkPrefix: `/mycity-ui/employee/tl/application-details/`,
             serviceRequestIdKey: t("TL_COMMON_TABLE_COL_APP_NO"),
           }}
         />

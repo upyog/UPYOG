@@ -81,7 +81,7 @@ const FSMCard = () => {
   const moduleForSomeFSMAdmin = FSM_ADMIN
     ? [
         {
-          link: "/upyog-ui/employee/fsm/registry?selectedTabs=VENDOR",
+          link: "/mycity-ui/employee/fsm/registry?selectedTabs=VENDOR",
           label: t("ES_TITLE_FSM_REGISTRY"),
           icon: <AddNewIcon />,
         },
@@ -94,16 +94,16 @@ const FSMCard = () => {
     // kpis: isSuccess ? Object.keys(info).map((key, index) => ({
     //             label: t(key),
     //             count: t(info[key]),
-    //             link: "/upyog-ui/employee/fsm/fstp-inbox"
+    //             link: "/mycity-ui/employee/fsm/fstp-inbox"
     //         })): [],
     links: [
       /*{
         label: t("ES_COMMON_INBOX"),
-        link: "/upyog-ui/employee/fsm/fstp-inbox",
+        link: "/mycity-ui/employee/fsm/fstp-inbox",
       },
       {
         label: t("ES_FSM_ADD_NEW_BUTTON"),
-        link: "/upyog-ui/employee/fsm/fstp-add-vehicle",
+        link: "/mycity-ui/employee/fsm/fstp-add-vehicle",
       },
       {
         label: t("ES_FSM_VIEW_REPORTS_BUTTON"),
@@ -111,8 +111,8 @@ const FSMCard = () => {
         hyperlink: true,
       }, */
       {
-        label: t("ES_COMMON_INBOX"),
-        link: "/upyog-ui/employee/fsm/fstp-inbox",
+        label: t("ES_COMMON_HOME"),
+        link: "/mycity-ui/employee/fsm/fstp-operations",
       },
     ],
   };
@@ -126,7 +126,7 @@ const FSMCard = () => {
       ? [
           {
             label: t("ES_TITLE_NEW_DESULDGING_APPLICATION"),
-            link: `/upyog-ui/employee/fsm/new-application`,
+            link: `/mycity-ui/employee/fsm/new-application`,
           },
         ]
       : [];
@@ -138,12 +138,12 @@ const FSMCard = () => {
         // kpis: isSuccess ? Object.keys(info).map((key, index) => ({
         //             label: t(key),
         //             count: t(info[key]),
-        //             link: "/upyog-ui/employee/fsm/fstp-inbox"
+        //             link: "/mycity-ui/employee/fsm/fstp-inbox"
         //         })): [],
         links: [
           {
             label: t("ES_COMMON_HOME"),
-            link: "/upyog-ui/employee/fsm/fstp-operations",
+            link: "/mycity-ui/employee/fsm/fstp-operations",
           },
         ],
       }
@@ -154,18 +154,18 @@ const FSMCard = () => {
           {
             count: total,
             label: t("TOTAL_FSM"),
-            link: `/upyog-ui/employee/fsm/inbox`,
+            link: `/mycity-ui/employee/fsm/inbox`,
           },
           {
             label: t("TOTAL_NEARING_SLA"),
-            link: `/upyog-ui/employee/fsm/inbox`,
+            link: `/mycity-ui/employee/fsm/inbox`,
           },
         ],
         links: [
           {
             count: total,
             label: t("ES_COMMON_INBOX"),
-            link: `/upyog-ui/employee/fsm/inbox`,
+            link: `/mycity-ui/employee/fsm/inbox`,
           },
           ...linksForSomeFSMEmployees,
           ...moduleForSomeFSMAdmin,

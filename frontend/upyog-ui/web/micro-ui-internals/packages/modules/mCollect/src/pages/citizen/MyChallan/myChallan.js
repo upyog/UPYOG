@@ -17,7 +17,7 @@ const MyChallanResult = ({ template, header, actionButtonLabel }) => {
   const result = Digit.Hooks.mcollect.useMcollectSearchBill({ tenantId, filters });
 
   const onSubmit = (data) => {
-   history.push(`/upyog-ui/citizen/payment/my-bills/${data?.businesService}/${data?.ChannelNo}?workflow=mcollect`);
+   history.push(`/mycity-ui/citizen/payment/my-bills/${data?.businesService}/${data?.ChannelNo}?workflow=mcollect`);
   };
 
   const payment = {};
@@ -79,7 +79,7 @@ const MyChallanResult = ({ template, header, actionButtonLabel }) => {
       <div style={{ marginLeft: "16px", marginTop: "16px", marginBottom: "46px" }}>
         <p>{t("UC_NOT_ABLE_TO_FIND_BILL_MSG")} </p>
         <p className="link">
-          <Link to="/upyog-ui/citizen/mcollect/search">{t("UC_CLICK_HERE_TO_SEARCH_LINK")}</Link>
+          <Link to="/mycity-ui/citizen/mcollect/search">{t("UC_CLICK_HERE_TO_SEARCH_LINK")}</Link>
         </p>
       </div>
     </div>

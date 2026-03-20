@@ -112,11 +112,11 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("PTR_PET_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
       {user?.type==="CITIZEN"?
-      <Link to={`/upyog-ui/citizen`}>
+      <Link to={`/mycity-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
       :
-      <Link to={`/upyog-ui/employee`}>
+      <Link to={`/mycity-ui/employee`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>}
     </Card>

@@ -149,7 +149,7 @@ const NewApplication = () => {
       };
     }
 
-    history.replace("/upyog-ui/employee/pt/response", { Property: formData }); //current wala
+    history.replace("/mycity-ui/employee/pt/response", { Property: formData }); //current wala
 
   };
   if (isLoading) {
@@ -170,7 +170,7 @@ const NewApplication = () => {
   }
   const setModal=()=>{
       setShowToast(false)   
-      history.replace("/upyog-ui/employee/pt/response", { Property: formData })
+      history.replace("/mycity-ui/employee/pt/response", { Property: formData })
     }
 let conf =[
   {

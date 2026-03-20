@@ -53,15 +53,15 @@ const CHBCard = () => {
     {
       count: isLoading ? "-" : total?.totalCount,
       label: t("ES_COMMON_INBOX"),
-      link: `/upyog-ui/employee/chb/inbox`,
+      link: `/mycity-ui/employee/chb/inbox`,
     },
     {
       label: t("ES_NEW_COMMUNITY_HALL_BOOKING"),
-      link: `/upyog-ui/employee/chb/bookHall/searchhall`,
+      link: `/mycity-ui/employee/chb/bookHall/searchhall`,
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/upyog-ui/employee/chb/my-applications`,
+      link: `/mycity-ui/employee/chb/my-applications`,
     },
   ]
   const CHB_CEMP = Digit.UserService.hasAccess(["CHB_CEMP"]) || false;
@@ -72,7 +72,7 @@ const CHBCard = () => {
       {
         count: total?.totalCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/upyog-ui/employee/chb/searchHall/inbox`,
+        link: `/mycity-ui/employee/chb/searchHall/inbox`,
       },
     ],
     links:links.filter(link=>!link?.role||CHB_CEMP),

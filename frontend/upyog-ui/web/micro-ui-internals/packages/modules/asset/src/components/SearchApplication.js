@@ -115,7 +115,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
         }
       });
       if(applicationDetails)
-      history.replace("/upyog-ui/employee/asset/assetservice/asset-process-depreciation-response", { ProcessDepreciation: applicationDetails,  applicationNo});
+      history.replace("/mycity-ui/employee/asset/assetservice/asset-process-depreciation-response", { ProcessDepreciation: applicationDetails,  applicationNo});
     } catch (error) {
       setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
     }
@@ -132,7 +132,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
         return (
           <div>
             <span className="link">
-              <Link to={`/upyog-ui/employee/asset/assetservice/applicationsearch/application-details/${row.original?.["applicationNo"]}`}>
+              <Link to={`/mycity-ui/employee/asset/assetservice/applicationsearch/application-details/${row.original?.["applicationNo"]}`}>
                 {row.original?.["applicationNo"]}
               </Link>
             </span>
@@ -208,16 +208,16 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
         //   {
         //     label: row?.original?.assetAssignment?.isAssigned ? t("AST_RETURN") : t("AST_ASSIGN"),
         //     link: row?.original?.assetAssignment?.isAssigned
-        //       ? `/upyog-ui/employee/asset/assetservice/return-assets/${row?.original?.["applicationNo"]}`
-        //       : `/upyog-ui/employee/asset/assetservice/assign-assets/${row?.original?.["applicationNo"]}`,
+        //       ? `/mycity-ui/employee/asset/assetservice/return-assets/${row?.original?.["applicationNo"]}`
+        //       : `/mycity-ui/employee/asset/assetservice/assign-assets/${row?.original?.["applicationNo"]}`,
         //   },
         //   {
         //     label: t("AST_DISPOSE"),
-        //     link: `/upyog-ui/employee/asset/assetservice/dispose-assets/${row?.original?.["applicationNo"]}`,
+        //     link: `/mycity-ui/employee/asset/assetservice/dispose-assets/${row?.original?.["applicationNo"]}`,
         //   },
         //   {
         //     label: t("AST_DEPRECIATION"),
-        //     link: `/upyog-ui/employee/asset/assetservice/depreciate-assets/${row?.original?.["applicationNo"]}`,
+        //     link: `/mycity-ui/employee/asset/assetservice/depreciate-assets/${row?.original?.["applicationNo"]}`,
         //   },
         // ];
 
@@ -334,8 +334,8 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
       const batch = data.slice(i, i + batchSize);
       console.log('comming data:- ', batch);
       const qrPromises = batch.map(async (row, index) => {
-        // const url = `https://niuatt.niua.in/upyog-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
-        const url = `${base_url}/upyog-ui/citizen/assets/services?tenantId=${tenantId}&applicationNo=${row.applicationNo}`;
+        // const url = `https://niuatt.niua.in/mycity-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+        const url = `${base_url}/mycity-ui/citizen/assets/services?tenantId=${tenantId}&applicationNo=${row.applicationNo}`;
         const qrCodeURL = await generateQRCode(url);
         const yOffset = (index % batchSize) * 90;
 

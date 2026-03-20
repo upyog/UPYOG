@@ -133,7 +133,7 @@ const AddVehicle = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("FSM_VEICLES_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push(`/upyog-ui/employee/fsm/registry?selectedTabs=VEHICLE`);
+          history.push(`/mycity-ui/employee/fsm/registry?selectedTabs=VEHICLE`);
         }, 5000);
       },
     });

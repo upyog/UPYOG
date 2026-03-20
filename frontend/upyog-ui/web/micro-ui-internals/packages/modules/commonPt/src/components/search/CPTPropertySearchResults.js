@@ -36,7 +36,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
                   onClick={() => {
                     //sessionStorage.setItem("propertyDetailsBC",JSON.stringify({...state}))
                     history.push(
-                      `/upyog-ui/employee/commonpt/view-property?propertyId=${row.original["propertyId"]}&tenantId=${tenantId}&redirectToUrl=${redirectToUrl}`,
+                      `/mycity-ui/employee/commonpt/view-property?propertyId=${row.original["propertyId"]}&tenantId=${tenantId}&redirectToUrl=${redirectToUrl}`,
                       { ...state }
                     );
                   }}

@@ -109,13 +109,13 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
       setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
     } else if(user.type==="CITIZEN") {
       history.push({
-        pathname: `/upyog-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`,
+        pathname: `/mycity-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`,
         state: { tenantId:tenantId, bookingNo: mutation.data?.hallsBookingApplication[0].bookingNo,timerValue:result?.data?.timerValue,SlotSearchData:SlotSearchData },
       });
     }
       else if(user.type==="EMPLOYEE") {
         history.push({
-          pathname: `/upyog-ui/employee/payment/collect/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`,
+          pathname: `/mycity-ui/employee/payment/collect/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`,
           state: { tenantId:tenantId, bookingNo: mutation.data?.hallsBookingApplication[0].bookingNo,timerValue:result?.data?.timerValue,SlotSearchData:SlotSearchData },
         });
       }
@@ -153,22 +153,22 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
       </StatusTable>
       {mutation.isSuccess && (
       <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-        {user.type==="EMPLOYEE" &&(<Link to={`/upyog-ui/employee`}>
+        {user.type==="EMPLOYEE" &&(<Link to={`/mycity-ui/employee`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
-         {user.type==="CITIZEN" &&(<Link to={`/upyog-ui/citizen`}>
+         {user.type==="CITIZEN" &&(<Link to={`/mycity-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
         <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}/>
       </div>
     )}
     {!mutation.isSuccess && user.type==="CITIZEN" &&(
-      <Link to={`/upyog-ui/citizen`}>
+      <Link to={`/mycity-ui/citizen`}>
       <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
        </Link>
      )}
      {!mutation.isSuccess && user.type==="EMPLOYEE" &&(
-      <Link to={`/upyog-ui/employee`}>
+      <Link to={`/mycity-ui/employee`}>
       <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
        </Link>
      )}

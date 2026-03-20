@@ -24,7 +24,7 @@ const MyApplication = () => {
   const requestor = userInfo?.info?.mobileNumber;
 
 
-  const { data, isLoading, revalidate } = Digit.Hooks.obps.useBPAREGSearch(Digit.ULBService.getStateId(), {}, {mobileNumber: requestor}, {cacheTime : 0});
+  const { data, isLoading, revalidate } = Digit.Hooks.obps.useBPAREGSearch(tenantId, {}, {mobileNumber: requestor}, {cacheTime : 0});
   const { data: bpaData, isLoading: isBpaSearchLoading, revalidate: bpaRevalidate } = Digit.Hooks.obps.useBPASearch(tenantId, {
     requestor,
     mobileNumber: requestor,
@@ -76,7 +76,7 @@ const MyApplication = () => {
     };
 
     sessionStorage.setItem("BPAREGintermediateValue", JSON.stringify(intermediateData));
-    history.push("/upyog-ui/citizen/obps/stakeholder/apply/stakeholder-docs-required");
+    history.push("/mycity-ui/citizen/obps/stakeholder/apply/stakeholder-docs-required");
   };
   useEffect(() => {
     return () => {
@@ -148,14 +148,14 @@ const MyApplication = () => {
               }
               <KeyNote keyValue={t("BPA_APPLICANT_NAME_LABEL")} note={application?.tradeLicenseDetail?.owners?.[0]?.name} />
               <KeyNote keyValue={t("TL_COMMON_TABLE_COL_STATUS")} note={t(`WF_ARCHITECT_${application?.status}`)} noteStyle={application?.status === "APPROVED" ? { color: "#00703C" } : { color: "#D4351C" }} />
-              {application.status !== "INITIATED" ? <Link to={{ pathname: `/upyog-ui/citizen/obps/stakeholder/${application?.applicationNumber}`, state: { tenantId: '' } }}>
+              {application.status !== "INITIATED" ? <Link to={{ pathname: `/mycity-ui/citizen/obps/stakeholder/${application?.applicationNumber}`, state: { tenantId: '' } }}>
                 <SubmitBar label={t("TL_VIEW_DETAILS")} />
               </Link> :
                 <SubmitBar label={t("BPA_COMP_WORKFLOW")} onSubmit={() => getBPAREGFormData(application)} />}
               {application.status==="PENDINGPAYMENT" ? (
               <Link
                 to={{
-                  pathname : `/upyog-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
+                  pathname : `/mycity-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
                 }}>
               <div style={{marginTop:"10px"}}>
                 <SubmitBar label ={t("COMMON_MAKE_PAYMENT")}/>
@@ -173,12 +173,12 @@ const MyApplication = () => {
               <KeyNote keyValue={t("BPA_COMMON_SERVICE")} note={t(`BPA_SERVICETYPE_NEW_CONSTRUCTION`)} />
               <KeyNote keyValue={t("TL_COMMON_TABLE_COL_STATUS")} note={t(`WF_BPA_${application?.state}`)} noteStyle={application?.status === "APPROVED" ? { color: "#00703C" } : { color: "#D4351C" }} />
               <KeyNote keyValue={t("BPA_COMMON_SLA")} note={typeof(application?.sla) == "string" && application?.sla?.includes("NA") ? t(`${`CS_NA`}`) : application?.sla} />
-              {application.action === "SEND_TO_ARCHITECT" || application.status !== "INITIATED" ? <Link to={{ pathname: `/upyog-ui/citizen/obps/bpa/${application?.applicationNo}`, state: { tenantId: '' } }}>
+              {application.action === "SEND_TO_ARCHITECT" || application.status !== "INITIATED" ? <Link to={{ pathname: `/mycity-ui/citizen/obps/bpa/${application?.applicationNo}`, state: { tenantId: '' } }}>
                 <SubmitBar label={t("TL_VIEW_DETAILS")} />
               </Link> :
                 <div>
                   {labelMessage ?
-                    <Link to={{ pathname: `/upyog-ui/citizen/obps/bpa/${application?.applicationNo}`, state: { tenantId: '' } }}>
+                    <Link to={{ pathname: `/mycity-ui/citizen/obps/bpa/${application?.applicationNo}`, state: { tenantId: '' } }}>
                       <SubmitBar label={t("TL_VIEW_DETAILS")} />
                     </Link> : <SubmitBar label={t("BPA_COMP_WORKFLOW")} onSubmit={() => getBPAFormData(application, mdmsData, history, t)} />}
                 </div>
@@ -186,7 +186,7 @@ const MyApplication = () => {
               {application.status==="PENDINGPAYMENT" ? (
               <Link
                 to={{
-                  pathname : `/upyog-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
+                  pathname : `/mycity-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
 
                 }}>
               <div style={{marginTop:"10px"}}>
@@ -202,7 +202,7 @@ const MyApplication = () => {
       <div style={{ marginLeft: "16px", marginTop: "16px", marginBottom: "46px" }}>
         <span>{`${t("BPA_NOT_ABLE_TO_FIND_APP_MSG")} `} </span>
         <span className="link">
-          <Link to="/upyog-ui/citizen/obps/search/obps-application">{t("BPA_CLICK_HERE_TO_SEARCH_LINK")}</Link>
+          <Link to="/mycity-ui/citizen/obps/search/obps-application">{t("BPA_CLICK_HERE_TO_SEARCH_LINK")}</Link>
         </span>
       </div>
     </Fragment>

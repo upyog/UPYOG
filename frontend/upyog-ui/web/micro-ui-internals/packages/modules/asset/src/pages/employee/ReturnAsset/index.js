@@ -64,7 +64,7 @@ const ReturnAsset = () => {
       },   
     };
 
-    history.replace("/upyog-ui/employee/asset/assetservice/return-response", { Asset: formData }); 
+    history.replace("/mycity-ui/employee/asset/assetservice/return-response", { Asset: formData }); 
     
 
   };

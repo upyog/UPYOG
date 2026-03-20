@@ -41,7 +41,7 @@ const SearchTrade = ({ config: propsConfig, onSelect }) => {
     }
     else {
       history.push(
-        `/upyog-ui/citizen/tl/tradelicence/renewal-list?mobileNumber=${data?.mobileNumber ? data?.mobileNumber : ``}&LicenseNumber=${data?.LicenseNum ? data?.LicenseNum : ``}&tenantId=${cityCode?cityCode:``}`
+        `/mycity-ui/citizen/tl/tradelicence/renewal-list?mobileNumber=${data?.mobileNumber ? data?.mobileNumber : ``}&LicenseNumber=${data?.LicenseNum ? data?.LicenseNum : ``}&tenantId=${cityCode?cityCode:``}`
       );
     }
   };

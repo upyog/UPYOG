@@ -193,7 +193,7 @@ const PropertyDetails = () => {
         asSectionHeader: true,
         belowComponent: () => (
           <LinkLabel
-            onClick={() => history.push({ pathname: `/upyog-ui/employee/pt/payment-details/${applicationNumber}`})}
+            onClick={() => history.push({ pathname: `/mycity-ui/employee/pt/payment-details/${applicationNumber}`})}
             style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
           >
             {t("PT_VIEW_PAYMENT")}
@@ -234,7 +234,7 @@ const PropertyDetails = () => {
                 showFinancialYearsModal: true,
                 customFunctionToExecute: (data) => {
                   delete data.customFunctionToExecute;
-                  history.replace({ pathname: `/upyog-ui/employee/pt/ptsearch/assessment-details/${applicationNumber}`, state: { ...data } });
+                  history.replace({ pathname: `/mycity-ui/employee/pt/ptsearch/assessment-details/${applicationNumber}`, state: { ...data } });
                 },
                 tenantId: Digit.ULBService.getStateId(),
               },
@@ -245,8 +245,8 @@ const PropertyDetails = () => {
                 isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? false : true,
                 redirectionUrl: {
                   pathname: !fetchBillData?.Bill[0]?.totalAmount
-                    ? `/upyog-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
-                    : `/upyog-ui/employee/payment/collect/PT/${applicationNumber}`,
+                    ? `/mycity-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
+                    : `/mycity-ui/employee/payment/collect/PT/${applicationNumber}`,
                   // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
                   state: null,
                 },
@@ -257,7 +257,7 @@ const PropertyDetails = () => {
                 forcedName: "PT_INACTIVE_PROPERTY",
                 showInactiveYearModel: true,
                 customFunctionToExecute: (data) => {
-                history.push("/upyog-ui/employee/pt/response", { Property: data.Property, key: "UPDATE", action: "SUBMIT" });
+                history.push("/mycity-ui/employee/pt/response", { Property: data.Property, key: "UPDATE", action: "SUBMIT" });
                 },
                 // redirectionUrl: {
                  
@@ -267,8 +267,8 @@ const PropertyDetails = () => {
                 //isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? true : true,
                 // redirectionUrl: {
                 //   pathname: !fetchBillData?.Bill[0]?.totalAmount
-                //     ? `/upyog-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
-                //     : `/upyog-ui/employee/payment/collect/PT/${applicationNumber}`,
+                //     ? `/mycity-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
+                //     : `/mycity-ui/employee/payment/collect/PT/${applicationNumber}`,
                 //   // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
                 //   state: null,
                 // },
@@ -287,7 +287,7 @@ const PropertyDetails = () => {
       workflowDetails?.data?.actionState?.nextActions?.push({
         action: "UPDATE",
         redirectionUrl: {
-          pathname: `/upyog-ui/employee/pt/modify-application/${applicationNumber}`,
+          pathname: `/mycity-ui/employee/pt/modify-application/${applicationNumber}`,
           state: { workflow: { action: "OPEN", moduleName: "PT", businessService: "PT.UPDATE" } },
         },
         tenantId: Digit.ULBService.getStateId(),

@@ -135,7 +135,7 @@ export const CHBMyApplications = () => {
               </div>
             </div>
           </div>
-            <Link to="/upyog-ui/citizen/chb/bookHall/searchhall">
+            <Link to="/mycity-ui/citizen/chb/bookHall/searchhall">
               <SubmitBar style={{borderRadius:"30px",width:"20%" }} label={t("CHB_NEW_BOOKING")+" +"} />
             </Link>
         </div>
@@ -161,7 +161,7 @@ export const CHBMyApplications = () => {
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">
-                <Link to={`/upyog-ui/citizen/chb/myBookings/${t1}`}>
+                <Link to={`/mycity-ui/citizen/chb/myBookings/${t1}`}>
                   {t("CHB_LOAD_MORE_MSG")}
                 </Link>
               </span>

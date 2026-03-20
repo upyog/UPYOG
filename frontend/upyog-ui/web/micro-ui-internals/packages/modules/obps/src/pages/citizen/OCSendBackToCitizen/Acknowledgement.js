@@ -33,7 +33,7 @@ const Acknowledgement = (props) => {
         />
         <CardText>{getAppAction == "BPA_SUBMIT_APP" ? t(`BPA_SUBMIT_SUB_HEADER_${bpaBusinessService}_${bpaAction}_${typeOfArchitect ? typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus," ","_").toUpperCase()}`) : t(`BPA_SUB_HEADER_${bpaBusinessService}_${bpaAction}_${typeOfArchitect ? typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus," ","_").toUpperCase()}`)}</CardText>
         <div style={{ marginTop: "12px", padding: "10px" }}>
-          <Link to={`/upyog-ui/citizen`} >
+          <Link to={`/mycity-ui/citizen`} >
             <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
         </div>

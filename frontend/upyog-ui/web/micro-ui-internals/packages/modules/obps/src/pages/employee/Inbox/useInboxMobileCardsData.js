@@ -43,7 +43,7 @@ const useInboxMobileCardsData = ({parentRoute, table, getRedirectionLink}) => {
         </SearchField>
     }
 
-    return ({ data:dataForMobileInboxCards,isTwoDynamicPrefix:true, linkPrefix: window.location.href.includes("/citizen") ?  `/upyog-ui/citizen/obps/` : `/upyog-ui/employee/obps/`,getRedirectionLink:getRedirectionLink, serviceRequestIdKey: "applicationNo", MobileSortFormValues})
+    return ({ data:dataForMobileInboxCards,isTwoDynamicPrefix:true, linkPrefix: window.location.href.includes("/citizen") ?  `/mycity-ui/citizen/obps/` : `/mycity-ui/employee/obps/`,getRedirectionLink:getRedirectionLink, serviceRequestIdKey: "applicationNo", MobileSortFormValues})
 
 }
 

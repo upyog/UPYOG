@@ -96,7 +96,7 @@ const AddDriver = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("FSM_DRIVER_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=DRIVER`);
+          history.push(`/mycity-ui/employee/vendor/search-vendor?selectedTabs=DRIVER`);
         }, 5000);
       },
     });

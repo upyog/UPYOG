@@ -51,7 +51,7 @@ const Response = (props) => {
         <BannerPicker t={t} data={mutation.data} mutation={mutation} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       </Card>
       <ActionBar>
-        <Link to={"/upyog-ui/employee"}>
+        <Link to={"/mycity-ui/employee"}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

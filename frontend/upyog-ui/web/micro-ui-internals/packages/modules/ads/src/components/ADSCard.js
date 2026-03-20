@@ -19,12 +19,12 @@ const ADSCard = () => {
   
     {
       label: t("ADS_BOOK"),
-      link: `/upyog-ui/employee/ads/bookad/searchads`,
+      link: `/mycity-ui/employee/ads/bookad/searchads`,
     },
     //in progress for search application page on employee side
     {
       label: t("ADS_SEARCH_BOOKINGS"),
-      link: `/upyog-ui/employee/ads/my-applications`,
+      link: `/mycity-ui/employee/ads/my-applications`,
     },
   ]
   const ADS_CEMP = Digit.UserService.hasAccess(["ADS_CEMP"]) || false;

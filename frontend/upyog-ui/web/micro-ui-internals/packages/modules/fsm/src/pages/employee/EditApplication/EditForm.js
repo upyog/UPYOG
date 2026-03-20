@@ -241,7 +241,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
     Digit.SessionStorage.set("city_property", null);
     Digit.SessionStorage.set("selected_localities", null);
     Digit.SessionStorage.set("locality_property", null);
-    history.replace("/upyog-ui/employee/fsm/response", {
+    history.replace("/mycity-ui/employee/fsm/response", {
       applicationData: formData,
       key: "update",
       action: applicationData?.applicationStatus === "CREATED" ? "SUBMIT" : "SCHEDULE",

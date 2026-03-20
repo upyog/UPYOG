@@ -9,8 +9,8 @@
 # -
 
 config:
--   name: builds/upyog-ui
+-   name: builds/mycity-ui
     build:
-      - work-dir: frontend/upyog-ui/web/
+      - work-dir: frontend/mycity-ui/web/
       dockerfile: web/docker/Dockerfile
-      image-name: upyog-ui
+      image-name: mycity-ui

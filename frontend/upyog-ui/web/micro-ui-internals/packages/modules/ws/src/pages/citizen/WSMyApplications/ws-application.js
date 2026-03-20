@@ -61,13 +61,13 @@ const WSApplication = ({ application }) => {
         },
        }}
       /> 
-      <Link to={`/upyog-ui/citizen/ws/connection/application/${encodeApplicationNo}`}>
+      <Link to={`/mycity-ui/citizen/ws/connection/application/${encodeApplicationNo}`}>
         <SubmitBar label={t("WS_VIEW_DETAILS_LABEL")} />
       </Link>
       {application?.applicationStatus === "PENDING_FOR_PAYMENT"  ? (
             <Link
               to={{
-                pathname: `/upyog-ui/citizen/payment/my-bills/${
+                pathname: `/mycity-ui/citizen/payment/my-bills/${
                   businessService
                 }/${application?.applicationNo?.includes("DC") ? (stringReplaceAll(application?.connectionNo, "/", "+") || stringReplaceAll(application?.connectionNo, "/", "+")) :
                   (stringReplaceAll(application?.applicationNo, "/", "+") ||

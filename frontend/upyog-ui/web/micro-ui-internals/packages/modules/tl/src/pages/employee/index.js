@@ -76,31 +76,31 @@ const TLBreadCrumb = ({ location }) => {
 
   const crumbs = [
     {
-      path: "/upyog-ui/employee",
+      path: "/mycity-ui/employee",
       content: t("ES_COMMON_HOME"),
       show: true
     },
     {
-      path: "/upyog-ui/employee/tl/inbox",
+      path: "/mycity-ui/employee/tl/inbox",
       content: t("ES_TITLE_INBOX"),
       show: breadCrumbUrls.includes("inbox") || isInbox
     },
     {
-      path: "/upyog-ui/employee/tl/search/application",
+      path: "/mycity-ui/employee/tl/search/application",
       content: t("ES_COMMON_SEARCH_APPLICATION"),
       show: isApplicationSearch ||
       breadCrumbUrls.includes("home/search") || 
       breadCrumbUrls.includes("inbox/search")
     },
     {
-      path: "/upyog-ui/employee/tl/search/license",
+      path: "/mycity-ui/employee/tl/search/license",
       content: t("TL_SEARCH_TRADE_HEADER"),
       show: isLicenceSearch || 
       breadCrumbUrls.includes("home/license") || 
       breadCrumbUrls.includes("inbox/license")
     },
     {
-      path: sessionStorage.getItem("applicationNumber") ? `/upyog-ui/employee/tl/application-details/${sessionStorage.getItem("applicationNumber")}` : "",
+      path: sessionStorage.getItem("applicationNumber") ? `/mycity-ui/employee/tl/application-details/${sessionStorage.getItem("applicationNumber")}` : "",
       content: t("TL_DETAILS_HEADER_LABEL"),
       show: isApplicationDetails ||
       breadCrumbUrls.includes("inbox/appDetails") || 
@@ -110,7 +110,7 @@ const TLBreadCrumb = ({ location }) => {
       breadCrumbUrls.includes("inbox/search/appDetails")
     },
     {
-      path: "/upyog-ui/employee/tl/new-application",
+      path: "/mycity-ui/employee/tl/new-application",
       content: t("TL_HOME_SEARCH_RESULTS_NEW_APP_BUTTON"),
       show: isNewApplication || 
       breadCrumbUrls.includes("home/newApp") || 
@@ -135,7 +135,7 @@ const TLBreadCrumb = ({ location }) => {
       breadCrumbUrls.includes("inbox/search/appDetails/edit")
     },
     {
-      path: "/upyog-ui/employee/tl/inbox",
+      path: "/mycity-ui/employee/tl/inbox",
       content: t("ACTION_TEST_RESPONSE"),
       show: isResponse
     }
@@ -165,22 +165,22 @@ const EmployeeApp = ({ path, url, userType }) => {
             <TLBreadCrumb location={location} />
           </div>
           {/* <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : !locationCheck ? "revert": "15px" }}>
-            <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
+            <Link to="/mycity-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
               {t("ES_COMMON_HOME")}
             </Link>{" "}
             / 
-            {location.pathname === "/upyog-ui/employee/tl/inbox" ? 
-              <span>{location.pathname === "/upyog-ui/employee/tl/inbox" ? t("ES_COMMON_INBOX") : ""}</span>
+            {location.pathname === "/mycity-ui/employee/tl/inbox" ? 
+              <span>{location.pathname === "/mycity-ui/employee/tl/inbox" ? t("ES_COMMON_INBOX") : ""}</span>
               : 
-              <Link to="/upyog-ui/employee/tl/inbox" style={{ cursor: "pointer", color: "#666" }}>
-                {location.pathname.includes("/upyog-ui/employee/tl/") ? t("ES_COMMON_INBOX") : ""}
+              <Link to="/mycity-ui/employee/tl/inbox" style={{ cursor: "pointer", color: "#666" }}>
+                {location.pathname.includes("/mycity-ui/employee/tl/") ? t("ES_COMMON_INBOX") : ""}
               </Link>}
-            <span>{location.pathname.includes("/upyog-ui/employee/tl/search/application") ? `/ ${t("ES_COMMON_SEARCH_APPLICATION") }`  : null}</span>
-            <span>{location.pathname.includes("/upyog-ui/employee/tl/search/license") ? `/ ${t("TL_SEARCH_TRADE_HEADER") }`  : null}</span>
-            <span>{location.pathname.includes("/upyog-ui/employee/tl/application-details") ? `/ ${t("TL_DETAILS_HEADER_LABEL") }`  : null}</span>
-            <span>{location.pathname.includes("/upyog-ui/employee/tl/new-application") ? `/ ${t("TL_HOME_SEARCH_RESULTS_NEW_APP_BUTTON") }`  : null}</span>
-            <span>{location.pathname.includes("/upyog-ui/employee/tl/renew-application-details") ? `/ ${t("ES_TITLE_RENEW_TRADE_LICESE_APPLICATION") }`  : null}</span>
-            <span>{location.pathname.includes("/upyog-ui/employee/tl/edit-application-details") ? `/ ${t("ES_TITLE_RE_NEW_TRADE_LICESE_APPLICATION") }`  : null}</span>
+            <span>{location.pathname.includes("/mycity-ui/employee/tl/search/application") ? `/ ${t("ES_COMMON_SEARCH_APPLICATION") }`  : null}</span>
+            <span>{location.pathname.includes("/mycity-ui/employee/tl/search/license") ? `/ ${t("TL_SEARCH_TRADE_HEADER") }`  : null}</span>
+            <span>{location.pathname.includes("/mycity-ui/employee/tl/application-details") ? `/ ${t("TL_DETAILS_HEADER_LABEL") }`  : null}</span>
+            <span>{location.pathname.includes("/mycity-ui/employee/tl/new-application") ? `/ ${t("TL_HOME_SEARCH_RESULTS_NEW_APP_BUTTON") }`  : null}</span>
+            <span>{location.pathname.includes("/mycity-ui/employee/tl/renew-application-details") ? `/ ${t("ES_TITLE_RENEW_TRADE_LICESE_APPLICATION") }`  : null}</span>
+            <span>{location.pathname.includes("/mycity-ui/employee/tl/edit-application-details") ? `/ ${t("ES_TITLE_RE_NEW_TRADE_LICESE_APPLICATION") }`  : null}</span>
           </p> */}
           <PrivateRoute
             path={`${path}/inbox`}
