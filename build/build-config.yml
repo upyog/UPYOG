@@ -140,6 +140,14 @@ config:
       - work-dir: "core-services/pdf-service/migration"
         image-name: "pdf-service-db"
 
+  - name: "builds/upyog/core-services/egov-user"
+    build:
+      - work-dir: "core-services/egov-user"
+        image-name: "egov-user"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/egov-user/src/main/resources/db"
+        image-name: "egov-user-db"      
+
 
   # Municipal Services
   - name: "builds/upyog/municipal-services/turn-io-adapter"

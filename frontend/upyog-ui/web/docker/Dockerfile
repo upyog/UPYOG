@@ -12,6 +12,8 @@ ENV GENERATE_SOURCEMAP "false"
 COPY ${WORK_DIR} .
 RUN ls -lah
 
+RUN yarn config set ignore-engines true
+
 #RUN node web/envs.js
 RUN cd web/ \
     && node envs.js \
