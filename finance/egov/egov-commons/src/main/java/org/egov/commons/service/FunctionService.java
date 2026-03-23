@@ -92,7 +92,7 @@ public class FunctionService {
 	}
 
 	public List<CFunction> findAllActive() {
-		return functionRepository.findByIsActiveAndIsNotLeaf(true, false);
+		return functionRepository.findByIsActiveAndIsNotLeafOrderByNameAsc(true, false);
 	}
 
 	public List<CFunction> findAll() {

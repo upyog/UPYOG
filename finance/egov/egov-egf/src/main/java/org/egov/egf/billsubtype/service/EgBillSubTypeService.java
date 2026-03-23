@@ -85,7 +85,7 @@ public class EgBillSubTypeService {
     }
 
     public List<EgBillSubType> getByExpenditureType(final String expenditureType) {
-        return egBillSubTypeRepository.findByExpenditureType(expenditureType);
+        return egBillSubTypeRepository.findByExpenditureTypeOrderByNameAsc(expenditureType);
     }
 
     public EgBillSubType getByExpenditureTypeAndName(final String expenditureType, final String name) {

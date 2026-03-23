@@ -64,7 +64,7 @@ public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
     }
 
     public List<SubScheme> getBySchemeId(final Integer schemeId) {
-        final Query query = getSession().createQuery(" from SubScheme where isactive = true and scheme.id=:schemeId");
+        final Query query = getSession().createQuery(" from SubScheme where isactive = true and scheme.id=:schemeId order by name asc");
 
         query.setInteger("schemeId", schemeId);
         return query.list();

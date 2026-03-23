@@ -61,6 +61,8 @@ import java.util.List;
 public interface EgBillSubTypeRepository extends JpaRepository<EgBillSubType, Long> {
 
     List<EgBillSubType> findByExpenditureType(String expenditureType);
+    
+    List<EgBillSubType> findByExpenditureTypeOrderByNameAsc(String expenditureType);
 
     EgBillSubType findByExpenditureTypeAndName(String expenditureType, String name);
 }

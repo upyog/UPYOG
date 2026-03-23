@@ -64,7 +64,7 @@ public interface WorkOrderRepository extends JpaRepository<WorkOrder, Long> {
 
     public List<WorkOrder> findByNameLikeIgnoreCaseOrOrderNumberLikeIgnoreCaseAndActive(String name, String orderNumber, Boolean active);
 
-    @Query("from WorkOrder where active=true")
+    @Query("from WorkOrder where active=true order by name asc")
     public List<WorkOrder> findActiveOrders();
 
     public List<WorkOrder> findByContractor_Id(Long id);

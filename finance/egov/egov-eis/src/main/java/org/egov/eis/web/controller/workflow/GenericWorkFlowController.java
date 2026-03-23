@@ -48,6 +48,7 @@
 package org.egov.eis.web.controller.workflow;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -154,7 +155,7 @@ public abstract class GenericWorkFlowController {
     public List<Department> getDepartmentsFromMs() {
 
         List<Department> departments = microserviceUtils.getDepartments();
-
+        departments.sort(Comparator.comparing(Department::getName));
         return departments;
 
     }

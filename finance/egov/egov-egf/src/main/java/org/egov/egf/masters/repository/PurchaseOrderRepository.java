@@ -64,7 +64,7 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
 
     public List<PurchaseOrder> findByNameLikeIgnoreCaseOrOrderNumberLikeIgnoreCaseAndActive(String name, String orderNumber, Boolean active);
 
-    @Query("from PurchaseOrder where active=true")
+    @Query("from PurchaseOrder where active=true order by name asc")
     public List<PurchaseOrder> findActiveOrders();
 
     public List<PurchaseOrder> findBySupplier_Id(Long id);

@@ -189,7 +189,7 @@ function generateReport(){
 					<td class="bluebox"><s:select
 							list="dropdownData.budgetGroupList" listKey="id" listValue="name"
 							name="budgetGroup.id" headerKey="0" headerValue="%{getText('lbl.choose.options')}"
-							value="budgetGroup.id" id="budgetHeadId"></s:select></td>
+							value="budgetGroup.id" id="budgetHeadId" escapeHtml="false"></s:select></td>
 					<td class="bluebox">&nbsp;</td>
 				</tr>
 

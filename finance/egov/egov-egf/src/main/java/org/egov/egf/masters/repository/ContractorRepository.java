@@ -64,7 +64,7 @@ public interface ContractorRepository extends JpaRepository<Contractor, Long> {
 
     public List<Contractor> findByNameLikeIgnoreCaseOrCodeLikeIgnoreCase(String name, String code);
     
-    @Query("from Contractor where status.code='Active'")
+    @Query("from Contractor where status.code='Active' order by name asc")
     public List<Contractor> findByStatus();
 
 }

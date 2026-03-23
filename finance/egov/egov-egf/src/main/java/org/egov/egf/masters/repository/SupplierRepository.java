@@ -63,6 +63,6 @@ import org.springframework.stereotype.Repository;
 public interface SupplierRepository extends JpaRepository<Supplier, Long> {
     public List<Supplier> findByNameLikeIgnoreCaseOrCodeLikeIgnoreCase(String name, String code);
     
-    @Query("from Supplier where status.code='Active'")
+    @Query("from Supplier where status.code='Active' order by name asc")
     public List<Supplier> findByStatus();
 }

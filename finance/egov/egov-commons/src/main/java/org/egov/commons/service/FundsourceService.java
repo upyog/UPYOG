@@ -109,7 +109,7 @@ public class FundsourceService {
 
     public List<Fundsource> getBySubSchemeId(final Integer subSchemeId) {
         final Query query = entityManager.unwrap(Session.class)
-                .createQuery(" from Fundsource where isactive = true and subSchemeId.id=:subSchemeId");
+                .createQuery(" from Fundsource where isactive = true and subSchemeId.id=:subSchemeId order by name asc");
 
         query.setInteger("subSchemeId", subSchemeId);
         return query.list();
