@@ -80,10 +80,6 @@
 <form:form name="contractorBillForm" role="form" action="" modelAttribute="egBillregister" id="egBillregister"
            class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
     <div>
-        <spring:
-<form:form name="contractorBillForm" role="form" action="" modelAttribute="egBillregister" id="egBillregister"
-           class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-    <div>
         <spring:hasBindErrors name="egBillregister">
             <div class="alert alert-danger col-md-10 col-md-offset-1">
                 <form:errors path="*"/><br/>

@@ -95,7 +95,7 @@ function printBill() {
            value="Print"
            style="margin-right:10px;"
            class="btn btn-primary"
-           onclick="window.print();" />	
+           onclick="printBill();" />	
            
            <input type="button" name="closeButton" id="closeButton" value='<spring:message code="lbl.close" text="Close"/>' class="btn btn-default" onclick="window.parent.postMessage('close','*');window.close();"/>
     </div>		

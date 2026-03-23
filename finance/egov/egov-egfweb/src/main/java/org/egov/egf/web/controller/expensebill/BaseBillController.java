@@ -128,10 +128,7 @@ public abstract class BaseBillController extends BaseVoucherController {
         model.addAttribute("billNumberGenerationAuto", expenseBillService.isBillNumberGenerationAuto());
         model.addAttribute("billSubTypes", getBillSubTypes());
         model.addAttribute("subLedgerTypes", accountdetailtypeService.findAll());
-        model.addAttribute("functions",
-        	    functionService.findAllActive().stream()
-        	        .sorted(Comparator.comparing(CFunction::getName, String.CASE_INSENSITIVE_ORDER))
-        	        .collect(Collectors.toList()));
+        model.addAttribute("functions", functionService.findAllActive());
         isBillDateDefaultValue = expenseBillService.isDefaultAutoPopulateCurrDateEnable();
     }
 
