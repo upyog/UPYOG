@@ -698,7 +698,7 @@ var totaldbamt=0,totalcramt=0;
         	addServiceTypeDropdown('serviceTable');
  			<s:iterator value="serviceTypeMap[#obj.key]" status="stat" var="names">
  				var stKey = '<s:property value="#names.key" />';
- 				var stValue = '<s:property value="#names.value" escapeHtml="true"/>';
+ 				var stValue = '<s:property value="#names.value" escapeHtml="false"/>';
  				document.getElementById('serviceId').options[<s:property value="#stat.index+1"/>]= new Option(stValue,stKey);
 			</s:iterator>
         }
