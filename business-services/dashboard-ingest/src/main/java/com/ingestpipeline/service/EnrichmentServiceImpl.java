@@ -163,6 +163,8 @@ public class EnrichmentServiceImpl implements EnrichmentService {
 					LOGGER.info("Query node "+ queryNode);
 					Map domainNode = elasticService.search(indexName, queryNode.toString());
 					if(domainNode != null){
+						LOGGER.info("domainNode ",  domainNode);
+						LOGGER.info("businessTypeVal ",  businessTypeVal);
 						Object transDomainResponse = enrichTransform.transform(domainNode, businessTypeVal.toString());
 						incomingData.put("domainObject", transDomainResponse);
 						enhanceData(incomingData);
