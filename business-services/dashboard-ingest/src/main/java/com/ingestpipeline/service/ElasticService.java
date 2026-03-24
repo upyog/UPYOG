@@ -166,10 +166,13 @@ public class ElasticService implements IESService {
 
         try {
 			ResponseEntity<Object> response = retryTemplate.postForEntity(url,requestEntity);
-
+			LOGGER.error("--response : " , response);
             Map responseNode = new ObjectMapper().convertValue(response.getBody(), Map.class);
+            LOGGER.error("--responseNode : " , responseNode);
 			Map hits = (Map)responseNode.get("hits");
-            if((Integer)hits.get("total") >=1)
+			LOGGER.error("--hits : " , hits);
+			Map hitsTotalMap = (Map)hits.get("total");
+            if((Integer)hitsTotalMap.get("value") >=1)
                 return (Map)((ArrayList)hits.get("hits")).get(0);
 
         } catch (HttpClientErrorException e) {
@@ -177,6 +180,9 @@ public class ElasticService implements IESService {
             LOGGER.error("client error while searching ES : " + e.getMessage());
 
         }
+         catch (Exception e) {
+        	 LOGGER.error("EXCEPTION on ES search : " , e.getMessage());
+         }
         return null;
     }
 	
