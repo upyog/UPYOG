@@ -160,8 +160,9 @@ public class EnrichmentServiceImpl implements EnrichmentService {
 						JSONUtil.replaceFieldValue(queryNode, ref.getArgument(), ref.getValue());
 
 					}
-					LOGGER.info("Query node "+ queryNode);
+					LOGGER.info("Query node "+ queryNode+ " -- INDEX NAME:   "+ indexName);					
 					Map domainNode = elasticService.search(indexName, queryNode.toString());
+					LOGGER.info("domainNode outside if",  domainNode);
 					if(domainNode != null){
 						LOGGER.info("domainNode ",  domainNode);
 						LOGGER.info("businessTypeVal ",  businessTypeVal);
