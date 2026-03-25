@@ -207,6 +207,8 @@ public class EstimationService {
 
 	@Value("${customization.pbfirecesslogic:false}")
 	Boolean usePBFirecessLogic;
+	
+	
 
 	/**
 	 * Calculates tax and creates demand for the given assessment number
@@ -1040,6 +1042,7 @@ public class EstimationService {
 	private Calculation getCalculation(RequestInfo requestInfo, CalculationCriteria criteria,
 			Map<String, Object> masterMap) {
 
+		String penaltyPrecentage = Boolean.FALSE.equals(configs.getIsPenaltyApplicable()) ? "0.00" : configs.getPenaltyPercent();
 		Map<String, List> estimatesAndBillingSlabs = getEstimationMap(criteria, requestInfo, masterMap);
 
 		List<TaxHeadEstimate> estimates = estimatesAndBillingSlabs.get("estimates");
@@ -1333,7 +1336,7 @@ public class EstimationService {
 			LocalDate startDate = LocalDate.parse(date, dtf);
 			BigDecimal daysdiff = new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
 			pastduePenalty = collectedAmtForOldDemand.multiply(
-					new BigDecimal(CALCULATION_0_027).divide(new BigDecimal(CALCULATION_100)).multiply(daysdiff));
+					new BigDecimal(penaltyPrecentage).divide(new BigDecimal(CALCULATION_100)).multiply(daysdiff));
 			pastduePenalty = pastduePenalty.setScale(CALCULATION_2, CALCULATION_2);
 			// if(pastduePenalty.compareTo(BigDecimal.ZERO)>0){
 			/*

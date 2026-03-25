@@ -41,6 +41,18 @@ public class Payment {
 	@NotNull
 	@JsonProperty("totalAmountPaid")
 	private BigDecimal totalAmountPaid;
+	
+	@NotNull
+	@JsonProperty("penaltyAmountPaid")
+	private BigDecimal penaltyAmountPaid;
+	
+	@NotNull
+	@JsonProperty("interestAmountPaid")
+	private BigDecimal interestAmountPaid;
+	
+	@NotNull
+	@JsonProperty("advanceAmountPaid")
+	private BigDecimal advanceAmountPaid;
 
 	@Size(max = 128)
 	@JsonProperty("transactionNumber")

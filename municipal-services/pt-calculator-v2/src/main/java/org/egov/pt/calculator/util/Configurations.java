@@ -151,5 +151,17 @@ public class Configurations {
 	//Notice
 	@Value("${egov.notice.search.endpoint}")
 	private String noticeSearchEndpoint; 
+	
+	@Value("${interest.perecent}")
+	private String interestPercent;
+	
+	@Value("${is.interest.applicable}")
+	private Boolean isInterestApplicable;
+	
+	@Value("${penalty.perecent}")
+	private String penaltyPercent;
+	
+	@Value("${is.penalty.applicable}")
+	private Boolean isPenaltyApplicable;
 
 }

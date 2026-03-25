@@ -1,5 +1,6 @@
 package org.egov.pt.calculator.util;
 
+
 import static org.egov.pt.calculator.util.CalculatorConstants.ALLOWED_RECEIPT_STATUS;
 import static org.egov.pt.calculator.util.CalculatorConstants.ASSESSMENTNUMBER_FIELD_SEARCH;
 import static org.egov.pt.calculator.util.CalculatorConstants.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL;
@@ -10,7 +11,6 @@ import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_START_DATE_
 import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_STATUS_ACTIVE;
 import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_STATUS_PARAM;
 import static org.egov.pt.calculator.util.CalculatorConstants.PROPERTY_TAX_SERVICE_CODE;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADVANCE_CARRYFORWARD;
 import static org.egov.pt.calculator.util.CalculatorConstants.RECEIPT_END_DATE_PARAM;
 import static org.egov.pt.calculator.util.CalculatorConstants.RECEIPT_START_DATE_PARAM;
 import static org.egov.pt.calculator.util.CalculatorConstants.SEPARATER;
@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -60,8 +59,16 @@ import org.egov.pt.calculator.web.models.GetBillCriteria;
 import org.egov.pt.calculator.web.models.ReceiptSearchCriteria;
 import org.egov.pt.calculator.web.models.collections.Payment;
 import org.egov.pt.calculator.web.models.collections.PaymentDetail;
-import org.egov.pt.calculator.web.models.demand.*;
+import org.egov.pt.calculator.web.models.demand.Bill;
 import org.egov.pt.calculator.web.models.demand.Bill.BillStatusEnum;
+import org.egov.pt.calculator.web.models.demand.BillAccountDetail;
+import org.egov.pt.calculator.web.models.demand.BillDetail;
+import org.egov.pt.calculator.web.models.demand.BillResponse;
+import org.egov.pt.calculator.web.models.demand.Demand;
+import org.egov.pt.calculator.web.models.demand.DemandDetail;
+import org.egov.pt.calculator.web.models.demand.DemandResponse;
+import org.egov.pt.calculator.web.models.demand.PaymentResponse;
+import org.egov.pt.calculator.web.models.demand.TaxPeriod;
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 import org.egov.pt.calculator.web.models.property.Notice;
 import org.egov.pt.calculator.web.models.property.NoticeResponse;
@@ -72,7 +79,6 @@ import org.egov.pt.calculator.web.models.property.PropertyRequest;
 import org.egov.pt.calculator.web.models.property.PropertyResponse;
 import org.egov.pt.calculator.web.models.property.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
-import org.springframework.aop.config.AdvisorEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -106,9 +112,10 @@ public class CalculatorUtils {
 	private static String timeZone;
 
 	@Value("${id.timezone}")
-	public  void setTimeZone(String zone){
+	public void setTimeZone(String zone) {
 		CalculatorUtils.timeZone = zone;
 	}
+
 
 	public Map<String, Integer> getTaxHeadApportionPriorityMap() {
 
@@ -149,12 +156,13 @@ public class CalculatorUtils {
 	 * @param assesmentYears
 	 * @return
 	 */
-	public MdmsCriteriaReq getFinancialYearRequest(RequestInfo requestInfo, Set<String> assesmentYears, String tenantId) {
+	public MdmsCriteriaReq getFinancialYearRequest(RequestInfo requestInfo, Set<String> assesmentYears,
+			String tenantId) {
 
 		String assessmentYearStr = StringUtils.join(assesmentYears, ",");
 		MasterDetail mstrDetail = MasterDetail.builder().name(CalculatorConstants.FINANCIAL_YEAR_MASTER)
-				.filter("[?(@." + CalculatorConstants.FINANCIAL_YEAR_RANGE_FEILD_NAME + " IN [" + assessmentYearStr + "]" +
-						" && @.module== '" + SERVICE_FIELD_VALUE_PT + "')]")
+				.filter("[?(@." + CalculatorConstants.FINANCIAL_YEAR_RANGE_FEILD_NAME + " IN [" + assessmentYearStr
+						+ "]" + " && @.module== '" + SERVICE_FIELD_VALUE_PT + "')]")
 				.build();
 		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(CalculatorConstants.FINANCIAL_MODULE)
 				.masterDetails(Arrays.asList(mstrDetail)).build();
@@ -212,9 +220,8 @@ public class CalculatorUtils {
 
 		return new StringBuilder().append(configurations.getBillingServiceHost())
 				.append(configurations.getTaxheadsSearchEndpoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
-				.append(SEPARATER).append(SERVICE_FIELD_FOR_SEARCH_URL)
-				.append(SERVICE_FIELD_VALUE_PT);
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId).append(SEPARATER)
+				.append(SERVICE_FIELD_FOR_SEARCH_URL).append(SERVICE_FIELD_VALUE_PT);
 	}
 
 	/**
@@ -228,9 +235,8 @@ public class CalculatorUtils {
 
 		return new StringBuilder().append(configurations.getBillingServiceHost())
 				.append(configurations.getTaxPeriodSearchEndpoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
-				.append(SEPARATER).append(SERVICE_FIELD_FOR_SEARCH_URL)
-				.append(SERVICE_FIELD_VALUE_PT);
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId).append(SEPARATER)
+				.append(SERVICE_FIELD_FOR_SEARCH_URL).append(SERVICE_FIELD_VALUE_PT);
 	}
 
 	/**
@@ -251,30 +257,23 @@ public class CalculatorUtils {
 				.append(ALLOWED_RECEIPT_STATUS);
 	}
 
-
 	/**
-	 * Returns the Receipt search Url with tenantId, cosumerCode,service name and tax period
-	 * parameters
+	 * Returns the Receipt search Url with tenantId, cosumerCode,service name and
+	 * tax period parameters
 	 *
 	 * @param criteria
 	 * @return
 	 */
 	public StringBuilder getReceiptSearchUrl(ReceiptSearchCriteria criteria) {
 
-
 		return new StringBuilder().append(configurations.getCollectionServiceHost())
 				.append(configurations.getReceiptSearchEndpoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(criteria.getTenantId())
-				.append(SEPARATER).append(CONSUMER_CODE_SEARCH_FIELD_NAME)
-				.append(criteria.getPropertyId())
-				.append(SEPARATER).append(RECEIPT_START_DATE_PARAM)
-				.append(criteria.getFromDate())
-				.append(SEPARATER).append(RECEIPT_END_DATE_PARAM)
-				.append(criteria.getToDate())
-				.append(CalculatorConstants.SEPARATER).append(STATUS_FIELD_FOR_SEARCH_URL)
-				.append(ALLOWED_RECEIPT_STATUS);
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(criteria.getTenantId()).append(SEPARATER)
+				.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(criteria.getPropertyId()).append(SEPARATER)
+				.append(RECEIPT_START_DATE_PARAM).append(criteria.getFromDate()).append(SEPARATER)
+				.append(RECEIPT_END_DATE_PARAM).append(criteria.getToDate()).append(CalculatorConstants.SEPARATER)
+				.append(STATUS_FIELD_FOR_SEARCH_URL).append(ALLOWED_RECEIPT_STATUS);
 	}
-
 
 	/**
 	 * method to create demandsearch url with demand criteria
@@ -287,28 +286,22 @@ public class CalculatorUtils {
 		if (CollectionUtils.isEmpty(getBillCriteria.getConsumerCodes())) {
 			builder = builder.append(configurations.getBillingServiceHost())
 					.append(configurations.getDemandSearchEndPoint()).append(URL_PARAMS_SEPARATER)
-					.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(getBillCriteria.getTenantId())
-					.append(SEPARATER)
-					.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(getBillCriteria.getPropertyId())
-					.append(SEPARATER)
+					.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(getBillCriteria.getTenantId()).append(SEPARATER)
+					.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(getBillCriteria.getPropertyId()).append(SEPARATER)
 					.append(DEMAND_STATUS_PARAM).append(DEMAND_STATUS_ACTIVE);
-		}
-		else {
+		} else {
 
 			builder = builder.append(configurations.getBillingServiceHost())
 					.append(configurations.getDemandSearchEndPoint()).append(URL_PARAMS_SEPARATER)
-					.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(getBillCriteria.getTenantId())
-					.append(SEPARATER)
-					.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(StringUtils.join(getBillCriteria.getConsumerCodes(), ","))
-					.append(SEPARATER)
+					.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(getBillCriteria.getTenantId()).append(SEPARATER)
+					.append(CONSUMER_CODE_SEARCH_FIELD_NAME)
+					.append(StringUtils.join(getBillCriteria.getConsumerCodes(), ",")).append(SEPARATER)
 					.append(DEMAND_STATUS_PARAM).append(DEMAND_STATUS_ACTIVE);
 
 		}
 		if (getBillCriteria.getFromDate() != null && getBillCriteria.getToDate() != null)
-			builder = builder.append(DEMAND_START_DATE_PARAM).append(getBillCriteria.getFromDate())
-			.append(SEPARATER)
-			.append(DEMAND_END_DATE_PARAM).append(getBillCriteria.getToDate())
-			.append(SEPARATER);
+			builder = builder.append(DEMAND_START_DATE_PARAM).append(getBillCriteria.getFromDate()).append(SEPARATER)
+					.append(DEMAND_END_DATE_PARAM).append(getBillCriteria.getToDate()).append(SEPARATER);
 
 		return builder;
 	}
@@ -324,10 +317,10 @@ public class CalculatorUtils {
 		return new StringBuilder().append(configurations.getBillingServiceHost())
 				.append(configurations.getDemandSearchEndPoint()).append(CalculatorConstants.URL_PARAMS_SEPARATER)
 				.append(CalculatorConstants.TENANT_ID_FIELD_FOR_SEARCH_URL).append(assessment.getTenantId())
-				.append(CalculatorConstants.SEPARATER)
-				.append(CalculatorConstants.CONSUMER_CODE_SEARCH_FIELD_NAME).append(assessment.getPropertyId() + CalculatorConstants.PT_CONSUMER_CODE_SEPARATOR + assessment.getAssessmentNumber());
+				.append(CalculatorConstants.SEPARATER).append(CalculatorConstants.CONSUMER_CODE_SEARCH_FIELD_NAME)
+				.append(assessment.getPropertyId() + CalculatorConstants.PT_CONSUMER_CODE_SEPARATOR
+						+ assessment.getAssessmentNumber());
 	}
-
 
 	/**
 	 * method to create demandsearch url with demand criteria
@@ -339,10 +332,8 @@ public class CalculatorUtils {
 
 		return new StringBuilder().append(configurations.getBillingServiceHost())
 				.append(configurations.getDemandSearchEndPoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(criteria.getTenantId())
-				.append(SEPARATER)
-				.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(criteria.getPropertyId())
-				.append(SEPARATER)
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(criteria.getTenantId()).append(SEPARATER)
+				.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(criteria.getPropertyId()).append(SEPARATER)
 				.append(DEMAND_STATUS_PARAM).append(DEMAND_STATUS_ACTIVE);
 	}
 
@@ -350,34 +341,27 @@ public class CalculatorUtils {
 
 		return new StringBuilder().append(configurations.getBillingServiceHost())
 				.append(configurations.getBillSearchEndpoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(criteria.getTenantId())
-				.append(SEPARATER)
-				.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(criteria.getConsumerCode())
-				.append(SEPARATER)
-				.append(SERVICE_FIELD_FOR_SEARCH_URL)
-				.append(SERVICE_FIELD_VALUE_PT)
-				.append(SEPARATER)
-				.append(DEMAND_ID_SEARCH_FIELD_NAME).append(criteria.getDemandId())
-				.append(SEPARATER)
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(criteria.getTenantId()).append(SEPARATER)
+				.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(criteria.getConsumerCode()).append(SEPARATER)
+				.append(SERVICE_FIELD_FOR_SEARCH_URL).append(SERVICE_FIELD_VALUE_PT).append(SEPARATER)
+				.append(DEMAND_ID_SEARCH_FIELD_NAME).append(criteria.getDemandId()).append(SEPARATER)
 				.append("searchAllForDemand=true");
 	}
 
-	public StringBuilder getCollectionSearchUrl(String tenantId,String billId) {
+	public StringBuilder getCollectionSearchUrl(String tenantId, String billId) {
 
 		return new StringBuilder().append(configurations.getCollectionServiceHost())
 				.append(configurations.getPaymentSearchEndpoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
-				.append(SEPARATER)
-				.append("billIds=").append(billId);
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId).append(SEPARATER).append("billIds=")
+				.append(billId);
 	}
-	
-	public StringBuilder getNoticeSearchUrl(String tenantId,String propertyid) {
+
+	public StringBuilder getNoticeSearchUrl(String tenantId, String propertyid) {
 
 		return new StringBuilder().append(configurations.getAssessmentServiceHost())
 				.append(configurations.getNoticeSearchEndpoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
-				.append(SEPARATER)
-				.append("propertyIds=").append(propertyid);
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId).append(SEPARATER).append("propertyIds=")
+				.append(propertyid);
 	}
 
 	/**
@@ -404,11 +388,9 @@ public class CalculatorUtils {
 	public BigDecimal getTaxAmtFromDemandForAdditonalTaxes(Demand demand) {
 		BigDecimal taxAmt = BigDecimal.ZERO;
 		for (DemandDetail detail : demand.getDemandDetails()) {
-			if (CalculatorConstants.ADDITIONAL_TAXES
-					.contains(detail.getTaxHeadMasterCode()))
+			if (CalculatorConstants.ADDITIONAL_TAXES.contains(detail.getTaxHeadMasterCode()))
 				taxAmt = taxAmt.add(detail.getTaxAmount());
-			else if (CalculatorConstants.ADDITIONAL_DEBITS
-					.contains(detail.getTaxHeadMasterCode()))
+			else if (CalculatorConstants.ADDITIONAL_DEBITS.contains(detail.getTaxHeadMasterCode()))
 				taxAmt = taxAmt.subtract(detail.getTaxAmount());
 		}
 		return taxAmt;
@@ -420,7 +402,8 @@ public class CalculatorUtils {
 	 * @return
 	 */
 	public StringBuilder getUpdateDemandUrl() {
-		return new StringBuilder().append(configurations.getBillingServiceHost()).append(configurations.getDemandUpdateEndPoint());
+		return new StringBuilder().append(configurations.getBillingServiceHost())
+				.append(configurations.getDemandUpdateEndPoint());
 	}
 
 	/**
@@ -434,11 +417,9 @@ public class CalculatorUtils {
 	public StringBuilder getBillGenUrl(String tenantId, String demandId, String consumerCode) {
 		return new StringBuilder().append(configurations.getBillingServiceHost())
 				.append(configurations.getBillGenEndPoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
-				.append(SEPARATER).append(DEMAND_ID_SEARCH_FIELD_NAME)
-				.append(demandId).append(SEPARATER)
-				.append(BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
-				.append(PROPERTY_TAX_SERVICE_CODE).append(SEPARATER)
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId).append(SEPARATER)
+				.append(DEMAND_ID_SEARCH_FIELD_NAME).append(demandId).append(SEPARATER)
+				.append(BUSINESSSERVICE_FIELD_FOR_SEARCH_URL).append(PROPERTY_TAX_SERVICE_CODE).append(SEPARATER)
 				.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(consumerCode);
 	}
 
@@ -452,10 +433,8 @@ public class CalculatorUtils {
 	public StringBuilder getBillGenUrl(String tenantId, String consumerCode) {
 		return new StringBuilder().append(configurations.getBillingServiceHost())
 				.append(configurations.getBillGenEndPoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
-				.append(SEPARATER)
-				.append(BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
-				.append(PROPERTY_TAX_SERVICE_CODE).append(SEPARATER)
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId).append(SEPARATER)
+				.append(BUSINESSSERVICE_FIELD_FOR_SEARCH_URL).append(PROPERTY_TAX_SERVICE_CODE).append(SEPARATER)
 				.append(CONSUMER_CODE_SEARCH_FIELD_NAME).append(consumerCode);
 	}
 
@@ -501,9 +480,9 @@ public class CalculatorUtils {
 
 		StringBuilder query = new StringBuilder("SELECT * FROM eg_pt_assessment a1 INNER JOIN "
 
-                + "(select Max(createdtime) as maxtime, propertyid, assessmentyear from eg_pt_assessment group by propertyid, assessmentyear) a2 "
+				+ "(select Max(createdtime) as maxtime, propertyid, assessmentyear from eg_pt_assessment group by propertyid, assessmentyear) a2 "
 
-                + "ON a1.createdtime=a2.maxtime and a1.propertyid=a2.propertyid where a1.tenantId=? ");
+				+ "ON a1.createdtime=a2.maxtime and a1.propertyid=a2.propertyid where a1.tenantId=? ");
 
 		preparedStmtList.add(assessment.getTenantId());
 
@@ -537,64 +516,61 @@ public class CalculatorUtils {
 	}
 
 	/**
-	 * Adds up the collection amount from the given demand
-	 * and the previous advance carry forward together as new advance carry forward
+	 * Adds up the collection amount from the given demand and the previous advance
+	 * carry forward together as new advance carry forward
 	 *
 	 * @param demand
-	 * @param requestInfo 
+	 * @param requestInfo
 	 * @return carryForward
 	 */
 	public BigDecimal getTotalCollectedAmountAndPreviousCarryForward(Demand demand, RequestInfo requestInfo) {
 
 		BigDecimal carryForward = BigDecimal.ZERO;
-		BigDecimal singleunitammount=BigDecimal.ZERO;
-		BigDecimal paidAmount=BigDecimal.ZERO;
-		
-		BigDecimal totalpaidAmountFromPayment=BigDecimal.ZERO;
-		BigDecimal totalBillAmount=BigDecimal.ZERO;
+		BigDecimal singleunitammount = BigDecimal.ZERO;
+		BigDecimal paidAmount = BigDecimal.ZERO;
+
+		BigDecimal totalpaidAmountFromPayment = BigDecimal.ZERO;
+		BigDecimal totalBillAmount = BigDecimal.ZERO;
 		BigDecimal totalAmountForDemand = BigDecimal.ZERO;
-		Set<String> consumercode=new HashSet<String>();
+		Set<String> consumercode = new HashSet<String>();
 		consumercode.add(demand.getConsumerCode());
-		BigDecimal pastDue= BigDecimal.ZERO;
-		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
-		BigDecimal unpaidbillAmount=BigDecimal.ZERO;
+		BigDecimal pastDue = BigDecimal.ZERO;
+		BigDecimal totalAfterPastDueDeduct = BigDecimal.ZERO;
+		BigDecimal unpaidbillAmount = BigDecimal.ZERO;
 		Boolean demandAdjusted = true;
-		BigDecimal interestAmount=BigDecimal.ZERO;
-		
-		for (DemandDetail detail : demand.getDemandDetails()) 
-		{
+		BigDecimal interestAmount = BigDecimal.ZERO;
+		String interestPrecentage = Boolean.FALSE.equals(configurations.getIsInterestApplicable()) ? "0.00" : configurations.getInterestPercent();
+
+		for (DemandDetail detail : demand.getDemandDetails()) {
 			BigDecimal amountForAccDeatil = detail.getTaxAmount();
 			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
 			/*
 			 * carryForward = carryForward.add(detail.getCollectionAmount()); if
 			 * (detail.getTaxHeadMasterCode().equalsIgnoreCase(PT_ADVANCE_CARRYFORWARD))
 			 * carryForward = carryForward.add(detail.getTaxAmount().negate());
-			 */ 
-			
-			if(detail.getTaxHeadMasterCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
-				pastDue=pastDue.add(detail.getTaxAmount());
+			 */
+
+			if (detail.getTaxHeadMasterCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
+				pastDue = pastDue.add(detail.getTaxAmount());
 		}
-		System.out.println(totalAmountForDemand);
-		System.out.println(pastDue);
 		
-		
+
 		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
 		totalAfterPastDueDeduct = totalAmountForDemand.subtract(pastDue);
-		carryForward=demand.getAdvanceAmount();
-		if(carryForward.compareTo(BigDecimal.ZERO)>0)
+		carryForward = demand.getAdvanceAmount();
+		if (carryForward.compareTo(BigDecimal.ZERO) > 0)
 			return carryForward;
-		else if(totalAmountForDemand.compareTo(BigDecimal.ZERO)==0)
-		{
-			carryForward=BigDecimal.ZERO;
+		else if (totalAmountForDemand.compareTo(BigDecimal.ZERO) == 0) {
+			carryForward = BigDecimal.ZERO;
 			return carryForward;
 		}
 
-		BigDecimal amountforquaterly=totalAfterPastDueDeduct.divide(new BigDecimal(4));
-		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.HALF_UP);
-		BigDecimal ammountforhalfyearly=totalAfterPastDueDeduct.divide(new BigDecimal(2));
-		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
+		BigDecimal amountforquaterly = totalAfterPastDueDeduct.divide(new BigDecimal(4));
+		amountforquaterly = amountforquaterly.setScale(0, RoundingMode.HALF_UP);
+		BigDecimal ammountforhalfyearly = totalAfterPastDueDeduct.divide(new BigDecimal(2));
+		ammountforhalfyearly = ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
 
-		BillSearchCriteria criteria=new BillSearchCriteria();
+		BillSearchCriteria criteria = new BillSearchCriteria();
 		criteria.setTenantId(demand.getTenantId());
 		criteria.setConsumerCode(consumercode);
 		criteria.setDemandId(demand.getId());
@@ -604,138 +580,139 @@ public class CalculatorUtils {
 				repository.fetchResult(getBillSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
 				BillResponse.class);
 
-		if(res!=null)
-		{
-			for(Bill bill:res.getBill())
-			{
-				PaymentResponse payment = mapper.convertValue(
-						repository.fetchResult(getCollectionSearchUrl(demand.getTenantId(), bill.getId()), new RequestInfoWrapper(requestInfo)),
-						PaymentResponse.class);
-				if(null!=payment && null!= payment.getPayments() && !payment.getPayments().isEmpty())
-				{
-					paidAmount=bill.getBillDetails().get(0).getAmount();
-					totalpaidAmountFromPayment =totalpaidAmountFromPayment.add (payment.getPayments().get(0).getTotalAmountPaid());
+		if (res != null) {
+			for (Bill bill : res.getBill()) {
+				PaymentResponse payment = mapper
+						.convertValue(repository.fetchResult(getCollectionSearchUrl(demand.getTenantId(), bill.getId()),
+								new RequestInfoWrapper(requestInfo)), PaymentResponse.class);
+				if (null != payment && null != payment.getPayments() && !payment.getPayments().isEmpty()) {
+					paidAmount = bill.getBillDetails().get(0).getAmount();
+					totalpaidAmountFromPayment = totalpaidAmountFromPayment
+							.add(payment.getPayments().get(0).getTotalAmountPaid());
 					totalBillAmount = totalBillAmount.add(bill.getBillDetails().get(0).getAmount());
-					
+
 				}
 			}
 
 		}
-		
-		List<Bill> sortedBills=res.getBill();
-		sortedBills=sortedBills.stream().sorted((x,y)->y.getAuditDetails().getCreatedTime().compareTo(x.getAuditDetails().getCreatedTime())).collect(Collectors.toList());
-		sortedBills=sortedBills.stream().filter(x->x.getStatus().equals(BillStatusEnum.ACTIVE) || x.getStatus().equals(BillStatusEnum.EXPIRED)).collect(Collectors.toList());
-		
-		if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q4"))
-		{
-			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+
+		List<Bill> sortedBills = res.getBill();
+		sortedBills = sortedBills.stream()
+				.sorted((x, y) -> y.getAuditDetails().getCreatedTime().compareTo(x.getAuditDetails().getCreatedTime()))
+				.collect(Collectors.toList());
+		sortedBills = sortedBills.stream().filter(
+				x -> x.getStatus().equals(BillStatusEnum.ACTIVE) || x.getStatus().equals(BillStatusEnum.EXPIRED))
+				.collect(Collectors.toList());
+
+		if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q4")) {
+			interestAmount = amountforquaterly.multiply(new BigDecimal(90))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q3")) {
+			interestAmount = amountforquaterly.multiply(new BigDecimal(91))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount = amountforquaterly.multiply(new BigDecimal(90))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q2")) {
+			interestAmount = amountforquaterly.multiply(new BigDecimal(92))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount = amountforquaterly.multiply(new BigDecimal(91))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+			interestAmount = amountforquaterly.multiply(new BigDecimal(90))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q1")) {
+			interestAmount = amountforquaterly.multiply(new BigDecimal(91))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount = amountforquaterly.multiply(new BigDecimal(92))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+			interestAmount = amountforquaterly.multiply(new BigDecimal(91))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+			interestAmount = amountforquaterly.multiply(new BigDecimal(90))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("H2")) {
+			interestAmount = ammountforhalfyearly.multiply(new BigDecimal(181))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("H1")) {
+			interestAmount = ammountforhalfyearly.multiply(new BigDecimal(182))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount = ammountforhalfyearly.multiply(new BigDecimal(181))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
 		}
-		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q3"))
-		{
-			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
-			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-		}
-		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q2"))
-		{
-			interestAmount=amountforquaterly.multiply(new BigDecimal(92)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
-			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-		}
-		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q1"))
-		{
-			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
-			interestAmount=amountforquaterly.multiply(new BigDecimal(92)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-		}
-		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("H2"))
-		{
-			interestAmount=ammountforhalfyearly.multiply(new BigDecimal(181)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
-		}
-		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("H1"))
-		{
-			interestAmount=ammountforhalfyearly.multiply(new BigDecimal(182)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
-			interestAmount=ammountforhalfyearly.multiply(new BigDecimal(181)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-		}
-		
-//		if(demandAdjusted) {
-//			totalAmountForDemand = totalAmountForDemand.subtract(pastDue);
-//		}
-		
-		
-		if(unpaidbillAmount.compareTo(totalAmountForDemand)>0)
-			totalAmountForDemand=unpaidbillAmount;
-		
-		
-		carryForward=totalpaidAmountFromPayment.subtract(totalAmountForDemand);
+
+//			if(demandAdjusted) {
+//				totalAmountForDemand = totalAmountForDemand.subtract(pastDue);
+//			}
+
+		if (unpaidbillAmount.compareTo(totalAmountForDemand) > 0)
+			totalAmountForDemand = unpaidbillAmount;
+
+		carryForward = totalpaidAmountFromPayment.subtract(totalAmountForDemand);
 		System.out.println(res);
 		return carryForward;
 	}
-	
-	
-	public Map<String,BigDecimal> getTotalCollectedAmountAndPreviousCarryForwardMap(Demand demand, RequestInfo requestInfo) {
+
+	public Map<String, BigDecimal> getTotalCollectedAmountAndPreviousCarryForwardMap(Demand demand,
+			RequestInfo requestInfo) {
 
 		BigDecimal carryForward = BigDecimal.ZERO;
-		BigDecimal singleunitammount=BigDecimal.ZERO;
-		BigDecimal paidAmount=BigDecimal.ZERO;
-		Map<String,BigDecimal>collectedMap = new HashMap<String, BigDecimal>();
-		BigDecimal totalpaidAmountFromPayment=BigDecimal.ZERO;
-		BigDecimal totalBillAmount=BigDecimal.ZERO;
+		BigDecimal singleunitammount = BigDecimal.ZERO;
+		BigDecimal paidAmount = BigDecimal.ZERO;
+		Map<String, BigDecimal> collectedMap = new HashMap<String, BigDecimal>();
+		BigDecimal totalpaidAmountFromPayment = BigDecimal.ZERO;
+		BigDecimal totalBillAmount = BigDecimal.ZERO;
 		BigDecimal totalAmountForDemand = BigDecimal.ZERO;
-		Set<String> consumercode=new HashSet<String>();
+		Set<String> consumercode = new HashSet<String>();
 		consumercode.add(demand.getConsumerCode());
-		BigDecimal pastDue= BigDecimal.ZERO;
-		BigDecimal totalAfterPastDueDeduct= BigDecimal.ZERO;
-		BigDecimal unpaidbillAmount=BigDecimal.ZERO;
-		BigDecimal interestAmount=BigDecimal.ZERO;
-		
-		for (DemandDetail detail : demand.getDemandDetails()) 
-		{
+		BigDecimal pastDue = BigDecimal.ZERO;
+		BigDecimal totalAfterPastDueDeduct = BigDecimal.ZERO;
+		BigDecimal unpaidbillAmount = BigDecimal.ZERO;
+		BigDecimal interestAmount = BigDecimal.ZERO;
+		String interestPrecentage = Boolean.FALSE.equals(configurations.getIsInterestApplicable()) ? "0.00" : configurations.getInterestPercent();
+
+		for (DemandDetail detail : demand.getDemandDetails()) {
 			BigDecimal amountForAccDeatil = detail.getTaxAmount();
 			totalAmountForDemand = totalAmountForDemand.add(amountForAccDeatil);
 			/*
 			 * carryForward = carryForward.add(detail.getCollectionAmount()); if
 			 * (detail.getTaxHeadMasterCode().equalsIgnoreCase(PT_ADVANCE_CARRYFORWARD))
 			 * carryForward = carryForward.add(detail.getTaxAmount().negate());
-			 */ 
-			
-			if(detail.getTaxHeadMasterCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
-				pastDue=detail.getTaxAmount();
+			 */
+
+			if (detail.getTaxHeadMasterCode().equalsIgnoreCase("PT_PASTDUE_CARRYFORWARD"))
+				pastDue = detail.getTaxAmount();
 		}
-		
+
 		totalAmountForDemand = totalAmountForDemand.setScale(0, RoundingMode.HALF_UP);
 		totalAfterPastDueDeduct = totalAmountForDemand.subtract(pastDue);
-		carryForward=demand.getAdvanceAmount();
-		if(carryForward.compareTo(BigDecimal.ZERO)>0) {
-			collectedMap.put("PT_ADVANCE_CARRYFORWARD",carryForward );
-			return  collectedMap;
-		}
-			
-		else if(totalAmountForDemand.compareTo(BigDecimal.ZERO)==0)
-		{
-			collectedMap.put("PT_PASTDUE_CARRYFORWARD",BigDecimal.ZERO );
-			return  collectedMap;
+		carryForward = demand.getAdvanceAmount();
+		if (carryForward.compareTo(BigDecimal.ZERO) > 0) {
+			collectedMap.put("PT_ADVANCE_CARRYFORWARD", carryForward);
+			return collectedMap;
 		}
 
-		BigDecimal amountforquaterly=totalAfterPastDueDeduct.divide(new BigDecimal(4));
-		amountforquaterly=amountforquaterly.setScale(0, RoundingMode.HALF_UP);
-		BigDecimal ammountforhalfyearly=totalAfterPastDueDeduct.divide(new BigDecimal(2));
-		ammountforhalfyearly=ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
+		else if (totalAmountForDemand.compareTo(BigDecimal.ZERO) == 0) {
+			collectedMap.put("PT_PASTDUE_CARRYFORWARD", BigDecimal.ZERO);
+			return collectedMap;
+		}
 
-		BillSearchCriteria criteria=new BillSearchCriteria();
+		BigDecimal amountforquaterly = totalAfterPastDueDeduct.divide(new BigDecimal(4));
+		amountforquaterly = amountforquaterly.setScale(0, RoundingMode.HALF_UP);
+		BigDecimal ammountforhalfyearly = totalAfterPastDueDeduct.divide(new BigDecimal(2));
+		ammountforhalfyearly = ammountforhalfyearly.setScale(0, RoundingMode.HALF_UP);
+
+		BillSearchCriteria criteria = new BillSearchCriteria();
 		criteria.setTenantId(demand.getTenantId());
 		criteria.setConsumerCode(consumercode);
 		criteria.setDemandId(demand.getId());
@@ -744,75 +721,88 @@ public class CalculatorUtils {
 		BillResponse res = mapper.convertValue(
 				repository.fetchResult(getBillSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
 				BillResponse.class);
-		
-		List<Bill> sortedBills=res.getBill();
-		sortedBills=sortedBills.stream().sorted((x,y)->y.getAuditDetails().getCreatedTime().compareTo(x.getAuditDetails().getCreatedTime())).collect(Collectors.toList());
-		sortedBills=sortedBills.stream().filter(x->x.getStatus().equals(BillStatusEnum.ACTIVE) || x.getStatus().equals(BillStatusEnum.EXPIRED)).collect(Collectors.toList());
-		if(res!=null)
-		{
-			for(Bill bill:res.getBill())
-			{
-				PaymentResponse payment = mapper.convertValue(
-						repository.fetchResult(getCollectionSearchUrl(demand.getTenantId(), bill.getId()), new RequestInfoWrapper(requestInfo)),
-						PaymentResponse.class);
-				if(null!=payment && null!= payment.getPayments() && !payment.getPayments().isEmpty())
-				{
-					paidAmount=bill.getBillDetails().get(0).getAmount();
-					totalpaidAmountFromPayment =totalpaidAmountFromPayment.add (payment.getPayments().get(0).getTotalAmountPaid());
+
+		List<Bill> sortedBills = res.getBill();
+		sortedBills = sortedBills.stream()
+				.sorted((x, y) -> y.getAuditDetails().getCreatedTime().compareTo(x.getAuditDetails().getCreatedTime()))
+				.collect(Collectors.toList());
+		sortedBills = sortedBills.stream().filter(
+				x -> x.getStatus().equals(BillStatusEnum.ACTIVE) || x.getStatus().equals(BillStatusEnum.EXPIRED))
+				.collect(Collectors.toList());
+		if (res != null) {
+			for (Bill bill : res.getBill()) {
+				PaymentResponse payment = mapper
+						.convertValue(repository.fetchResult(getCollectionSearchUrl(demand.getTenantId(), bill.getId()),
+								new RequestInfoWrapper(requestInfo)), PaymentResponse.class);
+				if (null != payment && null != payment.getPayments() && !payment.getPayments().isEmpty()) {
+					paidAmount = bill.getBillDetails().get(0).getAmount();
+					totalpaidAmountFromPayment = totalpaidAmountFromPayment
+							.add(payment.getPayments().get(0).getTotalAmountPaid());
 					totalBillAmount = totalBillAmount.add(bill.getBillDetails().get(0).getAmount());
-					
+
 				}
-				
+
 			}
 
 		}
-		
-		if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q4"))
-		{
-			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+
+		if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q4")) {
+			interestAmount = amountforquaterly.multiply(new BigDecimal(90))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q3")) {
+			interestAmount = amountforquaterly.multiply(new BigDecimal(91))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount = amountforquaterly.multiply(new BigDecimal(90))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q2")) {
+			interestAmount = amountforquaterly.multiply(new BigDecimal(92))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount = amountforquaterly.multiply(new BigDecimal(91))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+			interestAmount = amountforquaterly.multiply(new BigDecimal(90))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q1")) {
+			interestAmount = amountforquaterly.multiply(new BigDecimal(91))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount = amountforquaterly.multiply(new BigDecimal(92))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+			interestAmount = amountforquaterly.multiply(new BigDecimal(91))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+			interestAmount = amountforquaterly.multiply(new BigDecimal(90))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("H2")) {
+			interestAmount = ammountforhalfyearly.multiply(new BigDecimal(181))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+		} else if (sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("H1")) {
+			interestAmount = ammountforhalfyearly.multiply(new BigDecimal(182))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
+			interestAmount = ammountforhalfyearly.multiply(new BigDecimal(181))
+					.multiply(new BigDecimal(interestPrecentage).divide(new BigDecimal(100)));
+			unpaidbillAmount = interestAmount.add(unpaidbillAmount).add(amountforquaterly);
 		}
-		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q3"))
-		{
-			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
-			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
+
+		if (unpaidbillAmount.compareTo(totalAmountForDemand) > 0)
+			totalAmountForDemand = unpaidbillAmount;
+		// ADVANCE CASE
+		if (totalpaidAmountFromPayment.compareTo(totalAmountForDemand) > 0) {
+			collectedMap.put("PT_ADVANCE_CARRYFORWARD", totalpaidAmountFromPayment.subtract(totalAmountForDemand));
+		} else if (totalpaidAmountFromPayment.compareTo(totalAmountForDemand) <= 0) {
+			carryForward = totalAmountForDemand.subtract(totalpaidAmountFromPayment);
+			collectedMap.put("PT_PASTDUE_CARRYFORWARD", carryForward);
 		}
-		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q2"))
-		{
-			interestAmount=amountforquaterly.multiply(new BigDecimal(92)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
-			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-		}
-		else if(sortedBills.get(0).getBillDetails().get(0).getPaymentPeriod().equals("Q1"))
-		{
-			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(sortedBills.get(0).getBillDetails().get(0).getAmount());
-			interestAmount=amountforquaterly.multiply(new BigDecimal(92)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-			interestAmount=amountforquaterly.multiply(new BigDecimal(91)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-			interestAmount=amountforquaterly.multiply(new BigDecimal(90)).multiply(new BigDecimal(0.014).divide(new BigDecimal(100)));
-			unpaidbillAmount=interestAmount.add(unpaidbillAmount).add(amountforquaterly);
-		}
-			
-		
-		if(unpaidbillAmount.compareTo(totalAmountForDemand)>0)
-			totalAmountForDemand=unpaidbillAmount;
-		//ADVANCE CASE
-		if(totalpaidAmountFromPayment.compareTo(totalAmountForDemand)>0) {
-			collectedMap.put("PT_ADVANCE_CARRYFORWARD",totalpaidAmountFromPayment.subtract(totalAmountForDemand));
-		}
-		else if(totalpaidAmountFromPayment.compareTo(totalAmountForDemand)<=0) {
-			carryForward=totalAmountForDemand.subtract(totalpaidAmountFromPayment);
-			collectedMap.put("PT_PASTDUE_CARRYFORWARD",carryForward);
-		}
-		
-		
+
 		return collectedMap;
 	}
 
@@ -826,9 +816,10 @@ public class CalculatorUtils {
 			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
 
-
-	public DemandDetailAndCollection getLatestDemandDetailByTaxHead(String taxHeadCode, List<DemandDetail> demandDetails) {
-		List<DemandDetail> details = demandDetails.stream().filter(demandDetail -> demandDetail.getTaxHeadMasterCode().equalsIgnoreCase(taxHeadCode))
+	public DemandDetailAndCollection getLatestDemandDetailByTaxHead(String taxHeadCode,
+			List<DemandDetail> demandDetails) {
+		List<DemandDetail> details = demandDetails.stream()
+				.filter(demandDetail -> demandDetail.getTaxHeadMasterCode().equalsIgnoreCase(taxHeadCode))
 				.collect(Collectors.toList());
 		if (CollectionUtils.isEmpty(details))
 			return null;
@@ -847,15 +838,11 @@ public class CalculatorUtils {
 			}
 		}
 
-		return DemandDetailAndCollection.builder()
-				.taxHeadCode(taxHeadCode)
-				.latestDemandDetail(latestDemandDetail)
-				.taxAmountForTaxHead(taxAmountForTaxHead)
-				.collectionAmountForTaxHead(collectionAmountForTaxHead)
+		return DemandDetailAndCollection.builder().taxHeadCode(taxHeadCode).latestDemandDetail(latestDemandDetail)
+				.taxAmountForTaxHead(taxAmountForTaxHead).collectionAmountForTaxHead(collectionAmountForTaxHead)
 				.build();
 
 	}
-
 
 	/**
 	 * Returns the applicable total tax amount to be paid after the receipt
@@ -863,19 +850,17 @@ public class CalculatorUtils {
 	 * @param receipt
 	 * @return
 	 */
-	/*    public BigDecimal getTaxAmtFromReceiptForApplicablesGeneration(Receipt receipt) {
-        BigDecimal taxAmt = BigDecimal.ZERO;
-        BigDecimal amtPaid = BigDecimal.ZERO;
-        List<BillAccountDetail> billAccountDetails = receipt.getBill().get(0).getBillDetails().get(0).getBillAccountDetails();
-        for (BillAccountDetail detail : billAccountDetails) {
-            if (TAXES_TO_BE_CONSIDERD.contains(detail.getTaxHeadCode())) {
-                taxAmt = taxAmt.add(detail.getAmount());
-                amtPaid = amtPaid.add(detail.getAdjustedAmount());
-            }
-        }
-        return taxAmt.subtract(amtPaid);
-    }*/
-
+	/*
+	 * public BigDecimal getTaxAmtFromReceiptForApplicablesGeneration(Receipt
+	 * receipt) { BigDecimal taxAmt = BigDecimal.ZERO; BigDecimal amtPaid =
+	 * BigDecimal.ZERO; List<BillAccountDetail> billAccountDetails =
+	 * receipt.getBill().get(0).getBillDetails().get(0).getBillAccountDetails(); for
+	 * (BillAccountDetail detail : billAccountDetails) { if
+	 * (TAXES_TO_BE_CONSIDERD.contains(detail.getTaxHeadCode())) { taxAmt =
+	 * taxAmt.add(detail.getAmount()); amtPaid =
+	 * amtPaid.add(detail.getAdjustedAmount()); } } return taxAmt.subtract(amtPaid);
+	 * }
+	 */
 
 	/**
 	 * Returns the applicable total tax amount to be paid after the receipt
@@ -888,7 +873,7 @@ public class CalculatorUtils {
 		BigDecimal amtPaid = BigDecimal.ZERO;
 
 		List<BillAccountDetail> billAccountDetails = new LinkedList<>();
-		if(payment!=null) {
+		if (payment != null) {
 			payment.getPaymentDetails().forEach(paymentDetail -> {
 				if (paymentDetail.getBusinessService().equalsIgnoreCase(SERVICE_FIELD_VALUE_PT)) {
 					paymentDetail.getBill().getBillDetails().forEach(billDetail -> {
@@ -907,11 +892,10 @@ public class CalculatorUtils {
 				}
 			}
 			return taxAmt.subtract(amtPaid);
-		}else {
+		} else {
 			return BigDecimal.ZERO;
 		}
 	}
-
 
 	/**
 	 * Returns the current end of the day epoch time for the given epoch time
@@ -920,16 +904,15 @@ public class CalculatorUtils {
 	 * @return End of day epoch time for the given time
 	 */
 	public static Long getEODEpoch(Long epoch) {
-		LocalDate date =
-				Instant.ofEpochMilli(epoch).atZone(ZoneId.of(ZoneId.SHORT_IDS.get(timeZone))).toLocalDate();
+		LocalDate date = Instant.ofEpochMilli(epoch).atZone(ZoneId.of(ZoneId.SHORT_IDS.get(timeZone))).toLocalDate();
 		LocalDateTime endOfDay = LocalDateTime.of(date, LocalTime.MAX);
 		Long eodEpoch = endOfDay.atZone(ZoneId.of(ZoneId.SHORT_IDS.get(timeZone))).toInstant().toEpochMilli();
 		return eodEpoch;
 	}
 
 	/**
-	 * Check if Depreciation is allowed for this Property.
-	 * In case there is no receipt the depreciation will be allowed
+	 * Check if Depreciation is allowed for this Property. In case there is no
+	 * receipt the depreciation will be allowed
 	 *
 	 * @param demand             The demand agianst which receipts have to checked
 	 * @param requestInfoWrapper The incoming requestInfo
@@ -947,20 +930,19 @@ public class CalculatorUtils {
 		return isDepreciationAllowed;
 	}
 
-
 	/**
 	 * @param requestInfo
 	 * @param calculationCriteria
 	 * @return
 	 */
-	public Demand getLatestDemandForCurrentFinancialYear(RequestInfo requestInfo, CalculationCriteria calculationCriteria) {
+	public Demand getLatestDemandForCurrentFinancialYear(RequestInfo requestInfo,
+			CalculationCriteria calculationCriteria) {
 
 		DemandSearchCriteria criteria = new DemandSearchCriteria();
-		//criteria.setFromDate(calculationCriteria.getFromDate());
-		//criteria.setToDate(calculationCriteria.getToDate());
+		// criteria.setFromDate(calculationCriteria.getFromDate());
+		// criteria.setToDate(calculationCriteria.getToDate());
 		criteria.setTenantId(calculationCriteria.getTenantId());
 		criteria.setPropertyId(calculationCriteria.getProperty().getPropertyId());
-
 
 		DemandResponse res = mapper.convertValue(
 				repository.fetchResult(getDemandSearchUrl(criteria), new RequestInfoWrapper(requestInfo)),
@@ -971,27 +953,28 @@ public class CalculatorUtils {
 
 		return res.getDemands().get(0);
 	}
-	
+
 	public BigDecimal getNoticePenaltyAmount(RequestInfo requestInfo, CalculationCriteria calculationCriteria) {
 
-		BigDecimal penalty=BigDecimal.ZERO;
-	
-		NoticeResponse res = mapper.convertValue(
-				repository.fetchResult(getNoticeSearchUrl(calculationCriteria.getTenantId(),calculationCriteria.getProperty().getPropertyId()), new RequestInfoWrapper(requestInfo)),
-				NoticeResponse.class);
+		BigDecimal penalty = BigDecimal.ZERO;
+
+		NoticeResponse res = mapper
+				.convertValue(repository.fetchResult(
+						getNoticeSearchUrl(calculationCriteria.getTenantId(),
+								calculationCriteria.getProperty().getPropertyId()),
+						new RequestInfoWrapper(requestInfo)), NoticeResponse.class);
 
 		if (CollectionUtils.isEmpty(res.getNotice()))
 			return penalty;
-		
+
 		else
 			for (Notice notice : res.getNotice()) {
-				if(notice.getNoticeType().equals(NoticeType.NOTICE_FOR_PENALTY))
-				penalty=penalty.add(new BigDecimal(notice.getPenaltyAmount()));
+				if (notice.getNoticeType().equals(NoticeType.NOTICE_FOR_PENALTY))
+					penalty = penalty.add(new BigDecimal(notice.getPenaltyAmount()));
 			}
 
 		return penalty;
 	}
-
 
 	/**
 	 * Creates search query for PT based on tenantId and list of assessment numbers
@@ -1003,17 +986,13 @@ public class CalculatorUtils {
 	public StringBuilder getPTSearchQuery(String tenantId, List<String> assessmentNumbers) {
 
 		StringBuilder url = new StringBuilder(configurations.getPtHost());
-		url.append(configurations.getPtSearchEndpoint())
-		.append(URL_PARAMS_SEPARATER)
-		.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
-		.append(SEPARATER)
-		.append(ASSESSMENTNUMBER_FIELD_SEARCH)
-		.append(StringUtils.join(assessmentNumbers, ","));
+		url.append(configurations.getPtSearchEndpoint()).append(URL_PARAMS_SEPARATER)
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId).append(SEPARATER)
+				.append(ASSESSMENTNUMBER_FIELD_SEARCH).append(StringUtils.join(assessmentNumbers, ","));
 
 		return url;
 
 	}
-
 
 	/**
 	 * Creates CalculationRequest from PropertyRequest
@@ -1041,30 +1020,31 @@ public class CalculatorUtils {
 		return calculationReq;
 	}
 
-
 	/**
-	 * Call PT-services to get Property object for the given applicationNumber and tenantID
-	 * @param requestInfo The RequestInfo of the incoming request
-	 * @param applicationNumber The applicationNumber whose Property details has to be fetched
-	 * @param tenantId The tenantId of the property
+	 * Call PT-services to get Property object for the given applicationNumber and
+	 * tenantID
+	 * 
+	 * @param requestInfo       The RequestInfo of the incoming request
+	 * @param applicationNumber The applicationNumber whose Property details has to
+	 *                          be fetched
+	 * @param tenantId          The tenantId of the property
 	 * @return The property details for the particular applicationNumber
 	 */
-	public List<Property> getProperty(RequestInfo requestInfo, String applicationNumber, String tenantId){
+	public List<Property> getProperty(RequestInfo requestInfo, String applicationNumber, String tenantId) {
 		String url = getPropertySearchURL();
-		url = url.replace("{1}",tenantId).replace("{2}",applicationNumber);
+		url = url.replace("{1}", tenantId).replace("{2}", applicationNumber);
 
-		Object result =repository.fetchResult(new StringBuilder(url),RequestInfoWrapper.builder().
-				requestInfo(requestInfo).build());
+		Object result = repository.fetchResult(new StringBuilder(url),
+				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 
-		PropertyResponse response =null;
+		PropertyResponse response = null;
 		try {
-			response = mapper.convertValue(result,PropertyResponse.class);
-		}
-		catch (IllegalArgumentException e){
-			throw new CustomException("PARSING ERROR","Error while parsing response of TradeLicense Search");
+			response = mapper.convertValue(result, PropertyResponse.class);
+		} catch (IllegalArgumentException e) {
+			throw new CustomException("PARSING ERROR", "Error while parsing response of TradeLicense Search");
 		}
 
-		if(response==null || CollectionUtils.isEmpty(response.getProperties()))
+		if (response == null || CollectionUtils.isEmpty(response.getProperties()))
 			return null;
 
 		return response.getProperties();
@@ -1072,9 +1052,10 @@ public class CalculatorUtils {
 
 	/**
 	 * Creates PT search url based on tenantId and applicationNumber
+	 * 
 	 * @return PT search url
 	 */
-	private String getPropertySearchURL(){
+	private String getPropertySearchURL() {
 		StringBuilder url = new StringBuilder(configurations.getPtHost());
 		url.append(configurations.getPtSearchEndpoint());
 		url.append("?");
@@ -1086,7 +1067,7 @@ public class CalculatorUtils {
 		return url.toString();
 	}
 
-	public User getCommonContractUser(OwnerInfo owner){
+	public User getCommonContractUser(OwnerInfo owner) {
 		org.egov.common.contract.request.User user = new org.egov.common.contract.request.User();
 		user.setTenantId(owner.getTenantId());
 		user.setId(owner.getId());
@@ -1100,7 +1081,7 @@ public class CalculatorUtils {
 		return user;
 	}
 
-	private List<Role> addRoles(List<org.egov.common.contract.request.Role> Roles){
+	private List<Role> addRoles(List<org.egov.common.contract.request.Role> Roles) {
 		LinkedList<Role> addroles = new LinkedList<>();
 		Roles.forEach(role -> {
 			Role addrole = new Role();
@@ -1128,33 +1109,31 @@ public class CalculatorUtils {
 		}
 		return isTaxPeriodPresent;
 	}
-	
+
 	public Boolean isBetweenMonths(LocalDate date, String assessmentYear) {
-	    LocalDate startDate;
-	    LocalDate endDate;
+		LocalDate startDate;
+		LocalDate endDate;
 
-	    int currentYear = date.getYear();
-	    int currentFinancialYearStart = (date.getMonthValue() >= 4) ? currentYear : currentYear - 1;
+		int currentYear = date.getYear();
+		int currentFinancialYearStart = (date.getMonthValue() >= 4) ? currentYear : currentYear - 1;
 
-	    String[] parts = assessmentYear.split("-");
-	    int assessmentYearStart = (parts[0].length() == 2)
-	            ? Integer.parseInt("20" + parts[0])
-	            : Integer.parseInt(parts[0]);
+		String[] parts = assessmentYear.split("-");
+		int assessmentYearStart = (parts[0].length() == 2) ? Integer.parseInt("20" + parts[0])
+				: Integer.parseInt(parts[0]);
 
-	    if (assessmentYearStart < currentFinancialYearStart) {
-	        return true;
-	    }
+		if (assessmentYearStart < currentFinancialYearStart) {
+			return true;
+		}
 
-	    if (date.getMonthValue() >= 7) { // July or later
-	        startDate = LocalDate.of(date.getYear(), 7, 1);
-	        endDate = LocalDate.of(date.getYear() + 1, 3, 31);
-	    } else { // Before July
-	        startDate = LocalDate.of(date.getYear() - 1, 7, 1);
-	        endDate = LocalDate.of(date.getYear(), 3, 31);
-	    }
+		if (date.getMonthValue() >= 7) { // July or later
+			startDate = LocalDate.of(date.getYear(), 7, 1);
+			endDate = LocalDate.of(date.getYear() + 1, 3, 31);
+		} else { // Before July
+			startDate = LocalDate.of(date.getYear() - 1, 7, 1);
+			endDate = LocalDate.of(date.getYear(), 3, 31);
+		}
 
-	    return (!date.isBefore(startDate)) && (!date.isAfter(endDate));
+		return (!date.isBefore(startDate)) && (!date.isAfter(endDate));
 	}
-
 
 }

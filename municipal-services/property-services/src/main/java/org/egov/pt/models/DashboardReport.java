@@ -21,7 +21,7 @@ public class DashboardReport {
 	private String module;
 	private String region;
 	@JsonProperty("data")
-	private List<ServiceWithProperties> services;
+	private List<ServiceAndRevenueWithProperties> serviceAndRevenueWithProperties;
 	private Map<String, List<Assessment>> assesments;
 	private Map<String, List<Appeal>> appeals;
 	private Map<String, List<Payment>> payments;

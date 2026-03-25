@@ -4,17 +4,19 @@ import java.math.BigInteger;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
-@Getter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceWithProperties {
+public class ServiceAndRevenueWithProperties {
 	private BigInteger total;
-	private String type = null;
+	private String type;
 	private List<PropertyData> properties;
 
 }
