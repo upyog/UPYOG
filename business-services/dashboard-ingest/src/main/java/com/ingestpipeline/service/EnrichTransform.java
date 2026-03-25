@@ -49,42 +49,18 @@ public class EnrichTransform {
 		List chainrSpecJSON = null ;
         Object transNode = null;
 		try {
-			//logs
-			LOGGER.info("rawResponseNode keys :: " + rawResponseNode.keySet());
-			LOGGER.info("rawResponseNode :: " + rawResponseNode);
+			LOGGER.info("rawResponseNode keys inside transform : " + rawResponseNode.keySet());
+			LOGGER.info("rawResponseNode inside transform : " + rawResponseNode);
 			
             chainrSpecJSON = mapper.readValue(configLoader.get(OBJECTIVE.concat(SEPARATOR).concat(businessService.toLowerCase()).concat(SEPARATOR).concat(VERSION).concat(JSON_EXTENSION)), List.class);
-            LOGGER.info("ChainrSpecJSON::" + chainrSpecJSON);
+            LOGGER.info("ChainrSpecJSON inside transform:" + chainrSpecJSON);
+            
             Chainr chainr = Chainr.fromSpec( chainrSpecJSON );
             
-            //log
-            LOGGER.info("Contains _source at root? :: " + rawResponseNode.containsKey("_source"));
+            LOGGER.info("Contains _source at root? : " + rawResponseNode.containsKey("_source"));
+            
             Object indexData = rawResponseNode.keySet().contains("_source") ? ((Map)rawResponseNode.get("_source")).get("Data") : null;
-
-            //logs
-            LOGGER.info("indexData from current logic :: " + indexData);
-            try {
-                Map hitsMap = (Map) rawResponseNode.get("hits");
-                LOGGER.info("hitsMap :: " + hitsMap);
-
-                if (hitsMap != null) {
-                    List hitsList = (List) hitsMap.get("hits");
-                    LOGGER.info("hitsList size :: " + (hitsList != null ? hitsList.size() : "null"));
-
-                    if (hitsList != null && !hitsList.isEmpty()) {
-                        Map firstHit = (Map) hitsList.get(0);
-                        LOGGER.info("firstHit :: " + firstHit);
-
-                        Map source = (Map) firstHit.get("_source");
-                        LOGGER.info("actual _source :: " + source);
-
-                        Object actualData = source.get("Data");
-                        LOGGER.info("actual Data node :: " + actualData);
-                    }
-                }
-            } catch (Exception ex) {
-                LOGGER.error("Error while logging ES structure", ex);
-            }
+            LOGGER.info("indexData inside transform : " + indexData);
             
             transNode = indexData!= null ? chainr.transform(indexData) : null;
 
