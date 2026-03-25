@@ -54,6 +54,59 @@
 <link rel="stylesheet" type="text/css"
 	href="/services/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title><s:text name="surrender.cheque.search" /></title>
+<style>
+
+
+.formmainbox > table {
+    width: 85% !important;
+    margin: 0 auto !important;
+    table-layout: fixed !important;
+}
+
+
+.formmainbox table td {
+    width: 25% !important;
+    padding: 0.8% !important;
+    vertical-align: middle !important;
+}
+
+
+.formmainbox input[type="text"],
+.formmainbox select {
+    width: 100% !important;
+    display: block !important;
+}
+
+
+.formmainbox td:nth-child(1),
+.formmainbox td:nth-child(3) {
+    padding-right: 0.5% !important;
+}
+
+.formmainbox td:nth-child(2),
+.formmainbox td:nth-child(4) {
+    padding-left: 0.5% !important;
+}
+
+
+#bankaccount {
+    width: 100% !important;
+    display: block !important;
+    margin: 0 auto !important;
+    vertical-align: middle !important;
+}
+
+
+.formmainbox select {
+    line-height: normal !important;
+}
+
+
+.formmainbox td.greybox {
+    white-space: nowrap;
+}
+
+</style>
 </head>
 <body>
 	<s:form action="chequeAssignment" theme="simple">
@@ -119,8 +172,8 @@
 							</s:if></td>
 						<td class="greybox"><s:select name="department"
 								id="department" list="dropdownData.departmentList" listKey="code"
-								listValue="name" headerKey="" headerValue="%{getText('lbl.choose.options')}"
-								value="%{department}" />
+								listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
+								value="%{-1}" />
 						<td>
 					</s:if>
 					<td></td>

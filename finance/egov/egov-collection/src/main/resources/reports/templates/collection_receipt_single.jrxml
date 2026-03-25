@@ -236,7 +236,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[WardNo:]]></text>
+				<text><![CDATA[Ward No:]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="140" y="-30" width="426" height="15" uuid="b5c10ff1-b30b-44b8-a6df-384ee8666f69">

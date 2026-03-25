@@ -135,8 +135,8 @@
 							</s:if></td>
 						<td class="greybox"><s:select name="department"
 								id="department" list="dropdownData.departmentList" listKey="code"
-								listValue="name" headerKey="" headerValue="%{getText('lbl.choose.options')}"
-								value="%{department}" />
+								listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
+								value="%{-1}" />
 						<td>
 					</s:if>
 					<td></td>

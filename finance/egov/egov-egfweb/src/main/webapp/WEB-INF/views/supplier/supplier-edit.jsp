@@ -57,7 +57,7 @@
 				<div class="panel-heading">
 					<div class="panel-title"><spring:message code="title.supplier.edit" /></div>
 				</div>	
-				<%@ include file="supplier-form.jsp"%>
+				<%@ include file="supplier-update.jsp"%>
 				<div class="form-group">
 					<div class="text-center">
 						<button type='submit' class='btn btn-primary' id="buttonSubmit"> <spring:message code='lbl.update' text="Update"/> </button>

@@ -49,6 +49,16 @@
 
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
+<style>
+	.w20{width:20% !important}
+	.w30{width:30% !important}
+	input {width:60% !important}
+	select{width:75% !important}
+	.headingsmallbg span{ margin-left:5% !important;}
+	input.buttonsubmit, input.button{
+   		width:auto !important;
+   	}
+</style>
 <html>
 
 <head>
@@ -93,15 +103,15 @@
 						<tr>
 							<td style="width: 5%"></td>
 							<s:if test="%{shouldShowHeaderField('vouchernumber')}">
-								<td class="greybox"><s:text name="voucher.number" /><span
+								<td class="greybox w20"><s:text name="voucher.number" /><span
 									class="mandatory1">*</span></td>
-								<td class="greybox"><s:textfield name="voucherNumber"
+								<td class="greybox w30"><s:textfield name="voucherNumber"
 										id="voucherNumber" maxlength="30" /></td>
 							</s:if>
-							<td class="greybox"><s:text name="voucher.date" /><span
+							<td class="greybox w20"><s:text name="voucher.date" /><span
 								class="mandatory1">*</span></td>
 
-							<td class="bluebox"><s:date name="voucherDate"
+							<td class="bluebox w30"><s:date name="voucherDate"
 									var="voucherDateId" format="dd/MM/yyyy" /> <s:textfield
 									id="voucherDate" name="voucherDate" value="%{voucherDateId}"
 									data-date-end-date="0d"
@@ -121,9 +131,9 @@
 
 						<tr>
 							<td style="width: 5%"></td>
-							<td class="greybox"><s:text name="voucher.narration" /></td>
-							<td class="greybox" colspan="3"><s:textarea id="narration"
-									name="description" cols="100" rows="3"
+							<td class="greybox w20"><s:text name="voucher.narration" /></td>
+							<td class="greybox w30" colspan="3"><s:textarea id="narration"
+									name="description" style="width:29.50%" cols="100" rows="3"
 									onblur="checkVoucherNarrationLen(this)" /></td>
 						</tr>
 						</tr>
@@ -131,8 +141,8 @@
 				</div>
 				<br />
 				<div id="labelAD" align="center">
-					<table width="80%" border=0 id="labelid">
-						<th><s:text name="lbl.account.details"/> </th>
+					<table width="90%" border=0 id="labelid">
+						<th style="margin-bottom:10px"><s:text name="lbl.account.details"/> </th>
 					</table>
 				</div>
 				<div class="yui-skin-sam" align="center">
@@ -141,12 +151,12 @@
 				<script>
 		
 		makeVoucherDetailTable();
-		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="80%"
+		document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="100%"
 	 </script>
 				<br />
 				<div id="labelSL" align="center">
-					<table width="80%" border=0 id="labelid">
-						<th><s:text name="lbl.subledger.details"/> </th>
+					<table width="90%" border=0 id="labelid">
+						<th style="margin-bottom:10px"><s:text name="lbl.subledger.details"/> </th>
 					</table>
 				</div>
 
@@ -157,7 +167,7 @@
 			
 			makeSubLedgerTable();
 			
-			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="80%"
+			document.getElementById('subLedgerTable').getElementsByTagName('table')[0].width="100%"
 		</script>
 				<br />
 				<div class="subheadsmallnew" /></div>

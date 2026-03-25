@@ -220,6 +220,11 @@ th.bluebgheadtd {
 	font-size: xx-small;
 	color: #CC0000;
 }
+select{width:100% !important}
+.w5{width:5% !important}
+.w15{width:15% !important}
+.w30{width:25% !important}
+.w100{width:100% !important}
 </style>
 <div id="non-printable">
 	<s:if test="%{hasErrors()}">
@@ -237,63 +242,89 @@ th.bluebgheadtd {
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="10%" class="bluebox">&nbsp;</td>
-					<td width="15%" class="bluebox"><s:text name="report.period" />:<span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="report.period" />:<span
 						class="mandatory1">*</span></td>
-					<td width="22%" class="bluebox"><s:select name="period"
+					<td class="bluebox w30"><s:select name="period"
 							id="period"
 							list="#{'Select':'---Choose---','Date':'Date','Yearly':'Yearly','Half Yearly':'Half Yearly'}"
 							onclick="disableAsOnDate()" value="%{model.period}" /></td>
-					<td class="bluebox" width="12%"><s:text
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text
 							name="report.financialYear" />:<span class="mandatory1">*</span></td>
-					<td width="41%" class="bluebox"><s:select name="financialYear"
+					<td class="bluebox w30"><s:select name="financialYear"
 							id="financialYear" list="dropdownData.financialYearList"
 							listKey="id" listValue="finYearRange" headerKey="0"
 							headerValue="%{getText('lbl.choose.options')}" value="%{model.financialYear.id}" />
 					</td>
 				</tr>
 				<tr id="dateRow">
-					<td class="greybox">&nbsp;</td>
-					<td class="greybox"><s:text name="report.fromDate"/>:</td>
-					<td class="greybox">
-						<s:textfield name="fromDate" id="fromDate" cssStyle="width:100px"/>
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="report.fromDate"/>:</td>
+					<td class="greybox w30">
+						<s:date name="fromDate" var="fromDateId" format="dd/MM/yyyy" />
+					    <s:textfield
+					        id="fromDate"
+					        name="fromDate"
+					        value="%{fromDateId}"
+					        cssClass="form-control datepicker w100"
+					        placeholder="DD/MM/YYYY"
+					        data-date-end-date="0d"
+					        data-inputmask="'mask': 'd/m/y'"
+					        onkeyup="DateFormat(this,this.value,event,false,'3')" />
+					
+					
+						<%-- <s:textfield name="fromDate" id="fromDate" cssStyle="width:100px"/>
 						<a href="javascript:show_calendar('balanceSheetReport.fromDate');"
 						   style="text-decoration:none">
 							<img src="/services/egi/resources/erp2/images/calendaricon.gif" border="0"/>
-						</a>(dd/mm/yyyy)
+						</a>(dd/mm/yyyy) --%>
 					</td>
-					<td class="greybox"><s:text name="report.toDate"/>:</td>
-					<td class="greybox">
-						<s:textfield name="toDate" id="toDate" cssStyle="width:100px"/>
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="report.toDate"/>:</td>
+					<td class="greybox w30">
+					
+						<s:date name="toDate" var="toDateId" format="dd/MM/yyyy" />
+					    <s:textfield
+					        id="toDate"
+					        name="toDate"
+					        value="%{toDateId}"
+					        cssClass="form-control datepicker w100"
+					        placeholder="DD/MM/YYYY"
+					        data-date-end-date="0d"
+					        data-inputmask="'mask': 'd/m/y'"
+					        onkeyup="DateFormat(this,this.value,event,false,'3')" />	
+					        				
+						<%-- <s:textfield name="toDate" id="toDate" cssStyle="width:100px"/>
 						<a href="javascript:show_calendar('balanceSheetReport.toDate');"
 						   style="text-decoration:none">
 							<img src="/services/egi/resources/erp2/images/calendaricon.gif" border="0"/>
-						</a>(dd/mm/yyyy)
+						</a>(dd/mm/yyyy) --%>
 					</td>
 				</tr>
 				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox"><s:text name="report.department" />:</td>
-					<td class="bluebox"><s:select name="department"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="report.department" />:</td>
+					<td class="bluebox w30"><s:select name="department"
 							id="department" list="dropdownData.departmentList" listKey="code"
 							listValue="name" headerKey="null" headerValue="%{getText('lbl.choose.options')}"
 							value="model.department.code" /></td>
-					<td class="bluebox"><s:text name="report.fund" />:</td>
-					<td class="bluebox"><s:select name="fund" id="fund"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="report.fund" />:</td>
+					<td class="bluebox w30"><s:select name="fund" id="fund"
 							list="dropdownData.fundList" listKey="id" listValue="name"
 							headerKey="0" headerValue="%{getText('lbl.choose.options')}" value="model.fund.id" />
 					</td>
 				</tr>
 				<tr>
-					<td class="greybox">&nbsp;</td>
-
+					<td class="bluebox w5">&nbsp;</td>
 					<td class="greybox"><s:text name="report.function" />:</td>
 					<td class="greybox"><s:select name="function" id="function"
 							list="dropdownData.functionList" listKey="id" listValue="name"
 							headerKey="0" headerValue="%{getText('lbl.choose.options')}"
 							value="model.function.id" /></td>
-							
-							<td class="greybox"><s:text name="report.rupees" />:<span
+					<td class="bluebox w5">&nbsp;</td>		
+					<td class="greybox"><s:text name="report.rupees" />:<span
 						class="mandatory1">*</span></td>
 					<td class="greybox"><s:select name="currency" id="currency"
 							list="#{'Rupees':'Rupees','Thousands':'Thousands','Lakhs':'Lakhs'}"

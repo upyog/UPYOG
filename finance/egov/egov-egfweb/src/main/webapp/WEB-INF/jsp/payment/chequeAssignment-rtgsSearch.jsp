@@ -54,6 +54,12 @@
 
 <style>
 
+.formmainbox > table {
+    width: 96% !important;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
 /* Set consistent width for all form inputs and dropdowns */
 .formmainbox td.greybox input[type="text"],
 .formmainbox td.bluebox input[type="text"],
@@ -107,7 +113,7 @@
 					<td class="greybox"><s:text name="payment.mode" /><span
 						class="mandatory"></span></td>
 					<td class="greybox"><s:radio id="paymentMode"
-							name="paymentMode" list="#{'rtgs':'RTGS/TREASURY'}"
+							name="paymentMode" list="#{'rtgs':'RTGS/ Treasury'}"
 							onchange="enableOrDisableBillType(this)" value="%{paymentMode}" /></td>
 					<td class="greybox"><s:text
 							name="chq.assignment.paymentvoucherno" /></td>
@@ -134,7 +140,7 @@
 							id="vouchermis.departmentcode" list="dropdownData.departmentList"
 							listKey="code" listValue="name" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}"
-							value="voucherHeader.vouchermis.departmentcode" /></td>
+							value="%{voucherHeader.vouchermis.departmentcode}" /></td>
 				</tr>
 				<tr>
 					<egov:ajaxdropdown id="bank_branch" fields="['Text','Value']"

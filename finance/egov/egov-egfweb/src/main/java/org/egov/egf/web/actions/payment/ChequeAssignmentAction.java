@@ -350,7 +350,15 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 
         // overriding function Mandatory Condition only for cheque assignment search
         mandatoryFields.remove("function");
-        voucherHeader.getVouchermis().setDepartmentcode(getDefaultDepartmentValueForPayment());
+//        voucherHeader.getVouchermis().setDepartmentcode(getDefaultDepartmentValueForPayment());
+//        Doing for not auto-populate department data
+        
+        if (voucherHeader.getVouchermis().getDepartmentcode() == null
+                || "-1".equals(voucherHeader.getVouchermis().getDepartmentcode())) {
+
+            voucherHeader.getVouchermis().setDepartmentcode(null);
+        }
+        
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed prepare.");
     }

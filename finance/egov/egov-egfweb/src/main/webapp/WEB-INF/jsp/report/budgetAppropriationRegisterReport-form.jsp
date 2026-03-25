@@ -132,6 +132,16 @@ function generateReport(){
 	document.budgetAppropriationRegister.submit();  
 }
 </script>
+<style>
+	
+	.w5{width:5%}
+	.w15{
+	width:15%
+	}
+	.w25{width:25%}
+	select{width:100% !important}
+	#asOnDate{width:100% !important}
+</style>
 <body>
 	<div class="formmainbox">
 		<div class="formheading"></div>
@@ -143,24 +153,24 @@ function generateReport(){
 			name="budgetAppropriationRegister">
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
 				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox"><s:text name="report.fund" /> <s:if
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="report.fund" /> <s:if
 							test="%{isFieldMandatory('fund')}">
 							<span class="mandatory1">*</span>
 						</s:if></td>
-					<td class="bluebox"><s:select list="dropdownData.fundList"
+					<td class="bluebox w25"><s:select list="dropdownData.fundList"
 							listKey="id" listValue="name" name="fund.id" headerKey="0"
 							headerValue="%{getText('lbl.choose.options')}" value="fund.id" id="fund"
 							onChange="populateDepartment(this);"></s:select></td>
-
+					<td class="bluebox w5">&nbsp;</td>
 					<egov:ajaxdropdown id="department" fields="['Text','Value']"
 						dropdownId="department"
 						url="voucher/common-ajaxLoadEstimateBudgetDetailsByFundId.action" />
-					<td class="bluebox"><s:text name="report.department" /> <s:if
+					<td class="bluebox w15"><s:text name="report.department" /> <s:if
 							test="%{isFieldMandatory('executingDepartment')}">
 							<span class="mandatory1">*</span>
 						</s:if></td>
-					<td class="bluebox"><s:select
+					<td class="bluebox w25"><s:select
 							list="dropdownData.executingDepartmentList" listKey="code"
 							listValue="name" name="department.code" headerKey="0"
 							headerValue="%{getText('lbl.choose.options')}" value="department.code"
@@ -169,24 +179,25 @@ function generateReport(){
 
 				</tr>
 				<tr>
-					<td class="greybox">&nbsp;</td>
+					<td class="greybox w5">&nbsp;</td>
 					<egov:ajaxdropdown id="functions" fields="['Text','Value']"
 						dropdownId="functions"
 						url="voucher/common-ajaxLoadEstimateBudgetDetailsByDepartmentId.action" />
-					<td class="greybox"><s:text name="report.function.center" />
+					<td class="greybox w15"><s:text name="report.function.center" />
 						<s:if test="%{isFieldMandatory('function')}">
 							<span class="mandatory1">*</span>
 						</s:if></td>
-					<td class="greybox"><s:select list="dropdownData.functionList"
+					<td class="greybox w25"><s:select list="dropdownData.functionList"
 							listKey="id" listValue="name" name="function.id" headerKey="0"
 							headerValue="%{getText('lbl.choose.options')}" value="function.id" id="functions"
 							onChange="populateBudgetHead(this)"></s:select></td>
+					<td class="bluebox w5">&nbsp;</td>
 					<egov:ajaxdropdown id="budgetHeadId" fields="['Text','Value']"
 						dropdownId="budgetHeadId"
 						url="voucher/common-ajaxLoadEstimateBudgetDetailsByFuncId.action" />
-					<td class="bluebox"><s:text name="report.budged.head" /><span
+					<td class="bluebox w15"><s:text name="report.budged.head" /><span
 						class="mandatory1">*</span></td>
-					<td class="bluebox"><s:select
+					<td class="bluebox s25"><s:select
 							list="dropdownData.budgetGroupList" listKey="id" listValue="name"
 							name="budgetGroup.id" headerKey="0" headerValue="%{getText('lbl.choose.options')}"
 							value="budgetGroup.id" id="budgetHeadId" escapeHtml="false"></s:select></td>
@@ -194,9 +205,9 @@ function generateReport(){
 				</tr>
 
 				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="greybox"><s:text name="report.asOnDate"/> :<span class="mandatory1">*</span></td>
-					<td class="greybox"><s:date name="asOnDate" var="asOnDate"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="report.asOnDate"/> :<span class="mandatory1">*</span></td>
+					<td class="greybox w25"><s:date name="asOnDate" var="asOnDate"
 							format="dd/MM/yyyy" /> <s:textfield id="asOnDate"
 							name="asOnDate" value="%{strAsOnDate}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"

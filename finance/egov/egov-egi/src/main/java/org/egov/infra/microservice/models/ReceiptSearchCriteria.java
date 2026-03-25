@@ -80,12 +80,12 @@ public class ReceiptSearchCriteria {
     String tenantId;
     
     public void toPayemntSerachCriteriaContract(PaymentSearchCriteria contract){
-//        contract.setIds(this.ids);
+        //contract.setIds(this.ids);
         contract.setStatus(this.status);
         contract.setBusinessServices(this.businessCodes);
         contract.setFromDate(this.fromDate != null ? this.fromDate.getTime() : null);
         contract.setToDate(this.toDate != null ? this.toDate.getTime() : null);
-//        contract.setReceiptNumbers(this.receiptNumbers);
+        //contract.setReceiptNumbers(this.receiptNumbers);
         contract.setIds(this.receiptNumbers);
         contract.setTenantId(this.tenantId);
     }

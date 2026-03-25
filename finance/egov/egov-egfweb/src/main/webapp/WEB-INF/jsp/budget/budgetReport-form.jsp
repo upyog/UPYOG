@@ -63,33 +63,42 @@
 		document.budgetDetailReportForm.submit();
 	}
 </script>
-
+<style>
+		select{width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w30{width:25% !important}
+</style>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td class="greybox" width="5%" />
-		<td class="greybox"><s:text name="report.financialYear" /> <span
+		<td class="bluebox w5">&nbsp;</td>
+		<td class="greybox w15"><s:text name="report.financialYear" /> <span
 			class="mandatory"></span></td>
-		<td class="greybox"><s:select name="financialYear"
+		<td class="greybox w30"><s:select name="financialYear"
 				id="financialYear" list="dropdownData.financialYearList"
 				listKey="id" listValue="finYearRange" headerKey="0"
 				headerValue="%{getText('lbl.choose.options')}" value="%{model.financialYear.id}" /></td>
-		<td class="greybox"><s:text name="report.department" /></td>
-		<td class="greybox"><s:select name="department" id="department"
+		<td class="bluebox w5">&nbsp;</td>
+		<td class="greybox w15"><s:text name="report.department" /></td>
+		<td class="greybox w30"><s:select name="department" id="department"
 				list="dropdownData.departmentList" listKey="code" listValue="name"
 				headerKey="0" headerValue="%{getText('lbl.choose.options')}"
 				value="%{model.department.code}" /></td>
+		<td class="bluebox w5">&nbsp;</td>
 	</tr>
 	<tr>
-		<td class="bluebox" width="5%" />
-		<td class="bluebox"><s:text name="report.type" /></td>
-		<td class="bluebox"><s:select name="type" id="type"
+		<td class="bluebox w5">&nbsp;</td>
+		<td class="bluebox w15"><s:text name="report.type" /></td>
+		<td class="bluebox w30"><s:select name="type" id="type"
 				list="#{'All':'---Select---','I':'Revenue','E':'Expense','L':'Liability','A':'Asset','IE':'Revenue & Expense'}" />
 		</td>
-		<td class="bluebox" id="function_label" style="visibility: visible"><s:text
+		<td class="bluebox w5">&nbsp;</td>
+		<td class="bluebox w15" id="function_label" style="visibility: visible"><s:text
 				name="report.function" /></td>
-		<td class="bluebox"><s:select name="function" id="function"
+		<td class="bluebox w30"><s:select name="function" id="function"
 				list="dropdownData.functionList" listKey="id" listValue="name"
 				headerKey="-1" headerValue="%{getText('lbl.choose.options')}" value="%{function.id}" />
 		</td>
+		<td class="bluebox w5">&nbsp;</td>
 	</tr>
 </table>

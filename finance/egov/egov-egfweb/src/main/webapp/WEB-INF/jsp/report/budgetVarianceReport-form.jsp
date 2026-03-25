@@ -164,6 +164,13 @@ function resetSubmit()
 	document.getElementById('fund').value="";
 	}
 </script>
+<style>
+		select{width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w30{width:25% !important}
+		.w100{width:100% !important}
+</style>
 <body>
 	<div class="formmainbox">
 		<div class="formheading"></div>
@@ -177,34 +184,39 @@ function resetSubmit()
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
 				<tr>
 					<s:if test="%{isFieldMandatory('executingDepartment')}">
-						<td class="bluebox" width="10%"><s:text name="report.department"/> :<span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="report.department"/> :<span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:select name="executingDepartment"
+						<td class="bluebox w30"><s:select name="executingDepartment"
 								id="executingDepartment" list="dropdownData.departmentList"
 								listKey="code" listValue="name" headerKey="-1"
 								value="%{budgetDetail.executingDepartment}"
 								headerValue="%{getText('lbl.choose.options')}" /></td>
 					</s:if>
 					<s:if test="%{isFieldMandatory('function')}">
-						<td class="bluebox" width="10%"><s:text name="report.function"/> :</td>
-						<td class="bluebox"><s:select name="function" id="function"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="report.function"/> :</td>
+						<td class="bluebox w30"><s:select name="function" id="function"
 								value="%{budgetDetail.function.id}"
 								list="dropdownData.functionList" listKey="id" listValue="name"
 								headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
 					</s:if>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
 					<s:if test="%{isFieldMandatory('fund')}">
-						<td class="greybox" width="10%"><s:text name="report.fund"/>:</td>
-						<td class="greybox"><s:select name="fund" id="fund"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="report.fund"/>:</td>
+						<td class="greybox w30"><s:select name="fund" id="fund"
 								value="%{budgetDetail.fund.id}" list="dropdownData.fundList"
 								listKey="id" listValue="name" headerKey="-1"
 								headerValue="%{getText('lbl.choose.options')}" /></td>
 					</s:if>
 					<s:if test="%{isFieldMandatory('functionary')}">
-						<td class="greybox" width="10%"><s:text name="report.functionary"/>:<span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="report.functionary"/>:<span
 							class="mandatory1">*</span></td>
-						<td class="greybox"><s:select name="functionary"
+						<td class="greybox w30"><s:select name="functionary"
 								id="functionary" list="dropdownData.functionaryList"
 								listKey="id" listValue="name" headerKey="-1"
 								headerValue="%{getText('lbl.choose.options')}" /></td>
@@ -213,66 +225,76 @@ function resetSubmit()
 						<td class="greybox">&nbsp;</td>
 						<td class="greybox">&nbsp;</td>
 					</s:else>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
 					<s:if test="%{isFieldMandatory('scheme')}">
-						<td width="10%" class="bluebox">&nbsp;</td>
-						<td class="bluebox"><s:text name="scheme" />:<span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="scheme" />:<span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:select list="dropdownData.schemeList"
+						<td class="bluebox w30"><s:select list="dropdownData.schemeList"
 								listKey="id" listValue="name" headerKey="0"
 								headerValue="%{getText('lbl.choose.options')}" name="scheme"
 								onchange="updateGrid('scheme.id',document.getElementById('budgetDetail_scheme').selectedIndex);populateSubSchemes(this);"
 								value="scheme.id" id="budgetDetail_scheme"></s:select></td>
 					</s:if>
 					<s:if test="%{isFieldMandatory('subScheme')}">
+						<td class="bluebox w5">&nbsp;</td>
 						<egov:ajaxdropdown id="subScheme" fields="['Text','Value']"
 							dropdownId="budgetDetail_subScheme"
 							url="budget/budgetDetail-ajaxLoadSubSchemes.action"
 							afterSuccess="onHeaderSubSchemePopulation" />
-						<td class="bluebox"><s:text name="subScheme" />:<span
+						<td class="bluebox w15"><s:text name="subScheme" />:<span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:select
+						<td class="bluebox w30"><s:select
 								list="dropdownData.subschemeList" listKey="id" listValue="name"
 								headerKey="0" headerValue="%{getText('lbl.choose.options')}" name="subScheme"
 								onchange="updateGrid('subScheme.id',document.getElementById('budgetDetail_subScheme').selectedIndex)"
 								value="subScheme.id" id="budgetDetail_subScheme"></s:select></td>
 					</s:if>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
 					<s:if test="%{isFieldMandatory('boundary')}">
-						<td class="greybox"><s:text name="field"/>:<span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="field"/>:<span
 							class="mandatory1">*</span></td>
-						<td class="greybox"><s:select list="dropdownData.fieldList"
+						<td class="greybox w30"><s:select list="dropdownData.fieldList"
 								listKey="id" listValue="name" headerKey="0"
 								headerValue="%{getText('lbl.choose.options')}" name="boundary"
 								onchange="updateGrid('boundary.id',document.getElementById('budgetDetail_boundary').selectedIndex)"
 								value="boundary.id" id="budgetDetail_boundary"></s:select></td>
+						<td class="bluebox w5">&nbsp;</td>
 					</s:if>
 				</tr>
 				<tr>
-					<td class="bluebox" width="10%"><s:text name="lbl.account.type"/> :</td>
-					<td class="bluebox"><s:select name="accountType"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="lbl.account.type"/> :</td>
+					<td class="bluebox w30"><s:select name="accountType"
 							id="accountType" list="dropdownData.accountTypeList"
 							headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
-					<td class="bluebox" width="10%"><s:text name="report.budged.head"/> :</td>
-					<td class="bluebox"><s:select name="budgetGroup"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="report.budged.head"/> :</td>
+					<td class="bluebox w30"><s:select name="budgetGroup"
 							value="%{budgetGroup.id}" id="budgetGroup"
 							list="dropdownData.budgetGroupList" listKey="id" listValue="name"
 							headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
-					<td class="greybox" width="10%"><s:text name="report.asOnDate"/> :<span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="report.asOnDate"/> :<span
 						class="mandatory1">*</span></td>
 
-					<td class="greybox"><s:date name="asOnDate" var="asOnDateId"
+					<td class="greybox w30"><s:date name="asOnDate" var="asOnDateId"
 							format="dd/MM/yyyy" /> <s:textfield id="asOnDate"
 							name="asOnDate" value="%{asOnDateId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 							data-inputmask="'mask': 'd/m/y'" /></td>
 					<td class="greybox">&nbsp;</td>
 					<td class="greybox">&nbsp;</td>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 			</table>
 

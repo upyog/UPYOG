@@ -54,7 +54,7 @@
 	<div class="col-sm-3 add-margin">
 		  <form:input path="code" maxlength="50"
 			cssClass="form-control patternvalidation"
-			data-pattern="alphanumericwithspace" required="required" />
+			data-pattern="alphanumericwithspace" required="required" disabled="true" />
 		<form:errors path="code" cssClass="add-margin error-msg" />
 		<!--  <p class="form-control-static"><c:out value="${contractor.code}" /></p>
         <form:errors path="code" cssClass="add-margin error-msg" />-->
@@ -148,7 +148,7 @@
 	<div class="col-sm-3 add-margin">
 		<form:input path="tinNumber" id="tinNumber" minlength="15"
 			maxlength="15" cssClass="form-control patternvalidation"
-			data-pattern="alphanumericwithspace" required="required" />
+			data-pattern="alphanumericwithspace" required="required" disabled="true" />
 		<form:errors path="tinNumber" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"
@@ -256,7 +256,7 @@
 		<div class="col-sm-3 add-margin">
 			<form:input path="panNumber" id="panNumber" maxlength="10"
 				cssClass="form-control patternvalidation"
-				data-pattern="alphanumericwithspace" />
+				data-pattern="alphanumericwithspace" disabled="true" />
 			<form:errors path="panNumber" cssClass="add-margin error-msg" />
 		</div>
 	</div>
