@@ -58,6 +58,33 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
                 throw new CustomException("TXN_FETCH_FAILED", "Failed to deserialize data");
             }
         }
+        
+        JsonNode txnResponse = null;
+        String atomTxnId = null;
+        Object txnResponseObj = resultSet.getObject("txn_response");
+
+        if (txnResponseObj != null) {
+            try {
+                txnResponse = objectMapper.readTree(txnResponseObj.toString());
+                if (txnResponse.has("payInstruments") 
+                        
+                        && txnResponse.get("payInstruments").size() > 0) {
+
+                    JsonNode payDetailsNode = txnResponse
+                            .get("payInstruments")
+                            .get(0)
+                            .get("payDetails");
+
+                    if (payDetailsNode != null && payDetailsNode.has("atomTxnId")) {
+                        atomTxnId = payDetailsNode.get("atomTxnId").asText();
+                    }
+                }
+
+            } catch (IOException e) {
+                throw new CustomException("TXN_FETCH_FAILED",
+                        "Failed to deserialize txn_response");
+            }
+        }
 
         return Transaction.builder()
                 .txnId(resultSet.getString("txn_id"))
@@ -77,6 +104,7 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
                 .consumerCode(resultSet.getString("consumer_code"))
                 .additionalDetails(additionalDetails)
                 .taxAndPayments(taxAndPayments)
+                .atomTxnId(atomTxnId)
                 .auditDetails(auditDetails)
                 .build();
     }

@@ -182,6 +182,8 @@ public class Transaction {
     @JsonProperty("bankTransactionNo")
     private String bankTransactionNo;
 
+    @JsonProperty("atomTxnId")
+    private String atomTxnId;
 
     /**
      * Current status of the transaction

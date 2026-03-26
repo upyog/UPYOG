@@ -6,12 +6,19 @@ import org.egov.pg.web.models.TransactionCriteria;
 import java.util.*;
 
 class TransactionQueryBuilder {
-    private static final String SEARCH_TXN_SQL = "SELECT pg.txn_id, pg.txn_amount, pg.txn_status, pg.txn_status_msg, " +
-            "pg.gateway, pg.module, pg.consumer_code, pg.bill_id, pg.product_info, pg.user_uuid, pg.user_name, pg" +
-            ".mobile_number, pg.email_id, pg.name, pg.user_tenant_id, pg.tenant_id, pg.gateway_txn_id, pg.gateway_payment_mode, " +
-            "pg.gateway_status_code, pg.gateway_status_msg, pg.receipt, pg.additional_details,  pg.created_by, pg" +
-            ".created_time, pg.last_modified_by, pg.last_modified_time " +
-            "FROM eg_pg_transactions pg ";
+	private static final String SEARCH_TXN_SQL =
+	        "SELECT pg.txn_id, pg.txn_amount, pg.txn_status, pg.txn_status_msg, " +
+	        "pg.gateway, pg.module, pg.consumer_code, pg.bill_id, pg.product_info, " +
+	        "pg.user_uuid, pg.user_name, pg.mobile_number, pg.email_id, pg.name, " +
+	        "pg.user_tenant_id, pg.tenant_id, pg.gateway_txn_id, pg.gateway_payment_mode, " +
+	        "pg.gateway_status_code, pg.gateway_status_msg, pg.receipt, " +
+	        "pg.additional_details, pg.created_by, pg.created_time, " +
+	        "pg.last_modified_by, pg.last_modified_time, " +
+	        "dump.txn_response " +
+	        "FROM eg_pg_transactions pg " +
+	        "LEFT JOIN eg_pg_transactions_dump dump " +
+	        "ON pg.txn_id = dump.txn_id ";
+
 
     private TransactionQueryBuilder() {
     }

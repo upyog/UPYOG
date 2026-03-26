@@ -9,6 +9,8 @@ import org.egov.collection.config.ApplicationProperties;
 import org.egov.collection.model.Payment;
 import org.egov.collection.model.PaymentRequest;
 import org.egov.collection.model.PaymentSearchCriteria;
+import org.egov.collection.model.enums.InstrumentStatusEnum;
+import org.egov.collection.model.enums.PaymentStatusEnum;
 import org.egov.collection.producer.CollectionProducer;
 import org.egov.collection.repository.PaymentRepository;
 import org.egov.collection.util.PaymentEnricher;
@@ -210,5 +212,32 @@ public class PaymentService {
         return paymentRepository.fetchPaymentsForPlainSearch(criteria);
     }
 
+    
+     public Payment cancelPayment(PaymentRequest paymentRequest) {
+		Payment payment = paymentRequest.getPayment();
+	    RequestInfo requestInfo = paymentRequest.getRequestInfo();
+         PaymentSearchCriteria paymentSearchCriteria = PaymentSearchCriteria.builder().tenantId(payment.getTenantId()).transactionNumber(payment.getTransactionNumber()).build();
+		List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
+		
+		for(Payment paymentToBeCancel : payments) {
+			paymentToBeCancel.setInstrumentStatus(InstrumentStatusEnum.CANCELLED);
+			paymentToBeCancel.setPaymentStatus(PaymentStatusEnum.CANCELLED);
+			paymentToBeCancel.getPaymentDetails().forEach(paymentDetail -> {
+                Bill bill = paymentDetail.getBill();
+                bill.setStatus(Bill.StatusEnum.CANCELLED);
+                bill.setIsCancelled(true);
+            });
+            PaymentWorkflowService.updateAuditDetails(payment, requestInfo);
+        }
+
+
+        paymentRepository.updateStatus(payments);
+
+        payments.forEach(paymentToBeCancel -> {
+            producer.producer(applicationProperties.getCancelPaymentTopicName(), new PaymentRequest(requestInfo, payment));
+        });
+        
+		return payment;
+	}
 
 }

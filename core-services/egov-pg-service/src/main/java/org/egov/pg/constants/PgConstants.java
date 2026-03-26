@@ -8,6 +8,7 @@ public class PgConstants {
     public static final String TXN_FAILURE_AMT_MISMATCH = "Transaction failed, amount mismatch";
     public static final String TXN_RECEIPT_GEN_FAILED = "Receipt generation failed";
     public static final String PG_TXN_IN_LABEL = "eg_pg_txnid";
+    public static final String PG_REFUND_TXN_IN_LABEL = "refundId";
     public static final String PG_TXN_IN_LABEL_NTTDATA = "amp;eg_pg_txnid";
 
     public static final String NOTIFICATION_LOCALE = "en_IN";

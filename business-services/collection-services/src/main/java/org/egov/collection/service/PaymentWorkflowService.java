@@ -3,14 +3,19 @@ package org.egov.collection.service;
 
 import static java.util.Collections.reverseOrder;
 import static java.util.Collections.singleton;
-import static org.egov.collection.config.CollectionServiceConstants.*;
 import static org.egov.collection.config.CollectionServiceConstants.KEY_FILESTOREID;
+import static org.egov.collection.config.CollectionServiceConstants.KEY_ID;
 import static org.egov.collection.util.Utils.jsonMerge;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.config.ApplicationProperties;
 import org.egov.collection.model.Payment;
@@ -30,9 +35,12 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.web.client.RestTemplate;
+import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -118,6 +126,9 @@ public class PaymentWorkflowService {
             case REMIT:
                 processedPayments = remit(workflowRequestByPaymentId, consumerCodes,
                         paymentWorkflowRequest.getRequestInfo(), tenantId);
+            case REFUND:
+            	processedPayments = refund(workflowRequestByPaymentId, consumerCodes,
+            			paymentWorkflowRequest.getRequestInfo(), tenantId);
                 break;
         }
 
@@ -125,7 +136,28 @@ public class PaymentWorkflowService {
     }
 
 
-    private List<Payment> cancel(Map<String, PaymentWorkflow> workflowRequestByPaymentId, Set<String> consumerCodes,
+    private List<Payment> refund(Map<String, PaymentWorkflow> workflowRequestByPaymentId, Set<String> consumerCodes,
+			RequestInfo requestInfo, String tenantId) {
+         PaymentSearchCriteria paymentSearchCriteria = PaymentSearchCriteria
+                  .builder()
+                  .consumerCodes(consumerCodes)
+                  .tenantId(tenantId)
+                  .build();
+         List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
+         payments.sort(reverseOrder(Comparator.comparingLong(Payment::getTransactionDate)));
+          Payment latestPayment = payments.stream()
+                  .max(Comparator.comparingLong(Payment::getTransactionDate))
+                  .orElseThrow(() -> new CustomException("PAYMENT_NOT_FOUND", "No payments found for given consumer codes"));
+          
+          paymentWorkflowValidator.validateForRefund(new ArrayList<>(workflowRequestByPaymentId.values()), latestPayment);
+         
+         
+          collectionProducer.producer(applicationProperties.getInitiateRefundTopic(),new PaymentRequest(requestInfo, latestPayment));
+          
+		return payments;
+	}
+
+	private List<Payment> cancel(Map<String, PaymentWorkflow> workflowRequestByPaymentId, Set<String> consumerCodes,
                                  RequestInfo requestInfo, String tenantId){
         PaymentSearchCriteria paymentSearchCriteria = PaymentSearchCriteria
                 .builder()

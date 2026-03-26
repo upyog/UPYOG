@@ -20,6 +20,19 @@ public class ResponseParser
   public void setPayInstrument(List<PayInstrument> payInstrument) {
     this.payInstrument = payInstrument;
   }
+  
+  @JsonProperty("payInstrument")
+  private PayInstrument refundPayInstrument;
+  
+ 
+
+  public PayInstrument getRefundPayInstrument() {
+	return refundPayInstrument;
+}
+
+  public void setRefundPayInstrument(PayInstrument refundPayInstrument) {
+	this.refundPayInstrument = refundPayInstrument;
+  }
 
   public String toString()
   {

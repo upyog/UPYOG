@@ -261,5 +261,14 @@ public class ApplicationProperties {
     @Value("${egov.razorpay.url}")
     private String razorPayUrl;
 
+    // Refund
+    @Value("${egov.idgen.ref.name}")
+    private String idGenRefundName;
+    
+    @Value("${egov.idgen.ref.format}")
+    private String idGenRefundFormat;
+    
+    @Value("${kafka.topic.initiate.refund.name}")
+    private String initiateRefundTopic;
 
 }
