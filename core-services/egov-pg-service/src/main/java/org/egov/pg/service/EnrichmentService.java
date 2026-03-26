@@ -5,17 +5,25 @@ import static java.util.Collections.singletonMap;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.constants.TransactionAdditionalFields;
 import org.egov.pg.models.AuditDetails;
 import org.egov.pg.models.BankAccount;
+import org.egov.pg.models.Refund;
+import org.egov.pg.models.Refund.RefundStatusEnum;
+import org.egov.pg.models.RefundRequest;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.BankAccountRepository;
+import org.egov.pg.repository.TransactionRepository;
+import org.egov.pg.web.models.TransactionCriteria;
 import org.egov.pg.web.models.TransactionRequest;
+import org.egov.tracer.model.CustomException;
 import org.egov.pg.web.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +32,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import jakarta.validation.Valid;
 
 import java.util.Collections;
 import java.util.Map;
@@ -39,13 +49,15 @@ public class EnrichmentService {
     private BankAccountRepository bankAccountRepository;
     private ObjectMapper objectMapper;
     private UserService userService;
+    private TransactionRepository transactionRepository;
 
     @Autowired
-    EnrichmentService(IdGenService idGenService, BankAccountRepository bankAccountRepository, ObjectMapper objectMapper, UserService userService) {
+    EnrichmentService(IdGenService idGenService, BankAccountRepository bankAccountRepository, ObjectMapper objectMapper, UserService userService,TransactionRepository transactionRepository) {
         this.idGenService = idGenService;
         this.bankAccountRepository = bankAccountRepository;
         this.objectMapper = objectMapper;
         this.userService = userService;
+        this.transactionRepository=transactionRepository;
     }
 
     void enrichCreateTransaction(TransactionRequest transactionRequest) {
@@ -113,5 +125,86 @@ public class EnrichmentService {
         newTxn.setReceipt(currentTxnStatus.getReceipt());
 
     }
+
+//	public void enrichInitiateRefundRequest(@Valid RefundRequest refundRequest) {
+//		 RequestInfo requestInfo = refundRequest.getRequestInfo();
+//		 Refund refund = refundRequest.getRefund();
+//		 
+//		 refund.setId(UUID.randomUUID().toString());
+//		 // Generate ID from ID Gen service and assign to refund object
+//		 setIdFromIdGen(refundRequest);
+//		 attachOriginalTransactionDetails(refund);
+//		 refund.setStatus(Refund.RefundStatusEnum.INITIATED);
+//		 
+//		 AuditDetails auditDetails = AuditDetails.builder()
+//	                .createdBy(requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null)
+//	                .createdTime(System.currentTimeMillis())
+//	                .build();
+//	        refund.setAuditDetails(auditDetails);
+//	}
+//
+//	private void attachOriginalTransactionDetails(Refund refund) {
+//		TransactionCriteria criteria = TransactionCriteria.builder().txnId(refund.getOriginalTxnId()).build();
+//		List<Transaction> statuses = transactionRepository.fetchTransactions(criteria);
+//
+//		if (statuses == null || statuses.isEmpty()) {
+//		    throw new CustomException("TXN_NOT_FOUND", "No transaction found for given criteria");
+//		}
+//
+//		String atomTxnId = statuses.get(0).getAtomTxnId();
+//		String consumerCode = statuses.get(0).getConsumerCode();
+//		refund.setAtomTxnId(atomTxnId);
+//        refund.setConsumerCode(consumerCode);
+//
+//	}
+
+	private void setIdFromIdGen(@Valid RefundRequest refundRequest) {
+//		String refundId = idGenService.generateRefundId(refundRequest);
+		String refundId = "PG-1212-refund";
+		refundRequest.getRefund().setRefundId(refundId);
+	}
+
+	public void enrichupdateRefundTransaction(Refund currentRefund) {
+		TransactionCriteria criteria = TransactionCriteria.builder().txnId(currentRefund.getOriginalTxnId()).build();
+		List<Transaction> statuses = transactionRepository.fetchTransactions(criteria);
+
+		if (statuses == null || statuses.isEmpty()) {
+		    throw new CustomException("TXN_NOT_FOUND", "No transaction found for given criteria");
+		}
+
+		String atomTxnId = statuses.get(0).getAtomTxnId();
+		String consumerCode = statuses.get(0).getConsumerCode();
+		currentRefund.setAtomTxnId(atomTxnId);
+		
+	}
+
+	public RefundRequest enrichRefundRequest(List<Transaction> transactions, RequestInfo requestInfo) {
+		  RefundRequest refundRequest = new RefundRequest();
+		  Transaction transaction = transactions.get(0);
+		  Refund refund = refundRequest.getRefund();
+		  refundRequest.setRequestInfo(requestInfo);
+		  
+		  refund.setId(UUID.randomUUID().toString());
+		  setIdFromIdGen(refundRequest);
+		  
+		  refund.setOriginalTxnId(transaction.getTxnId());
+		  refund.setRefundAmount(transaction.getTxnAmount());
+		  refund.setOriginalAmount(transaction.getTxnAmount());
+		  refund.setAtomTxnId(transaction.getAtomTxnId());
+		  refund.setConsumerCode(transaction.getConsumerCode());
+		  refund.setGateway(transaction.getGateway());
+		  refund.setGatewayTxnId(transaction.getGatewayTxnId());
+		  
+		  refund.setStatus(Refund.RefundStatusEnum.INITIATED);
+			 
+			 AuditDetails auditDetails = AuditDetails.builder()
+		                .createdBy(requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null)
+		                .createdTime(System.currentTimeMillis())
+		                .build();
+		        refund.setAuditDetails(auditDetails);
+		  
+		return refundRequest;
+	}
+
 
 }
