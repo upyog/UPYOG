@@ -339,7 +339,7 @@ public class ElasticService implements IESService {
 			LOGGER.error("--hits inside searchMultiple : " , hits);
 			Map hitsTotalMap = (Map)hits.get("total");
             if((Integer)hitsTotalMap.get("value") >=1)
-                return (List)((ArrayList)hits.get("hits")).get(0);
+            	return (List) hits.get("hits");
             
 //            if((Integer)hits.get("total") >=1)
 //                return (List) ((ArrayList)hits.get("hits"));

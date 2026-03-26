@@ -32,6 +32,8 @@ import com.ingestpipeline.repository.ElasticSearchRepository;
 import com.ingestpipeline.repository.TargetDataDao;
 import com.ingestpipeline.util.Constants;
 import com.ingestpipeline.util.JSONUtil;
+
+import java.util.ArrayList;
 import java.util.Base64;
 import java.nio.charset.StandardCharsets;
 /**
@@ -300,9 +302,17 @@ public class EnrichmentServiceImpl implements EnrichmentService {
 					}
 					LOGGER.info("Enhance Query node "+ queryNode);
 					List domainNode = elasticService.searchMultiple(indexName, queryNode.toString());
-					if(domainNode != null){
-						Object transDomainResponse = enrichTransform.transformEnhanceData(domainNode, businessTypeVal.toString());
+					LOGGER.info("domainNode"+domainNode);
+//					if(domainNode != null){
+//						Object transDomainResponse = enrichTransform.transformEnhanceData(domainNode, businessTypeVal.toString());
+					if(domainNode != null && !domainNode.isEmpty()){
+						List cleanList = new ArrayList();
+						Map firstHit = (Map) domainNode.get(0);
+						cleanList.add(firstHit.get("_source"));
+						Object transDomainResponse = enrichTransform.transformEnhanceData(cleanList, businessTypeVal.toString());
+						LOGGER.info("transDomainResponse"+transDomainResponse);
 						Object domainObject = incomingData.get("domainObject");
+						LOGGER.info("domainObject"+domainObject);
 						Map domainMap = (Map) domainObject;
 						domainMap.put("assessmentsDetails", transDomainResponse);
 
