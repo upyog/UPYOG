@@ -59,7 +59,9 @@ public class EnrichmentConsumer implements KafkaConsumer {
 	private void push(Map incomingData, String docId ) {
 
 		try {
+			LOGGER.info("incomingData inside push: "+incomingData);
 			Map updatedIncomingData = enrichmentService.enrichData(incomingData);
+			LOGGER.info("updatedIncomingData inside push: "+updatedIncomingData);
 
 			if(esPushDirect) {
 				LOGGER.info("##esPushDirect## : "+esPushDirect);

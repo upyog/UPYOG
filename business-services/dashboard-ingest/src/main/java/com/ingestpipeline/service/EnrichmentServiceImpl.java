@@ -124,7 +124,7 @@ public class EnrichmentServiceImpl implements EnrichmentService {
 					break;
 				}
 			}
-
+			LOGGER.info("businessTypeVal :: " + businessTypeVal);
 			DomainIndexConfig indexConfig = domainConfig.getIndexConfig(businessTypeVal.toString());
 			LOGGER.info("indexConfig ## "+indexConfig);
 			if(indexConfig != null){
