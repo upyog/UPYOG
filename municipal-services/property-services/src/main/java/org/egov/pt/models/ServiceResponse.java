@@ -7,5 +7,5 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ServiceResponse {
 
 	@JsonProperty("service")
-	List<ServiceWithProperties> service;
+	List<ServiceAndRevenueWithProperties> service;
 }
