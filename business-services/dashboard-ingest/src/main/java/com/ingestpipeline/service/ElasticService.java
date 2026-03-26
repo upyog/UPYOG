@@ -320,8 +320,11 @@ public class ElasticService implements IESService {
     public List searchMultiple(String index, String searchQuery) throws Exception {
 
         String url = indexServiceHost + index + indexServiceHostSearch;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        //HttpHeaders headers = new HttpHeaders();
+        //headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = getHttpHeaders();
+        LOGGER.info("headers inside searchMultiple" +headers);
+        
 
         LOGGER.info("searching searchMultiple ES for query::" + searchQuery + "::on::" + index + "::ON URL::" + url);
 
