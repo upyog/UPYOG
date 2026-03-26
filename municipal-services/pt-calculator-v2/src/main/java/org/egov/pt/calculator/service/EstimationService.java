@@ -1334,7 +1334,9 @@ public class EstimationService {
 			LocalDate endDate = LocalDate.now();
 			date = date.concat(String.valueOf(endDate.getYear()));
 			LocalDate startDate = LocalDate.parse(date, dtf);
-			BigDecimal daysdiff = new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
+			//BigDecimal daysdiff = new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
+			long days = Math.abs(ChronoUnit.DAYS.between(startDate, endDate));
+			BigDecimal daysdiff = BigDecimal.valueOf(days);
 			pastduePenalty = collectedAmtForOldDemand.multiply(
 					new BigDecimal(penaltyPrecentage).divide(new BigDecimal(CALCULATION_100)).multiply(daysdiff));
 			pastduePenalty = pastduePenalty.setScale(CALCULATION_2, CALCULATION_2);
