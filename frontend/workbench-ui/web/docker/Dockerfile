@@ -10,6 +10,8 @@ COPY ${WORK_DIR} .
 RUN ls -lah
 
 #RUN node web/envs.js
+RUN yarn config set ignore-engines true
+
 RUN cd web/ \
     &&  ./install-deps.sh \
     && yarn install \
