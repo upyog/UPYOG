@@ -475,7 +475,7 @@ public class PropertyConfiguration {
 	@Value("${egov.usr.events.view.application}")
 	private String applicationViewFromNotif;
 	
-	@Value("$(is.asmt.pastyear.enable)")
+	@Value("${is.asmt.pastyear.enable}")
 	private Boolean isAsmtPastYearEnable;
 	    
 }
