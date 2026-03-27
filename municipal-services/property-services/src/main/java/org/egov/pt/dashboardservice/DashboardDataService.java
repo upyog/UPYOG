@@ -25,7 +25,6 @@ import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PropertyData;
 import org.egov.pt.models.Revenue;
-import org.egov.pt.models.RevenueWithProperties;
 import org.egov.pt.models.ServiceAndRevenueWithProperties;
 import org.egov.pt.models.Services;
 import org.egov.pt.models.collection.Payment;
