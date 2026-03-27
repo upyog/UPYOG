@@ -440,13 +440,13 @@ public class HeightOfRoom extends FeatureProcess {
 //										setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "" ,
 //												"Area >= " + minimumHeight + ", Width >=" + minWidth,
 //												"Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
-//														+ DcrConstants.IN_METER,
+//														+ DcrConstants.IN_M,
 //												Result.Accepted.getResultVal(), scrutinyDetail);
 //									} else {
 //										setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "",
 //												"Area >= " + minimumHeight + ", Width >=" + minWidth,
 //												"Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
-//														+ DcrConstants.IN_METER,
+//														+ DcrConstants.IN_M,
 //												Result.Not_Accepted.getResultVal(), scrutinyDetail);
 //									}
 										
@@ -456,13 +456,13 @@ public class HeightOfRoom extends FeatureProcess {
 									    setReportOutputDetails(pl, subRule, subRuleDesc, "" + floor.getNumber().toString(), "",
 									            "Area >= " + minimumHeight + ", Width >=" + minWidth,
 									            "Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
-									                    + DcrConstants.IN_METER,
+									                    + DcrConstants.IN_M,
 									            Result.Accepted.getResultVal(), scrutinyDetail);
 									} else {
 									    setReportOutputDetails(pl, subRule, subRuleDesc, "" + floor.getNumber().toString(), "",
 									            "Area >= " + minimumHeight + ", Width >=" + minWidth,
 									            "Area = " + roomAreas.get(0) + ", Width = " + roomWidths.get(0)
-									                    + DcrConstants.IN_METER,
+									                    + DcrConstants.IN_M,
 									            Result.Not_Accepted.getResultVal(), scrutinyDetail);
 									}
 								}
@@ -478,13 +478,13 @@ public class HeightOfRoom extends FeatureProcess {
 										setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "",
 												"Area >= " + minimumHeight + ", Width >=" + minWidth,
 												"Area = " + roomAreas.get(i) + ", Width = " + roomWidths.get(i)
-														+ DcrConstants.IN_METER,
+														+ DcrConstants.IN_M,
 												Result.Accepted.getResultVal(), scrutinyDetail1);
 									} else {
 										setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "",
 												"Area >= " + minimumHeight + ", Width >=" + minWidth,
 												"Area = " + roomAreas.get(i) + ", Width = " + roomWidths.get(i)
-														+ DcrConstants.IN_METER,
+														+ DcrConstants.IN_M,
 												Result.Not_Accepted.getResultVal(), scrutinyDetail1);
 									}
 
@@ -496,7 +496,7 @@ public class HeightOfRoom extends FeatureProcess {
 								for (Door door : floor.getDoors()) {
 									if (door != null) {
 										BigDecimal doorHeight = door.getDoorHeight();
-										BigDecimal doorWidth = door.getDoorWidth();									
+										BigDecimal doorWidth = door.getDoorWidth().setScale(2, BigDecimal.ROUND_HALF_UP);									
 											
 										// BigDecimal minDoorHeight = BigDecimal.valueOf(2.0);
 										//BigDecimal minDoorWidth = BigDecimal.valueOf(1);
@@ -505,12 +505,12 @@ public class HeightOfRoom extends FeatureProcess {
 										if (doorWidth.compareTo(minDoorWidth) >= 0) {
 											setReportOutputDetails2(pl, subRuleDoor, subRuleDesc,
 													floor.getNumber().toString(), 
-													" Width = " + minDoorWidth + DcrConstants.IN_METER, doorWidth.toString(),
+													" Width = " + minDoorWidth + DcrConstants.IN_M, doorWidth.toString(),
 													Result.Accepted.getResultVal(), scrutinyDetail2);
 										} else {
 											setReportOutputDetails2(pl, subRuleDoor, subRuleDesc, 
 													floor.getNumber().toString(),  
-													" Width = " + minDoorWidth + DcrConstants.IN_METER, doorWidth.toString(),
+													" Width = " + minDoorWidth + DcrConstants.IN_M, doorWidth.toString(),
 													Result.Not_Accepted.getResultVal(), scrutinyDetail2);
 										}
 									}
@@ -766,12 +766,12 @@ public class HeightOfRoom extends FeatureProcess {
 					? (String) typicalFloorValues.get("typicalFloors")
 					: "" + floor.getNumber();
 			if (valid) {
-				setReportOutputDetails(pl, subRule, subRuleDesc, value, "",  expected + DcrConstants.IN_METER,
-						actual + DcrConstants.IN_METER, Result.Accepted.getResultVal(), scrutinyDetail);
+				setReportOutputDetails(pl, subRule, subRuleDesc, value, "",  expected + DcrConstants.IN_M,
+						actual + DcrConstants.IN_M, Result.Accepted.getResultVal(), scrutinyDetail);
 				LOG.info("Room Height Validation True: (Expected/Actual) " + expected + "/" + actual);
 			} else {
-				setReportOutputDetails(pl, subRule, subRuleDesc, value, "" , expected + DcrConstants.IN_METER,
-						actual + DcrConstants.IN_METER, Result.Not_Accepted.getResultVal(), scrutinyDetail);
+				setReportOutputDetails(pl, subRule, subRuleDesc, value, "" , expected + DcrConstants.IN_M,
+						actual + DcrConstants.IN_M, Result.Not_Accepted.getResultVal(), scrutinyDetail);
 				LOG.info("Room Height Validation False: (Expected/Actual) " + expected + "/" + actual);
 			}
 		}
