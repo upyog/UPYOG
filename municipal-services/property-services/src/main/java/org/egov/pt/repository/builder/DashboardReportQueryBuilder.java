@@ -956,7 +956,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append(" group by ebv2.consumercode,ebv2.tenantid");
-		filter.append(" order by pay.lastmodifiedtime desc ");
+		filter.append(" order by MAX(pay.lastmodifiedtime) desc ");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -998,7 +998,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append(" group by edv.consumercode,edv.tenantid");
-		filter.append(" order by pay.lastmodifiedtime desc ");
+		filter.append(" order by MAX(pay.lastmodifiedtime) desc ");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
