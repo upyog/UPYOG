@@ -132,6 +132,33 @@ public class NotificationUtil {
 		return smsRequest;
 	}
 
+	
+	public List<Map<String, Object>> createEmailRequest(
+	        CommunityHallBookingRequest bookingRequest,
+	        String message,
+	        Map<String, String> emailToOwner) {
+
+	    List<Map<String, Object>> emailRequests = new LinkedList<>();
+
+	    String bookingNo = bookingRequest.getHallsBookingApplication().getBookingNo();
+	    String subject = "Community Hall Booking Confirmation - " + bookingNo + " | Govt. of Punjab";
+
+	    for (Map.Entry<String, String> entryset : emailToOwner.entrySet()) {
+
+	        Map<String, Object> emailRequest = new HashMap<>();
+
+	        emailRequest.put("emailTo", entryset.getKey());
+	        emailRequest.put("subject", subject);
+	        emailRequest.put("body", message);
+	        emailRequest.put("isHTML", true);
+
+	        emailRequests.add(emailRequest);
+
+	        log.info("Email Request created for: {}", entryset.getValue());
+	    }
+
+	    return emailRequests;
+	}
 	/**
 	 * Send the SMSRequest on the SMSNotification kafka topic
 	 *
@@ -147,6 +174,30 @@ public class NotificationUtil {
 		}
 	}
 
+	
+	public void sendEmail(List<Map<String, Object>> emailRequests, boolean isEmailEnabled) {
+	    if (isEmailEnabled) {
+	        if (CollectionUtils.isEmpty(emailRequests)) {
+	            log.info("No email requests found to send.");
+	            return;
+	        }
+
+	        for (Map<String, Object> emailRequest : emailRequests) {
+	            try {
+	            	
+	                // 1. Push to the EMAIL topic, not the SMS topic
+	                producer.push(config.getEmailNotifTopic(),emailRequest.get("emailTo").toString(), emailRequest);
+	                
+	                // 2. Log correctly using keys from your HashMap
+	                log.info("Email sent to: " + emailRequest.get("email") + 
+	                         " | Subject: " + emailRequest.get("subject"));
+	                         
+	            } catch (Exception e) {
+	                log.error("Failed to push email to Kafka for: " + emailRequest.get("email"), e);
+	            }
+	        }
+	    }
+	}
 	/**
 	 * Pushes the event request to Kafka Queue.
 	 *
@@ -218,6 +269,28 @@ public class NotificationUtil {
 			break;
 			
 		}
+		
+		Map<String, String> messageMap = new HashMap<String, String>();
+		messageMap.put(ACTION_LINK, link);
+		messageMap.put(MESSAGE_TEXT, messageTemplate);
+		
+		log.info("getCustomizedMsg messageTemplate : " + messageTemplate);
+		return messageMap;
+	}
+	
+	
+	
+	public Map<String, String> getCustomizedMailMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage, String actionStatus, String eventType) {
+		String messageTemplate = null, link = null;
+		String notificationEventType = eventType;
+		log.info(" booking status : " + bookingDetail.getBookingStatus());
+		log.info(" booking status ACTION_STATUS : " + actionStatus); 
+		log.info("notificationEventType  : " + notificationEventType);
+		
+
+	messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
+			link = getActionLink(bookingDetail, actionStatus);
+			
 		
 		Map<String, String> messageMap = new HashMap<String, String>();
 		messageMap.put(ACTION_LINK, link);
