@@ -73,6 +73,8 @@ public class CommunityHallBookingConstants {
 
 	public static final String CHANNEL_NAME_EMAIL = "EMAIL";
 	
+	public static final String CHANNEL_NAME_EMAIL_MSG = "email_chb_booking_success";
+	
 	public static final String MODULE = "module";
 
 	public static final String ACTION = "action";

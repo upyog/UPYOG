@@ -48,6 +48,9 @@ public class PaymentNotificationService {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
+	
+	@Autowired
+	private CHBNotificationService notificationService;
 
 	@Autowired
 	private CommunityHallBookingService bookingService;
@@ -93,6 +96,10 @@ public class PaymentNotificationService {
 				//deleting booking timer
 				bookingService.updateBookingSynchronously(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED,
 						true);
+				bookingRequest.getHallsBookingApplication().setTenantId(paymentRequest.getPayment().getTenantId().toString());
+				notificationService.process(bookingRequest,bookingRequest.getHallsBookingApplication().getBookingStatus());
+
+				
 			}
 		} catch (IllegalArgumentException e) {
 			log.error("Illegal argument exception occured while sending notification CHB : " + e.getMessage());
