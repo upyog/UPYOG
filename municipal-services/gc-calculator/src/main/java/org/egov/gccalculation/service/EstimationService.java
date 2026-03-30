@@ -819,6 +819,11 @@ public class EstimationService {
 //						.estimateAmount(tax.setScale(2, 2)).build());
 		}
 		addAdhocPenaltyAndRebate(estimates, criteria.getWaterConnection());
+		if (CollectionUtils.isEmpty(estimates)) {
+			// Billing demand create API requires at least one demand detail entry.
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(GCCalculationConstant.WS_FORM_FEE)
+					.estimateAmount(BigDecimal.ZERO.setScale(2, 2)).build());
+		}
 		return estimates;
 	}
 
