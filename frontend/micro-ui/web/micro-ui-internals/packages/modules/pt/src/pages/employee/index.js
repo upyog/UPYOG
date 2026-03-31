@@ -12,6 +12,8 @@ import AssessmentWorkflow from "./AssessmentWorkflow";
 import AppealWorkflow from "./AppealWorkflow"
 import SearchAppeal from "./SearchAppeal";
 import EmployeeDashboard from "./EmployeeDashboard";
+import EmployeeGrievanceDashboard from "./Grievances/officerGrievanceDashboard";
+import EmployeeGrievanceStatus from "./Grievances/officerGrievanceStatus";
 
 
 
@@ -259,6 +261,9 @@ const EmployeeApp = ({ path, url, userType }) => {
           />
           <PrivateRoute path={`${path}/application-search`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/appeal-search`} component={(props) => <SearchAppeal {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/grievances`} component={(props) => <EmployeeGrievanceDashboard {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/grievance/:grievanceId`} component={(props) => <EmployeeGrievanceStatus {...props} parentRoute={path} />} />
+
           {
             userRole == 'EXECUTING_OFFICER' && 
             <PrivateRoute path={`${path}/dashboard`} component={(props) => <EmployeeDashboard {...props} parentRoute={path} userDetails={userDetails} />} />

@@ -52,6 +52,8 @@ export const CommonPTModule = ({ stateCode, userType, tenants }) => {
 
   Digit.SessionStorage.set("PT_TENANTS", tenants);
 
+  console.log("CommonPTModule==", store, userType);
+
   if (userType === "employee") {
     return <EmployeeApp path={path} url={url} userType={userType} />;
   } else return <CitizenApp stateCode={stateCode} />;
@@ -76,7 +78,7 @@ export const CommonPTLinks = ({ matchPath, userType }) => {
       i18nKey: t("PT_CREATE_PROPERTY"),
     },
   ];
-
+  console.log("CommonPTLinks==", links);
   return <CitizenHomeCard header={t("ACTION_TEST_COMMON_PROPERTY_TAX")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
 
