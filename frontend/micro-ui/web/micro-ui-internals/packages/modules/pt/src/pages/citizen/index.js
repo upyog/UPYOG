@@ -10,6 +10,10 @@ import CitizenAppeal from "./Appeal";
 import MyNotices from "./MyNotices";
 
 import CitizenNotice from "./CitizenNotice"
+import CitizenFaqs from "./CitizenFaqs";
+import CitizenGrievanceDashboard from "./grievances/grievanceDashboard";
+import FileGrievance from "./grievances/fileGrievance";
+import CitizenGrievanceStatus from "./grievances/grievanceStatus";
 
 const hideBackButtonConfig = [
   { screenPath: "property/new-application/acknowledgement" },
@@ -38,7 +42,7 @@ const App = () => {
   const AssessmentDetails = Digit?.ComponentRegistryService?.getComponent("PTAssessmentDetails");
   const SearchAssessmentComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchAssessmentComponent");
   const SearchAssessmentResultsComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchAssessmentResultsComponent");
-
+  console.log("CreateProperty==", path);
   return (
     <span className={"pt-citizen"}>
       <Switch>
@@ -59,6 +63,10 @@ const App = () => {
           <PrivateRoute path={`${path}/property/appeal/:propertyIds`} component={CitizenAppeal}></PrivateRoute>
           <PrivateRoute path={`${path}/property/notices`} component={MyNotices}></PrivateRoute>
           <PrivateRoute path={`${path}/property/notice/:noticeNo`} component={CitizenNotice}></PrivateRoute>
+          <PrivateRoute path={`${path}/pt-faq`} component={CitizenFaqs}></PrivateRoute>
+          <PrivateRoute path={`${path}/pt-grievance-dashboard`} component={CitizenGrievanceDashboard}></PrivateRoute>
+          <PrivateRoute path={`${path}/pt-file-grievance`} component={FileGrievance}></PrivateRoute>
+          <PrivateRoute path={`${path}/pt-grievance/:grievanceId`} component={CitizenGrievanceStatus}></PrivateRoute>
 
           <PrivateRoute path={`${path}/property/properties/:propertyIds`} component={PropertyInformation}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/property/transfer-ownership`} component={MutateProperty}></PrivateRoute> */}

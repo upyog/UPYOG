@@ -89,6 +89,8 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
     return <Loader />;
   }
 
+  console.log("modules in home==", moduleArray);
+
   return (
     <React.Fragment>
       <div className="citizen-all-services-wrapper">
