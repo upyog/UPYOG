@@ -238,6 +238,30 @@ public class EstimationService {
 
 		if(criteria.getFromDate()==null || criteria.getToDate()==null)
             enrichmentService.enrichDemandPeriod(criteria,assessmentYear,masterMap);
+		
+		if ("2013-14".equals(assessmentYear)) {
+		    log.info("Calling 2013-14 special tax calculation...");
+
+		    CalculationReq request = new CalculationReq();
+		    request.setRequestInfo(requestInfo);
+		    request.setCalculationCriteria(Collections.singletonList(criteria));
+
+		    JsonNode requestBody = mapper.convertValue(request, JsonNode.class);
+		    JsonNode legacyResponseJson = calculateFor2013(requestBody);
+		    JsonNode calcArray = legacyResponseJson.path("Calculation");
+
+		    Calculation legacyCalc = mapper.convertValue(calcArray.get(0), Calculation.class);
+
+		    List<TaxHeadEstimate> taxHeadEstimates = legacyCalc.getTaxHeadEstimates();
+		    List<String> billingSlabs = legacyCalc.getBillingSlabIds();
+
+		    Map<String, List> estimatesAndBillingSlabs = new HashMap<>();
+		    estimatesAndBillingSlabs.put("estimates", taxHeadEstimates);
+		    estimatesAndBillingSlabs.put("billingSlabIds", billingSlabs);
+
+		    return estimatesAndBillingSlabs;
+		}
+
 
         List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property, requestInfo);
 
