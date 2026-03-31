@@ -312,12 +312,12 @@ public class Kitchen extends FeatureProcess {
                     : "" + floor.getNumber();
             if (valid) {
                 setReportOutputDetails(pl, subRule, subRuleDesc, value,
-                        expected + DcrConstants.IN_METER,
-                        actual + DcrConstants.IN_METER, Result.Accepted.getResultVal());
+                        expected + DcrConstants.IN_M,
+                        actual + DcrConstants.IN_M, Result.Accepted.getResultVal());
             } else {
                 setReportOutputDetails(pl, subRule, subRuleDesc, value,
-                        expected + DcrConstants.IN_METER,
-                        actual + DcrConstants.IN_METER, Result.Not_Accepted.getResultVal());
+                        expected + DcrConstants.IN_M,
+                        actual + DcrConstants.IN_M, Result.Not_Accepted.getResultVal());
             }
         }
     }
