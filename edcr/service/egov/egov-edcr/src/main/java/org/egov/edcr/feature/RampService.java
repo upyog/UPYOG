@@ -317,34 +317,89 @@ public class RampService extends FeatureProcess {
                             
                             valid = false;
                             if (isSlopeDefined) {
-                                Map<String, String> mapOfRampNumberAndSlopeValues = new HashMap<>();
-                                BigDecimal expectedSlope = BigDecimal.valueOf(1).divide(BigDecimal.valueOf(12), 2,
-                                        RoundingMode.HALF_UP);
-                                for (DARamp daRamp : block.getDARamps()) {
-                                    BigDecimal slope = daRamp.getSlope();
-                                    if (slope != null && slope.compareTo(BigDecimal.valueOf(0)) > 0
-                                            && expectedSlope != null) {
-                                        if (slope.compareTo(expectedSlope) <= 0) {
-                                            valid = true;
-                                            mapOfRampNumberAndSlopeValues.put("daRampNumber", daRamp.getNumber().toString());
-                                            mapOfRampNumberAndSlopeValues.put("slope", slope.toString());
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (valid) {
-                                    setReportOutputDetails(pl, SUBRULE_50_C_4_B,
-                                            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION,
-                                                    mapOfRampNumberAndSlopeValues.get("daRampNumber")),
-                                            expectedSlope.toString(),
-                                            mapOfRampNumberAndSlopeValues.get("slope"), Result.Accepted.getResultVal(),
-                                            scrutinyDetail2);
-                                } else {
-                                    setReportOutputDetails(pl, SUBRULE_50_C_4_B,
-                                            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION, ""), expectedSlope.toString(),
-                                            "Less than 0.08 for all da ramps", Result.Not_Accepted.getResultVal(),
-                                            scrutinyDetail2);
-                                }
+//                                Map<String, String> mapOfRampNumberAndSlopeValues = new HashMap<>();
+//                                BigDecimal expectedSlope = BigDecimal.valueOf(1).divide(BigDecimal.valueOf(12), 2,
+//                                        RoundingMode.HALF_UP);
+//                                for (DARamp daRamp : block.getDARamps()) {
+//                                    BigDecimal slope = daRamp.getSlope();
+//                                    if (slope != null && slope.compareTo(BigDecimal.valueOf(0)) > 0
+//                                            && expectedSlope != null) {
+//                                        if (slope.compareTo(expectedSlope) <= 0) {
+//                                            valid = true;
+//                                            mapOfRampNumberAndSlopeValues.put("daRampNumber", daRamp.getNumber().toString());
+//                                            mapOfRampNumberAndSlopeValues.put("slope", slope.toString());
+//                                            break;
+//                                        }
+//                                    }
+//                                }
+//                                if (valid) {
+//                                    setReportOutputDetails(pl, SUBRULE_50_C_4_B,
+//                                            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION,
+//                                                    mapOfRampNumberAndSlopeValues.get("daRampNumber")),
+//                                            expectedSlope.toString(),
+//                                            mapOfRampNumberAndSlopeValues.get("slope"), Result.Accepted.getResultVal(),
+//                                            scrutinyDetail2);
+//                                } else {
+//                                    setReportOutputDetails(pl, SUBRULE_50_C_4_B,
+//                                            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION, ""), expectedSlope.toString(),
+//                                            "Less than 0.08 for all da ramps", Result.Not_Accepted.getResultVal(),
+//                                            scrutinyDetail2);
+//                                }
+                            	Map<String, String> mapOfRampNumberAndSlopeValues = new HashMap<>();
+
+                            	String expectedRatio = "1:12";
+                            	BigDecimal expectedDenominator = extractDenominator(expectedRatio);
+
+                            	for (DARamp daRamp : block.getDARamps()) {
+
+                            	    String actualRatio = daRamp.getSlopeRatio();
+
+                            	    if (isValidSlopeFormat(actualRatio)) {
+
+                            	        BigDecimal actualDenominator = extractDenominator(actualRatio);
+
+                            	        if (actualDenominator != null
+                            	                && expectedDenominator != null
+                            	                && actualDenominator.compareTo(BigDecimal.ZERO) > 0
+                            	                && expectedDenominator.compareTo(BigDecimal.ZERO) > 0) {
+
+                            	            if (actualDenominator.compareTo(expectedDenominator) >= 0) {
+                            	                valid = true;
+
+                            	                mapOfRampNumberAndSlopeValues.put("daRampNumber",
+                            	                        daRamp.getNumber().toString());
+
+                            	                mapOfRampNumberAndSlopeValues.put("slope", actualRatio);
+
+                            	                break;
+                            	            }
+                            	        }
+                            	    }
+                            	}
+
+                            	if (valid) {
+                            	    setReportOutputDetails(
+                            	            pl,
+                            	            SUBRULE_50_C_4_B,
+                            	            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION,
+                            	                    mapOfRampNumberAndSlopeValues.get("daRampNumber")),
+                            	            expectedRatio,
+                            	            mapOfRampNumberAndSlopeValues.get("slope"),
+                            	            Result.Accepted.getResultVal(),
+                            	            scrutinyDetail2
+                            	    );
+                            	} else {
+                            	    setReportOutputDetails(
+                            	            pl,
+                            	            SUBRULE_50_C_4_B,
+                            	            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION, ""),
+                            	            expectedRatio,
+                            	            "Required: " + expectedRatio + ", Provided: Invalid or steeper slope",
+                            	            Result.Not_Accepted.getResultVal(),
+                            	            scrutinyDetail2
+                            	    );
+                            	}
+
                             }
 
                         }
@@ -471,6 +526,24 @@ public class RampService extends FeatureProcess {
         return pl;
     }
 
+    private BigDecimal extractDenominator(String ratio) {
+        if (ratio == null || !ratio.contains(":")) {
+            return null;
+        }
+
+        try {
+            String[] parts = ratio.split(":");
+            return new BigDecimal(parts[1].trim());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private boolean isValidSlopeFormat(String ratio) {
+        return ratio != null && ratio.matches("1\\s*:\\s*\\d+(\\.\\d+)?");
+    }
+
+    
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status,
             ScrutinyDetail scrutinyDetail) {
         Map<String, String> details = new HashMap<>();

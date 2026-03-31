@@ -473,13 +473,13 @@ public class SideYardService extends GeneralRule {
 			    if (scOpt.isPresent()) {
 			        BigDecimal mdmsValue = scOpt.get();
 			        LOG.info("Side Setback Value from MDMS : " + mdmsValue);
+			        BigDecimal oneFifthHeight = buildingHeight.divide(
+			                BigDecimal.valueOf(FIVE_MTR), 2, RoundingMode.HALF_UP
+			        );
 
-//			        BigDecimal oneFifthHeight = buildingHeight.divide(
-//			                BigDecimal.valueOf(FIVE_MTR), 2, RoundingMode.HALF_UP
-//			        );
-//
-//			        minVal = oneFifthHeight.max(mdmsValue);
-			        minVal = mdmsValue;
+			        minVal = oneFifthHeight.max(mdmsValue);
+			        //minVal = mdmsValue;
+			        LOG.info("One fifth of building height is : " + oneFifthHeight);	
 			    }else {
 			    	LOG.error("No value found from mdms for the side setback");
 			    }

@@ -104,6 +104,8 @@ public class DARamp extends Measurement {
 
     private BigDecimal slope;
     
+    private String slopeRatio;
+    
     private transient List<Measurement> measurements;
 
     public Integer getNumber() {
@@ -130,5 +132,14 @@ public class DARamp extends Measurement {
 		this.measurements = measurements;
 	}
 
+	public String getSlopeRatio() {
+		return slopeRatio;
+	}
+
+	public void setSlopeRatio(String slopeRatio) {
+		this.slopeRatio = slopeRatio;
+	}
+
+	
     
 }

@@ -39,6 +39,7 @@ public class RampServiceExtract extends FeatureExtract {
                     List<DXFLWPolyline> polyLines = Util.getPolyLinesByLayer(pl.getDoc(), rampLayerName);
                     String[] layerArray = rampLayerName.split("_", 5);
                     BigDecimal slope = extractSlope(pl, rampLayerName);
+                    String slopeRatio = extractSlopeRatio(pl, rampLayerName);
 
                     List<Measurement> convertedPolyLines = polyLines.stream()
                             .map(polyLine -> new MeasurementDetail(polyLine, true)).collect(Collectors.toList());
@@ -51,6 +52,7 @@ public class RampServiceExtract extends FeatureExtract {
                         daRamp.setMeasurements(convertedPolyLines);
                         daRamp.setPresentInDxf(true);
                         daRamp.setSlope(slope);
+                        daRamp.setSlopeRatio(slopeRatio);
                         daRamp.setWidth(convertedPolyLines.get(0).getWidth());
                         block.addDARamps(daRamp);
                     }
@@ -143,6 +145,19 @@ public class RampServiceExtract extends FeatureExtract {
 					slope = BigDecimal.valueOf(Double.valueOf(slopeDividendAndDivisor[0])).divide(
 							BigDecimal.valueOf(Double.valueOf(slopeDividendAndDivisor[1])), 2, RoundingMode.HALF_UP);
 				}
+		    }
+		}
+		return slope;
+	}
+	
+	private String extractSlopeRatio(PlanDetail pl, String rampLayerName) {
+		String text = Util.getMtextByLayerName(pl.getDoc(), rampLayerName);
+		String slope = null;
+		if (text != null && !text.isEmpty() && text.contains("=")) {
+		    String[] textArray = text.split("=", 2);
+		    String slopeText = textArray[1];
+		    if(slopeText!=null) {				
+				slope = slopeText.replace("IN", ":");
 		    }
 		}
 		return slope;
