@@ -324,7 +324,7 @@ public class DashboardReportQueryBuilder {
 			+ "WHERE bd.billsum >= td.demandsum";
 	
 	public static final String INTEREST_SHARE = "SELECT \r\n"
-			+ "    ebv2.consumercode AS consumercode,\r\n"
+			+ "    ebv2.consumercode AS propertyid,\r\n"
 			+ "    ebv2.tenantid,\r\n"
 			+ "    SUM(ebv2.interestonamount) AS total_interest_amount,\r\n"
 			+ "    SUM(ebv2.totalamount) AS total_bill_amount,\r\n"
