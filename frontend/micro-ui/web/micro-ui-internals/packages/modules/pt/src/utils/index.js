@@ -113,6 +113,7 @@ export const setExemptionDetails = (data) => {
 };
 
 export const setOwnerDetails = (data) => {
+  console.log("setOwnerDetails==",data)
   const { address, owners } = data;
   let institution = {},
     owner = [];
@@ -1064,7 +1065,7 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
 //   await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
 // };
 export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey = "consolidatedreceipt") => {
-  // console.log("============", consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey);
+  console.log("============", consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey);
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
   let response = { filestoreIds: [payments?.fileStoreId] };
   // if (!payments?.fileStoreId) {

@@ -219,6 +219,8 @@ export const PTModule = ({ stateCode, userType, tenants }) => {
     []
   );
 
+  console.log("PTModule store==", store,userType);
+
   if (userType === "employee") {
     return <EmployeeApp path={path} url={url} userType={userType} />;
   } else return <CitizenApp />;
@@ -271,9 +273,11 @@ export const PTLinks = ({ matchPath, userType }) => {
     },
     {
       link: `${matchPath}/faqs`,
-      i18nKey: t("PT_FAQ_S"),
+      i18nKey: t("PT_FAQ_SUU"),
     },
   ];
+
+  console.log("links==", links);
 
   return <CitizenHomeCard header={t("ACTION_TEST_PROPERTY_TAX")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
