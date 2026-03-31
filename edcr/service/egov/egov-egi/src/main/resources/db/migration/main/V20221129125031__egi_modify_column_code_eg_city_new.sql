@@ -23,7 +23,7 @@ DECLARE
         'mohali','sahnewal','samana','samrala','sanaur','sangat','sangrur','sardulgarh','shahkot',
         'shamchaurasi','sirhindfatehgarhsahib','srihargobindpur','srimuktsarsahib','sujanpur','sultanpur',
         'sunam','talwandibhai','talwandisabo','talwara','tapa','tarntaran','urmartanda','zira','zirakpur',
-        'generic','pb','public','state'
+        'generic','pb','state'
     ];
     s text;
 BEGIN
