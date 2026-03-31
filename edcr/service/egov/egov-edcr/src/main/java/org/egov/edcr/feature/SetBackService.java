@@ -235,7 +235,7 @@ public class SetBackService extends FeatureProcess {
 		    // Always process front yard if depth is valid
 		    frontYardService.processFrontYard(pl, scrutinyDetailList);
 
-		    boolean shouldProcessRearYard = false;
+		    boolean shouldProcessRearYard = true;
 
 		    if (pl.getCoreArea().equalsIgnoreCase("No")) {
 		        if (pl.getRoadReserveRear() != null && pl.getRoadReserveRear().compareTo(BigDecimal.ZERO) > 0) {

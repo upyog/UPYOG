@@ -150,6 +150,7 @@ public class RearYardService extends GeneralRule {
 	private static final BigDecimal COMMERCIAL_PLOT_AREA_LIMIT_418_21 = BigDecimal.valueOf(418.21);
 	
 	private static final double FOUR_MTR = 4;
+	private static final double FIFTH_MTR = 5;
 	private static final double SIX_MTR = 6;
 
 	private class RearYardResult {
@@ -442,6 +443,11 @@ public class RearYardService extends GeneralRule {
 	    			Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(pl.getMdmsMasterData().get("masterMdmsData"), MdmsFilter.REAR_SETBACK_PATH, BigDecimal.class);
 	    			scOpt.ifPresent(sc -> LOG.info("Rear Setback Value from mdms : " + sc));
 	    			minVal = scOpt.get();
+	    			BigDecimal oneFifthHeight = buildingHeight.divide(
+			                BigDecimal.valueOf(FIFTH_MTR), 2, RoundingMode.HALF_UP
+			        );
+			        LOG.info("One fifth of building height is : " + oneFifthHeight);		        
+			        minVal = oneFifthHeight.max(minVal);	
 	    		}
 	    }        
 
