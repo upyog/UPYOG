@@ -13,5 +13,9 @@ public class DashboardDataSearch {
 	private String toDate;
 	@NotNull
 	private String status;
+	
+	private String searchKey;
+	private Long limit;
+	private Long offset;
 
 }

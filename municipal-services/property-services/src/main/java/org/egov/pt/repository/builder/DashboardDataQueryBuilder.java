@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 public class DashboardDataQueryBuilder {
 
 	public static final String TOTAL_PROPERTIES_REGISTERED = "select count(epp.propertyid) from eg_pt_property epp join eg_pt_address epa on epp.id=epa.propertyid where epp.status in ('ACTIVE','INWORKFLOW')";
-
+	
 	public static final String PROPERTIES_PENDING_WITH =
 		    "WITH latest_actions AS (\n" +
 		    "  SELECT \n" +
@@ -45,7 +45,7 @@ public class DashboardDataQueryBuilder {
 		    "FROM latest_actions\n" +
 		    "WHERE rn = 1\n" +
 		    "GROUP BY action_st";
-
+	
 
 	public static final String PROPERTIES_APPROVED = "WITH approved AS (\r\n"
 			+ "  SELECT \r\n"
@@ -238,7 +238,7 @@ public class DashboardDataQueryBuilder {
 		}
 		return stringBuilder.toString();
 	}
-
+	
 	public String getTotalPropertyPendingWithQuery(DashboardDataSearch dashboardDataSearch) {
 	    StringBuilder filterBuilder = new StringBuilder();
 
@@ -270,7 +270,7 @@ public class DashboardDataQueryBuilder {
 	    String finalQuery = PROPERTIES_PENDING_WITH.replace("/*FILTER_CONDITIONS*/", filterBuilder.toString());
 	    return finalQuery;
 	}
-
+	
 	
 	public String getTotalPropertyApprovedQuery(DashboardDataSearch dashboardDataSearch) {
 

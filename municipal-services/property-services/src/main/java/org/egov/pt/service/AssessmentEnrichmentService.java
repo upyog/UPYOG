@@ -30,24 +30,26 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class AssessmentEnrichmentService {
-
+	@Autowired
 	private AssessmentUtils assessmentUtils;
-
+	
+	@Autowired
 	private PropertyConfiguration config;
-
+	
+	@Autowired
 	private WorkflowService workflowService;
-
+	
+	@Autowired
 	private PropertyUtil propertyutil;
 
-	@Autowired
-	public AssessmentEnrichmentService(AssessmentUtils assessmentUtils, PropertyConfiguration config,
-			WorkflowService workflowService, PropertyUtil propertyutil) {
-
-		this.assessmentUtils = assessmentUtils;
-		this.config = config;
-		this.workflowService = workflowService;
-		this.propertyutil = propertyutil;
-	}
+	/*
+	 * @Autowired public AssessmentEnrichmentService(AssessmentUtils
+	 * assessmentUtils, PropertyConfiguration config, WorkflowService
+	 * workflowService, PropertyUtil propertyutil) {
+	 * 
+	 * this.assessmentUtils = assessmentUtils; this.config = config;
+	 * this.workflowService = workflowService; this.propertyutil = propertyutil; }
+	 */
 
 	/**
 	 * Service layer to enrich assessment object in create flow
