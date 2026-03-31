@@ -20,7 +20,7 @@ DECLARE
         'nakodar','nangal','narotjaimalsingh','nathana','nawanshahr','nayagaon','nihalsinghwala','nurmahal',
         'pathankot','patiala','patialaregion','patran','patti','payal','phagwara','phillaur','qadian',
         'rahon','raikot','rajasansi','rajpura','raman','ramdas','rampura','rampuraphul','rayya','rupnagar',
-        'sasmohali','sahnewal','samana','samrala','sanaur','sangat','sangrur','sardulgarh','shahkot',
+        'mohali','sahnewal','samana','samrala','sanaur','sangat','sangrur','sardulgarh','shahkot',
         'shamchaurasi','sirhindfatehgarhsahib','srihargobindpur','srimuktsarsahib','sujanpur','sultanpur',
         'sunam','talwandibhai','talwandisabo','talwara','tapa','tarntaran','urmartanda','zira','zirakpur',
         'generic','pb','public','state'
