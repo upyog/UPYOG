@@ -1,5 +1,6 @@
 package org.egov.ptr.util;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import com.jayway.jsonpath.Filter;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.PetRegistrationApplication;
+import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.models.event.EventRequest;
 import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.ServiceRequestRepository;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
+
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -73,19 +76,24 @@ public class NotificationUtil {
 	 * @return message for the specific code
 	 */
 	public String getMessageTemplate(String notificationCode, String localizationMessage) {
-
-		String path = "$..messages[?(@.code==\"{}\")].message";
-		path = path.replace("{}", notificationCode);
-		String message = "";
-		try {
-			Object messageObj = JsonPath.parse(localizationMessage).read(path);
-			message = ((ArrayList<String>) messageObj).get(0);
-		} catch (Exception e) {
-			log.warn("Fetching from localization failed", e);
-		}
-		return message;
+	    // 1. Use String.format or structured path building for better readability
+	    String path = String.format("$..messages[?(@.code == '%s')].message", notificationCode);
+	    
+	    try {
+	        // 2. Read as a List directly to avoid manual casting issues
+	        List<String> results = JsonPath.parse(localizationMessage).read(path);
+	        
+	        if (results != null && !results.isEmpty()) {
+	            return results.get(0);
+	        } else {
+	            log.warn("Message not found for code: {}", notificationCode);
+	        }
+	    } catch (Exception e) {
+	        log.error("Failed to parse localization JSON for code: {}", notificationCode, e);
+	    }
+	    
+	    return ""; // Or return a default value/the code itself
 	}
-
 	/**
 	 * Fetches messages from localization service
 	 *
@@ -154,6 +162,20 @@ public class NotificationUtil {
 		return smsRequest;
 	}
 
+	
+	public void enrichSMSRequest(PetRegistrationRequest PetRequest, List<SMSRequest> smsRequests,
+			Map<String, String> mobileNumberToOwner, String message) {
+		smsRequests.addAll(createSMSRequest( message, mobileNumberToOwner));
+	}
+	
+	public void enrichEmailRequest(PetRegistrationRequest petRequest, 
+            List<EmailRequest> emailRequests, // Change this
+            Map<String, String> emailToOwner, 
+            String message, String ApplicationNumber) {
+emailRequests.addAll(createEmailRequest(petRequest.getRequestInfo(), message, emailToOwner, ApplicationNumber));
+}
+	
+	
 	/**
 	 * Send the SMSRequest on the SMSNotification kafka topic
 	 *
@@ -226,17 +248,19 @@ public class NotificationUtil {
 	 */
 
 	public List<EmailRequest> createEmailRequest(RequestInfo requestInfo, String message,
-			Map<String, String> mobileNumberToEmailId) {
+			Map<String, String> mobileNumberToEmailId, String ApplicationNumber) {
 
 		List<EmailRequest> emailRequest = new LinkedList<>();
 		for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
 			String customizedMsg = "";
 			if (message.contains(NOTIFICATION_EMAIL))
 				customizedMsg = message.replace(NOTIFICATION_EMAIL, entryset.getValue());
-
-			String subject = "";
+			else
+				customizedMsg = message;
+			
+			String subject = "Approval of Pet Registration Application" + " - " + ApplicationNumber;
 			String body = customizedMsg;
-			Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false)
+			Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(true)
 					.body(body).subject(subject).build();
 			EmailRequest email = new EmailRequest(requestInfo, emailobj);
 			emailRequest.add(email);
@@ -375,6 +399,11 @@ public class NotificationUtil {
 			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
 			break;
 
+		case ACTION_PAY:
+			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_PAY, localizationMessage);
+			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
+			break;
+			
 		case ACTION_STATUS_APPROVE:
 			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_APPROVE, localizationMessage);
 			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
@@ -389,12 +418,100 @@ public class NotificationUtil {
 
 		return message;
 	}
+	
+	
+	public String getCustomizedMailMsg(RequestInfo requestInfo, PetRegistrationApplication petApplication,
+			String localizationMessage) {
+		String message = null, messageTemplate;
+		String ACTION_STATUS = petApplication.getWorkflow().getAction();
+		switch (ACTION_STATUS) {
+
+
+		case ACTION_PAY:
+			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_EMAIL_MSG, localizationMessage);
+			message = getMessageMail(petApplication, messageTemplate);
+			break;
+
+		}
+
+		return message;
+	}
 
 	private String getMessageWithNumberAndPetDetails(PetRegistrationApplication petApplication, String message) {
 		message = message.replace("{1}", petApplication.getOwner().getName());
 		message = message.replace("{2}", petApplication.getPetDetails().getPetName());
 		message = message.replace("{3}", petApplication.getApplicationNumber());
 		return message;
+	}
+	
+	
+	private String getMessageMail(PetRegistrationApplication petApplication, String message) {
+	    // 1. Replace License/Application Number
+	    message = message.replace("{licenseNumber}", 
+	        petApplication.getPetToken() != null ? petApplication.getPetToken() : petApplication.getApplicationNumber());
+
+	    // 2. Replace Owner Name (Guardian Name)
+	    if (petApplication.getOwner() != null && petApplication.getOwner().getName() != null) {
+	        message = message.replace("{ownerName}", petApplication.getOwner().getName());
+	    }
+
+	    // 3. Replace Pet Details (Identity)
+	    if (petApplication.getPetDetails() != null) {
+	        String petName = petApplication.getPetDetails().getPetName() != null ? petApplication.getPetDetails().getPetName() : "N/A";
+	        String petType = petApplication.getPetDetails().getPetType() != null ? petApplication.getPetDetails().getPetType() : "Pet";
+	        String breed = petApplication.getPetDetails().getBreedType() != null ? petApplication.getPetDetails().getBreedType() : "N/A";
+	        String color = petApplication.getPetDetails().getPetColor() != null ? petApplication.getPetDetails().getPetColor() : "N/A";
+
+	        message = message.replace("{petName}", petName);
+	        message = message.replace("{petType}", petType);
+	        message = message.replace("{breed}", breed);
+	        message = message.replace("{color}", color);
+	    }
+
+	    // 4. Replace City and Tenant Info
+	    message = message.replace("{cityName}", getCityName(petApplication.getTenantId()));
+	    message = message.replace("{tenantid}", petApplication.getTenantId());
+
+	    // 5. Replace Dates
+	    message = message.replace("{registrationDate}", formatDate(petApplication.getAuditDetails().getCreatedTime()));
+	    message = message.replace("{validTo}", formatDate(petApplication.getValidityDate()));
+
+	    return message;
+	}
+	
+	
+	public String formatDate(Long timestamp) {
+	    if (timestamp == null || timestamp == 0) return "N/A";
+	    
+	    // If timestamp is in seconds (10 digits), convert to milliseconds
+	    if (timestamp < 9999999999L) {
+	        timestamp *= 1000L;
+	    }
+	    
+	    try {
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+	        return sdf.format(new Date(timestamp));
+	    } catch (Exception e) {
+	        return "N/A";
+	    }
+	}
+
+    /**
+     * Clean City Name for Localization
+     * Converts "pb.amritsar" to "AMRITSAR"
+     */
+	public String getCityName(String tenantId) {
+	    if (tenantId == null || tenantId.isEmpty()) return "Punjab";
+	    
+	    // 1. Remove the "pb." prefix
+	    String city = tenantId.replace("pb.", "");
+	    
+	    // 2. Convert to Title Case (e.g., amritsar -> Amritsar)
+	    if (city.length() > 0) {
+	        return city.substring(0, 1).toUpperCase() + city.substring(1).toLowerCase();
+	    }
+	    
+	    return city;
 	}
 
 }

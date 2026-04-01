@@ -221,6 +221,11 @@ public class PTRConstants {
 	public static final String NOTIFICATION_APPLY = "ptr.en.counter.submit";
 
 	public static final String NOTIFICATION_APPROVE = "ptr.en.counter.approve";
+	
+	public static final String NOTIFICATION_PAY = "ptr.en.counter.pay";
+
+	
+	public static final String NOTIFICATION_EMAIL_MSG = "email_pet_license_success";
 
 	public static final String NOTIFICATION_REJECT = "ptr.en.counter.reject";
 
