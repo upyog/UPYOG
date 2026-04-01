@@ -126,7 +126,7 @@ public class DemandValidatorV1 {
 		 * mdms-data read returns a list of hashMap which is converted to array of tax-period and then to list
 		 */
 		List<TaxPeriod> taxPeriods = Arrays.asList(mapper.convertValue(mdmsData.read(TAXPERIOD_PATH_CODE), TaxPeriod[].class));
-
+		System.out.println("taxPeriods::"+taxPeriods);
 		/*
 		 * Grouping by the list periods on business services
 		 */
