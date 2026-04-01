@@ -54,6 +54,12 @@
 <link rel="stylesheet" type="text/css"
 	href="/services/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title><s:text name="chq.assignment.heading.search" /></title>
+<style>
+		.w5{width:5% !important}
+		.w20{width:20% !important}
+		.w30{width:30% !important}
+		.w75{width:75% !important}
+	</style>
 </head>
 <body>
 	<s:form action="chequeAssignment" theme="simple"
@@ -70,40 +76,41 @@
 			</div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="greybox"></td>
-					<td class="greybox"><s:text
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w20"><s:text
 							name="chq.assignment.paymentvoucherdatefrom" /></td>
-					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
-							maxlength="20" value="%{fromDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].fromDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
-					<td class="greybox"><s:text
+					
+					<td class="greybox w30"><s:date name="fromDate" var="fromDate"
+							format="dd/MM/yyyy" /> <s:textfield id="fromDate"
+							name="fromDate" value="%{fromDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w75"
+							data-inputmask="'mask': 'd/m/y'" /></td>
+					<td class="greybox w20"><s:text
 							name="chq.assignment.paymentvoucherdateto" /></td>
-					<td class="greybox"><s:textfield name="toDate" id="toDate"
-							maxlength="20" value="%{toDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].toDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+					<td class="greybox w30"><s:date name="toDate" var="toDate"
+							format="dd/MM/yyyy" /> <s:textfield id="toDate"
+							name="toDate" value="%{toDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w75"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 				<tr>
-					<td class="greybox"></td>
-					<td class="bluebox"><s:text name="payment.mode" /><span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w20"><s:text name="payment.mode" /><span
 						class="mandatory"></span></td>
-					<td class="bluebox"><s:radio id="paymentMode"
+					<td class="bluebox w30"><s:radio id="paymentMode"
 							name="paymentMode" list="%{modeOfPaymentMap}"
 							value="%{paymentMode}" /></td>
-					<td class="bluebox"><s:text
+					<td class="bluebox w20"><s:text
 							name="chq.assignment.paymentvoucherno" /></td>
-					<td class="bluebox"><s:textfield name="voucherNumber"
-							id="voucherNumber" value="%{voucherNumber}" /></td>
+					<td class="bluebox w30"><s:textfield name="voucherNumber"
+							id="voucherNumber" value="%{voucherNumber}" class="w75" /></td>
 				</tr>
 				<tr>
-					<td class="greybox"></td>
-					<td class="greybox"><s:text name="recovery.code" /></td>
-					<td class="greybox"><s:select name="recoveryId"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w20"><s:text name="recovery.code" /></td>
+					<td class="greybox w30"><s:select name="recoveryId"
 							id="recoveryId" list="dropdownData.recoveryList" listKey="id"
 							listValue="type+'-'+recoveryName" headerKey="" headerValue="%{getText('lbl.choose.options')}" /></td>
 

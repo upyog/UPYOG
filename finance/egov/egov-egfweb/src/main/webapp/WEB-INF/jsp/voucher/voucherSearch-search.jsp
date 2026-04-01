@@ -74,6 +74,18 @@
 		}
 	}
 	</script>
+	
+<style>
+
+/* column widths */
+select { width:100% !important}
+.w5  { width: 5% !important; }
+.w15 { width: 15% !important; }
+.w25 { width: 25% !important; }
+.w100{ width:100% !important; }
+
+</style>
+	
 </head>
 <body onload="disableTypeForEditMode()">
 	<s:form action="voucherSearch" theme="simple">
@@ -92,55 +104,59 @@
 			</s:else>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td style="width: 5%"></td>
-					<td class="greybox"><s:text name="voucher.number" /></td>
-					<td class="greybox"><s:textfield name="voucherNumber"
-							id="voucherNumber" maxlength="25" value="%{voucherNumber}"  onblur="changeField();" /></td>
-					<td class="greybox"></td>
-					<td class="greybox"></td>
+					<td class="w5"></td>
+					<td class="greybox w15"><s:text name="voucher.number" /></td>
+					<td class="greybox w25"><s:textfield name="voucherNumber"
+							id="voucherNumber" maxlength="25" value="%{voucherNumber}"  onblur="changeField();" class="w100"/></td>
+					<td class="w5"></td>
+					<td class="greybox w15"></td>
+					<td class="greybox w25"></td>
 				</tr>
 				<tr>
-					<td style="width: 5%"></td>
-					<td class="bluebox"><s:text name="voucher.type" /></td>
-					<td class="bluebox"><s:select name="type" id="type"
+					<td class="w5"></td>
+					<td class="bluebox w15"><s:text name="voucher.type" /></td>
+					<td class="bluebox w25"><s:select name="type" id="type"
 							list="dropdownData.typeList" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}"
 							onchange="loadVoucherNames(this.value)" /></td>
-					<td class="bluebox"><s:text name="voucher.name" /></td>
-					<td class="bluebox"><s:select name="name" id="name"
+					<td class="w5"></td>
+					<td class="bluebox w15"><s:text name="voucher.name" /></td>
+					<td class="bluebox w25"><s:select name="name" id="name"
 							list="%{nameList}" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
 				</tr>
+					<td class="w5"></td>
 				<tr>
-					<td style="width: 5%"></td>
-					<td class="greybox"><s:text name="voucher.fromdate" /><span
+					<td class="w5"></td>
+					<td class="greybox w15"><s:text name="voucher.fromdate" /><span
 						class="mandatory1" id="disableFromDateCheck">*</span></td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
-					<td class="greybox">
+					<td class="greybox w25">
 							<s:textfield id="fromDate" name="fromDate"
 							value="%{tempFromDate}"  data-date-end-date="0d" 
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 							data-inputmask="'mask': 'd/m/y'" autocomplete="off"/>
 							</td>
 					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />
-					<td class="greybox"><s:text name="voucher.todate" /><span
+					<td class="w5"></td>
+					<td class="greybox w15"><s:text name="voucher.todate" /><span
 						class="mandatory1" id="disableToDateCheck">*</span></td>
-					<td class="greybox">
+					<td class="greybox w25">
 							<s:textfield id="toDate" name="toDate"
 							value="%{tempToDate}"  data-date-end-date="0d" 
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 							data-inputmask="'mask': 'd/m/y'" autocomplete="off"/>
-							
 							</td>
+							<td class="w5"></td>
 				</tr>
-				<tr>
+				<!-- <tr> -->
 					<jsp:include page="../voucher/voucher-filter.jsp" />
-				</tr>
-				<!-- tr>
-					<td style="width: 5%"></td>
-					<td class="greybox"><s:text name="voucher.source" /></td>
-					<td class="greybox"><s:select name="moduleId" id="moduleId"
+				<!-- </tr> -->
+				<!-- <tr>
+					<td class="w5""></td>
+					<td class="greybox 15"><s:text name="voucher.source" /></td>
+					<td class="greybox 25"><s:select name="moduleId" id="moduleId"
 							list="sourceMap" headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>  -->
 				<s:hidden name="mode" value="%{mode}" id="mode" />

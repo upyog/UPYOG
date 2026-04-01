@@ -48,9 +48,13 @@
 
 package org.egov.infra.microservice.models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.infra.microservice.utils.PaymentSearchCriteria;
 
@@ -73,7 +77,7 @@ public class ReceiptSearchCriteria {
     Set<String> businessCodes;
     Date fromDate;
     Date toDate;
-    Set<String>receiptNumbers;
+    Set<String> receiptNumbers=new HashSet<String>();
     String fund;
     String department;
     String classification;
@@ -85,8 +89,18 @@ public class ReceiptSearchCriteria {
         contract.setBusinessServices(this.businessCodes);
         contract.setFromDate(this.fromDate != null ? this.fromDate.getTime() : null);
         contract.setToDate(this.toDate != null ? this.toDate.getTime() : null);
+        if (this.receiptNumbers != null && this.receiptNumbers.stream().anyMatch(Objects::nonNull)) { 
+        	List<String> list=new ArrayList<>(this.receiptNumbers);
+        	
+        	if(list!=null && !list.isEmpty() && list.get(0).contains("/")) {
+        		contract.setReceiptNumbers(this.receiptNumbers);
+        	}
+        	else {
+        		contract.setIds(this.receiptNumbers);
+        	}
+        }
+        
         //contract.setReceiptNumbers(this.receiptNumbers);
-        contract.setIds(this.receiptNumbers);
         contract.setTenantId(this.tenantId);
     }
 }

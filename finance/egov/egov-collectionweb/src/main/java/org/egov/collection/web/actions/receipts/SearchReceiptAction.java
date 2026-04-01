@@ -58,9 +58,11 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.models.BillDetail;
 import org.egov.infra.microservice.models.BillDetailAdditional;
+import org.egov.infra.microservice.models.BusinessService;
 import org.egov.infra.microservice.models.Receipt;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.persistence.utils.Page;
@@ -78,8 +80,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @ParentPackage("egov")
 @Results({
@@ -114,6 +121,13 @@ public class SearchReceiptAction extends SearchFormAction {
     private MicroserviceUtils microserviceUtils;
     
     private String collectionVersion;
+    
+    private String serviceCategory;
+    private transient Map<String, String> serviceCategoryNames = new HashMap<>();
+    private transient Map<String, Map<String, String>> serviceTypeMap = new HashMap<>();
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService; 
 
     @Override
     public Object getModel() {
@@ -194,10 +208,44 @@ public class SearchReceiptAction extends SearchFormAction {
 //        addDropdownData("businessCategorylist", microserviceUtils.getBusinessCategories());
         addDropdownData("serviceTypeList", microserviceUtils.getBusinessService("Finance"));
         
+        getServiceCategoryList();
+        
         // addDropdownData("bankBranchList", collectionsUtil.getBankCollectionBankBranchList());
     }
 
-    @Override
+    private void getServiceCategoryList() {
+        List<BusinessService> businessService = microserviceUtils.getBusinessService("Finance");
+        for (BusinessService bs : businessService) {
+            String[] splitServName = bs.getBusinessService().split(Pattern.quote("."));
+            String[] splitSerCode  = bs.getCode().split(Pattern.quote("."));
+            if (splitServName.length == 2 && splitSerCode.length == 2) {
+                if (!serviceCategoryNames.containsKey(splitSerCode[0]))
+                    serviceCategoryNames.put(splitSerCode[0], splitServName[0]);
+                if (serviceTypeMap.containsKey(splitSerCode[0])) {
+                    serviceTypeMap.get(splitSerCode[0]).put(splitSerCode[1], splitServName[1]);
+                } else {
+                    Map<String, String> map = new HashMap<>();
+                    map.put(splitSerCode[1], splitServName[1]);
+                    serviceTypeMap.put(splitSerCode[0], map);
+                }
+            } else {
+                serviceCategoryNames.put(splitSerCode[0], splitServName[0]);
+            }
+        }
+        serviceCategoryNames = serviceCategoryNames.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (e1, e2) -> e1, LinkedHashMap::new));
+
+        Map<String, Map<String, String>> sorted = new LinkedHashMap<>();
+        serviceTypeMap.forEach((k, v) -> sorted.put(k,
+                v.entrySet().stream().sorted(Map.Entry.comparingByValue())
+                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                         (e1, e2) -> e1, LinkedHashMap::new))));
+        serviceTypeMap = sorted;
+    }
+
+	@Override
     @Action(value = "/receipts/searchReceipt")
     public String execute() {
         return SUCCESS;
@@ -218,10 +266,33 @@ public class SearchReceiptAction extends SearchFormAction {
     		
         target = "searchresult";
         collectionVersion = ApplicationThreadLocals.getCollectionVersion();
+        
+        
 
         List<ReceiptHeader> receiptList = new ArrayList<>();
-        List<Receipt> receipts = microserviceUtils.searchReciepts("MISCELLANEOUS", getFromDate(), getToDate(), getServiceTypeId(),
-                (getReceiptNumber() != null && !getReceiptNumber().isEmpty() && !"".equalsIgnoreCase(getReceiptNumber()))
+		/*
+		 * List<Receipt> receipts = microserviceUtils.searchReciepts("MISCELLANEOUS",
+		 * getFromDate(), getToDate(), getServiceTypeId(), (getReceiptNumber() != null
+		 * && !getReceiptNumber().isEmpty() && !"".equalsIgnoreCase(getReceiptNumber()))
+		 * ? getReceiptNumber() : null);
+		 */
+        
+		/*
+		 * String effectiveServiceId = (serviceTypeId != null &&
+		 * !serviceTypeId.isEmpty() && !serviceTypeId.equals("-1")) ? serviceCategory +
+		 * "." + serviceTypeId : serviceCategory;
+		 */
+        String effectiveServiceId=null;
+        if (serviceCategory != null && !serviceCategory.isEmpty() && !serviceCategory.equals("-1")) {
+        	effectiveServiceId= (serviceTypeId != null && !serviceTypeId.isEmpty() && !serviceTypeId.equals("-1"))
+                    ? serviceCategory + "." + serviceTypeId
+                    : serviceCategory;
+        }
+
+        List<Receipt> receipts = microserviceUtils.searchReciepts(
+                "MISCELLANEOUS", getFromDate(), getToDate(),
+                (effectiveServiceId !=null && !effectiveServiceId.isEmpty() && !effectiveServiceId.equals("-1") ?effectiveServiceId:null),
+                (getReceiptNumber() != null && !getReceiptNumber().isEmpty())
                         ? getReceiptNumber() : null);
         
 
@@ -238,9 +309,9 @@ public class SearchReceiptAction extends SearchFormAction {
                     receiptHeader.setPaymentId(receipt.getPaymentId());
                     receiptHeader.setReceiptnumber(billDetail.getReceiptNumber());
                     receiptHeader.setReceiptdate(new Date(billDetail.getReceiptDate()));
-                    receiptHeader.setService(billDetail.getBusinessService());
+                    receiptHeader.setService(microserviceUtils.getBusinessServiceNameByCode(billDetail.getBusinessService()));
                     receiptHeader.setReferencenumber(billDetail.getBillNumber());
-                    receiptHeader.setReferenceDesc(billDetail.getBillDescription());
+                    receiptHeader.setReferenceDesc(additionalDetails.get("narration")!=null?additionalDetails.get("narration").asText():null);
                     receiptHeader.setPaidBy(bill.getPaidBy());
                     receiptHeader.setTotalAmount(billDetail.getTotalAmount());
                     receiptHeader.setCurretnStatus(billDetail.getStatus());
@@ -303,8 +374,8 @@ public class SearchReceiptAction extends SearchFormAction {
     }
 
 	private void validateSearchParams() {
-		if (StringUtils.isEmpty(serviceTypeId) || serviceTypeId.equals("-1"))
-			addActionError(getText("error.select.service.type"));
+		if (StringUtils.isEmpty(serviceCategory) || serviceCategory.equals("-1"))
+	        addActionError(getText("error.select.service.category"));
 		if (fromDate != null && toDate != null && !fromDate.equals(toDate) && !fromDate.before(toDate))
 			addActionError(getText("common.comparedate.errormessage"));
 	}
@@ -454,4 +525,28 @@ public class SearchReceiptAction extends SearchFormAction {
     public void setCollectionVersion(String collectionVersion) {
         this.collectionVersion = collectionVersion;
     }
+
+	public String getServiceCategory() {
+		return serviceCategory;
+	}
+
+	public void setServiceCategory(String serviceCategory) {
+		this.serviceCategory = serviceCategory;
+	}
+
+	public Map<String, String> getServiceCategoryNames() {
+		return serviceCategoryNames;
+	}
+
+	public void setServiceCategoryNames(Map<String, String> m) {
+		this.serviceCategoryNames = m;
+	}
+
+	public Map<String, Map<String, String>> getServiceTypeMap() {
+		return serviceTypeMap;
+	}
+
+	public void setServiceTypeMap(Map<String, Map<String, String>> m) {
+		this.serviceTypeMap = m;
+	}
 }

@@ -63,6 +63,27 @@
 <title><s:text name="bill.register.report" /></title>
 
 </head>
+<style type="text/css">
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+		.fundRow + tr td:nth-child(2) {
+			  width:15% !important;
+			  vertical-align: middle;
+		}
+		.fundRow + tr td:nth-child(3) {
+			  width:25% !important;
+		}
+		.fundRow + tr td:nth-child(5) {
+			  width:15% !important;
+			  vertical-align: middle;
+		}
+		.fundRow + tr td:nth-child(6) {
+			  width:25% !important;
+		}
+</style>
 <body>
 	<s:form action="billRegisterReport" name="billRegisterReport"
 		theme="simple" method="post" onsubmit="javascript:doAfterSubmit()">
@@ -77,51 +98,72 @@
 			</div>
 		
 		<table align="center" width="100%" cellpadding="0" cellspacing="0">
-			<tr>
+			<tr class="fundRow">
 				<jsp:include page="../voucher/voucher-filter.jsp" />
 
 			</tr>
 
 			<tr>
-			<td style="width: 5%"></td>
-				<td class="greybox"><s:text name="voucher.fromdate" /></td>
-				<td class="greybox"><s:date name="fromDate" var="fromDateId"
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="greybox w15"><s:text name="voucher.fromdate" /></td>
+				<td class="greybox w25"><s:date name="fromDate" var="fromDateId"
+						format="dd/MM/yyyy" />
+								<s:textfield id="fromDate" name="fromDate"
+								value="%{fromDateId}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+								
+				<%-- <td class="greybox w25"><s:date name="fromDate" var="fromDateId"
 						format="dd/MM/yyyy" /> <s:textfield name="fromDate" id="fromDate"
 						value="%{fromDateId}" maxlength="10"
 						onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
 					href="javascript:show_calendar('billRegisterReport.fromDate',null,null,'DD/MM/YYYY');"
 					style="text-decoration: none">&nbsp;<img
 						src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
-				</td>
-				<td class="greybox"><s:text name="voucher.todate" /></td>
-				<td class="greybox"><s:date name="toDate" var="toDateId"
+				</td> --%>
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="greybox w15"><s:text name="voucher.todate" /></td>
+				<td class="greybox w25"><s:date name="toDate" var="toDateId"
+						format="dd/MM/yyyy" />
+								<s:textfield id="toDate" name="toDate"
+								value="%{toDateId}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+								
+			<%-- 	<td class="greybox w25"><s:date name="toDate" var="toDateId"
 						format="dd/MM/yyyy" /> <s:textfield name="toDate" id="toDate"
 						value="%{toDateId}" maxlength="10"
 						onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
 					href="javascript:show_calendar('billRegisterReport.toDate',null,null,'DD/MM/YYYY');"
 					style="text-decoration: none">&nbsp;<img
-						src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+						src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td> --%>
+				<td class="bluebox w5">&nbsp;</td>
 			</tr>
 			<tr>
-			<td style="width: 5%"></td>
-				<td class="bluebox"><s:text name="bill.expenditure.type" /></td>
-				<td class="bluebox"><s:select name="exptype" id="exptype"
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="bluebox w15"><s:text name="bill.expenditure.type" /></td>
+				<td class="bluebox w25"><s:select name="exptype" id="exptype"
 						list="dropdownData.expenditureList" headerKey=""
 						headerValue="%{getText('lbl.choose.options')}" /></td>
-				<td class="bluebox"><s:text name="bill.type" /></td>
-				<td class="bluebox"><s:select name="billType" id="billType"
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="bluebox w15"><s:text name="bill.type" /></td>
+				<td class="bluebox w25"><s:select name="billType" id="billType"
 						list="dropdownData.billTypeList" headerKey=""
 						headerValue="%{getText('lbl.choose.options')}" /></td>
+				<td class="bluebox w5">&nbsp;</td>
 			</tr>
 			<tr>
-			<td style="width: 5%"></td>
-				<td class="greybox"><s:text name="voucher.number" /></td>
-				<td class="greybox"><s:textfield name="voucherNumber"
-						id="voucherNumber" maxlength="30" value="%{voucherNumber}" /></td>
-
-				<td class="greybox"><s:text name="bill.number" /></td>
-				<td class="greybox"><s:textfield name="billNumber"
-						id="billNumber" maxlength="30" value="%{billNumber}" /></td>
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="greybox w15"><s:text name="voucher.number" /></td>
+				<td class="greybox w25"><s:textfield name="voucherNumber"
+						id="voucherNumber" maxlength="30" value="%{voucherNumber}" class="w100"/></td>
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="greybox w15"><s:text name="bill.number" /></td>
+				<td class="greybox w25"><s:textfield name="billNumber"
+						id="billNumber" maxlength="30" value="%{billNumber}" class="w100" /></td>
+				<td class="bluebox w5">&nbsp;</td>
 			</tr>
 
 		</table>

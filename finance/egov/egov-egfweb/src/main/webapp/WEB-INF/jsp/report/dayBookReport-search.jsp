@@ -56,6 +56,13 @@
 <head>
 <title><s:text name="dayBook.search.title" /></title>
 <style type="text/css">
+
+		select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+
 #codescontainer {
 	position: absolute;
 	left: 11em;
@@ -147,29 +154,30 @@
 				<table width="100%" border="1" cellspacing="0" cellpadding="0">
 
 					<tr>
-						<td style="width: 5%"></td>
-						<td class="bluebox"><s:text name="dayBook.startDate" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="dayBook.startDate" /><span
 							class="mandatory"></span></td>
-						<td class="bluebox"><s:textfield id="startDate"
+						<td class="bluebox w25"><s:textfield id="startDate"
 								name="startDate" value="%{currentDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 								data-inputmask="'mask': 'd/m/y'" /></td>
 
-
-						<td class="bluebox"><s:text name="dayBook.endDate" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="dayBook.endDate" /><span
 							class="mandatory"></span></td>
-						<td class="bluebox"><s:textfield id="endDate" name="endDate"
+						<td class="bluebox w25"><s:textfield id="endDate" name="endDate"
 								value="%{currentDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 								data-inputmask="'mask': 'd/m/y'" /></td>
+						<td class="bluebox w5">&nbsp;</td>
 					</tr>
 					<tr>
-						<td style="width: 5%"></td>
-						<td class="greybox"><s:text name="dayBook.fund" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="dayBook.fund" /><span
 							class="mandatory"></span></td>
-						<td class="greybox"><s:select name="fundId" id="fundId"
+						<td class="greybox w25"><s:select name="fundId" id="fundId"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="" headerValue="%{getText('lbl.choose.options')}" /></td>
 						<td class="greybox"></td>

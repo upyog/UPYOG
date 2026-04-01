@@ -49,18 +49,38 @@
 
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+
+<style>
+
+.formmainbox table {
+    width: 100%;
+    table-layout: fixed;
+}
+select,
+input.w100 {
+    width: 100% !important;
+}
+
+/* column widths */
+select { width:100% !important}
+.w5  { width: 5% !important; }
+.w15 { width: 15% !important; }
+.w25 { width: 25% !important; }
+.w100{ width:100% !important; }
+
+</style>
 <%!
        int count = -1;
    %>
 <tr>
-	<td style="width: 5%"></td>
+	<td class="w5"></td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
 		<% count++; %>
-		<td class="bluebox"><s:text name="voucher.fund" /> <s:if
+		<td class="bluebox w15"><s:text name="voucher.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
 				<span class="mandatory1" id="disableFundCheck">*</span>
 			</s:if></td>
-		<td class="bluebox"><s:select name="fundId" id="fundId"
+		<td class="bluebox w25"><s:select name="fundId" id="fundId"
 				list="dropdownData.fundList" listKey="id" listValue="name"
 				headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 				onChange="getSchemelist(this)" value="%{fundId.id}" /></td>
@@ -68,7 +88,7 @@
 	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
-<td style="width: 5%"></td>
+<td class="w5"></td>
 	<%} %>
 
 
@@ -147,17 +167,17 @@
 	<%if(count % 2 == 1) {%>
 </tr>
 <tr>
-<td style="width: 5%"></td>
 	<%} %>
 	<s:if test="%{shouldShowHeaderField('department')}">
 		<% count++; %>
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="bluebox"><s:text name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
 				<span class="mandatory1">*</span>
 			</s:if></td>
-		<td class="greybox"><s:select name="deptImpl.code" id="deptImpl.code"
+		<td class="greybox w25"><s:select name="deptImpl.code" id="deptImpl.code"
 				list="dropdownData.departmentList" listKey="code" listValue="name"
-				headerKey="-1" headerValue="%{getText('lbl.choose.options')}" value="%{deptImpl.code}" /></td>
+				headerKey="-1" headerValue="%{getText('lbl.choose.options')}" value="%{deptImpl.code}" class="w100"/></td>
 	</s:if>
 
 	<%if(count % 2 == 1) {%>

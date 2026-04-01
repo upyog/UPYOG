@@ -60,6 +60,10 @@
 table.its th {
 	text-align: left;
 }
+		select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
 </style>
 <title><s:text name="bank.advice.report" /></title>
 
@@ -102,18 +106,20 @@ table.its th {
 
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="bluebox" width="10%"><s:text name="lbl.bank.name" />:<span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="lbl.bank.name" />:<span
 						class="bluebox"><span class="mandatory"></span></span></td>
-					<td class="bluebox"><s:select name="bank.id" id="bank.id"
+					<td class="bluebox w25"><s:select name="bank.id" id="bank.id"
 							list="dropdownData.bankList" listKey="id" listValue="name"
 							headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 							onChange="populateBankBranch(this);" /></td>
 					<egov:ajaxdropdown id="bankbranch" fields="['Text','Value']"
 						dropdownId="bankbranch"
 						url="voucher/common-ajaxLoadBankBranchFromBank.action" />
-					<td class="bluebox" width="10%"><s:text name="bankbranch" />:<span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="bankbranch" />:<span
 						class="bluebox"><span class="mandatory"></span></span></td>
-					<td class="bluebox"><s:select name="bankbranch.id"
+					<td class="bluebox w25"><s:select name="bankbranch.id"
 							id="bankbranch" list="dropdownData.bankBranchList" listKey="id"
 							listValue="branchname" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}"
@@ -121,11 +127,13 @@ table.its th {
 					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
 						dropdownId="bankaccount"
 						url="voucher/common-ajaxLoadBankAccFromBranch.action" />
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
-					<td class="bluebox" width="10%"><s:text name="lbl.account.number" />:<span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15" width="10%"><s:text name="lbl.account.number" />:<span
 						class="bluebox"><span class="mandatory"></span></span></td>
-					<td class="bluebox"><s:select name="bankaccount.id"
+					<td class="bluebox w25"><s:select name="bankaccount.id"
 							id="bankaccount" list="dropdownData.bankAccountList" listKey="id"
 							listValue="accountnumber" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}"
@@ -133,12 +141,14 @@ table.its th {
 					<egov:ajaxdropdown id="instrumentnumber" fields="['Text','Value']"
 						dropdownId="instrumentnumber"
 						url="voucher/common-ajaxLoadRTGSChequeFromBankAcc.action" />
-					<td class="bluebox" width="10%"><s:text name="report.rtgsnumber" />:<span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="report.rtgsnumber" />:<span
 						class="bluebox"><span class="mandatory"></span></span></td>
-					<td class="bluebox"><s:select name="instrumentnumber.id"
+					<td class="bluebox w25"><s:select name="instrumentnumber.id"
 							id="instrumentnumber" list="dropdownData.chequeNumberList"
 							listKey="id" listValue="transactionNumber" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
 

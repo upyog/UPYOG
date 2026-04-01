@@ -51,6 +51,13 @@
 <%@ page language="java"%>
 <script language="javascript"
 	src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+<style type="text/css">
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+</style>
 <html>
 <head>
 <script type="text/javascript"
@@ -187,75 +194,76 @@ today = dd+'/'+mm+'/'+yyyy;
 				<table id="header" width="100%" cellpadding="0" cellspacing="0"
 					border="0">
 					<tr>
-						<td class="bluebox"></td>
-						<td class="bluebox"><s:text name="reporttype" />
-						<td class="bluebox"><s:select name="reportType"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="reporttype" />
+						<td class="bluebox w25"><s:select name="reportType"
 								id="reportType"
 								list="#{'daterange':'Date Range','asondate':'As On Date'}"
 								onChange="changeLable()" /></td>
 						<td colspan="2" class="bluebox"></td>
 					</tr>
 					<tr>
-						<td class="greybox"></td>
+						<td class="bluebox w5">&nbsp;</td>
 						<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
 						<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />
-						<td class="greybox"><div id="fromDatelbl">
+						<td class="greybox w15"><div id="fromDatelbl">
 								<s:text name="fromdate" />
 								<span class="greybox"><span class="mandatory1">*</span></span>
 							</div></td>
-						<td class="greybox"><s:textfield name="fromDate"
-								id="fromDate"
+						<td class="greybox w25"><s:textfield id="fromDate" name="fromDate"
+								value="%{tempFromDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								value="%{tempFromDate}" /> <a
-							href="javascript:show_calendar('forms[0].fromDate');"
-							style="text-decoration: none">&nbsp;<img tabIndex="-1"
-								src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
-						</td>
-						<td class="greybox"><div id="toDatelbl">
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><div id="toDatelbl">
 								<s:text name="todate" />
 								<span class="greybox"><span class="mandatory1">*</span></span>
 							</div></td>
-						<td class="greybox"><s:textfield name="toDate" id="toDate"
+						<td class="greybox w25"><s:textfield id="toDate" name="toDate"
+								value="%{tempToDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								value="%{tempToDate}" /> <a
-							href="javascript:show_calendar('forms[0].toDate');"
-							style="text-decoration: none">&nbsp;<img tabIndex="-1"
-								src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
-						</td>
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+						<td class="bluebox w5">&nbsp;</td>
 					</tr>
 					<tr>
-						<td class="bluebox"></td>
-						<td class="bluebox"><div id="fundlbl">
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><div id="fundlbl">
 								<s:text name="voucher.fund" />
 								<span id="fundStar" class="mandatory1">*</span>
 							</div>
-						<td class="bluebox"><s:select name="fundId" id="fundId"
+						<td class="bluebox w25"><s:select name="fundId" id="fundId"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="" headerValue="%{getText('lbl.choose.options')}" value="%{fundId}" /></td>
-						<td class="bluebox"><s:text name="voucher.department" />
-						<td class="bluebox"><s:select name="departmentCode"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="voucher.department" />
+						<td class="bluebox w25"><s:select name="departmentCode"
 								id="departmentcode" list="dropdownData.departmentList"
 								listKey="code" listValue="name" headerKey=""
 								headerValue="%{getText('lbl.choose.options')}" value="departmentCode" /></td>
+						<td class="bluebox w5">&nbsp;</td>
 					</tr>
 					<tr>
-						<td class="greybox"></td>
-						<td class="greybox"><s:text name="voucher.function" />
-						<td class="greybox"><s:select name="functionId"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="voucher.function" />
+						<td class="greybox w25"><s:select name="functionId"
 								id="functionId" list="dropdownData.functionList" listKey="id"
 								listValue="name" headerKey="" headerValue="%{getText('lbl.choose.options')}"
 								value="functionId" style="width:180px" /></td>
-						<td class="greybox"><s:text name="voucher.functionary" />
-						<td class="greybox"><s:select name="functionaryId"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="voucher.functionary" />
+						<td class="greybox w25"><s:select name="functionaryId"
 								id="functionaryId" list="dropdownData.functionaryList"
 								listKey="id" listValue="name" headerKey=""
 								headerValue="%{getText('lbl.choose.options')}" value="functionaryId"
 								style="width:180px" /></td>
+						<td class="bluebox w5">&nbsp;</td>
 					</tr>
 					<tr>
-						<td class="bluebox"></td>
-						<td class="bluebox"><s:text name="voucher.field" />
-						<td class="bluebox"><s:select name="divisionId"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="voucher.field" />
+						<td class="bluebox w25"><s:select name="divisionId"
 								id="divisionId" list="dropdownData.fieldList" listKey="id"
 								listValue="name" headerKey="" headerValue="%{getText('lbl.choose.options')}"
 								value="divisionId" /></td>

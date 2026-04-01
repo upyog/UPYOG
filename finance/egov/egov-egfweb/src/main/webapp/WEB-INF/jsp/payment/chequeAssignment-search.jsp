@@ -54,6 +54,12 @@
 <link rel="stylesheet" type="text/css"
 	href="/services/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title>Cheque Assignment Search</title>
+<style>
+		.w5{width:5% !important}
+		.w20{width:20% !important}
+		.w30{width:30% !important}
+		.w75{width:75% !important}
+	</style>
 </head>
 <body onload="onload()">
 	<s:form action="chequeAssignment" theme="simple">
@@ -69,19 +75,19 @@
 			</div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="chq.assignment.paymentvoucherdatefrom" /></td>
-					<td class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{fromDate}" data-date-end-date="0d" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" /></td>
-					<td class="bluebox"><s:text name="chq.assignment.paymentvoucherdateto" /></td>
-					<td class="bluebox"><s:textfield id="toDate" name="toDate" value="%{toDate}" data-date-end-date="0d" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" /></td>
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w20"><s:text name="chq.assignment.paymentvoucherdatefrom" /></td>
+					<td class="bluebox w30"><s:textfield id="fromDate" name="fromDate" value="%{fromDate}" data-date-end-date="0d" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker w75" data-inputmask="'mask': 'd/m/y'" /></td>
+					<td class="bluebox w20"><s:text name="chq.assignment.paymentvoucherdateto" /></td>
+					<td class="bluebox w30"><s:textfield id="toDate" name="toDate" value="%{toDate}" data-date-end-date="0d" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker w75" data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 				<tr>
-					<td class="greybox"></td>
-					<td class="greybox"><s:text name="payment.mode" /><span class="mandatory"></span></td>
-					<td class="greybox"><s:radio id="paymentMode" name="paymentMode" list="#{'cheque':'Cheque','cash':'Consolidated Cheque'}" onchange="enableOrDisableBillType(this)" value="%{paymentMode}" /></td>
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w20"><s:text name="payment.mode" /><span class="mandatory"></span></td>
+					<td class="greybox w30"><s:radio id="paymentMode" name="paymentMode" list="#{'cheque':'Cheque','cash':'Consolidated Cheque'}" onchange="enableOrDisableBillType(this)" value="%{paymentMode}" /></td>
 					<!-- td class="greybox"><s:radio id="paymentMode" name="paymentMode" list="#{'cheque':'Cheque'}" onchange="enableOrDisableBillType(this)" value="%{paymentMode}" /></td> -->
-					<td class="greybox"><s:text name="chq.assignment.paymentvoucherno" /></td>
-					<td class="greybox"><s:textfield name="voucherNumber" id="voucherNumber" value="%{voucherNumber}" /></td>
+					<td class="greybox w20"><s:text name="chq.assignment.paymentvoucherno" /></td>
+					<td class="greybox w30"><s:textfield name="voucherNumber" id="voucherNumber" value="%{voucherNumber}" class="w75" /></td>
 				</tr>
 				<tr>
 					<td class="greybox"></td>

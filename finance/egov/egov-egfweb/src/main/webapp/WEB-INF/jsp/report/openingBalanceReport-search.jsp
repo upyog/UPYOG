@@ -56,6 +56,10 @@
 <head>
 <title><s:text name="openingBalance.search.title" /></title>
 <style type="text/css">
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
 #codescontainer {
 	position: absolute;
 	left: 11em;
@@ -140,20 +144,24 @@
 				</div>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td class="bluebox"><s:text
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text
 								name="openingBalance.financialYear" /><span class="mandatory1">*</span></td>
-						<td class="bluebox"><s:select name="finYear" id="finYear"
+						<td class="bluebox w25"><s:select name="finYear" id="finYear"
 								list="dropdownData.financialYearList" listKey="id"
 								listValue="finYearRange" headerKey=""
 								headerValue="----Choose----" /></td>
-						<td class="bluebox"><s:text name="openingBalance.fund" /></td>
-						<td class="bluebox"><s:select name="obFund_id" id="obFund_id"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="openingBalance.fund" /></td>
+						<td class="bluebox w25"><s:select name="obFund_id" id="obFund_id"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="" headerValue="----Choose----" /></td>
+						<td class="bluebox w5">&nbsp;</td>
 					</tr>
 					<tr>
-						<td class="greybox"><s:text name="openingBalance.department" /></td>
-						<td class="greybox"><s:select name="deptId" id="deptId"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="openingBalance.department" /></td>
+						<td class="greybox w25"><s:select name="deptId" id="deptId"
 								list="dropdownData.departmentList" listKey="code"
 								listValue="name" headerKey="" headerValue="----Choose----" /></td>
 						<td class="greybox"></td>

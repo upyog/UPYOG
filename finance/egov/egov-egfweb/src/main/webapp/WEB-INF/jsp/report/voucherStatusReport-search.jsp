@@ -58,6 +58,28 @@
 <title><s:text name="voucher.title" /></title>
 
 </head>
+<style type="text/css">
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+		.fundRow + tr td:nth-child(2) {
+			  width:15% !important;
+			  vertical-align: middle;
+		}
+		.fundRow + tr td:nth-child(3) {
+			  width:25% !important;
+		}
+		.fundRow + tr td:nth-child(5) {
+			  width:15% !important;
+			  vertical-align: middle;
+		}
+		.fundRow + tr td:nth-child(6) {
+			  width:25% !important;
+		}
+		
+</style>
 <body onload="activeModeOfPayment()">
 	<s:form action="voucherStatusReport" name="voucherStatusReport"
 		theme="simple">
@@ -72,60 +94,82 @@
 			</div>
 
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
-				<tr>
+				<tr class="fundRow">
 					<jsp:include page="../voucher/voucher-filter.jsp" />
 				</tr>
 				<br />
 				<br />
 				<tr>
-					<td style="width: 5%"></td>
-					<td class="greybox"><s:text name="voucher.type" /></td>
-					<td class="greybox"><s:select name="type" id="type"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="voucher.type" /></td>
+					<td class="greybox w25"><s:select name="type" id="type"
 							list="dropdownData.typeList" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}"
 							onchange="loadVoucherNames(this.value);activeModeOfPayment()" /></td>
-					<td class="greybox"><s:text name="voucher.name" /></td>
-					<td class="greybox"><s:select name="name" id="name"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="voucher.name" /></td>
+					<td class="greybox w25"><s:select name="name" id="name"
 							list="%{nameMap}" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 
 				</tr>
 
 				<tr id="modeofpayment">
-					<td style="width: 5%"></td>
-					<td class="bluebox"><s:text name="voucher.modeOfPayment" /></td>
-					<td class="bluebox"><s:select name="modeOfPayment"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="voucher.modeOfPayment" /></td>
+					<td class="bluebox w25"><s:select name="modeOfPayment"
 							id="modeOfPayment" list="dropdownData.modeOfPaymentList"
 							headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
 					<td class="bluebox"></td>
 					<td class="bluebox"></td>
 				</tr>
 				<tr>
-					<td style="width: 5%"></td>
-					<td class="greybox"><s:text name="voucher.fromdate" /><span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="voucher.fromdate" /><span
 						class="mandatory1">*</span></td>
-					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
+					<td class="greybox w25"><s:date name="fromDate" var="tempFromDate"
+						format="dd/MM/yyyy" />
+								<s:textfield id="fromDate" name="fromDate"
+								value="%{tempFromDate}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+								
+					<%-- <s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
 							maxlength="20"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							value="%{tempFromDate}" autocomplete="off"/><a
 						href="javascript:show_calendar('forms[0].fromDate');"
 						style="text-decoration: none">&nbsp;<img
-							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
-					<td class="greybox"><s:text name="voucher.todate" /><span
+							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td> --%>
+							
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="voucher.todate" /><span
 						class="mandatory1">*</span></td>
-					 <s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />  
+				<td class="greybox w25"><s:date name="toDate" var="tempToDate"
+						format="dd/MM/yyyy" />
+								<s:textfield id="toDate" name="toDate"
+								value="%{tempToDate}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
+								data-inputmask="'mask': 'd/m/y'" /></td>						
+						
+						
+					<%--  <s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />  
 					<td class="greybox"><s:textfield name="toDate" id="toDate"
 							maxlength="20"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							value="%{tempToDate}" autocomplete="off"/><a
 						href="javascript:show_calendar('forms[0].toDate');"
 						style="text-decoration: none">&nbsp;<img
-							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td> --%>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
-					<td style="width: 5%"></td>
-					<td class="greybox"><s:text name="voucher.status" /></td>
-					<td class="greybox"><s:select name="status" id="status"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="voucher.status" /></td>
+					<td class="greybox w25"><s:select name="status" id="status"
 							list="%{statusMap}" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 							value="%{status}" /></td>
 					<td class="greybox"></td>

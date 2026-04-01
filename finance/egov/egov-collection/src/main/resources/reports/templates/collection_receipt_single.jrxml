@@ -172,7 +172,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{payeeName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{paidBy}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="20" y="15" width="120" height="15" uuid="dd610602-d4e9-43ac-a935-940c3b1bf462"/>

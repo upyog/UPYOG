@@ -50,6 +50,13 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <head>
+<style>
+		select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+</style>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/contra.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -190,54 +197,56 @@ function printCheque(id)
 			<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
 				<tr>
-					<td width="10%">&nbsp;</td>
-					<td class="bluebox" width="10%"><s:text name="lbl.bank.branch.name" />:<span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="lbl.bank.branch.name" />:<span
 						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:select name="bank" id="bank"
+					<td class="bluebox w25"><s:select name="bank" id="bank"
 							list="dropdownData.bankList" listKey="bankBranchId"
 							listValue="bankBranchName" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}" onChange="populateAccNum(this);" />
 					</td>
-					<td width="10%">&nbsp;</td>
+					<td class="bluebox w5">&nbsp;</td>
 					<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
 						dropdownId="accountNumber"
 						url="voucher/common-ajaxLoadAccNum.action" />
-					<td class="bluebox" width="10%"><s:text name="lbl.account.number" />:<span
+					<td class="bluebox w15"><s:text name="lbl.account.number" />:<span
 						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:select name="bankAccount"
+					<td class="bluebox w25"><s:select name="bankAccount"
 							id="accountNumber" list="dropdownData.bankAccountList"
 							listKey="id" listValue="accountnumber" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
-					<td class="greybox" width="10%">&nbsp;</td>
-					<td class="greybox" width="10%"><s:text name="lbl.cheque.from.date" />:<span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="lbl.cheque.from.date" />:<span
 						class="mandatory1">*</span></td>
 
-					<td class="greybox"><s:date name="fromDate" var="fromDate"
+					<td class="greybox w25"><s:date name="fromDate" var="fromDate"
 							format="dd/MM/yyyy" /> <s:textfield id="fromDate"
 							name="fromDate" value="%{fromDate}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 							data-inputmask="'mask': 'd/m/y'" /></td>
 
 
-					<td width="10%">&nbsp;</td>
-					<td class="greybox" width="10%"><s:text name="lbl.cheque.to.date" />:<span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="lbl.cheque.to.date" />:<span
 						class="mandatory1">*</span></td>
 
-					<td class="greybox"><s:date name="toDate" var="toDate"
+					<td class="greybox w25"><s:date name="toDate" var="toDate"
 							format="dd/MM/yyyy" /> <s:textfield id="toDate" name="toDate"
 							value="%{toDate}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 							data-inputmask="'mask': 'd/m/y'" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 
 				</tr>
 				<tr>
-					<td width="10%" class="bluebox">&nbsp;</td>
-					<td class="bluebox"><s:text name="report.department" /></td>
-					<td width="22%" class="bluebox"><s:select
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="report.department" /></td>
+					<td class="bluebox w25"><s:select
 							list="dropdownData.executingDepartmentList" listKey="code"
 							listValue="name" name="deptImpl.code" headerKey="0"
 							headerValue="%{getText('lbl.select')}" value="%{deptImpl.code}"

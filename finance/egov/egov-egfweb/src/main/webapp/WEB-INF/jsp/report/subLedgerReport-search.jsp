@@ -56,6 +56,13 @@
 <head>
 <title><s:text name="subLedger.search.title" /></title>
 <style type="text/css">
+
+		select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+
 #codescontainer {
 	position: absolute;
 	left: 11em;
@@ -162,73 +169,82 @@ background: #DEDEDE;
 				<div class="tbl-header" id="tbl-header">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td class="bluebox"><s:text name="subLedger.accountCode" /><span
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"><s:text name="subLedger.accountCode" /><span
 								class="mandatory"></span></td>
-							<td class="bluebox"><s:textfield id="glCode1" name="glCode1"
+							<td class="bluebox w25"><s:textfield id="glCode1" name="glCode1"
 									value="%{glCode1}" autocomplete="off"
 									onfocus='autocompleteAccountCodes(this);'
-									onblur='splitAccountCodes(this);' /></td>
-						<td class="greybox"><s:text name="subLedger.accountName" /></td>
-						<td class="greybox">
-						<s:textfield disabled="true" name="accountName" id="accountName"></s:textfield>
+									onblur='splitAccountCodes(this);' class="w100" /></td>
+							<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="subLedger.accountName" /></td>
+						<td class="greybox w25">
+						<s:textfield disabled="true" name="accountName" id="accountName" class="w100"></s:textfield>
 							 </td>
 							 <td class="greybox"></td>
 							<td class="greybox"></td>
 									</tr>
 							<tr>
-							<td class="bluebox"><s:text name="subLedger.fund" /><span
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"><s:text name="subLedger.fund" /><span
 								class="mandatory"></span></td>
-							<td class="bluebox"><s:select name="fund_id" id="fund_id"
+							<td class="bluebox w25"><s:select name="fund_id" id="fund_id"
 									list="dropdownData.fundList" listKey="id" listValue="name"
 									headerKey="" headerValue="%{getText('lbl.choose.options')}" /></td>
 						</tr>
 						<tr>
-							<td class="greybox"><s:text name="subLedger.startDate" /><span
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="greybox w15"><s:text name="subLedger.startDate" /><span
 								class="mandatory"></span></td>
 
-							<td class="greybox"><s:date name="startDate" var="startDate"
+							<td class="greybox w25"><s:date name="startDate" var="startDate"
 									format="dd/MM/yyyy" /> <s:textfield id="startDate"
 									name="startDate" value="%{startDate}"
 									onkeyup="DateFormat(this,this.value,event,false,'3')"
-									placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+									placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 									data-inputmask="'mask': 'd/m/y'" /></td>
 
-
-							<td class="greybox"><s:text name="subLedger.endDate" /><span
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="greybox w15"><s:text name="subLedger.endDate" /><span
 								class="mandatory"></span></td>
 
-							<td class="greybox"><s:date name="endDate" var="endDate"
+							<td class="greybox w25"><s:date name="endDate" var="endDate"
 									format="dd/MM/yyyy" /> <s:textfield id="endDate"
 									name="endDate" value="%{endDate}"
 									onkeyup="DateFormat(this,this.value,event,false,'3')"
-									placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+									placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 									data-inputmask="'mask': 'd/m/y'" /></td>
+							<td class="bluebox w5">&nbsp;</td>
 
 
 						</tr>
 						<tr>
+							<td class="bluebox w5">&nbsp;</td>
 							<egov:ajaxdropdown id="subledger" fields="['Text','Value']"
 								dropdownId="subledger"
 								url="voucher/common-ajaxLoadSubLedgerTypesByGlCode.action" />
-							<td class="bluebox"><s:text name="subLedger.subLedgerType" /><span
+							<td class="bluebox w15"><s:text name="subLedger.subLedgerType" /><span
 								class="mandatory"></span></td>
-							<td class="bluebox"><s:select name="subledger"
+							<td class="bluebox w25"><s:select name="subledger"
 									id="subledger" list="dropdownData.subLedgerTypeList"
 									listKey="id" listValue="description" headerKey=""
 									headerValue="%{getText('lbl.choose.options')}" /></td>
-							<td class="bluebox"><s:text name="subLedger.entityDetails" /><span
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"><s:text name="subLedger.entityDetails" /><span
 								class="mandatory"></span></td>
-							<td class="bluebox"><s:textfield id="accEntitycode" placeholder="Enter first three characters"
+							<td class="bluebox w25"><s:textfield id="accEntitycode" placeholder="Enter first three characters"
 									name="accEntitycode" autocomplete="off"
 									onfocus='autocompleteEntityDetails(this);'
-									onblur='splitEntityDetails(this);' /> <s:textfield
+									onblur='splitEntityDetails(this);' class="w100" /> <s:textfield
 									id="entityName" name="entityName" value="%{entityName}"
-									readonly="true" /></td>
+									readonly="true" class="w100" /></td>
+							<td class="bluebox w5">&nbsp;</td>
 
 						</tr>
 						<tr>
-							<td class="greybox"><s:text name="subLedger.department" /></td>
-							<td class="greybox"><s:select name="departmentCode"
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="greybox w15"><s:text name="subLedger.department" /></td>
+							<td class="greybox w25"><s:select name="departmentCode"
 									id="departmentCode" list="dropdownData.departmentList"
 									listKey="code" listValue="name" headerKey=""
 									headerValue="%{getText('lbl.choose.options')}" /></td>

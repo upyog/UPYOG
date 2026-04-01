@@ -50,6 +50,8 @@
 <link href="/services/EGF/resources/css/budget.css?rnd=${app_release_no}" rel="stylesheet"
 	type="text/css" />
 <style type="text/css">
+	.w80{width:80% !important}
+
 @media print {
 	#non-printable {
 		display: none;
@@ -221,7 +223,7 @@ function showSchedule(majorCode, scheduleNo){
 					        data-date-end-date="0d"
 					        onkeyup="DateFormat(this,this.value,event,false,'3')"
 					        placeholder="DD/MM/YYYY"
-					        cssClass="form-control datepicker"
+					        cssClass="form-control datepicker w80"
 					        data-inputmask="'mask': 'd/m/y'"
 					        autocomplete="off"/>
 					</td>
@@ -234,7 +236,7 @@ function showSchedule(majorCode, scheduleNo){
 					        data-date-end-date="0d"
 					        onkeyup="DateFormat(this,this.value,event,false,'3')"
 					        placeholder="DD/MM/YYYY"
-					        cssClass="form-control datepicker"
+					        cssClass="form-control datepicker w80"
 					        data-inputmask="'mask': 'd/m/y'"
 					        autocomplete="off"/>
 					</td>

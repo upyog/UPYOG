@@ -47,397 +47,469 @@
   ~
   --%>
 
-<%@ include file="/includes/taglibs.jsp" %>
-<%@ taglib prefix="egov-authz" uri="/WEB-INF/taglib/egov-authz.tld" %> 
-<link rel="stylesheet" type="text/css" href="<egov:url path='/yui/assets/skins/sam/autocomplete.css'/>" />
+<%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib prefix="egov-authz" uri="/WEB-INF/taglib/egov-authz.tld"%>
+<link rel="stylesheet" type="text/css"
+	href="<egov:url path='/yui/assets/skins/sam/autocomplete.css'/>" />
 <head>
-	<title><s:text name="searchreceipts.title"/></title>
-<script  >
-
-jQuery.noConflict();
-jQuery(document).ready(function() {
-  	 
-     jQuery(" form ").submit(function( event ) {
-    	 doLoadingMask();
-    });
-     doLoadingMask();
- });
-
-jQuery(window).load(function () {
-	undoLoadingMask();
-});
-
-function isChecked(chk) {
-	if (chk.length == undefined) {
- 	if (chk.checked == true)
-  	return true;
- 	else return false;	
- } else {
- 	for (i = 0; i < chk.length; i++)
-		{
-			if (chk[i].checked == true ) return true;
-		}
-	return false;
- }
+<title><s:text name="searchreceipts.title" /></title>
+<style type="text/css">
+table {
+	width: 100%;
 }
 
-function checkselectedreceiptcount(obj)
-{
-	var cnt=document.getElementsByName('selectedReceipts');
-	var receiptstatus=document.getElementsByName('receiptstatus');
-	var j=0;
-	for (i = 0; i < cnt.length; i++)
-	{
-		if (cnt[i].checked == true )
-		{
-			j++; 
-			if(obj=='cancel' && receiptstatus[i].value=="Cancelled")
-			{
-				dom.get("selectedcancelledreceiptserror").style.display="block";
-				return -1;
-			}
+#fromDate, #toDate, #receiptNumber, textfield, textarea, select {
+	width: 80% !important;
+}
+</style>
+<script type="text/javascript">
+	var serviceTypeMap = {};
+	<s:iterator value="serviceTypeMap" var="entry">
+	serviceTypeMap['<s:property value="#entry.key"/>'] = {};
+	<s:iterator value="#entry.value" var="inner">
+	serviceTypeMap['<s:property value="#entry.key"/>']['<s:property value="#inner.key"/>'] = '<s:property value="#inner.value" escapeJavaScript="true" escapeHtml="false"/>';
+	</s:iterator>
+	</s:iterator>
+
+	function populateServiceType(selected) {
+		var cell = document.getElementById('serviceTypeCell');
+		var label = document.getElementById('serviceTypeLabel');
+
+		cell.innerHTML = '';
+
+		label.innerHTML = '<s:text name="searchreceipts.criteria.servicetype" />';
+
+		/* if (selected == -1 || !serviceTypeMap[selected]) return; */
+
+		var map = serviceTypeMap[selected];
+		var keys = Object.keys(map);
+		if (keys.length === 0)
+			return;
+
+		label.innerHTML = 'Service Type:';
+
+		var sel = document.createElement('select');
+		sel.name = 'serviceTypeId';
+		sel.id = 'serviceType';
+		sel.className = 'selectwk';
+		sel.style.width = '100%';
+		sel.options[0] = new Option(
+				'<s:text name="searchreceipts.servicetype.select"/>', '-1');
+		keys.forEach(function(k, i) {
+			sel.options[i + 1] = new Option(map[k], k);
+		});
+
+		var prev = '<s:property value="serviceTypeId"/>';
+		if (prev)
+			sel.value = prev;
+
+		cell.appendChild(sel);
+	}
+
+	// On page load, re-populate if category was already selected (e.g. after a search)
+	jQuery(document).ready(function() {
+		var prevCat = '<s:property value="serviceCategory"/>';
+		if (prevCat && prevCat !== '-1') {
+			populateServiceType(prevCat);
+		}
+	});
+</script>
+
+<script>
+	jQuery.noConflict();
+	jQuery(document).ready(function() {
+
+		jQuery(" form ").submit(function(event) {
+			doLoadingMask();
+		});
+		doLoadingMask();
+	});
+
+	jQuery(window).load(function() {
+		undoLoadingMask();
+	});
+
+	function isChecked(chk) {
+		if (chk.length == undefined) {
+			if (chk.checked == true)
+				return true;
 			else
-			{
-				dom.get("selectedcancelledreceiptserror").style.display="none";
+				return false;
+		} else {
+			for (i = 0; i < chk.length; i++) {
+				if (chk[i].checked == true)
+					return true;
 			}
-		}
-		else
-		{
-			dom.get("selectedcancelledreceiptserror").style.display="none";
-		}
-	}
-	if(j==0)
-		return 0;
-	else if(j>1)
-		return 2;
-	else 
-		return 1;
-}
-
-function checkcancelforselectedrecord()
-{
-    dom.get("pendingreceiptcancellationerror").style.display="none";
-	dom.get("selectcancelerror").style.display="none";
-	var check=checkselectedreceiptcount('cancel');
-	// more than one receipt has been chosen. Should not allow cancellation
-	if(check==2)
-	{
-		dom.get("norecordselectederror").style.display="none";
-		dom.get("selectcancelerror").style.display="block";
-		dom.get("selectprinterror").style.display="none";
-		window.scroll(0,0);
-		return false;
-	}
-	// no receipts have been chosen. should not allow cancellation
-	else if(check==0)
-	{
-		dom.get("selectcancelerror").style.display="none";
-		dom.get("norecordselectederror").style.display="block";
-		dom.get("selectprinterror").style.display="none";
-		window.scroll(0,0);
-		return false;
-	}
-	// one or more cancelled receipts have been chosen. should not allow cancellation
-	else if(check==-1)
-	{
-		dom.get("selectcancelerror").style.display="none";
-		dom.get("norecordselectederror").style.display="none";
-		dom.get("selectprinterror").style.display="none";
-		window.scroll(0,0);
-		return false;
-	}
-	//one receipt has been chosen. Cancellation is allowed
-	else
-	{
-		var cnt=document.getElementsByName('selectedReceipts');
-		var receiptstatus=document.getElementsByName('receiptstatus');
-		var instrumenttype=document.getElementsByName('instrumenttype');
-		var j=0;
-		for (m = 0; m < cnt.length; m++)
-		{
-			if (cnt[m].checked == true )
-			{
-				if(receiptstatus[m].value=="Pending")
-				{
-					dom.get("pendingreceiptcancellationerror").style.display="block";
-					window.scroll(0,0);
-					return false;
-				}
-
-				else if(receiptstatus[m].value=="Instrument Bounced")
-				{
-					dom.get("instrumentbouncedreceiptcancellationerror").style.display="block";
-					window.scroll(0,0);
-					return false;
-				}
-				else if(receiptstatus[m].value=="Remitted" || receiptstatus[m].value=="Partial Remitted")
-				{
-					dom.get("remittedreceiptcancellationerror").style.display="block";
-					window.scroll(0,0);
-					return false;
-				}
-
-				if(instrumenttype[m].value=="online")
-				{
-					dom.get("onlinereceiptcancellationerror").style.display="block";
-					window.scroll(0,0);
-					return false;
-				}
-				
-			}
-		}
-		dom.get("selectcancelerror").style.display="none";
-		var receipttype=document.getElementsByName('receipttype');
-		var cnt=document.getElementsByName('selectedReceipts');
-		
-		for (m = 0; m < cnt.length; m++)
-		{
-			if (cnt[m].checked == true )
-			{
-				if(receipttype[m].value=="A" || receipttype[m].value=="B")
-				{
-					document.searchReceiptForm.action="receipt-cancel.action";
-				}
-				if(receipttype[m].value=='C')
-				{
-					document.searchReceiptForm.action="challan-cancelReceipt.action";
-				}
-				
-			}
-		}
-		
-		document.searchReceiptForm.submit();
-	}
-}
-function checkprintforselectedrecord()
-{
-	var check=checkselectedreceiptcount('print');
-	// more than one receipts have been chosen. should not print
-	if(check==2)
-	{
-		dom.get("norecordselectederror").style.display="none";
-		dom.get("selectprinterror").style.display="block";
-		dom.get("selectcancelerror").style.display="none";
-		window.scroll(0,0);
-		return false;
-	}
-	// no receipts ahev been chosen for print
-	else if(check==0)
-	{
-		dom.get("selectprinterror").style.display="none";
-		dom.get("norecordselectederror").style.display="block";
-		dom.get("selectcancelerror").style.display="none";
-		window.scroll(0,0);
-		return false;
-	}
-	// single receipt has been chosen. Print is allowed
-	else
-	{
-		dom.get("selectprinterror").style.display="none";
-		document.searchReceiptForm.action="receipt-printReceipts.action";
-		document.searchReceiptForm.submit();
-	}
-	//document.searchReceiptForm.action="receipt-printReceipts.action";
-	//document.searchReceiptForm.submit();
-}
-
-function validate()
-{
-	var fromdate=dom.get("fromDate").value;
-	var todate=dom.get("toDate").value;
-	var serviceType=dom.get("serviceType").value;
-	console.log("serviceType : "+serviceType);
-	var valSuccess = true;
-	/* if(null!= document.getElementById('serviceClass') && document.getElementById('serviceClass').value == '-1'){
-		dom.get("error_area").style.display="block";
-		dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
-		window.scroll(0,0);
-		valSuccess=false;
-		return false;
-	} */
-
-	if(serviceType==-1){
-		valSuccess=false;
-		dom.get("error_area").style.display="block";
-		dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
-		window.scroll(0,0);
-		return false;
-	}
-	
-	if(fromdate!="" && todate!="" && fromdate!=todate)
-	{
-		if(!checkFdateTdate(fromdate,todate))
-		{ 
-			dom.get("comparedatemessage").style.display="block";
-			window.scroll(0,0);
-			valSuccess= false;
 			return false;
 		}
 	}
-	else
-	{		
-		dom.get("comparedatemessage").style.display="none";
-		doLoadingMask('#loadingMask');
-		valSuccess= true;
-		return true;
+
+	function checkselectedreceiptcount(obj) {
+		var cnt = document.getElementsByName('selectedReceipts');
+		var receiptstatus = document.getElementsByName('receiptstatus');
+		var j = 0;
+		for (i = 0; i < cnt.length; i++) {
+			if (cnt[i].checked == true) {
+				j++;
+				if (obj == 'cancel' && receiptstatus[i].value == "Cancelled") {
+					dom.get("selectedcancelledreceiptserror").style.display = "block";
+					return -1;
+				} else {
+					dom.get("selectedcancelledreceiptserror").style.display = "none";
+				}
+			} else {
+				dom.get("selectedcancelledreceiptserror").style.display = "none";
+			}
+		}
+		if (j == 0)
+			return 0;
+		else if (j > 1)
+			return 2;
+		else
+			return 1;
 	}
-	return valSuccess;
-	
-}
 
-/* var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
-      		warn('improperreceiptNumberSelection');
-}
-var receiptNumberSearchSelectionHandler = function(sType, arguments) { 
-			var oData = arguments[2];
-			dom.get("receiptNumberSearch").value=oData[0];
-}
+	function checkcancelforselectedrecord() {
+		dom.get("pendingreceiptcancellationerror").style.display = "none";
+		dom.get("selectcancelerror").style.display = "none";
+		var check = checkselectedreceiptcount('cancel');
+		// more than one receipt has been chosen. Should not allow cancellation
+		if (check == 2) {
+			dom.get("norecordselectederror").style.display = "none";
+			dom.get("selectcancelerror").style.display = "block";
+			dom.get("selectprinterror").style.display = "none";
+			window.scroll(0, 0);
+			return false;
+		}
+		// no receipts have been chosen. should not allow cancellation
+		else if (check == 0) {
+			dom.get("selectcancelerror").style.display = "none";
+			dom.get("norecordselectederror").style.display = "block";
+			dom.get("selectprinterror").style.display = "none";
+			window.scroll(0, 0);
+			return false;
+		}
+		// one or more cancelled receipts have been chosen. should not allow cancellation
+		else if (check == -1) {
+			dom.get("selectcancelerror").style.display = "none";
+			dom.get("norecordselectederror").style.display = "none";
+			dom.get("selectprinterror").style.display = "none";
+			window.scroll(0, 0);
+			return false;
+		}
+		//one receipt has been chosen. Cancellation is allowed
+		else {
+			var cnt = document.getElementsByName('selectedReceipts');
+			var receiptstatus = document.getElementsByName('receiptstatus');
+			var instrumenttype = document.getElementsByName('instrumenttype');
+			var j = 0;
+			for (m = 0; m < cnt.length; m++) {
+				if (cnt[m].checked == true) {
+					if (receiptstatus[m].value == "Pending") {
+						dom.get("pendingreceiptcancellationerror").style.display = "block";
+						window.scroll(0, 0);
+						return false;
+					}
 
+					else if (receiptstatus[m].value == "Instrument Bounced") {
+						dom.get("instrumentbouncedreceiptcancellationerror").style.display = "block";
+						window.scroll(0, 0);
+						return false;
+					} else if (receiptstatus[m].value == "Remitted"
+							|| receiptstatus[m].value == "Partial Remitted") {
+						dom.get("remittedreceiptcancellationerror").style.display = "block";
+						window.scroll(0, 0);
+						return false;
+					}
 
-var manualReceiptNumberSearchSelectionHandler = function(sType, arguments) { 
-	var oData = arguments[2];
-	dom.get("manualReceiptNumberSearch").value=oData[0];
-}
-var manualReceiptNumberSelectionEnforceHandler = function(sType, arguments) {
-		warn('impropermanualReceiptNumberSelectionWarning');
-} */
-function checkviewforselectedrecord()
-{
-	dom.get("norecordselectederror").style.display="none";
-	dom.get("selectprinterror").style.display="none";
-	dom.get("selectcancelerror").style.display="none";
-	var cnt=document.getElementsByName('selectedReceipts');
-	var receiptstatus=document.getElementsByName('receiptstatus');
-	var j=0;
-	for (i = 0; i < cnt.length; i++)
-	{
-		if (cnt[i].checked == true )
-		{
-			j++; 
+					if (instrumenttype[m].value == "online") {
+						dom.get("onlinereceiptcancellationerror").style.display = "block";
+						window.scroll(0, 0);
+						return false;
+					}
+
+				}
+			}
+			dom.get("selectcancelerror").style.display = "none";
+			var receipttype = document.getElementsByName('receipttype');
+			var cnt = document.getElementsByName('selectedReceipts');
+
+			for (m = 0; m < cnt.length; m++) {
+				if (cnt[m].checked == true) {
+					if (receipttype[m].value == "A"
+							|| receipttype[m].value == "B") {
+						document.searchReceiptForm.action = "receipt-cancel.action";
+					}
+					if (receipttype[m].value == 'C') {
+						document.searchReceiptForm.action = "challan-cancelReceipt.action";
+					}
+
+				}
+			}
+
+			document.searchReceiptForm.submit();
 		}
 	}
-	//no records have been selected for view
-	if(j==0)
-	{
-		dom.get("norecordselectederror").style.display="block";
-		window.scroll(0,0);
-		return false;
+	function checkprintforselectedrecord() {
+		var check = checkselectedreceiptcount('print');
+		// more than one receipts have been chosen. should not print
+		if (check == 2) {
+			dom.get("norecordselectederror").style.display = "none";
+			dom.get("selectprinterror").style.display = "block";
+			dom.get("selectcancelerror").style.display = "none";
+			window.scroll(0, 0);
+			return false;
+		}
+		// no receipts ahev been chosen for print
+		else if (check == 0) {
+			dom.get("selectprinterror").style.display = "none";
+			dom.get("norecordselectederror").style.display = "block";
+			dom.get("selectcancelerror").style.display = "none";
+			window.scroll(0, 0);
+			return false;
+		}
+		// single receipt has been chosen. Print is allowed
+		else {
+			dom.get("selectprinterror").style.display = "none";
+			document.searchReceiptForm.action = "receipt-printReceipts.action";
+			document.searchReceiptForm.submit();
+		}
+		//document.searchReceiptForm.action="receipt-printReceipts.action";
+		//document.searchReceiptForm.submit();
 	}
-	// multiple records have been chosen . Viewing is allowed
-	else
-	{	
-		doLoadingMask('#loadingMask');
-		document.searchReceiptForm.action="receipt-viewReceipts.action";
-		document.searchReceiptForm.submit();
-	}	
 
-}
+	function validate() {
+		var fromdate = dom.get("fromDate").value;
+		var todate = dom.get("toDate").value;
+		var serviceType = dom.get("serviceType").value;
+		console.log("serviceType : " + serviceType);
+		var valSuccess = true;
+		/* if(null!= document.getElementById('serviceClass') && document.getElementById('serviceClass').value == '-1'){
+			dom.get("error_area").style.display="block";
+			dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
+			window.scroll(0,0);
+			valSuccess=false;
+			return false;
+		} */
 
-function onChangeServiceClass(obj)
-{
-    if(obj!=null && obj.value!=null && obj.value!='-1'){
-    	populateserviceType({serviceClass:obj.value});
-    }
-}
-</script> 
+		if (serviceType == -1) {
+			valSuccess = false;
+			dom.get("error_area").style.display = "block";
+			dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />'
+					+ '<br>';
+			window.scroll(0, 0);
+			return false;
+		}
+
+		if (fromdate != "" && todate != "" && fromdate != todate) {
+			if (!checkFdateTdate(fromdate, todate)) {
+				dom.get("comparedatemessage").style.display = "block";
+				window.scroll(0, 0);
+				valSuccess = false;
+				return false;
+			}
+		} else {
+			dom.get("comparedatemessage").style.display = "none";
+			doLoadingMask('#loadingMask');
+			valSuccess = true;
+			return true;
+		}
+		return valSuccess;
+
+	}
+
+	/* var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
+	 warn('improperreceiptNumberSelection');
+	 }
+	 var receiptNumberSearchSelectionHandler = function(sType, arguments) { 
+	 var oData = arguments[2];
+	 dom.get("receiptNumberSearch").value=oData[0];
+	 }
+
+
+	 var manualReceiptNumberSearchSelectionHandler = function(sType, arguments) { 
+	 var oData = arguments[2];
+	 dom.get("manualReceiptNumberSearch").value=oData[0];
+	 }
+	 var manualReceiptNumberSelectionEnforceHandler = function(sType, arguments) {
+	 warn('impropermanualReceiptNumberSelectionWarning');
+	 } */
+	function checkviewforselectedrecord() {
+		dom.get("norecordselectederror").style.display = "none";
+		dom.get("selectprinterror").style.display = "none";
+		dom.get("selectcancelerror").style.display = "none";
+		var cnt = document.getElementsByName('selectedReceipts');
+		var receiptstatus = document.getElementsByName('receiptstatus');
+		var j = 0;
+		for (i = 0; i < cnt.length; i++) {
+			if (cnt[i].checked == true) {
+				j++;
+			}
+		}
+		//no records have been selected for view
+		if (j == 0) {
+			dom.get("norecordselectederror").style.display = "block";
+			window.scroll(0, 0);
+			return false;
+		}
+		// multiple records have been chosen . Viewing is allowed
+		else {
+			doLoadingMask('#loadingMask');
+			document.searchReceiptForm.action = "receipt-viewReceipts.action";
+			document.searchReceiptForm.submit();
+		}
+
+	}
+
+	function onChangeServiceClass(obj) {
+		if (obj != null && obj.value != null && obj.value != '-1') {
+			populateserviceType({
+				serviceClass : obj.value
+			});
+		}
+	}
+</script>
 </head>
 <body>
-<div class="errorstyle" id="error_area" style="display:none;"></div>
-<span align="center" style="display: none" id="pendingreceiptcancellationerror">
-  <li>
-     <font size="2" color="red"><b><s:text name="error.pendingreceipt.cancellation"/></b></font>
-  </li>
-</span>
-<span align="center" style="display: none" id="instrumentbouncedreceiptcancellationerror">
-  <li>
-     <font size="2" color="red"><b><s:text name="error.instrumentbouncedreceipt.cancellation"/></b></font>
-  </li>
-</span>
-<span align="center" style="display: none" id="remittedreceiptcancellationerror">
-  <li>
-     <font size="2" color="red"><b><s:text name="error.remittedreceipt.cancellation"/></b></font>
-  </li>
-</span>
-<span align="center" style="display: none" id="onlinereceiptcancellationerror">
-  <li>
-     <font size="2" color="red"><b><s:text name="error.onlinereceipt.cancellation"/></b></font>
-  </li>
-</span>
-<span align="center" style="display: none" id="selectprinterror">
-  <li>
-     <font size="2" color="red"><b><s:text name="error.print.nomultipleprintreceipts"/>  </b></font>
-  </li>
-</span>
-<span align="center" style="display: none" id="selectcancelerror">
-  <li>
-     <font size="2" color="red"><b><s:text name="error.print.nomultiplecancelreceipts"/>  </b></font>
-  </li>
-</span>
-<span align="center" style="display: none" id="norecordselectederror">
-  <li>
-     <font size="2" color="red"><b><s:text name="error.norecordselected"/></b></font>
-  </li>
-</span>
-<span align="center" style="display: none" id="selectedcancelledreceiptserror">
-  <li>
-     <font size="2" color="red"><b><s:text name="error.selectedcancelledreceiptserror"/></b></font>
-  </li>
-</span>
-<span align="center" style="display: none" id="invaliddateformat">
-  <li>
-     <font size="2" color="red"><b>
-		<s:text name="common.dateformat.errormessage"/>
-	</b></font>
-  </li>
-</span>
-<span align="center" style="display: none" id="comparedatemessage">
-  <li>
-     <font size="2" color="red"><b>
-		<s:text name="common.comparedate.errormessage"/>
-	</b></font>
-  </li>
-</span>
-<s:if test="%{hasErrors()}">
-	<div align="center">
-	    <div id="actionErrorMessages" class="alert alert-danger">
-	      <s:actionerror/>
-	      <s:fielderror/>	      
-	    </div>
-	</div>
-</s:if>
-<s:form theme="simple" name="searchReceiptForm" action="searchReceipt-search.action">
-<div class="formmainbox"><div class="subheadnew"><s:text name="searchreceipts.title"/>
-</div>
-<div class="subheadsmallnew"><span class="subheadnew"><s:text name="searchreceipts.criteria"/></span></div>
-<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<div class="errorstyle" id="error_area" style="display: none;"></div>
+	<span align="center" style="display: none"
+		id="pendingreceiptcancellationerror">
+		<li><font size="2" color="red"><b><s:text
+						name="error.pendingreceipt.cancellation" /></b></font></li>
+	</span>
+	<span align="center" style="display: none"
+		id="instrumentbouncedreceiptcancellationerror">
+		<li><font size="2" color="red"><b><s:text
+						name="error.instrumentbouncedreceipt.cancellation" /></b></font></li>
+	</span>
+	<span align="center" style="display: none"
+		id="remittedreceiptcancellationerror">
+		<li><font size="2" color="red"><b><s:text
+						name="error.remittedreceipt.cancellation" /></b></font></li>
+	</span>
+	<span align="center" style="display: none"
+		id="onlinereceiptcancellationerror">
+		<li><font size="2" color="red"><b><s:text
+						name="error.onlinereceipt.cancellation" /></b></font></li>
+	</span>
+	<span align="center" style="display: none" id="selectprinterror">
+		<li><font size="2" color="red"><b><s:text
+						name="error.print.nomultipleprintreceipts" /> </b></font></li>
+	</span>
+	<span align="center" style="display: none" id="selectcancelerror">
+		<li><font size="2" color="red"><b><s:text
+						name="error.print.nomultiplecancelreceipts" /> </b></font></li>
+	</span>
+	<span align="center" style="display: none" id="norecordselectederror">
+		<li><font size="2" color="red"><b><s:text
+						name="error.norecordselected" /></b></font></li>
+	</span>
+	<span align="center" style="display: none"
+		id="selectedcancelledreceiptserror">
+		<li><font size="2" color="red"><b><s:text
+						name="error.selectedcancelledreceiptserror" /></b></font></li>
+	</span>
+	<span align="center" style="display: none" id="invaliddateformat">
+		<li><font size="2" color="red"><b> <s:text
+						name="common.dateformat.errormessage" />
+			</b></font></li>
+	</span>
+	<span align="center" style="display: none" id="comparedatemessage">
+		<li><font size="2" color="red"><b> <s:text
+						name="common.comparedate.errormessage" />
+			</b></font></li>
+	</span>
+	<s:if test="%{hasErrors()}">
+		<div align="center">
+			<div id="actionErrorMessages" class="alert alert-danger">
+				<s:actionerror />
+				<s:fielderror />
+			</div>
+		</div>
+	</s:if>
+	<s:form theme="simple" name="searchReceiptForm"
+		action="searchReceipt-search.action">
+		<div class="formmainbox">
+			<div class="subheadnew">
+				<s:text name="searchreceipts.title" />
+			</div>
+			<div class="subheadsmallnew">
+				<span class="subheadnew"><s:text
+						name="searchreceipts.criteria" /></span>
+			</div>
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" />
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-	    <tr>
-	      <td width="4%" class="bluebox">&nbsp;</td>
-	      <td class="bluebox"><s:text name="service.master.classification"/> <span class="mandatory"></td>
-			<td class="bluebox"> 
-				<%-- <s:select list="serviceClassMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
+				<tr>
+					<td width="2%" class="bluebox">&nbsp;</td>
+					<td width="15%" class="bluebox"><s:text
+							name="service.master.classification" /> <span class="mandatory"></td>
+					<td width="30%" class="bluebox">
+						<%-- <s:select list="serviceClassMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
 				name="serviceClass" id="serviceClass" onchange="onChangeServiceClass(this);"></s:select> --%>
-				<s:select name='type' list="#{'type':'MISCELLANEOUS' }"></s:select>
-			</td>
-			<%--  <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='serviceType'
+						<s:select name='type' list="#{'type':'MISCELLANEOUS' }"></s:select>
+					</td>
+					<td width="15%" class="bluebox"><s:text
+							name="searchreceipts.criteria.receiptno" /></td>
+					<td width="30%" class="bluebox">
+						<div class="yui-skin-sam">
+							<s:textfield id="receiptNumber" type="text" name="receiptNumber" />
+					</td>
+					<%--  <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='serviceType'
                 url='receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action' /> --%>
-	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.servicetype"/> <span class="mandatory"></td>
-	      <td width="24%" class="bluebox"><s:select headerKey="-1"  headerValue="%{getText('searchreceipts.servicetype.select')}"  name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="code" listValue="businessService" value="%{serviceTypeId}" /> </td>
-	      
-	      <%-- <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
+					<!--   <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.servicetype"/> <span class="mandatory"></td>
+	        <td width="24%" class="bluebox"><s:select headerKey="-1"  headerValue="%{getText('searchreceipts.servicetype.select')}"  name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="code" listValue="businessService" value="%{serviceTypeId}" /> </td>-->
+
+					<%-- <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
 	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td> --%>
-	    </tr>
-	     <tr>
-	      <td width="4%" class="bluebox">&nbsp;</td>
-	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.fromdate"/></td>
-		  <s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy"/>
-		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/services/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
-	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.todate"/></td>
-	      <s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy"/>
-		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/services/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
-	    </tr>
-	    <tr>
+				</tr>
+				<tr>
+					<td width="2%" class="bluebox">&nbsp;</td>
+					<td width="15%" class="bluebox"><s:text
+							name="searchreceipts.criteria.fromdate" /></td>
+					<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
+					<td width="30%" class="bluebox"><s:textfield id="fromDate"
+							name="fromDate" value="%{cdFormat}"
+							onfocus="javascript:vDateType='3';"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('forms[0].fromDate');"
+						onmouseover="window.status='Date Picker';return true;"
+						onmouseout="window.status='';return true;"><img
+							src="/services/egi/resources/erp2/images/calendaricon.gif"
+							alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
+					<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+					<td width="15%" class="bluebox"><s:text
+							name="searchreceipts.criteria.todate" /></td>
+					<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
+					<td width="30%" class="bluebox"><s:textfield id="toDate"
+							name="toDate" value="%{cdFormat1}"
+							onfocus="javascript:vDateType='3';"
+							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
+						href="javascript:show_calendar('forms[0].toDate');"
+						onmouseover="window.status='Date Picker';return true;"
+						onmouseout="window.status='';return true;"><img
+							src="/services/egi/resources/erp2/images/calendaricon.gif"
+							alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
+					<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+				</tr>
+				<tr>
+					<td width="2%" class="bluebox">&nbsp;</td>
+					<td width="15%" class="bluebox"><s:text
+							name="searchreceipts.criteria.servicetype" /> <span
+						class="mandatory"></td>
+					<td width="30%" class="bluebox"><s:select headerKey="-1"
+							headerValue="%{getText('miscreceipt.select')}"
+							name="serviceCategory" id="serviceCategoryid" cssClass="selectwk"
+							list="serviceCategoryNames" value="%{serviceCategory}"
+							onChange="populateServiceType(this.value);" /></td>
+					<td width="15%" class="bluebox" id="serviceTypeLabel"></td>
+					<td width="30%" class="bluebox" id="serviceTypeCell"></td>
+				</tr>
+
+
+
+				<!--  <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.receiptno"/></td>
 	      <td width="24%" class="bluebox">
@@ -445,8 +517,8 @@ function onChangeServiceClass(obj)
 	     <%--  <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.user"/></td>
 	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.user.select')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.userList" listKey="id" listValue="name" value="%{userId}" /> </td>
 	    --%>
-	    </tr>	    
-	 <%--    <tr>
+	    </tr>-->
+				<%--    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.status"/></td>
 	      <td width="24%" class="bluebox"><s:select id="searchStatus" name="searchStatus" headerKey="-1" headerValue="%{getText('searchreceipts.status.select')}" cssClass="selectwk" list="%{receiptStatuses}" value="%{searchStatus}" listKey="id" listValue="description" /> </td>
@@ -460,7 +532,7 @@ function onChangeServiceClass(obj)
 	      <td width="21%" class="bluebox"> &nbsp; </td>
 	      <td width="30%" class="bluebox"> &nbsp; </td>   
 	    </tr> --%>
-	   <%--  
+				<%--  
 	    <tr>
 					<td>
 						<div class="subheadsmallnew"><span class="subheadnew">
@@ -480,63 +552,94 @@ function onChangeServiceClass(obj)
 	      <td width="21%" class="bluebox">&nbsp;</td>
 	      <td width="30%" class="bluebox">&nbsp;</td>
 	    </tr> --%>
-	    </table>
-		<%-- <div align="left" class="mandatory1">
+			</table>
+			<%-- <div align="left" class="mandatory1">
 		              <s:text name="report.bankbranch.note"/>
 		</div> --%>
-</div>
-<div id="loadingMask" style="display: none; overflow: hidden; text-align: center"><img src="/services/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
-    <div class="buttonbottom">
-      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" key="lbl.search" onclick="return validate();"/></label>
-      <label><s:submit type="submit" cssClass="button" key="lbl.reset" onclick="document.searchReceiptForm.action='searchReceipt-reset.action'"/></label>
-      <s:if test="%{results.isEmpty()}">
-      	<input name="closebutton" type="button" class="button" id="closebutton" value="<s:text name='lbl.close'/>" onclick="window.close();"/>
-      </s:if>
-      
-</div>
-<s:if test='%{resultList.isEmpty()}'>
-		<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
-		<tr> 
-			<div>&nbsp;</div>
-			<div class="subheadnew"><s:text name="searchresult.norecord"/></div>
-		</tr>
-		</table>
-</s:if>
-<s:if test='%{!resultList.isEmpty()}'>
+		</div>
+		<div id="loadingMask"
+			style="display: none; overflow: hidden; text-align: center">
+			<img src="/services/collection/resources/images/bar_loader.gif" /> <span
+				style="color: red">Please wait....</span>
+		</div>
+		<div class="buttonbottom">
+			<label><s:submit type="submit" cssClass="buttonsubmit"
+					id="button" key="lbl.search" onclick="return validate();" /></label> <label><s:submit
+					type="submit" cssClass="button" key="lbl.reset"
+					onclick="document.searchReceiptForm.action='searchReceipt-reset.action'" /></label>
+			<s:if test="%{results.isEmpty()}">
+				<input name="closebutton" type="button" class="button"
+					id="closebutton" value="<s:text name='lbl.close'/>"
+					onclick="window.close();" />
+			</s:if>
 
-<div align="center">		
-<display:table name="searchResult" uid="currentRow"  style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0" cellspacing="0" export="false" requestURI="">
-<display:caption media="pdf">&nbsp;</display:caption>
-<display:column headerClass="bluebgheadtd"  class="blueborderfortd" style="width:3%">
-<s:if test='%{collectionVersion eq "V2"}'>
-<input name="selectedReceipts" type="checkbox" id="selectedReceipts"
-				value="${currentRow.paymentId}"/>
-</s:if>
-<s:else>
-<input name="selectedReceipts" type="checkbox" id="selectedReceipts"
-				value="${currentRow.receiptnumber}"/>
-</s:else>
-<input type="hidden" name="receiptstatus" id="receiptstatus" value="${currentRow.curretnStatus}" />
-<input type="hidden" name="receipttype" id="receipttype" value="${currentreceipttype}" />
-</display:column>
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Receipt No." style="width:8%;text-align:right" property="receiptnumber"/>
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptdate" title="Receipt Date" format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" />
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="G8 Receipt number/Date" style="width:8%;text-align:right" property="g8data"/>
-<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="manualreceiptdate" title="G8 Receipt Date" format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" /> --%>
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service" style="width:12%;text-align:left" property="service" />
-<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" style="width:8%;text-align:right" property="referencenumber" /> --%>
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Narration" style="width:27%;text-align:left" property="referenceDesc" />
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Paid By" style="width:27%;text-align:left" property="paidBy" />
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Amount (Rs.)" property="totalAmount" style="width:8%; text-align: right" format="{0, number, #,##0.00}" />
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Mode of Payment" style="width:8%"  property="modOfPayment"/>
-<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-    title="Fund Name" style="width:10%;text-align:left"
-    property="fund" />
+		</div>
+		<s:if test='%{resultList.isEmpty()}'>
+			<table width="90%" border="0" align="center" cellpadding="0"
+				cellspacing="0" class="tablebottom">
+				<tr>
+					<div>&nbsp;</div>
+					<div class="subheadnew">
+						<s:text name="searchresult.norecord" />
+					</div>
+				</tr>
+			</table>
+		</s:if>
+		<s:if test='%{!resultList.isEmpty()}'>
 
-<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-    title="Ward No" style="width:10%;text-align:left"
-    property="wardNo" />
-<%-- <div align="center">
+			<div align="center">
+				<display:table name="searchResult" uid="currentRow"
+					style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0"
+					cellspacing="0" export="false" requestURI="">
+					<display:caption media="pdf">&nbsp;</display:caption>
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						style="width:3%">
+						<s:if test='%{collectionVersion eq "V2"}'>
+							<input name="selectedReceipts" type="checkbox"
+								id="selectedReceipts" value="${currentRow.paymentId}" />
+						</s:if>
+						<s:else>
+							<input name="selectedReceipts" type="checkbox"
+								id="selectedReceipts" value="${currentRow.receiptnumber}" />
+						</s:else>
+						<input type="hidden" name="receiptstatus" id="receiptstatus"
+							value="${currentRow.curretnStatus}" />
+						<input type="hidden" name="receipttype" id="receipttype"
+							value="${currentreceipttype}" />
+					</display:column>
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Receipt No." style="width:8%;text-align:right"
+						property="receiptnumber" />
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						property="receiptdate" title="Receipt Date"
+						format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" />
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="G8 Receipt number/Date" style="width:8%;text-align:right"
+						property="g8data" />
+					<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="manualreceiptdate" title="G8 Receipt Date" format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" /> --%>
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Service" style="width:12%;text-align:left"
+						property="service" />
+					<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" style="width:8%;text-align:right" property="referencenumber" /> --%>
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Narration" style="width:27%;text-align:left"
+						property="referenceDesc" />
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Paid By" style="width:27%;text-align:left"
+						property="paidBy" />
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Amount (Rs.)" property="totalAmount"
+						style="width:8%; text-align: right" format="{0, number, #,##0.00}" />
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Mode of Payment" style="width:8%" property="modOfPayment" />
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Fund Name" style="width:10%;text-align:left"
+						property="fund" />
+
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Ward No" style="width:10%;text-align:left"
+						property="wardNo" />
+					<%-- <div align="center">
 <s:set var="instrtype" value="" />
 <s:iterator status="stat1" value="#attr.currentRow.receiptInstrument">
 <s:if test="instrumentType.type!=null">
@@ -548,21 +651,28 @@ function onChangeServiceClass(obj)
 </div>
 <input type="hidden" name="instrumenttype" id="instrumenttype" value="${instrtype}" />
 </display:column> --%>
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Status" style="width:8%;text-align:center" property="curretnStatus"></display:column>
-<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Owner" style="width:8%;text-align:center" property="workflowUserName"></display:column> --%>
-</display:table>	 
-</div>
-<br/>
-<div class="buttonbottom">
-  <input name="button32" type="button" class="buttonsubmit" id="button32" value="View" onclick="return checkviewforselectedrecord()"/>
-  <input name="button32" type="button" class="buttonsubmit" id="button32" value="Print" onclick="return checkprintforselectedrecord()"/> 
-   <%-- <egov-authz:authorize actionName="CancelReceipt">
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Status" style="width:8%;text-align:center"
+						property="curretnStatus"></display:column>
+					<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Owner" style="width:8%;text-align:center" property="workflowUserName"></display:column> --%>
+				</display:table>
+			</div>
+			<br />
+			<div class="buttonbottom">
+				<input name="button32" type="button" class="buttonsubmit"
+					id="button32" value="View"
+					onclick="return checkviewforselectedrecord()" /> 
+					<input name="button32" type="button" class="buttonsubmit" id="button32"
+					value="Print" onclick="return checkprintforselectedrecord()" />
+				<%-- <egov-authz:authorize actionName="CancelReceipt">
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="Cancel Receipt" onclick="return checkcancelforselectedrecord()"/>
   </egov-authz:authorize> --%>
-  <input name="button32" type="button" class="button" id="button32" value="<s:text name='lbl.close'/>" onclick="window.parent.postMessage('close','*');window.close();"/>
-</div>
-</s:if>
-</s:form>
+				<input name="button32" type="button" class="button" id="button32"
+					value="<s:text name='lbl.close'/>"
+					onclick="window.parent.postMessage('close','*');window.close();" />
+			</div>
+		</s:if>
+	</s:form>
 </body>
 
-	
+

@@ -65,5 +65,46 @@
 		<h1><s:property value="message"/></h1>
 	</font>
 </span>
+
+<s:form theme="simple" name="printReceiptForm" 
+        action="/receipts/receipt-printReceipts.action">
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    
+    <s:hidden name="selectedReceipts" 
+              value="%{selectedReceipts[0]}"/>
+
+    <s:hidden name="serviceTypeId" 
+              value="%{serviceTypeId}"/>
+</s:form>
+
+<div class="buttonbottom">
+    <input type="button" 
+           class="buttonsubmit" 
+           value="Print Receipt" 
+           onclick="return submitPrint()"/>
+    <input type="button" 
+           class="button" 
+           value="Close" 
+           onclick="window.close();"/>
+</div>
+
+<script>
+function submitPrint() {
+    var receiptNo   = '<s:property value="selectedReceipts[0]"/>';
+    var serviceType = '<s:property value="serviceTypeId"/>';
+
+    if (!receiptNo || receiptNo === '' || receiptNo === 'null') {
+        alert('Receipt number is not available!');
+        return false;
+    }
+    if (!serviceType || serviceType === '-1' || serviceType === 'null') {
+        alert('Service Type is missing!');
+        return false;
+    }
+
+    document.printReceiptForm.submit();
+    return true;
+}
+</script>
 </body>
 	

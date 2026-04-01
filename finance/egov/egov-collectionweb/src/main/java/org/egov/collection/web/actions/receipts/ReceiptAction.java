@@ -284,9 +284,11 @@ public class ReceiptAction extends BaseFormAction {
 	
 	private String fund;
     private String wardNo;
+    private String referenceDesc;
 
 	@Autowired
 	private transient FundHibernateDAO fundDAO;
+
 
 	@Autowired
 	private transient FunctionHibernateDAO functionDAO;
@@ -743,6 +745,7 @@ public class ReceiptAction extends BaseFormAction {
 			receiptHeader.setModOfPayment(instrumentType);
 			receiptHeader.setWardNo(wardNo);
 			receiptHeader.setFund(fund);
+			receiptHeader.setReferenceDesc(referenceDesc);
 			
 
 			if (setInstrument) {
@@ -783,9 +786,16 @@ public class ReceiptAction extends BaseFormAction {
         System.out.println(receiptResponse);
 		message = "Receipt created with receipt number: "
 				+ receiptResponse.getReceipts().get(0).getBill().get(0).getBillDetails().get(0).getReceiptNumber();
+		
+		String businessService = receiptResponse.getReceipts().get(0)
+		        .getBill().get(0).getBillDetails().get(0).getBusinessService();
+		if (serviceTypeId == null || serviceTypeId.isEmpty() || serviceTypeId.equals("-1")) {
+		    serviceTypeId = businessService;
+		}
 		// populate all receipt header ids except the cancelled receipt
 		// (in effect the newly created receipts)
 		selectedReceipts = new String[noOfNewlyCreatedReceipts];
+		selectedReceipts[0]=receiptResponse.getReceipts().get(0).getBill().get(0).getBillDetails().get(0).getReceiptNumber();
 		int i = 0;
 		if (receiptHeader.getId() != null && !receiptHeader.getId().equals(oldReceiptId)) {
 			selectedReceipts[i] = receiptHeader.getReceiptnumber();
@@ -1094,8 +1104,13 @@ public class ReceiptAction extends BaseFormAction {
 			throw new ApplicationRuntimeException("Service Type is missing");
 
 		receipts = new ReceiptHeader[selectedReceipts.length];
-
-		List<Receipt> receiptlist = this.microserviceUtils.searchReciepts(null, null, null, getServiceTypeId(),
+		String sTypeId;
+		if(getServiceTypeId().contains(".")) 
+			sTypeId=getServiceTypeId();
+		else
+			sTypeId=getServiceCategory()+"."+getServiceTypeId();
+		
+		List<Receipt> receiptlist = this.microserviceUtils.searchReciepts(null, null, null, sTypeId,
 				Arrays.asList(selectedReceipts));
 
 		receiptlist.stream().forEach(receipt -> {
@@ -1115,7 +1130,7 @@ public class ReceiptAction extends BaseFormAction {
 					String businessServiceCode = billDetail.getBusinessService();
 					receiptHeader.setService(microserviceUtils.getBusinessServiceNameByCode(businessServiceCode));
 					receiptHeader.setReferencenumber(billDetail.getBillNumber());
-					receiptHeader.setReferenceDesc(billDetail.getBillDescription());
+					receiptHeader.setReferenceDesc(additionalDetails.get("narration")!=null?additionalDetails.get("narration").asText():null);
 					receiptHeader.setPaidBy(bill.getPaidBy());
 					receiptHeader.setPayeeName(bill.getPayerName());
 					receiptHeader.setPayeeAddress(bill.getPayerAddress());

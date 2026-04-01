@@ -55,6 +55,13 @@
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <style type="text/css">
+
+		select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+
 #codescontainer {
 	position: absolute;
 	left: 11em;
@@ -173,73 +180,81 @@
 
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="voucher.fund" /><span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="voucher.fund" /><span
 						class="mandatory1">*</span></td>
-					<td class="bluebox"><s:select name="fundId" id="fundId"
+					<td class="bluebox w25"><s:select name="fundId" id="fundId"
 							list="dropdownData.fundList" listKey="id" listValue="name"
 							headerKey="-1" headerValue="%{getText('lbl.choose.options')}" 
 							onChange="loadBank(this);" value="%{fundId.id}" /></td>
-					<td class="bluebox"><s:text name="voucher.department" />
-					<td class="bluebox"><s:select name="departmentcode"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="voucher.department" />
+					<td class="bluebox w25"><s:select name="departmentcode"
 							id="departmentcode" list="dropdownData.departmentList" listKey="code"
 							listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" 
 							onChange="alertWhileSelectingDepartment(this);"
 							value="%{departmentcode}" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
-					<td class="bluebox"></td>
-					<td class="greybox"><s:text name="report.rtgsassignedfromdate" />:</td>
-					<td class="greybox"><s:date name="fromDate" var="fromDateId"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="report.rtgsassignedfromdate" />:</td>
+					<td class="greybox w25"><s:date name="fromDate" var="fromDateId"
 							format="dd/MM/yyyy" /> <s:textfield id="rtgsAssignedFromDate"
 							name="rtgsAssignedFromDate" value="%{fromDateId}"
 							data-date-end-date="0d"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 							data-inputmask="'mask': 'd/m/y'" /></td>
-					<td class="greybox"><s:text name="report.rtgsassignedtodate" />:</td>
-					<td class="greybox"><s:date name="toDate" var="toDateId"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="report.rtgsassignedtodate" />:</td>
+					<td class="greybox w25"><s:date name="toDate" var="toDateId"
 							format="dd/MM/yyyy" /> <s:textfield id="rtgsAssignedToDate"
 							name="rtgsAssignedToDate" value="%{toDateId}"
 							data-date-end-date="0d"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 							data-inputmask="'mask': 'd/m/y'" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
-					<td class="bluebox"></td>
+					<td class="bluebox w5">&nbsp;</td>
 					<egov:ajaxdropdown id="bank" fields="['Text','Value']"
 						dropdownId="bank"
 						url="voucher/common-ajaxLoadAllBanksByFund.action" />
-					<td class="bluebox"><s:text name="bank" />:</td>
-					<td class="bluebox"><s:select name="bank" id="bank"
+					<td class="bluebox w15"><s:text name="bank" />:</td>
+					<td class="bluebox w25"><s:select name="bank" id="bank"
 							list="dropdownData.bankList" listKey="id" listValue="name"
 							headerKey="-1" headerValue="%{getText('lbl.choose.options')}" 
 							onclick="validateFund()" onChange="populateBankBranch(this);" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 					<egov:ajaxdropdown id="bankbranch" fields="['Text','Value']"
 						dropdownId="bankbranch"
 						url="voucher/common-ajaxLoadBankBranchFromBank.action" />
-					<td class="bluebox"><s:text name="bankbranch" />:</td>
-					<td class="bluebox"><s:select name="bankbranch.id"
+					<td class="bluebox w15"><s:text name="bankbranch" />:</td>
+					<td class="bluebox w25"><s:select name="bankbranch.id"
 							id="bankbranch" list="dropdownData.bankBranchList" listKey="id"
 							listValue="branchname" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}" 
 							onChange="populateBankAccount(this);" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
-					<td class="bluebox"></td>
+					<td class="bluebox w5">&nbsp;</td>
 					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
 						dropdownId="bankaccount"
 						url="voucher/common-ajaxLoadBankAccFromBranch.action" />
-					<td class="greybox"><s:text name="bankaccount" />:</td>
-					<td class="greybox"><s:select name="bankaccount.id"
+					<td class="greybox w15"><s:text name="bankaccount" />:</td>
+					<td class="greybox w25"><s:select name="bankaccount.id"
 							id="bankaccount" list="dropdownData.accNumList" listKey="id"
 							listValue="accountnumber" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}"  /></td>
-					<td class="greybox"><s:text name="report.rtgsnumber" />:</td>
-					<td class="greybox"><input type="text" name="instrumentnumber"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="report.rtgsnumber" />:</td>
+					<td class="greybox w25"><input type="text" name="instrumentnumber"
 						id="instrumentnumber" autocomplete="off"
-						onfocus='autocompleteRTGSNumbers(this);' /></td>
+						onfocus='autocompleteRTGSNumbers(this);' class="w100"/></td>
+					<td class="bluebox w5">&nbsp;</td>
 
 				</tr>
 			</table>

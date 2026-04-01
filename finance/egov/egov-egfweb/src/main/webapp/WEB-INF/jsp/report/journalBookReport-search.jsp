@@ -54,6 +54,13 @@
 <head>
 <title><s:text name="journalBook.search.title" /></title>
 <style type="text/css">
+
+		select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+
 #codescontainer {
 	position: absolute;
 	left: 11em;
@@ -138,48 +145,56 @@
 				<s:hidden name="fundName" id="fundName" value="%{fundName}" />
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td class="bluebox"><s:text name="journalBook.startDate" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="journalBook.startDate" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:date name="startDate" var="startDate"
+						<td class="bluebox w25"><s:date name="startDate" var="startDate"
 								format="dd/MM/yyyy" /> <s:textfield id="startDate"
 								name="startDate" value="%{startDate}" data-date-end-date="0d"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 								data-inputmask="'mask': 'd/m/y'" /></td>
 
-
-						<td class="bluebox"><s:text name="journalBook.endDate" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="journalBook.endDate" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:date name="endDate" var="endDate"
+						<td class="bluebox w25"><s:date name="endDate" var="endDate"
 								format="dd/MM/yyyy" /> <s:textfield id="endDate" name="endDate"
 								value="%{endDate}" data-date-end-date="0d"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 								data-inputmask="'mask': 'd/m/y'" /></td>
+						<td class="bluebox w5">&nbsp;</td>
 
 					</tr>
 					<tr>
-						<td class="greybox"><s:text name="journalBook.fund" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="journalBook.fund" /><span
 							class="mandatory1">*</span></td>
-						<td class="greybox"><s:select name="fund_id" id="fund_id"
+						<td class="greybox w25"><s:select name="fund_id" id="fund_id"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="" headerValue="----Choose----" /></td>
-						<td class="greybox"><s:text name="journalBook.voucherName" /></td>
-						<td class="greybox"><s:select name="voucher_name"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="journalBook.voucherName" /></td>
+						<td class="greybox w25"><s:select name="voucher_name"
 								id="voucher_name" list="dropdownData.voucherNameList"
 								headerKey="" headerValue="----Choose----" /></td>
+						<td class="bluebox w5">&nbsp;</td>
 
 					</tr>
 
 					<tr>
-						<td class="bluebox"><s:text name="journalBook.function" /></td>
-						<td class="bluebox"><s:select name="functionId"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="journalBook.function" /></td>
+						<td class="bluebox w25"><s:select name="functionId"
 								id="functionId" list="dropdownData.functionList" listKey="id"
 								listValue="name" headerKey="" headerValue="----Choose----" /></td>
-						<td class="bluebox"><s:text name="journalBook.department" /></td>
-						<td class="bluebox"><s:select name="dept_name" id="dept_name"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="journalBook.department" /></td>
+						<td class="bluebox w25"><s:select name="dept_name" id="dept_name"
 								list="dropdownData.departmentList" listKey="code" listValue="name"
 								headerKey="" headerValue="----Choose----" /></td>
+						<td class="bluebox w5">&nbsp;</td>
 					</tr>
 
 				</table>

@@ -65,6 +65,31 @@
 <s:else>
 	<title><s:text name="lbl.bill.payment.search"/> </title>
 </s:else>
+
+<style>
+
+
+select,
+input[type="text"] {
+    width: 100% !important;
+    
+}
+.w5  { width: 5% !important; }
+.w15 { width: 15% !important; }
+.w25 { width: 25% !important; }
+.w100{ width:100% !important; }
+.w20{ width: 20% !important; }
+
+
+
+
+
+.formmainbox td[style*="width"] {
+    width: auto !important;
+} */
+
+</style>
+
 </head>
 <body>
 	<s:form action="payment" theme="simple">
@@ -82,39 +107,44 @@
 					test="%{disableExpenditureType == true && enablePensionType == true}"><s:text name="lbl.pension.bill.payment.search"/></s:elseif>
 				<s:else><s:text name="lbl.bill.payment.search"/></s:else>
 			</div>
-			<table align="center" width="100%" cellpadding="0" cellspacing="0">
+			<table>
 				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="payment.billnumber" /></td>
-					<td class="bluebox"><s:textfield name="billNumber"
+					<td class="bluebox w5"></td>
+					<td class="bluebox w15"><s:text name="payment.billnumber" /></td>
+					<td class="bluebox w20"><s:textfield name="billNumber"
 							id="billNumber" maxlength="25" value="%{billNumber}" /></td>
-					<td class="bluebox"></td>
-					<td class="bluebox"></td>
+					<td class="bluebox w5"></td>
+					<td class="bluebox w15"></td>
+					<td class="bluebox w20"></td>
 				</tr>
 				<tr>
-					<td class="bluebox"></td>
-					<td class="greybox"><s:text name="payment.billdatefrom" /></td>
-					<td class="greybox"><s:textfield id="fromDate" name="fromDate"
+					<td class="bluebox w5"></td>
+					<td class="greybox w15"><s:text name="payment.billdatefrom" /></td>
+					<td class="greybox w20"><s:textfield id="fromDate" name="fromDate"
 							value="%{fromDate}" data-date-end-date="0d"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" class="form-control datepicker"
-							data-inputmask="'mask': 'd/m/y'" /></td>
-					<td class="greybox"><s:text name="payment.billdateto" /></td>
-					<td class="greybox"><s:textfield id="toDate" name="toDate"
+							data-inputmask="'mask': 'd/m/y'"/></td>
+					<td class="bluebox w5"></td>
+					<td class="greybox w15"><s:text name="payment.billdateto" /></td>
+					<td class="greybox w20"><s:textfield id="toDate" name="toDate"
 							value="%{toDate}" data-date-end-date="0d"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" class="form-control datepicker"
-							data-inputmask="'mask': 'd/m/y'" /></td>
+							data-inputmask="'mask': 'd/m/y'"/></td>
+							<!-- <td class="bluebox w5"></td> -->
 				</tr>
 				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="payment.expendituretype" />
+					<td class="bluebox w5"></td>
+					<td class="bluebox w15"><s:text name="payment.expendituretype" />
 					</td>
-					<td class="bluebox"><s:select name="expType" id="expType"
+					<td class="bluebox w20"><s:select name="expType" id="expType"
 							list="#{'-1':'----Choose----','Purchase':'Purchase','Works':'Works','Expense':'Expense'}"
-							value="%{expType}" /></td>
-					<td class="bluebox"></td>
-					<td class="bluebox"></td>
+							value="%{expType}" cssClass="w100"/></td>
+					<td class="bluebox w5"></td>
+					<td class="bluebox w15"></td>
+					<td class="bluebox w20"></td>
+					<!-- <td class="bluebox w5"></td> -->
 
 				</tr>
 				<jsp:include page="../payment/paymenttrans-filter.jsp" />

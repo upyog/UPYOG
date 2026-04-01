@@ -54,7 +54,12 @@
 <head>
 <title><s:text name="generalLedger.search.title" /></title>
 <style type="text/css">
-#codescontainer {
+		select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+#codescontainer {	
 	position: absolute;
 	left: 11em;
 	width: 9%;
@@ -144,60 +149,67 @@ background: #DEDEDE;
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<div id="myContainer"></div> 
-						<td class="bluebox"><s:text name="generalLedger.accountCode" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="generalLedger.accountCode" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield id="glCode1" name="glCode1"
+						<td class="bluebox w25"><s:textfield id="glCode1" name="glCode1"
 								value="%{glCode1}" autocomplete="off"
 								onfocus='autocompleteAccountCodes(this);'
-								onblur='splitAccountCodes(this);' />
+								onblur='splitAccountCodes(this);' class="w100"/>
 							 </td>
-						<td class="greybox"><s:text name="generalLedger.accountName" /></td>
-						<td class="greybox">
-						<s:textfield disabled="true" name="accountName" id="accountName"></s:textfield>
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="generalLedger.accountName" /></td>
+						<td class="greybox w25">
+						<s:textfield disabled="true" name="accountName" id="accountName" class="w100"></s:textfield>
 							 </td>
+						<td class="bluebox w5">&nbsp;</td>
 					</tr>
 					<tr>
-						<td class="greybox"><s:text name="generalLedger.fund" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="greybox w15"><s:text name="generalLedger.fund" /><span
 							class="mandatory1">*</span></td>
-						<td class="greybox"><s:select name="fund_id" id="fund_id"
+						<td class="greybox w25"><s:select name="fund_id" id="fund_id"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="" headerValue="%{getText('lbl.choose.options')}" /></td>
-								
-						<td class="greybox"><s:text name="generalLedger.department" /></td>
-						<td class="greybox"><s:select name="departmentCode"
+						<td class="bluebox w5">&nbsp;</td>	
+						<td class="greybox w15"><s:text name="generalLedger.department" /></td>
+						<td class="greybox w25"><s:select name="departmentCode"
 								id="departmentCode" list="dropdownData.departmentList"
 								listKey="code" listValue="name" headerKey=""   
 								headerValue="%{getText('lbl.choose.options')}" /></td>
+						<td class="bluebox w5">&nbsp;</td>
 						
 					</tr>
 					<tr>
-						<td class="bluebox"><s:text name="generalLedger.startDate" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="generalLedger.startDate" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:date name="startDate" var="startDate"
+						<td class="bluebox w25"><s:date name="startDate" var="startDate"
 								format="dd/MM/yyyy" /> <s:textfield id="startDate"
 								name="startDate" value="%{startDate}" data-date-end-date="0d"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 								data-inputmask="'mask': 'd/m/y'" /></td>
 
-
-						<td class="bluebox"><s:text name="generalLedger.endDate" /><span
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="generalLedger.endDate" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:date name="endDate" var="endDate"
+						<td class="bluebox w25"><s:date name="endDate" var="endDate"
 								format="dd/MM/yyyy" /> <s:textfield id="endDate" name="endDate"
 								value="%{endDate}" data-date-end-date="0d"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 								data-inputmask="'mask': 'd/m/y'" /></td>
-
+						<td class="bluebox w5">&nbsp;</td>
 
 					</tr>
 					<tr>
-						<td class="bluebox"><s:text name="generalLedger.function" /></td>
-						<td class="bluebox"><s:textfield id="functionCode"
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="generalLedger.function" /></td>
+						<td class="bluebox w25"><s:textfield id="functionCode"
 								name="functionCode" value="%{functionCode}" autocomplete="off"
 								onfocus='autocompleteFunction(this);'
-								onblur='splitFunction(this);' /></td>
+								onblur='splitFunction(this);' class="w100" /></td>
 						<%-- <td class="greybox"><s:text name="generalLedger.functionary" /></td>
 						<td class="greybox"><s:select name="functionaryId"
 								id="functionaryId" list="dropdownData.functionaryList"
@@ -205,7 +217,6 @@ background: #DEDEDE;
 								headerValue="%{getText('lbl.choose.options')}" /></td> --%>
 
 					</tr>
-					<tr>
 						<%-- <td class="greybox"><s:text
 								name="generalLedger.financingSource" /></td>
 						<td class="greybox"><s:select name="fundSource_id"
@@ -218,7 +229,6 @@ background: #DEDEDE;
 								list="dropdownData.fieldList" listKey="id" listValue="name"
 								headerKey="" headerValue="%{getText('lbl.choose.options')}" /></td>
  --%>
-					</tr>
 
 				</table>
 				<br />
