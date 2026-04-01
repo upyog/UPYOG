@@ -646,6 +646,20 @@ public class SWCalculationUtil {
 
 		return userInfo;
 	}
+	
+	public StringBuilder getBillSearchUrl(GetBillCriteria getBillCriteria) {
+	    return new StringBuilder().append(configurations.getBillingServiceHost())
+	            .append(configurations.getSearchBillEndPoints())
+	            .append(SWCalculationConstant.URL_PARAMS_SEPARATER)
+	            .append(SWCalculationConstant.TENANT_ID_FIELD_FOR_SEARCH_URL).append(getBillCriteria.getTenantId())
+	            .append(SWCalculationConstant.SEPARATER)
+	            .append(SWCalculationConstant.CONSUMER_CODE_SEARCH_FIELD_NAME)
+	            .append(StringUtils.join(getBillCriteria.getConsumerCodes(), ","))
+	            .append(SWCalculationConstant.SEPARATER)
+	            // Use the constant instead of hardcoding "service=" and "WS"
+	            .append(SWCalculationConstant.SERVICE_FIELD_FOR_SEARCH_URL) 
+	            .append(SWCalculationConstant.SERVICE_FIELD_VALUE_SW);
+	}
 
 	public String getShortnerURL(String actualURL) {
 		net.minidev.json.JSONObject obj = new net.minidev.json.JSONObject();

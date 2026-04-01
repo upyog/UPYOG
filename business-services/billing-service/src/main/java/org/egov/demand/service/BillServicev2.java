@@ -432,6 +432,16 @@ public Integer cancelBill(UpdateBillRequest updateBillRequest) {
 				.bill(bills).build();
 	}
 	
+	/*	PI-19980 Patiala Penalty not apply in W/S*/
+	public BillResponseV2 searchBillLatest(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
+
+		List<BillV2> bills = billRepository.findBillLatest(billCriteria);
+
+		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
+				.bill(bills).build();
+	}
+	/*	PI-19980 Patiala Penalty not apply in W/S*/
+	
 	/**
 	 * Generate bill based on the given criteria
 	 * 

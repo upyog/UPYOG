@@ -104,6 +104,35 @@ public class BillQueryBuilder {
 
 		return maxQuery.toString();
 	}
+	
+	/*	PI-19980 Patiala Penalty not apply in W/S*/
+	public String getBillQueryLatest(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues) {
+
+		StringBuilder billQuery = new StringBuilder(BILL_BASE_QUERY);
+		String tenantId = billSearchCriteria.getTenantId();
+		String[] tenantIdChunks = tenantId.split("\\.");
+		if (tenantIdChunks.length == 1) {
+			billQuery.append(" WHERE b.tenantid LIKE ? ");
+			preparedStatementValues.add(billSearchCriteria.getTenantId() + '%');
+		} else {
+			billQuery.append(" WHERE b.tenantid = ? ");
+			preparedStatementValues.add(billSearchCriteria.getTenantId());
+		//	billQuery.append("AND b.status='ACTIVE' ");
+		}
+		if (billSearchCriteria.getPeriodFrom() != null) {
+			billQuery.append(" AND bd.fromperiod = ?");
+			preparedStatementValues.add(billSearchCriteria.getPeriodFrom());
+		}
+		if (billSearchCriteria.getPeriodTo() != null) {
+			billQuery.append(" AND bd.toperiod = ?");
+			preparedStatementValues.add(billSearchCriteria.getPeriodTo());
+		}
+		addWhereClauses(billQuery, preparedStatementValues, billSearchCriteria);
+		StringBuilder maxQuery = addPagingClauses(billQuery, preparedStatementValues, billSearchCriteria);
+
+		return maxQuery.toString();
+	}
+	/*	PI-19980 Patiala Penalty not apply in W/S*/
 
 	
 /**
@@ -192,6 +221,61 @@ public class BillQueryBuilder {
 			appendListToQuery(searchBill.getConsumerCode(), preparedStatementValues, selectQuery);
 		}
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void addWhereClauses(final StringBuilder selectQuery, final List preparedStatementValues,
+			final BillSearchCriteria searchBill) {
+
+		if (!CollectionUtils.isEmpty(searchBill.getBillId())) {
+			selectQuery.append(" AND b.id in (");
+			appendListToQuery(searchBill.getBillId(), preparedStatementValues, selectQuery);
+		}
+
+		if (searchBill.getRetrieveOldest()!=null && !searchBill.getRetrieveOldest()) {
+			if (searchBill.getStatus() != null) {
+				selectQuery.append(" AND b.status = ?");
+				preparedStatementValues.add(searchBill.getStatus().toString());
+			}
+		} else {
+			selectQuery.append(" AND b.status != ?");
+			preparedStatementValues.add(BillStatus.CANCELLED.toString());
+		}
+
+		if (searchBill.getEmail() != null) {
+			selectQuery.append(" AND b.payeremail = ?");
+			preparedStatementValues.add(searchBill.getEmail());
+		}
+
+		if (searchBill.getMobileNumber() != null) {
+			selectQuery.append(" AND b.mobileNumber = ?");
+			preparedStatementValues.add(searchBill.getMobileNumber());
+		}
+
+		if (searchBill.getService() != null) {
+			selectQuery.append(" AND bd.businessservice = ?");
+			preparedStatementValues.add(searchBill.getService());
+		}
+
+		if (searchBill.getFromPeriod() != null) {
+			selectQuery.append(" AND bd.fromperiod = ?");
+			preparedStatementValues.add(searchBill.getFromPeriod());
+		}
+
+		if (searchBill.getToPeriod() != null) {
+			selectQuery.append(" AND bd.toperiod = ?");
+			preparedStatementValues.add(searchBill.getToPeriod());
+		}
+
+		if (searchBill.getBillNumber() != null) {
+			selectQuery.append(" AND bd.billno = ?");
+			preparedStatementValues.add(searchBill.getBillNumber());
+		}
+
+		if (!CollectionUtils.isEmpty(searchBill.getConsumerCode())) {
+			selectQuery.append(" AND bd.consumercode IN (");
+			appendListToQuerys(searchBill.getConsumerCode(), preparedStatementValues, selectQuery);
+		}
+	}
 
 	@SuppressWarnings({ "rawtypes" })
 	private StringBuilder addPagingClause(final StringBuilder selectQuery, final List preparedStatementValues,
@@ -210,6 +294,30 @@ public class BillQueryBuilder {
 
 		return finalQuery;
 	}
+	
+	@SuppressWarnings({ "rawtypes" })
+	private StringBuilder addPagingClauses(final StringBuilder selectQuery, final List preparedStatementValues,
+	        final BillSearchCriteria searchBillCriteria) {
+
+	    StringBuilder finalQuery;
+
+	    // FIX: logic correction
+	    // If retrieveOldest is true -> use MIN_QUERY (Oldest)
+	    // If retrieveOldest is false (default for latest) -> use MAX_QUERY (Newest)
+	    if (searchBillCriteria.getRetrieveOldest() != null && searchBillCriteria.getRetrieveOldest()) {
+	        finalQuery = new StringBuilder(BILL_MIN_QUERY.replace(REPLACE_STRING, selectQuery));
+	    } else {
+	        // Path for 'getBillQueryLatest'
+	        finalQuery = new StringBuilder(BILL_MAX_QUERY.replace(REPLACE_STRING, selectQuery));
+	    }
+
+	    if (searchBillCriteria.isOrderBy()) {
+	        finalQuery.append(" ORDER BY billresult.bd_consumercode ");
+	    }
+
+	    return finalQuery;
+	}
+
 
 /**
 	 * Bill expire query builder
@@ -244,6 +352,19 @@ public class BillQueryBuilder {
 	 * @param query
 	 */
 	private void appendListToQuery(Collection<String> values, List<Object> preparedStmtList, StringBuilder query) {
+		int length = values.size();
+		String[] valueArray = values.toArray(new String[length]);
+
+		for (int i = 0; i < length; i++) {
+			query.append(" ?");
+			if (i != length - 1)
+				query.append(",");
+			preparedStmtList.add(valueArray[i]);
+		}
+		query.append(")");
+}
+	
+	private void appendListToQuerys(Collection<String> values, List<Object> preparedStmtList, StringBuilder query) {
 		int length = values.size();
 		String[] valueArray = values.toArray(new String[length]);
 
