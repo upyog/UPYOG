@@ -264,6 +264,22 @@ public class WSCalculationUtil {
 		}
 		return url;
 	}
+	
+	
+	public StringBuilder getBillSearchUrl(GetBillCriteria getBillCriteria) {
+	    return new StringBuilder().append(configurations.getBillingServiceHost())
+	            .append(configurations.getSearchBillEndPoints())
+	            .append(WSCalculationConstant.URL_PARAMS_SEPARATER)
+	            .append(WSCalculationConstant.TENANT_ID_FIELD_FOR_SEARCH_URL).append(getBillCriteria.getTenantId())
+	            .append(WSCalculationConstant.SEPARATER)
+	            .append(WSCalculationConstant.CONSUMER_CODE_SEARCH_FIELD_NAME)
+	            .append(StringUtils.join(getBillCriteria.getConsumerCodes(), ","))
+	            .append(WSCalculationConstant.SEPARATER)
+	            // Use the constant instead of hardcoding "service=" and "WS"
+	            .append(WSCalculationConstant.SERVICE_FIELD_FOR_SEARCH_URL) 
+	            .append(WSCalculationConstant.SERVICE_FIELD_VALUE_WS);
+	}
+	
 
 	/**
 	 * 

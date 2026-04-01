@@ -55,6 +55,16 @@ public class BillRepositoryV2 {
 		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
 	}
 	
+	/*	PI-19980 Patiala Penalty not apply in W/S*/
+	public List<BillV2> findBillLatest(BillSearchCriteria billCriteria){
+			
+			List<Object> preparedStatementValues = new ArrayList<>();
+			String queryStr = billQueryBuilder.getBillQueryLatest(billCriteria, preparedStatementValues);
+			log.debug("query:::"+queryStr+"  preparedStatementValues::"+preparedStatementValues);
+			return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
+		}
+	/*	PI-19980 Patiala Penalty not apply in W/S*/
+	
 	public List<BillV2> findBillActive(BillSearchCriteria billCriteria){
 		
 		List<Object> preparedStatementValues = new ArrayList<>();

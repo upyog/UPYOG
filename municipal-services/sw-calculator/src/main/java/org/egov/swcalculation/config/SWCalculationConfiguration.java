@@ -68,6 +68,9 @@ public class SWCalculationConfiguration {
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenEndPoint;
 	
+	@Value("${egov.bill.search.endpoints}")
+	private String searchBillEndPoints;
+	
 	@Value("${egov.demand.billexpirytime}")
 	private Long demandBillExpiry;
 	
