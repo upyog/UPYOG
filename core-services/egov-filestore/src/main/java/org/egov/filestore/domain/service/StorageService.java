@@ -135,7 +135,6 @@ public class StorageService {
 		String completeName = artifact.getFileLocation().getFileName();
 		int index = completeName.indexOf('/');
 		String fileNameWithPath = completeName.substring(index + 1, completeName.length());
-
 		try {
 
 			String imagetype = FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename());

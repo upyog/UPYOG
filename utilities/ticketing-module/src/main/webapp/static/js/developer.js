@@ -665,7 +665,7 @@ function getAllComments(tktId,userID)
 									}
 								else
 								{
-									htm1 = htm1+"<li class='left'><h4><i class='fa fa-user avatar' aria-hidden='true'></i>"+value.userName+"</h4><div class='commentText'><pre class='chat'>"+value.commentDesc+"<br><span class='cmtattachment'><a href='download-cmt/"+value.attachment+"'>"+value.attachment+"</a></span><br><span class='spdate'>"+(value.dateTime).slice(0, -2)+"</span></pre></div></li><div class='clear'></div>";
+									htm1 = htm1+"<li class='left'><h4><i class='fa fa-user avatar' aria-hidden='true'></i>"+value.userName+"</h4><div class='commentText'><pre class='chat'>"+value.commentDesc+"<br><span class='cmtattachment'><a href='"+value.imageUrl+"' target='_blank'>"+value.attachment+"</a></span><br><span class='spdate'>"+(value.dateTime).slice(0, -2)+"</span></pre></div></li><div class='clear'></div>";
 							}
 						}
         		  else
@@ -676,7 +676,7 @@ function getAllComments(tktId,userID)
 									}
 									else
 									{
-										htm1 = htm1+"<li class='right'><h4><i class='fa fa-user-plus' aria-hidden='true'></i>"+value.userName+"</h4><div class='commentText'><pre class='chat'>"+value.commentDesc+"<br><span class='cmtattachment'><a href='download-cmt/"+value.attachment+"'>"+value.attachment+"</a></span><br> <span class='spdate'>"+(value.dateTime).slice(0, -2)+"</span></pre></div></li><div class='clear'></div>";
+										htm1 = htm1+"<li class='right'><h4><i class='fa fa-user-plus' aria-hidden='true'></i>"+value.userName+"</h4><div class='commentText'><pre class='chat'>"+value.commentDesc+"<br><span class='cmtattachment'><a href='"+value.imageUrl+"' target='_blank'>"+value.attachment+"</a></span><br> <span class='spdate'>"+(value.dateTime).slice(0, -2)+"</span></pre></div></li><div class='clear'></div>";
 									}
 							}
         		});

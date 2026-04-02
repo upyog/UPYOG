@@ -11,4 +11,6 @@ public interface CommentDao {
 	public int addComment(Comment comment);
 	
 	public int addCommentWithAttachment(Comment comment);
+	
+	
 }
