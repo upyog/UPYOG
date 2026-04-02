@@ -17,12 +17,13 @@ public class Comment implements Serializable {
 	private MultipartFile commentFile;
 	private String attachment;
 	private int read_status;
+	private String imageUrl;
 	public Comment() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public Comment(int commentId, int tktId, int userId, String commentDesc, String dateTime, int status,
-			String userName, MultipartFile commentFile, String attachment, int read_status) {
+			String userName, MultipartFile commentFile, String attachment, int read_status, String imageUrl) {
 		super();
 		this.commentId = commentId;
 		this.tktId = tktId;
@@ -34,12 +35,14 @@ public class Comment implements Serializable {
 		this.commentFile = commentFile;
 		this.attachment = attachment;
 		this.read_status = read_status;
+		this.imageUrl = imageUrl;
 	}
 	@Override
 	public String toString() {
 		return "Comment [commentId=" + commentId + ", tktId=" + tktId + ", userId=" + userId + ", commentDesc="
 				+ commentDesc + ", dateTime=" + dateTime + ", status=" + status + ", userName=" + userName
-				+ ", commentFile=" + commentFile + ", attachment=" + attachment + ", read_status=" + read_status + "]";
+				+ ", commentFile=" + commentFile + ", attachment=" + attachment + ", read_status=" + read_status
+				+ ", imageUrl=" + imageUrl + "]";
 	}
 	public int getCommentId() {
 		return commentId;
@@ -101,6 +104,17 @@ public class Comment implements Serializable {
 	public void setRead_status(int read_status) {
 		this.read_status = read_status;
 	}
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
+
 
 	
 }
