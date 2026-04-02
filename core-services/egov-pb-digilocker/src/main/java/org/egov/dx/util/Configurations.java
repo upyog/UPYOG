@@ -90,4 +90,10 @@ public class Configurations {
 	
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndpoint;
+	
+	@Value("${egov.ws.host}")
+    private String wsHost;
+	
+	@Value("${egov.sw.host}")
+    private String swHost;
 }

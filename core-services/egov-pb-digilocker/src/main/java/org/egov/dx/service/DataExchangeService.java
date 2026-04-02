@@ -279,8 +279,9 @@ private String handleWaterSewerage(SearchCriteria searchCriteria, boolean isUriR
 
     private JsonNode fetchWaterSewerageConnection(SearchCriteria sc, String docType, RequestInfoWrapper requestInfo) {
         String endpoint = "WS".equalsIgnoreCase(docType) ? configurations.getSearchWSConnEndpoint() : configurations.getSearchSwConnEndpoint();
-        
-        StringBuilder urlBuilder = new StringBuilder(egovHost);
+        boolean isWaterService = "WS".equalsIgnoreCase(docType);
+        String host = isWaterService ? configurations.getWsHost() : configurations.getSwHost();
+        StringBuilder urlBuilder = new StringBuilder(host);
         urlBuilder.append(endpoint)
                   .append("?searchType=CONNECTION")
                   .append("&tenantId=").append(TENANT_PREFIX).append(sc.getCity());
