@@ -118,6 +118,10 @@ public class DataExchangeService {
             if (DIGILOCKER_DOCTYPE.equalsIgnoreCase(docType)) {
                 return handlePropertyTax(searchCriteria, isUriRequest, requestWrapper);
             } else if ("WS".equalsIgnoreCase(docType) || "SW".equalsIgnoreCase(docType) || DIGILOCKER_WS_DOCTYPE.equalsIgnoreCase(docType)) {
+            	
+            	if (DIGILOCKER_WS_DOCTYPE.equalsIgnoreCase(docType))
+            		searchCriteria.setDocType("WS"); // Ensure docType is set for WS/SW processing
+            	
                 return handleWaterSewerage(searchCriteria, isUriRequest, requestWrapper, docType);
             } else {
                 log.error("Unsupported DocType: {}", docType);
