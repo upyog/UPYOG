@@ -591,6 +591,8 @@ public class RemittanceServiceImpl extends RemittanceService {
         switch (ApplicationThreadLocals.getCollectionVersion().toUpperCase()) {
         case "V2":
         case "VERSION2":   
+            LOGGER.info("In V2/ VERSION2  with receipt Id==" + receiptIds.size());
+
         	 if(!receiptIds.isEmpty())
             receipts = microserviceUtils.getReceipts(StringUtils.join(receiptIds, ","), PaymentStatusEnum.NEW.name(), serviceCodes,startDate, endDate);
             else
@@ -602,7 +604,8 @@ public class RemittanceServiceImpl extends RemittanceService {
             receipts = microserviceUtils.getReceipts(StringUtils.join(receiptIds, ","), CollectionConstants.RECEIPT_STATUS_APPROVED, serviceCodes,startDate, endDate);
             break;
         }
-        
+        LOGGER.info("Outside Switch with receipt Id==" + receipts.size());
+
         
         Map<String, List<Receipt>> receiptDateWiseMap = new HashMap<>();
         Map<String, List<Receipt>> serviceWiseMap = new HashMap<>();
