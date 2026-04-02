@@ -465,27 +465,47 @@ private String handleWaterSewerage(SearchCriteria searchCriteria, boolean isUriR
     }
 
     private String downloadAndEncodePdf(String urlString) throws IOException {
-        URL url = java.net.URI.create(urlString).toURL();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-        connection.setRequestProperty("Accept", "*/*");
-        connection.setConnectTimeout(10000); 
-        connection.setReadTimeout(10000);
 
-        int responseCode = connection.getResponseCode();
-        if (responseCode != HttpURLConnection.HTTP_OK) {
-            throw new IOException("Server returned HTTP " + responseCode);
+        // Step 1: Convert any domain to localhost
+        try {
+            URL originalUrl = new URL(urlString);
+
+            urlString = configurations.getFilestoreHost()
+                    + originalUrl.getPath()
+                    + (originalUrl.getQuery() != null ? "?" + originalUrl.getQuery() : "");
+
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid URL: " + urlString, e);
         }
 
-        try (InputStream is = connection.getInputStream(); 
+        // Step 2: Open connection
+        URL url = java.net.URI.create(urlString).toURL();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+        connection.setRequestProperty("Accept", "*/*");
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(10000);
+
+        // Step 3: Validate response
+        int responseCode = connection.getResponseCode();
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            throw new IOException("Server returned HTTP " + responseCode + " for URL: " + urlString);
+        }
+
+        // Step 4: Read + Encode
+        try (InputStream is = connection.getInputStream();
              ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+
             byte[] data = new byte[8192];
             int nRead;
+
             while ((nRead = is.read(data, 0, data.length)) != -1) {
                 buffer.write(data, 0, nRead);
             }
+
             return Base64.getEncoder().encodeToString(buffer.toByteArray());
+
         } finally {
             connection.disconnect();
         }
