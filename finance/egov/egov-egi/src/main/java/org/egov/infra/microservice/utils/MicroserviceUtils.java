@@ -1011,6 +1011,15 @@ public class MicroserviceUtils {
                 .businessCodes(Arrays.stream(serviceCodes.split(",")).collect(Collectors.toSet())).tenantId(getTenentId()).build();
         return this.getReceipt(criteria);
     }
+    
+    public List<Receipt> getReceiptsAll(String status, String serviceCodes, Date fromDate, Date toDate) {
+        ReceiptSearchCriteria criteria = new ReceiptSearchCriteria().builder()
+                .status(Arrays.stream(status.split(",")).collect(Collectors.toSet())).fromDate(fromDate).toDate(toDate)
+                //.receiptNumbers(Arrays.stream(ids.split(",")).collect(Collectors.toSet()))
+                .businessCodes(Arrays.stream(serviceCodes.split(",")).collect(Collectors.toSet())).tenantId(getTenentId()).build();
+        return this.getReceipt(criteria);
+    }
+
 
     public List<Receipt> getReceipt(ReceiptSearchCriteria rSearchcriteria) {
         // Checking for the collection version either older version or new

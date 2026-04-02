@@ -586,24 +586,31 @@ public class RemittanceServiceImpl extends RemittanceService {
                 }
         }
         List<ReceiptBean> resultList = new ArrayList<>();
-        if(!receiptIds.isEmpty()){
+       
         List<Receipt> receipts = Collections.EMPTY_LIST;
         switch (ApplicationThreadLocals.getCollectionVersion().toUpperCase()) {
         case "V2":
-        case "VERSION2":    
+        case "VERSION2":   
+        	 if(!receiptIds.isEmpty())
             receipts = microserviceUtils.getReceipts(StringUtils.join(receiptIds, ","), PaymentStatusEnum.NEW.name(), serviceCodes,startDate, endDate);
+            else
+            receipts = microserviceUtils.getReceiptsAll(PaymentStatusEnum.NEW.name(), serviceCodes,startDate, endDate);
+	
             break;
 
         default:
             receipts = microserviceUtils.getReceipts(StringUtils.join(receiptIds, ","), CollectionConstants.RECEIPT_STATUS_APPROVED, serviceCodes,startDate, endDate);
             break;
         }
+        
+        
         Map<String, List<Receipt>> receiptDateWiseMap = new HashMap<>();
         Map<String, List<Receipt>> serviceWiseMap = new HashMap<>();
         Map<String, List<Receipt>> instrumentWiseMap = new HashMap<>();
         Map<String, List<Receipt>> fundWiseMap = new HashMap<>();
         Map<String, List<Receipt>> departmentWiseMap = new HashMap<>();
 
+        if(!receiptIds.isEmpty()) {
         groupByReceiptDate(receiptDateWiseMap, receipts);
 
         for (String key : receiptDateWiseMap.keySet()) {
