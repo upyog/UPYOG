@@ -41,8 +41,8 @@ public class CommentDaoImpl extends HibernateConfig implements CommentDao{
 	public int addCommentWithAttachment(Comment comment) {
 		int result=0;
 		try {
-		String sql = "INSERT into tkt_comment (tkt_id, user_id, comment_description, attachment) VALUES (?, ?, ?, ?)";
-		result = getJdbcTemplate().update(sql, new Object[] {comment.getTktId(), comment.getUserId(), comment.getCommentDesc(), comment.getAttachment()});
+		String sql = "INSERT into tkt_comment (tkt_id, user_id, comment_description, attachment,IMAGE_URL) VALUES (?, ?, ?, ?, ?)";
+		result = getJdbcTemplate().update(sql, new Object[] {comment.getTktId(), comment.getUserId(), comment.getCommentDesc(), comment.getAttachment(), comment.getImageUrl()});
 		return result;
 	}
 		catch (Exception e) {

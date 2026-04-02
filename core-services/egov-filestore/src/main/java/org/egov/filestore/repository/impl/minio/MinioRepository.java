@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -30,6 +31,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.amazonaws.util.IOUtils;
 
 import io.minio.MinioClient;
 import io.minio.PutObjectOptions;
@@ -141,31 +144,43 @@ public class MinioRepository implements CloudFilesManager {
 	@Override
 	public Map<String, String> getFiles(List<Artifact> artifacts) {
 
-		Map<String, String> mapOfIdAndSASUrls = new HashMap<>();
+	    Map<String, String> mapOfIdAndShortUrls = new HashMap<>();
 
-		for(Artifact artifact : artifacts) {
-			
-			String fileLocation = artifact.getFileLocation().getFileName();
-			String fileName = fileLocation.
-					substring(fileLocation.indexOf('/') + 1, fileLocation.length());
-			String signedUrl = getSignedUrl(fileName);
-			if (util.isFileAnImage(artifact.getFileName())) {
-				try {
-					signedUrl = setThumnailSignedURL(fileName, new StringBuilder(signedUrl));
-				} catch (InvalidKeyException | ErrorResponseException | IllegalArgumentException
-						| InsufficientDataException | InternalException | InvalidBucketNameException
-						| InvalidExpiresRangeException | InvalidResponseException | NoSuchAlgorithmException
-						| XmlParserException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			mapOfIdAndSASUrls.put(artifact.getFileStoreId(), signedUrl);
-			
-		}
-		return mapOfIdAndSASUrls;
+	    for (Artifact artifact : artifacts) {
+	        try {
+	            String fileLocation = artifact.getFileLocation().getFileName();
+	            String fileName = fileLocation.substring(fileLocation.indexOf('/') + 1);
+
+
+	            InputStream inputStream = minioClient.getObject(minioConfig.getBucketName(), fileName);
+	            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+	            IOUtils.copy(inputStream, buffer); 
+	            inputStream.close();
+
+
+
+	            String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+
+	            if (!fileStoreConfig.getAllowedKeySet().contains(fileExtension)) {
+	                log.warn("Unsupported file format: {}", fileExtension);
+	                continue;
+	            }
+
+	           
+	            String encodedPath = URLEncoder.encode(fileName, "UTF-8");
+	            String shortUrl = fileStoreConfig.getViewImagehost()
+	                    + fileStoreConfig.getViewImagesubhost()
+	                    + "?name=" + encodedPath;
+	            mapOfIdAndShortUrls.put(artifact.getFileStoreId(), shortUrl);
+
+	        } catch (Exception e) {
+	            log.error("Failed to fetch/cache file: {}", artifact.getFileStoreId(), e);
+	        }
+	    }
+
+	    return mapOfIdAndShortUrls;
 	}
+
 		
 	private String setThumnailSignedURL(String fileName, StringBuilder url) throws InvalidKeyException, ErrorResponseException, IllegalArgumentException, InsufficientDataException, InternalException, InvalidBucketNameException, InvalidExpiresRangeException, InvalidResponseException, NoSuchAlgorithmException, XmlParserException, IOException {
 		String[] imageFormats = { fileStoreConfig.get_large(), fileStoreConfig.get_medium(), fileStoreConfig.get_small() };

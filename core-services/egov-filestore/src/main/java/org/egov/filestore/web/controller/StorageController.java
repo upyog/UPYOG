@@ -2,16 +2,22 @@ package org.egov.filestore.web.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.filestore.config.FileStoreConfig;
 import org.egov.filestore.domain.model.FileInfo;
 import org.egov.filestore.domain.service.StorageService;
+import org.egov.filestore.repository.impl.minio.MinioConfig;
+import org.egov.filestore.repository.impl.minio.MinioRepository;
 import org.egov.filestore.utils.StorageUtil;
 import org.egov.filestore.web.contract.File;
 import org.egov.filestore.web.contract.FileStoreResponse;
@@ -24,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,10 +41,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.minio.MinioClient;
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Controller
 @RequestMapping("/v1/files")
 public class StorageController {
 
+
+	
+	
 	private StorageService storageService;
 	private ResponseFactory responseFactory;
 	private StorageUtil storageUtil;
@@ -84,6 +97,12 @@ public class StorageController {
 		return new ResponseEntity<>(resource, HttpStatus.OK);
 	}
 
+	@GetMapping("/viewfile")
+	public ResponseEntity<byte[]> serveDirect(@RequestParam String name) {
+		 return storageService.streamFile(name);
+	}
+
+	
 	@GetMapping(value = "/tag", produces = APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public GetFilesByTagResponse getUrlListByTag(@RequestParam(value = "tenantId") String tenantId,

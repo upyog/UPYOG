@@ -1,10 +1,12 @@
 package org.egov.filestore.domain.service;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,9 +28,14 @@ import org.egov.filestore.validator.StorageValidator;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -39,6 +46,9 @@ public class StorageService {
 	private CloudFileMgrUtils util;
 	
 	private FileStoreConfig configs;
+
+	@Autowired
+	private MinioClient minioClient;
 
 	@Autowired
 	private CloudFilesManager cloudFilesManager;
@@ -109,7 +119,9 @@ public class StorageService {
 				// TODO Auto-generated catch block
 				log.error("IO Exception while mapping files to artifact: " + e.getMessage());
 			}
-			storageValidator.validate(artifact);
+			if (!"ticket".equals(tenantId)) {
+				storageValidator.validate(artifact);
+			}
 			
 			if (fileStoreConfig.getImageFormats().contains(FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename())))
 				setThumbnailImages(artifact);
@@ -123,7 +135,6 @@ public class StorageService {
 		String completeName = artifact.getFileLocation().getFileName();
 		int index = completeName.indexOf('/');
 		String fileNameWithPath = completeName.substring(index + 1, completeName.length());
-
 		try {
 
 			String imagetype = FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename());
@@ -168,8 +179,18 @@ public class StorageService {
 				artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
 		return urlMap;
 	}
+	
+	public Map<String, String> getfile(String tenantId, List<String> fileStoreIds) {
+		Map<String, String> urlMap = getFileMap(
+				artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
+		return urlMap;
+	}
 
 	private Map<String, String> getUrlMap(List<org.egov.filestore.persistence.entity.Artifact> artifactList) {
+		return cloudFilesManager.getFiles(artifactList);
+	}
+	
+	private Map<String, String> getFileMap(List<org.egov.filestore.persistence.entity.Artifact> artifactList) {
 		return cloudFilesManager.getFiles(artifactList);
 	}
 
@@ -178,5 +199,30 @@ public class StorageService {
 				+ "/" + calendar.get(Calendar.DATE) + "/";
 	}
 
+	
+	 public ResponseEntity<byte[]> streamFile(String name) {
+	        try {
+	            InputStream inputStream = minioClient.getObject(minioConfig.getBucketName(), name);
+
+	            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+	            IOUtils.copy(inputStream, buffer);
+	            inputStream.close();
+
+
+	            byte[] fileBytes = buffer.toByteArray();
+	            String ext = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
+	            String mimeType = fileStoreConfig.getAllowedFormatsMap()
+	                .getOrDefault(ext, Collections.singletonList("application/octet-stream"))
+	                .get(0);
+
+	            return ResponseEntity.ok()
+	                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + name + "\"")
+	                .contentType(MediaType.parseMediaType(mimeType))
+	                .body(fileBytes);
+
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	        }
+	    }
 	
 }

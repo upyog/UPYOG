@@ -66,6 +66,7 @@ public class CommentController {
 	@RequestMapping(value = { "/add-comment" }, method = RequestMethod.POST)
 	public int addComment(@ModelAttribute("comment") Comment comment) {
 		String imgPath = null;
+		String imageUrl = null;
 		int result = 0;
 		MultipartFile commentFile = null;
 		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -86,11 +87,12 @@ public class CommentController {
 						Files.write(path, bytes);
 						//new S3Bucket().uploadFileS3Bucket(imgPath,path.toString(),"comment");
 						List<MultipartFile> fileList = Arrays.asList(commentFile);
-						filestore.uploadToFileStore(fileList, "ticket","comment-images");
+						imageUrl = filestore.uploadToFileStore(fileList, "ticket","comment-images");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 					comment.setAttachment(imgPath);
+					comment.setImageUrl(imageUrl);
 					result = commentDao.addCommentWithAttachment(comment);
 					
 			 }

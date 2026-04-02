@@ -23,6 +23,13 @@ public class FileStoreConfig {
 	
 	private Set<String> allowedKeySet;
 	
+	@Value("${view.file.host}")
+	private String viewImagehost;
+	
+	@Value("${view.file.sub.url}")
+	private String viewImagesubhost;
+	
+	
 	@Value("${image.small}")
 	private String _small;
 

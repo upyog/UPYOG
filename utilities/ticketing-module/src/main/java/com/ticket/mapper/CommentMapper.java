@@ -20,6 +20,7 @@ public class CommentMapper implements RowMapper<Comment> {
 		comment.setStatus(rs.getInt("status"));
 		comment.setUserName(rs.getString("user_name"));
 		comment.setAttachment(rs.getString("attachment"));
+		comment.setImageUrl(rs.getString("IMAGE_URL"));
 		return comment;
 	}
 }
