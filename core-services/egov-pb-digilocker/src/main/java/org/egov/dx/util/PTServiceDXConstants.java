@@ -50,6 +50,8 @@ public class PTServiceDXConstants {
 	public static final String DIGILOCKER_PARTNER_ORIGIN = "https://partners.digitallocker.gov.in";
 	public static final String DIGILOCKER_ISSUER_ID = "in.gov.lgpunjab";
 	public static final String DIGILOCKER_DOCTYPE = "PRTAX";
+	
+	public static final String DIGILOCKER_WS_DOCTYPE = "WTRBL";
 	public static final String LANGUAGE_CODE = "99";
 	public static final String ISSUER_ORG_NAME = "Punjab Municipal Infrastructure Development Company";
 	public static final String ISSUER_ORG_TYPE = "SG";
