@@ -304,7 +304,7 @@ public class SearchReceiptAction extends SearchFormAction {
                 for (BillDetail billDetail : bill.getBillDetails()) {
                     ReceiptHeader receiptHeader = new ReceiptHeader();
                     JsonNode additionalDetails = receipt.getAdditionalDetails();
-                	receiptHeader.setWardNo(additionalDetails.get("wardNo").asText());
+                	receiptHeader.setWardNo(additionalDetails.get("wardNo")!=null?additionalDetails.get("wardNo").asText():null);
                     receiptHeader.setFund(additionalDetails.get("fundName").asText());
                     receiptHeader.setPaymentId(receipt.getPaymentId());
                     receiptHeader.setReceiptnumber(billDetail.getReceiptNumber());

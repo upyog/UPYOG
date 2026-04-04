@@ -157,6 +157,12 @@
 	
 	}
 </script>
+<style type="text/css">
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+</style>
 </head>
 
 <body>
@@ -185,14 +191,14 @@
 				</div>
 
 				<table width="100%" border="0" cellspacing="0" cellpadding="0"
-					style="max-width: 960px; margin: 0 auto;">
+					margin: 0 auto;">
 					<tr>
 						<s:hidden id="serviceAccountId" name="serviceAccountId" />
 						<s:hidden id="id" name="id" />
 						<s:hidden id="sourcePage" name="sourcePage" />
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox"><s:text name="service.master.search.category" /> <span class="mandatory" /></td>
-						<td class="bluebox">
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="service.master.search.category" /> <span class="mandatory" /></td>
+						<td class="bluebox w25">
 						<s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory" id="serviceCategoryid" cssClass="selectwk" list="serviceCategoryNames" value="%{service.serviceCategory}" onChange="populateServiceType(this.value);" />
 						</td>
 						<td colspan="2">
@@ -201,19 +207,21 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox"><s:text name="service.master.bankname" /> <span class="mandatory" /></td>
-						<td class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="bankId" id="bankName" cssClass="selectwk" list="dropdownData.bankNameList" listKey="id" listValue="name" value="%{bankId}" onchange="onChangeBankBranch(this.value)" /> 
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="service.master.bankname" /> <span class="mandatory" /></td>
+						<td class="bluebox w25"><s:select headerKey="-1" headerValue="----Choose----" name="bankId" id="bankName" cssClass="selectwk" list="dropdownData.bankNameList" listKey="id" listValue="name" value="%{bankId}" onchange="onChangeBankBranch(this.value)" /> 
 							<egov:ajaxdropdown id="accountNumberIdDropdown" fields="['Text','Value']" dropdownId='branchName' url='receipts/ajaxBankRemittance-bankBranchsByBankForReceiptPayments.action' />
 						</td>
-						<td class="bluebox"><s:text name="service.master.branchName" /> <span class="mandatory" /></td>
-						<td class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="branchId" id="branchName" cssClass="selectwk" list="dropdownData.bankBranchList" listKey="id" listValue="branchname" onChange="onChangeBankAccount(this.value)" value="%{branchId}" />
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="service.master.branchName" /> <span class="mandatory" /></td>
+						<td class="bluebox w25"><s:select headerKey="-1" headerValue="----Choose----" name="branchId" id="branchName" cssClass="selectwk" list="dropdownData.bankBranchList" listKey="id" listValue="branchname" onChange="onChangeBankAccount(this.value)" value="%{branchId}" />
 							<egov:ajaxdropdown id="bankAccountIdDropDown" fields="['Text','Value']" dropdownId='bankAccountId' url='receipts/ajaxBankRemittance-bankAccountByBankBranch.action' />
 						</td>
+						<td class="bluebox w5">&nbsp;</td>
 					</tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox"><s:text name="service.master.accountnumber" /> <span class="mandatory" /></td>
-					<td class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="bankAccountId" id="bankAccountId" cssClass="selectwk" list="dropdownData.bankAccountIdList" listKey="id" listValue="accountnumber" value="%{bankAccountId.id}" /></td>
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="service.master.accountnumber" /> <span class="mandatory" /></td>
+					<td class="bluebox w25"><s:select headerKey="-1" headerValue="----Choose----" name="bankAccountId" id="bankAccountId" cssClass="selectwk" list="dropdownData.bankAccountIdList" listKey="id" listValue="accountnumber" value="%{bankAccountId.id}" /></td>
 					<tr>
 					</tr>
 				</table>

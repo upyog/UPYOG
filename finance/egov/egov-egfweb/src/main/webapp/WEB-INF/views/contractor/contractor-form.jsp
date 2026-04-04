@@ -223,12 +223,12 @@
 	<div class="form-group" id="registerationNo" style="display: none">
 		<label class="col-sm-2 control-label text-right"
 			for="registrationNumber"> <spring:message
-				code="contractor.registrationNo" text='Registration No' />
+				code="contractor.registrationNo" text='Registration No' /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="registrationNumber" id="registrationNumber"
 				maxlength="21" cssClass="form-control patternvalidation"
-				data-pattern="alphanumericwithspace" />
+				data-pattern="alphanumericwithspace" required="required" />
 			<form:errors path="registrationNumber"
 				cssClass="add-margin error-msg" />
 		</div>
@@ -251,12 +251,12 @@
 			<form:errors path="status" cssClass="add-margin error-msg" />
 		</div>
 		<label class="col-sm-2 control-label text-right" for="panNumber">
-			<spring:message code="contractor.panNo" text='PAN No' />
+			<spring:message code="contractor.panNo" text='PAN No' /><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="panNumber" id="panNumber" maxlength="10"
 				cssClass="form-control patternvalidation"
-				data-pattern="alphanumericwithspace" />
+				data-pattern="alphanumericwithspace" required="required" />
 			<form:errors path="panNumber" cssClass="add-margin error-msg" />
 		</div>
 	</div>

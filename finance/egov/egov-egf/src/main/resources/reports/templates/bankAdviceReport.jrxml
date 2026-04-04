@@ -1,53 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) 2017  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
-  ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
-  -->
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-08-25T11:04:19 -->
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bankAdviceReport" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="752" leftMargin="72" rightMargin="18" topMargin="18" bottomMargin="18" isFloatColumnFooter="true" uuid="e977129d-8063-4dc8-acc3-8e8fecf2dd1e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -69,6 +21,19 @@
 	<field name="amount" class="java.math.BigDecimal"/>
 	<field name="ifscCode" class="java.lang.String"/>
 	<field name="bank" class="java.lang.String"/>
+	<background>
+		<band height="559" splitType="Stretch">
+			<textField>
+				<reportElement x="121" y="230" width="600" height="100" forecolor="#C8C8C8" uuid="a1b2c3d4-0000-0000-0000-000000000001">
+					<printWhenExpression><![CDATA[$P{ulbName} != null && !$P{ulbName}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font size="60" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</background>
 	<title>
 		<band height="244" splitType="Stretch">
 			<staticText>
@@ -101,26 +66,26 @@ The Manager,
 			<staticText>
 				<reportElement x="0" y="154" width="752" height="31" uuid="9b690481-23e2-402d-8d1b-6005426435cb"/>
 				<text><![CDATA[Sir,
-            SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.
+SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.
 ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="60" y="127" width="375" height="27" uuid="9fd252ac-6668-437d-a6b7-d66ae1511cda"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement x="50" y="127" width="220" height="27" uuid="9fd252ac-6668-437d-a6b7-d66ae1511cda"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{chequeNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="520" y="127" width="85" height="27" uuid="823ad213-e4cb-4661-b404-bc18dcdec7a8"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<reportElement x="590" y="127" width="40" height="27" uuid="823ad213-e4cb-4661-b404-bc18dcdec7a8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Dated:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="185" width="752" height="41" uuid="c6427eb5-71f3-426b-bfc4-65ad65c9e907"/>
 				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{letterContext}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="605" y="127" width="146" height="27" uuid="881a8b92-90ec-41ff-af26-e3b687f15015"/>
+				<reportElement x="630" y="127" width="120" height="27" uuid="881a8b92-90ec-41ff-af26-e3b687f15015"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{chequeDate}]]></textFieldExpression>
@@ -133,12 +98,12 @@ The Manager,
 				<text><![CDATA[*****]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="127" width="60" height="26" uuid="7dd4f65b-e4be-4bb1-9797-4d7af1500512"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement x="0" y="127" width="50" height="26" uuid="7dd4f65b-e4be-4bb1-9797-4d7af1500512"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[File No. : ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="39" y="20" width="198" height="17" uuid="789f1eef-54b2-4192-8786-1789c43ea2dc"/>
+				<reportElement x="0" y="20" width="198" height="17" uuid="789f1eef-54b2-4192-8786-1789c43ea2dc"/>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -149,7 +114,7 @@ The Manager,
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement x="617" y="0" width="85" height="20" uuid="50ea7b62-d510-49ee-817f-8b85896fa257"/>
+				<reportElement x="617" y="0" width="134" height="20" uuid="50ea7b62-d510-49ee-817f-8b85896fa257"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -208,7 +173,7 @@ The Manager,
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="532" y="0" width="85" height="20" uuid="9ad6daf2-770e-4675-9aee-45d499b51848"/>
+				<reportElement positionType="Float" x="532" y="0" width="108" height="20" uuid="9ad6daf2-770e-4675-9aee-45d499b51848"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -256,7 +221,7 @@ The Manager,
 	</columnHeader>
 	<detail>
 		<band height="25" splitType="Prevent">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="310" y="0" width="125" height="25" uuid="3ce804a9-2b46-409d-ae18-8598990e6eb5"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -268,8 +233,8 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{bank}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="532" y="0" width="85" height="25" uuid="1ca99d34-be69-4921-883b-f31edb6b4e93"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="532" y="0" width="108" height="25" uuid="1ca99d34-be69-4921-883b-f31edb6b4e93"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -280,8 +245,8 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{ifscCode}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="617" y="0" width="85" height="25" isPrintWhenDetailOverflows="true" uuid="e63ea28c-c321-448e-862f-578be1383a3f"/>
+			<textField textAdjust="StretchHeight" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="640" y="0" width="110" height="25" isPrintWhenDetailOverflows="true" uuid="e63ea28c-c321-448e-862f-578be1383a3f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -294,7 +259,7 @@ The Manager,
 				</textElement>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="25" y="0" width="200" height="25" isPrintWhenDetailOverflows="true" uuid="6473d851-6f05-45c5-928e-c3ce8fb66ba6"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -308,7 +273,7 @@ The Manager,
 				</textElement>
 				<textFieldExpression><![CDATA[$F{partyName}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="0" width="25" height="25" isPrintWhenDetailOverflows="true" uuid="7ad8f054-ac88-48f4-ae44-e98ac70a3337"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -334,7 +299,7 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="225" y="0" width="85" height="25" isPrintWhenDetailOverflows="true" uuid="bd506a2f-9a03-4ddb-85b4-cbadf53002f1"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -362,10 +327,10 @@ The Manager,
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="123">
+		<band height="124">
 			<staticText>
-				<reportElement x="511" y="80" width="146" height="15" uuid="d6a1fe81-653c-46ff-8d0d-90450d03721e"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
+				<reportElement x="536" y="105" width="146" height="15" uuid="d6a1fe81-653c-46ff-8d0d-90450d03721e"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font isBold="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Authorized Signatory]]></text>
@@ -385,7 +350,7 @@ The Manager,
 				<text><![CDATA[Total ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="532" y="2" width="170" height="24" uuid="f07a8ff5-e237-4e05-8162-921deaff5088"/>
+				<reportElement x="532" y="2" width="219" height="24" uuid="f07a8ff5-e237-4e05-8162-921deaff5088"/>
 				<box rightPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -397,7 +362,7 @@ The Manager,
 				<textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="510" y="62" width="198" height="17" uuid="f73b0354-c824-47fd-b9b8-ab8c2fcc7c72"/>
+				<reportElement x="536" y="87" width="198" height="17" uuid="f73b0354-c824-47fd-b9b8-ab8c2fcc7c72"/>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 		</band>

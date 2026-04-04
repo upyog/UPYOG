@@ -108,14 +108,13 @@
 						<td width="50%">
 							<table border="0" width="100%" cellspacing="0" cellpadding="0">
 								<tr>
-									<td class="greybox" ></td>
-									<td class="greybox"></td>
-									<td class="greybox"><s:text name="financialyear" /> <span class="greybox"><span
+									<td class="greybox" style="width:28%"></td>
+									<td class="greybox" style="width:15%"><s:text name="financialyear" /> <span class="greybox"><span
 											class="mandatory1">*</span></span></td>
-									<td class="greybox"><s:select name="financialYear" id="financialYear"
+									<td class="greybox" style="width:25%"><s:select name="financialYear" id="financialYear"
 											list="dropdownData.financialYearList" listKey="id" listValue="finYearRange"
 											headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
-											value="%{financialYear}" /></td>
+											value="%{financialYear}" style="width:100%"/></td>
 									<span class="greybox" colspan="2">
 										</td>
 										<td class="greybox"></td>

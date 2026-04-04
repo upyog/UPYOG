@@ -1,54 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) 2017  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
-  ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
-  -->
-
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-11T17:55:33 -->
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="journalVoucherReport" pageWidth="599" pageHeight="842" orientation="Landscape" columnWidth="559" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b6d8f2d9-355e-4afe-bfb2-72df572b464f">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -107,7 +58,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="staticText" x="101" y="6" width="355" height="20" uuid="99ee80b6-7f14-47b1-b71a-2175414557c2"/>
 					<textElement textAlignment="Center">
 						<font size="16" isBold="true"/>
@@ -129,7 +80,7 @@
 					<reportElement key="staticText" x="0" y="117" width="41" height="20" uuid="b47ff603-7743-44c5-9b20-f77e6a28b762"/>
 					<text><![CDATA[Fund:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" x="74" y="92" width="156" height="20" uuid="c8ffd169-ec4c-473b-8f9b-1a536c1f716e"/>
 					<textElement>
 						<font size="9"/>
@@ -531,12 +482,12 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<subreport>
-					<reportElement positionType="Float" x="0" y="44" width="559" height="24" uuid="2a2e1001-c6dc-479f-81a9-d9e6c5df63e0"/>
+					<reportElement positionType="Float" x="20" y="44" width="559" height="24" uuid="2a2e1001-c6dc-479f-81a9-d9e6c5df63e0"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{workFlowHistory})]]></dataSourceExpression>
 					<subreportExpression><![CDATA[$P{workFlowJasper}]]></subreportExpression>
 				</subreport>
 				<subreport>
-					<reportElement x="0" y="0" width="559" height="44" uuid="dca0c6b6-9001-426d-b0c5-89b29eee1199"/>
+					<reportElement x="20" y="0" width="559" height="44" uuid="dca0c6b6-9001-426d-b0c5-89b29eee1199"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{budgetDetail})]]></dataSourceExpression>
 					<subreportExpression><![CDATA[$P{budgetAppropriationDetailJasper}]]></subreportExpression>
 				</subreport>

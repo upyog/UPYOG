@@ -55,6 +55,13 @@ function resetPage(){
 	jQuery("#results").empty();
 }
 </script>
+<style type="text/css">
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+</style>
 </head>
 <div class="formmainbox">
 	<div class="formheading"></div>
@@ -71,55 +78,81 @@ function resetPage(){
 		<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		<table width="100%" cellpadding="0" cellspacing="0" border="0">
 			<tr>
-				<td class="greybox" width="10%"><s:text name="lbl.recovery.code" />:<span
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="greybox w15"><s:text name="lbl.recovery.code" />:<span
 					class="mandatory1">*</span></td>
-				<td class="greybox"><s:select name="recovery" id="recovery"
+				<td class="greybox w25"><s:select name="recovery" id="recovery"
 						list="dropdownData.recoveryList" listKey="id" listValue="type"
 						headerKey="-1" headerValue="%{getText('lbl.choose.options')}"/></td>
-				<td class="greybox" width="10%">Fund:<span class="mandatory1">*</span></td>
-				<td class="greybox"><s:select name="fund" id="fund"
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="greybox w15">Fund:<span class="mandatory1">*</span></td>
+				<td class="greybox w25"><s:select name="fund" id="fund"
 						list="dropdownData.fundList" listKey="id" listValue="name"
 						headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
+				<td class="bluebox w5">&nbsp;</td>
 
 			</tr>
 			<tr>
-				<td class="bluebox" width="10%"><s:text name="from.date" /><span
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="bluebox w15"><s:text name="from.date" /><span
 					class="mandatory1"></span></td>
-				<td class="bluebox"><s:textfield name="fromDate" id="fromDate"
+				<td class="greybox w25"><s:date name="fromDate" var="fromDate"
+						format="dd/MM/yyyy" />
+								<s:textfield id="fromDate" name="fromDate"
+								value="%{getFormattedDate(fromDate)}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+								
+				<%-- <td class="bluebox w25"><s:textfield name="fromDate" id="fromDate"
 						cssStyle="width:100px" value='%{getFormattedDate(fromDate)}'
 						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 					href="javascript:show_calendar('pendingTDSReport.fromDate');"
 					style="text-decoration: none">&nbsp;<img
 						src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
-				</td>
+				</td> --%>
+				<td class="bluebox w5">&nbsp;</td>
 
-				<td class="bluebox" width="10%"><s:text name="lbl.as.on.date" />:<span
+				<td class="bluebox w15"><s:text name="lbl.as.on.date" />:<span
 					class="mandatory1">*</span></td>
-				<td class="bluebox"><s:textfield name="asOnDate" id="asOnDate"
+				<td class="greybox w25"><s:date name="asOnDate" var="asOnDate"
+						format="dd/MM/yyyy" />
+								<s:textfield id="asOnDate" name="asOnDate"
+								value="%{getFormattedDate(asOnDate)}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
+								data-inputmask="'mask': 'd/m/y'" /></td>	
+					
+				<%-- <td class="bluebox w25"><s:textfield name="asOnDate" id="asOnDate"
 						cssStyle="width:100px" value='%{getFormattedDate(asOnDate)}'
 						onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 					href="javascript:show_calendar('pendingTDSReport.asOnDate');"
 					style="text-decoration: none">&nbsp;<img
 						src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
-				</td>
+				</td> --%>
+				<td class="bluebox w5">&nbsp;</td>
 			</tr>
 			<tr>
-				<td class="greybox" width="10%"><s:text name="lbl.department" />:</td>
-				<td class="greybox"><s:select name="department" id="department"
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="greybox w15"><s:text name="lbl.department" />:</td>
+				<td class="greybox w25"><s:select name="department" id="department"
 						list="dropdownData.departmentList" listKey="code"
 						listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"/>
 				</td>
-				<td class="greybox" width="10%"><s:text name="lbl.partyname" />:</td>
-				<td class="greybox"><input type="text" name="partyName"
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="greybox w15"><s:text name="lbl.partyname" />:</td>
+				<td class="greybox w25"><input type="text" name="partyName"
 					id="partyName" onclick="loadEntities()" autocomplete="off"
 					onkeyup="autocompleteEntities(this,event)"
-					onblur="splitValues(this)" />
+					onblur="splitValues(this)" class="w100"/>
 					<div id="codescontainer"></div></td>
+				<td class="bluebox w5">&nbsp;</td>
 			</tr>
 			<tr>
-				<td class="bluebox" width="10%"><span
+				<td class="bluebox w5">&nbsp;</td>
+				<td class="bluebox w15"><span
 					id="showRemittedEntrieslabel"><s:text name="lbl.show.remitted.records" />:</span></td>
-				<td class="bluebox"><s:checkbox name="showRemittedEntries"
+				<td class="bluebox w25"><s:checkbox name="showRemittedEntries"
 						id="showRemittedEntries" /></td>
 				<td class="bluebox">&nbsp;</td>
 				<td class="bluebox">&nbsp;</td>

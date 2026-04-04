@@ -413,7 +413,15 @@
 		}
 	}
 </script>
+<style>
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+</style>
 </head>
+
 <body >
 	<div class="errorstyle" id="error_area" style="display: none;"></div>
 	<span align="center" style="display: none" id="selectremittanceerror">
@@ -452,9 +460,9 @@
 				<div align="center">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
-							<td width="4%" class="bluebox">&nbsp;</td>
-							<td class="bluebox"><s:text name="bankremittance.accountnumber" />: <span class="mandatory1">*</span></td>
-							<td class="bluebox">
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"><s:text name="bankremittance.accountnumber" />: <span class="mandatory1">*</span></td>
+							<td class="bluebox w25">
 								<select id="accountNumberId" name="accountNumberId" value="%{accountNumberId}">
 										<option value="-1">Select</option>
 										<c:forEach items="${dropdownData.accountNumberList}" var="accNum">
@@ -469,20 +477,22 @@
 							</td>
 						</tr>
 						<tr>
-							<td width="4%" class="bluebox">&nbsp;</td>
-							<td class="bluebox"><s:text name="bankremittance.financialyear" />:</td>
-							<td class="bluebox"><s:select headerKey="-1" headerValue="--Select--" list="dropdownData.financialYearList" listKey="id" id="finYearId" listValue="finYearRange" label="finYearRange" name="finYearId" value="%{finYearId}" /></td>
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"><s:text name="bankremittance.financialyear" />:</td>
+							<td class="bluebox w25"><s:select headerKey="-1" headerValue="--Select--" list="dropdownData.financialYearList" listKey="id" id="finYearId" listValue="finYearRange" label="finYearRange" name="finYearId" value="%{finYearId}" /></td>
 							<td class="bluebox">&nbsp;</td>
 							<td class="bluebox">&nbsp;</td>
 						</tr>
 						<tr id="dateDiv">
-							<td width="4%" class="bluebox">&nbsp;</td>
-							<td class="bluebox"><s:text name="bankremittance.fromdate" /></td>
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"><s:text name="bankremittance.fromdate" /></td>
 								<s:date name="fromDate" var="fromFormat" format="dd/MM/yyyy" />
-							<td class="bluebox"><s:textfield id="fromDate" name="fromDate" data-inputmask="'mask': 'd/m/y'" value="%{fromFormat}" placeholder="DD/MM/YYYY" /></td>
-							<td class="bluebox"><s:text name="bankremittance.todate" /></td>
+							<td class="bluebox w25"><s:textfield id="fromDate" name="fromDate" data-inputmask="'mask': 'd/m/y'" value="%{fromFormat}" placeholder="DD/MM/YYYY" class="w100" /></td>
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"><s:text name="bankremittance.todate" /></td>
 								<s:date name="toDate" var="toFormat" format="dd/MM/yyyy" />
-							<td class="bluebox"><s:textfield id="toDate" name="toDate" value="%{toFormat}" data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" /></td>
+							<td class="bluebox w25"><s:textfield id="toDate" name="toDate" value="%{toFormat}" data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" class="w100"/></td>
+							<td class="bluebox w5">&nbsp;</td>
 						</tr>
 					</table>
 					</div>

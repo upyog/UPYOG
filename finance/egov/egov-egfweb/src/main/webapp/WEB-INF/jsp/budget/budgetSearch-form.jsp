@@ -66,6 +66,13 @@
 		if(typeof preselectSubScheme=='function') preselectSubScheme()
     }
 </script>
+<style>
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+</style>
 
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js?rnd=${app_release_no}"></script>
@@ -73,44 +80,46 @@
 	<div class="formheading"></div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td width="10%" class="bluebox">&nbsp;</td>
-			<td class="bluebox"><s:text name="budget.financialYear" /><span
+			<td class="bluebox w5">&nbsp;</td>
+			<td class="bluebox w15"><s:text name="budget.financialYear" /><span
 				class="mandatory1">*</span>
-			<td width="22%" class="bluebox"><s:select
+			<td class="bluebox w25"><s:select
 					list="dropdownData.financialYearList" listKey="id"
 					listValue="finYearRange" name="budget.financialYear.id"
 					id="financialYearRange" onchange="populateBudgets(this);"></s:select></td>
 		</tr>
 		<tr>
-			<td width="10%" class="greybox">&nbsp;</td>
+			<td class="greybox w5">&nbsp;</td>
 			<egov:ajaxdropdown id="budget" fields="['Text','Value']"
 				dropdownId="budgetDetail_budget"
 				url="budget/budgetSearch-ajaxLoadBudget.action" />
-			<td class="greybox"><s:text name="budgetdetail.budget" />
-			<td width="22%" class="greybox"><s:select
+			<td class="greybox w15"><s:text name="budgetdetail.budget" />
+			<td class="greybox w25"><s:select
 					list="dropdownData.budgetList" listKey="id" listValue="name"
 					name="budget.id" value="model.budget.id" id="budgetDetail_budget"
 					disabled="%{headerDisabled}" headerKey="0"
 					headerValue="%{getText('lbl.choose.options')}"></s:select></td>
 			<s:if
 				test="%{shouldShowHeaderField('executingDepartment') || shouldShowGridField('executingDepartment')}">
-				<td class="greybox"><s:text
+				<td class="greybox w5">&nbsp;</td>
+				<td class="greybox w15"><s:text
 						name="budgetdetail.executingDepartment" /></td>
-				<td width="22%" class="greybox"><s:select
+				<td class="greybox w25"><s:select
 						list="dropdownData.executingDepartmentList" listKey="code"
 						listValue="name" name="executingDepartment" headerKey="0"
 						headerValue="%{getText('lbl.choose.options')}"
 						onchange="updateGrid('executingDepartment',document.getElementById('budgetDetail_executingDepartment').selectedIndex)"
 						value="model.executingDepartment"
 						id="budgetDetail_executingDepartment"></s:select></td>
+				<td class="greybox w5">&nbsp;</td>
 			</s:if>
 		</tr>
 		<tr>
 			<s:if
 				test="%{shouldShowHeaderField('fund') || shouldShowGridField('fund')}">
-				<td class="bluebox">&nbsp;</td>
-				<td class="bluebox"><s:text name="budgetdetail.fund" /></td>
-				<td class="bluebox"><s:select list="dropdownData.fundList"
+				<td class="greybox w5">&nbsp;</td>
+				<td class="bluebox w15"><s:text name="budgetdetail.fund" /></td>
+				<td class="bluebox w25"><s:select list="dropdownData.fundList"
 						listKey="id" listValue="name" name="fund.id" headerKey="0"
 						headerValue="%{getText('lbl.choose.options')}"
 						onchange="updateGrid('fund.id',document.getElementById('budgetDetail_fund').selectedIndex)"
@@ -118,20 +127,22 @@
 			</s:if>
 			<s:if
 				test="%{shouldShowHeaderField('function') || shouldShowGridField('function')}">
-				<td class="bluebox"><s:text name="budgetdetail.function" /></td>
-				<td class="bluebox"><s:select list="dropdownData.functionList"
+				<td class="greybox w5">&nbsp;</td>
+				<td class="bluebox w15"><s:text name="budgetdetail.function" /></td>
+				<td class="bluebox w25"><s:select list="dropdownData.functionList"
 						listKey="id" listValue="name" name="function.id" headerKey="0"
 						headerValue="%{getText('lbl.choose.options')}"
 						onchange="updateGrid('function.id',document.getElementById('budgetDetail_function').selectedIndex)"
 						value="function.id" id="budgetDetail_function"></s:select></td>
+				<td class="greybox w5">&nbsp;</td>
 			</s:if>
 		</tr>
 		<tr>
 			<s:if
 				test="%{shouldShowHeaderField('scheme') || shouldShowGridField('scheme')}">
-				<td width="10%" class="bluebox">&nbsp;</td>
-				<td class="greybox"><s:text name="budgetdetail.scheme" /></td>
-				<td class="greybox"><s:select list="dropdownData.schemeList"
+				<td class="greybox w5">&nbsp;</td>
+				<td class="greybox w15"><s:text name="budgetdetail.scheme" /></td>
+				<td class="greybox w25"><s:select list="dropdownData.schemeList"
 						listKey="id" listValue="name" headerKey="0"
 						headerValue="%{getText('lbl.choose.options')}" name="scheme"
 						onchange="updateGrid('scheme.id',document.getElementById('budgetDetail_scheme').selectedIndex);populateSubSchemes(this);"
@@ -139,12 +150,13 @@
 			</s:if>
 			<s:if
 				test="%{shouldShowHeaderField('subScheme') || shouldShowGridField('subScheme')}">
+				<td class="greybox w5">&nbsp;</td>
 				<egov:ajaxdropdown id="subScheme" fields="['Text','Value']"
 					dropdownId="budgetDetail_subScheme"
 					url="budget/budgetDetail-ajaxLoadSubSchemes.action"
 					afterSuccess="onHeaderSubSchemePopulation" />
-				<td class="greybox"><s:text name="budgetdetail.subScheme" /></td>
-				<td class="greybox"><s:select list="dropdownData.subSchemeList"
+				<td class="greybox w15"><s:text name="budgetdetail.subScheme" /></td>
+				<td class="greybox w25"><s:select list="dropdownData.subSchemeList"
 						listKey="id" listValue="name" headerKey="0"
 						headerValue="%{getText('lbl.choose.options')}" name="subScheme"
 						onchange="updateGrid('subScheme.id',document.getElementById('budgetDetail_subScheme').selectedIndex)"
@@ -154,8 +166,9 @@
 		<tr>
 			<s:if
 				test="%{shouldShowHeaderField('functionary') || shouldShowGridField('functionary')}">
-				<td class="bluebox"><s:text name="budgetdetail.functionary" /></td>
-				<td class="bluebox"><s:select
+				<td class="greybox w5">&nbsp;</td>
+				<td class="bluebox w15"><s:text name="budgetdetail.functionary" /></td>
+				<td class="bluebox w25"><s:select
 						list="dropdownData.functionaryList" listKey="id" listValue="name"
 						headerKey="0" headerValue="%{getText('lbl.choose.options')}" name="functionary"
 						onchange="updateGrid('functionary.id',document.getElementById('budgetDetail_functionary').selectedIndex)"
@@ -163,8 +176,9 @@
 			</s:if>
 			<s:if
 				test="%{shouldShowHeaderField('boundary') || shouldShowGridField('boundary')}">
-				<td class="bluebox"><s:text name="budgetdetail.field" /></td>
-				<td class="bluebox"><s:select list="dropdownData.boundaryList"
+				<td class="greybox w5">&nbsp;</td>
+				<td class="bluebox w15"><s:text name="budgetdetail.field" /></td>
+				<td class="bluebox w25"><s:select list="dropdownData.boundaryList"
 						listKey="id" listValue="name" headerKey="0"
 						headerValue="%{getText('lbl.choose.options')}" name="boundary"
 						onchange="updateGrid('boundary.id',document.getElementById('budgetDetail_boundary').selectedIndex)"

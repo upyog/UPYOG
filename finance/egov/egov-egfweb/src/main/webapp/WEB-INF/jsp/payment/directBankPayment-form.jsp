@@ -52,60 +52,73 @@
 	src="/services/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+<style type="text/css">
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+</style>
 <tr>
-	<td class="greybox"></td>
-	<td class="greybox"><s:text name="bank" /> <span class="greybox"><span
+	<td class="bluebox w5">&nbsp;</td>
+	<td class="greybox w15"><s:text name="bank" /> <span class="greybox"><span
 			class="mandatory1">*</span></span></td>
 	<egov:ajaxdropdown id="bankId" fields="['Text','Value']"
 		dropdownId="bankId"
 		url="/voucher/common-ajaxLoadBanksByFundAndType.action" />
-	<td class="greybox"><s:select name="commonBean.bankId" id="bankId"
+	<td class="greybox w25"><s:select name="commonBean.bankId" id="bankId"
 			list="dropdownData.bankList" listKey="bankBranchId"
 			listValue="bankBranchName" headerKey="" headerValue="%{getText('lbl.choose.options')}"
 			onChange="populateAccNum(this);" /></td>
-	<td class="greybox"><s:text name="amount" /><span
+	<td class="bluebox w5">&nbsp;</td>
+	<td class="greybox w15"><s:text name="amount" /><span
 		class="mandatory1">*</span></td>
-	<td class="greybox"><s:textfield name="commonBean.amount"
+	<td class="greybox w25"><s:textfield name="commonBean.amount"
 			id="amount" maxlength="18" onblur="validateDigitsAndDecimal(this);"
-			cssStyle="text-align:right" /></td>
+			cssStyle="text-align:right" class="w100" /></td>
+	<td class="bluebox w5">&nbsp;</td>
 </tr>
 
 <tr>
-	<td class="bluebox" width="10%"></td>
+	<td class="bluebox w5">&nbsp;</td>
 	<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
 		dropdownId="accountNumber"
 		url="voucher/common-ajaxLoadBankAccounts.action" />
-	<td class="bluebox" width="22%"><s:text name="account.number" /><span
+	<td class="bluebox w15"><s:text name="account.number" /><span
 		class="bluebox"><span class="mandatory1">*</span></span></td>
-	<td class="bluebox" width="22%"><s:select
+	<td class="bluebox w25"><s:select
 			name="commonBean.accountNumberId" id="accountNumber"
 			list="dropdownData.accNumList" listKey="id"
 			listValue="accountnumber+'-'+accounttype" headerKey=""
 			headerValue="%{getText('lbl.choose.options')}"
 			onChange="populateNarration(this);populateAvailableBalance(this);" />
 		<s:textfield name="accnumnar" id="accnumnar"
-			value="%{commonBean.accnumnar}" readonly="true" tabindex="-1" /></td>
+			value="%{commonBean.accnumnar}" readonly="true" tabindex="-1" class="w100"/></td>
+	<td class="bluebox w5">&nbsp;</td>
 	<egov:updatevalues id="availableBalance" fields="['Text']"
 		url="/payment/payment-ajaxGetAccountBalance.action" />
-	<td class="bluebox" id="balanceText"><s:text
+	<td class="bluebox w15" id="balanceText"><s:text
 			name="balance.available" /></td>
-	<td class="bluebox" id="balanceAvl"><s:textfield
+	<td class="bluebox w25" id="balanceAvl"><s:textfield
 			name="commonBean.availableBalance" id="availableBalance"
 			readonly="true" style="text-align:right"
-			value="%{commonBean.availableBalance}" /></td>
+			value="%{commonBean.availableBalance}" class="w100"/></td>
+	<td class="bluebox w5">&nbsp;</td>
 
 
 </tr>
-<td class="greybox"></td>
-<td class="greybox"><s:text name="modeofpayment" /> <span
-	class="greybox"><span class="mandatory1">*</span></span></td>
-<td class="greybox"><s:radio name="commonBean.modeOfPayment"
-		id="modeOfPayment" list="%{modeOfPaymentMap}" /></td>
-<td class="greybox"><s:text name="paidto" /><span
-	class="mandatory1">*</span></td>
-<td class="greybox"><s:textfield name="commonBean.paidTo" class = "patternvalidation"
-		id="paidTo" maxlength="250" data-pattern="alphanumericwithspaceanddot"
-			cssStyle="text-align:right"/></td>
+	<<td class="bluebox w5">&nbsp;</td>
+	<td class="greybox w15"><s:text name="modeofpayment" /> <span
+		class="greybox"><span class="mandatory1">*</span></span></td>
+	<td class="greybox w25"><s:radio name="commonBean.modeOfPayment"
+			id="modeOfPayment" list="%{modeOfPaymentMap}" /></td>
+	<td class="bluebox w5">&nbsp;</td>
+	<td class="greybox w15"><s:text name="paidto" /><span
+		class="mandatory1">*</span></td>
+	<td class="greybox w25"><s:textfield name="commonBean.paidTo" class = "patternvalidation w100"
+			id="paidTo" maxlength="250" data-pattern="alphanumericwithspaceanddot"
+				cssStyle="text-align:right"/></td>
+	<td class="bluebox w5">&nbsp;</td>
 </tr>
 <%-- <tr>
 	<td class="bluebox"></td>
@@ -121,47 +134,51 @@
 	<TD></TD>
 </tr> --%>
 <tr>
-	<td class="greybox"></td>
-	<td class="greybox"><s:text name="document.number" /><span
+	<td class="bluebox w5">&nbsp;</td>
+	<td class="greybox w15"><s:text name="document.number" /><span
 		class="greybox"><span class="mandatory1">*</span></span></td>
-	<td class="greybox"><s:textfield name="commonBean.documentNumber"
-			id="commonBean.documentNumber" size="25" /></td>
-	<td class="greybox"><s:text name="document.date" /><span
+	<td class="greybox w25"><s:textfield name="commonBean.documentNumber"
+			id="commonBean.documentNumber" size="25" class="w100"/></td>
+	<td class="bluebox w5">&nbsp;</td>
+	<td class="greybox w15"><s:text name="document.date" /><span
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<s:date name='commonBean.documentDate' var="commonBean.documentDateId"
 		format='dd/MM/yyyy' />
-	<td class="greybox"><s:textfield id="documentDate"
+	<td class="greybox w25"><s:textfield id="documentDate"
 			name="commonBean.documentDate" value="%{commonBean.documentDateId}"
 			data-date-end-date="0d"
 			onkeyup="DateFormat(this,this.value,event,false,'3')"
-			placeholder="DD/MM/YYYY" class="form-control datepicker"
+			placeholder="DD/MM/YYYY" class="form-control datepicker w100"
 			data-inputmask="'mask': 'd/m/y'" /></td>
+	<td class="bluebox w5">&nbsp;</td>
 </tr>
 
 
 <s:if test="%{instrumentHeaderList.size()>0}">
 	<s:iterator var="p" value="instrumentHeaderList" status="s">
 		<tr>
-			<td class="bluebox"></td>
-			<td class="bluebox"><s:text name="lbl.cheque.number"/> </td>
-			<td class="bluebox"><s:property value="%{instrumentNumber}" />
+			<td class="bluebox w5">&nbsp;</td>
+			<td class="bluebox w15"><s:text name="lbl.cheque.number"/> </td>
+			<td class="bluebox w25"><s:property value="%{instrumentNumber}" />
 			</td>
-			<td class="bluebox"><s:text name="lbl.cheque.date"/></td>
-			<td class="bluebox"><s:date name="%{instrumentDate}"
+			<td class="bluebox w5">&nbsp;</td>
+			<td class="bluebox w15"><s:text name="lbl.cheque.date"/></td>
+			<td class="bluebox w25"><s:date name="%{instrumentDate}"
 					format="dd/MM/yyyy" /></td>
+			<td class="bluebox w5">&nbsp;</td>
 		</tr>
 		<tr>
-			<td class="greybox"></td>
-			<td class="greybox"><s:text name="lbl.party.name"/></td>
-			<td class="greybox"><s:property value="%{payTo}" /></td>
+			<td class="bluebox w5">&nbsp;</td>
+			<td class="greybox w15"><s:text name="lbl.party.name"/></td>
+			<td class="greybox w25"><s:property value="%{payTo}" /></td>
 		</tr>
 	</s:iterator>
 </s:if>
 <tr>
-	<td class="bluebox"></td>
-	<td class="bluebox"><s:text name="voucher.narration" /></td>
-	<td class="bluebox" colspan="3"><s:textarea name="description"
-			id="description" style="width:580px" /></td>
+	<td class="bluebox w5">&nbsp;</td>
+	<td class="bluebox w15"><s:text name="voucher.narration" /></td>
+	<td class="bluebox w25" colspan="3"><s:textarea name="description"
+			id="description" style="width:55%" /></td>
 </tr>
 </table>
 <div id="budgetSearchGrid">

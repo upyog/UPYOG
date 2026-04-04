@@ -58,6 +58,13 @@
 <script type="text/javascript"
 	src="/services/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 <STYLE type="text/css">
+
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+
 .yui-dt-liner {
 	text-align: right;
 }
@@ -285,7 +292,7 @@
 				<div class="tabbertab">
 					<h2><s:text name="lbl.additional.appropriation"/> </h2>
 					<span>
-						<table width="60%" border="0" cellspacing="0" cellpadding="0">
+						<table width="72%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td>
 									<div class="subheadnew">
@@ -294,29 +301,30 @@
 								</td>
 							</tr>
 						</table>
-						<table width="50%" border="0" cellspacing="0" cellpadding="0">
+						<table width="72%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
-								<td width="10%" class="bluebox">&nbsp;</td>
-								<td class="bluebox"><s:text name="budget.financialYear" /><span
+								<td class="bluebox w5">&nbsp;</td>
+								<td class="bluebox w15"><s:text name="budget.financialYear" /><span
 									class="mandatory1">*</span></td>
-								<td class="bluebox"><s:select
+								<td class="bluebox w25"><s:select
 										list="dropdownData.financialYearList" listKey="id"
 										listValue="finYearRange" name="financialYear.id"
 										value="financialYear.id" id="financialYear" headerKey="0"
 										headerValue="%{getText('lbl.choose.options')}" onchange="getBeRe();"></s:select></td>
-								<td class="bluebox" width="19%"><s:text name="budget.bere" /></td>
-								<td class="bluebox"><s:select name="isBeRe" id="isBeRe"
+								<td class="bluebox w5">&nbsp;</td>
+								<td class="bluebox w15"><s:text name="budget.bere" /></td>
+								<td class="bluebox w25"><s:select name="isBeRe" id="isBeRe"
 										list="#{'BE':'BE','RE':'RE'}" value="beRe" disabled="true" /></td>
 							</tr>
 							<tr>
 								<s:if test="%{shouldShowHeaderField('executingDepartment')}">
-									<td class="greybox">&nbsp;</td>
-									<td class="greybox"><s:text
+									<td class="bluebox w5">&nbsp;</td>
+									<td class="greybox w15"><s:text
 											name="budgetdetail.executingDepartment" /> <s:if
 											test="%{isFieldMandatory('executingDepartment')}">
 											<span class="mandatory1">*</span>
 										</s:if></td>
-									<td width="22%" class="greybox"><s:select
+									<td class="greybox w25"><s:select
 											list="dropdownData.executingDepartmentList" listKey="code"
 											listValue="name" name="budgetDetail.executingDepartment"
 											headerKey="0" headerValue="%{getText('lbl.choose.options')}"
@@ -325,11 +333,12 @@
 											id="budgetReAppropriation_executingDepartment"></s:select></td>
 								</s:if>
 								<s:if test="%{shouldShowHeaderField('fund')}">
-									<td class="greybox"><s:text name="fund" /> <s:if
+									<td class="bluebox w5">&nbsp;</td>
+									<td class="greybox w15"><s:text name="fund" /> <s:if
 											test="%{isFieldMandatory('fund')}">
 											<span class="mandatory1">*</span>
 										</s:if></td>
-									<td class="greybox"><s:select list="dropdownData.fundList"
+									<td class="greybox w25"><s:select list="dropdownData.fundList"
 											listKey="id" listValue="name" name="budgetDetail.fund.id"
 											headerKey="0" headerValue="%{getText('lbl.choose.options')}"
 											onchange="updateGrid('budgetDetail.fund.id',document.getElementById('budgetReAppropriation_fund').selectedIndex);updateReAppGrid('budgetDetail.fund.id',document.getElementById('budgetReAppropriation_fund').selectedIndex)"
@@ -338,12 +347,12 @@
 							</tr>
 							<tr>
 								<s:if test="%{shouldShowHeaderField('function')}">
-									<td class="bluebox">&nbsp;</td>
-									<td class="bluebox"><s:text name="function" /> <s:if
+									<td class="bluebox w5">&nbsp;</td>
+									<td class="bluebox w15"><s:text name="function" /> <s:if
 											test="%{isFieldMandatory('function')}">
 											<span class="mandatory1">*</span>
 										</s:if></td>
-									<td class="bluebox"><s:select
+									<td class="bluebox w25"><s:select
 											list="dropdownData.functionList" listKey="id"
 											listValue="name" name="budgetDetail.function.id"
 											headerKey="0" headerValue="%{getText('lbl.choose.options')}"
@@ -351,11 +360,12 @@
 											value="function.id" id="budgetReAppropriation_function"></s:select></td>
 								</s:if>
 								<s:if test="%{shouldShowHeaderField('functionary')}">
-									<td class="bluebox"><s:text name="functionary" /> <s:if
+									<td class="bluebox w5">&nbsp;</td>
+									<td class="bluebox w15"><s:text name="functionary" /> <s:if
 											test="%{isFieldMandatory('functionary')}">
 											<span class="mandatory1">*</span>
 										</s:if></td>
-									<td class="bluebox"><s:select
+									<td class="bluebox w25"><s:select
 											list="dropdownData.functionaryList" listKey="id"
 											listValue="name" headerKey="0" headerValue="%{getText('lbl.choose.options')}"
 											name="budgetDetail.functionary.id"
@@ -365,12 +375,12 @@
 							</tr>
 							<tr>
 								<s:if test="%{shouldShowHeaderField('scheme')}">
-									<td width="10%" class="bluebox">&nbsp;</td>
-									<td class="greybox"><s:text name="scheme" /> <s:if
+									<td class="bluebox w5">&nbsp;</td>
+									<td class="greybox w15"><s:text name="scheme" /> <s:if
 											test="%{isFieldMandatory('scheme')}">
 											<span class="mandatory1">*</span>
 										</s:if></td>
-									<td class="greybox"><s:select
+									<td class="greybox w25"><s:select
 											list="dropdownData.schemeList" listKey="id" listValue="name"
 											headerKey="0" headerValue="%{getText('lbl.choose.options')}"
 											name="budgetDetail.scheme.id"
@@ -378,15 +388,16 @@
 											value="scheme.id" id="budgetReAppropriation_scheme"></s:select></td>
 								</s:if>
 								<s:if test="%{shouldShowHeaderField('subScheme')}">
+									<td class="bluebox w5">&nbsp;</td>
 									<egov:ajaxdropdown id="subScheme" fields="['Text','Value']"
 										dropdownId="budgetReAppropriation_subScheme"
 										url="budget/budgetDetail-ajaxLoadSubSchemes.action"
 										afterSuccess="onHeaderSubSchemePopulation" />
-									<td class="greybox"><s:text name="subscheme" /> <s:if
+									<td class="greybox w15"><s:text name="subscheme" /> <s:if
 											test="%{isFieldMandatory('subScheme')}">
 											<span class="mandatory1">*</span>
 										</s:if></td>
-									<td class="greybox"><s:select
+									<td class="greybox w25"><s:select
 											list="dropdownData.subSchemeList" listKey="id"
 											listValue="name" headerKey="0" headerValue="%{getText('lbl.choose.options')}"
 											name="budgetDetail.subScheme"
@@ -397,12 +408,12 @@
 							</tr>
 							<tr>
 								<s:if test="%{shouldShowHeaderField('boundary')}">
-									<td width="10%" class="bluebox">&nbsp;</td>
-									<td class="bluebox"><s:text name="field" /> <s:if
+									<td class="bluebox w5">&nbsp;</td>
+									<td class="bluebox w15"><s:text name="field" /> <s:if
 											test="%{isFieldMandatory('boundary')}">
 											<span class="mandatory1">*</span>
 										</s:if></td>
-									<td class="bluebox"><s:select
+									<td class="bluebox w25"><s:select
 											list="dropdownData.boundaryList" listKey="id"
 											listValue="name" headerKey="0" headerValue="%{getText('lbl.choose.options')}"
 											name="budgetDetail.boundary.id"
@@ -417,21 +428,28 @@
 								<td class="bluebox">&nbsp;</td>
 							</tr>
 							<tr>
-								<td class="greybox">&nbsp;</td>
-								<td class="greybox"><s:text
+								<td class="bluebox w5">&nbsp;</td>
+								<td class="greybox w15"><s:text
 										name="budgetReAppropriation.asOnDate" /></td>
-								<td class="greybox"><input type="text" id="date"
+								<td class="greybox w25"><s:textfield id="date" name="appropriationMisc.reAppropriationDate"
+								value= "%{appropriationMisc.reAppropriationDate}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+								
+							<%-- 	<td class="greybox"><input type="text" id="date"
 									name="appropriationMisc.reAppropriationDate"
 									style="width: 100px"
 									value='<s:date name="appropriationMisc.reAppropriationDate" format="dd/MM/yyyy"/>' /><a
 									href="javascript:show_calendar('budgetDetailForm.date');"
 									style="text-decoration: none">&nbsp;<img
-										src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
-								<td class="greybox"><s:text
+										src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td> --%>
+								<td class="bluebox w5">&nbsp;</td>
+								<td class="greybox w15"><s:text
 										name="budgetReAppropriation.comments" /></td>
-								<td class="greybox"><s:textarea
+								<td class="greybox w25"><s:textarea
 										id="appropriationMisc.remarks"
-										name="appropriationMisc.remarks" cols="50" /></td>
+										name="appropriationMisc.remarks" cols="50" class="w100"/></td>
 								<td class="greybox"></td>
 							</tr>
 						</table> <br />

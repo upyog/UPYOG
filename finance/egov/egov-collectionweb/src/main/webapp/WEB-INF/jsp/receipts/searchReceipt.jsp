@@ -52,10 +52,42 @@
 <link rel="stylesheet" type="text/css"
 	href="<egov:url path='/yui/assets/skins/sam/autocomplete.css'/>" />
 <head>
-<title><s:text name="searchreceipts.title" /></title>
-<style type="text/css">
-table {
-	width: 100%;
+	<title><s:text name="searchreceipts.title"/></title>
+	<style>
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+</style>
+<script  >
+
+jQuery.noConflict();
+jQuery(document).ready(function() {
+  	 
+     jQuery(" form ").submit(function( event ) {
+    	 doLoadingMask();
+    });
+     doLoadingMask();
+ });
+
+jQuery(window).load(function () {
+	undoLoadingMask();
+});
+
+function isChecked(chk) {
+	if (chk.length == undefined) {
+ 	if (chk.checked == true)
+  	return true;
+ 	else return false;	
+ } else {
+ 	for (i = 0; i < chk.length; i++)
+		{
+			if (chk[i].checked == true ) return true;
+		}
+	return false;
+ }
+
 }
 
 #fromDate, #toDate, #receiptNumber, textfield, textarea, select {
@@ -496,14 +528,15 @@ table {
 				<tr>
 					<td width="2%" class="bluebox">&nbsp;</td>
 					<td width="15%" class="bluebox"><s:text
-							name="searchreceipts.criteria.servicetype" /> <span
+							name="searchreceipts.criteria.servicecategory" /> <span
 						class="mandatory"></td>
 					<td width="30%" class="bluebox"><s:select headerKey="-1"
 							headerValue="%{getText('miscreceipt.select')}"
 							name="serviceCategory" id="serviceCategoryid" cssClass="selectwk"
 							list="serviceCategoryNames" value="%{serviceCategory}"
 							onChange="populateServiceType(this.value);" /></td>
-					<td width="15%" class="bluebox" id="serviceTypeLabel"></td>
+					<td width="15%" class="bluebox" id="serviceTypeLabel"><span
+						class="mandatory"></td>
 					<td width="30%" class="bluebox" id="serviceTypeCell"></td>
 				</tr>
 
@@ -514,6 +547,7 @@ table {
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.receiptno"/></td>
 	      <td width="24%" class="bluebox">
 	      <div class="yui-skin-sam"><s:textfield id="receiptNumber" type="text" name="receiptNumber"/></td>
+
 	     <%--  <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.user"/></td>
 	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.user.select')}" name="userId" id="user" cssClass="selectwk" list="dropdownData.userList" listKey="id" listValue="name" value="%{userId}" /> </td>
 	    --%>

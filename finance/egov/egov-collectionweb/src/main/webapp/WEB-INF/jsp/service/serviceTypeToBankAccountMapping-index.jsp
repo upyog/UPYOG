@@ -49,6 +49,12 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 <head>
+<style>
+	select{width:100% !important}
+	.w5{width:5%}
+	.w15{width:15%}
+	.w25{width:25%}
+</style>
 <title></title>
 <script>
 	function onChangeBankBranch(bankId) {
@@ -135,7 +141,7 @@
 					<s:text name="service.master.bankmappping.view.header" />
 				</div>
 
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 960px; margin: 0 auto;">
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" margin: 0 auto;">
 					<%-- <tr>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox"><s:text name="service.master.bankname" /> </td>
@@ -148,14 +154,14 @@
 						</td>
 					</tr> --%>
 					<tr>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox"><s:text name="service.master.accountnumber" /> </td>
-						<td class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="bankAccountId.accountnumber" id="bankAccountId" cssClass="selectwk"  list="dropdownData.bankAccountIdList" listKey="accountnumber" listValue="accountnumber" value="%{bankAccountId.accountnumber}" /></td>
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="service.master.accountnumber" /> </td>
+						<td class="bluebox w25"><s:select headerKey="-1" headerValue="----Choose----" name="bankAccountId.accountnumber" id="bankAccountId" cssClass="selectwk"  list="dropdownData.bankAccountIdList" listKey="accountnumber" listValue="accountnumber" value="%{bankAccountId.accountnumber}" /></td>
 					</tr>
 					<tr>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox"><s:text name="service.master.search.category" /></td>
-						<td class="bluebox">
+						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15"><s:text name="service.master.search.category" /></td>
+						<td class="bluebox w25">
 						<s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory" id="serviceCategoryid" cssClass="selectwk" list="serviceCategoryNames" value="%{serviceCategory}" onChange="populateServiceType(this.value);" /> 
 						</td>
 						<td colspan="2">

@@ -49,28 +49,36 @@
 
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+<style type="text/css">
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+</style>
 <tr>
-	<td class="greybox"></td>
+	<td class="bluebox w5">&nbsp;</td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
-		<td class="greybox"><s:text name="voucher.fund" /> <s:if
+		<td class="greybox w15"><s:text name="voucher.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
-		<td class="greybox"><s:select name="fundId" id="fundId"
+		<td class="greybox w25"><s:select name="fundId" id="fundId"
 				list="dropdownData.fundList" listKey="id" listValue="name"
 				headerKey="" headerValue="%{getText('lbl.choose.options')}"
 				onChange="populateSchemes(this);loadBank(this);"
 				value="%{fundId.id}" /></td>
+		
 	</s:if>
 	<s:if test="%{shouldShowHeaderField('scheme')}">
+		<td class="bluebox w5">&nbsp;</td>
 		<egov:ajaxdropdown id="scheme" fields="['Text','Value']"
 			dropdownId="schemeid" url="voucher/common-ajaxLoadSchemes.action" />
 
-		<td class="greybox"><s:text name="voucher.scheme" /> <s:if
+		<td class="greybox w15"><s:text name="voucher.scheme" /> <s:if
 				test="%{isFieldMandatory('scheme')}">
 				<span class="mandatory1">*</span>
 			</s:if></td>
-		<td class="greybox"><s:select list="dropdownData.schemeList"
+		<td class="greybox w25"><s:select list="dropdownData.schemeList"
 				name="vouchermis.schemeid" id="schemeid" listKey="id"
 				listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 				onChange="populatesubSchemes(this)"
@@ -78,44 +86,46 @@
 	</s:if>
 </tr>
 <tr>
-	<td class="bluebox"></td>
+	<td class="bluebox w5">&nbsp;</td>
 	<s:if test="%{shouldShowHeaderField('subscheme')}">
 		<egov:ajaxdropdown id="subscheme" fields="['Text','Value']"
 			dropdownId="subschemeid"
 			url="voucher/common-ajaxLoadSubSchemes.action" />
-		<td class="bluebox"><s:text name="voucher.subscheme" /> <s:if
+		<td class="bluebox w15"><s:text name="voucher.subscheme" /> <s:if
 				test="%{isFieldMandatory('subscheme')}">
 				<span class="mandatory1">*</span>
 			</s:if></td>
-		<td class="bluebox"><s:select name="vouchermis.subschemeid"
+		<td class="bluebox w25"><s:select name="vouchermis.subschemeid"
 				id="subschemeid" list="dropdownData.subschemeList" listKey="id"
 				listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 				value="voucherHeader.vouchermis.subschemeid.id"
 				onChange="populateFundSource(this)" /></td>
 	</s:if>
 	<s:if test="%{shouldShowHeaderField('fundsource')}">
+		<td class="bluebox w5">&nbsp;</td>
 		<egov:ajaxdropdown id="fundsource" fields="['Text','Value']"
 			dropdownId="fundsourceId"
 			url="voucher/common-ajaxLoadFundSource.action" />
-		<td class="bluebox"><s:text name="voucher.fundsource" /> <s:if
+		<td class="bluebox w15"><s:text name="voucher.fundsource" /> <s:if
 				test="%{isFieldMandatory('fundsource')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
-		<td class="bluebox"><s:select name="vouchermis.fundsource"
+		<td class="bluebox w25"><s:select name="vouchermis.fundsource"
 				id="fundsourceId" list="dropdownData.fundsourceList" listKey="id"
 				listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 				value="voucherHeader.vouchermis.fundsource.id" /></td>
 	</s:if>
 </tr>
 <tr>
-	<td class="greybox"></td>
+	
 
 	<s:if test="%{shouldShowHeaderField('department')}">
-		<td class="greybox"><s:text name="voucher.department" /> <s:if
+		<td class="bluebox w5">&nbsp;</td>
+		<td class="greybox w15"><s:text name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
-		<td class="greybox"><s:select name="vouchermis.departmentcode"
+		<td class="greybox w25"><s:select name="vouchermis.departmentcode"
 				id="vouchermis.departmentid" list="dropdownData.departmentList"
 				listKey="code" listValue="name" headerKey=""
 				headerValue="%{getText('lbl.choose.options')}"
@@ -135,8 +145,8 @@
 	</s:if>
 </tr>
 <tr>
-	<td class="bluebox"></td>
 	<s:if test="%{shouldShowHeaderField('functionary')}">
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="bluebox"><s:text name="voucher.functionary" /> <s:if
 				test="%{isFieldMandatory('functionary')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
@@ -148,11 +158,12 @@
 				value="voucherHeader.vouchermis.functionary.id" style="width:180px" /></td>
 	</s:if>
 	<s:if test="%{shouldShowHeaderField('function')}">
-		<td class="bluebox"><s:text name="voucher.function" /> <s:if
+		<td class="bluebox w5">&nbsp;</td>
+		<td class="bluebox w15"><s:text name="voucher.function" /> <s:if
 				test="%{isFieldMandatory('function')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
-		<td class="bluebox"><s:select name="vouchermis.function"
+		<td class="bluebox w25"><s:select name="vouchermis.function"
 				id="vouchermis.function" list="dropdownData.functionList"
 				listKey="id" listValue="name" headerKey="-1"
 				headerValue="%{getText('lbl.choose.options')}" value="%{vouchermis.function.id}" /></td>

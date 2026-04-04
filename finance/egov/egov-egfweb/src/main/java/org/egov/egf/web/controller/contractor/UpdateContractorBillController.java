@@ -442,7 +442,8 @@ public class UpdateContractorBillController extends BaseBillController {
                     updatedEgBillregister.getState(), updatedEgBillregister.getId(), approvalPosition, approverName);
 
             return "redirect:/contractorbill/success?approverDetails=" + approverDetails + "&billNumber="
-                    + updatedEgBillregister.getBillnumber();
+                    + updatedEgBillregister.getBillnumber()+"&billId="
+                            + updatedEgBillregister.getId();
         }
     }
 

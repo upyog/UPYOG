@@ -69,6 +69,10 @@
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <style type="text/css">
+.w100{width:100% !important}
+.w15{width:15% !important}
+.w5{width:5% !important}
+.w25{width:25% !important}
 #codescontainer {
 	position: absolute;
 	left: 11em;
@@ -327,24 +331,25 @@
 				</span>
 				<table border="0" width="100%" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="10%" class="bluebox"></td>
+						
 						<s:if test="%{shouldshowVoucherNumber()}">
-							<td class="bluebox" width="22%"><s:text
+							<td class="bluebox w5"></td>
+							<td class="bluebox w15"><s:text
 									name="voucher.number" /><span class="mandatory1">*</span></td>
-							<td class="bluebox" width="22%"><s:textfield
+							<td class="bluebox w25"><s:textfield
 									name="voucherNumber" id="voucherNumber" /></td>
 						</s:if>
 						<s:hidden name="id" />
-
-						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
+						<td class="bluebox w5"></td>
+						<td class="bluebox w15"><s:text name="voucher.date" /><span
 							class="mandatory1">*</span></td>
 						<s:date name='voucherDate' var="voucherDateId" format='dd/MM/yyyy' />
-						<td class="bluebox" width="34%">
+						<td class="bluebox w25">
 							<div name="daterow">
 								<s:textfield id="voucherDate" name="voucherDate"
 									value="%{voucherDateId}" data-date-end-date="0d"
 									onkeyup="DateFormat(this,this.value,event,false,'3')"
-									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									placeholder="DD/MM/YYYY" class="form-control datepicker w100"
 									data-inputmask="'mask': 'd/m/y'" />
 
 							</div>

@@ -765,7 +765,7 @@ var totaldbamt=0,totalcramt=0;
 				<tr>
 					<td class="bluebox2" style="width:5%">&nbsp;</td>
 					<td class="bluebox" style="width:15%"><s:text
-							name="viewReceipt.wardno" /><span class="mandatory1">*</span></td>
+							name="viewReceipt.wardno" /></td>
 					<td class="bluebox" style="width:30%"><s:select headerKey=""
 							headerValue="----Choose----" name="wardNo" id="wardNoCode"
 							cssClass="selectwk" list="dropdownData.wardNoList"
