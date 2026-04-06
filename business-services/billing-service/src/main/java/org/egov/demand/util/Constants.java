@@ -215,7 +215,8 @@ public class Constants {
 	public static final String Q2FlatDays="92";
 	public static final String Q3FlatDays="91";
 	public static final String H1FlatDays="182";
-	public static final String InterestPrecentage="0.014";
+	//public static final String InterestPrecentage="0.014";
+	public static final String DEFAULT_INTEREST = "0.014";
 	
 	public static final String PROPERTY_TAX="PT_TAX";
 	public static final String PROPERTY_TAX_GENERAL_CONSERVANCY="PT_GENERAL_CONSERVANCY";

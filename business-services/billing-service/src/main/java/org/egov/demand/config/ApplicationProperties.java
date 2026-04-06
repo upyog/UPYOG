@@ -228,8 +228,9 @@ public class ApplicationProperties {
 	private String pgCreateEndpoint;
 	
 	@Value("${interest.perecent}")
-	private BigDecimal interestPercent;
+	private String interestPercent;
 	
-	
+	@Value("${is.interest.applicable}")
+	private Boolean isInterestApplicable;
 	
 }

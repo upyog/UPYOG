@@ -314,6 +314,7 @@ public class Util {
 		 */
 		MdmsCriteriaReq mdmsReq = prepareMdMsRequest(tenantId, MODULE_NAME, MDMS_MASTER_NAMES, MDMS_CODE_FILTER,
 				requestInfo);
+		System.out.println("mdmsReq::"+mdmsReq);
 		DocumentContext mdmsData = getAttributeValues(mdmsReq);
 
 		return mdmsData;

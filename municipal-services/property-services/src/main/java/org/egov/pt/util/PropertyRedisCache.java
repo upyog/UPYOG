@@ -39,6 +39,9 @@ public class PropertyRedisCache {
     public static final String PREFIX = "PROPERTYREPORT:";
     public static final String PREFIX_PAYMENT = "PAYMENT:";
     public static final String PREFIX_PENALTY = "PENALTY:";
+    public static final String COLLECTION = "COLLECTION:";
+    public static final String PREFIX_INTEREST = "INTEREST:";
+    public static final String PREFIX_ADVANCE = "ADVANCE:";
     private static final Duration TTL = Duration.ofMinutes(30);
     
     @Autowired
@@ -120,8 +123,45 @@ public class PropertyRedisCache {
         return result;
     }
     
+    public Map<String, List<Payment>> multiGetCollection(
+            Map<String, String> propertyTenantMap) {
+
+        List<Map.Entry<String, String>> entries =
+                new ArrayList<>(propertyTenantMap.entrySet());
+
+        List<String> keys = entries.stream()
+                .map(e -> COLLECTION + e.getValue() + ":" + e.getKey())
+                .collect(Collectors.toList());
+
+        List<Object> values = redisTemplate.opsForValue().multiGet(keys);
+
+        Map<String, List<Payment>> result = new HashMap<>();
+
+        if (values != null) {
+            for (int i = 0; i < values.size(); i++) {
+                Object val = values.get(i);
+
+                if (val instanceof List<?>) {
+                    String propertyId = entries.get(i).getKey();
+
+                    @SuppressWarnings("unchecked")
+                    List<Payment> payments = (List<Payment>) val;
+
+                    result.put(propertyId, payments);
+
+                    redisTemplate.expire(
+                            keys.get(i),
+                            TTL.toMinutes(),
+                            TimeUnit.MINUTES
+                    );
+                }
+            }
+        }
+        return result;
+    }
     
-    public Map<String, List<RevenuDataBucket>> multiGetPenalty(
+    
+    public Map<String, List<Payment>> multiGetPenalty(
             Map<String, String> propertyTenantMap) {
 
         List<Map.Entry<String, String>> entries =
@@ -133,7 +173,7 @@ public class PropertyRedisCache {
 
         List<Object> values = redisTemplate.opsForValue().multiGet(keys);
 
-        Map<String, List<RevenuDataBucket>> result = new HashMap<>();
+        Map<String, List<Payment>> result = new HashMap<>();
 
         if (values != null) {
             for (int i = 0; i < values.size(); i++) {
@@ -143,7 +183,44 @@ public class PropertyRedisCache {
                     String propertyId = entries.get(i).getKey();
 
                     @SuppressWarnings("unchecked")
-                    List<RevenuDataBucket> datalist = (List<RevenuDataBucket>) val;
+                    List<Payment> datalist = (List<Payment>) val;
+
+                    result.put(propertyId, datalist);
+
+                    redisTemplate.expire(
+                            keys.get(i),
+                            TTL.toMinutes(),
+                            TimeUnit.MINUTES
+                    );
+                }
+            }
+        }
+        return result;
+    }
+    
+    public Map<String, List<Payment>> multiGetInterest(
+            Map<String, String> propertyTenantMap) {
+
+        List<Map.Entry<String, String>> entries =
+                new ArrayList<>(propertyTenantMap.entrySet());
+
+        List<String> keys = entries.stream()
+                .map(e -> PREFIX_INTEREST+ e.getValue() + ":" + e.getKey())
+                .collect(Collectors.toList());
+
+        List<Object> values = redisTemplate.opsForValue().multiGet(keys);
+
+        Map<String, List<Payment>> result = new HashMap<>();
+
+        if (values != null) {
+            for (int i = 0; i < values.size(); i++) {
+                Object val = values.get(i);
+
+                if (val instanceof List<?>) {
+                    String propertyId = entries.get(i).getKey();
+
+                    @SuppressWarnings("unchecked")
+                    List<Payment> datalist = (List<Payment>) val;
 
                     result.put(propertyId, datalist);
 
@@ -158,6 +235,42 @@ public class PropertyRedisCache {
         return result;
     }
 
+    public Map<String, List<Payment>> multiGetAdvance(
+            Map<String, String> propertyTenantMap) {
+
+        List<Map.Entry<String, String>> entries =
+                new ArrayList<>(propertyTenantMap.entrySet());
+
+        List<String> keys = entries.stream()
+                .map(e -> PREFIX_ADVANCE+ e.getValue() + ":" + e.getKey())
+                .collect(Collectors.toList());
+
+        List<Object> values = redisTemplate.opsForValue().multiGet(keys);
+
+        Map<String, List<Payment>> result = new HashMap<>();
+
+        if (values != null) {
+            for (int i = 0; i < values.size(); i++) {
+                Object val = values.get(i);
+
+                if (val instanceof List<?>) {
+                    String propertyId = entries.get(i).getKey();
+
+                    @SuppressWarnings("unchecked")
+                    List<Payment> datalist = (List<Payment>) val;
+
+                    result.put(propertyId, datalist);
+
+                    redisTemplate.expire(
+                            keys.get(i),
+                            TTL.toMinutes(),
+                            TimeUnit.MINUTES
+                    );
+                }
+            }
+        }
+        return result;
+    }
 
     @SuppressWarnings("unchecked")
     public Map<String, List<Assessment>> getAssessmentsForProperties(Set<String> propertyIds,RequestInfo requestInfo) {

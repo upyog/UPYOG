@@ -425,4 +425,7 @@ public class CalculatorConstants {
 	public static final String INDEPENDENTPROPERTY = "INDEPENDENTPROPERTY";
 
 	public static final String HERITAGE_PROPERTY = "HERITAGE_PROPERTY";
+	
+	//public static final String PenaltyPrecentage="0.027";
+	//public static final String DEFAULT_INTEREST = "0.014";
 }

@@ -324,7 +324,7 @@ public class DashboardReportQueryBuilder {
 			+ "WHERE bd.billsum >= td.demandsum";
 	
 	public static final String INTEREST_SHARE = "SELECT \r\n"
-			+ "    ebv2.consumercode AS consumercode,\r\n"
+			+ "    ebv2.consumercode AS propertyid,\r\n"
 			+ "    ebv2.tenantid,\r\n"
 			+ "    SUM(ebv2.interestonamount) AS total_interest_amount,\r\n"
 			+ "    SUM(ebv2.totalamount) AS total_bill_amount,\r\n"
@@ -956,7 +956,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append(" group by ebv2.consumercode,ebv2.tenantid");
-		filter.append(" order by pay.lastmodifiedtime desc ");
+		filter.append(" order by MAX(pay.lastmodifiedtime) desc ");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
@@ -998,7 +998,7 @@ public class DashboardReportQueryBuilder {
 		}
 		
 		filter.append(" group by edv.consumercode,edv.tenantid");
-		filter.append(" order by pay.lastmodifiedtime desc ");
+		filter.append(" order by MAX(pay.lastmodifiedtime) desc ");
 		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
 		{
 			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());

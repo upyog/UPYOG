@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ import org.egov.pt.models.workflow.State;
 import org.egov.pt.producer.PropertyProducer;
 import org.egov.pt.repository.AssessmentRepository;
 import org.egov.pt.util.AssessmentUtils;
+import org.egov.pt.util.CommonUtils;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.validator.AssessmentValidator;
@@ -52,6 +54,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.TypeRef;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
@@ -82,6 +87,8 @@ public class AssessmentService {
 	private WorkflowService workflowService;
 
 	private CalculationService calculationService;
+	
+	private ObjectMapper objectMapper;
 
 	@Autowired
 	private PropertyUtil util;
@@ -91,9 +98,10 @@ public class AssessmentService {
 	
 	@Autowired
 	BillingService billingService;
-	
+		
 	 @Autowired
 	  private  RedisTemplate<String, Object> redisTemplate;
+	 
 	
 	 @Value("${cuurrent.year.asmt.srch.val}")
 	 private String asmtSearchFor;
@@ -102,7 +110,7 @@ public class AssessmentService {
 	@Autowired
 	public AssessmentService(AssessmentValidator validator, PropertyProducer producer, PropertyConfiguration props, AssessmentRepository repository,
 			AssessmentEnrichmentService assessmentEnrichmentService, PropertyConfiguration config, DiffService diffService,
-			AssessmentUtils utils, WorkflowService workflowService, CalculationService calculationService) {
+			AssessmentUtils utils, WorkflowService workflowService, CalculationService calculationService, ObjectMapper objectMapper) {
 		this.validator = validator;
 		this.producer = producer;
 		this.props = props;
@@ -113,6 +121,7 @@ public class AssessmentService {
 		this.utils = utils;
 		this.workflowService = workflowService;
 		this.calculationService = calculationService;
+		this.objectMapper = objectMapper;
 	}
 
 	/**
@@ -143,7 +152,7 @@ public class AssessmentService {
 		notice.setNoticeType(NoticeType.NOTICE_FOR_PENALTY);
 		notice.setTenantId(property.getTenantId());
 		noticeRequest.setNotice(notice);
-		if(props.getAssesmentStartyear()>=Integer.parseInt(propertyCreationYear))
+		if(props.getAssesmentStartyear()>=Integer.parseInt(propertyCreationYear) && Boolean.TRUE.equals(props.getIsAsmtPastYearEnable()))
 		{
 			propertyIds.add(property.getPropertyId());
 			crt.setPropertyIds(propertyIds);
@@ -232,7 +241,16 @@ public class AssessmentService {
 		
 		Calendar datexp = Calendar.getInstance();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
+		
+		Object taxPeriods  = util.getAttributeValuesNew(config.getStateLevelTenantId(),
+				"BillingService", Arrays.asList("TaxPeriod"),
+				"[?(@.financialYear=='"+request.getAssessment().getFinancialYear()+"')].toDate", "$.MdmsRes.BillingService.TaxPeriod",
+				request.getRequestInfo());
+		
+		List<Long> taxperiod = ((List<?>) taxPeriods)
+		        .stream()
+		        .map(obj -> Long.valueOf(obj.toString()))
+		        .collect(Collectors.toList());
 		try {
 			java.util.Date parsedDate =  dateFormat.parse(assemtmentyearFromRequest);
 			datexp.setTime(parsedDate);
@@ -246,10 +264,10 @@ public class AssessmentService {
 			demaListToBeUpdated = new ArrayList<>();
 			for(Demand dm:dmr.getDemands()) {
 				
-				System.out.println(dm.getTaxPeriodTo());
-				System.out.println(datexp.getTimeInMillis());
-				System.out.println(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0);
-				if(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0) {
+				//System.out.println(dm.getTaxPeriodTo());
+				//System.out.println(datexp.getTimeInMillis());
+				//System.out.println(dm.getTaxPeriodTo().compareTo(datexp.getTimeInMillis()) < 0);
+				if(dm.getTaxPeriodTo().compareTo(taxperiod.get(0)) < 0) {
 					dm.setStatus(StatusEnum.CANCELLED);
 					demaListToBeUpdated.add(dm);
 				}
