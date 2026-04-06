@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
+import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -252,7 +253,7 @@ public class WaterDaoImpl implements WaterDao {
 			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), openWaterRowMapper);
 			for (WaterConnection waterConnection : waterConnectionList) {
             	convertMeterMakeToString(waterConnection);
-                convertLastMeterDateToEpoch(waterConnection);
+            	convertLastMeterDateFormat(waterConnection);
 
             }
 			connectionResponse = WaterConnectionResponse.builder().waterConnection(waterConnectionList)
@@ -261,7 +262,7 @@ public class WaterDaoImpl implements WaterDao {
 			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), waterRowMapper);
 			for (WaterConnection waterConnection : waterConnectionList) {
 				convertMeterMakeToString(waterConnection);
-			    convertLastMeterDateToEpoch(waterConnection);
+				convertLastMeterDateFormat(waterConnection);
 
 			}
 			connectionResponse = WaterConnectionResponse.builder().waterConnection(waterConnectionList)
@@ -272,7 +273,7 @@ public class WaterDaoImpl implements WaterDao {
 	
 
 
-	private void convertLastMeterDateToEpoch(WaterConnection wc) {
+	private void convertLastMeterDateFormat(WaterConnection wc) {
 
 	    if (wc.getAdditionalDetails() == null)
 	        return;
@@ -284,69 +285,76 @@ public class WaterDaoImpl implements WaterDao {
 
 	    JsonNode node = additionalDetails.get("last_meter_date");
 
-	    Long defaultEpoch = LocalDate.of(2023, 1, 1)
-	            .atTime(23, 59, 59)
-	            .atZone(ZoneId.systemDefault())
-	            .toInstant()
-	            .toEpochMilli();
+	    // ✅ Dynamic default → connectionExecutionDate
+	    String defaultDate = null;
+	    try {
+	        if (wc.getConnectionExecutionDate() != null && wc.getConnectionExecutionDate() > 0) {
+	            LocalDate date = Instant.ofEpochMilli(wc.getConnectionExecutionDate())
+	                    .atZone(ZoneId.systemDefault())
+	                    .toLocalDate();
+
+	            defaultDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+	        } else {
+	            defaultDate = "01-01-2023"; // fallback
+	        }
+	    } catch (Exception e) {
+	        defaultDate = "01-01-2023";
+	    }
 
 	    try {
 
+	        // NULL case
 	        if (node == null || node.isNull()) {
-	            additionalDetails.put("last_meter_date", defaultEpoch);
+	            additionalDetails.put("last_meter_date", defaultDate);
 	            return;
 	        }
 
 	        String value = node.asText().trim();
 
+	        // invalid values → default
 	        if (value.equalsIgnoreCase("null") ||
 	            value.equalsIgnoreCase("N/A") ||
 	            value.equals("0") ||
 	            value.isEmpty()) {
 
-	            additionalDetails.put("last_meter_date", defaultEpoch);
+	            additionalDetails.put("last_meter_date", defaultDate);
 	            return;
 	        }
 
-	        Long epoch = null;
+	        String formattedDate = null;
 
-	        // already epoch
+	        // ✅ already epoch
 	        if (value.matches("\\d{12,}")) {
-	            epoch = Long.parseLong(value);
+	            LocalDate date = Instant.ofEpochMilli(Long.parseLong(value))
+	                    .atZone(ZoneId.systemDefault())
+	                    .toLocalDate();
+
+	            formattedDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
 	        }
 	        // dd-MM-yyyy
 	        else if (value.matches("\\d{2}-\\d{2}-\\d{4}")) {
-	            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-	            LocalDate date = LocalDate.parse(value, formatter);
-
-	            epoch = date.atTime(23, 59, 59)
-	                    .atZone(ZoneId.systemDefault())
-	                    .toInstant()
-	                    .toEpochMilli();
+	            LocalDate date = LocalDate.parse(value, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+	            formattedDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
 	        }
-	        // ✅ NEW: yyyy-MM-dd
+	        // yyyy-MM-dd
 	        else if (value.matches("\\d{4}-\\d{2}-\\d{2}")) {
-	            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	            LocalDate date = LocalDate.parse(value, formatter);
-
-	            epoch = date.atTime(23, 59, 59)
-	                    .atZone(ZoneId.systemDefault())
-	                    .toInstant()
-	                    .toEpochMilli();
+	            LocalDate date = LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	            formattedDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
 	        }
 	        // invalid numeric like 3402
 	        else if (value.matches("\\d+")) {
-	            additionalDetails.put("last_meter_date", defaultEpoch);
+	            additionalDetails.put("last_meter_date", defaultDate);
 	            return;
 	        }
 
-	        if (epoch != null)
-	            additionalDetails.put("last_meter_date", epoch);
+	        // final set
+	        if (formattedDate != null)
+	            additionalDetails.put("last_meter_date", formattedDate);
 	        else
-	            additionalDetails.put("last_meter_date", defaultEpoch);
+	            additionalDetails.put("last_meter_date", defaultDate);
 
 	    } catch (Exception e) {
-	        additionalDetails.put("last_meter_date", defaultEpoch);
+	        additionalDetails.put("last_meter_date", defaultDate);
 	    }
 	}
 
