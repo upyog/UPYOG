@@ -30,6 +30,8 @@ public class SearchCriteria {
     
     private String payerName;
     
+    private String connType;
+    
     private String mobile;
 
 }

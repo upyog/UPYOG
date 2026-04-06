@@ -120,8 +120,15 @@ public class DataExchangeService {
             } else if ("WS".equalsIgnoreCase(docType) || "SW".equalsIgnoreCase(docType) || DIGILOCKER_WS_DOCTYPE.equalsIgnoreCase(docType)) {
             	
             	if (DIGILOCKER_WS_DOCTYPE.equalsIgnoreCase(docType))
-            	{	searchCriteria.setDocType("WS"); // Ensure docType is set for WS/SW processing
-            		docType = "WS"; // Override docType for WS/SW processing
+				{
+					if ("WS".equalsIgnoreCase(searchCriteria.getConnType())) {
+						searchCriteria.setDocType("WS"); // Ensure docType is set for WS/SW processing
+						docType = "WS"; // Override docType for WS/SW processing
+					} else if ("SW".equalsIgnoreCase(searchCriteria.getConnType())) {
+						searchCriteria.setDocType("SW"); // Ensure docType is set for WS/SW processing
+						docType = "SW"; // Override docType for WS/SW processing
+					}
+            	
             	}
                 return handleWaterSewerage(searchCriteria, isUriRequest, requestWrapper, docType);
             } else {

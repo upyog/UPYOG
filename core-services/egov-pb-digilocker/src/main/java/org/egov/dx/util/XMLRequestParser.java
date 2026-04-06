@@ -34,6 +34,7 @@ public class XMLRequestParser {
         SearchCriteria criteria = SearchCriteria.builder()
             .propertyId(idToSearch) // Pass the resolved ID here
             .city(request.getDocDetails().getCity())
+            .connType(request.getDocDetails().getConnType())
             .origin(origin)
             .txn(txn)
             .docType(request.getDocDetails().getDocType())

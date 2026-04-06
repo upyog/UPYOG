@@ -31,6 +31,11 @@ public class DocDetailsRequest {
     @Size(max=64)
     @XStreamAlias("PropertyID")
     private String propertyId;
+    
+    @XStreamAlias("connType")
+    private String connType;
+    
+    
 
     @XStreamAlias("City")
     private String city;
@@ -92,7 +97,13 @@ public class DocDetailsRequest {
         this.consumerCode = consumerCode;
     }
     // -----------------------------------------------
+    public String getConnType() {
+        return connType;
+    }
 
+    public void setConnType(String connType) {
+        this.connType = connType;
+    }
     public String getPropertyId() {
         return propertyId;
     }
