@@ -1036,3 +1036,9 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/gc-services/src/main/resources/db"
         image-name: "gc-services-db"
+
+  - name: "builds/upyog/utilities/ticketing-module"
+    build:
+      - work-dir: "utilities/ticketing-module"
+        image-name: "ticketing-module"
+        dockerfile: 'build/maven/maven2/Dockerfile'
