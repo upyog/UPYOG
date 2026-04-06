@@ -8,7 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.format.DateTimeFormatter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.threeten.bp.Instant;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -241,6 +246,8 @@ public class WaterDaoImpl implements WaterDao {
 			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), openWaterRowMapper);
 			for (WaterConnection waterConnection : waterConnectionList) {
             	convertMeterMakeToString(waterConnection);
+            	convertLastMeterDateFormat(waterConnection);
+
             }
 			connectionResponse = WaterConnectionResponse.builder().waterConnection(waterConnectionList)
 					.totalCount(openWaterRowMapper.getFull_count()).build();
@@ -248,11 +255,98 @@ public class WaterDaoImpl implements WaterDao {
 			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), waterRowMapper);
 			for (WaterConnection waterConnection : waterConnectionList) {
             	convertMeterMakeToString(waterConnection);
+            	convertLastMeterDateFormat(waterConnection);
+
             }
 			connectionResponse = WaterConnectionResponse.builder().waterConnection(waterConnectionList)
 					.totalCount(waterRowMapper.getFull_count()).build();
 		}
 		return connectionResponse;
+	}
+	
+	private void convertLastMeterDateFormat(WaterConnection wc) {
+
+	    if (wc.getAdditionalDetails() == null)
+	        return;
+
+	    if (!(wc.getAdditionalDetails() instanceof ObjectNode))
+	        return;
+
+	    ObjectNode additionalDetails = (ObjectNode) wc.getAdditionalDetails();
+
+	    JsonNode node = additionalDetails.get("last_meter_date");
+
+	    // ✅ Dynamic default → connectionExecutionDate
+	    String defaultDate = null;
+	    try {
+	        if (wc.getConnectionExecutionDate() != null && wc.getConnectionExecutionDate() > 0) {
+	            LocalDate date = Instant.ofEpochMilli(wc.getConnectionExecutionDate())
+	                    .atZone(ZoneId.systemDefault())
+	                    .toLocalDate();
+
+	            defaultDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+	        } else {
+	            defaultDate = "01-01-2023"; // fallback
+	        }
+	    } catch (Exception e) {
+	        defaultDate = "01-01-2023";
+	    }
+
+	    try {
+
+	        // NULL case
+	        if (node == null || node.isNull()) {
+	            additionalDetails.put("last_meter_date", defaultDate);
+	            return;
+	        }
+
+	        String value = node.asText().trim();
+
+	        // invalid values → default
+	        if (value.equalsIgnoreCase("null") ||
+	            value.equalsIgnoreCase("N/A") ||
+	            value.equals("0") ||
+	            value.isEmpty()) {
+
+	            additionalDetails.put("last_meter_date", defaultDate);
+	            return;
+	        }
+
+	        String formattedDate = null;
+
+	        // ✅ already epoch
+	        if (value.matches("\\d{12,}")) {
+	            LocalDate date = Instant.ofEpochMilli(Long.parseLong(value))
+	                    .atZone(ZoneId.systemDefault())
+	                    .toLocalDate();
+
+	            formattedDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+	        }
+	        // dd-MM-yyyy
+	        else if (value.matches("\\d{2}-\\d{2}-\\d{4}")) {
+	            LocalDate date = LocalDate.parse(value, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+	            formattedDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+	        }
+	        // yyyy-MM-dd
+	        else if (value.matches("\\d{4}-\\d{2}-\\d{2}")) {
+	            LocalDate date = LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	            formattedDate = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+	        }
+	        // invalid numeric like 3402
+	        else if (value.matches("\\d+")) {
+	            additionalDetails.put("last_meter_date", defaultDate);
+	            return;
+	        }
+
+	        // final set
+	        if (formattedDate != null)
+	            additionalDetails.put("last_meter_date", formattedDate);
+	        else
+	            additionalDetails.put("last_meter_date", defaultDate);
+
+	    } catch (Exception e) {
+	        additionalDetails.put("last_meter_date", defaultDate);
+	    }
 	}
 
     public List<String> fetchWaterConIds(SearchCriteria criteria) {
