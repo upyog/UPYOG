@@ -613,7 +613,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         Map<String, List<Receipt>> fundWiseMap = new HashMap<>();
         Map<String, List<Receipt>> departmentWiseMap = new HashMap<>();
 
-        if(!receiptIds.isEmpty()) {
+        if(!receipts.isEmpty()) {
         groupByReceiptDate(receiptDateWiseMap, receipts);
 
         for (String key : receiptDateWiseMap.keySet()) {
