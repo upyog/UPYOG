@@ -88,7 +88,7 @@ public class Contractor extends AbstractAuditable implements EntityType {
     @GeneratedValue(generator = SEQ_EGF_CONTRACTOR, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+
     @SafeHtml
     @Length(max = 50, message = "Maximum of 50 Characters allowed for Code")
     @OptionalPattern(regex = FinancialConstants.alphaNumericwithspecialchar, message = "Special Characters are not allowed in Code")

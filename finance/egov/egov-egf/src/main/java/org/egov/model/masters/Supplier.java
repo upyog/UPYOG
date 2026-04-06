@@ -90,7 +90,6 @@ public class Supplier extends AbstractAuditable implements EntityType {
     @Length(max = 50, message = "Maximum of 50 Characters allowed for Code")
     @OptionalPattern(regex = FinancialConstants.alphaNumericwithspecialchar, message = "Special Characters are not allowed in Code")
     @SafeHtml
-    @NotNull
     @Column(updatable = false)
     private String code;
 

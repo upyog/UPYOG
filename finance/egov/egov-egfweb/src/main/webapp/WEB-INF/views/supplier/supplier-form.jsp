@@ -48,10 +48,10 @@
 
 
 <div class="form-group">
-	<label class="col-sm-2 control-label text-right" for="code"> <spring:message code="supplier.code" /><span class="mandatory"></span> 
+	<label class="col-sm-2 control-label text-right" for="code"> <spring:message code="supplier.code" />
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="code" maxlength="50" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace" required="required"/>
+		<form:input path="code" maxlength="50" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace" placeholder="[AUTO GENERATED]" disabled="true"/>
 		<form:errors path="code" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right" for="name"> <spring:message code="supplier.name" /><span class="mandatory"></span>

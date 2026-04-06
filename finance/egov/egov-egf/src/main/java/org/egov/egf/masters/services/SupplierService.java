@@ -103,10 +103,35 @@ public class SupplierService implements EntityTypeService {
 	public Supplier getById(final Long id) {
 		return supplierRepository.findOne(id);
 	}
+	
+    private Long getNextSequence() {
+    	
+        // Check if sequence exists
+        String checkSql = "SELECT COUNT(*) FROM information_schema.sequences " +
+                          "WHERE sequence_schema = '" + ApplicationThreadLocals.getTenantID() + "' " +
+                          "AND sequence_name = 'sup_seq'";
+
+        Number count = (Number) entityManager.createNativeQuery(checkSql)
+                .getSingleResult();
+
+        // Create sequence if not exists
+        if (count.intValue() == 0) {
+            String createSql = "CREATE SEQUENCE " + ApplicationThreadLocals.getTenantID() + ".sup_seq" + " START WITH 1 INCREMENT BY 1";
+            entityManager.createNativeQuery(createSql).executeUpdate();
+        }
+    	
+        String sql = "SELECT nextval('" +ApplicationThreadLocals.getTenantID()+ ".sup_seq')";
+        return ((Number) entityManager.createNativeQuery(sql)
+                .getSingleResult()).longValue();
+    }
 
 	@Transactional
 	public Supplier create(Supplier supplier) {
 		setAuditDetails(supplier);
+		String ulb=ApplicationThreadLocals.getTenantID().toUpperCase();
+        Long seq = getNextSequence();
+        String code=String.format("%s/%s/%s", ulb,"SUP",String.format("%06d", seq));
+        supplier.setCode(code);
 		supplier = supplierRepository.save(supplier);
 		saveAccountDetailKey(supplier);
 		return supplier;

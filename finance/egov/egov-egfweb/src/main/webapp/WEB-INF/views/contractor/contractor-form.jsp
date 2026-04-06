@@ -49,12 +49,12 @@
 
 <div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="code"> <spring:message
-			code="contractor.code" text='Code' /><span class="mandatory"></span>
+			code="contractor.code" text='Code' />
 	</label>
 	<div class="col-sm-3 add-margin">
 		  <form:input path="code" maxlength="50"
-			cssClass="form-control patternvalidation"
-			data-pattern="alphanumericwithspace" required="required" />
+			cssClass="form-control patternvalidation" 
+			data-pattern="alphanumericwithspace" placeholder="[AUTO GENERATED]" disabled="true" />
 		<form:errors path="code" cssClass="add-margin error-msg" />
 		<!--  <p class="form-control-static"><c:out value="${contractor.code}" /></p>
         <form:errors path="code" cssClass="add-margin error-msg" />-->
