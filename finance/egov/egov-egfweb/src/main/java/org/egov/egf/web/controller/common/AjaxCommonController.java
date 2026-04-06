@@ -181,6 +181,16 @@ public class AjaxCommonController {
         po.setDescription(dept.getName());
         return Collections.singletonList(po);
     }
+    
+	@GetMapping(value = "/getrate")
+	@ResponseBody
+	public List<Double> getRateByCreditglcodeid() throws ApplicationException {
+		List<Double> taxPercentageList = new ArrayList<>();
+		Collections.addAll(taxPercentageList, 0.125, 0.25, 0.5, 1.00, 1.5, 2.00, 2.5, 3.00, 5.0, 6.0, 8.0, 9.0,
+				10.0, 12.0, 14.0, 15.0, 18.0, 20.0, 28.0, 30.0);
+
+	return taxPercentageList;
+	}
 
     @GetMapping(value = "/getworkordersbycontractorid")
     @ResponseBody

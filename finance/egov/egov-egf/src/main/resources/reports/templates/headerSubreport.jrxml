@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="headerSubreport" pageWidth="752" pageHeight="80" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f1a2b3c4-d5e6-7890-abcd-ef1234567890">
+	<parameter name="watermarkImage" class="java.io.InputStream"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<detail>
+		<band height="80" splitType="Stretch">
+			<staticText>
+				<reportElement x="70" y="10" width="612" height="28" uuid="bb222222-2222-2222-2222-222222222222"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Housing and Urban Development Department]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="38" width="612" height="22" uuid="cc333333-3333-3333-3333-333333333333"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[Government of Jammu & Kashmir]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="78" width="752" height="1" uuid="ee555555-5555-5555-5555-555555555555"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

@@ -46,81 +46,153 @@
  *
  */
 
-jQuery('#btnsearch').click(function(e) {
 
-	callAjaxSearch();
+jQuery('#btnsearch').click(function(e) {
+    callAjaxSearch();
 });
 
 function getFormData($form) {
-	var unindexed_array = $form.serializeArray();
-	var indexed_array = {};
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
 
-	$.map(unindexed_array, function(n, i) {
-		indexed_array[n['name']] = n['value'];
-	});
+    $.map(unindexed_array, function(n) {
+        indexed_array[n['name']] = n['value'];
+    });
 
-	return indexed_array;
+    return indexed_array;
 }
 
 function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");
-	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/services/EGF/fund/ajaxsearch/" + $('#mode').val(),
-					type : "POST",
-					"data" : getFormData(jQuery('form'))
-				},
-				"fnRowCallback" : function(row, data, index) {
-					$(row).on(
-							'click',
-							function() {
-								console.log(data.id);
-								window.open('/services/EGF/fund/' + $('#mode').val()
-										+ '/' + data.id, '',
-										'width=800, height=600');
-							});
-				},
-				"bDestroy" : true,
-				dom: "<'row'<'col-xs-12 pull-right'f>r>t<'row buttons-margin'<'col-md-3 col-xs-6'i><'col-md-3  col-xs-6'l><'col-md-3 col-xs-6'B><'col-md-3 col-xs-6 text-right'p>>",
-				buttons: [
-						  {
-						    extend: 'print',
-						    title: 'Fund',
-						    filename: 'Fund'
-						},{
-						    extend: 'pdf',
-						    title: 'Fund',
-						    filename: 'Fund'
-						},{
-						    extend: 'excel',
-						    message : 'Fund',
-						    filename: 'Fund'
-						}
-						],
-				aaSorting : [],
-				columns : [ {
-					"data" : "name",
-					"sClass" : "text-left"
-				}, {
-					"data" : "code",
-					"sClass" : "text-left"
-				}, {
-					"data" : "identifier",
-					"sClass" : "text-right"
-				}, {
-					"data" : "llevel",
-					"sClass" : "text-right"
-				}, {
-					"data" : "parentId",
-					"sClass" : "text-left"
-				}, {
-					"data" : "isnotleaf",
-					"sClass" : "text-left"
-				}, {
-					"data" : "isactive",
-					"sClass" : "text-left"
-				} ]
-			});
+
+    var drillDowntableContainer = jQuery("#resultTable");
+
+    jQuery('.report-section').removeClass('display-hide');
+
+    drillDowntableContainer.dataTable({
+        ajax: {
+            url: "/services/EGF/fund/ajaxsearch/" + $('#mode').val(),
+            type: "POST",
+            data: getFormData(jQuery('form'))
+        },
+
+        fnRowCallback: function(row, data) {
+            $(row).on('click', function() {
+                window.open('/services/EGF/fund/' + $('#mode').val() + '/' + data.id,
+                    '',
+                    'width=800, height=600');
+            });
+        },
+
+        bDestroy: true,
+
+        dom: "<'row'<'col-xs-12 pull-right'f>r>t<'row buttons-margin'<'col-md-3 col-xs-6'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'B><'col-md-3 col-xs-6 text-right'p>>",
+
+        buttons: [
+            {
+                extend: 'print',
+                title: 'Fund',
+                filename: 'Fund'
+            },
+            {
+                extend: 'pdf',
+                title: 'Fund',
+                filename: 'Fund',
+
+                customize: function(doc) {
+
+                    // ✅ Basic styling
+                    doc.defaultStyle.fontSize = 8;
+                    doc.pageMargins = [10, 10, 10, 10];
+
+                    // ✅ Title
+                    var titleContainer = {
+                            stack: [
+                                {
+                                    text: 'Housing and Urban Development Department',
+                                    fontSize: 16,
+                                    bold: true,
+                                    alignment: 'center',
+                                    noWrap: true
+                                },
+                                {
+                                    text: 'Government of Jammu & Kashmir',
+                                    fontSize: 12,
+                                    alignment: 'center',
+                                    margin: [0, 2, 0, 10]
+                                }
+                            ]
+                        };
+
+                    // ✅ Date & Time
+                    var currentDate = new Date().toLocaleDateString();
+                    var currentTime = new Date().toLocaleTimeString();
+
+                    var dateTimeContainer = {
+                        text: 'Date: ' + currentDate + '\nTime: ' + currentTime,
+                        fontSize: 10,
+                        bold: true,
+                        alignment: 'right',
+                        margin: [0, 5, 10, 10]
+                    };
+
+                    // ✅ Optional Logo (safe)
+                    var logoBase64 = window.logoBase64 || null;
+
+                    var header;
+                    if (logoBase64) {
+                        header = {
+                            columns: [
+                                { image: 'data:image/png;base64,' + logo, width: 50 },
+                                titleContainer,
+                                dateTimeContainer
+                            ]
+                        };
+                    } else {
+                        header = {
+                            columns: [
+                                { text: '' },
+                                titleContainer,
+                                dateTimeContainer
+                            ]
+                        };
+                    }
+
+                    // ✅ Insert header at top
+                    doc.content.splice(0, 0, header);
+
+                    // ✅ SAFE TABLE DETECTION (FIXES YOUR ERROR)
+                    var tableNode;
+                    for (var i = 0; i < doc.content.length; i++) {
+                        if (doc.content[i].table) {
+                            tableNode = doc.content[i];
+                            break;
+                        }
+                    }
+
+                    // ✅ Apply equal column widths
+                    if (tableNode && tableNode.table && tableNode.table.body) {
+                        var colCount = tableNode.table.body[0].length;
+                        tableNode.table.widths = Array(colCount).fill('*');
+                    }
+                }
+            },
+            {
+                extend: 'excel',
+                message: 'Fund',
+                filename: 'Fund'
+            }
+        ],
+
+        aaSorting: [],
+
+        columns: [
+            { data: "name", sClass: "text-left" },
+            { data: "code", sClass: "text-left" },
+            { data: "identifier", sClass: "text-right" },
+            { data: "llevel", sClass: "text-right" },
+            { data: "parentId", sClass: "text-left" },
+            { data: "isnotleaf", sClass: "text-left" },
+            { data: "isactive", sClass: "text-left" }
+        ]
+    });
 }

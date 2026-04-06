@@ -48,6 +48,7 @@
 package org.egov.egf.web.actions.report;
 
 import org.apache.log4j.Logger;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -77,6 +78,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.Constants;
+import org.egov.utils.ReportHelper;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
@@ -84,10 +86,20 @@ import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
+
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -96,6 +108,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.imageio.ImageIO;
 
 @ParentPackage("egov")
 @Results({
@@ -133,6 +147,8 @@ public class BankAdviceReportAction extends BaseFormAction {
     private Long financialYearId;
     private String mode;
     private String heading;
+    
+    ReportHelper reportHelper;
     @Autowired
     private CityService cityService;
 
@@ -471,13 +487,32 @@ public class BankAdviceReportAction extends BaseFormAction {
                 .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : " ")
                 .append("  under your bank to the following bank accounts:");
         reportParams.put("bankName", getBankName(bank.getId()));
-        final City city = cityService.getCityByCode(ApplicationThreadLocals.getTenantID());
+        final City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
         reportParams.put("ulbName", city.getName());
         reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
         reportParams.put("letterContext", letterContext.toString());
         reportParams.put("accountNumber", getBankAccountNumber(bankaccount.getId()));
         reportParams.put("chequeNumber", "RTGS Ref. No: " + getInstrumentNumber(instrumentnumber.getId()));
         reportParams.put("chequeDate", getInstrumentDate(instrumentnumber.getId()));
+        InputStream watermarkStream = getClass().getResourceAsStream("/images/jammulogo.jpeg");
+        if (watermarkStream == null) {
+            watermarkStream = Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream("images/jammulogo.jpeg");
+        }
+        try {
+			watermarkStream=this.getFadedImage(watermarkStream, 0.2f);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}     
+        reportParams.put("watermarkImage", watermarkStream);
+
+		InputStream jasperStream = reportHelper.getClass()
+	               .getResourceAsStream("/reports/templates/headerSubreport.jasper");
+			reportParams.put("headerSubreport", jasperStream);
+	
+        
         final List<BankAdviceReportInfo> subLedgerList = getBankAdviceReportList();
         reportParams.put("totalAmount", totalAmount);
         final ReportRequest reportInput = new ReportRequest("bankAdviceReport", subLedgerList, reportParams);
@@ -489,6 +524,31 @@ public class BankAdviceReportAction extends BaseFormAction {
             inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
 
         return "reportview";
+    }
+    
+    public ReportHelper getReportHelper() {
+		return reportHelper;
+	}
+
+	public void setReportHelper(ReportHelper reportHelper) {
+		this.reportHelper = reportHelper;
+	}
+
+	private InputStream getFadedImage(InputStream originalStream, float opacity) throws Exception {
+        // opacity: 0.0 = invisible, 1.0 = full color, 0.2 = very faint (recommended)
+        BufferedImage original = ImageIO.read(originalStream);
+
+        BufferedImage faded = new BufferedImage(
+            original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = faded.createGraphics();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+        g2d.drawImage(original, 0, 0, null);
+        g2d.dispose();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(faded, "png", baos);
+        return new ByteArrayInputStream(baos.toByteArray());
     }
 
     private List<BankAdviceReportInfo> getBankAdviceReportList() {
