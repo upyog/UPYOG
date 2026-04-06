@@ -84,7 +84,78 @@ function callAjaxSearch() {
 						},{
 						    extend: 'pdf',
 						    title: ""+heading1+"",
-						    filename: 'COA Report'
+						    filename: 'COA Report',
+							
+							customize: function(doc) {
+
+							                   doc.defaultStyle.fontSize = 8;
+							                   doc.pageMargins = [10, 10, 10, 10];
+
+							                   var titleContainer = {
+							                           stack: [
+							                               {
+							                                   text: 'Housing and Urban Development Department',
+							                                   fontSize: 16,
+							                                   bold: true,
+							                                   alignment: 'center',
+							                                   noWrap: true
+							                               },
+							                               {
+							                                   text: 'Government of Jammu & Kashmir',
+							                                   fontSize: 12,
+							                                   alignment: 'center',
+							                                   margin: [0, 2, 0, 10]
+							                               }
+							                           ]
+							                       };
+
+							                   var currentDate = new Date().toLocaleDateString();
+							                   var currentTime = new Date().toLocaleTimeString();
+
+							                   var dateTimeContainer = {
+							                       text: 'Date: ' + currentDate + '\nTime: ' + currentTime,
+							                       fontSize: 10,
+							                       bold: true,
+							                       alignment: 'right',
+							                       margin: [0, 5, 10, 10]
+							                   };
+
+							                   var logoBase64 = window.logoBase64 || null;
+
+							                   var header;
+							                   if (logoBase64) {
+							                       header = {
+							                           columns: [
+							                               { image: 'data:image/png;base64,' + logo, width: 50 },
+							                               titleContainer,
+							                               dateTimeContainer
+							                           ]
+							                       };
+							                   } else {
+							                       header = {
+							                           columns: [
+							                               { text: '' },
+							                               titleContainer,
+							                               dateTimeContainer
+							                           ]
+							                       };
+							                   }
+
+							                   doc.content.splice(0, 0, header);
+
+							                   var tableNode;
+							                   for (var i = 0; i < doc.content.length; i++) {
+							                       if (doc.content[i].table) {
+							                           tableNode = doc.content[i];
+							                           break;
+							                       }
+							                   }
+
+							                   if (tableNode && tableNode.table && tableNode.table.body) {
+							                       var colCount = tableNode.table.body[0].length;
+							                       tableNode.table.widths = Array(colCount).fill('*');
+							                   }
+							               }
 						},{
 						    extend: 'excel',
 						    message : ""+heading1+"",
