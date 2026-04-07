@@ -97,6 +97,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -456,8 +457,8 @@ public class BudgetVarianceReportAction extends BaseFormAction {
                     Constants.DDMMYYYYFORMAT2.format(asOnDate) , new StringBuffer(vimsQueryMapEntry.getKey()), vimsQueryMapEntry.getValue());
             extractData(resultForVoucher);
             final Map.Entry<String, Map<String, Object>> bmisQueryMapEntry = formMiscQuery("bmis", "bdetail", "bmis").entrySet().iterator().next();
-            final List<Object[]> resultForBill = budgetDetailService.fetchActualsForBillWithVouchersParams(fromDate, "'"
-                    + Constants.DDMMYYYYFORMAT2.format(asOnDate) + "'", new StringBuffer(bmisQueryMapEntry.getKey()), bmisQueryMapEntry.getValue());
+            final List<Object[]> resultForBill = budgetDetailService.fetchActualsForBillWithVouchersParams(fromDate,
+                  Constants.DDMMYYYYFORMAT2.format(asOnDate) , new StringBuffer(bmisQueryMapEntry.getKey()), bmisQueryMapEntry.getValue());
             extractData(resultForBill);
         } else {
             addActionError("no data found");
@@ -483,10 +484,17 @@ public class BudgetVarianceReportAction extends BaseFormAction {
                 row.setActual(BigDecimal.ZERO);
             row.setVariance(row.getEstimate().add(
                     row.getAdditionalAppropriation().subtract(row.getActual() == null ? BigDecimal.ZERO : row.getActual())));
-            if(row.getVariance()!=null && row.getTotal()!=null) {
-            BigDecimal variancePercentage=(BigDecimal)((row.getVariance().divide(row.getTotal())).multiply(BigDecimal.valueOf(100)));
-            row.setVariancePercentage(variancePercentage);
+            BigDecimal variancePercentage = BigDecimal.ZERO;
+
+            if (row.getVariance() != null && row.getTotal() != null 
+                    && row.getTotal().compareTo(BigDecimal.ZERO) != 0) {
+
+                variancePercentage = row.getVariance()
+                        .divide(row.getTotal(), 4, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100));
             }
+
+            row.setVariancePercentage(variancePercentage);
         }
     }
 

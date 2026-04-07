@@ -312,7 +312,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="54" splitType="Stretch">
+		<band height="27" splitType="Stretch">
 			<textField>
 				<reportElement x="572" y="2" width="179" height="24" uuid="b9529c40-643e-4334-85da-a96faf9e6aeb"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
@@ -323,9 +323,9 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="100">
+		<band height="132">
 			<staticText>
-				<reportElement positionType="Float" x="0" y="-28" width="532" height="24" uuid="6119aaa1-1b13-4395-aded-99cbbe990fa5"/>
+				<reportElement positionType="Float" x="0" y="0" width="532" height="24" uuid="6119aaa1-1b13-4395-aded-99cbbe990fa5"/>
 				<box rightPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -339,7 +339,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField pattern="###,##0.00">
-				<reportElement x="532" y="-28" width="219" height="24" uuid="f07a8ff5-e237-4e05-8162-921deaff5088"/>
+				<reportElement x="532" y="0" width="219" height="24" uuid="f07a8ff5-e237-4e05-8162-921deaff5088"/>
 				<box rightPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -353,14 +353,14 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="536" y="63" width="198" height="20" uuid="f73b0354-c824-47fd-b9b8-ab8c2fcc7c72"/>
+				<reportElement x="536" y="90" width="198" height="20" uuid="f73b0354-c824-47fd-b9b8-ab8c2fcc7c72"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="536" y="80" width="146" height="20" uuid="d6a1fe81-653c-46ff-8d0d-90450d03721e"/>
+				<reportElement x="536" y="110" width="146" height="20" uuid="d6a1fe81-653c-46ff-8d0d-90450d03721e"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>

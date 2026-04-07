@@ -52,42 +52,10 @@
 <link rel="stylesheet" type="text/css"
 	href="<egov:url path='/yui/assets/skins/sam/autocomplete.css'/>" />
 <head>
-	<title><s:text name="searchreceipts.title"/></title>
-	<style>
-		 select { width:100% !important}
-		.w5{width:5% !important}
-		.w15{width:15% !important}
-		.w25{width:25% !important}
-		.w100{width:100% !important}
-</style>
-<script  >
-
-jQuery.noConflict();
-jQuery(document).ready(function() {
-  	 
-     jQuery(" form ").submit(function( event ) {
-    	 doLoadingMask();
-    });
-     doLoadingMask();
- });
-
-jQuery(window).load(function () {
-	undoLoadingMask();
-});
-
-function isChecked(chk) {
-	if (chk.length == undefined) {
- 	if (chk.checked == true)
-  	return true;
- 	else return false;	
- } else {
- 	for (i = 0; i < chk.length; i++)
-		{
-			if (chk[i].checked == true ) return true;
-		}
-	return false;
- }
-
+<title><s:text name="searchreceipts.title" /></title>
+<style type="text/css">
+table {
+	width: 100%;
 }
 
 #fromDate, #toDate, #receiptNumber, textfield, textarea, select {
