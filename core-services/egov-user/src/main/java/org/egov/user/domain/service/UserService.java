@@ -172,8 +172,29 @@ public class UserService {
 	 */
 	public User getUniqueUser(String userName, String tenantId, UserType userType) {
 
-		UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder().userName(userName)
-				.tenantId(getStateLevelTenantForCitizen(tenantId, userType)).type(userType).build();
+		/*
+		 * UserSearchCriteria userSearchCriteria =
+		 * UserSearchCriteria.builder().userName(userName)
+		 * .tenantId(getStateLevelTenantForCitizen(tenantId,
+		 * userType)).type(userType).build();
+		 */
+		//Below changes is for manipur otp issue
+		UserSearchCriteria userSearchCriteria;
+
+		if (userType.equals(UserType.CITIZEN)) {
+		    userSearchCriteria = UserSearchCriteria.builder()
+		            .mobileNumber(userName)
+		            .tenantId(getStateLevelTenantForCitizen(tenantId, userType))
+		            .type(userType)
+		            .build();
+		} else {
+		    userSearchCriteria = UserSearchCriteria.builder()
+		            .userName(userName)
+		            .tenantId(getStateLevelTenantForCitizen(tenantId, userType))
+		            .type(userType)
+		            .build();
+		}
+		
 
 		if (isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
 			log.error("Invalid lookup, mandatory fields are absent");
