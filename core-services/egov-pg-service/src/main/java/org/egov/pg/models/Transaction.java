@@ -188,6 +188,8 @@ public class Transaction {
     @JsonProperty("bankTransactionNo")
     private String bankTransactionNo;
 
+    @JsonIgnore
+    private Object gatewayRequest;
 
     /**
      * Current status of the transaction
