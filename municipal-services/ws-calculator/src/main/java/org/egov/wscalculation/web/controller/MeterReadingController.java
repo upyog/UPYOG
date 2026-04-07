@@ -86,4 +86,15 @@ public class MeterReadingController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/_searchV2", method = RequestMethod.POST)
+	public ResponseEntity<MeterReadingResponse> searchV2(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@Valid @ModelAttribute MeterReadingSearchCriteria criteria) {
+		List<MeterReading> meterReadingLists = meterService.searchMeterReadingsV2(criteria, requestInfoWrapper.getRequestInfo());
+		MeterReadingResponse response = MeterReadingResponse.builder().meterReadings(meterReadingLists)
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(),
+						true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
 }
