@@ -93,7 +93,7 @@ public class TransactionService {
 				if (orderId!=null && orderId.length > 1)
 					transaction.setGatewayTxnId(orderId[1]);
 			}
-            dump.setTxnRequest(uri.toString());
+            dump.setTxnRequest(transaction.getGatewayRequest().toString());
         }
 
         // Persist transaction and transaction dump objects
@@ -176,7 +176,8 @@ public class TransactionService {
 
        	if (newTxn.getResponseJson() != null) {
        	    dumpBuilder.txnResponse(newTxn.getResponseJson());
-       	}
+       	}else
+       		dumpBuilder.txnResponse(requestParams);
 
        	TransactionDump dump = dumpBuilder.build();
         log.info("dumps "+dump);
