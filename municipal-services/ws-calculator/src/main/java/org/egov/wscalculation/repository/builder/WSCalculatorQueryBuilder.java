@@ -1146,4 +1146,43 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 		return query.toString();
 		
 	}
+	
+	/**
+	 * 
+	 * @param criteria          would be meter reading criteria
+	 * @param preparedStatement Prepared SQL Statement
+	 * @return Query for given criteria
+	 */
+	public String getSearchQueryStringV2(MeterReadingSearchCriteria criteria, List<Object> preparedStatement) {
+		if (criteria.isEmpty()) {
+			return null;
+		}
+		StringBuilder query = new StringBuilder(Query);
+		query.append(" INNER JOIN eg_ws_connection conn \r\n"
+				+ "  ON mr.connectionno = conn.connectionno \r\n"
+				+ " AND mr.tenantid = conn.tenantid  \r\n"
+				+ "INNER JOIN eg_pt_property epp \r\n"
+				+ "  ON conn.property_id = epp.propertyid\r\n"
+				+ "INNER JOIN eg_pt_address epa \r\n"
+				+ "  ON epa.propertyid = epp.id   ");
+		
+		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" mr.tenantid= ? ");
+			preparedStatement.add(criteria.getTenantId());
+		}
+		if (!StringUtils.isEmpty(criteria.getLocality())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" epa.locality= ? ");
+			preparedStatement.add(criteria.getLocality());
+		}
+		
+		if (!CollectionUtils.isEmpty(criteria.getConnectionNos())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" mr.connectionNo IN (").append(createQuery(criteria.getConnectionNos())).append(" )");
+			addToPreparedStatement(preparedStatement, criteria.getConnectionNos());
+		}
+		addOrderBy(query);
+		return addPaginationWrapper(query, preparedStatement, criteria);
+	}
 }

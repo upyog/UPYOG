@@ -210,6 +210,10 @@ public class MeterServicesImpl implements MeterService {
 	public List<MeterReading> searchMeterReadings(MeterReadingSearchCriteria criteria, RequestInfo requestInfo) {
 		return wSCalculationDao.searchMeterReadings(criteria);
 	}
+	
+	public List<MeterReading> searchMeterReadingsV2(MeterReadingSearchCriteria criteria, RequestInfo requestInfo) {
+		return wSCalculationDao.searchMeterReadingsV2(criteria);
+	}
 
 
 
