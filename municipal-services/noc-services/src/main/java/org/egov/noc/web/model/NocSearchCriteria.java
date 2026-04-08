@@ -50,6 +50,9 @@ public class NocSearchCriteria {
     @JsonProperty("nocType")
     private String nocType;
 
+    @JsonProperty("applicationStatus")
+    private String applicationStatus;
+
     @SafeHtml
     @JsonProperty("sourceRefId")
     private String sourceRefId;
