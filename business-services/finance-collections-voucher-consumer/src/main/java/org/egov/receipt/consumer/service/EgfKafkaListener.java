@@ -99,7 +99,7 @@ public class EgfKafkaListener {
 	@Value("${}")
 	private static final String COLLECTION_VERSION = "V2";
 	
-	@KafkaListener(topics = {"${kafka.topics.payment.create.name}$","${egov.collection.receipt.voucher.save.topic}","${egov.collection.receipt.voucher.cancel.topic}","${kafka.topics.payment.create.name}","${kafka.topics.payment.cancel.name}"})	
+	@KafkaListener(topics = {"${kafka.topics.payment.create.name}","${egov.collection.receipt.voucher.save.topic}","${egov.collection.receipt.voucher.cancel.topic}","${kafka.topics.payment.create.name}","${kafka.topics.payment.cancel.name}"})	
     public void process(ConsumerRecord<String, String> record) {
         VoucherResponse voucherResponse = null;
         String voucherNumber = "";
