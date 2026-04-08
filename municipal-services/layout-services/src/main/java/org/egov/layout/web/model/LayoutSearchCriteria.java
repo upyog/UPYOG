@@ -69,6 +69,9 @@ public class LayoutSearchCriteria {
     @JsonProperty("accountId")
     private List<String> accountId;
     
+    @JsonProperty("applicationStatus")
+    private String applicationStatus;
+
     @JsonProperty("status")
     private List<String> status;
 
