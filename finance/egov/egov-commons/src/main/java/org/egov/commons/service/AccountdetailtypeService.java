@@ -92,7 +92,7 @@ public class AccountdetailtypeService {
     }
 
     public List<Accountdetailtype> findAll() {
-        return accountdetailtypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return accountdetailtypeRepository.findAllActiveAccountDetailTypes();
     }
 
     public Accountdetailtype findByName(final String name) {

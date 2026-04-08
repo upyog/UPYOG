@@ -273,6 +273,18 @@ function showInstrumentDetails(obj){
 		document.getElementById('payMode').style.width="16%";
 		document.getElementById('payModeInput').style.width="40%";
 		document.getElementById('instrumentChequeAmount').value = document.getElementById('totalamountdisplay').value;
+
+		var rows = document.querySelectorAll("#chequeDDdetails tr");
+
+		rows.forEach(function(row){
+		    if(row.id === "chequedetailsrow"){
+		        var tds = row.getElementsByTagName("td");
+		        if(tds.length >= 5){
+		            tds[1].innerHTML = 'Cheque/Online Number <span class="mandatory1">*</span>';
+		            tds[3].innerHTML = 'Cheque/Online Date <span class="mandatory1">*</span>';
+		        }
+		    }
+		});
 		clearCashDetails();
 		clearCardDetails();
 		clearBankDetails();
@@ -285,10 +297,23 @@ function showInstrumentDetails(obj){
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="";
-		ocument.getElementById('payMode').style.paddingLeft="8px";
+		document.getElementById('payMode').style.paddingLeft="8px";
 		document.getElementById('payMode').style.width="16%";
 		document.getElementById('payModeInput').style.width="40%";
 		document.getElementById('instrumentChequeAmount').value = document.getElementById('totalamountdisplay').value;
+
+	    var rows = document.querySelectorAll("#chequeDDdetails tr");
+
+	    rows.forEach(function(row){
+	        if(row.id === "chequedetailsrow"){
+	            var tds = row.getElementsByTagName("td");
+	            if(tds.length >= 5){
+	                tds[1].innerHTML = 'DD Number <span class="mandatory1">*</span>';
+	                tds[3].innerHTML = 'DD Date <span class="mandatory1">*</span>';
+	            }
+	        }
+	    });
+		
 		clearCashDetails();
 		clearCardDetails();
 		clearBankDetails();

@@ -1637,6 +1637,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         ObjectNode emptyJsonNode = new ObjectMapper().createObjectNode();
         emptyJsonNode.put("wardNo", receiptHeader.getWardNo());
         emptyJsonNode.put("fundName", receiptHeader.getFund());
+        emptyJsonNode.put("narration", receiptHeader.getReferenceDesc());
         billList.stream().forEach(bill -> {
         	for(BillDetailV2 bd:bill.getBillDetails()) {
         		bd.setBillDescription(receiptHeader.getReferenceDesc());

@@ -222,7 +222,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 		String newToDate = "";
 		String reportRundate = "";
 		fundAndBankHeading = "RTGS Register for " + persistenceService
-				.find("select name from Fund where id = ?", Integer.parseInt(parameters.get("fundId")[0])).toString();
+				.find("select name from Fund where id = ?", Long.parseLong(parameters.get("fundId")[0])).toString();
 
 		if (null != parameters.get("rtgsAssignedFromDate")[0]
 				&& !parameters.get("rtgsAssignedFromDate")[0].isEmpty())

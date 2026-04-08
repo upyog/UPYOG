@@ -71,4 +71,7 @@ public interface AccountdetailtypeRepository extends JpaRepository<Accountdetail
 
 	@Query("select distinct(adt) from Accountdetailtype adt where adt.id in (select coad.detailTypeId from CChartOfAccountDetail coad where coad.glCodeId in (select coa.id from CChartOfAccounts coa where  coa.id =:glcodeId))")
 	public List<Accountdetailtype> findByGlcodeId(@Param("glcodeId") Long glcodeId);
+	
+	@Query(value = "SELECT * FROM accountdetailtype a WHERE a.isactive = true ORDER BY a.name ASC", nativeQuery = true)
+	public List<Accountdetailtype> findAllActiveAccountDetailTypes();
 }
