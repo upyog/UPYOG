@@ -167,6 +167,12 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "core-services/egov-location/src/main/resources/db"
         image-name: "egov-location-db"
+  
+  - name: "builds/upyog/core-services/egov-pb-digilocker"
+    build:
+      - work-dir: "core-services/egov-pb-digilocker"
+        image-name: "egov-pb-digilocker"
+        dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/upyog/core-services/egov-mdms-service"
     build:
