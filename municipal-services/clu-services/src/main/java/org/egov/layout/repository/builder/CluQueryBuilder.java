@@ -179,6 +179,19 @@ public class CluQueryBuilder {
                     }
                 }
 
+		String applicationStatus = criteria.getApplicationStatus();
+		if (applicationStatus != null) {
+			List<String> applicationStatuses = Arrays.asList(applicationStatus.split(","));
+			addClauseIfRequired(builder);
+			if (isFuzzyEnabled) {
+				builder.append(" clu.applicationstatus LIKE ANY(ARRAY[ ").append(createQuery(applicationStatuses)).append("])");
+				addToPreparedStatementForFuzzySearch(preparedStmtList, applicationStatuses);
+			} else {
+				builder.append(" clu.applicationstatus IN (").append(createQuery(applicationStatuses)).append(")");
+				addToPreparedStatement(preparedStmtList, applicationStatuses);
+			}
+		}
+
 		
 		String approvalNo = criteria.getCluNo();
                 if (approvalNo != null) {
