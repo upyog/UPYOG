@@ -69,6 +69,15 @@ public class WaterRowMapper implements ResultSetExtractor<List<WaterConnection>>
 				currentWaterConnection.setDisconnectionReason(rs.getString("disconnectionReason"));
 				currentWaterConnection.setIsDisconnectionTemporary(rs.getBoolean("isDisconnectionTemporary"));
 
+				String relatedSwConnection = rs.getString("relatedswconn");
+				if (relatedSwConnection == null || relatedSwConnection.trim().isEmpty() ||
+				        "null".equalsIgnoreCase(relatedSwConnection.trim())) {	
+					currentWaterConnection.setRelatedSwConnection(null);	}
+			    else {
+			    	relatedSwConnection = relatedSwConnection.trim();
+			    	relatedSwConnection = relatedSwConnection.replaceAll("[^a-zA-Z0-9]", "");
+			    	currentWaterConnection.setRelatedSwConnection(relatedSwConnection);;
+				}
 				PGobject pgObj = (PGobject) rs.getObject("additionaldetails");
 				this.setFull_count(rs.getInt("full_count"));
 				ObjectNode additionalDetails = null;
