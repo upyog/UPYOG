@@ -1,15 +1,24 @@
 package org.egov.noc.util;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.noc.config.NOCConfiguration;
 import org.egov.noc.producer.Producer;
 import org.egov.noc.repository.ServiceRequestRepository;
+import org.egov.noc.service.UserService;
 import org.egov.noc.web.model.Noc;
 import org.egov.noc.web.model.SMSRequest;
 import org.json.JSONObject;
@@ -21,6 +30,7 @@ import static org.egov.noc.util.NOCConstants.ACTION_STATUS_INITIATED;
 import static org.egov.noc.util.NOCConstants.ACTION_STATUS_REJECTED;
 import static org.egov.noc.util.NOCConstants.ACTION_STATUS_APPROVED;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +48,14 @@ public class NotificationUtil {
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 
+	@Autowired
+	private NOCUtil nocUtil;
 	
+	@Autowired
+	ObjectMapper mapper;
+	
+	@Autowired
+	UserService userService;
 
 	/**
 	 * Send the SMSRequest on the SMSNotification kafka topic
@@ -69,7 +86,7 @@ public class NotificationUtil {
 	public List<SMSRequest> createSMSRequest(String message, Map<String, String> mobileNumberToOwner) {
 		List<SMSRequest> smsRequest = new LinkedList<>();
 		for (Map.Entry<String, String> entryset : mobileNumberToOwner.entrySet()) {
-			smsRequest.add(new SMSRequest(entryset.getKey(), message));
+			smsRequest.add(new SMSRequest(entryset.getKey(), message.replace("{1}", entryset.getValue())));
 		}
 		return smsRequest;
 	}
@@ -121,35 +138,51 @@ public class NotificationUtil {
 	 *            The messages from localization
 	 * @return customized message based on noc
 	 */
-	public String getCustomizedMsg(RequestInfo requestInfo, Noc noc, String localizationMessage) {
-		String message = null, messageTemplate;
+	public String getCustomizedMsg(RequestInfo requestInfo, Noc noc, String localizationMessage, String rawRecord) {
+		String message = null;
 		String messageCode;
-		if(noc.getWorkflow() == null)
-			messageCode = noc.getWorkflow() + "_" + noc.getApplicationStatus();
-		else 
-			messageCode = noc.getWorkflow().getAction() + "_" + noc.getApplicationStatus();
-		switch (messageCode) {
-		case ACTION_STATUS_CREATED:
-			messageTemplate = getMessageTemplate(messageCode, localizationMessage);
-			if (!StringUtils.isEmpty(messageTemplate))
-				message = getInitiatedMsg(noc, messageTemplate);
-			break;
-		case ACTION_STATUS_INITIATED:
-			messageTemplate = getMessageTemplate(messageCode, localizationMessage);
-			if (!StringUtils.isEmpty(messageTemplate))
-				message = getInitiatedMsg(noc, messageTemplate);
-			break;
-		case ACTION_STATUS_APPROVED:
-			messageTemplate = getMessageTemplate(messageCode, localizationMessage);
-			if (!StringUtils.isEmpty(messageTemplate))
-				message = getInitiatedMsg(noc, messageTemplate);
-			break;
-		case ACTION_STATUS_REJECTED:
-			messageTemplate = getMessageTemplate(messageCode, localizationMessage);
-			if (!StringUtils.isEmpty(messageTemplate))
-				message = getInitiatedMsg(noc, messageTemplate);
-			break;
-		}
+		if(noc.getWorkflow() != null) {
+			Object mdmsData = getMDMSData(requestInfo, noc.getTenantId().split("\\.")[0]);
+			Map<String, Object> notificationConfig = getMDMSNotificationConfig(noc.getWorkflow().getAction()
+					,noc.getApplicationStatus(), mdmsData);
+			
+			messageCode = notificationConfig.getOrDefault("messageCode", "").toString();
+			message = getMessageTemplate(messageCode, localizationMessage);
+			
+			List<Map<String, Object>> variables = JsonPath.read(notificationConfig, "$.variables");
+			Map<String, String> employeeMap = new HashMap<>();
+			for(Map<String, Object> variable : variables) {
+				if((boolean)variable.get("isFixed"))
+					message = message.replace(variable.get("variable").toString(), variable.get("value").toString());
+				else {
+					String filter = variable.get("filter").toString();
+					String fixedValue = variable.get("value").toString();
+					if(StringUtils.isEmpty(fixedValue)) {
+						String value = JsonPath.read(rawRecord, filter).toString();
+						message = message.replace(variable.get("variable").toString(), value);
+					}else {
+						String filteredValue = JsonPath.read(rawRecord, filter);
+						employeeMap.put(fixedValue, filteredValue);
+						message = message.replace(variable.get("variable").toString(), fixedValue);
+					}
+				}
+			}
+			
+			String uuids = employeeMap.entrySet().stream().map(Entry::getValue).collect(Collectors.joining(","));
+			
+			if(!StringUtils.isEmpty(uuids)) {
+				Map<String, String> designationMap = userService.getEmployeeDesignation(requestInfo, uuids, noc.getTenantId());
+				employeeMap.entrySet().stream().forEach(entry -> {
+					List<String> designation = JsonPath.read(mdmsData, "$.MdmsRes.common-masters.Designation.[?(@.code == '" + designationMap.get(entry.getValue()) + "')].name");
+					entry.setValue(designation.get(0));
+				});
+				
+				for(Entry<String, String> entry : employeeMap.entrySet()) {
+					message = message.replace(entry.getKey(), entry.getValue());
+				}
+			}
+			
+		}		
 		return message;
 	}
 
@@ -178,26 +211,43 @@ public class NotificationUtil {
 		}
 		return message;
 	}
+	
+	public Map<String, Object> getMDMSNotificationConfig(String action, String state, Object mdmsdata){
+		final String nocFilterCode = "$.MdmsRes.NOC.NotificationConfig.[?(@.active==true && @.action contains '" + action + "' && @.state contains '" + state + "')]";
+		
+		List<Map<String, Object>> list = JsonPath.read(mdmsdata, nocFilterCode);
+		
+		if(CollectionUtils.isEmpty(list))
+			return new HashMap<>();
+		else
+			return list.get(0);
+	}
+	
+	public Object getMDMSData(RequestInfo requestInfo, String tenantId){
 
-	/**
-	 * Creates customized message for initiate
-	 * 
-	 * @param noc
-	 *            tenantId of the noc
-	 * @param message
-	 *            Message from localization for initiate
-	 * @return customized message for initiate
-	 */
-	private String getInitiatedMsg(Noc noc, String message) {
-		String type = null;
-		if(noc.getNocType().equalsIgnoreCase(NOCConstants.FIRE_NOC_TYPE)){
-			type = "Fire";
-		}else{
-			type = "AAI";
-		}
-		message = message.replace("{1}", type);
-		message = message.replace("{2}", noc.getApplicationNo());
-		return message;
+		List<ModuleDetail> moduleDetails = new LinkedList<>();
+		
+		ModuleDetail nocModuleDetails = ModuleDetail.builder()
+				.masterDetails(Collections.singletonList(MasterDetail.builder()
+						.name("NotificationConfig")
+						.build()))
+				.moduleName(NOCConstants.NOC_MODULE).build();
+		
+		ModuleDetail designationModuleDetails = ModuleDetail.builder()
+				.masterDetails(Collections.singletonList(MasterDetail.builder()
+						.name("Designation")
+						.build()))
+				.moduleName("common-masters").build();
+		
+		moduleDetails.add(nocModuleDetails);
+		moduleDetails.add(designationModuleDetails);
+		
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId).build();
+
+		MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(requestInfo)
+				.build();
+		
+		return serviceRequestRepository.fetchResult(nocUtil.getMdmsSearchUrl(), mdmsCriteriaReq);
 	}
 
 }

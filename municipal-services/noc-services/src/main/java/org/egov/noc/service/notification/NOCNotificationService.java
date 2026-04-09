@@ -5,14 +5,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.noc.config.NOCConfiguration;
 import org.egov.noc.repository.ServiceRequestRepository;
 import org.egov.noc.service.UserService;
+import org.egov.noc.util.NOCConstants;
 import org.egov.noc.util.NotificationUtil;
 import org.egov.noc.web.model.NocRequest;
 import org.egov.noc.web.model.NocSearchCriteria;
 import org.egov.noc.web.model.SMSRequest;
+import org.egov.noc.web.model.User;
 import org.egov.noc.web.model.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,11 +50,12 @@ public class NOCNotificationService {
 	 * @param request
 	 *            The NOCRequest listenend on the kafka topic
 	 */
-	public void process(NocRequest nocRequest) {
+	public void process(NocRequest nocRequest, String rawRecord) {
+		
 		List<SMSRequest> smsRequests = new LinkedList<>();
 		if (null != config.getIsSMSEnabled()) {
 			if (config.getIsSMSEnabled()) {
-				enrichSMSRequest(nocRequest, smsRequests);
+				enrichSMSRequest(nocRequest, smsRequests, rawRecord);
 				if (!CollectionUtils.isEmpty(smsRequests))
 					util.sendSMS(smsRequests, config.getIsSMSEnabled());
 			}
@@ -66,12 +70,12 @@ public class NOCNotificationService {
 	 * @param smsRequests
 	 *            List of SMSRequets
 	 */
-	private void enrichSMSRequest(NocRequest nocRequest, List<SMSRequest> smsRequests) {
+	private void enrichSMSRequest(NocRequest nocRequest, List<SMSRequest> smsRequests, String rawRecord) {
 		String tenantId = nocRequest.getNoc().getTenantId();
 		String localizationMessages = util.getLocalizationMessages(tenantId, nocRequest.getRequestInfo());
-		String message = util.getCustomizedMsg(nocRequest.getRequestInfo(), nocRequest.getNoc(), localizationMessages);
+		String message = util.getCustomizedMsg(nocRequest.getRequestInfo(), nocRequest.getNoc(), localizationMessages, rawRecord);
 		if(message != null){
-			Map<String, String> mobileNumberToOwner = getUserList(nocRequest);
+			Map<String, String> mobileNumberToOwner = getUserList(nocRequest, message);
 			smsRequests.addAll(util.createSMSRequest(message, mobileNumberToOwner));
 		}
 		
@@ -84,18 +88,24 @@ public class NOCNotificationService {
 	 * @param nocRequest
 	 * @return
 	 */
-	private Map<String, String> getUserList(NocRequest nocRequest) {
+	private Map<String, String> getUserList(NocRequest nocRequest, String message) {
 		Map<String, String> mobileNumberToOwner = new HashMap<>();
 		String tenantId = nocRequest.getNoc().getTenantId();
 		String stakeUUID = nocRequest.getNoc().getAccountId();
 		List<String> ownerId = new ArrayList<String>();
 		ownerId.add(stakeUUID);
+		ownerId.addAll(nocRequest.getNoc().getOwners().stream().map(User::getUuid).collect(Collectors.toList()));
+		
+		if(message.split("\n")[0].contains("/"))
+			ownerId.add(nocRequest.getNoc().getAuditDetails().getCreatedBy());
+		
 		NocSearchCriteria nocSearchCriteria = new NocSearchCriteria();
 		nocSearchCriteria.setOwnerIds(ownerId);
 		nocSearchCriteria.setTenantId(tenantId);
 		UserResponse userDetailResponse = userService.getUser(nocSearchCriteria, nocRequest.getRequestInfo());
-		mobileNumberToOwner.put(userDetailResponse.getUser().get(0).getMobileNumber(),
-				userDetailResponse.getUser().get(0).getName());
+		userDetailResponse.getUser().stream().forEach(owner -> {
+			mobileNumberToOwner.put(owner.getMobileNumber(), owner.getName());
+		});
 		return mobileNumberToOwner;
 	}
 

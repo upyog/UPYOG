@@ -38,7 +38,7 @@ public class CalculatorUtils {
      * Creates demand Search url based on tenanatId,businessService and ConsumerCode
      * @return demand search url
      */
-    public String getDemandSearchURL(){
+    public String getDemandSearchURL(String isPaymentCompleted){
         StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getDemandSearchEndpoint());
         url.append("?");
@@ -50,6 +50,11 @@ public class CalculatorUtils {
         url.append("&");
         url.append("consumerCode=");
         url.append("{3}");
+        if(!StringUtils.isEmpty(isPaymentCompleted)) {
+        	url.append("&");
+            url.append("isPaymentCompleted=");
+            url.append("{4}");
+        }
         return url.toString();
     }
 

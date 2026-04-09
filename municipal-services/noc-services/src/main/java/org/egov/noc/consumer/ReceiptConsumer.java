@@ -33,7 +33,7 @@ public class ReceiptConsumer {
         log.info("Incoming raw message: {}", rawRecord);
         try {
             PaymentRequest record = new ObjectMapper().readValue(rawRecord, PaymentRequest.class);
-            paymentUpdateService.process(record);
+            paymentUpdateService.process(record, rawRecord);
         } catch (Exception e) {
             log.error("Deserialization failed: {}", e.getMessage(), e);
         }

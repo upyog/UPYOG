@@ -1,0 +1,1 @@
+ALTER TABLE public.eg_layout ALTER COLUMN vasikaNumber TYPE character varying(256);

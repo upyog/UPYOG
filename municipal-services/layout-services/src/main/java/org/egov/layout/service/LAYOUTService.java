@@ -224,10 +224,7 @@ public class LAYOUTService {
 				.findFirst().orElse(new Action()).getNextState();
 		State nextState = businessServicename.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
 
-		String action = layout.getWorkflow() != null ? layout.getWorkflow().getAction() : "";
-
-		if (nextState != null && nextState.getState().equalsIgnoreCase(LAYOUTConstants.FI_STATUS)
-				&& (LAYOUTConstants.ACTION_PAY.equalsIgnoreCase(action) || LAYOUTConstants.ACTION_RESUBMIT.equalsIgnoreCase(action))) {
+		if (nextState != null && CollectionUtils.isEmpty(layout.getWorkflow().getAssignes())) {
 			List<String> roles = new ArrayList<>();
 			nextState.getActions().forEach(stateAction -> {
 				roles.addAll(stateAction.getRoles());

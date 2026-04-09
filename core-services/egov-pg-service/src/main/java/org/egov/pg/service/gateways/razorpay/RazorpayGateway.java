@@ -126,6 +126,8 @@ public class RazorpayGateway implements Gateway{
 	        
 	        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(MERCHANT_URL_PAY).queryParams
 	                (params).build().encode();
+	        request.put("url", uriComponents.toUri().toString());
+	        transaction.setGatewayRequest(request);
 	        return uriComponents.toUri();
 	}
 

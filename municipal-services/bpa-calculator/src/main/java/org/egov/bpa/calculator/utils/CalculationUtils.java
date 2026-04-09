@@ -1,5 +1,6 @@
 package org.egov.bpa.calculator.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
 import org.egov.bpa.calculator.repository.ServiceRequestRepository;
 import org.egov.bpa.calculator.web.models.AuditDetails;
@@ -34,7 +35,7 @@ public class CalculationUtils {
      * Creates demand Search url based on tenanatId,businessService and ConsumerCode
      * @return demand search url
      */
-    public String getDemandSearchURL(){
+    public String getDemandSearchURL(String isPaymentCompleted){
         StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getDemandSearchEndpoint());
         url.append("?");
@@ -46,9 +47,11 @@ public class CalculationUtils {
         url.append("&");
         url.append("consumerCode=");
         url.append("{3}");
-        url.append("&");
-        url.append("isPaymentCompleted=");
-        url.append("{4}");
+        if(!StringUtils.isEmpty(isPaymentCompleted)) {
+        	url.append("&");
+            url.append("isPaymentCompleted=");
+            url.append("{4}");
+        }
         return url.toString();
     }
 

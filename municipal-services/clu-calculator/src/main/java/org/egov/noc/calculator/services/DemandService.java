@@ -26,6 +26,7 @@ import org.egov.noc.calculator.web.models.bill.GetBillCriteria;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -47,10 +48,41 @@ public class DemandService {
     private DemandRepository demandRepository;
 
     public List<Demand> generateDemands(RequestInfo requestInfo, List<Calculation> calculations, String feeType) {
-    	
+		
+		//List that will contain Calculation for new demands
+        List<Calculation> createCalculations = new LinkedList<>();
+
+        //List that will contain Calculation for old demands
+        List<Calculation> updateCalculations = new LinkedList<>();
+		
+		String tenantId = calculations.get(0).getTenantId();
+		Set<String> applicationNos = calculations.stream().map(calculation -> calculation.getLayout().getApplicationNo())
+				.collect(Collectors.toSet());
+		List<Demand> searchedDemands = searchDemand(tenantId, applicationNos, requestInfo, calculations.get(0), CLUConstants.LAYOUT_BUSINESS_SERVICE + "." + feeType, "");
+		List<Demand> demands = searchedDemands.stream().filter(demand -> !demand.getIsPaymentCompleted()).collect(Collectors.toList());
+
+		Set<String> applicationNumbersFromDemands = new HashSet<>();
+        if(!CollectionUtils.isEmpty(demands))
+            applicationNumbersFromDemands = demands.stream().map(Demand::getConsumerCode).collect(Collectors.toSet());
+		
+      //If demand already exists add it updateCalculations else createCalculations
+        for(Calculation calculation : calculations)
+        {      if(!applicationNumbersFromDemands.contains(calculation.getLayout().getApplicationNo()))
+                    createCalculations.add(calculation);
+                else
+                    updateCalculations.add(calculation);
+        }
         
-        return createDemand(requestInfo,calculations, feeType);
-    }
+        demands = new ArrayList<>();
+        
+        if(!CollectionUtils.isEmpty(createCalculations))
+        	demands = createDemand(requestInfo,createCalculations, feeType, searchedDemands);
+
+        if(!CollectionUtils.isEmpty(updateCalculations))
+        	demands = updateDemand(requestInfo,updateCalculations, feeType, searchedDemands);
+        
+		return demands;
+	}
 
 
 
@@ -60,27 +92,20 @@ public class DemandService {
      * @param calculations List of calculation object
      * @return Demands that are updated
      */
-    private List<Demand> updateDemand(RequestInfo requestInfo,List<Calculation> calculations){
+    private List<Demand> updateDemand(RequestInfo requestInfo,List<Calculation> calculations, String feeType, List<Demand> searchedDemands){
         List<Demand> demands = new LinkedList<>();
         for(Calculation calculation : calculations) {
-            Object additionalDetailsData = calculation.getLayout().getLayoutDetails().getAdditionalDetails();
-
-            // Cast to LinkedHashMap
-            LinkedHashMap<String, Object> additionalDetailsMap = (LinkedHashMap<String, Object>) additionalDetailsData;
-            Map<String, Object> siteDetails = (Map<String, Object>) additionalDetailsMap.get("siteDetails");
-            String businessservice = (String) siteDetails.get("businessService");
-
-
-
-            List<Demand> searchResult = searchDemand(calculation.getTenantId(),Collections.singleton(calculation.getLayout().getApplicationNo())
-                    , requestInfo,calculation, CLUConstants.LAYOUT_BUSINESS_SERVICE);
-
-            if(CollectionUtils.isEmpty(searchResult))
+        	
+            if(CollectionUtils.isEmpty(searchedDemands))
                 throw new CustomException(CLUConstants.INVALID_UPDATE,"No demand exists for applicationNumber: "+calculation.getLayout().getApplicationNo());
 
-            Demand demand = searchResult.get(0);
-            List<DemandDetail> demandDetails = demand.getDemandDetails();
+            Demand demand = searchedDemands.stream().filter(d -> !d.getIsPaymentCompleted())
+            		.findFirst().orElse(searchedDemands.get(searchedDemands.size() -1 ));
+            List<DemandDetail> demandDetails = searchedDemands.stream().flatMap(d -> d.getDemandDetails().stream()).collect(Collectors.toList());
             List<DemandDetail> updatedDemandDetails = getUpdatedDemandDetails(calculation,demandDetails);
+            updatedDemandDetails = updatedDemandDetails.stream()
+            		.filter(demandDetail -> demandDetail.getDemandId() == null || demandDetail.getDemandId().equalsIgnoreCase(demand.getId()))
+            		.collect(Collectors.toList());
             demand.setDemandDetails(updatedDemandDetails);
             demands.add(demand);
         }
@@ -149,11 +174,13 @@ public class DemandService {
      * @param requestInfo The RequestInfo of the incoming request
      * @return Lis to demands for the given consumerCode
      */
-    private List<Demand> searchDemand(String tenantId,Set<String> consumerCodes,RequestInfo requestInfo,Calculation calculation,String businessservice){
-        String uri = utils.getDemandSearchURL();
+    private List<Demand> searchDemand(String tenantId,Set<String> consumerCodes,RequestInfo requestInfo,Calculation calculation,String businessservice, String isPaymentCompleted){
+    	String uri = utils.getDemandSearchURL(isPaymentCompleted);
         uri = uri.replace("{1}",tenantId);
         uri = uri.replace("{2}", businessservice);
         uri = uri.replace("{3}",StringUtils.join(consumerCodes, ','));
+        if(!StringUtils.isEmpty(isPaymentCompleted))
+    		uri = uri.replace("{4}",isPaymentCompleted);
 
         Object result = repository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
                                                       .requestInfo(requestInfo).build());
@@ -167,7 +194,7 @@ public class DemandService {
         }
 
         if(CollectionUtils.isEmpty(response.getDemands()))
-            return null;
+            return new ArrayList<>();
 
         else return response.getDemands();
 
@@ -180,7 +207,7 @@ public class DemandService {
      * @param calculations List of calculation object
      * @return Demands that are created
      */
-    private List<Demand> createDemand(RequestInfo requestInfo,List<Calculation> calculations, String feeType){
+    private List<Demand> createDemand(RequestInfo requestInfo,List<Calculation> calculations, String feeType, List<Demand> searchedDemands){
         List<Demand> demands = new LinkedList<>();
         for(Calculation calculation : calculations) {
             Clu noc = null;
@@ -213,18 +240,22 @@ public class DemandService {
                         .tenantId(calculation.getTenantId())
                         .build());
             });
-
-//            Demand demand = Demand.builder()
-//                    .tenantId(calculation.getTenantId())
-//                    .consumerCode(calculation.getApplicationNumber())
-//                    .consumerType("NOC_APPLICATION_FEE")
-//                    .businessService(CLUConstants.NOC_BUSINESS_SERVICE)
-//                    .payer(owner)
-//                    .minimumAmountPayable(nocConfiguration.getMinimumPayableAmount())
-//                    .taxPeriodFrom(calculation.getTaxPeriodFrom())
-//                    .taxPeriodTo(calculation.getTaxPeriodTo())
-//                    .demandDetails(demandDetails)
-//                    .build();
+            
+            List<Demand> searchResult = searchedDemands.stream().filter(demand -> demand.getIsPaymentCompleted()).collect(Collectors.toList());
+            
+            if(!CollectionUtils.isEmpty(searchResult)) {
+            	Demand latestDemand = searchResult.stream().max(Comparator.comparingLong(Demand::getTaxPeriodTo)).get();
+            	latestDemand.setTaxPeriodTo(System.currentTimeMillis());
+            	demandRepository.updateDemand(requestInfo, Collections.singletonList(latestDemand));
+            	
+            	List<DemandDetail> allPaidDemandDetails = searchResult.stream()
+            			.map(Demand::getDemandDetails)
+            			.flatMap(List::stream).collect(Collectors.toList());            	
+            	
+            	List<DemandDetail> updatedDemandDetails = getRemainingDemandDetails(demandDetails, allPaidDemandDetails, calculation.getTenantId());
+            	demandDetails.clear();
+            	demandDetails.addAll(updatedDemandDetails);
+            }
 
             Demand demand = Demand.builder()
                     .tenantId(calculation.getTenantId())
@@ -236,6 +267,7 @@ public class DemandService {
                     .taxPeriodFrom(calculation.getTaxPeriodFrom())
                     .taxPeriodTo(calculation.getTaxPeriodTo())
                     .demandDetails(demandDetails)
+                    .isPaymentCompleted(false)
                     .build();
 
             demands.add(demand);
@@ -363,5 +395,49 @@ public class DemandService {
         }
     }
 
+    /**
+     * Returns the list of new DemandDetail to be added for creation the demand for remaining amount
+     * @param demandDetails The list of demandDetails to be updated
+     * @param searchDemandDetails The list of demandDetails from the existing demand
+     * @return The list of new DemandDetails
+     */
+    private List<DemandDetail> getRemainingDemandDetails(List<DemandDetail> demandDetails, List<DemandDetail> searchDemandDetails, String tenantId){
+
+        List<DemandDetail> newDemandDetails = new ArrayList<>();
+        Map<String, List<DemandDetail>> taxHeadToDemandDetail = new HashMap<>();
+
+        searchDemandDetails.forEach(demandDetail -> {
+            if(!taxHeadToDemandDetail.containsKey(demandDetail.getTaxHeadMasterCode())){
+                List<DemandDetail> demandDetailList = new LinkedList<>();
+                demandDetailList.add(demandDetail);
+                taxHeadToDemandDetail.put(demandDetail.getTaxHeadMasterCode(),demandDetailList);
+            }
+            else
+              taxHeadToDemandDetail.get(demandDetail.getTaxHeadMasterCode()).add(demandDetail);
+        });
+
+        BigDecimal diffInTaxAmount;
+        List<DemandDetail> demandDetailList;
+        BigDecimal total;
+        
+        for(DemandDetail demandDetail : demandDetails){
+            if(!taxHeadToDemandDetail.containsKey(demandDetail.getTaxHeadMasterCode()))
+                newDemandDetails.add(demandDetail);
+            else {
+                 demandDetailList = taxHeadToDemandDetail.get(demandDetail.getTaxHeadMasterCode());
+                 total = demandDetailList.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+                 diffInTaxAmount = demandDetail.getTaxAmount().subtract(total);
+                 if(diffInTaxAmount.compareTo(BigDecimal.ZERO)!=-1) {
+                	 demandDetail.setTaxAmount(diffInTaxAmount);
+                 }else {
+                	 demandDetail.setTaxAmount(BigDecimal.ZERO);
+                 }
+                 newDemandDetails.add(demandDetail);
+
+            }
+        }
+        addRoundOffTaxHead(tenantId,newDemandDetails);
+        return newDemandDetails;
+    }
     
 }

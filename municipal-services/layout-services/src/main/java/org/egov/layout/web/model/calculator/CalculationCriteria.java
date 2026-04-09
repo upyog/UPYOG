@@ -11,7 +11,7 @@ import org.egov.layout.web.model.Layout;
 @NoArgsConstructor
 @Builder
 public class CalculationCriteria {
-	@JsonProperty("LAYOUT")
+	@JsonProperty("Layout")
 	private Layout layout = null;
 
     @JsonProperty("applicationNumber")

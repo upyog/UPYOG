@@ -130,6 +130,29 @@ public class UserService {
 		assignees = assignees.stream().distinct().collect(Collectors.toList());
 		return CollectionUtils.isEmpty(assignees) ? null :assignees;
 	}
+	
+	public Map<String, String> getEmployeeDesignation(RequestInfo requestInfo , String uuids, String tenantId) {
+		StringBuilder uri = new StringBuilder(config.getHrmsHost()).append(config.getEmployeeSearchEndpoint());
+		uri.append("?tenantId=").append(tenantId)
+				.append("&isActive=true")
+				.append("&uuids=")
+				.append(uuids);
+		JSONObject hrmsRequest = new JSONObject();
+		UserSearchRequest userSearchRequest = new UserSearchRequest();
+		userSearchRequest.setRequestInfo(requestInfo);
+		hrmsRequest.put("RequestInfo", requestInfo);
+		Object response = serviceRequestRepository.fetchResult(uri, userSearchRequest);
+
+		Map<String, String> designationMap = new HashMap<>();
+		
+		for(String uuid : uuids.split(",")) {
+			List<String> designation = JsonPath.read(response, "$.Employees.*.[?(@.uuid == '" + uuid + "')].assignments.[0].designation");
+				if(!CollectionUtils.isEmpty(designation))
+					designationMap.put(uuid, designation.get(0));
+		}
+		return designationMap;
+	}
+	
 	private StringBuilder getEmployeeSearchURL(String tenantId, String roles, Map<String, String> additionalDetails, boolean isAllAssignees) {
 		String zones = JsonPath.read(additionalDetails, "$.siteDetails.zone");
 

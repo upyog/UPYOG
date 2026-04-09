@@ -225,10 +225,7 @@ public class CLUService {
 				.findFirst().orElse(new Action()).getNextState();
 		State nextState = businessServicename.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
 
-		String action = clu.getWorkflow() != null ? clu.getWorkflow().getAction() : "";
-
-		if (nextState != null && nextState.getState().equalsIgnoreCase(CLUConstants.FI_STATUS)
-				&& (CLUConstants.ACTION_PAY.equalsIgnoreCase(action) || CLUConstants.ACTION_RESUBMIT.equalsIgnoreCase(action))) {
+		if (nextState != null && CollectionUtils.isEmpty(clu.getWorkflow().getAssignes())) {
 			List<String> roles = new ArrayList<>();
 			nextState.getActions().forEach(stateAction -> {
 				roles.addAll(stateAction.getRoles());
