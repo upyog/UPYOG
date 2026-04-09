@@ -60,6 +60,9 @@ public class WaterConnection extends Connection {
 
 	@JsonProperty("disconnectionReason")
 	private String disconnectionReason = null;
+	
+	@JsonProperty("relatedSwConnection")
+	private String relatedSwConnection;
 
 	public WaterConnection waterSource(String waterSource) {
 		this.waterSource = waterSource;
