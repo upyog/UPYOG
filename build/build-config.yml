@@ -1042,3 +1042,11 @@ config:
       - work-dir: "utilities/ticketing-module"
         image-name: "ticketing-module"
         dockerfile: 'build/maven/maven2/Dockerfile'
+
+  - name: "builds/upyog/core-services/egov-gisintegration"
+    build:
+      - work-dir: "core-services/egov-gisintegration"
+        image-name: "egov-gisintegration"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/egov-gisintegration/src/main/resources/db"
+        image-name: "egov-gisintegration-db"
