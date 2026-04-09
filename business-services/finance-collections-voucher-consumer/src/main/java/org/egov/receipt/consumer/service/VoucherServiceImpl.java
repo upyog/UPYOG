@@ -149,7 +149,7 @@ public class VoucherServiceImpl implements VoucherService {
 	@Override
 	public VoucherResponse createVoucher(List<Voucher> vouchers, RequestInfo requestInfo, String tenantId) throws VoucherCustomException{
 		final StringBuilder voucher_create_url = new StringBuilder(propertiesManager.getErpURLBytenantId(tenantId)
-				+ propertiesManager.getVoucherCreateUrl());
+				+ propertiesManager.getVoucherCreateUrl()+"?ulb="+tenantId.split("\\.")[1]);
 		VoucherRequest voucherRequest = new VoucherRequest();
 		voucherRequest.setVouchers(vouchers);
 		voucherRequest.setRequestInfo(requestInfo);
