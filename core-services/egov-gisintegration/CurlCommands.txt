@@ -1,0 +1,49 @@
+# CURL commands for Property API (Create and Update with all fields)
+
+# Create Property
+curl -u mseva:Simar@518 -X POST http://localhost:8080/api/properties \
+-H "Content-Type: application/json" \
+-d '{
+  "tenantid": "tenant1",
+  "propertyid": "prop1",
+  "surveyid": "survey1",
+  "oldpropertyid": "oldprop1",
+  "firmbusinessname": "Firm Name",
+  "address": "123 Main St",
+  "localitycode": "LC123",
+  "localityname": "Locality Name",
+  "blockname": "Block A",
+  "zonename": "Zone 1",
+  "plotsize": 1000,
+  "propertyusagetype": "Residential",
+  "propertytype": "Type A",
+  "ownershipcategory": "Owner",
+  "paymentdate": "2023-01-01",
+  "receiptnumber": "R12345",
+  "amountpaid": 5000,
+  "assessmentyear": "2023"
+}'
+
+# Update Property (replace {id} with actual property id)
+curl -u mseva:Simar@518 -X PUT http://localhost:8080/api/properties/{id} \
+-H "Content-Type: application/json" \
+-d '{
+  "tenantid": "tenant1",
+  "propertyid": "prop1",
+  "surveyid": "survey1",
+  "oldpropertyid": "oldprop1",
+  "firmbusinessname": "Firm Name Updated",
+  "address": "123 Main St Updated",
+  "localitycode": "LC123",
+  "localityname": "Locality Name",
+  "blockname": "Block A",
+  "zonename": "Zone 1",
+  "plotsize": 1200,
+  "propertyusagetype": "Commercial",
+  "propertytype": "Type B",
+  "ownershipcategory": "Owner",
+  "paymentdate": "2023-02-01",
+  "receiptnumber": "R12346",
+  "amountpaid": 6000,
+  "assessmentyear": "2023"
+}'
