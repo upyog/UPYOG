@@ -72,6 +72,9 @@ public class NocSearchCriteria {
     @JsonProperty("createdBy")
     private String createdBy;
 
+    @JsonProperty("applicationStatus")
+    private String applicationStatus;
+
     @SafeHtml
     @Size(min = 1, max = 15)
     @JsonProperty("vasikaNumber")
