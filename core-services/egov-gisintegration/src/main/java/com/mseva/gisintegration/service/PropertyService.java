@@ -228,9 +228,69 @@ public class PropertyService {
 
         if (match != null) {
             updateFields(match, property);
+
+            // 1. Safe Boundary Lookup
+            if (match.getLocalitycode() != null && match.getTenantid() != null) {
+                Map<String, Object> boundary = tenantMappingRepository.getBoundaryDetails(match.getLocalitycode(), match.getTenantid());
+                
+                if (boundary != null) {
+                    // Use .getOrDefault or check for null before casting
+                    Object zone = boundary.get("zonename");
+                    if (zone != null) {
+                        match.setZonename(zone.toString());
+                    }
+                    
+                    Object block = boundary.get("blockname");
+                    if (block != null) {
+                        match.setBlockname(block.toString());
+                    }
+                }
+            }
+
+            // 2. Safe Town Name Lookup
+            if (match.getTenantid() != null) {
+                String townName = tenantMappingRepository.getTownNameByTenantId(match.getTenantid());
+                
+                if (townName != null) {
+                    // CAUTION: You were setting match.setTenantid(townName). 
+                    // Usually, you want to keep the ID as "pb.amritsar" and set a 
+                    // separate field like setTownname(townName).
+                    match.setTenantid(townName); 
+                }
+            }
+
             response.put("Property", propertyRepository.save(match));
             responseInfo.put("method", "update");
-        } else {
+        }else {
+        	
+        	 if (property.getLocalitycode() != null && property.getTenantid() != null) {
+                 Map<String, Object> boundary = tenantMappingRepository.getBoundaryDetails(property.getLocalitycode(), property.getTenantid());
+                 
+                 if (boundary != null) {
+                     // Use .getOrDefault or check for null before casting
+                     Object zone = boundary.get("zonename");
+                     if (zone != null) {
+                    	 property.setZonename(zone.toString());
+                     }
+                     
+                     Object block = boundary.get("blockname");
+                     if (block != null) {
+                    	 property.setBlockname(block.toString());
+                     }
+                 }
+             }
+
+             // 2. Safe Town Name Lookup
+             if (property.getTenantid() != null) {
+                 String townName = tenantMappingRepository.getTownNameByTenantId(property.getTenantid());
+                 
+                 if (townName != null) {
+                     // CAUTION: You were setting match.setTenantid(townName). 
+                     // Usually, you want to keep the ID as "pb.amritsar" and set a 
+                     // separate field like setTownname(townName).
+                	 property.setTenantid(townName); 
+                 }
+             }
             response.put("Property", propertyRepository.save(property));
             responseInfo.put("method", "create");
         }
