@@ -879,12 +879,12 @@ function searchAllTkt() {
 	    		ext = (obj.attachment).substr(((obj.attachment).lastIndexOf('.') + 1));
 	    		if(ext=="jpg" || ext=="JPG" || ext=="png" || ext=="PNG")
     			{
-    			htm1 = htm1+"<tr><td>IMAGES</td><td class='dtd'><a href='download/"+obj.attachment+"'><img src='"+BUCKET_URL+""+obj.attachment+"' alt='image' width='110px' height='120px'/></a></td> ";
+    			htm1 = htm1+"<tr><td>IMAGES</td><td class='dtd'><a href='"+obj.imageUrl+"' target='_blank'><img src='"+obj.imageUrl+"' alt='image' width='110px' height='120px'/></a></td> ";
         		
     			}
     		else
     			{
-    			htm1 = htm1+"<tr><td>IMAGES</td><td class='dtd'><a href='download/"+obj.attachment+"'><img src='"+BUCKET_URL+""+obj.attachment+"' alt='image' width='110px' height='120px'/></a></td> ";
+    			htm1 = htm1+"<tr><td>IMAGES</td><td class='dtd'><a href='"+obj.imageUrl+"' target='_blank'><img src='"+obj.imageUrl+"' alt='image' width='110px' height='120px'/></a></td> ";
         		
     			}
 	    		}
