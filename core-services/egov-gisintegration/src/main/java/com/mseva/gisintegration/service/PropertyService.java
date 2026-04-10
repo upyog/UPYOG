@@ -331,7 +331,7 @@ public class PropertyService {
             p.setPropertyid(propertyNode.path("propertyId").asText());
             p.setSurveyid(propertyNode.path("surveyId").asText());
             p.setOldpropertyid(propertyNode.path("oldPropertyId").asText());
-            String townName = TenantStaticMapper.getTownName(p.getTenantid());
+            String townName = TenantStaticMapper.getTownName(propertyNode.path("tenantId").asText());
             p.setTenantid(townName);            
             // MAPPING CHANGE: buildingName -> firmbusinessname
 			p.setFirmbusinessname(propertyNode.path("additionalDetails").path("businessName").asText(null));
