@@ -297,7 +297,7 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
     }
     
     private void getServiceCategoryList() {
-        List<BusinessService> businessService = microserviceUtils.getBusinessService(null);
+        List<BusinessService> businessService = microserviceUtils.getBusinessService("Finance");
         for(BusinessService bs : businessService){
             String[] splitServName = bs.getBusinessService().split(Pattern.quote("."));
             String[] splitSerCode = bs.getCode().split(Pattern.quote("."));

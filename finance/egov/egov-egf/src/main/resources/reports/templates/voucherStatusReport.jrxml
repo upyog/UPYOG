@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report2" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="35aac265-3ad2-4f0b-a915-db67bc4047b1">
 	<property name="net.sf.jasperreports.export.pdf.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
@@ -15,6 +15,7 @@
 	<parameter name="toDate" class="java.util.Date"/>
 	<parameter name="voucherName" class="java.lang.String"/>
 	<parameter name="voucherType" class="java.lang.String"/>
+	<parameter name="headerReport" class="java.io.InputStream"/>
 	<field name="voucherDate" class="java.util.Date"/>
 	<field name="voucherType" class="java.lang.String"/>
 	<field name="voucherNumber" class="java.lang.String"/>
@@ -25,76 +26,82 @@
 	<field name="deptName" class="java.lang.String"/>
 	<field name="owner" class="java.lang.String"/>
 	<title>
-		<band height="141" splitType="Stretch">
+		<band height="230" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<subreport>
+				<reportElement x="4" y="-16" width="700" height="100" uuid="11111111-aaaa-bbbb-cccc-111111111111"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{headerReport}]]></subreportExpression>
+			</subreport>
 			<staticText>
-				<reportElement x="238" y="20" width="249" height="26" uuid="3f5d59bc-8c34-482e-8bf3-e1cff46dd4bf"/>
+				<reportElement x="248" y="108" width="249" height="26" uuid="3f5d59bc-8c34-482e-8bf3-e1cff46dd4bf"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="17"/>
 				</textElement>
 				<text><![CDATA[Voucher Status Report]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="541" y="46" width="81" height="20" uuid="11f5ac17-4140-4380-8588-91c716ccae95"/>
+				<reportElement x="539" y="160" width="81" height="20" uuid="11f5ac17-4140-4380-8588-91c716ccae95"/>
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="46" width="81" height="20" uuid="8cf3f9a5-6aa3-47fa-b5e9-16528295bf1d"/>
+				<reportElement x="-2" y="140" width="81" height="20" uuid="8cf3f9a5-6aa3-47fa-b5e9-16528295bf1d"/>
 				<text><![CDATA[Fund:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="66" width="81" height="20" uuid="c4a2919f-ff06-449e-ad36-8677c654f0c1"/>
+				<reportElement x="-2" y="160" width="81" height="20" uuid="c4a2919f-ff06-449e-ad36-8677c654f0c1"/>
 				<text><![CDATA[Department:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="541" y="66" width="81" height="20" uuid="519114ba-62f6-40fe-bb06-e388d3e016d0"/>
+				<reportElement x="539" y="180" width="81" height="20" uuid="519114ba-62f6-40fe-bb06-e388d3e016d0"/>
 				<text><![CDATA[To Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="541" y="86" width="81" height="20" uuid="0b11c9f7-8b9c-42b8-b113-00d6d36f8509"/>
+				<reportElement x="539" y="200" width="81" height="20" uuid="0b11c9f7-8b9c-42b8-b113-00d6d36f8509"/>
 				<text><![CDATA[Voucher Name:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="622" y="46" width="122" height="20" uuid="28677c53-2a79-486c-bc7c-31e832a80e7f"/>
+				<reportElement x="622" y="160" width="122" height="20" uuid="28677c53-2a79-486c-bc7c-31e832a80e7f"/>
 				<textFieldExpression><![CDATA[$P{fromDate}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="622" y="66" width="122" height="20" uuid="09f70185-c98a-4d78-99b5-c78728bc575b"/>
+				<reportElement x="621" y="180" width="122" height="20" uuid="09f70185-c98a-4d78-99b5-c78728bc575b"/>
 				<textFieldExpression><![CDATA[$P{toDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="81" y="46" width="157" height="20" uuid="edc45a5c-d9db-44aa-8c92-f6dc06a47e31"/>
+				<reportElement x="80" y="140" width="157" height="20" uuid="edc45a5c-d9db-44aa-8c92-f6dc06a47e31"/>
 				<textFieldExpression><![CDATA[$P{fund}==null?"":$P{fund}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="622" y="86" width="130" height="20" uuid="4112047f-079e-4ce5-8705-b44c39d345c8"/>
+				<reportElement x="621" y="200" width="130" height="20" uuid="4112047f-079e-4ce5-8705-b44c39d345c8"/>
 				<textFieldExpression><![CDATA[$P{voucherName}=="-1"?"":$P{voucherName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="81" y="66" width="188" height="20" uuid="5b1ee9c5-95c1-46b4-8004-df32b1f97789"/>
+				<reportElement x="80" y="160" width="188" height="20" uuid="5b1ee9c5-95c1-46b4-8004-df32b1f97789"/>
 				<textFieldExpression><![CDATA[$P{deptName}==null?"":$P{deptName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="86" width="81" height="20" uuid="f2e4c643-fa23-4063-bf4a-084f5739b632"/>
+				<reportElement x="-2" y="180" width="81" height="20" uuid="f2e4c643-fa23-4063-bf4a-084f5739b632"/>
 				<text><![CDATA[Voucher Type:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="81" y="86" width="269" height="20" uuid="66b82808-fe56-4247-ba6c-d15f8358f9ce"/>
+				<reportElement x="80" y="180" width="269" height="20" uuid="66b82808-fe56-4247-ba6c-d15f8358f9ce"/>
 				<textFieldExpression><![CDATA[$P{voucherType}=="-1"?"":$P{voucherType}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="106" width="81" height="20" uuid="f116bd98-6dee-4e69-9b14-6cd93d62186f"/>
+				<reportElement x="-2" y="200" width="81" height="20" uuid="f116bd98-6dee-4e69-9b14-6cd93d62186f"/>
 				<text><![CDATA[Status:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="81" y="106" width="157" height="20" uuid="80f85a1e-fbca-4b34-a8e0-1b731dad72ba"/>
+				<reportElement x="80" y="200" width="157" height="20" uuid="80f85a1e-fbca-4b34-a8e0-1b731dad72ba"/>
 				<textFieldExpression><![CDATA[$P{status}==null?"":$P{status}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="213" y="0" width="327" height="20" uuid="1232bb4b-00ac-4784-b4f1-3256c9cad643"/>
+				<reportElement x="213" y="84" width="327" height="20" uuid="1232bb4b-00ac-4784-b4f1-3256c9cad643"/>
 				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Jammu Municipal Corporation"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -236,7 +243,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{voucherName}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="375" y="0" width="80" height="35" uuid="d01a601b-b6d7-4585-84e6-15d58a25a168"/>
 				<box topPadding="7">
 					<pen lineWidth="1.0"/>

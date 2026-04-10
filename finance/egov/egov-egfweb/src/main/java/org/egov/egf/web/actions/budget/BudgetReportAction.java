@@ -1286,6 +1286,10 @@ public class BudgetReportAction extends BaseFormAction {
         String ulbGrade = microserviceUtils.getHeaderNameForTenant().toUpperCase();
         paramMap.put("ulbName", environment.getProperty(ulbGrade,ulbGrade));
         paramMap.put("finYear", budgetReport.getFinancialYear().getFinYearRange());
+        InputStream jasperStream = reportHelper.getClass()
+	               .getResourceAsStream("/reports/templates/headerReport.jasper");
+        paramMap.put("headerReport",jasperStream);
+			
         if (onSaveOrForward)
             paramMap = getReportConfigs(paramMap);
         if (budgetReport.getType() != null)

@@ -755,7 +755,7 @@ var totaldbamt=0,totalcramt=0;
 					<td class="bluebox" style="table-layout: fixed;width:30%"><s:select headerKey=""
 							headerValue="----Choose----" name="fund" id="fundId"
 							cssClass="selectwk" list="fundNames"
-							value="%{fund}" /></td>
+							value="%{fund}" required="true" /></td>
 							
 					<td class="bluebox" style="width:15%"><s:text
 							name="billreceipt.counter.paidby" /><span class="mandatory1">*</span></td>

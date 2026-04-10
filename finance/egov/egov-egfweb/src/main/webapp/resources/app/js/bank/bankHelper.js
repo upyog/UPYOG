@@ -99,15 +99,16 @@ function callAjaxSearch() {
 							                   var titleContainer = {
 							                           stack: [
 							                               {
-							                                   text: 'Housing and Urban Development Department',
-							                                   fontSize: 16,
+							                                   text: 'Government of Jammu & Kashmir',
+							                                   fontSize: 12,
 							                                   bold: true,
 							                                   alignment: 'center',
 							                                   noWrap: true
 							                               },
 							                               {
-							                                   text: 'Government of Jammu & Kashmir',
+							                                   text: 'Housing and Urban Development Department',
 							                                   fontSize: 12,
+															   bold: true,
 							                                   alignment: 'center',
 							                                   margin: [0, 2, 0, 10]
 							                               }

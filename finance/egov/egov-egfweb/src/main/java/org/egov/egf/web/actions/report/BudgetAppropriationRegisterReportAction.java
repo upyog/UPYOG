@@ -557,6 +557,10 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 		paramMapForReportFile.put("deptName", department.getName());
 		paramMapForReportFile.put("function", function.getName());
 		paramMapForReportFile.put("fund", fund.getName());
+		
+		InputStream jasperStream = reportHelper.getClass()
+	               .getResourceAsStream("/reports/templates/headerReport.jasper");
+		paramMapForReportFile.put("headerReport",jasperStream);
 
 		final String rBEorREAmountForm = " - (" + finYearRange + ") (Rs.)  : ";
 		paramMapForReportFile.put("rAsOnDate", strAsOnDate);

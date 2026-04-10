@@ -302,6 +302,7 @@ public class SearchReceiptAction extends SearchFormAction {
             for (org.egov.infra.microservice.models.Bill bill : receipt.getBill()) {
 
                 for (BillDetail billDetail : bill.getBillDetails()) {
+                	
                     ReceiptHeader receiptHeader = new ReceiptHeader();
                     JsonNode additionalDetails = receipt.getAdditionalDetails();
                 	receiptHeader.setWardNo(additionalDetails.get("wardNo")!=null?additionalDetails.get("wardNo").asText():null);
@@ -309,7 +310,9 @@ public class SearchReceiptAction extends SearchFormAction {
                     receiptHeader.setPaymentId(receipt.getPaymentId());
                     receiptHeader.setReceiptnumber(billDetail.getReceiptNumber());
                     receiptHeader.setReceiptdate(new Date(billDetail.getReceiptDate()));
-                    receiptHeader.setService(microserviceUtils.getBusinessServiceNameByCode(billDetail.getBusinessService()));
+                    String[] catSer=microserviceUtils.getBusinessServiceNameByCode(billDetail.getBusinessService()).split("\\.");
+                    receiptHeader.setService(catSer[1]);
+                    receiptHeader.setServiceCat(catSer[0]);
                     receiptHeader.setReferencenumber(billDetail.getBillNumber());
                     receiptHeader.setReferenceDesc(additionalDetails.get("narration")!=null?additionalDetails.get("narration").asText():null);
                     receiptHeader.setPaidBy(bill.getPaidBy());

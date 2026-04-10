@@ -91,7 +91,8 @@ public class ReceiptHeader extends StateAware implements Auditable {
     private Boolean isModifiable;
     @SafeHtml
     private String service;
-    private Character collectiontype;
+    private String serviceCat;
+	private Character collectiontype;
     private Set<ReceiptDetail> receiptDetails = new LinkedHashSet<>();
     private ReceiptMisc receiptMisc;
     private Set<InstrumentHeader> receiptInstrument = new HashSet<>();
@@ -288,6 +289,14 @@ public class ReceiptHeader extends StateAware implements Auditable {
     public void setService(final String service) {
         this.service = service;
     }
+    
+    public String getServiceCat() {
+		return serviceCat;
+	}
+
+	public void setServiceCat(String serviceCat) {
+		this.serviceCat = serviceCat;
+	}
 
     public Character getCollectiontype() {
         return collectiontype;

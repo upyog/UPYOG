@@ -620,6 +620,9 @@ table {
 						property="g8data" />
 					<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" property="manualreceiptdate" title="G8 Receipt Date" format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" /> --%>
 					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Category" style="width:12%;text-align:left"
+						property="serviceCat" />
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 						title="Service" style="width:12%;text-align:left"
 						property="service" />
 					<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" style="width:8%;text-align:right" property="referencenumber" /> --%>

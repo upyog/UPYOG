@@ -310,7 +310,8 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      */
     @Override
     public String getServiceName() {
-        return receiptHeader.getService();
+    	        return receiptHeader.getService().replace(".", ", ");
+
     }
 
     /*
