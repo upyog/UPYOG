@@ -323,7 +323,7 @@ public class PropertyService {
         try {
             Property p = new Property();
             try {
-                log.info("Full Property Object: {}", mapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
+                log.info("Full Property Object: {}", mapper.writerWithDefaultPrettyPrinter().writeValueAsString(propertyNode));
             } catch (Exception e) {
                 log.error("Could not print property object", e);
             }
