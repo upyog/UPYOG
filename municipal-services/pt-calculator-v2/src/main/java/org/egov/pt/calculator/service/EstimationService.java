@@ -942,6 +942,11 @@ public class EstimationService {
 				break;
 			}
 		}
+		
+		if (exemption.signum() > 0) {
+		    exemption = exemption.negate();
+		}
+		
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty), rebate.add(exemption));
         if (null != decimalEstimate) {
 			decimalEstimate.setCategory(taxHeadCategoryMap.get(decimalEstimate.getTaxHeadCode()));
