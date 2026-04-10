@@ -322,7 +322,11 @@ public class PropertyService {
     public void syncPropertyMaster(JsonNode propertyNode, RequestInfo requestInfo) {
         try {
             Property p = new Property();
-            
+            try {
+                log.info("Full Property Object: {}", mapper.writerWithDefaultPrettyPrinter().writeValueAsString(p));
+            } catch (Exception e) {
+                log.error("Could not print property object", e);
+            }
             // Step 1: Map GIS and Master Fields
             p.setPropertyid(propertyNode.path("propertyId").asText());
             p.setSurveyid(propertyNode.path("surveyId").asText());
