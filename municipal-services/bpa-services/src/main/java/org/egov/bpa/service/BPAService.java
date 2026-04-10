@@ -493,16 +493,18 @@ public class BPAService {
         				.findFirst().orElse(new Action()).getNextState();
         		State nextState = businessService.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
         		
-        		String action = bpa.getWorkflow() != null ? bpa.getWorkflow().getAction() : "";
-        		
-        		if (nextState != null && CollectionUtils.isEmpty(bpa.getWorkflow().getAssignes())) {
-        			List<String> roles = new ArrayList<>();
-        			nextState.getActions().forEach(stateAction -> {
-        				roles.addAll(stateAction.getRoles());
-        			});
-        			List<String> assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo);
-        			bpa.getWorkflow().setAssignes(assignee);
-        		}
+        		if (nextState != null 
+						&& CollectionUtils.isEmpty(bpa.getWorkflow().getAssignes())
+						&& !CollectionUtils.isEmpty(nextState.getActions())) {
+					List<String> roles = new ArrayList<>();
+					nextState.getActions().stream()
+					.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
+						roles.addAll(stateAction.getRoles())
+					);
+					List<String> assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo);
+					bpa.getWorkflow().setAssignes(assignee);
+					
+				}
                 
 		wfIntegrator.callWorkFlow(bpaRequest);
 		log.debug("===> workflow done =>" +bpaRequest.getBPA().getStatus()  );

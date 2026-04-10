@@ -122,15 +122,15 @@ public class PaymentUpdateService {
 								.filter(act -> act.getAction().equalsIgnoreCase(bpa.getWorkflow().getAction()))
 								.findFirst().orElse(new Action()).getNextState();
 						State nextState = busSer.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
-						
-						String action = bpa.getWorkflow() != null ? bpa.getWorkflow().getAction() : "";
-						
+												
 						if (nextState != null 
-								&& CollectionUtils.isEmpty(bpa.getWorkflow().getAssignes())) {
+								&& CollectionUtils.isEmpty(bpa.getWorkflow().getAssignes())
+								&& !CollectionUtils.isEmpty(nextState.getActions())) {
 							List<String> roles = new ArrayList<>();
-							nextState.getActions().forEach(stateAction -> {
-								roles.addAll(stateAction.getRoles());
-							});
+							nextState.getActions().stream()
+							.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
+								roles.addAll(stateAction.getRoles())
+							);
 							List<String> assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo);
 							bpa.getWorkflow().setAssignes(assignee);
 							
