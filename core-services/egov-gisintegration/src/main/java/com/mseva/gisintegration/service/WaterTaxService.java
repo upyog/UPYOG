@@ -2,6 +2,7 @@ package com.mseva.gisintegration.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mseva.gisintegration.config.TenantStaticMapper;
 import com.mseva.gisintegration.model.WaterTax;
 import com.mseva.gisintegration.repository.WaterTaxRepository;
 import com.mseva.gisintegration.repository.ServiceRequestRepository;
@@ -157,7 +158,7 @@ public class WaterTaxService {
 
     private void mapTransactionalFields(WaterTax w, JsonNode detail) {
         //w.setTenantid(detail.path("tenantId").asText());
-        String townName = tenantMappingRepository.getTownNameByTenantId(detail.path("tenantId").asText());
+    	String townName = TenantStaticMapper.getTownName(s.getTenantid());        s.setTenantid(townName);
         w.setTenantid(townName);
         w.setConnectionno(detail.path("bill").path("consumerCode").asText());
         

@@ -2,6 +2,7 @@ package com.mseva.gisintegration.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mseva.gisintegration.config.TenantStaticMapper;
 import com.mseva.gisintegration.model.Property;
 import com.mseva.gisintegration.repository.PropertyRepository;
 import com.mseva.gisintegration.repository.ServiceRequestRepository;
@@ -246,11 +247,10 @@ public class PropertyService {
                     }
                 }
             }
-
+            
             // 2. Safe Town Name Lookup
             if (match.getTenantid() != null) {
-                String townName = tenantMappingRepository.getTownNameByTenantId(match.getTenantid());
-                
+            	String townName = TenantStaticMapper.getTownName(match.getTenantid());                
                 if (townName != null) {
                     // CAUTION: You were setting match.setTenantid(townName). 
                     // Usually, you want to keep the ID as "pb.amritsar" and set a 
@@ -282,8 +282,7 @@ public class PropertyService {
 
              // 2. Safe Town Name Lookup
              if (property.getTenantid() != null) {
-                 String townName = tenantMappingRepository.getTownNameByTenantId(property.getTenantid());
-                 
+            	 String townName = TenantStaticMapper.getTownName(property.getTenantid());                 
                  if (townName != null) {
                      // CAUTION: You were setting match.setTenantid(townName). 
                      // Usually, you want to keep the ID as "pb.amritsar" and set a 
@@ -328,10 +327,12 @@ public class PropertyService {
             p.setPropertyid(propertyNode.path("propertyId").asText());
             p.setSurveyid(propertyNode.path("surveyId").asText());
             p.setOldpropertyid(propertyNode.path("oldPropertyId").asText());
-            p.setTenantid(propertyNode.path("tenantId").asText());
-            
+            String townName = TenantStaticMapper.getTownName(p.getTenantid());
+            p.setTenantid(townName);            
             // MAPPING CHANGE: buildingName -> firmbusinessname
-            p.setFirmbusinessname(propertyNode.path("address").path("buildingName").asText());
+			p.setFirmbusinessname(propertyNode.path("additionalDetails").path("businessName").asText(null));
+			// Legacy fallback to buildingName if businessName is not present
+           // p.setFirmbusinessname(propertyNode.path("address").path("buildingName").asText());
 
             p.setPropertytype(propertyNode.path("propertyType").asText());
             p.setOwnershipcategory(propertyNode.path("ownershipCategory").asText());
