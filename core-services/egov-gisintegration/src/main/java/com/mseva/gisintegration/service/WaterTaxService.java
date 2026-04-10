@@ -158,7 +158,7 @@ public class WaterTaxService {
 
     private void mapTransactionalFields(WaterTax w, JsonNode detail) {
         //w.setTenantid(detail.path("tenantId").asText());
-    	String townName = TenantStaticMapper.getTownName(w.getTenantid());        s.setTenantid(townName);
+    	String townName = TenantStaticMapper.getTownName(w.getTenantid());        
         w.setTenantid(townName);
         w.setConnectionno(detail.path("bill").path("consumerCode").asText());
         
