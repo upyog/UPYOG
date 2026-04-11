@@ -226,12 +226,16 @@ public class NOCService {
 					.findFirst().orElse(new Action()).getNextState();
 			State nextState = businessServicename.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
 
-			if (nextState != null && CollectionUtils.isEmpty(noc.getWorkflow().getAssignes())) {
+			if (nextState != null && CollectionUtils.isEmpty(noc.getWorkflow().getAssignes())
+					&& !CollectionUtils.isEmpty(nextState.getActions())) {
 				List<String> roles = new ArrayList<>();
-				nextState.getActions().forEach(stateAction -> {
-					roles.addAll(stateAction.getRoles());
-				});
-				List<String> assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo());
+				nextState.getActions().stream()
+				.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
+					roles.addAll(stateAction.getRoles())
+				);
+				List<String> assignee = null;
+				if(!CollectionUtils.isEmpty(roles))
+					assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo());
 				noc.getWorkflow().setAssignes(assignee);
 			}
 
@@ -281,13 +285,16 @@ public class NOCService {
 
 				String action = noc.getWorkflow() != null ? noc.getWorkflow().getAction() : "";
 
-				if (nextState != null && nextState.getState().equalsIgnoreCase(NOCConstants.FI_STATUS)
-						&& (NOCConstants.ACTION_APPLY.equalsIgnoreCase(action) || NOCConstants.ACTION_RESUBMIT.equalsIgnoreCase(action))) {
+				if (nextState != null && CollectionUtils.isEmpty(noc.getWorkflow().getAssignes())
+						&& !CollectionUtils.isEmpty(nextState.getActions())) {
 					List<String> roles = new ArrayList<>();
-					nextState.getActions().forEach(stateAction -> {
-						roles.addAll(stateAction.getRoles());
-					});
-					List<String> assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo());
+					nextState.getActions().stream()
+					.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
+						roles.addAll(stateAction.getRoles())
+					);
+					List<String> assignee = null;
+					if(!CollectionUtils.isEmpty(roles))
+						assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo());
 					noc.getWorkflow().setAssignes(assignee);
 				}
 
