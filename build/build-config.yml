@@ -621,7 +621,7 @@ config:
       - work-dir: "municipal-services/noc-calculator"
         image-name: "noc-calculator"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "municipal-services/noc-calculator/migration"
+      - work-dir: "municipal-services/noc-calculator/src/main/resources/db"
         image-name: "noc-calculator-db"
         
   - name: "builds/upyog/municipal-services/echallan-services"
