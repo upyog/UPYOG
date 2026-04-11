@@ -225,12 +225,16 @@ public class CLUService {
 				.findFirst().orElse(new Action()).getNextState();
 		State nextState = businessServicename.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
 
-		if (nextState != null && CollectionUtils.isEmpty(clu.getWorkflow().getAssignes())) {
+		if (nextState != null && CollectionUtils.isEmpty(clu.getWorkflow().getAssignes())
+				&& !CollectionUtils.isEmpty(nextState.getActions())) {
 			List<String> roles = new ArrayList<>();
-			nextState.getActions().forEach(stateAction -> {
-				roles.addAll(stateAction.getRoles());
-			});
-			List<String> assignee = userService.getAssigneeFromCLU(clu, roles, nocRequest.getRequestInfo());
+			nextState.getActions().stream()
+			.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
+				roles.addAll(stateAction.getRoles())
+			);
+			List<String> assignee = null;
+			if(!CollectionUtils.isEmpty(roles))
+				assignee = userService.getAssigneeFromCLU(clu, roles, nocRequest.getRequestInfo());
 			clu.getWorkflow().setAssignes(assignee);
 		}
 		if(nocRequest.getLayout().getWorkflow().getAction().equals(CLUConstants.ACTION_INITIATE) || nocRequest.getLayout().getWorkflow().getAction().equals(CLUConstants.ACTION_APPLY)){
