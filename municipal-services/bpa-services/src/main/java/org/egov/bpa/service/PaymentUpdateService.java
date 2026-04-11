@@ -131,7 +131,9 @@ public class PaymentUpdateService {
 							.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
 								roles.addAll(stateAction.getRoles())
 							);
-							List<String> assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo);
+							List<String> assignee = null;
+							if(!CollectionUtils.isEmpty(roles))
+								assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo);
 							bpa.getWorkflow().setAssignes(assignee);
 							
 						}
