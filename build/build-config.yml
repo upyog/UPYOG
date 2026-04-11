@@ -620,6 +620,7 @@ config:
     build:
       - work-dir: "municipal-services/noc-calculator"
         image-name: "noc-calculator"
+        dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/noc-calculator/migration"
         image-name: "noc-calculator-db"
         
