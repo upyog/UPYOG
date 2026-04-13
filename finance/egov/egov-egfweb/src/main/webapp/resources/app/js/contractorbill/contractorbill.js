@@ -543,10 +543,10 @@ function loadMisAttributes(orderNumber){
 						$('#fundName').val(value.fund.name);
 						$('#departmentCode').val(value.department);
 						$('#departmentName').val(value.description);
-						$('#schemeId').val(value.scheme.id);
-						$('#schemeName').val(value.scheme.name);
-						$('#subSchemeId').val(value.subScheme.id);
-						$('#subSchemeName').val(value.subScheme.name);
+						$('#schemeId').val(value.scheme);
+						$('#schemeName').val(value.schemeName);
+						$('#subSchemeId').val(value.subScheme);
+						$('#subSchemeName').val(value.subSchemeName);
 					});
 				});
 

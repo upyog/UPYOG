@@ -73,6 +73,8 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "EGF_WORKORDER")
 @Unique(fields = { "orderNumber" }, id = "id", tableName = "EGF_WORKORDER", enableDfltMsg = true)
@@ -118,14 +120,28 @@ public class WorkOrder extends AbstractAuditable implements EntityType {
     @SafeHtml
     private String department;
 
-    @ManyToOne
-    @JoinColumn(name = "scheme")
-    private Scheme scheme;
+//    @ManyToOne
+//    @JoinColumn(name = "scheme")
+//    private Scheme scheme;
+    
+    private Integer scheme;
 
-    @ManyToOne
-    @JoinColumn(name = "subScheme")
-    private SubScheme subScheme;
+	/*
+	 * @ManyToOne
+	 * 
+	 * @JoinColumn(name = "subScheme") private SubScheme subScheme;
+	 */
 
+    private Integer subScheme;
+    
+    @Transient
+    @JsonProperty
+    private String schemeName;
+    
+    @Transient
+    @JsonProperty
+    private String subSchemeName;
+    
     @SafeHtml
     private String sanctionNumber;
 
@@ -139,8 +155,40 @@ public class WorkOrder extends AbstractAuditable implements EntityType {
 
     @Transient
     private Boolean editAllFields;
+    
+	public String getSchemeName() {
+		return schemeName;
+	}
 
-    @Override
+	public void setSchemeName(String schemeName) {
+		this.schemeName = schemeName;
+	}
+	
+	public String getSubSchemeName() {
+		return subSchemeName;
+	}
+
+	public void setSubSchemeName(String subSchemeName) {
+		this.subSchemeName = subSchemeName;
+	}
+
+	public Integer getScheme() {
+		return scheme;
+	}
+
+	public void setScheme(Integer scheme) {
+		this.scheme = scheme;
+	}
+	
+	public Integer getSubScheme() {
+		return subScheme;
+	}
+
+	public void setSubScheme(Integer subScheme) {
+		this.subScheme = subScheme;
+	}
+
+	@Override
     public String getBankname() {
         return null;
     }
@@ -269,21 +317,21 @@ public class WorkOrder extends AbstractAuditable implements EntityType {
         this.department = department;
     }
 
-    public Scheme getScheme() {
-        return scheme;
-    }
+//    public Scheme getScheme() {
+//        return scheme;
+//    }
+//
+//    public void setScheme(Scheme scheme) {
+//        this.scheme = scheme;
+//    }
 
-    public void setScheme(Scheme scheme) {
-        this.scheme = scheme;
-    }
-
-    public SubScheme getSubScheme() {
-        return subScheme;
-    }
-
-    public void setSubScheme(SubScheme subScheme) {
-        this.subScheme = subScheme;
-    }
+//    public SubScheme getSubScheme() {
+//        return subScheme;
+//    }
+//
+//    public void setSubScheme(SubScheme subScheme) {
+//        this.subScheme = subScheme;
+//    }
 
     public String getSanctionNumber() {
         return sanctionNumber;

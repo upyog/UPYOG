@@ -15,7 +15,7 @@
 	<field name="instrumentDate" class="java.util.Date">
 		<fieldDescription><![CDATA[instrumentDate]]></fieldDescription>
 	</field>
-	<field name="instrumentAmount" class="java.lang.Double">
+	<field name="instrumentAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[instrumentAmount]]></fieldDescription>
 	</field>
 	<field name="instrumentType" class="java.lang.String">
@@ -51,7 +51,7 @@
 					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{instrumentType}.equals(CollectionConstants.INSTRUMENTTYPE_CASH) 
-    ? "Received a sum of Rs. " + ($P{TOTAL_AMOUNT}.setScale(2, BigDecimal.ROUND_UP)) + " (" + ReportUtil.amountInWords(BigDecimal.valueOf($F{instrumentAmount})) + ") through cash" 
+    ? "Received a sum of Rs. " + ($P{TOTAL_AMOUNT}.setScale(2, java.math.RoundingMode.UP)) + " (" + ReportUtil.amountInWords($F{instrumentAmount} == null ? BigDecimal.ZERO : $F{instrumentAmount}) + ") through cash" 
     : $F{instrumentType}.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE) 
         ? "Reference Number: " + $F{instrumentNumber} + ", Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate})
         : $F{instrumentType}.equals(CollectionConstants.INSTRUMENTTYPE_DD) 

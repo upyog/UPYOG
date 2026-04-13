@@ -148,20 +148,21 @@
 	<label class="col-sm-2 control-label text-right" for="scheme"> <spring:message code="purchaseorder.scheme" text="Scheme"/>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:hidden path="" name="schemeId" id="schemeId" value="${purchaseOrder.scheme.id }"/>
-		<form:select path="scheme.id" data-first-option="false" id="scheme" class="form-control"  value="${purchaseOrder.scheme.id}">
+		<form:hidden path="" name="schemeId" id="schemeId" value="${purchaseOrder.scheme}"/>
+		<form:select path="scheme" data-first-option="false" id="scheme" class="form-control">
 			<form:option value=""><spring:message code="lbl.select" text=""/></form:option>
 		</form:select>
-		<form:errors path="scheme.id" cssClass="add-margin error-msg" />
+		<form:errors path="scheme" cssClass="add-margin error-msg" />
 	</div>
+
 	<label class="col-sm-2 control-label text-right" for="subScheme"> <spring:message code="purchaseorder.subscheme" text="Sub Scheme"/>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:hidden path="" name="subSchemeId" id="subSchemeId" value="${purchaseOrder.subScheme.id }"/>
-		<form:select path="subScheme.id" data-first-option="false" id="subScheme" class="form-control" value="${purchaseOrder.subScheme.id}">
+		<form:hidden path="" name="subSchemeId" id="subSchemeId" value="${purchaseOrder.subScheme}"/>
+		<form:select path="subScheme" data-first-option="false" id="subScheme" class="form-control">
 			<form:option value=""><spring:message code="lbl.select" text="Select"/></form:option>
 		</form:select>
-		<form:errors path="subScheme.id" cssClass="add-margin error-msg" />
+		<form:errors path="subScheme" cssClass="add-margin error-msg" />
 	</div>
 </div>
 

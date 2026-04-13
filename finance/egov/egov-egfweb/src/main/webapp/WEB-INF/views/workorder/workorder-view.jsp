@@ -117,11 +117,13 @@
             <div class="col-xs-3 add-margin">
               <spring:message code="workorder.scheme" text="Scheme"/>
             </div>
-            <div class="col-sm-3 add-margin view-content">${workOrder.scheme.name}</div>
+            <%-- <div class="col-sm-3 add-margin view-content">${workOrder.scheme.name}</div> --%>
+            <div class="col-sm-3 add-margin view-content">${scheme}</div>
             <div class="col-xs-3 add-margin">
               <spring:message code="workorder.subscheme" text="Sub Scheme"/>
             </div>
-            <div class="col-sm-3 add-margin view-content">${workOrder.subScheme.name}</div>
+           <%--  <div class="col-sm-3 add-margin view-content">${workOrder.subScheme.name}</div> --%>
+            <div class="col-sm-3 add-margin view-content">${subScheme}</div>
           </div>
           <div class="row add-border">
             <div class="col-xs-3 add-margin">

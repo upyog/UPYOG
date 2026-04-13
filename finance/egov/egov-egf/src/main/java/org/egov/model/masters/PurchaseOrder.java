@@ -74,6 +74,8 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "EGF_PURCHASEORDER")
 @Unique(fields = { "orderNumber" }, id = "id", tableName = "EGF_PURCHASEORDER", enableDfltMsg = true)
@@ -121,13 +123,14 @@ public class PurchaseOrder extends AbstractAuditable implements EntityType {
     @SafeHtml
     private String department;
 
-    @ManyToOne
-    @JoinColumn(name = "scheme")
-    private Scheme scheme;
+    private Integer scheme;
+    
+    @Transient
+    @JsonProperty
+    private String schemeName;
 
-    @ManyToOne
-    @JoinColumn(name = "subScheme")
-    private SubScheme subScheme;
+
+    private Integer subScheme;
 
     @SafeHtml
     private String sanctionNumber;
@@ -137,6 +140,7 @@ public class PurchaseOrder extends AbstractAuditable implements EntityType {
     private Boolean active;
 
     @Transient
+    @JsonProperty
     private String departmentName;
 
     @Transient
@@ -270,20 +274,21 @@ public class PurchaseOrder extends AbstractAuditable implements EntityType {
     public void setDepartment(String department) {
         this.department = department;
     }
+    
 
-    public Scheme getScheme() {
-        return scheme;
-    }
+    public Integer getScheme() {
+		return scheme;
+	}
 
-    public void setScheme(Scheme scheme) {
-        this.scheme = scheme;
-    }
+	public void setScheme(Integer scheme) {
+		this.scheme = scheme;
+	}
 
-    public SubScheme getSubScheme() {
+	public Integer getSubScheme() {
         return subScheme;
     }
 
-    public void setSubScheme(SubScheme subScheme) {
+    public void setSubScheme(Integer subScheme) {
         this.subScheme = subScheme;
     }
 
@@ -330,5 +335,14 @@ public class PurchaseOrder extends AbstractAuditable implements EntityType {
     public void setEditAllFields(Boolean editAllFields) {
         this.editAllFields = editAllFields;
     }
+
+	public String getSchemeName() {
+		return schemeName;
+	}
+
+	public void setSchemeName(String schemeName) {
+		this.schemeName = schemeName;
+	}
+    
 
 }

@@ -52,7 +52,10 @@ import java.util.List;
 import org.egov.model.masters.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.egov.commons.Scheme;
+
 
 /**
  * @author venki
@@ -70,5 +73,11 @@ public interface WorkOrderRepository extends JpaRepository<WorkOrder, Long> {
     public List<WorkOrder> findByContractor_Id(Long id);
 
     public WorkOrder findByOrderNumber(String orderNumber);
+    
+    @Query(value = "SELECT name FROM scheme s WHERE s.id = :id", nativeQuery = true)
+	public String getSchemeById(@Param("id") Integer id);
+    
+    @Query(value = "SELECT name FROM sub_scheme s WHERE s.id = :id", nativeQuery = true)
+    public String getsubSchemeById(@Param("id") Integer id);
 
 }

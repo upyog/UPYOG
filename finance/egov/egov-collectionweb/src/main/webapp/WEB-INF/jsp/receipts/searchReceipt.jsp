@@ -77,7 +77,7 @@ table {
 
 		cell.innerHTML = '';
 
-		label.innerHTML = '<s:text name="searchreceipts.criteria.servicetype" />';
+		label.innerHTML = '<s:text name="searchreceipts.criteria.servicetype" /><span class="mandatory"></span>';
 
 		/* if (selected == -1 || !serviceTypeMap[selected]) return; */
 
@@ -86,7 +86,6 @@ table {
 		if (keys.length === 0)
 			return;
 
-		label.innerHTML = 'Service Type:';
 
 		var sel = document.createElement('select');
 		sel.name = 'serviceTypeId';
@@ -503,8 +502,7 @@ table {
 							name="serviceCategory" id="serviceCategoryid" cssClass="selectwk"
 							list="serviceCategoryNames" value="%{serviceCategory}"
 							onChange="populateServiceType(this.value);" /></td>
-					<td width="15%" class="bluebox" id="serviceTypeLabel"><span
-						class="mandatory"></td>
+					<td width="15%" class="bluebox" id="serviceTypeLabel"></td>
 					<td width="30%" class="bluebox" id="serviceTypeCell"></td>
 				</tr>
 

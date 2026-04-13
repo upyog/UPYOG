@@ -177,6 +177,9 @@ public class AjaxCommonController {
     public List<PurchaseOrder> getAllPurchaseOrderByOrderNumber(@RequestParam("orderNumber") @SafeHtml final String orderNumber)
             throws ApplicationException {
         PurchaseOrder po = purchaseOrderService.getByOrderNumber(orderNumber);
+        if (po != null && po.getScheme() != null) {
+        	po.setSchemeName(purchaseOrderService.getSchemeById(po.getScheme()));
+        }
         Department dept = microserviceUtils.getDepartmentByCode(po.getDepartment());
         po.setDescription(dept.getName());
         return Collections.singletonList(po);
@@ -204,6 +207,12 @@ public class AjaxCommonController {
     public List<WorkOrder> getAllWorkOrderByOrderNumber(@RequestParam("orderNumber") @SafeHtml final String orderNumber)
             throws ApplicationException {
         WorkOrder wo = workOrderService.getByOrderNumber(orderNumber);
+        if(wo != null && wo.getScheme() != null) {
+        	wo.setSchemeName(workOrderService.getSchemeById(wo.getScheme()));
+        }
+        if(wo != null && wo.getSubScheme() != null) {
+        	wo.setSubSchemeName(workOrderService.getsubSchemeById(wo.getSubScheme()));
+        }
         Department dept = microserviceUtils.getDepartmentByCode(wo.getDepartment());
         wo.setDescription(dept.getName());
         return Collections.singletonList(wo);

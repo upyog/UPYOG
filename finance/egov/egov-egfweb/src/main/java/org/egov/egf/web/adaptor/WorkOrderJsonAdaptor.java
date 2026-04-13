@@ -95,12 +95,16 @@ public class WorkOrderJsonAdaptor implements JsonSerializer<WorkOrder> {
                 jsonObject.addProperty("fund", workOrder.getFund().getName());
             else
                 jsonObject.addProperty("fund", "");
-            if (workOrder.getScheme() != null && workOrder.getScheme().getName() != null)
-                jsonObject.addProperty("scheme", workOrder.getScheme().getName());
+            /*if (workOrder.getScheme() != null && workOrder.getScheme().getName() != null)
+                jsonObject.addProperty("scheme", workOrder.getScheme().getName());*/
+            if(workOrder.getScheme() != null && workOrder.getScheme() != null)
+            	jsonObject.addProperty("scheme", workOrder.getScheme());
             else
                 jsonObject.addProperty("scheme", "");
-            if (workOrder.getSubScheme() != null && workOrder.getSubScheme().getName() != null)
-                jsonObject.addProperty("subScheme", workOrder.getSubScheme().getName());
+/*            if (workOrder.getSubScheme() != null && workOrder.getSubScheme().getName() != null)
+                jsonObject.addProperty("subScheme", workOrder.getSubScheme().getName());*/
+            if(workOrder.getSubScheme() != null && workOrder.getSubScheme() != null)
+            	jsonObject.addProperty("subScheme", workOrder.getSubScheme());
             else
                 jsonObject.addProperty("subScheme", "");
             if (workOrder.getDepartmentName() != null)

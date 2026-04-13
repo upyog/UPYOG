@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -135,16 +136,17 @@ public class WorkOrderService implements EntityTypeService {
 		if (workOrder.getFund() != null && workOrder.getFund().getId() != null) {
 			workOrder.setFund(fundService.findOne(workOrder.getFund().getId()));
 		}
-		if (workOrder.getScheme() != null && workOrder.getScheme().getId() != null) {
-			workOrder.setScheme(schemeService.findById(workOrder.getScheme().getId(), false));
-		} else {
-			workOrder.setScheme(null);
-		}
-		if (workOrder.getSubScheme() != null && workOrder.getSubScheme().getId() != null) {
-			workOrder.setSubScheme(subSchemeService.findById(workOrder.getSubScheme().getId(), false));
-		} else {
-			workOrder.setSubScheme(null);
-		}
+		/*
+		 * if (workOrder.getScheme() != null && workOrder.getScheme().getId() != null) {
+		 * workOrder.setScheme(schemeService.findById(workOrder.getScheme().getId(),
+		 * false)); } else { workOrder.setScheme(null); }
+		 */
+		/*
+		 * if (workOrder.getSubScheme() != null && workOrder.getSubScheme().getId() !=
+		 * null) {
+		 * workOrder.setSubScheme(subSchemeService.findById(workOrder.getSubScheme().
+		 * getId(), false)); } else { workOrder.setSubScheme(null); }
+		 */
 		if (workOrder.getContractor() != null && workOrder.getContractor().getId() != null) {
 			workOrder.setContractor(contractorService.getById(workOrder.getContractor().getId()));
 		}
@@ -173,16 +175,17 @@ public class WorkOrderService implements EntityTypeService {
 			if (workOrder.getFund() != null && workOrder.getFund().getId() != null) {
 				workOrder.setFund(fundService.findOne(workOrder.getFund().getId()));
 			}
-			if (workOrder.getScheme() != null && workOrder.getScheme().getId() != null) {
-				workOrder.setScheme(schemeService.findById(workOrder.getScheme().getId(), false));
-			} else {
-				workOrder.setScheme(null);
-			}
-			if (workOrder.getSubScheme() != null && workOrder.getSubScheme().getId() != null) {
-				workOrder.setSubScheme(subSchemeService.findById(workOrder.getSubScheme().getId(), false));
-			} else {
-				workOrder.setSubScheme(null);
-			}
+			/*
+			 * if (workOrder.getScheme() != null && workOrder.getScheme().getId() != null) {
+			 * workOrder.setScheme(schemeService.findById(workOrder.getScheme().getId(),
+			 * false)); } else { workOrder.setScheme(null); }
+			 */
+			/*
+			 * if (workOrder.getSubScheme() != null && workOrder.getSubScheme().getId() !=
+			 * null) {
+			 * workOrder.setSubScheme(subSchemeService.findById(workOrder.getSubScheme().
+			 * getId(), false)); } else { workOrder.setSubScheme(null); }
+			 */
 			if (workOrder.getContractor() != null && workOrder.getContractor().getId() != null) {
 				workOrder.setContractor(contractorService.getById(workOrder.getContractor().getId()));
 			}
@@ -277,5 +280,15 @@ public class WorkOrderService implements EntityTypeService {
 			throws ValidationException {
 		return Collections.emptyList();
 	}
+	
+	public String getSchemeById(Integer scheme) {
+		return workOrderRepository.getSchemeById(scheme);
+	}
+	
+	public String getsubSchemeById(Integer subScheme) {
+		return workOrderRepository.getsubSchemeById(subScheme);
+	}
+	
+
 
 }

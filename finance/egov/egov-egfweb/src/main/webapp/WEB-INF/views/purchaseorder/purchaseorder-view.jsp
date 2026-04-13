@@ -117,11 +117,11 @@
             <div class="col-xs-3 add-margin">
               <spring:message code="purchaseorder.scheme" text="Scheme"/>
             </div>
-            <div class="col-sm-3 add-margin view-content">${purchaseOrder.scheme.name}</div>
+            <div class="col-sm-3 add-margin view-content">${scheme}</div>
             <div class="col-xs-3 add-margin">
               <spring:message code="purchaseorder.subscheme" text="Sub Scheme"/>
             </div>
-            <div class="col-sm-3 add-margin view-content">${purchaseOrder.subScheme.name}</div>
+            <div class="col-sm-3 add-margin view-content">${subScheme}</div>
           </div>
           <div class="row add-border">
             <div class="col-xs-3 add-margin">

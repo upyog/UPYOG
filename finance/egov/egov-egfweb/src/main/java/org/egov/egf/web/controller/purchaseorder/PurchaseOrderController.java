@@ -52,6 +52,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
 import org.egov.commons.service.FundService;
 import org.egov.egf.masters.services.PurchaseOrderService;
 import org.egov.egf.masters.services.SupplierService;
@@ -129,6 +131,8 @@ public class PurchaseOrderController {
 
 	@PostMapping(value = "/newform")
 	public String showNewForm(@ModelAttribute(PURCHASE_ORDER) final PurchaseOrder purchaseOrder, final Model model) {
+	    //purchaseOrder.setScheme(new Scheme());
+	    //.setSubScheme(new SubScheme());
 		prepareNewForm(model);
 		model.addAttribute(PURCHASE_ORDER, new PurchaseOrder());
 		return NEW;
@@ -137,7 +141,7 @@ public class PurchaseOrderController {
 	@PostMapping(value = "/create")
 	public String create(@Valid @ModelAttribute final PurchaseOrder purchaseOrder, final BindingResult errors,
 			final Model model, final RedirectAttributes redirectAttrs) throws IOException {
-
+		
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
 			return NEW;
@@ -177,6 +181,14 @@ public class PurchaseOrderController {
 		final PurchaseOrder purchaseOrder = purchaseOrderService.getById(id);
 		populateDepartmentName(purchaseOrder);
 		prepareNewForm(model);
+		if (purchaseOrder != null && purchaseOrder.getScheme() != null) {
+			String scm = purchaseOrderService.getSchemeById(purchaseOrder.getScheme());
+			model.addAttribute("scheme", scm);
+		}
+		if (purchaseOrder != null && purchaseOrder.getSubScheme() != null) {
+			String sscm = purchaseOrderService.getSchemeById(purchaseOrder.getSubScheme());
+			model.addAttribute("subScheme", sscm);
+		}
 		model.addAttribute(PURCHASE_ORDER, purchaseOrder);
 		model.addAttribute("mode", "view");
 		return VIEW;
@@ -212,6 +224,14 @@ public class PurchaseOrderController {
 		populateDepartmentName(purchaseOrder);
 		model.addAttribute(PURCHASE_ORDER, purchaseOrder);
 		model.addAttribute("mode", mode);
+		if (purchaseOrder != null && purchaseOrder.getScheme() != null) {
+			String scm = purchaseOrderService.getSchemeById(purchaseOrder.getScheme());
+			model.addAttribute("scheme", scm);
+		}
+		if (purchaseOrder != null && purchaseOrder.getSubScheme() != null) {
+			String sscm = purchaseOrderService.getSchemeById(purchaseOrder.getSubScheme());
+			model.addAttribute("subScheme", sscm);
+		}
 		return RESULT;
 	}
 

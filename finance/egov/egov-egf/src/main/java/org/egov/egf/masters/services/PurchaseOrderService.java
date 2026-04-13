@@ -63,6 +63,7 @@ import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
 import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Scheme;
 import org.egov.commons.service.AccountDetailKeyService;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.commons.service.EntityTypeService;
@@ -135,16 +136,17 @@ public class PurchaseOrderService implements EntityTypeService {
 		if (purchaseOrder.getFund() != null && purchaseOrder.getFund().getId() != null) {
 			purchaseOrder.setFund(fundService.findOne(purchaseOrder.getFund().getId()));
 		}
-		if (purchaseOrder.getScheme() != null && purchaseOrder.getScheme().getId() != null) {
+	/*	if (purchaseOrder.getScheme() != null && purchaseOrder.getScheme().getId() != null) {
 			purchaseOrder.setScheme(schemeService.findById(purchaseOrder.getScheme().getId(), false));
 		} else {
 			purchaseOrder.setScheme(null);
-		}
-		if (purchaseOrder.getSubScheme() != null && purchaseOrder.getSubScheme().getId() != null) {
-			purchaseOrder.setSubScheme(subSchemeService.findById(purchaseOrder.getSubScheme().getId(), false));
-		} else {
-			purchaseOrder.setSubScheme(null);
-		}
+		}*/
+	/*
+	 * if (purchaseOrder.getSubScheme() != null &&
+	 * purchaseOrder.getSubScheme().getId() != null) {
+	 * purchaseOrder.setSubScheme(subSchemeService.findById(purchaseOrder.
+	 * getSubScheme().getId(), false)); } else { purchaseOrder.setSubScheme(null); }
+	 */
 		if (purchaseOrder.getSupplier() != null && purchaseOrder.getSupplier().getId() != null) {
 			purchaseOrder.setSupplier(supplierService.getById(purchaseOrder.getSupplier().getId()));
 		}
@@ -174,16 +176,17 @@ public class PurchaseOrderService implements EntityTypeService {
 			if (purchaseOrder.getFund() != null && purchaseOrder.getFund().getId() != null) {
 				purchaseOrder.setFund(fundService.findOne(purchaseOrder.getFund().getId()));
 			}
-			if (purchaseOrder.getScheme() != null && purchaseOrder.getScheme().getId() != null) {
+		/*	if (purchaseOrder.getScheme() != null && purchaseOrder.getScheme().getId() != null) {
 				purchaseOrder.setScheme(schemeService.findById(purchaseOrder.getScheme().getId(), false));
 			} else {
 				purchaseOrder.setScheme(null);
-			}
-			if (purchaseOrder.getSubScheme() != null && purchaseOrder.getSubScheme().getId() != null) {
-				purchaseOrder.setSubScheme(subSchemeService.findById(purchaseOrder.getSubScheme().getId(), false));
-			} else {
-				purchaseOrder.setSubScheme(null);
-			}
+			}*/
+		/*
+		 * if (purchaseOrder.getSubScheme() != null &&
+		 * purchaseOrder.getSubScheme().getId() != null) {
+		 * purchaseOrder.setSubScheme(subSchemeService.findById(purchaseOrder.
+		 * getSubScheme().getId(), false)); } else { purchaseOrder.setSubScheme(null); }
+		 */
 			if (purchaseOrder.getSupplier() != null && purchaseOrder.getSupplier().getId() != null) {
 				purchaseOrder.setSupplier(supplierService.getById(purchaseOrder.getSupplier().getId()));
 			}
@@ -279,6 +282,14 @@ public class PurchaseOrderService implements EntityTypeService {
 	public List<? extends org.egov.commons.utils.EntityType> getEntitiesById(List<Long> idsList)
 			throws ValidationException {
 		return Collections.emptyList();
+	}
+
+	public String getSchemeById(Integer scheme) {
+		return purchaseOrderRepository.getSchemeById(scheme);
+	}
+	
+	public String getSubSchemeById(Integer scheme) {
+		return purchaseOrderRepository.getSubSchemeById(scheme);
 	}
 
 }

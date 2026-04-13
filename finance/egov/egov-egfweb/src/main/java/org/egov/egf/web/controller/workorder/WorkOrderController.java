@@ -49,6 +49,8 @@ package org.egov.egf.web.controller.workorder;
 
 import java.io.IOException;
 import java.util.List;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
 
 import javax.validation.Valid;
 
@@ -127,7 +129,8 @@ public class WorkOrderController {
 		model.addAttribute("contractors", contractorService.getAllActiveEntities(null));
 	}
 
-	@PostMapping(value = "/newform")
+//	@PostMapping(value = "/newform")
+	@GetMapping(value = "/newform")
 	public String showNewForm(@ModelAttribute(WORK_ORDER) final WorkOrder workOrder, final Model model) {
 		prepareNewForm(model);
 		model.addAttribute(WORK_ORDER, new WorkOrder());
@@ -177,6 +180,14 @@ public class WorkOrderController {
 		final WorkOrder workOrder = workOrderService.getById(id);
 		populateDepartmentName(workOrder);
 		prepareNewForm(model);
+		if(workOrder != null && workOrder.getScheme() != null) {
+			String scme = workOrderService.getSchemeById(workOrder.getScheme());
+			model.addAttribute("scheme", scme);
+		}
+		if(workOrder != null && workOrder.getSubScheme() != null) {
+			String subscme = workOrderService.getsubSchemeById(workOrder.getSubScheme());
+			model.addAttribute("subScheme", subscme);
+		}
 		model.addAttribute(WORK_ORDER, workOrder);
 		model.addAttribute("mode", "view");
 		return VIEW;
@@ -210,6 +221,14 @@ public class WorkOrderController {
 			final Model model) {
 		final WorkOrder workOrder = workOrderService.getById(id);
 		populateDepartmentName(workOrder);
+		if(workOrder != null && workOrder.getScheme() != null) {
+			String scme = workOrderService.getSchemeById(workOrder.getScheme());
+			model.addAttribute("scheme", scme);
+		}
+		if(workOrder != null && workOrder.getSubScheme() != null) {
+			String subscme = workOrderService.getsubSchemeById(workOrder.getSubScheme());
+			model.addAttribute("subScheme", subscme);
+		}
 		model.addAttribute(WORK_ORDER, workOrder);
 		model.addAttribute("mode", mode);
 		return RESULT;
