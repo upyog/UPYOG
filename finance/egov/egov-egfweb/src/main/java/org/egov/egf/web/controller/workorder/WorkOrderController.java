@@ -129,8 +129,8 @@ public class WorkOrderController {
 		model.addAttribute("contractors", contractorService.getAllActiveEntities(null));
 	}
 
-//	@PostMapping(value = "/newform")
-	@GetMapping(value = "/newform")
+	@PostMapping(value = "/newform")
+//	@GetMapping(value = "/newform")
 	public String showNewForm(@ModelAttribute(WORK_ORDER) final WorkOrder workOrder, final Model model) {
 		prepareNewForm(model);
 		model.addAttribute(WORK_ORDER, new WorkOrder());
