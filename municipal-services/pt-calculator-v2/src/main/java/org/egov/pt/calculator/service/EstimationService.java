@@ -928,11 +928,15 @@ public class EstimationService {
 
 			case PT_UNIT_USAGE_EXEMPTION:
 				exemption = exemption.add(estimate.getEstimateAmount());
+				exemption = getExemption(exemption);
+				estimate.setEstimateAmount(exemption);			
 				estimate.setCategory(taxHeadCategoryMap.get(estimate.getTaxHeadCode()));
 				break;
 				
 			case PT_OWNER_EXEMPTION:
 				exemption = exemption.add(estimate.getEstimateAmount());
+				exemption = getExemption(exemption);
+				estimate.setEstimateAmount(exemption);	
 				estimate.setCategory(taxHeadCategoryMap.get(estimate.getTaxHeadCode()));
 				break;
 				
@@ -943,9 +947,7 @@ public class EstimationService {
 			}
 		}
 		
-		if (exemption.signum() > 0) {
-		    exemption = exemption.negate();
-		}
+		
 		
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty), rebate.add(exemption));
         if (null != decimalEstimate) {
@@ -988,6 +990,14 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 	/**
 	 * method to do a first level filtering on the slabs based on the values present in Property detail
 	 */
+	   
+	   
+	   private BigDecimal getExemption(BigDecimal exemption) {
+			 if (exemption.signum() > 0) {
+			    exemption = exemption.negate();
+			}
+			 return exemption;
+	   }
 	private List<BillingSlab> getSlabsFiltered(Property property, RequestInfo requestInfo) {
 
 		PropertyDetail detail = property.getPropertyDetails().get(0);
