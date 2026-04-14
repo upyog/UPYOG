@@ -271,7 +271,7 @@ public class ApplicationProperties {
     @Value("${egov.refund.create.endpoint}")
     private String initiateRefundEndPoint;
     
-//    @Value("${egov.refund.payment.txn}")
-//    private String paymentRefundTxn;
+    @Value("${egov.refund.payment.txn}")
+    private String paymentRefundTxn;
 
 }
