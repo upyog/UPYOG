@@ -54,6 +54,7 @@ import javax.validation.Valid;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.egf.commons.bank.service.CreateBankService;
+import org.egov.egf.commons.bank.service.StateMasterService;
 import org.egov.egf.masters.services.ContractorService;
 import org.egov.egf.web.adaptor.ContractorJsonAdaptor;
 import org.egov.model.masters.Contractor;
@@ -103,6 +104,9 @@ public class CreateContractorController {
 
 	@Autowired
 	private ContractorService contractorService;
+	
+	@Autowired
+	private StateMasterService stateMasterService;
 
 	@Autowired
 	private MessageSource messageSource;
@@ -114,6 +118,7 @@ public class CreateContractorController {
 
 	private void prepareNewForm(final Model model) {
 		model.addAttribute("banks", createBankService.getByIsActiveTrueOrderByName());
+		model.addAttribute("statemaster", stateMasterService.getAllState());
 		model.addAttribute("statuses",
 				egwStatusHibDAO.getStatusByModule(FinancialConstants.STATUS_MODULE_NAME_CONTRACTOR));
 	}

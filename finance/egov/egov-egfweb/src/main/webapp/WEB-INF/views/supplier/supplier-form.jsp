@@ -114,10 +114,13 @@
 		<form:input path="tinNumber" id="tinNumber" minlength="15" maxlength="15" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace" required="required" />
 		<form:errors path="tinNumber" cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right" for="gstRegisteredState"> <spring:message code="supplier.gst.registered.state" text="GST registered State/UT"/>
+	<label class="col-sm-2 control-label text-right" for="gstRegisteredState"> <spring:message code="supplier.gst.registered.state" text="GST registered State/UT"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="gstRegisteredState" id="gstRegisteredState" maxlength="250" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace"/>
+	    <form:select path="gstRegisteredState" data-first-option="false" id="gstRegisteredState" class="form-control"  required="required">
+			<form:option value=""><spring:message code="lbl.select" text="Select"/></form:option>
+			<form:options items="${statemaster}" itemValue="name" itemLabel="name" />
+		</form:select>
 		<form:errors path="gstRegisteredState" cssClass="add-margin error-msg" />
 	</div>
 </div>

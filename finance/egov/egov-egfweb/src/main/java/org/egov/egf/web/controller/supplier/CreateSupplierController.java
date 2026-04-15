@@ -54,6 +54,7 @@ import javax.validation.Valid;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.egf.commons.bank.service.CreateBankService;
+import org.egov.egf.commons.bank.service.StateMasterService;
 import org.egov.egf.masters.services.SupplierService;
 import org.egov.egf.web.adaptor.SupplierJsonAdaptor;
 import org.egov.model.masters.Supplier;
@@ -95,6 +96,9 @@ public class CreateSupplierController {
 
 	@Autowired
 	private CreateBankService createBankService;
+	
+	@Autowired
+	private StateMasterService stateMasterService;
 
 	@Autowired
 	private EgwStatusHibernateDAO egwStatusHibDAO;
@@ -107,6 +111,7 @@ public class CreateSupplierController {
 
 	private void prepareNewForm(final Model model) {
 		model.addAttribute("banks", createBankService.getByIsActiveTrueOrderByName());
+		model.addAttribute("statemaster", stateMasterService.getAllState());
 		model.addAttribute("statuses",
 				egwStatusHibDAO.getStatusByModule(FinancialConstants.STATUS_MODULE_NAME_SUPPLIER));
 	}

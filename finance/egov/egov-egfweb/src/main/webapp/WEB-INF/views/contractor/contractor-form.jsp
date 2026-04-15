@@ -157,9 +157,10 @@
 		class="mandatory"></span>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="gstRegisteredState" maxlength="250"
-			id="gstRegisteredState" cssClass="form-control patternvalidation"
-			data-pattern="alphanumericwithspace" required="required" />
+		    <form:select path="gstRegisteredState" data-first-option="false" id="gstRegisteredState" class="form-control"  required="required">
+			<form:option value=""><spring:message code="lbl.select" text="Select"/></form:option>
+			<form:options items="${statemaster}" itemValue="name" itemLabel="name" />
+		</form:select>
 		<form:errors path="gstRegisteredState" cssClass="add-margin error-msg" />
 	</div>
 </div>
