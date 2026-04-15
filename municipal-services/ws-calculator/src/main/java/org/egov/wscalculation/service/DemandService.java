@@ -506,7 +506,8 @@ public class DemandService {
 			
 			Object mdmsResponse = null;
 	        String relatedSwConn = "";
-	        List<String> matchingUsages = new ArrayList<>();
+//	        List<String> matchingUsages = new ArrayList<>();
+	        boolean matchingUsages = false;
 	        List<String> dbUsageCategory = new ArrayList<>();
 
 
@@ -534,8 +535,9 @@ public class DemandService {
 			}
 			if (mdmsUsageCategory !=null && !mdmsUsageCategory.isEmpty()) {
 				 dbUsageCategory = waterCalculatorDao.fetchUsageCategory(consumerCode);
+				 matchingUsages = mdmsUsageCategory.stream().anyMatch(dbUsageCategory::contains);
 
-		         matchingUsages = mdmsUsageCategory.stream().filter(dbUsageCategory::contains).collect(Collectors.toList());
+//		         matchingUsages2 = mdmsUsageCategory.stream().filter(dbUsageCategory::contains).collect(Collectors.toList());
 		        try {
 		            relatedSwConn = dao.getSwConnection(tenantId , consumerCode);
 		        } catch(Exception e){
@@ -553,7 +555,7 @@ public class DemandService {
 //	        WSCalculationDaoImpl dao = new WSCalculationDaoImpl();
 	       
         	
-	        if (!matchingUsages.isEmpty() && relatedSwConn != null && !relatedSwConn.isEmpty()) {
+	        if (matchingUsages && relatedSwConn != null && !relatedSwConn.isEmpty()) {
 	        	// For the metered connections demand has to create one by one
 	 			if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connection.getConnectionType())) {
 	 				demandReq.addAll(demands);

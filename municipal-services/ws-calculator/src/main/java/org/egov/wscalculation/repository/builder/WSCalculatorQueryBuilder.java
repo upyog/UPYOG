@@ -1139,7 +1139,7 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 		}
 		
 		addClauseIfRequired(preparedStatement, query);
-		query.append(" conn.applicationstatus = 'CONNECTION_ACTIVATED' ");
+		query.append(" conn.applicationstatus IN ('CONNECTION_ACTIVATED', 'APPROVED') ");
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" conn.status = 'Active' ");
 		
