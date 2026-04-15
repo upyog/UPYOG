@@ -120,6 +120,9 @@ public class SWCalculationConstant {
 	public static final String nonMeterdConnection = "Non Metered";
 
 	public static final String noOfWaterClosets = "No. of water closets";
+	
+	public static final String PLOT_SEAT_BASED = "PLOT_SEAT_BASED";
+
 
 	public static final String noOfToilets = "No. of toilets";
 
