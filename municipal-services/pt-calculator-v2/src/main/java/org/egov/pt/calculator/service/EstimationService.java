@@ -928,8 +928,9 @@ public class EstimationService {
 
 			case PT_UNIT_USAGE_EXEMPTION:
 				exemption = exemption.add(estimate.getEstimateAmount());
-				exemption = getExemption(exemption);
-				estimate.setEstimateAmount(exemption);			
+				/*
+				 * exemption = getExemption(exemption); estimate.setEstimateAmount(exemption);
+				 */			
 				estimate.setCategory(taxHeadCategoryMap.get(estimate.getTaxHeadCode()));
 				break;
 				
