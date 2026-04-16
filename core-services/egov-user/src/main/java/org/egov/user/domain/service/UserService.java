@@ -206,6 +206,20 @@ public class UserService {
 		userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User",
 				UserSearchCriteria.class);
 		List<User> users = userRepository.findAll(userSearchCriteria);
+		
+		//This block is for manipur to handel DuplicateUserNameException in stage environemnt
+		if(CollectionUtils.isEmpty(users) || users.size() > 1)
+		{
+			userSearchCriteria = UserSearchCriteria.builder()
+		            .userName(userName)
+		            .tenantId(getStateLevelTenantForCitizen(tenantId, userType))
+		            .type(userType)
+		            .build();
+			
+			userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User",
+					UserSearchCriteria.class);
+			users = userRepository.findAll(userSearchCriteria);
+		}
 
 		if (users.isEmpty())
 			throw new UserNotFoundException(userSearchCriteria);
