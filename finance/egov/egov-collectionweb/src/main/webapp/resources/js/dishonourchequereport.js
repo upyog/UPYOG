@@ -125,7 +125,69 @@ $(document).ready(function(){
 				orientation : 'landscape',
 				pageSize : 'A4',
 				customize: function(doc) {
-					doc.content[1].margin = [ 20, 0, 20, 0 ] //left, top, right, bottom
+
+				    doc.defaultStyle.fontSize = 8;
+				    doc.pageMargins = [10, 10, 10, 10];
+
+				    var titleContainer = {
+				        stack: [
+				            {
+				                text: 'Government of Jammu & Kashmir',
+				                fontSize: 12,
+				                bold: true,
+				                alignment: 'center',
+				                noWrap: true,
+				                color: '#1F4E79'
+				            },
+				            {
+				                text: 'Housing and Urban Development Department',
+				                fontSize: 12,
+				                bold: true,
+				                alignment: 'center',
+				                noWrap: true,
+				                margin: [0, 2, 0, 10],
+				                color: '#1F4E79'
+				            }
+				        ]
+				    };
+
+				    var currentDate = new Date().toLocaleDateString();
+				    var currentTime = new Date().toLocaleTimeString();
+
+				    var dateTimeContainer = {
+				        text: 'Date: ' + currentDate + '\nTime: ' + currentTime,
+				        fontSize: 10,
+				        bold: true,
+				        alignment: 'right',
+				        margin: [0, 5, 10, 10]
+				    };
+
+				    var header = {
+				        columns: [
+				            { text: '' },
+				            titleContainer,
+				            dateTimeContainer
+				        ]
+				    };
+
+
+				    doc.content.splice(0, 0, header);
+
+				    if (doc.content[1]) {
+				        doc.content[1].margin = [20, 0, 20, 0];
+				    }
+				    var tableNode;
+				    for (var i = 0; i < doc.content.length; i++) {
+				        if (doc.content[i].table) {
+				            tableNode = doc.content[i];
+				            break;
+				        }
+				    }
+
+				    if (tableNode && tableNode.table && tableNode.table.body) {
+				        var colCount = tableNode.table.body[0].length;
+				        tableNode.table.widths = Array(colCount).fill('*');
+				    }
 				},
 				exportOptions: {
 					columns: [1, 2, 3, 4, 5,6]

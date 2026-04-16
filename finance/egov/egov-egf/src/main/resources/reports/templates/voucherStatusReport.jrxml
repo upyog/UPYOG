@@ -15,7 +15,6 @@
 	<parameter name="toDate" class="java.util.Date"/>
 	<parameter name="voucherName" class="java.lang.String"/>
 	<parameter name="voucherType" class="java.lang.String"/>
-	<parameter name="headerReport" class="java.io.InputStream"/>
 	<field name="voucherDate" class="java.util.Date"/>
 	<field name="voucherType" class="java.lang.String"/>
 	<field name="voucherNumber" class="java.lang.String"/>
@@ -26,82 +25,90 @@
 	<field name="deptName" class="java.lang.String"/>
 	<field name="owner" class="java.lang.String"/>
 	<title>
-		<band height="230" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<subreport>
-				<reportElement x="4" y="-16" width="700" height="100" uuid="11111111-aaaa-bbbb-cccc-111111111111"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{headerReport}]]></subreportExpression>
-			</subreport>
+		<band height="220" splitType="Stretch">
 			<staticText>
-				<reportElement x="248" y="108" width="249" height="26" uuid="3f5d59bc-8c34-482e-8bf3-e1cff46dd4bf"/>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#1F4E79" uuid="7d5f1b59-c09f-49db-8c16-2627a068a415"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="17"/>
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Government of Jammu & Kashmir]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="20" width="752" height="20" forecolor="#1F4E79" uuid="126e4749-7c1d-41c3-88c1-16eaebf4c6e8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Housing and Urban Development Department]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="45" width="752" height="20" forecolor="#1F4E79" uuid="f0f0f2d2-7a98-44e8-9465-a81a98fef979"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Jammu Municipal Corporation"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="75" width="752" height="25" uuid="0bc51027-bf99-48e3-985f-3aa822320e22"/>
+				<textElement textAlignment="Center">
+					<font size="17" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Voucher Status Report]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="539" y="160" width="81" height="20" uuid="11f5ac17-4140-4380-8588-91c716ccae95"/>
-				<text><![CDATA[From Date:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="-2" y="140" width="81" height="20" uuid="8cf3f9a5-6aa3-47fa-b5e9-16528295bf1d"/>
+				<reportElement x="0" y="120" width="81" height="20" uuid="8ec7b04a-765b-414f-91d5-88e96d3456dd"/>
 				<text><![CDATA[Fund:]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="-2" y="160" width="81" height="20" uuid="c4a2919f-ff06-449e-ad36-8677c654f0c1"/>
-				<text><![CDATA[Department:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="539" y="180" width="81" height="20" uuid="519114ba-62f6-40fe-bb06-e388d3e016d0"/>
-				<text><![CDATA[To Date:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="539" y="200" width="81" height="20" uuid="0b11c9f7-8b9c-42b8-b113-00d6d36f8509"/>
-				<text><![CDATA[Voucher Name:]]></text>
-			</staticText>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="622" y="160" width="122" height="20" uuid="28677c53-2a79-486c-bc7c-31e832a80e7f"/>
-				<textFieldExpression><![CDATA[$P{fromDate}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy">
-				<reportElement x="621" y="180" width="122" height="20" uuid="09f70185-c98a-4d78-99b5-c78728bc575b"/>
-				<textFieldExpression><![CDATA[$P{toDate}]]></textFieldExpression>
-			</textField>
 			<textField>
-				<reportElement x="80" y="140" width="157" height="20" uuid="edc45a5c-d9db-44aa-8c92-f6dc06a47e31"/>
+				<reportElement x="80" y="120" width="157" height="20" uuid="4f7f68cf-845b-48e4-b41f-46e6a5ffeeed"/>
 				<textFieldExpression><![CDATA[$P{fund}==null?"":$P{fund}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="140" width="81" height="20" uuid="acab8671-3845-4b9f-8e5d-ec519c612643"/>
+				<text><![CDATA[Department:]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="621" y="200" width="130" height="20" uuid="4112047f-079e-4ce5-8705-b44c39d345c8"/>
-				<textFieldExpression><![CDATA[$P{voucherName}=="-1"?"":$P{voucherName}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="80" y="160" width="188" height="20" uuid="5b1ee9c5-95c1-46b4-8004-df32b1f97789"/>
+				<reportElement x="80" y="140" width="188" height="20" uuid="3647a038-65b7-43d4-9624-4e895d12e4a8"/>
 				<textFieldExpression><![CDATA[$P{deptName}==null?"":$P{deptName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="-2" y="180" width="81" height="20" uuid="f2e4c643-fa23-4063-bf4a-084f5739b632"/>
+				<reportElement x="0" y="160" width="81" height="20" uuid="318d04b5-9339-44c7-8ed0-2b643a3d9866"/>
 				<text><![CDATA[Voucher Type:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="180" width="269" height="20" uuid="66b82808-fe56-4247-ba6c-d15f8358f9ce"/>
+				<reportElement x="80" y="160" width="269" height="20" uuid="13f9de2d-0584-4878-9298-0b7792c4e759"/>
 				<textFieldExpression><![CDATA[$P{voucherType}=="-1"?"":$P{voucherType}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="-2" y="200" width="81" height="20" uuid="f116bd98-6dee-4e69-9b14-6cd93d62186f"/>
+				<reportElement x="0" y="180" width="81" height="20" uuid="23a3c6e6-984d-4b1d-952a-2fcd0deede4c"/>
 				<text><![CDATA[Status:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="200" width="157" height="20" uuid="80f85a1e-fbca-4b34-a8e0-1b731dad72ba"/>
+				<reportElement x="80" y="180" width="157" height="20" uuid="8c792eef-0d6a-4db4-92f0-48255f76a2b0"/>
 				<textFieldExpression><![CDATA[$P{status}==null?"":$P{status}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="539" y="120" width="81" height="20" uuid="756c1e2a-ee8e-43ca-ac5a-38423ecfed78"/>
+				<text><![CDATA[From Date:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="622" y="120" width="122" height="20" uuid="a75620ba-273c-4263-b8cf-5df9a82d40f2"/>
+				<textFieldExpression><![CDATA[$P{fromDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="539" y="140" width="81" height="20" uuid="60f7619e-07fc-4662-ac8a-39f8af27901d"/>
+				<text><![CDATA[To Date:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="622" y="140" width="122" height="20" uuid="32386cec-be5d-4761-ba7d-b88f9488acd0"/>
+				<textFieldExpression><![CDATA[$P{toDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="539" y="160" width="81" height="20" uuid="6986fbda-8a03-4902-9bd7-ecd25c931172"/>
+				<text><![CDATA[Voucher Name:]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="213" y="84" width="327" height="20" uuid="1232bb4b-00ac-4784-b4f1-3256c9cad643"/>
-				<textElement textAlignment="Center">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Jammu Municipal Corporation"]]></textFieldExpression>
+				<reportElement x="622" y="160" width="130" height="20" uuid="a2ab5c7c-4193-4a5f-bc0f-5217505cd3f3"/>
+				<textFieldExpression><![CDATA[$P{voucherName}=="-1"?"":$P{voucherName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

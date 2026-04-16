@@ -112,6 +112,129 @@ table {
 			populateServiceType(prevCat);
 		}
 	});
+
+	function printResultTable() {
+	    var tableContent = document.getElementById("resultTable").outerHTML;
+
+	    /* var today = new Date();
+	    var date = today.toLocaleDateString('en-GB'); // DD/MM/YYYY
+	    var time = today.toLocaleTimeString(); */
+
+	    var printWindow = window.open('', '', 'height=700,width=1000');
+
+	    printWindow.document.write('<html><head><title>Print Receipts</title>');
+
+	    // CSS
+	    printWindow.document.write('<style>');
+	    printWindow.document.write('body { font-family: Arial, sans-serif; }');
+
+	    //Blue header styling
+	    printWindow.document.write('.header { text-align: center; margin-bottom: 10px; color: #003366; }');
+	    printWindow.document.write('.header h2 { margin: 0; font-size: 18px; font-weight: bold; color: #003366; }');
+	    printWindow.document.write('.header h3 { margin: 0; font-size: 16px; color: #003366; }');
+	    printWindow.document.write('.header h4 { margin: 0; font-size: 14px; color: #003366; }');
+
+	    //printWindow.document.write('.datetime { position: absolute; right: 20px; top: 10px; font-size: 12px; }');
+	    printWindow.document.write('hr { border: 1px solid black; }');
+
+	    printWindow.document.write('table { width:100%; border-collapse: collapse; margin-top:10px;}');
+	    printWindow.document.write('table, th, td { border: 1px solid black; }');
+	    printWindow.document.write('th, td { padding: 6px; font-size: 12px; }');
+
+	    // hide checkbox & hidden fields
+	    printWindow.document.write('input { display:none; }');
+
+	    printWindow.document.write('</style>');
+	    printWindow.document.write('</head><body>');
+
+	    // Header
+	    printWindow.document.write(`
+	       <!-- <div class="datetime">
+	            Date: ${date}<br>
+	            Time: ${time}
+	        </div> -->
+
+	        <div class="header">
+	            <h2>Government of Jammu & Kashmir</h2>
+	            <h3>Housing and Urban Development</h3>
+	            <h4>Department</h4>
+	        </div>
+
+	        <hr/>
+	    `);
+
+	    // Table
+	    printWindow.document.write(tableContent);
+
+	    printWindow.document.write('</body></html>');
+
+	    printWindow.document.close();
+	    printWindow.focus();
+	    printWindow.print();
+	    printWindow.close();
+	}
+
+	function exportTableToExcel() {
+	    var table = document.getElementById("resultTable");
+
+	    if (!table) {
+	        alert("Table not found!");
+	        return;
+	    }
+
+	    var rows = table.rows;
+	    var excel = "<table border='1'>";
+
+	    // Header
+	    var today = new Date();
+	    var date = today.toLocaleDateString('en-GB');
+	    var time = today.toLocaleTimeString();
+
+	    excel += `
+	        <tr>
+	            <td colspan="10" style="text-align:center; font-weight:bold;">
+	                Government of Jammu & Kashmir<br>
+	                Housing and Urban Development<br>
+	                Department
+	            </td>
+	            <td colspan="3" style="text-align:right;">
+	                Date: ${date}<br>
+	                Time: ${time}
+	            </td>
+	        </tr>
+	        <tr><td colspan="13"></td></tr>
+	    `;
+
+	    // Loop table rows
+	    for (var i = 0; i < rows.length; i++) {
+	        excel += "<tr>";
+
+	        var cols = rows[i].cells;
+
+	        for (var j = 0; j < cols.length; j++) {
+	            var data = cols[j].innerText;
+
+	            // remove checkbox column (first column)
+	            if (j === 0) continue;
+
+	            excel += "<td>" + data + "</td>";
+	        }
+
+	        excel += "</tr>";
+	    }
+
+	    excel += "</table>";
+
+	    var blob = new Blob([excel], { type: "application/vnd.ms-excel" });
+	    var url = URL.createObjectURL(blob);
+
+	    var a = document.createElement("a");
+	    a.href = url;
+	    a.download = "Receipt_Report.xls";
+	    document.body.appendChild(a);
+	    a.click();
+	    document.body.removeChild(a);
+	}
 </script>
 
 <script>
@@ -588,9 +711,9 @@ table {
 		<s:if test='%{!resultList.isEmpty()}'>
 
 			<div align="center">
-				<display:table name="searchResult" uid="currentRow"
-					style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0"
-					cellspacing="0" export="false" requestURI="">
+				<display:table name="resultList" uid="currentRow" id="resultTable" htmlId="resultTable"
+                  style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0"
+                     cellspacing="0" export="false" requestURI="">
 					<display:caption media="pdf">&nbsp;</display:caption>
 					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 						style="width:3%">
@@ -663,10 +786,16 @@ table {
 			<br />
 			<div class="buttonbottom">
 				<input name="button32" type="button" class="buttonsubmit"
-					id="button32" value="View"
+					id="button32" value="View Receipt"
 					onclick="return checkviewforselectedrecord()" /> 
 					<input name="button32" type="button" class="buttonsubmit" id="button32"
-					value="Print" onclick="return checkprintforselectedrecord()" />
+					value="Print Receipt" onclick="return checkprintforselectedrecord()" />
+					<input type="button" class="buttonsubmit"
+                         value="Print PDF"
+                         onclick="printResultTable()" />
+                     <input type="button" class="buttonsubmit"
+                       value="Export to Excel"
+                       onclick="exportTableToExcel()" />    
 				<%-- <egov-authz:authorize actionName="CancelReceipt">
   <input name="button32" type="button" class="buttonsubmit" id="button32" value="Cancel Receipt" onclick="return checkcancelforselectedrecord()"/>
   </egov-authz:authorize> --%>

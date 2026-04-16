@@ -1,52 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) 2017  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
-  ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
-  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RevenueReport"  pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RevenueReport" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b76819d1-36e9-4772-8ded-45ac51a3019b">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="ulbName" class="java.lang.String"/>
 	<parameter name="reportHeader" class="java.lang.String"/>
 	<field name="remarks" class="java.lang.String"/>
@@ -70,27 +25,41 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="88" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="197" y="21" width="362" height="23" isPrintWhenDetailOverflows="true"/>
+		<band height="140" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="20" forecolor="#1F4E79" uuid="58af88ef-74e2-4700-bad4-bdc5a3174c29"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{ulbName}]]></textFieldExpression>
+				<text><![CDATA[Government of Jammu & Kashmir]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="20" width="802" height="20" forecolor="#1F4E79" uuid="191c37ea-a428-439c-9f78-f0df778cb0cd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Housing and Urban Development Department]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="45" width="802" height="22" forecolor="#1F4E79" uuid="2d638ea8-6ab9-434a-b6e1-fbfad52f701e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Jammu Municipal Corporation"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="178" y="44" width="395" height="27"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="75" width="802" height="22" uuid="8806a1b7-630e-4a7d-98ce-9518bf431485"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="13" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportHeader}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{reportHeader}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<columnHeader>
 		<band height="32" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="25" height="32"/>
+				<reportElement x="0" y="0" width="25" height="32" uuid="a1e41e05-98ff-48ae-a383-47b978f75cab"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -104,7 +73,7 @@
 				<text><![CDATA[Sl No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="25" y="0" width="72" height="32"/>
+				<reportElement x="25" y="0" width="72" height="32" uuid="3acb8580-6820-407f-8adf-477e4d2c78a6"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -118,7 +87,7 @@
 				<text><![CDATA[Department]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="97" y="0" width="40" height="32"/>
+				<reportElement x="97" y="0" width="40" height="32" uuid="a1408562-8c59-4254-821a-f7b8b9c0b50e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -132,7 +101,7 @@
 				<text><![CDATA[Year]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="178" y="0" width="47" height="32"/>
+				<reportElement x="178" y="0" width="47" height="32" uuid="3ce10c09-92d8-497d-9803-fca5f49d5821"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -146,7 +115,7 @@
 				<text><![CDATA[Proceedings Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="266" y="0" width="50" height="32"/>
+				<reportElement x="266" y="0" width="50" height="32" uuid="02ae7e6b-87f0-4669-86d8-a59edb5586d8"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -160,7 +129,7 @@
 				<text><![CDATA[Accrual GJV]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="357" y="0" width="45" height="32"/>
+				<reportElement x="357" y="0" width="45" height="32" uuid="25981d90-7a98-4823-8662-18db457ad71b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -174,7 +143,7 @@
 				<text><![CDATA[Accural Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="402" y="0" width="49" height="32"/>
+				<reportElement x="402" y="0" width="49" height="32" uuid="9c1a8b27-cc0a-4486-9232-33c3577c8518"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -188,7 +157,7 @@
 				<text><![CDATA[GJV Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="496" y="0" width="50" height="32"/>
+				<reportElement x="496" y="0" width="50" height="32" uuid="78367ed6-9312-4c55-9a76-59b254d54b53"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -202,7 +171,7 @@
 				<text><![CDATA[Challan Receipt No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="597" y="0" width="46" height="32"/>
+				<reportElement x="597" y="0" width="46" height="32" uuid="d3406da5-a55c-4667-987b-3dba04c68c34"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -216,7 +185,7 @@
 				<text><![CDATA[Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="643" y="0" width="46" height="32"/>
+				<reportElement x="643" y="0" width="46" height="32" uuid="b132268d-a0d5-423d-9603-df1f087a0102"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -230,7 +199,7 @@
 				<text><![CDATA[Cheque Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="745" y="0" width="50" height="32"/>
+				<reportElement x="745" y="0" width="50" height="32" uuid="f318bc2d-41f5-45f1-967b-4646d7e5af84"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -244,7 +213,7 @@
 				<text><![CDATA[Remarks]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="225" y="0" width="41" height="32"/>
+				<reportElement x="225" y="0" width="41" height="32" uuid="f45ee4f4-e52f-49fb-8640-57cc15f0b1f2"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -258,7 +227,7 @@
 				<text><![CDATA[Proceeding Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="316" y="0" width="41" height="32"/>
+				<reportElement x="316" y="0" width="41" height="32" uuid="09575fb9-bb34-4848-b29c-4162cd04997f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -272,7 +241,7 @@
 				<text><![CDATA[AccGJV Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="451" y="0" width="45" height="32"/>
+				<reportElement x="451" y="0" width="45" height="32" uuid="f7ab4a1f-741e-4ada-b12a-9d824d807d82"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -286,7 +255,7 @@
 				<text><![CDATA[GJV Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="689" y="0" width="55" height="32"/>
+				<reportElement x="689" y="0" width="55" height="32" uuid="f40bc191-8ac9-41bf-a102-924e40233fe2"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -300,7 +269,7 @@
 				<text><![CDATA[Cheque Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="546" y="0" width="51" height="32"/>
+				<reportElement x="546" y="0" width="51" height="32" uuid="5b436c71-d2b6-431d-a524-fa5f158b9fe5"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -314,7 +283,7 @@
 				<text><![CDATA[Challan Receipt Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="137" y="0" width="41" height="32"/>
+				<reportElement x="137" y="0" width="41" height="32" uuid="4731992c-1caf-484a-ab77-131f311c10c7"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -332,7 +301,7 @@
 	<detail>
 		<band height="30" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="25" height="30"/>
+				<reportElement x="0" y="0" width="25" height="30" uuid="96b053db-8af6-4ee7-a510-b8ca16ddf089"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -343,10 +312,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="137" y="0" width="41" height="30"/>
+				<reportElement x="137" y="0" width="41" height="30" uuid="448b2b7f-ddb9-4271-923a-ededaf3183ec"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -357,10 +326,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{period}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{period}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="178" y="0" width="47" height="30"/>
+				<reportElement x="178" y="0" width="47" height="30" uuid="0b393172-605b-4004-9d2e-5afb26e25bd6"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -371,10 +340,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{proceedingsNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{proceedingsNo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="225" y="0" width="41" height="30"/>
+				<reportElement x="225" y="0" width="41" height="30" uuid="f122e577-38e3-4211-94c6-7589f9331a29"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -385,10 +354,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{proceedingsDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{proceedingsDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="266" y="0" width="50" height="30"/>
+				<reportElement x="266" y="0" width="50" height="30" uuid="c8501abf-30fd-4b19-b293-71b818eb3444"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -399,10 +368,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{accrualVoucher.voucherNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{accrualVoucher.voucherNumber}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="316" y="0" width="41" height="30"/>
+				<reportElement x="316" y="0" width="41" height="30" uuid="8daaef83-ae83-4c64-8953-b6bd37c8979a"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -413,10 +382,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{accrualVoucher.voucherDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{accrualVoucher.voucherDate}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement x="357" y="0" width="45" height="30"/>
+			<textField textAdjust="StretchHeight" pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement x="357" y="0" width="45" height="30" uuid="0337795b-07b4-4efa-a85a-4f839b87b144"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -427,10 +396,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{accrualAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{accrualAmount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="402" y="0" width="49" height="30"/>
+				<reportElement x="402" y="0" width="49" height="30" uuid="efcecc24-3ba5-419d-9bfa-fcd6232f842e"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -441,10 +410,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{generalVoucher.voucherNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{generalVoucher.voucherNumber}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="451" y="0" width="45" height="30"/>
+				<reportElement x="451" y="0" width="45" height="30" uuid="0b814818-c1b9-4db7-9dd2-326d16808ee2"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -455,10 +424,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{generalVoucher.voucherDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{generalVoucher.voucherDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="496" y="0" width="50" height="30"/>
+				<reportElement x="496" y="0" width="50" height="30" uuid="452182b0-f835-40a8-a0d7-7f69be489103"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -469,10 +438,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptVoucher.voucherNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptVoucher.voucherNumber}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="546" y="0" width="51" height="30"/>
+				<reportElement x="546" y="0" width="51" height="30" uuid="268e7beb-d91b-412b-803a-1cd627eaa470"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -483,10 +452,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{receiptVoucher.voucherDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptVoucher.voucherDate}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement x="597" y="0" width="46" height="30"/>
+			<textField textAdjust="StretchHeight" pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement x="597" y="0" width="46" height="30" uuid="9e579457-e38c-41be-9fe9-6bafff229c12"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -497,10 +466,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{grantAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{grantAmount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="643" y="0" width="46" height="30"/>
+				<reportElement x="643" y="0" width="46" height="30" uuid="a0f2f260-00c4-4a32-948d-9ab9eec25de7"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -511,10 +480,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{ihID.instrumentNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ihID.instrumentNumber}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="689" y="0" width="55" height="30"/>
+				<reportElement x="689" y="0" width="55" height="30" uuid="63acd71a-1925-401b-83d7-4c5a169e7da2"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -525,10 +494,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{ihID.instrumentDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ihID.instrumentDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="745" y="0" width="50" height="30"/>
+				<reportElement x="745" y="0" width="50" height="30" uuid="e61d35ad-9e49-472f-906d-0521a7b0681a"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -539,10 +508,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{remarks}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="25" y="0" width="72" height="30"/>
+				<reportElement x="25" y="0" width="72" height="30" uuid="22bfe933-f450-4c76-9bde-401f516ac947"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -553,10 +522,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{department.deptName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{department.deptName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="97" y="0" width="40" height="30"/>
+				<reportElement x="97" y="0" width="40" height="30" uuid="315636a9-8cf3-412e-9a8b-dd019cc6a6f0"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -567,7 +536,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{financialYear.finYearRange}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{financialYear.finYearRange}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

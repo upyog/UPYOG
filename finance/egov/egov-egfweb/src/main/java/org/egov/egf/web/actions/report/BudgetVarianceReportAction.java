@@ -313,6 +313,12 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     Map<String, Object> getParamMap() {
         final Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("departmentName", getDepartmentName());
+        
+		/*
+		 * InputStream jasperStream = this.getClass()
+		 * .getResourceAsStream("/reports/templates/headerReport.jasper");
+		 * paramMap.put("headerReport", jasperStream);
+		 */
         String estimateHeading = "";
         if (Constants.BE.equalsIgnoreCase(budgetType))
             estimateHeading = "Budget Estimate";

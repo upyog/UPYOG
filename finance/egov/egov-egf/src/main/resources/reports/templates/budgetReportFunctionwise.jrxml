@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="budgetReportFunctionwise" pageWidth="750" pageHeight="842" columnWidth="462" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7f6aec9e-2404-44de-a191-e152fb4b78c5">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="budgetReportFunctionwise" pageWidth="750" pageHeight="880" columnWidth="462" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7f6aec9e-2404-44de-a191-e152fb4b78c5">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
@@ -35,7 +35,6 @@
 	</style>
 	<parameter name="ulbName" class="java.lang.String"/>
 	<parameter name="finYear" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="headerReport" class="java.io.InputStream"/>
 	<field name="amount" class="java.lang.String">
 		<fieldDescription><![CDATA[amountAsString]]></fieldDescription>
 	</field>
@@ -68,32 +67,34 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="150" splitType="Stretch">
-			<subreport>
-				<reportElement x="0" y="11" width="750" height="79" uuid="11111111-aaaa-bbbb-cccc-111111111111"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{headerReport}]]></subreportExpression>
-			</subreport>
-			<textField>
-				<reportElement x="39" y="105" width="661" height="18" uuid="ea947fde-eac2-4ff0-be85-67494e251880"/>
-				<textElement textAlignment="Center">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
-			</textField>
+		<band height="140" splitType="Stretch">
 			<staticText>
-				<reportElement x="39" y="127" width="661" height="18" uuid="cf065b5e-06c7-4a16-ac24-258ba52db122"/>
-				<textElement textAlignment="Center">
-					<font size="12"/>
+				<reportElement x="0" y="13" width="750" height="20" forecolor="#1F4E79" uuid="d577f1b8-3c9e-4e48-8e34-909d6a9c9217"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[FUNCTIONWISE BUDGET SUMMARY]]></text>
+				<text><![CDATA[Government of Jammu & Kashmir]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="0" y="35" width="750" height="20" forecolor="#1F4E79" uuid="08b06ce3-e965-4255-a320-df064ba8b81a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Housing and Urban Development Department]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="57" width="750" height="20" forecolor="#1F4E79" uuid="86a1cb89-ed0d-42ad-81d7-e370ccc18875"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Jammu Municipal Corporation"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="60" splitType="Stretch">
+		<band height="100" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText-2" x="39" y="0" width="47" height="60" uuid="0e2ac243-a36c-48a2-8e27-786d315e3b17"/>
+				<reportElement key="staticText-2" x="39" y="38" width="47" height="60" uuid="0e2ac243-a36c-48a2-8e27-786d315e3b17"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -107,7 +108,7 @@
 				<text><![CDATA[Dept Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-3" x="86" y="0" width="68" height="60" uuid="4790d7f9-ee40-4b6b-90e4-9546e4d8ad57"/>
+				<reportElement key="staticText-3" x="86" y="38" width="68" height="60" uuid="4790d7f9-ee40-4b6b-90e4-9546e4d8ad57"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -121,7 +122,7 @@
 				<text><![CDATA[Function Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-4" x="154" y="0" width="76" height="60" uuid="6569298e-8145-4952-a7c5-f2b36ca67dec"/>
+				<reportElement key="staticText-4" x="154" y="38" width="76" height="60" uuid="6569298e-8145-4952-a7c5-f2b36ca67dec"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -135,7 +136,7 @@
 				<text><![CDATA[Account Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-5" x="230" y="0" width="270" height="60" uuid="5f5c1f1c-a623-4743-b047-3efedcf84da8"/>
+				<reportElement key="staticText-5" x="230" y="38" width="270" height="60" uuid="5f5c1f1c-a623-4743-b047-3efedcf84da8"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -149,7 +150,7 @@
 				<text><![CDATA[Description]]></text>
 			</staticText>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-1" x="500" y="0" width="90" height="60" uuid="c881bb10-93ee-4014-a38b-08a0bb6cd4cc"/>
+				<reportElement key="textField-1" x="500" y="38" width="90" height="60" uuid="c881bb10-93ee-4014-a38b-08a0bb6cd4cc"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -163,28 +164,35 @@
 				<textFieldExpression><![CDATA["Budget Estimate "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="590" y="0" width="67" height="60" uuid="9b4101b6-8fff-42eb-adcd-f4f24fe855ef"/>
+				<reportElement x="590" y="38" width="67" height="60" uuid="9b4101b6-8fff-42eb-adcd-f4f24fe855ef"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Re Appropriation "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="657" y="0" width="43" height="60" uuid="b3024e05-0c31-4111-b64b-55a78d1a9626"/>
+				<reportElement x="657" y="38" width="43" height="60" uuid="b3024e05-0c31-4111-b64b-55a78d1a9626"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Total (Rs.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-1" y="4" width="750" height="20" uuid="19a81807-3e9c-4bcb-a060-3ad6227447e8"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Functionwise Budget Summary]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
@@ -203,7 +211,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="8" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{deptCode}==null?"":$F{deptCode}]]></textFieldExpression>
 			</textField>
@@ -217,7 +225,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="8" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{functionCode}==null?"":$F{functionCode}]]></textFieldExpression>
 			</textField>
@@ -231,7 +239,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="8" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{glCode}==null?"":$F{glCode}]]></textFieldExpression>
 			</textField>
@@ -245,7 +253,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="8" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{amount}==null?"":$F{amount}]]></textFieldExpression>
 			</textField>
@@ -256,7 +264,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="8" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{narration}==null?"":$F{narration}]]></textFieldExpression>
 			</textField>
@@ -267,7 +275,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="8" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{appropriationAmount}==null?"":$F{appropriationAmount}]]></textFieldExpression>
 			</textField>
@@ -278,7 +286,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="8" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{totalAmount}==null?"":$F{totalAmount}]]></textFieldExpression>
 			</textField>
@@ -294,9 +302,10 @@
 		<band splitType="Stretch"/>
 	</summary>
 	<noData>
-		<band height="44" splitType="Prevent">
+		<band height="40" splitType="Prevent">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement key="staticText-7" x="38" y="0" width="460" height="27" isRemoveLineWhenBlank="true" uuid="5f05cb6b-6228-44c1-bbde-58725cd4790b"/>
+				<reportElement key="staticText-7" x="38" y="3" width="460" height="27" isRemoveLineWhenBlank="true" uuid="5f05cb6b-6228-44c1-bbde-58725cd4790b"/>
 				<textElement textAlignment="Center">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>

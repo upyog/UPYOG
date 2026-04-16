@@ -100,30 +100,30 @@ function callAjaxSearch() {
 
                 customize: function(doc) {
 
-                    // ✅ Basic styling
                     doc.defaultStyle.fontSize = 8;
                     doc.pageMargins = [10, 10, 10, 10];
 
-                    // ✅ Title
                     var titleContainer = {
                             stack: [
-                                {
-                                    text: 'Housing and Urban Development Department',
-                                    fontSize: 16,
-                                    bold: true,
-                                    alignment: 'center',
-                                    noWrap: true
-                                },
-                                {
-                                    text: 'Government of Jammu & Kashmir',
-                                    fontSize: 12,
-                                    alignment: 'center',
-                                    margin: [0, 2, 0, 10]
-                                }
+								{
+								    text: 'Government of Jammu & Kashmir',
+								    fontSize: 12,
+								    bold: true,
+								    alignment: 'center',
+								    noWrap: true,
+								    color: '#1F4E79'
+								},
+								{
+								    text: 'Housing and Urban Development Department',
+								    fontSize: 12,
+								    bold: true,
+								    alignment: 'center',
+								    noWrap: true,
+								    margin: [0, 2, 0, 10],
+								    color: '#1F4E79'
+								}
                             ]
                         };
-
-                    // ✅ Date & Time
                     var currentDate = new Date().toLocaleDateString();
                     var currentTime = new Date().toLocaleTimeString();
 
@@ -135,7 +135,6 @@ function callAjaxSearch() {
                         margin: [0, 5, 10, 10]
                     };
 
-                    // ✅ Optional Logo (safe)
                     var logoBase64 = window.logoBase64 || null;
 
                     var header;
@@ -157,10 +156,7 @@ function callAjaxSearch() {
                         };
                     }
 
-                    // ✅ Insert header at top
                     doc.content.splice(0, 0, header);
-
-                    // ✅ SAFE TABLE DETECTION (FIXES YOUR ERROR)
                     var tableNode;
                     for (var i = 0; i < doc.content.length; i++) {
                         if (doc.content[i].table) {
@@ -169,7 +165,6 @@ function callAjaxSearch() {
                         }
                     }
 
-                    // ✅ Apply equal column widths
                     if (tableNode && tableNode.table && tableNode.table.body) {
                         var colCount = tableNode.table.body[0].length;
                         tableNode.table.widths = Array(colCount).fill('*');

@@ -1,57 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) 2017  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
-  ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
-  -->
-
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-03-01T11:43:10 -->
+<!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="journalVoucherReport" pageWidth="792" pageHeight="842" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="330ed9fc-f017-4cb3-856b-565fd7e58e2e">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -92,18 +44,35 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="178" splitType="Stretch">
+		<band height="200" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#1F4E79" uuid="6bdce603-a7ca-477e-ad39-152ea52804c6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Government of Jammu & Kashmir]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="20" width="752" height="20" forecolor="#1F4E79" uuid="3de1724e-fd8d-4c60-95d1-f1a465a7152f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Housing and Urban Development Department]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="45" width="752" height="25" forecolor="#1F4E79" uuid="c107d14d-4462-467f-a25f-da9970dacfaf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Jammu Municipal Corporation"]]></textFieldExpression>
+			</textField>
 			<frame>
-				<reportElement key="frame" x="20" y="130" width="712" height="48" uuid="08244927-3446-4870-99e6-09523558c305"/>
+				<reportElement x="20" y="90" width="712" height="48" uuid="30238948-b4d1-4bda-90de-d248cda555c1"/>
 				<box>
-					<pen lineWidth="1.0" lineStyle="Solid"/>
-					<topPen lineWidth="1.0" lineStyle="Solid"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+					<pen lineWidth="1.0"/>
 				</box>
 				<staticText>
-					<reportElement key="staticText" x="244" y="11" width="268" height="24" uuid="7b8c909e-b9dd-4abb-87eb-0bae42e04f8b"/>
+					<reportElement x="244" y="11" width="268" height="24" uuid="d9321ec4-b6b7-4da5-8dca-fc976e7e5c7a"/>
 					<textElement>
 						<font size="16" isBold="true"/>
 					</textElement>
@@ -111,67 +80,60 @@
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement x="20" y="0" width="712" height="130" uuid="4f86ef11-a728-4df3-a86b-a99688d04392"/>
-				<textField isBlankWhenNull="true">
-					<reportElement x="120" y="0" width="444" height="20" uuid="7ef6e233-4193-470d-a3e1-75a51206fb47"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="14" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
-				</textField>
+				<reportElement x="20" y="140" width="712" height="60" uuid="513874b9-c75d-4e2f-b5d8-a19947823403"/>
 				<staticText>
-					<reportElement x="56" y="45" width="77" height="20" uuid="3a08fae5-cdeb-4c3a-ae72-f89d506c5185"/>
+					<reportElement x="56" y="0" width="77" height="20" uuid="a784085c-21dd-4088-b17f-6839db925125"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[Bank :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="395" y="45" width="100" height="20" uuid="8700a1f4-ce9b-45b6-9535-6a20e759a4a8"/>
+					<reportElement x="395" y="0" width="100" height="20" uuid="3901e112-5a53-42a2-a650-8b4f8d90eb52"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[Account Number :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="56" y="65" width="77" height="20" uuid="3a0b486c-0590-47d5-8360-098723b6ad33"/>
+					<reportElement x="56" y="20" width="77" height="20" uuid="228a3db8-f779-4a99-bd1f-29fc1feb8bed"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[From Date :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="395" y="65" width="100" height="20" uuid="5e90ef89-5c2a-42c0-a4ee-e1752cb9b861"/>
+					<reportElement x="395" y="20" width="100" height="20" uuid="bfafa8c9-f642-4deb-95dc-587d7d41cae8"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[To Date :]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
-					<reportElement x="133" y="45" width="238" height="20" uuid="102d5d70-4c93-475e-960f-49dd634bb467"/>
+				<textField>
+					<reportElement x="133" y="0" width="238" height="20" uuid="b0caac6e-00e7-4cd8-9f27-f0838b5c34b1"/>
 					<textFieldExpression><![CDATA[$P{bank}]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="495" y="45" width="181" height="20" uuid="8b11cab5-364b-4f52-8a97-5e15d57e33b7"/>
+				<textField>
+					<reportElement x="495" y="0" width="181" height="20" uuid="8e4c34aa-6143-4d85-be2c-01eeefc49970"/>
 					<textFieldExpression><![CDATA[$P{accountNumber}]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="495" y="65" width="181" height="20" uuid="d3d141ca-a067-40ec-86ce-4b664ffd59b8"/>
-					<textFieldExpression><![CDATA[$P{toDate}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="133" y="65" width="220" height="20" uuid="97b041dc-fe3c-4ad7-93fd-af2be6046606"/>
+				<textField>
+					<reportElement x="133" y="20" width="220" height="20" uuid="5bff8827-957b-4cd3-a995-4df4038711e8"/>
 					<textFieldExpression><![CDATA[$P{fromDate}]]></textFieldExpression>
 				</textField>
+				<textField>
+					<reportElement x="495" y="20" width="181" height="20" uuid="facc5edf-95c5-4198-b9a8-cdd94f669205"/>
+					<textFieldExpression><![CDATA[$P{toDate}]]></textFieldExpression>
+				</textField>
 				<staticText>
-					<reportElement x="56" y="85" width="77" height="20" uuid="7b2f7b3e-319b-4090-bc50-a2e8983bcd96"/>
+					<reportElement x="56" y="40" width="77" height="20" uuid="f76219f8-1809-40f0-9311-7141d781bf6b"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[Department :]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
-					<reportElement x="133" y="85" width="220" height="20" uuid="4d5fdfe6-82b8-4314-9f76-70eafabfd919"/>
+				<textField>
+					<reportElement x="133" y="40" width="220" height="20" uuid="3431c49e-370e-4ce1-9912-28cb20383596"/>
 					<textFieldExpression><![CDATA[$P{departmentName}]]></textFieldExpression>
 				</textField>
 			</frame>
@@ -432,7 +394,8 @@
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="250" splitType="Stretch">
+		<band height="200" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<line>
 				<reportElement x="20" y="0" width="712" height="1" uuid="d6e1f82f-bd5d-4218-96fc-aea99a503cfc"/>
 			</line>

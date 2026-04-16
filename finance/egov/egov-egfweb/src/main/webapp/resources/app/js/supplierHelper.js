@@ -126,20 +126,23 @@ function callAjaxSearch() {
 							       
 							                   var titleContainer = {
 							                           stack: [
-							                               {
-							                                   text: 'Government of Jammu & Kashmir',
-							                                   fontSize: 12,
-							                                   bold: true,
-							                                   alignment: 'center',
-							                                   noWrap: true
-							                               },
-							                               {
-							                                   text: 'Housing and Urban Development Department',
-							                                   fontSize: 12,
-															   bold: true,
-							                                   alignment: 'center',
-							                                   margin: [0, 2, 0, 10]
-							                               }
+														{
+														    text: 'Government of Jammu & Kashmir',
+														    fontSize: 12,
+														    bold: true,
+														    alignment: 'center',
+														    noWrap: true,
+														    color: '#1F4E79'
+														},
+														{
+														    text: 'Housing and Urban Development Department',
+														    fontSize: 12,
+														    bold: true,
+														    alignment: 'center',
+														    noWrap: true,  
+														    margin: [0, 2, 0, 10],
+														    color: '#1F4E79'
+														}
 							                           ]
 							                       };
 
