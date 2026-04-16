@@ -172,28 +172,23 @@ public class UserService {
 	 */
 	public User getUniqueUser(String userName, String tenantId, UserType userType) {
 
-		/*
-		 * UserSearchCriteria userSearchCriteria =
-		 * UserSearchCriteria.builder().userName(userName)
-		 * .tenantId(getStateLevelTenantForCitizen(tenantId,
-		 * userType)).type(userType).build();
-		 */
+		
+		  UserSearchCriteria userSearchCriteria =
+		  UserSearchCriteria.builder().userName(userName)
+		  .tenantId(getStateLevelTenantForCitizen(tenantId,
+		  userType)).type(userType).build();
+		 
 		//Below changes is for manipur otp issue
-		UserSearchCriteria userSearchCriteria;
-
-		if (userType.equals(UserType.CITIZEN)) {
-		    userSearchCriteria = UserSearchCriteria.builder()
-		            .mobileNumber(userName)
-		            .tenantId(getStateLevelTenantForCitizen(tenantId, userType))
-		            .type(userType)
-		            .build();
-		} else {
-		    userSearchCriteria = UserSearchCriteria.builder()
-		            .userName(userName)
-		            .tenantId(getStateLevelTenantForCitizen(tenantId, userType))
-		            .type(userType)
-		            .build();
-		}
+		/*
+		 * UserSearchCriteria userSearchCriteria;
+		 * 
+		 * if (userType.equals(UserType.CITIZEN)) { userSearchCriteria =
+		 * UserSearchCriteria.builder() .mobileNumber(userName)
+		 * .tenantId(getStateLevelTenantForCitizen(tenantId, userType)) .type(userType)
+		 * .build(); } else { userSearchCriteria = UserSearchCriteria.builder()
+		 * .userName(userName) .tenantId(getStateLevelTenantForCitizen(tenantId,
+		 * userType)) .type(userType) .build(); }
+		 */
 		
 
 		if (isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
@@ -206,6 +201,19 @@ public class UserService {
 		userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User",
 				UserSearchCriteria.class);
 		List<User> users = userRepository.findAll(userSearchCriteria);
+		
+		//This block is for manipur to handel DuplicateUserNameException in stage environemnt
+		/*
+		 * if(CollectionUtils.isEmpty(users) || users.size() > 1) { userSearchCriteria =
+		 * UserSearchCriteria.builder() .userName(userName)
+		 * .tenantId(getStateLevelTenantForCitizen(tenantId, userType)) .type(userType)
+		 * .build();
+		 * 
+		 * userSearchCriteria =
+		 * encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User",
+		 * UserSearchCriteria.class); users =
+		 * userRepository.findAll(userSearchCriteria); }
+		 */
 
 		if (users.isEmpty())
 			throw new UserNotFoundException(userSearchCriteria);
