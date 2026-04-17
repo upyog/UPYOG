@@ -605,7 +605,17 @@ public class BillServicev2 {
 			.service(bills.get(0).getBusinessService()).build();
 			finalResponse=searchBillWithStatus(billSearchCriteria, requestInfo);
 			if(!CollectionUtils.isEmpty(finalResponse.getBill()))
-					return finalResponse;
+			{
+				finalResponse.getBill().stream().forEach(b -> b.getBillDetails().forEach(bd -> {
+					Map<String, Object> additionalDetails = mapper.convertValue(bd.getAdditionalDetails(), Map.class);
+					List<ModeOfPaymentDetails> modeOfPaymentDetails = mapper
+							.convertValue(additionalDetails.get("paymentModeDetails"), List.class);
+					bd.setModeOfPaymentDetails(modeOfPaymentDetails);
+				}));
+				
+				return finalResponse;
+			}
+					 
 			if (null != billCriteria.getConsumerCode() && !billCriteria.getConsumerCode().isEmpty()) {
 				finalResponse = generateBill(billCriteria, requestInfo);
 				if (null != finalResponse)
