@@ -58,6 +58,14 @@ public class BillRepositoryV2 {
 		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
 	}
 	
+	public List<BillV2> findBillwithStatus(BillSearchCriteria billCriteria){
+		
+		List<Object> preparedStatementValues = new ArrayList<>();
+		String queryStr = billQueryBuilder.getBillQueryWithStatus(billCriteria, preparedStatementValues);
+		log.debug("query:::"+queryStr+"  preparedStatementValues::"+preparedStatementValues);
+		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
+	}
+	
 	@Transactional
 	public void saveBill(BillRequestV2 billRequest){
 		

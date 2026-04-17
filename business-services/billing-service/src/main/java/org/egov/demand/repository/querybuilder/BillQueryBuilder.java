@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.demand.model.BillSearchCriteria;
 import org.egov.demand.model.BillV2.BillStatus;
 import org.egov.demand.model.UpdateBillCriteria;
@@ -93,6 +94,24 @@ public class BillQueryBuilder {
 		return maxQuery.toString();
 	}
 	
+	public String getBillQueryWithStatus(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
+		
+		StringBuilder billQuery = new StringBuilder(BILL_BASE_QUERY);
+		String tenantId = billSearchCriteria.getTenantId();
+		String[] tenantIdChunks = tenantId.split("\\.");
+		if(tenantIdChunks.length == 1){
+			billQuery.append(" WHERE b.tenantid LIKE ? ");
+			preparedStatementValues.add(billSearchCriteria.getTenantId() + '%');
+		}else{
+			billQuery.append(" WHERE b.tenantid = ? ");
+			preparedStatementValues.add(billSearchCriteria.getTenantId());
+		}
+		addWhereClausewithstatus(billQuery, preparedStatementValues, billSearchCriteria);
+		StringBuilder maxQuery = addPagingClause(billQuery, preparedStatementValues, billSearchCriteria);
+		
+		return maxQuery.toString();
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addWhereClause(final StringBuilder selectQuery, final List preparedStatementValues,
 			final BillSearchCriteria searchBill) {
@@ -148,6 +167,83 @@ public class BillQueryBuilder {
 		if (!CollectionUtils.isEmpty(searchBill.getConsumerCode())) {
 			selectQuery.append(" AND bd.consumercode IN (");
 			appendListToQuery(searchBill.getConsumerCode(), preparedStatementValues, selectQuery);
+		}
+		
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void addWhereClausewithstatus(final StringBuilder selectQuery, final List preparedStatementValues,
+			final BillSearchCriteria searchBill) {
+		
+		if(!CollectionUtils.isEmpty(searchBill.getBillId())){
+			selectQuery.append(" AND b.id in (");
+			appendListToQuery(searchBill.getBillId(), preparedStatementValues, selectQuery);
+		}
+
+		/*
+		 * if (!searchBill.getRetrieveOldest()) { if (searchBill.getStatus() != null) {
+		 * selectQuery.append(" AND b.status = ?");
+		 * preparedStatementValues.add(searchBill.getStatus().toString()); } } else {
+		 * selectQuery.append(" AND b.status != ?");
+		 * preparedStatementValues.add(BillStatus.CANCELLED.toString()); }
+		 */
+
+		if (searchBill.getEmail() != null) {
+			selectQuery.append(" AND b.payeremail = ?");
+			preparedStatementValues.add(searchBill.getEmail());
+		}
+
+		if (searchBill.getMobileNumber()!= null) {
+			selectQuery.append(" AND b.mobileNumber = ?");
+			preparedStatementValues.add(searchBill.getMobileNumber());
+		}
+
+		if (searchBill.getService() != null) {
+			selectQuery.append(" AND bd.businessservice = ?");
+			preparedStatementValues.add(searchBill.getService());
+		}
+		
+		if (searchBill.getFromPeriod() != null) {
+			selectQuery.append(" AND bd.fromperiod = ?");
+			preparedStatementValues.add(searchBill.getFromPeriod());
+		}
+
+		if (searchBill.getToPeriod() != null) {
+			selectQuery.append(" AND bd.toperiod = ?");
+			preparedStatementValues.add(searchBill.getToPeriod());
+		}
+
+		if (searchBill.getBillNumber() != null) {
+			selectQuery.append(" AND bd.billno = ?");
+			preparedStatementValues.add(searchBill.getBillNumber());
+		}
+		
+		if (searchBill.getDemandId() != null) {
+			selectQuery.append(" AND bd.demandid = ?");
+			preparedStatementValues.add(searchBill.getDemandId());
+		}
+
+		if (!CollectionUtils.isEmpty(searchBill.getConsumerCode())) {
+			selectQuery.append(" AND bd.consumercode IN (");
+			appendListToQuery(searchBill.getConsumerCode(), preparedStatementValues, selectQuery);
+		}
+		
+		if(searchBill.getStatus() != null)
+		{
+			selectQuery.append(" AND b.status = ?");
+			preparedStatementValues.add(searchBill.getStatus().toString());
+		}
+		
+		if(!StringUtils.isEmpty(searchBill.getPaymentPeriod()))
+		{
+			selectQuery.append(" AND bd.paymentperiod = ?");
+			preparedStatementValues.add(searchBill.getPaymentPeriod());
+		}
+		
+		if(!StringUtils.isEmpty(searchBill.getAssesmentYear()))
+		{
+			selectQuery.append(" AND bd.assesmentyear = ?");
+			preparedStatementValues.add(searchBill.getAssesmentYear());
 		}
 	}
 	
