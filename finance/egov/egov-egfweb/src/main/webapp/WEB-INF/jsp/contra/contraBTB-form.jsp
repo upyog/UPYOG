@@ -69,7 +69,7 @@
 	<s:hidden name="temp" value="contraBean.fromBankId" />
 	<td class="greybox"><s:select name="contraBean.fromBankId"
 			id="fromBankId" list="%{fromBankBranchMap}" headerKey="-1"
-			headerValue="%{getText('lbl.choose.options')}" onChange="loadFromAccNum(this);" /></td>
+			headerValue="%{getText('lbl.choose.options')}" onChange="loadFromAccNum(this);" escapeHtml="false"/></td>
 	<egov:ajaxdropdown id="fromAccountNumber" fields="['Text','Value']"
 		dropdownId="fromAccountNumber"
 		url="/voucher/common-ajaxLoadAccountNumbers.action" />
@@ -81,7 +81,7 @@
 			listValue="accountnumber" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 			onChange="populatefromNarration(this);loadFromBalance(this)" /> <s:textfield
 			name="fromAccnumnar" id="fromAccnumnar" value="%{fromAccnumnar}"
-			readonly="true" tabindex="-1" /></td>
+			readonly="true" tabindex="-1"  escapeHtml="false"/></td>
 </tr>
 
 <tr>
@@ -140,7 +140,7 @@
 		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:select name="contraBean.toBankId"
 			id="toBankId" list="%{toBankBranchMap}" headerKey="-1"
-			headerValue="%{getText('lbl.choose.options')}" onChange="loadToAccNum(this);" /></td>
+			headerValue="%{getText('lbl.choose.options')}" onChange="loadToAccNum(this);" escapeHtml="false"/></td>
 	<egov:ajaxdropdown id="toAccountNumber" fields="['Text','Value']"
 		dropdownId="toAccountNumber"
 		url="/voucher/common-ajaxLoadAccountNumbers.action" />
@@ -149,9 +149,9 @@
 	<td class="bluebox"><s:select name="contraBean.toBankAccountId"
 			id="toAccountNumber" list="dropdownData.toAccNumList" listKey="id"
 			listValue="accountnumber" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
-			onChange="populatetoNarration(this);loadToBalance(this)" /> <s:textfield
+			onChange="populatetoNarration(this);loadToBalance(this)" escapeHtml="false"/> <s:textfield
 			name="toAccnumnar" id="toAccnumnar" value="%{toAccnumnar}"
-			readonly="true" tabindex="-1" /></td>
+			readonly="true" tabindex="-1" escapeHtml="false" /></td>
 </tr>
 
 <tr>
@@ -243,5 +243,6 @@
 		fund_map[i++]= '<s:property value="%{id}"/>'+"_"+'<s:property value="%{chartofaccountsByPayglcodeid.glcode}"/>';
 	</s:iterator>	
 	
-	</script>
+	
+</script>
 

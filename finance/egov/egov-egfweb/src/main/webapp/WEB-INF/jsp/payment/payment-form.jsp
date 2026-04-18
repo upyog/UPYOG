@@ -291,7 +291,7 @@
 																			listKey="id" listValue="bank.name+'-'+branchname"
 																			headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 																			onchange="loadBankAccount(this)"
-																			value="%{bankbranch}" /></td>
+																			value="%{bankbranch}" escapeHtml="false"/></td>
 																	<egov:ajaxdropdown id="bankaccount"
 																		fields="['Text','Value']" dropdownId="bankaccount"
 																		url="voucher/common-ajaxLoadBankAccounts.action" />
@@ -304,7 +304,7 @@
 																			listValue="accountnumber+'---'+accounttype"
 																			headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 																			onChange="populateAvailableBalance(this);"
-																			value="%{bankaccount}" /></td>
+																			value="%{bankaccount}"  escapeHtml="false"/></td>
 																	<egov:updatevalues id="availableBalance"
 																		fields="['Text']"
 																		url="payment/payment-ajaxGetAccountBalance.action" />
@@ -555,6 +555,21 @@
 			var billSubType = '<s:property value="%{billSubType}"/>';
 			populatebankaccount({branchId:obj.options[obj.selectedIndex].value+'&date='+new Date(), typeOfAccount:vTypeOfAccount,fundId:fund,billSubType:billSubType} );
 			//populatebankaccount({branchId:obj.options[obj.selectedIndex].value+'&date='+new Date()});
+			//fix &amp 
+			var interval = setInterval(function() {
+		        var select = document.getElementById('bankaccount');
+		        if (select && select.options.length > 1) {
+		            for (var i = 0; i < select.options.length; i++) {
+		                select.options[i].text = select.options[i].text
+		                    .replace(/&amp;/g, '&')
+		                    .replace(/&lt;/g, '<')
+		                    .replace(/&gt;/g, '>')
+		                    .replace(/&quot;/g, '"')
+		                    .replace(/&#39;/g, "'");
+		            }
+		            clearInterval(interval);
+		        }
+		    }, 100);
 		}
 		function updateHidden(obj)
 		{

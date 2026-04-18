@@ -956,6 +956,10 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             val = egBillregister.getEgBillregistermis().getNarration();
         else if ("billnumber".equals(name))
             val = egBillregister.getBillnumber();
+        else if ("budgetaryAppnumber".equals(name))
+        	if(egBillregister.getEgBillregistermis() != null && egBillregister.getEgBillregistermis().getBudgetaryAppnumber() != null) {
+        		val = egBillregister.getEgBillregistermis().getBudgetaryAppnumber();
+        	}
         return val;
     }
 
