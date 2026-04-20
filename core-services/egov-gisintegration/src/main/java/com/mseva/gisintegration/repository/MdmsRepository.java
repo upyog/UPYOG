@@ -8,6 +8,8 @@ import com.mseva.gisintegration.model.MdmsRequest.ModuleDetail;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MdmsResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
@@ -18,6 +20,8 @@ import java.util.*;
 @Repository
 public class MdmsRepository {
 
+    private static final Logger log = LoggerFactory.getLogger(MdmsRepository.class);
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -25,6 +29,8 @@ public class MdmsRepository {
     private MdmsConfig mdmsConfig;
 
     public Map<String, String> getBoundaryByLocalityCode(String localityCode, String tenantId) {
+
+        log.info("Fetching boundary for localityCode: {}, tenantId: {}", localityCode, tenantId);
 
         Map<String, String> result = getDefault();
 
@@ -36,12 +42,20 @@ public class MdmsRepository {
 
             HttpEntity<MdmsRequest> entity = new HttpEntity<>(request, headers);
 
+            log.debug("Calling MDMS API at URL: {}", mdmsConfig.getUrl());
+
             ResponseEntity<MdmsResponse> response = restTemplate.exchange(
                     mdmsConfig.getUrl(),
                     HttpMethod.POST,
                     entity,
                     MdmsResponse.class
             );
+
+            if (response.getBody() == null) {
+                log.warn("MDMS response body is null");
+                return result;
+            }
+
             Object tbObj = response.getBody()
                     .getMdmsRes()
                     .get("egov-location")
@@ -55,10 +69,18 @@ public class MdmsRepository {
                         tenantBoundary.add((Map<String, Object>) item);
                     }
                 }
+            } else {
+                log.warn("TenantBoundary is not a list. Type: {}", tbObj != null ? tbObj.getClass() : "null");
             }
+
             for (Map<String, Object> hierarchy : tenantBoundary) {
 
                 Map boundary = (Map) hierarchy.get("boundary");
+                if (boundary == null) {
+                    log.warn("Boundary object is null in hierarchy");
+                    continue;
+                }
+
                 List zones = (List) boundary.get("children");
 
                 for (Object z : zones) {
@@ -82,6 +104,8 @@ public class MdmsRepository {
 
                             if (localityCode.equals(locality.get("code"))) {
 
+                                log.info("Match found for localityCode: {}", localityCode);
+
                                 result.put("zonename", zoneName);
                                 result.put("zonecode", zoneCode);
                                 result.put("blockname", blockName);
@@ -95,14 +119,18 @@ public class MdmsRepository {
                 }
             }
 
+            log.warn("No match found for localityCode: {}", localityCode);
+
         } catch (Exception e) {
-            // log properly in prod
+            log.error("Error while fetching boundary for localityCode: {}, tenantId: {}", localityCode, tenantId, e);
         }
 
         return result;
     }
 
     private MdmsRequest buildRequest(String tenantId) {
+
+        log.debug("Building MDMS request for tenantId: {}", tenantId);
 
         MasterDetail master = new MasterDetail();
         master.setName("TenantBoundary");
