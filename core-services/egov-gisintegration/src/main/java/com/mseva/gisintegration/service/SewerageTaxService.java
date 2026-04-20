@@ -31,8 +31,7 @@ public class SewerageTaxService {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
     
-    @Autowired
-    private TenantMappingRepository tenantMappingRepository;
+
 
     @Autowired
     private ObjectMapper mapper;
@@ -153,7 +152,12 @@ public class SewerageTaxService {
     }
 
     private void mapTransactionalFields(SewerageTax s, JsonNode detail) {
-    	String townName = TenantStaticMapper.getTownName(s.getTenantid());        s.setTenantid(townName);
+    	String tenantId = detail.path("tenantId").asText();
+    	s.setTenantid(tenantId);   // always set first
+
+    	String townName = TenantStaticMapper.getTownName(tenantId);
+    	// optional: s.setTownname(townName);    	
+    	s.setTenantid(townName);
         s.setConnectionno(detail.path("bill").path("consumerCode").asText());
         
         JsonNode billDetails = detail.path("bill").path("billDetails");

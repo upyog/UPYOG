@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mseva.gisintegration.config.TenantStaticMapper;
 import com.mseva.gisintegration.model.Property;
+import com.mseva.gisintegration.repository.MdmsRepository;
 import com.mseva.gisintegration.repository.PropertyRepository;
 import com.mseva.gisintegration.repository.ServiceRequestRepository;
-import com.mseva.gisintegration.repository.TenantMappingRepository;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.slf4j.Logger;
@@ -30,6 +30,9 @@ public class PropertyService {
 
     @Autowired
     private PropertyRepository propertyRepository;
+    
+    @Autowired
+    private MdmsRepository mdmsRepository;
 
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
@@ -37,8 +40,7 @@ public class PropertyService {
     @Autowired
     private ObjectMapper mapper;
     
-    @Autowired
-    private TenantMappingRepository tenantMappingRepository;
+
 
     @Value("${egov.propertyservice.host}")
     private String propertyHost;
@@ -83,8 +85,13 @@ public class PropertyService {
                 mapGisFields(p, propertyNode);
                 
                 // Step 3: Map Assessment-specific data
-                String townName = tenantMappingRepository.getTownNameByTenantId(tenantId);
-                p.setTenantid(townName);
+            	String townName = TenantStaticMapper.getTownName(tenantId);                
+                if (townName != null) {
+                    // CAUTION: You were setting match.setTenantid(townName). 
+                    // Usually, you want to keep the ID as "pb.amritsar" and set a 
+                    // separate field like setTownname(townName).
+                    p.setTenantid(townName); 
+                }
                 p.setPropertyid(propertyId);
                 p.setAssessmentyear(financialYear);
                 
@@ -160,8 +167,8 @@ public class PropertyService {
         JsonNode loc = addr.path("locality");
         String tenantId = node.path("tenantId").asText();
         String localityCode = node.path("address").path("locality").path("code").asText();
-        Map<String, Object> boundary = tenantMappingRepository.getBoundaryDetails(localityCode, tenantId);
-        // Collect all parts in an array to join them cleanly
+        Map<String, String> boundary =
+                mdmsRepository.getBoundaryByLocalityCode(localityCode, tenantId);        // Collect all parts in an array to join them cleanly
         String[] addressParts = {
             addr.path("doorNo").asText(""),
             addr.path("plotNo").asText(""),
@@ -181,15 +188,24 @@ public class PropertyService {
         p.setAddress(fullAddress);
         p.setLocalitycode(addr.path("locality").path("code").asText());
         if (boundary != null) {
-            p.setZonename((String) boundary.get("zonename"));
-            p.setBlockname((String) boundary.get("blockname"));
-            p.setLocalityname((String) boundary.get("localityname"));
+            p.setZonename(boundary.getOrDefault("zonename", "UNKNOWN"));
+            p.setBlockname(boundary.getOrDefault("blockname", "UNKNOWN"));
+            p.setLocalityname(boundary.getOrDefault("localityname", "UNKNOWN"));
+        } else {
+            p.setZonename("UNKNOWN");
+            p.setBlockname("UNKNOWN");
+            p.setLocalityname("UNKNOWN");
         }
     }
 
     private void mapTransactionalFields(Property p, JsonNode detail, JsonNode payment) {
-        String townName = tenantMappingRepository.getTownNameByTenantId(detail.path("tenantId").asText());
-        p.setTenantid(townName);
+    	String townName = TenantStaticMapper.getTownName(detail.path("tenantId").asText());                
+        if (townName != null) {
+            // CAUTION: You were setting match.setTenantid(townName). 
+            // Usually, you want to keep the ID as "pb.amritsar" and set a 
+            // separate field like setTownname(townName).
+            p.setTenantid(townName); 
+        }
         p.setReceiptnumber(detail.path("receiptNumber").asText());
         p.setAmoutpaid(detail.path("totalAmountPaid").asText());
      // 1. Get the epoch as long
@@ -232,9 +248,8 @@ public class PropertyService {
 
             // 1. Safe Boundary Lookup
             if (match.getLocalitycode() != null && match.getTenantid() != null) {
-                Map<String, Object> boundary = tenantMappingRepository.getBoundaryDetails(match.getLocalitycode(), match.getTenantid());
-                
-                if (boundary != null) {
+            	Map<String, String> boundary =
+            		    mdmsRepository.getBoundaryByLocalityCode(match.getLocalitycode(), match.getTenantid());      if (boundary != null) {
                     // Use .getOrDefault or check for null before casting
                     Object zone = boundary.get("zonename");
                     if (zone != null) {
@@ -264,20 +279,25 @@ public class PropertyService {
         }else {
         	
         	 if (property.getLocalitycode() != null && property.getTenantid() != null) {
-                 Map<String, Object> boundary = tenantMappingRepository.getBoundaryDetails(property.getLocalitycode(), property.getTenantid());
-                 
+        		 Map<String, String> boundary =
+        			        mdmsRepository.getBoundaryByLocalityCode(property.getLocalitycode(),  property.getTenantid() );                 
                  if (boundary != null) {
                      // Use .getOrDefault or check for null before casting
-                     Object zone = boundary.get("zonename");
+                     Object zone = boundary.getOrDefault("zonename", "UNKNOWN");
                      if (zone != null) {
                     	 property.setZonename(zone.toString());
                      }
                      
-                     Object block = boundary.get("blockname");
+                     Object block =boundary.getOrDefault("blockname", "UNKNOWN");
                      if (block != null) {
                     	 property.setBlockname(block.toString());
                      }
                  }
+                 	else {
+                 		property.setZonename("UNKNOWN");
+                 		property.setBlockname("UNKNOWN");
+                 		property.setLocalityname("UNKNOWN");
+                	}
              }
 
              // 2. Safe Town Name Lookup
