@@ -73,7 +73,7 @@ public class MSCommController {
 					params.get("departmentRule").trim(), null, params.get("additionalRule"), params.get("currentState"),
 					params.get("pendingAction"));
 			if (wfmatrix.getCurrentDesignation() != null) {
-				workflowDesignations.addAll(Arrays.asList(wfmatrix.getCurrentDesignation().split(",")));
+				workflowDesignations.addAll(Arrays.asList(wfmatrix.getNextDesignation().split(",")));
 			}
 			return microserviceUtils.getDesignations().stream()
 					.filter(desig -> workflowDesignations.contains(desig.getName())).collect(Collectors.toList());

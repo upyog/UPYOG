@@ -162,12 +162,20 @@ jQuery(document).ready(function($) {
     };
 
     var postTypeFrom = {
-        success: function(o) { $("#fromAccnumnar").val(o.responseText); },
+        /*success: function(o) { $("#fromAccnumnar").val(o.responseText); },*/
+		success: function(o) { 
+			var decodedText = $("<textarea/>").html(o.responseText).text();
+			$("#fromAccnumnar").val(decodedText);
+		 },
         failure: function(o) { bootbox.alert('failure'); }
     };
 
     var postTypeTo = {
-        success: function(o) { $("#toAccnumnar").val(o.responseText); },
+        /*success: function(o) { $("#toAccnumnar").val(o.responseText); },*/
+		success: function(o) { 
+			var decodedText = $("<textarea/>").html(o.responseText).text();
+			$("#toAccnumnar").val(decodedText);
+		},
         failure: function(o) { bootbox.alert('failure'); }
     };
 
