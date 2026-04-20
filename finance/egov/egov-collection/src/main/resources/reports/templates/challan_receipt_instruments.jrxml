@@ -55,7 +55,7 @@
     : $F{instrumentType}.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE) 
         ? "Reference Number: " + $F{instrumentNumber} + ", Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate})
         : $F{instrumentType}.equals(CollectionConstants.INSTRUMENTTYPE_DD) 
-            ? "Demand Draft No " + $F{instrumentNumber} + " drawn on " + $F{bankAccountNumber} + ", IFSC No : " + $F{ifscCode} + " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) 
+            ?"Reference Number: " + $F{instrumentNumber} + ", Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate})  
             : "Transaction Number: " + $F{instrumentNumber} + ", Payment Dated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate})]]></textFieldExpression>
 			</textField>
 		</band>
