@@ -1158,10 +1158,12 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			return null;
 		}
 		StringBuilder query = new StringBuilder(Query);
-		query.append(" INNER JOIN eg_ws_connection conn \r\n"
+		query.append("\r\n INNER JOIN eg_ws_connection conn \r\n"
 				+ "  ON mr.connectionno = conn.connectionno \r\n"
 				+ " AND mr.tenantid = conn.tenantid  \r\n"
-				+ "INNER JOIN eg_pt_property epp \r\n"
+				+" INNER JOIN eg_ws_service ews  \r\n"
+				+ "  ON conn.id = ews.connection_id \r\n"
+				+ " INNER JOIN eg_pt_property epp \r\n"
 				+ "  ON conn.property_id = epp.propertyid\r\n"
 				+ "INNER JOIN eg_pt_address epa \r\n"
 				+ "  ON epa.propertyid = epp.id   ");
@@ -1176,6 +1178,9 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			query.append(" epa.locality= ? ");
 			preparedStatement.add(criteria.getLocality());
 		}
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" ews.connectiontype = 'Metered' \r\n");
 		
 		if (!CollectionUtils.isEmpty(criteria.getConnectionNos())) {
 			addClauseIfRequired(preparedStatement, query);
