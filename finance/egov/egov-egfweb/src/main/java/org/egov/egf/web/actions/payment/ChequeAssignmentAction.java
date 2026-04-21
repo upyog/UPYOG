@@ -180,7 +180,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     private String typeOfAccount;
     private List<Map<String, Object>> bankbranchList;
     private String fileName;
-
+    
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -1209,8 +1209,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             chequeAssignment.setDepartmentName(items[6]);
             chequeAssignment.setBillId(Long.valueOf(items[7]));
             chequeAssignment.setExpenditureType(items[8]);
+            chequeAssignment.setTdNumber(items[12]);
             chequeAssignment.setPaidAmount(BigDecimal.valueOf(Double.valueOf(item)));
             chequeAssignment.setIsSelected(true);
+            
             rtgsList.add(chequeAssignment);
         }
         return rtgsList;

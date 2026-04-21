@@ -66,7 +66,7 @@ public abstract class RemittanceService implements Serializable {
     private static final long serialVersionUID = 1849734164810403255L;
 
     public abstract List<Receipt> createCashBankRemittance(List<ReceiptBean> receiptList, final String accountNumberId,
-            final Date remittanceDate);
+            final Date remittanceDate, String bankTokenNumber, Date tokenDate);
 
     public abstract List<ReceiptBean> findCashRemittanceDetailsForServiceAndFund(final String boundaryIdList,
             final String serviceCodes, final String fundCodes, Date startDate, Date endDate, String instrumentStatus);

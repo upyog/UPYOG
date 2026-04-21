@@ -58,6 +58,7 @@ public class ChequeAssignment implements java.io.Serializable {
     private String voucherNumber;
     private String bankAccNumber;
     private BigDecimal paidAmount;
+    private String tdNumber;
     private String paidTo;
     private String bankName;
     private String chequeNumber;
@@ -81,6 +82,7 @@ public class ChequeAssignment implements java.io.Serializable {
     private String drawingOfficerNameTAN;
     private BigDecimal receiptAmount;
     private BigDecimal deductedAmount;
+    
 
     public String getSerialNo() {
         return serialNo;
@@ -321,4 +323,14 @@ public class ChequeAssignment implements java.io.Serializable {
     public void setBillId(Long billId) {
         this.billId = billId;
     }
+
+	public String getTdNumber() {
+		return tdNumber;
+	}
+
+	public void setTdNumber(String tdNumber) {
+		this.tdNumber = tdNumber;
+	}
+    
+    
 }

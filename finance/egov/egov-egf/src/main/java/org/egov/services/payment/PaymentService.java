@@ -2549,8 +2549,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         final List<Long> selectedPaymentVHList = new ArrayList<Long>();
         final Map<String, BigDecimal> payeeMap = new HashMap<String, BigDecimal>();
         BigDecimal totalPaidAmt = BigDecimal.ZERO;
-
-        for (final ChequeAssignment assignment : chequeAssignmentList)
+        String tdNumber=null;  
+        for (final ChequeAssignment assignment : chequeAssignmentList) {
+        	
             if (assignment.getIsSelected()) {
                 selectedPaymentVHList.add(assignment.getVoucherid());
                 if (payeeMap.containsKey(assignment.getPaidTo() + DELIMETER + assignment.getDetailtypeid() + DELIMETER
@@ -2566,7 +2567,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     payeeMap.put(assignment.getPaidTo() + DELIMETER + assignment.getDetailtypeid() + DELIMETER
                             + assignment.getDetailkeyid(), assignment.getPaidAmount());
                 totalPaidAmt = totalPaidAmt.add(assignment.getPaidAmount());
+                tdNumber=assignment.getTdNumber();
             }
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("selectedPaymentList===" + selectedPaymentVHList);
         final Bankaccount account = (Bankaccount) persistenceService.find(" from Bankaccount where  id=?",
@@ -2577,6 +2580,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 
         final List<Map<String, Object>> instrumentHeaderList = new ArrayList<Map<String, Object>>();
         final List<Map<String, Object>> instrumentVoucherList = new ArrayList<Map<String, Object>>();
+        
+//        Map<String, Object> tdMap=new HashMap<String, Object>();
+//        tdMap.put("tdnumber",tdNumber);
+//        instrumentHeaderList.add(tdMap);
 
         if (paymentMode.equals(FinancialConstants.MODEOFPAYMENT_CHEQUE)) {
             final Map<Long, CVoucherHeader> paymentVoucherMap = new HashMap<Long, CVoucherHeader>();
@@ -2597,7 +2604,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                 int i = 0;
                 while (iterator.hasNext()) {
                     key = iterator.next().toString();
-                    instrumentHeaderList.add(prepareInstrumentHeader(account, chequeNoArray[i],
+                    instrumentHeaderList.add(prepareInstrumentHeader(tdNumber,account, chequeNoArray[i],
                             FinancialConstants.MODEOFPAYMENT_CHEQUE.toLowerCase(), key.split(DELIMETER)[0],
                             payeeMap.get(key), currentDate, key, null));
                     chequeNoMap.put(key, chequeNoArray[i]);
@@ -2634,7 +2641,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                 {
                     key = iterator.next().toString();
 
-                    instrumentHeaderList.add(prepareInstrumentHeader(account, key.split(DELIMETER)[3],
+                    instrumentHeaderList.add(prepareInstrumentHeader(tdNumber,account, key.split(DELIMETER)[3],
                             FinancialConstants.MODEOFPAYMENT_CHEQUE.toLowerCase(), key.split(DELIMETER)[0],
                             partyChequeNoMap.get(key), formatter.parse(key.split(DELIMETER)[4]), key,
                             key.split(DELIMETER)[5]));
@@ -2653,17 +2660,17 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         else {
             final String chequeNo;
             if (paymentMode.equals(FinancialConstants.MODEOFPAYMENT_RTGS))
-                instrumentHeaderList.add(prepareInstrumentHeaderForRtgs(account, parameters.get("rtgsRefNo")[0],
+                instrumentHeaderList.add(prepareInstrumentHeaderForRtgs(tdNumber,account, parameters.get("rtgsRefNo")[0],
                         totalPaidAmt, formatter.parse(parameters.get("rtgsDate")[0]), ""));
             else if (isChequeNoGenerationAuto()) // if cheque number generation
                                                  // is auto
             {
                 chequeNo = chequeService.nextChequeNumber(account.getId().toString(), 1, dept);
-                instrumentHeaderList.add(prepareInstrumentHeader(account, chequeNo,
+                instrumentHeaderList.add(prepareInstrumentHeader(tdNumber,account, chequeNo,
                         FinancialConstants.MODEOFPAYMENT_CHEQUE.toLowerCase(), parameters.get("inFavourOf")[0],
                         totalPaidAmt, currentDate, "", null));
             } else
-                instrumentHeaderList.add(prepareInstrumentHeader(account, parameters.get("chequeNo")[0],
+                instrumentHeaderList.add(prepareInstrumentHeader(tdNumber,account, parameters.get("chequeNo")[0],
                         FinancialConstants.MODEOFPAYMENT_CHEQUE.toLowerCase(), parameters.get("inFavourOf")[0],
                         totalPaidAmt, formatter.parse(parameters.get("chequeDt")[0]), "",
                         parameters.get("serialNo")[0]));
@@ -2791,13 +2798,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         return instHeaderList;
     }
 
-    protected Map<String, Object> prepareInstrumentHeader(final Bankaccount account, final String chqNo,
+    protected Map<String, Object> prepareInstrumentHeader(final String tdNumber,final Bankaccount account, final String chqNo,
             final String instType, final String partyName, final BigDecimal amount, final Date date, final String key,
             final String serialNo) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting prepareInstrumentHeader...");
         final Map<String, Object> instrumentHeaderMap = new HashMap<String, Object>();
         instrumentHeaderMap.put(VoucherConstant.IS_PAYCHECK, "1");
+        instrumentHeaderMap.put("tdnumber", tdNumber);
         instrumentHeaderMap.put(VoucherConstant.INSTRUMENT_TYPE, instType);
         instrumentHeaderMap.put(VoucherConstant.INSTRUMENT_AMOUNT, amount);
         instrumentHeaderMap.put(VoucherConstant.INSTRUMENT_NUMBER, chqNo);
@@ -2819,7 +2827,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         return instrumentHeaderMap;
     }
 
-    protected Map<String, Object> prepareInstrumentHeaderForRtgs(final Bankaccount account, final String txnNo,
+    protected Map<String, Object> prepareInstrumentHeaderForRtgs(final String tdNumber,final Bankaccount account, final String txnNo,
             final BigDecimal amount, final Date date, final String key) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting prepareInstrumentHeaderForRtgs...");
@@ -2827,6 +2835,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         instrumentHeaderMap.put(VoucherConstant.IS_PAYCHECK, "1");
         instrumentHeaderMap.put(VoucherConstant.INSTRUMENT_TYPE, FinancialConstants.INSTRUMENT_TYPE_ADVICE);
         instrumentHeaderMap.put(VoucherConstant.INSTRUMENT_AMOUNT, amount);
+        instrumentHeaderMap.put("tdnumber", tdNumber);
         instrumentHeaderMap.put(VoucherConstant.TRANSACTION_NUMBER, txnNo);
         instrumentHeaderMap.put(VoucherConstant.TRANSACTION_DATE, date);
         instrumentHeaderMap.put(VoucherConstant.BANK_CODE, account.getBankbranch().getBank().getCode());

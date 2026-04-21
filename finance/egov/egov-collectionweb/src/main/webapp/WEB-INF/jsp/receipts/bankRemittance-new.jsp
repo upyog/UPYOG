@@ -106,6 +106,25 @@
 										isDatepickerOpened = false;
 									}
 								}).data('datepicker');
+						
+						jQuery("#tokenDate")
+						.datepicker(
+								{
+									format : 'dd/mm/yyyy',
+									endDate : nowTemp,
+									autoclose : true,
+									onRender : function(date) {
+										return date.valueOf() < now
+												.valueOf() ? 'disabled'
+												: '';
+									}
+								}).on('changeDate', function(ev) {
+							var string = jQuery(this).val();
+							if (!(string.indexOf("_") > -1)) {
+								isDatepickerOpened = false;
+							}
+						}).data('datepicker');
+						
 						jQuery("#fromDate")
 								.datepicker(
 										{
@@ -143,6 +162,8 @@
 								}).data('datepicker');
 						doLoadingMask();
 					});
+
+				
 
 	jQuery(window).load(function() {
 		undoLoadingMask();
@@ -252,6 +273,19 @@
 				 alert("Account number for which search result has displayed and selected account number in search drop down are different. \n Please make sure account number in drop down and account number for which search has done are same.");
 				 return false;
 			}
+		// Bank Token Number validation
+		if (document.getElementById("bankTokenNumber") != null &&
+		    document.getElementById("bankTokenNumber").value.trim() == "") {
+		    bootbox.alert("Please Enter Bank Token Number");
+		    return false;
+		}
+
+		// Token Date validation
+		if (document.getElementById("tokenDate") != null &&
+		    document.getElementById("tokenDate").value == "") {
+		    bootbox.alert("Please Enter Token Date");
+		    return false;
+		}
 		var flag=confirm('Receipts once remitted cannot be modified, please verify before you proceed.');
         if(flag==false)
         {
@@ -566,7 +600,14 @@
 							<td class="bluebox"><s:text name="bankremittance.remittanceamount" /></td>
 							<td class="bluebox"><s:textfield id="remittanceAmount" name="remittanceAmount" readonly="true" /></td>								
 							<td class="bluebox"><s:text name="bankremittance.accountnumber" /></td>
-							<td class="bluebox"><input type="text" name="remitAccountNumber" readonly="readonly" id="remitAccountNumber" value="${accountNumberId}" /></td>		
+							<td class="bluebox"><input type="text" name="remitAccountNumber" readonly="readonly" id="remitAccountNumber" value="${accountNumberId}" /></td>	
+							
+							<!--Adding the row for the Bank Token Number & Date field-->
+							<td class="bluebox"><s:text name="bank.token.number" /></td>
+							<td class="bluebox"><s:textfield id="bankTokenNumber" name="bankTokenNumber" /></td>								
+							<td class="bluebox"><s:text name="token.date" /><span class="mandatory"></span></td> <s:date name="tokenDate" var="tokenDateFormat" format="dd/MM/yyyy" />
+							<td class="bluebox"> <s:textfield id="tokenDate" name="tokenDate" value="%{tokenDateFormat}"   data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" /></td>	
+								
 						</tr>
 					</table>
 				</div>

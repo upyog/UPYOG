@@ -89,8 +89,17 @@ public class InstrumentHeader extends BaseModel {
     private CFinancialYear serialNo;
     private ECSType ECSType;
     private String ifscCode;
+    private String tdnumber;
 
-    private Set<InstrumentVoucher> instrumentVouchers = new HashSet<InstrumentVoucher>(0);
+    public String getTdnumber() {
+		return tdnumber;
+	}
+
+	public void setTdnumber(String tdnumber) {
+		this.tdnumber = tdnumber;
+	}
+
+	private Set<InstrumentVoucher> instrumentVouchers = new HashSet<InstrumentVoucher>(0);
 
     // Property accessors
 

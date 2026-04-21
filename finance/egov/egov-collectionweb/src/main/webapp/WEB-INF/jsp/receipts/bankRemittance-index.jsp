@@ -70,6 +70,7 @@
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptnumber"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptdate"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.servicename"/></th>
+			<th class="bluebgheadtd" width="20%" ><s:text name="banktoken.date"/></th>
 		</tr>
 		<s:iterator value="%{bankRemittanceList}" status="s"> 
 		<tr>
@@ -77,6 +78,7 @@
 			<td class="blueborderfortd"><div align="center"><s:property value="%{receiptNumber}" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:date name="%{receiptDate}" format="dd/MM/yyyy" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{serviceName}" /></div></td>
+			<td class="blueborderfortd"><div align="center"><s:property value="%{bankTokenNumber}" />-<s:date name="%{tokenDate}" format="dd/MM/yyyy"/></div></td>
 			
 		</s:iterator>
 		<s:hidden name="totalCashAmount" value="%{totalCashAmount}"/>

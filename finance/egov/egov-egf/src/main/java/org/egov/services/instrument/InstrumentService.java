@@ -183,6 +183,7 @@ public class InstrumentService {
             else
                 instrHeader
                         .setIsPayCheque(instrMap.get(IS_PAYCHECK).toString());
+                
 
             // 2.Find the instrument type and based on type check for mandatory
             // fields
@@ -263,6 +264,7 @@ public class InstrumentService {
             instrHeader
                     .setBankBranchName(instrMap.get(BRANCH_NAME) != null ? instrMap
                             .get(BRANCH_NAME).toString() : null);
+            instrHeader.setTdnumber((String) instrMap.get("tdnumber"));
             final EgwStatus status = (EgwStatus) persistenceService
 					.find("from EgwStatus where upper(moduletype)=upper('Instrument') and upper(description)=?",
 							FinancialConstants.INSTRUMENT_CREATED_STATUS.toUpperCase());
@@ -277,6 +279,7 @@ public class InstrumentService {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("saving instrument details as "
                         + instrHeader.toString());
+            
             instrumentHeaderService.persist(instrHeader);
             final InstrumentOtherDetails io = new InstrumentOtherDetails();
             io.setInstrumentHeaderId(instrHeader);

@@ -93,6 +93,8 @@
 							name="chq.assignment.payment.voucherdate" /></th>
 					<th class="bluebgheadtdnew"><s:text
 							name="chq.assignment.partycode" /></th>
+				    <th class="bluebgheadtdnew"><s:text
+							name="chq.assignment.TBNumber" /></th>
 					<th class="bluebgheadtdnew"><s:text
 							name="chq.assignment.payment.amount" /></th>
 
@@ -153,6 +155,11 @@
 							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
 									id="paidTo" name="rtgsList[%{#counter}].paidTo"
 									value="%{paidTo}" /> <s:property value="%{paidTo}" /></td>
+							<!-- TD Number (NEW COLUMN) -->
+							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
+									name="rtgsList[%{#counter}].tdNumber" id="tdNumber%{#counter}"
+									value="%{tdNumber}" cssClass="form-control"
+									style="width:120px;" /></td>
 							<td style="text-align: right" class="blueborderfortdnew"><s:hidden
 									id="paidAmount" name="rtgsList[%{#counter}].paidAmount"
 									value="%{paidAmount}" /> <s:text name="format.number">
@@ -327,7 +334,9 @@
 								document.getElementsByName("rtgsList["+index+"].expenditureType")[0].value+"~"+
 								document.getElementsByName("rtgsList["+index+"].tempPaymentDate")[0].value+"~"+
 								document.getElementsByName("rtgsList["+index+"].isSelected")[0].value+"~"+
-								document.getElementsByName("rtgsList["+index+"].paidAmount")[0].value+";");
+								document.getElementsByName("rtgsList["+index+"].paidAmount")[0].value+"~"+
+								document.getElementsByName("rtgsList["+index+"].tdNumber")[0].value);
+					           
 						
 				  }
 				  	document.getElementsByName("rtgsList["+index+"].voucherHeaderId")[0].disabled =true;
