@@ -223,7 +223,22 @@ public class EstimationService {
 	    }
 
 	    if (applicableBillSlab != null && applicableSlab != null) {
-	        sewerageCharge = BigDecimal.valueOf(applicableSlab.getCharge());
+	    	
+	    	Double slabCharge = applicableSlab.getCharge();
+	        /* PI-21135 Sewrage Seat Based Billing Logic */ 
+
+	        if (SWCalculationConstant.PLOT_SEAT_BASED.equalsIgnoreCase(calculationAttribute)) {
+
+	            Integer noOfUnits = sewerageConnection.getNoOfToilets() != null
+	                    ? sewerageConnection.getNoOfToilets()
+	                    : 1;
+
+	            sewerageCharge = BigDecimal.valueOf(slabCharge * noOfUnits);
+	            /* PI-21135 Sewrage Seat Based Billing Logic */ 
+
+	        } else {
+	            sewerageCharge = BigDecimal.valueOf(slabCharge);
+	        }
 	        request.setTaxPeriodFrom(criteria.getFrom());
 	        request.setTaxPeriodTo(criteria.getTo());
 
@@ -362,6 +377,20 @@ public class EstimationService {
 				return new Double(sewerageConnection.getNoOfToilets());
 			
 		}
+		/* PI-21135 Sewrage Seat Based Billing Logic */ 
+		else if (sewerageConnection.getConnectionType().equals(SWCalculationConstant.nonMeterdConnection)
+		        && calculationAttribute.equalsIgnoreCase(SWCalculationConstant.PLOT_SEAT_BASED)) {
+
+		    return (property.getLandArea() != null && property.getLandArea() > 0)
+		            ? property.getLandArea()
+		            : (property.getSuperBuiltUpArea() != null 
+		                && property.getSuperBuiltUpArea().compareTo(BigDecimal.ZERO) > 0)
+		                ? property.getSuperBuiltUpArea().doubleValue()
+		                : (sewerageConnection.getNoOfToilets() != null 
+		                    ? new Double(sewerageConnection.getNoOfToilets()) 
+		                    : 0.0);
+		}
+		/* PI-21135 Sewrage Seat Based Billing Logic */ 
 		
 		else if (sewerageConnection.getConnectionType().equals(SWCalculationConstant.nonMeterdConnection)
 				&& calculationAttribute.equalsIgnoreCase(SWCalculationConstant.noOfWaterClosets)) {
