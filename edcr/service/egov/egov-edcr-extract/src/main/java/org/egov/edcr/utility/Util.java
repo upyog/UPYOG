@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +31,7 @@ import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plot;
 import org.egov.common.entity.edcr.TypicalFloor;
+import org.egov.commons.mdms.LayerErrorType;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.blackbox.PlanDetail;
 import org.egov.edcr.service.LayerNames;
@@ -67,6 +69,266 @@ public class Util {
     @Autowired
     public LayerNames layerNames;
 
+    
+ // 1. Helper class for Layer Rules
+    private static class LayerRule {
+        Pattern pattern;
+        int colorCode;
+
+        LayerRule(String regex, int colorCode) {
+            String finalizedRegex = regex
+                .replace("_n_", "_\\d+_")
+                .replace("_l_", "_\\d+_")
+                .replace("_i_", "_\\d+_")
+                .replace("_k", "_\\d+")
+                .replace("_m", "_\\d+");
+            this.pattern = Pattern.compile(finalizedRegex, Pattern.CASE_INSENSITIVE);
+            this.colorCode = colorCode;
+        }
+    }
+
+    private static final List<LayerRule> LAYER_RULES = new ArrayList<>();
+
+    static {
+        // --- SITE & BUILDING BASICS ---
+        LAYER_RULES.add(new LayerRule(".*BLDG_FOOT_PRINT$", 61));
+        LAYER_RULES.add(new LayerRule(".*BLDG_FOOT_PRINT_BASEMENT$", 62));
+        LAYER_RULES.add(new LayerRule(".*COVERED_AREA$", 63));
+        LAYER_RULES.add(new LayerRule(".*COVERED_AREA_DEDUCT$", 64));
+        LAYER_RULES.add(new LayerRule(".*FLOOR_HEIGHT$", 66));
+        LAYER_RULES.add(new LayerRule(".*HT_OF_BLDG$", 67));
+        LAYER_RULES.add(new LayerRule(".*HT_OF_BLDG_EXCLUDING_MP$", 68));
+        LAYER_RULES.add(new LayerRule(".*PLINTH_HEIGHT$", 69));
+        LAYER_RULES.add(new LayerRule(".*FRONT_SETBACK$", 70));
+        LAYER_RULES.add(new LayerRule(".*REAR_SETBACK$", 71));
+        LAYER_RULES.add(new LayerRule(".*SIDE_SETBACK1$", 72));
+        LAYER_RULES.add(new LayerRule(".*SIDE_SETBACK2$", 73));
+
+        // --- STAIRS & CIRCULATION ---
+        LAYER_RULES.add(new LayerRule(".*STAIR_k$", 74));
+        LAYER_RULES.add(new LayerRule(".*STAIR_k_FLIGHT_k$", 75));
+        LAYER_RULES.add(new LayerRule(".*STAIR_k_FLIGHT_m_LENGTH$", 1));      // Sub-code 01 (Length)
+        LAYER_RULES.add(new LayerRule(".*STAIR_k_FLIGHT_m_WIDTH$", 2));       // Sub-code 02 (Width)
+        LAYER_RULES.add(new LayerRule(".*STAIR_k_FLIGHT_m_TREADS$", 3));	// Sub-code 03 (Treads)
+        
+        LAYER_RULES.add(new LayerRule(".*STAIR_k_LANDING_m$", 76));
+        LAYER_RULES.add(new LayerRule(".*STAIR_k_LANDING_m_LENGTH$", 1));     // Sub-code 01
+        LAYER_RULES.add(new LayerRule(".*STAIR_k_LANDING_m_WIDTH$", 2));      // Sub-code 02
+        
+        LAYER_RULES.add(new LayerRule(".*FIRE_STAIR$", 97));
+        LAYER_RULES.add(new LayerRule(".*FIRE_STAIR_FLIGHT$", 98));
+        LAYER_RULES.add(new LayerRule(".*FIRE_STAIR_LANDING$", 99));
+        LAYER_RULES.add(new LayerRule(".*SPIRA_FIRE_STAIR_k$", 102));
+
+        // --- ROOMS & SANITATION ---
+        LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 77)); 
+        LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 78)); 
+        LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 79)); 
+        LAYER_RULES.add(new LayerRule(".*STORE_ROOM_k$", 80));
+        LAYER_RULES.add(new LayerRule(".*KITCHEN_k$", 81));
+        LAYER_RULES.add(new LayerRule(".*KITCHEN_k$", 82));
+        LAYER_RULES.add(new LayerRule(".*KITCHEN_k$", 83));
+        LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 84)); 
+        LAYER_RULES.add(new LayerRule(".*BATH_k$", 85));
+        LAYER_RULES.add(new LayerRule(".*WATER_CLOSET_k$", 86));
+        LAYER_RULES.add(new LayerRule(".*URINAL$", 87));
+        LAYER_RULES.add(new LayerRule(".*WASH$", 88));
+        LAYER_RULES.add(new LayerRule(".*WATER_CLOSET$", 89));
+        LAYER_RULES.add(new LayerRule(".*DRINKING_WATER$", 91));
+        LAYER_RULES.add(new LayerRule(".*TOILET_k$", 92));
+        LAYER_RULES.add(new LayerRule(".*TOILET_VENTILATION$", 93));
+
+        // --- BASEMENT & PARKING ---
+        LAYER_RULES.add(new LayerRule(".*BASEMENT_FOOT_PRINT$", 110));
+        LAYER_RULES.add(new LayerRule(".*BSMNT_FRONT_SETBACK$", 103));
+        LAYER_RULES.add(new LayerRule(".*BSMNT_REAR_SETBACK$", 104));
+        LAYER_RULES.add(new LayerRule(".*BSMNT_SIDE_SETBACK1$", 7));
+        LAYER_RULES.add(new LayerRule(".*BSMNT_SIDE_SETBACK2$", 8));
+        LAYER_RULES.add(new LayerRule(".*OPEN_PARKING$", 116));
+        LAYER_RULES.add(new LayerRule(".*ST_PARKING$", 117));
+        LAYER_RULES.add(new LayerRule(".*MECH_PARKING$", 118));
+        LAYER_RULES.add(new LayerRule(".*VISITOR_PARKING$", 119));
+        LAYER_RULES.add(new LayerRule(".*SPECIAL_PARKING$", 120));
+        LAYER_RULES.add(new LayerRule("^TWO_WHEELER_PARKING$", 132));
+        LAYER_RULES.add(new LayerRule("^DA_PARKING$", 134));
+        LAYER_RULES.add(new LayerRule("^LOADING_UNLOADING$", 133));
+
+        // --- UNIT AREA & LIFTS (Added from previous tables) ---
+        LAYER_RULES.add(new LayerRule(".*UNITFA$", 126));
+        LAYER_RULES.add(new LayerRule(".*UNITFA_DEDUCT$", 127));
+        LAYER_RULES.add(new LayerRule(".*LIFT_k$", 128));
+        LAYER_RULES.add(new LayerRule(".*DA_LIFT$", 138));
+
+        // --- DOORS, WINDOWS & SERVICES ---
+        LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_n_DOOR_n$", 139));
+        LAYER_RULES.add(new LayerRule(".*WINDOW_n$", 140));
+        LAYER_RULES.add(new LayerRule(".*NON_HABITATIONAL_DOOR_n$", 46));
+        LAYER_RULES.add(new LayerRule("^SOLAR_PANEL$", 143));
+        LAYER_RULES.add(new LayerRule("^SOLAR_WATER_HEATER$", 144));
+        LAYER_RULES.add(new LayerRule("^WASTE_MANAGEMENT$", 14));
+        LAYER_RULES.add(new LayerRule(".*SHADE_OVERHANG$", 3));
+        LAYER_RULES.add(new LayerRule(".*FIRE_TENDER_MOVEMENT$", 148));
+        LAYER_RULES.add(new LayerRule("^MAIN_GATE$", 1));
+        LAYER_RULES.add(new LayerRule("^DIST_EXIT$", 149));
+        LAYER_RULES.add(new LayerRule(".*BLT_UP_AREA_DEDUCT_.*$", 147));
+    }
+
+    public static int resolveLayerColor(String layerName) {
+        try {
+            if (StringUtils.isBlank(layerName)) {
+                throw new IllegalArgumentException("Layer name cannot be null or empty.");
+            }
+            final String normalized = layerName.trim().toUpperCase();
+            return LAYER_RULES.stream()
+                    .filter(rule -> rule.pattern.matcher(normalized).matches())
+                    .map(rule -> rule.colorCode)
+                    .findFirst()
+                    .orElseThrow(() -> new NoSuchElementException("Layer '" + layerName + "' is not defined in building plan standards."));
+
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            LOG.error("Color Resolution Failed: " + e.getMessage());
+            return -1;
+        } catch (Exception e) {
+            LOG.error("Unexpected error resolving layer: " + layerName, e);
+            return -1;
+        }
+    }
+    
+    /**
+     * Resolves color codes for specific features (Length, Width, Treads) within a layer.
+     * This prevents impact on the standard resolveLayerColor method.
+     */
+    public static int resolveLayerFeatureColor(String layerName, String feature) {
+        try {
+            if (StringUtils.isBlank(layerName) || StringUtils.isBlank(feature)) {
+                throw new IllegalArgumentException("Layer name and Feature cannot be null.");
+            }
+
+            // Combine layer name and feature to match the sub-rules (e.g., "STAIR_1_FLIGHT_1_LENGTH")
+            final String lookupName = layerName.trim().toUpperCase() + "_" + feature.trim().toUpperCase();
+
+            return LAYER_RULES.stream()
+                    .filter(rule -> rule.pattern.matcher(lookupName).matches())
+                    .map(rule -> rule.colorCode)
+                    .findFirst()
+                    .orElseThrow(() -> new NoSuchElementException("Feature '" + feature + "' not found for layer: " + layerName));
+
+        } catch (Exception e) {
+            LOG.error("Feature Resolution Failed: " + e.getMessage());
+            return -1;
+        }
+    }
+    
+    public static void validateLayerColor(String layerName, int actualColorCode, PlanDetail pl) {
+        int expectedColorCode = resolveLayerColor(layerName);
+        if (expectedColorCode == -1) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put(LayerErrorType.INVALID_LAYER.getKey(layerName),LayerErrorType.INVALID_LAYER.getMessage(layerName));
+            pl.addErrors(errors);
+            return;
+        }
+
+        if (actualColorCode != expectedColorCode) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put(
+                    LayerErrorType.INVALID_COLOR.getKey(layerName),
+                    LayerErrorType.INVALID_COLOR.getMessage(layerName,expectedColorCode,actualColorCode));
+            pl.addErrors(errors);
+        }
+    }
+
+    public static void validateSubLayerColor(String layerName, String feature, int actualColorCode, PlanDetail pl) {
+        // 1. Resolve the expected sub-color (01, 02, 03, etc.)
+        int expectedColorCode = resolveLayerFeatureColor(layerName, feature);
+
+        // 2. Handle cases where the layer/feature combo isn't in our standards
+        if (expectedColorCode == -1) {
+            Map<String, String> errors = new HashMap<>();
+            // Using a unique key for the sub-layer error
+            String errorKey = "INVALID_SUB_LAYER_" + layerName + "_" + feature;
+            String message = String.format("Sub-feature '%s' is not defined for layer '%s'.", feature, layerName);
+            errors.put(errorKey, message);
+            pl.addErrors(errors);
+            return;
+        }
+
+        // 3. Compare the actual DXF entity color against the expected sub-color
+        if (actualColorCode != expectedColorCode) {
+            Map<String, String> errors = new HashMap<>();
+            String errorKey = "INVALID_SUB_COLOR_" + layerName + "_" + feature;
+            String message = String.format("Invalid color for %s on layer %s. Expected: %d, Found: %d", 
+                                            feature, layerName, expectedColorCode, actualColorCode);
+            errors.put(errorKey, message);
+            pl.addErrors(errors);
+        }
+    }
+    
+    public static Map<String, String> getColorByDimensionByLayer(PlanDetail planDetail,String name) {
+        Map<String, String> result = new HashMap<>();
+        if (planDetail == null || planDetail.getDoc() == null || name == null) {
+            return result;
+        }
+        DXFDocument dxfDocument = planDetail.getDoc();
+        String layerName = name.trim().toUpperCase();
+        DXFLayer dxfLayer = dxfDocument.getDXFLayer(layerName);
+        if (dxfLayer != null && dxfLayer.getName().equalsIgnoreCase(layerName)) {
+            List<?> dxfEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION);
+            if (dxfEntities != null && !dxfEntities.isEmpty()) {
+                Object entity = dxfEntities.get(0);
+                if (entity instanceof DXFDimension) {
+                    int colorCode = ((DXFDimension) entity).getColor();
+                    result.put("layerName", layerName);
+                    result.put("colorCode", String.valueOf(colorCode));
+                    return result;
+                }
+            }
+        }
+
+        // Optional fallback
+        result.put("layerName", layerName);
+        result.put("colorCode", "0");
+
+        return result;
+    }
+    
+    public static Map<String, String> getColorByDimensionByLayerByColorCode(PlanDetail planDetail,String name, int expectedColorCode) {
+    	Map<String, String> result = new HashMap<>();
+
+        if (planDetail == null || planDetail.getDoc() == null || name == null) {
+            return result;
+        }
+
+        DXFDocument dxfDocument = planDetail.getDoc();
+        String layerName = name.trim().toUpperCase();
+        DXFLayer dxfLayer = dxfDocument.getDXFLayer(layerName);
+        if (dxfLayer != null && dxfLayer.getName().equalsIgnoreCase(layerName)) {
+            List<?> dxfEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION);
+            if (dxfEntities != null && !dxfEntities.isEmpty()) {
+                for (Object entity : dxfEntities) {
+                    if (entity instanceof DXFDimension) {
+                        DXFDimension dimension = (DXFDimension) entity;
+                        int actualColorCode = dimension.getColor();
+                        if (actualColorCode == expectedColorCode) {
+                            result.put("layerName", layerName);
+                            result.put("colorCode", String.valueOf(actualColorCode));
+                            return result;
+                        }
+                    }
+                }
+            }
+        }
+        result.put("layerName", layerName);
+        result.put("colorCode", "0");
+        return result;
+    }
+    
+    public static int getColorByPolyLine(List<DXFLWPolyline> polyLinesByLayer) {
+    	if (polyLinesByLayer !=null && !polyLinesByLayer.isEmpty()) {
+    		return polyLinesByLayer.get(0).getColor();
+        }
+        return 0;
+    }
+    
     public static List<Point> findPointsOnPolylines(List<Point> yardInSidePoints) {
         Point old = null;
         Point point1 = new Point();
@@ -593,8 +855,8 @@ public class Util {
          */
         return values;
 
-    }
-
+    } 
+    
     public static String getMtextByLayerName(DXFDocument doc, String name) {
         if (name == null)
             return null;

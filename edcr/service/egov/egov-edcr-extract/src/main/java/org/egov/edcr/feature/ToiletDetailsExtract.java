@@ -72,9 +72,14 @@ public class ToiletDetailsExtract extends FeatureExtract {
                         List<DXFLWPolyline> toiletVentilationMeasurements = Util.getPolyLinesByLayer(planDetail.getDoc(), ventilationHeightLayer);
                         String windowHeight = Util.getMtextByLayerName(planDetail.getDoc(), ventilationHeightLayer);
 
-                        BigDecimal windowHeight1 = windowHeight != null
-                                ? BigDecimal.valueOf(Double.parseDouble(windowHeight.replaceAll("WINDOW_HT_M=", "")))
-                                : BigDecimal.ZERO;
+//                        BigDecimal windowHeight1 = windowHeight != null
+//                                ? BigDecimal.valueOf(Double.parseDouble(windowHeight.trim().replaceAll("WINDOW_HT_M=", "")))
+//                                : BigDecimal.ZERO;
+                        BigDecimal windowHeight1 = BigDecimal.ZERO;
+                        if (windowHeight != null && windowHeight.contains("=")) {
+						    String value = windowHeight.split("=")[1].trim();
+						    windowHeight1 = new BigDecimal(value);
+						}
 
                         for (Toilet toiletObj : toilets) {
                             toiletObj.setToiletVentilation(windowHeight1);

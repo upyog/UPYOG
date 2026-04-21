@@ -30,14 +30,17 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.io.RandomAccessBufferedFileInputStream;
 import org.apache.pdfbox.io.RandomAccessRead;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.egov.common.entity.edcr.Plan;
@@ -166,7 +169,7 @@ public class EdcrApplicationService {
     private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType, EdcrRequest edcrRequest){
         Plan planDetail = new Plan();
         planDetail = planService.process(edcrApplication, applicationType, edcrRequest);
-        updateFile(planDetail, edcrApplication);
+        //updateFile(planDetail, edcrApplication);
         edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
         return planDetail;
     }
@@ -456,130 +459,454 @@ public class EdcrApplicationService {
 //        }
 //    }
     
+    private File mergePdfFiles(File pdf1, File pdf2, String outputFileName) throws IOException {
 
+        LOG.info("🔗 Merging PDFs: {} + {}", pdf1.getName(), pdf2.getName());
 
-private void updateFile(Plan pl, EdcrApplication edcrApplication) {
-    long start = System.currentTimeMillis();
-    String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
-    String newFileName = edcrApplication.getDxfFile().getOriginalFilename()
-            .replace(".dxf", "_system_scrutinized.pdf");
-    File finalOutputFile = new File(newFileName);
+        File mergedFile = new File(outputFileName);
 
-    LOG.info("🔄 Starting scrutinized PDF generation for: {}", newFileName);
+        PDFMergerUtility merger = new PDFMergerUtility();
+        merger.setDestinationFileName(mergedFile.getAbsolutePath());
 
-    File tempPdf = null;
-    try {
-        // --- Step 1: Convert DXF → PDF using Aspose CAD ---
-        tempPdf = File.createTempFile("scrutinized_", ".pdf");
-        LOG.debug("Temporary PDF path: {}", tempPdf.getAbsolutePath());
+        merger.addSource(pdf1);
+        merger.addSource(pdf2);
 
-        try (Image cadImage = Image.load(filePath);
-             FileOutputStream tempOut = new FileOutputStream(tempPdf)) {
+        // Use temp file strategy to avoid memory issues
+        merger.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
 
-            PdfOptions pdfOptions = new PdfOptions();
-            CadRasterizationOptions rasterOpts = new CadRasterizationOptions();
-            rasterOpts.setBackgroundColor(Color.getWhite());
-            rasterOpts.setDrawType(CadDrawTypeMode.UseObjectColor);
-            rasterOpts.setPageWidth(2480); // ~A4 horizontal, smaller to reduce memory
-            rasterOpts.setPageHeight(3508); // ~A4 vertical
-            rasterOpts.setAutomaticLayoutsScaling(true);
-            rasterOpts.setNoScaling(false);
-            pdfOptions.setVectorRasterizationOptions(rasterOpts);
+        LOG.info("✅ PDF merge completed: {}", mergedFile.getAbsolutePath());
 
-            cadImage.save(tempOut, pdfOptions);
-            LOG.debug("✅ CAD to PDF conversion complete.");
-        } catch (OutOfMemoryError oom) {
-            LOG.error("❌ OutOfMemoryError while converting DXF → PDF: {}", filePath, oom);
-            throw oom;
-        } catch (Exception ex) {
-            LOG.error("❌ Error converting DXF → PDF: {}", filePath, ex);
-            throw ex;
-        }
+        return mergedFile;
+    }
 
-        // --- Step 2: Post-process PDF (timestamp, incremental save) ---
-        try (RandomAccessBufferedFileInputStream rar = new RandomAccessBufferedFileInputStream(tempPdf);
-             PDDocument document = PDDocument.load(rar);
-             BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(finalOutputFile))) {
+//private void updateFile(Plan pl, EdcrApplication edcrApplication) {
+//    long start = System.currentTimeMillis();
+//    String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
+//    String newFileName = edcrApplication.getDxfFile().getOriginalFilename()
+//            .replace(".dxf", "_system_scrutinized.pdf");
+//    File finalOutputFile = new File(newFileName);
+//
+//    LOG.info("🔄 Starting scrutinized PDF generation for: {}", newFileName);
+//
+//    File tempPdf = null;
+//    try {
+//        // --- Step 1: Convert DXF → PDF using Aspose CAD ---
+//        tempPdf = File.createTempFile("scrutinized_", ".pdf");
+//        LOG.debug("Temporary PDF path: {}", tempPdf.getAbsolutePath());
+//
+//        try (Image cadImage = Image.load(filePath);
+//             FileOutputStream tempOut = new FileOutputStream(tempPdf)) {
+//
+//            PdfOptions pdfOptions = new PdfOptions();
+//            CadRasterizationOptions rasterOpts = new CadRasterizationOptions();
+//            rasterOpts.setBackgroundColor(Color.getWhite());
+//            rasterOpts.setDrawType(CadDrawTypeMode.UseObjectColor);
+//            rasterOpts.setPageWidth(2480); // ~A4 horizontal, smaller to reduce memory
+//            rasterOpts.setPageHeight(3508); // ~A4 vertical
+//            rasterOpts.setAutomaticLayoutsScaling(true);
+//            rasterOpts.setNoScaling(false);
+//            pdfOptions.setVectorRasterizationOptions(rasterOpts);
+//
+//            cadImage.save(tempOut, pdfOptions);
+//            LOG.debug("✅ CAD to PDF conversion complete.");
+//        } catch (OutOfMemoryError oom) {
+//            LOG.error("❌ OutOfMemoryError while converting DXF → PDF: {}", filePath, oom);
+//            throw oom;
+//        } catch (Exception ex) {
+//            LOG.error("❌ Error converting DXF → PDF: {}", filePath, ex);
+//            throw ex;
+//        }
+//
+//        // --- Step 2: Post-process PDF (timestamp, incremental save) ---
+//        try (RandomAccessBufferedFileInputStream rar = new RandomAccessBufferedFileInputStream(tempPdf);
+//             PDDocument document = PDDocument.load(rar);
+//             BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(finalOutputFile))) {
+//
+//            PDPage page = document.getPage(0);
+//            float pageWidth = page.getMediaBox().getWidth();
+//            float pageHeight = page.getMediaBox().getHeight();
+//
+//            // Set initial view to center
+//            PDPageXYZDestination dest = new PDPageXYZDestination();
+//            dest.setPage(page);
+//            dest.setLeft((int) (pageWidth / 2f));
+//            dest.setTop((int) (pageHeight / 2f));
+//            dest.setZoom(1.0f);
+//            document.getDocumentCatalog().setOpenAction(dest);
+//
+//            try (PDPageContentStream contentStream = new PDPageContentStream(
+//                    document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+//
+//                PDExtendedGraphicsState gs = new PDExtendedGraphicsState();
+//                gs.setNonStrokingAlphaConstant(0.7f);
+//                contentStream.setGraphicsStateParameters(gs);
+//
+//                // --- (COMMENTED WATERMARK IMAGE CODE - preserved) ---
+////                InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
+////                java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
+////                PDImageXObject image = LosslessFactory.createFromImage(document, image1);
+////                float scale = 10f;
+////                float watermarkWidth = image.getWidth() * scale;
+////                float watermarkHeight = image.getHeight() * scale;
+////                float watermarkXPos = (pageWidth - watermarkWidth) / 2;
+////                float watermarkYPos = (pageHeight - watermarkHeight) / 2;
+////                contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
+//
+//                // --- Add timestamp ---
+//                String timestamp = LocalDateTime.now().format(TS_FORMAT);
+//                float fontSize = 24f;
+//                contentStream.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
+//                float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000f) * fontSize;
+//
+//                float xPos = Math.max(20, pageWidth - textWidth - 20);
+//                float yPos = 20f;
+//                contentStream.beginText();
+//                contentStream.newLineAtOffset(xPos, yPos);
+//                contentStream.showText(timestamp);
+//                contentStream.endText();
+//            }
+//
+//            // Incremental save to reduce memory usage
+//            document.saveIncremental(out);
+//            LOG.info("✅ PDF timestamp appended incrementally.");
+//
+//        } catch (Exception pdfEx) {
+//            LOG.error("❌ Error during PDF post-processing for '{}': {}", newFileName, pdfEx.getMessage(), pdfEx);
+//            throw pdfEx;
+//        }
+//
+//        // --- Step 3: Store to Filestore ---
+//        try {
+//            FileStoreMapper fileStoreMapper = fileStoreService.store(
+//                    finalOutputFile, finalOutputFile.getName(),
+//                    edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
+//
+//            edcrApplication.getEdcrApplicationDetails()
+//                    .get(0).setScrutinizedDxfFileId(fileStoreMapper);
+//
+//            LOG.info("📁 File stored successfully in filestore: {}", 
+//                    fileStoreMapper != null ? fileStoreMapper.getFileStoreId() : "null");
+//        } catch (Exception storeEx) {
+//            LOG.error("❌ Failed to store generated PDF in filestore: {}", storeEx.getMessage(), storeEx);
+//            throw storeEx;
+//        }
+//
+//    } catch (Exception e) {
+//        LOG.error("🚨 Error in updateFile() for '{}': {}", newFileName, e.getMessage(), e);
+//    } finally {
+//        if (tempPdf != null && tempPdf.exists() && !tempPdf.delete()) {
+//            LOG.warn("⚠️ Temporary PDF not deleted: {}", tempPdf.getAbsolutePath());
+//        }
+//        long elapsed = System.currentTimeMillis() - start;
+//        LOG.info("⚡ updateFile() completed in {} ms → {}", elapsed, newFileName);
+//    }
+//}
+    
+//    private File overlayPlotDetails(File inputPdf, String outputFileName) throws IOException {
+//
+//        LOG.info("🖊️ Overlaying plot details on PDF: {}", inputPdf.getName());
+//
+//        File outputFile = new File(outputFileName);
+//
+//        try (PDDocument document = PDDocument.load(inputPdf)) {
+//
+//            for (PDPage page : document.getPages()) {
+//
+//                float pageWidth = page.getMediaBox().getWidth();
+//                float pageHeight = page.getMediaBox().getHeight();
+//
+//                // ✅ TOP-LEFT position (just below Aspose watermark)
+//                float startX = 500f;
+//
+//                // 🔥 IMPORTANT: Push BELOW watermark safely
+//                float startY = pageHeight - 920f;  
+//                // adjust 120 → 150 if still overlapping
+//
+//                float lineHeight = 18f;
+//
+//                try (PDPageContentStream contentStream = new PDPageContentStream(
+//                        document,
+//                        page,
+//                        PDPageContentStream.AppendMode.APPEND,
+//                        true,
+//                        true)) {
+//
+//                    // ✅ Strong visible text
+//                    contentStream.setNonStrokingColor(0, 0, 255); // BLUE
+//                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+//
+//                    PDExtendedGraphicsState gs = new PDExtendedGraphicsState();
+//                    gs.setNonStrokingAlphaConstant(1f);
+//                    contentStream.setGraphicsStateParameters(gs);
+//
+//                    // --- Dummy Data ---
+//                    String fileNo = "FILE-12345";
+//                    String professionalName = "John Doe";
+//
+//                    String totalPlotArea = "188.28";
+//                    String groundCoverage = "122.09";
+//                    String builtUpArea = "325.45";
+//
+//                    contentStream.beginText();
+//                    contentStream.newLineAtOffset(startX, startY);
+//
+//                    contentStream.showText("File No: " + fileNo);
+//                    contentStream.newLineAtOffset(0, -lineHeight);
+//
+//                    contentStream.showText("Professional Name: " + professionalName);
+//                    contentStream.newLineAtOffset(0, -lineHeight * 2);
+//
+//                    contentStream.showText("Total Plot Area: " + totalPlotArea);
+//                    contentStream.newLineAtOffset(0, -lineHeight);
+//
+//                    contentStream.showText("Ground Coverage: " + groundCoverage);
+//                    contentStream.newLineAtOffset(0, -lineHeight);
+//
+//                    contentStream.showText("Built Up Area: " + builtUpArea);
+//
+//                    contentStream.endText();
+//                }
+//            }
+//
+//            document.save(outputFile);
+//        }
+//
+//        LOG.info("✅ Plot details placed below Aspose watermark");
+//        return outputFile;
+//    }
+    
+    private File overlayPlotDetails(File inputPdf, String outputFileName) throws IOException {
 
-            PDPage page = document.getPage(0);
-            float pageWidth = page.getMediaBox().getWidth();
-            float pageHeight = page.getMediaBox().getHeight();
+        LOG.info("🖊️ Overlaying plot details on PDF: {}", inputPdf.getName());
 
-            // Set initial view to center
-            PDPageXYZDestination dest = new PDPageXYZDestination();
-            dest.setPage(page);
-            dest.setLeft((int) (pageWidth / 2f));
-            dest.setTop((int) (pageHeight / 2f));
-            dest.setZoom(1.0f);
-            document.getDocumentCatalog().setOpenAction(dest);
+        File outputFile = new File(outputFileName);
 
-            try (PDPageContentStream contentStream = new PDPageContentStream(
-                    document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+        try (PDDocument document = PDDocument.load(inputPdf)) {
 
-                PDExtendedGraphicsState gs = new PDExtendedGraphicsState();
-                gs.setNonStrokingAlphaConstant(0.7f);
-                contentStream.setGraphicsStateParameters(gs);
+            for (PDPage page : document.getPages()) {
 
-                // --- (COMMENTED WATERMARK IMAGE CODE - preserved) ---
-//                InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
-//                java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
-//                PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-//                float scale = 10f;
-//                float watermarkWidth = image.getWidth() * scale;
-//                float watermarkHeight = image.getHeight() * scale;
-//                float watermarkXPos = (pageWidth - watermarkWidth) / 2;
-//                float watermarkYPos = (pageHeight - watermarkHeight) / 2;
-//                contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
+                float pageWidth = page.getMediaBox().getWidth();
+                float pageHeight = page.getMediaBox().getHeight();
 
-                // --- Add timestamp ---
-                String timestamp = LocalDateTime.now().format(TS_FORMAT);
-                float fontSize = 24f;
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
-                float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000f) * fontSize;
+                // ✅ TOP-LEFT position (just below Aspose watermark)
+                float startX = 500f;
 
-                float xPos = Math.max(20, pageWidth - textWidth - 20);
-                float yPos = 20f;
-                contentStream.beginText();
-                contentStream.newLineAtOffset(xPos, yPos);
-                contentStream.showText(timestamp);
-                contentStream.endText();
+                // 🔥 IMPORTANT: Push BELOW watermark safely
+                float startY = pageHeight - 920f;  
+                // adjust 120 → 150 if still overlapping
+
+                //float lineHeight = 18f;
+                
+                float rowHeight = 25f;
+                float col1Width = 200f;
+                float col2Width = 150f;
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(
+                        document,
+                        page,
+                        PDPageContentStream.AppendMode.APPEND,
+                        true,
+                        true)) {
+
+                    // 🔵 Border color
+                    contentStream.setStrokingColor(0, 0, 0); // black borders
+
+                    // ✅ Strong visible text
+                    //contentStream.setNonStrokingColor(0, 0, 255); // BLUE
+                 // 🔵 Text color
+                    contentStream.setNonStrokingColor(0, 0, 255); // blue text
+                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+
+                    // --- Dummy Data ---
+                    String[][] tableData = {
+                            {"File No", "FILE-12345"},
+                            {"Professional Name", "John Doe"},
+                            {"Total Plot Area", "188.28"},
+                            {"Ground Coverage", "122.09"},
+                            {"Built Up Area", "325.45"}
+                    };
+
+                    int rows = tableData.length;
+                    float tableWidth = col1Width + col2Width;
+
+                    // =========================
+                    // ✅ DRAW TABLE GRID
+                    // =========================
+
+                    float yPosition = startY;
+
+                    for (int i = 0; i <= rows; i++) {
+                        contentStream.moveTo(startX, yPosition - i * rowHeight);
+                        contentStream.lineTo(startX + tableWidth, yPosition - i * rowHeight);
+                    }
+
+                    // Vertical lines
+                    contentStream.moveTo(startX, yPosition);
+                    contentStream.lineTo(startX, yPosition - rows * rowHeight);
+
+                    contentStream.moveTo(startX + col1Width, yPosition);
+                    contentStream.lineTo(startX + col1Width, yPosition - rows * rowHeight);
+
+                    contentStream.moveTo(startX + tableWidth, yPosition);
+                    contentStream.lineTo(startX + tableWidth, yPosition - rows * rowHeight);
+
+                    contentStream.stroke();
+
+                    // =========================
+                    // ✅ ADD TEXT INTO TABLE
+                    // =========================
+
+                    float textXOffset = 5f;
+                    float textYOffset = 17f;
+
+                    for (int i = 0; i < rows; i++) {
+
+                        float textY = yPosition - (i * rowHeight) - textYOffset;
+
+                        // Column 1
+                        contentStream.beginText();
+                        contentStream.newLineAtOffset(startX + textXOffset, textY);
+                        contentStream.showText(tableData[i][0]);
+                        contentStream.endText();
+
+                        // Column 2
+                        contentStream.beginText();
+                        contentStream.newLineAtOffset(startX + col1Width + textXOffset, textY);
+                        contentStream.showText(tableData[i][1]);
+                        contentStream.endText();
+                    }
+                }
             }
 
-            // Incremental save to reduce memory usage
-            document.saveIncremental(out);
-            LOG.info("✅ PDF timestamp appended incrementally.");
-
-        } catch (Exception pdfEx) {
-            LOG.error("❌ Error during PDF post-processing for '{}': {}", newFileName, pdfEx.getMessage(), pdfEx);
-            throw pdfEx;
+            document.save(outputFile);
         }
 
-        // --- Step 3: Store to Filestore ---
+        LOG.info("✅ Table overlay added successfully");
+        return outputFile;
+    }
+
+
+    
+    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
+        long start = System.currentTimeMillis();
+        String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
+
+        String newFileName = edcrApplication.getDxfFile().getOriginalFilename()
+                .replace(".dxf", "_system_scrutinized.pdf");
+
+        File finalOutputFile = new File(newFileName);
+
+        LOG.info("🔄 Starting scrutinized PDF generation for: {}", newFileName);
+
+        File tempPdf = null;
+        File processedPdf = null;
+        File overlayedPdf = null;
+
         try {
+            // --- Step 1: Convert DXF → PDF ---
+            tempPdf = File.createTempFile("scrutinized_", ".pdf");
+
+            try (Image cadImage = Image.load(filePath);
+                 FileOutputStream tempOut = new FileOutputStream(tempPdf)) {
+
+                PdfOptions pdfOptions = new PdfOptions();
+                CadRasterizationOptions rasterOpts = new CadRasterizationOptions();
+                rasterOpts.setBackgroundColor(Color.getWhite());
+                rasterOpts.setDrawType(CadDrawTypeMode.UseObjectColor);
+                rasterOpts.setPageWidth(2480);
+                rasterOpts.setPageHeight(3508);
+                rasterOpts.setAutomaticLayoutsScaling(true);
+
+                pdfOptions.setVectorRasterizationOptions(rasterOpts);
+
+                cadImage.save(tempOut, pdfOptions);
+            }
+
+            // --- Step 2: Post-process PDF (timestamp only) ---
+            processedPdf = File.createTempFile("processed_", ".pdf");
+
+            try (RandomAccessBufferedFileInputStream rar = new RandomAccessBufferedFileInputStream(tempPdf);
+                 PDDocument document = PDDocument.load(rar);
+                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(processedPdf))) {
+
+                PDPage page = document.getPage(0);
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(
+                        document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+
+                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 20);
+                    contentStream.setNonStrokingColor(0, 0, 255); // Blue timestamp
+
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(50, 50);
+                    contentStream.showText(LocalDateTime.now().format(TS_FORMAT));
+                    contentStream.endText();
+                }
+
+                document.saveIncremental(out);
+            }
+
+            // ✅ --- Step 2.5: APPLY OVERLAY ON FIRST PDF ---
+            overlayedPdf = File.createTempFile("overlayed_", ".pdf");
+
+            //overlayPlotDetails(processedPdf, overlayedPdf.getAbsolutePath());
+         // Step 2.5: Overlay text
+            overlayedPdf = File.createTempFile("overlayed_", ".pdf");
+            overlayPlotDetails(processedPdf, overlayedPdf.getAbsolutePath());
+            
+         // Step 2.6: Add signature
+            File signedPdf = File.createTempFile("signed_", ".pdf");
+
+            addSignatureImage(
+                    overlayedPdf,
+                    "C:\\Users\\KPMG\\Downloads\\signature.png", // 👈 your image path
+                    signedPdf.getAbsolutePath()
+            );
+
+            // --- Step 3: Merge with second PDF ---
+            File secondPdf = new File("C:\\Users\\KPMG\\Downloads\\pb_pdfgen_April_13_1776054343227zMpXRPKQXf.pdf");
+
+            if (!secondPdf.exists()) {
+                throw new FileNotFoundException("Second PDF not found: " + secondPdf.getAbsolutePath());
+            }
+
+//            File mergedOutput = mergePdfFiles(
+//                    overlayedPdf,
+//                    secondPdf,
+//                    finalOutputFile.getAbsolutePath()
+//            );
+
+            File mergedOutput = mergePdfFiles(
+                    signedPdf,   // 👈 USE SIGNED PDF
+                    secondPdf,
+                    finalOutputFile.getAbsolutePath()
+            );
+
+            // --- Step 4: Store ---
             FileStoreMapper fileStoreMapper = fileStoreService.store(
-                    finalOutputFile, finalOutputFile.getName(),
-                    edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
+                    mergedOutput,
+                    mergedOutput.getName(),
+                    edcrApplication.getDxfFile().getContentType(),
+                    FILESTORE_MODULECODE
+            );
 
             edcrApplication.getEdcrApplicationDetails()
                     .get(0).setScrutinizedDxfFileId(fileStoreMapper);
 
-            LOG.info("📁 File stored successfully in filestore: {}", 
-                    fileStoreMapper != null ? fileStoreMapper.getFileStoreId() : "null");
-        } catch (Exception storeEx) {
-            LOG.error("❌ Failed to store generated PDF in filestore: {}", storeEx.getMessage(), storeEx);
-            throw storeEx;
-        }
+            LOG.info("📁 File stored successfully");
 
-    } catch (Exception e) {
-        LOG.error("🚨 Error in updateFile() for '{}': {}", newFileName, e.getMessage(), e);
-    } finally {
-        if (tempPdf != null && tempPdf.exists() && !tempPdf.delete()) {
-            LOG.warn("⚠️ Temporary PDF not deleted: {}", tempPdf.getAbsolutePath());
+        } catch (Exception e) {
+            LOG.error("🚨 Error in updateFile(): {}", e.getMessage(), e);
+        } finally {
+            if (tempPdf != null) tempPdf.delete();
+            if (processedPdf != null) processedPdf.delete();
+            if (overlayedPdf != null) overlayedPdf.delete();
+
+            LOG.info("⚡ Completed in {} ms", System.currentTimeMillis() - start);
         }
-        long elapsed = System.currentTimeMillis() - start;
-        LOG.info("⚡ updateFile() completed in {} ms → {}", elapsed, newFileName);
     }
-}
+
+
     
 //    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
 //        long start = System.currentTimeMillis();
@@ -730,6 +1057,48 @@ private void updateFile(Plan pl, EdcrApplication edcrApplication) {
      LOG.warn("⚠️ Failed to delete file after {} retries: {}", maxRetries, path);
      return false;
  }
+
+ private File addSignatureImage(File inputPdf, String imagePath, String outputFileName) throws IOException {
+
+	    LOG.info("✍️ Adding signature to PDF: {}", inputPdf.getName());
+
+	    File outputFile = new File(outputFileName);
+
+	    try (PDDocument document = PDDocument.load(inputPdf)) {
+
+	        for (PDPage page : document.getPages()) {
+
+	            float pageWidth = page.getMediaBox().getWidth();
+	            float pageHeight = page.getMediaBox().getHeight();
+
+	            // Load image
+	            PDImageXObject image = PDImageXObject.createFromFile(imagePath, document);
+
+	            // 🔥 Signature size (adjust if needed)
+	            float imageWidth = 150f;
+	            float imageHeight = 50f;
+
+	            // 🔥 Bottom-right position
+	            float x = pageWidth - imageWidth - 20; // right margin
+	            float y = 20; // bottom margin
+
+	            try (PDPageContentStream contentStream = new PDPageContentStream(
+	                    document,
+	                    page,
+	                    PDPageContentStream.AppendMode.APPEND,
+	                    true,
+	                    true)) {
+
+	                contentStream.drawImage(image, x, y, imageWidth, imageHeight);
+	            }
+	        }
+
+	        document.save(outputFile);
+	    }
+
+	    LOG.info("✅ Signature added successfully: {}", outputFile.getAbsolutePath());
+	    return outputFile;
+	}
 
     
     

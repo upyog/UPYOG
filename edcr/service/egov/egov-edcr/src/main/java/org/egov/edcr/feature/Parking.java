@@ -464,18 +464,33 @@ public class Parking extends FeatureProcess {
         	}
         }else if (mostRestrictiveOccupancy != null && F.equals(mostRestrictiveOccupancy.getType().getCode())) {
             BigDecimal plotCoveredArea = pl.getVirtualBuilding().getTotalCoverageArea();
-            if (plotCoveredArea != null && plotCoveredArea.compareTo(BigDecimal.ZERO) > 0) {
-                // 1 ECS per 50 sqm
-                BigDecimal divisor = BigDecimal.valueOf(50);
-
-                // Divide and always round UP since ECS must be whole
-                BigDecimal requiredParking = plotCoveredArea.divide(divisor, 0, RoundingMode.HALF_UP);
-
-                noOfrequiredParking = requiredParking.intValue();
+//            if (plotCoveredArea != null && plotCoveredArea.compareTo(BigDecimal.ZERO) > 0) {
+//                BigDecimal divisor = BigDecimal.valueOf(50);
+//                BigDecimal requiredParking = plotCoveredArea.divide(divisor, 0, RoundingMode.HALF_UP);
+//                noOfrequiredParking = requiredParking.intValue();
+//            }
+            if (plotCoveredArea == null || plotCoveredArea.compareTo(BigDecimal.ZERO) <= 0) {
+                HashMap<String, String> errors = new HashMap<>();
+                errors.put("Plot Area Error:", "Plot covered area must be greater than 0.");
+                pl.addErrors(errors);
+            } else {            	
+            	String subType = mostRestrictiveOccupancy.getSubtype().getCode();
+            	Integer multiplier = getFTypeMultiplier(subType);
+            	BigDecimal divisor = getFTypeDivisor(subType);
+            	if (multiplier == null) {
+            	    HashMap<String, String> errors = new HashMap<>();
+            	    errors.put("Parking Calculation Error",
+            	            "No ECS rule defined for subtype: " + subType);
+            	    pl.addErrors(errors);
+            	} else {
+            	    int baseEcs = plotCoveredArea
+            	            .divide(divisor, 0, RoundingMode.HALF_UP)
+            	            .intValue();
+            	    noOfrequiredParking = baseEcs * multiplier;
+            	}
             }
         } else if (mostRestrictiveOccupancy != null && G.equals(mostRestrictiveOccupancy.getType().getCode())) {
             BigDecimal plotCoveredArea = pl.getVirtualBuilding().getTotalCoverageArea();
-
             if (plotCoveredArea == null || plotCoveredArea.compareTo(BigDecimal.ZERO) <= 0) {
                 HashMap<String, String> errors = new HashMap<>();
                 errors.put("Plot Area Error:", "Plot covered area must be greater than 0.");
@@ -489,124 +504,11 @@ public class Parking extends FeatureProcess {
             	            "No ECS rule defined for subtype: " + subType);
             	    pl.addErrors(errors);
             	} else {
-            	    // Divide first and round UP
             	    int baseEcs = plotCoveredArea
             	            .divide(BigDecimal.valueOf(100), 0, RoundingMode.CEILING)
             	            .intValue();
-            	    // Multiply after rounding
             	    noOfrequiredParking = baseEcs * multiplier;
             	}
-
-            	
-////                String subType = mostRestrictiveOccupancy.getSubtype().getCode();
-////                BigDecimal divisor = BigDecimal.valueOf(100); // default
-////                int multiplier = 1; // default
-////                boolean ruleFound = true;
-////
-////                switch (subType) {
-////                    case "G-I": // Industrial
-////                    case "G-F": // Factory
-////                    case "G-S": // Storage
-////                    case "G-H": // Hazard
-////                    case "G-T": // Textile
-////                    case "G-K": // Knitwear
-////                    case "G-RS": // Retail
-////                    case "G-SP": // Sports Industry
-////                        divisor = BigDecimal.valueOf(100);
-////                        multiplier = 1;
-////                        break;
-////
-////                    case "G-W": // Warehouse
-////                    case "G-IT": // IT Units
-////                    case "G-GI": // General Industry
-////                        divisor = BigDecimal.valueOf(100);
-////                        multiplier = 2;
-////                        break;
-////
-////                    default:
-////                        ruleFound = false;
-////                        LOGGER.warn("No ECS rule defined for subtype: {}", subType);
-////                }
-////
-////                if (!ruleFound) {
-////                    HashMap<String, String> errors = new HashMap<>();
-////                    errors.put("Parking Calculation Error:", 
-////                        "No ECS rule defined for subtype: " + subType);
-////                    pl.addErrors(errors);
-////                } else {
-////                    // Calculate required ECS, always round UP
-////                    BigDecimal requiredParking = plotCoveredArea
-////                            .divide(divisor, 0, RoundingMode.HALF_UP)
-////                            .multiply(BigDecimal.valueOf(multiplier));
-////
-////                    noOfrequiredParking = requiredParking.intValue();
-////                }
-////            }
-//            	
-//            	String subType = mostRestrictiveOccupancy.getSubtype().getCode();
-//
-//            	BigDecimal divisor = BigDecimal.valueOf(100); // per 100 sqm
-//            	BigDecimal multiplier = BigDecimal.ZERO;
-//            	boolean ruleFound = true;
-//
-////            	Set<String> oneEcs = new HashSet<String>(Arrays.asList(
-////            	        "G-G","G-F","G-S","G-HI","G-RSI","G-TI","G-KI","G-SI"
-////            	));
-////
-////            	Set<String> twoEcs = new HashSet<String>(Arrays.asList(
-////            	        "G-GIP","G-GIF","G-ITF","G-WT"
-////            	));
-////
-////            	String type = (subType == null) ? "" : subType.trim().toUpperCase();
-////
-////            	if (oneEcs.contains(type)) {
-////            	    multiplier = BigDecimal.ONE;
-////            	}
-////            	else if (twoEcs.contains(type)) {
-////            	    multiplier = BigDecimal.valueOf(2);
-////            	}
-////            	else {
-////            	    ruleFound = false;
-////            	    LOGGER.warn("No ECS rule defined for subtype: {}", subType);
-////            	}
-//
-//            	Map<String, BigDecimal> ECS_RULES = new HashMap<String, BigDecimal>();
-//            	ECS_RULES.put("G-G", BigDecimal.ONE);
-//                ECS_RULES.put("G-F", BigDecimal.ONE);
-//                ECS_RULES.put("G-S", BigDecimal.ONE);
-//                ECS_RULES.put("G-HI", BigDecimal.ONE);
-//                ECS_RULES.put("G-RSI", BigDecimal.ONE);
-//                ECS_RULES.put("G-TI", BigDecimal.ONE);
-//                ECS_RULES.put("G-KI", BigDecimal.ONE);
-//                ECS_RULES.put("G-SI", BigDecimal.ONE);
-//
-//                ECS_RULES.put("G-GIP", BigDecimal.valueOf(2));
-//                ECS_RULES.put("G-GIF", BigDecimal.valueOf(2));
-//                ECS_RULES.put("G-ITF", BigDecimal.valueOf(2));
-//                ECS_RULES.put("G-WT", BigDecimal.valueOf(2));
-//                
-//                String type = (subType == null) ? "" : subType.trim().toUpperCase();
-//
-//                if (ECS_RULES.containsKey(type)) {
-//                    multiplier = ECS_RULES.get(type);
-//                } else {
-//                    ruleFound = false;
-//                    LOGGER.warn("No ECS rule defined for subtype: {}", subType);
-//                }
-//
-//            	if (!ruleFound) {
-//            	    HashMap<String, String> errors = new HashMap<>();
-//            	    errors.put("Parking Calculation Error",
-//            	            "No ECS rule defined for subtype: " + subType);
-//            	    pl.addErrors(errors);
-//            	} else {
-//            	    // ECS calculation → ALWAYS round UP
-//            	    BigDecimal requiredParking = plotCoveredArea
-//            	            .divide(divisor, 0, RoundingMode.CEILING)
-//            	            .multiply(multiplier);
-//            	    noOfrequiredParking = requiredParking.intValue();
-//            	}
-//            }
             }
         }else if (mostRestrictiveOccupancy != null && L.equals(mostRestrictiveOccupancy.getType().getCode())) {
         	BigDecimal plotCoveredArea = pl.getVirtualBuilding().getTotalCoverageArea();
@@ -633,9 +535,6 @@ public class Parking extends FeatureProcess {
             	}
             }
         }
-
-        
-        
 
         BigDecimal requiredCarParkingArea = Util.roundOffTwoDecimal(BigDecimal.valueOf(requiredCarParkArea));
         BigDecimal totalProvidedCarParkingArea = Util.roundOffTwoDecimal(totalProvidedCarParkArea);
@@ -1168,6 +1067,67 @@ public class Parking extends FeatureProcess {
             case "G-ITP":
                 return 2;
 
+            default:
+                return null;
+        }
+    }
+    
+    private Integer getFTypeMultiplier(String subType) {
+
+        if (subType == null) {
+            return null;
+        }
+
+        String type = subType.trim().toUpperCase();
+        switch (type) {
+            case "F":
+            case "F-RB":
+            case "F-SCC":
+            case "F-PO":
+            case "F-B":
+            case "F-VGP":
+            case "F-BU":
+                return 1;
+            case "F-HM":
+            case "F-LB":
+                return 2;
+            case "F-PFSF":
+            case "F-PFST":
+            case "F-PFSS":
+            case "F-PS":
+            case "F-CNGS":
+            	return 0;
+                
+            default:
+                return null;
+        }
+    }
+    
+    private BigDecimal getFTypeDivisor(String subType) {
+
+        if (subType == null) {
+            return null;
+        }
+
+        String type = subType.trim().toUpperCase();
+        switch (type) {
+            case "F":
+            case "F-RB":
+            case "F-SCC":
+            case "F-PO":
+            case "F-B":
+            case "F-VGP":
+            case "F-BU":
+                return BigDecimal.valueOf(50);
+            case "F-HM":
+            case "F-LB":
+            case "F-PFSF":
+            case "F-PFST":
+            case "F-PFSS":
+            case "F-PS":
+            case "F-CNGS":
+            	return BigDecimal.valueOf(100);
+                
             default:
                 return null;
         }
