@@ -223,11 +223,11 @@ public class AllotmentValidator {
 		}
 
 
-		if(allotementRequest.getAllotment().get(0).getWorkflow().getAction().equals(RLConstants.APPLY_RL_APPLICATION)) {
-			if(allotementRequest.getAllotment().get(0).getDocuments()==null||allotementRequest.getAllotment().get(0).getDocuments().isEmpty()) {
-					throw new CustomException("EG_RL_DOCUMENT INFO ERROR", "Document can't be empty in the request");
-			}
-		}
+		// if(allotementRequest.getAllotment().get(0).getWorkflow().getAction().equals(RLConstants.APPLY_RL_APPLICATION)) {
+		// 	if(allotementRequest.getAllotment().get(0).getDocuments()==null||allotementRequest.getAllotment().get(0).getDocuments().isEmpty()) {
+		// 			throw new CustomException("EG_RL_DOCUMENT INFO ERROR", "Document can't be empty in the request");
+		// 	}
+		// }
 
 //		long uniqueAadharNumberSet = owners.stream().map(owner -> owner.getAadharCardNumber().trim()).distinct().count();
 //		long uniquePanNumberSet = owners.stream().map(owner -> owner.getPanCardNumber().trim()).distinct().count();
