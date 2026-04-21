@@ -401,11 +401,18 @@ public class FarExtract extends FeatureExtract {
                     block.getNumber());
             List<BigDecimal> plinthHeights = Util.getListOfDimensionValueByLayer(pl, plinthHeightLayer);
             block.setPlinthHeight(plinthHeights);
-
-            String interiorCourtYardLayer = String.format(layerNames.getLayerName("LAYER_NAME_INTERIOR_COURTYARD"),
+            
+            Map<String, String> data = Util.getColorByDimensionByLayer(pl, plinthHeightLayer);
+			Util.validateLayerColor(data.get("layerName"), Integer.parseInt(data.get("colorCode")), pl);
+            
+			String interiorCourtYardLayer = String.format(layerNames.getLayerName("LAYER_NAME_INTERIOR_COURTYARD"),
                     block.getNumber());
             List<BigDecimal> interiorCourtYard = Util.getListOfDimensionValueByLayer(pl,
                     interiorCourtYardLayer);
+            
+            data = Util.getColorByDimensionByLayer(pl, interiorCourtYardLayer);
+			Util.validateLayerColor(data.get("layerName"), Integer.parseInt(data.get("colorCode")), pl);
+			
             block.setInteriorCourtYard(interiorCourtYard);
         }
 
@@ -627,6 +634,14 @@ public class FarExtract extends FeatureExtract {
                 + layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + floor.getNumber() + "_"
                 + layerNames.getLayerName("LAYER_NAME_FLOOR_HEIGHT_PREFIX");
         List<BigDecimal> flrHeights = Util.getListOfDimensionValueByLayer(pl, floorHeightLayerName);
+        
+        Map<String, String> data = Util.getColorByDimensionByLayer(pl, floorHeightLayerName);
+        String layer = data.get("layerName");
+        String color = data.get("colorCode");
+        
+      //Code added for the layername with colorCode match
+		Util.validateLayerColor(layer, Integer.parseInt(color), pl);
+
 //    	String isStiltFloor = Util.getMtextByLayerName(pl.getDoc(), floorHeightLayerName, "STILT_FLR_HT");
 //    	
 //    	if (!isBlank(isStiltFloor)) {

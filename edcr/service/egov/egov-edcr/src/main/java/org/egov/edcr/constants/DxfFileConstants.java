@@ -72,7 +72,7 @@ public class DxfFileConstants {
     public static final String F_PO = "F-PO"; // Private Offices
     public static final String F_B = "F-B"; //Banks
     public static final String F_LB = "F-LB";//Club/ Guest House / Lodging & Boarding / Service Apartments
-    public static final String F_D = "F-D";//Dhaba (F-B)
+    public static final String F_D = "F-D";//Dhaba (F-D)
     public static final String F_CA   = "F-CA";   // Cinemas and Auditoriums
     public static final String F_VGP   = "F-VGP";   // Video Games Parlors
     public static final String F_BU   = "F-BU";   // Boutiques

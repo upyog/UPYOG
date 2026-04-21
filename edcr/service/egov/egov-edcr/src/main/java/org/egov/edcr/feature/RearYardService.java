@@ -1477,6 +1477,7 @@ public class RearYardService extends GeneralRule {
     			Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(pl.getMdmsMasterData().get("masterMdmsData"), MdmsFilter.REAR_SETBACK_PATH, BigDecimal.class);
     			scOpt.ifPresent(sc -> LOG.info("Rear Setback Value from mdms : " + sc));
     			minVal = scOpt.get();
+    			rearYardResult.setBackPercentage = minVal.toPlainString();
     		}
 	    }
 
