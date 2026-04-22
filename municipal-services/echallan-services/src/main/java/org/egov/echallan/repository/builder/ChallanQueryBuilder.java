@@ -123,6 +123,25 @@ public class ChallanQueryBuilder {
                 builder.append("  Lower(challan.challanno) LIKE  ? ");
                 preparedStmtList.add(challanPattern);
             }
+            
+            if (criteria.getFromDate() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" challan.createdtime >= ? ");
+                preparedStmtList.add(criteria.getFromDate());
+            }
+
+            if (criteria.getToDate() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" challan.createdtime <= ? ");
+                preparedStmtList.add(criteria.getToDate());
+            }
+            
+            if (criteria.getWard() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" challan.additionaldetail->>'ward' = ? ");
+                preparedStmtList.add(criteria.getWard());
+            }
+            
             if (criteria.getStatus() != null) {
                 List<String> status = Arrays.asList(criteria.getStatus().split(","));
                 addClauseIfRequired(preparedStmtList, builder);
