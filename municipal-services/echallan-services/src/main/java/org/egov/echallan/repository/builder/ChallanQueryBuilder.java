@@ -129,6 +129,25 @@ public class ChallanQueryBuilder {
                 builder.append(" challan.applicationstatus IN (").append(createQuery(status)).append(")");
                 addToPreparedStatement(preparedStmtList, status);
             }
+    	    if (criteria.getFromDate() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" challan.createdtime >= ? ");
+                preparedStmtList.add(criteria.getFromDate());
+            }
+
+            if (criteria.getToDate() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" challan.createdtime <= ? ");
+                preparedStmtList.add(criteria.getToDate());
+            }
+            
+            if (criteria.getWard() != null) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" challan.additionaldetail->>'ward' = ? ");
+                preparedStmtList.add(criteria.getWard());
+            }
+            
+
 
             if (criteria.getReceiptNumber() != null) {
                 String receiptNumbers = "%" + criteria.getReceiptNumber().toLowerCase() + "%";

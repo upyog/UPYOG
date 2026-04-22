@@ -59,6 +59,16 @@ public class SearchCriteria {
  
 	@JsonProperty("receiptNumber")
 	private String receiptNumber;
+
+	@JsonProperty("fromDate")
+	private Long fromDate=null;
+	
+	@JsonProperty("toDate")
+	private Long toDate=null;
+	
+	@JsonProperty("ward")
+	private String ward;
+	
 	
 	public boolean isEmpty() {
         return (this.tenantId == null && this.ids == null  && this.mobileNumber == null 
