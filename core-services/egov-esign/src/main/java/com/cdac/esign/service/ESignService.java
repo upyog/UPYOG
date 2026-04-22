@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.NodeList;
@@ -52,6 +54,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.signatures.IExternalSignatureContainer;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
+import com.jayway.jsonpath.JsonPath;
 import com.cdac.esign.eventListener.LastPositionListener;
 
 @Service
@@ -64,11 +67,17 @@ public class ESignService {
 
     @Autowired
     private Environment env;
+    
+    @Autowired
+    private MDMSService mdmsService;
+    
+    @Autowired
+    private UserService userService;
 
     /**
      * PHASE 1: Prepare PDF with Dynamic Location & Custom TXN ID
      */
-    public RequestXmlForm processDocumentUpload(String fileStoreId, String tenantId, String signerName, String callbackUrl) throws Exception {
+    public RequestXmlForm processDocumentUpload(String fileStoreId, String tenantId, String signerName, String callbackUrl, RequestInfo requestInfo) throws Exception {
 
         logger.info("Processing Phase 1 for tenant: {}, signer: {}", tenantId, signerName);
 
@@ -110,7 +119,25 @@ public class ESignService {
                             "Date: " + dateFormat.format(new Date()) + "\n" +
                             "Reason: mSeva eSign\n" + 
                             "Location: " + locationText; // <--- DYNAMIC LOCATION
-                            
+        
+        if(requestInfo.getUserInfo() != null) {
+        	Object mdmsData = mdmsService.mDMSCall(requestInfo, tenantId.split("\\.")[0]);
+        	String designation = userService.getEmployeeDesignation(requestInfo, requestInfo.getUserInfo().getUuid(), tenantId);
+        	List<String> designations = JsonPath.read(mdmsData, "$.MdmsRes.common-masters.Designation.[?(@.code == '" + designation + "')].name");
+        	if(CollectionUtils.isEmpty(designations))
+        		designation = "Citizen";
+        	else
+        		designation = designations.get(0);
+        	
+        	List<String> ulbTypeList = JsonPath.read(mdmsData, "$.MdmsRes.tenant.tenants.[?(@.code == '" + tenantId + "')].city.ulbType");
+			String ulbType = CollectionUtils.isEmpty(ulbTypeList) ? "" : ulbTypeList.get(0);
+        	
+        	layer2Text = "Digitally Signed by " + requestInfo.getUserInfo().getName() + "\n" +
+                    "Date: " + dateFormat.format(new Date()) + "\n" +
+                    ulbType + ", " + city +"\n" + 
+                    designation; // <--- DYNAMIC LOCATION
+        }
+        
         appearance.setLayer2Text(layer2Text);
         appearance.setRenderingMode(PdfSignatureAppearance.RenderingMode.DESCRIPTION); // Text Only
 
