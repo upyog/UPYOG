@@ -927,17 +927,12 @@ public class EstimationService {
 				break;
 
 			case PT_UNIT_USAGE_EXEMPTION:
-				exemption = exemption.add(estimate.getEstimateAmount());
-				/*
-				 * exemption = getExemption(exemption); estimate.setEstimateAmount(exemption);
-				 */			
+				exemption = exemption.add(estimate.getEstimateAmount());		
 				estimate.setCategory(taxHeadCategoryMap.get(estimate.getTaxHeadCode()));
 				break;
 				
 			case PT_OWNER_EXEMPTION:
-				exemption = exemption.add(estimate.getEstimateAmount());
-				exemption = getExemption(exemption);
-				estimate.setEstimateAmount(exemption);	
+				exemption = exemption.add(estimate.getEstimateAmount());	
 				estimate.setCategory(taxHeadCategoryMap.get(estimate.getTaxHeadCode()));
 				break;
 				
@@ -993,12 +988,6 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 	 */
 	   
 	   
-	   private BigDecimal getExemption(BigDecimal exemption) {
-			 if (exemption.signum() > 0) {
-			    exemption = exemption.negate();
-			}
-			 return exemption;
-	   }
 	private List<BillingSlab> getSlabsFiltered(Property property, RequestInfo requestInfo) {
 
 		PropertyDetail detail = property.getPropertyDetails().get(0);
@@ -2205,12 +2194,12 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 			double totalTax = tax_payable_roundoff;
 
 			taxHeadEstimates.add(buildTaxHead("PT_TAX", PT_TAX));
-			taxHeadEstimates.add(buildTaxHead("PT_OWNER_EXEMPTION", exemption));
-			taxHeadEstimates.add(buildTaxHead("PT_UNIT_USAGE_EXEMPTION", unit_usage_exemption));
+			taxHeadEstimates.add(buildTaxHead("PT_OWNER_EXEMPTION",  -Math.abs(exemption)));
+			taxHeadEstimates.add(buildTaxHead("PT_UNIT_USAGE_EXEMPTION", -Math.abs(unit_usage_exemption)));
 			taxHeadEstimates.add(buildTaxHead("PT_FIRE_CESS", FireCess));
 			taxHeadEstimates.add(buildTaxHead("PT_TIME_PENALTY", penality));
 			taxHeadEstimates.add(buildTaxHead("PT_CANCER_CESS", 0.0));
-			taxHeadEstimates.add(buildTaxHead("PT_TIME_REBATE", additional_rebate));
+			taxHeadEstimates.add(buildTaxHead("PT_TIME_REBATE", -Math.abs(additional_rebate)));
 			taxHeadEstimates.add(buildTaxHead("PT_TIME_INTEREST", totalInterest));
 			taxHeadEstimates.add(buildTaxHead("PT_ROUNDOFF", round_off));
 
