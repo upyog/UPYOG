@@ -227,9 +227,10 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         return REPORT;
     }
     public void buildReportParams() {
+    	String sessionBank = (String) getSession().get("REMITTANCE_BANK");
         critParams.put(EGOV_CASH_AMOUNT, totalCashAmount);
         critParams.put(EGOV_CHEQUE_AMOUNT, totalChequeAmount);
-        critParams.put(EGOV_BANK, bank);
+        critParams.put(EGOV_BANK, sessionBank);
         critParams.put(EGOV_BANK_ACCOUNT, bankAccount);
         critParams.put(EGOV_REMITTANCE_DATE, remittanceDate == null ? new Date() : remittanceDate);
         critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
