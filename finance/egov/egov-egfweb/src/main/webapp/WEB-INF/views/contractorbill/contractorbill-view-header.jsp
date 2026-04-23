@@ -122,7 +122,23 @@
 				<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
 					<c:out default="N/A" value="${egBillregister.egBillregistermis.budgetaryAppnumber }" />
 				</div>
+				<div class="col-md-3 col-xs-6 add-margin">
+					<spring:message text="TV Number"/>
+				</div>
+				<div class="col-md-3 col-xs-6 add-margin view-content">
+					<c:out default="N/A" value="${egBillregister.tvnumber}" />
+				</div>
 		</div>
+		
+		<div class="row add-border">
+				<div class="col-md-3 col-xs-6 add-margin">
+					<spring:message text="Treasury Voucher Date" />
+				</div>
+				<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
+					<c:out default="N/A" value="${egBillregister.tvdate}"  />
+				</div>			
+		</div>
+		
 	</div>
 	
 </div>

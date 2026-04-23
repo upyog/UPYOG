@@ -154,6 +154,11 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @Transient
     @SafeHtml
     private String approvalComent;
+    
+    private String tvnumber;
+    
+    private Date tvdate;
+
 
     public EgBillregister() {
     }
@@ -486,7 +491,25 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
             this.documentDetail.addAll(documentDetail);
     }
 
-    public enum BillStatus {
+    public String getTvnumber() {
+		return tvnumber;
+	}
+
+	public void setTvnumber(String tvnumber) {
+		this.tvnumber = tvnumber;
+	}
+
+	public Date getTvdate() {
+		return tvdate;
+	}
+
+	public void setTvdate(Date tvdate) {
+		this.tvdate = tvdate;
+	}
+
+
+
+	public enum BillStatus {
         CREATED, APPROVED, REJECTED, CANCELLED
     }
 }

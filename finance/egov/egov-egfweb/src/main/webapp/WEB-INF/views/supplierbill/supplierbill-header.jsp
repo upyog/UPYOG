@@ -224,4 +224,23 @@
 			<form:errors path="billtype" cssClass="add-margin error-msg" />
 		</div>
 	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right">
+			<spring:message text="Treasury Voucher No."/>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="tvnumber" path="tvnumber" maxlength="32" />
+			<form:errors path="tvnumber" cssClass="add-margin error-msg" />		
+		</div>
+		<label class="col-sm-2 control-label text-right">
+			<spring:message text="Treasury Voucher Date"/>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<form:input id="tvdate" path="tvdate" class="form-control datepicker" data-date-end-date="0d"  />
+			<form:errors path="tvdate" cssClass="add-margin error-msg" />
+		</div>
+	</div>	
+	
+	
+	
 </div>

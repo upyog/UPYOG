@@ -118,6 +118,21 @@
 			</div>
 		</div>
 		
+		<div class="row add-border">
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message text="Treasury voucher No."/>
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.tvnumber}" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message text="Treasury Voucher Date"/>
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
+				<c:out default="N/A" value="${egBillregister.tvdate} " />
+			</div>
+		</div>
+		
 	</div>
 	
 </div>

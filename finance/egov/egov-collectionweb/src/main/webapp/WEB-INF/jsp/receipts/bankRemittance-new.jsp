@@ -557,7 +557,7 @@
 						<input name="search" type="submit" class="buttonsubmit" id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
 					<s:if test="%{!resultList.isEmpty()}">
-						<display:table name="resultList" id="currentRow" uid="currentRow" pagesize="${pageSize}" style="border:1px;width:100%" cellpadding="0" cellspacing="0" export="false" requestURI="">
+						<display:table name="resultList" id="currentRow" uid="currentRow" pagesize="${pageSize}" style="border:1px;width:100%;table-layout:fixed;" cellpadding="0" cellspacing="0" export="false" requestURI="">
 							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);'/>" style="width:5%; text-align: center">
 								<c:set var="rowNumber" value="${currentRow_rowNum-1}" ></c:set>
 								<input type='checkbox' name='finalList[${rowNumber}].selected'  id='selected_${rowNumber}' value ="false" onClick="handleReceiptSelectionEvent()" />
@@ -570,12 +570,37 @@
 								<input type="hidden" name="instrumentAmount" disabled="disabled" id="instrumentAmount" value="${currentRow.instrumentAmount}" />
 							</display:column>
 
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Date" style="width:10%;text-align: center" value="${currentRow.receiptDate}" />
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Name" style="width:20%;text-align: center" value="${currentRow.serviceName}" />
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Fund" style="width:10%;text-align: center" value="${currentRow.fundName}" />
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Department" style="width:10%;text-align: center" value="${currentRow.departmentName}" />
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Total Cash Collection" style="width:10%;text-align: center">
-									<div align="center">
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Date"  style="width:5%;text-align:left" value="${currentRow.receiptDate}" />
+							<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Name" style="width:20%;text-align: center" value="${currentRow.serviceName}" /> --%>
+							<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						    title="Service Category" style="width:10%;text-align: left">
+						    <c:choose>
+						        <c:when test="${fn:contains(currentRow.serviceName, '.')}">
+						            ${fn:split(currentRow.serviceName, '.')[0]}
+						        </c:when>
+						        <c:otherwise>
+						            ${currentRow.serviceName}
+						        </c:otherwise>
+						    </c:choose>
+						</display:column>
+						
+						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						    title="Service Type" style="width:10%;text-align: left">
+						    <c:choose>
+						        <c:when test="${fn:contains(currentRow.serviceName, '.')}">
+						            ${fn:split(currentRow.serviceName, '.')[1]}
+						        </c:when>
+						        <c:otherwise>
+						            -
+						        </c:otherwise>
+						    </c:choose>
+						</display:column>
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Fund" style="width:10%;text-align: left" value="${currentRow.fundName}" />
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Department" style="width:10%;text-align: left" value="${currentRow.departmentName}" />
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Total Cash Collection" style="width:8%;text-align:right">
+									<div style="text-align: right;">
 										<c:if test="${not empty currentRow.instrumentAmount}">
 											<c:out value="${currentRow.instrumentAmount}" />
 										</c:if>

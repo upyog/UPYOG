@@ -125,6 +125,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.opensymphony.xwork2.ActionContext;
+
 @Transactional(readOnly = true)
 public class RemittanceServiceImpl extends RemittanceService {
     private static final long serialVersionUID = 5581301494846870670L;
@@ -313,6 +315,12 @@ public class RemittanceServiceImpl extends RemittanceService {
                 cashInHandGLCode, null, serviceGlCode, functionCode, bankRemittanceList, createVoucher,
                 voucherDate, depositedBankAccount, totalCashVoucherAmt, BigDecimal.ZERO, Collections.EMPTY_LIST,
                 receiptInstrumentMap, bankTokenNumber, tokenDate);
+        Long voucherId = null;
+
+        if (remittance != null && remittance.getVoucherHeader() != null) {
+            voucherId = remittance.getVoucherHeader().getId();
+        }
+        ActionContext.getContext().getSession().put("voucherId", voucherId);
 
         switch (ApplicationThreadLocals.getCollectionVersion().toUpperCase()) {
         case "V2":
@@ -383,6 +391,10 @@ public class RemittanceServiceImpl extends RemittanceService {
         }
         voucherHeader = financialsUtil.createRemittanceVoucher(prepareHeaderDetails(fundCode, functionCode, voucherDate),
                 accountCodeList, new ArrayList<HashMap<String, Object>>(0));
+        
+//        for the voucherId
+        Long voucherId = voucherHeader.getId();
+        String voucherNumber = voucherHeader.getVoucherNumber();
         return voucherHeader;
     }
 
@@ -1077,6 +1089,14 @@ public class RemittanceServiceImpl extends RemittanceService {
                 chequeInHandGlcode, serviceGlCode, functionCode, new HashSet(receiptList), createVoucher,
                 voucherDate, depositedBankAccount, BigDecimal.ZERO, totalChequeVoucherAmt,
                 instrumentIdList, receiptInstrumentMap, bankTokenNumber, tokenDate);
+        
+//        Doing for the print voucher button
+        Long voucherId = null;
+
+        if (remittance != null && remittance.getVoucherHeader() != null) {
+            voucherId = remittance.getVoucherHeader().getId();
+            ActionContext.getContext().getSession().put("voucherId", voucherId);
+        }
 
         // For cheque update instrument status to deposited.
         for (final RemittanceInstrument bankRemitInstrument : remittance.getRemittanceInstruments()) {

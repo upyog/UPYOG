@@ -161,6 +161,16 @@ public class ChequeRemittanceAction extends BaseFormAction {
     private String bankTokenNumber;
     private Date tokenDate;
     
+    private Long voucherId;
+
+    public Long getVoucherId() {
+        return voucherId;
+    }
+
+    public void setVoucherId(Long voucherId) {
+        this.voucherId = voucherId;
+    }
+    
     public String getBankTokenNumber() {
 		return bankTokenNumber;
 	}
@@ -304,6 +314,12 @@ public class ChequeRemittanceAction extends BaseFormAction {
                     "bankremittance.error.noaccountNumberselected")));
         remittedReceiptList = remittanceService.createChequeBankRemittance(finalBeanList, accountNumberId, remittanceDate,bankTokenNumber, tokenDate,
                 getInstrumentIdArray());
+//        Doing this for the Print Voucher Button 
+        Object vidObj = getSession().get("voucherId");
+
+        if (vidObj != null) {
+            this.voucherId = (Long) vidObj;
+        }
 
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);

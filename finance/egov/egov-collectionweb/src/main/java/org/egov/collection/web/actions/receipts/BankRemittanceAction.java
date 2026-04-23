@@ -163,7 +163,17 @@ public class BankRemittanceAction extends BaseFormAction {
     private String bankTokenNumber;
     private Date tokenDate;
     
-    public String getBankTokenNumber() {
+    private Long voucherId;
+
+    public Long getVoucherId() {
+		return voucherId;
+	}
+
+	public void setVoucherId(Long voucherId) {
+		this.voucherId = voucherId;
+	}
+
+	public String getBankTokenNumber() {
 		return bankTokenNumber;
 	}
 
@@ -303,6 +313,12 @@ public class BankRemittanceAction extends BaseFormAction {
                     "bankremittance.error.noaccountNumberselected")));
         // voucherHeaderValues =
         List<Receipt> receipts = remittanceService.createCashBankRemittance(finalList, accountNumberId, remittanceDate, bankTokenNumber, tokenDate);
+//        Doing for testing 
+        Object vidObj = getSession().get("voucherId");
+
+        if (vidObj != null) {
+            this.voucherId = (Long) vidObj;
+        }
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         bankRemittanceList = remittanceService.prepareCashRemittanceReport(receipts);
