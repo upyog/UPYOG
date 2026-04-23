@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.wscalculation.web.models.BulkMeterReading;
+import org.egov.wscalculation.web.models.BulkMeterReadingResponse;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterConnectionRequests;
 import org.egov.wscalculation.web.models.MeterReading;
@@ -102,10 +104,10 @@ public class MeterReadingController {
 	}
 	
 	@RequestMapping(value = "/_searchV2", method = RequestMethod.POST)
-	public ResponseEntity<MeterReadingResponse> searchV2(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+	public ResponseEntity<BulkMeterReadingResponse> searchV2(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute MeterReadingSearchCriteria criteria) {
-		List<MeterReading> meterReadingLists = meterService.searchMeterReadingsV2(criteria, requestInfoWrapper.getRequestInfo());
-		MeterReadingResponse response = MeterReadingResponse.builder().meterReadings(meterReadingLists)
+		List<BulkMeterReading> meterReadingLists = meterService.searchMeterReadingsV2(criteria, requestInfoWrapper.getRequestInfo());
+		BulkMeterReadingResponse response = BulkMeterReadingResponse.builder().bulkMeterReadings(meterReadingLists)
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(),
 						true))
 				.build();

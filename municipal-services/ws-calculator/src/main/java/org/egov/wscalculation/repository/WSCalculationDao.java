@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.egov.wscalculation.web.models.BillSearch;
 import org.egov.wscalculation.web.models.BillSearchs;
+import org.egov.wscalculation.web.models.BulkMeterReading;
 import org.egov.wscalculation.web.models.CancelDemand;
 import org.egov.wscalculation.web.models.CancelDemandReq;
 import org.egov.wscalculation.web.models.Canceldemandsearch;
@@ -89,5 +90,5 @@ public interface WSCalculationDao {
 	 * @param criteria would be meter reading criteria
 	 * @return List of meter readings based on criteria
 	 */
-	List<MeterReading> searchMeterReadingsV2(MeterReadingSearchCriteria criteria);
+	List<BulkMeterReading> searchMeterReadingsV2(MeterReadingSearchCriteria criteria);
 }
