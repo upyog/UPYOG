@@ -24,6 +24,7 @@ import org.egov.wscalculation.repository.rowmapper.WaterDemandRowMapper;
 import org.egov.wscalculation.repository.rowmapper.WaterRowMapper;
 import org.egov.wscalculation.web.models.BillSearch;
 import org.egov.wscalculation.web.models.BillSearchs;
+import org.egov.wscalculation.web.models.BulkMeterReading;
 import org.egov.wscalculation.web.models.CancelDemand;
 import org.egov.wscalculation.web.models.CancelDemandReq;
 import org.egov.wscalculation.web.models.Canceldemandsearch;
@@ -526,7 +527,7 @@ public List<BillSearchs> getBillss(String tenantId, String demandid) {
 	 * @return List of meter readings based on criteria
 	 */
 	@Override
-	public List<MeterReading> searchMeterReadingsV2(MeterReadingSearchCriteria criteria) {
+	public List<BulkMeterReading> searchMeterReadingsV2(MeterReadingSearchCriteria criteria) {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getSearchQueryStringV2(criteria, preparedStatement);
 		if (query == null)

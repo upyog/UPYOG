@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -24,23 +25,37 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+/**
+ * This is lightweight meter reading object that can be used as reference by
+ * definitions needing meterreading linking.
+ */
 @ApiModel(description = "This is lightweight meter reading object that can be used as reference by definitions needing meterreading linking.")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-11-12T10:46:14.653+05:30[Asia/Kolkata]")
-public class MeterReadingList {
+public class BulkMeterReading {
 
+	@SafeHtml
 	@JsonProperty("id")
 	private String id = null;
 
+	@SafeHtml
 	@JsonProperty("billingPeriod")
 	private String billingPeriod = null;
 
+	/**
+	 * Gets or Sets meterStatus
+	 */
 	public enum MeterStatusEnum {
 		WORKING("Working"),
+
 		LOCKED("Locked"),
+
 		BREAKDOWN("Breakdown"),
+
 		NO_METER("No-meter"),
+
 		RESET("Reset"),
+
 		REPLACEMENT("Replacement");
 
 		private String value;
@@ -81,8 +96,13 @@ public class MeterReadingList {
 	@JsonProperty("currentReadingDate")
 	private Long currentReadingDate = null;
 
+	@SafeHtml
 	@JsonProperty("connectionNo")
 	private String connectionNo = null;
+	
+	@SafeHtml
+	@JsonProperty("usageCategory")
+    private String usageCategory = null;
 
 	@JsonProperty("consumption")
 	private Double consumption = null;
@@ -94,17 +114,28 @@ public class MeterReadingList {
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;
 
+	@SafeHtml
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
-	// NO status or errorMessage fields here — those only appear in failed Map entries
-
-	public MeterReadingList id(String id) {
+	public BulkMeterReading id(String id) {
 		this.id = id;
 		return this;
 	}
 
+	
+
+    public void setMeterStatus(MeterStatusEnum meterStatusEnum) {
+        this.meterStatus = MeterStatusEnum.valueOf(meterStatusEnum.name());
+    }
+	
+	/**
+	 * Unique Identifier of the meterreading for internal reference.
+	 *
+	 * @return id
+	 **/
 	@ApiModelProperty(readOnly = true, value = "Unique Identifier of the meterreading for internal reference.")
+
 	@Size(min = 1, max = 64)
 	public String getId() {
 		return id;
@@ -114,18 +145,29 @@ public class MeterReadingList {
 		this.id = id;
 	}
 
-	public MeterReadingList billingPeriod(String billingPeriod) {
+	public BulkMeterReading billingPeriod(String billingPeriod) {
 		this.billingPeriod = billingPeriod;
 		return this;
 	}
 
-	public MeterReadingList connectionNo(String connectionNo) {
+	public BulkMeterReading connectionNo(String connectionNo) {
 		this.connectionNo = connectionNo;
 		return this;
 	}
+	
+	public BulkMeterReading usageCategory(String usageCategory) {
+		this.usageCategory = usageCategory;
+		return this;
+	}
 
+	/**
+	 * Formatted billingPeriod
+	 *
+	 * @return billingPeriod
+	 **/
 	@ApiModelProperty(required = true, readOnly = true, value = "Formatted billingPeriod")
 	@NotNull
+
 	public String getConnectionNo() {
 		return connectionNo;
 	}
@@ -134,8 +176,14 @@ public class MeterReadingList {
 		this.connectionNo = connectionNo;
 	}
 
+	/**
+	 * Formatted billingPeriod
+	 *
+	 * @return billingPeriod
+	 **/
 	@ApiModelProperty(required = true, readOnly = true, value = "Formatted billingPeriod")
 	@NotNull
+
 	@Size(min = 1, max = 64)
 	public String getBillingPeriod() {
 		return billingPeriod;
@@ -145,28 +193,40 @@ public class MeterReadingList {
 		this.billingPeriod = billingPeriod;
 	}
 
-	public MeterReadingList meterStatus(MeterStatusEnum meterStatus) {
+	public BulkMeterReading meterStatus(MeterStatusEnum meterStatus) {
 		this.meterStatus = meterStatus;
 		return this;
 	}
 
+	/**
+	 * Get meterStatus
+	 *
+	 * @return meterStatus
+	 **/
 	@ApiModelProperty(required = true, readOnly = true, value = "")
 	@NotNull
+
 	public MeterStatusEnum getMeterStatus() {
 		return meterStatus;
 	}
 
-	public void setMeterStatus(MeterStatusEnum meterStatus) {
-		this.meterStatus = meterStatus;
-	}
+//	public void setMeterStatus(MeterStatusEnum meterStatus) {
+//		this.meterStatus = meterStatus;
+//	}
 
-	public MeterReadingList lastReading(Double lastReading) {
+	public BulkMeterReading lastReading(Double lastReading) {
 		this.lastReading = lastReading;
 		return this;
 	}
 
+	/**
+	 * Last Reading
+	 *
+	 * @return lastReading
+	 **/
 	@ApiModelProperty(required = true, value = "Last Reading")
 	@NotNull
+
 	public Double getLastReading() {
 		return lastReading;
 	}
@@ -175,13 +235,19 @@ public class MeterReadingList {
 		this.lastReading = lastReading;
 	}
 
-	public MeterReadingList lastReadingDate(Long lastReadingDate) {
+	public BulkMeterReading lastReadingDate(Long lastReadingDate) {
 		this.lastReadingDate = lastReadingDate;
 		return this;
 	}
 
+	/**
+	 * The date of meter last reading date.
+	 *
+	 * @return lastReadingDate
+	 **/
 	@ApiModelProperty(required = true, value = "The date of meter last reading date.")
 	@NotNull
+
 	public Long getLastReadingDate() {
 		return lastReadingDate;
 	}
@@ -190,12 +256,12 @@ public class MeterReadingList {
 		this.lastReadingDate = lastReadingDate;
 	}
 
-	public MeterReadingList currentReading(Double currentReading) {
+	public BulkMeterReading currentReading(Double currentReading) {
 		this.currentReading = currentReading;
 		return this;
 	}
 
-	public MeterReadingList consumption(Double consumption) {
+	public BulkMeterReading consumption(Double consumption) {
 		this.consumption = consumption;
 		return this;
 	}
@@ -208,8 +274,14 @@ public class MeterReadingList {
 		this.consumption = consumption;
 	}
 
+	/**
+	 * Current Reading
+	 *
+	 * @return currentReading
+	 **/
 	@ApiModelProperty(required = true, value = "Current Reading")
 	@NotNull
+
 	public Double getCurrentReading() {
 		return currentReading;
 	}
@@ -218,13 +290,19 @@ public class MeterReadingList {
 		this.currentReading = currentReading;
 	}
 
-	public MeterReadingList currentReadingDate(Long currentReadingDate) {
+	public BulkMeterReading currentReadingDate(Long currentReadingDate) {
 		this.currentReadingDate = currentReadingDate;
 		return this;
 	}
 
+	/**
+	 * The date of meter current reading date.
+	 *
+	 * @return currentReadingDate
+	 **/
 	@ApiModelProperty(required = true, value = "The date of meter current reading date.")
 	@NotNull
+
 	public Long getCurrentReadingDate() {
 		return currentReadingDate;
 	}
@@ -233,7 +311,7 @@ public class MeterReadingList {
 		this.currentReadingDate = currentReadingDate;
 	}
 
-	public MeterReadingList generateDemand(Boolean generateDemand) {
+	public BulkMeterReading generateDemand(Boolean generateDemand) {
 		this.generateDemand = generateDemand;
 		return this;
 	}
@@ -246,11 +324,16 @@ public class MeterReadingList {
 		this.generateDemand = generateDemand;
 	}
 
-	public MeterReadingList auditDetails(AuditDetails auditDetails) {
+	public BulkMeterReading auditDetails(AuditDetails auditDetails) {
 		this.auditDetails = auditDetails;
 		return this;
 	}
 
+	/**
+	 * Get auditDetails
+	 *
+	 * @return auditDetails
+	 **/
 	@ApiModelProperty(value = "")
 	public AuditDetails getAuditDetails() {
 		return auditDetails;
@@ -260,7 +343,7 @@ public class MeterReadingList {
 		this.auditDetails = auditDetails;
 	}
 
-	public MeterReadingList tenantId(String tenantId) {
+	public BulkMeterReading tenantId(String tenantId) {
 		this.tenantId = tenantId;
 		return this;
 	}
@@ -276,30 +359,36 @@ public class MeterReadingList {
 
 	@Override
 	public boolean equals(java.lang.Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		MeterReadingList meterReading = (MeterReadingList) o;
-		return Objects.equals(this.id, meterReading.id)
-				&& Objects.equals(this.billingPeriod, meterReading.billingPeriod)
-				&& Objects.equals(this.meterStatus, meterReading.meterStatus)
-				&& Objects.equals(this.lastReading, meterReading.lastReading)
-				&& Objects.equals(this.lastReadingDate, meterReading.lastReadingDate)
-				&& Objects.equals(this.currentReading, meterReading.currentReading)
-				&& Objects.equals(this.currentReadingDate, meterReading.currentReadingDate)
-				&& Objects.equals(this.consumption, meterReading.consumption)
-				&& Objects.equals(this.tenantId, meterReading.tenantId);
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		BulkMeterReading bulkMeterReading = (BulkMeterReading) o;
+		return Objects.equals(this.id, bulkMeterReading.id)
+				&& Objects.equals(this.billingPeriod, bulkMeterReading.billingPeriod)
+				&& Objects.equals(this.meterStatus, bulkMeterReading.meterStatus)
+				&& Objects.equals(this.lastReading, bulkMeterReading.lastReading)
+				&& Objects.equals(this.lastReadingDate, bulkMeterReading.lastReadingDate)
+				&& Objects.equals(this.currentReading, bulkMeterReading.currentReading)
+				&& Objects.equals(this.currentReadingDate, bulkMeterReading.currentReadingDate)
+				&& Objects.equals(this.consumption, bulkMeterReading.consumption)
+				&& Objects.equals(this.usageCategory, bulkMeterReading.usageCategory)
+				&& Objects.equals(this.tenantId, bulkMeterReading.tenantId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, billingPeriod, meterStatus, lastReading, lastReadingDate,
-				currentReading, currentReadingDate, tenantId);
+		return Objects.hash(id, billingPeriod, meterStatus, lastReading, lastReadingDate, currentReading,
+				currentReadingDate, usageCategory, tenantId);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class MeterReading {\n");
+
 		sb.append("    id: ").append(toIndentedString(id)).append("\n");
 		sb.append("    billingPeriod: ").append(toIndentedString(billingPeriod)).append("\n");
 		sb.append("    meterStatus: ").append(toIndentedString(meterStatus)).append("\n");
@@ -308,13 +397,20 @@ public class MeterReadingList {
 		sb.append("    currentReading: ").append(toIndentedString(currentReading)).append("\n");
 		sb.append("    currentReadingDate: ").append(toIndentedString(currentReadingDate)).append("\n");
 		sb.append("    consumption: ").append(toIndentedString(consumption)).append("\n");
-		sb.append("    tenantId: ").append(toIndentedString(tenantId)).append("\n");
+		sb.append("    usageCategory: ").append(toIndentedString(usageCategory)).append("\n");
+		sb.append("	   tenantId: ").append(toIndentedString(tenantId)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
 
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces
+	 * (except the first line).
+	 */
 	private String toIndentedString(java.lang.Object o) {
-		if (o == null) return "null";
+		if (o == null) {
+			return "null";
+		}
 		return o.toString().replace("\n", "\n    ");
 	}
 }

@@ -1,6 +1,5 @@
 package org.egov.wscalculation.web.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -20,12 +19,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Builder
-public class MeterReadingResponses {
-    @JsonProperty("ResponseInfo")
-    private ResponseInfo responseInfo = null;
-    
+public class BulkMeterReadingResponse {
+	@JsonProperty("ResponseInfo")
+	private ResponseInfo responseInfo = null;
+	
+	@JsonProperty("bulkMeterReadings")
+	@Valid
+	private List<BulkMeterReading> bulkMeterReadings = null;
 
-    @JsonProperty("meterReadingslist")
-    @Valid
-    private List<Object> meterReadingslist = new ArrayList<>();  // ← changed from List<MeterReadingList> to List<Object>
 }
