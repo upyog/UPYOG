@@ -147,6 +147,27 @@
 		    <artifactId>jackson-databind</artifactId>
 		    <version>2.9.6</version>
 		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>mdms-client</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.egov.services</groupId>
+			<artifactId>services-common</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.egov.services</groupId>
+		  <artifactId>tracer</artifactId>
+		  <version>2.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<build>
