@@ -52,6 +52,7 @@ public class ESignController {
             			.uuid(userInfoObj.getString("uuid"))
             			.name(userInfoObj.getString("name"))
             			.userName(userInfoObj.getString("userName"))
+            			.type(userInfoObj.getString("type"))
             			.build();
             	requestInfo.setUserInfo(userInfo);
             }
