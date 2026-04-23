@@ -273,8 +273,8 @@ public class EisCommonService {
 	 * @return
 	 */
 	public boolean isValidAppover(WorkFlowMatrix workFlowMatrix, String designation) {
-		if (workFlowMatrix.getCurrentDesignation() != null) {
-			return Arrays.asList(workFlowMatrix.getCurrentDesignation().toLowerCase().split(","))
+		if (workFlowMatrix.getNextDesignation() != null) {
+			return Arrays.asList(workFlowMatrix.getNextDesignation().toLowerCase().split(","))
 					.contains(designation.toLowerCase());
 		}
 		return false;

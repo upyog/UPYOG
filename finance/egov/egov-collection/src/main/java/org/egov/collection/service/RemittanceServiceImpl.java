@@ -957,7 +957,7 @@ public class RemittanceServiceImpl extends RemittanceService {
     @Transactional
     @Override
     public List<Receipt> createChequeBankRemittance(List<ReceiptBean> receiptBeanList, String accountNumberId,
-            Date remittanceDate, String[] instrumentIdArray) {
+            Date remittanceDate,String bankTokenNumber, Date tokenDate, String[] instrumentIdArray) {
 
         List<Receipt> receiptList = new ArrayList<>();
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -1076,7 +1076,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         final Remittance remittance = populateAndPersistRemittance(BigDecimal.ZERO, totalChequeAmount, fundCode, null,
                 chequeInHandGlcode, serviceGlCode, functionCode, new HashSet(receiptList), createVoucher,
                 voucherDate, depositedBankAccount, BigDecimal.ZERO, totalChequeVoucherAmt,
-                instrumentIdList, receiptInstrumentMap, null, null);
+                instrumentIdList, receiptInstrumentMap, bankTokenNumber, tokenDate);
 
         // For cheque update instrument status to deposited.
         for (final RemittanceInstrument bankRemitInstrument : remittance.getRemittanceInstruments()) {

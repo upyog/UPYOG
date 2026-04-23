@@ -106,6 +106,42 @@
 										isDatepickerOpened = false;
 									}
 								}).data('datepicker');
+
+						jQuery("#tokenDate")
+						.datepicker(
+								{
+									format : 'dd/mm/yyyy',
+									endDate : nowTemp,
+									autoclose : true,
+									onRender : function(date) {
+										return date.valueOf() < now
+												.valueOf() ? 'disabled'
+												: '';
+									}
+								}).on('changeDate', function(ev) {
+							var string = jQuery(this).val();
+							if (!(string.indexOf("_") > -1)) {
+								isDatepickerOpened = false;
+							}
+						}).data('datepicker');
+						
+						jQuery("#fromDate")
+								.datepicker(
+										{
+											format : 'dd/mm/yyyy',
+											endDate : nowTemp,
+											autoclose : true,
+											onRender : function(date) {
+												return date.valueOf() < now
+														.valueOf() ? 'disabled'
+														: '';
+											}
+										}).on('changeDate', function(ev) {
+									var string = jQuery(this).val();
+									if (!(string.indexOf("_") > -1)) {
+										isDatepickerOpened = false;
+									}
+								}).data('datepicker');
 						jQuery("#fromDate")
 								.datepicker(
 										{
@@ -237,6 +273,20 @@
 				 alert("Account number for which search result has displayed and selected account number in search drop down are different. \n Please make sure account number in drop down and account number for which search has done are same.");
 				 return false;
 			}
+
+		// Bank Token Number validation
+		if (document.getElementById("bankTokenNumber") != null &&
+		    document.getElementById("bankTokenNumber").value.trim() == "") {
+		    bootbox.alert("Please Enter Bank Token Number");
+		    return false;
+		}
+
+		// Token Date validation
+		if (document.getElementById("tokenDate") != null &&
+		    document.getElementById("tokenDate").value == "") {
+		    bootbox.alert("Please Enter Token Date");
+		    return false;
+		}
 		var flag=confirm('Receipts once remitted cannot be modified, please verify before you proceed.');
         if(flag==false)
         {
@@ -500,7 +550,7 @@
 						<input name="search" type="submit" class="buttonsubmit" id="search" value="<s:text name='lbl.search'/>" onclick="return searchDataToRemit()" />
 					</div>
 					<s:if test="%{!receiptBeanList.isEmpty()}">
-						<display:table name="receiptBeanList" uid="currentRow" pagesize="${pageSize}" style="border:1px;width:100%" cellpadding="0" cellspacing="0" export="false" requestURI="">
+						<display:table name="receiptBeanList" uid="currentRow" pagesize="${pageSize}" style="border:1px;width:100%;table-layout:fixed;" cellpadding="0" cellspacing="0" export="false" requestURI="">
 							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>" style="width:5%; text-align: center">
 							
 							
@@ -522,18 +572,55 @@
 								<input type="hidden" name="instrumentAmount" disabled="disabled" id="instrumentAmount" value="${currentRow.instrumentAmount}" />
 							</display:column>
 
-			<%-- 				<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Receipt date" style="width:10%;text-align: center" value="${currentRow.receiptDate}" format="{0,date,dd/MM/yyyy}" /> --%>
-						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-							title="Receipt date" style="width:10%;text-align: center">
-							<c:out value="${fn:substring(currentRow.receiptDate, 0, 10)}" />
-						</display:column>
-						<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Receipt number" style="width:10%;text-align: center" value="${currentRow.receiptNumber}" />
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Cheque/DD number and date"  style="width:20%;text-align: center" value="${currentRow.instrumentNumber}  ${currentRow.instrumentDate}"  />
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Drawee bank and branch" style="width:20%;text-align: center" value="${currentRow.bank}  ${currentRow.bankBranch}"  />
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Name" style="width:15%;text-align: center" value="${currentRow.serviceName}" />
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Department" style="width:15%;text-align: center" value="${currentRow.departmentName}" />
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Cheque /DD Amount (Rs)" style="width:10%;text-align: center">
-									<div align="center">
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Receipt date" style="width:10%;text-align: left"><c:out value="${fn:substring(currentRow.receiptDate, 0, 10)}" /></display:column> 
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Receipt number" style="width:10%;text-align: left" value="${currentRow.receiptNumber}" />
+							<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Cheque/DD number and date"  style="width:20%;text-align: center" value="${currentRow.instrumentNumber}  ${currentRow.instrumentDate}"  /> --%>
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							    title="Cheque/DD Number"
+							    style="width:5%;text-align: left"
+							    value="${currentRow.instrumentNumber}" />
+							
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							    title="Cheque/DD Date"
+							    style="width:5%;text-align: left"
+							    value="${currentRow.instrumentDate}" />
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Drawee bank and branch" style="width:12%;text-align: left" value="${currentRow.bank}  ${currentRow.bankBranch}"  />
+							<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Name" style="width:15%;text-align: center" value="${currentRow.serviceName}" /> --%>
+							<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							    title="Service Category"
+							    style="width:12%;text-align: left">
+							
+							    <c:choose>
+							        <c:when test="${fn:contains(currentRow.serviceName, '.')}">
+							            ${fn:split(currentRow.serviceName, '.')[0]}
+							        </c:when>
+							        <c:otherwise>
+							            ${currentRow.serviceName}
+							        </c:otherwise>
+							    </c:choose>
+							
+							</display:column>
+							
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							    title="Service Type"
+							    style="width:12%;text-align: left">
+							
+							    <c:choose>
+							        <c:when test="${fn:contains(currentRow.serviceName, '.')}">
+							            ${fn:split(currentRow.serviceName, '.')[1]}
+							        </c:when>
+							        <c:otherwise>
+							            -
+							        </c:otherwise>
+							    </c:choose>
+							
+							</display:column>
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Department" style="width:15%;text-align: left" value="${currentRow.departmentName}" />
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Cheque /DD Amount (Rs)" style="width:10%;text-align: right">
+									<div style="text-align: right;">
+
 										<c:if test="${not empty currentRow.instrumentAmount}">
 											<c:out value="${currentRow.instrumentAmount}" />
 										</c:if>
@@ -558,7 +645,13 @@
 							<td class="bluebox"><s:text name="bankremittance.remittanceamount" /></td>
 							<td class="bluebox"><s:textfield id="remittanceAmount" name="remittanceAmount" readonly="true" /></td>								
 							<td class="bluebox"><s:text name="bankremittance.accountnumber" /></td>
-							<td class="bluebox"><s:textfield id="remitAccountNumber" name="remitAccountNumber" readonly="true" /></td>		
+							<td class="bluebox"><s:textfield id="remitAccountNumber" name="remitAccountNumber" readonly="true" /></td>	
+							
+							<!--Adding the row for the Bank Token Number & Date field-->
+							<td class="bluebox"><s:text name="bank.token.number" /></td>
+							<td class="bluebox"><s:textfield id="bankTokenNumber" name="bankTokenNumber" /></td>								
+							<td class="bluebox"><s:text name="token.date" /><span class="mandatory"></span></td> <s:date name="tokenDate" var="tokenDateFormat" format="dd/MM/yyyy" />
+							<td class="bluebox"> <s:textfield id="tokenDate" name="tokenDate" value="%{tokenDateFormat}"   data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" /></td>		
 						</tr>
 					</table>
 				</div>

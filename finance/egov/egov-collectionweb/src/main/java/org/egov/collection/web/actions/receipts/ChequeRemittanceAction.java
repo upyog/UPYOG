@@ -157,8 +157,27 @@ public class ChequeRemittanceAction extends BaseFormAction {
     private Boolean isBankCollectionRemitter;
     private String remitAccountNumber;
     private String selectedRowsId;
+//    for bank token number and date 
+    private String bankTokenNumber;
+    private Date tokenDate;
+    
+    public String getBankTokenNumber() {
+		return bankTokenNumber;
+	}
 
-    /**
+	public void setBankTokenNumber(String bankTokenNumber) {
+		this.bankTokenNumber = bankTokenNumber;
+	}
+
+	public Date getTokenDate() {
+		return tokenDate;
+	}
+
+	public void setTokenDate(Date tokenDate) {
+		this.tokenDate = tokenDate;
+	}
+
+	/**
      * @param collectionsUtil the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
@@ -283,7 +302,7 @@ public class ChequeRemittanceAction extends BaseFormAction {
         if (accountNumberId == null || accountNumberId.isEmpty())
             throw new ValidationException(Arrays.asList(new ValidationError("Please select Account number",
                     "bankremittance.error.noaccountNumberselected")));
-        remittedReceiptList = remittanceService.createChequeBankRemittance(finalBeanList, accountNumberId, remittanceDate,
+        remittedReceiptList = remittanceService.createChequeBankRemittance(finalBeanList, accountNumberId, remittanceDate,bankTokenNumber, tokenDate,
                 getInstrumentIdArray());
 
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;

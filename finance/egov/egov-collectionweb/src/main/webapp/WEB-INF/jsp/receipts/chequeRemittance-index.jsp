@@ -52,6 +52,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><s:text name="cheque.remittance.title"/></title>
+<!-- for calling another page -->
+<script>
+function openVoucher(){
+    var vid = document.getElementById("voucherId").value;
+    alert("voucherId = " + vid);
+    var url = "/services/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid=" + vid;
+    window.open(url, '', 'width=900, height=700');
+}
+
+</script>
 </head>
 <body >
 <s:form theme="simple" name="chequeRemittanceForm" action="chequeRemittance">
@@ -70,6 +80,7 @@
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptnumber"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptdate"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.servicename"/></th>
+			<th class="bluebgheadtd" width="20%" ><s:text name="banktoken.date"/></th>
 		</tr>
 		<s:iterator value="%{remittedReceiptList}" status="s"> 
 		<tr>
@@ -77,6 +88,7 @@
 			<td class="blueborderfortd"><div align="center"><s:property value="%{bill[0].billDetails[0].receiptNumber}" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:date name="%{bill[0].billDetails[0].receiptDate}" format="dd/MM/yyyy" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{bill[0].billDetails[0].businessService}" /></div></td>
+			<td class="blueborderfortd"><div align="center"><s:property value="%{bankTokenNumber}" />-<s:date name="%{tokenDate}" format="dd/MM/yyyy"/></div></td>
 			
 		</s:iterator>
 		<s:hidden name="totalCashAmount" value="%{totalCashAmount}"/>
@@ -93,6 +105,10 @@
 <input type="button" class="buttonsubmit" id="buttonCashReport"
 			value="<s:text name='bankremittance.print.bankchallan'/>"
 			onclick="window.open('${pageContext.request.contextPath}/receipts/chequeRemittance-printBankChallan.action?totalCashAmount=<s:property value="%{totalCashAmount}"/>&totalChequeAmount=<s:property value="%{totalChequeAmount}"/>&totalOnlineAmount=<s:property value="%{totalOnlineAmount}"/>&bank=<s:property value="%{bank}"/>&bankAccount=<s:property value="%{bankAccount}"/>&remittanceDate=<s:property value="%{remittanceDate}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
+			
+		<!--for the new button  -->
+		<s:hidden name="voucherId" id="voucherId" value="%{voucherId}" />
+		<input type="button" class="buttonsubmit" id="buttonCashReport" value="Print Voucher" onclick="openVoucher();"/> &nbsp;
 	
 </div>
 </s:form>

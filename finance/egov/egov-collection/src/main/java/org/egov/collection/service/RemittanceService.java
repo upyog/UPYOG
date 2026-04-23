@@ -136,5 +136,5 @@ public abstract class RemittanceService implements Serializable {
             final String serviceCodes, final String fundCodes, Date startDate, Date endDate);
 
     public abstract List<Receipt> createChequeBankRemittance(List<ReceiptBean> receiptList, String accountNumberId,
-            final Date remittanceDate, final String[] instrumentIdArray);
+            final Date remittanceDate,String bankTokenNumber, Date tokenDate, final String[] instrumentIdArray);
 }
