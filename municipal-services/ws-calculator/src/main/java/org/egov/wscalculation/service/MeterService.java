@@ -17,7 +17,9 @@ public interface MeterService {
 	List<MeterReading> updateMeterReading(MeterConnectionRequest meterConnectionRequest);
 
 	
-	List<MeterReadingList> createMeterReadings(MeterConnectionRequests meterConnectionlist);
+//	List<MeterReadingList> createMeterReadings(MeterConnectionRequests meterConnectionlist);
+	List<Object> createMeterReadings(MeterConnectionRequests meterConnectionRequests);
+
 	
 	List<MeterReading> searchMeterReadings(MeterReadingSearchCriteria criteria, RequestInfo requestInfo);
 	
