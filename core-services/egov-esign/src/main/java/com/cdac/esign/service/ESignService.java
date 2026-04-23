@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.NodeList;
 
@@ -43,12 +46,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 // iText 7 Imports
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.signatures.IExternalSignatureContainer;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
+import com.jayway.jsonpath.JsonPath;
+import com.cdac.esign.eventListener.LastPositionListener;
 
 @Service
 public class ESignService {
@@ -60,11 +67,17 @@ public class ESignService {
 
     @Autowired
     private Environment env;
+    
+    @Autowired
+    private MDMSService mdmsService;
+    
+    @Autowired
+    private UserService userService;
 
     /**
      * PHASE 1: Prepare PDF with Dynamic Location & Custom TXN ID
      */
-    public RequestXmlForm processDocumentUpload(String fileStoreId, String tenantId, String signerName) throws Exception {
+    public RequestXmlForm processDocumentUpload(String fileStoreId, String tenantId, String signerName, String callbackUrl, RequestInfo requestInfo) throws Exception {
 
         logger.info("Processing Phase 1 for tenant: {}, signer: {}", tenantId, signerName);
 
@@ -72,6 +85,12 @@ public class ESignService {
             signerName = "Authorized Signatory"; 
         }
 
+        String responseUrl = env.getProperty("esign.response.host") + env.getProperty("esign.response.url");
+        
+        //Added Custome response Url logic
+        if(!StringUtils.isEmpty(callbackUrl))
+        	responseUrl += "?callbackUrl=" + callbackUrl;
+        
         // 1. Get Original PDF
         String pdfUrl = getPdfUrlFromFilestore(fileStoreId, tenantId);
         byte[] originalPdfBytes = downloadPdfFromUrlAsBytes(pdfUrl);
@@ -80,10 +99,13 @@ public class ESignService {
         ByteArrayOutputStream preparedPdfStream = new ByteArrayOutputStream();
         PdfReader reader = new PdfReader(new ByteArrayInputStream(originalPdfBytes));
         PdfSigner signer = new PdfSigner(reader, preparedPdfStream, new StampingProperties());
-
+        
+        Map<String, Object> positionMap = getEsignPosition(originalPdfBytes);
+        
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance.setPageRect(new Rectangle(330, 50, 200, 80));
-        appearance.setPageNumber(1);
+        Float lastTextY = (Float)positionMap.getOrDefault("lastY", 50) - 64;
+        appearance.setPageRect(new Rectangle(380, lastTextY < 0 ? 0 : lastTextY, 160, 64));
+        appearance.setPageNumber((Integer)positionMap.getOrDefault("lastPage", 1));
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
         dateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
@@ -97,7 +119,25 @@ public class ESignService {
                             "Date: " + dateFormat.format(new Date()) + "\n" +
                             "Reason: mSeva eSign\n" + 
                             "Location: " + locationText; // <--- DYNAMIC LOCATION
-                            
+        
+        if(requestInfo.getUserInfo() != null) {
+        	Object mdmsData = mdmsService.mDMSCall(requestInfo, tenantId.split("\\.")[0]);
+        	String designation = userService.getEmployeeDesignation(requestInfo, requestInfo.getUserInfo().getUuid(), tenantId);
+        	List<String> designations = JsonPath.read(mdmsData, "$.MdmsRes.common-masters.Designation.[?(@.code == '" + designation + "')].name");
+        	if(CollectionUtils.isEmpty(designations))
+        		designation = "Citizen";
+        	else
+        		designation = designations.get(0);
+        	
+        	List<String> ulbTypeList = JsonPath.read(mdmsData, "$.MdmsRes.tenant.tenants.[?(@.code == '" + tenantId + "')].city.ulbType");
+			String ulbType = CollectionUtils.isEmpty(ulbTypeList) ? "" : ulbTypeList.get(0);
+        	
+        	layer2Text = "Digitally Signed by " + requestInfo.getUserInfo().getName() + "\n" +
+                    "Date: " + dateFormat.format(new Date()) + "\n" +
+                    ulbType + ", " + city +"\n" + 
+                    designation; // <--- DYNAMIC LOCATION
+        }
+        
         appearance.setLayer2Text(layer2Text);
         appearance.setRenderingMode(PdfSignatureAppearance.RenderingMode.DESCRIPTION); // Text Only
 
@@ -136,7 +176,7 @@ public class ESignService {
         formXmlDataAsp.setAspId(env.getProperty("esign.asp.id"));
         formXmlDataAsp.setAuthMode(env.getProperty("esign.auth.mode"));
         formXmlDataAsp.setResponseSigType(env.getProperty("esign.response.sig.type"));
-        formXmlDataAsp.setResponseUrl(env.getProperty("esign.response.host") + env.getProperty("esign.response.url"));
+        formXmlDataAsp.setResponseUrl(responseUrl);
         formXmlDataAsp.setId("1");
         formXmlDataAsp.setHashAlgorithm(env.getProperty("esign.hash.algorithm"));
         formXmlDataAsp.setDocInfo(env.getProperty("esign.doc.info"));
@@ -423,5 +463,36 @@ public class ESignService {
             logger.error("Error extracting fileStoreId", e);
         }
         return response;
+    }
+    
+    /**
+     * Get last page and last X and Y of the Pdf file content
+     * 
+     * @param originalPdfBytes
+     * @return
+     * @throws Exception
+     */
+    private Map<String, Object> getEsignPosition(byte[] originalPdfBytes) throws Exception{
+    	Map<String, Object> positionMap = new HashMap<>();
+    	
+    	PdfReader pdfReader = new PdfReader(new ByteArrayInputStream(originalPdfBytes));
+        PdfDocument document = new PdfDocument(pdfReader);
+        int totalPages = document.getNumberOfPages();
+        
+        LastPositionListener listener = new LastPositionListener();
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
+        processor.processPageContent(document.getLastPage());
+        
+        if(listener.hasPosition()) {
+        	positionMap.put("lastX", listener.getLastX());
+        	positionMap.put("lastY", listener.getLastY());
+        }
+        
+        document.close();
+        pdfReader.close();
+    	
+        positionMap.put("lastPage", totalPages);
+        
+    	return positionMap;
     }
 }
