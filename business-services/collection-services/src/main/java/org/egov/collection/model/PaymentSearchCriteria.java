@@ -51,7 +51,6 @@ public class PaymentSearchCriteria {
     private Integer offset;
 
     private Integer limit;
-    private String ward;
     
     @Default
     private Boolean isCountRequest = false;

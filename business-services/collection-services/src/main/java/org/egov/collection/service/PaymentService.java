@@ -202,12 +202,12 @@ public class PaymentService {
             searchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
         }
 
-//        List<String> ids = paymentRepository.fetchPaymentIds(searchCriteria);
-//        if (ids.isEmpty())
-//            return Collections.emptyList();
+        List<String> ids = paymentRepository.fetchPaymentIds(searchCriteria);
+        if (ids.isEmpty())
+            return Collections.emptyList();
 
-        //PaymentSearchCriteria criteria = PaymentSearchCriteria.builder().ids(new HashSet<String>(ids)).build();
-        return paymentRepository.fetchPaymentsForPlainSearch(paymentSearchCriteria);
+        PaymentSearchCriteria criteria = PaymentSearchCriteria.builder().ids(new HashSet<String>(ids)).build();
+        return paymentRepository.fetchPaymentsForPlainSearch(criteria);
     }
 
 
