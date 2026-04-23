@@ -142,6 +142,10 @@ public class WSCalculatorQueryBuilder {
 			+ "VALUES (?,?,?,?,?,?,?,?,?,?);";
 	
 	public static final String RELATED_SW_CONNECTION_SEARCH_QUERY = "SELECT conn.relatedSwConn from eg_ws_connection conn ";
+	
+	private final static String METERREADINGQUERY = "SELECT mr.id, mr.connectionNo as connectionId, epp.usagecategory as usageCategory , mr.billingPeriod, mr.meterStatus, mr.lastReading, mr.lastReadingDate, mr.currentReading,"
+			+ " mr.currentReadingDate, mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy,"
+			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime FROM eg_ws_meterreading mr";
 
 	public String getDistinctTenantIds() {
 		return distinctTenantIdsCriteria;
@@ -1137,7 +1141,7 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 		if (criteria.isEmpty()) {
 			return null;
 		}
-		StringBuilder query = new StringBuilder(Query);
+		StringBuilder query = new StringBuilder(METERREADINGQUERY);
 		query.append("\r\n INNER JOIN eg_ws_connection conn \r\n"
 				+ "  ON mr.connectionno = conn.connectionno \r\n"
 				+ " AND mr.tenantid = conn.tenantid  \r\n"
