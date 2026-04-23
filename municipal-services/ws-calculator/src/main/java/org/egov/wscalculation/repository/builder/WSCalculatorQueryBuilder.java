@@ -143,7 +143,7 @@ public class WSCalculatorQueryBuilder {
 	
 	public static final String RELATED_SW_CONNECTION_SEARCH_QUERY = "SELECT conn.relatedSwConn from eg_ws_connection conn ";
 	
-	private final static String METERREADINGQUERY = "SELECT mr.id, mr.connectionNo as connectionId, epp.usagecategory as usageCategory, mr.billingPeriod, mr.meterStatus, mr.lastReading, mr.lastReadingDate, mr.currentReading,"
+	public static final String METERREADINGQUERY = "SELECT mr.id, mr.connectionNo as connectionId, epp.usagecategory as usageCategory, mr.billingPeriod, mr.meterStatus, mr.lastReading, mr.lastReadingDate, mr.currentReading,"
 			+ " mr.currentReadingDate, mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy,"
 			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime FROM eg_ws_meterreading mr";
 

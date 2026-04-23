@@ -30,18 +30,18 @@ public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<BulkMe
 	        if (!maxReadingMap.containsKey(consumerCode) ||
 	        		currentReading > maxReadingMap.get(consumerCode).getCurrentReading()) {
 
-	            BulkMeterReading BulkMeterReading = new BulkMeterReading();
-	            BulkMeterReading.setId(rs.getString("id"));
-	            BulkMeterReading.setConnectionNo(rs.getString("connectionId"));
-	            BulkMeterReading.setUsageCategory(rs.getString("usageCategory"));
-	            BulkMeterReading.setBillingPeriod(rs.getString("billingPeriod"));
-	            BulkMeterReading.setCurrentReading(currentReading);
-	            BulkMeterReading.setCurrentReadingDate(rs.getLong("currentReadingDate"));
-	            BulkMeterReading.setLastReading(rs.getDouble("lastReading"));
-	            BulkMeterReading.setLastReadingDate(rs.getLong("lastReadingDate"));
-	            BulkMeterReading.setMeterStatus(
+	            BulkMeterReading bulkMeterReading = new BulkMeterReading();
+	            bulkMeterReading.setId(rs.getString("id"));
+	            bulkMeterReading.setConnectionNo(rs.getString("connectionId"));
+	            bulkMeterReading.setUsageCategory(rs.getString("usageCategory"));
+	            bulkMeterReading.setBillingPeriod(rs.getString("billingPeriod"));
+	            bulkMeterReading.setCurrentReading(currentReading);
+	            bulkMeterReading.setCurrentReadingDate(rs.getLong("currentReadingDate"));
+	            bulkMeterReading.setLastReading(rs.getDouble("lastReading"));
+	            bulkMeterReading.setLastReadingDate(rs.getLong("lastReadingDate"));
+	            bulkMeterReading.setMeterStatus(
 	                    MeterStatusEnum.fromValue(rs.getString("meterStatus")));
-	            BulkMeterReading.setTenantId(rs.getString("tenantid"));
+	            bulkMeterReading.setTenantId(rs.getString("tenantid"));
 
 	            AuditDetails auditdetails = AuditDetails.builder()
 	                    .createdBy(rs.getString("mr_createdBy"))
@@ -50,8 +50,8 @@ public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<BulkMe
 	                    .lastModifiedTime(rs.getLong("mr_lastModifiedTime"))
 	                    .build();
 
-	            BulkMeterReading.setAuditDetails(auditdetails);
-	            maxReadingMap.put(consumerCode, BulkMeterReading);
+	            bulkMeterReading.setAuditDetails(auditdetails);
+	            maxReadingMap.put(consumerCode, bulkMeterReading);
 	        }
 	    }
 	    return new ArrayList<>(maxReadingMap.values());
