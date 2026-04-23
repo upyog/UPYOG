@@ -15,10 +15,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.SafeHtml;
 
-
-import jakarta.validation.constraints.Size;
-import org.egov.collection.validation.SanitizeHtml;
+import javax.validation.constraints.Size;
 
 @Setter
 @Getter
@@ -29,22 +28,22 @@ import org.egov.collection.validation.SanitizeHtml;
 @EqualsAndHashCode
 public class BillAccountDetail {
 
-	@SanitizeHtml
+	@SafeHtml
 	@Size(max=64)
 	@JsonProperty("id")
 	private String id = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@Size(max=64)
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@Size(max=64)
 	@JsonProperty("billDetailId")
 	private String billDetailId = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@Size(max=64)
 	@JsonProperty("demandDetailId")
 	private String demandDetailId = null;
@@ -61,7 +60,7 @@ public class BillAccountDetail {
 	@JsonProperty("isActualDemand")
 	private Boolean isActualDemand = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@Size(max=64)
 	@JsonProperty("taxHeadCode")
 	private String taxHeadCode = null;

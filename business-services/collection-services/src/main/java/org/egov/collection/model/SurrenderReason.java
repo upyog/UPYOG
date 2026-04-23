@@ -1,6 +1,6 @@
 package org.egov.collection.model;
 
-import jakarta.validation.constraints.Size;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 

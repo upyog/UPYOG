@@ -13,7 +13,6 @@ import org.egov.collection.producer.CollectionProducer;
 import org.egov.collection.repository.PaymentRepository;
 import org.egov.collection.repository.ServiceRequestRepository;
 import org.egov.collection.service.PaymentWorkflowService;
-import org.egov.common.contract.request.PlainAccessRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -140,9 +139,8 @@ class PaymentValidatorTest {
 
         PaymentValidator paymentValidator = new PaymentValidator(paymentRepository, paymentWorkflowService,
                 new ApplicationProperties(), mock(ServiceRequestRepository.class));
-        PlainAccessRequest plainAccessRequest = new PlainAccessRequest();
         RequestInfo requestInfo = new RequestInfo("42", "INVALID_USER_INFO", 1L, "INVALID_USER_INFO", "INVALID_USER_INFO",
-                "INVALID_USER_INFO", "42", "ABC123", "42", plainAccessRequest,new User());
+                "INVALID_USER_INFO", "42", "ABC123", "42", new User());
 
         HashMap<String, String> stringStringMap = new HashMap<>();
         paymentValidator.validateUserInfo(requestInfo, stringStringMap);
@@ -306,8 +304,8 @@ class PaymentValidatorTest {
         PaymentValidator paymentValidator = new PaymentValidator(paymentRepository, paymentWorkflowService,
                 new ApplicationProperties(), mock(ServiceRequestRepository.class));
         PaymentSearchCriteria paymentSearchCriteria = new PaymentSearchCriteria();
-//        assertThrows(CustomException.class, () -> paymentValidator
-//                .validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria, new RequestInfo(), "Module Name"));
+        assertThrows(CustomException.class, () -> paymentValidator
+                .validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria, new RequestInfo(), "Module Name"));
     }
 
     @Test
@@ -322,8 +320,8 @@ class PaymentValidatorTest {
 
         PaymentValidator paymentValidator = new PaymentValidator(paymentRepository, paymentWorkflowService,
                 new ApplicationProperties(), mock(ServiceRequestRepository.class));
-//        assertThrows(CustomException.class,
-//                () -> paymentValidator.validateAndUpdateSearchRequestFromConfig(new PaymentSearchCriteria(), null, null));
+        assertThrows(CustomException.class,
+                () -> paymentValidator.validateAndUpdateSearchRequestFromConfig(new PaymentSearchCriteria(), null, null));
     }
 
     @Test
@@ -339,12 +337,11 @@ class PaymentValidatorTest {
         PaymentValidator paymentValidator = new PaymentValidator(paymentRepository, paymentWorkflowService,
                 new ApplicationProperties(), mock(ServiceRequestRepository.class));
         PaymentSearchCriteria paymentSearchCriteria = new PaymentSearchCriteria();
-        PlainAccessRequest plainAccessRequest = new PlainAccessRequest();
-//        assertThrows(CustomException.class,
-//                () -> paymentValidator.validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria,
-//                        new RequestInfo("42", "INVALID_USER_INFO", 1L, "INVALID_USER_INFO", "INVALID_USER_INFO",
-//                                "INVALID_USER_INFO", "42", "ABC123", "42", plainAccessRequest, new User()),
-//                        "Module Name"));
+        assertThrows(CustomException.class,
+                () -> paymentValidator.validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria,
+                        new RequestInfo("42", "INVALID_USER_INFO", 1L, "INVALID_USER_INFO", "INVALID_USER_INFO",
+                                "INVALID_USER_INFO", "42", "ABC123", "42", new User()),
+                        "Module Name"));
     }
 
     @Test
@@ -362,9 +359,9 @@ class PaymentValidatorTest {
         PaymentSearchCriteria paymentSearchCriteria = new PaymentSearchCriteria();
         RequestInfo requestInfo = mock(RequestInfo.class);
         when(requestInfo.getUserInfo()).thenReturn(new User());
-//        assertThrows(CustomException.class, () -> paymentValidator
-//                .validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria, requestInfo, "Module Name"));
- //       verify(requestInfo, atLeast(1)).getUserInfo();
+        assertThrows(CustomException.class, () -> paymentValidator
+                .validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria, requestInfo, "Module Name"));
+        verify(requestInfo, atLeast(1)).getUserInfo();
     }
 
     @Test
@@ -603,9 +600,9 @@ class PaymentValidatorTest {
         RequestInfo requestInfo = mock(RequestInfo.class);
         when(requestInfo.getUserInfo()).thenReturn(
                 new User(123L, "janedoe", "INVALID_USER_ID", "INVALID_USER_ID", "42", "42", new ArrayList<>(), "42", ""));
-//        assertThrows(CustomException.class, () -> paymentValidator
-//                .validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria, requestInfo, "Module Name"));
-//        verify(requestInfo, atLeast(1)).getUserInfo();
+        assertThrows(CustomException.class, () -> paymentValidator
+                .validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria, requestInfo, "Module Name"));
+        verify(requestInfo, atLeast(1)).getUserInfo();
     }
 
     @Test

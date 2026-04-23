@@ -45,7 +45,3 @@ Kafka consumer listen to payment topic to update demand whenever payment is made
 -kafka.topics.payment.cancel.name=
 -kafka.topics.payment.update.name=
 
-### Swagger URL
-
-- http://localhost:8280/collection-services/swagger-ui/index.html#/
-

@@ -43,7 +43,7 @@ package org.egov.collection.web.controller;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 import org.egov.collection.service.RemittanceService;
 import org.egov.collection.web.contract.Remittance;

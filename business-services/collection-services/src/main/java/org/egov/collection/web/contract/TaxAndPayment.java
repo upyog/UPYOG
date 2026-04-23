@@ -2,7 +2,7 @@ package org.egov.collection.web.contract;
 
 import java.math.BigDecimal;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

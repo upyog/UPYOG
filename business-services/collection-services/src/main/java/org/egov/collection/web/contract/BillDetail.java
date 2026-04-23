@@ -48,12 +48,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 import org.egov.collection.model.enums.CollectionType;
 import org.egov.collection.model.enums.ReceiptType;
-
-import org.egov.collection.validation.SanitizeHtml;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -76,19 +75,19 @@ import lombok.ToString;
 @EqualsAndHashCode(of = {"id"})
 public class BillDetail {
 
-	@SanitizeHtml
+	@SafeHtml
 	@JsonProperty("id")
 	private String id = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@JsonProperty("demandId")
 	private String demandId = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@JsonProperty("billId")
 	private String billId = null;
 
@@ -110,19 +109,19 @@ public class BillDetail {
 	@JsonProperty("additionalDetails")
 	private JsonNode additionalDetails = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@JsonProperty("channel")
 	private String channel = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@JsonProperty("voucherHeader")
 	private String voucherHeader = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@JsonProperty("boundary")
 	private String boundary = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	@JsonProperty("manualReceiptNumber")
 	private String manualReceiptNumber = null;
 
@@ -140,19 +139,19 @@ public class BillDetail {
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;
 
-	@SanitizeHtml
+	@SafeHtml
 	private String billDescription;
 
 	@NotNull
 	@JsonProperty("expiryDate")
 	private Long expiryDate;
 
-	@SanitizeHtml
+	@SafeHtml
 	private String displayMessage;
 
 	private Boolean callBackForApportioning;
 
-	@SanitizeHtml
+	@SafeHtml
 	private String cancellationRemarks;
 
 	public Boolean addBillAccountDetail(BillAccountDetail billAccountDetail) {

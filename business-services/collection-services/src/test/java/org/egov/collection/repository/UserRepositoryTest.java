@@ -15,9 +15,6 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 
 @ContextConfiguration(classes = {UserRepository.class, String.class})
 @ExtendWith(SpringExtension.class)
@@ -30,12 +27,12 @@ class UserRepositoryTest {
 
     @Test
     void testGetUsersById() throws RestClientException {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setReceiptCreators(new ArrayList<>());
-        when(this.restTemplate.postForObject(anyString(), any(), eq(UserResponse.class))).thenReturn(userResponse);
+        when(this.restTemplate.postForObject((String) any(), (Object) any(), (Class<UserResponse>) any(), (Object[]) any()))
+                .thenReturn(new UserResponse());
         ArrayList<Long> userIds = new ArrayList<>();
         assertTrue(this.userRepository.getUsersById(userIds, new RequestInfo(), "42").isEmpty());
-        verify(this.restTemplate).postForObject(anyString(), any(), eq(UserResponse.class));
+        verify(this.restTemplate).postForObject((String) any(), (Object) any(), (Class<UserResponse>) any(),
+                (Object[]) any());
     }
 }
 

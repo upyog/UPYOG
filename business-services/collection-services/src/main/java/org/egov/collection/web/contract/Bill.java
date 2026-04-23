@@ -6,11 +6,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.egov.collection.model.AuditDetails;
-
-import org.egov.collection.validation.SanitizeHtml;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.util.CollectionUtils;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,33 +27,35 @@ public class Bill {
     @JsonProperty("id")
     private String id = null;
 
-    @SanitizeHtml
+    @SafeHtml
     @JsonProperty("mobileNumber")
     private String mobileNumber = null;
 
-    @SanitizeHtml
+    @SafeHtml
     @JsonProperty("paidBy")
     private String paidBy = null;
 
-    @SanitizeHtml
+    @SafeHtml
     @JsonProperty("payerName")
     private String payerName = null;
 
-    @SanitizeHtml
+    @SafeHtml
+
     @JsonProperty("payerAddress")
     private String payerAddress = null;
 
-    @SanitizeHtml
+    @SafeHtml
     @JsonProperty("payerEmail")
     private String payerEmail = null;
 
-    @SanitizeHtml
+    @SafeHtml
     @JsonProperty("payerId")
     private String payerId = null;
 
     @JsonProperty("status")
     private StatusEnum status = null;
 
+    @SafeHtml
     @JsonProperty("reasonForCancellation")
     private String reasonForCancellation = null;
 
@@ -68,7 +69,7 @@ public class Bill {
     @Valid
     private List<BillDetail> billDetails = null;
 
-    @SanitizeHtml
+    @SafeHtml
     @JsonProperty("tenantId")
     private String tenantId = null;
 
@@ -87,18 +88,18 @@ public class Bill {
     @JsonProperty("minimumAmountToBePaid")
     private BigDecimal minimumAmountToBePaid = null;
 
-    @SanitizeHtml
+    @SafeHtml
     @JsonProperty("businessService")
     private String businessService = null;
 
     @JsonProperty("totalAmount")
     private BigDecimal totalAmount = null;
 
-    @SanitizeHtml
+    @SafeHtml
     @JsonProperty("consumerCode")
     private String consumerCode = null;
 
-    @SanitizeHtml
+    @SafeHtml
     @JsonProperty("billNumber")
     private String billNumber = null;
 

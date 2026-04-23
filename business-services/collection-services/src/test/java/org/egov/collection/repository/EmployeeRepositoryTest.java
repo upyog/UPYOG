@@ -5,12 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.reflect.Field;
 
 import org.egov.collection.web.contract.Employee;
 import org.egov.collection.web.contract.EmployeeResponse;
@@ -35,22 +32,19 @@ class EmployeeRepositoryTest {
     private RestTemplate restTemplate;
 
     @Test
-    void testGetPositionsForEmployee() throws Exception {
-        // Set the hrEmployeePositonsUrl field to a dummy value to avoid NPE
-        Field urlField = EmployeeRepository.class.getDeclaredField("hrEmployeePositonsUrl");
-        urlField.setAccessible(true);
-        urlField.set(employeeRepository, "http://dummy-url");
-
+    void testGetPositionsForEmployee() throws RestClientException {
         EmployeeResponse employeeResponse = new EmployeeResponse();
         ArrayList<Employee> employeeList = new ArrayList<>();
         employeeResponse.setEmployees(employeeList);
         employeeResponse.setResponseInfo(new ResponseInfo());
-        when(this.restTemplate.postForObject(anyString(), any(), eq(EmployeeResponse.class), any(), any())).thenReturn(employeeResponse);
+        when(this.restTemplate.postForObject((String) any(), (Object) any(), (Class<EmployeeResponse>) any(),
+                (Object[]) any())).thenReturn(employeeResponse);
         List<Employee> actualPositionsForEmployee = this.employeeRepository.getPositionsForEmployee(new RequestInfo(), 123L,
                 "42");
         assertSame(employeeList, actualPositionsForEmployee);
         assertTrue(actualPositionsForEmployee.isEmpty());
-        verify(this.restTemplate).postForObject(anyString(), any(), eq(EmployeeResponse.class), any(), any());
+        verify(this.restTemplate).postForObject((String) any(), (Object) any(), (Class<EmployeeResponse>) any(),
+                (Object[]) any());
     }
 }
 

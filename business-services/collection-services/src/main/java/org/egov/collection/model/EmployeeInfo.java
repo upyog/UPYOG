@@ -42,7 +42,7 @@ package org.egov.collection.model;
 
 import lombok.*;
 
-import jakarta.validation.constraints.Size;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 

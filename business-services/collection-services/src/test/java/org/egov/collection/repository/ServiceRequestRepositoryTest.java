@@ -7,10 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,51 +36,62 @@ class ServiceRequestRepositoryTest {
     @Test
     void testFetchResult() throws RestClientException {
         HashMap<Object, Object> objectObjectMap = new HashMap<>();
-        when(this.restTemplate.postForObject(anyString(), any(), eq(Map.class))).thenReturn(objectObjectMap);
+        when(this.restTemplate.postForObject((String) any(), (Object) any(), (Class<Map<Object, Object>>) any(),
+                (Object[]) any())).thenReturn(objectObjectMap);
         Object actualFetchResultResult = this.serviceRequestRepository.fetchResult(new StringBuilder("Str"), "Request");
         assertSame(objectObjectMap, actualFetchResultResult);
         assertTrue(((Map<Object, Object>) actualFetchResultResult).isEmpty());
-        verify(this.restTemplate).postForObject(anyString(), any(), eq(Map.class));
+        verify(this.restTemplate).postForObject((String) any(), (Object) any(), (Class<Map<Object, Object>>) any(),
+                (Object[]) any());
     }
 
     @Test
     void testFetchGetResult() throws RestClientException {
-        when(this.restTemplate.exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class)))
-                .thenReturn(new ResponseEntity<>(null, HttpStatus.CONTINUE));
+        when(this.restTemplate.exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any()))
+                .thenReturn(new ResponseEntity<>(HttpStatus.CONTINUE));
         assertNull(this.serviceRequestRepository.fetchGetResult("Uri"));
-        verify(this.restTemplate).exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class));
+        verify(this.restTemplate).exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any());
     }
 
     @Test
     void testFetchGetResult2() throws RestClientException {
-        when(this.restTemplate.exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class))).thenReturn(null);
+        when(this.restTemplate.exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any())).thenReturn(null);
         assertThrows(ServiceCallException.class, () -> this.serviceRequestRepository.fetchGetResult("Uri"));
-        verify(this.restTemplate).exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class));
+        verify(this.restTemplate).exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any());
     }
 
     @Test
     void testFetchGetResult3() throws RestClientException {
-        when(this.restTemplate.exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class)))
+        when(this.restTemplate.exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any()))
                 .thenThrow(new HttpClientErrorException(HttpStatus.CONTINUE));
         assertThrows(ServiceCallException.class, () -> this.serviceRequestRepository.fetchGetResult("Uri"));
-        verify(this.restTemplate).exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class));
+        verify(this.restTemplate).exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any());
     }
 
     @Test
     void testFetchGetResult4() throws RestClientException {
-        when(this.restTemplate.exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class)))
+        when(this.restTemplate.exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any()))
                 .thenThrow(new ServiceCallException("An error occurred"));
         assertThrows(ServiceCallException.class, () -> this.serviceRequestRepository.fetchGetResult("Uri"));
-        verify(this.restTemplate).exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class));
+        verify(this.restTemplate).exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any());
     }
 
     @Test
     void testFetchGetResult5() throws RestClientException {
-        // Instead of returning a ResponseEntity, throw an exception to trigger ServiceCallException
-        when(this.restTemplate.exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class)))
-            .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+        when(this.restTemplate.exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any()))
+                .thenReturn(new ResponseEntity<>(42, HttpStatus.CONTINUE));
         assertThrows(ServiceCallException.class, () -> this.serviceRequestRepository.fetchGetResult("Uri"));
-        verify(this.restTemplate).exchange(anyString(), eq(HttpMethod.GET), isNull(), eq(String.class));
+        verify(this.restTemplate).exchange((String) any(), (org.springframework.http.HttpMethod) any(),
+                (org.springframework.http.HttpEntity<?>) any(), (Class<Object>) any(), (Object[]) any());
     }
 }
 
