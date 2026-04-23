@@ -157,7 +157,7 @@ public class BPAValidator {
 		if (request.getBPA().getDocuments() != null) {
 			List<String> documentFileStoreIds = new LinkedList<String>();
 			request.getBPA().getDocuments().forEach(document -> {
-				if (documentFileStoreIds.contains(document.getFileStoreId()))
+				if (!StringUtils.isEmpty(document.getFileStoreId()) && documentFileStoreIds.contains(document.getFileStoreId()))
 					throw new CustomException(BPAErrorConstants.BPA_DUPLICATE_DOCUMENT, "Same document cannot be used multiple times");
 				else
 					documentFileStoreIds.add(document.getFileStoreId());
