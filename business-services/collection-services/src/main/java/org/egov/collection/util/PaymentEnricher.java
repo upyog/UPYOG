@@ -159,7 +159,7 @@ public class PaymentEnricher {
 		List<PaymentDetail> paymentDetails = payment.getPaymentDetails();
 		String paymentMode = payment.getPaymentMode().toString();
 
-		if (paymentMode.equalsIgnoreCase(ONLINE.name()) || paymentMode.equalsIgnoreCase(CARD.name()) ||
+		if (paymentMode.equalsIgnoreCase(ONLINE.name()) ||
 			paymentMode.equalsIgnoreCase(ONLINE_NEFT.name()) || paymentMode.equalsIgnoreCase(ONLINE_RTGS.name()))
 			payment.setPaymentStatus(PaymentStatusEnum.DEPOSITED);
 		else

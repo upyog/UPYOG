@@ -148,14 +148,12 @@
   }
   </script>
   
- <style>
-	/* Set consistent width for form inputs and dropdowns */
-	td.greybox input,
-	td.greybox select,
-	td.bluebox input,
-	td.bluebox select {
-	    width: 46% !important;
-	}
+<style type="text/css">
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
 </style>
   
   </head>
@@ -182,15 +180,15 @@
   
 	  <table border="0" width="100%" cellspacing="0" cellpadding="0">
 		  <tr>
-			  <td class="bluebox"></td>
+			  <td class="bluebox w5">&nbsp;</td>
 			  <s:if test="%{shouldShowHeaderField('vouchernumber')}">
-				  <td class="bluebox" width="22%"><s:text name="voucher.number" /><span class="mandatory1">*</span></td>
-				  <td class="bluebox" width="22%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
+				  <td class="bluebox w15"><s:text name="voucher.number" /><span class="mandatory1">*</span></td>
+				  <td class="bluebox w25" width="25%"><s:textfield name="voucherNumber" id="voucherNumber" /></td>
 			  </s:if>
 			  <s:hidden name="id" />
-			  <td class="bluebox" width="18%"><s:text name="voucher.date" /><span class="mandatory1">*</span></td>
-			  <td class="bluebox" width="34%">
-				  <s:textfield id="voucherDate" name="voucherDate" data-date-end-date="0d" value="{voucherDate}" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
+			  <td class="bluebox" width="15%"><s:text name="voucher.date" /><span class="mandatory1">*</span></td>
+			  <td class="bluebox" width="25%">
+				  <s:textfield id="voucherDate" name="voucherDate" data-date-end-date="0d" value="{voucherDate}" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker w100" data-inputmask="'mask': 'd/m/y'" />
 			  </td>
 			  <td class="bluebox"></td>
 			  <td class="bluebox"></td>
