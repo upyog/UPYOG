@@ -8,20 +8,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.wscalculation.web.models.AuditDetails;
-import org.egov.wscalculation.web.models.MeterReading;
-import org.egov.wscalculation.web.models.MeterReading.MeterStatusEnum;
+import org.egov.wscalculation.web.models.BulkMeterReading;
+import org.egov.wscalculation.web.models.BulkMeterReading.MeterStatusEnum;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
-
 @Component
-public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<MeterReading>> {
+public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<BulkMeterReading>> {
 
 	@Override
-	public List<MeterReading> extractData(ResultSet rs) throws SQLException, DataAccessException {
+	public List<BulkMeterReading> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-		Map<String, MeterReading> maxReadingMap = new HashMap<>();
+	    Map<String, BulkMeterReading> maxReadingMap = new HashMap<>();
 
 	    while (rs.next()) {
 
@@ -29,19 +28,20 @@ public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<MeterR
 	        double currentReading = rs.getDouble("currentReading");
 
 	        if (!maxReadingMap.containsKey(consumerCode) ||
-	                currentReading > maxReadingMap.get(consumerCode).getCurrentReading()) {
+	        		currentReading > maxReadingMap.get(consumerCode).getCurrentReading()) {
 
-	            MeterReading meterReading = new MeterReading();
-	            meterReading.setId(rs.getString("id"));
-	            meterReading.setConnectionNo(rs.getString("connectionId"));
-	            meterReading.setBillingPeriod(rs.getString("billingPeriod"));
-	            meterReading.setCurrentReading(currentReading);
-	            meterReading.setCurrentReadingDate(rs.getLong("currentReadingDate"));
-	            meterReading.setLastReading(rs.getDouble("lastReading"));
-	            meterReading.setLastReadingDate(rs.getLong("lastReadingDate"));
-	            meterReading.setMeterStatus(
+	            BulkMeterReading bulkMeterReading = new BulkMeterReading();
+	            bulkMeterReading.setId(rs.getString("id"));
+	            bulkMeterReading.setConnectionNo(rs.getString("connectionId"));
+	            bulkMeterReading.setUsageCategory(rs.getString("usageCategory"));
+	            bulkMeterReading.setBillingPeriod(rs.getString("billingPeriod"));
+	            bulkMeterReading.setCurrentReading(currentReading);
+	            bulkMeterReading.setCurrentReadingDate(rs.getLong("currentReadingDate"));
+	            bulkMeterReading.setLastReading(rs.getDouble("lastReading"));
+	            bulkMeterReading.setLastReadingDate(rs.getLong("lastReadingDate"));
+	            bulkMeterReading.setMeterStatus(
 	                    MeterStatusEnum.fromValue(rs.getString("meterStatus")));
-	            meterReading.setTenantId(rs.getString("tenantid"));
+	            bulkMeterReading.setTenantId(rs.getString("tenantid"));
 
 	            AuditDetails auditdetails = AuditDetails.builder()
 	                    .createdBy(rs.getString("mr_createdBy"))
@@ -50,8 +50,8 @@ public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<MeterR
 	                    .lastModifiedTime(rs.getLong("mr_lastModifiedTime"))
 	                    .build();
 
-	            meterReading.setAuditDetails(auditdetails);
-	            maxReadingMap.put(consumerCode, meterReading);
+	            bulkMeterReading.setAuditDetails(auditdetails);
+	            maxReadingMap.put(consumerCode, bulkMeterReading);
 	        }
 	    }
 	    return new ArrayList<>(maxReadingMap.values());
