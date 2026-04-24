@@ -58,7 +58,71 @@
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <title>Voucher - View</title>
+
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function() {
+		var now = new Date();
+
+		var date = now.toLocaleDateString('en-GB');
+		var time = now.toLocaleTimeString();
+
+		var d = document.getElementById("printDate");
+		var t = document.getElementById("printTime");
+
+		if (d)
+			d.innerText = date;
+		if (t)
+			t.innerText = time;
+	});
+</script>
+
 <style type="text/css">
+.print-header {
+	display: none;
+}
+
+@media print {
+    #ulbHeader,
+    #jmcHeader {
+        display: none !important;
+    }
+    
+	@page {
+		margin: 0;
+	}
+	.print-header {
+		display: block;
+		text-align: center;
+		border-bottom: 2px solid #000;
+		padding: 5px 0;
+		margin-bottom: 5px;
+		font-family: Arial, sans-serif;
+	}
+	.header-center h2 {
+		margin: 0;
+		font-size: 16px;
+		font-weight: bold;
+		color: #003366 !important;
+	}
+	.header-center h1 {
+		margin: 2px 0;
+		font-size: 18px;
+		font-weight: bold;
+		color: #003366 !important;
+	}
+	.header-right {
+		position: absolute;
+		right: 20px;
+		top: 10px;
+		text-align: right;
+		font-size: 14px;
+	}
+	.header-right p {
+		margin: 0;
+		padding: 0;
+	}
+}
+
 @media print {
 	input#button1 {
 		display: none;
@@ -100,29 +164,50 @@
 		display: none;
 	}
 }
-
 </style>
 <script>
-	function openSource(){
-		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escapeHtml='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
+	function openSource() {
+		if ("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escapeHtml='false'/>" == ""
+				|| "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>" == 'null')
 			bootbox.alert('Source is not available');
-		else{
-			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escapeHtml="false"/>'+'&showMode=view';
-			window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
-		}   
+		else {
+			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escapeHtml="false"/>'
+					+ '&showMode=view';
+			window
+					.open(url, 'Source',
+							'resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
+		}
 	}
-	function checkLength(obj)
-	{
-		if(obj.value.length>1024)
-		{
-			bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
-			obj.value = obj.value.substring(1,1024);
+	function checkLength(obj) {
+		if (obj.value.length > 1024) {
+			bootbox
+					.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+			obj.value = obj.value.substring(1, 1024);
 		}
 	}
 </script>
 </head>
 
 <body onload="refreshInbox()">
+	<div class="print-header">
+
+		<div class="header-right">
+			<p>
+				Date: <span id="printDate"></span>
+			</p>
+			<p>
+				Time: <span id="printTime"></span>
+			</p>
+		</div>
+
+		<div class="header-center">
+			<h1>Government of Jammu &amp; Kashmir</h1>
+			<h2>
+				Housing and Urban Development<br />Department
+			</h2>
+		</div>
+
+	</div>
 	<s:form action="preApprovedVoucher" theme="simple">
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Voucher-View" />
@@ -131,16 +216,22 @@
 			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
-			<div class="subheadnew"><label name="head" style="align:center;">Urban Local Body</label></div>
-			<div class="subheadnew"><label name="head" style="align:center;"><s:property
-							value="%{heading}" /></label></div>
+			<div class="subheadnew" id="ulbHeader">
+				<label name="head" style="align: center;">Urban Local Body</label>
+			</div>
+
+			<div class="subheadnew" id="jmcHeader">
+				<label name="head" style="align: center;"> <s:property
+						value="%{heading}" />
+				</label>
+			</div>
 			<div class="subheadnew">Voucher View</div>
 			<table border="0" width="100%" cellspacing="0">
 				<tr>
-					<td width="10%" class="greybox"><b>Voucher Number :  </b></td>
+					<td width="10%" class="greybox"><b>Voucher Number : </b></td>
 					<td width="25%" class="greybox"><s:property
 							value="%{voucherHeader.voucherNumber}" /></td>
-					<td width="10%" class="greybox"><b>  Date :</b></td>
+					<td width="10%" class="greybox"><b> Date :</b></td>
 					<td width="25%" class="greybox"><s:date
 							name="voucherHeader.voucherDate" format="dd/MM/yyyy" /></td>
 				</tr>
@@ -175,10 +266,10 @@
 
 				<s:iterator var="p" value="%{billDetails.tempList}" status="s">
 					<tr>
-						<td width="18%" class="bluebox setborder" style="text-align: center"><s:property
-								value="function" /></td>
-						<td width="17%" class="bluebox setborder" style="text-align: center"><s:property
-								value="glcode" /></td>
+						<td width="18%" class="bluebox setborder"
+							style="text-align: center"><s:property value="function" /></td>
+						<td width="17%" class="bluebox setborder"
+							style="text-align: center"><s:property value="glcode" /></td>
 						<td width="19%" class="bluebox setborder"><s:property
 								value="accounthead" /></td>
 						<td width="17%" class="bluebox setborder"
@@ -224,9 +315,11 @@
 					</tr>
 					<s:iterator var="p" value="%{billDetails.subLedgerlist}" status="s">
 						<tr>
-							<td width="17%" class="bluebox setborder" style="text-align: center"><s:property
+							<td width="17%" class="bluebox setborder"
+								style="text-align: center"><s:property
 									value="functionDetail" /></td>
-							<td width="17%"  class="bluebox setborder" style="text-align: center"><s:property 
+							<td width="17%" class="bluebox setborder"
+								style="text-align: center"><s:property
 									value="glcode.glcode" /></td>
 							<td width="19%" class="bluebox setborder"><s:property
 									value="detailType.description" /></td>

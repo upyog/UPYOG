@@ -63,15 +63,6 @@
   <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
   
   <script type="text/javascript">
-function printVoucher() {
-    var vhId = '<s:property value="vhId"/>';
-    var url = "${pageContext.request.contextPath}/contra/contraBTB-beforeView.action?voucherHeader.id=" + vhId + "&print=true";
-    window.open(url, "_blank");
-}
-</script>
-  
-  
-  <script type="text/javascript">
   $(document).ready(function() {
   
 	  // Initialize voucher date
@@ -164,41 +155,9 @@ function printVoucher() {
 		.w25{width:25% !important}
 		.w100{width:100% !important}
 </style>
-<style>
-@media print {
-    .no-print,
-    .btn,
-    button,
-    input[type=button],
-    input[type=submit] {
-        display: none !important;
-    }
-
-    .print-header {
-        text-align: center;
-        font-weight: bold;
-        font-size: 18px;
-        margin-bottom: 20px;
-    }
-}
-</style>
   
   </head>
-  <s:if test="%{#parameters.print == 'true'}">
-    <div class="print-header">
-        Government of Jammu &amp; Kashmir<br/>
-        <strong>Housing and Urban Development Department</strong>
-        <hr/>
-    </div>
-</s:if>
   <body>
-  <div id="successContainer">
-    <s:if test="saveSuccess">
-        <div class="alert alert-success">
-            <s:actionmessage />
-        </div>
-    </s:if>
- </div>
   <s:form action="contraBTB" theme="simple" name="cbtbform">
   <s:push value="model">
   
@@ -240,21 +199,7 @@ function printVoucher() {
   
   <div class="mandatory1" align="left">* <s:text name="lbl.mendatory.field"/> </div>
   <br/><br/>
-  
-  <s:if test="!saveSuccess">
-    <div class="no-print">
-    <%@ include file="../voucher/SaveButtons.jsp"%>
-   </div>
-  </s:if>
-
-  <s:if test="saveSuccess">
-    <div style="text-align: center;">
-    <input type="button"
-           value="Print"
-           class="btn btn-primary"
-           onclick="printVoucher();" />
-   </div>  
-   </s:if>
+  <%@include file="../voucher/SaveButtons.jsp"%>
   
   <input type="hidden" id="name" name="name" value="BankToBank" />
   <input type="hidden" id="type" name="type" value="Contra" />

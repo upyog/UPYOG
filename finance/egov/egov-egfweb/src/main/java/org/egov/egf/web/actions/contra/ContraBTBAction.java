@@ -119,7 +119,7 @@ import java.util.Map;
 		@Result(name = "edit", location = "contraBTB-edit.jsp"),
 		@Result(name = "reverse", location = "contraBTB-reverse.jsp"),
 		@Result(name = "view", location = "contraBTB-view.jsp"),
-		@Result(name = "new", location = "contraBTB-new.jsp") })
+		@Result(name = "success", location = "contraBTB-success.jsp") })
 public class ContraBTBAction extends BaseVoucherAction {
 	private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContraBTBAction.class);
@@ -156,7 +156,6 @@ public class ContraBTBAction extends BaseVoucherAction {
 	@Autowired
 	private AppConfigValueService appConfigValuesService;
 	private Long vhId;
-	private boolean saveSuccess = false;
 	@Autowired
 	@Qualifier("paymentService")
 	private PaymentService paymentService;
@@ -256,7 +255,6 @@ public class ContraBTBAction extends BaseVoucherAction {
 	public String create() {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Starting Bank to Bank Transfer ...");
-		
 		try {
 			getHibObjectsFromContraBean();
 			if (egovCommon.isShowChequeNumber())
@@ -267,7 +265,6 @@ public class ContraBTBAction extends BaseVoucherAction {
 			addActionMessage("Bank to Bank Transfer " + getText("transaction.success") + " with Voucher number: "
 					+ voucherHeader.getVoucherNumber());
 			setVhId(voucherHeader.getId());
-			this.saveSuccess = true; 
 			LoadAjaxedDropDowns();
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("Completed Bank to Bank Transfer .");
@@ -280,7 +277,7 @@ public class ContraBTBAction extends BaseVoucherAction {
            * ValidationException(Arrays.asList(new
            * ValidationError(e.getMessage(), e.getMessage()))); }
            */
-		return NEW;
+		return SUCCESS;
 	}
 
 	/**
@@ -1622,13 +1619,4 @@ public class ContraBTBAction extends BaseVoucherAction {
 	public void setChartOfAccounts(ChartOfAccounts chartOfAccounts) {
 		this.chartOfAccounts = chartOfAccounts;
 	}
-
-	public boolean getSaveSuccess() {
-		return saveSuccess;
-	}
-
-	public void setSaveSuccess(boolean saveSuccess) {
-		this.saveSuccess = saveSuccess;
-	}
-	
 }

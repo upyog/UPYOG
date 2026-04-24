@@ -50,7 +50,24 @@
 <%@ page language="java"%>
 
 <html>
-
+<style>
+  @media print {
+    #printButton,
+    #closeButton {
+        display: none !important;
+    }
+}
+</style>
+<script type="text/javascript">
+function printVoucher() {
+	var vhId = '${vhId}';
+    var url = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid=" + vhId;
+    var printWindow = window.open(url, "_blank");
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+}
+</script>
 <title>Bank to Bank Transfer</title>
 <body>
 	<span class="mandatory1">
@@ -64,6 +81,13 @@
 	</br>
 	
 	<div align="center">
+	    <input type="button"
+           name="printButton"
+           id="printButton"
+           value="Print"
+           style="margin-right:10px;"
+           class="btn btn-primary"
+           onclick="printVoucher();" />
 		<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.parent.postMessage('close','*');window.close();">
 	</div>
 </body>
