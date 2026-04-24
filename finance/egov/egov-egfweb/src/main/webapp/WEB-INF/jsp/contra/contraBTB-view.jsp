@@ -57,8 +57,138 @@
 	src="${pageContext.request.contextPath}/resources/javascript/contraBTBHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/services/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
+
+<style>
+/* Hide header normally */
+.print-header {
+    display: none;
+}
+
+/* PRINT MODE */
+@media print {
+
+    /* FORCE show all form content */
+    form,
+    .formmainbox,
+    table,
+    tbody,
+    tr,
+    td,
+    th,
+    div,
+    span {
+        display: block !important;
+        visibility: visible !important;
+    }
+
+    table {
+        display: table !important;
+    }
+
+    tr {
+        display: table-row !important;
+    }
+
+    td, th {
+        display: table-cell !important;
+    }
+
+    .print-header {
+        display: block;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        color: #1F4E79;
+        margin-bottom: 5px;
+        margin-top:-5px
+    }
+
+    /* Hide buttons */
+    .no-print,
+    #printButton,
+    #closeButton,
+    input[type="button"],
+    button {
+        display: none !important;
+    }
+
+    /* Hide mandatory stars */
+    .mandatory1,
+    span.mandatory1 {
+        display: none !important;
+    }
+
+    /* Clean form look */
+    input[type="text"],
+    textarea,
+    select {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+    
+    /* Remove dropdown arrow */
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background: none !important;
+        padding-right: 0 !important;
+        border: none !important;
+    }
+
+    /* Show ---Choose--- when unselected */
+    select:has(option:selected[value='-1'])::after,
+    select:has(option:selected[value=''])::after {
+        content: attr(data-print-default);
+        display: inline-block;
+        color: #000;
+    }
+
+    select:has(option:selected[value='-1']),
+    select:has(option:selected[value='']) {
+        color: transparent;
+    }
+    
+    /* Remove extra narration box height */
+    textarea {
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        resize: none !important;
+        border: none !important;
+        overflow: visible !important;
+        background: transparent !important;
+        padding: 0 !important;
+        line-height: 1.2 !important;
+    }
+    
+    textarea {
+        font-size: 13px;
+        font-weight: normal;
+    }
+
+    td.greybox textarea {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .datepicker,
+    .ui-datepicker-trigger {
+        display: none !important;
+    }
+     /* Hide calendar icon (date picker image & link) */
+    a[href*="show_calendar"],
+    img[src*="calendar"] {
+        display: none !important;
+    }
+}
+</style>
 </head>
 <body onload="onloadTask_view()">
+    <div class="print-header">
+    Government of Jammu &amp; Kashmir<br/>
+    <strong>Housing and Urban Development Department</strong>
+   </div>
 	<s:form action="contraBTB" theme="simple" name="cbtbform">
 		<s:push value="model">
 			<jsp:include page="../budget/budgetHeader.jsp">
@@ -99,10 +229,24 @@
 
 					</table>
 				</div>
-				<div class="buttonbottom">
+				<!-- <div class="buttonbottom">
 					<input type="button" id="closeButton" value="Close"
 						onclick="javascript:window.close()" class="button" />
-				</div>
+				</div> -->
+				
+				<div class="buttonbottom no-print">
+    <input type="button"
+           id="printButton"
+           value="Print"
+           class="button"
+           onclick="window.print();" />
+
+    <input type="button"
+           id="closeButton"
+           value="Close"
+           onclick="javascript:window.close()"
+           class="button" />
+</div>
 
 				<input type="hidden" id="voucherTypeBean.voucherName"
 					name="voucherTypeBean.voucherName" value="BankToBank" /> <input
@@ -115,19 +259,27 @@
 			</div>
 		</s:push>
 	</s:form>
-	<SCRIPT type="text/javascript">
-		function onloadTask_view() {
+	<script type="text/javascript">
+function onloadTask_view() {
 
-			var srcFund = '<s:property value="contraBean.fromFundId"/>'
-			var desFund = '<s:property value="contraBean.toFundId"/>'
-			if (srcFund == desFund) {
-				document.getElementById("interFundRow").style.visibility = "hidden";
-			} else {
-				document.getElementById("interFundRow").style.visibility = "visible";
-			}
-			disableControls(0, true);
-			document.getElementById("closeButton").disabled = false;
-		}
-	</SCRIPT>
+    // Detect print mode
+    if (window.matchMedia && window.matchMedia('print').matches) {
+        return; // DO NOTHING during print
+    }
+
+    var srcFund = '<s:property value="contraBean.fromFundId"/>';
+    var desFund = '<s:property value="contraBean.toFundId"/>';
+
+    if (srcFund == desFund) {
+        document.getElementById("interFundRow").style.visibility = "hidden";
+    } else {
+        document.getElementById("interFundRow").style.visibility = "visible";
+    }
+
+    // ⚠️ THIS causes blank print
+    /* disableControls(0, true); */
+    document.getElementById("closeButton").disabled = false;
+}
+</script>
 </body>
 </html>

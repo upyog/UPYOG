@@ -845,7 +845,8 @@ public class RemittanceServiceImpl extends RemittanceService {
         // TODO : need to make this call to mdms
 //        FinancialStatus status = microserviceUtils.getInstrumentStatusByCode(CollectionConstants.INSTRUMENT_NEW_STATUS);
         String instrumentTypes = CollectionConstants.INSTRUMENTTYPE_NAME_CHEQUE + ","
-                + CollectionConstants.INSTRUMENTTYPE_NAME_DD;
+                + CollectionConstants.INSTRUMENTTYPE_NAME_DD  + ","
+                        + CollectionConstants.INSTRUMENTTYPE_NAME_CARD;
         List<Instrument> instruments = microserviceUtils.getInstruments(instrumentTypes, TransactionType.Debit,
                 CollectionConstants.INSTRUMENT_NEW_STATUS,startDate,endDate);
         Map<String, Instrument> receiptInstrumentMap = new HashMap<>();
