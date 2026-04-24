@@ -599,6 +599,23 @@ public class BillServicev2 {
 			}
 
 			BillResponseV2 finalResponse = null;
+			Set<String> consumerCodes = Stream.of(bills.get(0).getConsumerCode()).collect(Collectors.toSet());
+			BillSearchCriteria billSearchCriteria= BillSearchCriteria.builder().consumerCode(consumerCodes).status(BillStatus.PAID).tenantId(bills.get(0).getTenantId())
+			.paymentPeriod(bills.get(0).getBillDetails().get(0).getPaymentPeriod()).assesmentYear(bills.get(0).getBillDetails().get(0).getAssesmentyear())
+			.service(bills.get(0).getBusinessService()).build();
+			finalResponse=searchBillWithStatus(billSearchCriteria, requestInfo);
+			if(!CollectionUtils.isEmpty(finalResponse.getBill()))
+			{
+				finalResponse.getBill().stream().forEach(b -> b.getBillDetails().forEach(bd -> {
+					Map<String, Object> additionalDetails = mapper.convertValue(bd.getAdditionalDetails(), Map.class);
+					List<ModeOfPaymentDetails> modeOfPaymentDetails = mapper
+							.convertValue(additionalDetails.get("paymentModeDetails"), List.class);
+					bd.setModeOfPaymentDetails(modeOfPaymentDetails);
+				}));
+				
+				return finalResponse;
+			}
+					 
 			if (null != billCriteria.getConsumerCode() && !billCriteria.getConsumerCode().isEmpty()) {
 				finalResponse = generateBill(billCriteria, requestInfo);
 				if (null != finalResponse)
@@ -657,6 +674,14 @@ public class BillServicev2 {
 	public BillResponseV2 searchBill(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
 
 		List<BillV2> bills = billRepository.findBill(billCriteria);
+
+		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
+				.bill(bills).build();
+	}
+	
+	public BillResponseV2 searchBillWithStatus(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
+
+		List<BillV2> bills = billRepository.findBillwithStatus(billCriteria);
 
 		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
 				.bill(bills).build();

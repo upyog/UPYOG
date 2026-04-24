@@ -64,4 +64,8 @@ public class BillSearchCriteria {
 	private String demandId;
 	
 	private boolean searchAllForDemand;
+	
+	private String paymentPeriod;
+	
+	private String assesmentYear;
 }
