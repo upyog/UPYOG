@@ -192,22 +192,21 @@ public class PaymentService {
     }
 
     public List<Payment> plainSearch(PaymentSearchCriteria paymentSearchCriteria) {
-        PaymentSearchCriteria searchCriteria = new PaymentSearchCriteria();
-
+        
         if (applicationProperties.isPaymentsSearchPaginationEnabled()) {
-            searchCriteria.setOffset(isNull(paymentSearchCriteria.getOffset()) ? 0 : paymentSearchCriteria.getOffset());
-            searchCriteria.setLimit(isNull(paymentSearchCriteria.getLimit()) ? applicationProperties.getReceiptsSearchDefaultLimit() : paymentSearchCriteria.getLimit());
+        	paymentSearchCriteria.setOffset(isNull(paymentSearchCriteria.getOffset()) ? 0 : paymentSearchCriteria.getOffset());
+        	paymentSearchCriteria.setLimit(isNull(paymentSearchCriteria.getLimit()) ? applicationProperties.getReceiptsSearchDefaultLimit() : paymentSearchCriteria.getLimit());
         } else {
-            searchCriteria.setOffset(0);
-            searchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
+        	paymentSearchCriteria.setOffset(0);
+        	paymentSearchCriteria.setLimit(applicationProperties.getReceiptsSearchDefaultLimit());
         }
 
-        List<String> ids = paymentRepository.fetchPaymentIds(searchCriteria);
-        if (ids.isEmpty())
-            return Collections.emptyList();
-
-        PaymentSearchCriteria criteria = PaymentSearchCriteria.builder().ids(new HashSet<String>(ids)).build();
-        return paymentRepository.fetchPaymentsForPlainSearch(criteria);
+//        List<String> ids = paymentRepository.fetchPaymentIds(searchCriteria);
+//        if (ids.isEmpty())
+//            return Collections.emptyList();
+//
+//        PaymentSearchCriteria criteria = PaymentSearchCriteria.builder().ids(new HashSet<String>(ids)).build();
+        return paymentRepository.fetchPaymentsForPlainSearch(paymentSearchCriteria);
     }
 
 
