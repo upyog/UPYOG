@@ -49,6 +49,9 @@
 package org.egov.collection.bean;
 
 import java.math.BigDecimal;
+import java.util.List;
+
+import org.egov.infra.microservice.models.Receipt;
 
 public class ReceiptBean {
 
@@ -70,8 +73,17 @@ public class ReceiptBean {
     private String bankBranch;
     private String bank;
     private String remittanceReferenceNumber;
+    private String receipts;
 
-    public Boolean getSelected() {
+	public String getReceipts() {
+		return receipts;
+	}
+
+	public void setReceipts(String receipts) {
+		this.receipts = receipts;
+	}
+
+	public Boolean getSelected() {
         return selected;
     }
 

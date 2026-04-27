@@ -573,7 +573,13 @@
 							<display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Date"  style="width:5%;text-align:left" value="${currentRow.receiptDate}" />
 							<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service Name" style="width:20%;text-align: center" value="${currentRow.serviceName}" /> --%>
 							<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+                             
+                             <display:column 
+                                  headerClass="bluebgheadtd" 
+                                  class="blueborderfortd" 
+                                   title="Receipt Numbers"
+                                    style="width:12%;text-align:left"
+                                      value="${currentRow.receipts}" />
 						<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 						    title="Service Category" style="width:10%;text-align: left">
 						    <c:choose>

@@ -94,7 +94,7 @@
 					<th class="bluebgheadtdnew"><s:text
 							name="chq.assignment.partycode" /></th>
 				    <th class="bluebgheadtdnew"><s:text
-							name="chq.assignment.TBNumber" /></th>
+							name="chq.assignment.TVNumber" /></th>
 					<th class="bluebgheadtdnew"><s:text
 							name="chq.assignment.payment.amount" /></th>
 
