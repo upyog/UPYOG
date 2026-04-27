@@ -189,15 +189,26 @@ public class UserService {
 						}
 					} else {
 						UserResponse userResponse = userExists(owner, requestInfo);
-						if (userResponse.getUser().isEmpty())
+						OwnerInfo existingUser = getFirstUserSafely(userResponse);
+
+						if (existingUser == null)
 							throw new CustomException("INVALID USER", "The uuid " + owner.getUuid() + " does not exists");
+
+						// Override owner safely with values returned from user search response.
+						setOwnerFields(owner, existingUser);
+
 						StringBuilder uri = new StringBuilder(userHost);
 						uri.append(userContextPath).append(userUpdateEndpoint);
 						OwnerInfo ownerInfo = new OwnerInfo();
 						ownerInfo.addUserWithoutAuditDetail(owner);
-						addNonUpdatableFields(ownerInfo, userResponse.getUser().get(0));
+						addNonUpdatableFields(ownerInfo, existingUser);
 						userResponse = userCall(new CreateUserRequest(requestInfo, ownerInfo), uri);
-						setOwnerFields(owner, userResponse.getUser().get(0));
+
+						OwnerInfo updatedUser = getFirstUserSafely(userResponse);
+						if (updatedUser == null)
+							throw new CustomException("INVALID USER RESPONSE", "User update response is empty");
+
+						setOwnerFields(owner, updatedUser);
 					}
 				});
 
@@ -268,12 +279,12 @@ public class UserService {
 		userSearchRequest.setRequestInfo(requestInfo);
 		userSearchRequest.setActive(true);
 		userSearchRequest.setUserType(owner.getType());
-		if(StringUtils.isBlank(owner.getUuid()) && StringUtils.isNotBlank(owner.getMobileNumber())) {
+		if(!StringUtils.isBlank(owner.getUuid()) && StringUtils.isNotBlank(owner.getMobileNumber())) {
 			String searchValue = owner.getMobileNumber().trim();
 			userSearchRequest.setMobileNumber(searchValue);
 	            userSearchRequest.setUserName(searchValue);
         }
-		if(StringUtils.isNotBlank(owner.getUuid()))
+		if(StringUtils.isBlank(owner.getMobileNumber())  && StringUtils.isNotBlank(owner.getUuid()))
 			userSearchRequest.setUuid(Arrays.asList(owner.getUuid()));
 		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
 		return userCall(userSearchRequest,uri);
@@ -284,6 +295,13 @@ public class UserService {
 		user.setId(userFromSearchResult.getId());
 		user.setActive(userFromSearchResult.getActive());
 		user.setPassword(userFromSearchResult.getPassword());
+	}
+
+	private OwnerInfo getFirstUserSafely(UserResponse userResponse) {
+		if (userResponse == null || CollectionUtils.isEmpty(userResponse.getUser())) {
+			return null;
+		}
+		return userResponse.getUser().get(0);
 	}
 
 }
