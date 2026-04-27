@@ -279,13 +279,28 @@ public class UserService {
 		userSearchRequest.setRequestInfo(requestInfo);
 		userSearchRequest.setActive(true);
 		userSearchRequest.setUserType(owner.getType());
-		if(!StringUtils.isBlank(owner.getUuid()) && StringUtils.isNotBlank(owner.getMobileNumber())) {
-			String searchValue = owner.getMobileNumber().trim();
-			userSearchRequest.setMobileNumber(searchValue);
-	            userSearchRequest.setUserName(searchValue);
-        }
-		if(StringUtils.isBlank(owner.getMobileNumber())  && StringUtils.isNotBlank(owner.getUuid()))
-			userSearchRequest.setUuid(Arrays.asList(owner.getUuid()));
+
+		String ownerUuid = StringUtils.trimToNull(owner.getUuid());
+		String ownerMobile = StringUtils.trimToNull(owner.getMobileNumber());
+		String ownerUserName = StringUtils.trimToNull(owner.getUserName());
+
+		if (StringUtils.isNotBlank(ownerMobile)) {
+			// For new users, search by mobile/username (username generally mirrors mobile).
+			userSearchRequest.setMobileNumber(ownerMobile);
+			userSearchRequest.setUserName(ownerMobile);
+		}
+		else if (StringUtils.isNotBlank(ownerUuid)) {
+			// UUID is the strongest identifier for existing users.
+			userSearchRequest.setUuid(Collections.singletonList(ownerUuid));
+		}gi
+		else if (StringUtils.isNotBlank(ownerUserName)) {
+			userSearchRequest.setUserName(ownerUserName);
+		} else {
+			// Avoid 400 from user service when no valid search criteria is present.
+			log.info("Skipping user search since uuid/mobile/userName are all empty for tenant: {}", owner.getTenantId());
+			return new UserResponse(null, Collections.emptyList());
+		}
+
 		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
 		return userCall(userSearchRequest,uri);
 	}
