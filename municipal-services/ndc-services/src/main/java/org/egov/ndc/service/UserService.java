@@ -169,6 +169,7 @@ public class UserService {
 				{
 					if (owner.getUuid() == null) {
 						addUserDefaultFields(application.getTenantId(), role, owner);
+						setUserName(owner);
 
 						UserResponse existingUserResponse = userExists(owner, requestInfo);
 						OwnerInfo existingUser = findUserWithMatchingUsernameAndMobile(existingUserResponse, owner);
@@ -179,7 +180,6 @@ public class UserService {
 						} else {
 //						  UserResponse userResponse = userExists(owner,requestInfo);
 							StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userCreateEndpoint);
-							setUserName(owner);
 							UserResponse userResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);
 							if (userResponse.getUser().get(0).getUuid() == null) {
 								throw new CustomException("INVALID USER RESPONSE", "The user created has uuid as null");
@@ -269,8 +269,9 @@ public class UserService {
 		userSearchRequest.setActive(true);
 		userSearchRequest.setUserType(owner.getType());
 		if(StringUtils.isBlank(owner.getUuid()) && StringUtils.isNotBlank(owner.getMobileNumber())) {
-			userSearchRequest.setMobileNumber(owner.getMobileNumber());
-            userSearchRequest.setUserName(owner.getMobileNumber());
+			String searchValue = owner.getMobileNumber().trim();
+			userSearchRequest.setMobileNumber(searchValue);
+	            userSearchRequest.setUserName(searchValue);
         }
 		if(StringUtils.isNotBlank(owner.getUuid()))
 			userSearchRequest.setUuid(Arrays.asList(owner.getUuid()));
