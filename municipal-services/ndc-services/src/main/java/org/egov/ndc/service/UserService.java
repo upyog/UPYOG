@@ -171,12 +171,11 @@ public class UserService {
 						addUserDefaultFields(application.getTenantId(), role, owner);
 
 						UserResponse existingUserResponse = userExists(owner, requestInfo);
+						OwnerInfo existingUser = findUserWithMatchingUsernameAndMobile(existingUserResponse, owner);
 
-						if (!existingUserResponse.getUser().isEmpty()) {
-							OwnerInfo existingUser = existingUserResponse.getUser().get(0);
+						if (existingUser != null) {
 							log.info("User already exists with UUID: " + existingUser.getUuid());
-							owner.setUuid(existingUser.getUuid());
-							setOwnerFields(owner, existingUserResponse, requestInfo);
+							setOwnerFields(owner, existingUser);
 						} else {
 //						  UserResponse userResponse = userExists(owner,requestInfo);
 							StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userCreateEndpoint);
@@ -186,7 +185,7 @@ public class UserService {
 								throw new CustomException("INVALID USER RESPONSE", "The user created has uuid as null");
 							}
 							log.info("owner created --> " + userResponse.getUser().get(0).getUuid());
-							setOwnerFields(owner, userResponse, requestInfo);
+							setOwnerFields(owner, userResponse.getUser().get(0));
 						}
 					} else {
 						UserResponse userResponse = userExists(owner, requestInfo);
@@ -198,10 +197,26 @@ public class UserService {
 						ownerInfo.addUserWithoutAuditDetail(owner);
 						addNonUpdatableFields(ownerInfo, userResponse.getUser().get(0));
 						userResponse = userCall(new CreateUserRequest(requestInfo, ownerInfo), uri);
-						setOwnerFields(owner, userResponse, requestInfo);
+						setOwnerFields(owner, userResponse.getUser().get(0));
 					}
 				});
 
+	}
+
+	private OwnerInfo findUserWithMatchingUsernameAndMobile(UserResponse existingUserResponse, OwnerInfo owner) {
+		if (existingUserResponse == null || CollectionUtils.isEmpty(existingUserResponse.getUser())) {
+			return null;
+		}
+
+		String ownerMobileNumber = owner.getMobileNumber();
+		for (OwnerInfo existingUser : existingUserResponse.getUser()) {
+			if (StringUtils.equals(existingUser.getMobileNumber(), ownerMobileNumber)
+					&& StringUtils.equals(existingUser.getUserName(), ownerMobileNumber)) {
+				return existingUser;
+			}
+		}
+
+		return null;
 	}
 
 	private void addUserDefaultFields(String tenantId,Role role,OwnerInfo owner){
@@ -237,14 +252,14 @@ public class UserService {
 
 	}
 
-	private void setOwnerFields(OwnerInfo owner, UserResponse userResponse,RequestInfo requestInfo){
-		owner.setUuid(userResponse.getUser().get(0).getUuid());
-		owner.setId(userResponse.getUser().get(0).getId());
-		owner.setUserName((userResponse.getUser().get(0).getMobileNumber()));
-		owner.setEmailId(userResponse.getUser().get(0).getEmailId());
+	private void setOwnerFields(OwnerInfo owner, OwnerInfo selectedUser){
+		owner.setUuid(selectedUser.getUuid());
+		owner.setId(selectedUser.getId());
+		owner.setUserName(StringUtils.defaultIfBlank(selectedUser.getUserName(), selectedUser.getMobileNumber()));
+		owner.setEmailId(selectedUser.getEmailId());
 		owner.setCreatedDate(System.currentTimeMillis());
 		owner.setLastModifiedDate(System.currentTimeMillis());
-		owner.setActive(userResponse.getUser().get(0).getActive());
+		owner.setActive(selectedUser.getActive());
 	}
 
 	private UserResponse userExists(OwnerInfo owner,RequestInfo requestInfo){
