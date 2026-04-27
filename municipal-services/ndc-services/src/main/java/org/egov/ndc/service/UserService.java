@@ -292,7 +292,7 @@ public class UserService {
 		else if (StringUtils.isNotBlank(ownerUuid)) {
 			// UUID is the strongest identifier for existing users.
 			userSearchRequest.setUuid(Collections.singletonList(ownerUuid));
-		}gi
+		}
 		else if (StringUtils.isNotBlank(ownerUserName)) {
 			userSearchRequest.setUserName(ownerUserName);
 		} else {
