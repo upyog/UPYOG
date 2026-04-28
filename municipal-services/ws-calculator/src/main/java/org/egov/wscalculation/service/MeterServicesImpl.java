@@ -2,14 +2,18 @@ package org.egov.wscalculation.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.validator.WSCalculationValidator;
 import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
 import org.egov.wscalculation.web.models.AuditDetails;
+import org.egov.wscalculation.web.models.BulkMeterReading;
 import org.egov.wscalculation.web.models.CalculationCriteria;
 import org.egov.wscalculation.web.models.CalculationReq;
 import org.egov.wscalculation.web.models.CancelDemandReq;
@@ -121,61 +125,87 @@ public class MeterServicesImpl implements MeterService {
 	}
 	
 	
+	/* PI-20175 BULKMETERREADING*/
+	
+	private static final Logger log = LoggerFactory.getLogger(MeterServicesImpl.class);
 	
 	@Override
-	public List<MeterReadingList> createMeterReadings(MeterConnectionRequests meterConnectionRequests) {
-		Boolean genratedemand = true;
-	    List<MeterReadingList> meterReadingslist = new ArrayList<>();
-	    
+	public List<Object> createMeterReadings(MeterConnectionRequests meterConnectionRequests) {
+	    Boolean genratedemand = true;
+	    List<Object> meterReadingslist = new ArrayList<>();
+
 	    if (meterConnectionRequests != null && meterConnectionRequests.getMeterReadingslist() != null) {
 
-		    for (MeterReadingList meterReadinglist : meterConnectionRequests.getMeterReadingslist()) {
-	        Boolean generateDemand = meterReadinglist.getGenerateDemand();
-	   
+	        for (MeterReadingList meterReadinglist : meterConnectionRequests.getMeterReadingslist()) {
+	            try {
+	                Boolean generateDemand = meterReadinglist.getGenerateDemand();
 
-						    RequestInfo requestInfo = meterConnectionRequests.getRequestInfo();
-						    MeterConnectionRequests meterreq = new MeterConnectionRequests();
-						    MeterConnectionRequest meterConnectionRequest=new MeterConnectionRequest();
-						   
-						    meterreq.setRequestInfo(requestInfo);
-						
-						    MeterReading meterReading = new MeterReading();
-						    meterReading.setBillingPeriod(meterReadinglist.getBillingPeriod());
-						    
-						    meterReading.setAuditDetails(meterReadinglist.getAuditDetails());
-						    meterReading.setConnectionNo(meterReadinglist.getConnectionNo());
-						    meterReading.setConsumption(meterReadinglist.getConsumption());
-						    meterReading.setCurrentReading(meterReadinglist.getCurrentReading());
-						    meterReading.setCurrentReadingDate(meterReadinglist.getCurrentReadingDate());
-						    meterReading.setGenerateDemand(generateDemand);
-						    meterReading.setId(meterReadinglist.getId());
-						    meterReading.setLastReading(meterReadinglist.getLastReading());
-						    meterReading.setLastReadingDate(meterReadinglist.getLastReadingDate());
-						    String newvar=meterReadinglist.getMeterStatus().toString();
-							MeterStatusEnum meterStatusEnum= MeterStatusEnum.fromValue(newvar);
-//
-							meterReading.setMeterStatus(meterStatusEnum);
-						    meterReading.setTenantId(meterReadinglist.getTenantId());
-						    meterConnectionRequest.setMeterReading(meterReading);
-						           
-						            meterConnectionRequest.setRequestInfo(requestInfo);
-						            List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
-						            if(meterConnectionRequest.getMeterReading().getGenerateDemand()){
-						    			wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading().getTenantId(),meterConnectionRequest.getMeterReading().getConnectionNo(),genratedemand);
-						    			wsCalculationValidator.validateMeterReading(meterConnectionRequest, false);
-						    		}
-						    		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
-						    		
-						    		meterReadingsList.add(meterConnectionRequest.getMeterReading());
-						    		meterReadingslist.add(meterReadinglist);
-						    		wSCalculationDao.saveMeterReading(meterConnectionRequest);
-						    		if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
-						    			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
-						    		}
-}}
-    return meterReadingslist;
+	                RequestInfo requestInfo = meterConnectionRequests.getRequestInfo();
+	                MeterConnectionRequests meterreq = new MeterConnectionRequests();
+	                MeterConnectionRequest meterConnectionRequest = new MeterConnectionRequest();
+
+	                meterreq.setRequestInfo(requestInfo);
+
+	                MeterReading meterReading = new MeterReading();
+	                meterReading.setBillingPeriod(meterReadinglist.getBillingPeriod());
+	                meterReading.setAuditDetails(meterReadinglist.getAuditDetails());
+	                meterReading.setConnectionNo(meterReadinglist.getConnectionNo());
+	                meterReading.setConsumption(meterReadinglist.getConsumption());
+	                meterReading.setCurrentReading(meterReadinglist.getCurrentReading());
+	                meterReading.setCurrentReadingDate(meterReadinglist.getCurrentReadingDate());
+	                meterReading.setGenerateDemand(generateDemand);
+	                meterReading.setId(meterReadinglist.getId());
+	                meterReading.setLastReading(meterReadinglist.getLastReading());
+	                meterReading.setLastReadingDate(meterReadinglist.getLastReadingDate());
+
+	                String newvar = meterReadinglist.getMeterStatus().toString();
+	                MeterStatusEnum meterStatusEnum = MeterStatusEnum.fromValue(newvar);
+	                meterReading.setMeterStatus(meterStatusEnum);
+	                meterReading.setTenantId(meterReadinglist.getTenantId());
+
+	                meterConnectionRequest.setMeterReading(meterReading);
+	                meterConnectionRequest.setRequestInfo(requestInfo);
+
+	                List<MeterReading> meterReadingsList = new ArrayList<>();
+
+	                if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
+	                    wsCalulationWorkflowValidator.applicationValidation(
+	                        meterConnectionRequest.getRequestInfo(),
+	                        meterConnectionRequest.getMeterReading().getTenantId(),
+	                        meterConnectionRequest.getMeterReading().getConnectionNo(),
+	                        genratedemand
+	                    );
+	                    wsCalculationValidator.validateMeterReading(meterConnectionRequest, false);
+	                }
+
+	                enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
+	                meterReadingsList.add(meterConnectionRequest.getMeterReading());
+	                wSCalculationDao.saveMeterReading(meterConnectionRequest);
+
+	                if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
+	                    generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
+	                }
+
+	                // SUCCESS — add original object as-is, no extra fields
+	                meterReadingslist.add(meterReadinglist);
+	                log.info("Successfully processed connectionNo: {}", meterReadinglist.getConnectionNo());
+
+	            } catch (Exception e) {
+	                // FAILED — add small error object only
+	                Map<String, Object> errorEntry = new HashMap<>();
+	                errorEntry.put("connectionNo", meterReadinglist.getConnectionNo());
+	                errorEntry.put("status", "FAILED");
+	                errorEntry.put("errorMessage", e.getMessage());
+	                meterReadingslist.add(errorEntry);
+	                log.error("Failed for connectionNo: {} | {}", meterReadinglist.getConnectionNo(), e.getMessage());
+	            }
+	        }
+	    }
+
+	    return meterReadingslist;
 	}
-	
+	/* PI-20175 BULKMETERREADING*/
+
 	private void generateDemandForMeterReading(List<MeterReading> meterReadingsList, RequestInfo requestInfo) {
 		List<CalculationCriteria> criteriaList = new ArrayList<>();
 		meterReadingsList.forEach(reading -> {
@@ -211,7 +241,7 @@ public class MeterServicesImpl implements MeterService {
 		return wSCalculationDao.searchMeterReadings(criteria);
 	}
 	
-	public List<MeterReading> searchMeterReadingsV2(MeterReadingSearchCriteria criteria, RequestInfo requestInfo) {
+	public List<BulkMeterReading> searchMeterReadingsV2(MeterReadingSearchCriteria criteria, RequestInfo requestInfo) {
 		return wSCalculationDao.searchMeterReadingsV2(criteria);
 	}
 
