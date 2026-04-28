@@ -590,6 +590,7 @@ public class BillServicev2 {
 					/* Fetching demands for the given bill search criteria */
 					List<Demand> demandsOld = demandService.getDemands(OlddemandCriteria, requestInfo);
 					List<Demand> demandsnew = demandService.getDemands(demandCriteriaNewDemand, requestInfo);
+					
 
 					if (demandsnew.get(0).getTaxPeriodFrom() <= demandsOld.get(0).getTaxPeriodFrom()) {
 						billCriteria.getConsumerCode().remove(s);
@@ -598,7 +599,9 @@ public class BillServicev2 {
 				}
 			}
 
+			
 			BillResponseV2 finalResponse = null;
+			//THis is for manipur paid bill not returning issue
 			Set<String> consumerCodes = Stream.of(bills.get(0).getConsumerCode()).collect(Collectors.toSet());
 			BillSearchCriteria billSearchCriteria= BillSearchCriteria.builder().consumerCode(consumerCodes).status(BillStatus.PAID).tenantId(bills.get(0).getTenantId())
 			.paymentPeriod(bills.get(0).getBillDetails().get(0).getPaymentPeriod()).assesmentYear(bills.get(0).getBillDetails().get(0).getAssesmentyear())
@@ -613,6 +616,8 @@ public class BillServicev2 {
 					bd.setModeOfPaymentDetails(modeOfPaymentDetails);
 				}));
 				
+				//this line is to return null for search and pay and my taxbills if that bill is already paid
+				//finalResponse = null;
 				return finalResponse;
 			}
 					 
@@ -681,6 +686,17 @@ public class BillServicev2 {
 	
 	public BillResponseV2 searchBillWithStatus(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
 
+		DemandCriteria demandCriteriaNewDemand = DemandCriteria.builder()
+				.status(org.egov.demand.model.Demand.StatusEnum.ACTIVE.toString())
+				.businessService(billCriteria.getService()).tenantId(billCriteria.getTenantId())
+				.consumerCode(billCriteria.getConsumerCode())
+				.isPaymentCompleted(false).receiptRequired(false).build();
+		
+		List<Demand> demandsnew = demandService.getDemands(demandCriteriaNewDemand, requestInfo);
+		
+		if(!CollectionUtils.isEmpty(demandsnew))
+		billCriteria.setDemandId(demandsnew.get(0).getId());
+		
 		List<BillV2> bills = billRepository.findBillwithStatus(billCriteria);
 
 		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
