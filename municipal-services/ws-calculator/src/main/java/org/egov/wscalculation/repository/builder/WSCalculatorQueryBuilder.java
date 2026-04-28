@@ -148,7 +148,10 @@ public class WSCalculatorQueryBuilder {
 	
 	public static final String METERREADINGQUERY = "SELECT mr.id, mr.connectionNo as connectionId, epp.usagecategory as usageCategory, mr.billingPeriod, mr.meterStatus, mr.lastReading, mr.lastReadingDate, mr.currentReading,"
 			+ " mr.currentReadingDate, mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy,"
-			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime FROM eg_ws_meterreading mr";
+			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime FROM eg_ws_meterreading mr "
+			+ INNER_JOIN_STRING + " eg_ws_connection conn  ON mr.connectionno = conn.connectionno  AND mr.tenantid = conn.tenantid  "
+			+ INNER_JOIN_STRING +" eg_ws_service ews  ON conn.id = ews.connection_id " + INNER_JOIN_STRING +" eg_pt_property epp  ON conn.property_id = epp.propertyid "
+			+ INNER_JOIN_STRING +" eg_pt_address epa  ON epa.propertyid = epp.id ";
 	
 	public static final String RELATED_SW_CONNECTION_SEARCH_QUERY = "SELECT conn.relatedSwConn from eg_ws_connection conn ";
 
@@ -1162,15 +1165,6 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			return null;
 		}
 		StringBuilder query = new StringBuilder(METERREADINGQUERY);
-		query.append("\r\n INNER JOIN eg_ws_connection conn \r\n"
-				+ "  ON mr.connectionno = conn.connectionno \r\n"
-				+ " AND mr.tenantid = conn.tenantid  \r\n"
-				+" INNER JOIN eg_ws_service ews  \r\n"
-				+ "  ON conn.id = ews.connection_id \r\n"
-				+ " INNER JOIN eg_pt_property epp \r\n"
-				+ "  ON conn.property_id = epp.propertyid\r\n"
-				+ "INNER JOIN eg_pt_address epa \r\n"
-				+ "  ON epa.propertyid = epp.id   ");
 		
 		if (!StringUtils.isEmpty(criteria.getTenantId())) {
 			addClauseIfRequired(preparedStatement, query);
@@ -1185,9 +1179,10 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 		
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" ews.connectiontype = 'Metered' \r\n");
-		
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" conn.status = 'Active' \r\n");
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.applicationstatus IN ('CONNECTION_ACTIVATED', 'APPROVED') \r\n");
 		
 		if (!CollectionUtils.isEmpty(criteria.getConnectionNos())) {
 			addClauseIfRequired(preparedStatement, query);
