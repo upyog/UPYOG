@@ -1186,6 +1186,9 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" ews.connectiontype = 'Metered' \r\n");
 		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.status = 'Active' \r\n");
+		
 		if (!CollectionUtils.isEmpty(criteria.getConnectionNos())) {
 			addClauseIfRequired(preparedStatement, query);
 			query.append(" mr.connectionNo IN (").append(createQuery(criteria.getConnectionNos())).append(" )");

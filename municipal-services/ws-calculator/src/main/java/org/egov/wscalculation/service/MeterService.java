@@ -8,7 +8,6 @@ import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterConnectionRequests;
 import org.egov.wscalculation.web.models.BulkMeterReading;
 import org.egov.wscalculation.web.models.MeterReading;
-import org.egov.wscalculation.web.models.MeterReadingList;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 
 
