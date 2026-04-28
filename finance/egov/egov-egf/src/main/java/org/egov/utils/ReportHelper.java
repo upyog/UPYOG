@@ -50,6 +50,7 @@ package org.egov.utils;
 import ar.com.fdvs.dj.core.DJConstants;
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
+import ar.com.fdvs.dj.domain.AutoText;
 import ar.com.fdvs.dj.domain.DJDataSource;
 import ar.com.fdvs.dj.domain.DynamicReport;
 import ar.com.fdvs.dj.domain.Style;
@@ -387,6 +388,12 @@ public class ReportHelper {
         final Style detailAmountStyle = getDetailAmountStyle();
         final Style columnStyle = getColumnStyle();
         FastReportBuilder drb = new FastReportBuilder();
+        
+        // adding for the header 
+        Style headerStyle = getHeaderTitleStyle();
+
+        drb.addAutoText("Government of Jammu & Kashmir", AutoText.POSITION_HEADER, AutoText.ALIGNMENT_CENTER, 500, headerStyle);
+        drb.addAutoText("Housing and Urban Development Department", AutoText.POSITION_HEADER, AutoText.ALIGNMENT_CENTER, 500, headerStyle);
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Generating Income Expenditure pdf/excel ");
         // drb.addsubre
@@ -825,6 +832,14 @@ public class ReportHelper {
         titleStyle.setFont(new Font(9, Font._FONT_VERDANA, true));
         titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         return titleStyle;
+    }
+    // for header 
+    private Style getHeaderTitleStyle() {
+        Style style = new Style();
+        style.setFont(new Font(12, Font._FONT_VERDANA, true));
+        style.setTextColor(new Color(31, 78, 121)); // #1F4E79
+        style.setHorizontalAlign(HorizontalAlign.CENTER);
+        return style;
     }
 
     private Style getBudgetTitleStyle() {

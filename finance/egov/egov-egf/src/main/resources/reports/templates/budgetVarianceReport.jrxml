@@ -7,6 +7,7 @@
 	<parameter name="departmentName" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="estimateHeading" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="asOnDate" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ulbName" class="java.lang.String"/>
 	<field name="fundCode" class="java.lang.String"/>
 	<field name="departmentName" class="java.lang.String"/>
 	<field name="departmentCode" class="java.lang.String"/>
@@ -42,7 +43,7 @@
 				<textElement textAlignment="Center">
 					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Jammu Municipal Corporation"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="92" width="555" height="18" uuid="8c38c444-a8aa-403c-9808-5489ab42b82b"/>

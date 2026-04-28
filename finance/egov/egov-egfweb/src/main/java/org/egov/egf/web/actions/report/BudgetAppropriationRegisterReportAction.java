@@ -84,6 +84,7 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -142,6 +143,8 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 	private BudgetDetailConfig budgetDetailConfig;
 	@Autowired
 	private BudgetDetailService budgetDetailService;
+    @Autowired
+    private Environment environment;
 
 	public BudgetAppropriationRegisterReportAction() {
 		addRelatedEntity(Constants.FUNCTION, CFunction.class);
@@ -553,8 +556,11 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
 	private Map<String, Object> getParamMapForReportFile() {
 		final Map<String, Object> paramMapForReportFile = new HashMap<String, Object>();
+		String ulbGrade = microserviceUtils.getHeaderNameForTenant().toUpperCase();
 		paramMapForReportFile.put("bgname", budgetHead);
 		paramMapForReportFile.put("deptName", department.getName());
+//		paramMap.put("ulbName", environment.getProperty(ulbGrade,ulbGrade));
+		paramMapForReportFile.put("ulbName", environment.getProperty(ulbGrade, ulbGrade));
 		paramMapForReportFile.put("function", function.getName());
 		paramMapForReportFile.put("fund", fund.getName());
 		final String rBEorREAmountForm = " - (" + finYearRange + ") (Rs.)  : ";
