@@ -386,7 +386,7 @@ public class PropertyService {
             String fullAddress = Arrays.stream(addressParts)
                     .filter(s -> s != null && !s.trim().isEmpty() && !s.equalsIgnoreCase("null"))
                     .collect(Collectors.joining(", "));
-
+            p.setTenantid(propertyNode.path("tenantId").asText());
             p.setAddress(fullAddress);
             // Defaulting assessment year for registry updates
             p.setAssessmentyear("N/A");
