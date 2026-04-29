@@ -85,6 +85,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     @SafeHtml
     private String receiptnumber;
     private Date receiptdate;
+    private String receiptdatenew;
     @SafeHtml
     private String manualreceiptnumber;
     private Date manualreceiptdate;
@@ -159,7 +160,74 @@ public class ReceiptHeader extends StateAware implements Auditable {
     @SafeHtml
     private String fund;
     
-    public ReceiptHeader() {
+	private String serviceType;
+	private String chequeddno;
+	private String chequedddate;
+	private String bank;
+	private String remittanceReceiptNo;
+	private String department;
+	
+	
+	
+	
+    
+    public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public String getChequeddno() {
+		return chequeddno;
+	}
+
+	public void setChequeddno(String chequeddno) {
+		this.chequeddno = chequeddno;
+	}
+
+	public String getChequedddate() {
+		return chequedddate;
+	}
+
+	public void setChequedddate(String chequedddate) {
+		this.chequedddate = chequedddate;
+	}
+
+	public String getBank() {
+		return bank;
+	}
+
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
+
+	public String getRemittanceReceiptNo() {
+		return remittanceReceiptNo;
+	}
+
+	public void setRemittanceReceiptNo(String remittanceReceiptNo) {
+		this.remittanceReceiptNo = remittanceReceiptNo;
+	}
+
+	public String getReceiptdatenew() {
+		return receiptdatenew;
+	}
+
+	public void setReceiptdatenew(String receiptdatenew) {
+		this.receiptdatenew = receiptdatenew;
+	}
+
+	public ReceiptHeader() {
     }
 
     public ReceiptHeader(final String referencenumber, final Date referencedate, final String consumerCode,

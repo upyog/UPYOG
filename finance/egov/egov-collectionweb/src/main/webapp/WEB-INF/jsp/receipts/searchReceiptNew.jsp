@@ -52,7 +52,7 @@
 <link rel="stylesheet" type="text/css"
 	href="<egov:url path='/yui/assets/skins/sam/autocomplete.css'/>" />
 <head>
-<title><s:text name="searchreceipts.title" /></title>
+<title><s:text name="searchreceipts.title.new" /></title>
 <style type="text/css">
 table {
 	width: 100%;
@@ -63,82 +63,42 @@ table {
 }
 </style>
 <script>
-function validateNew() {
-    var fromdate = dom.get("fromDate").value.trim();
-    var todate = dom.get("toDate").value.trim();
-    var serviceCategory = dom.get("serviceCategoryid").value;
-
-    var serviceTypeObj = dom.get("serviceType");
-    var serviceType = serviceTypeObj ? serviceTypeObj.value : "";
-
-    // Hide previous errors
-    dom.get("error_area").style.display = "none";
-    dom.get("comparedatemessage").style.display = "none";
-
-    // If both Service Category and Service Type are not selected,
-    // then From Date and To Date are mandatory
-    if ((serviceCategory == "-1" || serviceCategory == "")
-            && (serviceType == "" || serviceType == "-1")) {
-
-        if (fromdate == "" || todate == "") {
-            dom.get("error_area").style.display = "block";
-            dom.get("error_area").innerHTML =
-                "From Date and To Date are mandatory when Service Category and Service Type are not selected.<br>";
-            window.scroll(0, 0);
-            return false;
-        }
-    }
-
-    // Date comparison validation
-    if (fromdate !== "" && todate !== "") {
-        if (!checkFdateTdate(fromdate, todate)) {
-            dom.get("comparedatemessage").style.display = "block";
-            window.scroll(0, 0);
-            return false;
-        }
-    }
-
-    doLoadingMask('#loadingMask');
-    return true;
-}
-
-//*********
- function printResultTable() {
-    var tableContent = document.getElementById("resultTable").outerHTML;
+ /* function printResultTable() {
+    var tableContent = document.getElementById("resultTable").outerHTML; */
 
     /* var today = new Date();
     var date = today.toLocaleDateString('en-GB'); // DD/MM/YYYY
     var time = today.toLocaleTimeString(); */
 
-    var printWindow = window.open('', '', 'height=700,width=1000');
+   /*  var printWindow = window.open('', '', 'height=700,width=1000');
 
-    printWindow.document.write('<html><head><title>Print Receipts</title>');
+    printWindow.document.write('<html><head><title>Print Receipts</title>'); */
 
     // CSS
-    printWindow.document.write('<style>');
-    printWindow.document.write('body { font-family: Arial, sans-serif; }');
+   /*  printWindow.document.write('<style>');
+    printWindow.document.write('body { font-family: Arial, sans-serif; }'); */
 
     //Blue header styling
-    printWindow.document.write('.header { text-align: center; margin-bottom: 10px; color: #003366; }');
+   /*  printWindow.document.write('.header { text-align: center; margin-bottom: 10px; color: #003366; }');
     printWindow.document.write('.header h2 { margin: 0; font-size: 18px; font-weight: bold; color: #003366; }');
     printWindow.document.write('.header h3 { margin: 0; font-size: 16px; color: #003366; }');
     printWindow.document.write('.header h4 { margin: 0; font-size: 14px; color: #003366; }');
-
+ */
     //printWindow.document.write('.datetime { position: absolute; right: 20px; top: 10px; font-size: 12px; }');
-    printWindow.document.write('hr { border: 1px solid black; }');
-
-    printWindow.document.write('table { width:100%; border-collapse: collapse; margin-top:10px;}');
+    /* printWindow.document.write('hr { border: 1px solid black; }');
+ */
+    /* printWindow.document.write('table { width:100%; border-collapse: collapse; margin-top:10px;}');
     printWindow.document.write('table, th, td { border: 1px solid black; }');
-    printWindow.document.write('th, td { padding: 6px; font-size: 12px; }');
+    printWindow.document.write('th, td { padding: 6px; font-size: 12px; }'); */
 
     // hide checkbox & hidden fields
-    printWindow.document.write('input { display:none; }');
+   /*  printWindow.document.write('input { display:none; }');
 
     printWindow.document.write('</style>');
     printWindow.document.write('</head><body>');
-
+ */
     // Header
-    printWindow.document.write(`
+   /*  printWindow.document.write(`
        <!-- <div class="datetime">
             Date: ${date}<br>
             Time: ${time}
@@ -151,10 +111,10 @@ function validateNew() {
         </div>
 
         <hr/>
-    `);
+    `); */
 
     // Table
-    printWindow.document.write(tableContent);
+    /* printWindow.document.write(tableContent);
 
     printWindow.document.write('</body></html>');
 
@@ -162,9 +122,72 @@ function validateNew() {
     printWindow.focus();
     printWindow.print();
     printWindow.close();
+} */
+function printResultTable() {
+
+    var table = document.getElementById("resultTable");
+
+    
+    if (!table) {
+        alert("No data available to print!");
+        return;
+    }
+
+    var tableContent = table.outerHTML;
+
+    var printWindow = window.open('', '', 'height=700,width=1000');
+
+    printWindow.document.write('<html><head><title>Print Receipts</title>');
+
+    
+    printWindow.document.write('<style>');
+    printWindow.document.write('body { font-family: Arial, sans-serif; margin:20px; }');
+
+    
+    printWindow.document.write('.header { text-align: center; margin-bottom: 10px; color: #003366; }');
+    printWindow.document.write('.header h2 { margin: 0; font-size: 18px; font-weight: bold; }');
+    printWindow.document.write('.header h3 { margin: 0; font-size: 16px; }');
+    printWindow.document.write('.header h4 { margin: 0; font-size: 14px; }');
+
+    printWindow.document.write('hr { border: 1px solid black; }');
+
+    
+    printWindow.document.write('table { width:100%; border-collapse: collapse; margin-top:10px;}');
+    printWindow.document.write('table, th, td { border: 1px solid black; }');
+    printWindow.document.write('th, td { padding: 6px; font-size: 12px; text-align:left;}');
+
+    
+    printWindow.document.write('input { display:none; }');
+
+    printWindow.document.write('</style>');
+    printWindow.document.write('</head><body>');
+
+    
+    printWindow.document.write(`
+        <div class="header">
+            <h2>Government of Jammu & Kashmir</h2>
+            <h3>Housing and Urban Development</h3>
+            <h4>Department</h4>
+        </div>
+        <hr/>
+    `);
+
+    
+    printWindow.document.write(tableContent);
+
+    printWindow.document.write('</body></html>');
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    
+    setTimeout(function () {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
 }
 
-function exportTableToExcel() {
+/* function exportTableToExcel() {
     var table = document.getElementById("resultTable");
 
     if (!table) {
@@ -173,30 +196,30 @@ function exportTableToExcel() {
     }
 
     var rows = table.rows;
-    var excel = "<table border='1'>";
+    var excel = "<table border='1'>"; */
 
     // Header
-    var today = new Date();
+    /* var today = new Date();
     var date = today.toLocaleDateString('en-GB');
     var time = today.toLocaleTimeString();
-
-    excel += `
+ */
+    /* excel += `
         <tr>
             <td colspan="13" style="text-align:center; font-weight:bold; color: #003366;">
                 Government of Jammu & Kashmir<br>
                 Housing and Urban Development<br>
                 Department
-            </td>
+            </td> */
            <!--<td colspan="3" style="text-align:right;">
                 Date: ${date}<br>
                 Time: ${time}
             </td> -->
-        </tr>
+       /*  </tr>
         <tr><td colspan="13"></td></tr>
-    `;
+    `; */
 
     // Loop table rows
-    for (var i = 0; i < rows.length; i++) {
+    /* for (var i = 0; i < rows.length; i++) {
         excel += "<tr>";
 
         var cols = rows[i].cells;
@@ -213,8 +236,8 @@ function exportTableToExcel() {
         excel += "</tr>";
     }
 
-    excel += "</table>";
-
+    excel += "</table>"; */
+/* 
     var blob = new Blob([excel], { type: "application/vnd.ms-excel" });
     var url = URL.createObjectURL(blob);
 
@@ -225,7 +248,70 @@ function exportTableToExcel() {
     a.click();
     document.body.removeChild(a);
 } 
- 
+  */
+
+
+  function exportTableToExcel() {
+
+	    var table = document.getElementById("resultTable");
+
+	    if (!table || table.rows.length === 0) {
+	        alert("No data available to export!");
+	        return;
+	    }
+
+	    var rows = table.rows;
+	    var excel = "<table border='1'>";
+
+	    var today = new Date();
+	    var date = today.toLocaleDateString('en-GB');
+	    var time = today.toLocaleTimeString();
+
+	    excel += `
+	        <tr>
+	            <td colspan="13" style="text-align:center; font-weight:bold; color:#003366;">
+	                Government of Jammu & Kashmir<br>
+	                Housing and Urban Development<br>
+	                Department
+	            </td>
+	        </tr>
+	        <tr>
+	            <td colspan="13" style="text-align:right;">
+	                Date: ${date} &nbsp;&nbsp; Time: ${time}
+	            </td>
+	        </tr>
+	        <tr><td colspan="13"></td></tr>
+	    `;
+
+	    for (var i = 0; i < rows.length; i++) {
+	        excel += "<tr>";
+
+	        var cols = rows[i].cells;
+
+	        for (var j = 0; j < cols.length; j++) {
+
+	            var data = cols[j].innerText;
+
+	            excel += "<td>" + data + "</td>";
+	        }
+
+	        excel += "</tr>";
+	    }
+
+	    excel += "</table>";
+
+	    
+	    var blob = new Blob([excel], { type: "application/vnd.ms-excel" });
+	    var url = URL.createObjectURL(blob);
+
+	    var a = document.createElement("a");
+	    a.href = url;
+	    a.download = "Receipt_Report.xls";
+
+	    document.body.appendChild(a);
+	    a.click();
+	    document.body.removeChild(a);
+	}
 </script>
 
 
@@ -249,10 +335,10 @@ function exportTableToExcel() {
 
 		/* if (selected == -1 || !serviceTypeMap[selected]) return; */
 
-		var map = serviceTypeMap[selected];
+		var map = serviceTypeMap[selected] || {};
 		var keys = Object.keys(map);
-		if (keys.length === 0)
-			return;
+		/* if (keys.length === 0)
+			return; */
 
 
 		var sel = document.createElement('select');
@@ -278,6 +364,8 @@ function exportTableToExcel() {
 		var prevCat = '<s:property value="serviceCategory"/>';
 		if (prevCat && prevCat !== '-1') {
 			populateServiceType(prevCat);
+		} else {
+			populateServiceType('-1');
 		}
 	});
 
@@ -313,7 +401,7 @@ function exportTableToExcel() {
 		}
 	}
 
-	function checkselectedreceiptcount(obj) {
+/* 	function checkselectedreceiptcount(obj) {
 		var cnt = document.getElementsByName('selectedReceipts');
 		var receiptstatus = document.getElementsByName('receiptstatus');
 		var j = 0;
@@ -336,7 +424,7 @@ function exportTableToExcel() {
 			return 2;
 		else
 			return 1;
-	}
+	} */
 
 	function checkcancelforselectedrecord() {
 		dom.get("pendingreceiptcancellationerror").style.display = "none";
@@ -419,7 +507,7 @@ function exportTableToExcel() {
 			document.searchReceiptForm.submit();
 		}
 	}
-	function checkprintforselectedrecord() {
+	/* function checkprintforselectedrecord() {
 		var check = checkselectedreceiptcount('print');
 		// more than one receipts have been chosen. should not print
 		if (check == 2) {
@@ -445,13 +533,14 @@ function exportTableToExcel() {
 		}
 		//document.searchReceiptForm.action="receipt-printReceipts.action";
 		//document.searchReceiptForm.submit();
-	}
+	} */
 
 	function validate() {
 		var fromdate = dom.get("fromDate").value;
 		var todate = dom.get("toDate").value;
-		var serviceTypeObj = dom.get("serviceType");
-		var serviceType = serviceTypeObj ? serviceTypeObj.value : "";
+		/* var serviceType = dom.get("serviceType").value; */
+		var serviceTypeEl = document.getElementById("serviceType");
+		var serviceType = serviceTypeEl ? serviceTypeEl.value : '-1';
 		console.log("serviceType : " + serviceType);
 		var valSuccess = true;
 		/* if(null!= document.getElementById('serviceClass') && document.getElementById('serviceClass').value == '-1'){
@@ -462,7 +551,7 @@ function exportTableToExcel() {
 			return false;
 		} */
 
-		/* if (serviceType == -1) {
+	/* 	if (serviceType == -1) {
 			valSuccess = false;
 			dom.get("error_area").style.display = "block";
 			dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />'
@@ -470,8 +559,6 @@ function exportTableToExcel() {
 			window.scroll(0, 0);
 			return false;
 		} */
-
-		
 
 		if (fromdate != "" && todate != "" && fromdate != todate) {
 			if (!checkFdateTdate(fromdate, todate)) {
@@ -600,34 +687,34 @@ function exportTableToExcel() {
 		</div>
 	</s:if>
 	<s:form theme="simple" name="searchReceiptForm"
-		action="searchReceipt-search.action">
+		action="searchReceipt-searchReportNew.action">
 		<div class="formmainbox">
 			<div class="subheadnew">
-				<s:text name="searchreceipts.title" />
+				<s:text name="searchreceipts.title.new" />
 			</div>
 			<div class="subheadsmallnew">
 				<span class="subheadnew"><s:text
-						name="searchreceipts.criteria" /></span>
+						name="searchreceipts.criteria.new" /></span>
 			</div>
 			<input type="hidden" name="${_csrf.parameterName}"
 				value="${_csrf.token}" />
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-				<tr>
+				<%-- <tr>
 					<td width="2%" class="bluebox">&nbsp;</td>
 					<td width="15%" class="bluebox"><s:text
 							name="service.master.classification" /> <span class="mandatory"></td>
-					<td width="30%" class="bluebox">
+					<td width="30%" class="bluebox"> --%>
 						<%-- <s:select list="serviceClassMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
 				name="serviceClass" id="serviceClass" onchange="onChangeServiceClass(this);"></s:select> --%>
-						<s:select name='type' list="#{'type':'MISCELLANEOUS' }"></s:select>
-					</td>
-					<td width="15%" class="bluebox"><s:text
+						<%-- <s:select name='type' list="#{'type':'MISCELLANEOUS' }"></s:select>
+					</td> --%>
+				<%-- 	<td width="15%" class="bluebox"><s:text
 							name="searchreceipts.criteria.receiptno" /></td>
 					<td width="30%" class="bluebox">
 						<div class="yui-skin-sam">
 							<s:textfield id="receiptNumber" type="text" name="receiptNumber" />
-					</td>
+					</td> --%>
 					<%--  <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='serviceType'
                 url='receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action' /> --%>
 					<!--   <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.servicetype"/> <span class="mandatory"></td>
@@ -635,7 +722,7 @@ function exportTableToExcel() {
 
 					<%-- <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
 	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td> --%>
-				</tr>
+				<%-- </tr> --%>
 				<tr>
 					<td width="2%" class="bluebox">&nbsp;</td>
 					<td width="15%" class="bluebox"><s:text
@@ -668,7 +755,7 @@ function exportTableToExcel() {
 				<tr>
 					<td width="2%" class="bluebox">&nbsp;</td>
 					<td width="15%" class="bluebox"><s:text
-							name="searchreceipts.criteria.servicecategory" /> </td>
+							name="searchreceipts.criteria.servicecategory" /></td>
 					<td width="30%" class="bluebox"><s:select headerKey="-1"
 							headerValue="%{getText('miscreceipt.select')}"
 							name="serviceCategory" id="serviceCategoryid" cssClass="selectwk"
@@ -736,7 +823,7 @@ function exportTableToExcel() {
 		</div>
 		<div class="buttonbottom">
 			<label><s:submit type="submit" cssClass="buttonsubmit"
-					id="button" key="lbl.search" onclick="return validateNew();" /></label> <label><s:submit
+					id="button" key="lbl.search" onclick="return validate();" /></label> <label><s:submit
 					type="submit" cssClass="button" key="lbl.reset"
 					onclick="document.searchReceiptForm.action='searchReceipt-reset.action'" /></label>
 			<s:if test="%{results.isEmpty()}">
@@ -765,7 +852,7 @@ function exportTableToExcel() {
                      cellspacing="0" export="false" requestURI=""> 
                      
 					<display:caption media="pdf">&nbsp;</display:caption>
-					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+					<%-- <display:column headerClass="bluebgheadtd" class="blueborderfortd"
 						style="width:3%">
 						<s:if test='%{collectionVersion eq "V2"}'>
 							<input name="selectedReceipts" type="checkbox"
@@ -779,7 +866,7 @@ function exportTableToExcel() {
 							value="${currentRow.curretnStatus}" />
 						<input type="hidden" name="receipttype" id="receipttype"
 							value="${currentreceipttype}" />
-					</display:column>
+					</display:column> --%>
 					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 						title="Receipt No." style="width:8%;text-align:right"
 						property="receiptnumber" />
@@ -815,6 +902,9 @@ function exportTableToExcel() {
 					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 						title="Ward No" style="width:10%;text-align:left"
 						property="wardNo" />
+					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+						title="Department" style="width:10%;text-align:left"
+						property="department" />
 					<%-- <div align="center">
 <s:set var="instrtype" value="" />
 <s:iterator status="stat1" value="#attr.currentRow.receiptInstrument">
@@ -835,11 +925,11 @@ function exportTableToExcel() {
 			</div>
 			<br />
 			<div class="buttonbottom">
-				<input name="button32" type="button" class="buttonsubmit"
+				<!-- <input name="button32" type="button" class="buttonsubmit"
 					id="button32" value="View Receipt"
-					onclick="return checkviewforselectedrecord()" /> 
-					<input name="button32" type="button" class="buttonsubmit" id="button32"
-					value="Print Receipt" onclick="return checkprintforselectedrecord()" />
+					onclick="return checkviewforselectedrecord()" />  -->
+					<!-- <input name="button32" type="button" class="buttonsubmit" id="button32"
+					value="Print Receipt" onclick="return checkprintforselectedrecord()" /> -->
 					<input type="button" class="buttonsubmit"
                          value="Print PDF"
                          onclick="printResultTable()" />

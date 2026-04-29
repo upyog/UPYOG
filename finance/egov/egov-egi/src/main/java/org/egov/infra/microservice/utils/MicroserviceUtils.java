@@ -1672,8 +1672,13 @@ public class MicroserviceUtils {
         PaymentResponse response = null;
         StringBuilder url = new StringBuilder();
         if (paymentSearchEndPointEnabled) {
-            url = new StringBuilder(appConfigManager.getEgovCollSerHost())
-                    .append(appConfigManager.getCollSerPaymentModuleNameSearch()).append("?");
+        	if(!searchCriteria.getBusinessServices().isEmpty() && searchCriteria.getBusinessServices().size()>0) {
+        		url = new StringBuilder(appConfigManager.getEgovCollSerHost())
+                        .append(appConfigManager.getCollSerPaymentModuleNameSearch()).append("?");
+        	}else {
+        		url = new StringBuilder(appConfigManager.getEgovCollSerHost())
+                        .append(appConfigManager.getCollSerPaymentSearch()).append("?");
+        	}
         } else {
             url = new StringBuilder(appConfigManager.getEgovCollSerHost())
                     .append(appConfigManager.getCollSerPaymentSearch()).append("?");
@@ -1684,9 +1689,14 @@ public class MicroserviceUtils {
         try {
             preparePaymentSearchQueryString(searchCriteria, url);
             if (paymentSearchEndPointEnabled) {
-                for (String serviceCode :searchCriteria.getBusinessServices()) {
-                response = restTemplate.postForObject(url.toString(), reqWrapper, PaymentResponse.class,serviceCode);
-                }
+            	if(!searchCriteria.getBusinessServices().isEmpty() && searchCriteria.getBusinessServices().size()>0) {
+            		for (String serviceCode :searchCriteria.getBusinessServices()) {
+                        response = restTemplate.postForObject(url.toString(), reqWrapper, PaymentResponse.class,serviceCode);
+                        }	
+            	}else {
+            		response = restTemplate.postForObject(url.toString(), reqWrapper, PaymentResponse.class);
+            	}
+                
             } else {
                 response = restTemplate.postForObject(url.toString(), reqWrapper, PaymentResponse.class);
             }
