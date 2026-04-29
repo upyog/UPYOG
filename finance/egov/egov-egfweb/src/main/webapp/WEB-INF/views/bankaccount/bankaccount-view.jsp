@@ -54,13 +54,13 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<spring:message code="lbl.view.bankaccount" text="View Bank Account"/>
+					<spring:message code="lbl.view.bankaccount" text="View Bank Account/Major Head Account"/>
 				</div>
 			</div>
 			<div class="panel-body custom">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.accountnumber" text="Account Number"/>
+						<spring:message code="lbl.accountnumber" text="Account Number/Major Head"/>
 					</div>
 					<div class="col-sm-3 add-margin view-content">${bankaccount.accountnumber}</div>
 					<div class="col-xs-3 add-margin">

@@ -51,7 +51,7 @@
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title"><spring:message code="lbl.create.bankaccount" text="Create Bank Account"/></div>
+				<div class="panel-title"><spring:message code="lbl.create.bankaccount" text="Create Bank Account/Major Head Account"/></div>
 				<input type="hidden" name="bankaccount" value="${bankaccount.id}" />
 			</div>
 			<div class="panel-body">
@@ -72,7 +72,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" text="Account Number"/> <span class="mandatory"></span> </label>
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" text="Account Number/Major Head"/> <span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="accountnumber" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" required="required" />
 						<form:errors path="accountnumber" cssClass="error-msg" />

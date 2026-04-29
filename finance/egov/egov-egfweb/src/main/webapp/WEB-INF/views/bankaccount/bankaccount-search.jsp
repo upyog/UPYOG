@@ -56,7 +56,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="lbl.search.bankaccount" text="Search Bank Account"/>
+						<spring:message code="lbl.search.bankaccount" text="Search Bank Account/ Major Head Account"/>
 					</div>
 				</div>
 				<div class="panel-body">
@@ -78,7 +78,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" text="Account Number"/>  </label>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" text="Account Number/ Major Head"/>  </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="accountnumber" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"/>
 							<form:errors path="accountnumber" cssClass="error-msg" />
@@ -158,13 +158,13 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left"><spring:message code="lbl.search.bankaccount.result" text="Bank Account Search Result"/></div>
+	<div class="col-md-12 table-header text-left"><spring:message code="lbl.search.bankaccount.result" text="Bank Account/Major Head Search Result"/></div>
 	<div class="col-md-12 report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.accountnumber" text="Account Number"/></th>
+					<th><spring:message code="lbl.accountnumber" text="Account Number/ Major Head"/></th>
 					<th><spring:message code="lbl.fund" text="Fund"/></th>
 					<th><spring:message code="lbl.bank" text="Fund"/></th>
 					<th><spring:message code="lbl.bankbranch" text="Bank Branch"/></th>

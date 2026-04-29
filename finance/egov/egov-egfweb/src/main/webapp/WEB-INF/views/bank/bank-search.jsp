@@ -56,7 +56,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="lbl.search.bank" text="Search Bank"/>
+						<spring:message code="lbl.search.bank" text="Search Bank/Treasury"/>
 					</div>
 				</div>
 				<div class="panel-body">
@@ -98,7 +98,7 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left"><spring:message code="lbl.search.bank.result" text="Bank Search Result"/></div>
+	<div class="col-md-12 table-header text-left"><spring:message code="lbl.search.bank.result" text="Bank/Treasury Search Result"/></div>
 	<div class="col-md-12 report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">

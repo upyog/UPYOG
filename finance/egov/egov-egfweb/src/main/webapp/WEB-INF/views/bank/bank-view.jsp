@@ -54,7 +54,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<spring:message code="lbl.view.bank" text="View Bank"/>
+					<spring:message code="lbl.view.bank" text="View Bank/Treasury"/>
 				</div>
 			</div>
 			<div class="panel-body custom">

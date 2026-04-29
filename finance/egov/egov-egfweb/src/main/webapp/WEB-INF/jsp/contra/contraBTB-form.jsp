@@ -119,17 +119,18 @@
 				headerKey="" headerValue="%{getText('lbl.choose.options')}" /></td>
 	</s:if>
 	<s:if test="%{shouldShowHeaderField('department')}">
-		<td id="interFundRow1" style="visibility: hidden" class="greybox"><s:text
+		<td class="bluebox w5">&nbsp;</td>
+		<td id="interFundRow1" style="visibility: hidden" class="greybox w15"><s:text
 				name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
-		<td id="interFundRow2" style="visibility: hidden" class="greybox"><s:select
+		<td id="interFundRow2" style="visibility: hidden" class="greybox w25"><s:select
 				name="contraBean.toDepartment" id="contraBean.toDepartment"
 				list="dropdownData.departmentList" listKey="code" listValue="name"
 				headerKey="" headerValue="%{getText('lbl.choose.options')}"
 				value="voucherHeader.vouchermis.departmentcode"
-				onChange="populateApproverDept(this);" /></td>
+				onChange="populateApproverDept(this);" class="w100" /></td>
 	</s:if>
 </tr>
 <tr>
@@ -170,15 +171,15 @@
 </tr>
 <tr id="interFundRow3" style="visibility: hidden">
 	<td class="bluebox w5">&nbsp;</td>
-	<td class="greybox w15"><s:text name="lbl.source.inter.fund.code" />
-	<td class="greybox w25"><span class="mandatory1">*</span> <s:select
+	<td class="greybox w15"><s:text name="lbl.source.inter.fund.code" /><span class="mandatory1">*</span></td>
+	<td class="greybox w25"><s:select
 			name="contraBean.sourceGlcode" id="sourceGlcode"
 			list="dropdownData.interFundList" listKey="glcode"
 			listValue="glcode+'-'+name" headerKey="-1"
 			headerValue="%{getText('lbl.choose.options')}" /></td>
 	<td class="bluebox w5">&nbsp;</td>
-	<td class="greybox w15"><s:text name="lbl.destination.inter.fund.code" /></td>
-	<td class="greybox w25"><span class="mandatory1">*</span> <s:select
+	<td class="greybox w15"><s:text name="lbl.destination.inter.fund.code" /><span class="mandatory1">*</span></td>
+	<td class="greybox w25"><s:select
 			name="contraBean.destinationGlcode" id="destinationGlcode"
 			list="dropdownData.interFundList" listKey="glcode"
 			listValue="glcode+'-'+name" headerKey="-1"
