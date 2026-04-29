@@ -695,7 +695,10 @@ public class BillServicev2 {
 		List<Demand> demandsnew = demandService.getDemands(demandCriteriaNewDemand, requestInfo);
 		
 		if(!CollectionUtils.isEmpty(demandsnew))
-		billCriteria.setDemandId(demandsnew.get(0).getId());
+		{
+			billCriteria.setDemandId(demandsnew.get(0).getId());
+			billCriteria.setAssesmentYear(null);
+		}
 		
 		List<BillV2> bills = billRepository.findBillwithStatus(billCriteria);
 
