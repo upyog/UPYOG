@@ -146,7 +146,7 @@ public class WSCalculatorQueryBuilder {
 			+ "(id, eg_ws_scheduler_id, locality, module, createdtime, lastupdatedtime, status, tenantid, reason, consumercode) "
 			+ "VALUES (?,?,?,?,?,?,?,?,?,?);";
 	
-	public static final String METERREADINGQUERY = "SELECT mr.id, mr.connectionNo as connectionId, epp.usagecategory as usageCategory, mr.billingPeriod, mr.meterStatus, mr.lastReading, mr.lastReadingDate, mr.currentReading,"
+	public static final String METERREADINGQUERY = "SELECT DISTINCT ON (mr.connectionNo) mr.id, mr.connectionNo as connectionId, epp.usagecategory as usageCategory, mr.billingPeriod, mr.meterStatus, mr.lastReading, mr.lastReadingDate, mr.currentReading,"
 			+ " mr.currentReadingDate, mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy,"
 			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime FROM eg_ws_meterreading mr "
 			+ INNER_JOIN_STRING + " eg_ws_connection conn  ON mr.connectionno = conn.connectionno  AND mr.tenantid = conn.tenantid  "
@@ -1189,7 +1189,7 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			query.append(" mr.connectionNo IN (").append(createQuery(criteria.getConnectionNos())).append(" )");
 			addToPreparedStatement(preparedStatement, criteria.getConnectionNos());
 		}
-		addOrderBy(query);
+		query.append(" ORDER BY mr.connectionNo, mr.currentReadingDate DESC \r\n");
 		return addPaginationWrapper(query, preparedStatement, criteria);
 	}
 }

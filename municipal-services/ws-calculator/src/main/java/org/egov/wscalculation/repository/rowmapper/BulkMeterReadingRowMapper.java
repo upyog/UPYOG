@@ -23,19 +23,13 @@ public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<BulkMe
 	    Map<String, BulkMeterReading> maxReadingMap = new HashMap<>();
 
 	    while (rs.next()) {
-
-	        String consumerCode = rs.getString("connectionId");
-	        double currentReading = rs.getDouble("currentReading");
-
-	        if (!maxReadingMap.containsKey(consumerCode) ||
-	        		currentReading > maxReadingMap.get(consumerCode).getCurrentReading()) {
-
-	            BulkMeterReading bulkMeterReading = new BulkMeterReading();
+	    		BulkMeterReading bulkMeterReading = new BulkMeterReading();
+	    		
 	            bulkMeterReading.setId(rs.getString("id"));
 	            bulkMeterReading.setConnectionNo(rs.getString("connectionId"));
 	            bulkMeterReading.setUsageCategory(rs.getString("usageCategory"));
 	            bulkMeterReading.setBillingPeriod(rs.getString("billingPeriod"));
-	            bulkMeterReading.setCurrentReading(currentReading);
+	            bulkMeterReading.setCurrentReading(rs.getDouble("currentReading"));
 	            bulkMeterReading.setCurrentReadingDate(rs.getLong("currentReadingDate"));
 	            bulkMeterReading.setLastReading(rs.getDouble("lastReading"));
 	            bulkMeterReading.setLastReadingDate(rs.getLong("lastReadingDate"));
@@ -51,9 +45,8 @@ public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<BulkMe
 	                    .build();
 
 	            bulkMeterReading.setAuditDetails(auditdetails);
-	            maxReadingMap.put(consumerCode, bulkMeterReading);
+	            maxReadingMap.put(bulkMeterReading.getConnectionNo(), bulkMeterReading);
 	        }
-	    }
 	    return new ArrayList<>(maxReadingMap.values());
 	}
 }
