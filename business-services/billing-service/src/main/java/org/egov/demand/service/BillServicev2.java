@@ -695,7 +695,15 @@ public class BillServicev2 {
 		List<Demand> demandsnew = demandService.getDemands(demandCriteriaNewDemand, requestInfo);
 		
 		if(!CollectionUtils.isEmpty(demandsnew))
-		billCriteria.setDemandId(demandsnew.get(0).getId());
+		{
+			billCriteria.setDemandId(demandsnew.get(0).getId());
+			billCriteria.setAssesmentYear(null);
+		}
+		
+		if(billCriteria.getPaymentPeriod().contains("Q"))
+			billCriteria.setPaymentPeriod("Q4");	
+		else if(billCriteria.getPaymentPeriod().contains("H"))
+			billCriteria.setPaymentPeriod("H2");
 		
 		List<BillV2> bills = billRepository.findBillwithStatus(billCriteria);
 
