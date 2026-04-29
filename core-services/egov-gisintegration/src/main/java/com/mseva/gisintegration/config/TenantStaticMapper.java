@@ -177,7 +177,16 @@ public class TenantStaticMapper {
         
         TOWN_MAP = Collections.unmodifiableMap(map);
     }
+    public static String getTenantIdByTown(String townName) {
+        if (townName == null) return null;
 
+        return TOWN_MAP.entrySet()
+                .stream()
+                .filter(entry -> townName.equalsIgnoreCase(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(townName); // Returns the input if no match is found
+    }
     public static String getTownName(String tenantId) {
         if (tenantId == null) return "Unknown";
         // Returns the town name or falls back to tenantId if not found

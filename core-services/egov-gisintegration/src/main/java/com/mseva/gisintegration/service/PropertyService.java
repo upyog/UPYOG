@@ -350,9 +350,7 @@ public class PropertyService {
             // Step 1: Map GIS and Master Fields
             p.setPropertyid(propertyNode.path("propertyId").asText());
             p.setSurveyid(propertyNode.path("surveyId").asText());
-            p.setOldpropertyid(propertyNode.path("oldPropertyId").asText());
-            String townName = TenantStaticMapper.getTownName(propertyNode.path("tenantId").asText());
-            p.setTenantid(townName);            
+            p.setOldpropertyid(propertyNode.path("oldPropertyId").asText());           
             // MAPPING CHANGE: buildingName -> firmbusinessname
 			p.setFirmbusinessname(propertyNode.path("additionalDetails").path("businessName").asText(null));
 			// Legacy fallback to buildingName if businessName is not present
