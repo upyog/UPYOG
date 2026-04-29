@@ -700,6 +700,11 @@ public class BillServicev2 {
 			billCriteria.setAssesmentYear(null);
 		}
 		
+		if(billCriteria.getPaymentPeriod().contains("Q"))
+			billCriteria.setPaymentPeriod("Q4");	
+		else if(billCriteria.getPaymentPeriod().contains("H"))
+			billCriteria.setPaymentPeriod("H2");
+		
 		List<BillV2> bills = billRepository.findBillwithStatus(billCriteria);
 
 		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
