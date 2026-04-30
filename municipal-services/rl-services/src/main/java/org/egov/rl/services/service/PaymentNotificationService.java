@@ -245,18 +245,13 @@ public class PaymentNotificationService {
 			
 			if (applications != null && !applications.isEmpty()) {
 				AllotmentDetails application = applications.get(0);
-				
-				// Check additionalDetails for applicationType
-				if (application.getAdditionalDetails() != null) {
-					com.fasterxml.jackson.databind.JsonNode additionalDetails = application.getAdditionalDetails();
-					if (additionalDetails.has("applicationType")) {
-						String applicationType = additionalDetails.get("applicationType").asText();
-						if (RLConstants.APPLICATION_TYPE_LEGACY.equals(applicationType)) {
-							log.info("Using Legacy workflow for payment of application: {}", consumerCode);
-							return RLConstants.RL_WORKFLOW_NAME_LEGACY;
-						}
-					}
+
+				if (RLConstants.APPLICATION_TYPE_LEGACY.equalsIgnoreCase(application.getApplicationType())) {
+					log.info("Using Legacy workflow from root applicationType for payment of application: {}", consumerCode);
+					return RLConstants.RL_WORKFLOW_NAME_LEGACY;
 				}
+				
+				// Only use root-level applicationType to determine workflow; do not consult additionalDetails
 			}
 		} catch (Exception e) {
 			log.error("Error determining workflow name for application: {}, using default workflow. Error: {}", 

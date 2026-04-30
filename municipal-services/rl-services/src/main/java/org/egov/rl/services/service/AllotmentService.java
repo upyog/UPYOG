@@ -84,25 +84,27 @@ public class AllotmentService {
 			allotmentRequest.getAllotment().get(0).setStatus(RLConstants.APPROVED);
 		}
 		String previousApplicationNumber = allotmentRequest.getAllotment().get(0).getPreviousApplicationNumber();
-		if (previousApplicationNumber != null && previousApplicationNumber.trim().length() > 0) {
-			AllotmentDetails allotment = allotmentRequest.getAllotment().get(0);
+		AllotmentDetails allotment = allotmentRequest.getAllotment().get(0);
+		String resolvedIncomingType = resolveApplicationType(allotment);
+		if (RLConstants.APPLICATION_TYPE_LEGACY.equalsIgnoreCase(resolvedIncomingType)) {
+			allotment.setApplicationType(RLConstants.APPLICATION_TYPE_LEGACY);
+			allotmentRequest.setAllotment(Arrays.asList(allotment));
+		} else if (previousApplicationNumber != null && previousApplicationNumber.trim().length() > 0) {
 			allotment.setApplicationType(RLConstants.RENEWAL_RL_APPLICATION);
 			allotmentRequest.setAllotment(Arrays.asList(allotment));
 		} else {
-			AllotmentDetails allotment = allotmentRequest.getAllotment().get(0);
 			allotment.setApplicationType(RLConstants.NEW_RL_APPLICATION);
 			allotmentRequest.setAllotment(Arrays.asList(allotment));
 		}
 		allotmentProducer.push(config.getSaveRLAllotmentTopic(), allotmentRequest);
-	    AllotmentDetails allotment =	allotmentRequest.getAllotment().get(0);
-	    allotment.setWorkflow(null);
-		allotmentRequest.setAllotment(Arrays.asList(allotment));
+	    AllotmentDetails updatedAllotment = allotmentRequest.getAllotment().get(0);
+	    updatedAllotment.setWorkflow(null);
+		allotmentRequest.setAllotment(Arrays.asList(updatedAllotment));
 		return allotmentRequest.getAllotment().get(0);
 	}
 
 	public AllotmentDetails allotmentUpdate(AllotmentRequest allotmentRequest) {
         String action=allotmentRequest.getAllotment().get(0).getWorkflow().getAction();
-        String applicationType=allotmentRequest.getAllotment().get(0).getApplicationType();
 		allotmentValidator.validateUpdateAllotementRequest(allotmentRequest);
 		allotmentEnrichmentService.enrichUpdateRequest(allotmentRequest);
 		userService.createUser(allotmentRequest);
@@ -115,24 +117,28 @@ public class AllotmentService {
 		}
 		boolean isApprove = action.contains(RLConstants.APPROVED_RL_APPLICATION);
 		boolean isLegacyApplication = isLegacyApplication(allotmentDetails);
+		String applicationType = resolveApplicationType(allotmentDetails);
+		if (isLegacyApplication) {
+			allotmentDetails.setApplicationType(RLConstants.APPLICATION_TYPE_LEGACY);
+		}
 
 		log.info("Processing update for application: {}, action: {}, isApprove: {}, isLegacy: {}, applicationType: {}", 
 				allotmentDetails.getApplicationNumber(), action, isApprove, isLegacyApplication, applicationType);
 
-        if (isApprove && isLegacyApplication) {
-            // For legacy applications, generate demand based on arrear details from additionalDetails
-            log.info("Creating legacy arrear demand for application: {}", allotmentDetails.getApplicationNumber());
-            try {
-                String demandId = callCalculatorServiceForLegacy(allotmentRequest);
-                log.info("Legacy arrear demand created successfully with demandId: {} for application: {}", 
-                        demandId, allotmentDetails.getApplicationNumber());
-            } catch (Exception e) {
-                log.error("Error creating legacy demand for application: {}", allotmentDetails.getApplicationNumber(), e);
-                e.printStackTrace();
-                throw new CustomException("CREATE_DEMAND_ERROR",
-                        "Error occurred while generating demand for legacy application.");
-            }
-        } else if (isApprove && applicationType.contains(RLConstants.NEW_RL_APPLICATION)) {
+		if (isApprove && isLegacyApplication) {
+			// For legacy applications use the same flow as new applications but exclude security deposit and include arrear details if present
+			log.info("Processing legacy application as NEW flow (security deposit excluded) for application: {}", allotmentDetails.getApplicationNumber());
+			try {
+				// isSatelment=false, isSecurityDeposite=false (exclude security deposit)
+				callCalculatorServiceForLegacy(allotmentRequest);
+			} catch (Exception e) {
+				log.error("Error creating demand for legacy application: {}", allotmentDetails.getApplicationNumber(), e);
+				throw new CustomException("CREATE_DEMAND_ERROR",
+						"Error occurred while generating demand for legacy application.");
+			}
+		} else if (isApprove && applicationType != null
+				&& (applicationType.contains(RLConstants.NEW_RL_APPLICATION)
+						|| applicationType.contains(RLConstants.RENEWAL_RL_APPLICATION))) {
 			try {
 				callCalculatorService(false,true,allotmentRequest);
 			} catch (Exception e) {
@@ -192,26 +198,26 @@ public class AllotmentService {
             log.warn("AllotmentDetails is null, cannot determine if legacy application");
             return false;
         }
-        
-        com.fasterxml.jackson.databind.JsonNode additionalDetails = allotmentDetails.getAdditionalDetails();
-        if (additionalDetails == null) {
-            log.warn("AdditionalDetails is null for application: {}", allotmentDetails.getApplicationNumber());
-            return false;
-        }
-        
-        if (additionalDetails.has("applicationType")) {
-            String applicationType = additionalDetails.get("applicationType").asText();
-            log.info("Checking legacy application - applicationNumber: {}, additionalDetails.applicationType: {}", 
-                    allotmentDetails.getApplicationNumber(), applicationType);
-            boolean isLegacy = RLConstants.APPLICATION_TYPE_LEGACY.equalsIgnoreCase(applicationType);
-            log.info("Is legacy application: {}", isLegacy);
-            return isLegacy;
-        }
-        
-        log.warn("applicationType key not found in additionalDetails for application: {}", 
-                allotmentDetails.getApplicationNumber());
-        return false;
+		String applicationType = resolveApplicationType(allotmentDetails);
+		boolean isLegacy = RLConstants.APPLICATION_TYPE_LEGACY.equalsIgnoreCase(applicationType);
+		log.info("Resolved applicationType for application {} as {}, isLegacy: {}",
+				allotmentDetails.getApplicationNumber(), applicationType, isLegacy);
+		return isLegacy;
     }
+
+	private String resolveApplicationType(AllotmentDetails allotmentDetails) {
+		if (allotmentDetails == null) {
+			return null;
+		}
+		String rootType = allotmentDetails.getApplicationType();
+		if (rootType != null && !rootType.trim().isEmpty()) {
+			if (RLConstants.APPLICATION_TYPE_LEGACY.equalsIgnoreCase(rootType)) {
+				return RLConstants.APPLICATION_TYPE_LEGACY;
+			}
+			return rootType;
+		}
+		return null;
+	}
 
     /**
      * Call calculator service for legacy applications

@@ -77,14 +77,16 @@ public class DemandService {
 	private BatchDemanService batchDemanService;
 
 	public DemandResponse createDemand(CalculationReq calculationReq) {
+		CalculationCriteria firstCriteria = calculationReq.getCalculationCriteria().get(0);
+		boolean isLegacyApplication = isLegacyApplication(firstCriteria);
 
-		if (calculationReq.getCalculationCriteria().get(0).isSatelment()) {
+		if (firstCriteria.isSatelment()) {
 			return createSatelmentDemand(calculationReq);
-        } else if (calculationReq.getCalculationCriteria().get(0).isLegacyArrear()) {
+	        } else if (firstCriteria.isLegacyArrear() || isLegacyApplication) {
             return createLegacyArrearDemand(calculationReq);
 		} else {
 
-			boolean isSecurityDeposite = calculationReq.getCalculationCriteria().get(0).isSecurityDeposite();
+			boolean isSecurityDeposite = firstCriteria.isSecurityDeposite();
 			List<Demand> demands = new ArrayList<>();
 			RequestInfo requestInfo = calculationReq.getRequestInfo();
 			String tenantId = calculationReq.getCalculationCriteria().get(0).getAllotmentRequest().getAllotment().get(0)
@@ -141,100 +143,79 @@ public class DemandService {
 			return DemandResponse.builder().demands(demands1).build();
 		}
 	}
+
+	private boolean isLegacyApplication(CalculationCriteria criteria) {
+		if (criteria == null || criteria.getAllotmentRequest() == null
+				|| CollectionUtils.isEmpty(criteria.getAllotmentRequest().getAllotment())) {
+			return false;
+		}
+
+		String applicationType = criteria.getAllotmentRequest().getAllotment().get(0).getApplicationType();
+		return RLConstants.APPLICATION_TYPE_LEGACY.equalsIgnoreCase(applicationType);
+	}
     /**
-     * Creates demand for legacy applications based on arrear amount from additionalDetails.
-     * Legacy workflow: INITIATED → PENDINGFORAPPROVAL → APPROVED/REJECTED
-     * Demand is generated when the application is approved with arrear details.
+	 * Creates a single combined demand for legacy applications.
+	 * Legacy workflow should persist one demand containing RL fee, arrear and no security deposit.
      */
     public DemandResponse createLegacyArrearDemand(CalculationReq calculationReq) {
-        log.info("Creating legacy arrear demand - START");
+		log.info("Creating legacy combined demand - START");
         List<Demand> demands = new ArrayList<>();
-        CalculationCriteria criteria = calculationReq.getCalculationCriteria().get(0);
-        AllotmentRequest allotmentRequest = criteria.getAllotmentRequest();
-        AllotmentDetails allotmentDetails = allotmentRequest.getAllotment().get(0);
         RequestInfo requestInfo = calculationReq.getRequestInfo();
-        String tenantId = allotmentDetails.getTenantId();
-        String consumerCode = allotmentDetails.getApplicationNumber();
+		for (CalculationCriteria criteria : calculationReq.getCalculationCriteria()) {
+			Demand demand = buildLegacyCombinedDemand(criteria);
+			if (demand != null) {
+				demands.add(demand);
+			}
+		}
 
-        log.info("Legacy demand - consumerCode: {}, tenantId: {}", consumerCode, tenantId);
+		if (CollectionUtils.isEmpty(demands)) {
+			log.warn("No legacy demand could be built for the request");
+			return DemandResponse.builder().demands(Collections.emptyList()).build();
+		}
 
-        // Get arrear details from calculation criteria (passed from rl-services)
-        BigDecimal arrearAmount = criteria.getArrearAmount();
-        Long arrearStartDate = criteria.getFromDate();
-        Long arrearEndDate = criteria.getToDate();
-
-        log.info("Legacy demand - arrearAmount: {}, fromDate: {}, toDate: {}", arrearAmount, arrearStartDate, arrearEndDate);
-
-        // If arrear amount is not provided in criteria, it will be ZERO
-        if (arrearAmount == null) {
-            log.warn("Arrear amount is null, setting to ZERO");
-            arrearAmount = BigDecimal.ZERO;
-        }
-
-        // Use current time if dates are not provided
-        if (arrearStartDate == null) {
-            log.warn("Arrear start date is null, using current time");
-            arrearStartDate = System.currentTimeMillis();
-        }
-        if (arrearEndDate == null) {
-            log.warn("Arrear end date is null, using current time");
-            arrearEndDate = System.currentTimeMillis();
-        }
-
-        OwnerInfo ownerInfo = allotmentDetails.getOwnerInfo().get(0);
-        Owner payerUser = Owner.builder()
-                .name(ownerInfo.getName())
-                .emailId(ownerInfo.getEmailId())
-                .uuid(ownerInfo.getUserUuid())
-                .mobileNumber(ownerInfo.getMobileNo())
-                .tenantId(ownerInfo.getTenantId())
-                .build();
-
-        // Create demand detail for legacy arrear
-        List<DemandDetail> demandDetails = new ArrayList<>();
-        demandDetails.add(DemandDetail.builder()
-                .taxAmount(arrearAmount)
-                .taxHeadMasterCode(RLConstants.RL_ARREAR_FEE)
-                .tenantId(tenantId)
-                .build());
-
-        // Add round off if needed
-        calculationService.addRoundOffTaxHead(tenantId, demandDetails);
-
-        BigDecimal amountPayable = demandDetails.stream()
-                .map(DemandDetail::getTaxAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        log.info("Legacy demand - final amountPayable: {}", amountPayable);
-
-        // Subtract 1 millisecond from arrear taxPeriodFrom to ensure it differs from rent demand's taxPeriodFrom
-        // This prevents billing service's filterMultipleActiveDemands from overwriting one demand with another
-        // since it groups demands by taxPeriodFrom
-        Long arrearTaxPeriodFrom = arrearStartDate - 1;
-        log.info("Legacy demand - Using arrearTaxPeriodFrom: {} (original: {}) to avoid conflict with rent demand", arrearTaxPeriodFrom, arrearStartDate);
-
-        Demand demand = Demand.builder()
-                .consumerCode(consumerCode)
-                .demandDetails(demandDetails)
-                .payer(payerUser)
-                .minimumAmountPayable(amountPayable)
-                .tenantId(tenantId)
-                .taxPeriodFrom(arrearTaxPeriodFrom)
-                .taxPeriodTo(arrearEndDate)
-                .billExpiryTime(arrearEndDate)
-                .consumerType(RLConstants.APPLICATION_TYPE_LEGACY)
-                .businessService(RLConstants.RL_SERVICE_NAME)
-                .additionalDetails(null)
-                .build();
-
-        demands.add(demand);
-
-        log.info("Saving legacy demand to billing service for application: {}", consumerCode);
-        List<Demand> savedDemands = demandRepository.saveDemand(requestInfo, demands);
-        log.info("Legacy arrear demand created successfully for application: {} with amount: {}, demandId: {}", 
-                consumerCode, arrearAmount, savedDemands.isEmpty() ? "NONE" : savedDemands.get(0).getId());
-        return DemandResponse.builder().demands(savedDemands).build();
+		log.info("Saving legacy combined demand(s) to billing service. Count: {}", demands.size());
+		List<Demand> savedDemands = demandRepository.saveDemand(requestInfo, demands);
+		log.info("Legacy combined demand created successfully. Count: {}", savedDemands.size());
+		return DemandResponse.builder().demands(savedDemands).build();
     }
+
+	private Demand buildLegacyCombinedDemand(CalculationCriteria criteria) {
+		if (criteria == null || criteria.getAllotmentRequest() == null || CollectionUtils.isEmpty(criteria.getAllotmentRequest().getAllotment())) {
+			return null;
+		}
+
+		AllotmentRequest allotmentRequest = criteria.getAllotmentRequest();
+		AllotmentDetails allotmentDetails = allotmentRequest.getAllotment().get(0);
+		String tenantId = allotmentDetails.getTenantId();
+		String consumerCode = allotmentDetails.getApplicationNumber();
+		BigDecimal arrearAmount = criteria.getArrearAmount() == null ? BigDecimal.ZERO : criteria.getArrearAmount();
+
+		Demand demand = calculationService.buildDemand(allotmentRequest, false);
+		if (demand == null) {
+			log.warn("Unable to build base legacy demand for consumerCode: {}, tenantId: {}", consumerCode, tenantId);
+			return null;
+		}
+
+		if (demand.getDemandDetails() == null) {
+			demand.setDemandDetails(new ArrayList<>());
+		}
+		demand.getDemandDetails().removeIf(detail -> detail.getTaxHeadMasterCode() != null
+				&& RLConstants.ROUND_OFF_RL_APPLICATION.equalsIgnoreCase(detail.getTaxHeadMasterCode()));
+
+		log.info("Adding legacy arrear to combined demand. consumerCode: {}, arrearAmount: {}", consumerCode,
+				arrearAmount);
+		demand.getDemandDetails().add(DemandDetail.builder()
+				.taxAmount(arrearAmount)
+				.taxHeadMasterCode(RLConstants.RL_ARREAR_FEE)
+				.tenantId(tenantId)
+				.build());
+
+		calculationService.addRoundOffTaxHead(tenantId, demand.getDemandDetails());
+		BigDecimal amountPayable = demand.getDemandDetails().stream().map(DemandDetail::getTaxAmount)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		demand.setMinimumAmountPayable(amountPayable);
+		return demand;
+	}
 
 	public DemandResponse createSatelmentDemand(CalculationReq calculationReq) {
 
