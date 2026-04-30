@@ -63,6 +63,12 @@ public class CalculationCriteria {
 	
 	private MeterStatusEnum meterStatus;
 	
+	// ✅ isBulkMeter: passed from MeterReading request to drive Reset consumption formula.
+	// true  → use bulkMeterMaxReading from MDMS billingPeriod master
+	// false → use meterMaxReading from MDMS billingPeriod master
+	// null  → treated as false (normal meter)
+	private Boolean isBulkMeter;
+	
 	@JsonIgnore
     private List<MeterReading> meterReadings;
 
