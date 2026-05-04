@@ -17,11 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import static org.egov.ptr.util.PTRConstants.*;
 
 @Service
 public class DemandService {
+
+	private static final ZoneId INDIA_ZONE = ZoneId.of("Asia/Kolkata");
 
 	@Autowired
 	private PetConfiguration config;
@@ -56,14 +60,16 @@ public class DemandService {
 		amountPayable = demandDetails.stream()
 				.map(DemandDetail::getTaxAmount)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		long[] financialYearTaxPeriod = getCurrentFinancialYearTaxPeriod();
 		Demand demand = Demand.builder()
 				.consumerCode(consumerCode)
 				.demandDetails(demandDetails)
 				.payer(owner)
 				.minimumAmountPayable(amountPayable)
 				.tenantId(tenantId)
-				.taxPeriodFrom(Long.valueOf("1743445800000"))
-				.taxPeriodTo(Long.valueOf("1774981799000"))
+				.taxPeriodFrom(financialYearTaxPeriod[0])
+				.taxPeriodTo(financialYearTaxPeriod[1])
 				.consumerType(PET_BUSINESSSERVICE)
 				.businessService("pet-services")
 				.additionalDetails(null)
@@ -73,6 +79,15 @@ public class DemandService {
 		demands.add(demand);
 
 		return demandRepository.saveDemand(petReq.getRequestInfo(), demands);
+	}
+
+	private long[] getCurrentFinancialYearTaxPeriod() {
+		LocalDate today = LocalDate.now(INDIA_ZONE);
+		int financialYearStart = (today.getMonthValue() >= 4) ? today.getYear() : today.getYear() - 1;
+		LocalDate fyStartDate = LocalDate.of(financialYearStart, 4, 1);
+		long taxPeriodFrom = fyStartDate.atStartOfDay(INDIA_ZONE).toInstant().toEpochMilli();
+		long taxPeriodTo = fyStartDate.plusYears(1).atStartOfDay(INDIA_ZONE).toInstant().toEpochMilli() - 1;
+		return new long[] { taxPeriodFrom, taxPeriodTo };
 	}
 
 
