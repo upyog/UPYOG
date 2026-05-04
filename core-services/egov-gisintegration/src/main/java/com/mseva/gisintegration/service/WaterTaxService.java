@@ -2,9 +2,12 @@ package com.mseva.gisintegration.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mseva.gisintegration.config.TenantStaticMapper;
 import com.mseva.gisintegration.model.WaterTax;
 import com.mseva.gisintegration.repository.WaterTaxRepository;
 import com.mseva.gisintegration.repository.ServiceRequestRepository;
+import com.mseva.gisintegration.repository.TenantMappingRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,9 @@ public class WaterTaxService {
 
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
+    
+    @Autowired
+    private TenantMappingRepository tenantMappingRepository;
 
     @Autowired
     private ObjectMapper mapper;
@@ -151,7 +157,9 @@ public class WaterTaxService {
     }
 
     private void mapTransactionalFields(WaterTax w, JsonNode detail) {
-        w.setTenantid(detail.path("tenantId").asText());
+        //w.setTenantid(detail.path("tenantId").asText());
+    	String townName = TenantStaticMapper.getTownName(w.getTenantid());        
+        w.setTenantid(townName);
         w.setConnectionno(detail.path("bill").path("consumerCode").asText());
         
         JsonNode billDetails = detail.path("bill").path("billDetails");
@@ -170,6 +178,14 @@ public class WaterTaxService {
 
     public List<WaterTax> findByConnectionno(String connectionno) {
         return waterTaxRepository.findByConnectionno(connectionno);
+    }
+
+    public List<WaterTax> findByTenantid(String tenantid) {
+        return waterTaxRepository.findByTenantid(tenantid);
+    }
+
+    public List<WaterTax> findByTenantidAndAssessmentyear(String tenantid, String assessmentyear) {
+        return waterTaxRepository.findByTenantidAndAssessmentyear(tenantid, assessmentyear);
     }
 
     public Map<String, Object> createOrUpdateWaterTax(WaterTax waterTax) {

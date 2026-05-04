@@ -30,30 +30,14 @@ public class PropertyController {
     @Autowired
     private PropertyValidator propertyValidator;
 
-	@Autowired
-	private PropertyRepository propertyRepository;
-
-    
-    private JsonNode usersNode;
+    @Autowired
+    private PropertyRepository propertyRepository;
 
     public PropertyController() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            usersNode = mapper.readTree(new ClassPathResource("user.json").getInputStream()).get("users");
-        } catch (IOException e) {
-            e.printStackTrace();
-            usersNode = null;
-        }
     }
 
     @PostMapping("/_createOrUpdate")
-    public ResponseEntity<?> createOrUpdateProperty(@RequestBody Property property, @RequestHeader(value = "Authorization", required = false) String authorization) {
-        log.info("Authorization header: {}", authorization);
-        if (!com.mseva.gisintegration.util.AuthUtil.isAuthorized(authorization, usersNode)) {
-            java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
-            errorResponse.put("error", "Unauthorized: Invalid or missing Authorization header");
-            return ResponseEntity.status(401).body(errorResponse);
-        }
+    public ResponseEntity<?> createOrUpdateProperty(@RequestBody Property property) {
         if (!propertyValidator.isValid(property)) {
             java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
             errorResponse.put("error", "Property ID and Locality Code must be provided");
@@ -69,26 +53,17 @@ public class PropertyController {
         }
     }
 
-    @PostMapping("/_search")
-    public ResponseEntity<?> searchBySurveyidOrPropertyid(@RequestHeader(value = "Authorization", required = false) String authorization,
-                                                         @RequestParam(required = true) String tenantid,
+    @GetMapping("/_search")
+    public ResponseEntity<?> searchBySurveyidOrPropertyid(@RequestParam(name = "town_name", required = true) String tenantid,
                                                          @RequestParam(required = false) String surveyid,
-                                                         @RequestParam(required = false) String propertyid) {
-        if (!com.mseva.gisintegration.util.AuthUtil.isAuthorized(authorization, usersNode)) {
-            java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
-            errorResponse.put("error", "Unauthorized: Invalid or missing Authorization header");
-            return ResponseEntity.status(401).body(errorResponse);
-        }
+                                                         @RequestParam(required = false) String propertyid,
+                                                         @RequestParam(required = false) String assessmentyear) {
         if (tenantid == null || tenantid.isEmpty()) {
             java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
-            errorResponse.put("error", "'tenantid' query parameter must be provided");
+            errorResponse.put("error", "'town_name' query parameter must be provided");
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        if ((surveyid == null || surveyid.isEmpty()) && (propertyid == null || propertyid.isEmpty())) {
-            java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
-            errorResponse.put("error", "Either 'surveyid' or 'propertyid' query parameter must be provided");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
+
         java.util.List<Property> properties = null;
         if (surveyid != null && !surveyid.isEmpty() && propertyid != null && !propertyid.isEmpty()) {
             properties = propertyRepository.findBySurveyidAndPropertyid(surveyid, propertyid, tenantid);
@@ -96,14 +71,29 @@ public class PropertyController {
             properties = propertyService.findBySurveyid(surveyid, tenantid);
         } else if (propertyid != null && !propertyid.isEmpty()) {
             properties = propertyService.findByPropertyid(propertyid, tenantid);
+        } else if (assessmentyear != null && !assessmentyear.isEmpty()) {
+            properties = propertyService.findByTenantidAndAssessmentyear(tenantid, assessmentyear);
+        } else {
+            java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
+            errorResponse.put("error",
+                    "If not searching by surveyid or propertyid, 'assessmentyear' query parameter must be provided");
+            return ResponseEntity.badRequest().body(errorResponse);
         }
+
         if (properties == null || properties.isEmpty()) {
             java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
-            errorResponse.put("error", "Property not found for identifier: " + (surveyid != null ? surveyid : propertyid));
+            errorResponse.put("error", "Property not found for the given search criteria");
             return ResponseEntity.status(404).body(errorResponse);
         }
         return ResponseEntity.ok(properties);
     }
 
-    
+    @GetMapping("/v2/_search")
+    public ResponseEntity<?> searchBySurveyidOrPropertyidV2(@RequestParam(name = "town_name", required = true) String tenantid,
+                                                         @RequestParam(required = false) String surveyid,
+                                                         @RequestParam(required = false) String propertyid,
+                                                         @RequestParam(required = false) String assessmentyear) {
+        return searchBySurveyidOrPropertyid(tenantid, surveyid, propertyid, assessmentyear);
+    }
+
 }

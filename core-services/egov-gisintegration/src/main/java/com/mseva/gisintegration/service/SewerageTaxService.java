@@ -2,8 +2,10 @@ package com.mseva.gisintegration.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mseva.gisintegration.config.TenantStaticMapper;
 import com.mseva.gisintegration.model.SewerageTax;
 import com.mseva.gisintegration.repository.SewerageTaxRepository;
+import com.mseva.gisintegration.repository.TenantMappingRepository;
 import com.mseva.gisintegration.repository.ServiceRequestRepository;
 import org.egov.common.contract.request.RequestInfo;
 import org.slf4j.Logger;
@@ -28,6 +30,8 @@ public class SewerageTaxService {
 
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
+    
+
 
     @Autowired
     private ObjectMapper mapper;
@@ -148,7 +152,12 @@ public class SewerageTaxService {
     }
 
     private void mapTransactionalFields(SewerageTax s, JsonNode detail) {
-        s.setTenantid(detail.path("tenantId").asText());
+    	String tenantId = detail.path("tenantId").asText();
+    	s.setTenantid(tenantId);   // always set first
+
+    	String townName = TenantStaticMapper.getTownName(tenantId);
+    	// optional: s.setTownname(townName);    	
+    	s.setTenantid(townName);
         s.setConnectionno(detail.path("bill").path("consumerCode").asText());
         
         JsonNode billDetails = detail.path("bill").path("billDetails");
@@ -167,6 +176,14 @@ public class SewerageTaxService {
 
     public List<SewerageTax> findByConnectionno(String connectionno) {
         return sewerageTaxRepository.findByConnectionno(connectionno);
+    }
+
+    public List<SewerageTax> findByTenantid(String tenantid) {
+        return sewerageTaxRepository.findByTenantid(tenantid);
+    }
+
+    public List<SewerageTax> findByTenantidAndAssessmentyear(String tenantid, String assessmentyear) {
+        return sewerageTaxRepository.findByTenantidAndAssessmentyear(tenantid, assessmentyear);
     }
 
     public Map<String, Object> createOrUpdateSewerageTax(SewerageTax sewerageTax) {
