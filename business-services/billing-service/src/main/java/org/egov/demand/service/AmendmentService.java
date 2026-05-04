@@ -25,6 +25,7 @@ import org.egov.demand.model.DemandCriteria;
 import org.egov.demand.model.UpdateBillCriteria;
 import org.egov.demand.repository.AmendmentRepository;
 import org.egov.demand.repository.BillRepositoryV2;
+import org.egov.demand.repository.DemandRepository;
 import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.DemandRequest;
 import org.egov.demand.web.validator.AmendmentValidator;
@@ -34,7 +35,11 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import io.jaegertracing.thriftjava.Log;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class AmendmentService {
 	
 	@Autowired
@@ -167,8 +172,11 @@ public class AmendmentService {
 			
 			AuditDetails auditDetails = util.getAuditDetail(requestInfo);
 			if (demands.size() > 1)
-				Collections.sort(demands, Comparator.comparing(Demand::getTaxPeriodFrom)
-						.thenComparing(Demand::getTaxPeriodTo).reversed());
+			/*	Collections.sort(demands, Comparator.comparing(Demand::getTaxPeriodFrom)
+						.thenComparing(Demand::getTaxPeriodTo).reversed());*/
+				
+				demands.sort(Comparator.comparing(Demand::getTaxPeriodFrom));
+
 			Demand demand = demands.get(0);
 			amendment.getDemandDetails().forEach(detail -> {
 			
