@@ -13,6 +13,7 @@ import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.validator.WSCalculationValidator;
 import org.egov.wscalculation.validator.WSCalculationWorkflowValidator;
 import org.egov.wscalculation.web.models.AuditDetails;
+import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.web.models.BulkMeterReading;
 import org.egov.wscalculation.web.models.CalculationCriteria;
 import org.egov.wscalculation.web.models.CalculationReq;
@@ -71,12 +72,55 @@ public class MeterServicesImpl implements MeterService {
 			wsCalculationValidator.validateMeterReading(meterConnectionRequest, true);
 		}
 		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
+	    // ✅ NEW: Calculate and set consumption before saving
+	    setConsumption(meterConnectionRequest.getMeterReading());
 		meterReadingsList.add(meterConnectionRequest.getMeterReading());
 		wSCalculationDao.saveMeterReading(meterConnectionRequest);
 		if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
 			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
 		}
 		return meterReadingsList;
+	}
+	
+	
+	/**
+	 * ✅ Calculates and sets consumption on the MeterReading before persisting.
+	 *
+	 * Reset  : consumption = (meterMaxReading - lastReading) + currentReading
+	 *          — uses hardcoded defaults here since masterData not available at this layer.
+	 *            The accurate value is used in EstimationService for billing.
+	 *
+	 * Replacement : consumption = currentReading - lastReading (lastReading=0, so = currentReading)
+	 *
+	 * Working / Locked / Breakdown / No-meter :
+	 *          consumption = currentReading - lastReading
+	 */
+	private void setConsumption(MeterReading meterReading) {
+	    if (meterReading == null) return;
+
+	    Double lastReading    = meterReading.getLastReading()    != null ? meterReading.getLastReading()    : 0.0;
+	    Double currentReading = meterReading.getCurrentReading() != null ? meterReading.getCurrentReading() : 0.0;
+	    String meterStatus    = meterReading.getMeterStatus()    != null ? meterReading.getMeterStatus().toString() : "";
+
+	    Double consumption;
+
+	    if (WSCalculationConstant.RESET.equalsIgnoreCase(meterStatus)) {
+	        // meter rolled over — pick correct max based on isBulkMeter
+	        Boolean isBulkMeter = meterReading.getIsBulkMeter();
+	        Double maxReading = (isBulkMeter != null && isBulkMeter)
+	                ? WSCalculationConstant.DEFAULT_BULK_METER_MAX_READING   // 100000
+	                : WSCalculationConstant.DEFAULT_METER_MAX_READING;        // 10000
+	        consumption = (maxReading - lastReading) + currentReading;
+	        log.info("Consumption [Reset] isBulkMeter={} maxReading={} lastReading={} currentReading={} consumption={}",
+	                isBulkMeter, maxReading, lastReading, currentReading, consumption);
+	    } else {
+	        // Working / Replacement / Locked / Breakdown / No-meter
+	        consumption = currentReading - lastReading;
+	        log.info("Consumption [{}] lastReading={} currentReading={} consumption={}",
+	                meterStatus, lastReading, currentReading, consumption);
+	    }
+
+	    meterReading.setConsumption(consumption);
 	}
 	
 	
@@ -125,9 +169,9 @@ public class MeterServicesImpl implements MeterService {
 	}
 	
 	
-	/* PI-20175 BULKMETERREADING*/
+/* PI-20175 BULKMETERREADING*/
 	
-	private static final Logger log = LoggerFactory.getLogger(MeterServicesImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(MeterServicesImpl.class); 
 	
 	@Override
 	public List<Object> createMeterReadings(MeterConnectionRequests meterConnectionRequests) {
@@ -179,6 +223,8 @@ public class MeterServicesImpl implements MeterService {
 	                }
 
 	                enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
+	             // ✅ NEW: Calculate and set consumption before saving
+	                setConsumption(meterConnectionRequest.getMeterReading());
 	                meterReadingsList.add(meterConnectionRequest.getMeterReading());
 	                wSCalculationDao.saveMeterReading(meterConnectionRequest);
 
@@ -186,8 +232,7 @@ public class MeterServicesImpl implements MeterService {
 	                    generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
 	                }
 
-	                // SUCCESS — add original object as-is, no extra fields
-	                meterReadingslist.add(meterReadinglist);
+	                meterReadingslist.add(meterConnectionRequest.getMeterReading());
 	                log.info("Successfully processed connectionNo: {}", meterReadinglist.getConnectionNo());
 
 	            } catch (Exception e) {
@@ -218,6 +263,11 @@ public class MeterServicesImpl implements MeterService {
 			criteria.setFrom(reading.getLastReadingDate());
 			criteria.setTo(reading.getCurrentReadingDate());
 			criteria.setMeterStatus(reading.getMeterStatus());
+			// ✅ NEW: pass isBulkMeter so EstimationService can pick correct
+			// maxReading from MDMS when meterStatus == "Reset":
+			//   isBulkMeter=true  → bulkMeterMaxReading (e.g. 100000)
+			//   isBulkMeter=false → meterMaxReading     (e.g. 10000)
+			criteria.setIsBulkMeter(reading.getIsBulkMeter());
 			criteriaList.add(criteria);
 		});
 		CalculationReq calculationRequest = CalculationReq.builder().requestInfo(requestInfo)
