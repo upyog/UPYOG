@@ -1,5 +1,7 @@
 package org.egov.bpa.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -223,7 +225,7 @@ public class BPAPropertyService {
 		
 		return Property.builder()
 				.address(address).accountId(bpa.getAccountId())
-				.landArea(Double.valueOf(additionalDetails.get("area").toString()))
+				.landArea(new BigDecimal(additionalDetails.get("area").toString()).setScale(2, RoundingMode.HALF_UP).doubleValue())
 				.usageCategory(propertUsegeList.get(0))
 				.ownershipCategory(bpa.getLandInfo().getOwnershipCategory())
 				.owners(bpa.getLandInfo().getOwners())
