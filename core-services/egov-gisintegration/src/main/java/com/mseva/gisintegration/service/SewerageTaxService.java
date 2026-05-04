@@ -178,6 +178,14 @@ public class SewerageTaxService {
         return sewerageTaxRepository.findByConnectionno(connectionno);
     }
 
+    public List<SewerageTax> findByTenantid(String tenantid) {
+        return sewerageTaxRepository.findByTenantid(tenantid);
+    }
+
+    public List<SewerageTax> findByTenantidAndAssessmentyear(String tenantid, String assessmentyear) {
+        return sewerageTaxRepository.findByTenantidAndAssessmentyear(tenantid, assessmentyear);
+    }
+
     public Map<String, Object> createOrUpdateSewerageTax(SewerageTax sewerageTax) {
         Map<String, Object> response = new HashMap<>();
         List<SewerageTax> existing = findByConnectionno(sewerageTax.getConnectionno());

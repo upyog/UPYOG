@@ -17,4 +17,8 @@ public interface WaterTaxRepository extends JpaRepository<WaterTax, Integer> {
 
     List<WaterTax> findByConnectionno(String connectionno);
 
+    List<WaterTax> findByTenantid(String tenantid);
+
+    List<WaterTax> findByTenantidAndAssessmentyear(String tenantid, String assessmentyear);
+
 }

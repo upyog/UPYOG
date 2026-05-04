@@ -64,6 +64,22 @@ public class PropertyService {
         log.info("Controller request: Searching for propertyid: {} in tenant: {}", propertyid, tenantid);
         return propertyRepository.findByPropertyid(propertyid, tenantid);
     }
+
+    /**
+     * Searches local backup for a property by tenant ID.
+     */
+    public List<Property> findByTenantid(String tenantid) {
+        log.info("Controller request: Searching for tenantid: {}", tenantid);
+        return propertyRepository.findByTenantid(tenantid);
+    }
+
+    /**
+     * Searches local backup for a property by tenant ID and assessment year.
+     */
+    public List<Property> findByTenantidAndAssessmentyear(String tenantid, String assessmentyear) {
+        log.info("Controller request: Searching for tenantid: {} and assessmentyear: {}", tenantid, assessmentyear);
+        return propertyRepository.findByTenantidAndAssessmentyear(tenantid, assessmentyear);
+    }
     /**
      * Entry point for Assessment Topic Consumer.
      */
