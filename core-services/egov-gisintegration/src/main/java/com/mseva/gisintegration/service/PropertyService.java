@@ -2,9 +2,12 @@ package com.mseva.gisintegration.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mseva.gisintegration.config.TenantStaticMapper;
 import com.mseva.gisintegration.model.Property;
+import com.mseva.gisintegration.repository.MdmsRepository;
 import com.mseva.gisintegration.repository.PropertyRepository;
 import com.mseva.gisintegration.repository.ServiceRequestRepository;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +30,17 @@ public class PropertyService {
 
     @Autowired
     private PropertyRepository propertyRepository;
+    
+    @Autowired
+    private MdmsRepository mdmsRepository;
 
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
     private ObjectMapper mapper;
+    
+
 
     @Value("${egov.propertyservice.host}")
     private String propertyHost;
@@ -56,6 +64,22 @@ public class PropertyService {
         log.info("Controller request: Searching for propertyid: {} in tenant: {}", propertyid, tenantid);
         return propertyRepository.findByPropertyid(propertyid, tenantid);
     }
+
+    /**
+     * Searches local backup for a property by tenant ID.
+     */
+    public List<Property> findByTenantid(String tenantid) {
+        log.info("Controller request: Searching for tenantid: {}", tenantid);
+        return propertyRepository.findByTenantid(tenantid);
+    }
+
+    /**
+     * Searches local backup for a property by tenant ID and assessment year.
+     */
+    public List<Property> findByTenantidAndAssessmentyear(String tenantid, String assessmentyear) {
+        log.info("Controller request: Searching for tenantid: {} and assessmentyear: {}", tenantid, assessmentyear);
+        return propertyRepository.findByTenantidAndAssessmentyear(tenantid, assessmentyear);
+    }
     /**
      * Entry point for Assessment Topic Consumer.
      */
@@ -77,7 +101,13 @@ public class PropertyService {
                 mapGisFields(p, propertyNode);
                 
                 // Step 3: Map Assessment-specific data
-                p.setTenantid(tenantId);
+            	String townName = TenantStaticMapper.getTownName(tenantId);                
+                if (townName != null) {
+                    // CAUTION: You were setting match.setTenantid(townName). 
+                    // Usually, you want to keep the ID as "pb.amritsar" and set a 
+                    // separate field like setTownname(townName).
+                    p.setTenantid(townName); 
+                }
                 p.setPropertyid(propertyId);
                 p.setAssessmentyear(financialYear);
                 
@@ -136,11 +166,11 @@ public class PropertyService {
         p.setPropertyid(node.path("propertyId").asText());
         p.setSurveyid(node.path("surveyId").asText());
         p.setOldpropertyid(node.path("oldPropertyId").asText());
-        
+       
         p.setFirmbusinessname(
-                node.path("address")
-                    .path("buildingName")
-                    .asText()
+                node.path("additionalDetails")
+                    .path("businessName")
+                    .asText(null) // Returns null if businessName doesn't exist
         );
 
 
@@ -151,8 +181,10 @@ public class PropertyService {
         
         JsonNode addr = node.path("address");
         JsonNode loc = addr.path("locality");
-
-        // Collect all parts in an array to join them cleanly
+        String tenantId = node.path("tenantId").asText();
+        String localityCode = node.path("address").path("locality").path("code").asText();
+        Map<String, String> boundary =
+                mdmsRepository.getBoundaryByLocalityCode(localityCode, tenantId);        // Collect all parts in an array to join them cleanly
         String[] addressParts = {
             addr.path("doorNo").asText(""),
             addr.path("plotNo").asText(""),
@@ -170,14 +202,26 @@ public class PropertyService {
                 .collect(Collectors.joining(", "));
 
         p.setAddress(fullAddress);
-        p.setLocalityname(addr.path("locality").path("name").asText());
         p.setLocalitycode(addr.path("locality").path("code").asText());
-        p.setBlockname(addr.path("locality").path("name").asText());
-        p.setZonename(addr.path("city").asText());
+        if (boundary != null) {
+            p.setZonename(boundary.getOrDefault("zonename", "UNKNOWN"));
+            p.setBlockname(boundary.getOrDefault("blockname", "UNKNOWN"));
+            p.setLocalityname(boundary.getOrDefault("localityname", "UNKNOWN"));
+        } else {
+            p.setZonename("UNKNOWN");
+            p.setBlockname("UNKNOWN");
+            p.setLocalityname("UNKNOWN");
+        }
     }
 
     private void mapTransactionalFields(Property p, JsonNode detail, JsonNode payment) {
-        p.setTenantid(detail.path("tenantId").asText());
+    	String townName = TenantStaticMapper.getTownName(detail.path("tenantId").asText());                
+        if (townName != null) {
+            // CAUTION: You were setting match.setTenantid(townName). 
+            // Usually, you want to keep the ID as "pb.amritsar" and set a 
+            // separate field like setTownname(townName).
+            p.setTenantid(townName); 
+        }
         p.setReceiptnumber(detail.path("receiptNumber").asText());
         p.setAmoutpaid(detail.path("totalAmountPaid").asText());
      // 1. Get the epoch as long
@@ -217,9 +261,71 @@ public class PropertyService {
 
         if (match != null) {
             updateFields(match, property);
+
+            // 1. Safe Boundary Lookup
+            if (match.getLocalitycode() != null && match.getTenantid() != null) {
+            	Map<String, String> boundary =
+            		    mdmsRepository.getBoundaryByLocalityCode(match.getLocalitycode(), match.getTenantid());      if (boundary != null) {
+                    // Use .getOrDefault or check for null before casting
+                    Object zone = boundary.get("zonename");
+                    if (zone != null) {
+                        match.setZonename(zone.toString());
+                    }
+                    
+                    Object block = boundary.get("blockname");
+                    if (block != null) {
+                        match.setBlockname(block.toString());
+                    }
+                }
+            }
+            
+            // 2. Safe Town Name Lookup
+            if (match.getTenantid() != null) {
+            	String townName = TenantStaticMapper.getTownName(match.getTenantid());                
+                if (townName != null) {
+                    // CAUTION: You were setting match.setTenantid(townName). 
+                    // Usually, you want to keep the ID as "pb.amritsar" and set a 
+                    // separate field like setTownname(townName).
+                    match.setTenantid(townName); 
+                }
+            }
+
             response.put("Property", propertyRepository.save(match));
             responseInfo.put("method", "update");
-        } else {
+        }else {
+        	
+        	 if (property.getLocalitycode() != null && property.getTenantid() != null) {
+        		 Map<String, String> boundary =
+        			        mdmsRepository.getBoundaryByLocalityCode(property.getLocalitycode(),  property.getTenantid() );                 
+                 if (boundary != null) {
+                     // Use .getOrDefault or check for null before casting
+                     Object zone = boundary.getOrDefault("zonename", "UNKNOWN");
+                     if (zone != null) {
+                    	 property.setZonename(zone.toString());
+                     }
+                     
+                     Object block =boundary.getOrDefault("blockname", "UNKNOWN");
+                     if (block != null) {
+                    	 property.setBlockname(block.toString());
+                     }
+                 }
+                 	else {
+                 		property.setZonename("UNKNOWN");
+                 		property.setBlockname("UNKNOWN");
+                 		property.setLocalityname("UNKNOWN");
+                	}
+             }
+
+             // 2. Safe Town Name Lookup
+             if (property.getTenantid() != null) {
+            	 String townName = TenantStaticMapper.getTownName(property.getTenantid());                 
+                 if (townName != null) {
+                     // CAUTION: You were setting match.setTenantid(townName). 
+                     // Usually, you want to keep the ID as "pb.amritsar" and set a 
+                     // separate field like setTownname(townName).
+                	 property.setTenantid(townName); 
+                 }
+             }
             response.put("Property", propertyRepository.save(property));
             responseInfo.put("method", "create");
         }
@@ -252,15 +358,19 @@ public class PropertyService {
     public void syncPropertyMaster(JsonNode propertyNode, RequestInfo requestInfo) {
         try {
             Property p = new Property();
-            
+            try {
+                log.info("Full Property Object: {}", mapper.writerWithDefaultPrettyPrinter().writeValueAsString(propertyNode));
+            } catch (Exception e) {
+                log.error("Could not print property object", e);
+            }
             // Step 1: Map GIS and Master Fields
             p.setPropertyid(propertyNode.path("propertyId").asText());
             p.setSurveyid(propertyNode.path("surveyId").asText());
-            p.setOldpropertyid(propertyNode.path("oldPropertyId").asText());
-            p.setTenantid(propertyNode.path("tenantId").asText());
-            
+            p.setOldpropertyid(propertyNode.path("oldPropertyId").asText());           
             // MAPPING CHANGE: buildingName -> firmbusinessname
-            p.setFirmbusinessname(propertyNode.path("address").path("buildingName").asText());
+			p.setFirmbusinessname(propertyNode.path("additionalDetails").path("businessName").asText(null));
+			// Legacy fallback to buildingName if businessName is not present
+           // p.setFirmbusinessname(propertyNode.path("address").path("buildingName").asText());
 
             p.setPropertytype(propertyNode.path("propertyType").asText());
             p.setOwnershipcategory(propertyNode.path("ownershipCategory").asText());
@@ -292,7 +402,7 @@ public class PropertyService {
             String fullAddress = Arrays.stream(addressParts)
                     .filter(s -> s != null && !s.trim().isEmpty() && !s.equalsIgnoreCase("null"))
                     .collect(Collectors.joining(", "));
-
+            p.setTenantid(propertyNode.path("tenantId").asText());
             p.setAddress(fullAddress);
             // Defaulting assessment year for registry updates
             p.setAssessmentyear("N/A");

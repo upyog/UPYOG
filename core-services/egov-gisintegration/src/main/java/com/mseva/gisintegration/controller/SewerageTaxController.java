@@ -18,18 +18,11 @@ public class SewerageTaxController {
 
     @Autowired
     private SewerageTaxService sewerageTaxService;
-    private JsonNode usersNode;
-    
+
     public SewerageTaxController() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            usersNode = mapper.readTree(new ClassPathResource("user.json").getInputStream()).get("users");
-        } catch (IOException e) {
-            e.printStackTrace();
-            usersNode = null;
-        }
     }
-		@PostMapping("/_createOrUpdate")
+
+    @PostMapping("/_createOrUpdate")
     public ResponseEntity<Map<String, Object>> createOrUpdateSewerageTax(@RequestBody SewerageTax sewerageTax) {
         Map<String, Object> response = sewerageTaxService.createOrUpdateSewerageTax(sewerageTax);
         return ResponseEntity.ok(response);
@@ -37,31 +30,40 @@ public class SewerageTaxController {
 
     // Additional endpoints can be added here as needed
 
-    @PostMapping("/_search")
-    public ResponseEntity<?> searchByConnectionno(@RequestHeader(value = "Authorization", required = false) String authorization,
-                                                  @RequestParam(required = true) String tenantid,
-                                                  @RequestParam(required = true) String connectionno) {
-        if (!com.mseva.gisintegration.util.AuthUtil.isAuthorized(authorization, usersNode)) {
-            java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
-            errorResponse.put("error", "Unauthorized: Invalid or missing Authorization header");
-            return ResponseEntity.status(401).body(errorResponse);
-        }
+    @GetMapping("/_search")
+    public ResponseEntity<?> searchByConnectionno(@RequestParam(name = "town_name", required = true) String tenantid,
+            @RequestParam(required = false) String connectionno,
+            @RequestParam(required = false) String assessmentyear) {
         if (tenantid == null || tenantid.isEmpty()) {
             java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
-            errorResponse.put("error", "'tenantid' query parameter must be provided");
+            errorResponse.put("error", "'town_name' query parameter must be provided");
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        if (connectionno == null || connectionno.isEmpty()) {
+
+        java.util.List<com.mseva.gisintegration.model.SewerageTax> sewerageTaxes = null;
+        if (connectionno != null && !connectionno.isEmpty()) {
+            sewerageTaxes = sewerageTaxService.findByConnectionno(connectionno);
+        } else if (assessmentyear != null && !assessmentyear.isEmpty()) {
+            sewerageTaxes = sewerageTaxService.findByTenantidAndAssessmentyear(tenantid, assessmentyear);
+        } else {
             java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
-            errorResponse.put("error", "'connectionno' query parameter must be provided");
+            errorResponse.put("error",
+                    "If not searching by connectionno, 'assessmentyear' query parameter must be provided");
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        java.util.List<com.mseva.gisintegration.model.SewerageTax> sewerageTaxes = sewerageTaxService.findByConnectionno(connectionno);
+
         if (sewerageTaxes == null || sewerageTaxes.isEmpty()) {
             java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
-            errorResponse.put("error", "SewerageTax not found for connectionno: " + connectionno);
+            errorResponse.put("error", "SewerageTax not found for the given search criteria");
             return ResponseEntity.status(404).body(errorResponse);
         }
         return ResponseEntity.ok(sewerageTaxes);
+    }
+
+    @GetMapping("/v2/_search")
+    public ResponseEntity<?> searchByConnectionnoV2(@RequestParam(name = "town_name", required = true) String tenantid,
+                                                  @RequestParam(required = false) String connectionno,
+                                                  @RequestParam(required = false) String assessmentyear) {
+        return searchByConnectionno(tenantid, connectionno, assessmentyear);
     }
 }

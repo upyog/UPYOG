@@ -17,4 +17,8 @@ public interface SewerageTaxRepository extends JpaRepository<SewerageTax, Intege
 
     List<SewerageTax> findByConnectionno(String connectionno);
 
+    List<SewerageTax> findByTenantid(String tenantid);
+
+    List<SewerageTax> findByTenantidAndAssessmentyear(String tenantid, String assessmentyear);
+
 }
