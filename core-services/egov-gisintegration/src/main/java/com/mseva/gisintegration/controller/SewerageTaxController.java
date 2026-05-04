@@ -30,7 +30,7 @@ public class SewerageTaxController {
 
     // Additional endpoints can be added here as needed
 
-    @PostMapping("/_search")
+    @GetMapping("/_search")
     public ResponseEntity<?> searchByConnectionno(@RequestParam(name = "town_name", required = true) String tenantid,
             @RequestParam(required = false) String connectionno,
             @RequestParam(required = false) String assessmentyear) {
@@ -60,7 +60,7 @@ public class SewerageTaxController {
         return ResponseEntity.ok(sewerageTaxes);
     }
 
-    @PostMapping("/v2/_search")
+    @GetMapping("/v2/_search")
     public ResponseEntity<?> searchByConnectionnoV2(@RequestParam(name = "town_name", required = true) String tenantid,
                                                   @RequestParam(required = false) String connectionno,
                                                   @RequestParam(required = false) String assessmentyear) {

@@ -53,7 +53,7 @@ public class PropertyController {
         }
     }
 
-    @PostMapping("/_search")
+    @GetMapping("/_search")
     public ResponseEntity<?> searchBySurveyidOrPropertyid(@RequestParam(name = "town_name", required = true) String tenantid,
                                                          @RequestParam(required = false) String surveyid,
                                                          @RequestParam(required = false) String propertyid,
@@ -88,7 +88,7 @@ public class PropertyController {
         return ResponseEntity.ok(properties);
     }
 
-    @PostMapping("/v2/_search")
+    @GetMapping("/v2/_search")
     public ResponseEntity<?> searchBySurveyidOrPropertyidV2(@RequestParam(name = "town_name", required = true) String tenantid,
                                                          @RequestParam(required = false) String surveyid,
                                                          @RequestParam(required = false) String propertyid,
