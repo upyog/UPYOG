@@ -180,6 +180,14 @@ public class WaterTaxService {
         return waterTaxRepository.findByConnectionno(connectionno);
     }
 
+    public List<WaterTax> findByTenantid(String tenantid) {
+        return waterTaxRepository.findByTenantid(tenantid);
+    }
+
+    public List<WaterTax> findByTenantidAndAssessmentyear(String tenantid, String assessmentyear) {
+        return waterTaxRepository.findByTenantidAndAssessmentyear(tenantid, assessmentyear);
+    }
+
     public Map<String, Object> createOrUpdateWaterTax(WaterTax waterTax) {
         Map<String, Object> response = new HashMap<>();
         List<WaterTax> existing = findByConnectionno(waterTax.getConnectionno());

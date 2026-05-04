@@ -22,4 +22,10 @@ public interface PropertyRepository extends JpaRepository<Property, Integer> {
 
     @Query("SELECT p FROM Property p WHERE p.surveyid = :surveyid AND p.propertyid = :propertyid AND p.tenantid = :tenantid")
     List<Property> findBySurveyidAndPropertyid(@Param("surveyid") String surveyid, @Param("propertyid") String propertyid, @Param("tenantid") String tenantid);
+
+    @Query("SELECT p FROM Property p WHERE p.tenantid = :tenantid")
+    List<Property> findByTenantid(@Param("tenantid") String tenantid);
+
+    @Query("SELECT p FROM Property p WHERE p.tenantid = :tenantid AND p.assessmentyear = :assessmentyear")
+    List<Property> findByTenantidAndAssessmentyear(@Param("tenantid") String tenantid, @Param("assessmentyear") String assessmentyear);
 }
