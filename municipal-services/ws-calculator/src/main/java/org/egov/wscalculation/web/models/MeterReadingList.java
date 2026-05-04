@@ -90,6 +90,18 @@ public class MeterReadingList {
 	@Builder.Default
 	@JsonProperty("generateDemand")
 	private Boolean generateDemand = Boolean.TRUE;
+	
+	// In MeterReadingList.java — add this field if not present
+	@JsonProperty("isBulkMeter")
+	private Boolean isBulkMeter = false;
+
+	public Boolean getIsBulkMeter() {
+	    return isBulkMeter;
+	}
+
+	public void setIsBulkMeter(Boolean isBulkMeter) {
+	    this.isBulkMeter = isBulkMeter;
+	}
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;

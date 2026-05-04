@@ -468,4 +468,19 @@ public static final String PROPERTY_TYPE_MIXED = "MIXED";
 	public static final String WS_ADVANCE_CARRYFORWARD = "WS_ADVANCE_CARRYFORWARD";
 
 	public static final String SW_ADVANCE_CARRYFORWARD = "SW_ADVANCE_CARRYFORWARD";
+	
+	//  Meter Reset status constant
+	public static final String RESET = "Reset";
+	
+	// MDMS billingPeriod master key and field names for Reset meter logic
+	public static final String BILLING_PERIOD_MASTER_KEY        = "billingPeriod";
+	
+	public static final String METER_MAX_READING_KEY            = "meterMaxReading";
+	
+	public static final String BULK_METER_MAX_READING_KEY       = "bulkMeterMaxReading";
+ 
+	//Safe fallback defaults (used only if MDMS entry is missing)
+	public static final Double DEFAULT_METER_MAX_READING        = 10000.0;
+	
+	public static final Double DEFAULT_BULK_METER_MAX_READING   = 100000.0;
 }
