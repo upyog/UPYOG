@@ -54,7 +54,7 @@
 				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Jammu Municipal Corporation"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="60" width="752" height="20" uuid="2ce206ed-0ad4-489a-a07e-64259a04ffa3"/>

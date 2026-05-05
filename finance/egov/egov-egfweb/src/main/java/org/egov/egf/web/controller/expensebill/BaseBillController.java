@@ -326,6 +326,9 @@ public abstract class BaseBillController extends BaseVoucherController {
             }
             payeeDetails.setDetailTypeName(detailType.getName());
             payeeDetails.setDetailKeyName(entity.getName());
+            payeeDetails.setBankaccount(entity.getBankaccount());
+            payeeDetails.setIfsc(entity.getIfsccode());
+            
 
         }
     }

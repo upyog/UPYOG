@@ -52,6 +52,8 @@ import org.egov.model.recoveries.Recovery;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -115,6 +117,14 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
     @Length(max = 250)
     @SafeHtml
     private String narration;
+    
+    @Transient
+    @JsonProperty
+    private String bankaccount;
+    
+    @Transient
+    @JsonProperty
+    private String ifsc;
 
     public Integer getAccountDetailKeyId() {
         return accountDetailKeyId;
@@ -213,5 +223,22 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
     public void setIsDebit(final Boolean isDebit) {
         this.isDebit = isDebit;
     }
+
+	public String getBankaccount() {
+		return bankaccount;
+	}
+
+	public void setBankaccount(String bankaccount) {
+		this.bankaccount = bankaccount;
+	}
+
+	public String getIfsc() {
+		return ifsc;
+	}
+
+	public void setIfsc(String ifsc) {
+		this.ifsc = ifsc;
+	}
+    
 
 }
