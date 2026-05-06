@@ -42,6 +42,7 @@ public class PropertyRedisCache {
     public static final String COLLECTION = "COLLECTION:";
     public static final String PREFIX_INTEREST = "INTEREST:";
     public static final String PREFIX_ADVANCE = "ADVANCE:";
+    public static final String PREFIX_LEGACY = "LEGACY:";
     private static final Duration TTL = Duration.ofMinutes(30);
     
     @Autowired
@@ -374,6 +375,42 @@ public class PropertyRedisCache {
         return appeals;
     }
 
+    public Map<String, List<Payment>> multiGetLegacy(
+            Map<String, String> propertyTenantMap) {
+
+        List<Map.Entry<String, String>> entries =
+                new ArrayList<>(propertyTenantMap.entrySet());
+
+        List<String> keys = entries.stream()
+                .map(e -> PREFIX_LEGACY + e.getValue() + ":" + e.getKey())
+                .collect(Collectors.toList());
+
+        List<Object> values = redisTemplate.opsForValue().multiGet(keys);
+
+        Map<String, List<Payment>> result = new HashMap<>();
+
+        if (values != null) {
+            for (int i = 0; i < values.size(); i++) {
+                Object val = values.get(i);
+
+                if (val instanceof List<?>) {
+                    String propertyId = entries.get(i).getKey();
+
+                    @SuppressWarnings("unchecked")
+                    List<Payment> payments = (List<Payment>) val;
+
+                    result.put(propertyId, payments);
+
+                    redisTemplate.expire(
+                            keys.get(i),
+                            TTL.toMinutes(),
+                            TimeUnit.MINUTES
+                    );
+                }
+            }
+        }
+        return result;
+    }
 
 
     public void put(String tenantId, String propertyId, PropertyData response) {

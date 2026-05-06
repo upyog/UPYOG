@@ -16,6 +16,8 @@ public enum Status {
 	
 	CANCELLED ("CANCELLED"),
 	
+	LEGACYPROPERTYINACTIVE ("LEGACYPROPERTYINACTIVE"),
+	
 	REJECTED ("REJECTED");
 
 	private String value;

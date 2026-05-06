@@ -565,6 +565,62 @@ public class DashboardReportRepository {
 			return properties;
 	}
 	
+	public List<PropertyData> getLegacyTaxCollectedAmount(DashboardRequest dashboardRequest)
+	{
+
+	    String query =
+	            reportQueryBuilder.getLegacyTaxCollectedQuery(
+	                    dashboardRequest.getDashboardDataSearch());
+
+	    Map<String, String> propertyTenantMap = new HashMap<>();
+
+	    // Redis payload
+	    Map<String, List<Payment>> redisPayload = new HashMap<>();
+
+	    // Track unique transactions per property
+	    Map<String, Set<String>> txnTracker = new HashMap<>();
+
+	    jdbcTemplate.query(query, (RowCallbackHandler) rs -> {
+	            String propertyId = rs.getString("propertyid");
+	            String tenantId   = rs.getString("tenantid");
+	            String txnNo      = rs.getString("txn_id");
+
+	            propertyTenantMap.put(propertyId, tenantId);
+
+	            String redisKey =
+	            		PropertyRedisCache.PREFIX_LEGACY
+	                            + tenantId + ":" + propertyId;
+
+	            // init trackers
+	            txnTracker.computeIfAbsent(redisKey, k -> new HashSet<>());
+
+	            // skip duplicate transaction
+	            if (!txnTracker.get(redisKey).add(txnNo)) {
+	                return; // duplicate → skip
+	            }
+	            AuditDetails auditDetails= AuditDetails.builder().createdBy(rs.getString("createdby"))
+	            		.createdTime(rs.getLong("createdtime")).lastModifiedBy(rs.getString("lastmodifiedby")).lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
+	            Payment payment = Payment.builder()
+	                    .transactionNumber(txnNo)
+	                    .totalAmountPaid(rs.getBigDecimal("txn_amount"))
+	                    .auditDetails(auditDetails)
+	                    .build();
+
+	            redisPayload
+	                .computeIfAbsent(redisKey, k -> new ArrayList<>())
+	                .add(payment);
+	        
+	    });
+	    redisPayload.forEach((key, payments) ->
+	        propertyRedisCache.put(key,payments)
+	        
+	    );
+
+	    return getPropertiesList(
+	            getPropertiesWithCache(
+	                    propertyTenantMap, dashboardRequest));
+	}
+	
 	public BigInteger getTotalTaxCollectedCount(DashboardRequest dashboardRequest) {
 
 	    String query = reportQueryBuilder.getTotalTaxCollectedCount(
@@ -616,6 +672,19 @@ public class DashboardReportRepository {
 	        return BigInteger.ZERO;
 	    }
 	}
+	
+	public BigInteger getLegacyTaxCollectedCount(DashboardRequest dashboardRequest) {
+
+	    String query = reportQueryBuilder.getLegacyTaxCollectedCount(
+	            dashboardRequest.getDashboardDataSearch());
+	    
+	    try {
+	        Long count = jdbcTemplate.queryForObject(query, Long.class);
+	        return count != null ? BigInteger.valueOf(count) : BigInteger.ZERO;
+	    } catch (EmptyResultDataAccessException e) {
+	        return BigInteger.ZERO;
+	    }
+	}
 
 	 public Map<String, PropertyData> getPropertiesWithCache(
 			 Map<String, String> propertyTenantMap,DashboardRequest dashboardRequest ){
@@ -640,6 +709,9 @@ public class DashboardReportRepository {
 	        			.tenantIds(propertyTenantMap.values().stream().collect(Collectors.toSet()))
 	        			.propertyIds(missedPropertyIds)
 	        			.build();
+	        	
+	        	if(dashboardRequest.getDashboardDataSearch().getSearchKey().equalsIgnoreCase("LegacyPropertyReport"))
+	        		criteria.setIsLegacyProperty(Boolean.TRUE);
 	          
 	        	
 	        	List<Property> searchResponse =propertyService.searchProperty(criteria,dashboardRequest.getRequestInfo());
@@ -700,5 +772,9 @@ public class DashboardReportRepository {
 	 public Map<String, List<Payment>> getCacheDataForAdvanceReport(Map<String, String> propertyTenantMap)
 	 {
 		 return propertyRedisCache.multiGetInterest(propertyTenantMap);
+	 }
+	 
+	 public Map<String,List<Payment>>getCacheDataForLegacyReport(Map<String, String> propertyTenantMap){
+		 return propertyRedisCache.multiGetLegacy(propertyTenantMap);
 	 }
 }
