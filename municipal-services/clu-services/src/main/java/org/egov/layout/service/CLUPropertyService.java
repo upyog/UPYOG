@@ -1,6 +1,8 @@
 package org.egov.layout.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -24,6 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -118,14 +123,20 @@ public class CLUPropertyService {
 				owner.setOwnerType("NONE");
 		});
 		
+		ObjectNode propertyAdditionalDetails = (ObjectNode)JsonNodeFactory.instance.objectNode();
+		propertyAdditionalDetails.put("vasikaNo", clu.getVasikaNumber());
+		propertyAdditionalDetails.put("vasikaDate", clu.getVasikaDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		
 		return Property.builder()
 				.address(address).accountId(clu.getAccountId())
-				.landArea(Double.valueOf(siteDetails.get("netTotalArea").toString()))
+				.landArea(new BigDecimal(siteDetails.get("netTotalArea").toString())
+						.multiply(BigDecimal.valueOf(1.19599)).setScale(2, RoundingMode.HALF_UP).doubleValue())
 				.usageCategory(propertyUsageList.get(0))
 				.ownershipCategory(clu.getOwners().size() == 1 ? "INDIVIDUAL.SINGLEOWNER" : "INDIVIDUAL.MULTIPLEOWNERS" )
 				.owners(clu.getOwners())
 				.tenantId(clu.getTenantId())
 				.propertyType(buildingStatus)
+				.additionalDetails(propertyAdditionalDetails)
 				.build();
 		
 	}
