@@ -400,6 +400,27 @@ public class DashboardDataService {
 			total = dashboardReportRepository.getTotalAdvanceCollectedCount(dashboardRequest);
 			serviceAndRevenueWithProperties.add(buildServiceandRevenue(key, value, total));
 			break;
+		case "LegacyPropertyReport":
+			value = dashboardReportRepository.getLegacyTaxCollectedAmount(dashboardRequest);
+			if (!ObjectUtils.isEmpty(value)) {
+				Map<String, String> propertyTenantMap = value.stream()
+						.filter(p -> p.getPropertyId() != null && p.getTenantId() != null).collect(Collectors.toMap(
+								PropertyData::getPropertyId, PropertyData::getTenantId, (oldVal, newVal) -> oldVal));
+				Map<String, List<Payment>> payments = dashboardReportRepository
+						.getCacheDataForLegacyReport(propertyTenantMap);
+
+				value.forEach(propertyData -> {
+					List<Payment> paymentsList = payments.get(propertyData.getPropertyId());
+					if (paymentsList == null || paymentsList.isEmpty())
+						return;
+					paymentsList.sort(
+							Comparator.comparing((Payment a) -> a.getAuditDetails().getLastModifiedTime()).reversed());
+					propertyData.setPayments(paymentsList);
+				});
+			}
+			total = dashboardReportRepository.getLegacyTaxCollectedCount(dashboardRequest);
+			serviceAndRevenueWithProperties.add(buildServiceandRevenue(key, value, total));
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown key: " + key);
 		}

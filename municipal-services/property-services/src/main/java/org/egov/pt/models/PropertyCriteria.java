@@ -75,5 +75,8 @@ public class PropertyCriteria {
 	private Boolean isPartOfProperty = false;
 	
 	private String parentPropertyId;
+	
+	@Builder.Default
+	private Boolean isLegacyProperty = false;
 
 }

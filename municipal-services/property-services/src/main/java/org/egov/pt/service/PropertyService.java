@@ -994,6 +994,8 @@ public class PropertyService {
 	public List<Property> searchProperty(PropertyCriteria criteria, RequestInfo requestInfo) {
 
 		List<Property> properties;
+		Boolean isLegacyProperty=criteria.getIsLegacyProperty();
+		final Boolean finalisLegacyProperty;
 		/* encrypt here */
 		if(!criteria.getIsRequestForOldDataEncryption())
 			criteria = encryptionDecryptionUtil.encryptObject(criteria, PTConstants.PROPERTY_MODEL, PropertyCriteria.class);
@@ -1013,6 +1015,8 @@ public class PropertyService {
 		if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
 
 			/* converts owner information to associated property ids */
+			if(!StringUtils.isEmpty(criteria.getMobileNumber()))
+				isLegacyProperty=Boolean.TRUE;
 			Boolean shouldReturnEmptyList = repository.enrichCriteriaFromUser(criteria, requestInfo);
 
 			if (shouldReturnEmptyList)
@@ -1024,8 +1028,12 @@ public class PropertyService {
 			properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
 		}
 
+		finalisLegacyProperty=isLegacyProperty;
 		properties.forEach(property -> {
-			enrichmentService.enrichBoundary(property, requestInfo);
+			if (!(property.getStatus().equals(Status.LEGACYPROPERTYINACTIVE) 
+				      && Boolean.TRUE.equals(finalisLegacyProperty))) {
+				    enrichmentService.enrichBoundary(property, requestInfo);
+				}
 		});
 		//}
 

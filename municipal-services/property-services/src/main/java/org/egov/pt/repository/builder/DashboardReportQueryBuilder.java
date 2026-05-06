@@ -414,6 +414,45 @@ public class DashboardReportQueryBuilder {
 			+ "  AND ebv.status = 'PAID'\r\n"
 			+ "  AND edv.advanceamount > 0\r\n"
 			+ "  AND epp.status = 'ACTIVE'";
+	
+	public static final String LEGACY_TAX_COLLECTED = "SELECT \r\n"
+			+ "    epp.propertyid AS propertyid,\r\n"
+			+ "    epp.tenantid AS tenantid,\r\n"
+			+ "    ep.transactionnumber AS txn_id,\r\n"
+			+ "    ep.totalamountpaid AS txn_amount,\r\n"
+			+ "    ep.createdby AS createdby,\r\n"
+			+ "    ep.createdtime AS createdtime,\r\n"
+			+ "    ep.lastmodifiedby AS lastmodifiedby,\r\n"
+			+ "    ep.lastmodifiedtime AS lastmodifiedtime\r\n"
+			+ "FROM eg_pt_property epp\r\n"
+			+ "JOIN eg_pt_address epa \r\n"
+			+ "    ON epp.id = epa.propertyid\r\n"
+			+ "\r\n"
+			+ "LEFT JOIN eg_pg_transactions ept \r\n"
+			+ "    ON epp.propertyid = ept.consumer_code\r\n"
+			+ "    AND ept.txn_status = 'SUCCESS'\r\n"
+			+ "\r\n"
+			+ "LEFT JOIN egcl_payment ep \r\n"
+			+ "    ON ept.txn_id = ep.transactionnumber\r\n"
+			+ "\r\n"
+			+ "WHERE \r\n"
+			+ "    epp.status = 'LEGACYPROPERTYINACTIVE'";
+	
+	public static final String LEGACY_TAX_COLLECTED_COUNT=" SELECT \r\n"
+			+ "    COUNT(DISTINCT epp.propertyid) AS propertycount\r\n"
+			+ "FROM eg_pt_property epp\r\n"
+			+ "JOIN eg_pt_address epa \r\n"
+			+ "    ON epp.id = epa.propertyid\r\n"
+			+ "\r\n"
+			+ "LEFT JOIN eg_pg_transactions ept \r\n"
+			+ "    ON epp.propertyid = ept.consumer_code\r\n"
+			+ "    AND ept.txn_status = 'SUCCESS'\r\n"
+			+ "\r\n"
+			+ "LEFT JOIN egcl_payment ep \r\n"
+			+ "    ON ept.txn_id = ep.transactionnumber\r\n"
+			+ "\r\n"
+			+ "WHERE \r\n"
+			+ "    epp.status = 'LEGACYPROPERTYINACTIVE'";
 
 	public String getTotalPropertyRegisteredQuery(DashboardDataSearch dashboardDataSearch) {
 
@@ -1008,6 +1047,47 @@ public class DashboardReportQueryBuilder {
 		return filter.toString();
 	}
 	
+	public String getLegacyTaxCollectedQuery(DashboardDataSearch dashboardDataSearch) {
+
+		StringBuilder filter = new StringBuilder(LEGACY_TAX_COLLECTED);
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		filter.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			filter.append(" AND epa.ward_no != ''");
+		}
+		
+		filter.append(" order by ep.lastmodifiedtime desc");
+		if(!StringUtils.isEmpty(dashboardDataSearch.getLimit()) && !StringUtils.isEmpty(dashboardDataSearch.getOffset()))
+		{
+			filter.append(" OFFSET ").append(dashboardDataSearch.getOffset());
+			filter.append(" LIMIT ").append(dashboardDataSearch.getLimit());
+		}
+
+		return filter.toString();
+	}
+	
 	public String getTotalTaxCollectedCount(DashboardDataSearch dashboardDataSearch) {
 
 		StringBuilder filter = new StringBuilder(TOTAL_TAX_COLLECTED_COUNT);
@@ -1140,6 +1220,39 @@ public class DashboardReportQueryBuilder {
 		
 		filter.append(" order by pay.lastmodifiedtime desc ");
 		
+		return filter.toString();
+	}
+	
+	public String getLegacyTaxCollectedCount(DashboardDataSearch dashboardDataSearch) {
+
+		StringBuilder filter = new StringBuilder(LEGACY_TAX_COLLECTED_COUNT);
+
+		long fromEpoch, toEpoch;
+		if (!StringUtils.isEmpty(dashboardDataSearch.getFromDate())
+				&& !StringUtils.isEmpty(dashboardDataSearch.getToDate())) {
+
+			fromEpoch = getStartOfDayEpochMillis(dashboardDataSearch.getFromDate());
+			toEpoch = getEndOfDayEpochMillis(dashboardDataSearch.getToDate());
+		} else {
+			fromEpoch = getStartOfDayEpochMillis("01-04-2025");
+
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String formattedDate = currentDate.format(formatter);
+
+			toEpoch = getEndOfDayEpochMillis(formattedDate);
+		}
+		filter.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
+			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
+		}
+
+		if (!StringUtils.isEmpty(dashboardDataSearch.getWard())) {
+			filter.append(" AND epa.ward_no = '").append(dashboardDataSearch.getWard()).append("'");
+		} else {
+			filter.append(" AND epa.ward_no != ''");
+		}
 		return filter.toString();
 	}
 
