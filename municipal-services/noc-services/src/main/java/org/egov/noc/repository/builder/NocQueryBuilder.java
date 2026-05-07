@@ -158,6 +158,18 @@ public class NocQueryBuilder {
 			log.info(criteria.getVasikaDate());
 		}
 
+		String applicationStatus = criteria.getApplicationStatus();
+		if (applicationStatus != null) {
+			List<String> applicationStatuses = Arrays.asList(applicationStatus.split(","));
+			addClauseIfRequired(builder);
+			if (isFuzzyEnabled) {
+				builder.append(" noc.applicationstatus LIKE ANY(ARRAY[ ").append(createQuery(applicationStatuses)).append("])");
+				addToPreparedStatementForFuzzySearch(preparedStmtList, applicationStatuses);
+			} else {
+				builder.append(" noc.applicationstatus IN (").append(createQuery(applicationStatuses)).append(")");
+				addToPreparedStatement(preparedStmtList, applicationStatuses);
+			}
+		}
 
 		List<String> ids = criteria.getIds();
 		if (!CollectionUtils.isEmpty(ids)) {
@@ -187,23 +199,12 @@ public class NocQueryBuilder {
                     }
                 }
 
-		String applicationStatus = criteria.getApplicationStatus();
-		if (applicationStatus != null) {
-			List<String> applicationStatuses = Arrays.asList(applicationStatus.split(","));
-			addClauseIfRequired(builder);
-			if (isFuzzyEnabled) {
-				builder.append(" noc.applicationstatus LIKE ANY(ARRAY[ ").append(createQuery(applicationStatuses)).append("])");
-				addToPreparedStatementForFuzzySearch(preparedStmtList, applicationStatuses);
-			} else {
-				builder.append(" noc.applicationstatus IN (").append(createQuery(applicationStatuses)).append(")");
-				addToPreparedStatement(preparedStmtList, applicationStatuses);
-			}
-		}
+		
 		String approvalNo = criteria.getNocNo();
                 if (approvalNo != null) {
                     List<String> approvalNos = Arrays.asList(approvalNo.split(","));
                     addClauseIfRequired(builder);
-                if (isFuzzyEnabled) {
+                    if (isFuzzyEnabled) {
                         builder.append(" noc.nocNo LIKE ANY(ARRAY[ ").append(createQuery(approvalNos)).append("])");
                         addToPreparedStatementForFuzzySearch(preparedStmtList, approvalNos);
                     } else {

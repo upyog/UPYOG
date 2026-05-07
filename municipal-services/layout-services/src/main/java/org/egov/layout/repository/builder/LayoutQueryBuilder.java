@@ -137,6 +137,7 @@ public class LayoutQueryBuilder {
 
 
 
+
 		List<String> ids = criteria.getIds();
 		if (!CollectionUtils.isEmpty(ids)) {
 			addClauseIfRequired(builder);
@@ -194,18 +195,6 @@ public class LayoutQueryBuilder {
                     }
                 }
 
-		String applicationStatus = criteria.getApplicationStatus();
-		if (applicationStatus != null) {
-			List<String> applicationStatuses = Arrays.asList(applicationStatus.split(","));
-			addClauseIfRequired(builder);
-			if (isFuzzyEnabled) {
-				builder.append(" layout.applicationstatus LIKE ANY(ARRAY[ ").append(createQuery(applicationStatuses)).append("])");
-				addToPreparedStatementForFuzzySearch(preparedStmtList, applicationStatuses);
-			} else {
-				builder.append(" layout.applicationstatus IN (").append(createQuery(applicationStatuses)).append(")");
-				addToPreparedStatement(preparedStmtList, applicationStatuses);
-			}
-		}
 		
 //		String source = criteria.getSource();
 //		if (source!=null) {
@@ -245,6 +234,19 @@ public class LayoutQueryBuilder {
                         addClauseIfRequired(builder);
                         builder.append(" layout.status IN (").append(createQuery(status)).append(")");
                         addToPreparedStatement(preparedStmtList, status);
+                }
+
+                String applicationStatus = criteria.getApplicationStatus();
+                if (applicationStatus != null) {
+                    List<String> applicationStatuses = Arrays.asList(applicationStatus.split(","));
+                    addClauseIfRequired(builder);
+                    if (isFuzzyEnabled) {
+                        builder.append(" layout.applicationstatus LIKE ANY(ARRAY[ ").append(createQuery(applicationStatuses)).append("])");
+                        addToPreparedStatementForFuzzySearch(preparedStmtList, applicationStatuses);
+                    } else {
+                        builder.append(" layout.applicationstatus IN (").append(createQuery(applicationStatuses)).append(")");
+                        addToPreparedStatement(preparedStmtList, applicationStatuses);
+                    }
                 }
 //		if(criteria.getCreatedBy()!=null || !criteria.getCreatedBy().isEmpty())
 //		{

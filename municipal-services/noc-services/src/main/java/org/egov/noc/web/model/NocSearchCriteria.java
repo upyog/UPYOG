@@ -50,6 +50,9 @@ public class NocSearchCriteria {
     @JsonProperty("nocType")
     private String nocType;
 
+    @JsonProperty("applicationStatus")
+    private String applicationStatus;
+
     @SafeHtml
     @JsonProperty("sourceRefId")
     private String sourceRefId;
@@ -71,9 +74,6 @@ public class NocSearchCriteria {
 
     @JsonProperty("createdBy")
     private String createdBy;
-
-    @JsonProperty("applicationStatus")
-    private String applicationStatus;
 
     @SafeHtml
 //    @Size(min = 1, max = 15)
