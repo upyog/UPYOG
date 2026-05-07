@@ -541,15 +541,12 @@ public class DemandService {
 	    String originalAdvanceDemandId = null;
 	    List<Demand> demandsFromSearch = new ArrayList<>();
 
-	    // 1. Fetch existing demands and calculate advance
+	    // 1. Setup Initial Advance Data
 	    if (!CollectionUtils.isEmpty(demands)) {
 	        Demand first = demands.get(0);
-
-	        DemandCriteria sc = DemandCriteria.builder()
-	                .tenantId(first.getTenantId())
+	        DemandCriteria sc = DemandCriteria.builder().tenantId(first.getTenantId())
 	                .consumerCode(Collections.singleton(first.getConsumerCode()))
-	                .businessService(first.getBusinessService())
-	                .build();
+	                .businessService(first.getBusinessService()).build();
 
 	        demandsFromSearch = demandRepository.getDemands(sc);
 
@@ -562,94 +559,99 @@ public class DemandService {
 
 	        for (Demand old : demandsWithAdvance) {
 	            for (DemandDetail detail : old.getDemandDetails()) {
-
 	                if (detail.getTaxHeadMasterCode().toUpperCase().contains("ADVANCE")) {
-
 	                    taxHeadCode = detail.getTaxHeadMasterCode();
 	                    originalAdvanceDemandId = old.getId();
-
-	                    totalInitialAdvance = totalInitialAdvance.add(
-	                            detail.getTaxAmount().subtract(detail.getCollectionAmount())
-	                    );
+	                    totalInitialAdvance = totalInitialAdvance
+	                            .add(detail.getTaxAmount().subtract(detail.getCollectionAmount()));
 	                }
 	            }
 	        }
 	    }
 
+	    // FIX Bug 3: Pre-assign UUID to new demands before apportion call
+	    // so demand.getId() is never null during response matching
+	    for (Demand demand : demands) {
+	        if (demand.getId() == null) {
+	            demand.setId(UUID.randomUUID().toString());
+	        }
+	    }
+
+	    // FIX Bug 1: runningAdvanceBalance must be reassigned — BigDecimal.add() returns new instance
 	    BigDecimal runningAdvanceBalance = totalInitialAdvance;
 
-	    // ✅ make it final for lambda usage
-	    final String fTaxHead = taxHeadCode;
-
-	    // 2. Process each new demand
+	    // 2. Loop through new demands
 	    for (Demand demand : demands) {
-
 	        if (runningAdvanceBalance.compareTo(BigDecimal.ZERO) >= 0) {
 	            demandToBeCreated.add(demand);
 	            continue;
 	        }
 
-	        // Deep copy
-	        List<Demand> toApportion = getDemandsContainingAdvance(demandsFromSearch, mdmsData)
-	                .stream()
-	                .map(d -> mapper.convertValue(d, Demand.class))
-	                .collect(Collectors.toList());
+	        List<Demand> toApportion = getDemandsContainingAdvance(demandsFromSearch, mdmsData);
 
-	        // Update advance BEFORE apportion
 	        for (Demand histDemand : toApportion) {
 	            for (DemandDetail detail : histDemand.getDemandDetails()) {
-
-	                if (detail.getTaxHeadMasterCode().equalsIgnoreCase(fTaxHead)) {
-	                    detail.setTaxAmount(runningAdvanceBalance);
-	                    detail.setCollectionAmount(BigDecimal.ZERO);
+	                if (detail.getTaxHeadMasterCode().equalsIgnoreCase(taxHeadCode)) {
+	                    BigDecimal spentSoFar = totalInitialAdvance.subtract(runningAdvanceBalance);
+	                    detail.setCollectionAmount(spentSoFar);
 	                }
 	            }
 	        }
 
-	        // ✅ FIXED lambda issue here
-	        demand.getDemandDetails().removeIf(d ->
-	                d.getTaxHeadMasterCode().equalsIgnoreCase(fTaxHead)
-	        );
-
 	        toApportion.add(demand);
 
-	        // Call apportion
-	        DemandApportionRequest req = DemandApportionRequest.builder()
-	                .requestInfo(requestInfo)
-	                .demands(toApportion)
-	                .tenantId(demand.getTenantId())
-	                .build();
+	        DemandApportionRequest req = DemandApportionRequest.builder().requestInfo(requestInfo)
+	                .demands(toApportion).tenantId(demand.getTenantId()).build();
 
 	        Object result = serviceRequestRepository.fetchResult(util.getApportionURL(), req);
 	        ApportionDemandResponse resp = mapper.convertValue(result, ApportionDemandResponse.class);
 
-	        for (Demand resD : resp.getDemands()) {
+	        // FIX Bug 2: Enrich apportion-injected details that come back with null fields
+	        // Apportion service injects new ADVANCE details with id/demandId/tenantId/auditDetails=null
+	        // Without enrichment, insertBatch/updateBatch throws NPE at auditDetail.getCreatedBy()
+	        if (resp != null && !CollectionUtils.isEmpty(resp.getDemands())) {
+	            resp.getDemands().forEach(demandFromResponse -> {
+	                if (!CollectionUtils.isEmpty(demandFromResponse.getDemandDetails())) {
+	                    demandFromResponse.getDemandDetails().forEach(detail -> {
+	                        if (detail.getId() == null) {
+	                            detail.setId(UUID.randomUUID().toString());
+	                        }
+	                        if (detail.getDemandId() == null) {
+	                            detail.setDemandId(demandFromResponse.getId());
+	                        }
+	                        if (detail.getTenantId() == null) {
+	                            detail.setTenantId(demandFromResponse.getTenantId());
+	                        }
+	                        if (detail.getAuditDetails() == null) {
+	                            detail.setAuditDetails(AuditDetails.builder()
+	                                    .createdBy(requestInfo.getUserInfo().getUuid())
+	                                    .lastModifiedBy(requestInfo.getUserInfo().getUuid())
+	                                    .createdTime(System.currentTimeMillis())
+	                                    .lastModifiedTime(System.currentTimeMillis())
+	                                    .build());
+	                        }
+	                    });
+	                }
+	            });
+	        }
 
+	        final String fTaxHead = taxHeadCode;
+	        for (Demand resD : resp.getDemands()) {
 	            util.updateDemandPaymentStatus(resD, true);
 
-	            // NEW DEMAND
 	            if (resD.getId().equalsIgnoreCase(demand.getId())) {
-
 	                demandToBeCreated.add(resD);
-
-	                BigDecimal consumed = resD.getDemandDetails().stream()
-	                        .filter(dd -> !dd.getTaxHeadMasterCode().equalsIgnoreCase(fTaxHead))
+	                BigDecimal collectedNow = resD.getDemandDetails().stream()
 	                        .map(DemandDetail::getCollectionAmount)
 	                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-	                runningAdvanceBalance = runningAdvanceBalance.add(consumed);
-	            }
-
-	            // OLD ADVANCE DEMAND
-	            else {
-
+	                // FIX Bug 1: reassign result — BigDecimal is immutable, add() returns new value
+	                runningAdvanceBalance = runningAdvanceBalance.add(collectedNow);
+	            } else {
 	                for (DemandDetail det : resD.getDemandDetails()) {
-
 	                    if (det.getTaxHeadMasterCode().equalsIgnoreCase(fTaxHead)) {
 	                        det.setCollectionAmount(det.getTaxAmount());
 	                    }
 	                }
-
 	                util.updateDemandPaymentStatus(resD, true);
 
 	                if (demandToBeUpdated.stream().noneMatch(u -> u.getId().equals(resD.getId()))) {
@@ -659,9 +661,8 @@ public class DemandService {
 	        }
 	    }
 
-	    // 3. Carry forward remaining advance
+	    // 3. Final Carry Forward for Remainder
 	    if (!demandToBeCreated.isEmpty() && runningAdvanceBalance.compareTo(BigDecimal.ZERO) < 0) {
-
 	        Demand last = demandToBeCreated.get(demandToBeCreated.size() - 1);
 
 	        Map<String, Object> metadata = new HashMap<>();
@@ -676,6 +677,7 @@ public class DemandService {
 	        }
 
 	        String finalTaxHead = (taxHeadCode != null) ? taxHeadCode : "ADVANCE_ADJUSTMENT";
+	        log.info("Creating Carry Forward with TaxHead: {} and Amount: {}", finalTaxHead, runningAdvanceBalance);
 
 	        long currentTime = System.currentTimeMillis();
 	        String userUuid = requestInfo.getUserInfo().getUuid();
