@@ -136,33 +136,113 @@ $(document)
 										extend : 'print',
 										title : heading,
 										filename : fileName
-									}, {
-										extend : 'pdfHtml5',
-										title : heading,
-										filename : fileName,
-										orientation : 'portrait',
-										exportOptions : {
-											columns : ':visible'
-										},
-										customize : function(doc){
-											var now = new Date();
-											var jsDate = now.getDate()+'-'+(now.getMonth()+1)+'-'+now.getFullYear();
-											doc['footer']=(function(page, pages) {
-												return {
-													columns: [
-														{
-															alignment: 'left',
-															text: ['Created on: ', { text: jsDate.toString() }]
-														},
-														{
-															alignment: 'right',
-															text: ['page ', { text: page.toString() },	' of ',	{ text: pages.toString() }]
-														}
-													],
-													margin: 20
-												}
-											});
-										}
+									}, 
+									{
+									    extend : 'pdfHtml5',
+									    title : heading,
+									    filename : fileName,
+									    orientation : 'portrait',
+									    exportOptions : {
+									        columns : ':visible'
+									    },
+
+									    customize : function(doc){
+
+									        
+									        var now = new Date();
+									        var jsDate = now.getDate()+'-'+(now.getMonth()+1)+'-'+now.getFullYear();
+
+									        doc['footer'] = (function(page, pages) {
+									            return {
+									                columns: [
+									                    {
+									                        alignment: 'left',
+									                        text: ['Created on: ', { text: jsDate.toString() }]
+									                    },
+									                    {
+									                        alignment: 'right',
+									                        text: ['page ', { text: page.toString() }, ' of ', { text: pages.toString() }]
+									                    }
+									                ],
+									                margin: 20
+									            }
+									        });
+
+									       
+									        doc.defaultStyle.fontSize = 8;
+									        doc.pageMargins = [10, 10, 10, 10];
+
+									        var titleContainer = {
+									            stack: [
+									                {
+									                    text: 'Government of Jammu & Kashmir',
+									                    fontSize: 12,
+									                    bold: true,
+									                    alignment: 'center',
+									                    noWrap: true,
+									                    color: '#1F4E79'
+									                },
+									                {
+									                    text: 'Housing and Urban Development Department',
+									                    fontSize: 12,
+									                    bold: true,
+									                    alignment: 'center',
+									                    noWrap: true,
+									                    margin: [0, 2, 0, 10],
+									                    color: '#1F4E79'
+									                }
+									            ]
+									        };
+
+									        var currentDate = new Date().toLocaleDateString();
+									        var currentTime = new Date().toLocaleTimeString();
+
+									        var dateTimeContainer = {
+									            text: 'Date: ' + currentDate + '\nTime: ' + currentTime,
+									            fontSize: 10,
+									            bold: true,
+									            alignment: 'right',
+									            margin: [0, 5, 10, 10]
+									        };
+
+									        var logoBase64 = window.logoBase64 || null;
+
+									        var header;
+									        if (logoBase64) {
+									            header = {
+									                columns: [
+									                    { image: 'data:image/png;base64,' + logoBase64, width: 50 },
+									                    titleContainer,
+									                    dateTimeContainer
+									                ]
+									            };
+									        } else {
+									            header = {
+									                columns: [
+									                    { text: '' },
+									                    titleContainer,
+									                    dateTimeContainer
+									                ]
+									            };
+									        }
+
+									       
+									        doc.content.splice(0, 0, header);
+
+									        
+									        var tableNode;
+									        for (var i = 0; i < doc.content.length; i++) {
+									            if (doc.content[i].table) {
+									                tableNode = doc.content[i];
+									                break;
+									            }
+									        }
+
+									        if (tableNode && tableNode.table && tableNode.table.body) {
+									            var colCount = tableNode.table.body[0].length;
+									            tableNode.table.widths = Array(colCount).fill('*');
+									        }
+									    }
 									}, {
 										extend : 'excelHtml5',
 										message : heading,

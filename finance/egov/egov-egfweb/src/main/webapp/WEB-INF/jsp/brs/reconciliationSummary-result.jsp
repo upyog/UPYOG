@@ -57,7 +57,51 @@
 
 <title>Insert title here</title>
 <style type="text/css">
+.print-header {
+    display: none;
+}
 @media print {
+
+@page {
+        margin: 0;
+    }
+   .print-header {
+        display: block;
+        text-align: center;
+        border-bottom: 2px solid #000;
+        padding: 5px 0;
+        margin-bottom: 5px;
+        font-family: Arial, sans-serif;
+        
+    }
+
+    .header-center h2 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+       color: #003366 !important;
+    }
+
+    .header-center h1 {
+        margin: 2px 0;
+        font-size: 18px;
+        font-weight: bold;
+        color: #003366 !important;
+    }
+
+    .header-right {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        text-align: right;
+        font-size: 14px;
+    }
+    
+    .header-right p {
+        margin: 0;         
+        padding: 0;
+    }
+
 	input#Close {
 		display: none;
 	}
@@ -161,10 +205,38 @@ jQuery(function () {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    var now = new Date();
+
+    var date = now.toLocaleDateString('en-GB');
+    var time = now.toLocaleTimeString();
+
+    var d = document.getElementById("printDate");
+    var t = document.getElementById("printTime");
+
+    if (d) d.innerText = date;
+    if (t) t.innerText = time;
+});
+
 </script>
 
 </head>
 <body>
+    <div class="print-header">
+
+    <div class="header-right">
+        <p>Date: <span id="printDate"></span></p>
+        <p>Time: <span id="printTime"></span></p>
+    </div>
+
+    <div class="header-center">
+        <h1>Government of Jammu &amp; Kashmir</h1>
+        <h2>Housing and Urban Development<br/>Department</h2>
+        <h2><s:property value="ulbName"/></h2>
+    </div>
+
+</div>
 	<div class="formmainbox">
 		<div class="subheadnew">
 			<s:text name="Reconciliation Summary" />

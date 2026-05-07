@@ -230,28 +230,28 @@ function makeAmountFieldFormatter(prefix,suffix){
 
 	var makeBudgetReAppropriationTable = function() {
 		var budgetReAppropriationColumns = [ 
-			{key:"budgetDetail.budget.id",label:'Budget <span class="mandatory1">*</span>',width:90, formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),dropdownOptions:budgetOptions},
+			{key:"budgetDetail.budget.id",label:'Budget <span class="mandatory1">*</span>',width:120, formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),dropdownOptions:budgetOptions},
 			{key:"budgetDetail.budgetGroup.id",label:'Budget Group <span class="mandatory1">*</span>',width:120, formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),dropdownOptions:budgetGroupOptions},
 			<s:if test="%{shouldShowField('executingDepartment')}">				
-				{key:"budgetDetail.executingDepartment.id", label:'Executing Department'+mandatorySign('executingDepartment'),width:90,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST), dropdownOptions:executingDepartmentOptions},				
+				{key:"budgetDetail.executingDepartment.id", label:'Executing Department'+mandatorySign('executingDepartment'),width:120,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST), dropdownOptions:executingDepartmentOptions},				
 			</s:if>
 			<s:if test="%{shouldShowField('functionary')}">				
-				{key:"budgetDetail.functionary.id",label:'Functionary'+mandatorySign('functionary'),width:90,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:functionaryOptions} ,
+				{key:"budgetDetail.functionary.id",label:'Functionary'+mandatorySign('functionary'),width:120,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:functionaryOptions} ,
 			</s:if>
 			<s:if test="%{shouldShowField('function')}">				
-				{key:"budgetDetail.function.id",label:'Function'+mandatorySign('Function'),width:90,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:functionOptions} ,
+				{key:"budgetDetail.function.id",label:'Function'+mandatorySign('Function'),width:120,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:functionOptions} ,
 			</s:if>
 			<s:if test="%{shouldShowField('scheme')}">				
-				{key:"budgetDetail.scheme.id",label:'Scheme'+mandatorySign('scheme'),width:90,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:schemeOptions} ,
+				{key:"budgetDetail.scheme.id",label:'Scheme'+mandatorySign('scheme'),width:120,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:schemeOptions} ,
 			</s:if>
 			<s:if test="%{shouldShowField('subScheme')}">				
-				{key:"budgetDetail.subScheme.id",label:'Sub Scheme'+mandatorySign('subScheme'),width:90,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:subSchemeOptions} ,
+				{key:"budgetDetail.subScheme.id",label:'Sub Scheme'+mandatorySign('subScheme'),width:120,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:subSchemeOptions} ,
 			</s:if>
 			<s:if test="%{shouldShowField('fund')}">				
-				{key:"budgetDetail.fund.id",label:'Fund'+mandatorySign('fund'),width:90,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:fundOptions} ,
+				{key:"budgetDetail.fund.id",label:'Fund'+mandatorySign('fund'),width:120,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:fundOptions} ,
 			</s:if>
 			<s:if test="%{shouldShowField('boundary')}">				
-				{key:"budgetDetail.boundary.id",label:'Field'+mandatorySign('boundary'),width:90,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:boundaryOptions} ,
+				{key:"budgetDetail.boundary.id",label:'Field'+mandatorySign('boundary'),width:120,formatter:dropdownFormatter('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST),  dropdownOptions:boundaryOptions} ,
 			</s:if>
 			{key:"amount",label:'Budget Estimate(Rs)',width:"50em", formatter:createTextFieldFormatterWithOnblur('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST,".deltaAmount")},
 			{key:"planningPercent",label:'Planning Budget<br/>Percentage',width:"50em", formatter:createTextFieldFormatterWithOnblur('budgetReAppropriationTable',BUDGET_REAPPROPRIATION_LIST,".planningPercent")},

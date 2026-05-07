@@ -63,6 +63,8 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.models.Instrument;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -131,6 +133,21 @@ public class BankReconciliationAction extends BaseFormAction {
     private List<InstrumentHeader> chequDDNotPresentInBank;
     private List<BrsEntries> unReconciledBrsEntries;
     private List<Instrument> unReconciledDepositedInst;
+    
+    @Autowired
+    private CityRepository cityRepository;
+    
+    private String ulbName;
+    
+    
+
+	public String getUlbName() {
+		return ulbName;
+	}
+
+	public void setUlbName(String ulbName) {
+		this.ulbName = ulbName;
+	}
 
 	@Override
 	public Object getModel() {
@@ -212,6 +229,8 @@ public class BankReconciliationAction extends BaseFormAction {
 		Date dt = new Date();
 
 		try {
+			ulbName=cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName();
+			
 			dt = sdf.parse(bankSDate);
 
 			accountBalance = egovCommon.getAccountBalance(dt,

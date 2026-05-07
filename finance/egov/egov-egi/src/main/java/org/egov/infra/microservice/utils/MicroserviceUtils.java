@@ -645,7 +645,8 @@ public class MicroserviceUtils {
         final String authurl = appConfigManager.getEgovUserSerHost() + authSrvcUrl + "?access_token=" + user_token;
         RequestInfo reqInfo = new RequestInfo();
         RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
-        reqInfo.setAuthToken(admin_token);
+       reqInfo.setAuthToken(admin_token);
+        // reqInfo.setAuthToken(user_token);
         reqWrapper.setRequestInfo(reqInfo);
         LOGGER.info("call:" + authurl);
         CustomUserDetails user = restT.postForObject(authurl, reqWrapper, CustomUserDetails.class);
@@ -1404,23 +1405,60 @@ public class MicroserviceUtils {
         return restTemplate.postForObject(mdmsUrl, mdmsrequest, Map.class);
     }
 
+//    public String getHeaderNameForTenant() {
+//        String ulbGrade = "";
+//        List<ModuleDetail> moduleDetailList = new ArrayList<>();
+//        String tenentId = getTenentId();
+//        try {
+//            this.prepareModuleDetails(moduleDetailList, "tenant", "tenants", "code", tenentId, String.class);
+//            Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailList, true, null, null), Map.class);
+//            if (postForObject != null) {
+//                ulbGrade = mapper.convertValue(
+//                        JsonPath.read(postForObject, "$.MdmsRes.tenant.tenants[0].city.ulbGrade"), String.class);
+//            }
+//            if (ulbGrade != null && !ulbGrade.isEmpty())
+//                ulbGrade = environment.getProperty(ulbGrade, ulbGrade);
+//        } catch (RestClientException e) {
+//            LOGGER.error("ERROR occurred while fetching header name of tenant in getHeaderNameForTenant : ", e);
+//        }
+//        return tenentId.split(Pattern.quote("."))[1] + " " + (ulbGrade != null ? ulbGrade : "");
+//    }
+    
+	/* For Testing */
     public String getHeaderNameForTenant() {
-        String ulbGrade = "";
+        String ulbGrade = "";     
+        String tenantName = "";
         List<ModuleDetail> moduleDetailList = new ArrayList<>();
         String tenentId = getTenentId();
+
         try {
             this.prepareModuleDetails(moduleDetailList, "tenant", "tenants", "code", tenentId, String.class);
-            Map postForObject = mapper.convertValue(this.getMdmsData(moduleDetailList, true, null, null), Map.class);
+
+            Map postForObject = mapper.convertValue(
+                    this.getMdmsData(moduleDetailList, true, null, null),
+                    Map.class
+            );
+
             if (postForObject != null) {
-                ulbGrade = mapper.convertValue(
-                        JsonPath.read(postForObject, "$.MdmsRes.tenant.tenants[0].city.ulbGrade"), String.class);
+                
+                tenantName = mapper.convertValue(
+                        JsonPath.read(postForObject, "$.MdmsRes.tenant.tenants[0].name"),
+                        String.class
+                );
             }
+
+            
             if (ulbGrade != null && !ulbGrade.isEmpty())
                 ulbGrade = environment.getProperty(ulbGrade, ulbGrade);
+
         } catch (RestClientException e) {
             LOGGER.error("ERROR occurred while fetching header name of tenant in getHeaderNameForTenant : ", e);
         }
-        return tenentId.split(Pattern.quote("."))[1] + " " + (ulbGrade != null ? ulbGrade : "");
+
+       
+        return (tenantName != null && !tenantName.isEmpty())
+                ? tenantName
+                : tenentId.split(Pattern.quote("."))[1]; 
     }
 
     private void prepareModuleDetails(List<ModuleDetail> moduleDetailsList, String moduleNme, String masterName,

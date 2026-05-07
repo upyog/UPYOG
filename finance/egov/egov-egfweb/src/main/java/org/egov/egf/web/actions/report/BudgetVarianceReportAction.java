@@ -92,6 +92,7 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -152,6 +153,9 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     @Autowired
     @Qualifier("masterDataCache")
     private EgovMasterDataCaching masterDataCache;
+    
+    @Autowired
+    private Environment environment;
 
     @ValidationErrorPage(value = "form")
     @SkipValidation
@@ -312,7 +316,9 @@ public class BudgetVarianceReportAction extends BaseFormAction {
 
     Map<String, Object> getParamMap() {
         final Map<String, Object> paramMap = new HashMap<String, Object>();
+        String ulbGrade = microserviceUtils.getHeaderNameForTenant().toUpperCase();
         paramMap.put("departmentName", getDepartmentName());
+        paramMap.put("ulbName", environment.getProperty(ulbGrade,ulbGrade));
         
 		/*
 		 * InputStream jasperStream = this.getClass()

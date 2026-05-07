@@ -78,7 +78,8 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.accounttype" text="Account Type"/><span class="mandatory"></span></label>
-						<div class="col-sm-4 add-margin">
+						<!-- <div class="col-sm-4 add-margin"> -->
+						<div class="col-sm-6 add-margin">
 							<form:select path="accountType" id="accountType"
 								cssClass="form-control disablefield"
 								cssErrorClass="form-control error" disabled="disabled">
@@ -93,7 +94,8 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.budgetingtype" text="Budgeting Type"/> </label>
-						<div class="col-sm-3 add-margin">
+						<!-- <div class="col-sm-3 add-margin"> -->
+						<div class="col-sm-6 add-margin">
 							<form:select path="budgetingType" id="budgetingType"
 								cssClass="form-control disablefield"
 								cssErrorClass="form-control error" disabled="disabled">

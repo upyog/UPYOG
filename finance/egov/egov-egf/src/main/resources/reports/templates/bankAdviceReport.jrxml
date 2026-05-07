@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.12.0.final using JasperReports Library version 6.12.1-ac0eebdb29e4c0985457bab279a6db744d661530  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bankAdviceReport" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="752" leftMargin="72" rightMargin="18" topMargin="18" bottomMargin="18" isFloatColumnFooter="true" uuid="e977129d-8063-4dc8-acc3-8e8fecf2dd1e">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bankAdviceReport" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="804" leftMargin="20" rightMargin="18" topMargin="18" bottomMargin="18" isFloatColumnFooter="true" uuid="e977129d-8063-4dc8-acc3-8e8fecf2dd1e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -26,7 +26,7 @@
 	<background>
 		<band height="559" splitType="Stretch">
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="176" y="105" width="400" height="350" uuid="b2e4f6a8-1c3d-4e5f-9a7b-0d2e4f6a8c1b"/>
+				<reportElement mode="Transparent" x="184" y="105" width="400" height="350" uuid="b2e4f6a8-1c3d-4e5f-9a7b-0d2e4f6a8c1b"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
@@ -35,28 +35,37 @@
 		</band>
 	</background>
 	<title>
-		<band height="318" splitType="Stretch">
-			<subreport>
-				<reportElement x="0" y="-17" width="752" height="85" uuid="ab111111-aaaa-bbbb-cccc-dd2222222222"/>
-				<subreportParameter name="watermarkImage">
-					<subreportParameterExpression><![CDATA[$P{watermarkImage}]]></subreportParameterExpression>
-				</subreportParameter>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{headerSubreport}]]></subreportExpression>
-			</subreport>
+		<band height="470" splitType="Stretch">
+			<staticText>
+				<reportElement x="96" y="-6" width="595" height="18" forecolor="#1F4E79" uuid="c5a451c7-ab47-45ea-9f7f-e71fb160e5f4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Government of Jammu & Kashmir]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="96" y="12" width="595" height="18" forecolor="#1F4E79" uuid="276f16d6-7ae2-4391-b6ea-410f74c11280"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Housing and Urban Development Department]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="0" y="72" width="198" height="20" uuid="789f1eef-54b2-4192-8786-1789c43ea2dc"/>
+				<reportElement x="243" y="31" width="300" height="18" forecolor="#1F4E79" uuid="789f1eef-54b2-4192-8786-1789c43ea2dc"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="0" y="92" width="476" height="20" uuid="55231097-300b-4426-963a-1fe9b036b03b"/>
+			<textField>
+				<reportElement x="0" y="59" width="804" height="20" uuid="55231097-300b-4426-963a-1fe9b036b03b"/>
 				<textElement>
 					<font size="11"/>
 				</textElement>
-				<text><![CDATA[From : Urban Local Body]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA["From : " + $P{ulbName}]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="554" y="72" width="198" height="32" uuid="5fadac95-5bd1-4189-9b19-b241adf70f50"/>
+				<reportElement x="1" y="101" width="300" height="32" uuid="5fadac95-5bd1-4189-9b19-b241adf70f50"/>
 				<textElement>
 					<font size="11"/>
 				</textElement>
@@ -64,42 +73,61 @@
 The Manager,]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="554" y="104" width="198" height="17" uuid="284bd69b-eb27-4460-bfa3-8ac393d8f3d5"/>
+				<reportElement x="0" y="133" width="300" height="17" uuid="284bd69b-eb27-4460-bfa3-8ac393d8f3d5"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{bankName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="554" y="121" width="198" height="21" uuid="4ef74e37-30d1-4dc5-99fc-6749540dd79a"/>
+				<reportElement x="0" y="150" width="300" height="21" uuid="4ef74e37-30d1-4dc5-99fc-6749540dd79a"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{branchName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="185" width="50" height="27" uuid="7dd4f65b-e4be-4bb1-9797-4d7af1500512"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<reportElement x="0" y="192" width="60" height="27" uuid="7dd4f65b-e4be-4bb1-9797-4d7af1500512"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
 				<text><![CDATA[File No. : ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="50" y="185" width="220" height="27" uuid="9fd252ac-6668-437d-a6b7-d66ae1511cda"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<reportElement x="60" y="192" width="250" height="27" uuid="9fd252ac-6668-437d-a6b7-d66ae1511cda"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{chequeNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="590" y="185" width="40" height="27" uuid="823ad213-e4cb-4661-b404-bc18dcdec7a8"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<reportElement x="604" y="193" width="50" height="27" uuid="823ad213-e4cb-4661-b404-bc18dcdec7a8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
 				<text><![CDATA[Dated:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="630" y="185" width="120" height="27" uuid="881a8b92-90ec-41ff-af26-e3b687f15015"/>
+				<reportElement x="654" y="193" width="150" height="27" uuid="881a8b92-90ec-41ff-af26-e3b687f15015"/>
 				<box leftPadding="2"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{chequeDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="212" width="752" height="31" uuid="9b690481-23e2-402d-8d1b-6005426435cb"/>
+				<reportElement x="0" y="225" width="804" height="31" uuid="9b690481-23e2-402d-8d1b-6005426435cb"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
 				<text><![CDATA[Sir,
-SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
+SUB:   Transfer of amount through RTGS/NEFT - Requested - Regarding.]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="243" width="752" height="50" uuid="c6427eb5-71f3-426b-bfc4-65ad65c9e907"/>
-				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="258" width="804" height="50" uuid="c6427eb5-71f3-426b-bfc4-65ad65c9e907"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{letterContext}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -108,9 +136,9 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="20" splitType="Stretch">
+		<band splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="25" height="20" uuid="0c3b7cae-a144-40e7-b352-d8899dc4392d"/>
+				<reportElement x="-1" y="-158" width="36" height="25" uuid="0c3b7cae-a144-40e7-b352-d8899dc4392d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -124,7 +152,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<text><![CDATA[Sno]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="25" y="0" width="200" height="20" isPrintWhenDetailOverflows="true" uuid="6a1eccdd-8ce2-4cd2-a6cb-6ae052c6ee5e"/>
+				<reportElement stretchType="RelativeToBandHeight" x="35" y="-158" width="138" height="25" isPrintWhenDetailOverflows="true" uuid="6a1eccdd-8ce2-4cd2-a6cb-6ae052c6ee5e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -138,7 +166,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<text><![CDATA[Beneficiary Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="225" y="0" width="85" height="20" uuid="28093082-e9c7-4f95-9be7-292f760a6af8"/>
+				<reportElement x="173" y="-158" width="123" height="25" uuid="28093082-e9c7-4f95-9be7-292f760a6af8"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -152,7 +180,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<text><![CDATA[Account No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="310" y="0" width="125" height="20" uuid="6955e172-0b54-4011-87ab-6b5340886570"/>
+				<reportElement x="296" y="-158" width="125" height="25" uuid="6955e172-0b54-4011-87ab-6b5340886570"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -166,7 +194,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<text><![CDATA[Bank Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="435" y="0" width="97" height="20" uuid="27f7a361-3b8a-4d71-a296-14c0b35558ac"/>
+				<reportElement x="421" y="-158" width="117" height="25" uuid="27f7a361-3b8a-4d71-a296-14c0b35558ac"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -180,7 +208,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<text><![CDATA[Bank Branch]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="532" y="0" width="108" height="20" uuid="9ad6daf2-770e-4675-9aee-45d499b51848"/>
+				<reportElement x="538" y="-158" width="139" height="25" uuid="9ad6daf2-770e-4675-9aee-45d499b51848"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -194,7 +222,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<text><![CDATA[Bank IFSC Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="640" y="0" width="111" height="20" uuid="50ea7b62-d510-49ee-817f-8b85896fa257"/>
+				<reportElement x="677" y="-158" width="126" height="25" uuid="50ea7b62-d510-49ee-817f-8b85896fa257"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -210,9 +238,9 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="25" splitType="Prevent">
+		<band splitType="Prevent">
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="0" y="0" width="25" height="25" isPrintWhenDetailOverflows="true" uuid="7ad8f054-ac88-48f4-ae44-e98ac70a3337"/>
+				<reportElement positionType="Float" x="-1" y="-133" width="36" height="25" isPrintWhenDetailOverflows="true" uuid="7ad8f054-ac88-48f4-ae44-e98ac70a3337"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -226,7 +254,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="25" y="0" width="200" height="25" isPrintWhenDetailOverflows="true" uuid="6473d851-6f05-45c5-928e-c3ce8fb66ba6"/>
+				<reportElement positionType="Float" x="35" y="-133" width="138" height="25" isPrintWhenDetailOverflows="true" uuid="6473d851-6f05-45c5-928e-c3ce8fb66ba6"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -240,7 +268,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<textFieldExpression><![CDATA[$F{partyName}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="225" y="0" width="85" height="25" isPrintWhenDetailOverflows="true" uuid="bd506a2f-9a03-4ddb-85b4-cbadf53002f1"/>
+				<reportElement positionType="Float" x="173" y="-133" width="123" height="25" isPrintWhenDetailOverflows="true" uuid="bd506a2f-9a03-4ddb-85b4-cbadf53002f1"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -254,7 +282,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<textFieldExpression><![CDATA[$F{accountNumber}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement x="310" y="0" width="125" height="25" uuid="3ce804a9-2b46-409d-ae18-8598990e6eb5"/>
+				<reportElement x="296" y="-133" width="125" height="25" uuid="3ce804a9-2b46-409d-ae18-8598990e6eb5"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -267,8 +295,8 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bank}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="435" y="0" width="97" height="25" uuid="ca25d589-73f4-46b6-967a-220b3542843c"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement x="421" y="-133" width="117" height="25" uuid="ca25d589-73f4-46b6-967a-220b3542843c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -279,10 +307,10 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{branchName}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement x="532" y="0" width="108" height="25" uuid="1ca99d34-be69-4921-883b-f31edb6b4e93"/>
+				<reportElement x="538" y="-133" width="139" height="25" uuid="1ca99d34-be69-4921-883b-f31edb6b4e93"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -296,7 +324,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<textFieldExpression><![CDATA[$F{ifscCode}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="###,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="640" y="0" width="111" height="25" isPrintWhenDetailOverflows="true" uuid="e63ea28c-c321-448e-862f-578be1383a3f"/>
+				<reportElement positionType="Float" x="677" y="-133" width="126" height="25" isPrintWhenDetailOverflows="true" uuid="e63ea28c-c321-448e-862f-578be1383a3f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -309,23 +337,8 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
-		</band>
-	</detail>
-	<pageFooter>
-		<band height="27" splitType="Stretch">
-			<textField>
-				<reportElement x="572" y="2" width="179" height="24" uuid="b9529c40-643e-4334-85da-a96faf9e6aeb"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-		</band>
-	</pageFooter>
-	<summary>
-		<band height="132">
 			<staticText>
-				<reportElement positionType="Float" x="0" y="0" width="532" height="24" uuid="6119aaa1-1b13-4395-aded-99cbbe990fa5"/>
+				<reportElement positionType="Float" x="-1" y="-108" width="678" height="24" uuid="6119aaa1-1b13-4395-aded-99cbbe990fa5"/>
 				<box rightPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -339,7 +352,7 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField pattern="###,##0.00">
-				<reportElement x="532" y="0" width="219" height="24" uuid="f07a8ff5-e237-4e05-8162-921deaff5088"/>
+				<reportElement x="677" y="-108" width="126" height="24" uuid="f07a8ff5-e237-4e05-8162-921deaff5088"/>
 				<box rightPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -352,20 +365,31 @@ SUB:   Transfer of amount through RTGS/NEFT - Requested – Regarding.]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
 			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="89" splitType="Stretch">
 			<textField>
-				<reportElement x="536" y="90" width="198" height="20" uuid="f73b0354-c824-47fd-b9b8-ab8c2fcc7c72"/>
-				<textElement>
+				<reportElement x="603" y="2" width="198" height="20" uuid="f73b0354-c824-47fd-b9b8-ab8c2fcc7c72"/>
+				<textElement textAlignment="Right">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="536" y="110" width="146" height="20" uuid="d6a1fe81-653c-46ff-8d0d-90450d03721e"/>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+				<reportElement x="603" y="23" width="198" height="20" uuid="d6a1fe81-653c-46ff-8d0d-90450d03721e"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Authorized Signatory]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="624" y="62" width="179" height="24" uuid="b9529c40-643e-4334-85da-a96faf9e6aeb"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
 		</band>
-	</summary>
+	</pageFooter>
 </jasperReport>

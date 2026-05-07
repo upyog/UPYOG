@@ -508,9 +508,11 @@ public class BankAdviceReportAction extends BaseFormAction {
 		}     
         reportParams.put("watermarkImage", watermarkStream);
 
-		InputStream jasperStream = reportHelper.getClass()
-	               .getResourceAsStream("/reports/templates/headerSubreport.jasper");
-			reportParams.put("headerSubreport", jasperStream);
+		/*
+		 * InputStream jasperStream = reportHelper.getClass()
+		 * .getResourceAsStream("/reports/templates/headerSubreport.jasper");
+		 * reportParams.put("headerSubreport", jasperStream);
+		 */
 	
         
         final List<BankAdviceReportInfo> subLedgerList = getBankAdviceReportList();

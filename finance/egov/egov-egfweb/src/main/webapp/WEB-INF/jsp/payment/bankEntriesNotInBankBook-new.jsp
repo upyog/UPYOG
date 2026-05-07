@@ -321,6 +321,34 @@
 	var succesMessage = '<s:text name="directbank.transaction.succcess"/>';
 	var totalsnotmatchingamount = '<s:text name="totals.not.matching.amount"/>';
 	var button = '<s:property value="button"/>';
+	
+	
+</script>
+<script type="text/javascript">
+function decodeSelectOptions(selectId) {
+    jQuery("#" + selectId + " option").each(function() {
+        this.text = jQuery("<textarea/>").html(this.text).val();
+    });
+}
+
+// Intercept ALL XHR calls (including egov:ajaxdropdown's plain XHR)
+(function() {
+    var originalOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url) {
+        this.addEventListener('load', function() {
+            if (url.indexOf('ajaxLoadAllBanksByFund') > -1) {
+                setTimeout(function() { decodeSelectOptions("bank"); }, 50);
+            }
+            if (url.indexOf('ajaxLoadBankBranchFromBank') > -1) {
+                setTimeout(function() { decodeSelectOptions("bank_branch"); }, 50);
+            }
+            if (url.indexOf('ajaxLoadBankAccountsByBranch') > -1) {
+                setTimeout(function() { decodeSelectOptions("bankaccount"); }, 50);
+            }
+        });
+        originalOpen.apply(this, arguments);
+    };
+})();
 </script>
 
 </head>
@@ -354,13 +382,15 @@
 						<td class="greybox"></td>
 						<td class="greybox"><s:text name="bank" /><span
 							class="mandatory1">*</span></td>
-						<td class="greybox"><s:select name="bank" id="bank"
+						<td class="greybox">
+						<s:select name="bank" id="bank"
 								list="dropdownData.bankList" headerKey="-1" listKey="id"
 								listValue="name" headerValue="%{getText('lbl.choose.options')}"
-								onchange="loadBankBranch(this)" value="%{bank}" /></td>
+								onchange="loadBankBranch(this)" value="%{bank}" escapeHtml="false" /></td>
 						<egov:ajaxdropdown id="bank_branch" fields="['Text','Value']"
 							dropdownId="bank_branch"
 							url="voucher/common-ajaxLoadBankBranchFromBank.action" />
+							<td class="bluebox w5">&nbsp;</td>
 						<td class="greybox"><s:text name="arf.bankbranch" /><span
 							class="mandatory1">*</span></td>
 						<td class="greybox" colspan="2"><s:select name="bank_branch"
@@ -636,6 +666,7 @@
 		}
 		
 		function load(){
+			decodeSelectOptions("bank");
 			<s:if test="%{mode == 'save'}"> 
 				disableAll();
 			</s:if>

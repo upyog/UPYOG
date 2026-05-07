@@ -1280,19 +1280,40 @@ public class BudgetReportAction extends BaseFormAction {
 		return "";
 	}
 
-    @ReadOnly
-    protected Map<String, Object> getParamMap() {
-        Map<String, Object> paramMap = new HashMap<String, Object>();
-        String ulbGrade = microserviceUtils.getHeaderNameForTenant().toUpperCase();
-        paramMap.put("ulbName", environment.getProperty(ulbGrade,ulbGrade));
-        paramMap.put("finYear", budgetReport.getFinancialYear().getFinYearRange());			
-        if (onSaveOrForward)
-            paramMap = getReportConfigs(paramMap);
-        if (budgetReport.getType() != null)
-            paramMap.put("type", BudgetReport.getValueFor(budgetReport.getType()));
-        return paramMap;
+//    @ReadOnly
+//    protected Map<String, Object> getParamMap() {
+//        Map<String, Object> paramMap = new HashMap<String, Object>();
+//        String ulbGrade = microserviceUtils.getHeaderNameForTenant().toUpperCase();
+//        paramMap.put("ulbName", environment.getProperty(ulbGrade,ulbGrade));
+//        paramMap.put("finYear", budgetReport.getFinancialYear().getFinYearRange());			
+//        if (onSaveOrForward)
+//            paramMap = getReportConfigs(paramMap);
+//        if (budgetReport.getType() != null)
+//            paramMap.put("type", BudgetReport.getValueFor(budgetReport.getType()));
+//        return paramMap;
+//
+//    }
+	
+	@ReadOnly
+	protected Map<String, Object> getParamMap() {
+	    Map<String, Object> paramMap = new HashMap<String, Object>();
 
-    }
+	    // keeping same 
+	    String ulbGrade = microserviceUtils.getHeaderNameForTenant();
+
+	    // directly use it (no uppercase, no property lookup)
+	    paramMap.put("ulbName", ulbGrade);
+
+	    paramMap.put("finYear", budgetReport.getFinancialYear().getFinYearRange());
+
+	    if (onSaveOrForward)
+	        paramMap = getReportConfigs(paramMap);
+
+	    if (budgetReport.getType() != null)
+	        paramMap.put("type", BudgetReport.getValueFor(budgetReport.getType()));
+
+	    return paramMap;
+	}
 
     /**
      *

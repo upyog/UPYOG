@@ -793,7 +793,7 @@ var totaldbamt=0,totalcramt=0;
 						</table>
 					</td>
 				</tr>
-				<tr>
+				<!-- <tr>
 					<s:if test="%{shouldShowHeaderField('field')}">
 						<td class="bluebox"><s:text
 								name="miscreceipt.field" /> <s:if
@@ -819,7 +819,7 @@ var totaldbamt=0,totalcramt=0;
 					<s:else>
 						<td colspan=2 class="bluebox"></td>
 					</s:else>
-				</tr> 	
+				</tr> --> 	
 				<tr>
 					<td class="bluebox2" style="width:5%">&nbsp;</td>
 					<td class="bluebox" style="width:15%"><s:text

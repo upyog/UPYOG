@@ -70,6 +70,8 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -119,6 +121,9 @@ public class AutoReconciliationAction extends BaseFormAction {
 
 	@Autowired
 	private BankHibernateDAO bankHibernateDAO;
+	
+	@Autowired
+	private CityRepository cityRepository;
 
 	public BigDecimal getBankBookBalance() {
 		return autoReconcileHelper.getBankBookBalance();
@@ -424,6 +429,7 @@ public class AutoReconciliationAction extends BaseFormAction {
 		paramMap.put("notInStatementNet", autoReconcileHelper.getNotInStatementNet());
 		paramMap.put("totalNotReconciledAmount", autoReconcileHelper.getTotalNotReconciledAmount());
 		paramMap.put("brsBalance", autoReconcileHelper.getBrsBalance());
+		paramMap.put("ulbName", cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 
 		final List<Object> statementDataSource = new ArrayList<Object>();
 		final List<Object> entriesNotInBankStamentDataSource = new ArrayList<Object>();
