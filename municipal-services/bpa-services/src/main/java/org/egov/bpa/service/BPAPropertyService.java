@@ -225,7 +225,8 @@ public class BPAPropertyService {
 		
 		return Property.builder()
 				.address(address).accountId(bpa.getAccountId())
-				.landArea(new BigDecimal(additionalDetails.get("area").toString()).setScale(2, RoundingMode.HALF_UP).doubleValue())
+				.landArea(new BigDecimal(additionalDetails.get("area").toString())
+						.multiply(BigDecimal.valueOf(1.19599)).setScale(2, RoundingMode.HALF_UP).doubleValue())
 				.usageCategory(propertUsegeList.get(0))
 				.ownershipCategory(bpa.getLandInfo().getOwnershipCategory())
 				.owners(bpa.getLandInfo().getOwners())

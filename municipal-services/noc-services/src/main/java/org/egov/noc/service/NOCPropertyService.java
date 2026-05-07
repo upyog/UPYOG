@@ -1,6 +1,8 @@
 package org.egov.noc.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -20,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -111,15 +116,21 @@ public class NOCPropertyService {
 				owner.setOwnerType("NONE");
 		});
 		
+		ObjectNode propertyAdditionalDetails = (ObjectNode)JsonNodeFactory.instance.objectNode();
+		propertyAdditionalDetails.put("vasikaNo", noc.getVasikaNumber());
+		propertyAdditionalDetails.put("vasikaDate", noc.getVasikaDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		
 		return Property.builder()
 				.address(address).accountId(noc.getAccountId())
-				.landArea(Double.valueOf(siteDetails.get("netTotalArea").toString()))
+				.landArea(new BigDecimal(siteDetails.get("netTotalArea").toString())
+						.multiply(BigDecimal.valueOf(1.19599)).setScale(2, RoundingMode.HALF_UP).doubleValue())
 				.usageCategory(propertyUsageList.get(0))
 				.ownershipCategory(noc.getOwners().size() == 1 ? "INDIVIDUAL.SINGLEOWNER" : "INDIVIDUAL.MULTIPLEOWNERS" )
 				.owners(noc.getOwners())
 				.tenantId(noc.getTenantId())
 				.propertyType(buildingTypeList.get(0))
 				.noOfFloors(Long.valueOf(floorArea != null ? floorArea.size() : 0 ))
+				.additionalDetails(propertyAdditionalDetails)
 				.build();
 		
 	}
