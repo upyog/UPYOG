@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -348,6 +349,21 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	public void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status) {
 		
 		log.info("updateBookingSynchronously for booking id : {} by uuid : ", bookingId, uuid);
+
+		String bookingNo = null;
+		String tenantId = null;
+		try {
+			CommunityHallBookingSearchCriteria criteria = CommunityHallBookingSearchCriteria.builder()
+					.bookingIds(Collections.singletonList(bookingId)).build();
+			List<CommunityHallBookingDetail> bookingDetails = getBookingDetails(criteria);
+			if (!bookingDetails.isEmpty()) {
+				CommunityHallBookingDetail bookingDetail = bookingDetails.get(0);
+				bookingNo = bookingDetail.getBookingNo();
+				tenantId = bookingDetail.getTenantId();
+			}
+		} catch (Exception e) {
+			log.warn("Unable to fetch bookingNo/tenantId for bookingId: {}", bookingId, e);
+		}
 		
 		String lastUpdateBy = uuid;
 		long lastUpdatedTime = CommunityHallBookingUtil.getCurrentTimestamp();
@@ -366,6 +382,8 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		syncUpdate.put("status", status);
 		syncUpdate.put("lastModifiedBy", lastUpdateBy);
 		syncUpdate.put("lastModifiedTime", lastUpdatedTime);
+		syncUpdate.put("bookingNo", bookingNo);
+		syncUpdate.put("tenantId", tenantId);
 		syncUpdate.put("receiptNo", receiptNo);
 		syncUpdate.put("paymentDate", receiptDate == 0L ? null : receiptDate);
 
