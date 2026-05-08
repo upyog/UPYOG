@@ -173,7 +173,8 @@ public class PaymentsService {
                             .filter(name -> !name.isEmpty())
                             .collect(Collectors.joining(", "));
                 })
-                .orElse("");
+                .filter(names -> !names.isEmpty())
+                .orElseThrow(() -> new CustomException("PROPERTY_SEARCH_FAILED", "empty properties or owners found at property-service"));
         
 		//The code for multiple owners ends here 
         //request.getTransaction().getUser().getName() this was getting used in payername now we are using ownerNames
