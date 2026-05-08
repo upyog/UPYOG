@@ -1,6 +1,7 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -31,11 +32,21 @@ public class RoofTankExtract extends FeatureExtract {
 
         for (Block block : planDetail.getBlocks()) {
             block.setRoofTanks(Util.getListOfDimensionValueByLayer(planDetail,
-                    String.format(layerNames.getLayerName("LAYER_NAME_ROOF_TANK"), block.getNumber())));
-
+                    String.format(layerNames.getLayerName("LAYER_NAME_ROOF_TANK"), block.getNumber())));	        
+            
             if (block.getRoofTanks() != null && !block.getRoofTanks().isEmpty()) {
                 minHeight = block.getRoofTanks().stream().reduce(BigDecimal::min).get();
                 if (minHeight.compareTo(new BigDecimal(1)) > 0) {
+                	Map<String, String> data = Util.getColorByDimensionByLayer(planDetail, 
+                    		String.format(layerNames.getLayerName("LAYER_NAME_ROOF_TANK"), block.getNumber()));
+                    
+                    if(!data.isEmpty()) {
+                    	String layer = data.get("layerName");
+            	        String color = data.get("colorCode");
+            	        
+            	      //Code added for the layername with colorCode match
+            			Util.validateLayerColor(layer, Integer.parseInt(color), planDetail);
+                    }
                     increasedHeight = block.getBuilding().getBuildingHeight()
                             .subtract(block.getBuilding().getDeclaredBuildingHeight());
                     if (minHeight.compareTo(increasedHeight) > 0) {

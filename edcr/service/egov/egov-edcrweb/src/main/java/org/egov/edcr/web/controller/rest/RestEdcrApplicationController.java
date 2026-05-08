@@ -47,6 +47,7 @@
 
 package org.egov.edcr.web.controller.rest;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,12 +72,14 @@ import org.egov.common.edcr.model.EdcrRequest;
 import org.egov.edcr.contract.EdcrResponse;
 import org.egov.edcr.contract.PlanResponse;
 import org.egov.edcr.entity.ApplicationType;
+import org.egov.edcr.service.EdcrApplicationService;
 import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.service.EdcrValidator;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.service.OcComparisonService;
 import org.egov.edcr.service.PlanService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
 import org.egov.infra.microservice.contract.ResponseInfo;
 import org.egov.infra.microservice.models.RequestInfo;
@@ -84,6 +87,7 @@ import org.egov.infra.microservice.models.UserInfo;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.rest.error.ErrorResponse;
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +108,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -144,6 +149,9 @@ public class RestEdcrApplicationController {
 
     @Autowired
     private EdcrValidator edcrValidator;
+    
+    @Autowired
+    private EdcrApplicationService edcrApplicationService;
 
     @PostMapping(value = "/scrutinizeplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -538,5 +546,239 @@ public class RestEdcrApplicationController {
         return true;
     }
     
- 
+//    @PostMapping(value = "/mergeSanctionLetter", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ResponseBody
+//    public ResponseEntity<?> mergeSanctionLetter(@RequestBody JsonNode request) throws IOException {
+//
+//        JsonNode requestInfoNode = request.get("RequestInfo");
+//        JsonNode additionalDetails = request.get("additionalDetails");
+//
+//        if (requestInfoNode == null || additionalDetails == null) {
+//            return new ResponseEntity<>("Invalid request structure", HttpStatus.BAD_REQUEST);
+//        }
+//        
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//        RequestInfoWrapper requestInfoWrapper = null;
+//		try {
+//			requestInfoWrapper = mapper.treeToValue(requestInfoNode, RequestInfoWrapper.class);
+//			ErrorDetail edcRes = edcrValidator.validate(requestInfoWrapper);
+//	        if (edcRes != null && StringUtils.isNotBlank(edcRes.getErrorMessage()))
+//	            return new ResponseEntity<>(edcRes, HttpStatus.BAD_REQUEST);
+//		} catch (JsonProcessingException e) {
+//			e.printStackTrace();
+//			Log.error(e);
+//		}
+//
+//        // Extract values
+//        String tenantId = requestInfoNode
+//                .path("userInfo")
+//                .path("tenantId")
+//                .asText();
+//
+//        String uploadedFileId = additionalDetails
+//                .path("uploadedDiagram")
+//                .path("filestoreId")
+//                .asText();
+//
+//        String sanctionFileId = additionalDetails
+//                .path("sanctionLetter")
+//                .path("filestoreId")
+//                .asText();
+//
+//        JsonNode details = additionalDetails.path("details");
+//
+//        String ulbName = details.path("ulbName").asText();
+//
+//        // ✅ Custom Processing Logic
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("tenantId", tenantId);
+//        response.put("uploadedDiagram", uploadedFileId);
+//        response.put("sanctionLetter", sanctionFileId);
+//        response.put("ulbName", ulbName);
+//        response.put("message", "Processed successfully");
+//        
+//        FileStoreMapper fileStoreMapper = edcrApplicationService.mergeSanctionLetter(additionalDetails);
+//
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+    
+
+    @PostMapping(value = "/mergeSanctionLetter", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> mergeSanctionLetter(@RequestBody JsonNode request) {
+    	LOGGER.info("Received mergeSanctionLetter request");
+    		    try {
+    		        // Extract request nodes
+    		        JsonNode requestInfoNode = request.get("RequestInfo");
+    		        JsonNode additionalDetails = request.get("additionalDetails");
+
+    		        if (requestInfoNode == null || additionalDetails == null) {
+
+    		        	LOGGER.warn("Invalid request structure. RequestInfo or additionalDetails missing");
+
+    		            Map<String, Object> errorResponse = new HashMap<>();
+    		            errorResponse.put("message", "Invalid request structure");
+    		            errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+
+    		            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    		        }
+    		        
+////    		        ObjectMapper mapper = new ObjectMapper();
+////    		        RequestInfoWrapper requestInfoWrapper;
+////    		        try {
+////    		            requestInfoWrapper = mapper.treeToValue(
+////    		                    requestInfoNode,
+////    		                    RequestInfoWrapper.class
+////    		            );
+////
+////    		            LOGGER.info("RequestInfo parsed successfully");
+////
+////    		        } catch (JsonProcessingException e) {
+////
+////    		        	LOGGER.error("Failed to parse RequestInfo", e);
+////    		            Map<String, Object> errorResponse = new HashMap<>();
+////    		            errorResponse.put("message", "Invalid RequestInfo format");
+////    		            errorResponse.put("error", e.getMessage());
+////    		            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+////    		        }
+////
+////    		        ErrorDetail validationError = edcrValidator.validate(requestInfoWrapper);
+//
+//    		        if (validationError != null &&
+//    		                StringUtils.isNotBlank(validationError.getErrorMessage())) {
+//
+//    		        	LOGGER.warn("Validation failed: {}", validationError.getErrorMessage());
+//
+//    		            return new ResponseEntity<>(validationError, HttpStatus.BAD_REQUEST);
+//    		        }
+//
+//    		        LOGGER.info("Request validation successful");
+
+    		        // ===============================
+    		        // ✅ Extract required fields
+    		        // ===============================
+    		        String tenantId = requestInfoNode
+    		                .path("userInfo")
+    		                .path("tenantId")
+    		                .asText();
+
+    		        String uploadedFileId = additionalDetails
+    		                .path("uploadedDiagram")
+    		                .path("filestoreId")
+    		                .asText();
+
+    		        String uploadedDiagramTenantId = additionalDetails
+    		                .path("uploadedDiagram")
+    		                .path("tenantId")
+    		                .asText();
+
+    		        String sanctionFileId = additionalDetails
+    		                .path("sanctionLetter")
+    		                .path("filestoreId")
+    		                .asText();
+
+    		        String sanctionLetterTenantId = additionalDetails
+    		                .path("sanctionLetter")
+    		                .path("tenantId")
+    		                .asText();
+
+    		        JsonNode details = additionalDetails.path("details");
+
+    		        String ulbName = details.path("ulbName").asText();
+
+    		        LOGGER.info("📄 TenantId                : {}", tenantId);
+    		        LOGGER.info("📄 UploadedDiagram FileId : {}", uploadedFileId);
+    		        LOGGER.info("📄 UploadedDiagram Tenant : {}", uploadedDiagramTenantId);
+    		        LOGGER.info("📄 SanctionLetter FileId  : {}", sanctionFileId);
+    		        LOGGER.info("📄 SanctionLetter Tenant  : {}", sanctionLetterTenantId);
+    		        LOGGER.info("📄 ULB Name               : {}", ulbName);
+
+    		        if (StringUtils.isBlank(uploadedFileId)
+    		                || StringUtils.isBlank(uploadedDiagramTenantId)
+    		                || StringUtils.isBlank(sanctionFileId)
+    		                || StringUtils.isBlank(sanctionLetterTenantId)) {
+
+    		            LOGGER.warn("Missing filestoreId or tenantId in additionalDetails");
+
+    		            Map<String, Object> errorResponse = new HashMap<>();
+
+    		            errorResponse.put(
+    		                    "message",
+    		                    "uploadedDiagram/sanctionLetter filestoreId or tenantId is missing"
+    		            );
+    		            
+    		            Map<String, Object> uploadedDiagramMap = new HashMap<>();
+    		            uploadedDiagramMap.put("filestoreId", uploadedFileId);
+    		            uploadedDiagramMap.put("tenantId", uploadedDiagramTenantId);
+
+    		            Map<String, Object> sanctionLetterMap = new HashMap<>();
+    		            sanctionLetterMap.put("filestoreId", sanctionFileId);
+    		            sanctionLetterMap.put("tenantId", sanctionLetterTenantId);
+
+    		            errorResponse.put("uploadedDiagram", uploadedDiagramMap);
+    		            errorResponse.put("sanctionLetter", sanctionLetterMap);
+    		            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    		        }
+
+    		        LOGGER.info("Starting sanction letter merge process");
+
+    		        FileStoreMapper fileStoreMapper =
+    		                edcrApplicationService.mergeSanctionLetter(additionalDetails);
+
+    		        LOGGER.info("Merge completed successfully");
+    		        LOGGER.info("Stored FileStoreId: {}", fileStoreMapper.getFileStoreId());
+
+    		        Map<String, Object> response = new HashMap<>();
+//    		        response.put("tenantId", tenantId);
+//    		        response.put("uploadedDiagram", uploadedFileId);
+//    		        response.put("sanctionLetter", sanctionFileId);
+    		        response.put("mergedFileStoreId", fileStoreMapper);
+//    		        response.put("ulbName", ulbName);
+    		        response.put("message", "Sanction letter merged successfully");
+
+    		        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    		    } catch (FileNotFoundException e) {
+
+    		        LOGGER.error("File not found during merge process", e);
+
+    		        Map<String, Object> errorResponse = new HashMap<>();
+    		        errorResponse.put("message", "Required PDF file not found");
+    		        errorResponse.put("error", e.getMessage());
+
+    		        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+
+    		    } catch (IllegalArgumentException e) {
+
+    		        LOGGER.error("Invalid input provided", e);
+
+    		        Map<String, Object> errorResponse = new HashMap<>();
+    		        errorResponse.put("message", "Invalid input");
+    		        errorResponse.put("error", e.getMessage());
+
+    		        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+
+    		    } catch (IOException e) {
+
+    		        LOGGER.error("IO Exception occurred while processing PDFs", e);
+
+    		        Map<String, Object> errorResponse = new HashMap<>();
+    		        errorResponse.put("message", "PDF processing failed");
+    		        errorResponse.put("error", e.getMessage());
+
+    		        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    		    } catch (Exception e) {
+
+    		        LOGGER.error("Unexpected error occurred during mergeSanctionLetter", e);
+
+    		        Map<String, Object> errorResponse = new HashMap<>();
+    		        errorResponse.put("message", "Internal server error");
+    		        errorResponse.put("error", e.getMessage());
+
+    		        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    		    }
+    		}
+    		    
 }

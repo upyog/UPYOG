@@ -52,14 +52,22 @@ public class ExitWidthExtract extends FeatureExtract {
                                 floor.getNumber());
 						List<BigDecimal> exitWidthDoors = Util.getListOfDimensionValueByLayer(pl,
 								layerNameExitWidthDoor);
+						
                         String layerNameExitWidthStair = String.format(layerNames.getLayerName("LAYER_NAME_EXIT_WIDTH_STAIR"),
                                 block.getNumber(),
 								floor.getNumber());
 						List<BigDecimal> exitWidthStairs = Util.getListOfDimensionValueByLayer(pl,
 								layerNameExitWidthStair);
-
-						if (!exitWidthDoors.isEmpty())
+						
+						if (!exitWidthDoors.isEmpty()) {
 							floor.setExitWidthDoor(exitWidthDoors);
+							Map<String, String> data1 = Util.getColorByDimensionByLayer(pl, layerNameExitWidthDoor);
+					        if(!data1.isEmpty()) {
+					        	String layer1 = data1.get("layerName");
+						        String color1 = data1.get("colorCode");					        
+								Util.validateLayerColor(layer1, Integer.parseInt(color1), pl);
+					        }
+						}
 
 						if (!exitWidthStairs.isEmpty())
 							floor.setExitWidthStair(exitWidthStairs);
@@ -94,10 +102,15 @@ public class ExitWidthExtract extends FeatureExtract {
 				Util.extractDimensionValue(pl, widths, dimension, layerNameExitWidthDoor);
 			
 			String doorHeight = Util.getMtextByLayerName(pl.getDoc(), layerNameExitWidthDoor);
+//			door.setDoorHeight(BigDecimal.valueOf(Double.valueOf(doorHeight.replaceAll("DOOR_HT_M=", ""))));
+			BigDecimal doorHeight1 = BigDecimal.ZERO;
 			if(doorHeight!=null) {
-				door.setDoorHeight(BigDecimal.valueOf(Double.valueOf(doorHeight.replaceAll("DOOR_HT_M=", ""))));	
+				if (doorHeight != null && doorHeight.contains("=")) {
+				    String value = doorHeight.split("=")[1].trim();
+				    doorHeight1 = new BigDecimal(value);				
+				}				
 			}
-			
+			door.setDoorHeight(doorHeight1);
 			for (BigDecimal minDis : widths) {
 //            	doorWidth=minDis;
 				door.setDoorWidth(minDis);

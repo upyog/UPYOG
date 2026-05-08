@@ -243,10 +243,13 @@ public class HeightOfRoom extends FeatureProcess {
 							String subRuleDesc4 = "Room wise Door Area";
 							String subRuleDesc6 = "Door Area";
 							String color = "";
+							int colorCode = 0;
 							BigDecimal minimumArea = BigDecimal.ZERO;
 
-							if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
+							if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 								color = DxfFileConstants.COLOR_RESIDENTIAL_ROOM;
+								colorCode = DxfFileConstants.RESIDENTIAL_ROOM_COLOR;
+							}
 							else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
 								color = DxfFileConstants.COLOR_COMMERCIAL_ROOM;
 							else if (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
@@ -266,6 +269,9 @@ public class HeightOfRoom extends FeatureProcess {
 								}
 
 								for (RoomHeight roomHeight : acHeights) {
+//									if (heightOfRoomFeaturesColor.get(color) == roomHeight.getColorCode()) {
+//										residentialAcRoomHeights.add(roomHeight.getHeight());
+//									}
 									if (heightOfRoomFeaturesColor.get(color) == roomHeight.getColorCode()) {
 										residentialAcRoomHeights.add(roomHeight.getHeight());
 									}
@@ -332,7 +338,7 @@ public class HeightOfRoom extends FeatureProcess {
 							    }
 
 							    for (RoomHeight roomHeight : heights) {
-							        if (heightOfRoomFeaturesColor.get(color) == roomHeight.getColorCode()) {
+							        if (colorCode == roomHeight.getColorCode()) {
 							            residentialRoomHeights.add(roomHeight.getHeight());
 							        }
 							    }

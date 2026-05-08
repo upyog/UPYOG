@@ -782,8 +782,8 @@ public class SideYardService extends GeneralRule {
             //scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
             scrutinyDetailSideYard1.setKey("Block_" + block.getName() + "_" + "Side Setback");
         	scrutinyDetailSideYard2.setKey("Block_" + block.getName() + "_" + "Side Setback");
-            if (occupancy.getTypeHelper().getType() != null
-                    && A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
+            if (occupancy.getTypeHelper().getType() != null) {
+            	if(A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())
                     || F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
                 if (pl.getErrors().containsKey(SIDE_YARD_2_NOTDEFINED)) {
                     pl.getErrors().remove(SIDE_YARD_2_NOTDEFINED);
@@ -814,6 +814,7 @@ public class SideYardService extends GeneralRule {
             compareSideYard1Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
                     BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard1Result, true, RULE_35, SIDE_YARD_DESC,
                     0);
+        }
         }
     }
 

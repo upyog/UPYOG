@@ -59,7 +59,14 @@ public class ParkingExtract extends FeatureExtract {
                         + layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + floor.getNumber() + "_"
                         + layerNames.getLayerName("LAYER_NAME_UNITFA");
                 List<DXFLWPolyline> occupancyUnits = Util.getPolyLinesByLayer(pl.getDoc(), layerRegEx);
+                
+                if(!occupancyUnits.isEmpty()) {
+                	Util.validateLayerColor(layerRegEx, 
+                			Util.getColorByPolyLine(occupancyUnits), pl);
+                }
+                
                 extractByLayer(pl, pl.getDoc(), block, floor, occupancyUnits);
+                
                 String coveredParkLayer = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber()
                         + "_" + layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + floor.getNumber() + "_"
                         + layerNames.getLayerName("LAYER_NAME_COVERED_PARKING");
@@ -80,6 +87,16 @@ public class ParkingExtract extends FeatureExtract {
 //                for (String s : stiltParkLayerNames)
 //                    Util.getPolyLinesByLayer(pl.getDoc(), s).forEach(
 //                            stiltPark -> floor.getParking().getStilts().add(new MeasurementDetail(stiltPark, true)));
+                
+                if(!stiltParkLayerNames.isEmpty()) {
+                	List<DXFLWPolyline> stiltParkLyr = Util.getPolyLinesByLayer(pl.getDoc(), 
+                			stiltParkLayerNames.get(0));        
+                    if(!stiltParkLyr.isEmpty()) {
+                    	Util.validateLayerColor(stiltParkLayerNames.get(0), 
+                    			Util.getColorByPolyLine(stiltParkLyr), pl);
+                    }
+                }
+                
                 for (String s : stiltParkLayerNames) {
                     Util.getPolyLinesByLayer(pl.getDoc(), s).forEach(stiltPark -> {
                         MeasurementDetail detail = new MeasurementDetail(stiltPark, true);
@@ -124,17 +141,45 @@ public class ParkingExtract extends FeatureExtract {
         Util.getPolyLinesByLayer(pl.getDoc(), layerNames.getLayerName("LAYER_NAME_LOADING_UNLOADING"))
                 .forEach(loadUnloadPolyline -> pl.getParkingDetails().getLoadUnload()
                         .add(new MeasurementDetail(loadUnloadPolyline, true)));
+        
+        List<DXFLWPolyline> loadUnload = Util.getPolyLinesByLayer(pl.getDoc(), 
+        		layerNames.getLayerName("LAYER_NAME_LOADING_UNLOADING"));        
+        if(!loadUnload.isEmpty()) {
+        	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_LOADING_UNLOADING"), 
+        			Util.getColorByPolyLine(loadUnload), pl);
+        }
 
         Util.getPolyLinesByLayer(pl.getDoc(), layerNames.getLayerName("LAYER_NAME_MECH_PARKING"))
                 .forEach(mechParkPolyline -> pl.getParkingDetails().getMechParking()
                         .add(new MeasurementDetail(mechParkPolyline, true)));
 
+        List<DXFLWPolyline> mechPark = Util.getPolyLinesByLayer(pl.getDoc(), 
+        		layerNames.getLayerName("LAYER_NAME_MECH_PARKING"));        
+        if(!mechPark.isEmpty()) {
+        	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_MECH_PARKING"), 
+        			Util.getColorByPolyLine(mechPark), pl);
+        }
+        
+        
         Util.getPolyLinesByLayer(pl.getDoc(), layerNames.getLayerName("LAYER_NAME_TWO_WHEELER_PARKING"))
                 .forEach(twoWheelerPolyline -> pl.getParkingDetails().getTwoWheelers()
                         .add(new MeasurementDetail(twoWheelerPolyline, true)));
+        
+        List<DXFLWPolyline> twoWheeler = Util.getPolyLinesByLayer(pl.getDoc(), 
+        		layerNames.getLayerName("LAYER_NAME_TWO_WHEELER_PARKING"));        
+        if(!twoWheeler.isEmpty()) {
+        	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_TWO_WHEELER_PARKING"), 
+        			Util.getColorByPolyLine(twoWheeler), pl);
+        }
 
         Util.getPolyLinesByLayer(pl.getDoc(), DA_PARKING).forEach(disablePersonParkPolyline -> pl.getParkingDetails()
                 .getDisabledPersons().add(new MeasurementDetail(disablePersonParkPolyline, true)));
+        
+        List<DXFLWPolyline> daParking = Util.getPolyLinesByLayer(pl.getDoc(), 
+        		DA_PARKING);        
+        if(!daParking.isEmpty()) {
+        	Util.validateLayerColor(DA_PARKING,Util.getColorByPolyLine(daParking), pl);
+        }
 
         BigDecimal dimension = Util.getSingleDimensionValueByLayer(pl.getDoc(), DA_PARKING, pl);
         pl.getParkingDetails().setDistFromDAToMainEntrance(dimension);
@@ -160,6 +205,11 @@ public class ParkingExtract extends FeatureExtract {
 //                openParking -> pl.getParkingDetails().getOpenCars().add(new MeasurementDetail(openParking, true)));
         List<DXFLWPolyline> openParkingPloyLine = Util.getPolyLinesByLayer(pl.getDoc(), 
         		layerNames.getLayerName("LAYER_NAME_OPEN_PARKING"));
+        
+        if(!openParkingPloyLine.isEmpty()) {
+        	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_OPEN_PARKING"), 
+        			Util.getColorByPolyLine(openParkingPloyLine), pl);
+        }
         
         if(openParkingPloyLine!=null && !openParkingPloyLine.isEmpty()) {        	
         	pl.getParkingDetails().getOpenCars().add(new MeasurementDetail(openParkingPloyLine.get(0),true));
@@ -188,10 +238,33 @@ public class ParkingExtract extends FeatureExtract {
         
         Util.getPolyLinesByLayer(pl.getDoc(), layerNames.getLayerName("LAYER_NAME_MECHANICAL_LIFT")).forEach(
                 mechLift -> pl.getParkingDetails().getMechParking().add(new MeasurementDetail(mechLift, true)));
+        
+        List<DXFLWPolyline> mechParking = Util.getPolyLinesByLayer(pl.getDoc(), 
+        		layerNames.getLayerName("LAYER_NAME_MECHANICAL_LIFT"));        
+        if(!mechParking.isEmpty()) {
+        	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_MECHANICAL_LIFT"), 
+        			Util.getColorByPolyLine(mechParking), pl);
+        }
+        
         Util.getPolyLinesByLayer(pl.getDoc(), layerNames.getLayerName("LAYER_NAME_VISITOR_PARKING")).forEach(
-                visitorPark -> pl.getParkingDetails().getVisitors().add(new MeasurementDetail(visitorPark, true)));
+                visitorPark -> pl.getParkingDetails().getVisitors().add(new MeasurementDetail(visitorPark, true)));        
+        
+        	List<DXFLWPolyline> visitorParkLyr = Util.getPolyLinesByLayer(pl.getDoc(), layerNames.getLayerName("LAYER_NAME_VISITOR_PARKING"));        
+            if(!visitorParkLyr.isEmpty()) {
+            	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_VISITOR_PARKING"), 
+            			Util.getColorByPolyLine(visitorParkLyr), pl);
+            }
+       
+        
         Util.getPolyLinesByLayer(pl.getDoc(), layerNames.getLayerName("LAYER_NAME_SPECIAL_PARKING")).forEach(
                 specialPark -> pl.getParkingDetails().getSpecial().add(new MeasurementDetail(specialPark, true)));
+        
+        List<DXFLWPolyline> spclParkLyr = Util.getPolyLinesByLayer(pl.getDoc(), 
+        		layerNames.getLayerName("LAYER_NAME_SPECIAL_PARKING"));        
+        if(!spclParkLyr.isEmpty()) {
+        	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_SPECIAL_PARKING"), 
+        			Util.getColorByPolyLine(spclParkLyr), pl);
+        }
 
         validate(pl);
         
@@ -229,8 +302,15 @@ public class ParkingExtract extends FeatureExtract {
                 String deductLayerName = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + block.getNumber()
                         + "_" + layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + floor.getNumber() + "_"
                         + layerNames.getLayerName("LAYER_NAME_UNITFA_DEDUCT");
+                
+                List<DXFLWPolyline> deductPolylines = Util.getPolyLinesByLayer(doc, deductLayerName);
+                if(!deductPolylines.isEmpty()) {
+                	Util.validateLayerColor(deductLayerName, 
+                			Util.getColorByPolyLine(deductPolylines), pl);
+                }
+                
                 for (DXFLWPolyline occupancyDeduct : Util.getPolyLinesByLayer(doc, deductLayerName)) {
-                    boolean contains = false;
+                	boolean contains = false;
                     Iterator buildingIterator = occupancyDeduct.getVertexIterator();
                     while (buildingIterator.hasNext()) {
                         DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();

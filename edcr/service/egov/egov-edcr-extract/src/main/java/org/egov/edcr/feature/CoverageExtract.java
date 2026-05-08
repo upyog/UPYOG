@@ -37,8 +37,16 @@ public class CoverageExtract extends FeatureExtract {
         for (Block block : pl.getBlocks()) {
             List<DXFLWPolyline> polylinesCoverage = Util.getPolyLinesByLayer(pl.getDoc(),
                     String.format(layerNames.getLayerName("LAYER_NAME_COVERAGE"), block.getNumber()));
+            //Code added for the layername with colorCode match
+            if (polylinesCoverage != null && !polylinesCoverage.isEmpty()) {
+                Util.validateLayerColor(polylinesCoverage.get(0).getLayerName(),Util.getColorByPolyLine(polylinesCoverage),pl);
+            }
             List<DXFLWPolyline> polylinesCoverageDeduct = Util.getPolyLinesByLayer(pl.getDoc(),
                     String.format(layerNames.getLayerName("LAYER_NAME_COVERAGE_DEDUCT"), block.getNumber()));
+            
+            if (polylinesCoverageDeduct != null && !polylinesCoverageDeduct.isEmpty()) {
+                Util.validateLayerColor(polylinesCoverageDeduct.get(0).getLayerName(),Util.getColorByPolyLine(polylinesCoverageDeduct),pl);
+            }
             for (DXFLWPolyline polyline : polylinesCoverage) {
                 Measurement measurement = new MeasurementDetail(polyline, false);
                 block.getCoverage().add(measurement);

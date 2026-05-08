@@ -127,8 +127,10 @@ public class SetBackServiceExtract extends FeatureExtract {
                             minDistance.getYardMinDistance(pl, yardName, String.valueOf(setBack.getLevel()), doc));
                 }
                 setYardHeight(doc, yardName, yard);
-                List<DXFLWPolyline> rearYardMinWidths = Util.getPolyLinesByLayer(pl.getDoc(), yardName );
-                rearYardMinWidths.stream()
+                List<DXFLWPolyline> sideYardMinWidths = Util.getPolyLinesByLayer(pl.getDoc(), yardName );
+                //Code added for the layername with colorCode match
+    			Util.validateLayerColor(yardName, Util.getColorByPolyLine(sideYardMinWidths), pl);
+                sideYardMinWidths.stream()
                 	.map(YardWidth -> new MeasurementDetail(YardWidth, true))
                 	.forEach(measurement -> yard.setWidth(measurement.getWidth().setScale(2, RoundingMode.HALF_UP)));
             }
@@ -208,8 +210,10 @@ public class SetBackServiceExtract extends FeatureExtract {
                             minDistance.getYardMinDistance(pl, yardName, String.valueOf(setBack.getLevel()), doc));
                 }
                 setYardHeight(doc, yardName, sideYard1);
-                List<DXFLWPolyline> rearYardMinWidths = Util.getPolyLinesByLayer(pl.getDoc(), yardName );
-                rearYardMinWidths.stream()
+                List<DXFLWPolyline> sideYardMinWidths = Util.getPolyLinesByLayer(pl.getDoc(), yardName );
+                //Code added for the layername with colorCode match
+    			Util.validateLayerColor(yardName, Util.getColorByPolyLine(sideYardMinWidths), pl);
+                sideYardMinWidths.stream()
                 	.map(YardWidth -> new MeasurementDetail(YardWidth, true))
                 	.forEach(measurement -> sideYard1.setWidth(measurement.getWidth().setScale(2, RoundingMode.HALF_UP)));
             } 
@@ -246,6 +250,8 @@ public class SetBackServiceExtract extends FeatureExtract {
                 setYardHeight(doc, yardName, rearYard);
                 
                 List<DXFLWPolyline> rearYardMinWidths = Util.getPolyLinesByLayer(pl.getDoc(), yardName );
+              //Code added for the layername with colorCode match
+    			Util.validateLayerColor(yardName, Util.getColorByPolyLine(rearYardMinWidths), pl);
                 rearYardMinWidths.stream()
                 	.map(rearYardWidth -> new MeasurementDetail(rearYardWidth, true))
                 	.forEach(measurement -> rearYard.setWidth(measurement.getWidth().setScale(2, RoundingMode.HALF_UP)));
@@ -275,8 +281,12 @@ public class SetBackServiceExtract extends FeatureExtract {
                             minDistance.getYardMinDistance(pl, yardName, String.valueOf(setBack.getLevel()), doc));
                 }
                 setYardHeight(doc, yardName, frontYard);
-                List<DXFLWPolyline> rearYardMinWidths = Util.getPolyLinesByLayer(pl.getDoc(), yardName );
-                rearYardMinWidths.stream()
+                List<DXFLWPolyline> frontYardMinWidths = Util.getPolyLinesByLayer(pl.getDoc(), yardName );
+                
+                //Code added for the layername with colorCode match
+    			Util.validateLayerColor(yardName, Util.getColorByPolyLine(frontYardMinWidths), pl);
+    			
+    			frontYardMinWidths.stream()
                 	.map(frontYardWidth -> new MeasurementDetail(frontYardWidth, true))
                 	.forEach(measurement -> frontYard.setWidth(measurement.getWidth().setScale(2, RoundingMode.HALF_UP)));
             } else
