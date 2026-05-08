@@ -710,9 +710,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 							communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode())
 					.hallCode(slots.get(0).getHallCode())
 					.bookingStartDate(CommunityHallBookingUtil.parseLocalDateToString(minDate,
-							CommunityHallBookingConstants.DATE_FORMAT))
+							CommunityHallBookingUtil.DATE_FORMAT))
 					.bookingEndDate(CommunityHallBookingUtil.parseLocalDateToString(maxDate,
-							CommunityHallBookingConstants.DATE_FORMAT))
+							CommunityHallBookingUtil.DATE_FORMAT))
 					.isTimerRequired(false).build();
 
 			CommunityHallSlotAvailabilityResponse availabilityResponse = this.getCommunityHallSlotAvailability(
