@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.logging.log4j.Logger;
@@ -48,13 +49,22 @@ public class BuildingHeightExtract extends FeatureExtract {
 
     private void extractDistanceFromBuildingToRoadEnd(PlanDetail pl) {
         for (Block block : pl.getBlocks()) {
-            String layerName = String.format(layerNames.getLayerName("LAYER_NAME_MAX_HEIGHT_CAL"), block.getNumber());
+//            String layerName = String.format(layerNames.getLayerName("LAYER_NAME_MAX_HEIGHT_CAL"), block.getNumber());
+        	String layerName = String.format("BLK_%s_"+ layerNames.getLayerName("LAYER_NAME_MAX_HEIGHT_CAL"), block.getNumber());
             String heightSetBack = String.format(layerNames.getLayerName("LAYER_NAME_MAX_HEIGHT_CAL_SET_BACK"),
                     block.getNumber());
+            layerNames.getLayerName("LAYER_NAME_BLK_FLR_TOILET");
 
             List<BigDecimal> maxHeightCal = Util.getListOfDimensionValueByLayer(pl, layerName);
-            if (!maxHeightCal.isEmpty())
+            if (!maxHeightCal.isEmpty()) {
                 block.getBuilding().setDistanceFromBuildingFootPrintToRoadEnd(maxHeightCal);
+                Map<String, String> data = Util.getColorByDimensionByLayer(pl, layerName);
+		        if(!data.isEmpty()) {
+		        	String layer1 = data.get("layerName");
+			        String color1 = data.get("colorCode");					        
+					Util.validateLayerColor(layer1, Integer.parseInt(color1), pl);
+		        }
+            }
             List<BigDecimal> maxHeightSetBack = Util.getListOfDimensionValueByLayer(pl, heightSetBack);
             if (!maxHeightSetBack.isEmpty())
                 block.getBuilding().setDistanceFromSetBackToBuildingLine(maxHeightSetBack);

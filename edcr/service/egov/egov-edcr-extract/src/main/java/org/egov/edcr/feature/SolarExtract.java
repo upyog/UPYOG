@@ -28,6 +28,12 @@ public class SolarExtract extends FeatureExtract {
         if (pl.getDoc().containsDXFLayer(layerNames.getLayerName("LAYER_NAME_SOLAR"))) {
             List<DXFLWPolyline> solarPolyline = Util.getPolyLinesByLayer(pl.getDoc(),
                     layerNames.getLayerName("LAYER_NAME_SOLAR"));
+            
+            if(!solarPolyline.isEmpty()) {
+            	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_SOLAR"), 
+            			Util.getColorByPolyLine(solarPolyline), pl);
+            }
+            
             if (solarPolyline != null && !solarPolyline.isEmpty())
                 for (DXFLWPolyline pline : solarPolyline) {
                     Measurement measurement = new MeasurementDetail(pline, true);

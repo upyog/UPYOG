@@ -43,6 +43,10 @@ public class OverHangsExtract extends FeatureExtract {
                     String overhang = String.format(layerNames.getLayerName("LAYER_NAME_SHADE_OVERHANG"), block.getNumber(),
                             floor.getNumber());
                     List<DXFLWPolyline> overHangs = Util.getPolyLinesByLayer(planDetail.getDoc(), overhang);
+                    if(!overHangs.isEmpty()) {
+                    	Util.validateLayerColor(overhang, 
+                    			Util.getColorByPolyLine(overHangs), planDetail);
+                    }
                     List<Measurement> overHangMeasurements = overHangs.stream()
                             .map(flightPolyLine -> new MeasurementDetail(flightPolyLine, true))
                             .collect(Collectors.toList());

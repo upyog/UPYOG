@@ -78,6 +78,7 @@ public class GeneralStairExtract extends FeatureExtract {
                 List mTexts = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
                 if ((polyLines != null && !polyLines.isEmpty()) || (mTexts != null
                         && !mTexts.isEmpty())) {
+                	
                 //Code added for the layername with colorCode match
         		Util.validateLayerColor(generalStairName, Util.getColorByPolyLine(polyLines), pl);
         		
@@ -143,6 +144,7 @@ public class GeneralStairExtract extends FeatureExtract {
 		List<String> flightLayerNames = Util.getLayerNamesLike(doc, flightLayerNamePattern);
 		
 		List<DXFLWPolyline> stairFlightPolyLines1 = Util.getPolyLinesByLayer(doc, flightLayerNames.get(0));
+		
 		//Code added for the layername with colorCode match
 		Util.validateLayerColor(flightLayerNames.get(0), Util.getColorByPolyLine(stairFlightPolyLines1), pl);
 		

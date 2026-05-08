@@ -31,6 +31,10 @@ public class NorthDirectionExtract extends FeatureExtract {
                 layerNames.getLayerName("LAYER_NAME_NORTH_DIRECTION"));
         String direction = Util.getMtextByLayerName(doc, layerNames.getLayerName("LAYER_NAME_NORTH_DIRECTION"));
         if (!northDirectionPolyLines.isEmpty() || org.apache.commons.lang.StringUtils.isNotBlank(direction)) {
+        	
+        	Util.validateLayerColor(northDirectionPolyLines.get(0).getLayerName(), 
+        			Util.getColorByPolyLine(northDirectionPolyLines), pl);
+        	
             pl.getDrawingPreference().setNorthDirection(new NorthDirection());
             pl.getDrawingPreference().getNorthDirection().setDirections(new ArrayList<>());
 

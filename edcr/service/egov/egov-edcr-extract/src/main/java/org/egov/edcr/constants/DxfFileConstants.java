@@ -260,13 +260,18 @@ public class DxfFileConstants {
     public static final String CITY = "CITY";
   //  public static final String MAUZA = "MAUZA";
     public static final String RWH_DECLARED = "RWH_DECLARED";
-    public static final int RESIDENTIAL_ROOM_COLOR = 1;
+    //public static final int RESIDENTIAL_ROOM_COLOR = 1;
     public static final int COMMERCIAL_ROOM_COLOR = 2;
     public static final int EDUCATIONAL_ROOM_COLOR = 3;
     public static final int INDUSTRIAL_ROOM_COLOR = 4;
-    public static final int RESIDENTIAL_KITCHEN_ROOM_COLOR = 1;
-    public static final int RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR = 3;
-    public static final int RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR = 5;
+//    public static final int RESIDENTIAL_KITCHEN_ROOM_COLOR = 1;
+//    public static final int RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR = 3;
+//    public static final int RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR = 5;
+    public static final int RESIDENTIAL_ROOM_COLOR = 78;   
+    public static final int RESIDENTIAL_KITCHEN_ROOM_COLOR = 81;
+    public static final int RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR = 82;
+    public static final int RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR = 83;
+    
     public static final int COMMERCIAL_KITCHEN_ROOM_COLOR = 2;
     public static final int COMMERCIAL_KITCHEN_STORE_ROOM_COLOR = 4;
     public static final int COMMERCIAL_KITCHEN_DINING_ROOM_COLOR = 6;

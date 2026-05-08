@@ -72,11 +72,16 @@ public class SanitationExtract extends FeatureExtract {
                         + layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + f.getNumber() + "_"
                         + layerNames.getLayerName("LAYER_NAME_SPECIAL_WATER_CLOSET");
                 List<DXFLWPolyline> polyLinesByLayer = Util.getPolyLinesByLayer(pl.getDoc(), layerName1);
-                if (!polyLinesByLayer.isEmpty())
+                if (!polyLinesByLayer.isEmpty()) {
+                	if(!polyLinesByLayer.isEmpty()) {
+                    	//Code added for the layername with colorCode match
+                		Util.validateLayerColor(layerName1, Util.getColorByPolyLine(polyLinesByLayer), pl);
+                    }
                     for (DXFLWPolyline pline : polyLinesByLayer) {
                         Measurement m = new MeasurementDetail(pline, true);
                         f.getSpecialWaterClosets().add(m);
                     }
+                }
             }
 
         // Wash Basins for this will be added floor wise
@@ -87,6 +92,10 @@ public class SanitationExtract extends FeatureExtract {
                         + "_" + layerNames.getLayerName("LAYER_NAME_FLOOR_NAME_PREFIX") + f.getNumber() + "_"
                         + layerNames.getLayerName("LAYER_NAME_WASH");
                 List<DXFLWPolyline> polyLinesByLayer = Util.getPolyLinesByLayer(pl.getDoc(), washBasinLayers);
+                if(!polyLinesByLayer.isEmpty()) {
+                	//Code added for the layername with colorCode match
+            		Util.validateLayerColor(washBasinLayers, Util.getColorByPolyLine(polyLinesByLayer), pl);
+                }
                 if (polyLinesByLayer.isEmpty()) {
                     List<DXFCircle> washBasinCircles = Util.getPolyCircleByLayer(pl.getDoc(), washBasinLayers);
                     for (DXFCircle dxfCircle : washBasinCircles) {
@@ -118,6 +127,10 @@ public class SanitationExtract extends FeatureExtract {
         List<String> layerNames1 = Util.getLayerNamesLike(doc, layerName);
         for (String s : layerNames1) {
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, s);
+            if(!polyLinesByLayer.isEmpty()) {
+            	//Code added for the layername with colorCode match
+        		Util.validateLayerColor(layerName, Util.getColorByPolyLine(polyLinesByLayer), pl);
+            }
             if (!polyLinesByLayer.isEmpty())
                 for (DXFLWPolyline pline : polyLinesByLayer)
                     for (int i = 0; i < typicalCount; i++) {
@@ -136,6 +149,11 @@ public class SanitationExtract extends FeatureExtract {
         layerNames1 = Util.getLayerNamesLike(doc, layerName);
         for (String s : layerNames1) {
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, s);
+            if(!polyLinesByLayer.isEmpty()) {
+            	//Code added for the layername with colorCode match
+        		Util.validateLayerColor(layerName, Util.getColorByPolyLine(polyLinesByLayer), pl);
+            }
+            
             if (!polyLinesByLayer.isEmpty())
                 for (DXFLWPolyline pline : polyLinesByLayer)
                     for (int i = 0; i < typicalCount; i++) {
@@ -149,6 +167,10 @@ public class SanitationExtract extends FeatureExtract {
         layerNames1 = Util.getLayerNamesLike(doc, layerName);
         for (String s : layerNames1) {
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, s);
+            if(!polyLinesByLayer.isEmpty()) {
+            	//Code added for the layername with colorCode match
+        		Util.validateLayerColor(layerName, Util.getColorByPolyLine(polyLinesByLayer), pl);
+            }
             if (!polyLinesByLayer.isEmpty())
                 for (DXFLWPolyline pline : polyLinesByLayer)
                     for (int i = 0; i < typicalCount; i++) {
@@ -166,6 +188,10 @@ public class SanitationExtract extends FeatureExtract {
         layerNames1 = Util.getLayerNamesLike(doc, layerName);
         for (String s : layerNames1) {
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, s);
+            if(!polyLinesByLayer.isEmpty()) {
+            	//Code added for the layername with colorCode match
+        		Util.validateLayerColor(layerName, Util.getColorByPolyLine(polyLinesByLayer), pl);
+            }
             if (!polyLinesByLayer.isEmpty())
                 for (DXFLWPolyline pline : polyLinesByLayer)
                     for (int i = 0; i < typicalCount; i++) {
@@ -184,6 +210,10 @@ public class SanitationExtract extends FeatureExtract {
         layerNames1 = Util.getLayerNamesLike(doc, layerName);
         for (String s : layerNames1) {
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, s);
+            if(!polyLinesByLayer.isEmpty()) {
+            	//Code added for the layername with colorCode match
+        		Util.validateLayerColor(layerName, Util.getColorByPolyLine(polyLinesByLayer), pl);
+            }
             if (!polyLinesByLayer.isEmpty())
                 for (DXFLWPolyline pline : polyLinesByLayer)
                     for (int i = 0; i < typicalCount; i++) {

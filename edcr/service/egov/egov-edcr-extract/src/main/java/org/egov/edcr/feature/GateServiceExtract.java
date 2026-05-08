@@ -47,6 +47,12 @@ public class GateServiceExtract extends FeatureExtract {
         List<DXFLWPolyline> polyLinesByLayer = Util.getPolyLinesByLayer(planDetail.getDoc(), gateLayerName);
 
         List<DXFLWPolyline> mainGatePolyLinesByLayer = Util.getPolyLinesByLayer(planDetail.getDoc(), mainGateLayerName);
+        
+        if(!mainGatePolyLinesByLayer.isEmpty()) {
+        	Util.validateLayerColor(mainGateLayerName, 
+        			Util.getColorByPolyLine(mainGatePolyLinesByLayer), planDetail);
+        }
+        
         List<DXFLWPolyline> wicketGatePolyLinesByLayer = Util.getPolyLinesByLayer(planDetail.getDoc(), wicketGateLayerName);
         
         try {

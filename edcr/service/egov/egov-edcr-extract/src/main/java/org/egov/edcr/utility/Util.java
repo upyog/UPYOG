@@ -103,6 +103,13 @@ public class Util {
         LAYER_RULES.add(new LayerRule(".*REAR_SETBACK$", 71));
         LAYER_RULES.add(new LayerRule(".*SIDE_SETBACK1$", 72));
         LAYER_RULES.add(new LayerRule(".*SIDE_SETBACK2$", 73));
+        
+     // FIRE STAIR (handle FIRESTAIR and FIRE_STAIR both)
+        LAYER_RULES.add(new LayerRule(".*FIRE[_]?STAIR(_\\d+)?$", 97));
+        LAYER_RULES.add(new LayerRule(".*FIRE[_]?STAIR(_\\d+)?_FLIGHT(_\\d+)?$", 98));
+        LAYER_RULES.add(new LayerRule(".*FIRE[_]?STAIR(_\\d+)?_LANDING(_\\d+)?$", 99));
+        LAYER_RULES.add(new LayerRule(".*SPIRA[_]?FIRE[_]?STAIR(_\\d+)?$", 102));
+
 
         // --- STAIRS & CIRCULATION ---
         LAYER_RULES.add(new LayerRule(".*STAIR_k$", 74));
@@ -114,29 +121,24 @@ public class Util {
         LAYER_RULES.add(new LayerRule(".*STAIR_k_LANDING_m$", 76));
         LAYER_RULES.add(new LayerRule(".*STAIR_k_LANDING_m_LENGTH$", 1));     // Sub-code 01
         LAYER_RULES.add(new LayerRule(".*STAIR_k_LANDING_m_WIDTH$", 2));      // Sub-code 02
-        
-        LAYER_RULES.add(new LayerRule(".*FIRE_STAIR$", 97));
-        LAYER_RULES.add(new LayerRule(".*FIRE_STAIR_FLIGHT$", 98));
-        LAYER_RULES.add(new LayerRule(".*FIRE_STAIR_LANDING$", 99));
-        LAYER_RULES.add(new LayerRule(".*SPIRA_FIRE_STAIR_k$", 102));
-
+ 
         // --- ROOMS & SANITATION ---
-        LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 77)); 
+        //LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 77)); 
         LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 78)); 
-        LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 79)); 
+        //LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 79)); 
         LAYER_RULES.add(new LayerRule(".*STORE_ROOM_k$", 80));
-        LAYER_RULES.add(new LayerRule(".*KITCHEN_k$", 81));
-        LAYER_RULES.add(new LayerRule(".*KITCHEN_k$", 82));
-        LAYER_RULES.add(new LayerRule(".*KITCHEN_k$", 83));
+        LAYER_RULES.add(new LayerRule(".*KITCHEN(_\\d+)?$", 81));
+        LAYER_RULES.add(new LayerRule(".*KITCHEN(_\\d+)?$", 82));
+        LAYER_RULES.add(new LayerRule(".*KITCHEN(_\\d+)?$", 83));
         LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_k$", 84)); 
         LAYER_RULES.add(new LayerRule(".*BATH_k$", 85));
         LAYER_RULES.add(new LayerRule(".*WATER_CLOSET_k$", 86));
         LAYER_RULES.add(new LayerRule(".*URINAL$", 87));
         LAYER_RULES.add(new LayerRule(".*WASH$", 88));
         LAYER_RULES.add(new LayerRule(".*WATER_CLOSET$", 89));
-        LAYER_RULES.add(new LayerRule(".*DRINKING_WATER$", 91));
-        LAYER_RULES.add(new LayerRule(".*TOILET_k$", 92));
-        LAYER_RULES.add(new LayerRule(".*TOILET_VENTILATION$", 93));
+        LAYER_RULES.add(new LayerRule(".*DRINKING_WATER$", 90));
+        LAYER_RULES.add(new LayerRule(".*TOILET_k$", 91));
+        LAYER_RULES.add(new LayerRule(".*TOILET_VENTILATION$", 92));
 
         // --- BASEMENT & PARKING ---
         LAYER_RULES.add(new LayerRule(".*BASEMENT_FOOT_PRINT$", 110));
@@ -145,7 +147,7 @@ public class Util {
         LAYER_RULES.add(new LayerRule(".*BSMNT_SIDE_SETBACK1$", 7));
         LAYER_RULES.add(new LayerRule(".*BSMNT_SIDE_SETBACK2$", 8));
         LAYER_RULES.add(new LayerRule(".*OPEN_PARKING$", 116));
-        LAYER_RULES.add(new LayerRule(".*ST_PARKING$", 117));
+        LAYER_RULES.add(new LayerRule(".*STILT(_PARKING)?(_\\d+)?$", 117));
         LAYER_RULES.add(new LayerRule(".*MECH_PARKING$", 118));
         LAYER_RULES.add(new LayerRule(".*VISITOR_PARKING$", 119));
         LAYER_RULES.add(new LayerRule(".*SPECIAL_PARKING$", 120));
@@ -160,9 +162,9 @@ public class Util {
         LAYER_RULES.add(new LayerRule(".*DA_LIFT$", 138));
 
         // --- DOORS, WINDOWS & SERVICES ---
-        LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_n_DOOR_n$", 139));
-        LAYER_RULES.add(new LayerRule(".*WINDOW_n$", 140));
-        LAYER_RULES.add(new LayerRule(".*NON_HABITATIONAL_DOOR_n$", 46));
+        LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_\\d+_DOOR_\\d+$", 139));
+        LAYER_RULES.add(new LayerRule(".*WINDOW_\\d+$", 140));
+        LAYER_RULES.add(new LayerRule(".*NON_HABITATIONAL_DOOR_\\d+$", 46));
         LAYER_RULES.add(new LayerRule("^SOLAR_PANEL$", 143));
         LAYER_RULES.add(new LayerRule("^SOLAR_WATER_HEATER$", 144));
         LAYER_RULES.add(new LayerRule("^WASTE_MANAGEMENT$", 14));
@@ -171,6 +173,38 @@ public class Util {
         LAYER_RULES.add(new LayerRule("^MAIN_GATE$", 1));
         LAYER_RULES.add(new LayerRule("^DIST_EXIT$", 149));
         LAYER_RULES.add(new LayerRule(".*BLT_UP_AREA_DEDUCT_.*$", 147));
+        
+        // --- GREEN ---
+        LAYER_RULES.add(new LayerRule("^PLANTATION_GREENSTRIP$", 125));
+
+        // --- ROOF WATER TANK HEIGHT ---
+        LAYER_RULES.add(new LayerRule("^BLK_\\d+_ROOF_WATER_TANK_HT$", 131));
+
+        // --- PARAPET HEIGHT ---
+        LAYER_RULES.add(new LayerRule("^BLK_\\d+_PARAPET_HT$", 110));
+
+        // --- EXIT WIDTH DOOR ---
+        LAYER_RULES.add(new LayerRule("^BLK_\\d+_FLR_-?\\d+_EXIT_WIDTH_DOOR$", 100));
+
+        // --- RAIN WATER HARVESTING ---
+        LAYER_RULES.add(new LayerRule("^RWH$", 112));
+
+        // --- NORTH DIRECTION ---
+        LAYER_RULES.add(new LayerRule("^NORTH_DIRECTION$", 108));
+
+        // --- LOCATION PLAN ---
+        LAYER_RULES.add(new LayerRule("^LOCATION_PLAN$", 109));
+
+        // --- STAIR HEADROOM ---
+        LAYER_RULES.add(new LayerRule("^BLK_\\d+_STAIR_HEADROOM$", 107));
+
+        // --- LIGHT & VENTILATION ---
+        LAYER_RULES.add(new LayerRule("^BLK_\\d+_FLR_-?\\d+_LIGHT_VENTILATION$", 121));
+
+        // --- TOILET VENTILATION ---
+        LAYER_RULES.add(new LayerRule("^BLK_\\d+_FLR_-?\\d+_TOILET_\\d+_VENTILATION$", 92));
+
+        
     }
 
     public static int resolveLayerColor(String layerName) {
@@ -291,7 +325,8 @@ public class Util {
         return result;
     }
     
-    public static Map<String, String> getColorByDimensionByLayerByColorCode(PlanDetail planDetail,String name, int expectedColorCode) {
+    public static Map<String, String> getColorByDimensionByLayerByColorCode(PlanDetail planDetail,String name, 
+    		int expectedColorCode) {
     	Map<String, String> result = new HashMap<>();
 
         if (planDetail == null || planDetail.getDoc() == null || name == null) {
@@ -327,6 +362,24 @@ public class Util {
     		return polyLinesByLayer.get(0).getColor();
         }
         return 0;
+    }
+    
+    public static int getColorCodeByMTextANDLayerName(DXFDocument doc, String layerName) {
+          DXFLayer planInfoLayer = doc.getDXFLayer(layerName);
+            if (planInfoLayer != null) {
+                List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
+                DXFText text = null;
+                if (texts != null) {
+                    Iterator iterator = texts.iterator();
+                    while (iterator.hasNext()) {
+                        text = (DXFText) iterator.next();
+                        if (text != null && text.getText() != null) {                           
+                        	return text.getColor();
+                        }
+                    }
+                }
+            }
+            return 0;
     }
     
     public static List<Point> findPointsOnPolylines(List<Point> yardInSidePoints) {
@@ -459,6 +512,28 @@ public class Util {
         disNames.addAll(layerNames);
         return disNames;
     }
+    
+    public static List<String> getAllLayersNameLike(DXFDocument doc, String regExp) {
+    	List<String> layerNames = new ArrayList<>();
+        if (doc == null || regExp == null) {
+            return layerNames;
+        }
+        Pattern pattern = Pattern.compile(regExp, Pattern.CASE_INSENSITIVE);
+        Iterator<?> iterator = doc.getDXFLayerIterator();
+        while (iterator.hasNext()) {
+            DXFLayer layer = (DXFLayer) iterator.next();
+            String name = layer.getName();
+            if (name == null) {
+                continue;
+            }
+            Matcher matcher = pattern.matcher(name);
+            if (matcher.matches()) {
+                layerNames.add(name);
+            }
+        }
+        return layerNames;
+    }
+
 
     public static List<DXFLine> getLinesByLayer(DXFDocument dxfDocument, String name) {
         List<DXFLine> lines = new ArrayList<>();
@@ -1212,6 +1287,25 @@ public class Util {
 
     }
 
+    public static List<DXFLWPolyline> getPolyLinesByLayerPattern(DXFDocument doc, String regex) {
+
+        List<DXFLWPolyline> result = new ArrayList<>();
+
+        List<String> layers = getLayerNamesLike(doc, regex);
+
+        for (String layer : layers) {
+
+            List<DXFLWPolyline> polylines = getPolyLinesByLayer(doc, layer);
+
+            if (polylines != null && !polylines.isEmpty()) {
+                result.addAll(polylines);
+            }
+        }
+
+        return result;
+    }
+
+    
     public static List<DXFLWPolyline> getPolyLinesByLayerAndColor(DXFDocument dxfDocument, String layerName,
             int colorCode, PlanDetail pl) {
 

@@ -35,6 +35,10 @@ public class RainWaterHarvestingExtract extends FeatureExtract {
         // Rain water harvesting Utility
         List<DXFLWPolyline> rainWaterHarvesting = Util.getPolyLinesByLayer(pl.getDoc(),
                 layerNames.getLayerName("LAYER_NAME_RAINWATER_HARWESTING"));
+        if(!rainWaterHarvesting.isEmpty()) {
+        	Util.validateLayerColor(rainWaterHarvesting.get(0).getLayerName(), 
+        			Util.getColorByPolyLine(rainWaterHarvesting), pl);
+        }
         if (rainWaterHarvesting != null && !rainWaterHarvesting.isEmpty())
             for (DXFLWPolyline pline : rainWaterHarvesting) {
                 Measurement measurement = new MeasurementDetail(pline, true);
@@ -64,6 +68,13 @@ public class RainWaterHarvestingExtract extends FeatureExtract {
             String tankCapacity = Util.getMtextByLayerName(pl.getDoc(),
                     layerNames.getLayerName("LAYER_NAME_RAINWATER_HARWESTING"),
                     layerNames.getLayerName("LAYER_NAME_RWH_CAPACITY_L"));
+            
+            int tankCapacity1 = Util.getColorCodeByMTextANDLayerName(pl.getDoc(),
+                    layerNames.getLayerName("LAYER_NAME_RAINWATER_HARWESTING"));
+            
+            	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_RAINWATER_HARWESTING"), 
+            			tankCapacity1, pl);            
+            
             if (tankCapacity != null && !tankCapacity.isEmpty())
                 try {
                     if (tankCapacity.contains(";")) {
