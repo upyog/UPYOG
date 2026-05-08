@@ -488,6 +488,9 @@ async function create_bulk_pdf(kafkaData) {
   var locality = kafkaData.locality;
   var bussinessService = kafkaData.bussinessService;
   var isConsolidated = kafkaData.isConsolidated;
+  var batchType = kafkaData.batchType;
+  var group = kafkaData.group;
+  var url = kafkaData.url;
   var consumerCode = kafkaData.consumerCode;
   var pdfKey = kafkaData.pdfkey;
   var requestinfo = kafkaData.requestinfo;
@@ -748,12 +751,20 @@ async function create_bulk_pdf(kafkaData) {
 
     if (!isConsolidated && bussinessService === 'WS') {
       try {
-        var inputData = { searchCriteria: { locality: locality, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService  } };
+          var inputData ={}
+          if(batchType  === 'Group'){
+            inputData = { searchCriteria: { group: group, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService  } };
+          }else{
+            inputData  = { searchCriteria: { locality: locality, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService  } };
+          }
+            
            waterBillsData = await search_billgeneiWater(
            inputData,
            { RequestInfo: requestinfo.RequestInfo },
            headers
          );
+
+         console.log("waterBillsData",waterBillsData)
          waterBillsData = waterBillsData.data.Bills;
           if (waterBillsData.length > 0) {
             for (let waterBill of waterBillsData) {
