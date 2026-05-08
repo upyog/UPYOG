@@ -106,20 +106,61 @@ public class DemandRepository {
 		return jdbcTemplate.query(sql, presparedStmtList.toArray(), demandRowMapper);
 	}
 
+//	@Transactional
+//	public void save(DemandRequest demandRequest) {
+//
+//		log.debug("DemandRepository save, the request object : " + demandRequest);
+//		List<Demand> demands = demandRequest.getDemands();
+//		List<DemandDetail> demandDetails = new ArrayList<>();
+//		
+//		for (Demand demand : demands) {
+//			demandDetails.addAll(demand.getDemandDetails());
+//		}
+//		
+//		insertBatch(demands, demandDetails);
+//		log.debug("Demands saved >>>> ");
+//		insertBatchForAudit(demands, demandDetails);
+//	}
+	
 	@Transactional
 	public void save(DemandRequest demandRequest) {
 
-		log.debug("DemandRepository save, the request object : " + demandRequest);
-		List<Demand> demands = demandRequest.getDemands();
-		List<DemandDetail> demandDetails = new ArrayList<>();
-		
-		for (Demand demand : demands) {
-			demandDetails.addAll(demand.getDemandDetails());
-		}
-		
-		insertBatch(demands, demandDetails);
-		log.debug("Demands saved >>>> ");
-		insertBatchForAudit(demands, demandDetails);
+	    log.debug("DemandRepository save, the request object : " + demandRequest);
+	    List<Demand> demands = demandRequest.getDemands();
+	    List<DemandDetail> demandDetails = new ArrayList<>();
+
+	    for (Demand demand : demands) {
+	        for (DemandDetail detail : demand.getDemandDetails()) {
+
+	            // FIX: Apportion service injects ADVANCE details with all fields null.
+	            // save() path hits insertBatch directly — same NPE as update() path.
+	            // Enrich only null fields — never overwrites valid data.
+	            if (detail.getId() == null) {
+	                detail.setId(UUID.randomUUID().toString());
+	            }
+	            if (detail.getDemandId() == null) {
+	                detail.setDemandId(demand.getId());
+	            }
+	            if (detail.getTenantId() == null) {
+	                detail.setTenantId(demand.getTenantId());
+	            }
+	            if (detail.getAuditDetails() == null) {
+	                AuditDetails enriched = AuditDetails.builder()
+	                        .createdBy(demand.getAuditDetails().getCreatedBy())
+	                        .lastModifiedBy(demand.getAuditDetails().getLastModifiedBy())
+	                        .createdTime(demand.getAuditDetails().getCreatedTime())
+	                        .lastModifiedTime(demand.getAuditDetails().getLastModifiedTime())
+	                        .build();
+	                detail.setAuditDetails(enriched);
+	            }
+
+	            demandDetails.add(detail);
+	        }
+	    }
+
+	    insertBatch(demands, demandDetails);
+	    log.debug("Demands saved >>>> ");
+	    insertBatchForAudit(demands, demandDetails);
 	}
 	
 	@Transactional
