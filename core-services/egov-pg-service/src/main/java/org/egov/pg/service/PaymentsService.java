@@ -127,7 +127,6 @@ public class PaymentsService {
 		//this is for multiple owner name to display in payment recipet
 		StringBuilder url = new StringBuilder(props.getPropertyServiceHost());
 		url.append(props.getPropertyServiceSearchEndpoint());
-		TransactionCriteria critria = new TransactionCriteria();
 		if(!StringUtils.isEmpty(request.getTransaction().getConsumerCode()))
 		{
 	        url.append("?tenantId=");
@@ -138,7 +137,7 @@ public class PaymentsService {
 		}
 		else
 		{
-			critria.setTxnId(request.getTransaction().getTxnId());
+			TransactionCriteria critria = TransactionCriteria.builder().txnId(request.getTransaction().getTxnId()).build();
 	        List<Transaction> transactions = transactionService.getTransactions(critria);
 	        
 	        url.append("?tenantId=");
