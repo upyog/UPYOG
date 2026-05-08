@@ -37,6 +37,10 @@ public class VentilationExtract extends FeatureExtract {
 					List<DXFLWPolyline> lightAndVentilations = Util.getPolyLinesByLayer(pl.getDoc(), String.format(
 							layerNames.getLayerName("LAYER_NAME_LIGHT_VENTILATION"), b.getNumber(), f.getNumber()));
 					if (!lightAndVentilations.isEmpty()) {
+						
+						Util.validateLayerColor(lightAndVentilations.get(0).getLayerName(), 
+			        			Util.getColorByPolyLine(lightAndVentilations), pl);
+						
 						List<Measurement> lightAndventilationMeasurements = lightAndVentilations.stream()
 								.map(polyline -> new MeasurementDetail(polyline, true)).collect(Collectors.toList());
 						f.getLightAndVentilation().setMeasurements(lightAndventilationMeasurements);
@@ -61,6 +65,10 @@ public class VentilationExtract extends FeatureExtract {
 								List<DXFLWPolyline> lightAndventilations = Util.getPolyLinesByLayer(pl.getDoc(),
 										regularRoomLayer);
 								if (!lightAndventilations.isEmpty()) {
+									
+									Util.validateLayerColor(lightAndventilations.get(0).getLayerName(), 
+						        			Util.getColorByPolyLine(lightAndventilations), pl);
+									
 									List<Measurement> lightAndventilationMeasurements = lightAndventilations.stream()
 											.map(polyline -> new MeasurementDetail(polyline, true))
 											.collect(Collectors.toList());
@@ -87,6 +95,10 @@ public class VentilationExtract extends FeatureExtract {
 								List<DXFLWPolyline> lightAndventilations = Util.getPolyLinesByLayer(pl.getDoc(),
 										acRoomLayer);
 								if (!lightAndventilations.isEmpty()) {
+									
+									Util.validateLayerColor(lightAndventilations.get(0).getLayerName(), 
+						        			Util.getColorByPolyLine(lightAndventilations), pl);
+									
 									List<Measurement> lightAndventilationMeasurements = lightAndventilations.stream()
 											.map(polyline -> new MeasurementDetail(polyline, true))
 											.collect(Collectors.toList());

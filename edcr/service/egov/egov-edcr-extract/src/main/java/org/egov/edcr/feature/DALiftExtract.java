@@ -28,7 +28,7 @@ public class DALiftExtract extends FeatureExtract {
         for (Block block : pl.getBlocks())
             if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty())
                 for (Floor floor : block.getBuilding().getFloors())
-                    setDALifts(pl.getDoc(), block, floor);
+                    setDALifts(pl, block, floor);
         return pl;
     }
 
@@ -37,7 +37,7 @@ public class DALiftExtract extends FeatureExtract {
         return pl;
     }
 
-    private void setDALifts(DXFDocument doc, Block block, Floor floor) {
+    private void setDALifts(PlanDetail pl, Block block, Floor floor) {
         if (!block.getTypicalFloor().isEmpty())
             for (TypicalFloor tp : block.getTypicalFloor())
                 if (tp.getRepetitiveFloorNos().contains(floor.getNumber()))
@@ -49,10 +49,20 @@ public class DALiftExtract extends FeatureExtract {
                             }
         String liftRegex = String.format(layerNames.getLayerName("LAYER_NAME_DA_LIFT"), block.getNumber(), floor.getNumber())
                 + "_+\\d";
-        List<String> liftLayer = Util.getLayerNamesLike(doc, liftRegex);
+        List<String> liftLayer = Util.getLayerNamesLike(pl.getDoc(), liftRegex);
+        
+        if(!liftLayer.isEmpty()) {
+        	List<DXFLWPolyline> daPolyLines1 = Util.getPolyLinesByLayer(pl.getDoc(),
+        			liftLayer.get(0));
+        	if(!daPolyLines1.isEmpty()) {
+    			Util.validateLayerColor(liftLayer.get(0), 
+    					Util.getColorByPolyLine(daPolyLines1), pl);
+            }
+        }
+        
         if (!liftLayer.isEmpty())
             for (String lftLayer : liftLayer) {
-                List<DXFLWPolyline> polylines = Util.getPolyLinesByLayer(doc, lftLayer);
+                List<DXFLWPolyline> polylines = Util.getPolyLinesByLayer(pl.getDoc(), lftLayer);
                 String[] splitLayer = lftLayer.split("_", 6);
                 if (splitLayer.length == 6 && splitLayer[5] != null && !splitLayer[5].isEmpty()
                         && !polylines.isEmpty()) {

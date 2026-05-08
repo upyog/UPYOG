@@ -122,7 +122,7 @@ public class SpiralStair extends FeatureProcess {
 								if (valid) {
 									setReportOutputDetailsFloorStairWise(plan, RULE42_5_IV, value,
 											spiralStair.getNumber(), "",
-											"spiral stair of fire stair not allowed for building with height > 9 for block "
+											"spiral stair of fire stair not allowed for building with height > 10 for block "
 													+ block.getNumber() + " " + value,
 											Result.Not_Accepted.getResultVal(), scrutinyDetail);
 								} else {

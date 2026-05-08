@@ -58,6 +58,8 @@ import java.util.Set;
 public interface FileStoreService {
 
     FileStoreMapper store(File file, String fileName, String mimeType, String moduleName);
+    
+    FileStoreMapper store(File file, String fileName, String mimeType, String moduleName, String tenantId);
 
     FileStoreMapper store(InputStream fileStream, String fileName, String mimeType, String moduleName);
 

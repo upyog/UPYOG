@@ -52,14 +52,22 @@ public class ExitWidthExtract extends FeatureExtract {
                                 floor.getNumber());
 						List<BigDecimal> exitWidthDoors = Util.getListOfDimensionValueByLayer(pl,
 								layerNameExitWidthDoor);
+						
                         String layerNameExitWidthStair = String.format(layerNames.getLayerName("LAYER_NAME_EXIT_WIDTH_STAIR"),
                                 block.getNumber(),
 								floor.getNumber());
 						List<BigDecimal> exitWidthStairs = Util.getListOfDimensionValueByLayer(pl,
 								layerNameExitWidthStair);
-
-						if (!exitWidthDoors.isEmpty())
+						
+						if (!exitWidthDoors.isEmpty()) {
 							floor.setExitWidthDoor(exitWidthDoors);
+							Map<String, String> data1 = Util.getColorByDimensionByLayer(pl, layerNameExitWidthDoor);
+					        if(!data1.isEmpty()) {
+					        	String layer1 = data1.get("layerName");
+						        String color1 = data1.get("colorCode");					        
+								Util.validateLayerColor(layer1, Integer.parseInt(color1), pl);
+					        }
+						}
 
 						if (!exitWidthStairs.isEmpty())
 							floor.setExitWidthStair(exitWidthStairs);

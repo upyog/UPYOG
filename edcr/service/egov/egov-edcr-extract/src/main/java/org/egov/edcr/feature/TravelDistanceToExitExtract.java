@@ -3,6 +3,7 @@ package org.egov.edcr.feature;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +28,16 @@ public class TravelDistanceToExitExtract extends FeatureExtract {
         if (pl != null) {
             String layerName = layerNames.getLayerName("LAYER_NAME_TRAVEL_DIST_TO_EXIT");
             List<BigDecimal> travelDistanceDimensions = Util.getListOfDimensionValueByLayer(pl, layerName);
+            
+            if(!travelDistanceDimensions.isEmpty()) {
+            	Map<String, String> data = Util.getColorByDimensionByLayer(pl, layerName);
+    	        String layer = data.get("layerName");
+    	        String color = data.get("colorCode");
+    	        
+    	      //Code added for the layername with colorCode match
+    			Util.validateLayerColor(layer, Integer.parseInt(color), pl);
+            }            
+			
             if (!travelDistanceDimensions.isEmpty())
                 pl.setTravelDistancesToExit(travelDistanceDimensions);
         }

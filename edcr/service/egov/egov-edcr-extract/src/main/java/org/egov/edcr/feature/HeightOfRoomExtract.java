@@ -69,6 +69,15 @@ public class HeightOfRoomExtract extends FeatureExtract {
                                 block.getNumber(), floor.getNumber(), "+\\d");
 
                         List<String> acRoomLayers = Util.getLayerNamesLike(pl.getDoc(), acRoomLayerName);
+                        
+                        if(!acRoomLayers.isEmpty()) {
+                        	List<DXFLWPolyline> acPolyLines1 = Util.getPolyLinesByLayer(pl.getDoc(),
+                            		acRoomLayers.get(0));
+                        	if(!acPolyLines1.isEmpty()) {
+                            	//Code added for the layername with colorCode match
+                    			Util.validateLayerColor(acRoomLayers.get(0), Util.getColorByPolyLine(acPolyLines1), pl);
+                            }
+                        }                                              
 
                         if (!acRoomLayers.isEmpty()) {
 
@@ -119,6 +128,17 @@ public class HeightOfRoomExtract extends FeatureExtract {
                                                         block.getNumber(), floor.getNumber(), acRoom.getNumber(), "+\\d");
                                         List<String> acRoomMezzLayers = Util.getLayerNamesLike(pl.getDoc(),
                                                 acRoomMezzLayerRegExp);
+                                        
+                                        if(!acRoomMezzLayers.isEmpty()) {
+                                        	List<DXFLWPolyline> mezPolyLines1 = Util.getPolyLinesByLayer(pl.getDoc(),
+                                        			acRoomMezzLayers.get(0));
+                                        	if(!mezPolyLines1.isEmpty()) {
+                                            	//Code added for the layername with colorCode match
+                                    			Util.validateLayerColor(acRoomMezzLayers.get(0), 
+                                    					Util.getColorByPolyLine(mezPolyLines1), pl);
+                                            }
+                                        }
+                                        
                                         if (!acRoomMezzLayers.isEmpty()) {
                                             for (String layerName : acRoomMezzLayers) {
                                                 List<Occupancy> roomMezzanines = new ArrayList<>();
@@ -162,10 +182,13 @@ public class HeightOfRoomExtract extends FeatureExtract {
                                 block.getNumber(), floor.getNumber(), "+\\d");
 
                         List<String> regularRoomLayers = Util.getLayerNamesLike(pl.getDoc(), regularRoomLayerName);
-                        List<DXFLWPolyline> roomPolyLines1 = Util.getPolyLinesByLayer(pl.getDoc(),
-                                regularRoomLayers.get(0));
-                      //Code added for the layername with colorCode match
-            			Util.validateLayerColor(regularRoomLayers.get(0), Util.getColorByPolyLine(roomPolyLines1), pl);
+                        
+                        if(!regularRoomLayers.isEmpty()) {
+                        	List<DXFLWPolyline> roomPolyLines1 = Util.getPolyLinesByLayer(pl.getDoc(),
+                                    regularRoomLayers.get(0));
+                          //Code added for the layername with colorCode match
+                			Util.validateLayerColor(regularRoomLayers.get(0), Util.getColorByPolyLine(roomPolyLines1), pl);
+                        }
             			
                         if (!regularRoomLayers.isEmpty()) {
 
@@ -173,10 +196,17 @@ public class HeightOfRoomExtract extends FeatureExtract {
 
                                 for (String type : roomOccupancyTypes) {
                                     Integer colorCode = roomOccupancyFeature.get(type);
-                                    List<BigDecimal> regularRoomheights = Util.getListOfDimensionByColourCode(pl,
-                                            regularRoomLayer, colorCode);
-                                    if (!regularRoomheights.isEmpty())
-                                        roomHeightMap.put(colorCode, regularRoomheights);
+//                                    List<BigDecimal> regularRoomheights1 = Util.getListOfDimensionByColourCode(pl,
+//                                            regularRoomLayer, colorCode);
+//                                    List<BigDecimal> regularRoomheights = Util.getListOfDimensionValueByLayer(pl,
+//                                            regularRoomLayer);
+                                    Map<Integer, List<BigDecimal>> map=  Util.extractAndMapDimensionValuesByColorCode(pl,
+                                    		regularRoomLayer);
+                                    
+                                    if (map != null && !map.isEmpty()) {
+                                        roomHeightMap.putAll(map);
+                                    }
+                                        
                                 }
 
                                 List<DXFLWPolyline> roomPolyLines = Util.getPolyLinesByLayer(pl.getDoc(),
@@ -199,7 +229,8 @@ public class HeightOfRoomExtract extends FeatureExtract {
                                         List<Measurement> rooms = new ArrayList<Measurement>();
                                         roomPolyLines.stream().forEach(rp -> {
                                             Measurement m = new MeasurementDetail(rp, true);
-                                            if (!roomHeightMap.isEmpty() && roomHeightMap.containsKey(m.getColorCode())) {
+//                                            if (!roomHeightMap.isEmpty() && roomHeightMap.containsKey(m.getColorCode())) {
+                                            if (!roomHeightMap.isEmpty()) {
                                                 for (BigDecimal value : roomHeightMap.get(m.getColorCode())) {
                                                     RoomHeight roomHeight = new RoomHeight();
                                                     roomHeight.setColorCode(m.getColorCode());
@@ -257,9 +288,15 @@ public class HeightOfRoomExtract extends FeatureExtract {
                             }
                         }
                     	// Code Added by Neha for Doors extract
+//						String doorLayerName = String.format(layerNames.getLayerName("LAYER_NAME_DOOR"),
+//								block.getNumber(), floor.getNumber(), "+\\d");//BLK_1_FLR_0_DOOR_+\d
+						
+						String doorLayerName = String.format(
+							    "BLK_%s_FLR_%s_REGULAR_ROOM_\\d+_DOOR_\\d+",
+							    block.getNumber(),
+							    floor.getNumber()
+							);
 
-						String doorLayerName = String.format(layerNames.getLayerName("LAYER_NAME_DOOR"),
-								block.getNumber(), floor.getNumber(), "+\\d");
 
 						List<String> doorLayers = Util.getLayerNamesLike(pl.getDoc(), doorLayerName);
 
@@ -507,7 +544,6 @@ public class HeightOfRoomExtract extends FeatureExtract {
 						 }
 						
 						// Code Added by Neha for windows extract
-
 						String windowLayerName = String.format(layerNames.getLayerName("LAYER_NAME_WINDOW"),
 								block.getNumber(), floor.getNumber(), "+\\d");
 

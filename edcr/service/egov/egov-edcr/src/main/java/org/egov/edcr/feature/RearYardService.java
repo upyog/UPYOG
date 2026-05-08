@@ -259,22 +259,25 @@ public class RearYardService extends GeneralRule {
 									 * 
 									 * }
 									 */
-								}else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								}else if (occupancy.getTypeHelper().getSubtype()!=null && G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 										min = setback.getRearYard().getArea();
 										mean = setback.getRearYard().getWidth();
 									  checkRearYardForIndustrial(setback, block.getBuilding(), pl, block,
 									  setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
 									  occupancy.getTypeHelper(), rearYardResult , buildingHeight); 
-								}else if (L.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								}else if (occupancy.getTypeHelper().getSubtype()!=null && L.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 									min = setback.getRearYard().getArea();
 									checkRearYardForPublicBuilding(setback, block.getBuilding(), pl, block,
 									  setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
 									  occupancy.getTypeHelper(), rearYardResult , buildingHeight); 
 								}else {
 										min = setback.getRearYard().getArea();
-									  checkRearYardOtherOccupancies(setback, block.getBuilding(), pl, block,
-									  setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
-									  occupancy.getTypeHelper(), rearYardResult, buildingHeight,errors); 
+										if(occupancy.getTypeHelper().getSubtype()!=null) {
+											checkRearYardOtherOccupancies(setback, block.getBuilding(), pl, block,
+													  setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
+													  occupancy.getTypeHelper(), rearYardResult, buildingHeight,errors);
+										}
+									   
 								}
 									 
 

@@ -28,6 +28,11 @@ public class LocationPlanExtract extends FeatureExtract {
 
         List<DXFLWPolyline> locationPlanPolyLines = Util.getPolyLinesByLayer(doc,
                 layerNames.getLayerName("LAYER_NAME_LOCATION_PLAN"));
+        
+        if(!locationPlanPolyLines.isEmpty()) {
+             	Util.validateLayerColor(locationPlanPolyLines.get(0).getLayerName(), 
+        			Util.getColorByPolyLine(locationPlanPolyLines), pl);
+        }
 
         if (!locationPlanPolyLines.isEmpty()) {
             pl.getDrawingPreference().setLocationPlans(new ArrayList<>());

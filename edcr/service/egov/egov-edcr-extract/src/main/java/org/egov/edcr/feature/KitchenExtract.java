@@ -50,20 +50,64 @@ public class KitchenExtract extends FeatureExtract {
 
                         String kitchenLayer = String.format(layerNames.getLayerName("LAYER_NAME_KITCHEN"), block.getNumber(),
                                 floor.getNumber());
+                        List<DXFLWPolyline> polylines =
+                                Util.getPolyLinesByLayerPattern(
+                                        pl.getDoc(),
+                                        String.format("^BLK_%s_FLR_%s_KITCHEN(_\\d+)?$",
+                                                block.getNumber(),
+                                                floor.getNumber())
+                                );
+
+                        
                         List<BigDecimal> kitchenHeight = Util.getListOfDimensionValueByLayer(pl, kitchenLayer);
 
                         List<DXFLWPolyline> residentialKitchenPolyLines = Util.getPolyLinesByLayerAndColor(pl.getDoc(),
-                                kitchenLayer, DxfFileConstants.RESIDENTIAL_KITCHEN_ROOM_COLOR, pl);
+                                kitchenLayer, DxfFileConstants.RESIDENTIAL_KITCHEN_ROOM_COLOR, pl);                                           
+                        
+                        if(!residentialKitchenPolyLines.isEmpty()) {
+                			Util.validateLayerColor(kitchenLayer, 
+                					Util.getColorByPolyLine(residentialKitchenPolyLines), pl);
+                        }
+                        
                         List<DXFLWPolyline> residentialKitchenStorePolyLines = Util.getPolyLinesByLayerAndColor(
                                 pl.getDoc(), kitchenLayer, DxfFileConstants.RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR, pl);
+                        
+                        if(!residentialKitchenStorePolyLines.isEmpty()) {
+                			Util.validateLayerColor(kitchenLayer, 
+                					Util.getColorByPolyLine(residentialKitchenStorePolyLines), pl);
+                        }
+                        
                         List<DXFLWPolyline> residentialKitchenDiningPolyLines = Util.getPolyLinesByLayerAndColor(
                                 pl.getDoc(), kitchenLayer, DxfFileConstants.RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR, pl);
+                        
+                        if(!residentialKitchenDiningPolyLines.isEmpty()) {
+                			Util.validateLayerColor(kitchenLayer, 
+                					Util.getColorByPolyLine(residentialKitchenDiningPolyLines), pl);
+                        }
+                        
                         List<DXFLWPolyline> commercialKitchenPolyLines = Util.getPolyLinesByLayerAndColor(pl.getDoc(),
                                 kitchenLayer, DxfFileConstants.COMMERCIAL_KITCHEN_ROOM_COLOR, pl);
+                        
+                        if(!commercialKitchenPolyLines.isEmpty()) {
+                			Util.validateLayerColor(kitchenLayer, 
+                					Util.getColorByPolyLine(commercialKitchenPolyLines), pl);
+                        }
+                        
                         List<DXFLWPolyline> commercialKitchenStorePolyLines = Util.getPolyLinesByLayerAndColor(
                                 pl.getDoc(), kitchenLayer, DxfFileConstants.COMMERCIAL_KITCHEN_STORE_ROOM_COLOR, pl);
+                        
+                        if(!commercialKitchenStorePolyLines.isEmpty()) {
+                			Util.validateLayerColor(kitchenLayer, 
+                					Util.getColorByPolyLine(commercialKitchenStorePolyLines), pl);
+                        }
+                        
                         List<DXFLWPolyline> commercialKitchenDiningPolyLines = Util.getPolyLinesByLayerAndColor(
                                 pl.getDoc(), kitchenLayer, DxfFileConstants.COMMERCIAL_KITCHEN_DINING_ROOM_COLOR, pl);
+                        
+                        if(!commercialKitchenDiningPolyLines.isEmpty()) {
+                			Util.validateLayerColor(kitchenLayer, 
+                					Util.getColorByPolyLine(commercialKitchenDiningPolyLines), pl);
+                        }
 
                         if (!residentialKitchenPolyLines.isEmpty())
                             kitchenPolyLines.addAll(residentialKitchenPolyLines);

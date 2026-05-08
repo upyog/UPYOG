@@ -44,6 +44,12 @@ public class WaterClosetsExtract extends FeatureExtract {
                     String layerName = String.format(layerNames.getLayerName("LAYER_NAME_BLK_FLR_WC"), block.getNumber(),
                             f.getNumber());
                     rooms = Util.getPolyLinesByLayer(planDetail.getDoc(), layerName);
+                    
+                    if(!rooms.isEmpty()) {
+                    	//Code added for the layername with colorCode match
+                		Util.validateLayerColor(layerName, Util.getColorByPolyLine(rooms), planDetail);
+                    }
+                    
                     roomMeasurements = rooms.stream()
                             .map(flightPolyLine -> new MeasurementDetail(flightPolyLine, true)).collect(Collectors.toList());
                     f.setWaterClosets(new Room());

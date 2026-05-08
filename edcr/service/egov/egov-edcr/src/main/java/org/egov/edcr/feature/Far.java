@@ -637,12 +637,15 @@ public class Far extends FeatureProcess {
 		if (!distinctOccupancyTypesHelper.isEmpty()) {
 			int allResidentialOccTypesForPlan = 0;
 			for (OccupancyTypeHelper occupancy : distinctOccupancyTypesHelper) {
-				LOG.info("occupancy :" + occupancy.getType().getName());
+				//LOG.info("occupancy :" + occupancy.getType().getName());
 				// setting residentialBuilding
 				int residentialOccupancyType = 0;
-				if (occupancy.getType() != null && A.equals(occupancy.getType().getCode())) {
-					residentialOccupancyType = 1;
+				if(occupancy.getType() != null && occupancy.getType().getCode()!=null) {
+					if (A.equals(occupancy.getType().getCode())) {
+						residentialOccupancyType = 1;
+					}
 				}
+				
 				if (residentialOccupancyType == 0) {
 					allResidentialOccTypesForPlan = 0;
 					break;

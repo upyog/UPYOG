@@ -439,6 +439,8 @@ public class DxfFileConstants {
     public static final String MAINRIVER = "MainRiver";
     public static final String SUBRIVER = "SubRiver";
     
+    public static final int RESIDENTIAL_ROOM_COLOR = 78; 
+    
     private static final Map<String, String> SERVICE_TYPE = new ConcurrentHashMap<>();
     static {
     SERVICE_TYPE.put("NEW_CONSTRUCTION", "New Construction");
