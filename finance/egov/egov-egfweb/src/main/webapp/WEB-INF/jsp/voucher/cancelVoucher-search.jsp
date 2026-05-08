@@ -110,7 +110,8 @@ function loadNamesForSelectedType()
 		<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="greybox">&nbsp;</td>
+					<!-- <td class="greybox">&nbsp;</td> -->
+					<td class="bluebox" width="10%"></td>
 					<td class="greybox"><s:text name="voucher.number" /></td>
 					<td class="greybox"><s:textfield name="voucherNumber"
 							id="voucherNumber" maxlength="25" value="%{voucherNumber}" /></td>
@@ -122,23 +123,29 @@ function loadNamesForSelectedType()
 
 				</tr>
 				<tr>
-					<td class="greybox">&nbsp;</td>
+					<!-- <td class="greybox">&nbsp;</td> -->
+					<td class="bluebox" width="10%"></td>
 					<td class="greybox"><s:text name="voucher.type" /><span	class="mandatory1">*</span></td>
 					<td class="greybox"><s:select name="type" id="type"	list="dropdownData.typeList" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 							onchange="loadVoucherNames(this.value)" /></td>
+					<td class="bluebox w5">&nbsp;</td>
 					<td class="greybox"><s:text name="voucher.name" /><span	class="mandatory1">*</span></td>
 					<td class="greybox"><s:select name="name" id="name"	list="%{nameMap}"  headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
+					<td class="bluebox" width="10%"></td>
 				</tr>
 				<tr>
-					<td class="greybox">&nbsp;</td>
+					<!-- <td class="greybox">&nbsp;</td> -->
+					<td class="bluebox" width="10%"></td>
 					<td class="bluebox"><s:text name="voucher.fromdate" /><span	class="mandatory1">*</span></td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
 					<td class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{tempFromDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"	data-inputmask="'mask': 'd/m/y'" autocomplete="off"/></td>
+					<td class="bluebox w5">&nbsp;</td>
 					<td class="bluebox"><s:text name="voucher.todate" /><span class="mandatory1">*</span></td>
 					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />
 					<td class="bluebox"><s:textfield id="toDate" name="toDate" value="%{tempToDate}" onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"	data-inputmask="'mask': 'd/m/y'" autocomplete="off"/></td>
+					<td class="bluebox" width="10%"></td>		
 				</tr>
 			</table>
 			<div class="subheadsmallnew"></div>

@@ -59,6 +59,7 @@ import org.egov.egf.model.ClosedPeriod;
 import org.egov.egf.model.ClosedPeriodSearchRequest;
 import org.egov.egf.web.adaptor.ClosedPeriodJsonAdaptor;
 import org.egov.enums.CloseTypeEnum;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
 import org.egov.services.closeperiod.ClosedPeriodService;
 import org.egov.utils.FinancialConstants;
@@ -106,6 +107,7 @@ public class ClosedPeriodController {
     private void prepareNewForm(final Model model) {
         model.addAttribute("cFinancialYears", cFinancialYearService.getFinancialYearNotClosedAndActive());
         model.addAttribute("getAllMonths", DateUtils.getAllMonths());
+        model.addAttribute("cityName",ApplicationThreadLocals.getCityName());
     }
     
     private void prepareSoftClosePeriod(final Model model) {
@@ -190,6 +192,7 @@ public class ClosedPeriodController {
         else
             prepareNewForm(model);
         model.addAttribute(CLOSED_PERIOD_SEARCH_REQUEST, closedPeriodSearchRequest);
+        model.addAttribute("cityName",ApplicationThreadLocals.getCityName());
         return CLOSEDPERIOD_SEARCH;
 
     }

@@ -55,6 +55,17 @@
 <%@ include file="/includes/taglibs.jsp"%>
 
 <style>
+.control-label {
+    text-align: left !important;
+    color: #000 !important;
+    font-weight: normal;
+    font-size: 12px !important;
+}
+
+.form-horizontal .control-label {
+    text-align: left !important;
+    color: #000 !important;
+}
 .table thead:first-child>tr:first-child th {
     border-bottom: none;
     background: #f8f8f8;
@@ -98,7 +109,8 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+						    <div class="col-sm-1"></div>
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.bank.branch"/>:</label>
 							<div class="col-sm-3 add-margin">
 								<form:select name="bankBranch" path="" data-first-option="false"
@@ -124,10 +136,12 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 									</form:option>
 								</form:select>
 							</div>
+							<div class="col-sm-1"></div>
 
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+						    <div class="col-sm-1"></div>
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.instrument.mode"/> <span
 								class="mandatory"></span>:</label>
 							<div class="col-sm-3 add-margin">
@@ -142,10 +156,12 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 									</c:forEach>
 								</form:select>
 							</div>
+							<div class="col-sm-1"></div>
 
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+						    <div class="col-sm-1"></div>
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.cheque.dd.number" /> <span
 								class="mandatory"></span>:</label>
 							<div class="col-sm-3 add-margin">
@@ -166,6 +182,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 								<form:errors path="instrumentDate"
 									cssClass="add-margin error-msg" />
 							</div>
+							<div class="col-sm-1"></div>
 						</div>
 						<div class="form-group">
 							<div class="text-center">

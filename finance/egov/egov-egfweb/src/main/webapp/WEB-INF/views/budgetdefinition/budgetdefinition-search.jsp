@@ -90,6 +90,7 @@
 						</div>
 						<div>
 							<input type="hidden" id="mode" name="mode" value="${mode}" />
+							 <input type="hidden" id="ulbName" value="${cityName}" />
 							<div class="form-group">
 								<div class="col-sm-11 add-margin">
 									<div class="text-center">

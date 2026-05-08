@@ -64,6 +64,7 @@ import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.contracts.CFinanancialYearSearchRequest;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.egf.web.adaptor.CFinancialYearJsonAdaptor;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -105,6 +106,7 @@ public class CFinancialYearController {
 
 	private void prepareNewForm(final Model model) {
 		model.addAttribute("cFinancialYears", cFinancialYearService.findAll());
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 	}
 
 	@RequestMapping(value = "/new", method = { RequestMethod.GET, RequestMethod.POST })
@@ -215,6 +217,7 @@ public class CFinancialYearController {
 		model.addAttribute("financialYears", cFinancialYearService.findAll());
 		prepareNewForm(model);
 		model.addAttribute(C_FINANCIAL_YEAR_SEARCH_REQUEST, cFinanancialYearSearchRequest);
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 		return CFINANCIALYEAR_SEARCH;
 
 	}

@@ -123,6 +123,11 @@ jQuery(document).ready(function() {
 		window.location = sUrl;
 	}
 </script>
+<style type="text/css">
+.w5 {
+    width: 5% !important;
+}
+</style>
 </head>
 <body>
 	<s:form action="autoReconciliation" theme="css_xhtml" name="arform"
@@ -156,7 +161,8 @@ jQuery(document).ready(function() {
 		<center>
 			<table border="0" width="100%" cellspacing="0" cellpadding="0">
 				<tr>
-					<td class="greybox"></td>
+					<!-- <td class="greybox"></td> -->
+					<td class="bluebox w5">&nbsp;</td>
 					<td class="greybox"><s:text name="bank" /> <span
 						class="greybox"><span class="mandatory1">*</span></span></td>
 					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
@@ -177,17 +183,19 @@ jQuery(document).ready(function() {
 							onchange="populateaccount(this);" /></td>
 				</tr>
 				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="bankaccount" /> <span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:select name="accountId" id="accountId"
+					<!-- <td class="bluebox"></td> -->
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox"><s:text name="bankaccount" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox"><s:select name="accountId" id="accountId"
 							list="dropdownData.accountList" listKey="id"
 							listValue="chartofaccounts.glcode+'-'+accountnumber" headerKey=""
 							headerValue="%{getText('lbl.choose.options')}" /></td>
-					<td class="bluebox" colspan="2"></td>
+					<!-- <td class="bluebox" colspan="2"></td> -->
 				</tr>
 				<tr>
-					<td class="greybox"></td>
+					<!-- <td class="greybox"></td> -->
+					<td class="bluebox w5">&nbsp;</td>
 					<td class="greybox"><s:text name="upload" /> <span
 						class="greybox"><span class="mandatory1">*</span></span></td>
 					<td class="greybox"><s:file name="bankStatmentInXls"

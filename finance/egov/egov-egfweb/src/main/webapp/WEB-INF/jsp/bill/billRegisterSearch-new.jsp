@@ -54,26 +54,12 @@
 <head>
 <title><s:text name="bill.search.heading"></s:text></title>
 <style>
-
-/* Fix width of all form fields */
-select {
-    width:205px !important;
-}
-
-input[type="text"] {
-    width:205px !important;
-}
-/* Date fields */
-#billDateFrom,
-#billDateTo {
-    width:150px !important;
-}
-
-/* fixing datepicker*/
-.datepicker {
-    z-index: 9999 !important;
-}
-
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+		td.bluebox { vertical-align: middle !important }
 </style>
 </head>
 <body onload="changeMandatoryField()">
@@ -94,39 +80,41 @@ input[type="text"] {
 			</div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox"><s:text name="bill.search.expType" /> <span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="bill.search.expType" /> <span
 						class="mandatory1">*</span></td>
-					<td class="bluebox"><s:select name="expType" id="expType"
+					<td class="bluebox w25"><s:select name="expType" id="expType"
 							list="dropdownData.expType" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}" value="%{expType}" /></td>
-					<td class="greybox"><s:text name="bill.search.billnumber" /></td>
-					<td class="greybox"><s:textfield name="billnumber"
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="bill.search.billnumber" /></td>
+					<td class="greybox w25"><s:textfield name="billnumber"
 							id="billnumber" value="%{billnumber}"
-							onblur="changeMandatoryField()" /></td>
+							onblur="changeMandatoryField()" class="w100"/></td>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="greybox"><s:text name="bill.search.dateFrom" /> <span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="bill.search.dateFrom" /> <span
 						class="mandatory1" id="fromDateMandatory">*</span></td>
 
-					<td class="greybox"><s:date name="billDateFrom"
+					<td class="greybox w25"><s:date name="billDateFrom"
 							var="billDateFrom" format="dd/MM/yyyy" /> <s:textfield
 							id="billDateFrom" name="billDateFrom" value="%{billDateFrom}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 							data-inputmask="'mask': 'd/m/y'" /></td>
-
-					<td class="greybox"><s:text name="bill.search.dateTo" /> <span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="bill.search.dateTo" /> <span
 						class="mandatory1" id="toDateMandatory">*</span></td>
 
-					<td class="greybox"><s:date name="billDateTo" var="billDateTo"
+					<td class="greybox w25"><s:date name="billDateTo" var="billDateTo"
 							format="dd/MM/yyyy" /> <s:textfield id="billDateTo"
 							name="billDateTo" value="%{billDateTo}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100"
 							data-inputmask="'mask': 'd/m/y'" /></td>
-
+					<td class="bluebox w5">&nbsp;</td>
 
 				</tr>
 				<jsp:include page="billSearchCommon-filter.jsp" />

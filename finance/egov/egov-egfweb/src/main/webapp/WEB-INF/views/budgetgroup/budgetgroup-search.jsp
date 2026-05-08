@@ -69,6 +69,7 @@
 									data-pattern="alphanumeric" maxlength="250" />
 							</div>
 							<input type="hidden" id="mode" name="mode" value="${mode}" />
+							<input type="hidden" id="ulbName" value="${cityName}" />
 						</div>
 					</div>
 					<div class="form-group">

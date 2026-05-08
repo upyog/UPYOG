@@ -100,15 +100,12 @@
 		}
 	</script>
 	<style>
-		/* Default field width */
-		select {
-		    width:155px !important;
-		}
-		
-		input[type="text"] {
-		    width:155px !important;
-		}
-	</style>
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+</style>
 </head>
 <body onload="onloadtask();">
 	<s:form action="billVoucher" theme="simple" name="billVoucher">
@@ -130,24 +127,31 @@
 					</span>
 					<table border="0" width="100%">
 						<tr>
-							<td class="bluebox"><s:text name="lbl.bill.type"/> <span class="bluebox"><span class="mandatory1">*</span></span></td>
-							<td class="bluebox"><s:select name="expType" id="expType" list="dropdownData.expTypeList" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
-							<td class="bluebox" id="deptLabel"><s:text name="voucher.department" /></td>
-							<td class="bluebox"><s:select name="vouchermis.departmentcode" id="departmentid" list="dropdownData.departmentList" listKey="code" listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" value="voucherHeader.vouchermis.departmentcode" /></td>
-
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"><s:text name="lbl.bill.type"/> <span class="bluebox"><span class="mandatory1">*</span></span></td>
+							<td class="bluebox w25"><s:select name="expType" id="expType" list="dropdownData.expTypeList" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15" id="deptLabel"><s:text name="voucher.department" /></td>
+							<td class="bluebox w25"><s:select name="vouchermis.departmentcode" id="departmentid" list="dropdownData.departmentList" listKey="code" listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" value="voucherHeader.vouchermis.departmentcode" /></td>
+							<td class="bluebox w5">&nbsp;</td>
 						</tr>
 
 						<tr>
-							<td class="greybox"><s:text name="from.date"/></td>
-							<td class="greybox"><s:textfield id="voucherDateFrom" name="voucherTypeBean.voucherDateFrom" data-date-end-date="0d" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'"  autocomplete="off"/></td>
-							<td class="greybox"><s:text name="to.date"/> </td>
-							<td class="greybox"><s:textfield id="voucherDateTo" name="voucherTypeBean.voucherDateTo" data-date-end-date="0d" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'"  autocomplete="off"/>
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="greybox w15"><s:text name="from.date"/></td>
+							<td class="greybox w25"><s:textfield id="voucherDateFrom" name="voucherTypeBean.voucherDateFrom" data-date-end-date="0d" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker w100" data-inputmask="'mask': 'd/m/y'"  autocomplete="off"/></td>
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="greybox w15"><s:text name="to.date"/> </td>
+							<td class="greybox w25"><s:textfield id="voucherDateTo" name="voucherTypeBean.voucherDateTo" data-date-end-date="0d" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" class="form-control datepicker w100" data-inputmask="'mask': 'd/m/y'"  autocomplete="off"/>
+							<td class="bluebox w5">&nbsp;</td>
 						</tr>
 						<tr>
-							<td class="bluebox"><s:text name="bill.Number" /></td>
-							<td class="bluebox"><s:textfield name="billNumber" id="billNumber" maxlength="50" value="%{billNumber}" /></td>
-							<td class="bluebox"></td>
-							<td class="bluebox"></td>
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"><s:text name="bill.Number" /></td>
+							<td class="bluebox w25"><s:textfield name="billNumber" id="billNumber" maxlength="50" value="%{billNumber}" class="w100"/></td>
+							<td class="bluebox w5">&nbsp;</td>
+							<td class="bluebox w15"></td>
+							<td class="bluebox w25"></td>
 						</tr>
 
 					</table>

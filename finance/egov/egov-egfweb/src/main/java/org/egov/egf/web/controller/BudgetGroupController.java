@@ -56,6 +56,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.egf.web.adaptor.BudgetGroupJsonAdaptor;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetGroupSearchRequest;
@@ -104,6 +105,7 @@ public class BudgetGroupController {
 		model.addAttribute("minCodeList", budgetGroupService.getMinCodeList());
 		model.addAttribute("budgetAccountTypes", Arrays.asList(BudgetAccountType.values()));
 		model.addAttribute("budgetingTypes", Arrays.asList(BudgetingType.values()));
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 
 	}
 
@@ -189,6 +191,7 @@ public class BudgetGroupController {
 		final BudgetGroupSearchRequest budgetGroupSearchRequest = new BudgetGroupSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(BUDGET_GROUP_SEARCH_REQUEST, budgetGroupSearchRequest);
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 		return BUDGETGROUP_SEARCH;
 	}
 

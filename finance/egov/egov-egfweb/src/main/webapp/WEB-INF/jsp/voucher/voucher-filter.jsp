@@ -73,7 +73,8 @@ select { width:100% !important}
        int count = -1;
    %>
 <tr>
-	<td class="w5"></td>
+	<!-- <td class="w5"></td> -->
+	<td class="bluebox" width="10%"></td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
 		<% count++; %>
 		<td class="bluebox w15"><s:text name="voucher.fund" /> <s:if

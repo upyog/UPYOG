@@ -127,6 +127,9 @@
     </script>
     
 <style>
+   .w5 {
+    width: 5% !important;
+}
 	/* Set consistent width for form inputs and dropdowns */
 	td.greybox input,
 	td.greybox select,
@@ -154,43 +157,46 @@
 					<td class="bluebox"></td>
 				</tr>
 				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="bank" /> <span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
+					<!-- <td class="bluebox"></td> -->
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox"><s:text name="bank" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
 					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
 						dropdownId="branchId"
 						url="/voucher/common-ajaxLoadBankBranchesByBank.action" />
-					<td class="bluebox"><s:select name="bankId" id="bankId"
+					<td class="greybox"><s:select name="bankId" id="bankId"
 							list="dropdownData.bankList" listKey="id" listValue="name"
 							headerKey="" headerValue="%{getText('lbl.choose.options')}"
 							onchange="populatebranch(this);" /></td>
-					<td class="bluebox"><s:text name="bankbranch" /> <span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox"><s:text name="bankbranch" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
 					<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
 						dropdownId="accountId"
 						url="/voucher/common-ajaxLoadBankAccountsByBranch.action" />
-					<td class="bluebox"><s:select name="branchId" id="branchId"
+					<td class="greybox"><s:select name="branchId" id="branchId"
 							list="dropdownData.branchList" listKey="id"
 							listValue="branchname" headerKey="" headerValue="%{getText('lbl.choose.options')}"
 							onchange="populateaccount(this);" /></td>
 				</tr>
 				<tr>
 
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="bankaccount" /> <span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:select name="accountId" id="accountId"
+					<!-- <td class="bluebox"></td> -->
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox"><s:text name="bankaccount" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox"><s:select name="accountId" id="accountId"
 							list="dropdownData.accountList" listKey="id"
 							listValue="chartofaccounts.glcode+'-'+accountnumber" headerKey=""
 							headerValue="%{getText('lbl.choose.options')}" /></td>
-					<td class="bluebox"><s:text name="lbl.bank.statement.balance"/>:<span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:textfield name="bankStBalance"
+					<td class="greybox"><s:text name="lbl.bank.statement.balance"/>:<span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox"><s:textfield name="bankStBalance"
 							id="bankStBalance" onkeypress="return event.charCode >= 48 && event.charCode <= 57"/></td>
 				</tr>
 				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="lbl.bank.statement.date"/>:<span class="bluebox"><span
+					<!-- <td class="bluebox"></td> -->
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox"><s:text name="lbl.bank.statement.date"/>:<span class="greybox"><span
 							class="mandatory1">*</span></span></td>
 					<s:date name="bankStmtDate" format="dd/MM/yyyy" var="BSdate" />
 					<td class="greybox"><s:textfield id="bankStmtDate"

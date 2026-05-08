@@ -89,6 +89,7 @@
 					</br> </br>
 					<div class="panel-body">
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
+						<input type="hidden" id="ulbName" value="${cityName}" />
 						<div class="form-group">
 							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">

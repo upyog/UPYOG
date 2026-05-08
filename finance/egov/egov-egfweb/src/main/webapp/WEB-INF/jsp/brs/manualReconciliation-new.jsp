@@ -85,6 +85,9 @@
 	}
 </script>
 <style>
+    .w5 {
+    width: 5% !important;
+}
 	/* Set consistent width for form inputs and dropdowns */
 	td.greybox input,
 	td.greybox select,
@@ -120,7 +123,8 @@
 		<center>
 			<table border="0" width="100%" cellspacing="0" cellpadding="0">
 				<tr>
-					<td class="greybox"></td>
+					<!-- <td class="greybox"></td> -->
+					<td class="bluebox w5">&nbsp;</td>
 					<td class="greybox"><s:text name="bank" /> <span
 						class="greybox"><span class="mandatory1">*</span></span></td>
 					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
@@ -141,22 +145,24 @@
 							onchange="populateaccount(this);" /></td>
 				</tr>
 				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="bankaccount" /> <span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:select name="reconcileBean.accountId" id="accountId"
+					<!-- <td class="bluebox"></td> -->
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox"><s:text name="bankaccount" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox"><s:select name="reconcileBean.accountId" id="accountId"
 							list="dropdownData.accountList" listKey="id"
 							listValue="accountnumber" headerKey=""
 							headerValue="%{getText('lbl.choose.options')}" /></td>
-					<td class="bluebox"><s:text name="reconciliationdate" /> <span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><input type="text" name="reconcileBean.reconciliationDate" class="form-control datepicker"
+					<td class="greybox"><s:text name="reconciliationdate" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox"><input type="text" name="reconcileBean.reconciliationDate" class="form-control datepicker"
 							 data-inputmask="'mask': 'd/m/y'"  id="reconciliationDate"/>
 
 					</td>
 				</tr>
 				<tr>
-					<td class="greybox"></td>
+					<!-- <td class="greybox"></td> -->
+					<td class="bluebox w5">&nbsp;</td>
 					<td class="greybox"><s:text name="fromdate" /> <span
 						class="greybox"><span class="mandatory1">*</span></span></td>
 					<td class="greybox"><input type="text"  name="reconcileBean.fromDate" id="fromDate" class="form-control datepicker"
@@ -171,7 +177,8 @@
 					</td>
 				</tr>
         <tr>
-          <td class="greybox"></td>
+          <!-- <td class="greybox"></td> -->
+          <td class="bluebox w5">&nbsp;</td>
            <td class="greybox"><s:text name="instrumentNo" /> <span
             class="greybox"></td>
           <td class="greybox"><input type="text"  name="reconcileBean.instrumentNo" id="instrumentNo" /></td>

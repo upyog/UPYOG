@@ -50,8 +50,9 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <tr>
-	<td class="bluebox">&nbsp;</td>
+	
 	<s:if test="%{shouldShowHeaderField('fund')}">
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="bluebox"><s:text name="bill.search.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
 				<span class="mandatory1" id="fundDateMandatory">*</span>
@@ -63,6 +64,7 @@
 				onChange="populateSchemes(this);" /></td>
 	</s:if>
 	<s:if test="%{shouldShowHeaderField('fundsource')}">
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="bluebox"><s:text name="bill.search..fundsource" /> <s:if
 				test="%{isFieldMandatory('fundsource')}">
 				<span class="mandatory1">*</span>
@@ -103,8 +105,8 @@
 	</s:if>
 </tr>
 <tr>
-	<td class="bluebox">&nbsp;</td>
 	<s:if test="%{shouldShowHeaderField('functionary')}">
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="bluebox"><s:text name="bill.search.functionary" /> <s:if
 				test="%{isFieldMandatory('functionary')}">
 				<span class="mandatory1">*</span>
@@ -116,6 +118,7 @@
 				value="%{egBillregistermis.subScheme.id}" /></td>
 	</s:if>
 	<s:if test="%{shouldShowHeaderField('department')}">
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="bluebox"><s:text name="bill.search.dept" /> <s:if
 				test="%{isFieldMandatory('department')}">
 				<span class="mandatory1">*</span>
@@ -125,6 +128,7 @@
 				list="dropdownData.departmentList" listKey="code" listValue="name"
 				headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 				value="%{egBillregistermis.departmentcode}" /></td>
+		<td class="bluebox w5">&nbsp;</td>
 	</s:if>
 </tr>
 <tr>

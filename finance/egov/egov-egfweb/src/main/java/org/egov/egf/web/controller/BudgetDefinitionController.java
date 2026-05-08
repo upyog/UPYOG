@@ -57,6 +57,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.egf.web.adaptor.BudgetJsonAdaptor;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDefinitionSearchRequest;
 import org.egov.model.budget.BudgetDetail;
@@ -103,6 +104,8 @@ public class BudgetDefinitionController {
 	private void prepareNewForm(final Model model) {
 		model.addAttribute("financialYearList", cFinancialYearService.getFinancialYearNotClosed());
 		model.addAttribute("isBereList", Arrays.asList(BeReType.values()));
+//		Doing for the ULB name 
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 	}
 
 	@RequestMapping(value = "/new", method = { RequestMethod.GET, RequestMethod.POST })
@@ -176,6 +179,7 @@ public class BudgetDefinitionController {
 		final BudgetDefinitionSearchRequest budgetDefinitionSearchRequest = new BudgetDefinitionSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(BUDGET_DEFINITION_SEARCH_REQUEST, budgetDefinitionSearchRequest);
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 		return BUDGET_SEARCH;
 
 	}

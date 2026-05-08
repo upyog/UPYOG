@@ -56,6 +56,14 @@
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <title><s:property value="type" /> JV-Create</title>
+<style>
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+		td.bluebox { vertical-align: middle !important }
+</style>
 </head>
 <script>
 	function checkBillIdBillview(){
@@ -159,14 +167,15 @@ function onSubmit()
 					<div align="center">
 						<table border="0" width="100%" cellspacing="0">
 							<tr>
-								<td class="greybox" width="12%"><s:text name="voucher.date" /><span
+								<td class="bluebox w5">&nbsp;</td>
+								<td class="greybox w15"><s:text name="voucher.date" /><span
 									class="mandatory1">*</span></td>
-								<td class="greybox" width="25%">
+								<td class="greybox w25">
 									<div name="daterow">
 										<s:date name="voucherDate" var="voucherDateId"
 											format="dd/MM/yyyy" />
 										<s:textfield id="voucherDate" name="voucherDate" value="%{voucherDateId}"
-											class="form-control datepicker" data-date-end-date="0d" />
+											class="form-control datepicker w100" data-date-end-date="0d" />
 									</div>
 								</td>
 								<td class="greybox" width="25%" />

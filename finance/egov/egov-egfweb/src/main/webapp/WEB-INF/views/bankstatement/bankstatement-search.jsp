@@ -52,6 +52,17 @@
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn"%>
 
 <style>
+    .control-label {
+    text-align: left !important;
+    color: #000 !important;
+    font-weight: normal;
+    font-size: 12px !important;
+}
+
+.form-horizontal .control-label {
+    text-align: left !important;
+    color: #000 !important;
+}
 	/* Set consistent width for form inputs and dropdowns */
 	#bankstatementsearchform select.form-control,
 	#bankstatementsearchform input.form-control {
@@ -63,13 +74,14 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">
+					<div class="subheadnew" style="text-align: center">
 						<spring:message code="lbl.search.bankstatement" />
 					</div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.bank" />  </label>
+					    <div class="col-sm-1"></div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.bank" />  </label>
 						<div class="col-sm-3 add-margin">
 						<form:select path="" data-first-option="false" id="bank" class="form-control" >
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -84,9 +96,11 @@
 							</form:select>
 							<form:errors path="" cssClass="error-msg" />
 						</div>
+						<div class="col-sm-1"></div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" />  </label>
+					    <div class="col-sm-1"></div>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.accountnumber" />  </label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="bankAccount" id="bankaccount" class="form-control" data-first-option="false">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -98,9 +112,11 @@
 						<div class="col-sm-3 add-margin">
 							<form:input  path="asOnDate" id="filedate"  class="form-control datepicker" data-date-end-date="0d"  autocomplete="off"/>
 						</div>
+						<div class="col-sm-1"></div>
 					</div>
 
 					<input type="hidden" id="filedate" name="filedate" value="${filedate}" />
+					
 				</div>
 			</div>
 		</div>
