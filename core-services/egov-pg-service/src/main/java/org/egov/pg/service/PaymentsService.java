@@ -2,25 +2,41 @@ package org.egov.pg.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.RequestInfo.RequestInfoBuilder;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.models.CollectionPayment;
 import org.egov.pg.models.CollectionPaymentDetail;
 import org.egov.pg.models.CollectionPaymentRequest;
 import org.egov.pg.models.CollectionPaymentResponse;
 import org.egov.pg.models.TaxAndPayment;
+import org.egov.pg.models.Transaction;
+import org.egov.pg.models.Transaction.TxnStatusEnum;
 import org.egov.pg.models.enums.CollectionPaymentModeEnum;
 import org.egov.pg.repository.ServiceCallRepository;
+import org.egov.pg.web.models.RequestInfoWrapper;
+import org.egov.pg.web.models.TransactionCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Criteria;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +52,9 @@ public class PaymentsService {
 	
 	@Autowired
 	private ObjectMapper mapper;
+	
+	@Autowired
+	TransactionService transactionService;
 	
 	public CollectionPayment registerPayment(TransactionRequest request) {
 		CollectionPayment payment = getPaymentFromTransaction(request);
@@ -104,7 +123,61 @@ public class PaymentsService {
 					.build();
 			paymentDetails.add(detail);
 		}
-				
+		
+		//this is for multiple owner name to display in payment recipet
+		StringBuilder url = new StringBuilder(props.getPropertyServiceHost());
+		TransactionCriteria critria = new TransactionCriteria();
+		if(!StringUtils.isEmpty(request.getTransaction().getConsumerCode()))
+		{
+			url.append(props.getPropertyServiceSearchEndpoint());
+	        url.append("?tenantId=");
+	        url.append(request.getTransaction().getTenantId());
+	        url.append("&");
+	        url.append("propertyIds=");
+	        url.append(request.getTransaction().getConsumerCode());
+		}
+		else
+		{
+			critria.setTxnId(request.getTransaction().getTxnId());
+	        List<Transaction> transactions = transactionService.getTransactions(critria);
+	        url.append(props.getPropertyServiceSearchEndpoint());
+	        url.append("?tenantId=");
+	        url.append(transactions.get(0).getTenantId());
+	        url.append("&");
+	        url.append("propertyIds=");
+	        url.append(transactions.get(0).getConsumerCode());
+		}
+			
+        
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(request.getRequestInfo()).build();
+        Optional<Object> response =  repository.fetchResultNew(url.toString(), requestInfoWrapper);
+        
+        String ownerNames = response
+                .filter(Objects::nonNull)
+                .map(res -> (JsonNode) res)
+                .filter(root -> root.has("Properties") && root.get("Properties").isArray())
+                .map(root -> {
+                    JsonNode properties = root.get("Properties");
+
+                    return StreamSupport.stream(properties.spliterator(), false)
+                            .flatMap(property -> {
+                                JsonNode owners = property.path("owners");
+
+                                if (owners == null || !owners.isArray()) {
+                                    return Stream.<JsonNode>empty();
+                                }
+
+                                return StreamSupport.stream(owners.spliterator(), false);
+                            })
+                            .map(owner -> owner.path("name").asText(""))
+                            .filter(name -> !name.isEmpty())
+                            .collect(Collectors.joining(", "));
+                })
+                .orElse("");
+        
+		//The code for multiple owners ends here 
+        //request.getTransaction().getUser().getName() this was getting used in payername now we are using ownerNames
+        
 		return CollectionPayment.builder().paymentDetails(paymentDetails)
 				.tenantId(request.getTransaction().getTenantId())
 				.totalAmountPaid(new BigDecimal(request.getTransaction().getTxnAmount()))
@@ -114,7 +187,7 @@ public class PaymentsService {
 				.instrumentDate(System.currentTimeMillis())
 				.instrumentNumber("PROV_PAYMENT_VALIDATION")
 				.transactionNumber("PROV_PAYMENT_VALIDATION")
-				.payerName(request.getTransaction().getUser().getName())
+				.payerName(ownerNames)
 				.build();
 	}
 
