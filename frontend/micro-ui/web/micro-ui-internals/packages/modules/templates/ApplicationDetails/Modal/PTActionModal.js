@@ -1,5 +1,5 @@
 import { Loader, Modal, FormComposer, Dropdown } from "@upyog/digit-ui-react-components";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import { configPTRejectApplication, configPTVerifyApplication, configPTApproverApplication, configPTAssessProperty } from "../config";
 import * as predefinedConfig from "../config";
@@ -46,7 +46,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     }
   );
 
-  const [config, setConfig] = useState({});
+  // const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
   const [selectedApprover, setSelectedApprover] = useState(null);
@@ -58,7 +58,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   
   const [selectedModeofPayment, setSelectedModeofPayment] = useState(null);
   const [disableActionSubmit, setDisableActionSubmit] = useState(false);
-  let modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'},{code: 'HALFYEARLY', name: 'HALFYEARLY'},{code: 'QUARTERLY', name: 'QUARTERLY'}]
+  // let modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'},{code: 'HALFYEARLY', name: 'HALFYEARLY'},{code: 'QUARTERLY', name: 'QUARTERLY'}]
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
@@ -93,7 +93,70 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         }
       }
     })();
-  }, [file]);
+  }, [file,t]);
+
+  const modeOfPayments = useMemo(() => {
+    if (!action?.showFinancialYearsModal) return [];
+
+    const currentFinYr = getCurrentFinancialYear();
+
+    if (selectedFinancialYear?.name === currentFinYr) {
+      const today = new Date();
+      const year = today.getFullYear();
+      const aprilFirst = new Date(year, 3, 1);
+      const juneThirtieth = new Date(year, 5, 30);
+
+      if (today >= aprilFirst && today <= juneThirtieth) {
+        return [
+          { code: "YEARLY", name: "YEARLY" },
+          { code: "HALFYEARLY", name: "HALFYEARLY" },
+          { code: "QUARTERLY", name: "QUARTERLY" },
+        ];
+      }
+    }
+
+    return [{ code: "YEARLY", name: "YEARLY" }];
+  }, [action, selectedFinancialYear]);
+
+  const config = useMemo(() => {
+    if (!action) return {};
+
+    if (action?.showFinancialYearsModal) {
+      return configPTAssessProperty({
+        t,
+        action,
+        financialYears,
+        selectedFinancialYear,
+        setSelectedFinancialYear,
+        modeOfPayments,
+        selectedModeofPayment,
+        setSelectedModeofPayment,
+      });
+    }
+
+    return configPTApproverApplication({
+      t,
+      action,
+      approvers,
+      selectedApprover,
+      setSelectedApprover,
+      selectFile,
+      uploadedFile,
+      setUploadedFile,
+      businessService,
+    });
+  }, [
+    t,
+    action,
+    financialYears,
+    selectedFinancialYear,
+    modeOfPayments,
+    selectedModeofPayment,
+    approvers,
+    selectedApprover,
+    uploadedFile,
+    businessService,
+  ]);
 
   function submit(data) {
     if (!action?.showFinancialYearsModal) {
@@ -156,59 +219,59 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     return fiscalyear
   }
 
-  useEffect(() => {
-    if (action) {
-      if (action?.showFinancialYearsModal) {
+  // useEffect(() => {
+  //   if (action) {
+  //     if (action?.showFinancialYearsModal) {
    
-        let currentFinYr = getCurrentFinancialYear();
-        // setSelectedModeofPayment(null)
-        if(selectedFinancialYear && selectedFinancialYear.name == currentFinYr) {
+  //       let currentFinYr = getCurrentFinancialYear();
+  //       // setSelectedModeofPayment(null)
+  //       if(selectedFinancialYear && selectedFinancialYear.name == currentFinYr) {
 
-          const today = new Date();
-          const year = today.getFullYear();
+  //         const today = new Date();
+  //         const year = today.getFullYear();
 
-          // Define 1 April and 30 June of the current year
-          const aprilFirst = new Date(year, 3, 1);   // month index 3 = April
-          const juneThirtieth = new Date(year, 5, 30); // month index 5 = June
+  //         // Define 1 April and 30 June of the current year
+  //         const aprilFirst = new Date(year, 3, 1);   // month index 3 = April
+  //         const juneThirtieth = new Date(year, 5, 30); // month index 5 = June
 
-          if (today >= aprilFirst && today <= juneThirtieth) {
-            modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'},{code: 'HALFYEARLY', name: 'HALFYEARLY'},{code: 'QUARTERLY', name: 'QUARTERLY'}]
-          } else {
-            modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'}]
-          }
-        } else {
-          modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'}]
+  //         if (today >= aprilFirst && today <= juneThirtieth) {
+  //           modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'},{code: 'HALFYEARLY', name: 'HALFYEARLY'},{code: 'QUARTERLY', name: 'QUARTERLY'}]
+  //         } else {
+  //           modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'}]
+  //         }
+  //       } else {
+  //         modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'}]
 
-        }
-        setConfig(
-          configPTAssessProperty({
-            t,
-            action,
-            financialYears,
-            selectedFinancialYear,
-            setSelectedFinancialYear,
-            modeOfPayments,
-            selectedModeofPayment,
-            setSelectedModeofPayment
-          })
-        );
-      } else {
-        setConfig(
-          configPTApproverApplication({
-            t,
-            action,
-            approvers,
-            selectedApprover,
-            setSelectedApprover,
-            selectFile,
-            uploadedFile,
-            setUploadedFile,
-            businessService,
-          })
-        );
-      }
-    }
-  }, [action, approvers, financialYears, selectedFinancialYear,modeOfPayments,selectedModeofPayment, uploadedFile]);
+  //       }
+  //       setConfig(
+  //         configPTAssessProperty({
+  //           t,
+  //           action,
+  //           financialYears,
+  //           selectedFinancialYear,
+  //           setSelectedFinancialYear,
+  //           modeOfPayments,
+  //           selectedModeofPayment,
+  //           setSelectedModeofPayment
+  //         })
+  //       );
+  //     } else {
+  //       setConfig(
+  //         configPTApproverApplication({
+  //           t,
+  //           action,
+  //           approvers,
+  //           selectedApprover,
+  //           setSelectedApprover,
+  //           selectFile,
+  //           uploadedFile,
+  //           setUploadedFile,
+  //           businessService,
+  //         })
+  //       );
+  //     }
+  //   }
+  // }, [action, approvers, financialYears, selectedFinancialYear,selectedModeofPayment, uploadedFile]);
 
   return action && config.form ? (
     <Modal

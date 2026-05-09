@@ -3,14 +3,13 @@ import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
 import { useParams, useLocation, useHistory } from "react-router-dom";
-import { ActionBar, Header, Loader, SubmitBar,Card,CardSubHeader,CardSectionHeader,LinkLabel, CardLabel, CardHeader, CardText} from "@upyog/digit-ui-react-components";
+import { ActionBar, Header, Loader, SubmitBar,Card,CardSubHeader,CardSectionHeader,LinkLabel, CardLabel, CardHeader, CardText, PopUp, BackButton, TickMark } from "@upyog/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import _, { first, update } from "lodash";
 import { Modal,Dropdown, Row, StatusTable, MultiLink } from "@upyog/digit-ui-react-components";
 import {convertEpochToDate} from "../../utils/index";
 import { getPropertyTypeLocale2 } from "../../../../../libraries/src/utils/pt";
 import getPTAssessmentData from "../../getPTAssessmentData";
-
 // import html2canvas from "html2canvas";
 // import jsPDF from "jspdf";
 
@@ -31,10 +30,11 @@ const AssessmentDetails = () => {
    const [showOptions, setShowOptions] = useState(false);
   
   const [popup,showPopUp]=useState(false);
+  const [showAssessmentPopup, setShowAssessmentPopup]=useState(false);
   const [selectedPenalityReason,setSelectedPenalityReason]=useState(null);
   const [selectedRebateReason,setSelectedRebateReason]=useState(null);
   let dowloadOptions = [{
-    label:  t("Download Assessment PDF"),
+    label:  t("Download Assessment PDF 1"),
     onClick: () => getAssessmentData(),
   }]
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
@@ -124,32 +124,40 @@ const AssessmentDetails = () => {
     }
   ); 
   
-  
+  const [assessmentError,setAssessmentError]=useState(null);
+  const [assessmentSuccess,setAssessmentSuccess]=useState(null);
   
   const handleAssessment = () => {
     if (!queryClient.getQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear])) {
+      // setAssessmentSuccess(true);
+      // setShowAssessmentPopup(true);
+      // setAssessmentError("Assessment failed.")
+      // return;
       assessmentMutate(
         { Assessment:AssessmentData},
         {
           onError: (error, variables) => {
-            setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.message || error.message, isAssessmentError: true } });
-            setTimeout(closeToast, 50000);
+            setAssessmentError(error?.response?.data?.Errors[0]?.message || error.message);
+            // setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.message || error.message, isAssessmentError: true } });
+            // setTimeout(closeToast, 50000);
           },
           onSuccess: (data, variables) => {
+            setAssessmentSuccess(true);
             sessionStorage.setItem("IsPTAccessDone", data?.Assessments?.[0]?.auditDetails?.lastModifiedTime);
             let user = sessionStorage.getItem("Digit.User")
             let userType = JSON.parse(user)
-            setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
-            setTimeout(closeToast, 5000);
+            // setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
+            // setTimeout(closeToast, 5000);
             // queryClient.clear();
             // queryClient.setQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear], true);
+            setShowAssessmentPopup(true);
             if(userType?.value?.info?.type == "CITIZEN")
             {
-              setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
-              setTimeout(closeToast, 5000);
-              setTimeout(() => {
-                history.push(`/digit-ui/citizen/pt-home`);
-              }, 2000);
+              // setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
+              // setTimeout(closeToast, 5000);
+              // setTimeout(() => {
+              //   history.push(`/digit-ui/citizen/pt-home`);
+              // }, 2000);
             }
             else{
               proceeedToPay()
@@ -162,6 +170,10 @@ const AssessmentDetails = () => {
 
   const proceeedToPay = () => {
     history.push(`/digit-ui/employee/payment/collect/PT/${propertyId}`);
+  };
+
+   const proceeedToPayCitizen = () => {
+    history.push(`/digit-ui/citizen/pt/property/search-results?propertyIds=${propertyId}&city=${AssessmentData?.tenantId}`);
   };
 
   if (ptCalculationEstimateLoading || assessmentLoading||!applicationDetails?.applicationDetails) {
@@ -718,6 +730,50 @@ const Penality_menu=[
         </div>
       }
       </Modal>}
+      {  showAssessmentPopup && 
+      <PopUp>
+        <div style={{width:"auto",textAlign:"-webkit-center",position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}>
+          <Card style={{backgroundColor:"#FAFAFA"}}>
+            {assessmentLoading ? <Loader /> : 
+            <div style={{marginTop:"15px"}}>
+              {
+                assessmentError ? <div style={{color:"red",marginRight:"auto"}}>
+                  <div>
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="red" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z"
+                          fill="red"
+                        />
+                      </svg>
+                  </div>
+                  <div>{assessmentError}</div>
+                  <div style={{marginTop:"20px"}}>
+                  <button className="btn btn-primary" onClick={(e) => {e.preventDefault(); setShowAssessmentPopup(false); history.push(`/digit-ui/citizen/pt-home`)}}>{t("Go to Home")}</button>
+                  </div>
+                  </div> : assessmentSuccess ? <div style={{marginRight:"auto"}}>
+                    <div>
+                      <div style={{display:"inline",marginBottom:"8px", border:"2px solid green", borderRadius:"50%", padding:"3px"}}>
+                      <TickMark fillColor="green" />
+                      </div>
+                      <p style={{color:"green",fontSize:"20px"}}>{t("The assessment has been completed successfully.")}</p>
+                      <p style={{fontSize:"14px", fontStyle:"italic"}}>{t("To proceed with the completion of the process, we kindly request you to make the required payment at your earliest convenience. Once the payment is received, the process will be finalized accordingly.")}</p>
+                    </div>
+                    <div style={{marginTop:"20px"}}>
+                      
+                      <button className="btn btn-primary" onClick={(e) => {e.preventDefault(); setShowAssessmentPopup(false); proceeedToPayCitizen()}} style={{marginRight:"8px"}}>{t("Proceed To Pay")}</button>
+                      <button className="btn btn-primary" onClick={(e) => {e.preventDefault(); getAssessmentData()}} style={{marginRight:"8px"}}>{t("Download Acknowledgment")}</button>
+                      <button className="btn btn-primary" onClick={(e) => {e.preventDefault(); setShowAssessmentPopup(false); history.push(`/digit-ui/citizen/pt-home`)}}>{t("Go to Home")}</button>
+                    </div>
+                    
+                  </div> : null
+              }
+              
+              
+            </div>}
+          </Card>
+        </div>
+      </PopUp>
+      }
     </div>
 
       {!queryClient.getQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear]) ? (
