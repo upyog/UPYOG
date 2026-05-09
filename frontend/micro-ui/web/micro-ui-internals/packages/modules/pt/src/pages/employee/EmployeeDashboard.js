@@ -6,6 +6,7 @@ import { CardLabel, Dropdown, Header } from "@upyog/digit-ui-react-components";
 import { LocationService } from "../../../../../libraries/src/services/elements/Location";
 import { ServiceBasedDashboard } from "./ServiceBasedDashboard";
 import { RevenueBasedDashboard } from "./RevenueBasedDashboard";
+import { LegacyULBDetails } from "./LegacyULBDetails";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -74,7 +75,9 @@ const EmployeeDashboard = (props) => {
   const onSearch = (e) => {
     e.preventDefault();
     // console.log("onSearch");
-    loadDashboardData();
+    if(activeTab !== "legacyULB") {
+      loadDashboardData();
+    }
   };
   const onReset = (e) => {
     e.preventDefault();
@@ -138,6 +141,7 @@ const EmployeeDashboard = (props) => {
     }
   }, [city]);
 
+
   return (
     <div className="employee-app-container">
       <div className="dashboard-filter">
@@ -145,7 +149,7 @@ const EmployeeDashboard = (props) => {
           <form>
             <div id="form-print">
               {<Header>{t("Dashboard")}</Header>}
-              <div >
+              { activeTab !== "legacyULB" && <div >
                 <div className="card" style={{maxWidth: "100%"}}>
                   <div className="row">
                     <div className="col-sm-3" style={{ display: "inline-block" }}>
@@ -249,6 +253,7 @@ const EmployeeDashboard = (props) => {
                   </div>
                 </div>
               </div>
+              }
             </div>
 
             {/* <div className="card">
@@ -269,6 +274,9 @@ const EmployeeDashboard = (props) => {
                 <li className={activeTab === "revenue" ? "active" : ""}>
                     <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab("revenue"); }}>Revenue</a>
                 </li>
+                <li className={activeTab === "legacyULB" ? "active" : ""}>
+                    <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab("legacyULB"); }}>Legacy ULB</a>
+                </li>
                 </ul>
             </div>
             <div className="panel-body">
@@ -281,6 +289,11 @@ const EmployeeDashboard = (props) => {
                 {activeTab === "revenue" && (
                   <div className="tab-pane active" id="revenue">
                     <RevenueBasedDashboard dashboardData={dashboardData} filteredData={filteredData} resetTriggered={resetTriggered} />
+                  </div>
+                )}
+                {activeTab === "legacyULB" && (
+                  <div className="tab-pane active" id="legacyULB">
+                    <LegacyULBDetails dashboardData={dashboardData} filteredData={filteredData} resetTriggered={resetTriggered} />
                   </div>
                 )}
                 </div>

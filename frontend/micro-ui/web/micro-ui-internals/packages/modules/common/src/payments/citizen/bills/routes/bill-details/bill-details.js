@@ -11,6 +11,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const history = useHistory();
   const { state, ...location } = useLocation();
   let { consumerCode } = useParams();
+  console.log("state", state);
   const { workflow: wrkflow, tenantId: _tenantId, ConsumerName } = Digit.Hooks.useQueryParams();
   const [bill, setBill] = useState(state?.bill);
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
@@ -100,11 +101,13 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const getBillBreakDown = () => billDetails?.billAccountDetails || [];
 
   const getTotal = () => bill?.totalAmount || 0;
+  const getPaymentStatus = () => bill?.status || 'NA';
 
   const [paymentType, setPaymentType] = useState(t("CS_PAYMENT_FULL_AMOUNT"));
   const [amount, setAmount] = useState(getTotal());
   const [paymentAllowed, setPaymentAllowed] = useState(true);
   const [formError, setError] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState(getPaymentStatus());
 
   // useEffect(() => {
   //   window.scroll({ top: 0, behavior: "smooth" });
@@ -126,8 +129,10 @@ const BillDetails = ({ paymentRules, businessService }) => {
     if (!bill && data) {
       let requiredBill = data.Bill.filter((e) => e.consumerCode == (wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode))[0];
       setBill(requiredBill);
+      console.log("requiredBill", requiredBill);
+      setPaymentStatus(requiredBill?.status || 'NA');
     }
-  }, [isLoading]);
+  }, []);
 
   const onSubmit = () => {
     // let paymentAmount = paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? getTotal() : amount;
@@ -202,10 +207,12 @@ const BillDetails = ({ paymentRules, businessService }) => {
           {businessService?.includes("PT") || wrkflow === "WNS" && billDetails?.currentExpiryDate && (
             <KeyNote keyValue={t("CS_BILL_DUEDATE")} note={new Date(billDetails?.currentExpiryDate).toLocaleDateString()} />
           )}
-          <BillSumary billAccountDetails={getBillBreakDown()} total={getTotal()} businessService={businessService} arrears={Arrears} />
-          <ArrearSummary bill={bill} />
+          <BillSumary paymentStatus={paymentStatus} billAccountDetails={getBillBreakDown()} total={getTotal()} businessService={businessService} arrears={Arrears} />
+          {/* <ArrearSummary bill={bill} /> */}
+          
         </div>
-        <div className="bill-payment-amount">
+        {paymentStatus !== 'PAID' && (
+          <div className="bill-payment-amount">
           <hr className="underline" />
           <CardSubHeader>{t("CS_COMMON_PAYMENT_AMOUNT")}</CardSubHeader>
           {/* <RadioButtons
@@ -235,8 +242,9 @@ const BillDetails = ({ paymentRules, businessService }) => {
               <span className="card-label-error">{t(formError)}</span>
             )}
           </div>
-          <SubmitBar disabled={!paymentAllowed || getTotal() == 0} onSubmit={onSubmit} label={t("CS_COMMON_PROCEED_TO_PAY")} />
+          <SubmitBar disabled={!paymentAllowed || getTotal() == 0 || paymentStatus === 'PAID'} onSubmit={onSubmit} label={t("CS_COMMON_PROCEED_TO_PAY")} />
         </div>
+        )}
       </Card>
     </React.Fragment>
   );

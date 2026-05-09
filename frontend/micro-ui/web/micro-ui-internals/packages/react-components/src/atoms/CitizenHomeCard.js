@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 
 const CitizenHomeCard = ({ header, links = [], state, Icon, Info, isInfo = false, styles }) => {
   console.log("CitizenHomeCard links==", links);
+  if(links.length > 0) {
+    links = links.filter(item => item.i18nKey !== "Grievances");
+  }
+  
   return (
     <div className="citizen-homecard-cls" style={styles ? styles : {}}>
       <div className="header">
