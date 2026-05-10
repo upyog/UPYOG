@@ -294,20 +294,49 @@ async function search_bill_genie_water_bills(data, requestinfo, headers) {
   });
 }
 async function search_billgeneiWater(data, requestinfo, headers) {
-  return await axios({
+  //console.log("data",data)
+  if (
+    data &&
+    data.searchCriteria &&
+    data.searchCriteria.type === "group"
+  ) {
+    return await axios({
+    method: "post",
+    url: url.resolve(config.host.bill, config.paths.searcher_api_water_group),
+    data: Object.assign(requestinfo, data),
+    headers: headers,
+  });
+  }else{
+     return await axios({
     method: "post",
     url: url.resolve(config.host.bill, config.paths.searcher_api_water),
     data: Object.assign(requestinfo, data),
     headers: headers,
   });
+  }
+ 
 }
 async function search_billgeneiSewerage(data, requestinfo, headers) {
-  return await axios({
+  //console.log("data",data)
+  if (
+    data &&
+    data.searchCriteria &&
+    data.searchCriteria.type === "group"
+  ) {
+    return await axios({
+    method: "post",
+    url: url.resolve(config.host.bill, config.paths.searcher_api_sewerage_group),
+    data: Object.assign(requestinfo, data),
+    headers: headers,
+  });
+  }else{
+     return await axios({
     method: "post",
     url: url.resolve(config.host.bill, config.paths.searcher_api_sewerage),
     data: Object.assign(requestinfo, data),
     headers: headers,
   });
+  }
 }
 async function search_bill_genie_sewerage_bills(data, requestinfo, headers) {
   console.log("search_bill_genie_sewerage_bills data:", data);
@@ -753,9 +782,9 @@ async function create_bulk_pdf(kafkaData) {
       try {
           var inputData ={}
           if(batchType  === 'Group'){
-            inputData = { searchCriteria: { group: group, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService  } };
+            inputData = { searchCriteria: { group: group, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService, type : 'group'  } };
           }else{
-            inputData  = { searchCriteria: { locality: locality, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService  } };
+            inputData  = { searchCriteria: { locality: locality, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService, type: "locality"  } };
           }
             
            waterBillsData = await search_billgeneiWater(
@@ -778,7 +807,12 @@ async function create_bulk_pdf(kafkaData) {
       }
     }else if (!isConsolidated && bussinessService === 'SW') {
       try {
-        var inputData = { searchCriteria: { locality: locality, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService  } };
+         var inputData ={}
+          if(batchType  === 'Group'){
+            inputData = { searchCriteria: { group: group, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService, type : 'group'  } };
+          }else{
+            inputData  = { searchCriteria: { locality: locality, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService, type: "locality"  } };
+          }
            sewerageBillsData = await search_billgeneiSewerage(
            inputData,
            { RequestInfo: requestinfo.RequestInfo },
