@@ -80,6 +80,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		// 1. Validate request master data to confirm it has only valid data in records
 		hallBookingValidator.validateCreate(communityHallsBookingRequest, mdmsData);
+
+		// Concurrency safeguard: Verify that slots are still available before creation
+		verifySlotAvailabilityBeforeCreation(communityHallsBookingRequest, tenantId);
+
 		// 2. Add fields that has custom logic like booking no, ids using UUID
 		enrichmentService.enrichCreateBookingRequest(communityHallsBookingRequest);
 
@@ -688,6 +692,53 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		});
 
 		return availabiltityDetailsList;
+	}
+
+	private void verifySlotAvailabilityBeforeCreation(CommunityHallBookingRequest communityHallsBookingRequest,
+			String tenantId) {
+		List<BookingSlotDetail> slots = communityHallsBookingRequest.getHallsBookingApplication()
+				.getBookingSlotDetails();
+		if (slots != null && !slots.isEmpty()) {
+			LocalDate minDate = slots.stream().map(BookingSlotDetail::getBookingDate).min(LocalDate::compareTo).get();
+			LocalDate maxDate = slots.stream()
+					.map(s -> s.getBookingEndDate() != null ? s.getBookingEndDate() : s.getBookingDate())
+					.max(LocalDate::compareTo).get();
+
+			CommunityHallSlotSearchCriteria slotCheckCriteria = CommunityHallSlotSearchCriteria.builder()
+					.tenantId(tenantId)
+					.communityHallCode(
+							communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode())
+					.hallCode(slots.get(0).getHallCode())
+					.bookingStartDate(CommunityHallBookingUtil.parseLocalDateToString(minDate,
+							CommunityHallBookingUtil.DATE_FORMAT))
+					.bookingEndDate(CommunityHallBookingUtil.parseLocalDateToString(maxDate,
+							CommunityHallBookingUtil.DATE_FORMAT))
+					.isTimerRequired(false).build();
+
+			CommunityHallSlotAvailabilityResponse availabilityResponse = this.getCommunityHallSlotAvailability(
+					slotCheckCriteria, communityHallsBookingRequest.getRequestInfo());
+
+			if (availabilityResponse != null && availabilityResponse.getHallSlotAvailabiltityDetails() != null) {
+				boolean isConflict = false;
+				for (BookingSlotDetail requestedSlot : slots) {
+					String requestedDateStr = CommunityHallBookingUtil.parseLocalDateToString(requestedSlot.getBookingDate(),
+							CommunityHallBookingConstants.DATE_FORMAT);
+					boolean slotBooked = availabilityResponse.getHallSlotAvailabiltityDetails().stream()
+							.anyMatch(availSlot -> availSlot.getBookingDate().equals(requestedDateStr) &&
+									availSlot.getHallCode().equals(requestedSlot.getHallCode()) &&
+									BookingStatusEnum.BOOKED.toString().equals(availSlot.getSlotStaus()));
+					if (slotBooked) {
+						isConflict = true;
+						break;
+					}
+				}
+
+				if (isConflict) {
+					throw new CustomException("SLOT_ALREADY_BOOKED",
+							"One or more requested slots are already booked or reserved by another user.");
+				}
+			}
+		}
 	}
 
 	private CommunityHallSlotAvailabilityDetail createCommunityHallSlotAvailabiltityDetail(

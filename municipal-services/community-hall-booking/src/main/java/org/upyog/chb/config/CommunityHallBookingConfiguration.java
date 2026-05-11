@@ -41,6 +41,21 @@ public class CommunityHallBookingConfiguration {
 	@Value("${persister.update.communityhall.booking.topic}")
 	private String communityHallBookingUpdateTopic;
 
+	@Value("${persister.create.communityhall.booking.timer.topic}")
+	private String communityHallBookingTimerCreateTopic;
+
+	@Value("${persister.delete.communityhall.booking.timer.topic}")
+	private String communityHallBookingTimerDeleteTopic;
+
+	@Value("${persister.update.communityhall.booking.sync.topic}")
+	private String communityHallBookingSyncUpdateTopic;
+
+	@Value("${persister.update.communityhall.booking.sync.payment.topic}")
+	private String communityHallBookingSyncUpdateWithPaymentTopic;
+
+	@Value("${persister.update.communityhall.booking.timer.topic}")
+	private String communityHallBookingTimerUpdateTopic;
+
 	// Idgen Config
 	@Value("${egov.idgen.host}")
 	private String idGenHost;
