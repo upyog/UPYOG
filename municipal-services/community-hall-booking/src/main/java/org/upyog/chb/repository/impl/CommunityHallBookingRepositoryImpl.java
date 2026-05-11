@@ -462,7 +462,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	            details.setStatus(rs.getString("status"));
 	            details.setCommunityHallcode(rs.getString("community_hall_code"));
 	            details.setHallcode(rs.getString("hall_code"));
-	            details.setLastModifiedBy(rs.getString("lastmodifiegetCommunityHallBookingTimerUpdateTopicdby"));
+	            details.setLastModifiedBy(rs.getString("lastmodifiedby"));
 	            details.setLastModifiedTime(rs.getObject("lastmodifiedtime", Long.class));
 	            details.setTenantId(rs.getString("tenant_id"));
 	            java.sql.Date sqlDate = rs.getDate("booking_date");
