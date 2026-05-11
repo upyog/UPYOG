@@ -181,15 +181,15 @@
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
 					<td class="bluebox w5">&nbsp;</td>
-					<td class="bluebox w15"><s:text name="voucher.fund" /><span
+					<td class="greybox w15"><s:text name="voucher.fund" /><span
 						class="mandatory1">*</span></td>
-					<td class="bluebox w25"><s:select name="fundId" id="fundId"
+					<td class="greybox w25"><s:select name="fundId" id="fundId"
 							list="dropdownData.fundList" listKey="id" listValue="name"
 							headerKey="-1" headerValue="%{getText('lbl.choose.options')}" 
 							onChange="loadBank(this);" value="%{fundId.id}" /></td>
 					<td class="bluebox w5">&nbsp;</td>
-					<td class="bluebox w15"><s:text name="voucher.department" />
-					<td class="bluebox w25"><s:select name="departmentcode"
+					<td class="greybox w15"><s:text name="voucher.department" />
+					<td class="greybox w25"><s:select name="departmentcode"
 							id="departmentcode" list="dropdownData.departmentList" listKey="code"
 							listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" 
 							onChange="alertWhileSelectingDepartment(this);"
@@ -222,8 +222,8 @@
 					<egov:ajaxdropdown id="bank" fields="['Text','Value']"
 						dropdownId="bank"
 						url="voucher/common-ajaxLoadAllBanksByFund.action" />
-					<td class="bluebox w15"><s:text name="bank" />:</td>
-					<td class="bluebox w25"><s:select name="bank" id="bank"
+					<td class="greybox w15"><s:text name="bank" />:</td>
+					<td class="greybox w25"><s:select name="bank" id="bank"
 							list="dropdownData.bankList" listKey="id" listValue="name"
 							headerKey="-1" headerValue="%{getText('lbl.choose.options')}" 
 							onclick="validateFund()" onChange="populateBankBranch(this);" /></td>
@@ -231,8 +231,8 @@
 					<egov:ajaxdropdown id="bankbranch" fields="['Text','Value']"
 						dropdownId="bankbranch"
 						url="voucher/common-ajaxLoadBankBranchFromBank.action" />
-					<td class="bluebox w15"><s:text name="bankbranch" />:</td>
-					<td class="bluebox w25"><s:select name="bankbranch.id"
+					<td class="greybox w15"><s:text name="bankbranch" />:</td>
+					<td class="greybox w25"><s:select name="bankbranch.id"
 							id="bankbranch" list="dropdownData.bankBranchList" listKey="id"
 							listValue="branchname" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}" 

@@ -191,6 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <div class="header-center">
         <h1>Government of Jammu &amp; Kashmir</h1>
         <h2>Housing and Urban Development<br/>Department</h2>
+        <h2>${ulbName}</h2>
     </div>
 
 </div>

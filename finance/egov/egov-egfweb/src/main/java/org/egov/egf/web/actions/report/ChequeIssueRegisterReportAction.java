@@ -66,6 +66,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.result.VelocityResult;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -96,6 +97,8 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -139,6 +142,9 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 	
 	@Autowired
 	private CityService cityService;
+	
+    @Autowired 
+    private CityRepository cityRepository;
 	
 	private Department deptImpl = new Department();
 
@@ -400,6 +406,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 		paramMap.put("accountNumber", accountNumber.getAccountnumber());
 		paramMap.put("fromDate", Constants.DDMMYYYYFORMAT1.format(fromDate));
 		paramMap.put("toDate", Constants.DDMMYYYYFORMAT1.format(toDate));
+		ulbName=cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName();
 		paramMap.put("ulbName", ulbName);
 		if (deptImpl != null && deptImpl.getCode() != null && !deptImpl.getCode().equals("0")) {
 			paramMap.put("departmentName", deptImpl.getCode());

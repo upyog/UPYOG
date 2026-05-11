@@ -169,7 +169,7 @@
 	<td class="greybox"></td>
 	<td class="greybox"></td>
 </tr>
-<tr id="interFundRow3" style="visibility: hidden">
+<tr id="interFundRow3" style="display: none">
 	<td class="bluebox w5">&nbsp;</td>
 	<td class="greybox w15"><s:text name="lbl.source.inter.fund.code" /><span class="mandatory1">*</span></td>
 	<td class="greybox w25"><s:select

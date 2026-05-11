@@ -121,9 +121,9 @@
 						</div> 
 					</div>
 					</c:if>
-					<div class="show-row form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments" text="Comments"/></label>
-						<div class="col-sm-8 add-margin">
+					<div class="show-row form-group col-sm-12">
+						<label class="col-sm-3 control-label text-right" style="padding-right: 20px;"><spring:message code="lbl.comments" text="Comments"/></label>
+						<div class="col-sm-8 add-margin" style="padding-left: 10px;">
 							<form:textarea class="form-control" path="approvalComent"  id="approvalComent" name="approvalComent" />
 						</div>
 					</div>

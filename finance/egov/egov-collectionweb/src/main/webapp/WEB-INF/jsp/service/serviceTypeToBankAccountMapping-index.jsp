@@ -164,9 +164,11 @@
 						<td class="bluebox w25">
 						<s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory" id="serviceCategoryid" cssClass="selectwk" list="serviceCategoryNames" value="%{serviceCategory}" onChange="populateServiceType(this.value);" /> 
 						</td>
+						<td class="bluebox w5">&nbsp;</td>
 						<td colspan="2">
 						<table width="100%" id='serviceTable'>
 						</table>
+						<td class="bluebox w5">&nbsp;</td>
 						</td>
 							<script type="text/javascript">
 							console.log(document.getElementById("serviceCategoryid").value);

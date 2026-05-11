@@ -55,7 +55,9 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.cheque.ChequeReportJsonAdaptor;
 import org.egov.model.cheque.ChequeReportModel;
@@ -89,6 +91,8 @@ public class ChequeReportController {
 
 	@Autowired
 	private AppConfigValueService appConfigValuesService;
+	
+	@Autowired CityRepository cityRepository;
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.GET }, value = "/surrendered/form")
 	public String getSurrenderChequeForm(final Model model) {
@@ -118,6 +122,7 @@ public class ChequeReportController {
 	}
 
 	private void prepareModel(Model model) {
+		model.addAttribute("ulbName", cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		model.addAttribute("chequeReportModel", new ChequeReportModel());
 		model.addAttribute("fundList", masterDataCache.get("egi-fund"));
 		model.addAttribute("bankBranchList", getBankBranch(0));

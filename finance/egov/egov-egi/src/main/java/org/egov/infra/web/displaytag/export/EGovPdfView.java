@@ -82,7 +82,11 @@ import org.displaytag.model.Row;
 import org.displaytag.model.RowIterator;
 import org.displaytag.model.TableModel;
 import org.displaytag.util.TagConstants;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.jsp.JspException;
 import java.awt.*;
@@ -128,6 +132,9 @@ public class EGovPdfView implements BinaryExportView {
 	private Table tablePDF;
 
 	private Paragraph tableCaption;
+	
+	@Autowired
+	private CityRepository cityRepository;
 
 	@Override
 	public void setParameters(final TableModel tableModel, final boolean exportFullList, final boolean includeHeader, final boolean decorateValues) {
@@ -251,6 +258,45 @@ public class EGovPdfView implements BinaryExportView {
 			// Fill the virtual PDF table with the necessary data
 			generatePDFTable();
 			document.open();
+			SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+			
+			String ulbName=cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName();
+			//*****************
+			Font headingFont = FontFactory.getFont(
+			        FontFactory.HELVETICA,
+			        18,
+			        Font.BOLD,
+			        new Color(31, 78, 121));
+
+			Font subHeadingFont = FontFactory.getFont(
+			        FontFactory.HELVETICA,
+			        15,
+			        Font.NORMAL,
+			        new Color(31, 78, 121));
+
+			Paragraph p1 = new Paragraph(
+			        "Government of Jammu & Kashmir",
+			        headingFont);
+
+			p1.setAlignment(Element.ALIGN_CENTER);
+
+			Paragraph p2 = new Paragraph(
+			        "Housing and Urban Development Department",
+			        headingFont);
+
+			p2.setAlignment(Element.ALIGN_CENTER);
+
+			Paragraph p3 = new Paragraph(
+			        ulbName,
+			        subHeadingFont);
+
+			p3.setAlignment(Element.ALIGN_CENTER);
+
+			document.add(p1);
+			document.add(p2);
+			document.add(p3);
+
+			document.add(new Paragraph(" "));
 
 			// Table table = new Table(this.model.getNumberOfColumns());
 			// ItextTableWriter writer = new ItextTableWriter(tablePDF, document);
@@ -280,7 +326,7 @@ public class EGovPdfView implements BinaryExportView {
 	}
 
 	protected int getCaptionHorizontalAlignment() {
-		return Element.ALIGN_LEFT;
+		return Element.ALIGN_CENTER;
 	}
 
 	/**

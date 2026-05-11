@@ -62,6 +62,14 @@
 	src="/services/EGF/resources/javascript/remitrecovery-helper.js?rnd=${app_release_no}"></script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
+	<style>
+		select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+		td.bluebox { vertical-align: middle !important }
+	</style>
 <title><s:text name="remit.recovery.create.title" /></title>
 </head>
 <body>
@@ -86,25 +94,29 @@
 			</font>
 			<table border="0" width="100%">
 				<tr>
-					<td class="greybox"></td>
-					<td class="greybox"><s:text name="remit.recovery.search.code" /><span
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><s:text name="remit.recovery.search.code" /><span
 						class="mandatory"></span></td>
-					<td class="greybox">
+					<td class="greybox w25">
 						<s:select name="remittanceBean.recoveryId" id="recoveryId" list="dropdownData.recoveryList" listKey="id" listValue="chartofaccounts.glcode+'-'+type+'-'+recoveryName" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" value="%{remittanceBean.recoveryId}" />
 					</td>
-					<td class="greybox" width="10%">
-					<td class="greybox">
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15">
+					<td class="greybox w25">
+					<td class="bluebox w5">&nbsp;</td>
 				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="remit.recovery.search.fromdate" /></td>
-					<td class="greybox"><s:date name="remittanceBean.fromVhDate" var="fromVhDateId" format="dd/MM/yyyy" /> 
-						<s:textfield id="fromVhDate" name="remittanceBean.fromVhDate" value="%{voucherDateId}" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" cssClass="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text name="remit.recovery.search.fromdate" /></td>
+					<td class="greybox w25"><s:date name="remittanceBean.fromVhDate" var="fromVhDateId" format="dd/MM/yyyy" /> 
+						<s:textfield id="fromVhDate" name="remittanceBean.fromVhDate" value="%{voucherDateId}" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100" data-inputmask="'mask': 'd/m/y'" />
 					</td>
-					<td class="bluebox"><s:text	name="remit.recovery.search.todate" /><span class="mandatory"></span></td>
-					<td class="greybox">
+					<td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><s:text	name="remit.recovery.search.todate" /><span class="mandatory"></span></td>
+					<td class="greybox w25">
 						<s:date name="voucherDate" var="voucherDateId" format="dd/MM/yyyy" /> 
-						<s:textfield id="voucherDate" name="voucherDate" value="%{voucherDateId}" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" cssClass="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
+						<s:textfield id="voucherDate" name="voucherDate" value="%{voucherDateId}" onkeyup="DateFormat(this,this.value,event,false,'3')" placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100" data-inputmask="'mask': 'd/m/y'" />
 					</td>
+					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<%-- <tr>
 					<td class="greybox"></td>

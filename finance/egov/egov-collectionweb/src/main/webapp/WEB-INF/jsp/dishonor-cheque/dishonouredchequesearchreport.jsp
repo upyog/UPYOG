@@ -60,6 +60,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <style>
+.control-label {
+    text-align: left !important;
+    color: #000 !important;
+    font-weight: normal;
+    font-size: 12px !important;
+}
+
+.form-horizontal .control-label {
+    text-align: left !important;
+    color: #000 !important;
+}
 .table thead:first-child>tr:first-child th {
     border-bottom: none;
     background: #f8f8f8;

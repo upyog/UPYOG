@@ -148,8 +148,8 @@
         var row = table.insertRow(0);
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
-        cell1.className='bluebox';
-        cell2.className='bluebox';
+        cell1.className='bluebox w15';
+        cell2.className='bluebox w25';
         cell1.innerHTML = '<s:text name="miscreceipt.service" /><span class="mandatory"/>';
         cell2.innerHTML = '<select name="serviceDetails.code" id="serviceDetailsId"/>';
 		document.getElementById('serviceDetailsId').options.length=0;
@@ -201,10 +201,17 @@
 						<td class="bluebox w25">
 						<s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory" id="serviceCategoryid" cssClass="selectwk" list="serviceCategoryNames" value="%{service.serviceCategory}" onChange="populateServiceType(this.value);" />
 						</td>
+						<td class="bluebox w5">&nbsp;</td>
 						<td colspan="2">
 						<table width="100%" id='serviceTable'>
 						</table>
 						</td>
+<!-- 						<td class="bluebox w5">&nbsp;</td>
+						<td class="bluebox w15" id="serviceTableLabel"></td>
+						<td>
+						    <table width="100%" id='serviceTable'>
+						    </table>
+						</td> -->
 					</tr>
 					<tr>
 						<td class="bluebox w5">&nbsp;</td>

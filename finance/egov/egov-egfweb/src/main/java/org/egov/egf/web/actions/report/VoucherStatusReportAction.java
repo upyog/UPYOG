@@ -48,6 +48,7 @@
 package org.egov.egf.web.actions.report;
 
 import java.io.IOException;
+
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -80,7 +81,9 @@ import org.egov.egf.web.actions.voucher.VoucherSearchAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.persistence.utils.Page;
@@ -155,6 +158,9 @@ public class VoucherStatusReportAction extends BaseFormAction {
         private Environment environment;
 	@Autowired 
     private PaymentheaderHibernateDAO paymentheaderHibernateDAO;	
+	
+	@Autowired
+	private CityRepository cityRepository;
 	
 	private Department deptImpl = new Department();
 
@@ -595,6 +601,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
 	}
 
 	public void setParamMap(Map<String, String> depMap) {
+		paramMap.put("ulbName",cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		paramMap.put("fund", voucherHeader.getFundId().getName());
 		if (deptImpl != null && deptImpl.getCode()!= null && !"-1".equals(deptImpl.getCode()))
 			paramMap.put("deptName", depMap.get(deptImpl.getCode()));
@@ -603,8 +610,8 @@ public class VoucherStatusReportAction extends BaseFormAction {
 		paramMap.put("fromDate", fromDate);
 		paramMap.put("voucherName", voucherHeader.getName().equals("-1") || voucherHeader.getName().equals("0") ? "" : voucherHeader.getName());
 		paramMap.put("voucherType", voucherHeader.getType().equals("-1") || voucherHeader.getType().equals("0") ? "" : voucherHeader.getType());
-		 String ulbGrade = microserviceUtils.getHeaderNameForTenant().toUpperCase();
-	        paramMap.put("ulbName", environment.getProperty(ulbGrade,ulbGrade));
+		 //String ulbGrade = microserviceUtils.getHeaderNameForTenant().toUpperCase();
+	       // paramMap.put("ulbName", environment.getProperty(ulbGrade,ulbGrade));
 	}
 
 	public void setReportHelper(final ReportHelper reportHelper) {

@@ -107,9 +107,9 @@ table.its th {
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
 					<td class="bluebox w5">&nbsp;</td>
-					<td class="bluebox w15"><s:text name="lbl.bank.name" />:<span
-						class="bluebox"><span class="mandatory"></span></span></td>
-					<td class="bluebox w25"><s:select name="bank.id" id="bank.id"
+					<td class="greybox w15"><s:text name="lbl.bank.name" />:<span
+						class="greybox"><span class="mandatory"></span></span></td>
+					<td class="greybox w25"><s:select name="bank.id" id="bank.id"
 							list="dropdownData.bankList" listKey="id" listValue="name"
 							headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 							onChange="populateBankBranch(this);" /></td>
@@ -117,9 +117,9 @@ table.its th {
 						dropdownId="bankbranch"
 						url="voucher/common-ajaxLoadBankBranchFromBank.action" />
 					<td class="bluebox w5">&nbsp;</td>
-					<td class="bluebox w15"><s:text name="bankbranch" />:<span
-						class="bluebox"><span class="mandatory"></span></span></td>
-					<td class="bluebox w25"><s:select name="bankbranch.id"
+					<td class="greybox w15"><s:text name="bankbranch" />:<span
+						class="greybox"><span class="mandatory"></span></span></td>
+					<td class="greybox w25"><s:select name="bankbranch.id"
 							id="bankbranch" list="dropdownData.bankBranchList" listKey="id"
 							listValue="branchname" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}"
@@ -131,9 +131,9 @@ table.its th {
 				</tr>
 				<tr>
 					<td class="bluebox w5">&nbsp;</td>
-					<td class="bluebox w15" width="10%"><s:text name="lbl.account.number" />:<span
-						class="bluebox"><span class="mandatory"></span></span></td>
-					<td class="bluebox w25"><s:select name="bankaccount.id"
+					<td class="greybox w15" width="10%"><s:text name="lbl.account.number" />:<span
+						class="greybox"><span class="mandatory"></span></span></td>
+					<td class="greybox w25"><s:select name="bankaccount.id"
 							id="bankaccount" list="dropdownData.bankAccountList" listKey="id"
 							listValue="accountnumber" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}"
@@ -142,9 +142,9 @@ table.its th {
 						dropdownId="instrumentnumber"
 						url="voucher/common-ajaxLoadRTGSChequeFromBankAcc.action" />
 					<td class="bluebox w5">&nbsp;</td>
-					<td class="bluebox w15"><s:text name="report.rtgsnumber" />:<span
-						class="bluebox"><span class="mandatory"></span></span></td>
-					<td class="bluebox w25"><s:select name="instrumentnumber.id"
+					<td class="greybox w15"><s:text name="report.rtgsnumber" />:<span
+						class="greybox"><span class="mandatory"></span></span></td>
+					<td class="greybox w25"><s:select name="instrumentnumber.id"
 							id="instrumentnumber" list="dropdownData.chequeNumberList"
 							listKey="id" listValue="transactionNumber" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}" /></td>

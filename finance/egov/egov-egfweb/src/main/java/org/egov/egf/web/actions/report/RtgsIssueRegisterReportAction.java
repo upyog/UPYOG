@@ -65,7 +65,9 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.model.BankAdviceReportInfo;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.microservice.models.Department;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
@@ -136,6 +138,9 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 	
 	@Autowired
         private CityService cityService;
+	
+	@Autowired
+	private CityRepository cityRepository;
 
 	@Override
 	public Object getModel() {
@@ -239,6 +244,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 			dateRange = dateRange + " to " + newToDate;
 		}
 		reportRundate = dateFormat.format(date);
+		paramMap.put("ulbName",cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		paramMap.put("fundAndBankHeading", fundAndBankHeading);
 		paramMap.put("dateRange", dateRange);
 		paramMap.put("reportRundate", reportRundate);

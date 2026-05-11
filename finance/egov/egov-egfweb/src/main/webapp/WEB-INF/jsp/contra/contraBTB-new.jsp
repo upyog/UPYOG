@@ -72,7 +72,7 @@
 	  var srcFund = '<s:property value="contraBean.fromFundId"/>';
 	  var desFund = '<s:property value="contraBean.toFundId"/>';
 	  if(srcFund && desFund && srcFund !== desFund) {
-		  $("#interFundRow1, #interFundRow2, #interFundRow3").css("visibility", "visible");
+		  $("#interFundRow1, #interFundRow2, #interFundRow3").css("display", "contents");
 	  }
   
 	  // Handle transaction messages

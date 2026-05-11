@@ -56,17 +56,16 @@ select { width:100% !important}
 .w15 { width: 15% !important; }
 .w25 { width: 25% !important; }
 .w100{ width:100% !important; }
-.w20{ width: 20% !important; }
 
 </style>
 <tr>
-	<td class="w5"></td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="greybox w15"><s:text name="voucher.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
 				<%-- <span class="bluebox w30"> --%><span class="mandatory1">*</span><%-- </span> --%>
 			</s:if></td>
-		<td class="greybox w20"><s:select name="fundId" id="fundId"
+		<td class="greybox w25"><s:select name="fundId" id="fundId"
 				list="dropdownData.fundList" listKey="id" listValue="name"
 				headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 				onChange="populateSchemes(this);loadBank(this);"
@@ -75,40 +74,39 @@ select { width:100% !important}
 	<s:else>
 		
 		<td class="greybox w15"></td>
-		<td class="greybox w20"></td>
+		<td class="greybox w25"></td>
 	</s:else>
-	<td class="w5"></td>
 	<s:if test="%{shouldShowHeaderField('fundsource')}">
 		<egov:ajaxdropdown id="fundsource" fields="['Text','Value']"
 			dropdownId="fundsourceId"
 			url="voucher/common-ajaxLoadFundSource.action" />
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="bluebox w15"><s:text name="voucher.fundsource" /> <s:if
 				test="%{isFieldMandatory('fundsource')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
-		<td class="bluebox w20"><s:select name="vouchermis.fundsource"
+		<td class="bluebox w25"><s:select name="vouchermis.fundsource"
 				id="fundsourceId" list="dropdownData.fundsourceList" listKey="id"
 				listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 				value="voucherHeader.vouchermis.fundsource.id"  /></td>
-				<td class="w5"></td>
+		<td class="bluebox w5">&nbsp;</td>
 	</s:if>
 	<s:else>
 		<td class="greybox w15"></td>
-		<td class="greybox w20"></td>
+		<td class="greybox w25"></td>
 	</s:else>
 </tr>
 
 <tr>
-	<td class="w5"></td>
 	<s:if test="%{shouldShowHeaderField('scheme')}">
 		<egov:ajaxdropdown id="scheme" fields="['Text','Value']"
 			dropdownId="schemeid" url="voucher/common-ajaxLoadSchemes.action" />
-
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="greybox w15"><s:text name="voucher.scheme" /> <s:if
 				test="%{isFieldMandatory('scheme')}">
 				<span class="mandatory1">*</span>
 			</s:if></td>
-		<td class="greybox w20"><s:select list="dropdownData.schemeList"
+		<td class="greybox w25"><s:select list="dropdownData.schemeList"
 				name="vouchermis.schemeid" id="schemeid" listKey="id"
 				listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 				onChange="populatesubSchemes(this)"
@@ -118,65 +116,67 @@ select { width:100% !important}
 		<td class="greybox w15"></td>
 		<td class="greybox w20"></td>
 	</s:else>
-	<td class="w5"></td>
 	<s:if test="%{shouldShowHeaderField('subscheme')}">
 		<egov:ajaxdropdown id="subscheme" fields="['Text','Value']"
 			dropdownId="subschemeid"
 			url="voucher/common-ajaxLoadSubSchemes.action" />
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="bluebox w15"><s:text name="voucher.subscheme" /> <s:if
 				test="%{isFieldMandatory('subscheme')}">
 				<span class="mandatory1">*</span>
 			</s:if></td>
-		<td class="bluebox w20"><s:select name="vouchermis.subschemeid"
+		<td class="bluebox w25"><s:select name="vouchermis.subschemeid"
 				id="subschemeid" list="dropdownData.subschemeList" listKey="id"
 				listValue="name" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 				value="voucherHeader.vouchermis.subschemeid.id"
 				onChange="populateFundSource(this)" /></td>
-				<td class="w5"></td>
+		<td class="bluebox w5">&nbsp;</td>
 	</s:if>
 	<s:else>
 		<td class="greybox w15"></td>
-		<td class="greybox w20"></td>
+		<td class="greybox w25"></td>
 	</s:else>
 </tr>
 <tr>
-	<td class="w5"></td>
+		<td class="bluebox w5">&nbsp;</td>
 
 		<td class="greybox w15" id="deptLabel"><s:text
 				name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
 				<span class="bluebox"></span>
 			</s:if></td>
-		<td class="greybox w20"><s:select name="vouchermis.departmentcode"
+		<td class="greybox w25"><s:select name="vouchermis.departmentcode"
 				id="departmentid" list="dropdownData.departmentList"
 				listKey="code" listValue="name" headerKey="-1"
 				headerValue="%{getText('lbl.choose.options')}" value="-1"
 				/></td>
 	<s:if test="%{shouldShowHeaderField('field')}">
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="greybox w15"><s:text name="voucher.field" /> <s:if
 				test="%{isFieldMandatory('field')}">
 				<span class="mandatory1">*</span>
 			</s:if></td>
-		<td class="greybox w20"><s:select name="vouchermis.divisionid"
+		<td class="greybox w25"><s:select name="vouchermis.divisionid"
 				id="vouchermis.divisionid" list="dropdownData.fieldList"
 				listKey="id" listValue="name" headerKey="-1"
 				headerValue="%{getText('lbl.choose.options')}"
 				value="voucherHeader.vouchermis.divisionid.id" /></td>
 	</s:if>
 	<s:else>
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="greybox w15"></td>
-		<td class="greybox w20"></td>
+		<td class="greybox w25"></td>
 	</s:else>
 </tr>
 <tr>
-	<td class="w5"></td>
+		<td class="bluebox w5">&nbsp;</td>
 		<td id="functionnametext" class="bluebox w15"><s:text
 				name="voucher.function" /> <s:if
 				test="%{isFieldMandatory('function')}">
 				<!--<span class="bluebox"></span>-->
 				<span class="mandatory1">*</span>
 			</s:if></td>
-		<td class="bluebox w20"><s:select name="vouchermis.function"
+		<td class="bluebox w25"><s:select name="vouchermis.function"
 				id="vouchermis.function" list="dropdownData.functionList"
 				listKey="id" listValue="name" headerKey="-1"
 				headerValue="%{getText('lbl.choose.options')}" value="%{vouchermis.function.id}" /></td>
@@ -193,8 +193,9 @@ select { width:100% !important}
 				value="voucherHeader.vouchermis.functionary.id" /></td>
 	</s:if>
 	<s:else>
+		<td class="bluebox w5">&nbsp;</td>
 		<td class="greybox w15"></td>
-		<td class="greybox w20"></td>
+		<td class="greybox w25"></td>
 	</s:else>
 
 </tr>
