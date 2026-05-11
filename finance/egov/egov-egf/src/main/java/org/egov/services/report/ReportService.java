@@ -130,18 +130,28 @@ public abstract class ReportService {
 				.createSQLQuery("select majorcode from chartofaccounts where purposeid=:purposeId");
 		final List list = query.setParameter("purposeId", purposeId).list();
 		String glCode = "";
-		if (list.get(0) != null)
+		if (list != null && !list.isEmpty() && list.get(0) != null)
 			glCode = list.get(0).toString();
 		return glCode;
 	}
 
 	protected String getFilterQuery(final Statement balanceSheet, Map<String, Object> params) {
 		final StringBuilder query = new StringBuilder();
-		if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != null
-				&& balanceSheet.getDepartment().getId() != 0) {
-			query.append(" and mis.departmentid=:departmentid");
-			params.put("departmentid", balanceSheet.getDepartment().getId().toString());
-		}
+		/*
+		 * if (balanceSheet.getDepartment() != null &&
+		 * balanceSheet.getDepartment().getId() != null &&
+		 * balanceSheet.getDepartment().getId() != 0) {
+		 * query.append(" and mis.departmentid=:departmentid");
+		 * params.put("departmentid", balanceSheet.getDepartment().getId().toString());
+		 * }
+		 */
+		if (balanceSheet.getDepartment() != null
+		        && balanceSheet.getDepartment().getCode() != null
+		        && !balanceSheet.getDepartment().getCode().isEmpty()) {
+
+	        query.append(" and mis.departmentcode=:departmentcode");
+	        params.put("departmentcode", balanceSheet.getDepartment().getCode());
+	    }
 		if (balanceSheet.getFunction() != null && balanceSheet.getFunction().getId() != null
 				&& balanceSheet.getFunction().getId() != 0) {
 			query.append(" and g.functionid=:functionid");

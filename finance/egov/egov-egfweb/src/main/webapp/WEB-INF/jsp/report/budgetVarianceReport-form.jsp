@@ -251,8 +251,8 @@ function resetSubmit()
 								headerKey="0" headerValue="%{getText('lbl.choose.options')}" name="subScheme"
 								onchange="updateGrid('subScheme.id',document.getElementById('budgetDetail_subScheme').selectedIndex)"
 								value="subScheme.id" id="budgetDetail_subScheme"></s:select></td>
+						<td class="bluebox w5">&nbsp;</td>
 					</s:if>
-					<td class="bluebox w5">&nbsp;</td>
 				</tr>
 				<tr>
 					<s:if test="%{isFieldMandatory('boundary')}">
