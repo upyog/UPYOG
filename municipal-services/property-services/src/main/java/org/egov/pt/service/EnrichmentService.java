@@ -278,6 +278,7 @@ public class EnrichmentService {
 		RequestInfo requestInfo = request.getRequestInfo();
 		AuditDetails auditDetailsForUpdate = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
 		propertyFromDb.setAuditDetails(auditDetailsForUpdate);
+		List<String> documentType=new ArrayList<String>();
 
 
 		Boolean isWfEnabled = config.getIsWorkflowEnabled();
@@ -293,14 +294,26 @@ public class EnrichmentService {
 			enrichPropertyForNewWf(requestInfo, property, false);
 		}
 		//if()
+		
+		
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
 
 				if (doc.getId() == null && doc.getFileStoreId()!=null && doc.getDocumentType()!=null && !doc.getDocumentType().isEmpty()) {
 					doc.setId(UUID.randomUUID().toString());
 					doc.setStatus(Status.ACTIVE);
+					documentType.add(doc.getDocumentType());
 				}
 			});
+		
+		if (!CollectionUtils.isEmpty(propertyFromDb.getDocuments()))
+			property.getDocuments().forEach(doc -> {
+				if (documentType.contains(doc.getDocumentType())) {
+					doc.setStatus(Status.INACTIVE);
+				}
+			});
+		
+		
 
 		property.setDocuments(property.getDocuments().stream().filter(x->null!=x.getId() && (!x.getId().isEmpty()) && (!x.getFileStoreId().isEmpty() || !(x.getFileStoreId()==null))).collect(Collectors.toList()));
 		
