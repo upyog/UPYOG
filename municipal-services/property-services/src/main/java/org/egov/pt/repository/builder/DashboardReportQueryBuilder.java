@@ -1066,7 +1066,7 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		filter.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
 			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");

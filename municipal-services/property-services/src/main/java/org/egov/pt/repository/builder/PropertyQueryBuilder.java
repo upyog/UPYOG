@@ -872,6 +872,11 @@ public class PropertyQueryBuilder {
 				builder.append("appeal.tenantid= ?");
 			preparedStmtList.add(tenantId);
 		}
+		if(!StringUtils.isEmpty(appealCriteria.getPropertyTenantID()))
+		{
+			builder.append("appeal.propertytenantid= ?");
+			preparedStmtList.add(appealCriteria.getPropertyTenantID());
+		}
 		Set<String> propertyId = appealCriteria.getPropertyIds();
 		if (propertyId != null) {
 			addClauseIfRequired(preparedStmtList, builder);
