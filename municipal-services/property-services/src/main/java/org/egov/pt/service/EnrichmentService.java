@@ -316,6 +316,7 @@ public class EnrichmentService {
 		
 
 		property.setDocuments(property.getDocuments().stream().filter(x->null!=x.getId() && (!x.getId().isEmpty()) && (!x.getFileStoreId().isEmpty() || !(x.getFileStoreId()==null))).collect(Collectors.toList()));
+		property.setDocuments(propertyFromDb.getDocuments().stream().filter(x->null!=x.getId() && (!x.getId().isEmpty()) && (!x.getFileStoreId().isEmpty() || !(x.getFileStoreId()==null))).collect(Collectors.toList()));
 		
 		if (!CollectionUtils.isEmpty(property.getUnits())) {
 			property.getUnits().forEach(unit -> {
