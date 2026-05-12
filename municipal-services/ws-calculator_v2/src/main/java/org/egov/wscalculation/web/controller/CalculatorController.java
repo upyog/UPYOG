@@ -1,0 +1,175 @@
+package org.egov.wscalculation.web.controller;
+
+
+import java.util.*;
+
+import javax.validation.Valid;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.egov.tracer.model.CustomException;
+import org.egov.wscalculation.config.WSCalculationConfiguration;
+import org.egov.wscalculation.constants.WSCalculationConstant;
+import org.egov.wscalculation.service.*;
+import org.egov.wscalculation.web.models.*;
+import org.egov.wscalculation.util.ResponseInfoFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Getter
+@Setter
+@Builder
+@RestController
+@RequestMapping("/waterCalculator")
+public class CalculatorController {
+	
+	
+	@Autowired
+	private DemandService demandService;
+	
+	@Autowired
+	private WSCalculationService wSCalculationService;
+	
+	@Autowired
+	private WSCalculationServiceImpl wSCalculationServiceImpl;
+	
+	@Autowired
+	private final ResponseInfoFactory responseInfoFactory;
+
+	@Autowired
+	private final PaymentNotificationService paymentNotificationService;
+
+	@Autowired
+	private WSCalculationConfiguration config;
+	@Autowired
+	private DemandNotificationService demandNotificationService;
+	
+	@PostMapping("/_estimate")
+	public ResponseEntity<CalculationRes> getTaxEstimation(@RequestBody @Valid CalculationReq calculationReq) {
+		List<Calculation> calculations = wSCalculationServiceImpl.getEstimation(calculationReq);
+		CalculationRes response = CalculationRes.builder().calculation(calculations)
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(calculationReq.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_calculate")
+	public ResponseEntity<CalculationRes> calculate(@RequestBody @Valid CalculationReq calculationReq) {
+		List<Calculation> calculations = wSCalculationService.getCalculation(calculationReq);
+		CalculationRes response = CalculationRes.builder().calculation(calculations)
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(calculationReq.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_updateDemand")
+	public ResponseEntity<DemandResponse> updateDemands(@RequestBody @Valid RequestInfoWrapper requestInfoWrapper,
+			@ModelAttribute @Valid GetBillCriteria getBillCriteria) {
+		List<Demand> demands = demandService.updateDemands(getBillCriteria, requestInfoWrapper, false);
+		DemandResponse response = DemandResponse.builder().demands(demands)
+				.responseInfo(
+				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_jobscheduler")
+	public void jobscheduler(@Valid @RequestBody BulkBillReq bulkBillReq) {
+		wSCalculationService.generateDemandBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+	}
+	
+	@PostMapping("/_singledemand")
+    public ResponseEntity<Map<String, Object>> singledemandgen(@Valid @RequestBody SingleDemand singledemand) {
+	    Map<String, Object> response = new HashMap<>(); 
+		
+		 try {
+	     String singleresponse=   wSCalculationService.generateSingleDemand(singledemand);
+	     if (singleresponse==null) {
+	    	 response.put("status", "Failed");String Message="Unable to Generate Demand for Connection No: ".concat(singledemand.getConsumercode());
+	 	    response.put("message", Message);
+	 	   return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	     }
+	     else {response.put("status", "Success"); String Message="Single demand generated successfully for Connection No: ".concat(singledemand.getConsumercode());
+		    response.put("message",Message);
+	            log.info("singledemandgen:: Demand generated successfully for: {}", singledemand);
+	            return new ResponseEntity<>(response,HttpStatus.OK );
+	     }
+	        } catch (Exception e) {
+	        	response.put("status", "failed");
+	            log.error("singledemandgen:: Error generating demand for: {}", singledemand, e);
+	            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+     }
+		
+	
+	
+	}
+	
+	@PostMapping("/_jobbillscheduler")
+	public void jobbillscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+		log.info("_jobbillscheduler::");
+		wSCalculationService.generateBillBasedLocality(requestInfoWrapper.getRequestInfo());
+	}
+	
+	@PostMapping("/_getConnectionForDemand")
+	public ResponseEntity<ConnectionResponse> generateDemand(@Valid @RequestBody BulkBillReq bulkBillReq) {
+		List<WaterConnection> waterConnectionList=wSCalculationService.getConnnectionWithPendingDemand(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+		ConnectionResponse response = ConnectionResponse.builder().connection(waterConnectionList)
+				.responseInfo(
+				responseInfoFactory.createResponseInfoFromRequestInfo(bulkBillReq.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_generateDemand")
+	public String getConnection(@Valid @RequestBody BulkBillReq bulkBillReq) {
+		return wSCalculationService.generateDemandForConsumerCodeBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+		//return "Demand Generated successfully for consumer Code "+bulkBillReq.getBulkBillCriteria().getConsumerCode();
+	}
+	
+	@PostMapping("/cancelDemand")
+	public ResponseEntity<Map<String, Object>> cancelDemand(@Valid @RequestBody CancelDemand cancelDemand) {
+	    Map<String, Object> response = new HashMap<>();
+	    log.info("cancelDemand::");
+
+	    try {
+	        CancelDemand result = demandService.cancelDemandForConsumer(cancelDemand);
+
+	        response.put("status", "Success");
+	        response.put("message", "Cancel demand and bill successfully.");
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    } catch (CustomException e) {
+	        response.put("status", "Failed");
+	        response.put("message", e.getMessage());
+	        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	    } catch (Exception e) {
+	        log.error("Error while processing cancel demand: ", e);
+	        response.put("status", "Failed");
+	        response.put("message", "An error occurred while processing cancel demand.");
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+	
+	@PostMapping("/_applyAdhocTax")
+	public ResponseEntity<CalculationRes> applyAdhocTax(@Valid @RequestBody AdhocTaxReq adhocTaxReq) {
+		List<Calculation> calculations = wSCalculationServiceImpl.applyAdhocTax(adhocTaxReq);
+		CalculationRes response = CalculationRes.builder().calculation(calculations)
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(adhocTaxReq.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+}
