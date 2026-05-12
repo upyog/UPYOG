@@ -57,6 +57,8 @@ import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.egf.commons.bank.service.StateMasterService;
 import org.egov.egf.masters.services.ContractorService;
 import org.egov.egf.web.adaptor.ContractorJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.model.masters.Contractor;
 import org.egov.model.masters.ContractorSearchRequest;
 import org.egov.utils.FinancialConstants;
@@ -110,6 +112,8 @@ public class CreateContractorController {
 
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private CityRepository cityRepository;
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -183,6 +187,8 @@ public class CreateContractorController {
 		final ContractorSearchRequest contractorSearchRequest = new ContractorSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(STR_CONTRACTOR_SEARCH_REQUEST, contractorSearchRequest);
+		model.addAttribute("ulbName",
+			    cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		return SEARCH;
 
 	}

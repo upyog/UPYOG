@@ -196,11 +196,79 @@ function callAjaxSearch() {
 				"bDestroy" : true,
 				dom: "<'row'<'col-xs-12 pull-right'f>r>t<'row buttons-margin'<'col-md-3 col-xs-6'i><'col-md-3  col-xs-6'l><'col-md-3 col-xs-6'B><'col-md-3 col-xs-6 text-right'p>>",
 				buttons: [
-						  {
-						    extend: 'print',
-						    title: 'Purchase Order Master',
-						    filename: 'Purchase Order Master'
-						},{
+					{
+										    text: 'Print',
+										    action: function(e, dt, node, config) {
+										        var currentDate = new Date().toLocaleDateString();
+										        var currentTime = new Date().toLocaleTimeString();
+										        var ulb = (typeof ulbName !== 'undefined' && ulbName) ? ulbName : '';
+
+										        // Build table rows from DataTables data
+										        var tableHTML = '<table style="width:100%; border-collapse:collapse; font-size:11px;">';
+										        
+										        // Header row
+										        tableHTML += '<thead><tr style="background-color:#f2f2f2;">';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Order No.</th>';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Name</th>';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Total/Order Value</th>';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Contractor Name</th>';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Active Y/N</th>';
+										        tableHTML += '</tr></thead><tbody>';
+
+												$('#resultTable tbody tr').each(function() {
+												    tableHTML += '<tr>';
+												    $(this).find('td').each(function() {
+												        tableHTML += '<td style="border:1px solid #ddd; padding:5px;">' + $(this).text() + '</td>';
+												    });
+												    tableHTML += '</tr>';
+												});
+
+										        tableHTML += '</tbody></table>';
+
+										        var fullHTML = '<!DOCTYPE html><html><head>' +
+										            '<title>Work Order Master</title>' +
+										            '<style>' +
+										                'body { font-family: Arial, sans-serif; margin: 20px; }' +
+										                '@media print { body { margin: 10px; } }' +
+										            '</style>' +
+										            '</head><body>' +
+
+										            // ---- HEADER ----
+										            '<table style="width:100%; border:none; margin-bottom:8px;">' +
+										                '<tr>' +
+										                    '<td style="width:15%; border:none;"></td>' +
+										                    '<td style="width:70%; text-align:center; border:none;">' +
+										                        '<p style="font-size:15px; font-weight:bold; color:#1F4E79; margin:0;">' +
+										                            'Government of Jammu &amp; Kashmir' +
+										                        '</p>' +
+										                        '<p style="font-size:14px; font-weight:bold; color:#1F4E79; margin:4px 0;">' +
+										                            'Housing and Urban Development Department' +
+										                        '</p>' +
+										                        '<p style="font-size:13px; font-weight:bold; color:#1F4E79; margin:4px 0;">' +
+										                            ulb +
+										                        '</p>' +
+										                        '<p style="font-size:13px; font-weight:bold; color:#333; margin:6px 0;">' +
+										                            'Work Order Master' +
+										                        '</p>' +
+										                    '</td>' +
+										                    '<td style="width:15%; text-align:right; vertical-align:top; border:none; font-size:10px; color:#333;">' +
+										                        'Date: ' + currentDate + '<br/>Time: ' + currentTime +
+										                    '</td>' +
+										                '</tr>' +
+										            '</table>' +
+										            '<hr style="border:1px solid #1F4E79; margin-bottom:12px;"/>' +
+										            // ---- TABLE ----
+										            tableHTML +
+										            // ---- AUTO PRINT ----
+										            '<script>window.onload = function(){ window.print(); }<\/script>' +
+										            '</body></html>';
+
+										        var printWin = window.open('', '_blank', 'width=900,height=600');
+										        printWin.document.open();
+										        printWin.document.write(fullHTML);
+										        printWin.document.close();
+										    }
+										},{
 						    extend: 'pdf',
 						    title: 'Purchase Order Master',
 						    filename: 'Purchase Order Master',
@@ -228,7 +296,17 @@ function callAjaxSearch() {
 														    noWrap: true,   
 														    margin: [0, 2, 0, 10],
 														    color: '#1F4E79'
+														},
+														{
+																text: ulbName,
+																fontSize: 11,
+																bold: true,
+																alignment: 'center',
+																noWrap: true,
+																margin: [0, 2, 0, 10],
+																color: '#1F4E79'
 														}
+														
 							                           ]
 							                       };
 

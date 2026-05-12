@@ -171,5 +171,8 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/services/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/services/egi'/>"></script>
+<script>
+    var ulbName = '<c:out value="${ulbName}" />';
+</script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/functionHelper.js?rnd=${app_release_no}'/>"></script>

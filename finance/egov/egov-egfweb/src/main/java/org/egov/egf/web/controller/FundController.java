@@ -56,6 +56,7 @@ import org.egov.commons.Fund;
 import org.egov.commons.contracts.FundSearchRequest;
 import org.egov.commons.service.FundService;
 import org.egov.egf.web.adaptor.FundJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
@@ -93,6 +94,8 @@ public class FundController {
 	private FundService fundService;
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private CityRepository cityRepository;
 
 	private void prepareNewForm(final Model model) {
 		model.addAttribute("funds", fundService.findByIsnotleaf());
@@ -165,6 +168,8 @@ public class FundController {
 		final FundSearchRequest fundSearchRequest = new FundSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute("fundSearchRequest", fundSearchRequest);
+		model.addAttribute("ulbName",
+			    cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		return FUND_SEARCH;
 
 	}

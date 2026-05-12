@@ -57,6 +57,8 @@ import org.egov.commons.contracts.BankBranchSearchRequest;
 import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.egf.commons.bankbranch.service.CreateBankBranchService;
 import org.egov.egf.web.controller.bankbranch.adaptor.BankBranchJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -96,6 +98,8 @@ public class BankBranchController {
 
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private CityRepository cityRepository;
 
 	private void setDropDownValues(final Model model) {
 		model.addAttribute("banks", createBankService.getByIsActiveTrueOrderByName());
@@ -139,6 +143,7 @@ public class BankBranchController {
 		final BankBranchSearchRequest bankBranchSearchRequest = new BankBranchSearchRequest();
 		setDropDownValues(model);
 		model.addAttribute(BANKBRANCH_SEARCH_REQUEST, bankBranchSearchRequest);
+		model.addAttribute("ulbName",cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		return "bankbranch-search";
 
 	}

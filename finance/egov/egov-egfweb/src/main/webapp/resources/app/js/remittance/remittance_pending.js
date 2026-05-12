@@ -171,7 +171,7 @@ $(document)
 									       
 									        doc.defaultStyle.fontSize = 8;
 									        doc.pageMargins = [10, 10, 10, 10];
-
+											var ulbName = $('#ulbName').val() || '';
 									        var titleContainer = {
 									            stack: [
 									                {
@@ -190,7 +190,16 @@ $(document)
 									                    noWrap: true,
 									                    margin: [0, 2, 0, 10],
 									                    color: '#1F4E79'
-									                }
+									                },
+													{
+													    text: ulbName,
+													    fontSize: 11,
+													    bold: true,
+													    alignment: 'center',
+													    noWrap: true,
+													    margin: [0, 2, 0, 10],
+													    color: '#1F4E79'
+													}
 									            ]
 									        };
 

@@ -57,6 +57,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.egf.web.adaptor.RecoveryJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.model.recoveries.Recovery;
 import org.egov.model.recoveries.RecoverySearchRequest;
@@ -109,6 +110,8 @@ public class RecoveryController {
     private EgPartyTypeService egPartyTypeService;
     @Autowired
     private ChartOfAccountsDAO chartOfAccountsDAO;
+    @Autowired
+    private CityRepository cityRepository;
 
     @SuppressWarnings("deprecation")
 	private void prepareNewForm(final Model model) {
@@ -206,6 +209,8 @@ public class RecoveryController {
         final RecoverySearchRequest recoverySearchRequest = new RecoverySearchRequest();
         prepareNewForm(model);
         model.addAttribute(RECOVERY_SEARCH_REQUEST, recoverySearchRequest);
+        model.addAttribute("ulbName",
+        	    cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
         return RECOVERY_SEARCH;
 
     }

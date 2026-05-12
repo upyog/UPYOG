@@ -56,6 +56,8 @@ import org.egov.commons.contracts.AccountEntitySearchRequest;
 import org.egov.commons.service.AccountEntityService;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.egf.web.adaptor.AccountEntityJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.masters.model.AccountEntity;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +93,8 @@ public class AccountEntityController {
 	private MessageSource messageSource;
 	@Autowired
 	private AccountdetailtypeService accountdetailtypeService;
+	@Autowired
+	private CityRepository cityRepository;
 
 	private void prepareNewForm(Model model) {
 		model.addAttribute("accountdetailtypes",
@@ -160,6 +164,7 @@ public class AccountEntityController {
 		AccountEntitySearchRequest accountEntitySearchRequest = new AccountEntitySearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(ACCOUNT_ENTITY_SEARCH_REQUEST, accountEntitySearchRequest);
+	    model.addAttribute("ulbName",cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		return ACCOUNTENTITY_SEARCH;
 
 	}

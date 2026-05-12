@@ -51,6 +51,17 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn"%>
 <style>
+.control-label {
+    text-align: left !important;
+    color: #000 !important;
+    font-weight: normal;
+    font-size: 12px !important;
+}
+
+.form-horizontal .control-label {
+    text-align: left !important;
+    color: #000 !important;
+}
 .table thead:first-child>tr:first-child th {
     border-bottom: none;
     background: #f8f8f8;
@@ -74,7 +85,8 @@
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+						    <div class="col-sm-1"></div>
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.fund" text="Fund"/>:</label>
 							<div class="col-sm-3 add-margin">
 								<form:select name="fundId" path=""
@@ -86,7 +98,7 @@
 									<c:forEach items="${fundList}" var="fd">
 										<option value="${fd.id}">${fd.name}</option>
 									</c:forEach>
-								</form:select>
+								</form:select>	
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.bank.branch"  text="Bank Branch"/></label>
@@ -102,9 +114,11 @@
 									</c:forEach>
 								</form:select>
 							</div>
+							<div class="col-sm-1"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+						    <div class="col-sm-1"></div>
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.bankAccount" text="Bank Account" />:</label>
 							<div class="col-sm-3 add-margin">
 								<form:select name="bankAccountId" path=""
@@ -130,9 +144,11 @@
 									<form:hidden path="" id="surrenderReadon" value="" />
 								</form:select>
 							</div>
+							<div class="col-sm-1"></div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+						    <div class="col-sm-1"></div>
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.fromDate"  text="From Date"/> <span class="mandatory"></span> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="fromDate" id="fromDate"
@@ -148,6 +164,7 @@
 									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY" />
 								<form:errors path="toDate" cssClass="add-margin error-msg" />
 							</div>
+							<div class="col-sm-1"></div>
 						</div>
 						<div class="form-group">
 							<div class="text-center">
@@ -159,7 +176,7 @@
 										code='lbl.close' /></a>
 							</div>
 						</div>
-						<div class="row display-hide error-section text-center"><font color="red">Something Went wrong! Contact to system administrator</font></div>
+						<div class="row display-hide error-section text-center"><font color="red">Something WeSomething Went wrong! nt wrong! Contact to system administrator</font></div>
 						<div class="row display-hide report-section">
 							<div class="subheadnew col-md-12 table-header text-center" 
 								id="surrenderChequeHeading"></div>
@@ -246,5 +263,8 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/services/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/services/egi'/>"></script>
+<script type="text/javascript">
+    var ulbName = '${sessionScope.citymunicipalityname}';
+</script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/cheque/surrender_cheque.js?rnd=${app_release_no}'/>"></script>

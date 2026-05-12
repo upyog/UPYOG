@@ -198,9 +198,9 @@ function printCheque(id)
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
 				<tr>
 					<td class="bluebox w5">&nbsp;</td>
-					<td class="bluebox w15"><s:text name="lbl.bank.branch.name" />:<span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox w25"><s:select name="bank" id="bank"
+					<td class="greybox w15"><s:text name="lbl.bank.branch.name" />:<span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox w25"><s:select name="bank" id="bank"
 							list="dropdownData.bankList" listKey="bankBranchId"
 							listValue="bankBranchName" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}" onChange="populateAccNum(this);" />
@@ -209,9 +209,9 @@ function printCheque(id)
 					<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
 						dropdownId="accountNumber"
 						url="voucher/common-ajaxLoadAccNum.action" />
-					<td class="bluebox w15"><s:text name="lbl.account.number" />:<span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox w25"><s:select name="bankAccount"
+					<td class="greybox w15"><s:text name="lbl.account.number" />:<span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox w25"><s:select name="bankAccount"
 							id="accountNumber" list="dropdownData.bankAccountList"
 							listKey="id" listValue="accountnumber" headerKey="-1"
 							headerValue="%{getText('lbl.choose.options')}" /></td>
@@ -245,8 +245,8 @@ function printCheque(id)
 				</tr>
 				<tr>
 					<td class="bluebox w5">&nbsp;</td>
-					<td class="bluebox w15"><s:text name="report.department" /></td>
-					<td class="bluebox w25"><s:select
+					<td class="greybox w15"><s:text name="report.department" /></td>
+					<td class="greybox w25"><s:select
 							list="dropdownData.executingDepartmentList" listKey="code"
 							listValue="name" name="deptImpl.code" headerKey="0"
 							headerValue="%{getText('lbl.select')}" value="%{deptImpl.code}"

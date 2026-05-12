@@ -89,6 +89,7 @@ var fromDateToDateAlertMsg = '<spring:message code="msg.fromDate.must.be.lower.t
 						<div class="subheadnew"  style="text-align: center"><spring:message code="lbl.remittance.collection.report" text="Remittance Collection Report" /></div>
 					</div>
 					<div class="panel-body">
+					<input type="hidden" id="cityName" value="${cityName}" />
 					<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.account.number" text="Account Number"/>:<span class="mandatory"></span></label>

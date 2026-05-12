@@ -58,6 +58,8 @@ import org.egov.commons.service.FundService;
 import org.egov.egf.masters.services.PurchaseOrderService;
 import org.egov.egf.masters.services.SupplierService;
 import org.egov.egf.web.adaptor.PurchaseOrderJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.models.Department;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.model.bills.EgBillregister;
@@ -117,6 +119,9 @@ public class PurchaseOrderController {
 
 	@Autowired
 	private EgBillRegisterService egBillRegisterService;
+	
+	@Autowired
+	private CityRepository cityRepository;
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -199,6 +204,7 @@ public class PurchaseOrderController {
 		final PurchaseOrderSearchRequest purchaseOrderSearchRequest = new PurchaseOrderSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(PURCHASE_ORDER_SEARCH_REQUEST, purchaseOrderSearchRequest);
+		model.addAttribute("ulbName",cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		return SEARCH;
 
 	}

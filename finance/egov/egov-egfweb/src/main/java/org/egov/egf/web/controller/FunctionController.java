@@ -56,6 +56,8 @@ import org.egov.commons.CFunction;
 import org.egov.commons.contracts.FunctionSearchRequest;
 import org.egov.commons.service.FunctionService;
 import org.egov.egf.web.adaptor.FunctionJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +92,8 @@ public class FunctionController {
 	private FunctionService functionService;
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private CityRepository cityRepository;
 
 	private void prepareNewForm(Model model) {
 		model.addAttribute("functions", functionService.findAllIsNotLeafTrue());
@@ -169,6 +173,8 @@ public class FunctionController {
 		FunctionSearchRequest functionSearchRequest = new FunctionSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(STR_FUNCTION_REQUEST, functionSearchRequest);
+		model.addAttribute("ulbName",
+			    cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		return FUNCTION_SEARCH;
 
 	}

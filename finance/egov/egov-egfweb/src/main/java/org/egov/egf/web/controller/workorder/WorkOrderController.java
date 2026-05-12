@@ -58,6 +58,8 @@ import org.egov.commons.service.FundService;
 import org.egov.egf.masters.services.ContractorService;
 import org.egov.egf.masters.services.WorkOrderService;
 import org.egov.egf.web.adaptor.WorkOrderJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.models.Department;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.model.bills.EgBillregister;
@@ -117,6 +119,9 @@ public class WorkOrderController {
 
 	@Autowired
 	private EgBillRegisterService egBillRegisterService;
+	
+	@Autowired
+	private CityRepository cityRepository;
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -130,7 +135,6 @@ public class WorkOrderController {
 	}
 
 	@PostMapping(value = "/newform")
-//	@GetMapping(value = "/newform")
 	public String showNewForm(@ModelAttribute(WORK_ORDER) final WorkOrder workOrder, final Model model) {
 		prepareNewForm(model);
 		model.addAttribute(WORK_ORDER, new WorkOrder());
@@ -198,6 +202,7 @@ public class WorkOrderController {
 		final WorkOrderSearchRequest workOrderSearchRequest = new WorkOrderSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(WORK_ORDER_SEARCH_REQUEST, workOrderSearchRequest);
+		model.addAttribute("ulbName",cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		return SEARCH;
 
 	}

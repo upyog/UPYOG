@@ -64,6 +64,8 @@ import org.egov.egf.commons.bankaccount.service.CreateBankAccountService;
 import org.egov.egf.commons.bankbranch.service.CreateBankBranchService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.egf.web.controller.bankaccount.adaptor.BankAccountJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.services.voucher.GeneralLedgerService;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -126,6 +128,9 @@ public class BankAccountController {
     @Autowired
     private CreateBankService createBankService;
     
+    @Autowired
+    private CityRepository cityRepository;
+    
     private void setDropDownValues(final Model model) {
         model.addAttribute("banks", createBankService.getByIsActiveTrueOrderByName());
         model.addAttribute("bankbranches", createBankBranchService.getByIsActiveTrueOrderByBranchname());
@@ -164,6 +169,7 @@ public class BankAccountController {
         final BankAccountSearchRequest bankAccountSearchRequest = new BankAccountSearchRequest();
         setDropDownValues(model);
         model.addAttribute(BANKACCOUNT_SEARCH_REQUEST, bankAccountSearchRequest);
+        model.addAttribute("ulbName",cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
         return "bankaccount-search";
 
     }

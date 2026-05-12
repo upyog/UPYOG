@@ -726,7 +726,7 @@ function printResultTable() {
 				<tr>
 					<td width="2%" class="bluebox">&nbsp;</td>
 					<td width="15%" class="bluebox"><s:text
-							name="searchreceipts.criteria.fromdate" /></td>
+							name="searchreceipts.criteria.fromdate" /><span class="mandatory" /></td>
 					<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
 					<td width="30%" class="bluebox"><s:textfield id="fromDate"
 							name="fromDate" value="%{cdFormat}"
@@ -739,7 +739,7 @@ function printResultTable() {
 							alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
 					<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 					<td width="15%" class="bluebox"><s:text
-							name="searchreceipts.criteria.todate" /></td>
+							name="searchreceipts.criteria.todate" /><span class="mandatory" /></td>
 					<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
 					<td width="30%" class="bluebox"><s:textfield id="toDate"
 							name="toDate" value="%{cdFormat1}"
@@ -930,9 +930,9 @@ function printResultTable() {
 					onclick="return checkviewforselectedrecord()" />  -->
 					<!-- <input name="button32" type="button" class="buttonsubmit" id="button32"
 					value="Print Receipt" onclick="return checkprintforselectedrecord()" /> -->
-					<input type="button" class="buttonsubmit"
+					<!-- <input type="button" class="buttonsubmit"
                          value="Print PDF"
-                         onclick="printResultTable()" />
+                         onclick="printResultTable()" /> -->
                      <input type="button" class="buttonsubmit"
                        value="Export to Excel"
                        onclick="exportTableToExcel()" />    

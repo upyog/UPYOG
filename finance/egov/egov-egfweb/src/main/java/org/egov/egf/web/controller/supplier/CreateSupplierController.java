@@ -57,6 +57,8 @@ import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.egf.commons.bank.service.StateMasterService;
 import org.egov.egf.masters.services.SupplierService;
 import org.egov.egf.web.adaptor.SupplierJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.model.masters.Supplier;
 import org.egov.model.masters.SupplierSearchRequest;
 import org.egov.utils.FinancialConstants;
@@ -108,6 +110,8 @@ public class CreateSupplierController {
 
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private CityRepository cityRepository;
 
 	private void prepareNewForm(final Model model) {
 		model.addAttribute("banks", createBankService.getByIsActiveTrueOrderByName());
@@ -173,6 +177,8 @@ public class CreateSupplierController {
 		final SupplierSearchRequest supplierSearchRequest = new SupplierSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(STR_SUPPLIER_SEARCH_REQUEST, supplierSearchRequest);
+		model.addAttribute("ulbName",
+			    cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		return SEARCH;
 
 	}

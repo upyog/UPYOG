@@ -56,6 +56,8 @@ import org.egov.commons.Bank;
 import org.egov.commons.contracts.BankSearchRequest;
 import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.egf.web.controller.bank.adaptor.BankJsonAdaptor;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -91,6 +93,8 @@ public class BankController {
 
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private CityRepository cityRepository;
 
 	@PostMapping(value = "/new")
 	public String newForm(final Model model) {
@@ -117,6 +121,7 @@ public class BankController {
 	public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
 		final BankSearchRequest bankSearchRequest = new BankSearchRequest();
 		model.addAttribute(BANK_SEARCH_REQUEST, bankSearchRequest);
+		model.addAttribute("ulbName",cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
 		return "bank-search";
 
 	}
