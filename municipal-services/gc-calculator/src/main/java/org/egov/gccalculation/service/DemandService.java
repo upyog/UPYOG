@@ -1717,7 +1717,7 @@ public class DemandService {
             // FILTER connections by frequency
             List<GarbageConnection> connectionNos = allConnections.stream()
                     .filter(conn -> {
-                        String connFrequency = conn.getFrequency();
+                        String connFrequency = conn.getFrequency_of_garbage_collection();
                         if (connFrequency == null || connFrequency.trim().isEmpty()) {
                             connFrequency = "Quarterly"; // Default to quarterly
                         }

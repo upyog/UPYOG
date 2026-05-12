@@ -90,7 +90,7 @@ public class GarbageRowMapper implements ResultSetExtractor<List<GarbageConnecti
 				currentWaterConnection.setConnectionExecutionDate(rs.getLong("connectionExecutionDate"));
 				currentWaterConnection.setApplicationType(rs.getString("applicationType"));
 				currentWaterConnection.setDateEffectiveFrom(rs.getLong("dateEffectiveFrom"));
-				currentWaterConnection.setFrequency(rs.getString("frequency"));
+				currentWaterConnection.setFrequency_of_garbage_collection(rs.getString("frequency"));
 
 				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("ws_createdBy"))
 						.createdTime(rs.getLong("ws_createdTime")).lastModifiedBy(rs.getString("ws_lastModifiedBy"))

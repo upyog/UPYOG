@@ -39,7 +39,7 @@ public class GarbageConnectionRowMapper implements ResultSetExtractor<List<Garba
 				currentWaterConnection.setTenantId(rs.getString("tenantid"));
 				currentWaterConnection.setConnectionCategory(rs.getString("connectionCategory"));
 				currentWaterConnection.setConnectionType(rs.getString("connectionType"));
-                currentWaterConnection.setFrequency(rs.getString("frequency_of_garbage_collection"));//
+                currentWaterConnection.setFrequency_of_garbage_collection(rs.getString("frequency_of_garbage_collection"));//
 //				currentWaterConnection.setWaterSource(rs.getString("waterSource"));
 //				currentWaterConnection.setMeterId(rs.getString("meterId"));
 //				currentWaterConnection.setMeterInstallationDate(rs.getLong("meterInstallationDate"));

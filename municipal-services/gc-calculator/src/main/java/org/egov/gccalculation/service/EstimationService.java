@@ -348,7 +348,7 @@ public class EstimationService {
                 // Monthly connections now receive monthly tax periods (not quarterly divided by 3)
                 // The slab charge should already be configured for the appropriate period
                 log.info("Final charge for connection {}: {} (Frequency: {})",
-                        waterConnection.getConnectionNo(), waterCharge, waterConnection.getFrequency());
+                        waterConnection.getConnectionNo(), waterCharge, waterConnection.getFrequency_of_garbage_collection());
             }
         }
 
@@ -368,8 +368,8 @@ public class EstimationService {
                 : "Non Metered";
 
         // Get connection frequency (default to Quarterly if not set)
-        final String frequency = waterConnection.getFrequency() != null
-                ? waterConnection.getFrequency()
+        final String frequency = waterConnection.getFrequency_of_garbage_collection() != null
+                ? waterConnection.getFrequency_of_garbage_collection()
                 : "Quarterly";
 
         log.info("Matching billing slab for Unit ID: {}, UsageCategory: {}, Frequency: {}",

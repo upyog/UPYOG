@@ -40,8 +40,6 @@ import io.swagger.annotations.ApiModelProperty;
 	@JsonProperty("noOfTaps")
 	private Integer noOfTaps = null;
 
-	@JsonProperty("frequency")
-	private String frequency = null;
 
 
 	public GarbageConnection waterSource(String waterSource) {
@@ -185,25 +183,6 @@ import io.swagger.annotations.ApiModelProperty;
 		this.pipeSize = pipeSize;
 	}
 
-	public GarbageConnection frequency(String frequency) {
-		this.frequency = frequency;
-		return this;
-	}
-
-	/**
-	 * Billing frequency for the connection (Quarterly or Monthly).
-	 * 
-	 * @return frequency
-	 **/
-	@ApiModelProperty(value = "Billing frequency - Quarterly or Monthly")
-
-	public String getFrequency() {
-		return frequency;
-	}
-
-	public void setFrequency(String frequency) {
-		this.frequency = frequency;
-	}
 
 	@Override
 	public boolean equals(java.lang.Object o) {

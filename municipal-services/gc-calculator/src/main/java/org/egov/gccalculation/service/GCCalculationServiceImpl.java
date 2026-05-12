@@ -352,7 +352,7 @@ public class GCCalculationServiceImpl implements GCCalculationService {
 	            masterDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap,
 
                     criteria.getWaterConnection().getConnectionType(),
-                    criteria.getWaterConnection().getFrequency());
+                    criteria.getWaterConnection().getFrequency_of_garbage_collection());
                 Calculation calculation = null;
 	            if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest()) {
 	                if (criteria.getApplicationNo().equals(
