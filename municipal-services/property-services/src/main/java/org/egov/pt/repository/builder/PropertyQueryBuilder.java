@@ -693,6 +693,9 @@ public class PropertyQueryBuilder {
 		addClauseIfRequired(preparedStmtList, builder);
 		builder.append("owner.status = ?");
 		preparedStmtList.add(Status.ACTIVE.toString());
+		builder.append(" AND pdoc.status = ?");
+		preparedStmtList.add(Status.ACTIVE.toString());
+		//pdoc
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
 		if (onlyIds || criteria.getIsRequestForCount())

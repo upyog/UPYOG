@@ -354,6 +354,7 @@ public class PropertyService {
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 		
 		
+		
 
 		PropertyRequest OldPropertyRequest = PropertyRequest.builder()
 				.requestInfo(request.getRequestInfo())
@@ -361,6 +362,7 @@ public class PropertyService {
 				.build();
 
 		util.mergeAdditionalDetails(request, propertyFromSearch);
+		producer.pushAfterEncrytpion(config.getPropertyDocumentUpdate(), OldPropertyRequest);
 
 		if(config.getIsWorkflowEnabled()) {
 
