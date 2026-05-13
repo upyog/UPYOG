@@ -186,11 +186,24 @@ public abstract class ReportService {
 
 	protected String getTransactionQuery(final Statement balanceSheet, Map<String, Object> params) {
 		final StringBuilder query = new StringBuilder();
-		if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getId() != null
-				&& balanceSheet.getDepartment().getId() != 0) {
-			query.append(" and ts.departmentid=:tsDepartmentid");
-			params.put("tsDepartmentid", balanceSheet.getDepartment().getId().toString());
+		/*
+		 * if (balanceSheet.getDepartment() != null &&
+		 * balanceSheet.getDepartment().getId() != null &&
+		 * balanceSheet.getDepartment().getId() != 0) {
+		 * query.append(" and ts.departmentid=:tsDepartmentid");
+		 * params.put("tsDepartmentid",
+		 * balanceSheet.getDepartment().getId().toString()); }
+		 */
+		if (balanceSheet.getDepartment() != null
+		        && balanceSheet.getDepartment().getCode() != null
+		        && !balanceSheet.getDepartment().getCode().isEmpty()) {
+
+		    query.append(" and ts.departmentcode=:tsDepartmentcode");
+
+		    params.put("tsDepartmentcode",
+		            balanceSheet.getDepartment().getCode());
 		}
+		
 		if (balanceSheet.getFunction() != null && balanceSheet.getFunction().getId() != null
 				&& balanceSheet.getFunction().getId() != 0) {
 			query.append(" and ts.functionid=:tsFunctionid");
@@ -205,6 +218,9 @@ public abstract class ReportService {
 	}
 
     public String getFormattedDate(final Date date) {
+    	  if (date == null) {
+    	        return "";
+    	    }
         final SimpleDateFormat formatter = Constants.DDMMYYYYFORMAT1;
         return formatter.format(date);
     }

@@ -52,7 +52,7 @@
 "ResultSet": {
     "Result":[
     <s:iterator var="s" value="bankAccountArrayList" status="status">
-    {"Text":"<s:property value="%{accountnumber}"/>  - <s:property value="%{narration}" escapeJavaScript="true"/> - <s:property value="%{chartofaccounts.glcode}" escapeJavaScript="true"/>",
+    {"Text":"<s:property value="%{accountnumber}"/>  - <s:property value="%{narration}" escapeHtml="false" escapeJavaScript="true"/> - <s:property value="%{chartofaccounts.glcode}" escapeJavaScript="true"/>",
     "Value":"<s:property value="%{id}" />"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       

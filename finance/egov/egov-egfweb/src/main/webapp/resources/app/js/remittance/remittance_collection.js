@@ -97,7 +97,66 @@ function callAjaxSearch() {
 									buttons : [ {
 										extend : 'print',
 										title : heading,
-										filename : fileName
+										filename : fileName,
+										 customize: function(win) {
+
+										        var ulbName = $('#ulbName').val() || '';
+
+										        var titleContainer =
+										            '<div style="text-align:center; color:#1F4E79;">' +
+										                '<div style="font-size:16px; font-weight:bold; color:#1F4E79;">Government of Jammu & Kashmir</div>' +
+										                '<div style="font-size:14px; font-weight:bold; margin-top:2px; color:#1F4E79;">Housing and Urban Development Department</div>' +
+										                '<div style="font-size:13px; font-weight:bold; margin-top:2px; color:#1F4E79;">' + ulbName + '</div>' +
+										            '</div>';
+
+										        var currentDate = new Date().toLocaleDateString();
+										        var currentTime = new Date().toLocaleTimeString();
+
+										        var dateTimeContainer =
+										            '<div style="font-size:10px; font-weight:bold; text-align:right;">' +
+										                'Date: ' + currentDate + '<br>' +
+										                'Time: ' + currentTime +
+										            '</div>';
+
+										        var header =
+										            '<div style="width:100%; margin-bottom:10px;">' +
+
+										                '<table style="width:100%; border:none !important;">' +
+										                    '<tr>' +
+
+										                        '<td style="width:20%; border:none !important;"></td>' +
+
+										                        '<td style="width:60%; border:none !important;">' +
+										                            titleContainer +
+										                        '</td>' +
+
+										                        '<td style="width:20%; border:none !important;">' +
+										                            dateTimeContainer +
+										                        '</td>' +
+
+										                    '</tr>' +
+										                '</table>' +
+
+										                '<hr style="border:1px solid black;">' +
+
+										            '</div>';
+
+										        $(win.document.body).prepend(header);
+
+										        $(win.document.body).find('h1').remove();
+
+										        $(win.document.body).css('font-size', '8pt');
+
+										        $(win.document.body).find('table')
+										            .css('width', '100%')
+										            .css('border-collapse', 'collapse');
+
+										        $(win.document.body).find('table th, table td')
+										            .css('padding', '5px');
+
+										        $(win.document.body).find('table:first td')
+										            .css('border', 'none');
+										    }
 									}, 																		{
 									    extend : 'pdfHtml5',
 									    title : heading,
@@ -107,10 +166,8 @@ function callAjaxSearch() {
 
 									    customize: function(doc) {
 
-									        // your existing line (kept same)
 									        doc.content[1].margin = [20, 0, 20, 0];
 
-									        //  your added block (clean merge) 
 									        doc.defaultStyle.fontSize = 8;
 									        doc.pageMargins = [10, 10, 10, 10];
 											var ulbName = $('#ulbName').val() || '';

@@ -62,7 +62,18 @@ var codesForAccountDetailType={}
 var funcIdfuncAccCodeArray;
 var accCodeFuncFuncIdArray
 var slAccountCodes = new Array();
+function decodeHtml(html) {
+    var txt = document.createElement("textarea");
+
+    while (html !== txt.value) {
+        txt.innerHTML = html;
+        html = txt.value;
+    }
+
+    return html;
+}
 function updateGridPJV(field,index,value){
+	value = decodeHtml(value);
 	
 	document.getElementById(VOUCHERDETAILLIST+'['+index+'].'+field).value=value;
 }
@@ -170,9 +181,16 @@ function createSLTextFieldwithSearchBtnFormatterJV(prefix,suffix,onblurfunction,
 	}
 }
 
+function decodeHtml(value) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = value;
+    return txt.value;
+}
+
 function createLongTextFieldFormatterJV(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
     	var value = (YAHOO.lang.isValue(oData))?oData:"";
+		value = decodeHtml(value);
 		el.innerHTML = "<input type='text' id='"+prefix+"["+index+"]"+suffix+"' name='"+prefix+"["+index+"]"+suffix+"' readOnly style='width:250px;'/>";
 
     
@@ -181,6 +199,7 @@ function createLongTextFieldFormatterJV(prefix,suffix){
 function createLongTextFieldFormatterJV(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
+		value = decodeHtml(value);
 		el.innerHTML = "<input type='text' id='"+prefix+"["+billDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+billDetailTableIndex+"]"+suffix+"' readOnly style='width:250px;' tabindex='-1'/>";
 	}
 }
@@ -972,7 +991,15 @@ function fillNeibrAfterSplitGlcode(obj)
 		obj.value=temp[0];
 		var currRow=getRowIndex(obj);
 		document.getElementById('billDetailslist['+currRow+'].glcodeIdDetail').value=allGlcodes[key];
-		document.getElementById('billDetailslist['+currRow+'].accounthead').value=temp[1].split("`~`")[0];
+		//document.getElementById('billDetailslist['+currRow+'].accounthead').value=temp[1].split("`~`")[0];
+		var accountHead = temp[1].split("`~`")[0];
+
+		var txt = document.createElement("textarea");
+		txt.innerHTML = accountHead;
+		accountHead = txt.value;
+
+		document.getElementById('billDetailslist['+currRow+'].accounthead').value = accountHead;
+		//*** */
 		var flag=false;
 		for (var i=0; i<slDetailTableIndex;i++ )
 		{

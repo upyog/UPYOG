@@ -115,7 +115,7 @@ function callAjaxSearch() {
 										        tableHTML += '</tbody></table>';
 
 										        var fullHTML = '<!DOCTYPE html><html><head>' +
-										            '<title>Work Order Master</title>' +
+										            '<title>Deductions Master</title>' +
 										            '<style>' +
 										                'body { font-family: Arial, sans-serif; margin: 20px; }' +
 										                '@media print { body { margin: 10px; } }' +
@@ -137,7 +137,7 @@ function callAjaxSearch() {
 										                            ulb +
 										                        '</p>' +
 										                        '<p style="font-size:13px; font-weight:bold; color:#333; margin:6px 0;">' +
-										                            'Work Order Master' +
+										                            'Deductions Master' +
 										                        '</p>' +
 										                    '</td>' +
 										                    '<td style="width:15%; text-align:right; vertical-align:top; border:none; font-size:10px; color:#333;">' +

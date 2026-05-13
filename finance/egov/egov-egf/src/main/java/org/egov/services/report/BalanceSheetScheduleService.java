@@ -209,7 +209,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
                 "select glcode from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
-        if (list.get(0) != null)
+        if (list != null && !list.isEmpty() && list.get(0) != null)
             glCode = list.get(0).toString();
         return glCode;
     }
@@ -220,7 +220,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 						.append(" from chartofaccounts where purposeid=7").toString());
 		final List list = query.list();
 		String glCode = "";
-		if (list.get(0) != null)
+		if (list != null && !list.isEmpty() && list.get(0) != null)
 			glCode = list.get(0).toString();
 		return glCode;
 	}
@@ -232,7 +232,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 						.append(" from chartofaccounts where purposeid=7").toString());
 		final List list = query.list();
 		String glCode = "";
-		if (list.get(0) != null)
+		if (list != null && !list.isEmpty() && list.get(0) != null)
 			glCode = list.get(0).toString();
 		return glCode;
 	}

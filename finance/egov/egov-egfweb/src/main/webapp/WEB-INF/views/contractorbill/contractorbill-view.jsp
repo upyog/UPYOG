@@ -56,6 +56,35 @@
 .print-header {
     display: none;
 }
+.position_alert {
+	position: fixed;
+	z-index: 9999;
+	top: 85px;
+	right: 20px;
+	background: #F2DEDE;
+	padding: 10px 20px;
+	border-radius: 5px;
+}
+
+.position_alert1 {
+	position: fixed;
+	z-index: 9999;
+	top: 85px;
+	right: 520px;
+	background: #F2DEDE;
+	padding: 10px 20px;
+	border-radius: 5px;
+}
+
+.position_alert2 {
+	position: fixed;
+	z-index: 9999;
+	top: 85px;
+	right: 270px;
+	background: #F2DEDE;
+	padding: 10px 20px;
+	border-radius: 5px;
+}
 @media print {
 	@page {
 		margin: 0;
@@ -196,6 +225,23 @@ document.addEventListener("DOMContentLoaded", function () {
 		</div>
 
 	</div>
+	
+	<div class="position_alert">
+		<spring:message code="lbl.netpayable.amount" text="Net Payable Amount"/>
+		: &#8377 <span id="contractorNetPayableAmount"><c:out
+				value="${contractorNetPayableAmount}" default="0.0"></c:out></span>
+	</div>
+	<div class="position_alert1">
+		<spring:message code="lbl.total.debit.amount" text="Total Debit Amount"/>
+		: &#8377 <span id="contractorBillTotalDebitAmount"> <c:out
+				value="${contractorBillTotalDebitAmount}" default="0.0"></c:out></span>
+	</div>
+	<div class="position_alert2">
+		<spring:message code="lbl.total.deduction.amount" text="Total Deduction Amount"/>
+		: &#8377 <span id="contractorBillTotalCreditAmount"> <c:out
+				value="${contractorBillTotalCreditAmount}" default="0.0"></c:out></span>
+	</div>
+	
 	<div>
 		<spring:hasBindErrors name="egBillregister">
 			<div class="alert alert-danger col-md-10 col-md-offset-1">

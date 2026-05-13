@@ -228,7 +228,7 @@
 					</tr>
 					<td class="bluebox w5">&nbsp;</td>
 					<td class="bluebox w15"><s:text name="service.master.accountnumber" /> <span class="mandatory" /></td>
-					<td class="bluebox w25"><s:select headerKey="-1" headerValue="----Choose----" name="bankAccountId" id="bankAccountId" cssClass="selectwk" list="dropdownData.bankAccountIdList" listKey="id" listValue="accountnumber" value="%{bankAccountId.id}" /></td>
+					<td class="bluebox w25"><s:select headerKey="-1" headerValue="----Choose----" name="bankAccountId" id="bankAccountId" escapeHtml="false" cssClass="selectwk" list="dropdownData.bankAccountIdList" listKey="id" listValue="accountnumber" value="%{bankAccountId.id}" /></td>
 					<tr>
 					</tr>
 				</table>

@@ -90,9 +90,9 @@ function calculateBillAmount(){
 		debitamount = parseFloat(Number(debitamount) + Number($(this).find(".accountDetailsDebitAmount").html())).toFixed();
 		creditamount = parseFloat(Number(creditamount) + Number($(this).find(".accountDetailsCreditAmount").html())).toFixed();
 	});
-	$("#supplierNetPayableAmount").html($("#netPayableAmount").val());
-	$("#supplierBillTotalDebitAmount").html(debitamount);
-	$("#supplierBillTotalCreditAmount").html(Number(Number(creditamount)-Number($("#netPayableAmount").val())));
+	$("#contractorNetPayableAmount").html($("#netPayableAmount").val());
+	$("#contractorBillTotalDebitAmount").html(debitamount);
+	$("#contractorBillTotalCreditAmount").html(Number(Number(creditamount)-Number($("#netPayableAmount").val())));
 	$("#billamount").val(billamount);
 }
 

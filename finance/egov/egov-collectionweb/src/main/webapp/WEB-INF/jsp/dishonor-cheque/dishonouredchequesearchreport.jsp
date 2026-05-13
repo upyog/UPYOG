@@ -106,7 +106,8 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 						</div>
 						<div class="panel-body">
 							<div class="form-group">
-								<label class="col-sm-3 control-label text-right"><spring:message
+							    <div class="col-sm-1"></div>
+								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.dihonouredchequefromdate" />:<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
@@ -115,7 +116,7 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 										data-inputmask="'mask': 'd/m/y'" />
 									<form:errors path="fromDate" cssClass="error-msg" />
 								</div>
-								<label class="col-sm-3 control-label text-right"><spring:message
+								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.dihonouredchequetodate" />:<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
@@ -124,10 +125,11 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 										data-inputmask="'mask': 'd/m/y'" />
 									<form:errors path="toDate" cssClass="error-msg" />
 								</div>
-
+                                <div class="col-sm-1"></div>
 							</div>
 						 <div class="form-group">
-								<label class="col-sm-3 control-label text-right"><spring:message
+						        <div class="col-sm-1"></div>
+								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.bank.account.number" />:</label>
 								 <div class="col-sm-3 add-margin">
 								 <form:select name="accountNumber" path=""
@@ -142,7 +144,7 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 										</c:forEach> 
 									</form:select> 
 								</div> 
-								<label class="col-sm-3 control-label text-right"><spring:message
+								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.service"  />:</label>
 								 <div class="col-sm-3 add-margin">
 									 <form:select name="service" path="" data-first-option="false"
@@ -158,11 +160,12 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 										</c:forEach>
 									</form:select> 
 								</div> 
-
+                                <div class="col-sm-1"></div>
 							</div>
 
 							  <div class="form-group">
-								<label class="col-sm-3 control-label text-right"><spring:message
+							   <div class="col-sm-1"></div>
+								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.payment.type" text="Payment Type" />:</label>
 								<div class="col-sm-3 add-margin">
 									<form:select name="instrumentMode" path=""
@@ -176,14 +179,15 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 										</c:forEach>
 									</form:select>
 								</div>
-								<label class="col-sm-3 control-label text-right"><spring:message
+								<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.cheque.number"/></label>
-						<div class="col-sm-3 add-margin">
+						         <div class="col-sm-3 add-margin">
 							<form:input path="instrumentNumber" id ="instrumentNumberId"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="6"  onkeyup="decimalvalue(this);"/>
 							<form:errors path="instrumentNumber" cssClass="error-msg" />
 						</div>
+						<div class="col-sm-1"></div>
 							</div>
 							  <div class="form-group">
 								<div class="text-center">
@@ -266,6 +270,9 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/services/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/services/egi'/>"></script>
+<script>
+    var ulbName = '<c:out value="${ulbName}" />';
+</script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/dishonourchequereport.js?rnd=${app_release_no}'/>"></script>
 	

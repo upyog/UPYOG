@@ -168,9 +168,7 @@ function restrictTwoDecimals(input) {
 <script
         src="<cdn:url value='/resources/app/js/common/helper.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>
 <script
-        src="<cdn:url value='/resources/app/js/supplierbill/supplierbill.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>
-<script
-        src="<cdn:url value='/resources/app/js/supplierbill/rate.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>        
+        src="<cdn:url value='/resources/app/js/supplierbill/supplierbill.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>      
 <script
         src="<cdn:url value='/resources/app/js/common/voucherBillHelper.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>
 <script

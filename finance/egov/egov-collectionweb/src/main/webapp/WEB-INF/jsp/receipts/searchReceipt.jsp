@@ -146,8 +146,9 @@ function validateNew() {
 
         <div class="header">
             <h2>Government of Jammu & Kashmir</h2>
-            <h3>Housing and Urban Development</h3>
-            <h4>Department</h4>
+            <h3>Housing and Urban Development Department</h3>
+            /* <h4>Department</h4> */
+             <h4>${document.getElementById("ulbName").value}</h4>
         </div>
 
         <hr/>
@@ -611,6 +612,7 @@ function exportTableToExcel() {
 			</div>
 			<input type="hidden" name="${_csrf.parameterName}"
 				value="${_csrf.token}" />
+				  <input type="hidden" id="ulbName" value="<%= org.egov.infra.config.core.ApplicationThreadLocals.getCityName() %>" />
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 				<tr>

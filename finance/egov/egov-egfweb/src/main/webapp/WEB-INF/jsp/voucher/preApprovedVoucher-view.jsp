@@ -77,6 +77,17 @@
 </script>
 
 <style type="text/css">
+
+		 select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+		
+		div.subheadnew{
+		 padding : 2px 15px !important;
+		}
+
 .print-header {
 	display: none;
 }
@@ -228,12 +239,14 @@
 			<div class="subheadnew">Voucher View</div>
 			<table border="0" width="100%" cellspacing="0">
 				<tr>
-					<td width="10%" class="greybox"><b>Voucher Number : </b></td>
-					<td width="25%" class="greybox"><s:property
-							value="%{voucherHeader.voucherNumber}" /></td>
-					<td width="10%" class="greybox"><b> Date :</b></td>
-					<td width="25%" class="greybox"><s:date
-							name="voucherHeader.voucherDate" format="dd/MM/yyyy" /></td>
+					 <td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><b>Voucher Number : </b></td>
+					<td class="greybox w25"><s:property
+							value="%{voucherHeader.voucherNumber}" class="w100" /></td>
+					 <td class="bluebox w5">&nbsp;</td>
+					<td class="greybox w15"><b> Date :</b></td>
+					<td class="greybox w25"><s:date
+							name="voucherHeader.voucherDate" format="dd/MM/yyyy" class="w100"/></td>
 				</tr>
 			</table>
 			<jsp:include page="voucherViewHeader.jsp" />

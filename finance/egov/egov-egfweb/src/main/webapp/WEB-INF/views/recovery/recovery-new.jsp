@@ -64,6 +64,23 @@
 		</div>
 	</div>
 </form:form>
+<<style>
+.control-label {
+    text-align: right !important;
+    color: #000 !important;
+    font-weight: normal;
+    font-size: 12px !important;
+    padding-right: 15px;
+}
+
+.form-horizontal .control-label {
+    text-align: left !important;
+    padding-left:15px !important;
+}
+.add-margin {
+    margin-bottom: 12px;
+}
+</style>
 <script>
 	$('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {

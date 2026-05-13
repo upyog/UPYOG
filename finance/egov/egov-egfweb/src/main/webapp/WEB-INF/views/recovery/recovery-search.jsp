@@ -62,9 +62,10 @@
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
+						   <div class="col-sm-1"></div>
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.chartofaccounts" text="Account Code"/> </label>
-							<div class="col-sm-3">
+							<div class="col-sm-2">
 								<form:select path="chartofaccountsId" id="chartofaccounts.id"
 									cssClass="form-control" cssErrorClass="form-control error">
 									<form:option value="">
@@ -77,18 +78,21 @@
 								</form:select>
 								<form:errors path="chartofaccountsId" cssClass="error-msg" />
 							</div>
+							<div class="col-sm-1"></div>
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.deductions.code" text="Deduction Code"/> </label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-2 add-margin">
 								<form:input path="type" id="type" cssClass="form-control" cssErrorClass="form-control error"/>
 								<form:errors path="type" cssClass="error-msg" />
 							</div>
+							<div class="col-sm-1"></div>
 						</div>
 						
 						<div class="form-group">
+						    <div class="col-sm-1"></div>
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.deductions.name" text="Deduction Name"/> </label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-2 add-margin">
 								<form:input path="recoveryName" id="recoveryName" cssClass="form-control" cssErrorClass="form-control error"/>
 								<form:errors path="recoveryName" cssClass="error-msg" />
 							</div>
@@ -130,6 +134,23 @@
 		</table>
 	</div>
 </div>
+<<style>
+.control-label {
+    text-align: right !important;
+    color: #000 !important;
+    font-weight: normal;
+    font-size: 12px !important;
+    padding-right: 15px;
+}
+
+.form-horizontal .control-label {
+    text-align: left !important;
+    padding-left:15px !important;
+}
+.add-margin {
+    margin-bottom: 12px;
+}
+</style>
 <script>
 	$('#btnsearch').click(function(e) {
 		if ($('form').valid()) {

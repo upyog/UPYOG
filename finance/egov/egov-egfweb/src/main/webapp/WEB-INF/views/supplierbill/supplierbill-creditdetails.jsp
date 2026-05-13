@@ -62,7 +62,6 @@
 			<tr>
 				<th><spring:message code="lbl.account.code" text="Account Code"/></th>
 				<th><spring:message code="lbl.account.head" text="Account Head"/></th>
-				<th><spring:message text="Rate"/></th>
 				<th><spring:message code="lbl.deduction.amount" text="Deduction Amount"/></th>
 				<th><spring:message code="lbl.action" text="Action"/></th> 					
 			</tr>
@@ -72,16 +71,12 @@
 				<c:when test="${egBillregister.creditDetails.size() == 0}">
 					<tr id="creditdetailsrow">
 						<td>
-							<input type="text" id="creditDetails[0].creditGlcode" name="creditDetails[0].creditGlcode" class="form-control table-input creditDetailGlcode creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" onchange="populateRate(this);" placeholder="Type first 3 letters of Account code" >
+							<input type="text" id="creditDetails[0].creditGlcode" name="creditDetails[0].creditGlcode" class="form-control table-input creditDetailGlcode creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" placeholder="Type first 3 letters of Account code" >
 							<form:hidden path="creditDetails[0].glcodeid" id="creditDetails[0].glcodeid"  class="form-control table-input hidden-input creditdetailid"/>
 						</td>
 						<td>
 							<input type="text" id="creditDetails[0].creditAccountHead" name="creditDetails[0].creditAccountHead"  class="form-control creditdetailname" disabled>  
 						</td>
- 				<td>
-                    <form:select path="" name="tempCreditDetails[0].rate" id="tempCreditDetails[0].rate" onchange="calcualteNetpaybleAmount(); calculateCreditFromRate(this);"  class="form-control table-input text-left rate" >
-                    </form:select>
-                </td>						
 						<td>
 							<form:input path="creditDetails[0].creditamount" id="creditDetails[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" oninput="restrictTwoDecimals(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12"  />
 						</td> 

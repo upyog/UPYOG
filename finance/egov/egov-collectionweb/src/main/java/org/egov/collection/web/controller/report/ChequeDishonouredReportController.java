@@ -14,6 +14,8 @@ import org.apache.log4j.Logger;
 import org.egov.collection.entity.DishonoredChequeBean;
 import org.egov.collection.integration.services.DishonorChequeService;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.models.BankAccountServiceMapping;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infstr.services.PersistenceService;
@@ -57,6 +59,9 @@ public class ChequeDishonouredReportController {
     @Autowired
     private DishonorChequeService dishonorChequeService;
     
+    @Autowired
+    private CityRepository cityRepository;
+    
     @ModelAttribute
     public DishonoredChequeBean searchRequest() {
         return new DishonoredChequeBean();
@@ -94,6 +99,7 @@ public class ChequeDishonouredReportController {
         model.addAttribute("bankAccServiceMapp", getBankAccountServiceMapping());
         model.addAttribute("instrumentTypes", getInstrumentMap());
         model.addAttribute("businessServices", microserviceUtils.getBusinessService("Finance"));
+        model.addAttribute("ulbName",cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
     }
 
     private Object getBankAccountServiceMapping() {
