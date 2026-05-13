@@ -28,12 +28,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import static org.egov.swservice.util.SWConstants.*;
 
@@ -237,9 +240,9 @@ public class WorkflowNotificationService {
 				sewerageConnectionRequest, message, property);
 		if (message.contains("{receipt download link}"))
 			mobileNumberAndMesssage = setRecepitDownloadLink(mobileNumberAndMesssage, sewerageConnectionRequest, message, property);
-		Set<String> mobileNumbers = new HashSet<>(mobileNumberAndMesssage.keySet());
-	    mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumbers, sewerageConnectionRequest.getRequestInfo(),
-				property.getTenantId());
+		Set<String> mobileNumbers = mobileNumberAndMesssage.keySet().stream().collect(Collectors.toSet());
+//	    mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumbers, sewerageConnectionRequest.getRequestInfo(),
+//				property.getTenantId());
 
 		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
 			log.info("UUID search failed!");
@@ -514,17 +517,195 @@ public class WorkflowNotificationService {
 		if (message.contains("{receipt download link}"))
 			mobileNumberAndMessage = setRecepitDownloadLink(mobileNumberAndMessage, sewerageConnectionRequest, message, property);
 
-		List<EmailRequest> emailRequest = new LinkedList<>();
-		for (Map.Entry<String, String> entryset : mobileNumberAndEmailId.entrySet()) {
-			String customizedMsg = mobileNumberAndMessage.get(entryset.getKey());
-			String subject = customizedMsg.substring(customizedMsg.indexOf("<h2>")+4,customizedMsg.indexOf("</h2>"));
-			String body = customizedMsg.substring(customizedMsg.indexOf("</h2>")+5);
-			Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(true).body(body).subject(subject).build();
-			EmailRequest email = new EmailRequest(sewerageConnectionRequest.getRequestInfo(),emailobj);
-			emailRequest.add(email);
+    	String fileStoreId = getTargetFileStoreId(sewerageConnectionRequest.getSewerageConnection());
+  	   
+ 		List<String> attachments = new ArrayList<>();
+ 	    
+ 	    if (!StringUtils.isEmpty(fileStoreId)) {
+ 	        String publicUrl = fetchFileStorePublicUrl(sewerageConnectionRequest.getSewerageConnection().getTenantId(), fileStoreId);
+ 	        if (!StringUtils.isEmpty(publicUrl)) {
+ 	            attachments.add(publicUrl); //
+ 	        }
+ 	    }
+
+ 		List<EmailRequest> emailRequestList = new LinkedList<>();
+ 	    for (Map.Entry<String, String> entry : mobileNumberAndEmailId.entrySet()) {
+ 	        if (StringUtils.isEmpty(entry.getValue())) continue;
+
+ 	       String ownerName = mobileNumbersAndNames.get(entry.getKey());
+ 	      String feeBreakdown = "";
+ 	     if (applicationStatus.equalsIgnoreCase(PENDING_FOR_PAYMENT_STATUS_CODE)) {
+ 	         try {
+ 	        	  CalculationCriteria criteria = CalculationCriteria.builder().applicationNo(sewerageConnectionRequest.getSewerageConnection().getApplicationNo())
+ 	                     .sewerageConnection(sewerageConnectionRequest.getSewerageConnection()).tenantId(property.getTenantId()).build();
+ 	             CalculationReq calRequest = CalculationReq.builder().calculationCriteria(Arrays.asList(criteria))
+ 	                     .requestInfo(sewerageConnectionRequest.getRequestInfo()).isconnectionCalculation(false).isDisconnectionRequest(false).isReconnectionRequest(false).build();
+
+ 	             // Use your existing serviceRequestRepository logic
+ 	             Object response = serviceRequestRepository.fetchResult(sewerageServicesUtil.getEstimationURL(), calRequest);
+ 	             CalculationRes calResponse = mapper.convertValue(response, CalculationRes.class);
+ 	             
+ 	             if (calResponse != null && !CollectionUtils.isEmpty(calResponse.getCalculation())) {
+ 	                 feeBreakdown = buildFeeBreakdownHtml(calResponse.getCalculation().get(0));
+ 	             }
+ 	         } catch (Exception e) {
+ 	             log.error("Failed to fetch calculation for email: " + e.getMessage());
+ 	         }
+ 	     }
+ 	    if (!StringUtils.isEmpty(message)) {
+ 	    	message = elaborateEmailTemplate(message, ownerName, property, sewerageConnectionRequest, feeBreakdown);
+ 	   }
+
+ 	       // 4. Set Subject
+ 	       String subject = applicationStatus.equalsIgnoreCase("CONNECTION_ACTIVATED") 
+ 	                        ? "OFFICIAL NOTICE: Service Activation - " + sewerageConnectionRequest.getSewerageConnection().getApplicationNo()
+ 	                        : "ACTION REQUIRED: Estimation Letter Generated - " + sewerageConnectionRequest.getSewerageConnection().getApplicationNo();
+
+ 	       Email emailObj = Email.builder()
+ 	               .emailTo(Collections.singleton(entry.getValue()))
+ 	               .isHTML(true)
+ 	               .body(message)
+ 	               .subject(subject)
+ 	               .attachments(attachments)
+ 	               .build();
+ 	        
+ 	        emailRequestList.add(new EmailRequest(sewerageConnectionRequest.getRequestInfo(), emailObj));
+ 	    }
+ 	    return emailRequestList;
+ 	}
+	
+	 private String buildFeeBreakdownHtml(Calculation calculation) {
+	        if (calculation == null || calculation.getTaxHeadEstimates() == null) {
+	            return "";
+	        }
+	        
+	        StringBuilder rows = new StringBuilder();
+	        BigDecimal totalSum = BigDecimal.ZERO;
+
+	        for (TaxHeadEstimate estimate : calculation.getTaxHeadEstimates()) {
+	            if (estimate != null && estimate.getEstimateAmount() != null && 
+	                estimate.getEstimateAmount().compareTo(BigDecimal.ZERO) > 0) {
+	                
+	                totalSum = totalSum.add(estimate.getEstimateAmount());
+	                String headName = estimate.getTaxHeadCode().replace("WS_", "").replace("_", " ");
+	                
+	                rows.append("<tr>")
+	                    // Added padding: 12px 20px (Top/Bottom 12px, Left/Right 20px)
+	                    .append("<td style='padding: 12px 20px; color: #546e7a; border-bottom: 1px solid #e0e6ed;'>").append(headName).append("</td>")
+	                    .append("<td style='padding: 12px 20px; text-align: right; color: #263238; font-weight: bold; border-bottom: 1px solid #e0e6ed;'>₹ ").append(estimate.getEstimateAmount()).append("</td>")
+	                    .append("</tr>");
+	            }
+	        }
+
+	        // Updated Total Row with same padding to keep it aligned
+	        rows.append("<tr>")
+	            .append("<td style='padding: 20px; font-weight: bold; color: #1a237e; font-size: 16px;'>Total Payable Amount</td>")
+	            .append("<td style='padding: 20px; text-align: right; font-weight: 800; color: #e67e22; font-size: 22px;'>₹ ")
+	            .append(totalSum.setScale(2, RoundingMode.HALF_UP).toPlainString())
+	            .append("</td>")
+	            .append("</tr>");
+
+	        return rows.toString();
+	    }
+	    
+	    
+	    private String elaborateEmailTemplate(String template, String ownerName, Property property, SewerageConnectionRequest request, String feeBreakdown) {
+	        SewerageConnection conn = request.getSewerageConnection();
+	        Map<String, Object> additionalDetails = mapper.convertValue(conn.getAdditionalDetails(), Map.class);
+	        String appNo = conn.getApplicationNo() != null ? conn.getApplicationNo() : "";
+	        String serviceType = "Water & Sewerage"; // Fallback
+	        if (appNo.startsWith("WS")) {
+	            serviceType = "Water Supply";
+	        } else if (appNo.startsWith("SW")) {
+	            serviceType = "Sewerage";
+	        }
+	        // 1. City Name Logic
+	        String tenantId = conn.getTenantId();
+	        String cityName = (tenantId != null && tenantId.contains(".")) ? tenantId.split("\\.")[1] : "City";
+	        cityName = cityName.substring(0, 1).toUpperCase() + cityName.substring(1);
+
+	        // 2. Execution Date Logic
+	        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMMM, yyyy");
+	        String executionDate = (conn.getConnectionExecutionDate() != null && conn.getConnectionExecutionDate() > 0) 
+	                               ? sdf.format(new java.util.Date(conn.getConnectionExecutionDate())) : "Confirmed";
+
+	        // 3. Return statement (Minimalist)
+	        return template
+	            .replace("{ownerName}", ownerName != null ? ownerName : "Citizen")
+	            .replace("{cityName}", cityName)
+	            .replace("{serviceType}", serviceType) // New dynamic variable
+	            .replace("{applicationNo}", conn.getApplicationNo() != null ? conn.getApplicationNo() : "N/A")
+	            .replace("{consumerNo}", conn.getConnectionNo() != null ? conn.getConnectionNo() : "ACTIVATED")
+	            .replace("{propertyId}", conn.getPropertyId() != null ? conn.getPropertyId() : "N/A")
+	            .replace("{plotSize}", (property != null && property.getLandArea() != null) ? property.getLandArea().toString() : "N/A")
+	            .replace("{usageCategory}", (property != null && property.getUsageCategory() != null) ? property.getUsageCategory().replace("_", " ") : "Domestic")
+	            .replace("{waterSource}", "NA")
+	            .replace("{executionDate}", executionDate)
+	            .replace("{feeBreakdownRows}", feeBreakdown != null ? feeBreakdown : "")
+	            // If your email text still has {totalAmount} outside the table, 
+	            // we can still map it to the 'othersFee' or 'totalAmount' from additionalDetails as a fallback
+	            .replace("{totalAmount}", (additionalDetails != null && additionalDetails.get("totalAmount") != null) 
+	                                       ? additionalDetails.get("totalAmount").toString() : "Refer Table");
+	    }
+	    
+		private String fetchFileStorePublicUrl(String tenantId, String fileStoreId) {
+		    // 1. Get the template from properties
+		    // Template: /filestore/v1/files/url?tenantId=$tenantId&fileStoreIds=$fileStoreIds
+		    String linkTemplate = config.getFileStoreLink();
+		    
+		    // 2. Perform the replacement to clean the URI
+		    String processedLink = linkTemplate
+		            .replace("$tenantId", "pb")
+		            .replace("$fileStoreIds", fileStoreId);
+
+		    // 3. Combine Host and Path into a StringBuilder
+		    StringBuilder finalUri = new StringBuilder();
+		    finalUri.append(config.getFileStoreHost()).append(processedLink);
+		    
+		    try {
+		        log.info("Fetching FileStore URL using GET: {}", finalUri.toString());
+
+		        // 4. Call your specific GET method
+		        Object response = serviceRequestRepository.fetchResultUsingGet(finalUri);
+		        
+		        // 5. Convert and Extract
+		        Map<String, Object> responseMap = mapper.convertValue(response, Map.class);
+		        
+		        if (responseMap != null && responseMap.containsKey(fileStoreId)) {
+		            String fileUrl = (String) responseMap.get(fileStoreId); 
+		            log.info("Successfully fetched URL for fileStoreId {}: {}", fileStoreId, fileUrl);
+		            return fileUrl;
+		        }
+		    } catch (Exception e) {
+		        log.error("Failed to fetch public URL from FileStore for ID: " + fileStoreId, e);
+		    }
+		    return null;
 		}
-		return emailRequest;
-	}
+		
+		private String getTargetFileStoreId(SewerageConnection connection) {
+		    Object additionalDetails = connection.getAdditionalDetails();
+		    
+		    if (additionalDetails == null) return null;
+
+		    try {
+		        // Safely convert the ObjectNode to a Map
+		        Map<String, Object> detailsMap = mapper.convertValue(additionalDetails, Map.class);
+				if (connection.getApplicationStatus() != null
+						&& connection.getApplicationStatus().equalsIgnoreCase(PENDING_FOR_PAYMENT_STATUS_CODE)) {
+					if (detailsMap.containsKey("estimationFileStoreId")) {
+						return (String) detailsMap.get("estimationFileStoreId");
+					}
+				} else if (detailsMap.containsKey("sanctionFileStoreId")) {
+		            return (String) detailsMap.get("sanctionFileStoreId");
+		        }
+		    } catch (Exception e) {
+		        log.error("Error parsing additionalDetails for sanctionFileStoreId", e);
+		    }
+		    
+		    return null;
+		}
+		
+
 	public Map<String, String> getMessageForMobileNumber(Map<String, String> mobileNumbersAndNames,
 			SewerageConnectionRequest sewerageConnectionRequest, String message, Property property) {
 		Map<String, String> messageToReturn = new HashMap<>();

@@ -194,20 +194,29 @@ public class NotificationUtil {
 	 */
 	public String getCustomizedMsgForEmail(String action, String applicationStatus, String localizationMessage, int reqType) {
 		StringBuilder builder = new StringBuilder();
-		if (reqType == WCConstants.UPDATE_APPLICATION) {
+		if (applicationStatus.equalsIgnoreCase(WCConstants.PENDING_FOR_PAYMENT_STATUS_CODE) ) {
+			builder.append("notification.water.estimation.email");
+		}
+		else if (applicationStatus.equalsIgnoreCase(WCConstants.STATUS_APPROVED) ) {
+			builder.append("notification.water.activation.email.sanction");
+		}
+		
+		else	if (reqType == WCConstants.UPDATE_APPLICATION) {
 			builder.append("WS_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_EMAIL_MESSAGE");
 		}
-		if (reqType == WCConstants.MODIFY_CONNECTION) {
+		else	if (reqType == WCConstants.MODIFY_CONNECTION) {
 			builder.append("WS_MODIFY_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_EMAIL_MESSAGE");
 		}
-		if (reqType == DISCONNECT_CONNECTION)
+		else	if (reqType == DISCONNECT_CONNECTION)
 		{
 			builder.append("WS_DISCONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_EMAIL_MESSAGE");
 		}
-		if (reqType == RECONNECTION)
+		else if (reqType == RECONNECTION)
 		{
 			builder.append("WS_RECONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_EMAIL_MESSAGE");
 		}
+		
+		
 		return getMessageTemplate(builder.toString(), localizationMessage);
 	}
 
@@ -262,7 +271,8 @@ public class NotificationUtil {
 			if (CollectionUtils.isEmpty(emailRequestList))
 				log.info("Messages from localization couldn't be fetched!");
 			for (EmailRequest emailRequest : emailRequestList) {
-				producer.push(config.getEmailNotifTopic(), emailRequest);
+				String key = emailRequest.getEmail().getEmailTo().toString();
+				producer.push(config.getEmailNotifTopic(), key, emailRequest);
 				log.info("Email Request -> "+emailRequest.toString());
 				log.info("EMAIL notification sent!");
 			}

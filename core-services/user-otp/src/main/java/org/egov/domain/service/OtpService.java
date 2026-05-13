@@ -53,6 +53,8 @@ public class OtpService {
         if (!otpRequest.getIsThirdParty())
         { final String otpNumber = otpRepository.fetchOtp(otpRequest);
                 otpSMSSender.send(otpRequest, otpNumber);
+                if (null != matchingUser && null != matchingUser.getEmail())
+                otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
         }
     }
 

@@ -68,6 +68,11 @@ public class NDCConstants {
 	public static final String ACTION_STATUS_REJECTED = "REJECT_REJECTED";
 	
 	public static final String ACTION_STATUS_APPROVED = "APPROVE_APPROVED";
+	
+	public static final String EMAIL_APPROVED_CODE = "email_ndc_approval";
+	
+	public static final String EMAIL_SUBJECT = "Approval of No Due Certificate - Government of Punjab";
+
 
 	public static final String ACTION_PAY = "PAY";
 	public static final String PROPERTY_BUSINESSSERVICE = "PT";

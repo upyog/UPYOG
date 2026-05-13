@@ -28,26 +28,18 @@ public class PetNotificationConsumer {
 	@Autowired
 	private ObjectMapper mapper;
 
-	@KafkaListener(topics = { "${ptr.kafka.create.topic}", "${ptr.kafka.update.topic}" },concurrency = "${kafka.consumer.config.concurrency.count}")
-	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-
-		PetRegistrationRequest petRequest = new PetRegistrationRequest();
-		try {
-
-			log.debug("Consuming record in Pet for notification: " + record.toString());
-			petRequest = mapper.convertValue(record, PetRegistrationRequest.class);
-		} catch (final Exception e) {
-
-			log.error("Error while listening to value: " + record + " on topic: " + topic + ": " + e);
-		}
-
-		log.info("Pet Application Received: "
-				+ petRequest.getPetRegistrationApplications().get(0).getApplicationNumber());
-
-		// Save owner metadata after registration is persisted
-		enrichmentService.saveOwnerMetadata(petRequest);
-		
-		notificationService.process(petRequest);
+	@KafkaListener(topics = { "${ptr.kafka.create.topic}", "${ptr.kafka.update.topic}" }, concurrency = "${kafka.consumer.config.concurrency.count}")
+	public void listen(String jsonString, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+	    try {
+	        log.info("Received message on topic: " + topic);
+	        // Manually convert the String to the Object
+	        PetRegistrationRequest petRequest = mapper.readValue(jsonString, PetRegistrationRequest.class);
+	        
+//	     /   enrichmentService.saveOwnerMetadata(petRequest);
+	        notificationService.process(petRequest);
+	    } catch (Exception e) {
+	        log.error("Failed to process message", e);
+	    }
 	}
 
 }

@@ -568,23 +568,48 @@ public class NotificationUtil {
 	 *            Map of mobileNumber to Email Ids
 	 * @return List of EmailRequest
 	 */
-	public List<EmailRequest> createEmailRequest(RequestInfo requestInfo,String message, Map<String, String> mobileNumberToEmailId) {
+	public List<EmailRequest> createEmailRequest(RequestInfo requestInfo, String message, Map<String, String> mobileNumberToEmailId) {
+	    log.info("Processing Email Requests for {} recipients", mobileNumberToEmailId.size());
+	    List<EmailRequest> emailRequests = new LinkedList<>();
 
-		log.info("Map of mobileNumberToEmailId ->  "+mobileNumberToEmailId.toString());
-		List<EmailRequest> emailRequest = new LinkedList<>();
-		for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
-			String customizedMsg = message.replace("XXXX",entryset.getValue());
-			customizedMsg = customizedMsg.replace("{MOBILE_NUMBER}",entryset.getKey());
+	    for (Map.Entry<String, String> entry : mobileNumberToEmailId.entrySet()) {
+	        String emailId = entry.getValue();
+	        String mobileNumber = entry.getKey();
 
-			String subject = customizedMsg.substring(customizedMsg.indexOf("<h2>")+4,customizedMsg.indexOf("</h2>"));
-			String body = customizedMsg.substring(customizedMsg.indexOf("</h2>")+5);
-			Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(true).body(body).subject(subject).build();
-			EmailRequest email = new EmailRequest(requestInfo,emailobj);
-			emailRequest.add(email);
-		}
-		return emailRequest;
+	        // 1. Dynamic Replacement
+	        String customizedMsg = message.replace("XXXX", emailId != null ? emailId : "")
+	                                     .replace("{MOBILE_NUMBER}", mobileNumber != null ? mobileNumber : "");
+
+	        try {
+	            // 2. Robust Extraction of Subject and Body
+	            String subject = "Trade License Notification"; // Default Fallback
+	            String body = customizedMsg;
+
+	            if (customizedMsg.contains("<h2>") && customizedMsg.contains("</h2>")) {
+	                int start = customizedMsg.indexOf("<h2>") + 4;
+	                int end = customizedMsg.indexOf("</h2>");
+	                subject = customizedMsg.substring(start, end).trim();
+	                
+	                // Body starts after the closing </h2> tag
+	                body = customizedMsg.substring(end + 5).trim();
+	            }
+
+	            // 3. Object Construction
+	            Email emailObj = Email.builder()
+	                    .emailTo(Collections.singleton(emailId))
+	                    .isHTML(true)
+	                    .body(body)
+	                    .subject(subject)
+	                    .build();
+
+	            emailRequests.add(new EmailRequest(requestInfo, emailObj));
+
+	        } catch (Exception e) {
+	            log.error("Error parsing email template for {}: {}", emailId, e.getMessage());
+	        }
+	    }
+	    return emailRequests;
 	}
-
 
 
 	/**

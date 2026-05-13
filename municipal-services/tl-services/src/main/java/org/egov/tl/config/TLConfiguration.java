@@ -96,7 +96,23 @@ public class TLConfiguration {
 
     @Value("${egov.idgen.bpareg.licensenumber.format}")
     private String licenseNumberIdgenFormatBPA;
+    
+    
 
+    @Value("${egov.pdf.internal.host}")
+    private String pdfInternalHost;
+    
+    @Value("${egov.pdf.internal.create.endpoint}")
+    private String pdfInternalEndpoint;
+    
+    @Value("${egov.filestore.internal.host}")
+    private String fileInternalHost;
+    
+    @Value("${egov.filestore.internal.endpoint.search}")
+    private String fileStoreInternalDownloadEndpoint;
+    
+    
+    
     //Persister Config
     @Value("${persister.save.tradelicense.topic}")
     private String saveTopic;

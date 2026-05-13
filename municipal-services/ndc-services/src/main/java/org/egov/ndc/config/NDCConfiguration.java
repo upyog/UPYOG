@@ -122,4 +122,10 @@ public class NDCConfiguration {
 
 	@Value("${workflow.process.path}")
 	private String wfProcessSearchPath;
+	
+	@Value("${kafka.topics.notification.email}")
+	private String emailNotifTopic;
+	
+	@Value("${notification.email.enabled}")
+	private Boolean isEmailEnabled;
 }

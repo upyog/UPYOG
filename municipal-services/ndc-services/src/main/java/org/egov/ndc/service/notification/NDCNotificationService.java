@@ -49,14 +49,23 @@ public class NDCNotificationService {
 	 */
 	public void process(NdcApplicationRequest ndcRequest) {
 		List<SMSRequest> smsRequests = new LinkedList<>();
+		List<Map<String, Object>> emailRequests = new ArrayList<>();
 		if (null != config.getIsSMSEnabled()) {
 			if (config.getIsSMSEnabled()) {
 				enrichSMSRequest(ndcRequest, smsRequests);
 				if (!CollectionUtils.isEmpty(smsRequests))
 					util.sendSMS(smsRequests, config.getIsSMSEnabled());
 			}
+			if (config.getIsEmailEnabled()) {
+				enrichEmailRequest(ndcRequest, emailRequests);
+				 if (!CollectionUtils.isEmpty(emailRequests))
+					 util.sendEmail(emailRequests, config.getIsEmailEnabled());
+			}
 		}
 	}
+	
+	
+	
 
 	/**
 	 * Enriches the smsRequest with the customized messages
@@ -78,6 +87,35 @@ public class NDCNotificationService {
 			}
 		}
 		
+	}
+	
+	
+	/**
+	 * Enriches the emailRequest with the customized messages
+	 * 
+	 * @param request       The bpaRequest from kafka topic
+	 * @param emailRequests List of EmailRequets
+	 */
+	// Change the second parameter from HashMap to List<Map<String, Object>>
+	private void enrichEmailRequest(NdcApplicationRequest ndcRequest, List<Map<String, Object>> emailRequests) {
+	    
+	    for (Application application : ndcRequest.getApplications()) {
+	        String tenantId = application.getTenantId();
+	        
+	        // 1. Fetch the Punjab Govt NDC HTML Template from Localization
+	        String localizationMessages = util.getLocalizationMessages(tenantId, ndcRequest.getRequestInfo());
+	        
+	        // 2. Replace placeholders ({ownerName}, {consumerCode}, etc.)
+	        String message = util.getCustomizedMsgForMail(ndcRequest.getRequestInfo(), application, localizationMessages);
+	        
+	        if (message != null) {
+	            // 3. Get the map of Mobile -> Email
+	            Map<String, String> emailToOwner = getEmailUserList(application, ndcRequest.getRequestInfo());
+	            log.info("emailToOwner: " + emailToOwner);
+
+	            emailRequests.addAll(util.createEmailRequest(message, emailToOwner));
+	        }
+	    }
 	}
 
 	/**
@@ -102,6 +140,23 @@ public class NDCNotificationService {
 		mobileNumberToOwner.put(userDetailResponse.getUser().get(0).getMobileNumber(),
 				userDetailResponse.getUser().get(0).getName());
 		return mobileNumberToOwner;
+	}
+	
+	private Map<String, String> getEmailUserList(Application ndcRequest, RequestInfo requestInfo) {
+		Map<String, String> emailToOwner = new HashMap<>();
+		String tenantId = ndcRequest.getTenantId();
+//		List<String> mobileNumbers = ndcRequest.getOwners().stream().map(OwnerInfo::getMobileNumber).collect(Collectors.toList());
+		List<String> uuid = ndcRequest.getOwners().stream().map(OwnerInfo::getUuid).collect(Collectors.toList());
+		Set<String> ownerId = new HashSet<>();
+		ownerId.addAll(uuid);
+		NdcApplicationSearchCriteria ndcSearchCriteria = new NdcApplicationSearchCriteria();
+		ndcSearchCriteria.setOwnerIds(ownerId);
+		ndcSearchCriteria.setTenantId(tenantId);
+		UserResponse userDetailResponse = userService.getUser(ndcSearchCriteria, requestInfo);
+		emailToOwner.put(userDetailResponse.getUser().get(0).getMobileNumber(),
+				userDetailResponse.getUser().get(0).getEmailId()
+				);
+		return emailToOwner;
 	}
 
 }

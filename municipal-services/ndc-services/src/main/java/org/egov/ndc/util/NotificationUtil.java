@@ -2,6 +2,7 @@ package org.egov.ndc.util;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +59,29 @@ public class NotificationUtil {
 			}
 		}
 	}
+	
+	public void sendEmail(List<Map<String, Object>> emailRequests, boolean isEmailEnabled) {
+	    if (isEmailEnabled) {
+	        if (CollectionUtils.isEmpty(emailRequests)) {
+	            log.info("No email requests found to send.");
+	            return;
+	        }
+
+	        for (Map<String, Object> emailRequest : emailRequests) {
+	            try {
+	                // 1. Push to the EMAIL topic, not the SMS topic
+	                producer.push(config.getEmailNotifTopic(), emailRequest);
+	                
+	                // 2. Log correctly using keys from your HashMap
+	                log.info("Email sent to: " + emailRequest.get("email") + 
+	                         " | Subject: " + emailRequest.get("subject"));
+	                         
+	            } catch (Exception e) {
+	                log.error("Failed to push email to Kafka for: " + emailRequest.get("email"), e);
+	            }
+	        }
+	    }
+	}
 
 	/**
 	 * Creates sms request for the each owners
@@ -73,7 +99,25 @@ public class NotificationUtil {
 		}
 		return smsRequest;
 	}
-
+	
+	public List<Map<String, Object>> createEmailRequest(String message, Map<String, String> emailToOwner) {
+	    List<Map<String, Object>> emailRequests = new LinkedList<>();
+	    
+	    for (Map.Entry<String, String> entryset : emailToOwner.entrySet()) {
+	        HashMap<String, Object> emailRequest = new HashMap<>();
+	        
+	        // standard keys expected by egov-notification-mail service
+	        emailRequest.put("emailTo", entryset.getValue()); // Receiver Email ID
+	        emailRequest.put("subject", EMAIL_SUBJECT);           // e.g., "NDC Approval - Govt of Punjab"
+	        emailRequest.put("body", message);             // Your full HTML String
+	        emailRequest.put("isHTML", true);               // Tells the service to render the HTML
+	        
+	        emailRequests.add(emailRequest);
+	        
+	        log.info("HashMap Email Request created for: {}", entryset.getValue());
+	    }
+	    return emailRequests;
+	}
 	/**
 	 * Returns the uri for the localization call
 	 * 
@@ -161,6 +205,25 @@ public class NotificationUtil {
 		return message;
 	}
 
+	
+	
+	public String getCustomizedMsgForMail(RequestInfo requestInfo, Application ndc, String localizationMessage) {
+		String message = null, messageTemplate;
+		String messageCode;
+		if(ndc.getWorkflow() == null)
+			messageCode = ndc.getWorkflow() + "_" + ndc.getApplicationStatus();
+		else 
+			messageCode = ndc.getWorkflow().getAction() + "_" + ndc.getApplicationStatus();
+		switch (messageCode) {
+            case ACTION_STATUS_APPROVED:
+            	messageCode=EMAIL_APPROVED_CODE;
+				messageTemplate = getMessageTemplate(messageCode, localizationMessage);
+				if (!StringUtils.isEmpty(messageTemplate))
+					message = getApproveMsgForMail(ndc, messageTemplate);
+				break;
+        }
+		return message;
+	}
 	/**
 	 * Extracts message for the specific code
 	 * 
@@ -230,6 +293,60 @@ public class NotificationUtil {
 		return message;
 	}
 
+	
+	private String getApproveMsgForMail(Application ndc, String message) {
+	    String issueDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
+	    String cityName = ndc.getTenantId().split("\\.")[1]; 
+	    String consumerCode = ndc.getNdcDetails().get(0).getConsumerCode();   // check your field
+
+		 String ownerName = ndc.getOwners().get(0).getName();
+		    String applicationNo = ndc.getApplicationNo();
+
+		    // Format Reason
+		    String reason = formatReason(ndc.getReason());
+
+		    // Extract Address
+		    String address = "";
+		    if (ndc.getNdcDetails() != null && !ndc.getNdcDetails().isEmpty()) {
+		        String additionalDetails = ndc.getNdcDetails().get(0).getAdditionalDetails().toString();
+
+		        try {
+		            ObjectMapper mapper = new ObjectMapper();
+		            JsonNode node = mapper.readTree(additionalDetails);
+		            address = node.get("propertyAddress").asText();
+		        } catch (Exception e) {
+		            address = "";
+		        }
+		    }
+
+		    message = message.replace("{ownerName}", ownerName);
+		    message = message.replace("{applicationNo}", applicationNo);
+		    message = message.replace("{propertyAddress}", address);
+		    message = message.replace("{reason}", reason);
+		    message = message.replace("{cityName}", cityName);
+		    message = message.replace("{issueDate}", issueDate);
+		    message = message.replace("{consumerCode}", consumerCode);
+
+// usually works in egov
+
+
+		    return message;
+	}
+	
+	private String formatReason(String reason) {
+	    if (reason == null) return "";
+
+	    switch (reason) {
+	        case "FOR_SALE_OF_PROPERTY":
+	            return "Sale of Property";
+	        case "FOR_LOAN_PURPOSE":
+	            return "Loan Purpose";
+	        case "FOR_PROPERTY_TRANSFER":
+	            return "Property Transfer";
+	        default:
+	            return reason.replace("_", " ");
+	    }
+	}
 	private String getRejectedMsg(Application ndc, String message) {
 		message = message.replace("[Citizen Name]", ndc.getOwners().get(0).getName());
 		message = message.replace("[Application ID]", ndc.getApplicationNo());

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.egov.tl.util.TLConstants.*;
@@ -122,7 +124,15 @@ public class TLRenewalNotificationUtil {
 
         return message;
     }
+    public String getEmailCustomizedMsgMail(RequestInfo requestInfo, TradeLicense license, String localizationMessage) {
+        String message = null, messageTemplate;
 
+                messageTemplate = getMessageTemplate(TLConstants.NOTIF_TRADE_APPROVED_EMAIL , localizationMessage);
+                message = getReplacedMailMessage(license, messageTemplate);
+          
+
+        return message;
+    }
     public String getEmailCustomizedMsg(RequestInfo requestInfo, TradeLicense license, String localizationMessage) {
         String message = null, messageTemplate;
         String ACTION_STATUS = license.getAction() + "_" + license.getStatus();
@@ -207,6 +217,85 @@ public class TLRenewalNotificationUtil {
         message = message.replace("{PORTAL_LINK}",config.getUiAppHost());
         //CCC - Designaion configurable according to ULB
         // message = message.replace("CCC","");
+        return message;
+    }
+    
+    private String getReplacedMailMessage(TradeLicense license, String messageTemplate) {
+        if (license == null || messageTemplate == null) return "";
+
+        // 1. Basic Details
+        String appNo = license.getApplicationNumber() != null ? license.getApplicationNumber() : "";
+        String tenantId = license.getTenantId();
+        String cityName = (tenantId != null && tenantId.contains(".")) 
+                ? capitalize(tenantId.split("\\.")[1]) : "Punjab";
+
+        LocalDate today = LocalDate.now();
+        int expiryYear;
+
+        // If we haven't reached April 1st yet, the expiry is March 31st of the current year
+        if (today.getMonthValue() < 4) {
+            expiryYear = today.getYear();
+        } else {
+            // If we are in April or later, the license expires March 31st of the following year
+            expiryYear = today.getYear() + 1;
+        }
+
+        String validToDate = "31-MAR-" + expiryYear;
+        if (license.getValidTo() != null) {
+            try {
+                // Converts timestamp (e.g. 1869632999000) to "31-MAR-2029"
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+                validToDate = sdf.format(new java.util.Date(license.getValidTo())).toUpperCase();
+            } catch (Exception e) {
+                log.error("Error formatting validTo date for application: {}", appNo, e);
+            }
+        }
+        
+        
+
+        // 3. Safe Property ID extraction from additionalDetail Map
+        String propertyId = "N/A";
+        if (license.getTradeLicenseDetail() != null && license.getTradeLicenseDetail().getAdditionalDetail() != null) {
+            try {
+                Map<String, Object> addDetail = (Map<String, Object>) license.getTradeLicenseDetail().getAdditionalDetail();
+                if (addDetail.get("propertyId") != null) {
+                    propertyId = addDetail.get("propertyId").toString();
+                }
+            } catch (Exception e) {
+                log.warn("Could not parse propertyId from additionalDetail for {}", appNo);
+            }
+        }
+
+        // 4. Trade Type extraction (From the first TradeUnit)
+        String tradeType = "General Trade";
+        if (license.getTradeLicenseDetail() != null && 
+            license.getTradeLicenseDetail().getTradeUnits() != null && 
+            !license.getTradeLicenseDetail().getTradeUnits().isEmpty()) {
+            
+            tradeType = license.getTradeLicenseDetail().getTradeUnits().get(0).getTradeType();
+        }
+
+        // 5. Owner Name extraction
+        String ownerName = (license.getTradeLicenseDetail() != null && !license.getTradeLicenseDetail().getOwners().isEmpty()) 
+                ? license.getTradeLicenseDetail().getOwners().get(0).getName() : "Proprietor";
+
+        // 6. The Replacement Chain
+        String message = messageTemplate
+            .replace("{cityName}", cityName)
+            .replace("{applicationNo}", appNo)
+            .replace("{licenseNumber}", license.getLicenseNumber() != null ? license.getLicenseNumber() : "PENDING")
+            .replace("{tradeName}", license.getTradeName() != null ? license.getTradeName() : "Business Establishment")
+            .replace("{ownerName}", ownerName)
+            .replace("{propertyId}", propertyId)
+            .replace("{validToDate}", validToDate)
+            .replace("{tradeType}", tradeType != null ? tradeType : "General Trade")
+            .replace("{PORTAL_LINK}", config.getUiAppHost());
+
+        // Legacy Replacements for safety
+        message = message.replace("YYYY", "Trade License")
+                         .replace("ZZZZ", appNo)
+                         .replace("XYZ", cityName);
+
         return message;
     }
     /**
