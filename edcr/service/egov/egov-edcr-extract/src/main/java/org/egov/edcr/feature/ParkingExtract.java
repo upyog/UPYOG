@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -212,7 +213,11 @@ public class ParkingExtract extends FeatureExtract {
         }
         
         if(openParkingPloyLine!=null && !openParkingPloyLine.isEmpty()) {        	
-        	pl.getParkingDetails().getOpenCars().add(new MeasurementDetail(openParkingPloyLine.get(0),true));
+        	//pl.getParkingDetails().getOpenCars().add(new MeasurementDetail(openParkingPloyLine.get(0),true));
+        	pl.getParkingDetails().getOpenCars().addAll(
+                    openParkingPloyLine.stream()
+                            .map(polyLine -> new MeasurementDetail(polyLine, true))
+                            .collect(Collectors.toList()));
         	List<DXFLWPolyline> buildingFootPrintPolyLinesByLayer;
             String buildingFootPrint = layerNames.getLayerName("LAYER_NAME_BLOCK_NAME_PREFIX") + "\\d+_"
     				+ layerNames.getLayerName("LAYER_NAME_LEVEL_NAME_PREFIX") + "\\d+_"

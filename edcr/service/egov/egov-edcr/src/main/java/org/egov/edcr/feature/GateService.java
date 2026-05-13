@@ -70,23 +70,37 @@ public class GateService  extends FeatureProcess {
 	    }
 
 	    // --- Validation ---
-	    if (!gateDefined) {
-	        //LOG.warn("Gate details missing. Marking as Not Accepted.");
-	        details.put(PROVIDED, "0.00");
-	        details.put(STATUS, Result.Not_Accepted.getResultVal());
-	    } else if (gateHeight.compareTo(BigDecimal.ZERO) > 0) {
-	        LOG.info("Gate length is greater than zero. Accepted.");
-	        details.put(PROVIDED, gateHeight.toPlainString() + " m");
-	        details.put(STATUS, Result.Accepted.getResultVal());
-
-	    } else {
-	        //LOG.warn("Gate length is zero or negative. Not Accepted.");
-	        details.put(PROVIDED, gateHeight.toPlainString() + " m");
-	        details.put(STATUS, Result.Not_Accepted.getResultVal());
+//	    if (!gateDefined) {
+//	        //LOG.warn("Gate details missing. Marking as Not Accepted.");
+//	        details.put(PROVIDED, "0.00");
+//	        details.put(STATUS, Result.Not_Accepted.getResultVal());
+//	    } else if (gateHeight.compareTo(BigDecimal.ZERO) > 0) {
+//	        LOG.info("Gate length is greater than zero. Accepted.");
+//	        details.put(PROVIDED, gateHeight.toPlainString() + " m");
+//	        details.put(STATUS, Result.Accepted.getResultVal());
+//
+//	    } else {
+//	        //LOG.warn("Gate length is zero or negative. Not Accepted.");
+//	        details.put(PROVIDED, gateHeight.toPlainString() + " m");
+//	        details.put(STATUS, Result.Not_Accepted.getResultVal());
+//	    }
+	    
+	    if (gateDefined) {
+		    if (gateHeight.compareTo(BigDecimal.ZERO) > 0) {
+		        LOG.info("Gate length is greater than zero. Accepted.");
+		        details.put(PROVIDED, gateHeight.toPlainString() + " m");
+		        details.put(STATUS, Result.Accepted.getResultVal());
+		        scrutinyDetail.getDetail().add(details);
+			    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		    } else {
+		        //LOG.warn("Gate length is zero or negative. Not Accepted.");
+		        details.put(PROVIDED, gateHeight.toPlainString() + " m");
+		        details.put(STATUS, Result.Not_Accepted.getResultVal());
+		        scrutinyDetail.getDetail().add(details);
+			    plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		    }
 	    }
-
-	    //scrutinyDetail.getDetail().add(details);
-	    //plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	    
 
 	    LOG.info("Completed Main Gate validation.");
 
