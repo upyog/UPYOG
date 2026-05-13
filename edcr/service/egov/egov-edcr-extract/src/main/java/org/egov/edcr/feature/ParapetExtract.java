@@ -44,12 +44,14 @@ public class ParapetExtract extends FeatureExtract {
 
             List<DXFDimension> parapetDims = Util.getDimensionsByLayer(planDetail.getDoc(), layerName);
             
-            Map<String, String> data = Util.getColorByDimensionByLayer(planDetail, layerName);
-	        String layer = data.get("layerName");
-	        String color = data.get("colorCode");
-	        
-	      //Code added for the layername with colorCode match
-			Util.validateLayerColor(layer, Integer.parseInt(color), planDetail);
+            if(!parapetDims.isEmpty()){
+            	Map<String, String> data = Util.getColorByDimensionByLayer(planDetail, layerName);
+    	        String layer = data.get("layerName");
+    	        String color = data.get("colorCode");
+    	        
+    	      //Code added for the layername with colorCode match
+    			Util.validateLayerColor(layer, Integer.parseInt(color), planDetail);
+            }
             
             if (!parapetDims.isEmpty()) {
                 for (DXFDimension dim : parapetDims) {

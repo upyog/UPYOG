@@ -737,8 +737,12 @@ public class FarExtract extends FeatureExtract {
                 }
                 List<DXFLWPolyline> polyLinesByLayer;
                 polyLinesByLayer = Util.getPolyLinesByLayer(pl.getDoc(), stiltLayer);
-                BigDecimal occupancyArea = Util.getPolyLineArea(polyLinesByLayer.get(0));
-                LOG.info("Stilt Floor Area : " + occupancyArea);
+                
+                if(!polyLinesByLayer.isEmpty()) {
+                	BigDecimal occupancyArea = Util.getPolyLineArea(polyLinesByLayer.get(0));
+                	LOG.info("Stilt Floor Area : " + occupancyArea);
+                }                
+                
             }
            
            
@@ -770,8 +774,11 @@ public class FarExtract extends FeatureExtract {
             for (String stiltLayer : stiltParkLayerNames) {
                 List<DXFLWPolyline> polyLinesByLayer;
                 polyLinesByLayer = Util.getPolyLinesByLayer(pl.getDoc(), stiltLayer);
-                occupancyArea = Util.getPolyLineArea(polyLinesByLayer.get(0));
-                LOG.info("Stilt Floor Area : " + occupancyArea);
+                if(!polyLinesByLayer.isEmpty()) {
+                	occupancyArea = Util.getPolyLineArea(polyLinesByLayer.get(0));
+                    LOG.info("Stilt Floor Area : " + occupancyArea);
+                }
+                
             }
             return occupancyArea;            
         } else {
