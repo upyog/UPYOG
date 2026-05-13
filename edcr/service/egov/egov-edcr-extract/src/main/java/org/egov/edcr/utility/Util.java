@@ -164,7 +164,7 @@ public class Util {
         // --- DOORS, WINDOWS & SERVICES ---
         LAYER_RULES.add(new LayerRule(".*REGULAR_ROOM_\\d+_DOOR_\\d+$", 139));
         LAYER_RULES.add(new LayerRule(".*WINDOW_\\d+$", 140));
-        LAYER_RULES.add(new LayerRule(".*NON_HABITATIONAL_DOOR_\\d+$", 46));
+        LAYER_RULES.add(new LayerRule(".*NON_HABITATIONAL_DOOR_\\d+$", 146));
         LAYER_RULES.add(new LayerRule("^SOLAR_PANEL$", 143));
         LAYER_RULES.add(new LayerRule("^SOLAR_WATER_HEATER$", 144));
         LAYER_RULES.add(new LayerRule("^WASTE_MANAGEMENT$", 14));
