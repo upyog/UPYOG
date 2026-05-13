@@ -17,6 +17,7 @@ public class Otp {
     private static final String USER_LOGIN = "login";
     private String mobileNumber;
     private String tenantId;
+    private String emailId;
     private String type;
     private String userType;
     private Boolean isThirdParty = false; 

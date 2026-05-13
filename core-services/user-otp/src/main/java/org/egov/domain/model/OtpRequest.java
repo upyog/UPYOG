@@ -14,6 +14,8 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class OtpRequest {
 	@Setter
     private String mobileNumber;
+	@Setter
+	private String emailId;
     private String tenantId;
     private OtpRequestType type;
     private String userType;
@@ -23,7 +25,8 @@ public class OtpRequest {
 				|| isMobileNumberAbsent()
 				|| isInvalidType()
 				|| isMobileNumberNumeric()
-				|| isMobileNumberValidLength()) {
+				|| isMobileNumberValidLength()
+				|| isEmailValid()) {
             throw new InvalidOtpRequestException(this);
         }
     }
@@ -42,6 +45,17 @@ public class OtpRequest {
 		return false;
 	}
     
+	public boolean isEmailValid() {
+
+	    // Email is optional
+	    if (emailId == null || emailId.trim().isEmpty()) {
+	        return false;
+	    }
+
+	    // return TRUE only when invalid
+	    return !emailId.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+	}
+
 	public boolean isRegistrationRequestType() {
     	return OtpRequestType.REGISTER.equals(getType());
 	}
