@@ -145,8 +145,8 @@ public class GeneralStairExtract extends FeatureExtract {
 		
 		List<DXFLWPolyline> stairFlightPolyLines1 = Util.getPolyLinesByLayer(doc, flightLayerNames.get(0));
 		
-		//Code added for the layername with colorCode match
-		Util.validateLayerColor(flightLayerNames.get(0), Util.getColorByPolyLine(stairFlightPolyLines1), pl);
+//		//Code added for the layername with colorCode match
+//		Util.validateLayerColor(flightLayerNames.get(0), Util.getColorByPolyLine(stairFlightPolyLines1), pl);
 		
 		
 		Map<String, String> data = Util.getColorByDimensionByLayerByColorCode(pl, flightLayerNames.get(0),DxfFileConstants.STAIR_FLIGHT_LENGTH_COLOR);
@@ -229,8 +229,8 @@ public class GeneralStairExtract extends FeatureExtract {
 			stairLanding.setNumber(landingNo[7]);
 
 			List<DXFLWPolyline> landingPolyLines = Util.getPolyLinesByLayer(doc, landingLayer);
-			//Code added for the layername with colorCode match
-			Util.validateLayerColor(landingLayer, Util.getColorByPolyLine(landingPolyLines), pl);
+//			//Code added for the layername with colorCode match
+//			Util.validateLayerColor(landingLayer, Util.getColorByPolyLine(landingPolyLines), pl);
 			
 			boolean isClosed = landingPolyLines.stream().allMatch(dxflwPolyline -> dxflwPolyline.isClosed());
 

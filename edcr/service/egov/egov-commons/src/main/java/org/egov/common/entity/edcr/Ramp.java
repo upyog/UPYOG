@@ -66,8 +66,19 @@ public class Ramp extends Measurement {
     private Boolean rampClosed = false;  
 
     private BigDecimal floorHeight;
+    
+    private String slopeRatio;
+    
 
-    public BigDecimal getFloorHeight() {
+    public String getSlopeRatio() {
+		return slopeRatio;
+	}
+
+	public void setSlopeRatio(String slopeRatio) {
+		this.slopeRatio = slopeRatio;
+	}
+
+	public BigDecimal getFloorHeight() {
         return floorHeight;
     }
     
