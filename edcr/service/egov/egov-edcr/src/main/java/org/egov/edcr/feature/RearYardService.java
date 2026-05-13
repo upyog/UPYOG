@@ -356,10 +356,18 @@ public class RearYardService extends GeneralRule {
 						}
 					}else {
 						for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-							if(A_AIF.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())) {
-								errors.put("rearyardNodeDefined",
-	                                    getLocaleMessage(OBJECTNOTDEFINED, " Rear Setback of  Block " + block.getNumber() + "  at level  " + setback.getLevel()));
-								pl.addErrors(errors);
+							if (occupancy.getTypeHelper() != null
+							        && occupancy.getTypeHelper().getSubtype() != null
+							        && occupancy.getTypeHelper().getSubtype().getCode() != null
+							        && A_AIF.equalsIgnoreCase(
+							                occupancy.getTypeHelper().getSubtype().getCode())) {
+
+							    errors.put("rearyardNodeDefined",
+							            getLocaleMessage(OBJECTNOTDEFINED,
+							                    " Rear Setback of Block " + block.getNumber()
+							                            + " at level " + setback.getLevel()));
+
+							    pl.addErrors(errors);
 							}
 						}
 					}

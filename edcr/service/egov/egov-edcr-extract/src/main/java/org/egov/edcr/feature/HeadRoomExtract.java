@@ -28,12 +28,15 @@ public class HeadRoomExtract extends FeatureExtract {
                 String layerName = String.format(layerNames.getLayerName("LAYER_NAME_STAIR_HEAD_ROOM"), block.getNumber());
                 List<BigDecimal> headRoomDimensions = Util.getListOfDimensionValueByLayer(planDetail, layerName);
 
-                Map<String, String> data = Util.getColorByDimensionByLayer(planDetail, layerName);
-		        String layer = data.get("layerName");
-		        String color = data.get("colorCode");
-		        
-		      //Code added for the layername with colorCode match
-				Util.validateLayerColor(layer, Integer.parseInt(color), planDetail);
+                if(!headRoomDimensions.isEmpty()) {
+                	Map<String, String> data = Util.getColorByDimensionByLayer(planDetail, layerName);
+    		        String layer = data.get("layerName");
+    		        String color = data.get("colorCode");
+    		        
+    		      //Code added for the layername with colorCode match
+    				Util.validateLayerColor(layer, Integer.parseInt(color), planDetail);
+                }
+                
                 
                 if (headRoomDimensions != null && headRoomDimensions.size() > 0) {
                     HeadRoom headRoom = new HeadRoom();

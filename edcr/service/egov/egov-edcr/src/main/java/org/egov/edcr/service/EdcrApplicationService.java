@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -47,6 +48,8 @@ import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.util.Matrix;
 import org.egov.common.entity.edcr.Plan;
 //import org.egov.edcr.contract.EdcrRequest;
@@ -79,13 +82,39 @@ import com.aspose.cad.Color;
 import com.aspose.cad.Image;
 import com.aspose.cad.fileformats.cad.CadDrawTypeMode;
 import com.aspose.cad.imageoptions.CadRasterizationOptions;
+import com.aspose.cad.imageoptions.PdfDocumentOptions;
 import com.aspose.cad.imageoptions.PdfOptions;
+import com.aspose.cad.imageoptions.UnitType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.io.RandomAccessBufferedFileInputStream;
 
+import java.io.File;
+import java.io.IOException;
+//PDFBox - Document & Page
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+
+//PDFBox - Content Stream
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+
+//PDFBox - Font (PDFBox 2.0.x)
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+
+//PDFBox - Text Extraction (core pdfbox, no pdfbox-tools needed)
+import org.apache.pdfbox.text.PDFTextStripper;
+
+//Java IO
+import java.io.File;
+import java.io.IOException;
+
+//Java AWT - Region for PDFTextStripperByRegion
+import java.awt.geom.Rectangle2D;
+
+//Java IO
 import java.io.File;
 import java.io.IOException;
 
@@ -177,7 +206,7 @@ public class EdcrApplicationService {
     private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType, EdcrRequest edcrRequest){
         Plan planDetail = new Plan();
         planDetail = planService.process(edcrApplication, applicationType, edcrRequest);
-        updateFile(planDetail, edcrApplication);
+        //updateFile(planDetail, edcrApplication);
         edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
         return planDetail;
     }
@@ -955,6 +984,129 @@ public class EdcrApplicationService {
 
 
     
+//    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
+//        long start = System.currentTimeMillis();
+//        String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
+//        String newFileName = edcrApplication.getDxfFile().getOriginalFilename()
+//                .replace(".dxf", "_system_scrutinized.pdf");
+//        File finalOutputFile = new File(newFileName);
+//
+//        LOG.info("🔄 Starting scrutinized PDF generation for: {}", newFileName);
+//
+//        File tempPdf = null;
+//        try {
+//            // --- Step 1: Convert DXF → PDF using Aspose CAD ---
+//            tempPdf = File.createTempFile("scrutinized_", ".pdf");
+//            LOG.debug("Temporary PDF path: {}", tempPdf.getAbsolutePath());
+//
+//            try (Image cadImage = Image.load(filePath);
+//                 FileOutputStream tempOut = new FileOutputStream(tempPdf)) {
+//
+//                PdfOptions pdfOptions = new PdfOptions();
+//                CadRasterizationOptions rasterOpts = new CadRasterizationOptions();
+//                rasterOpts.setBackgroundColor(Color.getWhite());
+//                rasterOpts.setDrawType(CadDrawTypeMode.UseObjectColor);
+//                rasterOpts.setPageWidth(2480); // ~A4 horizontal, smaller to reduce memory
+//                rasterOpts.setPageHeight(3508); // ~A4 vertical
+//                rasterOpts.setAutomaticLayoutsScaling(true);
+//                rasterOpts.setNoScaling(false);
+//                pdfOptions.setVectorRasterizationOptions(rasterOpts);
+//
+//                cadImage.save(tempOut, pdfOptions);
+//                LOG.debug("✅ CAD to PDF conversion complete.");
+//            } catch (OutOfMemoryError oom) {
+//                LOG.error("❌ OutOfMemoryError while converting DXF → PDF: {}", filePath, oom);
+//                throw oom;
+//            } catch (Exception ex) {
+//                LOG.error("❌ Error converting DXF → PDF: {}", filePath, ex);
+//                throw ex;
+//            }
+//
+//            // --- Step 2: Post-process PDF (timestamp, incremental save) ---
+//            try (RandomAccessBufferedFileInputStream rar = new RandomAccessBufferedFileInputStream(tempPdf);
+//                 PDDocument document = PDDocument.load(rar);
+//                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(finalOutputFile))) {
+//
+//                PDPage page = document.getPage(0);
+//                float pageWidth = page.getMediaBox().getWidth();
+//                float pageHeight = page.getMediaBox().getHeight();
+//
+//                // Set initial view to center
+//                PDPageXYZDestination dest = new PDPageXYZDestination();
+//                dest.setPage(page);
+//                dest.setLeft((int) (pageWidth / 2f));
+//                dest.setTop((int) (pageHeight / 2f));
+//                dest.setZoom(1.0f);
+//                document.getDocumentCatalog().setOpenAction(dest);
+//
+//                try (PDPageContentStream contentStream = new PDPageContentStream(
+//                        document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+//
+//                    PDExtendedGraphicsState gs = new PDExtendedGraphicsState();
+//                    gs.setNonStrokingAlphaConstant(0.7f);
+//                    contentStream.setGraphicsStateParameters(gs);
+//
+//                    // --- (COMMENTED WATERMARK IMAGE CODE - preserved) ---
+////                    InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
+////                    java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
+////                    PDImageXObject image = LosslessFactory.createFromImage(document, image1);
+////                    float scale = 10f;
+////                    float watermarkWidth = image.getWidth() * scale;
+////                    float watermarkHeight = image.getHeight() * scale;
+////                    float watermarkXPos = (pageWidth - watermarkWidth) / 2;
+////                    float watermarkYPos = (pageHeight - watermarkHeight) / 2;
+////                    contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
+//
+//                    // --- Add timestamp ---
+//                    String timestamp = LocalDateTime.now().format(TS_FORMAT);
+//                    float fontSize = 24f;
+//                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
+//                    float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000f) * fontSize;
+//
+//                    float xPos = Math.max(20, pageWidth - textWidth - 20);
+//                    float yPos = 20f;
+//                    contentStream.beginText();
+//                    contentStream.newLineAtOffset(xPos, yPos);
+//                    contentStream.showText(timestamp);
+//                    contentStream.endText();
+//                }
+//
+//                // Incremental save to reduce memory usage
+//                document.saveIncremental(out);
+//                LOG.info("✅ PDF timestamp appended incrementally.");
+//
+//            } catch (Exception pdfEx) {
+//                LOG.error("❌ Error during PDF post-processing for '{}': {}", newFileName, pdfEx.getMessage(), pdfEx);
+//                throw pdfEx;
+//            }
+//
+//            // --- Step 3: Store to Filestore ---
+//            try {
+//                FileStoreMapper fileStoreMapper = fileStoreService.store(
+//                        finalOutputFile, finalOutputFile.getName(),
+//                        edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
+//
+//                edcrApplication.getEdcrApplicationDetails()
+//                        .get(0).setScrutinizedDxfFileId(fileStoreMapper);
+//
+//                LOG.info("📁 File stored successfully in filestore: {}", 
+//                        fileStoreMapper != null ? fileStoreMapper.getFileStoreId() : "null");
+//            } catch (Exception storeEx) {
+//                LOG.error("❌ Failed to store generated PDF in filestore: {}", storeEx.getMessage(), storeEx);
+//                throw storeEx;
+//            }
+//
+//        } catch (Exception e) {
+//            LOG.error("🚨 Error in updateFile() for '{}': {}", newFileName, e.getMessage(), e);
+//        } finally {
+//            if (tempPdf != null && tempPdf.exists() && !tempPdf.delete()) {
+//                LOG.warn("⚠️ Temporary PDF not deleted: {}", tempPdf.getAbsolutePath());
+//            }
+//            long elapsed = System.currentTimeMillis() - start;
+//            LOG.info("⚡ updateFile() completed in {} ms → {}", elapsed, newFileName);
+//        }
+//    }
+
     private void updateFile(Plan pl, EdcrApplication edcrApplication) {
         long start = System.currentTimeMillis();
         String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
@@ -962,11 +1114,11 @@ public class EdcrApplicationService {
                 .replace(".dxf", "_system_scrutinized.pdf");
         File finalOutputFile = new File(newFileName);
 
-        LOG.info("🔄 Starting scrutinized PDF generation for: {}", newFileName);
+        LOG.info("Starting scrutinized PDF generation for: {}", newFileName);
 
         File tempPdf = null;
+        File watermarkRemovedFile = null;
         try {
-            // --- Step 1: Convert DXF → PDF using Aspose CAD ---
             tempPdf = File.createTempFile("scrutinized_", ".pdf");
             LOG.debug("Temporary PDF path: {}", tempPdf.getAbsolutePath());
 
@@ -975,21 +1127,33 @@ public class EdcrApplicationService {
 
                 PdfOptions pdfOptions = new PdfOptions();
                 CadRasterizationOptions rasterOpts = new CadRasterizationOptions();
+
                 rasterOpts.setBackgroundColor(Color.getWhite());
                 rasterOpts.setDrawType(CadDrawTypeMode.UseObjectColor);
-                rasterOpts.setPageWidth(2480); // ~A4 horizontal, smaller to reduce memory
-                rasterOpts.setPageHeight(3508); // ~A4 vertical
+
+                rasterOpts.setPageWidth(4494);   
+                rasterOpts.setPageHeight(3178);
+
                 rasterOpts.setAutomaticLayoutsScaling(true);
+                
                 rasterOpts.setNoScaling(false);
+
+                rasterOpts.setLayouts(new String[]{"Model"});
+
+                rasterOpts.setUnitType(UnitType.Millimeter);
+
                 pdfOptions.setVectorRasterizationOptions(rasterOpts);
 
+                pdfOptions.setCorePdfOptions(new PdfDocumentOptions());
+
                 cadImage.save(tempOut, pdfOptions);
-                LOG.debug("✅ CAD to PDF conversion complete.");
+                LOG.debug("CAD to PDF conversion complete.");
+
             } catch (OutOfMemoryError oom) {
-                LOG.error("❌ OutOfMemoryError while converting DXF → PDF: {}", filePath, oom);
+                LOG.error("OutOfMemoryError while converting DXF → PDF: {}", filePath, oom);
                 throw oom;
             } catch (Exception ex) {
-                LOG.error("❌ Error converting DXF → PDF: {}", filePath, ex);
+                LOG.error("Error converting DXF → PDF: {}", filePath, ex);
                 throw ex;
             }
 
@@ -999,7 +1163,7 @@ public class EdcrApplicationService {
                  BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(finalOutputFile))) {
 
                 PDPage page = document.getPage(0);
-                float pageWidth = page.getMediaBox().getWidth();
+                float pageWidth  = page.getMediaBox().getWidth();
                 float pageHeight = page.getMediaBox().getHeight();
 
                 // Set initial view to center
@@ -1017,67 +1181,75 @@ public class EdcrApplicationService {
                     gs.setNonStrokingAlphaConstant(0.7f);
                     contentStream.setGraphicsStateParameters(gs);
 
-                    // --- (COMMENTED WATERMARK IMAGE CODE - preserved) ---
-//                    InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
-//                    java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
-//                    PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-//                    float scale = 10f;
-//                    float watermarkWidth = image.getWidth() * scale;
-//                    float watermarkHeight = image.getHeight() * scale;
-//                    float watermarkXPos = (pageWidth - watermarkWidth) / 2;
-//                    float watermarkYPos = (pageHeight - watermarkHeight) / 2;
-//                    contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
-
-                    // --- Add timestamp ---
                     String timestamp = LocalDateTime.now().format(TS_FORMAT);
-                    float fontSize = 24f;
+
+                    float fontSize = Math.max(12f, pageWidth * 0.024f);
                     contentStream.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
+
                     float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000f) * fontSize;
 
-                    float xPos = Math.max(20, pageWidth - textWidth - 20);
-                    float yPos = 20f;
+                    float margin = pageWidth * 0.005f;
+                    float xPos = Math.max(margin, pageWidth - textWidth - margin);
+                    float yPos = margin;
+
                     contentStream.beginText();
                     contentStream.newLineAtOffset(xPos, yPos);
                     contentStream.showText(timestamp);
                     contentStream.endText();
                 }
 
-                // Incremental save to reduce memory usage
                 document.saveIncremental(out);
-                LOG.info("✅ PDF timestamp appended incrementally.");
+                LOG.info("PDF timestamp appended incrementally.");
 
             } catch (Exception pdfEx) {
-                LOG.error("❌ Error during PDF post-processing for '{}': {}", newFileName, pdfEx.getMessage(), pdfEx);
+                LOG.error("Error during PDF post-processing for '{}': {}", newFileName, pdfEx.getMessage(), pdfEx);
                 throw pdfEx;
             }
+            
+         // --- Step 3: Replace Aspose Watermark ---
+            watermarkRemovedFile = File.createTempFile("watermark_removed_", ".pdf");
+            try {
+                watermarkRemovedFile = replaceAsposeWatermark(
+                        finalOutputFile,
+                        watermarkRemovedFile.getAbsolutePath(),
+                        ""
+                );
+                LOG.info("Aspose watermark replaced successfully.");
+            } catch (Exception wmEx) {
+                LOG.error("Failed to replace Aspose watermark: {}", wmEx.getMessage(), wmEx);
+                throw wmEx;
+            }
 
-            // --- Step 3: Store to Filestore ---
+            // --- Step 4: Store to Filestore ---
             try {
                 FileStoreMapper fileStoreMapper = fileStoreService.store(
-                        finalOutputFile, finalOutputFile.getName(),
+                        watermarkRemovedFile,              // ← use watermark-removed file
+                        finalOutputFile.getName(),
                         edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
 
                 edcrApplication.getEdcrApplicationDetails()
                         .get(0).setScrutinizedDxfFileId(fileStoreMapper);
 
-                LOG.info("📁 File stored successfully in filestore: {}", 
+                LOG.info("File stored in filestore: {}",
                         fileStoreMapper != null ? fileStoreMapper.getFileStoreId() : "null");
             } catch (Exception storeEx) {
-                LOG.error("❌ Failed to store generated PDF in filestore: {}", storeEx.getMessage(), storeEx);
+                LOG.error("Failed to store generated PDF: {}", storeEx.getMessage(), storeEx);
                 throw storeEx;
             }
 
         } catch (Exception e) {
-            LOG.error("🚨 Error in updateFile() for '{}': {}", newFileName, e.getMessage(), e);
+            LOG.error("Error in updateFile() for '{}': {}", newFileName, e.getMessage(), e);
         } finally {
-            if (tempPdf != null && tempPdf.exists() && !tempPdf.delete()) {
-                LOG.warn("⚠️ Temporary PDF not deleted: {}", tempPdf.getAbsolutePath());
+        	if (tempPdf != null && tempPdf.exists() && !tempPdf.delete()) {
+                LOG.warn("Temporary PDF not deleted: {}", tempPdf.getAbsolutePath());
+            }
+            if (watermarkRemovedFile != null && watermarkRemovedFile.exists() && !watermarkRemovedFile.delete()) {
+                LOG.warn("Watermark-removed temp PDF not deleted: {}", watermarkRemovedFile.getAbsolutePath());
             }
             long elapsed = System.currentTimeMillis() - start;
-            LOG.info("⚡ updateFile() completed in {} ms → {}", elapsed, newFileName);
+            LOG.info("updateFile() completed in {} ms → {}", elapsed, newFileName);
         }
     }
-
 
     
 //    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
@@ -1330,14 +1502,18 @@ public class EdcrApplicationService {
             throw new FileNotFoundException("File not found in filestore");
         }
 
+//        File updatedDiagramFile =
+//                File.createTempFile("updated_diagram_", ".pdf");
+//
+//        updatedDiagramFile = replaceAsposeWatermark(
+//                uploadedDiagramFile,
+//                updatedDiagramFile.getAbsolutePath(),
+//                ""
+//        );
+        
         // Step 1: Overlay on uploadedDiagram
         File overlayedDiagram = File.createTempFile("overlayed_", ".pdf");
-
-        overlayedDiagram = overlayPlotDetails(
-                uploadedDiagramFile,
-                overlayedDiagram.getAbsolutePath(),
-                additionalDetails
-        );
+        overlayedDiagram = overlayPlotDetails( uploadedDiagramFile, overlayedDiagram.getAbsolutePath(), additionalDetails );
 
         
         PDDocument dxfDoc = PDDocument.load(overlayedDiagram);
@@ -1367,10 +1543,199 @@ public class EdcrApplicationService {
                 mergedOutput,
                 mergedOutput.getName(),
                 "application/pdf",
-                FILESTORE_MODULECODE
+                FILESTORE_MODULECODE,
+                sanctionLetterTenant
         );
 
         return fileStoreMapper;
+    }
+    
+//    public File replaceAsposeWatermark(File inputPdf, String outputPath, String newText) throws IOException {
+//
+//        LOG.info("========== REPLACING ASPOSE WATERMARK ==========");
+//
+//        PDDocument document = PDDocument.load(inputPdf);
+//
+//        /*
+//         * PAGE 2
+//         * index = 1
+//         */
+//        PDPage page = document.getPage(0);
+//
+//        PDRectangle mediaBox = page.getMediaBox();
+//
+//        float pageWidth = mediaBox.getWidth();
+//        float pageHeight = mediaBox.getHeight();
+//
+//        LOG.info("PAGE WIDTH  : {}", pageWidth);
+//        LOG.info("PAGE HEIGHT : {}", pageHeight);
+//
+//        /*
+//         * WATERMARK POSITION (CAD coordinate space: 10173.09 x 14390.0)
+//         *
+//         * Aspose watermark is near the TOP of the page:
+//         *   "Evaluation only. Created with Aspose.CAD. Copyright 2016-2025 Aspose Pty Ltd."
+//         * Detected bbox: x0=299.94, y0=13648.71, x1=3287.66, y1=14230.49
+//         * With 50-unit padding applied on all sides.
+//         */
+//        float x = 249.94f;
+//
+//        float y = 13598.71f;
+//
+//        float width = 3087.72f;
+//
+//        float height = 681.78f;
+//
+//        LOG.info("Covering watermark area...");
+//        LOG.info("X      : {}", x);
+//        LOG.info("Y      : {}", y);
+//        LOG.info("WIDTH  : {}", width);
+//        LOG.info("HEIGHT : {}", height);
+//
+//        PDPageContentStream contentStream =
+//                new PDPageContentStream(document,page,PDPageContentStream.AppendMode.APPEND,true,true);
+//
+//        /*
+//         * WHITE RECTANGLE — covers the Aspose watermark
+//         */
+//        contentStream.setNonStrokingColor(255, 255, 255);
+//
+//        contentStream.addRect(x,y,width,height);
+//
+//        contentStream.fill();
+//
+//        LOG.info("Watermark hidden successfully");
+//
+//        /*
+//         * WRITE NEW TEXT at same position
+//         */
+//        contentStream.beginText();
+//
+//        contentStream.setNonStrokingColor(0, 0, 0);
+//
+//        contentStream.setFont(PDType1Font.HELVETICA_BOLD,80);
+//
+//        contentStream.newLineAtOffset(x + 20, y + height / 2 - 40);
+//
+//        contentStream.showText(newText);
+//
+//        contentStream.endText();
+//
+//        contentStream.close();
+//
+//        File outputFile = new File(outputPath);
+//
+//        document.save(outputFile);
+//
+//        document.close();
+//
+//        LOG.info("Updated PDF saved at : {}", outputFile.getAbsolutePath());
+//
+//        LOG.info("========== WATERMARK REPLACED ==========");
+//
+//        return outputFile;
+//    }
+
+    public File replaceAsposeWatermark(
+            File inputPdf,
+            String outputPath,
+            String newText) throws IOException {
+
+        LOG.info("========== REPLACING ASPOSE WATERMARK ==========");
+
+        PDDocument document = PDDocument.load(inputPdf);
+        int totalPages = document.getNumberOfPages();
+        LOG.info("Total pages in PDF: {}", totalPages);
+
+        // -------------------------------------------------------
+        // DYNAMIC DETECTION using core PDFTextStripper only.
+        // Scans every page for Aspose watermark text, then covers
+        // it using proportional coordinates derived from page size.
+        //
+        // Observed across all PDF sizes generated by Aspose.CAD:
+        //   - Always top-left corner
+        //   - Height  ≈ 4.0% of page height
+        //   - Y gap from top ≈ 1.1% of page height
+        //   - X starts near 0 (left edge)
+        //   - Width varies by DXF, so we use a safe 35% of page width
+        // -------------------------------------------------------
+        int    targetPageIndex = -1;
+        float  wmX = 0, wmY = 0, wmWidth = 0, wmHeight = 0;
+
+        PDFTextStripper stripper = new PDFTextStripper();
+
+        for (int i = 0; i < totalPages; i++) {
+            stripper.setStartPage(i + 1);
+            stripper.setEndPage(i + 1);
+            String pageText = stripper.getText(document);
+
+            if (pageText.contains("Aspose") || pageText.contains("Evaluation only")) {
+                targetPageIndex = i;
+                LOG.info("Aspose watermark detected on page index: {}", i);
+
+                PDRectangle mediaBox = document.getPage(i).getMediaBox();
+                float pageWidth  = mediaBox.getWidth();
+                float pageHeight = mediaBox.getHeight();
+                LOG.info("Page dimensions → width={}, height={}", pageWidth, pageHeight);
+
+                float padding = pageHeight * 0.005f;
+
+                // Watermark is always top-left; cover from top edge downward
+                wmHeight = (pageHeight * 0.040f) + (padding * 2);
+                wmWidth  = (pageWidth  * 0.35f)  + (padding * 2);
+                wmX      = -padding;
+                wmY      = pageHeight - wmHeight - padding;  // near top in PDFBox coords
+
+                LOG.info("Cover rect → x={}, y={}, w={}, h={}", wmX, wmY, wmWidth, wmHeight);
+                break;
+            }
+        }
+
+        if (targetPageIndex == -1) {
+            LOG.warn("No Aspose watermark found in PDF — saving unchanged.");
+            File outputFile = new File(outputPath);
+            document.save(outputFile);
+            document.close();
+            return outputFile;
+        }
+
+        PDPage targetPage = document.getPage(targetPageIndex);
+
+        PDPageContentStream contentStream = new PDPageContentStream(
+                document,
+                targetPage,
+                PDPageContentStream.AppendMode.APPEND,
+                true,
+                true
+        );
+
+        // WHITE RECTANGLE — covers the watermark
+        contentStream.setNonStrokingColor(255, 255, 255);
+        contentStream.addRect(wmX, wmY, wmWidth, wmHeight);
+        contentStream.fill();
+        LOG.info("Watermark area covered successfully");
+
+        // Optional replacement text (pass "" to just erase)
+        if (newText != null && !newText.isEmpty()) {
+            float fontSize = Math.max(10f, targetPage.getMediaBox().getWidth() * 0.008f);
+            contentStream.beginText();
+            contentStream.setNonStrokingColor(0, 0, 0);
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
+            contentStream.newLineAtOffset(wmX + 10, wmY + (wmHeight / 2f) - (fontSize / 2f));
+            contentStream.showText(newText);
+            contentStream.endText();
+        }
+
+        contentStream.close();
+
+        File outputFile = new File(outputPath);
+        document.save(outputFile);
+        document.close();
+
+        LOG.info("Updated PDF saved at: {}", outputFile.getAbsolutePath());
+        LOG.info("========== WATERMARK REPLACED ==========");
+
+        return outputFile;
     }
     
     private File scalePdfToMatch(File inputPdf, PDRectangle targetSize) throws IOException {
