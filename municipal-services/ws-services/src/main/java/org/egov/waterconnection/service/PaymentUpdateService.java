@@ -122,7 +122,17 @@ public class PaymentUpdateService {
 						throw new CustomException("INVALID_RECEIPT",
 								"More than one application found on consumerCode " + criteria.getApplicationNumber());
 					}
-					waterConnections.forEach(waterConnection -> waterConnection.getProcessInstance().setAction((WCConstants.ACTION_PAY)));
+					
+//					waterConnections.forEach(waterConnection -> waterConnection.getProcessInstance().setAction((WCConstants.ACTION_PAY)));
+
+					waterConnections.forEach(waterConnection -> {
+					    String action = (WCConstants.DISCONNECT_WATER_CONNECTION.equalsIgnoreCase(waterConnection.getApplicationType()) 
+					            && WCConstants.PENDING_FOR_APPLICATION_FEE.equalsIgnoreCase(waterConnection.getApplicationStatus())) 
+					            ? WCConstants.ACTION_PAYFEE : WCConstants.ACTION_PAY;
+					            
+					    waterConnection.getProcessInstance().setAction(action);
+					});
+					
 					WaterConnectionRequest waterConnectionRequest = WaterConnectionRequest.builder()
 							.waterConnection(connection).requestInfo(paymentRequest.getRequestInfo())
 							.build();
@@ -562,16 +572,16 @@ public class PaymentUpdateService {
 				message = message.replace("{Billing Period}", billingPeriod);
 			}
 
-			if (message.contains("{receipt download link}")){
-				String link = config.getNotificationUrl() + config.getMyPaymentsLink();
-				link = link.replace("$consumerCode", paymentDetail.getBill().getConsumerCode());
-				link = link.replace("$tenantId", paymentDetail.getTenantId());
-				link = link.replace("$businessService",paymentDetail.getBusinessService());
-				link = link.replace("$receiptNumber",paymentDetail.getReceiptNumber());
-				link = link.replace("$mobile", mobAndMesg.getKey());
-				link = waterServiceUtil.getShortnerURL(link);
-				message = message.replace("{receipt download link}",link);
-			}
+//			if (message.contains("{receipt download link}")){
+//				String link = config.getNotificationUrl() + config.getMyPaymentsLink();
+//				link = link.replace("$consumerCode", paymentDetail.getBill().getConsumerCode());
+//				link = link.replace("$tenantId", paymentDetail.getTenantId());
+//				link = link.replace("$businessService",paymentDetail.getBusinessService());
+//				link = link.replace("$receiptNumber",paymentDetail.getReceiptNumber());
+//				link = link.replace("$mobile", mobAndMesg.getKey());
+//				link = waterServiceUtil.getShortnerURL(link);
+//				message = message.replace("{receipt download link}",link);
+//			}
 
 			messageToReturn.put(mobAndMesg.getKey(), message);
 		}

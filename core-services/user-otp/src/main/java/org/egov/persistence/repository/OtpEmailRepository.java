@@ -35,7 +35,7 @@ public class OtpEmailRepository {
 		final EmailMessage emailMessage = EmailMessage.builder()
 				.body(getBody(otpNumber))
 				.subject(getSubject())
-				.email(email)
+				.emailTo(email)
 				.sender(EMPTY)
 				.build();
 		kafkaTemplate.send(emailTopic, emailMessage);

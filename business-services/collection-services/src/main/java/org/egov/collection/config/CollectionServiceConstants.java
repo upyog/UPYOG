@@ -291,5 +291,7 @@ public class CollectionServiceConstants {
     public static final String CITIZEN_ROLE = "CITIZEN";
     
     public static final String EMPLOYEE_TYPE = "EMPLOYEE";
+    
+    public static final String EMAIL_MESSAGE = "notification.collection.receipt.email";
 
 }

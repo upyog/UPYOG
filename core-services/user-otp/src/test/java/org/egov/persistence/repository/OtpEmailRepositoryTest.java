@@ -38,7 +38,7 @@ public class OtpEmailRepositoryTest {
 				.subject("Password Reset")
 				.body("Your OTP for recovering password is otpNumber.")
 				.sender("")
-				.email("foo@bar.com")
+				.emailTo("foo@bar.com")
 				.build();
 
 		repository.send("foo@bar.com", "otpNumber");

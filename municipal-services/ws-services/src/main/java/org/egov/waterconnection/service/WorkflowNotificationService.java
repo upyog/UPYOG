@@ -5,6 +5,9 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import java.math.BigDecimal; // Add this line
+import java.math.RoundingMode;
+
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -493,24 +496,204 @@ public class WorkflowNotificationService {
             mobileNumberAndEmailId.put(waterConnectionRequest.getRequestInfo().getUserInfo().getMobileNumber(), waterConnectionRequest.getRequestInfo().getUserInfo().getEmailId());
         }
 
-        Map<String, String> mobileNumberAndMessage = getMessageForMobileNumber(mobileNumbersAndNames,
-                waterConnectionRequest, message, property);
+        if (message != null) {
+        	Map<String, String> mobileNumberAndMessage = getMessageForMobileNumber(mobileNumbersAndNames,
+                    waterConnectionRequest, message, property);
 
-        if (message.contains("{receipt download link}"))
-            mobileNumberAndMessage = setRecepitDownloadLink(mobileNumberAndMessage, waterConnectionRequest, message, property);
+            if (message.contains("{receipt download link}"))
+                mobileNumberAndMessage = setRecepitDownloadLink(mobileNumberAndMessage, waterConnectionRequest, message, property);	
+		}
+        
+    	String fileStoreId = getTargetFileStoreId(waterConnectionRequest.getWaterConnection());
+ 	   
+ 		List<String> attachments = new ArrayList<>();
+ 	    
+ 	    if (!StringUtils.isEmpty(fileStoreId)) {
+ 	        String publicUrl = fetchFileStorePublicUrl(waterConnectionRequest.getWaterConnection().getTenantId(), fileStoreId);
+ 	        if (!StringUtils.isEmpty(publicUrl)) {
+ 	            attachments.add(publicUrl); //
+ 	        }
+ 	    }
 
-        List<EmailRequest> emailRequest = new LinkedList<>();
-        for (Map.Entry<String, String> entryset : mobileNumberAndEmailId.entrySet()) {
-            String customizedMsg = mobileNumberAndMessage.get(entryset.getKey());
-            String subject = customizedMsg.substring(customizedMsg.indexOf("<h2>")+4,customizedMsg.indexOf("</h2>"));
-            String body = customizedMsg.substring(customizedMsg.indexOf("</h2>")+5);
-            Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(true).body(body).subject(subject).build();
-            EmailRequest email = new EmailRequest(waterConnectionRequest.getRequestInfo(),emailobj);
-            emailRequest.add(email);
+ 		List<EmailRequest> emailRequestList = new LinkedList<>();
+ 	    for (Map.Entry<String, String> entry : mobileNumberAndEmailId.entrySet()) {
+ 	        if (StringUtils.isEmpty(entry.getValue())) continue;
+
+ 	       String ownerName = mobileNumbersAndNames.get(entry.getKey());
+ 	      String feeBreakdown = "";
+ 	     if (applicationStatus.equalsIgnoreCase(PENDING_FOR_PAYMENT_STATUS_CODE)) {
+ 	         try {
+ 	        	  CalculationCriteria criteria = CalculationCriteria.builder().applicationNo(waterConnectionRequest.getWaterConnection().getApplicationNo())
+ 	                     .waterConnection(waterConnectionRequest.getWaterConnection()).tenantId(property.getTenantId()).build();
+ 	             CalculationReq calRequest = CalculationReq.builder().calculationCriteria(Arrays.asList(criteria))
+ 	                     .requestInfo(waterConnectionRequest.getRequestInfo()).isconnectionCalculation(false).isDisconnectionRequest(false).isReconnectionRequest(false).build();
+
+ 	             // Use your existing serviceRequestRepository logic
+ 	             Object response = serviceRequestRepository.fetchResult(waterServiceUtil.getEstimationURL(), calRequest);
+ 	             CalculationRes calResponse = mapper.convertValue(response, CalculationRes.class);
+ 	             
+ 	             if (calResponse != null && !CollectionUtils.isEmpty(calResponse.getCalculation())) {
+ 	                 feeBreakdown = buildFeeBreakdownHtml(calResponse.getCalculation().get(0));
+ 	             }
+ 	         } catch (Exception e) {
+ 	             log.error("Failed to fetch calculation for email: " + e.getMessage());
+ 	         }
+ 	     }
+ 	    if (!StringUtils.isEmpty(message)) {
+ 	    	message = elaborateEmailTemplate(message, ownerName, property, waterConnectionRequest, feeBreakdown);
+ 	   }
+
+ 	       // 4. Set Subject
+ 	       String subject = applicationStatus.equalsIgnoreCase("CONNECTION_ACTIVATED") 
+ 	                        ? "OFFICIAL NOTICE: Service Activation - " + waterConnectionRequest.getWaterConnection().getApplicationNo()
+ 	                        : "ACTION REQUIRED: Estimation Letter Generated - " + waterConnectionRequest.getWaterConnection().getApplicationNo();
+
+ 	       Email emailObj = Email.builder()
+ 	               .emailTo(Collections.singleton(entry.getValue()))
+ 	               .isHTML(true)
+ 	               .body(message)
+ 	               .subject(subject)
+ 	               .attachments(attachments)
+ 	               .build();
+ 	        
+ 	        emailRequestList.add(new EmailRequest(waterConnectionRequest.getRequestInfo(), emailObj));
+ 	    }
+ 	    return emailRequestList;
+ 	}
+    
+    private String buildFeeBreakdownHtml(Calculation calculation) {
+        if (calculation == null || calculation.getTaxHeadEstimates() == null) {
+            return "";
         }
-        return emailRequest;
+        
+        StringBuilder rows = new StringBuilder();
+        BigDecimal totalSum = BigDecimal.ZERO;
 
+        for (TaxHeadEstimate estimate : calculation.getTaxHeadEstimates()) {
+            if (estimate != null && estimate.getEstimateAmount() != null && 
+                estimate.getEstimateAmount().compareTo(BigDecimal.ZERO) > 0) {
+                
+                totalSum = totalSum.add(estimate.getEstimateAmount());
+                String headName = estimate.getTaxHeadCode().replace("WS_", "").replace("_", " ");
+                
+                rows.append("<tr>")
+                    // Added padding: 12px 20px (Top/Bottom 12px, Left/Right 20px)
+                    .append("<td style='padding: 12px 20px; color: #546e7a; border-bottom: 1px solid #e0e6ed;'>").append(headName).append("</td>")
+                    .append("<td style='padding: 12px 20px; text-align: right; color: #263238; font-weight: bold; border-bottom: 1px solid #e0e6ed;'>₹ ").append(estimate.getEstimateAmount()).append("</td>")
+                    .append("</tr>");
+            }
+        }
+
+        // Updated Total Row with same padding to keep it aligned
+        rows.append("<tr>")
+            .append("<td style='padding: 20px; font-weight: bold; color: #1a237e; font-size: 16px;'>Total Payable Amount</td>")
+            .append("<td style='padding: 20px; text-align: right; font-weight: 800; color: #e67e22; font-size: 22px;'>₹ ")
+            .append(totalSum.setScale(2, RoundingMode.HALF_UP).toPlainString())
+            .append("</td>")
+            .append("</tr>");
+
+        return rows.toString();
     }
+    
+    
+    private String elaborateEmailTemplate(String template, String ownerName, Property property, WaterConnectionRequest request, String feeBreakdown) {
+        WaterConnection conn = request.getWaterConnection();
+        Map<String, Object> additionalDetails = mapper.convertValue(conn.getAdditionalDetails(), Map.class);
+        String appNo = conn.getApplicationNo() != null ? conn.getApplicationNo() : "";
+
+        String serviceType = "Water Supply & Sewerage"; // Fallback
+        if (appNo.startsWith("WS")) {
+            serviceType = "Water Supply";
+        } else if (appNo.startsWith("SW")) {
+            serviceType = "Sewerage";
+        }
+        // 1. City Name Logic
+        String tenantId = conn.getTenantId();
+        String cityName = (tenantId != null && tenantId.contains(".")) ? tenantId.split("\\.")[1] : "City";
+        cityName = cityName.substring(0, 1).toUpperCase() + cityName.substring(1);
+
+        // 2. Execution Date Logic
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMMM, yyyy");
+        String executionDate = (conn.getConnectionExecutionDate() != null && conn.getConnectionExecutionDate() > 0) 
+                               ? sdf.format(new java.util.Date(conn.getConnectionExecutionDate())) : "Confirmed";
+
+        // 3. Return statement (Minimalist)
+        return template
+            .replace("{ownerName}", ownerName != null ? ownerName : "Citizen")
+            .replace("{cityName}", cityName)
+            .replace("{serviceType}", serviceType) // New dynamic variable
+
+            .replace("{applicationNo}", conn.getApplicationNo() != null ? conn.getApplicationNo() : "N/A")
+            .replace("{consumerNo}", conn.getConnectionNo() != null ? conn.getConnectionNo() : "ACTIVATED")
+            .replace("{propertyId}", conn.getPropertyId() != null ? conn.getPropertyId() : "N/A")
+            .replace("{plotSize}", (property != null && property.getLandArea() != null) ? property.getLandArea().toString() : "N/A")
+            .replace("{usageCategory}", (property != null && property.getUsageCategory() != null) ? property.getUsageCategory().replace("_", " ") : "Domestic")
+            .replace("{waterSource}", conn.getWaterSource() != null ? conn.getWaterSource() : "Groundwater")
+            .replace("{executionDate}", executionDate)
+            .replace("{feeBreakdownRows}", feeBreakdown != null ? feeBreakdown : "")
+            // If your email text still has {totalAmount} outside the table, 
+            // we can still map it to the 'othersFee' or 'totalAmount' from additionalDetails as a fallback
+            .replace("{totalAmount}", (additionalDetails != null && additionalDetails.get("totalAmount") != null) 
+                                       ? additionalDetails.get("totalAmount").toString() : "Refer Table");
+    }
+    
+	private String fetchFileStorePublicUrl(String tenantId, String fileStoreId) {
+	    // 1. Get the template from properties
+	    // Template: /filestore/v1/files/url?tenantId=$tenantId&fileStoreIds=$fileStoreIds
+	    String linkTemplate = config.getFileStoreLink();
+	    
+	    // 2. Perform the replacement to clean the URI
+	    String processedLink = linkTemplate
+	            .replace("$tenantId", "pb")
+	            .replace("$fileStoreIds", fileStoreId);
+
+	    // 3. Combine Host and Path into a StringBuilder
+	    StringBuilder finalUri = new StringBuilder();
+	    finalUri.append(config.getFileStoreHost()).append(processedLink);
+	    
+	    try {
+	        log.info("Fetching FileStore URL using GET: {}", finalUri.toString());
+
+	        // 4. Call your specific GET method
+	        Object response = serviceRequestRepository.fetchResultUsingGet(finalUri);
+	        
+	        // 5. Convert and Extract
+	        Map<String, Object> responseMap = mapper.convertValue(response, Map.class);
+	        
+	        if (responseMap != null && responseMap.containsKey(fileStoreId)) {
+	            String fileUrl = (String) responseMap.get(fileStoreId); 
+	            log.info("Successfully fetched URL for fileStoreId {}: {}", fileStoreId, fileUrl);
+	            return fileUrl;
+	        }
+	    } catch (Exception e) {
+	        log.error("Failed to fetch public URL from FileStore for ID: " + fileStoreId, e);
+	    }
+	    return null;
+	}
+	
+	private String getTargetFileStoreId(WaterConnection connection) {
+	    Object additionalDetails = connection.getAdditionalDetails();
+	    
+	    if (additionalDetails == null) return null;
+
+	    try {
+	        // Safely convert the ObjectNode to a Map
+	        Map<String, Object> detailsMap = mapper.convertValue(additionalDetails, Map.class);
+			if (connection.getApplicationStatus() != null
+					&& connection.getApplicationStatus().equalsIgnoreCase(PENDING_FOR_PAYMENT_STATUS_CODE)) {
+				if (detailsMap.containsKey("estimationFileStoreId")) {
+					return (String) detailsMap.get("estimationFileStoreId");
+				}
+			} else if (detailsMap.containsKey("sanctionFileStoreId")) {
+	            return (String) detailsMap.get("sanctionFileStoreId");
+	        }
+	    } catch (Exception e) {
+	        log.error("Error parsing additionalDetails for sanctionFileStoreId", e);
+	    }
+	    
+	    return null;
+	}
+	
 
     public Map<String, String> getMessageForMobileNumber(Map<String, String> mobileNumbersAndNames,
                                                          WaterConnectionRequest waterConnectionRequest, String message, Property property) {
@@ -539,47 +722,47 @@ public class WorkflowNotificationService {
             if(messageToReplace.contains("{Reason for Rejection}"))
                 messageToReplace = messageToReplace.replace("{Reason for Rejection}",  waterConnectionRequest.getWaterConnection().getProcessInstance().getComment());
 
-            if (messageToReplace.contains("{Application download link}")) {
-                String actionLink = config.getNotificationUrl() + config.getViewHistoryLink();
-                actionLink = actionLink.replace(applicationNumberReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
-                messageToReplace = messageToReplace.replace("{Application download link}", waterServiceUtil.getShortnerURL(actionLink));
-            }
+//            if (messageToReplace.contains("{Application download link}")) {
+//                String actionLink = config.getNotificationUrl() + config.getViewHistoryLink();
+//                actionLink = actionLink.replace(applicationNumberReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
+//                messageToReplace = messageToReplace.replace("{Application download link}", waterServiceUtil.getShortnerURL(actionLink));
+//            }
+//
+//            if (messageToReplace.contains("{mseva URL}"))
+//                messageToReplace = messageToReplace.replace("{mseva URL}",
+//                        waterServiceUtil.getShortnerURL(config.getNotificationUrl()));
+//
+//            if (messageToReplace.contains("{mseva app link}"))
+//                messageToReplace = messageToReplace.replace("{mseva app link}",
+//                        waterServiceUtil.getShortnerURL(config.getMSevaAppLink()));
 
-            if (messageToReplace.contains("{mseva URL}"))
-                messageToReplace = messageToReplace.replace("{mseva URL}",
-                        waterServiceUtil.getShortnerURL(config.getNotificationUrl()));
-
-            if (messageToReplace.contains("{mseva app link}"))
-                messageToReplace = messageToReplace.replace("{mseva app link}",
-                        waterServiceUtil.getShortnerURL(config.getMSevaAppLink()));
-
-            if (messageToReplace.contains("{View History Link}")) {
-                String historyLink = config.getNotificationUrl() + config.getViewHistoryLink();
-                historyLink = historyLink.replace(mobileNoReplacer, mobileAndName.getKey());
-                historyLink = historyLink.replace(applicationNumberReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
-                historyLink = historyLink.replace(tenantIdReplacer, property.getTenantId());
-                messageToReplace = messageToReplace.replace("{View History Link}",
-                        waterServiceUtil.getShortnerURL(historyLink));
-            }
-            if (messageToReplace.contains("{payment link}")) {
-                String paymentLink = config.getNotificationUrl() +  config.getViewHistoryLink();
-                paymentLink = paymentLink.replace(mobileNoReplacer, mobileAndName.getKey());
-                paymentLink = paymentLink.replace(applicationNumberReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
-                paymentLink = paymentLink.replace(tenantIdReplacer, property.getTenantId());
-                messageToReplace = messageToReplace.replace("{payment link}",
-                        waterServiceUtil.getShortnerURL(paymentLink));
-            }
+//            if (messageToReplace.contains("{View History Link}")) {
+//                String historyLink = config.getNotificationUrl() + config.getViewHistoryLink();
+//                historyLink = historyLink.replace(mobileNoReplacer, mobileAndName.getKey());
+//                historyLink = historyLink.replace(applicationNumberReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
+//                historyLink = historyLink.replace(tenantIdReplacer, property.getTenantId());
+//                messageToReplace = messageToReplace.replace("{View History Link}",
+//                        waterServiceUtil.getShortnerURL(historyLink));
+//            }
+//            if (messageToReplace.contains("{payment link}")) {
+//                String paymentLink = config.getNotificationUrl() +  config.getViewHistoryLink();
+//                paymentLink = paymentLink.replace(mobileNoReplacer, mobileAndName.getKey());
+//                paymentLink = paymentLink.replace(applicationNumberReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
+//                paymentLink = paymentLink.replace(tenantIdReplacer, property.getTenantId());
+//                messageToReplace = messageToReplace.replace("{payment link}",
+//                        waterServiceUtil.getShortnerURL(paymentLink));
+//            }
 			/*if (messageToReplace.contains("{receipt download link}")){
 				messageToReplace = messageToReplace.replace("{receipt download link}",
 						waterServiceUtil.getShortnerURL(config.getNotificationUrl()));
 			}*/
-            if (messageToReplace.contains("{connection details page}")) {
-                String connectionDetaislLink = config.getNotificationUrl() + config.getConnectionDetailsLink();
-                connectionDetaislLink = connectionDetaislLink.replace(applicationNumberReplacer,
-                        waterConnectionRequest.getWaterConnection().getApplicationNo());
-                messageToReplace = messageToReplace.replace("{connection details page}",
-                        waterServiceUtil.getShortnerURL(connectionDetaislLink));
-            }
+//            if (messageToReplace.contains("{connection details page}")) {
+//                String connectionDetaislLink = config.getNotificationUrl() + config.getConnectionDetailsLink();
+//                connectionDetaislLink = connectionDetaislLink.replace(applicationNumberReplacer,
+//                        waterConnectionRequest.getWaterConnection().getApplicationNo());
+//                messageToReplace = messageToReplace.replace("{connection details page}",
+//                        waterServiceUtil.getShortnerURL(connectionDetaislLink));
+//            }
             if (messageToReplace.contains("{Date effective from}")) {
                 if (waterConnectionRequest.getWaterConnection().getDateEffectiveFrom() != null) {
                     LocalDate date = Instant
@@ -797,8 +980,8 @@ public class WorkflowNotificationService {
         for (Entry<String, String> mobileAndMsg : mobileNumberAndMessage.entrySet()) {
             String messageToReplace = mobileAndMsg.getValue();
             String link = config.getNotificationUrl() + config.getMyPaymentsLink();
-            link = waterServiceUtil.getShortnerURL(link);
-            messageToReplace = messageToReplace.replace("{receipt download link}", link);
+//            link = waterServiceUtil.getShortnerURL(link);
+//            messageToReplace = messageToReplace.replace("{receipt download link}", link);
             messageToReturn.put(mobileAndMsg.getKey(), messageToReplace);
 
         }

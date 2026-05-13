@@ -71,6 +71,9 @@ public class OwnerInfo extends User{
 
 	@JsonProperty("relationship")
 	private String relationship;
+	
+	@JsonProperty("emailId")
+	private String emailId;
 
 	public OwnerInfo addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {

@@ -10,14 +10,19 @@ import org.egov.ptr.models.*;
 import org.egov.ptr.models.collection.PaymentRequest;
 import org.egov.ptr.models.workflow.ProcessInstanceResponse;
 import org.egov.ptr.models.workflow.State;
+import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.PetRegistrationRepository;
 import org.egov.ptr.repository.ServiceRequestRepository;
+import org.egov.ptr.util.PTRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.egov.ptr.util.PTRConstants.*;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,8 +53,11 @@ public class PaymentNotificationService {
 	@Autowired
 	private org.egov.ptr.util.PetUtil petUtil;
 
+	@Autowired
+	private Producer producer;
 
-
+	
+	
 	/**
 	 * Process the incoming record and topic from the payment notification consumer.
 	 * Performs defensive null checks and validates the payment request before proceeding.
@@ -106,7 +114,6 @@ public class PaymentNotificationService {
 			} else {
 				log.warn("Could not fetch updated process instance for application: {}, using state from workflow transition", applicationNumber);
 			}
-			
 			// Get the application status from workflow state
 			String applicationStatus = workflowState.getApplicationStatus() != null ? workflowState.getApplicationStatus() : workflowState.getState();
 			
@@ -132,9 +139,13 @@ public class PaymentNotificationService {
 			}
 
 			PetRegistrationApplication application = applications.get(0);
-			
-			// For both new and renewal applications, ALWAYS set status to APPROVED after payment completion
-			// This ensures consistency regardless of what workflow returns (same logic as new applications)
+			if (application.getWorkflow() == null) {
+		        // Initialize it so we don't get a NullPointerException
+		        application.setWorkflow(new Workflow()); 
+		    }
+		    
+		    // 2. Now it is safe to set the action
+		    application.getWorkflow().setAction(PTRConstants.ACTION_PAY);		
 			String applicationType = application.getApplicationType();
 			boolean isRenewal = applicationType != null && "RENEWAPPLICATION".equals(applicationType);
 			
@@ -144,7 +155,6 @@ public class PaymentNotificationService {
 				log.warn("Workflow returned status '{}' instead of APPROVED for application: {} (type: {}). Forcing to APPROVED.", 
 						applicationStatus, applicationNumber, applicationType);
 			}
-			applicationStatus = "APPROVED";
 			
 			log.info("Updating application status to APPROVED for application: {} (type: {}, isRenewal: {}, previous workflow status: {})", 
 					applicationNumber, applicationType, isRenewal, workflowState.getApplicationStatus() != null ? workflowState.getApplicationStatus() : workflowState.getState());
@@ -291,9 +301,13 @@ public class PaymentNotificationService {
 							petRegistrationNumber, applicationNumber);
 				}
 			}
+			PetRegistrationRequest petRegistrationRequest = PetRegistrationRequest.builder()
+					.requestInfo(requestInfo)
+					.petRegistrationApplications(Collections.singletonList(application))
+					.build();
 			
-			updateDatabaseWithStatusAndPetRegNumber(application, status, petRegistrationNumber, requestInfo);
-			
+//			updateDatabaseWithStatusAndPetRegNumber(application, status, petRegistrationNumber, requestInfo);
+			producer.push(configs.getUpdatePtrTopic(), petRegistrationRequest);
 		} catch (Exception e) {
 			log.error("Error generating petRegistrationNumber and updating database for application: {}, Error: {}", 
 					application.getApplicationNumber(), e.getMessage(), e);
