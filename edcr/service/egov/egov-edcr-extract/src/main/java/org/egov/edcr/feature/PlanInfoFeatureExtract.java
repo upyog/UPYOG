@@ -165,8 +165,10 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 																								// parapet
 			BigDecimal heightExMP = Util.getSingleDimensionValueByLayer(pl.getDoc(), layerName1, pl);
 			
-			data = Util.getColorByDimensionByLayer(pl, layerName);
-			Util.validateLayerColor(data.get("layerName"), Integer.parseInt(data.get("colorCode")), pl);
+			if(heightExMP!=null) {
+				data = Util.getColorByDimensionByLayer(pl, layerName);
+				Util.validateLayerColor(data.get("layerName"), Integer.parseInt(data.get("colorCode")), pl);
+			}			
 			
 			b.getBuilding().setBuildingHeightExcludingMP(heightExMP);
 
