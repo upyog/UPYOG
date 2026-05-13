@@ -53,8 +53,8 @@ public class OtpService {
         if (!otpRequest.getIsThirdParty())
         { final String otpNumber = otpRepository.fetchOtp(otpRequest);
                 otpSMSSender.send(otpRequest, otpNumber);
-                if (null != matchingUser && null != matchingUser.getEmail())
-                otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
+                if (otpRequest.getEmailId() != null && !otpRequest.getEmailId().isEmpty())
+                otpEmailRepository.send(otpRequest.getEmailId(), otpNumber, otpRequest);
         }
     }
 
@@ -70,7 +70,8 @@ public class OtpService {
             final String otpNumber = otpRepository.fetchOtp(otpRequest);
             otpRequest.setMobileNumber(matchingUser.getMobileNumber());
             otpSMSSender.send(otpRequest, otpNumber);
-            otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
+            if (matchingUser.getEmail() != null && !matchingUser.getEmail().isEmpty())
+            	otpEmailRepository.send(matchingUser.getEmail(), otpNumber, otpRequest);
         } catch (Exception e) {
             log.error("Exception while fetching otp: ", e);
         }
