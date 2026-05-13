@@ -102,8 +102,8 @@ public class TLNotificationService {
 				if (request.getLicenses().get(0).getTradeLicenseDetail().getAdditionalDetail().get(PROPERTY_ID) != null)
 					propertyId = request.getLicenses().get(0).getTradeLicenseDetail().getAdditionalDetail().get(PROPERTY_ID).asText();
 				Property property = propertyUtil.getPropertyDetails(request.getLicenses().get(0), propertyId, requestInfo);
-				String source = property.getSource().name();
-
+				// Check if getSource() is null before calling .name()
+				String source = (property.getSource() != null) ? property.getSource().name() : "MUNICIPAL_RECORD";
 				if (config.getIsTLSMSEnabled()) {
 					if (!propertyId.isEmpty() && ACTION_STATUS_INITIATED.equalsIgnoreCase(ACTION_STATUS)) {
 						List<SMSRequest> smsRequestsPT = new ArrayList<>();
@@ -197,6 +197,7 @@ public class TLNotificationService {
 	 * @param configuredChannelList Map of actions mapped to configured channels for BPAREG flow
 	 */
 
+	@SuppressWarnings("unchecked")
 	public void enrichEmailRequest(TradeLicenseRequest request,List<EmailRequest> emailRequests, Map<String, String> mapOfPhnoAndEmail,Map<Object,Object> configuredChannelList) {
 		String tenantId = request.getLicenses().get(0).getTenantId();
 
@@ -206,7 +207,69 @@ public class TLNotificationService {
 				businessService = businessService_TL;
 			String message = null;
 			String applicationType = String.valueOf(license.getApplicationType());
-			if (businessService.equals(businessService_TL)) {
+			if (license.getStatus().contains("APPROVED")) {
+	            String localizationMessages = tlRenewalNotificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
+	            message = tlRenewalNotificationUtil.getEmailCustomizedMsgMail(request.getRequestInfo(), license, localizationMessages);
+
+	            // --- PDF GENERATION VIA SERVICE REPOSITORY ---
+	            try {
+	                // 1. Prepare PDF Request Body
+	                Map<String, Object> pdfReqBody = new HashMap<>();
+	                pdfReqBody.put("RequestInfo", request.getRequestInfo());
+	                pdfReqBody.put("Licenses", Collections.singletonList(license));
+
+	                // 2. Build URI using your internal config getters
+	                String pdfUri = config.getPdfInternalHost() + config.getPdfInternalEndpoint() + tenantId + "&key=tlcertificate";
+	                
+	                log.info("Directly calling PDF Service: {}", pdfUri);
+
+	                // 3. Direct RestTemplate Call (POST for creation)
+	                Map<String, Object> pdfRes = restTemplate.postForObject(pdfUri, pdfReqBody, Map.class);
+
+	                // Matching the lowercase "filestoreIds" from your actual response
+	                if (pdfRes != null && pdfRes.get("filestoreIds") != null) {
+	                    List<String> ids = (List<String>) pdfRes.get("filestoreIds");
+	                    
+	                    if (!ids.isEmpty()) {
+	                        String fileStoreId = ids.get(0);
+	                        log.info("Extracted FileStoreId: {}", fileStoreId);
+
+	                        // 4. Build FileStore URI (Ensure Endpoint contains '?' or '&')
+	                        String fsUri = config.getFileInternalHost() + config.getFileStoreInternalDownloadEndpoint() + tenantId + "&fileStoreIds=" + fileStoreId;
+	                        
+	                        log.info("Fetching Public URL via GET: {}", fsUri);
+
+	                        // Direct RestTemplate GET call
+	                        Map<String, Object> fsRes = restTemplate.getForObject(fsUri, Map.class);
+	                        
+	                        if (fsRes != null && fsRes.get(fileStoreId) != null) {
+	                            String publicUrl = fsRes.get(fileStoreId).toString();
+	                            
+	                            if (publicUrl != null && message != null) {
+	                            	log.info("Public URL fetched: {}", publicUrl);
+	                            	log.info("Original Message before replacement: {}", message);
+	                                // CRITICAL: This replaces the placeholder with the REAL mseva-dev link
+	                                message = message.replace("{downloadLink}", publicUrl);
+	                                log.info("Success! Placeholder replaced with: {}", publicUrl);
+	                            }
+	                        }
+	                    }
+	                } else {
+	                    log.warn("PDF Service response did not contain 'filestoreIds'. Response: {}", pdfRes);
+	                }
+	            } catch (org.springframework.web.client.ResourceAccessException e) {
+	                log.error("Connection Refused: Service at {} is not reachable.", config.getPdfInternalHost());
+	            } catch (Exception e) {
+	                log.error("Direct REST call failed for Application: " + license.getApplicationNumber(), e);
+	            } finally {
+	                // 5. Final Safety Fallback
+	                if (message != null && message.contains("{downloadLink}")) {
+	                    message = message.replace("{downloadLink}", config.getUiAppHost() + "/citizen/tl/my-applications");
+	                }
+	            }
+			}
+			
+			else if (businessService.equals(businessService_TL)) {
 				if(applicationType.equals(APPLICATION_TYPE_RENEWAL)){
 					String localizationMessages = tlRenewalNotificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
 					message = tlRenewalNotificationUtil.getEmailCustomizedMsg(request.getRequestInfo(), license, localizationMessages);
@@ -216,11 +279,11 @@ public class TLNotificationService {
 					message = util.getEmailCustomizedMsg(request.getRequestInfo(), license, localizationMessages);
 				}
 			}
-			if(businessService.equals(businessService_DIRECT_RENEWAL) || businessService.equals(businessService_EDIT_RENEWAL)){
+			else if(businessService.equals(businessService_DIRECT_RENEWAL) || businessService.equals(businessService_EDIT_RENEWAL)){
 				String localizationMessages = tlRenewalNotificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo());
 				message = tlRenewalNotificationUtil.getEmailCustomizedMsg(request.getRequestInfo(), license, localizationMessages);
 			}
-			if (businessService.equals(businessService_BPA)) {
+			else 	if (businessService.equals(businessService_BPA)) {
 				String action = license.getAction();
 				List<String> configuredChannelNames = (List<String>) configuredChannelList.get(action);
 				if(!CollectionUtils.isEmpty(configuredChannelNames) && configuredChannelNames.contains(CHANNEL_NAME_EMAIL))
@@ -239,6 +302,15 @@ public class TLNotificationService {
 			}
 		}
 
+	
+	private Map<String, Object> createPdfRequest(RequestInfo requestInfo, TradeLicense license) {
+	    Map<String, Object> pdfRequest = new HashMap<>();
+	    pdfRequest.put("RequestInfo", requestInfo);
+	    // Wrap the single license in a list as per your curl --data-raw
+	    pdfRequest.put("Licenses", Collections.singletonList(license)); 
+	    return pdfRequest;
+	}
+	
 		/**
          * Enriches the smsRequest with the customized messages
          * @param request The tradeLicenseRequest from kafka topic
