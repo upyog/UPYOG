@@ -25,12 +25,15 @@ public class OtpEmailRepository {
     private static final String LOCALIZATION_KEY_REGISTER_MAIL = "email_register_otp";
     private static final String LOCALIZATION_KEY_LOGIN_MAIL = "email_login_otp";
     private static final String LOCALIZATION_KEY_PWD_RESET_MAIL = "email_reset_otp";
+   
+    
     @Autowired
     public OtpEmailRepository(CustomKafkaTemplate<String, EmailMessage> kafkaTemplate,
 							  @Value("${email.topic}") String emailTopic) {
         this.kafkaTemplate = kafkaTemplate;
         this.emailTopic = emailTopic;
     }
+    
     @Autowired
     private LocalizationService localizationService;
     
