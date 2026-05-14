@@ -142,7 +142,7 @@ public class BPANotificationService {
 		List<Event> events = new ArrayList<>();
 		String tenantId = bpaRequest.getBPA().getTenantId();
 		String localizationMessages = util.getLocalizationMessages(tenantId, bpaRequest.getRequestInfo()); // --need
-		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), null);
 		String applicationType = edcrResponse.get(BPAConstants.APPLICATIONTYPE);
 																											// changes.
 		String message = util.getEventsCustomizedMsg(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), edcrResponse, localizationMessages); // --need localization service changes.
