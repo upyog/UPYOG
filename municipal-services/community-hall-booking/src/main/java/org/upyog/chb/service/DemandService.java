@@ -107,6 +107,22 @@ public class DemandService {
 			log.warn("Unable to apply discount from additionalDetails for booking {} : {}", bookingRequest.getHallsBookingApplication().getBookingId(), ex.getMessage());
 		}
 
+		// --- Add Round-off line item ---
+		BigDecimal totalBeforeRoundOff = demandDetails.stream()
+				.map(DemandDetail::getTaxAmount)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal roundedTotal = totalBeforeRoundOff.setScale(0, RoundingMode.HALF_UP);
+		BigDecimal roundOffAmount = roundedTotal.subtract(totalBeforeRoundOff);
+		if (roundOffAmount.compareTo(BigDecimal.ZERO) != 0) {
+			DemandDetail roundOffDetail = DemandDetail.builder()
+					.taxAmount(roundOffAmount.setScale(2, RoundingMode.HALF_UP))
+					.taxHeadMasterCode(CommunityHallBookingConstants.CHB_ROUND_OFF)
+					.tenantId(tenantId)
+					.build();
+			demandDetails.add(roundOffDetail);
+			log.info("Added round-off line item {} for booking {}", roundOffAmount, consumerCode);
+		}
+
 		LocalDate maxdate = getMaxBookingDate(bookingDetail);
 		
 		Demand demand = Demand.builder().consumerCode(consumerCode)
