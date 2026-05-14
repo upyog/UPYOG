@@ -162,8 +162,12 @@ public class CalculationService {
 	}
 
 	// Tax is in percentage
+	// Use scale=2 with HALF_UP so fractional tax values (e.g. 658.8) are retained
+	// as 658.80 instead of being silently floored to 658.
+	// The CHB_ROUND_OFF line item in DemandService absorbs any sub-rupee remainder
+	// in the grand total.
 	private BigDecimal calculateAmount(BigDecimal amount, BigDecimal tax) {
-		return amount.multiply(tax).divide(CommunityHallBookingConstants.ONE_HUNDRED, RoundingMode.FLOOR);
+		return amount.multiply(tax).divide(CommunityHallBookingConstants.ONE_HUNDRED, 2, RoundingMode.HALF_UP);
 	}
 
 	/**
