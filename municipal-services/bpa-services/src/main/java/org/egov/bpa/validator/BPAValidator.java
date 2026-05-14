@@ -333,7 +333,7 @@ public class BPAValidator {
 	 */
 	public void validateCheckList(Object mdmsData, BPARequest bpaRequest, String wfState) {
 		BPA bpa = bpaRequest.getBPA();
-		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), null);
 		log.debug("applicationType is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
         log.debug("serviceType is " + edcrResponse.get(BPAConstants.SERVICETYPE));
 
@@ -592,7 +592,7 @@ public class BPAValidator {
 			if (bpa.getStatus().equalsIgnoreCase(BPAConstants.NOCVERIFICATION_STATUS)
 					&& bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_FORWORD)) {
 				Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(),
-						bpaRequest.getBPA());
+						bpaRequest.getBPA(), null);
 				log.debug("===========> valdiateNocApprove method called, application is in noc verification pending");
 				String riskType = "ALL";
 				if (StringUtils.isEmpty(bpa.getRiskType()) || bpa.getRiskType().equalsIgnoreCase("LOW")) {

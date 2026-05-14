@@ -357,7 +357,7 @@ public class EnrichmentService {
 
 				Object mdmsData = bpaUtil.mDMSCall(bpaRequest.getRequestInfo(), bpaRequest.getBPA().getTenantId());
 				Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(),
-						bpaRequest.getBPA());
+						bpaRequest.getBPA(), null);
 				log.debug("applicationType is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
 				log.debug("serviceType is " + edcrResponse.get(BPAConstants.SERVICETYPE));
 
@@ -452,5 +452,9 @@ public class EnrichmentService {
 		if(!landInfos.isEmpty()) {
 			bpaRequest.getBPA().setLandInfo(landInfos.get(0));
 		}
+	}
+	
+	public void setApplicationNo(BPARequest bpaRequest) {
+		setIdgenIds(bpaRequest);
 	}
 }

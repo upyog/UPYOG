@@ -409,7 +409,8 @@ public class BPAService {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Application Not found in the System" + bpa);
 		}
 
-		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), mdmsData);
+		String workflowName = edcrResponse.getOrDefault("businessService", "");
 		String applicationType = edcrResponse.get(BPAConstants.APPLICATIONTYPE);
 		bpa.setApplicationType(applicationType);
 		log.debug("applicationType is " + applicationType);
@@ -508,6 +509,11 @@ public class BPAService {
 					
 				}
                 
+        		if(!bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(workflowName)) {
+        			enrichmentService.setApplicationNo(bpaRequest);
+        			bpaRequest.getBPA().setBusinessService(workflowName);
+        		}
+        		
 		wfIntegrator.callWorkFlow(bpaRequest);
 		log.debug("===> workflow done =>" +bpaRequest.getBPA().getStatus()  );
 		enrichmentService.postStatusEnrichment(bpaRequest);

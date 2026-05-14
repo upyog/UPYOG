@@ -265,7 +265,7 @@ public class EDCRService {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public Map<String, String> getEDCRDetails(org.egov.common.contract.request.RequestInfo requestInfo, BPA bpa) {
+	public Map<String, String> getEDCRDetails(org.egov.common.contract.request.RequestInfo requestInfo, BPA bpa, Object mdmsData) {
 
 		String edcrNo = bpa.getEdcrNumber();
 		StringBuilder uri = new StringBuilder(config.getEdcrHost());
@@ -303,6 +303,42 @@ public class EDCRService {
 		if(approvalNo.size()>0 && approvalNo!=null){
 			edcrDetails.put(BPAConstants.PERMIT_NO, approvalNo.get(0).toString());
 		}
+		
+		if(mdmsData != null) {
+			Double maxBuildingHight = 0.0;
+			List<String> OccupancyTypes = context
+					.read("edcrDetail.*.planDetail.virtualBuilding.occupancyTypes.*.type.code");
+			List<String> subOccupancyTypes = context
+					.read("edcrDetail.*.planDetail.virtualBuilding.occupancyTypes.*.subtype.code");
+			
+			List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area");
+			List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
+			
+			Boolean isSelfCertification = (Boolean)((Map<String, Object>)bpa.getAdditionalDetails()).get("isSelfCertification");
+			String ocType = OccupancyTypes.get(0);
+			String subOccupancyType = subOccupancyTypes.get(0);
+			
+
+			List<Double> buildingHightList = JsonPath.read(mdmsData, "$.MdmsRes.BPA.BuildingHeight.[?( @.name=='SELF_CERTIFICATION' && @.occupancyTypes contains '" + ocType + "' && @.subOccupancyTypes contains '" + subOccupancyType + "' )].value");
+			if(buildingHightList != null && !buildingHightList.isEmpty())
+				maxBuildingHight = buildingHightList.get(0);
+			
+			if(buildingHeights != null && !buildingHeights.isEmpty() && buildingHeights.get(0) <  maxBuildingHight && isSelfCertification) {
+				edcrDetails.put("businessService", BPAConstants.BPA_LOW_MODULE_CODE);
+			}else {
+				List<String> ulbTypeList = JsonPath.read(mdmsData, "$.MdmsRes.tenant.tenants.[?(@.code == '" + bpa.getTenantId() + "')].city.ulbType");
+				String ulbType = CollectionUtils.isEmpty(ulbTypeList) ? "" : ulbTypeList.get(0);
+				String plotArea = plotAreas.get(0).toString();
+				String filter = "$.MdmsRes.BPA.WorkflowConfig.[?(@.ulbType contains '" + ulbType + "' && @.occupancyTypes contains '" + ocType +  "' && @.subOccupancyTypes contains '" + subOccupancyType +"' && @.minArea < " + plotArea + " && @.maxArea >= " + plotArea + " )].businessService";
+				List<String> businessServices = JsonPath.read(mdmsData, filter);
+				
+				if(CollectionUtils.isEmpty(businessServices))
+					throw new CustomException(BPAErrorConstants.INVALID_CREATE, "Business Services not found for the Occupancy Types: " + OccupancyTypes.get(0) + "and Sub-Occupancy Types: " + subOccupancyTypes.get(0));
+				
+				edcrDetails.put("businessService", businessServices.get(0));
+			}
+		}
+		
 		return edcrDetails;
 	}
 
