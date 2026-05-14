@@ -209,6 +209,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
             heading.append(" in " + incomeExpenditureStatement.getFund().getName());
         }
         if (incomeExpenditureStatement.getDepartment() != null && incomeExpenditureStatement.getDepartment().getCode() != null
+        		&& !incomeExpenditureStatement.getDepartment().getCode().isEmpty()
                 && !"null".equalsIgnoreCase(incomeExpenditureStatement.getDepartment().getCode())) {
 //            incomeExpenditureStatement.setDepartment((Department) getPersistenceService().find("from Department where id=?",
 //                    incomeExpenditureStatement.getDepartment().getId()));

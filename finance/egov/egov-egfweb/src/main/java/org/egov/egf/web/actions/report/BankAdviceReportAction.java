@@ -410,6 +410,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
         reportParams.put("accountNumber", getBankAccountNumber(bankaccount.getId()));
         final List<BankAdviceReportInfo> subLedgerList = getBankAdviceReportList();
+        subLedgerList.get(0).setBankBranch(getBankBranchName(bankbranch.getId()));
         final ReportRequest reportInput = new ReportRequest("bankAdviceExcelReport", subLedgerList, reportParams);
         reportInput.setReportFormat(ReportFormat.XLS);
         contentType = ReportViewerUtil.getContentType(ReportFormat.XLS);

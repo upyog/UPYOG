@@ -187,7 +187,7 @@
 					"function":'<s:property value="functionDetail"/>',
 					"glcodeid":'<s:property value="glcodeIdDetail"/>',
 					"glcode":'<s:property value="glcodeDetail"/>',
-					"accounthead":'<s:property value="accounthead"/>',
+					"accounthead":'<s:property value="accounthead" escapeHtml="false"/>',
 					"debitamount":'<s:text name="format.number" ><s:param value="%{debitAmountDetail}"/></s:text>',
 					"creditamount":'<s:text name="format.number" ><s:param value="%{creditAmountDetail}"/></s:text>'
 				});
@@ -196,7 +196,7 @@
 				updateGridPJV('functionDetail',index,'<s:property value="functionDetail"/>');
 				updateGridPJV('glcodeIdDetail',index,'<s:property value="glcodeIdDetail"/>');
 				updateGridPJV('glcodeDetail',index,'<s:property value="glcodeDetail"/>');
-				updateGridPJV('accounthead',index,'<s:property value="accounthead"/>');
+				updateGridPJV('accounthead',index,'<s:property value="accounthead" escapeHtml="false"/>');
 				updateGridPJV('debitAmountDetail',index,'<s:text name="format.number" ><s:param value="%{debitAmountDetail}"/></s:text>');
 				updateGridPJV('creditAmountDetail',index,'<s:text name="format.number" ><s:param value="%{creditAmountDetail}"/></s:text>');
 				totaldbamt = totaldbamt+parseFloat('<s:property value="debitAmountDetail"/>');

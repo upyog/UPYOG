@@ -279,6 +279,8 @@ public class BalanceSheetService extends ReportService {
         coaType.add('L');
         final Date fromDate = getFromDate(balanceSheet);
         final Date toDate = getToDate(balanceSheet);
+        balanceSheet.setFromDate(fromDate);
+        balanceSheet.setToDate(toDate);
         String   voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         final List<Fund> fundList = balanceSheet.getFunds();
         Map<String, Object> filterQueryParams = new HashMap<>();

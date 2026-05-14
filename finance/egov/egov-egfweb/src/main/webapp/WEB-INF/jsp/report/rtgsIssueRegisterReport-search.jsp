@@ -109,6 +109,7 @@
 
 </head>
 <script>
+
 	function populateBankBranch(bank) {
 		var bankId = bank.options[bank.selectedIndex].value;
 		populatebankbranch({
@@ -225,7 +226,7 @@
 					<td class="greybox w15"><s:text name="bank" />:</td>
 					<td class="greybox w25"><s:select name="bank" id="bank"
 							list="dropdownData.bankList" listKey="id" listValue="name"
-							headerKey="-1" headerValue="%{getText('lbl.choose.options')}" 
+							headerKey="-1" headerValue="%{getText('lbl.choose.options')}" escapeHtml="false"
 							onclick="validateFund()" onChange="populateBankBranch(this);" /></td>
 					<td class="bluebox w5">&nbsp;</td>
 					<egov:ajaxdropdown id="bankbranch" fields="['Text','Value']"
@@ -325,6 +326,19 @@
 			}
 
 		}
+
+		function decodeHtmlEntities(str) {
+		    var txt = document.createElement("textarea");
+		    txt.innerHTML = str;
+		    return txt.value;
+		}
+
+		function fixBankDropdownEncoding() {
+		    var bank = document.getElementById('bank');
+		    for (var i = 0; i < bank.options.length; i++) {
+		        bank.options[i].text = decodeHtmlEntities(bank.options[i].text);
+		    }
+		}
 		function loadBank(fund) {
 			if (fund.value != -1) {
 				populatebank({
@@ -333,6 +347,9 @@
 			} else {
 				populatebank()
 			}
+
+			 // Wait for AJAX to complete, then fix encoding
+		    setTimeout(fixBankDropdownEncoding, 800);
 		}
 
 		function exportPDF() {

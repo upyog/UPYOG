@@ -140,7 +140,7 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left"><spring:message code="lbl.budget.upload.report.result" text="Budget Upload Report Result"/> </div>
+	<div class="col-md-12 table-header" style="text-align: center;"><spring:message code="lbl.budget.upload.report.result" text="Budget Upload Report Result"/> </div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">

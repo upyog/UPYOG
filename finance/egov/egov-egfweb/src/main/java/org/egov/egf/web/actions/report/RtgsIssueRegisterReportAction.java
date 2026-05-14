@@ -280,13 +280,16 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug(" Seraching RTGS result for given criteria ");
 		final Entry<String, Map<String, Object>> entry = getQueryString().entrySet().iterator().next();
+		
+		// Add this line
+		LOGGER.info("RTGS SQL Query: " + entry.getKey());
 
 		final Query query = persistenceService.getSession().createSQLQuery(entry.getKey())
 				.addScalar("ihId", BigDecimalType.INSTANCE).addScalar("rtgsNumber").addScalar("rtgsDate")
 				.addScalar("vhId", BigDecimalType.INSTANCE).addScalar("paymentNumber").addScalar("paymentDate")
 				.addScalar("paymentAmount").addScalar("department").addScalar("status").addScalar("bank")
 				.addScalar("bankBranch").addScalar("dtId", BigDecimalType.INSTANCE)
-				.addScalar("dkId", BigDecimalType.INSTANCE).addScalar("accountNumber");
+				.addScalar("dkId", BigDecimalType.INSTANCE).addScalar("accountNumber").addScalar("partyName");
 		if (null == parameters.get("rtgsAssignedFromDate")[0]
 				|| parameters.get("rtgsAssignedFromDate")[0].isEmpty())
 			query.setDate("finStartDate", new java.sql.Date(fromDate.getTime()));
@@ -383,10 +386,12 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
             queryString.append(" SELECT ih.id as ihId , ih.transactionnumber as rtgsNumber,  ih.transactiondate as rtgsDate, vh.id as vhId, ")
                     .append(" vh.vouchernumber as paymentNumber, to_char(vh.voucherdate,'dd/mm/yyyy') as paymentDate, gld.detailtypeid as dtId, ")
                     .append(" gld.detailkeyid as dkId,   gld.amount as paymentAmount, dept.name as department, stat.description as status,b.name as bank, ")
-                    .append(" branch.branchname as bankBranch, ba.accountnumber as accountNumber")
+                    //.append(" branch.branchname as bankBranch, ba.accountnumber as accountNumber")
+                    .append(" branch.branchname as bankBranch, ba.accountnumber as accountNumber, sup.name as partyName")
                     .append(" FROM Paymentheader ph, voucherheader vh,vouchermis vmis, ")
                     .append(" bankaccount ba,bankbranch branch,bank b,generalledger gl,generalledgerdetail gld, egf_instrumentvoucher iv,  ")
-                    .append(" egf_instrumentheader ih,  eg_department dept ,egw_status stat WHERE ph.voucherheaderid =vh.id AND vmis.voucherheaderid = vh.id ")
+                    //.append(" egf_instrumentheader ih,  eg_department dept ,egw_status stat WHERE ph.voucherheaderid =vh.id AND vmis.voucherheaderid = vh.id ")
+                    .append(" egf_instrumentheader ih,  eg_department dept ,egw_status stat, EGF_SUPPLIER sup WHERE ph.voucherheaderid =vh.id AND vmis.voucherheaderid = vh.id ")
                     .append(bankQry.toString())
                     .append(" AND ih.bankaccountid = ba.id and branch.id = ba.branchid and branch.bankid = b.id and vh.status = 0 ")
                     .append(fundQry)
@@ -397,9 +402,12 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
                     .append(instrumentHeaderQry.toString())
                     .append(" AND IV.VOUCHERHEADERID  IS NOT NULL AND iv.voucherheaderid   =vh.id AND ih.instrumentnumber IS NULL ")
                     .append(" AND ih.id = iv.instrumentheaderid ")
-                    .append(" AND vh.type   = 'Payment' and gl.voucherheaderid = vh.id and gld.generalledgerid = gl.id GROUP BY ih.id , ih.transactionnumber,")
+//                    .append(" AND vh.type   = 'Payment' and gl.voucherheaderid = vh.id and gld.generalledgerid = gl.id GROUP BY ih.id , ih.transactionnumber,")
+//                    .append(" ih.transactiondate, vh.id,  vh.vouchernumber,vh.voucherDate, vmis.departmentcode,dept.name, b.name,branch.branchname,")
+//                    .append(" ba.accountnumber,stat.description,gld.detailtypeid,gld.detailkeyid,gld.amount ORDER BY b.name,branch.branchname,")
+                    .append(" AND vh.type   = 'Payment' and gl.voucherheaderid = vh.id and gld.generalledgerid = gl.id AND sup.id = gld.detailkeyid GROUP BY ih.id , ih.transactionnumber,")
                     .append(" ih.transactiondate, vh.id,  vh.vouchernumber,vh.voucherDate, vmis.departmentcode,dept.name, b.name,branch.branchname,")
-                    .append(" ba.accountnumber,stat.description,gld.detailtypeid,gld.detailkeyid,gld.amount ORDER BY b.name,branch.branchname,")
+                    .append(" ba.accountnumber,stat.description,gld.detailtypeid,gld.detailkeyid,gld.amount,sup.name ORDER BY b.name,branch.branchname,")
                     .append(" ba.accountnumber,ih.transactiondate,ih.transactionnumber,dept.name");
             queryParams.putAll(bankQueryParams);
             queryParams.putAll(fundQueryParams);

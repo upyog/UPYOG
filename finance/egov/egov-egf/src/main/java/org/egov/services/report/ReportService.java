@@ -218,9 +218,6 @@ public abstract class ReportService {
 	}
 
     public String getFormattedDate(final Date date) {
-    	  if (date == null) {
-    	        return "";
-    	    }
         final SimpleDateFormat formatter = Constants.DDMMYYYYFORMAT1;
         return formatter.format(date);
     }

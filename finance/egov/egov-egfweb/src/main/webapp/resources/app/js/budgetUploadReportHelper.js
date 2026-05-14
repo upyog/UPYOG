@@ -157,9 +157,80 @@ function callAjaxSearch() {
 					}, {
 						"sExtends" : "xls",
 						"sTitle" : "Budget Upload Report Result"
-					}, {
-						"sExtends" : "print",
-						"sTitle" : "Budget Upload Report Result"
+					}, 					{
+					    "sExtends" : "text",
+					    "sButtonText" : "Print",
+					    "fnClick" : function(nButton, oConfig) {
+					        var reBudgetName = $("#reBudget option:selected").text();
+					        var beBudgetName = $("#referenceBudget").text();
+					        var currentDate = new Date().toLocaleDateString();
+					        var currentTime = new Date().toLocaleTimeString();
+
+					        var printContent = `
+					            <html>
+					            <head>
+					                <title>Budget Upload Report Result</title>
+					                <style>
+					                    body { font-family: Arial, sans-serif; font-size: 11px; }
+					                    .print-header { text-align: center; margin-bottom: 12px; }
+					                    .print-header h2 { color: #1F4E79; margin: 3px 0; font-size: 15px; }
+					                    .print-header h3 { color: #333; margin: 3px 0; font-size: 12px; }
+					                    .print-meta { text-align: right; font-size: 11px; margin-bottom: 10px; }
+					                    table { width: 100% !important; border-collapse: collapse; }
+					                    th, td { border: 1px solid #aaa !important; padding: 5px 7px !important; }
+					                    th { background-color: #dce6f1 !important; color: #1F4E79 !important; text-align: center !important; }
+					                    td:nth-child(n+5) { text-align: right !important; }
+					                </style>
+					            </head>
+					            <body>
+					                <div class="print-header">
+					                    <h2>Government of Jammu &amp; Kashmir</h2>
+					                    <h2>Housing and Urban Development Department</h2>
+					                    <h3>Budget Upload Report Result</h3>
+					                </div>
+					                <div class="print-meta">
+					                    <strong>Date:</strong> ${currentDate} &nbsp;&nbsp;
+					                    <strong>Time:</strong> ${currentTime}
+					                </div>
+					                <table>
+					                    <thead>
+					                        <tr>
+					                            <th rowspan="2">Fund</th>
+					                            <th rowspan="2">Department</th>
+					                            <th rowspan="2">Function</th>
+					                            <th rowspan="2">Budget Head</th>
+					                            <th colspan="2">${reBudgetName}</th>
+					                            <th colspan="2">${beBudgetName}</th>
+					                        </tr>
+					                        <tr>
+					                            <th>Budgeted Amount</th>
+					                            <th>Planning Amount</th>
+					                            <th>Budgeted Amount</th>
+					                            <th>Planning Amount</th>
+					                        </tr>
+					                    </thead>
+					                    <tbody>`;
+
+					        $('#resultTable tbody tr').each(function() {
+					            printContent += '<tr>';
+					            $(this).find('td').each(function() {
+					                printContent += '<td>' + $(this).text() + '</td>';
+					            });
+					            printContent += '</tr>';
+					        });
+
+					        printContent += `
+					                    </tbody>
+					                </table>
+					            </body>
+					            </html>`;
+
+								var printWindow = window.open('', '_blank');
+								printWindow.document.write(printContent);
+								printWindow.document.close();
+								printWindow.focus();
+								printWindow.print();
+					    }
 					} ]
 				},
 				aaSorting : [],

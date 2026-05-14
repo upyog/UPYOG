@@ -87,6 +87,8 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         minorCodeLength = Integer.valueOf(incomeExpenditureService.getAppConfigValueFor(Constants.EGF, "coa_minorcode_length"));
         final Date fromDate = incomeExpenditureService.getFromDate(statement);
         final Date toDate = incomeExpenditureService.getToDate(statement);
+        statement.setFromDate(fromDate);
+        statement.setToDate(toDate);
         Map<String, Object> params = new HashMap<>();
         final String filterQuery = incomeExpenditureService.getFilterQuery(statement, params);
         final CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where glcode=?", majorCode);

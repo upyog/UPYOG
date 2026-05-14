@@ -452,6 +452,7 @@ public class SearchReceiptAction extends SearchFormAction {
 	    collectionVersion = ApplicationThreadLocals.getCollectionVersion();
 	    
 	    if (getFromDate() == null || getToDate() == null) {
+	    	addActionError("From Date and To Date are required to search receipts.");
 	        return SUCCESSNEW;
 	    }
 
@@ -469,11 +470,9 @@ public class SearchReceiptAction extends SearchFormAction {
 	    }
 	    
 	    String serviceIdToSend = effectiveServiceId;
-
-
-		 if (serviceIdToSend == null) {
-		     serviceIdToSend = "";  
-		 }
+//		 if (serviceIdToSend == null) {
+//		     serviceIdToSend = "";  
+//		 }
 
 	    //  Department map
 	    Map<String, String> dplist = getAlldepartment();
@@ -501,7 +500,7 @@ public class SearchReceiptAction extends SearchFormAction {
 
 	        	if (bill.getBillDetails() == null) continue;
 	            for (BillDetail billDetail : bill.getBillDetails()) {
-
+	            	
 	                ReceiptHeader rh = new ReceiptHeader();
 
 	                rh.setReceiptnumber(billDetail.getReceiptNumber());
@@ -568,6 +567,22 @@ public class SearchReceiptAction extends SearchFormAction {
 					 * rh.setReferenceDesc(additionalDetails.get("narration").asText()); }
 					 */
 
+	                if (billDetail.getManualReceiptNumber() != null) {
+	                    rh.setManualreceiptnumber(billDetail.getManualReceiptNumber());
+	                    rh.setG8data(billDetail.getManualReceiptNumber());
+	                }
+
+	                if (billDetail.getManualReceiptDate() != null
+	                        && billDetail.getManualReceiptDate() != 0) {
+	                    rh.setManualreceiptdate(new Date(billDetail.getManualReceiptDate()));
+	                    if (billDetail.getManualReceiptNumber() != null) {
+	                        rh.setG8data(billDetail.getManualReceiptNumber()
+	                                + "/" + new Date(billDetail.getManualReceiptDate()).toString());
+	                    } else {
+	                        rh.setG8data(new Date(billDetail.getManualReceiptDate()).toString());
+	                    }
+	                }
+	                
 	                receiptList.add(rh);
 	            }
 	        }

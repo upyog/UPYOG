@@ -103,6 +103,8 @@ public class BalanceSheetScheduleService extends ScheduleService {
         majorCodeLength = Integer.valueOf(balanceSheetService.getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
         final Date fromDate = balanceSheetService.getFromDate(balanceSheet);
         final Date toDate = balanceSheetService.getToDate(balanceSheet);
+        balanceSheet.setFromDate(fromDate);
+        balanceSheet.setToDate(toDate);
         final CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where glcode=?", majorCode);
         final List<Fund> fundList = balanceSheet.getFunds();
         Map<String, Object> params = new HashMap<>();

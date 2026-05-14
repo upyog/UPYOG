@@ -166,8 +166,8 @@ function printResultTable() {
     printWindow.document.write(`
         <div class="header">
             <h2>Government of Jammu & Kashmir</h2>
-            <h3>Housing and Urban Development</h3>
-            <h4>Department</h4>
+            <h3>Housing and Urban Development Department</h3>
+            /* <h4>Department</h4> */
         </div>
         <hr/>
     `);
@@ -210,10 +210,10 @@ function printResultTable() {
                 Housing and Urban Development<br>
                 Department
             </td> */
-           <!--<td colspan="3" style="text-align:right;">
+          /*  <!--<td colspan="3" style="text-align:right;">
                 Date: ${date}<br>
                 Time: ${time}
-            </td> -->
+            </td> --> */
        /*  </tr>
         <tr><td colspan="13"></td></tr>
     `; */
@@ -255,44 +255,64 @@ function printResultTable() {
 
 	    var table = document.getElementById("resultTable");
 
-	    if (!table || table.rows.length === 0) {
+	    if (!table) {
 	        alert("No data available to export!");
 	        return;
 	    }
 
+	    if (table.rows.length <= 1) {
+	        alert("No records found to export!");
+	        return;
+	    }
+
 	    var rows = table.rows;
-	    var excel = "<table border='1'>";
+	    var colCount = rows[0].cells.length;
 
 	    var today = new Date();
 	    var date = today.toLocaleDateString('en-GB');
 	    var time = today.toLocaleTimeString();
 
-	    excel += `
-	        <tr>
-	            <td colspan="13" style="text-align:center; font-weight:bold; color:#003366;">
-	                Government of Jammu & Kashmir<br>
-	                Housing and Urban Development<br>
-	                Department
-	            </td>
-	        </tr>
-	        <tr>
-	            <td colspan="13" style="text-align:right;">
-	                Date: ${date} &nbsp;&nbsp; Time: ${time}
-	            </td>
-	        </tr>
-	        <tr><td colspan="13"></td></tr>
-	    `;
+	    var excel = "<table border='1'>";
 
+	    // Government header block
+	    excel += "<tr><td colspan='" + colCount + "' style='text-align:center;"
+	           + "font-weight:bold;color:#003366;font-size:14px;'>"
+	           + "Government of Jammu &amp; Kashmir<br/>"
+	           + "Housing and Urban Development Department"
+	           + "</td></tr>";
+
+	    excel += "<tr><td colspan='" + colCount + "' style='text-align:right;font-size:11px;'>"
+	           + "Date: " + date + " &nbsp; Time: " + time
+	           + "</td></tr>";
+
+	    excel += "<tr><td colspan='" + colCount + "'>&nbsp;</td></tr>";
+
+	    // Table rows
 	    for (var i = 0; i < rows.length; i++) {
-	        excel += "<tr>";
-
 	        var cols = rows[i].cells;
+
+	        // Skip display:table pagination row — it has 1 cell spanning all columns
+	        if (cols.length === 1 && cols[0].colSpan > 1) continue;
+
+	        excel += "<tr>";
 
 	        for (var j = 0; j < cols.length; j++) {
 
-	            var data = cols[j].innerText;
+	            // Clone and strip hidden inputs before reading text
+	            var cellClone = cols[j].cloneNode(true);
+	            var inputs = cellClone.querySelectorAll("input, select, textarea");
+	            inputs.forEach(function(inp) { inp.parentNode.removeChild(inp); });
 
-	            excel += "<td>" + data + "</td>";
+	            var data = (cellClone.innerText || cellClone.textContent || "").trim();
+
+	            if (i === 0) {
+	                // Header row styling
+	                excel += "<th style='background-color:#003366;color:#ffffff;"
+	                       + "font-weight:bold;padding:5px;text-align:left;'>"
+	                       + data + "</th>";
+	            } else {
+	                excel += "<td style='padding:4px;text-align:left;'>" + data + "</td>";
+	            }
 	        }
 
 	        excel += "</tr>";
@@ -300,17 +320,21 @@ function printResultTable() {
 
 	    excel += "</table>";
 
+	    // BOM prefix so Excel opens UTF-8 correctly (fixes special character encoding)
+		var blob = new Blob([excel], { type: "application/vnd.ms-excel" });
 	    
-	    var blob = new Blob([excel], { type: "application/vnd.ms-excel" });
-	    var url = URL.createObjectURL(blob);
 
+	    var url = URL.createObjectURL(blob);
 	    var a = document.createElement("a");
 	    a.href = url;
-	    a.download = "Receipt_Report.xls";
-
+	    a.download = "Receipt_Report_" + date.replace(/\//g, "-") + ".xls";
 	    document.body.appendChild(a);
 	    a.click();
-	    document.body.removeChild(a);
+
+	    setTimeout(function () {
+	        document.body.removeChild(a);
+	        URL.revokeObjectURL(url);
+	    }, 200);
 	}
 </script>
 
@@ -847,7 +871,8 @@ function printResultTable() {
 		<s:if test='%{!resultList.isEmpty()}'>
 
 			<div align="center">
-				<display:table id="resultTable" htmlId="resultTable" name="searchResult" uid="currentRow" 
+				<%-- <display:table id="resultTable" htmlId="resultTable" name="searchResult" uid="currentRow"  --%>
+				<display:table id="currentRow" htmlId="resultTable" name="searchResult" uid="currentRow"
                   style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0"
                      cellspacing="0" export="false" requestURI=""> 
                      
