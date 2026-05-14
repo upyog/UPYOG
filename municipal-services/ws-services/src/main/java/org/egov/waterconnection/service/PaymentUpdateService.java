@@ -123,15 +123,8 @@ public class PaymentUpdateService {
 								"More than one application found on consumerCode " + criteria.getApplicationNumber());
 					}
 					
-//					waterConnections.forEach(waterConnection -> waterConnection.getProcessInstance().setAction((WCConstants.ACTION_PAY)));
+					waterConnections.forEach(waterConnection -> waterConnection.getProcessInstance().setAction((WCConstants.ACTION_PAY)));
 
-					waterConnections.forEach(waterConnection -> {
-					    String action = (WCConstants.DISCONNECT_WATER_CONNECTION.equalsIgnoreCase(waterConnection.getApplicationType()) 
-					            && WCConstants.PENDING_FOR_APPLICATION_FEE.equalsIgnoreCase(waterConnection.getApplicationStatus())) 
-					            ? WCConstants.ACTION_PAYFEE : WCConstants.ACTION_PAY;
-					            
-					    waterConnection.getProcessInstance().setAction(action);
-					});
 					
 					WaterConnectionRequest waterConnectionRequest = WaterConnectionRequest.builder()
 							.waterConnection(connection).requestInfo(paymentRequest.getRequestInfo())
