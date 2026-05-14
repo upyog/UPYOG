@@ -3,6 +3,10 @@ package org.upyog.chb.service;
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
 
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,6 +26,7 @@ import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.repository.ServiceRequestRepository;
 import org.upyog.chb.util.NotificationUtil;
+import org.upyog.chb.web.models.BookingSlotDetail;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.events.Action;
@@ -35,6 +40,7 @@ import org.upyog.chb.web.models.notification.SMSRequest;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 
+import digit.models.coremodels.PaymentRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -52,10 +58,12 @@ public class CHBNotificationService {
 	public void process(CommunityHallBookingRequest bookingRequest, String status) {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		// Decrypt applicant detail it will be used in notification
+		if (bookingDetail.getApplicantDetail() != null) {
 		bookingDetail = chbEncryptionService.decryptObject(bookingDetail, bookingRequest.getRequestInfo());
 
 		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : "
 				+ status);
+		}
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
 		String action = status;
 
@@ -66,12 +74,15 @@ public class CHBNotificationService {
 		// All notification messages are part of this messages object
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
 
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
+		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
 			sendEventNotification(localizationMessages, bookingRequest, status);
 		}
 
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
+		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
 			sendMessageNotification(localizationMessages, bookingRequest, status);
+		}
+		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EMAIL)) {
+			sendEmailMessageNotification(localizationMessages, bookingRequest, status);
 		}
 	}
 	
@@ -113,6 +124,45 @@ public class CHBNotificationService {
 				enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
 				if (!CollectionUtils.isEmpty(smsRequests))
 					util.sendSMS(smsRequests);
+			}
+		}
+		
+	}
+	
+	
+	
+	private void  sendEmailMessageNotification(String localizationMessages, CommunityHallBookingRequest bookingRequest, String status) {
+		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+		Map<String, String> messageMap = new HashMap<String, String>();
+    	String message = null;
+		try {
+			messageMap = util.getCustomizedMailMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status
+					 , CommunityHallBookingConstants.CHANNEL_NAME_EMAIL_MSG);
+			
+			message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
+			 /**
+			  * Dynamic values Place holders
+			  * {APPLICANT_NAME} 
+			  * {BOOKING_NO}
+			  * {COMMUNITY_HALL_NAME}
+			  * {LINK} - Optional			 
+			  */
+//			 message = String.format(message, bookingDetail.getApplicantDetail().getApplicantName(), 
+//					 bookingDetail.getBookingNo(), bookingDetail.getCommunityHallName(), messageMap.get(NotificationUtil.ACTION_LINK));
+		}catch (Exception e) {
+			log.error("Exception occcured while fetching message", e);
+			e.printStackTrace();
+		}
+		log.info("Message for sending sms notification : " + message);
+		if (message != null) {
+			List<Map<String, Object>> emailRequests = new ArrayList<>();
+			if (config.getIsEmailNotificationEnabled()) {
+				Map<String, String> emailIdToOwner = new HashMap<String, String>();
+				emailIdToOwner.put(bookingDetail.getApplicantDetail().getApplicantEmailId(),
+						bookingDetail.getApplicantDetail().getApplicantName());
+				enrichMailRequest(bookingRequest, emailRequests, emailIdToOwner, message);
+				if (!CollectionUtils.isEmpty(emailRequests))
+					util.sendEmail(emailRequests,config.getIsEmailNotificationEnabled());
 			}
 		}
 		
@@ -164,6 +214,84 @@ public class CHBNotificationService {
 		smsRequests.addAll(util.createSMSRequest(bookingRequest, message, mobileNumberToOwner));
 	}
 
+	
+	private void enrichMailRequest(CommunityHallBookingRequest bookingRequest, List<Map<String, Object>> smsRequests,
+			Map<String, String> emailIdToOwner, String message) {
+
+		CommunityHallBookingDetail booking = bookingRequest.getHallsBookingApplication();
+
+		String bookingNo = booking.getBookingNo();
+		String hallName = booking.getCommunityHallName();
+		String purpose = booking.getPurpose().getPurpose();
+		String receiptNo = booking.getReceiptNo();
+		String applicantName = booking.getApplicantDetail().getApplicantName();
+		String mobileNo = booking.getApplicantDetail().getApplicantMobileNo();
+
+		String cityName = booking.getTenantId().split("\\.")[1];
+
+		String applicationDate = formatDate(booking.getApplicationDate());
+		String paymentDate = formatDate(booking.getPaymentDate());
+
+		BookingSlotDetail slot = booking.getBookingSlotDetails().get(0);
+
+		String eventDate = formatLocalDate(slot.getBookingDate());
+		String eventToDate = formatLocalDate(slot.getBookingEndDate());
+		String fromTime = formatTime(slot.getBookingFromTime());
+		String toTime = formatTime(slot.getBookingToTime());
+		String capacity = slot.getCapacity();
+		String eventDateRange=eventDate+" to "+eventToDate;
+		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
+		message = message.replace("{bookingNo}", bookingNo);
+		message = message.replace("{applicantMobileNo}", mobileNo);
+		message = message.replace("{tenantid}", tenantId);
+
+		message = message.replace("{hallName}", hallName);
+		message = message.replace("{purpose}", purpose);
+		message = message.replace("{receiptNo}", receiptNo);
+		message = message.replace("{applicantName}", applicantName);
+		message = message.replace("{cityName}", capitalize(cityName));
+
+		message = message.replace("{applicationDate}", applicationDate);
+		message = message.replace("{paymentDate}", paymentDate);
+
+		message = message.replace("{eventDate}", eventDateRange);
+		message = message.replace("{fromTime}", fromTime);
+		message = message.replace("{toTime}", toTime);
+		message = message.replace("{capacity}", capacity);
+
+		smsRequests.addAll(util.createEmailRequest(bookingRequest, message, emailIdToOwner));
+	}
+	private String formatDate(Long epoch) {
+	    if (epoch == null) return "";
+	    return Instant.ofEpochMilli(epoch)
+	            .atZone(ZoneId.systemDefault())
+	            .toLocalDate()
+	            .format(DateTimeFormatter.ofPattern("dd MMM yyyy"));
+	}
+	
+	private String capitalize(String city) {
+	    if (city == null) return "";
+	    return city.substring(0,1).toUpperCase() + city.substring(1);
+	}
+	
+	private String formatLocalDate(Object dateObj) {
+	    if (dateObj == null) return "";
+	    return dateObj.toString();
+	}
+	
+	
+	private String formatTime(Object timeObj) {
+	    if (timeObj == null) return "";
+	    try {
+	        LocalTime time = LocalTime.of(
+	                (int) timeObj.getClass().getMethod("getHour").invoke(timeObj),
+	                (int) timeObj.getClass().getMethod("getMinute").invoke(timeObj)
+	        );
+	        return time.format(DateTimeFormatter.ofPattern("hh:mm a"));
+	    } catch (Exception e) {
+	        return "";
+	    }
+	}
 	private EventRequest getEventsForCommunityHallBooking(CommunityHallBookingRequest request, String message, String actionLink) {
 
 		List<Event> events = new ArrayList<>();

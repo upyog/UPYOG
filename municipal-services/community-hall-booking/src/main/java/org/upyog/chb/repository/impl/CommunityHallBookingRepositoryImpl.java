@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -261,17 +262,24 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		log.info("Date Range: {} to {}", startDate, endDate);
 
 		// Iterate through the date range
-		List<Object[]> batchArgs = new ArrayList<>();
 		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-			batchArgs.add(new Object[] { bookingId, createdBy, createdTime, "ACTIVE", // Status
-					null, // Booking No (optional, replace with actual value if available)
-					communitycode, hallcode, date, // Booking Date
-					tenantId, lastModifiedBy, lastModifiedTime });
-		}
+			Map<String, Object> timer = new HashMap<>();
+			timer.put("bookingId", bookingId);
+			timer.put("createdBy", createdBy);
+			timer.put("createdTime", createdTime);
+			timer.put("status", "ACTIVE");
+			timer.put("bookingNo", null);
+			timer.put("communityHallCode", communitycode);
+			timer.put("hallCode", hallcode);
+			timer.put("bookingDate", date.toString());
+			timer.put("tenantId", tenantId);
+			timer.put("lastModifiedBy", lastModifiedBy);
+			timer.put("lastModifiedTime", lastModifiedTime);
 
-		// Execute batch insert
-		String query = CommunityHallBookingQueryBuilder.PAYMENT_TIMER_INSERT_QUERY;
-		jdbcTemplate.batchUpdate(query, batchArgs);
+			Map<String, Object> payload = new HashMap<>();
+			payload.put("paymentTimer", timer);
+			producer.push(bookingConfiguration.getCommunityHallBookingTimerCreateTopic(), bookingId, payload);
+		}
 
 		// Log after the query execution
 		log.info("Insert Query Executed Successfully for Booking ID: {}", bookingId);
@@ -302,15 +310,14 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 		List<String> bookingIdList = Arrays.asList(bookingIds.split(","));
 
-		// Generate placeholders for the number of booking IDs
-		String placeholders = String.join(",", Collections.nCopies(bookingIdList.size(), "?"));
-		String deleteQuery = String.format(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY,
-				placeholders);
-
-		log.info("Executing booking timer delete query: {} for booking IDs: {}", deleteQuery, bookingIdList);
-
-		// Convert the list to an array for use in the query
-		jdbcTemplate.update(deleteQuery, bookingIdList.toArray());
+		log.info("Publishing booking timer delete for booking IDs: {}", bookingIdList);
+		for (String bookingId : bookingIdList) {
+			Map<String, Object> timerDelete = new HashMap<>();
+			timerDelete.put("bookingId", bookingId.trim());
+			Map<String, Object> payload = new HashMap<>();
+			payload.put("paymentTimerDelete", timerDelete);
+			producer.push(bookingConfiguration.getCommunityHallBookingTimerDeleteTopic(), bookingId.trim(), payload);
+		}
 
 		if (updateBookingStatus) {
 			log.info("Updating booking status for booking IDs: {}", bookingIdList);
@@ -342,6 +349,21 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	public void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status) {
 		
 		log.info("updateBookingSynchronously for booking id : {} by uuid : ", bookingId, uuid);
+
+		String bookingNo = null;
+		String tenantId = null;
+		try {
+			CommunityHallBookingSearchCriteria criteria = CommunityHallBookingSearchCriteria.builder()
+					.bookingIds(Collections.singletonList(bookingId)).build();
+			List<CommunityHallBookingDetail> bookingDetails = getBookingDetails(criteria);
+			if (!bookingDetails.isEmpty()) {
+				CommunityHallBookingDetail bookingDetail = bookingDetails.get(0);
+				bookingNo = bookingDetail.getBookingNo();
+				tenantId = bookingDetail.getTenantId();
+			}
+		} catch (Exception e) {
+			log.warn("Unable to fetch bookingNo/tenantId for bookingId: {}", bookingId, e);
+		}
 		
 		String lastUpdateBy = uuid;
 		long lastUpdatedTime = CommunityHallBookingUtil.getCurrentTimestamp();
@@ -355,15 +377,23 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		
 		log.info("Updating payment status of booking id : {} to status : {}", bookingId, status);
 		
-		if(paymentDetail != null) {
-			jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_DETAIL_QUERY, status, lastUpdateBy, lastUpdatedTime, receiptNo, receiptDate, bookingId);
-		} else {
-			jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_STATUS, status, lastUpdateBy, lastUpdatedTime, bookingId);
-		}
-		
-		jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_SLOT_QUERY, status, lastUpdateBy, lastUpdatedTime, bookingId);
-		jdbcTemplate.update(CommunityHallBookingQueryBuilder.INSERT_BOOKING_DETAIL_AUDIT_QUERY, bookingId);
-		jdbcTemplate.update(CommunityHallBookingQueryBuilder.INSERT_SLOT_DETAIL_AUDIT_QUERY, bookingId);
+		Map<String, Object> syncUpdate = new HashMap<>();
+		syncUpdate.put("bookingId", bookingId);
+		syncUpdate.put("status", status);
+		syncUpdate.put("lastModifiedBy", lastUpdateBy);
+		syncUpdate.put("lastModifiedTime", lastUpdatedTime);
+		syncUpdate.put("bookingNo", bookingNo);
+		syncUpdate.put("tenantId", tenantId);
+		syncUpdate.put("receiptNo", receiptNo);
+		syncUpdate.put("paymentDate", receiptDate == 0L ? null : receiptDate);
+
+		Map<String, Object> payload = new HashMap<>();
+		payload.put("bookingSyncUpdate", syncUpdate);
+
+		String topic = paymentDetail != null
+				? bookingConfiguration.getCommunityHallBookingSyncUpdateWithPaymentTopic()
+				: bookingConfiguration.getCommunityHallBookingSyncUpdateTopic();
+		producer.push(topic, bookingId, payload);
 	}
 
 	@Override
@@ -396,7 +426,14 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
      */
 	@Override
     public int updateBookingTimer(String bookingId) {
-       return jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPADTE_BOOKING_PAYMENT_TIMER_VALUE_QUERY, "PENDING", bookingId);
+		Map<String, Object> timerUpdate = new HashMap<>();
+		timerUpdate.put("bookingId", bookingId);
+		timerUpdate.put("status", "PENDING");
+
+		Map<String, Object> payload = new HashMap<>();
+		payload.put("paymentTimerUpdate", timerUpdate);
+		producer.push(bookingConfiguration.getCommunityHallBookingTimerUpdateTopic(), bookingId, payload);
+		return 1;
     }
 
 	@Override
