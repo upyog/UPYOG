@@ -636,24 +636,29 @@ private List<Demand> filterMultipleActiveDemands(List<Demand> demands) {
 
 					billAmount = billAmount.setScale(0, RoundingMode.CEILING);
 
-					BillV2 bill = BillV2.builder()
-						.auditDetails(util.getAuditDetail(requestInfo))
-						.payerAddress(payer.getPermanentAddress())
-						.mobileNumber(payer.getMobileNumber())
-						.billDate(System.currentTimeMillis())
-						.businessService(business.getCode())
-						.payerName(payer.getName())
-						.consumerCode(consumerCode)
-						.status(BillStatus.ACTIVE)
-						.billDetails(billDetails)
-						.totalAmount(billAmount)
-						.userId(payer.getUuid())
-						.billNumber(billNumber)
-						.tenantId(tenantId)
-						.id(billId)
-						.build();
-				
-					bills.add(bill);
+					BillV2.BillV2Builder billBuilder = BillV2.builder()
+					        .auditDetails(util.getAuditDetail(requestInfo))
+					        .payerAddress(payer.getPermanentAddress())
+					        .mobileNumber(payer.getMobileNumber())
+					        .billDate(System.currentTimeMillis())
+					        .businessService(business.getCode())
+					        .payerName(payer.getName())
+					        .consumerCode(consumerCode)
+					        .status(BillStatus.ACTIVE)
+					        .billDetails(billDetails)
+					        .totalAmount(billAmount)
+					        .userId(payer.getUuid())
+					        .billNumber(billNumber)
+					        .tenantId(tenantId)
+					        .id(billId);
+
+					    // 2. Add email only if it's not null
+					    if (payer.getEmailId() != null) {
+					        billBuilder.payerEmail(payer.getEmailId());
+					    }
+
+					    // 3. Build and add to list
+					    bills.add(billBuilder.build());
 				}
 			}
 
