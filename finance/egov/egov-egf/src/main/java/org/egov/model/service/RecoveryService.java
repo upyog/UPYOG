@@ -111,7 +111,7 @@ public class RecoveryService {
 	}
 
     public List<Recovery> getAllActiveRecoverys() {
-        return recoveryRepository.findByIsactive(true);
+        return recoveryRepository.findByIsactiveOrderByRecoveryNameAsc(true);
     }
 
     public List<Recovery> getByAccountCode(CChartOfAccounts chartOfAccounts) {

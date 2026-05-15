@@ -172,6 +172,7 @@ public class PurchaseOrderService implements EntityTypeService {
 	public PurchaseOrder update(PurchaseOrder purchaseOrder) {
 
 		if (purchaseOrder.getEditAllFields().booleanValue()) {
+			entityManager.detach(purchaseOrder.getFund());
 			setAuditDetails(purchaseOrder);
 			if (purchaseOrder.getFund() != null && purchaseOrder.getFund().getId() != null) {
 				purchaseOrder.setFund(fundService.findOne(purchaseOrder.getFund().getId()));

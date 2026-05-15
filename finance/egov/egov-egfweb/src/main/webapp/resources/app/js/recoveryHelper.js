@@ -97,11 +97,14 @@ function callAjaxSearch() {
 										        
 										        // Header row
 										        tableHTML += '<thead><tr style="background-color:#f2f2f2;">';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Order No.</th>';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Name</th>';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Total/Order Value</th>';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Contractor Name</th>';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Active Y/N</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Deductions Code</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Deductions Name</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">SubLedger Type</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Account Code</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Remitted To</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">IFSC Code</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Account Number/Major Head</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Active</th>';
 										        tableHTML += '</tr></thead><tbody>';
 
 												$('#resultTable tbody tr').each(function() {

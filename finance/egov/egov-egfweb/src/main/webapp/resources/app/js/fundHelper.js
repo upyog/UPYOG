@@ -100,11 +100,13 @@ function callAjaxSearch() {
 								        
 								        // Header row
 								        tableHTML += '<thead><tr style="background-color:#f2f2f2;">';
-								        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Order No.</th>';
-								        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Name</th>';
-								        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Total/Order Value</th>';
-								        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Contractor Name</th>';
-								        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Active Y/N</th>';
+										tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Name</th>';
+										tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Code</th>';
+										tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Identifier</th>';
+										tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Level</th>';
+										tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Parent Fund</th>';
+										tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Isnotleaf</th>';
+										tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Active</th>';
 								        tableHTML += '</tr></thead><tbody>';
 
 										$('#resultTable tbody tr').each(function() {

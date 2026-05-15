@@ -221,7 +221,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id=?", budgetGroup.getId());
                     List<BudgetDetail> budgetDetailList =
                         budgetDetailService
-                            .getBudgetDetailByFunctionId(function.getId());
+                            .getBudgetDetailByFunctionIdAndDeptId(function.getId(),department.getCode());
                     dropdownData.put("budgetGroupList", budgetDetailList);
                 }
             }

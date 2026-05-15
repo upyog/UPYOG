@@ -134,11 +134,16 @@ function callAjaxSearch() {
 										        
 										        // Header row
 										        tableHTML += '<thead><tr style="background-color:#f2f2f2;">';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Order No.</th>';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Name</th>';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Total/Order Value</th>';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Contractor Name</th>';
-										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Active Y/N</th>';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Account Number/Major Head</th>';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Fund</th>';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Bank</th>';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Bank Branch</th>';
+										        tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Budget Head</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Account Type</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Usage Type</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Pay To</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Narration</th>';
+												tableHTML += '<th style="border:1px solid #ddd; padding:6px;">Active</th>';
 										        tableHTML += '</tr></thead><tbody>';
 
 												$('#resultTable tbody tr').each(function() {

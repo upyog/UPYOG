@@ -60,6 +60,7 @@ import javax.validation.constraints.Size;
 
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.web.service.report.RemittanceServiceImpl;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.models.BankAccountServiceMapping;
 import org.egov.infra.microservice.models.EmployeeSearchCriteria;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
@@ -116,12 +117,14 @@ public class RemittanceReportController {
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.GET }, value = "/collection/form")
 	public String getRemittanceReportForm(final Model model) {
 		prepareModel(model);
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 		return "remittance_collection_search";
 	}
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.GET }, value = "/pending/form")
 	public String getRemittancePendingReportForm(final Model model) {
 		preparePendingModel(model);
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 		return "remittance_pending_search";
 	}
 
@@ -207,6 +210,7 @@ public class RemittanceReportController {
 		model.addAttribute("instrumentTypes", getInstrumentMap());
 		model.addAttribute("businessServices",
 				microserviceUtils.getBusinessServices(Arrays.asList(serviceType.split(","))));
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 	}
 
 	private void preparePendingModel(Model model) {
@@ -216,6 +220,7 @@ public class RemittanceReportController {
 				microserviceUtils.getBusinessServices(Arrays.asList(serviceType.split(","))));
 		model.addAttribute("userList", microserviceUtils.getEmployeeBySearchCriteria(
 				EmployeeSearchCriteria.builder().roles(Arrays.asList(rolesToRemit.split(","))).build()));
+		model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
 	}
 
 	private Object getBankAccountServiceMapping() {

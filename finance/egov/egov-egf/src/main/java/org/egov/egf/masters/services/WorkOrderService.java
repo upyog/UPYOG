@@ -171,6 +171,7 @@ public class WorkOrderService implements EntityTypeService {
 	@Transactional
 	public WorkOrder update(WorkOrder workOrder) {
 		if (workOrder.getEditAllFields().booleanValue()) {
+			entityManager.detach(workOrder.getFund());
 			setAuditDetails(workOrder);
 			if (workOrder.getFund() != null && workOrder.getFund().getId() != null) {
 				workOrder.setFund(fundService.findOne(workOrder.getFund().getId()));

@@ -242,11 +242,11 @@
 					 <td class="bluebox w5">&nbsp;</td>
 					<td class="greybox w15"><b>Voucher Number : </b></td>
 					<td class="greybox w25"><s:property
-							value="%{voucherHeader.voucherNumber}" class="w100" /></td>
+							value="%{voucherHeader.voucherNumber}"/></td>
 					 <td class="bluebox w5">&nbsp;</td>
 					<td class="greybox w15"><b> Date :</b></td>
 					<td class="greybox w25"><s:date
-							name="voucherHeader.voucherDate" format="dd/MM/yyyy" class="w100"/></td>
+							name="voucherHeader.voucherDate" format="dd/MM/yyyy"/></td>
 				</tr>
 			</table>
 			<jsp:include page="voucherViewHeader.jsp" />

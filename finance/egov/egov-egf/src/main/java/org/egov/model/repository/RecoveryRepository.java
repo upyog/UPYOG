@@ -59,6 +59,7 @@ import java.util.List;
 public interface RecoveryRepository extends JpaRepository<Recovery, Long> {
 
     List<Recovery> findByIsactive(Boolean isActive);
+    List<Recovery> findByIsactiveOrderByRecoveryNameAsc(Boolean isActive);
     List<Recovery> findByChartofaccounts(CChartOfAccounts chartofaccounts);
     List<Recovery> findByIsactiveAndRemittanceModeOrderByType(Boolean isActive,Character remittanceMode);
     List<Recovery> findByTypeContainingIgnoreCaseAndRecoveryNameContainingIgnoreCase(String type,String name);

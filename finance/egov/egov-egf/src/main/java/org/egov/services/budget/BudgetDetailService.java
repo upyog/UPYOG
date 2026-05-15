@@ -2538,6 +2538,17 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .setProjection(Projections.distinct(Projections.property("budgetGroup")))
                 .addOrder(Order.asc("budgetGroup")).list();
     }
+    
+    public List<BudgetDetail> getBudgetDetailByFunctionIdAndDeptId(final Long functionId, final String departmentId) {
+        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
+        return criteria
+                .add(Restrictions.eq("function.id", functionId))
+                .add(Restrictions.eq("executingDepartment", departmentId))
+                .add(Restrictions.gt("currentApproved", BigDecimal.ZERO))
+                .setProjection(Projections.distinct(Projections.property("budgetGroup")))
+                .addOrder(Order.asc("budgetGroup"))
+                .list();
+    }
 
 	@Transactional
 	public void updateByMaterializedPath(final String materializedPath) {
