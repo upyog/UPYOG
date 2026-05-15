@@ -321,6 +321,14 @@ public class NDCService {
 				? NDCConstants.RESIDENTIAL
 				: NDCConstants.COMMERCIAL;
 
+		// Ensure processInstance.action reflects the actual workflow action being performed
+		if (request.getApplications() != null && !request.getApplications().isEmpty()) {
+			Application app = request.getApplications().get(0);
+			if (app.getProcessInstance() != null && app.getWorkflow() != null && app.getWorkflow().getAction() != null) {
+				app.getProcessInstance().setAction(app.getWorkflow().getAction());
+			}
+		}
+
 		CalculationCriteria calculationCriteria = CalculationCriteria.builder()
 				.ndcApplicationRequest(request)
 				.propertyType(mappedFeeType)
