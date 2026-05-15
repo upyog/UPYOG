@@ -1094,4 +1094,28 @@ config:
         image-name: "dashboard-ingest-v2"
         dockerfile: "build/maven/Dockerfile"
 
+  - name: "builds/upyog/business-services/billing-service-v2"
+    build:
+      - work-dir: "business-services/billing-service-v2"
+        image-name: "billing-service-v2"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "business-services/billing-service-v2/src/main/resources/db"
+        image-name: "billing-service-v2-db"
+
+  - name: "builds/upyog/municipal-services/sw-calculator-v2"
+    build:
+      - work-dir: "municipal-services/sw-calculator-v2"
+        image-name: "sw-calculator-v2"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/sw-calculator-v2/src/main/resources/db"
+        image-name: "sw-calculator-v2-db" 
+
+  - name: "builds/upyog/municipal-services/ws-calculator-v2"
+    build:
+      - work-dir: "municipal-services/ws-calculator-v2"
+        image-name: "ws-calculator-v2"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/ws-calculator-v2/src/main/resources/db"
+        image-name: "ws-calculator-v2-db"
+
 
