@@ -3,6 +3,7 @@ package org.egov.edcr.feature;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.common.entity.edcr.Block;
@@ -77,6 +78,10 @@ public class GeneralStairExtract extends FeatureExtract {
                 List mTexts = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
                 if ((polyLines != null && !polyLines.isEmpty()) || (mTexts != null
                         && !mTexts.isEmpty())) {
+                	
+                //Code added for the layername with colorCode match
+        		Util.validateLayerColor(generalStairName, Util.getColorByPolyLine(polyLines), pl);
+        		
 				String[] stairName = generalStairName.split("_");
 				String stairNo = stairName[5];
 				if (stairName.length == 6 && stairNo != null && !stairNo.isEmpty()) {
@@ -137,7 +142,20 @@ public class GeneralStairExtract extends FeatureExtract {
 	private void addFlight(PlanDetail pl, String flightLayerNamePattern, GeneralStair generalStair) {
 	    DXFDocument doc = pl.getDoc();
 		List<String> flightLayerNames = Util.getLayerNamesLike(doc, flightLayerNamePattern);
-
+		
+		List<DXFLWPolyline> stairFlightPolyLines1 = Util.getPolyLinesByLayer(doc, flightLayerNames.get(0));
+		
+//		//Code added for the layername with colorCode match
+//		Util.validateLayerColor(flightLayerNames.get(0), Util.getColorByPolyLine(stairFlightPolyLines1), pl);
+		
+		
+		Map<String, String> data = Util.getColorByDimensionByLayerByColorCode(pl, flightLayerNames.get(0),DxfFileConstants.STAIR_FLIGHT_LENGTH_COLOR);
+		Util.validateSubLayerColor(data.get("layerName"), "LENGTH", Integer.parseInt(data.get("colorCode")), pl);
+		
+		
+		data = Util.getColorByDimensionByLayerByColorCode(pl, flightLayerNames.get(0),DxfFileConstants.STAIR_FLIGHT_WIDTH_COLOR);
+		Util.validateSubLayerColor(data.get("layerName"), "WIDTH", Integer.parseInt(data.get("colorCode")), pl);
+		
 		if (!flightLayerNames.isEmpty()) {
 			List<Flight> flights = new ArrayList<>();
 			for (String flightLayer : flightLayerNames) {
@@ -149,7 +167,7 @@ public class GeneralStairExtract extends FeatureExtract {
 				flight.setNumber(flightNo[7]);
 
 				List<DXFLWPolyline> stairFlightPolyLines = Util.getPolyLinesByLayer(doc, flightLayer);
-
+    			
 				boolean isClosed = stairFlightPolyLines.stream().allMatch(dxflwPolyline -> dxflwPolyline.isClosed());
 
 				flight.setFlightClosed(isClosed);
@@ -163,13 +181,19 @@ public class GeneralStairExtract extends FeatureExtract {
 				// set length of flight
 				List<BigDecimal> stairFlightLengths = Util.getListOfDimensionByColourCode(pl, flightLayer,
 						DxfFileConstants.STAIR_FLIGHT_LENGTH_COLOR);
-
+				
+//				Map<String, String> data = Util.getColorByDimensionByLayerByColorCode(pl, flightLayer,DxfFileConstants.STAIR_FLIGHT_LENGTH_COLOR);
+//				Util.validateSubLayerColor(data.get("layerName"), "LENGTH", Integer.parseInt(data.get("colorCode")), pl);
+				
 				flight.setLengthOfFlights(stairFlightLengths);
 
 				// set width of flight
 				List<BigDecimal> stairFlightWidths = Util.getListOfDimensionByColourCode(pl, flightLayer,
 						DxfFileConstants.STAIR_FLIGHT_WIDTH_COLOR);
-
+				
+//				data = Util.getColorByDimensionByLayerByColorCode(pl, flightLayer,DxfFileConstants.STAIR_FLIGHT_WIDTH_COLOR);
+//				Util.validateLayerColor(data.get("layerName"), Integer.parseInt(data.get("colorCode")), pl);
+				
 				flight.setWidthOfFlights(stairFlightWidths);
 
 				// set number of rises
@@ -189,6 +213,13 @@ public class GeneralStairExtract extends FeatureExtract {
 	    List<String> landingLayerNames = Util.getLayerNamesLike(doc, landingNamePattern);
 		List<StairLanding> landings = new ArrayList<>();
 
+		Map<String, String> data = Util.getColorByDimensionByLayerByColorCode(pl, landingLayerNames.get(0),DxfFileConstants.STAIR_FLIGHT_LENGTH_COLOR);
+		Util.validateSubLayerColor(data.get("layerName"), "LENGTH", Integer.parseInt(data.get("colorCode")), pl);
+		
+		
+		data = Util.getColorByDimensionByLayerByColorCode(pl, landingLayerNames.get(0),DxfFileConstants.STAIR_FLIGHT_WIDTH_COLOR);
+		Util.validateSubLayerColor(data.get("layerName"), "WIDTH", Integer.parseInt(data.get("colorCode")), pl);
+		
 		for (String landingLayer : landingLayerNames) {
 
 			StairLanding stairLanding = new StairLanding();
@@ -198,7 +229,9 @@ public class GeneralStairExtract extends FeatureExtract {
 			stairLanding.setNumber(landingNo[7]);
 
 			List<DXFLWPolyline> landingPolyLines = Util.getPolyLinesByLayer(doc, landingLayer);
-
+//			//Code added for the layername with colorCode match
+//			Util.validateLayerColor(landingLayer, Util.getColorByPolyLine(landingPolyLines), pl);
+			
 			boolean isClosed = landingPolyLines.stream().allMatch(dxflwPolyline -> dxflwPolyline.isClosed());
 
 			stairLanding.setLandingClosed(isClosed);
@@ -211,12 +244,18 @@ public class GeneralStairExtract extends FeatureExtract {
 			// set length of flight
 			List<BigDecimal> landingLengths = Util.getListOfDimensionByColourCode(pl, landingLayer,
 					DxfFileConstants.STAIR_FLIGHT_LENGTH_COLOR);
-
+			
+//			Map<String, String> data = Util.getColorByDimensionByLayerByColorCode(pl, landingLayer,DxfFileConstants.STAIR_FLIGHT_LENGTH_COLOR);
+//			Util.validateLayerColor(data.get("layerName"), Integer.parseInt(data.get("colorCode")), pl);
+			
 			stairLanding.setLengths(landingLengths);
 
 			// set width of flight
 			List<BigDecimal> landingWidths = Util.getListOfDimensionByColourCode(pl, landingLayer,
 					DxfFileConstants.STAIR_FLIGHT_WIDTH_COLOR);
+			
+//			data = Util.getColorByDimensionByLayerByColorCode(pl, landingLayer,DxfFileConstants.STAIR_FLIGHT_WIDTH_COLOR);
+//			Util.validateLayerColor(data.get("layerName"), Integer.parseInt(data.get("colorCode")), pl);
 
 			stairLanding.setWidths(landingWidths);
 

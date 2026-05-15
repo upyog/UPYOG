@@ -50,7 +50,10 @@ public class ToiletDetailsExtract extends FeatureExtract {
 
                     for (String toiletLayer : names) {
                         List<DXFLWPolyline> toiletMeasurements = Util.getPolyLinesByLayer(planDetail.getDoc(), toiletLayer);
-
+                        if(!toiletMeasurements.isEmpty()) {
+                        	//Code added for the layername with colorCode match
+                    		Util.validateLayerColor(toiletLayer, Util.getColorByPolyLine(toiletMeasurements), planDetail);
+                        }
                         if (!toiletMeasurements.isEmpty()) {
                             Toilet toiletObj = new Toilet();
                             List<Measurement> toiletMeasurementList = new ArrayList<>();
@@ -69,12 +72,23 @@ public class ToiletDetailsExtract extends FeatureExtract {
                     List<String> ventilationList = Util.getLayerNamesLike(planDetail.getDoc(), toiletVentilationLayer);
 
                     for (String ventilationHeightLayer : ventilationList) {
-                        List<DXFLWPolyline> toiletVentilationMeasurements = Util.getPolyLinesByLayer(planDetail.getDoc(), ventilationHeightLayer);
+                        //List<DXFLWPolyline> toiletVentilationMeasurements = Util.getPolyLinesByLayer(planDetail.getDoc(), ventilationHeightLayer);
                         String windowHeight = Util.getMtextByLayerName(planDetail.getDoc(), ventilationHeightLayer);
 
-                        BigDecimal windowHeight1 = windowHeight != null
-                                ? BigDecimal.valueOf(Double.parseDouble(windowHeight.replaceAll("WINDOW_HT_M=", "")))
-                                : BigDecimal.ZERO;
+                        Map<String, String> data = Util.getColorByDimensionByLayer(planDetail, ventilationHeightLayer);                        
+                        if(!data.isEmpty()) {
+                        	//Code added for the layername with colorCode match
+                    		Util.validateLayerColor(ventilationHeightLayer, Integer.parseInt(data.get("colorCode")), planDetail);
+                        }
+                        
+//                        BigDecimal windowHeight1 = windowHeight != null
+//                                ? BigDecimal.valueOf(Double.parseDouble(windowHeight.trim().replaceAll("WINDOW_HT_M=", "")))
+//                                : BigDecimal.ZERO;
+                        BigDecimal windowHeight1 = BigDecimal.ZERO;
+                        if (windowHeight != null && windowHeight.contains("=")) {
+						    String value = windowHeight.split("=")[1].trim();
+						    windowHeight1 = new BigDecimal(value);
+						}
 
                         for (Toilet toiletObj : toilets) {
                             toiletObj.setToiletVentilation(windowHeight1);

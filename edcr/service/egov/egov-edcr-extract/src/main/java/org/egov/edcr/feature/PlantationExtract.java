@@ -30,6 +30,12 @@ public class PlantationExtract extends FeatureExtract {
 
         List<DXFLWPolyline> plantationPolylines = Util.getPolyLinesByLayer(pl.getDoc(),
                 layerNames.getLayerName("LAYER_NAME_PLANTATION_TREECOVER"));
+        
+        if(!plantationPolylines.isEmpty()) {
+        	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_PLANTATION_TREECOVER"), 
+        			Util.getColorByPolyLine(plantationPolylines), pl);
+        }
+        
         for (DXFLWPolyline pline : plantationPolylines)
             pl.getPlantation().getPlantations().add(new MeasurementDetail(pline, true));
 

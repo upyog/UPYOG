@@ -3,6 +3,7 @@ package org.egov.edcr.feature;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
@@ -42,6 +43,16 @@ public class ParapetExtract extends FeatureExtract {
                     layerName));
 
             List<DXFDimension> parapetDims = Util.getDimensionsByLayer(planDetail.getDoc(), layerName);
+            
+            if(!parapetDims.isEmpty()){
+            	Map<String, String> data = Util.getColorByDimensionByLayer(planDetail, layerName);
+    	        String layer = data.get("layerName");
+    	        String color = data.get("colorCode");
+    	        
+    	      //Code added for the layername with colorCode match
+    			Util.validateLayerColor(layer, Integer.parseInt(color), planDetail);
+            }
+            
             if (!parapetDims.isEmpty()) {
                 for (DXFDimension dim : parapetDims) {
                     parapets.add(buildHeight(planDetail, dim, parapetLayer));
@@ -54,6 +65,9 @@ public class ParapetExtract extends FeatureExtract {
             if (!parapetPolyLines.isEmpty() || !block.getParapetWithColor().isEmpty()) {
                 Parapet parapet = new Parapet();
                 if (parapetPolyLines != null && !parapetPolyLines.isEmpty()) {
+                	//Code added for the layername with colorCode match
+        			Util.validateLayerColor(layerName, Util.getColorByPolyLine(parapetPolyLines), planDetail);               	
+                	
                     List<Measurement> areas = parapetPolyLines.stream()
                             .map(parapetPolyline -> new MeasurementDetail(parapetPolyline, true))
                             .collect(Collectors.toList());

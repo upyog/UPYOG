@@ -97,6 +97,11 @@ public class LocalDiskFileStoreService implements FileStoreService {
     public FileStoreMapper store(File sourceFile, String fileName, String mimeType, String moduleName) {
         return store(sourceFile, fileName, mimeType, moduleName, true);
     }
+    
+    @Override
+    public FileStoreMapper store(File sourceFile, String fileName, String mimeType, String moduleName, String tenantId) {
+        return store(sourceFile, fileName, mimeType, moduleName, true, tenantId);
+    }
 
     @Override
     public FileStoreMapper store(InputStream sourceFileStream, String fileName, String mimeType, String moduleName) {
@@ -148,6 +153,55 @@ public class LocalDiskFileStoreService implements FileStoreService {
 
             fileMapper.setContentType(mimeType);
             fileMapper.setTenantId(ApplicationThreadLocals.getFilestoreTenantID());
+
+            if (deleteFile) {
+                boolean deleted = safeDeleteWithRetry(file.toPath(), 3, 200);
+                if (deleted)
+                    LOG.debug("✅ Deleted source file '{}' after storing.", file.getAbsolutePath());
+                else
+                    LOG.warn("⚠️ Could not delete source file '{}' after retries.", file.getAbsolutePath());
+            }
+
+            long elapsed = System.currentTimeMillis() - startTime;
+            LOG.info("✅ Stored file '{}' in '{}' ({} bytes, {} ms)", fileName, newFilePath, file.length(), elapsed);
+
+            return fileMapper;
+
+        } catch (IOException e) {
+            LOG.error("I/O error storing file '{}': {}", fileName, e.getMessage(), e);
+            return null;
+        } catch (Exception e) {
+            LOG.error("Unexpected error storing file '{}': {}", fileName, e.getMessage(), e);
+            return null;
+        }
+    }
+    
+    
+    public FileStoreMapper store(File file, String fileName, String mimeType, String moduleName, boolean deleteFile,
+    		String tenantId) {
+        long startTime = System.currentTimeMillis();
+        fileName = normalizeString(fileName);
+        moduleName = normalizeString(moduleName);
+
+        FileStoreMapper fileMapper = new FileStoreMapper(randomUUID().toString(),
+                defaultString(fileName, file.getName()));
+        Path newFilePath = null;
+
+        try {
+            newFilePath = this.createNewFilePath(fileMapper, moduleName);
+
+            try (InputStream in = new BufferedInputStream(Files.newInputStream(file.toPath()), 8192);
+                 OutputStream out = new BufferedOutputStream(Files.newOutputStream(newFilePath), 8192)) {
+
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+
+            fileMapper.setContentType(mimeType);
+            fileMapper.setTenantId(tenantId);
 
             if (deleteFile) {
                 boolean deleted = safeDeleteWithRetry(file.toPath(), 3, 200);

@@ -25,6 +25,12 @@ public class SolarWaterHeatingExtract extends FeatureExtract {
 
         List<DXFLWPolyline> swhPolylines = Util.getPolyLinesByLayer(pl.getDoc(),
                 layerNames.getLayerName("LAYER_NAME_SOLAR_WATER_HEATING"));
+        
+        if(!swhPolylines.isEmpty()) {
+        	Util.validateLayerColor(layerNames.getLayerName("LAYER_NAME_SOLAR_WATER_HEATING"), 
+        			Util.getColorByPolyLine(swhPolylines), pl);
+        }
+        
         for (DXFLWPolyline pline : swhPolylines)
             pl.getUtility().getSolarWaterHeatingSystems().add(new MeasurementDetail(pline, true));
 

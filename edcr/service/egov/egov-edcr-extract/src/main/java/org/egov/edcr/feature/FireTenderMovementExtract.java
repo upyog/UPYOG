@@ -40,6 +40,12 @@ public class FireTenderMovementExtract extends FeatureExtract {
                     b.getNumber());
             List<DXFLWPolyline> fireTenderMovementPolyLines = Util.getPolyLinesByLayer(pl.getDoc(),
                     fireTenderMovementLayer);
+                   
+            if(!fireTenderMovementPolyLines.isEmpty()) {
+            	Util.validateLayerColor(fireTenderMovementLayer, 
+            			Util.getColorByPolyLine(fireTenderMovementPolyLines), pl);
+            }
+            
             if (!fireTenderMovementPolyLines.isEmpty()) {
                 List<Measurement> measurementDetails = new ArrayList<>();
 

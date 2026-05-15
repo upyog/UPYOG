@@ -871,13 +871,23 @@ private class FrontYardResult {
 				&& L.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {		
 			minVal = getMinValueForPublicBuildingByMDMS(pl,plot.getArea(), buildingHeight, mostRestrictiveOccupancy, errors, frontYardResult);
 			subRule = RULE_37_TWO_I;
-			valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);	
-			if (setback.getFrontYard().getMinimumDistance().compareTo(minVal) >= 0) {		    
+			valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
+			if(L_NH.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())) {
+				if (setback.getFrontYard().getArea().compareTo(minVal) >= 0) {		    
+				}else {
+					valid=false;
+				}
+				compareFrontYardResultPublicBuilding(blockName, setback.getFrontYard().getArea(), mean, mostRestrictiveOccupancy,
+			    		frontYardResult, valid, subRule, rule, minVal, meanVal, level);	
 			}else {
-				valid=false;
+				if (setback.getFrontYard().getMinimumDistance().compareTo(minVal) >= 0) {		    
+				}else {
+					valid=false;
+				}
+				compareFrontYardResultPublicBuilding(blockName, setback.getFrontYard().getMinimumDistance(), mean, mostRestrictiveOccupancy,
+			    		frontYardResult, valid, subRule, rule, minVal, meanVal, level);	
 			}
-			compareFrontYardResultPublicBuilding(blockName, setback.getFrontYard().getMinimumDistance(), mean, mostRestrictiveOccupancy,
-		    		frontYardResult, valid, subRule, rule, minVal, meanVal, level);	
+			
 		}
 
 		//valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
@@ -912,7 +922,12 @@ private class FrontYardResult {
 		String occupanyCode;
 		if (mostRestrictiveOccupancy.getSubtype() != null) {
 			occupancyName = mostRestrictiveOccupancy.getSubtype().getName();
-			occupanyCode = mostRestrictiveOccupancy.getType().getCode();
+			if(L_NH.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())) {
+				occupanyCode = mostRestrictiveOccupancy.getSubtype().getCode();
+			}else {
+				occupanyCode = mostRestrictiveOccupancy.getType().getCode();
+			}
+			
 		}else {
 			occupancyName = mostRestrictiveOccupancy.getType().getName();
 			occupanyCode = mostRestrictiveOccupancy.getType().getCode();
@@ -938,7 +953,7 @@ private class FrontYardResult {
 			frontYardResult.level = level;
 			frontYardResult.expectedminimumDistance = minVal;
 			frontYardResult.expectedmeanDistance = meanVal;
-			frontYardResult.actualMinDistance = min;
+			frontYardResult.actualMinDistance = min.setScale(2, RoundingMode.HALF_UP);
 			frontYardResult.actualMeanDistance = mean;
 			frontYardResult.status = valid;
 			frontYardResult.occupancyCode = occupanyCode;
@@ -1283,20 +1298,41 @@ private class FrontYardResult {
 		
 		if(mostRestrictiveOccupancy != null &&
 				(L.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))) {
-			if (pl.getMdmsMasterData().get("masterMdmsData") != null) {
-			    Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(
-			            pl.getMdmsMasterData().get("masterMdmsData"),
-			            MdmsFilter.FRONT_SETBACK_PATH,
-			            BigDecimal.class
-			    );
-			    if (scOpt.isPresent()) {
-			        BigDecimal mdmsValue = scOpt.get();
-			        LOG.info("Front Setback Value from MDMS : " + mdmsValue);		        
-			        minVal = mdmsValue;	     
-			    }else {
-			    	LOG.error("No value found from mdms for the front setback");
-			    }
+			
+			if(L_NH.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())) {
+				if (pl.getMdmsMasterData().get("masterMdmsData") != null) {
+				    Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(
+				            pl.getMdmsMasterData().get("masterMdmsData"),
+				            MdmsFilter.FRONT_SETBACK_PATH,
+				            BigDecimal.class
+				    );
+				    if (scOpt.isPresent()) {
+				        BigDecimal mdmsValue = scOpt.get();
+				        LOG.info("Front Setback Value from MDMS : " + mdmsValue);		        
+				        //minVal = mdmsValue;	   
+				        minVal = (plotArea.multiply(mdmsValue)).divide(BigDecimal.valueOf(100)); 
+					    frontYardResult.setBackPercentage = mdmsValue.toPlainString();	
+				    }else {
+				    	LOG.error("No value found from mdms for the front setback");
+				    }
+				}
+			}else {
+				if (pl.getMdmsMasterData().get("masterMdmsData") != null) {
+				    Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(
+				            pl.getMdmsMasterData().get("masterMdmsData"),
+				            MdmsFilter.FRONT_SETBACK_PATH,
+				            BigDecimal.class
+				    );
+				    if (scOpt.isPresent()) {
+				        BigDecimal mdmsValue = scOpt.get();
+				        LOG.info("Front Setback Value from MDMS : " + mdmsValue);		        
+				        minVal = mdmsValue;	     
+				    }else {
+				    	LOG.error("No value found from mdms for the front setback");
+				    }
+				}
 			}
+			
 		}
 		
 		

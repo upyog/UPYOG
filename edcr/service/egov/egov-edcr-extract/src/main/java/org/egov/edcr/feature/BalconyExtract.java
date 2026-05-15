@@ -35,6 +35,12 @@ public class BalconyExtract extends FeatureExtract {
                         + "\\d{1,2}";
 
                 List<String> balconyLayers = Util.getLayerNamesLike(planDetail.getDoc(), balconylayerPattern);
+                
+                if(!balconyLayers.isEmpty()) {
+                	List<DXFLWPolyline> balconyPolyLines = Util.getPolyLinesByLayer(planDetail.getDoc(), balconyLayers.get(0));
+                	Util.validateLayerColor(balconyLayers.get(0), 
+                			Util.getColorByPolyLine(balconyPolyLines), planDetail);
+                }
 
                 for (String balconyLayer : balconyLayers) {
                     List<DXFLWPolyline> balconyPolyLines = Util.getPolyLinesByLayer(planDetail.getDoc(), balconyLayer);

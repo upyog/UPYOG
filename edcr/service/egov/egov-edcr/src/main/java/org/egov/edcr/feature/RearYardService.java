@@ -259,22 +259,25 @@ public class RearYardService extends GeneralRule {
 									 * 
 									 * }
 									 */
-								}else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								}else if (occupancy.getTypeHelper().getSubtype()!=null && G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 										min = setback.getRearYard().getArea();
 										mean = setback.getRearYard().getWidth();
 									  checkRearYardForIndustrial(setback, block.getBuilding(), pl, block,
 									  setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
 									  occupancy.getTypeHelper(), rearYardResult , buildingHeight); 
-								}else if (L.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+								}else if (occupancy.getTypeHelper().getSubtype()!=null && L.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 									min = setback.getRearYard().getArea();
 									checkRearYardForPublicBuilding(setback, block.getBuilding(), pl, block,
 									  setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
 									  occupancy.getTypeHelper(), rearYardResult , buildingHeight); 
 								}else {
 										min = setback.getRearYard().getArea();
-									  checkRearYardOtherOccupancies(setback, block.getBuilding(), pl, block,
-									  setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
-									  occupancy.getTypeHelper(), rearYardResult, buildingHeight,errors); 
+										if(occupancy.getTypeHelper().getSubtype()!=null) {
+											checkRearYardOtherOccupancies(setback, block.getBuilding(), pl, block,
+													  setback.getLevel(), plot, REAR_YARD_DESC, min, mean,
+													  occupancy.getTypeHelper(), rearYardResult, buildingHeight,errors);
+										}
+									   
 								}
 									 
 
@@ -353,10 +356,18 @@ public class RearYardService extends GeneralRule {
 						}
 					}else {
 						for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-							if(A_AIF.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())) {
-								errors.put("rearyardNodeDefined",
-	                                    getLocaleMessage(OBJECTNOTDEFINED, " Rear Setback of  Block " + block.getNumber() + "  at level  " + setback.getLevel()));
-								pl.addErrors(errors);
+							if (occupancy.getTypeHelper() != null
+							        && occupancy.getTypeHelper().getSubtype() != null
+							        && occupancy.getTypeHelper().getSubtype().getCode() != null
+							        && A_AIF.equalsIgnoreCase(
+							                occupancy.getTypeHelper().getSubtype().getCode())) {
+
+							    errors.put("rearyardNodeDefined",
+							            getLocaleMessage(OBJECTNOTDEFINED,
+							                    " Rear Setback of Block " + block.getNumber()
+							                            + " at level " + setback.getLevel()));
+
+							    pl.addErrors(errors);
 							}
 						}
 					}
@@ -1477,6 +1488,7 @@ public class RearYardService extends GeneralRule {
     			Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(pl.getMdmsMasterData().get("masterMdmsData"), MdmsFilter.REAR_SETBACK_PATH, BigDecimal.class);
     			scOpt.ifPresent(sc -> LOG.info("Rear Setback Value from mdms : " + sc));
     			minVal = scOpt.get();
+    			rearYardResult.setBackPercentage = minVal.toPlainString();
     		}
 	    }
 

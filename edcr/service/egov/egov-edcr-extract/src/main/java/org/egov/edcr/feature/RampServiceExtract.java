@@ -98,6 +98,7 @@ public class RampServiceExtract extends FeatureExtract {
                                 String[] splitLayer = rmpLayer.split("_", 6);
                                 if (splitLayer[5] != null && !splitLayer[5].isEmpty() && !polylines.isEmpty()) {
                                     Ramp ramp = new Ramp();
+                                    String slopeRatio = extractSlopeRatio(pl, rmpLayer);
                                     ramp.setNumber(Integer.valueOf(splitLayer[5]));
                                     boolean isClosed = polylines.stream()
                                             .allMatch(dxflwPolyline -> dxflwPolyline.isClosed());
@@ -120,6 +121,7 @@ public class RampServiceExtract extends FeatureExtract {
                                             BigDecimal height = BigDecimal.valueOf(Double.parseDouble(floorHeight));
                                             ramp.setFloorHeight(height);
                                         }
+                                        ramp.setSlopeRatio(slopeRatio);
                                         floor.addRamps(ramp);
                                     }
                                 }
