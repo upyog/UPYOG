@@ -237,5 +237,14 @@ public class SWConfiguration {
     
     @Value("${egov.billing.service.host}")
 	private String businesserviceHost;
+    
+    @Value("${egov.es.host}")
+    private String elasticsearchHost;
+    
+    @Value("${egov.es.search.endpoint}")
+    private String elasticsearchSearchEndpoint;
+    
+    @Value("${egov.sw.enriched.index}") // This matches your application properties key
+    private String swIndex;
 
 }

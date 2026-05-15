@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.egov.swservice.service.SewerageEncryptionService;
 import org.egov.swservice.service.DocumentService;
+import org.egov.swservice.service.SWFuzzySearchService;
 import org.egov.swservice.web.models.DocumentRequest;
 import org.egov.swservice.web.models.RequestInfoWrapper;
 import org.egov.swservice.web.models.SearchCriteria;
@@ -45,6 +46,9 @@ public class SewarageController {
 
 	@Autowired
 	SewerageEncryptionService sewerageEncryptionService;
+	
+	@Autowired
+	private SWFuzzySearchService swFuzzySearchService;
 
 	@Autowired
 	private final ResponseInfoFactory responseInfoFactory;
@@ -64,8 +68,17 @@ public class SewarageController {
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
 	public ResponseEntity<SewerageConnectionResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute SearchCriteria criteria) {
-		List<SewerageConnection> sewerageConnectionList = sewarageService.search(criteria,
-				requestInfoWrapper.getRequestInfo());
+		
+		List<SewerageConnection> sewerageConnectionList=null;
+		if (criteria.getOwnerName() != null || criteria.getDoorNo() != null || criteria.getLocality() != null) {
+	        
+	        // This calls the ES service (similar to how you did in Water Service)
+	        return swFuzzySearchService.getConnections(requestInfo, criteria);
+	    } 
+	    else {
+	        // 2. Fallback to the standard Database (JDBC) search if no fuzzy criteria exist
+	        return getSewerageConnectionsList(criteria, requestInfo);
+	    }
 		Integer count = sewarageService.countAllSewerageApplications(criteria,	requestInfoWrapper.getRequestInfo());
 		SewerageConnectionResponse response = SewerageConnectionResponse.builder()
 				.sewerageConnections(sewerageConnectionList).totalCount(count)
