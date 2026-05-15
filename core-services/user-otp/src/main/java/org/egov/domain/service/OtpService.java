@@ -41,22 +41,28 @@ public class OtpService {
         }
     }
 
-    private void sendOtpForUserRegistration(OtpRequest otpRequest) {
-        final User matchingUser = userRepository.fetchUser(otpRequest.getMobileNumber(), otpRequest.getTenantId(),
-                otpRequest.getUserType());
+	private void sendOtpForUserRegistration(OtpRequest otpRequest) {
+		final User matchingUser = userRepository.fetchUser(otpRequest.getMobileNumber(), otpRequest.getTenantId(),
+				otpRequest.getUserType());
 
-        if (otpRequest.isRegistrationRequestType() && null != matchingUser)
-            throw new UserAlreadyExistInSystemException();
-        else if (otpRequest.isLoginRequestType() && null == matchingUser)
-            throw new UserNotExistingInSystemException();
+		if (otpRequest.isRegistrationRequestType() && null != matchingUser)
+			throw new UserAlreadyExistInSystemException();
+		else if (otpRequest.isLoginRequestType() && null == matchingUser)
+			throw new UserNotExistingInSystemException();
+		if ((otpRequest.getEmailId() == null || otpRequest.getEmailId().isEmpty())
+		        && matchingUser != null
+		        && matchingUser.getEmail() != null
+		        && !matchingUser.getEmail().isEmpty()) {
 
-        if (!otpRequest.getIsThirdParty())
-        { final String otpNumber = otpRepository.fetchOtp(otpRequest);
-                otpSMSSender.send(otpRequest, otpNumber);
-                if (otpRequest.getEmailId() != null && !otpRequest.getEmailId().isEmpty())
-                otpEmailRepository.send(otpRequest.getEmailId(), otpNumber, otpRequest);
-        }
-    }
+		    otpRequest.setEmailId(matchingUser.getEmail());
+		}
+		if (!otpRequest.getIsThirdParty()) {
+			final String otpNumber = otpRepository.fetchOtp(otpRequest);
+			otpSMSSender.send(otpRequest, otpNumber);
+			if (otpRequest.getEmailId() != null && !otpRequest.getEmailId().isEmpty())
+				otpEmailRepository.send(otpRequest.getEmailId(), otpNumber, otpRequest);
+		}
+	}
 
     private void sendOtpForPasswordReset(OtpRequest otpRequest) {
         final User matchingUser = userRepository.fetchUser(otpRequest.getMobileNumber(), otpRequest.getTenantId(),
