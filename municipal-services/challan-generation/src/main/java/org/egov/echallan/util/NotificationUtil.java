@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.jayway.jsonpath.Criteria.where;
@@ -97,77 +98,271 @@ public class NotificationUtil {
 	     return message;
 	}
 	*/
-	private String getReplacedMsg(RequestInfo requestInfo,Challan challan, String message) {
-		if (challan.getApplicationStatus() != Challan.StatusEnum.CANCELLED) {
-			try {
-				String billDetails = getBillDetails(requestInfo, challan);
-				if (billDetails != null && !billDetails.isEmpty()) {
-					Object obj = JsonPath.parse(billDetails).read(BILL_AMOUNT_JSONPATH);
-					if (obj != null) {
-						BigDecimal amountToBePaid = new BigDecimal(obj.toString());
-						message = message.replace("<amount>", amountToBePaid.toString());
-						log.info("Replaced Amount");
-					} else {
-						// Fallback to challan amount if bill amount not available
-						if (challan.getChallanAmount() != null) {
-							message = message.replace("<amount>", challan.getChallanAmount().toString());
-						}
-					}
-				} else {
-					// Fallback to challan amount if bill details not available
-					if (challan.getChallanAmount() != null) {
-						message = message.replace("<amount>", challan.getChallanAmount().toString());
-					}
-				}
-			} catch (Exception e) {
-				log.warn("Failed to get bill amount for challan {}, using challan amount: {}", 
-					challan.getChallanNo(), e.getMessage());
-				// Fallback to challan amount
-				if (challan.getChallanAmount() != null) {
-					message = message.replace("<amount>", challan.getChallanAmount().toString());
-				}
-			}
-		}
+	private String getReplacedMsg(RequestInfo requestInfo, Challan challan, String message) {
+	    // ======================================================
+	    // CRITICAL CHECK 1: Ensure root objects are not null
+	    // ======================================================
+	    if (message == null || message.trim().isEmpty()) {
+	        log.error("Email template is NULL. Database localization is missing.");
+	        return "Your Municipal Challan has been generated. Please login to the portal to view details.";
+	    }
+	    if (challan == null) {
+	        log.error("Challan object is NULL inside getReplacedMsg.");
+	        return message;
+	    }
 
-		message = message.replace("{User}",challan.getCitizen().getName());
-        message = message.replace("<challanno>", challan.getChallanNo());
-		if(message.contains("{ULB}")) {
-			String[] tenantParts = challan.getTenantId().split("\\.");
-			if(tenantParts.length > 1) {
-				message = message.replace("{ULB}", capitalize(tenantParts[1]));
-			} else {
-				message = message.replace("{ULB}", capitalize(challan.getTenantId()));
-			}
-		}
+	    // ======================================================
+	    // CRITICAL CHECK 2: Safely extract nested variables
+	    // ======================================================
+	    String challanNo = challan.getChallanNo() != null ? challan.getChallanNo() : "N/A";
+	    String tenantId = challan.getTenantId() != null ? challan.getTenantId() : "pb";
+	    
+	    String citizenName = "Citizen";
+	    String mobileNo = "N/A";
+	    if (challan.getCitizen() != null) {
+	        citizenName = challan.getCitizen().getName() != null ? challan.getCitizen().getName() : "Citizen";
+	        mobileNo = challan.getCitizen().getMobileNumber() != null ? challan.getCitizen().getMobileNumber() : "N/A";
+	    }
 
-		// Handle businessService - it may or may not contain a dot
-		String businessServiceStr = challan.getBusinessService();
-		String service = "";
-		if(businessServiceStr != null) {
-			String[] businessServiceParts = businessServiceStr.split("\\.");
-			String serviceName = businessServiceParts.length > 1 ? businessServiceParts[1] : businessServiceParts[0];
-			String[] split_array = capitalize(serviceName).split("_");
-			service = String.join(" ", split_array);
-		}
+	    String employeeName = "Enforcement Officer";
+	    if (requestInfo != null && requestInfo.getUserInfo() != null && requestInfo.getUserInfo().getName() != null) {
+	        employeeName = requestInfo.getUserInfo().getName();
+	    }
 
-        String UIHost = config.getUiAppHost();
-		String paymentPath = config.getPayLinkSMS();
-		paymentPath = paymentPath.replace("$consumercode",challan.getChallanNo());
-		paymentPath = paymentPath.replace("$tenantId",challan.getTenantId());
-		paymentPath = paymentPath.replace("$businessservice",challan.getBusinessService());
-		//String finalPath = UIHost + paymentPath;
-		/*
-		 * if(message.contains("{Link}")) message =
-		 * message.replace("{Link}",getShortenedUrl(finalPath));
-		 */
-		String result = truncateAndSplitString(service, 33);
-		message = message.replace("<service>", result);
-		String newLink = "https://mseva.lgpunjab.gov.in/citizen";
-		String updatedMessage = message.replace("<Link>", newLink);
 
-        log.info("update"+updatedMessage);
-		log.info("Final msg after all rep: "+updatedMessage);
-        return updatedMessage;
+	    // ==========================================
+	    // 1. ORIGINAL LEGACY CODE
+	    // ==========================================
+	    if (challan.getApplicationStatus() != null && challan.getApplicationStatus() != Challan.StatusEnum.CANCELLED) {
+	        try {
+	            String billDetails = getBillDetails(requestInfo, challan);
+	            if (billDetails != null && !billDetails.isEmpty()) {
+	                Object obj = JsonPath.parse(billDetails).read(BILL_AMOUNT_JSONPATH);
+	                if (obj != null) {
+	                    BigDecimal amountToBePaid = new BigDecimal(obj.toString());
+	                    message = message.replace("<amount>", amountToBePaid.toString());
+	                    message = message.replace("{totalAmount}", amountToBePaid.toString());
+	                } else if (challan.getChallanAmount() != null) {
+	                    message = message.replace("<amount>", challan.getChallanAmount().toString());
+	                    message = message.replace("{totalAmount}", challan.getChallanAmount().toString());
+	                }
+	            } else if (challan.getChallanAmount() != null) {
+	                message = message.replace("<amount>", challan.getChallanAmount().toString());
+	                message = message.replace("{totalAmount}", challan.getChallanAmount().toString());
+	            }
+	        } catch (Exception e) {
+	            log.warn("Failed to get bill amount for challan {}, using challan amount: {}", challanNo, e.getMessage());
+	            if (challan.getChallanAmount() != null) {
+	                message = message.replace("<amount>", challan.getChallanAmount().toString());
+	                message = message.replace("{totalAmount}", challan.getChallanAmount().toString());
+	            }
+	        }
+	    }
+
+	    message = message.replace("{User}", citizenName);
+	    message = message.replace("<challanno>", challanNo);
+	    
+	    if (message.contains("{ULB}") && tenantId != null) {
+	        String[] tenantParts = tenantId.split("\\.");
+	        String ulbName = (tenantParts.length > 1) ? capitalize(tenantParts[1]) : capitalize(tenantId);
+	        message = message.replace("{ULB}", ulbName);
+	    }
+
+	    String businessServiceStr = challan.getBusinessService();
+	    String service = "";
+	    if (businessServiceStr != null) {
+	        String[] businessServiceParts = businessServiceStr.split("\\.");
+	        String serviceName = businessServiceParts.length > 1 ? businessServiceParts[1] : businessServiceParts[0];
+	        String[] split_array = capitalize(serviceName).split("_");
+	        service = String.join(" ", split_array);
+	    }
+
+	    // CRITICAL CHECK 3: Ensure Config isn't null before calling .replace()
+	    String paymentPath = (config != null) ? config.getPayLinkSMS() : null;
+	    if (paymentPath != null) {
+	        paymentPath = paymentPath.replace("$consumercode", challanNo);
+	        paymentPath = paymentPath.replace("$tenantId", tenantId);
+	        paymentPath = paymentPath.replace("$businessservice", businessServiceStr != null ? businessServiceStr : "");
+	    }
+
+	    String result = truncateAndSplitString(service, 33);
+	    message = message.replace("<service>", result != null ? result : "");
+	    
+	    String portalFallbackLink = "https://mseva.lgpunjab.gov.in/citizen";
+	    message = message.replace("<Link>", portalFallbackLink);
+
+
+	    // ==========================================
+	    // 2. NEW PROFESSIONAL TEMPLATE MAPPINGS
+	    // ==========================================
+	    
+	    message = message.replace("{challanNumber}", challanNo);
+	    message = message.replace("{citizenName}", citizenName);
+	    message = message.replace("{mobileNumber}", mobileNo);
+	    message = message.replace("{employeeName}", employeeName);
+	    
+	    String address = "Address not provided";
+	    if (challan.getAddress() != null && challan.getAddress().getAddressLine1() != null) {
+	        address = challan.getAddress().getAddressLine1();
+	    }
+	    message = message.replace("{address}", address);
+	    
+	    String cityName = "Municipal";
+	    if (tenantId != null) {
+	        String[] tenantParts = tenantId.split("\\.");
+	        if (tenantParts.length > 1) {
+	            cityName = capitalize(tenantParts[1]); 
+	        } else {
+	            cityName = capitalize(tenantId);
+	        }
+	    }
+	    message = message.replace("{cityName}", cityName != null ? cityName : "Municipal");
+	    
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+	    message = message.replace("{createdDate}", sdf.format(new Date(System.currentTimeMillis())));
+
+	    message = message.replace("{offenceCategory}", challan.getOffenceCategoryName() != null ? challan.getOffenceCategoryName() : "General Violation");
+	    message = message.replace("{offenceType}", challan.getOffenceSubCategoryName() != null ? challan.getOffenceSubCategoryName() : "Municipal Offence");
+	    message = message.replace("{offenceDescription}", challan.getOffenceTypeName() != null ? challan.getOffenceTypeName() : "Violation of Municipal Bye-Laws");
+	    
+	    String act = "Punjab Municipal Bye-Laws";
+	    if (challan.getAdditionalDetail() instanceof java.util.Map) {
+	        java.util.Map<String, Object> ad = (java.util.Map<String, Object>) challan.getAdditionalDetail();
+	        if (ad.get("offenceActs") != null) {
+	            act = ad.get("offenceActs").toString();
+	        }
+	    }
+	    message = message.replace("{offenceAct}", act);
+
+
+	    // ==========================================
+	    // 3. DOCUMENT AND PDF URL MAPPINGS
+	    // ==========================================
+
+	    String officialPdfUrl = getPdfAndPublicUrl(challan, requestInfo);
+	    message = message.replace("{pdfDownloadUrl}", officialPdfUrl != null ? officialPdfUrl : portalFallbackLink);
+
+	    return message;
+	}
+	
+	// =========================================================
+    // HELPER METHODS FOR PDF GENERATION (Paste inside NotificationUtil)
+    // =========================================================
+
+    public String getPdfAndPublicUrl(Challan challan, RequestInfo requestInfo) {
+        try {
+            // Using config to get the host (Ensure config.getPdfServiceHost() exists in your ChallanConfiguration)
+            String pdfUrl = config.getPdfServiceHost() + "/pdf-service/v1/_create?tenantId=" + challan.getTenantId() + "&key=challan-notice";
+            
+            java.util.Map<String, Object> pdfRequest = new java.util.HashMap<>();
+            pdfRequest.put("RequestInfo", requestInfo);
+            pdfRequest.put("challan", preparePdfData(challan, requestInfo)); 
+
+            // Call PDF Service
+            java.util.Map<String, Object> response = restTemplate.postForObject(pdfUrl, pdfRequest, java.util.Map.class);
+            
+            if (response != null && response.get("filestoreIds") != null) {
+                java.util.List<String> filestoreIds = (java.util.List<String>) response.get("filestoreIds");
+                if (!filestoreIds.isEmpty()) {
+                    String pdfFileStoreId = filestoreIds.get(0);
+                    // Get the public URL for the newly generated PDF
+                    return getPublicUrlFromFilestore(pdfFileStoreId, challan.getTenantId());
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to generate PDF for challan: " + challan.getChallanNo(), e);
+        }
+        // Fallback if PDF generation fails
+        return "https://mseva.lgpunjab.gov.in/citizen"; 
+    }
+ // =========================================================
+    // HELPER METHOD FOR FILESTORE IMAGES
+    // =========================================================
+    public String getPublicUrlFromFilestore(String fileStoreId, String tenantId) {
+        if (fileStoreId == null || fileStoreId.isEmpty()) return "";
+
+        try {
+            // Build the internal API URL using your config
+            String url = config.getFileStoreHost() + config.getFileStoreViewPath()
+                       + "?tenantId=" + tenantId
+                       + "&fileStoreIds=" + fileStoreId;
+
+            // Fetch the response from the Filestore API
+            java.util.Map<String, Object> response = restTemplate.getForObject(url, java.util.Map.class);
+
+            String devUrl = null;
+
+            if (response != null) {
+                // OPTION 1: Check if the ID is a direct key in the map (Common in mSeva)
+                if (response.containsKey(fileStoreId)) {
+                    devUrl = (String) response.get(fileStoreId);
+                }
+                // OPTION 2: Check if it is nested inside the fileStoreIds list
+                else if (response.get("fileStoreIds") instanceof java.util.List) {
+                    java.util.List<java.util.Map<String, Object>> fileList = 
+                        (java.util.List<java.util.Map<String, Object>>) response.get("fileStoreIds");
+                    
+                    for (java.util.Map<String, Object> fileData : fileList) {
+                        if (fileStoreId.equals(fileData.get("id"))) {
+                            devUrl = (String) fileData.get("url");
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Apply Dev Proxy to bypass Gmail's security block for internal IPs
+            if (devUrl != null && !devUrl.isEmpty()) {
+                if (devUrl.contains("mseva-dev")) {
+                    String cleanUrl = devUrl.replace("https://", "");
+                    // Using weserv.nl public proxy so Gmail can render the image
+                    return "https://images.weserv.nl/?url=" + cleanUrl;
+                }
+                return devUrl;
+            }
+
+        } catch (Exception e) {
+            log.error("Filestore API Error for ID " + fileStoreId, e);
+        }
+        
+        // Return empty string if failed so the fallback logic triggers
+        return "";
+    }
+    private java.util.Map<String, Object> preparePdfData(Challan challan, RequestInfo requestInfo) {
+        java.util.Map<String, Object> pdfData = new java.util.HashMap<>();
+
+        // 1. Wrap the single challan into a List
+        java.util.List<Challan> challanList = new java.util.ArrayList<>();
+        challanList.add(challan);
+        pdfData.put("challans", challanList);
+        pdfData.put("countOfServices", 1);
+        
+        // 2. Calculate Total Amount
+        java.math.BigDecimal totalAmount = java.math.BigDecimal.ZERO;
+        if (challan.getAmount() != null) {
+            for (Amount amt : challan.getAmount()) {
+                if (amt.getAmount() != null) {
+                    totalAmount = totalAmount.add(amt.getAmount()); 
+                }
+            }
+        }
+        pdfData.put("totalAmountCollected", totalAmount);
+        
+        // 3. Map the Officer/Employee details
+        java.util.Map<String, Object> officer = new java.util.HashMap<>();
+        if (requestInfo != null && requestInfo.getUserInfo() != null) {
+            officer.put("name", requestInfo.getUserInfo().getName());
+            officer.put("code", requestInfo.getUserInfo().getUserName());
+        } else {
+            officer.put("name", "System");
+            officer.put("code", "SYS");
+        }
+        pdfData.put("officer", officer);
+
+        // 4. Add Location
+        pdfData.put("location", (challan.getAddress() != null) ? challan.getAddress().getAddressLine1() : "Address not provided");
+
+        return pdfData;
     }
 	public static String truncateAndSplitString(String inputString, int truncateLength) {
         if (inputString.length() <= truncateLength) {
@@ -286,8 +481,8 @@ public class NotificationUtil {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getLocalizationHost()).append(config.getLocalizationContextPath())
 				.append(config.getLocalizationSearchEndpoint()).append("?").append("locale=").append(locale)
-				.append("&tenantId=").append(tenantId).append("&module=").append(MODULE)
-				.append("&codes=").append(CODES);
+				.append("&tenantId=").append(tenantId).append("&module=").append(MODULE);
+//				.append("&codes=").append(CODES);
 
 		return uri;
 	}

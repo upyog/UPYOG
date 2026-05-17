@@ -58,7 +58,18 @@ public class ChallanConfiguration {
 
     @Value("${egov.user.username.prefix}")
     private String usernamePrefix;
+    
+    @Value("${egov.pdf.service.host}")
+    private String pdfServiceHost;
 
+    @Value("${egov.pdf.service.create.endpoint}")
+    private String pdfServiceCreateEndpoint;
+    
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.filestore.view.endpoint}")
+    private String fileStoreViewPath;
 
     //Idgen Config
     @Value("${egov.idgen.host}")
