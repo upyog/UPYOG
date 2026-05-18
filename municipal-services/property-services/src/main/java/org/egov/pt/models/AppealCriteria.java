@@ -31,6 +31,8 @@ public class AppealCriteria {
 	
 	private Set<String>appealid;
 	
+	private String propertyTenantID;
+	
 	private Long offset;
 
 	private Long limit;

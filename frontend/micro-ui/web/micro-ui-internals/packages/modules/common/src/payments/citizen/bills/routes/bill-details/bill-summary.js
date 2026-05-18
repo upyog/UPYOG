@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-const BillSumary = ({ billAccountDetails, total, businessService, arrears }) => {
+const BillSumary = ({ paymentStatus='NA', billAccountDetails, total, businessService, arrears }) => {
   const { t } = useTranslation();
   const { workflow: ModuleWorkflow } = Digit.Hooks.useQueryParams();
 
@@ -32,7 +32,12 @@ const BillSumary = ({ billAccountDetails, total, businessService, arrears }) => 
             <div className="label">{t("COMMON_ARREARS")}</div>
             <div className="value">₹ {Math.abs(arrears?.toFixed?.(2) || Number(0).toFixed(2))}</div>
           </div>
+          
         }
+        <div className="bill-account-details">
+          <div className="label">{t("Payment Status")}</div>
+          <div className="value">{t(paymentStatus)}</div>
+        </div>
 
         <hr className="underline" />
         <div className="amount-details">

@@ -1068,7 +1068,7 @@ export const DownloadReceipt = async (consumerCode, tenantId, businessService, r
   console.log("============", consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey);
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
   let response = { filestoreIds: [payments?.fileStoreId] };
-  // if (!payments?.fileStoreId) {
+  if (!payments?.fileStoreId) {
     let assessmentYear = "",
       assessmentYearForReceipt = "";
     let count = 0;
@@ -1274,7 +1274,7 @@ export const DownloadReceipt = async (consumerCode, tenantId, businessService, r
       payments.paymentDetails[0].additionalDetails = details;
     }
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "property-receipt");
-  // }
+  }
   const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
   window.open(fileStore[response?.filestoreIds[0]], "_blank");
 };

@@ -693,6 +693,9 @@ public class PropertyQueryBuilder {
 		addClauseIfRequired(preparedStmtList, builder);
 		builder.append("owner.status = ?");
 		preparedStmtList.add(Status.ACTIVE.toString());
+		builder.append(" AND pdoc.status = ?");
+		preparedStmtList.add(Status.ACTIVE.toString());
+		//pdoc
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
 		if (onlyIds || criteria.getIsRequestForCount())
@@ -871,6 +874,11 @@ public class PropertyQueryBuilder {
 			//else
 				builder.append("appeal.tenantid= ?");
 			preparedStmtList.add(tenantId);
+		}
+		if(!StringUtils.isEmpty(appealCriteria.getPropertyTenantID()))
+		{
+			builder.append("appeal.propertytenantid= ?");
+			preparedStmtList.add(appealCriteria.getPropertyTenantID());
 		}
 		Set<String> propertyId = appealCriteria.getPropertyIds();
 		if (propertyId != null) {

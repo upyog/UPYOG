@@ -1,12 +1,12 @@
 package org.egov.pg.config;
 
-import lombok.Getter;
-import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString
@@ -102,6 +102,10 @@ public class AppProperties {
     private final String mdmsServiceahost;
     
     private final String mdmsServiceSearchEndpoint;
+    
+    private final String propertyServiceHost;
+    
+    private final String propertyServiceSearchEndpoint;
 
     @Autowired
     public AppProperties(Environment environment){
@@ -150,6 +154,8 @@ public class AppProperties {
         this.internalMicroserviceUserType = environment.getRequiredProperty("internal.microservice.user.type");
         this.mdmsServiceahost=environment.getRequiredProperty("egov.mdms.host");
         this.mdmsServiceSearchEndpoint=environment.getRequiredProperty("egov.mdms.search.endpoint");
+        this.propertyServiceHost = environment.getRequiredProperty("egov.pt.registry.host");
+        this.propertyServiceSearchEndpoint = environment.getRequiredProperty("egov.pt.registry.search");
     }
 
 }

@@ -1066,7 +1066,7 @@ public class DashboardReportQueryBuilder {
 
 			toEpoch = getEndOfDayEpochMillis(formattedDate);
 		}
-		filter.append(" AND ep.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
+		filter.append(" AND epp.createdtime BETWEEN ").append(fromEpoch).append(" AND ").append(toEpoch);
 
 		if (!StringUtils.isEmpty(dashboardDataSearch.getTenantid())) {
 			filter.append(" AND epp.tenantid = '").append(dashboardDataSearch.getTenantid()).append("'");
@@ -1182,7 +1182,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append(" order by pay.lastmodifiedtime desc ");
+		filter.append(" order by MAX(pay.lastmodifiedtime) desc ");
 		
 		return filter.toString();
 	}
