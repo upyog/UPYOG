@@ -65,4 +65,6 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
     
     @Query("from Supplier where status.code='Active' order by name asc")
     public List<Supplier> findByStatus();
+    
+    public List<Supplier> findByName(String name);
 }
