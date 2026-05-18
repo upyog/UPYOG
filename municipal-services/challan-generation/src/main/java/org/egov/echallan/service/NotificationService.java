@@ -19,6 +19,7 @@ import org.egov.echallan.web.models.uservevents.Event;
 import org.egov.echallan.web.models.uservevents.EventRequest;
 import org.egov.echallan.web.models.uservevents.Recepient;
 import org.egov.echallan.web.models.uservevents.Source;
+import org.egov.echallan.web.models.workflow.Workflow;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
@@ -109,15 +110,15 @@ public class NotificationService {
 		 * config.getIsUserEventEnabled()) { if (config.getIsUserEventEnabled()) {
 		 * EventRequest eventRequest = getEventsForChallan(challanRequest,isSave);
 		 * if(null != eventRequest) util.sendEventNotification(eventRequest); } } }
-		 * 
-		 * if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){ List<EmailRequest>
-		 * emailRequests = new LinkedList<>(); if (null !=
-		 * config.getIsEmailNotificationEnabled()) { if
-		 * (config.getIsEmailNotificationEnabled()) { enrichEmailRequest(challanRequest,
-		 * emailRequests, code.replace(".sms",".email")); if
-		 * (!CollectionUtils.isEmpty(emailRequests)) util.sendEmail(emailRequests); } }
-		 * }
 		 */
+		 if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){ List<EmailRequest>
+		  emailRequests = new LinkedList<>(); if (null !=
+		  config.getIsEmailNotificationEnabled()) { if
+		  (config.getIsEmailNotificationEnabled()) { enrichEmailRequest(challanRequest,
+		  emailRequests, code.replace(".sms",".email")); if
+		  (!CollectionUtils.isEmpty(emailRequests)) util.sendEmail(emailRequests); } }
+		  }
+		 
 	}
 
 	private EventRequest getEventsForChallan(ChallanRequest request,boolean isSave) {
@@ -272,36 +273,119 @@ public class NotificationService {
 		 * @param code
 		 *            Notification Template Code
 		 */
-		private void enrichEmailRequest(ChallanRequest challanRequest, List<EmailRequest> emailRequestList, String code) {
-			Set<String> mobileNumbers = new HashSet<>();
-			String mobilenumber = challanRequest.getChallan().getCitizen().getMobileNumber();
+	private void enrichEmailRequest(ChallanRequest challanRequest, List<EmailRequest> emailRequestList, String code) {
+	    Set<String> mobileNumbers = new HashSet<>();
+	    String mobilenumber = challanRequest.getChallan().getCitizen().getMobileNumber();
 
-			mobileNumbers.add(mobilenumber);
-			Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, challanRequest.getRequestInfo(), challanRequest.getChallan().getTenantId());
+	    mobileNumbers.add(mobilenumber);
+	    Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, challanRequest.getRequestInfo(), challanRequest.getChallan().getTenantId());
 
-			if(challanRequest.getChallan().getCitizen().getEmail()!=null && !StringUtils.isEmpty(challanRequest.getChallan().getCitizen().getEmail()) )
-				mapOfPhnoAndEmail.put(mobilenumber, challanRequest.getChallan().getCitizen().getEmail());
+	    if (challanRequest.getChallan().getCitizen().getEmail() != null && !StringUtils.isEmpty(challanRequest.getChallan().getCitizen().getEmail())) {
+	        mapOfPhnoAndEmail.put(mobilenumber, challanRequest.getChallan().getCitizen().getEmail());
+	    }
 
-			String message = util.getEmailCustomizedMsg(challanRequest.getRequestInfo(), challanRequest.getChallan(), code);
+	    String message = util.getEmailCustomizedMsg(challanRequest.getRequestInfo(), challanRequest.getChallan(), code);
 
-			if (message!=null && !StringUtils.isEmpty(message)) {
-				String subject = message.substring(message.indexOf("<h2>")+4,message.indexOf("</h2>"));
-				String body = message.substring(message.indexOf("</h2>")+5);
-				Email emailobj=null;
-				EmailRequest email = null;
-				if(mapOfPhnoAndEmail.get(mobilenumber)!=null) {
-					emailobj = Email.builder().emailTo(Collections.singleton(mapOfPhnoAndEmail.get(mobilenumber))).isHTML(true).body(body).subject(subject).build();
-					email = new EmailRequest(challanRequest.getRequestInfo(),emailobj);
-					emailRequestList.add(email);
-				}
-				else
-				{
-					log.error("No email for username - "+mobilenumber);
-				}
-			} else {
-				log.error("No message configured! Notification will not be sent.");
-			}
+	 // Inside your enrichEmailRequest method...
+
+	    if (message != null && !StringUtils.isEmpty(message)) {
+	        String subject = getSubjectBasedOnWorkflow(challanRequest.getChallan(), challanRequest.getChallan().getWorkflow());
+	        String body = message;
+
+	        // ==========================================
+	        // NEW LOGIC: Map the Filestore URLs to the cid tags
+	        // ==========================================
+	        List<EmailAttachment> attachments = new ArrayList<>();
+	        
+	        if (challanRequest.getChallan().getUploadedDocumentDetails() != null) {
+	            for (DocumentDetail doc : challanRequest.getChallan().getUploadedDocumentDetails()) {
+	                String tenant = challanRequest.getChallan().getTenantId();
+	                
+	                if ("CHALLAN.ID_PROOF".equals(doc.getDocumentType())) {
+	                	String imgUrl = util.getPublicUrlFromFilestore(doc.getFileStoreId(), tenant);
+
+	                	// 2. Fallback: If the first attempt returned null or empty, try the "pb" tenant
+	                	if (imgUrl == null || imgUrl.isEmpty()) {
+	                	    imgUrl = util.getPublicUrlFromFilestore(doc.getFileStoreId(), "pb");
+	                	}
+	                	if (imgUrl != null && !imgUrl.isEmpty()) {
+	                	    
+	                	    // Add to your attachments list...
+	                	    attachments.add(EmailAttachment.builder()
+	                	            .url(imgUrl)
+	                	            .contentId("evidence1") // or whatever ID you are assigning
+	                	            .mimeType("image/jpeg")
+	                	            .build());
+	                	}	                    
+	                }
+	                
+	                if ("CHALLAN.EVIDENCE_IMAGE".equals(doc.getDocumentType())) {
+	                	String imgUrl = util.getPublicUrlFromFilestore(doc.getFileStoreId(), tenant);
+
+	                	// 2. Fallback: If the first attempt returned null or empty, try the "pb" tenant
+	                	if (imgUrl == null || imgUrl.isEmpty()) {
+	                	    imgUrl = util.getPublicUrlFromFilestore(doc.getFileStoreId(), "pb");
+	                	}
+	                	if (imgUrl != null && !imgUrl.isEmpty()) {
+	                        attachments.add(EmailAttachment.builder()
+	                                .url(imgUrl)
+	                                .contentId("evidence2") // Maps to <img src="cid:evidence2">
+	                                .mimeType("image/jpeg")
+	                                .build());
+	                    }
+	                }
+	            }
+	        }
+
+	        Email emailobj = null;
+	        EmailRequest email = null;
+	        
+	        if (mapOfPhnoAndEmail.get(mobilenumber) != null) {
+	            emailobj = Email.builder()
+	                            .emailTo(Collections.singleton(mapOfPhnoAndEmail.get(mobilenumber)))
+	                            .isHTML(true)
+	                            .body(body)
+	                            .subject(subject)
+	                            .inlineAttachments(attachments) // Add the attachments payload here
+	                            .build();
+	                            
+	            email = new EmailRequest(challanRequest.getRequestInfo(), emailobj);
+	            log.info("Enriched EmailRequest: " + email);
+	            emailRequestList.add(email);
+	        }
+	    }
+	    else {
+	        log.error("No message configured! Notification will not be sent for challan: " + challanRequest.getChallan().getChallanNo());
+	    }
 	}
-	
+		/**
+	     * Determines the email subject based on the Workflow Action.
+	     */
+	    private String getSubjectBasedOnWorkflow(Challan challan, Workflow workflow) {
+	        String defaultSubject = "Municipal Challan Notice - " + challan.getChallanNo();
 
+	        // Null safety check: If workflow or action is missing, return the default subject
+	        if (workflow == null || workflow.getAction() == null || workflow.getAction().isEmpty()) {
+	            return defaultSubject;
+	        }
+
+	        String action = workflow.getAction().toUpperCase();
+
+	        // Set the subject based on the action
+	        if ("SUBMIT".equals(action)) {
+	            return "New Challan Generated -  " + challan.getChallanNo();
+	        } 
+	        else if ("APPLY".equals(action)) {
+	            return "New Challan Generated - " + challan.getChallanNo();
+	        } 
+	        else if ("CANCEL".equals(action)) {
+	            return "Challan Cancelled - " + challan.getChallanNo();
+	        } 
+	        else if ("PAY".equals(action)) {
+	            return "Payment Received for Challan - " + challan.getChallanNo();
+	        }
+
+	        // If the action is something else, return the default
+	        return defaultSubject;
+	    }
 }
