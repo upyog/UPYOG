@@ -286,7 +286,7 @@ public class NotificationUtil {
             String url = config.getFileStoreHost() + config.getFileStoreViewPath()
                        + "?tenantId=" + tenantId
                        + "&fileStoreIds=" + fileStoreId;
-
+            log.info("Fetching public URL from Filestore API for fileStoreId: {} with URL: {}", fileStoreId, url);
             // Fetch the response from the Filestore API
             java.util.Map<String, Object> response = restTemplate.getForObject(url, java.util.Map.class);
 
@@ -311,13 +311,10 @@ public class NotificationUtil {
                 }
             }
 
-            // Apply Dev Proxy to bypass Gmail's security block for internal IPs
+            // CRITICAL FIX: Return the pure, direct URL. 
+            // The central mail service will handle downloading it into memory.
             if (devUrl != null && !devUrl.isEmpty()) {
-                if (devUrl.contains("mseva-dev")) {
-                    String cleanUrl = devUrl.replace("https://", "");
-                    // Using weserv.nl public proxy so Gmail can render the image
-                    return "https://images.weserv.nl/?url=" + cleanUrl;
-                }
+            	log.info("Successfully retrieved public URL from Filestore API for fileStoreId {}: {}", fileStoreId, devUrl);
                 return devUrl;
             }
 
@@ -328,6 +325,8 @@ public class NotificationUtil {
         // Return empty string if failed so the fallback logic triggers
         return "";
     }
+    
+    
     private java.util.Map<String, Object> preparePdfData(Challan challan, RequestInfo requestInfo) {
         java.util.Map<String, Object> pdfData = new java.util.HashMap<>();
 
