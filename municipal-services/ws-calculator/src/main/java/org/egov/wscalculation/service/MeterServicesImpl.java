@@ -206,6 +206,18 @@ public class MeterServicesImpl implements MeterService {
 	                MeterStatusEnum meterStatusEnum = MeterStatusEnum.fromValue(newvar);
 	                meterReading.setMeterStatus(meterStatusEnum);
 	                meterReading.setTenantId(meterReadinglist.getTenantId());
+	                
+					// ✅ FIXED: Always copy isBulkMeter from request unconditionally.
+					// Root cause of consumption=-89970 bug:
+					//   Request sends isBulkMeter=true (lastReading=99990, maxReading should be 100000)
+					//   But isBulkMeter was never copied → meterReading.isBulkMeter stayed false
+					//   → setConsumption() used maxReading=10000
+					//   → (10000 - 99990) + 20 = -89970  ❌
+					// Fix: always set from request, default false if null
+					meterReading.setIsBulkMeter(
+							meterReadinglist.getIsBulkMeter() != null
+									? meterReadinglist.getIsBulkMeter()
+									: Boolean.FALSE);
 
 	                meterConnectionRequest.setMeterReading(meterReading);
 	                meterConnectionRequest.setRequestInfo(requestInfo);

@@ -122,6 +122,14 @@ public class MeterReading {
 	// Has no effect for any other meter status.
 	@JsonProperty("isBulkMeter")
 	private Boolean isBulkMeter = false;
+	
+	public Boolean getIsBulkMeter() {
+	    return isBulkMeter;
+	}
+
+	public void setIsBulkMeter(Boolean isBulkMeter) {
+	    this.isBulkMeter = isBulkMeter;
+	}
 
 
 	public MeterReading id(String id) {
