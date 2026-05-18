@@ -123,6 +123,14 @@ public class MeterReading {
 	@JsonProperty("isBulkMeter")
 	private Boolean isBulkMeter = false;
 	
+	public Boolean getIsBulkMeter() {
+	    return isBulkMeter;
+	}
+
+	public void setIsBulkMeter(Boolean isBulkMeter) {
+	    this.isBulkMeter = isBulkMeter;
+	}
+	
 
 	public MeterReading id(String id) {
 		this.id = id;
