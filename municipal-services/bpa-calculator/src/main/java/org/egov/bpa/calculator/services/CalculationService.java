@@ -178,8 +178,8 @@ public class CalculationService {
 			
 			List<Map<String,Object>> applicationFees = JsonPath.read(mdmsData, BPACalculatorConstants.MDMS_APPLIOCATION_FEES_PATH.replace("{0}", categorie).replace("{1}", subcategorie).replace("{2}", proposedSite));
 			
-			BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength")).multiply(BigDecimal.valueOf(3.2808)); //In Running Feet
-			BigDecimal area=new BigDecimal(node.get("builtUpArea")).multiply(BigDecimal.valueOf(10.7639)); //In Sq Feet
+			BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength")); //In Meter
+			BigDecimal area=new BigDecimal(node.get("builtUpArea")); //In Sq Meter
 			
 			for(Map<String,Object> fee : applicationFees) {
 
