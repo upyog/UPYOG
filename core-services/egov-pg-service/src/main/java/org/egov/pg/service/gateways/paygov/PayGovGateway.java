@@ -160,9 +160,9 @@ public class PayGovGateway implements Gateway {
         String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
         
         //for production need TO CHANGE
-        //queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
+        queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
         //for dev need TO CHANGE
-        queryMap.put(SERVICE_ID_KEY,"MMPTBTEST01");
+        //queryMap.put(SERVICE_ID_KEY,"MMPTBTEST01");
         String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
         String citizenReturnURL = returnUrl.split(domainName)[1];
        // citizenReturnURL = EGOV_SERVER_HOSTNAME+citizenReturnURL;
