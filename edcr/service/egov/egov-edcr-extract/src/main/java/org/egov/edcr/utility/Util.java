@@ -1864,6 +1864,8 @@ public class Util {
             return OccupancyType.OCCUPANCY_F15;
         else if (pline.getColor() == DxfFileConstants.OCCUPANCY_F16_COLOR_CODE)
             return OccupancyType.OCCUPANCY_F16;
+        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_F17_COLOR_CODE)
+            return OccupancyType.OCCUPANCY_F17;
         
 //        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_F2_COLOR_CODE)
 //            return OccupancyType.OCCUPANCY_F2;

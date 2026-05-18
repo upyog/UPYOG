@@ -90,13 +90,72 @@ public class RoadReserve extends FeatureProcess {
 			scrutinyDetail8.setKey("Common_" + "Road Reserve ");
 			LOG.info("ii" + pl.getRoadReserveFront() +  pl.getRoadReserveRear());
          
-        if(pl.getRoadReserveFront() != BigDecimal.ZERO &&  pl.getRoadReserveRear() != BigDecimal.ZERO) {
-     	setReportOutputDetails(pl, "Road Width Front And Rear",
-				"" + pl.getRoadReserveFront() + "m" +  " & " +  pl.getRoadReserveRear() +"m", "", scrutinyDetail8);
-		//LOG.info("Room Height Validation True: (Expected/Actual) " + "" + "/" + "");
-        // setReportOutputDetails(pl, "Road Width Rear", "" + pl.getRoadReserveRear(), scrutinyDetail);
-    
-        }
+//        if(pl.getRoadReserveFront() != BigDecimal.ZERO &&  pl.getRoadReserveRear() != BigDecimal.ZERO) {
+//     	setReportOutputDetails(pl, "Road Width Front , Rear and Side",
+//				"" + pl.getRoadReserveFront() + "m" +  " & " +  pl.getRoadReserveRear() +"m"
+//				 + " & " + pl.getRoadReserveSide() , "", scrutinyDetail8);
+//		//LOG.info("Room Height Validation True: (Expected/Actual) " + "" + "/" + "");
+//        // setReportOutputDetails(pl, "Road Width Rear", "" + pl.getRoadReserveRear(), scrutinyDetail);
+//    
+//        }
+			
+			/*
+			 * if(pl.getRoadReserveFront() != BigDecimal.ZERO && pl.getRoadReserveRear() !=
+			 * BigDecimal.ZERO) { setReportOutputDetails(pl,
+			 * "Road Width Front , Rear and Side", "" + pl.getRoadReserveFront() + "m" +
+			 * " & " + pl.getRoadReserveRear() +"m" + " & " + pl.getRoadReserveSide() , "",
+			 * scrutinyDetail8);
+			 * //LOG.info("Room Height Validation True: (Expected/Actual) " + "" + "/" +
+			 * ""); // setReportOutputDetails(pl, "Road Width Rear", "" +
+			 * pl.getRoadReserveRear(), scrutinyDetail);
+			 * 
+			 * }
+			 */
+			
+			StringBuilder roadWidthBuilder = new StringBuilder();
+			
+			if (roadReserves != null && !roadReserves.isEmpty()) {
+			    
+			    for (Road road : roadReserves) {
+			        if (road != null && road.getWidth() != null && road.getWidth().compareTo(BigDecimal.ZERO) > 0) {			        	
+			        	String roadName = "";
+			            if (road.getName() != null) {
+			                String layerName = road.getName().toUpperCase();
+			                if (layerName.contains("FRONT")) {
+			                    roadName = "Front";
+			                } else if (layerName.contains("REAR")) {
+			                    roadName = "Rear";
+			                } else if (layerName.contains("SIDE")) {
+			                    String[] split = layerName.split("_");
+			                    String sideValue = split[split.length - 1];
+			                    roadName = sideValue.substring(0, 1).toUpperCase()
+			                            + sideValue.substring(1).toLowerCase();
+			                } else {
+			                	String value = road.getName();
+			                    roadName = value.substring(0, 1).toUpperCase()
+			                            + value.substring(1).toLowerCase();
+			                }
+			            }
+
+			            if (roadWidthBuilder.length() > 0) {
+			                roadWidthBuilder.append(" , ");
+			            }
+
+			            roadWidthBuilder
+			                    .append(roadName)
+			                    .append("=")
+			                    .append(road.getWidth())
+			                    .append("m");
+			        }						 
+			        
+			    }
+
+			    if (roadWidthBuilder.length() > 0) {
+			        setReportOutputDetails(pl, "Road Reserve", roadWidthBuilder.toString(),
+			        		Result.Accepted.getResultVal(),scrutinyDetail8);
+			    }
+			}
+			
         return pl;
     }
     private void setReportOutputDetails(Plan pl, String ruleDesc,  

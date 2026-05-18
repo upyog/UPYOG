@@ -66,6 +66,7 @@ public class DxfFileConstants {
     public static final int OCCUPANCY_F14_COLOR_CODE = 42;
     public static final int OCCUPANCY_F15_COLOR_CODE = 43;
     public static final int OCCUPANCY_F16_COLOR_CODE = 44;
+    public static final int OCCUPANCY_F17_COLOR_CODE = 17;
     
 // // Color codes for industry as per 2025 byLaws
 //    public static final int OCCUPANCY_G_COLOR_CODE = 7;

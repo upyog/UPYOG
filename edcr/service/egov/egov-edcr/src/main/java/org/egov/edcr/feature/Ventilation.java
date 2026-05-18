@@ -57,16 +57,9 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.MeasurementWithHeight;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.Result;
-import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.springframework.stereotype.Service;
 import org.egov.common.entity.edcr.*;
+import org.egov.edcr.constants.DxfFileConstants;
 
 @Service
 public class Ventilation extends FeatureProcess {
@@ -108,6 +101,8 @@ public class Ventilation extends FeatureProcess {
 
 	        if (b.getBuilding() != null && b.getBuilding().getFloors() != null && !b.getBuilding().getFloors().isEmpty()) {
 	            for (Floor f : b.getBuilding().getFloors()) {
+	            	
+	            	OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 
 	                // ----------------------------------------------------
 	                // Common Ventilation
@@ -162,6 +157,17 @@ public class Ventilation extends FeatureProcess {
 	                        errorMsgs.put("Common Ventilation Error", "Floor " + f.getNumber() + ": " + e.getMessage());
 	                        pl.addErrors(errorMsgs);
 	                    }
+	                }else {
+	                	if (mostRestrictiveOccupancyType != null
+	                	        && mostRestrictiveOccupancyType.getType() != null
+	                	        && mostRestrictiveOccupancyType.getType().getCode() != null
+	                	        && DxfFileConstants.A.equalsIgnoreCase(
+	                	                mostRestrictiveOccupancyType.getType().getCode())) {
+	                		errorMsgs.put("Ventilation is mandatory",
+		                			"Floor ventilation layer not defined in the plan. Kindly refer to the user manual.");	                	
+	                        pl.addErrors(errorMsgs);
+		            	}
+	                	
 	                }
 
 	                // ----------------------------------------------------
