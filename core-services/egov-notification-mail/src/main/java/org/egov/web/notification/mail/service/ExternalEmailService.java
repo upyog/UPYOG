@@ -7,12 +7,14 @@ import java.util.List;
 import javax.mail.internet.MimeMessage;
 
 import org.egov.web.notification.mail.consumer.contract.Email;
+import org.egov.web.notification.mail.consumer.contract.EmailAttachment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StreamUtils;
@@ -34,6 +36,7 @@ public class ExternalEmailService implements EmailService {
     }
 
     @Override
+    @Async // CRITICAL FIX: Runs email sending in a background thread to prevent Kafka bottlenecks
     public void sendEmail(Email email) {
         try {
             if (email.isHTML()) {
@@ -60,7 +63,6 @@ public class ExternalEmailService implements EmailService {
     private void sendHTMLEmail(Email email) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
-            // true flag indicates multipart message for attachments
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
             helper.setFrom(mailSender.getUsername());
@@ -68,8 +70,14 @@ public class ExternalEmailService implements EmailService {
             helper.setSubject(email.getSubject());
             helper.setText(email.getBody(), true);
 
+            // 1. Process NEW Inline Images (For eChallan)
+            if (!CollectionUtils.isEmpty(email.getInlineAttachments())) {
+                processInlineAttachments(email.getInlineAttachments(), helper);
+            }
+
+            // 2. Process LEGACY String Attachments (For PT, TL, WS, etc.)
             if (!CollectionUtils.isEmpty(email.getAttachments())) {
-                processAttachments(email.getAttachments(), helper);
+                processLegacyAttachments(email.getAttachments(), helper);
             }
 
             log.info("Handing over to SMTP Server ({}) for delivery...", mailSender.getHost());
@@ -81,37 +89,64 @@ public class ExternalEmailService implements EmailService {
         }
     }
 
-    private void processAttachments(List<String> attachments, MimeMessageHelper helper) {
-        for (String urlString : attachments) {
+ // --- FOR ECHALLAN (NEW) ---
+    private void processInlineAttachments(List<EmailAttachment> attachments, MimeMessageHelper helper) {
+        for (EmailAttachment attachment : attachments) {
             try {
-                String downloadUrl = urlString;
-
-                // Use the internal routing logic to bypass SSL issues on the server
-                // We check for the filestore path specifically
-                if (urlString.contains("/filestore/v1/files/viewfile")) {
-                    downloadUrl = urlString.replaceFirst("https?://[^/]+", internalHost);
-                    log.info("Rerouting attachment download: {} -> {}", urlString, downloadUrl);
+                String downloadUrl = attachment.getUrl();
+                
+                // Keep routing bypass if testing locally!
+                if (downloadUrl.contains("/filestore/v1/files/viewfile")) {
+                    downloadUrl = downloadUrl.replaceFirst("https?://[^/]+", internalHost);
                 }
 
                 java.net.URL url = new java.net.URL(downloadUrl);
                 java.net.URLConnection conn = url.openConnection();
-                conn.setConnectTimeout(5000);
-                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(3000);
+                conn.setReadTimeout(7000);
 
-                // Download bytes to memory
                 byte[] bytes = org.springframework.util.StreamUtils.copyToByteArray(conn.getInputStream());
 
                 if (bytes != null && bytes.length > 0) {
-                    // Use YOUR extractFileName method here
-                    String fileName = extractFileName(urlString);
+                    org.springframework.core.io.ByteArrayResource resource = new org.springframework.core.io.ByteArrayResource(bytes);
                     
-                    // Attach the unique file
-                    helper.addAttachment(fileName, new org.springframework.core.io.ByteArrayResource(bytes));
-                    log.info("Successfully attached file: {} (Size: {} bytes)", fileName, bytes.length);
+                    if (attachment.getContentId() != null && !attachment.getContentId().isEmpty()) {
+                        helper.addInline(attachment.getContentId(), resource, attachment.getMimeType());
+                        log.info("Attached INLINE image: cid:{}", attachment.getContentId());
+                    } else {
+                        helper.addAttachment("document.pdf", resource);
+                    }
                 }
             } catch (Exception e) {
-                log.error("Failed to process attachment for URL: " + urlString, e);
-                // We continue the loop so other attachments/email can still proceed
+                log.error("Failed to process inline attachment: " + attachment.getUrl(), e);
+            }
+        }
+    }
+
+    // --- FOR OTHER MICROSERVICES (LEGACY) ---
+    private void processLegacyAttachments(List<String> attachments, MimeMessageHelper helper) {
+        for (String urlString : attachments) {
+            try {
+                String downloadUrl = urlString;
+                
+                if (urlString.contains("/filestore/v1/files/viewfile")) {
+                    downloadUrl = urlString.replaceFirst("https?://[^/]+", internalHost);
+                }
+
+                java.net.URL url = new java.net.URL(downloadUrl);
+                java.net.URLConnection conn = url.openConnection();
+                conn.setConnectTimeout(3000);
+                conn.setReadTimeout(7000);
+
+                byte[] bytes = org.springframework.util.StreamUtils.copyToByteArray(conn.getInputStream());
+
+                if (bytes != null && bytes.length > 0) {
+                    String fileName = extractFileName(urlString);
+                    helper.addAttachment(fileName, new org.springframework.core.io.ByteArrayResource(bytes));
+                    log.info("Attached LEGACY file: {}", fileName);
+                }
+            } catch (Exception e) {
+                log.error("Failed to process legacy attachment: " + urlString, e);
             }
         }
     }

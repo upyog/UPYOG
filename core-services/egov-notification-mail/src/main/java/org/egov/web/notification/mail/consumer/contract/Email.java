@@ -27,5 +27,8 @@ public class Email {
 	
 	@JsonProperty("attachments")
     private List<String> attachments;
+	
+	@JsonProperty("inlineAttachments")
+    private List<EmailAttachment> inlineAttachments;
 
 }
