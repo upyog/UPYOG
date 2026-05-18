@@ -1182,7 +1182,7 @@ public class DashboardReportQueryBuilder {
 			filter.append(" AND epa.ward_no != ''");
 		}
 		
-		filter.append(" order by pay.lastmodifiedtime desc ");
+		filter.append(" order by MAX(pay.lastmodifiedtime) desc ");
 		
 		return filter.toString();
 	}
