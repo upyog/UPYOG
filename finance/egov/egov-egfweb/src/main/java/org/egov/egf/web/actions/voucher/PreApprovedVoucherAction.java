@@ -93,6 +93,7 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
@@ -196,6 +197,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
 
     @Autowired
     private MicroserviceUtils microserviceUtils;
+    
+    @Autowired
+    private CityRepository cityRepository;
   
 
     private static final Logger LOGGER = Logger.getLogger(PreApprovedVoucherAction.class);
@@ -238,7 +242,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private boolean finanicalYearAndClosedPeriodCheckIsClosed=false;
     SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
-    Date date;
+    private String ulbName;
+    
+	Date date;
     @Autowired
     FinanceDashboardService finDashboardService;
     @Autowired
@@ -546,6 +552,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
 
        //heading = ReportUtil.getCityName();
        heading = microserviceUtils.getHeaderNameForTenant().toUpperCase();
+       
+       ulbName=cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName();
         getMasterDataForBillVoucher();
         getHeaderMandateFields();
         
@@ -1568,6 +1576,13 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     public EgBillregister getBillRegister() {
         return billRegister;
     }
+    public String getUlbName() {
+		return ulbName;
+	}
+
+	public void setUlbName(String ulbName) {
+		this.ulbName = ulbName;
+	}
 
     public void setBillRegister(EgBillregister billRegister) {
         this.billRegister = billRegister;

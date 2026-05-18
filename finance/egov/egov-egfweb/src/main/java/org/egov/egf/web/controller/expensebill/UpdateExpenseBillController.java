@@ -63,7 +63,9 @@ import org.egov.egf.expensebill.repository.DocumentUploadRepository;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.microservice.models.Department;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
@@ -134,6 +136,8 @@ public class UpdateExpenseBillController extends BaseBillController {
     private SecurityUtils securityUtils;
     @Autowired
     private CommonsUtil commonsUtil;
+    @Autowired
+    private CityRepository cityRepository;
 
     public UpdateExpenseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
@@ -204,11 +208,17 @@ public class UpdateExpenseBillController extends BaseBillController {
             }
 
             model.addAttribute("budgetDetails", budgetDetails);
+            model.addAttribute("ulbName",ulbName());
             return EXPENSEBILL_VIEW;
         }
     }
 
-    @PostMapping(value = "/update/{billId}")
+    private String ulbName() {
+    	return cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName();
+		
+	}
+
+	@PostMapping(value = "/update/{billId}")
     public String update(@Valid @ModelAttribute(EG_BILLREGISTER) final EgBillregister egBillregister,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             final HttpServletRequest request, @RequestParam @SafeHtml final String workFlowAction)
@@ -352,6 +362,7 @@ public class UpdateExpenseBillController extends BaseBillController {
                     && expensePayableAccountList.contains(details.getChartOfAccounts()))
                 model.addAttribute(NET_PAYABLE_AMOUNT, details.getCreditamount());
         model.addAttribute(EG_BILLREGISTER, egBillregister);
+        model.addAttribute("ulbName",ulbName());
         return EXPENSEBILL_VIEW;
     }
 

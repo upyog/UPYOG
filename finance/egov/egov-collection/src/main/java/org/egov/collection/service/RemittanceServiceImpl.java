@@ -125,6 +125,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.opensymphony.xwork2.ActionContext;
 
 @Transactional(readOnly = true)
@@ -892,8 +893,39 @@ public class RemittanceServiceImpl extends RemittanceService {
                 rb1.setBankBranch(receiptInstrumentMap.get(payment.getId()).getBranchName());
 //            final Bank bank = (Bank) persistenceService.find("from Bank where id=?",
 //                    receiptInstrumentMap.get(r.getBill().get(0).getBillDetails().get(0).getReceiptNumber()).getBank().getId().intValue());
+//                org.egov.infra.microservice.models.Bank bank = receiptInstrumentMap.get(payment.getId()).getBank();
+                
+             // Try instrument object first for branch name
+                String branchName = receiptInstrumentMap.get(payment.getId()).getBranchName();
                 org.egov.infra.microservice.models.Bank bank = receiptInstrumentMap.get(payment.getId()).getBank();
-                rb1.setBank(bank != null ? bank.getName() : "");
+                String bankName = (bank != null && bank.getName() != null) ? bank.getName() : "";
+
+                // fallback to payment.additionalDetails if bank name is empty
+                if (bankName.isEmpty() && payment.getAdditionalDetails() != null) {
+                    JsonNode additionalDetails = payment.getAdditionalDetails();
+                    if (additionalDetails.has("bankName") 
+                            && !additionalDetails.get("bankName").isNull()
+                            && !additionalDetails.get("bankName").asText().isEmpty()) {
+                        bankName = additionalDetails.get("bankName").asText();
+                    }
+                }
+
+                // fallback to payment.additionalDetails for branch name too
+                if ((branchName == null || branchName.isEmpty()) 
+                        && payment.getAdditionalDetails() != null) {
+                    JsonNode additionalDetails = payment.getAdditionalDetails();
+                    if (additionalDetails.has("branchName") 
+                            && !additionalDetails.get("branchName").isNull()
+                            && !additionalDetails.get("branchName").asText().isEmpty()) {
+                        branchName = additionalDetails.get("branchName").asText();
+                    }
+                }
+
+                LOGGER.info("BANK NAME RESOLVED => " + bankName + " | BRANCH => " + branchName);
+                rb1.setBankBranch(branchName);
+                rb1.setBank(bankName);
+                
+//                rb1.setBank(bank != null ? bank.getName() : "");
                 rb1.setReceiptId(payment.getId());
                 rb1.setReceiptNumber(StringUtils.join(receiptNumbers,","));
                 rb1.setReceiptDate(DateUtils.toDefaultDateTimeFormat(new Date(payment.getTransactionDate())));

@@ -306,9 +306,9 @@ public class EGovPdfView implements BinaryExportView {
 			String str = tableCaption.get(0).toString();
 			if(str.contains("\\n")){
 			    String[] strArr = str.split(Pattern.quote("\\n"));
-			    Paragraph titleElement = new Paragraph(new Chunk(strArr[0], this.getCaptionFont()));
-			    titleElement.setAlignment(Element.ALIGN_CENTER);
-                            document.add(titleElement);
+//			    Paragraph titleElement = new Paragraph(new Chunk(strArr[0], this.getCaptionFont()));
+//			    titleElement.setAlignment(Element.ALIGN_CENTER);
+//                            document.add(titleElement);
 			    Paragraph headerElement = new Paragraph(new Chunk(strArr[1], this.getCaptionFont1()));
 			    headerElement.setAlignment(headerElement.ALIGN_CENTER);
                             document.add(headerElement);

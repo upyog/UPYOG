@@ -634,7 +634,7 @@
 							<td class="bluebox"><input type="text" name="remitAccountNumber" readonly="readonly" id="remitAccountNumber" value="${accountNumberId}" /></td>	
 							
 							<!--Adding the row for the Bank Token Number & Date field-->
-							<td class="bluebox"><s:text name="bank.token.number" /></td>
+							<td class="bluebox"><s:text name="bank.token.number" /><span class="mandatory1">*</span></td>
 							<td class="bluebox"><s:textfield id="bankTokenNumber" name="bankTokenNumber" /></td>								
 							<td class="bluebox"><s:text name="token.date" /><span class="mandatory"></span></td> <s:date name="tokenDate" var="tokenDateFormat" format="dd/MM/yyyy" />
 							<td class="bluebox"> <s:textfield id="tokenDate" name="tokenDate" value="%{tokenDateFormat}"   data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" /></td>	

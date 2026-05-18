@@ -73,7 +73,9 @@ import org.egov.egf.supplierbill.service.SupplierBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.egf.web.controller.expensebill.BaseBillController;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.microservice.models.Department;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
@@ -172,6 +174,8 @@ public class UpdateSupplierBillController extends BaseBillController {
     private SecurityUtils securityUtils;
     @Autowired
     private CommonsUtil commonsUtil;
+    @Autowired
+    private CityRepository cityRepository;
 
     public UpdateSupplierBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
@@ -493,10 +497,16 @@ public class UpdateSupplierBillController extends BaseBillController {
                     && supplierPayableAccountList.contains(details.getChartOfAccounts()))
                 model.addAttribute(NET_PAYABLE_AMOUNT, details.getCreditamount());
         model.addAttribute(EG_BILLREGISTER, egBillregister);
+        model.addAttribute("ulbName",ulbName());
         return SUPPLIERBILL_VIEW;
     }
 
-    private void prepareCheckList(final EgBillregister egBillregister) {
+    private String ulbName() {
+		
+		return cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName();
+	}
+
+	private void prepareCheckList(final EgBillregister egBillregister) {
         final List<EgChecklists> checkLists = checkListService.getByObjectId(egBillregister.getId());
         egBillregister.getCheckLists().addAll(checkLists);
     }

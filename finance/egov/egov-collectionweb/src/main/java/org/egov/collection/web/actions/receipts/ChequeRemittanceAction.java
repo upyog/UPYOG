@@ -275,6 +275,16 @@ public class ChequeRemittanceAction extends BaseFormAction {
     @Action(value = "/receipts/chequeRemittance-printBankChallan")
     @SkipValidation
     public String printBankChallan() {
+        // bankAccount arrives from JSP but bank does not (special char & in J&K Bank breaks URL)
+        // So fetch bank name fresh using bankAccount from DB
+        if ((bank == null || bank.isEmpty()) && bankAccount != null && !bankAccount.isEmpty()) {
+            final Bankaccount bankAcc = bankaccountHibernateDAO.getByAccountNumber(bankAccount);
+            if (bankAcc != null) {
+                bank = bankAcc.getBankbranch().getBank().getName();
+            }
+        }
+        LOGGER.info("$$$ [printBankChallan] bank after fix = " + bank);
+        LOGGER.info("$$$ [printBankChallan] bankAccount = " + bankAccount);
         return PRINT_BANK_CHALLAN;
     }
 
@@ -331,6 +341,10 @@ public class ChequeRemittanceAction extends BaseFormAction {
         final Bankaccount bankAcc = bankaccountHibernateDAO.getByAccountNumber(accountNumberId);
         bankAccount = bankAcc.getAccountnumber();
         bank = bankAcc.getBankbranch().getBank().getName();
+        getSession().put("REMITTANCE_BANK", bank);
+        LOGGER.info("$$$ [create] accountNumberId = " + accountNumberId);
+        LOGGER.info("$$$ [create] bankAccount = " + bankAccount);
+        LOGGER.info("$$$ [create] bank = " + bank);
         totalCashAmount = 0.0;
         totalChequeAmount = getSum(finalBeanList);
         return INDEX;

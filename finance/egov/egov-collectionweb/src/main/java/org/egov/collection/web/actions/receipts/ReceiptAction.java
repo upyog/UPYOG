@@ -1000,6 +1000,16 @@ public class ReceiptAction extends BaseFormAction {
 			final List<InstrumentHeader> instrumentHeaderList, final List<InstrumentHeader> instrumentProxyList) {
 
 		for (final InstrumentHeader instrumentHeader : instrumentProxyList) {
+//			Testing for data coming or not 
+	      
+	        LOGGER.info("POINT1 | BankId object     : " + instrumentHeader.getBankId());
+	        LOGGER.info("POINT1 | BankId.code        : " + (instrumentHeader.getBankId() != null ? instrumentHeader.getBankId().getCode() : "NULL"));
+	        LOGGER.info("POINT1 | BankId.name        : " + (instrumentHeader.getBankId() != null ? instrumentHeader.getBankId().getName() : "NULL"));
+	        LOGGER.info("POINT1 | BankBranchName     : " + instrumentHeader.getBankBranchName());
+	        LOGGER.info("POINT1 | IfscCode           : " + instrumentHeader.getIfscCode());
+	        LOGGER.info("POINT1 | InstrumentNumber   : " + instrumentHeader.getInstrumentNumber());
+	        LOGGER.info("POINT1 | InstrumentAmount   : " + instrumentHeader.getInstrumentAmount());
+	       
 			InstrumentType instType = new InstrumentType();
 			if (getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)) {
 				instType.setType(CollectionConstants.INSTRUMENTTYPE_CHEQUE);

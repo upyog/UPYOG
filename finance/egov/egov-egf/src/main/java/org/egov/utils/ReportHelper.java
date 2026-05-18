@@ -831,6 +831,7 @@ public class ReportHelper {
         final Style titleStyle = new Style("titleStyle");
         titleStyle.setFont(new Font(9, Font._FONT_VERDANA, true));
         titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
+        titleStyle.setTextColor(new Color(31, 78, 121));
         return titleStyle;
     }
     // for header 
@@ -1174,10 +1175,37 @@ public class ReportHelper {
         JRDataSource ds;
         final Style amountStyle = getTBAmountStyle();
         final Style textStyle = getCOAStyle();
-        final String header = cityName + "\\n" + heading;
+		
+		 final String header =  heading;
+		       
         try {
             final Style detailAmountStyle = getDetailAmountStyle();
             FastReportBuilder drb = new FastReportBuilder();
+            Style headerStyle = new Style();
+
+            headerStyle.setHorizontalAlign(HorizontalAlign.CENTER);
+
+            headerStyle.setTextColor(new Color(31, 78, 121));
+            drb.addAutoText(
+            	    "Government of Jammu & Kashmir",
+            	    AutoText.POSITION_HEADER,
+            	    AutoText.ALIGMENT_CENTER,
+            	    800,headerStyle);
+            
+
+            	drb.addAutoText(
+            	    "Housing and Urban Development Department",
+            	    AutoText.POSITION_HEADER,
+            	    AutoText.ALIGMENT_CENTER,
+            	    800,headerStyle);
+
+            	drb.addAutoText(
+            	    cityName,
+            	    AutoText.POSITION_HEADER,
+            	    AutoText.ALIGMENT_CENTER,
+            	    800,headerStyle);
+
+            	drb.setTitle(heading);
             new DynamicReportBuilder();
             if (rb.getReportType().equalsIgnoreCase("daterange"))
                 drb = drb.addColumn("Account Code", "accCode", String.class.getName(), 50, textStyle)

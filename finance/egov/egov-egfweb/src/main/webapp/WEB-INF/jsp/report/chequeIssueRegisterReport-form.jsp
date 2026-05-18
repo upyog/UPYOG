@@ -76,19 +76,33 @@ var callback = {
 				undoLoadingMask();
 		    }
 		}
+
 function generateReport(){
-	var fromDate =  document.getElementById('fromDate').value;
-	var toDate = document.getElementById('toDate').value;
-	var bankAccount = document.getElementById('accountNumber').value;
-	var bank = document.getElementById('bank').value;
-	var department = document.getElementById('department').value;
-	var csrfValue = document.getElementById('csrfTokenValue').value;
-	isValid = validateDates();
-	if(isValid == false)
-		return false;
-	doLoadingMask();
-	var url = '../report/chequeIssueRegisterReport-ajaxPrint.action?fromDate='+fromDate+'&toDate='+toDate+'&_csrf='+csrfValue+'&accountNumber.id='+bankAccount+'&department.code='+department+'&bank='+bank+'&showDropDown=false';
-	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
+    var fromDate = document.getElementById('fromDate').value;
+    var toDate = document.getElementById('toDate').value;
+    var bankAccount = document.getElementById('accountNumber').value;
+    var bank = document.getElementById('bank').value;
+    var csrfValue = document.getElementById('csrfTokenValue').value;
+    
+    // Read department by name instead of id
+    var departmentEl = document.getElementsByName('deptImpl.code')[0];
+    var department = departmentEl ? departmentEl.value : '0';
+    
+    
+    isValid = validateDates();
+    if(isValid == false)
+        return false;
+    doLoadingMask();
+    var url = '../report/chequeIssueRegisterReport-ajaxPrint.action?fromDate='+fromDate
+        +'&toDate='+toDate
+        +'&_csrf='+csrfValue
+        +'&accountNumber.id='+bankAccount
+        +'&deptImpl.code='+department
+        +'&bank='+bank
+        +'&showDropDown=false';
+    
+    console.log("Full URL:", url);  // confirm deptImpl.code is in URL
+    YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 }
 
 function validateDates(){

@@ -155,7 +155,7 @@ public class RptSubLedgerSchedule {
             LOGGER.info(".............The formated date is " + formatedDateStr);
 
         try {
-            getSubQuery(startDateDBFormat, endDate);
+        	getSubQuery(startDateDBFormat, endDate);
             formatSLTypeReport();
             reportBean.setAccName(getAccountname(glCode));
         } catch (final TaskFailedException exception) {
@@ -242,7 +242,7 @@ public class RptSubLedgerSchedule {
             
             int i = 0;
             pst = persistenceService.getSession().createSQLQuery(query.toString());
-            pst.setLong(i++, Integer.valueOf(accEntityId));
+            pst.setLong(i++, Long.valueOf(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
@@ -250,7 +250,7 @@ public class RptSubLedgerSchedule {
             if (deptId != null && !deptId.equalsIgnoreCase(""))
                 pst.setString(i++,deptId);
   
-            pst.setLong(i++, Integer.valueOf(accEntityId));
+            pst.setLong(i++, Long.valueOf(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
@@ -258,7 +258,7 @@ public class RptSubLedgerSchedule {
             if (deptId != null && !deptId.equalsIgnoreCase(""))
                 pst.setString(i++,deptId);
  
-            pst.setLong(i++, Integer.valueOf(accEntityId));
+            pst.setLong(i++, Long.valueOf(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
@@ -267,7 +267,7 @@ public class RptSubLedgerSchedule {
                 pst.setString(i++, deptId);
             pst.setLong(i++, Long.parseLong(fundId));
 
-            pst.setLong(i++, Integer.valueOf(accEntityId));
+            pst.setLong(i++, Long.valueOf(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
@@ -277,7 +277,7 @@ public class RptSubLedgerSchedule {
             pst.setLong(i++, Long.parseLong(fundId));
 
             pst.setString(i++, glCode);
-            pst.setLong(i++, Integer.valueOf(accEntityId));
+            pst.setLong(i++, Long.valueOf(accEntityId));
             pst.setLong(i++, Long.parseLong(fundId));
             pst.setLong(i++, Long.parseLong(fyId));
             if (deptId != null && !deptId.equalsIgnoreCase(""))
@@ -307,7 +307,7 @@ public class RptSubLedgerSchedule {
         		try {
         			entity = (EntityType) persistenceService.find(
         					" from " + accountdetailtype.getFullQualifiedName() + " where id = ?",
-        					element[0].toString());
+        					Long.valueOf(element[0].toString()));
         		} catch (final HibernateException ee) {
         			LOGGER.error(ee.getMessage(), ee);
         			entity = (EntityType) persistenceService.find(

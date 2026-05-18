@@ -48,6 +48,7 @@
 package org.egov.egf.web.actions.report;
 
 import java.io.IOException;
+
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -70,6 +71,8 @@ import org.apache.struts2.result.VelocityResult;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
+import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.model.BankAdviceReportInfo;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -77,6 +80,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.microservice.models.BankAccount;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationError;
@@ -84,6 +88,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.instrument.InstrumentHeader;
+import org.egov.model.masters.Supplier;
 import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -98,7 +103,9 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.admin.master.repository.DepartmentRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.egf.masters.repository.SupplierRepository;
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -145,11 +152,19 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 	
     @Autowired 
     private CityRepository cityRepository;
+    
+    @Autowired
+    private DepartmentRepository departmentRepository;
+    
+    @Autowired
+    private SupplierRepository supplierRepository; 
+    
+    private String resolvedDeptCode;
 	
 	private Department deptImpl = new Department();
 
 	public ChequeIssueRegisterReportAction() {
-		addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
+		//addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
 	}
 
 	@Override
@@ -179,7 +194,12 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 	public void generateReport() throws JRException, IOException {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("----Inside generateReport---- ");
-
+		
+		
+		if (deptImpl != null && deptImpl.getCode() != null && !deptImpl.getCode().equals("0")) {
+	        resolvedDeptCode = deptImpl.getCode();
+	    }
+	    LOGGER.info("DEBUG generateReport >> resolvedDeptCode=" + resolvedDeptCode);
 		accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
 		if (accountNumber.getChequeformat() != null && !accountNumber.getChequeformat().equals("")) {
 			chequeFormat = accountNumber.getChequeformat().getId().toString();
@@ -352,7 +372,13 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 		final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService
 				.find("from InstrumentHeader where id=?", instrumentHeaderId);
 		bankAdvice.setPartyName(instrumentHeader.getPayTo());
+		List<Supplier> listSupplier=supplierRepository.findByName(instrumentHeader.getPayTo());
+		Supplier suppier=listSupplier.get(0);
 		bankAdvice.setAmount(instrumentHeader.getInstrumentAmount());
+		bankAdvice.setAccountNumber(instrumentHeader.getBankAccountId().getAccountnumber());
+		bankAdvice.setBank(instrumentHeader.getBankId().getName());
+		bankAdvice.setBankBranch(instrumentHeader.getBankBranchName());
+		bankAdvice.setIfscCode(listSupplier.get(0).getIfsccode());
 		final List<Object> data = new ArrayList<Object>();
 		data.add(bankAdvice);
 		inputStream = reportHelper.exportXls(getInputStream(), bankAdviceJasperPath, null, data);
@@ -408,9 +434,12 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 		paramMap.put("toDate", Constants.DDMMYYYYFORMAT1.format(toDate));
 		ulbName=cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName();
 		paramMap.put("ulbName", ulbName);
-		if (deptImpl != null && deptImpl.getCode() != null && !deptImpl.getCode().equals("0")) {
-			paramMap.put("departmentName", deptImpl.getCode());
-		}
+
+		if (resolvedDeptCode != null && !resolvedDeptCode.equals("0") && !resolvedDeptCode.isEmpty()) {
+			String depName=departmentRepository.findByCode(resolvedDeptCode).getName();
+	        paramMap.put("departmentName", depName);
+	        LOGGER.info("DEBUG getParamMap >> departmentName set to: " + resolvedDeptCode);
+	    }
 		return paramMap;
 	}
 
@@ -550,7 +579,9 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 	}
 
 	public Department getDeptImpl() {
-		return deptImpl;
+	    if (deptImpl == null)
+	        deptImpl = new Department();
+	    return deptImpl;
 	}
 
 	public void setDeptImpl(Department deptImpl) {

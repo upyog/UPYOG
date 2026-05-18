@@ -72,6 +72,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.apache.struts2.result.VelocityResult;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -102,6 +103,8 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 
 import com.exilant.eGov.src.reports.TrialBalanceBean;
 
@@ -171,6 +174,9 @@ public class TrialBalanceAction extends BaseFormAction {
 
 	@Autowired
 	private MicroserviceUtils microserviceUtils;
+	
+	@Autowired
+	private CityRepository cityRepository;
 
 	@Override
 	public Object getModel() {
@@ -200,7 +206,8 @@ public class TrialBalanceAction extends BaseFormAction {
 	public String exportTrialBalance() {
 		try {
 			heading = generateHeading();
-			titleName = microserviceUtils.getHeaderNameForTenant().toUpperCase()+" \\n";
+			//titleName = microserviceUtils.getHeaderNameForTenant().toUpperCase()+" \\n";
+			titleName=cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName();
 			cityWebsite = cityService.getCityByCode((String) getSession().get("ulb"));
 			if (rb.getExportType().equalsIgnoreCase("xls")) {
 				inputStream = reportHelper.exportXls(inputStream,

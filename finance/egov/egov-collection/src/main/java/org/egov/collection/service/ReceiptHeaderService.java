@@ -1638,6 +1638,17 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         emptyJsonNode.put("wardNo", receiptHeader.getWardNo());
         emptyJsonNode.put("fundName", receiptHeader.getFund());
         emptyJsonNode.put("narration", receiptHeader.getReferenceDesc());
+     // store bank details in additionalDetails
+        InstrumentHeader ih = receiptHeader.getInstruments(receiptHeader.getInstrumentType()).get(0);
+        if (ih.getBankId() != null) {
+            emptyJsonNode.put("bankName", ih.getBankId().getName());  // "ICICI Bank"
+        }
+        if (ih.getBankBranchName() != null) {
+            emptyJsonNode.put("branchName", ih.getBankBranchName());  // "BANGALOREINFOSYS"
+        }
+        if (ih.getIfscCode() != null) {
+            emptyJsonNode.put("ifscCode", ih.getIfscCode());          // "ICIC0000552"
+        }
         billList.stream().forEach(bill -> {
         	for(BillDetailV2 bd:bill.getBillDetails()) {
         		bd.setBillDescription(receiptHeader.getReferenceDesc());

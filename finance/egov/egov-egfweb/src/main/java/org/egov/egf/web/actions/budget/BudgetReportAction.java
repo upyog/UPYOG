@@ -75,6 +75,7 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -193,6 +194,9 @@ public class BudgetReportAction extends BaseFormAction {
     
     @Autowired
     private Environment environment;
+    
+    @Autowired
+    private CityRepository cityRepository;
 
     public boolean isDepartmentBudget() {
         return departmentBudget;
@@ -290,6 +294,7 @@ public class BudgetReportAction extends BaseFormAction {
     @Action(value = "/budget/budgetReport-generateFunctionWisePdf")
     public String generateFunctionWisePdf() throws JRException, IOException {
         final Map<String, Object> paramMap = getParamMap();
+        paramMap.put("ulbName", cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
         inputStream = reportHelper.exportPdf(inputStream, path, paramMap, getDataForFunctionwise());
         return "functionwise-PDF";
     }
