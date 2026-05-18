@@ -350,6 +350,7 @@ public class NotificationService {
 	                            .build();
 	                            
 	            email = new EmailRequest(challanRequest.getRequestInfo(), emailobj);
+	            log.info("Enriched EmailRequest: " + email);
 	            emailRequestList.add(email);
 	        }
 	    }

@@ -556,8 +556,8 @@ public class NotificationUtil {
 				log.debug("Messages from localization couldn't be fetched!");
 			for (EmailRequest emailRequest : emailRequestList) {
 				producer.push(config.getEmailNotifTopic(), emailRequest);
-				log.debug("Email Request -> "+emailRequest.getEmail().toString());
-				log.debug("EMAIL notification sent!");
+				log.info("Email Request -> "+emailRequest.getEmail().toString());
+				log.info("EMAIL notification sent!");
 			}
 		}
 	}
