@@ -12,6 +12,9 @@ import java.time.YearMonth;
 import java.util.concurrent.TimeUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.egov.wscalculation.constants.MRConstants;
+import org.egov.wscalculation.validator.MDMSValidator;
 
 import org.egov.common.contract.request.RequestInfo;
 
@@ -53,6 +56,9 @@ public class EstimationService {
 
 	@Autowired
 	private PayService payService;
+	
+	@Autowired
+	private MDMSValidator mdmsValidator;
 
 	/**
 	 * Generates a List of Tax head estimates with tax head code, tax head category
@@ -441,43 +447,25 @@ public class EstimationService {
 		if (billingSlabs == null || billingSlabs.isEmpty())
 			throw new CustomException("BILLING_SLAB_NOT_FOUND", "Billing Slab are Empty");
  
-		// ✅ NEW: Read meterMaxReading and bulkMeterMaxReading from MDMS billingPeriod
-		// master (Metered entry). Falls back to safe defaults if MDMS entry is missing.
-		Double meterMaxReading     = WSCalculationConstant.DEFAULT_METER_MAX_READING;
-		Double bulkMeterMaxReading = WSCalculationConstant.DEFAULT_BULK_METER_MAX_READING;
- 
-		try {
-			if (masterData != null) {
-				Object bpObj = masterData.get(WSCalculationConstant.BILLING_PERIOD_MASTER_KEY);
-				if (bpObj instanceof JSONArray) {
-					JSONArray billingPeriodArray = (JSONArray) bpObj;
-					for (Object obj : billingPeriodArray) {
-						JSONObject bp = mapper.convertValue(obj, JSONObject.class);
-						String connType = bp.getAsString("connectionType");
-						if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connType)) {
-							if (bp.get(WSCalculationConstant.METER_MAX_READING_KEY) != null) {
-								meterMaxReading = Double.valueOf(
-										bp.get(WSCalculationConstant.METER_MAX_READING_KEY).toString());
-							}
-							if (bp.get(WSCalculationConstant.BULK_METER_MAX_READING_KEY) != null) {
-								bulkMeterMaxReading = Double.valueOf(
-										bp.get(WSCalculationConstant.BULK_METER_MAX_READING_KEY).toString());
-							}
-							break;
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			log.warn("Could not read meterMaxReading/bulkMeterMaxReading from MDMS billingPeriod. "
-					+ "Using defaults ({}/{}). Error: {}",
-					WSCalculationConstant.DEFAULT_METER_MAX_READING,
-					WSCalculationConstant.DEFAULT_BULK_METER_MAX_READING,
-					e.getMessage());
-		}
- 
-		log.info("MDMS billingPeriod → meterMaxReading={}, bulkMeterMaxReading={}",
-				meterMaxReading, bulkMeterMaxReading);
+		Double meterMaxReading =
+		        getMaxMeterReadingFromMDMS(
+		                request.getRequestInfo(),
+		                waterConnection.getTenantId(),
+		                false
+		        );
+
+		Double bulkMeterMaxReading =
+		        getMaxMeterReadingFromMDMS(
+		                request.getRequestInfo(),
+		                waterConnection.getTenantId(),
+		                true
+		        );
+
+		log.info(
+		        "MDMS billingPeriod → meterMaxReading={}, bulkMeterMaxReading={}",
+		        meterMaxReading,
+		        bulkMeterMaxReading
+		);
  
 		// ✅ Pass maxReadings into getUnitOfMeasurement
 		Double totalUOM = getUnitOfMeasurement(property, waterConnection, calculationAttribute, criteria,
@@ -595,6 +583,67 @@ public class EstimationService {
 	    }
 
 	    return waterCharge;
+	}
+	
+	
+	private Double getMaxMeterReadingFromMDMS(
+	        RequestInfo requestInfo,
+	        String tenantId,
+	        Boolean isBulkMeter) {
+
+	    List<String> masters = new ArrayList<>(
+	            Arrays.asList(MRConstants.MDMS_MS_BILLING_PERIOD)
+	    );
+
+	    Map<String, List<String>> codes =
+	            mdmsValidator.getAttributeValues(
+	                    tenantId,
+	                    MRConstants.MDMS_WC_MOD_NAME,
+	                    masters,
+	                    "$.*",
+	                    MRConstants.JSONPATH_ROOT,
+	                    requestInfo
+	            );
+
+	    JSONObject obj = new JSONObject(codes);
+
+	    List<Map<String, Object>> billingArray =
+	            (List<Map<String, Object>>) obj.get(
+	                    MRConstants.MDMS_MS_BILLING_PERIOD
+	            );
+
+	    if (billingArray == null || billingArray.isEmpty()) {
+
+	        throw new RuntimeException(
+	                "billingPeriod MDMS configuration missing"
+	        );
+	    }
+
+	    for (Map<String, Object> billingObject : billingArray) {
+
+	        String connectionType =
+	                billingObject.get("connectionType").toString();
+
+	        if (MRConstants.METER_CONNECTION_TYPE
+	                .equalsIgnoreCase(connectionType)) {
+
+	            return Boolean.TRUE.equals(isBulkMeter)
+
+	                    ? Double.valueOf(
+	                            billingObject.get(
+	                                    MRConstants.BULK_METER_MAX_READING_KEY
+	                            ).toString())
+
+	                    : Double.valueOf(
+	                            billingObject.get(
+	                                    MRConstants.METER_MAX_READING_KEY
+	                            ).toString());
+	        }
+	    }
+
+	    throw new RuntimeException(
+	            "Metered billingPeriod configuration missing in MDMS"
+	    );
 	}
 
 
@@ -745,40 +794,60 @@ public class EstimationService {
 	 * All other meter statuses and non-metered logic are completely unchanged.
 	 */
 	private Double getUnitOfMeasurement(Property property, WaterConnection waterConnection,
-			String calculationAttribute, CalculationCriteria criteria,
-			Double meterMaxReading, Double bulkMeterMaxReading) {
- 
-		Double totalUnit = 0.0;
- 
-		if (waterConnection.getConnectionType().equals(WSCalculationConstant.meteredConnectionType)) {
- 
-			String meterStatus = criteria.getMeterStatus() != null
-					? criteria.getMeterStatus().toString()
-					: "";
- 
-			// ✅ Reset logic: meter display rolled over (e.g. 9960 → 25 on a 10000 cap)
-			// Formula: (maxReading - lastReading) + currentReading
-			if (WSCalculationConstant.RESET.equalsIgnoreCase(meterStatus)) {
- 
-				Boolean isBulkMeter = criteria.getIsBulkMeter();
- 
-				Double maxReading = (isBulkMeter != null && isBulkMeter)
-						? bulkMeterMaxReading   // from MDMS: e.g. 100000
-						: meterMaxReading;      // from MDMS: e.g. 10000
- 
-				totalUnit = (maxReading - criteria.getLastReading()) + criteria.getCurrentReading();
- 
-				log.info("Reset meter consumption | isBulkMeter={} | maxReading={} | "
-						+ "lastReading={} | currentReading={} | consumption={}",
-						isBulkMeter, maxReading,
-						criteria.getLastReading(), criteria.getCurrentReading(), totalUnit);
- 
-			} else {
-				// Normal case — unchanged
-				totalUnit = (criteria.getCurrentReading() - criteria.getLastReading());
-			}
- 
-			return totalUnit;
+	        String calculationAttribute, CalculationCriteria criteria,
+	        Double meterMaxReading, Double bulkMeterMaxReading) {
+
+	    Double totalUnit = 0.0;
+
+	    if (waterConnection.getConnectionType()
+	            .equals(WSCalculationConstant.meteredConnectionType)) {
+
+	        String meterStatus = criteria.getMeterStatus() != null
+	                ? criteria.getMeterStatus().toString()
+	                : "";
+
+	        // ✅ Reset logic: meter display rolled over
+	        // Formula: (maxReading - lastReading) + currentReading
+	        if (WSCalculationConstant.RESET.equalsIgnoreCase(meterStatus)) {
+
+	            Boolean isBulkMeter = criteria.getIsBulkMeter();
+
+	            Double maxReading = Boolean.TRUE.equals(isBulkMeter)
+	                    ? bulkMeterMaxReading
+	                    : meterMaxReading;
+
+	            totalUnit =
+	                    (maxReading - criteria.getLastReading())
+	                            + criteria.getCurrentReading();
+
+	            // ✅ Safety validation
+	            if (totalUnit < 0) {
+
+	                throw new RuntimeException(
+	                        "Calculated reset consumption cannot be negative"
+	                );
+	            }
+
+	            log.info(
+	                    "Reset meter consumption | isBulkMeter={} | "
+	                            + "maxReading={} | lastReading={} | "
+	                            + "currentReading={} | consumption={}",
+	                    isBulkMeter,
+	                    maxReading,
+	                    criteria.getLastReading(),
+	                    criteria.getCurrentReading(),
+	                    totalUnit
+	            );
+
+	        } else {
+
+	            // ✅ Normal meter logic
+	            totalUnit =
+	                    (criteria.getCurrentReading()
+	                            - criteria.getLastReading());
+	        }
+
+	        return totalUnit;
  
 		} else if (waterConnection.getConnectionType().equals(WSCalculationConstant.nonMeterdConnection)
 				&& calculationAttribute.equalsIgnoreCase(WSCalculationConstant.noOfTapsConst)) {

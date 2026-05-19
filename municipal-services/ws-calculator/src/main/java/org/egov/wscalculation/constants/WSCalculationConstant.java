@@ -479,8 +479,4 @@ public static final String PROPERTY_TYPE_MIXED = "MIXED";
 	
 	public static final String BULK_METER_MAX_READING_KEY       = "bulkMeterMaxReading";
  
-	//Safe fallback defaults (used only if MDMS entry is missing)
-	public static final Double DEFAULT_METER_MAX_READING        = 10000.0;
-	
-	public static final Double DEFAULT_BULK_METER_MAX_READING   = 100000.0;
 }
