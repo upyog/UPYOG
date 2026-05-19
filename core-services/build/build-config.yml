@@ -96,13 +96,7 @@ config:
     build:
       - work-dir: "egov-notification-mail"
         image-name: "egov-notification-mail"
-        dockerfile: "build/maven/Dockerfile"
-
-  - name: "builds/core-services/egov-pg-service"
-    build:
-      - work-dir: "core-services/egov-pg-service"
-        image-name: "egov-pg-service"
-        dockerfile: "core-services/build/maven/Dockerfile"      
+        dockerfile: "build/maven/Dockerfile"    
 
   - name: "builds/core-services/egov-notification-sms"
     build:
@@ -190,13 +184,7 @@ config:
     build:
       - work-dir: "gateway"
         image-name: "gateway"
-        dockerfile: "build/maven/Dockerfile"      
-
-  - name: "builds/core-services/gateway"
-    build:
-      - work-dir: "gateway"
-        image-name: "gateway"
-        dockerfile: "build/maven/Dockerfile"      
+        dockerfile: "build/maven/Dockerfile"    
 
   - name: "builds/core-services/internal-gateway"
     build:
