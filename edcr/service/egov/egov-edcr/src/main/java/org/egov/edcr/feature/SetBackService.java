@@ -243,8 +243,10 @@ public class SetBackService extends FeatureProcess {
 		            for (Block block : pl.getBlocks()) {
 		                for (SetBack setback : block.getSetBacks()) {
 		                    if (setback.getRearYard() == null) {
-		                        errors.put("rearyardNodeDefined","Rear Setback of " + block.getName() 
-		                                        + " is mandatory when rear road width is present.");
+//		                        errors.put("rearyardNodeDefined","Rear Setback of " + block.getName() 
+//		                                        + " is mandatory when rear road width is present.");
+		                    	errors.put("rearyardNodeDefined",
+		                    	"Rear abutting road present. Kindly provide mandatory rear setback for Block " + block.getNumber());
 		                        pl.addErrors(errors);
 		                    }
 		                }
