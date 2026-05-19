@@ -1,6 +1,10 @@
 package org.egov.wscalculation.service;
 
 import java.util.ArrayList;
+import org.egov.wscalculation.validator.MDMSValidator;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +12,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.wscalculation.constants.MRConstants;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.validator.WSCalculationValidator;
@@ -50,6 +55,9 @@ public class MeterServicesImpl implements MeterService {
 	
 	@Autowired
 	private WSCalculationWorkflowValidator wsCalulationWorkflowValidator;
+	
+	@Autowired
+	private MDMSValidator mdmsValidator;
 
 	@Autowired
 	public MeterServicesImpl(EnrichmentService enrichmentService) {
@@ -72,7 +80,10 @@ public class MeterServicesImpl implements MeterService {
 		}
 		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
 	    // ✅ NEW: Calculate and set consumption before saving
-	    setConsumption(meterConnectionRequest.getMeterReading());
+		setConsumption(
+		        meterConnectionRequest.getMeterReading(),
+		        meterConnectionRequest.getRequestInfo()
+		);
 		meterReadingsList.add(meterConnectionRequest.getMeterReading());
 		wSCalculationDao.saveMeterReading(meterConnectionRequest);
 		if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
@@ -93,29 +104,75 @@ public class MeterServicesImpl implements MeterService {
 	 * Working / Locked / Breakdown / No-meter :
 	 *          consumption = currentReading - lastReading
 	 */
-	private void setConsumption(MeterReading meterReading) {
-	    if (meterReading == null) return;
+	private void setConsumption(
+	        MeterReading meterReading,
+	        RequestInfo requestInfo) {
 
-	    Double lastReading    = meterReading.getLastReading()    != null ? meterReading.getLastReading()    : 0.0;
-	    Double currentReading = meterReading.getCurrentReading() != null ? meterReading.getCurrentReading() : 0.0;
-	    String meterStatus    = meterReading.getMeterStatus()    != null ? meterReading.getMeterStatus().toString() : "";
+	    if (meterReading == null) {
+	        return;
+	    }
+
+	    Double lastReading =
+	            meterReading.getLastReading() != null
+	                    ? meterReading.getLastReading()
+	                    : 0.0;
+
+	    Double currentReading =
+	            meterReading.getCurrentReading() != null
+	                    ? meterReading.getCurrentReading()
+	                    : 0.0;
+
+	    String meterStatus =
+	            meterReading.getMeterStatus() != null
+	                    ? meterReading.getMeterStatus().toString()
+	                    : "";
 
 	    Double consumption;
 
 	    if (WSCalculationConstant.RESET.equalsIgnoreCase(meterStatus)) {
-	        // meter rolled over — pick correct max based on isBulkMeter
+
 	        Boolean isBulkMeter = meterReading.getIsBulkMeter();
-	        Double maxReading = (isBulkMeter != null && isBulkMeter)
-	                ? WSCalculationConstant.DEFAULT_BULK_METER_MAX_READING   // 100000
-	                : WSCalculationConstant.DEFAULT_METER_MAX_READING;        // 10000
-	        consumption = (maxReading - lastReading) + currentReading;
-	        log.info("Consumption [Reset] isBulkMeter={} maxReading={} lastReading={} currentReading={} consumption={}",
-	                isBulkMeter, maxReading, lastReading, currentReading, consumption);
+
+	        // ✅ Fetch dynamically from MDMS
+	        Double maxReading = getMaxMeterReadingFromMDMS(
+	                requestInfo,
+	                meterReading.getTenantId(),
+	                isBulkMeter
+	        );
+
+	        consumption =
+	                (maxReading - lastReading)
+	                        + currentReading;
+
+	        if (consumption < 0) {
+
+	            throw new RuntimeException(
+	                    "Calculated reset consumption cannot be negative"
+	            );
+	        }
+
+	        log.info(
+	                "Consumption [Reset] isBulkMeter={} maxReading={} "
+	                        + "lastReading={} currentReading={} consumption={}",
+	                isBulkMeter,
+	                maxReading,
+	                lastReading,
+	                currentReading,
+	                consumption
+	        );
+
 	    } else {
+
 	        // Working / Replacement / Locked / Breakdown / No-meter
 	        consumption = currentReading - lastReading;
-	        log.info("Consumption [{}] lastReading={} currentReading={} consumption={}",
-	                meterStatus, lastReading, currentReading, consumption);
+
+	        log.info(
+	                "Consumption [{}] lastReading={} currentReading={} consumption={}",
+	                meterStatus,
+	                lastReading,
+	                currentReading,
+	                consumption
+	        );
 	    }
 
 	    meterReading.setConsumption(consumption);
@@ -289,7 +346,10 @@ public class MeterServicesImpl implements MeterService {
 
 	                enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
 	             // ✅ NEW: Calculate and set consumption before saving
-	                setConsumption(meterConnectionRequest.getMeterReading());
+	                setConsumption(
+	                        meterConnectionRequest.getMeterReading(),
+	                        meterConnectionRequest.getRequestInfo()
+	                );
 	                meterReadingsList.add(meterConnectionRequest.getMeterReading());
 	                wSCalculationDao.saveMeterReading(meterConnectionRequest);
 
@@ -314,6 +374,63 @@ public class MeterServicesImpl implements MeterService {
 
 	    return meterReadingslist;
 	}
+	
+	
+	private Double getMaxMeterReadingFromMDMS(
+	        RequestInfo requestInfo,
+	        String tenantId,
+	        Boolean isBulkMeter) {
+
+
+	    List<String> masters = new ArrayList<>(
+	            Arrays.asList(MRConstants.MDMS_MS_BILLING_PERIOD)
+	    );
+
+	    Map<String, List<String>> codes =
+	            mdmsValidator.getAttributeValues(
+	                    tenantId,
+	                    MRConstants.MDMS_WC_MOD_NAME,
+	                    masters,
+	                    "$.*",
+	                    MRConstants.JSONPATH_ROOT,
+	                    requestInfo
+	            );
+
+	    JSONObject obj = new JSONObject(codes);
+
+	    JSONArray billingArray =
+	            obj.getJSONArray(MRConstants.MDMS_MS_BILLING_PERIOD);
+
+	    if (billingArray.length() == 0) {
+
+	        throw new RuntimeException(
+	                "billingPeriod MDMS configuration missing"
+	        );
+	    }
+
+	    for (int i = 0; i < billingArray.length(); i++) {
+
+	        JSONObject billingObject = billingArray.getJSONObject(i);
+
+	        String connectionType =
+	                billingObject.optString("connectionType");
+
+	        if (MRConstants.METER_CONNECTION_TYPE
+	                .equalsIgnoreCase(connectionType)) {
+
+	            return Boolean.TRUE.equals(isBulkMeter)
+	                    ? billingObject.getDouble(
+	                            MRConstants.BULK_METER_MAX_READING_KEY)
+	                    : billingObject.getDouble(
+	                            MRConstants.METER_MAX_READING_KEY);
+	        }
+	    }
+
+	    throw new RuntimeException(
+	            "Metered billingPeriod configuration missing in MDMS"
+	    );
+	}
+	
 	/* PI-20175 BULKMETERREADING*/
 
 	
