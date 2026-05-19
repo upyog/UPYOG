@@ -170,9 +170,9 @@ background: #DEDEDE;
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td class="bluebox w5">&nbsp;</td>
-							<td class="bluebox w15"><s:text name="subLedger.accountCode" /><span
+							<td class="greybox w15"><s:text name="subLedger.accountCode" /><span
 								class="mandatory"></span></td>
-							<td class="bluebox w25"><s:textfield id="glCode1" name="glCode1"
+							<td class="greybox w25"><s:textfield id="glCode1" name="glCode1"
 									value="%{glCode1}" autocomplete="off"
 									onfocus='autocompleteAccountCodes(this);'
 									onblur='splitAccountCodes(this);' class="w100" /></td>
@@ -186,9 +186,9 @@ background: #DEDEDE;
 									</tr>
 							<tr>
 							<td class="bluebox w5">&nbsp;</td>
-							<td class="bluebox w15"><s:text name="subLedger.fund" /><span
+							<td class="greybox w15"><s:text name="subLedger.fund" /><span
 								class="mandatory"></span></td>
-							<td class="bluebox w25"><s:select name="fund_id" id="fund_id"
+							<td class="greybox w25"><s:select name="fund_id" id="fund_id"
 									list="dropdownData.fundList" listKey="id" listValue="name"
 									headerKey="" headerValue="%{getText('lbl.choose.options')}" /></td>
 						</tr>
@@ -223,16 +223,16 @@ background: #DEDEDE;
 							<egov:ajaxdropdown id="subledger" fields="['Text','Value']"
 								dropdownId="subledger"
 								url="voucher/common-ajaxLoadSubLedgerTypesByGlCode.action" />
-							<td class="bluebox w15"><s:text name="subLedger.subLedgerType" /><span
+							<td class="greybox w15"><s:text name="subLedger.subLedgerType" /><span
 								class="mandatory"></span></td>
-							<td class="bluebox w25"><s:select name="subledger"
+							<td class="greybox w25"><s:select name="subledger"
 									id="subledger" list="dropdownData.subLedgerTypeList"
 									listKey="id" listValue="description" headerKey=""
 									headerValue="%{getText('lbl.choose.options')}" /></td>
 							<td class="bluebox w5">&nbsp;</td>
-							<td class="bluebox w15"><s:text name="subLedger.entityDetails" /><span
+							<td class="greybox w15"><s:text name="subLedger.entityDetails" /><span
 								class="mandatory"></span></td>
-							<td class="bluebox w25"><s:textfield id="accEntitycode" placeholder="Enter first three characters"
+							<td class="greybox w25"><s:textfield id="accEntitycode" placeholder="Enter first three characters"
 									name="accEntitycode" autocomplete="off"
 									onfocus='autocompleteEntityDetails(this);'
 									onblur='splitEntityDetails(this);' class="w100" /> <s:textfield

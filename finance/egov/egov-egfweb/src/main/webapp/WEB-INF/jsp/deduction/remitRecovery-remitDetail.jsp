@@ -69,6 +69,14 @@
 <script type="text/javascript"
 	src="/services/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 <title><s:text name="remit.recovery.create.title" /></title>
+<style>
+		select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+		td.bluebox { vertical-align: middle !important }
+	</style>
 <script>
 var vTypeOfAccount="RECEIPTS_PAYMENTS,PAYMENTS"      ;                                 
 function loadBank(fundId){
@@ -352,29 +360,22 @@ else{
 																			name="remit.recovery.header" /></td>
 																</tr>
 																<tr>
-																	<td class="bluebox">&nbsp;</td>
+																	<td class="bluebox w5">&nbsp;</td>
 																	<s:if test="%{shouldShowHeaderField('vouchernumber')}">
 																		<td class="bluebox"><s:text name="voucher.number" /><span
 																			class="mandatory1">*</span></td>
 																		<td class="bluebox"><s:textfield
 																				name="voucherNumber" id="vouchernumber" /></td>
 																	</s:if>
-																	<td class="bluebox" width="18%"><s:text
+																	<td class="bluebox" width="15%"><s:text
 																			name="voucher.date" />&nbsp;<span class="mandatory1">*</span></td>
 																	<s:date name='voucherDate' var="voucherDateId"
 																		format='dd/MM/yyyy' />
-																	<td class="bluebox" width="34%">
+																	<td class="bluebox" width="25%">
 																		<div name="daterow">
-																			<s:textfield name="voucherDate" id="voucherDate"
-																				maxlength="10" readonly="true"
-																				onkeyup="DateFormat(this,this.value,event,false,'3')"
-																				size="15" value="%{voucherDateId}" />
-																			<A
-																				href="javascript:show_calendar('forms[0].voucherDate',null,null,'DD/MM/YYYY');"
-																				style="text-decoration: none" align="left"><img
-																				width="18" height="18" border="0" align="absmiddle"
-																				alt="Date"
-																				src="/services/egi/resources/erp2/images/calendaricon.gif" /></A>
+																			<s:date name="voucherDate" var="fromVhDateId" format="dd/MM/yyyy" /> 
+																			<s:textfield id="voucherDate" name="voucherDate" value="%{voucherDateId}" onkeyup="DateFormat(this,this.value,event,false,'3')"
+																			 placeholder="DD/MM/YYYY" cssClass="form-control datepicker w100" data-inputmask="'mask': 'd/m/y'" />
 																		</div>
 																	</td>
 																</tr>
@@ -384,13 +385,13 @@ else{
 
 																</tr>
 																<tr>
-																	<td class="bluebox">&nbsp;</td>
+																	<td class="bluebox w5">&nbsp;</td>
 																	<egov:ajaxdropdown id="bank" fields="['Text','Value']"
 																		dropdownId="bank"
 																		url="voucher/common-ajaxLoadBanksByFundAndType.action" />
-																	<td class="bluebox"><s:text name="bank" />&nbsp;<span
+																	<td class="bluebox w15"><s:text name="bank" />&nbsp;<span
 																		class="bluebox"><span class="mandatory1">*</span></span></td>
-																	<td class="bluebox"><s:select name="bank"
+																	<td class="bluebox w25"><s:select name="bank"
 																			id="bank" list="dropdownData.bankList"
 																			listKey="bank.id+'-'+id"
 																			listValue="bank.name+' '+branchname" headerKey="-1"
@@ -399,9 +400,10 @@ else{
 																	<egov:ajaxdropdown id="accountNumber"
 																		fields="['Text','Value']" dropdownId="bankaccount"
 																		url="voucher/common-ajaxLoadAccNumAndType.action" />
-																	<td class="bluebox"><s:text name="account.number" />&nbsp;<span
+																	<td class="bluebox w5">&nbsp;</td>
+																	<td class="bluebox w15"><s:text name="account.number" />&nbsp;<span
 																		class="bluebox"><span class="mandatory1">*</span></span></td>
-																	<td class="bluebox"><s:select
+																	<td class="bluebox w25"><s:select
 																			name="commonBean.accountNumberId" id="bankaccount"
 																			list="dropdownData.accNumList" listKey="id"
 																			listValue="chartofaccounts.glcode+'--'+accountnumber+'--'+accounttype"
@@ -409,27 +411,28 @@ else{
 																			headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
 																</tr>
 																<tr class="greybox">
-																	<td class="greybox">&nbsp;</td>
-																	<td class="greybox"><s:text name="lbl.payment.amount"/> &nbsp;</td>
-																	<td class="greybox"><label name="remitAmount"
+																	<td class="bluebox w5">&nbsp;</td>
+																	<td class="greybox w15"><s:text name="lbl.payment.amount"/> &nbsp;</td>
+																	<td class="greybox w25"><label name="remitAmount"
 																		id="remitAmount" /></td>
 																	<egov:updatevalues id="availableBalance"
 																		fields="['Text']"
 																		url="/payment/payment-ajaxGetAccountBalance.action" />
-																	<td class="greybox"><span id="balanceText"
-																		style="display: none" width="18%"><s:text
+																	<td class="bluebox w5">&nbsp;</td>
+																	<td class="greybox w15"><span id="balanceText"
+																		style="display: none"><s:text
 																				name="balance.available" />&nbsp;</span></td>
-																	<td class="greybox"><span id="balanceAvl"
-																		width="32%"><s:textfield
+																	<td class="greybox w25"><span id="balanceAvl"
+																		><s:textfield
 																				name="commonBean.availableBalance"
 																				id="availableBalance" readonly="true"
 																				style="text-align:right"
 																				value="%{commonBean.availableBalance}" /></span></td>
 																</tr>
 																<tr>
-																	<td class="bluebox">&nbsp;</td>
-																	<td class="bluebox"><s:text name="modeofpayment" />&nbsp;</td>
-																	<td class="bluebox">
+																	<td class="bluebox w5">&nbsp;</td>
+																	<td class="bluebox w15"><s:text name="modeofpayment" />&nbsp;</td>
+																	<td class="bluebox w25">
 																	<!-- s:radio name="modeOfPayment"
 																			id="paymentMode" list="%{modeOfCollectionMap}" value="defaultPaymentMode"/> -->
 																	<s:iterator value="modeOfCollectionMap" var="mop">
@@ -439,16 +442,17 @@ else{
 																	</s:if>
 																	</s:iterator>
 																	</td>
-																	<td class="bluebox"><s:text name="remit.party.to" />&nbsp;</td>
-																	<td class="bluebox"><s:textfield name="remittedTo"
+																	<td class="bluebox w5">&nbsp;</td>
+																	<td class="bluebox w15"><s:text name="remit.party.to" />&nbsp;</td>
+																	<td class="bluebox w25"><s:textfield name="remittedTo"
 																			id="remittedTo" />&nbsp;</td>
 																</tr>
 																<tr>
-																	<td class="greybox">&nbsp;</td>
-																	<td class="greybox"><s:text name="lbl.narration"/> </td>
-																	<td class="greybox" colspan="4"><textarea
+																	<td class="bluebox w5">&nbsp;</td>
+																	<td class="greybox w15"><s:text name="lbl.narration"/> </td>
+																	<td class="greybox w25"><textarea
 																			name="description" id="narration" type="text"
-																			style="width: 580px;"></textarea></td>
+																			"></textarea></td>
 																	<td></td>
 																</tr>
 															</table>

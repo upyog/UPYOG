@@ -85,6 +85,7 @@ import org.egov.egf.model.DepartmentwiseExpenditureReport;
 import org.egov.egf.model.FunctionwiseIE;
 import org.egov.egf.model.ReportSearch;
 import org.egov.egf.model.Statement;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.model.budget.BudgetProposalBean;
 import org.egov.model.report.ReportBean;
@@ -639,6 +640,17 @@ public class ReportHelper {
             final String toDate, final boolean showScheduleColumn) throws JRException {
         final Style detailAmountStyle = getDetailAmountStyle();
         FastReportBuilder drb = new FastReportBuilder();
+        
+        // adding for the header 
+        Style headerStyle = getHeaderTitleStyle();
+        
+        drb.addAutoText("Government of Jammu & Kashmir", AutoText.POSITION_HEADER, AutoText.ALIGNMENT_CENTER, 500, headerStyle);
+        drb.addAutoText("Housing and Urban Development Department", AutoText.POSITION_HEADER, AutoText.ALIGNMENT_CENTER, 500, headerStyle);
+        drb.addAutoText(ApplicationThreadLocals.getCityName(),
+                AutoText.POSITION_HEADER,
+                AutoText.ALIGNMENT_CENTER,
+                500,
+                headerStyle);
         final Style columnStyle = getColumnStyle();
         try {
             drb = drb.addColumn("Account Code", "glCode",

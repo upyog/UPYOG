@@ -241,11 +241,12 @@
 			<table border="0" width="100%" cellspacing="0">
 				<tr>
 				    <td class="bluebox w5">&nbsp;</td>
-					<td width="10%" class="bluebox"><b>Voucher Number : </b></td>
-					<td width="25%" class="bluebox"><s:property
+					<td class="bluebox w15"><b>Voucher Number : </b></td>
+					<td class="bluebox w25"><s:property
 							value="%{voucherHeader.voucherNumber}" /></td>
-					<td width="10%" class="bluebox"><b> Date :</b></td>
-					<td width="25%" class="bluebox"><s:date
+				    <td class="bluebox w5">&nbsp;</td>
+					<td class="bluebox w15"><b> Date :</b></td>
+					<td class="bluebox w25"><s:date
 							name="voucherHeader.voucherDate" format="dd/MM/yyyy" /></td>
 				</tr>
 			</table>

@@ -73,6 +73,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.model.TDSEntry;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -274,8 +275,13 @@ public class PendingTDSReportAction extends BaseFormAction {
         }
         recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
         paramMap.put("recoveryName", recovery.getRecoveryName());
-        String ulbName = microserviceUtils.getHeaderNameForTenant().toUpperCase();
-        paramMap.put("ulbName", environment.getProperty(ulbName,ulbName));
+//        String ulbName = microserviceUtils.getHeaderNameForTenant().toUpperCase();
+//        paramMap.put("ulbName", environment.getProperty(ulbName,ulbName));
+//        from the city name & avoid the null pointer exception
+        String ulbName = ApplicationThreadLocals.getCityName() != null 
+                ? ApplicationThreadLocals.getCityName() 
+                : "";
+        paramMap.put("ulbName", ulbName);
         return paramMap;
     }
 

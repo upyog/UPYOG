@@ -49,22 +49,29 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<style>
+   select { width:100% !important}
+		.w5{width:5% !important}
+		.w15{width:15% !important}
+		.w25{width:25% !important}
+		.w100{width:100% !important}
+</style>
 <div align="center">
 	<c:set var="tdclass" value="bluebox" scope="request" />
 	<table border="0" width="100%" cellspacing="0">
 		<tr>
 			<s:if test="%{shouldShowHeaderField('fund')}">
 				<td class="bluebox w5">&nbsp;</td>
-				<td  class="<c:out value='${tdclass}' />" class="w15"><s:text name="voucher.fund"/>:</td>
-				<td  class="<c:out value='${tdclass}'/>" class="w25"><s:property
+				<td  class="<c:out value='${tdclass}' /> w15"><s:text name="voucher.fund"/>:</td>
+				<td  class="<c:out value='${tdclass}'/> w25"><s:property
 						value="%{getMasterName('fund')}" /></td>
 
 			</s:if>
 			<s:if test="%{shouldShowHeaderField('scheme')}">
 				<td class="bluebox w5">&nbsp;</td>
-				<td  class="<c:out value='${tdclass}' />" class="w15"><s:text name="voucher.scheme"/> :
+				<td  class="<c:out value='${tdclass}' /> w15" ><s:text name="voucher.scheme"/> :
 					&nbsp;</td>
-				<td class="<c:out value='${tdclass}' />" class="w25"><s:property
+				<td class="<c:out value='${tdclass}' /> w25"><s:property
 						value="%{getMasterName('scheme')}" /></td>
 			</s:if>
 			<s:if
@@ -90,15 +97,15 @@
 		<tr>
 			<s:if test="%{shouldShowHeaderField('subscheme')}">
 				<td class="bluebox w5">&nbsp;</td>
-				<td class="<c:out value='${tdclass}'/>" class="w15"><s:text name="voucher.subscheme"/> :
+				<td class="<c:out value='${tdclass}'/> w15"><s:text name="voucher.subscheme"/> :
 					&nbsp;</td>
-				<td width="25%" class="<c:out value='${tdclass}' />"><s:property
+				<td class="<c:out value='${tdclass} w25' />"><s:property
 						value="%{getMasterName('subscheme')}" /></td>
 			</s:if>
 			<s:if test="%{shouldShowHeaderField('fundsource')}">
 				<td class="bluebox w5">&nbsp;</td>
-				<td class="<c:out value='${tdclass}' />" class="w15"><s:text name="voucher.financingSource"/> : &nbsp;</td>
-				<td width="25%" class="<c:out value='${tdclass}' />"><s:property
+				<td class="<c:out value='${tdclass}' /> w15" class="w15"><s:text name="voucher.financingSource"/> : &nbsp;</td>
+				<td class="<c:out value='${tdclass}' /> w25"><s:property
 						value="%{getMasterName('fundsource')}" /></td>
 
 			</s:if>
@@ -108,8 +115,8 @@
 				test="%{!shouldShowHeaderField('fundsource') && !shouldShowHeaderField('subscheme')}" />
 			<s:else>
 				<td class="bluebox w5">&nbsp;</td>
-				<td width="15%" class="<c:out value='${tdclass}' />"></td>
-				<td width="25%" class="<c:out value='${tdclass}' />"></td>
+				<td  class="<c:out value='${tdclass}' /> w15"></td>
+				<td width="25%" class="<c:out value='${tdclass}' /> w25"></td>
 			</s:else>
 			<s:if
 				test="%{shouldShowHeaderField('fundsource') || shouldShowHeaderField('subscheme')}">
@@ -126,14 +133,14 @@
 		<tr>
 			<s:if test="%{shouldShowHeaderField('department')}">
 				<td class="bluebox w5">&nbsp;</td>
-				<td width="15%" class="<c:out value='${tdclass}' />"><s:text name="voucher.department"/> :</td>
-				<td width="25%" class="<c:out value='${tdclass}' />"><s:property value="%{getMasterName('department')}" /></td>
+				<td  class="<c:out value='${tdclass}' /> w15"><s:text name="voucher.department"/> :</td>
+				<td  class="<c:out value='${tdclass}' /> w25"><s:property value="%{getMasterName('department')}" /></td>
 			</s:if>
 			<s:if test="%{shouldShowHeaderField('functionary')}">
 				<td class="bluebox w5">&nbsp;</td>
-				<td width="15%" class="<c:out value='${tdclass}' />"><s:text name="voucher.functionary"/> :
+				<td  class="<c:out value='${tdclass}' /> w15"><s:text name="voucher.functionary"/> :
 					&nbsp;</td>
-				<td width="25%" class="<c:out value='${tdclass}' />"><s:property
+				<td class="<c:out value='${tdclass}' /> w25"><s:property
 						value="%{getMasterName('functionary')}" /></td>
 			</s:if>
 			<s:if
@@ -161,13 +168,13 @@
 		<tr>
 			<s:if test="%{shouldShowHeaderField('field')}">
 				<td class="bluebox w5">&nbsp;</td>
-				<td width="15%" class="<c:out value='${tdclass}' />"><s:text name="voucher.field"/> :
+				<td  class="<c:out value='${tdclass}' /> w15"><s:text name="voucher.field"/> :
 					&nbsp;</td>
-				<td width="25%" class="<c:out value='${tdclass}' />"><s:property
+				<td class="<c:out value='${tdclass}' /> w25"><s:property
 						value="%{getMasterName('field')}" /></td>
 				<td class="bluebox w5">&nbsp;</td>
-				<td width="15%" class="<c:out value='${tdclass}' />"></td>
-				<td width="25%" class="<c:out value='${tdclass}' />"></td>
+				<td  class="<c:out value='${tdclass}' /> w15"></td>
+				<td  class="<c:out value='${tdclass}' /> w25"></td>
 				<c:choose>
 					<c:when test="${tdclass == 'bluebox'}">
 						<c:set var="tdclass" value="greybox" scope="request" />
@@ -181,7 +188,7 @@
 
 		<tr>
 			<td class="bluebox w5">&nbsp;</td>
-			<td width="15%" class="<c:out value='${tdclass}' />"><s:text name="voucher.narration"/> :
+			<td class="<c:out value='${tdclass}' /> w15"><s:text name="voucher.narration"/> :
 				&nbsp;</td>
 			<td colspan="3" class="<c:out value='${tdclass}' />"><s:property
 					value="%{getMasterName('narration')}" /></td>
@@ -198,7 +205,7 @@
 		
 		<tr>
 			<td class="bluebox w5">&nbsp;</td>
-			<td width="15%" class="<c:out value='${tdclass}' />"><s:text name="voucher.ban.number"/> :
+			<td  class="<c:out value='${tdclass}' /> w15"><s:text name="voucher.ban.number"/> :
 				&nbsp;</td>
 			<td colspan="3" class="<c:out value='${tdclass}' />"><s:property
 					value="%{getMasterName('budgetaryAppnumber')}" /></td>

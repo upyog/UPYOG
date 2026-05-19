@@ -264,7 +264,6 @@ public class InstrumentService {
             instrHeader
                     .setBankBranchName(instrMap.get(BRANCH_NAME) != null ? instrMap
                             .get(BRANCH_NAME).toString() : null);
-            instrHeader.setTdnumber((String) instrMap.get("tdnumber"));
             final EgwStatus status = (EgwStatus) persistenceService
 					.find("from EgwStatus where upper(moduletype)=upper('Instrument') and upper(description)=?",
 							FinancialConstants.INSTRUMENT_CREATED_STATUS.toUpperCase());

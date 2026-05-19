@@ -1209,7 +1209,6 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             chequeAssignment.setDepartmentName(items[6]);
             chequeAssignment.setBillId(Long.valueOf(items[7]));
             chequeAssignment.setExpenditureType(items[8]);
-            chequeAssignment.setTdNumber(items[12]);
             chequeAssignment.setPaidAmount(BigDecimal.valueOf(Double.valueOf(item)));
             chequeAssignment.setIsSelected(true);
             

@@ -62,7 +62,7 @@ public class BudgetAppDisplay {
     private Date voucherDate;
     private String description;
     private String billNumber;
-    private String VoucherNumber;
+    private String voucherNumber;
     private Date billDate;
     private String bdgApprNumber;
     private Date createdDate;
@@ -149,14 +149,14 @@ public class BudgetAppDisplay {
     }
 
     public String getVoucherNumber() {
-        return VoucherNumber;
-    }
+		return voucherNumber;
+	}
 
-    public void setVoucherNumber(final String voucherNumber) {
-        VoucherNumber = voucherNumber;
-    }
+	public void setVoucherNumber(String voucherNumber) {
+		this.voucherNumber = voucherNumber;
+	}
 
-    public Date getBillDate() {
+	public Date getBillDate() {
         return billDate;
     }
 

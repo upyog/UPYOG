@@ -80,7 +80,7 @@ public class InstrumentHeader extends BaseModel {
     private String payTo;
     private String isPayCheque;
     private InstrumentType instrumentType;
-    private Long detailKeyId;
+    private Long detailKeyId;	
     private String transactionNumber;
     private Date transactionDate;
     private String payee;
@@ -89,15 +89,6 @@ public class InstrumentHeader extends BaseModel {
     private CFinancialYear serialNo;
     private ECSType ECSType;
     private String ifscCode;
-    private String tdnumber;
-
-    public String getTdnumber() {
-		return tdnumber;
-	}
-
-	public void setTdnumber(String tdnumber) {
-		this.tdnumber = tdnumber;
-	}
 
 	private Set<InstrumentVoucher> instrumentVouchers = new HashSet<InstrumentVoucher>(0);
 

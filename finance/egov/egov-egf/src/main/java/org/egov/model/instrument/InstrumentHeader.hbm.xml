@@ -96,9 +96,6 @@
         <property name="bankBranchName" type="java.lang.String">
             <column name="bankBranchName" length="50" />
         </property>
-        <property name="tdnumber" type="java.lang.String">
-            <column name="tdnumber" length="50"/>
-        </property>
         <property name="isPayCheque" type="java.lang.String">
             <column name="ISPAYCHEQUE" length="1" />
         </property>
