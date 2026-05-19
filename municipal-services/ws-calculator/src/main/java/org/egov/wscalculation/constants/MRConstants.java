@@ -22,5 +22,11 @@ public class MRConstants {
 
 	public static final String PROPERTY_MASTER_MODULE = "PropertyTax";
 	
+	public static final String METER_CONNECTION_TYPE = "Metered";
+
+	public static final String METER_MAX_READING_KEY = "meterMaxReading";
+
+	public static final String BULK_METER_MAX_READING_KEY = "bulkMeterMaxReading";
+	
 
 }
