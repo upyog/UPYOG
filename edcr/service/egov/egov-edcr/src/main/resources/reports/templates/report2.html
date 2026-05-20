@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style th:inline="text">
+    body { font-family: Arial; font-size: 12px; }
+
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 10px;
+        page-break-inside: avoid;
+    }
+
+    th, td { 
+        border: 1px solid #000; 
+        padding: 5px; 
+        text-align: center;
+        page-break-inside: avoid;
+    	page-break-after: auto;
+    }
+
+    /* ✅ HEADER STYLE */
+    th {
+        background-color: #99CCFF;
+        font-weight: bold;
+        text-align: left;
+        font-size: 15px;
+    }
+
+    .pass { color: green; font-weight: bold; }
+    .fail { color: red; font-weight: bold; }
+    
+    /* ✅ PAGE NUMBER */
+    @page {
+        size: A4;
+        margin: 8mm;
+        margin-bottom: 15mm;
+
+        @bottom-center {
+            content: counter(page) " of " counter(pages);
+            font-size: 10px;
+        }
+        
+        @bottom-right {
+	        content: "[[${'Application No: ' + applicationNumber + ', Scrutiny Date: ' + reportGeneratedDate}]]";
+	        font-size: 10px;
+	        font-weight: bold;
+	    }
+    }
+    
+    /* ✅ Keep first page content together */
+	.first-page {
+	    page-break-inside: avoid;
+	}
+	
+	/* ✅ Force next content to new page */
+	.page-break {
+	    page-break-before: always;
+	}
+    
+    .center {
+    	text-align: center;
+	}
+	
+	.tdNumber{
+		width: 4%;
+	}
+	
+	.tdHeading{
+		text-align: left;
+		width: 21%;
+	}
+	
+	.tdHeadingValue{
+		text-align: left;
+		width: 25%;
+	}
+    
+</style>
+</head>
+<body>
+	
+	<div class="first-page">
+		<img alt="" th:src="${logo}"/>
+	    <div class="center">
+			<h1 th:text="${ulbName}"></h1>
+			<h2 th:text="${reportHeading}"></h2>
+			<h3 th:text="${reportType}"></h3>
+		</div>
+		
+		<div class="center">
+			<h2>
+				STATUS: <span th:text="${reportStatus}" th:classappend="${reportStatus} == 'Fulfilled' ? 'pass' : 'fail'"></span>
+			</h2>
+		</div>
+		
+		<!-- APPLICATION DETAILS -->
+		<table>
+			<thead>
+				<th colspan="6" style="text-align: center;">APPLICATION DETAILS</th>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="tdNumber">1</td>
+					<td class="tdHeading">NAME OF APPLICANT</td>
+					<td class="tdHeadingValue" th:text="${applicantName}"></td>
+					<td class="tdNumber">2</td>
+					<td class="tdHeading" th:text="${'SCRUTINY DATE &amp; TIME'}"></td>
+					<td class="tdHeadingValue" th:text="${reportGeneratedDate}"></td>
+				</tr>
+				<tr>
+					<td class="tdNumber">3</td>
+					<td class="tdHeading">APPLICATION NUMBER</td>
+					<td class="tdHeadingValue" th:text="${applicationNumber}"></td>
+					<td class="tdNumber">4</td>
+					<td class="tdHeading">APPLICATION TYPE</td>
+					<td class="tdHeadingValue" th:text="${applicationType}"></td>
+				</tr>
+				<tr>
+					<td class="tdNumber">5</td>
+					<td class="tdHeading">BUILDING(Occupancy/Sub Occupancy)</td>
+					<td class="tdHeadingValue" th:text="${planInformation.getOccupancy()}"></td>
+					<td class="tdNumber">6</td>
+					<td class="tdHeading">DCR NUMBER</td>
+					<td class="tdHeadingValue" th:text="${dcrNo}"></td>
+				</tr>
+				<tr>
+					<td class="tdNumber">7</td>
+					<td class="tdHeading">PROFESSIONAL'S NAME</td>
+					<td class="tdHeadingValue" th:text="${licensee}"></td>
+					<td class="tdNumber">8</td>
+					<td class="tdHeading">SERVICE TYPE</td>
+					<td class="tdHeadingValue" th:text="${serviceType}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+
+		<!-- PLOT DETAILS -->
+		<table>
+			<thead>
+			<th colspan="6" style="text-align: center;">PLOT DETAILS</th>
+			</thead>
+
+			<tbody>
+
+			<tr>
+				<td class="tdNumber">1</td>
+				<td class="tdHeading">PLOT NO</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getPlotNo()}"></td>
+
+				<td class="tdNumber">2</td>
+				<td class="tdHeading">KHASRA NO</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getKhasraNo()}"></td>
+			</tr>
+
+			<tr>
+				<td class="tdNumber">3</td>
+				<td class="tdHeading">DISTRICT</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getDistrict()}"></td>
+
+				<td class="tdNumber">4</td>
+				<td class="tdHeading">ULB NAME</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getCity()}"></td>
+			</tr>
+
+			<tr>
+				<td class="tdNumber">5</td>
+				<td class="tdHeading">PLOT AREA (Declared)</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getPlotArea()}"></td>
+
+				<td class="tdNumber">6</td>
+				<td class="tdHeading">PLOT AREA (Measured)</td>
+				<td class="tdHeadingValue"
+				    th:text="${plot.getPlotBndryArea()}"></td>
+			</tr>
+
+			<tr>
+				<td class="tdNumber">7</td>
+				<td class="tdHeading">AVERAGE WIDTH &amp; DEPTH OF PLOT</td>
+				<td class="tdHeadingValue"
+				    th:text="${'Width: ' + planInformation.getWidthOfPlot() + ' and Depth: ' + planInformation.getDepthOfPlot()}"></td>
+
+				<td class="tdNumber">8</td>
+				<td class="tdHeading">KHATUNI NO</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getKhatuniNo()}"></td>
+			</tr>
+
+			<tr>
+				<td class="tdNumber">9</td>
+				<td class="tdHeading">AREA TYPE</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getTypeOfArea()}"></td>
+
+				<td class="tdNumber">10</td>
+				<td class="tdHeading">DEMOLITION AREA</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getDemolitionArea()}"></td>
+			</tr>
+
+			<tr>
+				<td class="tdNumber">11</td>
+				<td class="tdHeading">ULB TYPE</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getUlbType()}"></td>
+
+				<td class="tdNumber">12</td>
+				<td class="tdHeading">NUMBER OF FLOORS</td>
+				<td class="tdHeadingValue"
+				    th:text="${planInformation.getNumberOfFloors()}"></td>
+			</tr>
+
+			</tbody>
+		</table>
+
+		<!-- Error Block -->
+		<div th:if="${errors.size() > 0}" style="color: red;">
+			<h2>ERROR</h2>
+			<div th:each="error, stat : ${errors}">
+				<span style="font-size: 15px;" th:text="${stat.count + '. ' + error.value}"></span>
+			</div>
+		</div>
+
+		<!-- ✅ QR CODE — sirf Fulfilled hone par dikhega -->
+		<div th:if="${qrCode != null}" style="margin-top: 15px; text-align: right;">
+			<p style="font-size: 11px; font-weight: bold; margin-bottom: 4px;">Scan to Verify</p>
+			<img th:src="'data:image/png;base64,' + ${qrCode}"
+			     alt="Verification Code"
+			     style="width: 200px; height: 60px;"/>
+		</div>
+
+	</div>  <!-- ← first-page div close hota hai yahan -->
+
+	<div class="page-break"></div>
+
+	<div th:each="section : ${sections}">
+		<div th:if="${section.value.size() > 0}">
+			<h2 style="color: blue;" th:text="${section.key}"></h2>
+
+			<div th:each="scrutinyDetail, stat : ${section.value}">
+
+				<!-- Ground Coverage Special Table -->
+				<th:block th:if="${scrutinyDetail.key == 'Ground Coverage'}">
+					<table>
+						<thead>
+						<tr>
+							<th>Total Plot Area</th>
+							<th>Ground Coverage</th>
+							<th>Built Up Area</th>
+						</tr>
+						</thead>
+
+						<tbody>
+						<tr th:each="row : ${scrutinyDetail.value.detail}">
+							<td th:text="${row['Total Plot Area']}"></td>
+							<td th:text="${row['Ground Coverage']}"></td>
+							<td th:text="${row['Built Up Area']}"></td>
+						</tr>
+						</tbody>
+					</table>
+				</th:block>
+
+				<!-- Existing Generic Table -->
+				<table th:unless="${scrutinyDetail.key == 'Ground Coverage'}">
+					<thead>
+					<tr>
+						<th th:text="${stat.count + '. ' + scrutinyDetail.key}"
+						    th:attr="colspan=${scrutinyDetail.value.getColumnHeading().size()}"></th>
+					</tr>
+					</thead>
+
+					<tbody>
+					<tr>
+						<td th:each="entry : ${scrutinyDetail.value.columnHeading}"
+						    th:text="${entry.value.name}">
+						</td>
+					</tr>
+
+					<tr th:each="row : ${scrutinyDetail.value.detail}">
+						<td th:if="${row.get(entry.value.name) != null && row.get(entry.value.name).contains('-colspan-')}"
+						    th:each="entry : ${scrutinyDetail.value.columnHeading}"
+						    th:text="${row.get(entry.value.name).split('-colspan-')[0]}"
+						    th:attr="colspan=${row.get(entry.value.name).split('-colspan-')[1]}"
+						    th:classappend="${entry.value.name == 'Status'} ? (${row.get(entry.value.name)} == 'Fulfilled' ? 'pass' : 'fail') : ''">
+						</td>
+
+						<td th:unless="${row.get(entry.value.name) != null && row.get(entry.value.name).contains('-colspan-')}"
+						    th:if="${row.get(entry.value.name) != null}"
+						    th:each="entry : ${scrutinyDetail.value.columnHeading}"
+						    th:text="${row.get(entry.value.name)}"
+						    th:classappend="${entry.value.name == 'Status'} ? (${row.get(entry.value.name)} == 'Fulfilled' ? 'pass' : 'fail') : ''">
+						</td>
+					</tr>
+
+					<tr th:if="${scrutinyDetail.value.remarks != null && !scrutinyDetail.value.remarks.isEmpty()}">
+						<td style="text-align: left; white-space: pre-line;"
+						    th:text="${scrutinyDetail.value.remarks}"
+						    th:attr="colspan=${scrutinyDetail.value.getColumnHeading().size()}">
+						</td>
+					</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>
