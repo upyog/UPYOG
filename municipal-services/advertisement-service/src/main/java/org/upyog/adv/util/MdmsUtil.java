@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.egov.common.contract.request.RequestInfo;
@@ -44,8 +46,8 @@ public class MdmsUtil {
 	@Autowired
 	private ObjectMapper mapper;
 
-	private static Object mdmsMap = null;
-	private static List<TaxHeadMaster> headMasters = null;
+	private static final Map<String, Object> mdmsMapByTenant = new ConcurrentHashMap<>();
+	private static final Map<String, List<TaxHeadMaster>> headMastersByTenant = new ConcurrentHashMap<>();
 	/*
 	 * @Autowired private MDMSClient mdmsClient;
 	 */
@@ -65,12 +67,10 @@ public class MdmsUtil {
 	 */
 	public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
 		MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
-		Object result = null;
-		if (mdmsMap == null) {
+		Object result = mdmsMapByTenant.get(tenantId);
+		if (result == null) {
 			result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-			setMDMSDataMap(result);
-		} else {
-			result = getMDMSDataMap();
+			setMDMSDataMap(tenantId, result);
 		}
 
 		// Object result = mdmsClient.getMDMSData(mdmsCriteriaReq);
@@ -180,21 +180,21 @@ public class MdmsUtil {
 
 
 
-	public static void setMDMSDataMap(Object mdmsDataMap) {
-		mdmsMap = mdmsDataMap;
+	public static void setMDMSDataMap(String tenantId, Object mdmsDataMap) {
+		mdmsMapByTenant.put(tenantId, mdmsDataMap);
 	}
 
-	public static Object getMDMSDataMap() {
-		return mdmsMap;
+	public static Object getMDMSDataMap(String tenantId) {
+		return mdmsMapByTenant.get(tenantId);
 	}
 
 	/**
 	 * makes mdms call with the given criteria and reutrn mdms data
 	 */
 	public List<TaxHeadMaster> getTaxHeadMasterList(RequestInfo requestInfo, String tenantId, String moduleName) {
-		if (headMasters != null) {
+		if (headMastersByTenant.containsKey(tenantId)) {
 			log.info("Returning cached value of tax head masters");
-			return headMasters;
+			return headMastersByTenant.get(tenantId);
 		}
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
@@ -210,13 +210,15 @@ public class MdmsUtil {
 
 			JSONArray jsonArray = mdmsResponse.getMdmsRes().get("BillingService").get("TaxHeadMaster");
 
-			headMasters = mapper.readValue(jsonArray.toJSONString(),
+			List<TaxHeadMaster> headMasters = mapper.readValue(jsonArray.toJSONString(),
 					mapper.getTypeFactory().constructCollectionType(List.class, TaxHeadMaster.class));
+			headMastersByTenant.put(tenantId, headMasters);
 		} catch (JsonProcessingException e) {
 			log.info("Exception occured while converting tax haead master list : " + e);
+			headMastersByTenant.put(tenantId, new ArrayList<>());
 		}
 
-		return headMasters;
+		return headMastersByTenant.getOrDefault(tenantId, new ArrayList<>());
 	}
 
 

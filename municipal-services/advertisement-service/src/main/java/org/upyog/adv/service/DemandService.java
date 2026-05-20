@@ -145,7 +145,7 @@ public class DemandService {
 	public List<Demand> getDemand(AdvertisementDemandEstimationCriteria estimationCriteria) throws JsonProcessingException {
 		log.info("Getting demand for request without booking no");
 
-		String tenantId = estimationCriteria.getTenantId().split("\\.")[0];
+		String tenantId = estimationCriteria.getTenantId();
 		if (estimationCriteria.getTenantId().split("\\.").length == 1) {
 			throw new CustomException(BookingConstants.INVALID_TENANT, "Please provide valid tenant id for booking creation");
 		}

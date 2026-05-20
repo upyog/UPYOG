@@ -72,8 +72,7 @@ public class BookingServiceImpl implements BookingService {
 	public BookingDetail createBooking(@Valid BookingRequest bookingRequest) throws JsonProcessingException {
 		log.info("Create advertisement booking for user : " + bookingRequest.getRequestInfo().getUserInfo().getId());
 		String uuid = bookingRequest.getRequestInfo().getUserInfo().getUuid();
-		// TODO move to util calss 
-		String tenantId = bookingRequest.getBookingApplication().getTenantId().split("\\.")[0];
+		String tenantId = bookingRequest.getBookingApplication().getTenantId();
 		if (bookingRequest.getBookingApplication().getTenantId().split("\\.").length == 1) {
 			throw new CustomException(BookingConstants.INVALID_TENANT,
 					"Please provide valid tenant id for booking creation");

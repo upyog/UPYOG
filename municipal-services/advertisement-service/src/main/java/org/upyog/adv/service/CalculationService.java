@@ -42,7 +42,7 @@ public class CalculationService {
 	 */
 	public List<DemandDetail> calculateDemand(BookingRequest bookingRequest, List<String> taxRateCodes, Object mdmsData) throws JsonProcessingException {
 
-		String tenantId = bookingRequest.getBookingApplication().getTenantId().split("\\.")[0];
+		String tenantId = bookingRequest.getBookingApplication().getTenantId();
 		Map<String, Object> mdmsDataMap = (Map<String, Object>) mdmsData;
 
 		List<Map<String, Object>> taxRateList = (List<Map<String, Object>>) ((Map<String, Object>) ((Map<String, Object>) mdmsDataMap
@@ -184,7 +184,7 @@ public class CalculationService {
 	 * This is the PER DAY booking fee, NOT the total
 	 */
 	private BigDecimal getBaseAmountFromMDMS(BookingRequest bookingRequest) {
-		String tenantId = bookingRequest.getBookingApplication().getTenantId().split("\\.")[0];
+		String tenantId = bookingRequest.getBookingApplication().getTenantId();
 		CartDetail cartDetail = bookingRequest.getBookingApplication().getCartDetails().get(0);
 
 		List<Advertisements> advertisements = null;
@@ -314,7 +314,7 @@ public class CalculationService {
 			BookingRequest bookingRequest,
 			BigDecimal securityDepositPaid) {
 
-		String tenantId = bookingRequest.getBookingApplication().getTenantId().split("\\.")[0];
+		String tenantId = bookingRequest.getBookingApplication().getTenantId();
 		String currentFY = feeCalculationUtil.getCurrentFinancialYear();
 		BigDecimal baseAmount = getBaseAmountFromMDMS(bookingRequest);
 		int daysAfterBooking = calculateDaysAfterBooking(bookingRequest);
