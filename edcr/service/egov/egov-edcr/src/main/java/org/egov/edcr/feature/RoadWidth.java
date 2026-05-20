@@ -99,7 +99,7 @@ public class RoadWidth extends FeatureProcess {
     public static final String NEW = "NEW";
     public static final String ROADWIDTH = "Road Width";
     
- // Road Width Required (in meters)
+    // Road Width Required (in meters)
     private static final BigDecimal ROAD_WIDTH_12  = BigDecimal.valueOf(12);
     private static final BigDecimal ROAD_WIDTH_18  = BigDecimal.valueOf(18);
     private static final BigDecimal ROAD_WIDTH_24  = BigDecimal.valueOf(24);
@@ -117,78 +117,80 @@ public class RoadWidth extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
     	
-        if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null) {
-            BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-            if (roadWidth == null || roadWidth.compareTo(BigDecimal.ZERO) == 0) {
-                boolean skipValidation = false;
-
-                if ("SCHEME_AREA".equalsIgnoreCase(pl.getEdcrRequest().getAreaType())
-                		&& !Boolean.TRUE.equals(pl.getEdcrRequest().getApprovedCS())) {
-                    skipValidation = true;
-                } else if ("NON_SCHEME_AREA".equalsIgnoreCase(pl.getEdcrRequest().getAreaType())
-                        && Boolean.TRUE.equals(pl.getEdcrRequest().getCluApprove())) {
-                    skipValidation = true;
-                }
-
-                if (!skipValidation) {
-                    pl.addError(ROADWIDTH, getLocaleMessage(OBJECTNOTDEFINED, ROADWIDTH));
-                }
-            }
-            String roadType = pl.getPlanInformation().getRoadType() != null ? pl.getPlanInformation().getRoadType() : "Mention Road type in PlanInfo" ;
-            String typeOfArea = pl.getPlanInformation().getTypeOfArea();
-            if (typeOfArea != null
-//            		&& NEW.equalsIgnoreCase(typeOfArea)
-            		) {
-                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.setKey("Common_Road Width And Type");
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, OCCUPANCY +" - "+ ROADTYPE);
-                scrutinyDetail.addColumnHeading(4, PERMITTED);
-                scrutinyDetail.addColumnHeading(4, PROVIDED);
-                scrutinyDetail.addColumnHeading(6, STATUS);
-
-                Map<String, String> details = new HashMap<>();
-                details.put(RULE_NO, RULE_34);
-                details.put(DESCRIPTION, ROADWIDTH_DESCRIPTION);
-
-                Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues();
-
-                if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null) {
-                    OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper()
-                            .getSubtype() != null
-                                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
-                                    : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
-
-                    if (occupancyType != null) {
-                        details.put(OCCUPANCY +" - "+ ROADTYPE, occupancyType.getName() +" - "+ "("+ roadType +")");
-                        // get occupancy for industrial
-                        OccupancyHelperDetail occupancyType1 = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
-                        //if (G.equals(occupancyType.getCode())) {
-                        //getRoadWidthFromMdms(pl,roadWidth);
-                        //}
-                        BigDecimal roadWidthRequired = getRoadWidthFromMdms(pl,roadWidth);
-                        if (roadWidthRequired != null) {
-                            if (roadWidth.compareTo(roadWidthRequired) >= 0 
-                            		&& roadWidth != null
-                            		&& roadWidth.compareTo(BigDecimal.ZERO) > 0) {
-                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
-                                details.put(PROVIDED, roadWidth.toString() + "m");
-                                details.put(STATUS, Result.Accepted.getResultVal());
-                                scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            } else {
-                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
-                                details.put(PROVIDED, roadWidth.toString() + "m");
-                                details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null) {
+////            BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+//        	BigDecimal roadWidth = pl.getRoadReserveFront();
+//            
+//            if (roadWidth == null || roadWidth.compareTo(BigDecimal.ZERO) == 0) {
+//                boolean skipValidation = false;
+//
+//                if ("SCHEME_AREA".equalsIgnoreCase(pl.getEdcrRequest().getAreaType())
+//                		&& !Boolean.TRUE.equals(pl.getEdcrRequest().getApprovedCS())) {
+//                    skipValidation = true;
+//                } else if ("NON_SCHEME_AREA".equalsIgnoreCase(pl.getEdcrRequest().getAreaType())
+//                        && Boolean.TRUE.equals(pl.getEdcrRequest().getCluApprove())) {
+//                    skipValidation = true;
+//                }
+//
+//                if (!skipValidation) {
+//                    pl.addError(ROADWIDTH, getLocaleMessage(OBJECTNOTDEFINED, ROADWIDTH));
+//                }
+//            }
+//            String roadType = pl.getPlanInformation().getRoadType() != null ? pl.getPlanInformation().getRoadType() : "Mention Road type in PlanInfo" ;
+//            String typeOfArea = pl.getPlanInformation().getTypeOfArea();
+//            if (typeOfArea != null
+////            		&& NEW.equalsIgnoreCase(typeOfArea)
+//            		) {
+//                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+//                scrutinyDetail.setKey("Common_Road Width And Type");
+//                scrutinyDetail.addColumnHeading(1, RULE_NO);
+//                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+//                scrutinyDetail.addColumnHeading(3, OCCUPANCY +" - "+ ROADTYPE);
+//                scrutinyDetail.addColumnHeading(4, PERMITTED);
+//                scrutinyDetail.addColumnHeading(4, PROVIDED);
+//                scrutinyDetail.addColumnHeading(6, STATUS);
+//
+//                Map<String, String> details = new HashMap<>();
+//                details.put(RULE_NO, RULE_34);
+//                details.put(DESCRIPTION, ROADWIDTH_DESCRIPTION);
+//
+//                Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues();
+//
+//                if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null) {
+//                    OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+//                            .getSubtype() != null
+//                                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
+//                                    : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
+//
+//                    if (occupancyType != null) {
+//                        details.put(OCCUPANCY +" - "+ ROADTYPE, occupancyType.getName() +" - "+ "("+ roadType +")");
+//                        // get occupancy for industrial
+//                        OccupancyHelperDetail occupancyType1 = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
+//                        //if (G.equals(occupancyType.getCode())) {
+//                        //getRoadWidthFromMdms(pl,roadWidth);
+//                        //}
+//                        BigDecimal roadWidthRequired = getRoadWidthFromMdms(pl,roadWidth);
+//                        if (roadWidthRequired != null) {
+//                            if (roadWidth.compareTo(roadWidthRequired) >= 0 
+//                            		&& roadWidth != null
+//                            		&& roadWidth.compareTo(BigDecimal.ZERO) > 0) {
+//                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
+//                                details.put(PROVIDED, roadWidth.toString() + "m");
+//                                details.put(STATUS, Result.Accepted.getResultVal());
+//                                scrutinyDetail.getDetail().add(details);
+//                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//                            } else {
+//                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
+//                                details.put(PROVIDED, roadWidth.toString() + "m");
+//                                details.put(STATUS, Result.Not_Accepted.getResultVal());
+//                                scrutinyDetail.getDetail().add(details);
+//                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
         return pl;
     }
 
