@@ -151,7 +151,7 @@ public class RoadReserve extends FeatureProcess {
 			    }
 
 			    if (roadWidthBuilder.length() > 0) {
-			        setReportOutputDetails(pl, "Road Reserve", roadWidthBuilder.toString(),
+			        setReportOutputDetails(pl, "Road Width", roadWidthBuilder.toString(),
 			        		Result.Accepted.getResultVal(),scrutinyDetail8);
 			    }
 			}
