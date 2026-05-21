@@ -15,7 +15,11 @@ public class ActuatorSecurityConfig {
     public SecurityFilterChain actuatorSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .securityMatcher("/user/prometheus", "/user/health")
+            .securityMatcher(
+                "/user/prometheus",
+                "/user/health",
+                "/user/info"
+            )
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll()
             )
