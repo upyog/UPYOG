@@ -50,7 +50,7 @@ public class SecurityConfig {
         return http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/actuator/**", "/health/**").permitAll()
+                .requestMatchers("/actuator/**", "/health/**","/prometheus/**").permitAll()
                 .requestMatchers("/oauth2/**", "/login", "/error").permitAll()
                 .requestMatchers("/user/oauth/**").permitAll()  // Allow access to custom auth endpoints
                 .requestMatchers("/_oauth2/**").permitAll()  // Allow access to custom OAuth2 endpoints
