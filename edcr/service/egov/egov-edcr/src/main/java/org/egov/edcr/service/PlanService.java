@@ -93,6 +93,9 @@ public class PlanService {
     
     @Autowired
     private BpaMdmsUtil bpaMdmsUtil;
+    
+    @Autowired
+    private PlanReportServiceV2 planReportServiceV2;
 
     public Plan process(EdcrApplication dcrApplication, String applicationType) {
         Map<String, String> cityDetails = specificRuleService.getCityDetails();
@@ -679,8 +682,8 @@ public class PlanService {
 
     private InputStream generateReport(Plan plan, Amendment amd, EdcrApplication dcrApplication) {
 
-        String beanName = "PlanReportService";
-        PlanReportService service = null;
+        String beanName = "PlanReportServiceV2";
+        PlanReportServiceV2 service = null;
         int index = -1;
         AmendmentDetails[] amdArray = null;
         InputStream reportStream = null;
@@ -695,18 +698,18 @@ public class PlanService {
             beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
 
             if (amd.getDetails().isEmpty() || index == -1)
-                service = (PlanReportService) specificRuleService.find(beanName);
+                service = (PlanReportServiceV2) specificRuleService.find(beanName);
             else if (index >= 0) {
                 for (int i = index; i < length; i++) {
 
-                    service = (PlanReportService) specificRuleService
+                    service = (PlanReportServiceV2) specificRuleService
                             .find(beanName + "_" + amdArray[i].getDateOfBylawString());
                     if (service != null)
                         break;
                 }
             }
             if (service == null) {
-                service = (PlanReportService) specificRuleService.find(beanName);
+                service = (PlanReportServiceV2) specificRuleService.find(beanName);
             }
 
             reportStream = service.generateReport(plan, dcrApplication);

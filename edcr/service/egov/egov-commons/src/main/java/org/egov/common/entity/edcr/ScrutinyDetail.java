@@ -74,6 +74,8 @@ public class ScrutinyDetail implements Serializable {
         public String name;
         @JsonIgnore
         public HorizontalAlign align;
+        
+        public String getName() {return name;}
 
     }
 
