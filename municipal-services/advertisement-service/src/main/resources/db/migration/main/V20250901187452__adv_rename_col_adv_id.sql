@@ -1,0 +1,1 @@
+ALTER TABLE public.eg_adv_cart_detail RENAME COLUMN "advertisementId" TO advertisementid;
