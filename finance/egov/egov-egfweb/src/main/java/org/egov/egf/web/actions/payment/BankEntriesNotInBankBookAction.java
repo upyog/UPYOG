@@ -246,7 +246,7 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
         }
 
         query.append("select be.id as beId,be.refno as refnum,be.type as type,be.txndate as date,be.txnamount as amount,be.glcodeid as glcodeDetail,be.remarks as remarks ")
-                .append(" from bankentries be,bankentries_mis bemis where be.voucherheaderid is null and be.id = bemis.bankentriesid ")
+                .append(" from bankentries be,bankentries_mis bemis where be.voucherheaderid is not null and be.id = bemis.bankentriesid ")
                 .append(subQuery.toString());
         queryMap.put(query.toString(), queryParams);
         return queryMap;

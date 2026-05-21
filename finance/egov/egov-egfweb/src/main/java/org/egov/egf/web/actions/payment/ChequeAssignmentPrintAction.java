@@ -48,11 +48,14 @@
 package org.egov.egf.web.actions.payment;
 
 import org.apache.struts2.convention.annotation.Action;
+
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.ChequeFormat;
+import org.egov.infra.admin.master.repository.CityRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.NumberToWord;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.model.instrument.InstrumentHeader;
@@ -90,6 +93,9 @@ public class ChequeAssignmentPrintAction extends BaseFormAction {
     private final SimpleDateFormat DDMMYYYFORMAT = new SimpleDateFormat("ddMMYYYY");
     private final SimpleDateFormat DD_MON_YYYYFORMAT = Constants.DD_MON_YYYYFORMAT;
     private String instrumentHeader ;
+    
+    @Autowired
+	private CityRepository cityRepository;
 
     @Override
     public Object getModel() {
@@ -136,6 +142,7 @@ public class ChequeAssignmentPrintAction extends BaseFormAction {
         paramMap.put("totalAmount", totalAmount);
         paramMap.put("amountInWords", amountInWords);
         paramMap.put("chqDate", chqDate);
+        paramMap.put("ulbName", cityRepository.findByCode(ApplicationThreadLocals.getTenantID()).getName());
         }
         return paramMap;
 

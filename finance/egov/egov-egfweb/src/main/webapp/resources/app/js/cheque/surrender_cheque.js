@@ -248,7 +248,17 @@ function callAjaxSearch() {
 
 																    if (tableNode && tableNode.table && tableNode.table.body) {
 																        var colCount = tableNode.table.body[0].length;
-																        tableNode.table.widths = Array(colCount).fill('*');
+																		tableNode.table.widths = [
+																		           '4%',   // Sr No
+																		           '14%',  // Bank Branch
+																		           '14%',  // Account Number
+																		           '10%',  // Cheque Number
+																		           '9%',   // Cheque Date
+																		           '10%',  // Pay To
+																		           '18%',  // Voucher Number
+																		           '9%',   // Voucher Date
+																		           '12%'   // Reason
+																		       ];
 																    }
 																}
 															}, {

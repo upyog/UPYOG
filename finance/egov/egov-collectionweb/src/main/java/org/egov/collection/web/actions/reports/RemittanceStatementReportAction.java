@@ -70,6 +70,7 @@ import org.egov.eis.service.OldEmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -238,6 +239,11 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         critParams.put(EGOV_REMITTANCE_VOUCHER,
                 bankRemittanceList.isEmpty() ? "" : bankRemittanceList.get(0).getVoucherNumber());
         critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
+        // ULB name for cash bank challan
+        String ulbName = ApplicationThreadLocals.getCityName() != null 
+                ? ApplicationThreadLocals.getCityName() 
+                : "";
+        critParams.put("ulbName", ulbName);
     }
     @SuppressWarnings("unchecked")
     @Action(value = "/reports/remittanceStatementReport-printChequeBankChallan")

@@ -91,6 +91,7 @@ import org.egov.commons.service.BankAccountService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.autonumber.RtgsNumberGenerator;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.egf.masters.repository.SupplierRepository;
 import org.egov.egf.model.BankAdviceReportInfo;
 import org.egov.egf.web.actions.voucher.BaseVoucherAction;
 import org.egov.eis.entity.DrawingOfficer;
@@ -131,6 +132,8 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import com.google.common.base.Supplier;
 
 import net.sf.jasperreports.engine.JRException;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -284,6 +287,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     private String selectedRowsId;
     @Autowired
     private InstrumentVoucherService instrumentVoucherService;
+    
+    @Autowired
+    private SupplierRepository supplierRepository;
 
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
@@ -2321,8 +2327,14 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String bankAdviceExcel() throws JRException, IOException {
         BankAdviceReportInfo bankAdvice = new BankAdviceReportInfo();
         final InstrumentVoucher instrumentHeader = instrumentVoucherService.getInstrumentVoucherByVoucherHeader(instHeaderId);
-        bankAdvice.setPartyName(instrumentHeader.getInstrumentHeaderId().getPayTo());
+        String supName=instrumentHeader.getInstrumentHeaderId().getPayTo();
+        bankAdvice.setPartyName(supName);
         bankAdvice.setAmount(instrumentHeader.getInstrumentHeaderId().getInstrumentAmount());
+        List<org.egov.model.masters.Supplier> suplier=supplierRepository.findByName(supName);
+        bankAdvice.setBank(instrumentHeader.getInstrumentHeaderId().getBankId().getName());
+        bankAdvice.setBankBranch(instrumentHeader.getInstrumentHeaderId().getBankBranchName());
+        bankAdvice.setIfscCode(instrumentHeader.getInstrumentHeaderId().getIfscCode());
+        bankAdvice.setAccountNumber(instrumentHeader.getInstrumentHeaderId().getBankAccountId().getAccountnumber());
         final List<Object> data = new ArrayList<Object>();
         data.add(bankAdvice);
 

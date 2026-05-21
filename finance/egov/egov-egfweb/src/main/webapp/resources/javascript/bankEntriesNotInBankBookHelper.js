@@ -119,87 +119,100 @@ function createCheckBoxFormatterBENIBB(prefix, suffix) {
 }
 
 function createDateFormatterBENIBB(prefix, suffix) {
-	return function(el, oRecord, oColumn, oData) {
-		var value = (YAHOO.lang.isValue(oData)) ? oData : "";
-		el.innerHTML = '<s:date name="'
-				+ prefix
-				+ '['
-				+ bankEntriesNotInBankBookTableIndex
-				+ ']'
-				+ suffix
-				+ 'Id" id="'
-				+ prefix
-				+ '['
-				+ bankEntriesNotInBankBookTableIndex
-				+ ']'
-				+ suffix
-				+ 'Id" format="dd/MM/yyyy" /> <input type="text" id="'
-				+ prefix
-				+ '['
-				+ bankEntriesNotInBankBookTableIndex
-				+ ']'
-				+ suffix
-				+ '"	name="'
-				+ prefix
-				+ '['
-				+ bankEntriesNotInBankBookTableIndex
-				+ ']'
-				+ suffix
-				+ '" data-date-end-date="0d" onkeyup="DateFormat(this,this.value,event,false,\'3\')"	placeholder="DD/MM/YYYY" class="form-control datepicker" data-inputmask="\'mask\': \'d/m/y\'"  />';
-	}
+    return function(el, oRecord, oColumn, oData) {
+
+        el.innerHTML =
+            '<input type="hidden" id="' + prefix + '['
+            + bankEntriesNotInBankBookTableIndex + ']' + suffix
+            + 'Id" name="' + prefix + '['
+            + bankEntriesNotInBankBookTableIndex + ']' + suffix
+            + 'Id" />'
+            +
+            '<input type="text" id="' + prefix + '['
+            + bankEntriesNotInBankBookTableIndex + ']' + suffix
+            + '" name="' + prefix + '['
+            + bankEntriesNotInBankBookTableIndex + ']' + suffix
+            + '" data-date-end-date="0d" '
+            + 'onkeyup="DateFormat(this,this.value,event,false,\'3\')" '
+            + 'placeholder="DD/MM/YYYY" '
+            + 'class="form-control datepicker" '
+            + 'data-inputmask="\'mask\': \'d/m/y\'" />';
+    }
 }
 
 function createDropdownFormatterBENIBB(prefix) {
 	return function(el, oRecord, oColumn, oData) {
-		var selectedValue = (lang.isValue(oData)) ? oData : oRecord
-				.getData(oColumn.field), options = (lang
-				.isArray(oColumn.dropdownOptions)) ? oColumn.dropdownOptions
-				: null, selectEl, collection = el
-				.getElementsByTagName("select");
+
+		var selectedValue = (YAHOO.lang.isValue(oData))
+				? oData
+				: oRecord.getData(oColumn.field),
+
+			options = (YAHOO.lang.isArray(oColumn.dropdownOptions))
+				? oColumn.dropdownOptions
+				: null,
+
+			selectEl,
+			collection = el.getElementsByTagName("select");
+
 		if (collection.length === 0) {
+
 			selectEl = document.createElement("select");
+
 			selectEl.className = YAHOO.widget.DataTable.CLASS_DROPDOWN;
-			selectEl.name = prefix + '[' + bankEntriesNotInBankBookTableIndex
+
+			selectEl.name = prefix + '['
+					+ bankEntriesNotInBankBookTableIndex
 					+ '].' + oColumn.getKey();
-			selectEl.id = prefix + '[' + bankEntriesNotInBankBookTableIndex
+
+			selectEl.id = prefix + '['
+					+ bankEntriesNotInBankBookTableIndex
 					+ '].' + oColumn.getKey();
-			// selectEl.onfocus=check;
+
 			selectEl = el.appendChild(selectEl);
-			var selectedIndex = {
-				value : bankEntriesNotInBankBookTableIndex
-			};
-
-			/*
-			 * YAHOO.util.Event.addListener(selectEl, "change",
-			 * onDropdownChange, selectedIndex, this);
-			 */
-
 		}
 
-		selectEl = collection[0];
+		selectEl = collection[0] || selectEl;
 
 		if (selectEl) {
+
 			selectEl.innerHTML = "";
+
 			if (options) {
+
 				for (var i = 0; i < options.length; i++) {
+
 					var option = options[i];
 					var optionEl = document.createElement("option");
-					optionEl.value = (lang.isValue(option.value)) ? option.value
+
+					optionEl.value = (YAHOO.lang.isValue(option.value))
+							? option.value
 							: option;
-					optionEl.innerHTML = (lang.isValue(option.text)) ? option.text
-							: (lang.isValue(option.label)) ? option.label
+
+					optionEl.innerHTML = (YAHOO.lang.isValue(option.text))
+							? option.text
+							: (YAHOO.lang.isValue(option.label))
+									? option.label
 									: option;
+
 					optionEl = selectEl.appendChild(optionEl);
+
 					if (optionEl.value == selectedValue) {
 						optionEl.selected = true;
 					}
 				}
 			} else {
-				selectEl.innerHTML = "<option selected value=\""
-						+ selectedValue + "\">" + selectedValue + "</option>";
+
+				selectEl.innerHTML =
+						"<option selected value=\""
+						+ selectedValue + "\">"
+						+ selectedValue
+						+ "</option>";
 			}
 		} else {
-			el.innerHTML = lang.isValue(oData) ? oData : "";
+
+			el.innerHTML = YAHOO.lang.isValue(oData)
+					? oData
+					: "";
 		}
 	}
 }

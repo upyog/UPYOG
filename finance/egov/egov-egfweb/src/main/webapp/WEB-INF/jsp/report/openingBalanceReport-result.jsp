@@ -90,13 +90,10 @@
 			title="Credit (Rs.)" style="width:6%;text-align:right"
 			property="credit" />
 		<display:caption media="pdf">
-			<div align="left" style="text-align: left;">
-				<b><s:property value="%{titleName}" /><s:property value="%{heading}" /></b>
-			</div>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<s:property value="%{titleName}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Opening Balance Report  
-		</display:caption>
+              <div style="text-align:center; font-weight:bold; font-size:16px;">
+                  Opening Balance Report
+                </div>
+          </display:caption>
 		<display:caption media="excel">
 				   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						  Opening Balance Report  
