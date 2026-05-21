@@ -447,27 +447,34 @@ public class EstimationService {
 		if (billingSlabs == null || billingSlabs.isEmpty())
 			throw new CustomException("BILLING_SLAB_NOT_FOUND", "Billing Slab are Empty");
  
-		Double meterMaxReading =
-		        getMaxMeterReadingFromMDMS(
-		                request.getRequestInfo(),
-		                waterConnection.getTenantId(),
-		                false
-		        );
+		Double meterMaxReading = null;
+		Double bulkMeterMaxReading = null;
 
-		Double bulkMeterMaxReading =
-		        getMaxMeterReadingFromMDMS(
-		                request.getRequestInfo(),
-		                waterConnection.getTenantId(),
-		                true
-		        );
+		if (WSCalculationConstant.meteredConnectionType
+		        .equals(waterConnection.getConnectionType())) {
 
-		log.info(
-		        "MDMS billingPeriod → meterMaxReading={}, bulkMeterMaxReading={}",
-		        meterMaxReading,
-		        bulkMeterMaxReading
-		);
+		    meterMaxReading =
+		            getMaxMeterReadingFromMDMS(
+		                    request.getRequestInfo(),
+		                    waterConnection.getTenantId(),
+		                    false
+		            );
+
+		    bulkMeterMaxReading =
+		            getMaxMeterReadingFromMDMS(
+		                    request.getRequestInfo(),
+		                    waterConnection.getTenantId(),
+		                    true
+		            );
+
+		    log.info(
+		            "MDMS billingPeriod → meterMaxReading={}, bulkMeterMaxReading={}",
+		            meterMaxReading,
+		            bulkMeterMaxReading
+		    );
+		}
  
-		// ✅ Pass maxReadings into getUnitOfMeasurement
+		//  Pass maxReadings into getUnitOfMeasurement
 		Double totalUOM = getUnitOfMeasurement(property, waterConnection, calculationAttribute, criteria,
 				meterMaxReading, bulkMeterMaxReading);
  
