@@ -35,6 +35,12 @@
         size: A4;
         margin: 8mm;
         margin-bottom: 15mm;
+        
+        @bottom-left {
+	        content: url([[${egovLogo}]]);
+	        transform: scale(0.4);
+	        transform-origin: left bottom;
+	    }
 
         @bottom-center {
             content: counter(page) " of " counter(pages);
@@ -75,13 +81,95 @@
 		text-align: left;
 		width: 25%;
 	}
+	
+	.logo{
+		position: absolute;
+		align-self: left;
+		width: 80px;
+		height: 80px;
+	}
     
+    #pdfFooter {
+	    position: running(pdfFooter);
+	    width: 100%;
+	    border-top: 1px solid #999;
+	    padding-top: 4px;
+	    font-size: 10px;
+	    font-weight: bold;
+	}
+
+	.footer-table {
+	    width: 100%;
+	    border-collapse: collapse;
+	    border: none;
+	    margin: 0;
+	}
+	
+	.footer-table td {
+	    border: none;
+	    vertical-align: middle;
+	    padding: 0;
+	}
+	
+	.footer-left {
+	    width: 20%;
+	    text-align: left;
+	    vertical-align: middle;
+    	line-height: 20px;
+	}
+	
+	.footer-center {
+	    width: 20%;
+	    text-align: center;
+	}
+
+	.footer-right {
+	    width: 60%;
+	    text-align: right;
+	}
+	
+	.footer-logo {
+	    width: 65px;
+	    height: 20px;
+	}
+	
+	.pageNumber:before {
+	    content: counter(page) " of " counter(pages);
+	}
+	
+	.footer-table td {
+    	vertical-align: middle;
+	}
+	
+	
+
 </style>
 </head>
 <body>
+<div id="pdfFooter">
+
+    <table class="footer-table">
+        <tr>
+
+            <td class="footer-left">
+                <img th:src="${egovLogo}" class="footer-logo" alt="logo"/>
+            </td>
+
+            <td class="footer-center">
+               <span class="pageNumber"></span>
+            </td>
+
+            <td class="footer-right">
+                <span th:text="${'Application No: ' + applicationNumber + ', Scrutiny Date: ' + reportGeneratedDate}"></span>
+            </td>
+
+        </tr>
+    </table>
+
+</div>
 	
 	<div class="first-page">
-		<img alt="" th:src="${logo}"/>
+		<img alt="" th:src="${logo}" class="logo"/>
 	    <div class="center">
 			<h1 th:text="${ulbName}"></h1>
 			<h2 th:text="${reportHeading}"></h2>

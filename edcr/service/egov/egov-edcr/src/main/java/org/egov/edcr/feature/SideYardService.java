@@ -313,6 +313,7 @@ public class SideYardService extends GeneralRule {
                                 	//if (buildingHeight.compareTo(BigDecimal.valueOf(10)) <= 0 && block.getBuilding()
                                 	//if (block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(4)) <= 0) {                                		
                                 		if(sideYard2==null) {
+                                			minlength = sideYard1.getMinimumDistance().doubleValue();
                                 			checkSideYardCommon(pl, block.getBuilding(), buildingHeight,
                                                     block.getName(), setback.getLevel(), plot, minlength, max, 
                                                     occupancy.getTypeHelper(),sideYard1Result,sideYard2Result, 
