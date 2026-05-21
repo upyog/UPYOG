@@ -127,6 +127,7 @@ import org.egov.common.entity.edcr.FarDetails;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
+import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
@@ -313,6 +314,9 @@ public class Far extends FeatureProcess {
 						existingFlrArea = existingFlrArea.add(occupancy.getExistingFloorArea());
 						carpetArea = carpetArea.add(occupancy.getCarpetArea());
 						existingCarpetArea = existingCarpetArea.add(occupancy.getExistingCarpetArea());
+					}else {
+						bltUpArea = bltUpArea.add(
+								occupancy.getBuiltUpArea() == null ? BigDecimal.valueOf(0) : occupancy.getBuiltUpArea());
 					}
 					
 				}
@@ -715,7 +719,7 @@ public class Far extends FeatureProcess {
 		updateFarAsPerBalconyWidth(pl);
 		
 		if (plotArea.doubleValue() > 0)
-			providedFar = pl.getVirtualBuilding().getTotalBuitUpArea()
+			providedFar = pl.getVirtualBuilding().getTotalFloorArea()
 							.divide(plotArea, DECIMALDIGITS_MEASUREMENTS,ROUNDMODE_MEASUREMENTS);		
 		
 		
@@ -954,8 +958,15 @@ public class Far extends FeatureProcess {
 					getLocaleMessage(VALIDATION_NEGATIVE_EXISTING_BUILTUP_AREA, blk.getNumber(),
 							flr.getNumber().toString(), occupancyTypeHelper));
 		}
-		occupancy.setFloorArea((occupancy.getBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getBuiltUpArea())
-				.subtract(occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction()));
+		
+		if(!flr.getIsStiltFloor()) {
+			occupancy.setFloorArea((occupancy.getBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getBuiltUpArea())
+					.subtract(occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction()));
+		}else {
+			occupancy.setFloorArea(BigDecimal.ZERO);
+			occupancy.setType(OccupancyType.OCCUPANCY_STILT);
+		}
+		
 		if (occupancy.getFloorArea() != null && occupancy.getFloorArea().compareTo(BigDecimal.valueOf(0)) < 0) {
 			pl.addError(VALIDATION_NEGATIVE_FLOOR_AREA, getLocaleMessage(VALIDATION_NEGATIVE_FLOOR_AREA,
 					blk.getNumber(), flr.getNumber().toString(), occupancyTypeHelper));

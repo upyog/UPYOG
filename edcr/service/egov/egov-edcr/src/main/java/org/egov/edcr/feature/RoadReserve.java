@@ -87,7 +87,7 @@ public class RoadReserve extends FeatureProcess {
 			//scrutinyDetail8.addColumnHeading(4, REQUIRED);
 			scrutinyDetail8.addColumnHeading(2, PROVIDED);
 			scrutinyDetail8.addColumnHeading(3, STATUS);
-			scrutinyDetail8.setKey("Common_" + "Road Reserve ");
+			scrutinyDetail8.setKey("Common_" + "Road Width ");
 			LOG.info("ii" + pl.getRoadReserveFront() +  pl.getRoadReserveRear());
          
 //        if(pl.getRoadReserveFront() != BigDecimal.ZERO &&  pl.getRoadReserveRear() != BigDecimal.ZERO) {
