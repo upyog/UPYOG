@@ -50,7 +50,7 @@ package org.egov.common.entity.edcr;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum OccupancyType {
-
+	OCCUPANCY_STILT("Stilt"),
 	OCCUPANCY_A1("Residential"), // singlefamily,
 	OCCUPANCY_A2("Special Residential"), 
 	OCCUPANCY_A3("Hostel Educational"), 
