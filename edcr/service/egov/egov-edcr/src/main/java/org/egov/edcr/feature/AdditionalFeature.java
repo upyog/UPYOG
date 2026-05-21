@@ -205,7 +205,8 @@ public class AdditionalFeature extends FeatureProcess {
         validate(pl);
 
         String typeOfArea = pl.getPlanInformation().getTypeOfArea();
-        BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+        //BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+        BigDecimal roadWidth =  pl.getRoadReserveFront().setScale(2, RoundingMode.HALF_UP);
 
         if (StringUtils.isNotBlank(typeOfArea) && roadWidth != null) {
             validateNumberOfFloors(pl, errors, typeOfArea, roadWidth);
