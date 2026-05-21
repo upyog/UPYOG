@@ -311,11 +311,18 @@ public class SideYardService extends GeneralRule {
 								/* || F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()) */) {
                                 	//Added by Bimal 18-March-2924 to check side yard based on plotarea not on height
                                 	//if (buildingHeight.compareTo(BigDecimal.valueOf(10)) <= 0 && block.getBuilding()
-                                	//if (block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(4)) <= 0) {
-                                		checkSideYardCommon(pl, block.getBuilding(), buildingHeight,
-                                                block.getName(), setback.getLevel(), plot, minlength, max, 
-                                                occupancy.getTypeHelper(),sideYard1Result,sideYard2Result, 
-                                                sideYard1.getMinimumDistance(), sideYard2.getMinimumDistance());
+                                	//if (block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(4)) <= 0) {                                		
+                                		if(sideYard2==null) {
+                                			checkSideYardCommon(pl, block.getBuilding(), buildingHeight,
+                                                    block.getName(), setback.getLevel(), plot, minlength, max, 
+                                                    occupancy.getTypeHelper(),sideYard1Result,sideYard2Result, 
+                                                    sideYard1.getMinimumDistance(), BigDecimal.ZERO);
+                                		}else {
+                                			checkSideYardCommon(pl, block.getBuilding(), buildingHeight,
+                                                    block.getName(), setback.getLevel(), plot, minlength, max, 
+                                                    occupancy.getTypeHelper(),sideYard1Result,sideYard2Result, 
+                                                    sideYard1.getMinimumDistance(), sideYard2.getMinimumDistance());
+                                		}
                                     //}
                                 	
 									/*
