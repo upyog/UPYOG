@@ -1,0 +1,10 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Fri May 22 11:38:19 IST 2026
+https\://nexus-repo.digit.org/nexus/content/groups/public/.error=
+https\://releases.aspose.com/repo/.lastUpdated=1779430099589
+https\://www.javaxt.com/maven/.error=Could not transfer artifact javaxt\:javaxt-core\:jar\:2.1.11 from/to javaxt.com (https\://www.javaxt.com/maven)\: The operation was cancelled.
+https\://releases.aspose.com/repo/.error=
+https\://repository.jboss.org/nexus/content/groups/public/.lastUpdated=1779430099390
+@default-javaxt.com-https\://www.javaxt.com/maven/.lastUpdated=1779429781405
+https\://repository.jboss.org/nexus/content/groups/public/.error=
+https\://nexus-repo.digit.org/nexus/content/groups/public/.lastUpdated=1779429781370

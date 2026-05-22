@@ -1,0 +1,9 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Jul 23 19:59:29 IST 2025
+http\://repo.egovernments.org/nexus/content/groups/public/.error=
+http\://repo.egovernments.org/nexus/content/groups/public/.lastUpdated=1753280966422
+https\://releases.aspose.com/repo/.error=
+https\://releases.aspose.com/repo/.lastUpdated=1753280967110
+https\://repository.jboss.org/nexus/content/groups/public/.error=
+https\://repository.jboss.org/nexus/content/groups/public/.lastUpdated=1753280967001
+https\://www.javaxt.com/maven/.lastUpdated=1753280969330

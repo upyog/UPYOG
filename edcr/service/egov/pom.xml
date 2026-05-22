@@ -41,6 +41,20 @@
 	</distributionManagement>
 
 	<repositories>
+	
+	<repository>
+			<id>in-project</id>
+			<name>In Project Repo</name>
+			<url>file://${project.basedir}/lib/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov Public Repository Group</name>
@@ -62,10 +76,10 @@
 			<name>Aspose Java API</name>
 			<url>https://releases.aspose.com/repo/</url>
 		</repository>
-		<repository>
+		<!--<repository>
 			<id>javaxt.com</id>
 			<url>https://www.javaxt.com/maven</url>
-		</repository>
+		</repository>-->
 		
 		<!-- Only for org.kabeja -->
 		<!--<repository>
