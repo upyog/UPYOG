@@ -890,15 +890,24 @@ public class EdcrApplicationService {
                 float pageWidth = page.getMediaBox().getWidth();
                 float pageHeight = page.getMediaBox().getHeight();
 
-                float startX = pageWidth - 650f;
-                float startY = pageHeight - 1100f;
+//                float startX = pageWidth - 650f;
+//                float startY = pageHeight - 1100f;
                 
                 // Bigger Table & Font
-                float rowHeight = 40f;
+                float rowHeight = 42f;
                 float col1Width = 260f;
                 float col2Width = 320f;
-
+                
+                float rightMargin = 80;
+                float bottomMargin = 120f;
+                //float tableWidth = 1400f;
+                float tableHeight = rowHeight * tableData.length;
                 float tableWidth = col1Width + col2Width;
+                float startX = pageWidth - tableWidth - rightMargin;
+
+                float startY = bottomMargin + tableHeight;
+
+               
 
                 int rows = tableData.length;
 
@@ -906,13 +915,13 @@ public class EdcrApplicationService {
                         document, page, PDPageContentStream.AppendMode.APPEND, true,true)) {
 
                     // Border Styling
-                    contentStream.setLineWidth(2f);
+                    contentStream.setLineWidth(1.5f);
                     contentStream.setStrokingColor(0, 0, 0);
                     // Text Styling
                     contentStream.setNonStrokingColor(255, 0, 0);
 
                     // Bigger Font
-                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
+                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
 
                     float yPosition = startY;
             
@@ -938,8 +947,8 @@ public class EdcrApplicationService {
                     contentStream.stroke();
 
                     // Add Text
-                    float textXOffset = 10f;
-                    float textYOffset = 26f;
+                    float textXOffset = 8f;
+                    float textYOffset = 28f;
 
                     for (int i = 0; i < rows; i++) {
 

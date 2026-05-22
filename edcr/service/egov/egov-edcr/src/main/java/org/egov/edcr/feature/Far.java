@@ -127,6 +127,7 @@ import org.egov.common.entity.edcr.FarDetails;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
+import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
@@ -313,6 +314,9 @@ public class Far extends FeatureProcess {
 						existingFlrArea = existingFlrArea.add(occupancy.getExistingFloorArea());
 						carpetArea = carpetArea.add(occupancy.getCarpetArea());
 						existingCarpetArea = existingCarpetArea.add(occupancy.getExistingCarpetArea());
+					}else {
+						bltUpArea = bltUpArea.add(
+								occupancy.getBuiltUpArea() == null ? BigDecimal.valueOf(0) : occupancy.getBuiltUpArea());
 					}
 					
 				}
@@ -715,7 +719,7 @@ public class Far extends FeatureProcess {
 		updateFarAsPerBalconyWidth(pl);
 		
 		if (plotArea.doubleValue() > 0)
-			providedFar = pl.getVirtualBuilding().getTotalBuitUpArea()
+			providedFar = pl.getVirtualBuilding().getTotalFloorArea()
 							.divide(plotArea, DECIMALDIGITS_MEASUREMENTS,ROUNDMODE_MEASUREMENTS);		
 		
 		
@@ -762,7 +766,8 @@ public class Far extends FeatureProcess {
 					&& DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
 //				processFarNonResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth,
 //						errorMsgs,plotArea);
-				processFarCommercial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs, plotArea);
+				processFarCommercial(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, 
+						errorMsgs, plotArea);
 			}
 			if (mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.L.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
@@ -953,8 +958,15 @@ public class Far extends FeatureProcess {
 					getLocaleMessage(VALIDATION_NEGATIVE_EXISTING_BUILTUP_AREA, blk.getNumber(),
 							flr.getNumber().toString(), occupancyTypeHelper));
 		}
-		occupancy.setFloorArea((occupancy.getBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getBuiltUpArea())
-				.subtract(occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction()));
+		
+		if(!flr.getIsStiltFloor()) {
+			occupancy.setFloorArea((occupancy.getBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getBuiltUpArea())
+					.subtract(occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction()));
+		}else {
+			occupancy.setFloorArea(BigDecimal.ZERO);
+			occupancy.setType(OccupancyType.OCCUPANCY_STILT);
+		}
+		
 		if (occupancy.getFloorArea() != null && occupancy.getFloorArea().compareTo(BigDecimal.valueOf(0)) < 0) {
 			pl.addError(VALIDATION_NEGATIVE_FLOOR_AREA, getLocaleMessage(VALIDATION_NEGATIVE_FLOOR_AREA,
 					blk.getNumber(), flr.getNumber().toString(), occupancyTypeHelper));
@@ -1528,7 +1540,16 @@ public class Far extends FeatureProcess {
 		        && occupancyType.getType().getCode() != null) {
 			//OccupancyHelperDetail subtype = occupancyType.getSubtype();
 			//occupancyName = subtype.getName();
-			getFarDetailsFromMDMS(pl, occupancyType.getType().getCode(), typeOfArea, occupancyType);
+			if(DxfFileConstants.F_MPMT.equalsIgnoreCase(occupancyType.getSubtype().getCode())) {
+				BigDecimal permissibleFAR =  getPermissibleFAR(pl.getPlanInformation().getRoadWidth());
+				isAccepted = far != null
+				        && permissibleFAR != null
+				        && far.compareTo(permissibleFAR) <= 0;
+				String occupancyName = occupancyType.getType().getName();
+				buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+			}else {
+				getFarDetailsFromMDMS(pl, occupancyType.getType().getCode(), typeOfArea, occupancyType);
+			}
 		    
 		}
 //	    /* ---------- FAR Determination (Ascending Order) ---------- */
@@ -1557,6 +1578,39 @@ public class Far extends FeatureProcess {
 //	        buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
 //	    }
 	}
+	
+	public static BigDecimal getPermissibleFAR(BigDecimal roadWidthInMeters) {
+
+        if (roadWidthInMeters == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal twentyFour = new BigDecimal("24");
+        BigDecimal forty = new BigDecimal("40");
+        BigDecimal sixty = new BigDecimal("60");
+
+        // 24 M to < 40 M
+        if (roadWidthInMeters.compareTo(twentyFour) >= 0
+                && roadWidthInMeters.compareTo(forty) < 0) {
+
+            return new BigDecimal("1.75");
+        }
+
+        // 40 M to < 60 M
+        if (roadWidthInMeters.compareTo(forty) >= 0
+                && roadWidthInMeters.compareTo(sixty) < 0) {
+
+            return new BigDecimal("2.00");
+        }
+
+        // 60 M and Above
+        if (roadWidthInMeters.compareTo(sixty) >= 0) {
+
+            return new BigDecimal("2.50");
+        }
+
+        return BigDecimal.ZERO;
+    }
 	
 	private void processFarCommercialByMBMS(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far,
 	        String typeOfArea, BigDecimal roadWidth, HashMap<String, String> errors,
@@ -2646,6 +2700,8 @@ public class Far extends FeatureProcess {
 	        case "F-PFSS":
 	        case "F-CNGS":	        
 	            return new BigDecimal("1080");
+	        case "F-MPMT":	        
+	            return new BigDecimal("4046");
 
 	        default:
 	            return BigDecimal.ZERO; // or throw exception if needed

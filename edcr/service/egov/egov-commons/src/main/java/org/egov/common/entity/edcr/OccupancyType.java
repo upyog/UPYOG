@@ -50,7 +50,7 @@ package org.egov.common.entity.edcr;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum OccupancyType {
-
+	OCCUPANCY_STILT("Stilt"),
 	OCCUPANCY_A1("Residential"), // singlefamily,
 	OCCUPANCY_A2("Special Residential"), 
 	OCCUPANCY_A3("Hostel Educational"), 
@@ -90,7 +90,8 @@ public enum OccupancyType {
 	OCCUPANCY_F13("Petrol Filling Station – Two W"),
 	OCCUPANCY_F14("Petrol Filling Station Service"),
 	OCCUPANCY_F15("Petrol Station"),
-	OCCUPANCY_F16("Compressed Natural Gas Station"),	
+	OCCUPANCY_F16("Compressed Natural Gas Station"),
+	OCCUPANCY_F17("Miniplex/Multiplex"),
 	
 //	OCCUPANCY_G("Industrial"), 
 //	OCCUPANCY_G1("Industrial Plotted - General, Textile, Knitwear, Sports"),

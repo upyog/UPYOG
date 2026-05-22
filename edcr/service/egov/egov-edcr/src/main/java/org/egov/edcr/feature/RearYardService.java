@@ -449,17 +449,53 @@ public class RearYardService extends GeneralRule {
 	    			errors.put("Plot Area Error:", "Plot area must be greater than : " + MIN_PLOT_AREA);
 	    			pl.addErrors(errors);			        
 	    		}
-	    				
-	    		if(pl.getMdmsMasterData().get("masterMdmsData")!=null) {					
-	    			Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(pl.getMdmsMasterData().get("masterMdmsData"), MdmsFilter.REAR_SETBACK_PATH, BigDecimal.class);
-	    			scOpt.ifPresent(sc -> LOG.info("Rear Setback Value from mdms : " + sc));
-	    			minVal = scOpt.get();
-	    			BigDecimal oneFifthHeight = buildingHeight.divide(
-			                BigDecimal.valueOf(FIFTH_MTR), 2, RoundingMode.HALF_UP
-			        );
-			        LOG.info("One fifth of building height is : " + oneFifthHeight);		        
-			        minVal = oneFifthHeight.max(minVal);	
-	    		}
+	    		
+	    		
+	    		
+	    		 
+	    	    if(mostRestrictiveOccupancy!=null && (mostRestrictiveOccupancy.getSubtype()!=null
+	    	    		&& A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode()))) {
+	    	    	
+	    	    	if (pl.getRoadReserveRear() != null
+		    		        && pl.getRoadReserveRear().compareTo(BigDecimal.ZERO) >= 0) {
+	    	    		if(pl.getMdmsMasterData().get("masterMdmsData")!=null) {					
+	    	    			Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(pl.getMdmsMasterData().get("masterMdmsData"),
+	    	    					MdmsFilter.FRONT_SETBACK_PATH, BigDecimal.class);
+	    	    			scOpt.ifPresent(sc -> LOG.info("Rear Setback Value from mdms : " + sc));
+	    	    			minVal = scOpt.get();
+	    	    			BigDecimal oneFifthHeight = buildingHeight.divide(
+	    			                BigDecimal.valueOf(FIFTH_MTR), 2, RoundingMode.HALF_UP
+	    			        );
+	    			        LOG.info("One fifth of building height is : " + oneFifthHeight);		        
+	    			        minVal = oneFifthHeight.max(minVal);	
+	    	    		}
+		    		}else {
+		    			if(pl.getMdmsMasterData().get("masterMdmsData")!=null) {					
+			    			Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(pl.getMdmsMasterData().get("masterMdmsData"), 
+			    					MdmsFilter.REAR_SETBACK_PATH, BigDecimal.class);
+			    			scOpt.ifPresent(sc -> LOG.info("Rear Setback Value from mdms : " + sc));
+			    			minVal = scOpt.get();
+			    			BigDecimal oneFifthHeight = buildingHeight.divide(
+					                BigDecimal.valueOf(FIFTH_MTR), 2, RoundingMode.HALF_UP
+					        );
+					        LOG.info("One fifth of building height is : " + oneFifthHeight);		        
+					        minVal = oneFifthHeight.max(minVal);	
+			    		}
+		    		}
+	    	    }else {
+	    	    	if(pl.getMdmsMasterData().get("masterMdmsData")!=null) {					
+		    			Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(pl.getMdmsMasterData().get("masterMdmsData"), MdmsFilter.REAR_SETBACK_PATH, BigDecimal.class);
+		    			scOpt.ifPresent(sc -> LOG.info("Rear Setback Value from mdms : " + sc));
+		    			minVal = scOpt.get();
+		    			BigDecimal oneFifthHeight = buildingHeight.divide(
+				                BigDecimal.valueOf(FIFTH_MTR), 2, RoundingMode.HALF_UP
+				        );
+				        LOG.info("One fifth of building height is : " + oneFifthHeight);		        
+				        minVal = oneFifthHeight.max(minVal);	
+		    		}
+	    	    }
+	    		
+	    		
 	    }        
 
 	    // Validate minimum and mean value
