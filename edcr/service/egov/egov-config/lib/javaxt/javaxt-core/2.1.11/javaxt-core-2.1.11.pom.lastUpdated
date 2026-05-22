@@ -1,0 +1,10 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Fri May 22 11:37:29 IST 2026
+https\://nexus-repo.digit.org/nexus/content/groups/public/.error=
+https\://releases.aspose.com/repo/.error=
+https\://releases.aspose.com/repo/.lastUpdated=1779429770680
+https\://www.javaxt.com/maven/.error=Could not transfer artifact javaxt\:javaxt-core\:pom\:2.1.11 from/to javaxt.com (https\://www.javaxt.com/maven)\: Connect to www.javaxt.com\:443 [www.javaxt.com/3.92.121.40] failed\: connect timed out
+https\://repository.jboss.org/nexus/content/groups/public/.lastUpdated=1779429770457
+@default-javaxt.com-https\://www.javaxt.com/maven/.lastUpdated=1779430049762
+https\://repository.jboss.org/nexus/content/groups/public/.error=
+https\://nexus-repo.digit.org/nexus/content/groups/public/.lastUpdated=1779429769957

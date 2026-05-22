@@ -1,0 +1,26 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Fri May 22 11:44:08 IST 2026
+@default-maven-default-http-blocker-http\://0.0.0.0/.lastUpdated=1775566394037
+@default-nexus-http\://repo.egovernments.org/nexus/content/groups/public/.lastUpdated=1775569113122
+file\://C\:\\Users\\KPMG\\git\\mSevaUPYOG\\edcr\\service\\egov\\egov-edcr-extract/lib/.error=
+file\://C\:\\Users\\KPMG\\git\\mSevaUPYOG\\edcr\\service\\egov\\egov-edcr-extract/lib/.lastUpdated=1779430448315
+http\://0.0.0.0/.error=Could not transfer artifact javaxt\:javaxt-core\:jar\:1.7.8 from/to maven-default-http-blocker (http\://0.0.0.0/)\: Blocked mirror for repositories\: [repo.egovernments.org (http\://repo.egovernments.org/nexus/content/groups/public/, default, releases+snapshots), javaxt.com (http\://www.javaxt.com/maven, default, releases+snapshots)]
+http\://releases.aspose.com/repo/.error=
+http\://releases.aspose.com/repo/.lastUpdated=1752943686833
+http\://repo.egovernments.org/nexus/content/groups/public/.error=Could not transfer artifact javaxt\:javaxt-core\:jar\:1.7.8 from/to nexus (http\://repo.egovernments.org/nexus/content/groups/public/)\: transfer failed for http\://repo.egovernments.org/nexus/content/groups/public/javaxt/javaxt-core/1.7.8/javaxt-core-1.7.8.jar
+http\://www.javaxt.com/maven/.lastUpdated=1752943688733
+https\://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/.error=
+https\://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/.lastUpdated=1779429140743
+https\://maven.java.net/content/groups/public/.error=
+https\://maven.java.net/content/groups/public/.lastUpdated=1763437523688
+https\://nexus-repo.digit.org/nexus/content/groups/public/.error=
+https\://nexus-repo.digit.org/nexus/content/groups/public/.lastUpdated=1779429137487
+https\://releases.aspose.com/repo/.error=
+https\://releases.aspose.com/repo/.lastUpdated=1779429138478
+https\://repo.maven.apache.org/maven2/.error=
+https\://repo.maven.apache.org/maven2/.lastUpdated=1775566451144
+https\://repo.softmotions.com/repository/softmotions-public/.error=
+https\://repo.softmotions.com/repository/softmotions-public/.lastUpdated=1763437522895
+https\://repository.jboss.org/nexus/content/groups/public/.error=
+https\://repository.jboss.org/nexus/content/groups/public/.lastUpdated=1779429138388
+https\://www.javaxt.com/maven/.lastUpdated=1763437524459
