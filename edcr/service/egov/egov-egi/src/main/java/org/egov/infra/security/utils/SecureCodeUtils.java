@@ -57,12 +57,17 @@ import com.google.zxing.common.BitMatrix;
 import org.apache.commons.lang.RandomStringUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.EnumMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import static com.google.zxing.EncodeHintType.CHARACTER_SET;
 import static com.google.zxing.EncodeHintType.MARGIN;
@@ -91,6 +96,43 @@ public final class SecureCodeUtils {
         return generatePDF417Code(content, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
+    
+    public static String generatePDF417CodeV2(String content) {
+        return generatePDF417CodeV2(content, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+
+    
+    public static String generatePDF417CodeV2(String content, int imgWidth, int imgHeight) {
+
+        try {
+
+            Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
+            hints.put(EncodeHintType.CHARACTER_SET, encoding());
+            hints.put(EncodeHintType.MARGIN, 1);
+
+            BitMatrix secureCodeMatrix = new MultiFormatWriter()
+                    .encode(content, BarcodeFormat.PDF_417, imgWidth, imgHeight, hints);
+
+            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(secureCodeMatrix);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            ImageIO.write(bufferedImage, "png", baos);
+
+            byte[] imageBytes = baos.toByteArray();
+
+            String base64 = Base64.getEncoder().encodeToString(imageBytes);
+
+            // VERY IMPORTANT
+            base64 = base64.replaceAll("\\s+", "");
+
+            return "data:image/png;base64," + base64;
+
+        } catch (Exception e) {
+            throw new ApplicationRuntimeException("Error occurred while generating Secure Code", e);
+        }
+    }
+    
     public static File generatePDF417Code(String content, int imgWidth, int imgHeight) {
         return generateSecureCode(content, BarcodeFormat.PDF_417, imgWidth, imgHeight);
     }

@@ -57,6 +57,7 @@
     /* ✅ Keep first page content together */
 	.first-page {
 	    page-break-inside: avoid;
+	     position: relative;
 	}
 	
 	/* ✅ Force next content to new page */
@@ -83,11 +84,23 @@
 	}
 	
 	.logo{
-		position: absolute;
-		align-self: left;
-		width: 80px;
-		height: 80px;
-	}
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+}
+
+.qr-container{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.qr-code{
+    width: 100px;
+    height: 40px;
+}
     
     #pdfFooter {
 	    position: running(pdfFooter);
@@ -316,12 +329,11 @@
 		</div>
 
 		<!-- ✅ QR CODE — sirf Fulfilled hone par dikhega -->
-		<div th:if="${qrCode != null}" style="margin-top: 15px; text-align: right;">
-			<p style="font-size: 11px; font-weight: bold; margin-bottom: 4px;">Scan to Verify</p>
-			<img th:src="'data:image/png;base64,' + ${qrCode}"
-			     alt="Verification Code"
-			     style="width: 200px; height: 60px;"/>
-		</div>
+		<div th:if="${qrCode != null}" class="qr-container">
+    <img th:src="${qrCode}"
+         alt="Verification Code"
+         class="qr-code"/>
+</div>
 
 	</div>  <!-- ← first-page div close hota hai yahan -->
 

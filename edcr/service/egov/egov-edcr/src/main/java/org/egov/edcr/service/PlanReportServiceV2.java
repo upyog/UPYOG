@@ -47,6 +47,7 @@ import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.feature.RoadWidth;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.utils.SecureCodeUtils;
 import org.egov.infra.utils.DateUtils;
 import org.joda.time.LocalDate;
 
@@ -382,7 +383,7 @@ public class PlanReportServiceV2 {
                     + "Application Number : " + applicationNumber + "\n"
                     + "Application Date : " + applicationDate + "\n"
                     + "Report Status : Fulfilled\n";
-            model.put("qrCode", generatePDF417Code(qrContent));  // import from SecureCodeUtils
+            model.put("qrCode", SecureCodeUtils.generatePDF417CodeV2(qrContent));  // import from SecureCodeUtils
         } else {
             model.put("dcrNo", "NA");
             model.put("qrCode", null);

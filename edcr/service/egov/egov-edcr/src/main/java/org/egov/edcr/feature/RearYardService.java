@@ -457,7 +457,7 @@ public class RearYardService extends GeneralRule {
 	    	    		&& A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode()))) {
 	    	    	
 	    	    	if (pl.getRoadReserveRear() != null
-		    		        && pl.getRoadReserveRear().compareTo(BigDecimal.ZERO) >= 0) {
+		    		        && pl.getRoadReserveRear().compareTo(BigDecimal.ZERO) > 0) {
 	    	    		if(pl.getMdmsMasterData().get("masterMdmsData")!=null) {					
 	    	    			Optional<BigDecimal> scOpt = BpaMdmsUtil.extractMdmsValue(pl.getMdmsMasterData().get("masterMdmsData"),
 	    	    					MdmsFilter.FRONT_SETBACK_PATH, BigDecimal.class);
