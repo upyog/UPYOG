@@ -106,9 +106,9 @@ public class Constants {
     public static final String BUDGET_GROUP = "budgetGroup";
     public static final String BUDGET = "budget";
     public static final String STATE = "state";
-    public static final String TOTAL_ASSETS = "Total ASSETS";
-    public static final String TOTAL_LIABILITIES = "Total LIABILITIES";
-    public static final String TOTAL = "Total";
+    public static final String TOTAL_ASSETS = "TOTAL ASSETS";
+    public static final String TOTAL_LIABILITIES = "TOTAL LIABILITIES";
+    public static final String TOTAL = "TOTAL";
     public static final String LIABILITIES = "LIABILITIES";
     public static final String ASSETS = "ASSETS";
     public static final String RE = "RE";

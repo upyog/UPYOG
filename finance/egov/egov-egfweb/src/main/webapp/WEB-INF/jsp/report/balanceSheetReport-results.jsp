@@ -128,7 +128,7 @@
 											</div>
 										</td>
 										<td class="blueborderfortd">
-											<div align="left">
+											<div align="left" style="text-transform: uppercase;">
 												<s:if test='%{scheduleNo == ""}'>
 													<strong><s:property value="accountName" /></strong>
 												</s:if>
