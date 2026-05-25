@@ -98,7 +98,8 @@ module.exports = {
     fetch_bill: "/billing-service/bill/v2/_fetchbill",
     searcher_api_water : "/egov-searcher/bill-genie/waterbills/_get?",
     searcher_api_water_group : "/egov-searcher/bill-genie/groupbills/_get",
+    searcher_api_sw_integrated : "/egov-searcher/bill-genie/integratedbills/_get?",
     searcher_api_sewerage : "/egov-searcher/bill-genie/seweragebills/_get?",
-    searcher_api_sewerage_group : "/egov-searcher/bill-genie/groupbillssw/_get?"
+    searcher_api_sewerage_group : "/egov-searcher/bill-genie/groupbillssw/_get?",
   },
 };
