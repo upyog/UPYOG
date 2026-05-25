@@ -79,6 +79,11 @@ const PTCard = () => {
       link: `/digit-ui/employee/pt/appeal-search`,
       image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Property-Transfer.png",
     },
+    {
+      label: t("User Management"),
+      link: `/digit-ui/employee/pt/user-management`,
+      image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Property-Transfer.png",
+    },
     // {
     //   label: t("Grievances"),
     //   link: `/digit-ui/employee/pt/grievances`,

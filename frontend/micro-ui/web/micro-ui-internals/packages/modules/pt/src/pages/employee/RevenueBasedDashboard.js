@@ -230,9 +230,10 @@ export const RevenueBasedDashboard = ({ dashboardData, filteredData, resetTrigge
 
     function mapProperties(properties = [], key) {
         return properties.map((property) => {
-            const address = property.address || {};
-            const locality = address.locality || {};
-            const owners = property.owners || [];
+            const address = property?.address || {};
+            const locality = address?.locality || {};
+            const owners = property?.owners || [];
+            const payments = property?.Payments || [];
 
             // 🏠 Build Address String
             const propertyAddress = [
@@ -277,7 +278,8 @@ export const RevenueBasedDashboard = ({ dashboardData, filteredData, resetTrigge
                     dateOfPayment: property.auditDetails?.createdTime
                     ? new Date(property.auditDetails.createdTime).toLocaleDateString('en-GB')
                     : "N/A",
-                    totalPtCollected: 0,
+                    totalPtCollected: payments?.reduce((sum, payment) => sum + (payment?.totalAmountPaid || 0), 0) || 0,
+                    // payments?.reduce((sum, payment) => sum + (payment.totalAmountPaid || 0), 0) : 0,
                 };
                 case "penalty":
                 return {
@@ -288,9 +290,9 @@ export const RevenueBasedDashboard = ({ dashboardData, filteredData, resetTrigge
                     dateOfPayment: property.auditDetails?.createdTime
                     ? new Date(property.auditDetails.createdTime).toLocaleDateString('en-GB')
                     : "N/A",
-                    dueTaxAmount: 0,
-                    penaltyAmount: 0,
-                    totalCollected: 0,
+                    dueTaxAmount: payments?.reduce((sum, payment) => sum + (payment?.totalDue || 0), 0) || 0,
+                    penaltyAmount: payments?.reduce((sum, payment) => sum + (payment?.penaltyAmountPaid || 0), 0) || 0,
+                    totalCollected: payments?.reduce((sum, payment) => sum + (payment?.totalAmountPaid || 0), 0) || 0,
                 };
                 
                 case "interest":
@@ -302,9 +304,9 @@ export const RevenueBasedDashboard = ({ dashboardData, filteredData, resetTrigge
                     dateOfPayment: property.auditDetails?.createdTime
                     ? new Date(property.auditDetails.createdTime).toLocaleDateString('en-GB')
                     : "N/A",
-                    dueTaxAmount: 0,
-                    interestAmount: 0,
-                    totalCollected: 0,
+                    dueTaxAmount: payments?.reduce((sum, payment) => sum + (payment?.totalDue || 0), 0) || 0,
+                    interestAmount: payments?.reduce((sum, payment) => sum + (payment?.interestAmountPaid || 0), 0) || 0,
+                    totalCollected: payments?.reduce((sum, payment) => sum + (payment?.totalAmountPaid || 0), 0) || 0,
                 };
                 case "advance":
                 return {
@@ -315,9 +317,9 @@ export const RevenueBasedDashboard = ({ dashboardData, filteredData, resetTrigge
                     dateOfPayment: property.auditDetails?.createdTime
                     ? new Date(property.auditDetails.createdTime).toLocaleDateString('en-GB')
                     : "N/A",
-                    dueTaxAmount: 0,
-                    advanceAmount: 0,
-                    totalCollected: 0,
+                    dueTaxAmount: payments?.reduce((sum, payment) => sum + (payment?.totalDue || 0), 0) || 0,
+                    advanceAmount: payments?.reduce((sum, payment) => sum + (payment?.advanceAmountPaid || 0), 0) || 0,
+                    totalCollected:payments?.reduce((sum, payment) => sum + (payment.totalAmountPaid || 0), 0) || 0,
                 };
                 case "arrears":
                 return {
@@ -328,9 +330,9 @@ export const RevenueBasedDashboard = ({ dashboardData, filteredData, resetTrigge
                     dateOfPayment: property.auditDetails?.createdTime
                     ? new Date(property.auditDetails.createdTime).toLocaleDateString('en-GB')
                     : "N/A",
-                    dueTaxAmount: 0,
-                    arrearsAmount: 0,
-                    totalCollected: 0,
+                    dueTaxAmount: payments?.reduce((sum, payment) => sum + (payment?.totalDue || 0), 0) || 0,
+                    arrearsAmount: payments?.reduce((sum, payment) => sum + (payment?.arrearsAmountPaid || 0), 0) || 0,
+                    totalCollected: payments?.reduce((sum, payment) => sum + (payment?.totalAmountPaid || 0), 0) || 0,
                 };
                 default:
                 return {

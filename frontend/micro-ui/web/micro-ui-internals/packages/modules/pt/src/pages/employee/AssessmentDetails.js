@@ -34,7 +34,7 @@ const AssessmentDetails = () => {
   const [selectedPenalityReason,setSelectedPenalityReason]=useState(null);
   const [selectedRebateReason,setSelectedRebateReason]=useState(null);
   let dowloadOptions = [{
-    label:  t("Download Assessment PDF 1"),
+    label:  t("Download Assessed Acknowledgement"),
     onClick: () => getAssessmentData(),
   }]
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
@@ -761,7 +761,7 @@ const Penality_menu=[
                     <div style={{marginTop:"20px"}}>
                       
                       <button className="btn btn-primary" onClick={(e) => {e.preventDefault(); setShowAssessmentPopup(false); proceeedToPayCitizen()}} style={{marginRight:"8px"}}>{t("Proceed To Pay")}</button>
-                      <button className="btn btn-primary" onClick={(e) => {e.preventDefault(); getAssessmentData()}} style={{marginRight:"8px"}}>{t("Download Acknowledgment")}</button>
+                      <button className="btn btn-primary" onClick={(e) => {e.preventDefault(); getAssessmentData()}} style={{marginRight:"8px"}}>{t("Download Assessed Acknowledgement")}</button>
                       <button className="btn btn-primary" onClick={(e) => {e.preventDefault(); setShowAssessmentPopup(false); history.push(`/digit-ui/citizen/pt-home`)}}>{t("Go to Home")}</button>
                     </div>
                     

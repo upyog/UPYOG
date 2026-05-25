@@ -1,3 +1,4 @@
+import { update } from "lodash";
 import Urls from "../../atoms/urls";
 import { Request, ServiceRequest } from "../../atoms/Utils/Request";
 import { Storage } from "../../atoms/Utils/Storage";
@@ -77,6 +78,15 @@ export const UserService = {
       serviceName: "generateCaptcha",
       url: Urls.GenerateCaptcha,
       data: details,
+      auth: true,
+      params: {  }
+    }),
+  updateEmployee: (details) => 
+    ServiceRequest({
+      serviceName: "updateEmployee",
+      url: Urls.UpdateEmployee,
+      data: details,
+      userService: true,
       auth: true,
       params: {  }
     }),

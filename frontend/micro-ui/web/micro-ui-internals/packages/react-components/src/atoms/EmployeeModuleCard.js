@@ -51,7 +51,7 @@ import { Link } from "react-router-dom";
 // };
 const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, FsmHideCount }) => {
   return (
-    <div style={{display: "inline-flex"}}>
+    <div style={{display: "flex"}}>
       {/* <div className="ServicesSection">
         <div role="button" tabindex="0" class="pt-card-main" onClick={()=>  null}>
           <img src="https://mnptapp-terraform.s3.amazonaws.com/images/property_tax.jpg" loading="lazy" alt="img" class="pt-emp-card-img1" />
@@ -64,7 +64,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
           </div>
       </div> */}
       {kpis.length !== 0 && (
-              <div style={{ display: "inline-flex" }}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
 
                 {kpis.map(({ count, label, link,image }, index) => (
                   <div className="ServicesSection" style={{display: "inline", marginLeft: "10px"}}>
@@ -90,7 +90,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
               </div>
             )}
             {links.length !== 0 && (
-              <div style={{ display: "inline-flex" }}>
+              <div style={{ display: "flex" }}>
 
                 {links.map(({ count, label, link,image }, index) => (
                   <div className="ServicesSection" style={{display: "inline",marginLeft: "10px"}}>
