@@ -34,24 +34,27 @@
     @page {
         size: A4;
         margin: 8mm;
-        margin-bottom: 15mm;
+        margin-bottom: 22mm;
         
-        @bottom-left {
+       /*  @bottom-left {
 	        content: url([[${egovLogo}]]);
 	        transform: scale(0.4);
 	        transform-origin: left bottom;
-	    }
+	    } */
 
-        @bottom-center {
+        /* @bottom-center {
             content: counter(page) " of " counter(pages);
             font-size: 10px;
-        }
-        
+        } */
+      /*   
         @bottom-right {
 	        content: "[[${'Application No: ' + applicationNumber + ', Scrutiny Date: ' + reportGeneratedDate}]]";
 	        font-size: 10px;
 	        font-weight: bold;
-	    }
+	    } */
+	     @bottom-center {
+        	content: element(pdfFooter);
+   	 	}
     }
     
     /* ✅ Keep first page content together */
@@ -103,47 +106,48 @@
 }
     
     #pdfFooter {
-	    position: running(pdfFooter);
-	    width: 100%;
-	    border-top: 1px solid #999;
-	    padding-top: 4px;
-	    font-size: 10px;
-	    font-weight: bold;
+	     position: running(pdfFooter);
+    width: 100%;
+    font-size: 10px;
+    font-weight: bold;
 	}
 
+.footer-note {
+    text-align: center;
+    font-size: 9px;
+    padding-top: 2px;
+}
+
 	.footer-table {
-	    width: 100%;
-	    border-collapse: collapse;
-	    border: none;
-	    margin: 0;
+	     width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid #999;
 	}
 	
 	.footer-table td {
-	    border: none;
-	    vertical-align: middle;
-	    padding: 0;
+	   border: none;
+    padding: 2px 4px;
+    vertical-align: middle;
 	}
 	
 	.footer-left {
-	    width: 20%;
-	    text-align: left;
-	    vertical-align: middle;
-    	line-height: 20px;
+	     width: 20%;
+    text-align: left;
 	}
 	
 	.footer-center {
 	    width: 20%;
-	    text-align: center;
+    text-align: center;
 	}
 
 	.footer-right {
-	    width: 60%;
-	    text-align: right;
+	     width: 60%;
+    text-align: right;
 	}
 	
 	.footer-logo {
-	    width: 65px;
-	    height: 20px;
+	    width: 50px;
+	    height: 15px;
 	}
 	
 	.pageNumber:before {
@@ -159,6 +163,32 @@
 </style>
 </head>
 <body>
+<!-- <div id="pdfFooter">
+
+    <table class="footer-table">
+        <tr>
+
+            <td class="footer-left">
+                <img th:src="${egovLogo}" class="footer-logo" alt="logo"/>
+            </td>
+
+            <td class="footer-center">
+               <span class="pageNumber"></span>
+            </td>
+
+            <td class="footer-right">
+                <span th:text="${'Application No: ' + applicationNumber + ', Scrutiny Date: ' + reportGeneratedDate}"></span>
+            </td>
+
+        </tr>
+        <tr>
+            <td colspan="3">
+                Note: All Linear measurement values are in Metres and Area values in Square Metres
+            </td>
+        </tr>
+    </table>
+
+</div> -->
 <div id="pdfFooter">
 
     <table class="footer-table">
@@ -177,6 +207,14 @@
             </td>
 
         </tr>
+
+        <!-- ✅ NEW ROW -->
+        <tr>
+            <td colspan="3" class="footer-note">
+                Note: All Linear measurement values are in Metres and Area values in Square Metres
+            </td>
+        </tr>
+
     </table>
 
 </div>
@@ -409,6 +447,17 @@
 
 			</div>
 		</div>
+	</div>
+	<div>
+		<p>
+			<b>Note: The scrutiny has been done in accordance with the amended byelaws dated 31. 12. 2019. If any error is observed in the scrutiny report, the observations should be informed at Stp-tpw-lg@punjab.gov.in with the approval of the Competent Authority.
+			</b>
+			<div></div>
+			<div></div>
+			<br />
+			
+			Disclaimer: This is an automatically generated electronic document which requires no signature.
+		</p>
 	</div>
 </body>
 </html>
