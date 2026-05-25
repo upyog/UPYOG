@@ -93,7 +93,10 @@ public class Payment {
 
     @SafeHtml
     @Size(max=128)
-    @Pattern(regexp = "^[a-zA-Z ]+(([_\\-'`\\. ][a-zA-Z ])?[a-zA-Z]*)*$", message = "Invalid name. Only alphabets and special characters -, ',`, ., _")
+    @Pattern(
+    	    regexp = "^[a-zA-Z ]+(([_\\-'`\\. ][a-zA-Z ]+)*)(\\s*,\\s*[a-zA-Z ]+(([_\\-'`\\. ][a-zA-Z ]+)*)?)*$",
+    	    message = "Invalid name. Only alphabets and special characters -, ',`, ., _ with comma-separated values allowed"
+    	)
     @JsonProperty("payerName")
     private String payerName = null;
 

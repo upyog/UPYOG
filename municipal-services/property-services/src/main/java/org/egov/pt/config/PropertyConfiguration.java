@@ -477,5 +477,8 @@ public class PropertyConfiguration {
 	
 	@Value("${is.asmt.pastyear.enable}")
 	private Boolean isAsmtPastYearEnable;
+	
+	@Value("${persister.update.property.document.topic}")
+	private String propertyDocumentUpdate;
 	    
 }

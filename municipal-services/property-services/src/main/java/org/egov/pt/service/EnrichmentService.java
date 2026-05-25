@@ -232,7 +232,7 @@ public class EnrichmentService {
 		appeal.setId(UUID.randomUUID().toString());
 		appeal.setAuditDetails(propertyAuditDetails);
 		appeal.setPropertyTenantID(appeal.getTenantId());
-		//appeal.setTenantId(statetenantid);
+		appeal.setTenantId(statetenantid);
 		
 		if (!CollectionUtils.isEmpty(appeal.getDocuments()))
 			appeal.getDocuments().forEach(doc -> {
@@ -278,6 +278,9 @@ public class EnrichmentService {
 		RequestInfo requestInfo = request.getRequestInfo();
 		AuditDetails auditDetailsForUpdate = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
 		propertyFromDb.setAuditDetails(auditDetailsForUpdate);
+		List<String> addressDocuments = Arrays.asList("OWNER.ADDRESSPROOF.AADHAAR","OWNER.ADDRESSPROOF.VOTERID","OWNER.IDENTITYPROOF.DRIVING","OWNER.IDENTITYPROOF.PASSPORT","OWNER.ADDRESSPROOF.ELECTRICITYBILL");
+		List<String> pattaDocuments = Arrays.asList("OWNER.PATTA.JAMABANDI","OWNER.DAG.CHITHA","OWNER.SELF.DECLARATION","OWNER.OTHERS");
+		List<String> documentTypeInactive=new ArrayList<String>();
 
 
 		Boolean isWfEnabled = config.getIsWorkflowEnabled();
@@ -293,16 +296,37 @@ public class EnrichmentService {
 			enrichPropertyForNewWf(requestInfo, property, false);
 		}
 		//if()
+		
+
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
 
 				if (doc.getId() == null && doc.getFileStoreId()!=null && doc.getDocumentType()!=null && !doc.getDocumentType().isEmpty()) {
 					doc.setId(UUID.randomUUID().toString());
 					doc.setStatus(Status.ACTIVE);
+					if (addressDocuments.contains(doc.getDocumentType())) {
+					    documentTypeInactive.addAll(addressDocuments);
+					} else if (pattaDocuments.contains(doc.getDocumentType())) {
+					    documentTypeInactive.addAll(pattaDocuments);
+					} else {
+					    documentTypeInactive.add(doc.getDocumentType());
+					}
+				}
+			});
+		
+		
+		if (!CollectionUtils.isEmpty(propertyFromDb.getDocuments()))
+			propertyFromDb.getDocuments().forEach(doc -> {
+				if (documentTypeInactive.contains(doc.getDocumentType())) {
+					doc.setStatus(Status.INACTIVE);
 				}
 			});
 
+		
+		
+
 		property.setDocuments(property.getDocuments().stream().filter(x->null!=x.getId() && (!x.getId().isEmpty()) && (!x.getFileStoreId().isEmpty() || !(x.getFileStoreId()==null))).collect(Collectors.toList()));
+		//property.setDocuments(propertyFromDb.getDocuments().stream().filter(x->null!=x.getId() && (!x.getId().isEmpty()) && (!x.getFileStoreId().isEmpty() || !(x.getFileStoreId()==null))).collect(Collectors.toList()));
 		
 		if (!CollectionUtils.isEmpty(property.getUnits())) {
 			property.getUnits().forEach(unit -> {
