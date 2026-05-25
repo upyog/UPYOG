@@ -29,7 +29,16 @@ public class MeterReadingSearchCriteria {
     
     @JsonProperty("locality")
     private String locality;
+    
+    @JsonProperty("block")
+    private String block;
+    
+    @JsonProperty("zone")
+    private String zone;
 
+    @JsonProperty("bulkLimit")
+    private Integer bulkLimit = 10;
+    
     public boolean isEmpty() {
         return (StringUtils.isEmpty(this.tenantId) && CollectionUtils.isEmpty(this.connectionNos));
     }

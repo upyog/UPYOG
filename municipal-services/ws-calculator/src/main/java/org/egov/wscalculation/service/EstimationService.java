@@ -264,8 +264,17 @@ public class EstimationService {
 		Double meterMaxReading = null;
 		Double bulkMeterMaxReading = null;
 
+		String meterStatus = criteria.getMeterStatus() != null
+		        ? criteria.getMeterStatus().toString()
+		        : "";
+
+		/*
+		 * Fetch max readings ONLY for RESET meters.
+		 * Avoids MDMS dependency for WORKING / LOCKED / NO_METER / BREAKDOWN.
+		 */
 		if (WSCalculationConstant.meteredConnectionType
-		        .equals(waterConnection.getConnectionType())) {
+		        .equals(waterConnection.getConnectionType())
+		        && WSCalculationConstant.RESET.equalsIgnoreCase(meterStatus)) {
 
 		    meterMaxReading =
 		            getMaxMeterReadingFromMDMS(
@@ -286,8 +295,7 @@ public class EstimationService {
 		            meterMaxReading,
 		            bulkMeterMaxReading
 		    );
-		}
- 
+		} 
 		// ✅ Pass maxReadings into getUnitOfMeasurement
 		Double totalUOM = getUnitOfMeasurement(property, waterConnection, calculationAttribute, criteria,
 				meterMaxReading, bulkMeterMaxReading);
@@ -322,7 +330,6 @@ public class EstimationService {
 						.equalsIgnoreCase(waterConnection.getConnectionType())) {
  
 					Double meterReading = totalUOM;
-					String meterStatus = criteria.getMeterStatus().toString();
  
 					if (WSCalculationConstant.NO_METER.equalsIgnoreCase(meterStatus)
 							|| WSCalculationConstant.BREAKDOWN.equalsIgnoreCase(meterStatus)) {
