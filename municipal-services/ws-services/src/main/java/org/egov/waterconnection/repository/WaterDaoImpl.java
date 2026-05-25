@@ -8,12 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.format.DateTimeFormatter;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.threeten.bp.Instant;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -30,8 +25,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
+import org.threeten.bp.Instant;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Slf4j
 @Repository
@@ -72,7 +73,8 @@ public class WaterDaoImpl implements WaterDao {
 
 	@Override
 	public void saveWaterConnection(WaterConnectionRequest waterConnectionRequest) {
-		waterConnectionProducer.push(createWaterConnection, waterConnectionRequest);
+		String key = waterConnectionRequest.getWaterConnection().getConnectionNo();
+		waterConnectionProducer.push(createWaterConnection, key, waterConnectionRequest);
 	}
 
 	@Override
@@ -125,6 +127,7 @@ public class WaterDaoImpl implements WaterDao {
 	public void updateWaterConnection(WaterConnectionRequest waterConnectionRequest, boolean isStateUpdatable) {
 		String reqAction = waterConnectionRequest.getWaterConnection().getProcessInstance().getAction();
 		
+		String key = waterConnectionRequest.getWaterConnection().getConnectionNo();
 		if (isStateUpdatable) 
 		{
 			if (WCConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(reqAction)) 
@@ -137,16 +140,16 @@ public class WaterDaoImpl implements WaterDao {
 			else if(waterConnectionRequest.getWaterConnection().isIsworkflowdisabled())
 			{
 			// For meter number and rest details addition before payment (02-08-2024)
-				waterConnectionProducer.push(updateWaterConnection, waterConnectionRequest);
+				waterConnectionProducer.push(updateWaterConnection, key, waterConnectionRequest);
 			
 			}
 			else
-				waterConnectionProducer.push(updateWaterConnection, waterConnectionRequest);
+				waterConnectionProducer.push(updateWaterConnection, key, waterConnectionRequest);
 		} 
 		
 		
 		else {
-			waterConnectionProducer.push(wsConfiguration.getWorkFlowUpdateTopic(), waterConnectionRequest);
+			waterConnectionProducer.push(wsConfiguration.getWorkFlowUpdateTopic(), key, waterConnectionRequest);
 		}
 	}
 	
@@ -157,7 +160,8 @@ public class WaterDaoImpl implements WaterDao {
 	 */
 	public void postForMeterReading(WaterConnectionRequest waterConnectionRequest) {
 		log.info("Posting request to kafka topic - " + wsConfiguration.getCreateMeterReading());
-		waterConnectionProducer.push(wsConfiguration.getCreateMeterReading(), waterConnectionRequest);
+		String key = waterConnectionRequest.getWaterConnection().getConnectionNo();
+		waterConnectionProducer.push(wsConfiguration.getCreateMeterReading(), key , waterConnectionRequest);
 	}
 
 	/**
@@ -168,7 +172,8 @@ public class WaterDaoImpl implements WaterDao {
 	public void pushForEditNotification(WaterConnectionRequest waterConnectionRequest, boolean isStateUpdatable) {
 		if (!WCConstants.EDIT_NOTIFICATION_STATE
 				.contains(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction())) {
-			waterConnectionProducer.push(wsConfiguration.getEditNotificationTopic(), waterConnectionRequest);
+			String key = waterConnectionRequest.getWaterConnection().getConnectionNo();
+			waterConnectionProducer.push(wsConfiguration.getEditNotificationTopic(), key, waterConnectionRequest);
 		}
 	}
 	
@@ -178,7 +183,8 @@ public class WaterDaoImpl implements WaterDao {
 	 * @param waterConnectionRequest
 	 */
 	public void enrichFileStoreIds(WaterConnectionRequest waterConnectionRequest) {
-		waterConnectionProducer.push(wsConfiguration.getFileStoreIdsTopic(), waterConnectionRequest);
+		String key = waterConnectionRequest.getWaterConnection().getConnectionNo();
+		waterConnectionProducer.push(wsConfiguration.getFileStoreIdsTopic(), key , waterConnectionRequest);
 	}
 	
 	/**
@@ -187,7 +193,8 @@ public class WaterDaoImpl implements WaterDao {
 	 * @param waterConnectionRequest
 	 */
 	public void saveFileStoreIds(WaterConnectionRequest waterConnectionRequest) {
-		waterConnectionProducer.push(wsConfiguration.getSaveFileStoreIdsTopic(), waterConnectionRequest);
+		String key = waterConnectionRequest.getWaterConnection().getConnectionNo();
+		waterConnectionProducer.push(wsConfiguration.getSaveFileStoreIdsTopic(), key , waterConnectionRequest);
 	}
 
 	public Boolean isSearchOpen(User userInfo) {
@@ -254,16 +261,18 @@ public class WaterDaoImpl implements WaterDao {
 		} else {
 			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), waterRowMapper);
 			for (WaterConnection waterConnection : waterConnectionList) {
-            	convertMeterMakeToString(waterConnection);
-            	convertLastMeterDateFormat(waterConnection);
+				convertMeterMakeToString(waterConnection);
+				convertLastMeterDateFormat(waterConnection);
 
-            }
+			}
 			connectionResponse = WaterConnectionResponse.builder().waterConnection(waterConnectionList)
 					.totalCount(waterRowMapper.getFull_count()).build();
 		}
 		return connectionResponse;
 	}
 	
+
+
 	private void convertLastMeterDateFormat(WaterConnection wc) {
 
 	    if (wc.getAdditionalDetails() == null)
@@ -386,7 +395,8 @@ public class WaterDaoImpl implements WaterDao {
 	/* Method to push the encrypted data to the 'update' topic  */
 	@Override
 	public void updateOldWaterConnections(WaterConnectionRequest waterConnectionRequest) {
-		waterConnectionProducer.push(updateOldDataEncTopic, waterConnectionRequest);
+		String key = waterConnectionRequest.getWaterConnection().getConnectionNo();
+		waterConnectionProducer.push(updateOldDataEncTopic, key, waterConnectionRequest);
 	}
 
 	/* Method to find the total count of applications present in dB */
@@ -403,7 +413,8 @@ public class WaterDaoImpl implements WaterDao {
 	/* Method to push the old data encryption status to the 'ws-enc-audit' topic  */
 	@Override
 	public void updateEncryptionStatus(EncryptionCount encryptionCount) {
-		waterConnectionProducer.push(encryptionStatusTopic, encryptionCount);
+		String key = encryptionCount.getId();
+		waterConnectionProducer.push(encryptionStatusTopic, key, encryptionCount);
 	}
 	@Override
 	public List<WaterConnection> getPlainWaterConnectionSearch(SearchCriteria criteria) {
@@ -486,5 +497,6 @@ public class WaterDaoImpl implements WaterDao {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	
 }

@@ -260,4 +260,13 @@ public class WSConfiguration {
 	@Value("${egov.fetch.bill.endpoint}")
 	private String fetchBillEndPoint;
 	
+	@Value("${elasticsearch.host}")
+	private String elasticsearchHost;
+	
+	@Value("${elasticsearch.search.endpoint}")
+	private String elasticsearchSearchEndpoint;
+	
+	@Value("${elasticsearch.index.name}")
+	private String elasticsearchIndexName;
+	
 }

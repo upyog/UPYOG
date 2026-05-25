@@ -5,7 +5,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.swservice.service.SewerageEncryptionService;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.swservice.service.DocumentService;
+import org.egov.swservice.service.SWFuzzySearchService;
 import org.egov.swservice.web.models.DocumentRequest;
 import org.egov.swservice.web.models.RequestInfoWrapper;
 import org.egov.swservice.web.models.SearchCriteria;
@@ -45,6 +47,9 @@ public class SewarageController {
 
 	@Autowired
 	SewerageEncryptionService sewerageEncryptionService;
+	
+	@Autowired
+	private SWFuzzySearchService swFuzzySearchService;
 
 	@Autowired
 	private final ResponseInfoFactory responseInfoFactory;
@@ -62,18 +67,35 @@ public class SewarageController {
 	}
 
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
-	public ResponseEntity<SewerageConnectionResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-			@Valid @ModelAttribute SearchCriteria criteria) {
-		List<SewerageConnection> sewerageConnectionList = sewarageService.search(criteria,
-				requestInfoWrapper.getRequestInfo());
-		Integer count = sewarageService.countAllSewerageApplications(criteria,	requestInfoWrapper.getRequestInfo());
-		SewerageConnectionResponse response = SewerageConnectionResponse.builder()
-				.sewerageConnections(sewerageConnectionList).totalCount(count)
-				.responseInfo(responseInfoFactory
-						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
-				.build();
-		return new ResponseEntity<>(response, HttpStatus.OK);
-
+	public ResponseEntity<SewerageConnectionResponse> search(
+	        @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+	        @Valid @ModelAttribute SearchCriteria criteria) {
+	    
+	    // 1. FIX: Extract requestInfo from the wrapper
+	    RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
+	    
+	    List<SewerageConnection> sewerageConnectionList = null;
+	    
+	    if (criteria.getOwnerName() != null || criteria.getDoorNo() != null || criteria.getLocality() != null) {
+	        // 2. FIX: Assign to the list instead of returning directly
+	        sewerageConnectionList = swFuzzySearchService.getConnections(requestInfo, criteria);
+	    } 
+	    else {
+	        // 2. FIX: Assign to the list instead of returning directly
+	        sewerageConnectionList = sewarageService.search(criteria, requestInfo);
+	    }
+	    
+	    // Now this code is reachable and will actually execute
+	    Integer count = sewarageService.countAllSewerageApplications(criteria, requestInfo);
+	    
+	    SewerageConnectionResponse response = SewerageConnectionResponse.builder()
+	            .sewerageConnections(sewerageConnectionList)
+	            .totalCount(count)
+	            .responseInfo(responseInfoFactory
+	                    .createResponseInfoFromRequestInfo(requestInfo, true))
+	            .build();
+	            
+	    return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/_update", method = RequestMethod.POST, produces = "application/json")

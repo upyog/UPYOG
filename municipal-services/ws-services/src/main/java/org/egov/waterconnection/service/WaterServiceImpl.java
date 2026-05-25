@@ -71,6 +71,9 @@ public class WaterServiceImpl implements WaterService {
 
 	@Autowired
 	private WaterServicesUtil waterServiceUtil;
+	
+	@Autowired
+	private WSFuzzySearchService WSFuzzySearchService;
 
 	@Autowired
 	private CalculationService calculationService;
@@ -297,7 +300,11 @@ public class WaterServiceImpl implements WaterService {
 	 */
 	public List<WaterConnection> search(SearchCriteria criteria, RequestInfo requestInfo) {
 		List<WaterConnection> waterConnectionList;
-		waterConnectionList = getWaterConnectionsList(criteria, requestInfo);
+		
+		if(criteria.getOwnerName() != null || criteria.getDoorNo() != null ||criteria.getLocality() != null)
+            waterConnectionList = WSFuzzySearchService.getConnections(requestInfo,criteria);
+        else
+            waterConnectionList = getWaterConnectionsList(criteria, requestInfo);
 		log.info("Water Connection List Inside Search API call ::" + waterConnectionList);
 		log.info("Search Criteria ::" + criteria);
 		if (!StringUtils.isEmpty(criteria.getSearchType())
