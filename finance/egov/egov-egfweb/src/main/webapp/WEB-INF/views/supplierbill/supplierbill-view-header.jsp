@@ -135,7 +135,7 @@
 					<spring:message text="Treasury Voucher Date" />
 				</div>
 				<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
-					<c:out default="N/A" value="${egBillregister.tvdate}"  />
+					<fmt:formatDate value="${egBillregister.tvdate}" pattern="dd/MM/yyyy" />
 				</div>			
 		</div>
 	</div>
