@@ -141,7 +141,7 @@ public class ESignService {
         }
         
         appearance.setLayer2Text(layer2Text);
-        appearance.setRenderingMode(PdfSignatureAppearance.RenderingMode.NAME_AND_DESCRIPTION); // Text Only
+        appearance.setRenderingMode(PdfSignatureAppearance.RenderingMode.DESCRIPTION); // Text Only
 
         signer.setFieldName("Signature1");
 
