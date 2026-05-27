@@ -53,6 +53,12 @@ import org.joda.time.LocalDate;
 
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Base64;
+
+
 @Service
 public class PlanReportServiceV2 {
 
@@ -115,7 +121,7 @@ public class PlanReportServiceV2 {
 
         int count = 1;
 
-        model.put("logo", edcr_logodep_url);
+        
         model.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         model.put("applicantName", dcrApplication.getApplicantName());
         model.put("licensee", dcrApplication.getArchitectInformation());
@@ -135,7 +141,11 @@ public class PlanReportServiceV2 {
         model.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
         model.put("surrenderRoadArea", plan.getTotalSurrenderRoadArea());
-        model.put("egovLogo", edcr_mseva_logo_url);
+//        model.put("egovLogo", edcr_mseva_logo_url);
+//        model.put("logo", edcr_logodep_url);
+        model.put("logo", imageUrlToBase64(edcr_logodep_url));
+        model.put("egovLogo", imageUrlToBase64(edcr_mseva_logo_url));
+        
         model.put("cityLogo", edcr_logodep_url);
         model.put("numberOfFloors", plan.getPlanInformation().getNumberOfFloors());
         model.put("ulbType", plan.getPlanInformation().getUlbType());
@@ -731,6 +741,29 @@ public class PlanReportServiceV2 {
         }
 
         LOG.info("Status terminology update completed.");
+    }
+    
+    public static String imageUrlToBase64(String imageUrl) {
+
+        try (InputStream inputStream = new URL(imageUrl).openStream();
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+
+            byte[] imageBytes = baos.toByteArray();
+
+            String base64 = Base64.getEncoder().encodeToString(imageBytes);
+
+            return "data:image/png;base64," + base64;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert image URL to Base64", e);
+        }
     }
 
     private static String swapStatus(String status) {
