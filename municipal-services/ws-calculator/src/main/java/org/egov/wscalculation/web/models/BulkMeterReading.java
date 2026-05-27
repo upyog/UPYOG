@@ -127,6 +127,9 @@ public class BulkMeterReading {
 	@JsonProperty("locality")
 	private String locality = null;
 	
+	@JsonProperty("groups")
+	private String groups = null;
+	
 	public BulkMeterReading id(String id) {
 		this.id = id;
 		return this;
@@ -387,7 +390,8 @@ public class BulkMeterReading {
 				&& Objects.equals(this.tenantId, bulkMeterReading.tenantId)
 				&& Objects.equals(this.block, bulkMeterReading.block)
 				&& Objects.equals(this.zone, bulkMeterReading.zone)
-				&& Objects.equals(this.locality, bulkMeterReading.locality);
+				&& Objects.equals(this.locality, bulkMeterReading.locality)
+				&& Objects.equals(this.groups, bulkMeterReading.groups);
 	}
 
 	@Override
@@ -414,6 +418,7 @@ public class BulkMeterReading {
 		sb.append("	   block: ").append(toIndentedString(block)).append("\n");
 		sb.append("	   zone: ").append(toIndentedString(zone)).append("\n");
 		sb.append("	   locality: ").append(toIndentedString(locality)).append("\n");
+		sb.append("	   groups: ").append(toIndentedString(groups)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}

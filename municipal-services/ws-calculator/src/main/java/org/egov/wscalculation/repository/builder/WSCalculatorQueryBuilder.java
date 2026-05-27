@@ -144,8 +144,8 @@ public class WSCalculatorQueryBuilder {
 	public static final String RELATED_SW_CONNECTION_SEARCH_QUERY = "SELECT conn.relatedSwConn from eg_ws_connection conn ";
 	
 	public static final String METERREADINGQUERY = "SELECT DISTINCT ON (mr.connectionNo) mr.id, mr.connectionNo as connectionId, epp.usagecategory as usageCategory, mr.billingPeriod, mr.meterStatus, mr.lastReading, mr.lastReadingDate, mr.currentReading,"
-			+ " mr.currentReadingDate, mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy,"
-			+ " mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime , ebm.zonecode as zonecode , ebm.blockcode AS blockcode , epa.locality as localityCode FROM eg_ws_meterreading mr "
+			+ " mr.currentReadingDate, mr.createdBy as mr_createdBy, mr.tenantid, mr.lastModifiedBy as mr_lastModifiedBy, mr.createdTime as mr_createdTime, mr.lastModifiedTime as mr_lastModifiedTime , "
+			+ " ebm.zonecode as zonecode , ebm.blockcode AS blockcode , ebm.localitycode as localityCode , conn.additionaldetails->>'groups' as groups FROM eg_ws_meterreading mr "
 			+ INNER_JOIN_STRING + " eg_ws_connection conn  ON mr.connectionno = conn.connectionno  AND mr.tenantid = conn.tenantid  "
 			+ INNER_JOIN_STRING +" eg_ws_service ews  ON conn.id = ews.connection_id " + INNER_JOIN_STRING +" eg_pt_property epp  ON conn.property_id = epp.propertyid "
 			+ INNER_JOIN_STRING +" eg_pt_address epa  ON epa.propertyid = epp.id " + INNER_JOIN_STRING + " eg_bndry_mohalla ebm ON ebm.tenantid = conn.tenantid AND ebm.localitycode = epa.locality";
@@ -1156,7 +1156,7 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 		}
 		if (!StringUtils.isEmpty(criteria.getLocality())) {
 			addClauseIfRequired(preparedStatement, query);
-			query.append(" epa.locality= ? ");
+			query.append(" ebm.localitycode= ? ");
 			preparedStatement.add(criteria.getLocality());
 		}
 		
@@ -1172,6 +1172,12 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			preparedStatement.add(criteria.getZone());
 		}
 		
+		if (!StringUtils.isEmpty(criteria.getGroups())) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" conn.additionaldetails->>'groups' = ? ");
+	        preparedStatement.add(criteria.getGroups());
+	    }
+		
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" ews.connectiontype = 'Metered' \r\n");
 		addClauseIfRequired(preparedStatement, query);
@@ -1184,7 +1190,7 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			query.append(" mr.connectionNo IN (").append(createQuery(criteria.getConnectionNos())).append(" )");
 			addToPreparedStatement(preparedStatement, criteria.getConnectionNos());
 		}
-		query.append(" ORDER BY mr.connectionNo, mr.currentReadingDate DESC \r\n");
+		query.append(" ORDER BY mr.connectionNo ASC, mr.currentReadingDate DESC \r\n");
 		
 		return addPaginationWrapper(query, preparedStatement, criteria);
 	}

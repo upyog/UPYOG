@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.egov.wscalculation.web.models.AuditDetails;
 import org.egov.wscalculation.web.models.BulkMeterReading;
@@ -20,7 +21,7 @@ public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<BulkMe
 	@Override
 	public List<BulkMeterReading> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-	    Map<String, BulkMeterReading> maxReadingMap = new HashMap<>();
+	    Map<String, BulkMeterReading> maxReadingMap = new LinkedHashMap<>();
 
 	    while (rs.next()) {
 	    		BulkMeterReading bulkMeterReading = new BulkMeterReading();
@@ -38,7 +39,8 @@ public class BulkMeterReadingRowMapper implements ResultSetExtractor<List<BulkMe
 	            bulkMeterReading.setTenantId(rs.getString("tenantid"));
 	            bulkMeterReading.setZone(rs.getString("zonecode"));
 	            bulkMeterReading.setBlock(rs.getString("blockcode"));
-	            bulkMeterReading.setLocality(rs.getString("localityCode"));
+	            bulkMeterReading.setLocality(rs.getString("localitycode"));
+	            bulkMeterReading.setGroups(rs.getString("groups"));
 
 	            AuditDetails auditdetails = AuditDetails.builder()
 	                    .createdBy(rs.getString("mr_createdBy"))

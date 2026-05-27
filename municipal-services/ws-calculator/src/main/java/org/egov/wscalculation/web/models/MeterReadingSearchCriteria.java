@@ -35,6 +35,9 @@ public class MeterReadingSearchCriteria {
     
     @JsonProperty("zone")
     private String zone;
+    
+    @JsonProperty("groups")
+    private String groups;
 
     @JsonProperty("bulkLimit")
     private Integer bulkLimit = 10;
