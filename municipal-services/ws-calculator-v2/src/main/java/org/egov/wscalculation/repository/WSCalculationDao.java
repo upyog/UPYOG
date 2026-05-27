@@ -91,4 +91,6 @@ public interface WSCalculationDao {
 	 * @return List of meter readings based on criteria
 	 */
 	List<BulkMeterReading> searchMeterReadingsV2(MeterReadingSearchCriteria criteria);
+
+	Boolean isBatchDemandExecuted(String tenantId, Long taxPeriodFrom, Long taxPeriodTo);
 }
