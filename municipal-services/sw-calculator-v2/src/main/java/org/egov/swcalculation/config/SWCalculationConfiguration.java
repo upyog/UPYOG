@@ -212,4 +212,17 @@ public class SWCalculationConfiguration {
 	@Value("${egov.bulk.bill.generate.count}")
 	private Integer bulkBillGenerateCount;
 
+	@Value("${kafka.topics.save.sw.batch.demand.log}")
+	private String saveBatchDemandLogTopic;
+
+	@Value("${kafka.topics.save.sw.batch.connection.log}")
+	private String saveBatchConnectionLogTopic;
+
+	// Multi-threading configuration
+	@Value("${sw.tenant.thread.pool.size:5}")
+	private Integer tenantThreadPoolSize;
+
+	@Value("${sw.connection.thread.pool.size:3}")
+	private Integer connectionThreadPoolSize;
+
 }
