@@ -1,0 +1,6 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon Jan 12 14:31:14 IST 2026
+xmlgraphics-commons-1.5.jar>maven-central=
+xmlgraphics-commons-1.5.jar>nexus=
+xmlgraphics-commons-1.5.pom>maven-central=
+xmlgraphics-commons-1.5.pom>nexus=

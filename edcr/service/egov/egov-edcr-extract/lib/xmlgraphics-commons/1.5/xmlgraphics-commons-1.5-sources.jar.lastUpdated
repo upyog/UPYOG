@@ -1,0 +1,17 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon Jan 12 13:27:35 IST 2026
+1725debf38749785a7ef4aafbfcf1dd284f00acf@default-repo.egovernments.org-https\://nexus-repo.digit.org/nexus/content/groups/public/.lastUpdated=1768204652219
+@default-AsposeJavaAPI-https\://releases.aspose.com/repo/.lastUpdated=1768204652233
+@default-JBoss\ Repository-https\://repository.jboss.org/nexus/content/groups/public/.lastUpdated=1768204652224
+@default-javaxt.com-https\://www.javaxt.com/maven/.lastUpdated=1768204652239
+@default-jspresso-mirror-https\://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/.lastUpdated=1768204655978
+@default-maven-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1768204655397
+@default-nexus-https\://nexus-repo.digit.org/nexus/content/groups/public/.lastUpdated=1768204652257
+file\://C\:\\Users\\DELL\\git\\mSevaUPYOG-2018Rules\\edcr\\service\\egov\\egov-edcr-extract/lib/.error=
+file\://C\:\\Users\\DELL\\git\\mSevaUPYOG-2018Rules\\edcr\\service\\egov\\egov-edcr-extract/lib/.lastUpdated=1768204655970
+https\://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/.error=Could not transfer artifact org.apache.xmlgraphics\:xmlgraphics-commons\:jar\:sources\:1.5 from/to jspresso-mirror (https\://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/)\: jaspersoft.jfrog.io
+https\://nexus-repo.digit.org/nexus/content/groups/public/.error=Could not transfer artifact org.apache.xmlgraphics\:xmlgraphics-commons\:jar\:sources\:1.5 from/to nexus (https\://nexus-repo.digit.org/nexus/content/groups/public/)\: No route to host\: getsockopt
+https\://releases.aspose.com/repo/.error=Could not transfer artifact org.apache.xmlgraphics\:xmlgraphics-commons\:jar\:sources\:1.5 from/to AsposeJavaAPI (https\://releases.aspose.com/repo/)\: releases.aspose.com
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact org.apache.xmlgraphics\:xmlgraphics-commons\:jar\:sources\:1.5 from/to maven-central (https\://repo.maven.apache.org/maven2)\: repo.maven.apache.org
+https\://repository.jboss.org/nexus/content/groups/public/.error=Could not transfer artifact org.apache.xmlgraphics\:xmlgraphics-commons\:jar\:sources\:1.5 from/to JBoss Repository (https\://repository.jboss.org/nexus/content/groups/public/)\: repository.jboss.org
+https\://www.javaxt.com/maven/.error=Could not transfer artifact org.apache.xmlgraphics\:xmlgraphics-commons\:jar\:sources\:1.5 from/to javaxt.com (https\://www.javaxt.com/maven)\: www.javaxt.com
