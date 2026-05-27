@@ -117,6 +117,18 @@ public class BulkMeterReading {
 	@SafeHtml
 	@JsonProperty("tenantId")
 	private String tenantId = null;
+	
+	@JsonProperty("zone")
+	private String zone = null;
+	
+	@JsonProperty("block")
+	private String block = null;
+	
+	@JsonProperty("locality")
+	private String locality = null; 
+	
+	@JsonProperty("groups")
+	private String groups = null;
 
 	public BulkMeterReading id(String id) {
 		this.id = id;
@@ -375,7 +387,11 @@ public class BulkMeterReading {
 				&& Objects.equals(this.currentReadingDate, bulkMeterReading.currentReadingDate)
 				&& Objects.equals(this.consumption, bulkMeterReading.consumption)
 				&& Objects.equals(this.usageCategory, bulkMeterReading.usageCategory)
-				&& Objects.equals(this.tenantId, bulkMeterReading.tenantId);
+				&& Objects.equals(this.tenantId, bulkMeterReading.tenantId)
+				&& Objects.equals(this.block, bulkMeterReading.block)
+				&& Objects.equals(this.zone, bulkMeterReading.zone)
+				&& Objects.equals(this.locality, bulkMeterReading.locality)
+				&& Objects.equals(this.groups, bulkMeterReading.groups);
 	}
 
 	@Override
@@ -399,6 +415,10 @@ public class BulkMeterReading {
 		sb.append("    consumption: ").append(toIndentedString(consumption)).append("\n");
 		sb.append("    usageCategory: ").append(toIndentedString(usageCategory)).append("\n");
 		sb.append("	   tenantId: ").append(toIndentedString(tenantId)).append("\n");
+		sb.append("	   block: ").append(toIndentedString(block)).append("\n");
+		sb.append("	   zone: ").append(toIndentedString(zone)).append("\n");
+		sb.append("	   locality: ").append(toIndentedString(locality)).append("\n");
+		sb.append("	   groups: ").append(toIndentedString(groups)).append("\n");
 		sb.append("}");
 		return sb.toString();
 	}
