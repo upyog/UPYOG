@@ -1563,10 +1563,21 @@ public class DemandService {
 			log.info("requestInfo After removing Anonymous User: {}", mapper.writeValueAsString(requestInfo));
 
 			List<TaxPeriod> taxPeriods = calculatorUtils.getTaxPeriodsFromMDMS(requestInfo, tenantId);
+			if (taxPeriods == null || taxPeriods.isEmpty()) {
+				log.error("❌ No tax periods returned from MDMS for tenant: {}", tenantId);
+				return;
+			}
 			
-			int generateDemandToIndex = IntStream.range(0, taxPeriods.size())
-				     .filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate()))
-				     .findFirst().getAsInt();
+			int generateDemandToIndex;
+			try {
+				generateDemandToIndex = IntStream.range(0, taxPeriods.size())
+					     .filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate()))
+					     .findFirst().getAsInt();
+			} catch (Exception e) {
+				log.error("❌ taxPeriodFrom {} not found in taxPeriods for tenant: {} | {}",
+						taxPeriodFrom, tenantId, e.getMessage());
+				return;
+			}
 			
 			log.info("Billing master data values for non metered connection:: {}", master);
 			String cone=requestInfo.getKey();
@@ -1925,10 +1936,21 @@ public class DemandService {
 			log.info("requestInfo After removing Anonymous User: {}", mapper.writeValueAsString(singleDemand.getRequestInfo()));
 
 			List<TaxPeriod> taxPeriods = calculatorUtils.getTaxPeriodsFromMDMS(singleDemand.getRequestInfo(), tenantId);
+			if (taxPeriods == null || taxPeriods.isEmpty()) {
+				log.error("❌ No tax periods returned from MDMS for tenant: {}", tenantId);
+				return "";
+			}
 			
-			int generateDemandToIndex = IntStream.range(0, taxPeriods.size())
-				     .filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate()))
-				     .findFirst().getAsInt();
+			int generateDemandToIndex;
+			try {
+				generateDemandToIndex = IntStream.range(0, taxPeriods.size())
+					     .filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate()))
+					     .findFirst().getAsInt();
+			} catch (Exception e) {
+				log.error("❌ taxPeriodFrom {} not found in taxPeriods for tenant: {} | {}",
+						taxPeriodFrom, tenantId, e.getMessage());
+				return "";
+			}
 			
 			log.info("Billing master data values for non metered connection:: {}", master);
 		
