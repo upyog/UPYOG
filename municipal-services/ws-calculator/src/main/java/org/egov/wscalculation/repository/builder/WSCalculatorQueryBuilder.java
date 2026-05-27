@@ -218,8 +218,8 @@ public class WSCalculatorQueryBuilder {
 		if (criteria.getLimit() != null && criteria.getLimit() > config.getMeterReadingDefaultLimit())
 			limit = config.getMeterReadingDefaultLimit();
 
-		if(criteria.getBulkLimit() != null && query.toString().startsWith(METERREADINGQUERY) )
-			limit = criteria.getBulkLimit();
+		if(config.getBulkMeterLimit() != null && query.toString().startsWith(METERREADINGQUERY) )
+			limit = Integer.valueOf(config.getBulkMeterLimit());
 		
 		if (criteria.getOffset() != null)
 			offset = criteria.getOffset();

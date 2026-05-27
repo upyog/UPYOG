@@ -38,9 +38,6 @@ public class MeterReadingSearchCriteria {
     
     @JsonProperty("groups")
     private String groups;
-
-    @JsonProperty("bulkLimit")
-    private Integer bulkLimit = 10;
     
     public boolean isEmpty() {
         return (StringUtils.isEmpty(this.tenantId) && CollectionUtils.isEmpty(this.connectionNos));
