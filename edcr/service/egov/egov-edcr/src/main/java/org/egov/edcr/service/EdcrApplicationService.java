@@ -206,7 +206,7 @@ public class EdcrApplicationService {
     private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType, EdcrRequest edcrRequest){
         Plan planDetail = new Plan();
         planDetail = planService.process(edcrApplication, applicationType, edcrRequest);
-        updateFile(planDetail, edcrApplication);
+        updateFilev2(planDetail, edcrApplication);
         edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
         return planDetail;
     }
@@ -1115,6 +1115,54 @@ public class EdcrApplicationService {
 //            LOG.info("⚡ updateFile() completed in {} ms → {}", elapsed, newFileName);
 //        }
 //    }
+    
+    private void updateFilev2(Plan pl, EdcrApplication edcrApplication) {
+        long start = System.currentTimeMillis();
+        String newFileName = edcrApplication.getDxfFile()
+                .getOriginalFilename()
+                .replace(".dxf", "_system_scrutinized.pdf");
+        LOG.info("Starting scrutinized PDF generation for: {}", newFileName);
+
+        File tempPdf = null;
+        try {
+            tempPdf = File.createTempFile("scrutinized_", ".pdf");
+
+            try (FileInputStream dxfInput =
+                         new FileInputStream(edcrApplication.getSavedDxfFile())) {
+                DxfToPdfConverterv2.convertDxfToPdf(dxfInput, tempPdf, false); // false = don't save SVG
+                LOG.info("DXF to PDF conversion completed: {} bytes", tempPdf.length());
+            }
+
+            FileStoreMapper fileStoreMapper = fileStoreService.store(
+                    tempPdf,
+                    newFileName,
+                    "application/pdf",
+                    FILESTORE_MODULECODE
+            );
+
+            edcrApplication.getEdcrApplicationDetails()
+                    .get(0)
+                    .setScrutinizedDxfFileId(fileStoreMapper);
+
+            LOG.info("PDF stored in filestore: {}",
+                    fileStoreMapper != null ? fileStoreMapper.getFileStoreId() : "null");
+
+        } catch (AbstractMethodError ame) {
+            LOG.error("AbstractMethodError in updateFile() — Batik/FOP JAR conflict: {}", ame.getMessage(), ame);
+            throw new RuntimeException("SVG→PDF conversion failed due to Batik classpath conflict.", ame);
+
+        } catch (Exception e) {
+            LOG.error("Error in updateFile() for '{}': {}", newFileName, e.getMessage(), e);
+            throw new RuntimeException(e);
+
+        } finally {
+            if (tempPdf != null && tempPdf.exists() && !tempPdf.delete()) {
+                LOG.warn("Temporary PDF not deleted: {}", tempPdf.getAbsolutePath());
+            }
+            long elapsed = System.currentTimeMillis() - start;
+            LOG.info("updateFile() completed in {} ms → {}", elapsed, newFileName);
+        }
+    }
 
     private void updateFile(Plan pl, EdcrApplication edcrApplication) {
         long start = System.currentTimeMillis();
