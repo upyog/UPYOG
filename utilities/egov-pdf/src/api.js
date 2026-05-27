@@ -306,7 +306,16 @@ async function search_billgeneiWater(data, requestinfo, headers) {
     data: Object.assign(requestinfo, data),
     headers: headers,
   });
-  }else{
+  }else if(data &&
+    data.searchCriteria &&
+    data.searchCriteria.type === "integraded_bill"){
+      return await axios({
+        method: "post",
+        url: url.resolve(config.host.bill, config.paths.searcher_api_sw_integrated),
+        data: Object.assign(requestinfo, data),
+        headers: headers,
+      });
+    }else{
      return await axios({
     method: "post",
     url: url.resolve(config.host.bill, config.paths.searcher_api_water),
@@ -783,7 +792,10 @@ async function create_bulk_pdf(kafkaData) {
           var inputData ={}
           if(batchType  === 'Group'){
             inputData = { searchCriteria: { group: group, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService, type : 'group'  } };
-          }else{
+          }else if(batchType === 'Integrated Bill'){
+            inputData  = { searchCriteria: { locality: locality, tenantId: tenantId, url : config.paths.searcher_api_sw_integrated, businesService : bussinessService, type: "integraded_bill"  } };
+          }
+          else{
             inputData  = { searchCriteria: { locality: locality, tenantId: tenantId, url : config.paths.searcher_api_water, businesService : bussinessService, type: "locality"  } };
           }
             
