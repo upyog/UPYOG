@@ -139,9 +139,9 @@ public class DemandGenerationConsumer {
 	 * @param records
 	 *            failed batch processing
 	 */
-	@KafkaListener(topics = {
-			"${persister.demand.based.dead.letter.topic.batch}" }, containerFactory = "kafkaListenerContainerFactory",
-					concurrency = "${egov.sw.calculator.concurrency.count}")
+	// @KafkaListener(topics = {
+	// 		"${persister.demand.based.dead.letter.topic.batch}" }, containerFactory = "kafkaListenerContainerFactory",
+	// 				concurrency = "${egov.sw.calculator.concurrency.count}")
 	public void listenDeadLetterTopic(final List<Message<?>> records) {
 		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
 		Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),
