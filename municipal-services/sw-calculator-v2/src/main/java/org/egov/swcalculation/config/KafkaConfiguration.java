@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.kafka.listener.ContainerProperties.AckMode;
 
 @Configuration
@@ -23,6 +24,7 @@ public class KafkaConfiguration {
             Map<String, Object> props = new HashMap<>(
                     kafkaProperties.buildConsumerProperties()
             );
+            props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1800000); // 30 minutes
             return props;
         }
         

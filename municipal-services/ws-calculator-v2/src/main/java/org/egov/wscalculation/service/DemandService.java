@@ -1816,7 +1816,6 @@ public class DemandService {
 			List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
 			int connectionNosCount = 0;
 			int totalRecordsPushedToKafka = 0;
-			int threadSleepCount = 0;
 			for (int connectionNosIndex = 0; connectionNosIndex < connectionNos.size(); connectionNosIndex++) {
 				WaterDetails waterConnection = connectionNos.get(connectionNosIndex);
 				connectionNosCount++;
@@ -1875,11 +1874,7 @@ public class DemandService {
 						totalRecordsPushedToKafka = totalRecordsPushedToKafka + calculationCriteriaList.size();
 						calculationCriteriaList.clear();
 						connectionNosCount = 0;
-						if (threadSleepCount == 3) {
-							Thread.sleep(15000);
-							threadSleepCount = 0;
-						}
-						threadSleepCount++;
+
 
 					} else if (connectionNosIndex == connectionNos.size() - 1) {
 						/*

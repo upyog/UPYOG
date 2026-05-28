@@ -919,7 +919,6 @@ So, both lists are now filtered to include only records with INITIATED status, w
 				log.info(
 						"partitionConectionNoList size: {}, Producer ConsumerCodes size : {} and BulkBillGenerateCount: {}",
 						partitionConectionNoList.size(), connectionNos.size(), configs.getBulkBillGenerateCount());
-				int threadSleepCount = 1;
 				int count = 1;
 				for (List<String> conectionNoList : partitionConectionNoList) {
 
@@ -961,13 +960,7 @@ So, both lists are now filtered to include only records with INITIATED status, w
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ",
 							conectionNoList.size(), count++);
 
-					if (threadSleepCount == 2) {
-						// Pausing the controller for 10 seconds after every two batches pushed to Kafka
-						// topic
-						Thread.sleep(2000);
-						threadSleepCount = 1;
-					}
-					threadSleepCount++;
+
 
 				}
 				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.COMPLETED);

@@ -1702,7 +1702,6 @@ public class DemandService {
 
 		List<CalculationCriteria> batchList = new ArrayList<>();
 		int connectionNosCount = 0;
-		int threadSleepCount = 0;
 
 		for (int i = 0; i < connections.size(); i++) {
 			SewerageDetails sewConnDetails = connections.get(i);
@@ -1770,11 +1769,7 @@ public class DemandService {
 						billingCycleCount = 0;
 					}
 					
-					if (threadSleepCount == 3) {
-						Thread.sleep(1000);
-						threadSleepCount = 0;
-					}
-					threadSleepCount++;
+
 				} else if (i == connections.size() - 1) {
 					try {
 						pushBatchToKafka(batchList, requestInfo, tenantId, sewConnDetails.getConnectionNo(), connections.size());
@@ -1961,7 +1956,6 @@ public class DemandService {
 
 			int connectionNosCount = 0;
 			int totalRecordsPushedToKafka = 0;
-			int threadSleepCount = 0;
 			List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
 			for (int connectionNosIndex = 0; connectionNosIndex < connectionNos.size(); connectionNosIndex++) {
 				SewerageDetails sewConnDetails = connectionNos.get(connectionNosIndex);
@@ -2039,11 +2033,7 @@ public class DemandService {
 						billingCycleCount=0;
 						calculationCriteriaList.clear();
 						connectionNosCount=0;
-						if(threadSleepCount == 3) {
-							Thread.sleep(15000);
-							threadSleepCount=0;
-						}
-						threadSleepCount++;
+
 
 					} else if(connectionNosIndex == connectionNos.size()-1) {
 						log.info("Last connection entered into producer logic, connectionNosCount: {} and connectionNos.size(): {}",connectionNosCount, connectionNos.size());
