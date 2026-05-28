@@ -139,7 +139,7 @@ public class EdcrRestService {
 
     private static final String BPA_05 = "BPA-05";
 
-    private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
+    private static Logger LOG = LogManager.getLogger(EdcrRestService.class);
 
     public static final String FILE_DOWNLOAD_URL = "%s/edcr/rest/dcr/downloadfile";
 
