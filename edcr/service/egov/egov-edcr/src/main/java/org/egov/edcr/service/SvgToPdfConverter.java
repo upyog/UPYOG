@@ -85,10 +85,14 @@ public class SvgToPdfConverter {
 	        input.setURI(uri);
 	        TranscoderOutput output = new TranscoderOutput(fos);
 	        transcoder.transcode(input, output);
-	    } catch (TranscoderException e) {
+	    }  catch (TranscoderException e) {
+	        // TranscoderException.getMessage() is often null — extract the enclosed exception
+	        String cause = e.getException() != null
+	                ? e.getException().getMessage()
+	                : (e.getCause() != null ? e.getCause().getMessage() : "unknown");
 	        LOG.error("Transcoder error converting '{}' → '{}': {}",
-	                svgFile.getAbsolutePath(), pdfFile.getAbsolutePath(), e.getMessage(), e);
-	        throw new Exception("PDF transcoding failed: " + e.getMessage(), e);
+	                svgFile.getAbsolutePath(), pdfFile.getAbsolutePath(), cause, e);
+	        throw new Exception("PDF transcoding failed: " + cause, e);
 	    } catch (IOException e) {
 	        LOG.error("IO error writing PDF '{}': {}", pdfFile.getAbsolutePath(), e.getMessage(), e);
 	        throw new Exception("PDF file write failed: " + e.getMessage(), e);
