@@ -192,6 +192,17 @@ public class DxfToPdfConverterv2 {
             // After Y-flip, CCW becomes CW (sweep-flag=0)
             int largeArc = (sweep > 180) ? 1 : 0;
             int sweepFlag = 0; // Y flipped -> CW
+
+            String d = String.format(Locale.US,
+                    "M %.4f %.4f A %.4f %.4f 0 %d %d %.4f %.4f",
+                    sx, sy, r, r, largeArc, sweepFlag, ex, ey);
+
+                String safeD = validatePathData(d);
+                if (safeD == null) {
+                    LOG.debug("Skipping invalid arc path: {}", d);
+                    return "";
+                }
+            
             return String.format(Locale.US,
                 "<path d=\"M %.4f %.4f A %.4f %.4f 0 %d %d %.4f %.4f\" " +
                 "stroke=\"%s\" stroke-width=\"%.4f\" fill=\"none\"/>",
@@ -230,6 +241,17 @@ public class DxfToPdfConverterv2 {
             double sweep = endParam - startParam;
             if (sweep < 0) sweep += 2 * Math.PI;
             int largeArc = sweep > Math.PI ? 1 : 0;
+            
+            String d = String.format(Locale.US,
+                    "M %.4f %.4f A %.4f %.4f %.4f %d 0 %.4f %.4f",
+                    s[0], s[1], rx, ry, rotation, largeArc, e[0], e[1]);
+
+                String safeD = validatePathData(d);
+                if (safeD == null) {
+                    LOG.debug("Skipping invalid ellipse path: {}", d);
+                    return "";
+                }
+                
             return String.format(Locale.US,
                 "<path d=\"M %.4f %.4f A %.4f %.4f %.4f %d 0 %.4f %.4f\" " +
                 "stroke=\"%s\" stroke-width=\"%.4f\" fill=\"none\"/>",
@@ -284,6 +306,12 @@ public class DxfToPdfConverterv2 {
                     appendBulgeArc(d, last[0], last[1], first[0], first[1], last[2], t);
                 }
                 d.append(" Z");
+            }
+            
+            String safeD = validatePathData(d.toString());
+            if (safeD == null) {
+                LOG.debug("Skipping invalid polyline path on layer {}: {}", layer, d);
+                return "";
             }
             return String.format(Locale.US,
                 "<path d=\"%s\" stroke=\"%s\" stroke-width=\"%.4f\" fill=\"none\"/>",
@@ -341,6 +369,13 @@ public class DxfToPdfConverterv2 {
                 }
             }
             if (closed) d.append(" Z");
+            
+            String safeD = validatePathData(d.toString());
+            if (safeD == null) {
+                LOG.debug("Skipping invalid spline path on layer {}: {}", layer, d);
+                return "";
+            }
+            
             return String.format(Locale.US,
                 "<path d=\"%s\" stroke=\"%s\" stroke-width=\"%.4f\" fill=\"none\"/>",
                 d, color, lw);
@@ -729,6 +764,13 @@ public class DxfToPdfConverterv2 {
             d.append(String.format(Locale.US, "M %.4f %.4f", tx(vertices.get(0)[0], t), ty(vertices.get(0)[1], t)));
             for (int i = 1; i < vertices.size(); i++)
                 d.append(String.format(Locale.US, " L %.4f %.4f", tx(vertices.get(i)[0], t), ty(vertices.get(i)[1], t)));
+            
+            String safeD = validatePathData(d.toString());
+            if (safeD == null) {
+                LOG.debug("Skipping invalid leader path on layer {}: {}", layer, d);
+                return "";
+            }
+            
             return String.format(Locale.US,
                 "<path d=\"%s\" stroke=\"%s\" stroke-width=\"%.4f\" fill=\"none\"/>",
                 d, color, lw);
@@ -2218,6 +2260,10 @@ public class DxfToPdfConverterv2 {
                 LOG.error("Failed to generate SVG from DXF: {}", e.getMessage(), e);
                 throw new Exception("SVG generation failed: " + e.getMessage(), e);
             }
+            
+            // sanitize before handing to Batik
+            LOG.info("Sanitizing SVG paths...");
+            svg = sanitizeSvgPaths(svg);
 
             // --- Step 4: Convert SVG → PDF ---
             LOG.info("Converting SVG to PDF...");
@@ -2284,6 +2330,42 @@ public class DxfToPdfConverterv2 {
                 }
             }
         }
+    }
+    
+    
+    private static String sanitizeSvgPaths(String svg) {
+        if (svg == null || svg.isEmpty()) return svg;
+
+        // Remove <path> elements with empty d=""
+        svg = svg.replaceAll("<path([^>]*?)\\sd=\"\\s*\"([^>]*?)/>", "<!-- removed empty path -->");
+        svg = svg.replaceAll("<path([^>]*?)\\sd=\"\\s*\"([^>]*?)>\\s*</path>", "<!-- removed empty path -->");
+
+        // Remove <path> elements where d contains NaN
+        svg = svg.replaceAll("<path[^>]*?d=\"[^\"]*NaN[^\"]*\"[^>]*/?>", "<!-- removed NaN path -->");
+
+        // Remove <path> elements where d is just "M x y" with nothing after (no drawing commands)
+        svg = svg.replaceAll(
+            "<path([^>]*?)\\sd=\"\\s*M\\s+[\\d.eE+\\-]+[,\\s]+[\\d.eE+\\-]+\\s*\"([^>]*?)/>",
+            "<!-- removed moveto-only path -->"
+        );
+
+        return svg;
+    }
+    
+    private static String validatePathData(String d) {
+        if (d == null || d.trim().isEmpty()) {
+            return null;
+        }
+        // Reject NaN or Infinity values
+        if (d.contains("NaN") || d.contains("Infinity") || d.contains("infinity")) {
+            return null;
+        }
+        // Reject moveto-only paths — they render nothing and Batik may reject them
+        String trimmed = d.trim();
+        if (trimmed.matches("(?i)M\\s+[\\d.eE+\\-]+[,\\s]+[\\d.eE+\\-]+\\s*")) {
+            return null;
+        }
+        return d;
     }
 
 }

@@ -2,6 +2,7 @@ package org.egov.edcr.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.thymeleaf.TemplateEngine;
@@ -143,6 +145,21 @@ public class PlanReportServiceV2 {
         model.put("surrenderRoadArea", plan.getTotalSurrenderRoadArea());
 //        model.put("egovLogo", edcr_mseva_logo_url);
 //        model.put("logo", edcr_logodep_url);
+        
+        ClassPathResource logoResource =
+                new ClassPathResource("images/logo_dep.png");
+        
+        ClassPathResource footerLogoResource =
+                new ClassPathResource("images/mseva.png");        
+
+        try {
+			model.put("logo", logoResource.getURL().toString());
+			model.put("egovLogo", footerLogoResource.getURL().toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         model.put("logo", imageUrlToBase64(edcr_logodep_url));
         model.put("egovLogo", imageUrlToBase64(edcr_mseva_logo_url));
         
