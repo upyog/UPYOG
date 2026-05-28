@@ -144,13 +144,16 @@ public class DemandGenerationConsumer {
 					.map(criteria -> criteria.getConnectionNo()).collect(Collectors.toSet()).toString();
 			log.info("\u2705 Demand generated successfully for: {}", connectionNoStrings);
 		} catch (Exception ex) {
-			log.error("\u274C Demand generation error: ", ex);
+			log.error("❌ Demand generation error: ", ex);
 			// Push to dead-letter topic — wrap separately so a Kafka failure here
 			// does NOT cause an infinite retry loop or crash the consumer thread.
 			try {
+				if (request.getMigrationCount() != null) {
+					request.getMigrationCount().setMessage("Error: " + ex.getMessage());
+				}
 				producer.push(errorTopic, request);
 			} catch (Exception pushEx) {
-				log.error("\u274C Failed to push to dead-letter topic '{}' (swallowing to protect consumer): {}",
+				log.error("❌ Failed to push to dead-letter topic '{}' (swallowing to protect consumer): {}",
 						errorTopic, pushEx.getMessage(), pushEx);
 			}
 		}

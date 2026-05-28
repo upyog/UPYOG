@@ -189,6 +189,9 @@ public class DemandGenerationConsumer {
 		} catch (Exception ex) {
 			log.error("❌ Sewerage Demand generation error: ", ex);
 			try {
+				if (request.getMigrationCount() != null) {
+					request.getMigrationCount().setMessage("Error: " + ex.getMessage());
+				}
 				producer.push(errorTopic, request);
 			} catch (Exception pushEx) {
 				log.error("❌ Failed to push to dead-letter topic '{}' (swallowing to protect consumer): {}",
