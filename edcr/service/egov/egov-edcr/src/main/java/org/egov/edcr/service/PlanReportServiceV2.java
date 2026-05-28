@@ -160,10 +160,10 @@ public class PlanReportServiceV2 {
 			e.printStackTrace();
 		}
         
-        model.put("logo", imageUrlToBase64(edcr_logodep_url));
-        model.put("egovLogo", imageUrlToBase64(edcr_mseva_logo_url));
+//        model.put("logo", imageUrlToBase64(edcr_logodep_url));
+//        model.put("egovLogo", imageUrlToBase64(edcr_mseva_logo_url));
         
-        model.put("cityLogo", edcr_logodep_url);
+        //model.put("cityLogo", edcr_logodep_url);
         model.put("numberOfFloors", plan.getPlanInformation().getNumberOfFloors());
         model.put("ulbType", plan.getPlanInformation().getUlbType());
         model.put("district", plan.getPlanInformation().getDistrict());
