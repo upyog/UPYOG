@@ -451,6 +451,39 @@ public class PayService {
 		else
 			return null;
 	}
+	
+	public TaxHeadEstimate roundOffDecimalsV2(
+	        BigDecimal amount,
+	        BigDecimal totalRoundOffAmount) {
+
+	    BigDecimal finalAmount = amount.add(totalRoundOffAmount)
+	            .setScale(2, RoundingMode.HALF_UP);
+
+	    BigDecimal fraction = finalAmount.remainder(BigDecimal.ONE);
+
+	    if (fraction.compareTo(BigDecimal.ZERO) == 0) {
+	        return null;
+	    }
+
+	    BigDecimal roundOff;
+
+	    if (fraction.compareTo(new BigDecimal("0.5")) >= 0) {
+	        roundOff = BigDecimal.ONE.subtract(fraction);
+	    } else {
+	        roundOff = fraction.negate();
+	    }
+
+	    roundOff = roundOff.setScale(2, RoundingMode.HALF_UP);
+
+	    if (roundOff.compareTo(BigDecimal.ZERO) == 0) {
+	        return null;
+	    }
+
+	    return TaxHeadEstimate.builder()
+	            .estimateAmount(roundOff)
+	            .taxHeadCode(CalculatorConstants.PT_ROUNDOFF)
+	            .build();
+	}
 
 
 	/**

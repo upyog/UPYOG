@@ -78,6 +78,7 @@ export const LegacyULBDetails = ({ dashboardData, filteredData, resetTriggered }
         { key: "slNo", label: "Sl No" },
         { key: "propertyId", label: "UPIN" },
         { key: "ownerName", label: "Name of Owner(s)" },
+        { key: "ownerMobileNo", label: "Owner Mobile No" },
         { key: "city", label: "City" },
         { key: "dateOfRegistration", label: "Date of Registration" },
         { key: "totalAmountPaid", label: "Total Amount Paid" },
@@ -238,6 +239,7 @@ export const LegacyULBDetails = ({ dashboardData, filteredData, resetTriggered }
             return {
               propertyId: property.propertyId,
               ownerName: owners.map((o) => o.name).join(", "),
+              ownerMobileNo: owners.map((o) => o.mobileNumber).filter(Boolean).join(", "),
               city: address?.city || "N/A",
 
             //   localityName: locality.name,

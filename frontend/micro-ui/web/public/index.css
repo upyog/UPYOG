@@ -3545,7 +3545,7 @@ img, video {
   background-color: #00703c;
   background-color: rgba(0, 112, 60, var(--bg-opacity));
   line-height: 1.75rem;
-  z-index: 200;
+  z-index: 99999;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;

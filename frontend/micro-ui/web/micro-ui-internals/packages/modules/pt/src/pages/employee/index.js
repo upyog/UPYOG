@@ -14,6 +14,8 @@ import SearchAppeal from "./SearchAppeal";
 import EmployeeDashboard from "./EmployeeDashboard";
 import EmployeeGrievanceDashboard from "./Grievances/officerGrievanceDashboard";
 import EmployeeGrievanceStatus from "./Grievances/officerGrievanceStatus";
+import UserManagement from "./UserManagement";
+import UserDetails from "./UserDetails";
 
 
 
@@ -263,6 +265,9 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/appeal-search`} component={(props) => <SearchAppeal {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/grievances`} component={(props) => <EmployeeGrievanceDashboard {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/grievance/:grievanceId`} component={(props) => <EmployeeGrievanceStatus {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/user-management`} component={(props) => <UserManagement {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/user-details/:userId`} component={(props) => <UserDetails {...props} parentRoute={path} />} />
+
 
           {
             userRole == 'EXECUTING_OFFICER' && 

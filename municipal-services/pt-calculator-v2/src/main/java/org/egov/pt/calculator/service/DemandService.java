@@ -623,7 +623,7 @@ public class DemandService {
 		 * 
 		 * If no decimal value found null object will be returned
 		 */
-		TaxHeadEstimate roundOffEstimate = payService.roundOffDecimals(taxAmount, totalRoundOffAmount);
+		TaxHeadEstimate roundOffEstimate = payService.roundOffDecimalsV2(taxAmount, totalRoundOffAmount);
 
 		BigDecimal decimalRoundOff = null != roundOffEstimate ? roundOffEstimate.getEstimateAmount() : BigDecimal.ZERO;
 
@@ -702,7 +702,7 @@ public class DemandService {
 			BigDecimal collectionAmount = demandDetails.stream().map(DemandDetail::getCollectionAmount)
 					.reduce(BigDecimal.ZERO, BigDecimal::add);
 			BigDecimal netAmount = collectionAmount.subtract(taxAmount);
-			details.add(DemandDetail.builder().taxHeadMasterCode(entry.getKey()).taxAmount(netAmount)
+			details.add(DemandDetail.builder().taxHeadMasterCode(entry.getKey()).taxAmount(BigDecimal.ZERO)
 					.collectionAmount(BigDecimal.ZERO).tenantId(tenantId).build());
 		}
 
