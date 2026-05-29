@@ -250,18 +250,55 @@ public class Util {
 	 * if the call happens with payment false and the demand is already tallied even then the demands won't be set to paid-completely to allow zero payment
 	 */
 	public void updateDemandPaymentStatus(Demand demand, Boolean isUpdateFromPayment) {
-		BigDecimal totoalTax = demand.getDemandDetails().stream()
-			    .filter(detail -> !detail.getTaxHeadMasterCode().contains("ADVANCE")) // Exclude tax heads with "ADVANCE"
-			    .map(DemandDetail::getTaxAmount)
-			    .reduce(BigDecimal.ZERO, BigDecimal::add);
-		
-		BigDecimal totalCollection = demand.getDemandDetails().stream().map(DemandDetail::getCollectionAmount)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		if (totoalTax.compareTo(totalCollection) == 0 && isUpdateFromPayment)
-			demand.setIsPaymentCompleted(true);
-		else if (totoalTax.compareTo(totalCollection) != 0)
-			demand.setIsPaymentCompleted(false);
+	    String businessService =
+	            demand.getBusinessService() != null
+	                    ? demand.getBusinessService().toUpperCase()
+	                    : "";
+
+	    // WS / SW specific handling
+	    if (businessService.contains("WS")
+	            || businessService.contains("SW")) {
+
+	        BigDecimal totalTax = demand.getDemandDetails().stream()
+	                .filter(detail ->
+	                        detail.getTaxHeadMasterCode() != null
+	                                && !detail.getTaxHeadMasterCode()
+	                                .toUpperCase()
+	                                .contains("ADVANCE"))
+	                .map(DemandDetail::getTaxAmount)
+	                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	        BigDecimal totalCollection = demand.getDemandDetails().stream()
+	                .filter(detail ->
+	                        detail.getTaxHeadMasterCode() != null
+	                                && !detail.getTaxHeadMasterCode()
+	                                .toUpperCase()
+	                                .contains("ADVANCE"))
+	                .map(DemandDetail::getCollectionAmount)
+	                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	        if (totalTax.compareTo(totalCollection) == 0 && isUpdateFromPayment)
+	            demand.setIsPaymentCompleted(true);
+	        else if (totalTax.compareTo(totalCollection) != 0)
+	            demand.setIsPaymentCompleted(false);
+
+	    } else {
+
+	        // Generic logic for all other services
+	        BigDecimal totalTax = demand.getDemandDetails().stream()
+	                .map(DemandDetail::getTaxAmount)
+	                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	        BigDecimal totalCollection = demand.getDemandDetails().stream()
+	                .map(DemandDetail::getCollectionAmount)
+	                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	        if (totalTax.compareTo(totalCollection) == 0)
+	            demand.setIsPaymentCompleted(true);
+	        else
+	            demand.setIsPaymentCompleted(false);
+	    }
 	}
 	
 //	public void updateDemandPaymentStatus(Demand demand, Boolean isUpdateFromPayment) {
