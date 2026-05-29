@@ -2,26 +2,33 @@ import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@upyog
 import React, { useState, useEffect } from "react";
 import Timeline from "../components/TLTimeline";
 import { currentFinancialYear } from "../utils";
-
-const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => {
+import "../css/tl-inline-auto.css";
+const SelectTradeName = ({
+  t,
+  config,
+  onSelect,
+  value,
+  userType,
+  formData
+}) => {
   let validation = {};
   const onSkip = () => onSelect();
   const [TradeName, setTradeName] = useState(formData.TradeDetails?.TradeName);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
-  const { isLoading, data: fydata = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", "FinancialYear");
-
+  const {
+    isLoading,
+    data: fydata = {}
+  } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", "FinancialYear");
   let mdmsFinancialYear = fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter(y => y.module === "TL") : [];
   let FY = mdmsFinancialYear && mdmsFinancialYear.length > 0 && mdmsFinancialYear.sort((x, y) => y.endingDate - x.endingDate)[0]?.code;
   function setSelectTradeName(e) {
     setTradeName(e.target.value);
   }
-
   useEffect(() => {
     localStorage.setItem("TLAppSubmitEnabled", "true");
   }, []);
-
   const goNext = () => {
     // const getCurrentFinancialYear = () => {
     //   var today = new Date();
@@ -40,39 +47,24 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
     // sessionStorage.setItem("CurrentFinancialYear", FY);
     // sessionStorage.setItem("CurrentFinancialYear", getCurrentFinancialYear());
     sessionStorage.setItem("CurrentFinancialYear", currentFinancialYear());
-    onSelect(config.key, { TradeName });
+    onSelect(config.key, {
+      TradeName
+    });
   };
   if (isLoading) {
-    return <Loader></Loader>
+    return <Loader></Loader>;
   }
-
-  return (
-    <React.Fragment>
+  return <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
-      <FormStep
-        config={config}
-        onSelect={goNext}
-        onSkip={onSkip}
-        t={t}
-        isDisabled={!TradeName}
-      >
-        <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
-        <TextInput
-          t={t}
-          isMandatory={false}
-          type={"text"}
-          optionKey="i18nKey"
-          name="TradeName"
-          value={TradeName}
-          onChange={setSelectTradeName}
-          disable={isEdit}
-          {...(validation = {pattern: ".*", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
-
-        />
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!TradeName}>
+        <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}<span className="tl-auto-65">*</span></CardLabel>
+        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="TradeName" value={TradeName} onChange={setSelectTradeName} disable={isEdit} {...validation = {
+        pattern: ".*",
+        isRequired: true,
+        title: t("TL_INVALID_TRADE_NAME")
+      }} />
       </FormStep>
       {<CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("TL_LICENSE_ISSUE_YEAR_INFO_MSG") + FY} />}
-    </React.Fragment>
-  );
+    </React.Fragment>;
 };
-
 export default SelectTradeName;

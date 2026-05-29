@@ -26,6 +26,7 @@ import { pdfDownloadLink } from "../../utils";
 
 import get from "lodash/get";
 import { size } from "lodash";
+import "../../css/chb-inline.css";
 
 /**
 
@@ -315,8 +316,8 @@ const CHBApplicationDetails = () => {
   return (
     <React.Fragment>
       <div>
-        <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-          <Header styles={{ fontSize: "32px" }}>{t("CHB_BOOKING_DETAILS")}</Header>
+        <div className="cardHeaderWithOptions chb-card-header-max-width">
+          <Header className="chb-citizen-header">{t("CHB_BOOKING_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -336,7 +337,7 @@ const CHBApplicationDetails = () => {
             <Row className="border-none" label={t("CHB_BOOKING_NO")} text={chb_details?.bookingNo} />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_APPLICANT_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="chb-subheader-lg">{t("CHB_APPLICANT_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("CHB_APPLICANT_NAME")} text={chb_details?.applicantDetail?.applicantName || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_MOBILE_NUMBER")} text={chb_details?.applicantDetail?.applicantMobileNo || t("CS_NA")} />
@@ -344,7 +345,7 @@ const CHBApplicationDetails = () => {
             <Row className="border-none" label={t("CHB_EMAIL_ID")} text={chb_details?.applicantDetail?.applicantEmailId || t("CS_NA")} />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_EVENT_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="chb-subheader-lg">{t("CHB_EVENT_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("CHB_SPECIAL_CATEGORY")} text={chb_details?.specialCategory?.category || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_PURPOSE")} text={chb_details?.purpose?.purpose || t("CS_NA")} />
@@ -357,16 +358,16 @@ const CHBApplicationDetails = () => {
             <Row className="border-none" label={t("CHB_BOOKING_DATE")} text={getBookingDateRange(chb_details?.bookingSlotDetails) || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_BOOKING_TIME")} text={getBookingTimeRange(chb_details?.bookingSlotDetails) || t("CS_NA")} />
             </StatusTable> */}
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_ADDRESS_DETAILS")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("CHB_PINCODE")} text={chb_details?.address?.pincode || t("CS_NA")} />
-            <Row className="border-none" label={t("CHB_CITY")} text={chb_details?.address?.city || t("CS_NA")} />
-            <Row className="border-none" label={t("CHB_LOCALITY")} text={chb_details?.address?.locality || t("CS_NA")} />
-            <Row className="border-none" label={t("CHB_STREET_NAME")} text={chb_details?.address?.streetName || t("CS_NA")} />
-            <Row className="border-none" label={t("CHB_HOUSE_NO")} text={chb_details?.address?.houseNo || t("CS_NA")} />
-            <Row className="border-none" label={t("CHB_LANDMARK")} text={chb_details?.address?.landmark || t("CS_NA")} />
-          </StatusTable>
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_BANK_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="chb-subheader-lg">{t("CHB_ADDRESS_DETAILS")}</CardSubHeader>
+            <StatusTable>
+              <Row className="border-none" label={t("CHB_PINCODE")} text={chb_details?.address?.pincode || t("CS_NA")} />
+              <Row className="border-none" label={t("CHB_CITY")} text={chb_details?.address?.city || t("CS_NA")}/>
+              <Row className="border-none" label={t("CHB_LOCALITY")} text={chb_details?.address?.locality || t("CS_NA")} />
+              <Row className="border-none" label={t("CHB_STREET_NAME")} text={chb_details?.address?.streetName || t("CS_NA")} />
+              <Row className="border-none" label={t("CHB_HOUSE_NO")} text={chb_details?.address?.houseNo || t("CS_NA")} />
+              <Row className="border-none" label={t("CHB_LANDMARK")} text={chb_details?.address?.landmark || t("CS_NA")} />
+            </StatusTable>
+          <CardSubHeader className="chb-subheader-lg">{t("CHB_BANK_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("CHB_ACCOUNT_NUMBER")} text={chb_details?.applicantDetail?.accountNumber || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_IFSC_CODE")} text={chb_details?.applicantDetail?.ifscCode || t("CS_NA")} />
@@ -374,27 +375,22 @@ const CHBApplicationDetails = () => {
             <Row className="border-none" label={t("CHB_BANK_BRANCH_NAME")} text={chb_details?.applicantDetail?.bankBranchName || t("CS_NA")} />
             <Row className="border-none" label={t("CHB_ACCOUNT_HOLDER_NAME")} text={chb_details?.applicantDetail?.accountHolderName || t("CS_NA")} />
           </StatusTable>
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="chb-subheader-lg">{t("SLOT_DETAILS")}</CardSubHeader>
           <ApplicationTable
-            t={t}
-            data={slotlistRows}
-            columns={columns}
-            getCellProps={(cellInfo) => ({
-              style: {
-                minWidth: "150px",
-                padding: "10px",
-                fontSize: "16px",
-                paddingLeft: "20px",
-              },
-            })}
-            isPaginationRequired={false}
-            totalRecords={slotlistRows.length}
-          />
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_DOCUMENTS_DETAILS")}</CardSubHeader>
+                t={t}
+                data={slotlistRows}
+                columns={columns}
+                getCellProps={(cellInfo) => ({
+                  className: "chb-table-cell",
+                })}
+                isPaginationRequired={false}
+                totalRecords={slotlistRows.length}
+              />
+          <CardSubHeader className="chb-subheader-lg">{t("CHB_DOCUMENTS_DETAILS")}</CardSubHeader>
           <StatusTable>
-            <Card style={{ display: "flex", flexDirection: "row" }}>
+            <Card className="chb-doc-card">
               {docs.map((doc, index) => (
-                <div key={`doc-${index}`} style={{ marginRight: "25px" }}>
+                <div key={`doc-${index}`} className="chb-doc-item">
                   <div>
                     <CardSectionHeader>{t("CHB_" + (doc?.documentType?.split('.').slice(0, 2).join('_')))}</CardSectionHeader>
                     <CHBDocument value={docs} Code={doc?.documentType} index={index} />
@@ -421,7 +417,7 @@ const CHBApplicationDetails = () => {
             <Toast
               error={showToast.key}
               label={t(showToast.label)}
-              style={{ bottom: "0px" }}
+              className="chb-toast-bottom"
               onClose={() => {
                 setShowToast(null);
               }}

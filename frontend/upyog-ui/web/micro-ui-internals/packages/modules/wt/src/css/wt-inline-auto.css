@@ -1,0 +1,391 @@
+/* components/BookingPopup.js */
+.wt-auto-1 {
+  box-shadow: none;
+}
+
+.wt-auto-2 {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* components/ExistingBookingDetails.js */
+.wt-auto-3 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* components/MobileInbox.js */
+.wt-auto-4 {
+  padding: 0px;
+}
+
+
+/* components/SearchApplication.js */
+.wt-auto-5 {
+  color: #505A5F;
+}
+
+.wt-auto-6 {
+  color: #505A5F;
+  margin-bottom: 10px;
+}
+
+.wt-auto-7 {
+  margin-top: 10px;
+}
+
+.wt-auto-8 {
+  margin-top: 20px;
+}
+
+.wt-auto-9 {
+  text-align: center;
+}
+
+
+/* components/WTDesktopInbox.js */
+.wt-auto-10 {
+  margin-top: 20px;
+}
+
+.wt-auto-11 {
+  text-align: center;
+}
+
+.wt-auto-12 {
+  flex: 1px;
+}
+
+
+/* components/inbox/ApplicationCard.js */
+.wt-auto-13 {
+  margin-top: 20px;
+}
+
+.wt-auto-14 {
+  text-align: center;
+}
+
+
+/* components/inbox/NewInboxFilter.js */
+.wt-auto-15 {
+  align-items: center;
+}
+
+.wt-auto-16 {
+  display: flex;
+  align-items: center;
+}
+
+.wt-auto-17 {
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+.wt-auto-18 {
+  border: 1px solid #e0e0e0;
+  padding: 6px;
+}
+
+.wt-auto-19 {
+  font-weight: normal;
+}
+
+
+/* components/inbox/Status.js */
+.wt-auto-20 {
+  font-weight: normal;
+}
+
+
+/* components/inbox/search.js */
+.wt-auto-21 {
+  width: 100%;
+  display: grid;
+}
+
+.wt-auto-22 {
+  font-weight: 700;
+  color: rgba(212, 53, 28);
+  padding-left: 8px;
+  margin-top: -20px;
+  font-size: 12px;
+}
+
+.wt-auto-23 {
+  grid-column: 2/3;
+  text-align: right;
+  padding-top: 10px;
+}
+
+.wt-auto-24 {
+  max-width: unset;
+  margin-left: unset;
+}
+
+.wt-auto-25 {
+  flex: 1px;
+}
+
+.wt-auto-26 {
+  flex: 1px;
+}
+
+
+/* pageComponents/RequestDetails.js */
+.wt-auto-27 {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 30px;
+}
+
+
+/* pageComponents/TreePruningRequestDetails.js */
+.wt-auto-28 {
+  flex: 1px;
+}
+
+.wt-auto-29 {
+  cursor: pointer;
+  width: 25px;
+  margin-bottom: 8px;
+}
+
+.wt-auto-30 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* pageComponents/WFApplicationTimeline.js */
+.wt-auto-31 {
+  margin-top: 1em;
+  bottom: 0px;
+  width: 100%;
+  margin-bottom: 1.2em;
+}
+
+.wt-auto-32 {
+  margin-bottom: 16px;
+  margin-top: 32px;
+}
+
+
+/* pageComponents/WFCaption.js */
+.wt-auto-33 {
+  overflow-x: scroll;
+}
+
+
+/* pages/citizen/Create/CheckPage.js */
+.wt-auto-34 {
+  margin-top: -30px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.wt-auto-35 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-auto-36 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-auto-37 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-auto-38 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-auto-39 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-auto-40 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+
+/* pages/citizen/Create/MTAcknowledgement.js */
+.wt-auto-41 {
+  width: 100%;
+}
+
+
+/* pages/citizen/Create/TPAcknowledgement.js */
+.wt-auto-42 {
+  width: 100%;
+}
+
+
+/* pages/citizen/Create/WTAcknowledgement.js */
+.wt-auto-43 {
+  width: 100%;
+}
+
+
+/* pages/citizen/MTApplicationDetails.js */
+.wt-auto-44 {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.wt-auto-45 {
+  font-size: 24px;
+}
+
+.wt-auto-46 {
+  font-size: 24px;
+}
+
+.wt-auto-47 {
+  font-size: 24px;
+}
+
+.wt-auto-48 {
+  bottom: 0px;
+}
+
+
+/* pages/citizen/MyApplications/index.js */
+.wt-auto-49 {
+  margin-left: 16px;
+}
+
+.wt-auto-50 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.wt-auto-51 {
+  flex: 1px;
+}
+
+.wt-auto-52 {
+  flex: 1px;
+}
+
+.wt-auto-53 {
+  flex: 1px;
+}
+
+.wt-auto-54 {
+  display: flex;
+  flex-direction: column;
+}
+
+.wt-auto-55 {
+  width: 100%;
+}
+
+.wt-auto-56 {
+  margin-top: 17%;
+}
+
+.wt-auto-57 {
+  margin-left: 30%;
+  margin-top: 10px;
+  display: block;
+}
+
+.wt-auto-58 {
+  border-radius: 30px;
+  width: 20%;
+}
+
+.wt-auto-59 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.wt-auto-60 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/TPApplicationDetails.js */
+.wt-auto-61 {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.wt-auto-62 {
+  font-size: 24px;
+}
+
+.wt-auto-63 {
+  font-size: 24px;
+}
+
+.wt-auto-64 {
+  font-size: 24px;
+}
+
+.wt-auto-65 {
+  bottom: 0px;
+}
+
+
+/* pages/citizen/WTApplicationDetails.js */
+.wt-auto-66 {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.wt-auto-67 {
+  font-size: 24px;
+}
+
+.wt-auto-68 {
+  font-size: 24px;
+}
+
+.wt-auto-69 {
+  font-size: 24px;
+}
+
+.wt-auto-70 {
+  bottom: 0px;
+}
+
+
+/* pages/citizen/index.js */
+.wt-auto-71 {
+  width: 100%;
+}
+
+
+/* pages/employee/ApplicationDetails.js */
+.wt-auto-72 {
+  margin-bottom: 15px;
+}
+
+.wt-auto-73 {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+

@@ -44,7 +44,11 @@ const FormStep = ({
           <CardLabel>{t(input.label)}</CardLabel>
           {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
           <div className="field-container" style={{ justifyContent: "left" }}>
-            {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
+            {componentInFront ? (
+              <span className="citizen-card-input citizen-card-input--front" style={{ height: "40px" }}>
+                {componentInFront}
+              </span>
+            ) : null}
             <TextInput
               key={index}
               name={input.name}

@@ -1,16 +1,34 @@
 import { CardLabel, LabelFieldPair, LinkButton, Loader, TextInput } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
-
-const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, formState, clearErrors }) => {
+import "../css/ws-inline-auto.css";
+const WSPropertyDetails = ({
+  t,
+  config,
+  onSelect,
+  userType,
+  formData,
+  setError,
+  formState,
+  clearErrors
+}) => {
   const redirectBackUrl = `/upyog-ui/${userType}/ws/new-application`;
   const [propertyId, setPropertyId] = React.useState("");
   const tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
-  const { isLoading: loading, data: propertyDetails } = Digit.Hooks.pt.usePropertySearch(
-    { filters: { propertyIds: formData?.cptId?.id }, tenantId: tenantId },
-    { filters: { propertyIds: formData?.cptId?.id }, tenantId: tenantId }
-  );
-
+  const {
+    isLoading: loading,
+    data: propertyDetails
+  } = Digit.Hooks.pt.usePropertySearch({
+    filters: {
+      propertyIds: formData?.cptId?.id
+    },
+    tenantId: tenantId
+  }, {
+    filters: {
+      propertyIds: formData?.cptId?.id
+    },
+    tenantId: tenantId
+  });
   const getPropertyAddress = () => {
     const property = propertyDetails?.Properties?.at(0);
     const doorNo = property?.doorNo;
@@ -19,7 +37,6 @@ const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, 
     const locality = property?.address?.locality?.name;
     const city = property?.address?.city;
     const pinCode = property?.address?.pincode;
-
     return `${doorNo ? doorNo + ", " : ""}
       ${street ? street + ", " : ""}
       ${landMark ? landMark + ", " : ""}
@@ -27,40 +44,33 @@ const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, 
       ${city ? city : ""}
       ${pinCode ? ", " + pinCode : ""}`;
   };
-
   if (loading) {
     return <Loader />;
   }
-
-  return (
-    <React.Fragment>
+  return <React.Fragment>
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">{`${t(`PROPERTY_ID`)}`}</CardLabel>
-        <div className="field" style={{ marginTop: "20px" }}>
-          <TextInput
-            key={config.key}
-            value={propertyId}
-            onChange={(e) => {
-              setPropertyId(e.target.value);
-              onSelect(config.key, { id: e.target.value });
-            }}
-            style={{ width: "65%", float: "left", marginRight: "20px" }}
-          />
+        <div className="field ws-auto-135">
+          <TextInput key={config.key} value={propertyId} onChange={e => {
+          setPropertyId(e.target.value);
+          onSelect(config.key, {
+            id: e.target.value
+          });
+        }} className="ws-auto-136" />
           <button className="submit-bar" type="button" onClick={() => setPropertyId(propertyId)}>
             {`${t("PT_SEARCH")}`}
           </button>
         </div>
       </LabelFieldPair>
       <Link to={`/upyog-ui/employee/pt/search`}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
+        <LinkButton label={t("CPT_SEARCH_PROPERTY")} className="ws-auto-137" />
       </Link>
       &nbsp; | &nbsp;
       <Link to={`/upyog-ui/employee/pt/new-application`}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
+        <LinkButton label={t("CPT_CREATE_PROPERTY")} className="ws-auto-138" />
       </Link>
-      {propertyDetails && propertyDetails?.Properties.length && (
-        <React.Fragment>
-          <header className="card-section-header" style={{ marginBottom: 0, marginTop: "20px" }}>
+      {propertyDetails && propertyDetails?.Properties.length && <React.Fragment>
+          <header className="card-section-header ws-auto-139">
             {t("PT_DETAILS")}
           </header>
           <LabelFieldPair>
@@ -82,12 +92,9 @@ const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, 
             </div>
           </LabelFieldPair>
           <Link to={`/upyog-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}`}>
-            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#a82227" }} />
+            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} className="ws-auto-140" />
           </Link>
-        </React.Fragment>
-      )}
-    </React.Fragment>
-  );
+        </React.Fragment>}
+    </React.Fragment>;
 };
-
 export default WSPropertyDetails;

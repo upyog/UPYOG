@@ -1,0 +1,126 @@
+.pt-inline-link-label {
+  display: inline;
+}
+
+.pt-inline-link-label-mobile {
+  margin: 0;
+}
+
+.pt-inline-search-container {
+  width: auto;
+}
+
+.pt-inline-search-container-inbox {
+  margin-left: 24px;
+}
+
+.pt-inline-complaint-grid {
+  width: 100%;
+  display: grid;
+}
+
+.pt-inline-inbox-search-error {
+  font-weight: 700;
+  color: rgba(212, 53, 28);
+  padding-left: 8px;
+  margin-top: -20px;
+  font-size: 12px;
+}
+
+.pt-inline-clear-all-wrap {
+  grid-column: 2 / 3;
+  text-align: right;
+  padding-top: 10px;
+}
+
+.pt-inline-search-submit-wrapper {
+  max-width: unset;
+  margin-left: unset;
+}
+
+.pt-inline-flex-1 {
+  flex: 1;
+}
+
+.pt-inline-submit-flex {
+  flex: 1;
+}
+
+.pt-inline-card-header {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.pt-inline-card-header-actions {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+
+.pt-inline-view-timeline-btn {
+  color: #a52a2a;
+}
+
+.pt-inline-subheader {
+  font-size: 24px;
+}
+
+.pt-inline-unit-card {
+  border: groove;
+  padding: 7px;
+  margin-bottom: 10px;
+}
+
+.pt-inline-toast-bottom {
+  bottom: 0;
+}
+
+.pt-inline-add-owner-btn {
+  color: orange;
+}
+
+.pt-inline-owner-form-section {
+  margin-bottom: 16px;
+}
+
+.pt-inline-owner-form-heading {
+  color: #505a5f;
+}
+
+.pt-inline-owner-form-body {
+  border: 1px solid #e3e3e3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.pt-inline-owner-remove {
+  margin-bottom: 16px;
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.pt-inline-owner-error {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+.pt-employee-breadcrumb-mobile {
+  display: flex;
+}
+
+.pt-employee-breadcrumb-wrap-new {
+  margin-left: 12px;
+}
+
+.pt-employee-breadcrumb-wrap-default {
+  margin-left: -4px;
+}
+
+.pt-button-selector-label {
+  width: 100%;
+}

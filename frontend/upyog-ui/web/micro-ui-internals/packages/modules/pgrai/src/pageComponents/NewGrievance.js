@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment, useRef } from "react";
 import { FormStep, TextInput, CardLabel, Loader, CardLabelError, LabelFieldPair, SubmitBar, TextArea } from "@upyog/digit-ui-react-components";
 import { fetchCurrentLocation, reverseGeocode } from "../components/locationUtils";
 import { fetchGrievanceCategories } from "../utils/index";
@@ -20,6 +20,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
   const [isFetchingAddress, setIsFetchingAddress] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
+  const spinnerRef = useRef(null);
   const [addressDetails, setAddressDetails] = useState(formData?.addressDetails || {});
   const [documents, setDocuments] = useState(formData?.documents || {});
   const [showAddressPopup, setShowAddressPopup] = useState(false);
@@ -66,6 +67,19 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
       onSelect(config.key, formStepData, false, 0);
     }
   };
+
+  // CSP-friendly spinner animation: avoid injecting style tags/keyframes at runtime.
+  useEffect(() => {
+    const el = spinnerRef.current;
+    if (!el || !isLoading || typeof el.animate !== "function") return;
+
+    const animation = el.animate(
+      [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
+      { duration: 1000, iterations: Infinity, easing: "linear" }
+    );
+
+    return () => animation.cancel();
+  }, [isLoading]);
 
   const handleLocationChange = (e) => {
     setLocation(e.target.value);
@@ -330,7 +344,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
         {isLoading && (
           <div style={styles.loaderContainer}>
-            <div className="spinner" style={styles.customLoader}></div>
+            <div ref={spinnerRef} style={styles.customLoader} />
             <span style={styles.loadingText}>{t("PGR_FINDING_SUGGESTIONS")}</span>
           </div>
         )}

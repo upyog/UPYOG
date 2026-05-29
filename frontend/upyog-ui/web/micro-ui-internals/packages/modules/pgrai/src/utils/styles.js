@@ -3,19 +3,6 @@
  * This file contains reusable styles that can be imported across components
  */
 
-// Add CSS for spinner animation
-const spinnerStyle = document.createElement('style');
-spinnerStyle.innerHTML = `
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  .spinner {
-    animation: spin 1s linear infinite;
-  }
-`;
-document.head.appendChild(spinnerStyle);
-
 export const styles = {
   // Document.js styles
   documentContainer: {

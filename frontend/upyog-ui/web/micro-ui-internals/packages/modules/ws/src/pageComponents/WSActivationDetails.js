@@ -1,71 +1,67 @@
 import { CardLabel, DatePicker, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
 import React from "react";
-
-const WSActivationDetails = ({ t, config, userType, formData, onSelect }) => {
+import "../css/ws-inline-auto.css";
+const WSActivationDetails = ({
+  t,
+  config,
+  userType,
+  formData,
+  onSelect
+}) => {
   const [activationDetails, setActivationDetails] = React.useState({
     meterId: "",
     meterInstallationDate: "",
     meterInitialReading: "",
-    connectionExecutionDate: "",
+    connectionExecutionDate: ""
   });
-
   React.useEffect(() => {
-    if (formData) {
-    }
+    if (formData) {}
   });
-
-  return (
-    <React.Fragment>
+  return <React.Fragment>
       <LabelFieldPair>
-        <CardLabel className="card-label-smaller" style={{fontWeight: "700"}}>{`${t(`WS_METER_ID`)}`}</CardLabel>
+        <CardLabel className="card-label-smaller ws-auto-33">{`${t(`WS_METER_ID`)}`}</CardLabel>
         <div className="field">
-          <TextInput
-            t={t}
-            type="text"
-            optionKey="i18nKey"
-            name="meterId"
-            value={activationDetails.meterId}
-            onChange={(ev) => {
-              setActivationDetails({ ...activationDetails, meterId: ev.target.value });
-            }}
-          ></TextInput>
+          <TextInput t={t} type="text" optionKey="i18nKey" name="meterId" value={activationDetails.meterId} onChange={ev => {
+          setActivationDetails({
+            ...activationDetails,
+            meterId: ev.target.value
+          });
+        }}></TextInput>
         </div>
       </LabelFieldPair>
       <LabelFieldPair>
-        <CardLabel className="card-label-smaller" style={{fontWeight: "700"}}>{`${t(`WS_METER_INSTALLATION_DATE`)}`}</CardLabel>
+        <CardLabel className="card-label-smaller ws-auto-34">{`${t(`WS_METER_INSTALLATION_DATE`)}`}</CardLabel>
         <div className="field">
-          <DatePicker
-            date={activationDetails.meterInstallationDate}
-            onChange={(date) => {
-              setActivationDetails({ ...activationDetails, meterInstallationDate: date });
-            }}
-          ></DatePicker>
+          <DatePicker date={activationDetails.meterInstallationDate} onChange={date => {
+          setActivationDetails({
+            ...activationDetails,
+            meterInstallationDate: date
+          });
+        }}></DatePicker>
         </div>
       </LabelFieldPair>
       <LabelFieldPair>
-        <CardLabel className="card-label-smaller" style={{fontWeight: "700"}}>{`${t(`WS_INIT_METER_READING`)}`}</CardLabel>
+        <CardLabel className="card-label-smaller ws-auto-35">{`${t(`WS_INIT_METER_READING`)}`}</CardLabel>
         <div className="field">
-          <TextInput
-            value={activationDetails.meterInitialReading}
-            onChange={(ev) => {
-              setActivationDetails({ ...activationDetails, meterInitialReading: ev.target.value });
-            }}
-          ></TextInput>
+          <TextInput value={activationDetails.meterInitialReading} onChange={ev => {
+          setActivationDetails({
+            ...activationDetails,
+            meterInitialReading: ev.target.value
+          });
+        }}></TextInput>
         </div>
       </LabelFieldPair>
       <LabelFieldPair>
-        <CardLabel className="card-label-smaller" style={{fontWeight: "700"}}>{`${t(`WS_CONN_EXEC_DATE`)}`}</CardLabel>
+        <CardLabel className="card-label-smaller ws-auto-36">{`${t(`WS_CONN_EXEC_DATE`)}`}</CardLabel>
         <div className="field">
-          <DatePicker
-            date={activationDetails.connectionExecutionDate}
-            onChange={(date) => {
-              setActivationDetails({ ...activationDetails, connectionExecutionDate: date });
-            }}
-          ></DatePicker>
+          <DatePicker date={activationDetails.connectionExecutionDate} onChange={date => {
+          setActivationDetails({
+            ...activationDetails,
+            connectionExecutionDate: date
+          });
+        }}></DatePicker>
         </div>
       </LabelFieldPair>
-    </React.Fragment>
-  );
+    </React.Fragment>;
 };
-
 export default WSActivationDetails;

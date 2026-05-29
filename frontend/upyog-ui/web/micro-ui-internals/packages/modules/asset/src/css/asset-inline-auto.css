@@ -1,0 +1,1341 @@
+/* components/ASTDesktopInbox.js */
+.asset-auto-1 {
+  margin-top: 20px;
+}
+
+.asset-auto-2 {
+  text-align: center;
+}
+
+.asset-auto-3 {
+  flex: 1px;
+}
+
+
+/* components/MobileInbox.js */
+.asset-auto-4 {
+  padding: 0px;
+}
+
+
+/* components/RenewPopup.js */
+.asset-auto-5 {
+  box-shadow: none;
+}
+
+.asset-auto-6 {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* components/SearchApplication.js */
+.asset-auto-7 {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  z-index: 1000px;
+}
+
+.asset-auto-8 {
+  display: block;
+  padding: 8px;
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+
+.asset-auto-9 {
+  display: block;
+  padding: 8px;
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+
+.asset-auto-10 {
+  display: block;
+  padding: 8px;
+  text-decoration: none;
+  color: black;
+}
+
+.asset-auto-11 {
+  color: #505A5F;
+}
+
+.asset-auto-12 {
+  margin-top: 10px;
+}
+
+.asset-auto-13 {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.asset-auto-14 {
+  color: maroon;
+  border: 2px solid #333;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+.asset-auto-15 {
+  margin-top: 20px;
+}
+
+.asset-auto-16 {
+  text-align: center;
+}
+
+
+/* components/SearchReportApplication.js */
+.asset-auto-17 {
+  color: #505A5F;
+}
+
+.asset-auto-18 {
+  margin-top: 10px;
+}
+
+.asset-auto-19 {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.asset-auto-20 {
+  color: maroon;
+  border: 2px solid #333;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.asset-auto-21 {
+  color: maroon;
+  border: 2px solid #333;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.asset-auto-22 {
+  color: maroon;
+  border: 2px solid #333;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+.asset-auto-23 {
+  margin-top: 20px;
+}
+
+.asset-auto-24 {
+  text-align: center;
+}
+
+
+/* components/inbox/ApplicationCard.js */
+.asset-auto-25 {
+  margin-top: 20px;
+}
+
+.asset-auto-26 {
+  text-align: center;
+}
+
+
+/* components/inbox/NewInboxFilter.js */
+.asset-auto-27 {
+  align-items: center;
+}
+
+.asset-auto-28 {
+  display: flex;
+  align-items: center;
+}
+
+.asset-auto-29 {
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+.asset-auto-30 {
+  border: 1px solid #e0e0e0;
+  padding: 6px;
+}
+
+.asset-auto-31 {
+  font-weight: normal;
+}
+
+
+/* components/inbox/Status.js */
+.asset-auto-32 {
+  font-weight: normal;
+}
+
+
+/* components/inbox/search.js */
+.asset-auto-33 {
+  width: 100%;
+  display: grid;
+}
+
+.asset-auto-34 {
+  font-weight: 700;
+  color: rgba(212, 53, 28);
+  padding-left: 8px;
+  margin-top: -20px;
+  font-size: 12px;
+}
+
+.asset-auto-35 {
+  grid-column: 2/3;
+  text-align: right;
+  padding-top: 10px;
+}
+
+.asset-auto-36 {
+  max-width: unset;
+  margin-left: unset;
+}
+
+.asset-auto-37 {
+  flex: 1px;
+}
+
+.asset-auto-38 {
+  flex: 1px;
+}
+
+
+/* pageComponents/AssetAssign.js */
+.asset-auto-39 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-40 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.asset-auto-41 {
+  margin-bottom: 16px;
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+
+/* pageComponents/AssetDispose.js */
+.asset-auto-42 {
+  position: relative;
+  display: inline-block;
+}
+
+.asset-auto-43 {
+  visibility: hidden;
+  position: absolute;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 5px;
+  z-index: 1;
+  opacity: 0px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.asset-auto-44 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-45 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.asset-auto-46 {
+  margin-bottom: 16px;
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.asset-auto-47 {
+  margin-left: 8px;
+}
+
+.asset-auto-48 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-49 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.asset-auto-50 {
+  margin-top: 15px;
+}
+
+
+/* pageComponents/AssetDocuments.js */
+.asset-auto-51 {
+  margin-bottom: 24px;
+}
+
+
+/* pageComponents/AssetMaintenance.js */
+.asset-auto-52 {
+  position: relative;
+  display: inline-block;
+}
+
+.asset-auto-53 {
+  visibility: hidden;
+  position: absolute;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 5px;
+  z-index: 1;
+  opacity: 0px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.asset-auto-54 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-55 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.asset-auto-56 {
+  margin-bottom: 16px;
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.asset-auto-57 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-58 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-59 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-60 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-61 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-62 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-63 {
+  color: red;
+}
+
+.asset-auto-64 {
+  max-width: 300px;
+}
+
+.asset-auto-65 {
+  vertical-align: middle;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.asset-auto-66 {
+  color: red;
+}
+
+.asset-auto-67 {
+  color: red;
+}
+
+.asset-auto-68 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-69 {
+  color: red;
+}
+
+.asset-auto-70 {
+  color: red;
+}
+
+.asset-auto-71 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-72 {
+  color: red;
+}
+
+.asset-auto-73 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-74 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-75 {
+  color: red;
+}
+
+.asset-auto-76 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-77 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-78 {
+  color: red;
+}
+
+.asset-auto-79 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-80 {
+  color: red;
+}
+
+.asset-auto-81 {
+  color: red;
+}
+
+.asset-auto-82 {
+  color: red;
+}
+
+.asset-auto-83 {
+  color: red;
+}
+
+.asset-auto-84 {
+  color: red;
+}
+
+.asset-auto-85 {
+  margin-top: 15px;
+}
+
+.asset-auto-86 {
+  color: red;
+}
+
+.asset-auto-87 {
+  background-color: #f1f3f4;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.asset-auto-88 {
+  color: red;
+}
+
+.asset-auto-89 {
+  color: red;
+}
+
+.asset-auto-90 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-91 {
+  color: red;
+}
+
+.asset-auto-92 {
+  color: red;
+}
+
+
+/* pageComponents/AssetPincode.js */
+.asset-auto-93 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+
+/* pageComponents/AssetStreets.js */
+.asset-auto-94 {
+  width: 50%;
+}
+
+.asset-auto-95 {
+  width: 50%;
+}
+
+.asset-auto-96 {
+  width: 50%;
+}
+
+.asset-auto-97 {
+  width: 50%;
+}
+
+.asset-auto-98 {
+  width: 50%;
+}
+
+.asset-auto-99 {
+  width: 50%;
+}
+
+.asset-auto-100 {
+  width: 50%;
+}
+
+
+/* pageComponents/EditAssetDetails.js */
+.asset-auto-101 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-102 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+
+/* pageComponents/EditAssetDetails_Backup.js */
+.asset-auto-103 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-104 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+
+/* pageComponents/EditAssetDetails_Backup_afterDynamically.js */
+.asset-auto-105 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-106 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+
+/* pageComponents/EditAssetMaintenancePage.js */
+.asset-auto-107 {
+  position: relative;
+  display: inline-block;
+}
+
+.asset-auto-108 {
+  visibility: hidden;
+  position: absolute;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 5px;
+  z-index: 1;
+  opacity: 0px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.asset-auto-109 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-110 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.asset-auto-111 {
+  margin-bottom: 16px;
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.asset-auto-112 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-113 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-114 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-115 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-116 {
+  border: none;
+  background-color: transparent;
+}
+
+.asset-auto-117 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-118 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-119 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-120 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-121 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-122 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-123 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-124 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-125 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-126 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-127 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-128 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.asset-auto-129 {
+  margin-top: 15px;
+}
+
+.asset-auto-130 {
+  background-color: #f1f3f4;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.asset-auto-131 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-132 {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+
+/* pageComponents/EditGeneralDetails.js */
+.asset-auto-133 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-134 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+
+/* pageComponents/EditGeneralDetails_Backup.js */
+.asset-auto-135 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-136 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+
+/* pageComponents/NewAsset.js */
+.asset-auto-137 {
+  color: red;
+}
+
+.asset-auto-138 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-139 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-140 {
+  color: red;
+}
+
+.asset-auto-141 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-142 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-143 {
+  width: 50%;
+}
+
+.asset-auto-144 {
+  color: red;
+}
+
+.asset-auto-145 {
+  width: 50%;
+}
+
+.asset-auto-146 {
+  color: red;
+}
+
+.asset-auto-147 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-148 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-149 {
+  width: 50%;
+}
+
+.asset-auto-150 {
+  color: red;
+}
+
+.asset-auto-151 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-152 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-153 {
+  width: 50%;
+}
+
+.asset-auto-154 {
+  color: red;
+}
+
+.asset-auto-155 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-156 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-157 {
+  width: 50%;
+}
+
+.asset-auto-158 {
+  color: red;
+}
+
+.asset-auto-159 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-160 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-161 {
+  position: relative;
+  width: 50%;
+}
+
+.asset-auto-162 {
+  flex: 1px;
+}
+
+.asset-auto-163 {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px 5px;
+}
+
+.asset-auto-164 {
+  color: red;
+}
+
+.asset-auto-165 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-166 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-167 {
+  width: 50%;
+}
+
+.asset-auto-168 {
+  color: red;
+}
+
+.asset-auto-169 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-170 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-171 {
+  width: 50%;
+}
+
+.asset-auto-172 {
+  color: red;
+}
+
+.asset-auto-173 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-174 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-175 {
+  width: 50%;
+}
+
+.asset-auto-176 {
+  color: red;
+}
+
+.asset-auto-177 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-178 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-179 {
+  width: 50%;
+}
+
+.asset-auto-180 {
+  position: relative;
+  width: 50%;
+}
+
+.asset-auto-181 {
+  flex: 1px;
+}
+
+.asset-auto-182 {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px 5px;
+}
+
+.asset-auto-183 {
+  width: 50%;
+}
+
+
+/* pageComponents/NewAssetClassification.js */
+.asset-auto-184 {
+  color: red;
+}
+
+.asset-auto-185 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-186 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-187 {
+  color: red;
+}
+
+.asset-auto-188 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-189 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-190 {
+  color: red;
+}
+
+.asset-auto-191 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-192 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-193 {
+  color: red;
+}
+
+.asset-auto-194 {
+  color: red;
+}
+
+.asset-auto-195 {
+  color: red;
+}
+
+.asset-auto-196 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-197 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-198 {
+  width: 50%;
+}
+
+.asset-auto-199 {
+  color: red;
+}
+
+.asset-auto-200 {
+  width: 50%;
+}
+
+.asset-auto-201 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-202 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-203 {
+  color: red;
+}
+
+.asset-auto-204 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-205 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-206 {
+  color: red;
+}
+
+.asset-auto-207 {
+  color: red;
+}
+
+
+/* pageComponents/NewDocument.js */
+.asset-auto-208 {
+  margin-bottom: 24px;
+}
+
+.asset-auto-209 {
+  color: red;
+}
+
+.asset-auto-210 {
+  width: 12px;
+  height: 5px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-auto-211 {
+  white-space: pre-wrap;
+  font-size: small;
+  word-wrap: break-word;
+  width: 300px;
+  margin-left: 15px;
+  margin-bottom: -10px;
+}
+
+.asset-auto-212 {
+  color: red;
+}
+
+.asset-auto-213 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-auto-214 {
+  margin-top: 10px;
+  text-align: center;
+}
+
+
+/* pageComponents/ReturnAssignedAsset.js */
+.asset-auto-215 {
+  margin-bottom: 16px;
+}
+
+.asset-auto-216 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.asset-auto-217 {
+  margin-bottom: 16px;
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+
+/* pageComponents/ServiceDoc.js */
+.asset-auto-218 {
+  color: red;
+}
+
+
+/* pages/AssetDisposeResponse.js */
+.asset-auto-219 {
+  padding: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* pages/EditMaintenance.js */
+.asset-auto-220 {
+  padding: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* pages/Maintenance.js */
+.asset-auto-221 {
+  padding: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* pages/ProcessDepreciationResponse.js */
+.asset-auto-222 {
+  padding: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* pages/employee/TestApplication/Create/NewResponse.js */
+.asset-auto-223 {
+  width: 100%;
+}
+
+
+/* pages/employee/index.js */
+.asset-auto-224 {
+  margin: 0 5px 16px;
+  display: inline-block;
+}
+

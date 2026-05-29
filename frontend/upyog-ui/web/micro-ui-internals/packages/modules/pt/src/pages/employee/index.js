@@ -8,6 +8,7 @@ import PaymentDetails from "./PaymentDetails";
 import Search from "./Search";
 import SearchApp from "./SearchApp";
 import UlbAssesment from "./UlbAssesment";
+import "../../css/pt-inline.css";
 
 
 const EmployeeApp = ({ path, url, userType }) => {
@@ -145,7 +146,7 @@ const EmployeeApp = ({ path, url, userType }) => {
       },
     ];
   
-    return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
+    return <BreadCrumb className={`${isMobile ? "pt-employee-breadcrumb-mobile" : ""}`} spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
   }
 
   const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTNewApplication");
@@ -163,13 +164,13 @@ const EmployeeApp = ({ path, url, userType }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          {/* <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : "revert" }}>
-            <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
+          {/* <p className="breadcrumb">
+            <Link to="/upyog-ui/employee">
               {t("ES_COMMON_HOME")}
             </Link>{" "}
             / <span>{getBreadCrumb()}</span>
           </p>} */}
-          {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><PTBreadCrumbs location={location} /></div> : null}
+          {!isRes ? <div className={isNewRegistration ? "pt-employee-breadcrumb-wrap-new" : "pt-employee-breadcrumb-wrap-default"}><PTBreadCrumbs location={location} /></div> : null}
           <PrivateRoute exact path={`${path}/`} component={() => <PTLinks matchPath={path} userType={userType} />} />
           <PrivateRoute
             path={`${path}/inbox`}

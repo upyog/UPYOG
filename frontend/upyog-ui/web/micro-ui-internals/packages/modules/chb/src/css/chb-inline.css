@@ -1,0 +1,174 @@
+/* ==========================================================================
+   CHB Module - External Stylesheet (CSP-compliant replacement for inline styles)
+   ========================================================================== */
+
+/* ----------------------------------------------------------------
+   pages/employee/ApplicationDetails.js
+   ---------------------------------------------------------------- */
+
+/* Outer wrapper for employee application details page */
+.chb-employee-app-details-wrapper {
+  margin-bottom: 15px;
+}
+
+/* Header inside employee application details */
+.chb-employee-header {
+  margin-left: 0px;
+  padding-top: 10px;
+  font-size: 32px;
+}
+
+/* Row holding the download options (MultiLink) */
+.chb-download-options-row {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+
+/* ----------------------------------------------------------------
+   pages/citizen/CHBApplicationDetails.js
+   ---------------------------------------------------------------- */
+
+/* Card header container with max width constraint */
+.chb-card-header-max-width {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+/* Citizen application details page header font size */
+.chb-citizen-header {
+  font-size: 32px;
+}
+
+/* Toast positioned at the bottom of the page */
+.chb-toast-bottom {
+  bottom: 0px;
+}
+
+/* ----------------------------------------------------------------
+   Shared — CHBApplicationDetails.js & CheckPage.js
+   ---------------------------------------------------------------- */
+
+/* Large sub-header (CardSubHeader) used in detail sections */
+.chb-subheader-lg {
+  font-size: 24px;
+}
+
+/* Documents card rendered as a flex row */
+.chb-doc-card {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Individual document item inside the documents card */
+.chb-doc-item {
+  margin-right: 25px;
+}
+
+/* Table cell styles for ApplicationTable getCellProps */
+.chb-table-cell {
+  min-width: 150px;
+  padding: 10px;
+  font-size: 16px;
+  padding-left: 20px;
+}
+
+/* ----------------------------------------------------------------
+   pages/citizen/Create/CHBAcknowledgement.js
+   ---------------------------------------------------------------- */
+
+/* Banner component that spans full width */
+.chb-banner-full-width {
+  width: 100%;
+}
+
+/* Row of action buttons on the acknowledgement page */
+.chb-ack-buttons-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+/* ----------------------------------------------------------------
+   pages/citizen/Create/CheckPage.js
+   ---------------------------------------------------------------- */
+
+/* CheckBox height override for declaration checkbox */
+.chb-checkbox-auto-height {
+  height: auto;
+}
+
+/* ----------------------------------------------------------------
+   pages/citizen/CHBMyApplications/index.js
+   ---------------------------------------------------------------- */
+
+/* Outer container with left margin */
+.chb-myapps-container {
+  margin-left: 16px;
+}
+
+/* Search row: booking no + status + search button in a flex row */
+.chb-myapps-search-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Each field column takes equal space */
+.chb-myapps-field-col {
+  flex: 1;
+}
+
+/* Inner flex column for label + input stacking */
+.chb-myapps-field-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Full-width text input with extra height */
+.chb-myapps-text-input {
+  width: 100%;
+  padding: 8px;
+  height: 150%;
+}
+
+/* Full-width dropdown */
+.chb-myapps-dropdown {
+  width: 100%;
+}
+
+/* Pushes search button down to align with inputs */
+.chb-myapps-search-btn-wrap {
+  margin-top: 17%;
+}
+
+/* Clear-all link alignment */
+.chb-myapps-clear-link {
+  margin-left: 30%;
+  margin-top: 10px;
+  display: block;
+}
+
+/* New Booking button pill shape */
+.chb-new-booking-btn {
+  border-radius: 30px;
+  width: 20%;
+}
+
+/* Empty / load-more paragraph margins */
+.chb-myapps-msg {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+/* ----------------------------------------------------------------
+   components/inbox/StatusCount.js
+   ---------------------------------------------------------------- */
+
+/* Remove fixed height from status count checkbox */
+.chb-status-count-checkbox {
+  height: unset;
+}

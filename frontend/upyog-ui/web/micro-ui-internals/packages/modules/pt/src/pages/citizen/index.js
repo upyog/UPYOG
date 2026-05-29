@@ -5,20 +5,27 @@ import { shouldHideBackButton } from "../../utils";
 import Search from "../employee/Search";
 import { useTranslation } from "react-i18next";
 import { PTMyPayments } from "./MyPayments";
-import PaymentDetails from "../../utils/PaymentDetails"
-const hideBackButtonConfig = [
-  { screenPath: "property/new-application/acknowledgement" },
-  { screenPath: "property/edit-application/acknowledgement" },
-  //{ screenPath: "property/feedback-acknowledgement" }
+import PaymentDetails from "../../utils/PaymentDetails";
+import "../../css/pt-inline-auto.css";
+const hideBackButtonConfig = [{
+  screenPath: "property/new-application/acknowledgement"
+}, {
+  screenPath: "property/edit-application/acknowledgement"
+}
+//{ screenPath: "property/feedback-acknowledgement" }
 ];
-
 const App = () => {
-  const { path, url, ...match } = useRouteMatch();
-  const { t } = useTranslation();
+  const {
+    path,
+    url,
+    ...match
+  } = useRouteMatch();
+  const {
+    t
+  } = useTranslation();
   const inboxInitialState = {
-    searchParams: {},
+    searchParams: {}
   };
-
   const CreateProperty = Digit?.ComponentRegistryService?.getComponent("PTCreateProperty");
   const EditProperty = Digit?.ComponentRegistryService?.getComponent("PTEditProperty");
   const SearchPropertyComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchPropertyComponent");
@@ -30,8 +37,7 @@ const App = () => {
   const PropertyInformation = Digit?.ComponentRegistryService?.getComponent("PropertyInformation");
   const PropertyOwnerHistory = Digit?.ComponentRegistryService?.getComponent("PropertyOwnerHistory");
   const AssessmentDetails = Digit?.ComponentRegistryService?.getComponent("PTAssessmentDetails");
-  return (
-    <span className={"pt-citizen"}style={{width:"100%"}}>
+  return <span className={"pt-citizen pt-auto-149"}>
       <Switch>
         <AppContainer>
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
@@ -50,11 +56,9 @@ const App = () => {
           <PrivateRoute path={`${path}/property/owner-history/:tenantId/:propertyIds`} component={PropertyOwnerHistory}></PrivateRoute>
           {/* <Redirect to={`/`}></Redirect> */}
           <PrivateRoute path={`${path}/assessment-details/:id`} component={() => <AssessmentDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/property/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/property/search`} component={props => <Search {...props} t={t} parentRoute={path} />} />
         </AppContainer>
       </Switch>
-    </span>
-  );
+    </span>;
 };
-
 export default App;

@@ -3,46 +3,48 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
-import UploadFileDigiLocker from "../utils/UploadFile"
-
-
-const Proof = ({ t, config, onSelect, userType, formData, isMandatory}) => {
+import UploadFileDigiLocker from "../utils/UploadFile";
+import "../css/pt-inline-auto.css";
+const Proof = ({
+  t,
+  config,
+  onSelect,
+  userType,
+  formData,
+  isMandatory
+}) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
-  const [digiLockerUpload,setDigilockerUpload] = useState(false)
-  const { pathname: url } = useLocation();
+  const [digiLockerUpload, setDigilockerUpload] = useState(false);
+  const {
+    pathname: url
+  } = useLocation();
   const isMutation = url.includes("property-mutation");
-
   let index = window.location.href.split("/").pop();
-  const [uploadedFile, setUploadedFile] = useState(
-    !isMutation ? formData?.address?.documents?.ProofOfAddress?.fileStoreId || null : formData?.[config.key]?.fileStoreId
-  );
+  const [uploadedFile, setUploadedFile] = useState(!isMutation ? formData?.address?.documents?.ProofOfAddress?.fileStoreId || null : formData?.[config.key]?.fileStoreId);
   const [file, setFile] = useState(formData?.address?.documents?.ProofOfAddress);
   const [error, setError] = useState(null);
   const cityDetails = Digit.ULBService.getCurrentUlb();
   const isUpdateProperty = formData?.isUpdateProperty || false;
   const isEditProperty = formData?.isEditProperty || false;
-
-  const [dropdownValue, setDropdownValue] = useState(
-    !isMutation ? formData?.address?.documents?.ProofOfAddress?.documentType || null : formData?.[config.key]?.documentType
-  );
+  const [dropdownValue, setDropdownValue] = useState(!isMutation ? formData?.address?.documents?.ProofOfAddress?.documentType || null : formData?.[config.key]?.documentType);
   let dropdownData = [];
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
+  const {
+    data: Documentsob = {}
+  } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
   const docs = Documentsob?.PropertyTax?.Documents;
-  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
+  const proofOfAddress = Array.isArray(docs) && docs.filter(doc => doc.code.includes("ADDRESSPROOF"));
   if (proofOfAddress.length > 0) {
-    dropdownData = proofOfAddress[0]?.dropdownData.filter((doc) => doc?.active == true);
-    dropdownData.forEach((data) => {
+    dropdownData = proofOfAddress[0]?.dropdownData.filter(doc => doc?.active == true);
+    dropdownData.forEach(data => {
       data.i18nKey = stringReplaceAll(data.code, ".", "_");
     });
   }
-
   function setTypeOfDropdownValue(dropdownValue) {
-    dropdownValue?.digiLockerFetch == true ?  setDigilockerUpload(true) : setDigilockerUpload(false),setUploadedFile(null)
+    dropdownValue?.digiLockerFetch == true ? setDigilockerUpload(true) : setDigilockerUpload(false), setUploadedFile(null);
     setDropdownValue(dropdownValue);
   }
-
   const handleSubmit = () => {
     let fileStoreId = uploadedFile;
     let fileDetails = file;
@@ -55,22 +57,19 @@ const Proof = ({ t, config, onSelect, userType, formData, isMandatory}) => {
       address["documents"] = [];
       address.documents["ProofOfAddress"] = fileDetails;
     }
-    if (!isMutation) onSelect(config.key, address, "", index);
-    else onSelect(config.key, { documentType: dropdownValue, fileStoreId }, "", index);
+    if (!isMutation) onSelect(config.key, address, "", index);else onSelect(config.key, {
+      documentType: dropdownValue,
+      fileStoreId
+    }, "", index);
   };
   const onSkip = () => onSelect();
-
-  function selectfile(e,newFile) {
-    if(newFile)
-    {
-      setFile(newFile)
-    }
-    else {
+  function selectfile(e, newFile) {
+    if (newFile) {
+      setFile(newFile);
+    } else {
       setFile(e.target.files[0]);
     }
-    
   }
-
   useEffect(() => {
     (async () => {
       setError(null);
@@ -90,63 +89,23 @@ const Proof = ({ t, config, onSelect, userType, formData, isMandatory}) => {
       }
     })();
   }, [file]);
-  const checkMutatePT = window.location.href.includes("citizen/pt/property/property-mutation/") ? (
-    <Timeline currentStep={3} flow="PT_MUTATE" />
-  ) : (
-    <Timeline currentStep={1} />
-  );
-
-  return (
-    <React.Fragment>
+  const checkMutatePT = window.location.href.includes("citizen/pt/property/property-mutation/") ? <Timeline currentStep={3} flow="PT_MUTATE" /> : <Timeline currentStep={1} />;
+  return <React.Fragment>
       {window.location.href.includes("/citizen") ? checkMutatePT : null}
-      <FormStep
-        config={config}
-        onSelect={handleSubmit}
-        onSkip={onSkip}
-        t={t}
-        isMandatory={isMandatory}
-        isDisabled={isUpdateProperty || isEditProperty ? false : !uploadedFile || !dropdownValue || error}
-      >
+      <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isMandatory={isMandatory} isDisabled={isUpdateProperty || isEditProperty ? false : !uploadedFile || !dropdownValue || error}>
         <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
         <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
         <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
-        <Dropdown
-          t={t}
-          isMandatory={false}
-          option={dropdownData}
-          selected={dropdownValue}
-          optionKey="i18nKey"
-          select={setTypeOfDropdownValue}
-          placeholder={t(`PT_MUTATION_SELECT_DOC_LABEL`)}
-        />
-        {digiLockerUpload ?
-        <UploadFileDigiLocker
-          id={"pt-doc"}
-          extraStyleName={"propertyCreate"}
-          accept=".jpg,.png,.pdf"
-          onUpload={selectfile}
-          onDelete={() => {
-            setUploadedFile(null);
-          }}
-          message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
-          error={error}
-        /> :<UploadFile
-        id={"pt-doc"}
-        extraStyleName={"propertyCreate"}
-        accept=".jpg,.png,.pdf"
-        onUpload={selectfile}
-        onDelete={() => {
-          setUploadedFile(null);
-        }}
-        message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
-        error={error}
-      /> }
+        <Dropdown t={t} isMandatory={false} option={dropdownData} selected={dropdownValue} optionKey="i18nKey" select={setTypeOfDropdownValue} placeholder={t(`PT_MUTATION_SELECT_DOC_LABEL`)} />
+        {digiLockerUpload ? <UploadFileDigiLocker id={"pt-doc"} extraStyleName={"propertyCreate"} accept=".jpg,.png,.pdf" onUpload={selectfile} onDelete={() => {
+        setUploadedFile(null);
+      }} message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)} error={error} /> : <UploadFile id={"pt-doc"} extraStyleName={"propertyCreate"} accept=".jpg,.png,.pdf" onUpload={selectfile} onDelete={() => {
+        setUploadedFile(null);
+      }} message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)} error={error} />}
 
-        {error ? <div style={{ height: "20px", width: "100%", fontSize: "20px", color: "red", marginTop: "5px" }}>{error}</div> : ""}
-        <div style={{ disabled: "true", height: "20px", width: "100%" }}></div>
+        {error ? <div className="pt-auto-66">{error}</div> : ""}
+        <div className="pt-auto-67"></div>
       </FormStep>
-    </React.Fragment>
-  );
+    </React.Fragment>;
 };
-
 export default Proof;

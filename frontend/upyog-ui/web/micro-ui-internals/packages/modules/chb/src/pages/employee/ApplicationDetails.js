@@ -240,29 +240,44 @@ const ApplicationDetails = () => {
             message: `${t("CHB_CANCELLATION_SUCCESS_BUT_REFUND_FAILED") || "Booking cancelled, but refund initiation failed"}${refundErrorMessage ? `: ${refundErrorMessage}` : ""}`
           }
         });
-      } else {
-        setShowToast({ key: "success", action: { action: "CANCEL" } });
-      }
-      refetchApplicationDetails();
-      refetchRecieptData();
-      workflowDetails.revalidate();
-    } catch (err) {
-      setShowToast({ key: "error", error: { message: err?.response?.data?.Errors?.[0]?.message || err?.message || t("CS_SOMETHING_WENT_WRONG") } });
-    }
-  };
+    
 
-  let dowloadOptions = [];
-  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-    dowloadOptions.push({
-      label: t("CHB_FEE_RECIEPT"),
-      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-    });
-
-  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-    dowloadOptions.push({
-      label: t("CHB_PERMISSION_LETTER"),
-      onClick: () => getPermissionLetter({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-    });
+      return (
+        <div>
+        <div className={"employee-application-details chb-employee-app-details-wrapper"}>
+          <Header className="chb-employee-header">{t("CHB_BOOKING_DETAILS")}</Header>
+          <div className="chb-download-options-row">
+            {dowloadOptions && dowloadOptions.length > 0 && (
+              <MultiLink
+                className="multilinkWrapper employee-mulitlink-main-div"
+                onHeadClick={() => setShowOptions(!showOptions)}
+                displayOptions={showOptions}
+                options={dowloadOptions}
+                downloadBtnClassName={"employee-download-btn-className"}
+                optionsClassName={"employee-options-btn-className"}
+              // ref={menuRef}
+              />
+            )}
+          </div>      
+          </div>
+          <ApplicationDetailsTemplate
+            applicationDetails={appDetailsToShow?.applicationData}
+            isLoading={isLoading}
+            isDataLoading={isLoading}
+            applicationData={appDetailsToShow?.applicationData?.applicationData}
+            mutate={mutate}
+            workflowDetails={workflowDetails}
+            businessService={businessService}
+            moduleCode="chb-services"
+            showToast={showToast}
+            setShowToast={setShowToast}
+            closeToast={closeToast}
+            timelineStatusPrefix={""}
+            forcedActionPrefix={"CHB"}
+            statusAttribute={"state"}
+            MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
+          />
+          
 
 
   return (

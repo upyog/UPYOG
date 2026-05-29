@@ -305,25 +305,51 @@ const CHBMapView = () => {
             style="color: #0066cc; text-decoration: none; font-weight: 500; display: block; margin-bottom: 5px;">
             ${t("CHB_GET_DIRECTION")} (Google Maps)
             </a>
-            <button style="
-            background-color: #a82227;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 12px;
-            " onclick="window.selectHall('${props.community_hall_code}', '${props.community_hall_id}')">
-                ${t("CHB_BOOK_NOW")}
+            <button
+              type="button"
+              class="chb-book-now-btn"
+              style="
+                background-color: #a82227;
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                border-radius: 4px;
+                font-weight: bold;
+                cursor: pointer;
+                font-size: 12px;
+              "
+              data-community-hall-code="${props.community_hall_code}"
+              ${props.community_hall_id ? `data-community-hall-id="${props.community_hall_id}"` : ""}
+            >
+              ${t("CHB_BOOK_NOW")}
             </button>
           </div>
         </div>
         `;
       marker.bindPopup(popupContent);
+      marker.on("popupopen", (e) => {
+        const popupElement = e.popup && e.popup.getElement ? e.popup.getElement() : null;
+        if (!popupElement) return;
+        const button = popupElement.querySelector(".chb-book-now-btn");
+        if (!button) return;
+        const hallCode = button.getAttribute("data-community-hall-code");
+        const hallId = button.getAttribute("data-community-hall-id");
+        button.addEventListener("click", () => {
+          if (!hallCode) return;
+          history.push({
+            pathname: `/upyog-ui/citizen/chb/bookHall/searchhall`,
+            selectedCommunityHall: {
+              code: hallCode,
+              value: hallCode,
+              i18nKey: hallCode,
+              communityHallId: hallId || undefined,
+            },
+          });
+        });
+      });
 
-          // Add to markerMap for searching
-        markerMap.set(
+      // Add to markerMap for searching
+      markerMap.set(
         `${props.community_hall_code.toLowerCase()}`,
         { marker, lat, lng }
       );
@@ -331,22 +357,15 @@ const CHBMapView = () => {
 
     // Search and fly-to logic
     if (searchTerm) {
-        const term = searchTerm.trim().toLowerCase();
-        for (let [key, { marker, lat, lng }] of markerMap) {
+      const term = searchTerm.trim().toLowerCase();
+      for (let [key, { marker, lat, lng }] of markerMap) {
         if (key.includes(term)) {
-            map.flyTo([lat, lng], 18);
-            marker.openPopup();
-            break;
+          map.flyTo([lat, lng], 18);
+          marker.openPopup();
+          break;
         }
-        }
-    } 
-    window.selectHall = (hallCode,hallId) => {
-      history.push({
-        pathname: `/upyog-ui/citizen/chb/bookHall/searchhall`,
-        selectedCommunityHall: {code: hallCode, value: hallCode, i18nKey: hallCode, communityHallId:hallId}
-      });
+      }
     }
-      
   };
 
   return (

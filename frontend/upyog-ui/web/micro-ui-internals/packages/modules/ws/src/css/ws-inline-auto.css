@@ -1,0 +1,1825 @@
+/* components/BillIAmendMentInbox/useInboxMobileCardsData.js */
+.ws-auto-1 {
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* components/BillIAmendMentInbox/useInboxTableConfig.js */
+.ws-auto-2 {
+  color: #00703C;
+}
+
+.ws-auto-3 {
+  color: #0B0C0C;
+}
+
+.ws-auto-4 {
+  color: #E50000;
+}
+
+.ws-auto-5 {
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* components/SearchApplication/MobileSearchApplication.js */
+.ws-auto-6 {
+  margin-top: 20px;
+}
+
+.ws-auto-7 {
+  text-align: center;
+}
+
+
+/* components/SearchApplication/index.js */
+.ws-auto-8 {
+  color: #505A5F;
+}
+
+.ws-auto-9 {
+  margin-top: 20px;
+}
+
+.ws-auto-10 {
+  text-align: center;
+}
+
+
+/* components/SearchWaterConnection/BulkBillSearch.js */
+.ws-auto-11 {
+  margin-top: 20px;
+}
+
+.ws-auto-12 {
+  text-align: center;
+}
+
+.ws-auto-13 {
+  background-color: white;
+}
+
+.ws-auto-14 {
+  float: right;
+  padding: 10px 30px;
+}
+
+.ws-auto-15 {
+  cursor: pointer;
+}
+
+.ws-auto-16 {
+  display: flex;
+}
+
+.ws-auto-17 {
+  width: 70%;
+}
+
+.ws-auto-18 {
+  top: 5px;
+  left: 10px;
+  position: relative;
+}
+
+.ws-auto-19 {
+  width: 100%;
+}
+
+.ws-auto-20 {
+  width: 100%;
+}
+
+.ws-auto-21 {
+  float: right;
+  padding: 10px 30px;
+}
+
+.ws-auto-22 {
+  cursor: pointer;
+}
+
+
+/* components/SearchWaterConnection/BulkBillSearchFields.js */
+.ws-auto-23 {
+  margin-top: 16px !important;
+}
+
+
+/* components/SearchWaterConnection/MobileSearchWater.js */
+.ws-auto-24 {
+  margin-top: 20px;
+}
+
+.ws-auto-25 {
+  text-align: center;
+}
+
+
+/* components/SearchWaterConnection/SearchFields2.js */
+.ws-auto-26 {
+  width: 100%;
+}
+
+
+/* components/SearchWaterConnection/index.js */
+.ws-auto-27 {
+  margin-top: 20px;
+}
+
+.ws-auto-28 {
+  text-align: center;
+}
+
+.ws-auto-29 {
+  margin-top: 20px;
+}
+
+.ws-auto-30 {
+  text-align: center;
+}
+
+
+/* pageComponents/WSActivationCommentsDetails.js */
+.ws-auto-31 {
+  font-weight: 700;
+}
+
+
+/* pageComponents/WSActivationConnectionDetails.js */
+.ws-auto-32 {
+  margin-bottom: 16px;
+}
+
+
+/* pageComponents/WSActivationDetails.js */
+.ws-auto-33 {
+  font-weight: 700;
+}
+
+.ws-auto-34 {
+  font-weight: 700;
+}
+
+.ws-auto-35 {
+  font-weight: 700;
+}
+
+.ws-auto-36 {
+  font-weight: 700;
+}
+
+
+/* pageComponents/WSActivationPageDetails.js */
+.ws-auto-37 {
+  margin-bottom: 16px;
+}
+
+
+/* pageComponents/WSActivationPlumberDetails.js */
+.ws-auto-38 {
+  margin-bottom: 16px;
+}
+
+.ws-auto-39 {
+  display: flex;
+  align-items: baseline;
+  margin-right: unset;
+}
+
+.ws-auto-40 {
+  position: relative;
+  z-index: 1;
+  left: 35px;
+  margin-top: -24.5px;
+  margin-left: -26px;
+}
+
+.ws-auto-41 {
+  background: #FAFAFA;
+  padding: 0px 35px;
+}
+
+
+/* pageComponents/WSActivationSupportingDocuments.js */
+.ws-auto-42 {
+  font-weight: 700;
+}
+
+
+/* pageComponents/WSConnectionDetails.js */
+.ws-auto-43 {
+  margin-bottom: 16px;
+}
+
+.ws-auto-44 {
+  font-weight: 700;
+}
+
+.ws-auto-45 {
+  display: flex;
+  gap: 0 3rem;
+}
+
+.ws-auto-46 {
+  padding-bottom: 10px;
+  padding-top: 3px;
+}
+
+.ws-auto-47 {
+  padding-bottom: 10px;
+  padding-top: 3px;
+}
+
+
+/* pageComponents/WSConnectionHolder.js */
+.ws-auto-48 {
+  padding-bottom: 10px;
+  padding-top: 3px;
+}
+
+.ws-auto-49 {
+  border: solid;
+  border-radius: 5px;
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+  border-color: #f3f3f3;
+  background: #FAFAFA;
+}
+
+.ws-auto-50 {
+  background: #FAFAFA;
+}
+
+.ws-auto-51 {
+  background: #FAFAFA;
+}
+
+.ws-auto-52 {
+  background: #FAFAFA;
+}
+
+.ws-auto-53 {
+  background: #FAFAFA;
+}
+
+.ws-auto-54 {
+  color: red;
+}
+
+
+/* pageComponents/WSConnectionHolderDetails.js */
+.ws-auto-55 {
+  padding-bottom: 10px;
+  padding-top: 3px;
+}
+
+.ws-auto-56 {
+  position: relative;
+  margin-top: 4px;
+}
+
+
+/* pageComponents/WSDisconnectAcknowledgement.js */
+.ws-auto-57 {
+  padding: 10px;
+}
+
+.ws-auto-58 {
+  padding: 10px;
+}
+
+
+/* pageComponents/WSDisconnectionAppDetails.js */
+.ws-auto-59 {
+  margin-bottom: 16px;
+}
+
+.ws-auto-60 {
+  margin-bottom: 40px;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.ws-auto-61 {
+  border: none;
+  color: #0b0c0c !important;
+  pointer-events: none;
+}
+
+.ws-auto-62 {
+  display: flex;
+  gap: 0px 3rem;
+}
+
+
+/* pageComponents/WSDisconnectionDocsRequired.js */
+.ws-auto-63 {
+  margin: 0px;
+}
+
+.ws-auto-64 {
+  color: #0B0C0C;
+  margin-top: 12px;
+}
+
+.ws-auto-65 {
+  color: #0B0C0C;
+  margin-top: 12px;
+}
+
+.ws-auto-66 {
+  color: #0B0C0C;
+  margin-top: 12px;
+}
+
+.ws-auto-67 {
+  font-weight: 700px;
+  margin-bottom: 8px;
+}
+
+.ws-auto-68 {
+  display: flex;
+}
+
+.ws-auto-69 {
+  margin-bottom: 16px;
+  margin-left: 18px;
+  color: gray;
+}
+
+.ws-auto-70 {
+  color: gray;
+}
+
+.ws-auto-71 {
+  color: gray;
+}
+
+.ws-auto-72 {
+  margin: 16px;
+}
+
+.ws-auto-73 {
+  margin-top: 16px;
+}
+
+.ws-auto-74 {
+  margin-bottom: 16px;
+  line-height: 28px;
+  font-size: 24px;
+}
+
+.ws-auto-75 {
+  line-height: 24px;
+  font-size: 16px;
+}
+
+.ws-auto-76 {
+  margin: 16px 0;
+  line-height: 18px;
+  font-size: 16px;
+}
+
+.ws-auto-77 {
+  font-weight: bold;
+  line-height: 32px;
+}
+
+.ws-auto-78 {
+  font-size: 16px;
+}
+
+.ws-auto-79 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.ws-auto-80 {
+  margin: 10px 10px 0px 0px;
+}
+
+
+/* pageComponents/WSDisconnectionDocumentsForm.js */
+.ws-auto-81 {
+  margin-top: 19px;
+}
+
+.ws-auto-82 {
+  margin-bottom: 24px;
+}
+
+
+/* pageComponents/WSDisconnectionForm.js */
+.ws-auto-83 {
+  padding: 0px 10px 10px 10px;
+}
+
+.ws-auto-84 {
+  display: inline;
+}
+
+.ws-auto-85 {
+  display: inline;
+}
+
+.ws-auto-86 {
+  position: absolute;
+}
+
+.ws-auto-87 {
+  display: inline;
+}
+
+.ws-auto-88 {
+  position: absolute;
+}
+
+.ws-auto-89 {
+  display: inline;
+}
+
+.ws-auto-90 {
+  margin: 0px;
+}
+
+.ws-auto-91 {
+  margin: 16px;
+}
+
+.ws-auto-92 {
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+}
+
+.ws-auto-93 {
+  margin-left: 8px;
+}
+
+.ws-auto-94 {
+  display: flex;
+  gap: 0px 3rem;
+}
+
+.ws-auto-95 {
+  margin-top: -5px;
+  font-weight: 700;
+  display: inline;
+}
+
+.ws-auto-96 {
+  position: absolute;
+  margin-left: 4px;
+}
+
+.ws-auto-97 {
+  margin-top: -5px;
+  font-weight: 700;
+  display: inline;
+}
+
+.ws-auto-98 {
+  position: absolute;
+  margin-left: 4px;
+}
+
+.ws-auto-99 {
+  margin-top: -5px;
+  font-weight: 700;
+  display: inline;
+}
+
+.ws-auto-100 {
+  margin-bottom: 8px;
+}
+
+.ws-auto-101 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.ws-auto-102 {
+  margin: 10px 10px 0px 0px;
+}
+
+.ws-auto-103 {
+  margin-bottom: 24px;
+}
+
+.ws-auto-104 {
+  margin-top: -5px;
+  font-weight: 700;
+  display: inline;
+}
+
+
+/* pageComponents/WSDocsRequired.js */
+.ws-auto-105 {
+  margin: 0px;
+  text-align: center;
+}
+
+.ws-auto-106 {
+  color: #0B0C0C;
+  margin-top: 12px;
+}
+
+.ws-auto-107 {
+  color: #0B0C0C;
+  margin-top: 12px;
+}
+
+.ws-auto-108 {
+  color: #0B0C0C;
+  margin-top: 12px;
+}
+
+.ws-auto-109 {
+  font-weight: 700px;
+  margin-bottom: 8px;
+}
+
+.ws-auto-110 {
+  display: flex;
+}
+
+.ws-auto-111 {
+  margin-bottom: 16px;
+  margin-left: 18px;
+}
+
+.ws-auto-112 {
+  margin: 16px;
+}
+
+.ws-auto-113 {
+  cursor: pointer;
+  display: flex;
+}
+
+.ws-auto-114 {
+  font-size: 24px;
+  font-weight: 400;
+  color: #0B0C0C;
+}
+
+.ws-auto-115 {
+  margin-top: 16px;
+}
+
+.ws-auto-116 {
+  margin-bottom: 16px;
+  line-height: 28px;
+  font-size: 24px;
+}
+
+.ws-auto-117 {
+  line-height: 24px;
+  font-size: 16px;
+}
+
+.ws-auto-118 {
+  margin: 16px 0;
+  line-height: 18px;
+  font-size: 16px;
+}
+
+.ws-auto-119 {
+  font-weight: bold;
+  line-height: 32px;
+}
+
+.ws-auto-120 {
+  font-size: 16px;
+}
+
+.ws-auto-121 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.ws-auto-122 {
+  margin: 10px 10px 0px 0px;
+}
+
+
+/* pageComponents/WSDocument.js */
+.ws-auto-123 {
+  margin-top: 19px;
+}
+
+.ws-auto-124 {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ws-auto-125 {
+  min-width: 160px;
+}
+
+.ws-auto-126 {
+  margin-top: 8px;
+}
+
+
+/* pageComponents/WSDocumentDetails.js */
+.ws-auto-127 {
+  margin-bottom: 24px;
+}
+
+.ws-auto-128 {
+  font-weight: 700;
+}
+
+
+/* pageComponents/WSDocumentsEmployee.js */
+.ws-auto-129 {
+  margin-bottom: 24px;
+}
+
+.ws-auto-130 {
+  font-weight: 700;
+}
+
+.ws-auto-131 {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+
+/* pageComponents/WSEditConnectionDetails.js */
+.ws-auto-132 {
+  margin-bottom: 16px;
+}
+
+
+/* pageComponents/WSInfoLabel.js */
+.ws-auto-133 {
+  color: #3498DB;
+}
+
+.ws-auto-134 {
+  display: inline;
+  margin-bottom: 5px;
+}
+
+
+/* pageComponents/WSPropertyDetails.js */
+.ws-auto-135 {
+  margin-top: 20px;
+}
+
+.ws-auto-136 {
+  width: 65%;
+  float: left;
+  margin-right: 20px;
+}
+
+.ws-auto-137 {
+  color: #a82227;
+  display: inline-block;
+}
+
+.ws-auto-138 {
+  color: #a82227;
+  display: inline-block;
+}
+
+.ws-auto-139 {
+  margin-bottom: 0px;
+  margin-top: 20px;
+}
+
+.ws-auto-140 {
+  color: #a82227;
+}
+
+
+/* pageComponents/WSRestorationAcknowledgement.js */
+.ws-auto-141 {
+  padding: 10px;
+}
+
+.ws-auto-142 {
+  padding: 10px;
+}
+
+
+/* pageComponents/WSRestorationForm.js */
+.ws-auto-143 {
+  padding: 0px 10px 10px 10px;
+}
+
+.ws-auto-144 {
+  display: inline;
+}
+
+.ws-auto-145 {
+  display: inline;
+}
+
+.ws-auto-146 {
+  margin: 0px;
+}
+
+.ws-auto-147 {
+  margin: 16px;
+}
+
+.ws-auto-148 {
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+}
+
+.ws-auto-149 {
+  margin-top: -5px;
+  font-weight: 700;
+  display: inline;
+}
+
+.ws-auto-150 {
+  position: absolute;
+  margin-left: 4px;
+}
+
+.ws-auto-151 {
+  margin-top: -5px;
+  font-weight: 700;
+  display: inline;
+}
+
+.ws-auto-152 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.ws-auto-153 {
+  margin: 10px 10px 0px 0px;
+}
+
+
+/* pageComponents/WSRoadCuttingDetails.js */
+.ws-auto-154 {
+  color: orange;
+  display: inline-block;
+}
+
+.ws-auto-155 {
+  margin-bottom: 16px;
+}
+
+.ws-auto-156 {
+  color: #505A5F;
+}
+
+.ws-auto-157 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.ws-auto-158 {
+  width: 100px;
+  display: inline;
+  background: black;
+}
+
+.ws-auto-159 {
+  float: right;
+  position: relative;
+  bottom: -6px;
+}
+
+
+/* pageComponents/WSWFApplicationTimeline.js */
+.ws-auto-160 {
+  margin-top: 1em;
+  bottom: 0px;
+  width: 100%;
+  margin-bottom: 1.2em;
+}
+
+.ws-auto-161 {
+  margin-top: 1em;
+  bottom: 0px;
+  width: 100%;
+  margin-bottom: 1.2em;
+}
+
+.ws-auto-162 {
+  margin-top: 24px;
+}
+
+.ws-auto-163 {
+  margin-bottom: 16px;
+}
+
+
+/* pageComponents/WSWFCaption.js */
+.ws-auto-164 {
+  overflow-x: scroll;
+}
+
+
+/* pages/citizen/MyConnection/ConnectionDetails.js */
+.ws-auto-165 {
+  margin-left: 22px;
+}
+
+.ws-auto-166 {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.ws-auto-167 {
+  text-align: left;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+.ws-auto-168 {
+  text-align: left;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+.ws-auto-169 {
+  position: relative;
+  box-shadow: none;
+  min-width: 240px;
+  max-width: 310px;
+  padding: 0px;
+  margin-top: 15px;
+}
+
+.ws-auto-170 {
+  width: 100%;
+}
+
+.ws-auto-171 {
+  width: 100%;
+}
+
+.ws-auto-172 {
+  position: relative;
+  box-shadow: none;
+  min-width: 240px;
+  max-width: 310px;
+  padding: 0px;
+  margin-top: 15px;
+}
+
+.ws-auto-173 {
+  width: 100%;
+}
+
+.ws-auto-174 {
+  width: 100%;
+}
+
+.ws-auto-175 {
+  bottom: 150px;
+}
+
+
+/* pages/citizen/MyConnection/ConsumptionDetails.js */
+.ws-auto-176 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/MyConnection/index.js */
+.ws-auto-177 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/MyPayment/index.js */
+.ws-auto-178 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/ReSubmitDisconnection/CheckPage.js */
+.ws-auto-179 {
+  padding-right: 16px;
+}
+
+.ws-auto-180 {
+  display: inline;
+}
+
+.ws-auto-181 {
+  width: 100px;
+  display: inline;
+}
+
+.ws-auto-182 {
+  margin-top: -20px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.ws-auto-183 {
+  padding-right: 16px;
+}
+
+.ws-auto-184 {
+  display: inline;
+}
+
+.ws-auto-185 {
+  width: 100px;
+  display: inline;
+}
+
+.ws-auto-186 {
+  margin-top: -20px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.ws-auto-187 {
+  color: #cccccc;
+  background-color: #cccccc;
+  height: 2px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+
+/* pages/citizen/SearchConnection/searchConnection.js */
+.ws-auto-188 {
+  margin-top: 16px;
+}
+
+.ws-auto-189 {
+  border: solid;
+  border-radius: 5px;
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+  border-color: #f3f3f3;
+  background: #FAFAFA;
+  margin-bottom: 20px;
+}
+
+.ws-auto-190 {
+  margin-top: -1px;
+}
+
+.ws-auto-191 {
+  background: #FAFAFA;
+  max-width: 500px;
+}
+
+.ws-auto-192 {
+  text-align: center;
+  color: #505A5F;
+}
+
+.ws-auto-193 {
+  display: flex;
+  gap: 0 4px;
+}
+
+.ws-auto-194 {
+  position: absolute;
+  width: 70%;
+  margin-left: 50%;
+  font-size: medium;
+}
+
+.ws-auto-195 {
+  background: #FAFAFA;
+}
+
+.ws-auto-196 {
+  text-align: center;
+  color: #505A5F;
+}
+
+.ws-auto-197 {
+  display: flex;
+  gap: 0 4px;
+}
+
+.ws-auto-198 {
+  position: absolute;
+  width: 55%;
+  margin-left: 50%;
+  font-size: medium;
+}
+
+.ws-auto-199 {
+  background: #FAFAFA;
+}
+
+.ws-auto-200 {
+  text-align: center;
+  color: #505A5F;
+}
+
+.ws-auto-201 {
+  background: #FAFAFA;
+}
+
+.ws-auto-202 {
+  border: solid;
+  border-radius: 5px;
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+  border-color: #f3f3f3;
+  background: #FAFAFA;
+  margin-bottom: 20px;
+}
+
+.ws-auto-203 {
+  background: #FAFAFA;
+}
+
+.ws-auto-204 {
+  background: #FAFAFA;
+}
+
+
+/* pages/citizen/SearchResults/searchResults.js */
+.ws-auto-205 {
+  margin-top: 16px;
+}
+
+.ws-auto-206 {
+  margin-left: 8px;
+}
+
+.ws-auto-207 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.ws-auto-208 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.ws-auto-209 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.ws-auto-210 {
+  display: block;
+}
+
+
+/* pages/citizen/WSApplicationDetails.js */
+.ws-auto-211 {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.ws-auto-212 {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+
+.ws-auto-213 {
+  color: #A52A2A;
+}
+
+.ws-auto-214 {
+  text-align: left;
+}
+
+.ws-auto-215 {
+  text-align: left;
+}
+
+.ws-auto-216 {
+  text-align: left;
+}
+
+.ws-auto-217 {
+  color: #cccccc;
+  background-color: #cccccc;
+  height: 2px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.ws-auto-218 {
+  color: white;
+  background-color: white;
+  height: 2px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+
+/* pages/citizen/WSCreate/CheckPage.js */
+.ws-auto-219 {
+  padding-right: 16px;
+}
+
+.ws-auto-220 {
+  text-align: left;
+}
+
+.ws-auto-221 {
+  text-align: left;
+}
+
+.ws-auto-222 {
+  padding-right: 16px;
+}
+
+.ws-auto-223 {
+  position: relative;
+}
+
+.ws-auto-224 {
+  width: 100px;
+  display: inline;
+}
+
+.ws-auto-225 {
+  margin-top: -10px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+  margin-right: -10px;
+}
+
+.ws-auto-226 {
+  padding-right: 16px;
+}
+
+.ws-auto-227 {
+  position: relative;
+}
+
+.ws-auto-228 {
+  width: 100px;
+  display: inline;
+}
+
+.ws-auto-229 {
+  margin-top: -10px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.ws-auto-230 {
+  padding-right: 16px;
+}
+
+.ws-auto-231 {
+  position: relative;
+}
+
+.ws-auto-232 {
+  width: 100px;
+  display: inline;
+}
+
+.ws-auto-233 {
+  margin-top: -10px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.ws-auto-234 {
+  color: white;
+  background-color: white;
+  height: 2px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.ws-auto-235 {
+  margin-left: 10px;
+  max-width: 95%;
+}
+
+
+/* pages/citizen/WSDisconnection/CheckPage.js */
+.ws-auto-236 {
+  padding-right: 16px;
+}
+
+.ws-auto-237 {
+  display: inline;
+}
+
+.ws-auto-238 {
+  width: 100px;
+  display: inline;
+}
+
+.ws-auto-239 {
+  margin-top: -20px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.ws-auto-240 {
+  padding-right: 16px;
+}
+
+.ws-auto-241 {
+  display: inline;
+}
+
+.ws-auto-242 {
+  width: 100px;
+  display: inline;
+}
+
+.ws-auto-243 {
+  margin-top: -20px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.ws-auto-244 {
+  color: #cccccc;
+  background-color: #cccccc;
+  height: 2px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+
+/* pages/citizen/WSMyApplications/index.js */
+.ws-auto-245 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/WSMyApplications/ws-application.js */
+.ws-auto-246 {
+  margin-top: 10px;
+}
+
+
+/* pages/citizen/WSRestoration/CheckPage.js */
+.ws-auto-247 {
+  padding-right: 16px;
+}
+
+.ws-auto-248 {
+  display: inline;
+}
+
+.ws-auto-249 {
+  width: 100px;
+  display: inline;
+}
+
+.ws-auto-250 {
+  margin-top: -20px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.ws-auto-251 {
+  padding-right: 16px;
+}
+
+
+/* pages/citizen/WnSMyBills/wnsMyBills.js */
+.ws-auto-252 {
+  margin-top: 16px;
+}
+
+.ws-auto-253 {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.ws-auto-254 {
+  padding-left: 16px;
+}
+
+
+/* pages/citizen/index.js */
+.ws-auto-255 {
+  border: none;
+}
+
+
+/* pages/employee/ActivateConnection/index.js */
+.ws-auto-256 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/ApplicationBillAmendment.js */
+.ws-auto-257 {
+  margin-left: 20px;
+}
+
+.ws-auto-258 {
+  margin-bottom: 20px;
+}
+
+.ws-auto-259 {
+  font-weight: 500;
+}
+
+.ws-auto-260 {
+  margin-bottom: 0px;
+}
+
+.ws-auto-261 {
+  margin-bottom: 16px;
+}
+
+.ws-auto-262 {
+  margin-bottom: 16px;
+}
+
+.ws-auto-263 {
+  text-align: left;
+}
+
+.ws-auto-264 {
+  text-align: right;
+}
+
+.ws-auto-265 {
+  padding-left: 150px;
+}
+
+.ws-auto-266 {
+  padding-top: 20px;
+}
+
+.ws-auto-267 {
+  margin-left: 35px;
+}
+
+.ws-auto-268 {
+  padding-top: 17px;
+}
+
+.ws-auto-269 {
+  margin-left: 35px;
+}
+
+.ws-auto-270 {
+  padding-right: 60px;
+  font-weight: 700;
+}
+
+.ws-auto-271 {
+  text-align: end;
+}
+
+.ws-auto-272 {
+  padding-right: 60px;
+  padding-left: 150px;
+}
+
+.ws-auto-273 {
+  margin-bottom: -20px;
+  margin-top: -30px;
+  margin-left: 150px;
+}
+
+.ws-auto-274 {
+  margin-bottom: -20px;
+  margin-top: -30px;
+  margin-left: 150px;
+}
+
+.ws-auto-275 {
+  padding-right: 60px;
+}
+
+.ws-auto-276 {
+  margin-top: -19px;
+}
+
+.ws-auto-277 {
+  margin-top: -19px;
+}
+
+.ws-auto-278 {
+  padding-right: 60px;
+  font-weight: 700;
+}
+
+.ws-auto-279 {
+  margin-left: 10px;
+  margin-bottom: -4px;
+}
+
+.ws-auto-280 {
+  white-space: nowrap;
+  font-size: medium;
+}
+
+.ws-auto-281 {
+  text-align: end;
+}
+
+.ws-auto-282 {
+  padding-right: 60px;
+  padding-left: 150px;
+}
+
+.ws-auto-283 {
+  padding-right: 60px;
+}
+
+.ws-auto-284 {
+  margin-bottom: 16px;
+}
+
+.ws-auto-285 {
+  margin-bottom: 16px;
+}
+
+.ws-auto-286 {
+  font-weight: 500;
+}
+
+.ws-auto-287 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+.ws-auto-288 {
+  font-weight: 500;
+}
+
+.ws-auto-289 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+.ws-auto-290 {
+  font-weight: 500;
+}
+
+.ws-auto-291 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+.ws-auto-292 {
+  font-weight: 500;
+}
+
+.ws-auto-293 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+.ws-auto-294 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+.ws-auto-295 {
+  margin-bottom: 16px;
+}
+
+.ws-auto-296 {
+  margin-bottom: 25px;
+}
+
+.ws-auto-297 {
+  font-weight: 500;
+}
+
+.ws-auto-298 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+}
+
+
+/* pages/employee/ApplicationDetails.js */
+.ws-auto-299 {
+  margin-bottom: 15px;
+}
+
+.ws-auto-300 {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+
+.ws-auto-301 {
+  z-index: 10;
+  position: relative;
+  max-width: 100% !important;
+}
+
+.ws-auto-302 {
+  color: #A52A2A;
+}
+
+.ws-auto-303 {
+  z-index: 10000;
+}
+
+
+/* pages/employee/ApplicationDetailsBillAmendment.js */
+.ws-auto-304 {
+  margin-bottom: 15px;
+}
+
+
+/* pages/employee/DisconnectionApplication/WSDisconnectionResponse.js */
+.ws-auto-305 {
+  padding: 10px;
+}
+
+.ws-auto-306 {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.ws-auto-307 {
+  display: flex;
+}
+
+.ws-auto-308 {
+  margin-left: unset;
+  margin-bottom: 10px;
+  padding: 0px 8px;
+}
+
+.ws-auto-309 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.ws-auto-310 {
+  margin: 10px 10px 0px 0px;
+}
+
+
+/* pages/employee/DisconnectionDetails.js */
+.ws-auto-311 {
+  margin-bottom: 15px;
+}
+
+.ws-auto-312 {
+  display: flex;
+}
+
+.ws-auto-313 {
+  width: 70%;
+}
+
+.ws-auto-314 {
+  width: 30%;
+  z-index: 10;
+}
+
+
+/* pages/employee/EditApplication/WSEditApplicationByConfig.js */
+.ws-auto-315 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/EditApplication/index.js */
+.ws-auto-316 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/EditDisconnectionApplication/EditDisconnectionByConfig.js */
+.ws-auto-317 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/EditDisconnectionApplication/ResubmitDisconnection.js */
+.ws-auto-318 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/EditDisconnectionApplication/index.js */
+.ws-auto-319 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/EditModifyApplication/index.js */
+.ws-auto-320 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/ModifyApplication/index.js */
+.ws-auto-321 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/ModifyApplicationDetails.js */
+.ws-auto-322 {
+  margin-bottom: 15px;
+}
+
+
+/* pages/employee/NewApplication/index.js */
+.ws-auto-323 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/RequiredDocuments.js */
+.ws-auto-324 {
+  margin-right: 35px;
+}
+
+.ws-auto-325 {
+  position: relative;
+}
+
+
+/* pages/employee/Response.js */
+.ws-auto-326 {
+  margin-left: unset;
+  margin-bottom: 10px;
+  padding: 0px 8px;
+}
+
+.ws-auto-327 {
+  margin-top: 3px;
+}
+
+.ws-auto-328 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.ws-auto-329 {
+  margin-right: 1rem;
+}
+
+
+/* pages/employee/ResponseBillAmend.js */
+.ws-auto-330 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.ws-auto-331 {
+  margin-right: 1rem;
+}
+
+
+/* pages/employee/RestorationApplication/WSRestorationResponse.js */
+.ws-auto-332 {
+  padding: 10px;
+}
+
+.ws-auto-333 {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.ws-auto-334 {
+  display: flex;
+}
+
+.ws-auto-335 {
+  margin-left: unset;
+  margin-bottom: 10px;
+  padding: 0px 8px;
+}
+
+.ws-auto-336 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.ws-auto-337 {
+  margin: 10px 10px 0px 0px;
+}
+
+
+/* pages/employee/SearchWaterConnectionIntegrated.js */
+.ws-auto-338 {
+  margin-top: 20px;
+}
+
+.ws-auto-339 {
+  text-align: center;
+}
+
+.ws-auto-340 {
+  font-family: sans-serif;
+  color: white;
+  font-size: 19px;
+  margin-top: 10px;
+  float: right;
+}
+
+
+/* pages/employee/WSResponse.js */
+.ws-auto-341 {
+  padding: 10px;
+}
+
+.ws-auto-342 {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.ws-auto-343 {
+  display: flex;
+}
+
+.ws-auto-344 {
+  margin-left: unset;
+  margin-bottom: 10px;
+  padding: 0px 8px;
+}
+
+.ws-auto-345 {
+  margin-left: unset;
+  margin-bottom: 10px;
+  padding: 0px 8px;
+}
+
+.ws-auto-346 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.ws-auto-347 {
+  margin: 10px 10px 0px 0px;
+}
+
+
+/* pages/employee/connectionDetails/ConsumptionDetails.js */
+.ws-auto-348 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.ws-auto-349 {
+  z-index: 10000;
+}
+
+
+/* pages/employee/connectionDetails/connectionDetails.js */
+.ws-auto-350 {
+  margin-left: 22px;
+}
+
+.ws-auto-351 {
+  max-width: 100%;
+}
+

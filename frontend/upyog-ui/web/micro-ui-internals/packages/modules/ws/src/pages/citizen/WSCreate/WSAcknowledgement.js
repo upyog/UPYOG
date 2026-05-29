@@ -157,7 +157,7 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
               <span className="download-button">{t("TL_DOWNLOAD_ACK_FORM")}</span>
             </div>
           }
-          //style={{ width: "100px" }}
+          // width override removed
           onClick={handleDownloadPdf}
         />)} */}
       {/* {mutation2?.data?.Licenses[0]?.status === "PENDINGPAYMENT" && <Link to={{
@@ -177,7 +177,7 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
           <span className="download-button">{t("WS_PRINT_WATER_APPLICATION_LABEL")}</span>
         </div>
       }
-      //style={{ width: "100px" }}
+      // width override removed
       onClick={handleDownloadPdfWater}
     />}
       {(data?.serviceName?.code === "SEWERAGE" || data?.serviceName?.code === "BOTH") && SWmutation.isSuccess && <LinkButton
@@ -191,7 +191,7 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
           <span className="download-button">{t("WS_PRINT_SEWERAGE_APPLICATION_LABEL")}</span>
         </div>
       }
-      //style={{ width: "100px" }}
+      // width override removed
       onClick={handleDownloadPdfSewerage}
     />}
       <Link to={{

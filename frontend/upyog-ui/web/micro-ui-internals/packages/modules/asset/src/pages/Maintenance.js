@@ -3,39 +3,27 @@ import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, Toast, ActionBar
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
-
-
-
+import "../css/asset-inline-auto.css";
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
   return t(`${isEmployee ? "E" : "C"}S_MAINTENANCE_RESPONSE_${action ? action : "MAINTENANCE"}_${type}${isSuccess ? "" : "_ERROR"}`);
 };
-
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
   return GetMessage("ACTION", action, isSuccess, isEmployee, t);
 };
-
 const GetLabel = (action, isSuccess, isEmployee, t) => {
   return GetMessage("LABEL", action, isSuccess, isEmployee, t);
 };
-
 const DisplayText = (action, isSuccess, isEmployee, t) => {
   return GetMessage("DISPLAY", action, isSuccess, isEmployee, t);
 };
-
-const BannerPicker = (props) => {
-  return (
-    <Banner
-      message={GetActionMessage(props?.data?.Asset?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
-      applicationNumber={props?.data?.Assets?.[0]?.applicationNo}
-      info={GetLabel(props.data?.Assets?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
-      successful={props.isSuccess}
-    />
-  );
+const BannerPicker = props => {
+  return <Banner message={GetActionMessage(props?.data?.Asset?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)} applicationNumber={props?.data?.Assets?.[0]?.applicationNo} info={GetLabel(props.data?.Assets?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)} successful={props.isSuccess} />;
 };
-
-const Maintenance = (props) => {
-  console.log('For coming data from props in response:- ', props)
-  const { t } = useTranslation();
+const Maintenance = props => {
+  console.log('For coming data from props in response:- ', props);
+  const {
+    t
+  } = useTranslation();
   const queryClient = useQueryClient();
   const history = useHistory();
   const [error, setError] = useState(null);
@@ -44,27 +32,24 @@ const Maintenance = (props) => {
   const [applicationDetail, setApplicationDetail] = useState(null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", false);
-
   const closeToast = () => {
     setShowToast(null);
     setError(null);
   };
-
-
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { state } = props.location;
+  const {
+    state
+  } = props.location;
   // console.log('State value :- ', state?.AssetMaintenance, state?.applicationNo);
 
   const mutation = Digit.Hooks.asset.useMaintenanceAPI(tenantId, state.key !== "UPDATE");
   const mutation1 = Digit.Hooks.asset.useMaintenanceAPI(tenantId, false);
-
   useEffect(() => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
   }, [mutation.data]);
   useEffect(() => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
   }, [mutation1.data]);
-
   useEffect(() => {
     if (state?.applicationNo) {
       setApplicationDetail(state?.applicationNo); // Set success message
@@ -73,9 +58,8 @@ const Maintenance = (props) => {
       setApplicationDetail(t("CS_SOMETHING_WENT_WRONG")); // Default error message
     }
   }, [state]);
-
   useEffect(() => {
-    const onSuccess = async (successRes) => {
+    const onSuccess = async successRes => {
       setMutationHappened(true);
       queryClient.clear();
       if (successRes?.ResponseInfo?.status === "successful") {
@@ -83,43 +67,28 @@ const Maintenance = (props) => {
       }
     };
     const onError = (error, variables) => {
-      setShowToast({ key: "error" });
+      setShowToast({
+        key: "error"
+      });
       setError(error?.response?.data?.Errors[0]?.message || null);
     };
-
- 
-
     if (!mutationHappened) {
-      mutation.mutate(
-        {
-          AssetMaintenance: state?.AssetMaintenance,
-        },
-        {
-          onError,
-          onSuccess,
-        }
-      );
+      mutation.mutate({
+        AssetMaintenance: state?.AssetMaintenance
+      }, {
+        onError,
+        onSuccess
+      });
     }
   }, []);
-
-
-  if (mutation.isLoading || (mutation.isIdle && !mutationHappened)) {
+  if (mutation.isLoading || mutation.isIdle && !mutationHappened) {
     return <Loader />;
   }
-
-  return (
-    <div>
+  return <div>
       <Card>
-        <BannerPicker
-          t={t}
-          data={mutation?.data || successData}
-          action={state?.action}
-          isSuccess={!Object.keys(successData || {}).length ? mutation?.isSuccess : true}
-          isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isLoading}
-          isEmployee={props.parentRoute.includes("employee")}
-        />
-        <div style={{ padding: "10px", paddingBottom: "10px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
+        <BannerPicker t={t} data={mutation?.data || successData} action={state?.action} isSuccess={!Object.keys(successData || {}).length ? mutation?.isSuccess : true} isLoading={mutation.isIdle && !mutationHappened || mutation?.isLoading} isEmployee={props.parentRoute.includes("employee")} />
+        <div className="asset-auto-221">
+          <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`}>
             <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
           </Link>
         </div>
@@ -131,8 +100,6 @@ const Maintenance = (props) => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>
-    </div>
-  );
+    </div>;
 };
-
 export default Maintenance;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApplicationCard } from "./inbox/ApplicationCard";
 import InboxLinks from "./inbox/InboxLink";
-
+import "../css/asset-inline-auto.css";
 const MobileInbox = ({
   data,
   isLoading,
@@ -16,44 +16,28 @@ const MobileInbox = ({
   sortParams,
   linkPrefix,
   tableConfig,
-  filterComponent,
+  filterComponent
 }) => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const getData = () => {
-    return data?.map((dataObj) => {
+    return data?.map(dataObj => {
       const obj = {};
       const columns = isSearch ? tableConfig.searchColumns() : tableConfig.inboxColumns();
-      columns.forEach((el) => {
+      columns.forEach(el => {
         if (el.mobileCell) obj[el.Header] = el.mobileCell(dataObj);
       });
       return obj;
     });
   };
-
-  return (
-    <div style={{ padding: 0 }}>
+  return <div className="asset-auto-4">
       <div className="inbox-container">
         <div className="filters-container">
           {!isSearch && <InboxLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} isMobile={true} />}
-          <ApplicationCard
-            t={t}
-            data={getData()}
-            onFilterChange={onFilterChange}
-            isLoading={isLoading}
-            isSearch={isSearch}
-            onSearch={onSearch}
-            onSort={onSort}
-            searchParams={searchParams}
-            searchFields={searchFields}
-            linkPrefix={linkPrefix}
-            sortParams={sortParams}
-            serviceRequestIdKey={tableConfig?.serviceRequestIdKey}
-            filterComponent={filterComponent}
-          />
+          <ApplicationCard t={t} data={getData()} onFilterChange={onFilterChange} isLoading={isLoading} isSearch={isSearch} onSearch={onSearch} onSort={onSort} searchParams={searchParams} searchFields={searchFields} linkPrefix={linkPrefix} sortParams={sortParams} serviceRequestIdKey={tableConfig?.serviceRequestIdKey} filterComponent={filterComponent} />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default MobileInbox;

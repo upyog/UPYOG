@@ -2,21 +2,25 @@ import React, { useEffect, useState } from "react";
 import { Card, Banner, SubmitBar, Toast, ActionBar, Loader } from "@upyog/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
-const ProcessDepreciationResponse = (props) => {
+import "../css/asset-inline-auto.css";
+const ProcessDepreciationResponse = props => {
   const location = useLocation();
-  const { ProcessDepreciation, applicationNo } = location.state || {}; // Getting data from the location state
-  const { t } = useTranslation();
+  const {
+    ProcessDepreciation,
+    applicationNo
+  } = location.state || {}; // Getting data from the location state
+  const {
+    t
+  } = useTranslation();
   const [message, setMessage] = useState(null);
   const [applicationDetail, setApplicationDetail] = useState(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
 
-
-
   useEffect(() => {
     if (ProcessDepreciation) {
-      setTimeout(() => { // Simulating a delay
+      setTimeout(() => {
+        // Simulating a delay
         setLoading(false); // Stop loader after delay
         if (ProcessDepreciation.ResponseInfo.status === "successful") {
           setMessage(ProcessDepreciation.Message);
@@ -28,57 +32,36 @@ const ProcessDepreciationResponse = (props) => {
       }, 2000); // 3 seconds delay
     }
   }, [ProcessDepreciation, t]);
-  
-
   const closeToast = () => {
     setMessage(null);
     setError(false);
   };
-
   const GetBannerMessage = (isSuccess, t) => {
     return isSuccess ? t("CS_DEPRECIATION_SUCCESS_MESSAGE") : t("CS_SOMETHING_WENT_WRONG");
   };
-
   const GetBannerLabel = (isSuccess, t) => {
     return isSuccess ? t("CS_DEPRECIATION_SUCCESS_LABEL") : t("CS_ERROR_LABEL");
   };
-
-  return (
-    <div>
+  return <div>
       <Card>
         {/* Show Loader while waiting for response */}
-        {loading ? (
-          <Loader />
-        ) : message && !error ? (
-          <div> 
-            <Banner
-              message={GetBannerMessage(true, t)}
-              applicationNumber={applicationDetail}
-              info={GetBannerLabel(true, t)}
-              successful={true}
-            />
-            <div style={{ padding: "10px", paddingBottom: "10px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
+        {loading ? <Loader /> : message && !error ? <div> 
+            <Banner message={GetBannerMessage(true, t)} applicationNumber={applicationDetail} info={GetBannerLabel(true, t)} successful={true} />
+            <div className="asset-auto-222">
+              <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`}>
                 <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
               </Link>
             </div>
-          </div>
-        ) : (
-          <Banner message="Processing..." successful={false} />
-        )}
+          </div> : <Banner message="Processing..." successful={false} />}
       </Card>
 
-      {error && message && (
-        <Toast error={true} label={message} onClose={closeToast} />
-      )}
+      {error && message && <Toast error={true} label={message} onClose={closeToast} />}
 
       <ActionBar>
         <Link to={`${props.parentRoute.includes("employee") ? "/upyog-ui/employee" : "/upyog-ui/citizen"}`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>
-    </div>
-  );
+    </div>;
 };
-
 export default ProcessDepreciationResponse;

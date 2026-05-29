@@ -3,68 +3,70 @@ import { TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, FormStep,
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
-  const { pathname: url } = useLocation();
+import "../css/pt-inline-auto.css";
+const SelectOwnerDetails = ({
+  t,
+  config,
+  onSelect,
+  userType,
+  formData,
+  ownerIndex
+}) => {
+  const {
+    pathname: url
+  } = useLocation();
   const editScreen = url.includes("/modify-application/");
   const mutationScreen = url.includes("/property-mutation/");
-
   let index = mutationScreen ? ownerIndex : window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
-  const [name, setName] = useState((formData.owners && formData.owners[index] && formData.owners[index].name) || formData?.owners?.name || "");
-  const [email, setEmail] = useState((formData.owners && formData.owners[index] && formData.owners[index].email) || formData?.owners?.emailId || ""); 
-  const [gender, setGender] = useState((formData.owners && formData.owners[index] && formData.owners[index].gender) || formData?.owners?.gender);
-  const [mobileNumber, setMobileNumber] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].mobileNumber) || formData?.owners?.mobileNumber || ""
-  );
-  const [error, setError]=useState(null);
-  const [fatherOrHusbandName, setFatherOrHusbandName] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].fatherOrHusbandName) || formData?.owners?.fatherOrHusbandName || ""
-  );
-  const [relationship, setRelationship] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].relationship) || formData?.owners?.relationship || {}
-  );
+  const [name, setName] = useState(formData.owners && formData.owners[index] && formData.owners[index].name || formData?.owners?.name || "");
+  const [email, setEmail] = useState(formData.owners && formData.owners[index] && formData.owners[index].email || formData?.owners?.emailId || "");
+  const [gender, setGender] = useState(formData.owners && formData.owners[index] && formData.owners[index].gender || formData?.owners?.gender);
+  const [mobileNumber, setMobileNumber] = useState(formData.owners && formData.owners[index] && formData.owners[index].mobileNumber || formData?.owners?.mobileNumber || "");
+  const [error, setError] = useState(null);
+  const [fatherOrHusbandName, setFatherOrHusbandName] = useState(formData.owners && formData.owners[index] && formData.owners[index].fatherOrHusbandName || formData?.owners?.fatherOrHusbandName || "");
+  const [relationship, setRelationship] = useState(formData.owners && formData.owners[index] && formData.owners[index].relationship || formData?.owners?.relationship || {});
   const isUpdateProperty = formData?.isUpdateProperty || false;
   let isEditProperty = formData?.isEditProperty || false;
-
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const validateEmail=(value)=>{
-    const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
-    if(value===""){
+  const validateEmail = value => {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+    if (value === "") {
       setError("");
+    } else if (emailPattern.test(value)) {
+      setError("");
+    } else {
+      setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));
     }
-    else if(emailPattern.test(value)){
-      setError("");  
-    }
-    else{
-      setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));  
-    }
-  }
-  const { data: Menu } = Digit.Hooks.pt.useGenderMDMS(stateId, "common-masters", "GenderType");
-
+  };
+  const {
+    data: Menu
+  } = Digit.Hooks.pt.useGenderMDMS(stateId, "common-masters", "GenderType");
   let menu = [];
-  Menu &&
-    Menu.map((genderDetails) => {
-      menu.push({ i18nKey: `PT_COMMON_GENDER_${genderDetails.code}`, code: `${genderDetails.code}`, value: `${genderDetails.code}` });
+  Menu && Menu.map(genderDetails => {
+    menu.push({
+      i18nKey: `PT_COMMON_GENDER_${genderDetails.code}`,
+      code: `${genderDetails.code}`,
+      value: `${genderDetails.code}`
     });
-
+  });
   function setOwnerName(e) {
     setName(e.target.value);
   }
-  const handleEmailChange=(e)=>{
-    const value=e.target.value;
+  const handleEmailChange = e => {
+    const value = e.target.value;
     setEmail(value);
-    validateEmail(value);   
-  }
+    validateEmail(value);
+  };
   useEffect(() => {
-    if(email){
+    if (email) {
       validateEmail(email);
-    } 
-  }, [email])
+    }
+  }, [email]);
   function setGenderName(value) {
     setGender(value);
   }
-
   function setMobileNo(e) {
     setMobileNumber(e.target.value);
   }
@@ -74,266 +76,199 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
   function setGuardianName(value) {
     setRelationship(value);
   }
-
   const goNext = () => {
-    if(email==="" || !error){     
-    let owner = formData.owners && formData.owners[index];
-    let ownerStep;
-    if (userType === "employee") {
-      ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship, emailId: email };
-      onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
-    } else {
-      if (mutationScreen) {
-        ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship,emailId: email };
-        onSelect("", ownerStep);
-        return;
+    if (email === "" || !error) {
+      let owner = formData.owners && formData.owners[index];
+      let ownerStep;
+      if (userType === "employee") {
+        ownerStep = {
+          ...owner,
+          name,
+          gender,
+          mobileNumber,
+          fatherOrHusbandName,
+          relationship,
+          emailId: email
+        };
+        onSelect(config.key, {
+          ...formData[config.key],
+          ...ownerStep
+        }, false, index);
+      } else {
+        if (mutationScreen) {
+          ownerStep = {
+            ...owner,
+            name,
+            gender,
+            mobileNumber,
+            fatherOrHusbandName,
+            relationship,
+            emailId: email
+          };
+          onSelect("", ownerStep);
+          return;
+        }
+        ownerStep = {
+          ...owner,
+          name,
+          gender,
+          mobileNumber,
+          fatherOrHusbandName,
+          relationship,
+          emailId: email
+        };
+        onSelect(config.key, ownerStep, false, index);
       }
-      ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship, emailId:email};
-      onSelect(config.key, ownerStep, false, index);
     }
+    ;
   };
-}
-
   const onSkip = () => onSelect();
   // As Ticket RAIN-2619 other option in gender and gaurdian will be enhance , dont uncomment it
-  const options = [
-    { name: "Female", value: "FEMALE", code: "FEMALE" },
-    { name: "Male", value: "MALE", code: "MALE" },
-    { name: "Transgender", value: "TRANSGENDER", code: "TRANSGENDER" },
-    { name: "OTHERS", value: "OTHERS", code: "OTHERS" },
-    // { name: "Other", value: "OTHER", code: "OTHER" },
+  const options = [{
+    name: "Female",
+    value: "FEMALE",
+    code: "FEMALE"
+  }, {
+    name: "Male",
+    value: "MALE",
+    code: "MALE"
+  }, {
+    name: "Transgender",
+    value: "TRANSGENDER",
+    code: "TRANSGENDER"
+  }, {
+    name: "OTHERS",
+    value: "OTHERS",
+    code: "OTHERS"
+  }
+  // { name: "Other", value: "OTHER", code: "OTHER" },
   ];
-
-  const GuardianOptions = [
-    { name: "HUSBAND", code: "HUSBAND", i18nKey: "PT_RELATION_HUSBAND" },
-    { name: "Father", code: "FATHER", i18nKey: "PT_RELATION_FATHER" },
-    // { name: "Husband/Wife", code: "HUSBANDWIFE", i18nKey: "PT_RELATION_HUSBANDWIFE" },
-    // { name: "Other", code: "OTHER", i18nKey: "PT_RELATION_OTHER" },
+  const GuardianOptions = [{
+    name: "HUSBAND",
+    code: "HUSBAND",
+    i18nKey: "PT_RELATION_HUSBAND"
+  }, {
+    name: "Father",
+    code: "FATHER",
+    i18nKey: "PT_RELATION_FATHER"
+  }
+  // { name: "Husband/Wife", code: "HUSBANDWIFE", i18nKey: "PT_RELATION_HUSBANDWIFE" },
+  // { name: "Other", code: "OTHER", i18nKey: "PT_RELATION_OTHER" },
   ];
-
   useEffect(() => {
     if (userType === "employee") {
       goNext();
     }
   }, [name, gender, mobileNumber, fatherOrHusbandName, relationship]);
-
   if (userType === "employee") {
-    return (
-      <div>
+    return <div>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
+          <CardLabel style={editScreen ? {
+          color: "#B1B4B6"
+        } : {}}>{`${t("PT_FORM3_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <div className="field">
-            <TextInput
-              type={"text"}
-              t={t}
-              isMandatory={false}
-              name="mobileNumber"
-              value={mobileNumber}
-              onChange={setMobileNo}
-              ValidationRequired = {true}
-              {...(validation = {
-                isRequired: true,
-                pattern: "[6-9]{1}[0-9]{9}",
-                type: "tel",
-                title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
-              })}
-              disable={editScreen}
-            />
+            <TextInput type={"text"} t={t} isMandatory={false} name="mobileNumber" value={mobileNumber} onChange={setMobileNo} ValidationRequired={true} {...validation = {
+            isRequired: true,
+            pattern: "[6-9]{1}[0-9]{9}",
+            type: "tel",
+            title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")
+          }} disable={editScreen} />
           </div>
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_OWNER_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
+          <CardLabel style={editScreen ? {
+          color: "#B1B4B6"
+        } : {}}>{`${t("PT_OWNER_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <div className="field">
-            <TextInput
-              t={t}
-              type={"text"}
-              isMandatory={false}
-              name="name"
-              value={name}
-              onChange={setOwnerName}
-              ValidationRequired = {true}
-              {...(validation = {
-                isRequired: true,
-                pattern: "^[a-zA-Z ]+$",
-                type: "tel",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
-              disable={editScreen}
-            />
+            <TextInput t={t} type={"text"} isMandatory={false} name="name" value={name} onChange={setOwnerName} ValidationRequired={true} {...validation = {
+            isRequired: true,
+            pattern: "^[a-zA-Z ]+$",
+            type: "tel",
+            title: t("PT_NAME_ERROR_MESSAGE")
+          }} disable={editScreen} />
           </div>
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_GUARDIAN_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
+          <CardLabel style={editScreen ? {
+          color: "#B1B4B6"
+        } : {}}>{`${t("PT_FORM3_GUARDIAN_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <div className="field">
-            <TextInput
-              t={t}
-              type={"text"}
-              isMandatory={false}
-              name="fatherOrHusbandName"
-              value={fatherOrHusbandName}
-              onChange={setGuardiansName}
-              ValidationRequired = {true}
-              {...(validation = {
-                pattern: "^[a-zA-Z ]+$",
-                title: t("PT_NAME_ERROR_MESSAGE"),
-              })}
-              disable={editScreen}
-            />
+            <TextInput t={t} type={"text"} isMandatory={false} name="fatherOrHusbandName" value={fatherOrHusbandName} onChange={setGuardiansName} ValidationRequired={true} {...validation = {
+            pattern: "^[a-zA-Z ]+$",
+            title: t("PT_NAME_ERROR_MESSAGE")
+          }} disable={editScreen} />
           </div>
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_RELATIONSHIP")}`}<span className="check-page-link-button"> *</span></CardLabel>
-          <Dropdown
-            className="form-field"
-            selected={relationship?.length === 1 ? relationship[0] : relationship}
-            disable={relationship?.length === 1 || editScreen}
-            option={GuardianOptions}
-            select={setGuardianName}
-            optionKey="i18nKey"
-            t={t}
-            name="relationship"
-          />
+          <CardLabel style={editScreen ? {
+          color: "#B1B4B6"
+        } : {}}>{`${t("PT_FORM3_RELATIONSHIP")}`}<span className="check-page-link-button"> *</span></CardLabel>
+          <Dropdown className="form-field" selected={relationship?.length === 1 ? relationship[0] : relationship} disable={relationship?.length === 1 || editScreen} option={GuardianOptions} select={setGuardianName} optionKey="i18nKey" t={t} name="relationship" />
         </LabelFieldPair>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_GENDER")}`}<span className="check-page-link-button"> *</span></CardLabel>
-          <Dropdown
-            className="form-field"
-            selected={gender?.length === 1 ? gender[0] : gender}
-            disable={gender?.length === 1 || editScreen}
-            option={menu}
-            select={setGenderName}
-            optionKey="code"
-            t={t}
-            name="gender"
-          />
+          <CardLabel style={editScreen ? {
+          color: "#B1B4B6"
+        } : {}}>{`${t("PT_FORM3_GENDER")}`}<span className="check-page-link-button"> *</span></CardLabel>
+          <Dropdown className="form-field" selected={gender?.length === 1 ? gender[0] : gender} disable={gender?.length === 1 || editScreen} option={menu} select={setGenderName} optionKey="code" t={t} name="gender" />
         </LabelFieldPair>
         <div>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_OWNER_EMAIL")}`}</CardLabel>
+          <CardLabel style={editScreen ? {
+            color: "#B1B4B6"
+          } : {}}>{`${t("PT_OWNER_EMAIL")}`}</CardLabel>
           <div className="field">
-            <TextInput
-              t={t}
-              type="email"
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="email"
-              value={email}
-              onChange={handleEmailChange}
-              disable={editScreen}
-            />
+            <TextInput t={t} type="email" isMandatory={false} optionKey="i18nKey" name="email" value={email} onChange={handleEmailChange} disable={editScreen} />
           </div>
         </LabelFieldPair>
-        {error && <span style={{color:"red"}}>{error}</span>}
+        {error && <span className="pt-auto-80">{error}</span>}
         </div>
-      </div>
-    );
+      </div>;
   }
+  return <React.Fragment>
+    {window.location.href.includes("/citizen") ? window.location.href.includes("/citizen/pt/property/property-mutation") ? <Timeline currentStep={1} flow="PT_MUTATE" /> : <Timeline currentStep={2} /> : null}
 
-  return (
-    <React.Fragment>
-    {
-      window.location.href.includes("/citizen") ?
-        window.location.href.includes("/citizen/pt/property/property-mutation") ? 
-          <Timeline currentStep={1} flow="PT_MUTATE" /> : <Timeline currentStep={2} />
-    : null
-    }
-
-    <FormStep
-      config={config}
-      onSelect={goNext}
-      onSkip={onSkip}
-      t={t}
-      isDisabled={!name || !mobileNumber || !gender || !relationship || !fatherOrHusbandName}
-    >
+    <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!name || !mobileNumber || !gender || !relationship || !fatherOrHusbandName}>
       <div>
         <CardLabel>{`${t("PT_OWNER_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
-        <TextInput
-          t={t}
-          type={"text"}
-          isMandatory={false}
-          optionKey="i18nKey"
-          name="name"
-          value={name}
-          onChange={setOwnerName}
-          disable={isUpdateProperty || isEditProperty}
-          ValidationRequired = {true}
-          {...(validation = {
-            isRequired: true,
-            pattern: "^[a-zA-Z ]+$",
-            type: "text",
-            title: t("PT_NAME_ERROR_MESSAGE"),
-          })}
-        />
+        <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="name" value={name} onChange={setOwnerName} disable={isUpdateProperty || isEditProperty} ValidationRequired={true} {...validation = {
+          isRequired: true,
+          pattern: "^[a-zA-Z ]+$",
+          type: "text",
+          title: t("PT_NAME_ERROR_MESSAGE")
+        }} />
         <CardLabel>{`${t("PT_FORM3_GENDER")}`}<span className="check-page-link-button"> *</span></CardLabel>
-        <RadioButtons
-          t={t}
-          options={menu}
-          optionsKey="code"
-          name="gender"
-          value={gender}
-          selectedOption={gender}
-          onSelect={setGenderName}
-          isDependent={true}
-          labelKey="PT_COMMON_GENDER"
-          disabled={isUpdateProperty || isEditProperty}
-        />
+        <RadioButtons t={t} options={menu} optionsKey="code" name="gender" value={gender} selectedOption={gender} onSelect={setGenderName} isDependent={true} labelKey="PT_COMMON_GENDER" disabled={isUpdateProperty || isEditProperty} />
         <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
-        <MobileNumber
-          value={mobileNumber}
-          name="mobileNumber"
-          onChange={(value) => setMobileNo({ target: { value } })}
-          disable={isUpdateProperty || isEditProperty}
-          {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
-        />
+        <MobileNumber value={mobileNumber} name="mobileNumber" onChange={value => setMobileNo({
+          target: {
+            value
+          }
+        })} disable={isUpdateProperty || isEditProperty} {...{
+          required: true,
+          pattern: "[6-9]{1}[0-9]{9}",
+          type: "tel",
+          title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")
+        }} />
         <CardLabel>{`${t("PT_FORM3_GUARDIAN_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
-        <TextInput
-          t={t}
-          type={"text"}
-          isMandatory={false}
-          optionKey="i18nKey"
-          name="fatherOrHusbandName"
-          value={fatherOrHusbandName}
-          onChange={setGuardiansName}
-          disable={isUpdateProperty || isEditProperty}
-          ValidationRequired = {true}
-          {...(validation = {
-            isRequired: true,
-            pattern: "^[a-zA-Z ]+$",
-            type: "text",
-            title: t("PT_NAME_ERROR_MESSAGE"),
-          })}
-        />
+        <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="fatherOrHusbandName" value={fatherOrHusbandName} onChange={setGuardiansName} disable={isUpdateProperty || isEditProperty} ValidationRequired={true} {...validation = {
+          isRequired: true,
+          pattern: "^[a-zA-Z ]+$",
+          type: "text",
+          title: t("PT_NAME_ERROR_MESSAGE")
+        }} />
         <CardLabel>{`${t("PT_FORM3_RELATIONSHIP")}`}<span className="check-page-link-button"> *</span></CardLabel>
-        <RadioButtons
-          t={t}
-          optionsKey="i18nKey"
-          name="relationship"
-          options={GuardianOptions}
-          value={relationship}
-          selectedOption={relationship}
-          onSelect={setGuardianName}
-          isDependent={true}
-          labelKey="PT_RELATION"
-          disabled={isUpdateProperty || isEditProperty}
-        />
+        <RadioButtons t={t} optionsKey="i18nKey" name="relationship" options={GuardianOptions} value={relationship} selectedOption={relationship} onSelect={setGuardianName} isDependent={true} labelKey="PT_RELATION" disabled={isUpdateProperty || isEditProperty} />
         <div>
           <LabelFieldPair>
           <CardLabel>{`${t("PT_FORM3_EMAIL_ID")}`}</CardLabel>
-        <TextInput
-              isMandatory={false}
-              name="email"
-              value={email}
-              onChange={handleEmailChange}
-              // {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
-              disable={isUpdateProperty || isEditProperty}
-            />
+        <TextInput isMandatory={false} name="email" value={email} onChange={handleEmailChange}
+            // {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
+            disable={isUpdateProperty || isEditProperty} />
           </LabelFieldPair>
-          {error && <span style={{color:"red"}}>{error}</span>}
+          {error && <span className="pt-auto-81">{error}</span>}
         </div>
         </div>
     </FormStep>
-    </React.Fragment>
-  );
+    </React.Fragment>;
 };
-
 export default SelectOwnerDetails;

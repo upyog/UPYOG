@@ -5,6 +5,7 @@ import { useParams, useHistory, useRouteMatch } from "react-router-dom";
 import { stringReplaceAll, convertEpochToDate } from "./utils";
 import ActionModal from "./components/Modal";
 import { downloadAndPrintChallan, downloadAndPrintReciept } from "./utils";
+import "./EmployeeChallan.css";
 
 const EmployeeChallan = (props) => {
   const { t } = useTranslation();
@@ -120,20 +121,12 @@ const EmployeeChallan = (props) => {
 
   return (
     <React.Fragment>
-      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-      <style>{`
-  .multilinkWrapper employee-mulitlink-main-divNew {
-   max-width:100%;
-   margin-top:-20px
-  }`
-}
-
-        </style>
-        <div style={{display:"flex"}}>
-          <div style={{width:"80%"}}>
+      <div className="employee-application-details employee-challan-root">
+        <div className="employee-challan-header-row">
+          <div className="employee-challan-title">
         <Header>{`${t("CHALLAN_DETAILS")}`} </Header>
         </div>
-        <div style={{width:"20%"}}>
+        <div className="employee-challan-download">
           <MultiLink
               className="multilinkWrapper employee-mulitlink-main-divNew"
               onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
@@ -141,6 +134,7 @@ const EmployeeChallan = (props) => {
               options={challanDetails?.applicationStatus === "PAID" ? [challanDownload , receiptDownload] : [challanDownload]}
               downloadBtnClassName={"employee-download-btn-className"}
               optionsClassName={"employee-options-btn-className"}
+              style={{ maxWidth: "100%" }}
             />
          </div>
       </div>

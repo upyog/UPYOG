@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { waterTankerPayload, APPLICATION_PATH } from "../../../utils";
 import getWTAcknowledgementData from "../../../utils/getWTAcknowledgementData";
 
-
 /* This component, WTAcknowledgement, is responsible for displaying the acknowledgement 
  of a service request submission. It utilizes the Digit UI library components for 
  rendering the UI elements. 
@@ -22,55 +21,50 @@ import getWTAcknowledgementData from "../../../utils/getWTAcknowledgementData";
  4. **Navigation**: A LinkButton is provided to navigate back to the home page 
     after the acknowledgement is displayed.
 */
-
-
-
-const GetActionMessage = (props) => {
-    const { t } = useTranslation();
-    if (props.isSuccess) {
-      return t("WT_SUBMIT_SUCCESSFULL");
-    }
-    else if (props.isLoading){
-      return t("WT_APPLICATION_PENDING");
-    }
-    else if (!props.isSuccess)
-    return t("WT_APPLICATION_FAILED");
-  };
-
+import "../../../css/wt-inline-auto.css";
+const GetActionMessage = props => {
+  const {
+    t
+  } = useTranslation();
+  if (props.isSuccess) {
+    return t("WT_SUBMIT_SUCCESSFULL");
+  } else if (props.isLoading) {
+    return t("WT_APPLICATION_PENDING");
+  } else if (!props.isSuccess) return t("WT_APPLICATION_FAILED");
+};
 
 //style object to pass inside row container which shows the application ID and status of application of banner image
 const rowContainerStyle = {
   padding: "4px 0px",
-  justifyContent: "space-between",
+  justifyContent: "space-between"
 };
-
-const BannerPicker = (props) => {
-  return (
-    <Banner
-      message={GetActionMessage(props)}
-      applicationNumber={props.data?.waterTankerBookingDetail?.bookingNo}
-      info={props.isSuccess ? props.t("WT_BOOKING_NO") : ""}
-      successful={props.isSuccess}
-      style={{width: "100%"}}
-    />
-  );
+const BannerPicker = props => {
+  return <Banner message={GetActionMessage(props)} applicationNumber={props.data?.waterTankerBookingDetail?.bookingNo} info={props.isSuccess ? props.t("WT_BOOKING_NO") : ""} successful={props.isSuccess} className="wt-auto-43" />;
 };
-
-const WTAcknowledgement = ({ data, onSuccess }) => {
-  const { t } = useTranslation();
+const WTAcknowledgement = ({
+  data,
+  onSuccess
+}) => {
+  const {
+    t
+  } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.wt.useTankerCreateAPI(tenantId); 
+  const mutation = Digit.Hooks.wt.useTankerCreateAPI(tenantId);
   const user = Digit.UserService.getUser().info;
-  const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const { tenants } = storeData || {};
-
+  const {
+    data: storeData
+  } = Digit.Hooks.useStore.getInitData();
+  const {
+    tenants
+  } = storeData || {};
   useEffect(() => {
     try {
       data.tenantId = tenantId;
       let formdata = waterTankerPayload(data);
-      mutation.mutate(formdata, {onSuccess});
-    } catch (err) {
-    }
+      mutation.mutate(formdata, {
+        onSuccess
+      });
+    } catch (err) {}
   }, []);
 
   /*custom hook to prevent going back in Acknowledgement /success response page
@@ -78,7 +72,7 @@ const WTAcknowledgement = ({ data, onSuccess }) => {
   */
   Digit.Hooks.useCustomBackNavigation({
     redirectPath: '${APPLICATION_PATH}/citizen'
-  })
+  });
 
   /**
    * Handles the generation and download of the Water Tanker Acknowledgement PDF.
@@ -90,37 +84,27 @@ const WTAcknowledgement = ({ data, onSuccess }) => {
    */
   const handleDownloadPdf = async () => {
     let waterTankerDetail = mutation.data?.waterTankerBookingDetail;
-    const tenantInfo = tenants.find((tenant) => tenant.code === waterTankerDetail.tenantId);
+    const tenantInfo = tenants.find(tenant => tenant.code === waterTankerDetail.tenantId);
     let tenantId = waterTankerDetail.tenantId || tenantId;
-    const data = await getWTAcknowledgementData({...waterTankerDetail }, tenantInfo, t);
+    const data = await getWTAcknowledgementData({
+      ...waterTankerDetail
+    }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
-
-  return mutation.isLoading || mutation.isIdle ? (
-    <Loader />
-  ) : (
-    <Card>
+  return mutation.isLoading || mutation.isIdle ? <Loader /> : <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       <StatusTable>
-        {mutation.isSuccess && (
-          <Row
-            rowContainerStyle={rowContainerStyle}
-            last       
-            textStyle={{ whiteSpace: "pre", width: "60%" }}
-          />
-        )}
+        {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{
+        whiteSpace: "pre",
+        width: "60%"
+      }} />}
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("WT_DOWNLOAD_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
-      {user?.type==="CITIZEN"?
-      <Link to={`${APPLICATION_PATH}/citizen`}>
+      {user?.type === "CITIZEN" ? <Link to={`${APPLICATION_PATH}/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>
-      :
-      <Link to={`${APPLICATION_PATH}/employee`}>
+      </Link> : <Link to={`${APPLICATION_PATH}/employee`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>}
-    </Card>
-  );
+    </Card>;
 };
-
 export default WTAcknowledgement;

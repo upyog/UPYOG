@@ -14,6 +14,7 @@ import {
 } from "@upyog/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
+import "../../css/pt-inline.css";
 
 const fieldComponents = {
   date: DatePicker,
@@ -107,9 +108,8 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   }
 
   const clearAll = (mobileView) => {
-    const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className={`pt-inline-link-label ${mobileView ? "pt-inline-link-label-mobile" : ""}`} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -118,7 +118,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+        <div className={`search-container pt-inline-search-container ${isInboxPage ? "pt-inline-search-container-inbox" : ""}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -128,7 +128,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display:"grid" }}>
+            <div className={"complaint-input-container for-pt pt-inline-complaint-grid " + (!isInboxPage ? "for-search" : "")}>
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
@@ -158,10 +158,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                       )}
                     </span>
                     {formState?.dirtyFields?.[input.name] ? (
-                      <span
-                        style={{ fontWeight: "700", color: "rgba(212, 53, 28)", paddingLeft: "8px", marginTop: "-20px", fontSize: "12px" }}
-                        className="inbox-search-form-error"
-                      >
+                      <span className="inbox-search-form-error pt-inline-inbox-search-error">
                         {formState?.errors?.[input.name]?.message}
                       </span>
                     ) : null}
@@ -169,20 +166,19 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 ))}
 
               {isInboxPage && (
-                <div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px" }} className="input-fields">
+                <div className="input-fields pt-inline-clear-all-wrap">
                   <div>{clearAll()}</div>
                 </div>
               )}
 
               {type === "desktop" && !mobileView && (
-                <div style={{ maxWidth: "unset", marginLeft: "unset" }} className="search-submit-wrapper">
+                <div className="search-submit-wrapper pt-inline-search-submit-wrapper">
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
                     disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
                   {!isInboxPage && <div>{clearAll()}</div>}
                 </div>
               )}
@@ -191,10 +187,15 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search pt-inline-flex-1">
               {clearAll(mobileView)}
             </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar
+              disabled={!!Object.keys(formState.errors).length}
+              label={t("ES_COMMON_SEARCH")}
+              className="pt-inline-submit-flex"
+              submit={true}
+            />
           </ActionBar>
         )}
       </React.Fragment>

@@ -1,0 +1,967 @@
+/* components/SearchApplication/MobileSearchApplication.js */
+.tl-auto-1 {
+  margin-top: 20px;
+}
+
+.tl-auto-2 {
+  text-align: center;
+}
+
+
+/* components/SearchApplication/index.js */
+.tl-auto-3 {
+  margin-top: 20px;
+}
+
+.tl-auto-4 {
+  text-align: center;
+}
+
+
+/* components/SearchLicense/MobileSearchApplication.js */
+.tl-auto-5 {
+  margin-top: 20px;
+}
+
+.tl-auto-6 {
+  text-align: center;
+}
+
+
+/* components/SearchLicense/index.js */
+.tl-auto-7 {
+  margin-top: 20px;
+}
+
+.tl-auto-8 {
+  text-align: center;
+}
+
+
+/* components/inbox/ApplicationCard.js */
+.tl-auto-9 {
+  margin-top: 20px;
+}
+
+.tl-auto-10 {
+  text-align: center;
+}
+
+
+/* components/inbox/DesktopInbox.js */
+.tl-auto-11 {
+  margin-top: 20px;
+}
+
+.tl-auto-12 {
+  text-align: center;
+}
+
+.tl-auto-13 {
+  flex: 1px;
+}
+
+
+/* components/inbox/InboxFilter.js */
+.tl-auto-14 {
+  align-items: center;
+}
+
+.tl-auto-15 {
+  display: flex;
+  align-items: center;
+}
+
+.tl-auto-16 {
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+.tl-auto-17 {
+  border: 1px solid #e0e0e0;
+  padding: 6px;
+}
+
+.tl-auto-18 {
+  font-weight: normal;
+}
+
+.tl-auto-19 {
+  font-weight: normal;
+}
+
+
+/* components/inbox/MobileInbox.js */
+.tl-auto-20 {
+  padding: 0px;
+}
+
+
+/* components/inbox/search.js */
+.tl-auto-21 {
+  text-align: start;
+}
+
+.tl-auto-22 {
+  font-weight: 700;
+  color: rgba(212, 53, 28);
+  padding-left: 8px;
+  margin-top: -20px;
+  font-size: 12px;
+}
+
+.tl-auto-23 {
+  width: 100%;
+  text-align: right;
+  width: 240px;
+  text-align: right;
+  margin-left: 96px;
+  margin-top: 8px;
+}
+
+.tl-auto-24 {
+  width: 100%;
+}
+
+.tl-auto-25 {
+  padding-top: 9px;
+}
+
+.tl-auto-26 {
+  flex: 1px;
+}
+
+.tl-auto-27 {
+  flex: 1px;
+}
+
+
+/* pageComponents/Proof.js */
+.tl-auto-28 {
+  font-weight: unset;
+}
+
+.tl-auto-29 {
+  font-weight: unset;
+}
+
+.tl-auto-30 {
+  height: 20px;
+  width: 100%;
+  font-size: 20px;
+  color: red;
+  margin-top: 5px;
+}
+
+.tl-auto-31 {
+  disabled: true;
+  height: 20px;
+  width: 100%;
+}
+
+
+/* pageComponents/SelectAccessoriesDetails.js */
+.tl-auto-32 {
+  border: solid;
+  border-radius: 5px;
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+  border-color: #f3f3f3;
+  background: #FAFAFA;
+}
+
+.tl-auto-33 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-34 {
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.tl-auto-35 {
+  background: #FAFAFA;
+}
+
+.tl-auto-36 {
+  background: #FAFAFA;
+}
+
+.tl-auto-37 {
+  background: #FAFAFA;
+}
+
+.tl-auto-38 {
+  justify-content: center;
+  display: flex;
+  padding-bottom: 15px;
+  color: #FF8C00;
+}
+
+.tl-auto-39 {
+  padding-top: 10px;
+}
+
+
+/* pageComponents/SelectDocuments.js */
+.tl-auto-40 {
+  margin-bottom: 24px;
+}
+
+
+/* pageComponents/SelectOwnerAddress.js */
+.tl-auto-41 {
+  padding-top: 10px;
+}
+
+
+/* pageComponents/SelectOwnerDetails.js */
+.tl-auto-42 {
+  margin-top: -1px;
+}
+
+.tl-auto-43 {
+  margin-top: -1px;
+}
+
+.tl-auto-44 {
+
+}
+
+.tl-auto-45 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-46 {
+  float: right;
+  position: relative;
+  bottom: 5px;
+}
+
+.tl-auto-47 {
+  margin-top: -1px;
+}
+
+.tl-auto-48 {
+  padding-top: 10px;
+}
+
+.tl-auto-49 {
+  justify-content: left;
+  display: flex;
+  padding-bottom: 15px;
+  color: #FF8C00;
+}
+
+.tl-auto-50 {
+  padding-top: 10px;
+}
+
+.tl-auto-51 {
+  justify-content: left;
+  display: flex;
+  padding-bottom: 15px;
+  font-size: 15px;
+  color: #FF8C00;
+}
+
+
+/* pageComponents/SelectOwnerShipDetails.js */
+.tl-auto-52 {
+  margin-bottom: 20px;
+}
+
+.tl-auto-53 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+.tl-auto-54 {
+  margin-bottom: 20px;
+}
+
+
+/* pageComponents/SelectOwnershipProof.js */
+.tl-auto-55 {
+  font-weight: unset;
+}
+
+.tl-auto-56 {
+  font-weight: unset;
+}
+
+.tl-auto-57 {
+  height: 20px;
+  width: 100%;
+  font-size: 20px;
+  color: red;
+  margin-top: 5px;
+}
+
+.tl-auto-58 {
+  disabled: true;
+  height: 20px;
+  width: 100%;
+}
+
+
+/* pageComponents/SelectProofIdentity.js */
+.tl-auto-59 {
+  font-weight: unset;
+}
+
+.tl-auto-60 {
+  font-weight: unset;
+}
+
+.tl-auto-61 {
+  height: 20px;
+  width: 100%;
+  font-size: 20px;
+  color: red;
+  margin-top: 5px;
+}
+
+.tl-auto-62 {
+  disabled: true;
+  height: 20px;
+  width: 100%;
+}
+
+
+/* pageComponents/SelectStreet.js */
+.tl-auto-63 {
+  display: flex;
+  align-items: baseline;
+  margin-right: unset;
+}
+
+.tl-auto-64 {
+  margin-right: -50px;
+  margin-left: 10px;
+}
+
+
+/* pageComponents/SelectTradeName.js */
+.tl-auto-65 {
+  color: red;
+}
+
+
+/* pageComponents/SelectTradeUnits.js */
+.tl-auto-66 {
+  border: solid;
+  border-radius: 5px;
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+  border-color: #f3f3f3;
+  background: #FAFAFA;
+}
+
+.tl-auto-67 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-68 {
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.tl-auto-69 {
+  background: #FAFAFA;
+}
+
+.tl-auto-70 {
+  background: #FAFAFA;
+}
+
+.tl-auto-71 {
+  justify-content: center;
+  display: flex;
+  padding-bottom: 15px;
+  color: #FF8C00;
+}
+
+.tl-auto-72 {
+  padding-top: 10px;
+}
+
+
+/* pageComponents/SelectTradeUnitsInitial.js */
+.tl-auto-73 {
+  border: solid;
+  border-radius: 5px;
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+  border-color: #f3f3f3;
+  background: #FAFAFA;
+}
+
+.tl-auto-74 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-75 {
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.tl-auto-76 {
+  background: #FAFAFA;
+}
+
+.tl-auto-77 {
+  background: #FAFAFA;
+}
+
+.tl-auto-78 {
+  justify-content: center;
+  display: flex;
+  padding-bottom: 15px;
+  color: #FF8C00;
+}
+
+.tl-auto-79 {
+  padding-top: 10px;
+}
+
+
+/* pageComponents/TLAccessoriesEmployee.js */
+.tl-auto-80 {
+  color: #a82227;
+  width: fit-content;
+}
+
+.tl-auto-81 {
+  margin-bottom: 16px;
+}
+
+.tl-auto-82 {
+  border: 1px solid #D6D5D4;
+  padding: 16px;
+  margin-top: 8px;
+  background: #FAFAFA;
+}
+
+.tl-auto-83 {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tl-auto-84 {
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.tl-auto-85 {
+  float: right;
+  position: relative;
+  bottom: 5px;
+}
+
+.tl-auto-86 {
+  background: #FAFAFA;
+}
+
+.tl-auto-87 {
+  background: #FAFAFA;
+}
+
+.tl-auto-88 {
+  background: #FAFAFA;
+}
+
+
+/* pageComponents/TLDocumentsEmployee.js */
+.tl-auto-89 {
+  margin-bottom: 24px;
+}
+
+.tl-auto-90 {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+
+/* pageComponents/TLDocumets.js */
+.tl-auto-91 {
+  margin-top: 19px;
+}
+
+.tl-auto-92 {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tl-auto-93 {
+  min-width: 100px;
+  margin-right: 10px;
+}
+
+.tl-auto-94 {
+  background: #f6f6f6;
+  padding: 8px;
+}
+
+.tl-auto-95 {
+  margin-top: 8px;
+  text-align: center;
+}
+
+
+/* pageComponents/TLInfoLabel.js */
+.tl-auto-96 {
+  width: 80%;
+}
+
+
+/* pageComponents/TLOwnerDetailsEmployee.js */
+.tl-auto-97 {
+  margin-bottom: 16px;
+}
+
+.tl-auto-98 {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tl-auto-99 {
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.tl-auto-100 {
+  float: right;
+  position: relative;
+  bottom: 5px;
+}
+
+.tl-auto-101 {
+  color: #a82227;
+  width: fit-content;
+}
+
+.tl-auto-102 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -24px;
+}
+
+
+/* pageComponents/TLProof.js */
+.tl-auto-103 {
+  font-weight: unset;
+}
+
+.tl-auto-104 {
+  font-weight: unset;
+}
+
+.tl-auto-105 {
+  height: 20px;
+  width: 100%;
+  font-size: 20px;
+  color: red;
+  margin-top: 5px;
+}
+
+.tl-auto-106 {
+  disabled: true;
+  height: 20px;
+  width: 100%;
+}
+
+
+/* pageComponents/TLSelectOwnerAddress.js */
+.tl-auto-107 {
+  padding-top: 10px;
+}
+
+
+/* pageComponents/TLSelectOwnerDetails.js */
+.tl-auto-108 {
+  margin-top: -1px;
+}
+
+.tl-auto-109 {
+  margin-top: -1px;
+}
+
+.tl-auto-110 {
+
+}
+
+.tl-auto-111 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-112 {
+  float: right;
+  position: relative;
+  bottom: 5px;
+}
+
+.tl-auto-113 {
+  margin-top: -1px;
+}
+
+.tl-auto-114 {
+  color: red;
+}
+
+.tl-auto-115 {
+  padding-top: 10px;
+}
+
+.tl-auto-116 {
+  justify-content: center;
+  display: flex;
+  padding-bottom: 15px;
+  color: #FF8C00;
+}
+
+.tl-auto-117 {
+  padding-top: 10px;
+}
+
+
+/* pageComponents/TLSelectOwnerShipDetails.js */
+.tl-auto-118 {
+  margin-bottom: 20px;
+}
+
+.tl-auto-119 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+.tl-auto-120 {
+  margin-bottom: 20px;
+}
+
+
+/* pageComponents/TLSelectProofIdentity.js */
+.tl-auto-121 {
+  font-weight: unset;
+}
+
+.tl-auto-122 {
+  font-weight: unset;
+}
+
+.tl-auto-123 {
+  height: 20px;
+  width: 100%;
+  font-size: 20px;
+  color: red;
+  margin-top: 5px;
+}
+
+.tl-auto-124 {
+  disabled: true;
+  height: 20px;
+  width: 100%;
+}
+
+
+/* pageComponents/TLSelectStreet.js */
+.tl-auto-125 {
+  display: flex;
+  align-items: baseline;
+  margin-right: unset;
+}
+
+.tl-auto-126 {
+  margin-right: -50px;
+  margin-left: 10px;
+}
+
+
+/* pageComponents/TLTradeDetailsEmployee.js */
+.tl-auto-127 {
+  margin-bottom: 16px;
+}
+
+
+/* pageComponents/TLTradeUnitsEmployee.js */
+.tl-auto-128 {
+  color: #a82227;
+  width: fit-content;
+}
+
+.tl-auto-129 {
+  margin-bottom: 16px;
+}
+
+.tl-auto-130 {
+  border: 1px solid #D6D5D4;
+  padding: 16px;
+  margin-top: 8px;
+  background: #FAFAFA;
+}
+
+.tl-auto-131 {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tl-auto-132 {
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.tl-auto-133 {
+  float: right;
+  position: relative;
+  bottom: 5px;
+}
+
+.tl-auto-134 {
+  background: #FAFAFA;
+}
+
+.tl-auto-135 {
+  background: #FAFAFA;
+}
+
+
+/* pageComponents/TLTradeUnitsEmployeeInitial.js */
+.tl-auto-136 {
+  color: #F47738;
+  width: fit-content;
+}
+
+.tl-auto-137 {
+  margin-bottom: 16px;
+}
+
+.tl-auto-138 {
+  border: 1px solid #D6D5D4;
+  padding: 16px;
+  margin-top: 8px;
+  background: #FAFAFA;
+}
+
+.tl-auto-139 {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tl-auto-140 {
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.tl-auto-141 {
+  float: right;
+  position: relative;
+  bottom: 5px;
+}
+
+.tl-auto-142 {
+  background: #FAFAFA;
+}
+
+.tl-auto-143 {
+  background: #FAFAFA;
+}
+
+
+/* pageComponents/TLWFApplicationTimeline.js */
+.tl-auto-144 {
+  margin-bottom: 16px;
+  margin-top: 32px;
+}
+
+
+/* pageComponents/TLWFCaption.js */
+.tl-auto-145 {
+  overflow-x: scroll;
+}
+
+
+/* pages/Response.js */
+.tl-auto-146 {
+  margin-left: unset;
+}
+
+.tl-auto-147 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.tl-auto-148 {
+  margin-right: 1rem;
+}
+
+
+/* pages/citizen/Applications/Application.js */
+.tl-auto-149 {
+  margin-top: 10px;
+}
+
+
+/* pages/citizen/Applications/ApplicationDetails.js */
+.tl-auto-150 {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+
+.tl-auto-151 {
+  color: #A52A2A;
+}
+
+.tl-auto-152 {
+  position: relative;
+}
+
+.tl-auto-153 {
+  padding-top: 7px;
+}
+
+.tl-auto-154 {
+  text-align: left;
+}
+
+
+/* pages/citizen/Create/CheckPage.js */
+.tl-auto-155 {
+  padding-right: 16px;
+}
+
+.tl-auto-156 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-157 {
+  margin-top: -10px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.tl-auto-158 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-159 {
+  margin-top: -10px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.tl-auto-160 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-161 {
+  margin-top: -10px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.tl-auto-162 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-163 {
+  margin-top: -10px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.tl-auto-164 {
+  width: 100px;
+  display: inline;
+}
+
+.tl-auto-165 {
+  margin-top: -10px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.tl-auto-166 {
+  max-width: 670px;
+}
+
+
+/* pages/citizen/Renewal/index.js */
+.tl-auto-167 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/SearchTrade/searchTrade.js */
+.tl-auto-168 {
+  margin-top: 16px;
+}
+
+
+/* pages/employee/ApplicationDetails.js */
+.tl-auto-169 {
+  margin-bottom: 15px;
+}
+
+.tl-auto-170 {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+
+.tl-auto-171 {
+  z-index: 10;
+  position: relative;
+}
+
+.tl-auto-172 {
+  color: #A52A2A;
+}
+
+
+/* pages/employee/NewApplication/index.js */
+.tl-auto-173 {
+  margin-left: 15px;
+}
+
+
+/* pages/employee/ReNewApplication/index.js */
+.tl-auto-174 {
+  margin-left: 15px;
+}
+
