@@ -272,8 +272,18 @@ public class PlanReportServiceV2 {
         if (plan.getErrors() != null && plan.getErrors().size() > 0)
             finalReportStatus = false;
 
-        model.put("logo", edcr_logodep_url);
+        //model.put("logo", edcr_logodep_url);
         model.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
+        
+        ClassPathResource logoResource =
+                new ClassPathResource("images/logo_dep.png");        
+
+        try {
+			model.put("logo", logoResource.getURL().toString());			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         // applicationType — safe extraction with fallback
         String applicationTypeVal = null;
@@ -312,8 +322,8 @@ public class PlanReportServiceV2 {
         model.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
         model.put("surrenderRoadArea",  plan.getTotalSurrenderRoadArea());
-        model.put("egovLogo",           edcr_mseva_logo_url);
-        model.put("cityLogo",           edcr_logodep_url);
+//        model.put("egovLogo",           edcr_mseva_logo_url);
+//        model.put("cityLogo",           edcr_logodep_url);
         model.put("numberOfFloors",     plan.getPlanInformation().getNumberOfFloors());
         model.put("ulbType",            plan.getPlanInformation().getUlbType());
         model.put("district",           plan.getPlanInformation().getDistrict());
