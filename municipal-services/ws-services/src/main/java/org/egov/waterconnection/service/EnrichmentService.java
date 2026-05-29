@@ -718,7 +718,8 @@ public class EnrichmentService {
 				auditObject.put("accessBy", requestInfo.getUserInfo().getUuid());
 				auditObject.put("purpose",DOCUMENT_ACCESS_AUDIT_MSG);
 
-				producer.push(config.getDocumentAuditTopic(), auditObject);
+				String key = uuid;
+				producer.push(config.getDocumentAuditTopic(), key, auditObject);
 			}
 
 

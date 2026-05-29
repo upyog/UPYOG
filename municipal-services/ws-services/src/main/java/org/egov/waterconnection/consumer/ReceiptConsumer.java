@@ -12,7 +12,8 @@ public class ReceiptConsumer {
 	@Autowired
 	private PaymentUpdateService paymentUpdateService;
 	
-	@KafkaListener(topics = {"${kafka.topics.receipt.create}"})
+	@KafkaListener(topics = {"${kafka.topics.receipt.create}"},
+			concurrency = "${kafka.consumer.config.concurrency.count}")
     public void listenPayments(final HashMap<String, Object> record) {
         paymentUpdateService.process(record);
     }
