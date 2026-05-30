@@ -24,7 +24,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -117,6 +120,8 @@ import java.awt.geom.Rectangle2D;
 //Java IO
 import java.io.File;
 import java.io.IOException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 //import com.aspose.cad.Color;
 //import com.aspose.cad.Image;
@@ -132,7 +137,15 @@ public class EdcrApplicationService {
     public static final String ULB_NAME = "ulbName";
     public static final String ABORTED = "Aborted";
     private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
+        
+    private static final float EXPAND_RIGHT  = 800f;
+    private static final float EXPAND_BOTTOM = 0f;
     
+    // GAP CONTROLS  ← spacing between elements
+    private static final float GAP_DRAWING_TO_TABLES = 20f;
+ 
+    /*Gap from the top edge of the (expanded) page to the first table row. */
+    private static final float GAP_TOP = 15f;
     
     //private static final PDFont TIMESTAMP_FONT = PDType1Font.HELVETICA_BOLD;
     private static final DateTimeFormatter TS_FORMAT =
@@ -162,8 +175,13 @@ public class EdcrApplicationService {
     @Autowired
     private EdcrIndexService edcrIndexService;
 
-    @Autowired
+    
+
+        @Autowired
     private EdcrApplicationDetailService edcrApplicationDetailService;
+
+    @Autowired
+    private PdfOverlayTemplateService pdfOverlayTemplateService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -364,175 +382,24 @@ public class EdcrApplicationService {
 //      LOG.error("Error occurred when reading file!!!!!", e);
 //  }
 //}
-    
-  
-
-    
-//    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
-//        String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
-//        String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.pdf");
-//
-//        // Load the source CAD file
-//        Image objImage = Image.load(filePath);
-//
-//        // Create an instance of PdfOptions
-//        PdfOptions pdfOptions = new PdfOptions();
-//
-//        // Create rasterization options and configure scaling
-//        CadRasterizationOptions rasterizationOptions = new CadRasterizationOptions();
-//        rasterizationOptions.setBackgroundColor(Color.getWhite()); // Set background color if needed
-//        rasterizationOptions.setDrawType(CadDrawTypeMode.UseObjectColor); // Ensure object colors are used
-//
-//        // Set the page size (A0 size in points)
-//        rasterizationOptions.setPageWidth(3370); // A0 width in points
-//        rasterizationOptions.setPageHeight(2384); // A0 height in points
-//
-//        // Ensure content fits within the page size
-//        rasterizationOptions.setAutomaticLayoutsScaling(true);
-//        rasterizationOptions.setNoScaling(false);
-//
-//        pdfOptions.setVectorRasterizationOptions(rasterizationOptions);
-//
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//
-//        // Export CAD to PDF
-//        objImage.save(outputStream, pdfOptions);
-//
-//        byte[] pdfBytes = outputStream.toByteArray();
-//
-//        try (PDDocument document = PDDocument.load(pdfBytes)) {
-//            // Get the first page to set the view
-//            PDPageTree pages = document.getPages();
-//            PDPage page = pages.get(0);
-//
-//            // Set the destination to center of the page
-//            PDPageXYZDestination dest = new PDPageXYZDestination();
-//            dest.setPage(page);
-//
-//            // Calculate the center coordinates
-//            float pageWidth = page.getMediaBox().getWidth();
-//            float pageHeight = page.getMediaBox().getHeight();
-//            int centerX = (int) (pageWidth / 2.0f);
-//            int centerY = (int) (pageHeight / 2.0f);
-//
-//            dest.setLeft(centerX);
-//            dest.setTop(centerY);
-//            dest.setZoom(1.0f); // Adjust the zoom level if necessary
-//
-//            // Set the open action
-//            PDDocumentCatalog catalog = document.getDocumentCatalog();
-//            catalog.setOpenAction(dest);
-//
-//            byte[] modifiedPdfBytes;
-//
-//            // Create a new content stream to add the watermark
-//            PDPageContentStream contentStream = new PDPageContentStream(document, page,
-//                    PDPageContentStream.AppendMode.APPEND, true, true);
-//
-//            PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
-//            graphicsState.setNonStrokingAlphaConstant(0.2f); // Set lower opacity
-//            graphicsState.setAlphaSourceFlag(true);
-//            contentStream.setGraphicsStateParameters(graphicsState);
-//
-////            InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
-////            java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
-////            PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-////    
-////            // Calculate the position to center the watermark
-////            float scale = 10f; // Smaller scale for the watermark
-////            float watermarkWidth = image.getWidth() * scale;
-////            float watermarkHeight = image.getHeight() * scale;
-////            float watermarkXPos = (pageWidth - watermarkWidth) / 2; // Center horizontally
-////            float watermarkYPos = (pageHeight - watermarkHeight) / 2; // Center vertically
-////
-////            // Draw the watermark image on the page
-////            contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
-//
-//            // Add timestamp
-//            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-//            contentStream.beginText();
-//            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 200);
-//
-//            // Estimate the width of the timestamp text
-//            float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000) * 200;
-//
-//            // Set the position to bottom right corner
-//            float xPos = pageWidth - textWidth - 700; // 700 units margin from the right edge
-//            float yPos = 10; // 10 units margin from the bottom edge
-//
-//            contentStream.newLineAtOffset(xPos, yPos); // Position the timestamp at the bottom right corner
-//
-//            PDExtendedGraphicsState graphicsState1 = new PDExtendedGraphicsState();
-//            graphicsState1.setNonStrokingAlphaConstant(0.7f); // Set text opacity
-//            contentStream.setGraphicsStateParameters(graphicsState1);
-//
-//            contentStream.showText(timestamp);
-//            contentStream.endText();
-//
-//            // Close the content stream
-//            contentStream.close();
-//
-//            // Save the modified PDF
-//            ByteArrayOutputStream modifiedPdfStream = new ByteArrayOutputStream();
-//            document.save(modifiedPdfStream);
-//
-//            // Convert the modified PDF to a byte array
-//            modifiedPdfBytes = modifiedPdfStream.toByteArray();
-//
-//            File f = new File(newFile);
-//            try (FileOutputStream fos = new FileOutputStream(f)) {
-//                if (!f.exists())
-//                    f.createNewFile();
-//                fos.write(modifiedPdfBytes);
-//                fos.flush();
-//                FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
-//                        edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
-//                edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
-//            } catch (IOException e) {
-//                LOG.error("Error occurred when reading file!!!!!", e);
-//            }
-//        } catch (IOException e) {
-//            LOG.error("Error occurred when processing PDF!!!!!", e);
-//        }
-//    }
-    
-//    private File mergePdfFiles(File pdf1, File pdf2, String outputFileName) throws IOException {
-//
-//        LOG.info("🔗 Merging PDFs: {} + {}", pdf1.getName(), pdf2.getName());
-//
-//        File mergedFile = new File(outputFileName);
-//
-//        PDFMergerUtility merger = new PDFMergerUtility();
-//        merger.setDestinationFileName(mergedFile.getAbsolutePath());
-//
-//        merger.addSource(pdf1);
-//        merger.addSource(pdf2);
-//
-//        // Use temp file strategy to avoid memory issues
-//        merger.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
-//
-//        LOG.info("✅ PDF merge completed: {}", mergedFile.getAbsolutePath());
-//
-//        return mergedFile;
-//    }
-    
+        
     private File mergePdfFiles(File pdf1, File pdf2, String outputFileName) throws IOException {
 
         LOG.info("🔗 Merging PDFs: {} + {}", pdf1.getName(), pdf2.getName());
 
-        // ✅ Ensure .pdf extension
+        // Ensure .pdf extension
         if (!outputFileName.toLowerCase().endsWith(".pdf")) {
             outputFileName = outputFileName + ".pdf";
         }
 
-        // ✅ Create file safely in temp directory
+        //Create file safely in temp directory
         String tempDir = System.getProperty("java.io.tmpdir");
         String uniqueFileName = outputFileName.replace(".pdf", "") 
                 + "_" + System.currentTimeMillis() + ".pdf";
 
         File mergedFile = new File(tempDir, uniqueFileName);
 
-        // ✅ Initialize merger
+        //Initialize merger
         PDFMergerUtility merger = new PDFMergerUtility();
 
         merger.addSource(pdf1);
@@ -540,581 +407,512 @@ public class EdcrApplicationService {
 
         merger.setDestinationFileName(mergedFile.getAbsolutePath());
 
-        // ✅ Use temp file strategy (best for large PDFs)
+        //Use temp file strategy (best for large PDFs)
         merger.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
 
         LOG.info("✅ PDF merge completed: {}", mergedFile.getAbsolutePath());
 
-        // ✅ Final safety check
+        //Final safety check
         if (!mergedFile.exists() || mergedFile.length() == 0) {
             throw new IOException("Merged PDF file is empty or not created properly");
         }
 
         return mergedFile;
     }
+  
+    private JsonNode buildJsonNode(Plan pl) {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectNode root = mapper.createObjectNode();
+        final ObjectNode details = mapper.createObjectNode();
+        root.set("details", details);
 
-//private void updateFile(Plan pl, EdcrApplication edcrApplication) {
-//    long start = System.currentTimeMillis();
-//    String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
-//    String newFileName = edcrApplication.getDxfFile().getOriginalFilename()
-//            .replace(".dxf", "_system_scrutinized.pdf");
-//    File finalOutputFile = new File(newFileName);
-//
-//    LOG.info("🔄 Starting scrutinized PDF generation for: {}", newFileName);
-//
-//    File tempPdf = null;
-//    try {
-//        // --- Step 1: Convert DXF → PDF using Aspose CAD ---
-//        tempPdf = File.createTempFile("scrutinized_", ".pdf");
-//        LOG.debug("Temporary PDF path: {}", tempPdf.getAbsolutePath());
-//
-//        try (Image cadImage = Image.load(filePath);
-//             FileOutputStream tempOut = new FileOutputStream(tempPdf)) {
-//
-//            PdfOptions pdfOptions = new PdfOptions();
-//            CadRasterizationOptions rasterOpts = new CadRasterizationOptions();
-//            rasterOpts.setBackgroundColor(Color.getWhite());
-//            rasterOpts.setDrawType(CadDrawTypeMode.UseObjectColor);
-//            rasterOpts.setPageWidth(2480); // ~A4 horizontal, smaller to reduce memory
-//            rasterOpts.setPageHeight(3508); // ~A4 vertical
-//            rasterOpts.setAutomaticLayoutsScaling(true);
-//            rasterOpts.setNoScaling(false);
-//            pdfOptions.setVectorRasterizationOptions(rasterOpts);
-//
-//            cadImage.save(tempOut, pdfOptions);
-//            LOG.debug("✅ CAD to PDF conversion complete.");
-//        } catch (OutOfMemoryError oom) {
-//            LOG.error("❌ OutOfMemoryError while converting DXF → PDF: {}", filePath, oom);
-//            throw oom;
-//        } catch (Exception ex) {
-//            LOG.error("❌ Error converting DXF → PDF: {}", filePath, ex);
-//            throw ex;
-//        }
-//
-//        // --- Step 2: Post-process PDF (timestamp, incremental save) ---
-//        try (RandomAccessBufferedFileInputStream rar = new RandomAccessBufferedFileInputStream(tempPdf);
-//             PDDocument document = PDDocument.load(rar);
-//             BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(finalOutputFile))) {
-//
-//            PDPage page = document.getPage(0);
-//            float pageWidth = page.getMediaBox().getWidth();
-//            float pageHeight = page.getMediaBox().getHeight();
-//
-//            // Set initial view to center
-//            PDPageXYZDestination dest = new PDPageXYZDestination();
-//            dest.setPage(page);
-//            dest.setLeft((int) (pageWidth / 2f));
-//            dest.setTop((int) (pageHeight / 2f));
-//            dest.setZoom(1.0f);
-//            document.getDocumentCatalog().setOpenAction(dest);
-//
-//            try (PDPageContentStream contentStream = new PDPageContentStream(
-//                    document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-//
-//                PDExtendedGraphicsState gs = new PDExtendedGraphicsState();
-//                gs.setNonStrokingAlphaConstant(0.7f);
-//                contentStream.setGraphicsStateParameters(gs);
-//
-//                // --- (COMMENTED WATERMARK IMAGE CODE - preserved) ---
-////                InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
-////                java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
-////                PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-////                float scale = 10f;
-////                float watermarkWidth = image.getWidth() * scale;
-////                float watermarkHeight = image.getHeight() * scale;
-////                float watermarkXPos = (pageWidth - watermarkWidth) / 2;
-////                float watermarkYPos = (pageHeight - watermarkHeight) / 2;
-////                contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
-//
-//                // --- Add timestamp ---
-//                String timestamp = LocalDateTime.now().format(TS_FORMAT);
-//                float fontSize = 24f;
-//                contentStream.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
-//                float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000f) * fontSize;
-//
-//                float xPos = Math.max(20, pageWidth - textWidth - 20);
-//                float yPos = 20f;
-//                contentStream.beginText();
-//                contentStream.newLineAtOffset(xPos, yPos);
-//                contentStream.showText(timestamp);
-//                contentStream.endText();
-//            }
-//
-//            // Incremental save to reduce memory usage
-//            document.saveIncremental(out);
-//            LOG.info("✅ PDF timestamp appended incrementally.");
-//
-//        } catch (Exception pdfEx) {
-//            LOG.error("❌ Error during PDF post-processing for '{}': {}", newFileName, pdfEx.getMessage(), pdfEx);
-//            throw pdfEx;
-//        }
-//
-//        // --- Step 3: Store to Filestore ---
-//        try {
-//            FileStoreMapper fileStoreMapper = fileStoreService.store(
-//                    finalOutputFile, finalOutputFile.getName(),
-//                    edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
-//
-//            edcrApplication.getEdcrApplicationDetails()
-//                    .get(0).setScrutinizedDxfFileId(fileStoreMapper);
-//
-//            LOG.info("📁 File stored successfully in filestore: {}", 
-//                    fileStoreMapper != null ? fileStoreMapper.getFileStoreId() : "null");
-//        } catch (Exception storeEx) {
-//            LOG.error("❌ Failed to store generated PDF in filestore: {}", storeEx.getMessage(), storeEx);
-//            throw storeEx;
-//        }
-//
-//    } catch (Exception e) {
-//        LOG.error("🚨 Error in updateFile() for '{}': {}", newFileName, e.getMessage(), e);
-//    } finally {
-//        if (tempPdf != null && tempPdf.exists() && !tempPdf.delete()) {
-//            LOG.warn("⚠️ Temporary PDF not deleted: {}", tempPdf.getAbsolutePath());
-//        }
-//        long elapsed = System.currentTimeMillis() - start;
-//        LOG.info("⚡ updateFile() completed in {} ms → {}", elapsed, newFileName);
-//    }
-//}
-    
-//    private File overlayPlotDetails(File inputPdf, String outputFileName) throws IOException {
-//
-//        LOG.info("🖊️ Overlaying plot details on PDF: {}", inputPdf.getName());
-//
-//        File outputFile = new File(outputFileName);
-//
-//        try (PDDocument document = PDDocument.load(inputPdf)) {
-//
-//            for (PDPage page : document.getPages()) {
-//
-//                float pageWidth = page.getMediaBox().getWidth();
-//                float pageHeight = page.getMediaBox().getHeight();
-//
-//                // ✅ TOP-LEFT position (just below Aspose watermark)
-//                float startX = 500f;
-//
-//                // 🔥 IMPORTANT: Push BELOW watermark safely
-//                float startY = pageHeight - 920f;  
-//                // adjust 120 → 150 if still overlapping
-//
-//                float lineHeight = 18f;
-//
-//                try (PDPageContentStream contentStream = new PDPageContentStream(
-//                        document,
-//                        page,
-//                        PDPageContentStream.AppendMode.APPEND,
-//                        true,
-//                        true)) {
-//
-//                    // ✅ Strong visible text
-//                    contentStream.setNonStrokingColor(0, 0, 255); // BLUE
-//                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
-//
-//                    PDExtendedGraphicsState gs = new PDExtendedGraphicsState();
-//                    gs.setNonStrokingAlphaConstant(1f);
-//                    contentStream.setGraphicsStateParameters(gs);
-//
-//                    // --- Dummy Data ---
-//                    String fileNo = "FILE-12345";
-//                    String professionalName = "John Doe";
-//
-//                    String totalPlotArea = "188.28";
-//                    String groundCoverage = "122.09";
-//                    String builtUpArea = "325.45";
-//
-//                    contentStream.beginText();
-//                    contentStream.newLineAtOffset(startX, startY);
-//
-//                    contentStream.showText("File No: " + fileNo);
-//                    contentStream.newLineAtOffset(0, -lineHeight);
-//
-//                    contentStream.showText("Professional Name: " + professionalName);
-//                    contentStream.newLineAtOffset(0, -lineHeight * 2);
-//
-//                    contentStream.showText("Total Plot Area: " + totalPlotArea);
-//                    contentStream.newLineAtOffset(0, -lineHeight);
-//
-//                    contentStream.showText("Ground Coverage: " + groundCoverage);
-//                    contentStream.newLineAtOffset(0, -lineHeight);
-//
-//                    contentStream.showText("Built Up Area: " + builtUpArea);
-//
-//                    contentStream.endText();
-//                }
-//            }
-//
-//            document.save(outputFile);
-//        }
-//
-//        LOG.info("✅ Plot details placed below Aspose watermark");
-//        return outputFile;
-//    }
-    
-//    private File overlayPlotDetails(File inputPdf, String outputFileName) throws IOException {
-//
-//        LOG.info("🖊️ Overlaying plot details on PDF: {}", inputPdf.getName());
-//
-//        File outputFile = new File(outputFileName);
-//
-//        try (PDDocument document = PDDocument.load(inputPdf)) {
-//
-//            for (PDPage page : document.getPages()) {
-//
-//                float pageWidth = page.getMediaBox().getWidth();
-//                float pageHeight = page.getMediaBox().getHeight();
-//
-//                // ✅ TOP-LEFT position (just below Aspose watermark)
-//                float startX = 500f;
-//
-//                // 🔥 IMPORTANT: Push BELOW watermark safely
-//                float startY = pageHeight - 920f;  
-//                // adjust 120 → 150 if still overlapping
-//
-//                //float lineHeight = 18f;
-//                
-//                float rowHeight = 25f;
-//                float col1Width = 200f;
-//                float col2Width = 150f;
-//
-//                try (PDPageContentStream contentStream = new PDPageContentStream(
-//                        document,
-//                        page,
-//                        PDPageContentStream.AppendMode.APPEND,
-//                        true,
-//                        true)) {
-//
-//                    // 🔵 Border color
-//                    contentStream.setStrokingColor(0, 0, 0); // black borders
-//
-//                    // ✅ Strong visible text
-//                    //contentStream.setNonStrokingColor(0, 0, 255); // BLUE
-//                 // 🔵 Text color
-//                    contentStream.setNonStrokingColor(0, 0, 255); // blue text
-//                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-//
-//                    // --- Dummy Data ---
-//                    String[][] tableData = {
-//                            {"File No", "FILE-12345"},
-//                            {"Professional Name", "John Doe"},
-//                            {"Total Plot Area", "188.28"},
-//                            {"Ground Coverage", "122.09"},
-//                            {"Built Up Area", "325.45"}
-//                    };
-//
-//                    int rows = tableData.length;
-//                    float tableWidth = col1Width + col2Width;
-//
-//                    // =========================
-//                    // ✅ DRAW TABLE GRID
-//                    // =========================
-//
-//                    float yPosition = startY;
-//
-//                    for (int i = 0; i <= rows; i++) {
-//                        contentStream.moveTo(startX, yPosition - i * rowHeight);
-//                        contentStream.lineTo(startX + tableWidth, yPosition - i * rowHeight);
-//                    }
-//
-//                    // Vertical lines
-//                    contentStream.moveTo(startX, yPosition);
-//                    contentStream.lineTo(startX, yPosition - rows * rowHeight);
-//
-//                    contentStream.moveTo(startX + col1Width, yPosition);
-//                    contentStream.lineTo(startX + col1Width, yPosition - rows * rowHeight);
-//
-//                    contentStream.moveTo(startX + tableWidth, yPosition);
-//                    contentStream.lineTo(startX + tableWidth, yPosition - rows * rowHeight);
-//
-//                    contentStream.stroke();
-//
-//                    // =========================
-//                    // ✅ ADD TEXT INTO TABLE
-//                    // =========================
-//
-//                    float textXOffset = 5f;
-//                    float textYOffset = 17f;
-//
-//                    for (int i = 0; i < rows; i++) {
-//
-//                        float textY = yPosition - (i * rowHeight) - textYOffset;
-//
-//                        // Column 1
-//                        contentStream.beginText();
-//                        contentStream.newLineAtOffset(startX + textXOffset, textY);
-//                        contentStream.showText(tableData[i][0]);
-//                        contentStream.endText();
-//
-//                        // Column 2
-//                        contentStream.beginText();
-//                        contentStream.newLineAtOffset(startX + col1Width + textXOffset, textY);
-//                        contentStream.showText(tableData[i][1]);
-//                        contentStream.endText();
-//                    }
-//                }
-//            }
-//
-//            document.save(outputFile);
-//        }
-//
-//        LOG.info("✅ Table overlay added successfully");
-//        return outputFile;
-//    }
-    
-    private File overlayPlotDetails(
-            File inputPdf,
-            String outputFileName,
-            JsonNode additionalDetails) throws IOException {
-
-        LOG.info("Overlaying plot details on PDF: {}", inputPdf.getName());
-
-        File outputFile = new File(outputFileName);
-
-        try (PDDocument document = PDDocument.load(inputPdf)) {
-
-            JsonNode details = additionalDetails.path("details");
-
-            List<String[]> tableDataList = new ArrayList<>();
-
-            addRow(tableDataList, "ULB Name", details.path("ulbName").asText());
-            addRow(tableDataList, "Approval Date", details.path("dateOfApproval").asText());
-            addRow(tableDataList, "File Number", details.path("fileNumber").asText());
-            addRow(tableDataList, "Building Category", details.path("buildingCategory").asText());
-            addRow(tableDataList, "Professional Name", details.path("professionalName").asText());
-            addRow(tableDataList, "Plot Area", details.path("plotArea").asText());
-            addRow(tableDataList, "Built Up Area", details.path("builtUpArea").asText());
-            addRow(tableDataList, "Auto Approved", details.path("isAutoApproved").asText());
-
-            String[][] tableData = tableDataList.toArray(new String[0][]);
-
-            for (PDPage page : document.getPages()) {
-
-                float pageWidth = page.getMediaBox().getWidth();
-                float pageHeight = page.getMediaBox().getHeight();
-
-//                float startX = pageWidth - 650f;
-//                float startY = pageHeight - 1100f;
-                
-                // Bigger Table & Font
-                float rowHeight = 42f;
-                float col1Width = 260f;
-                float col2Width = 320f;
-                
-                float rightMargin = 80;
-                float bottomMargin = 120f;
-                //float tableWidth = 1400f;
-                float tableHeight = rowHeight * tableData.length;
-                float tableWidth = col1Width + col2Width;
-                float startX = pageWidth - tableWidth - rightMargin;
-
-                float startY = bottomMargin + tableHeight;
-
-               
-
-                int rows = tableData.length;
-
-                try (PDPageContentStream contentStream = new PDPageContentStream(
-                        document, page, PDPageContentStream.AppendMode.APPEND, true,true)) {
-
-                    // Border Styling
-                    contentStream.setLineWidth(1.5f);
-                    contentStream.setStrokingColor(0, 0, 0);
-                    // Text Styling
-                    contentStream.setNonStrokingColor(255, 0, 0);
-
-                    // Bigger Font
-                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
-
-                    float yPosition = startY;
-            
-                    // Draw Horizontal Lines
-                    for (int i = 0; i <= rows; i++) {
-
-                        float y = yPosition - (i * rowHeight);
-
-                        contentStream.moveTo(startX, y);
-                        contentStream.lineTo(startX + tableWidth, y);
-                    }
-                    
-                    //Draw Vertical Lines
-                    contentStream.moveTo(startX, yPosition);
-                    contentStream.lineTo(startX, yPosition - rows * rowHeight);
-
-                    contentStream.moveTo(startX + col1Width, yPosition);
-                    contentStream.lineTo(startX + col1Width, yPosition - rows * rowHeight);
-
-                    contentStream.moveTo(startX + tableWidth, yPosition);
-                    contentStream.lineTo(startX + tableWidth, yPosition - rows * rowHeight);
-
-                    contentStream.stroke();
-
-                    // Add Text
-                    float textXOffset = 8f;
-                    float textYOffset = 28f;
-
-                    for (int i = 0; i < rows; i++) {
-
-                        float textY = yPosition - (i * rowHeight) - textYOffset;
-                        // Column 1
-                        contentStream.beginText();
-
-                        contentStream.newLineAtOffset(startX + textXOffset,textY);
-
-                        contentStream.showText(
-                                tableData[i][0] != null? tableData[i][0]: "");
-
-                        contentStream.endText();
-
-                        // Column 2
-                        contentStream.beginText();
-
-                        contentStream.newLineAtOffset(startX + col1Width + textXOffset,textY);
-
-                        contentStream.showText(tableData[i][1] != null? tableData[i][1]: "");
-                        contentStream.endText();
-                    }
-                }
+        try {
+            Map<String, Object> finalReportData = extractFinalReportData(pl);
+            if (finalReportData == null || finalReportData.isEmpty()) {
+                LOG.warn("finalReportData is empty. Building minimal overlay JSON.");
+                return root;
             }
 
-            document.save(outputFile);
+            JsonNode frd = mapper.valueToTree(finalReportData);
+
+            details.set("applicationDetails", buildApplicationDetails(mapper, frd));
+            details.set("plotAreaDetails", buildPlotAreaDetails(mapper, frd));
+            details.set("builtUpArea", buildBuiltUpArea(mapper, frd));
+            details.set("farDetails", buildFarDetails(mapper, frd));
+            details.set("ecsDetails", buildEcsDetails(mapper, frd));
+            details.set("buildingHeight", buildBuildingHeight(mapper, frd));
+            details.set("roadDescription", buildRoadDescription(mapper, frd));
+            details.set("officeUse", buildOfficeUse(mapper, frd));
+            details.set("professionalSignature", buildProfessionalSignature(mapper, frd));
+            details.set("eSign", buildESign(mapper, frd));
+            details.set("blockWiseSummary", buildBlockWiseSummary(mapper, frd));
+            details.set("blocks", buildBlocks(mapper, frd));
+            details.set("setbacks", buildSetbacks(mapper, frd));
+            return root;
+        } catch (Exception ex) {
+            LOG.error("Failed to build overlay JSON from finalReportData", ex);
+            throw new RuntimeException("Unable to build overlay JSON", ex);
         }
-
-        LOG.info("Dynamic table overlay added successfully");
-
-        return outputFile;
     }
 
-    private void addRow(List<String[]> tableDataList, String key, String value) {
-
-        if (!StringUtils.isEmpty(value)
-                && !"null".equalsIgnoreCase(value)) {
-
-            tableDataList.add(new String[]{key, value});
-        }
+    private ObjectNode buildApplicationDetails(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+        JsonNode pi = frd.path("planInformation");
+        n.put("nameOfApplicant", txt(frd, "applicantName"));
+        n.put("fileNumber", txt(frd, "fileNumber"));
+        n.put("edcrNumber", txt(frd, "dcrNo"));
+        n.put("ulbName", txt(frd, "district"));
+        n.put("ulbType", txt(frd, "ulbType"));
+        n.put("buildingCategory", txt(pi, "occupancy"));
+        n.put("proposedSiteAddress", txt(pi, "city"));
+        n.put("khasraNo", txt(pi, "khasraNo"));
+        n.put("zone", txt(pi, "landUseZone"));
+        return n;
     }
 
+    private ObjectNode buildPlotAreaDetails(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
 
+        double area = num(frd.path("planInformation"), "plotArea");
+        n.put("plotAreaAsPerDeclaration", area);
+
+        area = num(frd.path("plot"), "plotBndryArea");
+        n.put("plotAreaAsPerDrawing", area);
+
+        return n;
+    }
+
+    private ObjectNode buildBuiltUpArea(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+        n.put("existingBuiltUpArea", 0.0d);
+        n.put("proposedBuiltUpArea", num(frd, "totalBuiltUpArea"));
+        n.put("totalBuiltUpArea", num(frd, "totalBuiltUpArea"));
+        return n;
+    }
+
+    private ObjectNode buildFarDetails(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+
+        JsonNode farDetails = findCommonFarDetail(frd);
+        JsonNode bws = frd.path("sections")
+                         .path("Block Wise Summary")
+                         .path("Block No 1 - Proposed Details");
+
+        n.put("totalPermissibleFAR", txt(farDetails, "Permissible"));
+        n.put("totalPermissibleFARArea", getTotalFloorArea(bws));
+        n.put("totalProposedFAR", txt(farDetails, "Purchasable"));
+        n.put("totalProposedFARArea", getTotalFloorArea(bws));
+
+        return n;
+    }
     
-//    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
-//        long start = System.currentTimeMillis();
-//        String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
-//        String newFileName = edcrApplication.getDxfFile().getOriginalFilename()
-//                .replace(".dxf", "_system_scrutinized.pdf");
-//        File finalOutputFile = new File(newFileName);
-//
-//        LOG.info("🔄 Starting scrutinized PDF generation for: {}", newFileName);
-//
-//        File tempPdf = null;
-//        try {
-//            // --- Step 1: Convert DXF → PDF using Aspose CAD ---
-//            tempPdf = File.createTempFile("scrutinized_", ".pdf");
-//            LOG.debug("Temporary PDF path: {}", tempPdf.getAbsolutePath());
-//
-//            try (Image cadImage = Image.load(filePath);
-//                 FileOutputStream tempOut = new FileOutputStream(tempPdf)) {
-//
-//                PdfOptions pdfOptions = new PdfOptions();
-//                CadRasterizationOptions rasterOpts = new CadRasterizationOptions();
-//                rasterOpts.setBackgroundColor(Color.getWhite());
-//                rasterOpts.setDrawType(CadDrawTypeMode.UseObjectColor);
-//                rasterOpts.setPageWidth(2480); // ~A4 horizontal, smaller to reduce memory
-//                rasterOpts.setPageHeight(3508); // ~A4 vertical
-//                rasterOpts.setAutomaticLayoutsScaling(true);
-//                rasterOpts.setNoScaling(false);
-//                pdfOptions.setVectorRasterizationOptions(rasterOpts);
-//
-//                cadImage.save(tempOut, pdfOptions);
-//                LOG.debug("✅ CAD to PDF conversion complete.");
-//            } catch (OutOfMemoryError oom) {
-//                LOG.error("❌ OutOfMemoryError while converting DXF → PDF: {}", filePath, oom);
-//                throw oom;
-//            } catch (Exception ex) {
-//                LOG.error("❌ Error converting DXF → PDF: {}", filePath, ex);
-//                throw ex;
-//            }
-//
-//            // --- Step 2: Post-process PDF (timestamp, incremental save) ---
-//            try (RandomAccessBufferedFileInputStream rar = new RandomAccessBufferedFileInputStream(tempPdf);
-//                 PDDocument document = PDDocument.load(rar);
-//                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(finalOutputFile))) {
-//
-//                PDPage page = document.getPage(0);
-//                float pageWidth = page.getMediaBox().getWidth();
-//                float pageHeight = page.getMediaBox().getHeight();
-//
-//                // Set initial view to center
-//                PDPageXYZDestination dest = new PDPageXYZDestination();
-//                dest.setPage(page);
-//                dest.setLeft((int) (pageWidth / 2f));
-//                dest.setTop((int) (pageHeight / 2f));
-//                dest.setZoom(1.0f);
-//                document.getDocumentCatalog().setOpenAction(dest);
-//
-//                try (PDPageContentStream contentStream = new PDPageContentStream(
-//                        document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-//
-//                    PDExtendedGraphicsState gs = new PDExtendedGraphicsState();
-//                    gs.setNonStrokingAlphaConstant(0.7f);
-//                    contentStream.setGraphicsStateParameters(gs);
-//
-//                    // --- (COMMENTED WATERMARK IMAGE CODE - preserved) ---
-////                    InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
-////                    java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
-////                    PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-////                    float scale = 10f;
-////                    float watermarkWidth = image.getWidth() * scale;
-////                    float watermarkHeight = image.getHeight() * scale;
-////                    float watermarkXPos = (pageWidth - watermarkWidth) / 2;
-////                    float watermarkYPos = (pageHeight - watermarkHeight) / 2;
-////                    contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
-//
-//                    // --- Add timestamp ---
-//                    String timestamp = LocalDateTime.now().format(TS_FORMAT);
-//                    float fontSize = 24f;
-//                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
-//                    float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000f) * fontSize;
-//
-//                    float xPos = Math.max(20, pageWidth - textWidth - 20);
-//                    float yPos = 20f;
-//                    contentStream.beginText();
-//                    contentStream.newLineAtOffset(xPos, yPos);
-//                    contentStream.showText(timestamp);
-//                    contentStream.endText();
-//                }
-//
-//                // Incremental save to reduce memory usage
-//                document.saveIncremental(out);
-//                LOG.info("✅ PDF timestamp appended incrementally.");
-//
-//            } catch (Exception pdfEx) {
-//                LOG.error("❌ Error during PDF post-processing for '{}': {}", newFileName, pdfEx.getMessage(), pdfEx);
-//                throw pdfEx;
-//            }
-//
-//            // --- Step 3: Store to Filestore ---
-//            try {
-//                FileStoreMapper fileStoreMapper = fileStoreService.store(
-//                        finalOutputFile, finalOutputFile.getName(),
-//                        edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
-//
-//                edcrApplication.getEdcrApplicationDetails()
-//                        .get(0).setScrutinizedDxfFileId(fileStoreMapper);
-//
-//                LOG.info("📁 File stored successfully in filestore: {}", 
-//                        fileStoreMapper != null ? fileStoreMapper.getFileStoreId() : "null");
-//            } catch (Exception storeEx) {
-//                LOG.error("❌ Failed to store generated PDF in filestore: {}", storeEx.getMessage(), storeEx);
-//                throw storeEx;
-//            }
-//
-//        } catch (Exception e) {
-//            LOG.error("🚨 Error in updateFile() for '{}': {}", newFileName, e.getMessage(), e);
-//        } finally {
-//            if (tempPdf != null && tempPdf.exists() && !tempPdf.delete()) {
-//                LOG.warn("⚠️ Temporary PDF not deleted: {}", tempPdf.getAbsolutePath());
-//            }
-//            long elapsed = System.currentTimeMillis() - start;
-//            LOG.info("⚡ updateFile() completed in {} ms → {}", elapsed, newFileName);
-//        }
-//    }
+    private double getTotalFloorArea(JsonNode bws) {
+        for (JsonNode row : bws.path("detail")) {
+            if ("Total-colspan-2".equals(
+                    row.path("Occupancy/Sub Occupancy").asText())) {
+                return row.path("Floor Area in m²").asDouble();
+            }
+        }
+        return 0.0;
+    }
+    
+    private String extractTotalHeight(String remarks) {
+        if (remarks == null) {
+            return "N/A";
+        }
+
+        Pattern pattern = Pattern.compile("Total Height of building is\\s*([\\d.]+)");
+        Matcher matcher = pattern.matcher(remarks);
+
+        return matcher.find() ? matcher.group(1) : "N/A";
+    }
+
+    private ObjectNode buildEcsDetails(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+        JsonNode parkingDetails = findCommonParkingDetail(frd);
+        n.put("parking", txt(parkingDetails, "Provided"));
+        n.put("required", txt(parkingDetails, "Required"));
+        n.put("twoWheelerParking", "N/A");
+        n.put("openParkingArea", txt(parkingDetails, "Provided"));
+        n.put("coveredStiltParkingArea", "0.0");
+        n.put("basementParkingArea", "0.0");
+        return n;
+    }
+
+    private ObjectNode buildBuildingHeight(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+        JsonNode h = findBlockScrutinyFirstDetailByKey(frd, "Height of Building (excluding mumty)");
+        JsonNode bws = frd.path("sections")
+                .path("Block Wise Summary")
+                .path("Block No 1 - Proposed Details");
+        
+        String provided = txt(h, "Provided");
+        String remarks = bws.path("remarks").asText();
+        String totalHeight = remarks.split("Total Height of building is")[1]
+                                   .replace("m", "")
+                                   .trim();
+        n.put("permissibleBuildingHeight", extractNumber(txt(h, "Permissible")));
+        n.put("proposedBuildingHeight", extractNumber(provided));
+        n.put("permissibleTotalHeight", "----");
+        n.put("proposedTotalHeight", totalHeight);
+        return n;
+    }
+
+    private ObjectNode buildRoadDescription(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+        JsonNode rd = findCommonRoadWidthDetail(frd);
+        n.put("approachRoadWidth", extractNumber(txt(rd, "Provided")));
+        n.put("rearSideRoadWidth", 0.0d);
+        n.put("side1RoadWidth", 0.0d);
+        n.put("side2RoadWidth", 0.0d);
+        return n;
+    }
+
+    private ObjectNode buildOfficeUse(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+        n.put("examinedBy", "N/A");
+        n.put("approvedSanctionedBy", "N/A");
+        n.put("approvalSanctionDate", txt(frd, "applicationDate"));
+        n.put("validTill", "N/A");
+        return n;
+    }
+
+    private ObjectNode buildProfessionalSignature(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+        n.put("uploadedSignature", txt(frd, "N/A"));
+        return n;
+    }
+
+    private ArrayNode buildESign(ObjectMapper mapper, JsonNode frd) {
+        ArrayNode arr = mapper.createArrayNode();
+        ObjectNode p1 = mapper.createObjectNode();
+        p1.put("signatoryName", txt(frd, "N/A"));
+        p1.put("designation", "Licensed Professional");
+        arr.add(p1);
+
+        ObjectNode p2 = mapper.createObjectNode();
+        p2.put("signatoryName", txt(frd, "N/A"));
+        p2.put("designation", "Applicant");
+        arr.add(p2);
+        return arr;
+    }
+
+    private ObjectNode buildBlockWiseSummary(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+        n.put("totalPlotArea", num(frd.path("planInformation"), "plotArea"));
+        n.put("groundCoverage", txt(frd, "coverage") + "%");
+        n.put("totalBuiltUpArea", num(frd, "totalBuiltUpArea"));
+        
+        JsonNode bws = frd.path("sections")
+                .path("Block Wise Summary")
+                .path("Block No 1 - Proposed Details");
+        
+        n.put("totalFARArea", getTotalFloorArea(bws));
+        return n;
+    }
+
+    private ArrayNode buildBlocks(ObjectMapper mapper, JsonNode frd) {
+        ArrayNode blocks = mapper.createArrayNode();
+        JsonNode bws = frd.path("sections").path("Block Wise Summary");
+        if (!bws.isObject()) return blocks;
+
+        bws.fieldNames().forEachRemaining(blockKey -> {
+            JsonNode blockSection = bws.path(blockKey);
+            ArrayNode detail = (ArrayNode) blockSection.path("detail");
+            if (!detail.isArray()) return;
+
+            ObjectNode block = mapper.createObjectNode();
+            block.put("blockName", blockKey.replace(" - Proposed Details", ""));
+            block.put("proposedTitle", "1. " + blockKey);
+            block.set("proposedDetails", buildProposedDetails(mapper, detail));
+            block.put("remarks", txt(blockSection, "remarks"));
+            block.set("floorWiseBuiltUpFAR", buildFloorWiseBuiltUpFAR(mapper, detail));
+//            block.set("deductionDetails", buildDeductionDetails(mapper, detail));
+//            block.set("builtUpDeductions", buildBuiltUpDeductions(mapper, detail));
+//            block.set("farDeductionDetails", buildFarDeductionDetails(mapper, detail));
+            blocks.add(block);
+        });
+        return blocks;
+    }
+
+    private ArrayNode buildProposedDetails(ObjectMapper mapper, ArrayNode rows) {
+        ArrayNode out = mapper.createArrayNode();
+        for (JsonNode r : rows) {
+            ObjectNode n = mapper.createObjectNode();
+            String occupancy = txt(r, "Occupancy/Sub Occupancy");
+
+            if ("Total-colspan-2".equalsIgnoreCase(occupancy)) {
+                n.put("floor", "Total");
+                n.put("occupancySubOccupancy", "");
+            } else {
+                n.put("floor", txt(r, "Floor"));
+                n.put("occupancySubOccupancy", occupancy);
+            }
+
+            n.put("builtUpArea", txt(r, "Built Up Area in m²"));
+            n.put("deductionArea", txt(r, "Deduction Area in m²"));
+            n.put("floorArea", txt(r, "Floor Area in m²"));
+            out.add(n);
+        }
+        return out;
+    }
+
+    private ArrayNode buildFloorWiseBuiltUpFAR(ObjectMapper mapper, ArrayNode rows) {
+        ArrayNode out = mapper.createArrayNode();
+        for (JsonNode r : rows) {
+            if ("Total-colspan-2".equalsIgnoreCase(txt(r, "Occupancy/Sub Occupancy"))) continue;
+            ObjectNode n = mapper.createObjectNode();
+            n.put("floor", floorLabel(txt(r, "Floor")));
+            n.put("Occupancy/Sub Occupancy", floorLabel(txt(r, "Occupancy/Sub Occupancy")));
+            n.put("Built Up Area in m²", floorLabel(txt(r, "Built Up Area in m²")));
+            n.put("Deduction Area in m²", floorLabel(txt(r, "Deduction Area in m²")));
+            n.put("Floor Area in m²", floorLabel(txt(r, "Floor Area in m²")));
+            //n.put("effectiveBuiltUpArea", num(r, "Built Up Area in m²"));
+            //n.put("existingBuiltUpArea", 0.0d);
+            //n.put("proposedFAR", num(r, "Floor Area in m²"));
+            //n.put("existingFAR", 0.0d);
+            out.add(n);
+        }
+        out.add(totalRow(mapper, out, "effectiveBuiltUpArea", "proposedFAR"));
+        return out;
+    }
+
+    private ArrayNode buildDeductionDetails(ObjectMapper mapper, ArrayNode rows) {
+        ArrayNode out = mapper.createArrayNode();
+        for (JsonNode r : rows) {
+            if ("Total-colspan-2".equalsIgnoreCase(txt(r, "Occupancy/Sub Occupancy"))) continue;
+            double bua = num(r, "Built Up Area in m²");
+            double farArea = num(r, "Floor Area in m²");
+            double ded = 0.0d;
+            ObjectNode n = mapper.createObjectNode();
+            n.put("floor", floorLabel(txt(r, "Floor")));
+            n.put("builtUpAreaIncludingDeduction", bua);
+            n.put("builtUpDeductionArea", ded);
+            n.put("effectiveBuiltUpArea", bua - ded);
+            n.put("nonFARArea", Math.max(0.0d, (bua - ded) - farArea));
+            n.put("farArea", farArea);
+            out.add(n);
+        }
+        out.add(totalDeductionRow(mapper, out));
+        return out;
+    }
+
+    private ArrayNode buildBuiltUpDeductions(ObjectMapper mapper, ArrayNode rows) {
+        ArrayNode out = mapper.createArrayNode();
+        for (JsonNode r : rows) {
+            if ("Total-colspan-2".equalsIgnoreCase(txt(r, "Occupancy/Sub Occupancy"))) continue;
+            ObjectNode n = mapper.createObjectNode();
+            n.put("floor", floorLabel(txt(r, "Floor")));
+            n.put("voids", 0.0d);
+            n.put("ramp", 0.0d);
+            n.put("totalDeduction", 0.0d);
+            out.add(n);
+        }
+        out.add(totalSimpleDeductionRow(mapper, out));
+        return out;
+    }
+
+    private ArrayNode buildFarDeductionDetails(ObjectMapper mapper, ArrayNode rows) {
+        ArrayNode out = mapper.createArrayNode();
+        for (JsonNode r : rows) {
+            if ("Total-colspan-2".equalsIgnoreCase(txt(r, "Occupancy/Sub Occupancy"))) continue;
+            ObjectNode n = mapper.createObjectNode();
+            n.put("floor", floorLabel(txt(r, "Floor")));
+            n.put("mumty", 0.0d);
+            n.put("totalDeduction", 0.0d);
+            out.add(n);
+        }
+        out.add(totalMumtyRow(mapper, out));
+        return out;
+    }
+
+    private ObjectNode buildSetbacks(ObjectMapper mapper, JsonNode frd) {
+        ObjectNode n = mapper.createObjectNode();
+        n.put("frontPermissible", "N/A");
+        n.put("frontProvided", "N/A");
+        n.put("rearPermissible", "N/A");
+        n.put("rearProvided", "N/A");
+        n.put("side1Permissible", "N/A");
+        n.put("side1Provided", "N/A");
+        n.put("side2Permissible", "N/A");
+        n.put("side2Provided", "N/A");
+
+        JsonNode setbackRows = frd.path("sections").path("Block 1 - Scrutiny Details").path("Setback").path("detail");
+        if (setbackRows.isArray()) {
+            for (JsonNode row : setbackRows) {
+                String type = txt(row, "Setback").toLowerCase();
+                if (type.contains("front")) {
+                    n.put("frontPermissible", txt(row, "Permissible"));
+                    n.put("frontProvided", txt(row, "Provided"));
+                } else if (type.contains("rear")) {
+                    n.put("rearPermissible", txt(row, "Permissible"));
+                    n.put("rearProvided", txt(row, "Provided"));
+                } else if (type.contains("1")) {
+                    n.put("side1Permissible", txt(row, "Permissible"));
+                    n.put("side1Provided", txt(row, "Provided"));
+                } else if (type.contains("2")) {
+                    n.put("side2Permissible", txt(row, "Permissible"));
+                    n.put("side2Provided", txt(row, "Provided"));
+                }
+            }
+        }
+        return n;
+    }
+
+    private JsonNode findCommonParkingDetail(JsonNode frd) {
+        JsonNode arr = frd.path("sections").path("Common - Scrutiny Details").path("Parking").path("detail");
+        return arr.isArray() && arr.size() > 0 ? arr.get(0) : new ObjectMapper().createObjectNode();
+    }
+    
+    private JsonNode findCommonFarDetail(JsonNode frd) {
+        JsonNode arr = frd.path("sections").path("Common - Scrutiny Details").path("FAR").path("detail");
+        return arr.isArray() && arr.size() > 0 ? arr.get(0) : new ObjectMapper().createObjectNode();
+    }
+
+    private JsonNode findCommonRoadWidthDetail(JsonNode frd) {
+        JsonNode arr = frd.path("sections").path("Common - Scrutiny Details").path("Road Width ").path("detail");
+        return arr.isArray() && arr.size() > 0 ? arr.get(0) : new ObjectMapper().createObjectNode();
+    }
+
+    private JsonNode findBlockScrutinyFirstDetailByKey(JsonNode frd, String key) {
+        JsonNode arr = frd.path("sections").path("Block 1 - Scrutiny Details").path(key).path("detail");
+        return arr.isArray() && arr.size() > 0 ? arr.get(0) : new ObjectMapper().createObjectNode();
+    }
+
+    private ObjectNode totalRow(ObjectMapper mapper, ArrayNode rows, String builtField, String farField) {
+        double totalBuilt = 0.0d;
+        double totalFar = 0.0d;
+        for (JsonNode r : rows) {
+            totalBuilt += num(r, builtField);
+            totalFar += num(r, farField);
+        }
+        ObjectNode t = mapper.createObjectNode();
+        t.put("floor", "Total");
+        t.put("effectiveBuiltUpArea", round2(totalBuilt));
+        t.put("existingBuiltUpArea", 0.0d);
+        t.put("proposedFAR", round2(totalFar));
+        t.put("existingFAR", 0.0d);
+        return t;
+    }
+
+    private ObjectNode totalDeductionRow(ObjectMapper mapper, ArrayNode rows) {
+        double incl = 0.0d, ded = 0.0d, eff = 0.0d, nonFar = 0.0d, far = 0.0d;
+        for (JsonNode r : rows) {
+            incl += num(r, "builtUpAreaIncludingDeduction");
+            ded += num(r, "builtUpDeductionArea");
+            eff += num(r, "effectiveBuiltUpArea");
+            nonFar += num(r, "nonFARArea");
+            far += num(r, "farArea");
+        }
+        ObjectNode t = mapper.createObjectNode();
+        t.put("floor", "Total");
+        t.put("builtUpAreaIncludingDeduction", round2(incl));
+        t.put("builtUpDeductionArea", round2(ded));
+        t.put("effectiveBuiltUpArea", round2(eff));
+        t.put("nonFARArea", round2(nonFar));
+        t.put("farArea", round2(far));
+        return t;
+    }
+
+    private ObjectNode totalSimpleDeductionRow(ObjectMapper mapper, ArrayNode rows) {
+        double voids = 0.0d, ramp = 0.0d, total = 0.0d;
+        for (JsonNode r : rows) {
+            voids += num(r, "voids");
+            ramp += num(r, "ramp");
+            total += num(r, "totalDeduction");
+        }
+        ObjectNode t = mapper.createObjectNode();
+        t.put("floor", "Total");
+        t.put("voids", round2(voids));
+        t.put("ramp", round2(ramp));
+        t.put("totalDeduction", round2(total));
+        return t;
+    }
+
+    private ObjectNode totalMumtyRow(ObjectMapper mapper, ArrayNode rows) {
+        double mumty = 0.0d, total = 0.0d;
+        for (JsonNode r : rows) {
+            mumty += num(r, "mumty");
+            total += num(r, "totalDeduction");
+        }
+        ObjectNode t = mapper.createObjectNode();
+        t.put("floor", "Total");
+        t.put("mumty", round2(mumty));
+        t.put("totalDeduction", round2(total));
+        return t;
+    }
+
+    private String floorLabel(String floorNo) {
+//        if ("0".equals(floorNo)) return "Ground Floor";
+//        if ("1".equals(floorNo)) return "1st Floor";
+//        if ("2".equals(floorNo)) return "2nd Floor";
+        return floorNo == null || floorNo.trim().isEmpty() ? "N/A" : floorNo;
+    }
+
+    private String txt(JsonNode node, String field) {
+        JsonNode v = node == null ? null : node.path(field);
+        if (v == null || v.isMissingNode() || v.isNull()) return "N/A";
+        String out = v.asText("").trim();
+        return out.isEmpty() ? "N/A" : out;
+    }
+
+    private double num(JsonNode node, String field) {
+        JsonNode v = node == null ? null : node.path(field);
+        if (v == null || v.isMissingNode() || v.isNull()) return 0.0d;
+        if (v.isNumber()) return round2(v.asDouble());
+        try {
+            return round2(Double.parseDouble(v.asText("0").replaceAll("[^0-9.-]", "")));
+        } catch (Exception ex) {
+            return 0.0d;
+        }
+    }
+
+    private double extractNumber(String text) {
+        if (text == null) return 0.0d;
+        try {
+            String value = text.replaceAll("[^0-9.-]", "");
+            return value.isEmpty() ? 0.0d : round2(Double.parseDouble(value));
+        } catch (Exception ex) {
+            return 0.0d;
+        }
+    }
+
+    private double round2(double val) {
+        return Math.round(val * 100.0d) / 100.0d;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> extractFinalReportData(Plan pl) {
+        if (pl == null) return new java.util.HashMap<String, Object>();
+        try {
+            java.lang.reflect.Method getter = pl.getClass().getMethod("getFinalReportData");
+            Object value = getter.invoke(pl);
+            if (value instanceof Map) return (Map<String, Object>) value;
+        } catch (NoSuchMethodException ignored) {
+            LOG.debug("Plan does not expose getFinalReportData(). Building fallback JSON from Plan fields.");
+        } catch (Exception ex) {
+            LOG.warn("Unable to read finalReportData from Plan. Using fallback fields.", ex);
+        }
+
+        Map<String, Object> fallback = new java.util.HashMap<String, Object>();
+        Map<String, Object> planInfo = new java.util.HashMap<String, Object>();
+        if (pl.getPlanInformation() != null) {
+            planInfo.put("plotArea", pl.getPlanInformation().getPlotArea());
+            planInfo.put("occupancy", pl.getPlanInformation().getOccupancy());
+            planInfo.put("khasraNo", pl.getPlanInformation().getKhasraNo());
+            planInfo.put("landUseZone", pl.getPlanInformation().getLandUseZone());
+            planInfo.put("city", pl.getPlanInformation().getCity());
+            planInfo.put("ulbType", pl.getPlanInformation().getUlbType());
+        }
+        fallback.put("planInformation", planInfo);
+        if (pl.getFarDetails() != null) fallback.put("far", pl.getFarDetails().getProvidedFar());
+        if (pl.getVirtualBuilding() != null) {
+            fallback.put("totalBuiltUpArea", pl.getVirtualBuilding().getTotalBuitUpArea());
+            fallback.put("totalFloorArea", pl.getVirtualBuilding().getTotalFloorArea());
+            fallback.put("coverage", pl.getCoverage());
+        }
+        return fallback;
+    }
     
     private void updateFilev2(Plan pl, EdcrApplication edcrApplication) {
         long start = System.currentTimeMillis();
@@ -1124,6 +922,7 @@ public class EdcrApplicationService {
         LOG.info("Starting scrutinized PDF generation for: {}", newFileName);
 
         File tempPdf = null;
+        JsonNode additionalDetails = null;
         try {
             tempPdf = File.createTempFile("scrutinized_", ".pdf");
 
@@ -1133,6 +932,19 @@ public class EdcrApplicationService {
                 LOG.info("DXF to PDF conversion completed: {} bytes", tempPdf.length());
             }
 
+            additionalDetails = buildJsonNode(pl);
+
+            // Overlay the information onto the DXF-converted PDF using template renderer
+            tempPdf = pdfOverlayTemplateService.impose(
+                    tempPdf,
+                    tempPdf.getAbsolutePath(),
+                    additionalDetails,
+                    EXPAND_RIGHT,
+                    EXPAND_BOTTOM,
+                    GAP_DRAWING_TO_TABLES,
+                    GAP_TOP);
+
+            
             FileStoreMapper fileStoreMapper = fileStoreService.store(
                     tempPdf,
                     newFileName,
@@ -1307,133 +1119,8 @@ public class EdcrApplicationService {
             LOG.info("updateFile() completed in {} ms → {}", elapsed, newFileName);
         }
     }
-
-    
-//    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
-//        long start = System.currentTimeMillis();
-//        String originalFileName = edcrApplication.getDxfFile().getOriginalFilename();
-//        String newFileName = originalFileName.replace(".dxf", "_system_scrutinized.pdf");
-//        File finalOutputFile = new File(newFileName);
-//
-//        LOG.info("🔄 Starting DXF → DWG → PDF process for: {}", newFileName);
-//
-//        File tempInputDir = new File(System.getProperty("java.io.tmpdir"), "teigha_input");
-//        File tempOutputDir = new File(System.getProperty("java.io.tmpdir"), "teigha_output");
-//        tempInputDir.mkdirs();
-//        tempOutputDir.mkdirs();
-//
-//        try {
-//            // --- Step 0: Copy DXF to temp folder with simple name ---
-//            File originalDxfFile = edcrApplication.getSavedDxfFile();
-//            File tempDxfFile = new File(tempInputDir, "temp.dxf");
-//            Files.copy(originalDxfFile.toPath(), tempDxfFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//
-//            // --- Step 1: DXF → DWG (TeighaFileConverter) ---
-//            String converterPath = System.getProperty("os.name").toLowerCase().contains("win")
-//                    ? "C:\\Program Files\\ODA\\ODAFileConverter 26.8.0\\ODAFileConverter.exe"
-//                    : "/opt/ODA/TeighaFileConverter/TeighaFileConverter";
-//
-//            ProcessBuilder pb = new ProcessBuilder(
-//                    converterPath,
-//                    tempInputDir.getAbsolutePath(),
-//                    tempOutputDir.getAbsolutePath(),
-//                    "ACAD2018",
-//                    "DWG",
-//                    "0", // recurse = false
-//                    "1"  // audit = true
-//            );
-//            pb.redirectErrorStream(true);
-//            Process process = pb.start();
-//
-//            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-//                String line;
-//                while ((line = reader.readLine()) != null) {
-//                    LOG.debug("[Teigha] {}", line);
-//                }
-//            }
-//
-//            int exitCode = process.waitFor();
-//            if (exitCode != 0) {
-//                throw new RuntimeException("TeighaFileConverter failed with exit code: " + exitCode);
-//            }
-//            LOG.info("✅ DXF → DWG conversion done.");
-//
-//            // --- Step 2: Locate generated DWG ---
-//            File[] dwgFiles = tempOutputDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".dwg"));
-//            if (dwgFiles == null || dwgFiles.length == 0) {
-//                throw new RuntimeException("No DWG file generated by Teigha.");
-//            }
-//            File dwgFile = dwgFiles[0];
-//
-//            // --- Step 3: DWG → PDF (Aspose.CAD) ---
-//            com.aspose.cad.Image dwgImage = com.aspose.cad.Image.load(dwgFile.getAbsolutePath());
-//            com.aspose.cad.imageoptions.PdfOptions pdfOptions = new com.aspose.cad.imageoptions.PdfOptions();
-//            dwgImage.save(finalOutputFile.getAbsolutePath(), pdfOptions);
-//            LOG.info("✅ DWG → PDF conversion done: {}", finalOutputFile.getAbsolutePath());
-//
-//            // --- Step 4: Add timestamp (PDFBox) ---
-//            try (PDDocument document = PDDocument.load(finalOutputFile);
-//                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(finalOutputFile))) {
-//
-//                PDPage page = document.getPage(0);
-//                float pageWidth = page.getMediaBox().getWidth();
-//
-//                try (PDPageContentStream contentStream = new PDPageContentStream(
-//                        document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-//
-//                    String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-//                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-//                    contentStream.beginText();
-//                    contentStream.newLineAtOffset(pageWidth - 200, 20);
-//                    contentStream.showText(timestamp);
-//                    contentStream.endText();
-//                }
-//
-//                document.save(out);
-//                LOG.info("✅ Timestamp added successfully.");
-//            }
-//
-//            // --- Step 5: Store in filestore ---
-//            FileStoreMapper fileStoreMapper = fileStoreService.store(
-//                    finalOutputFile, finalOutputFile.getName(),
-//                    "application/pdf", FILESTORE_MODULECODE);
-//
-//            edcrApplication.getEdcrApplicationDetails()
-//                    .get(0).setScrutinizedDxfFileId(fileStoreMapper);
-//
-//            LOG.info("📁 PDF stored in filestore: {}",
-//                    fileStoreMapper != null ? fileStoreMapper.getFileStoreId() : "null");
-//
-//        } catch (Exception e) {
-//            LOG.error("🚨 Error in updateFile(): {}", e.getMessage(), e);
-//        } finally {
-//            // --- Cleanup temp folders ---
-//            try {
-//                Files.walk(tempInputDir.toPath())
-//                        .sorted(Comparator.reverseOrder())
-//                        .map(Path::toFile)
-//                        .forEach(File::delete);
-//                Files.walk(tempOutputDir.toPath())
-//                        .sorted(Comparator.reverseOrder())
-//                        .map(Path::toFile)
-//                        .forEach(File::delete);
-//            } catch (IOException ignored) {}
-//
-//            long elapsed = System.currentTimeMillis() - start;
-//            LOG.info("⚡ updateFile() completed in {} ms → {}", elapsed, newFileName);
-//        }
-//    }
-
-
-
-
-
-
-
-
- // =======================================================
- // ✅ Utility: Safe delete with retry (shared by both methods)
- // =======================================================
+   
+ //Safe delete with retry (shared by both methods)
  private boolean safeDeleteWithRetry(Path path, int maxRetries, long sleepMillis) {
      for (int attempt = 1; attempt <= maxRetries; attempt++) {
          try {
@@ -1458,51 +1145,6 @@ public class EdcrApplicationService {
      LOG.warn("⚠️ Failed to delete file after {} retries: {}", maxRetries, path);
      return false;
  }
-
- private File addSignatureImage(File inputPdf, String imagePath, String outputFileName) throws IOException {
-
-	    LOG.info("✍️ Adding signature to PDF: {}", inputPdf.getName());
-
-	    File outputFile = new File(outputFileName);
-
-	    try (PDDocument document = PDDocument.load(inputPdf)) {
-
-	        for (PDPage page : document.getPages()) {
-
-	            float pageWidth = page.getMediaBox().getWidth();
-	            float pageHeight = page.getMediaBox().getHeight();
-
-	            // Load image
-	            PDImageXObject image = PDImageXObject.createFromFile(imagePath, document);
-
-	            // 🔥 Signature size (adjust if needed)
-	            float imageWidth = 150f;
-	            float imageHeight = 50f;
-
-	            // 🔥 Bottom-right position
-	            float x = pageWidth - imageWidth - 20; // right margin
-	            float y = 20; // bottom margin
-
-	            try (PDPageContentStream contentStream = new PDPageContentStream(
-	                    document,
-	                    page,
-	                    PDPageContentStream.AppendMode.APPEND,
-	                    true,
-	                    true)) {
-
-	                contentStream.drawImage(image, x, y, imageWidth, imageHeight);
-	            }
-	        }
-
-	        document.save(outputFile);
-	    }
-
-	    LOG.info("✅ Signature added successfully: {}", outputFile.getAbsolutePath());
-	    return outputFile;
-	}
-
-    
-    
 
     @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication, EdcrRequest edcrRequest){
@@ -1606,92 +1248,6 @@ public class EdcrApplicationService {
 
         return fileStoreMapper;
     }
-    
-//    public File replaceAsposeWatermark(File inputPdf, String outputPath, String newText) throws IOException {
-//
-//        LOG.info("========== REPLACING ASPOSE WATERMARK ==========");
-//
-//        PDDocument document = PDDocument.load(inputPdf);
-//
-//        /*
-//         * PAGE 2
-//         * index = 1
-//         */
-//        PDPage page = document.getPage(0);
-//
-//        PDRectangle mediaBox = page.getMediaBox();
-//
-//        float pageWidth = mediaBox.getWidth();
-//        float pageHeight = mediaBox.getHeight();
-//
-//        LOG.info("PAGE WIDTH  : {}", pageWidth);
-//        LOG.info("PAGE HEIGHT : {}", pageHeight);
-//
-//        /*
-//         * WATERMARK POSITION (CAD coordinate space: 10173.09 x 14390.0)
-//         *
-//         * Aspose watermark is near the TOP of the page:
-//         *   "Evaluation only. Created with Aspose.CAD. Copyright 2016-2025 Aspose Pty Ltd."
-//         * Detected bbox: x0=299.94, y0=13648.71, x1=3287.66, y1=14230.49
-//         * With 50-unit padding applied on all sides.
-//         */
-//        float x = 249.94f;
-//
-//        float y = 13598.71f;
-//
-//        float width = 3087.72f;
-//
-//        float height = 681.78f;
-//
-//        LOG.info("Covering watermark area...");
-//        LOG.info("X      : {}", x);
-//        LOG.info("Y      : {}", y);
-//        LOG.info("WIDTH  : {}", width);
-//        LOG.info("HEIGHT : {}", height);
-//
-//        PDPageContentStream contentStream =
-//                new PDPageContentStream(document,page,PDPageContentStream.AppendMode.APPEND,true,true);
-//
-//        /*
-//         * WHITE RECTANGLE — covers the Aspose watermark
-//         */
-//        contentStream.setNonStrokingColor(255, 255, 255);
-//
-//        contentStream.addRect(x,y,width,height);
-//
-//        contentStream.fill();
-//
-//        LOG.info("Watermark hidden successfully");
-//
-//        /*
-//         * WRITE NEW TEXT at same position
-//         */
-//        contentStream.beginText();
-//
-//        contentStream.setNonStrokingColor(0, 0, 0);
-//
-//        contentStream.setFont(PDType1Font.HELVETICA_BOLD,80);
-//
-//        contentStream.newLineAtOffset(x + 20, y + height / 2 - 40);
-//
-//        contentStream.showText(newText);
-//
-//        contentStream.endText();
-//
-//        contentStream.close();
-//
-//        File outputFile = new File(outputPath);
-//
-//        document.save(outputFile);
-//
-//        document.close();
-//
-//        LOG.info("Updated PDF saved at : {}", outputFile.getAbsolutePath());
-//
-//        LOG.info("========== WATERMARK REPLACED ==========");
-//
-//        return outputFile;
-//    }
 
     public File replaceAsposeWatermark(
             File inputPdf,
@@ -1704,18 +1260,6 @@ public class EdcrApplicationService {
         int totalPages = document.getNumberOfPages();
         LOG.info("Total pages in PDF: {}", totalPages);
 
-        // -------------------------------------------------------
-        // DYNAMIC DETECTION using core PDFTextStripper only.
-        // Scans every page for Aspose watermark text, then covers
-        // it using proportional coordinates derived from page size.
-        //
-        // Observed across all PDF sizes generated by Aspose.CAD:
-        //   - Always top-left corner
-        //   - Height  ≈ 4.0% of page height
-        //   - Y gap from top ≈ 1.1% of page height
-        //   - X starts near 0 (left edge)
-        //   - Width varies by DXF, so we use a safe 35% of page width
-        // -------------------------------------------------------
         int    targetPageIndex = -1;
         float  wmX = 0, wmY = 0, wmWidth = 0, wmHeight = 0;
 
@@ -1794,37 +1338,34 @@ public class EdcrApplicationService {
 
         return outputFile;
     }
-    
-    private File scalePdfToMatch(File inputPdf, PDRectangle targetSize) throws IOException {
+         
+    public File scalePdfToMatch(File inputPdf, PDRectangle targetSize) throws IOException {
 
         File outputFile = File.createTempFile("scaled_", ".pdf");
 
-        try (PDDocument inputDoc = PDDocument.load(inputPdf);
+        try (PDDocument inputDoc  = PDDocument.load(inputPdf);
              PDDocument outputDoc = new PDDocument()) {
 
-            LayerUtility layerUtility = new LayerUtility(outputDoc);
+            org.apache.pdfbox.multipdf.LayerUtility layerUtility =
+                    new org.apache.pdfbox.multipdf.LayerUtility(outputDoc);
 
             for (int i = 0; i < inputDoc.getNumberOfPages(); i++) {
 
                 PDPage srcPage = inputDoc.getPage(i);
-
-                //Create ONLY ONE new page per input page
                 PDPage newPage = new PDPage(targetSize);
                 outputDoc.addPage(newPage);
 
-                //Import correct page by index (NOT indexOf)
                 PDFormXObject pageForm = layerUtility.importPageAsForm(inputDoc, i);
 
                 float srcW = srcPage.getMediaBox().getWidth();
                 float srcH = srcPage.getMediaBox().getHeight();
 
-                float scaleX = targetSize.getWidth() / srcW;
+                float scaleX = targetSize.getWidth()  / srcW;
                 float scaleY = targetSize.getHeight() / srcH;
+                float scale  = Math.min(scaleX, scaleY) * 0.8f;
 
-                float scale = Math.min(scaleX, scaleY) * 0.8f; // 90%
-
-                float offsetX = (targetSize.getWidth() - srcW * scale) / 2;
-                float offsetY = (targetSize.getHeight() - srcH * scale) / 2;
+                float offsetX = (targetSize.getWidth()  - srcW * scale) / 2f;
+                float offsetY = (targetSize.getHeight() - srcH * scale) / 2f;
 
                 try (PDPageContentStream cs = new PDPageContentStream(outputDoc, newPage)) {
                     cs.transform(Matrix.getTranslateInstance(offsetX, offsetY));
@@ -1839,7 +1380,27 @@ public class EdcrApplicationService {
         return outputFile;
     }
 
-
-
     
+    public File overlayPlotDetails(
+            File inputPdf,
+            String outputFileName,
+            JsonNode additionalDetails) throws IOException {
+
+        LOG.info("Overlaying plot details using template renderer: {}", inputPdf.getName());
+
+        return pdfOverlayTemplateService.impose(
+                inputPdf,
+                outputFileName,
+                additionalDetails,
+                EXPAND_RIGHT,
+                EXPAND_BOTTOM,
+                GAP_DRAWING_TO_TABLES,
+                GAP_TOP);
+    }
+
 }
+
+
+
+
+
