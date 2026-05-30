@@ -68,14 +68,14 @@ public class PlanReportServiceV2 {
 
     private static final Logger LOG = LogManager.getLogger(PlanReportServiceV2.class);
 
-    @Value("${edcr.service.url:}")
-    private String edcr_internal_service_url;
-
-    @Value("${edcr.report.mseva.logo.url:}")
-    private String edcr_mseva_logo_url;
-
-    @Value("${edcr.report.logodep.url:}")
-    private String edcr_logodep_url;
+//    @Value("${edcr.service.url:}")
+//    private String edcr_internal_service_url;
+//
+//    @Value("${edcr.report.mseva.logo.url:}")
+//    private String edcr_mseva_logo_url;
+//
+//    @Value("${edcr.report.logodep.url:}")
+//    private String edcr_logodep_url;
 
     @Autowired
     private TemplateEngine templateEngine;
@@ -276,10 +276,14 @@ public class PlanReportServiceV2 {
         model.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         
         ClassPathResource logoResource =
-                new ClassPathResource("images/logo_dep.png");        
+                new ClassPathResource("images/logo_dep.png");   
+        
+        ClassPathResource footerLogoResource =
+                new ClassPathResource("images/mseva.png"); 
 
         try {
-			model.put("logo", logoResource.getURL().toString());			
+			model.put("logo", logoResource.getURL().toString());	
+			model.put("egovLogo", footerLogoResource.getURL().toString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -808,6 +812,14 @@ public class PlanReportServiceV2 {
             LOG.info("Generating report for application: {}", dcrApplication.getApplicationNumber());
             Map<String, Object> model = buildReportModelV2(plan, dcrApplication);
             replaceStatusWithFulfillTerms(model);
+            // Keep backward compatibility: set finalReportData only when Plan supports it.
+            try {
+                java.lang.reflect.Method m = plan.getClass().getMethod("setFinalReportData", java.util.Map.class);
+                m.invoke(plan, model);
+            } catch (NoSuchMethodException ignored) {
+                LOG.debug("Plan does not expose setFinalReportData(Map). Skipping.");
+            }
+
             byte[] pdfBytes = generatePdf(model);
 
             InputStream reportStream = new ByteArrayInputStream(pdfBytes);
