@@ -100,11 +100,8 @@ public class Plan implements Serializable {
     private BigDecimal roadReserveFront = BigDecimal.ZERO;
     private BigDecimal roadReserveRear = BigDecimal.ZERO;
     private BigDecimal roadReserveSide = BigDecimal.ZERO;
-    
-
     // Single plan contain multiple block/building information. Records Existing and proposed block information.
     private List<Block> blocks = new ArrayList<>();
-
     // Records Accessory building details. Building has outdoor structures such as attached or detached garages, sheds, storage
     // building etc.This will not consider as another block.
     private List<AccessoryBlock> accessoryBlocks = new ArrayList<>();
@@ -122,14 +119,12 @@ public class Plan implements Serializable {
     private transient List<CulDeSacRoad> culdeSacRoads = new ArrayList<>();
     // Lane road which are present next to plot.
     private transient List<Lane> laneRoads = new ArrayList<>();
-
     // Travel distance to exit from the buildings.
     private transient List<BigDecimal> travelDistancesToExit = new ArrayList<>();
     // Parking facilities provided in the plot. Includes visitor, two wheeler, four wheeler etc
     private transient ParkingDetails parkingDetails = new ParkingDetails();
     // If canopy present, then distance from the plot boundary
     private transient List<BigDecimal> canopyDistanceFromPlotBoundary;
-
     // List of occupancies present in the plot including all the blocks.
     private List<Occupancy> occupancies = new ArrayList<>();
     @JsonIgnore
@@ -139,7 +134,74 @@ public class Plan implements Serializable {
     @JsonIgnore
     private transient Map<Integer, Usage> usagesMaster = new HashMap<>();
     @JsonIgnore
-    private transient Map<String, Map<String, Integer>> subFeatureColorCodesMaster = new HashMap<>();
+    private transient Map<String, Map<String, Integer>> subFeatureColorCodesMaster = new HashMap<>();    
+ // Utilities of building like solar,waste disposal plant, watertank, rain water harvesting etc
+    private Utility utility = new Utility();   
+    // coverage Overall Coverage of all the block. Total area of all the floor/plot area.
+    private BigDecimal coverage = BigDecimal.ZERO;
+    // Calculated Permissible FSI and provided FSI details
+    private FarDetails farDetails;
+    // Drawing standard parameters required to process dxf file.
+    private DrawingPreference drawingPreference = new DrawingPreference();
+    @Transient
+    private Double parkingRequired;
+    // Septic tanks defined in the plan
+    private transient List<SepticTank> septicTanks = new ArrayList<>();
+    // Trees and plant defined in the plan
+    private transient Plantation plantation;    
+    // Guard room details
+    private transient GuardRoom guardRoom;
+    // Segregated toilet facilities for visitors in Public Buildings (within the premises of the building, but outside the
+    // building block)
+    private transient SegregatedToilet segregatedToilet;
+    // Roads which are surrendered by citizen
+    private transient List<Measurement> surrenderRoads = new ArrayList<>();
+    // For proposed road widening, surrendered road area.This area will be used to calculate FAR,setback and permissible buildup
+    // area.
+    private transient BigDecimal totalSurrenderRoadArea = BigDecimal.ZERO;
+    // Distance of plot with external entities like rive, lake, monuments, government building etc are grouped.
+    private DistanceToExternalEntity distanceToExternalEntity = new DistanceToExternalEntity();
+    // Plot all sides compound wall and their railing heights
+    private CompoundWall compoundWall;
+    // Roads reserved by government for road widening purpose
+    private transient List<Road> roadReserves = new ArrayList<>();
+    @Transient
+    @JsonIgnore
+    public StringBuffer additionsToDxf = new StringBuffer();
+    @Transient
+    private String dxfFileName;
+    private List<EdcrPdfDetail> edcrPdfDetails;
+    @Transient
+    private Boolean strictlyValidateDimension = false;    
+    @Transient
+    private Boolean strictlyValidateBldgHeightDimension = false;
+    private Gate gate;
+    // Used to show drawing mistakes, General errors, mistakes in following layer/color coding standard etc
+    private transient Map<String, String> errors = new LinkedHashMap<>();
+    /**
+     * The report output object. Based on type of building and occupancies,the rules are validated and rules which are considered
+     * for the submitted plan are recorded in this object.
+     */
+    private ReportOutput reportOutput = new ReportOutput();
+    // System will evaluate the list of noc's required based on the plan input
+    private transient Map<String, String> noObjectionCertificates = new HashMap<>();
+    private List<String> nocDeptCodes = new ArrayList<String>();
+    private HashMap<String, String> featureAmendments = new LinkedHashMap<>();
+    private transient Map<String, List<Object>> mdmsMasterData;
+    private transient Boolean mainDcrPassed = false;
+    private List<ICT> icts = new ArrayList<>();    
+    private String coreArea;    
+    private EdcrRequest edcrRequest;   
+    
+    private Map<String, Object> finalReportData;
+    
+    public Map<String, Object> getFinalReportData() {
+		return finalReportData;
+	}
+
+	public void setFinalReportData(Map<String, Object> finalReportData) {
+		this.finalReportData = finalReportData;
+	}
 
     public BigDecimal getRoadReserveFront() {
 		return roadReserveFront;
@@ -164,28 +226,6 @@ public class Plan implements Serializable {
 	public void setRoadReserveSide(BigDecimal roadReserveSide) {
 		this.roadReserveSide = roadReserveSide;
 	}
-
-
-	// Utilities of building like solar,waste disposal plant, watertank, rain water harvesting etc
-    private Utility utility = new Utility();
-   
-    // coverage Overall Coverage of all the block. Total area of all the floor/plot area.
-    private BigDecimal coverage = BigDecimal.ZERO;
-
-    // Calculated Permissible FSI and provided FSI details
-    private FarDetails farDetails;
-
-    // Drawing standard parameters required to process dxf file.
-    private DrawingPreference drawingPreference = new DrawingPreference();
-
-    @Transient
-    private Double parkingRequired;
-    // Septic tanks defined in the plan
-    private transient List<SepticTank> septicTanks = new ArrayList<>();
-    // Trees and plant defined in the plan
-    private transient Plantation plantation;
-    
-  
     
     private  Map<String, List<Map<String, Object>>> edcrRulesFeatures;
     
@@ -196,61 +236,7 @@ public class Plan implements Serializable {
 	public void setEdcrRulesFeatures(Map<String, List<Map<String, Object>>> edcrRulesFeatures) {
 		this.edcrRulesFeatures = edcrRulesFeatures;
 	}
-
-	
-    // Guard room details
-    private transient GuardRoom guardRoom;
-    // Segregated toilet facilities for visitors in Public Buildings (within the premises of the building, but outside the
-    // building block)
-    private transient SegregatedToilet segregatedToilet;
-    // Roads which are surrendered by citizen
-    private transient List<Measurement> surrenderRoads = new ArrayList<>();
-    // For proposed road widening, surrendered road area.This area will be used to calculate FAR,setback and permissible buildup
-    // area.
-    private transient BigDecimal totalSurrenderRoadArea = BigDecimal.ZERO;
-    // Distance of plot with external entities like rive, lake, monuments, government building etc are grouped.
-    private DistanceToExternalEntity distanceToExternalEntity = new DistanceToExternalEntity();
-    // Plot all sides compound wall and their railing heights
-    private CompoundWall compoundWall;
-
-    // Roads reserved by government for road widening purpose
-    private transient List<Road> roadReserves = new ArrayList<>();
-
-    @Transient
-    @JsonIgnore
-    public StringBuffer additionsToDxf = new StringBuffer();
-    @Transient
-    private String dxfFileName;
-
-    private List<EdcrPdfDetail> edcrPdfDetails;
-
-    @Transient
-    private Boolean strictlyValidateDimension = false;
     
-    @Transient
-    private Boolean strictlyValidateBldgHeightDimension = false;
-
-    private Gate gate;
-
-    // Used to show drawing mistakes, General errors, mistakes in following layer/color coding standard etc
-    private transient Map<String, String> errors = new LinkedHashMap<>();
-    /**
-     * The report output object. Based on type of building and occupancies,the rules are validated and rules which are considered
-     * for the submitted plan are recorded in this object.
-     */
-    private ReportOutput reportOutput = new ReportOutput();
-    // System will evaluate the list of noc's required based on the plan input
-    private transient Map<String, String> noObjectionCertificates = new HashMap<>();
-    private List<String> nocDeptCodes = new ArrayList<String>();
-    private HashMap<String, String> featureAmendments = new LinkedHashMap<>();
-    private transient Map<String, List<Object>> mdmsMasterData;
-    private transient Boolean mainDcrPassed = false;
-    private List<ICT> icts = new ArrayList<>();
-    
-    private String coreArea;
-    
-    private EdcrRequest edcrRequest;       
-
     public EdcrRequest getEdcrRequest() {
 		return edcrRequest;
 	}
@@ -419,8 +405,6 @@ public class Plan implements Serializable {
         this.errors = errors;
     }
     
-   
-
     public PlanInformation getPlanInformation() {
         return planInformation;
     }
