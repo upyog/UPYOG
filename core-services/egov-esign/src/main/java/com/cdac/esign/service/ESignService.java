@@ -132,10 +132,12 @@ public class ESignService {
         	List<String> ulbTypeList = JsonPath.read(mdmsData, "$.MdmsRes.tenant.tenants.[?(@.code == '" + tenantId + "')].city.ulbType");
 			String ulbType = CollectionUtils.isEmpty(ulbTypeList) ? "" : ulbTypeList.get(0);
         	
-        	layer2Text = "Digitally Signed by " + requestInfo.getUserInfo().getName() + "\n" +
-                    "Date: " + dateFormat.format(new Date()) + "\n" +
-                    ulbType + ", " + city +"\n" + 
-                    designation; // <--- DYNAMIC LOCATION
+//        	layer2Text = "Digitally Signed by " + requestInfo.getUserInfo().getName() + "\n" +
+//                    "Date: " + dateFormat.format(new Date()) + "\n" +
+//                    ulbType + ", " + city +"\n" + 
+//                    designation; // <--- DYNAMIC LOCATION
+        	
+        	layer2Text = requestInfo.getUserInfo().getName() + "\n" + designation + "\n" + dateFormat.format(new Date()) + "\n" + ulbType + "\n" + city;
         }
         
         appearance.setLayer2Text(layer2Text);
