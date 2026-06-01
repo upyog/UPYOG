@@ -124,9 +124,16 @@
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-			<id>javaxt.com</id>
-			<url>https://www.javaxt.com/maven</url>
-		</repository>
+        <id>upyog-nexus.niua.org</id>
+        <name>UPYOG Thirdparty</name>
+        <url>https://upyog-nexus.niua.org/nexus/content/repositories/egov-client-release/</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+      </repository>
     </repositories>
 
     <pluginRepositories>
