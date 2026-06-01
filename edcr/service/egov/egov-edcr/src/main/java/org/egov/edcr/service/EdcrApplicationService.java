@@ -139,7 +139,7 @@ public class EdcrApplicationService {
     private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
         
     private static final float EXPAND_RIGHT  = 800f;
-    private static final float EXPAND_BOTTOM = 0f;
+    private static final float EXPAND_BOTTOM = 80f;
     
     // GAP CONTROLS  ← spacing between elements
     private static final float GAP_DRAWING_TO_TABLES = 20f;
@@ -1399,6 +1399,8 @@ public class EdcrApplicationService {
     }
 
 }
+
+
 
 
 
