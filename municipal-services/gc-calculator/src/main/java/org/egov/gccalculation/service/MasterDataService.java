@@ -264,6 +264,14 @@ public class MasterDataService {
 		if (master.get(GCCalculationConstant.ConnectionType) != null 
 				&& master.get(GCCalculationConstant.ConnectionType).toString()
 				.equalsIgnoreCase(GCCalculationConstant.meteredConnectionType)) {
+			// Metered: always use explicit from/to from criteria
+			billingPeriod.put(GCCalculationConstant.STARTING_DATE_APPLICABLES, criteria.getFrom());
+			billingPeriod.put(GCCalculationConstant.ENDING_DATE_APPLICABLES, criteria.getTo());
+		} else if (criteria.getFrom() != null && criteria.getFrom() > 0
+				&& criteria.getTo() != null && criteria.getTo() > 0) {
+			// Non-metered with explicit dates passed (e.g. previous month billing for new GC connection)
+			log.info("Non-metered connection: using explicitly provided billing period [{} - {}]",
+					criteria.getFrom(), criteria.getTo());
 			billingPeriod.put(GCCalculationConstant.STARTING_DATE_APPLICABLES, criteria.getFrom());
 			billingPeriod.put(GCCalculationConstant.ENDING_DATE_APPLICABLES, criteria.getTo());
 		} else {

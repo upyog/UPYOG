@@ -188,6 +188,7 @@ public class GcServiceImpl implements GcService {
 		}
 		gcValidator.validateGarbageConnection(garbageConnectionRequest, reqType);
 		Property property = validateProperty.getOrValidateProperty(garbageConnectionRequest);
+		enrichAdditionalDetailsFromUnit(garbageConnectionRequest, property);
 		validateProperty.validatePropertyFields(property, garbageConnectionRequest.getRequestInfo());
 		mDMSValidator.validateMasterForCreateRequest(garbageConnectionRequest);
 		enrichmentService.enrichGarbageConnection(garbageConnectionRequest, reqType);
@@ -238,6 +239,64 @@ public class GcServiceImpl implements GcService {
 		 * garbageConnectionRequest.getRequestInfo()));
 		 */
 		return Arrays.asList(garbageConnectionRequest.getGarbageConnection());
+	}
+
+	@SuppressWarnings("unchecked")
+	private void enrichAdditionalDetailsFromUnit(GarbageConnectionRequest request, Property property) {
+		if (request == null || request.getGarbageConnection() == null || property == null || CollectionUtils.isEmpty(property.getUnits())) {
+			return;
+		}
+
+		String unitId = request.getGarbageConnection().getUnitId();
+		if (StringUtils.isEmpty(unitId)) {
+			return;
+		}
+
+		Optional<Unit> selectedUnitOptional = property.getUnits().stream()
+				.filter(unit -> unitId.equals(unit.getId()))
+				.findFirst();
+
+		if (!selectedUnitOptional.isPresent()) {
+			return;
+		}
+
+		Unit selectedUnit = selectedUnitOptional.get();
+		Map<String, Object> connectionAdditionalDetails = new HashMap<>();
+		Object existingAdditionalDetails = request.getGarbageConnection().getAdditionalDetails();
+
+		if (existingAdditionalDetails instanceof Map) {
+			connectionAdditionalDetails.putAll((Map<String, Object>) existingAdditionalDetails);
+		}
+
+		Object derivedDefAmount = connectionAdditionalDetails.get(GCConstants.DEF_AMOUNT);
+		if (ObjectUtils.isEmpty(derivedDefAmount)) {
+			derivedDefAmount = extractDefAmountFromUnit(selectedUnit);
+		}
+		connectionAdditionalDetails.put(GCConstants.DEF_AMOUNT, ObjectUtils.isEmpty(derivedDefAmount) ? "100" : derivedDefAmount);
+
+		Object payloadFloorNo = connectionAdditionalDetails.get(GCConstants.FLOOR_NO);
+		if (ObjectUtils.isEmpty(payloadFloorNo)) {
+			Integer floorNo = selectedUnit.getFloorNo();
+			connectionAdditionalDetails.put(GCConstants.FLOOR_NO, floorNo == null ? "" : floorNo);
+		}
+
+		request.getGarbageConnection().setAdditionalDetails(connectionAdditionalDetails);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object extractDefAmountFromUnit(Unit unit) {
+		if (unit == null || !(unit.getAdditionalDetails() instanceof Map)) {
+			return null;
+		}
+
+		Map<String, Object> unitAdditionalDetails = (Map<String, Object>) unit.getAdditionalDetails();
+		if (!ObjectUtils.isEmpty(unitAdditionalDetails.get(GCConstants.DEF_AMOUNT))) {
+			return unitAdditionalDetails.get(GCConstants.DEF_AMOUNT);
+		}
+		if (!ObjectUtils.isEmpty(unitAdditionalDetails.get("amount"))) {
+			return unitAdditionalDetails.get("amount");
+		}
+		return null;
 	}
 
 	private void validateDisconnectionRequest(GarbageConnectionRequest waterConnectionRequest) {

@@ -657,7 +657,8 @@ public class WorkflowNotificationService {
                 connectionRequest.getRequestInfo(), businessServiceName);
         if (businessService != null && businessService.getStates() != null && businessService.getStates().size() > 0) {
             for (State state : businessService.getStates()) {
-                if (GCConstants.PENDING_FOR_CONNECTION_ACTIVATION.equalsIgnoreCase(state.getState())) {
+                // PENDING_FOR_CONNECTION_ACTIVATION removed from NewGC; use PENDING_FOR_PAYMENT SLA
+                if (GCConstants.PENDING_FOR_PAYMENT_STATUS_CODE.equalsIgnoreCase(state.getState())) {
                     resultSla = String.valueOf((state.getSla() == null ? 0L : state.getSla()) / 86400000);
                 }
             }

@@ -401,10 +401,17 @@ public class EnrichmentService {
 	 * @param garbageConnectionRequest WaterConnectionRequest Object
 	 */
 	public void postStatusEnrichment(GarbageConnectionRequest garbageConnectionRequest) {
-		if (GCConstants.ACTIVATE_CONNECTION
-				.equalsIgnoreCase(garbageConnectionRequest.getGarbageConnection().getProcessInstance().getAction())) {
+		String action = garbageConnectionRequest.getGarbageConnection().getProcessInstance().getAction();
+		String appStatus = garbageConnectionRequest.getGarbageConnection().getApplicationStatus();
+
+		if (GCConstants.ACTIVATE_CONNECTION.equalsIgnoreCase(action)) {
+			// Reconnect / other flows: ACTIVATE_CONNECTION still sets connection number
 			setConnectionNO(garbageConnectionRequest);
-			// Set connection execution date to current time when connection is activated
+			garbageConnectionRequest.getGarbageConnection().setConnectionExecutionDate(System.currentTimeMillis());
+		} else if (GCConstants.ACTION_PAY.equalsIgnoreCase(action)
+				&& GCConstants.STATUS_APPROVED.equalsIgnoreCase(appStatus)) {
+			// NewGC trimmed flow: PAY goes directly to CONNECTION_ACTIVATED
+			setConnectionNO(garbageConnectionRequest);
 			garbageConnectionRequest.getGarbageConnection().setConnectionExecutionDate(System.currentTimeMillis());
 		}
 	}

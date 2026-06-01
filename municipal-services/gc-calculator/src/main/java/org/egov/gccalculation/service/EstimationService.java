@@ -321,28 +321,29 @@ public class EstimationService {
                 }
             } else {
                 // Flat rate calculation
-                request.setTaxPeriodFrom(criteria.getFrom());
-                request.setTaxPeriodTo(criteria.getTo());
+//                request.setTaxPeriodFrom(criteria.getFrom());
+//                request.setTaxPeriodTo(criteria.getTo());
 
                 // Pro-rate charge if connection execution date is after tax period start
-                if (request.getTaxPeriodFrom() > 0 && request.getTaxPeriodTo() > 0
-                        && waterConnection.getConnectionExecutionDate() > request.getTaxPeriodFrom()) {
-
-                    long milliBetweenConnDate = Math.abs(request.getTaxPeriodTo() - waterConnection.getConnectionExecutionDate());
-                    long milliBetweenQuarter = Math.abs(request.getTaxPeriodTo() - request.getTaxPeriodFrom());
-
-                    long daysConn = TimeUnit.MILLISECONDS.toDays(milliBetweenConnDate) + 1;
-                    long daysQuarter = TimeUnit.MILLISECONDS.toDays(milliBetweenQuarter) + 1;
-
-                    waterCharge = BigDecimal.valueOf(daysConn * (applicableBillSlab.getMinimumCharge() / daysQuarter))
-                            .setScale(2, RoundingMode.HALF_UP);
-
-                    log.info("Pro-rated billing: Connection started on {} ({} days out of {} days), charge: {} (from {})",
-                            new Date(waterConnection.getConnectionExecutionDate()), daysConn, daysQuarter,
-                            waterCharge, applicableBillSlab.getMinimumCharge());
-                } else {
-                    waterCharge = BigDecimal.valueOf(applicableBillSlab.getMinimumCharge());
-                }
+//                if (request.getTaxPeriodFrom() > 0 && request.getTaxPeriodTo() > 0
+//                        && waterConnection.getConnectionExecutionDate() > request.getTaxPeriodFrom()) {
+//
+//                    long milliBetweenConnDate = Math.abs(request.getTaxPeriodTo() - waterConnection.getConnectionExecutionDate());
+//                    long milliBetweenQuarter = Math.abs(request.getTaxPeriodTo() - request.getTaxPeriodFrom());
+//
+//                    long daysConn = TimeUnit.MILLISECONDS.toDays(milliBetweenConnDate) + 1;
+//                    long daysQuarter = TimeUnit.MILLISECONDS.toDays(milliBetweenQuarter) + 1;
+//
+//                    waterCharge = BigDecimal.valueOf(daysConn * (applicableBillSlab.getMinimumCharge() / daysQuarter))
+//                            .setScale(2, RoundingMode.HALF_UP);
+//
+//                    log.info("Pro-rated billing: Connection started on {} ({} days out of {} days), charge: {} (from {})",
+//                            new Date(waterConnection.getConnectionExecutionDate()), daysConn, daysQuarter,
+//                            waterCharge, applicableBillSlab.getMinimumCharge());
+//                } else {
+//                    waterCharge = BigDecimal.valueOf(applicableBillSlab.getMinimumCharge());
+//                }
+				waterCharge = BigDecimal.valueOf(applicableBillSlab.getMinimumCharge());
 
                 // NO frequency-based division needed anymore!
                 // Monthly connections now receive monthly tax periods (not quarterly divided by 3)
