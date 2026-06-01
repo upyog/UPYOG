@@ -98,7 +98,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 .ts(System.currentTimeMillis())
                 .build();
             User user = userService.getUniqueUser(username, tenantId, UserType.fromValue(userType), requestInfo);
-            
+            user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
             if (user == null) {
                 log.error("User not found in database for username: {}, tenantId: {}, userType: {}", username, tenantId, userType);
                 throw new BadCredentialsException("User not found");
@@ -230,8 +230,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     
     private boolean isPasswordMatch(Boolean isOtpBased, String password, User user, Authentication authentication) {
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-        final Map<String, String> details = (Map<String, String>) authentication.getDetails();
-        String isCallInternal = details != null ? details.get("isInternal") : null;
+        final Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
+        String isCallInternal = details != null ? (String) details.get("isInternal") : null;
         
         // Log the validation attempt
         log.info("Password validation - OTP based: {}, Internal call: {}, User: {}", 
@@ -244,7 +244,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 log.warn("Skipping OTP validation for internal system call - User: {}", user.getUsername());
                 return true;
             }
-            user.setOtpReference(password);
+//            user.setOtpReference(password);
+            user.setOtpReference((String) details.get("otp"));    
+            user.setOtpValidationMandatory((boolean) details.get("otpValidationMandatory"));   
+            
             try {
                 boolean otpValid = userService.validateOtp(user);
                 log.info("OTP validation result for user {}: {}", user.getUsername(), otpValid);

@@ -56,7 +56,7 @@
 <script>
 function openVoucher(){
     var vid = document.getElementById("voucherId").value;
-    alert("voucherId = " + vid);
+    /* alert("voucherId = " + vid); */
     var url = "/services/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid=" + vid;
     window.open(url, '', 'width=900, height=700');
 }

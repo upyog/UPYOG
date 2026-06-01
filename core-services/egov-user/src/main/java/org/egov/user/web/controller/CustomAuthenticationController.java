@@ -6,6 +6,7 @@ import org.egov.user.domain.model.SecureUser;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.UserService;
+import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,11 +57,19 @@ public class CustomAuthenticationController {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    
+    @Autowired
+    private UserService useService;
+    
+    @Autowired
+    private EncryptionDecryptionUtil encryptionDecryptionUtil;
 
     @PostMapping("/token")
     public ResponseEntity<?> authenticate(@RequestParam("grant_type") String grantType,
                                         @RequestParam(value = "username", required = false) String username,
                                         @RequestParam(value = "password", required = false) String password,
+                                        @RequestParam(value = "otp", required = false) String otp,
+                                        @RequestParam(value = "otpValidationMandatory", required = false) boolean otpValidationMandatory,
                                         @RequestParam(value = "tenantId", required = false) String tenantId,
                                         @RequestParam(value = "userType", required = false) String userType,
                                         @RequestParam(value = "scope", required = false) String scope,
@@ -71,7 +80,7 @@ public class CustomAuthenticationController {
 
         try {
             if ("password".equals(grantType)) {
-                return handlePasswordGrant(username, password, tenantId, userType, scope, request);
+                return handlePasswordGrant(username, password,otp,otpValidationMandatory, tenantId, userType, scope, request);
             } else if ("client_credentials".equals(grantType)) {
                 return handleClientCredentialsGrant(scope);
             } else {
@@ -88,6 +97,160 @@ public class CustomAuthenticationController {
                 .body(createErrorResponse("server_error", "Token generation failed: " + e.getMessage()));
         }
     }
+    
+    private ResponseEntity<?> handlePasswordGrant(String username, String password, String otp,
+			boolean otpValidationMandatory, String tenantId, String userType, String scope,
+			HttpServletRequest request) {
+    	// CRITICAL FIX: Fallback to HttpServletRequest parameters if @RequestParam didn't capture them
+        // This handles cases where parameters might be in different encoding or Content-Type
+        // Pattern already proven working in line 114 of this same controller
+        if (username == null) {
+            username = request.getParameter("username");
+            // Support citizen login with mobileNumber parameter (common in UPYOG frontends)
+            if (username == null) {
+                username = request.getParameter("mobileNumber");
+                if (username != null) {
+                    log.info("Using mobileNumber parameter as username for login");
+                }
+            }
+        }
+        if (password == null) {
+            password = request.getParameter("password");
+        }
+        if (tenantId == null) {
+            tenantId = request.getParameter("tenantId");
+        }
+        if (userType == null) {
+            userType = request.getParameter("userType");
+        }
+        if (scope == null) {
+            scope = request.getParameter("scope");
+        }
+
+        log.info("Handling password grant for user: {} in tenant: {} with userType: {}", username, tenantId, userType);
+
+        if (username == null || password == null || tenantId == null || userType == null) {
+            log.error("Missing required parameters after fallback - username: {}, password: {}, tenantId: {}, userType: {}",
+                     username != null, password != null, tenantId, userType);
+            return ResponseEntity.badRequest()
+                .body(createErrorResponse("invalid_request", "Missing required parameters"));
+        }
+
+        try {
+            // Create authentication token with details
+            UsernamePasswordAuthenticationToken authToken = 
+                new UsernamePasswordAuthenticationToken(username, password);
+            
+            // Set additional details for custom authentication provider
+            Map<String, Object> details = new HashMap<>();
+            details.put("tenantId", tenantId);
+            details.put("userType", userType);
+            details.put("otp", otp);
+            details.put("otpValidationMandatory", otpValidationMandatory);
+            // Only set isInternal if it was explicitly passed as a parameter
+            // Never hardcode it to "true" for regular user login
+            if (request.getParameter("isInternal") != null) {
+                details.put("isInternal", request.getParameter("isInternal"));
+            }
+            authToken.setDetails(details);
+            
+            // Authenticate using existing providers
+            Authentication authentication = authenticationManager.authenticate(authToken);
+            
+            if (authentication.isAuthenticated() && authentication.getPrincipal() instanceof SecureUser) {
+                SecureUser secureUser = (SecureUser) authentication.getPrincipal();
+                
+                // Reset failed login attempts - SecureUser.getUser() returns contract User
+                if (secureUser.getUser() != null && secureUser.getUser().getUuid() != null) {
+                    try {
+                        // SecureUser.getUser() already returns the contract User type
+                        userService.resetFailedLoginAttempts(secureUser.getUser());
+                    } catch (Exception e) {
+                        log.warn("Could not reset failed login attempts for user: {} - {}", username, e.getMessage());
+                    }
+                }
+                
+                // Generate tokens
+                String accessToken = generateAccessToken(secureUser, scope);
+                String refreshToken = generateRefreshToken(secureUser);
+
+                Map<String, Object> response = createSuccessResponse(accessToken, refreshToken, scope, secureUser);
+                
+                log.info("Successfully generated tokens for user: {}", username);
+                return ResponseEntity.ok(response);
+            } else {
+                throw new BadCredentialsException("Authentication failed - invalid user type");
+            }
+            
+        } catch (AuthenticationException e) {
+            log.warn("Authentication failed for user: {} - {}", username, e.getMessage());
+            
+            // Handle failed login using existing service
+            try {
+                RequestInfo requestInfo = RequestInfo.builder()
+                    .action("authenticate")
+                    .ts(System.currentTimeMillis())
+                    .build();
+                User user = userService.getUniqueUser(username, tenantId, UserType.fromValue(userType), requestInfo);
+                if (user != null) {
+                    userService.handleFailedLogin(user, getClientIpAddress(request), requestInfo);
+                }
+            } catch (Exception ex) {
+                log.warn("Could not handle failed login for user: {} - {}", username, ex.getMessage());
+            }
+            
+            throw new BadCredentialsException("Invalid username or password");
+        } catch (Exception e) {
+            log.error("Unexpected error during password grant", e);
+            throw new RuntimeException("Authentication failed", e);
+        }
+	}
+
+//	@PostMapping("/otptoken")
+//    public ResponseEntity<?> otpToken(@RequestParam("grant_type") String grantType,
+//                                        @RequestParam(value = "username", required = true) String username,
+//                                        @RequestParam(value = "password", required = true) String password,
+//                                        @RequestParam(value = "otp", required = true) String otp,
+//                                        @RequestParam(value = "otpValidationMandatory", required = true) boolean otpValidationMandatory,
+//                                        @RequestParam(value = "tenantId", required = true) String tenantId,
+//                                        @RequestParam(value = "userType", required = true) String userType,
+//                                        @RequestParam(value = "scope", required = false) String scope,
+//                                        @RequestParam(value = "isInternal", required = false) String isInternal,
+//                                        HttpServletRequest request) {
+//
+//        log.info("Custom token endpoint called with grant_type: {}", grantType);
+//
+//        try {
+//            if ("password".equals(grantType)) {
+//            	ResponseEntity<?> handlePasswordGrant = handlePasswordGrant(username, password, tenantId, userType, scope, request);
+//            	Map<String, Object> response =
+//                        (Map<String, Object>) handlePasswordGrant.getBody();
+//
+//                String authToken = (String) response.get("access_token");
+//            	RequestInfo requestInfo = RequestInfo.builder().action("Post").ver("1").authToken(authToken).apiId(tenantId).build();
+//            	UserType type = UserType.fromValue(userType);
+//            	User user = userService.getUniqueUser(username, tenantId, type, requestInfo);
+//            	user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
+//                user.setOtpReference(otp);
+//                user.setOtpValidationMandatory(otpValidationMandatory);
+//                userService.validateOtp(user);
+//                return handlePasswordGrant;
+//            } else if ("client_credentials".equals(grantType)) {
+//                return handleClientCredentialsGrant(scope);
+//            } else {
+//                return ResponseEntity.badRequest()
+//                    .body(createErrorResponse("unsupported_grant_type", "Grant type not supported: " + grantType));
+//            }
+//        } catch (BadCredentialsException e) {
+//            log.error("Authentication failed for user: {}", username, e);
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                .body(createErrorResponse("invalid_grant", e.getMessage()));
+//        } catch (Exception e) {
+//            log.error("Token generation failed", e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(createErrorResponse("server_error", "Token generation failed: " + e.getMessage()));
+//        }
+//    }
 
     private ResponseEntity<?> handlePasswordGrant(String username, String password,
                                                 String tenantId, String userType,
