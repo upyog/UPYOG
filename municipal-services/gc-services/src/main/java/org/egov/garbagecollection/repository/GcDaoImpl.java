@@ -146,7 +146,16 @@ public class GcDaoImpl implements GcDao {
 
 		else {
 			String applicationNo = garbageConnectionRequest.getGarbageConnection().getApplicationNo();
-			gcProducer.push(gcConfiguration.getWorkFlowUpdateTopic(), applicationNo, garbageConnectionRequest);
+			// For NewGC trimmed flow: PAY → CONNECTION_ACTIVATED directly.
+			// Must push to the main update topic so the connectionNo is persisted.
+			if (GCConstants.ACTION_PAY.equalsIgnoreCase(reqAction)
+					&& GCConstants.STATUS_APPROVED.equalsIgnoreCase(
+							garbageConnectionRequest.getGarbageConnection().getApplicationStatus())) {
+				garbageConnectionRequest.getGarbageConnection().setStatus(Connection.StatusEnum.ACTIVE);
+				gcProducer.push(updateWaterConnection, applicationNo, garbageConnectionRequest);
+			} else {
+				gcProducer.push(gcConfiguration.getWorkFlowUpdateTopic(), applicationNo, garbageConnectionRequest);
+			}
 		}
 	}
 	

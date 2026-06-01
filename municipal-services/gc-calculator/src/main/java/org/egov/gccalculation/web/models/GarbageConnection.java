@@ -41,7 +41,6 @@ import io.swagger.annotations.ApiModelProperty;
 	private Integer noOfTaps = null;
 
 
-
 	public GarbageConnection waterSource(String waterSource) {
 		this.waterSource = waterSource;
 		return this;
