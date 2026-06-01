@@ -265,7 +265,7 @@ public class InboxService {
             response.setNearingSlaCount(0);
             return response;
         }     
-        processCriteria.setStatus(statusIds);
+//        processCriteria.setStatus(statusIds);
         processCriteria.setBusinessIds(new ArrayList<>(businessKeys));
         processCriteria.setTenantId(criteria.getTenantId());
         processCriteria.setIsProcessCountCall(Boolean.FALSE);
@@ -300,6 +300,10 @@ public class InboxService {
                                                 : newVal
                         ));
 
+        // Modules that require a searcher-based count override (e.g. multi-tenant, citizen/stakeholder aggregation).
+        // For all other modules, fall back to the WF processInstanceMap size.
+        int searcherCount = resolveSearcherCount(moduleName, criteria, statusIdNameMap, requestInfo);
+        int totalCount = (searcherCount >= 0) ? searcherCount : processInstanceMap.size();
 
         // FIXED: store businessIds as List<String>, not CSV
         moduleSearchCriteria.put(srvMap.get("applNosParam"), new ArrayList<>(processInstanceMap.keySet()));
@@ -344,11 +348,31 @@ public class InboxService {
         }
 
         // Build final response
-        response.setTotalCount(processInstanceMap.size());   // CORRECT
+        response.setTotalCount(totalCount);
         response.setItems(inboxes);
         response.setStatusMap(statusMap);
 
         return response;
+    }
+    /**
+     * Returns a searcher-based total count for modules that cannot rely on the WF processInstanceMap size
+     * (e.g. multi-tenant stakeholders, cross-role aggregation).
+     *
+     * Returns -1 as a sentinel value when the module should fall back to processInstanceMap.size().
+     * To add a new module: simply add a case below and delegate to its filter service.
+     */
+    private int resolveSearcherCount(String moduleName, InboxSearchCriteria criteria,
+            HashMap<String, String> statusIdNameMap, RequestInfo requestInfo) {
+        if (moduleName == null) return -1;
+        switch (moduleName.toLowerCase()) {
+            case "bpa-service":
+                return bpaInboxFilterService.fetchApplicationCountFromSearcher(criteria, statusIdNameMap, requestInfo);
+            // Add more modules here as needed, e.g.:
+            // case "ndc":
+            //     return ndcInboxFilterService.fetchApplicationCountFromSearcher(criteria, statusIdNameMap, requestInfo);
+            default:
+                return -1;
+        }
     }
 
     private Map<String, Object> handleModuleSearchCriteria(
