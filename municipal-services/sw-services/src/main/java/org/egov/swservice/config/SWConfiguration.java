@@ -247,4 +247,10 @@ public class SWConfiguration {
     @Value("${egov.sw.enriched.index}") // This matches your application properties key
     private String swIndex;
 
+    @Value("${elasticsearch.username:}")
+    private String elasticsearchUsername;
+
+    @Value("${elasticsearch.password:}")
+    private String elasticsearchPassword;
+
 }

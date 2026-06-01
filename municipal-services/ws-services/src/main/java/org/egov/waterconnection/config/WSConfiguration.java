@@ -269,4 +269,10 @@ public class WSConfiguration {
 	@Value("${elasticsearch.index.name}")
 	private String elasticsearchIndexName;
 	
+	@Value("${elasticsearch.username:}")
+	private String elasticsearchUsername;
+
+	@Value("${elasticsearch.password:}")
+	private String elasticsearchPassword;
+	
 }
