@@ -53,7 +53,9 @@ public class NDCConstants {
     
 	public static final String ACTION_VOID = "VOID";
 	
-	public static final String ACTION_INITIATE = "INITIATE";	
+	public static final String ACTION_INITIATE = "INITIATE";
+
+	public static final String ACTION_SENDBACKTOCITIZEN = "SENDBACKTOCITIZEN";
 
 	public static final String INITIATED_TIME = "SubmittedOn";
 
