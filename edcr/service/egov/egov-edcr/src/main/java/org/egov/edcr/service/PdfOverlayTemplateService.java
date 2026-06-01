@@ -39,7 +39,6 @@ public class PdfOverlayTemplateService {
                        float gapDrawingToTables,
                        float gapTop) throws IOException {
 
-        File expandedPdf = expandPageCanvas(inputPdf, expandRight, expandBottom);
         File outputFile = new File(outputFileName);
         File panelPdf = File.createTempFile("impose_panel_", ".pdf");
 
@@ -49,35 +48,46 @@ public class PdfOverlayTemplateService {
                 fos.write(panelBytes);
             }
 
-            try (PDDocument baseDoc = PDDocument.load(expandedPdf);
+            try (PDDocument baseDoc = PDDocument.load(inputPdf);
                  PDDocument panelDoc = PDDocument.load(panelPdf);
-                 PDDocument outputDoc = new PDDocument();
-                 PDDocument flattenedPanelDoc = flattenPanelPages(panelDoc)) {
+                 PDDocument outputDoc = new PDDocument()) {
 
                 LayerUtility lu = new LayerUtility(outputDoc);
+                PDDocument flattenedPanelDoc = flattenPanelPages(panelDoc);
                 PDFormXObject panelForm = lu.importPageAsForm(flattenedPanelDoc, 0);
                 float panelW = flattenedPanelDoc.getPage(0).getMediaBox().getWidth();
                 float panelH = flattenedPanelDoc.getPage(0).getMediaBox().getHeight();
 
                 for (int i = 0; i < baseDoc.getNumberOfPages(); i++) {
                     PDPage srcPage = baseDoc.getPage(i);
-                    PDPage outPage = outputDoc.importPage(srcPage);
-                    PDRectangle box = outPage.getMediaBox();
+                    float origW = srcPage.getMediaBox().getWidth();
+                    float origH = srcPage.getMediaBox().getHeight();
 
-                    float pageW = box.getWidth();
-                    float pageH = box.getHeight();
-                    float drawingW = pageW - expandRight;
-                    float targetX = drawingW + gapDrawingToTables;
-                    float targetY = Math.max(8f, pageH - gapTop - panelH);
+                    float targetX = origW + gapDrawingToTables;
+                    float minWToFit = targetX + panelW + 12f;
+                    float minHToFit = gapTop + panelH + 12f;
 
-                    float availableW = pageW - targetX - 8f;
-                    float availableH = pageH - gapTop - 8f;
-                    float scale = Math.min(1.35f, Math.min(availableW / panelW, availableH / panelH));
+                    float newW = Math.max(origW + expandRight, minWToFit);
+                    float newH = Math.max(origH + expandBottom, minHToFit);
+
+                    PDPage outPage = new PDPage(new PDRectangle(newW, newH));
+                    outputDoc.addPage(outPage);
+
+                    PDFormXObject drawingForm = lu.importPageAsForm(baseDoc, i);
+                    float drawingY = newH - origH;
+                    float panelY = newH - gapTop - panelH;
 
                     try (PDPageContentStream cs = new PDPageContentStream(outputDoc, outPage,
                             PDPageContentStream.AppendMode.APPEND, true, true)) {
-                        cs.transform(Matrix.getTranslateInstance(targetX, targetY));
-                        cs.transform(Matrix.getScaleInstance(scale, scale));
+                        cs.setNonStrokingColor(1f, 1f, 1f);
+                        cs.addRect(0, 0, newW, newH);
+                        cs.fill();
+
+                        // Keep drawing at top-left; grow canvas to right/bottom only.
+                        cs.transform(Matrix.getTranslateInstance(0, drawingY));
+                        cs.drawForm(drawingForm);
+
+                        cs.transform(Matrix.getTranslateInstance(targetX, panelY - drawingY));
                         cs.drawForm(panelForm);
                     }
                 }
@@ -94,9 +104,6 @@ public class PdfOverlayTemplateService {
                 outputDoc.save(outputFile);
             }
         } finally {
-            if (expandedPdf.exists()) {
-                expandedPdf.delete();
-            }
             if (panelPdf.exists()) {
                 panelPdf.delete();
             }
