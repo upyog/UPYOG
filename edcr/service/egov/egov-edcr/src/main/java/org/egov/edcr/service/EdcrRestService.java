@@ -62,10 +62,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -142,6 +144,16 @@ public class EdcrRestService {
     private static Logger LOG = LogManager.getLogger(EdcrRestService.class);
 
     public static final String FILE_DOWNLOAD_URL = "%s/edcr/rest/dcr/downloadfile";
+    
+    // Define the BPA roles that require UUID-scoped filtering
+    private static final Set<String> BPA_STAKEHOLDER_ROLES = new HashSet<>(Arrays.asList(
+        "BPA_ARCHITECT",
+        "BPA_ENGINEER",
+        "BPA_BUILDER",
+        "BPA_STRUCTURALENGINEER",
+        "BPA_TOWNPLANNER",
+        "BPA_DESIGNER"
+    ));
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -632,15 +644,24 @@ public class EdcrRestService {
         LOG.info("[fetchEdcr] Resolved userId from userInfo    : '{}'", userId);
 
         // When the user is ANONYMOUS, clear userId
-        if (userInfo != null && StringUtils.isNoneBlank(userId) && userInfo.getRoles() != null
-                && !userInfo.getRoles().isEmpty()) {
-            List<String> roles = userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
-            LOG.info("[fetchEdcr] User roles                       : {}", roles);
-            if (roles.contains("ANONYMOUS")) {
-                LOG.info("[fetchEdcr] User is ANONYMOUS, clearing userId for open search");
-                userId = "";
-            }
-        }
+//        if (userInfo != null && StringUtils.isNoneBlank(userId) && userInfo.getRoles() != null
+//                && !userInfo.getRoles().isEmpty()) {
+//            List<String> roles = userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+//            LOG.info("[fetchEdcr] User roles : {}", roles);
+//            if (roles.contains("ANONYMOUS")) {
+//                LOG.info("[fetchEdcr] User is ANONYMOUS, clearing userId for open search");
+//                userId = "";
+//            }
+//        }
+        
+        List<String> roles = (userInfo != null && userInfo.getRoles() != null)
+        	    ? userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toList())
+        	    : Collections.emptyList();
+
+        	boolean isBpaStakeholderRole = roles.stream().anyMatch(BPA_STAKEHOLDER_ROLES::contains);
+
+        	LOG.info("[fetchEdcr] isBpaStakeholderRole flag          : {}", isBpaStakeholderRole);
+
 
         if (edcrRequest.getLimit() == null)
             edcrRequest.setLimit(-1);
@@ -701,8 +722,10 @@ public class EdcrRestService {
             String specificTenant = resolveSpecificTenant(edcrRequest.getTenantId());
             LOG.info("[fetchEdcr] specificTenant after resolve     : '{}'", specificTenant);
 
+//            String queryString = searchAtStateTenantLevel(
+//                    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder, specificTenant);
             String queryString = searchAtStateTenantLevel(
-                    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder, specificTenant);
+            	    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder, specificTenant, isBpaStakeholderRole);
 
             LOG.info("[fetchEdcr] Generated SQL query              :\n{}", queryString);
 
@@ -793,15 +816,20 @@ public class EdcrRestService {
         LOG.info("[fetchCount] Resolved userId from userInfo    : '{}'", userId);
 
         // When the user is ANONYMOUS, clear userId
-        if (userInfo != null && StringUtils.isNoneBlank(userId) && userInfo.getRoles() != null
-                && !userInfo.getRoles().isEmpty()) {
-            List<String> roles = userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
-            LOG.info("[fetchCount] User roles                       : {}", roles);
-            if (roles.contains("ANONYMOUS")) {
-                LOG.info("[fetchCount] User is ANONYMOUS, clearing userId");
-                userId = "";
-            }
-        }
+//        if (userInfo != null && StringUtils.isNoneBlank(userId) && userInfo.getRoles() != null
+//                && !userInfo.getRoles().isEmpty()) {
+//            List<String> roles = userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+//            LOG.info("[fetchCount] User roles                       : {}", roles);
+//            if (roles.contains("ANONYMOUS")) {
+//                LOG.info("[fetchCount] User is ANONYMOUS, clearing userId");
+//                userId = "";
+//            }
+//        }
+        List<String> roles = (userInfo != null && userInfo.getRoles() != null)
+        	    ? userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toList())
+        	    : Collections.emptyList();
+
+        	boolean isBpaStakeholderRole = roles.stream().anyMatch(BPA_STAKEHOLDER_ROLES::contains);
 
         boolean onlyTenantId = edcrRequest != null && isBlank(edcrRequest.getEdcrNumber())
                 && isBlank(edcrRequest.getTransactionNumber()) && isBlank(edcrRequest.getAppliactionType())
@@ -834,7 +862,7 @@ public class EdcrRestService {
             LOG.info("[fetchCount] specificTenant after resolve     : '{}'", specificTenant);
 
             String queryString = searchAtStateTenantLevel(
-                    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder, specificTenant);
+            	    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder, specificTenant, isBpaStakeholderRole);
 
             LOG.info("[fetchCount] Generated SQL query for count   :\n{}", queryString);
 
@@ -968,7 +996,7 @@ public class EdcrRestService {
     
     private String searchAtStateTenantLevel(final EdcrRequest edcrRequest, UserInfo userInfo, String userId,
             boolean onlyTenantId, final Map<String, String> params, boolean isStakeholder,
-            String specificTenant) {
+            String specificTenant, boolean isBpaStakeholderRole) {
 
         LOG.info("[searchAtStateTenantLevel] ========== START ==========");
         LOG.info("[searchAtStateTenantLevel] specificTenant               : '{}'", specificTenant);
@@ -1042,17 +1070,23 @@ public class EdcrRestService {
             // UUID filter:
             // Case 1: onlyTenantId or isStakeholder — existing behavior
             // Case 2: specificTenant + userId present — new condition (scope by uuid)
-            if ((onlyTenantId || isStakeholder) && userInfo != null && isNotBlank(userId)) {
-                LOG.info("[searchAtStateTenantLevel] Adding uuid filter (onlyTenantId/isStakeholder) — userId: '{}'", userId);
-                queryStr.append("and appln.thirdPartyUserCode=:thirdPartyUserCode ");
-                params.put("thirdPartyUserCode", userId);
-            } else if (isNotBlank(specificTenant) && userInfo != null && isNotBlank(userId)) {
-                LOG.info("[searchAtStateTenantLevel] Adding uuid filter (specificTenant+userId) — userId: '{}'", userId);
-                queryStr.append("and appln.thirdPartyUserCode=:thirdPartyUserCode ");
-                params.put("thirdPartyUserCode", userId);
-            } else {
-                LOG.info("[searchAtStateTenantLevel] No uuid filter applied");
-            }
+         // UUID filter is ONLY applied when the user holds one of the designated BPA stakeholder roles.
+         // All other roles (e.g. CITIZEN, EMPLOYEE, ANONYMOUS, etc.) skip this filter entirely.
+         if (isBpaStakeholderRole && userInfo != null && isNotBlank(userId)) {
+             if ((onlyTenantId || isStakeholder)) {
+                 LOG.info("[searchAtStateTenantLevel] Adding uuid filter (onlyTenantId/isStakeholder + BPA role) — userId: '{}'", userId);
+                 queryStr.append("and appln.thirdPartyUserCode=:thirdPartyUserCode ");
+                 params.put("thirdPartyUserCode", userId);
+             } else if (isNotBlank(specificTenant)) {
+                 LOG.info("[searchAtStateTenantLevel] Adding uuid filter (specificTenant + BPA role) — userId: '{}'", userId);
+                 queryStr.append("and appln.thirdPartyUserCode=:thirdPartyUserCode ");
+                 params.put("thirdPartyUserCode", userId);
+             } else {
+                 LOG.info("[searchAtStateTenantLevel] BPA role present but no matching scope condition — uuid filter skipped");
+             }
+         } else {
+             LOG.info("[searchAtStateTenantLevel] Non-BPA role or missing userId — uuid filter NOT applied. roles qualify: {}", isBpaStakeholderRole);
+         }
 
             String appliactionType = edcrRequest.getAppliactionType();
             if (isNotBlank(appliactionType)) {

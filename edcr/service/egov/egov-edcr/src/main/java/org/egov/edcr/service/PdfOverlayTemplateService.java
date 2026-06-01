@@ -72,7 +72,7 @@ public class PdfOverlayTemplateService {
 
                     float availableW = pageW - targetX - 8f;
                     float availableH = pageH - gapTop - 8f;
-                    float scale = Math.min(1f, Math.min(availableW / panelW, availableH / panelH));
+                    float scale = Math.min(1.35f, Math.min(availableW / panelW, availableH / panelH));
 
                     try (PDPageContentStream cs = new PDPageContentStream(outputDoc, outPage,
                             PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -82,6 +82,15 @@ public class PdfOverlayTemplateService {
                     }
                 }
 
+                if (outputDoc.getNumberOfPages() > 0) {
+                    org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination dest =
+                            new org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination();
+                    dest.setPage(outputDoc.getPage(0));
+                    dest.setLeft(0);
+                    dest.setTop((int) outputDoc.getPage(0).getMediaBox().getHeight());
+                    dest.setZoom(1.25f);
+                    outputDoc.getDocumentCatalog().setOpenAction(dest);
+                }
                 outputDoc.save(outputFile);
             }
         } finally {
@@ -166,8 +175,8 @@ public class PdfOverlayTemplateService {
         });
 
         addLabeledKeyValueSection(sections, "left", "Plot Area Details", d.path("plotAreaDetails"), new String[][] {
-                {"Plot Area as per Drawing", "plotAreaAsPerDrawing"},
-                {"Plot Area as per Declaration", "plotAreaAsPerDeclaration"}
+                {"Plot Area as per Drawing (m²)", "plotAreaAsPerDrawing"},
+                {"Plot Area as per Declaration (m²)", "plotAreaAsPerDeclaration"}
         });
 
         addLabeledKeyValueSection(sections, "left", "Built Up Area", d.path("builtUpArea"), new String[][] {
@@ -196,15 +205,15 @@ public class PdfOverlayTemplateService {
         addTripleSection(sections, "left", "Building Height", d.path("buildingHeight"),
                 Arrays.asList("Description", "Permissible", "Proposed"),
                 new String[][] {
-                        {"Building Height", safeText(d.path("buildingHeight"), "permissibleBuildingHeight"), safeText(d.path("buildingHeight"), "proposedBuildingHeight")},
-                        {"Total Building Height", safeText(d.path("buildingHeight"), "permissibleTotalHeight"), safeText(d.path("buildingHeight"), "proposedTotalHeight")}
+                        {"Building Height (m)", safeText(d.path("buildingHeight"), "permissibleBuildingHeight"), safeText(d.path("buildingHeight"), "proposedBuildingHeight")},
+                        {"Total Building Height (m)", safeText(d.path("buildingHeight"), "permissibleTotalHeight"), safeText(d.path("buildingHeight"), "proposedTotalHeight")}
                 });
 
         addLabeledKeyValueSection(sections, "left", "Road Description", d.path("roadDescription"), new String[][] {
-                {"Approach Road Width", "approachRoadWidth"},
-                {"Rear Side Road Width", "rearSideRoadWidth"},
-                {"Side 1 Road Width", "side1RoadWidth"},
-                {"Side 2 Road Width", "side2RoadWidth"}
+                {"Approach Road Width (m)", "approachRoadWidth"},
+                {"Rear Side Road Width (m)", "rearSideRoadWidth"},
+                {"Side 1 Road Width (m)", "side1RoadWidth"},
+                {"Side 2 Road Width (m)", "side2RoadWidth"}
         });
 
         addLabeledKeyValueSection(sections, "left", "Office Use", d.path("officeUse"), new String[][] {
@@ -297,8 +306,9 @@ public class PdfOverlayTemplateService {
                 String floorValue = safeText(item, "floor");
                 for (int i = 0; i < keys.size(); i++) {
                     String value = safeText(item, keys.get(i));
-                    // For Total row, numeric cells should show 0.0 instead of N/A when absent.
-                    if (i > 0 && "Total".equalsIgnoreCase(floorValue) && "N/A".equals(value)) {
+                    // For Total row, only numeric columns should fallback to 0.0.
+                    // Keep Occupancy/Sub Occupancy column as N/A.
+                    if (i > 1 && "Total".equalsIgnoreCase(floorValue) && "N/A".equals(value)) {
                         value = "0.0";
                     }
                     row.add(value);
@@ -369,7 +379,7 @@ public class PdfOverlayTemplateService {
         s.put("side", side);
         s.put("showHeader", true);
         s.put("title", "Block Wise Summary");
-        s.put("columns", Arrays.asList("Total Plot Area", "Ground Coverage", "Total Built-up Area", "Total FAR Area"));
+        s.put("columns", Arrays.asList("Total Plot Area (m²)", "Ground Coverage (m²)", "Total Built-up Area (m²)", "Total FAR Area (m²)"));
         s.put("rows", Arrays.asList(Arrays.asList(
                 safeText(bws, "totalPlotArea"),
                 safeText(bws, "groundCoverage"),
@@ -499,5 +509,6 @@ public class PdfOverlayTemplateService {
         return (pt * 25.4f) / 72f;
     }
 }
+
 
 
