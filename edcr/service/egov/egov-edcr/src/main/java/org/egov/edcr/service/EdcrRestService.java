@@ -462,7 +462,9 @@ public class EdcrRestService {
         }
 
         // Final print
-        LOG.info("Final tenantId after resolution: {}", tenantId);
+//        LOG.info("Final tenantId after resolution: {}", tenantId);
+        tenantId=thirdPartyTenant;        
+        LOG.info("Final tenantId after resolution: {}", tenantId);        
 
         if (edcrApplnDtl.getDxfFileId() != null)
             edcrDetail.setDxfFile(format(getFileDownloadUrl(edcrApplnDtl.getDxfFileId().getFileStoreId(), tenantId)));
