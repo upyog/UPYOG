@@ -210,7 +210,7 @@ public class CustomAuthenticationController {
 //    public ResponseEntity<?> otpToken(@RequestParam("grant_type") String grantType,
 //                                        @RequestParam(value = "username", required = true) String username,
 //                                        @RequestParam(value = "password", required = true) String password,
-//                                        @RequestParam(value = "otp", required = true) String otp,
+//                                        @RequestParam(value = "otp", required = false) String otp,
 //                                        @RequestParam(value = "otpValidationMandatory", required = true) boolean otpValidationMandatory,
 //                                        @RequestParam(value = "tenantId", required = true) String tenantId,
 //                                        @RequestParam(value = "userType", required = true) String userType,
