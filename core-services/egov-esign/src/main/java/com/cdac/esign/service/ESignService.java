@@ -104,7 +104,8 @@ public class ESignService {
         
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
         Float lastTextY = (Float)positionMap.getOrDefault("lastY", 50) - 64;
-        appearance.setPageRect(new Rectangle(380, lastTextY < 0 ? 0 : lastTextY, 160, 64));
+        Float textX = (Float)positionMap.getOrDefault("pageWidth", 540.0) - 160;
+        appearance.setPageRect(new Rectangle(textX, lastTextY < 0 ? 0 : lastTextY, 160, 64));
         appearance.setPageNumber((Integer)positionMap.getOrDefault("lastPage", 1));
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
@@ -506,12 +507,12 @@ public class ESignService {
         	positionMap.put("lastX", listener.getLastX());
         	positionMap.put("lastY", listener.getLastY());
         }
+        positionMap.put("pageWidth", document.getLastPage().getPageSizeWithRotation().getWidth());
         
         document.close();
         pdfReader.close();
     	
-        positionMap.put("lastPage", totalPages);
-        
+        positionMap.put("lastPage", totalPages);       
     	return positionMap;
     }
 }
