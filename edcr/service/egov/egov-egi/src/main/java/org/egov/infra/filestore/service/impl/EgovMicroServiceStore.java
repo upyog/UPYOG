@@ -337,12 +337,13 @@ public class EgovMicroServiceStore implements FileStoreService {
                 LOG.debug(String.format("Uploading .....  %s    with size %s   ", f.getName(), f.length()));
 
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-            LOG.info("Filestore tenant::::"+ApplicationThreadLocals.getFilestoreTenantID());
+            LOG.info("Filestore tenant::::"+ApplicationThreadLocals.getFullTenantID());
             MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
             map.add("file", new FileSystemResource(f.getName()));
-			map.add("tenantId",
-					ApplicationThreadLocals.getFilestoreTenantID() == null ? ApplicationThreadLocals.getFullTenantID()
-							: ApplicationThreadLocals.getFilestoreTenantID());
+//			map.add("tenantId",
+//					ApplicationThreadLocals.getFilestoreTenantID() == null ? ApplicationThreadLocals.getFullTenantID()
+//							: ApplicationThreadLocals.getFilestoreTenantID());
+            map.add("tenantId", ApplicationThreadLocals.getFullTenantID());
             map.add("module", moduleName);
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(map,
                     headers);
@@ -352,9 +353,12 @@ public class EgovMicroServiceStore implements FileStoreService {
             if (LOG.isDebugEnabled())
                 LOG.debug(String.format("Upload completed for  %s   with filestoreid   ", f.getName(),
                         fileMapper.getFileStoreId()));
-			fileMapper.setTenantId(
-					ApplicationThreadLocals.getFilestoreTenantID() == null ? ApplicationThreadLocals.getFullTenantID()
-							: ApplicationThreadLocals.getFilestoreTenantID());
+//			fileMapper.setTenantId(
+//					ApplicationThreadLocals.getFilestoreTenantID() == null ? ApplicationThreadLocals.getFullTenantID()
+//							: ApplicationThreadLocals.getFilestoreTenantID());
+            
+            fileMapper.setTenantId(ApplicationThreadLocals.getFullTenantID());
+            
             fileMapper.setContentType(mimeType);
             if (closeStream)
                 Files.deleteIfExists(Paths.get(fileName));
