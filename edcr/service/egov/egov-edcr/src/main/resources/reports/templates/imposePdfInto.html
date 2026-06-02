@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    @page { margin: 8pt; }
+    body { font-family: Arial, sans-serif; font-size: 12px; color: #111; margin: 0; }
+    .section { margin: 0 0 8pt 0; page-break-inside: avoid; }
+    .title { background: #2f5d94; color: #fff; padding: 6pt 8pt; font-weight: 700; border: 1px solid #38485a; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th, td { border: 1px solid #555; padding: 6pt 7pt; vertical-align: top; word-wrap: break-word; }
+    th { background: #e4edf8; font-weight: 700; }
+    tr:nth-child(even) td { background: #f7fbff; }`r`n    .title { font-size: 12px; }`r`n    table { line-height: 1.25; }
+    .remarks-table td { background: #fff !important; }
+  </style>
+</head>
+<body>
+  <div th:each="section : ${sections}" class="section">
+    <div class="title" th:if="${section['hideTitle'] == null or !section['hideTitle']}" th:text="${section.title}">Section</div>
+    <table th:classappend="${section['hideTitle']} ? 'remarks-table' : ''">
+      <thead th:if="${section.showHeader}">
+        <tr>
+          <th th:each="col : ${section.columns}" th:text="${col}">Col</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="row : ${section.rows}">
+          <td th:each="cell : ${row}" th:text="${cell}">Value</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
+

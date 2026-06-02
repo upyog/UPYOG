@@ -124,23 +124,23 @@ public class EdcrValidator {
                     if (StringUtils.isNotBlank(value) && value.length() > 1) {
                         value = value.trim();
                         boolean isAllow = Pattern.matches(ALPHANUMERIC_WITH_SPECIAL_CHARS, value);
-                        if (!isAllow) {
-                            LOG.info("The Inalid Value is" + value);
-                            error.setErrorCode("EDCR-31");
-                            error.setErrorMessage(String.format(INVALID_CHAR, f.getName(), INVALID_CHAR_MSG));
-                            return error;
-                        }
-
-                        if(f.getName().equals("applicantName") && StringUtils.isNotBlank(value) && value.length() > 1)
-                        {
-                        	 boolean isAllowName = Pattern.matches(ALPHA_CHARS, value);
-                        	  if (!isAllowName) {
-                                  LOG.info("The Inalid Value is" + value);
-                                  error.setErrorCode("EDCR-31");
-                                  error.setErrorMessage(String.format(INVALID_CHAR, f.getName(), INVALID_CHAR_MSG));
-                                  return error;
-                              }
-                        }
+//                        if (!isAllow) {
+//                            LOG.info("The Inalid Value is" + value);
+//                            error.setErrorCode("EDCR-31");
+//                            error.setErrorMessage(String.format(INVALID_CHAR, f.getName(), INVALID_CHAR_MSG));
+//                            return error;
+//                        }
+//
+//                        if(f.getName().equals("applicantName") && StringUtils.isNotBlank(value) && value.length() > 1)
+//                        {
+//                        	 boolean isAllowName = Pattern.matches(ALPHA_CHARS, value);
+//                        	  if (!isAllowName) {
+//                                  LOG.info("The Inalid Value is" + value);
+//                                  error.setErrorCode("EDCR-31");
+//                                  error.setErrorMessage(String.format(INVALID_CHAR, f.getName(), INVALID_CHAR_MSG));
+//                                  return error;
+//                              }
+//                        }
 
                         if (value.length() > 256) {
                             error.setErrorCode("EDCR-32");

@@ -2,6 +2,7 @@ package org.egov.edcr.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.thymeleaf.TemplateEngine;
@@ -53,6 +55,12 @@ import org.joda.time.LocalDate;
 
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Base64;
+
+
 @Service
 public class PlanReportServiceV2 {
 
@@ -60,14 +68,14 @@ public class PlanReportServiceV2 {
 
     private static final Logger LOG = LogManager.getLogger(PlanReportServiceV2.class);
 
-    @Value("${edcr.service.url:}")
-    private String edcr_internal_service_url;
-
-    @Value("${edcr.report.mseva.logo.url:}")
-    private String edcr_mseva_logo_url;
-
-    @Value("${edcr.report.logodep.url:}")
-    private String edcr_logodep_url;
+//    @Value("${edcr.service.url:}")
+//    private String edcr_internal_service_url;
+//
+//    @Value("${edcr.report.mseva.logo.url:}")
+//    private String edcr_mseva_logo_url;
+//
+//    @Value("${edcr.report.logodep.url:}")
+//    private String edcr_logodep_url;
 
     @Autowired
     private TemplateEngine templateEngine;
@@ -115,7 +123,7 @@ public class PlanReportServiceV2 {
 
         int count = 1;
 
-        model.put("logo", edcr_logodep_url);
+        
         model.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         model.put("applicantName", dcrApplication.getApplicantName());
         model.put("licensee", dcrApplication.getArchitectInformation());
@@ -135,8 +143,27 @@ public class PlanReportServiceV2 {
         model.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
         model.put("surrenderRoadArea", plan.getTotalSurrenderRoadArea());
-        model.put("egovLogo", edcr_mseva_logo_url);
-        model.put("cityLogo", edcr_logodep_url);
+//        model.put("egovLogo", edcr_mseva_logo_url);
+//        model.put("logo", edcr_logodep_url);
+        
+        ClassPathResource logoResource =
+                new ClassPathResource("images/logo_dep.png");
+        
+        ClassPathResource footerLogoResource =
+                new ClassPathResource("images/mseva.png");        
+
+        try {
+			model.put("logo", logoResource.getURL().toString());
+			model.put("egovLogo", footerLogoResource.getURL().toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+//        model.put("logo", imageUrlToBase64(edcr_logodep_url));
+//        model.put("egovLogo", imageUrlToBase64(edcr_mseva_logo_url));
+        
+        //model.put("cityLogo", edcr_logodep_url);
         model.put("numberOfFloors", plan.getPlanInformation().getNumberOfFloors());
         model.put("ulbType", plan.getPlanInformation().getUlbType());
         model.put("district", plan.getPlanInformation().getDistrict());
@@ -245,8 +272,22 @@ public class PlanReportServiceV2 {
         if (plan.getErrors() != null && plan.getErrors().size() > 0)
             finalReportStatus = false;
 
-        model.put("logo", edcr_logodep_url);
+        //model.put("logo", edcr_logodep_url);
         model.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
+        
+        ClassPathResource logoResource =
+                new ClassPathResource("images/logo_dep.png");   
+        
+        ClassPathResource footerLogoResource =
+                new ClassPathResource("images/mseva.png"); 
+
+        try {
+			model.put("logo", logoResource.getURL().toString());	
+			model.put("egovLogo", footerLogoResource.getURL().toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         // applicationType — safe extraction with fallback
         String applicationTypeVal = null;
@@ -285,8 +326,8 @@ public class PlanReportServiceV2 {
         model.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
         model.put("surrenderRoadArea",  plan.getTotalSurrenderRoadArea());
-        model.put("egovLogo",           edcr_mseva_logo_url);
-        model.put("cityLogo",           edcr_logodep_url);
+//        model.put("egovLogo",           edcr_mseva_logo_url);
+//        model.put("cityLogo",           edcr_logodep_url);
         model.put("numberOfFloors",     plan.getPlanInformation().getNumberOfFloors());
         model.put("ulbType",            plan.getPlanInformation().getUlbType());
         model.put("district",           plan.getPlanInformation().getDistrict());
@@ -732,6 +773,29 @@ public class PlanReportServiceV2 {
 
         LOG.info("Status terminology update completed.");
     }
+    
+    public static String imageUrlToBase64(String imageUrl) {
+
+        try (InputStream inputStream = new URL(imageUrl).openStream();
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+
+            byte[] imageBytes = baos.toByteArray();
+
+            String base64 = Base64.getEncoder().encodeToString(imageBytes);
+
+            return "data:image/png;base64," + base64;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert image URL to Base64", e);
+        }
+    }
 
     private static String swapStatus(String status) {
         if (status == null) return null;
@@ -748,6 +812,14 @@ public class PlanReportServiceV2 {
             LOG.info("Generating report for application: {}", dcrApplication.getApplicationNumber());
             Map<String, Object> model = buildReportModelV2(plan, dcrApplication);
             replaceStatusWithFulfillTerms(model);
+            // Keep backward compatibility: set finalReportData only when Plan supports it.
+            try {
+                java.lang.reflect.Method m = plan.getClass().getMethod("setFinalReportData", java.util.Map.class);
+                m.invoke(plan, model);
+            } catch (NoSuchMethodException ignored) {
+                LOG.debug("Plan does not expose setFinalReportData(Map). Skipping.");
+            }
+
             byte[] pdfBytes = generatePdf(model);
 
             InputStream reportStream = new ByteArrayInputStream(pdfBytes);

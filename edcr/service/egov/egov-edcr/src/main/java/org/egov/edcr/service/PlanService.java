@@ -367,8 +367,17 @@ public class PlanService {
         LOG.info("Setting mdms master data");
         plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
         LOG.info("mdms master data set successfully");
+        
+        if (plan.getDrawingPreference() != null &&
+                org.egov.infra.utils.StringUtils.isNotBlank(plan.getDrawingPreference().getUom())
+                && (DxfFileConstants.INCH_UOM.equalsIgnoreCase(plan.getDrawingPreference().getUom())
+                        || DxfFileConstants.FEET_UOM.equalsIgnoreCase(plan.getDrawingPreference().getUom()))) {
+        	plan.getErrors().put("units not in meters", "The Drawing should be in meters.");
+		}
+        
 //        plan = applyRules(plan, amd, cityDetails);
-        if(plan.getErrors().containsKey("Not authorized to scrutinize") || plan.getErrors().containsKey("Invalid ULB")) {
+        if(plan.getErrors().containsKey("Not authorized to scrutinize") || plan.getErrors().containsKey("Invalid ULB")
+        		|| plan.getErrors().containsKey("units not in meters")) {
         	
         }else {
         	plan = applyRules(plan, amd, cityDetails,features);
