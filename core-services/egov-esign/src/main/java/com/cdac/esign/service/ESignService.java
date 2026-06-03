@@ -15,7 +15,7 @@ import java.security.PrivateKey;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
@@ -104,7 +104,8 @@ public class ESignService {
         
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
         Float lastTextY = (Float)positionMap.getOrDefault("lastY", 50) - 64;
-        appearance.setPageRect(new Rectangle(380, lastTextY < 0 ? 0 : lastTextY, 160, 64));
+        Float textX = (Float)positionMap.getOrDefault("pageWidth", 540.0) - 160;
+        appearance.setPageRect(new Rectangle(textX, lastTextY < 0 ? 0 : lastTextY, 160, 64));
         appearance.setPageNumber((Integer)positionMap.getOrDefault("lastPage", 1));
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
@@ -128,6 +129,23 @@ public class ESignService {
         		designation = "Citizen";
         	else
         		designation = designations.get(0);
+        	
+        	if("Citizen".equalsIgnoreCase(designation)) {
+        		List<String> roles = requestInfo.getUserInfo().getRoles().stream()
+        		.filter(role -> (role.getTenantId().equalsIgnoreCase("pb")
+        				|| role.getTenantId().equalsIgnoreCase(tenantId)) 
+        				&& !role.getTenantId().equalsIgnoreCase("Citizen"))
+        		.map(role -> {
+        			String[] roleNameAr = role.getName().split(" ");
+        			return roleNameAr[roleNameAr.length - 1];
+        			
+        		})
+        		.collect(Collectors.toList());
+        		
+        		if(!CollectionUtils.isEmpty(roles))
+        			designation = roles.get(0);
+        		
+        	}
         	
         	List<String> ulbTypeList = JsonPath.read(mdmsData, "$.MdmsRes.tenant.tenants.[?(@.code == '" + tenantId + "')].city.ulbType");
 			String ulbType = CollectionUtils.isEmpty(ulbTypeList) ? "" : ulbTypeList.get(0);
@@ -489,12 +507,12 @@ public class ESignService {
         	positionMap.put("lastX", listener.getLastX());
         	positionMap.put("lastY", listener.getLastY());
         }
+        positionMap.put("pageWidth", document.getLastPage().getPageSizeWithRotation().getWidth());
         
         document.close();
         pdfReader.close();
     	
-        positionMap.put("lastPage", totalPages);
-        
+        positionMap.put("lastPage", totalPages);       
     	return positionMap;
     }
 }

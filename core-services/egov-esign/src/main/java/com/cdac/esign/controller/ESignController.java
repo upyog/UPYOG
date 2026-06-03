@@ -1,10 +1,13 @@
 package com.cdac.esign.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.cdac.esign.form.RequestXmlForm;
 import com.cdac.esign.service.ESignService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class ESignController {
@@ -48,12 +52,11 @@ public class ESignController {
         	
         	if(!StringUtils.isEmpty(userInfoRowData)) {
             	JSONObject userInfoObj = new JSONObject(userInfoRowData);
-            	User userInfo = User.builder()
-            			.uuid(userInfoObj.getString("uuid"))
-            			.name(userInfoObj.getString("name"))
-            			.userName(userInfoObj.getString("userName"))
-            			.type(userInfoObj.getString("type"))
-            			.build();
+            	userInfoObj.remove("locale");
+            	userInfoObj.remove("active");
+            	userInfoObj.remove("permanentCity");
+            	ObjectMapper mapper = new ObjectMapper();
+            	User userInfo = mapper.readValue(userInfoObj.toString(), User.class);
             	requestInfo.setUserInfo(userInfo);
             }
             // 2. UPDATED: Passing the dynamic 'signerName' instead of null
