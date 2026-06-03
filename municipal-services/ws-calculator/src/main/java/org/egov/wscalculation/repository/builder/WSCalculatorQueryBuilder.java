@@ -1191,7 +1191,7 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			addToPreparedStatement(preparedStatement, criteria.getConnectionNos());
 		}
 		query.append(" ORDER BY mr.connectionNo ASC, mr.currentReadingDate DESC \r\n");
-		
-		return addPaginationWrapper(query, preparedStatement, criteria);
+		return query.toString();
+//		return addPaginationWrapper(query, preparedStatement, criteria);
 	}
 }
