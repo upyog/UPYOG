@@ -199,7 +199,8 @@ public class EgovMicroServiceStore implements FileStoreService {
                         result.getBody().getFiles().get(0).getFileStoreId(),
                         fileName
                 );
-                fileMapper.setTenantId(ApplicationThreadLocals.getFilestoreTenantID());
+//                fileMapper.setTenantId(ApplicationThreadLocals.getFilestoreTenantID());
+                fileMapper.setTenantId(ApplicationThreadLocals.getFullTenantID());
                 fileMapper.setContentType(mimeType);
 
                 LOG.info("File '{}' uploaded successfully with filestoreId '{}'", file.getAbsolutePath(), fileMapper.getFileStoreId());
@@ -261,7 +262,8 @@ public class EgovMicroServiceStore implements FileStoreService {
 
                 MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
                 map.add("file", new FileSystemResource(file));
-                map.add("tenantId", ApplicationThreadLocals.getFilestoreTenantID());
+//                map.add("tenantId", ApplicationThreadLocals.getFilestoreTenantID());
+                map.add("tenantId", ApplicationThreadLocals.getFullTenantID());
                 map.add("module", moduleName);
 
                 HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers);
@@ -276,7 +278,8 @@ public class EgovMicroServiceStore implements FileStoreService {
                         result.getBody().getFiles().get(0).getFileStoreId(),
                         fileName
                 );
-                fileMapper.setTenantId(ApplicationThreadLocals.getFilestoreTenantID());
+//                fileMapper.setTenantId(ApplicationThreadLocals.getFilestoreTenantID());
+                fileMapper.setTenantId(ApplicationThreadLocals.getFullTenantID());
                 fileMapper.setContentType(mimeType);
 
                 LOG.info("File '{}' uploaded successfully with filestoreId '{}'", file.getAbsolutePath(), fileMapper.getFileStoreId());
@@ -337,32 +340,60 @@ public class EgovMicroServiceStore implements FileStoreService {
                 LOG.debug(String.format("Uploading .....  %s    with size %s   ", f.getName(), f.length()));
 
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-            LOG.info("Filestore tenant::::"+ApplicationThreadLocals.getFilestoreTenantID());
+            LOG.info("Filestore tenant::::"+ApplicationThreadLocals.getFullTenantID());
             MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
             map.add("file", new FileSystemResource(f.getName()));
-			map.add("tenantId",
-					ApplicationThreadLocals.getFilestoreTenantID() == null ? ApplicationThreadLocals.getFullTenantID()
-							: ApplicationThreadLocals.getFilestoreTenantID());
+//			map.add("tenantId",
+//					ApplicationThreadLocals.getFilestoreTenantID() == null ? ApplicationThreadLocals.getFullTenantID()
+//							: ApplicationThreadLocals.getFilestoreTenantID());
+            map.add("tenantId", ApplicationThreadLocals.getFullTenantID());
             map.add("module", moduleName);
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(map,
                     headers);
+            LOG.info("URL: {}", url);
+            LOG.info("Request Body     : {}", request.getBody());
             ResponseEntity<StorageResponse> result = restTemplate.postForEntity(url, request, StorageResponse.class);
             FileStoreMapper fileMapper = new FileStoreMapper(result.getBody().getFiles().get(0).getFileStoreId(),
                     fileName);
             if (LOG.isDebugEnabled())
                 LOG.debug(String.format("Upload completed for  %s   with filestoreid   ", f.getName(),
                         fileMapper.getFileStoreId()));
-			fileMapper.setTenantId(
-					ApplicationThreadLocals.getFilestoreTenantID() == null ? ApplicationThreadLocals.getFullTenantID()
-							: ApplicationThreadLocals.getFilestoreTenantID());
+//			fileMapper.setTenantId(
+//					ApplicationThreadLocals.getFilestoreTenantID() == null ? ApplicationThreadLocals.getFullTenantID()
+//							: ApplicationThreadLocals.getFilestoreTenantID());
+            
+            fileMapper.setTenantId(ApplicationThreadLocals.getFullTenantID());
+            
             fileMapper.setContentType(mimeType);
             if (closeStream)
                 Files.deleteIfExists(Paths.get(fileName));
 
             return fileMapper;
         } catch (RestClientException | IOException e) {
-            LOG.error("Error while Saving to FileStore", e);
 
+            LOG.error("=========== FILESTORE ERROR START ===========");
+            LOG.error("URL              : {}", url);
+            LOG.error("TenantId         : {}", ApplicationThreadLocals.getFullTenantID());
+            LOG.error("Module           : {}", moduleName);
+            LOG.error("File Name        : {}", fileName);
+            LOG.error("Mime Type        : {}", mimeType);
+            LOG.error("closeStream      : {}", closeStream);
+
+            LOG.error("Exception Type   : {}", e.getClass().getName());
+            LOG.error("Error Message    : {}", e.getMessage());
+
+            if (e instanceof org.springframework.web.client.HttpStatusCodeException) {
+
+                org.springframework.web.client.HttpStatusCodeException ex =
+                        (org.springframework.web.client.HttpStatusCodeException) e;
+
+                LOG.error("HTTP Status      : {}", ex.getStatusCode());
+                LOG.error("Status Text      : {}", ex.getStatusText());
+                LOG.error("Response Body    : {}", ex.getResponseBodyAsString());
+            }
+
+            LOG.error("Complete StackTrace:", e);
+            LOG.error("=========== FILESTORE ERROR END ===========");
         }
         return null;
 
@@ -388,7 +419,7 @@ public class EgovMicroServiceStore implements FileStoreService {
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
             map.add("file", new FileSystemResource(f.getName()));
-            map.add("tenantId", StringUtils.isEmpty(tenantId) ? ApplicationThreadLocals.getFilestoreTenantID() : tenantId);
+            map.add("tenantId", StringUtils.isEmpty(tenantId) ? ApplicationThreadLocals.getFullTenantID() : tenantId);
             map.add("module", moduleName);
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(map,
                     headers);
@@ -398,7 +429,7 @@ public class EgovMicroServiceStore implements FileStoreService {
             if (LOG.isDebugEnabled())
                 LOG.debug(String.format("Upload completed for  %s   with filestoreid   ", f.getName(),
                         fileMapper.getFileStoreId()));
-            fileMapper.setTenantId(ApplicationThreadLocals.getFilestoreTenantID());
+            fileMapper.setTenantId(ApplicationThreadLocals.getFullTenantID());
             fileMapper.setContentType(mimeType);
             if (closeStream)
                 Files.deleteIfExists(Paths.get(fileName));
@@ -428,7 +459,8 @@ public class EgovMicroServiceStore implements FileStoreService {
 
         fileStoreId = normalizeString(fileStoreId);
         moduleName = normalizeString(moduleName);
-        String urls = url + "/id?tenantId=" + ApplicationThreadLocals.getFilestoreTenantID() + "&fileStoreId=" + fileStoreId;
+//        String urls = url + "/id?tenantId=" + ApplicationThreadLocals.getFilestoreTenantID() + "&fileStoreId=" + fileStoreId;
+        String urls = url + "/id?tenantId=" + ApplicationThreadLocals.getFullTenantID() + "&fileStoreId=" + fileStoreId;
         if (LOG.isDebugEnabled())
             LOG.debug(String.format("fetch file fron url   %s   ", urls));
 
@@ -482,7 +514,7 @@ public class EgovMicroServiceStore implements FileStoreService {
     public File fetch(String fileStoreId, String moduleName, String tenantId) {
         fileStoreId = normalizeString(fileStoreId);
         moduleName = normalizeString(moduleName);
-        String tenant = StringUtils.isEmpty(tenantId) ? ApplicationThreadLocals.getFilestoreTenantID() : tenantId;
+        String tenant = StringUtils.isEmpty(tenantId) ? ApplicationThreadLocals.getFullTenantID() : tenantId;
         String urls = url + "/id?tenantId=" + tenant + "&fileStoreId=" + fileStoreId;
         LOG.info(String.format("fetch file from url   %s   ", urls));
         Path path = Paths.get("/tmp/" + RandomUtils.nextLong());

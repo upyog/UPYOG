@@ -152,7 +152,8 @@ public class LocalDiskFileStoreService implements FileStoreService {
             }
 
             fileMapper.setContentType(mimeType);
-            fileMapper.setTenantId(ApplicationThreadLocals.getFilestoreTenantID());
+//            fileMapper.setTenantId(ApplicationThreadLocals.getFilestoreTenantID());
+            fileMapper.setTenantId(ApplicationThreadLocals.getFullTenantID());
 
             if (deleteFile) {
                 boolean deleted = safeDeleteWithRetry(file.toPath(), 3, 200);

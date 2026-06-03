@@ -553,7 +553,9 @@ public class EdcrRestService {
         }
         edcrDetail.setApplicationSubType(String.valueOf(applnDtls[12]));
         edcrDetail.setPermitNumber(String.valueOf(applnDtls[13]));
-        String tenantId = String.valueOf(applnDtls[0]);
+//        String tenantId = String.valueOf(applnDtls[0]);
+        String tenantId = String.valueOf(applnDtls[15]);
+        LOG.info("Full tenant id : " + tenantId);
         if (applnDtls[14] != null)
             edcrDetail.setPermitDate(new LocalDate(String.valueOf(applnDtls[14])).toDate());
 
@@ -1038,7 +1040,7 @@ public class EdcrRestService {
                     .append("dxf.fileStoreId as dxfFileId,scrudxf.fileStoreId as scrutinizedDxfFileId,")
                     .append("rofile.fileStoreId as reportOutputId,pdfile.fileStoreId as planDetailFileStore,")
                     .append("appln.applicationDate,appln.applicationNumber,appln.applicationType,")
-                    .append("appln.serviceType,appln.planPermitNumber,appln.permitApplicationDate from ")
+                    .append("appln.serviceType,appln.planPermitNumber,appln.permitApplicationDate , appln.thirdpartyusertenant from ")
                     .append(value.getKey()).append(".edcr_application appln, ")
                     .append(value.getKey()).append(".edcr_application_detail dtl, ")
                     .append(value.getKey()).append(".eg_filestoremap dxf, ")

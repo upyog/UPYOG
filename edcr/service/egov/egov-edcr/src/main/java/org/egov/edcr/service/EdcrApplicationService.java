@@ -239,6 +239,15 @@ public class EdcrApplicationService {
 
     private File saveDXF(EdcrApplication edcrApplication) {
         FileStoreMapper fileStoreMapper = addToFileStore(edcrApplication.getDxfFile());
+        LOG.info("Returned FileStoreMapper : {}", fileStoreMapper);
+        if (fileStoreMapper == null) {
+            LOG.error("FileStoreMapper is null");
+            return null;
+        }
+
+        LOG.info("FileStoreId : {}", fileStoreMapper.getFileStoreId());
+        LOG.info("TenantId    : {}", fileStoreMapper.getTenantId());
+        
         File dxfFile = fileStoreService.fetch(fileStoreMapper.getFileStoreId(), FILESTORE_MODULECODE);
         planService.buildDocuments(edcrApplication, fileStoreMapper, null, null);
         List<EdcrApplicationDetail> edcrApplicationDetails = edcrApplication.getEdcrApplicationDetails();
