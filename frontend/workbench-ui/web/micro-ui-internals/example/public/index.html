@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="https://egov-dev-assets.s3.ap-south-1.amazonaws.com/browser-icon.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap"
+    rel='stylesheet' type='text/css'>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#00bcd1" />
+  <title>UPYOG</title>
+  <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css@1.5.29/dist/index.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css@1.5.53/dist/index.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-naljal-css@1.0.1/dist/index.css" />
+  <!-- <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css@1.5.41/dist/index.css" /> -->
+
+  <!-- <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css/dist/index.css"/> -->
+  <!-- <script src="https://s3.ap-south-1.amazonaws.com/egov-dev-assets/globalConfigs.js"></script> -->
+  <!-- <script src="%REACT_APP_GLOBAL%"></script> -->
+
+  <script>
+    var globalConfigs = (function() {
+  var stateTenantId = 'pb'
+  var gmaps_api_key = 'AIzaSyDjSk-Bw1OuiOE-5K7jsP6KGN2rbcN7iBk'
+  var finEnv = 'uat'
+  var contextPath = 'workbench-ui';
+  var centralInstanceEnabled = false;
+  var footerBWLogoURL = 'https://s3.ap-south-1.amazonaws.com/egov-uat-assets/digit-footer-bw.png'
+  var footerLogoURL = 'https://s3.ap-south-1.amazonaws.com/egov-uat-assets/digit-footer.png'
+  var upyogHomeURL = 'https://mseva-dev.lgpunjab.gov.in/'
+  var assetS3Bucket = 'pg-egov-assets';
+  var mdmsContext = "mdms-v2";
+
+  var getConfig = function (key) {
+    if (key === 'STATE_LEVEL_TENANT_ID') {
+      return stateTenantId;
+    }
+    else if (key === 'GMAPS_API_KEY') {
+      return gmaps_api_key;
+    }
+    else if (key === 'FIN_ENV') {
+      return finEnv;
+    } else if (key === 'ENABLE_SINGLEINSTANCE') {
+      return centralInstanceEnabled;
+    } else if (key === 'DIGIT_FOOTER_BW') {
+      return footerBWLogoURL;
+    } else if (key === 'DIGIT_FOOTER') {
+      return footerLogoURL;
+    } else if (key === 'DIGIT_HOME_URL') {
+      return upyogHomeURL;
+    } else if (key === 'S3BUCKET') {
+      return assetS3Bucket;
+    } else if (key === "JWT_TOKEN"){
+      return "ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0";
+    } else if (key === "MDMS_CONTEXT_PATH") {
+      return mdmsContext;
+    }else if (key === 'CONTEXT_PATH') {
+      return contextPath;
+    }
+  };
+
+  return {
+    getConfig
+  };
+}());
+  </script>
+
+  <style type="text/css">
+    .link-label {
+      color: #1f4ac4 !important;
+    }
+
+    .primary-label-btn {
+      color: #1f4ac4 !important;
+    }
+    #logo-img-container{
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+</body>
+
+</html>
