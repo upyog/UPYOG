@@ -475,7 +475,7 @@ public class UserService {
      * @param user
      * @return
      */
-    public Boolean validateOtp(User user) {
+    public Boolean validateOtp(User user) {    	
         Otp otp = Otp.builder().otp(user.getOtpReference()).identity(user.getMobileNumber()).tenantId(user.getTenantId())
                 .userType(user.getType()).build();
         RequestInfo requestInfo = RequestInfo.builder().action("validate").ver("1").apiId(user.getTenantId()).authToken(null).ts(System.currentTimeMillis()).build();

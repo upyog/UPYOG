@@ -157,7 +157,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             	
             }else {
             	log.info("It is not Citizen/Employee and fixed OTP not enabled or not matching, validating via OTP service");
-                user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
                 isPasswordMatched = isPasswordMatch(isOtpBased, password, user, authentication);
             }
 
