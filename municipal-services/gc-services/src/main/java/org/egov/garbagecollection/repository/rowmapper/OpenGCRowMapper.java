@@ -1,21 +1,29 @@
 package org.egov.garbagecollection.repository.rowmapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbagecollection.constants.GCConstants;
 import org.egov.garbagecollection.web.models.*;
 import org.egov.garbagecollection.web.models.Connection.StatusEnum;
 import org.egov.garbagecollection.web.models.workflow.ProcessInstance;
+import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
 @Component
 public class OpenGCRowMapper implements ResultSetExtractor<List<GarbageConnection>> {
+
+    @Autowired
+    private ObjectMapper mapper;
 	
 	private int full_count=0;
 
@@ -48,7 +56,16 @@ public class OpenGCRowMapper implements ResultSetExtractor<List<GarbageConnectio
                 garbageConnection.setConnectionNo(rs.getString("connectionNo"));
                 garbageConnection.setOldConnectionNo(rs.getString("oldConnectionNo"));
                 garbageConnection.setOldApplication(rs.getBoolean("isoldapplication"));
-                HashMap<String, Object> additionalDetails = new HashMap<>();
+                Map<String, Object> additionalDetails = new LinkedHashMap<>();
+                PGobject pgObj = (PGobject) rs.getObject("additionaldetails");
+                if (pgObj != null && !StringUtils.isEmpty(pgObj.getValue())) {
+                    try {
+                        additionalDetails = mapper.readValue(pgObj.getValue(), new TypeReference<Map<String, Object>>() {
+                        });
+                    } catch (IOException ignored) {
+                        additionalDetails = new LinkedHashMap<>();
+                    }
+                }
 //                additionalDetails.put(GCConstants.INITIAL_METER_READING_CONST, rs.getBigDecimal("initialmeterreading"));
                 additionalDetails.put(GCConstants.APP_CREATED_DATE, rs.getBigDecimal("appCreatedDate"));
                 additionalDetails.put(GCConstants.LOCALITY, rs.getString("locality"));
@@ -114,10 +131,6 @@ public class OpenGCRowMapper implements ResultSetExtractor<List<GarbageConnectio
             }
         }
         if(!StringUtils.isEmpty(uuid)){
-            Double holderShipPercentage = rs.getDouble("holdershippercentage");
-            if (rs.wasNull()) {
-                holderShipPercentage = null;
-            }
             Boolean isPrimaryOwner = rs.getBoolean("isprimaryholder");
             if (rs.wasNull()) {
                 isPrimaryOwner = null;
@@ -131,5 +144,4 @@ public class OpenGCRowMapper implements ResultSetExtractor<List<GarbageConnectio
         }
     }
 }
-
 
