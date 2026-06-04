@@ -599,10 +599,10 @@ public class EdcrApplicationService {
         p1.put("designation", "Licensed Professional");
         arr.add(p1);
 
-        ObjectNode p2 = mapper.createObjectNode();
-        p2.put("signatoryName", txt(frd, "N/A"));
-        p2.put("designation", "Applicant");
-        arr.add(p2);
+//        ObjectNode p2 = mapper.createObjectNode();
+//        p2.put("signatoryName", txt(frd, "N/A"));
+//        p2.put("designation", "Applicant");
+//        arr.add(p2);
         return arr;
     }
 
