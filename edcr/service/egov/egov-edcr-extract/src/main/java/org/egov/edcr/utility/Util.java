@@ -1808,8 +1808,8 @@ public class Util {
             return OccupancyType.OCCUPANCY_B1;
 //        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_B2_COLOR_CODE)
 //            return OccupancyType.OCCUPANCY_B2;
-        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_B3_COLOR_CODE)
-            return OccupancyType.OCCUPANCY_B3;
+//        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_B3_COLOR_CODE)
+//            return OccupancyType.OCCUPANCY_B3;
         else if (pline.getColor() == DxfFileConstants.OCCUPANCY_C1_COLOR_CODE)
             return OccupancyType.OCCUPANCY_C1;
 //        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_C2_COLOR_CODE)
