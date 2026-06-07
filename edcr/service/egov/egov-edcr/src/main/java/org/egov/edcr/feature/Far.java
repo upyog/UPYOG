@@ -306,17 +306,17 @@ public class Far extends FeatureProcess {
 					 */
 					if(!flr.getIsStiltFloor()) {
 						bltUpArea = bltUpArea.add(
-								occupancy.getBuiltUpArea() == null ? BigDecimal.valueOf(0) : occupancy.getBuiltUpArea());
+								occupancy.getBuiltUpArea() == null ? BigDecimal.valueOf(0) : occupancy.getBuiltUpArea()).setScale(2, RoundingMode.HALF_UP);
 						existingBltUpArea = existingBltUpArea
 								.add(occupancy.getExistingBuiltUpArea() == null ? BigDecimal.valueOf(0)
-										: occupancy.getExistingBuiltUpArea());
+										: occupancy.getExistingBuiltUpArea().setScale(2, RoundingMode.HALF_UP));
 						flrArea = flrArea.add(occupancy.getFloorArea());
 						existingFlrArea = existingFlrArea.add(occupancy.getExistingFloorArea());
 						carpetArea = carpetArea.add(occupancy.getCarpetArea());
 						existingCarpetArea = existingCarpetArea.add(occupancy.getExistingCarpetArea());
 					}else {
 						bltUpArea = bltUpArea.add(
-								occupancy.getBuiltUpArea() == null ? BigDecimal.valueOf(0) : occupancy.getBuiltUpArea());
+								occupancy.getBuiltUpArea() == null ? BigDecimal.valueOf(0) : occupancy.getBuiltUpArea()).setScale(2, RoundingMode.HALF_UP);
 					}
 					
 				}
