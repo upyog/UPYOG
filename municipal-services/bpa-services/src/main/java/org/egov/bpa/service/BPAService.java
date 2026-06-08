@@ -417,6 +417,10 @@ public class BPAService {
 		BusinessService businessService = workflowService.getBusinessService(bpa, bpaRequest.getRequestInfo(),
 				bpa.getApplicationNo());
 		
+		if(!bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(workflowName)) {
+			bpaRequest.getBPA().getWorkflow().setAction(BPAConstants.ACTION_CANCEL);
+		}
+		
 		List<BPA> searchResult = getBPAWithBPAId(bpaRequest);
 		if (CollectionUtils.isEmpty(searchResult) || searchResult.size() > 1) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Failed to Update the Application, Found None or multiple applications!");
@@ -508,11 +512,6 @@ public class BPAService {
 					bpa.getWorkflow().setAssignes(assignee);
 					
 				}
-                
-        		if(!bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(workflowName)) {
-        			enrichmentService.setApplicationNo(bpaRequest);
-        			bpaRequest.getBPA().setBusinessService(workflowName);
-        		}
         		
 		wfIntegrator.callWorkFlow(bpaRequest);
 		log.debug("===> workflow done =>" +bpaRequest.getBPA().getStatus()  );
@@ -528,6 +527,12 @@ public class BPAService {
 
 		
 		repository.update(bpaRequest, workflowService.isStateUpdatable(bpa.getStatus(), businessService));
+		
+		if(!bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(workflowName)) {
+			bpaRequest.getBPA().getWorkflow().setAction(BPAConstants.ACTION_INITIATE);
+			this.create(bpaRequest);
+		}
+		
 		return bpaRequest.getBPA();
 
 	}
