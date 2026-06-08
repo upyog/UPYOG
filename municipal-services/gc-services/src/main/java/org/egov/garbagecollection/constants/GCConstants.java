@@ -261,6 +261,7 @@ public class GCConstants {
 	public static final String LOCALITY = "locality";
 	public static final String DEF_AMOUNT = "defAmount";
 	public static final String FLOOR_NO = "floorNo";
+	public static final String IS_RENTED = "isRented";
 	public static final String connectionCategory = "connectionCategory";
 	public static final String OTHER_FEE_CONST = "othersFee";
 

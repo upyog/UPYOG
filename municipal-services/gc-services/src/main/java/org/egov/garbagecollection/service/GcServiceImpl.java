@@ -279,6 +279,8 @@ public class GcServiceImpl implements GcService {
 			Integer floorNo = selectedUnit.getFloorNo();
 			connectionAdditionalDetails.put(GCConstants.FLOOR_NO, floorNo == null ? "" : floorNo);
 		}
+		Object Rented = connectionAdditionalDetails.get(GCConstants.IS_RENTED);
+		connectionAdditionalDetails.put(GCConstants.IS_RENTED, Rented);
 
 		request.getGarbageConnection().setAdditionalDetails(connectionAdditionalDetails);
 	}
