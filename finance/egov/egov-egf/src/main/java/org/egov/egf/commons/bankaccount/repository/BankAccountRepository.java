@@ -64,4 +64,6 @@ public interface BankAccountRepository extends JpaRepository<Bankaccount, Long> 
     Bankaccount findByChartofaccounts_Glcode(final String glcode);
 
     List<Bankaccount> findByBankbranch_Id(final Integer branchId);
+    
+    List<Bankaccount> findByAccountnumber(String accountNumber);
 }

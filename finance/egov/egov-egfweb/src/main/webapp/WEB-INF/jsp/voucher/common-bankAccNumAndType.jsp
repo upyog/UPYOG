@@ -44,4 +44,4 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="accNumList" status="status"> {"Text":"<s:property value="%{chartofaccounts.glcode+'--'+accountnumber+'--'+bankbranch.bank.name}" />","Value":"<s:property value="%{id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }
+  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="accNumList" status="status"> {"Text":"<s:property value="%{chartofaccounts.glcode+'--'+accountnumber+'--'+bankbranch.bank.name}" escapeHtml="false" />","Value":"<s:property value="%{id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }
