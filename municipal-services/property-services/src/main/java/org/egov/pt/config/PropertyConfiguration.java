@@ -86,6 +86,12 @@ public class PropertyConfiguration {
 
     // IDGEN config
 
+    
+    @Value("${elasticsearch.username:}")
+    private String elasticsearchUsername;
+
+    @Value("${elasticsearch.password:}")
+    private String elasticsearchPassword;
     @Value("${egov.idgen.host}")
     private String idGenHost;
 
