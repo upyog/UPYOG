@@ -10,7 +10,7 @@ RUN cd ${WORK_DIR} \
 #RUN chmod +x ./${WORK_DIR}/entrypoint.sh && ./${WORK_DIR}/entrypoint.sh
 
 # Create runtime image
-FROM egovio/wildfly:1-helm-fin-e6312078
+FROM odhub/wildfly:postgres-wildfly-fix1-05062026-1
 
 COPY --from=build /app/egov/egov-ear/target/*.ear /opt/jboss/wildfly/standalone/deployments/
 USER jboss
