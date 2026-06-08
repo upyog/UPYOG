@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.repository.BPARepository;
@@ -70,7 +71,9 @@ public class EDCRService {
 		BPASearchCriteria criteria = new BPASearchCriteria();
 		criteria.setEdcrNumber(bpa.getEdcrNumber());
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
-		if(bpas.size()>0){
+		bpas = bpas.stream().filter(bpaApplication -> !bpaApplication.getStatus().equalsIgnoreCase(BPAConstants.STATUS_CANCELLED))
+				.collect(Collectors.toList());
+		if(bpas.size() > 0){
 			for(int i=0; i<bpas.size(); i++){
 				if(!bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED) && !bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REVOCATED)){
 					throw new CustomException(BPAErrorConstants.DUPLICATE_EDCR,
