@@ -136,9 +136,7 @@ public class EnrichmentService {
 //		 BPA Documents
 		if (!CollectionUtils.isEmpty(bpaRequest.getBPA().getDocuments()))
 			bpaRequest.getBPA().getDocuments().forEach(document -> {
-				if (document.getId() == null) {
-					document.setId(UUID.randomUUID().toString());
-				}
+				document.setId(UUID.randomUUID().toString());
 			});
 		setIdgenIds(bpaRequest);
 	}

@@ -109,7 +109,7 @@ public class EDCRService {
 		TypeRef<List<Double>> typeRef = new TypeRef<List<Double>>(){};
 		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map)bpa.getAdditionalDetails()
 				: new HashMap<String, String>();
-		LinkedList<String> serviceType = context.read("edcrDetail.*.applicationSubType");
+		List<String> serviceType = context.read("edcrDetail.*.applicationSubType");
                 if (serviceType != null && !serviceType.isEmpty() && additionalDetails.get(BPAConstants.SERVICETYPE) != null
                         && !serviceType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.SERVICETYPE))) {
                     throw new CustomException(BPAErrorConstants.INVALID_SERVICE_TYPE,
@@ -119,7 +119,7 @@ public class EDCRService {
 		if(serviceType == null || serviceType.size() == 0){
 			serviceType.add("NEW_CONSTRUCTION");
 		}
-		LinkedList<String> applicationType = context.read("edcrDetail.*.appliactionType");
+		List<String> applicationType = context.read("edcrDetail.*.appliactionType");
                 if (applicationType != null && !applicationType.isEmpty()
                         && additionalDetails.get(BPAConstants.APPLICATIONTYPE) != null
                         && !applicationType.get(0).equalsIgnoreCase(additionalDetails.get(BPAConstants.APPLICATIONTYPE))) {
@@ -131,7 +131,7 @@ public class EDCRService {
 		if(applicationType == null || applicationType.size() == 0){
 			applicationType.add("permit");
 		}
-		LinkedList<String> permitNumber = context.read("edcrDetail.*.permitNumber");
+		List<String> permitNumber = context.read("edcrDetail.*.permitNumber");
 		additionalDetails.put(BPAConstants.SERVICETYPE, serviceType.get(0));
 		additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType.get(0));
                 if (permitNumber !=null &&  !permitNumber.isEmpty() && !permitNumber.get(0).equalsIgnoreCase("null") ) {
@@ -157,9 +157,8 @@ public class EDCRService {
                     }
                     additionalDetails.put(BPAConstants.PERMIT_NO, permitNumber.get(0));
                 }
-		List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area", typeRef);
-		List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight",
-				typeRef);
+		List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area");
+		List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
 
 		if (CollectionUtils.isEmpty(edcrStatus) || !edcrStatus.get(0).equalsIgnoreCase("Accepted")) {
 			throw new CustomException(BPAErrorConstants.INVALID_EDCR_NUMBER, "The EDCR Number is not Accepted " + edcrNo);
@@ -202,7 +201,7 @@ public class EDCRService {
 	 * @param riskType
 	 */
 	private void validateOCEdcr(List<String> OccupancyTypes, List<Double> plotAreas,List<Double> buildingHeights, 
-			LinkedList<String> applicationType,Map<String, List<String>> masterData, String riskType) {
+			List<String> applicationType,Map<String, List<String>> masterData, String riskType) {
 		if (!CollectionUtils.isEmpty(OccupancyTypes) && !CollectionUtils.isEmpty(plotAreas)
 				&& !CollectionUtils.isEmpty(buildingHeights) && !applicationType.get(0).equalsIgnoreCase(BPAConstants.BUILDING_PLAN_OC)) {
 			Double buildingHeight = Collections.max(buildingHeights);

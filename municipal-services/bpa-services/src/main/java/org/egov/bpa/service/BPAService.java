@@ -531,6 +531,13 @@ public class BPAService {
 		
 		if(!bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(workflowName)) {
 			bpaRequest.getBPA().getWorkflow().setAction(BPAConstants.ACTION_INITIATE);
+			bpaRequest.getBPA().getWorkflow().setAssignes(Collections.singletonList(bpa.getAccountId()));
+			bpaRequest.getBPA().setLandId(null);
+			bpaRequest.getBPA().getLandInfo().setId(null);
+			bpaRequest.getBPA().getLandInfo().getAddress().setId(null);
+			bpaRequest.getBPA().getLandInfo().getAddress().getGeoLocation().setId(null);
+			bpaRequest.getBPA().getLandInfo().getOwners().stream().forEach(owner -> owner.setOwnerId(null));
+			bpaRequest.getBPA().getLandInfo().getUnit().stream().forEach(unit -> unit.setId(null));
 			this.create(bpaRequest);
 		}
 		
