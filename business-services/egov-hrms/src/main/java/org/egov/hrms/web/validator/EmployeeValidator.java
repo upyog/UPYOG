@@ -123,30 +123,52 @@ public class EmployeeValidator {
 	 * @param requestInfo the request info from the incoming request
 	 */
 	private void validateZoneAccessUniqueness(ObpasEmployee emp, RequestInfo requestInfo, Map<String, String> errorMap) {
-	    // Build search criteria using zone + category + subcategory + tenantId + assignedTenantId
-	    ObpasEmployeeSearchCriteria searchCriteria = new ObpasEmployeeSearchCriteria();
-	    searchCriteria.setTenantId(emp.getTenantId());
-	    searchCriteria.setZone(emp.getZone());
-	    searchCriteria.setCategory(emp.getCategory());
-	    searchCriteria.setSubcategory(emp.getSubcategory());
-	    if (!StringUtils.isEmpty(emp.getAssignedTenantId())) {
-	        searchCriteria.setAssignedTenantId(emp.getAssignedTenantId());
+	    // 1. Fetch current employee's roles
+	    EmployeeSearchCriteria empCriteria = new EmployeeSearchCriteria();
+	    empCriteria.setTenantId(emp.getTenantId());
+	    empCriteria.setUuids(Collections.singletonList(emp.getUserUUID()));
+	    EmployeeResponse empResponse = employeeService.search(empCriteria, requestInfo);
+	    
+	    if (empResponse == null || CollectionUtils.isEmpty(empResponse.getEmployees())) {
+	        return; // Current employee not found in HRMS, cannot check roles
 	    }
+	    
+	    Employee currentEmployee = empResponse.getEmployees().get(0);
+	    if (currentEmployee.getUser() == null || CollectionUtils.isEmpty(currentEmployee.getUser().getRoles())) {
+	        return; // Current employee has no roles, nothing to conflict with
+	    }
+	    
+	    List<String> roleCodes = currentEmployee.getUser().getRoles().stream()
+	            .map(org.egov.hrms.model.Role::getCode)
+	            .collect(Collectors.toList());
 
-	    ObpassEmployeeResponse existingResponse = employeeService.obpasSearch(searchCriteria, requestInfo);
+	    // 2. Build search criteria using zone + category + subcategory + tenantId + assignedTenantId + roles
+	    EmployeeSearchCriteria conflictCriteria = new EmployeeSearchCriteria();
+	    conflictCriteria.setTenantId(emp.getTenantId());
+	    conflictCriteria.setIsActive(true);
+	    conflictCriteria.setCategories(Collections.singletonList(emp.getCategory()));
+	    conflictCriteria.setSubcategories(Collections.singletonList(emp.getSubcategory()));
+	    conflictCriteria.setZones(Collections.singletonList(emp.getZone()));
+	    if (!StringUtils.isEmpty(emp.getAssignedTenantId())) {
+	        conflictCriteria.setAssignedtenattids(Collections.singletonList(emp.getAssignedTenantId()));
+	    }
+	    conflictCriteria.setRoles(roleCodes);
 
-	    // If no existing records found for this zone — zone is free, continue existing flow
-	    if (existingResponse == null || CollectionUtils.isEmpty(existingResponse.getEmployees())) {
+	    EmployeeResponse conflictResponse = employeeService.search(conflictCriteria, requestInfo);
+
+	    // If no existing records found for this criteria — zone is free for this role, continue existing flow
+	    if (conflictResponse == null || CollectionUtils.isEmpty(conflictResponse.getEmployees())) {
 	        return;
 	    }
 
-	    // If zone is assigned to a DIFFERENT employee, throw error
-	    boolean isAssignedToOtherEmployee = existingResponse.getEmployees().stream()
-	            .anyMatch(existingEmp -> !existingEmp.getUserUUID().equals(emp.getUserUUID()));
+	    // If zone is assigned to a DIFFERENT employee with the same role, throw error
+	    boolean isAssignedToOtherEmployeeWithSameRole = conflictResponse.getEmployees().stream()
+	            .anyMatch(existingEmp -> existingEmp.getUser() != null && 
+	                                     !existingEmp.getUser().getUuid().equals(emp.getUserUUID()));
 
-	    if (isAssignedToOtherEmployee) {
+	    if (isAssignedToOtherEmployeeWithSameRole) {
 	        errorMap.put(ErrorConstants.OBPAS_ZONE_ACCESS_ALREADY_EXISTS_CODE + "_" + emp.getZone(),
-	                "Zone access for '" + emp.getZone() + "' is already given to another employee.");
+	                "Zone access for '" + emp.getZone() + "' is already assigned to the employee of the same role.");
 	    }
 	}
 
