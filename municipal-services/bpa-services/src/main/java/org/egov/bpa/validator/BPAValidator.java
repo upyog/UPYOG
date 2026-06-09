@@ -140,7 +140,7 @@ public class BPAValidator {
 						}
 					});
 				}
-			} else if (requiredDocTypes.size() > 0) {
+			} else if (requiredDocTypes.size() > 0 && bpa.getApplicationNo() == null) {
 				throw new CustomException(BPAErrorConstants.BPA_MDNADATORY_DOCUMENTPYE_MISSING,
 						"Atleast " + requiredDocTypes.size() + " Documents are requied ");
 			}
