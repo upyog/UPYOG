@@ -22,6 +22,8 @@ import org.egov.hrms.web.contract.EmployeeRequest;
 import org.egov.hrms.web.contract.ObpasEmployeeRequest;
 import org.egov.hrms.web.contract.EmployeeResponse;
 import org.egov.hrms.web.contract.EmployeeSearchCriteria;
+import org.egov.hrms.web.contract.ObpasEmployeeSearchCriteria;
+import org.egov.hrms.web.contract.ObpassEmployeeResponse;
 import org.egov.hrms.web.contract.UserResponse;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.tracer.model.CustomException;
@@ -85,29 +87,88 @@ public class EmployeeValidator {
             throw new IllegalArgumentException("Employees list cannot be null or empty");
         }
 
+        Map<String, String> errorMap = new HashMap<>();
+        Map<String, String> processedZoneToUserMap = new HashMap<>();
+
         for (ObpasEmployee emp : employees) {
-            validateEmployee(emp);
+            validateEmployee(emp, errorMap);
+
+            if (emp.getZone() != null && emp.getUserUUID() != null) {
+                String zoneKey = emp.getTenantId() + "-" + emp.getCategory() + "-" + emp.getSubcategory() + "-" + emp.getZone();
+
+                if (processedZoneToUserMap.containsKey(zoneKey)) {
+                    String existingUserUUID = processedZoneToUserMap.get(zoneKey);
+                    if (!existingUserUUID.equals(emp.getUserUUID())) {
+                        errorMap.put(ErrorConstants.OBPAS_ZONE_ACCESS_ALREADY_EXISTS_CODE + "_BATCH_" + emp.getZone(),
+                                "Zone access for '" + emp.getZone() + "' is already given to another employee in this request.");
+                    }
+                } else {
+                    processedZoneToUserMap.put(zoneKey, emp.getUserUUID());
+                    validateZoneAccessUniqueness(emp, requestInfo, errorMap);
+                }
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(errorMap.keySet())) {
+            throw new CustomException(errorMap);
         }
     }
 
-	private void validateEmployee(ObpasEmployee emp) {
+	/**
+	 * Checks if the zone being assigned is already given to another employee.
+	 * If the zone is unoccupied, the method returns normally and the existing flow continues.
+	 * If the user being searched does not exist, the check is skipped and the existing flow handles it.
+	 *
+	 * @param emp         the OBPAS employee being created/assigned
+	 * @param requestInfo the request info from the incoming request
+	 */
+	private void validateZoneAccessUniqueness(ObpasEmployee emp, RequestInfo requestInfo, Map<String, String> errorMap) {
+	    // Build search criteria using zone + category + subcategory + tenantId + assignedTenantId
+	    ObpasEmployeeSearchCriteria searchCriteria = new ObpasEmployeeSearchCriteria();
+	    searchCriteria.setTenantId(emp.getTenantId());
+	    searchCriteria.setZone(emp.getZone());
+	    searchCriteria.setCategory(emp.getCategory());
+	    searchCriteria.setSubcategory(emp.getSubcategory());
+	    if (!StringUtils.isEmpty(emp.getAssignedTenantId())) {
+	        searchCriteria.setAssignedTenantId(emp.getAssignedTenantId());
+	    }
+
+	    ObpassEmployeeResponse existingResponse = employeeService.obpasSearch(searchCriteria, requestInfo);
+
+	    // If no existing records found for this zone — zone is free, continue existing flow
+	    if (existingResponse == null || CollectionUtils.isEmpty(existingResponse.getEmployees())) {
+	        return;
+	    }
+
+	    // If zone is assigned to a DIFFERENT employee, throw error
+	    boolean isAssignedToOtherEmployee = existingResponse.getEmployees().stream()
+	            .anyMatch(existingEmp -> !existingEmp.getUserUUID().equals(emp.getUserUUID()));
+
+	    if (isAssignedToOtherEmployee) {
+	        errorMap.put(ErrorConstants.OBPAS_ZONE_ACCESS_ALREADY_EXISTS_CODE + "_" + emp.getZone(),
+	                "Zone access for '" + emp.getZone() + "' is already given to another employee.");
+	    }
+	}
+
+	private void validateEmployee(ObpasEmployee emp, Map<String, String> errorMap) {
 	    if (emp == null) {
-	        throw new IllegalArgumentException("Employee object cannot be null");
+	        errorMap.put("OBPAS_EMP_NULL", "Employee object cannot be null");
+            return;
 	    }
 	    if (StringUtils.isBlank(emp.getTenantId())) {
-	        throw new IllegalArgumentException("TenantId is mandatory for employee");
+	        errorMap.put("OBPAS_EMP_TENANTID_MANDATORY", "TenantId is mandatory for employee");
 	    }
 	    if (StringUtils.isBlank(emp.getUserUUID())) {
-	        throw new IllegalArgumentException("UserUUID is mandatory for employee");
+	        errorMap.put("OBPAS_EMP_USERUUID_MANDATORY", "UserUUID is mandatory for employee");
 	    }
 	    if (emp.getCategory() == null || emp.getCategory().isEmpty()) {
-	        throw new IllegalArgumentException("At least one Category is mandatory for employee");
+	        errorMap.put("OBPAS_EMP_CATEGORY_MANDATORY", "At least one Category is mandatory for employee");
 	    }
 	    if (emp.getSubcategory() == null || emp.getSubcategory().isEmpty()) {
-	        throw new IllegalArgumentException("At least one Subcategory is mandatory for employee");
+	        errorMap.put("OBPAS_EMP_SUBCATEGORY_MANDATORY", "At least one Subcategory is mandatory for employee");
 	    }
 	    if (StringUtils.isBlank(emp.getZone())) {
-	        throw new IllegalArgumentException("Zone is mandatory for employee");
+	        errorMap.put("OBPAS_EMP_ZONE_MANDATORY", "Zone is mandatory for employee");
 	    }
 	}
 

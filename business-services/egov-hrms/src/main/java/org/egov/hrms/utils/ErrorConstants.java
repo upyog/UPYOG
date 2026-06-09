@@ -17,6 +17,9 @@ public class ErrorConstants {
 	 public static final String OBPAS_INVALID_SEARCH_TENANT_CODE = "OBPAS_INVALID_SEARCH_TENANT";
 	    public static final String OBPAS_INVALID_SEARCH_TENANT_MSG  = "TenantId is mandatory for search";
 
+	public static final String OBPAS_ZONE_ACCESS_ALREADY_EXISTS_CODE = "OBPAS_ZONE_ACCESS_ALREADY_EXISTS";
+	public static final String OBPAS_ZONE_ACCESS_ALREADY_EXISTS_MSG  = "Zone access is already given to another employee.";
+
 	
 	
 	public static final String HRMS_MISSING_ROLES_CODE = "ERR_HRMS_MISSING_ROLES";
