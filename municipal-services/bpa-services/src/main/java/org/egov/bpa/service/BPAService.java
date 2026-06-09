@@ -419,6 +419,7 @@ public class BPAService {
 		
 		if(!bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(workflowName)) {
 			bpaRequest.getBPA().getWorkflow().setAction(BPAConstants.ACTION_CANCEL);
+			bpaRequest.getBPA().getWorkflow().setAssignes(null);
 		}
 		
 		List<BPA> searchResult = getBPAWithBPAId(bpaRequest);
