@@ -409,12 +409,18 @@ public class BPAService {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Application Not found in the System" + bpa);
 		}
 
-		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), mdmsData);
+		String workflowName = edcrResponse.getOrDefault("businessService", "");
 		String applicationType = edcrResponse.get(BPAConstants.APPLICATIONTYPE);
 		bpa.setApplicationType(applicationType);
 		log.debug("applicationType is " + applicationType);
 		BusinessService businessService = workflowService.getBusinessService(bpa, bpaRequest.getRequestInfo(),
 				bpa.getApplicationNo());
+		
+		if(!bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(workflowName)) {
+			bpaRequest.getBPA().getWorkflow().setAction(BPAConstants.ACTION_CANCEL);
+			bpaRequest.getBPA().getWorkflow().setAssignes(null);
+		}
 		
 		List<BPA> searchResult = getBPAWithBPAId(bpaRequest);
 		if (CollectionUtils.isEmpty(searchResult) || searchResult.size() > 1) {
@@ -507,7 +513,7 @@ public class BPAService {
 					bpa.getWorkflow().setAssignes(assignee);
 					
 				}
-                
+        		
 		wfIntegrator.callWorkFlow(bpaRequest);
 		log.debug("===> workflow done =>" +bpaRequest.getBPA().getStatus()  );
 		enrichmentService.postStatusEnrichment(bpaRequest);
@@ -522,6 +528,19 @@ public class BPAService {
 
 		
 		repository.update(bpaRequest, workflowService.isStateUpdatable(bpa.getStatus(), businessService));
+		
+		if(!bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(workflowName)) {
+			bpaRequest.getBPA().getWorkflow().setAction(BPAConstants.ACTION_INITIATE);
+			bpaRequest.getBPA().getWorkflow().setAssignes(Collections.singletonList(bpa.getAccountId()));
+			bpaRequest.getBPA().setLandId(null);
+			bpaRequest.getBPA().getLandInfo().setId(null);
+			bpaRequest.getBPA().getLandInfo().getAddress().setId(null);
+			bpaRequest.getBPA().getLandInfo().getAddress().getGeoLocation().setId(null);
+			bpaRequest.getBPA().getLandInfo().getOwners().stream().forEach(owner -> owner.setOwnerId(null));
+			bpaRequest.getBPA().getLandInfo().getUnit().stream().forEach(unit -> unit.setId(null));
+			this.create(bpaRequest);
+		}
+		
 		return bpaRequest.getBPA();
 
 	}
