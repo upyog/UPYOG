@@ -55,7 +55,7 @@ public class CalculationService {
 	private List<DemandDetail> processCalculationForDemandGeneration(boolean isSecurityDeposite, String tenantId,
 			List<RLProperty> calculateAmount, AllotmentRequest allotmentRequest) {
 
-		String applicationType = allotmentRequest.getAllotment().get(0).getApplicationType();
+		String applicationType = resolveApplicationType(allotmentRequest.getAllotment().get(0));
 		BigDecimal fee = BigDecimal.ZERO;
 		List<DemandDetail> demandDetails = new ArrayList<>();
 		// Step 1: Calculate base fee
@@ -66,8 +66,9 @@ public class CalculationService {
 //						.collectionAmount(fee)
 						.taxHeadMasterCode(RLConstants.SECURITY_DEPOSIT_FEE_RL_APPLICATION).tenantId(tenantId).build());
 			}
-			if ((applicationType.equalsIgnoreCase(RLConstants.NEW_RL_APPLICATION))
-					|| (applicationType.equalsIgnoreCase(RLConstants.RENEWAL_RL_APPLICATION))) {
+			if (RLConstants.NEW_RL_APPLICATION.equalsIgnoreCase(applicationType)
+					|| RLConstants.RENEWAL_RL_APPLICATION.equalsIgnoreCase(applicationType)
+					|| RLConstants.APPLICATION_TYPE_LEGACY.equalsIgnoreCase(applicationType)) {
 				
 				fee = new BigDecimal(amount.getBaseRent());
 				AllotmentDetails allotmentDetails=allotmentRequest.getAllotment().get(0);
@@ -99,6 +100,19 @@ public class CalculationService {
 		// Step 2: Calculate additional fees (Penality, cowcass, cgst,sgst)
 		calculateAdditionalFees(fee,calculateAmount.get(0), allotmentRequest, tenantId, demandDetails);
 		return demandDetails;
+	}
+
+	private String resolveApplicationType(AllotmentDetails allotmentDetails) {
+		if (allotmentDetails == null) {
+			return null;
+		}
+
+		// Only consider the root-level applicationType field. Do not read additionalDetails.
+		String rootType = allotmentDetails.getApplicationType();
+		if (rootType != null && !rootType.trim().isEmpty()) {
+			return rootType;
+		}
+		return null;
 	}
 
 	private void calculateAdditionalFees(BigDecimal baseAmount,RLProperty calculateAmount, AllotmentRequest allotmentRequest, String tenantId,

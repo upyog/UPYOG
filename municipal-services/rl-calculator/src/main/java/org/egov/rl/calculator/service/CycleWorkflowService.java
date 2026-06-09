@@ -180,19 +180,7 @@ public class CycleWorkflowService {
 			log.info("Using Legacy workflow for application: {}", allotmentDetails.getApplicationNumber());
 			return RLConstants.RL_WORKFLOW_NAME_LEGACY;
 		}
-		
-		// Also check additionalDetails for applicationType (for backwards compatibility)
-		if (allotmentDetails.getAdditionalDetails() != null) {
-			com.fasterxml.jackson.databind.JsonNode additionalDetails = allotmentDetails.getAdditionalDetails();
-			if (additionalDetails.has("applicationType")) {
-				String additionalAppType = additionalDetails.get("applicationType").asText();
-				if (RLConstants.APPLICATION_TYPE_LEGACY.equalsIgnoreCase(additionalAppType)) {
-					log.info("Using Legacy workflow (from additionalDetails) for application: {}", allotmentDetails.getApplicationNumber());
-					return RLConstants.RL_WORKFLOW_NAME_LEGACY;
-				}
-			}
-		}
-		
+		// Do not check additionalDetails.applicationType; only root applicationType is considered
 		return RLConstants.RL_WORKFLOW_NAME;
 	}
 
