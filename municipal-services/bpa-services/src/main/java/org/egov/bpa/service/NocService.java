@@ -49,7 +49,7 @@ public class NocService {
 	@SuppressWarnings("unchecked")
 	public void createNocRequest(BPARequest bpaRequest, Object mdmsData) {
 		BPA bpa = bpaRequest.getBPA();
-		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), null);
 		log.debug("applicationType in NOC is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
 		log.debug("serviceType in NOC is " + edcrResponse.get(BPAConstants.SERVICETYPE));
 		
@@ -215,7 +215,7 @@ public class NocService {
 	private void initiateNocWorkflow(BPARequest bpaRequest, Object mdmsData, List<Noc> nocs) {
 		BPA bpa = bpaRequest.getBPA();
 		
-		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), null);
 		String nocPath = BPAConstants.NOC_TRIGGER_STATE_MAP
 				.replace("{1}", edcrResponse.get(BPAConstants.APPLICATIONTYPE))
 				.replace("{2}", edcrResponse.get(BPAConstants.SERVICETYPE))
