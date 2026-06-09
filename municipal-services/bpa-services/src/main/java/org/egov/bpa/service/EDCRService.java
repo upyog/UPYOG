@@ -73,7 +73,7 @@ public class EDCRService {
 		List<BPA> bpas = bpaRepository.getBPAData(criteria, null);
 		bpas = bpas.stream().filter(bpaApplication -> !bpaApplication.getStatus().equalsIgnoreCase(BPAConstants.STATUS_CANCELLED))
 				.collect(Collectors.toList());
-		if(bpas.size() > 0){
+		if(bpas.size() > 0 && bpa.getApplicationNo() == null){
 			for(int i=0; i<bpas.size(); i++){
 				if(!bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REJECTED) && !bpas.get(i).getStatus().equalsIgnoreCase(BPAConstants.STATUS_REVOCATED)){
 					throw new CustomException(BPAErrorConstants.DUPLICATE_EDCR,
