@@ -41,9 +41,11 @@ def findCity(a):
     #result=list()
     
     for j in master:
+        cityName = j["cityName"].lower()
 
-        if (a == j["cityName"].lower()[0:len(a)]):
-            city.append([100,j["tenantId"]])
+        if a == cityName[0:len(a)]:
+            length_penalty = len(cityName)
+            city.append([100 - (length_penalty * 0.01), j["tenantId"]])
             
         elif fuzz.ratio(a,j["cityName"].lower())>=50 :
             max1=max(max1,fuzz.ratio(a,j["cityName"].lower()))
