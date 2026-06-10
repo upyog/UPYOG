@@ -232,7 +232,7 @@ public class PdfOverlayTemplateService {
 	    });
         
         addLabeledKeyValueSection(sections, "left", "Office Use", d.path("officeUse"), new String[][] {
-            {"Examined By", "examinedBy"},
+            //{"Examined By", "examinedBy"},
             {"Approved/Sanctioned By", "approvedSanctionedBy"},
             {"Approval/Sanction Date", "approvalSanctionDate"},
             {"Valid Till", "validTill"}
@@ -430,6 +430,7 @@ public class PdfOverlayTemplateService {
         s.put("showHeader", false);
         s.put("title", title);
         s.put("columns", Arrays.asList("Field", "Value"));
+        s.put("renderSignatureImage", "Professional's Signature".equals(title));
         List<List<String>> rows = new ArrayList<List<String>>();
         for (String[] pair : labelsAndKeys) {
             rows.add(Arrays.asList(pair[0], safeText(node, pair[1])));
@@ -444,6 +445,7 @@ public class PdfOverlayTemplateService {
         s.put("showHeader", false);
         s.put("title", title);
         s.put("columns", Arrays.asList("Field", "Value"));
+        s.put("renderSignatureImage", "Professional's Signature".equals(title));
         List<List<String>> rows = new ArrayList<List<String>>();
         for (String[] pair : labelsAndKeys) {
             rows.add(Arrays.asList(pair[0], safeText(node, pair[1])));

@@ -65,6 +65,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.egov.commons.mdms.BpaMdmsUtil;
+import org.egov.commons.mdms.config.MdmsConfiguration;
+import org.egov.commons.service.RestCallService;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -194,7 +197,7 @@ public class EdcrRestService {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
+    
     @Transactional
     public EdcrDetail createEdcr(final EdcrRequest edcrRequest, final MultipartFile file,
             Map<String, List<Object>> masterData){
@@ -824,34 +827,40 @@ public class EdcrRestService {
 
         LOG.info("[fetchEdcr] Resolved userId from userInfo    : '{}'", userId);
 
-        // -----------------------------------------------------------------------
-        // RESOLVE ROLES
-        // -----------------------------------------------------------------------
+        // When the user is ANONYMOUS, clear userId
+//        if (userInfo != null && StringUtils.isNoneBlank(userId) && userInfo.getRoles() != null
+//                && !userInfo.getRoles().isEmpty()) {
+//            List<String> roles = userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+//            LOG.info("[fetchEdcr] User roles : {}", roles);
+//            if (roles.contains("ANONYMOUS")) {
+//                LOG.info("[fetchEdcr] User is ANONYMOUS, clearing userId for open search");
+//                userId = "";
+//            }
+//        }
+        
         List<String> roles = (userInfo != null && userInfo.getRoles() != null)
-                ? userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toList())
-                : Collections.emptyList();
+        	    ? userInfo.getRoles().stream().map(Role::getCode).collect(Collectors.toList())
+        	    : Collections.emptyList();
 
-        LOG.info("[fetchEdcr] User roles                       : {}", roles);
+        	boolean isBpaStakeholderRole = roles.stream().anyMatch(BPA_STAKEHOLDER_ROLES::contains);
 
-        // When the user is ANONYMOUS, clear userId so no scoped filter is applied
-        if (roles.contains("ANONYMOUS")) {
-            LOG.info("[fetchEdcr] User is ANONYMOUS — clearing userId for open search");
-            userId = "";
-        }
+        	LOG.info("[fetchEdcr] isBpaStakeholderRole flag          : {}", isBpaStakeholderRole);
 
-        boolean isBpaStakeholderRole = roles.stream().anyMatch(BPA_STAKEHOLDER_ROLES::contains);
-        LOG.info("[fetchEdcr] isBpaStakeholderRole flag        : {}", isBpaStakeholderRole);
 
-        // -----------------------------------------------------------------------
-        // PAGINATION DEFAULTS
-        // -----------------------------------------------------------------------
         if (edcrRequest.getLimit() == null)
             edcrRequest.setLimit(-1);
         if (edcrRequest.getOffset() == null)
             edcrRequest.setOffset(0);
 
-        boolean onlyTenantId = edcrRequest != null
-                && isNotBlank(edcrRequest.getEdcrNumber())
+//        boolean onlyTenantId = edcrRequest != null && isBlank(edcrRequest.getEdcrNumber())
+//                && isBlank(edcrRequest.getTransactionNumber()) && isBlank(edcrRequest.getAppliactionType())
+//                && isBlank(edcrRequest.getApplicationSubType()) && isBlank(edcrRequest.getStatus())
+//                && edcrRequest.getFromDate() == null && edcrRequest.getToDate() == null
+//                && isBlank(edcrRequest.getApplicationNumber())
+//                && isNotBlank(edcrRequest.getTenantId());
+        
+        boolean onlyTenantId = edcrRequest != null 
+        		&& isNotBlank(edcrRequest.getEdcrNumber())
                 && isNotBlank(edcrRequest.getTenantId());
 
         boolean isStakeholder = edcrRequest != null && (isNotBlank(edcrRequest.getAppliactionType())
@@ -879,25 +888,11 @@ public class EdcrRestService {
 
         // -----------------------------------------------------------------------
         // BRANCH DECISION
-        // tenantId == "pb"         → STATE-LEVEL path  (isStateLevelRequest=true)
-        // tenantId == "pb.amritsar" etc. → SINGLE-TENANT path
         // -----------------------------------------------------------------------
         boolean isStateLevelRequest = edcrRequest != null
                 && edcrRequest.getTenantId().equalsIgnoreCase(stateCity.getCode());
 
-        LOG.info("[fetchEdcr] isStateLevelRequest (tenantId == stateCode) : {}", isStateLevelRequest);
-
-        // -----------------------------------------------------------------------
-        // GENERIC SEARCH FLAG
-        // When tenantId = "pb" (state level) → treat as generic search:
-        //   - no UUID filter applied regardless of role
-        //   - any role (CITIZEN, BPA_*, EMPLOYEE, etc.) can search freely by edcrNumber
-        // When tenantId = "pb.amritsar" etc. → scoped search:
-        //   - BPA stakeholder roles get UUID filter applied
-        //   - all other roles see all records for that tenant
-        // -----------------------------------------------------------------------
-        boolean isGenericSearch = isStateLevelRequest;
-        LOG.info("[fetchEdcr] isGenericSearch (pb=no uuid filter)         : {}", isGenericSearch);
+        LOG.info("[fetchEdcr] Is state-level request (tenantId == stateCode)? : {}", isStateLevelRequest);
 
         if (isStateLevelRequest) {
             // -------------------------------------------------------------------
@@ -911,9 +906,10 @@ public class EdcrRestService {
             String specificTenant = resolveSpecificTenant(edcrRequest.getTenantId());
             LOG.info("[fetchEdcr] specificTenant after resolve     : '{}'", specificTenant);
 
+//            String queryString = searchAtStateTenantLevel(
+//                    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder, specificTenant);
             String queryString = searchAtStateTenantLevel(
-                    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder,
-                    specificTenant, isBpaStakeholderRole, isGenericSearch);
+            	    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder, specificTenant, isBpaStakeholderRole);
 
             LOG.info("[fetchEdcr] Generated SQL query              :\n{}", queryString);
 
@@ -964,9 +960,9 @@ public class EdcrRestService {
             LOG.info("[fetchEdcr] Taking SINGLE-TENANT path for tenantId: '{}'", edcrRequest.getTenantId());
 
             final Criteria criteria = getCriteriaofSingleTenant(
-                    edcrRequest, userInfo, userId, onlyTenantId, isStakeholder, isBpaStakeholderRole);
+                    edcrRequest, userInfo, userId, onlyTenantId, isStakeholder);
 
-            LOG.info("[fetchEdcr] Criteria query                   : {}", criteria.toString());
+            LOG.info("[fetchEdcr] Criteria query : {}", criteria.toString());
             criteria.setFirstResult(offset);
             criteria.setMaxResults(limit);
             edcrApplications = criteria.list();
@@ -1035,24 +1031,12 @@ public class EdcrRestService {
 
         City stateCity = cityService.fetchStateCityDetails();
         LOG.info("[fetchCount] State city code                  : {}", stateCity.getCode());
-        
+
         boolean isStateLevelRequest = edcrRequest != null
                 && edcrRequest.getTenantId().equalsIgnoreCase(stateCity.getCode());
 
-        LOG.info("[fetchEdcr] isStateLevelRequest (tenantId == stateCode) : {}", isStateLevelRequest);
+        LOG.info("[fetchCount] Is state-level request           : {}", isStateLevelRequest);
 
-        // -----------------------------------------------------------------------
-        // GENERIC SEARCH FLAG
-        // When tenantId = "pb" (state level) → treat as generic search:
-        //   - no UUID filter applied regardless of role
-        //   - any role (CITIZEN, BPA_*, EMPLOYEE, etc.) can search freely by edcrNumber
-        // When tenantId = "pb.amritsar" etc. → scoped search:
-        //   - BPA stakeholder roles get UUID filter applied
-        //   - all other roles see all records for that tenant
-        // -----------------------------------------------------------------------
-        boolean isGenericSearch = isStateLevelRequest;
-        LOG.info("[fetchEdcr] isGenericSearch (pb=no uuid filter)         : {}", isGenericSearch);
-        
         if (isStateLevelRequest) {
             LOG.info("[fetchCount] Taking STATE-LEVEL path for count");
 
@@ -1062,8 +1046,7 @@ public class EdcrRestService {
             LOG.info("[fetchCount] specificTenant after resolve     : '{}'", specificTenant);
 
             String queryString = searchAtStateTenantLevel(
-                    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder,
-                    specificTenant, isBpaStakeholderRole, isGenericSearch);
+            	    edcrRequest, userInfo, userId, onlyTenantId, params, isStakeholder, specificTenant, isBpaStakeholderRole);
 
             LOG.info("[fetchCount] Generated SQL query for count   :\n{}", queryString);
 
@@ -1082,7 +1065,7 @@ public class EdcrRestService {
             LOG.info("[fetchCount] Taking SINGLE-TENANT path for count, tenantId: '{}'", edcrRequest.getTenantId());
 
             final Criteria criteria = getCriteriaofSingleTenant(
-                    edcrRequest, userInfo, userId, onlyTenantId, isStakeholder, isBpaStakeholderRole);
+                    edcrRequest, userInfo, userId, onlyTenantId, isStakeholder);
 
             int count = criteria.list().size();
             LOG.info("[fetchCount] Count result (single-tenant)    : {}", count);
@@ -1354,15 +1337,13 @@ public class EdcrRestService {
 
     private String searchAtStateTenantLevel(final EdcrRequest edcrRequest, UserInfo userInfo, String userId,
             boolean onlyTenantId, final Map<String, String> params, boolean isStakeholder,
-            String specificTenant, boolean isBpaStakeholderRole, boolean isGenericSearch) {
+            String specificTenant, boolean isBpaStakeholderRole) {
 
         LOG.info("[searchAtStateTenantLevel] ========== START ==========");
         LOG.info("[searchAtStateTenantLevel] specificTenant               : '{}'", specificTenant);
         LOG.info("[searchAtStateTenantLevel] userId                       : '{}'", userId);
         LOG.info("[searchAtStateTenantLevel] onlyTenantId                 : {}", onlyTenantId);
         LOG.info("[searchAtStateTenantLevel] isStakeholder                : {}", isStakeholder);
-        LOG.info("[searchAtStateTenantLevel] isBpaStakeholderRole         : {}", isBpaStakeholderRole);
-        LOG.info("[searchAtStateTenantLevel] isGenericSearch (tenantId=pb): {}", isGenericSearch);
         LOG.info("[searchAtStateTenantLevel] edcrNumber                   : '{}'", edcrRequest.getEdcrNumber());
         LOG.info("[searchAtStateTenantLevel] transactionNumber            : '{}'", edcrRequest.getTransactionNumber());
 
@@ -1396,7 +1377,7 @@ public class EdcrRestService {
                     .append("dxf.fileStoreId as dxfFileId,scrudxf.fileStoreId as scrutinizedDxfFileId,")
                     .append("rofile.fileStoreId as reportOutputId,pdfile.fileStoreId as planDetailFileStore,")
                     .append("appln.applicationDate,appln.applicationNumber,appln.applicationType,")
-                    .append("appln.serviceType,appln.planPermitNumber,appln.permitApplicationDate,appln.thirdpartyusertenant from ")
+                    .append("appln.serviceType,appln.planPermitNumber,appln.permitApplicationDate , appln.thirdpartyusertenant from ")
                     .append(value.getKey()).append(".edcr_application appln, ")
                     .append(value.getKey()).append(".edcr_application_detail dtl, ")
                     .append(value.getKey()).append(".eg_filestoremap dxf, ")
@@ -1427,35 +1408,28 @@ public class EdcrRestService {
                 params.put("applicationNumber", edcrRequest.getApplicationNumber());
             }
 
-            // -----------------------------------------------------------------------
-            // UUID FILTER DECISION
-            // -----------------------------------------------------------------------
-            // isGenericSearch = true  → tenantId is "pb" (state level)
-            //                          → GENERIC SEARCH: no UUID filter for ANY role.
-            //                            Any user (CITIZEN, BPA_*, EMPLOYEE, etc.)
-            //                            can search freely (e.g. by edcrNumber).
-            //
-            // isGenericSearch = false → tenantId is "pb.amritsar" etc. (scoped tenant)
-            //                          → UUID filter applied ONLY for BPA stakeholder
-            //                            roles. All other roles see all tenant records.
-            // -----------------------------------------------------------------------
-            if (isGenericSearch) {
-                LOG.info("[searchAtStateTenantLevel] isGenericSearch=true (tenantId=pb) — uuid filter SKIPPED for all roles");
-            } else if (isBpaStakeholderRole && userInfo != null && isNotBlank(userId)) {
-                if (onlyTenantId || isStakeholder) {
-                    LOG.info("[searchAtStateTenantLevel] Scoped tenant + BPA role (onlyTenantId/isStakeholder) — applying uuid filter, userId: '{}'", userId);
-                    queryStr.append("and appln.thirdPartyUserCode=:thirdPartyUserCode ");
-                    params.put("thirdPartyUserCode", userId);
-                } else if (isNotBlank(specificTenant)) {
-                    LOG.info("[searchAtStateTenantLevel] Scoped tenant + BPA role (specificTenant) — applying uuid filter, userId: '{}'", userId);
-                    queryStr.append("and appln.thirdPartyUserCode=:thirdPartyUserCode ");
-                    params.put("thirdPartyUserCode", userId);
-                } else {
-                    LOG.info("[searchAtStateTenantLevel] BPA role present but no matching scope condition — uuid filter skipped");
-                }
-            } else {
-                LOG.info("[searchAtStateTenantLevel] Non-BPA role or missing userId — uuid filter NOT applied. isBpaStakeholderRole: {}", isBpaStakeholderRole);
-            }
+            // UUID filter:
+            // Case 1: onlyTenantId or isStakeholder — existing behavior
+            // Case 2: specificTenant + userId present — new condition (scope by uuid)
+         // UUID filter is ONLY applied when the user holds one of the designated BPA stakeholder roles.
+         // All other roles (e.g. CITIZEN, EMPLOYEE, ANONYMOUS, etc.) skip this filter entirely.
+         if (isBpaStakeholderRole && userInfo != null && isNotBlank(userId)) {
+             if ((onlyTenantId || isStakeholder)) {
+                 LOG.info("[searchAtStateTenantLevel] Adding uuid filter (onlyTenantId/isStakeholder + BPA role) — userId: '{}'", userId);
+                 queryStr.append("and (appln.thirdPartyUserCode=:thirdPartyUserCode OR appln.applicantName=:applicantName) ");
+                 params.put("thirdPartyUserCode", userId);
+                 params.put("applicantName", userInfo.getName());
+             } else if (isNotBlank(specificTenant)) {
+                 LOG.info("[searchAtStateTenantLevel] Adding uuid filter (specificTenant + BPA role) — userId: '{}'", userId);
+                 queryStr.append("and (appln.thirdPartyUserCode=:thirdPartyUserCode OR appln.applicantName=:applicantName) ");
+                 params.put("thirdPartyUserCode", userId);
+                 params.put("applicantName", userInfo.getName());
+             } else {
+                 LOG.info("[searchAtStateTenantLevel] BPA role present but no matching scope condition — uuid filter skipped");
+             }
+         } else {
+             LOG.info("[searchAtStateTenantLevel] Non-BPA role or missing userId — uuid filter NOT applied. roles qualify: {}", isBpaStakeholderRole);
+         }
 
             String appliactionType = edcrRequest.getAppliactionType();
             if (isNotBlank(appliactionType)) {
@@ -1730,14 +1704,9 @@ public class EdcrRestService {
             UserInfo userInfo,
             String userId,
             boolean onlyTenantId,
-            boolean isStakeholder,
-            boolean isBpaStakeholderRole) {
+            boolean isStakeholder) {
 
-        LOG.info("============== SINGLE TENANT CRITERIA START ==============");
-        LOG.info("[getCriteriaofSingleTenant] userId                : '{}'", userId);
-        LOG.info("[getCriteriaofSingleTenant] onlyTenantId          : {}", onlyTenantId);
-        LOG.info("[getCriteriaofSingleTenant] isStakeholder         : {}", isStakeholder);
-        LOG.info("[getCriteriaofSingleTenant] isBpaStakeholderRole  : {}", isBpaStakeholderRole);
+    	LOG.info("============== SINGLE TENANT CRITERIA START ==============");
 
         final Criteria criteria = getCurrentSession()
                 .createCriteria(EdcrApplicationDetail.class, "edcrApplicationDetail");
@@ -1745,101 +1714,127 @@ public class EdcrRestService {
         criteria.createAlias("edcrApplicationDetail.application", "application");
 
         if (edcrRequest != null && isNotBlank(edcrRequest.getEdcrNumber())) {
-            LOG.info("[getCriteriaofSingleTenant] Adding filter -> dcrNumber : {}", edcrRequest.getEdcrNumber());
+
+        	LOG.info("Adding filter -> dcrNumber : {}", edcrRequest.getEdcrNumber());
+
             criteria.add(Restrictions.eq(
                     "edcrApplicationDetail.dcrNumber",
                     edcrRequest.getEdcrNumber()));
         }
 
         if (edcrRequest != null && isNotBlank(edcrRequest.getTransactionNumber())) {
-            LOG.info("[getCriteriaofSingleTenant] Adding filter -> transactionNumber : {}", edcrRequest.getTransactionNumber());
+
+        	LOG.info("Adding filter -> transactionNumber : {}",
+                    edcrRequest.getTransactionNumber());
+
             criteria.add(Restrictions.eq(
                     "application.transactionNumber",
                     edcrRequest.getTransactionNumber()));
         }
 
         if (edcrRequest != null && isNotBlank(edcrRequest.getApplicationNumber())) {
-            LOG.info("[getCriteriaofSingleTenant] Adding filter -> applicationNumber : {}", edcrRequest.getApplicationNumber());
+
+        	LOG.info("Adding filter -> applicationNumber : {}",
+                    edcrRequest.getApplicationNumber());
+
             criteria.add(Restrictions.eq(
                     "application.applicationNumber",
                     edcrRequest.getApplicationNumber()));
         }
 
         String appliactionType = edcrRequest.getAppliactionType();
-        LOG.info("[getCriteriaofSingleTenant] Application Type received : {}", appliactionType);
+
+        LOG.info("Application Type received : {}", appliactionType);
 
         if (edcrRequest != null && isNotBlank(appliactionType)) {
+
             ApplicationType applicationType = null;
+
             if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(appliactionType)) {
                 applicationType = ApplicationType.PERMIT;
             } else if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(appliactionType)) {
                 applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
             }
+
             if ("Permit".equalsIgnoreCase(appliactionType)) {
                 applicationType = ApplicationType.PERMIT;
             } else if ("Occupancy certificate".equalsIgnoreCase(appliactionType)) {
                 applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
             }
-            LOG.info("[getCriteriaofSingleTenant] Resolved ApplicationType : {}", applicationType);
+
+            LOG.info("Resolved ApplicationType : {}", applicationType);
+
             criteria.add(Restrictions.eq(
                     "application.applicationType",
                     applicationType));
         }
 
-        if (edcrRequest != null && isNotBlank(edcrRequest.getApplicationSubType())) {
-            LOG.info("[getCriteriaofSingleTenant] Adding filter -> serviceType : {}", edcrRequest.getApplicationSubType());
+        if (edcrRequest != null
+                && isNotBlank(edcrRequest.getApplicationSubType())) {
+
+        	LOG.info("Adding filter -> serviceType : {}",
+                    edcrRequest.getApplicationSubType());
+
             criteria.add(Restrictions.eq(
                     "application.serviceType",
                     edcrRequest.getApplicationSubType()));
         }
 
-        // -----------------------------------------------------------------------
-        // UUID FILTER DECISION  (single-tenant path — tenantId = "pb.amritsar" etc.)
-        // -----------------------------------------------------------------------
-        // This path is NEVER reached for tenantId="pb" (that goes to state-level).
-        // So here we always apply scoped-search rules:
-        //   → UUID filter applied ONLY when user holds a BPA stakeholder role.
-        //   → CITIZEN, EMPLOYEE, ANONYMOUS and all other roles skip the filter
-        //     and see all records for this tenant.
-        // -----------------------------------------------------------------------
-        if (isBpaStakeholderRole && userInfo != null && isNotBlank(userId)
-                && (onlyTenantId || isStakeholder)) {
-            LOG.info("[getCriteriaofSingleTenant] BPA role + scoped condition met — adding uuid filter, userId: '{}'", userId);
-            criteria.add(Restrictions.eq(
-                    "application.thirdPartyUserCode",
-                    userId));
-        } else if (isBpaStakeholderRole && userInfo != null && isNotBlank(userId)) {
-            LOG.info("[getCriteriaofSingleTenant] BPA role present — adding uuid filter (default scoped), userId: '{}'", userId);
-            criteria.add(Restrictions.eq(
-                    "application.thirdPartyUserCode",
-                    userId));
-        } else {
-            LOG.info("[getCriteriaofSingleTenant] Non-BPA role or missing userId — uuid filter NOT applied. isBpaStakeholderRole: {}", isBpaStakeholderRole);
+        LOG.info("onlyTenantId : {}", onlyTenantId);
+        LOG.info("isStakeholder : {}", isStakeholder);
+        LOG.info("userId : {}", userId);
+
+        if ((onlyTenantId || isStakeholder)
+                && userInfo != null
+                && isNotBlank(userId)) {
+
+        	LOG.info("Adding filter -> thirdPartyUserCode : {}", userId);
+
+        	criteria.add(
+        		    Restrictions.or(
+        		        Restrictions.eq("application.thirdPartyUserCode", userId),
+        		        Restrictions.eq("application.applicantName", userInfo.getName())
+        		    )
+        		);
         }
 
         if (isNotBlank(edcrRequest.getStatus())) {
-            LOG.info("[getCriteriaofSingleTenant] Adding filter -> status : {}", edcrRequest.getStatus());
+
+        	LOG.info("Adding filter -> status : {}",
+                    edcrRequest.getStatus());
+
             criteria.add(Restrictions.eq(
                     "edcrApplicationDetail.status",
                     edcrRequest.getStatus()));
         }
 
         if (edcrRequest.getFromDate() != null) {
-            LOG.info("[getCriteriaofSingleTenant] Adding filter -> fromDate : {}", edcrRequest.getFromDate());
+
+        	LOG.info("Adding filter -> fromDate : {}",
+                    edcrRequest.getFromDate());
+
             criteria.add(Restrictions.ge(
                     "application.applicationDate",
                     edcrRequest.getFromDate()));
         }
 
         if (edcrRequest.getToDate() != null) {
-            LOG.info("[getCriteriaofSingleTenant] Adding filter -> toDate : {}", edcrRequest.getToDate());
+
+        	LOG.info("Adding filter -> toDate : {}",
+                    edcrRequest.getToDate());
+
             criteria.add(Restrictions.le(
                     "application.applicationDate",
                     edcrRequest.getToDate()));
         }
 
-        String orderBy = isNotBlank(edcrRequest.getOrderBy()) ? edcrRequest.getOrderBy() : "desc";
-        LOG.info("[getCriteriaofSingleTenant] Order By : {}", orderBy);
+        String orderBy = "desc";
+
+        if (isNotBlank(edcrRequest.getOrderBy())) {
+            orderBy = edcrRequest.getOrderBy();
+        }
+
+        LOG.info("Order By : {}", orderBy);
 
         if (orderBy.equalsIgnoreCase("asc")) {
             criteria.addOrder(Order.asc("edcrApplicationDetail.createdDate"));
@@ -1849,7 +1844,8 @@ public class EdcrRestService {
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-        LOG.info("[getCriteriaofSingleTenant] Final Hibernate Criteria : {}", criteria);
+        LOG.info("Final Hibernate Criteria Query : {}", criteria);
+
         LOG.info("============== SINGLE TENANT CRITERIA END ==============");
 
         return criteria;
@@ -2134,4 +2130,5 @@ public class EdcrRestService {
         cal1.set(Calendar.MILLISECOND, 999);
         return cal1.getTime();
     }
+    
 }

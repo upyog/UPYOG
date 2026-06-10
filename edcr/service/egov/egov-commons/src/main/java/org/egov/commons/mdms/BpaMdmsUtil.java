@@ -23,6 +23,7 @@ import org.egov.commons.mdms.model.MdmsCriteriaReq;
 import org.egov.commons.mdms.model.ModuleDetail;
 import org.egov.commons.service.RestCallService;
 import org.egov.infra.microservice.models.RequestInfo;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -39,6 +40,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class BpaMdmsUtil {
 	private RestCallService serviceRequestRepository;
 	private MdmsConfiguration mdmsConfiguration;
+	
+	@Value("${egov.user.host}")
+	private String userServiceHost;
+	
+	@Value("${egov.bpa.host}")
+	private String bpaServiceHost;
+	
+	@Value("${user.search.url}")
+	private String userServiceUrl;
+	
+	@Value("${bpa.search.url}")
+	private String bpaServiceUrl;
 	
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 	private static final Configuration JACKSON_CONFIG = Configuration.builder()
@@ -211,7 +224,15 @@ public class BpaMdmsUtil {
 	public StringBuilder getMdmsSearchUrl() {
 		return new StringBuilder().append(mdmsConfiguration.getMdmsHost()).append(mdmsConfiguration.getMdmsSearchUrl());
 	}
+	
+	public StringBuilder getUserSearchUrl() {
+		return new StringBuilder().append(userServiceHost).append(userServiceUrl);
+	}
 
+	public StringBuilder getBPASearchUrl() {
+		return new StringBuilder().append(bpaServiceHost).append(bpaServiceUrl);
+	}
+	
 	public List<ModuleDetail> getBPAFARModuleRequest() {
 		List<MasterDetail> bpaMasterDtls = new ArrayList<>();
 		final String filterCode = "$.[?(@.active==true)].code";
