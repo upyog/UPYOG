@@ -138,9 +138,9 @@ public class EmployeeValidator {
 	        return; // Current employee has no roles, nothing to conflict with
 	    }
 	    
-	    List<String> roleCodes = currentEmployee.getUser().getRoles().stream()
+	    Set<String> currentRoleCodes = currentEmployee.getUser().getRoles().stream()
 	            .map(org.egov.hrms.model.Role::getCode)
-	            .collect(Collectors.toList());
+	            .collect(Collectors.toSet());
 
 	    // 2. Build search criteria using zone + category + subcategory + tenantId + assignedTenantId + roles
 	    EmployeeSearchCriteria conflictCriteria = new EmployeeSearchCriteria();
@@ -152,7 +152,7 @@ public class EmployeeValidator {
 	    if (!StringUtils.isEmpty(emp.getAssignedTenantId())) {
 	        conflictCriteria.setAssignedtenattids(Collections.singletonList(emp.getAssignedTenantId()));
 	    }
-	    conflictCriteria.setRoles(roleCodes);
+	    conflictCriteria.setRoles(new ArrayList<>(currentRoleCodes));
 
 	    EmployeeResponse conflictResponse = employeeService.search(conflictCriteria, requestInfo);
 
@@ -161,10 +161,18 @@ public class EmployeeValidator {
 	        return;
 	    }
 
-	    // If zone is assigned to a DIFFERENT employee with the same role, throw error
+	    // If zone is assigned to a DIFFERENT employee with the EXACT SAME roles, throw error
 	    boolean isAssignedToOtherEmployeeWithSameRole = conflictResponse.getEmployees().stream()
-	            .anyMatch(existingEmp -> existingEmp.getUser() != null && 
-	                                     !existingEmp.getUser().getUuid().equals(emp.getUserUUID()));
+	            .anyMatch(existingEmp -> {
+	                if (existingEmp.getUser() == null || CollectionUtils.isEmpty(existingEmp.getUser().getRoles()) ||
+	                        existingEmp.getUser().getUuid().equals(emp.getUserUUID())) {
+	                    return false;
+	                }
+	                Set<String> existingRoleCodes = existingEmp.getUser().getRoles().stream()
+	                        .map(org.egov.hrms.model.Role::getCode)
+	                        .collect(Collectors.toSet());
+	                return currentRoleCodes.equals(existingRoleCodes);
+	            });
 
 	    if (isAssignedToOtherEmployeeWithSameRole) {
 	        errorMap.put(ErrorConstants.OBPAS_ZONE_ACCESS_ALREADY_EXISTS_CODE + "_" + emp.getZone(),
