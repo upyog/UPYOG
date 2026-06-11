@@ -81,7 +81,7 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 			if (area == null) {
 				pl.getPlot().setPlotBndryArea(BigDecimal.valueOf(0.0));
 			} else {
-				pl.getPlot().setPlotBndryArea(area);
+				pl.getPlot().setPlotBndryArea(area.setScale(2, RoundingMode.HALF_UP));
 				pl.getPlot().setArea(area.setScale(2, RoundingMode.HALF_UP));
 			}
 		} else {

@@ -86,7 +86,7 @@ public class StairCover extends FeatureProcess {
         scrutinyDetail.addColumnHeading(5, STATUS);
 
         Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_44_C);
+        details.put(RULE_NO, "-");
 
         BigDecimal minHeight = BigDecimal.ZERO;
 
