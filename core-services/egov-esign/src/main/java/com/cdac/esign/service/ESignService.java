@@ -134,7 +134,7 @@ public class ESignService {
         		List<String> roles = requestInfo.getUserInfo().getRoles().stream()
         		.filter(role -> (role.getTenantId().equalsIgnoreCase("pb")
         				|| role.getTenantId().equalsIgnoreCase(tenantId)) 
-        				&& !role.getTenantId().equalsIgnoreCase("Citizen"))
+        				&& !role.getCode().equalsIgnoreCase("CITIZEN"))
         		.map(role -> {
         			String[] roleNameAr = role.getName().split(" ");
         			return roleNameAr[roleNameAr.length - 1];

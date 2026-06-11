@@ -305,11 +305,35 @@ public class EnrichmentService {
 		if(bpaRequest.getBPA().getStatus().equalsIgnoreCase(BPAConstants.APPL_FEE_STATE))
 			calculationService.addCalculation(bpaRequest, BPAConstants.APPLICATION_FEE_KEY);
 		
-		// Generate the sanction Fees Demand
+		// Generate the sanction Fees Demand and Generate Approval Date
 		if(bpaRequest.getBPA().getStatus().equalsIgnoreCase(BPAConstants.SANC_FEE_STATE))
 			calculationService.addCalculation(bpaRequest, BPAConstants.SANCTION_FEE_KEY);
-				
-				
+		
+		if ((BPAConstants.BPA_LOW_MODULE_CODE.equalsIgnoreCase(bpa.getBusinessService())
+				&& BPAConstants.ACTION_VERIFY.equalsIgnoreCase(action))
+				|| (BPAConstants.STATUS_ESIGN_PENDING.equalsIgnoreCase(state)
+						&& BPAConstants.ACTION_APPROVE.equalsIgnoreCase(action))) {
+
+			int vailidityInMonths = config.getValidityInMonths();
+			Calendar calendar = Calendar.getInstance();
+			bpa.setApprovalDate(Calendar.getInstance().getTimeInMillis());
+
+			// Adding 3years (36 months) to Current Date
+			calendar.add(Calendar.MONTH, vailidityInMonths);
+			Map<String, Object> additionalDetail = null;
+			if (bpa.getAdditionalDetails() != null) {
+				additionalDetail = (Map) bpa.getAdditionalDetails();
+			} else {
+				additionalDetail = new HashMap<String, Object>();
+				bpa.setAdditionalDetails(additionalDetail);
+			}
+
+			additionalDetail.put("validityDate", calendar.getTimeInMillis());
+			additionalDetail.put("approvedBy", bpaRequest.getRequestInfo().getUserInfo().getName());
+
+			edcrService.updateEDCRBpaDetails(bpaRequest);
+		}
+		
 //		nocService.initiateNocWorkflow(bpaRequest, mdmsData);
 
 	}
@@ -330,12 +354,7 @@ public class EnrichmentService {
 								&& state.equalsIgnoreCase(BPAConstants.APPROVED_STATE))
 								|| (state.equalsIgnoreCase(BPAConstants.APPROVED_STATE) && bpa.getRiskType()
 										.toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE))))) {
-			int vailidityInMonths = config.getValidityInMonths();
-			Calendar calendar = Calendar.getInstance();
-			bpa.setApprovalDate(Calendar.getInstance().getTimeInMillis());
-
-			// Adding 3years (36 months) to Current Date
-			calendar.add(Calendar.MONTH, vailidityInMonths);
+			
 			Map<String, Object> additionalDetail = null;
 			if (bpa.getAdditionalDetails() != null) {
 				additionalDetail = (Map) bpa.getAdditionalDetails();
@@ -343,8 +362,7 @@ public class EnrichmentService {
 				additionalDetail = new HashMap<String, Object>();
 				bpa.setAdditionalDetails(additionalDetail);
 			}
-
-			additionalDetail.put("validityDate", calendar.getTimeInMillis());
+			
 			if(StringUtils.isEmpty(bpa.getApprovalNo())) {
 				List<IdResponse> idResponses = idGenRepository.getId(bpaRequest.getRequestInfo(), bpa.getTenantId(),
 						config.getPermitNoIdgenName(), config.getPermitNoIdgenFormat(), 1).getIdResponses();

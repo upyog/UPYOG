@@ -372,5 +372,23 @@ public class EDCRService {
 
 		return CollectionUtils.isEmpty(edcrNos) ? null : edcrNos;
 	}
+	
+	public void updateEDCRBpaDetails(BPARequest bpaRequest) {
+		List<BPA> bpas = Collections.singletonList(bpaRequest.getBPA());
+		StringBuilder uri = new StringBuilder(config.getEdcrHost());
+
+		uri.append(config.getUpdateBPADetailsEndPoint());
+		
+		RequestInfo edcrRequestInfo = new RequestInfo();
+		BeanUtils.copyProperties(bpaRequest.getRequestInfo(), edcrRequestInfo);
+		Map<String, Object> request = new HashMap<String, Object>();
+		request.put("RequestInfo", edcrRequestInfo);
+		request.put("BPA", bpas);
+		try {
+			serviceRequestRepository.fetchResult(uri, request);
+		} catch (ServiceCallException se) {
+			throw new CustomException(BPAErrorConstants.EDCR_ERROR, " Error while updateing BPA Details in EDCR.");
+		}
+	}
 
 }
