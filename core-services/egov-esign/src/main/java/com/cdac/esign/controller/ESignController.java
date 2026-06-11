@@ -1,7 +1,6 @@
 package com.cdac.esign.controller;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +47,7 @@ public class ESignController {
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setAuthToken(request.getHeader("auth-token"));
         
-        Enumeration<String> headers = request.getHeaderNames();
-        while(headers.hasMoreElements()) {
-        	String header = headers.nextElement();
-        	logger.info(header + ": " + request.getHeader(header));
-        }        
+        
         try {
         	
         	if(!StringUtils.isEmpty(userInfoRowData)) {
