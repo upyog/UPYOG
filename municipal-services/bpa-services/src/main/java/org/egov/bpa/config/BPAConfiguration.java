@@ -112,6 +112,9 @@ public class BPAConfiguration {
 
 	@Value("${egov.edcr.getPlan.endpoint}")
 	private String getPlanEndPoint;
+	
+	@Value("${egov.edcr.updateBPADetails.endpoint}")
+	private String updateBPADetailsEndPoint;
 
 	// Institutional key word
 	@Value("${egov.ownershipcategory.institutional}")
