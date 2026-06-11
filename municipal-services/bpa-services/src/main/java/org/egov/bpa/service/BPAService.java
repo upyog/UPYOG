@@ -533,11 +533,18 @@ public class BPAService {
 			bpaRequest.getBPA().getWorkflow().setAction(BPAConstants.ACTION_INITIATE);
 			bpaRequest.getBPA().getWorkflow().setAssignes(Collections.singletonList(bpa.getAccountId()));
 			bpaRequest.getBPA().setLandId(null);
-			bpaRequest.getBPA().getLandInfo().setId(null);
-			bpaRequest.getBPA().getLandInfo().getAddress().setId(null);
-			bpaRequest.getBPA().getLandInfo().getAddress().getGeoLocation().setId(null);
-			bpaRequest.getBPA().getLandInfo().getOwners().stream().forEach(owner -> owner.setOwnerId(null));
-			bpaRequest.getBPA().getLandInfo().getUnit().stream().forEach(unit -> unit.setId(null));
+			if(bpaRequest.getBPA().getLandInfo() != null) {
+				bpaRequest.getBPA().getLandInfo().setId(null);
+				if(bpaRequest.getBPA().getLandInfo().getAddress() != null) {
+					bpaRequest.getBPA().getLandInfo().getAddress().setId(null);
+					if(bpaRequest.getBPA().getLandInfo().getAddress().getGeoLocation() != null)
+						bpaRequest.getBPA().getLandInfo().getAddress().getGeoLocation().setId(null);
+				}
+				if(!CollectionUtils.isEmpty(bpaRequest.getBPA().getLandInfo().getOwners()))
+					bpaRequest.getBPA().getLandInfo().getOwners().stream().forEach(owner -> owner.setOwnerId(null));
+				if(!CollectionUtils.isEmpty(bpaRequest.getBPA().getLandInfo().getUnit()))
+					bpaRequest.getBPA().getLandInfo().getUnit().stream().forEach(unit -> unit.setId(null));
+			}
 			this.create(bpaRequest);
 		}
 		
