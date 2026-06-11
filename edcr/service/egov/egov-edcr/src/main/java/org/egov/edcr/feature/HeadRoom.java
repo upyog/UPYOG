@@ -63,7 +63,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class HeadRoom extends FeatureProcess {
-    private static final String RULE42_5_ii = "42-5-ii";
+    private static final String RULE42_5_ii = "5.15.4";
     private static final String RULE_42_5_ii_DESCRIPTION = "Minimum clear of stair head-room";
     private static final BigDecimal TWO_POINTTWO = BigDecimal.valueOf(2.2);
 

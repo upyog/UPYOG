@@ -84,7 +84,7 @@ public class LocationPlan extends FeatureProcess {
 
 		HashMap<String, String> errors = new HashMap<>();
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE);
+		details.put(RULE_NO, "-");
 		details.put(DESCRIPTION, LOCATION_PLAN_DESCRIPTION);
 		if (pl.getDrawingPreference().getLocationPlans() == null) {
 			errors.put("LOCATION_PLAN", "LOCATION_PLAN layer is not provided");
