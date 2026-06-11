@@ -298,6 +298,7 @@ export async function getBulkPdfRecordsDetails(userid, offset, limit, jobId){
           bussinessService: row.businessservice,
           consumercode: row.consumercode,
           isConsolidated: row.isconsolidated,
+          group: row.group_name,
           status: row.status
         };
         data.push(value);
