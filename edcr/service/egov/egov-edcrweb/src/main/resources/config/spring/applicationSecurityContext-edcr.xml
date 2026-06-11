@@ -63,6 +63,7 @@
 				<security:filter-chain pattern="/rest/dcr/downloadfile/**" filters="none"/>
 				<security:filter-chain pattern="/rest/dcr/scrutinydetails/**" filters="none"/>
 				<security:filter-chain pattern="/rest/dcr/mergeSanctionLetter/**" filters="none"/>
+				<security:filter-chain pattern="/rest/dcr/updateBPADetails/**" filters="none"/>
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,authenticationProcessingFilter,springSecurityFilterChain,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

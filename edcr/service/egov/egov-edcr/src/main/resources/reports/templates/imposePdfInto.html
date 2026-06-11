@@ -12,6 +12,7 @@
     th { background: #e4edf8; font-weight: 700; }
     tr:nth-child(even) td { background: #f7fbff; }`r`n    .title { font-size: 12px; }`r`n    table { line-height: 1.25; }
     .remarks-table td { background: #fff !important; }
+    .signature-image { width: 100px; height: 40px; object-fit: contain; display: block; }
   </style>
 </head>
 <body>
@@ -25,7 +26,13 @@
       </thead>
       <tbody>
         <tr th:each="row : ${section.rows}">
-          <td th:each="cell : ${row}" th:text="${cell}">Value</td>
+          <td th:each="cell, cellStat : ${row}">
+            <span th:if="${!(section['renderSignatureImage'] == true and cellStat.index == 1)}" th:text="${cell}">Value</span>
+            <img th:if="${section['renderSignatureImage'] == true and cellStat.index == 1 and cell != null and !#strings.equalsIgnoreCase(cell, 'N/A')}"
+                 th:src="${cell}"
+                 alt="Signature"
+                 class="signature-image" />
+          </td>
         </tr>
       </tbody>
     </table>
