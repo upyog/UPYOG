@@ -81,7 +81,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class HeightOfRoom extends FeatureProcess {
 
-	private static final String RULE = "4.4.4";
+	private static final String RULE = "4.4.4(iv)";
+	private static final String ROOM_AREA_RULE = "4.4.4(iv)";
 	private static final String RULE1 = "4.4.4 (ix)";
 	private static final String SUBRULE_41_II_B = "41-ii-b";
 	private static final BigDecimal minDoorWidth = BigDecimal.valueOf(1);
@@ -364,6 +365,8 @@ public class HeightOfRoom extends FeatureProcess {
 							            roomWithMinWidth2_4Exists = true;
 							        }
 
+							        subRule = ROOM_AREA_RULE;
+							        
 							        // Perform the validation and generate the report
 							        if (roomArea.compareTo(minimumArea) >= 0 && roomWidth.compareTo(minWidth) >= 0) {
 							            setReportOutputDetails(pl, subRule, subRuleDesc, floor.getNumber().toString(), "" + room.getRoomNumber(),
@@ -388,7 +391,7 @@ public class HeightOfRoom extends FeatureProcess {
 							            minimumHeight = MINIMUM_HEIGHT_3;
 							        }
 
-							        subRule = RULE;
+							        subRule = ROOM_AREA_RULE;
 							        subRuleDesc = RULE_REGULAR_DESC;
 
 							        boolean valid = false;
@@ -507,7 +510,7 @@ public class HeightOfRoom extends FeatureProcess {
 										// BigDecimal minDoorHeight = BigDecimal.valueOf(2.0);
 										//BigDecimal minDoorWidth = BigDecimal.valueOf(1);
 										subRule = SUBRULE_41_II_B;
-										subRuleDesc = SUBRULE_41_II_B;
+										subRuleDesc = "Door Width";
 										if (doorWidth.compareTo(minDoorWidth) >= 0) {
 											setReportOutputDetails2(pl, subRuleDoor, subRuleDesc,
 													floor.getNumber().toString(), 
@@ -533,7 +536,7 @@ public class HeightOfRoom extends FeatureProcess {
 										// BigDecimal minDoorHeight = BigDecimal.valueOf(2.0);
 										BigDecimal minDoorWidth = BigDecimal.valueOf(0.75);
 										subRule = SUBRULE_41_II_B;
-										subRuleDesc = SUBRULE_41_II_B;
+										subRuleDesc = "Non Habitational Door Width";
 
 										if (doorHeight.compareTo(MIN_DOOR_HEIGHT) >= 0
 												&& doorWidth.compareTo(MIN_NON_HABITATIONAL_DOOR_WIDTH) >= 0) {
@@ -559,7 +562,7 @@ public class HeightOfRoom extends FeatureProcess {
 									BigDecimal windowWidth = window.getWindowWidth();
 //									BigDecimal minWindowHeight = BigDecimal.valueOf(.50);
 //									BigDecimal minWindowWidth = BigDecimal.valueOf(.50);
-									subRule = SUBRULE_41_II_B;
+									subRule = "5.21.1";
 									subRuleDesc = SUBRULE_41_II_B;
 //									if (windowHeight.compareTo(MIN_WINDOW_HEIGHT) >= 0 && windowWidth.compareTo(MIN_WINDOW_WIDTH) >= 0) {
 									setReportOutputDetailsWindow(pl,subRule, subRuleDesc3, floor.getNumber().toString(), "-", "" + "-",

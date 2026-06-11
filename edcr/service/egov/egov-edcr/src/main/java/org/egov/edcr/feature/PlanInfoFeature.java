@@ -42,7 +42,7 @@ public class PlanInfoFeature extends FeatureProcess {
 	    scrutinyDetail.addColumnHeading(5, STATUS);
 
 	    Map<String, String> details = new HashMap<>();
-	    details.put(RULE_NO, RULE_32);
+	    details.put(RULE_NO, "-");
 	    details.put(DESCRIPTION, SITE_DIMENSION_DESCRIPTION);
 
 	    HashMap<String, String> errors = new HashMap<>();
