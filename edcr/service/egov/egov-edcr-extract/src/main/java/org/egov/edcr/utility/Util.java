@@ -1667,45 +1667,105 @@ public class Util {
 
     }
 
+//    public static void setDimension(Measurement measurement, DXFLWPolyline polyLine) {
+//        Iterator vertexIterator2 = polyLine.getVertexIterator();
+//        if (LOG.isDebugEnabled())
+//            while (vertexIterator2.hasNext()) {
+//                DXFVertex dxfVertex = (DXFVertex) vertexIterator2.next();
+//                Point p = dxfVertex.getPoint();
+//                LOG.debug(p.getX() + " " + p.getY());
+//            }
+//
+//        // if (polyLine.getVertexCount() == 4 || polyLine.getVertexCount() == 5) {
+//        if (polyLine.getVertexCount() > 1) {
+//            Iterator vertexIterator = polyLine.getVertexIterator();
+//            Point next = null, first = null;
+//            List<Double> distances = new ArrayList<>();
+//            while (vertexIterator.hasNext()) {
+//                DXFVertex dxfVertex = (DXFVertex) vertexIterator.next();
+//                Point p = dxfVertex.getPoint();
+//                if (next == null) {
+//                    next = p;
+//                    first = p;
+//                    continue;
+//                }
+//                distances.add(MathUtils.distance(next, p));
+//                next = p;
+//            }
+//            if (!pointsEquals(next, first))
+//                distances.add(MathUtils.distance(next, first));
+//
+//            if (!distances.isEmpty()) {
+//                measurement.setWidth(BigDecimal.valueOf(Collections.min(distances)));
+//                measurement.setHeight(BigDecimal.valueOf(Collections.max(distances)));
+//                measurement.setMinimumSide(BigDecimal.valueOf(Collections.min(distances)));
+//            } else {
+//                measurement.setWidth(BigDecimal.ZERO);
+//                measurement.setHeight(BigDecimal.ZERO);
+//                measurement.setMinimumSide(BigDecimal.ZERO);
+//            }
+//        } else
+//            measurement.setInvalidReason("It is not rectangle, found " + polyLine.getVertexCount() + " points");
+//    }
+    
     public static void setDimension(Measurement measurement, DXFLWPolyline polyLine) {
+
         Iterator vertexIterator2 = polyLine.getVertexIterator();
-        if (LOG.isDebugEnabled())
+
+        if (LOG.isDebugEnabled()) {
             while (vertexIterator2.hasNext()) {
                 DXFVertex dxfVertex = (DXFVertex) vertexIterator2.next();
                 Point p = dxfVertex.getPoint();
                 LOG.debug(p.getX() + " " + p.getY());
             }
+        }
 
-        // if (polyLine.getVertexCount() == 4 || polyLine.getVertexCount() == 5) {
         if (polyLine.getVertexCount() > 1) {
+
             Iterator vertexIterator = polyLine.getVertexIterator();
+
             Point next = null, first = null;
             List<Double> distances = new ArrayList<>();
+
             while (vertexIterator.hasNext()) {
+
                 DXFVertex dxfVertex = (DXFVertex) vertexIterator.next();
                 Point p = dxfVertex.getPoint();
+
                 if (next == null) {
                     next = p;
                     first = p;
                     continue;
                 }
+
                 distances.add(MathUtils.distance(next, p));
                 next = p;
             }
-            if (!pointsEquals(next, first))
+
+            if (!pointsEquals(next, first)) {
                 distances.add(MathUtils.distance(next, first));
+            }
+
+            double actualWidth = getPolylineWidth(polyLine);
+
+            if (actualWidth == 0 && !distances.isEmpty()) {
+                actualWidth = Collections.min(distances);
+            }
 
             if (!distances.isEmpty()) {
-                measurement.setWidth(BigDecimal.valueOf(Collections.min(distances)));
+                measurement.setWidth(BigDecimal.valueOf(actualWidth));
                 measurement.setHeight(BigDecimal.valueOf(Collections.max(distances)));
-                measurement.setMinimumSide(BigDecimal.valueOf(Collections.min(distances)));
+                measurement.setMinimumSide(BigDecimal.valueOf(actualWidth));
             } else {
                 measurement.setWidth(BigDecimal.ZERO);
                 measurement.setHeight(BigDecimal.ZERO);
                 measurement.setMinimumSide(BigDecimal.ZERO);
             }
-        } else
-            measurement.setInvalidReason("It is not rectangle, found " + polyLine.getVertexCount() + " points");
+
+        } else {
+            measurement.setInvalidReason(
+                "It is not rectangle, found " + polyLine.getVertexCount() + " points");
+        }
     }
 
     public static void setOccupancyType(DXFLWPolyline pline, Occupancy occupancy) {
@@ -1808,8 +1868,8 @@ public class Util {
             return OccupancyType.OCCUPANCY_B1;
 //        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_B2_COLOR_CODE)
 //            return OccupancyType.OCCUPANCY_B2;
-        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_B3_COLOR_CODE)
-            return OccupancyType.OCCUPANCY_B3;
+//        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_B3_COLOR_CODE)
+//            return OccupancyType.OCCUPANCY_B3;
         else if (pline.getColor() == DxfFileConstants.OCCUPANCY_C1_COLOR_CODE)
             return OccupancyType.OCCUPANCY_C1;
 //        else if (pline.getColor() == DxfFileConstants.OCCUPANCY_C2_COLOR_CODE)
@@ -2408,5 +2468,107 @@ public class Util {
                b.getY() <= Math.max(a.getY(), c.getY()) && b.getY() >= Math.min(a.getY(), c.getY());
     }
 
+    public static class Segment {
+
+        Point p1;
+        Point p2;
+
+        public Segment(Point p1, Point p2) {
+            this.p1 = p1;
+            this.p2 = p2;
+        }
+
+        public double length() {
+            return MathUtils.distance(p1, p2);
+        }
+    }
+    
+    private static boolean areParallel(Segment s1, Segment s2) {
+
+        double dx1 = s1.p2.getX() - s1.p1.getX();
+        double dy1 = s1.p2.getY() - s1.p1.getY();
+
+        double dx2 = s2.p2.getX() - s2.p1.getX();
+        double dy2 = s2.p2.getY() - s2.p1.getY();
+
+        double cross = dx1 * dy2 - dy1 * dx2;
+
+        return Math.abs(cross) < 0.001;
+    }
+    
+    private static double perpendicularDistance(Segment s1, Segment s2) {
+
+        double x1 = s1.p1.getX();
+        double y1 = s1.p1.getY();
+
+        double x2 = s1.p2.getX();
+        double y2 = s1.p2.getY();
+
+        double x0 = s2.p1.getX();
+        double y0 = s2.p1.getY();
+
+        return Math.abs(
+                (y2 - y1) * x0
+              - (x2 - x1) * y0
+              + x2 * y1
+              - y2 * x1)
+                / Math.sqrt(
+                Math.pow(y2 - y1, 2)
+              + Math.pow(x2 - x1, 2));
+    }
+    
+    private static double getPolylineWidth(DXFLWPolyline polyLine) {
+
+        List<Point> points = new ArrayList<>();
+
+        Iterator<?> iterator = polyLine.getVertexIterator();
+
+        while (iterator.hasNext()) {
+            DXFVertex vertex = (DXFVertex) iterator.next();
+            points.add(vertex.getPoint());
+        }
+
+        if (!pointsEquals(points.get(0), points.get(points.size() - 1))) {
+            points.add(points.get(0));
+        }
+
+        List<Segment> segments = new ArrayList<>();
+
+        for (int i = 0; i < points.size() - 1; i++) {
+
+            Segment segment = new Segment(
+                    points.get(i),
+                    points.get(i + 1));
+
+            /*
+             * Ignore tiny chamfer/notch edges.
+             */
+            if (segment.length() > 1.0) {
+                segments.add(segment);
+            }
+        }
+
+        double width = Double.MAX_VALUE;
+
+        for (int i = 0; i < segments.size(); i++) {
+
+            for (int j = i + 1; j < segments.size(); j++) {
+
+                Segment s1 = segments.get(i);
+                Segment s2 = segments.get(j);
+
+                if (!areParallel(s1, s2))
+                    continue;
+
+                double distance = perpendicularDistance(s1, s2);
+
+                if (distance > 0.01) {
+                    width = Math.min(width, distance);
+                }
+            }
+        }
+
+        return width == Double.MAX_VALUE ? 0 : width;
+    }
     
 }

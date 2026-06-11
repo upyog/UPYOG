@@ -463,7 +463,7 @@ public class EgovMicroServiceStore implements FileStoreService {
         String urls = url + "/id?tenantId=" + ApplicationThreadLocals.getFullTenantID() + "&fileStoreId=" + fileStoreId;
         if (LOG.isDebugEnabled())
             LOG.debug(String.format("fetch file fron url   %s   ", urls));
-
+        LOG.info(String.format("fetch file fron url   %s   ", urls));
         Path path = Paths.get("/tmp/" + RandomUtils.nextLong());
         try {
             RequestCallback requestCallback = request -> request.getHeaders()
