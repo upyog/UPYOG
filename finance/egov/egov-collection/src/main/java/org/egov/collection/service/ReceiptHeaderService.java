@@ -1296,7 +1296,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 bill.getBillDetails().get(0)
                 .setAmountPaid(bills.get(0).getBillDetails().get(0).getTotalAmount());
                 bill.getTaxAndPayments().get(0).setAmountPaid(bills.get(0).getBillDetails().get(0).getTotalAmount());
-                bill.setPaidBy(receiptHeader.getPaidBy());
+                bill.setPaidBy(receiptHeader.getPaidBy().trim());
                 bill.setPayerName(receiptHeader.getPayeeName());
                 bill.setPayerAddress(receiptHeader.getPayeeAddress());
                 bill.getBillDetails().get(0).setCollectionType(CollectionType.COUNTER);
@@ -1676,7 +1676,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 .paymentMode(getPaymentModeEnum(receiptHeader.getModOfPayment()))
                 .totalDue(receiptHeader.getTotalAmount())
                 .totalAmountPaid(receiptHeader.getTotalAmount())
-                .paidBy(receiptHeader.getPaidBy())
+                .paidBy(receiptHeader.getPaidBy().trim())
                 .paymentStatus(PaymentStatusEnum.NEW)
                 // Explicitly setting empty objects
                 .auditDetails(new AuditDetails())   
