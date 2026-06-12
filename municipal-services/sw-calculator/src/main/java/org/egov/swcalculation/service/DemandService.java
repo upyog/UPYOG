@@ -1538,14 +1538,12 @@ public class DemandService {
 			
 			log.info("Total Connections: {} and batch count: {}", connectionNos.size(), bulkSaveDemandCount);
 
-			int connectionNosCount = 0;
 			int totalRecordsPushedToKafka = 0;
-			int threadSleepCount = 0;
+			int connectionCount = 0;
 			List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
 			for (int connectionNosIndex = 0; connectionNosIndex < connectionNos.size(); connectionNosIndex++) {
 				SewerageDetails sewConnDetails = connectionNos.get(connectionNosIndex);
-				connectionNosCount++;
-				int billingCycleCount = 0;
+				log.info("Connection Number: {}", sewConnDetails.getConnectionNo());
 
 				try {
 					int generateDemandFromIndex = 0;
@@ -1558,9 +1556,13 @@ public class DemandService {
 						generateDemandFromIndex++;
 					}
 
-					for (int taxPeriodIndex = generateDemandFromIndex; generateDemandFromIndex <= generateDemandToIndex; taxPeriodIndex++) {
-						generateDemandFromIndex++;
-						billingCycleCount++;
+					List<CalculationCriteria> connectionCriteriaList = new ArrayList<>();
+					for (int taxPeriodIndex = generateDemandFromIndex; taxPeriodIndex <= generateDemandToIndex; taxPeriodIndex++) {
+						if (taxPeriods == null || taxPeriods.isEmpty() || taxPeriodIndex < 0 || taxPeriodIndex >= taxPeriods.size()) {
+							log.warn("⚠️ taxPeriodIndex {} out of bounds (size: {}) or taxPeriods is empty for connectionNo: {} — breaking.",
+									taxPeriodIndex, taxPeriods != null ? taxPeriods.size() : 0, sewConnDetails.getConnectionNo());
+							break;
+						}
 						TaxPeriod taxPeriod = taxPeriods.get(taxPeriodIndex);
 //						log.info("FromPeriod: {} and ToPeriod: {}",taxPeriod.getFromDate(),taxPeriod.getToDate());
 						log.info("taxPeriodIndex: {} and generateDemandFromIndex: {} and generateDemandToIndex: {}",taxPeriodIndex, generateDemandFromIndex, generateDemandToIndex);
@@ -1569,24 +1571,26 @@ public class DemandService {
 								requestInfo);
 						if (isValidBillingCycle) {
 
-							CalculationCriteria calculationCriteria = CalculationCriteria.builder()
+							connectionCriteriaList.add(CalculationCriteria.builder()
 									.tenantId(tenantId)
 									.assessmentYear(taxPeriod.getFinancialYear())
 									.from(taxPeriod.getFromDate())
 									.to(taxPeriod.getToDate())
 									.connectionNo(sewConnDetails.getConnectionNo())
-									.build();
-							calculationCriteriaList.add(calculationCriteria);
+									.build());
 							log.info("connectionNosIndex: {} and connectionNos.size(): {}",connectionNosIndex, connectionNos.size());
 
 						}
 						
 					}
-					if(calculationCriteriaList == null || calculationCriteriaList.isEmpty())
-						continue;
+
+					if (!connectionCriteriaList.isEmpty()) {
+						calculationCriteriaList.addAll(connectionCriteriaList);
+						connectionCount++;
+					}
 					
-					if(billingCycleCount > 10 || connectionNosCount == bulkSaveDemandCount) {
-						log.info("Controller entered into producer logic, connectionNosCount: {} and connectionNos.size(): {}",connectionNosCount, connectionNos.size());
+					if (connectionCount == bulkSaveDemandCount) {
+						log.info("Controller entered into producer logic, connectionCount: {} and connectionNos.size(): {}", connectionCount, connectionNos.size());
 						MigrationCount migrationCount = MigrationCount.builder()
 								.tenantid(tenantId)
 								.businessService("SW")
@@ -1608,48 +1612,43 @@ public class DemandService {
 					    kafkaTemplate.send(configs.getCreateDemand(), key,calculationReq);
 					    
 						totalRecordsPushedToKafka++;
-						billingCycleCount=0;
 						calculationCriteriaList.clear();
-						connectionNosCount=0;
-						if(threadSleepCount == 3) {
-						    Thread.sleep(1000); // Sleep for 1 second
-							threadSleepCount=0;
-						}
-						threadSleepCount++;
-
-					} else if(connectionNosIndex == connectionNos.size()-1) {
-						log.info("Last connection entered into producer logic, connectionNosCount: {} and connectionNos.size(): {}",connectionNosCount, connectionNos.size());
-						MigrationCount migrationCount = MigrationCount.builder()
-								.tenantid(tenantId)
-								.businessService("SW")
-								.limit((long)1.00)
-								.id(UUID.randomUUID().toString())
-								.offset((long)1.00)								
-								.createdTime(System.currentTimeMillis())
-								.recordCount(Long.valueOf(connectionNos.size()))
-								.build();
-						CalculationReq calculationReq = CalculationReq.builder()
-								.calculationCriteria(calculationCriteriaList)
-								.requestInfo(requestInfo)
-								.isconnectionCalculation(true)
-								.migrationCount(migrationCount)
-								.build();
-						log.info("Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}", calculationCriteriaList.size());
-						String key = sewConnDetails.getConnectionNo();
-					    kafkaTemplate.send(configs.getCreateDemand(), key,calculationReq);
-						totalRecordsPushedToKafka++;
-						calculationCriteriaList.clear();
-						connectionNosCount=0;
-
+						connectionCount = 0;
 					}
 
 				}catch (Exception e) {
 					log.error("Exception occurred while generating demand for sewerage connectionno: "+sewConnDetails.getConnectionNo() + " tenantId: "+tenantId);
 				}
 			}
+
+			if (!calculationCriteriaList.isEmpty()) {
+				log.info("Last connection entered into producer logic, connectionCount: {} and connectionNos.size(): {}", connectionCount, connectionNos.size());
+				MigrationCount migrationCount = MigrationCount.builder()
+						.tenantid(tenantId)
+						.businessService("SW")
+						.limit((long)1.00)
+						.id(UUID.randomUUID().toString())
+						.offset((long)1.00)								
+						.createdTime(System.currentTimeMillis())
+						.recordCount(Long.valueOf(connectionNos.size()))
+						.build();
+				CalculationReq calculationReq = CalculationReq.builder()
+						.calculationCriteria(calculationCriteriaList)
+						.requestInfo(requestInfo)
+						.isconnectionCalculation(true)
+						.migrationCount(migrationCount)
+						.build();
+				log.info("Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}", calculationCriteriaList.size());
+				String key = calculationCriteriaList.get(0).getConnectionNo();
+			    kafkaTemplate.send(configs.getCreateDemand(), key,calculationReq);
+				totalRecordsPushedToKafka++;
+				calculationCriteriaList.clear();
+			}
+
 			log.info("totalConnRecordsPushedToKafka: {}", totalRecordsPushedToKafka);
-		}catch (Exception e) {
-			log.error("Exception occurred while processing the demand generation for tenantId: "+tenantId);
+
+		} catch (Exception e) {
+			log.error("Exception occurred while processing the demand generation for tenantId: " + tenantId);
 		}
 	}
 

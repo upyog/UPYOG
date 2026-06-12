@@ -1945,6 +1945,7 @@ public class DemandService {
 
 			List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
 			int totalRecordsPushedToKafka = 0;
+			int connectionCount = 0;
 
 			for (int connectionNosIndex = 0; connectionNosIndex < connectionNos.size(); connectionNosIndex++) {
 				WaterDetails waterConnection = connectionNos.get(connectionNosIndex);
@@ -1962,6 +1963,7 @@ public class DemandService {
 						startIndex++; // move to next quarter
 					}
 
+					List<CalculationCriteria> connectionCriteriaList = new ArrayList<>();
 					for (int taxPeriodIndex = startIndex; taxPeriodIndex <= generateDemandToIndex; taxPeriodIndex++) {
 						TaxPeriod taxPeriod = taxPeriods.get(taxPeriodIndex);
 						log.info("FromPeriod: {} ToPeriod: {} connectionNo: {}", taxPeriod.getFromDate(),
@@ -1970,24 +1972,25 @@ public class DemandService {
 						if (isValidBillingCycle(waterConnection, requestInfo, tenantId, taxPeriod.getFromDate(),
 								taxPeriod.getToDate())) {
 
-							calculationCriteriaList.add(CalculationCriteria.builder().tenantId(tenantId)
+							connectionCriteriaList.add(CalculationCriteria.builder().tenantId(tenantId)
 									.assessmentYear(taxPeriod.getFinancialYear()).from(taxPeriod.getFromDate())
 									.to(taxPeriod.getToDate()).connectionNo(waterConnection.getConnectionNo()).build());
-
-							// ✅ Push batch when reaching configured size
-							if (calculationCriteriaList.size() == bulkSaveDemandCount) {
-								pushBatchToKafka(calculationCriteriaList, requestInfo);
-							
-									//Thread.sleep(1500000);
-
-								
-								totalRecordsPushedToKafka += calculationCriteriaList.size();
-								calculationCriteriaList.clear();
-							}
-
 						} else {
 							log.info("Invalid Connection for period {}", taxPeriod.getFinancialYear());
 						}
+					}
+
+					if (!connectionCriteriaList.isEmpty()) {
+						calculationCriteriaList.addAll(connectionCriteriaList);
+						connectionCount++;
+					}
+
+					// ✅ Push batch when reaching configured connection count size
+					if (connectionCount == bulkSaveDemandCount) {
+						pushBatchToKafka(calculationCriteriaList, requestInfo);
+						totalRecordsPushedToKafka += calculationCriteriaList.size();
+						calculationCriteriaList.clear();
+						connectionCount = 0;
 					}
 
 				} catch (Exception e) {
@@ -1996,7 +1999,7 @@ public class DemandService {
 				}
 			}
 
-// ✅ Push leftover records if any
+			// ✅ Push leftover records if any
 			if (!calculationCriteriaList.isEmpty()) {
 				pushBatchToKafka(calculationCriteriaList, requestInfo);
 				totalRecordsPushedToKafka += calculationCriteriaList.size();
