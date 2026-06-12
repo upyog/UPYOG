@@ -462,7 +462,7 @@ public class DemandValidatorV1 {
 		        for (String substring : substrings) {
 		            if (taxHeadMasterCode.contains(substring)) 
 		            {
-				System.out.println("WS Contains");
+//				System.out.println("WS Contains");
 			}
 			else {
 			if (isTaxGtZeroAndCollectionGtTaxOrCollectionLtZero) {
@@ -601,6 +601,7 @@ public class DemandValidatorV1 {
 			if (dbDemandDetailMap.get(demandDetail.getId()) == null)
 				unFoundDemandDetailIds.add(demandDetail.getId());
 		}
+		log.info("Unfound Demand Ids: "+ dbDemandDetailMap.toString());
 		
 		if (!CollectionUtils.isEmpty(unFoundDemandIds))
 			errorMap.put(DEMAND_NOT_FOUND_KEY,
