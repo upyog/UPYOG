@@ -22,6 +22,8 @@ import org.egov.hrms.web.contract.EmployeeRequest;
 import org.egov.hrms.web.contract.ObpasEmployeeRequest;
 import org.egov.hrms.web.contract.EmployeeResponse;
 import org.egov.hrms.web.contract.EmployeeSearchCriteria;
+import org.egov.hrms.web.contract.ObpasEmployeeSearchCriteria;
+import org.egov.hrms.web.contract.ObpassEmployeeResponse;
 import org.egov.hrms.web.contract.UserResponse;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.tracer.model.CustomException;
@@ -36,7 +38,7 @@ import static org.egov.hrms.utils.ErrorConstants.CITIZEN_TYPE_CODE;
 @Service
 @Slf4j
 public class EmployeeValidator {
-	
+
 	@Autowired
 	private MDMSService mdmsService;
 
@@ -45,7 +47,7 @@ public class EmployeeValidator {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private PropertiesManager propertiesManager;
 
@@ -53,7 +55,7 @@ public class EmployeeValidator {
 	 * Validates employee request for create. Validations include:
 	 * 1. Validating MDMS codes
 	 * 2. Performing data sanity checks
-	 * 
+	 *
 	 * @param request
 	 */
 	public void validateCreateEmployee(EmployeeRequest request) {
@@ -69,46 +71,135 @@ public class EmployeeValidator {
 		if(!CollectionUtils.isEmpty(errorMap.keySet()))
 			throw new CustomException(errorMap);
 	}
-	
+
 	public void validateRequest(ObpasEmployeeRequest obpasrequest) {
-        if (obpasrequest == null) {
-            throw new IllegalArgumentException("ObpasEmployeeRequest cannot be null");
-        }
+		if (obpasrequest == null) {
+			throw new IllegalArgumentException("ObpasEmployeeRequest cannot be null");
+		}
 
-        RequestInfo requestInfo = obpasrequest.getRequestInfo();
-        if (requestInfo == null) {
-            throw new IllegalArgumentException("RequestInfo cannot be null");
-        }
+		RequestInfo requestInfo = obpasrequest.getRequestInfo();
+		if (requestInfo == null) {
+			throw new IllegalArgumentException("RequestInfo cannot be null");
+		}
 
-        List<ObpasEmployee> employees = obpasrequest.getEmployees();
-        if (employees == null || employees.isEmpty()) {
-            throw new IllegalArgumentException("Employees list cannot be null or empty");
-        }
+		List<ObpasEmployee> employees = obpasrequest.getEmployees();
+		if (employees == null || employees.isEmpty()) {
+			throw new IllegalArgumentException("Employees list cannot be null or empty");
+		}
 
-        for (ObpasEmployee emp : employees) {
-            validateEmployee(emp);
-        }
-    }
+		Map<String, String> errorMap = new HashMap<>();
+		Map<String, String> processedZoneToUserMap = new HashMap<>();
 
-	private void validateEmployee(ObpasEmployee emp) {
-	    if (emp == null) {
-	        throw new IllegalArgumentException("Employee object cannot be null");
-	    }
-	    if (StringUtils.isBlank(emp.getTenantId())) {
-	        throw new IllegalArgumentException("TenantId is mandatory for employee");
-	    }
-	    if (StringUtils.isBlank(emp.getUserUUID())) {
-	        throw new IllegalArgumentException("UserUUID is mandatory for employee");
-	    }
-	    if (emp.getCategory() == null || emp.getCategory().isEmpty()) {
-	        throw new IllegalArgumentException("At least one Category is mandatory for employee");
-	    }
-	    if (emp.getSubcategory() == null || emp.getSubcategory().isEmpty()) {
-	        throw new IllegalArgumentException("At least one Subcategory is mandatory for employee");
-	    }
-	    if (StringUtils.isBlank(emp.getZone())) {
-	        throw new IllegalArgumentException("Zone is mandatory for employee");
-	    }
+		for (ObpasEmployee emp : employees) {
+			validateEmployee(emp, errorMap);
+
+			if (emp.getZone() != null && emp.getUserUUID() != null) {
+				String zoneKey = emp.getTenantId() + "-" + emp.getCategory() + "-" + emp.getSubcategory() + "-" + emp.getZone();
+
+				if (processedZoneToUserMap.containsKey(zoneKey)) {
+					String existingUserUUID = processedZoneToUserMap.get(zoneKey);
+					if (!existingUserUUID.equals(emp.getUserUUID())) {
+						errorMap.put(ErrorConstants.OBPAS_ZONE_ACCESS_ALREADY_EXISTS_CODE + "_BATCH_" + emp.getZone(),
+								"Zone access for '" + emp.getZone() + "' is already given to another employee in this request.");
+					}
+				} else {
+					processedZoneToUserMap.put(zoneKey, emp.getUserUUID());
+					validateZoneAccessUniqueness(emp, requestInfo, errorMap);
+				}
+			}
+		}
+
+		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
+			throw new CustomException(errorMap);
+		}
+	}
+
+	/**
+	 * Checks if the zone being assigned is already given to another employee.
+	 * If the zone is unoccupied, the method returns normally and the existing flow continues.
+	 * If the user being searched does not exist, the check is skipped and the existing flow handles it.
+	 *
+	 * @param emp         the OBPAS employee being created/assigned
+	 * @param requestInfo the request info from the incoming request
+	 */
+	private void validateZoneAccessUniqueness(ObpasEmployee emp, RequestInfo requestInfo, Map<String, String> errorMap) {
+		// 1. Fetch current employee's roles
+		EmployeeSearchCriteria empCriteria = new EmployeeSearchCriteria();
+		empCriteria.setTenantId(emp.getTenantId());
+		empCriteria.setUuids(Collections.singletonList(emp.getUserUUID()));
+		EmployeeResponse empResponse = employeeService.search(empCriteria, requestInfo);
+
+		if (empResponse == null || CollectionUtils.isEmpty(empResponse.getEmployees())) {
+			return; // Current employee not found in HRMS, cannot check roles
+		}
+
+		Employee currentEmployee = empResponse.getEmployees().get(0);
+		if (currentEmployee.getUser() == null || CollectionUtils.isEmpty(currentEmployee.getUser().getRoles())) {
+			return; // Current employee has no roles, nothing to conflict with
+		}
+
+		Set<String> currentRoleCodes = currentEmployee.getUser().getRoles().stream()
+				.map(org.egov.hrms.model.Role::getCode)
+				.collect(Collectors.toSet());
+
+		// 2. Build search criteria using zone + category + subcategory + tenantId + assignedTenantId + roles
+		EmployeeSearchCriteria conflictCriteria = new EmployeeSearchCriteria();
+		conflictCriteria.setTenantId(emp.getTenantId());
+		conflictCriteria.setIsActive(true);
+		conflictCriteria.setCategories(Collections.singletonList(emp.getCategory()));
+		conflictCriteria.setSubcategories(Collections.singletonList(emp.getSubcategory()));
+		conflictCriteria.setZones(Collections.singletonList(emp.getZone()));
+		if (!StringUtils.isEmpty(emp.getAssignedTenantId())) {
+			conflictCriteria.setAssignedtenattids(Collections.singletonList(emp.getAssignedTenantId()));
+		}
+		conflictCriteria.setRoles(new ArrayList<>(currentRoleCodes));
+
+		EmployeeResponse conflictResponse = employeeService.search(conflictCriteria, requestInfo);
+
+		// If no existing records found for this criteria — zone is free for this role, continue existing flow
+		if (conflictResponse == null || CollectionUtils.isEmpty(conflictResponse.getEmployees())) {
+			return;
+		}
+
+		// If zone is assigned to a DIFFERENT employee with the EXACT SAME roles, throw error
+		boolean isAssignedToOtherEmployeeWithSameRole = conflictResponse.getEmployees().stream()
+				.anyMatch(existingEmp -> {
+					if (existingEmp.getUser() == null || CollectionUtils.isEmpty(existingEmp.getUser().getRoles()) ||
+							existingEmp.getUser().getUuid().equals(emp.getUserUUID())) {
+						return false;
+					}
+					Set<String> existingRoleCodes = existingEmp.getUser().getRoles().stream()
+							.map(org.egov.hrms.model.Role::getCode)
+							.collect(Collectors.toSet());
+					return currentRoleCodes.equals(existingRoleCodes);
+				});
+
+		if (isAssignedToOtherEmployeeWithSameRole) {
+			errorMap.put(ErrorConstants.OBPAS_ZONE_ACCESS_ALREADY_EXISTS_CODE + "_" + emp.getZone(),
+					"Zone access for '" + emp.getZone() + "' is already assigned to the employee of the same role.");
+		}
+	}
+
+	private void validateEmployee(ObpasEmployee emp, Map<String, String> errorMap) {
+		if (emp == null) {
+			errorMap.put("OBPAS_EMP_NULL", "Employee object cannot be null");
+			return;
+		}
+		if (StringUtils.isBlank(emp.getTenantId())) {
+			errorMap.put("OBPAS_EMP_TENANTID_MANDATORY", "TenantId is mandatory for employee");
+		}
+		if (StringUtils.isBlank(emp.getUserUUID())) {
+			errorMap.put("OBPAS_EMP_USERUUID_MANDATORY", "UserUUID is mandatory for employee");
+		}
+		if (emp.getCategory() == null || emp.getCategory().isEmpty()) {
+			errorMap.put("OBPAS_EMP_CATEGORY_MANDATORY", "At least one Category is mandatory for employee");
+		}
+		if (emp.getSubcategory() == null || emp.getSubcategory().isEmpty()) {
+			errorMap.put("OBPAS_EMP_SUBCATEGORY_MANDATORY", "At least one Subcategory is mandatory for employee");
+		}
+		if (StringUtils.isBlank(emp.getZone())) {
+			errorMap.put("OBPAS_EMP_ZONE_MANDATORY", "Zone is mandatory for employee");
+		}
 	}
 
 
@@ -147,11 +238,11 @@ public class EmployeeValidator {
 		}
 		return masterData;
 	}
-	
+
 	/**
 	 * Validates search request. Checks the following:
 	 * 1. If a user who doesn't have access to open search is making an open search call.
-	 * 
+	 *
 	 * @param requestInfo
 	 * @param criteria
 	 */
@@ -180,53 +271,46 @@ public class EmployeeValidator {
 				errorMap.put(ErrorConstants.HRMS_INVALID_SEARCH_AOD_CODE, ErrorConstants.HRMS_INVALID_SEARCH_AOD_MSG);
 		}
 
-        if(!CollectionUtils.isEmpty( criteria.getRoles()) && StringUtils.isEmpty(criteria.getTenantId())) {
-            errorMap.put(ErrorConstants.HRMS_INVALID_SEARCH_ROLES_CODE, ErrorConstants.HRMS_INVALID_SEARCH_ROLES_MSG);
-        }
+		if(!CollectionUtils.isEmpty( criteria.getRoles()) && StringUtils.isEmpty(criteria.getTenantId())) {
+			errorMap.put(ErrorConstants.HRMS_INVALID_SEARCH_ROLES_CODE, ErrorConstants.HRMS_INVALID_SEARCH_ROLES_MSG);
+		}
 
-        if((!StringUtils.isEmpty(criteria.getPhone()) || !CollectionUtils.isEmpty(criteria.getNames())) &&
+		if((!StringUtils.isEmpty(criteria.getPhone()) || !CollectionUtils.isEmpty(criteria.getNames())) &&
 				StringUtils.isEmpty(criteria.getTenantId())) {
 			errorMap.put(ErrorConstants.HRMS_INVALID_SEARCH_USER_CODE, ErrorConstants.HRMS_INVALID_SEARCH_USER_MSG);
 		}
 		if(!CollectionUtils.isEmpty(errorMap.keySet()))
 			throw new CustomException(errorMap);
 	}
-
-	
-	
-	
-	
-	
-	
 	public void validatewardSearchRequest(RequestInfo requestInfo, EmployeeWithWard criteria) {
-	    Map<String, String> errorMap = new HashMap<>();
+		Map<String, String> errorMap = new HashMap<>();
 
-	    if (criteria.getTenantId() == null || criteria.getTenantId().trim().isEmpty()) {
-	        errorMap.put("tenantId", "Tenant ID is mandatory");
-	    }
+		if (criteria.getTenantId() == null || criteria.getTenantId().trim().isEmpty()) {
+			errorMap.put("tenantId", "Tenant ID is mandatory");
+		}
 
-	    if (criteria.getWardId() == null || criteria.getWardId().trim().isEmpty()) {
-	        errorMap.put("wardId", "Ward ID is mandatory");
-	    }
+		if (criteria.getWardId() == null || criteria.getWardId().trim().isEmpty()) {
+			errorMap.put("wardId", "Ward ID is mandatory");
+		}
 
-	    if (!errorMap.isEmpty()) {
-	        throw new CustomException(errorMap);
-	    }
+		if (!errorMap.isEmpty()) {
+			throw new CustomException(errorMap);
+		}
 	}
 
 	/**
 	 * Checks if the employee being created is duplicate with the following:
 	 * 1. Validating mobile number
 	 * 2. Validating username
-	 * 
+	 *
 	 * @param request
 	 * @param errorMap
 	 */
 	private void validateExistingDuplicates(EmployeeRequest request, Map<String, String> errorMap) {
 		List<Employee> employees = request.getEmployees();
 		validateDataUniqueness(employees,errorMap);
-        validateUserMobile(employees,errorMap,request.getRequestInfo());
-        validateUserName(employees,errorMap,request.getRequestInfo());
+		validateUserMobile(employees,errorMap,request.getRequestInfo());
+		validateUserName(employees,errorMap,request.getRequestInfo());
 	}
 
 	/**
@@ -254,53 +338,53 @@ public class EmployeeValidator {
 
 	/**
 	 * Checks if the mobile number used in the request is duplicate.
-	 * 
+	 *
 	 * @param employees
 	 * @param errorMap
 	 * @param requestInfo
 	 */
-    private void validateUserMobile(List<Employee> employees, Map<String, String> errorMap, RequestInfo requestInfo) {
-        employees.forEach(employee -> {
+	private void validateUserMobile(List<Employee> employees, Map<String, String> errorMap, RequestInfo requestInfo) {
+		employees.forEach(employee -> {
 			Map<String, Object> userSearchCriteria = new HashMap<>();
 			userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_TENANTID,employee.getTenantId());
 			userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_MOBILENO,employee.getUser().getMobileNumber());
 			UserResponse userResponse = userService.getUser(requestInfo, userSearchCriteria);
-            if(!CollectionUtils.isEmpty(userResponse.getUser())){
-                errorMap.put(ErrorConstants.HRMS_USER_EXIST_MOB_CODE,
-                		ErrorConstants.HRMS_USER_EXIST_MOB_MSG);
-            }
-        });
-    }
+			if(!CollectionUtils.isEmpty(userResponse.getUser())){
+				errorMap.put(ErrorConstants.HRMS_USER_EXIST_MOB_CODE,
+						ErrorConstants.HRMS_USER_EXIST_MOB_MSG);
+			}
+		});
+	}
 
-    /**
-     * Checks if the username is duplicate
-     * 
-     * @param employees
-     * @param errorMap
-     * @param requestInfo
-     */
-    private void validateUserName(List<Employee> employees, Map<String, String> errorMap, RequestInfo requestInfo) {
-        employees.forEach(employee -> {
-            if(!StringUtils.isEmpty(employee.getCode())){
+	/**
+	 * Checks if the username is duplicate
+	 *
+	 * @param employees
+	 * @param errorMap
+	 * @param requestInfo
+	 */
+	private void validateUserName(List<Employee> employees, Map<String, String> errorMap, RequestInfo requestInfo) {
+		employees.forEach(employee -> {
+			if(!StringUtils.isEmpty(employee.getCode())){
 				Map<String, Object> userSearchCriteria = new HashMap<>();
 				userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_TENANTID,employee.getTenantId());
 				userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_USERNAME,employee.getCode());
 				UserResponse userResponse = userService.getUser(requestInfo, userSearchCriteria);
 				if(!CollectionUtils.isEmpty(userResponse.getUser())){
-                    errorMap.put(ErrorConstants.HRMS_USER_EXIST_USERNAME_CODE,
-                    		ErrorConstants.HRMS_USER_EXIST_USERNAME_MSG);
-                }
-            }
-        });
-    }
+					errorMap.put(ErrorConstants.HRMS_USER_EXIST_USERNAME_CODE,
+							ErrorConstants.HRMS_USER_EXIST_USERNAME_MSG);
+				}
+			}
+		});
+	}
 
-    /**
-     * Validates MDMS codes of the request.
-     * 
-     * @param employee
-     * @param errorMap
-     * @param mdmsData
-     */
+	/**
+	 * Validates MDMS codes of the request.
+	 *
+	 * @param employee
+	 * @param errorMap
+	 * @param mdmsData
+	 */
 	private void validateMdmsData(Employee employee, Map<String, String> errorMap, Map<String, List<String>> mdmsData, Map<String, List<String>> boundaryMap) {
 		validateEmployee(employee, errorMap, mdmsData);
 		validateAssignments(employee, errorMap, mdmsData);
@@ -367,7 +451,7 @@ public class EmployeeValidator {
 	 * 3. Whether the employee status mentioned is valid.
 	 * 4. Whether the employee type mentioned is valid
 	 * 5. Whether the date of appointment of the employee is valid.
-	 * 
+	 *
 	 * @param employee
 	 * @param errorMap
 	 * @param mdmsData
@@ -376,7 +460,7 @@ public class EmployeeValidator {
 
 		if(employee.getUser().getMobileNumber().length() != 10)
 			errorMap.put(ErrorConstants.HRMS_INVALID_MOB_NO_CODE, ErrorConstants.HRMS_INVALID_MOB_NO_MSG);
-		
+
 		if(CollectionUtils.isEmpty(employee.getUser().getRoles()))
 			errorMap.put(ErrorConstants.HRMS_MISSING_ROLES_CODE, ErrorConstants.HRMS_INVALID_ROLES_MSG);
 		else {
@@ -398,7 +482,7 @@ public class EmployeeValidator {
 				errorMap.put(ErrorConstants.HRMS_INVALID_DATE_OF_APPOINTMENT_DOB_CODE, ErrorConstants.HRMS_INVALID_DATE_OF_APPOINTMENT_DOB_MSG);
 		}
 	}
-	
+
 	/**
 	 * Checks the following:
 	 * 1. If there is more than one current assignment.
@@ -406,7 +490,7 @@ public class EmployeeValidator {
 	 * 3. if the Department code is valid
 	 * 4. If the Designation code is valid
 	 * 5. If the assignment dates are valid
-	 * 
+	 *
 	 * @param employee
 	 * @param errorMap
 	 * @param mdmsData
@@ -434,24 +518,24 @@ public class EmployeeValidator {
 		for(Assignment assignment: employee.getAssignments()) {
 			if(!assignment.getIsCurrentAssignment() && !CollectionUtils.isEmpty(currentAssignments) && null != assignment.getToDate()&& currentAssignments.get(0).getFromDate() < assignment.getToDate() )
 				errorMap.put(ErrorConstants.HRMS_OVERLAPPING_ASSGN_CURRENT_CODE,ErrorConstants.HRMS_OVERLAPPING_ASSGN_CURRENT_MSG);
-		    if(!mdmsData.get(HRMSConstants.HRMS_MDMS_DEPT_CODE).contains(assignment.getDepartment()))
+			if(!mdmsData.get(HRMSConstants.HRMS_MDMS_DEPT_CODE).contains(assignment.getDepartment()))
 				errorMap.put(ErrorConstants.HRMS_INVALID_DEPT_CODE, ErrorConstants.HRMS_INVALID_DEPT_MSG);
 			if(!mdmsData.get(HRMSConstants.HRMS_MDMS_DESG_CODE).contains(assignment.getDesignation()))
 				errorMap.put(ErrorConstants.HRMS_INVALID_DESG_CODE, ErrorConstants.HRMS_INVALID_DESG_MSG);
-            if( assignment.getIsCurrentAssignment() && null != assignment.getToDate())
-                errorMap.put(ErrorConstants.HRMS_INVALID_ASSIGNMENT_CURRENT_TO_DATE_CODE,ErrorConstants.HRMS_INVALID_ASSIGNMENT_CURRENT_TO_DATE_MSG);
-            if(!assignment.getIsCurrentAssignment() && null == assignment.getToDate())
-                errorMap.put(ErrorConstants.HRMS_INVALID_ASSIGNMENT_NON_CURRENT_TO_DATE_CODE,ErrorConstants.HRMS_INVALID_ASSIGNMENT_NON_CURRENT_TO_DATE_MSG);
+			if( assignment.getIsCurrentAssignment() && null != assignment.getToDate())
+				errorMap.put(ErrorConstants.HRMS_INVALID_ASSIGNMENT_CURRENT_TO_DATE_CODE,ErrorConstants.HRMS_INVALID_ASSIGNMENT_CURRENT_TO_DATE_MSG);
+			if(!assignment.getIsCurrentAssignment() && null == assignment.getToDate())
+				errorMap.put(ErrorConstants.HRMS_INVALID_ASSIGNMENT_NON_CURRENT_TO_DATE_CODE,ErrorConstants.HRMS_INVALID_ASSIGNMENT_NON_CURRENT_TO_DATE_MSG);
 			if(null != assignment.getToDate() && assignment.getFromDate() > assignment.getToDate())
-                errorMap.put(ErrorConstants.HRMS_INVALID_ASSIGNMENT_PERIOD_CODE, ErrorConstants.HRMS_INVALID_ASSIGNMENT_PERIOD_MSG);
+				errorMap.put(ErrorConstants.HRMS_INVALID_ASSIGNMENT_PERIOD_CODE, ErrorConstants.HRMS_INVALID_ASSIGNMENT_PERIOD_MSG);
 			if(employee.getUser().getDob()!=null )
 				if(assignment.getFromDate() < employee.getUser().getDob() || (null != assignment.getToDate() && assignment.getToDate() < employee.getUser().getDob()))
-                	errorMap.put(ErrorConstants.HRMS_INVALID_ASSIGNMENT_DATES_CODE, ErrorConstants.HRMS_INVALID_ASSIGNMENT_DATES_MSG);
+					errorMap.put(ErrorConstants.HRMS_INVALID_ASSIGNMENT_DATES_CODE, ErrorConstants.HRMS_INVALID_ASSIGNMENT_DATES_MSG);
 			if(null != employee.getDateOfAppointment() && assignment.getFromDate() <	 employee.getDateOfAppointment())
 				errorMap.put(ErrorConstants.HRMS_INVALID_ASSIGNMENT_DATES_APPOINTMENT_CODE, ErrorConstants.HRMS_INVALID_ASSIGNMENT_DATES_APPOINTMENT_MSG);
 
-        }
-		
+		}
+
 	}
 
 	/**
@@ -461,7 +545,7 @@ public class EmployeeValidator {
 	 * 3. If the service dates is valid.
 	 * 4. If there is more than 1 current Positions.
 	 * 5. If service end date is null for current position
-	 * 
+	 *
 	 * @param employee
 	 * @param errorMap
 	 * @param mdmsData
@@ -490,13 +574,13 @@ public class EmployeeValidator {
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks the following:
 	 * 1. If the qualification is valid.
 	 * 2. If the specialization provided is valid.
 	 * 3. If the year of passing is valid.
-	 * 
+	 *
 	 * @param employee
 	 * @param errorMap
 	 * @param mdmsData
@@ -530,19 +614,19 @@ public class EmployeeValidator {
 			errorMap.put(ErrorConstants.HRMS_INVALID_JURISDICTION_ACTIIEV_NULL_CODE,ErrorConstants.HRMS_INVALID_JURISDICTION_ACTIIEV_NULL_MSG);
 		}
 		for(Jurisdiction jurisdiction: employee.getJurisdictions()) {
-				String hierarchy_type_path = String.format(HRMSConstants.HRMS_TENANTBOUNDARY_HIERARCHY_JSONPATH,jurisdiction.getBoundary());
-				String boundary_type_path = String.format(HRMSConstants.HRMS_TENANTBOUNDARY_BOUNDARY_TYPE_JSONPATH,jurisdiction.getHierarchy(),jurisdiction.getBoundary());
-				String boundary_value_path = String.format(HRMSConstants.HRMS_TENANTBOUNDARY_BOUNDARY_VALUE_JSONPATH,jurisdiction.getHierarchy(),jurisdiction.getBoundary());
-				List<String>  hierarchyTypes = JsonPath.read(boundaryMap,hierarchy_type_path);
-				List <String> boundaryTypes = JsonPath.read(boundaryMap,boundary_type_path);
-				List <String> boundaryValues = JsonPath.read(boundaryMap,boundary_value_path);
-				if(!hierarchyTypes.contains(jurisdiction.getHierarchy()))
-					errorMap.put(ErrorConstants.HRMS_INVALID_JURISDICTION_HEIRARCHY_CODE, ErrorConstants.HRMS_INVALID_JURISDICTION_HEIRARCHY_MSG);
-				if(!boundaryTypes.contains(jurisdiction.getBoundaryType()))
-					errorMap.put(ErrorConstants.HRMS_INVALID_JURISDICTION_BOUNDARY_TYPE_CODE, ErrorConstants.HRMS_INVALID_JURISDICTION_BOUNDARY_TYPE_MSG);
-				if(!boundaryValues.contains(jurisdiction.getBoundary()))
-					errorMap.put(ErrorConstants.HRMS_INVALID_JURISDICTION_BOUNDARY_CODE, ErrorConstants.HRMS_INVALID_JURISDICTION_BOUNDARY_MSG);
-			}
+			String hierarchy_type_path = String.format(HRMSConstants.HRMS_TENANTBOUNDARY_HIERARCHY_JSONPATH,jurisdiction.getBoundary());
+			String boundary_type_path = String.format(HRMSConstants.HRMS_TENANTBOUNDARY_BOUNDARY_TYPE_JSONPATH,jurisdiction.getHierarchy(),jurisdiction.getBoundary());
+			String boundary_value_path = String.format(HRMSConstants.HRMS_TENANTBOUNDARY_BOUNDARY_VALUE_JSONPATH,jurisdiction.getHierarchy(),jurisdiction.getBoundary());
+			List<String>  hierarchyTypes = JsonPath.read(boundaryMap,hierarchy_type_path);
+			List <String> boundaryTypes = JsonPath.read(boundaryMap,boundary_type_path);
+			List <String> boundaryValues = JsonPath.read(boundaryMap,boundary_value_path);
+			if(!hierarchyTypes.contains(jurisdiction.getHierarchy()))
+				errorMap.put(ErrorConstants.HRMS_INVALID_JURISDICTION_HEIRARCHY_CODE, ErrorConstants.HRMS_INVALID_JURISDICTION_HEIRARCHY_MSG);
+			if(!boundaryTypes.contains(jurisdiction.getBoundaryType()))
+				errorMap.put(ErrorConstants.HRMS_INVALID_JURISDICTION_BOUNDARY_TYPE_CODE, ErrorConstants.HRMS_INVALID_JURISDICTION_BOUNDARY_TYPE_MSG);
+			if(!boundaryValues.contains(jurisdiction.getBoundary()))
+				errorMap.put(ErrorConstants.HRMS_INVALID_JURISDICTION_BOUNDARY_CODE, ErrorConstants.HRMS_INVALID_JURISDICTION_BOUNDARY_MSG);
+		}
 
 
 	}
@@ -552,7 +636,7 @@ public class EmployeeValidator {
 	 * Checks the follwing:
 	 * 1. If the dept test is valid.
 	 * 2. If the year of passing is valid.
-	 * 
+	 *
 	 * @param employee
 	 * @param errorMap
 	 * @param mdmsData
@@ -604,40 +688,40 @@ public class EmployeeValidator {
 		if(!CollectionUtils.isEmpty(updatedEmployeeData.getReactivationDetails())) {
 			for (ReactivationDetails reactivationDetails : updatedEmployeeData.getReactivationDetails()) {
 				Boolean isValidDetails = existingEmp.getDeactivationDetails().get(0).getEffectiveFrom() <= reactivationDetails.getEffectiveFrom()
-										 && reactivationDetails.getEffectiveFrom() <= new Date().getTime();
+						&& reactivationDetails.getEffectiveFrom() <= new Date().getTime();
 				if(!isValidDetails)
 					errorMap.put(ErrorConstants.HRMS_UPDATE_REACT_DETAILS_INCORRECT_EFFECTIVEFROM_CODE, ErrorConstants.HRMS_UPDATE_REACT_DETAILS_INCORRECT_EFFECTIVEFROM_MSG);
 
 			}
 		}
 	}
-	
+
 	/**
 	 * Validates the employee request for update. Validates the following:
 	 * 1. MDMS codes in the request
 	 * 2. Performs data consistency checks.
-	 * 
+	 *
 	 * @param request
 	 */
 	public void validateUpdateEmployee(EmployeeRequest request) {
 		Map<String, String> errorMap = new HashMap<>();
 		Map<String, List<String>> boundaryMap = getBoundaryList(request.getRequestInfo(),request.getEmployees().get(0));
 		Map<String, List<String>> mdmsData = mdmsService.getMDMSData(request.getRequestInfo(), request.getEmployees().get(0).getTenantId());
-		List <String> uuidList = request.getEmployees().stream().map(Employee :: getUuid).collect(Collectors.toList()); 
+		List <String> uuidList = request.getEmployees().stream().map(Employee :: getUuid).collect(Collectors.toList());
 		EmployeeResponse existingEmployeeResponse = employeeService.search(EmployeeSearchCriteria.builder().uuids(uuidList).build(),request.getRequestInfo());
 		List <Employee> existingEmployees = existingEmployeeResponse.getEmployees();
 		for(Employee employee: request.getEmployees()){
 			if(validateEmployeeForUpdate(employee, errorMap)){
 				if(!existingEmployees.isEmpty()){
-				Employee existingEmp = existingEmployees.stream().filter(existingEmployee -> existingEmployee.getUuid().equals(employee.getUuid())).findFirst().get();
-				validateDataConsistency(employee, errorMap, mdmsData, existingEmp, request.getRequestInfo());
+					Employee existingEmp = existingEmployees.stream().filter(existingEmployee -> existingEmployee.getUuid().equals(employee.getUuid())).findFirst().get();
+					validateDataConsistency(employee, errorMap, mdmsData, existingEmp, request.getRequestInfo());
 				}
 				else
 					errorMap.put(ErrorConstants.HRMS_UPDATE_EMPLOYEE_NOT_EXIST_CODE, ErrorConstants.HRMS_UPDATE_EMPLOYEE_NOT_EXIST_MSG);
 			}
 			validateMdmsData(employee, errorMap, mdmsData,boundaryMap);
 		}
-		if(!CollectionUtils.isEmpty(errorMap.keySet())) {	
+		if(!CollectionUtils.isEmpty(errorMap.keySet())) {
 			throw new CustomException(errorMap);
 		}
 
@@ -646,7 +730,7 @@ public class EmployeeValidator {
 
 	/**
 	 * Checks if the ID, UUID and Code are present in the update request
-	 * 
+	 *
 	 * @param employee
 	 * @param errorMap
 	 * @return
@@ -672,7 +756,7 @@ public class EmployeeValidator {
 
 	/**
 	 * Juridictions once created in the system cannot be deleted, they can however be changed. Validates that condition
-	 * 
+	 *
 	 * @param existingEmp
 	 * @param updatedEmployeeData
 	 * @param errorMap
@@ -690,7 +774,7 @@ public class EmployeeValidator {
 		}
 
 	}
-	
+
 	/**
 	 * Assignments once created in the system cannot be deleted, they can however be changed. Validates that condition
 	 *
@@ -735,7 +819,7 @@ public class EmployeeValidator {
 
 	/**
 	 * Education Details once created in the system cannot be deleted, they can however be changed. Validates that condition
-	 * 
+	 *
 	 * @param existingEmp
 	 * @param updatedEmployeeData
 	 * @param errorMap
@@ -757,7 +841,7 @@ public class EmployeeValidator {
 
 	/**
 	 * Service History once created in the system cannot be deleted, they can however be changed. Validates that condition
-	 * 
+	 *
 	 * @param existingEmp
 	 * @param updatedEmployeeData
 	 * @param errorMap
@@ -781,7 +865,7 @@ public class EmployeeValidator {
 
 	/**
 	 * Documents once created in the system cannot be deleted, they can however be changed. Validates that condition
-	 * 
+	 *
 	 * @param existingEmp
 	 * @param updatedEmployeeData
 	 * @param errorMap
@@ -804,7 +888,7 @@ public class EmployeeValidator {
 
 	/**
 	 * Deactivation Details once created in the system cannot be deleted, they can however be changed. Validates that condition
-	 * 
+	 *
 	 * @param existingEmp
 	 * @param updatedEmployeeData
 	 * @param errorMap
