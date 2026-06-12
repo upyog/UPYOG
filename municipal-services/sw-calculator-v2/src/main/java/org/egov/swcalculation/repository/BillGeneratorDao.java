@@ -19,6 +19,7 @@ import org.egov.swcalculation.web.models.BillScheduler;
 import org.egov.swcalculation.web.models.BillScheduler.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
@@ -129,38 +130,35 @@ public class BillGeneratorDao {
 	public void insertBillSchedulerConnectionStatus(List<String> consumerCodes, String scheduler_id, 
 			String locality, String Status, String tenantid, String reason, long createdTime) {
 		try {
-
-			log.info("Entered into insertBillSchedulerConnectionStatus");
-			if(consumerCodes ==null || consumerCodes.isEmpty())
+			log.info("Entered into insertBillSchedulerConnectionStatus batch insert. Count={}", consumerCodes.size());
+			if (consumerCodes == null || consumerCodes.isEmpty())
 				return;
-			
-			consumerCodes.forEach(consumercode -> {
-				String id = UUID.randomUUID().toString();
 
-				int rows = jdbcTemplate.update(SWCalculatorQueryBuilder.EG_SW_BILL_SCHEDULER_CONNECTION_STATUS_INSERT, new PreparedStatementSetter() {
+			jdbcTemplate.batchUpdate(SWCalculatorQueryBuilder.EG_SW_BILL_SCHEDULER_CONNECTION_STATUS_INSERT, new BatchPreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					String consumercode = consumerCodes.get(i);
+					String id = UUID.randomUUID().toString();
+					ps.setString(1, id);
+					ps.setString(2, scheduler_id);
+					ps.setString(3, locality);
+					ps.setString(4, SWCalculationConstant.SERVICE_FIELD_VALUE_SW);
+					ps.setObject(5, createdTime);
+					ps.setObject(6, createdTime);
+					ps.setString(7, Status);
+					ps.setString(8, tenantid);
+					ps.setString(9, reason + consumercode);
+					ps.setString(10, consumercode);
+				}
 
-					@Override
-					public void setValues(PreparedStatement ps) throws SQLException {
-
-						ps.setString(1, id);
-						ps.setString(2, scheduler_id);
-						ps.setString(3, locality);
-						ps.setString(4, SWCalculationConstant.SERVICE_FIELD_VALUE_SW);
-						ps.setObject(5, createdTime);
-						ps.setObject(6, createdTime);
-						ps.setString(7, Status);
-						ps.setString(8, tenantid);
-						ps.setString(9, reason+consumercode);
-						ps.setString(10, consumercode);
-
-					}
-				});
-				log.info("Insert result: consumerCode={} rowsInserted={}", consumercode, rows);
-
+				@Override
+				public int getBatchSize() {
+					return consumerCodes.size();
+				}
 			});
-		}catch (Exception e) {
-			log.error("Exception occurred in the insertBillSchedulerConnectionStatus: {}", e);
-			e.printStackTrace();
+			log.info("Successfully batch inserted {} connection status records.", consumerCodes.size());
+		} catch (Exception e) {
+			log.error("Exception occurred in the insertBillSchedulerConnectionStatus batch insert: {}", e.getMessage(), e);
 		}
 	}
 	
