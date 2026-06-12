@@ -54,32 +54,39 @@ public class DemandRepository {
 	 */
 	public List<Demand> saveDemand(RequestInfo requestInfo, List<Demand> demands,
 			DemandNotificationObj notificationObj) {
+		StringBuilder url = new StringBuilder(config.getBillingServiceHost());
+		url.append(config.getDemandCreateEndPoint());
 		DemandRequest request = new DemandRequest(requestInfo, demands);
 		try {
-			wsCalculationProducer.push(config.getSaveDemand(), request);
-			notificationObj.setSuccess(true);
-			wsCalculationProducer.push(config.getOnDemandsSaved(), notificationObj);
-			return demands;
-		} catch (Exception e) {
+			Object result = serviceRequestRepository.fetchResult(url, request);
+			List<Demand> demandList = mapper.convertValue(result, DemandResponse.class).getDemands();
+			if (!CollectionUtils.isEmpty(demandList)) {
+				notificationObj.setSuccess(true);
+				wsCalculationProducer.push(config.getOnDemandsSaved(), notificationObj);
+			}
+			return demandList;
+		} catch (IllegalArgumentException e) {
 			notificationObj.setSuccess(false);
 			wsCalculationProducer.push(config.getOnDemandsFailure(), notificationObj);
-			throw new CustomException("EG_WS_KAFKA_ERROR", "Failed to push demands to Kafka save-demand topic: " + e.getMessage());
+			throw new CustomException("EG_WS_PARSING_ERROR", "Failed to parse response of create demand");
 		}
 	}
 	 /**
-      * Creates demand
-      * @param requestInfo The RequestInfo of the calculation Request
-      * @param demands The demands to be created
-      * @return The list of demand created
-      */
+     * Creates demand
+     * @param requestInfo The RequestInfo of the calculation Request
+     * @param demands The demands to be created
+     * @return The list of demand created
+     */
     public List<Demand> saveDemand(RequestInfo requestInfo, List<Demand> demands){
+        StringBuilder url = new StringBuilder(config.getBillingServiceHost());
+        url.append(config.getDemandCreateEndPoint());
         DemandRequest request = new DemandRequest(requestInfo,demands);
+        Object result = serviceRequestRepository.fetchResult(url, request);
         try{
-            wsCalculationProducer.push(config.getSaveDemand(), request);
-            return demands;
+           return  mapper.convertValue(result,DemandResponse.class).getDemands();
         }
-        catch(Exception e){
-            throw new CustomException("EG_WS_KAFKA_ERROR","Failed to push demands to Kafka save-demand topic: " + e.getMessage());
+        catch(IllegalArgumentException e){
+            throw new CustomException("PARSING_ERROR","Failed to parse response of create demand");
         }
     }
 
@@ -91,12 +98,14 @@ public class DemandRepository {
 	 * @return The list of demand updated
 	 */
 	public List<Demand> updateDemand(RequestInfo requestInfo, List<Demand> demands) {
+		StringBuilder url = new StringBuilder(config.getBillingServiceHost());
+		url.append(config.getDemandUpdateEndPoint());
 		DemandRequest request = new DemandRequest(requestInfo, demands);
+		Object result = serviceRequestRepository.fetchResult(url, request);
 		try {
-			wsCalculationProducer.push(config.getUpdateDemand(), request);
-			return demands;
-		} catch (Exception e) {
-			throw new CustomException("EG_WS_KAFKA_ERROR", "Failed to push demands to Kafka update-demand topic: " + e.getMessage());
+			return mapper.convertValue(result, DemandResponse.class).getDemands();
+		} catch (IllegalArgumentException e) {
+			throw new CustomException("EG_WS_PARSING_ERROR", "Failed to parse response of update demand");
 		}
 	}
 
