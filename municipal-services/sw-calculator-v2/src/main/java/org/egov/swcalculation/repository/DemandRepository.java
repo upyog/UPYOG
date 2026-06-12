@@ -53,24 +53,19 @@ public class DemandRepository {
 	     * @return The list of demand created
 	     */
 	    public List<Demand> saveDemand(RequestInfo requestInfo, List<Demand> demands, DemandNotificationObj notificationObj){
-	        StringBuilder url = new StringBuilder(config.getBillingServiceHost());
-	        url.append(config.getDemandCreateEndPoint());
 	        DemandRequest request = new DemandRequest(requestInfo,demands);
 	        try{
-				Object result = serviceRequestRepository.fetchResult(url, request);
-				List<Demand>  demandList =  mapper.convertValue(result,DemandResponse.class).getDemands();
-				if(!CollectionUtils.isEmpty(demandList)) {
-					notificationObj.setSuccess(true);
-					String key = demandList.get(0).getConsumerCode();
-					swCalculationProducer.push(config.getOnDemandSuccess(), key, notificationObj);
-				}
-				return demandList;
+				swCalculationProducer.push(config.getSaveDemand(), request);
+				notificationObj.setSuccess(true);
+				String key = demands.get(0).getConsumerCode();
+				swCalculationProducer.push(config.getOnDemandSuccess(), key, notificationObj);
+				return demands;
 	        }
-	        catch(IllegalArgumentException e){
+	        catch(Exception e){
 				notificationObj.setSuccess(false);
 				String key = demands.get(0).getConsumerCode();
 				swCalculationProducer.push(config.getOnDemandFailed(), key, notificationObj);
-				throw new CustomException("EG_SW_PARSING_ERROR","Failed to parse response of create demand");
+				throw new CustomException("EG_SW_KAFKA_ERROR","Failed to push demands to Kafka save-demand topic: " + e.getMessage());
 	        }
 	    }
 	    
@@ -81,19 +76,14 @@ public class DemandRepository {
 	     * @return The list of demand updated
 	     */
 	    public List<Demand> updateDemand(RequestInfo requestInfo, List<Demand> demands){
-	        StringBuilder url = new StringBuilder(config.getBillingServiceHost());
-	        url.append(config.getDemandUpdateEndPoint());
 	        DemandRequest request = new DemandRequest(requestInfo,demands);
-	        Object result = serviceRequestRepository.fetchResult(url,request);
-	        DemandResponse response;
 	        try{
-	            response = mapper.convertValue(result,DemandResponse.class);
+	            swCalculationProducer.push(config.getUpdateDemand(), request);
+	            return demands;
 	        }
-	        catch(IllegalArgumentException e){
-	            throw new CustomException("EG_SW_PARSING_ERROR","Failed to parse response of update demand");
+	        catch(Exception e){
+	            throw new CustomException("EG_SW_KAFKA_ERROR","Failed to push demands to Kafka update-demand topic: " + e.getMessage());
 	        }
-	        return response.getDemands();
-
 	    }
 	    
 	    

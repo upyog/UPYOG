@@ -40,6 +40,9 @@ public class KafkaConfigBatch {
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, wSCalculationConfiguration.getBatchSize());
         props.put(ConsumerConfig.FETCH_MIN_BYTES_CONFIG, 900000);
         props.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, 10000);
+        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1800000); // 30 minutes
+        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 60000);     // 60 seconds
+        props.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 20000);  // 20 seconds
 
         return props;
     }

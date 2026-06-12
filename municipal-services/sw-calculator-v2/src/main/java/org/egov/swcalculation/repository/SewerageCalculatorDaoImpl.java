@@ -266,7 +266,7 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		return true;
 }
 	
-public Boolean getexpiryBills(List billSearchsss) {
+	public Boolean getexpiryBills(List billSearchsss) {
 		
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getBillDemands(billSearchsss,preparedStatement);
@@ -274,7 +274,16 @@ public Boolean getexpiryBills(List billSearchsss) {
 				 " connection list : " + query);
 		jdbcTemplate.update(query, preparedStatement.toArray());	
 		return true;
-}
-	
-	
+	}
+
+	@Override
+	public Boolean isBatchDemandExecuted(String tenantId, Long taxPeriodFrom, Long taxPeriodTo) {
+		try {
+			String query = "SELECT EXISTS (SELECT 1 FROM eg_sw_batch_demand_log WHERE tenantid = ? AND taxperiodfrom = ? AND taxperiodto = ? AND isdemandexecuted = true)";
+			return jdbcTemplate.queryForObject(query, new Object[]{tenantId, taxPeriodFrom, taxPeriodTo}, Boolean.class);
+		} catch (Exception e) {
+			log.error("Error checking sewerage batch demand execution status for tenantId: " + tenantId, e);
+			return false;
+		}
+	}
 }

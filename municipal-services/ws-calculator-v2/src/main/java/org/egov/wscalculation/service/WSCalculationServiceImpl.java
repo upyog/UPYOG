@@ -7,6 +7,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.egov.wscalculation.web.models.BillScheduler.StatusEnum;
@@ -598,7 +602,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	    for (Map.Entry<String, CalculationCriteria> entry : latestCriteriaMap.entrySet()) {
 	        DemandGenerationError demandGenerationError = getDemandGenerationError(entry.getValue(), "Error during calculation");
 	        if (demandGenerationError != null) {
-	            producer.push(configs.getBillGenerateSchedulerTopic(), demandGenerationError);
+	            producer.push(configs.getDemandGenerationErrorTopic(), demandGenerationError);
 	        }
 	    }
 	    return calculations;
@@ -740,16 +744,57 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			return;
 		}
 		log.info("Tenant Ids : " + tenantIds.toString());
-		tenantIds.forEach(tenantId -> {
+		int tenantPoolSize = configs.getTenantThreadPoolSize() != null ? configs.getTenantThreadPoolSize() : 5;
+		int actualTenantThreads = Math.min(tenantPoolSize, tenantIds.size());
+		log.info("\uD83D\uDE80 Starting parallel demand generation for {} tenants using {} threads.",
+				tenantIds.size(), actualTenantThreads);
+
+		ExecutorService tenantExecutor = Executors.newFixedThreadPool(actualTenantThreads);
+		List<CompletableFuture<Void>> tenantFutures = new ArrayList<>();
+
+		for (String tenantId : tenantIds) {
+			// Deep-clone RequestInfo per tenant — generateDemandForTenantId mutates
+			// requestInfo.getUserInfo().setTenantId() so sharing it across threads is a race.
+			final RequestInfo tenantRequestInfo;
 			try {
-
-				demandService.generateDemandForTenantId(tenantId, requestInfo);
-
+				tenantRequestInfo = mapper.readValue(mapper.writeValueAsString(requestInfo), RequestInfo.class);
 			} catch (Exception e) {
-				log.error("Exception occured while generating demand for tenant: " + tenantId);
-				e.printStackTrace();
+				log.error("\u274C Failed to clone RequestInfo for tenant: {} \u2014 skipping tenant. Error: {}",
+						tenantId, e.getMessage(), e);
+				continue; // skip this tenant; all others proceed normally
 			}
-		});
+
+			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+				try {
+					log.info("\u25B6\uFE0F  Demand generation started for tenant: {}", tenantId);
+					demandService.generateDemandForTenantId(tenantId, tenantRequestInfo);
+					log.info("\u2705 Demand generation completed for tenant: {}", tenantId);
+				} catch (Exception e) {
+					// Catch everything — one tenant failure must NOT block others
+					log.error("\u274C Demand generation failed for tenant: {} | {}", tenantId, e.getMessage(), e);
+				}
+			}, tenantExecutor);
+			tenantFutures.add(future);
+		}
+
+		try {
+			CompletableFuture.allOf(tenantFutures.toArray(new CompletableFuture[0])).join();
+			log.info("\u2705 All tenant demand generation tasks finished.");
+		} catch (Exception e) {
+			log.error("\u274C Error waiting for tenant futures: {}", e.getMessage(), e);
+		} finally {
+			tenantExecutor.shutdown();
+			try {
+				if (!tenantExecutor.awaitTermination(2, TimeUnit.HOURS)) {
+					log.warn("\u26A0\uFE0F Tenant executor did not finish within 2 hours \u2014 forcing shutdown.");
+					tenantExecutor.shutdownNow();
+				}
+			} catch (InterruptedException ie) {
+				Thread.currentThread().interrupt();
+				log.error("\u274C Interrupted while awaiting tenant executor shutdown.");
+				tenantExecutor.shutdownNow();
+			}
+		}
 	}
 
 	public List<WaterConnection> getConnnectionWithPendingDemand(RequestInfo requestInfo,
@@ -874,7 +919,6 @@ So, both lists are now filtered to include only records with INITIATED status, w
 				log.info(
 						"partitionConectionNoList size: {}, Producer ConsumerCodes size : {} and BulkBillGenerateCount: {}",
 						partitionConectionNoList.size(), connectionNos.size(), configs.getBulkBillGenerateCount());
-				int threadSleepCount = 1;
 				int count = 1;
 				for (List<String> conectionNoList : partitionConectionNoList) {
 
@@ -916,13 +960,7 @@ So, both lists are now filtered to include only records with INITIATED status, w
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ",
 							conectionNoList.size(), count++);
 
-					if (threadSleepCount == 2) {
-						// Pausing the controller for 10 seconds after every two batches pushed to Kafka
-						// topic
-						Thread.sleep(2000);
-						threadSleepCount = 1;
-					}
-					threadSleepCount++;
+
 
 				}
 				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.COMPLETED);

@@ -22,6 +22,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -357,15 +361,54 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		if (tenantIds.isEmpty())
 			return;
 		log.info("Tenant Ids : " + tenantIds.toString());
-		for (String tenantId : tenantIds) {
-			try {
-				demandService.generateDemandForTenantId(tenantId, requestInfo);
-			} catch (Exception e) {
-				log.error("Exception occurred while generating demand for tenant: {} : " , tenantId);
-				log.error("Exception: {} : " , e);
-				e.printStackTrace();
-				continue;
 
+		int tenantPoolSize = configs.getTenantThreadPoolSize() != null ? configs.getTenantThreadPoolSize() : 5;
+		int actualTenantThreads = Math.min(tenantPoolSize, tenantIds.size());
+		log.info("🚀 Starting parallel sewerage demand generation for {} tenants using {} threads.",
+				tenantIds.size(), actualTenantThreads);
+
+		ExecutorService tenantExecutor = Executors.newFixedThreadPool(actualTenantThreads);
+		List<CompletableFuture<Void>> tenantFutures = new ArrayList<>();
+
+		for (String tenantId : tenantIds) {
+			// Deep-clone RequestInfo per tenant — generateDemandForTenantId mutates RequestInfo
+			final RequestInfo tenantRequestInfo;
+			try {
+				tenantRequestInfo = mapper.readValue(mapper.writeValueAsString(requestInfo), RequestInfo.class);
+			} catch (Exception e) {
+				log.error("❌ Failed to clone RequestInfo for tenant: {} — skipping tenant. Error: {}",
+						tenantId, e.getMessage(), e);
+				continue;
+			}
+
+			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+				try {
+					log.info("▶️ Sewerage demand generation started for tenant: {}", tenantId);
+					demandService.generateDemandForTenantId(tenantId, tenantRequestInfo);
+					log.info("✅ Sewerage demand generation completed for tenant: {}", tenantId);
+				} catch (Exception e) {
+					log.error("❌ Sewerage demand generation failed for tenant: {} | {}", tenantId, e.getMessage(), e);
+				}
+			}, tenantExecutor);
+			tenantFutures.add(future);
+		}
+
+		try {
+			CompletableFuture.allOf(tenantFutures.toArray(new CompletableFuture[0])).join();
+			log.info("✅ All sewerage tenant demand generation tasks finished.");
+		} catch (Exception e) {
+			log.error("❌ Error waiting for sewerage tenant futures: {}", e.getMessage(), e);
+		} finally {
+			tenantExecutor.shutdown();
+			try {
+				if (!tenantExecutor.awaitTermination(2, TimeUnit.HOURS)) {
+					log.warn("⚠️ Sewerage tenant executor did not finish within 2 hours — forcing shutdown.");
+					tenantExecutor.shutdownNow();
+				}
+			} catch (InterruptedException ie) {
+				Thread.currentThread().interrupt();
+				log.error("❌ Interrupted while awaiting sewerage tenant executor shutdown.");
+				tenantExecutor.shutdownNow();
 			}
 		}
 	}
@@ -646,8 +689,6 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 				}
 
 				Collection<List<String>> partitionConectionNoList = partitionBasedOnSize(connectionNos, configs.getBulkBillGenerateCount());
-				int threadSleepCount = 1;
-				
 				log.info("partitionConectionNoList size: {}, Producer ConsumerCodes size : {} and BulkBillGenerateCount: {}",partitionConectionNoList.size(), connectionNos.size(), configs.getBulkBillGenerateCount());
 				int count = 1;
 
@@ -695,11 +736,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 					producer.push(configs.getBillGenerateSchedulerTopic(),key, billGeneraterReq);
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ", conectionNoList.size(), count++);
 
-					if(threadSleepCount == 2) {
-						Thread.sleep(2000);
-						threadSleepCount=1;
-					}
-					threadSleepCount++;
+
 				}
 				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.COMPLETED);
 

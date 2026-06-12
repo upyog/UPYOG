@@ -1,6 +1,7 @@
 package org.egov.swcalculation.consumer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.egov.swcalculation.validator.SWCalculationWorkflowValidator;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -80,41 +81,55 @@ public class DemandGenerationConsumer {
 		    containerFactory = "kafkaListenerContainerFactoryBatch",
 		    concurrency = "${egov.sw.calculator.concurrency.count}"
 		)
-		@SuppressWarnings("unchecked")
 		public void listen(final List<ConsumerRecord<String, Object>> records) {
+			log.info("📦 Batch received: {} sewerage record(s)", records.size());
+			for (ConsumerRecord<String, Object> record : records) {
+				try {
+					log.info("🔹 Key={}, Partition={}, Offset={}",
+							record.key(), record.partition(), record.offset());
 
-		    CalculationReq calculationReq = mapper.convertValue(records.get(0).value(), CalculationReq.class);
-		    Map<String, Object> masterMap = mDataService.loadMasterData(
-		            calculationReq.getRequestInfo(),
-		            calculationReq.getCalculationCriteria().get(0).getTenantId()
-		    );
+					// ── Step 1: Deserialize — skip bad record, don't fail the batch ──
+					CalculationReq calculationReq;
+					try {
+						calculationReq = mapper.convertValue(record.value(), CalculationReq.class);
+					} catch (Exception e) {
+						log.error("❌ Deserialization failed at offset={} — skipping record. Error: {}",
+								record.offset(), e.getMessage(), e);
+						continue;
+					}
 
-		    List<CalculationCriteria> calculationCriteria = new ArrayList<>();
+					// ── Step 2: Null / empty guard ──────────────────────────────
+					if (calculationReq == null
+							|| calculationReq.getCalculationCriteria() == null
+							|| calculationReq.getCalculationCriteria().isEmpty()) {
+						log.error("❌ Null or empty CalculationReq at offset={} — skipping.", record.offset());
+						continue;
+					}
 
-		    records.forEach(record -> {
-		        try {
-		            CalculationReq calcReq = mapper.convertValue(record.value(), CalculationReq.class);
-		            calculationCriteria.addAll(calcReq.getCalculationCriteria());
-		            log.info("Consuming record: {}", record);
-		        } catch (final Exception e) {
-		            StringBuilder builder = new StringBuilder();
-		            builder.append("Error while listening to value: ").append(record)
-		                   .append(" on topic: ").append(e);
-		            log.error(builder.toString());
-		        }
-		    });
+					// ── Step 3: Load master data — skip record on failure ──────────
+					String tenantId = calculationReq.getCalculationCriteria().get(0).getTenantId();
+					Map<String, Object> masterMap;
+					try {
+						masterMap = mDataService.loadMasterData(
+								calculationReq.getRequestInfo(), tenantId);
+					} catch (Exception e) {
+						log.error("❌ Failed to load masterData for tenant: {} at offset={} — skipping record. Error: {}",
+								tenantId, record.offset(), e.getMessage(), e);
+						continue;
+					}
 
-		    CalculationReq request = CalculationReq.builder()
-		            .calculationCriteria(calculationCriteria)
-		            .requestInfo(calculationReq.getRequestInfo())
-		            .isconnectionCalculation(true)
-		            .taxPeriodFrom(calculationReq.getTaxPeriodFrom())
-		            .taxPeriodTo(calculationReq.getTaxPeriodTo())
-		            .migrationCount(calculationReq.getMigrationCount())
-		            .build();
+					// ── Step 4: Generate demand (has its own internal try-catch) ───
+					generateDemandInBatch(calculationReq, masterMap, config.getDeadLetterTopicBatch());
 
-		    generateDemandInBatch(request, masterMap);
-		    log.info("Number of batch records: {}", records.size());
+					log.info("✅ Processed tenant={} | criteriaCount={}",
+							tenantId, calculationReq.getCalculationCriteria().size());
+
+				} catch (Exception e) {
+					// Last-resort catch — ensures the rest of the batch is always processed
+					log.error("❌ Unexpected error processing record at offset={}: {}",
+							record.offset(), e.getMessage(), e);
+				}
+			}
 		}
 
 	/**
@@ -124,9 +139,9 @@ public class DemandGenerationConsumer {
 	 * @param records
 	 *            failed batch processing
 	 */
-	@KafkaListener(topics = {
-			"${persister.demand.based.dead.letter.topic.batch}" }, containerFactory = "kafkaListenerContainerFactory",
-					concurrency = "${egov.sw.calculator.concurrency.count}")
+	// @KafkaListener(topics = {
+	// 		"${persister.demand.based.dead.letter.topic.batch}" }, containerFactory = "kafkaListenerContainerFactory",
+	// 				concurrency = "${egov.sw.calculator.concurrency.count}")
 	public void listenDeadLetterTopic(final List<Message<?>> records) {
 		CalculationReq calculationReq = mapper.convertValue(records.get(0).getPayload(), CalculationReq.class);
 		Map<String, Object> masterMap = mDataService.loadMasterData(calculationReq.getRequestInfo(),
@@ -142,7 +157,7 @@ public class DemandGenerationConsumer {
 					try {
 						log.info("Generating Demand for Criteria : " + calcCriteria);
 						// processing single
-						generateDemandInBatch(request,masterMap);
+						generateDemandInBatch(request, masterMap, config.getDeadLetterTopicSingle());
 					} catch (final Exception e) {
 						StringBuilder builder = new StringBuilder();
 						builder.append("Error while generating Demand for Criteria: ").append(calcCriteria);
@@ -165,27 +180,24 @@ public class DemandGenerationConsumer {
 	 *            Calculation request
 	 * @param masterMap 
 	 */
-	private void generateDemandInBatch(CalculationReq request, Map<String, Object> masterMap) {
-		/*
-		 * this topic will be used by billing service to post message
-		 */
-		//request.getMigrationCount().setAuditTopic(bulkBillGenAuditTopic);
-		//request.getMigrationCount().setAuditTime(System.currentTimeMillis());
+	private void generateDemandInBatch(CalculationReq request, Map<String, Object> masterMap, String errorTopic) {
 		try {
-			sWCalculationServiceImpl.bulkDemandGeneration(request,masterMap);
-			StringBuilder str = new StringBuilder("Demand generated Successfully. For records : ").append(request.getCalculationCriteria());
-			log.info(str.toString());
+			sWCalculationServiceImpl.bulkDemandGeneration(request, masterMap);
+			String connectionNoStrings = request.getCalculationCriteria().stream()
+					.map(criteria -> criteria.getConnectionNo()).collect(Collectors.toSet()).toString();
+			log.info("✅ Sewerage Demand generated successfully for: {}", connectionNoStrings);
 		} catch (Exception ex) {
-			/*
-			 * Error with message goes to audit topic
-			 */
-			log.error("Failed in DemandGenerationConsumer with error : " + ex.getMessage());
-			// log.info("Bulk bill Errorbatch records log for batch : " + request.getMigrationCount().getOffset()
-			// 		+ "Count is : " + request.getMigrationCount().getRecordCount());
-		//	request.getMigrationCount().setMessage("Failed in DemandGenerationConsumer with error : " + ex.getMessage());
-			//producer.push(bulkBillGenAuditTopic, request.getMigrationCount());
+			log.error("❌ Sewerage Demand generation error: ", ex);
+			try {
+				if (request.getMigrationCount() != null) {
+					request.getMigrationCount().setMessage("Error: " + ex.getMessage());
+				}
+				producer.push(errorTopic, request);
+			} catch (Exception pushEx) {
+				log.error("❌ Failed to push to dead-letter topic '{}' (swallowing to protect consumer): {}",
+						errorTopic, pushEx.getMessage(), pushEx);
+			}
 		}
-
 	}
 
 }
