@@ -335,7 +335,7 @@ public class PlanReportServiceV2 {
         model.put("planInformation",    plan.getPlanInformation());
         model.put("plot",               plan.getPlot());
         model.put("plotBndryArea",
-                plan.getPlot() != null ? plan.getPlot().getPlotBndryArea() : BigDecimal.ZERO);
+                plan.getPlot() != null ? plan.getPlot().getPlotBndryArea(): BigDecimal.ZERO);
 
         // ---- serviceType (same logic as PlanReportService) ----
         Map<String, String> serviceTypeList = new ConcurrentHashMap<>();

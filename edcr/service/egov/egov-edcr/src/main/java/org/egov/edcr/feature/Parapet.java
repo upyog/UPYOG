@@ -86,7 +86,7 @@ public class Parapet extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(5, STATUS);
 
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_41_V);
+		details.put(RULE_NO, "-");
 		details.put(DESCRIPTION, PARAPET_DESCRIPTION);
 
 		BigDecimal minHeight = BigDecimal.ZERO;
