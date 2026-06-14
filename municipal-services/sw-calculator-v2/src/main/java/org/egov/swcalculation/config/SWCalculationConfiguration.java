@@ -212,12 +212,6 @@ public class SWCalculationConfiguration {
 	@Value("${egov.bulk.bill.generate.count}")
 	private Integer bulkBillGenerateCount;
 
-	@Value("${kafka.topics.save.demand}")
-	private String saveDemand;
-
-	@Value("${kafka.topics.update.demand}")
-	private String updateDemand;
-
 	@Value("${kafka.topics.save.sw.batch.demand.log}")
 	private String saveBatchDemandLogTopic;
 

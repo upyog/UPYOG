@@ -2146,6 +2146,7 @@ public class DemandService {
 			AtomicInteger totalPushed) {
 
 		List<CalculationCriteria> batchList = new ArrayList<>(); // local to this thread — no sharing
+		int connectionCount = 0;
 
 		for (WaterDetails waterConnection : connections) {
 			if (waterConnection == null) {
@@ -2171,6 +2172,7 @@ public class DemandService {
 					startIndex = 0; // safe fallback — do not skip the connection entirely
 				}
 
+				List<CalculationCriteria> connectionCriteriaList = new ArrayList<>();
 				// ── iterate over tax periods for this connection ──────────────────
 				for (int taxPeriodIndex = startIndex; taxPeriodIndex <= generateDemandToIndex; taxPeriodIndex++) {
 					// Guard against out-of-bounds — prevents infinite-loop-style crashes
@@ -2184,27 +2186,13 @@ public class DemandService {
 						if (isValidBillingCycle(waterConnection, requestInfo, tenantId,
 								taxPeriod.getFromDate(), taxPeriod.getToDate())) {
 
-							batchList.add(CalculationCriteria.builder()
+							connectionCriteriaList.add(CalculationCriteria.builder()
 									.tenantId(tenantId)
 									.assessmentYear(taxPeriod.getFinancialYear())
 									.from(taxPeriod.getFromDate())
 									.to(taxPeriod.getToDate())
 									.connectionNo(waterConnection.getConnectionNo())
 									.build());
-
-							// Push to Kafka when batch is full
-							if (batchList.size() == bulkSaveDemandCount) {
-								try {
-									pushBatchToKafka(batchList, requestInfo);
-									totalPushed.addAndGet(batchList.size());
-								} catch (Exception e) {
-									log.error("\u274C Kafka push failed ({} items, tenant: {}, connectionNo: {}): {}",
-											batchList.size(), tenantId,
-											waterConnection.getConnectionNo(), e.getMessage(), e);
-								} finally {
-									batchList.clear(); // ALWAYS clear — never re-push the same batch
-								}
-							}
 						} else {
 							log.debug("\u26A0\uFE0F Invalid billing cycle: connectionNo={} period={}",
 									waterConnection.getConnectionNo(), taxPeriod.getFinancialYear());
@@ -2213,6 +2201,26 @@ public class DemandService {
 						log.error("\u274C Error at taxPeriod index {} for connectionNo: {} (tenant: {}): {}",
 								taxPeriodIndex, waterConnection.getConnectionNo(), tenantId, e.getMessage(), e);
 						// continue to next taxPeriod — do NOT break the loop
+					}
+				}
+
+				if (!connectionCriteriaList.isEmpty()) {
+					batchList.addAll(connectionCriteriaList);
+					connectionCount++;
+				}
+
+				// Push to Kafka when batch connection count matches configs
+				if (connectionCount == bulkSaveDemandCount) {
+					try {
+						pushBatchToKafka(batchList, requestInfo);
+						totalPushed.addAndGet(batchList.size());
+					} catch (Exception e) {
+						log.error("\u274C Kafka push failed ({} items, tenant: {}, connectionNo: {}): {}",
+								batchList.size(), tenantId,
+								waterConnection.getConnectionNo(), e.getMessage(), e);
+					} finally {
+						batchList.clear(); // ALWAYS clear — never re-push the same batch
+						connectionCount = 0;
 					}
 				}
 			} catch (Exception e) {

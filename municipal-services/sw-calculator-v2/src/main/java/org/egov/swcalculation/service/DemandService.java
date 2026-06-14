@@ -1701,14 +1701,10 @@ public class DemandService {
 			AtomicInteger totalPushed) {
 
 		List<CalculationCriteria> batchList = new ArrayList<>();
-		int connectionNosCount = 0;
+		int connectionCount = 0;
 
-		for (int i = 0; i < connections.size(); i++) {
-			SewerageDetails sewConnDetails = connections.get(i);
+		for (SewerageDetails sewConnDetails : connections) {
 			if (sewConnDetails == null) continue;
-			connectionNosCount++;
-			int billingCycleCount = 0;
-
 			try {
 				int generateDemandFromIndex = 0;
 				try {
@@ -1725,9 +1721,8 @@ public class DemandService {
 					generateDemandFromIndex = 0;
 				}
 
-				for (int taxPeriodIndex = generateDemandFromIndex; generateDemandFromIndex <= generateDemandToIndex; taxPeriodIndex++) {
-					generateDemandFromIndex++;
-					billingCycleCount++;
+				List<CalculationCriteria> connectionCriteriaList = new ArrayList<>();
+				for (int taxPeriodIndex = generateDemandFromIndex; taxPeriodIndex <= generateDemandToIndex; taxPeriodIndex++) {
 					if (taxPeriods == null || taxPeriods.isEmpty() || taxPeriodIndex < 0 || taxPeriodIndex >= taxPeriods.size()) {
 						log.warn("⚠️ taxPeriodIndex {} out of bounds (size: {}) or taxPeriods is empty for connectionNo: {} — breaking.",
 								taxPeriodIndex, taxPeriods != null ? taxPeriods.size() : 0, sewConnDetails.getConnectionNo());
@@ -1738,14 +1733,13 @@ public class DemandService {
 						if (taxPeriod != null) {
 							boolean isValidBillingCycle = isValidBillingCycle(sewConnDetails, taxPeriod.getFromDate(), taxPeriod.getToDate(), tenantId, requestInfo);
 							if (isValidBillingCycle) {
-								CalculationCriteria calculationCriteria = CalculationCriteria.builder()
+								connectionCriteriaList.add(CalculationCriteria.builder()
 										.tenantId(tenantId)
 										.assessmentYear(taxPeriod.getFinancialYear())
 										.from(taxPeriod.getFromDate())
 										.to(taxPeriod.getToDate())
 										.connectionNo(sewConnDetails.getConnectionNo())
-										.build();
-								batchList.add(calculationCriteria);
+										.build());
 							}
 						}
 					} catch (Exception e) {
@@ -1754,9 +1748,13 @@ public class DemandService {
 					}
 				}
 
-				if (batchList.isEmpty()) continue;
+				if (!connectionCriteriaList.isEmpty()) {
+					batchList.addAll(connectionCriteriaList);
+					connectionCount++;
+				}
 
-				if (billingCycleCount > 10 || connectionNosCount == bulkSaveDemandCount) {
+				// Push to Kafka when batch connection count matches configs
+				if (connectionCount == bulkSaveDemandCount) {
 					try {
 						pushBatchToKafka(batchList, requestInfo, tenantId, sewConnDetails.getConnectionNo(), connections.size());
 						totalPushed.addAndGet(batchList.size());
@@ -1765,21 +1763,7 @@ public class DemandService {
 								batchList.size(), sewConnDetails.getConnectionNo(), tenantId, e.getMessage(), e);
 					} finally {
 						batchList.clear();
-						connectionNosCount = 0;
-						billingCycleCount = 0;
-					}
-					
-
-				} else if (i == connections.size() - 1) {
-					try {
-						pushBatchToKafka(batchList, requestInfo, tenantId, sewConnDetails.getConnectionNo(), connections.size());
-						totalPushed.addAndGet(batchList.size());
-					} catch (Exception e) {
-						log.error("❌ Kafka push failed for batch (size: {}, connectionNo: {}, tenantId: {}): {}",
-								batchList.size(), sewConnDetails.getConnectionNo(), tenantId, e.getMessage(), e);
-					} finally {
-						batchList.clear();
-						connectionNosCount = 0;
+						connectionCount = 0;
 					}
 				}
 			} catch (Exception e) {
@@ -1788,6 +1772,7 @@ public class DemandService {
 			}
 		}
 
+		// ── Push any remaining items left in this partition's batch ───────────────
 		if (!batchList.isEmpty()) {
 			try {
 				pushBatchToKafka(batchList, requestInfo, tenantId, batchList.get(0).getConnectionNo(), connections.size());
