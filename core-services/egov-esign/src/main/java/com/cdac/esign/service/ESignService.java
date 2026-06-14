@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -42,7 +44,8 @@ import com.cdac.esign.form.RequestXmlForm;
 import com.cdac.esign.xmlparser.AspXmlGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 // iText 7 Imports
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -103,9 +106,11 @@ public class ESignService {
         Map<String, Object> positionMap = getEsignPosition(originalPdfBytes);
         
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        Float lastTextY = (Float)positionMap.getOrDefault("lastY", 50) - 64;
-        Float textX = (Float)positionMap.getOrDefault("pageWidth", 540.0) - 160;
-        appearance.setPageRect(new Rectangle(textX, lastTextY < 0 ? 0 : lastTextY, 160, 64));
+        float width = 160;
+        float height = 64;
+        Float lastTextY = (Float)positionMap.getOrDefault("lastY", 50) - height;
+        Float textX = (Float)positionMap.getOrDefault("pageWidth", 540.0) - width;
+        appearance.setPageRect(new Rectangle(textX, lastTextY < 0 ? 0 : lastTextY, width, height));
         appearance.setPageNumber((Integer)positionMap.getOrDefault("lastPage", 1));
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
@@ -157,9 +162,15 @@ public class ESignService {
         	
         	layer2Text = "Digitally Signed by " + requestInfo.getUserInfo().getName() + "\n" + designation + "\n" + dateFormat.format(new Date()) + "\n" + ulbType + "\n" + city;
         }
-        
-        appearance.setLayer2Text(layer2Text);
-        appearance.setRenderingMode(PdfSignatureAppearance.RenderingMode.DESCRIPTION); // Text Only
+
+        // Load base image from classpath
+        byte[] baseImageBytes = Files.readAllBytes(new ClassPathResource("/esign.jpeg").getFile().toPath());
+        ImageData baseImageData = ImageDataFactory.create(baseImageBytes);
+
+        appearance.setLayer2Text(layer2Text); // Set the dynamic text (with location) as Layer 2 of the signature
+        appearance.setImage(baseImageData); // Set the base image (e.g. "esign.jpeg") as the background of the signature
+        appearance.setImageScale(0.3f); // Scale down the image to fit within the signature rectangle
+        appearance.setRenderingMode(PdfSignatureAppearance.RenderingMode.DESCRIPTION);
 
         signer.setFieldName("Signature1");
 
