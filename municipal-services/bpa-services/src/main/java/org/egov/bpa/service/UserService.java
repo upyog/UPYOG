@@ -246,10 +246,10 @@ public class UserService {
 		}
 	}
     
-    public List<String> getAssigneeFromBPA(BPA bpa, List<String> userRoles, RequestInfo requestInfo) {
+    public List<String> getAssigneeFromBPA(BPA bpa, List<String> userRoles, RequestInfo requestInfo, boolean isAllAssignees) {
     	Map<String, Object> additionalDetails = (Map<String, Object>)bpa.getAdditionalDetails();
     	String roles = userRoles.stream().collect(Collectors.joining(","));
-    	StringBuilder uri = getEmployeeSearchURL(bpa.getTenantId(), roles, additionalDetails, false);
+    	StringBuilder uri = getEmployeeSearchURL(bpa.getTenantId(), roles, additionalDetails, isAllAssignees);
     	
     	JSONObject hrmsRequest = new JSONObject();
     	UserSearchRequest userSearchRequest = new UserSearchRequest();

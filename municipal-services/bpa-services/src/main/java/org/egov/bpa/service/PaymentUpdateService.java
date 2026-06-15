@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.repository.BPARepository;
@@ -123,17 +124,21 @@ public class PaymentUpdateService {
 								.findFirst().orElse(new Action()).getNextState();
 						State nextState = busSer.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
 												
+						List<String> roles = new ArrayList<String>();
+		    			if(nextState != null && !CollectionUtils.isEmpty(nextState.getActions()))
+		    				roles = nextState.getActions().stream()
+		    				.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId))
+		    				.flatMap(stateAction -> stateAction.getRoles().stream())
+		    				.distinct()
+		    				.filter(r -> !r.equalsIgnoreCase("OBPAS_UPDATE_ZONE")
+		    						&& !r.equalsIgnoreCase("SYSTEM"))
+		    				.collect(Collectors.toList());
 						if (nextState != null 
 								&& CollectionUtils.isEmpty(bpa.getWorkflow().getAssignes())
 								&& !CollectionUtils.isEmpty(nextState.getActions())) {
-							List<String> roles = new ArrayList<>();
-							nextState.getActions().stream()
-							.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
-								roles.addAll(stateAction.getRoles())
-							);
 							List<String> assignee = null;
 							if(!CollectionUtils.isEmpty(roles))
-								assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo);
+								assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo, false);
 							bpa.getWorkflow().setAssignes(assignee);
 							
 						}
