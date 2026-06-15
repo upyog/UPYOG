@@ -199,7 +199,7 @@ const runConsumer = async () => {
     envVariables.KAFKA_TOPICS_FIRENOC_UPDATE,
     envVariables.KAFKA_TOPICS_FIRENOC_WORKFLOW,
     envVariables.KAFKA_TOPICS_RECEIPT_CREATE
-  ], fromBeginning: false });
+  ], fromBeginning: envVariables.KAFKA_OFFSET === "earliest" });
 
   await consumer.run({
     autoCommitInterval: 5000,
