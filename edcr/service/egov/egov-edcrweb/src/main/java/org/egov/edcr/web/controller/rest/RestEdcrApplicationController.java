@@ -718,6 +718,7 @@ public class RestEdcrApplicationController {
             String approvedDate = getJsonValue(bpaObject, "$.BPA[0].approvalDate");
             String validDate = getJsonValue(bpaObject, "$.BPA[0].additionalDetails.validityDate");
             String edcrNo = getJsonValue(bpaObject, "$.BPA[0].edcrNumber");
+            String zone = getJsonValue(bpaObject, "$.BPA[0].additionalDetails.zonenumber");
             Boolean isSelfCertification = JsonPath.read(
                     bpaObject,
                     "$.BPA[0].additionalDetails.isSelfCertification"
@@ -750,7 +751,8 @@ public class RestEdcrApplicationController {
                     isSelfCertification,
                     eSign,
                     eSignName,
-                    tenantId
+                    tenantId,
+                    zone
             );
 
             response.put("success", true);
