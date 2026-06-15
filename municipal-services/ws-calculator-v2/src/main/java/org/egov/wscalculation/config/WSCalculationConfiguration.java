@@ -236,9 +236,6 @@ public class WSCalculationConfiguration {
 	@Value("${kafka.topics.save.demand}")
 	private String saveDemand;
 
-	@Value("${kafka.topics.update.demand}")
-	private String updateDemand;
-
 	@Value("${kafka.topics.save.ws.batch.demand.log}")
 	private String saveBatchDemandLogTopic;
 
