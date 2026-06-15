@@ -1,4 +1,4 @@
-const kafka = require("kafka-node");
+const { Kafka } = require("kafkajs");
 import envVariables from "../envVariables";
 import logger from "../config/logger";
 import get from "lodash/get";
@@ -17,27 +17,19 @@ initializeProducer().then((p) => {
   process.exit(1);
 });
 
-// Using your dynamic offset variable
-var options = {
-  kafkaHost: envVariables.KAFKA_BROKER_HOST,
-  groupId: "firenoc-consumer-grp",
-  autoCommit: true,
-  autoCommitIntervalMs: 5000,
-  sessionTimeout: 15000,
-  fetchMaxBytes: 10 * 1024 * 1024,
-  protocol: ["roundrobin"],
-  fromOffset: envVariables.KAFKA_OFFSET,
-  outOfRangeOffset: "earliest"
-};
+const kafka = new Kafka({
+  clientId: 'firenoc-services-consumer',
+  brokers: [envVariables.KAFKA_BROKER_HOST],
+  ssl: false,
+  retry: { retries: 1 }
+});
 
-var consumerGroup = new kafka.ConsumerGroup(options, [
-  envVariables.KAFKA_TOPICS_FIRENOC_CREATE,
-  envVariables.KAFKA_TOPICS_FIRENOC_UPDATE,
-  envVariables.KAFKA_TOPICS_FIRENOC_WORKFLOW,
-  envVariables.KAFKA_TOPICS_RECEIPT_CREATE
-]);
+const consumer = kafka.consumer({ 
+  groupId: 'firenoc-consumer-grp',
+  sessionTimeout: 30000,
+  heartbeatInterval: 3000
+});
 
-// Using your specific env variables
 const CONCURRENCY_LIMIT = parseInt(envVariables.KAFKA_CONCURRENCY);
 const DLQ_TOPIC = envVariables.KAFKA_TOPICS_FIRENOC_DLQ;
 
@@ -126,12 +118,12 @@ const worker = async (message) => {
 
     const sendPaymentMessage = (value) => {
       const { Payment } = value;
-      let bill = get(Payment.paymentDetails[0], "Bill[0]");
-      smsRequest["mobileNumber"] = get(bill, "mobileNumber");
-      let paymentAmount = get(bill, "amountPaid");
-      let applicantName = get(bill, "payerName");
-      let receiptNumber = get(bill, "billDetails[0].receiptNumber");
-      let applicationNumber = get(bill, "billDetails[0].consumerCode");
+      let bill = get(Payment.paymentDetails[0], "Bill[0]") || get(Payment.paymentDetails[0], "bill");
+      smsRequest["mobileNumber"] = get(bill, "mobileNumber") || get(bill, "billDetails[0].mobileNumber");
+      let paymentAmount = get(bill, "amountPaid") || get(bill, "billDetails[0].amountPaid");
+      let applicantName = get(bill, "payerName") || get(bill, "billDetails[0].payerName");
+      let receiptNumber = get(Payment.paymentDetails[0], "receiptNumber") || get(bill, "billDetails[0].receiptNumber");
+      let applicationNumber = get(bill, "billDetails[0].consumerCode") || get(bill, "consumerCode");
       let tenant = get(Payment, "tenantId");
       let downLoadLink = `${envVariables.EGOV_HOST_BASE_URL}${envVariables.EGOV_RECEIPT_URL}?applicationNumber=${applicationNumber}&tenantId=${tenant}`;
 
@@ -147,13 +139,16 @@ const worker = async (message) => {
       if (paymentDetails) {
         for (let detail of paymentDetails) {
           if (get(detail, "businessService") === envVariables.BUSINESS_SERVICE) {
-            let applicationNumber = get(detail, "bill.consumerCode");
+            let bill = get(detail, "Bill[0]") || get(detail, "bill");
+            let applicationNumber = get(bill, "billDetails[0].consumerCode") || get(bill, "consumerCode");
             const searchResponse = await searchApiResponse({ body: { RequestInfo }, query: { tenantId, applicationNumber } });
             const { FireNOCs } = searchResponse;
             if (!FireNOCs || !FireNOCs.length) throw new Error("FIRENOC Search error");
 
             FireNOCs.forEach(f => set(f, "fireNOCDetails.action", envVariables.ACTION_PAY));
-            RequestInfo.userInfo.roles.forEach(role => set(role, "tenantId", get(RequestInfo.userInfo, "tenantId")));
+            if (RequestInfo.userInfo && RequestInfo.userInfo.roles) {
+              RequestInfo.userInfo.roles.forEach(role => set(role, "tenantId", get(RequestInfo.userInfo, "tenantId")));
+            }
 
             await updateApiResponse({ body: { RequestInfo, FireNOCs } });
           }
@@ -194,6 +189,31 @@ const worker = async (message) => {
 };
 
 const queue = async.queue(worker, CONCURRENCY_LIMIT);
-consumerGroup.on("message", (message) => queue.push(message));
 
-export default consumerGroup;
+const runConsumer = async () => {
+  await consumer.connect();
+  logger.info("Kafkajs consumer connected successfully");
+  
+  await consumer.subscribe({ topics: [
+    envVariables.KAFKA_TOPICS_FIRENOC_CREATE,
+    envVariables.KAFKA_TOPICS_FIRENOC_UPDATE,
+    envVariables.KAFKA_TOPICS_FIRENOC_WORKFLOW,
+    envVariables.KAFKA_TOPICS_RECEIPT_CREATE
+  ], fromBeginning: false });
+
+  await consumer.run({
+    autoCommitInterval: 5000,
+    eachMessage: async ({ topic, partition, message }) => {
+      queue.push({
+        topic,
+        partition,
+        offset: message.offset,
+        value: message.value.toString()
+      });
+    }
+  });
+};
+
+runConsumer().catch(err => logger.error("Kafkajs consumer crash: " + err));
+
+export default consumer;
