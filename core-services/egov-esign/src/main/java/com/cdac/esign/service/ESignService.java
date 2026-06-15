@@ -163,8 +163,10 @@ public class ESignService {
         	layer2Text = "Digitally Signed by " + requestInfo.getUserInfo().getName() + "\n" + designation + "\n" + dateFormat.format(new Date()) + "\n" + ulbType + "\n" + city;
         }
 
-        // Load base image from classpath
-        byte[] baseImageBytes = Files.readAllBytes(new ClassPathResource("/esign.jpeg").getFile().toPath());
+        byte[] baseImageBytes;
+        try (InputStream imgStream = new ClassPathResource("/esign.jpeg").getInputStream()) {
+            baseImageBytes = org.springframework.util.StreamUtils.copyToByteArray(imgStream);
+        }
         ImageData baseImageData = ImageDataFactory.create(baseImageBytes);
 
         appearance.setLayer2Text(layer2Text); // Set the dynamic text (with location) as Layer 2 of the signature
