@@ -152,8 +152,9 @@ public class EdcrApplicationService {
     public static final String ABORTED = "Aborted";
     private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
         
-    private static final float EXPAND_RIGHT  = 800f;
+    private static final float EXPAND_RIGHT  = 80f;
     private static final float EXPAND_BOTTOM = 80f;
+    private static final String BLANK_TEXT = "-";
     
     // GAP CONTROLS  ← spacing between elements
     private static final float GAP_DRAWING_TO_TABLES = 20f;
@@ -476,9 +477,15 @@ public class EdcrApplicationService {
                 return root;
             }
 
+            String zone = BLANK_TEXT;
+            if (patchFields != null && !patchFields.isNull() && !patchFields.isMissingNode()) {
+            	JsonNode patchRoot = patchFields.path("details").isMissingNode() ? patchFields : patchFields.path("details");
+            	zone = meaningfulText(patchRoot, "zone");
+            }
+            
             JsonNode frd = mapper.valueToTree(finalReportData);
 
-            details.set("applicationDetails", buildApplicationDetails(mapper, frd));
+            details.set("applicationDetails", buildApplicationDetails(mapper, frd, zone));
             details.set("plotAreaDetails", buildPlotAreaDetails(mapper, frd));
             details.set("builtUpArea", buildBuiltUpArea(mapper, frd));
             details.set("farDetails", buildFarDetails(mapper, frd));
@@ -553,7 +560,8 @@ public class EdcrApplicationService {
                                          String approvalSanctionDate,
                                          String validTill,
                                          String signatoryName,
-                                         String designation) {
+                                         String designation,
+                                         String zone) {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode root = mapper.createObjectNode();
         final ObjectNode details = mapper.createObjectNode();
@@ -585,6 +593,8 @@ public class EdcrApplicationService {
                 details.set("eSign", eSign);
             }
         }
+        
+        details.put("zone", zone);
 
         return root;
     }
@@ -640,7 +650,7 @@ public class EdcrApplicationService {
         });
     }
 
-    private ObjectNode buildApplicationDetails(ObjectMapper mapper, JsonNode frd) {
+    private ObjectNode buildApplicationDetails(ObjectMapper mapper, JsonNode frd, String zone) {
         ObjectNode n = mapper.createObjectNode();
         JsonNode pi = frd.path("planInformation");
         n.put("nameOfApplicant", txt(frd, "applicantName"));
@@ -651,7 +661,7 @@ public class EdcrApplicationService {
         n.put("buildingCategory", txt(pi, "occupancy"));
         n.put("proposedSiteAddress", txt(pi, "city"));
         n.put("khasraNo", txt(pi, "khasraNo"));
-        n.put("zone", txt(pi, "landUseZone"));
+        n.put("zone", zone);
         return n;
     }
 
@@ -685,7 +695,7 @@ public class EdcrApplicationService {
 
         n.put("totalPermissibleFAR", txt(farDetails, "Permissible"));
         n.put("totalPermissibleFARArea", getTotalFloorArea(bws));
-        n.put("totalProposedFAR", txt(farDetails, "Purchasable"));
+        n.put("totalProposedFAR", txt(farDetails, "Provided"));
         n.put("totalProposedFARArea", getTotalFloorArea(bws));
 
         return n;
@@ -703,13 +713,13 @@ public class EdcrApplicationService {
     
     private String extractTotalHeight(String remarks) {
         if (remarks == null) {
-            return "N/A";
+            return BLANK_TEXT;
         }
 
         Pattern pattern = Pattern.compile("Total Height of building is\\s*([\\d.]+)");
         Matcher matcher = pattern.matcher(remarks);
 
-        return matcher.find() ? matcher.group(1) : "N/A";
+        return matcher.find() ? matcher.group(1) : BLANK_TEXT;
     }
 
     private ObjectNode buildEcsDetails(ObjectMapper mapper, JsonNode frd) {
@@ -717,7 +727,7 @@ public class EdcrApplicationService {
         JsonNode parkingDetails = findCommonParkingDetail(frd);
         n.put("parking", txt(parkingDetails, "Provided"));
         n.put("required", txt(parkingDetails, "Required"));
-        n.put("twoWheelerParking", "N/A");
+        n.put("twoWheelerParking", BLANK_TEXT);
         n.put("openParkingArea", txt(parkingDetails, "Provided"));
         n.put("coveredStiltParkingArea", "0.0");
         n.put("basementParkingArea", "0.0");
@@ -767,7 +777,7 @@ public class EdcrApplicationService {
     private ObjectNode buildProfessionalSignature(ObjectMapper mapper, JsonNode frd, File signatureImageFile) {
         ObjectNode n = mapper.createObjectNode();
         String signatureDataUri = toDataUri(signatureImageFile);
-        n.put("uploadedSignature", StringUtils.isNotBlank(signatureDataUri) ? signatureDataUri : txt(frd, "N/A"));
+        n.put("uploadedSignature", StringUtils.isNotBlank(signatureDataUri) ? signatureDataUri : txt(frd, BLANK_TEXT));
         n.put("hasSignatureImage", StringUtils.isNotBlank(signatureDataUri));
         return n;
     }
@@ -810,8 +820,8 @@ public class EdcrApplicationService {
         }
 
         ObjectNode p1 = mapper.createObjectNode();
-        p1.put("signatoryName", "N/A");
-        p1.put("designation", "N/A");
+        p1.put("signatoryName", BLANK_TEXT);
+        p1.put("designation", BLANK_TEXT);
         arr.add(p1);
 
 //        ObjectNode p2 = mapper.createObjectNode();
@@ -867,7 +877,7 @@ public class EdcrApplicationService {
 
             if ("Total-colspan-2".equalsIgnoreCase(occupancy)) {
                 n.put("floor", "Total");
-                n.put("occupancySubOccupancy", "N/A");
+                n.put("occupancySubOccupancy", BLANK_TEXT);
             } else {
                 n.put("floor", txt(r, "Floor"));
                 n.put("occupancySubOccupancy", occupancy);
@@ -952,14 +962,14 @@ public class EdcrApplicationService {
 
     private ObjectNode buildSetbacks(ObjectMapper mapper, JsonNode frd) {
         ObjectNode n = mapper.createObjectNode();
-        n.put("frontPermissible", "N/A");
-        n.put("frontProvided", "N/A");
-        n.put("rearPermissible", "N/A");
-        n.put("rearProvided", "N/A");
-        n.put("side1Permissible", "N/A");
-        n.put("side1Provided", "N/A");
-        n.put("side2Permissible", "N/A");
-        n.put("side2Provided", "N/A");
+        n.put("frontPermissible", BLANK_TEXT);
+        n.put("frontProvided", BLANK_TEXT);
+        n.put("rearPermissible", BLANK_TEXT);
+        n.put("rearProvided", BLANK_TEXT);
+        n.put("side1Permissible", BLANK_TEXT);
+        n.put("side1Provided", BLANK_TEXT);
+        n.put("side2Permissible", BLANK_TEXT);
+        n.put("side2Provided", BLANK_TEXT);
 
         JsonNode setbackRows = frd.path("sections").path("Block 1 - Scrutiny Details").path("Setback").path("detail");
         if (setbackRows.isArray()) {
@@ -1070,14 +1080,14 @@ public class EdcrApplicationService {
 //        if ("0".equals(floorNo)) return "Ground Floor";
 //        if ("1".equals(floorNo)) return "1st Floor";
 //        if ("2".equals(floorNo)) return "2nd Floor";
-        return floorNo == null || floorNo.trim().isEmpty() ? "N/A" : floorNo;
+        return floorNo == null || floorNo.trim().isEmpty() ? BLANK_TEXT : floorNo;
     }
 
     private String txt(JsonNode node, String field) {
         JsonNode v = node == null ? null : node.path(field);
-        if (v == null || v.isMissingNode() || v.isNull()) return "N/A";
+        if (v == null || v.isMissingNode() || v.isNull()) return BLANK_TEXT;
         String out = v.asText("").trim();
-        return out.isEmpty() ? "N/A" : out;
+        return out.isEmpty() ? BLANK_TEXT : out;
     }
 
     private double num(JsonNode node, String field) {
@@ -1144,9 +1154,9 @@ public class EdcrApplicationService {
 
 	private void updateFileNew(Plan pl, EdcrApplication edcrApplication, String fileNumber, String examinedBy,
 			String approvedSanctionedBy, String approvalSanctionDate, String validTill, String signatoryName,
-			String designation, String tenantId) {
+			String designation, String tenantId, String zone) {
 		JsonNode patchFields = buildLateFieldPatch(fileNumber, examinedBy, approvedSanctionedBy, approvalSanctionDate,
-				validTill, signatoryName, designation);
+				validTill, signatoryName, designation, zone);
 		updateFileV4(pl, edcrApplication, patchFields, tenantId);
 	}
     
@@ -1862,7 +1872,7 @@ public class EdcrApplicationService {
     
 	public FileStoreMapper updateDXFOutput(String fileNo, String examinedBy, String approvedBy, String approvedDate,
 			String validDate, String edcrNo, Boolean isSelfCertification, String eSign, String eSignName,
-			String tenantId) throws IOException {
+			String tenantId, String zone) throws IOException {
 
 		if (StringUtils.isBlank(edcrNo)) {
 			throw new IllegalArgumentException("EDCR Number is mandatory.");
@@ -1923,7 +1933,7 @@ public class EdcrApplicationService {
 		edcrApplication.setSavedDxfFile(dxfFile);
 
 		updateFileNew(pl, edcrApplication, fileNo, examinedBy, approvedBy, approvedDate, validDate, eSignName, eSign,
-				tenantId);
+				tenantId, zone);
 
 		FileStoreMapper mapper = appDetail.getScrutinizedDxfFileId();
 
