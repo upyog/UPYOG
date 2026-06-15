@@ -20,7 +20,7 @@ initializeProducer().then((p) => {
 // Using your dynamic offset variable
 var options = {
   kafkaHost: envVariables.KAFKA_BROKER_HOST,
-  groupId: "firenoc-consumer-grp",
+  groupId: "firenoc-consumer-grp-uat",
   autoCommit: true,
   autoCommitIntervalMs: 5000,
   sessionTimeout: 15000,
