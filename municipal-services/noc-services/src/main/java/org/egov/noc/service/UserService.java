@@ -115,10 +115,10 @@ public class UserService {
 		}
 	}
 
-	public List<String> getAssigneeFromNOC(Noc noc, List<String> userRoles, RequestInfo requestInfo) {
+	public List<String> getAssigneeFromNOC(Noc noc, List<String> userRoles, RequestInfo requestInfo, boolean isAllAssignees) {
 		Map<String, String> additionalDetails = (Map<String, String>)noc.getNocDetails().getAdditionalDetails();
 		String roles = userRoles.stream().collect(Collectors.joining(","));
-		StringBuilder uri = getEmployeeSearchURL(noc.getTenantId(), roles, additionalDetails, false);
+		StringBuilder uri = getEmployeeSearchURL(noc.getTenantId(), roles, additionalDetails, isAllAssignees);
 
 		JSONObject hrmsRequest = new JSONObject();
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
