@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.repository.ServiceRequestRepository;
+import org.upyog.chb.web.models.BookingPurpose;
 import org.upyog.chb.web.models.CalculationType;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 
@@ -47,7 +48,13 @@ public class CalculationTypeCache {
 			CommunityHallBookingDetail bookingDetail) {
 
 	String hallCode = bookingDetail.getCommunityHallCode();
-	String cacheKey = tenantId + ":" + hallCode;
+	// Derive functionType from the booking's purpose via MDMS Purpose.type
+	// Falls back to null if purpose is not set or has no type — backward compatible
+		BookingPurpose bookingPurpose = bookingDetail.getPurpose();
+	String purposeCode = bookingPurpose.getPurpose().toString();
+	String functionType = resolveFunctionType(requestInfo, tenantId, moduleName, purposeCode);
+
+	String cacheKey = tenantId + ":" + hallCode + (functionType != null ? ":" + functionType : "");
 
 	if (feeTypeCache.isEmpty() || !feeTypeCache.containsKey(cacheKey)) {
 
@@ -79,8 +86,22 @@ public class CalculationTypeCache {
 					JsonNode faceAreaNode = hallNode.get(hallCode);
 					if (faceAreaNode != null) {
 						try {
-							calculationTypes = mapper.readValue(faceAreaNode.toString(),
+							List<CalculationType> allTypes = mapper.readValue(faceAreaNode.toString(),
 									mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
+
+							// Filter by functionType when present — backward compatible:
+							// if functionType is null OR none of the entries have functionType set,
+							// return all entries unchanged.
+							if (functionType != null && allTypes.stream().anyMatch(t -> t.getFunctionType() != null)) {
+								final String ft = functionType;
+								calculationTypes = allTypes.stream()
+										.filter(t -> ft.equalsIgnoreCase(t.getFunctionType()))
+										.collect(java.util.stream.Collectors.toList());
+								log.info("Filtered CalculationType entries by functionType={}: {}", ft, calculationTypes);
+							} else {
+								calculationTypes = allTypes;
+							}
+
 							feeTypeCache.put(cacheKey, calculationTypes);
 						} catch (JsonProcessingException e) {
 							log.error("Error converting calculation types: ", e);
@@ -88,13 +109,68 @@ public class CalculationTypeCache {
 					}
 				}
 			}
-			log.info("Loaded calculation type data for tenant/hall codes : " + feeTypeCache);
+			log.info("Loaded calculation type data for tenant/hall/functionType [{}]: {}", cacheKey, feeTypeCache.get(cacheKey));
 		}
 
-		log.info("Calculation type for tenant: {} hall code: {} is : {}", tenantId, hallCode, feeTypeCache.get(cacheKey));
+		log.info("Calculation type for key [{}] is: {}", cacheKey, feeTypeCache.get(cacheKey));
 
 		return feeTypeCache.get(cacheKey);
 
+	}
+
+	/**
+	 * Fetches the Purpose master from MDMS and returns the 'type' (HAPPY/SAD)
+	 * for the given purposeCode. Returns null if purpose has no type or isn't found
+	 * — enabling full backward compatibility with tenants that don't use this feature.
+	 */
+	private String resolveFunctionType(RequestInfo requestInfo, String tenantId,
+			String moduleName, String purposeCode) {
+		if (purposeCode == null || purposeCode.isEmpty()) return null;
+		try {
+			StringBuilder uri = new StringBuilder()
+					.append(config.getMdmsHost()).append(config.getMdmsPath());
+
+			MasterDetail masterDetail = new MasterDetail();
+			masterDetail.setName("Purpose");
+			List<MasterDetail> masterDetailList = new ArrayList<>();
+			masterDetailList.add(masterDetail);
+
+			ModuleDetail moduleDetail = new ModuleDetail();
+			moduleDetail.setMasterDetails(masterDetailList);
+			moduleDetail.setModuleName(moduleName);
+
+			MdmsCriteria mdmsCriteria = new MdmsCriteria();
+			mdmsCriteria.setTenantId(tenantId);
+			mdmsCriteria.setModuleDetails(java.util.Arrays.asList(moduleDetail));
+
+			MdmsCriteriaReq req = new MdmsCriteriaReq();
+			req.setMdmsCriteria(mdmsCriteria);
+			req.setRequestInfo(requestInfo);
+
+			MdmsResponse mdmsResponse = mapper.convertValue(
+					serviceRequestRepository.fetchResult(uri, req), MdmsResponse.class);
+
+			if (mdmsResponse == null || mdmsResponse.getMdmsRes() == null
+					|| mdmsResponse.getMdmsRes().get(moduleName) == null) return null;
+
+			JSONArray purposeArray = mdmsResponse.getMdmsRes().get(moduleName).get("Purpose");
+			if (purposeArray == null) return null;
+
+			JsonNode purposeNode = mapper.readTree(purposeArray.toJSONString());
+			for (JsonNode p : purposeNode) {
+				// The frontend sends purpose by name (e.g. "Marriage Function"), not code.
+				// Match against the 'name' field accordingly.
+				JsonNode nameNode = p.get("name");
+				JsonNode typeNode = p.get("type");
+				if (nameNode != null && purposeCode.equals(nameNode.asText()) && typeNode != null) {
+					log.info("Resolved functionType '{}' for purpose '{}'", typeNode.asText(), purposeCode);
+					return typeNode.asText();
+				}
+			}
+		} catch (Exception e) {
+			log.warn("Could not resolve functionType for purpose '{}': {}", purposeCode, e.getMessage());
+		}
+		return null;
 	}
 
 	private MdmsCriteriaReq getMdmsRequestCalculationType(RequestInfo requestInfo, String tenantId, String moduleName,
