@@ -41,6 +41,7 @@ import org.w3c.dom.NodeList;
 import com.cdac.esign.encryptor.RSAKeyUtil;
 import com.cdac.esign.form.FormXmlDataAsp;
 import com.cdac.esign.form.RequestXmlForm;
+import com.cdac.esign.repository.ImageStoreRepositry;
 import com.cdac.esign.xmlparser.AspXmlGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,6 +78,9 @@ public class ESignService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ImageStoreRepositry imageStoreRepositry;
+    
     /**
      * PHASE 1: Prepare PDF with Dynamic Location & Custom TXN ID
      */
@@ -163,11 +167,7 @@ public class ESignService {
         	layer2Text = "Digitally Signed by " + requestInfo.getUserInfo().getName() + "\n" + designation + "\n" + dateFormat.format(new Date()) + "\n" + ulbType + "\n" + city;
         }
 
-        byte[] baseImageBytes;
-        try (InputStream imgStream = new ClassPathResource("/esign.jpeg").getInputStream()) {
-            baseImageBytes = org.springframework.util.StreamUtils.copyToByteArray(imgStream);
-        }
-        ImageData baseImageData = ImageDataFactory.create(baseImageBytes);
+        ImageData baseImageData = ImageDataFactory.create(imageStoreRepositry.getBaseImageBytes());
 
         appearance.setLayer2Text(layer2Text); // Set the dynamic text (with location) as Layer 2 of the signature
         appearance.setImage(baseImageData); // Set the base image (e.g. "esign.jpeg") as the background of the signature
