@@ -177,6 +177,8 @@ public class BPAConstants {
 	public static final String STATUS_PAID = "INPROGRESS";
 	
 	public static final String STATUS_ESIGN_PENDING = "ESIGN_PENDING";
+	
+	public static final String STATUS_DRAWING_ESIGN_PENDING = "DRAWING_ESIGN_PENDING";
 
 	public static final String BILL_AMOUNT = "$.Demands[0].demandDetails[0].taxAmount";
 

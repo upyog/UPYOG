@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.config.BPAConfiguration;
 import org.egov.bpa.repository.BPARepository;
@@ -499,20 +500,31 @@ public class BPAService {
         				.findFirst().orElse(new Action()).getNextState();
         		State nextState = businessService.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
         		
+        		List<String> roles = new ArrayList<String>();
+    			if(nextState != null && !CollectionUtils.isEmpty(nextState.getActions()))
+    				roles = nextState.getActions().stream()
+    				.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId))
+    				.flatMap(stateAction -> stateAction.getRoles().stream())
+    				.distinct()
+    				.filter(role -> !role.equalsIgnoreCase("OBPAS_UPDATE_ZONE")
+    						&& !role.equalsIgnoreCase("SYSTEM"))
+    				.collect(Collectors.toList());
+        		
         		if (nextState != null 
 						&& CollectionUtils.isEmpty(bpa.getWorkflow().getAssignes())
 						&& !CollectionUtils.isEmpty(nextState.getActions())) {
-					List<String> roles = new ArrayList<>();
-					nextState.getActions().stream()
-					.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
-						roles.addAll(stateAction.getRoles())
-					);
 					List<String> assignee = null;
 					if(!CollectionUtils.isEmpty(roles))
-						assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo);
+						assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo, false);
 					bpa.getWorkflow().setAssignes(assignee);
 					
 				}
+        		
+        		if(!CollectionUtils.isEmpty(roles)) {
+    				List<String> assignee = null;
+    				assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo, true);
+    				bpa.getWorkflow().setAssignes(assignee);
+    			}
         		
 		wfIntegrator.callWorkFlow(bpaRequest);
 		log.debug("===> workflow done =>" +bpaRequest.getBPA().getStatus()  );
