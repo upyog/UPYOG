@@ -724,13 +724,38 @@ public class EdcrApplicationService {
 
     private ObjectNode buildEcsDetails(ObjectMapper mapper, JsonNode frd) {
         ObjectNode n = mapper.createObjectNode();
-        JsonNode parkingDetails = findCommonParkingDetail(frd);
+        JsonNode parkingDetails = new ObjectMapper().createObjectNode();
+        JsonNode parkingDetailsArr = findCommonParkingDetail(frd);
+        String oprnParking = "0.0";
+        String stiltParking = "0.0";
+        String basementParking = "0.0";
+        for (JsonNode row : parkingDetailsArr) {
+        	String description = row.path("Description").asText();
+        	switch (description) {
+				case "Parking":
+					parkingDetails = row;
+					break;
+				case "Open Parking Area":
+					oprnParking = txt(row, "Provided");
+					break;
+				case "Stilt Parking Area":
+					stiltParking = txt(row, "Provided");
+					break;
+				case "Basement Parking Area":
+					basementParking = txt(row, "Provided");
+					break;
+				default:
+					break;
+			}
+			
+		}
+        
         n.put("parking", txt(parkingDetails, "Provided"));
         n.put("required", txt(parkingDetails, "Required"));
         n.put("twoWheelerParking", BLANK_TEXT);
-        n.put("openParkingArea", txt(parkingDetails, "Provided"));
-        n.put("coveredStiltParkingArea", "0.0");
-        n.put("basementParkingArea", "0.0");
+        n.put("openParkingArea", oprnParking);
+        n.put("coveredStiltParkingArea", stiltParking);
+        n.put("basementParkingArea", basementParking);
         return n;
     }
 
@@ -833,7 +858,7 @@ public class EdcrApplicationService {
 
     private ObjectNode buildBlockWiseSummary(ObjectMapper mapper, JsonNode frd) {
         ObjectNode n = mapper.createObjectNode();
-        n.put("totalPlotArea", num(frd.path("planInformation"), "plotArea"));
+        n.put("totalPlotArea", num(frd.path("plot"), "area"));
         n.put("groundCoverage", txt(frd, "coverage") + "%");
         n.put("totalBuiltUpArea", num(frd, "totalBuiltUpArea"));
         
@@ -995,7 +1020,7 @@ public class EdcrApplicationService {
 
     private JsonNode findCommonParkingDetail(JsonNode frd) {
         JsonNode arr = frd.path("sections").path("Common - Scrutiny Details").path("Parking").path("detail");
-        return arr.isArray() && arr.size() > 0 ? arr.get(0) : new ObjectMapper().createObjectNode();
+        return arr.isArray() && arr.size() > 0 ? arr : new ObjectMapper().createObjectNode();
     }
     
     private JsonNode findCommonFarDetail(JsonNode frd) {

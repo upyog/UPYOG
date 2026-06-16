@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -331,6 +332,13 @@ public class PlanService {
             plan.getErrors().put("Invalid ULB", "Plan ULB and login ULB must be the same.");
         }        
        
+        // Check Measured and Declared plot area match
+        BigDecimal declaredPlotArea = plan.getPlanInformation().getPlotArea().setScale(0, RoundingMode.DOWN);
+        BigDecimal measuredPlotArea = plan.getPlot().getArea().setScale(0, RoundingMode.DOWN);
+        
+        if(!declaredPlotArea.equals(measuredPlotArea))
+        	plan.getErrors().put("Invalid Plot Area", "Declared plot are and Measured plot area must be the same.");
+        
         String ulbType = "";
         String districtName = "";
         try {
