@@ -347,7 +347,8 @@ public class SideYardService extends GeneralRule {
 									 * maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result);
 									 * }
 									 */
-								}else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {									
+								}else if (occupancy.getTypeHelper().getSubtype() != null && 
+										G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {									
 			                            if (sideYard1 != null) {			                                
 			                                minlength = sideYard1.getMinimumDistance().doubleValue();
 			                            } else if (sideYard2 != null) {
@@ -358,7 +359,8 @@ public class SideYardService extends GeneralRule {
 									  			block.getName(), setback.getLevel(), plot, minlength, max, minMeanlength,
 									  			maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result , 
 									  			sideYard2, sideYard1, setback);
-								}else if (L.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {									
+								}else if (occupancy.getTypeHelper().getSubtype() != null &&
+										L.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {									
 		                            if (sideYard1 != null) {			                                
 		                                minlength = sideYard1.getMinimumDistance().doubleValue();
 		                            } else if (sideYard2 != null) {
@@ -370,10 +372,14 @@ public class SideYardService extends GeneralRule {
 								  			maxMeanLength, occupancy.getTypeHelper(), sideYard1Result, sideYard2Result , 
 								  			sideYard2, sideYard1, setback);
 							}else {									
-										 checkSideYardForOtherOccupancies(pl, block.getBuilding(),
-												  buildingHeight, block.getName(), setback.getLevel(), plot, minlength, max,
-												  minMeanlength, maxMeanLength, occupancy.getTypeHelper(), sideYard1Result,
-												  sideYard2Result, errors, sideYard1, sideYard2); 
+								if(occupancy.getTypeHelper().getType() != null
+										&& occupancy.getTypeHelper().getSubtype() != null) {
+									checkSideYardForOtherOccupancies(pl, block.getBuilding(),
+											  buildingHeight, block.getName(), setback.getLevel(), plot, minlength, max,
+											  minMeanlength, maxMeanLength, occupancy.getTypeHelper(), sideYard1Result,
+											  sideYard2Result, errors, sideYard1, sideYard2); 
+								}
+								
 								}
 									 
 

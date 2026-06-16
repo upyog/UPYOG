@@ -378,6 +378,7 @@ public class EDCRService {
 		StringBuilder uri = new StringBuilder(config.getEdcrHost());
 
 		uri.append(config.getUpdateBPADetailsEndPoint());
+		uri.append("?").append("tenantId=").append(bpaRequest.getBPA().getTenantId());
 		
 		RequestInfo edcrRequestInfo = new RequestInfo();
 		BeanUtils.copyProperties(bpaRequest.getRequestInfo(), edcrRequestInfo);

@@ -882,6 +882,8 @@ public class GeneralStair extends FeatureProcess {
 
     private void setReportOutputDetailsFloorStairWise(Plan pl, String ruleNo, String floor, String description,
             String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
+    	if(actual.trim().equalsIgnoreCase("0"))
+    		return;
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, ruleNo);
         details.put(FLOOR, floor);

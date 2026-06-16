@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.repository.ServiceRequestRepository;
 import org.egov.bpa.util.BPAErrorConstants;
@@ -29,6 +30,7 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -212,13 +214,17 @@ public class BPAAutoEscalationService {
 				.findFirst().orElse(new Action()).getNextState();
 		State nextState = businessService.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);		
 
-		List<String> roles = new ArrayList<>();
-		if(nextState != null)
-			nextState.getActions().forEach(stateAction -> 
-				roles.addAll(stateAction.getRoles())
-			);
+		List<String> roles = new ArrayList<String>();
+		if(nextState != null && !CollectionUtils.isEmpty(nextState.getActions()))
+			roles = nextState.getActions().stream()
+			.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId))
+			.flatMap(stateAction -> stateAction.getRoles().stream())
+			.distinct()
+			.filter(role -> !role.equalsIgnoreCase("OBPAS_UPDATE_ZONE")
+					&& !role.equalsIgnoreCase("SYSTEM"))
+			.collect(Collectors.toList());
 		
-		return userService.getAssigneeFromBPA(bpa, roles, requestInfo);	
+		return userService.getAssigneeFromBPA(bpa, roles, requestInfo, false);	
 	}
 	
 	/**
