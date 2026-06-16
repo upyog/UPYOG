@@ -226,19 +226,30 @@ public class NOCService {
 					.findFirst().orElse(new Action()).getNextState();
 			State nextState = businessServicename.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
 
-			if (nextState != null && CollectionUtils.isEmpty(noc.getWorkflow().getAssignes())
-					&& !CollectionUtils.isEmpty(nextState.getActions())) {
-				List<String> roles = new ArrayList<>();
-				nextState.getActions().stream()
-				.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
-					roles.addAll(stateAction.getRoles())
-				);
+			List<String> roles = new ArrayList<String>();
+			if(nextState != null && !CollectionUtils.isEmpty(nextState.getActions()))
+				roles = nextState.getActions().stream()
+				.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId))
+				.flatMap(stateAction -> stateAction.getRoles().stream())
+				.distinct()
+				.filter(role -> !role.equalsIgnoreCase("OBPAS_UPDATE_ZONE")
+						&& !role.equalsIgnoreCase("SYSTEM"))
+				.collect(Collectors.toList());
+			
+			if (nextState != null && CollectionUtils.isEmpty(noc.getWorkflow().getAssignes())) {
 				List<String> assignee = null;
 				if(!CollectionUtils.isEmpty(roles))
-					assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo());
+					assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo(), false);
 				noc.getWorkflow().setAssignes(assignee);
 			}
 
+			if(!CollectionUtils.isEmpty(roles)) {
+				List<String> assignee = null;
+				assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo(), true);
+				noc.getWorkflow().setAssignes(assignee);
+			}
+				
+			
 			if(!ObjectUtils.isEmpty(nocRequest.getNoc().getWorkflow())
 					&& !StringUtils.isEmpty(nocRequest.getNoc().getWorkflow().getAction())) {
 
@@ -285,19 +296,28 @@ public class NOCService {
 
 				String action = noc.getWorkflow() != null ? noc.getWorkflow().getAction() : "";
 
-				if (nextState != null && CollectionUtils.isEmpty(noc.getWorkflow().getAssignes())
-						&& !CollectionUtils.isEmpty(nextState.getActions())) {
-					List<String> roles = new ArrayList<>();
-					nextState.getActions().stream()
-					.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId)).forEach(stateAction -> 
-						roles.addAll(stateAction.getRoles())
-					);
+				List<String> roles = new ArrayList<String>();
+				if(nextState != null && !CollectionUtils.isEmpty(nextState.getActions()))
+					roles = nextState.getActions().stream()
+					.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId))
+					.flatMap(stateAction -> stateAction.getRoles().stream())
+					.distinct()
+					.filter(role -> !role.equalsIgnoreCase("OBPAS_UPDATE_ZONE")
+							&& !role.equalsIgnoreCase("SYSTEM"))
+					.collect(Collectors.toList());
+				
+				if (nextState != null && CollectionUtils.isEmpty(noc.getWorkflow().getAssignes())) {
 					List<String> assignee = null;
-					if(!CollectionUtils.isEmpty(roles))
-						assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo());
+					if (!CollectionUtils.isEmpty(roles))
+						assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo(), false);
 					noc.getWorkflow().setAssignes(assignee);
 				}
 
+				if (!CollectionUtils.isEmpty(roles)) {
+					List<String> assignee = userService.getAssigneeFromNOC(noc, roles, nocRequest.getRequestInfo(), true);
+					if(CollectionUtils.isEmpty(assignee))
+						noc.getWorkflow().setAssignes(null);
+				}
 
 				wfIntegrator.callWorkFlow(nocRequest,businessServiceName);
 				enrichmentService.postStatusEnrichment(nocRequest, businessServiceName);
