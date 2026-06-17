@@ -208,7 +208,8 @@ public class PdfOverlayTemplateService {
                         {"Parking", safeText(d.path("ecsDetails"), "required"), safeText(d.path("ecsDetails"), "parking")},
                         {"Two-Wheeler Parking", "", safeText(d.path("ecsDetails"), "twoWheelerParking")},
                         {"Open Parking Area", "", safeText(d.path("ecsDetails"), "openParkingArea")},
-                        {"Covered/Stilt Parking", "", safeText(d.path("ecsDetails"), "coveredStiltParkingArea")},
+                        {"Stilt Parking", "", safeText(d.path("ecsDetails"), "stiltParkingArea")},
+                        {"Covered Parking", "", safeText(d.path("ecsDetails"), "coveredParkingArea")},
                         {"Basement Parking Area", "", safeText(d.path("ecsDetails"), "basementParkingArea")}
                 });
 

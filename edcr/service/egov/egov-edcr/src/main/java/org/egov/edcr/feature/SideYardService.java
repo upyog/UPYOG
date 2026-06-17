@@ -413,7 +413,7 @@ public class SideYardService extends GeneralRule {
 
     	BigDecimal plotArea = pl.getPlot().getArea();
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = "4.4.4";
 //        Boolean valid2 = false;
 //        Boolean valid1 = false;
 //        BigDecimal side2val = BigDecimal.ZERO;
@@ -1024,7 +1024,7 @@ public class SideYardService extends GeneralRule {
             SideYardResult sideYard1Result, SideYardResult sideYard2Result, Yard sideYard2, Yard sideYard1, SetBack setback) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = "4.18";
         Boolean valid1 = false;
         Boolean valid2 = false;
 
@@ -1081,7 +1081,7 @@ public class SideYardService extends GeneralRule {
             SideYardResult sideYard1Result, SideYardResult sideYard2Result, Yard sideYard2, Yard sideYard1, SetBack setback) {
 
         String rule = SIDE_YARD_DESC;
-        String subRule = RULE_35;
+        String subRule = "4.14";
         Boolean valid1 = false;
         Boolean valid2 = false;
 
@@ -1369,7 +1369,7 @@ public class SideYardService extends GeneralRule {
         if (mostRestrictiveOccupancy.getType() != null && F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
         	side2val = getMinValueForCommercialFromMdms(pl, plot.getArea(), errors, buildingHeight, sideYard1Result, sideYard2Result);
         	side1val = getMinValueForCommercialFromMdms(pl, plot.getArea(), errors, buildingHeight, sideYard1Result, sideYard2Result);        	
-            subRule = RULE_37_TWO_I;
+            subRule = "4.7.4";;
         }
         
         if (max >= side1val.doubleValue())

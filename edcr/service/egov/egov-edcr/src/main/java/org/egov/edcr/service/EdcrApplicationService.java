@@ -728,6 +728,7 @@ public class EdcrApplicationService {
         JsonNode parkingDetailsArr = findCommonParkingDetail(frd);
         String oprnParking = "0.0";
         String stiltParking = "0.0";
+        String coveredParking = "0.0";
         String basementParking = "0.0";
         for (JsonNode row : parkingDetailsArr) {
         	String description = row.path("Description").asText();
@@ -740,6 +741,9 @@ public class EdcrApplicationService {
 					break;
 				case "Stilt Parking Area":
 					stiltParking = txt(row, "Provided");
+					break;
+				case "Cover Parking Area":
+					coveredParking = txt(row, "Provided");
 					break;
 				case "Basement Parking Area":
 					basementParking = txt(row, "Provided");
@@ -754,7 +758,8 @@ public class EdcrApplicationService {
         n.put("required", txt(parkingDetails, "Required"));
         n.put("twoWheelerParking", BLANK_TEXT);
         n.put("openParkingArea", oprnParking);
-        n.put("coveredStiltParkingArea", stiltParking);
+        n.put("stiltParkingArea", stiltParking);
+        n.put("coveredParkingArea", coveredParking);
         n.put("basementParkingArea", basementParking);
         return n;
     }
