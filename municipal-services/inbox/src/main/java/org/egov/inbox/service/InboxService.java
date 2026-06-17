@@ -265,7 +265,7 @@ public class InboxService {
             response.setNearingSlaCount(0);
             return response;
         }     
-//        processCriteria.setStatus(statusIds);
+       processCriteria.setStatus(null);
         processCriteria.setBusinessIds(new ArrayList<>(businessKeys));
         processCriteria.setTenantId(criteria.getTenantId());
         processCriteria.setIsProcessCountCall(Boolean.FALSE);
