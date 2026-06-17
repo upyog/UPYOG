@@ -445,6 +445,8 @@ public class ExitWidth extends FeatureProcess {
 
     private void setReportOutputDetails(Plan pl, String ruleNo, String floor, String occupancy, String expected, String actual,
             String status) {
+    	if(occupancy == null)
+    		occupancy = "-";
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, ruleNo);
         details.put(FLOOR, floor);

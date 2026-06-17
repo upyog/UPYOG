@@ -164,7 +164,11 @@ public class ESignService {
 //                    ulbType + ", " + city +"\n" + 
 //                    designation; // <--- DYNAMIC LOCATION
         	
-        	layer2Text = "Digitally Signed by " + requestInfo.getUserInfo().getName() + "\n" + designation + "\n" + dateFormat.format(new Date()) + "\n" + ulbType + "\n" + city;
+			layer2Text = "Digitally Signed by " + requestInfo.getUserInfo().getName() +"\n" + 
+							designation + "\n" + 
+							ulbType + "\n" + 
+							city + "\n" + 
+							dateFormat.format(new Date());
         }
 
         ImageData baseImageData = ImageDataFactory.create(imageStoreRepositry.getBaseImageBytes());
