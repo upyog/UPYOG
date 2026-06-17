@@ -592,10 +592,10 @@ public class UserService {
         final User user = getUniqueUser(updatePasswordRequest.getUserName(), updatePasswordRequest.getTenantId(),
                 updatePasswordRequest.getType(), null);
 
-        if (user.getType().toString().equals(UserType.CITIZEN.toString()) && isCitizenLoginOtpBased)
-            throw new InvalidUpdatePasswordRequestException();
-        if (user.getType().toString().equals(UserType.EMPLOYEE.toString()) && isEmployeeLoginOtpBased)
-            throw new InvalidUpdatePasswordRequestException();
+        // if (user.getType().toString().equals(UserType.CITIZEN.toString()) && isCitizenLoginOtpBased)
+        //     throw new InvalidUpdatePasswordRequestException();
+        // if (user.getType().toString().equals(UserType.EMPLOYEE.toString()) && isEmployeeLoginOtpBased)
+        //     throw new InvalidUpdatePasswordRequestException();
 
         validateExistingPassword(user, updatePasswordRequest.getExistingPassword());
         validatePassword(updatePasswordRequest.getNewPassword());
