@@ -193,10 +193,13 @@ public class PdfOverlayTemplateService {
         });
 
         addTripleSection(sections, "left", "FAR Details", d.path("farDetails"),
-                Arrays.asList("Description", "FAR", "FAR Area"),
+//                Arrays.asList("Description", "FAR", "FAR Area"),
+                Arrays.asList("Description", "FAR"),
                 new String[][] {
-                        {"Total Permissible FAR", safeText(d.path("farDetails"), "totalPermissibleFAR"), safeText(d.path("farDetails"), "totalPermissibleFARArea")},
-                        {"Total Proposed FAR", safeText(d.path("farDetails"), "totalProposedFAR"), safeText(d.path("farDetails"), "totalProposedFARArea")}
+//                        {"Total Permissible FAR", safeText(d.path("farDetails"), "totalPermissibleFAR"), safeText(d.path("farDetails"), "totalPermissibleFARArea")},
+//                        {"Total Proposed FAR", safeText(d.path("farDetails"), "totalProposedFAR"), safeText(d.path("farDetails"), "totalProposedFARArea")}
+                        {"Total Permissible FAR", safeText(d.path("farDetails"), "totalPermissibleFAR")},
+                        {"Total Proposed FAR", safeText(d.path("farDetails"), "totalProposedFAR")}
                 });
 
         addTripleSection(sections, "left", "ECS Details", d.path("ecsDetails"),
@@ -205,7 +208,8 @@ public class PdfOverlayTemplateService {
                         {"Parking", safeText(d.path("ecsDetails"), "required"), safeText(d.path("ecsDetails"), "parking")},
                         {"Two-Wheeler Parking", "", safeText(d.path("ecsDetails"), "twoWheelerParking")},
                         {"Open Parking Area", "", safeText(d.path("ecsDetails"), "openParkingArea")},
-                        {"Covered/Stilt Parking", "", safeText(d.path("ecsDetails"), "coveredStiltParkingArea")},
+                        {"Stilt Parking", "", safeText(d.path("ecsDetails"), "stiltParkingArea")},
+                        {"Covered Parking", "", safeText(d.path("ecsDetails"), "coveredParkingArea")},
                         {"Basement Parking Area", "", safeText(d.path("ecsDetails"), "basementParkingArea")}
                 });
 

@@ -94,7 +94,7 @@ public class RearYardService extends GeneralRule {
 	private static final Logger LOG = LogManager.getLogger(RearYardService.class);
 	private static final String RULE = "4.4.4";
 	private static final String RULE_36 = "36";
-	private static final String RULE_37_TWO_A = "37-2-A";
+	private static final String RULE_37_TWO_A = "4.4.4";
 	private static final String RULE_37_TWO_B = "37-2-B";
 	private static final String RULE_37_TWO_C = "37-2-C";
 	private static final String RULE_37_TWO_D = "37-2-D";
@@ -102,6 +102,10 @@ public class RearYardService extends GeneralRule {
 	private static final String RULE_37_TWO_H = "37-2-H";
 	private static final String RULE_37_TWO_I = "37-2-I";
 	private static final String RULE_47 = "47";
+	private static final String RULE_F = "4.7.4";
+	private static final String RULE_L = "4.18";
+	private static final String RULE_G = "4.14";
+	private static final String RULE_A = "4.4.4";
 
 	private static final String MINIMUMLABEL = "Minimum distance";
 	// Added by Bimal 18-March-2924 for method processRearYardResidential
@@ -279,8 +283,16 @@ public class RearYardService extends GeneralRule {
 										}
 									   
 								}
-									 
-
+								
+								if(occupancy.getTypeHelper().getSubtype()!=null && G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+									rearYardResult.subRule = RULE_G;
+								else if(occupancy.getTypeHelper().getSubtype()!=null && A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+									rearYardResult.subRule = RULE_A;
+								else if(occupancy.getTypeHelper().getSubtype()!=null && F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+									rearYardResult.subRule = RULE_F;
+								else if(occupancy.getTypeHelper().getSubtype()!=null && L.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+									rearYardResult.subRule = RULE_L;
+								
 							}
 							Map<String, String> details = new HashMap<>();
 							details.put(RULE_NO, rearYardResult.subRule);
@@ -384,7 +396,7 @@ public class RearYardService extends GeneralRule {
 			OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			HashMap<String, String> errors, BigDecimal buildingHeight) {
 		Boolean valid = false;
-		String subRule = RULE;
+		String subRule = "4.4.4";
 		String rule = REAR_YARD_DESC;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
@@ -734,7 +746,7 @@ public class RearYardService extends GeneralRule {
 	private Boolean checkRearYardForIndustrial(SetBack setback, Building building, final Plan pl, Block block,
 			Integer level, final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult, BigDecimal buildingHeight) {
-		String subRule = RULE;
+		String subRule = "4.14";
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -750,7 +762,7 @@ public class RearYardService extends GeneralRule {
 	private Boolean checkRearYardForPublicBuilding(SetBack setback, Building building, final Plan pl, Block block,
 			Integer level, final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult, BigDecimal buildingHeight) {
-		String subRule = RULE;
+		String subRule = "4.18";
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -1233,7 +1245,7 @@ public class RearYardService extends GeneralRule {
 		if (mostRestrictiveOccupancy.getType() != null
 				&& F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 			minVal = getMinValueForCommercialFromMdms(pl, plot.getArea(), errors, buildingHeight, rearYardResult);
-			subRule = RULE_37_TWO_I;
+			subRule = "4.7.4";
 			valid = validateMinimumAndMeanValue(min, setback.getRearYard().getWidth(), minVal, meanVal);
 	    	if (setback.getRearYard().getWidth().compareTo(minVal) >= 0) {		    
 			}else {

@@ -94,13 +94,15 @@ public class FrontYardService extends GeneralRule {
 	private static final Logger LOG = LogManager.getLogger(FrontYardService.class);
 	private static final String RULE_35 = "35 Table-8";
 	private static final String RULE_36 = "36";
-	private static final String RULE_37_TWO_A = "37-2-A";
+	private static final String RULE_37_TWO_A = "4.4.4";
 	private static final String RULE_37_TWO_B = "37-2-B";
 	private static final String RULE_37_TWO_C = "37-2-C";
 	private static final String RULE_37_TWO_D = "37-2-D";
-	private static final String RULE_37_TWO_G = "37-2-G";
+	private static final String RULE_37_TWO_G = "4.14";
 	private static final String RULE_37_TWO_H = "37-2-H";
 	private static final String RULE_37_TWO_I = "37-2-I";
+	private static final String RULE_37_TWO_F = "4.7.4";
+	private static final String RULE_37_TWO_L = "4.18";
 	private static final String RULE = "4.4.4";
 
 	private static final String MINIMUMLABEL = "Minimum distance ";
@@ -843,13 +845,13 @@ private class FrontYardResult {
 		if (mostRestrictiveOccupancy.getType() != null
 				&& A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 			minVal = BigDecimal.ZERO;
-			subRule = RULE_37_TWO_H;
+			subRule = RULE_37_TWO_A;
 		}
 		// IT,ITES
 		if (mostRestrictiveOccupancy.getType() != null
 				&& F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {		
 			minVal = getMinValueForCommercialFromMdms(pl,plot.getArea(),errors, frontYardResult, buildingHeight);
-			subRule = RULE_37_TWO_I;
+			subRule = RULE_37_TWO_F;
 			valid = validateMinimumAndMeanValue(min, setback.getFrontYard().getWidth(), minVal, meanVal);
 	    	if (setback.getFrontYard().getArea().compareTo(minVal) >= 0) {		    
 			}else {
@@ -862,7 +864,7 @@ private class FrontYardResult {
 		if (mostRestrictiveOccupancy.getType() != null
 				&& G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {		
 			minVal = getMinValueForIndustrial(pl,plot.getArea(), buildingHeight, mostRestrictiveOccupancy, errors, frontYardResult);
-			subRule = RULE_37_TWO_I;
+			subRule = RULE_37_TWO_G;
 			valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);	
 			compareFrontYardResultIndustry(blockName, setback.getFrontYard().getMinimumDistance(), mean, mostRestrictiveOccupancy,
 		    		frontYardResult, valid, subRule, rule, minVal, meanVal, level);	
@@ -870,7 +872,7 @@ private class FrontYardResult {
 		if (mostRestrictiveOccupancy.getType() != null
 				&& L.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {		
 			minVal = getMinValueForPublicBuildingByMDMS(pl,plot.getArea(), buildingHeight, mostRestrictiveOccupancy, errors, frontYardResult);
-			subRule = RULE_37_TWO_I;
+			subRule = RULE_37_TWO_L;
 			valid = validateMinimumAndMeanValue(min, mean, minVal, meanVal);
 			if(L_NH.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())) {
 				if (setback.getFrontYard().getArea().compareTo(minVal) >= 0) {		    

@@ -478,7 +478,7 @@ public class SetBackService extends FeatureProcess {
                     scrutinyDetail.setKey(combinedKey);
 
                     Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, RULE);
+                    details.put(RULE_NO, detailsMap.get(RULE_NO));
                     details.put(LEVEL, detailsMap.get("Level"));
                     details.put(OCCUPANCY, detailsMap.get("Occupancy"));
                     details.put(PERMISSIBLE, permissibleDisplay);

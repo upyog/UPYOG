@@ -322,6 +322,7 @@ public class EnrichmentService {
 
 			// Adding 3years (36 months) to Current Date
 			calendar.add(Calendar.MONTH, vailidityInMonths);
+			calendar.add(Calendar.DATE, -1);
 			Map<String, Object> additionalDetail = null;
 			if (bpa.getAdditionalDetails() != null) {
 				additionalDetail = (Map) bpa.getAdditionalDetails();
