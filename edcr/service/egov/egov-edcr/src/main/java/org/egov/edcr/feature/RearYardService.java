@@ -102,6 +102,10 @@ public class RearYardService extends GeneralRule {
 	private static final String RULE_37_TWO_H = "37-2-H";
 	private static final String RULE_37_TWO_I = "37-2-I";
 	private static final String RULE_47 = "47";
+	private static final String RULE_F = "4.7.4";
+	private static final String RULE_L = "4.18";
+	private static final String RULE_G = "4.14";
+	private static final String RULE_A = "4.4.4";
 
 	private static final String MINIMUMLABEL = "Minimum distance";
 	// Added by Bimal 18-March-2924 for method processRearYardResidential
@@ -279,8 +283,16 @@ public class RearYardService extends GeneralRule {
 										}
 									   
 								}
-									 
-
+								
+								if(occupancy.getTypeHelper().getSubtype()!=null && G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+									rearYardResult.subRule = RULE_G;
+								else if(occupancy.getTypeHelper().getSubtype()!=null && A.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+									rearYardResult.subRule = RULE_A;
+								else if(occupancy.getTypeHelper().getSubtype()!=null && F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+									rearYardResult.subRule = RULE_F;
+								else if(occupancy.getTypeHelper().getSubtype()!=null && L.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))
+									rearYardResult.subRule = RULE_L;
+								
 							}
 							Map<String, String> details = new HashMap<>();
 							details.put(RULE_NO, rearYardResult.subRule);

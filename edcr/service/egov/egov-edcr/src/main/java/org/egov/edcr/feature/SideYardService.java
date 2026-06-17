@@ -123,6 +123,10 @@ public class SideYardService extends GeneralRule {
     private static final String RULE_37_TWO_H = "37-2-H";
     private static final String RULE_37_TWO_I = "37-2-I";
     private static final String RULE_47 = "47";
+    private static final String RULE_F = "4.7.4";
+	private static final String RULE_L = "4.18";
+	private static final String RULE_G = "4.14";
+	private static final String RULE_A = "4.4.4";
     private static final String SIDE_YARD_2_NOTDEFINED = "side2yardNodeDefined";
     private static final String SIDE_YARD_1_NOTDEFINED = "side1yardNodeDefined";
 
@@ -649,6 +653,27 @@ public class SideYardService extends GeneralRule {
     private void addSideYardResult(final Plan pl, HashMap<String, String> errors, SideYardResult sideYard1Result,
             SideYardResult sideYard2Result, List<ScrutinyDetail> scrutinyDetailList, 
             ScrutinyDetail scrutinyDetailSideYard1, ScrutinyDetail scrutinyDetailSideYard2) {
+    	if(sideYard1Result != null && sideYard1Result.occupancyCode !=null) {
+    		if(G.equalsIgnoreCase(sideYard1Result.occupancyCode))
+    			sideYard1Result.subRule = RULE_G;
+			else if(A.equalsIgnoreCase(sideYard1Result.occupancyCode))
+				sideYard1Result.subRule = RULE_A;
+			else if(F.equalsIgnoreCase(sideYard1Result.occupancyCode))
+				sideYard1Result.subRule = RULE_F;
+			else if(L.equalsIgnoreCase(sideYard1Result.occupancyCode))
+				sideYard1Result.subRule = RULE_L;
+    	}
+    	
+    	if(sideYard2Result != null && sideYard2Result.occupancyCode !=null) {
+    		if(G.equalsIgnoreCase(sideYard2Result.occupancyCode))
+    			sideYard2Result.subRule = RULE_G;
+			else if(A.equalsIgnoreCase(sideYard2Result.occupancyCode))
+				sideYard2Result.subRule = RULE_A;
+			else if(F.equalsIgnoreCase(sideYard2Result.occupancyCode))
+				sideYard2Result.subRule = RULE_F;
+			else if(L.equalsIgnoreCase(sideYard2Result.occupancyCode))
+				sideYard2Result.subRule = RULE_L;
+    	}
         if (sideYard1Result != null) {
             Map<String, String> details = new HashMap<>();
             details.put(RULE_NO, sideYard1Result.subRule);

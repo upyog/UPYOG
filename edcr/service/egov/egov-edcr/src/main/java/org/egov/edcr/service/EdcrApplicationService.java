@@ -771,11 +771,13 @@ public class EdcrApplicationService {
                 .path("Block Wise Summary")
                 .path("Block No 1 - Proposed Details");
         
-        String provided = txt(h, "Provided");
-        String remarks = bws.path("remarks").asText();
-        String totalHeight = remarks.split("Total Height of building is")[1]
+        String[] remarks = bws.path("remarks").asText().split("\\n");
+        String totalHeight = remarks[2].split("Total Height of building is")[1]
                                    .replace("m", "")
                                    .trim();
+        String provided = remarks[1].split("Height of building is")[1]
+                					.replace("m", "")
+                					.trim();
         n.put("permissibleBuildingHeight", extractNumber(txt(h, "Permissible")));
         n.put("proposedBuildingHeight", extractNumber(provided));
         n.put("permissibleTotalHeight", "----");
