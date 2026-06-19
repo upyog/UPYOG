@@ -54,8 +54,18 @@ public class BookingValidator {
 
 		private boolean validateBookingDate(List<CartDetail> CartDetails) {
 			LocalDate currentDate = BookingUtil.getCurrentDate();
-			boolean isBookingDateValid = CartDetails.stream().anyMatch(cartDetail ->
-			currentDate.isBefore(cartDetail.getBookingDate()));
+			boolean isBookingDateValid = CartDetails.stream().anyMatch(cartDetail -> {
+				if (cartDetail.getBookingDate() == null) {
+					return false;
+				}
+				// Range-based booking: the end date must not have passed
+				if (cartDetail.getBookingEndDate() != null) {
+					return !cartDetail.getBookingEndDate().isBefore(cartDetail.getBookingDate())
+							&& !currentDate.isAfter(cartDetail.getBookingEndDate());
+				}
+				// Single-day booking: the booking date must be in the future
+				return currentDate.isBefore(cartDetail.getBookingDate());
+			});
 			return isBookingDateValid;
 		}
 		

@@ -1,11 +1,18 @@
 package org.upyog.adv.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -93,12 +100,54 @@ public class BookingUtil {
 	    return !(searchStartDate.isAfter(bookedEndDate) || searchEndDate.isBefore(bookedStartDate));
 	}
 
+	/**
+	 * Auto‑detects the applicable per‑day rate from the advertisement.
+	 * <p>
+	 * Checks which period‑amount field is populated and divides accordingly:
+	 * <ul>
+	 *   <li>{@code monthlyAmount} → divided by days in the reference month</li>
+	 *   <li>{@code weeklyAmount}  → divided by 7</li>
+	 *   <li>{@code yearlyAmount}  → divided by days in the reference year</li>
+	 *   <li>{@code biannualAmount} → divided by 182</li>
+	 *   <li>none of the above → {@code amount} used as‑is (daily rate)</li>
+	 * </ul>
+	 *
+	 * @param adv           the advertisement from MDMS
+	 * @param referenceDate used for variable‑length periods (month / year length)
+	 * @return per‑day amount, or null if no amount is available
+	 */
+	public static BigDecimal getPerDayRate(org.upyog.adv.web.models.Advertisements adv, LocalDate referenceDate) {
+		if (adv == null) return null;
+
+		BigDecimal periodAmount;
+		int divisor;
+
+		if (adv.getMonthlyAmount() != null) {
+			periodAmount = adv.getMonthlyAmount();
+			divisor = (referenceDate != null) ? getDaysInMonth(referenceDate) : 30;
+		} else if (adv.getWeeklyAmount() != null) {
+			periodAmount = adv.getWeeklyAmount();
+			divisor = 7;
+		} else if (adv.getYearlyAmount() != null) {
+			periodAmount = adv.getYearlyAmount();
+			divisor = (referenceDate != null) ? referenceDate.lengthOfYear() : 365;
+		} else if (adv.getBiannualAmount() != null) {
+			periodAmount = adv.getBiannualAmount();
+			divisor = 182;
+		} else {
+			// No period amount — treat as daily rate
+			return adv.getAmount();
+		}
+
+		if (periodAmount == null || divisor <= 0) return adv.getAmount();
+		return periodAmount.divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+	}
+
 	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
 		if(dateFormat == null) {
 			dateFormat = DATE_FORMAT;
 		}
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
-		// Format the LocalDate
 		String formattedDate = date.format(formatter);
 		return formattedDate;
 	}
@@ -116,7 +165,6 @@ public class BookingUtil {
 		try {
 			data = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -128,10 +176,48 @@ public class BookingUtil {
 	
 	public static LocalDate getMonthsAgo(int month) {
 		LocalDate currentDate = LocalDate.now();
-		// Calculate the date given months ago
 		LocalDate monthsAgo = currentDate.minusMonths(month);
-		
-        return monthsAgo;
+		return monthsAgo;
+	}
+	
+	public static int getDaysInMonth(LocalDate date) {
+		return YearMonth.from(date).lengthOfMonth();
+	}
+	
+	public static long getDaysBetween(LocalDate start, LocalDate end) {
+		if (start == null || end == null || end.isBefore(start)) {
+			return 0;
+		}
+		return ChronoUnit.DAYS.between(start, end) + 1;
+	}
+	
+	public static List<LocalDate> expandDateRange(LocalDate start, LocalDate end) {
+		List<LocalDate> dates = new ArrayList<>();
+		if (start == null || end == null || end.isBefore(start)) {
+			return dates;
+		}
+		LocalDate current = start;
+		while (!current.isAfter(end)) {
+			dates.add(current);
+			current = current.plusDays(1);
+		}
+		return dates;
+	}
+
+	/**
+	 * Expands booking dates into individual daily slots.
+	 * <p>
+	 * If {@code endDate} is provided and differs from {@code startDate},
+	 * the range is expanded into one entry per day (inclusive).
+	 * Otherwise returns a single‑element list for {@code startDate}.
+	 * </p>
+	 */
+	public static List<LocalDate> expandBookingDates(LocalDate startDate, LocalDate endDate) {
+		if (startDate == null) return Collections.emptyList();
+		if (endDate != null && !endDate.equals(startDate) && !endDate.isBefore(startDate)) {
+			return expandDateRange(startDate, endDate);
+		}
+		return Collections.singletonList(startDate);
 	}
 
 }

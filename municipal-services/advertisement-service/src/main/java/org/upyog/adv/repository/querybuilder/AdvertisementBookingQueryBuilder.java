@@ -97,6 +97,36 @@ public class AdvertisementBookingQueryBuilder {
 		    "INSERT INTO public.eg_adv_booking_detail_audit " +
 		    "SELECT * FROM public.eg_adv_booking_detail WHERE booking_id = ?";
 
+	// Check whether the same advertisement slot is already booked by another active booking.
+	public static final String CHECK_ACTIVE_SLOT_CONFLICT =
+		    "SELECT eabd.booking_id " +
+		    "FROM public.eg_adv_cart_detail eacd " +
+		    "JOIN public.eg_adv_booking_detail eabd ON eacd.booking_id = eabd.booking_id " +
+		    "WHERE eacd.advertisementid = ? " +
+		    "  AND eacd.booking_date = ?::DATE " +
+		    "  AND eacd.add_type = ? " +
+		    "  AND eacd.location = ? " +
+		    "  AND eacd.face_area = ? " +
+		    "  AND COALESCE(eacd.night_light, false) = ? " +
+		    "  AND eacd.booking_id != ? " +
+		    "  AND eabd.booking_status NOT IN ('CANCELLED', 'REJECTED', 'REMOVED', 'BOOKING_EXPIRED', 'PAYMENT_FAILED') " +
+		    "LIMIT 1";
+
+	// Check whether another user already has an active timer on the same slot.
+	public static final String CHECK_ACTIVE_TIMER_CONFLICT =
+		    "SELECT booking_id " +
+		    "FROM public.eg_adv_payment_timer " +
+		    "WHERE advertisementId = ? " +
+		    "  AND booking_date = ?::DATE " +
+		    "  AND add_type = ? " +
+		    "  AND location = ? " +
+		    "  AND face_area = ? " +
+		    "  AND COALESCE(night_light, false) = ? " +
+		    "  AND booking_id != ? " +
+		    "  AND createdby != ? " +
+		    "  AND status = 'ACTIVE' " +
+		    "LIMIT 1";
+
 	public static final String INSERT_CART_DETAIL_AUDIT_QUERY = 
 		    "INSERT INTO public.eg_adv_cart_detail_audit " +
 		    "SELECT cart_id, booking_id, booking_date::date, booking_from_time, booking_to_time, add_type, location, " +

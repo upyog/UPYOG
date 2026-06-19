@@ -1,9 +1,12 @@
 package org.upyog.adv.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +56,9 @@ public class EnrichmentService {
 		bookingDetail.setApplicationDate(auditDetails.getCreatedTime());
 		bookingDetail.setBookingStatus(BookingStatusEnum.valueOf(bookingDetail.getBookingStatus()).toString());
 		
-		
+		// Expand recurring bookings into individual cart entries per date
+		bookingDetail.setCartDetails(expandRecurringCartDetails(bookingDetail.getCartDetails()));
+
 		//Updating id and status for cart details
 		bookingDetail.getCartDetails().stream().forEach(cart -> {
 			cart.setBookingId(bookingId);
@@ -205,6 +210,47 @@ public class EnrichmentService {
 
 		bookingDetail.setAuditDetails(auditDetails);
 		
+	}
+
+	/**
+	 * Expands cart entries with a date range into individual daily cart entries.
+	 * <p>
+	 * If a cart has a {@code bookingEndDate} that differs from {@code bookingDate},
+	 * the range is expanded into one entry per day. Otherwise the cart is passed
+	 * through unchanged.
+	 * </p>
+	 */
+	private List<CartDetail> expandRecurringCartDetails(List<CartDetail> cartDetails) {
+		if (CollectionUtils.isEmpty(cartDetails)) {
+			return cartDetails;
+		}
+		List<CartDetail> expanded = new ArrayList<>();
+		for (CartDetail cart : cartDetails) {
+			List<LocalDate> dates = BookingUtil.expandBookingDates(
+					cart.getBookingDate(),
+					cart.getBookingEndDate());
+
+			if (dates.isEmpty()) {
+				expanded.add(cart);
+			} else {
+				log.info("Expanding cart date range: {} → {} dates", cart.getBookingDate(), dates.size());
+				for (LocalDate date : dates) {
+					CartDetail newCart = CartDetail.builder()
+						.addType(cart.getAddType())
+						.location(cart.getLocation())
+						.faceArea(cart.getFaceArea())
+						.nightLight(cart.getNightLight())
+						.bookingDate(date)
+						.bookingFromTime(cart.getBookingFromTime())
+						.bookingToTime(cart.getBookingToTime())
+						.status(cart.getStatus())
+						.advertisementId(cart.getAdvertisementId())
+						.build();
+					expanded.add(newCart);
+				}
+			}
+		}
+		return expanded;
 	}
 
 }

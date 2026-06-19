@@ -46,7 +46,9 @@ public class CartDetail {
 	
 	@JsonProperty("nightLight")
     private Boolean nightLight;  
-	
+
+	//@JsonFormat(pattern = BookingUtil.DATE_FORMAT)
+	private LocalDate bookingEndDate;
 	
 	//@NonNull
 	@JsonFormat(pattern = BookingUtil.DATE_FORMAT)

@@ -87,6 +87,15 @@ public class BookingServiceImpl implements BookingService {
 		// 2. Add fields that has custom logic like booking no, ids using UUID
 		enrichmentService.enrichCreateBookingRequest(bookingRequest);
 
+		// 2a. Concurrency guard: check that no other active booking or timer already holds these slots.
+		// Queries eg_adv_cart_detail (bookings) and eg_adv_payment_timer (active timers) — no DB changes needed.
+		String bookingId = bookingRequest.getBookingApplication().getBookingId();
+		String userId = bookingRequest.getRequestInfo().getUserInfo().getUuid();
+		if (bookingRepository.hasActiveSlotConflict(bookingId, userId, bookingRequest.getBookingApplication().getCartDetails())) {
+			throw new CustomException("SLOT_ALREADY_BOOKED",
+					"One or more selected advertisement slots are already booked by another user. Please choose different slots/dates.");
+		}
+
 		// ENcrypt PII data of applicant
 		encryptionService.encryptObject(bookingRequest);
 		userService.createUser(bookingRequest.getRequestInfo(),bookingRequest.getBookingApplication());
@@ -114,7 +123,7 @@ public class BookingServiceImpl implements BookingService {
 		String draftId = bookingRequest.getBookingApplication().getDraftId();
 		// 5
 
-		String bookingId = bookingRequest.getBookingApplication().getBookingId();
+//		String bookingId = bookingRequest.getBookingApplication().getBookingId();
 
 		BookingDetail bookingDetails = encryptionService.decryptObject(bookingRequest.getBookingApplication(),
 				bookingRequest.getRequestInfo());

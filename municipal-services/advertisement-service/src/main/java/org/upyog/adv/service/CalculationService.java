@@ -9,10 +9,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
+import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.util.MdmsUtil;
 import org.upyog.adv.util.FeeCalculationUtil;
 import org.upyog.adv.web.models.*;
@@ -63,8 +65,13 @@ public class CalculationService {
 	private List<DemandDetail> processCalculationForDemandGeneration(String tenantId,
 																	 List<Advertisements> advertisements, BookingRequest bookingRequest, List<TaxHeadMaster> headMasters, List<String> taxRateCodes, Object taxRateList) {
 
-		Map<String, Long> advBookingDaysMap = bookingRequest.getBookingApplication().getCartDetails()
-				.stream().collect(Collectors.groupingBy(CartDetail::getAddType, Collectors.counting()));
+		List<CartDetail> cartDetails = bookingRequest.getBookingApplication().getCartDetails();
+		if (cartDetails == null || cartDetails.isEmpty()) {
+			throw new CustomException("EMPTY_CART", "Cart details cannot be empty for demand calculation");
+		}
+
+		CartDetail cartDetail = cartDetails.get(0);
+		String advertisementId = cartDetail.getAdvertisementId();
 
 		final List<DemandDetail> demandDetails = new LinkedList<>();
 
@@ -74,11 +81,6 @@ public class CalculationService {
 
 		// Demand for which tax is applicable is stored
 		List<Advertisements> taxableFeeType = new ArrayList<>();
-
-		CartDetail cartDetail = bookingRequest.getBookingApplication().getCartDetails().get(0);
-		// use valueOf to convert long to BigDecimal safely
-		BigDecimal advBookingDays = BigDecimal.valueOf(advBookingDaysMap.get(cartDetail.getAddType()));
-		String advertisementId = cartDetail.getAdvertisementId();
 
 		// We have two type of fee 1.taxable(Booking fee, advertisement fee etc) and 2.fixed(Security deposit)
 		for (Advertisements type : advertisements) {
@@ -97,10 +99,38 @@ public class CalculationService {
 
 		log.info("taxable fee type : " + taxableFeeType);
 
-		// Calculating taxable demand as per no of days for taxable fee
-		List<DemandDetail> taxableDemands = taxableFeeType.stream().map(data ->
-				DemandDetail.builder().taxAmount(data.getAmount().multiply(advBookingDays))
-						.taxHeadMasterCode(data.getFeeType()).tenantId(tenantId).build()).collect(Collectors.toList());
+		// Find the matching advertisement for pricing
+		Advertisements matchingAdv = advertisements.stream()
+				.filter(a -> a.getId().equals(Integer.parseInt(advertisementId)))
+				.findFirst().orElse(null);
+		if (matchingAdv == null) {
+			throw new CustomException("ADVERTISEMENT_NOT_FOUND",
+					"No advertisement found with id: " + advertisementId);
+		}
+
+		// Sum per-day rate for each cart detail's actual date — auto‑detects whether
+		// to use monthly/weekly/yearly/biannual/daily rate based on which amount field is populated.
+		// Handles multi‑month ranges correctly (e.g. June has 30 days, July has 31).
+		BigDecimal totalTaxBaseAmount = cartDetails.stream()
+				.map(cd -> BookingUtil.getPerDayRate(matchingAdv, cd.getBookingDate()))
+				.filter(amount -> amount != null)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		if (totalTaxBaseAmount.compareTo(BigDecimal.ZERO) == 0) {
+			throw new CustomException("ZERO_TAX_BASE",
+					"Total taxable amount is zero for advertisement id: " + advertisementId
+							+ ". Ensure the advertisement has a valid amount/monthlyAmount/weeklyAmount/yearlyAmount/biannualAmount.");
+		}
+		log.info("totalTaxBaseAmount={} (from {} cart entries)", totalTaxBaseAmount, cartDetails.size());
+
+		// Calculating taxable demand
+		final BigDecimal taxBase = totalTaxBaseAmount;
+		List<DemandDetail> taxableDemands = taxableFeeType.stream().map(data -> {
+			return DemandDetail.builder()
+					.taxAmount(taxBase)
+					.taxHeadMasterCode(data.getFeeType())
+					.tenantId(tenantId)
+					.build();
+		}).collect(Collectors.toList());
 
 		log.info("taxableDemands : " + taxableDemands);
 
