@@ -436,8 +436,6 @@ public class BPAService {
 		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map<String, String>)bpa.getAdditionalDetails()
 				: new HashMap<String, String>();
 
-		additionalDetails.put(BPAConstants.APPLICATIONTYPE, applicationType);
-		bpa.setAdditionalDetails(additionalDetails);
 		
 		if (bpa.getStatus().equalsIgnoreCase(BPAConstants.FI_STATUS)
 				&& bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_SENDBACKTOCITIZEN)) {
