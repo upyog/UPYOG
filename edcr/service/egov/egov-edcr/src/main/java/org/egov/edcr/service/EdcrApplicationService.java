@@ -71,6 +71,7 @@ import org.egov.edcr.entity.SearchBuildingPlanScrutinyForm;
 import org.egov.edcr.repository.EdcrApplicationDetailRepository;
 import org.egov.edcr.repository.EdcrApplicationRepository;
 import org.egov.edcr.service.es.EdcrIndexService;
+import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -472,6 +473,10 @@ public class EdcrApplicationService {
 
         try {
             Map<String, Object> finalReportData = extractFinalReportData(pl);
+            if(!CollectionUtils.isEmpty(pl.getBlocks())) {
+            	finalReportData.put("buildingHeight", pl.getBlocks().get(0).getBuilding().getBuildingHeightExcludingMP().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS));
+            	finalReportData.put("totalBuildingHeight", pl.getBlocks().get(0).getBuilding().getBuildingHeight().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS));
+            }
             if (finalReportData == null || finalReportData.isEmpty()) {
                 LOG.warn("finalReportData is empty. Building minimal overlay JSON.");
                 return root;
@@ -766,22 +771,11 @@ public class EdcrApplicationService {
 
     private ObjectNode buildBuildingHeight(ObjectMapper mapper, JsonNode frd) {
         ObjectNode n = mapper.createObjectNode();
-        JsonNode h = findBlockScrutinyFirstDetailByKey(frd, "Height of Building (excluding mumty)");
-        JsonNode bws = frd.path("sections")
-                .path("Block Wise Summary")
-                .path("Block No 1 - Proposed Details");
-        
-        String[] remarks = bws.path("remarks").asText().split("\\n");
-        String totalHeight = remarks[2].split("Total Height of building is")[1]
-                                   .replace("m", "")
-                                   .trim();
-        String provided = remarks[1].split("Height of building is")[1]
-                					.replace("m", "")
-                					.trim();
-        n.put("permissibleBuildingHeight", extractNumber(txt(h, "Permissible")));
-        n.put("proposedBuildingHeight", extractNumber(provided));
+       
+        n.put("permissibleBuildingHeight", "0.0");
+        n.put("proposedBuildingHeight", txt(frd, "buildingHeight") + " m");
         n.put("permissibleTotalHeight", "----");
-        n.put("proposedTotalHeight", totalHeight);
+        n.put("proposedTotalHeight", txt(frd, "totalBuildingHeight") + " m");
         return n;
     }
 
