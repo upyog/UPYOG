@@ -98,6 +98,7 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.additionalDetails(additionalDetails)
 						.businessService(rs.getString("businessService"))
 						.riskType(riskType)
+						.applicationType(rs.getString("applicationtype"))
 						.draftComment(draftComment)
 						.build();
 
