@@ -26,6 +26,9 @@ public class BillGenerationSearchCriteria {
 	@JsonProperty("batch")
 	private String batch;
 	
+	@JsonProperty("group")
+	private String group;
+	
 	@JsonProperty("status")
 	private String status;
 
