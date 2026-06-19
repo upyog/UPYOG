@@ -25,6 +25,7 @@ import org.egov.bpa.util.BPAErrorConstants;
 import org.egov.bpa.util.BPAUtil;
 import org.egov.bpa.util.NotificationUtil;
 import org.egov.bpa.validator.BPAValidator;
+import org.egov.bpa.web.model.AuditDetails;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
@@ -402,13 +403,46 @@ public class BPAService {
 	@SuppressWarnings("unchecked")
 	public BPA update(BPARequest bpaRequest) {
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
-		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
-		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		BPA bpa = bpaRequest.getBPA();
 
 		if (bpa.getId() == null) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Application Not found in the System" + bpa);
 		}
+
+		if (bpa.getWorkflow() == null) {
+			List<BPA> searchResult = getBPAWithBPAId(bpaRequest);
+			if (CollectionUtils.isEmpty(searchResult) || searchResult.size() > 1) {
+				throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Failed to Update the Application, Found None or multiple applications!");
+			}
+			BPA existingBpa = searchResult.get(0);
+			Map<String, Object> additionalDetailsMap = null;
+			if (existingBpa.getAdditionalDetails() != null) {
+				if (existingBpa.getAdditionalDetails() instanceof Map) {
+					additionalDetailsMap = (Map<String, Object>) existingBpa.getAdditionalDetails();
+				} else {
+					ObjectMapper mapper = new ObjectMapper();
+					additionalDetailsMap = mapper.convertValue(existingBpa.getAdditionalDetails(), Map.class);
+				}
+			} else {
+				additionalDetailsMap = new HashMap<>();
+			}
+			additionalDetailsMap.put("draftComment", bpa.getDraftComment());
+			existingBpa.setAdditionalDetails(additionalDetailsMap);
+			existingBpa.setDraftComment(bpa.getDraftComment());
+
+			AuditDetails auditDetails = existingBpa.getAuditDetails();
+			if (auditDetails != null) {
+				auditDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+				auditDetails.setLastModifiedTime(System.currentTimeMillis());
+			}
+
+			BPARequest updateRequest = new BPARequest(requestInfo, existingBpa);
+			repository.update(updateRequest, false);
+			return existingBpa;
+		}
+
+		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
+		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 
 		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), mdmsData);
 		String workflowName = edcrResponse.getOrDefault("businessService", "");
@@ -427,10 +461,27 @@ public class BPAService {
 		if (CollectionUtils.isEmpty(searchResult) || searchResult.size() > 1) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Failed to Update the Application, Found None or multiple applications!");
 		}
-		
+		BPA existingBpa = searchResult.get(0);
+
+		String draftComment = bpa.getDraftComment();
+		if (StringUtils.isEmpty(draftComment)) {
+			if (existingBpa.getAdditionalDetails() != null && existingBpa.getAdditionalDetails() instanceof Map) {
+				Map<String, Object> existingAddDetails = (Map<String, Object>) existingBpa.getAdditionalDetails();
+				if (existingAddDetails.containsKey("draftComment")) {
+					draftComment = (String) existingAddDetails.get("draftComment");
+				}
+			}
+		}
+
+		if (!StringUtils.isEmpty(draftComment)) {
+			bpa.getWorkflow().setComments(draftComment);
+		}
 		
 		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map<String, String>)bpa.getAdditionalDetails()
 				: new HashMap<String, String>();
+		additionalDetails.put("draftComment", null);
+		bpa.setAdditionalDetails(additionalDetails);
+		bpa.setDraftComment(null);
 		
 		if (bpa.getStatus().equalsIgnoreCase(BPAConstants.FI_STATUS)
 				&& bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_SENDBACKTOCITIZEN)) {
