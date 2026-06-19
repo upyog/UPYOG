@@ -413,7 +413,11 @@ public class BPAService {
 		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), mdmsData);
 		String workflowName = edcrResponse.getOrDefault("businessService", "");
 		String applicationType = edcrResponse.get(BPAConstants.APPLICATIONTYPE);
-		bpa.setApplicationType(applicationType);
+		if (bpa.getApplicationType() == null) {
+			bpa.setApplicationType(applicationType);
+		} else {
+			applicationType = bpa.getApplicationType();
+		}
 		log.debug("applicationType is " + applicationType);
 		BusinessService businessService = workflowService.getBusinessService(bpa, bpaRequest.getRequestInfo(),
 				bpa.getApplicationNo());
@@ -431,6 +435,7 @@ public class BPAService {
 		
 		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map<String, String>)bpa.getAdditionalDetails()
 				: new HashMap<String, String>();
+
 		
 		if (bpa.getStatus().equalsIgnoreCase(BPAConstants.FI_STATUS)
 				&& bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_SENDBACKTOCITIZEN)) {
