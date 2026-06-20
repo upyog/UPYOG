@@ -59,7 +59,6 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.util.Matrix;
 import org.egov.common.entity.edcr.Plan;
-import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.commons.service.RestCallService;
 //import org.egov.edcr.contract.EdcrRequest;
@@ -209,6 +208,9 @@ public class EdcrApplicationService {
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
     
+    @Autowired
+    private PlanReportServiceV2 planReportServiceV2;
+    
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -256,8 +258,7 @@ public class EdcrApplicationService {
     private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType, EdcrRequest edcrRequest){
         Plan planDetail = new Plan();
         planDetail = planService.process(edcrApplication, applicationType, edcrRequest);         
-        String edcrNumber = edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber();
-        updateFilev2(planDetail, edcrApplication, edcrNumber);
+        updateFilev2(planDetail, edcrApplication);
         edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
         return planDetail;
     }
@@ -463,18 +464,18 @@ public class EdcrApplicationService {
     }
  
 
-    private JsonNode buildJsonNode(Plan pl, File signatureImageFile, String edcrNumber) {
-        return buildJsonNode(pl, signatureImageFile, null, edcrNumber);
+    private JsonNode buildJsonNode(Plan pl, File signatureImageFile, EdcrApplication dcrApplication) {
+        return buildJsonNode(pl, signatureImageFile, null, dcrApplication);
     }
 
-    private JsonNode buildJsonNode(Plan pl, File signatureImageFile, JsonNode patchFields, String edcrNumber) {
+    private JsonNode buildJsonNode(Plan pl, File signatureImageFile, JsonNode patchFields, EdcrApplication dcrApplication) {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode root = mapper.createObjectNode();
         final ObjectNode details = mapper.createObjectNode();
         root.set("details", details);
 
         try {
-            Map<String, Object> finalReportData = extractFinalReportData(pl, edcrNumber);
+            Map<String, Object> finalReportData = extractFinalReportData(pl, dcrApplication);
             if(!CollectionUtils.isEmpty(pl.getBlocks())) {
             	finalReportData.put("buildingHeight", pl.getBlocks().get(0).getBuilding().getBuildingHeightExcludingMP().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS));
             	finalReportData.put("totalBuildingHeight", pl.getBlocks().get(0).getBuilding().getBuildingHeight().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS));
@@ -663,8 +664,8 @@ public class EdcrApplicationService {
         n.put("nameOfApplicant", txt(frd, "applicantName"));
         n.put("fileNumber", txt(frd, "fileNumber"));
         n.put("edcrNumber", txt(frd, "dcrNo"));
-        n.put("ulbName", txt(pi, "district"));
-        n.put("ulbType", txt(pi, "ulbType"));
+        n.put("ulbName", txt(frd, "district"));
+        n.put("ulbType", txt(frd, "ulbType"));
         n.put("buildingCategory", txt(pi, "occupancy"));
         n.put("proposedSiteAddress", txt(pi, "city"));
         n.put("khasraNo", txt(pi, "khasraNo"));
@@ -678,7 +679,7 @@ public class EdcrApplicationService {
         double area = num(frd.path("planInformation"), "plotArea");
         n.put("plotAreaAsPerDeclaration", area);
 
-        area = num(frd, "plotBndryArea");
+        area = num(frd.path("plot"), "plotBndryArea");
         n.put("plotAreaAsPerDrawing", area);
 
         return n;
@@ -686,7 +687,7 @@ public class EdcrApplicationService {
 
     private ObjectNode buildBuiltUpArea(ObjectMapper mapper, JsonNode frd) {
         ObjectNode n = mapper.createObjectNode();
-        n.put("existingBuiltUpArea", num(frd, "totalExistingBuiltUpArea"));
+        n.put("existingBuiltUpArea", 0.0d);
         n.put("proposedBuiltUpArea", num(frd, "totalBuiltUpArea"));
         n.put("totalBuiltUpArea", num(frd, "totalBuiltUpArea"));
         return n;
@@ -695,8 +696,15 @@ public class EdcrApplicationService {
     private ObjectNode buildFarDetails(ObjectMapper mapper, JsonNode frd) {
         ObjectNode n = mapper.createObjectNode();
 
-        n.put("totalPermissibleFAR", txt(frd, "totalPermissibleFAR"));
-        n.put("totalProposedFAR", txt(frd, "totalProposedFAR"));
+        JsonNode farDetails = findCommonFarDetail(frd);
+        JsonNode bws = frd.path("sections")
+                         .path("Block Wise Summary")
+                         .path("Block No 1 - Proposed Details");
+
+        n.put("totalPermissibleFAR", txt(farDetails, "Permissible"));
+        n.put("totalPermissibleFARArea", getTotalFloorArea(bws));
+        n.put("totalProposedFAR", txt(farDetails, "Provided"));
+        n.put("totalProposedFARArea", getTotalFloorArea(bws));
 
         return n;
     }
@@ -1015,32 +1023,13 @@ public class EdcrApplicationService {
     }
 
     private JsonNode findCommonParkingDetail(JsonNode frd) {
-    	if(frd.path("Parking").isMissingNode())
-    		return new ObjectMapper().createObjectNode();
-    	
-        JsonNode arr = frd.path("Parking").path("detail");
+        JsonNode arr = frd.path("sections").path("Common - Scrutiny Details").path("Parking").path("detail");
         return arr.isArray() && arr.size() > 0 ? arr : new ObjectMapper().createObjectNode();
     }
     
-    private void findCommonFarDetail(Map<String, Object> fallback, Plan pl) {
-        if(pl.getReportOutput() != null) {
-        	ScrutinyDetail farDetails = pl.getReportOutput().getScrutinyDetails().stream()
-        			.filter(detail -> detail.getKey().equalsIgnoreCase("Common_FAR")).findFirst().orElse(null);
-        	if(farDetails != null) {
-        		fallback.put("totalPermissibleFAR", farDetails.getDetail().get(0).get("Permissible"));
-        		fallback.put("totalProposedFAR", farDetails.getDetail().get(0).get("Provided"));
-        	}
-        }
-    }
-    
-    private void findCommonParkingDetail(Map<String, Object> fallback, Plan pl) {
-        if(pl.getReportOutput() != null) {
-        	ScrutinyDetail parkingDetails = pl.getReportOutput().getScrutinyDetails().stream()
-        			.filter(detail -> detail.getKey().equalsIgnoreCase("Common_Parking")).findFirst().orElse(null);
-        	
-        	if(parkingDetails != null)
-        		fallback.put("Parking", parkingDetails);
-        }
+    private JsonNode findCommonFarDetail(JsonNode frd) {
+        JsonNode arr = frd.path("sections").path("Common - Scrutiny Details").path("FAR").path("detail");
+        return arr.isArray() && arr.size() > 0 ? arr.get(0) : new ObjectMapper().createObjectNode();
     }
 
     private JsonNode findCommonRoadWidthDetail(JsonNode frd) {
@@ -1156,8 +1145,21 @@ public class EdcrApplicationService {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> extractFinalReportData(Plan pl, String edcrNumber) {
+    private Map<String, Object> extractFinalReportData(Plan pl, EdcrApplication dcrApplication) {
         if (pl == null) return new java.util.HashMap<String, Object>();
+        try {
+            java.lang.reflect.Method getter = pl.getClass().getMethod("getFinalReportData");
+            Object value = getter.invoke(pl);
+            if (value instanceof Map) return (Map<String, Object>) value;
+        } catch (NoSuchMethodException ignored) {
+            LOG.debug("Plan does not expose getFinalReportData(). Building fallback JSON from Plan fields.");
+        } catch (Exception ex) {
+            LOG.warn("Unable to read finalReportData from Plan. Using fallback fields.", ex);
+        }
+        
+        Map<String, Object> model = planReportServiceV2.buildReportModelV2(pl, dcrApplication);
+        if(!CollectionUtils.isEmpty(model))
+        	return model;
         
         Map<String, Object> fallback = new java.util.HashMap<String, Object>();
         Map<String, Object> planInfo = new java.util.HashMap<String, Object>();
@@ -1168,34 +1170,27 @@ public class EdcrApplicationService {
             planInfo.put("landUseZone", pl.getPlanInformation().getLandUseZone());
             planInfo.put("city", pl.getPlanInformation().getCity());
             planInfo.put("ulbType", pl.getPlanInformation().getUlbType());
-            planInfo.put("district", pl.getPlanInformation().getDistrict());
         }
         fallback.put("planInformation", planInfo);
-        fallback.put("dcrNo", edcrNumber);
-        fallback.put("plotBndryArea", pl.getPlot().getPlotBndryArea());
-        fallback.put("applicantName", pl.getEdcrRequest().getApplicantName());
         if (pl.getFarDetails() != null) fallback.put("far", pl.getFarDetails().getProvidedFar());
         if (pl.getVirtualBuilding() != null) {
             fallback.put("totalBuiltUpArea", pl.getVirtualBuilding().getTotalBuitUpArea());
-            fallback.put("totalExistingBuiltUpArea", pl.getVirtualBuilding().getTotalExistingBuiltUpArea());
             fallback.put("totalFloorArea", pl.getVirtualBuilding().getTotalFloorArea());
             fallback.put("coverage", pl.getCoverage());
         }
-        findCommonFarDetail(fallback, pl);
-        findCommonParkingDetail(fallback, pl);
         return fallback;
     }
     
-    private void updateFilev2(Plan pl, EdcrApplication edcrApplication, String edcrNumber) {
-        updateFilev2(pl, edcrApplication, null, edcrNumber);
+    private void updateFilev2(Plan pl, EdcrApplication edcrApplication) {
+        updateFilev2(pl, edcrApplication, null);
     }
 
 	private void updateFileNew(Plan pl, EdcrApplication edcrApplication, String fileNumber, String examinedBy,
 			String approvedSanctionedBy, String approvalSanctionDate, String validTill, String signatoryName,
-			String designation, String tenantId, String zone, String edcrNumber) {
+			String designation, String tenantId, String zone) {
 		JsonNode patchFields = buildLateFieldPatch(fileNumber, examinedBy, approvedSanctionedBy, approvalSanctionDate,
 				validTill, signatoryName, designation, zone);
-		updateFileV4(pl, edcrApplication, patchFields, tenantId, edcrNumber);
+		updateFileV4(pl, edcrApplication, patchFields, tenantId);
 	}
     
 //    private void updateFileV4(Plan pl, EdcrApplication edcrApplication, JsonNode patchFields, String tenantId) {
@@ -1273,7 +1268,7 @@ public class EdcrApplicationService {
 //        }
 //    }
 	
-	private void updateFileV4(Plan pl, EdcrApplication edcrApplication, JsonNode patchFields, String tenantId, String edcrNumber) {
+	private void updateFileV4(Plan pl, EdcrApplication edcrApplication, JsonNode patchFields, String tenantId) {
 
 		long start = System.currentTimeMillis();
 
@@ -1299,7 +1294,7 @@ public class EdcrApplicationService {
 
 			File signatureFile = fetchSignatureFile(pl);
 
-			JsonNode additionalDetails = buildJsonNode(pl, signatureFile, patchFields, edcrNumber);
+			JsonNode additionalDetails = buildJsonNode(pl, signatureFile, patchFields, edcrApplication);
 
 			tempPdf = pdfOverlayTemplateService.impose(tempPdf, tempPdf.getAbsolutePath(), additionalDetails,
 					EXPAND_RIGHT, EXPAND_BOTTOM, GAP_DRAWING_TO_TABLES, GAP_TOP);
@@ -1398,7 +1393,7 @@ public class EdcrApplicationService {
         }
     }
     
-    private void updateFilev2(Plan pl, EdcrApplication edcrApplication, JsonNode patchFields, String edcrNumber) {
+    private void updateFilev2(Plan pl, EdcrApplication edcrApplication, JsonNode patchFields) {
         long start = System.currentTimeMillis();
         String newFileName = edcrApplication.getDxfFile()
                 .getOriginalFilename()
@@ -1429,7 +1424,7 @@ public class EdcrApplicationService {
                 uploadedDiagramFile = fileStoreService.fetch(signatureFileStoreId, "", "pb");
             }
 
-            additionalDetails = buildJsonNode(pl, uploadedDiagramFile, patchFields, edcrNumber);
+            additionalDetails = buildJsonNode(pl, uploadedDiagramFile, patchFields,edcrApplication);
 
             // Overlay the information onto the DXF-converted PDF using template renderer
             tempPdf = pdfOverlayTemplateService.impose(
@@ -1971,7 +1966,7 @@ public class EdcrApplicationService {
 		edcrApplication.setSavedDxfFile(dxfFile);
 
 		updateFileNew(pl, edcrApplication, fileNo, examinedBy, approvedBy, approvedDate, validDate, eSignName, eSign,
-				tenantId, zone, edcrNo);
+				tenantId, zone);
 
 		FileStoreMapper mapper = appDetail.getScrutinizedDxfFileId();
 
