@@ -419,6 +419,7 @@ public class PlanReportServiceV2 {
                     dcrApplicationNumber = dcrApplicationNumberGenerator.generateEdcrApplicationNumber(dcrApplication);
                 edcrApplicationDetail.setDcrNumber(dcrApplicationNumber);
             }
+            dcrApplicationNumber = edcrApplicationDetail.getDcrNumber();
             if (StringUtils.isEmpty(dcrApplicationNumber)) dcrApplicationNumber = "NA";
             model.put("dcrNo", dcrApplicationNumber);
 
