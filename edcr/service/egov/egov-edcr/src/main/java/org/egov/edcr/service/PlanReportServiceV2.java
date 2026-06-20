@@ -412,7 +412,7 @@ public class PlanReportServiceV2 {
         if (finalReportStatus) {
             String dcrApplicationNumber = "";
             EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
-            if(!StringUtils.isEmpty(edcrApplicationDetail.getDcrNumber())) {
+            if(StringUtils.isEmpty(edcrApplicationDetail.getDcrNumber())) {
             	if (ApplicationType.OCCUPANCY_CERTIFICATE.equals(dcrApplication.getApplicationType()))
                     dcrApplicationNumber = ocPlanScrutinyNumberGenerator.generateEdcrApplicationNumber();
                 else
