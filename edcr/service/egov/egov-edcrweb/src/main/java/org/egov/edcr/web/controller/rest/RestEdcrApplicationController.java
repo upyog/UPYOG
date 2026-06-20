@@ -794,9 +794,12 @@ public class RestEdcrApplicationController {
 	public static String formatEpochDate(String epochMillis) {
 
     	    if (epochMillis == null) {
-    	        return "";
+    	        return "-";
     	    }
     	    Long date = Long.parseLong(epochMillis);
+    	    if(date == 0) {
+		        return "-";
+		    }
     	    try {
     	        Date date1 = new Date(date);
     	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMMM-yyyy");

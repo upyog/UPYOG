@@ -208,6 +208,9 @@ public class EdcrApplicationService {
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
     
+    @Autowired
+    private PlanReportServiceV2 planReportServiceV2;
+    
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -461,18 +464,18 @@ public class EdcrApplicationService {
     }
  
 
-    private JsonNode buildJsonNode(Plan pl, File signatureImageFile) {
-        return buildJsonNode(pl, signatureImageFile, null);
+    private JsonNode buildJsonNode(Plan pl, File signatureImageFile, EdcrApplication dcrApplication) {
+        return buildJsonNode(pl, signatureImageFile, null, dcrApplication);
     }
 
-    private JsonNode buildJsonNode(Plan pl, File signatureImageFile, JsonNode patchFields) {
+    private JsonNode buildJsonNode(Plan pl, File signatureImageFile, JsonNode patchFields, EdcrApplication dcrApplication) {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode root = mapper.createObjectNode();
         final ObjectNode details = mapper.createObjectNode();
         root.set("details", details);
 
         try {
-            Map<String, Object> finalReportData = extractFinalReportData(pl);
+            Map<String, Object> finalReportData = extractFinalReportData(pl, dcrApplication);
             if(!CollectionUtils.isEmpty(pl.getBlocks())) {
             	finalReportData.put("buildingHeight", pl.getBlocks().get(0).getBuilding().getBuildingHeightExcludingMP().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS));
             	finalReportData.put("totalBuildingHeight", pl.getBlocks().get(0).getBuilding().getBuildingHeight().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS));
@@ -1142,7 +1145,7 @@ public class EdcrApplicationService {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> extractFinalReportData(Plan pl) {
+    private Map<String, Object> extractFinalReportData(Plan pl, EdcrApplication dcrApplication) {
         if (pl == null) return new java.util.HashMap<String, Object>();
         try {
             java.lang.reflect.Method getter = pl.getClass().getMethod("getFinalReportData");
@@ -1153,7 +1156,11 @@ public class EdcrApplicationService {
         } catch (Exception ex) {
             LOG.warn("Unable to read finalReportData from Plan. Using fallback fields.", ex);
         }
-
+        
+        Map<String, Object> model = planReportServiceV2.buildReportModelV2(pl, dcrApplication);
+        if(!CollectionUtils.isEmpty(model))
+        	return model;
+        
         Map<String, Object> fallback = new java.util.HashMap<String, Object>();
         Map<String, Object> planInfo = new java.util.HashMap<String, Object>();
         if (pl.getPlanInformation() != null) {
@@ -1287,7 +1294,7 @@ public class EdcrApplicationService {
 
 			File signatureFile = fetchSignatureFile(pl);
 
-			JsonNode additionalDetails = buildJsonNode(pl, signatureFile, patchFields);
+			JsonNode additionalDetails = buildJsonNode(pl, signatureFile, patchFields, edcrApplication);
 
 			tempPdf = pdfOverlayTemplateService.impose(tempPdf, tempPdf.getAbsolutePath(), additionalDetails,
 					EXPAND_RIGHT, EXPAND_BOTTOM, GAP_DRAWING_TO_TABLES, GAP_TOP);
@@ -1417,7 +1424,7 @@ public class EdcrApplicationService {
                 uploadedDiagramFile = fileStoreService.fetch(signatureFileStoreId, "", "pb");
             }
 
-            additionalDetails = buildJsonNode(pl, uploadedDiagramFile, patchFields);
+            additionalDetails = buildJsonNode(pl, uploadedDiagramFile, patchFields,edcrApplication);
 
             // Overlay the information onto the DXF-converted PDF using template renderer
             tempPdf = pdfOverlayTemplateService.impose(
