@@ -411,12 +411,15 @@ public class PlanReportServiceV2 {
         // 5. DCR number
         if (finalReportStatus) {
             String dcrApplicationNumber = "";
-            if (ApplicationType.OCCUPANCY_CERTIFICATE.equals(dcrApplication.getApplicationType()))
-                dcrApplicationNumber = ocPlanScrutinyNumberGenerator.generateEdcrApplicationNumber();
-            else
-                dcrApplicationNumber = dcrApplicationNumberGenerator.generateEdcrApplicationNumber(dcrApplication);
             EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
-            edcrApplicationDetail.setDcrNumber(dcrApplicationNumber);
+            if(StringUtils.isEmpty(edcrApplicationDetail.getDcrNumber())) {
+            	if (ApplicationType.OCCUPANCY_CERTIFICATE.equals(dcrApplication.getApplicationType()))
+                    dcrApplicationNumber = ocPlanScrutinyNumberGenerator.generateEdcrApplicationNumber();
+                else
+                    dcrApplicationNumber = dcrApplicationNumberGenerator.generateEdcrApplicationNumber(dcrApplication);
+                edcrApplicationDetail.setDcrNumber(dcrApplicationNumber);
+            }
+            dcrApplicationNumber = edcrApplicationDetail.getDcrNumber();
             if (StringUtils.isEmpty(dcrApplicationNumber)) dcrApplicationNumber = "NA";
             model.put("dcrNo", dcrApplicationNumber);
 
