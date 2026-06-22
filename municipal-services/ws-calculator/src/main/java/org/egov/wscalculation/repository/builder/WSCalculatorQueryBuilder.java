@@ -150,9 +150,6 @@ public class WSCalculatorQueryBuilder {
 			+ INNER_JOIN_STRING +" eg_ws_service ews  ON conn.id = ews.connection_id " + INNER_JOIN_STRING +" eg_pt_property epp  ON conn.property_id = epp.propertyid "
 			+ INNER_JOIN_STRING +" eg_pt_address epa  ON epa.propertyid = epp.id " + INNER_JOIN_STRING + " eg_bndry_mohalla ebm ON ebm.tenantid = conn.tenantid AND ebm.localitycode = epa.locality";
 
-	private static final String SCHEDULER_SEARCH_QUERY = "SELECT DISTINCT * from eg_ws_scheduler egws ";
-	private static final String JOIN_SCHEDULER_SEARCH = " INNER JOIN eg_bndry_mohalla egbm on egws.locality = egbm.localitycode and egws.tenantid = egbm.tenantid ";
-	
 	public String getDistinctTenantIds() {
 		return distinctTenantIdsCriteria;
 	}
@@ -1031,13 +1028,8 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 }
 	public String searchBillGenerationSchedulerQuery(BillGenerationSearchCriteria criteria,
 			List<Object> preparedStatement) {
-		StringBuilder query = new StringBuilder(SCHEDULER_SEARCH_QUERY);
-		if (criteria.getBatch() != null) {
-			query.append(JOIN_SCHEDULER_SEARCH);
-	        addClauseIfRequired(preparedStatement, query);
-	        query.append(" egbm.blockcode = ? ");
-	        preparedStatement.add(criteria.getBatch());
-	    }
+		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
+		query.append("egws inner join eg_bndry_mohalla egbm on egws.locality = egbm.localitycode ");
 		
 		if (!StringUtils.isEmpty(criteria.getTenantId())) {
 	        addClauseIfRequired(preparedStatement, query);
@@ -1047,7 +1039,7 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 	    
 	    if (!StringUtils.isEmpty(criteria.getLocality())) {
 	        addClauseIfRequired(preparedStatement, query);
-	        query.append(" egws.locality = ? ");
+	        query.append(" egbm.localitycode = ? ");
 	        preparedStatement.add(criteria.getLocality());
 	    }
 	    
@@ -1055,6 +1047,12 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 	        addClauseIfRequired(preparedStatement, query);
 	        query.append(" egws.status = ? ");
 	        preparedStatement.add(criteria.getStatus());
+	    }
+	    
+	    if (criteria.getBatch() != null) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" egbm.blockcode = ? ");
+	        preparedStatement.add(criteria.getBatch());
 	    }
 	    
 	    if (criteria.getGroup() != null) {

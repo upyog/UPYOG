@@ -127,9 +127,6 @@ public class SWCalculatorQueryBuilder {
 	public static final String EG_SW_BILL_SCHEDULER_CONNECTION_STATUS_INSERT = "INSERT INTO eg_sw_bill_scheduler_connection_status "
 			+ "(id, eg_sw_scheduler_id, locality, module, createdtime, lastupdatedtime, status, tenantid, reason, consumercode) VALUES (?,?,?,?,?,?,?,?,?,?);";
 
-	private static final String SCHEDULER_SEARCH_QUERY = "SELECT DISTINCT * from eg_sw_scheduler egsw ";
-	private static final String JOIN_SCHEDULER_SEARCH = " INNER JOIN eg_bndry_mohalla egbm on egsw.locality = egbm.localitycode and egsw.tenantid = egbm.tenantid ";
-	
 	public String getDistinctTenantIds() {
 		return distinctTenantIdsCriteria;
 	}
@@ -267,14 +264,8 @@ public class SWCalculatorQueryBuilder {
 	
 	public String getBillGenerationSchedulerQuery(BillGenerationSearchCriteria criteria,
 			List<Object> preparedStatement) {
-		StringBuilder query = new StringBuilder(SCHEDULER_SEARCH_QUERY);
-		if (criteria.getBatch() != null) {
-			query.append(JOIN_SCHEDULER_SEARCH);
-		    addClauseIfRequired(preparedStatement, query);
-		    query.append(" egbm.blockcode = ? ");
-		    preparedStatement.add(criteria.getBatch());
-		}
-		
+		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
+		query.append("egsw inner join eg_bndry_mohalla egbm on egsw.locality = egbm.localitycode ");
 		if (!StringUtils.isEmpty(criteria.getTenantId())) {
 		    addClauseIfRequired(preparedStatement, query);
 		    query.append(" egsw.tenantid = ? ");
@@ -283,7 +274,7 @@ public class SWCalculatorQueryBuilder {
 
 		if (!StringUtils.isEmpty(criteria.getLocality())) {
 		    addClauseIfRequired(preparedStatement, query);
-		    query.append(" egsw.locality = ? ");
+		    query.append(" egbm.localitycode = ? ");
 		    preparedStatement.add(criteria.getLocality());
 		}
 
@@ -293,10 +284,10 @@ public class SWCalculatorQueryBuilder {
 		    preparedStatement.add(criteria.getStatus());
 		}
 
-		if (criteria.getGroup() != null) {
+		if (criteria.getBatch() != null) {
 		    addClauseIfRequired(preparedStatement, query);
-		    query.append(" egsw.groups = ? ");
-		    preparedStatement.add(criteria.getGroup());
+		    query.append(" egbm.blockcode = ? ");
+		    preparedStatement.add(criteria.getBatch());
 		}
 
 
