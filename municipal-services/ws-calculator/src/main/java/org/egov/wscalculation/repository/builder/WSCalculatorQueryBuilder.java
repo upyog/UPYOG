@@ -1029,14 +1029,7 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 	public String searchBillGenerationSchedulerQuery(BillGenerationSearchCriteria criteria,
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
-		if (StringUtils.isEmpty(criteria.getGroup())) {
-			query.append("egws inner join eg_bndry_mohalla egbm on egws.locality = egbm.localitycode ");
-		}else {
-			query.append(" egws ");
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" egws.groups = ? ");
-	        preparedStatement.add(criteria.getGroup());
-		}
+		query.append("egws inner join eg_bndry_mohalla egbm on egws.locality = egbm.localitycode ");
 		
 		if (!StringUtils.isEmpty(criteria.getTenantId())) {
 	        addClauseIfRequired(preparedStatement, query);
