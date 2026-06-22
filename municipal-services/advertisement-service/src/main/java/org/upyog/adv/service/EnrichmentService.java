@@ -59,6 +59,9 @@ public class EnrichmentService {
 		// Expand recurring bookings into individual cart entries per date
 		bookingDetail.setCartDetails(expandRecurringCartDetails(bookingDetail.getCartDetails()));
 
+		// Compute overall booking date range from cart details and set on header
+		setBookingDateRange(bookingDetail);
+
 		//Updating id and status for cart details
 		bookingDetail.getCartDetails().stream().forEach(cart -> {
 			cart.setBookingId(bookingId);
@@ -213,11 +216,35 @@ public class EnrichmentService {
 	}
 
 	/**
+	 * Computes the overall booking date range from expanded cart details
+	 * and sets it on the booking header for frontend display.
+	 */
+	private void setBookingDateRange(BookingDetail bookingDetail) {
+		List<CartDetail> cartDetails = bookingDetail.getCartDetails();
+		if (CollectionUtils.isEmpty(cartDetails)) return;
+		LocalDate start = null;
+		LocalDate end = null;
+		for (CartDetail cart : cartDetails) {
+			if (cart.getBookingDate() != null) {
+				if (start == null || cart.getBookingDate().isBefore(start)) {
+					start = cart.getBookingDate();
+				}
+				if (end == null || cart.getBookingDate().isAfter(end)) {
+					end = cart.getBookingDate();
+				}
+			}
+		}
+		bookingDetail.setBookingStartDate(start);
+		bookingDetail.setBookingEndDate(end);
+		log.info("Booking {} date range: {} → {}", bookingDetail.getBookingId(), start, end);
+	}
+
+	/**
 	 * Expands cart entries with a date range into individual daily cart entries.
 	 * <p>
-	 * If a cart has a {@code bookingEndDate} that differs from {@code bookingDate},
-	 * the range is expanded into one entry per day. Otherwise the cart is passed
-	 * through unchanged.
+	 * The overall booking date range is stored on {@link BookingDetail#bookingStartDate}
+	 * and {@link BookingDetail#bookingEndDate} for frontend display, so expanded
+	 * cart entries do not carry a {@code bookingEndDate}.
 	 * </p>
 	 */
 	private List<CartDetail> expandRecurringCartDetails(List<CartDetail> cartDetails) {
@@ -232,6 +259,9 @@ public class EnrichmentService {
 
 			if (dates.isEmpty()) {
 				expanded.add(cart);
+			} else if (dates.size() == 1 && dates.get(0).equals(cart.getBookingDate())) {
+				// Single date, no expansion — keep original cart with bookingEndDate intact
+				expanded.add(cart);
 			} else {
 				log.info("Expanding cart date range: {} → {} dates", cart.getBookingDate(), dates.size());
 				for (LocalDate date : dates) {
@@ -241,6 +271,7 @@ public class EnrichmentService {
 						.faceArea(cart.getFaceArea())
 						.nightLight(cart.getNightLight())
 						.bookingDate(date)
+						// expanded entries are individual days; range is on the booking header
 						.bookingFromTime(cart.getBookingFromTime())
 						.bookingToTime(cart.getBookingToTime())
 						.status(cart.getStatus())

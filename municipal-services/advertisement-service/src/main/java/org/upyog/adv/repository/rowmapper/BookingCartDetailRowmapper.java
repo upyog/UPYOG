@@ -26,7 +26,6 @@ public class BookingCartDetailRowmapper implements ResultSetExtractor<List<CartD
 					.bookingId(rs.getString("booking_id"))
 					.addType(rs.getString("add_type"))
 					.bookingDate(BookingUtil.parseStringToLocalDate(rs.getString("booking_date")))
-					.bookingEndDate(rs.getString("booking_end_date") != null ? BookingUtil.parseStringToLocalDate(rs.getString("booking_end_date")) : null)
 					.bookingFromTime(LocalTime.parse(rs.getString("booking_from_time")))
 					.bookingToTime(LocalTime.parse(rs.getString("booking_to_time")))
 					.status(rs.getString("status"))

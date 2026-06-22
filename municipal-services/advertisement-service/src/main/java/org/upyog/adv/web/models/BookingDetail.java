@@ -1,5 +1,6 @@
 package org.upyog.adv.web.models;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,9 @@ import org.springframework.validation.annotation.Validated;
 import org.upyog.adv.validator.CreateApplicationGroup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.upyog.adv.util.BookingUtil;
 
 import io.swagger.annotations.ApiModel;
 import org.upyog.adv.web.models.workflow.Workflow;
@@ -62,6 +66,12 @@ public class BookingDetail {
 
 	private String paymentReceiptFilestoreId;
 	private String advertisementId;
+
+	@JsonFormat(pattern = BookingUtil.DATE_FORMAT)
+	private LocalDate bookingStartDate;
+
+	@JsonFormat(pattern = BookingUtil.DATE_FORMAT)
+	private LocalDate bookingEndDate;
 
 
 
