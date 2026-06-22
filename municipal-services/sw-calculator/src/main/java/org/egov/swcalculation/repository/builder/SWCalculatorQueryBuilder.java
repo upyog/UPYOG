@@ -265,7 +265,14 @@ public class SWCalculatorQueryBuilder {
 	public String getBillGenerationSchedulerQuery(BillGenerationSearchCriteria criteria,
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
-		query.append("egsw inner join eg_bndry_mohalla egbm on egsw.locality = egbm.localitycode ");
+		if (StringUtils.isEmpty(criteria.getGroup())) {
+			query.append("egsw inner join eg_bndry_mohalla egbm on egsw.locality = egbm.localitycode ");
+		}else {
+			query.append(" egsw ");
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" egsw.groups = ? ");
+	        preparedStatement.add(criteria.getGroup());
+		}
 		if (!StringUtils.isEmpty(criteria.getTenantId())) {
 		    addClauseIfRequired(preparedStatement, query);
 		    query.append(" egsw.tenantid = ? ");
