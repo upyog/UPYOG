@@ -571,6 +571,10 @@ public class BPAValidator {
 	 */
 	private void validateSkipPaymentAction(BPARequest bpaRequest) {
 		BPA bpa = bpaRequest.getBPA();
+		
+		if(bpa.getWorkflow() == null)
+			return;
+		
 		if (bpa.getWorkflow().getAction() != null && (bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_SKIP_PAY))) {
 			BigDecimal demandAmount = bpaUtil.getDemandAmount(bpaRequest);
 			if ((demandAmount.compareTo(BigDecimal.ZERO) > 0)) {

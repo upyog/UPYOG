@@ -73,14 +73,6 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 					        riskType = riskTypeElement.getAsString();
 					    }
 					}
-
-					String draftComment = null;
-					if (jsonObject.has("draftComment")) {
-					    JsonElement draftCommentElement = jsonObject.get("draftComment");
-					    if (draftCommentElement != null && !draftCommentElement.isJsonNull()) {
-					        draftComment = draftCommentElement.getAsString();
-					    }
-					}
 				//String riskType = new Gson().fromJson(rs.getString("additionalDetails").equals("{}") || rs.getString("additionalDetails").equals("null") ? "{}" : rs.getString("additionalDetails"), JsonObject.class).get("riskType").getAsString();
 
 				currentbpa = BPA.builder()
@@ -99,7 +91,6 @@ public class BPARowMapper implements ResultSetExtractor<List<BPA>> {
 						.businessService(rs.getString("businessService"))
 						.riskType(riskType)
 						.applicationType(rs.getString("applicationtype"))
-						.draftComment(draftComment)
 						.build();
 
 				buildingMap.put(id, currentbpa);

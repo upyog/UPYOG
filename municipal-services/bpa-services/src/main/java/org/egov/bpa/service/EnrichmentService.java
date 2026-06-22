@@ -206,7 +206,7 @@ public class EnrichmentService {
 				}
 			});
 		// BPA WfDocuments
-		if (!CollectionUtils.isEmpty(bpaRequest.getBPA().getWorkflow().getVarificationDocuments())) {
+		if (bpaRequest.getBPA().getWorkflow() != null && !CollectionUtils.isEmpty(bpaRequest.getBPA().getWorkflow().getVarificationDocuments())) {
 			bpaRequest.getBPA().getWorkflow().getVarificationDocuments().forEach(document -> {
 				if (document.getId() == null) {
 					document.setId(UUID.randomUUID().toString());
@@ -427,6 +427,9 @@ public class EnrichmentService {
 	 */
 	public void enrichAssignes(BPA bpa) {
 		Workflow wf = bpa.getWorkflow();
+		if(wf ==null)
+			return;
+		
 		Map<String,String> mobilenumberToUUIDs = new HashMap<>();
 		Set<String> assignes = new HashSet<>();
 		if (wf != null && wf.getAssignes() != null)

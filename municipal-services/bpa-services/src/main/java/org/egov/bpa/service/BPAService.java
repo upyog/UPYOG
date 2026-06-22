@@ -25,7 +25,6 @@ import org.egov.bpa.util.BPAErrorConstants;
 import org.egov.bpa.util.BPAUtil;
 import org.egov.bpa.util.NotificationUtil;
 import org.egov.bpa.validator.BPAValidator;
-import org.egov.bpa.web.model.AuditDetails;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
 import org.egov.bpa.web.model.BPASearchCriteria;
@@ -403,46 +402,13 @@ public class BPAService {
 	@SuppressWarnings("unchecked")
 	public BPA update(BPARequest bpaRequest) {
 		RequestInfo requestInfo = bpaRequest.getRequestInfo();
+		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
+		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		BPA bpa = bpaRequest.getBPA();
 
 		if (bpa.getId() == null) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Application Not found in the System" + bpa);
 		}
-
-		if (bpa.getWorkflow() == null) {
-			List<BPA> searchResult = getBPAWithBPAId(bpaRequest);
-			if (CollectionUtils.isEmpty(searchResult) || searchResult.size() > 1) {
-				throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Failed to Update the Application, Found None or multiple applications!");
-			}
-			BPA existingBpa = searchResult.get(0);
-			Map<String, Object> additionalDetailsMap = null;
-			if (existingBpa.getAdditionalDetails() != null) {
-				if (existingBpa.getAdditionalDetails() instanceof Map) {
-					additionalDetailsMap = (Map<String, Object>) existingBpa.getAdditionalDetails();
-				} else {
-					ObjectMapper mapper = new ObjectMapper();
-					additionalDetailsMap = mapper.convertValue(existingBpa.getAdditionalDetails(), Map.class);
-				}
-			} else {
-				additionalDetailsMap = new HashMap<>();
-			}
-			additionalDetailsMap.put("draftComment", bpa.getDraftComment());
-			existingBpa.setAdditionalDetails(additionalDetailsMap);
-			existingBpa.setDraftComment(bpa.getDraftComment());
-
-			AuditDetails auditDetails = existingBpa.getAuditDetails();
-			if (auditDetails != null) {
-				auditDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
-				auditDetails.setLastModifiedTime(System.currentTimeMillis());
-			}
-
-			BPARequest updateRequest = new BPARequest(requestInfo, existingBpa);
-			repository.update(updateRequest, false);
-			return existingBpa;
-		}
-
-		String tenantId = bpaRequest.getBPA().getTenantId().split("\\.")[0];
-		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 
 		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA(), mdmsData);
 		String workflowName = edcrResponse.getOrDefault("businessService", "");
@@ -465,27 +431,11 @@ public class BPAService {
 		if (CollectionUtils.isEmpty(searchResult) || searchResult.size() > 1) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Failed to Update the Application, Found None or multiple applications!");
 		}
-		BPA existingBpa = searchResult.get(0);
-
-		String draftComment = bpa.getDraftComment();
-		if (StringUtils.isEmpty(draftComment)) {
-			if (existingBpa.getAdditionalDetails() != null && existingBpa.getAdditionalDetails() instanceof Map) {
-				Map<String, Object> existingAddDetails = (Map<String, Object>) existingBpa.getAdditionalDetails();
-				if (existingAddDetails.containsKey("draftComment")) {
-					draftComment = (String) existingAddDetails.get("draftComment");
-				}
-			}
-		}
-
-		if (!StringUtils.isEmpty(draftComment)) {
-			bpa.getWorkflow().setComments(draftComment);
-		}
+		
 		
 		Map<String, String> additionalDetails = bpa.getAdditionalDetails() != null ? (Map<String, String>)bpa.getAdditionalDetails()
 				: new HashMap<String, String>();
-		additionalDetails.put("draftComment", null);
-		bpa.setAdditionalDetails(additionalDetails);
-		bpa.setDraftComment(null);
+
 		
 		if (bpa.getStatus().equalsIgnoreCase(BPAConstants.FI_STATUS)
 				&& bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_SENDBACKTOCITIZEN)) {
@@ -539,7 +489,7 @@ public class BPAService {
                  * then we need to skip the payment on APPROVE and need to make it APPROVED instead
                  * of SANCTION FEE PAYMENT PEDNING.
                  */
-                if ((businessSrvc.equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
+                if (bpa.getWorkflow() != null && (businessSrvc.equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
                         || businessSrvc.equalsIgnoreCase(BPAConstants.BPA_BUSINESSSERVICE))
                         && state.equalsIgnoreCase(BPAConstants.PENDING_APPROVAL_STATE) &&
                         bpa.getWorkflow() != null && bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_APPROVE)
@@ -548,43 +498,46 @@ public class BPAService {
                     bpa.setWorkflow(workflow);
                 }
 
-        		// Add Assignees in application workflow 
-        		State currentState = workflowService.getCurrentStateObj(bpa.getStatus(), businessService);
-        		String nextStateId = currentState.getActions().stream()
-        				.filter(act -> act.getAction().equalsIgnoreCase(bpa.getWorkflow().getAction()))
-        				.findFirst().orElse(new Action()).getNextState();
-        		State nextState = businessService.getStates().stream().filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
-        		
-        		List<String> roles = new ArrayList<String>();
-    			if(nextState != null && !CollectionUtils.isEmpty(nextState.getActions()))
-    				roles = nextState.getActions().stream()
-    				.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId))
-    				.flatMap(stateAction -> stateAction.getRoles().stream())
-    				.distinct()
-    				.filter(role -> !role.equalsIgnoreCase("OBPAS_UPDATE_ZONE")
-    						&& !role.equalsIgnoreCase("SYSTEM"))
-    				.collect(Collectors.toList());
-        		
-        		if (nextState != null 
-						&& CollectionUtils.isEmpty(bpa.getWorkflow().getAssignes())
-						&& !CollectionUtils.isEmpty(nextState.getActions())) {
-					List<String> assignee = null;
-					if(!CollectionUtils.isEmpty(roles))
-						assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo, false);
-					bpa.getWorkflow().setAssignes(assignee);
+				if (bpa.getWorkflow() != null) {
+					// Add Assignees in application workflow
+					State currentState = workflowService.getCurrentStateObj(bpa.getStatus(), businessService);
+					String nextStateId = currentState.getActions().stream()
+							.filter(act -> act.getAction().equalsIgnoreCase(bpa.getWorkflow().getAction())).findFirst()
+							.orElse(new Action()).getNextState();
+					State nextState = businessService.getStates().stream()
+							.filter(st -> st.getUuid().equalsIgnoreCase(nextStateId)).findFirst().orElse(null);
+
+					List<String> roles = new ArrayList<String>();
+					if (nextState != null && !CollectionUtils.isEmpty(nextState.getActions()))
+						roles = nextState.getActions().stream()
+								.filter(stateAction -> !stateAction.getNextState().equalsIgnoreCase(nextStateId))
+								.flatMap(stateAction -> stateAction.getRoles().stream()).distinct()
+								.filter(role -> !role.equalsIgnoreCase("OBPAS_UPDATE_ZONE")
+										&& !role.equalsIgnoreCase("SYSTEM"))
+								.collect(Collectors.toList());
+
+					if (nextState != null && CollectionUtils.isEmpty(bpa.getWorkflow().getAssignes())
+							&& !CollectionUtils.isEmpty(nextState.getActions())) {
+						List<String> assignee = null;
+						if (!CollectionUtils.isEmpty(roles))
+							assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo, false);
+						bpa.getWorkflow().setAssignes(assignee);
+
+					}
+
+					if (!CollectionUtils.isEmpty(roles)) {
+						List<String> assignee = null;
+						assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo, true);
+						bpa.getWorkflow().setAssignes(assignee);
+					}
+
+					wfIntegrator.callWorkFlow(bpaRequest);
+					log.debug("===> workflow done =>" + bpaRequest.getBPA().getStatus());
+					enrichmentService.postStatusEnrichment(bpaRequest);
 					
+					additionalDetails.put("draftComment", null);
 				}
-        		
-        		if(!CollectionUtils.isEmpty(roles)) {
-    				List<String> assignee = null;
-    				assignee = userService.getAssigneeFromBPA(bpa, roles, requestInfo, true);
-    				bpa.getWorkflow().setAssignes(assignee);
-    			}
-        		
-		wfIntegrator.callWorkFlow(bpaRequest);
-		log.debug("===> workflow done =>" +bpaRequest.getBPA().getStatus()  );
-		enrichmentService.postStatusEnrichment(bpaRequest);
-		
+              
 		log.debug("Bpa status is : " + bpa.getStatus());
 
 
@@ -630,6 +583,9 @@ public class BPAService {
 	 */
 	private void handleRejectSendBackActions(String applicationType, BPARequest bpaRequest,BusinessService businessService,List<BPA> searchResult,Object mdmsData,Map<String, String> edcrResponse ) {
 		BPA bpa = bpaRequest.getBPA();
+		if(bpa.getWorkflow() ==  null)
+			return;
+		
 		if (bpa.getWorkflow().getAction() != null && (bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_REJECT)
 				|| bpa.getWorkflow().getAction().equalsIgnoreCase(BPAConstants.ACTION_REVOCATE))) {
 
