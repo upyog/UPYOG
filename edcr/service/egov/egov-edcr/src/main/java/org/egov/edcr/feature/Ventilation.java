@@ -163,9 +163,11 @@ public class Ventilation extends FeatureProcess {
 	                	        && mostRestrictiveOccupancyType.getType().getCode() != null
 	                	        && DxfFileConstants.A.equalsIgnoreCase(
 	                	                mostRestrictiveOccupancyType.getType().getCode())) {
-	                		errorMsgs.put("Ventilation is mandatory",
-		                			"Floor ventilation layer not defined in the plan. Kindly refer to the user manual.");	                	
-	                        pl.addErrors(errorMsgs);
+	                		if(!f.getIsStiltFloor()) {
+	                			errorMsgs.put("Ventilation is mandatory",
+			                			"Floor ventilation layer not defined in the plan. Kindly refer to the user manual.");	                	
+		                        pl.addErrors(errorMsgs);
+	                		}	                		
 		            	}
 	                	
 	                }

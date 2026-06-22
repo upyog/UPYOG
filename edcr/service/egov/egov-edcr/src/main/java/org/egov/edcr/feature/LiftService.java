@@ -104,9 +104,9 @@ public class LiftService extends FeatureProcess {
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, REQUIRED);
-                scrutinyDetail.addColumnHeading(4, PROVIDED);
-                scrutinyDetail.addColumnHeading(5, STATUS);
+                //scrutinyDetail.addColumnHeading(3, REQUIRED);
+                scrutinyDetail.addColumnHeading(3, PROVIDED);
+                scrutinyDetail.addColumnHeading(4, STATUS);
                 scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Lift Requirements");
 
                 if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()
