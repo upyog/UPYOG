@@ -23,6 +23,7 @@ public class AdvertisementBookingQueryBuilder {
 			"SELECT ecbd.booking_id, booking_no, payment_date, application_date, tenant_id,\n"
 					+ "ecbd.advertisementId ,booking_status,receipt_no, ecbd.createdby, ecbd.createdtime, \n"
 					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,ecbd.permission_letter_filestore_id, ecbd.payment_receipt_filestore_id, \n"
+					+ "ecbd.booking_start_date, ecbd.booking_end_date, \n"
 					+ "appl.applicant_detail_id, applicant_name, applicant_email_id, applicant_mobile_no,\n"
 					+ "applicant_alternate_mobile_no, \n"
 					+ "address_id, door_no, house_no, address_line_1,address_line_2, \n"
