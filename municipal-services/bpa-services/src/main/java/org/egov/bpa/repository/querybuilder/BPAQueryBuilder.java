@@ -135,7 +135,7 @@ public class BPAQueryBuilder {
         if(applicationType != null) {
             List<String> applicationTypes = Arrays.asList(applicationType.split(","));
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" bpa.additionaldetails ->>'applicationType' IN (").append(createQuery(applicationTypes)).append(")");
+            builder.append(" bpa.applicationtype IN (").append(createQuery(applicationTypes)).append(")");
             addToPreparedStatement(preparedStmtList, applicationTypes);
         }
         

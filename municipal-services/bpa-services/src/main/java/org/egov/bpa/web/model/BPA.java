@@ -97,6 +97,10 @@ public class BPA   {
   @JsonProperty("additionalDetails")
   private Object additionalDetails = null;
 
+  @SafeHtml
+  @JsonProperty("draftComment")
+  private String draftComment = null;
+
   public BPA id(String id) {
     this.id = id;
     return this;
@@ -437,6 +441,24 @@ public class BPA   {
     this.additionalDetails = additionalDetails;
   }
 
+  public BPA draftComment(String draftComment) {
+    this.draftComment = draftComment;
+    return this;
+  }
+
+  /**
+   * Draft comment for the application
+   * @return draftComment
+  **/
+  @ApiModelProperty(value = "Draft comment for the application")
+  public String getDraftComment() {
+    return draftComment;
+  }
+
+  public void setDraftComment(String draftComment) {
+    this.draftComment = draftComment;
+  }
+
   
 
   @Override
@@ -461,12 +483,13 @@ public class BPA   {
         Objects.equals(this.landInfo, BPA.landInfo) &&
         Objects.equals(this.workflow, BPA.workflow) &&
         Objects.equals(this.auditDetails, BPA.auditDetails) &&
-        Objects.equals(this.additionalDetails, BPA.additionalDetails);
+        Objects.equals(this.additionalDetails, BPA.additionalDetails) &&
+        Objects.equals(this.draftComment, BPA.draftComment);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, applicationNo, approvalNo, accountId, edcrNumber, riskType, landId, tenantId, status, documents, landInfo, workflow, auditDetails, additionalDetails);
+    return Objects.hash(id, applicationNo, approvalNo, accountId, edcrNumber, riskType, landId, tenantId, status, documents, landInfo, workflow, auditDetails, additionalDetails, draftComment);
   }
 
   @Override
@@ -488,6 +511,7 @@ public class BPA   {
     sb.append("    workflow: ").append(toIndentedString(workflow)).append("\n");
     sb.append("    auditDetails: ").append(toIndentedString(auditDetails)).append("\n");
     sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
+    sb.append("    draftComment: ").append(toIndentedString(draftComment)).append("\n");
     sb.append("}");
     return sb.toString();
   }

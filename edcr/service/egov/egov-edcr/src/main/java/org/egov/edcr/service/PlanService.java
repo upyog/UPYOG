@@ -337,7 +337,7 @@ public class PlanService {
         BigDecimal measuredPlotArea = plan.getPlot().getArea().setScale(0, RoundingMode.DOWN);
         
         if(!declaredPlotArea.equals(measuredPlotArea))
-        	plan.getErrors().put("Invalid Plot Area", "Declared plot are and Measured plot area must be the same.");
+        	plan.getErrors().put("Invalid Plot Area", "Declared plot area and Measured plot area must be the same.");
         
         String ulbType = "";
         String districtName = "";
