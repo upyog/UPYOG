@@ -335,6 +335,12 @@ public class EnrichmentService {
 			additionalDetail.put("approvedBy", bpaRequest.getRequestInfo().getUserInfo().getName());
 
 			edcrService.updateEDCRBpaDetails(bpaRequest);
+			
+			if(StringUtils.isEmpty(bpa.getApprovalNo())) {
+				List<IdResponse> idResponses = idGenRepository.getId(bpaRequest.getRequestInfo(), bpa.getTenantId(),
+						config.getPermitNoIdgenName(), config.getPermitNoIdgenFormat(), 1).getIdResponses();
+				bpa.setApprovalNo(idResponses.get(0).getId());
+			}
 		}
 		
 //		nocService.initiateNocWorkflow(bpaRequest, mdmsData);
