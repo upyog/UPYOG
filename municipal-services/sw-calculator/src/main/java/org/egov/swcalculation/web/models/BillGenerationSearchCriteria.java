@@ -29,6 +29,9 @@ public class BillGenerationSearchCriteria {
 	@JsonProperty("status")
 	private String status;
 
+	@JsonProperty("group")
+	private String group;
+	
 	@JsonProperty("billingcyclestartdate")
 	private Long billingcycleStartdate;
 
