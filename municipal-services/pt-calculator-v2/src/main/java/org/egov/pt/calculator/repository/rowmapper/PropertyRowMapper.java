@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 import org.egov.pt.calculator.web.models.property.Property;
@@ -13,9 +16,13 @@ import org.egov.pt.calculator.web.models.property.PropertyInfo.StatusEnum;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
+	private static final ObjectMapper mapper = new ObjectMapper();
+    private static final Logger log = LoggerFactory.getLogger(PropertyRowMapper.class);
 
 	@Override
 	public List<Property> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -35,6 +42,21 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.propertyId(rs.getString("propertyid")).auditDetails(auditDetails)
 						.tenantId(rs.getString("tenantid")).build();
 				;
+				
+				String additionalDetails = rs.getString("additionaldetails");
+
+				if (additionalDetails != null) {
+				    try {
+				        property.setAdditionalDetails(
+				            mapper.readValue(
+				                additionalDetails,
+				                new TypeReference<Map<String, Object>>() {}
+				            )
+				        );
+				    } catch (Exception e) {
+				        log.error("Error parsing additionaldetails for property {}", propertyId, e);
+				    }
+				}
 
 				propertyMap.put(propertyId, property);
 			}

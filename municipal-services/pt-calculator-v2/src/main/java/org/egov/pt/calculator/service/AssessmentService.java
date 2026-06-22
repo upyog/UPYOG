@@ -233,8 +233,19 @@ public class AssessmentService {
 
 				List<Property> properties = repository.fetchAllActivePropertieswithLimit(assessmentRequest);
 				for (Property property : properties) {
+					log.info("Property: {}", property);
+				    log.info("AdditionalDetails: {}", property.getAdditionalDetails());
+				    
 					boolean isExists = repository.isAssessmentExists(property.getPropertyId(),
 							assessmentRequest.getAssessmentYear(), property.getTenantId());
+					Map<String, Object> additionalDetails = property.getAdditionalDetails();
+					if(additionalDetails != null && additionalDetails.get("yearConstruction") != null) // check construction year of property should be less than assessment year
+                    {
+					String constructionYear=additionalDetails.get("yearConstruction").toString(); 
+					               
+                     if(constructionYear.compareToIgnoreCase(assessmentRequest.getAssessmentYear())>0)
+                         isExists=true;
+                    }		
 					if (!isExists) {
 
 						Assessment assessment = Assessment.builder()
