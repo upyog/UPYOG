@@ -140,6 +140,14 @@ public class AllotmentDetails {
 		return this;
 	}
 	
+	public Long getStartDate() {
+		return startDate != null ? startDate : -2208988800000L;
+	}
+
+	public Long getEndDate() {
+		return endDate != null ? endDate : 32503680000000L;
+	}
+
 	@Override
 	public String toString() {
 	    return "AllotmentDetails{" +

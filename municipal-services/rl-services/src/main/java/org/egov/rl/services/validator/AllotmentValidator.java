@@ -150,6 +150,10 @@ public class AllotmentValidator {
 		validateOwnersData(allotementRequest, errorMap);
 		boundaryService.validateAndLoadPropertyData(allotementRequest, errorMap);
 
+		if ("Legacy".equalsIgnoreCase(allotementRequest.getAllotment().get(0).getApplicationType())) {
+			return;
+		}
+
 		try {
 			long startDate1 = Optional.ofNullable(allotementRequest.getAllotment().get(0).getStartDate()).orElse(null);
 			long endDate1 = Optional.ofNullable(allotementRequest.getAllotment().get(0).getEndDate()).orElse(null);
@@ -222,12 +226,11 @@ public class AllotmentValidator {
 					"Wrong allotment id is passing , please provide another corroct allotment Id information");
 		}
 
-
-		// if(allotementRequest.getAllotment().get(0).getWorkflow().getAction().equals(RLConstants.APPLY_RL_APPLICATION)) {
-		// 	if(allotementRequest.getAllotment().get(0).getDocuments()==null||allotementRequest.getAllotment().get(0).getDocuments().isEmpty()) {
-		// 			throw new CustomException("EG_RL_DOCUMENT INFO ERROR", "Document can't be empty in the request");
-		// 	}
-		// }
+//		if(allotementRequest.getAllotment().get(0).getWorkflow().getAction().equals(RLConstants.APPLY_RL_APPLICATION)) {
+//			if(allotementRequest.getAllotment().get(0).getDocuments()==null||allotementRequest.getAllotment().get(0).getDocuments().isEmpty()) {
+//					throw new CustomException("EG_RL_DOCUMENT INFO ERROR", "Document can't be empty in the request");
+//			}
+//		}
 
 //		long uniqueAadharNumberSet = owners.stream().map(owner -> owner.getAadharCardNumber().trim()).distinct().count();
 //		long uniquePanNumberSet = owners.stream().map(owner -> owner.getPanCardNumber().trim()).distinct().count();
@@ -252,6 +255,10 @@ public class AllotmentValidator {
 
 		validateOwnersData(allotementRequest, errorMap);
 		boundaryService.validateAndLoadPropertyData(allotementRequest, errorMap);
+		if ("Legacy".equalsIgnoreCase(allotementRequest.getAllotment().get(0).getApplicationType())) {
+			return;
+		}
+
 		try {
 			long startDate1 = Optional.ofNullable(allotementRequest.getAllotment().get(0).getStartDate()).orElse(null);
 			long endDate1 = Optional.ofNullable(allotementRequest.getAllotment().get(0).getEndDate()).orElse(null);

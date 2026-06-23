@@ -14,7 +14,9 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.rl.calculator.repository.DemandRepository;
 import org.egov.rl.calculator.util.Configurations;
 import org.egov.rl.calculator.web.models.demand.Demand;
+import org.egov.rl.calculator.service.DemandService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.log4j.Log4j;
@@ -29,6 +31,10 @@ public class BatchDemanService {
 	
 	@Autowired
 	private CycleWorkflowService cycleWorkflowService;
+
+	@Lazy
+	@Autowired
+	private DemandService demandService;
 
 	@Autowired
 	private Configurations config;
@@ -56,7 +62,8 @@ public class BatchDemanService {
 			int batch=noofBatch.incrementAndGet();
 			LocalDate currentDate = LocalDate.now();
 			try {
-				demandRepository.saveDemand(requestInfo, demands);
+				List<Demand> savedDemands = demandRepository.saveDemand(requestInfo, demands);
+				demandService.fetchBillForDemands(savedDemands, requestInfo);
 				batchWorkflowUpdate(requestInfo,demands);
 				demands.forEach(d -> {
 					
