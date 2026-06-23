@@ -472,18 +472,18 @@ public class MinDistance {
         boolean isOldWay = false;
         
         // ONLY check Front and Rear yards. Side yards naturally touch footprint corners in the Sandwich style.
-        if (name.contains("FRONT") || name.contains("REAR")) {
-            for (Point yp : yardPts) {
-                for (Point fp : fpPts) {
-                    if (Util.pointsEquals(yp, fp)) {
-                        isOldWay = true;
-                        LOG.info("Detected OLD WAY marking for " + name + ". Rejecting to trigger native errors.");
-                        break;
-                    }
-                }
-                if (isOldWay) break;
-            }
-        }
+//        if (name.contains("FRONT") || name.contains("REAR")) {
+//            for (Point yp : yardPts) {
+//                for (Point fp : fpPts) {
+//                    if (Util.pointsEquals(yp, fp)) {
+//                        isOldWay = true;
+//                        LOG.info("Detected OLD WAY marking for " + name + ". Rejecting to trigger native errors.");
+//                        break;
+//                    }
+//                }
+//                if (isOldWay) break;
+//            }
+//        }
 
         // =========================================================================================
         // POINT MAPPING (Only runs if marked the New Way)
