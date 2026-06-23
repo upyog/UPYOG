@@ -215,7 +215,9 @@ public class ChallanInboxFilterService {
                     .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
-            searchCriteria.put(STATUS_PARAM, matchingIds);
+            if(!CollectionUtils.isEmpty(matchingIds)) {
+                searchCriteria.put(STATUS_PARAM, matchingIds);
+            }
         } else {
             if (statusIdNameMap.values().size() > 0) {
                 if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
