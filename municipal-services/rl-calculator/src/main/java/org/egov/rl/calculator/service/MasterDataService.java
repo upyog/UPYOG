@@ -11,6 +11,7 @@ import org.egov.rl.calculator.util.Configurations;
 import org.egov.rl.calculator.util.RLConstants;
 import org.egov.rl.calculator.web.models.demand.BillingPeriod;
 import org.egov.rl.calculator.web.models.demand.Penalty;
+import org.egov.rl.calculator.web.models.demand.Interest;
 import org.egov.rl.calculator.web.models.demand.TaxPeriod;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +112,7 @@ public class MasterDataService {
     public List<Penalty> getPenaltySlabs(RequestInfo requestInfo, String tenantId) {
         try {
         	  MdmsCriteriaReq mdmsCriteriaReq = getMasterRequest(requestInfo, tenantId,
-                      RLConstants.RL_SERVICES_MASTER_MODULE, RLConstants.PENALTY_MASTER, null);
+                       RLConstants.RL_SERVICES_MASTER_MODULE, RLConstants.PENALTY_MASTER, null);
             
             Object result = repository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
             MdmsResponse mdmsResponse = mapper.convertValue(result, MdmsResponse.class);
@@ -122,18 +123,70 @@ public class MasterDataService {
                     new TypeReference<List<Penalty>>() {}
             );
             LocalDate now=LocalDate.now();
-//     	   System.out.println("------------penaltySlabs----------"+penaltySlabs);
-//            penaltySlabs = penaltySlabs.stream().filter(p -> {
-//                int start = Integer.valueOf(p.getFromFY().split("-")[0]);
-//                int end   = Integer.valueOf("20"+p.getFromFY().split("-")[1]);
-//                return (start<now.getYear()&&now.getYear()<end)?true:false;
-//               }).collect(Collectors.toList());
-//            System.out.println("ssssssss-------------sssssss---------"+penaltySlabs.size());
             return penaltySlabs;
         } catch (Exception e) {
-            log.error("Failed to get Penalty slabs from MDMS for tenant " + tenantId, e);
+            log.error("Failed to get Penalty slabs from MDMS for tenanDueDatet " + tenantId, e);
             throw new CustomException("MDMS_ERROR", "Failed to get Penalty slabs from MDMS");
         }
+    }
+
+    public List<Interest> getInterestSlabs(RequestInfo requestInfo, String tenantId) {
+        try {
+            MdmsCriteriaReq mdmsCriteriaReq = getMasterRequest(requestInfo, tenantId,
+                    RLConstants.RL_SERVICES_MASTER_MODULE, "Interest", null);
+            
+            Object result = repository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+            MdmsResponse mdmsResponse = mapper.convertValue(result, MdmsResponse.class);
+            List<Interest> interestSlabs = mapper.convertValue(
+                    mdmsResponse.getMdmsRes()
+                            .get(RLConstants.RL_SERVICES_MASTER_MODULE)
+                            .get("Interest"),
+                    new TypeReference<List<Interest>>() {}
+            );
+            return interestSlabs;
+        } catch (Exception e) {
+            log.error("Failed to get Interest slabs from MDMS for tenant " + tenantId, e);
+            throw new CustomException("MDMS_ERROR", "Failed to get Interest slabs from MDMS");
+        }
+    }
+
+    public Integer getLegacyDueDate(RequestInfo requestInfo, String tenantId, String billingCycle) {
+        try {
+            MdmsCriteriaReq mdmsCriteriaReq = getMasterRequest(requestInfo, tenantId,
+                    RLConstants.RL_SERVICES_MASTER_MODULE, "DueDate", null);
+            
+            Object result = repository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+            MdmsResponse mdmsResponse = mapper.convertValue(result, MdmsResponse.class);
+            
+            if (mdmsResponse.getMdmsRes().containsKey(RLConstants.RL_SERVICES_MASTER_MODULE) &&
+                mdmsResponse.getMdmsRes().get(RLConstants.RL_SERVICES_MASTER_MODULE).containsKey("DueDate")) {
+                
+                List<org.egov.rl.calculator.web.models.demand.DueDate> dueDates = mapper.convertValue(
+                        mdmsResponse.getMdmsRes()
+                                .get(RLConstants.RL_SERVICES_MASTER_MODULE)
+                                .get("DueDate"),
+                        new TypeReference<List<org.egov.rl.calculator.web.models.demand.DueDate>>() {}
+                );
+                
+                if (dueDates != null && !dueDates.isEmpty()) {
+                    // Try to find a matching entry for the billing cycle
+                    if (billingCycle != null) {
+                        for (org.egov.rl.calculator.web.models.demand.DueDate dd : dueDates) {
+                            if (billingCycle.equalsIgnoreCase(dd.getBillingCycle()) && dd.getDueDay() != null) {
+                                return dd.getDueDay();
+                            }
+                        }
+                    }
+                    // Fallback to first entry if no cycle match
+                    if (dueDates.get(0).getDueDay() != null) {
+                        return dueDates.get(0).getDueDay();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to get DueDate from MDMS for tenant " + tenantId + ". Falling back to default (10).", e);
+        }
+        return 10; // Default fallback if missing or error
     }
 
     /**

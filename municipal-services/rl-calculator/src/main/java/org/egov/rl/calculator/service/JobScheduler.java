@@ -52,13 +52,14 @@ public class JobScheduler {
 	}
 	
 //	@Scheduled(cron = "0 30 10 * * *", zone = RLConstants.TIME_ZONE)
-	@Scheduled(cron = "${scheduler.notification.cron:0 30 22 * * *}", zone = RLConstants.TIME_ZONE)
+//	@Scheduled(cron = "${scheduler.notification.cron:0 0 1 * * *}", zone = RLConstants.TIME_ZONE)
+	@Scheduled(cron = "0 * * * * *", zone = RLConstants.TIME_ZONE)
 	public void sendNotificationAndUpdateDemandCronJob() {
-		log.info("Scheduler Start Every day at 10:30 PM");
+		log.info("Scheduler Start Every day at 01:00 AM");
 		
-		log.info("Afternoon Scheduler Start Date Time :{}",LocalDateTime.now());
+		log.info("Nightly Scheduler Start Date Time :{}",LocalDateTime.now());
 		  demandService.sendNotificationAndUpdateDemand(getOAuthToken(),null,null);
-		log.info("Afternoon Scheduler End Date Time :{}",LocalDateTime.now());
+		log.info("Nightly Scheduler End Date Time :{}",LocalDateTime.now());
 		
 	}
 

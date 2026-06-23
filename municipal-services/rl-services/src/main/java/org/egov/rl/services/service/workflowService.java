@@ -57,7 +57,7 @@ public class workflowService {
 		processInstance.setAction(workflow.getAction());
         processInstance.setModuleName(RLConstants.RL_SERVICE_NAME);
         // Check if applicationType is Legacy in additionalDetails if legacy then RENT_AND_LEASE_LEGACY otherwise RENT_AND_LEASE_NEW
-        String workflowName = getWorkflowName(application);
+		String workflowName = getWorkflowName(application); // Only use root-level applicationType to determine workflow; do not consult additionalDetails
         processInstance.setBusinessService(workflowName);
 		processInstance.setTenantId(application.getTenantId());
 		processInstance.setDocuments(workflow.getDocuments());
@@ -88,15 +88,12 @@ public class workflowService {
      * @return The appropriate workflow name
      */
     private String getWorkflowName(AllotmentDetails application) {
-        if (application.getAdditionalDetails() != null) {
-            com.fasterxml.jackson.databind.JsonNode additionalDetails = application.getAdditionalDetails();
-            if (additionalDetails.has("applicationType")) {
-                String applicationType = additionalDetails.get("applicationType").asText();
-                if (RLConstants.APPLICATION_TYPE_LEGACY.equals(applicationType)) {
-                    return RLConstants.RL_WORKFLOW_NAME_LEGACY;
-                }
-            }
-        }
+		String rootType = application.getApplicationType();
+		if (RLConstants.APPLICATION_TYPE_LEGACY.equalsIgnoreCase(rootType)) {
+			return RLConstants.RL_WORKFLOW_NAME_LEGACY;
+		}
+
+		// Removed additionalDetails check for applicationType
         return RLConstants.RL_WORKFLOW_NAME;
     }
 

@@ -142,6 +142,18 @@ public class PropertyUtil{
 			
 		}
 
+		public StringBuilder getFetchBillURL(String tenantId, String consumerCode) {
+			return new StringBuilder()
+					.append(config.getBillingServiceHost())
+					.append(config.getBillSearchEndPoint())
+					.append(RLConstants.URL_PARAMS_SEPARATER)
+					.append(RLConstants.TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
+					.append(RLConstants.SEPARATER)
+					.append(RLConstants.CONSUMER_CODE_SEARCH_FIELD_NAME).append(consumerCode)
+					.append(RLConstants.SEPARATER)
+					.append(RLConstants.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL).append(RLConstants.RL_SERVICE_NAME);
+		}
+
 		public StringBuilder getDemandSearchUrl(GetBillCriteria getBillCriteria) {
 			StringBuilder builder = new StringBuilder();
 			if (CollectionUtils.isEmpty(getBillCriteria.getConsumerCodes())) {

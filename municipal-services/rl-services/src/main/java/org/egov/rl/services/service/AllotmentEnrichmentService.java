@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.rl.services.config.RentLeaseConfiguration;
 import org.egov.rl.services.models.Address;
@@ -38,6 +39,9 @@ public class AllotmentEnrichmentService {
 	@Autowired
 	private AllotmentService allotmentService;
 
+	@Autowired
+	private ObjectMapper mapper;
+
 	/**
 	 * Assigns UUIDs to all id fields and also assigns acknowledgement-number and
 	 * assessment-number generated from id-gen
@@ -56,8 +60,57 @@ public class AllotmentEnrichmentService {
 		if(allotmentRequest.getAllotment().get(0).getPreviousApplicationNumber()==null) {
 		 setRegistrationNumber(allotmentRequest);
 		}
+		
+		enrichTaxApplicability(requestInfo, allotmentDetails);
+		enrichAdditionalDetails(allotmentDetails);
 	}
 
+
+
+	private void enrichTaxApplicability(RequestInfo requestInfo, AllotmentDetails allotmentDetails) {
+		try {
+			com.fasterxml.jackson.databind.node.ArrayNode taxRates = propertyutil.fetchTaxRatesFromMdms(requestInfo, allotmentDetails.getTenantId());
+			if (taxRates != null) {
+				for (com.fasterxml.jackson.databind.JsonNode taxRate : taxRates) {
+					String taxType = taxRate.path("taxType").asText();
+					boolean isActive = taxRate.path("isActive").asBoolean(false);
+					if (isActive) {
+						if ("RL_CGST_FEE".equals(taxType) || "RL_SGST_FEE".equals(taxType)) {
+							allotmentDetails.setGSTApplicable(true);
+						}
+						if ("RL_COWCESS_FEE".equals(taxType)) {
+							allotmentDetails.setCowCessApplicable(true);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Error enriching tax applicability from MDMS: " + e.getMessage());
+		}
+	}
+
+	private void enrichAdditionalDetails(AllotmentDetails allotmentDetails) {
+		com.fasterxml.jackson.databind.node.ObjectNode additionalDetailsNode;
+		if (allotmentDetails.getAdditionalDetails() != null && allotmentDetails.getAdditionalDetails().isObject()) {
+			additionalDetailsNode = (com.fasterxml.jackson.databind.node.ObjectNode) allotmentDetails.getAdditionalDetails();
+		} else {
+			additionalDetailsNode = mapper.createObjectNode();
+		}
+		
+		if (additionalDetailsNode.has("propertyDetails") && additionalDetailsNode.get("propertyDetails").isArray()) {
+			com.fasterxml.jackson.databind.node.ArrayNode propertyDetailsArray = (com.fasterxml.jackson.databind.node.ArrayNode) additionalDetailsNode.get("propertyDetails");
+			for (com.fasterxml.jackson.databind.JsonNode propertyNode : propertyDetailsArray) {
+				if (propertyNode.isObject()) {
+					com.fasterxml.jackson.databind.node.ObjectNode propObj = (com.fasterxml.jackson.databind.node.ObjectNode) propertyNode;
+					if (!propObj.has("propertyType") || propObj.get("propertyType").isNull() || propObj.get("propertyType").asText().isEmpty()) {
+						propObj.put("propertyType", "Commercial");
+					}
+				}
+			}
+		}
+		
+		allotmentDetails.setAdditionalDetails(additionalDetailsNode);
+	}
 
 	/**
 	 * Assigns UUID for new fields that are added and sets propertyDetail and

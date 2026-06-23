@@ -6,6 +6,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.validation.constraints.Digits;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Property
  */
@@ -16,6 +18,7 @@ import javax.validation.constraints.Digits;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RLProperty {// extends PropertyInfo {
 
 	@JsonProperty("propertyId")
@@ -42,34 +45,14 @@ public class RLProperty {// extends PropertyInfo {
 	@JsonProperty("propertyImage")
 	private String propertyImage;
 	
-	@JsonProperty("propertyType")
-//	@SafeHtml
-	private String propertyType;
-	
-	
-	@JsonProperty("locationType")
-	private String locationType;
-
 	@JsonProperty("baseRent")
 	private String baseRent;
 	
 	@JsonProperty("securityDeposit")
 	private String securityDeposit;
 	
-	@JsonProperty("financialYear")
-	private String financialYear;
-	
 	@JsonProperty("type")
 	private String type;
-	
-	@JsonProperty("taxApplicable")
-	private boolean taxApplicable;
-
-	@JsonProperty("refundApplicableOnDiscontinuation")
-	private boolean refundApplicableOnDiscontinuation;
-	
-	@JsonProperty("cowCessApplicable")
-	private boolean cowCessApplicable;
 	
 	@JsonProperty("penaltyType")
 	private String penaltyType;

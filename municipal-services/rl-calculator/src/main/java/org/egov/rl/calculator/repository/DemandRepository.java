@@ -218,4 +218,36 @@ public class DemandRepository {
 					"Failed to fetch demands for the given rentable IDs and period");
 		}
 	}
+
+	public List<Demand> getExpiredUnpaidDemands(String tenantId, long currentTime, String consumerCode) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		StringBuilder queryBuilder = new StringBuilder("SELECT * FROM egbs_demand_v1 WHERE tenantid = ? AND (createdtime + billexpirytime) <= ? AND ispaymentcompleted = false AND businessservice = 'rl-services' AND status = 'ACTIVE'");
+		preparedStmtList.add(tenantId);
+		preparedStmtList.add(currentTime);
+
+		if (consumerCode != null && !consumerCode.trim().isEmpty()) {
+			queryBuilder.append(" AND consumercode = ?");
+			preparedStmtList.add(consumerCode);
+		}
+
+		try {
+			return jdbcTemplate.query(queryBuilder.toString(), preparedStmtList.toArray(), demandRowMapper);
+		} catch (Exception e) {
+			log.error("Error while fetching expired unpaid demands", e);
+			throw new CustomException("DEMAND_FETCH_ERROR", "Failed to fetch expired unpaid demands");
+		}
+	}
+
+	public List<Demand> getAllUnpaidDemands(String tenantId, String consumerCode) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = "SELECT * FROM egbs_demand_v1 WHERE tenantid = ? AND consumercode = ? AND businessservice = 'rl-services' AND status = 'ACTIVE' AND ispaymentcompleted = false";
+		preparedStmtList.add(tenantId);
+		preparedStmtList.add(consumerCode);
+		try {
+			return jdbcTemplate.query(query, preparedStmtList.toArray(), demandRowMapper);
+		} catch (Exception e) {
+			log.error("Error while fetching unpaid demands for tenant: {} and consumerCode: {}", tenantId, consumerCode, e);
+			throw new CustomException("DEMAND_FETCH_ERROR", "Failed to fetch unpaid demands");
+		}
+	}
 }

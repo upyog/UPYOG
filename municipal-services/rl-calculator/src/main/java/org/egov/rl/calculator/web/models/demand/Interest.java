@@ -12,25 +12,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Penalty {
-
-    @JsonProperty("billingCycle")
-    private String billingCycle;
+public class Interest {
 
     @JsonProperty("rate")
     private BigDecimal rate;
-
-    @JsonProperty("minAmount")
-    private BigDecimal minAmount;
-
-    @JsonProperty("applicableAfterDays")
-    private Integer applicableAfterDays;
-
-    @JsonProperty("flatAmount")
-    private BigDecimal flatAmount;
-
-    @JsonProperty("maxAmount")
-    private BigDecimal maxAmount;
 
     @JsonProperty("fromFY")
     private String fromFY;

@@ -39,7 +39,7 @@ public class RLConstants {
     // Legacy application additionalDetails keys
     public static final String LEGACY_ARREAR_KEY = "arrear";
     public static final String LEGACY_ARREAR_START_DATE_KEY = "arrearStartDate";
-    public static final String LEGACY_ARREAR_END_DATE_KEY = "arrearEndDate";
+    public static final String LEGACY_LAST_BILLING_PERIOD_KEY = "lastBillingPeriod";
     public static final String LEGACY_ARREAR_REASON_KEY = "arrearReason";
     public static final String LEGACY_REMARKS_KEY = "remarks";
 

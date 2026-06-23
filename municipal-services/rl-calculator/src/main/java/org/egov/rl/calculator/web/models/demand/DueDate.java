@@ -10,17 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BillingPeriod {
-
-    @JsonProperty("active")
-    private Boolean active;
+public class DueDate {
 
     @JsonProperty("billingCycle")
     private String billingCycle;
 
-    @JsonProperty("taxPeriodFrom")
-    private Long taxPeriodFrom;
+    @JsonProperty("dueDay")
+    private Integer dueDay;
 
-    @JsonProperty("taxPeriodTo")
-    private Long taxPeriodTo;
 }
