@@ -611,8 +611,8 @@ public class SideYardService extends GeneralRule {
         sideYard1Result.subRule = subRule;
         sideYard1Result.blockName = blockName;
         sideYard1Result.level = level;
-        sideYard1Result.actualDistance = actualDistance;
-        //sideYard1Result.actualDistance = minDistanceSideYard1;
+        //sideYard1Result.actualDistance = actualDistance;
+        sideYard1Result.actualDistance = minDistanceSideYard1;
         sideYard1Result.expectedDistance = exptDistance;
         if (sideYard1Result.actualDistance.compareTo(sideYard1Result.expectedDistance) >= 0) {
             sideYard1Result.status = true;  // ✅ OK if actual >= expected
