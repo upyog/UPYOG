@@ -450,7 +450,8 @@ public class PaymentValidator {
 		Boolean isRequesterEmployee = requestInfo.getUserInfo().getType()
 				.equalsIgnoreCase(CollectionServiceConstants.EMPLOYEE_TYPE);
 		if (isRequesterEmployee && applicationProperties.getIsModuleNameMandatoryInSearchUriForEmployee()
-				&& null == moduleName)
+				&& null == moduleName && (paymentSearchCriteria.getReceiptNumbers() == null 
+			            || paymentSearchCriteria.getReceiptNumbers().isEmpty()))
 			throw new CustomException("EGCL_URI_EXCEPTION", "Path variable module name is mandatory for employees");
 
 		/*

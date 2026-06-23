@@ -27,6 +27,8 @@ public class PaymentSearchCriteria {
     private Set<String> tenantIds;
 
     private Set<String> receiptNumbers;
+    
+    private Long receiptDate;
 
     private Set<String> status;
 
