@@ -48,10 +48,12 @@
 package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
+import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -97,7 +99,10 @@ public class ExitWidth extends FeatureProcess {
                 if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                     OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
                     if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
-                            && A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
+                            && 
+                            (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
+                            || F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
+                            )) {
                         continue blk;
                     }
                     for (Floor floor : block.getBuilding().getFloors()) {
@@ -420,6 +425,8 @@ public class ExitWidth extends FeatureProcess {
                     minimumExitWidth = exitWidthDoor;
                 }
             }
+            
+            minimumExitWidth = minimumExitWidth.setScale(2, RoundingMode.HALF_UP);
             Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
             if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
                 Boolean valid = false;
@@ -431,12 +438,12 @@ public class ExitWidth extends FeatureProcess {
                         ? (String) typicalFloorValues.get("typicalFloors")
                         : " floor " + floor.getNumber();
                 if (valid) {
-                    setReportOutputDetails(pl, subRule, typclFloor, occupancyType, value + DcrConstants.IN_METER,
-                            minimumExitWidth + DcrConstants.IN_METER,
+                    setReportOutputDetails(pl, subRule, typclFloor, occupancyType, value + DcrConstants.IN_M,
+                            minimumExitWidth + DcrConstants.IN_M,
                             Result.Accepted.getResultVal());
                 } else {
-                    setReportOutputDetails(pl, subRule, typclFloor, occupancyType, value + DcrConstants.IN_METER,
-                            minimumExitWidth + DcrConstants.IN_METER,
+                    setReportOutputDetails(pl, subRule, typclFloor, occupancyType, value + DcrConstants.IN_M,
+                            minimumExitWidth + DcrConstants.IN_M,
                             Result.Accepted.getResultVal());
                 }
             }

@@ -422,8 +422,7 @@ public class GeneralStair extends FeatureProcess {
 
                 
 
-                if (
-                        !stairAbsent.isEmpty()) {
+                if (!stairAbsent.isEmpty()) {
                     for (String error : stairAbsent) {
                         errors.put("General Stair " + error,
                                 "General stair not defined in " + error);
@@ -431,12 +430,15 @@ public class GeneralStair extends FeatureProcess {
                     }
                 }
 
-                if (
-                         generalStairCount == 0) {
-                    errors.put("General Stair not defined in blk " + block.getNumber(),
-                            "General Stair not defined in block " + block.getNumber()
-                                    + ", it is mandatory for building with floors more than one.");
-                    plan.addErrors(errors);
+                if (generalStairCount == 0) {
+                	if(floors.size()==1) {                		
+                	}else {
+                		errors.put("General Stair not defined in blk " + block.getNumber(),
+                                "General Stair not defined in block " + block.getNumber()
+                                        + ", it is mandatory for building with floors more than one.");
+                        plan.addErrors(errors);
+                	}
+                    
                 }
             }
         }
