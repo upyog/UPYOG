@@ -38,10 +38,8 @@ public class CartDetail {
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String addType;
 	
-	@NotBlank(groups = CreateApplicationGroup.class)
 	private String location;
 	
-	@NotBlank(groups = CreateApplicationGroup.class)
 	private String faceArea;
 	
 	@JsonProperty("nightLight")

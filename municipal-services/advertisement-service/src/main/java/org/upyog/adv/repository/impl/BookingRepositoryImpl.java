@@ -198,6 +198,12 @@ public class BookingRepositoryImpl implements BookingRepository {
 			return;
 		}
 
+		// Quantity-based — ANYWHERE ads don't need timer blocking
+		if (criteriaList.stream().allMatch(c -> "ANYWHERE".equalsIgnoreCase(c.getLocation()))) {
+			log.info("Quantity-based criteria — skipping timer insertion");
+			return;
+		}
+
 		long createdTime = BookingUtil.getCurrentTimestamp();
 		String status = BookingConstants.ACTIVE;
 
@@ -542,6 +548,10 @@ public class BookingRepositoryImpl implements BookingRepository {
 
 		for (CartDetail cart : cartDetails) {
 			if (cart.getBookingDate() == null || cart.getAdvertisementId() == null) {
+				continue;
+			}
+			// Quantity-based — "ANYWHERE" boards have no specific slot to block
+			if ("ANYWHERE".equalsIgnoreCase(cart.getLocation())) {
 				continue;
 			}
 			Object[] slotParams = new Object[] {

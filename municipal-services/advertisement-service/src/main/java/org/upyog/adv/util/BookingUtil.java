@@ -50,7 +50,7 @@ public class BookingUtil {
 	
 	public static LocalDate getCurrentDate() {
 		return LocalDate.now();
-	}
+	}OpenCode
 
 	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
 		Long time = getCurrentTimestamp();
@@ -103,44 +103,73 @@ public class BookingUtil {
 	/**
 	 * Auto‑detects the applicable per‑day rate from the advertisement.
 	 * <p>
-	 * Checks which period‑amount field is populated and divides accordingly:
+	 * <b>Duration‑based tier selection</b> — picks the rate whose period best
+	 * matches the total booking length:
 	 * <ul>
-	 *   <li>{@code monthlyAmount} → divided by days in the reference month</li>
-	 *   <li>{@code weeklyAmount}  → divided by 7</li>
-	 *   <li>{@code yearlyAmount}  → divided by days in the reference year</li>
-	 *   <li>{@code biannualAmount} → divided by 182</li>
-	 *   <li>none of the above → {@code amount} used as‑is (daily rate)</li>
+	 *   <li>≥ 365 days → {@code yearlyAmount}</li>
+	 *   <li>≥ 180 days → {@code biannualAmount}</li>
+	 *   <li>≥ 28 days  → {@code monthlyAmount}</li>
+	 *   <li>≥ 7 days   → {@code weeklyAmount}</li>
 	 * </ul>
+	 * <p>
+	 * <b>Fallback</b> — when no tier matches the duration (e.g. a 3‑day booking
+	 * where only monthly and yearly rates are populated), computes the per‑day
+	 * rate for <i>every</i> populated amount and returns the <b>cheapest</b> one.
+	 * This ensures the ULB's best available rate is always used.
+	 * <p>
+	 * If no period amounts are populated at all, {@code amount} is returned as
+	 * the daily rate.
 	 *
 	 * @param adv           the advertisement from MDMS
 	 * @param referenceDate used for variable‑length periods (month / year length)
+	 * @param bookingDays   total number of booked days (cart entries)
 	 * @return per‑day amount, or null if no amount is available
 	 */
-	public static BigDecimal getPerDayRate(org.upyog.adv.web.models.Advertisements adv, LocalDate referenceDate) {
+	public static BigDecimal getPerDayRate(org.upyog.adv.web.models.Advertisements adv, LocalDate referenceDate, long bookingDays) {
 		if (adv == null) return null;
 
-		BigDecimal periodAmount;
-		int divisor;
-
-		if (adv.getMonthlyAmount() != null) {
-			periodAmount = adv.getMonthlyAmount();
-			divisor = (referenceDate != null) ? getDaysInMonth(referenceDate) : 30;
-		} else if (adv.getWeeklyAmount() != null) {
-			periodAmount = adv.getWeeklyAmount();
-			divisor = 7;
-		} else if (adv.getYearlyAmount() != null) {
-			periodAmount = adv.getYearlyAmount();
-			divisor = (referenceDate != null) ? referenceDate.lengthOfYear() : 365;
-		} else if (adv.getBiannualAmount() != null) {
-			periodAmount = adv.getBiannualAmount();
-			divisor = 182;
-		} else {
-			// No period amount — treat as daily rate
-			return adv.getAmount();
+		// ── Duration‑based tier selection ──
+		if (bookingDays >= 365 && adv.getYearlyAmount() != null) {
+			int divisor = (referenceDate != null) ? referenceDate.lengthOfYear() : 365;
+			return adv.getYearlyAmount().divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+		}
+		if (bookingDays >= 180 && adv.getBiannualAmount() != null) {
+			return adv.getBiannualAmount().divide(BigDecimal.valueOf(182), 2, RoundingMode.CEILING);
+		}
+		if (bookingDays >= 28 && adv.getMonthlyAmount() != null) {
+			int divisor = (referenceDate != null) ? getDaysInMonth(referenceDate) : 30;
+			return adv.getMonthlyAmount().divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+		}
+		if (bookingDays >= 7 && adv.getWeeklyAmount() != null) {
+			return adv.getWeeklyAmount().divide(BigDecimal.valueOf(7), 2, RoundingMode.CEILING);
 		}
 
-		if (periodAmount == null || divisor <= 0) return adv.getAmount();
-		return periodAmount.divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+		// ── Fallback: compute per‑day for ALL populated amounts, pick cheapest ──
+		BigDecimal cheapest = null;
+
+		if (adv.getMonthlyAmount() != null) {
+			int divisor = (referenceDate != null) ? getDaysInMonth(referenceDate) : 30;
+			BigDecimal rate = adv.getMonthlyAmount().divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+			cheapest = (cheapest == null || rate.compareTo(cheapest) < 0) ? rate : cheapest;
+		}
+		if (adv.getWeeklyAmount() != null) {
+			BigDecimal rate = adv.getWeeklyAmount().divide(BigDecimal.valueOf(7), 2, RoundingMode.CEILING);
+			cheapest = (cheapest == null || rate.compareTo(cheapest) < 0) ? rate : cheapest;
+		}
+		if (adv.getYearlyAmount() != null) {
+			int divisor = (referenceDate != null) ? referenceDate.lengthOfYear() : 365;
+			BigDecimal rate = adv.getYearlyAmount().divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+			cheapest = (cheapest == null || rate.compareTo(cheapest) < 0) ? rate : cheapest;
+		}
+		if (adv.getBiannualAmount() != null) {
+			BigDecimal rate = adv.getBiannualAmount().divide(BigDecimal.valueOf(182), 2, RoundingMode.CEILING);
+			cheapest = (cheapest == null || rate.compareTo(cheapest) < 0) ? rate : cheapest;
+		}
+
+		if (cheapest != null) return cheapest;
+
+		// No period amounts — treat as daily rate
+		return adv.getAmount();
 	}
 
 	public static String parseLocalDateToString(LocalDate date, String dateFormat) {

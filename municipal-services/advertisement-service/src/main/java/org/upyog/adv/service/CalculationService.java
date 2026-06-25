@@ -109,10 +109,12 @@ public class CalculationService {
 		}
 
 		// Sum per-day rate for each cart detail's actual date — auto‑detects whether
-		// to use monthly/weekly/yearly/biannual/daily rate based on which amount field is populated.
+		// to use monthly/weekly/yearly/biannual/daily rate based on which amount field
+		// is populated AND how long the total booking is.
 		// Handles multi‑month ranges correctly (e.g. June has 30 days, July has 31).
+		final long totalBookingDays = cartDetails.size();
 		BigDecimal totalTaxBaseAmount = cartDetails.stream()
-				.map(cd -> BookingUtil.getPerDayRate(matchingAdv, cd.getBookingDate()))
+				.map(cd -> BookingUtil.getPerDayRate(matchingAdv, cd.getBookingDate(), totalBookingDays))
 				.filter(amount -> amount != null)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		if (totalTaxBaseAmount.compareTo(BigDecimal.ZERO) == 0) {

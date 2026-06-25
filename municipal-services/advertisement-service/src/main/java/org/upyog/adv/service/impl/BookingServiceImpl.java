@@ -234,6 +234,22 @@ public class BookingServiceImpl implements BookingService {
 	public List<AdvertisementSlotAvailabilityDetail> checkAdvertisementSlotAvailability(
 			AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) {
 
+		// Quantity-based — "ANYWHERE" location means no specific slot, always available
+		if ("ANYWHERE".equalsIgnoreCase(criteria.getLocation())) {
+			List<AdvertisementSlotAvailabilityDetail> result = new ArrayList<>();
+			AdvertisementSlotAvailabilityDetail detail = new AdvertisementSlotAvailabilityDetail();
+			detail.setSlotStaus("AVAILABLE");
+			detail.setBookingDate(criteria.getBookingStartDate());
+			detail.setAdvertisementId(criteria.getAdvertisementId());
+			detail.setAddType(criteria.getAddType());
+			detail.setLocation(criteria.getLocation());
+			detail.setFaceArea(criteria.getFaceArea());
+			detail.setNightLight(criteria.getNightLight());
+			result.add(detail);
+			log.info("Quantity-based ad {} — always available, skipping slot check", criteria.getAdvertisementId());
+			return result;
+		}
+
 		List<AdvertisementSlotAvailabilityDetail> availabilityDetails = bookingRepository
 				.getAdvertisementSlotAvailability(criteria);
 		log.info("Fetched availability details: " + availabilityDetails);
@@ -269,10 +285,17 @@ public class BookingServiceImpl implements BookingService {
 			bookingRepository.deleteDataFromTimerAndDraft(requestInfo.getUserInfo().getUuid(),
 					criteriaList.get(0).getDraftId(), criteriaList.get(0).getBookingId());
 		}
+
+		boolean isQuantityBased = criteriaList.stream()
+				.allMatch(c -> "ANYWHERE".equalsIgnoreCase(c.getLocation()));
+
 		if (isTimerRequiredForAnyCriteria && !slotBookedFlag) {
-			// Insert the timer for all criteria at once
-			paymentTimerService.insertBookingIdForTimer(criteriaList, requestInfo, allAvailabilityDetails);
-			log.info("Inserted booking ID for timer for all criteria.");
+			if (isQuantityBased) {
+				log.info("Quantity-based booking — skipping timer insertion. Multiple users can book concurrently.");
+			} else {
+				paymentTimerService.insertBookingIdForTimer(criteriaList, requestInfo, allAvailabilityDetails);
+				log.info("Inserted booking ID for timer for all criteria.");
+			}
 		}
 
 		return allAvailabilityDetails;
