@@ -854,6 +854,18 @@ def chat():
                 "options": result.get("options", []),
                 "field": result.get("field", "")
             })
+        #AI agent CHB
+        # GATE 1B: Check if booking flow is active for this session
+        booking_session = get_booking_session(session_id)
+        if booking_session.get("active"):
+            result = handle_booking_turn(session_id, user_input, user_language)
+            audio_output = text_to_speech(result["message"], result["lang"])
+            return jsonify({
+                "response": result["message"],
+                "lang": result["lang"],
+                "mode": "booking_active",
+                "audio": audio_output
+            })
 
         # ===== INTENT CLASSIFICATION FLOW =====
         # Run intent classifier FIRST - before any FAISS filtering
@@ -909,6 +921,51 @@ def chat():
                 # User asked something else - drop offer, answer their question
                 grievance_sessions[session_id] = {"active": False, "offer_pending": False}
                 # Fall through to PATH C
+        #AI agent path
+        # Check if we have an active booking offer pending
+        b_offer = get_booking_session(session_id)
+
+        if b_offer.get("offer_pending"):
+            user_input_clean = user_input.strip().lower().rstrip('.!?')
+            is_yes = user_input_clean in ["yes", "y", "yeah", "yes please", "sure", "ok", "okay"]
+            is_no = user_input_clean in ["no", "n", "no thanks", "nope", "not now", "cancel"]
+
+            if is_yes:
+                intent = {"intent": "booking_confirm"}
+            elif is_no:
+                intent = {"intent": "booking_cancel"}
+            else:
+                intent = classify_intent(user_input, history, user_language)
+
+            if intent["intent"] == "booking_confirm":
+                # User said YES - start booking workflow in Agent Service
+                b_offer["active"] = True
+                b_offer["offer_pending"] = False
+                result = handle_booking_turn(session_id, "I want to start booking a community hall.", user_language)
+                audio_output = text_to_speech(result["message"], result["lang"])
+                return jsonify({
+                    "response": result["message"],
+                    "lang": user_language,
+                    "mode": "booking_active",
+                    "audio": audio_output
+                })
+
+            elif intent["intent"] == "booking_cancel":
+                # User said NO - clear offer, continue normally
+                b_offer["active"] = False
+                b_offer["offer_pending"] = False
+                msg = "बुकिंग प्रक्रिया रद्द कर दी गई है।" if user_language == 'hi' else "Booking process has been cancelled."
+                audio_output = text_to_speech(msg, user_language)
+                return jsonify({
+                    "response": msg,
+                    "lang": user_language,
+                    "mode": "faq",
+                    "audio": audio_output
+                })
+
+            else:
+                b_offer["offer_pending"] = False
+                # Fall through to PATH C
 
         # PATH C: Normal flow - classify intent first
         intent = classify_intent(user_input, history, user_language)
@@ -933,6 +990,23 @@ def chat():
                 "lang": user_language,
                 "mode": "grievance_offered",
                 "detected_emotion": intent.get("emotion"),
+                "audio": audio_output
+            })
+        #AI agent CHB intent
+        elif intent["intent"] == "booking_candidate":
+            # User wants to book - OFFER booking (don't auto-start)
+            booking_session = get_booking_session(session_id)
+            booking_session["offer_pending"] = True
+            offer_message = (
+                "मुझे लगता है कि आप कम्युनिटी हॉल बुक करना चाहते हैं। क्या आप बुकिंग प्रक्रिया शुरू करना चाहेंगे? (हाँ/नहीं)"
+                if user_language == 'hi'
+                else "It seems you want to book a community hall. Would you like to start the booking process? (yes/no)"
+            )
+            audio_output = text_to_speech(offer_message, user_language)
+            return jsonify({
+                "response": offer_message,
+                "lang": user_language,
+                "mode": "booking_offered",
                 "audio": audio_output
             })
 
@@ -1050,7 +1124,7 @@ def classify_intent(query: str, history: list, lang: str) -> dict:
     """
     Classifies user intent using a fast LLM call.
     Returns: {
-        "intent": "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel",
+        "intent": "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel" | "booking_candidate" | "booking_confirm" | "booking_cancel",
         "reasoning": "brief explanation",
         "service": "which UPYOG service is involved, if any",
         "emotion": "neutral" | "frustrated" | "stuck" | "urgent"
@@ -1142,6 +1216,27 @@ Examples: no, nahi, rehne do, chhodo, cancel,
    "help nahi kar rahe", "kuch karo"
    → grievance_candidate (read with conversation context)
 
+"booking_candidate" — User wants to BOOK or RESERVE a resource (e.g. community hall, venue, hoarding, advertisement space).
+Examples:
+→ "I want to book the community hall near MG Road"
+→ "community center book karna hai"
+→ "hall booking process"
+→ "book a hall"
+→ "advertisement hoarding booking"
+
+"booking_confirm" — User is saying YES to the bot's offer to book a resource.
+Only classify this if the PREVIOUS bot message was asking to start the booking process (e.g., "Would you like to start the booking process?").
+Examples: yes, haan, theek hai, please do, proceed, confirm.
+
+"booking_cancel" — User says NO to the booking offer.
+Only classify this if the PREVIOUS bot message was asking to start the booking process.
+Examples: no, nahi, cancel, rehne do, stop, don't start.
+
+━━━ IMPORTANT RULES ━━━
+1. Look at the last message and context. If the user says "yes" or "haan":
+   - If the previous turn offered a grievance -> "grievance_confirm"
+   - If the previous turn offered a booking -> "booking_confirm"
+
 ━━━ CONVERSATION CONTEXT (last 3 turns) ━━━
 {history_text}
 
@@ -1151,7 +1246,7 @@ Language: {lang}
 
 Respond ONLY with this JSON, no other text:
 {{
-  "intent": "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel",
+  "intent": "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel" | "booking_candidate" | "booking_confirm" | "booking_cancel",
   "reasoning": "one sentence why",
   "service": "specific UPYOG service name or null",
   "emotion": "neutral" | "frustrated" | "stuck" | "urgent"
@@ -1172,7 +1267,7 @@ Respond ONLY with this JSON, no other text:
         raw = raw.replace("```json", "").replace("```", "").strip()
         result = json.loads(raw)
 
-        valid_intents = ["faq", "grievance_candidate", "grievance_confirm", "grievance_cancel"]
+        valid_intents = ["faq", "grievance_candidate", "grievance_confirm", "grievance_cancel", "booking_candidate", "booking_confirm", "booking_cancel"]
         if result.get("intent") not in valid_intents:
             result["intent"] = "faq"
 
@@ -1229,6 +1324,62 @@ GRIEVANCE_HEADERS = {"Content-Type": "application/x-www-form-urlencoded", "Autho
 
 # Grievance session storage
 grievance_sessions = {}
+
+# Booking session storage and helper functions to proxy to Agent Service
+booking_sessions = {}
+
+def get_booking_session(session_id):
+    """Get or create booking session state for forwarding."""
+    if session_id not in booking_sessions:
+        booking_sessions[session_id] = {
+            "active": False,
+            "offer_pending": False
+        }
+    return booking_sessions[session_id]
+
+def handle_booking_turn(session_id, user_input, lang):
+    """Proxy conversation messages directly to the FastAPI Agent Service."""
+    url = "http://127.0.0.1:8080/chat"
+    
+    # Extract phone number from session_id if available
+    mobile = None
+    if session_id.startswith("user_") or session_id.startswith("user-"):
+        parts = session_id.replace("-", "_").split("_")
+        if len(parts) > 1 and parts[1].isdigit() and len(parts[1]) == 10:
+            mobile = parts[1]
+            
+    payload = {
+        "message": user_input,
+        "session_id": session_id,
+        "tenant_id": "pb.amritsar",
+        "workflow": "chb"
+    }
+    
+    headers = {"Content-Type": "application/json"}
+    if mobile:
+        payload["token"] = mobile
+        headers["Authorization"] = f"Bearer {mobile}"
+        
+    try:
+        res = requests.post(url, json=payload, headers=headers, timeout=30)
+        data = res.json()
+        response_text = data.get("response", "No response from booking agent.")
+        status = data.get("status", "active")
+        
+        # Deactivate session if booking is completed or confirmed (via reference id)
+        if status == "completed" or "reference id:" in response_text.lower() or "booking reference" in response_text.lower():
+            sess = get_booking_session(session_id)
+            sess["active"] = False
+            
+        return {"message": response_text, "lang": lang, "status": status}
+        
+    except Exception as e:
+        logger.error(f"Error communicating with Upyog Agent Service: {e}")
+        return {
+            "message": "Sorry, I am having trouble connecting to the booking agent service. Please verify the service is running on port 8080.",
+            "lang": lang,
+            "status": "error"
+        }
 
 def get_grievance_session(session_id):
     """Get or create grievance session for a session ID."""
@@ -1606,10 +1757,51 @@ def handle_grievance_turn(session_id, user_input, lang):
     # Step handlers
     if step == "START":
         session["active"] = True
-        session["step"] = "AWAITING_PHONE"
-        if lang == 'hi':
-            return {"type": "collect", "message": "शिकायत दर्ज करने के लिए पहले आपका मोबाइल नंबर चाहिए। कृपया अपना 10 अंकों का मोबाइल नंबर बताएं।", "lang": lang, "field": "mobile", "input_type": "number", "options": []}
-        return {"type": "collect", "message": "To register a complaint, I need your mobile number first. Please tell me your 10-digit mobile number.", "lang": lang, "field": "mobile", "input_type": "number", "options": []}
+        
+        # Check if user is logged in via phone number in session_id
+        mobile = None
+        if session_id.startswith("user_"):
+            parts = session_id.split("_")
+            if len(parts) > 1 and parts[1].isdigit() and len(parts[1]) == 10:
+                mobile = parts[1]
+                
+        if mobile:
+            # Bypass phone collection and OTP verification
+            session["data"]["mobile"] = mobile
+            session["data"]["auth_token"] = mobile
+            session["data"]["user_info"] = {
+                "id": None,
+                "userName": mobile,
+                "name": "Citizen",
+                "type": "CITIZEN",
+                "mobileNumber": mobile,
+                "emailId": "",
+                "roles": [{"id": None, "name": "Citizen", "code": "CITIZEN", "tenantId": "pg"}],
+                "tenantId": "pg",
+                "uuid": mobile
+            }
+            
+            # Fetch categories directly
+            categories = fetch_categories(session["data"]["auth_token"])
+            session["categories"] = categories
+
+            if not categories:
+                if lang == 'hi':
+                    return {"type": "error", "message": "श्रेणियां लोड नहीं हो सकीं। कृपया कुछ देर बाद पुनः प्रयास करें।", "lang": lang}
+                return {"type": "error", "message": "Could not load categories. Please try again later.", "lang": lang}
+
+            cat_list = list(categories.keys())
+            session["step"] = "AWAITING_CATEGORY"
+            session["data"]["category_group"] = None
+
+            if lang == 'hi':
+                return {"type": "collect", "message": f"श्रेणी चुनें: {', '.join(cat_list)}", "lang": lang, "field": "category", "input_type": "choice", "options": cat_list}
+            return {"type": "collect", "message": f"Please choose a category: {', '.join(cat_list)}", "lang": lang, "field": "category", "input_type": "choice", "options": cat_list}
+        else:
+            session["step"] = "AWAITING_PHONE"
+            if lang == 'hi':
+                return {"type": "collect", "message": "शिकायत दर्ज करने के लिए पहले आपका मोबाइल नंबर चाहिए। कृपया अपना 10 अंकों का मोबाइल नंबर बताएं।", "lang": lang, "field": "mobile", "input_type": "number", "options": []}
+            return {"type": "collect", "message": "To register a complaint, I need your mobile number first. Please tell me your 10-digit mobile number.", "lang": lang, "field": "mobile", "input_type": "number", "options": []}
 
     elif step == "AWAITING_PHONE":
         normalized_value = normalize_field("mobile", user_input)
