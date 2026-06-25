@@ -1,7 +1,6 @@
 package org.upyog.adv.workflow;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.workflow.ProcessInstance;
 import org.upyog.adv.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.adv.web.models.workflow.ProcessInstanceResponse;
-import org.upyog.adv.web.models.workflow.ProcessInstanceSearchRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -166,37 +165,42 @@ public class WorkflowIntegrator {
   }
 
   /**
-   * Fetches workflow process instances for the given business IDs (booking
-   * numbers) from egov-workflow-v2 and returns them grouped by businessId.
+   * Fetches workflow process instances for the given business IDs from
+   * egov-workflow-v2 using a GET with query parameters.
    *
-   * @param requestInfo  RequestInfo for the API call
+   * @param requestInfo  RequestInfo (passed as header for auth context)
+   * @param tenantId     tenant id for query filter
    * @param bookingNos   list of booking numbers (businessIds)
-   * @return map of businessId → latest ProcessInstance (may be empty if
-   *         workflow call fails or returns nothing)
+   * @return map of businessId → latest ProcessInstance (may be empty)
    */
-  public Map<String, ProcessInstance> fetchProcessInstances(RequestInfo requestInfo, List<String> bookingNos) {
+  public Map<String, ProcessInstance> fetchProcessInstances(RequestInfo requestInfo, String tenantId, List<String> bookingNos) {
     Map<String, ProcessInstance> result = new java.util.LinkedHashMap<>();
     if (bookingNos == null || bookingNos.isEmpty()) return result;
 
     try {
-      ProcessInstanceSearchRequest searchBody = ProcessInstanceSearchRequest.builder()
-          .requestInfo(requestInfo)
-          .businessIds(bookingNos)
-          .build();
+      String url = UriComponentsBuilder.fromHttpUrl(workflowHost + searchPath)
+          .queryParam("tenantId", tenantId)
+          .queryParam("businessIds", String.join(",", bookingNos))
+          .queryParam("latest", "true")
+          .toUriString();
+
+      log.info("Fetching workflow process instances: {}", url);
+
+      // Send RequestInfo in JSON body, filters as query params
+      Map<String, Object> requestBody = new java.util.HashMap<>();
+      requestBody.put("RequestInfo", requestInfo);
 
       HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.APPLICATION_JSON);
-      HttpEntity<ProcessInstanceSearchRequest> entity = new HttpEntity<>(searchBody, headers);
+      HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-      URI uri = URI.create(workflowHost + searchPath);
-      ResponseEntity<ProcessInstanceResponse> response = restTemplate.exchange(uri, HttpMethod.POST, entity,
+      ResponseEntity<ProcessInstanceResponse> response = restTemplate.exchange(url, HttpMethod.POST, entity,
           ProcessInstanceResponse.class);
 
       ProcessInstanceResponse responseBody = response.getBody();
       if (responseBody != null && responseBody.getProcessInstances() != null) {
         for (ProcessInstance pi : responseBody.getProcessInstances()) {
           if (pi.getBusinessId() != null) {
-            // Only keep the latest (last in response) per businessId
             result.put(pi.getBusinessId(), pi);
           }
         }

@@ -217,7 +217,8 @@ public class BookingServiceImpl implements BookingService {
 				.collect(Collectors.toList());
 		if (!bookingNos.isEmpty()) {
 			try {
-				Map<String, ProcessInstance> wfMap = workflowIntegrator.fetchProcessInstances(info, bookingNos);
+				Map<String, ProcessInstance> wfMap = workflowIntegrator.fetchProcessInstances(info, 
+							bookingDetails.get(0).getTenantId(), bookingNos);
 				for (BookingDetail bd : bookingDetails) {
 					ProcessInstance pi = wfMap.get(bd.getBookingNo());
 					if (pi != null) {
