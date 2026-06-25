@@ -926,10 +926,16 @@ public class EstimationService {
                 rebate = rebate.add(decimalEstimate.getEstimateAmount());
         }
 
-		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption);
+        taxAmt = taxAmt.setScale(0, BigDecimal.ROUND_CEILING);
+        penalty = penalty.setScale(0, BigDecimal.ROUND_CEILING);
+        exemption = exemption.setScale(0, BigDecimal.ROUND_CEILING);
+        rebate = rebate.setScale(0, BigDecimal.ROUND_CEILING);
+        
+		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).setScale(0, BigDecimal.ROUND_CEILING);
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
-		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
+		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false)
+				.setScale(0, BigDecimal.ROUND_CEILING);
 		log.info("inside getCalculation line number 892" +collectedAmtForOldDemand.toString());
 
 if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
