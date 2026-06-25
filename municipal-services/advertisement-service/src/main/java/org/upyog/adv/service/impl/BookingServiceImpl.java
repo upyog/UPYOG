@@ -221,9 +221,20 @@ public class BookingServiceImpl implements BookingService {
 				for (BookingDetail bd : bookingDetails) {
 					ProcessInstance pi = wfMap.get(bd.getBookingNo());
 					if (pi != null) {
+						// Map workflow documents back to DocumentDetail for response
+						List<DocumentDetail> wfDocs = null;
+						if (pi.getDocuments() != null && !pi.getDocuments().isEmpty()) {
+							wfDocs = pi.getDocuments().stream()
+									.map(d -> DocumentDetail.builder()
+											.fileStoreId(d.getFileStoreId())
+											.documentType(d.getDocumentType())
+											.build())
+									.collect(Collectors.toList());
+						}
 						Workflow wf = Workflow.builder()
 								.action(pi.getAction())
 								.comment(pi.getComment())
+								.documents(wfDocs)
 								.build();
 						bd.setWorkflow(wf);
 					}
