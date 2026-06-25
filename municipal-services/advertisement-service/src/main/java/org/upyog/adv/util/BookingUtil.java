@@ -50,7 +50,7 @@ public class BookingUtil {
 	
 	public static LocalDate getCurrentDate() {
 		return LocalDate.now();
-	}OpenCode
+	}
 
 	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
 		Long time = getCurrentTimestamp();
