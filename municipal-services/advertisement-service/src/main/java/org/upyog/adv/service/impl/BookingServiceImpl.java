@@ -30,6 +30,7 @@ import org.upyog.adv.web.models.*;
 import org.upyog.adv.web.models.billing.PaymentDetail;
 import org.upyog.adv.workflow.WorkflowIntegrator;
 import org.upyog.adv.web.models.workflow.Workflow;
+import org.upyog.adv.web.models.workflow.ProcessInstance;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -208,7 +209,32 @@ public class BookingServiceImpl implements BookingService {
 		enrichCartDetailsWithAdvertisementInfo(bookingDetail, info);
 	}
 
-		// Fetch remaining timer values for the booking details
+	// Enrich search results with workflow data (action, comment, documents)
+	if (bookingDetails != null && !bookingDetails.isEmpty() && workflowIntegrator != null) {
+		List<String> bookingNos = bookingDetails.stream()
+				.map(BookingDetail::getBookingNo)
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
+		if (!bookingNos.isEmpty()) {
+			try {
+				Map<String, ProcessInstance> wfMap = workflowIntegrator.fetchProcessInstances(info, bookingNos);
+				for (BookingDetail bd : bookingDetails) {
+					ProcessInstance pi = wfMap.get(bd.getBookingNo());
+					if (pi != null) {
+						Workflow wf = Workflow.builder()
+								.action(pi.getAction())
+								.comment(pi.getComment())
+								.build();
+						bd.setWorkflow(wf);
+					}
+				}
+			} catch (Exception ex) {
+				log.warn("Failed to enrich booking search results with workflow data", ex);
+			}
+		}
+	}
+
+	// Fetch remaining timer values for the booking details
 		// paymentTimerService.getRemainingTimerValue(bookingDetails);
 
 		if (CollectionUtils.isEmpty(bookingDetails)) {
