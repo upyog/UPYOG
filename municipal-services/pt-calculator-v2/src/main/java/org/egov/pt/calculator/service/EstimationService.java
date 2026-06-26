@@ -2141,9 +2141,9 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 				}
 			}
 
-			PT_TAX = Math.round(PT_TAX * 100) / 100.0;
-			exemption = Math.round(exemption * 100) / 100.0;
-			unit_usage_exemption = Math.round(unit_usage_exemption * 100) / 100.0;
+			PT_TAX = Math.round((PT_TAX * 100) / 100.0);
+			exemption = Math.round((exemption * 100) / 100.0);
+			unit_usage_exemption = Math.round((unit_usage_exemption * 100) / 100.0);
 			PT_TAX_NET = PT_TAX - exemption - unit_usage_exemption;
 
 			double penality = PT_TAX_NET * penalityRate / 100.0;
@@ -2152,18 +2152,18 @@ if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 			long days = ChronoUnit.DAYS.between(LocalDate.of(2014, 4, 1), currentDate);
 			double totalInterest = interestPerDay * days;
 
-			penality = Math.round(penality * 100) / 100.0;
-			totalInterest = Math.round(totalInterest * 100) / 100.0;
+			penality = Math.round((penality * 100) / 100.0);
+			totalInterest = Math.round((totalInterest * 100) / 100.0);
 
 			double rebatable_amount = PT_TAX + penality + totalInterest - unit_usage_exemption - exemption;
 			double additional_rebate = new BigDecimal(rebatable_amount * additionalRebateRate / 100.0)
-					.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+					.setScale(0, BigDecimal.ROUND_CEILING).doubleValue();
 
 			double tax_payable = rebatable_amount + FireCess - additional_rebate;
 			tax_payable = Math.round(tax_payable * 100) / 100.0;
 			double tax_payable_roundoff = Math.round(tax_payable);
-			double round_off = Math.round((tax_payable_roundoff - tax_payable) * 100.0) / 100.0;
-			FireCess=Math.round(FireCess * 100) / 100.0;
+			double round_off = Math.round(((tax_payable_roundoff - tax_payable) * 100.0) / 100.0);
+			FireCess=Math.round((FireCess * 100) / 100.0);
 			double totalTax = tax_payable_roundoff;
 
 			taxHeadEstimates.add(buildTaxHead("PT_TAX", PT_TAX));
