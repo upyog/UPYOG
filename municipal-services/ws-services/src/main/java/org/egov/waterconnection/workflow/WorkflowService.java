@@ -99,7 +99,7 @@ public class WorkflowService {
 			if (state.getApplicationStatus() != null && state.getApplicationStatus().equalsIgnoreCase(stateCode))
 				return state.getIsStateUpdatable();
 		}
-		return null;
+		return Boolean.FALSE;
 	}
 
 	/**
