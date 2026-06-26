@@ -9,6 +9,7 @@ import java.util.Comparator;
 import org.egov.custom.mapper.billing.impl.Bill;
 import org.egov.custom.mapper.billing.impl.BillRowMapper;
 import org.egov.custom.mapper.billing.impl.IntegratedBillRowMapper;
+import org.egov.custom.mapper.billing.impl.MeterReadingRowMapper;
 import org.egov.custom.mapper.billing.impl.SaskiSearchRowMapper;
 import org.egov.search.model.Definition;
 import org.egov.search.model.PropertyBasedBill;
@@ -47,6 +48,9 @@ public class SearchRepository {
 	private BillRowMapper rowMapper;
 	
 	@Autowired
+	private MeterReadingRowMapper meterReadingRowMapper;
+	
+	@Autowired
 	private SaskiSearchRowMapper saskiMapper;
 	
 	@Autowired
@@ -76,6 +80,19 @@ public class SearchRepository {
 
 	    try {
 	        log.info("Final Query: " + query);
+	        
+
+	        String rowMapperKey = searchDefinition.getRowMapperKey();
+
+	        if ("meterreadingsearch".equalsIgnoreCase(rowMapperKey)) {
+	            log.info("Using MeterReadingRowMapper");
+
+	            return namedParameterJdbcTemplate.query(
+	                    query,
+	                    preparedStatementValues,
+	                    meterReadingRowMapper
+	            );
+	        }
 
 	        List<PropertyBasedBill> integratedResult = null;
 	        List<Bill> normalResult = null;
