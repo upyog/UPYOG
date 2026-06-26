@@ -56,7 +56,12 @@ public class BillGeneratorDao {
 		if (query == null)
 			return Collections.emptyList();
 		log.debug("Prepared Statement" + preparedStatement.toString());
-		return jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
+
+        List<BillScheduler> billSchedulers =
+                jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
+
+        billSchedulers.forEach(bs -> bs.setIsBatch(criteria.getBatch() != null));
+        return billSchedulers;
 	}
 	
 	
