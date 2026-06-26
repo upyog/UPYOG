@@ -135,20 +135,20 @@ public class BookingValidator {
 
         // Check if booking dates haven't started yet (business rule) can comment it if no need
 
-		List<CartDetail> cartDetails = bookingRequest.getBookingApplication().getCartDetails();
-		if (cartDetails != null && !cartDetails.isEmpty()) {
-			LocalDate today = BookingUtil.getCurrentDate();
-			LocalDate minBookingDate = cartDetails.stream()
-				.map(CartDetail::getBookingDate)
-				.filter(date -> date != null)
-				.min(LocalDate::compareTo)
-				.orElse(null);
+		// List<CartDetail> cartDetails = bookingRequest.getBookingApplication().getCartDetails();
+		// if (cartDetails != null && !cartDetails.isEmpty()) {
+		// 	LocalDate today = BookingUtil.getCurrentDate();
+		// 	LocalDate minBookingDate = cartDetails.stream()
+		// 		.map(CartDetail::getBookingDate)
+		// 		.filter(date -> date != null)
+		// 		.min(LocalDate::compareTo)
+		// 		.orElse(null);
 
-			if (minBookingDate != null && today.isAfter(minBookingDate)) {
-				throw new CustomException("INVALID_CANCELLATION",
-					"Cannot cancel booking after booking dates have started");
-			}
-		}
+		// 	if (minBookingDate != null && today.isAfter(minBookingDate)) {
+		// 		throw new CustomException("INVALID_CANCELLATION",
+		// 			"Cannot cancel booking after booking dates have started");
+		// 	}
+		// }
 
 
         log.info("Cancellation validation passed for booking no: " + bookingRequest.getBookingApplication().getBookingNo());
