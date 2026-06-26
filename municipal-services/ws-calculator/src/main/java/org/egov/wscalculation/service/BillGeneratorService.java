@@ -1,7 +1,6 @@
 package org.egov.wscalculation.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,104 +25,101 @@ import org.egov.wscalculation.constants.WSCalculationConstant;
 @Slf4j
 public class BillGeneratorService {
 
-    @Autowired
-    private EnrichmentService enrichmentService;
+	@Autowired
+	private EnrichmentService enrichmentService;
 
-    @Autowired
-    private BillGeneratorDao billGeneratorDao;
+	@Autowired
+	private BillGeneratorDao billGeneratorDao;
+	
+	@Autowired
+	private WSCalculationDao waterCalculatorDao;
+	
+	@Autowired
+	private BillGenerationValidator billGenerationValidator;
+	
 
-    @Autowired
-    private WSCalculationDao waterCalculatorDao;
+	@Autowired
+	private BillGeneratorService billGeneratorService;
 
-    @Autowired
-    private BillGenerationValidator billGenerationValidator;
+	public List<BillScheduler> saveBillGenerationDetails(BillGenerationReq billRequest) {
+		List<BillScheduler> billSchedulers = new ArrayList<>();
+		AuditDetails auditDetails = enrichmentService
+				.getAuditDetails(billRequest.getRequestInfo().getUserInfo().getUuid(), true);
 
+		billRequest.getBillScheduler().setId(UUID.randomUUID().toString());
+		billRequest.getBillScheduler().setAuditDetails(auditDetails);
+		billRequest.getBillScheduler().setStatus(BillStatus.INITIATED);
+		billRequest.getBillScheduler().setTransactionType(WSCalculationConstant.WS_BILL_SCHEDULER_TRANSACTION);
+		
+		billGeneratorDao.saveBillGenertaionDetails(billRequest);
+		billSchedulers.add(billRequest.getBillScheduler());
+		return billSchedulers;
+	}
 
-    @Autowired
-    private BillGeneratorService billGeneratorService;
+	public List<BillScheduler> getBillGenerationDetails(BillGenerationSearchCriteria criteria) {
 
-    public List<BillScheduler> saveBillGenerationDetails(BillGenerationReq billRequest) {
-        List<BillScheduler> billSchedulers = new ArrayList<>();
-        AuditDetails auditDetails = enrichmentService
-                .getAuditDetails(billRequest.getRequestInfo().getUserInfo().getUuid(), true);
+		return billGeneratorDao.getBillGenerationDetails(criteria);
+	}
+	
+	
+	public List<BillScheduler> getBillGenerationGroup(BillGenerationSearchCriteria criteria) {
 
-        billRequest.getBillScheduler().setId(UUID.randomUUID().toString());
-        billRequest.getBillScheduler().setAuditDetails(auditDetails);
-        billRequest.getBillScheduler().setStatus(BillStatus.INITIATED);
-        billRequest.getBillScheduler().setTransactionType(WSCalculationConstant.WS_BILL_SCHEDULER_TRANSACTION);
+		return billGeneratorDao.getBillGenerationGroup(criteria);
+	}
+	
+	public List<BillScheduler> bulkbillgeneration(BillGenerationReq billGenerationReq) {
 
-        billGeneratorDao.saveBillGenertaionDetails(billRequest);
-        billSchedulers.add(billRequest.getBillScheduler());
-        return billSchedulers;
-    }
+		List<BillScheduler> billDetails = new ArrayList<BillScheduler>();
+	       
+    	if(billGenerationReq.getBillScheduler().getIsBatch())
+    	{		
+		List<String> listOfLocalities = waterCalculatorDao.getLocalityList(billGenerationReq.getBillScheduler().getTenantId(),billGenerationReq.getBillScheduler().getLocality());
+		for(String localityName : listOfLocalities)
+		{		
+			billGenerationReq.getBillScheduler().setLocality(localityName);			
+			boolean localityStatus = billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
+			if(!localityStatus) 
+			{
+			billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+			}
+			
+		}
+    	}
+        else if (billGenerationReq.getBillScheduler().getGroup() != null && !billGenerationReq.getBillScheduler().getGroup().isEmpty()) 
 
-    public List<BillScheduler> getBillGenerationDetails(BillGenerationSearchCriteria criteria) {
+		{
+			
+			
+		
+				List<String> temp=billGenerationReq.getBillScheduler().getGroup();
+				billGenerationReq.getBillScheduler().setGroup(null);
+				for(String grup:temp)
+				{
+					billGenerationReq.getBillScheduler().setGrup(grup);
+					 Boolean Check=billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
+					
+					 if (!Check)
+						 billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+					 else 
+						 log.info("Bills Are Already In Initieated Or InProgress For Group--> "+ billGenerationReq.getBillScheduler().getGrup());
+				}
+			
+			
 
-        List<BillScheduler> billSchedulers = billGeneratorDao.getBillGenerationDetails(criteria);
-        return billSchedulers != null && !billSchedulers.isEmpty()
-                ? Collections.singletonList(billSchedulers.get(0)) : Collections.emptyList();
-
-    }
-
-
-    public List<BillScheduler> getBillGenerationGroup(BillGenerationSearchCriteria criteria) {
-
-        return billGeneratorDao.getBillGenerationGroup(criteria);
-    }
-
-    public List<BillScheduler> bulkbillgeneration(BillGenerationReq billGenerationReq) {
-
-        List<BillScheduler> billDetails = new ArrayList<BillScheduler>();
-
-        if(billGenerationReq.getBillScheduler().getIsBatch())
-        {
-            List<String> listOfLocalities = waterCalculatorDao.getLocalityList(billGenerationReq.getBillScheduler().getTenantId(),billGenerationReq.getBillScheduler().getLocality());
-            for(String localityName : listOfLocalities)
-            {
-                billGenerationReq.getBillScheduler().setLocality(localityName);
-                boolean localityStatus = billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-                if(!localityStatus)
-                {
-                    billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-                }
-
-            }
-        }
-        else if (billGenerationReq.getBillScheduler().getGroup() != null && !billGenerationReq.getBillScheduler().getGroup().isEmpty())
-
-        {
-
-
-
-            List<String> temp=billGenerationReq.getBillScheduler().getGroup();
-            billGenerationReq.getBillScheduler().setGroup(null);
-            for(String grup:temp)
-            {
-                billGenerationReq.getBillScheduler().setGrup(grup);
-                Boolean Check=billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-
-                if (!Check)
-                    billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-                else
-                    log.info("Bills Are Already In Initieated Or InProgress For Group--> "+ billGenerationReq.getBillScheduler().getGrup());
-            }
-
-
-
-        }
-
-        else {
-            billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-            billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-            // billDetails1.addAll(billDetails);
-        }
-
-        return billDetails;
-    }
-
-
-
-
-
-
+		}
+    	
+    	else {
+				billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
+				billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+			   // billDetails1.addAll(billDetails);
+	}
+    	
+    	return billDetails;
+	}
+		
+	
+	
+	
+	
+	
 }
