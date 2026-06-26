@@ -1,6 +1,7 @@
 package org.egov.wscalculation.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,7 +59,9 @@ public class BillGeneratorService {
 
 	public List<BillScheduler> getBillGenerationDetails(BillGenerationSearchCriteria criteria) {
 
-		return billGeneratorDao.getBillGenerationDetails(criteria);
+        List<BillScheduler> billSchedulers = billGeneratorDao.getBillGenerationDetails(criteria);
+        return billSchedulers != null && !billSchedulers.isEmpty()
+                ? Collections.singletonList(billSchedulers.get(0)) : Collections.emptyList();
 	}
 	
 	
