@@ -157,8 +157,8 @@ public class EDCRService {
                     }
                     additionalDetails.put(BPAConstants.PERMIT_NO, permitNumber.get(0));
                 }
-		List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area");
-		List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
+		List<Double> plotAreas = convertObjectToDoubleList(context.read("edcrDetail.*.planDetail.plot.area"));
+		List<Double> buildingHeights = convertObjectToDoubleList(context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight"));
 
 		if (CollectionUtils.isEmpty(edcrStatus) || !edcrStatus.get(0).equalsIgnoreCase("Accepted")) {
 			throw new CustomException(BPAErrorConstants.INVALID_EDCR_NUMBER, "The EDCR Number is not Accepted " + edcrNo);
@@ -313,8 +313,8 @@ public class EDCRService {
 			List<String> subOccupancyTypes = context
 					.read("edcrDetail.*.planDetail.virtualBuilding.occupancyTypes.*.subtype.code");
 			
-			List<Double> plotAreas = context.read("edcrDetail.*.planDetail.plot.area");
-			List<Double> buildingHeights = context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight");
+			List<Double> plotAreas = convertObjectToDoubleList(context.read("edcrDetail.*.planDetail.plot.area"));
+			List<Double> buildingHeights = convertObjectToDoubleList(context.read("edcrDetail.*.planDetail.blocks.*.building.buildingHeight"));
 			
 			Boolean isSelfCertification = (Boolean)((Map<String, Object>)bpa.getAdditionalDetails()).get("isSelfCertification");
 			String ocType = OccupancyTypes.get(0);
@@ -390,6 +390,10 @@ public class EDCRService {
 		} catch (ServiceCallException se) {
 			throw new CustomException(BPAErrorConstants.EDCR_ERROR, " Error while updateing BPA Details in EDCR.");
 		}
+	}
+	
+	private List<Double> convertObjectToDoubleList(List<Object> list) {
+		return list.stream().map(obj -> new Double(obj.toString())).collect(Collectors.toList());
 	}
 
 }
