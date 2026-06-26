@@ -875,6 +875,8 @@ public class EstimationService {
 		BigDecimal exemption = BigDecimal.ZERO;
 		BigDecimal rebate = BigDecimal.ZERO;
 		BigDecimal ptTax = BigDecimal.ZERO;
+		
+		estimates.stream().forEach(estimate -> estimate.setEstimateAmount(estimate.getEstimateAmount().setScale(0, RoundingMode.CEILING)));
 
 		for (TaxHeadEstimate estimate : estimates) {
 
@@ -926,12 +928,12 @@ public class EstimationService {
                 rebate = rebate.add(decimalEstimate.getEstimateAmount());
         }
 
-        taxAmt = taxAmt.setScale(0, BigDecimal.ROUND_CEILING);
-        penalty = penalty.setScale(0, BigDecimal.ROUND_CEILING);
-        exemption = exemption.setScale(0, BigDecimal.ROUND_CEILING);
-        rebate = rebate.setScale(0, BigDecimal.ROUND_CEILING);
+        taxAmt = taxAmt.setScale(0, RoundingMode.CEILING);
+        penalty = penalty.setScale(0, RoundingMode.CEILING);
+        exemption = exemption.setScale(0, RoundingMode.CEILING);
+        rebate = rebate.setScale(0, RoundingMode.CEILING);
         
-		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).setScale(0, BigDecimal.ROUND_CEILING);
+		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).setScale(0, RoundingMode.CEILING);
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false)
