@@ -211,7 +211,9 @@ public class CHBInboxFilterService {
                     .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
-            searchCriteria.put(STATUS_PARAM, matchingIdsChb);
+            if(!CollectionUtils.isEmpty(matchingIdsChb)) {
+                searchCriteria.put(STATUS_PARAM, matchingIdsChb);
+            }
         }else{
             if(statusIdNameMap.values().size() > 0) {
                 if(CollectionUtils.isEmpty(processCriteria.getStatus())) {

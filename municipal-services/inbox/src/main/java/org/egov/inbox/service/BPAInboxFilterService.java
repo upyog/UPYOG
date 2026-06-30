@@ -181,14 +181,13 @@ public class BPAInboxFilterService {
         if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
             searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
         }
+        // Status is always sent as UUID in the request; processCriteria.getStatus() holds UUIDs.
+        // When a status filter is present, forward those UUIDs directly.
+        // When no filter, fall back to all actionable status UUIDs from statusIdNameMap.
         if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
             searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
-        } else {
-            if (statusIdNameMap != null && statusIdNameMap.values().size() > 0) {
-                if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
-                    searchCriteria.put(STATUS_PARAM, statusIdNameMap.keySet());
-                }
-            }
+        } else if (statusIdNameMap != null && !statusIdNameMap.isEmpty()) {
+            searchCriteria.put(STATUS_PARAM, statusIdNameMap.keySet());
         }
         return searchCriteria;
     }

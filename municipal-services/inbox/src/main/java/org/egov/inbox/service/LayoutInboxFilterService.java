@@ -202,11 +202,7 @@ public class LayoutInboxFilterService {
 
         // Workflow Status - accommodating processSearchCriteria in the search_criteria
         if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
-            List<String> matchingIds = statusIdNameMap.entrySet().stream()
-                    .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
-                    .map(Map.Entry::getKey)
-                    .collect(Collectors.toList());
-            searchCriteria.put(STATUS_PARAM, matchingIds);
+            searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
         } else {
             if (statusIdNameMap.values().size() > 0) {
                 if (CollectionUtils.isEmpty(processCriteria.getStatus())) {

@@ -21,10 +21,9 @@ import com.jayway.jsonpath.JsonPath;
 
 import static org.egov.inbox.util.BpaConstants.*;
 
-
 @Service
 @Slf4j
-public class NOCInboxFilterService {
+public class FireNocInboxFilterService {
 
     @Value("${egov.user.host}")
     private String userHost;
@@ -34,14 +33,14 @@ public class NOCInboxFilterService {
     @Value("${egov.searcher.host}")
     private String searcherHost;
 
-    @Value("${egov.searcher.noc.search.path:}")
-    private String nocInboxSearcherEndpoint;
+    @Value("${egov.searcher.fn.search.path:}")
+    private String fireNocInboxSearcherEndpoint;
 
-    @Value("${egov.searcher.noc.search.desc.path:}")
-    private String nocInboxSearcherDescEndpoint;
+    @Value("${egov.searcher.fn.search.desc.path:}")
+    private String fireNocInboxSearcherDescEndpoint;
 
-    @Value("${egov.searcher.noc.count.path:}")
-    private String nocInboxSearcherCountEndpoint;
+    @Value("${egov.searcher.fn.count.path:}")
+    private String fireNocInboxSearcherCountEndpoint;
 
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
@@ -49,15 +48,15 @@ public class NOCInboxFilterService {
     @Autowired
     private RestTemplate restTemplate;
 
-
     public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria,
-            HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
+            HashMap<String, String> statusIdNameMap, RequestInfo requestInfo) {
         HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
-        Boolean isSearchResultEmpty = false;
-        Boolean isMobileNumberPresent = false;
+        boolean isSearchResultEmpty = false;
+        boolean isMobileNumberPresent = false;
         List<String> userUUIDs = new ArrayList<>();
         List<String> citizenRoles = Collections.emptyList();
+
         if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM)) {
             isMobileNumberPresent = true;
         }
@@ -67,25 +66,27 @@ public class NOCInboxFilterService {
             Map<String, List<String>> userDetails = fetchUserUUID(mobileNumber, requestInfo, tenantId);
             userUUIDs = userDetails.get(USER_UUID);
             citizenRoles = userDetails.get(USER_ROLES);
-            Boolean isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
+            boolean isUserPresentForGivenMobileNumber = !CollectionUtils.isEmpty(userUUIDs);
             isSearchResultEmpty = !isMobileNumberPresent || !isUserPresentForGivenMobileNumber;
             if (isSearchResultEmpty) {
                 return new ArrayList<>();
             }
         } else {
-            List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
-            if(roles.contains(CITIZEN)) {
+            List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode)
+                    .collect(Collectors.toList());
+            if (roles.contains(CITIZEN)) {
                 userUUIDs.add(requestInfo.getUserInfo().getUuid());
                 citizenRoles = roles;
             }
         }
+
         Map<String, Object> searcherRequest = new HashMap<>();
-        Map<String, Object> searchCriteria = getSearchCriteria(criteria, StatusIdNameMap, moduleSearchCriteria, processCriteria,userUUIDs, citizenRoles);
+        Map<String, Object> searchCriteria = getSearchCriteria(criteria, statusIdNameMap, moduleSearchCriteria,
+                processCriteria, userUUIDs, citizenRoles);
+
         // Paginating searcher results
         searchCriteria.put(OFFSET_PARAM, criteria.getOffset());
-
-            searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
-
+        searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
         moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
 
         searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
@@ -94,34 +95,50 @@ public class NOCInboxFilterService {
         StringBuilder uri = new StringBuilder();
         if (moduleSearchCriteria.containsKey(SORT_ORDER_PARAM)
                 && Objects.equals(moduleSearchCriteria.get(SORT_ORDER_PARAM), DESC_PARAM)
-                && nocInboxSearcherDescEndpoint != null && !nocInboxSearcherDescEndpoint.isEmpty()) {
-            uri.append(searcherHost).append(nocInboxSearcherDescEndpoint);
+                && fireNocInboxSearcherDescEndpoint != null && !fireNocInboxSearcherDescEndpoint.isEmpty()) {
+            uri.append(searcherHost).append(fireNocInboxSearcherDescEndpoint);
         } else {
-            uri.append(searcherHost).append(nocInboxSearcherEndpoint);
+            uri.append(searcherHost).append(fireNocInboxSearcherEndpoint);
         }
 
         Object result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
         List<String> applicationNumbers = new ArrayList<>();
+        Map<String, String> appNoToUuidMap = new HashMap<>();
+
+        List<Map<String, Object>> firenocs = null;
         try {
-            applicationNumbers = JsonPath.read(result, "$.Noc.[*].applicationno");
-        } catch (Exception e1) {
-            try {
-                applicationNumbers = JsonPath.read(result, "$..applicationNo");
-            } catch (Exception e2) {
-                try {
-                    applicationNumbers = JsonPath.read(result, "$..applicationNumber");
-                } catch (Exception e3) {
-                    applicationNumbers = new ArrayList<>();
+            firenocs = JsonPath.read(result, "$.FireNOCs");
+        } catch (Exception e) {
+            log.error("Error reading FireNOCs from searcher result", e);
+        }
+
+        if (firenocs != null) {
+            for (Map<String, Object> fn : firenocs) {
+                if (fn != null) {
+                    String appNo = fn.get("applicationnumber") != null ? String.valueOf(fn.get("applicationnumber")) : null;
+                    String uuid = fn.get("uuid") != null ? String.valueOf(fn.get("uuid")) : null;
+
+                    if (appNo != null) {
+                        applicationNumbers.add(appNo);
+                        if (uuid != null) {
+                            appNoToUuidMap.put(appNo, uuid);
+                        }
+                    }
                 }
             }
         }
 
-        return applicationNumbers == null ? new ArrayList<>() : applicationNumbers;
+        if (criteria.getModuleSearchCriteria() != null && !appNoToUuidMap.isEmpty()) {
+            criteria.getModuleSearchCriteria().put("firenoc_appNo_to_uuid_map", appNoToUuidMap);
+        }
+
+        return applicationNumbers;
     }
 
-    private Map<String, Object> getSearchCriteria(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap,
-            HashMap<String, Object> moduleSearchCriteria, ProcessInstanceSearchCriteria processCriteria, List<String> userUUIDs, List<String> userRoles) {
+    private Map<String, Object> getSearchCriteria(InboxSearchCriteria criteria,
+            HashMap<String, String> statusIdNameMap, HashMap<String, Object> moduleSearchCriteria,
+            ProcessInstanceSearchCriteria processCriteria, List<String> userUUIDs, List<String> userRoles) {
         Map<String, Object> searchCriteria = new HashMap<>();
 
         searchCriteria.put(TENANT_ID_PARAM, criteria.getTenantId());
@@ -131,39 +148,63 @@ public class NOCInboxFilterService {
             searchCriteria.put(LOCALITY_PARAM, moduleSearchCriteria.get(LOCALITY_PARAM));
         }
 
-        // Map status display names directly for searcher (like BPA)
-        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("status") && moduleSearchCriteria.get("status") != null) {
-            List<String> requestedStatuses = Arrays.asList(moduleSearchCriteria.get("status").toString().split(","));
-            searchCriteria.put("status", requestedStatuses);
+        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("applicationNumber")) {
+            searchCriteria.put("applicationNumber", moduleSearchCriteria.get("applicationNumber"));
+        } else if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("applicationNo")) {
+            searchCriteria.put("applicationNumber", moduleSearchCriteria.get("applicationNo"));
         }
-        else {
-			// If no status filter is provided, include all statuses
-			searchCriteria.put("status", new ArrayList<>(StatusIdNameMap.keySet()));
-		}
+
+        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("fireNOCNumber")) {
+            searchCriteria.put("fireNOCNumber", moduleSearchCriteria.get("fireNOCNumber"));
+        }
+        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("fireNOCType")) {
+            searchCriteria.put("fireNOCType", moduleSearchCriteria.get("fireNOCType"));
+        }
+        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("fireStationId")) {
+            searchCriteria.put("fireStationId", moduleSearchCriteria.get("fireStationId"));
+        }
+        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("financialYear")) {
+            searchCriteria.put("financialYear", moduleSearchCriteria.get("financialYear"));
+        }
+
+        // Map status display names to WF UUIDs for searcher
+        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey(STATUS_PARAM)
+                && moduleSearchCriteria.get(STATUS_PARAM) != null) {
+            List<String> requestedStatuses = Arrays.asList(moduleSearchCriteria.get(STATUS_PARAM).toString().split(","));
+            List<String> matchingIds = statusIdNameMap.entrySet().stream()
+                    .filter(entry -> requestedStatuses.contains(entry.getValue()))
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+            if (!matchingIds.isEmpty()) {
+                searchCriteria.put(STATUS_PARAM, matchingIds);
+            }
+        } else {
+            searchCriteria.put(STATUS_PARAM, new ArrayList<>(statusIdNameMap.keySet()));
+        }
+
         if (moduleSearchCriteria != null && (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM) || userRoles.contains(CITIZEN))
                 && !CollectionUtils.isEmpty(userUUIDs)) {
             searchCriteria.put(USERID_PARAM, userUUIDs);
         }
 
-        if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("applicationNo")) {
-            searchCriteria.put("applicationNo", moduleSearchCriteria.get("applicationNo"));
-        }
         if (moduleSearchCriteria != null && moduleSearchCriteria.containsKey("uuid")) {
             searchCriteria.put("id", moduleSearchCriteria.get("uuid"));
         }
+
         if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
             searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
         }
+
         return searchCriteria;
     }
 
     public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria,
-            HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo){
-        if (nocInboxSearcherCountEndpoint != null && !nocInboxSearcherCountEndpoint.isEmpty()) {
+            HashMap<String, String> statusIdNameMap, RequestInfo requestInfo) {
+        if (fireNocInboxSearcherCountEndpoint != null && !fireNocInboxSearcherCountEndpoint.isEmpty()) {
             HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
             ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
-            Boolean isSearchResultEmpty = false;
-            Boolean isMobileNumberPresent = false;
+            boolean isSearchResultEmpty = false;
+            boolean isMobileNumberPresent = false;
             List<String> userUUIDs = new ArrayList<>();
             List<String> citizenRoles = Collections.emptyList();
             if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM)) {
@@ -175,39 +216,46 @@ public class NOCInboxFilterService {
                 Map<String, List<String>> userDetails = fetchUserUUID(mobileNumber, requestInfo, tenantId);
                 userUUIDs = userDetails.get(USER_UUID);
                 citizenRoles = userDetails.get(USER_ROLES);
-                Boolean isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
+                boolean isUserPresentForGivenMobileNumber = !CollectionUtils.isEmpty(userUUIDs);
                 isSearchResultEmpty = !isMobileNumberPresent || !isUserPresentForGivenMobileNumber;
                 if (isSearchResultEmpty) {
                     return 0;
                 }
             } else {
-                List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
-                if(roles.contains(CITIZEN)) {
+                List<String> roles = requestInfo.getUserInfo().getRoles().stream().map(Role::getCode)
+                        .collect(Collectors.toList());
+                if (roles.contains(CITIZEN)) {
                     userUUIDs.add(requestInfo.getUserInfo().getUuid());
                     citizenRoles = roles;
                 }
             }
             Map<String, Object> searcherRequest = new HashMap<>();
-            Map<String, Object> searchCriteria = getSearchCriteria(criteria, StatusIdNameMap, moduleSearchCriteria, processCriteria,userUUIDs,citizenRoles);
+            Map<String, Object> searchCriteria = getSearchCriteria(criteria, statusIdNameMap, moduleSearchCriteria,
+                    processCriteria, userUUIDs, citizenRoles);
             searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
             searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
             StringBuilder citizenUri = new StringBuilder();
-            citizenUri.append(searcherHost).append(nocInboxSearcherCountEndpoint);
+            citizenUri.append(searcherHost).append(fireNocInboxSearcherCountEndpoint);
             Object result = restTemplate.postForObject(citizenUri.toString(), searcherRequest, Map.class);
-            // Try common count response shapes
+
             try {
-                Double count = JsonPath.read(result, "$.totalCount[0].totalcount");
+                Double count = JsonPath.read(result, "$.TotalCount.count");
                 return count == null ? 0 : count.intValue();
             } catch (Exception e1) {
                 try {
                     Double count = JsonPath.read(result, "$.TotalCount[0].count");
                     return count == null ? 0 : count.intValue();
                 } catch (Exception e2) {
-                    return 0;
+                    try {
+                        Double count = JsonPath.read(result, "$.totalCount[0].totalcount");
+                        return count == null ? 0 : count.intValue();
+                    } catch (Exception e3) {
+                        return 0;
+                    }
                 }
             }
         } else {
-            List<String> apps = fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+            List<String> apps = fetchApplicationNumbersFromSearcher(criteria, statusIdNameMap, requestInfo);
             return apps.size();
         }
     }
@@ -217,14 +265,13 @@ public class NOCInboxFilterService {
         StringBuilder uri = new StringBuilder();
         uri.append(userHost).append(userSearchEndpoint);
         Map<String, Object> userSearchRequest = new HashMap<>();
-        userSearchRequest.put("RequestInfo", requestInfo);
-        userSearchRequest.put("tenantId", tenantId);
+        userSearchRequest.put(REQUESTINFO_PARAM, requestInfo);
+        userSearchRequest.put(TENANT_ID_PARAM, tenantId);
         userSearchRequest.put("userType", CITIZEN);
-        userSearchRequest.put("mobileNumber", mobileNumber);
+        userSearchRequest.put(MOBILE_NUMBER_PARAM, mobileNumber);
         try {
             Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
             if (null != user) {
-                // log.info(user.toString());
                 userDetails.put(USER_UUID, JsonPath.read(user, "$.user.*.uuid"));
                 userDetails.put(USER_ROLES, new ArrayList<>(new HashSet<>(JsonPath.read(user, "$.user.*.roles.*.code"))));
             } else {

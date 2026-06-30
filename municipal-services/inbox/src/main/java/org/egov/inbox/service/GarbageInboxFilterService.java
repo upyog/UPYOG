@@ -197,20 +197,26 @@ public class GarbageInboxFilterService {
             searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
         }
 
-        // Accommodating process search criteria in the search_criteria
-        if(!ObjectUtils.isEmpty(processCriteria.getStatus())){
-            List<String> matchingIdsGc = statusIdNameMap.entrySet().stream()
-                    .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
-                    .map(Map.Entry::getKey)
-                    .collect(Collectors.toList());
+        if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
+        List<String> matchingIdsGc = statusIdNameMap.entrySet().stream()
+                .filter(entry -> processCriteria.getStatus().contains(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        if (!CollectionUtils.isEmpty(matchingIdsGc)) {
             searchCriteria.put(STATUS_PARAM, matchingIdsGc);
         } else {
-            if(statusIdNameMap.values().size() > 0) {
-                if(CollectionUtils.isEmpty(processCriteria.getStatus())) {
-                    searchCriteria.put(STATUS_PARAM, statusIdNameMap.keySet());
-                }
-            }
+            // No matching statuses → return empty result set immediately
+            // Putting an empty IN list would cause SQL syntax error
+            searchCriteria.put(STATUS_PARAM, Collections.singletonList("NO_MATCH"));
         }
+    } else {
+        if (!statusIdNameMap.isEmpty()) {
+            searchCriteria.put(STATUS_PARAM, statusIdNameMap.keySet());
+        }
+        // If statusIdNameMap is also empty, don't put STATUS_PARAM at all
+        // so the searcher omits the IN clause entirely
+    }
 
         return searchCriteria;
     }
