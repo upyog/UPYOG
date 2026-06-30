@@ -511,9 +511,6 @@ public class BookingServiceImpl implements BookingService {
 
 		// Fetch advertisement data from MDMS
 		String tenantId = bookingDetail.getTenantId();
-		if (tenantId != null && tenantId.contains(".")) {
-			tenantId = tenantId.split("\\.")[0];
-		}
 		
 		List<Advertisements> advertisementsList = mdmsUtil.fetchAdvertisementsData(requestInfo, tenantId);
 		if (advertisementsList == null || advertisementsList.isEmpty()) {
