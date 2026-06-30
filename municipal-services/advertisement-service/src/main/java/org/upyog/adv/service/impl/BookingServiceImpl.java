@@ -92,10 +92,10 @@ public class BookingServiceImpl implements BookingService {
 		// Queries eg_adv_cart_detail (bookings) and eg_adv_payment_timer (active timers) — no DB changes needed.
 		String bookingId = bookingRequest.getBookingApplication().getBookingId();
 		String userId = bookingRequest.getRequestInfo().getUserInfo().getUuid();
-		if (bookingRepository.hasActiveSlotConflict(bookingId, userId, bookingRequest.getBookingApplication().getCartDetails())) {
-			throw new CustomException("SLOT_ALREADY_BOOKED",
-					"One or more selected advertisement slots are already booked by another user. Please choose different slots/dates.");
-		}
+//		if (bookingRepository.hasActiveSlotConflict(bookingId, userId, bookingRequest.getBookingApplication().getCartDetails())) {
+//			throw new CustomException("SLOT_ALREADY_BOOKED",
+//					"One or more selected advertisement slots are already booked by another user. Please choose different slots/dates.");
+//		}
 
 		// ENcrypt PII data of applicant
 		encryptionService.encryptObject(bookingRequest);
