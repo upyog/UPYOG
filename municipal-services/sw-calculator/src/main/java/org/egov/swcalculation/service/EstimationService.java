@@ -106,19 +106,39 @@ public class EstimationService {
 				.estimateAmount(sewerageCharge.setScale(2, 2)).build());
 
 		/// DISPOSAL DISCHARGE CHARGES
-		HashMap<String, String> add_details = ((HashMap<String, String>) connection.getAdditionalDetails());
-		if (add_details.containsKey("dischargeConnection") && add_details.get("dischargeConnection") != null) {
+		Map<String, Object> add_details = null;
+		if (connection.getAdditionalDetails() != null) {
+			try {
+				add_details = mapper.convertValue(connection.getAdditionalDetails(), HashMap.class);
+			} catch (Exception e) {
+				log.error("Error converting additional details in getEstimatesForTax", e);
+			}
+		}
+		if (add_details == null) {
+			add_details = new HashMap<>();
+		}
 
-			if (add_details.get("dischargeConnection").equalsIgnoreCase("true")) {
+		String dischargeConnectionStr = null;
+		if (add_details.containsKey("dischargeConnection") && add_details.get("dischargeConnection") != null) {
+			dischargeConnectionStr = String.valueOf(add_details.get("dischargeConnection"));
+		}
+
+		if (dischargeConnectionStr != null) {
+
+			if (dischargeConnectionStr.equalsIgnoreCase("true")) {
 				// BigDecimal disposal_charge=new BigDecimal(200.0);
 				BigDecimal disposal_charge;
 				try {
-					if (add_details.containsKey("dischargeFee")) // if dischargeFee attribute is present in
-																	// additionalDetails then use give dischargeFee else
-																	// fix dischagefee to 200
-						disposal_charge = new BigDecimal(add_details.get("dischargeFee"));
-					else
+					Object dischargeFeeObj = add_details.get("dischargeFee");
+					if (dischargeFeeObj != null) {
+						if (dischargeFeeObj instanceof Number) {
+							disposal_charge = BigDecimal.valueOf(((Number) dischargeFeeObj).doubleValue());
+						} else {
+							disposal_charge = new BigDecimal(String.valueOf(dischargeFeeObj));
+						}
+					} else {
 						disposal_charge = new BigDecimal(200.0);
+					}
 				} catch (Exception ex) {
 					disposal_charge = new BigDecimal(200.0);
 				}
