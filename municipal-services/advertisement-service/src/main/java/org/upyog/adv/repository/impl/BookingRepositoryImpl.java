@@ -198,6 +198,12 @@ public class BookingRepositoryImpl implements BookingRepository {
 			return;
 		}
 
+		// Quantity-based — ANYWHERE ads don't need timer blocking
+		if (criteriaList.stream().allMatch(c -> "ANYWHERE".equalsIgnoreCase(c.getLocation()))) {
+			log.info("Quantity-based criteria — skipping timer insertion");
+			return;
+		}
+
 		long createdTime = BookingUtil.getCurrentTimestamp();
 		String status = BookingConstants.ACTIVE;
 
@@ -533,6 +539,62 @@ public class BookingRepositoryImpl implements BookingRepository {
 	}
 
 	@Override
+	public boolean hasActiveSlotConflict(String currentBookingId, String currentUserId, List<CartDetail> cartDetails) {
+		if (StringUtils.isBlank(currentBookingId) || cartDetails == null || cartDetails.isEmpty()) {
+			return false;
+		}
+		String cartSql = AdvertisementBookingQueryBuilder.CHECK_ACTIVE_SLOT_CONFLICT;
+		String timerSql = AdvertisementBookingQueryBuilder.CHECK_ACTIVE_TIMER_CONFLICT;
+
+		for (CartDetail cart : cartDetails) {
+			if (cart.getBookingDate() == null || cart.getAdvertisementId() == null) {
+				continue;
+			}
+			// Quantity-based — "ANYWHERE" boards have no specific slot to block
+			if ("ANYWHERE".equalsIgnoreCase(cart.getLocation())) {
+				continue;
+			}
+			Object[] slotParams = new Object[] {
+					cart.getAdvertisementId(),
+					cart.getBookingDate().toString(),
+					cart.getAddType(),
+					cart.getLocation(),
+					cart.getFaceArea(),
+					cart.getNightLight() != null ? cart.getNightLight() : Boolean.FALSE
+			};
+
+			try {
+				// 1. Check eg_adv_cart_detail for another active booking on the same slot
+				Object[] cartParams = java.util.Arrays.copyOf(slotParams, slotParams.length + 1);
+				cartParams[slotParams.length] = currentBookingId;
+				List<Map<String, Object>> cartConflicts = jdbcTemplate.queryForList(cartSql, cartParams);
+				if (cartConflicts != null && !cartConflicts.isEmpty()) {
+					log.warn("Active booking conflict: booking {} on slot {} date {}",
+							currentBookingId, cart.getAdvertisementId(), cart.getBookingDate());
+					return true;
+				}
+
+				// 2. Check eg_adv_payment_timer for another user's active timer on the same slot
+				if (StringUtils.isNotBlank(currentUserId)) {
+					Object[] timerParams = java.util.Arrays.copyOf(slotParams, slotParams.length + 2);
+					timerParams[slotParams.length] = currentBookingId;
+					timerParams[slotParams.length + 1] = currentUserId;
+					List<Map<String, Object>> timerConflicts = jdbcTemplate.queryForList(timerSql, timerParams);
+					if (timerConflicts != null && !timerConflicts.isEmpty()) {
+						log.warn("Active timer conflict: user {} on slot {} date {}",
+								currentUserId, cart.getAdvertisementId(), cart.getBookingDate());
+						return true;
+					}
+				}
+			} catch (DataAccessException e) {
+				log.error("Error checking slot conflict for booking {}: {}", currentBookingId, e.getMessage(), e);
+				return true; // fail-safe: treat DB errors as conflicts to prevent unsafe booking
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(
 			AdvertisementSlotSearchCriteria criteria) {
 		List<Object> paramsList = new ArrayList<>();
@@ -698,8 +760,8 @@ public class BookingRepositoryImpl implements BookingRepository {
 		List<String> bookingIds = fetchBookingIds(currentTimeMillis);
 		List<String> draftIds = fetchDraftId(currentTimeMillis);
 
-		if (bookingIds.isEmpty()) {
-			log.warn("No valid booking IDs found for deletion.");
+		if (bookingIds.isEmpty() && (draftIds == null || draftIds.isEmpty())) {
+			log.info("No expired booking or draft IDs found for deletion.");
 			return;
 		}
 

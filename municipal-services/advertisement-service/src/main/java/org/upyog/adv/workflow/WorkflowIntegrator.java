@@ -2,6 +2,9 @@ package org.upyog.adv.workflow;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.adv.enums.BookingStatusEnum;
@@ -13,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.workflow.ProcessInstance;
 import org.upyog.adv.web.models.workflow.ProcessInstanceRequest;
@@ -38,6 +42,9 @@ public class WorkflowIntegrator {
   @Value("${workflow.transition.path:${egov.workflow.transition.path:/egov-workflow-v2/egov-wf/process/_transition}}")
   private String transitionPath;
 
+  @Value("${workflow.search.path:${egov.workflow.processinstance.search.path:/egov-workflow-v2/egov-wf/process/_search}}")
+  private String searchPath;
+
   @Value("${adv.module.name:Advertisement}")
   private String moduleName;
 
@@ -59,14 +66,27 @@ public class WorkflowIntegrator {
     try {
       String businessService = booking.getBusinessService() != null ? booking.getBusinessService()
           : defaultBusinessService;
+
+      // Map workflow documents to ProcessInstance documents format
+      List<org.upyog.adv.web.models.workflow.Document> wfDocuments = null;
+      if (booking.getWorkflow() != null && booking.getWorkflow().getDocuments() != null
+          && !booking.getWorkflow().getDocuments().isEmpty()) {
+        wfDocuments = booking.getWorkflow().getDocuments().stream()
+            .map(d -> org.upyog.adv.web.models.workflow.Document.builder()
+                .fileStoreId(d.getFileStoreId())
+                .documentType(d.getDocumentType())
+                .build())
+            .collect(Collectors.toList());
+      }
+
       ProcessInstance pi = ProcessInstance.builder()
           .businessService(businessService)
           .businessId(booking.getBookingNo())
           .tenantId(booking.getTenantId())
           .action(action)
-          // optional module name used by some WF configs
           .moduleName(moduleName)
           .comment(booking.getWorkflow() != null ? booking.getWorkflow().getComment() : null)
+          .documents(wfDocuments)
           .build();
 
       ProcessInstanceRequest requestBody = ProcessInstanceRequest.builder()
@@ -142,5 +162,52 @@ public class WorkflowIntegrator {
     } catch (Exception ignore) {
       return false;
     }
+  }
+
+  /**
+   * Fetches workflow process instances for the given business IDs from
+   * egov-workflow-v2 using a GET with query parameters.
+   *
+   * @param requestInfo  RequestInfo (passed as header for auth context)
+   * @param tenantId     tenant id for query filter
+   * @param bookingNos   list of booking numbers (businessIds)
+   * @return map of businessId → latest ProcessInstance (may be empty)
+   */
+  public Map<String, ProcessInstance> fetchProcessInstances(RequestInfo requestInfo, String tenantId, List<String> bookingNos) {
+    Map<String, ProcessInstance> result = new java.util.LinkedHashMap<>();
+    if (bookingNos == null || bookingNos.isEmpty()) return result;
+
+    try {
+      String url = UriComponentsBuilder.fromHttpUrl(workflowHost + searchPath)
+          .queryParam("tenantId", tenantId)
+          .queryParam("businessIds", String.join(",", bookingNos))
+          .queryParam("latest", "true")
+          .toUriString();
+
+      log.info("Fetching workflow process instances: {}", url);
+
+      // Send RequestInfo in JSON body, filters as query params
+      Map<String, Object> requestBody = new java.util.HashMap<>();
+      requestBody.put("RequestInfo", requestInfo);
+
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.APPLICATION_JSON);
+      HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+      ResponseEntity<ProcessInstanceResponse> response = restTemplate.exchange(url, HttpMethod.POST, entity,
+          ProcessInstanceResponse.class);
+
+      ProcessInstanceResponse responseBody = response.getBody();
+      if (responseBody != null && responseBody.getProcessInstances() != null) {
+        for (ProcessInstance pi : responseBody.getProcessInstances()) {
+          if (pi.getBusinessId() != null) {
+            result.put(pi.getBusinessId(), pi);
+          }
+        }
+      }
+    } catch (Exception ex) {
+      log.error("Error fetching workflow process instances for {} bookings", bookingNos.size(), ex);
+    }
+    return result;
   }
 }

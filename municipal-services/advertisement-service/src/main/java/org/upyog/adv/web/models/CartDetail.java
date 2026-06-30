@@ -38,15 +38,15 @@ public class CartDetail {
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String addType;
 	
-	@NotBlank(groups = CreateApplicationGroup.class)
 	private String location;
 	
-	@NotBlank(groups = CreateApplicationGroup.class)
 	private String faceArea;
 	
 	@JsonProperty("nightLight")
     private Boolean nightLight;  
-	
+
+	//@JsonFormat(pattern = BookingUtil.DATE_FORMAT)
+	private LocalDate bookingEndDate;
 	
 	//@NonNull
 	@JsonFormat(pattern = BookingUtil.DATE_FORMAT)
