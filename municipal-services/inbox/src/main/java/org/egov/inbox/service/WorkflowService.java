@@ -364,4 +364,26 @@ public class WorkflowService {
     }
 
 	
+    /**
+     * Gets all statuses configured for the business services, regardless of role actionability
+     * @param businessServices The list of business services
+     * @return Map of status UUID to application status name
+     */
+    public HashMap<String, String> getAllStatuses(List<BusinessService> businessServices) {
+        HashMap<String, String> allStatuses = new HashMap<>();
+        if (!CollectionUtils.isEmpty(businessServices)) {
+            businessServices.forEach(service -> {
+                List<State> states = service.getStates();
+                if (!CollectionUtils.isEmpty(states)) {
+                    states.forEach(state -> {
+                        if (!ObjectUtils.isEmpty(state.getApplicationStatus())) {
+                            allStatuses.put(state.getUuid(), state.getApplicationStatus());
+                        }
+                    });
+                }
+            });
+        }
+        return allStatuses;
+    }
 }
+
