@@ -104,6 +104,11 @@ public class CalculationService {
 
 		// Sum per-day rate for each cart detail using its OWN advertisement's rate
 		// Handles multi-month ranges correctly (e.g. June has 30 days, July has 31)
+		Map<String, Long> daysPerAd = cartDetails.stream()
+				.map(CartDetail::getAdvertisementId)
+				.filter(Objects::nonNull)
+				.collect(Collectors.groupingBy(id -> id, Collectors.counting()));
+
 		BigDecimal totalTaxBaseAmount = cartDetails.stream()
 				.map(cd -> {
 					if (cd.getAdvertisementId() == null) return null;
@@ -112,7 +117,8 @@ public class CalculationService {
 						throw new CustomException("ADVERTISEMENT_NOT_FOUND",
 								"No advertisement found with id: " + cd.getAdvertisementId());
 					}
-					return BookingUtil.getPerDayRate(adv, cd.getBookingDate(), cartDetails.size());
+					long bookingDaysForAd = daysPerAd.getOrDefault(cd.getAdvertisementId(), 0L);
+					return BookingUtil.getPerDayRate(adv, cd.getBookingDate(), bookingDaysForAd);
 				})
 				.filter(amount -> amount != null)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
