@@ -33,8 +33,8 @@ public class NayanAPIService {
 	}
 	
 	public void updateStatus(ServiceRequest serviceRequest) {
-		StringBuilder uri = new StringBuilder(config.getNayanapiHost());
-		uri.append(config.getNayanapiStatusUpdateEndPoint());
+		StringBuilder uri = new StringBuilder(config.getNayanAIHost());
+		uri.append(config.getNayanAIStatusUpdateEndPoint());
 		Map<String, String> body = new HashMap<String, String>();
 		body.put("pmidc_complaint_number", serviceRequest.getService().getServiceRequestId());
 		body.put("pmidc_status", serviceRequest.getService().getApplicationStatus());
@@ -49,7 +49,7 @@ public class NayanAPIService {
 		Object response = null;
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
-		headers.set("API-KEY", config.getNayanapiKey());
+		headers.set("API-KEY", config.getNayanAIKey());
 		
 		HttpEntity<Map<String, String>> request = new HttpEntity<Map<String,String>>(requestBody, headers);
 		try {
