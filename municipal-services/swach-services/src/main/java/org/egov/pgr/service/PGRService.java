@@ -8,9 +8,11 @@ import org.egov.pgr.repository.PGRRepository;
 import org.egov.pgr.util.MDMSUtils;
 import org.egov.pgr.validator.ServiceRequestValidator;
 import org.egov.pgr.web.models.ServiceWrapper;
+import org.egov.pgr.web.models.SwachhImageData;
 import org.egov.pgr.web.models.AuditDetails;
 import org.egov.pgr.web.models.ImageData;
 import org.egov.pgr.web.models.ImageRequest;
+import org.egov.pgr.web.models.ImageSearchRequest;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.ServiceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +44,14 @@ public class PGRService {
     private PGRRepository repository;
 
     private MDMSUtils mdmsUtils;
+    
+    private NayanAPIService nayanAPIService;
 
 
     @Autowired
     public PGRService(EnrichmentService enrichmentService, UserService userService, WorkflowService workflowService,
                       ServiceRequestValidator serviceRequestValidator, ServiceRequestValidator validator, Producer producer,
-                      PGRConfiguration config, PGRRepository repository, MDMSUtils mdmsUtils) {
+                      PGRConfiguration config, PGRRepository repository, MDMSUtils mdmsUtils, NayanAPIService nayanAPIService) {
         this.enrichmentService = enrichmentService;
         this.userService = userService;
         this.workflowService = workflowService;
@@ -57,6 +61,7 @@ public class PGRService {
         this.config = config;
         this.repository = repository;
         this.mdmsUtils = mdmsUtils;
+        this.nayanAPIService = nayanAPIService;
     }
 
 
@@ -71,6 +76,10 @@ public class PGRService {
         validator.validateCreate(request, mdmsData);
         enrichmentService.enrichCreateRequest(request);
         workflowService.updateWorkflowStatus(request);
+        
+        if(config.getNayanAIUserUuid().equalsIgnoreCase(request.getRequestInfo().getUserInfo().getUuid()))
+        	nayanAPIService.updateStatus(request);
+        
         producer.push(config.getCreateTopic(),request);
         return request;
     }
@@ -132,6 +141,28 @@ public class PGRService {
     }
 
 
+    
+    
+    
+    public List<SwachhImageData> searchImage(RequestInfo requestInfo, ImageSearchRequest criteria){
+        validator.validateImageSearch(requestInfo, criteria);
+
+ //       enrichmentService.enrichSearchRequest(requestInfo, criteria);
+
+        if(criteria.isEmpty())
+            return new ArrayList<>();
+
+        criteria.setIsPlainSearch(false);
+
+        List<SwachhImageData> serviceWrappers = repository.getServiceImageWrappers(criteria);
+
+        if(CollectionUtils.isEmpty(serviceWrappers))
+            return new ArrayList<>();;
+
+        userService.enrichImgaeUsers(serviceWrappers);
+      
+        return serviceWrappers;
+    }
     /**
      * Updates the complaint (used to forward the complaint from one application status to another)
      * @param request The request containing the complaint to be updated
@@ -142,6 +173,10 @@ public class PGRService {
         validator.validateUpdate(request, mdmsData);
         enrichmentService.enrichUpdateRequest(request);
         workflowService.updateWorkflowStatus(request);
+        
+        if(config.getNayanAIUserUuid().equalsIgnoreCase(request.getRequestInfo().getUserInfo().getUuid()))
+        	nayanAPIService.updateStatus(request);
+        
         producer.push(config.getUpdateTopic(),request);
         return request;
     }

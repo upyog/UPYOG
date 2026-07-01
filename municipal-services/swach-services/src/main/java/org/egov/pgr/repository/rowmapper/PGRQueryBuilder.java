@@ -1,6 +1,7 @@
 package org.egov.pgr.repository.rowmapper;
 
 import org.egov.pgr.config.PGRConfiguration;
+import org.egov.pgr.web.models.ImageSearchRequest;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class PGRQueryBuilder {
     private static final String QUERY = "select ser.*,ads.*," + QUERY_ALIAS+
                                         " from eg_swach_service_v2 ser INNER JOIN eg_swach_address_v2 ads" +
                                         " ON ads.parentId = ser.id ";
+    
+    private static final String ATTENDANCE_QUERY ="Select * from  public.egov_swach_imagedata";
 
     private static final String COUNT_WRAPPER = "select count(*) from ({INTERNAL_QUERY}) as count";
     
@@ -106,6 +109,7 @@ public class PGRQueryBuilder {
         }
 
 
+
         Set<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
             addClauseIfRequired(preparedStmtList, builder);
@@ -171,6 +175,119 @@ public class PGRQueryBuilder {
         return builder.toString();
     }
 
+    
+    
+    public String getImageSearchQuery(ImageSearchRequest criteria, List<Object> preparedStmtList) {
+
+        StringBuilder builder = new StringBuilder(ATTENDANCE_QUERY);
+
+        if(criteria.getIsPlainSearch() != null && criteria.getIsPlainSearch()){
+            Set<String> tenantIds = criteria.getTenantIds();
+            if(!CollectionUtils.isEmpty(tenantIds)){
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append("tenant_id IN (").append(createQuery(tenantIds)).append(")");
+                addToPreparedStatement(preparedStmtList, tenantIds);
+            }
+        }
+        else {
+            if (criteria.getTenantId() != null) {
+                String tenantId = criteria.getTenantId();
+
+                String[] tenantIdChunks = tenantId.split("\\.");
+
+                if (tenantIdChunks.length == 1) {
+                    addClauseIfRequired(preparedStmtList, builder);
+                    builder.append(" tenant_id LIKE ? ");
+                    preparedStmtList.add(criteria.getTenantId() + '%');
+                } else {
+                    addClauseIfRequired(preparedStmtList, builder);
+                    builder.append("tenant_id=? ");
+                    preparedStmtList.add(criteria.getTenantId());
+                }
+            }
+        }
+        Set<String> lat = criteria.getLatitude();
+        if (!CollectionUtils.isEmpty(lat)) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" latitude IN (").append(createQuery(lat)).append(")");
+            addToPreparedStatement(preparedStmtList, lat);
+        }
+
+        Set<String> longitude = criteria.getLogitude();
+        if (!CollectionUtils.isEmpty(longitude)) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" longitude IN (").append(createQuery(longitude)).append(")");
+            addToPreparedStatement(preparedStmtList, longitude);
+        }
+
+      
+
+
+
+        Set<String> ids = criteria.getIds();
+        if (!CollectionUtils.isEmpty(ids)) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" id IN (").append(createQuery(ids)).append(")");
+            addToPreparedStatement(preparedStmtList, ids);
+        }
+
+        //When UI tries to fetch "escalated" complaints count.
+        if(criteria.getSlaDeltaMaxLimit() != null && criteria.getSlaDeltaMinLimit() == null){
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" ((extract(epoch FROM NOW())*1000) - ser.createdtime) > ? ");
+            preparedStmtList.add(criteria.getSlaDeltaMaxLimit());
+        }
+        //When UI tries to fetch "other" complaints count.
+        if(criteria.getSlaDeltaMaxLimit() != null && criteria.getSlaDeltaMinLimit() != null){
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" ((extract(epoch FROM NOW())*1000) - ser.createdtime) > ? ");
+            preparedStmtList.add(criteria.getSlaDeltaMinLimit());
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" ((extract(epoch FROM NOW())*1000) - ser.createdtime) < ? ");
+            preparedStmtList.add(criteria.getSlaDeltaMaxLimit());
+        }
+
+        Set<String> userIds = criteria.getUserIds();
+        if (!CollectionUtils.isEmpty(userIds)) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" uuid IN (").append(createQuery(userIds)).append(")");
+            addToPreparedStatement(preparedStmtList, userIds);
+        }
+
+
+        Set<String> localities = criteria.getLocality();
+        if(!CollectionUtils.isEmpty(localities)){
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append("locality IN (").append(createQuery(localities)).append(")");
+            addToPreparedStatement(preparedStmtList, localities);
+        }
+
+        if (criteria.getFromDate() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
+
+            //If user does not specify toDate, take today's date as toDate by default.
+            if (criteria.getToDate() == null) {
+                criteria.setToDate(Instant.now().toEpochMilli());
+            }
+
+            builder.append(" created_time BETWEEN ? AND ?");
+            preparedStmtList.add(criteria.getFromDate());
+            preparedStmtList.add(criteria.getToDate());
+
+        } else {
+            //if only toDate is provided as parameter without fromDate parameter, throw an exception.
+            if (criteria.getToDate() != null) {
+                throw new CustomException("INVALID_SEARCH", "Cannot specify to-Date without a from-Date");
+            }
+        }
+
+
+        addImageOrderByClause(builder, criteria);
+
+      //  addLimitAndOffset(builder, criteria, preparedStmtList);
+
+        return builder.toString();
+    }
 
     public String getCountQuery(RequestSearchCriteria criteria, List<Object> preparedStmtList){
         String query = getPGRSearchQuery(criteria, preparedStmtList);
@@ -196,6 +313,14 @@ public class PGRQueryBuilder {
             builder.append(" ASC ");
         else builder.append(" DESC ");
 
+    }
+    
+    
+    
+    private void addImageOrderByClause(StringBuilder builder, ImageSearchRequest criteria){
+
+        if(StringUtils.isEmpty(criteria.getSortBy()))
+            builder.append( " ORDER BY created_time ");
     }
 
     private void addLimitAndOffset(StringBuilder builder, RequestSearchCriteria criteria, List<Object> preparedStmtList){

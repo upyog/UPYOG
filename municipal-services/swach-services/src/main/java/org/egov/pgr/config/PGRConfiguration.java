@@ -221,5 +221,17 @@ public class PGRConfiguration {
     @Value("${egov.complaints.category}")
     private String complaintTypes;
 
+    //Nayan AI
+    @Value("${egov.nayanAI.host}")
+    private String nayanAIHost;
+
+    @Value("${egov.nayanAI.statusUpdate.endpoint}")
+    private String nayanAIStatusUpdateEndPoint;
+    
+    @Value("${egov.nayanAI.api.key}")
+    private String nayanAIKey;
+    
+    @Value("${egov.nayanAI.user.uuid}")
+    private String nayanAIUserUuid;
 
 }
