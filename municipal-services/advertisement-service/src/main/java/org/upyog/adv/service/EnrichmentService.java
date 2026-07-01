@@ -1,9 +1,12 @@
 package org.upyog.adv.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +56,12 @@ public class EnrichmentService {
 		bookingDetail.setApplicationDate(auditDetails.getCreatedTime());
 		bookingDetail.setBookingStatus(BookingStatusEnum.valueOf(bookingDetail.getBookingStatus()).toString());
 		
-		
+		// Expand recurring bookings into individual cart entries per date
+		bookingDetail.setCartDetails(expandRecurringCartDetails(bookingDetail.getCartDetails()));
+
+		// Compute overall booking date range from cart details and set on header
+		setBookingDateRange(bookingDetail);
+
 		//Updating id and status for cart details
 		bookingDetail.getCartDetails().stream().forEach(cart -> {
 			cart.setBookingId(bookingId);
@@ -205,6 +213,75 @@ public class EnrichmentService {
 
 		bookingDetail.setAuditDetails(auditDetails);
 		
+	}
+
+	/**
+	 * Computes the overall booking date range from expanded cart details
+	 * and sets it on the booking header for frontend display.
+	 */
+	private void setBookingDateRange(BookingDetail bookingDetail) {
+		List<CartDetail> cartDetails = bookingDetail.getCartDetails();
+		if (CollectionUtils.isEmpty(cartDetails)) return;
+		LocalDate start = null;
+		LocalDate end = null;
+		for (CartDetail cart : cartDetails) {
+			if (cart.getBookingDate() != null) {
+				if (start == null || cart.getBookingDate().isBefore(start)) {
+					start = cart.getBookingDate();
+				}
+				if (end == null || cart.getBookingDate().isAfter(end)) {
+					end = cart.getBookingDate();
+				}
+			}
+		}
+		bookingDetail.setBookingStartDate(start);
+		bookingDetail.setBookingEndDate(end);
+		log.info("Booking {} date range: {} → {}", bookingDetail.getBookingId(), start, end);
+	}
+
+	/**
+	 * Expands cart entries with a date range into individual daily cart entries.
+	 * <p>
+	 * The overall booking date range is stored on {@link BookingDetail#bookingStartDate}
+	 * and {@link BookingDetail#bookingEndDate} for frontend display, so expanded
+	 * cart entries do not carry a {@code bookingEndDate}.
+	 * </p>
+	 */
+	private List<CartDetail> expandRecurringCartDetails(List<CartDetail> cartDetails) {
+		if (CollectionUtils.isEmpty(cartDetails)) {
+			return cartDetails;
+		}
+		List<CartDetail> expanded = new ArrayList<>();
+		for (CartDetail cart : cartDetails) {
+			List<LocalDate> dates = BookingUtil.expandBookingDates(
+					cart.getBookingDate(),
+					cart.getBookingEndDate());
+
+			if (dates.isEmpty()) {
+				expanded.add(cart);
+			} else if (dates.size() == 1 && dates.get(0).equals(cart.getBookingDate())) {
+				// Single date, no expansion — keep original cart with bookingEndDate intact
+				expanded.add(cart);
+			} else {
+				log.info("Expanding cart date range: {} → {} dates", cart.getBookingDate(), dates.size());
+				for (LocalDate date : dates) {
+					CartDetail newCart = CartDetail.builder()
+						.addType(cart.getAddType())
+						.location(cart.getLocation())
+						.faceArea(cart.getFaceArea())
+						.nightLight(cart.getNightLight())
+						.bookingDate(date)
+						// expanded entries are individual days; range is on the booking header
+						.bookingFromTime(cart.getBookingFromTime())
+						.bookingToTime(cart.getBookingToTime())
+						.status(cart.getStatus())
+						.advertisementId(cart.getAdvertisementId())
+						.build();
+					expanded.add(newCart);
+				}
+			}
+		}
+		return expanded;
 	}
 
 }

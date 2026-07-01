@@ -25,7 +25,16 @@ import lombok.ToString;
         private Integer height;
         private String imageSrc;
         private String light;
+        /** Per-day booking amount (null when the advertisement uses a different rate period). */
         private BigDecimal amount;
+        /** Per-week booking amount. */
+        private BigDecimal weeklyAmount;
+        /** Per-month booking amount. */
+        private BigDecimal monthlyAmount;
+        /** Per-year booking amount. */
+        private BigDecimal yearlyAmount;
+        /** Biannual (6-month) booking amount. */
+        private BigDecimal biannualAmount;
         private Boolean available;
         private String locationCode;
         private String feeType;

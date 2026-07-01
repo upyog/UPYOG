@@ -77,6 +77,12 @@ public interface BookingRepository {
 	void deleteDataFromTimerAndDraft(String uuid, String draftId, String bookingId);
 
 	/**
+	 * Returns true if any of the requested cart slots are already actively booked by
+	 * a different booking (i.e. booking_status is not terminal/cancelled).
+	 */
+	boolean hasActiveSlotConflict(String currentBookingId, String currentUserId, List<org.upyog.adv.web.models.CartDetail> cartDetails);
+
+	/**
 	 * Mark the given cart slots as REMOVED (status) for the booking and create audit.
 	 */
 	void markCartSlotsRemoved(String bookingId, List<org.upyog.adv.web.models.CartDetail> removed, String modifiedBy,

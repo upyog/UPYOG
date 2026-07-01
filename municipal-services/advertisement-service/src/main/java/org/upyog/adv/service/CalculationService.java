@@ -2,17 +2,20 @@ package org.upyog.adv.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
+import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.util.MdmsUtil;
 import org.upyog.adv.util.FeeCalculationUtil;
 import org.upyog.adv.web.models.*;
@@ -63,44 +66,75 @@ public class CalculationService {
 	private List<DemandDetail> processCalculationForDemandGeneration(String tenantId,
 																	 List<Advertisements> advertisements, BookingRequest bookingRequest, List<TaxHeadMaster> headMasters, List<String> taxRateCodes, Object taxRateList) {
 
-		Map<String, Long> advBookingDaysMap = bookingRequest.getBookingApplication().getCartDetails()
-				.stream().collect(Collectors.groupingBy(CartDetail::getAddType, Collectors.counting()));
+		List<CartDetail> cartDetails = bookingRequest.getBookingApplication().getCartDetails();
+		if (cartDetails == null || cartDetails.isEmpty()) {
+			throw new CustomException("EMPTY_CART", "Cart details cannot be empty for demand calculation");
+		}
 
 		final List<DemandDetail> demandDetails = new LinkedList<>();
 
 		List<String> taxHeadCodes = headMasters.stream().map(head -> head.getCode()).collect(Collectors.toList());
-
 		log.info("tax head codes  : " + taxHeadCodes);
 
-		// Demand for which tax is applicable is stored
-		List<Advertisements> taxableFeeType = new ArrayList<>();
+		// Build lookup: advertisementId → Advertisements for fast per-entry matching
+		Map<Integer, Advertisements> advById = advertisements.stream()
+				.filter(a -> a.getId() != null)
+				.collect(Collectors.toMap(Advertisements::getId, a -> a, (existing, replacement) -> existing));
 
-		CartDetail cartDetail = bookingRequest.getBookingApplication().getCartDetails().get(0);
-		// use valueOf to convert long to BigDecimal safely
-		BigDecimal advBookingDays = BigDecimal.valueOf(advBookingDaysMap.get(cartDetail.getAddType()));
-		String advertisementId = cartDetail.getAdvertisementId();
+		// Collect all unique advertisement IDs from cart entries
+		Set<Integer> bookedAdIds = cartDetails.stream()
+				.map(CartDetail::getAdvertisementId)
+				.filter(Objects::nonNull)
+				.map(Integer::parseInt)
+				.collect(Collectors.toSet());
 
-		// We have two type of fee 1.taxable(Booking fee, advertisement fee etc) and 2.fixed(Security deposit)
-		for (Advertisements type : advertisements) {
-			if (taxHeadCodes.contains(type.getFeeType()) && type.getId().equals(Integer.parseInt(advertisementId))) {
-				if (type.isTaxApplicable()) {
-					// Add taxable fee
-					taxableFeeType.add(type);
-				} else {
-					DemandDetail data = DemandDetail.builder().taxAmount(type.getAmount())
-							.taxHeadMasterCode(type.getFeeType()).tenantId(tenantId).build();
-					// Add fixed fee for which tax is not applicable like security deposit
-					demandDetails.add(data);
-				}
+		// Fixed fee (non-taxable like security deposit) — once per unique advertisement
+		for (Integer adId : bookedAdIds) {
+			Advertisements adv = advById.get(adId);
+			if (adv == null) {
+				throw new CustomException("ADVERTISEMENT_NOT_FOUND",
+						"No advertisement found with id: " + adId);
+			}
+			if (taxHeadCodes.contains(adv.getFeeType()) && !adv.isTaxApplicable()) {
+				DemandDetail data = DemandDetail.builder().taxAmount(adv.getAmount())
+						.taxHeadMasterCode(adv.getFeeType()).tenantId(tenantId).build();
+				demandDetails.add(data);
 			}
 		}
 
-		log.info("taxable fee type : " + taxableFeeType);
+		// Sum per-day rate for each cart detail using its OWN advertisement's rate
+		// Handles multi-month ranges correctly (e.g. June has 30 days, July has 31)
+		BigDecimal totalTaxBaseAmount = cartDetails.stream()
+				.map(cd -> {
+					if (cd.getAdvertisementId() == null) return null;
+					Advertisements adv = advById.get(Integer.parseInt(cd.getAdvertisementId()));
+					if (adv == null) {
+						throw new CustomException("ADVERTISEMENT_NOT_FOUND",
+								"No advertisement found with id: " + cd.getAdvertisementId());
+					}
+					return BookingUtil.getPerDayRate(adv, cd.getBookingDate(), cartDetails.size());
+				})
+				.filter(amount -> amount != null)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		// Calculating taxable demand as per no of days for taxable fee
-		List<DemandDetail> taxableDemands = taxableFeeType.stream().map(data ->
-				DemandDetail.builder().taxAmount(data.getAmount().multiply(advBookingDays))
-						.taxHeadMasterCode(data.getFeeType()).tenantId(tenantId).build()).collect(Collectors.toList());
+		if (totalTaxBaseAmount.compareTo(BigDecimal.ZERO) == 0) {
+			throw new CustomException("ZERO_TAX_BASE",
+					"No valid advertisement rates found. Ensure each advertisement has an amount field populated.");
+		}
+		log.info("totalTaxBaseAmount={} (from {} cart entries across {} unique ads)",
+				totalTaxBaseAmount, cartDetails.size(), bookedAdIds.size());
+
+		// Taxable demand — one entry per unique ad's fee type
+		final BigDecimal taxBase = totalTaxBaseAmount;
+		List<DemandDetail> taxableDemands = bookedAdIds.stream()
+				.map(advById::get)
+				.filter(adv -> adv != null && taxHeadCodes.contains(adv.getFeeType()) && adv.isTaxApplicable())
+				.map(data -> DemandDetail.builder()
+						.taxAmount(taxBase)
+						.taxHeadMasterCode(data.getFeeType())
+						.tenantId(tenantId)
+						.build())
+				.collect(Collectors.toList());
 
 		log.info("taxableDemands : " + taxableDemands);
 
