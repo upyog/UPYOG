@@ -130,14 +130,28 @@ public class CalculationService {
 		log.info("totalTaxBaseAmount={} (from {} cart entries across {} unique ads)",
 				totalTaxBaseAmount, cartDetails.size(), bookedAdIds.size());
 
-		// Taxable demand — one entry per unique ad's fee type
-		final BigDecimal taxBase = totalTaxBaseAmount;
-		List<DemandDetail> taxableDemands = bookedAdIds.stream()
-				.map(advById::get)
-				.filter(adv -> adv != null && taxHeadCodes.contains(adv.getFeeType()) && adv.isTaxApplicable())
-				.map(data -> DemandDetail.builder()
-						.taxAmount(taxBase)
-						.taxHeadMasterCode(data.getFeeType())
+		// Taxable demand — aggregate by tax head code (feeType) to avoid double-counting across multiple ads
+		Map<String, Long> daysPerAd = cartDetails.stream()
+				.map(CartDetail::getAdvertisementId)
+				.filter(Objects::nonNull)
+				.collect(Collectors.groupingBy(id -> id, Collectors.counting()));
+
+		Map<String, BigDecimal> taxableByFeeType = cartDetails.stream()
+				.filter(cd -> cd.getAdvertisementId() != null)
+				.map(cd -> {
+					Advertisements adv = advById.get(Integer.parseInt(cd.getAdvertisementId()));
+					if (adv == null || !adv.isTaxApplicable() || !taxHeadCodes.contains(adv.getFeeType())) return null;
+					long daysForAd = daysPerAd.getOrDefault(cd.getAdvertisementId(), 0L);
+					BigDecimal rate = BookingUtil.getPerDayRate(adv, cd.getBookingDate(), daysForAd);
+					return (rate == null) ? null : new java.util.AbstractMap.SimpleEntry<>(adv.getFeeType(), rate);
+				})
+				.filter(Objects::nonNull)
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, BigDecimal::add));
+
+		List<DemandDetail> taxableDemands = taxableByFeeType.entrySet().stream()
+				.map(e -> DemandDetail.builder()
+						.taxAmount(e.getValue())
+						.taxHeadMasterCode(e.getKey())
 						.tenantId(tenantId)
 						.build())
 				.collect(Collectors.toList());
