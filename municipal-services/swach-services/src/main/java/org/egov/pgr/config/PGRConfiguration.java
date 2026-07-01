@@ -221,5 +221,14 @@ public class PGRConfiguration {
     @Value("${egov.complaints.category}")
     private String complaintTypes;
 
+    //Nayan API
+    @Value("${egov.nayanapi.host}")
+    private String nayanapiHost;
+
+    @Value("${egov.nayanapi.statusUpdate.endpoint}")
+    private String nayanapiStatusUpdateEndPoint;
+    
+    @Value("${egov.nayanapi.api.key}")
+    private String nayanapiKey;
 
 }

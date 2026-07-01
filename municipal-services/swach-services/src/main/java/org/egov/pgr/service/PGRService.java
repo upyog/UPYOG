@@ -44,12 +44,14 @@ public class PGRService {
     private PGRRepository repository;
 
     private MDMSUtils mdmsUtils;
+    
+    private NayanAPIService nayanAPIService;
 
 
     @Autowired
     public PGRService(EnrichmentService enrichmentService, UserService userService, WorkflowService workflowService,
                       ServiceRequestValidator serviceRequestValidator, ServiceRequestValidator validator, Producer producer,
-                      PGRConfiguration config, PGRRepository repository, MDMSUtils mdmsUtils) {
+                      PGRConfiguration config, PGRRepository repository, MDMSUtils mdmsUtils, NayanAPIService nayanAPIService) {
         this.enrichmentService = enrichmentService;
         this.userService = userService;
         this.workflowService = workflowService;
@@ -59,6 +61,7 @@ public class PGRService {
         this.config = config;
         this.repository = repository;
         this.mdmsUtils = mdmsUtils;
+        this.nayanAPIService = nayanAPIService;
     }
 
 
@@ -73,6 +76,7 @@ public class PGRService {
         validator.validateCreate(request, mdmsData);
         enrichmentService.enrichCreateRequest(request);
         workflowService.updateWorkflowStatus(request);
+        nayanAPIService.updateStatus(request);
         producer.push(config.getCreateTopic(),request);
         return request;
     }
@@ -166,6 +170,7 @@ public class PGRService {
         validator.validateUpdate(request, mdmsData);
         enrichmentService.enrichUpdateRequest(request);
         workflowService.updateWorkflowStatus(request);
+        nayanAPIService.updateStatus(request);
         producer.push(config.getUpdateTopic(),request);
         return request;
     }
