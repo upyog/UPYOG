@@ -20,7 +20,7 @@ import org.egov.model.budget.BudgetRegister;
 import org.egov.model.service.BudgetRegisterWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -104,7 +104,7 @@ import java.util.*;
  *
  * <h3>Security</h3>
  * <ul>
- *     <li>Uses {@code @SafeHtml} validation for request parameters and path variables.</li>
+ *     <li>Uses {@code @SanitizeHtml} validation for request parameters and path variables.</li>
  *     <li>Enforces authenticated user access through {@link SecurityUtils}.</li>
  *     <li>Supports designation-based and position-based workflow authorization.</li>
  * </ul>
@@ -261,7 +261,7 @@ public class BudgetRegisterController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/workflow/view/{budgetRegisterNumber}", method = { RequestMethod.GET, RequestMethod.POST })
     public String workflow(final Model model,
-            @PathVariable("budgetRegisterNumber") @SafeHtml String budgetRegisterNumber,
+            @PathVariable("budgetRegisterNumber") @SanitizeHtml String budgetRegisterNumber,
             RedirectAttributes redirectAttributes) {
 
         BudgetRegister budgetRegister = budgetRegisterWorkflowService
@@ -314,7 +314,7 @@ public class BudgetRegisterController extends GenericWorkFlowController {
 
     // to show from workflow
     @RequestMapping(value = "/workflow/form/{id}", method = { RequestMethod.GET, RequestMethod.POST })
-    public String workflowUpdateForm(final Model model, @PathVariable("id") @SafeHtml Long id,
+    public String workflowUpdateForm(final Model model, @PathVariable("id") @SanitizeHtml Long id,
             RedirectAttributes redirectAttributes) {
 
         // BudgetRegister budgetRegister =
@@ -357,9 +357,9 @@ public class BudgetRegisterController extends GenericWorkFlowController {
     @PostMapping(value = "/workflow/update")
     public String workflowUpdate(@ModelAttribute BudgetRegister budgetRegister, final Model model,
             final BindingResult resultBinder, final HttpServletRequest request,
-            @RequestParam @SafeHtml final String workFlowAction) {
+            @RequestParam @SanitizeHtml final String workFlowAction) {
 
-        // @PathVariable("budgetRegisterNumber") @SafeHtml String budgetRegisterNumber,
+        // @PathVariable("budgetRegisterNumber") @SanitizeHtml String budgetRegisterNumber,
 
         LOGGER.info("work flow update !");
         LOGGER.info(budgetRegister.getBudgetRegisterNumber());

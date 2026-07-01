@@ -83,7 +83,7 @@ public class DepartmentService {
     }
 
     public Department getDepartmentById(final Long id) {
-        return departmentRepository.findOne(id);
+        return departmentRepository.findById(id).orElse(null);
     }
 
     public Department getDepartmentByName(final String name) {
@@ -91,7 +91,7 @@ public class DepartmentService {
     }
 
     public List<Department> getAllDepartments() {
-        return departmentRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return departmentRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public Department getDepartmentByCode(final String code) {

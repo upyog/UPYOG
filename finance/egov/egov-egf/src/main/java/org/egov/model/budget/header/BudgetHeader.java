@@ -6,7 +6,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 

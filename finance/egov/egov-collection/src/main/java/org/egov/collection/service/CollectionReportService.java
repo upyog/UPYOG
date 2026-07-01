@@ -55,8 +55,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;

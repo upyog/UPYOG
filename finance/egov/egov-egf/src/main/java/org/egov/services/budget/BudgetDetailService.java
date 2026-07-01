@@ -62,8 +62,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
@@ -118,7 +118,6 @@ import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -704,7 +703,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append(" and vh.voucherDate <= to_date(:toVoucherDate,'dd/MM/yyyy') ").append(miscQuery)
                 .append(" and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) group by bd.id");
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameterList("voucherstatusExclude", financialUtils.getStatuses(voucherstatusExclude))
                 .setParameter("fromDate", fromDate).setParameter("toVoucherDate", toVoucherDate);
 
@@ -801,7 +800,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("topBudgetPath", topBudget.getMaterializedPath() + "%");
         params.put("voucherstatusExclude", financialUtils.getStatuses(voucherstatusExclude));
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         persistenceService.populateQueryWithParams(qry, params);
 
         final List<Object[]> result = qry.list();
@@ -880,7 +879,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("topBudgetPath", topBudget.getMaterializedPath() + "%");
         params.put("voucherstatusExclude", financialUtils.getStatuses(voucherstatusExclude));
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         persistenceService.populateQueryWithParams(qry, params);
 
         final List<Object[]> result = qry.list();
@@ -942,7 +941,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", dept);
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         persistenceService.populateQueryWithParams(qry, params);
 
         final List<Object[]> result = qry.list();
@@ -978,7 +977,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1020,7 +1019,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1063,7 +1062,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> result = qry.list();
 
@@ -1114,7 +1113,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1156,7 +1155,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> result = qry.list();
 
@@ -1190,7 +1189,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1224,7 +1223,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1265,7 +1264,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1300,7 +1299,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1340,7 +1339,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("execDept", budgetDetail.getExecutingDepartment());
         params.put("ownerPos", pos.getId());
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1374,7 +1373,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append(" AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode")
                 .append(" AND wf.code='Approved' AND bd.status = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameter("fyId", financialYear.getId());
         qry.setParameter("budgetingType", budgetingType);
         final List<Object[]> result = qry.list();
@@ -1438,7 +1437,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("budgetingType", budgetingType);
         params.put("voucherstatusExclude", financialUtils.getStatuses(voucherstatusExclude));
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         persistenceService.populateQueryWithParams(qry, params);
         final List<Object[]> result = qry.list();
         if (LOGGER.isInfoEnabled())
@@ -1479,7 +1478,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append(" AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno")
                 .append(" AND wf.value='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameter("financialYearId", financialYear.getId());
         qry.setParameter("budgetingType", budgetingType);
 
@@ -1525,7 +1524,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("financialYearId", financialYear.getId());
         params.put("budgetingType", budgetingType);
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1564,7 +1563,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         params.put("financialYearId", financialYear.getId());
         params.put("budgetingType", budgetingType);
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         params.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
         final List<Object[]> result = qry.list();
@@ -1604,7 +1603,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append(" GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)")
                 .append("||'-'||substr(cao.glcode,8,2), cao.glcode||'-'||cao.name");
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameter("financialYearId", financialYear.getId());
         qry.setParameter("budgetingType", budgetingType);
 
@@ -1666,7 +1665,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append(" AND bd.status = wf.id GROUP BY substr(gl.glcode,0,3)||'-'||substr(gl.glcode,4,2)")
                 .append("||'-'||substr(gl.glcode,6,2)||'-'||substr(gl.glcode,8,2)");
 
-        final Query qry = getSession().createSQLQuery(query.toString())
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString())
                 .setParameter("prevFinYearId", prevFinYear.getId())
                 .setParameter("financialYearId", financialYear.getId()).setParameter("budgetingType", budgetingType)
                 .setParameterList("voucherstatusExclude", financialUtils.getStatuses(voucherstatusExclude));
@@ -1712,7 +1711,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append(" GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)")
                 .append("||'-'||substr(cao.glcode,8,2)");
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameter("financialYearId", financialYear.getId()).setParameter("budgetingType", budgetingType);
 
         final List<Object[]> result = qry.list();
@@ -1759,7 +1758,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append(" AND bd.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)")
                 .append("||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameter("financialYearId", financialYear.getId()).setParameter("budgetingType", budgetingType);
 
         final List<Object[]> result = qry.list();
@@ -1800,7 +1799,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append(" AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)")
                 .append("||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameter("financialYearId", financialYear.getId()).setParameter("budgetingType", budgetingType);
 
         final List<Object[]> result = qry.list();
@@ -1835,7 +1834,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append(" and br.billdate <= to_date(:toVoucherDate,'dd/MM/yyyy') ").append(miscQuery)
                 .append(" and ((bdetail.glcodeid between bg.mincode ")
                 .append("and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id");
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameter("fromDate", fromDate).setParameter("toVoucherDate", toVoucherDate);
         final List<Object[]> result = qry.list();
         return result;
@@ -1877,7 +1876,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append("vh.voucherDate>= to_date(:fromDate,'dd/MM/yyyy') and vh.voucherDate <= to_date(:toVoucherDate,'dd/MM/yyyy') ")
                 .append(miscQuery).append(" and (gl.glcode = bg.mincode  or gl.glcode=bg.majorcode ) group by bd.id");
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameterList("voucherstatusExclude", financialUtils.getStatuses(voucherstatusExclude))
                 .setParameter("fromDate", fromDate).setParameter("toVoucherDate", toVoucherDate);
         miscQueryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
@@ -1944,7 +1943,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Main Query :" + query);
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameter("fromDate", fromDate).setParameter("toVoucherDate", toVoucherDate);
 
         final List<Object[]> result = qry.list();
@@ -2019,7 +2018,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Main Query :" + query);
 
-        final Query qry = getSession().createSQLQuery(query.toString());
+        final org.hibernate.query.Query qry = getSession().createNativeQuery(query.toString());
         qry.setParameter("fromDate", fromDate).setParameter("toVoucherDate", toVoucherDate);
         miscQueryParams.entrySet().forEach(entry -> qry.setParameter(entry.getKey(), entry.getValue()));
 
@@ -2235,7 +2234,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         }
         stateId = Long.valueOf(sequenceNumber.toString());
 
-        persistenceService.getSession().createSQLQuery(BUDGETDETAIL_STATES_INSERT).setLong("stateId", stateId)
+        persistenceService.getSession().createSQLQuery(BUDGETDETAIL_STATES_INSERT).setParameter("stateId", stateId)
                 .executeUpdate();
 
         budgetDetail.setWfState((State) persistenceService.find("from State where id = ?", stateId));
@@ -2387,7 +2386,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         } catch (final SQLGrammarException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
-        persistenceService.getSession().createSQLQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
+        persistenceService.getSession().createSQLQuery(BUDGET_STATES_INSERT).setParameter("stateId", stateId)
                 .executeUpdate();
         budgetState = (State) persistenceService.find("from State where id = ?", stateId);
         budget.setWfState(budgetState);
@@ -2466,7 +2465,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         try {
             final Query query = persistenceService.getSession()
                     .createSQLQuery("select count(*)+1 from egf_budget c, egf_budget p where c.parent = p.id and p.name = :parentName")
-                    .setString("parentName", parent.getName());
+                    .setParameter("parentName", parent.getName());
             //persistenceService.getSession().close();
             final String count = query.uniqueResult().toString();
             Integer capOrRevCount = Integer.valueOf(count);
@@ -2577,7 +2576,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         persistenceService.getSession().createSQLQuery(
                         new StringBuilder("update egf_budgetdetail  set status = :approvedStatus where status =:createdStatus")
                                 .append(" and  materializedPath like :materializedPath").toString())
-                .setLong("approvedStatus", approvedStatus.getId()).setLong("createdStatus", createdStatus.getId())
+                .setParameter("approvedStatus", approvedStatus.getId()).setParameter("createdStatus", createdStatus.getId())
                 .setParameter("materializedPath", materializedPath + "%").executeUpdate();
     }
 
@@ -2690,8 +2689,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<BudgetDetail> getBudgetDetailsByBudgetGroupId(final Long budgetGroupId) {
-        final Query qry = getCurrentSession().createQuery("from BudgetDetail where budgetGroup.id=:budgetGroupId");
-        qry.setLong("budgetGroupId", budgetGroupId);
+        final org.hibernate.query.Query qry = getCurrentSession().createQuery("from BudgetDetail where budgetGroup.id=:budgetGroupId");
+        qry.setParameter("budgetGroupId", budgetGroupId);
         List<BudgetDetail> budgetDetails = null;
         if (!qry.list().isEmpty())
             budgetDetails = qry.list();
@@ -2702,8 +2701,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<BudgetDetail> getBudgetDetailsByBudgetId(final Long budgetId) {
-        final Query qry = getCurrentSession().createQuery("from BudgetDetail where budget.id=:budgetId");
-        qry.setLong("budgetId", budgetId);
+        final org.hibernate.query.Query qry = getCurrentSession().createQuery("from BudgetDetail where budget.id=:budgetId");
+        qry.setParameter("budgetId", budgetId);
         List<BudgetDetail> budgetDetails = null;
         if (!qry.list().isEmpty())
             budgetDetails = qry.list();
@@ -2720,8 +2719,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         .append("budgetDetail.budget.id in(select id from Budget where financialYear.id=:financialYearId)")
                         .toString());
 
-        qry.setInteger("statusId", statusId);
-        qry.setLong("financialYearId", financialYearId);
+        qry.setParameter("statusId", statusId);
+        qry.setParameter("financialYearId", financialYearId);
         List<Budget> budget;
         if (!qry.list().isEmpty())
             budget = qry.list();

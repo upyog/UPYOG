@@ -51,8 +51,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.admin.master.entity.AppConfigValues;

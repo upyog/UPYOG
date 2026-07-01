@@ -59,7 +59,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -126,7 +126,7 @@ public class CreateJournalVoucherController extends BaseVoucherController {
 
     @PostMapping(value = "/create")
     public String create(@Valid @ModelAttribute("voucherHeader") final CVoucherHeader voucherHeader, final Model model,
-            final BindingResult resultBinder, final HttpServletRequest request, @RequestParam @SafeHtml final String workFlowAction) {
+            final BindingResult resultBinder, final HttpServletRequest request, @RequestParam @SanitizeHtml final String workFlowAction) {
 
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL);
         voucherHeader.setEffectiveDate(voucherHeader.getVoucherDate());
@@ -175,7 +175,7 @@ public class CreateJournalVoucherController extends BaseVoucherController {
     }
 
     @GetMapping(value = "/success")
-    public String showSuccessPage(@RequestParam("voucherNumber") @SafeHtml final String voucherNumber, final Model model,
+    public String showSuccessPage(@RequestParam("voucherNumber") @SanitizeHtml final String voucherNumber, final Model model,
             final HttpServletRequest request) {
         final String workFlowAction = request.getParameter("workFlowAction");
         final String[] keyNameArray = request.getParameter("approverDetails").split(",");

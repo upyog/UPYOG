@@ -48,11 +48,9 @@
 
 package org.egov.infra.web.struts.interceptors;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.ServletActionContext;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.HTTPUtilities;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
@@ -65,11 +63,10 @@ public class CacheControlInterceptor extends AbstractInterceptor {
     public String intercept(final ActionInvocation invocation) throws Exception {
         final HttpServletResponse response = ServletActionContext.getResponse();
         if (response != null) {
-			HTTPUtilities httpUtilities = ESAPI.httpUtilities();
-			httpUtilities.addHeader(response, "Cache-control", "no-cache, no-store, must-revalidate");
-        	httpUtilities.addHeader(response, "Pragma", "no-cache");
-        	httpUtilities.addHeader(response, "Expires", "-1");
-        	httpUtilities.addHeader(response, "Vary", "*");
+			response.addHeader("Cache-control", "no-cache, no-store, must-revalidate");
+        	response.addHeader("Pragma", "no-cache");
+        	response.addHeader("Expires", "-1");
+        	response.addHeader("Vary", "*");
         }
         return invocation.invoke();
     }

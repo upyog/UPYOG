@@ -11,7 +11,7 @@ import org.egov.model.budget.FunctionBudgetHead;
 import org.egov.model.service.BudgetHeadService;
 import org.egov.model.service.FunctionBudgetHeadService;
 import org.egov.utils.BudgetAccountType;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -115,14 +115,14 @@ public class BudgetHeadController {
 
 	@GetMapping(value = "/ajaxBudgetHead", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<BudgetHead> findBudgetHead(@RequestParam @SafeHtml final String query) {
+	public List<BudgetHead> findBudgetHead(@RequestParam @SanitizeHtml final String query) {
 		final List<BudgetHead> budgetHeads = budgetHeadService.findBudgetHeadByNameOrCode(query);
 		return budgetHeads;
 	}
 
 	@GetMapping(value = "/ajaxBudgetHead/{functionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<BudgetHead> findFunctionBudgetHeads(@PathVariable("functionId") Long functionId, @RequestParam @SafeHtml final String query) {
+	public List<BudgetHead> findFunctionBudgetHeads(@PathVariable("functionId") Long functionId, @RequestParam @SanitizeHtml final String query) {
 		final List<BudgetHead> budgetHeads = budgetHeadService.searchBudgetHeadsByFunctionNative(functionId, query);
 		return budgetHeads;
 	}

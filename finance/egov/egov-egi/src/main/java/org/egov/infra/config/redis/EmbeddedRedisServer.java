@@ -48,12 +48,13 @@
 
 package org.egov.infra.config.redis;
 
+import jnr.netdb.Protocol;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import redis.clients.jedis.Protocol;
+import redis.clients.jedis.ConnectionFactory;
 import redis.embedded.RedisServer;
 
 public class EmbeddedRedisServer implements InitializingBean, DisposableBean, BeanDefinitionRegistryPostProcessor {
@@ -62,7 +63,7 @@ public class EmbeddedRedisServer implements InitializingBean, DisposableBean, Be
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        redisServer = new RedisServer(Protocol.DEFAULT_PORT);
+        redisServer = new RedisServer(6379);  // Default Redis port
         redisServer.start();
     }
 

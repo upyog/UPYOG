@@ -51,22 +51,22 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Entity
 @Table(name = "BANK")
@@ -85,17 +85,17 @@ public class Bank extends AbstractPersistable<Integer> {
 
 	@NotNull
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	private String code;
 
 	@NotNull
 	@Length(max = 100)
-	@SafeHtml
+	@SanitizeHtml
 	private String name;
 
 	@JsonIgnore
 	@Length(max = 250)
-	@SafeHtml
+	@SanitizeHtml
 	private String narration;
 
 	@JsonIgnore
@@ -104,7 +104,7 @@ public class Bank extends AbstractPersistable<Integer> {
 
 	@JsonIgnore
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	private String type;
 
 	@JsonIgnore

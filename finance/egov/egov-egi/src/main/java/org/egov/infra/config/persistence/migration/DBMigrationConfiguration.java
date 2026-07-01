@@ -49,6 +49,7 @@
 
 package org.egov.infra.config.persistence.migration;
 
+import org.checkerframework.checker.units.qual.A;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.slf4j.Logger;
@@ -149,7 +150,8 @@ public class DBMigrationConfiguration {
         flyway.migrate();
     }
 
-    @Bean(name = "tenants", autowire = Autowire.BY_NAME)
+    @Bean(name = "tenants")
+    @Autowired
     public List<String> tenants() {
         List<String> tenants = new ArrayList<>();
 

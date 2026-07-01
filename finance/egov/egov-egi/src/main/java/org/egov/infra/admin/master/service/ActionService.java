@@ -70,9 +70,9 @@ public class ActionService {
     }
 
     public Action getActionById(Long id) {
-        return actionRepository.findOne(id);
+        return actionRepository.findById(id)  // ✅ Optional<T> return karta hai
+                .orElse(null); // ✅ null return karo agar nahi mila
     }
-
     @Transactional
     public Action saveAction(Action action) {
         return actionRepository.save(action);

@@ -78,10 +78,10 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     }
 
     @Override
-    public Connection getConnection(String tenantId) {
+    public Connection getConnection(Object tenantId) {
         try {
             Connection connection = getAnyConnection();
-            connection.setSchema(tenantId);
+            connection.setSchema((String) tenantId);
             return connection;
         } catch (SQLException e) {
             LOG.error("Error occurred while switching tenant schema upon getting connection", e);
@@ -90,9 +90,9 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     }
 
     @Override
-    public void releaseConnection(String tenantId, Connection connection) throws SQLException {
+    public void releaseConnection(Object tenantId, Connection connection) throws SQLException {
         try {
-            connection.setSchema(tenantId);
+            connection.setSchema((String) tenantId);
         } catch (SQLException e) {
             LOG.warn("Error occurred while switching schema upon release connection", e);
         }

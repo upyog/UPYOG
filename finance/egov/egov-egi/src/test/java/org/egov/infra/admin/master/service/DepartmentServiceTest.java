@@ -109,7 +109,7 @@ public class DepartmentServiceTest {
         department.setId(1l);
         when(departmentService.getDepartmentById(anyLong())).thenReturn(department);
         Department expectedDepartment = departmentService.getDepartmentById(1l);
-        verify(departmentRepository).findOne(1l);
+        verify(departmentRepository).findById(1l);
         assertEquals(expectedDepartment, department);
     }
 
@@ -119,7 +119,7 @@ public class DepartmentServiceTest {
         Department department2 = new DepartmentBuilder().withName("test2").withCode("test2").build();
         when(departmentService.getAllDepartments()).thenReturn(Arrays.asList(department1, department2));
         List<Department> list = departmentService.getAllDepartments();
-        verify(departmentRepository).findAll(new Sort(Sort.Direction.ASC, "name"));
+        verify(departmentRepository).findAll(Sort.by(Sort.Direction.ASC, "name"));
         assertEquals(list.size(), 2);
     }
 }

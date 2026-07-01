@@ -56,7 +56,7 @@ import org.egov.common.entity.UOM;
 import org.egov.commons.service.UOMCategoryService;
 import org.egov.commons.service.UOMService;
 import org.egov.commons.web.adaptor.UOMJsonAdaptor;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -151,7 +151,7 @@ public class UOMController {
     }
 
     @GetMapping(value = "/search/{mode}")
-    public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+    public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
         final UOM uom = new UOM();
         model.addAttribute("unitOfMeasurement", uomService.findAll());
         prepareNewForm(model);
@@ -161,7 +161,7 @@ public class UOMController {
     }
 
     @PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+    public @ResponseBody String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
            @Valid @ModelAttribute final UOM uom) {
         final List<UOM> searchResultList = uomService.search(uom);
         return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")

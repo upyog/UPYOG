@@ -58,7 +58,7 @@ import org.egov.commons.contracts.FunctionSearchRequest;
 import org.egov.commons.service.FunctionService;
 import org.egov.egf.web.adaptor.FunctionJsonAdaptor;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -158,7 +158,7 @@ public class FunctionController {
 	}
 
 	@GetMapping(value = "/result/{id}/{mode}")
-	public String result(@PathVariable("id") final Long id,@PathVariable("mode") @SafeHtml final String mode, Model model) {
+	public String result(@PathVariable("id") final Long id,@PathVariable("mode") @SanitizeHtml final String mode, Model model) {
 		CFunction function = functionService.findOne(id);
 		model.addAttribute(STR_FUNCTION, function);
 		model.addAttribute("mode", mode);
@@ -166,7 +166,7 @@ public class FunctionController {
 	}
 
 	@PostMapping(value = "/search/{mode}")
-	public String search(@PathVariable("mode") @SafeHtml final String mode, Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, Model model) {
 		FunctionSearchRequest functionSearchRequest = new FunctionSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(STR_FUNCTION_REQUEST, functionSearchRequest);
@@ -176,7 +176,7 @@ public class FunctionController {
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String ajaxsearch(
-			@PathVariable("mode") @SafeHtml final String mode, Model model,
+			@PathVariable("mode") @SanitizeHtml final String mode, Model model,
 			@Valid @ModelAttribute final FunctionSearchRequest functionSearchRequest) {
 		List<CFunction> searchResultList = functionService.search(functionSearchRequest);
 		return new StringBuilder("{ \"data\":")
@@ -203,7 +203,7 @@ public class FunctionController {
 	 */
 	@GetMapping(value = "/getByNameOrCode", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<String> findFunctionNames(@RequestParam @SafeHtml final String query) {
+	public List<String> findFunctionNames(@RequestParam @SanitizeHtml final String query) {
 //		final List<String> functionNames = new ArrayList<>();
 //		final List<CFunction> functions = functionService.findByNameLikeOrCodeLike(name);
 

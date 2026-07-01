@@ -88,7 +88,7 @@ import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.script.ScriptContext;
+import jakarta.script.ScriptContext;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;

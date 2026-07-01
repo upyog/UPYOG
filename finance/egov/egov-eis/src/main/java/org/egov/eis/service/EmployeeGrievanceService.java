@@ -51,8 +51,8 @@ package org.egov.eis.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeGrievance;
@@ -66,9 +66,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
@@ -112,35 +110,37 @@ public class EmployeeGrievanceService {
     }
 
     public List<EmployeeGrievance> findAll() {
-        return employeeGrievanceRepository.findAll(new Sort(Sort.Direction.ASC, "grievanceNumber"));
+        return employeeGrievanceRepository.findAll(Sort.by(Sort.Direction.ASC, "grievanceNumber"));
     }
 
     public EmployeeGrievance findOne(Long id) {
-        return employeeGrievanceRepository.findOne(id);
+        return employeeGrievanceRepository.findById(id).orElse(null);
     }
 
     public List<EmployeeGrievance> search(EmployeeGrievance employeeGrievance) {
-        final Criteria criteria = getCurrentSession().createCriteria(
-                EmployeeGrievance.class);
-        criteria.createAlias("employee", "emp");
-        if (employeeGrievance.getGrievanceNumber() != null) {
-            String number = "%" + employeeGrievance.getGrievanceNumber() + "%";
-            criteria.add(Restrictions.ilike("grievanceNumber", number));
-        }
-
+        StringBuilder hql = new StringBuilder("from EmployeeGrievance eg join fetch eg.employee emp where 1=1");
+        if (employeeGrievance.getGrievanceNumber() != null)
+            hql.append(" and eg.grievanceNumber like :grievanceNumber");
         if (employeeGrievance.getStatus() != null)
-            criteria.add(Restrictions.eq("status", employeeGrievance.getStatus()));
+            hql.append(" and eg.status = :status");
         if (employeeGrievance.getEmployeeGrievanceType() != null)
-            criteria.add(Restrictions.eq("employeeGrievanceType", employeeGrievance.getEmployeeGrievanceType()));
-        if (employeeGrievance.getEmployee() != null && employeeGrievance.getEmployee().getCode() != null) {
-            String empCode = "%" + employeeGrievance.getEmployee().getCode() + "%";
-            criteria.add(Restrictions.ilike("emp.code", empCode));
-        }
-        if (employeeGrievance.getEmployee() != null && employeeGrievance.getEmployee().getName() != null) {
-            String empName = "%" + employeeGrievance.getEmployee().getName() + "%";
-            criteria.add(Restrictions.ilike("emp.name", empName));
-        }
-        return criteria.list();
+            hql.append(" and eg.employeeGrievanceType = :grievanceType");
+        if (employeeGrievance.getEmployee() != null && employeeGrievance.getEmployee().getCode() != null)
+            hql.append(" and upper(emp.code) like :empCode");
+        if (employeeGrievance.getEmployee() != null && employeeGrievance.getEmployee().getName() != null)
+            hql.append(" and upper(emp.name) like :empName");
+        jakarta.persistence.Query query = entityManager.createQuery(hql.toString());
+        if (employeeGrievance.getGrievanceNumber() != null)
+            query.setParameter("grievanceNumber", "%" + employeeGrievance.getGrievanceNumber() + "%");
+        if (employeeGrievance.getStatus() != null)
+            query.setParameter("status", employeeGrievance.getStatus());
+        if (employeeGrievance.getEmployeeGrievanceType() != null)
+            query.setParameter("grievanceType", employeeGrievance.getEmployeeGrievanceType());
+        if (employeeGrievance.getEmployee() != null && employeeGrievance.getEmployee().getCode() != null)
+            query.setParameter("empCode", "%" + employeeGrievance.getEmployee().getCode().toUpperCase() + "%");
+        if (employeeGrievance.getEmployee() != null && employeeGrievance.getEmployee().getName() != null)
+            query.setParameter("empName", "%" + employeeGrievance.getEmployee().getName().toUpperCase() + "%");
+        return query.getResultList();
     }
 
     public void prepareWorkFlowTransition(EmployeeGrievance employeeGrievance) {

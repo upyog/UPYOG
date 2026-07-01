@@ -74,7 +74,7 @@ public class FeatureService {
     }
 
     public Feature getFeatureById(Long id) {
-        return featureRepository.findOne(id);
+        return featureRepository.findById(id).orElse(null);
     }
 
     @Transactional

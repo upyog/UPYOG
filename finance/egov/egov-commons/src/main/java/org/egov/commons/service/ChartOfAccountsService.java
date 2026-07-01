@@ -67,7 +67,7 @@ import org.egov.infra.microservice.contract.AccountCodeTemplate;
 import org.egov.infra.microservice.models.ChartOfAccounts;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,8 +101,8 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
         final Query entitysQuery = getSession()
                 .createQuery(
                         " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and (a.glcode like :glcode or lower(a.name) like :name) order by a.glcode");
-        entitysQuery.setString(GLCODE, glcode + "%");
-        entitysQuery.setString("name", glcode.toLowerCase() + "%");
+        entitysQuery.setParameter(GLCODE, glcode + "%");
+        entitysQuery.setParameter("name", glcode.toLowerCase() + "%");
         return entitysQuery.list();
 
     }
@@ -118,9 +118,9 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
 	@Transactional
 	public void updateActiveForPostingByMaterializedPath(final String materializedPath) {
-		final Query entitysQuery = getSession().createSQLQuery(
+		final Query entitysQuery = getSession().createNativeQuery(
 				"update chartofaccounts set isactiveforposting = true where isactiveforposting = false and id in (select distinct bg.mincode from egf_budgetgroup bg,egf_budgetdetail bd where bd.budgetgroup = bg.id  and bd.materializedpath like :materializedPath ) ");
-		entitysQuery.setString("materializedPath", materializedPath + "%");
+		entitysQuery.setParameter("materializedPath", materializedPath + "%");
 		entitysQuery.executeUpdate();
 	}
 
@@ -128,8 +128,8 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
         final Query entitysQuery = getSession()
                 .createQuery(
                         " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4  and (glcode like :glcode or lower(name) like :name) and  type in ('E','A') order by a.id");
-        entitysQuery.setString(GLCODE, glcode + "%");
-        entitysQuery.setString("name", glcode.toLowerCase() + "%");
+        entitysQuery.setParameter(GLCODE, glcode + "%");
+        entitysQuery.setParameter("name", glcode.toLowerCase() + "%");
         return entitysQuery.list();
     }
 
@@ -137,8 +137,8 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
         final Query entitysQuery = getSession()
                 .createQuery(
                         " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and (a.glcode like :glcode or lower(a.name) like :name) and a.type in ('I','L') order by a.id");
-        entitysQuery.setString(GLCODE, glcode + "%");
-        entitysQuery.setString("name", glcode.toLowerCase() + "%");
+        entitysQuery.setParameter(GLCODE, glcode + "%");
+        entitysQuery.setParameter("name", glcode.toLowerCase() + "%");
 
         List<CChartOfAccounts> netPayableCodes = getSupplierNetPayableAccountCodes();
         Map<String, CChartOfAccounts> netPayableMap = new HashMap<>();
@@ -159,8 +159,8 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
         final Query entitysQuery = getSession()
                 .createQuery(
                         " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4  and (glcode like :glcode or lower(name) like :name) and  type in ('E','A') order by a.id");
-        entitysQuery.setString(GLCODE, glcode + "%");
-        entitysQuery.setString("name", glcode.toLowerCase() + "%");
+        entitysQuery.setParameter(GLCODE, glcode + "%");
+        entitysQuery.setParameter("name", glcode.toLowerCase() + "%");
         return entitysQuery.list();
     }
 
@@ -168,8 +168,8 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
         final Query entitysQuery = getSession()
                 .createQuery(
                         " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and (a.glcode like :glcode or lower(a.name) like :name) and a.type in ('I','L') order by a.id");
-        entitysQuery.setString(GLCODE, glcode + "%");
-        entitysQuery.setString("name", glcode.toLowerCase() + "%");
+        entitysQuery.setParameter(GLCODE, glcode + "%");
+        entitysQuery.setParameter("name", glcode.toLowerCase() + "%");
 
         List<CChartOfAccounts> netPayableCodes = getContractorNetPayableAccountCodes();
         Map<String, CChartOfAccounts> netPayableMap = new HashMap<>();
@@ -212,17 +212,17 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
             final Query entitysQuery = getSession()
                     .createQuery(
                             " from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and size(a.chartOfAccountDetails) = 0 and (glcode like :glcode or lower(name) like :name) and (purposeId is null or purposeId not in (:ids)) order by a.id");
-            entitysQuery.setString(GLCODE, "%" + glcode + "%");
-            entitysQuery.setString("name", "%" + glcode.toLowerCase() + "%");
+            entitysQuery.setParameter(GLCODE, "%" + glcode + "%");
+            entitysQuery.setParameter("name", "%" + glcode.toLowerCase() + "%");
             entitysQuery.setParameterList("ids", contingencyBillPurposeIds);
             return entitysQuery.list();
         } else {
             final Query entitysQuery = getSession()
                     .createQuery(
                             " from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=:accountDetailTypeId) and a.isActiveForPosting=true and a.classification=4 and (a.glcode like :glcode or lower(a.name) like :name) and (purposeId is null or purposeId not in (:ids)) order by a.id");
-            entitysQuery.setInteger("accountDetailTypeId", accountDetailTypeId);
-            entitysQuery.setString(GLCODE, "%" + glcode + "%");
-            entitysQuery.setString("name", "%" + glcode.toLowerCase() + "%");
+            entitysQuery.setParameter("accountDetailTypeId", accountDetailTypeId);
+            entitysQuery.setParameter(GLCODE, "%" + glcode + "%");
+            entitysQuery.setParameter("name", "%" + glcode.toLowerCase() + "%");
             entitysQuery.setParameterList("ids", contingencyBillPurposeIds);
             return entitysQuery.list();
         }
@@ -240,22 +240,22 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
-            query.setLong(PURPOSE_ID, purposeId);
+            query.setParameter(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
-            query.setLong(PURPOSE_ID, purposeId);
+            query.setParameter(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId) AND classification=4 AND isActiveForPosting=true ");
-            query.setLong(PURPOSE_ID, purposeId);
+            query.setParameter(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE purposeid=:purposeId AND classification=4 AND isActiveForPosting=true ");
-            query.setLong(PURPOSE_ID, purposeId);
+            query.setParameter(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
         } catch (final HibernateException e) {
             throw new ApplicationRuntimeException("Error occurred while getting Account Code by purpose", e);
@@ -275,22 +275,22 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT coa.id FROM CChartOfAccounts coa,EgfAccountcodePurpose purpose WHERE coa.purposeId=purpose.id and purpose.name = :purposeName))) AND classification=4 AND isActiveForPosting=true ");
-            query.setString("purposeName", purposeName);
+            query.setParameter("purposeName", purposeName);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT coa.id FROM CChartOfAccounts coa,EgfAccountcodePurpose purpose WHERE coa.purposeId=purpose.id and purpose.name = :purposeName)) AND classification=4 AND isActiveForPosting=true ");
-            query.setString("purposeName", purposeName);
+            query.setParameter("purposeName", purposeName);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT coa.id FROM CChartOfAccounts coa,EgfAccountcodePurpose purpose WHERE coa.purposeId=purpose.id and purpose.name = :purposeName) AND classification=4 AND isActiveForPosting=true ");
-            query.setString("purposeName", purposeName);
+            query.setParameter("purposeName", purposeName);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
                             "SELECT coa FROM CChartOfAccounts coa,EgfAccountcodePurpose purpose WHERE coa.purposeId=purpose.id and purpose.name = :purposeName AND coa.classification=4 AND coa.isActiveForPosting=true ");
-            query.setString("purposeName", purposeName);
+            query.setParameter("purposeName", purposeName);
             accountCodeList.addAll(query.list());
         } catch (final ApplicationException e) {
             throw new ApplicationRuntimeException("Error occurred while getting Account Code by purpose name", e);
@@ -361,7 +361,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
         final Query query = getSession()
                 .createQuery(" from CChartOfAccounts a where  a.glcode like :glcode  order by a.glcode desc");
-        query.setString(GLCODE, glcode + "%");
+        query.setParameter(GLCODE, glcode + "%");
         final List<CChartOfAccounts> resultList = query.list();
 
         return resultList.isEmpty() ? null : resultList.get(0);
@@ -371,7 +371,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
     public CChartOfAccounts getByGlCode(final String glcode) {
 
         final Query query = getSession().createQuery(" from CChartOfAccounts a where  a.glcode =:glcode ");
-        query.setString("glcode", glcode);
+        query.setParameter("glcode", glcode);
         final List<CChartOfAccounts> resultList = query.list();
 
         return resultList.isEmpty() ? null : resultList.get(0);
@@ -410,7 +410,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
             final Query entitysQuery = getSession()
                     .createQuery(
                             "  from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=:accountDetailTypeId) and a.isActiveForPosting=true and a.classification=4 and a.glcode in (:glcodes) and (purposeId is null or purposeId not in (:ids)) order by a.id");
-            entitysQuery.setInteger("accountDetailTypeId", accountDetailTypeId);
+            entitysQuery.setParameter("accountDetailTypeId", accountDetailTypeId);
             entitysQuery.setParameterList("glcodes", glcodes);
             entitysQuery.setParameterList("ids", contingencyBillPurposeIds);
             return entitysQuery.list();
@@ -450,7 +450,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
         final Query entitysQuery = getSession().createQuery(
                 "  from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=:accountDetailTypeId) and a.isActiveForPosting=true and a.classification=4 and a.glcode in (:glcodes) and (purposeId is null or purposeId not in (:ids)) order by a.id");
-        entitysQuery.setInteger("accountDetailTypeId", contractorAccountDetailTypeId);
+        entitysQuery.setParameter("accountDetailTypeId", contractorAccountDetailTypeId);
         entitysQuery.setParameterList("glcodes", glcodeSet.keySet());
         entitysQuery.setParameterList("ids", contingencyBillPurposeIds);
         return entitysQuery.list();
@@ -489,7 +489,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
         final Query entitysQuery = getSession().createQuery(
                 "  from CChartOfAccounts  a LEFT OUTER JOIN  fetch a.chartOfAccountDetails  b where (size(a.chartOfAccountDetails) = 0 or b.detailTypeId.id=:accountDetailTypeId) and a.isActiveForPosting=true and a.classification=4 and a.glcode in (:glcodes) and (purposeId is null or purposeId not in (:ids)) order by a.id");
-        entitysQuery.setInteger("accountDetailTypeId", supplierAccountDetailTypeId);
+        entitysQuery.setParameter("accountDetailTypeId", supplierAccountDetailTypeId);
         entitysQuery.setParameterList("glcodes", glcodeSet.keySet());
         entitysQuery.setParameterList("ids", contingencyBillPurposeIds);
         return entitysQuery.list();

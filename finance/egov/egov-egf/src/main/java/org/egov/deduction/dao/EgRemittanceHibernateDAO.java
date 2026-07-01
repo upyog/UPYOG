@@ -55,12 +55,11 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.model.recoveries.Recovery;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 /**
@@ -110,7 +109,7 @@ public class EgRemittanceHibernateDAO {
 
     public List<EgRemittance> getEgRemittanceFilterBy(final Fund fund, final Recovery recovery, final String month,
             final CFinancialYear financialyear) {
-        Query qry;
+        org.hibernate.query.Query qry;
         final StringBuffer qryStr = new StringBuffer();
         List<EgRemittance> egRemittanceList = null;
         qryStr.append("From EgRemittance rmt where rmt.voucherheader.type='Payment' and rmt.voucherheader.status=0");
@@ -136,13 +135,13 @@ public class EgRemittanceHibernateDAO {
         qry = getCurrentSession().createQuery(qryStr.toString());
 
         if (fund != null)
-            qry.setEntity("fund", fund);
+            qry.setParameter("fund", fund.getId());
         if (recovery != null)
-            qry.setEntity("recovery", recovery);
+            qry.setParameter("recovery", recovery.getId());
         if (month != null)
-            qry.setString("month", month);
+            qry.setParameter("month", month);
         if (financialyear != null)
-            qry.setEntity("financialyear", financialyear);
+            qry.setParameter("financialyear", financialyear.getId());
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("qryStr " + qryStr.toString());

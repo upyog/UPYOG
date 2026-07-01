@@ -62,7 +62,7 @@ import org.egov.enums.CloseTypeEnum;
 import org.egov.infra.utils.DateUtils;
 import org.egov.services.closeperiod.ClosedPeriodService;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -182,7 +182,7 @@ public class ClosedPeriodController {
     }
 
     @RequestMapping(value = "/search/{mode}", method = { RequestMethod.GET, RequestMethod.POST })
-    public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+    public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
         final ClosedPeriodSearchRequest closedPeriodSearchRequest = new ClosedPeriodSearchRequest();
 
         if (mode.equalsIgnoreCase("reopen"))
@@ -196,7 +196,7 @@ public class ClosedPeriodController {
 
     @PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+    public String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
         @Valid @ModelAttribute final ClosedPeriodSearchRequest closedPeriodSearchRequest) {
         if (mode.equalsIgnoreCase("reopen"))
             closedPeriodSearchRequest.setCloseType(CloseTypeEnum.SOFTCLOSE);

@@ -58,7 +58,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageForward;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;

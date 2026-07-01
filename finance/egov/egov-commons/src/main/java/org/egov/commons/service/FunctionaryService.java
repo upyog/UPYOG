@@ -66,7 +66,7 @@ public class FunctionaryService {
 	}
 
 	public Functionary findOne(final Long id) {
-		return functionaryRepository.findOne(id.intValue());
+		return functionaryRepository.findById(id.intValue()).orElse(null);
 	}
 
 	public Functionary findByCode(final String code) {

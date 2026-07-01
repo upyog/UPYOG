@@ -52,8 +52,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFiscalPeriod;

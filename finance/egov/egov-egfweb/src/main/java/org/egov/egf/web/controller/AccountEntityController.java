@@ -57,7 +57,7 @@ import org.egov.commons.service.AccountEntityService;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.egf.web.adaptor.AccountEntityJsonAdaptor;
 import org.egov.masters.model.AccountEntity;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -147,7 +147,7 @@ public class AccountEntityController {
 	}
 
 	@GetMapping(value = "/result/{id}/{mode}")
-	public String result(@PathVariable("id") final Integer id, @PathVariable("mode") @SafeHtml final String mode,
+	public String result(@PathVariable("id") final Integer id, @PathVariable("mode") @SanitizeHtml final String mode,
 			Model model) {
 		AccountEntity accountEntity = accountEntityService.findOne(id);
 		model.addAttribute(ACCOUNT_ENTITY, accountEntity);
@@ -156,7 +156,7 @@ public class AccountEntityController {
 	}
 
 	@PostMapping(value = "/search/{mode}")
-	public String search(@PathVariable("mode") @SafeHtml final String mode, Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, Model model) {
 		AccountEntitySearchRequest accountEntitySearchRequest = new AccountEntitySearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(ACCOUNT_ENTITY_SEARCH_REQUEST, accountEntitySearchRequest);
@@ -165,7 +165,7 @@ public class AccountEntityController {
 	}
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, Model model,
+	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, Model model,
 			@Valid @ModelAttribute final AccountEntitySearchRequest accountEntitySearchRequest) {
 		List<AccountEntity> searchResultList = accountEntityService.search(accountEntitySearchRequest);
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();

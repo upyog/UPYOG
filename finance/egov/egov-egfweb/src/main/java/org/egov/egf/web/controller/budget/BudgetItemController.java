@@ -22,7 +22,7 @@ import org.egov.model.service.FunctionBudgetHeadService;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;

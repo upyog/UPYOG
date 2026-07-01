@@ -53,12 +53,11 @@ package org.egov.deduction.dao;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.deduction.model.EgRemittanceGldtl;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 /**
@@ -104,16 +103,16 @@ public class EgRemittanceDetailHibernateDAO {
    
 
     public List<EgRemittanceDetail> getEgRemittanceDetailByEgRmt(final EgRemittance egRmt) {
-        final Query qry = getCurrentSession().createQuery("from EgRemittanceDetail erd where erd.egRemittance =:egRmt");
-        qry.setEntity("egRmt", egRmt);
+        final org.hibernate.query.Query qry = getCurrentSession().createQuery("from EgRemittanceDetail erd where erd.egRemittance =:egRmt");
+        qry.setParameter("egRmt", egRmt.getId());
         return qry.list();
     }
 
     public EgRemittanceDetail getEgRemittanceDetailFilterBy(final EgRemittance egRmt, final EgRemittanceGldtl egRmtGldtl) {
-        final Query qry = getCurrentSession().createQuery(
+        final org.hibernate.query.Query qry = getCurrentSession().createQuery(
                 "from EgRemittanceDetail erd where erd.egRemittance =:egRmt and erd.egRemittanceGldtl =:egRmtGldtl");
-        qry.setEntity("egRmt", egRmt);
-        qry.setEntity("egRmtGldtl", egRmtGldtl);
+        qry.setParameter("egRmt", egRmt.getId());
+        qry.setParameter("egRmtGldtl", egRmtGldtl.getId());
         return (EgRemittanceDetail) qry.uniqueResult();
     }
 }

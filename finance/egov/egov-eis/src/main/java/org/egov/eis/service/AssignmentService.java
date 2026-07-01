@@ -61,14 +61,13 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -101,7 +100,7 @@ public class AssignmentService {
     }
 
     public Assignment getAssignmentById(final Long id) {
-        return assignmentRepository.findOne(id);
+        return assignmentRepository.findById(id).orElse(null);
     }
 
     public List<Assignment> getAllAssignmentsByEmpId(final Long empId) {
@@ -282,7 +281,7 @@ public class AssignmentService {
     public Employee removeDeletedAssignments(final Employee employee, final String removedAssignIds) {
         if (null != removedAssignIds)
             for (final String id : removedAssignIds.split(","))
-                employee.getAssignments().remove(assignmentRepository.findOne(Long.valueOf(id)));
+                employee.getAssignments().remove(assignmentRepository.findById(Long.valueOf(id)).orElse(null));
         return employee;
     }
 
@@ -327,7 +326,7 @@ public class AssignmentService {
         if (employeeAssignmentSearch.getAssignmentDate() != null)
             queryString.append(" AND assign.fromDate <=:assignDate AND assign.toDate >= :assignDate ");
         queryString.append(" Order by assign.employee.code, assign.employee.name ");
-        final Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
+        final org.hibernate.query.Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
         if (StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeCode()))
             query.setParameter("code", employeeAssignmentSearch.getEmployeeCode());
         if (StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeName()))
@@ -350,7 +349,7 @@ public class AssignmentService {
             queryString.append(" AND assignment.position.id =:pos ");
         if (employeePositionSearch.getIsPrimary() != null)
             queryString.append(" AND assignment.primary =:primary ");
-        Query queryResult = entityManager.unwrap(Session.class).createQuery(queryString.toString());
+        org.hibernate.query.Query queryResult = entityManager.unwrap(Session.class).createQuery(queryString.toString());
         queryResult = setParametersToQuery(employeePositionSearch, queryResult);
 
         return queryResult.list();
@@ -360,7 +359,7 @@ public class AssignmentService {
         return assignmentRepository.findAllAssignmentsByHODDeptAndGivenDate(deptId, givenDate);
     }
 
-    private Query setParametersToQuery(final EmployeePositionSearch employeePositionSearch, final Query queryResult) {
+    private org.hibernate.query.Query setParametersToQuery(final EmployeePositionSearch employeePositionSearch, final org.hibernate.query.Query queryResult) {
         if (employeePositionSearch.getPosition() != null)
             queryResult.setParameter("pos", Long.valueOf(employeePositionSearch.getPosition()));
         if (employeePositionSearch.getIsPrimary() != null)

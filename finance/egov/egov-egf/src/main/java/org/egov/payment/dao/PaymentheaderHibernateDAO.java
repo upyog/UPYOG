@@ -51,8 +51,8 @@
 package org.egov.payment.dao;
 
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.egov.commons.CVoucherHeader;
 import org.egov.model.payment.Paymentheader;
 import org.hibernate.Query;

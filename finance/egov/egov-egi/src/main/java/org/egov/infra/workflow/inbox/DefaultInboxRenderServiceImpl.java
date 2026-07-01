@@ -48,12 +48,14 @@
 
 package org.egov.infra.workflow.inbox;
 
+import jakarta.persistence.criteria.*;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+//import org.hibernate.FlushMode;
+import jakarta.persistence.FlushModeType;
 
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -109,29 +111,98 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
 //                .addOrder(Order.desc("state.createdDate"))
 //                .list();
     	
-    	Criteria criteria =  this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
-              .setFetchMode("state", JOIN).createAlias("state", "state")
-              .setFlushMode(MANUAL).setReadOnly(true).setCacheable(true)
-              .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
-              .add(Restrictions.in("state.ownerPosition", owners))
-              .add(Restrictions.in("state.status", Arrays.asList(INPROGRESS, STARTED)))
-              .addOrder(Order.desc("state.createdDate"));
-    	
-    	List list = criteria.list();
-    	System.out.println("#################### inbox list size"+list.size());
-    	return list;
+//    	Criteria criteria =  this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
+//              .setFetchMode("state", JOIN).createAlias("state", "state")
+//              .setFlushMode(MANUAL).setReadOnly(true).setCacheable(true)
+//              .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
+//              .add(Restrictions.in("state.ownerPosition", owners))
+//              .add(Restrictions.in("state.status", Arrays.asList(INPROGRESS, STARTED)))
+//              .addOrder(Order.desc("state.createdDate"));
+//
+//    	List list = criteria.list();
+//    	System.out.println("#################### inbox list size"+list.size());
+//    	return list;
+
+
+
+        CriteriaBuilder cb = this.stateAwarePersistenceService
+                .getSession()
+                .getCriteriaBuilder();
+
+        CriteriaQuery<T> cq = cb.createQuery(this.stateAwareType);
+        Root<T> root = cq.from(this.stateAwareType);
+
+
+        Join<T, ?> stateJoin = root.join("state", JoinType.INNER);
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(stateJoin.get("type"),
+                this.stateAwareType.getSimpleName()));
+        predicates.add(stateJoin.get("ownerPosition").in(owners));
+        predicates.add(stateJoin.get("status").in(Arrays.asList(INPROGRESS, STARTED)));
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.orderBy(cb.desc(stateJoin.get("createdDate")));
+
+        List<T> list = this.stateAwarePersistenceService
+                .getSession()
+                .createQuery(cq)
+                .setFlushMode(FlushModeType.COMMIT)   // ✅ setFlushMode
+                .setReadOnly(true)                 // ✅ setReadOnly
+                .setCacheable(true)                // ✅ setCacheable
+                .getResultList();                  // ✅ .list() → .getResultList()
+
+        System.out.println("#################### inbox list size" + list.size());
+        return list;
+
+
     }
 
-    @Override
     public List<T> getDraftWorkflowItems(List<Long> owners) {
-        return this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
-                .setFetchMode("state", JOIN).createAlias("state", "state")
-                .setFlushMode(MANUAL).setReadOnly(true).setCacheable(true)
-                .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
-                .add(Restrictions.in("state.ownerPosition.id", owners))
-                .add(Restrictions.eq("state.status", STARTED))
-                .add(Restrictions.eq("state.createdBy.id", getUserId()))
-                .addOrder(Order.asc("state.createdDate"))
-                .list();
+
+        CriteriaBuilder cb = this.stateAwarePersistenceService
+                .getSession()
+                .getCriteriaBuilder();
+
+        CriteriaQuery<T> cq = cb.createQuery(this.stateAwareType);
+        Root<T> root = cq.from(this.stateAwareType);
+
+        // ✅ setFetchMode("state", JOIN) + createAlias("state", "state")
+        Join<T, ?> stateJoin = root.join("state", JoinType.INNER);
+
+        // ✅ "state.ownerPosition.id" — nested join chahiye
+        Join<?, ?> ownerPositionJoin = stateJoin.join("ownerPosition", JoinType.INNER);
+
+        // ✅ "state.createdBy.id" — nested join chahiye
+        Join<?, ?> createdByJoin = stateJoin.join("createdBy", JoinType.INNER);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Restrictions.eq("state.type", ...)
+        predicates.add(cb.equal(stateJoin.get("type"),
+                this.stateAwareType.getSimpleName()));
+
+        // ✅ Restrictions.in("state.ownerPosition.id", owners)
+        // nested path — ownerPositionJoin se id lo
+        predicates.add(ownerPositionJoin.get("id").in(owners));
+
+        // Restrictions.eq("state.status", STARTED)
+        predicates.add(cb.equal(stateJoin.get("status"), STARTED));
+
+        // ✅ Restrictions.eq("state.createdBy.id", getUserId())
+        // nested path — createdByJoin se id lo
+        predicates.add(cb.equal(createdByJoin.get("id"), getUserId()));
+
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+
+        // ✅ Order.asc("state.createdDate") → cb.asc()
+        cq.orderBy(cb.asc(stateJoin.get("createdDate")));
+
+        return this.stateAwarePersistenceService
+                .getSession()
+                .createQuery(cq)
+                .setFlushMode(FlushModeType.COMMIT)  // ✅ MANUAL → COMMIT
+                .setReadOnly(true)
+                .setCacheable(true)
+                .getResultList();                     // ✅ .list() → .getResultList()
     }
 }

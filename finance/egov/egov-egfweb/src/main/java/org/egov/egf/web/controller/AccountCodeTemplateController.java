@@ -7,7 +7,7 @@ import org.egov.egf.web.exception.GenericExceptionResponse;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.contract.AccountCodeTemplate;
 import org.egov.services.accountcode.template.AccountCodeTemplateService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +28,8 @@ public class AccountCodeTemplateController {
     private AccountCodeTemplateService accCodeTempSer;
 
     @GetMapping(value = "/list")
-    public ResponseEntity<List<AccountCodeTemplate>> getTemplateList(@RequestParam("module") @SafeHtml String module,
-            @RequestParam("billSubType") @SafeHtml String billSubType, @RequestParam("detailTypeName") @SafeHtml String detailTypeName,
+    public ResponseEntity<List<AccountCodeTemplate>> getTemplateList(@RequestParam("module") @SanitizeHtml String module,
+            @RequestParam("billSubType") @SanitizeHtml String billSubType, @RequestParam("detailTypeName") @SanitizeHtml String detailTypeName,
             @RequestParam("detailTypeId") int detailTypeId) {
         List<AccountCodeTemplate> list = accCodeTempSer.getAccountTemplate(module, billSubType, detailTypeName,
                 detailTypeId);
@@ -37,13 +37,13 @@ public class AccountCodeTemplateController {
     }
 
     @GetMapping(value = "/contarctorlist")
-    public ResponseEntity<List<AccountCodeTemplate>> getContarctorTemplateList(@RequestParam("module") @SafeHtml String module) {
+    public ResponseEntity<List<AccountCodeTemplate>> getContarctorTemplateList(@RequestParam("module") @SanitizeHtml String module) {
         List<AccountCodeTemplate> list = accCodeTempSer.getAccountTemplate(module, null, null, 0);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
     
     @GetMapping(value = "/supplierlist")
-    public ResponseEntity<List<AccountCodeTemplate>> getSupplierTemplateList(@RequestParam("module") @SafeHtml String module) {
+    public ResponseEntity<List<AccountCodeTemplate>> getSupplierTemplateList(@RequestParam("module") @SanitizeHtml String module) {
         List<AccountCodeTemplate> list = accCodeTempSer.getAccountTemplate(module, null, null, 0);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }

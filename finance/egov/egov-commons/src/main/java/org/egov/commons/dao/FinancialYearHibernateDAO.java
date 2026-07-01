@@ -51,13 +51,13 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -90,7 +90,7 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
     }
 
     public List<CFinancialYear> findAll() {
-        return (List<CFinancialYear>) getCurrentSession().createCriteria(CFinancialYear.class).list();
+        return getCurrentSession().createQuery("from CFinancialYear", CFinancialYear.class).list();
     }
 
     @PersistenceContext
@@ -179,7 +179,7 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
     public CFinancialYear getFinancialYearByFinYearRange(String finYearRange) {
         Query query = getCurrentSession().createQuery(
                 "from CFinancialYear cfinancialyear where cfinancialyear.finYearRange=:finYearRange");
-        query.setString("finYearRange", finYearRange);
+        query.setParameter("finYearRange", finYearRange);
         query.setCacheable(true);
         return (CFinancialYear) query.uniqueResult();
     }
@@ -206,7 +206,7 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
 
     public CFinancialYear getFinancialYearById(Long id) {
         Query query = getCurrentSession().createQuery("from CFinancialYear cfinancialyear where id=:id");
-        query.setLong("id", id);
+        query.setParameter("id", id);
         return (CFinancialYear) query.uniqueResult();
     }
 
@@ -240,8 +240,8 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
                 .createQuery(
                         ""
                                 + " from CFinancialYear cfinancialyear where cfinancialyear.isActiveForPosting=false and cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  ");
-        query.setDate("sDate", fromDate);
-        query.setDate("eDate", toDate);
+        query.setParameter("sDate", fromDate);
+        query.setParameter("eDate", toDate);
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0)
             return false;
@@ -264,8 +264,8 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
                 .createQuery(
                         ""
                                 + " from ClosedPeriod cp where cp.isClosed=true and cp.startingDate <=:sDate and cp.endingDate >=:eDate  ");
-        query.setDate("sDate", fromDate);
-        query.setDate("eDate", toDate);
+        query.setParameter("sDate", fromDate);
+        query.setParameter("eDate", toDate);
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0)
             return false;
@@ -286,8 +286,8 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         Query query = getCurrentSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate  and cfinancialyear.isActiveForPosting=true");
-        query.setDate("sDate", date);
-        query.setDate("eDate", date);
+        query.setParameter("sDate", date);
+        query.setParameter("eDate", date);
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0)
             cFinancialYear = (CFinancialYear) list.get(0);
@@ -307,8 +307,8 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         Query query = getCurrentSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate");
-        query.setDate("sDate", date);
-        query.setDate("eDate", date);
+        query.setParameter("sDate", date);
+        query.setParameter("eDate", date);
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0)
             cFinancialYear = (CFinancialYear) list.get(0);
@@ -354,7 +354,7 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         Query query = getCurrentSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <:sDate and isActive=true order by finYearRange desc ");
-        query.setDate("sDate", date);
+        query.setParameter("sDate", date);
         return query.list();
     }
     
@@ -367,7 +367,7 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         Query query = getCurrentSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate >=:sDate and isActive=true order by finYearRange desc ");
-        query.setDate("sDate", date);
+        query.setParameter("sDate", date);
         return query.list();
     }
 

@@ -72,9 +72,9 @@ public class LoginAuditService {
     }
 
     public Page<LoginAudit> getLoginAudits(LoginAuditReportRequest loginAuditReportRequest) {
-        Pageable pageable = new PageRequest(loginAuditReportRequest.pageNumber(),
+        Pageable pageable = PageRequest.of(loginAuditReportRequest.pageNumber(),
                 loginAuditReportRequest.pageSize(),
-                loginAuditReportRequest.orderDir(), loginAuditReportRequest.orderBy());
+                org.springframework.data.domain.Sort.by(loginAuditReportRequest.orderDir(), loginAuditReportRequest.orderBy()));
         return loginAuditRepository.findAll(LoginAuditSpec.loginAuditSearchSpec(loginAuditReportRequest), pageable);
     }
 }

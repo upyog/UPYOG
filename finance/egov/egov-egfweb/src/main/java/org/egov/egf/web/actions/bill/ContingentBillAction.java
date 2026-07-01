@@ -99,7 +99,7 @@ import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.script.ScriptContext;
+import jakarta.script.ScriptContext;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;

@@ -60,12 +60,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -75,9 +75,10 @@ import org.egov.infra.microservice.models.Department;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.cache.CacheException;
+import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,12 +103,21 @@ public class EgovMasterDataCaching {
     @Autowired
     private MicroserviceUtils microserviceUtils;
     
+//    static {
+//        try {
+//            final Context context = new InitialContext();
+//            CACHE_MANAGER = (EmbeddedCacheManager) context.lookup("java:jboss/infinispan/container/master-data");
+//        } catch (final NamingException e) {
+//            throw new ApplicationRuntimeException("Error occurred while getting Cache Manager", e);
+//        }
+//    }
+
+
     static {
         try {
-            final Context context = new InitialContext();
-            CACHE_MANAGER = (EmbeddedCacheManager) context.lookup("java:jboss/infinispan/container/master-data");
-        } catch (final NamingException e) {
-            throw new ApplicationRuntimeException("Error occurred while getting Cache Manager", e);
+            CACHE_MANAGER = new DefaultCacheManager(false);  // local instance
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -398,7 +408,7 @@ public class EgovMasterDataCaching {
         List list = null;
 
         try {
-            final Query qry = getCurrentSession().createQuery(query);
+            final Query<List> qry = getCurrentSession().createQuery(query, List.class);
             list = qry.list();
         } catch (final HibernateException e) {
             LOGGER.error("Error occurred in EgovMasterDataCaching queryByHibernate", e);
@@ -422,7 +432,7 @@ public class EgovMasterDataCaching {
         List resultlist = null;
         List returnList = null;
         try {
-            resultlist = getCurrentSession().createSQLQuery(query).list();
+            resultlist = getCurrentSession().createNativeQuery(query).list();
             if (resultlist != null)
                 returnList = resultSetToArrayList(resultlist);
         } catch (final HibernateException e) {

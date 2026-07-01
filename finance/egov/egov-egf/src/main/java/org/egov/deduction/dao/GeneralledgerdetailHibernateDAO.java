@@ -51,12 +51,11 @@
 package org.egov.deduction.dao;
 
 import org.egov.deduction.model.Generalledgerdetail;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Transactional(readOnly = true)
@@ -97,26 +96,26 @@ public class GeneralledgerdetailHibernateDAO {
 
 	public List<Generalledgerdetail> getGeneralledgerdetailByFilterBy(final Integer voucherHeaderId,
 			final Integer purposeId) {
-		final Query qry = getCurrentSession().createQuery(new StringBuilder(" from Generalledgerdetail gld")
+		final org.hibernate.query.Query qry = getCurrentSession().createQuery(new StringBuilder(" from Generalledgerdetail gld")
 				.append(" where gld.generalledger.voucherHeaderId =:voucherHeaderId  ")
 				.append("and gld.generalledger.glcodeId in(select id from CChartOfAccounts where purposeId =:purposeId) ")
 				.toString());
-		qry.setInteger("voucherHeaderId", voucherHeaderId);
-		qry.setInteger("purposeId", purposeId);
+		qry.setParameter("voucherHeaderId", voucherHeaderId);
+		qry.setParameter("purposeId", purposeId);
 		return qry.list();
 	}
 
     public List<Generalledgerdetail> getGeneralledgerdetailByGlCodeId(final Integer glcodeId) {
-        final Query qry = getCurrentSession().createQuery(
+        final org.hibernate.query.Query qry = getCurrentSession().createQuery(
                 " from Generalledgerdetail gld where gld.generalledger.glcodeId =:glcodeId");
-        qry.setInteger("glcodeId", glcodeId);
+        qry.setParameter("glcodeId", glcodeId);
         return qry.list();
     }
 
     public List<Generalledgerdetail> getGeneralledgerdetailByVhId(final Integer vhId) {
-        final Query qry = getCurrentSession().createQuery(
+        final org.hibernate.query.Query qry = getCurrentSession().createQuery(
                 " from Generalledgerdetail gld where gld.generalledger.voucherHeaderId =:vhId");
-        qry.setInteger("vhId", vhId);
+        qry.setParameter("vhId", vhId);
         return qry.list();
     }
 }

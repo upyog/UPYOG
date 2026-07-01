@@ -64,10 +64,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
@@ -96,7 +96,7 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.masters.WorkOrder;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -218,7 +218,7 @@ public class CreateContractorBillController extends BaseBillController {
 	@PostMapping(value = "/create")
 	public String create(@Valid @ModelAttribute("egBillregister") final EgBillregister egBillregister,
 			final Model model, final BindingResult resultBinder, final HttpServletRequest request,
-			@RequestParam @SafeHtml final String workFlowAction) throws IOException, ParseException {
+			@RequestParam @SanitizeHtml final String workFlowAction) throws IOException, ParseException {
 
 		if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workFlowAction) && !commonsUtil
 				.isValidApprover(egBillregister, Long.valueOf(request.getParameter(APPROVAL_POSITION)))) {
@@ -424,7 +424,7 @@ public class CreateContractorBillController extends BaseBillController {
 	}
 
 	@GetMapping(value = "/success")
-	public String showSuccessPage(@RequestParam("billNumber") @SafeHtml final String billNumber, final Model model,
+	public String showSuccessPage(@RequestParam("billNumber") @SanitizeHtml final String billNumber, final Model model,
 			final HttpServletRequest request) {
 		final String[] keyNameArray = request.getParameter(APPROVER_DETAILS).split(",");
 		Long id = 0L;

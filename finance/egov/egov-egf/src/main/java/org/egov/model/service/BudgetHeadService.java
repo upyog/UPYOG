@@ -1,7 +1,7 @@
 package org.egov.model.service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.apache.struts2.util.SortIteratorFilter;
 import org.egov.commons.CFinancialYear;

@@ -56,9 +56,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.script.ScriptContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;

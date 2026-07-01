@@ -55,7 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptContext;
+import jakarta.script.ScriptContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;

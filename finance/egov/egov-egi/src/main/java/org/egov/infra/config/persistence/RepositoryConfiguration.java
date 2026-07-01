@@ -74,6 +74,6 @@ public class RepositoryConfiguration {
 
     @Bean
     public AuditorAware<User> springSecurityAwareAuditor() {
-        return userService::getCurrentUser;
+        return () -> java.util.Optional.ofNullable(userService.getCurrentUser());
     }
 }
