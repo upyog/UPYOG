@@ -3,8 +3,11 @@ package org.egov.pgr.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.pgr.repository.rowmapper.PGRQueryBuilder;
 import org.egov.pgr.repository.rowmapper.PGRRowMapper;
+import org.egov.pgr.repository.rowmapper.SwachhImageDataRowMapper;
 import org.egov.pgr.util.PGRConstants;
 import org.egov.pgr.web.models.ServiceWrapper;
+import org.egov.pgr.web.models.SwachhImageData;
+import org.egov.pgr.web.models.ImageSearchRequest;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.Workflow;
@@ -26,7 +29,7 @@ public class PGRRepository {
     private PGRQueryBuilder queryBuilder;
 
     private PGRRowMapper rowMapper;
-
+    private SwachhImageDataRowMapper  SwachhImageDataRowMapper;
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -54,6 +57,13 @@ public class PGRRepository {
         }
         return serviceWrappers;
     }
+    
+    
+    public List<SwachhImageData> getServiceImageWrappers(ImageSearchRequest criteria){
+        List<SwachhImageData> services = getImageServices(criteria);
+      
+        return services;
+    }
 
     /**
      * searches services based on search criteria
@@ -64,6 +74,15 @@ public class PGRRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getPGRSearchQuery(criteria, preparedStmtList);
         List<Service> services =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+        return services;
+    }
+    
+    
+    public List<SwachhImageData> getImageServices(ImageSearchRequest criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getImageSearchQuery(criteria, preparedStmtList);
+        log.info(query,preparedStmtList.toArray());
+        List<SwachhImageData> services = jdbcTemplate.query(query, preparedStmtList.toArray(), new SwachhImageDataRowMapper());
         return services;
     }
 

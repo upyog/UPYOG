@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -66,7 +70,35 @@ public class UserService {
 
     }
 
+    public void enrichImgaeUsers(List<SwachhImageData> serviceWrappers){
 
+        Set<String> uuids = new HashSet<>();
+
+        serviceWrappers.forEach(serviceWrapper -> {
+            uuids.add(serviceWrapper.getUserUuid());
+        });
+
+        Map<String, User> idToUserMap = searchBulkUser(new LinkedList<>(uuids));
+
+        serviceWrappers.forEach(serviceWrapper -> {
+            User user = idToUserMap.get(serviceWrapper.getUserUuid());
+           // serviceWrapper.setCitizen(user); 
+            serviceWrapper.setUserDetail(user);
+        });
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        serviceWrappers.forEach(wrapper -> {
+            Long epochMillis = wrapper.getCreatedTime(); // or serviceWrapper.getService().getDateOfAppointment(), if nested
+
+            if (epochMillis != null) {
+                LocalDate date = Instant.ofEpochMilli(epochMillis)
+                                        .atZone(ZoneId.systemDefault())
+                                        .toLocalDate();
+               // wrapper.setd(date.format(formatter));
+                wrapper.setDateOfAttendance(date.format(formatter));
+            }
+        });
+    }
     /**
      * Creates or updates the user based on if the user exists. The user existance is searched based on userName = mobileNumber
      * If the there is already a user with that mobileNumber, the existing user is updated

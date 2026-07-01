@@ -83,6 +83,21 @@ public class RequestsApiController{
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+    
+    
+    
+    
+    @RequestMapping(value="/attendance/_search", method = RequestMethod.POST)
+    public ResponseEntity<AttendanceServiceWrapper> requestsImageSearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                              @Valid @ModelAttribute ImageSearchRequest criteria) {
+    
+        List<SwachhImageData> serviceWrappers = pgrService.searchImage(requestInfoWrapper.getRequestInfo(), criteria);
+         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        AttendanceServiceWrapper response = AttendanceServiceWrapper.builder().responseInfo(responseInfo).serviceWrappers(serviceWrappers).build();
+  //      ServiceResponse response = null;
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
 
     @RequestMapping(value = "request/_plainsearch", method = RequestMethod.POST)
     public ResponseEntity<ServiceResponse> requestsPlainSearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute RequestSearchCriteria requestSearchCriteria) {
