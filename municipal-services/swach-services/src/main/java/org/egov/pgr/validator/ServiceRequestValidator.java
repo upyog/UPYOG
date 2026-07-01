@@ -243,6 +243,20 @@ public class ServiceRequestValidator {
         validateSearchParam(requestInfo, criteria);
 
     }
+    
+    
+    public void validateImageSearch(RequestInfo requestInfo, ImageSearchRequest criteria){
+
+        /*
+        * Checks if tenatId is provided with the search params
+        * */
+        if( criteria.getUserIds()!=null    
+                && criteria.getTenantId()==null)
+            throw new CustomException("INVALID_SEARCH","TenantId is mandatory search param");
+
+       // validateSearchParam(requestInfo, criteria);
+
+    }
 
 
     /**
