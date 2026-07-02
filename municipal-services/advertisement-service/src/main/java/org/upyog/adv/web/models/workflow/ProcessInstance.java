@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -31,6 +33,9 @@ public class ProcessInstance {
 
   @JsonProperty("comment")
   private String comment;
+
+  @JsonProperty("documents")
+  private List<Document> documents;
 
   @JsonProperty("state")
   private State state; // populated by workflow response
