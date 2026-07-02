@@ -130,12 +130,6 @@ public class CalculationService {
 		log.info("totalTaxBaseAmount={} (from {} cart entries across {} unique ads)",
 				totalTaxBaseAmount, cartDetails.size(), bookedAdIds.size());
 
-		// Taxable demand — aggregate by tax head code (feeType) to avoid double-counting across multiple ads
-		Map<String, Long> daysPerAd = cartDetails.stream()
-				.map(CartDetail::getAdvertisementId)
-				.filter(Objects::nonNull)
-				.collect(Collectors.groupingBy(id -> id, Collectors.counting()));
-
 		Map<String, BigDecimal> taxableByFeeType = cartDetails.stream()
 				.filter(cd -> cd.getAdvertisementId() != null)
 				.map(cd -> {
