@@ -217,8 +217,13 @@ public class InboxService {
         String assigneeUuid = ObjectUtils.isEmpty(processCriteria.getAssignee())
                 ? null
                 : processCriteria.getAssignee();
-
         String moduleName = processCriteria.getModuleName();
+
+        List<String> roles = requestInfo.getUserInfo().getRoles().stream()
+                .map(Role::getCode).collect(Collectors.toList());
+        boolean isBpaCitizenCall = !ObjectUtils.isEmpty(moduleName)
+                && moduleName.equalsIgnoreCase("bpa-service")
+                && roles.contains(BpaConstants.CITIZEN);
 
         processCriteria.setStatus(inputStatuses);
         processCriteria.setAssignee(assigneeUuid);
@@ -242,8 +247,10 @@ public class InboxService {
         }
 
         // Load actionable statuses
-        HashMap<String, String> statusIdNameMap =
-                workflowService.getActionableStatusesForRole(requestInfo, businessSrvs, processCriteria);
+        //For BpaCitizenCall we need to send all the statuses so that we can show all the applications on the citizen side
+        HashMap<String, String> statusIdNameMap = isBpaCitizenCall
+                ? workflowService.getAllStatuses(businessSrvs)
+                : workflowService.getActionableStatusesForRole(requestInfo, businessSrvs, processCriteria);
                 
         // Preserve all actionable statuses before any filtering
         Map<String, String> allActionableStatuses = new HashMap<>(statusIdNameMap);
@@ -259,12 +266,6 @@ public class InboxService {
         // Fetch full status count map for the UI.
         // BPA citizen uses a searcher-based path (multi-tenant, by applicationNo);
         // every other module goes directly through the workflow status-count API.
-        List<String> roles = requestInfo.getUserInfo().getRoles().stream()
-                .map(Role::getCode).collect(Collectors.toList());
-        boolean isBpaCitizenCall = !ObjectUtils.isEmpty(moduleName)
-                && moduleName.equalsIgnoreCase("bpa-service")
-                && roles.contains(BpaConstants.CITIZEN);
-
         List<HashMap<String, Object>> fullStatusCountMap;
         if (isBpaCitizenCall) {
             fullStatusCountMap = getBPACitizenStatusCount(
