@@ -466,7 +466,7 @@ public class InboxService {
         for (Map.Entry<String, List<String>> entry : appsByTenant.entrySet()) {
             ProcessInstanceSearchCriteria tenantCriteria = buildStatusCountCriteria(
                     entry.getKey(), businessServiceName, moduleName, allActionableStatuses);
-            tenantCriteria.setBusinessIds(entry.getValue());
+            // tenantCriteria.setBusinessIds(entry.getValue());
             tenantCriteria.setStatus(allStatusIds);
 
             List<HashMap<String, Object>> tenantCounts =
