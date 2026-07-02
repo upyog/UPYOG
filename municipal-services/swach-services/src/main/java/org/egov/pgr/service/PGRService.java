@@ -77,7 +77,7 @@ public class PGRService {
         enrichmentService.enrichCreateRequest(request);
         workflowService.updateWorkflowStatus(request);
         
-        if(config.getNayanAIUserUuid().equalsIgnoreCase(request.getRequestInfo().getUserInfo().getUuid()))
+        if(config.getNayanAIUserUuid().equalsIgnoreCase(request.getService().getAccountId()))
         	nayanAPIService.updateStatus(request);
         
         producer.push(config.getCreateTopic(),request);
@@ -174,7 +174,7 @@ public class PGRService {
         enrichmentService.enrichUpdateRequest(request);
         workflowService.updateWorkflowStatus(request);
         
-        if(config.getNayanAIUserUuid().equalsIgnoreCase(request.getRequestInfo().getUserInfo().getUuid()))
+        if(config.getNayanAIUserUuid().equalsIgnoreCase(request.getService().getAccountId()))
         	nayanAPIService.updateStatus(request);
         
         producer.push(config.getUpdateTopic(),request);
