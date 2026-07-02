@@ -2,6 +2,7 @@ package org.upyog.adv.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -209,16 +210,24 @@ public class CalculationService {
 	 * Returns 0 if booking hasn't ended yet
 	 */
 	private int calculateDaysAfterBooking(BookingRequest bookingRequest) {
-		// Get booking end date from first cart detail
-		CartDetail firstCart = bookingRequest.getBookingApplication()
-				.getCartDetails().get(0);
+		List<CartDetail> cartDetails = bookingRequest.getBookingApplication().getCartDetails();
+		if (cartDetails == null || cartDetails.isEmpty()) {
+			throw new CustomException("EMPTY_CART", "Cart details cannot be empty for demand calculation");
+		}
+
+		LocalDate bookingEndDate = cartDetails.stream()
+				.map(CartDetail::getBookingDate)
+				.filter(Objects::nonNull)
+				.max(LocalDate::compareTo)
+				.orElseThrow(() -> new CustomException("BOOKING_DATE_NOT_FOUND",
+						"Booking date is required for demand calculation"));
 
 		/*
 		 * Assuming CartDetail.getBookingDate() returns a java.time.LocalDate (or similar)
 		 * Convert to epoch-day then to milliseconds (start of day), like CHB implementation.
 		 * Use long literals to avoid int overflow.
 		 */
-		long bookingEndDateMillis = firstCart.getBookingDate().toEpochDay() * 24L * 60 * 60 * 1000;
+		long bookingEndDateMillis = bookingEndDate.toEpochDay() * 24L * 60 * 60 * 1000;
 		long currentTimeMillis = System.currentTimeMillis();
 		long elapsedMillis = currentTimeMillis - bookingEndDateMillis;
 		int daysAfterBooking = (int) (elapsedMillis / (24L * 60 * 60 * 1000));
@@ -233,7 +242,10 @@ public class CalculationService {
 	 */
 	private BigDecimal getBaseAmountFromMDMS(BookingRequest bookingRequest) {
 		String tenantId = bookingRequest.getBookingApplication().getTenantId();
-		CartDetail cartDetail = bookingRequest.getBookingApplication().getCartDetails().get(0);
+		List<CartDetail> cartDetails = bookingRequest.getBookingApplication().getCartDetails();
+		if (cartDetails == null || cartDetails.isEmpty()) {
+			throw new CustomException("EMPTY_CART", "Cart details cannot be empty for demand calculation");
+		}
 
 		List<Advertisements> advertisements = null;
 		try {
@@ -241,19 +253,37 @@ public class CalculationService {
 					bookingRequest.getRequestInfo(),
 					tenantId,
 					config.getModuleName(),
-					cartDetail);
+					cartDetails.get(0));
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 
-		String advertisementId = cartDetail.getAdvertisementId();
+		Map<Integer, Advertisements> advById = advertisements.stream()
+				.filter(ad -> ad.getId() != null)
+				.collect(Collectors.toMap(Advertisements::getId, ad -> ad, (existing, replacement) -> existing));
 
-		return advertisements.stream()
-				.filter(ad -> ad.getId().equals(Integer.parseInt(advertisementId)) &&
-						"BOOKING_FEES".equals(ad.getFeeType()))
-				.findFirst()
-				.map(Advertisements::getAmount)
-				.orElse(BigDecimal.ZERO);
+		Map<String, Long> daysPerAd = cartDetails.stream()
+				.map(CartDetail::getAdvertisementId)
+				.filter(Objects::nonNull)
+				.collect(Collectors.groupingBy(id -> id, Collectors.counting()));
+
+		return cartDetails.stream()
+				.filter(cartDetail -> cartDetail.getAdvertisementId() != null)
+				.map(cartDetail -> {
+					Advertisements advertisement = advById.get(Integer.parseInt(cartDetail.getAdvertisementId()));
+					if (advertisement == null) {
+						throw new CustomException("ADVERTISEMENT_NOT_FOUND",
+								"No advertisement found with id: " + cartDetail.getAdvertisementId());
+					}
+					if (!"BOOKING_FEES".equals(advertisement.getFeeType())) {
+						return BigDecimal.ZERO;
+					}
+					long bookingDaysForAd = daysPerAd.getOrDefault(cartDetail.getAdvertisementId(), 0L);
+					BigDecimal rate = BookingUtil.getPerDayRate(advertisement,
+							cartDetail.getBookingDate(), bookingDaysForAd);
+					return rate == null ? BigDecimal.ZERO : rate;
+				})
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 	/**
