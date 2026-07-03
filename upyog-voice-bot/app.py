@@ -1,4 +1,4 @@
-"""
+""""
 UPYOG Voice Assistant v2 - Telephone Call Model
 =================================================
 A new project that adapts the existing chatbot with continuous listening,
@@ -22,6 +22,9 @@ from functools import lru_cache
 import threading
 import json
 import re
+from database import get_any_user_profile_name, save_user_profile_name
+
+adv_sessions = {}
 
 try:
     from groq import Groq
@@ -36,6 +39,51 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+# ============== HELPER: Extract Phone Number from Session ==============
+
+def extract_phone_from_session(session_id: str) -> str:
+    """
+    Extract phone number from session_id format.
+    Handles: "user_9876543210" or "user-9876543210"
+    Returns: "9876543210" or "default" if not found
+    """
+    if not session_id:
+        return "default"
+   
+    # Normalize: convert hyphens to underscores
+    session_clean = session_id.replace("-", "_")
+    parts = session_clean.split("_")
+   
+    # Check if second part is a 10-digit number
+    if len(parts) > 1:
+        potential_phone = parts[1]
+        if potential_phone.isdigit() and len(potential_phone) == 10:
+            logger.info(f"Extracted phone {potential_phone} from session {session_id}")
+            return potential_phone
+   
+    logger.warning(f"Could not extract phone from session_id: {session_id}")
+    return "default"
+
+# ============== END HELPER ==============
+
+def save_user_profile_info(phone_anchor: str, user_info: dict) -> bool:
+    try:
+        from database import r_client
+        r_client.set(f"user_profile_info:{phone_anchor}", json.dumps(user_info))
+        return True
+    except Exception as e:
+        logger.error(f"Error saving user profile info: {e}")
+        return False
+
+def get_user_profile_info(phone_anchor: str) -> dict:
+    try:
+        from database import r_client
+        data = r_client.get(f"user_profile_info:{phone_anchor}")
+        if data:
+            return json.loads(data.decode('utf-8'))
+    except Exception as e:
+        logger.error(f"Error getting user profile info: {e}")
+    return {}
 
 # Ensure consistent language detection
 DetectorFactory.seed = 0
@@ -527,7 +575,7 @@ def text_to_speech(text, language_code, gender="female"):
 def contains_urdu_script(text):
     return bool(re.compile(r'[؀-ۿ]').search(text))
 
-def get_rag_response(query: str, history: list, lang: str, search_lang: str = None) -> str:
+def get_rag_response(query: str, history: list, lang: str, search_lang: str = None, session_id: str = "default") -> str:
     """
     LLM-first architecture: LLM understands human language, FAISS provides optional context.
     FAISS is NOT a hard gate - if no context found, LLM answers from general knowledge.
@@ -536,6 +584,65 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
 
     if search_lang is None:
         search_lang = lang
+
+    # --- Fetch persistent profile values from Redis ---
+    phone_anchor = extract_phone_from_session(session_id)
+    user_info = get_user_profile_info(phone_anchor)
+    
+    # --- LOAD USER'S LONG-TERM MEMORY (BOOKINGS) ---
+    long_term_bookings_str = ""
+    if phone_anchor != "default":
+        try:
+            from database import get_long_term_memory
+            bookings = get_long_term_memory(phone_anchor)
+            if bookings:
+                long_term_bookings_str = "\n\nUSER'S PAST ADVERTISEMENT BOOKINGS (LONG-TERM MEMORY):\n"
+                for i, b in enumerate(bookings, 1):
+                    long_term_bookings_str += (
+                        f"{i}. Booking ID: {b.get('bookingNo') or b.get('applicationNo')}, "
+                        f"Type: {b.get('addType')}, Location: {b.get('location')}, "
+                        f"Face Area: {b.get('faceArea')}, Dates: {b.get('bookingStartDate')} to {b.get('bookingEndDate')}, "
+                        f"Night Light: {b.get('nightLight')}, Pincode: {b.get('pincode')}, Locality: {b.get('locality')}, "
+                        f"Street: {b.get('streetName')}\n"
+                    )
+        except Exception as e:
+            logger.error(f"Error loading long term memory for RAG context: {e}")
+    
+    # --- LOAD USER'S PERSISTENT CHAT HISTORY (LONG-TERM REDIS MEMORY) ---
+    long_term_chat_str = ""
+    if phone_anchor != "default":
+        try:
+            from database import get_chat_history
+            redis_chat = get_chat_history(phone_anchor)
+            if redis_chat:
+                long_term_chat_str = "\n\nUSER'S PAST CHAT HISTORY (LONG-TERM REDIS MEMORY):\n"
+                for msg in redis_chat[-15:]:
+                    role_label = "User" if msg.get("role") == "user" else "Assistant"
+                    long_term_chat_str += f"{role_label}: {msg.get('content')}\n"
+        except Exception as e:
+            logger.error(f"Error loading chat history for RAG context: {e}")
+    
+    profile_details_str = "NO ACTIVE CITIZEN PROFILE FOUND."
+    profile_name = "User"
+    if user_info:
+        profile_name = user_info.get("name") or user_info.get("userName") or "User"
+        profile_details_str = f"""ACTIVE CITIZEN PROFILE:
+- Name: {profile_name}
+- Mobile Number: {user_info.get("mobileNumber") or user_info.get("userName") or "N/A"}
+- Email ID: {user_info.get("emailId") or "N/A"}
+- User ID (UUID): {user_info.get("uuid") or "N/A"}
+- Roles: {', '.join([r.get('name') for r in user_info.get('roles', [])]) if user_info.get('roles') else 'Citizen'}
+- Tenant ID: {user_info.get("tenantId") or "pg"}"""
+    else:
+        profile_name = get_any_user_profile_name()
+        if profile_name and profile_name != "User":
+            profile_details_str = f"""ACTIVE CITIZEN PROFILE:
+- Name: {profile_name}"""
+
+    if long_term_bookings_str:
+        profile_details_str += long_term_bookings_str
+    if long_term_chat_str:
+        profile_details_str += long_term_chat_str
 
     # Step 1: Try FAISS for supporting context (relaxed, not a hard gate)
     context = ""
@@ -606,6 +713,10 @@ You are UPYOG Assistant — expert on:
   GIS Services, Community Hall, Street Vendors, Livelihood, Works Management, etc.
 - MoU details, NUDM state partnerships, citizen processes
 
+{profile_details_str}
+
+If the user asks "who am I?", "what is my name?", "show my details", "show my profile", or asks for their registered details (mobile number, email address, UUID, or roles), respond by listing their CITIZEN PROFILE details above. Address them warmly by their name ({profile_name}).
+
 CRITICAL RULES:
 
 RULE 1 — UNDERSTAND HUMAN LANGUAGE:
@@ -617,6 +728,7 @@ Understand MEANING, not literal words.
 RULE 2 — ALWAYS TRY TO HELP:
 If you know about the topic, answer it.
 NEVER say "जानकारी नहीं है" for UPYOG-related questions.
+If the user asks "what is my name?", "do you remember my name?", or "who am I?", greet them warmly by their name ({profile_name}) stored in your profile system context matrix.
 
 RULE 3 — CONVERSATIONAL SCENARIOS:
 Users describe situations, not textbook questions.
@@ -655,14 +767,14 @@ If unsure about numbers/dates, say "approximately" rather than refusing.
 
 # ============== RETRIEVAL (legacy wrapper) ==============
 
-def retrieve_document(query, user_lang, history):
+def retrieve_document(query, user_lang, history, session_id="default"):
     """Retrieve document using LLM-first approach with FAISS as optional context."""
     global stop_generation
     stop_generation.clear()
 
     # Use new get_rag_response which has LLM-first architecture
     # The old FAISS hard gate is removed - LLM will answer from general knowledge if no context
-    return get_rag_response(query, history, user_lang, search_lang=user_lang)
+    return get_rag_response(query, history, user_lang, search_lang=user_lang, session_id=session_id)
 
 def retrieve_document_stream(query, user_lang, history):
     """Streaming version - yields chunks for SSE."""
@@ -760,6 +872,52 @@ def retrieve_document_stream(query, user_lang, history):
         logger.error(f"Error in retrieve_document_stream: {e}")
         yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
 
+
+### --- Added Proxy Function for Ad Agent --- ###
+def handle_adv_turn(session_id, user_input, auth_token=None, workflow="booking", reset=False, file_name=None, file_data=None):
+    """
+    Proxy conversation directly to Agent Service.
+    CRITICAL: Extract phone_number from session_id before sending to agent.
+    This ensures each phone number has separate Redis memory.
+    """
+    if not auth_token:
+        load_dotenv(override=True)
+        auth_token = os.environ.get("PORTAL_AUTH_TOKEN")
+
+    url = "http://127.0.0.1:8080/adv_agent"
+   
+    # Extract phone number from session_id 
+    phone_number = extract_phone_from_session(session_id)
+   
+    payload = {
+        "message": user_input,
+        "phone_number": phone_number,
+        "session_id": session_id,
+        "token": auth_token,
+        "workflow": workflow,
+        "reset": reset,
+        "file_name": file_name,
+        "file_data": file_data
+    }
+   
+    logger.info(f"[AdAgent] Calling with phone: {phone_number}, workflow: {workflow}")
+   
+    try:
+        res = requests.post(url, json=payload, timeout=10)
+        result = res.json()
+        logger.info(f"[AdAgent] Response status: {result.get('status')}")
+        return result
+    except Exception as e:
+        logger.error(f"[AdAgent] Error connecting to Ad Agent: {e}")
+        return {
+            "response": "Advertisement Agent service is offline. Please check port 8080.",
+            "status": "error"
+        }
+
+adv_sessions = {}
+### --- [END] --- ###
+
+
 # ============== ROUTES ==============
 
 """
@@ -814,10 +972,66 @@ def chat():
         user_data = request.json
         user_input = user_data.get("query", "")
         session_id = user_data.get("session_id", "default")
-        history = user_data.get("history", [])
+        phone_anchor = extract_phone_from_session(session_id)
+        from database import get_chat_history
+        history = get_chat_history(phone_anchor) if phone_anchor != "default" else []
+        file_name = user_data.get("file_name")
+        file_data = user_data.get("file_data")
 
-        if not user_input:
+        token = None
+        cached_info = None
+
+        # --- Cache & Validate User Profile Info in Redis dynamically ---
+        phone_anchor = extract_phone_from_session(session_id)
+        if phone_anchor != "default":
+            token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
+            if token and len(token) > 15:
+                cached_info = get_user_profile_info(phone_anchor)
+                uuid = cached_info.get("uuid") if cached_info else None
+                is_valid, user_info = verify_user_auth(token, phone_anchor)
+                if is_valid:
+                    save_user_profile_info(phone_anchor, user_info)
+                    cached_info = user_info
+                    
+                    # Clear chat history if the user was previously locked out by an expired session
+                    try:
+                        from database import get_chat_history, r_client
+                        history = get_chat_history(phone_anchor)
+                        if history and len(history) > 0:
+                            # Check the entire history to ensure we catch any previous lockout messages
+                            last_messages = [msg.get("content", "") for msg in history]
+                            if any("session has expired" in content.lower() or "सत्र समाप्त हो गया है" in content for content in last_messages):
+                                r_client.delete(f"chat_history:{phone_anchor}")
+                                logger.info(f"[Auth] Cleared old expired session chat history for {phone_anchor}")
+                    except Exception as history_err:
+                        logger.error(f"Error checking/clearing history on re-login: {history_err}")
+                else:
+                    from database import r_client
+                    r_client.delete(f"user_profile_info:{phone_anchor}")
+                    
+                    lang_info = detect_language(user_input)
+                    user_language = lang_info['lang']
+                    msg = "सत्र समाप्त हो गया है। कृपया फिर से लॉगिन करें।" if user_language == 'hi' else "Your login session has expired. Please log in again using the System Login button."
+                    audio = text_to_speech(msg, user_language)
+                    return jsonify({
+                        "response": msg,
+                        "lang": user_language,
+                        "mode": "blocked",
+                        "audio": audio
+                    })
+
+        if not user_input and not file_name:
             return jsonify({"response": "", "lang": "en", "audio": ""})
+
+        # === MODIFICATION [START]: PROFILE MEMORY INTERCEPTOR ===
+        # Capture name introductions and anchor permanently to phone number inside Redis
+        name_match = re.search(r'\bi\s+am\s+([A-Za-z]+)\b|\bmy\s+name\s+is\s+([A-Za-z]+)\b', user_input, re.IGNORECASE)
+        if name_match:
+            detected_name = name_match.group(1) or name_match.group(2)
+            phone_match = re.search(r'user_(\d{10})', session_id)
+            phone_anchor = phone_match.group(1) if phone_match else session_id
+            save_user_profile_name(phone_anchor, detected_name.strip().capitalize())
+        # === MODIFICATION [END] ===
 
         # NEW: Script-aware language detection returning dict
         lang_info = detect_language(user_input)
@@ -842,7 +1056,7 @@ def chat():
         # GATE 1: Check if grievance flow is active for this session
         grievance_session = get_grievance_session(session_id)
         if grievance_session.get("active") and grievance_session.get("collecting"):
-            result = handle_grievance_turn(session_id, user_input, user_language)
+            result = handle_grievance_turn(session_id, user_input, user_language, auth_token=token, user_info=cached_info)
             audio_output = text_to_speech(result["message"], result["lang"])
             return jsonify({
                 "response": result["message"],
@@ -854,7 +1068,7 @@ def chat():
                 "options": result.get("options", []),
                 "field": result.get("field", "")
             })
-        #AI agent CHB
+           
         # GATE 1B: Check if booking flow is active for this session
         booking_session = get_booking_session(session_id)
         if booking_session.get("active"):
@@ -866,6 +1080,85 @@ def chat():
                 "mode": "booking_active",
                 "audio": audio_output
             })
+
+
+        ### --- MODIFICATION [START]: Added Gate 1C for Advertisement Agent Flow --- ###
+        adv_offer = adv_sessions.get(session_id, {})
+       
+        # If user was offered ad booking in the previous turn, wait for their yes/no
+        if adv_offer.get("offer_pending"):
+            user_input_clean = user_input.strip().lower()
+            if user_input_clean in ["yes", "y", "haan", "ok", "sure", "please"]:
+                adv_offer["active"] = True
+                adv_offer["offer_pending"] = False
+                user_input = "" # Blank input triggers the first prompt in the agent
+            elif user_input_clean in ["no", "n", "cancel", "nahi"]:
+                adv_sessions[session_id] = {"active": False, "offer_pending": False}
+                audio_output = text_to_speech("विज्ञापन बुकिंग रद्द कर दी गई है।", user_language)
+                return jsonify({"response": "Advertisement booking cancelled.", "lang": user_language, "mode": "faq", "audio": audio_output})
+
+        # Pay Now Interceptor
+        if "pay now" in user_input.lower() or "make payment" in user_input.lower() or "pay for my booking" in user_input.lower() or "payment is pending" in user_input.lower():
+            phone = extract_phone_from_session(session_id)
+            if phone != "default":
+                from database import get_long_term_memory
+                long_term_data = get_long_term_memory(phone)
+                if long_term_data:
+                    pending_booking = None
+                    for b in reversed(long_term_data):
+                        if b.get("status") != "PAID":
+                            pending_booking = b
+                            break
+                    if pending_booking:
+                        # Activate agent session
+                        adv_sessions[session_id] = {"active": True, "offer_pending": False}
+                        # Create short-term memory draft for PAYMENT_METHOD
+                        from database import save_short_term_memory
+                        draft_state = {
+                            "active": True,
+                            "step": "PAYMENT_METHOD",
+                            "data": pending_booking
+                        }
+                        save_short_term_memory(phone, draft_state)
+                        # Call agent to trigger payment prompt
+                        token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
+                        agent_res = handle_adv_turn(session_id, "", auth_token=token)
+                        audio = text_to_speech(agent_res["response"], user_language)
+                        return jsonify({
+                            "response": agent_res["response"],
+                            "lang": user_language,
+                            "mode": "adv_active",
+                            "audio": audio,
+                            "input_type": agent_res.get("input_type", "text"),
+                            "options": agent_res.get("options", []),
+                            "show_button": agent_res.get("show_button")
+                        })
+
+        # Check if Ad session is actively running
+       
+        if adv_sessions.get(session_id, {}).get("active"):
+            phone = extract_phone_from_session(session_id)
+            logger.info(f"[AdAgent] Phone: {phone}, Session: {session_id}")
+            token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
+            agent_res = handle_adv_turn(session_id, user_input, auth_token=token, file_name=file_name, file_data=file_data)
+           
+            # If the agent signals completion, close the loop so normal chat resumes
+            if agent_res.get("status") == "completed":
+                adv_sessions[session_id]["active"] = False
+               
+            audio = text_to_speech(agent_res["response"], user_language)
+            return jsonify({
+                "response": agent_res["response"],
+                "lang": user_language,
+                "mode": "adv_active",
+                "audio": audio,
+                "input_type": agent_res.get("input_type", "text"),
+                "options": agent_res.get("options", []),
+                "show_button": agent_res.get("show_button"),
+                "redirect_url": agent_res.get("redirect_url")
+            })
+        ### --- MODIFICATION [END] --- ###
+
 
         # ===== INTENT CLASSIFICATION FLOW =====
         # Run intent classifier FIRST - before any FAISS filtering
@@ -890,7 +1183,7 @@ def chat():
                     "categories": {},
                     "localities": []
                 }
-                result = handle_grievance_turn(session_id, "", user_language)
+                result = handle_grievance_turn(session_id, "", user_language, auth_token=token, user_info=cached_info)
                 audio_output = text_to_speech(result["message"], result["lang"])
                 return jsonify({
                     "response": result["message"],
@@ -906,7 +1199,7 @@ def chat():
             elif intent["intent"] == "grievance_cancel":
                 # User said NO - clear offer, continue normally
                 grievance_sessions[session_id] = {"active": False, "offer_pending": False}
-                response_text = retrieve_document(user_input, user_language, history)
+                response_text = retrieve_document(user_input, user_language, history, session_id=session_id)
                 response_text = re.sub(r'\bUpyog\b', 'UPYOG', response_text, flags=re.IGNORECASE)
                 audio_output = text_to_speech(response_text, user_language)
                 return jsonify({
@@ -921,7 +1214,7 @@ def chat():
                 # User asked something else - drop offer, answer their question
                 grievance_sessions[session_id] = {"active": False, "offer_pending": False}
                 # Fall through to PATH C
-        #AI agent path
+
         # Check if we have an active booking offer pending
         b_offer = get_booking_session(session_id)
 
@@ -971,6 +1264,48 @@ def chat():
         intent = classify_intent(user_input, history, user_language)
         logger.info(f"INTENT: {intent['intent']}, SERVICE: {intent.get('service')}, EMOTION: {intent.get('emotion')}")
 
+
+        ### --- MODIFICATION [START]: Added check for Advertisement Intent & Status Checks --- ###
+        if intent["intent"] == "adv_candidate" and not adv_sessions.get(session_id, {}).get("active"):
+            # Start the session active directly!
+            adv_sessions[session_id] = {"active": True, "offer_pending": False}
+            token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
+            agent_res = handle_adv_turn(session_id, "", auth_token=token, reset=True)
+            audio = text_to_speech(agent_res["response"], user_language)
+            return jsonify({
+                "response": agent_res["response"],
+                "lang": user_language,
+                "mode": "adv_active",
+                "audio": audio,
+                "input_type": agent_res.get("input_type", "text"),
+                "options": agent_res.get("options", []),
+                "show_button": agent_res.get("show_button"),
+                "redirect_url": agent_res.get("redirect_url")
+            })
+
+        if intent["intent"] == "adv_status_candidate":
+            token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
+            # Send directly to the agent's status workflow
+            agent_res = handle_adv_turn(
+                session_id,
+                user_input,
+                auth_token=token,
+                workflow="status"
+            )
+            audio = text_to_speech(agent_res["response"], user_language)
+            return jsonify({
+                "response": agent_res["response"],
+                "lang": user_language,
+                "mode": "adv_status",
+                "audio": audio,
+                "input_type": agent_res.get("input_type", "text"),
+                "options": agent_res.get("options", []),
+                "show_button": agent_res.get("show_button"),
+                "redirect_url": agent_res.get("redirect_url")
+            })
+        ### --- MODIFICATION [END] --- ###
+
+
         if intent["intent"] == "grievance_candidate":
             # User has a problem - OFFER grievance (don't auto-start)
             grievance_sessions[session_id] = {
@@ -992,7 +1327,7 @@ def chat():
                 "detected_emotion": intent.get("emotion"),
                 "audio": audio_output
             })
-        #AI agent CHB intent
+           
         elif intent["intent"] == "booking_candidate":
             # User wants to book - OFFER booking (don't auto-start)
             booking_session = get_booking_session(session_id)
@@ -1035,7 +1370,7 @@ def chat():
                 "audio": audio_output
             })
 
-        response_text = retrieve_document(user_input, user_language, history)
+        response_text = retrieve_document(user_input, user_language, history, session_id=session_id)
 
         # Check if response is a grievance offer (from FAISS fallback)
         if response_text and ("शिकायत" in response_text or "grievance" in response_text.lower() or "एक शिकायत" in response_text):
@@ -1049,7 +1384,6 @@ def chat():
                 "audio": audio_output
             })
 
-        # Branding fix
         response_text = re.sub(r'\bUpyog\b', 'UPYOG', response_text, flags=re.IGNORECASE)
 
         # Generate TTS (language matches detected language)
@@ -1066,6 +1400,41 @@ def chat():
     except Exception as e:
         logger.error(f"Chat Error: {e}")
         return jsonify({"error": str(e)}), 500
+
+@app.after_request
+def log_chat_to_redis(response):
+    # Only intercept chat endpoints
+    if request.path not in ["/chat", "/upyog-voice-bot/chat"]:
+        return response
+        
+    try:
+        if response.status_code == 200:
+            req_data = request.get_json(silent=True) or {}
+            session_id = req_data.get("session_id")
+            user_input = req_data.get("query", "").strip()
+            
+            # Fallback label for file uploads
+            file_name = req_data.get("file_name")
+            if not user_input and file_name:
+                user_input = f"[Uploaded Document: {file_name}]"
+                
+            res_data = response.get_json(silent=True) or {}
+            response_text = res_data.get("response", "").strip()
+            
+            if session_id and user_input and response_text:
+                phone_anchor = extract_phone_from_session(session_id)
+                if phone_anchor != "default":
+                    from database import get_chat_history, save_chat_history
+                    redis_chat = get_chat_history(phone_anchor)
+                    # Check safety buffer to avoid duplicate saves on page refresh or retries
+                    if not redis_chat or redis_chat[-1].get("content") != response_text or redis_chat[-2].get("content") != user_input:
+                        redis_chat.append({"role": "user", "content": user_input})
+                        redis_chat.append({"role": "assistant", "content": response_text})
+                        save_chat_history(phone_anchor, redis_chat[-100:])
+    except Exception as e:
+        logger.error(f"Error logging chat to Redis after_request: {e}")
+        
+    return response
 
 """
 Streaming SSE endpoint — two route aliases:
@@ -1091,7 +1460,10 @@ def stream():
         user_data = request.json
         user_input = user_data.get("query", "")
         # NOTE: Don't use lang from frontend - detect fresh per turn
-        history = user_data.get("history", [])
+        session_id = user_data.get("session_id", "default")
+        phone_anchor = extract_phone_from_session(session_id)
+        from database import get_chat_history
+        history = get_chat_history(phone_anchor) if phone_anchor != "default" else []
 
         # DYNAMIC PER-TURN LANGUAGE DETECTION
         user_language, detected_script = detect_language_per_turn(user_input)
@@ -1118,18 +1490,142 @@ def stop():
     logger.info("Stop signal received - aborting generation")
     return jsonify({"status": "stopped"}), 200
 
+# ============== UPYOG LOGIN & OTP API INTEGRATIONS ==============
+
+def send_otp_upyog(mobile):
+    url = f"https://niuatt.niua.in/user-otp/v1/_send?tenantId=pg&_={int(time.time() * 1000)}"
+    payload = {
+        "otp": {
+            "mobileNumber": mobile,
+            "tenantId": "pg",
+            "userType": "citizen",
+            "type": "login"
+        },
+        "RequestInfo": {
+            "apiId": "Rainmaker",
+            "msgId": f"{int(time.time() * 1000)}|en_IN",
+            "plainAccessRequest": {}
+        }
+    }
+    try:
+        res = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
+        return res.json()
+    except Exception as e:
+        logger.error(f"Error sending UPYOG OTP: {e}")
+        return {"error": str(e)}
+
+def verify_otp_upyog(mobile, otp):
+    url = "https://niuatt.niua.in/user/oauth/token"
+    data = {
+        "username": mobile,
+        "password": otp,
+        "grant_type": "password",
+        "scope": "read",
+        "tenantId": "pg",
+        "userType": "CITIZEN"
+    }
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "Basic ZWdvdi11c2VyLWNsaWVudDo="
+    }
+    try:
+        res = requests.post(url, data=data, headers=headers)
+        return res.json()
+    except Exception as e:
+        logger.error(f"Error verifying UPYOG OTP: {e}")
+        return {"error": str(e)}
+
+def fetch_user_details_upyog(mobile, auth_token):
+    url = f"https://niuatt.niua.in/user/_search?_={int(time.time() * 1000)}"
+    payload = {
+        "tenantId": "pg",
+        "userName": mobile,
+        "pageSize": "100",
+        "RequestInfo": {
+            "apiId": "Rainmaker",
+            "authToken": auth_token,
+            "msgId": f"{int(time.time() * 1000)}|en_IN",
+            "plainAccessRequest": {}
+        }
+    }
+    try:
+        res = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
+        data = res.json()
+        if "user" in data and len(data["user"]) > 0:
+            return data["user"][0]
+        return {}
+    except Exception as e:
+        logger.error(f"Error fetching user details from UPYOG: {e}")
+        return {}
+
+def verify_user_auth(auth_token, uuid_or_mobile, tenant_id="pg"):
+    url = f"https://niuatt.niua.in/user/_search?_={int(time.time() * 1000)}"
+    payload = {
+        "tenantId": tenant_id,
+        "pageSize": "100",
+        "RequestInfo": {
+            "apiId": "Rainmaker",
+            "authToken": auth_token,
+            "msgId": f"{int(time.time() * 1000)}|en_IN",
+            "plainAccessRequest": {}
+        }
+    }
+    if uuid_or_mobile and "-" in str(uuid_or_mobile):
+        payload["uuid"] = [uuid_or_mobile]
+    else:
+        payload["userName"] = uuid_or_mobile
+
+    try:
+        res = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
+        data = res.json()
+        if "user" in data and len(data["user"]) > 0:
+            return True, data["user"][0]
+        return False, {}
+    except Exception as e:
+        logger.error(f"Error checking user auth: {e}")
+        return False, {}
+
+@app.route("/api/send-otp", methods=["POST"])
+@app.route("/upyog-voice-bot/api/send-otp", methods=["POST"])
+def api_send_otp():
+    req_data = request.json or {}
+    mobile = req_data.get("mobile")
+    if not mobile or len(mobile) != 10:
+        return jsonify({"error": "Invalid mobile number"}), 400
+    res = send_otp_upyog(mobile)
+    return jsonify(res)
+
+@app.route("/api/verify-otp", methods=["POST"])
+@app.route("/upyog-voice-bot/api/verify-otp", methods=["POST"])
+def api_verify_otp():
+    req_data = request.json or {}
+    mobile = req_data.get("mobile")
+    otp = req_data.get("otp")
+    if not mobile or not otp:
+        return jsonify({"error": "Mobile and OTP are required"}), 400
+    
+    # 1. Verify OTP
+    verify_res = verify_otp_upyog(mobile, otp)
+    if "access_token" not in verify_res:
+        return jsonify({"error": "Invalid OTP or verification failed", "details": verify_res}), 400
+    
+    # 2. Get user info (either from verify response or search)
+    user_info = verify_res.get("UserRequest", verify_res.get("userInfo", {}))
+    if not user_info or not user_info.get("uuid"):
+        # fallback search
+        search_res = fetch_user_details_upyog(mobile, verify_res["access_token"])
+        if search_res:
+            user_info = search_res
+            
+    return jsonify({
+        "access_token": verify_res["access_token"],
+        "user_info": user_info
+    })
+
 # ============== LLM INTENT CLASSIFIER ==============
 
 def classify_intent(query: str, history: list, lang: str) -> dict:
-    """
-    Classifies user intent using a fast LLM call.
-    Returns: {
-        "intent": "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel" | "booking_candidate" | "booking_confirm" | "booking_cancel",
-        "reasoning": "brief explanation",
-        "service": "which UPYOG service is involved, if any",
-        "emotion": "neutral" | "frustrated" | "stuck" | "urgent"
-    }
-    """
+    """Classifies user intent using a fast LLM call."""
     global groq_client
 
     # Build last 3 turns of context
@@ -1147,95 +1643,29 @@ Classify the user message into exactly one category.
 ━━━ CATEGORY DEFINITIONS ━━━
 
 "faq" — User wants INFORMATION or EXPLANATION.
-They are learning, not complaining.
-They use words like: what is, how does, kya hai, kaise hota hai,
-batao, explain, tell me about, documents kya chahiye.
-The problem described is HYPOTHETICAL or GENERAL, not personal.
 
-Examples of faq:
-→ "what is property mutation?"
-→ "property tax kaise calculate hota hai?"
-→ "trade license ke liye kya documents chahiye?"
-→ "UPYOG mein kaun si services hain?"
-→ "desludging service kya hoti hai?"
-→ "complaint process kya hai?"  ← asking ABOUT process, not filing one
-→ "fire NOC ke liye kya karna padta hai?"
-
-"grievance_candidate" — User is describing a PERSONAL PROBLEM happening
-RIGHT NOW to them specifically.
-Key signals:
-- Personal pronouns: I, my, mera, meri, mere, humara, hamare
-- Time of suffering: days, weeks, months, din se, hafte se, mahine se
-- Something not working FOR THEM: nahi aa raha, nahi hua, pending hai,
-  reject ho gaya, kaam nahi kar raha, nahi mila, abhi tak nahi
-- Frustration or helplessness: kaise karoon, kya karoon, pareshan hoon,
-  help nahi kar rahe, action lena hai, complaint karni hai
-- A specific service failing: pani, bijli, garbage, property, license,
-  certificate, noc, registration, sewerage, road, light
-- Asking for action not information: kuch karna chahta hoon,
-  inke against action, shikayat darz karni hai
-
-Examples of grievance_candidate:
-→ "पानी नहीं आ रहा है बहुत दिन हो गए हैं"
-→ "मैंने बहुत दिन पहले प्रॉपर्टी रजिस्टर करी थी अभी तक हो ही नहीं है"
-→ "वह हेल्प नहीं कर रहे हैं मुझे इनके अगेंस्ट कुछ एक्शन लेना है"
-→ "I am not able to pay my property tax online"
-→ "mera trade license 3 mahine se pending hai"
-→ "garbage not collected in my area for 2 weeks"
-→ "birth certificate ke liye apply kiya tha but still pending"
-→ "fire NOC reject ho gaya bina reason ke"
-→ "nagar palika wale sun nahi rahe"
-→ "building plan approve nahi ho raha kaafi time se"
-→ "water supply band hai"
-→ "mere ghar ke saamne road toot gayi है"
-→ "sewerage overflow ho raha है"
-→ "street light kharab है kaafi din se"
-→ "sanitation worker nahi aata hamare area mein"
-
+"grievance_candidate" — User is describing a PERSONAL PROBLEM happening RIGHT NOW to them specifically.
 "grievance_confirm" — User is saying YES to bot's offer to file a grievance.
-Only classify this if the PREVIOUS bot message was asking
-"would you like to file a grievance?"
-Examples: yes, haan, please, theek hai karo, file karo,
-          bilkul, zaroor, go ahead, haan karein
-
 "grievance_cancel" — User says NO to the grievance offer.
-Examples: no, nahi, rehne do, chhodo, cancel,
-          baad mein, abhi nahi, nevermind, bas
 
-━━━ IMPORTANT RULES ━━━
-1. When in doubt between faq and grievance_candidate,
-   check: is the user describing THEIR OWN current problem?
-   If YES → grievance_candidate
-   If they are asking HOW something works → faq
-
-2. Sentences with "nahi ho raha", "pending hai", "nahi aaya",
-   "kaam nahi kar raha" about a government service
-   → ALWAYS grievance_candidate
-
-3. Short frustrated sentences like "sun nahi rahe",
-   "help nahi kar rahe", "kuch karo"
-   → grievance_candidate (read with conversation context)
-
-"booking_candidate" — User wants to BOOK or RESERVE a resource (e.g. community hall, venue, hoarding, advertisement space).
-Examples:
-→ "I want to book the community hall near MG Road"
-→ "community center book karna hai"
-→ "hall booking process"
-→ "book a hall"
-→ "advertisement hoarding booking"
-
+"booking_candidate" — User wants to BOOK or RESERVE a resource (e.g. community hall).
 "booking_confirm" — User is saying YES to the bot's offer to book a resource.
-Only classify this if the PREVIOUS bot message was asking to start the booking process (e.g., "Would you like to start the booking process?").
-Examples: yes, haan, theek hai, please do, proceed, confirm.
-
 "booking_cancel" — User says NO to the booking offer.
-Only classify this if the PREVIOUS bot message was asking to start the booking process.
-Examples: no, nahi, cancel, rehne do, stop, don't start.
+
+"adv_candidate" — User wants to book advertisement space, hoardings, or unipoles.
+"adv_confirm" — User says YES to the bot's offer to book an ad.
+"adv_cancel" — User says NO to the ad booking offer.
+
+"adv_status_candidate" — User wants to check the status of their existing advertisement bookings or know their booking ID.
+Examples:
+→ "show my bookings"
+→ "what is my booking number"
+→ "track my ad booking"
+→ "my applications"
 
 ━━━ IMPORTANT RULES ━━━
 1. Look at the last message and context. If the user says "yes" or "haan":
-   - If the previous turn offered a grievance -> "grievance_confirm"
-   - If the previous turn offered a booking -> "booking_confirm"
+   - If the previous turn offered an advertisement -> "adv_confirm"
 
 ━━━ CONVERSATION CONTEXT (last 3 turns) ━━━
 {history_text}
@@ -1246,7 +1676,7 @@ Language: {lang}
 
 Respond ONLY with this JSON, no other text:
 {{
-  "intent": "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel" | "booking_candidate" | "booking_confirm" | "booking_cancel",
+  "intent": "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel" | "booking_candidate" | "booking_confirm" | "booking_cancel" | "adv_candidate" | "adv_confirm" | "adv_cancel" | "adv_status_candidate",
   "reasoning": "one sentence why",
   "service": "specific UPYOG service name or null",
   "emotion": "neutral" | "frustrated" | "stuck" | "urgent"
@@ -1267,7 +1697,12 @@ Respond ONLY with this JSON, no other text:
         raw = raw.replace("```json", "").replace("```", "").strip()
         result = json.loads(raw)
 
-        valid_intents = ["faq", "grievance_candidate", "grievance_confirm", "grievance_cancel", "booking_candidate", "booking_confirm", "booking_cancel"]
+        valid_intents = [
+            "faq", "grievance_candidate", "grievance_confirm", "grievance_cancel",
+            "booking_candidate", "booking_confirm", "booking_cancel",
+            "adv_candidate", "adv_confirm", "adv_cancel", "adv_status_candidate"
+        ]
+       
         if result.get("intent") not in valid_intents:
             result["intent"] = "faq"
 
@@ -1340,39 +1775,39 @@ def get_booking_session(session_id):
 def handle_booking_turn(session_id, user_input, lang):
     """Proxy conversation messages directly to the FastAPI Agent Service."""
     url = "http://127.0.0.1:8080/chat"
-    
+   
     # Extract phone number from session_id if available
     mobile = None
     if session_id.startswith("user_") or session_id.startswith("user-"):
         parts = session_id.replace("-", "_").split("_")
         if len(parts) > 1 and parts[1].isdigit() and len(parts[1]) == 10:
             mobile = parts[1]
-            
+           
     payload = {
         "message": user_input,
         "session_id": session_id,
         "tenant_id": "pb.amritsar",
         "workflow": "chb"
     }
-    
+   
     headers = {"Content-Type": "application/json"}
     if mobile:
         payload["token"] = mobile
         headers["Authorization"] = f"Bearer {mobile}"
-        
+       
     try:
         res = requests.post(url, json=payload, headers=headers, timeout=30)
         data = res.json()
         response_text = data.get("response", "No response from booking agent.")
         status = data.get("status", "active")
-        
+       
         # Deactivate session if booking is completed or confirmed (via reference id)
         if status == "completed" or "reference id:" in response_text.lower() or "booking reference" in response_text.lower():
             sess = get_booking_session(session_id)
             sess["active"] = False
-            
+           
         return {"message": response_text, "lang": lang, "status": status}
-        
+       
     except Exception as e:
         logger.error(f"Error communicating with Upyog Agent Service: {e}")
         return {
@@ -1665,7 +2100,7 @@ def normalize_spoken_number(text: str) -> str:
     result_digits = []
     sorted_multipliers = sorted(MULTIPLIER_MAP.keys(), key=len, reverse=True)
     working = text_lower
-    
+   
     for phrase in sorted_multipliers:
         if phrase in working:
             count = MULTIPLIER_MAP[phrase]
@@ -1679,7 +2114,7 @@ def normalize_spoken_number(text: str) -> str:
                     replacement = digit * count
                     working = working[:match.start()] + replacement + working[match.end():]
                     continue
-            
+           
             if phrase in ('double', 'twice'):
                 pattern2 = r'double\s+(\w+)|twice\s+(\w+)'
                 for m in re.finditer(pattern2, working):
@@ -1742,7 +2177,7 @@ def validate_field(field_type: str, value: str) -> tuple:
         return True, None
     return True, None
 
-def handle_grievance_turn(session_id, user_input, lang):
+def handle_grievance_turn(session_id, user_input, lang, auth_token=None, user_info=None):
     """Handle a single turn in the grievance flow."""
     session = get_grievance_session(session_id)
     step = session["step"]
@@ -1757,30 +2192,41 @@ def handle_grievance_turn(session_id, user_input, lang):
     # Step handlers
     if step == "START":
         session["active"] = True
-        
+       
         # Check if user is logged in via phone number in session_id
         mobile = None
         if session_id.startswith("user_"):
             parts = session_id.split("_")
             if len(parts) > 1 and parts[1].isdigit() and len(parts[1]) == 10:
                 mobile = parts[1]
-                
+               
         if mobile:
             # Bypass phone collection and OTP verification
             session["data"]["mobile"] = mobile
-            session["data"]["auth_token"] = mobile
-            session["data"]["user_info"] = {
-                "id": None,
-                "userName": mobile,
-                "name": "Citizen",
-                "type": "CITIZEN",
-                "mobileNumber": mobile,
-                "emailId": "",
-                "roles": [{"id": None, "name": "Citizen", "code": "CITIZEN", "tenantId": "pg"}],
-                "tenantId": "pg",
-                "uuid": mobile
-            }
-            
+            if auth_token and len(auth_token) > 15:
+                session["data"]["auth_token"] = auth_token
+            else:
+                session["data"]["auth_token"] = auth_token or mobile
+
+            if user_info and user_info.get("uuid"):
+                session["data"]["user_info"] = user_info
+            else:
+                cached_prof = get_user_profile_info(mobile)
+                if cached_prof and cached_prof.get("uuid"):
+                    session["data"]["user_info"] = cached_prof
+                else:
+                    session["data"]["user_info"] = {
+                        "id": None,
+                        "userName": mobile,
+                        "name": "Citizen",
+                        "type": "CITIZEN",
+                        "mobileNumber": mobile,
+                        "emailId": "",
+                        "roles": [{"id": None, "name": "Citizen", "code": "CITIZEN", "tenantId": "pg"}],
+                        "tenantId": "pg",
+                        "uuid": mobile
+                    }
+           
             # Fetch categories directly
             categories = fetch_categories(session["data"]["auth_token"])
             session["categories"] = categories
@@ -1846,7 +2292,7 @@ def handle_grievance_turn(session_id, user_input, lang):
 
         session["data"]["auth_token"] = verify_result["access_token"]
         session["data"]["user_info"] = verify_result.get("UserRequest", verify_result.get("userInfo", {}))
-        
+       
         # Fetch categories
         categories = fetch_categories(session["data"]["auth_token"])
         session["categories"] = categories

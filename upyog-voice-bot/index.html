@@ -10,15 +10,26 @@
 </head>
 
 <body>
- <div id="phone-login-modal">
- <div class="phone-modal-card">
- <h2>System Login</h2>
- <p>Enter your 10-digit mobile number to access your account and load context memory.</p>
- <div id="login-error">Invalid phone number.</div>
- <input type="text" id="phone-input" placeholder="e.g. 9876543210" maxlength="10" onkeypress="handleLoginKeyPress(event)">
- <button onclick="handlePhoneLogin()">Access Platform</button>
- </div>
- </div>
+  <div id="phone-login-modal">
+  <div class="phone-modal-card">
+  <h2>System Login</h2>
+  <div id="login-mobile-screen">
+  <p>Enter your 10-digit mobile number to receive an OTP via UPYOG.</p>
+  <div id="login-error" style="color: #ff6b6b; margin-bottom: 10px; display: none; font-size: 14px;">Invalid phone number.</div>
+  <input type="text" id="phone-input" placeholder="e.g. 9876543210" maxlength="10" onkeypress="handleLoginKeyPress(event)">
+  <button onclick="handlePhoneLogin()">Send OTP</button>
+  </div>
+  <div id="login-otp-screen" style="display: none;">
+  <p>Enter the 6-digit OTP sent to your phone.</p>
+  <div id="otp-error" style="color: #ff6b6b; margin-bottom: 10px; display: none; font-size: 14px;">Invalid OTP. Please try again.</div>
+  <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" onkeypress="handleOtpKeyPress(event)">
+  <div class="modal-button-group" style="display: flex; gap: 10px; margin-top: 15px;">
+  <button onclick="handleOtpVerify()" style="flex: 1;">Verify OTP</button>
+  <button onclick="showMobileScreen()" style="flex: 1; background: #555;">Back</button>
+  </div>
+  </div>
+  </div>
+  </div>
 
  <div id="bg-layers"></div>
 
@@ -78,68 +89,155 @@
  <script src="/upyog-voice-bot/assets/constants.js"></script>
  <script src="/upyog-voice-bot/assets/icons.js"></script>
  <script>
- // ============== REDIS LOGIN LOGIC ==============
+  // ============== REDIS LOGIN LOGIC ==============
   let conversationSessionId = null;
 
   window.addEventListener('DOMContentLoaded', () => {
-  const savedPhone = localStorage.getItem("upyog_redis_phone");
-  const modal = document.getElementById("phone-login-modal");
-  if (!savedPhone) {
-  modal.style.display = "flex";
-  setTimeout(() => { document.getElementById("phone-input").focus(); }, 100);
-  } else {
-  // Retrieve existing active session from sessionStorage to continue the conversation on refresh
-  let sessionId = sessionStorage.getItem("upyog_active_session");
-  if (!sessionId) {
-  sessionId = `user_${savedPhone}_${Math.random().toString(36).substring(2, 9)}`;
-  sessionStorage.setItem("upyog_active_session", sessionId);
-  }
-  activateUser(sessionId);
-  }
+    const savedPhone = localStorage.getItem("upyog_redis_phone");
+    const savedToken = localStorage.getItem("upyog_auth_token");
+    const modal = document.getElementById("phone-login-modal");
+    if (!savedPhone || !savedToken) {
+      modal.style.display = "flex";
+      setTimeout(() => { document.getElementById("phone-input").focus(); }, 100);
+    } else {
+      let sessionId = sessionStorage.getItem("upyog_active_session");
+      if (!sessionId) {
+        sessionId = `user_${savedPhone}_${Math.random().toString(36).substring(2, 9)}`;
+        sessionStorage.setItem("upyog_active_session", sessionId);
+      }
+      activateUser(sessionId);
+    }
   });
 
   function handleLoginKeyPress(event) {
-  if (event.key === "Enter") handlePhoneLogin();
+    if (event.key === "Enter") handlePhoneLogin();
   }
 
-  function handlePhoneLogin() {
-  const phoneInput = document.getElementById("phone-input");
-  const phone = phoneInput.value.trim();
-  const errorText = document.getElementById("login-error");
-  const phoneRegex = /^[0-9]{10}$/;
-  
-  if (!phoneRegex.test(phone)) {
-  errorText.style.display = "block";
-  return;
+  function handleOtpKeyPress(event) {
+    if (event.key === "Enter") handleOtpVerify();
   }
-  errorText.style.display = "none";
-  
-  localStorage.setItem("upyog_redis_phone", phone);
-  
-  const sessionId = `user_${phone}_${Math.random().toString(36).substring(2, 9)}`;
-  sessionStorage.setItem("upyog_active_session", sessionId);
-  document.getElementById("phone-login-modal").style.display = "none";
-  activateUser(sessionId);
+
+  function showMobileScreen() {
+    document.getElementById("login-mobile-screen").style.display = "block";
+    document.getElementById("login-otp-screen").style.display = "none";
+    document.getElementById("login-error").style.display = "none";
+    document.getElementById("otp-error").style.display = "none";
+    setTimeout(() => { document.getElementById("phone-input").focus(); }, 100);
+  }
+
+  async function handlePhoneLogin() {
+    const phoneInput = document.getElementById("phone-input");
+    const phone = phoneInput.value.trim();
+    const errorText = document.getElementById("login-error");
+    const phoneRegex = /^[0-9]{10}$/;
+    
+    if (!phoneRegex.test(phone)) {
+      errorText.style.display = "block";
+      errorText.textContent = "Invalid phone number. Must be 10 digits.";
+      return;
+    }
+    errorText.style.display = "none";
+    
+    try {
+      const response = await fetch(`${API_URL}/api/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: phone })
+      });
+      const data = await response.json();
+      let errorMsg = null;
+      if (data.error) {
+        if (typeof data.error === 'object') {
+          errorMsg = data.error.message || data.error.description || JSON.stringify(data.error);
+        } else {
+          errorMsg = data.error;
+        }
+      } else if (data.Errors && data.Errors.length > 0) {
+        errorMsg = data.Errors[0].message || data.Errors[0].code;
+      }
+      
+      if (errorMsg) {
+        errorText.style.display = "block";
+        errorText.textContent = "Failed to send OTP: " + errorMsg;
+        return;
+      }
+      
+      localStorage.setItem("upyog_redis_phone", phone);
+      document.getElementById("login-mobile-screen").style.display = "none";
+      document.getElementById("login-otp-screen").style.display = "block";
+      setTimeout(() => { document.getElementById("otp-input").focus(); }, 100);
+    } catch (err) {
+      errorText.style.display = "block";
+      errorText.textContent = "Error sending OTP. Please try again.";
+    }
+  }
+
+  async function handleOtpVerify() {
+    const otpInput = document.getElementById("otp-input");
+    const otp = otpInput.value.trim();
+    const errorText = document.getElementById("otp-error");
+    const phone = localStorage.getItem("upyog_redis_phone");
+    
+    if (otp.length !== 6 || !/^\d+$/.test(otp)) {
+      errorText.style.display = "block";
+      errorText.textContent = "OTP must be 6 digits.";
+      return;
+    }
+    errorText.style.display = "none";
+    
+    try {
+      const response = await fetch(`${API_URL}/api/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: phone, otp: otp })
+      });
+      if (!response.ok) {
+        const errData = await response.json();
+        let errMsg = "Invalid OTP. Please try again.";
+        if (errData.error) {
+          errMsg = typeof errData.error === 'object' ? (errData.error.message || errData.error.description || JSON.stringify(errData.error)) : errData.error;
+        } else if (errData.Errors && errData.Errors.length > 0) {
+          errMsg = errData.Errors[0].message || errData.Errors[0].code;
+        }
+        errorText.style.display = "block";
+        errorText.textContent = errMsg;
+        return;
+      }
+      const data = await response.json();
+      
+      localStorage.setItem("upyog_auth_token", data.access_token);
+      localStorage.setItem("upyog_user_info", JSON.stringify(data.user_info));
+      
+      const sessionId = `user_${phone}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionStorage.setItem("upyog_active_session", sessionId);
+      document.getElementById("phone-login-modal").style.display = "none";
+      activateUser(sessionId);
+    } catch (err) {
+      errorText.style.display = "block";
+      errorText.textContent = "Error verifying OTP. Please try again.";
+    }
   }
 
   function activateUser(sessionId) {
-  conversationSessionId = sessionId;
-  console.log("Memory active for session:", conversationSessionId);
-  
-  // Unlock UI Elements
-  document.getElementById("text-input").disabled = false;
-  document.getElementById("text-input").placeholder = "Ask anything about UPYOG services...";
-  document.getElementById("session-toggle-btn").disabled = false;
-  document.getElementById("send-text-btn").disabled = false;
-  document.getElementById("logout-btn").style.display = "inline-block";
-  
-  // Note: UI stays clean. Backend natively pulls history from Redis for AI context.
+    conversationSessionId = sessionId;
+    console.log("Memory active for session:", conversationSessionId);
+    
+    document.getElementById("text-input").disabled = false;
+    document.getElementById("text-input").placeholder = "Ask anything about UPYOG services...";
+    document.getElementById("session-toggle-btn").disabled = false;
+    document.getElementById("send-text-btn").disabled = false;
+    document.getElementById("logout-btn").style.display = "inline-block";
+    
+    // Automatically send greeting message on successful activation
+    sendQuery("hello");
   }
 
   function logoutSession() {
-  localStorage.removeItem("upyog_redis_phone");
-  sessionStorage.removeItem("upyog_active_session");
-  window.location.reload();
+    localStorage.removeItem("upyog_redis_phone");
+    localStorage.removeItem("upyog_auth_token");
+    localStorage.removeItem("upyog_user_info");
+    sessionStorage.removeItem("upyog_active_session");
+    window.location.reload();
   }
 
  // ============== STATE ==============
@@ -190,14 +288,19 @@
  }
  window.addEventListener("message", handleNiuattMessage);
 
-  const getRequestInfo = () => {
-    const info = { ...NIAUTT_REQUEST_INFO, msgId: `${Date.now()}|en_IN` };
-    const savedPhone = localStorage.getItem("upyog_redis_phone");
-    if (savedPhone && savedPhone.length === 10 && /^\d+$/.test(savedPhone)) {
-      info.authToken = savedPhone;
-    }
-    return info;
-  };
+   const getRequestInfo = () => {
+     const info = { ...NIAUTT_REQUEST_INFO, msgId: `${Date.now()}|en_IN` };
+     const savedToken = localStorage.getItem("upyog_auth_token");
+     if (savedToken) {
+       info.authToken = savedToken;
+     } else {
+       const savedPhone = localStorage.getItem("upyog_redis_phone");
+       if (savedPhone && savedPhone.length === 10 && /^\d+$/.test(savedPhone)) {
+         info.authToken = savedPhone;
+       }
+     }
+     return info;
+   };
 
  function setState(newState) {
  currentState = newState;
@@ -266,7 +369,7 @@
  chatContainer.scrollTop = chatContainer.scrollHeight;
  }
 
- function addBotMessage(text, mode, inputType, options, field) {
+  function addBotMessage(text, mode, inputType, options, field, minDate) {
  const hero = document.getElementById('hero-welcome');
  if (hero) hero.classList.add('hidden');
  if (mode !== 'grievance_collecting') removeTextInputBar();
@@ -325,6 +428,101 @@
  hint.className = 'number-hint'; hint.textContent = HINT_MESSAGES.speakDigits;
  wrapper.appendChild(hint);
  showTextInputBar(field);
+ }
+  if (inputType === 'date') {
+  const dateContainer = document.createElement('div');
+  dateContainer.className = 'date-input-container';
+  dateContainer.style.marginTop = '10px';
+  const dateInput = document.createElement('input');
+  dateInput.type = 'date';
+  dateInput.className = 'native-date-input';
+  dateInput.style.padding = '8px';
+  dateInput.style.borderRadius = '8px';
+  dateInput.style.border = '1px solid #ccc';
+  dateInput.style.fontSize = '16px';
+  dateInput.style.marginRight = '10px';
+  
+  if (minDate) {
+    dateInput.min = minDate;
+  } else {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    dateInput.min = `${year}-${month}-${day}`;
+  }
+ 
+ const confirmBtn = document.createElement('button');
+ confirmBtn.textContent = 'Confirm';
+ confirmBtn.className = 'choice-confirm-btn';
+ confirmBtn.onclick = function() {
+ if (!dateInput.value) return;
+ dateInput.disabled = true; confirmBtn.disabled = true;
+ sendQuery(dateInput.value);
+ };
+ 
+ dateContainer.appendChild(dateInput);
+ dateContainer.appendChild(confirmBtn);
+ wrapper.appendChild(dateContainer);
+ }
+ if (inputType === 'file') {
+ const fileContainer = document.createElement('div');
+ fileContainer.className = 'file-input-container';
+ fileContainer.style.marginTop = '10px';
+ 
+ const fileInput = document.createElement('input');
+ fileInput.type = 'file';
+ fileInput.accept = 'image/*,application/pdf';
+ fileInput.className = 'native-file-input';
+ fileInput.style.display = 'none';
+ 
+ const uploadBtn = document.createElement('button');
+ uploadBtn.textContent = 'Choose File';
+ uploadBtn.className = 'choice-confirm-btn';
+ uploadBtn.style.marginRight = '10px';
+ 
+ const fileLabel = document.createElement('span');
+ fileLabel.textContent = 'No file chosen';
+ fileLabel.style.fontSize = '14px';
+ fileLabel.style.color = '#666';
+ fileLabel.style.marginRight = '10px';
+ 
+ uploadBtn.onclick = function() {
+ fileInput.click();
+ };
+ 
+ let selectedFile = null;
+ fileInput.onchange = function(e) {
+ const file = e.target.files[0];
+ if (file) {
+ selectedFile = file;
+ fileLabel.textContent = file.name;
+ confirmBtn.disabled = false;
+ }
+ };
+ 
+ const confirmBtn = document.createElement('button');
+ confirmBtn.textContent = 'Upload & Confirm';
+ confirmBtn.className = 'choice-confirm-btn';
+ confirmBtn.disabled = true;
+ 
+ confirmBtn.onclick = function() {
+ if (!selectedFile) return;
+ fileInput.disabled = true; uploadBtn.disabled = true; confirmBtn.disabled = true;
+ 
+ const reader = new FileReader();
+ reader.onload = function(evt) {
+ const base64Data = evt.target.result;
+ sendQuery('', selectedFile.name, base64Data);
+ };
+ reader.readAsDataURL(selectedFile);
+ };
+ 
+ fileContainer.appendChild(fileInput);
+ fileContainer.appendChild(uploadBtn);
+ fileContainer.appendChild(fileLabel);
+ fileContainer.appendChild(confirmBtn);
+ wrapper.appendChild(fileContainer);
  }
  if (inputType === 'text') showTextInputBar(field);
  chatContainer.appendChild(wrapper);
@@ -458,12 +656,16 @@
 
  function clearInterimDisplay() { if (interimDisplay) { interimDisplay.classList.remove('show'); interimText.innerText = ''; } }
 
- async function sendQuery(transcript) {
- if (!transcript.trim() || !conversationSessionId) return;
+ async function sendQuery(transcript, file_name = null, file_data = null) {
+ if ((!transcript.trim() && !file_name) || !conversationSessionId) return;
  setState(States.PROCESSING);
  clearInterimDisplay();
  if (currentFetch) { currentFetch.abort(); currentFetch = null; }
+ if (file_name) {
+ addUserMessage(`[Uploaded Document: ${file_name}]`);
+ } else {
  addUserMessage(transcript);
+ }
  currentFetch = new AbortController();
 
  try {
@@ -472,8 +674,11 @@
  headers: { 'Content-Type': 'application/json' },
  body: JSON.stringify({
  RequestInfo: getRequestInfo(),
- query: transcript,
- session_id: conversationSessionId
+ query: transcript || '',
+ session_id: conversationSessionId,
+ auth_token: localStorage.getItem("upyog_auth_token"),
+ file_name: file_name,
+ file_data: file_data
  }),
  signal: currentFetch.signal
  });
@@ -496,7 +701,7 @@
  lastDetectedLang = detectedLang;
  if (recognition) recognition.lang = detectedLang === 'hi' ? 'hi-IN' : 'en-IN';
 
- addBotMessage(data.response, data.mode, data.input_type, data.options, data.field);
+  addBotMessage(data.response, data.mode, data.input_type, data.options, data.field, data.min_date);
  if (data.audio) { playAudio(data.audio); } else { setState(States.LISTENING); onTurnComplete(); }
 
  } catch (error) {
@@ -564,6 +769,22 @@
  }
  sendTextBtn.addEventListener('click', handleTextSubmit);
  textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleTextSubmit(); });
+
+ // 1. Add this function to save history
+function saveChatHistory() {
+    const chatContainer = document.getElementById("chat-box"); // Change to your actual chat container ID
+    localStorage.setItem("upyogChatHistory", chatContainer.innerHTML);
+}
+
+// 2. Call saveChatHistory() every time a new message is appended.
+
+// 3. Add this at the very bottom of your JS file so it loads history on refresh:
+window.onload = function() {
+    const savedChat = localStorage.getItem("upyogChatHistory");
+    if (savedChat) {
+        document.getElementById("chat-box").innerHTML = savedChat; // Change to your actual chat container ID
+    }
+};
  </script>
 </body>
 </html>
