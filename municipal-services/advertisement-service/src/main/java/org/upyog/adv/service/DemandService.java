@@ -98,10 +98,10 @@ public class DemandService {
 		List<DemandDetail> demandDetails = calculationService.calculateDemand(bookingRequest, taxRateCodes, mdmsData);
 
 		// 🔹 Round off each tax head independently before creating Demand
+		// Use HALF_UP for standard rounding (≥0.5 rounds up, <0.5 rounds down)
 		demandDetails.forEach(detail -> {
 			if (detail.getTaxAmount() != null) {
-				BigDecimal rounded = new BigDecimal(Math.ceil(detail.getTaxAmount().doubleValue()));
-				detail.setTaxAmount(rounded);
+				detail.setTaxAmount(detail.getTaxAmount().setScale(0, java.math.RoundingMode.HALF_UP));
 			}
 		});
 

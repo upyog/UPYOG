@@ -129,19 +129,21 @@ public class BookingUtil {
 		if (adv == null) return null;
 
 		// ── Duration‑based tier selection ──
+		// Use scale 6 HALF_UP to avoid accumulated rounding errors when the per‑day
+		// rate is multiplied back by bookingDays and then finally rounded to whole rupees.
 		if (bookingDays >= 365 && adv.getYearlyAmount() != null) {
 			int divisor = (referenceDate != null) ? referenceDate.lengthOfYear() : 365;
-			return adv.getYearlyAmount().divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+			return adv.getYearlyAmount().divide(BigDecimal.valueOf(divisor), 6, RoundingMode.HALF_UP);
 		}
 		if (bookingDays >= 180 && adv.getBiannualAmount() != null) {
-			return adv.getBiannualAmount().divide(BigDecimal.valueOf(182), 2, RoundingMode.CEILING);
+			return adv.getBiannualAmount().divide(BigDecimal.valueOf(182), 6, RoundingMode.HALF_UP);
 		}
 		if (bookingDays >= 28 && adv.getMonthlyAmount() != null) {
 			int divisor = (referenceDate != null) ? getDaysInMonth(referenceDate) : 30;
-			return adv.getMonthlyAmount().divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+			return adv.getMonthlyAmount().divide(BigDecimal.valueOf(divisor), 6, RoundingMode.HALF_UP);
 		}
 		if (bookingDays >= 7 && adv.getWeeklyAmount() != null) {
-			return adv.getWeeklyAmount().divide(BigDecimal.valueOf(7), 2, RoundingMode.CEILING);
+			return adv.getWeeklyAmount().divide(BigDecimal.valueOf(7), 6, RoundingMode.HALF_UP);
 		}
 
 		// ── Fallback: compute per‑day for ALL populated amounts, pick cheapest ──
@@ -149,20 +151,20 @@ public class BookingUtil {
 
 		if (adv.getMonthlyAmount() != null) {
 			int divisor = (referenceDate != null) ? getDaysInMonth(referenceDate) : 30;
-			BigDecimal rate = adv.getMonthlyAmount().divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+			BigDecimal rate = adv.getMonthlyAmount().divide(BigDecimal.valueOf(divisor), 6, RoundingMode.HALF_UP);
 			cheapest = (cheapest == null || rate.compareTo(cheapest) < 0) ? rate : cheapest;
 		}
 		if (adv.getWeeklyAmount() != null) {
-			BigDecimal rate = adv.getWeeklyAmount().divide(BigDecimal.valueOf(7), 2, RoundingMode.CEILING);
+			BigDecimal rate = adv.getWeeklyAmount().divide(BigDecimal.valueOf(7), 6, RoundingMode.HALF_UP);
 			cheapest = (cheapest == null || rate.compareTo(cheapest) < 0) ? rate : cheapest;
 		}
 		if (adv.getYearlyAmount() != null) {
 			int divisor = (referenceDate != null) ? referenceDate.lengthOfYear() : 365;
-			BigDecimal rate = adv.getYearlyAmount().divide(BigDecimal.valueOf(divisor), 2, RoundingMode.CEILING);
+			BigDecimal rate = adv.getYearlyAmount().divide(BigDecimal.valueOf(divisor), 6, RoundingMode.HALF_UP);
 			cheapest = (cheapest == null || rate.compareTo(cheapest) < 0) ? rate : cheapest;
 		}
 		if (adv.getBiannualAmount() != null) {
-			BigDecimal rate = adv.getBiannualAmount().divide(BigDecimal.valueOf(182), 2, RoundingMode.CEILING);
+			BigDecimal rate = adv.getBiannualAmount().divide(BigDecimal.valueOf(182), 6, RoundingMode.HALF_UP);
 			cheapest = (cheapest == null || rate.compareTo(cheapest) < 0) ? rate : cheapest;
 		}
 
