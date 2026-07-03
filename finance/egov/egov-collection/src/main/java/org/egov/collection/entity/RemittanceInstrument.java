@@ -47,7 +47,7 @@
  */
 package org.egov.collection.entity;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 
 import org.egov.infra.microservice.models.Instrument;
 import org.egov.infstr.models.BaseModel;

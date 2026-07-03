@@ -130,6 +130,11 @@
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+
         <!-- STRUTS2 DEPENDENCIES START -->
         <dependency>
             <groupId>org.apache.struts</groupId>
