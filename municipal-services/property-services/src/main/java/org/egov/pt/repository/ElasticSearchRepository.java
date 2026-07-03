@@ -78,6 +78,10 @@ public class ElasticSearchRepository {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        if (config.getElasticsearchUsername() != null && !config.getElasticsearchUsername().isEmpty() &&
+                config.getElasticsearchPassword() != null && !config.getElasticsearchPassword().isEmpty()) {
+                headers.setBasicAuth(config.getElasticsearchUsername(), config.getElasticsearchPassword());
+            }
         HttpEntity<String> requestEntity = new HttpEntity<>(searchQuery, headers);
         log.info("Url"+url+"reuest"+requestEntity);
         ResponseEntity response = null;
