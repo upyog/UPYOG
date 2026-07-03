@@ -21,6 +21,8 @@ public interface WSCalculationService {
 	
 //	String cancelDemand(CancelDemand cancelDemand);
 	void generateBillBasedLocality(RequestInfo requestInfo);
+	
+	void generateBillBasedTenant(RequestInfo requestInfo);
 
 	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
 	

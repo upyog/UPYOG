@@ -973,6 +973,68 @@ So, both lists are now filtered to include only records with INITIATED status, w
 
 		}
 	}
+	
+	/**
+	 * Generate bills based on the tenant billing cycle (Monthly, Quarterly,
+	 * Yearly).
+	 *
+	 * @param requestInfo Request information
+	 */
+	public void generateBillBasedTenant(RequestInfo requestInfo) {
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		log.info("Water bill generation scheduler started at: {}", LocalDateTime.now().format(formatter));
+
+		User userInfo = requestInfo.getUserInfo();
+		String tenantId = userInfo.getTenantId();
+
+		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+		List<String> connectionNos = wSCalculationDao.getConnectionsNoByTenant(tenantId,
+				WSCalculationConstant.nonMeterdConnection);
+
+		if (connectionNos == null || connectionNos.isEmpty()) {
+			log.info("No non-metered connections found for tenant: {}", tenantId);
+			return;
+		}
+
+		Collection<List<String>> partitionConnectionNoList = partitionBasedOnSize(connectionNos,
+				configs.getBulkBillGenerateCount());
+
+		log.info("Partition count: {}, Total connections: {}, Batch size: {}", partitionConnectionNoList.size(),
+				connectionNos.size(), configs.getBulkBillGenerateCount());
+
+		String cityName = "Unknown";
+		if (tenantId != null && tenantId.contains(".")) {
+			String city = tenantId.substring(tenantId.indexOf('.') + 1);
+			cityName = Character.toUpperCase(city.charAt(0)) + city.substring(1).toLowerCase();
+		}
+
+		int batchCount = 1;
+
+		for (List<String> connectionList : partitionConnectionNoList) {
+			try {
+
+				BillGeneratorReq billGeneratorReq = BillGeneratorReq.builder().requestInfoWrapper(requestInfoWrapper)
+						.tenantId(tenantId).consumerCodes(ImmutableSet.copyOf(connectionList)).build();
+
+				String key = cityName + "-" + tenantId + "-" + batchCount;
+
+				producer.push(configs.getBillGenerateSchedulerTopic(), key, billGeneratorReq);
+
+				log.info("Successfully pushed batch {} to Kafka. Connections: {}, Key: {}", batchCount,
+						connectionList.size(), key);
+
+				batchCount++;
+
+			} catch (Exception e) {
+				log.error("Exception occurred while generating bills for tenant: {}, batch: {}", tenantId, batchCount,
+						e);
+			}
+		}
+
+		log.info("Bill Scheduler status updated to COMPLETED for tenant: {}", tenantId);
+	}
 
 	/**
 	 * 

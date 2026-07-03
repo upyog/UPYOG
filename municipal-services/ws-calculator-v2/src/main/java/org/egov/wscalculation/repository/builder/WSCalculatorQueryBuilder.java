@@ -71,6 +71,8 @@ public class WSCalculatorQueryBuilder {
 	private static final String distinctTenantIdsCriteria = "SELECT distinct(tenantid) FROM eg_ws_connection ws";
 
 	private static final String connectionNoByLocality = "SELECT distinct(conn.connectionno) FROM eg_ws_connection conn INNER JOIN eg_ws_service ws ON conn.id = ws.connection_id  ";
+	
+	private static final String connectionNoByTenant = "SELECT distinct(conn.connectionno) FROM eg_ws_connection conn INNER JOIN eg_ws_service ws ON conn.id = ws.connection_id  ";
 
 	private static final String BILL_SCHEDULER_STATUS_SEARCH_QUERY = "select status from eg_ws_scheduler ";
 	private static final String LAST_DEMAND_GEN_FOR_CONN = " SELECT d.taxperiodfrom FROM egbs_demand_v1 d ";
@@ -497,6 +499,47 @@ public class WSCalculatorQueryBuilder {
 
 	}
 
+
+	public String getConnectionsNoByTenant(String tenantId, String connectionType, String status,String groups,
+			List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(connectionNoByTenant);
+
+		// add tenantid
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.tenantid = ? ");
+		preparedStatement.add(tenantId);
+
+		// Add connection type
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" ws.connectiontype = ? ");
+		preparedStatement.add(connectionType);
+		
+		//find in locality code
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.locality IN (SELECT DISTINCT(ebm.localitycode) FROM eg_bndry_mohalla ebm WHERE ebm.tenantid = ? )");
+		preparedStatement.add(tenantId);
+		// Active status
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.status = ? ");
+		preparedStatement.add(status);
+
+		if (groups != null) {
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" conn.additionaldetails->>'groups' = ? ");
+	        preparedStatement.add(groups); // Exact match
+	    }
+		
+		
+		// Getting only non exempted connection to generate bill
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" (conn.additionaldetails->>'isexempted')::boolean is not true ");
+
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno is not null");
+		return query.toString();
+
+	}
+	
 	public String getConnectionNumberListForDemand(String tenantId, String connectionType,
 			List<Object> preparedStatement, Long fromDate, Long toDate) {
 		// StringBuilder query = new StringBuilder(connectionNoListQuery);

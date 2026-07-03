@@ -124,6 +124,12 @@ public class CalculatorController {
 		wSCalculationService.generateBillBasedLocality(requestInfoWrapper.getRequestInfo());
 	}
 	
+	@PostMapping("/_tenantjobbillscheduler")
+	public void jobTenantBillScheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+		log.info("_tenantJobBillScheduler::");
+		wSCalculationService.generateBillBasedTenant(requestInfoWrapper.getRequestInfo());
+	}
+	
 	@PostMapping("/_getConnectionForDemand")
 	public ResponseEntity<ConnectionResponse> generateDemand(@Valid @RequestBody BulkBillReq bulkBillReq) {
 		List<WaterConnection> waterConnectionList=wSCalculationService.getConnnectionWithPendingDemand(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
