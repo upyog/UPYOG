@@ -145,31 +145,6 @@ public class PolylineMetrics {
         return BigDecimal.valueOf(minDistance).setScale(4, RoundingMode.HALF_UP);
     }
 
-    /**
-     * Calculates the shortest distance from a point to a finite line segment.
-     */
-//    private static double pointToSegmentDistance(Point p, Point v, Point w) {
-//        double l2 = Math.pow(w.getX() - v.getX(), 2) + Math.pow(w.getY() - v.getY(), 2);
-//        
-//        // If the segment's length is 0, it's just a point. Return point-to-point distance.
-//        if (l2 == 0) {
-//            return Math.sqrt(Math.pow(p.getX() - v.getX(), 2) + Math.pow(p.getY() - v.getY(), 2));
-//        }
-//
-//        // Consider the line extending the segment, parameterized as v + t (w - v).
-//        // Find the projection of point p onto the line. 
-//        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-//        double t = Math.max(0, Math.min(1, ((p.getX() - v.getX()) * (w.getX() - v.getX()) + 
-//                                            (p.getY() - v.getY()) * (w.getY() - v.getY())) / l2));
-//        
-//        // Find the coordinate of the projection on the segment
-//        double projX = v.getX() + t * (w.getX() - v.getX());
-//        double projY = v.getY() + t * (w.getY() - v.getY());
-//        
-//        // Return the distance from the point to its projection on the segment
-//        return Math.sqrt(Math.pow(p.getX() - projX, 2) + Math.pow(p.getY() - projY, 2));
-//    }
-    
     public static BigDecimal getSandwichSetbackDistance(DXFLWPolyline plotBoundary, DXFLWPolyline footprint, DXFLWPolyline yard) {
         if (plotBoundary == null || footprint == null || yard == null) {
             return BigDecimal.ZERO;
@@ -209,92 +184,6 @@ public class PolylineMetrics {
     }
 
     /**
-     * Filters a polyline to only return the segments that fall inside or on the boundary of the yard.
-     */
-//    private static List<DXFLine> getLinesIntersectingYard(DXFLWPolyline sourcePolyline, DXFLWPolyline yardMask) {
-//        List<DXFLine> allLines = getLinesOfPolyline(sourcePolyline);
-//        List<DXFLine> validLines = new ArrayList<>();
-//
-//        for (DXFLine line : allLines) {
-//            // Use the midpoint of the segment to check if this line belongs to the yard
-//            Point midPoint = new Point(
-//                (line.getStartPoint().getX() + line.getEndPoint().getX()) / 2.0,
-//                (line.getStartPoint().getY() + line.getEndPoint().getY()) / 2.0,
-//                0.0
-//            );
-//
-//            // Assuming you have this Util method from your previous code
-//            // It should check if the point is inside OR on the edge of the polygon
-//            if (Util.isPointStrictlyInsidePolygon(yardMask, midPoint) || Util.isPointOnPolygonBoundary(yardMask, midPoint)) {
-//                validLines.add(line);
-//            }
-//        }
-//        return validLines;
-//    }
-
-    /**
-     * Standard utility to convert a DXFLWPolyline into a list of individual DXFLines.
-     */
-//    private static List<DXFLine> getLinesOfPolyline(DXFLWPolyline polyline) {
-//        List<DXFLine> lines = new ArrayList<>();
-//        Iterator vertexIterator = polyline.getVertexIterator();
-//        DXFVertex first = null;
-//        DXFVertex previous = null;
-//
-//        while (vertexIterator.hasNext()) {
-//            DXFVertex current = (DXFVertex) vertexIterator.next();
-//            if (previous != null) {
-//                DXFLine line = new DXFLine();
-//                line.setStartPoint(previous.getPoint());
-//                line.setEndPoint(current.getPoint());
-//                lines.add(line);
-//            } else {
-//                first = current;
-//            }
-//            previous = current;
-//        }
-//        // Close the loop
-//        if (previous != null && first != null && !Util.pointsEquals(first.getPoint(), previous.getPoint())) {
-//            DXFLine line = new DXFLine();
-//            line.setStartPoint(previous.getPoint());
-//            line.setEndPoint(first.getPoint());
-//            lines.add(line);
-//        }
-//        return lines;
-//    }
-    
- // --- Helper Methods ---
-
-//    private static List<DXFLine> getLinesOfPolyline(DXFLWPolyline polyline) {
-//        List<DXFLine> lines = new ArrayList<>();
-//        Iterator vertexIterator = polyline.getVertexIterator();
-//        DXFVertex first = null;
-//        DXFVertex previous = null;
-//
-//        while (vertexIterator.hasNext()) {
-//            DXFVertex current = (DXFVertex) vertexIterator.next();
-//            if (previous != null) {
-//                DXFLine line = new DXFLine();
-//                line.setStartPoint(previous.getPoint());
-//                line.setEndPoint(current.getPoint());
-//                lines.add(line);
-//            } else {
-//                first = current;
-//            }
-//            previous = current;
-//        }
-//        if (previous != null && first != null && !Util.pointsEquals(first.getPoint(), previous.getPoint())) {
-//            DXFLine line = new DXFLine();
-//            line.setStartPoint(previous.getPoint());
-//            line.setEndPoint(first.getPoint());
-//            lines.add(line);
-//        }
-//        return lines;
-//    }
-//    
-    
-
-    /**
      * Calculates the absolute shortest distance between two finite line segments.
      * This handles angled lines and stepped geometries perfectly.
      */
@@ -311,30 +200,6 @@ public class PolylineMetrics {
 
         return Math.min(Math.min(d1, d2), Math.min(d3, d4));
     }
-
-//    private static double pointToSegmentDistance(Point p, Point v, Point w) {
-//        double l2 = Math.pow(v.getX() - w.getX(), 2) + Math.pow(v.getY() - w.getY(), 2);
-//        if (l2 == 0) return Math.sqrt(Math.pow(p.getX() - v.getX(), 2) + Math.pow(p.getY() - v.getY(), 2));
-//        
-//        double t = Math.max(0, Math.min(1, ((p.getX() - v.getX()) * (w.getX() - v.getX()) + (p.getY() - v.getY()) * (w.getY() - v.getY())) / l2));
-//        
-//        double projX = v.getX() + t * (w.getX() - v.getX());
-//        double projY = v.getY() + t * (w.getY() - v.getY());
-//        
-//        return Math.sqrt(Math.pow(p.getX() - projX, 2) + Math.pow(p.getY() - projY, 2));
-//    }
-
-//    private static double pointToSegmentDistance(Point p, Point v, Point w) {
-//        double l2 = Math.pow(v.getX() - w.getX(), 2) + Math.pow(v.getY() - w.getY(), 2);
-//        if (l2 == 0) return Math.sqrt(Math.pow(p.getX() - v.getX(), 2) + Math.pow(p.getY() - v.getY(), 2));
-//        
-//        double t = Math.max(0, Math.min(1, ((p.getX() - v.getX()) * (w.getX() - v.getX()) + (p.getY() - v.getY()) * (w.getY() - v.getY())) / l2));
-//        
-//        double projX = v.getX() + t * (w.getX() - v.getX());
-//        double projY = v.getY() + t * (w.getY() - v.getY());
-//        
-//        return Math.sqrt(Math.pow(p.getX() - projX, 2) + Math.pow(p.getY() - projY, 2));
-//    }
     
     public static BigDecimal getMaxSegmentLength(DXFLWPolyline polyline) {
         List<Point> points = extractPoints(polyline);
@@ -384,18 +249,6 @@ public class PolylineMetrics {
         }
         return points;
     }
-    
-    /**
-     * Extracts vertices from a DXFLWPolyline into a standard List.
-     */
-//    private static List<Point> extractPoints(DXFLWPolyline polyline) {
-//        List<Point> points = new ArrayList<>();
-//        Iterator it = polyline.getVertexIterator();
-//        while (it.hasNext()) {
-//            points.add(((DXFVertex) it.next()).getPoint());
-//        }
-//        return points;
-//    }
  
     public static BigDecimal getMinParallelDistance(DXFLWPolyline polyline) {
         List<DXFLine> allLines = getLinesOfPolyline(polyline);
@@ -444,7 +297,7 @@ public class PolylineMetrics {
         return BigDecimal.ZERO;
     }
     
-    public static BigDecimal getMinParallelSetback(
+    public static BigDecimal getMinDistance(
             DXFLWPolyline plotBoundary,
             DXFLWPolyline footprint,
             DXFLWPolyline setbackPolyline) {
@@ -647,20 +500,6 @@ public class PolylineMetrics {
 	    return lines;
 	}
 
-//    private static double getShortestDistanceBetweenSegments(DXFLine l1, DXFLine l2) {
-//        Point p1 = l1.getStartPoint();
-//        Point p2 = l1.getEndPoint();
-//        Point p3 = l2.getStartPoint();
-//        Point p4 = l2.getEndPoint();
-//
-//        double d1 = pointToSegmentDistance(p1, p3, p4);
-//        double d2 = pointToSegmentDistance(p2, p3, p4);
-//        double d3 = pointToSegmentDistance(p3, p1, p2);
-//        double d4 = pointToSegmentDistance(p4, p1, p2);
-//
-//        return Math.min(Math.min(d1, d2), Math.min(d3, d4));
-//    }
-
    private static double pointToSegmentDistance(Point p, Point v, Point w) {
        double l2 = Math.pow(v.getX() - w.getX(), 2) + Math.pow(v.getY() - w.getY(), 2);
        if (l2 == 0) return Math.sqrt(Math.pow(p.getX() - v.getX(), 2) + Math.pow(p.getY() - v.getY(), 2));
@@ -679,82 +518,8 @@ public class PolylineMetrics {
 	        DXFLWPolyline setbackPolyline) {
 
 	    LOG.info("getSpecificSetbackDistance -> delegating to getMinParallelSetback");
-	    return getMinParallelSetback(plotBoundary, footprint, setbackPolyline);
+	    return getMinDistance(plotBoundary, footprint, setbackPolyline);
 	}
-   
-// public static BigDecimal getSpecificSetbackDistance(
-//        DXFLWPolyline plotBoundary,
-//        DXFLWPolyline footprint,
-//        DXFLWPolyline setbackPolyline) {
-//
-//    if (plotBoundary == null || footprint == null || setbackPolyline == null) {
-//        LOG.warn("getSpecificSetbackDistance: null input. plotBoundary={}, footprint={}, setbackPolyline={}",
-//                plotBoundary != null, footprint != null, setbackPolyline != null);
-//        return BigDecimal.ZERO;
-//    }
-//
-//    LOG.info("getSpecificSetbackDistance started");
-//
-//    List<DXFLine> footprintLines = getLinesInsideSetbackZone(footprint, setbackPolyline);
-//    List<DXFLine> boundaryLines = getLinesInsideSetbackZone(plotBoundary, setbackPolyline);
-//
-//    LOG.info("Lines in setback zone: footprintLines={}, boundaryLines={}",
-//            footprintLines.size(), boundaryLines.size());
-//
-//    for (DXFLine line : footprintLines) {
-//        LOG.info("Footprint line: ({}, {}) -> ({}, {})",
-//                line.getStartPoint().getX(), line.getStartPoint().getY(),
-//                line.getEndPoint().getX(), line.getEndPoint().getY());
-//    }
-//
-//    for (DXFLine line : boundaryLines) {
-//        LOG.info("Boundary line: ({}, {}) -> ({}, {})",
-//                line.getStartPoint().getX(), line.getStartPoint().getY(),
-//                line.getEndPoint().getX(), line.getEndPoint().getY());
-//    }
-//
-//    if (footprintLines.isEmpty() || boundaryLines.isEmpty()) {
-//        LOG.warn("getSpecificSetbackDistance: no usable lines found.");
-//        return BigDecimal.ZERO;
-//    }
-//
-//    double angleTolerance = Math.toRadians(10.0);
-//    double minDistance = Double.MAX_VALUE;
-//    boolean found = false;
-//
-//    for (DXFLine fpLine : footprintLines) {
-//        for (DXFLine bndLine : boundaryLines) {
-//            boolean parallel = isParallel(fpLine, bndLine, angleTolerance);
-//
-//            LOG.debug("Compare fp=({}, {}) -> ({}, {}) with bnd=({}, {}) -> ({}, {}), parallel={}",
-//                    fpLine.getStartPoint().getX(), fpLine.getStartPoint().getY(),
-//                    fpLine.getEndPoint().getX(), fpLine.getEndPoint().getY(),
-//                    bndLine.getStartPoint().getX(), bndLine.getStartPoint().getY(),
-//                    bndLine.getEndPoint().getX(), bndLine.getEndPoint().getY(),
-//                    parallel);
-//
-//            if (!parallel) {
-//                continue;
-//            }
-//
-//            double dist = getPerpendicularDistanceBetweenParallelSegments(fpLine, bndLine);
-//            LOG.info("Parallel distance={}", dist);
-//
-//            if (dist > 0.1 && dist < minDistance) {
-//                minDistance = dist;
-//                found = true;
-//            }
-//        }
-//    }
-//
-//    if (!found) {
-//        LOG.warn("getSpecificSetbackDistance: no valid parallel distance found.");
-//        return BigDecimal.ZERO;
-//    }
-//
-//    LOG.info("getSpecificSetbackDistance result={}", minDistance);
-//    return BigDecimal.valueOf(minDistance).setScale(2, RoundingMode.HALF_UP);
-//}
    
  private static double getPerpendicularDistanceBetweenParallelSegments(DXFLine l1, DXFLine l2) {
 	    Point a1 = l1.getStartPoint();

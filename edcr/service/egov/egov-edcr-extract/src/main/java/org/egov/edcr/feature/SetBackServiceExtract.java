@@ -322,9 +322,9 @@ public class SetBackServiceExtract extends FeatureExtract {
             // =========================================================
             // CONDITION 3: IS NOT INSIDE BUILDING FOOTPRINT
             // =========================================================
-            if (isInsideBuildingFootprint(pl, doc, currentPolyline, yardName)) {
-                 pl.addError(yardName + "_INSIDE_FOOTPRINT", yardName + " is drawn overlapping or strictly inside the Building Footprint. Setbacks must represent open space outside the building.");
-            }
+//            if (isInsideBuildingFootprint(pl, doc, currentPolyline, yardName)) {
+//                 pl.addError(yardName + "_INSIDE_FOOTPRINT", yardName + " is drawn overlapping or strictly inside the Building Footprint. Setbacks must represent open space outside the building.");
+//            }
             
             // =========================================================
             // CONDITION 4: SETBACKS DO NOT OVERLAP EACH OTHER
@@ -547,10 +547,10 @@ public class SetBackServiceExtract extends FeatureExtract {
 
             List<DXFLWPolyline> otherYardLines = Util.getPolyLinesByLayer(doc, otherLayerName);
             if (otherYardLines != null && !otherYardLines.isEmpty()) {
-                if (doesPolygonOverlap(currentPolyline, otherYardLines.get(0))) {
-                    pl.addError(errKey, currentYardName + " and " + otherLayerName + " intersect or overlap each other. Setbacks must not overlap.");
-                    hasOverlap = true; 
-                }
+//                if (doesPolygonOverlap(currentPolyline, otherYardLines.get(0))) {
+//                    pl.addError(errKey, currentYardName + " and " + otherLayerName + " intersect or overlap each other. Setbacks must not overlap.");
+//                    hasOverlap = true; 
+//                }
             }
         }
         return hasOverlap; 
