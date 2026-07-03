@@ -155,7 +155,8 @@ public class EdcrRestService {
         "BPA_BUILDER",
         "BPA_STRUCTURALENGINEER",
         "BPA_TOWNPLANNER",
-        "BPA_DESIGNER"
+        "BPA_DESIGNER",
+        "BPA_SUPERVISOR"
     ));
 
     @Autowired
