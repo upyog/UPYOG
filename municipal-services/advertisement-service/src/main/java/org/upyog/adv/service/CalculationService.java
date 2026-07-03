@@ -49,12 +49,18 @@ public class CalculationService {
 		String tenantId = bookingRequest.getBookingApplication().getTenantId();
 		Map<String, Object> mdmsDataMap = (Map<String, Object>) mdmsData;
 
+		List<CartDetail> cartDetails = bookingRequest.getBookingApplication().getCartDetails();
+		if (cartDetails == null || cartDetails.isEmpty()) {
+			throw new CustomException("EMPTY_CART", "Cart details cannot be empty for demand calculation");
+		}
+
 		List<Map<String, Object>> taxRateList = (List<Map<String, Object>>) ((Map<String, Object>) ((Map<String, Object>) mdmsDataMap
 				.get("MdmsRes")).get("Advertisement")).get("TaxAmount");
 
 		List<TaxHeadMaster> headMasters = mdmsUtil.getTaxHeadMasterList(bookingRequest.getRequestInfo(), tenantId, BookingConstants.BILLING_SERVICE);
 
-		List<Advertisements> calculationTypes = mdmsUtil.getAdvertisements(bookingRequest.getRequestInfo(), tenantId, config.getModuleName(), bookingRequest.getBookingApplication().getCartDetails().get(0));
+		// Fetch ALL advertisements from MDMS — the cartDetail parameter is unused by the method (no per-item filtering)
+		List<Advertisements> calculationTypes = mdmsUtil.getAdvertisements(bookingRequest.getRequestInfo(), tenantId, config.getModuleName(), null);
 
 		log.info("Retrieved calculation types: {}", calculationTypes);
 
@@ -247,13 +253,14 @@ public class CalculationService {
 			throw new CustomException("EMPTY_CART", "Cart details cannot be empty for demand calculation");
 		}
 
+		// Fetch ALL advertisements from MDMS — the cartDetail parameter is unused (no per-item filtering)
 		List<Advertisements> advertisements = null;
 		try {
 			advertisements = mdmsUtil.getAdvertisements(
 					bookingRequest.getRequestInfo(),
 					tenantId,
 					config.getModuleName(),
-					cartDetails.get(0));
+					null);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
