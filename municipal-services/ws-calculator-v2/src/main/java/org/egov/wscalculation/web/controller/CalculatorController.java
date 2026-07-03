@@ -124,6 +124,11 @@ public class CalculatorController {
 		wSCalculationService.generateBillBasedLocality(requestInfoWrapper.getRequestInfo());
 	}
 	
+	/**
+	 * API to trigger tenant bill generation scheduler.
+	 *
+	 * @param requestInfoWrapper request context for bill generation
+	 */
 	@PostMapping("/_tenantjobbillscheduler")
 	public void jobTenantBillScheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
 		log.info("_tenantJobBillScheduler::");

@@ -975,8 +975,7 @@ So, both lists are now filtered to include only records with INITIATED status, w
 	}
 	
 	/**
-	 * Generate bills based on the tenant billing cycle (Monthly, Quarterly,
-	 * Yearly).
+	 * Generate bills based on the tenant billing cycle (Quarterly, Yearly).
 	 *
 	 * @param requestInfo Request information
 	 */
@@ -985,8 +984,7 @@ So, both lists are now filtered to include only records with INITIATED status, w
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		log.info("Water bill generation scheduler started at: {}", LocalDateTime.now().format(formatter));
 
-		User userInfo = requestInfo.getUserInfo();
-		String tenantId = userInfo.getTenantId();
+		String tenantId = requestInfo.getMsgId();
 
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
