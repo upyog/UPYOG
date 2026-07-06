@@ -158,6 +158,6 @@ public class Configurations {
 	private int SignatureContentSize;
 
 	@Value("${esign.gateway.url}")
-	private int gatewayUrl;
+	private String gatewayUrl;
 	
 }
