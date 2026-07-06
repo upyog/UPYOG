@@ -31,4 +31,7 @@ public class BulkBillCriteria {
 	
 	@JsonProperty("tenantId")
 	private String tenantId;
+
+    @JsonProperty("locality")
+    private String locality;
 }

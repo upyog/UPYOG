@@ -220,7 +220,7 @@ public class DemandService {
 	/**
 	 * Creates or updates Demand
 	 * 
-	 * @param requestInfo  The RequestInfo of the calculation request
+//	 * @param requestInfo  The RequestInfo of the calculation request
 	 * @param calculations The Calculation Objects for which demand has to be
 	 *                     generated or updated
 	 */
@@ -292,7 +292,7 @@ public class DemandService {
 	 * @param calculations List of Calculation
 	 * @param masterMap    Master MDMS Data
 	 * @return Returns list of demands
-	 * @throws IOException
+//	 * @throws IOException
 	 * @throws JsonMappingException
 	 */
 	private List<Demand> createDemand(RequestInfo requestInfo, List<Calculation> calculations,
@@ -1809,7 +1809,7 @@ public class DemandService {
 								"Pushing calculation req to the kafka topic with bulk data of calculationCriteriaList size: {}",
 								calculationCriteriaList.size());
 
-						wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
+						wsCalculationProducer.push(configs.getCreateSingleDemand(), calculationReq);
 						totalRecordsPushedToKafka = totalRecordsPushedToKafka + calculationCriteriaList.size();
 						calculationCriteriaList.clear();
 						connectionNosCount = 0;
@@ -1837,7 +1837,7 @@ public class DemandService {
 								"Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}",
 								calculationCriteriaList.size());
 
-						wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
+						wsCalculationProducer.push(configs.getCreateSingleDemand(), calculationReq);
 						totalRecordsPushedToKafka = totalRecordsPushedToKafka + calculationCriteriaList.size();
 						calculationCriteriaList.clear();
 						connectionNosCount = 0;

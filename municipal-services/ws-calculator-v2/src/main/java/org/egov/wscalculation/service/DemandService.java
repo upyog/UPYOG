@@ -227,7 +227,7 @@ public class DemandService {
 	/**
 	 * Creates or updates Demand
 	 * 
-	 * @param requestInfo  The RequestInfo of the calculation request
+//	 * @param requestInfo  The RequestInfo of the calculation request
 	 * @param calculations The Calculation Objects for which demand has to be
 	 *                     generated or updated
 	 */
@@ -349,7 +349,7 @@ public class DemandService {
 	 * @param calculations List of Calculation
 	 * @param masterMap    Master MDMS Data
 	 * @return Returns list of demands
-	 * @throws IOException
+//	 * @throws IOException
 	 * @throws JsonMappingException
 	 */
 	private List<Demand> createDemand(RequestInfo requestInfo, List<Calculation> calculations,
@@ -1686,6 +1686,30 @@ public class DemandService {
 		generateDemandForULB(billingMasterData, requestInfo, tenantId, taxPeriodFrom, taxPeriodTo);
 	}
 
+    public void generateDemandForTenantIdLocality(String tenantId, String locality, RequestInfo requestInfo) {
+        requestInfo.getUserInfo().setTenantId(tenantId);
+        Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
+        long taxPeriodFrom = billingMasterData.get("taxPeriodFrom") == null ? 0l
+                : (long) billingMasterData.get("taxPeriodFrom");
+        long taxPeriodTo = billingMasterData.get("taxPeriodTo") == null ? 0l
+                : (long) billingMasterData.get("taxPeriodTo");
+        log.info("generateDemandForTenantId:: " + tenantId + " taxPeriodFrom:: " + taxPeriodFrom + " taxPeriodTo "
+                + taxPeriodTo);
+        if (taxPeriodFrom == 0 || taxPeriodTo == 0) {
+            throw new CustomException("NO_BILLING_PERIODS",
+                    "MDMS Billing Period does not available for tenant: " + tenantId);
+        }
+
+        if (waterCalculatorDao.isBatchDemandExecuted(tenantId, taxPeriodFrom, taxPeriodTo)) {
+            log.info("Demand generation already successfully executed for tenant: " + tenantId + " period: " + taxPeriodFrom + " - " + taxPeriodTo + ". Skipping.");
+            return;
+        }
+
+        generateDemandForLocality(billingMasterData, requestInfo, tenantId, locality, taxPeriodFrom, taxPeriodTo);
+    }
+
+
+
 	public String generateDemandForConsumerCode(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo,
 				bulkBillCriteria.getTenantId());
@@ -1870,7 +1894,7 @@ public class DemandService {
 								"Pushing calculation req to the kafka topic with bulk data of calculationCriteriaList size: {}",
 								calculationCriteriaList.size());
 
-						wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
+						wsCalculationProducer.push(configs.getCreateSingleDemand(), calculationReq);
 						totalRecordsPushedToKafka = totalRecordsPushedToKafka + calculationCriteriaList.size();
 						calculationCriteriaList.clear();
 						connectionNosCount = 0;
@@ -1894,7 +1918,7 @@ public class DemandService {
 								"Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}",
 								calculationCriteriaList.size());
 
-						wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
+						wsCalculationProducer.push(configs.getCreateSingleDemand(), calculationReq);
 						totalRecordsPushedToKafka = totalRecordsPushedToKafka + calculationCriteriaList.size();
 						calculationCriteriaList.clear();
 						connectionNosCount = 0;
@@ -2130,6 +2154,158 @@ public class DemandService {
 			log.error("\u274C Unexpected exception in generateDemandForULB for tenant: {}", tenantId, e);
 		}
 	}
+
+    public void generateDemandForLocality(Map<String, Object> master, RequestInfo requestInfo, String tenantId, String locality,
+                                     Long taxPeriodFrom, Long taxPeriodTo) {
+        log.info("generateDemandForULB:: {} locality:: {} taxPeriodFrom:: {} taxPeriodTo {}", tenantId, locality, taxPeriodFrom, taxPeriodTo);
+        try {
+
+            // ── Step 1: load tax periods from MDMS ───────────────────────────────
+            List<TaxPeriod> taxPeriods;
+            try {
+                taxPeriods = calculatorUtils.getTaxPeriodsFromMDMS(requestInfo, tenantId);
+            } catch (Exception e) {
+                log.error("\u274C Failed to load tax periods from MDMS for tenant: {} | {}", tenantId, e.getMessage(), e);
+                return;
+            }
+            if (taxPeriods == null || taxPeriods.isEmpty()) {
+                log.error("\u274C No tax periods returned from MDMS for tenant: {}", tenantId);
+                return;
+            }
+
+            // ── Step 2: find the target demand-to index in tax periods ───────────
+            int generateDemandToIndex;
+            try {
+                generateDemandToIndex = IntStream.range(0, taxPeriods.size())
+                        .filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate()))
+                        .findFirst().getAsInt();
+            } catch (Exception e) {
+                log.error("\u274C taxPeriodFrom {} not found in taxPeriods for tenant: {} | {}",
+                        taxPeriodFrom, tenantId, e.getMessage());
+                return;
+            }
+
+            String cone = requestInfo.getKey();
+            log.info("Billing master data values for non metered connection:: {}", master);
+
+            // ── Step 3: fetch connections from DB ─────────────────────────────────
+//            List<WaterDetails> connectionNos;
+            List<WaterDetails> connectionNos;
+            try {
+                connectionNos = waterCalculatorDao.getLocalityConnectionsNoListforsingledemand(tenantId, locality,
+                        WSCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
+
+
+            } catch (Exception e) {
+                log.error("\u274C DB fetch failed for connections (tenant: {}) | {}", tenantId, e.getMessage(), e);
+                return;
+            }
+
+            int bulkSaveDemandCount = configs.getBulkSaveDemandCount() != null ? configs.getBulkSaveDemandCount() : 1;
+            log.info("Total Connections: {} | batch size: {}",
+                    connectionNos == null ? 0 : connectionNos.size(), bulkSaveDemandCount);
+
+            if (connectionNos == null || connectionNos.isEmpty()) {
+                log.info("No connections found for tenant: {} \u2014 skipping.", tenantId);
+                return;
+            }
+
+            // ── Step 4: push start BatchDemandLog (non-fatal if it fails) ─────────
+            if (cone == null || cone.isEmpty()) {
+                try {
+                    BatchDemandLog startLog = BatchDemandLog.builder()
+                            .id(UUID.randomUUID().toString())
+                            .tenantId(tenantId)
+                            .taxPeriodFrom(taxPeriodFrom)
+                            .taxPeriodTo(taxPeriodTo)
+                            .insertionTime(System.currentTimeMillis())
+                            .totalConnectionCount((long) connectionNos.size())
+                            .isDemandExecuted(true)
+                            .build();
+                    wsCalculationProducer.push(configs.getSaveBatchDemandLogTopic(), startLog);
+                } catch (Exception e) {
+                    log.error("\u26A0\uFE0F Non-fatal: failed to push start BatchDemandLog for tenant: {} | {}",
+                            tenantId, e.getMessage(), e);
+                    // do NOT return — demand generation must continue
+                }
+            }
+
+            // ── Step 5: partition connections and process in parallel threads ──────
+            int connPoolSize = configs.getConnectionThreadPoolSize() != null
+                    ? configs.getConnectionThreadPoolSize() : 3;
+            int partitionSize = Math.max(1, (int) Math.ceil((double) connectionNos.size() / connPoolSize));
+            List<List<WaterDetails>> partitions = Lists.partition(connectionNos, partitionSize);
+            int actualThreads = Math.min(connPoolSize, partitions.size());
+            log.info("\uD83D\uDE80 Partitioning {} connections into {} partition(s) across {} thread(s) for tenant: {}",
+                    connectionNos.size(), partitions.size(), actualThreads, tenantId);
+
+            AtomicInteger totalRecordsPushedToKafka = new AtomicInteger(0);
+            ExecutorService connExecutor = Executors.newFixedThreadPool(actualThreads);
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+            // Make shared data effectively final and unmodifiable for lambda safety
+            final List<TaxPeriod> taxPeriodsFinal = Collections.unmodifiableList(taxPeriods);
+            final int toIndexFinal = generateDemandToIndex;
+
+            for (List<WaterDetails> partition : partitions) {
+                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                    try {
+                        processConnectionPartition(partition, taxPeriodsFinal, toIndexFinal,
+                                requestInfo, tenantId, bulkSaveDemandCount, totalRecordsPushedToKafka);
+                    } catch (Exception e) {
+                        // Last-resort catch — processConnectionPartition already catches everything internally
+                        log.error("\u274C Unhandled error in connection partition thread (tenant: {}): {}",
+                                tenantId, e.getMessage(), e);
+                    }
+                }, connExecutor);
+                futures.add(future);
+            }
+
+            // ── Step 6: wait for all partition threads to complete ────────────────
+            try {
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            } catch (Exception e) {
+                log.error("\u274C Error waiting for partition futures (tenant: {}): {}", tenantId, e.getMessage(), e);
+            } finally {
+                connExecutor.shutdown();
+                try {
+                    if (!connExecutor.awaitTermination(30, TimeUnit.MINUTES)) {
+                        log.warn("\u26A0\uFE0F Connection executor timed out after 30 min for tenant: {} \u2014 forcing shutdown.",
+                                tenantId);
+                        connExecutor.shutdownNow();
+                    }
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    log.error("\u274C Interrupted while awaiting connection executor shutdown (tenant: {})", tenantId);
+                    connExecutor.shutdownNow();
+                }
+            }
+
+            log.info("\u2705 totalRecordsPushedToKafka for tenant {}: {}", tenantId, totalRecordsPushedToKafka.get());
+
+            // ── Step 7: push end BatchDemandLog (non-fatal if it fails) ──────────
+            if (cone == null || cone.isEmpty()) {
+                try {
+                    BatchDemandLog endLog = BatchDemandLog.builder()
+                            .id(UUID.randomUUID().toString())
+                            .tenantId(tenantId)
+                            .taxPeriodFrom(taxPeriodFrom)
+                            .taxPeriodTo(taxPeriodTo)
+                            .insertionTime(System.currentTimeMillis())
+                            .totalConnectionCount((long) connectionNos.size())
+                            .isDemandExecuted(true)
+                            .build();
+                    wsCalculationProducer.push(configs.getSaveBatchDemandLogTopic(), endLog);
+                } catch (Exception e) {
+                    log.error("\u26A0\uFE0F Non-fatal: failed to push end BatchDemandLog for tenant: {} | {}",
+                            tenantId, e.getMessage(), e);
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("\u274C Unexpected exception in generateDemandForULB for tenant: {}", tenantId, e);
+        }
+    }
 
 	/**
 	 * Processes a sub-list (partition) of water connections in a single thread.

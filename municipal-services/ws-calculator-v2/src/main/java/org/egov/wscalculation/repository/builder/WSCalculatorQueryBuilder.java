@@ -398,6 +398,55 @@ public class WSCalculatorQueryBuilder {
 
 	}
 
+    public String getLocalityConnectionNumberList(String tenantId, String locality, String connectionType, String status, Long taxPeriodFrom,
+                                          Long taxPeriodTo, String cone, List<Object> preparedStatement) {
+        StringBuilder query = new StringBuilder(connectionNoListQuery);
+
+        // Add connection type
+        addClauseIfRequired(preparedStatement, query);
+        query.append(" ws.connectiontype = ? ");
+        preparedStatement.add(connectionType);
+
+        // Active status
+        addClauseIfRequired(preparedStatement, query);
+        query.append(" conn.status = ? ");
+        preparedStatement.add(status);
+
+        // Get the activated connections status
+        addClauseIfRequired(preparedStatement, query);
+        query.append(" (conn.applicationstatus = ?  or conn.applicationstatus = ?)");
+        preparedStatement.add(WSCalculationConstant.CONNECTION_ACTIVATED);
+        preparedStatement.add(WSCalculationConstant.MODIFIED_APPROVED);
+
+        // add tenantid
+        addClauseIfRequired(preparedStatement, query);
+        query.append(" conn.tenantid = ? ");
+        preparedStatement.add(tenantId);
+
+        if (locality != null) {
+            addClauseIfRequired(preparedStatement, query);
+            query.append(" conn.locality = ? ");
+            preparedStatement.add(locality);
+        }
+
+//		 Test with connection number
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append(" conn.connectionno = '0603000900' ");
+
+        addClauseIfRequired(preparedStatement, query);
+        query.append(" conn.connectionno is not null");
+
+        if (cone != null && cone != "") {
+            addClauseIfRequired(preparedStatement, query);
+            query.append(" conn.connectionno = ? ");
+            preparedStatement.add(cone);
+        }
+        query.append(fetchConnectionsToBeGenerate(tenantId, taxPeriodFrom, taxPeriodTo, preparedStatement));
+
+        return query.toString();
+
+    }
+
 	public String fetchConnectionsToBeGenerate(String tenantId, Long taxPeriodFrom, Long taxPeriodTo,
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(fiterConnectionBasedOnTaxPeriod);

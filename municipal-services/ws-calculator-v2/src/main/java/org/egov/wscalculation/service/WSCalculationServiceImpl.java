@@ -697,107 +697,211 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	/**
 	 * Generate Demand Based on Time (Monthly, Quarterly, Yearly)
 	 */
-	public void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime date = LocalDateTime.now();
-		log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
+	public void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkDemandCriteria bulkDemandCriteria) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime date = LocalDateTime.now();
+        log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
 //		List<String> tenantIds = wSCalculationDao.getTenantId();
-		List<String> tenantIds = new ArrayList<>();
-		String tenat = requestInfo.getMsgId();
+        List<String> tenantIds = new ArrayList<>();
+        String tenat = bulkDemandCriteria.getTenantId();
 
-		if (!tenat.contains("pb")) {
-			MdmsCriteriaReq mdmsCriteriaReq = calculatorUtil.gettenants(requestInfo);
-			StringBuilder url = calculatorUtil.getMdmsSearchUrl();
-			Object res = repository.fetchResult(url, mdmsCriteriaReq);
+        if (!tenat.contains("pb")) {
+            MdmsCriteriaReq mdmsCriteriaReq = calculatorUtil.gettenants(requestInfo);
+            StringBuilder url = calculatorUtil.getMdmsSearchUrl();
+            Object res = repository.fetchResult(url, mdmsCriteriaReq);
 
-			if (res == null) {
-				throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY",
-						"ERROR IN FETCHING THE BILLING FREQUENCY");
-			} else {
+            if (res == null) {
+                throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY",
+                        "ERROR IN FETCHING THE BILLING FREQUENCY");
+            } else {
 
-				Map<String, Object> resMap = (Map<String, Object>) res;
-				Object mdmsResObj = resMap.get("MdmsRes");
-				Map<String, Object> mdmsRes = (Map<String, Object>) mdmsResObj;
-				Object tenantObj = mdmsRes.get("tenant");
-				Map<String, Object> tenant = (Map<String, Object>) tenantObj;
-				Object waterSewerageObj = tenant.get("waterSewerage");
-				List<Object> waterSewerageList = (List<Object>) waterSewerageObj;
-				for (Object obj : waterSewerageList) {
-					if (obj instanceof Map) {
-						Map<String, Object> waterSewerageMap = (Map<String, Object>) obj;
-						Object codeObj = waterSewerageMap.get("code");
-						if (codeObj != null) {
-							String code = codeObj.toString();
-							tenantIds.add(code);
-						}
-					}
-				}
+                Map<String, Object> resMap = (Map<String, Object>) res;
+                Object mdmsResObj = resMap.get("MdmsRes");
+                Map<String, Object> mdmsRes = (Map<String, Object>) mdmsResObj;
+                Object tenantObj = mdmsRes.get("tenant");
+                Map<String, Object> tenant = (Map<String, Object>) tenantObj;
+                Object waterSewerageObj = tenant.get("waterSewerage");
+                List<Object> waterSewerageList = (List<Object>) waterSewerageObj;
+                for (Object obj : waterSewerageList) {
+                    if (obj instanceof Map) {
+                        Map<String, Object> waterSewerageMap = (Map<String, Object>) obj;
+                        Object codeObj = waterSewerageMap.get("code");
+                        if (codeObj != null) {
+                            String code = codeObj.toString();
+                            tenantIds.add(code);
+                        }
+                    }
+                }
 
-			}
+            }
 
-		} else {
-			tenantIds.add(tenat);
+        } else {
+            tenantIds.add(tenat);
 
-		}
-		if (tenantIds.isEmpty()) {
-			log.info("No tenants are found for generating demand");
-			return;
-		}
-		log.info("Tenant Ids : " + tenantIds.toString());
-		int tenantPoolSize = configs.getTenantThreadPoolSize() != null ? configs.getTenantThreadPoolSize() : 5;
-		int actualTenantThreads = Math.min(tenantPoolSize, tenantIds.size());
-		log.info("\uD83D\uDE80 Starting parallel demand generation for {} tenants using {} threads.",
-				tenantIds.size(), actualTenantThreads);
+        }
+        if (tenantIds.isEmpty()) {
+            log.info("No tenants are found for generating demand");
+            return;
+        }
+        log.info("Tenant Ids : " + tenantIds.toString());
+        int tenantPoolSize = configs.getTenantThreadPoolSize() != null ? configs.getTenantThreadPoolSize() : 5;
+        int actualTenantThreads = Math.min(tenantPoolSize, tenantIds.size());
+        log.info("\uD83D\uDE80 Starting parallel demand generation for {} tenants using {} threads.",
+                tenantIds.size(), actualTenantThreads);
 
-		ExecutorService tenantExecutor = Executors.newFixedThreadPool(actualTenantThreads);
-		List<CompletableFuture<Void>> tenantFutures = new ArrayList<>();
+        ExecutorService tenantExecutor = Executors.newFixedThreadPool(actualTenantThreads);
+        List<CompletableFuture<Void>> tenantFutures = new ArrayList<>();
 
-		for (String tenantId : tenantIds) {
-			// Deep-clone RequestInfo per tenant — generateDemandForTenantId mutates
-			// requestInfo.getUserInfo().setTenantId() so sharing it across threads is a race.
-			final RequestInfo tenantRequestInfo;
-			try {
-				tenantRequestInfo = mapper.readValue(mapper.writeValueAsString(requestInfo), RequestInfo.class);
-			} catch (Exception e) {
-				log.error("\u274C Failed to clone RequestInfo for tenant: {} \u2014 skipping tenant. Error: {}",
-						tenantId, e.getMessage(), e);
-				continue; // skip this tenant; all others proceed normally
-			}
+        for (String tenantId : tenantIds) {
+            // Deep-clone RequestInfo per tenant — generateDemandForTenantId mutates
+            // requestInfo.getUserInfo().setTenantId() so sharing it across threads is a race.
+            final RequestInfo tenantRequestInfo;
+            try {
+                tenantRequestInfo = mapper.readValue(mapper.writeValueAsString(requestInfo), RequestInfo.class);
+            } catch (Exception e) {
+                log.error("\u274C Failed to clone RequestInfo for tenant: {} \u2014 skipping tenant. Error: {}",
+                        tenantId, e.getMessage(), e);
+                continue; // skip this tenant; all others proceed normally
+            }
 
-			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-				try {
-					log.info("\u25B6\uFE0F  Demand generation started for tenant: {}", tenantId);
-					demandService.generateDemandForTenantId(tenantId, tenantRequestInfo);
-					log.info("\u2705 Demand generation completed for tenant: {}", tenantId);
-				} catch (Exception e) {
-					// Catch everything — one tenant failure must NOT block others
-					log.error("\u274C Demand generation failed for tenant: {} | {}", tenantId, e.getMessage(), e);
-				}
-			}, tenantExecutor);
-			tenantFutures.add(future);
-		}
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                try {
+                    log.info("\u25B6\uFE0F  Demand generation started for tenant: {}", tenantId);
+                    demandService.generateDemandForTenantId(tenantId, tenantRequestInfo);
+                    log.info("\u2705 Demand generation completed for tenant: {}", tenantId);
+                } catch (Exception e) {
+                    // Catch everything — one tenant failure must NOT block others
+                    log.error("\u274C Demand generation failed for tenant: {} | {}", tenantId, e.getMessage(), e);
+                }
+            }, tenantExecutor);
+            tenantFutures.add(future);
+        }
 
-		try {
-			CompletableFuture.allOf(tenantFutures.toArray(new CompletableFuture[0])).join();
-			log.info("\u2705 All tenant demand generation tasks finished.");
-		} catch (Exception e) {
-			log.error("\u274C Error waiting for tenant futures: {}", e.getMessage(), e);
-		} finally {
-			tenantExecutor.shutdown();
-			try {
-				if (!tenantExecutor.awaitTermination(2, TimeUnit.HOURS)) {
-					log.warn("\u26A0\uFE0F Tenant executor did not finish within 2 hours \u2014 forcing shutdown.");
-					tenantExecutor.shutdownNow();
-				}
-			} catch (InterruptedException ie) {
-				Thread.currentThread().interrupt();
-				log.error("\u274C Interrupted while awaiting tenant executor shutdown.");
-				tenantExecutor.shutdownNow();
-			}
-		}
-	}
+        try {
+            CompletableFuture.allOf(tenantFutures.toArray(new CompletableFuture[0])).join();
+            log.info("\u2705 All tenant demand generation tasks finished.");
+        } catch (Exception e) {
+            log.error("\u274C Error waiting for tenant futures: {}", e.getMessage(), e);
+        } finally {
+            tenantExecutor.shutdown();
+            try {
+                if (!tenantExecutor.awaitTermination(2, TimeUnit.HOURS)) {
+                    log.warn("\u26A0\uFE0F Tenant executor did not finish within 2 hours \u2014 forcing shutdown.");
+                    tenantExecutor.shutdownNow();
+                }
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                log.error("\u274C Interrupted while awaiting tenant executor shutdown.");
+                tenantExecutor.shutdownNow();
+            }
+        }
+    }
 
-	public List<WaterConnection> getConnnectionWithPendingDemand(RequestInfo requestInfo,
+
+    @Override
+    public void generateDemandLocalityBasedOnTimePeriod(RequestInfo requestInfo, BulkDemandCriteria bulkDemandCriteria) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime date = LocalDateTime.now();
+        log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter) + "for locality" +bulkDemandCriteria.getLocality());
+
+        List<String> tenantIds = new ArrayList<>();
+        String tenat = bulkDemandCriteria.getTenantId();
+        String locality= bulkDemandCriteria.getLocality();
+
+        if (!tenat.contains("pb")) {
+            MdmsCriteriaReq mdmsCriteriaReq = calculatorUtil.gettenants(requestInfo);
+            StringBuilder url = calculatorUtil.getMdmsSearchUrl();
+            Object res = repository.fetchResult(url, mdmsCriteriaReq);
+
+            if (res == null) {
+                throw new CustomException("MDMS_ERROR_FOR_BILLING_FREQUENCY",
+                        "ERROR IN FETCHING THE BILLING FREQUENCY");
+            } else {
+
+                Map<String, Object> resMap = (Map<String, Object>) res;
+                Object mdmsResObj = resMap.get("MdmsRes");
+                Map<String, Object> mdmsRes = (Map<String, Object>) mdmsResObj;
+                Object tenantObj = mdmsRes.get("tenant");
+                Map<String, Object> tenant = (Map<String, Object>) tenantObj;
+                Object waterSewerageObj = tenant.get("waterSewerage");
+                List<Object> waterSewerageList = (List<Object>) waterSewerageObj;
+                for (Object obj : waterSewerageList) {
+                    if (obj instanceof Map) {
+                        Map<String, Object> waterSewerageMap = (Map<String, Object>) obj;
+                        Object codeObj = waterSewerageMap.get("code");
+                        if (codeObj != null) {
+                            String code = codeObj.toString();
+                            tenantIds.add(code);
+                        }
+                    }
+                }
+
+            }
+
+        } else {
+            tenantIds.add(tenat);
+
+        }
+        if (tenantIds.isEmpty()) {
+            log.info("No tenants are found for generating demand");
+            return;
+        }
+        log.info("Tenant Ids : " + tenantIds.toString());
+        int tenantPoolSize = configs.getTenantThreadPoolSize() != null ? configs.getTenantThreadPoolSize() : 5;
+        int actualTenantThreads = Math.min(tenantPoolSize, tenantIds.size());
+        log.info("\uD83D\uDE80 Starting parallel demand generation for {} tenants using {} threads.",
+                tenantIds.size(), actualTenantThreads);
+
+        ExecutorService tenantExecutor = Executors.newFixedThreadPool(actualTenantThreads);
+        List<CompletableFuture<Void>> tenantFutures = new ArrayList<>();
+
+        for (String tenantId : tenantIds) {
+            // Deep-clone RequestInfo per tenant — generateDemandForTenantId mutates
+            // requestInfo.getUserInfo().setTenantId() so sharing it across threads is a race.
+            final RequestInfo tenantRequestInfo;
+            try {
+                tenantRequestInfo = mapper.readValue(mapper.writeValueAsString(requestInfo), RequestInfo.class);
+            } catch (Exception e) {
+                log.error("\u274C Failed to clone RequestInfo for tenant: {} \u2014 skipping tenant. Error: {}",
+                        tenantId, e.getMessage(), e);
+                continue; // skip this tenant; all others proceed normally
+            }
+
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                try {
+                    log.info("\u25B6\uFE0F  Demand generation started for tenant: {}", tenantId);
+                    demandService.generateDemandForTenantIdLocality(tenantId, locality, tenantRequestInfo);
+                    log.info("\u2705 Demand generation completed for tenant: {}", tenantId);
+                } catch (Exception e) {
+                    // Catch everything — one tenant failure must NOT block others
+                    log.error("\u274C Demand generation failed for tenant: {} | {}", tenantId, e.getMessage(), e);
+                }
+            }, tenantExecutor);
+            tenantFutures.add(future);
+        }
+
+        try {
+            CompletableFuture.allOf(tenantFutures.toArray(new CompletableFuture[0])).join();
+            log.info("\u2705 All tenant demand generation tasks finished.");
+        } catch (Exception e) {
+            log.error("\u274C Error waiting for tenant futures: {}", e.getMessage(), e);
+        } finally {
+            tenantExecutor.shutdown();
+            try {
+                if (!tenantExecutor.awaitTermination(2, TimeUnit.HOURS)) {
+                    log.warn("\u26A0\uFE0F Tenant executor did not finish within 2 hours \u2014 forcing shutdown.");
+                    tenantExecutor.shutdownNow();
+                }
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                log.error("\u274C Interrupted while awaiting tenant executor shutdown.");
+                tenantExecutor.shutdownNow();
+            }
+        }
+
+    }
+
+    public List<WaterConnection> getConnnectionWithPendingDemand(RequestInfo requestInfo,
 			BulkBillCriteria bulkBillCriteria) {
 		return demandService.getConnectionPendingForDemand(requestInfo, bulkBillCriteria.getTenantId());
 	}

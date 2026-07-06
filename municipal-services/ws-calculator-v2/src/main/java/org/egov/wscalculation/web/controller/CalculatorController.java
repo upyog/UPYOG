@@ -88,8 +88,14 @@ public class CalculatorController {
 	}
 	
 	@PostMapping("/_jobscheduler")
-	public void jobscheduler(@Valid @RequestBody BulkBillReq bulkBillReq) {
-		wSCalculationService.generateDemandBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+	public void jobscheduler(@Valid @RequestBody BulkDemandReq bulkDemandReq) {
+        if (bulkDemandReq.getBulkDemandCriteria().getLocality() != null
+                && !bulkDemandReq.getBulkDemandCriteria().getLocality().trim().isEmpty()) {
+            log.info("Generating Demand Locality Wise for Tenant::{} , Locality::{}",bulkDemandReq.getBulkDemandCriteria().getTenantId(),bulkDemandReq.getBulkDemandCriteria().getLocality());
+            wSCalculationService.generateDemandLocalityBasedOnTimePeriod(bulkDemandReq.getRequestInfo(), bulkDemandReq.getBulkDemandCriteria());
+        } else {
+		wSCalculationService.generateDemandBasedOnTimePeriod(bulkDemandReq.getRequestInfo(), bulkDemandReq.getBulkDemandCriteria());
+        }
 	}
 	
 	@PostMapping("/_singledemand")
