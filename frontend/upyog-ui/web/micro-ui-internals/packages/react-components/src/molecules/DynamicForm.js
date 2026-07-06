@@ -1,165 +1,192 @@
-import React, { useState, useCallback } from "react";
-import { SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import DynamicFormField from "./DynamicFormField";
+import { validateFields, validateCrossField, calculateDuration } from "../utilities/validators";
+import { sortByOrder, buildPayload, scrollToFirstError, buildInitialData } from "../utilities/formUtils";
+import useDynamicMDMS from "../utilities/useDynamicMDMS";
+import styles from "../styles/dynamicForm.module.scss";
+
+// ── Computed-field registry ────────────────────────────────────────────
+// A field can declare: field: { computeFrom: ["startDate","endDate"], computeFn: "calculateDuration" }
+// Whenever any of computeFrom changes, DynamicForm looks up computeFn here and
+// re-derives that field's value automatically. Add more pure functions here
+// as new modules need derived fields — no DynamicForm changes required.
+const COMPUTE_REGISTRY = {
+  calculateDuration,
+};
+
+// Flattens group children into a single list alongside top-level fields,
+// since computed fields (and their computeFrom dependencies) can live at either level.
+const flattenFields = (formConfig = []) =>
+  formConfig.reduce((acc, fieldConfig) => {
+    if (fieldConfig.type === "group") {
+      return [...acc, ...(fieldConfig.children || [])];
+    }
+    return [...acc, fieldConfig];
+  }, []);
 
 const DynamicForm = ({
   routeConfig,
-  initialData = {},
-  dropdownData = {},
   onSubmit,
-  onSelect,        // ← for "go next" flow (non-edit)
-  config,          // ← route config key e.g. { key: "assetDetails" }
+  onSelect,
+  config,
   isEditMode = false,
   isDisabled = false,
-  updateMutation,  // ← mutation hook for edit flow
-  editData = {},   // ← existing record data for edit flow
+  updateMutation,
+  editData = {},
   tenantId = "",
+  persistedData = {},
   t = (k) => k,
 }) => {
+  const stateId = Digit.ULBService.getStateId();
+  const payloadKey = routeConfig.payloadKey || "Assets";
+
+  // ── Dropdown data: single generic source for ANY module's config ─────
+  const { dropdownData, isLoading } = useDynamicMDMS(routeConfig.form, stateId, tenantId, t);
+
+  // ── Raw pre-fill source ───────────────────────────────────────────────
+  // Merge, don't pick: persisted (user-entered) values win, editData (asset
+  // info from router state) sits underneath so read-only prefill fields still
+  // populate on first visit AND when coming back via the edit pencil.
+  const rawAsset = useMemo(() => {
+    const saved = persistedData?.[config?.key]?.[payloadKey];
+    const persisted = (Array.isArray(saved) ? saved[0] : saved) || {};
+    const hasPersisted = Object.keys(persisted).length > 0;
+
+    if (hasPersisted) return { ...editData, ...persisted };
+    return editData && Object.keys(editData).length > 0 ? editData : {};
+  }, [editData, persistedData, config, payloadKey]);
+
+  // ── Build initialData generically from config + dropdownData ─────────
+  const initialData = useMemo(
+    () => buildInitialData(routeConfig.form, rawAsset, dropdownData, tenantId),
+    [routeConfig.form, rawAsset, dropdownData, tenantId]
+  );
+
   const [formData, setFormData] = useState(initialData);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dimensionError, setDimensionError] = useState(false);
+  const [crossFieldMessages, setCrossFieldMessages] = useState([]);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastError, setToastError] = useState(false);
 
-  // ── Field change handler ──────────────────────────────────────────────
-  const handleChange = useCallback((fieldName, value, resetFields = []) => {
+  const flatFields = useMemo(() => flattenFields(routeConfig.form || []), [routeConfig.form]);
+
+  // Re-derive any field whose computeFrom list includes a field that just changed.
+  const applyComputedFields = useCallback(
+    (updated, changedFieldNames) => {
+      let next = updated;
+      flatFields.forEach((fc) => {
+        const computeFrom = fc.field?.computeFrom;
+        const computeFn = fc.field?.computeFn;
+        if (!computeFrom || !computeFn) return;
+        if (!computeFrom.some((dep) => changedFieldNames.includes(dep))) return;
+
+        const fn = COMPUTE_REGISTRY[computeFn];
+        if (!fn) return;
+
+        const args = computeFrom.map((dep) => next[dep]);
+        next = { ...next, [fc.field.name]: fn(...args) };
+      });
+      return next;
+    },
+    [flatFields]
+  );
+
+  // Sync formData with initialData EXACTLY ONCE, right after dropdownData
+  // has finished loading. Guarded with a ref so it can never fire again,
+  // regardless of how many times initialData's identity changes afterward.
+  // Also runs computed fields once so derived values (e.g. duration) show
+  // immediately on prefill/edit, not only after the user touches a date.
+  const hasSyncedRef = useRef(false);
+
+  useEffect(() => {
+    if (hasSyncedRef.current) return;
+    if (isLoading) return;
+    hasSyncedRef.current = true;
     setFormData((prev) => {
-      const updated = { ...prev, [fieldName]: value };
-      resetFields.forEach((f) => { updated[f] = null; });
-      return updated;
+      const merged = { ...initialData, ...prev };
+      const allComputeDeps = flatFields.flatMap((fc) => fc.field?.computeFrom || []);
+      return allComputeDeps.length ? applyComputedFields(merged, allComputeDeps) : merged;
     });
-    setErrors((prev) => {
-      const updated = { ...prev, [fieldName]: false };
-      resetFields.forEach((f) => { updated[f] = false; });
-      return updated;
-    });
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
 
-  // ── Validation ────────────────────────────────────────────────────────
-  const validate = useCallback(() => {
-    const newErrors = {};
+  const handleChange = useCallback(
+    (fieldName, value, resetFields = []) => {
+      setFormData((prev) => {
+        let updated = { ...prev, [fieldName]: value };
+        resetFields.forEach((f) => { updated[f] = null; });
+        updated = applyComputedFields(updated, [fieldName, ...resetFields]);
+        return updated;
+      });
+      setErrors((prev) => {
+        const updated = { ...prev, [fieldName]: false };
+        resetFields.forEach((f) => { updated[f] = false; });
+        return updated;
+      });
+    },
+    [applyComputedFields]
+  );
 
-    const validateField = (fieldConfig) => {
-      // Recurse into groups
-      if (fieldConfig.type === "group") {
-        (fieldConfig.children || []).forEach(validateField);
+  // ── File upload: owns tenantId + filestore call + error toast ────────
+  // module code defaults to "ESTATE" but can be overridden per-route via routeConfig.uploadModule
+  const handleFileUpload = useCallback(
+    async (fieldName, file) => {
+      if (!file) return;
+      if (file.size >= 5242880) {
+        setToastError(true);
+        setToastMessage(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+        setShowToast(true);
         return;
       }
-
-      const { field, validation = {} } = fieldConfig;
-      if (!field) return;
-
-      const { name, type } = field;
-      const value = formData[name];
-
-      if (validation.required) {
-        const isEmpty =
-          type === "dropdown"
-            ? !value || !value.code
-            : value === undefined || value === null || String(value).trim() === "";
-
-        if (isEmpty) {
-          newErrors[name] = true;
-          return;
+      try {
+        const response = await Digit.UploadServices.Filestorage(
+          routeConfig.uploadModule || "ESTATE",
+          file,
+          tenantId
+        );
+        const id = response?.data?.files?.[0]?.fileStoreId;
+        if (id) {
+          handleChange(fieldName, { filestoreId: id, documentuuid: id, documentType: fieldName });
         }
+      } catch {
+        setToastError(true);
+        setToastMessage(t("CS_FILE_UPLOAD_ERROR"));
+        setShowToast(true);
       }
+    },
+    [routeConfig.uploadModule, tenantId, t, handleChange]
+  );
 
-      // Pattern check for text fields
-      if (value && type !== "dropdown" && validation.pattern) {
-        if (!new RegExp(validation.pattern).test(value)) {
-          newErrors[name] = true;
-          return;
-        }
-      }
+  const sortedFields = useMemo(() => sortByOrder(routeConfig.form || []), [routeConfig.form]);
 
-      // MaxLength check
-      if (value && validation.maxLength && String(value).length > validation.maxLength) {
-        newErrors[name] = true;
-      }
-    };
-
-    (routeConfig.form || []).forEach(validateField);
-    return newErrors;
-  }, [formData, routeConfig]);
-
-  // ── Build payload ─────────────────────────────────────────────────────
-  // Flattens dropdown objects { code, name } → just the code string
-  // You can customise this per your API contract
-  const buildPayload = useCallback(() => {
-    return Object.entries(formData).reduce((acc, [key, val]) => {
-      if (val && typeof val === "object" && val.code !== undefined) {
-        // Dropdown field — expand to both code and name for convenience
-        acc[key] = val.code;
-        acc[`${key}Name`] = val.name || "";
-      } else {
-        acc[key] = val ?? "";
-      }
-      return acc;
-    }, {});
-  }, [formData]);
-
-  // ── goNext ────────────────────────────
   const goNext = useCallback(() => {
-    // ── Step 1: Field-level validation
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      setTimeout(() => {
-        const firstError = document.querySelector(".field-error");
-        if (firstError) {
-          firstError.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      }, 100);
+    const fieldErrors = validateFields(routeConfig.form, formData);
+    const { errors: crossErrors, failures } = validateCrossField(routeConfig.crossFieldValidations, formData);
+    const allErrors = { ...fieldErrors, ...crossErrors };
+
+    if (Object.keys(allErrors).length > 0) {
+      setErrors(allErrors);
+      setCrossFieldMessages(failures.map((f) => f.message));
+      scrollToFirstError();
       return;
     }
 
-    // ── Step 2: Cross-field business validation
-    // Length × Width must not exceed Total Plot Area
-    const length = parseFloat(formData.dimensionLength) || 0;
-    const width = parseFloat(formData.dimensionWidth) || 0;
-    const totalArea = parseFloat(formData.totalFloorArea) || 0;
-    const computedArea = length * width;
+    setCrossFieldMessages([]);
+    const formVal = buildPayload(formData);
+    const payload = { [payloadKey]: [formVal], tenantId };
 
-    if (totalArea > 0 && computedArea > totalArea) {
-      setErrors((prev) => ({
-        ...prev,
-        dimensionLength: true,
-        dimensionWidth: true,
-      }));
-      // Show error inside form — no alert()
-      setDimensionError(true);
-      return;
-    }
-
-    setDimensionError(false);
-
-    // ── Step 3: Build payload
-    const formVal = buildPayload();
-
-    const  payload = { Assets: [formVal] }
-    payload.tenantId="pg.citya"
-    
-    console.log('payload in dyanmic form    ',payload)
-
-
-    // ── Step 4: Edit vs Create flow
     if (isEditMode) {
       if (!updateMutation) {
         console.error("updateMutation is required in edit mode");
         return;
       }
-
       setIsSubmitting(true);
-
       const updatePayload = {
-        Assets: {
-          ...payload,
-          id: editData.id,
-          estateNo: editData.estateNo,
-          tenantId,
-        },
+        [payloadKey]: { ...formVal, id: editData.id, tenantId, ...routeConfig.editPayloadExtras?.(editData) },
       };
-
       updateMutation.mutate(updatePayload, {
         onSuccess: (data) => {
           setIsSubmitting(false);
@@ -171,67 +198,46 @@ const DynamicForm = ({
           onSubmit && onSubmit({ payload, error, isEditMode: true });
         },
       });
-
     } else {
-      // Create flow — go to next screen
-      if (onSelect) {
-        console.log('in save form')
-        onSelect(config?.key, { Assets: [formVal] }, false);
-      }
+      onSelect && onSelect(config?.key, { [payloadKey]: [formVal] }, false);
       onSubmit && onSubmit({ payload, isEditMode: false });
     }
-  }, [
-    validate,
-    buildPayload,
-    formData,
-    isEditMode,
-    updateMutation,
-    editData,
-    tenantId,
-    onSelect,
-    onSubmit,
-    config,
-  ]);
-
-  const sortedFields = [...(routeConfig.form || [])].sort(
-    (a, b) => (a.order ?? 0) - (b.order ?? 0)
-  );
+  }, [routeConfig, formData, isEditMode, updateMutation, editData, tenantId, onSelect, onSubmit, config, payloadKey]);
 
   const buttonLabel = isEditMode
     ? routeConfig.actionButton?.text?.edit || "UPDATE"
     : routeConfig.actionButton?.text?.create || "SAVE & NEXT";
 
+  if (isLoading) return <p>Loading...</p>;
+
   return (
-    <div className="dynamic-form-container">
+    <div className={styles["dynamic-form-container"]}>
       {sortedFields.map((fieldConfig) => (
-        <>
-          <DynamicFormField
-            key={fieldConfig.key}
-            fieldConfig={fieldConfig}
-            formData={formData}
-            onChange={handleChange}
-            errors={errors}
-            dropdownData={dropdownData}
-            t={t}
-            isDisabled={isDisabled}
-          />
-          {fieldConfig.key === "EST_DIMENSION" && dimensionError && (
-            <p style={{ color: "red", fontSize: "12px" }}>
-              {t("EST_DIMENSION_ERROR_LENGTH_WIDTH_EXCEEDS_PLOT_AREA")}
-            </p>
-          )}
-        </>
+        <DynamicFormField
+          key={fieldConfig.key}
+          fieldConfig={fieldConfig}
+          formData={formData}
+          onChange={handleChange}
+          errors={errors}
+          dropdownData={dropdownData}
+          t={t}
+          isDisabled={isDisabled}
+          onFileUpload={handleFileUpload}
+        />
+      ))}
+
+      {crossFieldMessages.map((msg, i) => (
+        <p key={i} className={styles["dynamic-form-error"]}>{t(msg)}</p>
       ))}
 
       {!isDisabled && (
-        <div className="dynamic-form-action" style={{ marginTop: "24px" }}>
-          <SubmitBar
-            label={t(buttonLabel)}
-            onSubmit={goNext}
-            disabled={isSubmitting}
-            variant={routeConfig.actionButton?.variant || "contained"}
-          />
+        <div className={styles["dynamic-form-action"]}>
+          <SubmitBar label={t(buttonLabel)} onSubmit={goNext} disabled={isSubmitting} variant={routeConfig.actionButton?.variant || "contained"} />
         </div>
+      )}
+
+      {showToast && (
+        <Toast label={toastMessage} error={toastError} onClose={() => setShowToast(false)} />
       )}
     </div>
   );
