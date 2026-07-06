@@ -125,7 +125,7 @@ public class VehicleRamp extends FeatureProcess {
 					scrutinyDetail.addColumnHeading(4, REQUIRED);
 					scrutinyDetail.addColumnHeading(5, PROVIDED);
 					scrutinyDetail.addColumnHeading(6, STATUS);
-					scrutinyDetail.setKey("Vehicle Ramp");
+					scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Vehicle Ramp");
 
 					if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
 						for (Floor floor : block.getBuilding().getFloors()) {
