@@ -235,7 +235,7 @@ public class MDMSService {
         
         List<MasterDetail> sanctionFeeChargesDetails = new ArrayList<>();
         Long currentTime = System.currentTimeMillis();
-        final String filterCodeForCharges = "$.[?(@.active==true && @.code=='" + code + "' && @.Category == '" + category + "' && @.fromFY == '" + fromFY + "' && @.startingDate <= "+ currentTime +" && @.endingDate >= "+ currentTime +" )]";
+        final String filterCodeForCharges = "$.[?(@.active==true && @.code=='" + code + "' && @.Category contains '" + category + "' && @.fromFY == '" + fromFY + "' && @.startingDate <= "+ currentTime +" && @.endingDate >= "+ currentTime +" )]";
         sanctionFeeChargesDetails.add(MasterDetail.builder().name(BPACalculatorConstants.MDMS_CHARGES_TYPE).filter(filterCodeForCharges).build());
         ModuleDetail fyModuleDtls = ModuleDetail.builder().masterDetails(sanctionFeeChargesDetails)
                 .moduleName(BPACalculatorConstants.MDMS_BPA).build();
