@@ -53,6 +53,7 @@ import org.egov.swcalculation.web.models.Demand;
 import org.egov.swcalculation.web.models.DemandDetail;
 import org.egov.swcalculation.web.models.Property;
 import org.egov.swcalculation.web.models.RequestInfoWrapper;
+import org.egov.swcalculation.web.models.SchedulerLevel;
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.egov.swcalculation.web.models.SewerageConnectionRequest;
 import org.egov.swcalculation.web.models.SingleDemand;
@@ -620,10 +621,9 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 	/**
 	 * Generate bill Based on Time (Monthly, Quarterly, Yearly)
 	 */
-	public void generateBillBasedLocality(RequestInfo requestInfo) {
+	public void generateBillBasedLocalityOrTenant(RequestInfo requestInfo, SchedulerLevel schedulerLevel) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime date = LocalDateTime.now();
-		log.info("Time schedule start for water bill generation on : " + date.format(dateTimeFormatter));
+		log.info("Time schedule start for water bill generation on : " + LocalDateTime.now().format(dateTimeFormatter));
 
 		BillGenerationSearchCriteria criteria = new BillGenerationSearchCriteria();
 		criteria.setStatus(SWCalculationConstant.INITIATED_CONST);
@@ -649,6 +649,16 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 				        billSchedularList.add(scheduler);
 				    }
 				}
+				String currentTenantId = requestInfo.getMsgId();
+				if (schedulerLevel == SchedulerLevel.TENANT) {
+					criteria.setTenantId(currentTenantId);
+					List<BillScheduler> billSchedarTenantList = billGeneratorService.getBillGenerationByTenant(criteria);
+					for (BillScheduler scheduler : billSchedarTenantList) {
+						if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+							billSchedularList.add(scheduler);
+						}
+					}
+				}
 		if (billSchedularList != null && billSchedularList.isEmpty())
 			return;
 		log.info("billSchedularList count : " + billSchedularList.size());
@@ -661,22 +671,23 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
 //				List<String> connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality( billSchedular.getTenantId(), SWCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
-				if ("pb.patiala".equalsIgnoreCase(billSchedular.getTenantId()) &&
-					    billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
-					    
-					    connectionNos = sewerageCalculatorDao.getConnectionsNoByGroups(
-					        billSchedular.getTenantId(),
-					        SWCalculationConstant.nonMeterdConnection,
-					        billSchedular.getGrup()
-					    );
+				if (billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
 
-					} else {
-					    connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality(
-					        billSchedular.getTenantId(),
-					        SWCalculationConstant.nonMeterdConnection,
-					        billSchedular.getLocality()
-					    );
+					connectionNos = sewerageCalculatorDao.getConnectionsNoByGroups(billSchedular.getTenantId(),
+							SWCalculationConstant.nonMeterdConnection, billSchedular.getGrup());
+
+				} else if (schedulerLevel == SchedulerLevel.TENANT) {
+					if (!billSchedular.getTenantId().equals(currentTenantId)) {
+						continue;
 					}
+					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
+					log.info("Updated Bill Schedular Status To INPROGRESS");
+					connectionNos = sewerageCalculatorDao.getConnectionsNoByTenant(billSchedular.getTenantId(),
+							SWCalculationConstant.nonMeterdConnection);
+				} else {
+					connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality(billSchedular.getTenantId(),
+							SWCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
+				}
 
 				//testing purpose added three consumercodes
 //				connectionNos.add("0603000001");

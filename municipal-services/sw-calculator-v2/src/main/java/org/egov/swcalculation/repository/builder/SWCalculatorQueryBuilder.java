@@ -327,6 +327,25 @@ public class SWCalculatorQueryBuilder {
 		return query.toString();
 	}
 	
+	
+	public String searchBillGenerationSchedulerTenantQuery(BillGenerationSearchCriteria criteria,
+			List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
+		if(!StringUtils.isEmpty(criteria.getTenantId())) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" tenantid= ? ");
+			preparedStatement.add(criteria.getTenantId());
+		}
+		
+		if (criteria.getStatus() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" status = ? ");
+			preparedStatement.add(criteria.getStatus());
+		}
+		
+		query.append(" ORDER BY createdtime DESC");
+		return query.toString();
+	}
 
 	public String getConnectionNumber(String tenantId, String consumerCode,String connectionType, List<Object> preparedStatement,Long fromDate, Long toDate) {
 		//StringBuilder query = new StringBuilder(connectionNoListQuery);
@@ -411,7 +430,7 @@ public class SWCalculatorQueryBuilder {
 		}
 	}
 	
-	public String getConnectionsNoByLocality(String tenantId, String connectionType,String status,String locality, String groups,List<Object> preparedStatement) {
+	public String getConnectionsNoByLocalityGroupOrTenant(String tenantId, String connectionType,String status,String locality, String groups,List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(connectionNoByLocality);
 		// add tenantid
 		if(tenantId != null) {

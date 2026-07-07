@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.swcalculation.web.models.BulkBillCriteria;
 import org.egov.swcalculation.web.models.Calculation;
 import org.egov.swcalculation.web.models.CalculationReq;
+import org.egov.swcalculation.web.models.SchedulerLevel;
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.egov.swcalculation.web.models.SingleDemand;
 
@@ -17,7 +18,7 @@ public interface SWCalculationService {
 	
 	String generateSingleDemand(SingleDemand singledemand);
 	
-	void generateBillBasedLocality(RequestInfo requestInfo);
+	void generateBillBasedLocalityOrTenant(RequestInfo requestInfo, SchedulerLevel schedulerLevel);
 	
 	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
 	

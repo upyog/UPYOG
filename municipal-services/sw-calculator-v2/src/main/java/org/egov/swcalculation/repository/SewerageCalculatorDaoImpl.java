@@ -107,7 +107,7 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 	@Override
 	public List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getConnectionsNoByLocality(tenantId, connectionType,SWCalculationConstant.ACTIVE, locality,null, preparedStatement);
+		String query = queryBuilder.getConnectionsNoByLocalityGroupOrTenant(tenantId, connectionType,SWCalculationConstant.ACTIVE, locality,null, preparedStatement);
 		log.info("Sewerage " + connectionType + " connection list : " + query);
 		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
 	}
@@ -115,11 +115,18 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 	@Override
 	public List<String> getConnectionsNoByGroups(String tenantId, String connectionType, String group) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getConnectionsNoByLocality(tenantId, connectionType,SWCalculationConstant.ACTIVE, null,group, preparedStatement);
+		String query = queryBuilder.getConnectionsNoByLocalityGroupOrTenant(tenantId, connectionType,SWCalculationConstant.ACTIVE, null,group, preparedStatement);
 		log.info("preparedStatement: " + preparedStatement + " query : " + query);
 		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
 	}
 	
+	@Override
+	public List<String> getConnectionsNoByTenant(String tenantId, String connectionType) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getConnectionsNoByLocalityGroupOrTenant(tenantId, connectionType,SWCalculationConstant.ACTIVE, null,null, preparedStatement);
+		log.info("preparedStatement: " + preparedStatement + " query : " + query);
+		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
+	}
 	
 	@Override
 	public long getConnectionCount(String tenantid, Long fromDate, Long toDate){

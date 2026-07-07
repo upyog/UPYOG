@@ -878,7 +878,9 @@ So, both lists are now filtered to include only records with INITIATED status, w
 		    }
 		}
 		
+		String currentTenantId = waterServiceSchedulerRequest.getRequestInfo().getMsgId();
 		if (schedulerLevel == SchedulerLevel.TENANT) {
+			criteria.setTenantId(currentTenantId);
 			List<BillScheduler> billSchedarTenantList = billGeneratorService.getBillGenerationByTenant(criteria);
 			for (BillScheduler scheduler : billSchedarTenantList) {
 				if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
@@ -889,7 +891,6 @@ So, both lists are now filtered to include only records with INITIATED status, w
 		
 		if (billSchedularList.isEmpty())
 			return;
-		String currentTenantId = waterServiceSchedulerRequest.getRequestInfo().getMsgId();
 		log.info("billSchedularList count : " + billSchedularList.size());
 		for (BillScheduler billSchedular : billSchedularList) {
 			try {
@@ -898,8 +899,7 @@ So, both lists are now filtered to include only records with INITIATED status, w
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
 						.requestInfo(waterServiceSchedulerRequest.getRequestInfo()).build();
 
-				if ("pb.patiala".equalsIgnoreCase(billSchedular.getTenantId()) && billSchedular.getGrup() != null
-						&& !billSchedular.getGrup().isEmpty()) {
+				if (billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
 					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
 					log.info("Updated Bill Schedular Status To INPROGRESS");
 					connectionNos = wSCalculationDao.getConnectionsNoByGroups(billSchedular.getTenantId(),
