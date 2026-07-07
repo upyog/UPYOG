@@ -76,7 +76,10 @@ public class PGRService {
         validator.validateCreate(request, mdmsData);
         enrichmentService.enrichCreateRequest(request);
         workflowService.updateWorkflowStatus(request);
-        nayanAPIService.updateStatus(request);
+        
+        if(config.getNayanAIUserUuid().equalsIgnoreCase(request.getService().getAccountId()))
+        	nayanAPIService.updateStatus(request);
+        
         producer.push(config.getCreateTopic(),request);
         return request;
     }
@@ -170,7 +173,10 @@ public class PGRService {
         validator.validateUpdate(request, mdmsData);
         enrichmentService.enrichUpdateRequest(request);
         workflowService.updateWorkflowStatus(request);
-        nayanAPIService.updateStatus(request);
+        
+        if(config.getNayanAIUserUuid().equalsIgnoreCase(request.getService().getAccountId()))
+        	nayanAPIService.updateStatus(request);
+        
         producer.push(config.getUpdateTopic(),request);
         return request;
     }

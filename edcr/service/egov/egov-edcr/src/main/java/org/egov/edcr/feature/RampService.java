@@ -372,6 +372,13 @@ public class RampService extends FeatureProcess {
                             	                mapOfRampNumberAndSlopeValues.put("slope", actualRatio);
 
                             	                break;
+                            	            }else {
+                            	            	valid = false;
+
+                            	                mapOfRampNumberAndSlopeValues.put("daRampNumber",
+                            	                        daRamp.getNumber().toString());
+
+                            	                mapOfRampNumberAndSlopeValues.put("slope", actualRatio);
                             	            }
                             	        }
                             	    }

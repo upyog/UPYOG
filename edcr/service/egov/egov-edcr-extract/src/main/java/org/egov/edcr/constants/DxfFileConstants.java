@@ -67,6 +67,7 @@ public class DxfFileConstants {
     public static final int OCCUPANCY_F15_COLOR_CODE = 43;
     public static final int OCCUPANCY_F16_COLOR_CODE = 44;
     public static final int OCCUPANCY_F17_COLOR_CODE = 17;
+    public static final int OCCUPANCY_F18_COLOR_CODE = 16;
     
 // // Color codes for industry as per 2025 byLaws
 //    public static final int OCCUPANCY_G_COLOR_CODE = 7;
@@ -135,7 +136,7 @@ public class DxfFileConstants {
   //Color codes for Mix land use as per 2018 byLaws
     public static final int OCCUPANCY_R_COLOR_CODE= 19;
     
-    public static final int OCCUPANCY_D1_COLOR_CODE = 16;
+    //public static final int OCCUPANCY_D1_COLOR_CODE = 16;
     //public static final int OCCUPANCY_A2_BOARDING_COLOR_CODE = 19;
     
     //public static final int OCCUPANCY_C2_COLOR_CODE = 20;

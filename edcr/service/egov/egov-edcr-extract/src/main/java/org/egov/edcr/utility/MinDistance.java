@@ -439,14 +439,12 @@ public class MinDistance {
         // =========================================================================================
         boolean isYardInsideFootprint = false;
         for (Point yp : yardPts) {
-            // If any yard point is strictly inside the footprint, the drawing is invalid.
             if (Util.isPointStrictlyInsidePolygon(buildFoorPrint, yp)) {
                 isYardInsideFootprint = true;
                 break;
             }
         }
 
-        // Also check the reverse: Footprint cannot be completely swallowed by a single setback
         if (!isYardInsideFootprint) {
             for (Point fp : fpPts) {
                 if (Util.isPointStrictlyInsidePolygon(yardPolyline, fp)) {
@@ -461,35 +459,38 @@ public class MinDistance {
             LOG.error("{} is drawn inside the building footprint.", name);
             return BigDecimal.ZERO.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS);
         }
-        // =========================================================================================
         
         List<Point> insidePoints = new ArrayList<>();
         List<Point> outsidePoints = new ArrayList<>();
 
         // =========================================================================================
-        // STRICT ENFORCEMENT: REJECT "OLD WAY" (Corner-to-Corner Touching)
+        // STRICT ENFORCEMENT: REJECT "OLD WAY" (Isolated Floating Boxes)
         // =========================================================================================
         boolean isOldWay = false;
         
-        // ONLY check Front and Rear yards. Side yards naturally touch footprint corners in the Sandwich style.
-//        if (name.contains("FRONT") || name.contains("REAR")) {
-//            for (Point yp : yardPts) {
-//                for (Point fp : fpPts) {
-//                    if (Util.pointsEquals(yp, fp)) {
-//                        isOldWay = true;
-//                        LOG.info("Detected OLD WAY marking for " + name + ". Rejecting to trigger native errors.");
-//                        break;
-//                    }
-//                }
-//                if (isOldWay) break;
-//            }
-//        }
+        // We ONLY check Front and Rear yards. 
+        // Side yards naturally form "boxes" in the Sandwich style and bypass this check.
+        if (name.contains("FRONT") || name.contains("REAR")) {
+            isOldWay = isOldStyleMarking(pl, doc, yardPolyline, buildFoorPrint, plotBoundary, name);
+        }
+        
+        if (isOldWay) {
+            LOG.info("Detected OLD WAY marking for {}. Rejecting to trigger native errors.", name);
+            
+            // Add a meaningful, descriptive error directly to the eDCR report
+            pl.getErrors().put(
+                name + "_INVALID_MARKING_STYLE", 
+                "Invalid marking style detected for " + name + ". Setbacks must NOT be drawn as isolated boxes inside the plot. Please draw them extending continuously from the Plot Boundary, touching the adjacent yards (Edge-to-Edge/Sandwich style)."
+            );
+            
+            // Return 0.0 immediately so it fails the validation check
+            return BigDecimal.ZERO.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS);
+        }
 
         // =========================================================================================
         // POINT MAPPING (Only runs if marked the New Way)
         // =========================================================================================
         if (!isOldWay) {
-            // 1. Check if Yard corners touch the Footprint or Plot Boundary
             for (Point yp : yardPts) {
                 if (Util.isPointStrictlyInsidePolygon(buildFoorPrint, yp) || Util.isPointOnPolygonBoundary(buildFoorPrint, yp)) {
                     if(!insidePoints.contains(yp)) insidePoints.add(yp);
@@ -499,7 +500,6 @@ public class MinDistance {
                 }
             }
 
-            // 2. Check if Footprint or Plot Boundary corners touch the Yard
             for (Point fp : fpPts) {
                 if (Util.isPointStrictlyInsidePolygon(yardPolyline, fp) || Util.isPointOnPolygonBoundary(yardPolyline, fp)) {
                     if(!insidePoints.contains(fp)) insidePoints.add(fp);
@@ -511,7 +511,6 @@ public class MinDistance {
                 }
             }
 
-            // Failsafe mappings
             if (insidePoints.isEmpty() || outsidePoints.isEmpty()) {
                 List<DXFLine> yardLines = getLinesOfPolyline(yardPolyline);
                 if (insidePoints.isEmpty()) insidePoints = Util.findPointsOnPolylines(fpPts, yardLines, pl, name);
@@ -522,12 +521,12 @@ public class MinDistance {
         // =========================================================================================
         // NATIVE ERROR TRIGGERS
         // =========================================================================================
-        if (insidePoints == null || insidePoints.isEmpty() || insidePoints.size() == 1) {
+        if (insidePoints == null || insidePoints.isEmpty() || insidePoints.size() <= 1) {
             String layer = level.equals("-1") ? "LAYER_NAME_BSMNT_FOOT_PRINT" : "LAYER_NAME_BUILDING_FOOT_PRINT";
             pl.getErrors().put("Set back calculation error for footprint " + name, "Points of " + name + " not properly on " + layerNames.getLayerName(layer));
         }
                         
-        if (outsidePoints == null || outsidePoints.isEmpty() || outsidePoints.size() == 1) {
+        if (outsidePoints == null || outsidePoints.isEmpty() || outsidePoints.size() <= 1) {
             pl.getErrors().put("Set back calculation error for boundary " + name, "Points of " + name + " not properly on " + layerNames.getLayerName("LAYER_NAME_PLOT_BOUNDARY"));
         }
 
@@ -544,10 +543,10 @@ public class MinDistance {
         if (yard.getMinimumDistance() != null && yard.getMinimumDistance().doubleValue() > 0.0d) {
             finalMinDistance = yard.getMinimumDistance();
         } else if (!isOldWay && insidePoints != null && outsidePoints != null && !insidePoints.isEmpty() && !outsidePoints.isEmpty()) {
-            // Ultra-fast math-based segment distance
-            double calcDist = calculateFastYardDistance(buildFoorPrint, plotBoundary, yardPolyline);
-            if (calcDist > 0) {
-                finalMinDistance = BigDecimal.valueOf(calcDist).setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, RoundingMode.HALF_UP);
+            BigDecimal minDistance = PolylineMetrics.getMinDistance(plotBoundary, buildFoorPrint, yardPolyline);
+            if (minDistance != null && minDistance.compareTo(BigDecimal.ZERO) > 0) {
+                finalMinDistance = minDistance;
+                yard.setMinimumDistance(minDistance);
             }
         }
 
@@ -560,6 +559,92 @@ public class MinDistance {
         }
 
         return finalMinDistance;
+    }
+    
+    private boolean isOldStyleMarking(PlanDetail pl, DXFDocument doc, DXFLWPolyline currentYard, DXFLWPolyline footprint, DXFLWPolyline plotBoundary, String currentYardName) {
+        if (currentYard == null || footprint == null || plotBoundary == null) return false;
+        
+        List<DXFLine> yardLines = getLinesOfPolyline(currentYard);
+        
+        // Find adjacent yards to ensure sandwich continuity
+        List<DXFLWPolyline> otherYards = new ArrayList<>();
+        String prefix = "";
+        String[] allYardSuffixes = {
+            layerNames.getLayerName("LAYER_NAME_FRONT_YARD"), layerNames.getLayerName("LAYER_NAME_REAR_YARD"),
+            layerNames.getLayerName("LAYER_NAME_SIDE_YARD_1"), layerNames.getLayerName("LAYER_NAME_SIDE_YARD_2"),
+            layerNames.getLayerName("LAYER_NAME_BSMNT_FRONT_YARD"), layerNames.getLayerName("LAYER_NAME_BSMNT_REAR_YARD"),
+            layerNames.getLayerName("LAYER_NAME_BSMNT_SIDE_YARD_1"), layerNames.getLayerName("LAYER_NAME_BSMNT_SIDE_YARD_2")
+        };
+        
+        for (String suffix : allYardSuffixes) {
+            if (suffix != null && !suffix.isEmpty() && currentYardName.endsWith(suffix)) {
+                prefix = currentYardName.substring(0, currentYardName.length() - suffix.length());
+                break;
+            }
+        }
+        
+        if (!prefix.isEmpty()) {
+            for (String suffix : allYardSuffixes) {
+                if (suffix != null && !suffix.isEmpty() && !currentYardName.endsWith(suffix)) {
+                    List<DXFLWPolyline> yl = Util.getPolyLinesByLayer(doc, prefix + suffix);
+                    if (yl != null && !yl.isEmpty()) {
+                        otherYards.add(yl.get(0));
+                    }
+                }
+            }
+        }
+
+        double tolerance = 0.1; // 10cm tolerance for CAD drawing inaccuracies
+
+        for (DXFLine line : yardLines) {
+            // Find the midpoint of the yard edge
+            Point mid = new Point((line.getStartPoint().getX() + line.getEndPoint().getX()) / 2.0, 
+                                  (line.getStartPoint().getY() + line.getEndPoint().getY()) / 2.0, 0.0);
+            
+            // 1. Is the edge resting on the footprint?
+            if (isPointNearPolyline(mid, footprint, tolerance)) continue;
+            
+            // 2. Is the edge resting on the plot boundary?
+            if (isPointNearPolyline(mid, plotBoundary, tolerance)) continue;
+            
+            // 3. Is the edge touching any adjacent setback?
+            boolean touchesOther = false;
+            for (DXFLWPolyline other : otherYards) {
+                if (isPointNearPolyline(mid, other, tolerance) || Util.isPointStrictlyInsidePolygon(other, mid)) {
+                    touchesOther = true;
+                    break;
+                }
+            }
+            if (touchesOther) continue;
+            
+            // If we reach here, the edge is completely floating in empty space!
+            // This guarantees the plot corners are empty, proving it's the "Old Style"
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private double pointToSegmentDistance(Point p, DXFLine line) {
+        if (p == null || line == null || line.getStartPoint() == null || line.getEndPoint() == null) {
+            return Double.MAX_VALUE;
+        }
+        return pointToSegmentDistance(
+            p.getX(), p.getY(),
+            line.getStartPoint().getX(), line.getStartPoint().getY(),
+            line.getEndPoint().getX(), line.getEndPoint().getY()
+        );
+    }
+    
+    private boolean isPointNearPolyline(Point p, DXFLWPolyline poly, double tolerance) {
+        if (poly == null) return false;
+        List<DXFLine> lines = getLinesOfPolyline(poly);
+        for (DXFLine line : lines) {
+            if (pointToSegmentDistance(p, line) <= tolerance) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**

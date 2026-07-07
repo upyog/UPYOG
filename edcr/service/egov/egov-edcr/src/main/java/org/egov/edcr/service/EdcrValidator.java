@@ -3,12 +3,14 @@ package org.egov.edcr.service;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.edcr.contract.ComparisonRequest;
+import org.egov.edcr.entity.SourceType;
 //import org.egov.edcr.contract.EdcrRequest;
 import org.egov.common.edcr.model.EdcrRequest;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
@@ -41,6 +43,7 @@ public class EdcrValidator {
         VALIDATION_NOT_REQUIRED_FIELDS.add("apiId");
         VALIDATION_NOT_REQUIRED_FIELDS.add("action");
         VALIDATION_NOT_REQUIRED_FIELDS.add("userName");
+        VALIDATION_NOT_REQUIRED_FIELDS.add("additionalDetails");        
     }
 
     public ErrorDetail validate(final EdcrRequest edcr) {
@@ -62,6 +65,41 @@ public class EdcrValidator {
                 if (e3 != null)
                     return error;
             }
+
+            if (edcr.getAdditionalDetails() != null) {
+                ErrorDetail e4 = validateAdditionalDetails(edcr.getAdditionalDetails(), error);
+                if (e4 != null) {
+                    return e4;
+                }
+            }else {
+            	 error.setErrorCode("EDCR-33");
+                 error.setErrorMessage("Source is mandatory");
+                 return error;
+            }
+        }
+        return null;
+    }
+    
+    public ErrorDetail validate2(final EdcrRequest edcr) {
+        if (edcr != null) {
+            ErrorDetail error = new ErrorDetail();
+            Field[] edcrFields = edcr.getClass().getDeclaredFields();
+            ErrorDetail e1 = validateAttributes(edcr, edcrFields, error);
+            if (e1 != null)
+                return error;
+            if (edcr.getRequestInfo() != null) {
+                Field[] reqInfoFields = edcr.getRequestInfo().getClass().getDeclaredFields();
+                ErrorDetail e2 = validateAttributes(edcr.getRequestInfo(), reqInfoFields, error);
+                if (e2 != null)
+                    return error;
+            }
+            if (edcr.getRequestInfo() != null && edcr.getRequestInfo().getUserInfo() != null) {
+                Field[] userInfoFields = edcr.getRequestInfo().getUserInfo().getClass().getDeclaredFields();
+                ErrorDetail e3 = validateAttributes(edcr.getRequestInfo().getUserInfo(), userInfoFields, error);
+                if (e3 != null)
+                    return error;
+            }
+            
         }
         return null;
     }
@@ -155,4 +193,44 @@ public class EdcrValidator {
         }
         return null;
     }
+    
+    private ErrorDetail validateAdditionalDetails(final Object additionalDetails, ErrorDetail error) {
+
+        if (additionalDetails == null) {
+            return null;
+        }
+
+        if (!(additionalDetails instanceof Map)) {
+            return null;
+        }
+
+        Map<String, Object> details = (Map<String, Object>) additionalDetails;
+
+        // Validate roadType
+        Object roadType = details.get("roadType");
+        if (roadType == null || StringUtils.isBlank(String.valueOf(roadType))) {
+            error.setErrorCode("EDCR-33");
+            error.setErrorMessage("RoadType is mandatory.");
+            return error;
+        }
+
+        // Validate source
+        Object source = details.get("source");
+        if (source == null || StringUtils.isBlank(String.valueOf(source))) {
+            error.setErrorCode("EDCR-34");
+            error.setErrorMessage("Source is mandatory.");
+            return error;
+        }
+
+        try {
+            SourceType.valueOf(String.valueOf(source).trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            error.setErrorCode("EDCR-34");
+            error.setErrorMessage("Invalid source type");
+            return error;
+        }
+
+        return null;
+    }
+    
 }

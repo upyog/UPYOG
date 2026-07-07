@@ -348,8 +348,8 @@ public class CalculationService {
 			throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Plot area should not be null");
 		if(!node.containsKey("builtUpArea"))
 			throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "builtUpArea should not be null!!");
-		if(!node.containsKey("categories"))
-			throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Categories should not be null!!");
+		if(!node.containsKey("subcategories"))
+			throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Sub Categories should not be null!!");
 		
 //		Map<String,Object> fee = node.containsKey("selfCertificationCharges") ? (Map<String, Object>)node.get("selfCertificationCharges") : new HashMap<>();
 		
@@ -361,7 +361,7 @@ public class CalculationService {
 		BigDecimal builtUpArea = new BigDecimal((String)node.get("builtUpArea")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD); //In Sq Yard
 		BigDecimal plotArea = new BigDecimal((String)node.get("area")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);  //In Sq Yard
 		BigDecimal basementArea = BigDecimal.ZERO;
-		String category = StringUtils.isEmpty(node.get("categories")) ? null : node.get("categories").toString();
+		String category = StringUtils.isEmpty(node.get("subcategories")) ? null : node.get("subcategories").toString();
 		String approvedColony = (String)node.getOrDefault("approvedColony", "NO");
 //		String buildingStatus  = (String)node.getOrDefault("buildingStatus", "");
 		Map<String, Object> farDetails  = (Map<String, Object>)node.getOrDefault("farDetails", new HashMap<>());

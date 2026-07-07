@@ -405,7 +405,7 @@ public class RestEdcrApplicationController {
     @ResponseBody
     public ResponseEntity<?> scrutinyDetails(@ModelAttribute EdcrRequest edcrRequest,
             @RequestBody @Valid RequestInfoWrapper requestInfoWrapper) {
-        ErrorDetail edcReqRes = edcrValidator.validate(edcrRequest);
+        ErrorDetail edcReqRes = edcrValidator.validate2(edcrRequest);
         if (edcReqRes != null && StringUtils.isNotBlank(edcReqRes.getErrorMessage()))
             return new ResponseEntity<>(edcReqRes, HttpStatus.BAD_REQUEST);
         ErrorDetail edcRes = edcrValidator.validate(requestInfoWrapper);

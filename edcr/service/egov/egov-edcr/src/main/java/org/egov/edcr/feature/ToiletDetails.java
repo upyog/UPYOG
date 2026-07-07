@@ -142,8 +142,12 @@ public class ToiletDetails extends FeatureProcess {
                 }
             }
         }
+        
+        if(scrutinyDetail.getDetail()!=null && scrutinyDetail.getDetail().size()>0) {
+        	pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        }
 
-        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        
 
         return pl;
     }

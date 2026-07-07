@@ -81,7 +81,8 @@ public class DxfFileConstants {
     public static final String F_PFSS    = "F-PFSS";    // Petrol Filling Station Service
     public static final String F_PS    = "F-PS";   // Petrol Station
     public static final String F_CNGS  = "F-CNGS";   // Compressed Natural Gas Station
-    public static final String F_MPMT  = "F-MPMT";   // Multiplex - Miniplex
+    public static final String F_MTP  = "F-MTP";   // Multiplex
+    public static final String F_MIP  = "F-MIP";   // Miniplex
 
 //    // new Occupancy for Industry as per 2025 byLaws
     public static final String G_GTKS   = "G-GTKS";    // Industrial Plotted - General, Textile, Knitwear, Sports

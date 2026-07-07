@@ -63,6 +63,16 @@ public class EdcrRequest {
     
     //private File layoutFile;  
     
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails = null;
+
+	public Object getAdditionalDetails() {
+		return additionalDetails;
+	}
+
+	public void setAdditionalDetails(Object additionalDetails) {
+		this.additionalDetails = additionalDetails;
+	}
 
     public Boolean getPurchasableFar() {
 		return purchasableFar;

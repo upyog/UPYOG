@@ -1540,13 +1540,20 @@ public class Far extends FeatureProcess {
 		        && occupancyType.getType().getCode() != null) {
 			//OccupancyHelperDetail subtype = occupancyType.getSubtype();
 			//occupancyName = subtype.getName();
-			if(DxfFileConstants.F_MPMT.equalsIgnoreCase(occupancyType.getSubtype().getCode())) {
-				BigDecimal permissibleFAR =  getPermissibleFAR(pl.getPlanInformation().getRoadWidth());
+			if(DxfFileConstants.F_MTP.equalsIgnoreCase(occupancyType.getSubtype().getCode())) {
+				BigDecimal permissibleFAR =  getPermissibleFARMTP(pl.getRoadReserveFront());
 				isAccepted = far != null
 				        && permissibleFAR != null
 				        && far.compareTo(permissibleFAR) <= 0;
 				String occupancyName = occupancyType.getType().getName();
-				buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+				buildResult(pl, occupancyName, far, typeOfArea, roadWidth, permissibleFAR.toPlainString(), isAccepted);
+			}else if(DxfFileConstants.F_MIP.equalsIgnoreCase(occupancyType.getSubtype().getCode())){
+				BigDecimal permissibleFAR =  getPermissibleFARMIP(pl.getRoadReserveFront());
+				isAccepted = far != null
+				        && permissibleFAR != null
+				        && far.compareTo(permissibleFAR) <= 0;
+				String occupancyName = occupancyType.getType().getName();
+				buildResult(pl, occupancyName, far, typeOfArea, roadWidth, permissibleFAR.toPlainString(), isAccepted);
 			}else {
 				getFarDetailsFromMDMS(pl, occupancyType.getType().getCode(), typeOfArea, occupancyType);
 			}
@@ -1579,7 +1586,7 @@ public class Far extends FeatureProcess {
 //	    }
 	}
 	
-	public static BigDecimal getPermissibleFAR(BigDecimal roadWidthInMeters) {
+	public static BigDecimal getPermissibleFARMTP(BigDecimal roadWidthInMeters) {
 
         if (roadWidthInMeters == null) {
             return BigDecimal.ZERO;
@@ -1611,6 +1618,36 @@ public class Far extends FeatureProcess {
 
         return BigDecimal.ZERO;
     }
+	
+	public static BigDecimal getPermissibleFARMIP(BigDecimal roadWidthInMeters) {
+
+	    if (roadWidthInMeters == null) {
+	        return BigDecimal.ZERO;
+	    }
+
+	    BigDecimal fifteenPointTwentyFour = new BigDecimal("15.24");
+	    BigDecimal eighteenPointTwentyEight = new BigDecimal("18.28");
+	    BigDecimal twentyFourPointThreeEightFour = new BigDecimal("24.384");
+
+	    // 15.24 M to < 18.28 M
+	    if (roadWidthInMeters.compareTo(fifteenPointTwentyFour) >= 0
+	            && roadWidthInMeters.compareTo(eighteenPointTwentyEight) < 0) {
+	        return new BigDecimal("2.00");
+	    }
+
+	    // 18.28 M to < 24.384 M
+	    if (roadWidthInMeters.compareTo(eighteenPointTwentyEight) >= 0
+	            && roadWidthInMeters.compareTo(twentyFourPointThreeEightFour) < 0) {
+	        return new BigDecimal("2.25");
+	    }
+
+	    // 24.384 M and Above
+	    if (roadWidthInMeters.compareTo(twentyFourPointThreeEightFour) >= 0) {
+	        return new BigDecimal("2.50");
+	    }
+
+	    return BigDecimal.ZERO;
+	}
 	
 	private void processFarCommercialByMBMS(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far,
 	        String typeOfArea, BigDecimal roadWidth, HashMap<String, String> errors,
@@ -2700,8 +2737,12 @@ public class Far extends FeatureProcess {
 	        case "F-PFSS":
 	        case "F-CNGS":	        
 	            return new BigDecimal("1080");
-	        case "F-MPMT":	        
-	            return new BigDecimal("4046");
+	        
+	        case "F-MTP":	        
+	            return new BigDecimal(" 4046.856");
+	            
+	        case "F-MIP":	        
+	            return new BigDecimal("2000");
 
 	        default:
 	            return BigDecimal.ZERO; // or throw exception if needed
