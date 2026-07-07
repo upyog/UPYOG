@@ -59,10 +59,11 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 	@Autowired
 	private DemandService demandService;
+	
+    // Add this if not already present
+    @Autowired
+    private MeterService meterService;
 
-	// Add this if not already present
-	@Autowired
-	private MeterService meterService;
 
 	@Autowired
 	private MasterDataService masterDataService;
@@ -172,12 +173,23 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		return calculations;
 	}
 
+	
+	
+	
+	
+	
 	public List<Calculation> bulkbillgeneration(CalculationReq request, Map<String, Object> masterMap) {
 		List<Calculation> calculations = getCalculations(request, masterMap);
 		demandService.generateDemandForBillingCycleInBulk(request, calculations, masterMap, true);
 		return calculations;
 	}
-
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * 
 	 * @param request - Calculation Request Object
@@ -318,92 +330,119 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 					break;
 				}
 		}
-
+		
+		
+		
+		
 		boolean isBreakdownAvgEnabled = false;
 
 		Object obj = masterMap.get(WSCalculationConstant.Billing_Period_Master);
 
 		if (obj instanceof List) {
-			List<?> billingFrequencyList = (List<?>) obj;
+		    List<?> billingFrequencyList = (List<?>) obj;
 
-			for (Object o : billingFrequencyList) {
-				if (!(o instanceof Map))
-					continue;
+		    for (Object o : billingFrequencyList) {
+		        if (!(o instanceof Map)) continue;
 
-				Map<?, ?> freq = (Map<?, ?>) o;
+		        Map<?, ?> freq = (Map<?, ?>) o;
 
-				log.info("MDMS CHECK >>> {}", freq);
+		        log.info("MDMS CHECK >>> {}", freq);
 
-				boolean active = Boolean.parseBoolean(String.valueOf(freq.get("active")));
-				boolean avgFlag = Boolean.parseBoolean(String.valueOf(freq.get("isBreakdownAverageApplicable")));
+		        boolean active = Boolean.parseBoolean(String.valueOf(freq.get("active")));
+		        boolean avgFlag = Boolean.parseBoolean(
+		                String.valueOf(freq.get("isBreakdownAverageApplicable"))
+		        );
 
-				String connType = String.valueOf(freq.get("connectionType"));
+		        String connType = String.valueOf(freq.get("connectionType"));
 
-				if (active && WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(connType) && avgFlag) {
+		        if (active
+		                && WSCalculationConstant.meteredConnectionType
+		                        .equalsIgnoreCase(connType)
+		                && avgFlag) {
 
-					isBreakdownAvgEnabled = true;
-					break;
-				}
-			}
+		            isBreakdownAvgEnabled = true;
+		            break;
+		        }
+		    }
 		}
 
 //		log.info("FINAL FLAG | isBreakdownAvgEnabled={}", isBreakdownAvgEnabled);
+		
 
-		if (WSCalculationConstant.meteredConnectionType.equalsIgnoreCase(waterConnection.getConnectionType())
-				&& MeterReading.MeterStatusEnum.BREAKDOWN.equals(criteria.getMeterStatus()) && isBreakdownAvgEnabled) {
+		if (WSCalculationConstant.meteredConnectionType
+		        .equalsIgnoreCase(waterConnection.getConnectionType())
+		        && MeterReading.MeterStatusEnum.BREAKDOWN.equals(criteria.getMeterStatus())
+		        && isBreakdownAvgEnabled) {
 
-			log.info("BREAKDOWN triggered for connection {}", criteria.getConnectionNo());
+		    log.info("BREAKDOWN triggered for connection {}", criteria.getConnectionNo());
 
-			Long currentFrom = criteria.getFrom();
-			Long currentTo = criteria.getTo();
+		    Long currentFrom = criteria.getFrom();
+		    Long currentTo   = criteria.getTo();
 
-			MeterReading previousReading = meterService
-					.searchMeterReadings(
-							MeterReadingSearchCriteria.builder().tenantId(criteria.getTenantId())
-									.connectionNos(Collections.singleton(criteria.getConnectionNo())).build(),
-							requestInfo)
-					.stream()
-					// ❌ skip same billing period
-					.filter(r -> !(Objects.equals(r.getLastReadingDate(), currentFrom)
-							&& Objects.equals(r.getCurrentReadingDate(), currentTo)))
-					// ✅ only earlier periods
-					.filter(r -> r.getLastReadingDate() != null && r.getLastReadingDate() < currentFrom)
-					// ✅ closest previous period
-					.sorted(Comparator.comparing(MeterReading::getLastReadingDate).reversed()).findFirst().orElse(null);
+		    MeterReading previousReading = meterService.searchMeterReadings(
+		            MeterReadingSearchCriteria.builder()
+		                    .tenantId(criteria.getTenantId())
+		                    .connectionNos(Collections.singleton(criteria.getConnectionNo()))
+		                    .build(),
+		            requestInfo
+		    ).stream()
+		    // ❌ skip same billing period
+		    .filter(r ->
+		            !(Objects.equals(r.getLastReadingDate(), currentFrom)
+		           && Objects.equals(r.getCurrentReadingDate(), currentTo))
+		    )
+		    // ✅ only earlier periods
+		    .filter(r -> r.getLastReadingDate() != null
+		              && r.getLastReadingDate() < currentFrom)
+		    // ✅ closest previous period
+		    .sorted(Comparator.comparing(MeterReading::getLastReadingDate).reversed())
+		    .findFirst()
+		    .orElse(null);
 
-			if (previousReading != null
-					&& MeterReading.MeterStatusEnum.BREAKDOWN.equals(previousReading.getMeterStatus())) {
+		    if (previousReading != null
+		            && MeterReading.MeterStatusEnum.BREAKDOWN
+		                    .equals(previousReading.getMeterStatus())) {
 
-				// 🔥 Consecutive BREAKDOWN → penalty
-				waterCharge = getChargeFromDemand(previousReading, criteria, requestInfo);
-				penalty = waterCharge.multiply(BigDecimal.valueOf(2)).setScale(2, RoundingMode.HALF_UP);
+		        // 🔥 Consecutive BREAKDOWN → penalty
+		        waterCharge = getChargeFromDemand(previousReading, criteria, requestInfo);
+		        penalty = waterCharge.multiply(BigDecimal.valueOf(2))
+		                .setScale(2, RoundingMode.HALF_UP);
 
 //		        log.info("Consecutive BREAKDOWN | prevFrom={} charge={} penalty={}",
 //		                previousReading.getLastReadingDate(), waterCharge, penalty);
 
-			} else {
-				// ✅ First BREAKDOWN
-				waterCharge = getAverageFromLastThreeDemands(criteria, requestInfo);
-				penalty = BigDecimal.ZERO;
+		    } else {
+		        // ✅ First BREAKDOWN
+		        waterCharge = getAverageFromLastThreeDemands(criteria, requestInfo);
+		        penalty = BigDecimal.ZERO;
 
-				log.info("First BREAKDOWN | avgCharge={}", waterCharge);
-			}
+		        log.info("First BREAKDOWN | avgCharge={}", waterCharge);
+		    }
+		
 
-			// Add WS_CHARGE estimate
-			estimates.removeIf(e -> TaxHeadCategory.CHARGES.equals(e.getCategory()));
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_CHARGE)
-					.estimateAmount(waterCharge).category(TaxHeadCategory.CHARGES).build());
+				    // Add WS_CHARGE estimate
+				    estimates.removeIf(e -> TaxHeadCategory.CHARGES.equals(e.getCategory()));
+				    estimates.add(TaxHeadEstimate.builder()
+				            .taxHeadCode(WSCalculationConstant.WS_CHARGE)
+				            .estimateAmount(waterCharge)
+				            .category(TaxHeadCategory.CHARGES)
+				            .build());
 
-			// Add penalty estimate if any
-			if (penalty.compareTo(BigDecimal.ZERO) > 0) {
-				estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_BREAKDOWN_PENALTY)
-						.estimateAmount(penalty).category(TaxHeadCategory.PENALTY).build());
-			}
+				    // Add penalty estimate if any
+				    if (penalty.compareTo(BigDecimal.ZERO) > 0) {
+				        estimates.add(TaxHeadEstimate.builder()
+				                .taxHeadCode(WSCalculationConstant.WS_BREAKDOWN_PENALTY)
+				                .estimateAmount(penalty)
+				                .category(TaxHeadCategory.PENALTY)
+				                .build());
+				    }
 
-			log.info("BREAKDOWN calculation completed | charge={} penalty={}", waterCharge, penalty);
-		}
+				    log.info("BREAKDOWN calculation completed | charge={} penalty={}", waterCharge, penalty);
+				} 
 		//
 
+
+		
 //	    PI-20289 Metered Breakdown penalty enable and working new logic
 
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty).add(waterCharge).add(fee),
@@ -423,153 +462,166 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 				.tenantId(criteria.getTenantId()).taxHeadEstimates(estimates).billingSlabIds(billingSlabIds)
 				.connectionNo(criteria.getConnectionNo()).applicationNO(criteria.getApplicationNo()).build();
 	}
-
+	
 	// =====================================================
 	// Utilities
 	// =====================================================
-
+	
+	
 	// Utility: fetch charge from demand matching meter reading period
-	private BigDecimal getChargeFromDemand(MeterReading reading, CalculationCriteria criteria,
-			RequestInfo requestInfo) {
+	private BigDecimal getChargeFromDemand(
+	        MeterReading reading,
+	        CalculationCriteria criteria,
+	        RequestInfo requestInfo) {
 
-		List<Demand> demands = demandService.searchDemandForBreakdownCalculation(criteria.getTenantId(),
-				Collections.singleton(criteria.getConnectionNo()), requestInfo);
+	    List<Demand> demands = demandService.searchDemandForBreakdownCalculation(
+	            criteria.getTenantId(),
+	            Collections.singleton(criteria.getConnectionNo()),
+	            requestInfo
+	    );
 
-		if (CollectionUtils.isEmpty(demands)) {
-			return BigDecimal.ZERO;
-		}
+	    if (CollectionUtils.isEmpty(demands)) {
+	        return BigDecimal.ZERO;
+	    }
 
-		// 3️⃣ Fallback: pick latest ACTIVE demand
-		Demand latestDemand = demands.stream().filter(d -> Demand.StatusEnum.ACTIVE.equals(d.getStatus()))
-				.max(Comparator.comparing(Demand::getTaxPeriodTo)).orElse(null);
 
-		if (latestDemand != null) {
-			return extractWsCharge(latestDemand);
-		}
+	    // 3️⃣ Fallback: pick latest ACTIVE demand
+	    Demand latestDemand = demands.stream()
+	            .filter(d -> Demand.StatusEnum.ACTIVE.equals(d.getStatus()))
+	            .max(Comparator.comparing(Demand::getTaxPeriodTo))
+	            .orElse(null);
 
-		return BigDecimal.ZERO;
+	    if (latestDemand != null) {
+	        return extractWsCharge(latestDemand);
+	    }
+
+	    return BigDecimal.ZERO;
 	}
 
 	private BigDecimal extractWsCharge(Demand demand) {
-		return demand.getDemandDetails().stream()
-				.filter(dd -> WSCalculationConstant.WS_CHARGE.equalsIgnoreCase(dd.getTaxHeadMasterCode()))
-				.map(DemandDetail::getTaxAmount).findFirst().orElse(BigDecimal.ZERO);
+	    return demand.getDemandDetails().stream()
+	            .filter(dd -> WSCalculationConstant.WS_CHARGE
+	                    .equalsIgnoreCase(dd.getTaxHeadMasterCode()))
+	            .map(DemandDetail::getTaxAmount)
+	            .findFirst()
+	            .orElse(BigDecimal.ZERO);
 	}
 
 	// Utility: average of last 3 WS_CHARGE demands
-	private BigDecimal getAverageFromLastThreeDemands(CalculationCriteria criteria, RequestInfo requestInfo) {
+	private BigDecimal getAverageFromLastThreeDemands(
+	        CalculationCriteria criteria,
+	        RequestInfo requestInfo) {
 
-		List<Demand> demands = demandService.searchDemandForBreakdownCalculation(criteria.getTenantId(),
-				Collections.singleton(criteria.getConnectionNo()), requestInfo);
+	    List<Demand> demands = demandService.searchDemandForBreakdownCalculation(
+	            criteria.getTenantId(),
+	            Collections.singleton(criteria.getConnectionNo()),
+	            requestInfo
+	    );
 
-		if (CollectionUtils.isEmpty(demands)) {
-			log.warn("No demands found for averaging");
-			return BigDecimal.ZERO;
-		}
+	    if (CollectionUtils.isEmpty(demands)) {
+	        log.warn("No demands found for averaging");
+	        return BigDecimal.ZERO;
+	    }
 
-		demands.sort(Comparator.comparing(Demand::getTaxPeriodTo).reversed());
+	    demands.sort(Comparator.comparing(Demand::getTaxPeriodTo).reversed());
 
-		BigDecimal total = BigDecimal.ZERO;
-		int count = 0;
+	    BigDecimal total = BigDecimal.ZERO;
+	    int count = 0;
 
-		for (Demand d : demands) {
-			BigDecimal wsCharge = extractWsCharge(d);
+	    for (Demand d : demands) {
+	        BigDecimal wsCharge = extractWsCharge(d);
 
-			if (wsCharge.compareTo(BigDecimal.ZERO) > 0) {
-				total = total.add(wsCharge);
-				count++;
-				log.info("Including demand {} with WS_CHARGE {}", d.getId(), wsCharge);
-			}
+	        if (wsCharge.compareTo(BigDecimal.ZERO) > 0) {
+	            total = total.add(wsCharge);
+	            count++;
+	            log.info("Including demand {} with WS_CHARGE {}", d.getId(), wsCharge);
+	        }
 
-			if (count == 3)
-				break;
-		}
+	        if (count == 3) break;
+	    }
 
-		if (count == 0) {
-			log.error("No valid WS_CHARGE found in demands");
-			return BigDecimal.ZERO;
-		}
+	    if (count == 0) {
+	        log.error("No valid WS_CHARGE found in demands");
+	        return BigDecimal.ZERO;
+	    }
 
-		BigDecimal avg = total.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
-		log.info("Average WS_CHARGE from {} demands = {}", count, avg);
+	    BigDecimal avg = total.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
+	    log.info("Average WS_CHARGE from {} demands = {}", count, avg);
 
-		return avg;
+	    return avg;
 	}
-
-	/**
+	
+	
+		/**
 	 * 
 	 * @param request   would be calculations request
 	 * @param masterMap master data
 	 * @return all calculations including water charge and taxhead on that
 	 */
 	public List<Calculation> getCalculations(CalculationReq request, Map<String, Object> masterMap) {
-		List<Calculation> calculations = new ArrayList<>(request.getCalculationCriteria().size());
-		Set<String> errorConsumerCodes = new HashSet<>(); // Track consumers with errors
-		Map<String, CalculationCriteria> latestCriteriaMap = new HashMap<>(); // consumerCode -> latest criteria
+	    List<Calculation> calculations = new ArrayList<>(request.getCalculationCriteria().size());
+	    Set<String> errorConsumerCodes = new HashSet<>(); // Track consumers with errors
+	    Map<String, CalculationCriteria> latestCriteriaMap = new HashMap<>(); // consumerCode -> latest criteria
 
-		for (CalculationCriteria criteria : request.getCalculationCriteria()) {
-			try {
-				Map<String, List> estimationMap = estimationService.getEstimationMap(criteria, request, masterMap);
-				ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap
-						.get(WSCalculationConstant.Billing_Period_Master);
-				masterDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap,
-						criteria.getWaterConnection().getConnectionType());
+	    for (CalculationCriteria criteria : request.getCalculationCriteria()) {
+	        try {
+	            Map<String, List> estimationMap = estimationService.getEstimationMap(criteria, request, masterMap);
+	            ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap.get(WSCalculationConstant.Billing_Period_Master);
+	            masterDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap,
+	                    criteria.getWaterConnection().getConnectionType());
 
-				Calculation calculation = null;
+	            Calculation calculation = null;
 
-				if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest()) {
-					if (criteria.getApplicationNo().equals(request.getCalculationCriteria()
-							.get(request.getCalculationCriteria().size() - 1).getApplicationNo())) {
-						calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true,
-								true);
-					}
-				} else if (request.getIsReconnectionRequest() != null && request.getIsReconnectionRequest()) {
-					if (criteria.getApplicationNo().equals(request.getCalculationCriteria()
-							.get(request.getCalculationCriteria().size() - 1).getApplicationNo())) {
-						calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true,
-								false);
-					}
-				} else {
-					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true,
-							false);
-				}
+	            if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest()) {
+	                if (criteria.getApplicationNo().equals(
+	                        request.getCalculationCriteria()
+	                               .get(request.getCalculationCriteria().size() - 1).getApplicationNo())) {
+	                    calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, true);
+	                }
+	            } else if (request.getIsReconnectionRequest() != null && request.getIsReconnectionRequest()) {
+	                if (criteria.getApplicationNo().equals(
+	                        request.getCalculationCriteria()
+	                               .get(request.getCalculationCriteria().size() - 1).getApplicationNo())) {
+	                    calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
+	                }
+	            } else {
+	                calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
+	            }
 
-				calculations.add(calculation);
+	            calculations.add(calculation);
 
-			} catch (Exception ex) {
-				log.error("Error processing calculation for applicationNo {}: {}",
-						criteria != null ? criteria.getApplicationNo() : "null", ex.getMessage(), ex);
+	        } catch (Exception ex) {
+	        	   log.error("Error processing calculation for applicationNo {}: {}", 
+	                       criteria != null ? criteria.getApplicationNo() : "null", ex.getMessage(), ex);
 
-				trackLatestCriteriaPerConsumer(latestCriteriaMap, criteria);
+	               trackLatestCriteriaPerConsumer(latestCriteriaMap, criteria);
 
-			}
-		}
-
-		for (Map.Entry<String, CalculationCriteria> entry : latestCriteriaMap.entrySet()) {
-			DemandGenerationError demandGenerationError = getDemandGenerationError(entry.getValue(),
-					"Error during calculation");
-			if (demandGenerationError != null) {
-				producer.push(configs.getDemandGenerationErrorTopic(), demandGenerationError);
-			}
-		}
-		return calculations;
+	        }
+	    }
+	    
+	    for (Map.Entry<String, CalculationCriteria> entry : latestCriteriaMap.entrySet()) {
+	        DemandGenerationError demandGenerationError = getDemandGenerationError(entry.getValue(), "Error during calculation");
+	        if (demandGenerationError != null) {
+	            producer.push(configs.getDemandGenerationErrorTopic(), demandGenerationError);
+	        }
+	    }
+	    return calculations;
 	}
 
+	
 	/**
 	 * Helper method to track the latest criteria per consumerCode
 	 */
-	private void trackLatestCriteriaPerConsumer(Map<String, CalculationCriteria> latestCriteriaMap,
-			CalculationCriteria criteria) {
-		if (criteria == null || criteria.getConnectionNo() == null)
-			return;
+	private void trackLatestCriteriaPerConsumer(Map<String, CalculationCriteria> latestCriteriaMap, CalculationCriteria criteria) {
+	    if (criteria == null || criteria.getConnectionNo() == null) return;
 
-		CalculationCriteria existing = latestCriteriaMap.get(criteria.getConnectionNo());
-		if (existing == null || (criteria.getFrom() != null && existing.getFrom() != null
-				&& criteria.getFrom() > existing.getFrom())) {
-			latestCriteriaMap.put(criteria.getConnectionNo(), criteria);
-		}
+	    CalculationCriteria existing = latestCriteriaMap.get(criteria.getConnectionNo());
+	    if (existing == null || (criteria.getFrom() != null && existing.getFrom() != null
+	            && criteria.getFrom() > existing.getFrom())) {
+	        latestCriteriaMap.put(criteria.getConnectionNo(), criteria);
+	    }
 	}
-
+	
 	private static DemandGenerationError getDemandGenerationError(CalculationCriteria criteria, String errorMsg) {
 		DemandGenerationError error = new DemandGenerationError();
 		if (criteria != null && errorMsg != null) {
@@ -579,8 +631,8 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			error.setFromDate(criteria.getFrom());
 			error.setAssessmentYear(criteria.getAssessmentYear());
 
-			if (criteria.getWaterConnection() != null) {
-				error.setPropertyId(criteria.getWaterConnection().getPropertyId());
+			if (criteria.getWaterConnection() != null){
+			error.setPropertyId(criteria.getWaterConnection().getPropertyId());
 			}
 
 			error.setErrorMessage(errorMsg);
@@ -694,16 +746,15 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		log.info("Tenant Ids : " + tenantIds.toString());
 		int tenantPoolSize = configs.getTenantThreadPoolSize() != null ? configs.getTenantThreadPoolSize() : 5;
 		int actualTenantThreads = Math.min(tenantPoolSize, tenantIds.size());
-		log.info("\uD83D\uDE80 Starting parallel demand generation for {} tenants using {} threads.", tenantIds.size(),
-				actualTenantThreads);
+		log.info("\uD83D\uDE80 Starting parallel demand generation for {} tenants using {} threads.",
+				tenantIds.size(), actualTenantThreads);
 
 		ExecutorService tenantExecutor = Executors.newFixedThreadPool(actualTenantThreads);
 		List<CompletableFuture<Void>> tenantFutures = new ArrayList<>();
 
 		for (String tenantId : tenantIds) {
 			// Deep-clone RequestInfo per tenant — generateDemandForTenantId mutates
-			// requestInfo.getUserInfo().setTenantId() so sharing it across threads is a
-			// race.
+			// requestInfo.getUserInfo().setTenantId() so sharing it across threads is a race.
 			final RequestInfo tenantRequestInfo;
 			try {
 				tenantRequestInfo = mapper.readValue(mapper.writeValueAsString(requestInfo), RequestInfo.class);
@@ -803,34 +854,28 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 		BillGenerationSearchCriteria criteria = new BillGenerationSearchCriteria();
 		criteria.setStatus(WSCalculationConstant.INITIATED_CONST);
-
-		/*
-		 * Previously, we fetched all localities without filtering by status. Now, we
-		 * are updating the logic to pick only those localities where the status is
-		 * "INITIATED". Additionally, from the group-based list for Patiala, we now pick
-		 * only those entries where: The group is not configured (i.e., group is null or
-		 * empty), and The status is also "INITIATED". So, both lists are now filtered
-		 * to include only records with INITIATED status, with an extra condition for
-		 * Patiala that the group should not be present.
-		 */
+		
+/* Previously, we fetched all localities without filtering by status. Now, we are updating the logic to pick only those localities where the status is "INITIATED".
+Additionally, from the group-based list for Patiala, we now pick only those entries where: The group is not configured (i.e., group is null or empty), and The status is also "INITIATED".
+So, both lists are now filtered to include only records with INITIATED status, with an extra condition for Patiala that the group should not be present.  */		
+  
 		SchedulerLevel schedulerLevel = serviceSchedulerRequest.getSchedulerLevel();
-
+		List<BillScheduler> billSchedularLocality = billGeneratorService.getBillGenerationDetails(criteria);
+		List<BillScheduler> billSchedulargrouplist = billGeneratorService.getBillGenerationGroup(criteria);
 		List<BillScheduler> billSchedularList = new ArrayList<>();
 
 		Set<String> seenIds = new HashSet<>();
 
-		List<BillScheduler> billSchedularLocality = billGeneratorService.getBillGenerationDetails(criteria);
-		List<BillScheduler> billSchedulargrouplist = billGeneratorService.getBillGenerationGroup(criteria);
-
 		for (BillScheduler scheduler : billSchedularLocality) {
-			if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
-				billSchedularList.add(scheduler);
-			}
+		    if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+		        billSchedularList.add(scheduler);
+		    }
 		}
+
 		for (BillScheduler scheduler : billSchedulargrouplist) {
-			if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
-				billSchedularList.add(scheduler);
-			}
+		    if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+		        billSchedularList.add(scheduler);
+		    }
 		}
 		
 		if (schedulerLevel == SchedulerLevel.TENANT) {
@@ -841,16 +886,15 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 				}
 			}
 		}
+		
 		String currentTenantId = serviceSchedulerRequest.getRequestInfo().getMsgId();
 		if (billSchedularList.isEmpty())
 			return;
-
 		log.info("billSchedularList count : " + billSchedularList.size());
 		for (BillScheduler billSchedular : billSchedularList) {
 			try {
 				
 				List<String> connectionNos = null;
-
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
 						.requestInfo(serviceSchedulerRequest.getRequestInfo()).build();
 
@@ -895,35 +939,41 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 							.requestInfoWrapper(requestInfoWrapper).tenantId(billSchedular.getTenantId())
 							.consumerCodes(ImmutableSet.copyOf(conectionNoList)).billSchedular(billSchedular).build();
 
+					
 					String localityCode;
 
 					if (billSchedular.getLocality() != null && !billSchedular.getLocality().trim().isEmpty()) {
-						localityCode = billSchedular.getLocality();
+					    localityCode = billSchedular.getLocality();
 					} else if (billSchedular.getGrup() != null && !billSchedular.getGrup().trim().isEmpty()) {
-						localityCode = billSchedular.getGrup();
+					    localityCode = billSchedular.getGrup();
 					} else {
-						localityCode = "NA";
+					    localityCode = "NA";
 					}
-
-					int batchCount = count;
+					
+					int batchCount = count;       
 					String tenantId = billSchedular.getTenantId();
 					String cityName = "Unknown";
 
 					if (tenantId != null && tenantId.contains(".")) {
-						cityName = tenantId.substring(tenantId.indexOf('.') + 1); // get part after dot
-						cityName = cityName.substring(0, 1).toUpperCase() + cityName.substring(1).toLowerCase(); // capitalize
+					    cityName = tenantId.substring(tenantId.indexOf('.') + 1); // get part after dot
+					    cityName = cityName.substring(0, 1).toUpperCase() + cityName.substring(1).toLowerCase(); // capitalize
 					}
 
-					String key = cityName + "-" + localityCode + "-" + batchCount;
-					billGeneratorDao.insertBillSchedulerConnectionStatus(
-							new ArrayList<>(billGeneraterReq.getConsumerCodes()),
-							billGeneraterReq.getBillSchedular().getId(),
-							billGeneraterReq.getBillSchedular().getLocality(), WSCalculationConstant.INITIATED,
-							billGeneraterReq.getBillSchedular().getTenantId(), WSCalculationConstant.INITIATED,
-							System.currentTimeMillis());
-					producer.push(configs.getBillGenerateSchedulerTopic(), key, billGeneraterReq);
+					String key =cityName+"-"+ localityCode + "-" + batchCount;
+					 billGeneratorDao.insertBillSchedulerConnectionStatus(
+			                    new ArrayList<>(billGeneraterReq.getConsumerCodes()),
+			                    billGeneraterReq.getBillSchedular().getId(),
+			                    billGeneraterReq.getBillSchedular().getLocality(),
+			                    WSCalculationConstant.INITIATED,
+			                    billGeneraterReq.getBillSchedular().getTenantId(),
+			                    WSCalculationConstant.INITIATED,
+			                    System.currentTimeMillis()
+			            );
+					producer.push(configs.getBillGenerateSchedulerTopic(), key,billGeneraterReq);
 					log.info("Bill Scheduler pushed connections size:{} to kafka topic of batch no: ",
 							conectionNoList.size(), count++);
+
+
 
 				}
 				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.COMPLETED);
