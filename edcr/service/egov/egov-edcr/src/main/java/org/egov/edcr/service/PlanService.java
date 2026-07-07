@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,12 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.EdcrPdfDetail;
+import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.Occupancy;
+import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.common.entity.edcr.PlanInformation;
@@ -61,6 +67,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.microservice.models.Role;
+import org.python.antlr.PythonParser.print_stmt_return;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,6 +76,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import static org.egov.edcr.constants.DxfFileConstants.*;
 
 @Service
 public class PlanService {
@@ -97,6 +105,37 @@ public class PlanService {
     
     @Autowired
     private PlanReportServiceV2 planReportServiceV2;
+    
+	private static final List<String> FAR_PRIORITY = Collections.unmodifiableList(
+			Arrays.asList(S_ECFG, A_FH, S_SAS, D_B, D_C, D_A, H_PP, E_NS, M_DFPAB, E_PS, E_SFMC, E_SFDAP, E_EARC, S_MCH,
+					S_BH, S_CRC, S_CA, S_SC, S_ICC, A2, E_CLG, M_OHF, M_VH, M_NAPI, A_SA, M_HOTHC, E_SACA,
+
+					C_MA, C_MIP, C_MOP,
+
+					F, A, C,
+
+					J_FS, J_FCSS, J_CNG, J,
+
+					A_AF, A_AIF,
+
+					G_G, G_F, G_S, G_HI, G_WT, G_RSI, G_GIP, G_GIF, G_ITP, G_ITF, G_TI, G_KI, G_SI,
+
+					L_GP, L_GO, L_NS, L_PS, L_CO, L_ERC, L_MP, L_NH, L_C,
+
+					R_R,
+
+					F_RB, F_HM, F_SCC, F_PO, F_B, F_LB, F_D, F_CA, F_VGP, F_BU, F_PFSF, F_PFST, F_PFSS, F_PS, F_CNGS));
+	
+	private static final String SOURCE_INVESTPUNJAB = "INVESTPUNJAB";
+	private static final String SOURCE_OBPAS = "OBPAS";
+	private static final String INVALID_SOURCE = "INVALID SOURCE";
+	
+	private static final String ERROR_MSG = 
+	        "Dear Investors,\n"
+	                + "Please be informed that with effect from 15.05.2025, all building plan applications under the following categories will no longer be accepted on the eNaksha Portal: https://enaksha.lgpunjab.gov.in and https://mseva.lgpunjab.gov.in/\n"
+	                + "• Industry • Hotel • Nursing Home / Hospital • Institutions\n"
+	                + "Instead, investors are requested to submit such applications exclusively through the Punjab Bureau of Investment Promotion (PBIP) Portal: https://fasttrack.punjab.gov.in/webportal/login We request all stakeholders to kindly take note of this change and plan submissions accordingly.\n"
+	                + "Local Government Department, Government of Punjab.”";
 
     public Plan process(EdcrApplication dcrApplication, String applicationType) {
         Map<String, String> cityDetails = specificRuleService.getCityDetails();
@@ -314,10 +353,11 @@ public class PlanService {
                     plan
             );
         }
-
         
-
-            //return (Plan) planDetail;
+        // validate Source of the request
+        validateSourcePortal(plan);
+           
+        //return (Plan) planDetail;
         // remove requestInfo before plan processing
         //edcrRequest.setRequestInfo(null);
         //Setting edcr Data to Plan        
@@ -385,7 +425,8 @@ public class PlanService {
         
 //        plan = applyRules(plan, amd, cityDetails);
         if(plan.getErrors().containsKey("Not authorized to scrutinize") || plan.getErrors().containsKey("Invalid ULB")
-        		|| plan.getErrors().containsKey("units not in meters")) {
+        		|| plan.getErrors().containsKey("units not in meters") 
+        		|| plan.getErrors().containsKey("INVALID SOURCE")) {
         	
         }else {
         	plan = applyRules(plan, amd, cityDetails,features);
@@ -882,6 +923,131 @@ public class PlanService {
         return tenantId;
     }
     
+    
+    public OccupancyTypeHelper getOccTypeSubType(Plan plan) {
+
+    if (plan == null || plan.getBlocks() == null || plan.getBlocks().isEmpty()) {
+        return null;
+    }
+
+    Set<OccupancyTypeHelper> occupancyTypes = new HashSet<>();
+
+    for (Block block : plan.getBlocks()) {
+
+        Building building = block.getBuilding();
+        if (building == null || building.getFloors() == null) {
+            continue;
+        }
+
+        for (Floor floor : building.getFloors()) {
+            if (floor.getOccupancies() == null) {
+                continue;
+            }
+            for (Occupancy occupancy : floor.getOccupancies()) {
+                if (occupancy != null && occupancy.getTypeHelper() != null) {
+                    occupancyTypes.add(occupancy.getTypeHelper());
+                }
+            }
+        }
+    }
+
+    return getMostRestrictiveFar(occupancyTypes);
+}
+    
+	protected OccupancyTypeHelper getMostRestrictiveFar(Set<OccupancyTypeHelper> distinctOccupancyTypes) {
+
+	    if (distinctOccupancyTypes == null || distinctOccupancyTypes.isEmpty()) {
+	        return null;
+	    }
+
+	    Map<String, OccupancyTypeHelper> codeMap = new HashMap<>();
+
+	    for (OccupancyTypeHelper helper : distinctOccupancyTypes) {
+
+	        if (helper.getType() != null) {
+	            codeMap.put(helper.getType().getCode(), helper);
+	        }
+
+	        if (helper.getSubtype() != null) {
+	            codeMap.put(helper.getSubtype().getCode(), helper);
+	        }
+	    }
+
+	    for (String priorityCode : FAR_PRIORITY) {
+	        OccupancyTypeHelper helper = codeMap.get(priorityCode);
+	        if (helper != null) {
+	            return helper;
+	        }
+	    }
+
+	    return null;
+	}
+	
+	private void validateSourcePortal(Plan pl) {
+
+		try {
+			OccupancyTypeHelper mostRestrictiveFar = getOccTypeSubType(pl);
+
+			if (mostRestrictiveFar == null || mostRestrictiveFar.getType() == null
+					|| mostRestrictiveFar.getSubtype() == null || mostRestrictiveFar.getSubtype().getCode() == null) {
+				LOG.info("validateSourcePortal: mostRestrictiveFar/type/subtype is null, skipping validation.");
+				return;
+			}
+
+			String occTypeCode = mostRestrictiveFar.getType().getCode();
+			String occSubTypeCode = mostRestrictiveFar.getSubtype().getCode();
+
+			String sourceType = getSourceViaReflection(
+					pl.getEdcrRequest() != null ? pl.getEdcrRequest().getAdditionalDetails() : null);
+
+			LOG.info("validateSourcePortal: sourceType=" + sourceType + ", occTypeCode=" + occTypeCode
+					+ ", occSubTypeCode=" + occSubTypeCode);
+
+			if (sourceType == null) {
+				LOG.info("validateSourcePortal: sourceType is null, skipping validation.");
+				return;
+			}
+
+			boolean isGorLOrCommHousing = G.equals(occTypeCode) || L.equals(occTypeCode)
+					|| (F.equals(occTypeCode) && F_HM.equals(occSubTypeCode));
+
+			if (SOURCE_INVESTPUNJAB.equalsIgnoreCase(sourceType)) {
+				// INVESTPUNJAB: G / L / F-HM -> OK, continue. Anything else -> error.
+				if (!isGorLOrCommHousing) {
+					String errorMsg = "Please process this file through the OBPAS portal.";
+					LOG.info("validateSourcePortal: VALIDATION FAILED -> sourceType=" + sourceType + ", occTypeCode="
+							+ occTypeCode + ", occSubTypeCode=" + occSubTypeCode + ", error=" + errorMsg);
+					pl.addError(INVALID_SOURCE, errorMsg);
+				}
+
+			} else if (SOURCE_OBPAS.equalsIgnoreCase(sourceType)) {
+				// OBPAS: G / L / F-HM -> error (must use Invest Punjab). Anything else -> OK.
+				if (isGorLOrCommHousing) {
+					String errorMsg = "Please process this file through the Invest Punjab portal.";
+					LOG.info("validateSourcePortal: VALIDATION FAILED -> sourceType=" + sourceType + ", occTypeCode="
+							+ occTypeCode + ", occSubTypeCode=" + occSubTypeCode + ", error=" + errorMsg);
+					pl.addError(INVALID_SOURCE + "1", ERROR_MSG);
+				}
+			}
+
+		} catch (Exception e) {
+			LOG.error("validateSourcePortal: Error while validating source portal for occupancy type", e);
+		}
+	}
+
+	private String getSourceViaReflection(Object additionalDetails) {
+		if (additionalDetails == null) {
+			return null;
+		}
+		Map<String, Object> details = (Map<String, Object>) additionalDetails;
+		Object source = details.get("source");
+		if (source == null || StringUtils.isBlank(String.valueOf(source))) {
+			return null;
+		}
+
+		return (String) source;
+	}
+	
 }
 
 

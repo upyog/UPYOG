@@ -35,23 +35,6 @@
         size: A4;
         margin: 8mm;
         margin-bottom: 22mm;
-        
-       /*  @bottom-left {
-	        content: url([[${egovLogo}]]);
-	        transform: scale(0.4);
-	        transform-origin: left bottom;
-	    } */
-
-        /* @bottom-center {
-            content: counter(page) " of " counter(pages);
-            font-size: 10px;
-        } */
-      /*   
-        @bottom-right {
-	        content: "[[${'Application No: ' + applicationNumber + ', Scrutiny Date: ' + reportGeneratedDate}]]";
-	        font-size: 10px;
-	        font-weight: bold;
-	    } */
 	     @bottom-center {
         	content: element(pdfFooter);
    	 	}
@@ -163,32 +146,6 @@
 </style>
 </head>
 <body>
-<!-- <div id="pdfFooter">
-
-    <table class="footer-table">
-        <tr>
-
-            <td class="footer-left">
-                <img th:src="${egovLogo}" class="footer-logo" alt="logo"/>
-            </td>
-
-            <td class="footer-center">
-               <span class="pageNumber"></span>
-            </td>
-
-            <td class="footer-right">
-                <span th:text="${'Application No: ' + applicationNumber + ', Scrutiny Date: ' + reportGeneratedDate}"></span>
-            </td>
-
-        </tr>
-        <tr>
-            <td colspan="3">
-                Note: All Linear measurement values are in Metres and Area values in Square Metres
-            </td>
-        </tr>
-    </table>
-
-</div> -->
 <div id="pdfFooter">
 
     <table class="footer-table">
@@ -359,12 +316,57 @@
 		</table>
 
 		<!-- Error Block -->
-		<div th:if="${errors.size() > 0}" style="color: red;">
-			<h2>ERROR</h2>
-			<div th:each="error, stat : ${errors}">
-				<span style="font-size: 15px;" th:text="${stat.count + '. ' + error.value}"></span>
-			</div>
-		</div>
+		<div th:if="${errors.size() > 0}" style="color:red;">
+    <h2>ERROR</h2>
+
+    <!-- Print all errors except INVALID SOURCE1 -->
+    <div th:each="error, stat : ${errors}">
+        <div th:unless="${error.key == 'INVALID SOURCE1'}">
+            <span style="font-size:15px;"
+                  th:text="${stat.count + '. ' + error.value}"></span>
+        </div>
+    </div>
+
+    <!-- Custom message -->
+    <div th:if="${errors.containsKey('INVALID SOURCE1')}"
+         style="font-size:15px; line-height:1.6;">
+
+        <span>2. </span><p>Dear Investors,</p>
+        <p>
+            Please be informed that with effect from 15.05.2025, all building plan applications
+            under the following categories will no longer be accepted on the eNaksha Portal:
+            <a href="https://enaksha.lgpunjab.gov.in" target="_blank">
+                https://enaksha.lgpunjab.gov.in
+            </a>
+            and
+            <a href="https://mseva.lgpunjab.gov.in/" target="_blank">
+                https://mseva.lgpunjab.gov.in/
+            </a>
+        </p>
+        <p style="margin:0;">• Industry</p>
+        <p style="margin:0;">• Hotel</p>
+        <p style="margin:0;">• Nursing Home / Hospital</p>
+        <p style="margin:0;">• Institutions</p>
+        <p>
+            Instead, investors are requested to submit such applications exclusively through the
+            Punjab Bureau of Investment Promotion (PBIP) Portal:
+            <br/>
+            <a href="https://fasttrack.punjab.gov.in/webportal/login" target="_blank">
+                https://fasttrack.punjab.gov.in/webportal/login
+            </a>
+        </p>
+
+        <p>
+            We request all stakeholders to kindly take note of this change and plan submissions accordingly.
+        </p>
+
+        <p>
+            Local Government Department,<br/>
+            Government of Punjab
+        </p>
+    </div>
+
+</div>
 
 		<!-- ✅ QR CODE — sirf Fulfilled hone par dikhega -->
 		<div th:if="${qrCode != null}" class="qr-container">
