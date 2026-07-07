@@ -236,12 +236,17 @@ public class EnrichmentService {
 //						.getIdResponses();
 //				layout.setNocNo(idResponses.get(0).getId());
 			}
+			
+			if (state.equalsIgnoreCase("PENDINGSANCTIONPAYMENT") && noc.getWorkflow() != null && noc.getWorkflow().getAction().equalsIgnoreCase(LAYOUTConstants.ACTION_APPROVE)) {
+				((Map<String, Object>) noc.getNocDetails().getAdditionalDetails()).put("approvalDate", Long.toString(System.currentTimeMillis()));
+			}
+			
 			if (state.equalsIgnoreCase(LAYOUTConstants.VOIDED_STATUS)) {
 				noc.setStatus(Status.INACTIVE);
 			}
 		}
 		
-		if (noc.getWorkflow() != null && noc.getWorkflow().getAction().equals(LAYOUTConstants.ACTION_INITIATE)) {
+		if (noc.getApplicationStatus().equalsIgnoreCase(LAYOUTConstants.FI_STATUS)) {
 			Map<String, String> details = (Map<String, String>) noc.getNocDetails().getAdditionalDetails();
 			details.put(LAYOUTConstants.INITIATED_TIME, Long.toString(System.currentTimeMillis()));
 
