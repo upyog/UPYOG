@@ -119,20 +119,9 @@ public class CalculatorController {
 	}
 	
 	@PostMapping("/_jobbillscheduler")
-	public void jobbillscheduler(@Valid @RequestBody WaterServiceSchedulerRequest serviceSchedulerRequest) {
+	public void jobbillscheduler(@Valid @RequestBody WaterServiceSchedulerRequest waterServiceSchedulerRequest) {
 		log.info("_jobbillscheduler::");
-		wSCalculationService.generateBillBasedLocalityOrTenant(serviceSchedulerRequest);
-	}
-	
-	/**
-	 * API to trigger tenant bill generation scheduler.
-	 *
-	 * @param requestInfoWrapper request context for bill generation
-	 */
-	@PostMapping("/_tenantjobbillscheduler")
-	public void jobTenantBillScheduler(@Valid @RequestBody WaterServiceSchedulerRequest serviceSchedulerRequest) {
-		log.info("_tenantJobBillScheduler::");
-		wSCalculationService.generateBillBasedLocalityOrTenant(serviceSchedulerRequest);
+		wSCalculationService.generateBillBasedLocalityOrTenant(waterServiceSchedulerRequest);
 	}
 	
 	@PostMapping("/_getConnectionForDemand")
