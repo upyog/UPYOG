@@ -79,6 +79,30 @@ public class EdcrValidator {
         }
         return null;
     }
+    
+    public ErrorDetail validate2(final EdcrRequest edcr) {
+        if (edcr != null) {
+            ErrorDetail error = new ErrorDetail();
+            Field[] edcrFields = edcr.getClass().getDeclaredFields();
+            ErrorDetail e1 = validateAttributes(edcr, edcrFields, error);
+            if (e1 != null)
+                return error;
+            if (edcr.getRequestInfo() != null) {
+                Field[] reqInfoFields = edcr.getRequestInfo().getClass().getDeclaredFields();
+                ErrorDetail e2 = validateAttributes(edcr.getRequestInfo(), reqInfoFields, error);
+                if (e2 != null)
+                    return error;
+            }
+            if (edcr.getRequestInfo() != null && edcr.getRequestInfo().getUserInfo() != null) {
+                Field[] userInfoFields = edcr.getRequestInfo().getUserInfo().getClass().getDeclaredFields();
+                ErrorDetail e3 = validateAttributes(edcr.getRequestInfo().getUserInfo(), userInfoFields, error);
+                if (e3 != null)
+                    return error;
+            }
+            
+        }
+        return null;
+    }
 
     public ErrorDetail validate(final RequestInfoWrapper requestInfoWrapper) {
         if (requestInfoWrapper != null) {
