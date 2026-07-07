@@ -847,7 +847,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	/**
 	 * Generate bill Based on Time (Monthly, Quarterly, Yearly)
 	 */
-	public void generateBillBasedLocalityOrTenant(WaterServiceSchedulerRequest serviceSchedulerRequest) {
+	public void generateBillBasedLocalityOrTenant(WaterServiceSchedulerRequest waterServiceSchedulerRequest) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 		log.info("Time schedule start for water bill generation on : " + date.format(dateTimeFormatter));
@@ -859,7 +859,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 Additionally, from the group-based list for Patiala, we now pick only those entries where: The group is not configured (i.e., group is null or empty), and The status is also "INITIATED".
 So, both lists are now filtered to include only records with INITIATED status, with an extra condition for Patiala that the group should not be present.  */		
   
-		SchedulerLevel schedulerLevel = serviceSchedulerRequest.getSchedulerLevel();
+		SchedulerLevel schedulerLevel = waterServiceSchedulerRequest.getSchedulerLevel();
 		List<BillScheduler> billSchedularLocality = billGeneratorService.getBillGenerationDetails(criteria);
 		List<BillScheduler> billSchedulargrouplist = billGeneratorService.getBillGenerationGroup(criteria);
 		List<BillScheduler> billSchedularList = new ArrayList<>();
@@ -887,16 +887,16 @@ So, both lists are now filtered to include only records with INITIATED status, w
 			}
 		}
 		
-		String currentTenantId = serviceSchedulerRequest.getRequestInfo().getMsgId();
 		if (billSchedularList.isEmpty())
 			return;
+		String currentTenantId = waterServiceSchedulerRequest.getRequestInfo().getMsgId();
 		log.info("billSchedularList count : " + billSchedularList.size());
 		for (BillScheduler billSchedular : billSchedularList) {
 			try {
 				
 				List<String> connectionNos = null;
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
-						.requestInfo(serviceSchedulerRequest.getRequestInfo()).build();
+						.requestInfo(waterServiceSchedulerRequest.getRequestInfo()).build();
 
 				if ("pb.patiala".equalsIgnoreCase(billSchedular.getTenantId()) && billSchedular.getGrup() != null
 						&& !billSchedular.getGrup().isEmpty()) {
