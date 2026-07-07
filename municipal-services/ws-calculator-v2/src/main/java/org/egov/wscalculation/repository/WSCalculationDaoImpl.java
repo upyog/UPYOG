@@ -304,7 +304,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	@Override
 	public List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getConnectionsNoByLocality(tenantId, connectionType,WSCalculationConstant.ACTIVE_CONNECTION, locality,null, preparedStatement);
+		String query = queryBuilder.getConnectionsNoByLocalityTenantOrGroup(tenantId, connectionType,WSCalculationConstant.ACTIVE_CONNECTION, locality,null, preparedStatement);
 		log.info("preparedStatement: " + preparedStatement + " query : " + query);
 		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
 	}
@@ -312,7 +312,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	@Override
 	public List<String> getConnectionsNoByTenant(String tenantId, String connectionType) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getConnectionsNoByTenant(tenantId, connectionType,WSCalculationConstant.ACTIVE_CONNECTION,null, preparedStatement);
+		String query = queryBuilder.getConnectionsNoByLocalityTenantOrGroup(tenantId, connectionType,WSCalculationConstant.ACTIVE_CONNECTION,null,null, preparedStatement);
 		log.info("preparedStatement: " + preparedStatement + " query : " + query);
 		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
 	}
@@ -320,7 +320,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	@Override
 	public List<String> getConnectionsNoByGroups(String tenantId, String connectionType, String group) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getConnectionsNoByLocality(tenantId, connectionType,WSCalculationConstant.ACTIVE_CONNECTION, null,group, preparedStatement);
+		String query = queryBuilder.getConnectionsNoByLocalityTenantOrGroup(tenantId, connectionType,WSCalculationConstant.ACTIVE_CONNECTION, null,group, preparedStatement);
 		log.info("preparedStatement: " + preparedStatement + " query : " + query);
 		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
 	}

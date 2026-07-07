@@ -34,11 +34,10 @@ public class BillGenerationConsumer {
 	private BillGeneratorDao billGeneratorDao;
 
 	/**
-	 * Listens to the bill generation Kafka topic and processes bill generation
-	 * requests in batches. Each record is validated and processed independently,
-	 * ensuring failures in one record do not affect the others.
-	 *
-	 * @param records the batch of bill generation requests received from Kafka
+	 * Listen the topic for processing the batch records.
+	 * 
+	 * @param records
+	 *            would be bill generator request.
 	 */
 	@KafkaListener(
 		    topics = "${egov.watercalculatorservice.billgenerate.topic}",
@@ -71,29 +70,20 @@ public class BillGenerationConsumer {
 		                continue;
 		            }
 
-		            List<String> failureConsumerCodes = new ArrayList<>();
-		            List<String> fetchBillSuccessConsumercodes;
-		            if(billGeneratorReq.getTenantId() != null && billGeneratorReq.getBillSchedular() == null) {
-		            	log.info("🚀 Fetch Bill by without Bill Schedular based generator initiated for Consumers: {}", billGeneratorReq.getConsumerCodes());
-		            	fetchBillSuccessConsumercodes = demandService.fetchTenentBillSchedulerSingle(
-								billGeneratorReq.getConsumerCodes(),
-								billGeneratorReq.getTenantId(),
-								billGeneratorReq.getRequestInfoWrapper().getRequestInfo(),
-								failureConsumerCodes);
-		            } else {
-		            	log.info("🚀 Fetch Bill by with Bill Schedular based generator initiated for Consumers: {}", billGeneratorReq.getConsumerCodes());
-			            fetchBillSuccessConsumercodes = demandService.fetchBillSchedulerSingle(
-			                    billGeneratorReq.getConsumerCodes(),
-			                    billGeneratorReq.getTenantId(),
-			                    billGeneratorReq.getRequestInfoWrapper().getRequestInfo(),
-			                    failureConsumerCodes,
-			                    billGeneratorReq.getBillSchedular().getId(),
-			                    billGeneratorReq.getBillSchedular().getLocality()
-			            );
-		            }
+		            log.info("🚀 Fetch Bill generator initiated for Consumers: {}", billGeneratorReq.getConsumerCodes());
 
-		            log.info("✅ Fetch Bill generator completed for consumers : {}", fetchBillSuccessConsumercodes);
-		            log.info("❌ Fetch Bill generator failed for consumers : {}", failureConsumerCodes);
+		            List<String> failureConsumerCodes = new ArrayList<>();
+
+		            List<String> fetchBillSuccessConsumercodes = demandService.fetchBillSchedulerSingle(
+		                    billGeneratorReq.getConsumerCodes(),
+		                    billGeneratorReq.getTenantId(),
+		                    billGeneratorReq.getRequestInfoWrapper().getRequestInfo(),
+		                    failureConsumerCodes,
+		                    billGeneratorReq.getBillSchedular().getId(),
+		                    billGeneratorReq.getBillSchedular().getLocality()
+		            );
+
+		            log.info("✅ Fetch Bill generator completed for consumers: {}", fetchBillSuccessConsumercodes);
 		        } catch (Exception ex) {
 		            log.error("❌ Exception while processing record {} -> {}", i + 1, ex.getMessage(), ex);
 		        }

@@ -1,0 +1,27 @@
+package org.egov.wscalculation.web.models;
+
+import java.util.List;
+
+import org.egov.common.contract.request.RequestInfo;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class WaterServiceSchedulerRequest {
+
+	@JsonProperty("RequestInfo")
+	private RequestInfo requestInfo;
+	
+	@JsonProperty("ScheduledFor")
+	private SchedulerLevel schedulerLevel;
+}

@@ -119,9 +119,9 @@ public class CalculatorController {
 	}
 	
 	@PostMapping("/_jobbillscheduler")
-	public void jobbillscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+	public void jobbillscheduler(@Valid @RequestBody WaterServiceSchedulerRequest serviceSchedulerRequest) {
 		log.info("_jobbillscheduler::");
-		wSCalculationService.generateBillBasedLocality(requestInfoWrapper.getRequestInfo());
+		wSCalculationService.generateBillBasedLocalityOrTenant(serviceSchedulerRequest);
 	}
 	
 	/**
@@ -130,9 +130,9 @@ public class CalculatorController {
 	 * @param requestInfoWrapper request context for bill generation
 	 */
 	@PostMapping("/_tenantjobbillscheduler")
-	public void jobTenantBillScheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+	public void jobTenantBillScheduler(@Valid @RequestBody WaterServiceSchedulerRequest serviceSchedulerRequest) {
 		log.info("_tenantJobBillScheduler::");
-		wSCalculationService.generateBillBasedTenant(requestInfoWrapper.getRequestInfo());
+		wSCalculationService.generateBillBasedLocalityOrTenant(serviceSchedulerRequest);
 	}
 	
 	@PostMapping("/_getConnectionForDemand")
