@@ -1,46 +1,220 @@
-// Utility function to check if a value is not null, undefined, or an empty string
-export const checkForNotNull = (value = "") => {
-  return value && value != null && value != undefined && value != "" ? true : false;
+/**
+ * utils/index.js (cleaned)
+ * ------------------------
+ * Pure data helpers for the EST module. No React, no API calls —
+ * API calls live in services/ESTAllotmentService.js, and the
+ * document-preview component now lives in ./ESTDocumentPreview.js
+ * (re-exported at the bottom so existing imports keep working).
+ */
+
+/* ════════════════════════ Date helpers ════════════════════════
+   The EST backend mixes formats: "DD-MM-YYYY" strings for agreement
+   dates, epoch ms for audit fields. parseESTDate is the single
+   entry point — every other date function goes through it.       */
+
+/** Parse epoch ms/seconds, "DD-MM-YYYY", or ISO string into a Date (or null). */
+export const parseESTDate = (value) => {
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value === "number" || /^\d+$/.test(String(value))) {
+    let num = Number(value);
+    if (String(num).length === 10) num *= 1000; // epoch seconds → ms
+    const d = new Date(num);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  const m = String(value).match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (m) return new Date(+m[3], +m[2] - 1, +m[1]); // DD-MM-YYYY
+  const d = new Date(value); // ISO or anything else parseable
+  return isNaN(d.getTime()) ? null : d;
 };
 
-// Utility function to replace all dots in a string with underscores
-export const convertDotValues = (value = "") => {
-  return (
-    (checkForNotNull(value) && ((value.replaceAll && value.replaceAll(".", "_")) || (value.replace && stringReplaceAll(value, ".", "_")))) || "NA"
+/** Display format DD/MM/YYYY; "" if missing/invalid. */
+export const formatDate = (value) => {
+  const d = parseESTDate(value);
+  if (!d) return "";
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${d.getFullYear()}`;
+};
+
+/**
+ * Backend contract wants dates as "dd-MM-yyyy" strings.
+ * Built from LOCAL date parts — toISOString() shifts IST-midnight
+ * dates back a day (UTC), giving off-by-one dates.
+ */
+export const toDDMMYYYY = (value) => {
+  const d = parseESTDate(value);
+  if (!d) return null;
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${dd}-${mm}-${d.getFullYear()}`;
+};
+
+/** Epoch (ms or s) → DD/MM/YYYY, or "N/A". */
+export const formatEpochDate = (value) => formatDate(value) || "N/A";
+
+/**
+ * Legacy epoch formatter kept for existing callers.
+ * "ewst" gets dashes, everything else slashes.
+ */
+export const convertEpochToDate = (dateEpoch, businessService) => {
+  const formatted = formatDate(dateEpoch);
+  if (!formatted) return null;
+  return businessService === "ewst" ? formatted.replaceAll("/", "-") : formatted;
+};
+
+/* ════════════════════════ Duration helpers ════════════════════════ */
+
+/** Whole months between two dates (0 if invalid/negative). Single source of the math. */
+export const calculateDuration = (start, end) => {
+  const startDate = parseESTDate(start);
+  const endDate = parseESTDate(end);
+  if (!startDate || !endDate) return 0;
+
+  let years = endDate.getFullYear() - startDate.getFullYear();
+  let months = endDate.getMonth() - startDate.getMonth();
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+  const totalMonths = years * 12 + months;
+  return totalMonths >= 0 ? totalMonths : 0;
+};
+
+/** Months count → "1 year 6 months" (or "" for 0/invalid). */
+const monthsToReadable = (totalMonths) => {
+  const months = Number(totalMonths);
+  if (!Number.isFinite(months) || months <= 0) return "";
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+  const parts = [];
+  if (y) parts.push(`${y} ${y === 1 ? "year" : "years"}`);
+  if (m) parts.push(`${m} ${m === 1 ? "month" : "months"}`);
+  return parts.join(" ");
+};
+
+/** Two dates → "1 year 6 months" ("0 months" if same/invalid). */
+export const calculatemonths = (start, end) =>
+  monthsToReadable(calculateDuration(start, end)) || "0 months";
+
+/** Allotment (duration in months) → "1 year 7 months". */
+export const formatDurationWithMonths = (allotment = {}) =>
+  monthsToReadable(allotment.duration);
+
+/** "15 months" / "15" / 15 → 15. */
+export const extractDuration = (durationStr) => {
+  if (!durationStr) return 0;
+  const match = durationStr.toString().match(/\d+/);
+  return match ? Number(match[0]) : 0;
+};
+
+/* ════════════════════════ Value helpers ════════════════════════ */
+
+/** First non-empty value (numeric 0 counts as a value). */
+export const pick = (...values) =>
+  values.find((v) => v !== null && v !== undefined && v !== "");
+
+/** Keep rows with a meaningful value — numeric 0 is kept (Advance Payment: 0 shows). */
+export const filterEmpty = (rows = []) =>
+  rows.filter((r) => r && r.value !== null && r.value !== undefined && r.value !== "");
+
+export const checkForNotNull = (value = "") =>
+  value !== null && value !== undefined && value !== "";
+
+export const checkForNA = (value = "") => (checkForNotNull(value) ? value : "EST_NA");
+
+export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
+  if (searcher === "") return str;
+  while (str.includes(searcher)) {
+    str = str.replace(searcher, replaceWith);
+  }
+  return str;
+};
+
+/** Replace all dots with underscores; "NA" if empty. */
+export const convertDotValues = (value = "") =>
+  checkForNotNull(value) ? stringReplaceAll(String(value), ".", "_") : "NA";
+
+export const getFixedFilename = (filename = "", size = 5) =>
+  filename.length <= size ? filename : `${filename.substr(0, size)}...`;
+
+export const checkIsAnArray = (obj = []) => Array.isArray(obj);
+
+export const checkArrayLength = (obj = [], length = 0) =>
+  checkIsAnArray(obj) && obj.length > length;
+
+/* ════════════════════════ Form / UI helpers ════════════════════════ */
+
+/** Sort form items by "order", including a group's children. */
+export const sortByOrder = (formConfig = []) => {
+  const sorted = [...formConfig].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  return sorted.map((item) =>
+    item.type === "group" && Array.isArray(item.children)
+      ? { ...item, children: [...item.children].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) }
+      : item
   );
 };
 
-// Utility function to truncate a filename to a fixed size and append ellipsis
-export const getFixedFilename = (filename = "", size = 5) => {
-  if (filename.length <= size) {
-    return filename;
-  }
-  return `${filename.substr(0, size)}...`;
+export const shouldHideBackButton = (config = []) =>
+  config.some((key) => window.location.href.includes(key.screenPath)) ||
+  window.location.href.includes("acknowledgement");
+
+export const estAccess = () => true;
+
+export const getWorkflow = () => ({
+  businessService: `est`,
+  moduleName: "estate-services",
+});
+
+/** Shallow-ish equality check used by edit flows. Kept as-is behaviorally. */
+export const CompareTwoObjects = (ob1, ob2) => {
+  let comp = 0;
+  Object.keys(ob1).forEach((key) => {
+    if (typeof ob1[key] === "object" && ob1[key] !== null) {
+      if (key === "institution") {
+        if ((ob1[key].name || ob2[key]?.name) && ob1[key]?.name !== ob2[key]?.name) comp = 1;
+        else if (ob1[key]?.type?.code !== ob2[key]?.type?.code) comp = 1;
+      } else if (ob1[key]?.code !== ob2[key]?.code) comp = 1;
+    } else if ((ob1[key] || ob2[key]) && ob1[key] !== ob2[key]) {
+      comp = 1;
+    }
+  });
+  return comp !== 1;
 };
 
-// Utility function to determine if the back button should be hidden based on the current URL
-export const shouldHideBackButton = (config = []) => {
-  return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 || window.location.href.includes("acknowledgement")
-    ? true
-    : false;
+/* ════════════════════════ Filestore helpers ════════════════════════ */
+
+export const pdfDownloadLink = (documents = {}, fileStoreId = "") => {
+  const downloadLink = documents[fileStoreId] || "";
+  const differentFormats = downloadLink?.split(",") || [];
+  return (
+    differentFormats.find(
+      (link) => !link.includes("large") && !link.includes("medium") && !link.includes("small")
+    ) || ""
+  );
 };
 
-export const estAccess = () => {
-  return true;
+export const pdfDocumentName = (documentLink = "", index = 0) =>
+  decodeURIComponent(documentLink.split("?")[0].split("/").pop().slice(13)) ||
+  `Document - ${index + 1}`;
+
+export const DownloadReceipt = async (
+  consumerCode,
+  tenantId,
+  businessService,
+  pdfKey = "consolidatedreceipt"
+) => {
+  tenantId = tenantId || Digit.ULBService.getCurrentTenantId();
+  await Digit.Utils.downloadReceipt(consumerCode, businessService, pdfKey, tenantId);
 };
 
-const toYMD = (d) => {
-  if (!d) return null;
-  const date = new Date(d);
-  if (isNaN(date.getTime())) return null;
-  return date.toISOString().split("T")[0]; // YYYY-MM-DD
-};
+/* ════════════════════════ Payload builders ════════════════════════
+   These SHAPE data only. Sending it is ESTAllotmentService's job
+   (called from useESTAssetsAllotment) — never call APIs from here. */
 
 export const estPayloadData = (data) => {
   const user = Digit.UserService.getUser().info;
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  // ✅ CORRECT asset source (THIS IS THE FIX)
   const assetData =
     data?.AssignAssetsData?.asset ||
     data?.AssignAssetsData?.Asset ||
@@ -50,20 +224,28 @@ export const estPayloadData = (data) => {
     data?.Assetdata ||
     {};
 
-  console.log("FINAL assetData used for payload:", assetData);
-
-  const formdata = {
+  return {
     Assets: [
       {
         assetStatus: "1",
         assetType: assetData?.assetType || "",
         buildingName: assetData?.buildingName || "",
-        buildingNo: assetData?.buildingNo || "",  
+        buildingNo: assetData?.buildingNo || "",
         dimensionLength: Number(assetData?.dimensionLength) || 0,
         dimensionWidth: Number(assetData?.dimensionWidth) || 0,
         floor: Number(assetData?.buildingFloor) || 0,
-        locality:assetData?.localityName || assetData?.locality || assetData?.serviceType?.i18nKey || "",
-        localityCode: assetData?.localityCode || (typeof assetData?.serviceType === "string" ? assetData?.serviceType : assetData?.serviceType?.code) || "",
+        locality:
+          assetData?.localityName ||
+          assetData?.locality ||
+          assetData?.serviceType?.i18nKey ||
+          "",
+        localityCode:
+          assetData?.localityCode ||
+          (typeof assetData?.serviceType === "string"
+            ? assetData?.serviceType
+            : assetData?.serviceType?.code) ||
+          "",
+        billingCycle: assetData?.billingCycle || "MONTHLY",
         rate: Number(assetData?.rate) || 0,
         tenantId,
         totalFloorArea: Number(assetData?.totalFloorArea) || 0,
@@ -83,386 +265,61 @@ export const estPayloadData = (data) => {
         description: assetData?.description || "",
         assetClassification: "IMMOVABLE",
         assetParentCategory: "LAND",
-        assetCategory: assetData?.assetType || "",
         assetSubCategory: assetData?.assetSubCategory || null,
         department: assetData?.department || "DEPT_2",
       },
     ],
   };
-
-  return formdata;
 };
 
+import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
+import estateAllotmentFormConfig from "../config/Create/estateAllotmentFormConfig";
 
 export const createAllotmentData = (data) => {
   const user = Digit.UserService.getUser().info;
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  
-  const allotmentData = data?.AssignAssetsData?.AllotmentData || {};
 
-const extractDuration = (durationStr) => {
-  if (!durationStr) return 0;
-  const match = durationStr.toString().match(/\d+/);
-  return match ? Number(match[0]) : 0;
-};
-  
-const formdata = {
-  Allotments: [
-    {
-      allotmentId: allotmentData?.allotmentId || "",
-      assetNo: data?.assetData?.estateNo || allotmentData?.assetNo || "",
-      tenantId: tenantId,
-      userUuid: user?.uuid || "",
+  // DynamicForm saves via onSelect(config.key, { [payloadKey]: [formVal] }),
+  // and both config.key and payloadKey are "Allotments" for this flow — so the
+  // captured form values live at data.Allotments.Allotments[0].
+  // (data.AssignAssetsData.AllotmentData kept only as a legacy fallback.)
+  const allotmentData =
+    data?.Allotments?.Allotments?.[0] ||
+    data?.AssignAssetsData?.AllotmentData ||
+    {};
 
-      alloteeName: allotmentData?.allotteeName || "",
-      mobileNo: allotmentData?.phoneNumber || "",
-      alternateMobileNo: allotmentData?.altPhoneNumber || "",
-      emailId: allotmentData?.email || "",
+  const flatAllotment = {
+    ...allotmentData,
+    assetNo: allotmentData?.assetNo || data?.assetData?.estateNo || "",
+    emailId: allotmentData?.emailId || allotmentData?.email || "",
+  };
 
-      agreementStartDate: toYMD(allotmentData?.startDate),
-      agreementEndDate: toYMD(allotmentData?.endDate),
-      advancePaymentDate: toYMD(allotmentData?.advancePaymentDate),
+  const built = buildDynamicAllotmentPayload(
+    estateAllotmentFormConfig,
+    flatAllotment,
+    tenantId
+  );
 
-     duration: extractDuration(allotmentData?.duration),
-
-      rentRate: Number(allotmentData?.rate) || 0,
-      monthlyRent: Number(allotmentData?.monthlyRent) || 0,
-      advancePayment: Number(allotmentData?.advancePayment) || 0,
-
-      eofficeFileNo: allotmentData?.eOfficeFileNo || "",
-
-      auditDetails: {
-        createdBy: user?.uuid || "",
-        lastModifiedBy: user?.uuid || "",
-        createdTime: Date.now(),
-        lastModifiedTime: Date.now(),
-      },
-    },
-  ],
-};
-
-  return formdata;
-};
-
-
-export const CompareTwoObjects = (ob1, ob2) => {
-  let comp = 0;
-  Object.keys(ob1).map((key) => {
-    if (typeof ob1[key] == "object") {
-      if (key == "institution") {
-        if ((ob1[key].name || ob2[key].name) && ob1[key]?.name !== ob2[key]?.name) comp = 1;
-        else if (ob1[key]?.type?.code !== ob2[key]?.type?.code) comp = 1;
-      } else if (ob1[key]?.code !== ob2[key]?.code) comp = 1;
-    } else {
-      if ((ob1[key] || ob2[key]) && ob1[key] !== ob2[key]) comp = 1;
-    }
-  });
-  if (comp == 1) return false;
-  else return true;
-};
-
-
-export const checkForNA = (value = "") => {
-  return checkForNotNull(value) ? value : "EST_NA";
-};
-
-
-export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
-  let downloadLink = documents[fileStoreId] || "";
-  let differentFormats = downloadLink?.split(",") || [];
-  let fileURL = "";
-  differentFormats.length > 0 &&
-    differentFormats.map((link) => {
-      if (!link.includes("large") && !link.includes("medium") && !link.includes("small")) {
-        fileURL = link;
-      }
-    });
-  return fileURL;
-};
-
-
-export const pdfDocumentName = (documentLink = "", index = 0) => {
-  let documentName = decodeURIComponent(documentLink.split("?")[0].split("/").pop().slice(13)) || `Document - ${index + 1}`;
-  return documentName;
-};
-
-
-export const convertEpochToDate = (dateEpoch, businessService) => {
-  if (dateEpoch) {
-    const dateFromApi = new Date(dateEpoch);
-    let month = dateFromApi.getMonth() + 1;
-    let day = dateFromApi.getDate();
-    let year = dateFromApi.getFullYear();
-    month = (month > 9 ? "" : "0") + month;
-    day = (day > 9 ? "" : "0") + day;
-    if (businessService == "ewst") return `${day}-${month}-${year}`;
-    else return `${day}/${month}/${year}`;
-  } else {
-    return null;
-  }
-};
-
-export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
-  if (searcher == "") return str;
-  while (str.includes(searcher)) {
-    str = str.replace(searcher, replaceWith);
-  }
-  return str;
-};
-
-
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
-  tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
-  await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
-};
-
-
-export const checkIsAnArray = (obj = []) => {
-  return obj && Array.isArray(obj) ? true : false;
-};
-
-export const checkArrayLength = (obj = [], length = 0) => {
-  return checkIsAnArray(obj) && obj.length > length ? true : false;
-};
-
-export const getWorkflow = (data = {}) => {
   return {
-    businessService: `est`,
-    moduleName: "estate-services",
+    Allotments: [
+      {
+        ...built,
+        allotmentId: allotmentData?.allotmentId || "",
+        userUuid: user?.uuid || "",
+        billingCycle: built.billingCycle || "MONTHLY",
+        auditDetails: {
+          createdBy: user?.uuid || "",
+          lastModifiedBy: user?.uuid || "",
+          createdTime: Date.now(),
+          lastModifiedTime: Date.now(),
+        },
+      },
+    ],
   };
 };
 
+/* ════════════════════════ Re-exports ════════════════════════
+   ESTDocumnetPreview moved to its own file (it's a React component,
+   not a util). Re-exported here so existing imports keep working. */
 
-export const calculateDuration = (start, end) => {
-  if (!start || !end) return 0;
-
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-
-  let years = endDate.getFullYear() - startDate.getFullYear();
-  let months = endDate.getMonth() - startDate.getMonth();
-
-  // adjust negative months
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
-
-  // total months
-  const totalMonths = years * 12 + months;
-
-  return totalMonths >= 0 ? totalMonths : 0;
-};
-
-
-
-
-
-
-// utils.js
-import React from "react";
-import { useTranslation } from "react-i18next";
-
-/**
- * Large PDF SVG used in previews
- */
-const LargePdfSvg = ({ size = 48 }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden
-    style={{ flexShrink: 0 }}
-  >
-    <rect width="24" height="24" rx="4" fill="#D32F2F" />
-    <text x="3" y="16" fontFamily="Arial, sans-serif" fontSize="10" fontWeight="700" fill="#FFFFFF">PDF</text>
-  </svg>
-);
-
-/**
- * Compact single document row: [LABEL] [ICON] [Click to View File]
- * - labelWidth: controls label column width (px)
- * - small gap between icon and link so they appear close
- */
-function DocLink({ href, label, titleStyles = {}, pdfSize = 48, labelWidth = 220 }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        textDecoration: "none",
-        marginBottom: 12,
-        width: "100%",
-      }}
-    >
-      {/* label */}
-      <div style={{ minWidth: labelWidth, fontWeight: 700, color: "#111", ...titleStyles }}>
-        {label}
-      </div>
-
-      {/* icon */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <LargePdfSvg size={pdfSize} />
-        {/* Click text immediately after icon */}
-        <div style={{ color: "#0B5FFF", textDecoration: "none", fontWeight: 500 }}>
-          Click to View File
-        </div>
-      </div>
-    </a>
-  );
-}
-
-/**
- * ESTDocumnetPreview
- * - documents: Array of groups with `values: [{ url, title, documentType }]`
- * Renders compact rows where icon and link are adjacent.
- */
-export function ESTDocumnetPreview({ documents = [], titleStyles = {}, isHrLine = false, pdfSize = 48, labelWidth = 220 }) {
-  const { t } = useTranslation();
-
-  // flatten groups -> values
-  const flattened = (documents || []).flatMap((group) =>
-    (group.values || []).map((v) => ({
-      url: v.url,
-      title: t(v.title || v.documentType || "DOCUMENT"),
-      documentType: v.documentType,
-    }))
-  );
-
-  return (
-    <div style={{ marginTop: 8 }}>
-      {flattened.length > 0 ? (
-        flattened.map((val, idx) => (
-          <div key={`est-link-${idx}`}>
-            <DocLink
-              href={val.url}
-              label={val.title}
-              titleStyles={titleStyles}
-              pdfSize={pdfSize}
-              labelWidth={labelWidth}
-            />
-            {isHrLine && idx !== flattened.length - 1 ? (
-              <hr style={{ border: 0, height: 1, backgroundColor: "#E5E5E5", margin: "8px 0 12px" }} />
-            ) : null}
-          </div>
-        ))
-      ) : (
-        !(window.location.href.includes("citizen")) && <div style={{ color: "#666" }}>{t("EST_NO_DOCUMENTS_UPLOADED_LABEL")}</div>
-      )}
-    </div>
-  );
-}
-
-
-export const formatEpochDate = (value) => {
-  if (!value) return "N/A";
-
-  let num = Number(value);
-
-  // If epoch is in seconds (10 digits), convert to milliseconds
-  if (String(num).length === 10) {
-    num = num * 1000;
-  }
-
-  const date = new Date(num);
-
-  if (isNaN(date.getTime())) return "N/A";
-
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
-};
-
-
-
-
-// src/utils/index.js
-
-/* -------------------- Utility helpers -------------------- */
-
-export const pick = (...vals) =>
-  vals.find((v) => v !== undefined && v !== null && v !== "") || "";
-
-export const filterEmpty = (arr = []) =>
-  arr.filter(
-    (i) =>
-      i &&
-      i.value !== undefined &&
-      i.value !== null &&
-      i.value !== ""
-  );
-
-/* -------------------- Date formatter -------------------- */
-/**
- * Returns: DD/MM/YYYY
- */
-export const formatDate = (d) => {
-  if (!d) return "";
-  const date = d instanceof Date ? d : new Date(d);
-  if (isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("en-GB");
-};
-
-/* -------------------- Duration calculator -------------------- */
-/**
- * Returns:
- * 1 year 6 months
- */
-export const calculatemonths = (start, end) => {
-  if (!start || !end) return "";
-
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-
-  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return "";
-
-  let years = endDate.getFullYear() - startDate.getFullYear();
-  let months = endDate.getMonth() - startDate.getMonth();
-
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
-
-  let result = "";
-
-  if (years > 0) {
-    result += `${years} year${years > 1 ? "s" : ""}`;
-  }
-
-  if (months > 0) {
-    result += `${result ? " " : ""}${months} month${months > 1 ? "s" : ""}`;
-  }
-
-  return result || "0 months";
-};
-
-/* -------------------- Duration formatter -------------------- */
-/**
- * Final Output:
- * 18 months (1 year 6 months)
- */
-export const formatDurationWithMonths = (allotment = {}) => {
-  const totalMonths = Number(allotment.duration || 0);
-  if (!totalMonths) return "";
-
-  const readable = calculatemonths(
-    allotment.agreementStartDate,
-    allotment.agreementEndDate
-  );
-
-  return readable
-    ? `${totalMonths} months (${readable})`
-    : `${totalMonths} months`;
-};
-
-
-
+export { ESTDocumnetPreview } from "./ESTDocumentPreview";

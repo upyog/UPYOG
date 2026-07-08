@@ -17,14 +17,22 @@
 // assetPayloadUtils.js's NUMERIC_FIELDS approach (explicit list, not pattern-sniffed).
 export const ALLOTMENT_NUMERIC_FIELDS = new Set([
   "rate",
+  "rentRate",      // was missing — API expects rentRate: 1500 (number), not "1500"
+  "duration",      // was missing — API expects duration: 3 (number)
   "monthlyRent",
   "advancePayment",
 ]);
 
-const toEpoch = (value) => {
+// The Allotment API takes dates as "dd-MM-yyyy" strings (e.g. "12-02-2026"),
+// matching createAllotmentData in utils/index.js — NOT epoch millis. Keeping
+// the preview identical to the real submit is the whole point of this file.
+const toApiDate = (value) => {
   if (!value) return null;
   const d = value instanceof Date ? value : new Date(value);
-  return isNaN(d.getTime()) ? null : d.getTime();
+  if (isNaN(d.getTime())) return null;
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${dd}-${mm}-${d.getFullYear()}`;
 };
 
 /**
@@ -33,7 +41,7 @@ const toEpoch = (value) => {
  *
  * - type "text"     → copies value, casts to Number for ALLOTMENT_NUMERIC_FIELDS
  * - type "dropdown" → copies code and label (name + nameName), same as assetPayloadUtils
- * - type "date"     → converts to epoch millis
+ * - type "date"     → converts to "dd-MM-yyyy" string
  * - type "radio"    → copies raw code value (already a plain string from DynamicFormField)
  * - type "file"     → passes the {filestoreId, documentuuid, documentType} object through as-is
  * - apiFieldName    → renames the key in the payload, same as assetPayloadUtils
@@ -63,7 +71,7 @@ export const buildDynamicAllotmentPayload = (routeConfig, flatAllotment = {}, te
     }
 
     if (type === "date") {
-      allotment[payloadKey] = toEpoch(flatAllotment[name]);
+      allotment[payloadKey] = toApiDate(flatAllotment[name]);
       return;
     }
 
@@ -73,12 +81,9 @@ export const buildDynamicAllotmentPayload = (routeConfig, flatAllotment = {}, te
 
   (routeConfig?.form || []).forEach(processField);
 
-  // ── Static required fields not driven by form config ──
-  // Best-effort guess at the real Allotment API contract — please verify/replace
-  // against whatever the actual Allotment service expects, the same way
-  // assetPayloadUtils.js's static block was verified against the real Asset API.
+
   allotment.tenantId = tenantId;
-  allotment.assetId = flatAllotment.assetNo || "";
+  allotment.assetNo = flatAllotment.assetNo || "";
   allotment.assetRefNumber = flatAllotment.assetRefNumber || "";
   allotment.allotmentStatus = "INITIATED";
 
