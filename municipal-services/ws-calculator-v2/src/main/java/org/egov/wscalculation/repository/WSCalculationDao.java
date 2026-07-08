@@ -44,6 +44,8 @@ public interface WSCalculationDao {
 	
 	List<String> getConnectionsNoByLocality(String tenantId, String connectionType, String locality);
 	
+	List<String> getConnectionsNoByTenant(String tenantId, String connectionType);
+	
 	Long searchLastDemandGenFromDate(String consumerCode, String tenantId);
 	
 	Boolean isConnectionDemandAvailableForBillingCycle(String tenantId, Long taxPeriodFrom, Long taxPeriodTo, String consumerCode); 

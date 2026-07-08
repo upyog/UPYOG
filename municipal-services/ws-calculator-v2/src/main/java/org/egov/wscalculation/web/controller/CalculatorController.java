@@ -119,9 +119,9 @@ public class CalculatorController {
 	}
 	
 	@PostMapping("/_jobbillscheduler")
-	public void jobbillscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+	public void jobbillscheduler(@Valid @RequestBody WaterServiceSchedulerRequest waterServiceSchedulerRequest) {
 		log.info("_jobbillscheduler::");
-		wSCalculationService.generateBillBasedLocality(requestInfoWrapper.getRequestInfo());
+		wSCalculationService.generateBillBasedLocalityOrTenant(waterServiceSchedulerRequest);
 	}
 	
 	@PostMapping("/_getConnectionForDemand")

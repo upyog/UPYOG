@@ -26,6 +26,7 @@ import org.egov.swcalculation.web.models.GetBillCriteria;
 import org.egov.swcalculation.web.models.RequestInfoWrapper;
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.egov.swcalculation.web.models.SingleDemand;
+import org.egov.swcalculation.web.models.SewerageSchedulerRequestWrapper;
 import org.egov.tracer.model.CustomException;
 import org.egov.swcalculation.service.DemandService;
 import org.egov.swcalculation.service.SWCalculationService;
@@ -132,8 +133,8 @@ public class SWCalculationController {
 
 	        
 	@PostMapping("/_jobbillscheduler")
-	public void jobbillscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-		sWCalculationService.generateBillBasedLocality(requestInfoWrapper.getRequestInfo());
+	public void jobbillscheduler(@Valid @RequestBody SewerageSchedulerRequestWrapper schedulerRequestWrapper) {
+		sWCalculationService.generateBillBasedLocalityOrTenant(schedulerRequestWrapper.getRequestInfo(), schedulerRequestWrapper.getSchedulerLevel());
 	}
 	
 

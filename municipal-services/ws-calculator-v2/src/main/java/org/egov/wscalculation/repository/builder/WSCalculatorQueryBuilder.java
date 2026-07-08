@@ -457,7 +457,7 @@ public class WSCalculatorQueryBuilder {
 
 	}
 
-	public String getConnectionsNoByLocality(String tenantId, String connectionType, String status, String locality,String groups,
+	public String getConnectionsNoByLocalityTenantOrGroup(String tenantId, String connectionType, String status, String locality,String groups,
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(connectionNoByLocality);
 
@@ -1086,8 +1086,12 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 			query.append(" status = ? ");
 			preparedStatement.add(criteria.getStatus());
 		}
-		query.append(" and groups is not null ");
-		query.append(" ORDER BY createdtime ");
+		
+		if (criteria.getGroup() != null) {
+			query.append(" and groups is not null ");
+		}
+		
+		query.append(" ORDER BY createdtime DESC");
 		return query.toString();
 	}
 	

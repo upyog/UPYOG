@@ -847,7 +847,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	/**
 	 * Generate bill Based on Time (Monthly, Quarterly, Yearly)
 	 */
-	public void generateBillBasedLocality(RequestInfo requestInfo) {
+	public void generateBillBasedLocalityOrTenant(WaterServiceSchedulerRequest waterServiceSchedulerRequest) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 		log.info("Time schedule start for water bill generation on : " + date.format(dateTimeFormatter));
@@ -859,6 +859,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 Additionally, from the group-based list for Patiala, we now pick only those entries where: The group is not configured (i.e., group is null or empty), and The status is also "INITIATED".
 So, both lists are now filtered to include only records with INITIATED status, with an extra condition for Patiala that the group should not be present.  */		
   
+		SchedulerLevel schedulerLevel = waterServiceSchedulerRequest.getSchedulerLevel();
 		List<BillScheduler> billSchedularLocality = billGeneratorService.getBillGenerationDetails(criteria);
 		List<BillScheduler> billSchedulargrouplist = billGeneratorService.getBillGenerationGroup(criteria);
 		List<BillScheduler> billSchedularList = new ArrayList<>();
@@ -877,35 +878,47 @@ So, both lists are now filtered to include only records with INITIATED status, w
 		    }
 		}
 		
+		String currentTenantId = waterServiceSchedulerRequest.getRequestInfo().getMsgId();
+		if (schedulerLevel == SchedulerLevel.TENANT) {
+			criteria.setTenantId(currentTenantId);
+			List<BillScheduler> billSchedarTenantList = billGeneratorService.getBillGenerationByTenant(criteria);
+			for (BillScheduler scheduler : billSchedarTenantList) {
+				if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
+					billSchedularList.add(scheduler);
+				}
+			}
+		}
+		
 		if (billSchedularList.isEmpty())
 			return;
 		log.info("billSchedularList count : " + billSchedularList.size());
 		for (BillScheduler billSchedular : billSchedularList) {
 			try {
-
-				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
-				log.info("Updated Bill Schedular Status To INPROGRESS");
-				List<String> connectionNos = null;
-				requestInfo.getUserInfo().setTenantId(billSchedular.getTenantId() != null ? billSchedular.getTenantId()
-						: requestInfo.getUserInfo().getTenantId());
-				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 				
-				if ("pb.patiala".equalsIgnoreCase(billSchedular.getTenantId()) &&
-					    billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
-					    
-					    connectionNos = wSCalculationDao.getConnectionsNoByGroups(
-					        billSchedular.getTenantId(),
-					        WSCalculationConstant.nonMeterdConnection,
-					        billSchedular.getGrup()
-					    );
+				List<String> connectionNos = null;
+				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+						.requestInfo(waterServiceSchedulerRequest.getRequestInfo()).build();
 
-					} else {
-					    connectionNos = wSCalculationDao.getConnectionsNoByLocality(
-					        billSchedular.getTenantId(),
-					        WSCalculationConstant.nonMeterdConnection,
-					        billSchedular.getLocality()
-					    );
+				if (billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
+					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
+					log.info("Updated Bill Schedular Status To INPROGRESS");
+					connectionNos = wSCalculationDao.getConnectionsNoByGroups(billSchedular.getTenantId(),
+							WSCalculationConstant.nonMeterdConnection, billSchedular.getGrup());
+
+				} else if (schedulerLevel == SchedulerLevel.TENANT) {
+					if(!billSchedular.getTenantId().equals(currentTenantId)) {
+						continue;
 					}
+					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
+					log.info("Updated Bill Schedular Status To INPROGRESS");
+					connectionNos = wSCalculationDao.getConnectionsNoByTenant(billSchedular.getTenantId(),
+							WSCalculationConstant.nonMeterdConnection);
+				} else {
+					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
+					log.info("Updated Bill Schedular Status To INPROGRESS");
+					connectionNos = wSCalculationDao.getConnectionsNoByLocality(billSchedular.getTenantId(),
+							WSCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
+				}
 				// connectionNos.add("0603000002");
 				// connectionNos.add("0603009718");
 				// connectionNos.add("0603000001");

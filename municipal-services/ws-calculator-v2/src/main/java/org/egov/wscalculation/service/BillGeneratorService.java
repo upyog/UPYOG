@@ -65,6 +65,13 @@ public class BillGeneratorService {
 	public List<BillScheduler> getBillGenerationGroup(BillGenerationSearchCriteria criteria) {
 
 		return billGeneratorDao.getBillGenerationGroup(criteria);
+
+	}
+	
+	public List<BillScheduler> getBillGenerationByTenant(BillGenerationSearchCriteria criteria) {
+
+		return billGeneratorDao.getBillGenerationByTenant(criteria);
+		
 	}
 	
 	public List<BillScheduler> bulkbillgeneration(BillGenerationReq billGenerationReq) {

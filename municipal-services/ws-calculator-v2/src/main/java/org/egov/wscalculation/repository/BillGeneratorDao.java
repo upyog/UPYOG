@@ -71,6 +71,15 @@ public class BillGeneratorDao {
 		return jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
 	}
 	
+	public List<BillScheduler> getBillGenerationByTenant(BillGenerationSearchCriteria criteria) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.searchBillGenerationSchedulerQuerys(criteria, preparedStatement);
+		if (query == null)
+			return Collections.emptyList();
+		log.debug("Prepared Statement" + preparedStatement.toString());
+		return jdbcTemplate.query(query, preparedStatement.toArray(), billGenerateSchedulerRowMapper);
+	}
+	
 	public List<String> getConnectionsByStatus(String string, String status) {
 	    List<Object> preparedStatement = new ArrayList<>();
 

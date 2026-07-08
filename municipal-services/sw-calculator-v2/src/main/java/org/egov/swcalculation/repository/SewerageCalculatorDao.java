@@ -24,6 +24,8 @@ public interface SewerageCalculatorDao {
 	List<String> getConnectionsNoByGroups(String tenantId, String connectionType, String groups);
 
 	
+	List<String> getConnectionsNoByTenant(String tenantId, String connectionType);
+	
 	Long searchLastDemandGenFromDate(String consumerCode, String tenantId);
 	
 	Boolean isConnectionDemandAvailableForBillingCycle(String tenantId, Long taxPeriodFrom, Long taxPeriodTo, String consumerCode); 
@@ -56,5 +58,6 @@ public interface SewerageCalculatorDao {
 	public Boolean getexpiryBills(List billSearchsss);
 
 	Boolean isBatchDemandExecuted(String tenantId, Long taxPeriodFrom, Long taxPeriodTo);
+
 
 }

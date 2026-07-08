@@ -618,8 +618,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
 //				List<String> connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality( billSchedular.getTenantId(), SWCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
-				if ("pb.patiala".equalsIgnoreCase(billSchedular.getTenantId()) &&
-					    billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
+				if (billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
 					    
 					    connectionNos = sewerageCalculatorDao.getConnectionsNoByGroups(
 					        billSchedular.getTenantId(),

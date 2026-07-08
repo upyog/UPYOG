@@ -9,6 +9,7 @@ import org.egov.wscalculation.web.models.CalculationReq;
 import org.egov.wscalculation.web.models.CancelDemand;
 import org.egov.wscalculation.web.models.SingleDemand;
 import org.egov.wscalculation.web.models.WaterConnection;
+import org.egov.wscalculation.web.models.WaterServiceSchedulerRequest;
 
 public interface WSCalculationService {
 
@@ -20,8 +21,8 @@ public interface WSCalculationService {
 	String  generateSingleDemand(SingleDemand singledemand);
 	
 //	String cancelDemand(CancelDemand cancelDemand);
-	void generateBillBasedLocality(RequestInfo requestInfo);
-
+	void generateBillBasedLocalityOrTenant(WaterServiceSchedulerRequest waterServiceSchedulerRequest);
+	
 	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
 	
 	String generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
