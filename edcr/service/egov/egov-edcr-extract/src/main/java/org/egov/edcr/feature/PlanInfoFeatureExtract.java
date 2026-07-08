@@ -773,13 +773,13 @@ public class PlanInfoFeatureExtract extends FeatureExtract {
 		if (StringUtils.isNotBlank(numberOfFloors))
 			pi.setNumberOfFloors(numberOfFloors);
 
-		String roadType = planInfoProperties.get(DxfFileConstants.ROAD_TYPE);
-		if (StringUtils.isNotBlank(roadType))
-			pi.setRoadType(roadType);
-		else {
-			pl.addError(DxfFileConstants.ROAD_TYPE,
-					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.ROAD_TYPE + " of PLAN_INFO layer"));
-		}
+//		String roadType = planInfoProperties.get(DxfFileConstants.ROAD_TYPE);
+//		if (StringUtils.isNotBlank(roadType))
+//			pi.setRoadType(roadType);
+//		else {
+//			pl.addError(DxfFileConstants.ROAD_TYPE,
+//					getLocaleMessage(OBJECTNOTDEFINED, DxfFileConstants.ROAD_TYPE + " of PLAN_INFO layer"));
+//		}
 		
 		String khasraNo = planInfoProperties.get(DxfFileConstants.KHASRA_NO);
 		if (StringUtils.isNotBlank(khasraNo)) {
