@@ -157,10 +157,8 @@ const ESTAllotmentAcknowledgement = ({ data = {}, onSuccess }) => {
     (async () => {
       try {
         payloadRef.current = createAllotmentData(data);
-        console.debug("EST_ACK: submitting payload", payloadRef.current);
 
         const res = await allotmentMutation.mutateAsync(payloadRef.current);
-        console.debug("EST_ACK: API resolved", res);
 
         try {
           settle(true, buildMergedResponse(res));
