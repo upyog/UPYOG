@@ -133,6 +133,7 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.2</version>
         </dependency>
 
         <!-- Lombok: compile-time only annotation processor -->
@@ -145,6 +146,7 @@
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.5</version>
             <scope>runtime</scope>
         </dependency>
 
