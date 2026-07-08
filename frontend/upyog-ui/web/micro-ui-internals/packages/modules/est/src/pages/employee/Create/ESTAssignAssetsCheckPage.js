@@ -1,32 +1,26 @@
-import React from "react";
-import  {DynamicCheckPage}  from "@nudmcdgnpm/digit-ui-react-components"; // adjust if you export it differently
+import React, { useCallback, useMemo, useState } from "react";
+import { DynamicCheckPage } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { checkForNA, ESTDocumnetPreview, formatEpochDate } from "../../../utils";
+import {
+  checkForNA,
+  createAllotmentData,
+  ESTDocumnetPreview,
+  formatEpochDate,
+} from "../../../utils";
+import { Config } from "../../../config/Create/AssignAssetConfig";
+import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig";
 
-// The same config sources ESTAssignAssets merges at runtime:
-import { Config } from "../../../config/Create/AssignAssetConfig";                   
-//import estateAllotmentFormConfig from "../../../config/Create/AssignAssetConfig"; 
-import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig"; // ← its own file
-
-/* =========================================================
-   ESTAssignAssetsCheckPage
-   ---------------------------------------------------------
-   Thin wrapper: all rendering is driven by the SAME config
-   DynamicForm uses (Config body entry + estateAllotmentFormConfig),
-   so adding/removing a field in the form config automatically
-   updates this summary page too.
-   ========================================================= */
-
-// Same merge ESTAssignAssets.js does: estateAllotmentFormConfig's `form` wins.
 const baseRoute = Config[0].body.find((b) => b.key === "Allotments");
 const routeConfig = { ...baseRoute, ...estateAllotmentFormConfig };
 
-const ESTAssignAssetsCheckPage = ({ onSubmit, value = {} }) => {
+const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {} }) => {
   const { t } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
-  // Display-only asset fields (excludeFromPayload) live in router state
-  // under value.assetData with different key names — map them once here
-  // to the field `name`s declared in the form config.
+  const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
+  const mutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
+
   const assetData = value?.assetData || {};
   const extraData = {
     assetNo: assetData.estateNo,
@@ -38,12 +32,39 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, value = {} }) => {
     assetRate: assetData.rate,
   };
 
+  const editRoute = `${modulePath}/assignassets/assign-assets`;
+
   const formatAnyDate = (v) => {
-  if (!v) return "N/A";
-  if (typeof v === "number" || /^\d+$/.test(String(v))) return formatEpochDate(Number(v));
-  const d = new Date(v);
-  return isNaN(d.getTime()) ? "N/A" : d.toLocaleDateString("en-IN"); // dd/mm/yyyy
-};
+    if (!v) return "N/A";
+    if (typeof v === "number" || /^\d+$/.test(String(v))) return formatEpochDate(Number(v));
+    const d = new Date(v);
+    return isNaN(d.getTime()) ? "N/A" : d.toLocaleDateString("en-IN");
+  };
+
+  const handleFinalSubmit = useCallback(() => {
+    if (isSubmitting) return;
+
+    if (!Array.isArray(routeConfig.form) || routeConfig.form.length === 0) {
+      console.error("EST_ALLOT: routeConfig.form is empty — refusing to submit");
+      onError && onError(new Error("EST_ALLOT: empty form config"));
+      return;
+    }
+
+    const payload = createAllotmentData(value);
+    setIsSubmitting(true);
+
+    mutation.mutate(payload, {
+      onSuccess: (response) => {
+        setIsSubmitting(false);
+        onSubmit && onSubmit(response);
+      },
+      onError: (error) => {
+        console.error("EST Allotment error:", error?.response?.data || error);
+        setIsSubmitting(false);
+        onError && onError(error);
+      },
+    });
+  }, [isSubmitting, value, mutation, onSubmit, onError]);
 
   return (
     <DynamicCheckPage
@@ -51,8 +72,9 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, value = {} }) => {
       config={{ key: "Allotments" }}
       value={value}
       extraData={extraData}
-      editRoute="/upyog-ui/employee/est/assignassets/assign-assets"
-      onSubmit={onSubmit}
+      editRoute={editRoute}
+      onSubmit={handleFinalSubmit}
+      isSubmitting={isSubmitting}
       summaryHeaderCode="EST_ASSIGN_ASSETS_SUMMARY"
       defaultSectionHeaderCode="EST_ASSET_DETAILS"
       t={t}

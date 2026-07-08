@@ -1,78 +1,108 @@
-import React, { useEffect } from "react";
+import React, { useMemo, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Config } from "../../../config/Create/AssignAssetConfig";
+import { buildAllotmentAcknowledgementData } from "../../../utils";
 
 const ESTAssignAssetCreate = ({ parentRoute }) => {
   const location = useLocation();
-  const assetData = location.state?.assetData || {};
   const queryClient = useQueryClient();
   const match = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
-  const { pathname } = useLocation();
+  const { pathname } = location;
   const navigate = Digit.Hooks.useCustomNavigate();
-  const stateId = Digit.ULBService.getStateId();
-  let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EST_ASSIGN_ASSETS", {});
 
+  const config = useMemo(() => {
+    const merged = Config.reduce((acc, obj) => {
+      if (!obj?.body) return acc;
+      return acc.concat(obj.body.filter((a) => !a.hideInCitizen));
+    }, []);
+    merged.indexRoute = "info";
+    return merged;
+  }, []);
+
   useEffect(() => {
-    if (assetData && Object.keys(params).length === 0) {
-      setParams({ assetData });
+    const incoming = location.state?.assetData;
+    if (!incoming || Object.keys(incoming).length === 0) return;
+
+    const identityOf = (a) => a?.estateNo || a?.assetId || a?.refAssetNo || "";
+    setParams((prev) => {
+      if (identityOf(prev?.assetData) === identityOf(incoming)) return prev;
+      return { ...prev, assetData: incoming };
+    });
+  }, [location.state, setParams]);
+
+  const getBasePath = useCallback(() => {
+    if (match?.pathnameBase) return match.pathnameBase;
+
+    const parts = pathname.split("/");
+    const terminalSegments = ["check", "acknowledgement", "info", "assign-assets"];
+    const terminalIndex = parts.findIndex((p) => terminalSegments.includes(p));
+    if (terminalIndex > 0) {
+      return parts.slice(0, terminalIndex).join("/");
     }
-  }, [assetData]);
+    return parts.slice(0, -1).join("/");
+  }, [match, pathname]);
 
-  const goNext = (skipStep, index, isAddMultiple, key) => {
-    console.log("goNext called with:", { skipStep, index, isAddMultiple, key });
-    let currentPath = pathname.split("/").pop();
-    let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
+  const goNext = useCallback(
+    (skipStep, index, isAddMultiple, key) => {
+      let currentPath = pathname.split("/").pop();
+      let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath) || {};
 
-    let redirectWithHistory = (to, state) => navigate(to, state != null ? { state } : undefined);
-    if (skipStep) {
-      redirectWithHistory = (to, state) => navigate(to, state != null ? { replace: true, state } : { replace: true });
-    }
+      let redirectWithHistory = (to, state) =>
+        navigate(to, state != null ? { state } : undefined);
+      if (skipStep) {
+        redirectWithHistory = (to, state) =>
+          navigate(to, state != null ? { replace: true, state } : { replace: true });
+      }
 
-    if (isAddMultiple) {
-      nextStep = key;
-    }
+      if (isAddMultiple) nextStep = key;
+      if (nextStep === null) return redirectWithHistory("check");
+      if (typeof nextStep !== "string") return redirectWithHistory("check");
 
-    if (nextStep === null) {
-      return redirectWithHistory(`check`);
-    }
+      redirectWithHistory(`${nextStep}`);
+    },
+    [pathname, config, navigate]
+  );
 
-    let nextPage = `${nextStep}`;
-    redirectWithHistory(nextPage);
-  };
+  const handleSelect = useCallback(
+    (key, data, skipStep, index, isAddMultiple = false) => {
+      setParams((prev) => ({ ...prev, [key]: data }));
+      goNext(skipStep, index, isAddMultiple, key);
+    },
+    [setParams, goNext]
+  );
 
-  function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
-    console.log("handleSelect called with:", { key, data, skipStep, index, isAddMultiple });
-    if (key === "Documents") {
-      setParams({ ...params, assetData, [key]: data });
-    } else {
-      setParams({ ...params, [key]: data });
-    }
-    goNext(skipStep, index, isAddMultiple, key);
-  }
+  const handleSkip = useCallback(() => {}, []);
+  const handleMultiple = useCallback(() => {}, []);
 
-  const handleSkip = () => {};
-  const handleMultiple = () => {};
-
-  const onSuccess = () => {
+  const onSuccess = useCallback(() => {
     clearParams();
     queryClient.invalidateQueries("EST_ASSIGN_ASSETS");
-  };
+  }, [clearParams, queryClient]);
 
-  const estcreate = async () => {
-    console.log("Final params before acknowlgement:", params);
-    navigate(`acknowledgement`);
-  };
+  const estcreate = useCallback(
+    (response) => {
+      const merged = buildAllotmentAcknowledgementData(params, response);
+      clearParams();
+      queryClient.invalidateQueries("EST_ASSIGN_ASSETS");
+      navigate(`${getBasePath()}/acknowledgement`, {
+        state: { data: merged, isSuccess: true },
+      });
+    },
+    [params, clearParams, queryClient, getBasePath, navigate]
+  );
 
-  let commonFields = Config;
-  commonFields.forEach((obj) => {
-    config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
-  });
-
-  config.indexRoute = "info";
+  const estcreateError = useCallback(
+    (error) => {
+      navigate(`${getBasePath()}/acknowledgement`, {
+        state: { data: null, isSuccess: false, error },
+      });
+    },
+    [getBasePath, navigate]
+  );
 
   const ESTAssignAssetsCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTAssignAssetsCheckPage");
   const ESTAllotmentAcknowledgement = Digit?.ComponentRegistryService?.getComponent("ESTAllotmentAcknowledgement");
@@ -80,19 +110,45 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
   return (
     <Routes>
       {config.map((routeObj, index) => {
-        const { component, texts, inputs, key } = routeObj;
-        const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
+        const { component } = routeObj;
+        const Component =
+          typeof component === "string"
+            ? Digit.ComponentRegistryService.getComponent(component)
+            : component;
         const user = Digit.UserService.getUser().info.type;
         return (
           <Route
             path={`${routeObj.route}/*`}
             key={index}
-            element={<Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} />}
+            element={
+              <Component
+                config={routeObj}
+                onSelect={handleSelect}
+                onSkip={handleSkip}
+                t={t}
+                formData={params}
+                onAdd={handleMultiple}
+                userType={user}
+                parentRoute={match?.pathnameBase || parentRoute}
+              />
+            }
           />
         );
       })}
-      <Route path="check/*" element={<ESTAssignAssetsCheckPage onSubmit={estcreate} value={params} />} />
-      <Route path="acknowledgement/*" element={<ESTAllotmentAcknowledgement data={params} onSuccess={onSuccess} />} />
+      <Route
+        path="check/*"
+        element={
+          <ESTAssignAssetsCheckPage
+            onSubmit={estcreate}
+            onError={estcreateError}
+            value={params}
+          />
+        }
+      />
+      <Route
+        path="acknowledgement/*"
+        element={<ESTAllotmentAcknowledgement data={params} onSuccess={onSuccess} />}
+      />
       <Route path="/*" element={<Navigate to={config.indexRoute} replace />} />
     </Routes>
   );

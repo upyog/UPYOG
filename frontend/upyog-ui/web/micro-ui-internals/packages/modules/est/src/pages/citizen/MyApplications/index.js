@@ -6,6 +6,7 @@ import EstateApplication from "./est-application";
 
 export const ESTMyApplications = () => {
   const { t } = useTranslation();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
 
@@ -143,7 +144,7 @@ export const ESTMyApplications = () => {
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">
-                <Link to={`/upyog-ui/citizen/est/my-applications/${t1}`}>{t("EST_LOAD_MORE_MSG")}</Link>
+                <Link to={`${modulePath}/my-applications/${t1}`}>{t("EST_LOAD_MORE_MSG")}</Link>
               </span>
             </p>
           </div>

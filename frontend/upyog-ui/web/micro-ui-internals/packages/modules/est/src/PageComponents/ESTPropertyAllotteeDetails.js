@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 const ESTPropertyAllotteeDetails = () => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -108,7 +109,7 @@ const clearFilters = (event) => {
         Cell: ({ row }) => (
           <span 
             style={{ color: "#a82227", cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => navigate(`/upyog-ui/employee/est/application-details/${row.original.assetNo}`)}
+            onClick={() => navigate(`${modulePath}/application-details/${row.original.assetNo}`)}
           >
             {row.original.assetNo || "N/A"}
           </span>
@@ -142,7 +143,7 @@ const clearFilters = (event) => {
         Cell: ({ row }) => GetCell(row.original.status || "ACTIVE") 
       },
     ],
-    [t, navigate]
+    [t, navigate, modulePath]
   );
 
   if (loading) return <Loader />;

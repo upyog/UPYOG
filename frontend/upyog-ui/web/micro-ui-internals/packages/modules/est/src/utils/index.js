@@ -8,7 +8,10 @@
  */
 
 import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
+import { buildDynamicAssetPayload } from "./assetPayloadUtils";
 import estateAllotmentFormConfig from "../config/Create/estateAllotmentFormConfig";
+import estateFormConfig from "../config/estateFormConfig";
+import { Config as registrationConfig } from "../config/Create/config";
 
 /* ════════════════════════ Date helpers ════════════════════════
    The EST backend mixes formats: "DD-MM-YYYY" strings for agreement
@@ -214,64 +217,99 @@ export const DownloadReceipt = async (
    These SHAPE data only. Sending it is ESTAllotmentService's job
    (called from useESTAssetsAllotment) — never call APIs from here. */
 
+const extractAssetDataFromSession = (data = {}) =>
+  data?.AssignAssetsData?.asset ||
+  data?.AssignAssetsData?.Asset ||
+  data?.AssignAssetsData?.assetData ||
+  data?.assetData ||
+  data?.Assetdata?.Assetdata ||
+  data?.Assetdata ||
+  {};
+
+const toFlatAssetForPayload = (assetData = {}) => ({
+  ...assetData,
+  buildingFloor: assetData.buildingFloor ?? assetData.floor ?? "",
+  buildingName: assetData.buildingName || assetData.assetName || "",
+  serviceType:
+    assetData.localityCode ||
+    (typeof assetData.serviceType === "string"
+      ? assetData.serviceType
+      : assetData.serviceType?.code) ||
+    "",
+  serviceTypeName:
+    assetData.locality ||
+    assetData.localityName ||
+    assetData.serviceTypeName ||
+    "",
+  assetType: assetData.assetType || assetData.assetParentCategory || "",
+  department: assetData.department || "DEPT_2",
+  refAssetNo: assetData.refAssetNo || assetData.refAsset || "",
+});
+
+const getAssetRouteConfig = () => {
+  const step =
+    registrationConfig?.[0]?.body?.find((s) => s.key === "newRegistration") || {};
+  return { ...step, ...estateFormConfig };
+};
+
 export const estPayloadData = (data) => {
   const user = Digit.UserService.getUser().info;
   const tenantId = Digit.ULBService.getCurrentTenantId();
-
-  const assetData =
-    data?.AssignAssetsData?.asset ||
-    data?.AssignAssetsData?.Asset ||
-    data?.AssignAssetsData?.assetData ||
-    data?.assetData ||
-    data?.Assetdata?.Assetdata ||
-    data?.Assetdata ||
-    {};
+  const assetData = extractAssetDataFromSession(data);
+  const flatAsset = toFlatAssetForPayload(assetData);
+  const routeConfig = getAssetRouteConfig();
+  const assetPayload = buildDynamicAssetPayload(routeConfig, flatAsset, tenantId);
 
   return {
     Assets: [
       {
-        assetStatus: "1",
-        assetType: assetData?.assetType || "",
-        buildingName: assetData?.buildingName || "",
-        buildingNo: assetData?.buildingNo || "",
-        dimensionLength: Number(assetData?.dimensionLength) || 0,
-        dimensionWidth: Number(assetData?.dimensionWidth) || 0,
-        floor: Number(assetData?.buildingFloor) || 0,
-        locality:
-          assetData?.localityName ||
-          assetData?.locality ||
-          assetData?.serviceType?.i18nKey ||
-          "",
-        localityCode:
-          assetData?.localityCode ||
-          (typeof assetData?.serviceType === "string"
-            ? assetData?.serviceType
-            : assetData?.serviceType?.code) ||
-          "",
-        billingCycle: assetData?.billingCycle || "MONTHLY",
-        rate: Number(assetData?.rate) || 0,
-        tenantId,
-        totalFloorArea: Number(assetData?.totalFloorArea) || 0,
-        assetId: crypto.randomUUID(),
-        estateNo: assetData?.estateNo || "",
-        assetAllotmentType: "DONATED",
-        assetAllotmentStatus: "INITIATED",
-        refAssetNo: assetData?.refAssetNo || "",
+        ...assetPayload,
+        assetId: assetData.assetId || crypto.randomUUID(),
+        estateNo: assetData.estateNo || "",
+        refAssetNo: flatAsset.refAssetNo || "",
+        billingCycle: assetData.billingCycle || "MONTHLY",
+        additionalDetails: assetData.additionalDetails || {},
         auditDetails: {
           createdBy: user?.uuid || "",
           lastModifiedBy: user?.uuid || "",
           createdTime: Date.now(),
           lastModifiedTime: Date.now(),
         },
-        additionalDetails: assetData?.additionalDetails || {},
-        assetName: assetData?.buildingName || assetData?.name || "",
-        description: assetData?.description || "",
-        assetClassification: "IMMOVABLE",
-        assetParentCategory: "LAND",
-        assetSubCategory: assetData?.assetSubCategory || null,
-        department: assetData?.department || "DEPT_2",
       },
     ],
+  };
+};
+
+/** Merge API response + session data for acknowledgement display/PDF. */
+export const buildAllotmentAcknowledgementData = (sessionData, apiResponse) => {
+  const responseAllotment = apiResponse?.Allotments?.[0] || {};
+  let payloadAllotment = {};
+  try {
+    payloadAllotment = createAllotmentData(sessionData)?.Allotments?.[0] || {};
+  } catch (e) {
+    console.error("EST_ACK: failed reading payload for merge", e);
+  }
+
+  let assets = [];
+  try {
+    assets = estPayloadData(sessionData)?.Assets || [];
+  } catch (e) {
+    console.error("EST_ACK: estPayloadData threw during merge", e);
+  }
+
+  return {
+    Allotments: [
+      {
+        ...responseAllotment,
+        agreementStartDate:
+          payloadAllotment.agreementStartDate ?? responseAllotment.agreementStartDate,
+        agreementEndDate:
+          payloadAllotment.agreementEndDate ?? responseAllotment.agreementEndDate,
+        advancePaymentDate:
+          payloadAllotment.advancePaymentDate ?? responseAllotment.advancePaymentDate,
+      },
+    ],
+    Assets: assets,
   };
 };
 

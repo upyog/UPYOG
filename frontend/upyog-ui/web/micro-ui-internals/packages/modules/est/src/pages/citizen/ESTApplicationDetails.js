@@ -2,6 +2,7 @@ import { Card, CardSubHeader, Header, Loader, Row, StatusTable, SubmitBar, Actio
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { getCitizenPaymentPath } from "../../utils/estRoutes";
 import ViewTimeline from "../../components/ViewTimeline";
 
 // EST Application Details Component
@@ -118,12 +119,10 @@ const fetchBillData = async () => {
 
   const handleMakePayment = () => {
     navigate({
-      pathname: `/upyog-ui/citizen/payment/my-bills/est-services/${data?.estateNo}`,
+      pathname: getCitizenPaymentPath(data?.estateNo),
     });
   };
-  const handleTakeAction = () => {
-  console.log("Take action clicked for asset:", assetNo);
-};
+  const handleTakeAction = () => {};
 
 
   if (isLoading) {

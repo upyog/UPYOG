@@ -8,7 +8,8 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
-import styles from '../../../styles/ESTAcknowledgement.module.scss'
+import { getEmployeeHomeFromModulePath, getCitizenHomeFromModulePath } from "../../../utils/estRoutes";
+import styles from "../../../styles/ESTAcknowledgement.module.scss";
 
 /**
  * ESTAcknowledgement
@@ -80,6 +81,7 @@ const extractEstateNo = (response) => {
 const ESTAcknowledgement = ({ onSuccess }) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
   // ESTRegCreate.estcreate navigates here with state:
   //   { data: apiResponse, isSuccess: true }   ← success
@@ -101,9 +103,10 @@ const ESTAcknowledgement = ({ onSuccess }) => {
   const getUserHomeLink = () => {
     try {
       const type = Digit?.UserService?.getUser()?.info?.type;
-      return type === "CITIZEN" ? "/upyog-ui/citizen" : "/upyog-ui/employee";
+      const employeeHome = getEmployeeHomeFromModulePath(modulePath);
+      return type === "CITIZEN" ? getCitizenHomeFromModulePath(modulePath) : employeeHome;
     } catch {
-      return "/upyog-ui/employee";
+      return getEmployeeHomeFromModulePath(modulePath);
     }
   };
 

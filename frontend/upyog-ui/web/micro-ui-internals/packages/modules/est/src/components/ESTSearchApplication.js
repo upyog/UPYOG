@@ -23,6 +23,7 @@ const ESTSearchApplication = ({
   setShowToast,
 }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
   const [selectedAssetType, setSelectedAssetType] = useState(null); // assetParentCategory
   const [selectedLocality, setSelectedLocality] = useState(null);   // localityCode
@@ -144,9 +145,12 @@ const ESTSearchApplication = ({
 
   const GetCell = (value) => <span className="cell-text">{value || "N/A"}</span>;
 
-  const handleAllotAsset = (asset) => {
-    navigate("/upyog-ui/employee/est/assignassets/info", { state: { assetData: asset } });
-  };
+  const handleAllotAsset = useCallback(
+    (asset) => {
+      navigate(`${modulePath}/assignassets/info`, { state: { assetData: asset } });
+    },
+    [navigate, modulePath]
+  );
 
   const columns = useMemo(
     () => [
@@ -166,12 +170,14 @@ const ESTSearchApplication = ({
       },
       {
         Header: "Asset Ref",
-        Cell: ({ row }) => GetCell(row.original["refAssetNo"]),
+        // Fallbacks: rows created before the apiFieldName/numeric fixes in
+        // config.js may carry legacy keys (assetRef, buildingFloor) or nulls.
+        Cell: ({ row }) => GetCell(row.original["refAssetNo"] || row.original["assetRef"]),
         disableSortBy: true,
       },
       {
         Header: "Building Name",
-        Cell: ({ row }) => GetCell(row.original["buildingName"]),
+        Cell: ({ row }) => GetCell(row.original["buildingName"] || row.original["assetName"]),
         disableSortBy: true,
       },
       {
@@ -186,8 +192,12 @@ const ESTSearchApplication = ({
       },
       {
         Header: "Dimensions",
-        Cell: ({ row }) =>
-          GetCell(`${row.original["dimensionLength"]} x ${row.original["dimensionWidth"]}`),
+        Cell: ({ row }) => {
+          const l = row.original["dimensionLength"];
+          const w = row.original["dimensionWidth"];
+          // Avoid rendering the literal "null x null" for legacy rows
+          return GetCell(l != null && w != null ? `${l} x ${w}` : null);
+        },
         disableSortBy: true,
       },
       {
@@ -231,7 +241,9 @@ const ESTSearchApplication = ({
         disableSortBy: true,
       },
     ],
-    []
+    // Old deps were [] — the Action cell captured the first-render isMobile and
+    // handleAllotAsset forever, so mobile styles never updated on resize.
+    [isMobile, handleAllotAsset]
   );
 
   const onSort = useCallback(
@@ -267,7 +279,7 @@ const ESTSearchApplication = ({
           {/* Asset Number */}
           <SearchField style={{ marginBottom: isMobile ? '10px' : '15px' }}>
             <label style={{ fontSize: isMobile ? '14px' : '16px', marginBottom: '5px', display: 'block' }}>{t("EST_SEARCH_ASSET_NUMBER")}</label>
-            <TextInput name="estateNo" inputRef={register({})} style={{ width: '100%', fontSize: isMobile ? '14px' : '16px', padding: isMobile ? '8px' : '10px' }} />
+            {/* <TextInput name="estateNo" inputRef={register({})} style={{ width: '100%', fontSize: isMobile ? '14px' : '16px', padding: isMobile ? '8px' : '10px' }} />  */}
           </SearchField>
 
           {/* Locality dropdown */}
@@ -340,7 +352,7 @@ const ESTSearchApplication = ({
               ))}
 
             <button
-              onClick={() => navigate("/upyog-ui/employee/est/create-asset")}
+              onClick={() => navigate(`${modulePath}/create-asset`)}
               style={{
                 backgroundColor: "#007bff",
                 color: "white",

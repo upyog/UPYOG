@@ -3,6 +3,7 @@ import { CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { getCitizenPaymentPath } from "../../utils/estRoutes";
 
 // View Timeline Component
 // This component displays the timeline of an EST application, showing various checkpoints and allowing citizens to make payments if applicable.
@@ -76,7 +77,7 @@ const ViewTimeline = (props) => {
         <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
           <Link
             to={{ 
-              pathname: `/upyog-ui/citizen/payment/my-bills/est-services/${props?.application?.applicationNo}`, 
+              pathname: getCitizenPaymentPath(props?.application?.applicationNo), 
               state: { tenantId: props.application.tenantId, applicationNumber: props?.application?.applicationNo } 
             }}
           >

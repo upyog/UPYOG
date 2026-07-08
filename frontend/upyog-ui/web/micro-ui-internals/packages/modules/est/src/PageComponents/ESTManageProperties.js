@@ -4,7 +4,7 @@ import { Header, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 const ESTManageProperties = () => {
   const { t } = useTranslation();
-  const navigate = Digit.Hooks.useCustomNavigate();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
   
 //  This is for the page to navigate to different sections related to property management in the EST module.
@@ -32,7 +32,7 @@ const ESTManageProperties = () => {
           {/* Manage Property Link */}
           <span className="link">
             <Link
-              to="/upyog-ui/employee/est/manage-properties-table"
+              to={`${modulePath}/manage-properties-table`}
               style={{
                 textDecoration: "none",
                 color: "#8B0000",
@@ -47,7 +47,7 @@ const ESTManageProperties = () => {
            {/* Manage Property Link */}
           <span className="link">
             <Link
-              to="/upyog-ui/employee/est/all-properties"
+              to={`${modulePath}/all-properties`}
               style={{
                 textDecoration: "none",
                 color: "#8B0000",
@@ -62,7 +62,7 @@ const ESTManageProperties = () => {
           {/* Allotte Asset Link */}
           <span className="link">
             <Link
-              to="/upyog-ui/employee/est/property-allottee-details"
+              to={`${modulePath}/property-allottee-details`}
               style={{
                 textDecoration: "none",
                 color: "#8B0000",

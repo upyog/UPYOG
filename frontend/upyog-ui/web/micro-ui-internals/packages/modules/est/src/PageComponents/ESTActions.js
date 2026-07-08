@@ -11,10 +11,7 @@ import { Link } from "react-router-dom";
 
 const ESTActions = () => {
     const { t } = useTranslation();
-    const navigate = Digit.Hooks.useCustomNavigate();
-
-    const goTo = (path) => navigate(path);
-
+    const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
     return (
         <React.Fragment>
@@ -32,7 +29,7 @@ const ESTActions = () => {
                         {/* Manage Rebate Link */}
                         <span className="link">
                             <Link
-                                to="/upyog-ui/employee/est/manage-rebate"
+                                to={`${modulePath}/manage-rebate`}
                                 style={{
                                     textDecoration: "none",
                                     color: "#8B0000",
@@ -47,7 +44,7 @@ const ESTActions = () => {
                         {/* INTEREST */}
                         <span classname="link">
                             <Link
-                                to="/upyog-ui/employee/est/manage-interest"
+                                to={`${modulePath}/manage-interest`}
                                 style={{
                                     textDecoration: "none",
                                     color: "#8B0000",
@@ -62,7 +59,7 @@ const ESTActions = () => {
                         {/* PENALTY */}
                         <span className="link">
                             <Link
-                                to="/upyog-ui/employee/est/manage-penalty"
+                                to={`${modulePath}/manage-penalty`}
                                 style={{
                                     textDecoration: "none",
                                     color: "#8B0000",

@@ -19,6 +19,7 @@ import ManagePenalty from "../../components/ManagePenalty";
 const EmployeeApp = ({ path, url, userType }) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const employeeHome = path?.replace(/\/est\/?$/, "") || "/upyog-ui/employee";
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const ESTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ESTApplicationDetails");
 
@@ -38,15 +39,15 @@ const EmployeeApp = ({ path, url, userType }) => {
   const ESTBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
     const crumbs = [
-      { path: "/upyog-ui/employee", content: t("ES_COMMON_HOME"), show: true },
-      { path: "/upyog-ui/employee/est/inbox", content: t("INBOX"), show: location.pathname.includes("est/inbox") },
-      { path: "/upyog-ui/employee/est/search-applications", content: t("ES_COMMON_APPLICATION_SEARCH"), show: location.pathname.includes("est/search-applications") },
-      { path: "/upyog-ui/employee/est/create-asset", content: t("EST_CREATE_ASSET"), show: location.pathname.includes("est/create-asset") },
-      { path: "/upyog-ui/employee/est/manage-properties-table", content: t("EST_MANAGE_PROPERTY"), show: location.pathname.includes("est/manage-properties-table") },
-      { path: "/upyog-ui/employee/est/actions", content: t("EST_ACTION"), show: location.pathname.includes("est/actions") },
-      { path: "/upyog-ui/employee/est/manage-rebate", content: t("EST_MANAGE_REBATE"), show: location.pathname.includes("est/manage-rebate") },
-      { path: "/upyog-ui/employee/est/manage-interest", content: t("EST_MANAGE_INTEREST"), show: location.pathname.includes("est/manage-interest") },
-      { path: "/upyog-ui/employee/est/manage-penalty", content: t("EST_MANAGE_PENALTY"), show: location.pathname.includes("est/manage-penalty") },
+      { path: employeeHome, content: t("ES_COMMON_HOME"), show: true },
+      { path: `${path}/inbox`, content: t("INBOX"), show: location.pathname.includes("est/inbox") },
+      { path: `${path}/search-applications`, content: t("ES_COMMON_APPLICATION_SEARCH"), show: location.pathname.includes("est/search-applications") },
+      { path: `${path}/create-asset`, content: t("EST_CREATE_ASSET"), show: location.pathname.includes("est/create-asset") },
+      { path: `${path}/manage-properties-table`, content: t("EST_MANAGE_PROPERTY"), show: location.pathname.includes("est/manage-properties-table") },
+      { path: `${path}/actions`, content: t("EST_ACTION"), show: location.pathname.includes("est/actions") },
+      { path: `${path}/manage-rebate`, content: t("EST_MANAGE_REBATE"), show: location.pathname.includes("est/manage-rebate") },
+      { path: `${path}/manage-interest`, content: t("EST_MANAGE_INTEREST"), show: location.pathname.includes("est/manage-interest") },
+      { path: `${path}/manage-penalty`, content: t("EST_MANAGE_PENALTY"), show: location.pathname.includes("est/manage-penalty") },
     ];
     return (
       <BreadCrumb
@@ -61,12 +62,12 @@ const EmployeeApp = ({ path, url, userType }) => {
     <AppContainer>
       <React.Fragment>
         <div className="ground-container" style={{ padding: isMobile ? "10px" : "20px" }}>
-          <div style={{ marginLeft: isMobile ? "0" : "-4px", display: "flex", alignItems: "center" }}>
+         <div style={{ marginLeft: isMobile ? "0" : "-4px", display: "flex", alignItems: "center" }}>
             <ESTBreadCrumbs location={location} />
           </div>
           <Routes>
             <Route path="/*" element={<PrivateRoute><ESTLinks matchPath={path} userType={userType} /></PrivateRoute>} />
-            <Route path="property-allottee-details/*" element={<PrivateRoute><ESTPropertyAllotteeDetails t={t} parentRoute={path} /></PrivateRoute>} />
+            <Route path="property-allottee-details/*" element={<PrivateRoute><ESTPropertyAllotteeDetails t={t} parentRoute={path} /></PrivateRoute>} /> 
             <Route path="assignassets/*" element={<PrivateRoute><ESTAssignAssetCreate parentRoute={path} /></PrivateRoute>} />
             <Route path="inbox/*" element={<PrivateRoute><ESTInbox parentRoute={path} businessService="EST" initialStates={inboxInitialState} isInbox={true} filterComponent="EST_INBOX_FILTER" useNewInboxAPI={true} /></PrivateRoute>} />
             <Route path="search-applications/*" element={<PrivateRoute><SearchApp parentRoute={path} /></PrivateRoute>} />

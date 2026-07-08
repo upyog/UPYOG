@@ -31,6 +31,7 @@ const ESTRegCheckPage = ({ onSubmit, onError, value = {}, config }) => {
   const { t } = useTranslation();
   const [agree, setAgree] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const mutation = Digit.Hooks.estate.useESTCreateAPI(tenantId);
@@ -128,7 +129,7 @@ const ESTRegCheckPage = ({ onSubmit, onError, value = {}, config }) => {
 
       <div className={styles["estRegCheckPage__action-row"]}>
         <ActionButton
-          jumpTo="/upyog-ui/employee/est/create-asset/newRegistration"
+          jumpTo={`${modulePath}/create-asset/newRegistration`}
           flatAsset={flatAsset}
         />
       </div>
