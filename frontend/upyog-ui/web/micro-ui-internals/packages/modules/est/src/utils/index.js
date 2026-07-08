@@ -7,6 +7,9 @@
  * (re-exported at the bottom so existing imports keep working).
  */
 
+import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
+import estateAllotmentFormConfig from "../config/Create/estateAllotmentFormConfig";
+
 /* ════════════════════════ Date helpers ════════════════════════
    The EST backend mixes formats: "DD-MM-YYYY" strings for agreement
    dates, epoch ms for audit fields. parseESTDate is the single
@@ -271,9 +274,6 @@ export const estPayloadData = (data) => {
     ],
   };
 };
-
-import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
-import estateAllotmentFormConfig from "../config/Create/estateAllotmentFormConfig";
 
 export const createAllotmentData = (data) => {
   const user = Digit.UserService.getUser().info;
