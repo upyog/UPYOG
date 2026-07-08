@@ -62,6 +62,7 @@ import javax.validation.Valid;
 
 import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.commons.exception.EdcrException;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.commons.mdms.config.MdmsConfiguration;
 import org.egov.commons.mdms.validator.MDMSValidator;
@@ -496,17 +497,35 @@ public class RestEdcrApplicationController {
         planRes.setResponseInfo(responseInfo);
         return new ResponseEntity<>(planRes, HttpStatus.OK);
     }
+    
+    @ExceptionHandler(EdcrException.class)
+    public final ResponseEntity<ErrorResponse> handleEdcrException(EdcrException ex) {
+
+        ErrorResponse error = new ErrorResponse(
+                ex.getErrorCode(),
+                ex.getMessage(),
+                ex.getStatus());
+
+        return new ResponseEntity<>(error, ex.getStatus());
+    }
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+
         String errorDesc;
-        if (ex.getLocalizedMessage() == null)
-            errorDesc = String.valueOf(ex).length() <= 200 ? String.valueOf(ex).substring(0, String.valueOf(ex).length())
-                    : String.valueOf(ex).substring(1, 200);
-        else
+        if (ex.getLocalizedMessage() == null) {
+            errorDesc = String.valueOf(ex).length() <= 200
+                    ? String.valueOf(ex)
+                    : String.valueOf(ex).substring(0, 200);
+        } else {
             errorDesc = ex.getMessage();
-        ErrorResponse error = new ErrorResponse("Internal Server Error", errorDesc,
+        }
+
+        ErrorResponse error = new ErrorResponse(
+                "Internal Server Error",
+                errorDesc,
                 HttpStatus.INTERNAL_SERVER_ERROR);
+
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
