@@ -1,5 +1,5 @@
 import { CitizenHomeCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import CitizenApp from "./pages/citizen";
 import ESTCard from "./components/ESTCard";
@@ -46,6 +46,8 @@ const addComponentsToRegistry = () => {
   });
 };
 
+addComponentsToRegistry();
+
 export const ESTModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = Digit.Hooks.useModuleBasePath();
   const moduleCode = "EST";
@@ -55,7 +57,6 @@ export const ESTModule = ({ stateCode, userType, tenants }) => {
     moduleCode,
     language,
   });
-  addComponentsToRegistry();
   Digit.SessionStorage.set("EST_TENANTS", tenants);
 
   if (userType === "employee") {

@@ -4,8 +4,9 @@ import { useTranslation } from "react-i18next";
 import { checkForNA, ESTDocumnetPreview, formatEpochDate } from "../../../utils";
 
 // The same config sources ESTAssignAssets merges at runtime:
-import { Config } from "../../../config/Create/AssignAssetConfig";                    // ← adjust path
-import estateAllotmentFormConfig from "../../../config/Create/AssignAssetConfig"; // ← adjust path
+import { Config } from "../../../config/Create/AssignAssetConfig";                   
+//import estateAllotmentFormConfig from "../../../config/Create/AssignAssetConfig"; 
+import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig"; // ← its own file
 
 /* =========================================================
    ESTAssignAssetsCheckPage
@@ -17,7 +18,7 @@ import estateAllotmentFormConfig from "../../../config/Create/AssignAssetConfig"
    ========================================================= */
 
 // Same merge ESTAssignAssets.js does: estateAllotmentFormConfig's `form` wins.
-const baseRoute = Config[0].body.find((b) => b.key === "AssignAssetsData");
+const baseRoute = Config[0].body.find((b) => b.key === "Allotments");
 const routeConfig = { ...baseRoute, ...estateAllotmentFormConfig };
 
 const ESTAssignAssetsCheckPage = ({ onSubmit, value = {} }) => {
@@ -33,7 +34,7 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, value = {} }) => {
     buildingName: assetData.buildingName,
     localityDisplay: assetData.locality,
     totalFloorArea: assetData.totalFloorArea,
-    buildingFloor: assetData.floor,
+    buildingFloor: assetData.buildingFloor || assetData.floor,
     assetRate: assetData.rate,
   };
 
@@ -47,7 +48,7 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, value = {} }) => {
   return (
     <DynamicCheckPage
       routeConfig={routeConfig}
-      config={{ key: "AssignAssetsData" }}
+      config={{ key: "Allotments" }}
       value={value}
       extraData={extraData}
       editRoute="/upyog-ui/employee/est/assignassets/assign-assets"
