@@ -356,7 +356,16 @@ public class PlanService {
         
         // validate Source of the request
         validateSourcePortal(plan);
-           
+        
+        String roadType = getRoadTypeViaReflection(
+				plan.getEdcrRequest() != null ? plan.getEdcrRequest().getAdditionalDetails() : null);
+        
+        if(roadType!=null) {
+        	plan.getPlanInformation().setRoadType(roadType);
+        }else {
+        	plan.getErrors().put("ROAD_TYPE NOT PROVIDED", "ROAD_TYPE not provided");
+        }
+        
         //return (Plan) planDetail;
         // remove requestInfo before plan processing
         //edcrRequest.setRequestInfo(null);
@@ -426,7 +435,7 @@ public class PlanService {
 //        plan = applyRules(plan, amd, cityDetails);
         if(plan.getErrors().containsKey("Not authorized to scrutinize") || plan.getErrors().containsKey("Invalid ULB")
         		|| plan.getErrors().containsKey("units not in meters") 
-        		|| plan.getErrors().containsKey("INVALID SOURCE")) {
+        		|| plan.getErrors().containsKey("INVALID SOURCE") || plan.getErrors().containsKey("INVALID SOURCE1")) {
         	
         }else {
         	plan = applyRules(plan, amd, cityDetails,features);
@@ -1008,8 +1017,10 @@ public class PlanService {
 				return;
 			}
 
-			boolean isGorLOrCommHousing = G.equals(occTypeCode) || L.equals(occTypeCode)
-					|| (F.equals(occTypeCode) && F_HM.equals(occSubTypeCode));
+			boolean isGorLOrCommHousing =
+			        G.equals(occTypeCode)
+			        || (L.equals(occTypeCode) && !L_MP.equals(occSubTypeCode))
+			        || (F.equals(occTypeCode) && F_HM.equals(occSubTypeCode));
 
 			if (SOURCE_INVESTPUNJAB.equalsIgnoreCase(sourceType)) {
 				// INVESTPUNJAB: G / L / F-HM -> OK, continue. Anything else -> error.
@@ -1041,6 +1052,19 @@ public class PlanService {
 		}
 		Map<String, Object> details = (Map<String, Object>) additionalDetails;
 		Object source = details.get("source");
+		if (source == null || StringUtils.isBlank(String.valueOf(source))) {
+			return null;
+		}
+
+		return (String) source;
+	}
+	
+	private String getRoadTypeViaReflection(Object additionalDetails) {
+		if (additionalDetails == null) {
+			return null;
+		}
+		Map<String, Object> details = (Map<String, Object>) additionalDetails;
+		Object source = details.get("roadType");
 		if (source == null || StringUtils.isBlank(String.valueOf(source))) {
 			return null;
 		}
