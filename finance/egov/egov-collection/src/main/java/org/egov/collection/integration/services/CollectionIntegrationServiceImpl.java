@@ -95,7 +95,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -508,12 +508,12 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                         + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
                         + " and source=:source and ulb=:ulbCode  group by ulb,service  ");
 
-        final Query query = getSession().createSQLQuery(queryBuilder.toString());
-        query.setDate("fromDate", aggrReq.getFromdate());
-        query.setDate("toDate", aggrReq.getTodate());
-        query.setString("serviceCode", aggrReq.getServicecode());
-        query.setString("source", aggrReq.getSource());
-        query.setString("ulbCode", aggrReq.getUlbCode());
+        final Query query = getSession().createNativeQuery(queryBuilder.toString());
+        query.setParameter("fromDate", aggrReq.getFromdate());
+        query.setParameter("toDate", aggrReq.getTodate());
+        query.setParameter("serviceCode", aggrReq.getServicecode());
+        query.setParameter("source", aggrReq.getSource());
+        query.setParameter("ulbCode", aggrReq.getUlbCode());
 
         LOGGER.debug(aggrReq.getSource());
 
@@ -732,11 +732,11 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             queryString.append(" and rh.consumerCode = :consumerCode");
         final Query listQuery = getSession().createQuery(queryString.toString());
         if (!paymentInfoRequest.getUserName().isEmpty())
-            listQuery.setString("userName", paymentInfoRequest.getUserName().toUpperCase());
+            listQuery.setParameter("userName", paymentInfoRequest.getUserName().toUpperCase());
         if (!paymentInfoRequest.getServiceName().isEmpty())
-            listQuery.setString("serviceName", paymentInfoRequest.getServiceName());
+            listQuery.setParameter("serviceName", paymentInfoRequest.getServiceName());
         if (!paymentInfoRequest.getConsumerCode().isEmpty())
-            listQuery.setString("consumerCode", paymentInfoRequest.getConsumerCode());
+            listQuery.setParameter("consumerCode", paymentInfoRequest.getConsumerCode());
         receiptHeaders = listQuery.list();
         if (receiptHeaders == null || receiptHeaders.isEmpty()) {
             receipts.add(new RestReceiptInfo());

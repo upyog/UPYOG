@@ -135,6 +135,19 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
 
+        <!-- Lombok: compile-time only annotation processor -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- STRUTS2 DEPENDENCIES START -->
         <dependency>
             <groupId>org.apache.struts</groupId>
@@ -307,6 +320,20 @@
         </resources>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- Exclude all Elasticsearch-related sources; incompatible with JDK17 ES client APIs -->
+                        <exclude>**/service/elasticsearch/**/*.java</exclude>
+                        <exclude>**/service/dashboard/CollectionDashboardService.java</exclude>
+                        <exclude>**/service/CollectionIndexService.java</exclude>
+                        <exclude>**/entity/es/**/*.java</exclude>
+                        <exclude>**/utils/es/**/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

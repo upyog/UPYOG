@@ -63,7 +63,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -115,8 +115,8 @@ public class SchedularService {
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
                                 + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
                 .setMaxResults(50);
-        qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
-        qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_AXIS);
+        qry.setParameter("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        qry.setParameter("paymentservicecode", CollectionConstants.SERVICECODE_AXIS);
         qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
         final List<OnlinePayment> reconcileList = qry.list();
 
@@ -181,8 +181,8 @@ public class SchedularService {
                 .getSession()
                 .createQuery(queryString.toString())
                 .setMaxResults(50);
-        query.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
-        query.setString("paymentservicecode", CollectionConstants.SERVICECODE_ATOM);
+        query.setParameter("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        query.setParameter("paymentservicecode", CollectionConstants.SERVICECODE_ATOM);
         query.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
         query.setParameter("bulkJobs", CollectionConstants.QUARTZ_ATOM_RECONCILE_BULK_JOBS);
         query.setParameter("modulo", modulo);
@@ -295,8 +295,8 @@ public class SchedularService {
                 .getSession()
                 .createQuery(queryString.toString())
                 .setMaxResults(50);
-        query.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
-        query.setString("paymentservicecode", paymentServiceCode);
+        query.setParameter("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        query.setParameter("paymentservicecode", paymentServiceCode);
         query.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
         query.setParameter("bulkJobs", QUARTZ_SBIMOPS_RECONCILE_BULK_JOBS);
         query.setParameter("modulo", modulo);

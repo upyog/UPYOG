@@ -47,7 +47,7 @@
  */
 package org.egov.collection.integration.models;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public class PaymentInfoRequest {
     private String ulbCode;

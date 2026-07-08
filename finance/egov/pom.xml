@@ -168,6 +168,7 @@
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
         <jakarta-validation-version>3.0.2</jakarta-validation-version>
         <jakarta-xml-bind-version>4.0.2</jakarta-xml-bind-version>
+        <jaxb-runtime-version>4.0.5</jaxb-runtime-version>
         <jakarta-servlet-api-version>6.0.0.Final</jakarta-servlet-api-version>
         <jakarta-servlet-jstl-version>1.2.6-RC1</jakarta-servlet-jstl-version>
         <jakarta-servlet-jsp-version>1.0.1.Final</jakarta-servlet-jsp-version>
@@ -349,6 +350,12 @@
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jakarta-xml-bind-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${jaxb-runtime-version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>

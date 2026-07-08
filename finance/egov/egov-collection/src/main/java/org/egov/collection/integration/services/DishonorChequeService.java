@@ -109,8 +109,8 @@ import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.services.voucher.VoucherHeaderService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -701,7 +701,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
     }
 
     public List<CChartOfAccounts> getChartOfAccounts(Set<String> glcodeSet) {
-        List list = persistenceService.getSession().createCriteria(CChartOfAccounts.class).add(Restrictions.in("glcode", glcodeSet)).list();
+        List list = persistenceService.getSession().createQuery("from CChartOfAccounts where glcode in (:glcodes)", CChartOfAccounts.class).setParameter("glcodes", glcodeSet).list();
         return list;
     }
 
