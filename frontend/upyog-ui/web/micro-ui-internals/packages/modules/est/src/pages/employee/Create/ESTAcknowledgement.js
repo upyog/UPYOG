@@ -5,18 +5,23 @@ import {
   Row,
   StatusTable,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { estPayloadData } from "../../../utils";
+import { Link, useLocation } from "react-router-dom";
+import styles from '../../../styles/ESTAcknowledgement.module.scss'
 
 /**
- * ESTAcknowledgement (final)
+ * ESTAcknowledgement
+ * -------------------
+ * Displays the result of the EST asset create API call.
  *
- * - No loader shown for pending.
- * - Banner only shown for success or failed.
- * - If mutation.data already exists (e.g. after refresh), derive final state immediately.
- * - Defensive fallbacks if Digit/Hooks missing.
+ * The API call is made in ESTRegCheckPage (mutation.mutate).
+ * On success/failure, ESTRegCreate.estcreate navigates here with:
+ *   location.state = { data: apiResponse, isSuccess: true }
+ *   location.state = { data: null, isSuccess: false, error }
+ *
+ * This component just reads location.state and renders the banner.
+ * It does NOT make any API calls itself.
  */
 
 const rowContainerStyle = {
@@ -24,253 +29,108 @@ const rowContainerStyle = {
   justifyContent: "space-between",
 };
 
-const BannerPicker = ({ t, resultStatus, applicationNumber }) => {
-  let message = "";
-  let info = "";
-  let successful = false;
-
-  if (resultStatus === "success") {
-    message = window?.location?.href?.includes("edit")
-      ? t("EST_UPDATE_SUCCESSFULL")
-      : t("EST_SUBMIT_SUCCESSFULL");
-    info = t("EST_APPLICATION_NO");
-    successful = true;
-  } else {
-    // when called with "failed"
-    message = t("EST_APPLICATION_FAILED");
-    successful = false;
+// ─── BannerPicker ──────────────────────────────────────────────────────────────
+const BannerPicker = ({ t, isSuccess, applicationNumber }) => {
+  if (isSuccess) {
+    return (
+      <Banner
+        message={
+          window?.location?.href?.includes("edit")
+            ? t("EST_UPDATE_SUCCESSFULL")
+            : t("EST_SUBMIT_SUCCESSFULL")
+        }
+        applicationNumber={applicationNumber || ""}
+        info={applicationNumber ? t("EST_APPLICATION_NO") : ""}
+        successful={true}
+        className={styles["festAcknowledgement__full-width"]}
+      />
+    );
   }
 
   return (
     <Banner
-      message={message}
-      applicationNumber={applicationNumber || ""}
-      info={info}
-      successful={successful}
-      style={{ width: "100%" }}
+      message={t("EST_APPLICATION_FAILED")}
+      successful={false}
+      className={styles["festAcknowledgement__full-width"]}
     />
   );
 };
 
-const createNoopMutation = () => ({
-  mutate: (_payload, _callbacks) =>
-    console.warn("Mutation hook missing; mutate noop called"),
-  isLoading: false,
-  isSuccess: false,
-  isError: false,
-  data: null,
-  error: null,
-});
+// ─── Extract estateNo from API response ───────────────────────────────────────
+const extractEstateNo = (response) => {
+  if (!response) return "";
+  try {
+    const assets =
+      response?.Assets ||
+      response?.data?.Assets ||
+      (Array.isArray(response) ? response : []);
+    const asset0 = Array.isArray(assets) && assets.length ? assets[0] : {};
+    return (
+      asset0?.estateNo ||
+      asset0?.applicationNo ||
+      response?.estateNo ||
+      ""
+    );
+  } catch {
+    return "";
+  }
+};
 
-const ESTAcknowledgement = ({ data, onSuccess }) => {
+// ─── ESTAcknowledgement ───────────────────────────────────────────────────────
+const ESTAcknowledgement = ({ onSuccess }) => {
   const { t } = useTranslation();
-  const hasRun = useRef(false);
+  const location = useLocation();
 
-  // null | "success" | "failed"
-  const [resultStatus, setResultStatus] = useState(null);
-  const [applicationNumber, setApplicationNumber] = useState("");
+  // ESTRegCreate.estcreate navigates here with state:
+  //   { data: apiResponse, isSuccess: true }   ← success
+  //   { data: null, isSuccess: false, error }   ← failure
+  const { data: apiResponse, isSuccess = false, error } = location?.state || {};
 
-  // safe tenantId
-  let tenantId;
-  try {
-    tenantId =
-      (typeof Digit !== "undefined" &&
-        (Digit.ULBService?.getCitizenCurrentTenant(true) ||
-          Digit.ULBService?.getCurrentTenantId())) ||
-      undefined;
-  } catch (err) {
-    tenantId = undefined;
-  }
+  const applicationNumber = extractEstateNo(apiResponse);
 
-  // initialize mutation safely (fallback to noop)
-  let mutation = createNoopMutation();
-  try {
-    if (
-      typeof Digit !== "undefined" &&
-      Digit.Hooks &&
-      Digit.Hooks.estate &&
-      Digit.Hooks.estate.useESTCreateAPI
-    ) {
-      const raw = Digit.Hooks.estate.useESTCreateAPI(tenantId) || {};
-      mutation = {
-        mutate: raw?.mutate || createNoopMutation().mutate,
-        isLoading: Boolean(raw?.isLoading),
-        isSuccess: Boolean(raw?.isSuccess),
-        isError: Boolean(raw?.isError),
-        data: raw?.data ?? null,
-        error: raw?.error ?? null,
-      };
-    }
-  } catch (err) {
-    console.error("Error initializing mutation hook:", err);
-    mutation = createNoopMutation();
-  }
+  if (error) console.error("EST Acknowledgement — error:", error);
 
-  // defensive assetData from props
-  const assetData = data?.Assetdata?.Assetdata || data?.Assetdata || {};
-
-  // utility to extract estateNo from various shapes
-  const extractEstateNo = (resp) => {
-    try {
-      const assets =
-        resp?.Assets ||
-        resp?.data?.Assets ||
-        resp?.response?.Assets ||
-        (Array.isArray(resp) ? resp : []) ||
-        [];
-      const asset0 = assets && assets.length ? assets[0] : {};
-      return asset0?.estateNo || asset0?.applicationNo || resp?.estateNo || "";
-    } catch {
-      return "";
-    }
-  };
-
-  // If mutation.data already present (e.g. after refresh), set immediate result
-  useEffect(() => {
-    try {
-      const existing = mutation?.data;
-      if (!existing) return;
-      // if we already determined final state, don't override
-      if (resultStatus === "success" || resultStatus === "failed") return;
-
-      const estateNo = extractEstateNo(existing);
-      if (estateNo) {
-        setApplicationNumber(estateNo);
-        setResultStatus("success");
-      } else {
-        setResultStatus("failed");
-      }
-    } catch (err) {
-      console.error("Error deriving state from existing mutation.data:", err);
+  // Call parent onSuccess callback if provided (clears session/query cache)
+  React.useEffect(() => {
+    if (isSuccess && typeof onSuccess === "function") {
+      onSuccess(apiResponse);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mutation.data]);
+  }, []);
 
-  // If mutation error flag toggles externally and we haven't set final result yet
-  useEffect(() => {
-    if (mutation?.isError && resultStatus !== "success") {
-      setResultStatus("failed");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mutation.isError]);
-
-  // main effect: build payload and call mutate once (if needed)
-  useEffect(() => {
-    // If we've already attempted submission, do nothing
-    if (hasRun.current) return;
-
-    // If mutation.data already exists we've handled it in the other effect, so skip calling mutate
-    if (mutation?.data) {
-      hasRun.current = true;
-      return;
-    }
-
-    // If there's no Assetdata to submit, mark failed
-    if (!data?.Assetdata) {
-      console.warn("No data.Assetdata to submit. Marking as failed.");
-      setResultStatus("failed");
-      hasRun.current = true;
-      return;
-    }
-
-    // Build payload
-    let payload;
-    try {
-      payload = {
-        RequestInfo: {
-          apiId: "Rainmaker",
-          authToken: Digit?.UserService?.getUser()?.access_token || "",
-          userInfo: Digit?.UserService?.getUser()?.info || {},
-        },
-        ...estPayloadData(data),
-      };
-    } catch (err) {
-      console.error("Payload build failed:", err);
-      setResultStatus("failed");
-      hasRun.current = true;
-      return;
-    }
-
-    // call mutation
-    try {
-      if (mutation && typeof mutation.mutate === "function") {
-        // DO NOT set pending state or show loader — per requirement we skip pending UI
-        hasRun.current = true;
-
-        mutation.mutate(payload, {
-          onSuccess: (response) => {
-            try {
-              const estateNo = extractEstateNo(response || {});
-              if (estateNo) {
-                setApplicationNumber(estateNo);
-                setResultStatus("success");
-              } else {
-                setResultStatus("failed");
-              }
-              if (typeof onSuccess === "function") onSuccess(response);
-            } catch (err) {
-              console.error("Error in onSuccess handler:", err);
-              setResultStatus("failed");
-            }
-          },
-          onError: (error) => {
-            console.error("Create API error:", error);
-            setResultStatus("failed");
-          },
-        });
-      } else {
-        console.warn("Mutation hook not available; marking failed.");
-        setResultStatus("failed");
-        hasRun.current = true;
-      }
-    } catch (err) {
-      console.error("Error invoking mutation.mutate:", err);
-      setResultStatus("failed");
-      hasRun.current = true;
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
-  // determine user link safely
   const getUserHomeLink = () => {
     try {
       const type = Digit?.UserService?.getUser()?.info?.type;
       return type === "CITIZEN" ? "/upyog-ui/citizen" : "/upyog-ui/employee";
     } catch {
-      return "/upyog-ui/citizen";
+      return "/upyog-ui/employee";
     }
   };
-
-  // if we have application number either from response or assetData fallback, show it
-  const displayedApplicationNumber =
-    applicationNumber || assetData?.estateNo || assetData?.applicationNo || "";
 
   return (
     <React.Fragment>
       <Card>
-        {/* Render Banner only when we have success or failed */}
-        {(resultStatus === "success" || resultStatus === "failed") && (
-          <BannerPicker
-            t={t}
-            resultStatus={resultStatus}
-            applicationNumber={displayedApplicationNumber}
-          />
-        )}
+        <BannerPicker
+          t={t}
+          isSuccess={isSuccess}
+          applicationNumber={applicationNumber}
+        />
 
-        <StatusTable>
+        <StatusTable className={styles["estAcknowledgement__status-table"]}>
           <Row
-            rowContainerStyle={rowContainerStyle}
+            rowContainerStyle={undefined}
+            className={styles["estAcknowledgement__row"]}
             last
-            textStyle={{ whiteSpace: "pre", width: "60%" }}
+            textStyle={undefined}
           />
         </StatusTable>
 
-        <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
-          <Link to={getUserHomeLink()}>
+        <div className={styles["estAcknowledgement__action-row"]}>
+          <Link to={getUserHomeLink()} className={styles["estAcknowledgement__home-link"]}>
             <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
         </div>
+
       </Card>
     </React.Fragment>
   );

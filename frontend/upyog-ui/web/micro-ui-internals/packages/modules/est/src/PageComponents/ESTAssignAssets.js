@@ -2,7 +2,7 @@ import React, { useMemo, useCallback } from "react";
 import { Header, DynamicForm } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { buildDynamicAllotmentPayload } from "../utils/allotmentPayloadUtils";
-import estateAllotmentFormConfig from "../config/estateAllotmentFormConfig";
+import estateAllotmentFormConfig from "../config/Create/estateAllotmentFormConfig";
 
 // Resolves whatever shape the asset's locality field came back in (raw code, i18nKey object,
 // plain string) into a single display string. Lifted as-is from the static ESTAssignAssets.js —
@@ -30,13 +30,6 @@ const getLocalityText = (asset, t) => {
 
 const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) => {
   const persistedData = useMemo(() => formData || {}, [formData]);
-  console.log("ESTAssignAssets", { onSelect, config, persistedData, isEditMode, editData });
-
-  // console.log("persistedData", persistedData);
-  // console.log("editData", editData);
-  // console.log("config", config);
-  // console.log("isEditMode", isEditMode);
-  // console.log("onSelect", onSelect);
 
   const { t } = useTranslation();
 
@@ -77,13 +70,11 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
         console.error("Submit error:", error);
         return;
       }
-      const flatAllotment = payload?.AllotmentData?.[0] || {};
+      const flatAllotment = payload?.Allotments?.[0] || {};
       buildDynamicAllotmentPayload(routeConfig, flatAllotment, tenantId);
     },
     [routeConfig, tenantId]
   );
-
-  console.log('prefillData in assign assets  ',prefillData)
 
   return (
     <div className="employeeCard">

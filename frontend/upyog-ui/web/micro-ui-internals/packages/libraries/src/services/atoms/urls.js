@@ -338,9 +338,9 @@ eSign:{
   },
 
  est: {
-    create: "/estate-management/estate/asset/v1/_create",
-    search: "/estate-management/estate/asset/v1/_search",
-    allotment: "/estate-management/estate/allotment/v1/_create",
+    create: "/estate-management/estate/asset/v1/_create", // create first call - for creation 
+    search: "/estate-management/estate/asset/v1/_search", // table  - second screen post call = only tenant id
+    allotment: "/estate-management/estate/allotment/v1/_create", //crate allotatment 
     allotmentSearch: "/estate-management/estate/allotment/v1/_search",
   },
   

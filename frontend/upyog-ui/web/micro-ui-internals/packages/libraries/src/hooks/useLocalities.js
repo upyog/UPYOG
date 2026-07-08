@@ -2,7 +2,7 @@ import { queryTemplate } from "../common/queryTemplate";
 import { getLocalities } from "../services/molecules/getLocalities";
 import { LocalityService } from "../services/elements/Localities";
 
-const useLocalities = (tenant, boundaryType = "admin", config, t) => {
+const useLocalities = (tenant, boundaryType = "revenue", config, t) => {
   boundaryType = boundaryType.toLocaleLowerCase();
   return queryTemplate({
     queryKey: ["BOUNDARY_DATA", tenant, boundaryType],
