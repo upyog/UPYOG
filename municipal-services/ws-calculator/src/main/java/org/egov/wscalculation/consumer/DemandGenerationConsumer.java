@@ -70,7 +70,7 @@ public class DemandGenerationConsumer {
 	 * Exception e){ log.error("KAFKA_PROCESS_ERROR", e); } }
 	 */
 	@KafkaListener(
-		    topics = "${egov.watercalculatorservice.createdemand.topic}",
+		    topics = {"${egov.watercalculatorservice.createdemand.topic}","${egov.watercalculatorservice.createsingledemand.topic}"},
 		    containerFactory = "kafkaListenerContainerFactoryBatch",
 		    concurrency = "${egov.watercalculatorservice.listener.concurrency}"
 		)

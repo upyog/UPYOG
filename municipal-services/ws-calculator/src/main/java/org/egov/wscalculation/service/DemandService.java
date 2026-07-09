@@ -220,7 +220,7 @@ public class DemandService {
 	/**
 	 * Creates or updates Demand
 	 * 
-	 * @param requestInfo  The RequestInfo of the calculation request
+//	 * @param requestInfo  The RequestInfo of the calculation request
 	 * @param calculations The Calculation Objects for which demand has to be
 	 *                     generated or updated
 	 */
@@ -292,7 +292,7 @@ public class DemandService {
 	 * @param calculations List of Calculation
 	 * @param masterMap    Master MDMS Data
 	 * @return Returns list of demands
-	 * @throws IOException
+//	 * @throws IOException
 	 * @throws JsonMappingException
 	 */
 	private List<Demand> createDemand(RequestInfo requestInfo, List<Calculation> calculations,
@@ -1607,7 +1607,7 @@ public class DemandService {
 	 * 
 	 * @param tenantId TenantId for getting master data.
 	 */
-	public void generateDemandForTenantId(String tenantId, RequestInfo requestInfo) {
+	public void generateDemandForTenantId(String tenantId, String locality, RequestInfo requestInfo) {
 		requestInfo.getUserInfo().setTenantId(tenantId);
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
 		long taxPeriodFrom = billingMasterData.get("taxPeriodFrom") == null ? 0l
@@ -1621,7 +1621,12 @@ public class DemandService {
 					"MDMS Billing Period does not available for tenant: " + tenantId);
 		}
 
-		generateDemandForULB(billingMasterData, requestInfo, tenantId, taxPeriodFrom, taxPeriodTo);
+        if(locality!=null && !locality.trim().isEmpty()){
+            generateDemandForULB(billingMasterData, requestInfo, tenantId, locality, taxPeriodFrom, taxPeriodTo);
+        }
+        else{
+            generateDemandForULB(billingMasterData, requestInfo, tenantId,null, taxPeriodFrom, taxPeriodTo);
+        }
 	}
 
 	public String generateDemandForConsumerCode(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
@@ -1742,7 +1747,7 @@ public class DemandService {
 					.filter(p -> taxPeriodFrom.equals(taxPeriods.get(p).getFromDate())).findFirst().getAsInt();
 			String cone = singleDemand.getConsumercode();
 			log.info("Billing master data values for non metered connection:: {}", master);
-			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoListforsingledemand(tenantId,
+			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoListforsingledemand(tenantId, null,
 					WSCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
 			int bulkSaveDemandCount = configs.getBulkSaveDemandCount() != null ? configs.getBulkSaveDemandCount() : 1;
 			log.info("Total Connections: {} and batch count: {}", connectionNos.size(), bulkSaveDemandCount);
@@ -1809,7 +1814,7 @@ public class DemandService {
 								"Pushing calculation req to the kafka topic with bulk data of calculationCriteriaList size: {}",
 								calculationCriteriaList.size());
 
-						wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
+						wsCalculationProducer.push(configs.getCreateSingleDemand(), calculationReq);
 						totalRecordsPushedToKafka = totalRecordsPushedToKafka + calculationCriteriaList.size();
 						calculationCriteriaList.clear();
 						connectionNosCount = 0;
@@ -1837,7 +1842,7 @@ public class DemandService {
 								"Pushing calculation last req to the kafka topic with bulk data of calculationCriteriaList size: {}",
 								calculationCriteriaList.size());
 
-						wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
+						wsCalculationProducer.push(configs.getCreateSingleDemand(), calculationReq);
 						totalRecordsPushedToKafka = totalRecordsPushedToKafka + calculationCriteriaList.size();
 						calculationCriteriaList.clear();
 						connectionNosCount = 0;
@@ -1925,7 +1930,7 @@ public class DemandService {
 	 * @param requestInfo Request Info
 	 * @param tenantId    Tenant Id
 	 */
-	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId,
+	public void generateDemandForULB(Map<String, Object> master, RequestInfo requestInfo, String tenantId, String locality,
 			Long taxPeriodFrom, Long taxPeriodTo) {
 		log.info("generateDemandForULB:: {} taxPeriodFrom:: {} taxPeriodTo {}", tenantId, taxPeriodFrom, taxPeriodTo);
 		try {
@@ -1937,8 +1942,15 @@ public class DemandService {
 			String cone = requestInfo.getKey();
 			log.info("Billing master data values for non metered connection:: {}", master);
 
-			List<WaterDetails> connectionNos = waterCalculatorDao.getConnectionsNoListforsingledemand(tenantId,
-					WSCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
+            List<WaterDetails> connectionNos = new ArrayList<>();
+            if(locality!=null && !locality.trim().isEmpty()) {
+                connectionNos = waterCalculatorDao.getConnectionsNoListforsingledemand(tenantId, locality,
+                        WSCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
+            }
+            else{
+                connectionNos = waterCalculatorDao.getConnectionsNoListforsingledemand(tenantId, null,
+                        WSCalculationConstant.nonMeterdConnection, taxPeriodFrom, taxPeriodTo, cone);
+            }
 
 			int bulkSaveDemandCount = configs.getBulkSaveDemandCount() != null ? configs.getBulkSaveDemandCount() : 1;
 			log.info("Total Connections: {} and batch count: {}", connectionNos.size(), bulkSaveDemandCount);

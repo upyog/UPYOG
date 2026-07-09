@@ -695,15 +695,17 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	/**
 	 * Generate Demand Based on Time (Monthly, Quarterly, Yearly)
 	 */
-	public void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+	public void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkDemandCriteria bulkDemandCriteria) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 		log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
 //		List<String> tenantIds = wSCalculationDao.getTenantId();
 		List<String> tenantIds = new ArrayList<>();
-		String tenat = requestInfo.getMsgId();
+        List<String> localities = new ArrayList<>();
+        String tenant = bulkDemandCriteria.getTenantId();
+        String locality = bulkDemandCriteria.getLocality();
 
-		if (!tenat.contains("pb")) {
+		if (!tenant.contains("pb")) {
 			MdmsCriteriaReq mdmsCriteriaReq = calculatorUtil.gettenants(requestInfo);
 			StringBuilder url = calculatorUtil.getMdmsSearchUrl();
 			Object res = repository.fetchResult(url, mdmsCriteriaReq);
@@ -717,25 +719,28 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 				Object mdmsResObj = resMap.get("MdmsRes");
 				Map<String, Object> mdmsRes = (Map<String, Object>) mdmsResObj;
 				Object tenantObj = mdmsRes.get("tenant");
-				Map<String, Object> tenant = (Map<String, Object>) tenantObj;
-				Object waterSewerageObj = tenant.get("waterSewerage");
+				Map<String, Object> tenantMap = (Map<String, Object>) tenantObj;
+				Object waterSewerageObj = tenantMap.get("waterSewerage");
 				List<Object> waterSewerageList = (List<Object>) waterSewerageObj;
 				for (Object obj : waterSewerageList) {
-					if (obj instanceof Map) {
-						Map<String, Object> waterSewerageMap = (Map<String, Object>) obj;
-						Object codeObj = waterSewerageMap.get("code");
-						if (codeObj != null) {
-							String code = codeObj.toString();
-							tenantIds.add(code);
-						}
-					}
-				}
-
+                    if (obj instanceof Map) {
+                        Map<String, Object> waterSewerageMap = (Map<String, Object>) obj;
+                        Object codeObj = waterSewerageMap.get("code");
+                        Object localitiesObj = waterSewerageMap.get("localities");
+                        if (codeObj != null) {
+                            String code = codeObj.toString();
+                            tenantIds.add(code);
+                        } else if (localitiesObj != null) {
+                            String local = localitiesObj.toString();
+                            localities.add(local);
+                        }
+                    }
+                }
 			}
 
 		} else {
-			tenantIds.add(tenat);
-
+			tenantIds.add(tenant);
+            localities.add(locality);
 		}
 		if (tenantIds.isEmpty()) {
 			log.info("No tenants are found for generating demand");
@@ -764,9 +769,13 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				try {
-					log.info("\u25B6\uFE0F  Demand generation started for tenant: {}", tenantId);
-					demandService.generateDemandForTenantId(tenantId, tenantRequestInfo);
-					log.info("\u2705 Demand generation completed for tenant: {}", tenantId);
+                    if(!localities.isEmpty()){
+                        localities.forEach(localty -> {
+                            demandService.generateDemandForTenantId(tenantId, localty, requestInfo);
+                        });
+                    }else {
+                        demandService.generateDemandForTenantId(tenantId,null, requestInfo);
+                    }
 				} catch (Exception e) {
 					// Catch everything — one tenant failure must NOT block others
 					log.error("\u274C Demand generation failed for tenant: {} | {}", tenantId, e.getMessage(), e);
