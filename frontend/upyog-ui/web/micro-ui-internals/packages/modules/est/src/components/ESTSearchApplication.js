@@ -5,14 +5,15 @@ import {
   SubmitBar,
   SearchForm,
   SearchField,
-  Table,
   Card,
   Loader,
   Header,
   Dropdown,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import { Link } from "react-router-dom";
 import { getCreateAssetPath } from "../utils/estRoutes";
+import AssetTable from "./shared/AssetTable";
+import useAssetTableColumns from "./shared/useAssetTableColumns";
+import useIsMobile from "./shared/useIsMobile";
 
 const ESTSearchApplication = ({
   tenantId,
@@ -25,11 +26,11 @@ const ESTSearchApplication = ({
 }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
   const { path: modulePath } = Digit.Hooks.useModuleBasePath();
+  const isMobile = useIsMobile();
 
-  const [selectedAssetType, setSelectedAssetType] = useState(null); // assetParentCategory
-  const [selectedLocality, setSelectedLocality] = useState(null);   // localityCode
+  const [selectedAssetType, setSelectedAssetType] = useState(null);
+  const [selectedLocality, setSelectedLocality] = useState(null);
   const [isCleared, setIsCleared] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const { register, handleSubmit, setValue, getValues, reset, watch } = useForm({
     defaultValues: {
@@ -41,7 +42,6 @@ const ESTSearchApplication = ({
     },
   });
 
-  // Asset Parent Category (LAND / BUILDING)
   const { data: assetTypeData } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
     "ASSET",
@@ -51,10 +51,7 @@ const ESTSearchApplication = ({
         const formattedData = data?.ASSET?.assetParentCategory || [];
         return formattedData
           .filter((item) => item.active)
-          .map((item) => ({
-            code: item.code,
-            name: item.name,
-          }));
+          .map((item) => ({ code: item.code, name: item.name }));
       },
     }
   );
@@ -66,7 +63,6 @@ const ESTSearchApplication = ({
       label: item.name,
     })) || [];
 
-  // 🔹 Locality options (boundary) – like create page
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     tenantId,
     "revenue",
@@ -82,22 +78,18 @@ const ESTSearchApplication = ({
       label: loc.name || loc.label || loc.code,
     })) || [];
 
-  // Submit handler: send clean payload to parent (filters handled server-side)
   const handleFormSubmit = (formData) => {
     setIsCleared(false);
     setValue("offset", 0);
-    const searchData = {
+    onSubmit({
       ...formData,
       offset: 0,
       assetParentCategory: selectedAssetType?.code || undefined,
       localityCode: selectedLocality?.code || undefined,
-    };
-
-    onSubmit(searchData);
+    });
   };
 
   const estateNoField = register("estateNo");
-
   const offset = watch("offset") || 0;
   const limit = watch("limit") || 10;
 
@@ -113,14 +105,6 @@ const ESTSearchApplication = ({
     register("sortOrder");
   }, [register]);
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const GetCell = (value) => <span className="cell-text">{value || "N/A"}</span>;
-
   const handleAllotAsset = useCallback(
     (asset) => {
       navigate(`${modulePath}/assignassets/info`, { state: { assetData: asset } });
@@ -128,99 +112,15 @@ const ESTSearchApplication = ({
     [navigate, modulePath]
   );
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: "Asset Number",
-        accessor: "estateNo",
-        disableSortBy: true,
-        Cell: ({ row }) => (
-          <div>
-            <span className="link">
-              <Link to={`application-details/${row.original["estateNo"]}`}>
-                {row.original["estateNo"]}
-              </Link>
-            </span>
-          </div>
-        ),
-      },
-      {
-        Header: "Asset Ref",
-        // Fallbacks: rows created before the apiFieldName/numeric fixes in
-        // config.js may carry legacy keys (assetRef, buildingFloor) or nulls.
-        Cell: ({ row }) => GetCell(row.original["refAssetNo"] || row.original["assetRef"]),
-        disableSortBy: true,
-      },
-      {
-        Header: "Building Name",
-        Cell: ({ row }) => GetCell(row.original["buildingName"] || row.original["assetName"]),
-        disableSortBy: true,
-      },
-      {
-        Header: "Locality",
-        Cell: ({ row }) => GetCell(row.original["locality"]),
-        disableSortBy: true,
-      },
-      {
-        Header: "Plot Area",
-        Cell: ({ row }) => GetCell(row.original["totalFloorArea"]),
-        disableSortBy: true,
-      },
-      {
-        Header: "Dimensions",
-        Cell: ({ row }) => {
-          const l = row.original["dimensionLength"];
-          const w = row.original["dimensionWidth"];
-          // Avoid rendering the literal "null x null" for legacy rows
-          return GetCell(l != null && w != null ? `${l} x ${w}` : null);
-        },
-        disableSortBy: true,
-      },
-      {
-        Header: "Asset Type",
-        Cell: ({ row }) => GetCell(row.original["assetType"]),
-        disableSortBy: true,
-      },
-      {
-        Header: "Rate/sqft",
-        Cell: ({ row }) => GetCell(row.original["rate"]),
-        disableSortBy: true,
-      },
-      {
-        Header: "Status",
-        Cell: ({ row }) => GetCell(row.original["assetStatus"]),
-        disableSortBy: true,
-      },
-      {
-        Header: "Action",
-        Cell: ({ row }) => {
-          const isAllotted = row.original["assetStatus"] === "Allotted";
-          return (
-            <button
-              onClick={() => !isAllotted && handleAllotAsset(row.original)}
-              style={{
-                backgroundColor: isAllotted ? "#ccc" : "#007bff",
-                color: "white",
-                border: "none",
-                padding: isMobile ? "3px 6px" : "6px 10px",
-                borderRadius: "4px",
-                cursor: isAllotted ? "not-allowed" : "pointer",
-                fontSize: isMobile ? "9px" : "12px",
-                minWidth: isMobile ? "50px" : "auto",
-              }}
-              disabled={isAllotted}
-            >
-              Allot Asset
-            </button>
-          );
-        },
-        disableSortBy: true,
-      },
-    ],
-    // Old deps were [] — the Action cell captured the first-render isMobile and
-    // handleAllotAsset forever, so mobile styles never updated on resize.
-    [isMobile, handleAllotAsset]
-  );
+  const columns = useAssetTableColumns({
+    isMobile,
+    modulePath,
+    navigate,
+    estateNoLink: "link",
+    showAssetRef: true,
+    actions: "allot",
+    onAllot: handleAllotAsset,
+  });
 
   const onSort = useCallback(
     (args) => {
@@ -231,46 +131,46 @@ const ESTSearchApplication = ({
     [setValue]
   );
 
-  function onPageSizeChange(e) {
+  const onPageSizeChange = (e) => {
     setValue("limit", Number(e.target.value));
     setValue("offset", 0);
-  }
+  };
 
-  function nextPage() {
+  const nextPage = () => {
     const newOffset = (getValues("offset") || 0) + (getValues("limit") || 10);
-    if (newOffset < count) {
-      setValue("offset", newOffset);
-    }
-  }
+    if (newOffset < count) setValue("offset", newOffset);
+  };
 
-  function previousPage() {
+  const previousPage = () => {
     const newOffset = (getValues("offset") || 0) - (getValues("limit") || 10);
-    if (newOffset >= 0) {
-      setValue("offset", newOffset);
-    }
-  }
+    if (newOffset >= 0) setValue("offset", newOffset);
+  };
 
   return (
     <React.Fragment>
-      <div style={{ padding: isMobile ? '10px' : '20px' }}>
-        <Header style={{ fontSize: isMobile ? '18px' : '24px', marginBottom: '15px' }}>{t("EST_SEARCH_APPLICATIONS")}</Header>
+      <div style={{ padding: isMobile ? "10px" : "20px" }}>
+        <Header style={{ fontSize: isMobile ? "18px" : "24px", marginBottom: "15px" }}>
+          {t("EST_SEARCH_APPLICATIONS")}
+        </Header>
 
         <SearchForm onSubmit={handleFormSubmit} handleSubmit={handleSubmit}>
-          {/* Asset Number */}
-          <SearchField style={{ marginBottom: isMobile ? '10px' : '15px' }}>
-            <label style={{ fontSize: isMobile ? '14px' : '16px', marginBottom: '5px', display: 'block' }}>{t("EST_SEARCH_ASSET_NUMBER")}</label>
+          <SearchField style={{ marginBottom: isMobile ? "10px" : "15px" }}>
+            <label style={{ fontSize: isMobile ? "14px" : "16px", marginBottom: "5px", display: "block" }}>
+              {t("EST_SEARCH_ASSET_NUMBER")}
+            </label>
             <TextInput
               name="estateNo"
               inputRef={estateNoField.ref}
               onChange={estateNoField.onChange}
               onBlur={estateNoField.onBlur}
-              style={{ width: '100%', fontSize: isMobile ? '14px' : '16px', padding: isMobile ? '8px' : '10px' }}
+              style={{ width: "100%", fontSize: isMobile ? "14px" : "16px", padding: isMobile ? "8px" : "10px" }}
             />
           </SearchField>
 
-          {/* Locality dropdown */}
-          <SearchField style={{ marginBottom: isMobile ? '10px' : '15px' }}>
-            <label style={{ fontSize: isMobile ? '14px' : '16px', marginBottom: '5px', display: 'block' }}>{t("EST_LOCALITY")}</label>
+          <SearchField style={{ marginBottom: isMobile ? "10px" : "15px" }}>
+            <label style={{ fontSize: isMobile ? "14px" : "16px", marginBottom: "5px", display: "block" }}>
+              {t("EST_LOCALITY")}
+            </label>
             <Dropdown
               option={localityOptions}
               optionKey="i18nKey"
@@ -279,13 +179,14 @@ const ESTSearchApplication = ({
               placeholder={t("EST_SELECT_LOCALITY")}
               t={t}
               optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
-              style={{ width: '100%', fontSize: isMobile ? '14px' : '16px' }}
+              style={{ width: "100%", fontSize: isMobile ? "14px" : "16px" }}
             />
           </SearchField>
 
-          {/* Asset Type (parent category) */}
-          <SearchField style={{ marginBottom: isMobile ? '10px' : '15px' }}>
-            <label style={{ fontSize: isMobile ? '14px' : '16px', marginBottom: '5px', display: 'block' }}>{t("EST_ASSET_TYPE")}</label>
+          <SearchField style={{ marginBottom: isMobile ? "10px" : "15px" }}>
+            <label style={{ fontSize: isMobile ? "14px" : "16px", marginBottom: "5px", display: "block" }}>
+              {t("EST_ASSET_TYPE")}
+            </label>
             <Dropdown
               option={assetTypeOptions}
               optionKey="i18nKey"
@@ -293,20 +194,31 @@ const ESTSearchApplication = ({
               select={setSelectedAssetType}
               placeholder={t("EST_SELECT_ASSET_TYPE")}
               t={t}
-              style={{ width: '100%', fontSize: isMobile ? '14px' : '16px' }}
+              style={{ width: "100%", fontSize: isMobile ? "14px" : "16px" }}
             />
           </SearchField>
 
-          {/* Submit + Clear */}
-          <SearchField className="submit" style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '10px', alignItems: isMobile ? 'stretch' : 'center' }}>
-            <SubmitBar label={t("ES_COMMON_SEARCH")} submit style={{ width: isMobile ? '100%' : 'auto', fontSize: isMobile ? '14px' : '16px' }} />
+          <SearchField
+            className="submit"
+            style={{
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: "10px",
+              alignItems: isMobile ? "stretch" : "center",
+            }}
+          >
+            <SubmitBar
+              label={t("ES_COMMON_SEARCH")}
+              submit
+              style={{ width: isMobile ? "100%" : "auto", fontSize: isMobile ? "14px" : "16px" }}
+            />
             <p
-              style={{ 
-                marginTop: isMobile ? "10px" : "0", 
-                cursor: "pointer", 
-                width: isMobile ? '100%' : 'auto',
-                textAlign: isMobile ? 'center' : 'left',
-                fontSize: isMobile ? '14px' : '16px'
+              style={{
+                marginTop: isMobile ? "10px" : "0",
+                cursor: "pointer",
+                width: isMobile ? "100%" : "auto",
+                textAlign: isMobile ? "center" : "left",
+                fontSize: isMobile ? "14px" : "16px",
               }}
               onClick={() => {
                 reset({
@@ -314,7 +226,7 @@ const ESTSearchApplication = ({
                   offset: 0,
                   limit: 10,
                   sortBy: "createdDate",
-                  sortOrder: "DESC"
+                  sortOrder: "DESC",
                 });
                 setSelectedAssetType(null);
                 setSelectedLocality(null);
@@ -327,7 +239,6 @@ const ESTSearchApplication = ({
           </SearchField>
         </SearchForm>
 
-        {/* Results */}
         {!isLoading && data?.display ? (
           <Card style={{ marginTop: 20, textAlign: "center" }}>
             {String(t(data.display) || "")
@@ -335,7 +246,6 @@ const ESTSearchApplication = ({
               .map((text, index) => (
                 <p key={index}>{text}</p>
               ))}
-
             <button
               onClick={() => navigate(getCreateAssetPath(modulePath))}
               style={{
@@ -352,42 +262,22 @@ const ESTSearchApplication = ({
             </button>
           </Card>
         ) : !isLoading && Array.isArray(data) && data.length > 0 ? (
-          <div style={{ 
-            overflowX: "auto", 
-            width: "100%", 
-            marginTop: "20px",
-            WebkitOverflowScrolling: "touch",
-            padding: isMobile ? '5px' : '10px'
-          }}>
-            <Table
-              t={t}
-              data={paginatedData}
-              totalRecords={count}
-              columns={columns}
-              getCellProps={() => ({
-                style: {
-                  minWidth: isMobile ? "70px" : "100px",
-                  padding: isMobile ? "4px 2px" : "8px 6px",
-                  fontSize: isMobile ? "10px" : "12px",
-                  textAlign: "center",
-                  whiteSpace: "nowrap",
-                },
-              })}
-              onPageSizeChange={onPageSizeChange}
-              currentPage={offset / limit}
-              onNextPage={nextPage}
-              onPrevPage={previousPage}
-              pageSizeLimit={limit}
-              onSort={onSort}
-              disableSort={false}
-              sortParams={[
-                {
-                  id: watch("sortBy"),
-                  desc: watch("sortOrder") === "DESC",
-                },
-              ]}
-            />
-          </div>
+          <AssetTable
+            t={t}
+            data={paginatedData}
+            columns={columns}
+            totalRecords={count}
+            isMobile={isMobile}
+            pagination={{
+              onPageSizeChange,
+              currentPage: offset / limit,
+              onNextPage: nextPage,
+              onPrevPage: previousPage,
+              pageSizeLimit: limit,
+              onSort,
+              sortParams: [{ id: watch("sortBy"), desc: watch("sortOrder") === "DESC" }],
+            }}
+          />
         ) : (
           isLoading && <Loader />
         )}

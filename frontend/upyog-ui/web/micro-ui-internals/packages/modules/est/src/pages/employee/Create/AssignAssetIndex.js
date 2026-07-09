@@ -1,8 +1,8 @@
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useMemo, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { Config } from "../../../config/Create/AssignAssetConfig";
 import { buildAllotmentAcknowledgementData } from "../../../utils";
 
 const ESTAssignAssetCreate = ({ parentRoute }) => {
@@ -14,14 +14,24 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EST_ASSIGN_ASSETS", {});
 
+  const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
+    Digit.ULBService.getStateId(),
+    "Estate",
+    [{ name: "assignAssetConfig" }],
+    {
+      select: (data) => data?.Estate?.assignAssetConfig,
+    }
+  );
+
   const config = useMemo(() => {
-    const merged = Config.reduce((acc, obj) => {
-      if (!obj?.body) return acc;
-      return acc.concat(obj.body.filter((a) => !a.hideInCitizen));
+    if (!initialConfig || !Array.isArray(initialConfig)) return [];
+    const merged = initialConfig.reduce((acc, entry) => {
+      if (!entry?.body) return acc;
+      return acc.concat(entry.body.filter((step) => !step.hideInEmployee));
     }, []);
     merged.indexRoute = "info";
     return merged;
-  }, []);
+  }, [initialConfig]);
 
   useEffect(() => {
     const incoming = location.state?.assetData;
@@ -107,6 +117,10 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
   const ESTAssignAssetsCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTAssignAssetsCheckPage");
   const ESTAllotmentAcknowledgement = Digit?.ComponentRegistryService?.getComponent("ESTAllotmentAcknowledgement");
 
+  if (isLoading || !initialConfig || config.length === 0) {
+    return <Loader />;
+  }
+
   return (
     <Routes>
       {config.map((routeObj, index) => {
@@ -142,6 +156,7 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
             onSubmit={estcreate}
             onError={estcreateError}
             value={params}
+            config={config}
           />
         }
       />

@@ -7,19 +7,31 @@ import {
   ESTDocumnetPreview,
   formatEpochDate,
 } from "../../../utils";
-import { Config } from "../../../config/Create/AssignAssetConfig";
 import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig";
 
-const baseRoute = Config[0].body.find((b) => b.key === "Allotments");
-const routeConfig = { ...baseRoute, ...estateAllotmentFormConfig };
-
-const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {} }) => {
+const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }) => {
   const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const mutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
+
+  const rawRouteConfig = useMemo(() => {
+    const steps = Array.isArray(config) ? config : [];
+    return (
+      steps.find((step) => step.key === "Allotments") ||
+      steps.find((step) => Array.isArray(step.form) && step.form.length > 0) ||
+      {}
+    );
+  }, [config]);
+
+  const routeConfig = useMemo(() => {
+    if (Array.isArray(rawRouteConfig.form) && rawRouteConfig.form.length > 0) {
+      return rawRouteConfig;
+    }
+    return { ...rawRouteConfig, ...estateAllotmentFormConfig };
+  }, [rawRouteConfig]);
 
   const assetData = value?.assetData || {};
   const extraData = {
@@ -64,7 +76,7 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {} }) => {
         onError && onError(error);
       },
     });
-  }, [isSubmitting, value, mutation, onSubmit, onError]);
+  }, [isSubmitting, value, mutation, onSubmit, onError, routeConfig.form]);
 
   return (
     <DynamicCheckPage
