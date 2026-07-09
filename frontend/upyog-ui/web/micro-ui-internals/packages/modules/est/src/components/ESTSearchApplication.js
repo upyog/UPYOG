@@ -96,6 +96,8 @@ const ESTSearchApplication = ({
     onSubmit(searchData);
   };
 
+  const estateNoField = register("estateNo");
+
   const offset = watch("offset") || 0;
   const limit = watch("limit") || 10;
 
@@ -105,10 +107,10 @@ const ESTSearchApplication = ({
   }, [data, offset, limit, isCleared]);
 
   useEffect(() => {
-    register("offset", 0);
-    register("limit", 10);
-    register("sortBy", "createdDate");
-    register("sortOrder", "DESC");
+    register("offset");
+    register("limit");
+    register("sortBy");
+    register("sortOrder");
   }, [register]);
 
   useEffect(() => {
@@ -257,7 +259,13 @@ const ESTSearchApplication = ({
           {/* Asset Number */}
           <SearchField style={{ marginBottom: isMobile ? '10px' : '15px' }}>
             <label style={{ fontSize: isMobile ? '14px' : '16px', marginBottom: '5px', display: 'block' }}>{t("EST_SEARCH_ASSET_NUMBER")}</label>
-            <TextInput name="estateNo" inputRef={register({})} style={{ width: '100%', fontSize: isMobile ? '14px' : '16px', padding: isMobile ? '8px' : '10px' }} />
+            <TextInput
+              name="estateNo"
+              inputRef={estateNoField.ref}
+              onChange={estateNoField.onChange}
+              onBlur={estateNoField.onBlur}
+              style={{ width: '100%', fontSize: isMobile ? '14px' : '16px', padding: isMobile ? '8px' : '10px' }}
+            />
           </SearchField>
 
           {/* Locality dropdown */}
@@ -322,7 +330,7 @@ const ESTSearchApplication = ({
         {/* Results */}
         {!isLoading && data?.display ? (
           <Card style={{ marginTop: 20, textAlign: "center" }}>
-            {t(data.display)
+            {String(t(data.display) || "")
               .split("\\n")
               .map((text, index) => (
                 <p key={index}>{text}</p>
