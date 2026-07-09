@@ -13,6 +13,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { getCreateAssetPath } from "../utils/estRoutes";
 
 // Manage Properties Component
 // This component allows users to manage properties by viewing, filtering, editing, and allotting assets.
@@ -39,7 +40,7 @@ const ManageProperties = ({ t }) => {
  const handleEditAsset = (asset) => {
   sessionStorage.setItem("EST_EDIT_DATA", JSON.stringify(asset));
 
-  navigate(`${modulePath}/create-asset/newRegistration?edit=true`);
+  navigate(`${getCreateAssetPath(modulePath)}?edit=true`);
 };
 
   const [properties, setProperties] = useState([]);

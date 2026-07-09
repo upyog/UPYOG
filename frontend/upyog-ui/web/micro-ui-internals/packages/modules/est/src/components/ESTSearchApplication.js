@@ -12,6 +12,7 @@ import {
   Dropdown,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
+import { getCreateAssetPath } from "../utils/estRoutes";
 
 const ESTSearchApplication = ({
   tenantId,
@@ -328,7 +329,7 @@ const ESTSearchApplication = ({
               ))}
 
             <button
-              onClick={() => navigate(`${modulePath}/create-asset`)}
+              onClick={() => navigate(getCreateAssetPath(modulePath))}
               style={{
                 backgroundColor: "#007bff",
                 color: "white",

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { checkForNA, ESTDocumnetPreview, formatEpochDate } from "../../../utils";
 import { buildDynamicAssetPayload, getEstateRequestInfo } from "../../../utils/assetPayloadUtils";
 import estateFormConfig from "../../../config/estateFormConfig";
+import { getCreateAssetPath } from "../../../utils/estRoutes";
 
 const ESTRegCheckPage = ({ onSubmit, onError, value = {}, config }) => {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ const ESTRegCheckPage = ({ onSubmit, onError, value = {}, config }) => {
     return saved || {};
   }, [value, routeConfig]);
 
-  const editRoute = `${modulePath}/create-asset/newRegistration`;
+  const editRoute = getCreateAssetPath(modulePath);
   const editNavigationState = useMemo(() => ({ editData: flatAsset }), [flatAsset]);
 
   const formatAnyDate = (v) => {
