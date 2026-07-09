@@ -76,6 +76,38 @@ serviceMaps:
             - jsonPath: $.Allotments.*.auditDetails.lastModifiedTime
 
     - version: 1.0
+      description: Update allotment details in ug_em_allotment_details table
+      fromTopic: update-allotment-details
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE ug_em_allotment_details SET estate_no=?, tenant_id=?, user_uuid=?, allotee_name=?, mobile_number=?, alternate_contact_no=?, email_id=?, agreement_start_date=?, agreement_end_date=?, duration=?, rate=?, monthly_rent=?, advance_payment=?, advance_payment_date=?, eoffice_file_no=?, asset_reference_no=?, property_type=?, citizen_request_letter=?, allotment_letter=?, signed_deed=?, lastmodifiedby=?, lastmodifiedtime=? WHERE allotment_id=?
+          basePath: Allotments.*
+          jsonMaps:
+            - jsonPath: $.Allotments.*.assetNo
+            - jsonPath: $.Allotments.*.tenantId
+            - jsonPath: $.Allotments.*.userUuid
+            - jsonPath: $.Allotments.*.alloteeName
+            - jsonPath: $.Allotments.*.mobileNo
+            - jsonPath: $.Allotments.*.alternateMobileNo
+            - jsonPath: $.Allotments.*.emailId
+            - jsonPath: $.Allotments.*.agreementStartDate
+            - jsonPath: $.Allotments.*.agreementEndDate
+            - jsonPath: $.Allotments.*.duration
+            - jsonPath: $.Allotments.*.rentRate
+            - jsonPath: $.Allotments.*.monthlyRent
+            - jsonPath: $.Allotments.*.advancePayment
+            - jsonPath: $.Allotments.*.advancePaymentDate
+            - jsonPath: $.Allotments.*.eofficeFileNo
+            - jsonPath: $.Allotments.*.assetReferenceNo
+            - jsonPath: $.Allotments.*.propertyType
+            - jsonPath: $.Allotments.*.citizenRequestLetter
+            - jsonPath: $.Allotments.*.allotmentLetter
+            - jsonPath: $.Allotments.*.signedDeed
+            - jsonPath: $.Allotments.*.auditDetails.lastModifiedBy
+            - jsonPath: $.Allotments.*.auditDetails.lastModifiedTime
+            - jsonPath: $.Allotments.*.allotmentId
+
+    - version: 1.0
       description: Persist document details into ug_em_document_details table
       fromTopic: save-document-details
       isTransaction: true

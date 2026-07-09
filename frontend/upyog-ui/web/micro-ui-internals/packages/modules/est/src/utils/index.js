@@ -330,6 +330,9 @@ export const createAllotmentData = (data) => {
     ...allotmentData,
     assetNo: allotmentData?.assetNo || data?.assetData?.estateNo || "",
     emailId: allotmentData?.emailId || allotmentData?.email || "",
+    allotmentId:
+      allotmentData?.allotmentId || data?.allotmentId || "",
+    userUuid: allotmentData?.userUuid || "",
   };
 
   const built = buildDynamicAllotmentPayload(
@@ -338,19 +341,29 @@ export const createAllotmentData = (data) => {
     tenantId
   );
 
+  const isEdit = Boolean(allotmentData?.allotmentId);
+  const existingAudit = allotmentData?.auditDetails;
+
   return {
     Allotments: [
       {
         ...built,
         allotmentId: allotmentData?.allotmentId || "",
-        userUuid: user?.uuid || "",
+        userUuid: allotmentData?.userUuid || user?.uuid || "",
         billingCycle: built.billingCycle || "MONTHLY",
-        auditDetails: {
-          createdBy: user?.uuid || "",
-          lastModifiedBy: user?.uuid || "",
-          createdTime: Date.now(),
-          lastModifiedTime: Date.now(),
-        },
+        auditDetails: isEdit && existingAudit?.createdTime
+          ? {
+              createdBy: existingAudit.createdBy || user?.uuid || "",
+              lastModifiedBy: user?.uuid || "",
+              createdTime: existingAudit.createdTime,
+              lastModifiedTime: Date.now(),
+            }
+          : {
+              createdBy: user?.uuid || "",
+              lastModifiedBy: user?.uuid || "",
+              createdTime: Date.now(),
+              lastModifiedTime: Date.now(),
+            },
       },
     ],
   };

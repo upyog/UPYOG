@@ -98,6 +98,9 @@ public class EstateConfiguration {
     @Value("${save-estate-management-allotment-topic}")
     private String estateAllotmentSaveTopic;
 
+    @Value("${update-estate-management-allotment-topic}")
+    private String estateAllotmentUpdateTopic;
+
 
     // EST Business Service Config
     @Value("${est.module.name}")

@@ -121,6 +121,26 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
     [routeConfig, tenantId]
   );
 
+  const handleSelect = useCallback(
+    (key, data, skipStep, index, isAddMultiple) => {
+      const saved = data?.[routeConfig.payloadKey]?.[0] || {};
+      const mergedAllotment = {
+        ...saved,
+        allotmentId: saved.allotmentId || apiAllotment?.allotmentId || "",
+        userUuid: saved.userUuid || apiAllotment?.userUuid || "",
+        auditDetails: saved.auditDetails || apiAllotment?.auditDetails || null,
+      };
+      onSelect?.(
+        key,
+        { [routeConfig.payloadKey]: [mergedAllotment] },
+        skipStep,
+        index,
+        isAddMultiple
+      );
+    },
+    [onSelect, routeConfig.payloadKey, apiAllotment]
+  );
+
   return (
     <div className="employeeCard">
       <Header>{t(routeConfig.pageHeading?.create || "EST_COMMMON_ASSIGN_ASSETS")}</Header>
@@ -130,13 +150,14 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
         <DynamicForm
           routeConfig={routeConfig}
           onSubmit={handleSubmit}
-          onSelect={onSelect}
+          onSelect={handleSelect}
           config={config || { key: routeConfig.key }}
           persistedData={dynamicPersistedData || {}}
-          isEditMode={isEditMode || false}
+          isEditMode={Boolean(apiAllotment?.allotmentId)}
           editData={prefillData}
           tenantId={tenantId}
           t={t}
+          showCancel
         />
       )}
     </div>

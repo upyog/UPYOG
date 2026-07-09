@@ -49,6 +49,9 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
         const next = { assetData: incoming };
         if (allotmentData) {
           next.Allotments = { Allotments: [allotmentData] };
+          if (allotmentData.allotmentId) {
+            next.allotmentId = allotmentData.allotmentId;
+          }
         }
         return next;
       }
@@ -58,6 +61,9 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
           ...prev,
           assetData: incoming,
           Allotments: { Allotments: [allotmentData] },
+          ...(allotmentData.allotmentId
+            ? { allotmentId: allotmentData.allotmentId }
+            : {}),
         };
       }
 

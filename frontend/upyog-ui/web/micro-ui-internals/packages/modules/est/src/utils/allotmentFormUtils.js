@@ -16,6 +16,7 @@ export const mapAllotmentApiToFormData = (allotment = {}) => {
 
   return {
     allotmentId: allotment.allotmentId || "",
+    userUuid: allotment.userUuid || "",
     assetNo: allotment.assetNo || "",
     alloteeName: allotment.alloteeName || "",
     mobileNo: allotment.mobileNo || allotment.phoneNumber || "",
@@ -41,7 +42,16 @@ export const mapAllotmentApiToFormData = (allotment = {}) => {
     citizenLetter: allotment.citizenLetter || null,
     allotmentLetter: allotment.allotmentLetter || null,
     signedDeed: allotment.signedDeed || null,
+    auditDetails: allotment.auditDetails || null,
   };
+};
+
+export const isAllotmentEdit = (data = {}) => {
+  const allotment =
+    data?.Allotments?.Allotments?.[0] ||
+    data?.AssignAssetsData?.AllotmentData ||
+    {};
+  return Boolean(allotment?.allotmentId || data?.allotmentId);
 };
 
 export const getAssetIdentity = (asset = {}) =>

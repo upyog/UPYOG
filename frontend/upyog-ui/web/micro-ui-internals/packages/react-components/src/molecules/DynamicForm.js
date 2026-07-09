@@ -1,8 +1,10 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
-import { SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { SubmitBar, Toast, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import ActionBar from "../atoms/ActionBar";
+import ButtonSelector from "../atoms/ButtonSelector";
 import DynamicFormField from "./DynamicFormField";
 import { validateFields, validateCrossField, calculateDuration } from "../utilities/validators";
-import { sortByOrder, buildPayload, scrollToFirstError, buildInitialData } from "../utilities/formUtils";
+import { sortByOrder, buildPayload, scrollToFirstError, buildInitialData, flattenFormConfig } from "../utilities/formUtils";
 import useDynamicMDMS from "../utilities/useDynamicMDMS";
 import styles from "../styles/dynamicForm.module.scss";
 
@@ -14,16 +16,6 @@ import styles from "../styles/dynamicForm.module.scss";
 const COMPUTE_REGISTRY = {
   calculateDuration,
 };
-
-// Flattens group children into a single list alongside top-level fields,
-// since computed fields (and their computeFrom dependencies) can live at either level.
-const flattenFields = (formConfig = []) =>
-  formConfig.reduce((acc, fieldConfig) => {
-    if (fieldConfig.type === "group") {
-      return [...acc, ...(fieldConfig.children || [])];
-    }
-    return [...acc, fieldConfig];
-  }, []);
 
 const DynamicForm = ({
   routeConfig,
@@ -37,15 +29,15 @@ const DynamicForm = ({
   tenantId = "",
   persistedData = {},
   t = (k) => k,
+  showCancel = false,
+  cancelLabel = "CS_COMMON_CANCEL",
+  onCancel,
 }) => {
   const stateId = Digit.ULBService.getStateId();
   const payloadKey = routeConfig.payloadKey || "Assets";
 
-  // // ── Dropdown data: single generic source for ANY module's config ─────
+  // ── Dropdown data: single generic source for ANY module's config ─────
   const { dropdownData, isLoading } = useDynamicMDMS(routeConfig.form, stateId, tenantId, t);
-
-
-
 
   // ── Raw pre-fill source ───────────────────────────────────────────────
   // Merge, don't pick: persisted (user-entered) values win, editData (asset
@@ -54,9 +46,7 @@ const DynamicForm = ({
   const rawAsset = useMemo(() => {
     const saved = persistedData?.[config?.key]?.[payloadKey];
     const persisted = (Array.isArray(saved) ? saved[0] : saved) || {};
-    const hasPersisted = Object.keys(persisted).length > 0;
-
-    if (hasPersisted) return { ...editData, ...persisted };
+    if (Object.keys(persisted).length > 0) return { ...editData, ...persisted };
     return editData && Object.keys(editData).length > 0 ? editData : {};
   }, [editData, persistedData, config, payloadKey]);
 
@@ -70,27 +60,23 @@ const DynamicForm = ({
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [crossFieldMessages, setCrossFieldMessages] = useState([]);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastError, setToastError] = useState(false);
+  const [toast, setToast] = useState(null); // { message, error } | null
 
-  const flatFields = useMemo(() => flattenFields(routeConfig.form || []), [routeConfig.form]);
+  // Derived views of the config — flattened once, sorted once.
+  const flatFields = useMemo(() => flattenFormConfig(routeConfig.form || []), [routeConfig.form]);
+  const sortedFields = useMemo(() => sortByOrder(routeConfig.form || []), [routeConfig.form]);
 
   // Re-derive any field whose computeFrom list includes a field that just changed.
   const applyComputedFields = useCallback(
     (updated, changedFieldNames) => {
       let next = updated;
       flatFields.forEach((fc) => {
-        const computeFrom = fc.field?.computeFrom;
-        const computeFn = fc.field?.computeFn;
+        const { computeFrom, computeFn, name } = fc.field || {};
         if (!computeFrom || !computeFn) return;
         if (!computeFrom.some((dep) => changedFieldNames.includes(dep))) return;
-
         const fn = COMPUTE_REGISTRY[computeFn];
         if (!fn) return;
-
-        const args = computeFrom.map((dep) => next[dep]);
-        next = { ...next, [fc.field.name]: fn(...args) };
+        next = { ...next, [name]: fn(...computeFrom.map((dep) => next[dep])) };
       });
       return next;
     },
@@ -100,16 +86,19 @@ const DynamicForm = ({
   // Sync formData with initialData EXACTLY ONCE, right after dropdownData
   // has finished loading. Guarded with a ref so it can never fire again,
   // regardless of how many times initialData's identity changes afterward.
-  // Also runs computed fields once so derived values (e.g. duration) show
-  // immediately on prefill/edit, not only after the user touches a date.
+  // The freshly-built initialData wins over the pre-load snapshot so options
+  // resolved against REAL dropdown data replace synthesized placeholders;
+  // anything the user already typed (non-empty) is preserved on top.
   const hasSyncedRef = useRef(false);
 
   useEffect(() => {
-    if (hasSyncedRef.current) return;
-    if (isLoading) return;
+    if (hasSyncedRef.current || isLoading) return;
     hasSyncedRef.current = true;
     setFormData((prev) => {
-      const merged = { ...initialData, ...prev };
+      const userTouched = Object.fromEntries(
+        Object.entries(prev).filter(([, v]) => v !== "" && v !== null && v !== undefined)
+      );
+      const merged = { ...initialData, ...userTouched };
       const allComputeDeps = flatFields.flatMap((fc) => fc.field?.computeFrom || []);
       return allComputeDeps.length ? applyComputedFields(merged, allComputeDeps) : merged;
     });
@@ -121,8 +110,7 @@ const DynamicForm = ({
       setFormData((prev) => {
         let updated = { ...prev, [fieldName]: value };
         resetFields.forEach((f) => { updated[f] = null; });
-        updated = applyComputedFields(updated, [fieldName, ...resetFields]);
-        return updated;
+        return applyComputedFields(updated, [fieldName, ...resetFields]);
       });
       setErrors((prev) => {
         const updated = { ...prev, [fieldName]: false };
@@ -134,14 +122,12 @@ const DynamicForm = ({
   );
 
   // ── File upload: owns tenantId + filestore call + error toast ────────
-  // module code defaults to "ESTATE" but can be overridden per-route via routeConfig.uploadModule
+  // Module code defaults to "ESTATE"; override per-route via routeConfig.uploadModule.
   const handleFileUpload = useCallback(
     async (fieldName, file) => {
       if (!file) return;
       if (file.size >= 5242880) {
-        setToastError(true);
-        setToastMessage(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-        setShowToast(true);
+        setToast({ message: t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"), error: true });
         return;
       }
       try {
@@ -155,15 +141,11 @@ const DynamicForm = ({
           handleChange(fieldName, { filestoreId: id, documentuuid: id, documentType: fieldName });
         }
       } catch {
-        setToastError(true);
-        setToastMessage(t("CS_FILE_UPLOAD_ERROR"));
-        setShowToast(true);
+        setToast({ message: t("CS_FILE_UPLOAD_ERROR"), error: true });
       }
     },
     [routeConfig.uploadModule, tenantId, t, handleChange]
   );
-
-  const sortedFields = useMemo(() => sortByOrder(routeConfig.form || []), [routeConfig.form]);
 
   const goNext = useCallback(() => {
     const fieldErrors = validateFields(routeConfig.form, formData);
@@ -197,6 +179,9 @@ const DynamicForm = ({
         },
         onError: (error) => {
           setIsSubmitting(false);
+          // Surface the failure — previously only console.error'd, so the
+          // user saw nothing when an update silently failed.
+          setToast({ message: t("EST_UPDATE_FAILED"), error: true });
           console.error("Update failed:", error);
           onSubmit && onSubmit({ payload, error, isEditMode: true });
         },
@@ -205,13 +190,25 @@ const DynamicForm = ({
       onSelect && onSelect(config?.key, { [payloadKey]: [formVal] }, false);
       onSubmit && onSubmit({ payload, isEditMode: false });
     }
-  }, [routeConfig, formData, isEditMode, updateMutation, editData, tenantId, onSelect, onSubmit, config, payloadKey]);
+  }, [routeConfig, formData, isEditMode, updateMutation, editData, tenantId, onSelect, onSubmit, config, payloadKey, t]);
+
+  const handleCancel = useCallback(() => {
+    const resetData = buildInitialData(routeConfig.form, rawAsset, dropdownData, tenantId);
+    const allComputeDeps = flatFields.flatMap((fc) => fc.field?.computeFrom || []);
+    const next = allComputeDeps.length
+      ? applyComputedFields({ ...resetData }, allComputeDeps)
+      : { ...resetData };
+    setFormData(next);
+    setErrors({});
+    setCrossFieldMessages([]);
+    onCancel?.();
+  }, [routeConfig.form, rawAsset, dropdownData, tenantId, flatFields, applyComputedFields, onCancel]);
 
   const buttonLabel = isEditMode
     ? routeConfig.actionButton?.text?.edit || "UPDATE"
     : routeConfig.actionButton?.text?.create || "SAVE & NEXT";
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loader />;
 
   return (
     <div className={styles["dynamic-form-container"]}>
@@ -234,13 +231,26 @@ const DynamicForm = ({
       ))}
 
       {!isDisabled && (
-        <div className={styles["dynamic-form-action"]}>
-          <SubmitBar label={t(buttonLabel)} onSubmit={goNext} disabled={isSubmitting} variant={routeConfig.actionButton?.variant || "contained"} />
-        </div>
+        <ActionBar className={styles["dynamic-form-action"]}>
+          {showCancel && (
+            <ButtonSelector
+              theme="border"
+              label={t(cancelLabel)}
+              onSubmit={handleCancel}
+              style={{ marginRight: "16px" }}
+            />
+          )}
+          <SubmitBar
+            label={t(buttonLabel)}
+            onSubmit={goNext}
+            disabled={isSubmitting}
+            style={showCancel ? { flex: 1 } : undefined}
+          />
+        </ActionBar>
       )}
 
-      {showToast && (
-        <Toast label={toastMessage} error={toastError} onClose={() => setShowToast(false)} />
+      {toast && (
+        <Toast label={toast.message} error={toast.error} onClose={() => setToast(null)} />
       )}
     </div>
   );

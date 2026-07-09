@@ -8,6 +8,7 @@ import {
   formatEpochDate,
 } from "../../../utils";
 import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig";
+import { isAllotmentEdit } from "../../../utils/allotmentFormUtils";
 
 const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }) => {
   const { t } = useTranslation();
@@ -15,7 +16,10 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }
   const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
-  const mutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
+  const isEditAllotment = useMemo(() => isAllotmentEdit(value), [value]);
+  const createMutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
+  const updateMutation = Digit.Hooks.estate.useESTAllotmentUpdate(tenantId);
+  const mutation = isEditAllotment ? updateMutation : createMutation;
 
   const rawRouteConfig = useMemo(() => {
     const steps = Array.isArray(config) ? config : [];
@@ -74,7 +78,7 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }
         onError && onError(error);
       },
     });
-  }, [isSubmitting, value, mutation, onSubmit, onError, routeConfig.form]);
+  }, [isSubmitting, value, mutation, onSubmit, onError, routeConfig.form, isEditAllotment]);
 
   return (
     <DynamicCheckPage

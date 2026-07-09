@@ -44,6 +44,19 @@ public class EstateController {
     }
 
     /**
+     * Updates an existing allotment. Skips demand creation to avoid duplicate billing records.
+     */
+    @PostMapping("/allotment/v1/_update")
+    public ResponseEntity<AllotmentResponse> updateAllotment(
+            @Valid @RequestBody AllotmentRequest request) {
+        log.info("Updating allotment for request: {}", request);
+        AllotmentResponse response = estateService.updateAllotment(request);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+        response.setResponseInfo(responseInfo);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Searches for allotments based on provided search criteria.
      * Supports filtering by allotment ID, tenant ID, asset number, allottee details, etc.
      *

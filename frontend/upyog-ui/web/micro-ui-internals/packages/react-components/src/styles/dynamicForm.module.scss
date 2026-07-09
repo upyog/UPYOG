@@ -1,0 +1,51 @@
+.dynamic-form {
+  &-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+
+  &-unit {
+    font-size: 12px;
+    font-weight: 400;
+    color: #505a5f;
+    margin-left: 4px;
+  }
+
+  &-required {
+    color: #d4351c;
+    margin-left: 2px;
+  }
+
+  &-field-wrap {
+    width: 100%;
+  }
+
+  &-group {
+    margin-bottom: 24px;
+
+    &-children {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      flex-wrap: wrap;
+
+      > * {
+        flex: 1 1 160px;
+      }
+    }
+  }
+
+  &-action {
+    display: flex;
+    align-items: center;
+    margin-top: 28px;
+    padding-bottom: 24px;
+  }
+
+  &-error {
+    color: "red";
+    font-size: 12px 
+  }
+}

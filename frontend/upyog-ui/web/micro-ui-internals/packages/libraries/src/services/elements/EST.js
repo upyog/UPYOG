@@ -35,6 +35,18 @@ export const ESTService = {
     auth: true,
   }),
 
+    allotmentUpdate: (details, tenantId) =>
+      Request({
+        url: Urls.est.allotmentUpdate,
+        data: details,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: {},
+        auth: true,
+      }),
+
   // Search EST Assets
   // This method searches for EST assets based on provided filters.
 
