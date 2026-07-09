@@ -72,11 +72,12 @@ const estateAllotmentFormConfig = {
     {
       order: 8,
       key: "EST_ALLOTMENT_TYPE",
+      apiFieldName: "propertyType",
       field: {
         code: "EST_ALLOTMENT_TYPE",
         name: "allotmentType",
         type: "radio",
-        dataSource: { type: "MDMS", moduleName: "Estate", moduleData: "AllotmentType" },
+        dataSource: { type: "MDMS", moduleName: "Estate", masterName: "AllotmentType" },
       },
       // Falls back to these two static options if MDMS Estate/AllotmentType returns nothing,
       // matching the static component's fallbackAllotmentTypes behavior.

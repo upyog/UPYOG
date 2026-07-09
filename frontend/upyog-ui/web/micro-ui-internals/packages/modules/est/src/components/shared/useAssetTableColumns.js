@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { AssetCell, formatDimensions } from "./assetTableUtils";
-import { isAssetAllotted } from "../../utils/allotmentFormUtils";
+import { isAssetAllotted, hasExistingAllotment } from "../../utils/allotmentFormUtils";
 
 const allotButtonStyle = (isMobile, isDisabled) => ({
   backgroundColor: isDisabled ? "#ccc" : "#007bff",
@@ -38,6 +38,7 @@ const editButtonStyle = (isMobile) => ({
  * @param {"none"|"allot"|"allot-edit"} options.actions
  * @param {function} options.onAllot
  * @param {function} options.onEdit
+ * @param {Set<string>} options.allottedAssetNos - estate numbers with saved allotments
  */
 const useAssetTableColumns = ({
   isMobile,
@@ -49,6 +50,7 @@ const useAssetTableColumns = ({
   actions = "none",
   onAllot,
   onEdit,
+  allottedAssetNos = null,
 }) => {
   return useMemo(() => {
     const columns = [
@@ -151,7 +153,7 @@ const useAssetTableColumns = ({
         Header: "Action",
         disableSortBy: true,
         Cell: ({ row }) => {
-          const allotted = isAssetAllotted(row.original);
+          const allotted = hasExistingAllotment(row.original, allottedAssetNos);
           const showEdit = actions === "allot-edit";
 
           if (actions === "allot") {
@@ -212,6 +214,7 @@ const useAssetTableColumns = ({
     actions,
     onAllot,
     onEdit,
+    allottedAssetNos,
   ]);
 };
 

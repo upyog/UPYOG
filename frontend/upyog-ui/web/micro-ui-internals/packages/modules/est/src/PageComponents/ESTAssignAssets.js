@@ -98,6 +98,14 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
 
   }, [persistedData, routeConfig, editData, apiAllotment, t]);
 
+  // When API allotment is loaded, session draft must not override fetched values
+  // (stale Allotments in session can carry empty allotmentType / propertyType).
+  const dynamicPersistedData = useMemo(() => {
+    if (!apiAllotment) return persistedData;
+    const { [routeConfig.key]: _removed, ...rest } = persistedData || {};
+    return rest;
+  }, [persistedData, apiAllotment, routeConfig.key]);
+
   // Dev-time preview only — real submit/mutation happens further down the workflow
   // (e.g. an ESTAllotmentCheckPage), via the same shared buildDynamicAllotmentPayload()
   // so it can't drift.
@@ -124,7 +132,7 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
           onSubmit={handleSubmit}
           onSelect={onSelect}
           config={config || { key: routeConfig.key }}
-          persistedData={persistedData || {}}
+          persistedData={dynamicPersistedData || {}}
           isEditMode={isEditMode || false}
           editData={prefillData}
           tenantId={tenantId}

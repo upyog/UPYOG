@@ -13,8 +13,9 @@ import {
 import { getCreateAssetPath } from "../utils/estRoutes";
 import {
   fetchAllotmentByAssetNo,
+  fetchAllottedAssetNos,
   getAssetIdentity,
-  isAssetAllotted,
+  hasExistingAllotment,
   mapAllotmentApiToFormData,
 } from "../utils/allotmentFormUtils";
 import AssetTable from "./shared/AssetTable";
@@ -37,6 +38,7 @@ const ESTSearchApplication = ({
   const [selectedAssetType, setSelectedAssetType] = useState(null);
   const [selectedLocality, setSelectedLocality] = useState(null);
   const [isCleared, setIsCleared] = useState(false);
+  const [allottedAssetNos, setAllottedAssetNos] = useState(new Set());
 
   const { register, handleSubmit, setValue, getValues, reset, watch } = useForm({
     defaultValues: {
@@ -111,6 +113,24 @@ const ESTSearchApplication = ({
     register("sortOrder");
   }, [register]);
 
+  useEffect(() => {
+    if (!Array.isArray(data) || data.length === 0 || isCleared) {
+      setAllottedAssetNos(new Set());
+      return;
+    }
+
+    let cancelled = false;
+    const loadAllottedAssets = async () => {
+      const allotted = await fetchAllottedAssetNos(data, tenantId);
+      if (!cancelled) setAllottedAssetNos(allotted);
+    };
+
+    loadAllottedAssets();
+    return () => {
+      cancelled = true;
+    };
+  }, [data, tenantId, isCleared]);
+
   const [sessionParams] = Digit.Hooks.useSessionStorage("EST_ASSIGN_ASSETS", {});
 
   const navigateToAssignFlow = useCallback(
@@ -163,13 +183,13 @@ const ESTSearchApplication = ({
 
   const handleAssetAction = useCallback(
     (asset) => {
-      if (isAssetAllotted(asset)) {
+      if (hasExistingAllotment(asset, allottedAssetNos)) {
         handleEditAsset(asset);
       } else {
         handleAllotAsset(asset);
       }
     },
-    [handleAllotAsset, handleEditAsset]
+    [allottedAssetNos, handleAllotAsset, handleEditAsset]
   );
 
   const columns = useAssetTableColumns({
@@ -181,6 +201,7 @@ const ESTSearchApplication = ({
     actions: "allot",
     onAllot: handleAssetAction,
     onEdit: handleEditAsset,
+    allottedAssetNos,
   });
 
   const onSort = useCallback(

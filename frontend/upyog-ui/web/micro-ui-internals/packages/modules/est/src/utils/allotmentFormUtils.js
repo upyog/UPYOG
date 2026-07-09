@@ -9,19 +9,30 @@ export const mapAllotmentApiToFormData = (allotment = {}) => {
     return value;
   };
 
+  const normalizeOptionCode = (value) => {
+    const code = String(value || "").trim().toUpperCase();
+    return code || "";
+  };
+
   return {
     allotmentId: allotment.allotmentId || "",
     assetNo: allotment.assetNo || "",
     alloteeName: allotment.alloteeName || "",
-    phoneNumber: allotment.mobileNo || allotment.phoneNumber || "",
-    altPhoneNumber: allotment.alternateMobileNo || allotment.altPhoneNumber || "",
+    mobileNo: allotment.mobileNo || allotment.phoneNumber || "",
+    alternateMobileNo:
+      allotment.alternateMobileNo || allotment.altPhoneNumber || "",
     emailId: allotment.emailId || allotment.email || "",
     agreementStartDate: toFormDate(allotment.agreementStartDate),
     agreementEndDate: toFormDate(allotment.agreementEndDate),
     advancePaymentDate: toFormDate(allotment.advancePaymentDate),
     duration: allotment.duration != null ? String(allotment.duration) : "",
     billingCycle: allotment.billingCycle || "",
-    allotmentType: allotment.allotmentType || "",
+    allotmentType: normalizeOptionCode(
+      allotment.allotmentType || allotment.propertyType
+    ),
+    propertyType: normalizeOptionCode(
+      allotment.propertyType || allotment.allotmentType
+    ),
     rentRate: allotment.rentRate != null ? String(allotment.rentRate) : "",
     monthlyRent: allotment.monthlyRent != null ? String(allotment.monthlyRent) : "",
     advancePayment:
@@ -46,6 +57,34 @@ export const isAssetAllotted = (asset = {}) => {
     return true;
   }
   return String(asset?.assetStatus || "").toLowerCase() === "allotted";
+};
+
+export const hasExistingAllotment = (asset = {}, allottedAssetNos = null) => {
+  const estateNo = asset?.estateNo;
+  if (estateNo && allottedAssetNos?.has?.(estateNo)) return true;
+  return isAssetAllotted(asset);
+};
+
+export const fetchAllottedAssetNos = async (assets = [], tenantId) => {
+  if (!tenantId || !Array.isArray(assets) || assets.length === 0) {
+    return new Set();
+  }
+
+  try {
+    const response = await Digit.ESTService.allotmentSearch({
+      tenantId,
+      filters: { tenantId },
+    });
+    const searchNos = new Set(assets.map((asset) => asset.estateNo).filter(Boolean));
+    return new Set(
+      (response?.Allotments || [])
+        .map((allotment) => allotment.assetNo)
+        .filter((assetNo) => searchNos.has(assetNo))
+    );
+  } catch (error) {
+    console.error("Error fetching allotted asset numbers:", error);
+    return new Set();
+  }
 };
 
 export const fetchAllotmentByAssetNo = async (assetNo, tenantId) => {
