@@ -1,4 +1,4 @@
-import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, mergeSessionStepWithRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useMemo, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
@@ -116,7 +116,7 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
 
   const handleSelect = useCallback(
     (key, data, skipStep, index, isAddMultiple = false) => {
-      setParams((prev) => ({ ...prev, [key]: data }));
+      setParams((prev) => mergeSessionStepWithRouteConfig(prev, key, data));
       goNext(skipStep, index, isAddMultiple, key);
     },
     [setParams, goNext]

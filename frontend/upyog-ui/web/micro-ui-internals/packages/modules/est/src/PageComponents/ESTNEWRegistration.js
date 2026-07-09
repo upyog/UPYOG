@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { Header, DynamicForm } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, DynamicForm, attachRouteConfigToStepData } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { buildDynamicAssetPayload } from "../utils/assetPayloadUtils";
 import estateFormConfig from "../config/estateFormConfig";
@@ -24,13 +24,26 @@ const NewRegistration = ({ onSelect, config, persistedData, isEditMode, editData
     [routeConfig, tenantId]
   );
 
+  const handleSelect = useCallback(
+    (key, data, skipStep, index, isAddMultiple) => {
+      onSelect?.(
+        key,
+        attachRouteConfigToStepData(data, routeConfig),
+        skipStep,
+        index,
+        isAddMultiple
+      );
+    },
+    [onSelect, routeConfig]
+  );
+
   return (
     <div className="employeeCard">
       <Header>{t(routeConfig.pageHeading?.create || "EST_COMMON_NEW_REGISTRATION")}</Header>
       <DynamicForm
         routeConfig={routeConfig}
         onSubmit={handleSubmit}
-        onSelect={onSelect}
+        onSelect={handleSelect}
         config={config || { key: routeConfig.key }}
         persistedData={persistedData || {}}
         isEditMode={isEditMode || false}

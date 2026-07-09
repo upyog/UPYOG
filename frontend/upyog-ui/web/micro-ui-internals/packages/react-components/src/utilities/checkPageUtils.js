@@ -59,6 +59,55 @@ export const mergeRouteConfig = (rawRouteConfig = {}, localFormConfig = {}) => (
   ...localFormConfig,
 });
 
+/** Session key where each wizard step's resolved routeConfig is stored. */
+export const ROUTE_CONFIG_SESSION_KEY = "routeConfigs";
+
+/** Marker attached to step data when a form page passes its routeConfig upstream. */
+export const ROUTE_CONFIG_STEP_MARKER = "__routeConfig";
+
+/** Remove the routeConfig marker from step payload before persisting form values. */
+export const stripRouteConfigMarker = (stepData = {}) => {
+  if (!stepData || typeof stepData !== "object") return stepData;
+  const { [ROUTE_CONFIG_STEP_MARKER]: _removed, ...rest } = stepData;
+  return rest;
+};
+
+/** Attach the active routeConfig so the wizard parent can store it in session. */
+export const attachRouteConfigToStepData = (stepData = {}, routeConfig) => {
+  if (!routeConfig) return stepData;
+  return { ...stepData, [ROUTE_CONFIG_STEP_MARKER]: routeConfig };
+};
+
+/**
+ * Persist form step values + routeConfig snapshot from the form page.
+ * Call from parent handleSelect so check pages reuse the same config.
+ */
+export const mergeSessionStepWithRouteConfig = (prevSession = {}, stepKey, stepData) => {
+  const routeConfig = stepData?.[ROUTE_CONFIG_STEP_MARKER];
+  const cleanedStepData = stripRouteConfigMarker(stepData);
+
+  return {
+    ...prevSession,
+    [stepKey]: cleanedStepData,
+    ...(routeConfig
+      ? {
+          [ROUTE_CONFIG_SESSION_KEY]: {
+            ...(prevSession[ROUTE_CONFIG_SESSION_KEY] || {}),
+            [stepKey]: routeConfig,
+          },
+        }
+      : {}),
+  };
+};
+
+/**
+ * Route config for check/submit: prefer session snapshot from form step,
+ * fall back to MDMS wizard steps when session has no snapshot yet.
+ */
+export const resolveActiveRouteConfig = (sessionValue, mdmsSteps, stepKey) =>
+  sessionValue?.[ROUTE_CONFIG_SESSION_KEY]?.[stepKey] ||
+  resolveRouteConfigFromSteps(mdmsSteps, stepKey);
+
 /**
  * Read flat form values saved by DynamicForm's onSelect:
  *   onSelect(stepKey, { [payloadKey]: [formVal] })

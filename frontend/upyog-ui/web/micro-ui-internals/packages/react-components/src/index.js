@@ -237,13 +237,17 @@ import Stepper from "./customComponents/Stepper";
 import Timeline from "./molecules/Timeline";
 
 import DynamicForm from "./molecules/DynamicForm"
-export { buildApiPayload, toDropdownOption, resolveOption, getRequestInfo } from "./utilities/payloadUtils";
+export { buildApiPayload, toDropdownOption, resolveOption, getRequestInfo, formatDateForApi } from "./utilities/payloadUtils";
 export {
   defaultCheckNA,
   parseFlexibleDate,
   formatCheckPageDate,
   resolveRouteConfigFromSteps,
   mergeRouteConfig,
+  resolveActiveRouteConfig,
+  mergeSessionStepWithRouteConfig,
+  attachRouteConfigToStepData,
+  ROUTE_CONFIG_SESSION_KEY,
   extractWizardFormValues,
   flattenForSummary,
   buildSummarySections,

@@ -7,7 +7,6 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { checkForNA, createAllotmentData, ESTDocumnetPreview } from "../../../utils";
-import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig";
 import { isAllotmentEdit } from "../../../utils/allotmentFormUtils";
 
 const STEP_KEY = "Allotments";
@@ -21,7 +20,7 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }
   const updateMutation = Digit.Hooks.estate.useESTAllotmentUpdate(tenantId);
   const mutation = isEditAllotment ? updateMutation : createMutation;
 
-  const routeConfig = useDynamicRouteConfig(config, STEP_KEY, estateAllotmentFormConfig);
+  const routeConfig = useDynamicRouteConfig(config, STEP_KEY, value);
 
   const assetData = value?.assetData || {};
   const extraData = useMemo(
@@ -37,7 +36,10 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }
     [assetData]
   );
 
-  const buildPayload = useCallback(() => createAllotmentData(value), [value]);
+  const buildPayload = useCallback(
+    () => createAllotmentData(value, routeConfig),
+    [value, routeConfig]
+  );
 
   const { isSubmitting, handleSubmit } = useDynamicCheckSubmit({
     routeConfig,

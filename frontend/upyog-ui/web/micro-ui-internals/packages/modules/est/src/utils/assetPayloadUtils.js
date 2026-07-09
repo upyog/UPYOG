@@ -21,8 +21,10 @@ import  estateFormConfig  from "../config/estateFormConfig";
 
 export { toDropdownOption, resolveOption };
 
-export const getEstateRequestInfo = (extra = {}) =>
-  getRequestInfo(estateFormConfig.apiId, extra);
+export const getEstateRequestInfo = (extra = {}) => {
+  const { apiId, ...rest } = extra;
+  return getRequestInfo(apiId || estateFormConfig.apiId, rest);
+};
 
 export const buildDynamicAssetPayload = (routeConfig, flatAsset, tenantId) =>
   buildApiPayload(routeConfig, flatAsset, tenantId);

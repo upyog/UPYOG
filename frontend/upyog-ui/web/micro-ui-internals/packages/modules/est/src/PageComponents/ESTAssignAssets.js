@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { Header, DynamicForm, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, DynamicForm, Loader, attachRouteConfigToStepData } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { buildDynamicAllotmentPayload } from "../utils/allotmentPayloadUtils";
 import estateAllotmentFormConfig from "../config/Create/estateAllotmentFormConfig";
@@ -132,13 +132,16 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
       };
       onSelect?.(
         key,
-        { [routeConfig.payloadKey]: [mergedAllotment] },
+        attachRouteConfigToStepData(
+          { [routeConfig.payloadKey]: [mergedAllotment] },
+          routeConfig
+        ),
         skipStep,
         index,
         isAddMultiple
       );
     },
-    [onSelect, routeConfig.payloadKey, apiAllotment]
+    [onSelect, routeConfig, apiAllotment]
   );
 
   return (

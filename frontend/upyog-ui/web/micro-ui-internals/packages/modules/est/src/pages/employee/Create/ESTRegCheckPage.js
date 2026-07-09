@@ -8,7 +8,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { checkForNA, ESTDocumnetPreview } from "../../../utils";
 import { buildDynamicAssetPayload, getEstateRequestInfo } from "../../../utils/assetPayloadUtils";
-import estateFormConfig from "../../../config/estateFormConfig";
 import { getCreateAssetPath } from "../../../utils/estRoutes";
 
 const STEP_KEY = "newRegistration";
@@ -19,7 +18,7 @@ const ESTRegCheckPage = ({ onSubmit, onError, value = {}, config }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const mutation = Digit.Hooks.estate.useESTCreateAPI(tenantId);
 
-  const routeConfig = useDynamicRouteConfig(config, STEP_KEY, estateFormConfig);
+  const routeConfig = useDynamicRouteConfig(config, STEP_KEY, value);
 
   const flatAsset = useMemo(() => {
     const payloadKey = routeConfig?.payloadKey || "Assets";
@@ -30,7 +29,11 @@ const ESTRegCheckPage = ({ onSubmit, onError, value = {}, config }) => {
 
   const buildPayload = useCallback(
     () => ({
-      RequestInfo: getEstateRequestInfo({ msgId: `${Date.now()}|en_IN`, plainAccessRequest: {} }),
+      RequestInfo: getEstateRequestInfo({
+        msgId: `${Date.now()}|en_IN`,
+        plainAccessRequest: {},
+        apiId: routeConfig?.apiId,
+      }),
       Assets: [buildDynamicAssetPayload(routeConfig, flatAsset, tenantId)],
     }),
     [routeConfig, flatAsset, tenantId]

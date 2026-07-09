@@ -9,7 +9,6 @@
 
 import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
 import { buildDynamicAssetPayload } from "./assetPayloadUtils";
-import estateAllotmentFormConfig from "../config/Create/estateAllotmentFormConfig";
 import estateFormConfig from "../config/estateFormConfig";
 import { Config as registrationConfig } from "../config/Create/config";
 
@@ -313,14 +312,17 @@ export const buildAllotmentAcknowledgementData = (sessionData, apiResponse) => {
   };
 };
 
-export const createAllotmentData = (data) => {
+export const createAllotmentData = (data, routeConfig) => {
   const user = Digit.UserService.getUser().info;
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const activeRouteConfig = routeConfig || data?.routeConfigs?.Allotments;
 
-  // DynamicForm saves via onSelect(config.key, { [payloadKey]: [formVal] }),
-  // and both config.key and payloadKey are "Allotments" for this flow — so the
-  // captured form values live at data.Allotments.Allotments[0].
-  // (data.AssignAssetsData.AllotmentData kept only as a legacy fallback.)
+  if (!activeRouteConfig?.form?.length) {
+    console.warn(
+      "createAllotmentData: routeConfig missing — complete the assign-assets form step before submit"
+    );
+  }
+
   const allotmentData =
     data?.Allotments?.Allotments?.[0] ||
     data?.AssignAssetsData?.AllotmentData ||
@@ -336,7 +338,7 @@ export const createAllotmentData = (data) => {
   };
 
   const built = buildDynamicAllotmentPayload(
-    estateAllotmentFormConfig,
+    activeRouteConfig || { form: [] },
     flatAllotment,
     tenantId
   );

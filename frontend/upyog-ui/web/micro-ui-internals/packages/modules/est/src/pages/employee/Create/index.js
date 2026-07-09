@@ -1,11 +1,21 @@
-import React, { useMemo, useCallback } from "react";
+/**
+ * ESTRegCreate Component
+ *
+ * Handles the estate registration process: form navigation, MDMS config
+ * fetching, and rendering the multi-step application routes.
+ *
+ 
+ */
+
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useMemo, useCallback, useEffect } from "react";
+import { mergeSessionStepWithRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { Config } from '../../../config/Create/config'
-
 
 const ESTRegCreate = ({ parentRoute }) => {
+  // ─── ALL hooks first — no early return may appear before this block ends ───
   const queryClient = useQueryClient();
   const match = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
@@ -13,12 +23,16 @@ const ESTRegCreate = ({ parentRoute }) => {
   const { pathname } = location;
   const navigate = Digit.Hooks.useCustomNavigate();
 
+  const tenantId =
+    Digit.ULBService.getCitizenCurrentTenant(true) ||
+    Digit.ULBService.getCurrentTenantId();
+  const mutation = Digit.Hooks.ptr.usePTRCreateAPI(tenantId);
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage(
     "EST_NEW_REGISTRATION_CREATES",
     {}
   );
 
-  // Merge router state editData into params when user returns from check page via Edit
+  // Merge router-state editData into params when user returns from check page via Edit
   const routerEditData = location?.state?.editData;
 
   const effectiveParams = useMemo(() => {
@@ -27,41 +41,52 @@ const ESTRegCreate = ({ parentRoute }) => {
       : params;
   }, [routerEditData, params]);
 
-  // ─── MDMS config fetch ─────────────────────────────────────────────────────────
-  // Shape returned: [{ head, body: [ {key, route, component, hideInEmployee, ...} ] }]
-  // i.e. the SAME shape as the "Config" array in the Estate MDMS JSON.
-  // const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
-  //   Digit.ULBService.getStateId(),
-  //   "Estate",
-  //   [{ name: "Config" }],
-  //   {
-  //     select: (data) => data?.["Estate"]?.["Config"],
-  //   }
-  // );
+  // Fetches common field configurations from MDMS
+  const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
+    Digit.ULBService.getStateId(),
+    "Estate",
+    [{ name: "Config" }],
+    {
+      select: (data) => data?.["Estate"]?.["Config"],
+    }
+  );
 
-  // // Don't compute anything that touches initialConfig until it has actually loaded.
-  // if (isLoading || !initialConfig || initialConfig.length === 0) {
-  //   return null; // or a <Loader /> if available
-  // }
-
-  // formConfig = the first top-level config entry (head + body) — what ESTRegCheckPage needs.
-  //const formConfig = initialConfig[0];
-
-  // Build config ONCE from the static import, without mutating the shared
-  // module-level array (Config is a module singleton — mutating it in place
-  // on every render is unsafe and gives unstable identity to consumers below).
+  // Build config safely even while initialConfig is still undefined.
+  // (Must run on every render — cannot sit below a conditional return.)
   const config = useMemo(() => {
-    const body = Config[0]?.body || [];
-    const cloned = [...body];
-    cloned.indexRoute = "newRegistration";
-    return cloned;
-  }, []); // Config is a static import; this only needs to run once
+    if (!initialConfig || !Array.isArray(initialConfig)) return [];
+    const merged = initialConfig.reduce((acc, entry) => {
+      if (!entry?.body) return acc;
+      return acc.concat(entry.body.filter((step) => !step.hideInEmployee));
+    }, []);
+    merged.indexRoute = "newRegistration";
+    return merged;
+  }, [initialConfig]);
 
-  // const config = initialConfig.reduce((acc, entry) => {
-  //   if (!entry?.body) return acc;
-  //   return acc.concat(entry.body.filter((step) => !step.hideInEmployee));
-  // }, []);
-  // config.indexRoute = "newRegistration";
+  // Side effect: set applicationType (was previously executed during render)
+  useEffect(() => {
+    sessionStorage.setItem(
+      "applicationType",
+      pathname.includes("new-application")
+        ? "EST_NEWAPPLICATION"
+        : "EST_RENEWAPPLICATION"
+    );
+  }, [pathname]);
+
+  // Side effect: clear stale params when landing back on /info
+  // (was previously executed during render, which can cause render loops)
+  useEffect(() => {
+    if (
+      params &&
+      Object.keys(params).length > 0 &&
+      window.location.href.includes("/info") &&
+      sessionStorage.getItem("docReqScreenByBack") !== "true"
+    ) {
+      clearParams();
+      queryClient.invalidateQueries("EST_NEW_REGISTRATION_CREATES");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const getBasePath = useCallback(() => {
     if (match?.pathnameBase) return match.pathnameBase;
@@ -75,103 +100,112 @@ const ESTRegCreate = ({ parentRoute }) => {
     return parts.slice(0, -1).join("/");
   }, [match, pathname]);
 
-  const goNext = useCallback((skipStep, index, isAddMultiple, key) => {
-    let currentPath = pathname.split("/").pop(),
-      lastchar = currentPath.charAt(currentPath.length - 1),
-      isMultiple = false,
-      nextPage;
+  const goNext = useCallback(
+    (skipStep, index, isAddMultiple, key) => {
+      let currentPath = pathname.split("/").pop(),
+        lastchar = currentPath.charAt(currentPath.length - 1),
+        isMultiple = false,
+        nextPage;
 
-    if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
-      if (currentPath == "-1" || currentPath == "-2") {
-        currentPath = pathname.slice(0, -3);
-        currentPath = currentPath.split("/").pop();
-        isMultiple = true;
+      if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
+        if (currentPath == "-1" || currentPath == "-2") {
+          currentPath = pathname.slice(0, -3);
+          currentPath = currentPath.split("/").pop();
+          isMultiple = true;
+        } else {
+          currentPath = pathname.slice(0, -2);
+          currentPath = currentPath.split("/").pop();
+          isMultiple = true;
+        }
       } else {
-        currentPath = pathname.slice(0, -2);
-        currentPath = currentPath.split("/").pop();
-        isMultiple = true;
+        isMultiple = false;
       }
-    } else {
-      isMultiple = false;
-    }
 
-    if (!isNaN(lastchar)) isMultiple = true;
+      if (!isNaN(lastchar)) isMultiple = true;
 
-    let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath) || {};
+      let { nextStep = {} } =
+        config.find((routeObj) => routeObj.route === currentPath) || {};
 
-    let redirectWithHistory = (to, state) =>
-      navigate(to, state != null ? { state } : undefined);
+      let redirectWithHistory = (to, state) =>
+        navigate(to, state != null ? { state } : undefined);
 
-    if (skipStep) {
-      redirectWithHistory = (to, state) =>
-        navigate(to, state != null ? { replace: true, state } : { replace: true });
-    }
+      if (skipStep) {
+        redirectWithHistory = (to, state) =>
+          navigate(to, state != null ? { replace: true, state } : { replace: true });
+      }
 
-    if (isAddMultiple) nextStep = key;
-    if (nextStep === null) return redirectWithHistory("check");
+      if (isAddMultiple) nextStep = key;
+      if (nextStep === null) return redirectWithHistory("check");
 
-    if (!isNaN(nextStep.split("/").pop())) {
-      nextPage = `${nextStep}`;
-    } else {
-      nextPage = isMultiple && nextStep !== "map"
-        ? `${nextStep}/${index}`
-        : `${nextStep}`;
-    }
+      // Guard: if no matching route was found, nextStep is the default {}
+      // and calling .split() on it throws. Fall back to the check page.
+      if (typeof nextStep !== "string") return redirectWithHistory("check");
 
-    redirectWithHistory(nextPage);
-  }, [pathname, config, navigate]);
+      if (!isNaN(nextStep.split("/").pop())) {
+        nextPage = `${nextStep}`;
+      } else {
+        nextPage =
+          isMultiple && nextStep !== "map" ? `${nextStep}/${index}` : `${nextStep}`;
+      }
 
-  if (
-    params &&
-    Object.keys(params).length > 0 &&
-    window.location.href.includes("/info") &&
-    sessionStorage.getItem("docReqScreenByBack") !== "true"
-  ) {
-    clearParams();
-    queryClient.invalidateQueries("EST_NEW_REGISTRATION_CREATES");
-  }
+      redirectWithHistory(nextPage);
+    },
+    [pathname, config, navigate]
+  );
 
-  // ─── estcreate ───────────────────────────────────────────────────────────────
   // Called by ESTRegCheckPage with the API response on success.
-  const estcreate = useCallback((response) => {
-    clearParams();
-    queryClient.invalidateQueries("EST_NEW_REGISTRATION_CREATES");
-    const basePath = getBasePath();
-    navigate(`${basePath}/acknowledgement`, {
-      state: {
-        data: response,
-        isSuccess: true,
-      },
-    });
-  }, [clearParams, queryClient, getBasePath, navigate]);
+  const estcreate = useCallback(
+    (response) => {
+      clearParams();
+      queryClient.invalidateQueries("EST_NEW_REGISTRATION_CREATES");
+      const basePath = getBasePath();
+      navigate(`${basePath}/acknowledgement`, {
+        state: {
+          data: response,
+          isSuccess: true,
+        },
+      });
+    },
+    [clearParams, queryClient, getBasePath, navigate]
+  );
 
-  // ─── estcreateError ──────────────────────────────────────────────────────────
   // Called by ESTRegCheckPage with the error on failure.
-  const estcreateError = useCallback((error) => {
-    const basePath = getBasePath();
-    navigate(`${basePath}/acknowledgement`, {
-      state: {
-        data: null,
-        isSuccess: false,
-        error,
-      },
-    });
-  }, [getBasePath, navigate]);
-
-  const handleSelect = useCallback((key, data, skipStep, index, isAddMultiple = false) => {
-    setParams({ ...params, [key]: data });
-    goNext(skipStep, index, isAddMultiple, key);
-  }, [params, setParams, goNext]);
-
-  const handleSkip = useCallback(() => {}, []);
-  const handleMultiple = useCallback(() => {}, []);
+  const estcreateError = useCallback(
+    (error) => {
+      const basePath = getBasePath();
+      navigate(`${basePath}/acknowledgement`, {
+        state: {
+          data: null,
+          isSuccess: false,
+          error,
+        },
+      });
+    },
+    [getBasePath, navigate]
+  );
 
   const onSuccess = useCallback(() => {
     clearParams();
     queryClient.invalidateQueries("EST_NEW_REGISTRATION_CREATES");
   }, [clearParams, queryClient]);
 
-  const ESTRegCheckPage    = Digit?.ComponentRegistryService?.getComponent("ESTRegCheckPage");
+  const handleSelect = useCallback(
+    (key, data, skipStep, index, isAddMultiple = false) => {
+      setParams((prev) => mergeSessionStepWithRouteConfig(prev, key, data));
+      goNext(skipStep, index, isAddMultiple, key);
+    },
+    [setParams, goNext]
+  );
+
+  const handleSkip = useCallback(() => {}, []);
+  const handleMultiple = useCallback(() => {}, []);
+
+  // ─── Early return is now SAFE: every hook above has already been called ────
+  if (isLoading || !initialConfig || config.length === 0) {
+    return <Loader />;
+  }
+
+  const ESTRegCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTRegCheckPage");
   const ESTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("ESTAcknowledgement");
 
   return (
