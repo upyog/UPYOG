@@ -74,6 +74,9 @@ import org.egov.swcalculation.web.models.TaxPeriod;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.egov.swcalculation.web.models.SingleDemand;
+import org.egov.swcalculation.web.models.Email;
+import org.egov.swcalculation.web.models.EmailRequest;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -132,6 +135,9 @@ public class DemandService {
     
     @Autowired
     private KafkaTemplate kafkaTemplate;
+
+    @Autowired
+    private DemandSchedulerNotificationService demandSchedulerNotificationService;
     
     @Autowired
     private SWCalculationUtil sWCalculationUtil;
@@ -1618,8 +1624,9 @@ public class DemandService {
 							.isDemandExecuted(true)
 							.build();
 					swCalculationProducer.push(configs.getSaveBatchDemandLogTopic(), startLog);
+					demandSchedulerNotificationService.sendStartEmail(tenantId, taxPeriodFrom, taxPeriodTo, connectionNos.size(), requestInfo);
 				} catch (Exception e) {
-					log.error("⚠️ Non-fatal: failed to push start BatchDemandLog for tenant: {} | {}",
+					log.error("⚠️ Non-fatal: failed to push start BatchDemandLog or send start email for tenant: {} | {}",
 							tenantId, e.getMessage(), e);
 					// do NOT return — demand generation must continue
 				}
@@ -1693,6 +1700,14 @@ public class DemandService {
 				} catch (Exception e) {
 					log.error("⚠️ Non-fatal: failed to push end BatchDemandLog for tenant: {} | {}",
 							tenantId, e.getMessage(), e);
+				}
+
+				// Send Completion Email & Poll
+				try {
+					List<String> allConnNos = connectionNos.stream().map(SewerageDetails::getConnectionNo).collect(Collectors.toList());
+					demandSchedulerNotificationService.sendCompletionEmail(tenantId, taxPeriodFrom, taxPeriodTo, allConnNos, System.currentTimeMillis(), requestInfo);
+				} catch (Exception e) {
+					log.error("❌ Failed to send completion email for tenant: {} | {}", tenantId, e.getMessage(), e);
 				}
 			}
 		} catch (Exception e) {
@@ -2411,6 +2426,5 @@ public List<String> fetchBillSchedulerBatch(Set<String> consumerCodes,String ten
 		}
 		return query.toString();
 	}
-		
 
 }

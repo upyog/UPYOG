@@ -42,6 +42,7 @@ import org.egov.wscalculation.web.models.*;
 import org.egov.wscalculation.web.models.Demand.StatusEnum;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.*;
 
@@ -83,6 +84,9 @@ public class DemandService {
 
 	@Autowired
 	private WSCalculationConfiguration configs;
+
+	@Autowired
+	private DemandSchedulerNotificationService demandSchedulerNotificationService;
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
@@ -2089,8 +2093,9 @@ public class DemandService {
 							.isDemandExecuted(true)
 							.build();
 					wsCalculationProducer.push(configs.getSaveBatchDemandLogTopic(), startLog);
+					demandSchedulerNotificationService.sendStartEmail(tenantId, taxPeriodFrom, taxPeriodTo, connectionNos.size(), requestInfo);
 				} catch (Exception e) {
-					log.error("\u26A0\uFE0F Non-fatal: failed to push start BatchDemandLog for tenant: {} | {}",
+					log.error("⚠️ Non-fatal: failed to push start BatchDemandLog or send start email for tenant: {} | {}",
 							tenantId, e.getMessage(), e);
 					// do NOT return — demand generation must continue
 				}
@@ -2163,8 +2168,16 @@ public class DemandService {
 							.build();
 					wsCalculationProducer.push(configs.getSaveBatchDemandLogTopic(), endLog);
 				} catch (Exception e) {
-					log.error("\u26A0\uFE0F Non-fatal: failed to push end BatchDemandLog for tenant: {} | {}",
+					log.error("⚠️ Non-fatal: failed to push end BatchDemandLog for tenant: {} | {}",
 							tenantId, e.getMessage(), e);
+				}
+
+				// Send Completion Email & Poll
+				try {
+					List<String> allConnNos = connectionNos.stream().map(WaterDetails::getConnectionNo).collect(Collectors.toList());
+					demandSchedulerNotificationService.sendCompletionEmail(tenantId, taxPeriodFrom, taxPeriodTo, allConnNos, System.currentTimeMillis(), requestInfo);
+				} catch (Exception e) {
+					log.error("❌ Failed to send completion email for tenant: {} | {}", tenantId, e.getMessage(), e);
 				}
 			}
 
@@ -2765,6 +2778,5 @@ public class DemandService {
 
 	    return url;
 	}
-
 
 }

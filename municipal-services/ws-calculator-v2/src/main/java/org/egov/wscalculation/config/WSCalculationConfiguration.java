@@ -135,6 +135,9 @@ public class WSCalculationConfiguration {
   	//Email
     	@Value("${kafka.topics.notification.mail.name}")
     	private String emailNotifyTopic;
+
+    	@Value("${notification.mail.recipients}")
+    	private String mailRecipients;
     
     	//User Configuration
     	@Value("${egov.user.host}")
@@ -251,5 +254,21 @@ public class WSCalculationConfiguration {
 
 	@Value("${ws.connection.thread.pool.size:3}")
 	private Integer connectionThreadPoolSize;
+
+	// Elasticsearch properties
+	@Value("${elasticsearch.host}")
+	private String elasticsearchHost;
+
+	@Value("${elasticsearch.search.endpoint}")
+	private String elasticsearchSearchEndpoint;
+
+	@Value("${property.es.index}")
+	private String propertyEsIndex;
+
+	@Value("${elasticsearch.username:}")
+	private String elasticsearchUsername;
+
+	@Value("${elasticsearch.password:}")
+	private String elasticsearchPassword;
 
 }
