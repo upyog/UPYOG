@@ -11,6 +11,11 @@ import {
   Dropdown,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { getCreateAssetPath } from "../utils/estRoutes";
+import {
+  getAssetIdentity,
+  isAssetAllotted,
+  mapAllotmentApiToFormData,
+} from "../utils/allotmentFormUtils";
 import AssetTable from "./shared/AssetTable";
 import useAssetTableColumns from "./shared/useAssetTableColumns";
 import useIsMobile from "./shared/useIsMobile";
@@ -105,11 +110,69 @@ const ESTSearchApplication = ({
     register("sortOrder");
   }, [register]);
 
-  const handleAllotAsset = useCallback(
-    (asset) => {
-      navigate(`${modulePath}/assignassets/info`, { state: { assetData: asset } });
+  const [sessionParams] = Digit.Hooks.useSessionStorage("EST_ASSIGN_ASSETS", {});
+
+  const navigateToAssignFlow = useCallback(
+    (asset, { allotmentForm, targetStep = "info", resetSession = false } = {}) => {
+      navigate(`${modulePath}/assignassets/${targetStep}`, {
+        state: {
+          assetData: asset,
+          allotmentData: allotmentForm,
+          resetSession,
+        },
+      });
     },
     [navigate, modulePath]
+  );
+
+  const handleAllotAsset = useCallback(
+    (asset) => {
+      const hasSavedDraft =
+        getAssetIdentity(sessionParams?.assetData) === getAssetIdentity(asset) &&
+        sessionParams?.Allotments?.Allotments?.[0];
+
+      navigateToAssignFlow(asset, {
+        targetStep: hasSavedDraft ? "assign-assets" : "info",
+        resetSession: !hasSavedDraft,
+      });
+    },
+    [sessionParams, navigateToAssignFlow]
+  );
+
+  const handleEditAsset = useCallback(
+    async (asset) => {
+      try {
+        const response = await Digit.ESTService.allotmentSearch({
+          tenantId,
+          filters: { tenantId, assetNo: asset.estateNo },
+        });
+        const allotment = response?.Allotments?.[0];
+        if (!allotment) {
+          setShowToast?.({ error: true, label: "ES_COMMON_NO_DATA" });
+          return;
+        }
+        navigateToAssignFlow(asset, {
+          allotmentForm: mapAllotmentApiToFormData(allotment),
+          targetStep: "assign-assets",
+          resetSession: true,
+        });
+      } catch (error) {
+        console.error("Error fetching allotment details:", error);
+        setShowToast?.({ error: true, label: "EST_ALLOTMENT_FETCH_FAILED" });
+      }
+    },
+    [tenantId, navigateToAssignFlow, setShowToast]
+  );
+
+  const handleAssetAction = useCallback(
+    (asset) => {
+      if (isAssetAllotted(asset)) {
+        handleEditAsset(asset);
+      } else {
+        handleAllotAsset(asset);
+      }
+    },
+    [handleAllotAsset, handleEditAsset]
   );
 
   const columns = useAssetTableColumns({
@@ -119,7 +182,8 @@ const ESTSearchApplication = ({
     estateNoLink: "link",
     showAssetRef: true,
     actions: "allot",
-    onAllot: handleAllotAsset,
+    onAllot: handleAssetAction,
+    onEdit: handleEditAsset,
   });
 
   const onSort = useCallback(

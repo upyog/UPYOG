@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { buildAllotmentAcknowledgementData } from "../../../utils";
+import { getAssetIdentity } from "../../../utils/allotmentFormUtils";
 
 const ESTAssignAssetCreate = ({ parentRoute }) => {
   const location = useLocation();
@@ -35,12 +36,32 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
 
   useEffect(() => {
     const incoming = location.state?.assetData;
-    if (!incoming || Object.keys(incoming).length === 0) return;
+    const allotmentData = location.state?.allotmentData;
+    const resetSession = location.state?.resetSession;
 
-    const identityOf = (a) => a?.estateNo || a?.assetId || a?.refAssetNo || "";
+    if (!incoming && !allotmentData) return;
+
     setParams((prev) => {
-      if (identityOf(prev?.assetData) === identityOf(incoming)) return prev;
-      return { ...prev, assetData: incoming };
+      const sameAsset =
+        getAssetIdentity(prev?.assetData) === getAssetIdentity(incoming);
+
+      if (resetSession || !sameAsset) {
+        const next = { assetData: incoming };
+        if (allotmentData) {
+          next.Allotments = { Allotments: [allotmentData] };
+        }
+        return next;
+      }
+
+      if (allotmentData) {
+        return {
+          ...prev,
+          assetData: incoming,
+          Allotments: { Allotments: [allotmentData] },
+        };
+      }
+
+      return prev?.assetData ? prev : { ...prev, assetData: incoming };
     });
   }, [location.state, setParams]);
 

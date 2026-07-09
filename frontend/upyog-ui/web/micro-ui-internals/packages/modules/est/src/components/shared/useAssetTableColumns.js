@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { AssetCell, formatDimensions } from "./assetTableUtils";
+import { isAssetAllotted } from "../../utils/allotmentFormUtils";
 
 const allotButtonStyle = (isMobile, isDisabled) => ({
   backgroundColor: isDisabled ? "#ccc" : "#007bff",
@@ -150,8 +151,25 @@ const useAssetTableColumns = ({
         Header: "Action",
         disableSortBy: true,
         Cell: ({ row }) => {
-          const isAllotted = row.original.assetStatus === "Allotted";
+          const allotted = isAssetAllotted(row.original);
           const showEdit = actions === "allot-edit";
+
+          if (actions === "allot") {
+            return (
+              <button
+                onClick={() =>
+                  allotted ? onEdit?.(row.original) : onAllot?.(row.original)
+                }
+                style={
+                  allotted
+                    ? editButtonStyle(isMobile)
+                    : allotButtonStyle(isMobile, false)
+                }
+              >
+                {allotted ? "Edit Asset" : "Allot Asset"}
+              </button>
+            );
+          }
 
           return (
             <div
@@ -163,9 +181,9 @@ const useAssetTableColumns = ({
               }}
             >
               <button
-                onClick={() => !isAllotted && onAllot?.(row.original)}
-                style={allotButtonStyle(isMobile, isAllotted)}
-                disabled={isAllotted}
+                onClick={() => !allotted && onAllot?.(row.original)}
+                style={allotButtonStyle(isMobile, allotted)}
+                disabled={allotted}
               >
                 Allot Asset
               </button>
