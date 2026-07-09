@@ -389,7 +389,7 @@ public class WSCalculatorQueryBuilder {
 
         if (locality != null) {
             addClauseIfRequired(preparedStatement, query);
-            query.append(" conn.locality = ? ");
+            query.append(" a.locality = ? ");
             preparedStatement.add(locality);
         }
 //		 Test with connection number
