@@ -1,16 +1,7 @@
 package org.egov.dx.util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import lombok.Getter;
 
@@ -69,8 +60,6 @@ public class Configurations {
 	@Value("${dl.flow}")
 	private String dlFlow;
 
-	@Value("${esign.democontent}")
-	private String demoContent;
 	
 	@Value("${esign.responseurl}")
 	private String responseUrl;
@@ -108,14 +97,6 @@ public class Configurations {
 	@Value("${persister.update.tl.esign.txns}")
 	private String updateTLEsignTxnTopic;
 	
-//	@Value("${esign.tlredirecturl}")
-//	private String tlRedirectUrl;
-	
-//	@Value("${eSign.s3bucket}")
-//	private String s3Bucket;
-//	
-//	@Value("${api.documenthost}")
-//	private String documentHost;
 	
 	@Value("${egov.idgen.host}")
 	private String IdGenHost;
