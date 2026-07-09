@@ -10,58 +10,16 @@ import {
   CheckBox,
   EditIcon,
 } from "@nudmcdgnpm/digit-ui-react-components";
+import {
+  buildSummarySections,
+  defaultCheckNA,
+  extractWizardFormValues,
+  formatCheckPageDate,
+  resolveSummaryFieldValue,
+} from "../utilities/checkPageUtils";
 
-/* =========================================================
-   DynamicCheckPage  (lives in react-components)
-   ---------------------------------------------------------
-   Config-driven summary/check page. Renders sections + rows
-   from the SAME routeConfig.form that DynamicForm renders
-   inputs from, so form and summary can never drift.
-
-   Field type → summary rendering:
-   - sectionHeader  → new <CardSubHeader> section
-   - date           → formatDate(value)
-   - dropdown/radio → t(selected.i18nKey) (or code looked up in options)
-   - file           → collected into one document-preview block
-   - group          → children flattened into normal rows
-   - everything else→ checkNA(value) (+ unit if declared)
-
-   Per-field config extras it understands (all optional):
-   - summaryLabel: "EST_DURATION_IN_YEARS"  → overrides t(fc.key) on this page only
-   - hideInSummary: true                    → skip the field on the check page
-
-   Value resolution order for each field `name`:
-     formValues[name] → extraData[name]
-   `extraData` surfaces display-only fields (excludeFromPayload)
-   that live in router state instead of the saved record.
-
-   Because this file lives in react-components, module-level
-   utils are injected as props (with safe fallbacks):
-   - formatDate(epoch)         (fallback: toLocaleDateString)
-   - checkNA(value)            (fallback: value || "NA")
-   - DocumentPreview           (e.g. ESTDocumnetPreview)
-   ========================================================= */
-
-const defaultCheckNA = (v) => (v === undefined || v === null || v === "" ? "NA" : v);
-const defaultFormatDate = (v) => {
-  if (!v) return "NA";
-  const d = v instanceof Date ? v : new Date(Number(v) || v);
-  return isNaN(d.getTime()) ? "NA" : d.toLocaleDateString("en-IN");
-};
-
-const sortByOrder = (fields = []) =>
-  [...fields].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-
-const flattenForSummary = (formConfig = []) =>
-  formConfig.reduce((acc, fc) => {
-    if (fc.type === "group") return [...acc, ...(fc.children || [])];
-    return [...acc, fc];
-  }, []);
-
-// const ActionButton = ({ jumpTo }) => {
-//   const navigate = Digit.Hooks.useCustomNavigate();
-//   return <LinkButton label={<EditIcon />} onClick={() => navigate(jumpTo)} />;
-// };
+/* Config-driven summary page — shares routeConfig.form with DynamicForm.
+   Utilities: utilities/checkPageUtils.js, useDynamicRouteConfig, useDynamicCheckSubmit */
 
 const ActionButton = ({ jumpTo, editNavigationState }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
@@ -77,7 +35,6 @@ const ActionButton = ({ jumpTo, editNavigationState }) => {
   );
 };
 
-
 const DynamicCheckPage = ({
   routeConfig,             // same route entry DynamicForm receives (must contain .form)
   config,                  // route config with .key (e.g. "AssignAssetsData")
@@ -89,9 +46,9 @@ const DynamicCheckPage = ({
   summaryHeaderCode,       // optional i18n code for the page header
   defaultSectionHeaderCode = "EST_ASSET_DETAILS", // header for fields before the first sectionHeader
   t = (k) => k,
-  formatDate = defaultFormatDate,
+  formatDate = formatCheckPageDate,
   checkNA = defaultCheckNA,
-  DocumentPreview,         // component: ({documents, ...}) => JSX (e.g. ESTDocumnetPreview)
+  DocumentPreview,         // component: ({documents, ...}) => JSX (e.g. ESTDocumentPreview)
   declarationCode = "EST_FINAL_DECLARATION_MESSAGE",
   submitLabelCode = "EST_COMMON_SUBMIT",
   isSubmitting = false,
@@ -102,71 +59,18 @@ const DynamicCheckPage = ({
 
   const payloadKey = routeConfig?.payloadKey || "Allotments";
 
-  // Persisted data may be an array (DynamicForm saves [formVal]) or a plain object.
-  const formValues = useMemo(() => {
-    const saved = value?.[config?.key]?.[payloadKey];
-    if (Array.isArray(saved)) return saved[0] || {};
-    return saved || {};
-  }, [value, config, payloadKey]);
+  const formValues = useMemo(
+    () => extractWizardFormValues(value, config?.key, payloadKey),
+    [value, config, payloadKey]
+  );
 
-  const sortedFields = useMemo(
-    () => flattenForSummary(sortByOrder(routeConfig?.form || [])),
+  const { sections, fileFields } = useMemo(
+    () => buildSummarySections(routeConfig?.form || []),
     [routeConfig]
   );
 
-  // ── Split flat field list into sections; pull out file fields ──
-  const { sections, fileFields } = useMemo(() => {
-    const secs = [];
-    const files = [];
-    let current = { headerCode: null, fields: [] };
-
-    sortedFields.forEach((fc) => {
-      if (fc.hideInSummary) return;
-      if (fc.type === "sectionHeader") {
-        if (current.fields.length) secs.push(current);
-        current = { headerCode: fc.label?.code || fc.key, fields: [] };
-        return;
-      }
-      if (fc.field?.type === "file") {
-        files.push(fc);
-        return;
-      }
-      if (fc.field) current.fields.push(fc);
-    });
-    if (current.fields.length) secs.push(current);
-
-    return { sections: secs, fileFields: files };
-  }, [sortedFields]);
-
-  // ── Resolve one field's display text ──
-  const resolveValue = (fc) => {
-    const { field, options = [] } = fc;
-    const name = field.name;
-    const formVal = formValues[name];
-    const raw =
-      formVal !== undefined && formVal !== null && formVal !== ""
-        ? formVal
-        : extraData[name];
-
-    if (raw === undefined || raw === null || raw === "") return t("NA");
-
-    switch (field.type) {
-      case "date":
-        return formatDate(raw);
-
-      case "dropdown":
-      case "radio": {
-        if (typeof raw === "object") return t(raw.i18nKey || raw.code || "NA");
-        const opt = options.find((o) => o.code === raw);
-        return opt ? t(opt.i18nKey || opt.code) : checkNA(raw);
-      }
-
-      default: {
-        const text = checkNA(raw);
-        return field.unit ? `${text} ${field.unit}` : text;
-      }
-    }
-  };
+  const resolveValue = (fc) =>
+    resolveSummaryFieldValue(fc, { formValues, extraData, formatDate, checkNA, t });
 
   // ── Document preview: fetch URLs for every uploaded file field ──
   useEffect(() => {

@@ -6,6 +6,12 @@ const estateAllotmentFormConfig = {
   key: "Allotments",
   payloadKey: "Allotments",
   uploadModule: "ESTATE",
+  dateFormat: "dd-MM-yyyy",
+  staticFields: (tenantId, flatData) => ({
+    assetNo: flatData?.assetNo || "",
+    assetRefNumber: flatData?.assetRefNumber || "",
+    allotmentStatus: "INITIATED",
+  }),
   pageHeading: {
     create: "EST_COMMMON_ASSIGN_ASSETS",
     edit: "EST_COMMMON_ASSIGN_ASSETS",
@@ -191,6 +197,7 @@ const estateAllotmentFormConfig = {
         name: "duration",
         type: "text",
         unit: "In months",
+        numeric: true,
         // Must match the actual field `name`s below — DynamicForm's
         // applyComputedFields matches on changed field names, so the old
         // ["startDate","endDate"] never fired and duration stayed blank.
@@ -220,6 +227,7 @@ const estateAllotmentFormConfig = {
         placeholder: "EST_ENTER_RATE",
         type: "text",
         unit: "(Per sq ft)",
+        numeric: true,
       },
       validation: {
         maxLength: 12,
@@ -240,6 +248,7 @@ const estateAllotmentFormConfig = {
         placeholder: "EST_ENTER_MONTHLY_RENT",
         type: "text",
         unit: "In INR",
+        numeric: true,
       },
       validation: {
         maxLength: 12,
@@ -260,6 +269,7 @@ const estateAllotmentFormConfig = {
         placeholder: "EST_ENTER_ADVANCE_PAYMENT",
         type: "text",
         unit: "In INR",
+        numeric: true,
       },
       validation: {
         maxLength: 12,

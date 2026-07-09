@@ -1,5 +1,5 @@
 import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useMemo, useCallback, useEffect } from "react";
+import React, { useMemo, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
@@ -14,6 +14,7 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
   const { pathname } = location;
   const navigate = Digit.Hooks.useCustomNavigate();
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EST_ASSIGN_ASSETS", {});
+  const appliedNavRef = useRef(null);
 
   const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
     Digit.ULBService.getStateId(),
@@ -40,6 +41,15 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     const resetSession = location.state?.resetSession;
 
     if (!incoming && !allotmentData) return;
+
+    const navKey = [
+      getAssetIdentity(incoming),
+      allotmentData?.allotmentId || "",
+      Boolean(resetSession),
+    ].join("|");
+
+    if (appliedNavRef.current === navKey) return;
+    appliedNavRef.current = navKey;
 
     setParams((prev) => {
       const sameAsset =

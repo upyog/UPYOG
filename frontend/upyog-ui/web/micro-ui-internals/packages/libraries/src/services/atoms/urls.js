@@ -340,8 +340,10 @@ eSign:{
  est: {
     create: "/estate-management/estate/asset/v1/_create", // create first call - for creation 
     search: "/estate-management/estate/asset/v1/_search", // table  - second screen post call = only tenant id
+    update: "/estate-management/estate/asset/v1/_update",
     allotment: "/estate-management/estate/allotment/v1/_create", //crate allotatment 
     allotmentSearch: "/estate-management/estate/allotment/v1/_search",
+    allotmentUpdate: "/estate-management/estate/allotment/v1/_update",
   },
   
   tp: {
