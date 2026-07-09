@@ -51,7 +51,7 @@ package org.egov.commons.web.controller;
 import java.util.List;
 import java.util.Locale;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.entity.UOMCategory;
 import org.egov.commons.service.UOMCategoryService;

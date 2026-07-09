@@ -50,7 +50,7 @@ package org.egov.commons.web.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.entity.UOM;
 import org.egov.commons.service.UOMCategoryService;
