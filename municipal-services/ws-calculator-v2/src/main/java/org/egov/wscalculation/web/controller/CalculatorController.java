@@ -88,8 +88,8 @@ public class CalculatorController {
 	}
 	
 	@PostMapping("/_jobscheduler")
-	public void jobscheduler(@Valid @RequestBody BulkBillReq bulkBillReq) {
-		wSCalculationService.generateDemandBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+	public void jobscheduler(@Valid @RequestBody BulkDemandReq bulkDemandReq) {
+		wSCalculationService.generateDemandBasedOnTimePeriod(bulkDemandReq.getRequestInfo(), bulkDemandReq.getBulkDemandCriteria());
 	}
 	
 	@PostMapping("/_singledemand")

@@ -371,13 +371,20 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		jdbcTemplate.update(queryStr, preparedStmtList.toArray());
 	}
 	@Override
-	public List<WaterDetails> getConnectionsNoListforsingledemand(String tenantId, String connectionType, Long taxPeriodFrom,
+	public List<WaterDetails> getConnectionsNoListforsingledemand(String tenantId, String locality, String connectionType, Long taxPeriodFrom,
 			Long taxPeriodTo, String cone) {
-		
+
+            String query;
 			List<Object> preparedStatement = new ArrayList<>();
-			String query = queryBuilder.getConnectionNumberList(tenantId, connectionType,
-					WSCalculationConstant.ACTIVE_CONNECTION, taxPeriodFrom, taxPeriodTo, cone, preparedStatement);
-			log.info("preparedStatement: " + preparedStatement + " connection type: " + connectionType
+            if(locality!=null && !locality.trim().isEmpty()) {
+                query = queryBuilder.getConnectionNumberList(tenantId, locality, connectionType,
+                        WSCalculationConstant.ACTIVE_CONNECTION, taxPeriodFrom, taxPeriodTo, cone, preparedStatement);
+            }
+            else{
+                query = queryBuilder.getConnectionNumberList(tenantId, null, connectionType,
+                        WSCalculationConstant.ACTIVE_CONNECTION, taxPeriodFrom, taxPeriodTo, cone, preparedStatement);
+            }
+        log.info("preparedStatement: " + preparedStatement + " connection type: " + connectionType
 					+ " connection list : " + query);
 			return jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);
 		

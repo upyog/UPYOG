@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.wscalculation.web.models.BulkBillCriteria;
+import org.egov.wscalculation.web.models.BulkDemandCriteria;
 import org.egov.wscalculation.web.models.Calculation;
 import org.egov.wscalculation.web.models.CalculationReq;
 import org.egov.wscalculation.web.models.CancelDemand;
@@ -22,7 +23,7 @@ public interface WSCalculationService {
 //	String cancelDemand(CancelDemand cancelDemand);
 	void generateBillBasedLocality(RequestInfo requestInfo);
 
-	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
+	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkDemandCriteria bulkDemandCriteriaCriteria);
 	
 	String generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
 	

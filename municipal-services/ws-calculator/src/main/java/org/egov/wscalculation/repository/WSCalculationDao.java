@@ -52,7 +52,7 @@ public interface WSCalculationDao {
 	
 	List<WaterConnection> getConnection(String tenantId, String consumerCode,String connectionType,Long fromDate, Long toDate);
 	List<String> getLocalityList(String tenantId, String locality); 
-	List<WaterDetails> getConnectionsNoListforsingledemand(String tenantId, String connectionType, Long taxPeriodFrom,
+	List<WaterDetails> getConnectionsNoListforsingledemand(String tenantId, String locality, String connectionType, Long taxPeriodFrom,
 			Long taxPeriodTo, String cone);
 
 	List<String> fetchUsageCategory(String consumerCodes);
