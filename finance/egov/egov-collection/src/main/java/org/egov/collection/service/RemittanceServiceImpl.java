@@ -119,7 +119,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -173,7 +173,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 
 		final StringBuilder cashInHandQueryString = new StringBuilder(
 				"SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA WHERE COA.GLCODE = :glcode");
-		final Query cashInHand = persistenceService.getSession().createSQLQuery(cashInHandQueryString.toString());
+		final Query cashInHand = persistenceService.getSession().createNativeQuery(cashInHandQueryString.toString());
 		cashInHand.setParameter("glcode", accountCode.getGlcode());
 
         String cashInHandGLCode = null;
@@ -946,7 +946,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 
 		final StringBuilder cashInHandQueryString = new StringBuilder(
 				"SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA WHERE COA.GLCODE = :glcode");
-		final Query chequeInHand = persistenceService.getSession().createSQLQuery(cashInHandQueryString.toString());
+		final Query chequeInHand = persistenceService.getSession().createNativeQuery(cashInHandQueryString.toString());
 		chequeInHand.setParameter("glcode", accountCode.getGlcode());
 
         String chequeInHandGlcode = null;
@@ -1102,8 +1102,8 @@ public class RemittanceServiceImpl extends RemittanceService {
     }
 
     private List<CVoucherHeader> getVoucher(String voucherHeaderId) {
-        final StringBuilder sqlQuery = new StringBuilder("from CVoucherHeader vh where voucherNumber=:voucherNumber");
-        final Query query = persistenceService.getSession().createQuery(sqlQuery.toString());
+        final StringBuilder NativeQuery = new StringBuilder("from CVoucherHeader vh where voucherNumber=:voucherNumber");
+        final Query query = persistenceService.getSession().createQuery(NativeQuery.toString());
         query.setParameter("voucherNumber", voucherHeaderId);
         return query.list();
     }

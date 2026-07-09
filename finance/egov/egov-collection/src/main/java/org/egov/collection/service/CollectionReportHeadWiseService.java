@@ -62,10 +62,10 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReport;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReportResult;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.DoubleType;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -196,51 +196,51 @@ public class CollectionReportHeadWiseService {
         final StringBuilder finalRebateQueryStr = new StringBuilder(finalSelectQueryStr).append(rebateQueryStr)
                 .append(finalGroupQuery);
 
-        final SQLQuery aggrQuery = (SQLQuery) getCurrentSession().createSQLQuery(finalRevQueryStr.toString())
-                .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", DoubleType.INSTANCE)
-                .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("chequeddAmount", DoubleType.INSTANCE)
-                .addScalar("onlineCount", org.hibernate.type.StringType.INSTANCE).addScalar("onlineAmount", DoubleType.INSTANCE)
-                .addScalar("source", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("glCode", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("cardAmount", DoubleType.INSTANCE).addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
+        final NativeQuery aggrQuery = (NativeQuery) getCurrentSession().createNativeQuery(finalRevQueryStr.toString())
+                .addScalar("cashCount", StandardBasicTypes.STRING).addScalar("cashAmount", StandardBasicTypes.DOUBLE)
+                .addScalar("chequeddCount", StandardBasicTypes.STRING)
+                .addScalar("chequeddAmount", StandardBasicTypes.DOUBLE)
+                .addScalar("onlineCount", StandardBasicTypes.STRING).addScalar("onlineAmount", StandardBasicTypes.DOUBLE)
+                .addScalar("source", StandardBasicTypes.STRING)
+                .addScalar("glCode", StandardBasicTypes.STRING)
+                .addScalar("cardAmount", StandardBasicTypes.DOUBLE).addScalar("cardCount", StandardBasicTypes.STRING)
+                .addScalar("totalReceiptCount", StandardBasicTypes.STRING)
                 .setResultTransformer(Transformers.aliasToBean(CollectionSummaryHeadWiseReport.class));
 
-        final SQLQuery rebateQuery = (SQLQuery) getCurrentSession().createSQLQuery(finalRebateQueryStr.toString())
-                .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", DoubleType.INSTANCE)
-                .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("chequeddAmount", DoubleType.INSTANCE)
-                .addScalar("onlineCount", org.hibernate.type.StringType.INSTANCE).addScalar("onlineAmount", DoubleType.INSTANCE)
-                .addScalar("source", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("glCode", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("cardAmount", DoubleType.INSTANCE).addScalar("cardCount", org.hibernate.type.StringType.INSTANCE)
-                .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
+        final NativeQuery rebateQuery = (NativeQuery) getCurrentSession().createNativeQuery(finalRebateQueryStr.toString())
+                .addScalar("cashCount", StandardBasicTypes.STRING).addScalar("cashAmount", StandardBasicTypes.DOUBLE)
+                .addScalar("chequeddCount", StandardBasicTypes.STRING)
+                .addScalar("chequeddAmount", StandardBasicTypes.DOUBLE)
+                .addScalar("onlineCount", StandardBasicTypes.STRING).addScalar("onlineAmount", StandardBasicTypes.DOUBLE)
+                .addScalar("source", StandardBasicTypes.STRING)
+                .addScalar("glCode", StandardBasicTypes.STRING)
+                .addScalar("cardAmount", StandardBasicTypes.DOUBLE).addScalar("cardCount", StandardBasicTypes.STRING)
+                .addScalar("totalReceiptCount", StandardBasicTypes.STRING)
                 .setResultTransformer(Transformers.aliasToBean(CollectionSummaryHeadWiseReport.class));
 		if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
-			aggrQuery.setString("source", source);
-			rebateQuery.setString("source", source);
+			aggrQuery.setParameter("source", source);
+			rebateQuery.setParameter("source", source);
 		}
 		if (glCode != null) {
-			aggrQuery.setString("glCode", glCode);
-			rebateQuery.setString("glCode", glCode);
+			aggrQuery.setParameter("glCode", glCode);
+			rebateQuery.setParameter("glCode", glCode);
 		}
 		if (status != -1) {
-			aggrQuery.setLong("searchStatus", status);
-			rebateQuery.setLong("searchStatus", status);
+			aggrQuery.setParameter("searchStatus", status);
+			rebateQuery.setParameter("searchStatus", status);
 		}
 
 		if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL))
 			if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
-				aggrQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
-				rebateQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
+				aggrQuery.setParameter("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
+				rebateQuery.setParameter("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
 			} else {
-				aggrQuery.setString("paymentMode", paymentMode);
-				rebateQuery.setString("paymentMode", paymentMode);
+				aggrQuery.setParameter("paymentMode", paymentMode);
+				rebateQuery.setParameter("paymentMode", paymentMode);
 			}
 		if (branchId != null && branchId != -1) {
-			aggrQuery.setInteger("branchId", branchId);
-			rebateQuery.setInteger("branchId", branchId);
+			aggrQuery.setParameter("branchId", branchId);
+			rebateQuery.setParameter("branchId", branchId);
 		}
 		rebateQuery.setParameter("accountPurposeName", CollectionConstants.PURPOSE_NAME_REBATE);
 		whereQueryParams.entrySet().forEach(entry -> {
