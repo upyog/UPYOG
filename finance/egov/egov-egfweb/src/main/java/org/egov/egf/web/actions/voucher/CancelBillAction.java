@@ -84,9 +84,10 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.services.bills.BillsService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.type.LongType;
+import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.query.NativeQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -450,8 +451,8 @@ public class CancelBillAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Cancel Query - " + cancelQuery.toString());
             final Query totalNativeQuery = persistenceService.getSession()
-                    .createSQLQuery(cancelQuery.toString());
-            totalNativeQuery.setParameter("statusId", Long.valueOf(status.getId()), LongType.INSTANCE);
+                    .createNativeQuery(cancelQuery.toString());
+            totalNativeQuery.setParameter("statusId", Long.valueOf(status.getId()), StandardBasicTypes.LONG);
             cancelQueryMap.entrySet().forEach(entry -> totalNativeQuery.setParameter(entry.getKey(), entry.getValue()));
             totalNativeQuery.setParameterList("ids", ids);
             if (!ids.isEmpty())

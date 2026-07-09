@@ -59,7 +59,7 @@ import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -127,17 +127,17 @@ public class ScheduleMapping {
         				.append("values(?,?,?,?,?,?,?,?,?,?)");
         if (LOGGER.isInfoEnabled())
         	LOGGER.info(insertQuery);
-        pstmt = persistenceService.getSession().createSQLQuery(insertQuery.toString());
-        pstmt.setString(0, id);
-        pstmt.setString(1, reportType);
-        pstmt.setString(2, schedule);
-        pstmt.setString(3, scheduleName);
-        pstmt.setString(4, createdBy);
-        pstmt.setString(5, createdDate);
-        pstmt.setString(6, lastModifiedBy);
-        pstmt.setString(7, lastModifiedDate);
-        pstmt.setString(8, repSubType);
-        pstmt.setString(9, isRemission);
+        pstmt = persistenceService.getSession().createNativeQuery(insertQuery.toString());
+        pstmt.setParameter(0, id);
+        pstmt.setParameter(1, reportType);
+        pstmt.setParameter(2, schedule);
+        pstmt.setParameter(3, scheduleName);
+        pstmt.setParameter(4, createdBy);
+        pstmt.setParameter(5, createdDate);
+        pstmt.setParameter(6, lastModifiedBy);
+        pstmt.setParameter(7, lastModifiedDate);
+        pstmt.setParameter(8, repSubType);
+        pstmt.setParameter(9, isRemission);
         pstmt.executeUpdate();
 
     }
@@ -180,26 +180,26 @@ public class ScheduleMapping {
         query.deleteCharAt(lastIndexOfComma);
         query.append(" where id=?");
         int i = 1;
-        pstmt = persistenceService.getSession().createSQLQuery(query.toString());
+        pstmt = persistenceService.getSession().createNativeQuery(query.toString());
         if (reportType != null)
-            pstmt.setString(i++, reportType);
+            pstmt.setParameter(i++, reportType);
         if (schedule != null)
-            pstmt.setString(i++, schedule);
+            pstmt.setParameter(i++, schedule);
         if (scheduleName != null)
-            pstmt.setString(i++, scheduleName);
+            pstmt.setParameter(i++, scheduleName);
         if (createdBy != null)
-            pstmt.setString(i++, createdBy);
+            pstmt.setParameter(i++, createdBy);
         if (createdDate != null && !createdDate.isEmpty())
-            pstmt.setString(i++, createdDate);
+            pstmt.setParameter(i++, createdDate);
         if (lastModifiedBy != null)
-            pstmt.setString(i++, lastModifiedBy);
+            pstmt.setParameter(i++, lastModifiedBy);
         if (lastModifiedDate != null)
-            pstmt.setString(i++, lastModifiedDate);
+            pstmt.setParameter(i++, lastModifiedDate);
         if (repSubType != null)
-            pstmt.setString(i++, repSubType);
+            pstmt.setParameter(i++, repSubType);
         if (isRemission != null)
-            pstmt.setString(i++, isRemission);
-        pstmt.setString(i++, id);
+            pstmt.setParameter(i++, isRemission);
+        pstmt.setParameter(i++, id);
 
         pstmt.executeUpdate();
     }

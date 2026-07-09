@@ -82,7 +82,7 @@ public class BudgetUsageHibernateDAO implements BudgetUsageDAO {
     }
 
     public List<BudgetUsage> findAll() {
-        return (List<BudgetUsage>) getCurrentSession().createCriteria(BudgetUsage.class).list();
+        return getCurrentSession().createQuery("from BudgetUsage", BudgetUsage.class).getResultList();
     }
 
     @PersistenceContext

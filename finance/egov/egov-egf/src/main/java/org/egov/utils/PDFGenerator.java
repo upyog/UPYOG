@@ -94,7 +94,7 @@ public class PDFGenerator
         final List<JasperPrint> jasperPrintList = new ArrayList<JasperPrint>();
         jasperPrintList.add(jasperPrint);
         pdfExporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
-        pdfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, req.getRealPath("") + "/temp/" + jasperName + ".pdf");
+        pdfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, req.getServletContext().getRealPath("") + "/temp/" + jasperName + ".pdf");
         pdfExporter.exportReport();
     }
 

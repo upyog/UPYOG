@@ -79,11 +79,12 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.cache.CacheException;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -342,9 +343,9 @@ public class ChartOfAccountsAction extends BaseFormAction {
     	StringBuilder queryString = new StringBuilder("select * from chartofaccounts c,generalledger gl,generalledgerdetail gd ")
                 .append("where c.glcode=:glCode")
                 .append(" and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID=:id");
-        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString())
-                .setParameter("glCode", glCode, StringType.INSTANCE)
-                .setParameter("id", id, IntegerType.INSTANCE);
+        final Query query = persistenceService.getSession().createNativeQuery(queryString.toString())
+                .setParameter("glCode", glCode, StandardBasicTypes.STRING)
+                .setParameter("id", id, StandardBasicTypes.INTEGER);
         final List list = query.list();
         if (list != null && list.size() > 0)
             return true;
@@ -360,8 +361,8 @@ public class ChartOfAccountsAction extends BaseFormAction {
                 .append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode =:glCode")
                 .append(" AND bd.glcodeid = coa.id AND br.id= bd.billid AND br.statusid=sts.id ");
         strQuery.append(" and sts.id not in (select id from egw_status where upper(moduletype) like '%BILL%' and upper(description) like '%CANCELLED%') ");
-        final Query query = persistenceService.getSession().createSQLQuery(strQuery.toString())
-                .setParameter("glCode", glCode, StringType.INSTANCE);
+        final Query query = persistenceService.getSession().createNativeQuery(strQuery.toString())
+                .setParameter("glCode", glCode, StandardBasicTypes.STRING);
         final List list = query.list();
         if (!list.isEmpty())
             flag = false;

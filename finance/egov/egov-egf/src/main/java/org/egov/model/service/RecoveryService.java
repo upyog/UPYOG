@@ -85,11 +85,11 @@ public class RecoveryService {
     }
 
     public List<Recovery> findAll() {
-        return recoveryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return recoveryRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public Recovery findOne(Long id) {
-        return recoveryRepository.findOne(id);
+        return recoveryRepository.findById(id).orElse(null);
     }
 
     public List<Recovery> search(Recovery recovery) {

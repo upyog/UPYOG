@@ -93,7 +93,7 @@ public class CreateBankService {
 	}
 
 	public Bank getById(final Integer id) {
-		return bankRepository.findOne(id);
+		return bankRepository.findById(id).orElse(null);
 	}
 
 	public List<Bank> getByIsActive(final Boolean isActive) {

@@ -75,7 +75,7 @@ public class AccountDetailContract {
         creditAmount = gl.getCreditAmount();
         debitAmount = gl.getDebitAmount();
         if (gl.getFunctionId() != null)
-            function = new FunctionContract().id(new Long(gl.getFunctionId()));
+            function = new FunctionContract().id(Long.valueOf(gl.getFunctionId()));
         for (final CGeneralLedgerDetail sub : gl.getGeneralLedgerDetails())
             subledgerDetails.add(new SubledgerDetailContract(sub));
 

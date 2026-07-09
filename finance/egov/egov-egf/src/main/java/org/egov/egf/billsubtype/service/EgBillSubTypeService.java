@@ -81,7 +81,7 @@ public class EgBillSubTypeService {
     }
 
     public EgBillSubType getById(final Long id) {
-        return egBillSubTypeRepository.findOne(id);
+        return egBillSubTypeRepository.findById(id).orElse(null);
     }
 
     public List<EgBillSubType> getByExpenditureType(final String expenditureType) {

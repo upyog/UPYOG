@@ -59,10 +59,7 @@ import org.egov.commons.Bank;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -156,7 +153,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
 		final Query qry = getSession().createQuery(query.toString());
 
 		if (fundId != null)
-			qry.setLong(FUND_ID, fundId);
+			qry.setParameter(FUND_ID, fundId);
 
 		qry.setParameterList("accountType", list);
 
@@ -173,7 +170,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
 				.append(" and bankBranch.isactive=true and bankaccount.isactive=true ")
 				.append("and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ")
 				.append("and bankaccount.fund.id=:fundId order by 2");
-		return getSession().createSQLQuery(query.toString()).setLong(FUND_ID, fundId).list();
+		return getSession().createNativeQuery(query.toString()).setParameter(FUND_ID, fundId).list();
 	}
 
 	private List<Object[]> fetchBankAndBranchNameWithRTGSAssigned(final Date asOnDate) {
@@ -194,7 +191,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
 				.append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID")
 				.append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
 				.append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-		return getSession().createSQLQuery(queryString.toString()).setParameter("date", asOnDate).list();
+		return getSession().createNativeQuery(queryString.toString()).setParameter("date", asOnDate).list();
 	}
 
 	private List<Object[]> fetchBankAndBankBranchWithAssignedCheques(Date asOnDate) {
@@ -213,7 +210,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
 				.append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID")
 				.append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
 				.append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-		return getSession().createSQLQuery(queryString.toString()).setParameter("date", asOnDate).list();
+		return getSession().createNativeQuery(queryString.toString()).setParameter("date", asOnDate).list();
 	}
 
 	private List<Object[]> fetchBankAndBranchNameHasApprovedPayment(Long fundId, Date asOnDate) {
@@ -255,33 +252,30 @@ public class BankService extends PersistenceService<Bank, Integer> {
 				.append("AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
 		if (fundId != null && fundId > 0)
 			queryString.append(" and bankaccount.fundid=:fundId");
-		return getSession().createSQLQuery(queryString.toString()).setLong(FUND_ID, fundId)
+		return getSession().createNativeQuery(queryString.toString()).setParameter(FUND_ID, fundId)
 				.setParameterList("vhName", Arrays.asList(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE,
 						FinancialConstants.PAYMENTVOUCHER_NAME_SALARY))
-				.setDate("asOnDate", asOnDate).list();
+				.setParameter("asOnDate", asOnDate).list();
 	}
     
     public List<Bank> search(Bank bank,List<Long>ids, String sortBy,int offset,int pageSize){
-    	
-    	Criteria criteria = getSession().createCriteria(Bank.class);
-    	
-    	criteria.add(Restrictions.eq("code", bank.getCode()));
-    	criteria.add(Restrictions.eq("name", bank.getName()));
-    	criteria.add(Restrictions.eq("isactive", bank.getIsactive()));
-    	
-    	if(ids.size()>0)
-    	criteria.add(Restrictions.in("id",ids));
-    	
-    	criteria.addOrder(Order.asc(sortBy));
-    	criteria.setFirstResult(offset);
-    	criteria.setMaxResults(pageSize);
-    	
-    	return criteria.list();
+        final StringBuilder query = new StringBuilder("from Bank b where b.code = :code and b.name = :name ")
+                .append("and b.isactive = :isactive");
+        if (ids.size() > 0)
+            query.append(" and b.id in (:ids)");
+        query.append(" order by b.").append(sortBy);
+        final Query<Bank> hibQuery = getSession().createQuery(query.toString(), Bank.class)
+                .setParameter("code", bank.getCode())
+                .setParameter("name", bank.getName())
+                .setParameter("isactive", bank.getIsactive());
+        if (ids.size() > 0)
+            hibQuery.setParameter("ids", ids);
+        hibQuery.setFirstResult(offset);
+        hibQuery.setMaxResults(pageSize);
+        return hibQuery.list();
     }
     
     public List<Bank> getAllBanks(){
-        Criteria criteria = getSession().createCriteria(Bank.class);
-        criteria.add(Restrictions.eq("isactive", true));
-        return criteria.list();
+        return getSession().createQuery("from Bank b where b.isactive = true", Bank.class).list();
     }
 }

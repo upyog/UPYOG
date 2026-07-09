@@ -177,8 +177,8 @@
         <postgres-version>42.7.1</postgres-version>
 
         <!-- Other application dependency versions -->
-        <struts2-version>2.5.14.1</struts2-version>
-        <struts2-jquery-version>4.0.2</struts2-jquery-version>
+        <struts2-version>7.1.1</struts2-version>
+        <struts2-jquery-version>6.0.3</struts2-jquery-version>
         <xstream-version>1.4.10</xstream-version>
         <spring-version>6.1.21</spring-version>
         <spring-session-version>3.2.6</spring-session-version>
@@ -381,8 +381,8 @@
             </dependency>
             <dependency>
                 <groupId>jakarta.servlet.jsp</groupId>
-                <artifactId>jakarta.servlet-api</artifactId> <!-- Note: Standard JSP API coord -->
-                <version>3.1.1</version>
+                <artifactId>jakarta.servlet.jsp-api</artifactId> <!-- Fixed: correct artifact ID for JSP API -->
+                <version>3.1.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -1474,8 +1474,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${mvn.compiler.plugin.version}</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <release>17</release>
+
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

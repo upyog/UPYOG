@@ -53,7 +53,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -92,7 +92,7 @@ public class EgBillRegisterHibernateDAO {
     }
 
     public List<EgBillregister> findAll() {
-        return (List<EgBillregister>) getCurrentSession().createCriteria(EgBillregister.class).list();
+        return (List<EgBillregister>) getCurrentSession().createQuery("from EgBillregister", EgBillregister.class).list();
     }
 
     @PersistenceContext
@@ -130,7 +130,7 @@ public class EgBillRegisterHibernateDAO {
         session = getCurrentSession();
         final Query qry = session
                 .createQuery("from  EgBillregister br where br.egBillregistermis.voucherHeader.id=:voucherId");
-        qry.setLong("voucherId", voucherHeader.getId());
+        qry.setParameter("voucherId", voucherHeader.getId());
         final EgBillregister billRegister = (EgBillregister) qry.uniqueResult();
         return billRegister == null ? null : billRegister.getExpendituretype();
     }
@@ -145,7 +145,7 @@ public class EgBillRegisterHibernateDAO {
         session = getCurrentSession();
         final Query qry = session
                 .createQuery("from  EgBillregister br where br.egBillregistermis.voucherHeader.id=:voucherId");
-        qry.setLong("voucherId", voucherHeader.getId());
+        qry.setParameter("voucherId", voucherHeader.getId());
         final EgBillregister billRegister = (EgBillregister) qry.uniqueResult();
         return billRegister == null ? "General"
                 : billRegister.getEgBillregistermis().getEgBillSubType() == null ? billRegister.getExpendituretype()

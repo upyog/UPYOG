@@ -146,7 +146,7 @@ public class BudgetHeadService {
     }
 
     public List<BudgetHead> getActiveBudgetHeads() {
-        List<BudgetHead> budgetHeads = budgetHeadRepository.findAll(new Sort(Sort.Direction.ASC, "order"));
+        List<BudgetHead> budgetHeads = budgetHeadRepository.findAll(Sort.by(Sort.Direction.ASC, "order"));
         return budgetHeads;
     }
 
@@ -166,7 +166,7 @@ public class BudgetHeadService {
     }
 
     public BudgetHead findById(final  Long budgetHeadId) {
-        return budgetHeadRepository.findOne(budgetHeadId);
+        return budgetHeadRepository.findById(budgetHeadId).orElse(null);
     }
 
 

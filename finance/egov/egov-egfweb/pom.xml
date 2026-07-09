@@ -109,6 +109,29 @@
         <!-- HIBERNATE END -->
     </dependencies>
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/es/dashboard/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <failOnError>false</failOnError>
+                    <sourceFileExcludes>
+                        <exclude>**/es/dashboard/**</exclude>
+                    </sourceFileExcludes>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
         <resources>
             <resource>
                 <directory>src/main/java</directory>

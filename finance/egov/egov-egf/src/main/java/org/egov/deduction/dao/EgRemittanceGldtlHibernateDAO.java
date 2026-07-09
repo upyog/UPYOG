@@ -89,7 +89,7 @@ public class EgRemittanceGldtlHibernateDAO {
     }
 
     public List<EgRemittanceGldtl> findAll() {
-        return (List<EgRemittanceGldtl>) getCurrentSession().createCriteria(EgRemittanceGldtl.class).list();
+        return getCurrentSession().createQuery("from EgRemittanceGldtl", EgRemittanceGldtl.class).list();
     }
 
     @PersistenceContext

@@ -101,7 +101,7 @@ public class ContractorService implements EntityTypeService {
     }
 
     public Contractor getById(final Long id) {
-        return contractorRepository.findOne(id);
+        return contractorRepository.findById(id).orElse(null);
     }
 
     @Transactional

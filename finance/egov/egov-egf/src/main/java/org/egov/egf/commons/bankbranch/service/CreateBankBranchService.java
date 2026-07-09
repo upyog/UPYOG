@@ -93,7 +93,7 @@ public class CreateBankBranchService {
 	}
 
 	public Bankbranch getById(final Integer id) {
-		return bankBranchRepository.findOne(id);
+		return bankBranchRepository.findById(id).orElse(null);
 	}
 
 	public List<Bankbranch> getByBankId(final Integer bankId) {

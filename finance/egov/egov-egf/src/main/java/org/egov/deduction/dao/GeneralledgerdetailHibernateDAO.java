@@ -82,7 +82,7 @@ public class GeneralledgerdetailHibernateDAO {
     }
 
     public List<Generalledgerdetail> findAll() {
-        return (List<Generalledgerdetail>) getCurrentSession().createCriteria(Generalledgerdetail.class).list();
+        return getCurrentSession().createQuery("from Generalledgerdetail", Generalledgerdetail.class).list();
     }
 
     @PersistenceContext

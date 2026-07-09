@@ -98,10 +98,12 @@ import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.DateType;
-import org.hibernate.type.StringType;
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -214,7 +216,7 @@ public class BankBookReportAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		persistenceService.getSession().setDefaultReadOnly(true);
-		persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+		persistenceService.getSession().setHibernateFlushMode(FlushMode.COMMIT);
 		super.prepare();
 		if (!parameters.containsKey("skipPrepare")) {
 			addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
@@ -565,7 +567,7 @@ public class BankBookReportAction extends BaseFormAction {
                 .append(queryFrom).append(")").toString();
         mainQuery = mainQuery.append(getInstrumentsByVoucherIdsQuery);
 
-        final Query query = persistenceService.getSession().createSQLQuery(mainQuery.toString());
+        final Query query = persistenceService.getSession().createNativeQuery(mainQuery.toString());
         queryFromParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> objs = query.list();
 		for (final Object[] obj : objs)
@@ -586,7 +588,7 @@ public class BankBookReportAction extends BaseFormAction {
                 .append(getInstrumentsByVoucherIdsQuery)
                 .append(")");
 
-        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
+        final Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
         queryFromParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<Object[]> objs = query.list();
 		for (final Object[] obj : objs)
@@ -696,19 +698,19 @@ public class BankBookReportAction extends BaseFormAction {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Main query :" + query1 + queryFrom + OrderBy);
 
-		final Query query = persistenceService.getSession().createSQLQuery(query1.append(queryFrom).append(OrderBy).toString())
-                .addScalar("voucherId", new BigDecimalType())
+		final Query query = persistenceService.getSession().createNativeQuery(query1.append(queryFrom).append(OrderBy).toString())
+                .addScalar("voucherId", StandardBasicTypes.BIG_DECIMAL)
                 .addScalar("voucherDate")
                 .addScalar("voucherNumber")
                 .addScalar("particulars")
-                .addScalar("amount", new BigDecimalType())
+                .addScalar("amount", StandardBasicTypes.BIG_DECIMAL)
                 .addScalar("type")
                 .addScalar("chequeDetail")
                 .addScalar("glCode")
                 .addScalar("instrumentStatus")
-                .setParameter("glCode", glCode1, StringType.INSTANCE)
-                .setParameter("startDate", startDate, DateType.INSTANCE)
-                .setParameter("endDate", endDate, DateType.INSTANCE)
+                .setParameter("glCode", glCode1, StandardBasicTypes.STRING)
+                .setParameter("startDate", startDate, StandardBasicTypes.DATE)
+                .setParameter("endDate", endDate, StandardBasicTypes.DATE)
                 .setResultTransformer(Transformers.aliasToBean(BankBookEntry.class));
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<BankBookEntry> results = query.list();
@@ -772,7 +774,7 @@ public class BankBookReportAction extends BaseFormAction {
 	
 	/*
 	 * public String getUlbName() { final Query query =
-	 * persistenceService.getSession().createSQLQuery(
+	 * persistenceService.getSession().createNativeQuery(
 	 * "select name from companydetail"); final List<String> result =
 	 * query.list(); if (result != null) return result.get(0); return
 	 * EMPTY_STRING; }

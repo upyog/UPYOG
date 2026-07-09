@@ -63,9 +63,10 @@ import java.util.UUID;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.interceptor.ParameterAware;
-import org.apache.struts2.interceptor.RequestAware;
-import org.apache.struts2.interceptor.SessionAware;
+import org.apache.struts2.action.SessionAware;
+import org.apache.struts2.action.ParameterNameAware;
+import org.apache.struts2.dispatcher.HttpParameters;
+import org.apache.struts2.dispatcher.Parameter;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.models.Department;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
@@ -75,15 +76,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.ModelDriven;
-import com.opensymphony.xwork2.Preparable;
-import com.opensymphony.xwork2.interceptor.ParameterNameAware;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionSupport;
+import org.apache.struts2.ModelDriven;
+import org.apache.struts2.Preparable;
 
 @ParentPackage("egov")
 public abstract class BaseFormAction extends ActionSupport
-        implements ModelDriven<Object>, ParameterAware, SessionAware, Preparable, RequestAware, ParameterNameAware {
+        implements ModelDriven<Object>, SessionAware, Preparable, ParameterNameAware {
     public static final String INDEX = "index";
     public static final String NEW = "new";
     public static final String EDIT = "edit";
@@ -114,7 +114,7 @@ public abstract class BaseFormAction extends ActionSupport
     }
 
     @Override
-    public void setSession(final Map<String, Object> session) {
+    public void withSession(final Map<String, Object> session) {
         this.session = session;
     }
 
@@ -128,6 +128,21 @@ public abstract class BaseFormAction extends ActionSupport
 
     @Override
     public void prepare() {
+        // Struts 7: ParameterAware/RequestAware interfaces were removed from the
+        // framework, so Struts no longer auto-injects `parameters`/`request` via
+        // interceptors. We pull them manually from ActionContext here so existing
+        // field-based logic (e.g. setRelationship() below, which reads `parameters`)
+        // keeps working unchanged.
+        final HttpParameters httpParameters = ActionContext.getContext().getParameters();
+        final Map<String, String[]> paramsMap = new HashMap<>();
+        if (httpParameters != null) {
+            for (final Map.Entry<String, Parameter> entry : httpParameters.entrySet()) {
+                paramsMap.put(entry.getKey(), entry.getValue().getMultipleValues());
+            }
+        }
+        this.parameters = paramsMap;
+        this.request = ActionContext.getContext().getContextMap();
+
         final Map<String, Class> relationships = getRelationships();
         for (final Entry<String, Class> rel : relationships.entrySet())
             try {
@@ -138,31 +153,31 @@ public abstract class BaseFormAction extends ActionSupport
             }
     }
 
-	private void setRelationship(final String relationshipName, final Class class1) throws IntrospectionException {
-		final String[] ids = parameters.get(relationshipName);
-		final List<String> relationNames = Arrays.asList("department", "executingDepartment", "vouchermis.schemeid",
-				"vouchermis.subschemeid");
-		if (ids != null && ids.length > 0) {
-			final String id = ids[0];
-			if (!relationNames.contains(relationshipName) && isNotBlank(id) && Long.valueOf(id) > 0) {
-				final PropertyDescriptor propDiscriptor = new PropertyDescriptor("id", class1);
-				if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
-					setValue(relationshipName, getPersistenceService().getSession().get(class1, Long.valueOf(id)));
-				else
-					setValue(relationshipName, getPersistenceService().load(Integer.valueOf(id), class1));
-			} else if (("vouchermis.schemeid".equals(relationshipName)
-					|| "vouchermis.subschemeid".equals(relationshipName)) && id != null && !id.equals("-1")) {
-				setValue(relationshipName, getPersistenceService().load(Integer.valueOf(id), class1));
-			} else if ("department".equals(relationshipName) && id != null && !id.equals("-1")) {
-				Department dept = microserviceUtils.getDepartmentByCode(id);
-				setValue(relationshipName, dept);
-			} else if ("executingDepartment".equals(relationshipName) && id != null) {
-				Department dept = microserviceUtils.getDepartmentByCode(id);
-				setValue(relationshipName, dept.getCode());
-			}
+    private void setRelationship(final String relationshipName, final Class class1) throws IntrospectionException {
+        final String[] ids = parameters.get(relationshipName);
+        final List<String> relationNames = Arrays.asList("department", "executingDepartment", "vouchermis.schemeid",
+                "vouchermis.subschemeid");
+        if (ids != null && ids.length > 0) {
+            final String id = ids[0];
+            if (!relationNames.contains(relationshipName) && isNotBlank(id) && Long.valueOf(id) > 0) {
+                final PropertyDescriptor propDiscriptor = new PropertyDescriptor("id", class1);
+                if (propDiscriptor.getPropertyType().isAssignableFrom(Long.class))
+                    setValue(relationshipName, getPersistenceService().getSession().get(class1, Long.valueOf(id)));
+                else
+                    setValue(relationshipName, getPersistenceService().load(Integer.valueOf(id), class1));
+            } else if (("vouchermis.schemeid".equals(relationshipName)
+                    || "vouchermis.subschemeid".equals(relationshipName)) && id != null && !id.equals("-1")) {
+                setValue(relationshipName, getPersistenceService().load(Integer.valueOf(id), class1));
+            } else if ("department".equals(relationshipName) && id != null && !id.equals("-1")) {
+                Department dept = microserviceUtils.getDepartmentByCode(id);
+                setValue(relationshipName, dept);
+            } else if ("executingDepartment".equals(relationshipName) && id != null) {
+                Department dept = microserviceUtils.getDepartmentByCode(id);
+                setValue(relationshipName, dept.getCode());
+            }
 
-		}
-	}
+        }
+    }
 
     protected void setValue(final String relationshipName, final Object relation) {
         ActionContext.getContext().getValueStack().setValue("model." + relationshipName, relation);
@@ -176,7 +191,6 @@ public abstract class BaseFormAction extends ActionSupport
         return dropdownData;
     }
 
-    @Override
     public void setRequest(final Map<String, Object> request) {
         this.request = request;
     }
@@ -214,7 +228,6 @@ public abstract class BaseFormAction extends ActionSupport
         return !relations.containsKey(paramName);
     }
 
-    @Override
     public void setParameters(Map<String, String[]> parameters) {
         this.parameters = parameters;
     }

@@ -51,7 +51,7 @@ package org.egov.egf.web.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.CFunction;
 import org.egov.commons.contracts.FunctionSearchRequest;

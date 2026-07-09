@@ -51,8 +51,8 @@ package org.egov.egf.web.controller;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.egf.model.ClosedPeriod;

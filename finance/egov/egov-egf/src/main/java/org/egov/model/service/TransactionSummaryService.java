@@ -85,11 +85,11 @@ public class TransactionSummaryService {
     }
 
     public List<TransactionSummary> findAll() {
-        return transactionSummaryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return transactionSummaryRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public TransactionSummary findOne(Long id) {
-        return transactionSummaryRepository.findOne(id);
+        return transactionSummaryRepository.findById(id).orElse(null);
     }
 
     @Transactional

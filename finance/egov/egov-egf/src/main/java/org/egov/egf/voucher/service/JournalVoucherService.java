@@ -188,7 +188,7 @@ public class JournalVoucherService {
     }
 
     public CVoucherHeader getById(final Long id) {
-        return journalVoucherRepository.findOne(id);
+        return journalVoucherRepository.findById(id).orElse(null);
     }
 
     public CVoucherHeader getByVoucherNumber(final String voucherNumber) {

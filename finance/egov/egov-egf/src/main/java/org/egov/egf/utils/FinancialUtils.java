@@ -359,8 +359,8 @@ public class FinancialUtils {
         Long id;
         Method method;
         try {
-            method = object.getClass().getMethod("getId", null);
-            id = (Long) method.invoke(object, null);
+            method = object.getClass().getMethod("getId");
+            id = (Long) method.invoke(object);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             throw new ApplicationRuntimeException("error.expense.bill.document.error", e);

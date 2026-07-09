@@ -56,8 +56,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFiscalPeriod;

@@ -72,7 +72,7 @@ public class BillsService {
 
     public EgBillregister getBillRegisterById(final Integer billid)
     {
-        return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
+        return (EgBillregister) egBillRegisterHibernateDAO.findById(Long.valueOf(billid), false);
     }
 
     public List<String> getDistExpType()

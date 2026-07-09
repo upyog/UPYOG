@@ -105,8 +105,8 @@ import org.egov.services.budget.BudgetService;
 import org.egov.services.budget.BudgetUsageService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -142,7 +142,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	}
 
 	public List<BudgetDetail> findAll() {
-		return (List<BudgetDetail>) getCurrentSession().createCriteria(BudgetDetail.class).list();
+		return getCurrentSession().createQuery("from BudgetDetail", BudgetDetail.class).list();
 	}
 
 	@PersistenceContext
@@ -2709,13 +2709,13 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 		final Query query1 = getCurrentSession().createQuery(query.toString());
 		params.entrySet().forEach(entry -> query1.setParameter(entry.getKey(), entry.getValue()));
 		if (!isNull(queryParamMap.get("fromDate")))
-			query1.setTimestamp("from", (Date) queryParamMap.get("fromDate"));
+			query1.setParameter("from", (Date) queryParamMap.get("fromDate"));
 		if (!isNull(queryParamMap.get("toDate"))) {
 			final Date date = (Date) queryParamMap.get("toDate");
 			date.setMinutes(59);
 			date.setHours(23);
 			date.setSeconds(59);
-			query1.setTimestamp("to", date);
+			query1.setParameter("to", date);
 		}
 
 		listBudgetUsage = query1.list();
@@ -2800,9 +2800,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			session = getCurrentSession();
 			final Query qry = session.createQuery(qryStr.toString());
 			if (fund != null)
-				qry.setLong("fund", fund);
+				qry.setParameter("fund", fund);
 			if (department != null)
-				qry.setLong("department", department);
+				qry.setParameter("department", department);
 
 			functionsList = qry.list();
 

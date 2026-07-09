@@ -112,11 +112,11 @@ public class ClosedPeriodService {
 	}
 
 	public List<ClosedPeriod> findAll() {
-		return closedPeriodRepository.findAll(new Sort(Sort.Direction.ASC, "financialYear"));
+		return closedPeriodRepository.findAll(Sort.by(Sort.Direction.ASC, "financialYear"));
 	}
 
 	public ClosedPeriod findOne(final Long id) {
-		return closedPeriodRepository.findOne(id);
+		return closedPeriodRepository.findById(id).orElse(null);
 
 	}
 

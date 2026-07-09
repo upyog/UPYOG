@@ -101,7 +101,7 @@ public class SupplierService implements EntityTypeService {
 	}
 
 	public Supplier getById(final Long id) {
-		return supplierRepository.findOne(id);
+		return supplierRepository.findById(id).orElse(null);
 	}
 
 	@Transactional

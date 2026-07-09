@@ -91,7 +91,7 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.elasticsearch.index.mapper.MapperException;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -523,8 +523,8 @@ public class ChartOfAccounts {
 	private void checkfuctreqd(final String glcode, final String fuctid, final DataCollection dc) throws TaskFailedException {
 
 		final String sql = "select FUNCTIONREQD from chartofaccounts where glcode = ?";
-		final Query pst = persistenceService.getSession().createSQLQuery(sql);
-		pst.setString(0, glcode);
+		final Query pst = persistenceService.getSession().createNativeQuery(sql);
+		pst.setParameter(1, glcode);
 		List<Object[]> rs = null;
 		rs = pst.list();
 		for (final Object[] element : rs)
@@ -881,8 +881,8 @@ public class ChartOfAccounts {
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("VoucherHeaderId----" + VoucherHeaderId);
 		final String query = "select id from generalledger where voucherheaderid= ? order by id";
-		Query pst = persistenceService.getSession().createSQLQuery(query);
-		pst.setInteger(0, VoucherHeaderId);
+		Query pst = persistenceService.getSession().createNativeQuery(query);
+		pst.setParameter(1, VoucherHeaderId);
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("select id from generalledger where voucherheaderid=" + VoucherHeaderId + " order by id");
 
@@ -901,8 +901,8 @@ public class ChartOfAccounts {
 			try {
 				final StringBuilder delremitsql = new StringBuilder("delete from eg_remittance_gldtl")
 						.append(" where gldtlid in (select id from generalledgerdetail where generalledgerid=?)");
-				pst = persistenceService.getSession().createSQLQuery(delremitsql.toString());
-				pst.setString(0, glHeaderId.get(k).toString());
+				pst = persistenceService.getSession().createNativeQuery(delremitsql.toString());
+				pst.setParameter(1, glHeaderId.get(k).toString());
 				if (LOGGER.isInfoEnabled())
 					LOGGER.info("deleting remittance Query " + delremitsql);
 				pst.executeUpdate();
@@ -910,8 +910,8 @@ public class ChartOfAccounts {
 					LOGGER.info("delete from generalledgerdetail where generalledgerid='" + glHeaderId.get(k).toString()
 							+ "'");
 				final String delGenLedDet = "delete from generalledgerdetail where generalledgerid= ?";
-				pst = persistenceService.getSession().createSQLQuery(delGenLedDet);
-				pst.setString(0, glHeaderId.get(k).toString());
+				pst = persistenceService.getSession().createNativeQuery(delGenLedDet);
+				pst.setParameter(1, glHeaderId.get(k).toString());
 				final int del = pst.executeUpdate();
 				if (del > 0)
 					if (LOGGER.isInfoEnabled())
@@ -926,8 +926,8 @@ public class ChartOfAccounts {
 			try {
 
 				final String genLed = "DELETE FROM generalledger WHERE voucherheaderid= ?";
-				pst = persistenceService.getSession().createSQLQuery(genLed);
-				pst.setInteger(0, VoucherHeaderId);
+				pst = persistenceService.getSession().createNativeQuery(genLed);
+				pst.setParameter(1, VoucherHeaderId);
 				final int del = pst.executeUpdate();
 				if (del > 0)
 					if (LOGGER.isInfoEnabled())
@@ -1210,7 +1210,7 @@ public class ChartOfAccounts {
 						.append(" and to_char(startingDate, 'DD-MON-YYYY')<=:date AND endingDate>=:date");
 				if (LOGGER.isDebugEnabled())
 					LOGGER.debug(qry);
-				psmt1 = persistenceService.getSession().createSQLQuery(qry.toString());
+				psmt1 = persistenceService.getSession().createNativeQuery(qry.toString());
 				psmt1.setParameter("date", formatter.parse(date));
 				rs = psmt1.list();
 

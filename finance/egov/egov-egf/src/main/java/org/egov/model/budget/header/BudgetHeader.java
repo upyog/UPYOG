@@ -56,6 +56,7 @@ public class BudgetHeader extends StateAware {
 
 
     @Column(name = "version")
+    @Builder.Default
     private Long version = 0L;          // optimistic locking
 
     @Override

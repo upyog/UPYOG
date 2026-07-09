@@ -58,7 +58,7 @@ import java.util.Set;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.script.ScriptContext;
+import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
@@ -186,7 +186,7 @@ public class ExpenseBillService {
     }
 
     public EgBillregister getById(final Long id) {
-        return expenseBillRepository.findOne(id);
+        return expenseBillRepository.findById(id).orElse(null);
     }
 
     public EgBillregister getByBillnumber(final String billNumber) {

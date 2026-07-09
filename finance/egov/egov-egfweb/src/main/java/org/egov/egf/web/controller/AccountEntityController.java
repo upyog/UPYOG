@@ -50,7 +50,7 @@ package org.egov.egf.web.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.contracts.AccountEntitySearchRequest;
 import org.egov.commons.service.AccountEntityService;

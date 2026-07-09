@@ -101,11 +101,11 @@ public class BudgetingGroupService {
 	}
 
 	public List<BudgetGroup> findAll() {
-		return budgetGroupRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+		return budgetGroupRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
 	}
 
 	public BudgetGroup findOne(final Long id) {
-		return budgetGroupRepository.findOne(id);
+		return budgetGroupRepository.findById(id).orElse(null);
 	}
 
 	public int getMajorCodeLength() {

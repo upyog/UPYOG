@@ -74,7 +74,7 @@ import org.egov.pims.commons.Position;
 import org.egov.services.voucher.JournalVoucherActionHelper;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -263,7 +263,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     public List<EgBillregister> getBillsByWorkOrderNumber(String workOrderNumber) {
         Query qry = this.getCurrentSession()
                 .createQuery("from EgBillregister br where br.workordernumber =:workOrderNumber and br.status.code!='Cancelled'");
-        qry.setString("workOrderNumber", workOrderNumber);
+        qry.setParameter("workOrderNumber", workOrderNumber);
         return qry.list();
     }
 

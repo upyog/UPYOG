@@ -86,10 +86,12 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+
+import org.hibernate.query.Query;
+import jakarta.persistence.FlushModeType;
+import org.hibernate.type.StandardBasicTypes;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -186,7 +188,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         addRelatedEntity("budgetGroup", BudgetGroup.class);
         super.prepare();
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
 
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
         if (!parameters.containsKey("skipPrepare")) {
@@ -334,8 +336,8 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         final Query query = persistenceService.getSession().createQuery(new StringBuilder("from BudgetDetail where budget.isbere=:isBeRe")
                 .append(" and budget.isActiveBudget=true and budget.status.code='Approved' and budget.financialYear.id=:finYearId")
                 .append(queryMapEntry.getKey()).append(" order by budget.name,budgetGroup.name").toString());
-        query.setParameter("isBeRe", budgetType, StringType.INSTANCE)
-                .setParameter("finYearId", financialYear.getId(), LongType.INSTANCE);
+        query.setParameter("isBeRe", budgetType, StandardBasicTypes.STRING)
+                .setParameter("finYearId", financialYear.getId(), StandardBasicTypes.LONG);
         queryMapEntry.getValue().entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         final List<BudgetDetail> result = query.list();
         if (budgetVarianceEntries == null)

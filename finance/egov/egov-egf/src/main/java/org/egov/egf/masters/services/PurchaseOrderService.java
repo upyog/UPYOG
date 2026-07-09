@@ -116,7 +116,7 @@ public class PurchaseOrderService implements EntityTypeService {
 	}
 
 	public PurchaseOrder getById(final Long id) {
-		return purchaseOrderRepository.findOne(id);
+		return purchaseOrderRepository.findById(id).orElse(null);
 	}
 
 	public List<PurchaseOrder> getBySupplierId(final Long supplierId) {
@@ -189,7 +189,7 @@ public class PurchaseOrderService implements EntityTypeService {
 			}
 			purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
 		} else {
-			PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.findOne(purchaseOrder.getId());
+			PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.findById(purchaseOrder.getId()).orElse(null);
 			savedPurchaseOrder.setName(purchaseOrder.getName());
 			savedPurchaseOrder.setDescription(purchaseOrder.getDescription());
 			savedPurchaseOrder.setActive(purchaseOrder.getActive());

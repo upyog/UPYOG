@@ -405,7 +405,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
 		EgwStatus approvedStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Approved");
 		EgwStatus createdStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Created");
 		persistenceService.getSession()
-				.createSQLQuery(
+				.createNativeQuery(
 						new StringBuilder("update egf_budget set status = :approvedStatus where status =:createdStatus")
 								.append(" and  materializedPath like :materializedPath").toString())
 				.setParameter("approvedStatus", approvedStatus.getId())

@@ -116,7 +116,7 @@ public class WorkOrderService implements EntityTypeService {
 	}
 
 	public WorkOrder getById(final Long id) {
-		return workOrderRepository.findOne(id);
+		return workOrderRepository.findById(id).orElse(null);
 	}
 
 	public List<WorkOrder> getByContractorId(final Long contractorId) {
@@ -189,7 +189,7 @@ public class WorkOrderService implements EntityTypeService {
 			workOrder = workOrderRepository.save(workOrder);
 		} else {
 			setAuditDetails(workOrder);
-			WorkOrder savedWorkOrder = workOrderRepository.findOne(workOrder.getId());
+			WorkOrder savedWorkOrder = workOrderRepository.findById(workOrder.getId()).orElse(null);
 			savedWorkOrder.setName(workOrder.getName());
 			savedWorkOrder.setDescription(workOrder.getDescription());
 			savedWorkOrder.setActive(workOrder.getActive());

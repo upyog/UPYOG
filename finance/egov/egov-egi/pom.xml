@@ -461,6 +461,16 @@
                 </configuration>
             </plugin>
 
+            <!-- Exclude Elasticsearch packages from Javadoc - incompatible with Spring Data ES 5.x -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>org.egov.infra.elasticsearch.*:org.egov.infra.admin.master.repository.es:org.egov.infra.admin.master.entity.es:org.egov.infra.admin.master.service.es:org.egov.infra.config.elasticsearch</excludePackageNames>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

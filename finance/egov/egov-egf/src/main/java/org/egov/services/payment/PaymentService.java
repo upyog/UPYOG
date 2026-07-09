@@ -124,12 +124,12 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.StandardBasicTypes;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -960,7 +960,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting deleteMiscBill...");
         try {
-			final Query st = getSession().createSQLQuery("delete from miscbilldetail where PAYVHID = :payVHId")
+			final Query st = getSession().createNativeQuery("delete from miscbilldetail where PAYVHID = :payVHId")
 					.setParameter("payVHId", payVHId);
 			st.executeUpdate();
         } catch (final HibernateException e) {
@@ -1106,7 +1106,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 				.append(" and gl.voucherHeaderId=billmis.voucherHeaderid and gl.glcodeId not in(:glCodeList) and ")
 				.append("gl.creditAmount>0 and (misc.billvhid is null or (bill.passedamount > misc.paidamount))")
 				.append(" group by bill.id");
-		dedList = getSession().createSQLQuery(mainquery.toString()).setParameterList("glCodeList", glcodeList)
+		dedList = getSession().createNativeQuery(mainquery.toString()).setParameterList("glCodeList", glcodeList)
 				.setParameter("expendituretype", expendituretype).list();
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Completed getDeductionList.");
@@ -1126,7 +1126,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 						.append(" and billmis.billid=bill.id and ")
 						.append("vh.status=0 and bill.expendituretype=:expendituretype")
 						.append(" and (bill.passedamount > misc.paidamount)");
-		dedList = getSession().createSQLQuery(mainquery.toString()).setParameter("expendituretype", expendituretype)
+		dedList = getSession().createNativeQuery(mainquery.toString()).setParameter("expendituretype", expendituretype)
 				.list();
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Completed getEarlierPaymentAmtList.");
@@ -1430,8 +1430,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 		if (null != billList && !billList.isEmpty())
 			for (final PaymentBean bean : billList)
 				if (bean != null) {
-					final SQLQuery createSQLQuery = getSession().createSQLQuery(query.toString());
-					createSQLQuery.setString(0, bean.getBillVoucherNumber());
+					final NativeQuery createSQLQuery = getSession().createNativeQuery(query.toString());
+					createSQLQuery.setParameter(0, bean.getBillVoucherNumber());
 					if (createSQLQuery.list().size() > 0 && bean.getBillDate().compareTo(restrictedDate) > 0) {
 						billDateFlag++;
 						break;
@@ -1532,7 +1532,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getMiscBillList...");
         List<PaymentBean> paymentBeanList = null;
-		final Query query = getSession().createSQLQuery(
+		final Query query = getSession().createNativeQuery(
 				new StringBuilder("select mb.billvhId as billId,mb.billnumber as billNumber,mb.billdate as billDate,")
 						.append("mb.paidto as payTo,mb.amount as netAmt,  ")
 						.append(" mb.passedamount as passedAmt,mb.paidamount as paymentAmt,br.expendituretype as expType")
@@ -1540,9 +1540,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 						.append(" where mb.payvhid = :vhId")
 						.append(" and br.id= mis.billid and mis.voucherheaderid=billvhid order by mb.paidto,mb.BILLDATE")
 						.toString())
-				.addScalar("billId", BigDecimalType.INSTANCE).addScalar("billNumber").addScalar("billDate")
-				.addScalar("payTo").addScalar("netAmt", BigDecimalType.INSTANCE)
-				.addScalar("passedAmt", BigDecimalType.INSTANCE).addScalar("paymentAmt", BigDecimalType.INSTANCE)
+				.addScalar("billId", StandardBasicTypes.BIG_DECIMAL).addScalar("billNumber").addScalar("billDate")
+				.addScalar("payTo").addScalar("netAmt", StandardBasicTypes.BIG_DECIMAL)
+				.addScalar("passedAmt", StandardBasicTypes.BIG_DECIMAL).addScalar("paymentAmt", StandardBasicTypes.BIG_DECIMAL)
 				.addScalar("expType").setResultTransformer(Transformers.aliasToBean(PaymentBean.class));
 		paymentBeanList = query.setParameter("vhId", header.getVoucherheader().getId()).list();
         BigDecimal earlierAmt;
@@ -1652,7 +1652,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 																													// payment
 																													// screen
 			Map<String, Object> params = new HashMap<>();
-			final Query query = getSession().createSQLQuery(
+			final Query query = getSession().createNativeQuery(
 					new StringBuilder(" select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ,")
 							.append(" vmis.departmentcode   AS departmentName, vh.voucherDate as voucherDate,")
 							.append(" misbill.paidto as paidTo,sum(misbill.paidamount) as paidAmount,current_date as chequeDate")
@@ -1671,10 +1671,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 							.append(" group by vh.id,  vh.voucherNumber,  vmis.departmentcode ,  vh.voucherDate,misbill.paidto, ")
 							.append(" ba.accountnumber, ba.id , bill.id, bill.billnumber,bill.expenditureType ")
 							.append(" order by ba.id,vmis.departmentcode,vh.voucherNumber ").toString())
-					.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("departmentName")
-					.addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", BigDecimalType.INSTANCE)
-					.addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId", LongType.INSTANCE)
-					.addScalar("billId", LongType.INSTANCE).addScalar("billNumber").addScalar("expenditureType")
+					.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("departmentName")
+					.addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL)
+					.addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId", StandardBasicTypes.LONG)
+					.addScalar("billId", StandardBasicTypes.LONG).addScalar("billNumber").addScalar("expenditureType")
 					.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 			params.put("vhStatus", Integer.valueOf(approvedstatus));
@@ -1695,7 +1695,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("checking  cheque assigned and surrendard");
 			params = new HashMap<>();
-			final Query qry = getSession().createSQLQuery(
+			final Query qry = getSession().createNativeQuery(
 					new StringBuilder("select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,").append(
 							" vmis.departmentcode AS departmentName, vh.voucherDate as voucherDate, misbill.paidto as paidTo")
 							.append(",sum(misbill.paidamount) as paidAmount,current_date as chequeDate ,")
@@ -1716,10 +1716,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 							.append(" group by   vh.id,  vh.voucherNumber,  vmis.departmentcode ,  vh.voucherDate,misbill.paidto,")
 							.append("ba.accountnumber, ba.id , bill.id, bill.billnumber ,bill.expenditureType order by ba.id,")
 							.append("vmis.departmentcode,vh.voucherNumber ").toString())
-					.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("departmentName")
-					.addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", BigDecimalType.INSTANCE)
-					.addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId", LongType.INSTANCE)
-					.addScalar("billId", LongType.INSTANCE).addScalar("billNumber").addScalar("expenditureType")
+					.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("departmentName")
+					.addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL)
+					.addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId", StandardBasicTypes.LONG)
+					.addScalar("billId", StandardBasicTypes.LONG).addScalar("billNumber").addScalar("expenditureType")
 					.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 			params.put("vhStatus", Integer.valueOf(approvedstatus));
@@ -1855,7 +1855,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 																													// payment
 																													// screen
 			Map<String, Object> params = new HashMap<>();
-			final Query query = getSession().createSQLQuery(new StringBuilder(
+			final Query query = getSession().createNativeQuery(new StringBuilder(
 					" SELECT vh.id AS voucherid , vh.voucherNumber AS voucherNumber , dept.name   AS departmentName, ")
 							.append(String.format(" vh.voucherDate AS voucherDate, %s", payTo))
 							.append(" AS paidTo , ph.paymentamount AS paidAmount, current_date AS chequeDate ,")
@@ -1874,10 +1874,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 							.append(" AND vh.name NOT IN (:vhName) ")
 							.append(" GROUP BY vh.id,vh.voucherNumber,dept.name , vh.voucherDate, ba.accountnumber, ba.id ,")
 							.append(" ph.paymentamount ORDER BY ba.id,dept.name,vh.voucherNumber ").toString())
-					.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("departmentName")
-					.addScalar("voucherDate").addScalar("paidTo", StringType.INSTANCE)
-					.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate").addScalar("bankAccNumber")
-					.addScalar("bankAccountId", LongType.INSTANCE)
+					.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("departmentName")
+					.addScalar("voucherDate").addScalar("paidTo", StandardBasicTypes.STRING)
+					.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate").addScalar("bankAccNumber")
+					.addScalar("bankAccountId", StandardBasicTypes.LONG)
 					.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 			params.putAll(tnebParams);
@@ -1899,7 +1899,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("checking  cheque assigned and surrendard");
 			params = new HashMap<>();
-			final Query qry = getSession().createSQLQuery(new StringBuilder(
+			final Query qry = getSession().createNativeQuery(new StringBuilder(
 					" SELECT vh.id AS voucherid , vh.voucherNumber AS voucherNumber , dept.name   AS departmentName, ")
 							.append(String.format(" vh.voucherDate AS voucherDate, %s", payTo))
 							.append(" AS paidTo , ph.paymentamount AS paidAmount, current_date AS chequeDate ,")
@@ -1921,10 +1921,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 							.append(" ih.id_status NOT IN (:ihStatus) AND vh.type = :vhType AND vh.name NOT IN (:vhName) ")
 							.append(" GROUP BY vh.id,vh.voucherNumber,dept.name , vh.voucherDate, ba.accountnumber, ba.id ,")
 							.append(" ph.paymentamount ORDER BY ba.id,dept.name,vh.voucherNumber ").toString())
-					.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("departmentName")
-					.addScalar("voucherDate").addScalar("paidTo", StringType.INSTANCE)
-					.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate").addScalar("bankAccNumber")
-					.addScalar("bankAccountId", LongType.INSTANCE)
+					.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("departmentName")
+					.addScalar("voucherDate").addScalar("paidTo", StandardBasicTypes.STRING)
+					.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate").addScalar("bankAccNumber")
+					.addScalar("bankAccountId", StandardBasicTypes.LONG)
 					.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 			params.putAll(tnebParams);
@@ -2036,7 +2036,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 																													// bill
 																													// payment
 																													// screen
-			final Query query = getSession().createSQLQuery(new StringBuilder(
+			final Query query = getSession().createNativeQuery(new StringBuilder(
 					" SELECT vh.id   AS voucherid , vh.voucherNumber AS voucherNumber ,dept.name AS departmentName,")
 							.append("  vh.voucherDate  AS voucherDate , misbill.paidto  AS paidTo, SUM(misbill.paidamount) AS paidAmount,")
 							.append("current_date AS chequeDate,")
@@ -2071,9 +2071,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 							.append(" GROUP BY vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,  misbill.paidto, ")
 							.append(" ba.accountnumber,  ba.id,  vh.name ")
 							.append(" order by bankAccountId, departmentName,  voucherNumber ").toString())
-					.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("departmentName")
-					.addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", BigDecimalType.INSTANCE)
-					.addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId", LongType.INSTANCE)
+					.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("departmentName")
+					.addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL)
+					.addScalar("chequeDate").addScalar("bankAccNumber").addScalar("bankAccountId", StandardBasicTypes.LONG)
 					.addScalar("expenditureType")
 					.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
@@ -2193,7 +2193,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             if (voucherHeader.getName() != null
                     && voucherHeader.getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY)) {
             	Map<String, Object> salaryParams = new HashMap<>();
-				final Query salaryQuery = getSession().createSQLQuery(
+				final Query salaryQuery = getSession().createNativeQuery(
 						new StringBuilder("select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,").append(
 								"vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate,")
 								.append("  misbill.paidto as paidTo from Paymentheader ph,voucherheader vh")
@@ -2206,7 +2206,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append(" and vh.name = :vhName")
 								.append(" group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto")
 								.append(" order by vh.voucherNumber ").toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("voucherDate")
 						.addScalar("paidAmount").addScalar("chequeDate").addScalar("paidTo")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
@@ -2225,7 +2225,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("checking  cheque assigned and surrendard");
 				salaryParams = new HashMap<>();
-				final Query salaryQry = getSession().createSQLQuery(
+				final Query salaryQry = getSession().createNativeQuery(
 						new StringBuilder("select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,").append(
 								"vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate,")
 								.append("  misbill.paidto as paidTo from Paymentheader ph,voucherheader vh ")
@@ -2241,8 +2241,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append(" and vh.name = :vhName")
 								.append(" group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
 								.toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate").addScalar("paidTo")
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("voucherDate")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate").addScalar("paidTo")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 				salaryParams.put("vhStatus", Integer.valueOf(approvedstatus));
@@ -2285,7 +2285,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     && voucherHeader.getName().equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_PENSION)) {
             	Map<String, Object> pensionParams = new HashMap<>();
                 final Query pensionQuery = getSession()
-                        .createSQLQuery(new StringBuilder(
+                        .createNativeQuery(new StringBuilder(
                                 "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,")
                         		.append("sum(misbill.paidamount) as paidAmount,current_date as chequeDate,  misbill.paidto as paidTo")
                         		.append(" from Paymentheader ph,voucherheader vh  LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON")
@@ -2298,8 +2298,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                         		.append(" and vh.name = :vhName")
                         		.append(" group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
                         		.toString())
-                        .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
-                        .addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate").addScalar("paidTo")
+                        .addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("voucherDate")
+                        .addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate").addScalar("paidTo")
                         .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
                         
                 pensionParams.put("vhStatus", Integer.valueOf(approvedstatus));
@@ -2317,7 +2317,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("checking  cheque assigned and surrendard");
                 pensionParams = new HashMap<>();
-				final Query pensionQry = getSession().createSQLQuery(
+				final Query pensionQry = getSession().createNativeQuery(
 						new StringBuilder("select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,").append(
 								"vh.voucherDate as voucherDate,sum(misbill.paidamount) as paidAmount,current_date as chequeDate,")
 								.append("  misbill.paidto as paidTo from Paymentheader ph,voucherheader vh ")
@@ -2333,8 +2333,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append(" and vh.type = :vhType and vh.name = :vhName")
 								.append(" group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
 								.toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate").addScalar("paidTo")
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("voucherDate")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate").addScalar("paidTo")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 				pensionParams.put("vhStatus", Integer.valueOf(approvedstatus));
@@ -2385,7 +2385,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                                                                                                       // and
                                                                                                                       // remittances
 				Map<String, Object> params = new HashMap<>();
-				final Query query = getSession().createSQLQuery(new StringBuilder(
+				final Query query = getSession().createNativeQuery(new StringBuilder(
 						"select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,")
 								.append("sum(misbill.paidamount) as paidAmount,current_date as chequeDate from Paymentheader ph,")
 								.append("voucherheader vh   LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID")
@@ -2397,8 +2397,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append(" and vh.name NOT IN (:vhName) ")
 								.append(" group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
 								.toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate")
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("voucherDate")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 				params.put("vhStatus", Integer.valueOf(approvedstatus));
@@ -2418,7 +2418,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 				if (LOGGER.isDebugEnabled())
 					LOGGER.debug("checking  cheque assigned and surrendard");
 				params = new HashMap<>();
-				final Query qry = getSession().createSQLQuery(new StringBuilder(
+				final Query qry = getSession().createNativeQuery(new StringBuilder(
 						"select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,vh.voucherDate as voucherDate,")
 								.append("sum(misbill.paidamount) as paidAmount,current_date as chequeDate from Paymentheader ph,")
 								.append("voucherheader vh   LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID ")
@@ -2433,8 +2433,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append(" and vh.type=:vhType and vh.name NOT IN (:vhName) ")
 								.append(" group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
 								.toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate")
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("voucherDate")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 				params.put("vhStatus", Integer.valueOf(approvedstatus));
@@ -2476,9 +2476,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 				params.put("vhType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
 				params.put("vhName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
 
-				final Query query = getSession().createSQLQuery(tempquery1.toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate").addScalar("paidTo")
+				final Query query = getSession().createNativeQuery(tempquery1.toString())
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber").addScalar("voucherDate")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate").addScalar("paidTo")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 				if (LOGGER.isDebugEnabled())
 					LOGGER.debug(" for salary and remittance" + query);
@@ -2522,9 +2522,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 				params.put("vhType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
 				params.put("vhName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
 
-				final Query qry = getSession().createSQLQuery(tempquery.toString()).addScalar("voucherid", LongType.INSTANCE)
+				final Query qry = getSession().createNativeQuery(tempquery.toString()).addScalar("voucherid", StandardBasicTypes.LONG)
 						.addScalar("voucherNumber").addScalar("voucherDate")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate").addScalar("paidTo")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate").addScalar("paidTo")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 				persistenceService.populateQueryWithParams(qry, params);
@@ -3184,7 +3184,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             // / Only for bill payment screen
             if (nonSubledger) {
 				Map<String, Object> params = new HashMap<>();
-				final Query query = getSession().createSQLQuery(
+				final Query query = getSession().createNativeQuery(
 						new StringBuilder(" select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ,")
 								.append(" dept.name   AS departmentName, vh.voucherDate as voucherDate,")
 								.append("  recovery.remitted as paidTo,sum(misbill.paidamount) as paidAmount,current_date as chequeDate")
@@ -3202,11 +3202,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append(" group by vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,misbill.paidto, ")
 								.append(" ba.accountnumber, ba.id , gl.glcodeid,DO.name,do.tan,recovery.remitted ")
 								.append(" order by ba.id,dept.name,vh.voucherNumber ").toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber")
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber")
 						.addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate")
-						.addScalar("bankAccNumber").addScalar("bankAccountId", LongType.INSTANCE)
-						.addScalar("glcodeId", LongType.INSTANCE).addScalar("drawingOfficerNameTAN")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate")
+						.addScalar("bankAccNumber").addScalar("bankAccountId", StandardBasicTypes.LONG)
+						.addScalar("glcodeId", StandardBasicTypes.LONG).addScalar("drawingOfficerNameTAN")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 				// TODO Changet the debug statement to appropriate sentence
 				params.put("recoveryType", parameters.get("recoveryCode")[0]);
@@ -3226,7 +3226,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             if (LOGGER.isDebugEnabled())
 					LOGGER.debug("checking  cheque assigned and surrendard");
 				params = new HashMap<>();
-				final Query qry = getSession().createSQLQuery(
+				final Query qry = getSession().createNativeQuery(
 						new StringBuilder("select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,").append(
 								" dept.name   AS departmentName, vh.voucherDate as voucherDate, recovery.remitted as paidTo")
 								.append(" ,sum(misbill.paidamount) as paidAmount,current_date as chequeDate ,")
@@ -3250,11 +3250,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append(" vh.voucherDate,misbill.paidto,ba.accountnumber, ba.id , gl.glcodeid,")
 								.append("DO.name,do.tan,recovery.remitted")
 								.append("  order by ba.id,dept.name,vh.voucherNumber ").toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber")
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber")
 						.addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate")
-						.addScalar("bankAccNumber").addScalar("bankAccountId", LongType.INSTANCE)
-						.addScalar("glcodeId", LongType.INSTANCE).addScalar("drawingOfficerNameTAN")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate")
+						.addScalar("bankAccNumber").addScalar("bankAccountId", StandardBasicTypes.LONG)
+						.addScalar("glcodeId", StandardBasicTypes.LONG).addScalar("drawingOfficerNameTAN")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 				params.put("recoveryType", parameters.get("recoveryCode")[0]);
@@ -3273,7 +3273,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 
             } else {
 				final Map<String, Object> params = new HashMap<>();
-				final Query query = getSession().createSQLQuery(
+				final Query query = getSession().createNativeQuery(
 						new StringBuilder(" select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ,")
 								.append(" dept.name   AS departmentName, vh.voucherDate as voucherDate,")
 								.append(" misbill.paidto as paidTo,sum(misbill.paidamount) as paidAmount,current_date as chequeDate")
@@ -3290,11 +3290,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append(" group by vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,misbill.paidto, ")
 								.append(" ba.accountnumber, ba.id , gl.glcodeid,DO.name,do.tan ")
 								.append(" order by ba.id,dept.name,vh.voucherNumber ").toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber")
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber")
 						.addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate")
-						.addScalar("bankAccNumber").addScalar("bankAccountId", LongType.INSTANCE)
-						.addScalar("glcodeId", LongType.INSTANCE).addScalar("drawingOfficerNameTAN")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate")
+						.addScalar("bankAccNumber").addScalar("bankAccountId", StandardBasicTypes.LONG)
+						.addScalar("glcodeId", StandardBasicTypes.LONG).addScalar("drawingOfficerNameTAN")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 				params.put("vhStatus", approvedstatus);
@@ -3312,7 +3312,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             // assign-->surrendar-->assign-->surrendar-->.......
             if (LOGGER.isDebugEnabled())
 					LOGGER.debug("checking  cheque assigned and surrendard");
-				final Query qry = getSession().createSQLQuery(
+				final Query qry = getSession().createNativeQuery(
 						new StringBuilder("select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,").append(
 								" dept.name   AS departmentName, vh.voucherDate as voucherDate, misbill.paidto as paidTo")
 								.append(" ,sum(misbill.paidamount) as paidAmount,current_date as chequeDate ,")
@@ -3335,11 +3335,11 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append("misbill.paidto,ba.accountnumber,")
 								.append(" ba.id , gl.glcodeid,DO.name,do.tan  order by ba.id,dept.name,vh.voucherNumber ")
 								.toString())
-						.addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber")
+						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber")
 						.addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo")
-						.addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate")
-						.addScalar("bankAccNumber").addScalar("bankAccountId", LongType.INSTANCE)
-						.addScalar("glcodeId", LongType.INSTANCE).addScalar("drawingOfficerNameTAN")
+						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate")
+						.addScalar("bankAccNumber").addScalar("bankAccountId", StandardBasicTypes.LONG)
+						.addScalar("glcodeId", StandardBasicTypes.LONG).addScalar("drawingOfficerNameTAN")
 						.setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
 
 				params.put("vhStatus", approvedstatus);
@@ -3385,14 +3385,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 				.append(" (select remittancegldtlid from eg_remittance_detail where remittanceid in")
 				.append(" (select id from eg_remittance where paymentvhid=:paymentvhid))))");
 
-		count = getSession().createSQLQuery(sql.toString()).setParameter("paymentvhid", paymentVoucherId)
+		count = getSession().createNativeQuery(sql.toString()).setParameter("paymentvhid", paymentVoucherId)
 				.executeUpdate();
 		if (count == 0) {
 			// This is for non control codes
 			final StringBuilder sql1 = new StringBuilder(" update generalledger set remittancedate = null where id in ")
 					.append(" (select generalledgerid from eg_remittance_detail where remittanceid in ")
 					.append(" (select id from eg_remittance where paymentvhid =:paymentvhid))");
-			count = getSession().createSQLQuery(sql1.toString()).setParameter("paymentvhid", paymentVoucherId)
+			count = getSession().createNativeQuery(sql1.toString()).setParameter("paymentvhid", paymentVoucherId)
 					.executeUpdate();
 		}
         return count;

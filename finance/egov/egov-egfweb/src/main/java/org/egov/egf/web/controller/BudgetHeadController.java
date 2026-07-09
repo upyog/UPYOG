@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.model.budget.BudgetHead;
 import org.egov.model.budget.FunctionBudgetHead;

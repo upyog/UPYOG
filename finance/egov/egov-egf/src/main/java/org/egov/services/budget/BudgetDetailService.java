@@ -117,14 +117,10 @@ import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -255,7 +251,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public Long getCountByBudget(final Long budgetId) {
         return ((BigInteger) persistenceService.getSession()
-                .createSQLQuery("select count(*) from egf_budgetdetail where budget = :budgetId")
+                .createNativeQuery("select count(*) from egf_budgetdetail where budget = :budgetId")
                 .setParameter("budgetId", budgetId).uniqueResult()).longValue();
     }
 
@@ -283,38 +279,39 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<BudgetDetail> searchBy(final BudgetDetail detail) {
-        return constructCriteria(detail).list();
+        return createBudgetDetailQuery(detail, null, null).list();
 
     }
 
     public List<BudgetDetail> searchByCriteriaAndFY(final Long financialYear, final BudgetDetail detail,
                                                     final boolean isApprove, final Position pos) {
-        final Criteria criteria = constructCriteria(detail).createCriteria(Constants.BUDGET)
-                .add(Restrictions.eq("financialYear.id", financialYear));
-        if (isApprove)
-            criteria.createCriteria(Constants.STATE).add(Restrictions.eq("owner", pos));
-        else
-            criteria.createCriteria(Constants.STATE).add(Restrictions.eq("value", "NEW"));
-        return criteria.list();
+        final Map<String, Object> params = new HashMap<String, Object>();
+        final StringBuilder where = new StringBuilder();
+        where.append(" and bd.budget.financialYear.id = :financialYear");
+        params.put("financialYear", financialYear);
+        if (isApprove) {
+            where.append(" and bd.state.owner = :owner");
+            params.put("owner", pos);
+        } else
+            where.append(" and bd.state.value = 'NEW'");
+        return createBudgetDetailQuery(detail, where.toString(), params).list();
     }
 
     public List<BudgetDetail> searchByCriteriaWithTypeAndFY(final Long financialYear, final String type,
                                                             final BudgetDetail detail) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        final StringBuilder where = new StringBuilder();
+        where.append(" and bd.budget.financialYear.id = :financialYear and bd.budget.isbere = :type");
+        params.put("financialYear", financialYear);
+        params.put("type", type);
         if (detail.getBudget() != null && detail.getBudget().getId() != 0l) {
             final Map<String, Object> map = new HashMap<String, Object>();
             addCriteriaExcludingBudget(detail, map);
-            final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-            addBudgetDetailCriteria(map, criteria);
-            criteria.addOrder(Order.asc("id"));
-
-            return criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("financialYear.id", financialYear))
-                    .add(Restrictions.eq("isbere", type)).list();
+            return createBudgetDetailQuery(map, where.toString(), params, " order by bd.id").list();
         } else{
-            Criteria constructCriteria = constructCriteria(detail);
-            constructCriteria.add(Restrictions.eq("executingDepartment", detail.getExecutingDepartment()));
-            return constructCriteria.createCriteria(Constants.BUDGET)
-                    .add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isbere", type))
-                    .list();
+            where.append(" and bd.executingDepartment = :executingDepartment");
+            params.put("executingDepartment", detail.getExecutingDepartment());
+            return createBudgetDetailQuery(detail, where.toString(), params).list();
         }
     }
 
@@ -342,12 +339,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final List<Budget> budgets = new ArrayList<Budget>();
         collectLeafBudgets(budget, budgets);
         budgets.add(findBudget(budget));
-        final Criteria criteria = constructCriteria(example);
-        criteria.add(Restrictions.in(Constants.BUDGET, budgets));
-        criteria.addOrder(Property.forName("budget").asc());
-        criteria.createAlias("budgetGroup", "bg");
-        criteria.addOrder(Property.forName("bg.name").asc());
-        return criteria.list();
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("budgets", budgets);
+        return createBudgetDetailQuery(example, " and bd.budget in (:budgets)", params,
+                " order by bd.budget.id, bd.budgetGroup.name").list();
     }
 
     public List<BudgetDetail> findAllBudgetDetailsForParent(Budget budget, final BudgetDetail example,
@@ -359,10 +354,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         detail.copyFrom(example);
         detail.setBudget(null);
         final String materializedPath = budget.getMaterializedPath();
-        return constructCriteria(detail).addOrder(Property.forName("executingDepartment").asc())
-                .createCriteria(Constants.BUDGET).add(Restrictions.like("materializedPath",
-                        materializedPath == null ? "" : materializedPath.concat("%")))
-                .list();
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("materializedPath", materializedPath == null ? "" : materializedPath.concat("%"));
+        return createBudgetDetailQuery(detail, " and bd.budget.materializedPath like :materializedPath", params,
+                " order by bd.executingDepartment").list();
     }
 
     public List<BudgetDetail> findAllBudgetDetailsWithReAppropriation(final Budget budget, final BudgetDetail example) {
@@ -379,62 +374,61 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<Budget> findBudgetsForFY(final Long financialYear) {
-        final Criteria criteria = getSession().createCriteria(Budget.class);
-        return criteria.add(Restrictions.eq("financialYear.id", financialYear))
-                .add(Restrictions.eq("isActiveBudget", true)).list();
+        return getSession().createQuery("from Budget b where b.financialYear.id = :financialYear "
+                        + "and b.isActiveBudget = true", Budget.class)
+                .setParameter("financialYear", financialYear).list();
     }
 
     public List<Budget> findApprovedBudgetsForFY(final Long financialYear) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("starting findApprovedBudgetsForFY...");
-        final Criteria criteria = getSession().createCriteria(Budget.class);
-        return criteria.add(Restrictions.eq("financialYear.id", financialYear))
-                .add(Restrictions.eq("isActiveBudget", true)).addOrder(Property.forName("name").asc())
-                .createCriteria("status", "status").add(Restrictions.eq("status.code", "Approved")).list();
+        return getSession().createQuery("from Budget b where b.financialYear.id = :financialYear "
+                        + "and b.isActiveBudget = true and b.status.code = 'Approved' order by b.name", Budget.class)
+                .setParameter("financialYear", financialYear).list();
     }
 
     public List<Budget> findBudgetsForFYWithNewState(final Long financialYear) {
-        final Criteria criteria = getSession().createCriteria(Budget.class);
-        criteria.createCriteria("status", "status").add(Restrictions.eq("status.code", "Created"));
-        return criteria.add(Restrictions.eq("financialYear.id", financialYear))
-                .add(Restrictions.eq("isActiveBudget", true)).list();
+        return getSession().createQuery("from Budget b where b.status.code = 'Created' "
+                        + "and b.financialYear.id = :financialYear and b.isActiveBudget = true", Budget.class)
+                .setParameter("financialYear", financialYear).list();
     }
 
     public List<Budget> findPrimaryBudgetForFY(final Long financialYear) {
-        final Criteria criteria = getSession().createCriteria(Budget.class);
-        return criteria.add(Restrictions.eq("financialYear.id", financialYear))
-                .add(Restrictions.eq("isActiveBudget", true)).add(Restrictions.eq("isPrimaryBudget", true))
-                .add(Restrictions.isNull("parent")).list();
+        return getSession().createQuery("from Budget b where b.financialYear.id = :financialYear "
+                        + "and b.isActiveBudget = true and b.isPrimaryBudget = true and b.parent is null",
+                Budget.class).setParameter("financialYear", financialYear).list();
     }
 
     public Budget findApprovedPrimaryParentBudgetForFY(final Long financialYear) {
-        final Criteria criteria = getSession().createCriteria(Budget.class);
-        List<Budget> budgetList = criteria.add(Restrictions.eq("financialYear.id", financialYear))
-                .add(Restrictions.eq("isbere", RE)).add(Restrictions.eq("isActiveBudget", true))
-                .add(Restrictions.eq("isPrimaryBudget", true)).add(Restrictions.isNull("parent"))
-                .addOrder(Property.forName("name").asc()).createCriteria("status", "status")
-                .add(Restrictions.eq("status.code", "Approved")).list();
+        List<Budget> budgetList = findApprovedPrimaryParentBudgetForFYAndType(financialYear, RE);
         if (budgetList.isEmpty()) {
-            final Criteria c = getSession().createCriteria(Budget.class);
-            budgetList = c.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isbere", BE))
-                    .add(Restrictions.eq("isActiveBudget", true)).add(Restrictions.eq("isPrimaryBudget", true))
-                    .add(Restrictions.isNull("parent")).addOrder(Property.forName("name").asc())
-                    .createCriteria("status", "status").add(Restrictions.eq("status.code", "Approved")).list();
+            budgetList = findApprovedPrimaryParentBudgetForFYAndType(financialYear, BE);
             if (budgetList.isEmpty())
                 return null;
         }
         return budgetList.get(0);
     }
 
+    private List<Budget> findApprovedPrimaryParentBudgetForFYAndType(final Long financialYear, final String type) {
+        return getSession().createQuery("from Budget b where b.financialYear.id = :financialYear "
+                        + "and b.isbere = :type and b.isActiveBudget = true and b.isPrimaryBudget = true "
+                        + "and b.parent is null and b.status.code = 'Approved' order by b.name", Budget.class)
+                .setParameter("financialYear", financialYear)
+                .setParameter("type", type).list();
+    }
+
     public Set<Budget> findBudgetTree(final Budget budget, final BudgetDetail example) {
         if (budget == null)
             return Collections.EMPTY_SET;
-        final Criteria budgetDetailCriteria = constructCriteria(example);
-        budgetDetailCriteria.createCriteria(Constants.BUDGET);
-        if(!"0".equals(example.getExecutingDepartment()) && example.getExecutingDepartment() != null)
-            budgetDetailCriteria.add(Restrictions.eq("executingDepartment", example.getExecutingDepartment()));
-        final List<Budget> leafBudgets = budgetDetailCriteria
-                .setProjection(Projections.distinct(Projections.property(Constants.BUDGET))).list();
+        final Map<String, Object> params = new HashMap<String, Object>();
+        final StringBuilder where = new StringBuilder();
+        if(!"0".equals(example.getExecutingDepartment()) && example.getExecutingDepartment() != null) {
+            where.append(" and bd.executingDepartment = :executingDepartment");
+            params.put("executingDepartment", example.getExecutingDepartment());
+        }
+        final Query<Budget> budgetDetailCriteria = createBudgetDetailQuery(example, where.toString(), params,
+                null, "select distinct bd.budget");
+        final List<Budget> leafBudgets = budgetDetailCriteria.list();
         final List<Budget> parents = new ArrayList<Budget>();
         final Set<Budget> budgetTree = new LinkedHashSet<Budget>();
         for (Budget leaf : leafBudgets) {
@@ -464,27 +458,56 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         }
     }
 
-    private Criteria constructCriteria(final BudgetDetail example) {
-        final Map<String, Object> map = createCriteriaMap(example);
-        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-        addBudgetDetailCriteria(map, criteria);
-        return criteria;
-
+    private Query<BudgetDetail> createBudgetDetailQuery(final BudgetDetail example, final String extraWhere,
+                                                        final Map<String, Object> extraParams) {
+        return createBudgetDetailQuery(createCriteriaMap(example), extraWhere, extraParams, null);
     }
 
-    private void addBudgetDetailCriteria(final Map<String, Object> map, final Criteria criteria) {
-        for (final Entry<String, Object> criterion : map.entrySet())
-            if (isIdPresent(criterion.getValue()))
-                criteria.createCriteria(criterion.getKey()).add(Restrictions.idEq(criterion.getValue()));
+    private Query<BudgetDetail> createBudgetDetailQuery(final BudgetDetail example, final String extraWhere,
+                                                        final Map<String, Object> extraParams, final String orderBy) {
+        return createBudgetDetailQuery(createCriteriaMap(example), extraWhere, extraParams, orderBy);
     }
 
-    private void addBudgetDetailCriteriaIncudingNullRestrictions(final Map<String, Object> map,
-                                                                 final Criteria criteria) {
-        for (final Entry<String, Object> criterion : map.entrySet())
-            if (isIdPresent(criterion.getValue()))
-                criteria.createCriteria(criterion.getKey()).add(Restrictions.idEq(criterion.getValue()));
-            else
-                criteria.add(Restrictions.isNull(criterion.getKey()));
+    private Query<BudgetDetail> createBudgetDetailQuery(final Map<String, Object> map, final String extraWhere,
+                                                        final Map<String, Object> extraParams, final String orderBy) {
+        return createBudgetDetailQuery(map, extraWhere, extraParams, orderBy, "select bd");
+    }
+
+    private <T> Query<T> createBudgetDetailQuery(final BudgetDetail example, final String extraWhere,
+                                                 final Map<String, Object> extraParams, final String orderBy,
+                                                 final String selectClause) {
+        return createBudgetDetailQuery(createCriteriaMap(example), extraWhere, extraParams, orderBy, selectClause);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> Query<T> createBudgetDetailQuery(final Map<String, Object> map, final String extraWhere,
+                                                 final Map<String, Object> extraParams, final String orderBy,
+                                                 final String selectClause) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        final StringBuilder query = new StringBuilder(selectClause).append(" from BudgetDetail bd where 1=1");
+        appendBudgetDetailCriteria(map, query, params, false);
+        if (StringUtils.isNotBlank(extraWhere))
+            query.append(extraWhere);
+        if (StringUtils.isNotBlank(orderBy))
+            query.append(orderBy);
+        final Query<T> hibQuery = getSession().createQuery(query.toString());
+        params.entrySet().forEach(entry -> hibQuery.setParameter(entry.getKey(), entry.getValue()));
+        if (extraParams != null)
+            extraParams.entrySet().forEach(entry -> hibQuery.setParameter(entry.getKey(), entry.getValue()));
+        return hibQuery;
+    }
+
+    private void appendBudgetDetailCriteria(final Map<String, Object> map, final StringBuilder query,
+                                            final Map<String, Object> params, final boolean includeNullRestrictions) {
+        int index = 0;
+        for (final Entry<String, Object> criterion : map.entrySet()) {
+            final String paramName = criterion.getKey() + index++;
+            if (isIdPresent(criterion.getValue())) {
+                query.append(" and bd.").append(criterion.getKey()).append(".id = :").append(paramName);
+                params.put(paramName, criterion.getValue());
+            } else if (includeNullRestrictions)
+                query.append(" and bd.").append(criterion.getKey()).append(" is null");
+        }
     }
 
     protected boolean isIdPresent(final Object value) {
@@ -509,34 +532,47 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     private Boolean chequeUnique(final BudgetDetail detail) {
-
-        final Criteria criteria = constructCriteria(detail)
-                .add(Restrictions.eq("budget.id", detail.getBudget().getId()));
-        criteria.add(Restrictions.eq("budgetGroup.id", detail.getBudgetGroup().getId()));
-        criteria.add(Restrictions.eq("fund.id", detail.getFund().getId()));
-        criteria.add(Restrictions.eq("function.id", detail.getFunction().getId()));
-//        criteria.add(Restrictions.eq("executingDepartmentCode", detail.getExecutingDepartmentCode()));
-
-        return criteria.list().isEmpty();
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("budgetId", detail.getBudget().getId());
+        params.put("budgetGroupId", detail.getBudgetGroup().getId());
+        params.put("fundId", detail.getFund().getId());
+        params.put("functionId", detail.getFunction().getId());
+        return createBudgetDetailQuery(detail, " and bd.budget.id = :budgetId and bd.budgetGroup.id = :budgetGroupId "
+                + "and bd.fund.id = :fundId and bd.function.id = :functionId", params).list().isEmpty();
     }
 
     public void checkForDuplicates(final BudgetDetail detail) {
-        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
         final Map<String, Object> map = new HashMap<String, Object>();
         addCriteriaExcludingBudget(detail, map);
-        addBudgetDetailCriteriaIncudingNullRestrictions(map, criteria);
         if (detail.getBudget() == null || detail.getBudget().getId() == null || detail.getBudget().getId() == 0
                 || detail.getBudget().getId() == -1)
             return;
         // add restriction to check if budgetdetail with is combination exists
         // in the current year within a tree
         final Budget root = getRootFor(detail.getBudget());
-        criteria.createCriteria(Constants.BUDGET)
-                .add(Restrictions.eq("materializedPath", root == null ? "" : root.getMaterializedPath()));
-        final List<BudgetDetail> existingDetails = criteria.list();
+        final Map<String, Object> params = new HashMap<String, Object>();
+        params.put("materializedPath", root == null ? "" : root.getMaterializedPath());
+        final List<BudgetDetail> existingDetails = createBudgetDetailQueryWithNullRestrictions(map,
+                " and bd.budget.materializedPath = :materializedPath", params).list();
         if (!existingDetails.isEmpty() && !existingDetails.get(0).getId().equals(detail.getId()))
             throw new ValidationException(
                     Arrays.asList(new ValidationError(DUPLICATE, EXISTS)));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Query<BudgetDetail> createBudgetDetailQueryWithNullRestrictions(final Map<String, Object> map,
+                                                                            final String extraWhere,
+                                                                            final Map<String, Object> extraParams) {
+        final Map<String, Object> params = new HashMap<String, Object>();
+        final StringBuilder query = new StringBuilder("from BudgetDetail bd where 1=1");
+        appendBudgetDetailCriteria(map, query, params, true);
+        if (StringUtils.isNotBlank(extraWhere))
+            query.append(extraWhere);
+        final Query<BudgetDetail> hibQuery = getSession().createQuery(query.toString());
+        params.entrySet().forEach(entry -> hibQuery.setParameter(entry.getKey(), entry.getValue()));
+        if (extraParams != null)
+            extraParams.entrySet().forEach(entry -> hibQuery.setParameter(entry.getKey(), entry.getValue()));
+        return hibQuery;
     }
 
     private Budget getRootFor(final Budget budget) {
@@ -607,19 +643,16 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<BudgetDetail> getRemainingDetailsForApproveOrReject(final Budget budget) {
-        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-        // criteria.createCriteria("materializedPath",
-        // "state").add(Restrictions.eq("state.value","NEW"));
-        criteria.createCriteria(Constants.BUDGET, Constants.BUDGET).add(Restrictions.eq("budget.id", budget.getId()));
-        return criteria.list();
+        return getSession().createQuery("from BudgetDetail bd where bd.budget.id = :budgetId", BudgetDetail.class)
+                .setParameter("budgetId", budget.getId()).list();
 
     }
 
     public List<BudgetDetail> getRemainingDetailsForSave(final Budget budget, final Position currPos) {
-        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-        criteria.createCriteria(Constants.STATE, Constants.STATE).add(Restrictions.eq("state.owner", currPos));
-        criteria.createCriteria(Constants.BUDGET, Constants.BUDGET).add(Restrictions.eq("budget.id", budget.getId()));
-        return criteria.list();
+        return getSession().createQuery("from BudgetDetail bd where bd.state.owner = :owner "
+                        + "and bd.budget.id = :budgetId", BudgetDetail.class)
+                .setParameter("owner", currPos)
+                .setParameter("budgetId", budget.getId()).list();
 
     }
 
@@ -2234,7 +2267,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         }
         stateId = Long.valueOf(sequenceNumber.toString());
 
-        persistenceService.getSession().createSQLQuery(BUDGETDETAIL_STATES_INSERT).setParameter("stateId", stateId)
+        persistenceService.getSession().createNativeQuery(BUDGETDETAIL_STATES_INSERT).setParameter("stateId", stateId)
                 .executeUpdate();
 
         budgetDetail.setWfState((State) persistenceService.find("from State where id = ?", stateId));
@@ -2368,7 +2401,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private String getNewRootMaterializedPath() {
         String rootmaterial;
         final Query query = persistenceService.getSession()
-                .createSQLQuery("select count(*)+1 from egf_budget where parent is null");
+                .createNativeQuery("select count(*)+1 from egf_budget where parent is null");
 
         rootmaterial = query.uniqueResult().toString();
         //persistenceService.getSession().close();
@@ -2386,7 +2419,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         } catch (final SQLGrammarException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
-        persistenceService.getSession().createSQLQuery(BUDGET_STATES_INSERT).setParameter("stateId", stateId)
+        persistenceService.getSession().createNativeQuery(BUDGET_STATES_INSERT).setParameter("stateId", stateId)
                 .executeUpdate();
         budgetState = (State) persistenceService.find("from State where id = ?", stateId);
         budget.setWfState(budgetState);
@@ -2464,7 +2497,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         try {
             final Query query = persistenceService.getSession()
-                    .createSQLQuery("select count(*)+1 from egf_budget c, egf_budget p where c.parent = p.id and p.name = :parentName")
+                    .createNativeQuery("select count(*)+1 from egf_budget c, egf_budget p where c.parent = p.id and p.name = :parentName")
                     .setParameter("parentName", parent.getName());
             //persistenceService.getSession().close();
             final String count = query.uniqueResult().toString();
@@ -2547,33 +2580,30 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<String> getDepartmentFromBudgetDetailByFundId(final Long fundId) {
-
-        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-
-        return criteria.add(Restrictions.eq("fund.id", fundId))
-                .setProjection(Projections.distinct(Projections.property("executingDepartment")))
-                .addOrder(Order.asc("executingDepartment")).list();
+        return getSession().createQuery("select distinct bd.executingDepartment from BudgetDetail bd "
+                        + "where bd.fund.id = :fundId order by bd.executingDepartment", String.class)
+                .setParameter("fundId", fundId).list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<BudgetDetail> getFunctionFromBudgetDetailByDepartmentId(final String departmentId) {
-        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-        return criteria.add(Restrictions.eq("executingDepartment", departmentId))
-                .setProjection(Projections.distinct(Projections.property("function"))).addOrder(Order.asc("function"))
-                .list();
+        return getSession().createQuery("select distinct bd.function from BudgetDetail bd "
+                        + "where bd.executingDepartment = :departmentId order by bd.function")
+                .setParameter("departmentId", departmentId).list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<BudgetDetail> getBudgetDetailByFunctionId(final Long functionId) {
-        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-        return criteria.add(Restrictions.eq("function.id", functionId))
-                .setProjection(Projections.distinct(Projections.property("budgetGroup")))
-                .addOrder(Order.asc("budgetGroup")).list();
+        return getSession().createQuery("select distinct bd.budgetGroup from BudgetDetail bd "
+                        + "where bd.function.id = :functionId order by bd.budgetGroup")
+                .setParameter("functionId", functionId).list();
     }
 
     @Transactional
     public void updateByMaterializedPath(final String materializedPath) {
         final EgwStatus approvedStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved");
         final EgwStatus createdStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
-        persistenceService.getSession().createSQLQuery(
+        persistenceService.getSession().createNativeQuery(
                         new StringBuilder("update egf_budgetdetail  set status = :approvedStatus where status =:createdStatus")
                                 .append(" and  materializedPath like :materializedPath").toString())
                 .setParameter("approvedStatus", approvedStatus.getId()).setParameter("createdStatus", createdStatus.getId())

@@ -51,7 +51,7 @@ package org.egov.egf.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsDAO;

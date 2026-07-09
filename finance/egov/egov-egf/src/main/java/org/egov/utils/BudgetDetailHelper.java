@@ -47,7 +47,7 @@
  */
 package org.egov.utils;
 
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.util.ValueStack;
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;

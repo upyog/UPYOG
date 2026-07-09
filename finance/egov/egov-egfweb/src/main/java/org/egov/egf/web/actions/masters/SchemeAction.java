@@ -71,8 +71,8 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import org.apache.struts2.validator.annotations.RequiredFieldValidator;
+import org.apache.struts2.validator.annotations.Validations;
 
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")

@@ -70,8 +70,8 @@ import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import org.apache.struts2.validator.annotations.RequiredFieldValidator;
+import org.apache.struts2.validator.annotations.Validations;
 
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")

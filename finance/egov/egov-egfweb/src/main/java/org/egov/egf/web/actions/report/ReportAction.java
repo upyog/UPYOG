@@ -47,6 +47,7 @@
  */
 package org.egov.egf.web.actions.report;
 
+import jakarta.persistence.FlushModeType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,7 +71,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.FlushMode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -114,7 +115,7 @@ public class ReportAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		persistenceService.getSession().setDefaultReadOnly(true);
-		persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+		persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
 		super.prepare();
 		getHeaderFields();
 		if (headerFields.contains(Constants.DEPARTMENT))

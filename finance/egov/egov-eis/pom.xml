@@ -197,6 +197,16 @@
                 </configuration>
             </plugin>
 
+            <!-- Exclude Elasticsearch packages from Javadoc - incompatible with Spring Data ES 5.x -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>org.egov.eis.es.*:org.egov.eis.service.es.*</excludePackageNames>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

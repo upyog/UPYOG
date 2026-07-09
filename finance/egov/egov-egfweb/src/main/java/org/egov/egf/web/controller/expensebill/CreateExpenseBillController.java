@@ -85,8 +85,6 @@ import org.egov.model.bills.DocumentUpload;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
 import org.egov.infra.validation.SanitizeHtml;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.HTTPUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -348,15 +346,13 @@ public class CreateExpenseBillController extends BaseBillController {
 				mimeType = "application/octet-stream";
 
 			// set content attributes for the response
-			HTTPUtilities httpUtilities = ESAPI.httpUtilities();
-			httpUtilities.setCurrentHTTP(request, response);
-			httpUtilities.setHeader("Content-Type", mimeType);
+			response.setHeader("Content-Type", mimeType);
 			response.setContentLength((int) downloadFile.length());
 
 			// set headers for the response
 			final String headerKey = "Content-Disposition";
 			final String headerValue = String.format("attachment; filename=\"%s\"", fileName);
-			httpUtilities.setHeader(headerKey, headerValue);
+			response.setHeader(headerKey, headerValue);
 
 			final byte[] buffer = new byte[BUFFER_SIZE];
 			int bytesRead = -1;

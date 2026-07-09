@@ -203,7 +203,7 @@ suffix.
         <description>
 Name of the exported scoped variable which stores
 the i18n localization context of type
-javax.servlet.jsp.jstl.fmt.LocalizationC
+jakarta.servlet.jsp.jstl.fmt.LocalizationC
 ontext.
         </description>
         <name>var</name>

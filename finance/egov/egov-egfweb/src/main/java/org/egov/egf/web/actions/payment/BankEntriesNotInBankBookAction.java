@@ -76,11 +76,13 @@ import org.egov.services.voucher.BankEntriesNotInBankBookActionHelper;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.DateType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -170,14 +172,14 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
         final Map.Entry<String, Map<String, Object>> queryMapEntry = getQuery().entrySet().iterator().next();
         final String queryString = queryMapEntry.getKey();
         final Map<String, Object> queryParams = queryMapEntry.getValue();
-        Query query = persistenceService.getSession().createSQLQuery(queryString)
-                .addScalar("refNum", StringType.INSTANCE)
-                .addScalar("type", StringType.INSTANCE)
-                .addScalar("date", DateType.INSTANCE)
-                .addScalar("amount", BigDecimalType.INSTANCE)
-                .addScalar("remarks", StringType.INSTANCE)
-                .addScalar("glcodeDetail", StringType.INSTANCE)
-                .addScalar("beId", LongType.INSTANCE)
+        Query query = persistenceService.getSession().createNativeQuery(queryString)
+                .addScalar("refNum", StandardBasicTypes.STRING)
+                .addScalar("type", StandardBasicTypes.STRING)
+                .addScalar("date", StandardBasicTypes.DATE)
+                .addScalar("amount", StandardBasicTypes.BIG_DECIMAL)
+                .addScalar("remarks", StandardBasicTypes.STRING)
+                .addScalar("glcodeDetail", StandardBasicTypes.STRING)
+                .addScalar("beId", StandardBasicTypes.LONG)
                 .setResultTransformer(Transformers.aliasToBean(BankEntriesNotInBankBook.class));
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         bankEntriesNotInBankBookList = query.list();

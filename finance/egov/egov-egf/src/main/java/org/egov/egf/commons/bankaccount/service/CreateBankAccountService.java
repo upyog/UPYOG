@@ -120,7 +120,7 @@ public class CreateBankAccountService {
 	}
 
 	public Bankaccount getById(final Long id) {
-		return bankAccountRepository.findOne(id);
+		return bankAccountRepository.findById(id).orElse(null);
 	}
 
 	public Bankaccount getByGlcode(final String glcode) {

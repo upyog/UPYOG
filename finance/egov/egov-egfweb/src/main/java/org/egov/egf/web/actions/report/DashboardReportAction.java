@@ -21,8 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -139,7 +142,9 @@ public class DashboardReportAction extends BaseFormAction {
     @Action(value = "/report/dashboardReport-viewFilteredReport")
     public String viewFilteredReport() {
 
-        HttpServletRequest request = ServletActionContext.getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+
+
 
         try {
 
@@ -165,7 +170,7 @@ public class DashboardReportAction extends BaseFormAction {
 
     @Override
     public void validate() {
-        HttpServletRequest request = ServletActionContext.getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
         LOGGER.info("inside validation");
 

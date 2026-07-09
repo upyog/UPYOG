@@ -54,9 +54,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Size;
 
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.web.service.report.RemittanceServiceImpl;

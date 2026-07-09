@@ -67,7 +67,7 @@ import org.egov.infra.admin.master.entity.Location;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 
-import com.opensymphony.xwork2.util.reflection.ReflectionExceptionHandler;
+import org.apache.struts2.util.reflection.ReflectionExceptionHandler;
 
 /**
  * The bill receipt information class. Provides details of a bill receipt.

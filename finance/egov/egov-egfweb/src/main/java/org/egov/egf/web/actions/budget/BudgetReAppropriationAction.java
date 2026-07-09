@@ -47,8 +47,8 @@
  */
 package org.egov.egf.web.actions.budget;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.util.ValueStack;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -89,7 +89,7 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
