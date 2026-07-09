@@ -463,6 +463,7 @@ public class Parking extends FeatureProcess {
             	//            }
         	}
         }else if (mostRestrictiveOccupancy != null && F.equals(mostRestrictiveOccupancy.getType().getCode())) {
+        	String subType = mostRestrictiveOccupancy.getSubtype().getCode();
             BigDecimal plotCoveredArea = pl.getVirtualBuilding().getTotalCoverageArea();
 //            if (plotCoveredArea != null && plotCoveredArea.compareTo(BigDecimal.ZERO) > 0) {
 //                BigDecimal divisor = BigDecimal.valueOf(50);
@@ -473,8 +474,11 @@ public class Parking extends FeatureProcess {
                 HashMap<String, String> errors = new HashMap<>();
                 errors.put("Plot Area Error:", "Plot covered area must be greater than 0.");
                 pl.addErrors(errors);
-            } else {            	
-            	String subType = mostRestrictiveOccupancy.getSubtype().getCode();
+            } else if (F_MIP.equalsIgnoreCase(subType)) {
+            	noOfrequiredParking = calculateMiniplexECS(plotCoveredArea)
+                        .setScale(0, RoundingMode.HALF_UP)
+                        .intValue();
+            }else {            	
             	Integer multiplier = getFTypeMultiplier(subType);
             	BigDecimal divisor = getFTypeDivisor(subType);
             	if (multiplier == null) {
@@ -1161,5 +1165,33 @@ public class Parking extends FeatureProcess {
         }
     }
 
-    
+    private BigDecimal calculateMiniplexECS(BigDecimal coveredArea) {
+
+        if (coveredArea == null || coveredArea.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal hundred = BigDecimal.valueOf(100);
+
+        // First 100 sq.m
+        BigDecimal firstSlabArea = coveredArea.min(hundred);
+
+        // Remaining area beyond 100 sq.m
+        BigDecimal remainingArea = coveredArea.subtract(firstSlabArea);
+
+        // 3 ECS per 100 sq.m for first 100 sq.m
+        BigDecimal firstSlabECS = firstSlabArea
+                .multiply(BigDecimal.valueOf(3))
+                .divide(hundred, 10, RoundingMode.HALF_UP);
+
+        // 2 ECS per 100 sq.m for remaining area
+        BigDecimal remainingSlabECS = BigDecimal.ZERO;
+        if (remainingArea.compareTo(BigDecimal.ZERO) > 0) {
+            remainingSlabECS = remainingArea
+                    .multiply(BigDecimal.valueOf(2))
+                    .divide(hundred, 10, RoundingMode.HALF_UP);
+        }
+
+        return firstSlabECS.add(remainingSlabECS);
+    }
 }
