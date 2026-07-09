@@ -1,3 +1,5 @@
+// table  ----  D:\UPYOG-NIUA\Hema-UPYOG-NIUA\frontend\upyog-ui\web\micro-ui-internals\packages\modules\est\src\components\ManageProperties.js
+
 import React, { useMemo, useState, useEffect } from "react";
 import { 
   Table, 
@@ -17,6 +19,7 @@ import { useForm } from "react-hook-form";
 
 const ManageProperties = ({ t }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -36,7 +39,7 @@ const ManageProperties = ({ t }) => {
  const handleEditAsset = (asset) => {
   sessionStorage.setItem("EST_EDIT_DATA", JSON.stringify(asset));
 
-  navigate("/upyog-ui/employee/est/create-asset/newRegistration?edit=true");
+  navigate(`${modulePath}/create-asset/newRegistration?edit=true`);
 };
 
   const [properties, setProperties] = useState([]);
@@ -148,7 +151,7 @@ const ManageProperties = ({ t }) => {
   const GetCell = (value) => <span className="cell-text">{value || "N/A"}</span>;
 
   const handleAllotAsset = (asset) => {
-    navigate("/upyog-ui/employee/est/assignassets/info", { state: { assetData: asset } });
+    navigate(`${modulePath}/assignassets/info`, { state: { assetData: asset } });
   };
 
   const columns = useMemo(
@@ -165,7 +168,7 @@ const ManageProperties = ({ t }) => {
         textDecoration: "underline"
       }}
       onClick={() =>
-        navigate(`/upyog-ui/employee/est/application-details/${row.original.estateNo}`)
+        navigate(`${modulePath}/application-details/${row.original.estateNo}`)
       }
     >
       {row.original.estateNo}

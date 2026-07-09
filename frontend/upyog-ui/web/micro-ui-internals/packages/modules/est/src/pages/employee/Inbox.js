@@ -36,7 +36,7 @@ const ESTInbox = ({
 }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
-  const styles = getResponsiveStyles(isMobile);
+  const isMobile = window.Digit.Utils.browser.isMobile();
 
   const [enableSearch, setEnableSearch] = useState(() => (isInbox ? {} : { enabled: false }));
   const [TableConfig] = useState(() => Digit.ComponentRegistryService?.getComponent("ESTInboxTableConfig"));
@@ -46,7 +46,6 @@ const ESTInbox = ({
   const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: true }]);
   const [searchParams, setSearchParams] = useState(initialStates.searchParams || {});
 
-  const isMobile = window.Digit.Utils.browser.isMobile();
   const paginationParams = isMobile
     ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
     : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };

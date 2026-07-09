@@ -43,12 +43,14 @@ const ManageInterest = ({ t: propT }) => {
       const response = await Digit.UploadServices.Filestorage("ESTATE", file, tenantId);
       const id = response?.data?.files?.[0]?.fileStoreId;
       if (id) {
-        setDocument({ filestoreId: id, documentType: "Interest_DOCUMENT" });
+        setDocument({ filestoreId: id, documentType: "INTEREST_DOCUMENT" });
       }
     } catch (error) {
       console.error("File upload error:", error);
     }
   };
+
+  const handleFileDelete = () => setDocument(null);
 
   const handleSubmit = () => {
     const payload = {
@@ -56,9 +58,9 @@ const ManageInterest = ({ t: propT }) => {
       amount: Number(amount),
       appliedTo,
       comments,
-      document
+      document,
     };
-    console.log("Interest data:", payload);
+    console.warn("Interest API not yet integrated. Payload:", payload);
   };
 
   const fullWidthStyle = { width: "70%", marginBottom: "16px" };
@@ -111,12 +113,12 @@ const ManageInterest = ({ t: propT }) => {
           style={fullWidthStyle}
         />
 
-        <CardLabel>{t("EST_Interest_DOCUMENT")}</CardLabel>
+        <CardLabel>{t("EST_INTEREST_DOCUMENT")}</CardLabel>
 <div style={fullWidthStyle}>
   <UploadFile
-    onUpload={(e) => handleFileUpload(e.target.files[0], "InterestDocument")}
-    onDelete={() => handleFileDelete("InterestDocument")}
-    id="InterestDocument"
+    onUpload={(e) => handleFileUpload(e.target.files[0])}
+    onDelete={handleFileDelete}
+    id="interestDocument"
     message={document ? t("CS_ACTION_FILEUPLOADED") : t("CS_ACTION_NO_FILEUPLOADED")}
     accept=".png,.jpg,.jpeg,.pdf"
   />

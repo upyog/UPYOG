@@ -16,9 +16,6 @@ import React from "react";
  */
 
 const ESTAssignAstRequiredDoc = ({ t, config, onSelect, userType, formData }) => {
-  console.log("Info page props:", { t, config, onSelect, userType, formData });
-  
-
   // 🔹 Go Next Function
   function goNext() {
    onSelect("Documents", {});

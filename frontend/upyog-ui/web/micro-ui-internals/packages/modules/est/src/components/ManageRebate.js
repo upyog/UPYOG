@@ -10,8 +10,8 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
-// Manage Penalty Component
-// This component allows users to manage penalties by specifying amount type, amount, applicable ULBs, comments, and uploading relevant documents.
+// Manage Rebate Component
+// This component allows users to manage rebates by specifying amount type, amount, applicable ULBs, comments, and uploading relevant documents.
 
 const ManageRebate = ({ t: propT }) => {
   const { t: hookT } = useTranslation();
@@ -50,15 +50,17 @@ const ManageRebate = ({ t: propT }) => {
     }
   };
 
+  const handleFileDelete = () => setDocument(null);
+
   const handleSubmit = () => {
     const payload = {
       amountType,
       amount: Number(amount),
       appliedTo,
       comments,
-      document
+      document,
     };
-    console.log("Rebate data:", payload);
+    console.warn("Rebate API not yet integrated. Payload:", payload);
   };
 
   const fullWidthStyle = { width: "70%", marginBottom: "16px" };
@@ -114,8 +116,8 @@ const ManageRebate = ({ t: propT }) => {
         <CardLabel>{t("EST_REBATE_DOCUMENT")}</CardLabel>
 <div style={fullWidthStyle}>
   <UploadFile
-    onUpload={(e) => handleFileUpload(e.target.files[0], "rebateDocument")}
-    onDelete={() => handleFileDelete("rebateDocument")}
+    onUpload={(e) => handleFileUpload(e.target.files[0])}
+    onDelete={handleFileDelete}
     id="rebateDocument"
     message={document ? t("CS_ACTION_FILEUPLOADED") : t("CS_ACTION_NO_FILEUPLOADED")}
     accept=".png,.jpg,.jpeg,.pdf"

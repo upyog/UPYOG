@@ -27,11 +27,10 @@ const ESTSearchApplication = ({
 
   const [selectedAssetType, setSelectedAssetType] = useState(null); // assetParentCategory
   const [selectedLocality, setSelectedLocality] = useState(null);   // localityCode
-  const [properties, setProperties] = useState([]);
   const [isCleared, setIsCleared] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  const { register, handleSubmit, setValue, getValues, reset } = useForm({
+  const { register, handleSubmit, setValue, getValues, reset, watch } = useForm({
     defaultValues: {
       offset: 0,
       limit: 10,
@@ -82,17 +81,27 @@ const ESTSearchApplication = ({
       label: loc.name || loc.label || loc.code,
     })) || [];
 
-  // Submit handler: send clean payload to parent
+  // Submit handler: send clean payload to parent (filters handled server-side)
   const handleFormSubmit = (formData) => {
-    setIsCleared(false); // Reset cleared state when searching
+    setIsCleared(false);
+    setValue("offset", 0);
     const searchData = {
       ...formData,
+      offset: 0,
       assetParentCategory: selectedAssetType?.code || undefined,
       localityCode: selectedLocality?.code || undefined,
     };
 
     onSubmit(searchData);
   };
+
+  const offset = watch("offset") || 0;
+  const limit = watch("limit") || 10;
+
+  const paginatedData = useMemo(() => {
+    if (!Array.isArray(data) || isCleared) return [];
+    return data.slice(offset, offset + limit);
+  }, [data, offset, limit, isCleared]);
 
   useEffect(() => {
     register("offset", 0);
@@ -106,42 +115,6 @@ const ESTSearchApplication = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  // Apply frontend filtering (type + locality) over API data
-  useEffect(() => {
-    if (!Array.isArray(data) || isCleared) return;
-
-    let result = data;
-
-    // Filter by asset type (LAND/BUILDING)
-    if (selectedAssetType?.code) {
-      const selectedCode = selectedAssetType.code.toUpperCase();
-      result = result.filter((asset) => {
-        const type = (asset.assetType || asset.assetParentCategory || "").toUpperCase();
-        return type === selectedCode;
-      });
-    }
-
-    // Filter by locality code
-    if (selectedLocality?.code) {
-      const locCode = selectedLocality.code.toUpperCase();
-      result = result.filter((asset) => {
-        const assetLocCode = (
-          asset.localityCode ||
-          asset.locality?.code ||
-          asset.locality
-        );
-        return assetLocCode && assetLocCode.toUpperCase() === locCode;
-      });
-    }
-
-    // Apply pagination to show only 10 items per page
-    const offset = getValues("offset") || 0;
-    const limit = getValues("limit") || 10;
-    const paginatedResult = result.slice(offset, offset + limit);
-
-    setProperties(paginatedResult);
-  }, [data, selectedAssetType, selectedLocality, getValues("offset"), getValues("limit"), isCleared]);
 
   const GetCell = (value) => <span className="cell-text">{value || "N/A"}</span>;
 
@@ -257,17 +230,21 @@ const ESTSearchApplication = ({
 
   function onPageSizeChange(e) {
     setValue("limit", Number(e.target.value));
-    handleSubmit(handleFormSubmit)();
+    setValue("offset", 0);
   }
 
   function nextPage() {
-    setValue("offset", getValues("offset") + getValues("limit"));
-    handleSubmit(handleFormSubmit)();
+    const newOffset = (getValues("offset") || 0) + (getValues("limit") || 10);
+    if (newOffset < count) {
+      setValue("offset", newOffset);
+    }
   }
 
   function previousPage() {
-    setValue("offset", getValues("offset") - getValues("limit"));
-    handleSubmit(handleFormSubmit)();
+    const newOffset = (getValues("offset") || 0) - (getValues("limit") || 10);
+    if (newOffset >= 0) {
+      setValue("offset", newOffset);
+    }
   }
 
   return (
@@ -279,7 +256,7 @@ const ESTSearchApplication = ({
           {/* Asset Number */}
           <SearchField style={{ marginBottom: isMobile ? '10px' : '15px' }}>
             <label style={{ fontSize: isMobile ? '14px' : '16px', marginBottom: '5px', display: 'block' }}>{t("EST_SEARCH_ASSET_NUMBER")}</label>
-            {/* <TextInput name="estateNo" inputRef={register({})} style={{ width: '100%', fontSize: isMobile ? '14px' : '16px', padding: isMobile ? '8px' : '10px' }} />  */}
+            <TextInput name="estateNo" inputRef={register({})} style={{ width: '100%', fontSize: isMobile ? '14px' : '16px', padding: isMobile ? '8px' : '10px' }} />
           </SearchField>
 
           {/* Locality dropdown */}
@@ -333,7 +310,6 @@ const ESTSearchApplication = ({
                 setSelectedAssetType(null);
                 setSelectedLocality(null);
                 setShowToast(null);
-                setProperties([]);
                 setIsCleared(true);
               }}
             >
@@ -376,7 +352,7 @@ const ESTSearchApplication = ({
           }}>
             <Table
               t={t}
-              data={properties}
+              data={paginatedData}
               totalRecords={count}
               columns={columns}
               getCellProps={() => ({
@@ -389,16 +365,16 @@ const ESTSearchApplication = ({
                 },
               })}
               onPageSizeChange={onPageSizeChange}
-              currentPage={getValues("offset") / getValues("limit")}
+              currentPage={offset / limit}
               onNextPage={nextPage}
               onPrevPage={previousPage}
-              pageSizeLimit={getValues("limit")}
+              pageSizeLimit={limit}
               onSort={onSort}
               disableSort={false}
               sortParams={[
                 {
-                  id: getValues("sortBy"),
-                  desc: getValues("sortOrder") === "DESC",
+                  id: watch("sortBy"),
+                  desc: watch("sortOrder") === "DESC",
                 },
               ]}
             />

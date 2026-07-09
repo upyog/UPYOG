@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, Loader, Row, StatusTable, SubmitBar, ActionBar, Menu } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardSubHeader, Header, Loader, Row, StatusTable, SubmitBar, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -20,7 +20,6 @@ const ESTApplicationDetails = () => {
   const isMountedRef = React.useRef(true);
 
   const [userType, setUserType] = useState("citizen");
-  const [displayMenu, setDisplayMenu] = useState(false);
 
   useEffect(() => {
   const currentPath = navigate.location.pathname;
@@ -117,15 +116,14 @@ const fetchBillData = async () => {
 };
 
 
-  const handleTakeAction = () => setDisplayMenu((prev) => !prev);
-
-  const workflowDetails = Digit.Hooks.useWorkflowDetails({
-    tenantId: data?.tenantId || tenantId,
-    id: data?.estateNo,
-    moduleCode: "EST",
-    role: "EMPLOYEE",
-    config: { enabled: userType === "employee" && !!data?.estateNo },
-  });
+  const handleMakePayment = () => {
+    navigate({
+      pathname: `/upyog-ui/citizen/payment/my-bills/est-services/${data?.estateNo}`,
+    });
+  };
+  const handleTakeAction = () => {
+  console.log("Take action clicked for asset:", assetNo);
+};
 
 
   if (isLoading) {
@@ -221,27 +219,17 @@ const fetchBillData = async () => {
           <ViewTimeline
             application={applicationForTimeline}
             id={data?.estateNo}
-            userType={userType}
+            userType="citizen"
           />
         </Card>
-        {userType === "employee" &&
-          !workflowDetails?.isLoading &&
-          workflowDetails?.data?.nextActions?.length > 0 && (
-            <ActionBar>
-              {displayMenu && (
-                <Menu
-                  localeKeyPrefix="WF_EST"
-                  options={workflowDetails.data.nextActions.map((action) => action.action)}
-                  t={t}
-                  onSelect={() => setDisplayMenu(false)}
-                />
-              )}
-              <SubmitBar
-                label={t("ES_COMMON_TAKE_ACTION")}
-                onSubmit={handleTakeAction}
-              />
-            </ActionBar>
-          )}
+        {userType === "employee" && (
+  <ActionBar>
+    <SubmitBar 
+      label={t("ES_COMMON_TAKE_ACTION")} 
+      onSubmit={handleTakeAction}
+    />
+  </ActionBar>
+)}
       </div>
     </React.Fragment>
   );
