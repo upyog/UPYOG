@@ -52,8 +52,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
-import javax.persistence.NoResultException;
-import javax.validation.Valid;
+import jakarta.persistence.NoResultException;
+import jakarta.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.collection.constants.CollectionConstants;
@@ -115,7 +115,7 @@ public class ChequeDishonourController {
                 bankBranchHibernateDAO.getAllBankBranchs());
         model.addAttribute(CollectionConstants.DROPDOWN_DATA_ACCOUNT_NO_LIST, Collections.emptyList());
         model.addAttribute(CollectionConstants.DROPDOWN_DATA_DISHONOR_REASONS_LIST,
-                persistenceService.getSession().createSQLQuery("select * from egf_instrument_dishonor_reason").list());
+                persistenceService.getSession().createNativeQuery("select * from egf_instrument_dishonor_reason").list());
         final DishonoredChequeBean attributeValue = new DishonoredChequeBean();
         attributeValue.setDishonorDate(new Date());
         model.addAttribute("dishonoredChequeModel", attributeValue);
