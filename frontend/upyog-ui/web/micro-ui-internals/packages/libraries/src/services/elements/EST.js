@@ -94,16 +94,20 @@ export const ESTService = {
 // Allotment Search API Call
 // This method searches for EST allotments based on provided filters.
 
-    allotmentSearch: ({ tenantId, filters }) =>
-  Request({
-    url: Urls.est.allotmentSearch,
-    useCache: false,
-    method: "POST",
-    auth: true,
-    userService: true,
-    params: { tenantId },
-    data: filters,
-  }),
+    allotmentSearch: ({ tenantId, filters }) => {
+      const criteria = filters?.AllotmentSearchCriteria || filters || {};
+      return Request({
+        url: Urls.est.allotmentSearch,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+        data: {
+          AllotmentSearchCriteria: criteria,
+        },
+      });
+    },
 
 
 };

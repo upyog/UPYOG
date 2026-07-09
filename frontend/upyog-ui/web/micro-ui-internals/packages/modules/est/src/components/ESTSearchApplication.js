@@ -12,6 +12,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { getCreateAssetPath } from "../utils/estRoutes";
 import {
+  fetchAllotmentByAssetNo,
   getAssetIdentity,
   isAssetAllotted,
   mapAllotmentApiToFormData,
@@ -142,11 +143,7 @@ const ESTSearchApplication = ({
   const handleEditAsset = useCallback(
     async (asset) => {
       try {
-        const response = await Digit.ESTService.allotmentSearch({
-          tenantId,
-          filters: { tenantId, assetNo: asset.estateNo },
-        });
-        const allotment = response?.Allotments?.[0];
+        const allotment = await fetchAllotmentByAssetNo(asset.estateNo, tenantId);
         if (!allotment) {
           setShowToast?.({ error: true, label: "ES_COMMON_NO_DATA" });
           return;

@@ -1,8 +1,12 @@
-import React, { useMemo, useCallback } from "react";
-import { Header, DynamicForm } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
+import { Header, DynamicForm, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { buildDynamicAllotmentPayload } from "../utils/allotmentPayloadUtils";
 import estateAllotmentFormConfig from "../config/Create/estateAllotmentFormConfig";
+import {
+  fetchAllotmentByAssetNo,
+  mapAllotmentApiToFormData,
+} from "../utils/allotmentFormUtils";
 
 // Resolves whatever shape the asset's locality field came back in (raw code, i18nKey object,
 // plain string) into a single display string. Lifted as-is from the static ESTAssignAssets.js —
@@ -30,6 +34,8 @@ const getLocalityText = (asset, t) => {
 
 const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) => {
   const persistedData = useMemo(() => formData || {}, [formData]);
+  const [apiAllotment, setApiAllotment] = useState(null);
+  const [loadingAllotment, setLoadingAllotment] = useState(false);
 
   const { t } = useTranslation();
 
@@ -40,6 +46,31 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
     [config]
   );
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
+  const assetNo = persistedData?.assetData?.estateNo;
+
+  useEffect(() => {
+    if (!assetNo) return;
+
+    let cancelled = false;
+    const loadAllotment = async () => {
+      setLoadingAllotment(true);
+      try {
+        const allotment = await fetchAllotmentByAssetNo(assetNo, tenantId);
+        if (!cancelled && allotment) {
+          setApiAllotment(mapAllotmentApiToFormData(allotment));
+        }
+      } catch (error) {
+        console.error("Error fetching allotment for asset:", error);
+      } finally {
+        if (!cancelled) setLoadingAllotment(false);
+      }
+    };
+
+    loadAllotment();
+    return () => {
+      cancelled = true;
+    };
+  }, [assetNo, tenantId]);
 
   // The asset (Building Name/Locality/Area/Floor/Rate/Asset No/Asset Ref) was captured in the
   // NewRegistration step, keyed by *its* step key — not this step's. DynamicForm only knows how
@@ -61,10 +92,11 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
       buildingFloor: asset.buildingFloor || "",
       assetRate: asset.rate || "",
       ...priorAllotment,
+      ...(apiAllotment || {}),
       ...(editData || {}),
     };
 
-  }, [persistedData, routeConfig, editData, t]);
+  }, [persistedData, routeConfig, editData, apiAllotment, t]);
 
   // Dev-time preview only — real submit/mutation happens further down the workflow
   // (e.g. an ESTAllotmentCheckPage), via the same shared buildDynamicAllotmentPayload()
@@ -84,17 +116,21 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
   return (
     <div className="employeeCard">
       <Header>{t(routeConfig.pageHeading?.create || "EST_COMMMON_ASSIGN_ASSETS")}</Header>
-      <DynamicForm
-        routeConfig={routeConfig}
-        onSubmit={handleSubmit}
-        onSelect={onSelect}
-        config={config || { key: routeConfig.key }}
-        persistedData={persistedData || {}}
-        isEditMode={isEditMode || false}
-        editData={prefillData}
-        tenantId={tenantId}
-        t={t}
-      />
+      {loadingAllotment ? (
+        <Loader />
+      ) : (
+        <DynamicForm
+          routeConfig={routeConfig}
+          onSubmit={handleSubmit}
+          onSelect={onSelect}
+          config={config || { key: routeConfig.key }}
+          persistedData={persistedData || {}}
+          isEditMode={isEditMode || false}
+          editData={prefillData}
+          tenantId={tenantId}
+          t={t}
+        />
+      )}
     </div>
   );
 };

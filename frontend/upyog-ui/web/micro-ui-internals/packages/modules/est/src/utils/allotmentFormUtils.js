@@ -36,5 +36,23 @@ export const mapAllotmentApiToFormData = (allotment = {}) => {
 export const getAssetIdentity = (asset = {}) =>
   asset?.estateNo || asset?.assetId || asset?.refAssetNo || "";
 
-export const isAssetAllotted = (asset = {}) =>
-  String(asset?.assetStatus || "").toLowerCase() === "allotted";
+export const isAssetAllotted = (asset = {}) => {
+  const allotmentStatus = String(asset?.assetAllotmentStatus || "").toUpperCase();
+  if (
+    allotmentStatus &&
+    allotmentStatus !== "INITIATED" &&
+    allotmentStatus !== "AVAILABLE"
+  ) {
+    return true;
+  }
+  return String(asset?.assetStatus || "").toLowerCase() === "allotted";
+};
+
+export const fetchAllotmentByAssetNo = async (assetNo, tenantId) => {
+  if (!assetNo || !tenantId) return null;
+  const response = await Digit.ESTService.allotmentSearch({
+    tenantId,
+    filters: { tenantId, assetNo },
+  });
+  return response?.Allotments?.[0] || null;
+};
