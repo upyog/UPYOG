@@ -105,4 +105,20 @@
         </dependency>
         <!-- HIBERNATE END -->
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- Excluded: depends on CollectionDashboardService which is excluded in egov-collection (ES/JDK17 incompatibility) -->
+                        <exclude>**/web/controller/dashboard/CollectionDashboardController.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

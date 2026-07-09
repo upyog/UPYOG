@@ -139,7 +139,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({ @Result(name = BaseFormAction.NEW, location = "receipt-new.jsp"),
-		@Result(name = com.opensymphony.xwork2.Action.SUCCESS, location = "receipt-success.jsp"),
+		@Result(name = org.apache.struts2.action.Action.SUCCESS, location = "receipt-success.jsp"),
 		@Result(name = BaseFormAction.INDEX, location = "receipt-index.jsp"),
 		@Result(name = ReceiptAction.REDIRECT, location = "receipt-redirect.jsp"),
 		@Result(name = CollectionConstants.REPORT, location = "receipt-report.jsp") })
