@@ -98,8 +98,6 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	@Autowired
 	private WaterCessUtil waterCessUtil;
 
-	@Autowired
-	private MasterDataService mDataService;
 
 	/**
 	 * Get CalculationReq and Calculate the Tax Head on Water Charge And Estimation
@@ -178,11 +176,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	
 	
 	
-	public List<Calculation> bulkbillgeneration(CalculationReq request, Map<String, Object> masterMap) {
-		List<Calculation> calculations = getCalculations(request, masterMap);
-		demandService.generateDemandForBillingCycleInBulk(request, calculations, masterMap, true);
-		return calculations;
-	}
+
 	
 	
 	
@@ -567,8 +561,10 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	        try {
 	            Map<String, List> estimationMap = estimationService.getEstimationMap(criteria, request, masterMap);
 	            ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap.get(WSCalculationConstant.Billing_Period_Master);
-	            masterDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap,
-	                    criteria.getWaterConnection().getConnectionType());
+	            if (criteria != null && criteria.getWaterConnection() != null) {
+	                masterDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap,
+	                        criteria.getWaterConnection().getConnectionType());
+	            }
 
 	            Calculation calculation = null;
 
@@ -588,7 +584,9 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	                calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
 	            }
 
-	            calculations.add(calculation);
+	            if (calculation != null) {
+	                calculations.add(calculation);
+	            }
 
 	        } catch (Exception ex) {
 	        	   log.error("Error processing calculation for applicationNo {}: {}", 
@@ -1073,7 +1071,7 @@ So, both lists are now filtered to include only records with INITIATED status, w
 			List<Object> waterCessMasterList = timeBasedExemptionMasterMap
 					.get(WSCalculationConstant.WC_WATER_CESS_MASTER);
 
-			Map<String, Object> CessMap = mDataService.getApplicableMasterCess(WSCalculationConstant.Assessment_Year,
+			Map<String, Object> CessMap = masterDataService.getApplicableMasterCess(WSCalculationConstant.Assessment_Year,
 					waterCessMasterList);
 			waterCess = waterCessUtil.calculateWaterCess(finalWaterCharge, CessMap);
 

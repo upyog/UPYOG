@@ -167,7 +167,15 @@ public class EstimationService {
 	        Map<String, JSONArray> billingSlabMaster, ArrayList<String> billingSlabIds, CalculationReq request) {
 
 	    BigDecimal sewerageCharge = BigDecimal.ZERO;
-	    HashMap<String, Object> additionalDetail = mapper.convertValue(sewerageConnection.getAdditionalDetails(), HashMap.class);
+	    HashMap<String, Object> additionalDetail = new HashMap<>();
+	    if (sewerageConnection.getAdditionalDetails() != null) {
+	        try {
+	            additionalDetail = mapper.convertValue(sewerageConnection.getAdditionalDetails(), HashMap.class);
+	        } catch (Exception e) {
+	            log.warn("Could not convert additionalDetails for connection {}: {}",
+	                    sewerageConnection.getConnectionNo(), e.getMessage());
+	        }
+	    }
 	    String billingType = (String) additionalDetail.getOrDefault(SWCalculationConstant.BILLINGTYPE, "STANDARD");
 
 	    if (SWCalculationConstant.nonMeterdConnection.equalsIgnoreCase(sewerageConnection.getConnectionType())
@@ -228,6 +236,7 @@ public class EstimationService {
 	            }
 	        }
 
+	        if (billSlab.getSlabs() == null || billSlab.getSlabs().isEmpty()) continue;
 	        for (Slab slab : billSlab.getSlabs()) {
 	            boolean slabCondition = totalUnits >= slab.getFrom() && totalUnits <= slab.getTo()
 	                    && slab.getEffectiveFrom() <= System.currentTimeMillis()
