@@ -33,10 +33,12 @@ const ESTAssignAssets = ({ onSelect, config, formData, isEditMode, editData }) =
 
   const { t } = useTranslation();
 
-  const routeConfig = useMemo(() => {
-    if (Array.isArray(config?.form) && config.form.length > 0) return config;
-    return { ...config, ...estateAllotmentFormConfig };
-  }, [config]);
+  // MDMS supplies route metadata (steps, components); local form config supplies
+  // corrected field rules — email pattern {2,}, computeFrom agreementStartDate/EndDate.
+  const routeConfig = useMemo(
+    () => ({ ...config, ...estateAllotmentFormConfig }),
+    [config]
+  );
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
 
   // The asset (Building Name/Locality/Area/Floor/Rate/Asset No/Asset Ref) was captured in the

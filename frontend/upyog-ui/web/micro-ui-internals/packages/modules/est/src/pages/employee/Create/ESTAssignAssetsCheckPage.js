@@ -26,12 +26,10 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }
     );
   }, [config]);
 
-  const routeConfig = useMemo(() => {
-    if (Array.isArray(rawRouteConfig.form) && rawRouteConfig.form.length > 0) {
-      return rawRouteConfig;
-    }
-    return { ...rawRouteConfig, ...estateAllotmentFormConfig };
-  }, [rawRouteConfig]);
+  const routeConfig = useMemo(
+    () => ({ ...rawRouteConfig, ...estateAllotmentFormConfig }),
+    [rawRouteConfig]
+  );
 
   const assetData = value?.assetData || {};
   const extraData = {

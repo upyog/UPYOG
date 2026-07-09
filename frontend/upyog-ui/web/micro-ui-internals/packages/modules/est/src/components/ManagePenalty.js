@@ -43,12 +43,14 @@ const ManagePenalty = ({ t: propT }) => {
       const response = await Digit.UploadServices.Filestorage("ESTATE", file, tenantId);
       const id = response?.data?.files?.[0]?.fileStoreId;
       if (id) {
-        setDocument({ filestoreId: id, documentType: "REBATE_DOCUMENT" });
+        setDocument({ filestoreId: id, documentType: "PENALTY_DOCUMENT" });
       }
     } catch (error) {
       console.error("File upload error:", error);
     }
   };
+
+  const handleFileDelete = () => setDocument(null);
 
   const handleSubmit = () => {
     const payload = {
@@ -56,18 +58,18 @@ const ManagePenalty = ({ t: propT }) => {
       amount: Number(amount),
       appliedTo,
       comments,
-      document
+      document,
     };
-    console.log("Rebate data:", payload);
+    console.warn("Penalty API not yet integrated. Payload:", payload);
   };
 
   const fullWidthStyle = { width: "70%", marginBottom: "16px" };
 
   return (
     <div>
-      <Header>Manage Rebate</Header>
+      <Header>Manage Penalty</Header>
       <Card style={{ padding: "16px" }}>
-        <h3 style={{ marginBottom: "16px" }}>Rebate Amount</h3>
+        <h3 style={{ marginBottom: "16px" }}>Penalty Amount</h3>
         
         <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
           {amountTypeOptions.map((option) => (
@@ -111,12 +113,12 @@ const ManagePenalty = ({ t: propT }) => {
           style={fullWidthStyle}
         />
 
-        <CardLabel>{t("EST_REBATE_DOCUMENT")}</CardLabel>
+        <CardLabel>{t("EST_PENALTY_DOCUMENT")}</CardLabel>
 <div style={fullWidthStyle}>
   <UploadFile
-    onUpload={(e) => handleFileUpload(e.target.files[0], "rebateDocument")}
-    onDelete={() => handleFileDelete("rebateDocument")}
-    id="rebateDocument"
+    onUpload={(e) => handleFileUpload(e.target.files[0])}
+    onDelete={handleFileDelete}
+    id="penaltyDocument"
     message={document ? t("CS_ACTION_FILEUPLOADED") : t("CS_ACTION_NO_FILEUPLOADED")}
     accept=".png,.jpg,.jpeg,.pdf"
   />
