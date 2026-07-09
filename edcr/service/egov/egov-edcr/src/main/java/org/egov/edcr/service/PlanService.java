@@ -136,10 +136,10 @@ public class PlanService {
 	private static final String INVALID_SOURCE = "INVALID SOURCE";
 	
 	private static final String ERROR_MSG = 
-	        "Dear Investors,\n"
-	                + "Please be informed that with effect from 15.05.2025, all building plan applications under the following categories will no longer be accepted on the eNaksha Portal: https://enaksha.lgpunjab.gov.in and https://mseva.lgpunjab.gov.in/\n"
-	                + "• Industry • Hotel • Nursing Home / Hospital • Institutions\n"
-	                + "Instead, investors are requested to submit such applications exclusively through the Punjab Bureau of Investment Promotion (PBIP) Portal: https://fasttrack.punjab.gov.in/webportal/login We request all stakeholders to kindly take note of this change and plan submissions accordingly.\n"
+	        "Dear Investors,"
+	                + "Please be informed that with effect from 15.05.2025, all building plan applications under the following categories will no longer be accepted on the eNaksha Portal: https://enaksha.lgpunjab.gov.in and https://mseva.lgpunjab.gov.in/"
+	                + "• Industry • Hotel • Nursing Home / Hospital • Institutions"
+	                + "Instead, investors are requested to submit such applications exclusively through the Punjab Bureau of Investment Promotion (PBIP) Portal: https://fasttrack.punjab.gov.in/webportal/login We request all stakeholders to kindly take note of this change and plan submissions accordingly."
 	                + "Local Government Department, Government of Punjab.”";
 	
 	@Value("${source.validation}")
@@ -374,8 +374,9 @@ public class PlanService {
         
         if(roadType!=null) {
         	plan.getPlanInformation().setRoadType(roadType);
+        	plan.getPlanInfoProperties().put("ROAD_TYPE", roadType);
         }else {
-        	plan.getErrors().put("ROAD_TYPE NOT PROVIDED", "ROAD_TYPE not provided");
+        	plan.getErrors().put("ROAD_TYPE NOT PROVIDED", "ROAD TYPE not provided");
         }
         
         //return (Plan) planDetail;
