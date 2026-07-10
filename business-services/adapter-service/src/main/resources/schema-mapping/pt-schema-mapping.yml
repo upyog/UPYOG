@@ -1,0 +1,175 @@
+tenantId: pg.citya
+module: PT
+
+property:
+  table: eg_pt_property
+  columns:
+    id: id
+    tenantId: tenantid
+    status: status
+    createdTime: createdtime
+    lastModifiedTime: lastmodifiedtime
+    creationReason: creationreason
+
+assessment:
+  table: eg_pt_asmt_assessment
+  columns:
+    propertyId: propertyid
+    tenantId: tenantid
+    assessmentDate: assessmentdate
+    financialYear: financialyear
+    channel: channel
+
+unit:
+  table: eg_pt_unit
+  columns:
+    propertyId: propertyid
+    tenantId: tenantid
+    arv: arv
+    builtUpArea: builtuparea
+    usageCategory: usageCategory
+
+rules:
+  slaDays: 15
+  taxDefaultRate: 10
+
+metrics:
+  - name: assessments
+    type: SCALAR
+    source: assessment
+    aggregation: COUNT
+
+  - name: todaysTotalApplications
+    type: SCALAR
+    source: property
+    aggregation: COUNT
+    dateField: createdtime
+    dateBounded: true
+
+  - name: todaysClosedApplications
+    type: SCALAR
+    source: property
+    aggregation: COUNT
+    dateField: lastmodifiedtime
+    dateBounded: true
+    filters:
+      - field: status
+        op: IN
+        value: [INACTIVE, REJECTED]
+
+  - name: todaysApprovedApplications
+    type: SCALAR
+    source: property
+    aggregation: COUNT
+    dateField: lastmodifiedtime
+    dateBounded: true
+    filters:
+      - field: status
+        op: EQUALS
+        value: ACTIVE
+      - field: creationreason
+        op: EQUALS
+        value: CREATE
+
+  - name: todaysApprovedApplicationsWithinSLA
+    type: SCALAR
+    source: property
+    aggregation: COUNT
+    dateField: lastmodifiedtime
+    dateBounded: true
+    filters:
+      - field: status
+        op: EQUALS
+        value: ACTIVE
+    withinSla: true
+
+  - name: avgDaysForApplicationApproval
+    type: SCALAR
+    source: property
+    aggregation: AVG_DAYS
+    dateField: lastmodifiedtime
+    dateBounded: true
+    filters:
+      - field: status
+        op: EQUALS
+        value: ACTIVE
+
+  - name: noOfPropertiesPaidToday
+    type: SCALAR
+    source: assessment
+    aggregation: COUNT
+    dateField: assessmentdate
+    dateBounded: true
+
+  - name: propertiesRegistered
+    type: GROUPED
+    source: assessment
+    aggregation: DISTINCT_PROPERTY_COUNT
+    groupBy: financialyear
+    groupByLabel: financialYear
+
+  - name: assessedProperties
+    type: GROUPED
+    source: assessment
+    aggregation: DISTINCT_PROPERTY_COUNT
+    groupBy: usageCategory
+    groupByLabel: usageCategory
+
+  - name: transactions
+    type: GROUPED
+    source: assessment
+    aggregation: COUNT
+    groupBy: usageCategory
+    groupByLabel: usageCategory
+
+  - name: propertyTax
+    type: GROUPED
+    source: unit
+    aggregation: SUM_SIMULATED_TAX
+    groupBy: usageCategory
+    groupByLabel: usageCategory
+
+  - name: cess
+    type: GROUPED
+    source: unit
+    aggregation: SUM_SIMULATED_TAX
+    groupBy: usageCategory
+    groupByLabel: usageCategory
+    scaleFactor: 0.1
+
+  - name: rebate
+    type: GROUPED
+    source: unit
+    aggregation: SUM_SIMULATED_TAX
+    groupBy: usageCategory
+    groupByLabel: usageCategory
+    scaleFactor: -0.05
+
+  - name: penalty
+    type: GROUPED
+    source: unit
+    aggregation: ZERO
+    groupBy: usageCategory
+    groupByLabel: usageCategory
+
+  - name: interest
+    type: GROUPED
+    source: unit
+    aggregation: ZERO
+    groupBy: usageCategory
+    groupByLabel: usageCategory
+
+  - name: todaysCollection
+    type: MULTI_GROUPED
+    groupings:
+      - source: unit
+        aggregation: SUM_SIMULATED_TAX
+        groupBy: usageCategory
+        groupByLabel: usageCategory
+      - source: assessment
+        aggregation: COUNT
+        groupBy: channel
+        groupByLabel: paymentChannelType
+        dateField: assessmentdate
+        dateBounded: true
+        normalizer: PAYMENT_CHANNEL
