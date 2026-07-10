@@ -53,7 +53,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import java.util.Arrays;
 import java.util.List;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.audit.contract.LoginAuditReportRequest;

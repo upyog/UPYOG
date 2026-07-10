@@ -50,7 +50,7 @@ package org.egov.infra.web.controller.admin.auditing.report;
 
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 import org.egov.infra.admin.auditing.contract.UserRoleChangeAuditReportRequest;
 import org.egov.infra.admin.auditing.service.UserAuditService;
