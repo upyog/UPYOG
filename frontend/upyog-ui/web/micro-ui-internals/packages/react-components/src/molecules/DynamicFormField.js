@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   CardLabel,
   Dropdown,
@@ -6,6 +6,26 @@ import {
   DatePicker,
   UploadFile,
 } from "@nudmcdgnpm/digit-ui-react-components";
+import { toInputDate, resolveFieldLabelKey, getFieldWatchNames } from "../utilities/formUtils";
+
+/* ── shared sub-renderers (were copy-pasted 5x before) ─────────────────── */
+
+const FieldLabel = ({ text, required, hasError, unit }) => (
+  <CardLabel style={{ color: hasError ? "red" : undefined }}>
+    {text}
+    {unit && <span className="field-unit"> {unit}</span>}
+    {required && <span style={{ color: "red" }}> *</span>}
+  </CardLabel>
+);
+
+const FieldError = ({ show, message }) =>
+  show ? (
+    <p className="field-error" style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+      {message}
+    </p>
+  ) : null;
+
+const EMPTY_OPTIONS = [];
 
 const DynamicFormField = ({
   fieldConfig,
@@ -15,8 +35,48 @@ const DynamicFormField = ({
   dropdownData = {},
   t,
   isDisabled = false,
-  onFileUpload, // (fieldName, file) => void — provided by DynamicForm, handles the actual filestore upload
+  onFileUpload, // (fieldName, file) => void — DynamicForm owns the filestore upload
 }) => {
+  // Hooks must run unconditionally, so they sit ABOVE the type early-returns.
+  // For sectionHeader/group nodes `field` is undefined — the memos no-op.
+  const { field, validation = {}, messages = {} } = fieldConfig;
+  const { name, type, placeholder, unit } = field || {};
+
+  // Options resolved ONCE per dropdownData change — not on every keystroke.
+  // (The locality list can be 1000+ items; mapping + t() on each render of
+  // each field was the main typing-lag source.)
+  // useDynamicMDMS keys dropdownData by field.name ("assetType"), with
+  // fieldConfig.key ("EST_ASSET_TYPE") kept as a legacy fallback.
+  const options = useMemo(() => {
+    if (type !== "dropdown" && type !== "radio") return EMPTY_OPTIONS;
+
+    const fromMdms = dropdownData[name] || dropdownData[fieldConfig.key];
+    if (Array.isArray(fromMdms) && fromMdms.length > 0) {
+      // If an option's i18nKey has no translation yet (t returns the raw
+      // key), fall back to its plain name: "Land", not "EST_ASSET_TYPE_LAND".
+      return fromMdms.map((o) => {
+        const translated = o.i18nKey ? t(o.i18nKey) : "";
+        const untranslated = !translated || translated === o.i18nKey;
+        return untranslated ? { ...o, i18nKey: o.name || o.code } : o;
+      });
+    }
+    return (fieldConfig.options || []).map((o) => ({
+      code: o.code || o.value,
+      name: o.value || o.code,
+      value: o.i18nKey || o.localname || o.value || o.code,
+      i18nKey: o.i18nKey || o.localname || o.value || o.code,
+    }));
+  }, [type, name, fieldConfig, dropdownData, t]);
+
+  // Compile the sanitize regex once, not on every keystroke.
+  const sanitizeRegex = useMemo(
+    () =>
+      validation.regex
+        ? new RegExp(validation.regex.pattern, validation.regex.flags || "")
+        : null,
+    [validation.regex]
+  );
+
   // ── SECTION HEADER: plain heading, no field/value ─────────────────────
   if (fieldConfig.type === "sectionHeader") {
     return (
@@ -30,12 +90,10 @@ const DynamicFormField = ({
   if (fieldConfig.type === "group") {
     return (
       <div className="dynamic-form-group">
-        <CardLabel>
-          {t(fieldConfig.label?.code || fieldConfig.key)}
-          {fieldConfig.label?.unit && (
-            <span className="field-unit"> {fieldConfig.label.unit}</span>
-          )}
-        </CardLabel>
+        <FieldLabel
+          text={t(fieldConfig.label?.code || fieldConfig.key)}
+          unit={fieldConfig.label?.unit}
+        />
         <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
           {(fieldConfig.children || []).map((child) => (
             <DynamicFormField
@@ -55,38 +113,21 @@ const DynamicFormField = ({
     );
   }
 
-  const { field, validation = {}, messages = {} } = fieldConfig;
   if (!field) return null;
 
-  const { name, type, placeholder, unit } = field;
   const value = formData[name];
   const hasError = errors[name];
+  const errorMsg = t(messages.error || "FIELD_REQUIRED");
+  const labelKey = resolveFieldLabelKey(fieldConfig, formData);
 
   // ── DROPDOWN ─────────────────────────────────────────────────────────
   if (type === "dropdown") {
-    const options =
-      dropdownData[fieldConfig.key] ||
-      (fieldConfig.options || []).map((o) => ({
-        code: o.code || o.value,
-        name: o.value || o.code,
-        value: o.i18nKey || o.localname || o.value || o.code,
-        i18nKey: o.i18nKey || o.localname || o.code,
-      }));
-
     const isFieldDisabled = isDisabled || fieldConfig.key === "EST_CITY";
-
-    const tSafe = (key) => {
-      if (!key) return "";
-      const translated = t(key);
-      return translated || key;
-    };
+    const tSafe = (key) => (key ? t(key) || key : "");
 
     return (
       <>
-        <CardLabel style={{ color: hasError ? "red" : undefined }}>
-          {t(fieldConfig.key)}
-          {validation.required && <span style={{ color: "red" }}> *</span>}
-        </CardLabel>
+        <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} />
         <div className="field" data-field-error={hasError ? "true" : undefined}>
           <Dropdown
             placeholder={tSafe(placeholder || "")}
@@ -97,112 +138,61 @@ const DynamicFormField = ({
             t={tSafe}
             disable={isFieldDisabled}
           />
-          {hasError && (
-            <p className="field-error" style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-              {t(messages.error || "FIELD_REQUIRED")}
-            </p>
-          )}
+          <FieldError show={hasError} message={errorMsg} />
         </div>
       </>
     );
   }
 
   // ── RADIO ────────────────────────────────────────────────────────────
-  // Options resolved the same way as dropdown: MDMS-backed dropdownData first,
-  // falling back to static options declared inline in the field config.
   if (type === "radio") {
-    const options =
-      dropdownData[fieldConfig.key] ||
-      (fieldConfig.options || []).map((o) => ({
-        code: o.code,
-        label: o.label || o.i18nKey || o.code,
-        i18nKey: o.i18nKey || o.label || o.code,
-      }));
-
+    const radioDisabled = isDisabled || validation.disabled;
     return (
       <>
-        <CardLabel style={{ color: hasError ? "red" : undefined }}>
-          {t(fieldConfig.key)}
-          {validation.required && <span style={{ color: "red" }}> *</span>}
-        </CardLabel>
+        <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} />
         <div className="field" data-field-error={hasError ? "true" : undefined} style={{ display: "flex", gap: "20px", marginBottom: "16px" }}>
           {options.map((opt) => (
-            <label key={opt.code} style={{ display: "flex", alignItems: "center", cursor: isDisabled || validation.disabled ? "default" : "pointer" }}>
+            <label key={opt.code} style={{ display: "flex", alignItems: "center", cursor: radioDisabled ? "default" : "pointer" }}>
               <input
                 type="radio"
                 name={name}
                 value={opt.code}
                 checked={value === opt.code}
-                disabled={isDisabled || validation.disabled}
+                disabled={radioDisabled}
                 onChange={() => onChange(name, opt.code)}
                 style={{ marginRight: "8px" }}
               />
-              {t(opt.i18nKey)}
+              {t(opt.i18nKey || opt.label || opt.name || opt.code)}
             </label>
           ))}
         </div>
-        {hasError && (
-          <p className="field-error" style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-            {t(messages.error || "FIELD_REQUIRED")}
-          </p>
-        )}
+        <FieldError show={hasError} message={errorMsg} />
       </>
     );
   }
 
   // ── DATE ─────────────────────────────────────────────────────────────
   if (type === "date") {
-    // Native <input type="date"> (inside DIGIT's DatePicker) requires a
-    // "yyyy-MM-dd" STRING — passing a Date object stringifies to
-    // "Thu Jul 09 2026 05:30:00 GMT+0530..." and the browser rejects it.
-    // formData may hold: a yyyy-MM-dd string (live edits), an epoch number
-    // (prefill from a saved record), or a Date. Normalize all three.
-    const toInputDate = (v) => {
-      if (!v) return "";
-      if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
-      const d = v instanceof Date ? v : new Date(v);
-      if (isNaN(d.getTime())) return "";
-      // Build from LOCAL date parts — toISOString() shifts IST-midnight
-      // epochs back a day (UTC), giving off-by-one dates.
-      const pad = (n) => String(n).padStart(2, "0");
-      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-    };
-
-    const dateValue = toInputDate(value);
-
     return (
       <>
-        <CardLabel style={{ color: hasError ? "red" : undefined }}>
-          {t(fieldConfig.key)}
-          {validation.required && <span style={{ color: "red" }}> *</span>}
-        </CardLabel>
+        <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} />
         <div className="field" data-field-error={hasError ? "true" : undefined}>
           <DatePicker
-            date={dateValue}
+            date={toInputDate(value)}
             disable={isDisabled || validation.disabled}
             onChange={(d) => onChange(name, d)}
           />
-          {hasError && (
-            <p className="field-error" style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-              {t(messages.error || "FIELD_REQUIRED")}
-            </p>
-          )}
+          <FieldError show={hasError} message={errorMsg} />
         </div>
       </>
     );
   }
 
   // ── FILE ─────────────────────────────────────────────────────────────
-  // Upload itself (filestore call, size validation, toast on error) is owned by
-  // DynamicForm via onFileUpload, since that's where tenantId/error-toast state live.
-  // This component only reports the raw File object up and renders upload state.
   if (type === "file") {
     return (
       <>
-        <CardLabel style={{ color: hasError ? "red" : undefined }}>
-          {t(fieldConfig.key)}
-          {validation.required && <span style={{ color: "red" }}> *</span>}
-        </CardLabel>
+        <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} />
         <div className="field" data-field-error={hasError ? "true" : undefined}>
           <UploadFile
             id={name}
@@ -211,55 +201,60 @@ const DynamicFormField = ({
             onUpload={(e) => onFileUpload && onFileUpload(name, e.target.files[0])}
             onDelete={() => onChange(name, null)}
           />
-          {hasError && (
-            <p className="field-error" style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-              {t(messages.error || "FIELD_REQUIRED")}
-            </p>
-          )}
+          <FieldError show={hasError} message={errorMsg} />
         </div>
       </>
     );
   }
 
-  // ── TEXT INPUT (default) ───────────────────────────────────────────────
-  // Also covers read-only "display" fields (e.g. prefilled asset info) via
-  // validation.disabled/readOnly — no separate "label" type needed.
+  // ── TEXT INPUT (default) — also covers read-only display fields ───────
   return (
     <>
-      <CardLabel style={{ color: hasError ? "red" : undefined }}>
-        {t(fieldConfig.key)}
-        {unit && <span className="field-unit"> {unit}</span>}
-        {validation.required && <span style={{ color: "red" }}> *</span>}
-      </CardLabel>
+      <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} unit={unit} />
       <div className="field" data-field-error={hasError ? "true" : undefined}>
         <TextInput
           placeholder={t(placeholder || "")}
           value={value || ""}
           onChange={(e) => {
             let val = e.target.value;
-            if (validation.regex) {
-              val = val.replace(
-                new RegExp(validation.regex.pattern, validation.regex.flags || ""),
-                ""
-              );
-            }
-            if (validation.maxLength) {
-              val = val.slice(0, validation.maxLength);
-            }
+            if (sanitizeRegex) val = val.replace(sanitizeRegex, "");
+            if (validation.maxLength) val = val.slice(0, validation.maxLength);
             onChange(name, val);
           }}
           disabled={isDisabled || validation.disabled}
           readOnly={validation.readOnly}
           style={{ borderColor: hasError ? "red" : undefined }}
         />
-        {hasError && (
-          <p className="field-error" style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-            {t(messages.error || "FIELD_REQUIRED")}
-          </p>
-        )}
+        <FieldError show={hasError} message={errorMsg} />
       </div>
     </>
   );
 };
 
-export default DynamicFormField;
+/* ── memoization ────────────────────────────────────────────────────────
+   formData changes identity on EVERY keystroke, which used to re-render
+   every field in the form (including 1000+ option locality dropdowns).
+   This comparator re-renders a field only when ITS OWN value/error (or its
+   group children's) changed, or when shared inputs actually changed.
+   Requires onChange/onFileUpload to be stable (useCallback in DynamicForm —
+   they are). */
+
+const collectNames = (fc) => getFieldWatchNames(fc);
+
+const areEqual = (prev, next) => {
+  if (
+    prev.fieldConfig !== next.fieldConfig ||
+    prev.dropdownData !== next.dropdownData ||
+    prev.t !== next.t ||
+    prev.isDisabled !== next.isDisabled ||
+    prev.onChange !== next.onChange ||
+    prev.onFileUpload !== next.onFileUpload
+  ) {
+    return false;
+  }
+  return collectNames(next.fieldConfig).every(
+    (n) => prev.formData[n] === next.formData[n] && prev.errors[n] === next.errors[n]
+  );
+};
+
+export default React.memo(DynamicFormField, areEqual);

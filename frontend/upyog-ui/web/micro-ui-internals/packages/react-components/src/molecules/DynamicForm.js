@@ -32,6 +32,11 @@ const DynamicForm = ({
   showCancel = false,
   cancelLabel = "CS_COMMON_CANCEL",
   onCancel,
+  resetBaseline,
+  showDraftButton = false,
+  draftLabel = "EST_ADD_AS_DRAFT",
+  draftSuccessLabel = "EST_DRAFT_SAVED",
+  onSaveDraft,
   onPersistDraft,
 }) => {
   const stateId = Digit.ULBService.getStateId();
@@ -122,16 +127,16 @@ const DynamicForm = ({
     [applyComputedFields]
   );
 
-  // Optional: auto-save partial progress to session while the user is still on the form.
+  // Optional: auto-save when onPersistDraft is set and no explicit draft button.
   useEffect(() => {
-    if (!onPersistDraft || isLoading || !hasSyncedRef.current) return;
+    if (!onPersistDraft || showDraftButton || isLoading || !hasSyncedRef.current) return;
 
     const timer = setTimeout(() => {
       onPersistDraft(buildPayload(formData));
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [formData, onPersistDraft, isLoading]);
+  }, [formData, onPersistDraft, showDraftButton, isLoading]);
 
   // ── File upload: owns tenantId + filestore call + error toast ────────
   // Module code defaults to "ESTATE"; override per-route via routeConfig.uploadModule.
@@ -205,7 +210,9 @@ const DynamicForm = ({
   }, [routeConfig, formData, isEditMode, updateMutation, editData, tenantId, onSelect, onSubmit, config, payloadKey, t]);
 
   const handleCancel = useCallback(() => {
-    const resetData = buildInitialData(routeConfig.form, rawAsset, dropdownData, tenantId);
+    const baselineSource =
+      resetBaseline && Object.keys(resetBaseline).length > 0 ? resetBaseline : rawAsset;
+    const resetData = buildInitialData(routeConfig.form, baselineSource, dropdownData, tenantId);
     const allComputeDeps = flatFields.flatMap((fc) => fc.field?.computeFrom || []);
     const next = allComputeDeps.length
       ? applyComputedFields({ ...resetData }, allComputeDeps)
@@ -214,7 +221,22 @@ const DynamicForm = ({
     setErrors({});
     setCrossFieldMessages([]);
     onCancel?.();
-  }, [routeConfig.form, rawAsset, dropdownData, tenantId, flatFields, applyComputedFields, onCancel]);
+  }, [
+    routeConfig.form,
+    resetBaseline,
+    rawAsset,
+    dropdownData,
+    tenantId,
+    flatFields,
+    applyComputedFields,
+    onCancel,
+  ]);
+
+  const handleSaveDraft = useCallback(() => {
+    if (!onSaveDraft) return;
+    onSaveDraft(buildPayload(formData));
+    setToast({ message: t(draftSuccessLabel), error: false });
+  }, [onSaveDraft, formData, draftSuccessLabel, t]);
 
   const buttonLabel = isEditMode
     ? routeConfig.actionButton?.text?.edit || "UPDATE"
@@ -249,13 +271,22 @@ const DynamicForm = ({
               theme="border"
               label={t(cancelLabel)}
               onSubmit={handleCancel}
-              style={{ marginRight: "16px" }}
+              className={styles["dynamic-form-margin-right"]}
+            />
+          )}
+          {showDraftButton && (
+            <ButtonSelector
+              theme="border"
+              label={t(draftLabel)}
+              onSubmit={handleSaveDraft}
+              className={styles["dynamic-form-margin-right"]}
             />
           )}
           <SubmitBar
             label={t(buttonLabel)}
             onSubmit={goNext}
             disabled={isSubmitting}
+            className={showCancel || showDraftButton ? styles["dynamic-form-submit-flex"] : undefined}
           />
         </ActionBar>
       )}

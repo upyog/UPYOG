@@ -33,6 +33,7 @@ const editButtonStyle = (isMobile) => ({
  * @param {string}  options.modulePath - base module path for absolute links
  * @param {function} options.navigate
  * @param {"link"|"navigate"} options.estateNoLink - how to render estate number
+ * @param {function} options.onEstateNoClick - if set, estate number opens assign/edit flow
  * @param {boolean} options.showAssetRef
  * @param {boolean} options.showAllotmentStatus
  * @param {"none"|"allot"|"allot-edit"} options.actions
@@ -50,6 +51,7 @@ const useAssetTableColumns = ({
   actions = "none",
   onAllot,
   onEdit,
+  onEstateNoClick,
   allottedAssetNos = null,
 }) => {
   return useMemo(() => {
@@ -60,6 +62,16 @@ const useAssetTableColumns = ({
         disableSortBy: true,
         Cell: ({ row }) => {
           const estateNo = row.original.estateNo;
+          if (onEstateNoClick) {
+            return (
+              <span
+                style={{ color: "#a82227", cursor: "pointer", textDecoration: "underline" }}
+                onClick={() => onEstateNoClick(row.original)}
+              >
+                {estateNo}
+              </span>
+            );
+          }
           if (estateNoLink === "navigate") {
             return (
               <span
@@ -214,6 +226,7 @@ const useAssetTableColumns = ({
     actions,
     onAllot,
     onEdit,
+    onEstateNoClick,
     allottedAssetNos,
   ]);
 };

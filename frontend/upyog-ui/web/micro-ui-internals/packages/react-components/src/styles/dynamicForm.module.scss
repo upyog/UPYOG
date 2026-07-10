@@ -6,6 +6,10 @@
     width: 100%;
   }
 
+  &-margin-right {
+    margin-right: 16px;
+  }
+
   &-unit {
     font-size: 12px;
     font-weight: 400;
@@ -42,6 +46,11 @@
     align-items: center;
     margin-top: 28px;
     padding-bottom: 24px;
+    gap: 0;
+  }
+
+  &-submit-flex {
+    flex: 1;
   }
 
   &-error {

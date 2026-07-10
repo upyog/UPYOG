@@ -101,7 +101,13 @@ const getESTAllotmentAcknowledgementData = async (
       value: formatDurationWithMonths(allotment),
     },
     {
-      title: t("EST_MONTHLY_RENT_IN_INR"),
+      title: t(
+        {
+          MONTHLY: "EST_MONTHLY_RENT_IN_INR",
+          QUARTERLY: "EST_QUARTERLY_RENT_IN_INR",
+          YEARLY: "EST_YEARLY_RENT_IN_INR",
+        }[String(allotment.billingCycle || "").toUpperCase()] || "EST_MONTHLY_RENT_IN_INR"
+      ),
       value: allotment.monthlyRent,
     },
     {

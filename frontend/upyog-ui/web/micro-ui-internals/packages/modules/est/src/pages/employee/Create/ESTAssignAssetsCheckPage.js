@@ -7,7 +7,6 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { checkForNA, createAllotmentData, ESTDocumnetPreview } from "../../../utils";
-import { isAllotmentEdit } from "../../../utils/allotmentFormUtils";
 
 const STEP_KEY = "Allotments";
 
@@ -15,10 +14,7 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }
   const { t } = useTranslation();
   const { path: modulePath } = Digit.Hooks.useModuleBasePath();
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
-  const isEditAllotment = useMemo(() => isAllotmentEdit(value), [value]);
-  const createMutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
-  const updateMutation = Digit.Hooks.estate.useESTAllotmentUpdate(tenantId);
-  const mutation = isEditAllotment ? updateMutation : createMutation;
+  const mutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
 
   const routeConfig = useDynamicRouteConfig(config, STEP_KEY, value);
 
@@ -47,7 +43,7 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }
     mutation,
     onSubmit,
     onError,
-    logTag: isEditAllotment ? "EST_ALLOT_UPDATE" : "EST_ALLOT",
+    logTag: "EST_ALLOT",
   });
 
   const editRoute = `${modulePath}/assignassets/assign-assets`;

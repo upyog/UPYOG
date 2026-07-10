@@ -12,12 +12,9 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { getCreateAssetPath } from "../utils/estRoutes";
 import {
-  fetchAllotmentByAssetNo,
   fetchAllottedAssetNos,
   getAssetIdentity,
   hasExistingAllotment,
-  hasAllotmentSessionDraft,
-  mapAllotmentApiToFormData,
 } from "../utils/allotmentFormUtils";
 import AssetTable from "./shared/AssetTable";
 import useAssetTableColumns from "./shared/useAssetTableColumns";
@@ -161,57 +158,22 @@ const ESTSearchApplication = ({
     [sessionParams, navigateToAssignFlow]
   );
 
-  const handleEditAsset = useCallback(
-    async (asset) => {
-      try {
-        const hasSavedDraft = hasAllotmentSessionDraft(sessionParams, asset);
-
-        if (hasSavedDraft) {
-          navigateToAssignFlow(asset, {
-            targetStep: "assign-assets",
-            resetSession: false,
-          });
-          return;
-        }
-
-        const allotment = await fetchAllotmentByAssetNo(asset.estateNo, tenantId);
-        if (!allotment) {
-          setShowToast?.({ error: true, label: "ES_COMMON_NO_DATA" });
-          return;
-        }
-        navigateToAssignFlow(asset, {
-          allotmentForm: mapAllotmentApiToFormData(allotment),
-          targetStep: "assign-assets",
-          resetSession: true,
-        });
-      } catch (error) {
-        console.error("Error fetching allotment details:", error);
-        setShowToast?.({ error: true, label: "EST_ALLOTMENT_FETCH_FAILED" });
-      }
-    },
-    [tenantId, navigateToAssignFlow, setShowToast, sessionParams]
-  );
-
   const handleAssetAction = useCallback(
     (asset) => {
-      if (hasExistingAllotment(asset, allottedAssetNos)) {
-        handleEditAsset(asset);
-      } else {
-        handleAllotAsset(asset);
-      }
+      if (hasExistingAllotment(asset, allottedAssetNos)) return;
+      handleAllotAsset(asset);
     },
-    [allottedAssetNos, handleAllotAsset, handleEditAsset]
+    [allottedAssetNos, handleAllotAsset]
   );
 
   const columns = useAssetTableColumns({
     isMobile,
     modulePath,
     navigate,
-    estateNoLink: "link",
+    onEstateNoClick: handleAssetAction,
     showAssetRef: true,
     actions: "allot",
-    onAllot: handleAssetAction,
-    onEdit: handleEditAsset,
+    onAllot: handleAllotAsset,
     allottedAssetNos,
   });
 

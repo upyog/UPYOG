@@ -371,6 +371,10 @@ const estateAllotmentFormConfig = {
     variant: "contained",
     color: "primary",
   },
+  draftButton: {
+    label: "EST_ADD_AS_DRAFT",
+    successMessage: "EST_DRAFT_SAVED",
+  },
 };
 
 export default estateAllotmentFormConfig;

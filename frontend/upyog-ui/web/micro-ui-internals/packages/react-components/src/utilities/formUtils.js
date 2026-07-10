@@ -49,6 +49,42 @@ export const resolveOption = (codeOrObj, nameHint, options = []) => {
   );
 };
 
+/* ── shared field-value helpers ─────────────────────────────────────── */
+
+/** Normalize dropdown/radio values to an uppercase code string. */
+export const optionCode = (val) => {
+  if (val === null || val === undefined || val === "") return "";
+  if (typeof val === "object" && val.code) return String(val.code).trim().toUpperCase();
+  return String(val).trim().toUpperCase();
+};
+
+/**
+ * Resolve the i18n label key for a field. Supports optional `field.labelBy`:
+ *   labelBy: { field: "billingCycle", map: { MONTHLY: "EST_..." }, defaultKey: "EST_..." }
+ */
+export const resolveFieldLabelKey = (fieldConfig, formValues = {}) => {
+  const labelBy = fieldConfig?.field?.labelBy;
+  if (!labelBy) return fieldConfig?.summaryLabel || fieldConfig?.key;
+
+  const code = optionCode(formValues[labelBy.field]);
+  return labelBy.map?.[code] || labelBy.defaultKey || fieldConfig.key;
+};
+
+/** Names whose formData changes should re-render a field (value, label, compute). */
+export const getFieldWatchNames = (fieldConfig) => {
+  if (fieldConfig?.type === "group") {
+    return (fieldConfig.children || []).flatMap(getFieldWatchNames);
+  }
+  const field = fieldConfig?.field;
+  if (!field) return [];
+
+  const names = new Set([field.name]);
+  if (field.labelBy?.field) names.add(field.labelBy.field);
+  (field.computeFrom || []).forEach((n) => names.add(n));
+  if (field.prefillFrom) names.add(field.prefillFrom);
+  return [...names];
+};
+
 /* ── prefill ────────────────────────────────────────────────────────── */
 
 // Walks ANY module's form config (including groups) and builds initialData
@@ -89,7 +125,14 @@ export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = 
       return;
     }
 
-    result[name] = rawAsset[name] ?? "";
+    const raw = rawAsset[name];
+    const isEmpty = raw === undefined || raw === null || raw === "";
+    if (isEmpty && field.prefillFrom) {
+      const fromVal = rawAsset[field.prefillFrom];
+      result[name] = fromVal !== undefined && fromVal !== null ? fromVal : "";
+      return;
+    }
+    result[name] = raw ?? "";
   });
 
   return result;

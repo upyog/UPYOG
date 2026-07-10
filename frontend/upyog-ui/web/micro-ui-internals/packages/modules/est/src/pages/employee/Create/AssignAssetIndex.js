@@ -141,6 +141,17 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     [setParams]
   );
 
+  const handleDraftClear = useCallback(
+    (key) => {
+      setParams((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    },
+    [setParams]
+  );
+
   const handleSkip = useCallback(() => {}, []);
   const handleMultiple = useCallback(() => {}, []);
 
@@ -195,6 +206,7 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
                 config={routeObj}
                 onSelect={handleSelect}
                 onDraftSave={handleDraftSave}
+                onDraftClear={handleDraftClear}
                 onSkip={handleSkip}
                 t={t}
                 formData={params}

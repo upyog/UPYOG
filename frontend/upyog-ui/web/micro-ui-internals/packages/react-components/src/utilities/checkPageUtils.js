@@ -2,7 +2,9 @@
 // Shared helpers for DynamicCheckPage and module-specific check wrappers.
 // Works with the same routeConfig.form that DynamicForm / DynamicFormField use.
 
-import { sortByOrder } from "./formUtils";
+import { sortByOrder, resolveFieldLabelKey } from "./formUtils";
+
+export { resolveFieldLabelKey };
 
 /** Summary fallback when a value is empty. */
 export const defaultCheckNA = (value, fallback = "NA") =>

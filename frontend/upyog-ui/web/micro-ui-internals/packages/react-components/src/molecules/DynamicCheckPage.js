@@ -15,6 +15,7 @@ import {
   defaultCheckNA,
   extractWizardFormValues,
   formatCheckPageDate,
+  resolveFieldLabelKey,
   resolveSummaryFieldValue,
 } from "../utilities/checkPageUtils";
 
@@ -83,7 +84,7 @@ const DynamicCheckPage = ({
       const obj = formValues?.[fc.field.name];
       if (obj?.filestoreId) {
         filestoreIds.push(obj.filestoreId);
-        idToLabelMap[obj.filestoreId] = t(fc.summaryLabel || fc.key);
+        idToLabelMap[obj.filestoreId] = t(resolveFieldLabelKey(fc, formValues));
       }
     });
 
@@ -137,7 +138,7 @@ const DynamicCheckPage = ({
             {section.fields.map((fc, fIdx) => (
               <Row
                 key={fc.key}
-                label={t(fc.summaryLabel || fc.key)}
+                label={t(resolveFieldLabelKey(fc, formValues))}
                 text={resolveValue(fc)}
                 actionButton={
                   sIdx === 0 && fIdx === 0 && editRoute
