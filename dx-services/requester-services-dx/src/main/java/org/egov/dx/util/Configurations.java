@@ -141,4 +141,12 @@ public class Configurations {
 	@Value("${esign.gateway.url}")
 	private String gatewayUrl;
 	
+	
+	@Value("${filestore.host}")
+	private String fileStoreUrl;
+	
+	@Value("${filestore.post.endpoint}")
+	private String fileStorePostUrl;
+	
+	
 }

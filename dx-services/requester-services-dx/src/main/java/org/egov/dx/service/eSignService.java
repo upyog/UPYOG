@@ -240,8 +240,9 @@ public class eSignService {
 				.addFormDataPart("module", "TL").addFormDataPart("file", pdfPath,
 						RequestBody.create(MediaType.parse("application/pdf"), new File(pdfPath)))
 				.build();
-		Request request1 = new Request.Builder().url("https://upyog-test.niua.org/filestore/v1/files")
-				.method("POST", body)
+
+		Request request1 = new Request.Builder()
+				.url(configurations.getFileStoreUrl() + configurations.getFileStorePostUrl()).method("POST", body)
 				.addHeader("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundaryf04Aqi5zqaexyYxK")
 				.build();
 
