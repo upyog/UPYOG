@@ -31,6 +31,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.EdcrPdfDetail;
@@ -41,6 +42,7 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.common.entity.edcr.PlanInformation;
 import org.egov.commons.edcr.mdms.filter.MdmsFilter;
+import org.egov.commons.exception.EdcrException;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.contract.ComparisonRequest;
@@ -70,6 +72,9 @@ import org.egov.infra.microservice.models.Role;
 import org.python.antlr.PythonParser.print_stmt_return;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -131,11 +136,14 @@ public class PlanService {
 	private static final String INVALID_SOURCE = "INVALID SOURCE";
 	
 	private static final String ERROR_MSG = 
-	        "Dear Investors,\n"
-	                + "Please be informed that with effect from 15.05.2025, all building plan applications under the following categories will no longer be accepted on the eNaksha Portal: https://enaksha.lgpunjab.gov.in and https://mseva.lgpunjab.gov.in/\n"
-	                + "• Industry • Hotel • Nursing Home / Hospital • Institutions\n"
-	                + "Instead, investors are requested to submit such applications exclusively through the Punjab Bureau of Investment Promotion (PBIP) Portal: https://fasttrack.punjab.gov.in/webportal/login We request all stakeholders to kindly take note of this change and plan submissions accordingly.\n"
+	        "Dear Investors,"
+	                + "Please be informed that with effect from 15.05.2025, all building plan applications under the following categories will no longer be accepted on the eNaksha Portal: https://enaksha.lgpunjab.gov.in and https://mseva.lgpunjab.gov.in/"
+	                + "• Industry • Hotel • Nursing Home / Hospital • Institutions"
+	                + "Instead, investors are requested to submit such applications exclusively through the Punjab Bureau of Investment Promotion (PBIP) Portal: https://fasttrack.punjab.gov.in/webportal/login We request all stakeholders to kindly take note of this change and plan submissions accordingly."
 	                + "Local Government Department, Government of Punjab.”";
+	
+	@Value("${source.validation}")
+	private Boolean sourceValidation;
 
     public Plan process(EdcrApplication dcrApplication, String applicationType) {
         Map<String, String> cityDetails = specificRuleService.getCityDetails();
@@ -355,8 +363,22 @@ public class PlanService {
         }
         
         // validate Source of the request
-        validateSourcePortal(plan);
-           
+        if(sourceValidation) {
+        	LOG.info("Source validation : " +sourceValidation);
+        	validateSourcePortal(plan);
+        }
+        
+        
+        String roadType = getRoadTypeViaReflection(
+				plan.getEdcrRequest() != null ? plan.getEdcrRequest().getAdditionalDetails() : null);
+        
+        if(roadType!=null) {
+        	plan.getPlanInformation().setRoadType(roadType);
+        	plan.getPlanInfoProperties().put("ROAD_TYPE", roadType);
+        }else {
+        	plan.getErrors().put("ROAD_TYPE NOT PROVIDED", "ROAD TYPE not provided");
+        }
+        
         //return (Plan) planDetail;
         // remove requestInfo before plan processing
         //edcrRequest.setRequestInfo(null);
@@ -426,7 +448,7 @@ public class PlanService {
 //        plan = applyRules(plan, amd, cityDetails);
         if(plan.getErrors().containsKey("Not authorized to scrutinize") || plan.getErrors().containsKey("Invalid ULB")
         		|| plan.getErrors().containsKey("units not in meters") 
-        		|| plan.getErrors().containsKey("INVALID SOURCE")) {
+        		|| plan.getErrors().containsKey("INVALID SOURCE") || plan.getErrors().containsKey("INVALID SOURCE1")) {
         	
         }else {
         	plan = applyRules(plan, amd, cityDetails,features);
@@ -983,64 +1005,167 @@ public class PlanService {
 	    return null;
 	}
 	
+//	private void validateSourcePortal(Plan pl) {
+//
+//		try {
+//			OccupancyTypeHelper mostRestrictiveFar = getOccTypeSubType(pl);
+//
+//			if (mostRestrictiveFar == null || mostRestrictiveFar.getType() == null
+//					|| mostRestrictiveFar.getSubtype() == null || mostRestrictiveFar.getSubtype().getCode() == null) {
+//				LOG.info("validateSourcePortal: mostRestrictiveFar/type/subtype is null, skipping validation.");
+//				return;
+//			}
+//
+//			String occTypeCode = mostRestrictiveFar.getType().getCode();
+//			String occSubTypeCode = mostRestrictiveFar.getSubtype().getCode();
+//
+//			String sourceType = getSourceViaReflection(
+//					pl.getEdcrRequest() != null ? pl.getEdcrRequest().getAdditionalDetails() : null);
+//
+//			LOG.info("validateSourcePortal: sourceType=" + sourceType + ", occTypeCode=" + occTypeCode
+//					+ ", occSubTypeCode=" + occSubTypeCode);
+//
+//			if (sourceType == null) {
+//				LOG.info("validateSourcePortal: sourceType is null, skipping validation.");
+//				return;
+//			}
+//
+//			boolean isGorLOrCommHousing =
+//			        G.equals(occTypeCode)
+//			        || (L.equals(occTypeCode) && !L_MP.equals(occSubTypeCode))
+//			        || (F.equals(occTypeCode) && F_HM.equals(occSubTypeCode));
+//
+//			if (SOURCE_INVESTPUNJAB.equalsIgnoreCase(sourceType)) {
+//				// INVESTPUNJAB: G / L / F-HM -> OK, continue. Anything else -> error.
+//				if (!isGorLOrCommHousing) {
+//					String errorMsg = "Please process this file through the OBPAS portal.";
+//					LOG.info("validateSourcePortal: VALIDATION FAILED -> sourceType=" + sourceType + ", occTypeCode="
+//							+ occTypeCode + ", occSubTypeCode=" + occSubTypeCode + ", error=" + errorMsg);
+//					pl.addError(INVALID_SOURCE, errorMsg);	
+//					throw new EdcrException(
+//					        HttpStatus.BAD_REQUEST,
+//					        "EDCR-34",
+//					        "Please process this file through the OBPAS portal.");
+//					
+//				}
+//
+//			} else if (SOURCE_OBPAS.equalsIgnoreCase(sourceType)) {
+//				// OBPAS: G / L / F-HM -> error (must use Invest Punjab). Anything else -> OK.
+//				if (isGorLOrCommHousing) {
+//					String errorMsg = "Please process this file through the Invest Punjab portal.";
+//					LOG.info("validateSourcePortal: VALIDATION FAILED -> sourceType=" + sourceType + ", occTypeCode="
+//							+ occTypeCode + ", occSubTypeCode=" + occSubTypeCode + ", error=" + errorMsg);
+//					pl.addError(INVALID_SOURCE + "1", ERROR_MSG);
+//					throw new EdcrException(
+//					        HttpStatus.BAD_REQUEST,
+//					        "EDCR-34",
+//					        ERROR_MSG);
+//				}
+//			}
+//
+//		} catch (Exception e) {
+//			LOG.error("validateSourcePortal: Error while validating source portal for occupancy type", e);
+//		}
+//	}
+
+	
 	private void validateSourcePortal(Plan pl) {
+	    try {
+	        OccupancyTypeHelper mostRestrictiveFar = getOccTypeSubType(pl);
 
-		try {
-			OccupancyTypeHelper mostRestrictiveFar = getOccTypeSubType(pl);
+	        if (mostRestrictiveFar == null
+	                || mostRestrictiveFar.getType() == null
+	                || mostRestrictiveFar.getSubtype() == null
+	                || mostRestrictiveFar.getSubtype().getCode() == null) {
+	            LOG.info("validateSourcePortal: mostRestrictiveFar/type/subtype is null, skipping validation.");
+	            return;
+	        }
 
-			if (mostRestrictiveFar == null || mostRestrictiveFar.getType() == null
-					|| mostRestrictiveFar.getSubtype() == null || mostRestrictiveFar.getSubtype().getCode() == null) {
-				LOG.info("validateSourcePortal: mostRestrictiveFar/type/subtype is null, skipping validation.");
-				return;
-			}
+	        String occTypeCode = mostRestrictiveFar.getType().getCode();
+	        String occSubTypeCode = mostRestrictiveFar.getSubtype().getCode();
 
-			String occTypeCode = mostRestrictiveFar.getType().getCode();
-			String occSubTypeCode = mostRestrictiveFar.getSubtype().getCode();
+	        String sourceType = getSourceViaReflection(
+	                pl.getEdcrRequest() != null
+	                        ? pl.getEdcrRequest().getAdditionalDetails()
+	                        : null);
 
-			String sourceType = getSourceViaReflection(
-					pl.getEdcrRequest() != null ? pl.getEdcrRequest().getAdditionalDetails() : null);
+	        LOG.info("validateSourcePortal: sourceType={}, occTypeCode={}, occSubTypeCode={}",
+	                sourceType, occTypeCode, occSubTypeCode);
 
-			LOG.info("validateSourcePortal: sourceType=" + sourceType + ", occTypeCode=" + occTypeCode
-					+ ", occSubTypeCode=" + occSubTypeCode);
+	        if (sourceType == null) {
+	            LOG.info("validateSourcePortal: sourceType is null, skipping validation.");
+	            return;
+	        }
 
-			if (sourceType == null) {
-				LOG.info("validateSourcePortal: sourceType is null, skipping validation.");
-				return;
-			}
+	        boolean isGorLOrCommHousing =
+	                G.equals(occTypeCode)
+	                        || (L.equals(occTypeCode) && !L_MP.equals(occSubTypeCode))
+	                        || (F.equals(occTypeCode) && F_HM.equals(occSubTypeCode));
 
-			boolean isGorLOrCommHousing = G.equals(occTypeCode) || L.equals(occTypeCode)
-					|| (F.equals(occTypeCode) && F_HM.equals(occSubTypeCode));
+	        if (SOURCE_INVESTPUNJAB.equalsIgnoreCase(sourceType)) {
 
-			if (SOURCE_INVESTPUNJAB.equalsIgnoreCase(sourceType)) {
-				// INVESTPUNJAB: G / L / F-HM -> OK, continue. Anything else -> error.
-				if (!isGorLOrCommHousing) {
-					String errorMsg = "Please process this file through the OBPAS portal.";
-					LOG.info("validateSourcePortal: VALIDATION FAILED -> sourceType=" + sourceType + ", occTypeCode="
-							+ occTypeCode + ", occSubTypeCode=" + occSubTypeCode + ", error=" + errorMsg);
-					pl.addError(INVALID_SOURCE, errorMsg);
-				}
+	            // INVEST PUNJAB: Only G / L (except L-MP) / F-HM allowed
+	            if (!isGorLOrCommHousing) {
+	                String errorMsg = "Please process this file through the OBPAS portal.";
 
-			} else if (SOURCE_OBPAS.equalsIgnoreCase(sourceType)) {
-				// OBPAS: G / L / F-HM -> error (must use Invest Punjab). Anything else -> OK.
-				if (isGorLOrCommHousing) {
-					String errorMsg = "Please process this file through the Invest Punjab portal.";
-					LOG.info("validateSourcePortal: VALIDATION FAILED -> sourceType=" + sourceType + ", occTypeCode="
-							+ occTypeCode + ", occSubTypeCode=" + occSubTypeCode + ", error=" + errorMsg);
-					pl.addError(INVALID_SOURCE + "1", ERROR_MSG);
-				}
-			}
+	                LOG.info("validateSourcePortal: Validation failed. {}", errorMsg);
 
-		} catch (Exception e) {
-			LOG.error("validateSourcePortal: Error while validating source portal for occupancy type", e);
-		}
+	                pl.addError(INVALID_SOURCE, errorMsg);
+
+	                throw new EdcrException(
+	                        HttpStatus.BAD_REQUEST,
+	                        "EDCR-34",
+	                        errorMsg);
+	            }
+
+	        } else if (SOURCE_OBPAS.equalsIgnoreCase(sourceType)) {
+
+	            // OBPAS: G / L (except L-MP) / F-HM not allowed
+	            if (isGorLOrCommHousing) {
+	                LOG.info("validateSourcePortal: Validation failed. {}", ERROR_MSG);
+
+	                pl.addError(INVALID_SOURCE + "1", ERROR_MSG);
+
+	                throw new EdcrException(
+	                        HttpStatus.BAD_REQUEST,
+	                        "EDCR-34",
+	                        ERROR_MSG);
+	            }
+	        }
+
+	    } catch (EdcrException ex) {
+	        // Let the global exception handler handle it
+	        throw ex;
+
+	    } catch (Exception ex) {
+	        LOG.error("Unexpected error while validating source portal.", ex);
+
+	        throw new EdcrException(
+	        		HttpStatus.BAD_REQUEST,
+	                "EDCR-500",
+	                "Unexpected error occurred while validating source type.");
+	    }
 	}
-
+	
 	private String getSourceViaReflection(Object additionalDetails) {
 		if (additionalDetails == null) {
 			return null;
 		}
 		Map<String, Object> details = (Map<String, Object>) additionalDetails;
 		Object source = details.get("source");
+		if (source == null || StringUtils.isBlank(String.valueOf(source))) {
+			return null;
+		}
+
+		return (String) source;
+	}
+	
+	private String getRoadTypeViaReflection(Object additionalDetails) {
+		if (additionalDetails == null) {
+			return null;
+		}
+		Map<String, Object> details = (Map<String, Object>) additionalDetails;
+		Object source = details.get("roadType");
 		if (source == null || StringUtils.isBlank(String.valueOf(source))) {
 			return null;
 		}

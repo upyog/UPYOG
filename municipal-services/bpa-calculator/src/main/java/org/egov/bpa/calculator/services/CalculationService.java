@@ -360,6 +360,7 @@ public class CalculationService {
 		
 		BigDecimal builtUpArea = new BigDecimal((String)node.get("builtUpArea")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD); //In Sq Yard
 		BigDecimal plotArea = new BigDecimal((String)node.get("area")).multiply(BPACalculatorConstants.SQMETER_TO_SQYARD);  //In Sq Yard
+		BigDecimal plotAreaMsq = new BigDecimal((String)node.get("area"));
 		BigDecimal basementArea = BigDecimal.ZERO;
 		String category = StringUtils.isEmpty(node.get("subcategories")) ? null : node.get("subcategories").toString();
 		String approvedColony = (String)node.getOrDefault("approvedColony", "NO");
@@ -386,14 +387,14 @@ public class CalculationService {
 			case BPACalculatorConstants.BPA_PROCESSING_FEES:
 			case BPACalculatorConstants.BPA_EXTERNAL_DEVELOPMENT_CHARGES:
 				if(approvedColony.equalsIgnoreCase("LAL_LAKEER") || (approvedColony.equalsIgnoreCase("NO") && StringUtils.isEmpty(NocNumber)))
-					amount=rate.multiply(builtUpArea).setScale(0, RoundingMode.CEILING);
+					amount=rate.multiply(plotAreaMsq).setScale(0, RoundingMode.CEILING);
 				break;
 			case BPACalculatorConstants.BPA_CLU_CHARGES:
 				if(approvedColony.equalsIgnoreCase("LAL_LAKEER") || (approvedColony.equalsIgnoreCase("NO") && StringUtils.isEmpty(NocNumber))) {
 					Map<String,Double> slabAmountMap = ((List<Map<String, Object>>)chargesType.get("slabs")).stream()
 							.collect(Collectors.toMap(slab -> slab.get("roadType").toString(), slab -> (Double)slab.get("rate")));
 					Double CLUSlabAmount = slabAmountMap.containsKey(roadType) ? slabAmountMap.get(roadType) : slabAmountMap.get("OTHER ROAD");
-					amount = new BigDecimal(CLUSlabAmount).multiply(builtUpArea).setScale(0, RoundingMode.CEILING);
+					amount = new BigDecimal(CLUSlabAmount).multiply(plotAreaMsq).setScale(0, RoundingMode.CEILING);
 				}
 				break;
 			case BPACalculatorConstants.BPA_MALBA_CHARGES:

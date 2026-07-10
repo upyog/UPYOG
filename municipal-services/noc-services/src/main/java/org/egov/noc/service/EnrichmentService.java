@@ -232,6 +232,9 @@ public class EnrichmentService {
 //						.getIdResponses();
 //				noc.setNocNo(idResponses.get(0).getId());
 			}
+			if (state.equalsIgnoreCase("PENDINGPAYMENT") && noc.getWorkflow() != null && noc.getWorkflow().getAction().equalsIgnoreCase(NOCConstants.ACTION_APPROVE)) {
+				((Map<String, Object>) noc.getNocDetails().getAdditionalDetails()).put("approvalDate", Long.toString(System.currentTimeMillis()));
+			}
 			if (state.equalsIgnoreCase(NOCConstants.VOIDED_STATUS)) {
 				noc.setStatus(Status.INACTIVE);
 			}

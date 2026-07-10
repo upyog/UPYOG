@@ -323,6 +323,7 @@ public class EstimationService {
 		for (BillingSlab billSlab : billingSlabs) {
 			billingSlabIds.add(billSlab.getId());
  
+			if (billSlab.getSlabs() == null || billSlab.getSlabs().isEmpty()) continue;
 			List<Slab> filteredSlabs = billSlab.getSlabs().stream()
 					.filter(slab -> slab.getFrom() <= totalUOM && slab.getTo() >= totalUOM
 							&& slab.getEffectiveFrom() <= System.currentTimeMillis()
@@ -1111,7 +1112,7 @@ public class EstimationService {
 									additionalDetails.get(WSCalculationConstant.COMPOSITION_FEE_CONST).toString()))
 							.build());
 				}
-				System.out.println(additionalDetails.get(WSCalculationConstant.connectionCategory).toString());
+				log.debug("connectionCategory: {}", additionalDetails.get(WSCalculationConstant.connectionCategory));
 				if (additionalDetails.getOrDefault(WSCalculationConstant.USER_CHARGES_CONST, null) != null) {
 					estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.USER_CHARGES)
 							.estimateAmount(new BigDecimal(

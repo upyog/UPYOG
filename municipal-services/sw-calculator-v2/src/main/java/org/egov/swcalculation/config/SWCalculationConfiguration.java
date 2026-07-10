@@ -91,6 +91,9 @@ public class SWCalculationConfiguration {
     
     @Value("${kafka.topics.notification.mail.name}")
     private String emailNotifTopic;
+
+    @Value("${notification.mail.recipients}")
+    private String mailRecipients;
     
     //User-events
     @Value("${egov.user.event.notification.enabled}")
@@ -224,5 +227,21 @@ public class SWCalculationConfiguration {
 
 	@Value("${sw.connection.thread.pool.size:3}")
 	private Integer connectionThreadPoolSize;
+
+	// Elasticsearch properties
+	@Value("${elasticsearch.host}")
+	private String elasticsearchHost;
+
+	@Value("${elasticsearch.search.endpoint}")
+	private String elasticsearchSearchEndpoint;
+
+	@Value("${property.es.index}")
+	private String propertyEsIndex;
+
+	@Value("${elasticsearch.username:}")
+	private String elasticsearchUsername;
+
+	@Value("${elasticsearch.password:}")
+	private String elasticsearchPassword;
 
 }
