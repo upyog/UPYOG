@@ -22,4 +22,7 @@ public class SewerageSchedulerRequestWrapper {
 	
 	@JsonProperty("ScheduledFor")
 	private SchedulerLevel schedulerLevel;
+	
+	@JsonProperty("TenantId")
+	private String tenantId;
 }

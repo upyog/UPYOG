@@ -24,4 +24,7 @@ public class WaterServiceSchedulerRequest {
 	
 	@JsonProperty("ScheduledFor")
 	private SchedulerLevel schedulerLevel;
+	
+	@JsonProperty("TenantId")
+	private String tenantId;
 }

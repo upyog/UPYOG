@@ -117,7 +117,8 @@ public class SWCalculationController {
 	        
 	@PostMapping("/_jobbillscheduler")
 	public void jobbillscheduler(@Valid @RequestBody SewerageSchedulerRequestWrapper schedulerRequestWrapper) {
-		sWCalculationService.generateBillBasedLocalityOrTenant(schedulerRequestWrapper.getRequestInfo(), schedulerRequestWrapper.getSchedulerLevel());
+		sWCalculationService.generateBillBasedLocalityOrTenant(schedulerRequestWrapper.getRequestInfo(),
+				schedulerRequestWrapper.getSchedulerLevel(), schedulerRequestWrapper.getTenantId());
 	}
 	
 

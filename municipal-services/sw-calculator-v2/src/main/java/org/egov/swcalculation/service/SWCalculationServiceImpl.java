@@ -621,7 +621,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 	/**
 	 * Generate bill Based on Time (Monthly, Quarterly, Yearly)
 	 */
-	public void generateBillBasedLocalityOrTenant(RequestInfo requestInfo, SchedulerLevel schedulerLevel) {
+	public void generateBillBasedLocalityOrTenant(RequestInfo requestInfo, SchedulerLevel schedulerLevel, String tenantId) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		log.info("Time schedule start for water bill generation on : " + LocalDateTime.now().format(dateTimeFormatter));
 
@@ -650,6 +650,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 				    }
 				}
 				if (schedulerLevel == SchedulerLevel.TENANT) {
+					criteria.setTenantId(tenantId);
 					List<BillScheduler> billSchedarTenantList = billGeneratorService.getBillGenerationByTenant(criteria);
 					for (BillScheduler scheduler : billSchedarTenantList) {
 						if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
@@ -719,7 +720,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 					}
 					
 					int batchCount = count;       
-					String tenantId = billSchedular.getTenantId();
+					tenantId = billSchedular.getTenantId();
 					String cityName = "Unknown";
 
 					if (tenantId != null && tenantId.contains(".")) {

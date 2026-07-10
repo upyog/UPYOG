@@ -885,9 +885,9 @@ So, both lists are now filtered to include only records with INITIATED status, w
 		    }
 		}
 		
-		String currentTenantId = waterServiceSchedulerRequest.getRequestInfo().getMsgId();
+		String tenantId = waterServiceSchedulerRequest.getTenantId();		
 		if (schedulerLevel == SchedulerLevel.TENANT) {
-			criteria.setTenantId(currentTenantId);
+			criteria.setTenantId(tenantId);
 			List<BillScheduler> billSchedarTenantList = billGeneratorService.getBillGenerationByTenant(criteria);
 			for (BillScheduler scheduler : billSchedarTenantList) {
 				if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
@@ -913,9 +913,6 @@ So, both lists are now filtered to include only records with INITIATED status, w
 							WSCalculationConstant.nonMeterdConnection, billSchedular.getGrup());
 
 				} else if (schedulerLevel == SchedulerLevel.TENANT) {
-					if(!billSchedular.getTenantId().equals(currentTenantId)) {
-						continue;
-					}
 					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
 					log.info("Updated Bill Schedular Status To INPROGRESS");
 					connectionNos = wSCalculationDao.getConnectionsNoByTenant(billSchedular.getTenantId(),
@@ -958,7 +955,7 @@ So, both lists are now filtered to include only records with INITIATED status, w
 					}
 					
 					int batchCount = count;       
-					String tenantId = billSchedular.getTenantId();
+					tenantId = billSchedular.getTenantId();
 					String cityName = "Unknown";
 
 					if (tenantId != null && tenantId.contains(".")) {
