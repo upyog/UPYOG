@@ -106,4 +106,19 @@
         <!-- HIBERNATE END -->
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- Excluded: depends on ES packages excluded in egov-eis (ES/JDK17 incompatibility) -->
+                        <exclude>**/web/controller/es/dashboard/EISDashboardController.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
