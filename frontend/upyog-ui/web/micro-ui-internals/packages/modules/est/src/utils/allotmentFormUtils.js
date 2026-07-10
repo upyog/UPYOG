@@ -57,6 +57,49 @@ export const isAllotmentEdit = (data = {}) => {
 export const getAssetIdentity = (asset = {}) =>
   asset?.estateNo || asset?.assetId || asset?.refAssetNo || "";
 
+/** True when a form value should override API prefill (non-empty / file uploaded). */
+export const hasMeaningfulFormValue = (value) => {
+  if (value === null || value === undefined || value === "") return false;
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return Boolean(value.filestoreId || value.code);
+  }
+  return true;
+};
+
+/** Keep only user-entered values from a partial session draft. */
+export const pickMeaningfulFormValues = (values = {}) =>
+  Object.fromEntries(
+    Object.entries(values).filter(([, value]) => hasMeaningfulFormValue(value))
+  );
+
+/**
+ * Merge API allotment + session draft + read-only asset display fields.
+ * Session wins only for fields the user actually filled; rest stay from DB.
+ */
+export const mergeAllotmentPrefill = (
+  apiData = {},
+  sessionDraft = {},
+  assetDisplay = {}
+) => {
+  const merged = {
+    ...assetDisplay,
+    ...(apiData || {}),
+    ...pickMeaningfulFormValues(sessionDraft),
+  };
+
+  merged.allotmentId = sessionDraft?.allotmentId || apiData?.allotmentId || "";
+  merged.userUuid = sessionDraft?.userUuid || apiData?.userUuid || "";
+  merged.auditDetails = sessionDraft?.auditDetails || apiData?.auditDetails || null;
+
+  return merged;
+};
+
+export const hasAllotmentSessionDraft = (sessionData = {}, asset = {}) => {
+  const draft = sessionData?.Allotments?.Allotments?.[0] || {};
+  if (getAssetIdentity(sessionData?.assetData) !== getAssetIdentity(asset)) return false;
+  return Object.keys(pickMeaningfulFormValues(draft)).length > 0;
+};
+
 export const isAssetAllotted = (asset = {}) => {
   const allotmentStatus = String(asset?.assetAllotmentStatus || "").toUpperCase();
   if (

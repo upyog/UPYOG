@@ -66,6 +66,15 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
         return next;
       }
 
+      const hasDraft = Boolean(prev?.Allotments?.Allotments?.[0]);
+
+      if (allotmentData && hasDraft) {
+        return {
+          ...prev,
+          assetData: incoming,
+        };
+      }
+
       if (allotmentData) {
         return {
           ...prev,
@@ -122,6 +131,16 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     [setParams, goNext]
   );
 
+  const handleDraftSave = useCallback(
+    (key, data) => {
+      setParams((prev) => ({
+        ...prev,
+        [key]: data,
+      }));
+    },
+    [setParams]
+  );
+
   const handleSkip = useCallback(() => {}, []);
   const handleMultiple = useCallback(() => {}, []);
 
@@ -175,6 +194,7 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
               <Component
                 config={routeObj}
                 onSelect={handleSelect}
+                onDraftSave={handleDraftSave}
                 onSkip={handleSkip}
                 t={t}
                 formData={params}

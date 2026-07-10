@@ -32,6 +32,7 @@ const DynamicForm = ({
   showCancel = false,
   cancelLabel = "CS_COMMON_CANCEL",
   onCancel,
+  onPersistDraft,
 }) => {
   const stateId = Digit.ULBService.getStateId();
   const payloadKey = routeConfig.payloadKey || "Assets";
@@ -120,6 +121,17 @@ const DynamicForm = ({
     },
     [applyComputedFields]
   );
+
+  // Optional: auto-save partial progress to session while the user is still on the form.
+  useEffect(() => {
+    if (!onPersistDraft || isLoading || !hasSyncedRef.current) return;
+
+    const timer = setTimeout(() => {
+      onPersistDraft(buildPayload(formData));
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [formData, onPersistDraft, isLoading]);
 
   // ── File upload: owns tenantId + filestore call + error toast ────────
   // Module code defaults to "ESTATE"; override per-route via routeConfig.uploadModule.
@@ -244,7 +256,6 @@ const DynamicForm = ({
             label={t(buttonLabel)}
             onSubmit={goNext}
             disabled={isSubmitting}
-            style={showCancel ? { flex: 1 } : undefined}
           />
         </ActionBar>
       )}

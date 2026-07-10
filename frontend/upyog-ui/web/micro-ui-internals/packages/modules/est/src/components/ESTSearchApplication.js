@@ -16,6 +16,7 @@ import {
   fetchAllottedAssetNos,
   getAssetIdentity,
   hasExistingAllotment,
+  hasAllotmentSessionDraft,
   mapAllotmentApiToFormData,
 } from "../utils/allotmentFormUtils";
 import AssetTable from "./shared/AssetTable";
@@ -163,6 +164,16 @@ const ESTSearchApplication = ({
   const handleEditAsset = useCallback(
     async (asset) => {
       try {
+        const hasSavedDraft = hasAllotmentSessionDraft(sessionParams, asset);
+
+        if (hasSavedDraft) {
+          navigateToAssignFlow(asset, {
+            targetStep: "assign-assets",
+            resetSession: false,
+          });
+          return;
+        }
+
         const allotment = await fetchAllotmentByAssetNo(asset.estateNo, tenantId);
         if (!allotment) {
           setShowToast?.({ error: true, label: "ES_COMMON_NO_DATA" });
@@ -178,7 +189,7 @@ const ESTSearchApplication = ({
         setShowToast?.({ error: true, label: "EST_ALLOTMENT_FETCH_FAILED" });
       }
     },
-    [tenantId, navigateToAssignFlow, setShowToast]
+    [tenantId, navigateToAssignFlow, setShowToast, sessionParams]
   );
 
   const handleAssetAction = useCallback(
