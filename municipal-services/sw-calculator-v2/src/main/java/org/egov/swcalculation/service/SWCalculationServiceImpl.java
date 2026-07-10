@@ -649,9 +649,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 				        billSchedularList.add(scheduler);
 				    }
 				}
-				String currentTenantId = requestInfo.getMsgId();
 				if (schedulerLevel == SchedulerLevel.TENANT) {
-					criteria.setTenantId(currentTenantId);
 					List<BillScheduler> billSchedarTenantList = billGeneratorService.getBillGenerationByTenant(criteria);
 					for (BillScheduler scheduler : billSchedarTenantList) {
 						if (scheduler.getId() != null && seenIds.add(scheduler.getId())) {
@@ -676,9 +674,6 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 							SWCalculationConstant.nonMeterdConnection, billSchedular.getGrup());
 
 				} else if (schedulerLevel == SchedulerLevel.TENANT) {
-					if (!billSchedular.getTenantId().equals(currentTenantId)) {
-						continue;
-					}
 					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
 					log.info("Updated Bill Schedular Status To INPROGRESS");
 					connectionNos = sewerageCalculatorDao.getConnectionsNoByTenant(billSchedular.getTenantId(),

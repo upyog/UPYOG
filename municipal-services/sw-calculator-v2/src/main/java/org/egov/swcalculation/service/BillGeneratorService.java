@@ -11,6 +11,7 @@ import org.egov.swcalculation.web.models.BillGenerationRequest;
 import org.egov.swcalculation.web.models.BillGenerationSearchCriteria;
 import org.egov.swcalculation.web.models.BillScheduler;
 import org.egov.swcalculation.web.models.BillStatus;
+import org.egov.tracer.model.CustomException;
 import org.egov.swcalculation.service.BillGeneratorService;
 import org.egov.swcalculation.validator.BillGenerationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,58 +59,55 @@ public class BillGeneratorService {
 	public List<BillScheduler> bulkbillgeneration(BillGenerationRequest billGenerationReq) {
 
 		List<BillScheduler> billDetails = new ArrayList<BillScheduler>();
-	       
-    	if(billGenerationReq.getBillScheduler().getIsBatch())
-    	{		
-		List<String> listOfLocalities = SewerageCalculatorDao.getLocalityList(billGenerationReq.getBillScheduler().getTenantId(),billGenerationReq.getBillScheduler().getLocality());
-		for(String localityName : listOfLocalities)
-		{		
-			billGenerationReq.getBillScheduler().setLocality(localityName);			
-			boolean localityStatus = billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-			if(!localityStatus) 
-			{
-				billDetails =	billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-		
+
+		BillScheduler billScheduler = billGenerationReq.getBillScheduler();
+		if (billScheduler.getIsBatch()) {
+			List<String> listOfLocalities = SewerageCalculatorDao.getLocalityList(billScheduler.getTenantId(),
+					billScheduler.getLocality());
+			for (String localityName : listOfLocalities) {
+				billScheduler.setLocality(localityName);
+				boolean localityStatus = billGenerationValidator.checkBillingCycleDates(billGenerationReq,
+						billGenerationReq.getRequestInfo());
+				if (!localityStatus) {
+					billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+
+				}
+
 			}
-			
-		}
-    	}
-        else if (billGenerationReq.getBillScheduler().getGroup() != null && !billGenerationReq.getBillScheduler().getGroup().isEmpty()) 
+		} else if (billScheduler.getGroup() != null && !billScheduler.getGroup().isEmpty())
 
 		{
-			
-			
-		
-				List<String> temp=billGenerationReq.getBillScheduler().getGroup();
-				billGenerationReq.getBillScheduler().setGroup(null);
-				for(String grup:temp)
-				{
-					billGenerationReq.getBillScheduler().setGrup(grup);
-					 Boolean Check=billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-					
-					 if (!Check)
-						 billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-					 else 
-						 log.info("Bills Are Already In Initieated Or InProgress For Group--> "+ billGenerationReq.getBillScheduler().getGrup());
-				}
-			
-			
+
+			List<String> temp = billScheduler.getGroup();
+			billScheduler.setGroup(null);
+			for (String grup : temp) {
+				billScheduler.setGrup(grup);
+				Boolean Check = billGenerationValidator.checkBillingCycleDates(billGenerationReq,
+						billGenerationReq.getRequestInfo());
+
+				if (!Check)
+					billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+				else
+					log.info("Bills Are Already In Initieated Or InProgress For Group--> " + billScheduler.getGrup());
+			}
 
 		}
-    	
-    	else {
-				billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-				billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-			   // billDetails1.addAll(billDetails);
-	}
-    	
-    	return billDetails;
+
+		else if (billScheduler.getLocality() == null && !billScheduler.getIsBatch() && billScheduler.getGrup() == null
+				&& billScheduler.getGroup() == null && billScheduler.getGroup().isEmpty()
+				&& billScheduler.getIsTenant()) {
+
+			billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
+			billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+			// billDetails1.addAll(billDetails);
+		} else {
+			throw new CustomException(SWCalculationConstant.SW_BILL_SCHEDULER_TRANSACTION,
+					"Invalid bill Sewerage scheduler configuration. Please provide at least one scheduling criterion: batch, group, locality, or tenant.");
+		}
+
+		return billDetails;
 	}
 		
-	
-	
-	
-
 	public List<BillScheduler> getBillGenerationDetails(BillGenerationSearchCriteria criteria) {
 
 		return billGeneratorDao.getBillGenerationDetails(criteria);
