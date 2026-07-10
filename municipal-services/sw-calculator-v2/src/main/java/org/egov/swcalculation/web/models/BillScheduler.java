@@ -27,7 +27,6 @@ public class BillScheduler {
 
 	private String transactionType;
 
-	@NotNull
 	private String locality;
 
 	@NotNull
@@ -40,6 +39,7 @@ public class BillScheduler {
 	
 	@Default
 	private Boolean isBatch = false;
+	
 	private AuditDetails auditDetails;
 
 	@NotNull

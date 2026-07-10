@@ -33,13 +33,13 @@ public class BillGeneratorService {
 
 	@Autowired
 	private BillGeneratorService billGeneratorService;
-	
+
 	@Autowired
 	private SewerageCalculatorDao SewerageCalculatorDao;
-	
+
 	@Autowired
 	private BillGenerationValidator billGenerationValidator;
-	
+
 	public List<BillScheduler> saveBillGenerationDetails(BillGenerationRequest billRequest) {
 		List<BillScheduler> billSchedulers = new ArrayList<>();
 		AuditDetails auditDetails = enrichmentService
@@ -53,9 +53,7 @@ public class BillGeneratorService {
 		billSchedulers.add(billRequest.getBillScheduler());
 		return billSchedulers;
 	}
-	
-	
-	
+
 	public List<BillScheduler> bulkbillgeneration(BillGenerationRequest billGenerationReq) {
 
 		List<BillScheduler> billDetails = new ArrayList<BillScheduler>();
@@ -82,9 +80,7 @@ public class BillGeneratorService {
 			billScheduler.setGroup(null);
 			for (String grup : temp) {
 				billScheduler.setGrup(grup);
-				Boolean Check = billGenerationValidator.checkBillingCycleDates(billGenerationReq,
-						billGenerationReq.getRequestInfo());
-
+				Boolean Check = billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
 				if (!Check)
 					billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
 				else
@@ -94,9 +90,7 @@ public class BillGeneratorService {
 		}
 
 		else if (billScheduler.getLocality() == null && !billScheduler.getIsBatch() && billScheduler.getGrup() == null
-				&& billScheduler.getGroup() == null && billScheduler.getGroup().isEmpty()
-				&& billScheduler.getIsTenant()) {
-
+				&& (billScheduler.getGroup() == null || billScheduler.getGroup().isEmpty()) && billScheduler.getIsTenant()) {
 			billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
 			billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
 			// billDetails1.addAll(billDetails);
@@ -107,17 +101,17 @@ public class BillGeneratorService {
 
 		return billDetails;
 	}
-		
+
 	public List<BillScheduler> getBillGenerationDetails(BillGenerationSearchCriteria criteria) {
 
 		return billGeneratorDao.getBillGenerationDetails(criteria);
 	}
-	
+
 	public List<BillScheduler> getBillGenerationGroup(BillGenerationSearchCriteria criteria) {
 
 		return billGeneratorDao.getBillGenerationGroup(criteria);
 	}
-	
+
 	public List<BillScheduler> getBillGenerationByTenant(BillGenerationSearchCriteria criteria) {
 
 		return billGeneratorDao.getBillGenerationByTenant(criteria);
