@@ -150,8 +150,8 @@ public class eSignService {
 	            new ArrayList<>(List.of(signInput)),
 	            "",
 	            txnId + "-" + transaction.getModule(),
-	            configurations.getRedirectUrl(),
-	            configurations.getRedirectUrl(),
+	            transaction.getRedirectUrl(),
+	            transaction.getRedirectUrl(),
 	            configurations.getTempFolder(),
 	            eSign.eSignAPIVersion.V2,
 	            eSign.AuthMode.OTP);
