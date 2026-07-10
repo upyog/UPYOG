@@ -8,6 +8,8 @@
  */
 
 import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
+import { extractFileStoreId } from "./allotmentDocumentUtils";
+
 import { buildDynamicAssetPayload } from "./assetPayloadUtils";
 import estateFormConfig from "../config/estateFormConfig";
 import { Config as registrationConfig } from "../config/Create/config";
@@ -282,6 +284,7 @@ export const estPayloadData = (data) => {
 /** Merge API response + session data for acknowledgement display/PDF. */
 export const buildAllotmentAcknowledgementData = (sessionData, apiResponse) => {
   const responseAllotment = apiResponse?.Allotments?.[0] || {};
+  const sessionAllotment = sessionData?.Allotments?.Allotments?.[0] || {};
   let payloadAllotment = {};
   try {
     payloadAllotment = createAllotmentData(sessionData)?.Allotments?.[0] || {};
@@ -306,6 +309,20 @@ export const buildAllotmentAcknowledgementData = (sessionData, apiResponse) => {
           payloadAllotment.agreementEndDate ?? responseAllotment.agreementEndDate,
         advancePaymentDate:
           payloadAllotment.advancePaymentDate ?? responseAllotment.advancePaymentDate,
+        citizenRequestLetter:
+          payloadAllotment.citizenRequestLetter ??
+          extractFileStoreId(sessionAllotment.citizenLetter) ??
+          responseAllotment.citizenRequestLetter,
+        allotmentLetter:
+          payloadAllotment.allotmentLetter ??
+          extractFileStoreId(sessionAllotment.allotmentLetter) ??
+          responseAllotment.allotmentLetter,
+        signedDeed:
+          payloadAllotment.signedDeed ??
+          extractFileStoreId(sessionAllotment.signedDeed) ??
+          responseAllotment.signedDeed,
+        eofficeFileNo:
+          payloadAllotment.eofficeFileNo ?? responseAllotment.eofficeFileNo,
       },
     ],
     Assets: assets,

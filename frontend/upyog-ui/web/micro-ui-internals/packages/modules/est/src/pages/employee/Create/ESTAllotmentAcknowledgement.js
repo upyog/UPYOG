@@ -1,16 +1,15 @@
 /**
  * ESTAllotmentAcknowledgement
- * ---------------------------
- * Displays the result of the EST allotment API call.
- * The API call is made in ESTAssignAssetsCheckPage; on success/failure,
- * AssignAssetIndex navigates here with location.state.
+ * Displays allotment result with document thumbnails (click to preview).
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Banner,
   Card,
+  CardSubHeader,
   LinkButton,
+  Loader,
   Row,
   StatusTable,
   SubmitBar,
@@ -18,6 +17,8 @@ import {
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import getESTAllotmentAcknowledgementData from "../../../utils/getESTAllotmentAcknowledgementData";
+import { ESTDocumnetPreview } from "../../../utils";
+import { fetchAllotmentDocumentPreviews } from "../../../utils/allotmentDocumentUtils";
 import { getEmployeeHomeFromModulePath, getCitizenHomeFromModulePath } from "../../../utils/estRoutes";
 
 const rowContainerStyle = {
@@ -50,12 +51,41 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
   const storeData = initResponse?.data || initResponse;
   const tenants = storeData?.tenants || [];
 
+  const [previewDocs, setPreviewDocs] = useState([]);
+  const [loadingDocs, setLoadingDocs] = useState(false);
+
   useEffect(() => {
     if (isSuccess && typeof onSuccess === "function") {
       onSuccess(ackData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!isSuccess || !ackData?.Allotments?.[0]) {
+      setPreviewDocs([]);
+      return;
+    }
+
+    let mounted = true;
+    setLoadingDocs(true);
+
+    fetchAllotmentDocumentPreviews(ackData.Allotments[0], t)
+      .then((docs) => {
+        if (mounted) setPreviewDocs(docs);
+      })
+      .catch((err) => {
+        console.error("EST ack document preview failed:", err);
+        if (mounted) setPreviewDocs([]);
+      })
+      .finally(() => {
+        if (mounted) setLoadingDocs(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [ackData, isSuccess, t]);
 
   if (error) console.error("EST Allotment Acknowledgement — error:", error);
 
@@ -83,6 +113,19 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
       <StatusTable>
         <Row rowContainerStyle={rowContainerStyle} last />
       </StatusTable>
+
+      {isSuccess && (
+        <>
+          <CardSubHeader>{t("EST_DOCUMENT_PREVIEW")}</CardSubHeader>
+          {loadingDocs ? (
+            <div style={{ padding: "12px 16px" }}>
+              <Loader />
+            </div>
+          ) : (
+            <ESTDocumnetPreview documents={previewDocs} useThumbnails thumbSize={80} />
+          )}
+        </>
+      )}
 
       {isSuccess && (
         <SubmitBar label={t("EST_ALLOTMENT_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />

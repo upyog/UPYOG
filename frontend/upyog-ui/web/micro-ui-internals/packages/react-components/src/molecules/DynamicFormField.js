@@ -190,6 +190,16 @@ const DynamicFormField = ({
 
   // ── FILE ─────────────────────────────────────────────────────────────
   if (type === "file") {
+    const fileRef =
+      typeof value === "string"
+        ? value
+        : value?.filestoreId || value?.fileStoreId || value?.documentuuid;
+    const hasUploaded = Boolean(fileRef);
+    const uploadedLabel =
+      (typeof value === "object" && value?.fileName) ||
+      fileRef ||
+      t("CS_ACTION_FILEUPLOADED");
+
     return (
       <>
         <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} />
@@ -197,7 +207,8 @@ const DynamicFormField = ({
           <UploadFile
             id={name}
             accept={field.accept || ".png,.jpg,.jpeg,.pdf"}
-            message={value ? t("CS_ACTION_FILEUPLOADED") : t("CS_ACTION_NO_FILEUPLOADED")}
+            message={hasUploaded ? t("CS_ACTION_FILEUPLOADED") : t("CS_ACTION_NO_FILEUPLOADED")}
+            file={hasUploaded ? { name: uploadedLabel } : undefined}
             onUpload={(e) => onFileUpload && onFileUpload(name, e.target.files[0])}
             onDelete={() => onChange(name, null)}
           />

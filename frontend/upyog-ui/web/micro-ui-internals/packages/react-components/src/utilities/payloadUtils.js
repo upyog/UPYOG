@@ -44,6 +44,18 @@ const shouldCastNumeric = (field, fieldConfig, routeConfig) => {
   return false;
 };
 
+/** API file fields are plain fileStoreId strings, not { filestoreId } objects. */
+export const extractFileStoreId = (value) => {
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value === "string") return value;
+  if (typeof value === "object") {
+    return value.filestoreId || value.fileStoreId || value.documentuuid || null;
+  }
+  return null;
+};
+
+const serializeFileValue = extractFileStoreId;
+
 const assignFieldValue = (payload, payloadKey, field, fieldConfig, flatData, routeConfig) => {
   const { name, type } = field;
   const defaultDateFormat = routeConfig?.dateFormat || "dd-MM-yyyy";
@@ -63,7 +75,7 @@ const assignFieldValue = (payload, payloadKey, field, fieldConfig, flatData, rou
   }
 
   if (type === "file") {
-    payload[payloadKey] = flatData[name] ?? null;
+    payload[payloadKey] = serializeFileValue(flatData[name]);
     return;
   }
 
@@ -81,7 +93,7 @@ const assignFieldValue = (payload, payloadKey, field, fieldConfig, flatData, rou
  *   - apiFieldName           → renames payload key
  *   - type dropdown          → code + codeName
  *   - type date              → formatted string (see formatDateForApi)
- *   - type file              → passes file object through
+ *   - type file              → fileStoreId string (extracted from upload object)
  *   - type radio/text/number → raw value; numeric when field.numeric or routeConfig.numericFields
  *
  * Per routeConfig:

@@ -14,6 +14,12 @@ export const mapAllotmentApiToFormData = (allotment = {}) => {
     return code || "";
   };
 
+  const toFileRef = (value) => {
+    if (!value) return null;
+    if (typeof value === "object") return value;
+    return { filestoreId: value, documentuuid: value };
+  };
+
   return {
     allotmentId: allotment.allotmentId || "",
     userUuid: allotment.userUuid || "",
@@ -39,9 +45,9 @@ export const mapAllotmentApiToFormData = (allotment = {}) => {
     advancePayment:
       allotment.advancePayment != null ? String(allotment.advancePayment) : "",
     eOfficeFileNo: allotment.eofficeFileNo || allotment.eOfficeFileNo || "",
-    citizenLetter: allotment.citizenLetter || null,
-    allotmentLetter: allotment.allotmentLetter || null,
-    signedDeed: allotment.signedDeed || null,
+    citizenLetter: toFileRef(allotment.citizenRequestLetter || allotment.citizenLetter),
+    allotmentLetter: toFileRef(allotment.allotmentLetter),
+    signedDeed: toFileRef(allotment.signedDeed),
     auditDetails: allotment.auditDetails || null,
   };
 };
@@ -61,7 +67,9 @@ export const getAssetIdentity = (asset = {}) =>
 export const hasMeaningfulFormValue = (value) => {
   if (value === null || value === undefined || value === "") return false;
   if (typeof value === "object" && !Array.isArray(value)) {
-    return Boolean(value.filestoreId || value.code);
+    return Boolean(
+      value.filestoreId || value.fileStoreId || value.documentuuid || value.code
+    );
   }
   return true;
 };
@@ -90,6 +98,11 @@ export const mergeAllotmentPrefill = (
   merged.allotmentId = sessionDraft?.allotmentId || apiData?.allotmentId || "";
   merged.userUuid = sessionDraft?.userUuid || apiData?.userUuid || "";
   merged.auditDetails = sessionDraft?.auditDetails || apiData?.auditDetails || null;
+
+  // Invoice "Rate Per Sq Ft" defaults from read-only asset EST_RATE (Per sq.ft).
+  if (!hasMeaningfulFormValue(merged.rentRate) && hasMeaningfulFormValue(merged.assetRate)) {
+    merged.rentRate = merged.assetRate;
+  }
 
   return merged;
 };

@@ -125,6 +125,20 @@ export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = 
       return;
     }
 
+    if (type === "file") {
+      const raw = rawAsset[name] ?? (item.apiFieldName ? rawAsset[item.apiFieldName] : undefined);
+      if (!raw) {
+        result[name] = null;
+        return;
+      }
+      if (typeof raw === "object") {
+        result[name] = raw;
+        return;
+      }
+      result[name] = { filestoreId: raw, documentuuid: raw, documentType: name };
+      return;
+    }
+
     const raw = rawAsset[name];
     const isEmpty = raw === undefined || raw === null || raw === "";
     if (isEmpty && field.prefillFrom) {

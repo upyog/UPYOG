@@ -12,6 +12,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import {
   buildSummarySections,
+  collectFormFileEntries,
   defaultCheckNA,
   extractWizardFormValues,
   formatCheckPageDate,
@@ -70,6 +71,11 @@ const DynamicCheckPage = ({
     [routeConfig]
   );
 
+  const uploadedFiles = useMemo(
+    () => collectFormFileEntries(fileFields, formValues, t),
+    [fileFields, formValues, t]
+  );
+
   const resolveValue = (fc) =>
     resolveSummaryFieldValue(fc, { formValues, extraData, formatDate, checkNA, t });
 
@@ -77,51 +83,65 @@ const DynamicCheckPage = ({
   useEffect(() => {
     let mounted = true;
 
-    const filestoreIds = [];
-    const idToLabelMap = {};
-
-    fileFields.forEach((fc) => {
-      const obj = formValues?.[fc.field.name];
-      if (obj?.filestoreId) {
-        filestoreIds.push(obj.filestoreId);
-        idToLabelMap[obj.filestoreId] = t(resolveFieldLabelKey(fc, formValues));
-      }
-    });
-
-    if (filestoreIds.length === 0) {
+    if (uploadedFiles.length === 0) {
       if (mounted) setPreviewDocs([]);
       return () => { mounted = false; };
     }
+
+    const filestoreIds = uploadedFiles.map((f) => f.id);
+    const idToLabelMap = Object.fromEntries(
+      uploadedFiles.map((f) => [f.id, f.label])
+    );
 
     setLoadingDocs(true);
     Digit.UploadServices.Filefetch(filestoreIds, Digit.ULBService.getStateId())
       .then((res) => {
         if (!mounted) return;
         const arr = res?.data?.fileStoreIds;
-        const values = [];
+        const urlById = {};
+
         if (Array.isArray(arr)) {
-          arr.forEach((fsObj) => {
+          arr.forEach((fsObj, index) => {
             const fsid = fsObj?.fileStoreId || fsObj?.id;
             const url = fsObj?.url?.split(",")[0];
-            if (url) {
-              values.push({ url, title: idToLabelMap[fsid] || t("DOCUMENT"), documentType: fsid });
-            }
+            if (!url) return;
+            if (fsid) urlById[fsid] = url;
+            if (filestoreIds[index]) urlById[filestoreIds[index]] = url;
           });
         }
-        const ordered = filestoreIds
-          .map((id) => values.find((v) => v.documentType === id))
-          .filter(Boolean);
-        if (mounted) setPreviewDocs(ordered.length ? [{ values: ordered }] : []);
+
+        const values = uploadedFiles.map((file) => ({
+          url: urlById[file.id] || null,
+          title: idToLabelMap[file.id] || file.label,
+          documentType: file.id,
+          fileStoreId: file.id,
+          reference: file.reference,
+          fileName: file.fileName,
+        }));
+
+        if (mounted) setPreviewDocs([{ values }]);
       })
       .catch((err) => {
         console.error("Error fetching files for preview:", err);
-        if (mounted) setPreviewDocs([]);
+        if (mounted) {
+          setPreviewDocs([
+            {
+              values: uploadedFiles.map((file) => ({
+                url: null,
+                title: file.label,
+                documentType: file.id,
+                fileStoreId: file.id,
+                reference: file.reference,
+                fileName: file.fileName,
+              })),
+            },
+          ]);
+        }
       })
       .finally(() => mounted && setLoadingDocs(false));
 
     return () => { mounted = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formValues, fileFields, t]);
+  }, [uploadedFiles]);
 
   return (
     <Card>
@@ -152,7 +172,7 @@ const DynamicCheckPage = ({
       ))}
 
       {/* ----------------- DOCUMENT PREVIEW ----------------- */}
-      {fileFields.length > 0 && (
+      {(fileFields.length > 0 || uploadedFiles.length > 0) && (
         <>
           <CardSubHeader>{t("EST_DOCUMENT_PREVIEW")}</CardSubHeader>
           {loadingDocs ? (
@@ -164,7 +184,22 @@ const DynamicCheckPage = ({
                 titleStyles={{ fontSize: "14px" }}
                 pdfSize={48}
                 labelWidth={220}
+                useThumbnails
+                thumbSize={80}
               />
+            </div>
+          ) : uploadedFiles.length > 0 ? (
+            <div style={{ padding: "8px 16px 12px" }}>
+              {uploadedFiles.map((file) => (
+                <div key={file.id} style={{ marginBottom: 12 }}>
+                  <div style={{ fontWeight: 700, fontSize: "14px", color: "#111" }}>
+                    {file.label}
+                  </div>
+                  <div style={{ fontSize: "13px", color: "#666", marginTop: 4 }}>
+                    {file.fileName || file.reference}
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div style={{ padding: "8px 16px", color: "#666" }}>

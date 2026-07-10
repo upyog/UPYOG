@@ -3,6 +3,7 @@
 // Works with the same routeConfig.form that DynamicForm / DynamicFormField use.
 
 import { sortByOrder, resolveFieldLabelKey } from "./formUtils";
+import { extractFileStoreId } from "./payloadUtils";
 
 export { resolveFieldLabelKey };
 
@@ -174,6 +175,26 @@ export const buildSummarySections = (formConfig = []) => {
   if (current.fields.length) sections.push(current);
   return { sections, fileFields };
 };
+
+/** Collect uploaded file references from form values for check-page preview. */
+export const collectFormFileEntries = (fileFields = [], formValues = {}, t = (k) => k) =>
+  fileFields
+    .map((fc) => {
+      const { field, apiFieldName } = fc;
+      if (!field) return null;
+      const raw =
+        formValues[field.name] ??
+        (apiFieldName ? formValues[apiFieldName] : undefined);
+      const id = extractFileStoreId(raw);
+      if (!id) return null;
+      return {
+        id,
+        label: t(resolveFieldLabelKey(fc, formValues)),
+        fileName: typeof raw === "object" ? raw.fileName || null : null,
+        reference: id,
+      };
+    })
+    .filter(Boolean);
 
 /**
  * Resolve one field's display text on the check page.

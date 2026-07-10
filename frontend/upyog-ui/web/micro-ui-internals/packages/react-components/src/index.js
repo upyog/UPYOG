@@ -252,6 +252,7 @@ export {
   flattenForSummary,
   buildSummarySections,
   resolveSummaryFieldValue,
+  collectFormFileEntries,
 } from "./utilities/checkPageUtils";
 export { default as useDynamicRouteConfig } from "./utilities/useDynamicRouteConfig";
 export { default as useDynamicCheckSubmit } from "./utilities/useDynamicCheckSubmit";
