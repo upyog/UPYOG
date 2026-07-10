@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.egov.tracer.model.CustomException;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 
 
@@ -77,50 +78,40 @@ public class BillGeneratorService {
 	public List<BillScheduler> bulkbillgeneration(BillGenerationReq billGenerationReq) {
 
 		List<BillScheduler> billDetails = new ArrayList<BillScheduler>();
-	       
-    	if(billGenerationReq.getBillScheduler().getIsBatch())
-    	{		
-		List<String> listOfLocalities = waterCalculatorDao.getLocalityList(billGenerationReq.getBillScheduler().getTenantId(),billGenerationReq.getBillScheduler().getLocality());
-		for(String localityName : listOfLocalities)
-		{		
-			billGenerationReq.getBillScheduler().setLocality(localityName);			
-			boolean localityStatus = billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-			if(!localityStatus) 
-			{
-			billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-			}
-			
-		}
-    	}
-        else if (billGenerationReq.getBillScheduler().getGroup() != null && !billGenerationReq.getBillScheduler().getGroup().isEmpty()) 
-
-		{
-			
-			
+		BillScheduler billScheduler = billGenerationReq.getBillScheduler();
 		
-				List<String> temp=billGenerationReq.getBillScheduler().getGroup();
-				billGenerationReq.getBillScheduler().setGroup(null);
-				for(String grup:temp)
-				{
-					billGenerationReq.getBillScheduler().setGrup(grup);
-					 Boolean Check=billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-					
-					 if (!Check)
-						 billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-					 else 
-						 log.info("Bills Are Already In Initieated Or InProgress For Group--> "+ billGenerationReq.getBillScheduler().getGrup());
+    	if(billScheduler.getIsBatch()){		
+			List<String> listOfLocalities = waterCalculatorDao.getLocalityList(billScheduler.getTenantId(),billScheduler.getLocality());
+			for(String localityName : listOfLocalities){		
+				billScheduler.setLocality(localityName);			
+				boolean localityStatus = billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
+				if(!localityStatus) {
+					billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
 				}
-			
-			
-
+			}
+    	} else if (billScheduler.getGroup() != null && !billScheduler.getGroup().isEmpty()){
+			List<String> temp=billScheduler.getGroup();
+			billScheduler.setGroup(null);
+			for(String grup:temp){
+				billScheduler.setGrup(grup);
+				Boolean Check=billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());	
+				if (!Check)
+					billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+				else 
+					log.info("Bills Are Already In Initieated Or InProgress For Group--> "+ billScheduler.getGrup());
+			}
+		} else if (billScheduler.getLocality() != null) {
+			billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
+			billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+		} else if (!billScheduler.getIsBatch() && billScheduler.getGroup() == null && billScheduler.getGrup() == null && billScheduler.getLocality() == null
+				&& billScheduler.getIsTenant()){
+			billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
+			billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
+			// billDetails1.addAll(billDetails);
+		} else {
+			throw new CustomException(WSCalculationConstant.WS_BILL_SCHEDULER_TRANSACTION,
+					"Invalid bill scheduler configuration. Please provide at least one scheduling criterion: batch, group, locality, or tenant.");
 		}
-    	
-    	else {
-				billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-				billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-			   // billDetails1.addAll(billDetails);
-	}
-    	
     	return billDetails;
 	}
 		

@@ -664,7 +664,6 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		log.info("billSchedularList count : " + billSchedularList.size());
 		for (BillScheduler billSchedular : billSchedularList) {
 			try {
-				billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
 				List<String> connectionNos = null;
 
 				requestInfo.getUserInfo().setTenantId(billSchedular.getTenantId() != null ? billSchedular.getTenantId() : requestInfo.getUserInfo().getTenantId());
@@ -672,7 +671,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 
 //				List<String> connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality( billSchedular.getTenantId(), SWCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
 				if (billSchedular.getGrup() != null && !billSchedular.getGrup().isEmpty()) {
-
+					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
 					connectionNos = sewerageCalculatorDao.getConnectionsNoByGroups(billSchedular.getTenantId(),
 							SWCalculationConstant.nonMeterdConnection, billSchedular.getGrup());
 
@@ -685,6 +684,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 					connectionNos = sewerageCalculatorDao.getConnectionsNoByTenant(billSchedular.getTenantId(),
 							SWCalculationConstant.nonMeterdConnection);
 				} else {
+					billGeneratorDao.updateBillSchedularStatus(billSchedular.getId(), StatusEnum.INPROGRESS);
 					connectionNos = sewerageCalculatorDao.getConnectionsNoByLocality(billSchedular.getTenantId(),
 							SWCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
 				}

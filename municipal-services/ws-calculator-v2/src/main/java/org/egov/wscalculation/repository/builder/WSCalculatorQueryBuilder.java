@@ -579,12 +579,6 @@ public class WSCalculatorQueryBuilder {
 		addClauseIfRequired(preparedStmtList, query);
 		query.append(" tenantid = ? ");
 		preparedStmtList.add(tenantId);
-
-		if (locality != null) {
-			addClauseIfRequired(preparedStmtList, query);
-			query.append(" locality = ? ");
-			preparedStmtList.add(locality);
-		}
 		if (billFromDate != null) {
 			addClauseIfRequired(preparedStmtList, query);
 			query.append(" billingcyclestartdate = ? ");
@@ -594,6 +588,18 @@ public class WSCalculatorQueryBuilder {
 			addClauseIfRequired(preparedStmtList, query);
 			query.append(" billingcycleenddate = ? ");
 			preparedStmtList.add(billToDate);
+		}
+		
+		if (locality == null && group == null) {
+	        query.append(" AND locality IS NULL");
+	        query.append(" AND groups IS NULL");
+	        return query.toString();
+	    }
+		
+		if (locality != null) {
+			addClauseIfRequired(preparedStmtList, query);
+			query.append(" locality = ? ");
+			preparedStmtList.add(locality);
 		}
 		if (group != null) {
 			addClauseIfRequired(preparedStmtList, query);

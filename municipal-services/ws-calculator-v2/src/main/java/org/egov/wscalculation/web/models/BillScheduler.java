@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,6 +46,10 @@ public class BillScheduler {
 	private List<String> group;
 
 	private String grup;
+	
+	@Default
+	private Boolean isTenant = false;
+	
 	/**
 	 * status of the bill .
 	 */
