@@ -37,7 +37,10 @@ public class BillScheduler {
 	private long billingcycleEnddate;
 
 	private BillStatus status;
-	private Boolean isBatch;
+	
+	@Default
+	private Boolean isBatch = false;
+	
 	private AuditDetails auditDetails;
 
 	@NotNull
