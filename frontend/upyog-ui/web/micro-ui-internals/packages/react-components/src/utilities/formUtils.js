@@ -152,12 +152,13 @@ const mergeFormField = (local, mdms) => {
     if (local.field?.[key] != null) mergedField[key] = local.field[key];
   });
 
+  // Local validation/messages win — MDMS often over-escapes regex patterns (e.g. \\\\.).
   const merged = {
     ...local,
     ...mdms,
     field: mergedField,
-    validation: { ...(local.validation || {}), ...(mdms.validation || {}) },
-    messages: { ...(local.messages || {}), ...(mdms.messages || {}) },
+    validation: { ...(mdms.validation || {}), ...(local.validation || {}) },
+    messages: { ...(mdms.messages || {}), ...(local.messages || {}) },
   };
   if (Array.isArray(mdms.options) && mdms.options.length > 0) {
     merged.options = mdms.options;

@@ -18,7 +18,16 @@ export const fieldRules = {
     const { type } = fieldConfig.field;
     const { pattern } = fieldConfig.validation;
     if (!value || type === "dropdown") return true;
-    return new RegExp(pattern).test(value);
+    const normalized = String(value).trim();
+    if (!normalized) return true; // empty handled by `required`
+    try {
+      // Prefer patterns that avoid `\.` escaping (use `[.]` instead) so MDMS/JSON
+      // double-escaping cannot turn a valid email into a false failure.
+      return new RegExp(pattern).test(normalized);
+    } catch (e) {
+      console.error("Invalid validation.pattern:", pattern, e);
+      return true;
+    }
   },
 
   maxLength: (value, { fieldConfig }) => {

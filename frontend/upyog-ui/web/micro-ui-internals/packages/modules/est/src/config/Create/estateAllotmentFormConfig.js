@@ -9,7 +9,7 @@ const estateAllotmentFormConfig = {
   dateFormat: "dd-MM-yyyy",
   staticFields: (tenantId, flatData) => ({
     assetNo: flatData?.assetNo || "",
-    assetRefNumber: flatData?.assetRefNumber || "",
+    assetReferenceNo: flatData?.assetRefNumber || "",
     allotmentStatus: "INITIATED",
   }),
   pageHeading: {
@@ -160,7 +160,8 @@ const estateAllotmentFormConfig = {
         type: "text",
       },
       validation: {
-        pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        // Use [.] not \. — MDMS/JSON double-escaping of \. rejects valid emails.
+        pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+[.][a-zA-Z]{2,}$",
         required: true,
         disabled: false,
         readOnly: false,
@@ -209,12 +210,21 @@ const estateAllotmentFormConfig = {
     {
       order: 17,
       key: "EST_BILLING_CYCLE",
-      field: { code: "EST_BILLING_CYCLE", name: "billingCycle", type: "dropdown", placeholder: "EST_SELECT_BILLING_CYCLE" },
-      options: [
-        { code: "MONTHLY", i18nKey: "EST_BILLING_CYCLE_MONTHLY" },
-        { code: "QUARTERLY", i18nKey: "EST_BILLING_CYCLE_QUARTERLY" },
-        { code: "YEARLY", i18nKey: "EST_BILLING_CYCLE_YEARLY" },
-      ],
+      field: {
+        code: "EST_BILLING_CYCLE",
+        name: "billingCycle",
+        type: "dropdown",
+        placeholder: "EST_SELECT_BILLING_CYCLE",
+        // Fallback when assignAssetConfig MDMS step does not define options inline.
+        dataSource: {
+          type: "MDMS",
+          moduleName: "Estate",
+          masterName: "BillingCycle",
+        },
+      },
+      // Options come from MDMS assignAssetConfig form merge or BillingCycle master.
+      // Each option: { code, name, multiplier, rentLabelKey, i18nKey?, active? }
+      options: [],
       validation: { required: true, disabled: false },
       messages: { error: "EST_BILLING_CYCLE_REQUIRED" },
     },
@@ -228,9 +238,11 @@ const estateAllotmentFormConfig = {
         type: "text",
         unit: "(Per sq ft)",
         numeric: true,
+        prefillFrom: "assetRate",
       },
       validation: {
         maxLength: 12,
+        maxAmount: 9999999999.99,
         pattern: "^[0-9]+(\\.[0-9]{1,2})?$",
         regex: { pattern: "[^0-9.]", flags: "g" },
         required: true,
@@ -249,14 +261,22 @@ const estateAllotmentFormConfig = {
         type: "text",
         unit: "In INR",
         numeric: true,
+        labelBy: {
+          field: "billingCycle",
+          optionKey: "rentLabelKey",
+          defaultKey: "EST_MONTHLY_RENT_IN_INR",
+        },
+        computeFrom: ["rentRate", "totalFloorArea", "billingCycle"],
+        computeFn: "calculateRentByBillingCycle",
       },
       validation: {
         maxLength: 12,
+        maxAmount: 9999999999.99,
         pattern: "^[0-9]+(\\.[0-9]{1,2})?$",
         regex: { pattern: "[^0-9.]", flags: "g" },
         required: true,
-        disabled: false,
-        readOnly: false,
+        disabled: true,
+        readOnly: true,
       },
       messages: { error: "EST_INVALID_AMOUNT" },
     },
@@ -273,6 +293,7 @@ const estateAllotmentFormConfig = {
       },
       validation: {
         maxLength: 12,
+        maxAmount: 9999999999.99,
         pattern: "^[0-9]+(\\.[0-9]{1,2})?$",
         regex: { pattern: "[^0-9.]", flags: "g" },
         required: true,
@@ -304,6 +325,7 @@ const estateAllotmentFormConfig = {
         placeholder: "EST_ENTER_FILE_NO",
         type: "text",
       },
+      apiFieldName: "eofficeFileNo",
       validation: {
         maxLength: 20,
         pattern: "^[0-9]+$",
@@ -317,6 +339,7 @@ const estateAllotmentFormConfig = {
     {
       order: 24,
       key: "EST_CITIZEN_REQUEST_LETTER",
+      apiFieldName: "citizenRequestLetter",
       field: {
         code: "EST_CITIZEN_REQUEST_LETTER",
         name: "citizenLetter",
