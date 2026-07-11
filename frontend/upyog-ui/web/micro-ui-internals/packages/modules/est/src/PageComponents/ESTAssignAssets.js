@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import ESTDynamicFormStep from "./ESTDynamicFormStep";
+import { DynamicFormStep } from "@nudmcdgnpm/digit-ui-react-components";
 import estateAllotmentFormOverrides from "../config/Create/estateAllotmentFormOverrides";
 import {
   mergeAllotmentPrefill,
@@ -11,8 +11,9 @@ import { resolveLocalityDisplay } from "../utils/estMdmsUtils";
 const PAYLOAD_KEY = "Allotments";
 const STEP_KEY = "Allotments";
 
-const ESTAssignAssets = ({ onSelect, onDraftSave, onDraftClear, config, formData }) => {
-  const { t } = useTranslation();
+const ESTAssignAssets = ({ onSelect, onDraftSave, onDraftClear, config, formData, t: tProp }) => {
+  const { t: tHook } = useTranslation();
+  const t = tProp || tHook;
   const persistedData = useMemo(() => formData || {}, [formData]);
 
   const sessionDraft =
@@ -55,19 +56,23 @@ const ESTAssignAssets = ({ onSelect, onDraftSave, onDraftClear, config, formData
   }, [persistedData, sessionDraft]);
 
   return (
-    <ESTDynamicFormStep
+    <DynamicFormStep
       config={config}
       localOverrides={estateAllotmentFormOverrides}
       onSelect={onSelect}
       formData={dynamicPersistedData}
       editData={prefillData}
       resetBaseline={resetBaseline}
+      t={t}
+      defaultHeaderCode="EST_COMMMON_ASSIGN_ASSETS"
       draft={
         onDraftSave
           ? {
               buildStepData: (flat) => ({ [PAYLOAD_KEY]: [{ ...flat }] }),
               onPersist: onDraftSave,
               onClear: onDraftClear,
+              label: "EST_ADD_AS_DRAFT",
+              successLabel: "EST_DRAFT_SAVED",
             }
           : undefined
       }

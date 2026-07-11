@@ -224,6 +224,7 @@ import { FilterForm, FilterFormField } from "./molecules/FilterForm";
 import WrapUnMaskComponent from "./molecules/WrapUnMaskComponent";
 import DynamicObjectRenderer from "./molecules/DynamicObjectRenderer"
 import DynamicCheckPage from "./molecules/DynamicCheckPage";
+import DynamicFormStep from "./molecules/DynamicFormStep";
 
 import OpenLinkContainer from "./atoms/OpenLinkContainer";
 import UploadPitPhoto from "./molecules/UploadPitPhoto";
@@ -524,6 +525,7 @@ export {
   Timeline,
   SuccessSvg,
   DynamicForm,
+  DynamicFormStep,
   DynamicObjectRenderer,
   DynamicCheckPage,
 };

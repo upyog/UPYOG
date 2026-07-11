@@ -1,18 +1,15 @@
 import React, { useMemo, useCallback } from "react";
-import {
-  Header,
-  DynamicForm,
-  attachRouteConfigToStepData,
-  mergeRouteConfig,
-} from "@nudmcdgnpm/digit-ui-react-components";
-import { useTranslation } from "react-i18next";
+import Header from "../atoms/Header";
+import DynamicForm from "./DynamicForm";
+import { attachRouteConfigToStepData, mergeRouteConfig } from "../utilities/checkPageUtils";
 
 /**
- * Generic MDMS wizard form step — merges step config with local overrides, renders DynamicForm.
+ * MDMS wizard form step — merges step config with local overrides, renders DynamicForm.
+ * Use in module wizard routes instead of per-module wrappers around DynamicForm.
  */
-const ESTDynamicFormStep = ({
+const DynamicFormStep = ({
   config,
-  localOverrides,
+  localOverrides = {},
   onSelect,
   persistedData,
   formData,
@@ -20,8 +17,12 @@ const ESTDynamicFormStep = ({
   editData = {},
   resetBaseline,
   draft,
+  t: tProp,
+  tenantId: tenantIdProp,
+  wrapperClassName = "employeeCard",
+  defaultHeaderCode = "COMMON_FORM",
 }) => {
-  const { t } = useTranslation();
+  const t = tProp || ((key) => key);
   const sessionData = formData ?? persistedData ?? {};
 
   const routeConfig = useMemo(
@@ -29,7 +30,10 @@ const ESTDynamicFormStep = ({
     [config, localOverrides]
   );
 
-  const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
+  const tenantId = useMemo(
+    () => tenantIdProp || Digit.ULBService.getCurrentTenantId(),
+    [tenantIdProp]
+  );
 
   const handleSubmit = useCallback(({ error }) => {
     if (error) console.error("Submit error:", error);
@@ -70,16 +74,15 @@ const ESTDynamicFormStep = ({
     ? (flat) => draft.onPersist(routeConfig.key, draft.buildStepData?.(flat) || flat)
     : undefined;
 
+  const headerCode =
+    routeConfig.pageHeading?.create ||
+    config?.sectionHeading ||
+    config?.texts?.header ||
+    defaultHeaderCode;
+
   return (
-    <div className="employeeCard">
-      <Header>
-        {t(
-          routeConfig.pageHeading?.create ||
-            config?.sectionHeading ||
-            config?.texts?.header ||
-            "EST_FORM"
-        )}
-      </Header>
+    <div className={wrapperClassName}>
+      <Header>{t(headerCode)}</Header>
       <DynamicForm
         routeConfig={routeConfig}
         onSubmit={handleSubmit}
@@ -94,9 +97,9 @@ const ESTDynamicFormStep = ({
         showCancel={Boolean(draft?.onClear)}
         onCancel={() => draft?.onClear?.(routeConfig.key)}
         showDraftButton={Boolean(draft?.onPersist)}
-        draftLabel={routeConfig.draftButton?.label || draft?.label || "EST_ADD_AS_DRAFT"}
+        draftLabel={routeConfig.draftButton?.label || draft?.label || "CS_COMMON_SAVE_DRAFT"}
         draftSuccessLabel={
-          routeConfig.draftButton?.successMessage || draft?.successLabel || "EST_DRAFT_SAVED"
+          routeConfig.draftButton?.successMessage || draft?.successLabel || "CS_COMMON_SAVED"
         }
         onSaveDraft={onSaveDraft}
       />
@@ -104,4 +107,4 @@ const ESTDynamicFormStep = ({
   );
 };
 
-export default ESTDynamicFormStep;
+export default DynamicFormStep;
