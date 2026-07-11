@@ -181,7 +181,7 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     [getBasePath, navigate]
   );
 
-  const ESTAssignAssetsCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTAssignAssetsCheckPage");
+  const ESTDynamicCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTDynamicCheckPage");
   const ESTAllotmentAcknowledgement = Digit?.ComponentRegistryService?.getComponent("ESTAllotmentAcknowledgement");
 
   if (isLoading || !initialConfig || config.length === 0) {
@@ -221,7 +221,8 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
       <Route
         path="check/*"
         element={
-          <ESTAssignAssetsCheckPage
+          <ESTDynamicCheckPage
+            flow="allotment"
             onSubmit={estcreate}
             onError={estcreateError}
             value={params}

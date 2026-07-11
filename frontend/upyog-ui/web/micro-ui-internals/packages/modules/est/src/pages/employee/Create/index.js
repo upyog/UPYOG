@@ -205,7 +205,7 @@ const ESTRegCreate = ({ parentRoute }) => {
     return <Loader />;
   }
 
-  const ESTRegCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTRegCheckPage");
+  const ESTDynamicCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTDynamicCheckPage");
   const ESTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("ESTAcknowledgement");
 
   return (
@@ -241,7 +241,8 @@ const ESTRegCreate = ({ parentRoute }) => {
       <Route
         path="check/*"
         element={
-          <ESTRegCheckPage
+          <ESTDynamicCheckPage
+            flow="registration"
             onSubmit={estcreate}
             onError={estcreateError}
             value={params}

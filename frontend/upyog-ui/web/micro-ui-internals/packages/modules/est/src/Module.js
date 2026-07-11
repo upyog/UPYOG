@@ -8,6 +8,7 @@ import MyApplications from "./pages/citizen/MyApplications";
 import { ESTPaymentHistory } from "./pages/citizen/PaymentHistory";
 import ESTManageProperties from "./PageComponents/ESTManageProperties";
 import NewRegistration from "./PageComponents/ESTNEWRegistration";
+import ESTDynamicCheckPage from "./pages/employee/Create/ESTDynamicCheckPage";
 import ESTRegCheckPage from "./pages/employee/Create/ESTRegCheckPage";
 import ESTRegCreate from "./pages/employee/Create";
 import ESTAcknowledgement from "./pages/employee/Create/ESTAcknowledgement";
@@ -28,6 +29,7 @@ const componentsToRegister = {
   NewRegistration,
   ESTManageProperties,
   ESTRegCreate,
+  ESTDynamicCheckPage,
   ESTRegCheckPage,
   ESTAcknowledgement,
   ESTAllotmentAcknowledgement,
@@ -40,13 +42,15 @@ const componentsToRegister = {
   ESTApplicationDetails,
 };
 
+let componentsRegistered = false;
+
 const addComponentsToRegistry = () => {
+  if (componentsRegistered || !Digit?.ComponentRegistryService?.setComponent) return;
   Object.entries(componentsToRegister).forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
+  componentsRegistered = true;
 };
-
-addComponentsToRegistry();
 
 export const ESTModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = Digit.Hooks.useModuleBasePath();
@@ -57,6 +61,7 @@ export const ESTModule = ({ stateCode, userType, tenants }) => {
     moduleCode,
     language,
   });
+  addComponentsToRegistry();
   Digit.SessionStorage.set("EST_TENANTS", tenants);
 
   if (userType === "employee") {

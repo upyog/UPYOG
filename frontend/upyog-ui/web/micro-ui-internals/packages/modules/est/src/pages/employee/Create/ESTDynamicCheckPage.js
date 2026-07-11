@@ -1,0 +1,135 @@
+import React, { useCallback, useMemo } from "react";
+import {
+  DynamicCheckPage,
+  formatCheckPageDate,
+  mergeRouteConfig,
+  resolveRouteConfigFromSteps,
+  useDynamicCheckSubmit,
+  useDynamicRouteConfig,
+} from "@nudmcdgnpm/digit-ui-react-components";
+import { useTranslation } from "react-i18next";
+import { EST_CHECK_FLOWS } from "../../../config/estCheckPageConfig";
+import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig";
+import { checkForNA, createAllotmentData, ESTDocumnetPreview } from "../../../utils";
+import { buildDynamicAssetPayload, getEstateRequestInfo } from "../../../utils/assetPayloadUtils";
+import { getCreateAssetPath } from "../../../utils/estRoutes";
+
+/**
+ * Unified EST check page — renders DynamicCheckPage for any wizard flow.
+ * Pass flow="registration" | flow="allotment" (see estCheckPageConfig.js).
+ */
+const ESTDynamicCheckPage = ({
+  flow,
+  onSubmit,
+  onError,
+  value = {},
+  config,
+}) => {
+  const flowConfig = EST_CHECK_FLOWS[flow];
+  const stepKey = flowConfig?.stepKey || "newRegistration";
+  const logTag = flowConfig?.logTag || "EST_CHECK";
+  const summaryHeaderCode = flowConfig?.summaryHeaderCode || "EST_REGISTRATION_SUMMARY";
+  const defaultSectionHeaderCode = flowConfig?.defaultSectionHeaderCode || "EST_ASSET_DETAILS";
+  const isRegistration = flow === "registration";
+  const isAllotment = flow === "allotment";
+
+  const { t } = useTranslation();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
+  const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
+
+  const createMutation = Digit.Hooks.estate.useESTCreateAPI(tenantId);
+  const allotMutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
+  const mutation = isRegistration ? createMutation : allotMutation;
+
+  const sessionRouteConfig = useDynamicRouteConfig(config, stepKey, value);
+
+  const routeConfig = useMemo(() => {
+    if (isAllotment) {
+      return mergeRouteConfig(resolveRouteConfigFromSteps(config, stepKey), {
+        ...estateAllotmentFormConfig,
+        ...sessionRouteConfig,
+      });
+    }
+    return sessionRouteConfig;
+  }, [isAllotment, config, stepKey, sessionRouteConfig]);
+
+  const flatAsset = useMemo(() => {
+    if (!isRegistration) return {};
+    const payloadKey = routeConfig?.payloadKey || "Assets";
+    const saved = value?.[stepKey]?.[payloadKey] || value?.[stepKey]?.Assets;
+    if (Array.isArray(saved)) return saved[0] || {};
+    return saved || {};
+  }, [isRegistration, value, routeConfig, stepKey]);
+
+  const extraData = useMemo(() => {
+    if (!isAllotment) return {};
+    const assetData = value?.assetData || {};
+    return {
+      assetNo: assetData.estateNo,
+      assetRefNumber: assetData.assetRefNumber,
+      buildingName: assetData.buildingName,
+      localityDisplay: assetData.locality,
+      totalFloorArea: assetData.totalFloorArea,
+      buildingFloor: assetData.buildingFloor || assetData.floor,
+      assetRate: assetData.rate,
+    };
+  }, [isAllotment, value]);
+
+  const buildPayload = useCallback(() => {
+    if (isRegistration) {
+      return {
+        RequestInfo: getEstateRequestInfo({
+          msgId: `${Date.now()}|en_IN`,
+          plainAccessRequest: {},
+          apiId: routeConfig?.apiId,
+        }),
+        Assets: [buildDynamicAssetPayload(routeConfig, flatAsset, tenantId)],
+      };
+    }
+    return createAllotmentData(value, routeConfig);
+  }, [isRegistration, routeConfig, flatAsset, tenantId, value]);
+
+  const { isSubmitting, handleSubmit } = useDynamicCheckSubmit({
+    routeConfig,
+    buildPayload,
+    mutation,
+    onSubmit,
+    onError,
+    logTag,
+  });
+
+  const editRoute = isRegistration
+    ? getCreateAssetPath(modulePath)
+    : `${modulePath}/assignassets/assign-assets`;
+
+  const editNavigationState = useMemo(
+    () => (isRegistration ? { editData: flatAsset } : undefined),
+    [isRegistration, flatAsset]
+  );
+
+  if (!flowConfig) {
+    console.error(`ESTDynamicCheckPage: unknown flow "${flow}"`);
+    return null;
+  }
+
+  return (
+    <DynamicCheckPage
+      routeConfig={routeConfig}
+      config={{ key: stepKey }}
+      value={value}
+      extraData={isAllotment ? extraData : undefined}
+      editRoute={editRoute}
+      editNavigationState={editNavigationState}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      summaryHeaderCode={summaryHeaderCode}
+      defaultSectionHeaderCode={defaultSectionHeaderCode}
+      t={t}
+      formatDate={formatCheckPageDate}
+      checkNA={checkForNA}
+      DocumentPreview={ESTDocumnetPreview}
+    />
+  );
+};
+
+export default ESTDynamicCheckPage;
