@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { mergeSessionStepWithRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import {
@@ -25,7 +26,7 @@ const useEstWizard = ({
   const { pathname } = location;
   const navigate = Digit.Hooks.useCustomNavigate();
   const match = Digit.Hooks.useModuleBasePath();
-  const queryClient = Digit.Hooks.useQueryClient?.() || { invalidateQueries: () => {} };
+  const queryClient = useQueryClient();
 
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage(sessionKey, {});
 

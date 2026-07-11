@@ -60,3 +60,22 @@ export const resolveLocalityDisplay = (asset, t = (k) => k) => {
   }
   return raw;
 };
+
+const pickValue = (...values) =>
+  values.find((v) => v !== null && v !== undefined && v !== "");
+
+/** Shared asset summary fields for assign-assets form, check page, and ack PDF. */
+export const buildAllotmentAssetDisplay = (asset = {}, allotment = {}, t = (k) => k) => ({
+  assetNo: pickValue(allotment.assetNo, asset.estateNo, asset.assetNo),
+  assetRefNumber: pickValue(
+    allotment.assetReferenceNo,
+    allotment.assetRefNumber,
+    asset.refAssetNo,
+    asset.assetRef
+  ),
+  buildingName: pickValue(allotment.buildingName, asset.buildingName),
+  localityDisplay: resolveLocalityDisplay(asset, t),
+  totalFloorArea: pickValue(allotment.totalFloorArea, asset.totalFloorArea),
+  buildingFloor: pickValue(allotment.buildingFloor, asset.buildingFloor, asset.floor),
+  assetRate: pickValue(allotment.rentRate, allotment.rate, asset.rate),
+});

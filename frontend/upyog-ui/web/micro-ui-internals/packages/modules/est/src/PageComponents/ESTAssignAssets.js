@@ -6,7 +6,7 @@ import {
   mergeAllotmentPrefill,
   pickMeaningfulFormValues,
 } from "../utils/allotmentFormUtils";
-import { resolveLocalityDisplay } from "../utils/estMdmsUtils";
+import { buildAllotmentAssetDisplay } from "../utils/estMdmsUtils";
 
 const PAYLOAD_KEY = "Allotments";
 const STEP_KEY = "Allotments";
@@ -19,18 +19,10 @@ const ESTAssignAssets = ({ onSelect, onDraftSave, onDraftClear, config, formData
   const sessionDraft =
     persistedData?.[STEP_KEY]?.[PAYLOAD_KEY]?.[0] || {};
 
-  const assetDisplay = useMemo(() => {
-    const asset = persistedData?.assetData || {};
-    return {
-      assetNo: asset.estateNo || asset.assetNo || "",
-      assetRefNumber: asset.assetRef || asset.refAssetNo || "",
-      buildingName: asset.buildingName || "",
-      localityDisplay: resolveLocalityDisplay(asset, t),
-      totalFloorArea: asset.totalFloorArea || "",
-      buildingFloor: asset.buildingFloor || "",
-      assetRate: asset.rate || "",
-    };
-  }, [persistedData, t]);
+  const assetDisplay = useMemo(
+    () => buildAllotmentAssetDisplay(persistedData?.assetData || {}, {}, t),
+    [persistedData, t]
+  );
 
   const prefillData = useMemo(
     () => mergeAllotmentPrefill({}, sessionDraft, assetDisplay),

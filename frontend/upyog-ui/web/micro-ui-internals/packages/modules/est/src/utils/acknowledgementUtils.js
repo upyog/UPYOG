@@ -12,7 +12,7 @@ import {
 import estateAllotmentFormOverrides from "../config/Create/estateAllotmentFormOverrides";
 import { normalizeAllotmentFlatData } from "./allotmentFormUtils";
 import { filterEmpty, formatDate, formatDurationWithMonths, pick, checkForNA } from "./index";
-import { resolveLocalityDisplay } from "./estMdmsUtils";
+import { buildAllotmentAssetDisplay, resolveLocalityDisplay } from "./estMdmsUtils";
 
 const isEmptyAckValue = (value, t) => {
   if (value === undefined || value === null || value === "") return true;
@@ -53,20 +53,8 @@ export const resolveAllotmentAckContext = (application = {}) => {
 };
 
 /** extraData mirror for asset prefill fields (same idea as ESTDynamicCheckPage). */
-export const buildAllotmentAckExtraData = (asset = {}, allotment = {}, t = (k) => k) => ({
-  assetNo: pick(allotment.assetNo, asset.estateNo, asset.assetNo),
-  assetRefNumber: pick(
-    allotment.assetReferenceNo,
-    allotment.assetRefNumber,
-    asset.refAssetNo,
-    asset.assetRef
-  ),
-  buildingName: pick(allotment.buildingName, asset.buildingName),
-  localityDisplay: resolveLocalityDisplay(asset, t),
-  totalFloorArea: pick(allotment.totalFloorArea, asset.totalFloorArea),
-  buildingFloor: pick(allotment.buildingFloor, asset.buildingFloor, asset.floor),
-  assetRate: pick(allotment.rentRate, allotment.rate, asset.rate),
-});
+export const buildAllotmentAckExtraData = (asset = {}, allotment = {}, t = (k) => k) =>
+  buildAllotmentAssetDisplay(asset, allotment, t);
 
 /** Normalize API/session allotment into form field names used by routeConfig. */
 export const buildAllotmentAckFormValues = (allotment = {}, asset = {}, routeConfig = {}) => {

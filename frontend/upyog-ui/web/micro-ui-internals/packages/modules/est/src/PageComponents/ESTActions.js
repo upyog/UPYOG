@@ -42,7 +42,7 @@ const ESTActions = () => {
                         </span>
 
                         {/* INTEREST */}
-                        <span classname="link">
+                        <span className="link">
                             <Link
                                 to={`${modulePath}/manage-interest`}
                                 style={{

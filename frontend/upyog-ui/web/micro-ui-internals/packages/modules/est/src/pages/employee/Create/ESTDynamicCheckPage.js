@@ -12,7 +12,7 @@ import estateFormConfig from "../../../config/estateFormConfig";
 import { checkForNA, createAllotmentData, ESTDocumnetPreview } from "../../../utils";
 import { buildDynamicAssetPayload, getEstateRequestInfo } from "../../../utils/assetPayloadUtils";
 import { getCreateAssetPath } from "../../../utils/estRoutes";
-import { resolveLocalityDisplay } from "../../../utils/estMdmsUtils";
+import { buildAllotmentAssetDisplay } from "../../../utils/estMdmsUtils";
 
 /**
  * Unified EST check page — renders DynamicCheckPage for any wizard flow.
@@ -60,16 +60,7 @@ const ESTDynamicCheckPage = ({
 
   const extraData = useMemo(() => {
     if (!isAllotment) return {};
-    const assetData = value?.assetData || {};
-    return {
-      assetNo: assetData.estateNo,
-      assetRefNumber: assetData.assetRefNumber,
-      buildingName: assetData.buildingName,
-      localityDisplay: resolveLocalityDisplay(assetData, t),
-      totalFloorArea: assetData.totalFloorArea,
-      buildingFloor: assetData.buildingFloor || assetData.floor,
-      assetRate: assetData.rate,
-    };
+    return buildAllotmentAssetDisplay(value?.assetData || {}, {}, t);
   }, [isAllotment, value, t]);
 
   const buildPayload = useCallback(() => {

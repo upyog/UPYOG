@@ -1,24 +1,14 @@
-import { Loader, mergeSessionStepWithRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useMemo, useCallback, useEffect, useRef } from "react";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { buildAllotmentAcknowledgementData } from "../../../utils";
 import { getAssetIdentity } from "../../../utils/allotmentFormUtils";
-import {
-  buildWizardSteps,
-  createWizardGoNext,
-  getWizardBasePath,
-} from "../../../utils/estWizardUtils";
+import useEstWizard from "../../../utils/useEstWizard";
 
 const ESTAssignAssetCreate = ({ parentRoute }) => {
   const location = useLocation();
-  const queryClient = useQueryClient();
-  const match = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
-  const { pathname } = location;
-  const navigate = Digit.Hooks.useCustomNavigate();
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EST_ASSIGN_ASSETS", {});
   const appliedNavRef = useRef(null);
 
   const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
@@ -30,7 +20,29 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     }
   );
 
-  const config = useMemo(() => buildWizardSteps(initialConfig, "info"), [initialConfig]);
+  const {
+    config,
+    params,
+    setParams,
+    match,
+    handleSelect,
+    onAckSuccess,
+    onCheckSuccess: estcreate,
+    onCheckError: estcreateError,
+    isReady,
+  } = useEstWizard({
+    mdmsData: initialConfig,
+    isLoading,
+    indexRoute: "info",
+    sessionKey: "EST_ASSIGN_ASSETS",
+    terminalSegments: ["check", "acknowledgement", "info", "assign-assets"],
+    multiStepNavigation: false,
+    invalidateQueryKey: "EST_ASSIGN_ASSETS",
+    buildSuccessAckState: (response, sessionParams) => ({
+      data: buildAllotmentAcknowledgementData(sessionParams, response),
+      isSuccess: true,
+    }),
+  });
 
   useEffect(() => {
     const incoming = location.state?.assetData;
@@ -87,30 +99,6 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     });
   }, [location.state, setParams]);
 
-  const getBasePath = useCallback(
-    () =>
-      getWizardBasePath(pathname, match?.pathnameBase, [
-        "check",
-        "acknowledgement",
-        "info",
-        "assign-assets",
-      ]),
-    [match, pathname]
-  );
-
-  const goNext = useCallback(
-    createWizardGoNext({ pathname, config, navigate, multiStep: false }),
-    [pathname, config, navigate]
-  );
-
-  const handleSelect = useCallback(
-    (key, data, skipStep, index, isAddMultiple = false) => {
-      setParams((prev) => mergeSessionStepWithRouteConfig(prev, key, data));
-      goNext(skipStep, index, isAddMultiple, key);
-    },
-    [setParams, goNext]
-  );
-
   const handleDraftSave = useCallback(
     (key, data) => {
       setParams((prev) => ({
@@ -132,36 +120,11 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     [setParams]
   );
 
-  const onSuccess = useCallback(() => {
-    clearParams();
-    queryClient.invalidateQueries("EST_ASSIGN_ASSETS");
-  }, [clearParams, queryClient]);
-
-  const estcreate = useCallback(
-    (response) => {
-      const merged = buildAllotmentAcknowledgementData(params, response);
-      clearParams();
-      queryClient.invalidateQueries("EST_ASSIGN_ASSETS");
-      navigate(`${getBasePath()}/acknowledgement`, {
-        state: { data: merged, isSuccess: true },
-      });
-    },
-    [params, clearParams, queryClient, getBasePath, navigate]
-  );
-
-  const estcreateError = useCallback(
-    (error) => {
-      navigate(`${getBasePath()}/acknowledgement`, {
-        state: { data: null, isSuccess: false, error },
-      });
-    },
-    [getBasePath, navigate]
-  );
-
   const ESTDynamicCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTDynamicCheckPage");
-  const ESTAllotmentAcknowledgement = Digit?.ComponentRegistryService?.getComponent("ESTAllotmentAcknowledgement");
+  const ESTAllotmentAcknowledgement =
+    Digit?.ComponentRegistryService?.getComponent("ESTAllotmentAcknowledgement");
 
-  if (isLoading || !initialConfig || config.length === 0) {
+  if (!isReady) {
     return <Loader />;
   }
 
@@ -207,7 +170,7 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
       />
       <Route
         path="acknowledgement/*"
-        element={<ESTAllotmentAcknowledgement data={params} onSuccess={onSuccess} />}
+        element={<ESTAllotmentAcknowledgement onSuccess={onAckSuccess} />}
       />
       <Route path="/*" element={<Navigate to={config.indexRoute} replace />} />
     </Routes>
