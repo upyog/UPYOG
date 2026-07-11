@@ -13,6 +13,11 @@ import { mergeSessionStepWithRouteConfig } from "@nudmcdgnpm/digit-ui-react-comp
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import {
+  buildWizardSteps,
+  createWizardGoNext,
+  getWizardBasePath,
+} from "../../../utils/estWizardUtils";
 
 const ESTRegCreate = ({ parentRoute }) => {
   // ─── ALL hooks first — no early return may appear before this block ends ───
@@ -47,17 +52,10 @@ const ESTRegCreate = ({ parentRoute }) => {
     }
   );
 
-  // Build config safely even while initialConfig is still undefined.
-  // (Must run on every render — cannot sit below a conditional return.)
-  const config = useMemo(() => {
-    if (!initialConfig || !Array.isArray(initialConfig)) return [];
-    const merged = initialConfig.reduce((acc, entry) => {
-      if (!entry?.body) return acc;
-      return acc.concat(entry.body.filter((step) => !step.hideInEmployee));
-    }, []);
-    merged.indexRoute = "newRegistration";
-    return merged;
-  }, [initialConfig]);
+  const config = useMemo(
+    () => buildWizardSteps(initialConfig, "newRegistration"),
+    [initialConfig]
+  );
 
   // Side effect: set applicationType (was previously executed during render)
   useEffect(() => {
@@ -84,68 +82,18 @@ const ESTRegCreate = ({ parentRoute }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  const getBasePath = useCallback(() => {
-    if (match?.pathnameBase) return match.pathnameBase;
-
-    const parts = pathname.split("/");
-    const terminalSegments = ["check", "acknowledgement", "newRegistration"];
-    const terminalIndex = parts.findIndex((p) => terminalSegments.includes(p));
-    if (terminalIndex > 0) {
-      return parts.slice(0, terminalIndex).join("/");
-    }
-    return parts.slice(0, -1).join("/");
-  }, [match, pathname]);
+  const getBasePath = useCallback(
+    () =>
+      getWizardBasePath(pathname, match?.pathnameBase, [
+        "check",
+        "acknowledgement",
+        "newRegistration",
+      ]),
+    [match, pathname]
+  );
 
   const goNext = useCallback(
-    (skipStep, index, isAddMultiple, key) => {
-      let currentPath = pathname.split("/").pop(),
-        lastchar = currentPath.charAt(currentPath.length - 1),
-        isMultiple = false,
-        nextPage;
-
-      if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
-        if (currentPath == "-1" || currentPath == "-2") {
-          currentPath = pathname.slice(0, -3);
-          currentPath = currentPath.split("/").pop();
-          isMultiple = true;
-        } else {
-          currentPath = pathname.slice(0, -2);
-          currentPath = currentPath.split("/").pop();
-          isMultiple = true;
-        }
-      } else {
-        isMultiple = false;
-      }
-
-      if (!isNaN(lastchar)) isMultiple = true;
-
-      let { nextStep = {} } =
-        config.find((routeObj) => routeObj.route === currentPath) || {};
-
-      let redirectWithHistory = (to, state) =>
-        navigate(to, state != null ? { state } : undefined);
-
-      if (skipStep) {
-        redirectWithHistory = (to, state) =>
-          navigate(to, state != null ? { replace: true, state } : { replace: true });
-      }
-
-      if (isAddMultiple) nextStep = key;
-      if (nextStep === null) return redirectWithHistory("check");
-
-      // Guard: if no matching route was found, nextStep is the default {}
-      // and calling .split() on it throws. Fall back to the check page.
-      if (typeof nextStep !== "string") return redirectWithHistory("check");
-
-      if (!isNaN(nextStep.split("/").pop())) {
-        nextPage = `${nextStep}`;
-      } else {
-        nextPage =
-          isMultiple && nextStep !== "map" ? `${nextStep}/${index}` : `${nextStep}`;
-      }
-
-      redirectWithHistory(nextPage);
-    },
+    createWizardGoNext({ pathname, config, navigate, multiStep: true }),
     [pathname, config, navigate]
   );
 

@@ -15,21 +15,15 @@ const SearchApp = ({ path }) => {
   const [showToast, setShowToast] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
 
-  function onSubmit(_data) {
+  function onSubmit(data) {
     setHasSearched(true);
 
-    const data = { ..._data };
-    const searchCriteria = {};
+    const { offset, limit, sortBy, sortOrder, ...searchCriteria } = data || {};
+    const hasCriteria = Object.values(searchCriteria).some(
+      (val) => val !== undefined && val !== null && val !== ""
+    );
 
-    // flatten any dropdown objects to their code
-    Object.keys(data).forEach((key) => {
-      const val = data[key];
-      if (val !== undefined && val !== null && val !== "") {
-        searchCriteria[key] = typeof val === "object" ? val.code : val;
-      }
-    });
-
-    if (Object.keys(searchCriteria).length > 0) {
+    if (hasCriteria) {
       setPayload(searchCriteria);
     } else {
       setShowToast({ error: true, label: "Please enter search criteria" });
@@ -59,6 +53,7 @@ const SearchApp = ({ path }) => {
 
   return (
     <React.Fragment>
+      
       <ESTSearchApplication
         t={t}
         isLoading={isLoading}

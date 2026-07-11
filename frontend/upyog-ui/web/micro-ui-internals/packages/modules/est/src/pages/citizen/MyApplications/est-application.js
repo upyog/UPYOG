@@ -5,20 +5,23 @@ import { useTranslation } from "react-i18next";
 // Estate Application Component
 // This component displays the details of an estate application and provides options to view the summary or make a payment.
 
+import { getCitizenPaymentPath } from "../../../utils/estRoutes";
+
 const EstateApplication = ({ application, tenantId }) => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
   const handleViewSummary = () => {
-    navigate(`/upyog-ui/citizen/est/application/${application?.estateNo}/${application?.tenantId}`, {
+    navigate(`${modulePath}/application/${application?.estateNo}/${application?.tenantId}`, {
       assetData: application,
-      tenantId
+      tenantId,
     });
   };
 
   const handleMakePayment = () => {
     navigate({
-      pathname: `/upyog-ui/citizen/payment/my-bills/est-services/${application?.estateNo}`,
+      pathname: getCitizenPaymentPath(application?.estateNo),
       state: { tenantId },
     });
   };

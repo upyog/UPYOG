@@ -3,12 +3,12 @@
  * Document preview: ./ESTDocumentPreview.js (re-exported below).
  */
 
+import { mergeRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";
 import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
 import { extractFileStoreId } from "./allotmentDocumentUtils";
 import { normalizeAllotmentFlatData } from "./allotmentFormUtils";
 import { buildDynamicAssetPayload } from "./assetPayloadUtils";
 import estateFormConfig from "../config/estateFormConfig";
-import { Config as registrationConfig } from "../config/Create/config";
 
 const parseESTDate = (value) => {
   if (value === null || value === undefined || value === "") return null;
@@ -87,10 +87,12 @@ const toFlatAssetForPayload = (assetData = {}) => ({
   refAssetNo: assetData.refAssetNo || assetData.refAsset || "",
 });
 
-const getAssetRouteConfig = () => {
-  const step =
-    registrationConfig?.[0]?.body?.find((s) => s.key === "newRegistration") || {};
-  return { ...step, ...estateFormConfig };
+const getAssetRouteConfig = (data = {}) => {
+  const fromSession = data?.routeConfigs?.newRegistration;
+  if (fromSession?.form?.length) {
+    return mergeRouteConfig(fromSession, estateFormConfig);
+  }
+  return estateFormConfig;
 };
 
 const estPayloadData = (data) => {
@@ -98,7 +100,7 @@ const estPayloadData = (data) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const assetData = extractAssetDataFromSession(data);
   const flatAsset = toFlatAssetForPayload(assetData);
-  const routeConfig = getAssetRouteConfig();
+  const routeConfig = getAssetRouteConfig(data);
   const assetPayload = buildDynamicAssetPayload(routeConfig, flatAsset, tenantId);
 
   return {

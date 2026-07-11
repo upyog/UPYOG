@@ -171,16 +171,11 @@ const useAssetTableColumns = ({
           if (actions === "allot") {
             return (
               <button
-                onClick={() =>
-                  allotted ? onEdit?.(row.original) : onAllot?.(row.original)
-                }
-                style={
-                  allotted
-                    ? editButtonStyle(isMobile)
-                    : allotButtonStyle(isMobile, false)
-                }
+                onClick={() => !allotted && onAllot?.(row.original)}
+                style={allotButtonStyle(isMobile, allotted)}
+                disabled={allotted}
               >
-                {allotted ? "Edit Asset" : "Allot Asset"}
+                Allot Asset
               </button>
             );
           }

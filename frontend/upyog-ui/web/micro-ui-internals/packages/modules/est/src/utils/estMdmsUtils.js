@@ -39,3 +39,24 @@ export const resolveSearchApplicationConfig = (mdmsData, override = {}) => {
     routeConfig,
   };
 };
+
+/** Resolve locality label from asset row (MDMS codes, objects, or plain strings). */
+export const resolveLocalityDisplay = (asset, t = (k) => k) => {
+  if (!asset) return "";
+  const locObj = asset.locality || asset.address?.locality;
+  if (typeof locObj === "string") {
+    if (locObj.startsWith("TENANT_") || locObj.startsWith("EST_")) return t(locObj);
+    return locObj;
+  }
+  if (locObj && typeof locObj === "object") {
+    if (locObj.i18nKey) return t(locObj.i18nKey);
+    return locObj.label || locObj.name || locObj.code || "";
+  }
+  const candidates = [asset.localityName, asset.localityCode, asset.serviceType];
+  const raw = candidates.find((v) => v !== undefined && v !== null && v !== "");
+  if (!raw) return "";
+  if (typeof raw === "string" && (raw.startsWith("TENANT_") || raw.startsWith("EST_"))) {
+    return t(raw);
+  }
+  return raw;
+};

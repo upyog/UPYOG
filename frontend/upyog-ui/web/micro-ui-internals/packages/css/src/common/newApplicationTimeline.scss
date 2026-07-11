@@ -351,4 +351,8 @@
     background-color: var(--bg-soft);
     transition: 0.2s ease;
   }
+  .custom-error {
+    color:green;
+    border: 1px solid red;
+  }
 }

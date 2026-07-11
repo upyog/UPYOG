@@ -148,7 +148,7 @@ export const findFieldConfig = (formConfig = [], fieldName) =>
 const mergeFormField = (local, mdms) => {
   const mergedField = { ...local.field, ...mdms.field };
   // Local bindings for compute/label/prefill must survive MDMS field overrides.
-  ["name", "computeFrom", "computeFn", "labelBy", "prefillFrom"].forEach((key) => {
+  ["name", "computeFrom", "computeFn", "labelBy", "prefillFrom", "dataSource", "numeric"].forEach((key) => {
     if (local.field?.[key] != null) mergedField[key] = local.field[key];
   });
 
@@ -160,6 +160,9 @@ const mergeFormField = (local, mdms) => {
     validation: { ...(mdms.validation || {}), ...(local.validation || {}) },
     messages: { ...(mdms.messages || {}), ...(local.messages || {}) },
   };
+  ["apiFieldName", "submitKey", "excludeFromPayload"].forEach((key) => {
+    if (local[key] != null) merged[key] = local[key];
+  });
   if (Array.isArray(mdms.options) && mdms.options.length > 0) {
     merged.options = mdms.options;
   }

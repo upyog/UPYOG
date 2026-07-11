@@ -5,6 +5,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { buildAllotmentAcknowledgementData } from "../../../utils";
 import { getAssetIdentity } from "../../../utils/allotmentFormUtils";
+import {
+  buildWizardSteps,
+  createWizardGoNext,
+  getWizardBasePath,
+} from "../../../utils/estWizardUtils";
 
 const ESTAssignAssetCreate = ({ parentRoute }) => {
   const location = useLocation();
@@ -25,15 +30,7 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     }
   );
 
-  const config = useMemo(() => {
-    if (!initialConfig || !Array.isArray(initialConfig)) return [];
-    const merged = initialConfig.reduce((acc, entry) => {
-      if (!entry?.body) return acc;
-      return acc.concat(entry.body.filter((step) => !step.hideInEmployee));
-    }, []);
-    merged.indexRoute = "info";
-    return merged;
-  }, [initialConfig]);
+  const config = useMemo(() => buildWizardSteps(initialConfig, "info"), [initialConfig]);
 
   useEffect(() => {
     const incoming = location.state?.assetData;
@@ -90,36 +87,19 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     });
   }, [location.state, setParams]);
 
-  const getBasePath = useCallback(() => {
-    if (match?.pathnameBase) return match.pathnameBase;
-
-    const parts = pathname.split("/");
-    const terminalSegments = ["check", "acknowledgement", "info", "assign-assets"];
-    const terminalIndex = parts.findIndex((p) => terminalSegments.includes(p));
-    if (terminalIndex > 0) {
-      return parts.slice(0, terminalIndex).join("/");
-    }
-    return parts.slice(0, -1).join("/");
-  }, [match, pathname]);
+  const getBasePath = useCallback(
+    () =>
+      getWizardBasePath(pathname, match?.pathnameBase, [
+        "check",
+        "acknowledgement",
+        "info",
+        "assign-assets",
+      ]),
+    [match, pathname]
+  );
 
   const goNext = useCallback(
-    (skipStep, index, isAddMultiple, key) => {
-      let currentPath = pathname.split("/").pop();
-      let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath) || {};
-
-      let redirectWithHistory = (to, state) =>
-        navigate(to, state != null ? { state } : undefined);
-      if (skipStep) {
-        redirectWithHistory = (to, state) =>
-          navigate(to, state != null ? { replace: true, state } : { replace: true });
-      }
-
-      if (isAddMultiple) nextStep = key;
-      if (nextStep === null) return redirectWithHistory("check");
-      if (typeof nextStep !== "string") return redirectWithHistory("check");
-
-      redirectWithHistory(`${nextStep}`);
-    },
+    createWizardGoNext({ pathname, config, navigate, multiStep: false }),
     [pathname, config, navigate]
   );
 

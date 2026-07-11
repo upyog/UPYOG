@@ -2,18 +2,17 @@ import React, { useCallback, useMemo } from "react";
 import {
   DynamicCheckPage,
   formatCheckPageDate,
-  mergeRouteConfig,
-  resolveRouteConfigFromSteps,
   useDynamicCheckSubmit,
-  useDynamicRouteConfig,
+  useMergedRouteConfig,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { EST_CHECK_FLOWS } from "../../../config/estCheckPageConfig";
-import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig";
+import estateAllotmentFormOverrides from "../../../config/Create/estateAllotmentFormOverrides";
 import estateFormConfig from "../../../config/estateFormConfig";
 import { checkForNA, createAllotmentData, ESTDocumnetPreview } from "../../../utils";
 import { buildDynamicAssetPayload, getEstateRequestInfo } from "../../../utils/assetPayloadUtils";
 import { getCreateAssetPath } from "../../../utils/estRoutes";
+import { resolveLocalityDisplay } from "../../../utils/estMdmsUtils";
 
 /**
  * Unified EST check page — renders DynamicCheckPage for any wizard flow.
@@ -42,18 +41,14 @@ const ESTDynamicCheckPage = ({
   const allotMutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
   const mutation = isRegistration ? createMutation : allotMutation;
 
-  const sessionRouteConfig = useDynamicRouteConfig(config, stepKey, value);
+  const sessionRouteConfig = useMergedRouteConfig(
+    config,
+    stepKey,
+    value,
+    isAllotment ? estateAllotmentFormOverrides : estateFormConfig
+  );
 
-  const routeConfig = useMemo(() => {
-    const mdmsStep = resolveRouteConfigFromSteps(config, stepKey);
-    const activeConfig =
-      sessionRouteConfig?.form?.length > 0 ? sessionRouteConfig : mdmsStep;
-
-    if (isAllotment) {
-      return mergeRouteConfig(activeConfig, estateAllotmentFormConfig);
-    }
-    return mergeRouteConfig(activeConfig, estateFormConfig);
-  }, [isAllotment, config, stepKey, sessionRouteConfig]);
+  const routeConfig = sessionRouteConfig;
 
   const flatAsset = useMemo(() => {
     if (!isRegistration) return {};
@@ -70,12 +65,12 @@ const ESTDynamicCheckPage = ({
       assetNo: assetData.estateNo,
       assetRefNumber: assetData.assetRefNumber,
       buildingName: assetData.buildingName,
-      localityDisplay: assetData.locality,
+      localityDisplay: resolveLocalityDisplay(assetData, t),
       totalFloorArea: assetData.totalFloorArea,
       buildingFloor: assetData.buildingFloor || assetData.floor,
       assetRate: assetData.rate,
     };
-  }, [isAllotment, value]);
+  }, [isAllotment, value, t]);
 
   const buildPayload = useCallback(() => {
     if (isRegistration) {

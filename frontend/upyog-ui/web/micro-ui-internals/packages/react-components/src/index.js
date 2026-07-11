@@ -275,6 +275,7 @@ export {
   mapFormToSearchFilters,
 } from "./utilities/searchUtils";
 export { default as useDynamicRouteConfig } from "./utilities/useDynamicRouteConfig";
+export { default as useMergedRouteConfig } from "./utilities/useMergedRouteConfig";
 export { default as useDynamicCheckSubmit } from "./utilities/useDynamicCheckSubmit";
 export { default as useIsMobile } from "./utilities/useIsMobile";
 export { default as useClientPagination } from "./utilities/useClientPagination";
