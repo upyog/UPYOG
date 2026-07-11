@@ -2,7 +2,7 @@
 // Shared helpers for DynamicCheckPage and module-specific check wrappers.
 // Works with the same routeConfig.form that DynamicForm / DynamicFormField use.
 
-import { sortByOrder, resolveFieldLabelKey } from "./formUtils";
+import { sortByOrder, resolveFieldLabelKey, mergeFormFieldConfigs } from "./formUtils";
 import { extractFileStoreId } from "./payloadUtils";
 
 export { resolveFieldLabelKey };
@@ -57,10 +57,19 @@ export const resolveRouteConfigFromSteps = (config, stepKey) => {
 };
 
 /** Merge MDMS route entry with a module's local form-config overrides. */
-export const mergeRouteConfig = (rawRouteConfig = {}, localFormConfig = {}) => ({
-  ...rawRouteConfig,
-  ...localFormConfig,
-});
+export const mergeRouteConfig = (rawRouteConfig = {}, localFormConfig = {}) => {
+  const merged = {
+    ...rawRouteConfig,
+    ...localFormConfig,
+  };
+  if (Array.isArray(rawRouteConfig.form) || Array.isArray(localFormConfig.form)) {
+    merged.form = mergeFormFieldConfigs(
+      localFormConfig.form || [],
+      rawRouteConfig.form || []
+    );
+  }
+  return merged;
+};
 
 /** Session key where each wizard step's resolved routeConfig is stored. */
 export const ROUTE_CONFIG_SESSION_KEY = "routeConfigs";
@@ -174,6 +183,34 @@ export const buildSummarySections = (formConfig = []) => {
 
   if (current.fields.length) sections.push(current);
   return { sections, fileFields };
+};
+
+/** Pick the full document URL (not small/medium thumbnail) from filestore response. */
+export const resolveFilePreviewUrl = (rawUrl = "") => {
+  if (!rawUrl) return "";
+  if (typeof rawUrl === "string" && Digit?.Utils?.getFileUrl) {
+    return Digit.Utils.getFileUrl(rawUrl) || rawUrl.split(",")[0] || "";
+  }
+  return typeof rawUrl === "string" ? rawUrl.split(",")[0] || "" : "";
+};
+
+/** Resolve preview URL from Filefetch response for a given fileStoreId. */
+export const extractUrlFromFilefetchResponse = (response, fileStoreId, index = 0) => {
+  const data = response?.data;
+  if (!data) return "";
+
+  if (fileStoreId && data[fileStoreId]) {
+    return resolveFilePreviewUrl(data[fileStoreId]);
+  }
+
+  const arr = data.fileStoreIds;
+  if (Array.isArray(arr)) {
+    const match =
+      arr.find((o) => (o?.fileStoreId || o?.id) === fileStoreId) || arr[index];
+    return resolveFilePreviewUrl(match?.url);
+  }
+
+  return "";
 };
 
 /** Collect uploaded file references from form values for check-page preview. */

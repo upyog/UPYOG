@@ -1,6 +1,11 @@
 /**
  * Maps allotment API records to DynamicForm field names.
  */
+import {
+  calculateRentByBillingCycle,
+  findFieldConfig,
+  rehydrateBillingCycleOption,
+} from "@nudmcdgnpm/digit-ui-react-components";
 export const mapAllotmentApiToFormData = (allotment = {}) => {
   const toFormDate = (value) => {
     if (!value) return "";
@@ -160,4 +165,30 @@ export const fetchAllotmentByAssetNo = async (assetNo, tenantId) => {
     filters: { tenantId, assetNo },
   });
   return response?.Allotments?.[0] || null;
+};
+
+/** Recompute rent from rate × area × billing cycle before API submit (never string concat). */
+export const normalizeAllotmentFlatData = (flatData = {}, assetData = {}, routeConfig = {}) => {
+  const merged = {
+    ...flatData,
+    totalFloorArea: flatData.totalFloorArea || assetData.totalFloorArea || "",
+    rentRate: flatData.rentRate ?? assetData.rate ?? flatData.rentRate,
+  };
+
+  const billingField = findFieldConfig(routeConfig?.form, "billingCycle");
+  const billingOptions = billingField?.options || [];
+  const billingCycle = rehydrateBillingCycleOption(merged, routeConfig);
+
+  const monthlyRent = calculateRentByBillingCycle(
+    merged.rentRate,
+    merged.totalFloorArea,
+    billingCycle,
+    billingOptions
+  );
+
+  if (monthlyRent) {
+    merged.monthlyRent = monthlyRent;
+  }
+
+  return merged;
 };

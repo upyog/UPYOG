@@ -42,11 +42,31 @@ export const toDropdownOption = (code, name) => ({
 // codeOrObj may be a raw code string, or an already-hydrated option object.
 export const resolveOption = (codeOrObj, nameHint, options = []) => {
   if (!codeOrObj) return null;
-  if (typeof codeOrObj === "object") return codeOrObj;
-  return (
-    options.find((o) => o.code === codeOrObj) ||
-    toDropdownOption(codeOrObj, nameHint || codeOrObj)
-  );
+  if (typeof codeOrObj === "object") {
+    return enrichDropdownSelection(codeOrObj, options);
+  }
+  const matched =
+    options.find((o) => optionCode(o) === optionCode(codeOrObj)) ||
+    options.find((o) => o.code === codeOrObj);
+  return matched || toDropdownOption(codeOrObj, nameHint || codeOrObj);
+};
+
+/** Merge a dropdown selection with the full MDMS/config option (multiplier, rentLabelKey, …). */
+export const enrichDropdownSelection = (selected, options = []) => {
+  if (!selected) return selected;
+  if (!Array.isArray(options) || options.length === 0) {
+    return typeof selected === "object" ? selected : selected;
+  }
+  const code = optionCode(selected);
+  if (!code) return selected;
+  const matched = options.find((o) => optionCode(o) === code);
+  if (!matched) {
+    return typeof selected === "object" ? selected : toDropdownOption(selected, selected);
+  }
+  if (typeof selected === "object") {
+    return { ...matched, ...selected, code: matched.code || selected.code };
+  }
+  return matched;
 };
 
 /* ── shared field-value helpers ─────────────────────────────────────── */
@@ -58,16 +78,156 @@ export const optionCode = (val) => {
   return String(val).trim().toUpperCase();
 };
 
+/** Uppercase billing-cycle code from a dropdown value or plain string. */
+export const normalizeBillingCycleCode = (val) => optionCode(val);
+
+/** Legacy fallbacks when MDMS option metadata is missing (string codes only). */
+const LEGACY_BILLING_CYCLE_MULTIPLIERS = {
+  MONTHLY: 1,
+  QUARTERLY: 3,
+  YEARLY: 12,
+};
+
+/**
+ * Rent multiplier from the selected billing-cycle option (MDMS-driven).
+ * Option may carry `multiplier`, `rentMultiplier`, or `cycleMultiplier`.
+ */
+export const resolveBillingCycleMultiplier = (billingCycle, options = []) => {
+  const enriched = enrichDropdownSelection(billingCycle, options);
+  if (enriched && typeof enriched === "object") {
+    for (const key of ["multiplier", "rentMultiplier", "cycleMultiplier"]) {
+      const num = Number(enriched[key]);
+      if (Number.isFinite(num) && num > 0) return num;
+    }
+  }
+  const cycle = normalizeBillingCycleCode(enriched ?? billingCycle);
+  const fromOptions = options.find((o) => optionCode(o) === cycle);
+  if (fromOptions) {
+    for (const key of ["multiplier", "rentMultiplier", "cycleMultiplier"]) {
+      const num = Number(fromOptions[key]);
+      if (Number.isFinite(num) && num > 0) return num;
+    }
+  }
+  return LEGACY_BILLING_CYCLE_MULTIPLIERS[cycle] ?? 1;
+};
+
+const resolveLabelByCode = (labelBy, formValues = {}) => {
+  const selected = formValues[labelBy.field];
+  if (labelBy.optionKey && selected && typeof selected === "object") {
+    const fromOption = selected[labelBy.optionKey];
+    if (fromOption) return fromOption;
+  }
+  if (labelBy.optionKey) {
+    const flatMetaKey = `${labelBy.field}${labelBy.optionKey.charAt(0).toUpperCase()}${labelBy.optionKey.slice(1)}`;
+    if (formValues[flatMetaKey]) return formValues[flatMetaKey];
+  }
+  const raw = optionCode(selected);
+  return labelBy.map?.[raw] || labelBy.defaultKey;
+};
+
 /**
  * Resolve the i18n label key for a field. Supports optional `field.labelBy`:
- *   labelBy: { field: "billingCycle", map: { MONTHLY: "EST_..." }, defaultKey: "EST_..." }
+ *   labelBy: {
+ *     field: "billingCycle",
+ *     optionKey: "rentLabelKey",   // preferred — read from MDMS option
+ *     map: { MONTHLY: "EST_..." },  // optional legacy fallback
+ *     defaultKey: "EST_...",
+ *   }
  */
 export const resolveFieldLabelKey = (fieldConfig, formValues = {}) => {
   const labelBy = fieldConfig?.field?.labelBy;
   if (!labelBy) return fieldConfig?.summaryLabel || fieldConfig?.key;
 
-  const code = optionCode(formValues[labelBy.field]);
-  return labelBy.map?.[code] || labelBy.defaultKey || fieldConfig.key;
+  return resolveLabelByCode(labelBy, formValues);
+};
+
+/** Find a leaf field config by `field.name`. */
+export const findFieldConfig = (formConfig = [], fieldName) =>
+  flattenFormConfig(formConfig).find((fc) => fc.field?.name === fieldName);
+
+const mergeFormField = (local, mdms) => {
+  const mergedField = { ...local.field, ...mdms.field };
+  // Local bindings for compute/label/prefill must survive MDMS field overrides.
+  ["name", "computeFrom", "computeFn", "labelBy", "prefillFrom"].forEach((key) => {
+    if (local.field?.[key] != null) mergedField[key] = local.field[key];
+  });
+
+  const merged = {
+    ...local,
+    ...mdms,
+    field: mergedField,
+    validation: { ...(local.validation || {}), ...(mdms.validation || {}) },
+    messages: { ...(local.messages || {}), ...(mdms.messages || {}) },
+  };
+  if (Array.isArray(mdms.options) && mdms.options.length > 0) {
+    merged.options = mdms.options;
+  }
+  return merged;
+};
+
+/**
+ * Merge MDMS assignAssetConfig form fields into a module's local form.
+ * MDMS wins for options, dataSource, and field metadata when present.
+ */
+export const mergeFormFieldConfigs = (localForm = [], mdmsForm = []) => {
+  if (!Array.isArray(mdmsForm) || mdmsForm.length === 0) {
+    return sortByOrder(localForm);
+  }
+  if (!Array.isArray(localForm) || localForm.length === 0) {
+    return sortByOrder(mdmsForm);
+  }
+
+  const mdmsByName = new Map();
+  flattenFormConfig(mdmsForm).forEach((fc) => {
+    if (fc?.field?.name) mdmsByName.set(fc.field.name, fc);
+  });
+
+  const mergeItem = (item) => {
+    if (item.type === "group") {
+      return {
+        ...item,
+        children: (item.children || []).map((child) => {
+          const name = child.field?.name;
+          return name && mdmsByName.has(name)
+            ? mergeFormField(child, mdmsByName.get(name))
+            : child;
+        }),
+      };
+    }
+    const name = item.field?.name;
+    if (name && mdmsByName.has(name)) {
+      return mergeFormField(item, mdmsByName.get(name));
+    }
+    return item;
+  };
+
+  return sortByOrder(localForm.map(mergeItem));
+};
+
+/** Rehydrate a flattened billing-cycle code using session metadata or form options. */
+export const rehydrateBillingCycleOption = (flatData = {}, routeConfig = {}) => {
+  const raw = flatData.billingCycle;
+  if (raw && typeof raw === "object") return raw;
+
+  const billingField = findFieldConfig(routeConfig?.form, "billingCycle");
+  const fromOptions = resolveOption(
+    raw,
+    flatData.billingCycleName,
+    billingField?.options || []
+  );
+  if (fromOptions && typeof fromOptions === "object") return fromOptions;
+
+  if (!raw) return raw;
+
+  const multiplier =
+    flatData.billingCycleMultiplier ??
+    flatData.billingCycleRentMultiplier ??
+    flatData.billingCycleCycleMultiplier;
+  const rentLabelKey = flatData.billingCycleRentLabelKey;
+  if (multiplier != null || rentLabelKey) {
+    return { code: raw, multiplier, rentLabelKey };
+  }
+  return raw;
 };
 
 /** Names whose formData changes should re-render a field (value, label, compute). */
@@ -106,7 +266,9 @@ export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = 
       }
       const rawVal = rawAsset[name];
       const rawNameHint = rawAsset[`${name}Name`];
-      const options = dropdownData[name] || dropdownData[item.key] || [];
+      const staticOptions = item.options || [];
+      const options =
+        dropdownData[name] || dropdownData[item.key] || staticOptions;
       result[name] = rawVal ? resolveOption(rawVal, rawNameHint, options) : null;
       return;
     }
@@ -166,6 +328,13 @@ export const buildPayload = (formData = {}) => {
     if (value && typeof value === "object" && "code" in value) {
       payload[key] = value.code;
       payload[`${key}Name`] = value.name ?? value.i18nKey ?? value.code;
+      // Keep MDMS option metadata for config-driven rent/label resolution after flatten.
+      const multiplier =
+        value.multiplier ?? value.rentMultiplier ?? value.cycleMultiplier;
+      if (multiplier != null && multiplier !== "") {
+        payload[`${key}Multiplier`] = multiplier;
+      }
+      if (value.rentLabelKey) payload[`${key}RentLabelKey`] = value.rentLabelKey;
     } else {
       payload[key] = value;
     }

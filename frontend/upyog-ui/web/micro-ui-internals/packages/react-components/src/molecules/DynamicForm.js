@@ -3,9 +3,10 @@ import { SubmitBar, Toast, Loader } from "@nudmcdgnpm/digit-ui-react-components"
 import ActionBar from "../atoms/ActionBar";
 import ButtonSelector from "../atoms/ButtonSelector";
 import DynamicFormField from "./DynamicFormField";
-import { validateFields, validateCrossField, calculateDuration } from "../utilities/validators";
-import { sortByOrder, buildPayload, scrollToFirstError, buildInitialData, flattenFormConfig } from "../utilities/formUtils";
+import { validateFields, validateCrossField, calculateDuration, calculateRentByBillingCycle } from "../utilities/validators";
+import { sortByOrder, buildPayload, scrollToFirstError, buildInitialData, flattenFormConfig, findFieldConfig, enrichDropdownSelection } from "../utilities/formUtils";
 import useDynamicMDMS from "../utilities/useDynamicMDMS";
+import { mapFormToSearchFilters } from "../utilities/searchUtils";
 import styles from "../styles/dynamicForm.module.scss";
 
 // ── Computed-field registry ────────────────────────────────────────────
@@ -15,6 +16,7 @@ import styles from "../styles/dynamicForm.module.scss";
 // as new modules need derived fields — no DynamicForm changes required.
 const COMPUTE_REGISTRY = {
   calculateDuration,
+  calculateRentByBillingCycle,
 };
 
 const DynamicForm = ({
@@ -38,7 +40,10 @@ const DynamicForm = ({
   draftSuccessLabel = "EST_DRAFT_SAVED",
   onSaveDraft,
   onPersistDraft,
+  /** "wizard" (default) | "search" — search reuses the same fields/MDMS without wizard ActionBar */
+  mode = "wizard",
 }) => {
+  const isSearchMode = mode === "search";
   const stateId = Digit.ULBService.getStateId();
   const payloadKey = routeConfig.payloadKey || "Assets";
 
@@ -46,9 +51,6 @@ const DynamicForm = ({
   const { dropdownData, isLoading } = useDynamicMDMS(routeConfig.form, stateId, tenantId, t);
 
   // ── Raw pre-fill source ───────────────────────────────────────────────
-  // Merge, don't pick: persisted (user-entered) values win, editData (asset
-  // info from router state) sits underneath so read-only prefill fields still
-  // populate on first visit AND when coming back via the edit pencil.
   const rawAsset = useMemo(() => {
     const saved = persistedData?.[config?.key]?.[payloadKey];
     const persisted = (Array.isArray(saved) ? saved[0] : saved) || {};
@@ -72,21 +74,63 @@ const DynamicForm = ({
   const flatFields = useMemo(() => flattenFormConfig(routeConfig.form || []), [routeConfig.form]);
   const sortedFields = useMemo(() => sortByOrder(routeConfig.form || []), [routeConfig.form]);
 
+  const billingCycleOptions = useMemo(() => {
+    const billingField = findFieldConfig(routeConfig.form, "billingCycle");
+    return (
+      dropdownData?.billingCycle ||
+      dropdownData?.[billingField?.key] ||
+      billingField?.options ||
+      []
+    );
+  }, [dropdownData, routeConfig.form]);
+
+  const resolveComputeArgs = useCallback(
+    (computeFrom, computeFn, data) =>
+      computeFrom.map((dep) => {
+        const val = data[dep];
+        if (dep === "billingCycle") {
+          return enrichDropdownSelection(val, billingCycleOptions);
+        }
+        return val;
+      }),
+    [billingCycleOptions]
+  );
+
   // Re-derive any field whose computeFrom list includes a field that just changed.
   const applyComputedFields = useCallback(
     (updated, changedFieldNames) => {
       let next = updated;
-      flatFields.forEach((fc) => {
-        const { computeFrom, computeFn, name } = fc.field || {};
-        if (!computeFrom || !computeFn) return;
-        if (!computeFrom.some((dep) => changedFieldNames.includes(dep))) return;
-        const fn = COMPUTE_REGISTRY[computeFn];
-        if (!fn) return;
-        next = { ...next, [name]: fn(...computeFrom.map((dep) => next[dep])) };
-      });
+      const pending = new Set(changedFieldNames);
+      let iterations = 0;
+
+      while (pending.size > 0 && iterations < 10) {
+        iterations += 1;
+        const round = [...pending];
+        pending.clear();
+
+        flatFields.forEach((fc) => {
+          const { computeFrom, computeFn, name } = fc.field || {};
+          if (!computeFrom || !computeFn) return;
+          if (!computeFrom.some((dep) => round.includes(dep))) return;
+
+          const fn = COMPUTE_REGISTRY[computeFn];
+          if (!fn) return;
+
+          const args = resolveComputeArgs(computeFrom, computeFn, next);
+          const newVal =
+            computeFn === "calculateRentByBillingCycle"
+              ? fn(...args, billingCycleOptions)
+              : fn(...args);
+          if (next[name] !== newVal) {
+            next = { ...next, [name]: newVal };
+            pending.add(name);
+          }
+        });
+      }
+
       return next;
     },
-    [flatFields]
+    [flatFields, billingCycleOptions, resolveComputeArgs]
   );
 
   // Sync formData with initialData EXACTLY ONCE, right after dropdownData
@@ -114,7 +158,11 @@ const DynamicForm = ({
   const handleChange = useCallback(
     (fieldName, value, resetFields = []) => {
       setFormData((prev) => {
-        let updated = { ...prev, [fieldName]: value };
+        let resolvedValue = value;
+        if (fieldName === "billingCycle") {
+          resolvedValue = enrichDropdownSelection(value, billingCycleOptions);
+        }
+        let updated = { ...prev, [fieldName]: resolvedValue };
         resetFields.forEach((f) => { updated[f] = null; });
         return applyComputedFields(updated, [fieldName, ...resetFields]);
       });
@@ -124,7 +172,7 @@ const DynamicForm = ({
         return updated;
       });
     },
-    [applyComputedFields]
+    [applyComputedFields, billingCycleOptions]
   );
 
   // Optional: auto-save when onPersistDraft is set and no explicit draft button.
@@ -157,7 +205,8 @@ const DynamicForm = ({
         if (id) {
           handleChange(fieldName, { filestoreId: id, documentuuid: id, documentType: fieldName });
         }
-      } catch {
+      } catch (err) {
+        console.error("File upload failed:", err?.response?.data || err);
         setToast({ message: t("CS_FILE_UPLOAD_ERROR"), error: true });
       }
     },
@@ -165,19 +214,28 @@ const DynamicForm = ({
   );
 
   const goNext = useCallback(() => {
-    const fieldErrors = validateFields(routeConfig.form, formData);
-    const { errors: crossErrors, failures } = validateCrossField(routeConfig.crossFieldValidations, formData);
-    const allErrors = { ...fieldErrors, ...crossErrors };
+    if (!isSearchMode) {
+      const fieldErrors = validateFields(routeConfig.form, formData);
+      const { errors: crossErrors, failures } = validateCrossField(routeConfig.crossFieldValidations, formData);
+      const allErrors = { ...fieldErrors, ...crossErrors };
 
-    if (Object.keys(allErrors).length > 0) {
-      setErrors(allErrors);
-      setCrossFieldMessages(failures.map((f) => f.message));
-      scrollToFirstError();
+      if (Object.keys(allErrors).length > 0) {
+        setErrors(allErrors);
+        setCrossFieldMessages(failures.map((f) => f.message));
+        scrollToFirstError();
+        return;
+      }
+      setCrossFieldMessages([]);
+    }
+
+    const formVal = buildPayload(formData);
+
+    if (isSearchMode) {
+      const filters = mapFormToSearchFilters(formVal, routeConfig.form);
+      onSubmit?.({ payload: { ...filters, offset: 0 }, isSearch: true });
       return;
     }
 
-    setCrossFieldMessages([]);
-    const formVal = buildPayload(formData);
     const payload = { [payloadKey]: [formVal], tenantId };
 
     if (isEditMode) {
@@ -196,8 +254,6 @@ const DynamicForm = ({
         },
         onError: (error) => {
           setIsSubmitting(false);
-          // Surface the failure — previously only console.error'd, so the
-          // user saw nothing when an update silently failed.
           setToast({ message: t("EST_UPDATE_FAILED"), error: true });
           console.error("Update failed:", error);
           onSubmit && onSubmit({ payload, error, isEditMode: true });
@@ -207,7 +263,20 @@ const DynamicForm = ({
       onSelect && onSelect(config?.key, { [payloadKey]: [formVal] }, false);
       onSubmit && onSubmit({ payload, isEditMode: false });
     }
-  }, [routeConfig, formData, isEditMode, updateMutation, editData, tenantId, onSelect, onSubmit, config, payloadKey, t]);
+  }, [
+    isSearchMode,
+    routeConfig,
+    formData,
+    isEditMode,
+    updateMutation,
+    editData,
+    tenantId,
+    onSelect,
+    onSubmit,
+    config,
+    payloadKey,
+    t,
+  ]);
 
   const handleCancel = useCallback(() => {
     const baselineSource =
@@ -240,7 +309,9 @@ const DynamicForm = ({
 
   const buttonLabel = isEditMode
     ? routeConfig.actionButton?.text?.edit || "UPDATE"
-    : routeConfig.actionButton?.text?.create || "SAVE & NEXT";
+    : routeConfig.actionButton?.text?.create || (isSearchMode ? "ES_COMMON_SEARCH" : "SAVE & NEXT");
+
+  const clearLabel = cancelLabel || routeConfig.actionButton?.text?.clear || "ES_COMMON_CLEAR_ALL";
 
   if (isLoading) return <Loader />;
 
@@ -264,7 +335,20 @@ const DynamicForm = ({
         <p key={i} className={styles["dynamic-form-error"]}>{t(msg)}</p>
       ))}
 
-      {!isDisabled && (
+      {!isDisabled && isSearchMode && (
+        <div className={styles["dynamic-form-search-actions"]}>
+          <SubmitBar
+            label={t(buttonLabel)}
+            onSubmit={goNext}
+            className={styles["dynamic-form-search-submit"]}
+          />
+          <p className={styles["dynamic-form-search-clear"]} onClick={handleCancel}>
+            {t(clearLabel)}
+          </p>
+        </div>
+      )}
+
+      {!isDisabled && !isSearchMode && (
         <ActionBar className={styles["dynamic-form-action"]}>
           {showCancel && (
             <ButtonSelector

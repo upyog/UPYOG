@@ -6,23 +6,22 @@ import {
   DatePicker,
   UploadFile,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import { toInputDate, resolveFieldLabelKey, getFieldWatchNames } from "../utilities/formUtils";
+import { toInputDate, resolveFieldLabelKey, getFieldWatchNames, optionCode, enrichDropdownSelection } from "../utilities/formUtils";
+import styles from "../styles/DynamicFormField.module.scss";
 
-/* ── shared sub-renderers (were copy-pasted 5x before) ─────────────────── */
+/* ── shared sub-renderers ─────────────────────────────────────────────── */
 
 const FieldLabel = ({ text, required, hasError, unit }) => (
-  <CardLabel style={{ color: hasError ? "red" : undefined }}>
+  <CardLabel className={hasError ? styles["dynamic-form-field__label--error"] : undefined}>
     {text}
-    {unit && <span className="field-unit"> {unit}</span>}
-    {required && <span style={{ color: "red" }}> *</span>}
+    {unit && <span className={styles["dynamic-form-field__unit"]}> {unit}</span>}
+    {required && <span className={styles["dynamic-form-field__required"]}> *</span>}
   </CardLabel>
 );
 
 const FieldError = ({ show, message }) =>
   show ? (
-    <p className="field-error" style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-      {message}
-    </p>
+    <p className={styles["dynamic-form-field__error"]}>{message}</p>
   ) : null;
 
 const EMPTY_OPTIONS = [];
@@ -43,8 +42,6 @@ const DynamicFormField = ({
   const { name, type, placeholder, unit } = field || {};
 
   // Options resolved ONCE per dropdownData change — not on every keystroke.
-  // (The locality list can be 1000+ items; mapping + t() on each render of
-  // each field was the main typing-lag source.)
   // useDynamicMDMS keys dropdownData by field.name ("assetType"), with
   // fieldConfig.key ("EST_ASSET_TYPE") kept as a legacy fallback.
   const options = useMemo(() => {
@@ -52,8 +49,6 @@ const DynamicFormField = ({
 
     const fromMdms = dropdownData[name] || dropdownData[fieldConfig.key];
     if (Array.isArray(fromMdms) && fromMdms.length > 0) {
-      // If an option's i18nKey has no translation yet (t returns the raw
-      // key), fall back to its plain name: "Land", not "EST_ASSET_TYPE_LAND".
       return fromMdms.map((o) => {
         const translated = o.i18nKey ? t(o.i18nKey) : "";
         const untranslated = !translated || translated === o.i18nKey;
@@ -68,7 +63,6 @@ const DynamicFormField = ({
     }));
   }, [type, name, fieldConfig, dropdownData, t]);
 
-  // Compile the sanitize regex once, not on every keystroke.
   const sanitizeRegex = useMemo(
     () =>
       validation.regex
@@ -77,24 +71,22 @@ const DynamicFormField = ({
     [validation.regex]
   );
 
-  // ── SECTION HEADER: plain heading, no field/value ─────────────────────
   if (fieldConfig.type === "sectionHeader") {
     return (
-      <h2 className="dynamic-form-section-header" style={{ marginTop: "20px", marginBottom: "16px", fontSize: "20px", fontWeight: "bold", color: "#333" }}>
+      <h2 className={styles["dynamic-form-field__section-header"]}>
         {t(fieldConfig.label?.code || fieldConfig.key)}
       </h2>
     );
   }
 
-  // ── GROUP: render children side by side ──────────────────────────────
   if (fieldConfig.type === "group") {
     return (
-      <div className="dynamic-form-group">
+      <div className={styles["dynamic-form-field__group"]}>
         <FieldLabel
           text={t(fieldConfig.label?.code || fieldConfig.key)}
           unit={fieldConfig.label?.unit}
         />
-        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+        <div className={styles["dynamic-form-field__group-row"]}>
           {(fieldConfig.children || []).map((child) => (
             <DynamicFormField
               key={child.key}
@@ -120,7 +112,6 @@ const DynamicFormField = ({
   const errorMsg = t(messages.error || "FIELD_REQUIRED");
   const labelKey = resolveFieldLabelKey(fieldConfig, formData);
 
-  // ── DROPDOWN ─────────────────────────────────────────────────────────
   if (type === "dropdown") {
     const isFieldDisabled = isDisabled || fieldConfig.key === "EST_CITY";
     const tSafe = (key) => (key ? t(key) || key : "");
@@ -134,9 +125,10 @@ const DynamicFormField = ({
             selected={value || null}
             option={options}
             optionKey="i18nKey"
-            select={(val) => onChange(name, val)}
+            select={(val) => onChange(name, enrichDropdownSelection(val, options))}
             t={tSafe}
             disable={isFieldDisabled}
+            optionCardStyles={field.optionCardStyles}
           />
           <FieldError show={hasError} message={errorMsg} />
         </div>
@@ -144,15 +136,22 @@ const DynamicFormField = ({
     );
   }
 
-  // ── RADIO ────────────────────────────────────────────────────────────
   if (type === "radio") {
     const radioDisabled = isDisabled || validation.disabled;
     return (
       <>
         <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} />
-        <div className="field" data-field-error={hasError ? "true" : undefined} style={{ display: "flex", gap: "20px", marginBottom: "16px" }}>
+        <div
+          className={`field ${styles["dynamic-form-field__radio-group"]}`}
+          data-field-error={hasError ? "true" : undefined}
+        >
           {options.map((opt) => (
-            <label key={opt.code} style={{ display: "flex", alignItems: "center", cursor: radioDisabled ? "default" : "pointer" }}>
+            <label
+              key={opt.code}
+              className={`${styles["dynamic-form-field__radio-label"]}${
+                radioDisabled ? ` ${styles["dynamic-form-field__radio-label--disabled"]}` : ""
+              }`}
+            >
               <input
                 type="radio"
                 name={name}
@@ -160,7 +159,7 @@ const DynamicFormField = ({
                 checked={value === opt.code}
                 disabled={radioDisabled}
                 onChange={() => onChange(name, opt.code)}
-                style={{ marginRight: "8px" }}
+                className={styles["dynamic-form-field__radio-input"]}
               />
               {t(opt.i18nKey || opt.label || opt.name || opt.code)}
             </label>
@@ -171,7 +170,6 @@ const DynamicFormField = ({
     );
   }
 
-  // ── DATE ─────────────────────────────────────────────────────────────
   if (type === "date") {
     return (
       <>
@@ -188,7 +186,6 @@ const DynamicFormField = ({
     );
   }
 
-  // ── FILE ─────────────────────────────────────────────────────────────
   if (type === "file") {
     const fileRef =
       typeof value === "string"
@@ -218,7 +215,6 @@ const DynamicFormField = ({
     );
   }
 
-  // ── TEXT INPUT (default) — also covers read-only display fields ───────
   return (
     <>
       <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} unit={unit} />
@@ -234,7 +230,7 @@ const DynamicFormField = ({
           }}
           disabled={isDisabled || validation.disabled}
           readOnly={validation.readOnly}
-          style={{ borderColor: hasError ? "red" : undefined }}
+          errorStyle={hasError}
         />
         <FieldError show={hasError} message={errorMsg} />
       </div>
@@ -242,15 +238,17 @@ const DynamicFormField = ({
   );
 };
 
-/* ── memoization ────────────────────────────────────────────────────────
-   formData changes identity on EVERY keystroke, which used to re-render
-   every field in the form (including 1000+ option locality dropdowns).
-   This comparator re-renders a field only when ITS OWN value/error (or its
-   group children's) changed, or when shared inputs actually changed.
-   Requires onChange/onFileUpload to be stable (useCallback in DynamicForm —
-   they are). */
-
 const collectNames = (fc) => getFieldWatchNames(fc);
+
+const watchValueEqual = (a, b) => {
+  if (a === b) return true;
+  if (a && b && typeof a === "object" && typeof b === "object") {
+    if (optionCode(a) !== optionCode(b)) return false;
+    const metaKeys = ["multiplier", "rentMultiplier", "cycleMultiplier", "rentLabelKey"];
+    return metaKeys.every((key) => (a[key] ?? null) === (b[key] ?? null));
+  }
+  return false;
+};
 
 const areEqual = (prev, next) => {
   if (
@@ -263,8 +261,11 @@ const areEqual = (prev, next) => {
   ) {
     return false;
   }
-  return collectNames(next.fieldConfig).every(
-    (n) => prev.formData[n] === next.formData[n] && prev.errors[n] === next.errors[n]
+  const names = collectNames(next.fieldConfig);
+  return names.every(
+    (n) =>
+      watchValueEqual(prev.formData[n], next.formData[n]) &&
+      prev.errors[n] === next.errors[n]
   );
 };
 

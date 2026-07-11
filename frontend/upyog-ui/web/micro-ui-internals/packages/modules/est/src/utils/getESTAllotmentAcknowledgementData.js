@@ -5,6 +5,13 @@ import {
   formatDate,
   formatDurationWithMonths,
 } from "./index";
+import {
+  mergeRouteConfig,
+  resolveFieldLabelKey,
+  findFieldConfig,
+  rehydrateBillingCycleOption,
+} from "@nudmcdgnpm/digit-ui-react-components";
+import estateAllotmentFormConfig from "../config/Create/estateAllotmentFormConfig";
 /**
  * getESTAllotmentAcknowledgementData
  * ---------------------------------
@@ -49,6 +56,16 @@ const getESTAllotmentAcknowledgementData = async (
     Allotments[0] ||
     AssignAssetsData?.AllotmentData ||
     {};
+
+  const routeConfig = mergeRouteConfig(
+    application?.routeConfigs?.Allotments || {},
+    estateAllotmentFormConfig
+  );
+  const rentField = findFieldConfig(routeConfig.form, "monthlyRent");
+  const billingCycleVal = rehydrateBillingCycleOption(allotment, routeConfig);
+  const rentLabelKey = rentField
+    ? resolveFieldLabelKey(rentField, { billingCycle: billingCycleVal })
+    : "EST_MONTHLY_RENT_IN_INR";
 
   /* ---------------- Asset Details Section ----------------
      Basic information related to the allotted asset
@@ -101,13 +118,7 @@ const getESTAllotmentAcknowledgementData = async (
       value: formatDurationWithMonths(allotment),
     },
     {
-      title: t(
-        {
-          MONTHLY: "EST_MONTHLY_RENT_IN_INR",
-          QUARTERLY: "EST_QUARTERLY_RENT_IN_INR",
-          YEARLY: "EST_YEARLY_RENT_IN_INR",
-        }[String(allotment.billingCycle || "").toUpperCase()] || "EST_MONTHLY_RENT_IN_INR"
-      ),
+      title: t(rentLabelKey),
       value: allotment.monthlyRent,
     },
     {

@@ -1,0 +1,28 @@
+// ESTRegCheckPage.module.scss
+
+.estRegCheckPage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  
+  &__action-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__edit-icon {
+    float: right;
+    position: relative;
+    bottom: 32px;
+  }
+
+  &__declaration {
+    margin: 16px 0;
+  }
+
+  &__submit-row {
+    display: flex;
+    margin-top: 24px;
+  }
+}

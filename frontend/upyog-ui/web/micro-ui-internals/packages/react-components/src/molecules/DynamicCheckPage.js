@@ -14,14 +14,15 @@ import {
   buildSummarySections,
   collectFormFileEntries,
   defaultCheckNA,
+  extractUrlFromFilefetchResponse,
   extractWizardFormValues,
   formatCheckPageDate,
   resolveFieldLabelKey,
   resolveSummaryFieldValue,
 } from "../utilities/checkPageUtils";
+import styles from "../styles/dynamicCheckPage.module.scss";
 
-/* Config-driven summary page — shares routeConfig.form with DynamicForm.
-   Utilities: utilities/checkPageUtils.js, useDynamicRouteConfig, useDynamicCheckSubmit */
+/* Config-driven summary page — shares routeConfig.form with DynamicForm. */
 
 const ActionButton = ({ jumpTo, editNavigationState }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
@@ -38,19 +39,19 @@ const ActionButton = ({ jumpTo, editNavigationState }) => {
 };
 
 const DynamicCheckPage = ({
-  routeConfig,             // same route entry DynamicForm receives (must contain .form)
-  config,                  // route config with .key (e.g. "AssignAssetsData")
-  value = {},              // persisted wizard data (params)
-  extraData = {},          // fallback values for display-only / excludeFromPayload fields
-  editRoute,               // where the edit pencil navigates
-  editNavigationState,     // optional router state when edit is clicked (e.g. { editData })
+  routeConfig,
+  config,
+  value = {},
+  extraData = {},
+  editRoute,
+  editNavigationState,
   onSubmit,
-  summaryHeaderCode,       // optional i18n code for the page header
-  defaultSectionHeaderCode = "EST_ASSET_DETAILS", // header for fields before the first sectionHeader
+  summaryHeaderCode,
+  defaultSectionHeaderCode = "EST_ASSET_DETAILS",
   t = (k) => k,
   formatDate = formatCheckPageDate,
   checkNA = defaultCheckNA,
-  DocumentPreview,         // component: ({documents, ...}) => JSX (e.g. ESTDocumentPreview)
+  DocumentPreview,
   declarationCode = "EST_FINAL_DECLARATION_MESSAGE",
   submitLabelCode = "EST_COMMON_SUBMIT",
   isSubmitting = false,
@@ -79,7 +80,6 @@ const DynamicCheckPage = ({
   const resolveValue = (fc) =>
     resolveSummaryFieldValue(fc, { formValues, extraData, formatDate, checkNA, t });
 
-  // ── Document preview: fetch URLs for every uploaded file field ──
   useEffect(() => {
     let mounted = true;
 
@@ -94,21 +94,18 @@ const DynamicCheckPage = ({
     );
 
     setLoadingDocs(true);
-    Digit.UploadServices.Filefetch(filestoreIds, Digit.ULBService.getStateId())
+    const tenantId =
+      Digit.ULBService.getCurrentTenantId() || Digit.ULBService.getStateId();
+
+    Digit.UploadServices.Filefetch(filestoreIds, tenantId)
       .then((res) => {
         if (!mounted) return;
-        const arr = res?.data?.fileStoreIds;
         const urlById = {};
 
-        if (Array.isArray(arr)) {
-          arr.forEach((fsObj, index) => {
-            const fsid = fsObj?.fileStoreId || fsObj?.id;
-            const url = fsObj?.url?.split(",")[0];
-            if (!url) return;
-            if (fsid) urlById[fsid] = url;
-            if (filestoreIds[index]) urlById[filestoreIds[index]] = url;
-          });
-        }
+        filestoreIds.forEach((id, index) => {
+          const url = extractUrlFromFilefetchResponse(res, id, index);
+          if (url) urlById[id] = url;
+        });
 
         const values = uploadedFiles.map((file) => ({
           url: urlById[file.id] || null,
@@ -171,17 +168,15 @@ const DynamicCheckPage = ({
         </React.Fragment>
       ))}
 
-      {/* ----------------- DOCUMENT PREVIEW ----------------- */}
       {(fileFields.length > 0 || uploadedFiles.length > 0) && (
         <>
           <CardSubHeader>{t("EST_DOCUMENT_PREVIEW")}</CardSubHeader>
           {loadingDocs ? (
-            <div style={{ padding: "12px 16px" }}>{t("CS_LOADING")}</div>
+            <div className={styles["dynamic-check-page__loading"]}>{t("CS_LOADING")}</div>
           ) : previewDocs.length > 0 && DocumentPreview ? (
-            <div style={{ paddingTop: 8 }}>
+            <div className={styles["dynamic-check-page__preview"]}>
               <DocumentPreview
                 documents={previewDocs}
-                titleStyles={{ fontSize: "14px" }}
                 pdfSize={48}
                 labelWidth={220}
                 useThumbnails
@@ -189,28 +184,25 @@ const DynamicCheckPage = ({
               />
             </div>
           ) : uploadedFiles.length > 0 ? (
-            <div style={{ padding: "8px 16px 12px" }}>
+            <div className={styles["dynamic-check-page__file-list"]}>
               {uploadedFiles.map((file) => (
-                <div key={file.id} style={{ marginBottom: 12 }}>
-                  <div style={{ fontWeight: 700, fontSize: "14px", color: "#111" }}>
-                    {file.label}
-                  </div>
-                  <div style={{ fontSize: "13px", color: "#666", marginTop: 4 }}>
+                <div key={file.id} className={styles["dynamic-check-page__file-item"]}>
+                  <div className={styles["dynamic-check-page__file-label"]}>{file.label}</div>
+                  <div className={styles["dynamic-check-page__file-ref"]}>
                     {file.fileName || file.reference}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div style={{ padding: "8px 16px", color: "#666" }}>
+            <div className={styles["dynamic-check-page__empty-docs"]}>
               {t("EST_NO_DOCUMENTS_UPLOADED_LABEL")}
             </div>
           )}
         </>
       )}
 
-      {/* ----------------- DECLARATION + SUBMIT ----------------- */}
-      <div style={{ marginTop: 16 }}>
+      <div className={styles["dynamic-check-page__declaration"]}>
         <CheckBox
           label={t(declarationCode)}
           onChange={() => setAgree(!agree)}
@@ -218,7 +210,7 @@ const DynamicCheckPage = ({
         />
       </div>
 
-      <div style={{ marginTop: 12 }}>
+      <div className={styles["dynamic-check-page__submit"]}>
         <SubmitBar
           label={t(submitLabelCode)}
           onSubmit={onSubmit}

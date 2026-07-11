@@ -2,11 +2,14 @@ import React, { useCallback, useMemo } from "react";
 import {
   DynamicCheckPage,
   formatCheckPageDate,
+  mergeRouteConfig,
+  resolveRouteConfigFromSteps,
   useDynamicCheckSubmit,
   useDynamicRouteConfig,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { checkForNA, createAllotmentData, ESTDocumnetPreview } from "../../../utils";
+import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig";
 
 const STEP_KEY = "Allotments";
 
@@ -16,7 +19,15 @@ const ESTAssignAssetsCheckPage = ({ onSubmit, onError, value = {}, config = [] }
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const mutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
 
-  const routeConfig = useDynamicRouteConfig(config, STEP_KEY, value);
+  const sessionRouteConfig = useDynamicRouteConfig(config, STEP_KEY, value);
+  const routeConfig = useMemo(
+    () =>
+      mergeRouteConfig(resolveRouteConfigFromSteps(config, STEP_KEY), {
+        ...estateAllotmentFormConfig,
+        ...sessionRouteConfig,
+      }),
+    [config, sessionRouteConfig]
+  );
 
   const assetData = value?.assetData || {};
   const extraData = useMemo(

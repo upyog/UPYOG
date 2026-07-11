@@ -9,6 +9,7 @@
 
 import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
 import { extractFileStoreId } from "./allotmentDocumentUtils";
+import { normalizeAllotmentFlatData } from "./allotmentFormUtils";
 
 import { buildDynamicAssetPayload } from "./assetPayloadUtils";
 import estateFormConfig from "../config/estateFormConfig";
@@ -345,14 +346,17 @@ export const createAllotmentData = (data, routeConfig) => {
     data?.AssignAssetsData?.AllotmentData ||
     {};
 
-  const flatAllotment = {
-    ...allotmentData,
-    assetNo: allotmentData?.assetNo || data?.assetData?.estateNo || "",
-    emailId: allotmentData?.emailId || allotmentData?.email || "",
-    allotmentId:
-      allotmentData?.allotmentId || data?.allotmentId || "",
-    userUuid: allotmentData?.userUuid || "",
-  };
+  const flatAllotment = normalizeAllotmentFlatData(
+    {
+      ...allotmentData,
+      assetNo: allotmentData?.assetNo || data?.assetData?.estateNo || "",
+      emailId: allotmentData?.emailId || allotmentData?.email || "",
+      allotmentId: allotmentData?.allotmentId || data?.allotmentId || "",
+      userUuid: allotmentData?.userUuid || "",
+    },
+    data?.assetData || {},
+    activeRouteConfig || {}
+  );
 
   const built = buildDynamicAllotmentPayload(
     activeRouteConfig || { form: [] },

@@ -3,7 +3,7 @@
 // `ctx` = { fieldConfig, formData }
 // Field-level rules run per field. Cross-field rules run once against the whole formData.
 
-import { flattenFormConfig, optionCode, toDate } from "./formUtils";
+import { flattenFormConfig, resolveBillingCycleMultiplier, enrichDropdownSelection, toDate } from "./formUtils";
 
 const isEmptyValue = (value, type) => {
   if (type === "dropdown") return !value || !value.code;
@@ -25,6 +25,14 @@ export const fieldRules = {
     const { maxLength } = fieldConfig.validation;
     if (!value) return true;
     return String(value).length <= maxLength;
+  },
+
+  /** Billing amounts must fit numeric(12,2) — max 9999999999.99 */
+  maxAmount: (value, { fieldConfig }) => {
+    const max = fieldConfig.validation.maxAmount ?? 9999999999.99;
+    if (value === null || value === undefined || value === "") return true;
+    const num = Number(String(value).replace(/,/g, "").trim());
+    return Number.isFinite(num) && num >= 0 && num <= max;
   },
 };
 
@@ -101,29 +109,34 @@ export const calculateDuration = (startDate, endDate) => {
   return months >= 0 ? String(months) : "";
 };
 
-const RENT_CYCLE_MULTIPLIERS = {
-  MONTHLY: 1,
-  QUARTERLY: 3,
-  YEARLY: 12,
-};
+/** Matches billing DB column numeric(12,2) — values must be below 10^10 */
+export const MAX_TAX_AMOUNT = 9999999999.99;
 
 const toPositiveNumber = (value) => {
   const num = Number(String(value ?? "").replace(/,/g, "").trim());
   return Number.isFinite(num) && num > 0 ? num : 0;
 };
 
+const formatRentAmount = (value) => {
+  if (!Number.isFinite(value) || value <= 0 || value > MAX_TAX_AMOUNT) return "";
+  const rounded = Math.round(value * 100) / 100;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2);
+};
+
 /**
  * Rent for the selected billing period = rate/sqft × plot area × cycle multiplier.
  * Used via field.computeFrom + field.computeFn in route config.
  */
-export const calculateRentByBillingCycle = (rentRate, totalFloorArea, billingCycle) => {
+export const calculateRentByBillingCycle = (
+  rentRate,
+  totalFloorArea,
+  billingCycle,
+  billingCycleOptions = []
+) => {
   const rate = toPositiveNumber(rentRate);
   const area = toPositiveNumber(totalFloorArea);
   if (!rate || !area) return "";
 
-  const cycle = optionCode(billingCycle);
-  const multiplier = RENT_CYCLE_MULTIPLIERS[cycle] ?? 1;
-  const total = rate * area * multiplier;
-  const rounded = Math.round(total * 100) / 100;
-  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2);
+  const multiplier = resolveBillingCycleMultiplier(billingCycle, billingCycleOptions);
+  return formatRentAmount(rate * area * multiplier);
 };

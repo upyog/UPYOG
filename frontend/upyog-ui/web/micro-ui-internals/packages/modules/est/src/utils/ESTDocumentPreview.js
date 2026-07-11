@@ -3,8 +3,12 @@
  * Document preview with clickable thumbnails for check + acknowledgement pages.
  */
 
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import {
+  extractUrlFromFilefetchResponse,
+  resolveFilePreviewUrl,
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 const LargePdfSvg = ({ size = 48 }) => (
   <svg
@@ -30,15 +34,54 @@ const LargePdfSvg = ({ size = 48 }) => (
   </svg>
 );
 
-const DocThumbnail = ({ href, label, url, thumbSize = 72 }) => {
-  const [imgFailed, setImgFailed] = useState(false);
-  const showImage = Boolean(url) && !imgFailed;
+const openFilePreview = async (fileStoreId, previewUrl = "") => {
+  const resolved = resolveFilePreviewUrl(previewUrl);
+  if (resolved) {
+    window.open(resolved, "_blank", "noopener,noreferrer");
+    return;
+  }
+
+  if (!fileStoreId) return;
+
+  const tenantIds = [
+    Digit.ULBService.getCurrentTenantId(),
+    Digit.ULBService.getStateId(),
+  ].filter(Boolean);
+
+  for (const tenantId of [...new Set(tenantIds)]) {
+    try {
+      const res = await Digit.UploadServices.Filefetch([fileStoreId], tenantId);
+      const url = extractUrlFromFilefetchResponse(res, fileStoreId);
+      if (url) {
+        window.open(url, "_blank", "noopener,noreferrer");
+        return;
+      }
+    } catch (err) {
+      console.error("EST document preview fetch failed:", err);
+    }
+  }
+};
+
+const DocThumbnail = ({
+  label,
+  url,
+  thumbSize = 72,
+  fileStoreId,
+  reference,
+  fileName,
+}) => {
+  const displayRef = fileName || reference || fileStoreId;
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    openFilePreview(fileStoreId, url);
+  };
 
   return (
     <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      href="#"
+      role="button"
+      onClick={handleClick}
       style={{
         display: "flex",
         alignItems: "center",
@@ -47,17 +90,16 @@ const DocThumbnail = ({ href, label, url, thumbSize = 72 }) => {
         marginBottom: 16,
         width: "100%",
         padding: "8px 0",
+        cursor: "pointer",
       }}
     >
-      <div
-        style={{
-          minWidth: 160,
-          fontWeight: 700,
-          color: "#111",
-          fontSize: "14px",
-        }}
-      >
-        {label}
+      <div style={{ flex: 1, minWidth: 160 }}>
+        <div style={{ fontWeight: 700, color: "#111", fontSize: "14px" }}>{label}</div>
+        {displayRef ? (
+          <div style={{ fontSize: "12px", color: "#666", marginTop: 4, wordBreak: "break-all" }}>
+            {displayRef}
+          </div>
+        ) : null}
       </div>
 
       <div
@@ -74,16 +116,7 @@ const DocThumbnail = ({ href, label, url, thumbSize = 72 }) => {
           flexShrink: 0,
         }}
       >
-        {showImage ? (
-          <img
-            src={url}
-            alt={label}
-            onError={() => setImgFailed(true)}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        ) : (
-          <LargePdfSvg size={Math.min(thumbSize, 48)} />
-        )}
+        <LargePdfSvg size={Math.min(thumbSize, 48)} />
       </div>
 
       <span style={{ color: "#0B5FFF", fontWeight: 500, fontSize: "14px" }}>
@@ -93,13 +126,28 @@ const DocThumbnail = ({ href, label, url, thumbSize = 72 }) => {
   );
 };
 
-/** Legacy row layout (list mode without thumbnail box). */
-function DocLink({ href, label, titleStyles = {}, pdfSize = 48, labelWidth = 220 }) {
+function DocLink({
+  label,
+  url,
+  titleStyles = {},
+  pdfSize = 48,
+  labelWidth = 220,
+  fileStoreId,
+  reference,
+  fileName,
+}) {
+  const displayRef = fileName || reference || fileStoreId;
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    openFilePreview(fileStoreId, url);
+  };
+
   return (
     <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      href="#"
+      role="button"
+      onClick={handleClick}
       style={{
         display: "flex",
         alignItems: "center",
@@ -107,16 +155,20 @@ function DocLink({ href, label, titleStyles = {}, pdfSize = 48, labelWidth = 220
         textDecoration: "none",
         marginBottom: 12,
         width: "100%",
+        cursor: "pointer",
       }}
     >
-      <div style={{ minWidth: labelWidth, fontWeight: 700, color: "#111", ...titleStyles }}>
-        {label}
+      <div style={{ minWidth: labelWidth, ...titleStyles }}>
+        <div style={{ fontWeight: 700, color: "#111" }}>{label}</div>
+        {displayRef ? (
+          <div style={{ fontSize: "12px", color: "#666", marginTop: 4, wordBreak: "break-all" }}>
+            {displayRef}
+          </div>
+        ) : null}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <LargePdfSvg size={pdfSize} />
-        <div style={{ color: "#0B5FFF", textDecoration: "none", fontWeight: 500 }}>
-          Click to View File
-        </div>
+        <div style={{ color: "#0B5FFF", fontWeight: 500 }}>Click to View File</div>
       </div>
     </a>
   );
@@ -124,7 +176,7 @@ function DocLink({ href, label, titleStyles = {}, pdfSize = 48, labelWidth = 220
 
 /**
  * ESTDocumnetPreview
- * documents: [{ values: [{ url, title, documentType }] }]
+ * documents: [{ values: [{ url, title, documentType, fileStoreId }] }]
  */
 export function ESTDocumnetPreview({
   documents = [],
@@ -142,6 +194,9 @@ export function ESTDocumnetPreview({
       url: v.url,
       title: t(v.title || v.documentType || "DOCUMENT"),
       documentType: v.documentType,
+      fileStoreId: v.fileStoreId || v.documentType,
+      reference: v.reference || v.fileStoreId || v.documentType,
+      fileName: v.fileName,
     }))
   );
 
@@ -151,14 +206,24 @@ export function ESTDocumnetPreview({
         flattened.map((val, idx) => (
           <div key={`est-link-${idx}`}>
             {useThumbnails ? (
-              <DocThumbnail href={val.url} label={val.title} url={val.url} thumbSize={thumbSize} />
+              <DocThumbnail
+                label={val.title}
+                url={val.url}
+                thumbSize={thumbSize}
+                fileStoreId={val.fileStoreId}
+                reference={val.reference}
+                fileName={val.fileName}
+              />
             ) : (
               <DocLink
-                href={val.url}
                 label={val.title}
+                url={val.url}
                 titleStyles={titleStyles}
                 pdfSize={pdfSize}
                 labelWidth={labelWidth}
+                fileStoreId={val.fileStoreId}
+                reference={val.reference}
+                fileName={val.fileName}
               />
             )}
             {isHrLine && idx !== flattened.length - 1 ? (

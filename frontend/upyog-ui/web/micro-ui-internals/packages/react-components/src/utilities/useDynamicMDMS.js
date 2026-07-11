@@ -43,7 +43,7 @@ const toOptions = (list, fieldCode) =>
       name: item.name || item.code,
       // e.g. EST_ASSET_TYPE_LAND — add these keys in localization.
       // DynamicFormField falls back to `name` while untranslated.
-      i18nKey: `${fieldCode}_${item.code}`,
+      i18nKey: item.i18nKey || item.labelKey || `${fieldCode}_${item.code}`,
     }));
 
 /* ── hook ─────────────────────────────────────────────────────────────── */

@@ -1,6 +1,9 @@
 /**
  * Shared helpers for allotment document preview (check page + acknowledgement).
  */
+import {
+  extractUrlFromFilefetchResponse,
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 export const ALLOTMENT_DOCUMENT_FIELDS = [
   {
@@ -43,24 +46,32 @@ export const fetchAllotmentDocumentPreviews = async (allotment = {}, t = (k) => 
   const entries = collectAllotmentDocumentEntries(allotment);
   if (entries.length === 0) return [];
 
-  const stateId = Digit.ULBService.getStateId();
+  const tenantId =
+    Digit.ULBService.getCurrentTenantId() || Digit.ULBService.getStateId();
   const res = await Digit.UploadServices.Filefetch(
     entries.map((e) => e.id),
-    stateId
+    tenantId
   );
   const arr = res?.data?.fileStoreIds || [];
   const byId = {};
-  arr.forEach((fsObj) => {
-    const fsid = fsObj?.fileStoreId || fsObj?.id;
-    const url = fsObj?.url?.split(",")[0];
+  arr.forEach((fsObj, index) => {
+    const fsid = fsObj?.fileStoreId || fsObj?.id || entries[index]?.id;
+    const url = extractUrlFromFilefetchResponse(res, fsid, index);
     if (fsid && url) byId[fsid] = url;
+    if (entries[index]?.id && url) byId[entries[index].id] = url;
   });
 
   const values = entries
     .map(({ id, labelKey }) => {
       const url = byId[id];
       if (!url) return null;
-      return { url, title: t(labelKey), documentType: id };
+      return {
+        url,
+        title: t(labelKey),
+        documentType: id,
+        fileStoreId: id,
+        reference: id,
+      };
     })
     .filter(Boolean);
 
