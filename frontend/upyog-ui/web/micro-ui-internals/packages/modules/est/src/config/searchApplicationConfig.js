@@ -1,8 +1,7 @@
 /**
- * EST Search Applications — DynamicForm routeConfig (mode="search").
- * Same field shape as allotment/registration forms for one reusable DynamicForm.
- */
-export const EST_SEARCH_APPLICATION_CONFIG = {
+ * Local fallback for Estate.searchApplicationConfig (MDMS).
+ * Search page loads MDMS first via resolveSearchApplicationConfig().
+ */const EST_SEARCH_APPLICATION_CONFIG = {
   header: "EST_SEARCH_APPLICATIONS",
   sessionKey: "EST_ASSIGN_ASSETS",
   assignRoute: "assignassets",

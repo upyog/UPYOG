@@ -16,7 +16,7 @@ import styles from "../../../styles/ESTAcknowledgement.module.scss";
  * -------------------
  * Displays the result of the EST asset create API call.
  *
- * The API call is made in ESTRegCheckPage (mutation.mutate).
+ * The API call is made in ESTDynamicCheckPage (mutation.mutate).
  * On success/failure, ESTRegCreate.estcreate navigates here with:
  *   location.state = { data: apiResponse, isSuccess: true }
  *   location.state = { data: null, isSuccess: false, error }

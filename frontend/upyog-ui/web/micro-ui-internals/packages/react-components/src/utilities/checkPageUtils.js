@@ -56,18 +56,46 @@ export const resolveRouteConfigFromSteps = (config, stepKey) => {
   );
 };
 
-/** Merge MDMS route entry with a module's local form-config overrides. */
-export const mergeRouteConfig = (rawRouteConfig = {}, localFormConfig = {}) => {
-  const merged = {
-    ...rawRouteConfig,
-    ...localFormConfig,
-  };
-  if (Array.isArray(rawRouteConfig.form) || Array.isArray(localFormConfig.form)) {
+const LOCAL_ROUTE_BEHAVIOR_KEYS = [
+  "staticFields",
+  "computedFields",
+  "crossFieldValidations",
+  "dateFormat",
+  "uploadModule",
+  "editPayloadExtras",
+];
+
+const LOCAL_ROUTE_FALLBACK_KEYS = [
+  "payloadKey",
+  "key",
+  "apiId",
+  "pageHeading",
+  "draftButton",
+  "searchLayout",
+  "searchFormClassName",
+];
+
+/** Merge MDMS route config with module-local behavior overrides (compute, payload, validation). */
+export const mergeRouteConfig = (mdmsRouteConfig = {}, localFormConfig = {}) => {
+  const merged = { ...mdmsRouteConfig };
+
+  LOCAL_ROUTE_BEHAVIOR_KEYS.forEach((key) => {
+    if (localFormConfig[key] != null) merged[key] = localFormConfig[key];
+  });
+
+  LOCAL_ROUTE_FALLBACK_KEYS.forEach((key) => {
+    if (merged[key] == null && localFormConfig[key] != null) {
+      merged[key] = localFormConfig[key];
+    }
+  });
+
+  if (Array.isArray(mdmsRouteConfig.form) || Array.isArray(localFormConfig.form)) {
     merged.form = mergeFormFieldConfigs(
       localFormConfig.form || [],
-      rawRouteConfig.form || []
+      mdmsRouteConfig.form || []
     );
   }
+
   return merged;
 };
 

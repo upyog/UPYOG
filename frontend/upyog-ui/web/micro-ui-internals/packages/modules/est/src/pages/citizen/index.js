@@ -5,7 +5,7 @@ import ESTApplicationDetails from "./ESTApplicationDetails";
 import { ESTPaymentHistory } from "./PaymentHistory";
 import ESTMyApplications from "./MyApplications";
 
-const CitizenApp = ({ path }) => {
+const CitizenApp = () => {
   return (
     <span className="citizen" style={{ width: "100%" }}>
       <AppContainer>

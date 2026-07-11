@@ -23,10 +23,6 @@ const ESTRegCreate = ({ parentRoute }) => {
   const { pathname } = location;
   const navigate = Digit.Hooks.useCustomNavigate();
 
-  const tenantId =
-    Digit.ULBService.getCitizenCurrentTenant(true) ||
-    Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.ptr.usePTRCreateAPI(tenantId);
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage(
     "EST_NEW_REGISTRATION_CREATES",
     {}
@@ -153,7 +149,7 @@ const ESTRegCreate = ({ parentRoute }) => {
     [pathname, config, navigate]
   );
 
-  // Called by ESTRegCheckPage with the API response on success.
+  // Called by ESTDynamicCheckPage with the API response on success.
   const estcreate = useCallback(
     (response) => {
       clearParams();
@@ -169,7 +165,7 @@ const ESTRegCreate = ({ parentRoute }) => {
     [clearParams, queryClient, getBasePath, navigate]
   );
 
-  // Called by ESTRegCheckPage with the error on failure.
+  // Called by ESTDynamicCheckPage with the error on failure.
   const estcreateError = useCallback(
     (error) => {
       const basePath = getBasePath();
@@ -197,9 +193,6 @@ const ESTRegCreate = ({ parentRoute }) => {
     [setParams, goNext]
   );
 
-  const handleSkip = useCallback(() => {}, []);
-  const handleMultiple = useCallback(() => {}, []);
-
   // ─── Early return is now SAFE: every hook above has already been called ────
   if (isLoading || !initialConfig || config.length === 0) {
     return <Loader />;
@@ -226,10 +219,8 @@ const ESTRegCreate = ({ parentRoute }) => {
               <Component
                 config={routeObj}
                 onSelect={handleSelect}
-                onSkip={handleSkip}
                 t={t}
                 persistedData={effectiveParams}
-                onAdd={handleMultiple}
                 userType={user}
                 parentRoute={match?.pathnameBase}
               />

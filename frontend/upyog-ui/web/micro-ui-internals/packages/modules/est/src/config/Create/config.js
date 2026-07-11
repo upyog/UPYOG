@@ -1,3 +1,4 @@
+
 export const Config = [
   {
     "head": "EST_COMMON_NEW_REGISTRATION",
@@ -13,7 +14,7 @@ export const Config = [
           "hideInEmployee": false,
           "isMandatory": true,
           "sectionHeading": null,
-       "form": [
+          "form": [
             {
               "order": 0,
               "key": "EST_BUILDING_NAME",
@@ -54,7 +55,7 @@ export const Config = [
                   "pattern": "\\D",
                   "flags": "g"
                 },
-                "required": false,
+                "required": true,
                 "disabled": false,
                 "readOnly": false
               },
@@ -67,10 +68,12 @@ export const Config = [
               "key": "EST_BUILDING_FLOOR",
               "field": {
                 "code": "EST_BUILDING_FLOOR",
-                "name": "floor",
+                "name": "buildingFloor",
                 "placeholder": "EST_ENTER_BUILDING_FLOOR",
-                "type": "text"
+                "type": "text",
+                "numeric": true
               },
+              "apiFieldName": "floor",
               "validation": {
                 "maxLength": 3,
                 "pattern": "^[0-9]+$",
@@ -110,21 +113,18 @@ export const Config = [
                 "error": "EST_INVALID_BUILDING_BLOCK"
               }
             },
-            {
-              "order": 4,
-              "key": "EST_CITY",
-              "field": {
-                "code": "EST_CITY",
-                "name": "city",
-                "placeholder": "EST_SELECT_CITY",
-                "type": "dropdown"
-              },
-              "validation": {
-                "required": false,
-                "disabled": false,
-                "readOnly": false
-              }
-            },
+{
+  "order": 4,
+  "key": "EST_CITY",
+  "field": {
+    "code": "EST_CITY",
+    "name": "city",
+    "placeholder": "EST_SELECT_CITY",
+    "type": "dropdown",
+    "dataSource": { "defaultValueSource": "tenantId" }
+  },
+  "validation": { "required": false, "disabled": true, "readOnly": false }
+},
             {
               "order": 5,
               "key": "EST_LOCALITY",
@@ -132,7 +132,14 @@ export const Config = [
                 "code": "EST_LOCALITY",
                 "name": "serviceType",
                 "placeholder": "EST_SELECT_LOCALITY",
-                "type": "dropdown"
+                "type": "dropdown",
+                  "dataSource" :{
+                  "type":"MDMS",
+                  "moduleName":"egov-location",
+                  "moduleData":"TenantBoundary",
+                  "customiztionRequired":true,
+                   "dependsOn": "city" 
+                }
               },
               "validation": {
                 "required": false,
@@ -148,7 +155,8 @@ export const Config = [
                 "name": "totalFloorArea",
                 "placeholder": "EST_ENTER_TOTAL_PLOT_AREA",
                 "type": "text",
-                "unit": "( In sq.ft)"
+                "numeric": true,
+                "unit": "(In sq.ft)"
               },
               "validation": {
                 "pattern": "^[0-9]+$",
@@ -156,7 +164,7 @@ export const Config = [
                   "pattern": "\\D",
                   "flags": "g"
                 },
-                "required": false,
+                "required": true,
                 "disabled": false,
                 "readOnly": false
               },
@@ -169,7 +177,7 @@ export const Config = [
               "key": "EST_DIMENSION",
               "label": {
                 "code": "EST_DIMENSION",
-                "unit": "( In sq.ft)"
+                "unit": "(In sq.ft)"
               },
               "type": "group",
               "children": [
@@ -180,7 +188,8 @@ export const Config = [
                     "code": "EST_LENGTH",
                     "name": "dimensionLength",
                     "placeholder": "EST_LENGTH",
-                    "type": "text"
+                    "type": "text",
+                "numeric": true
                   },
                   "validation": {
                     "pattern": "^[0-9]+$",
@@ -188,7 +197,7 @@ export const Config = [
                       "pattern": "\\D",
                       "flags": "g"
                     },
-                    "required": false,
+                    "required": true,
                     "disabled": false,
                     "readOnly": false
                   },
@@ -203,7 +212,8 @@ export const Config = [
                     "code": "EST_WIDTH",
                     "name": "dimensionWidth",
                     "placeholder": "EST_WIDTH",
-                    "type": "text"
+                    "type": "text",
+                "numeric": true
                   },
                   "validation": {
                     "pattern": "^[0-9]+$",
@@ -211,7 +221,7 @@ export const Config = [
                       "pattern": "\\D",
                       "flags": "g"
                     },
-                    "required": false,
+                    "required": true,
                     "disabled": false,
                     "readOnly": false
                   },
@@ -232,6 +242,7 @@ export const Config = [
                 "name": "rate",
                 "placeholder": "EST_ENTER_RATE",
                 "type": "text",
+                "numeric": true,
                 "unit": "(Per sq ft)"
               },
               "validation": {
@@ -241,7 +252,7 @@ export const Config = [
                   "pattern": "\\D",
                   "flags": "g"
                 },
-                "required": false,
+                "required": true,
                 "disabled": false,
                 "readOnly": false
               },
@@ -258,6 +269,7 @@ export const Config = [
                 "placeholder": "EST_ENTER_ASSET_REFERENCE_NUMBER",
                 "type": "text"
               },
+              "apiFieldName": "refAssetNo",
               "validation": {
                 "maxLength": 50,
                 "required": false,
@@ -272,123 +284,24 @@ export const Config = [
                 "code": "EST_ASSET_TYPE",
                 "name": "assetType",
                 "placeholder": "EST_SELECT_ASSET_TYPE",
-                "type": "dropdown"
-              },
+                "type": "dropdown",
+                "dataSource" :{
+                  "type":"MDMS",
+                  "moduleName":"ASSET",
+                  "moduleData":"assetParentCategory",
+                  "customiztionRequired":false
+                }
+                            },
               "validation": {
                 "required": false,
                 "disabled": false,
                 "readOnly": false
               },
-              "options": [
-                {
-                  "code": "ASSET_TYPE_RESIDENTIAL",
-                  "value": "RESIDENTIAL"
-                },
-                {
-                  "code": "ASSET_TYPE_COMMERCIAL",
-                  "value": "COMMERCIAL"
-                },
-                {
-                  "code": "ASSET_TYPE_INDUSTRIAL",
-                  "value": "INDUSTRIAL"
-                }
-              ]
             }
           ],
           "actionButton": {
             "text": {
               "create": "SAVE_&_NEXT",
-              "edit": "UPDATE"
-            },
-            "variant": "contained",
-            "color": "primary"
-          }
-        },
-        {
-          "key": "ownerDetails",
-          "route": "ownerDetails",
-          "component": "OwnerDetails",
-          "nextStep": null,
-          "isPreview": false,
-          "withoutLabel": false,
-          "type": "component",
-          "hideInEmployee": false,
-          "isMandatory": true,
-          "sectionHeading": "EST_OWNER_DETAILS",
-          "form": [
-            {
-              "order": 0,
-              "key": "EST_OWNER_NAME",
-              "field": {
-                "code": "EST_OWNER_NAME",
-                "name": "ownerName",
-                "placeholder": "EST_ENTER_OWNER_NAME",
-                "type": "text"
-              },
-              "validation": {
-                "maxLength": 60,
-                "pattern": "^[a-zA-Z\\s]+$",
-                "regex": {
-                  "pattern": "[^a-zA-Z\\s]",
-                  "flags": "g"
-                },
-                "required": true,
-                "disabled": false,
-                "readOnly": false
-              },
-              "messages": {
-                "error": "EST_INVALID_OWNER_NAME"
-              }
-            },
-            {
-              "order": 1,
-              "key": "EST_OWNER_MOBILE",
-              "field": {
-                "code": "EST_OWNER_MOBILE",
-                "name": "ownerMobile",
-                "placeholder": "EST_ENTER_OWNER_MOBILE",
-                "type": "text"
-              },
-              "validation": {
-                "maxLength": 10,
-                "pattern": "^[6-9][0-9]{9}$",
-                "regex": {
-                  "pattern": "\\D",
-                  "flags": "g"
-                },
-                "required": true,
-                "disabled": false,
-                "readOnly": false
-              },
-              "messages": {
-                "error": "EST_INVALID_OWNER_MOBILE"
-              }
-            }
-          ],
-          "actionButton": {
-            "text": {
-              "create": "SAVE_&_NEXT",
-              "edit": "UPDATE"
-            },
-            "variant": "contained",
-            "color": "primary"
-          }
-        },
-        {
-          "key": "reviewDetails",
-          "route": "reviewDetails",
-          "component": "ReviewDetails",
-          "nextStep": null,
-          "isPreview": true,
-          "withoutLabel": false,
-          "type": "component",
-          "hideInEmployee": false,
-          "isMandatory": false,
-          "sectionHeading": "EST_REVIEW_DETAILS",
-          "form": [],
-          "actionButton": {
-            "text": {
-              "create": "SUBMIT",
               "edit": "UPDATE"
             },
             "variant": "contained",

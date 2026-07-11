@@ -167,8 +167,8 @@ const mergeFormField = (local, mdms) => {
 };
 
 /**
- * Merge MDMS assignAssetConfig form fields into a module's local form.
- * MDMS wins for options, dataSource, and field metadata when present.
+ * Merge local field overrides onto an MDMS-driven form.
+ * MDMS defines structure/order/options; local wins for compute, validation, prefill, labelBy.
  */
 export const mergeFormFieldConfigs = (localForm = [], mdmsForm = []) => {
   if (!Array.isArray(mdmsForm) || mdmsForm.length === 0) {
@@ -178,31 +178,41 @@ export const mergeFormFieldConfigs = (localForm = [], mdmsForm = []) => {
     return sortByOrder(mdmsForm);
   }
 
-  const mdmsByName = new Map();
-  flattenFormConfig(mdmsForm).forEach((fc) => {
-    if (fc?.field?.name) mdmsByName.set(fc.field.name, fc);
+  const localByName = new Map();
+  const localByKey = new Map();
+  flattenFormConfig(localForm).forEach((fc) => {
+    if (fc?.field?.name) localByName.set(fc.field.name, fc);
+    if (fc?.key) localByKey.set(fc.key, fc);
   });
 
-  const mergeItem = (item) => {
-    if (item.type === "group") {
+  const resolveLocal = (item) => {
+    const name = item?.field?.name;
+    return (
+      (name && localByName.get(name)) ||
+      (item?.key && localByKey.get(item.key)) ||
+      null
+    );
+  };
+
+  const overlayMdmsItem = (mdmsItem) => {
+    if (mdmsItem?.type === "group") {
       return {
-        ...item,
-        children: (item.children || []).map((child) => {
-          const name = child.field?.name;
-          return name && mdmsByName.has(name)
-            ? mergeFormField(child, mdmsByName.get(name))
-            : child;
+        ...mdmsItem,
+        children: (mdmsItem.children || []).map((child) => {
+          const localChild = resolveLocal(child);
+          return localChild ? mergeFormField(localChild, child) : child;
         }),
       };
     }
-    const name = item.field?.name;
-    if (name && mdmsByName.has(name)) {
-      return mergeFormField(item, mdmsByName.get(name));
+    if (mdmsItem?.type === "sectionHeader") {
+      const localHeader = localByKey.get(mdmsItem.key);
+      return localHeader ? { ...mdmsItem, ...localHeader, type: "sectionHeader" } : mdmsItem;
     }
-    return item;
+    const localItem = resolveLocal(mdmsItem);
+    return localItem ? mergeFormField(localItem, mdmsItem) : mdmsItem;
   };
 
-  return sortByOrder(localForm.map(mergeItem));
+  return sortByOrder(mdmsForm.map(overlayMdmsItem));
 };
 
 /** Rehydrate a flattened billing-cycle code using session metadata or form options. */

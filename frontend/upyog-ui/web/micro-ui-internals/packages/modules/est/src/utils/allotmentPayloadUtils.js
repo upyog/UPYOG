@@ -7,5 +7,3 @@ import { buildApiPayload } from "@nudmcdgnpm/digit-ui-react-components";
 
 export const buildDynamicAllotmentPayload = (routeConfig, flatAllotment = {}, tenantId) =>
   buildApiPayload(routeConfig, flatAllotment, tenantId);
-
-export default buildDynamicAllotmentPayload;

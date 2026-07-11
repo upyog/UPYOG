@@ -1,7 +1,5 @@
-// estateFormConfig.js
-// All ESTATE-specific behavior lives here. DynamicForm / DynamicFormField /
-// payloadUtils know nothing about "EST_DIMENSION", "EST_CITY", "Assets",
-// "LAND", or floor-area math — they just execute whatever this declares.
+// estateFormConfig.js — local behavior overrides for MDMS Estate.Config registration step.
+// Form fields come from MDMS; this file adds payload static/computed/cross-field rules.
 
 export const estateCrossFieldValidations = [
   {

@@ -1,6 +1,5 @@
-// Flat routeConfig for DynamicForm — same shape as estateFormConfig.js used by NewRegistration.
-// payloadKey "Allotments" matches the state/payload key used by the static ESTAssignAssets.js
-// and by NewRegistration's onSelect(config.key, { Allotments: [...] }) contract.
+// Local overrides + fallback when MDMS assignAssetConfig form is empty.
+// Runtime: MDMS form is primary; this file supplies compute/prefill/validation overrides.
 
 const estateAllotmentFormConfig = {
   key: "Allotments",

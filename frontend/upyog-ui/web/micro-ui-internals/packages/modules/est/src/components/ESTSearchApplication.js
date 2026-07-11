@@ -13,7 +13,7 @@ import {
   getAssetIdentity,
   hasExistingAllotment,
 } from "../utils/allotmentFormUtils";
-import EST_SEARCH_APPLICATION_CONFIG from "../config/searchApplicationConfig";
+import { resolveSearchApplicationConfig } from "../utils/estMdmsUtils";
 import AssetTable from "./shared/AssetTable";
 import useAssetTableColumns from "./shared/useAssetTableColumns";
 import styles from "../styles/ESTSearchApplication.module.scss";
@@ -28,9 +28,18 @@ const ESTSearchApplication = ({
   setShowToast,
   config: configOverride,
 }) => {
+  const { data: mdmsSearchConfig, isLoading: mdmsLoading } = Digit.Hooks.useEnabledMDMS(
+    Digit.ULBService.getStateId(),
+    "Estate",
+    [{ name: "searchApplicationConfig" }],
+    {
+      select: (data) => data?.Estate?.searchApplicationConfig,
+    }
+  );
+
   const config = useMemo(
-    () => ({ ...EST_SEARCH_APPLICATION_CONFIG, ...configOverride }),
-    [configOverride]
+    () => resolveSearchApplicationConfig(mdmsSearchConfig, configOverride),
+    [mdmsSearchConfig, configOverride]
   );
 
   const navigate = Digit.Hooks.useCustomNavigate();
@@ -143,7 +152,9 @@ const ESTSearchApplication = ({
         cancelLabel={config.routeConfig.actionButton?.text?.clear || "ES_COMMON_CLEAR_ALL"}
       />
 
-      {!isLoading && data?.display ? (
+      {mdmsLoading && <Loader />}
+
+      {!mdmsLoading && !isLoading && data?.display ? (
         <Card className={styles["est-search-application__empty-card"]}>
           {String(t(data.display) || "")
             .split("\\n")
@@ -158,7 +169,7 @@ const ESTSearchApplication = ({
             {t(config.emptyState.actionLabel)}
           </button>
         </Card>
-      ) : !isLoading && Array.isArray(data) && data.length > 0 ? (
+      ) : !mdmsLoading && !isLoading && Array.isArray(data) && data.length > 0 ? (
         <AssetTable
           t={t}
           data={paginatedData}
@@ -168,7 +179,7 @@ const ESTSearchApplication = ({
           pagination={pagination}
         />
       ) : (
-        isLoading && <Loader />
+        (mdmsLoading || isLoading) && <Loader />
       )}
     </div>
   );

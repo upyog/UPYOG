@@ -152,9 +152,6 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     [setParams]
   );
 
-  const handleSkip = useCallback(() => {}, []);
-  const handleMultiple = useCallback(() => {}, []);
-
   const onSuccess = useCallback(() => {
     clearParams();
     queryClient.invalidateQueries("EST_ASSIGN_ASSETS");
@@ -207,10 +204,8 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
                 onSelect={handleSelect}
                 onDraftSave={handleDraftSave}
                 onDraftClear={handleDraftClear}
-                onSkip={handleSkip}
                 t={t}
                 formData={params}
-                onAdd={handleMultiple}
                 userType={user}
                 parentRoute={match?.pathnameBase || parentRoute}
               />

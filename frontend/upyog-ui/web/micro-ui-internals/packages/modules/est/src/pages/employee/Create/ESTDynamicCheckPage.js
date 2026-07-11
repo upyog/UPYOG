@@ -10,6 +10,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { EST_CHECK_FLOWS } from "../../../config/estCheckPageConfig";
 import estateAllotmentFormConfig from "../../../config/Create/estateAllotmentFormConfig";
+import estateFormConfig from "../../../config/estateFormConfig";
 import { checkForNA, createAllotmentData, ESTDocumnetPreview } from "../../../utils";
 import { buildDynamicAssetPayload, getEstateRequestInfo } from "../../../utils/assetPayloadUtils";
 import { getCreateAssetPath } from "../../../utils/estRoutes";
@@ -44,13 +45,14 @@ const ESTDynamicCheckPage = ({
   const sessionRouteConfig = useDynamicRouteConfig(config, stepKey, value);
 
   const routeConfig = useMemo(() => {
+    const mdmsStep = resolveRouteConfigFromSteps(config, stepKey);
+    const activeConfig =
+      sessionRouteConfig?.form?.length > 0 ? sessionRouteConfig : mdmsStep;
+
     if (isAllotment) {
-      return mergeRouteConfig(resolveRouteConfigFromSteps(config, stepKey), {
-        ...estateAllotmentFormConfig,
-        ...sessionRouteConfig,
-      });
+      return mergeRouteConfig(activeConfig, estateAllotmentFormConfig);
     }
-    return sessionRouteConfig;
+    return mergeRouteConfig(activeConfig, estateFormConfig);
   }, [isAllotment, config, stepKey, sessionRouteConfig]);
 
   const flatAsset = useMemo(() => {

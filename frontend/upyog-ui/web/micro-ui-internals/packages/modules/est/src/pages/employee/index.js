@@ -1,4 +1,4 @@
-import { PrivateRoute, BreadCrumb, AppContainer, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb, AppContainer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route, useLocation } from "react-router-dom";
@@ -16,7 +16,7 @@ import ManageRebate from "../../components/ManageRebate";
 import ManageInterest from "../../components/ManageInterest";
 import ManagePenalty from "../../components/ManagePenalty";
 
-const EmployeeApp = ({ path, url, userType }) => {
+const EmployeeApp = ({ path, userType }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const employeeHome = path?.replace(/\/est\/?$/, "") || "/upyog-ui/employee";
@@ -66,8 +66,8 @@ const EmployeeApp = ({ path, url, userType }) => {
             <ESTBreadCrumbs location={location} />
           </div>
           <Routes>
-            <Route path="/*" element={<PrivateRoute><ESTLinks matchPath={path} userType={userType} /></PrivateRoute>} />
-            <Route path="property-allottee-details/*" element={<PrivateRoute><ESTPropertyAllotteeDetails t={t} parentRoute={path} /></PrivateRoute>} /> 
+            <Route path="/*" element={<PrivateRoute><ESTLinks /></PrivateRoute>} />
+            <Route path="property-allottee-details/*" element={<PrivateRoute><ESTPropertyAllotteeDetails /></PrivateRoute>} /> 
             <Route path="assignassets/*" element={<PrivateRoute><ESTAssignAssetCreate parentRoute={path} /></PrivateRoute>} />
             <Route path="inbox/*" element={<PrivateRoute><ESTInbox parentRoute={path} businessService="EST" initialStates={inboxInitialState} isInbox={true} filterComponent="EST_INBOX_FILTER" useNewInboxAPI={true} /></PrivateRoute>} />
             <Route path="search-applications/*" element={<PrivateRoute><SearchApp parentRoute={path} /></PrivateRoute>} />
