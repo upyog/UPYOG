@@ -7,7 +7,14 @@ import { validateFields, validateCrossField, calculateDuration, calculateRentByB
 import { sortByOrder, buildPayload, scrollToFirstError, buildInitialData, flattenFormConfig, findFieldConfig, enrichDropdownSelection } from "../utilities/formUtils";
 import useDynamicMDMS from "../utilities/useDynamicMDMS";
 import { mapFormToSearchFilters } from "../utilities/searchUtils";
+import { SearchField, SearchForm } from "./SearchForm";
 import styles from "../styles/dynamicForm.module.scss";
+
+/** RHF-compatible wrapper so SearchForm can submit without react-hook-form. */
+const searchFormHandleSubmit = (onValid) => (e) => {
+  if (e?.preventDefault) e.preventDefault();
+  onValid();
+};
 
 // ── Computed-field registry ────────────────────────────────────────────
 // A field can declare: field: { computeFrom: ["startDate","endDate"], computeFn: "calculateDuration" }
@@ -42,8 +49,13 @@ const DynamicForm = ({
   onPersistDraft,
   /** "wizard" (default) | "search" — search reuses the same fields/MDMS without wizard ActionBar */
   mode = "wizard",
+  /** search only: "inline" (row, default) | "stack" — or set routeConfig.searchLayout */
+  searchLayout,
 }) => {
   const isSearchMode = mode === "search";
+  const resolvedSearchLayout =
+    searchLayout || routeConfig?.searchLayout || (isSearchMode ? "inline" : "stack");
+  const isInlineSearch = isSearchMode && resolvedSearchLayout === "inline";
   const stateId = Digit.ULBService.getStateId();
   const payloadKey = routeConfig.payloadKey || "Assets";
 
@@ -315,38 +327,76 @@ const DynamicForm = ({
 
   if (isLoading) return <Loader />;
 
+  const fieldNodes = sortedFields.map((fieldConfig) => (
+    <DynamicFormField
+      key={fieldConfig.key}
+      fieldConfig={fieldConfig}
+      formData={formData}
+      onChange={handleChange}
+      errors={errors}
+      dropdownData={dropdownData}
+      t={t}
+      isDisabled={isDisabled}
+      onFileUpload={handleFileUpload}
+    />
+  ));
+
+  const searchActions = !isDisabled && isSearchMode && (
+    <SearchField className="submit">
+      <SubmitBar label={t(buttonLabel)} submit />
+      <p className={styles["dynamic-form-search-clear"]} onClick={handleCancel}>
+        {t(clearLabel)}
+      </p>
+    </SearchField>
+  );
+
+  const stackedSearchActions = !isDisabled && isSearchMode && !isInlineSearch && (
+    <div className={styles["dynamic-form-search-actions"]}>
+      <SubmitBar
+        label={t(buttonLabel)}
+        onSubmit={goNext}
+        className={styles["dynamic-form-search-submit"]}
+      />
+      <p className={styles["dynamic-form-search-clear"]} onClick={handleCancel}>
+        {t(clearLabel)}
+      </p>
+    </div>
+  );
+
+  if (isInlineSearch) {
+    return (
+      <>
+        <SearchForm
+          onSubmit={goNext}
+          handleSubmit={searchFormHandleSubmit}
+          className={routeConfig.searchFormClassName || ""}
+        >
+          {fieldNodes.map((node, i) => (
+            <SearchField key={sortedFields[i].key}>{node}</SearchField>
+          ))}
+          {searchActions}
+        </SearchForm>
+
+        {crossFieldMessages.map((msg, i) => (
+          <p key={i} className={styles["dynamic-form-error"]}>{t(msg)}</p>
+        ))}
+
+        {toast && (
+          <Toast label={toast.message} error={toast.error} onClose={() => setToast(null)} />
+        )}
+      </>
+    );
+  }
+
   return (
     <div className={styles["dynamic-form-container"]}>
-      {sortedFields.map((fieldConfig) => (
-        <DynamicFormField
-          key={fieldConfig.key}
-          fieldConfig={fieldConfig}
-          formData={formData}
-          onChange={handleChange}
-          errors={errors}
-          dropdownData={dropdownData}
-          t={t}
-          isDisabled={isDisabled}
-          onFileUpload={handleFileUpload}
-        />
-      ))}
+      {fieldNodes}
 
       {crossFieldMessages.map((msg, i) => (
         <p key={i} className={styles["dynamic-form-error"]}>{t(msg)}</p>
       ))}
 
-      {!isDisabled && isSearchMode && (
-        <div className={styles["dynamic-form-search-actions"]}>
-          <SubmitBar
-            label={t(buttonLabel)}
-            onSubmit={goNext}
-            className={styles["dynamic-form-search-submit"]}
-          />
-          <p className={styles["dynamic-form-search-clear"]} onClick={handleCancel}>
-            {t(clearLabel)}
-          </p>
-        </div>
-      )}
+      {stackedSearchActions}
 
       {!isDisabled && !isSearchMode && (
         <ActionBar className={styles["dynamic-form-action"]}>

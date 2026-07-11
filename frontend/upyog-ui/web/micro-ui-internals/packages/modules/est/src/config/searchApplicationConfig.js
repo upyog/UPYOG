@@ -23,6 +23,7 @@ export const EST_SEARCH_APPLICATION_CONFIG = {
   routeConfig: {
     key: "SearchFilters",
     payloadKey: "Filters",
+    searchLayout: "inline",
     actionButton: {
       text: {
         create: "ES_COMMON_SEARCH",
