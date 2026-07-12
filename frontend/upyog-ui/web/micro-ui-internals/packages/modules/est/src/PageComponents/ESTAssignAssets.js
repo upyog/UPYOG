@@ -7,6 +7,7 @@ import {
   pickMeaningfulFormValues,
 } from "../utils/allotmentFormUtils";
 import { buildAllotmentAssetDisplay } from "../utils/estMdmsUtils";
+import styles from "../styles/ESTAssignAssets.module.scss";
 
 const PAYLOAD_KEY = "Allotments";
 const STEP_KEY = "Allotments";
@@ -56,6 +57,7 @@ const ESTAssignAssets = ({ onSelect, onDraftSave, onDraftClear, config, formData
       editData={prefillData}
       resetBaseline={resetBaseline}
       t={t}
+      wrapperClassName={`employeeCard ${styles.estAssignAssets}`}
       defaultHeaderCode="EST_COMMMON_ASSIGN_ASSETS"
       draft={
         onDraftSave
