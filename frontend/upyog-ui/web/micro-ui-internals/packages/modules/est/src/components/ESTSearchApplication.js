@@ -25,7 +25,6 @@ const ESTSearchApplication = ({
   onSubmit,
   data,
   count,
-  setShowToast,
   config: configOverride,
 }) => {
   const { data: mdmsSearchConfig, isLoading: mdmsLoading } = Digit.Hooks.useEnabledMDMS(
@@ -131,9 +130,8 @@ const ESTSearchApplication = ({
   );
 
   const handleClear = useCallback(() => {
-    setShowToast?.(null);
     setIsCleared(true);
-  }, [setShowToast]);
+  }, []);
 
   return (
     <div className={styles["est-search-application"]}>
