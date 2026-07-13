@@ -124,7 +124,8 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
-import org.elasticsearch.index.IndexNotFoundException;
+// IndexNotFoundException (org.elasticsearch.index.IndexNotFoundException) removed in ES 8.x;
+// the catch below uses Exception to preserve the original error-handling behaviour.
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.query.Query;
 import org.springframework.beans.BeansException;
@@ -832,7 +833,14 @@ public class CollectionsUtil {
                             receiptHeader.getService() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
                     receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
                 }
-            } catch (final IndexNotFoundException e) {
+            } catch (final Exception e) {
+                // TODO(JDK17 Migration):
+                // org.elasticsearch.index.IndexNotFoundException no longer exists after the
+                // Spring Data Elasticsearch 5.x upgrade.
+                // Temporarily catching Exception because the Elasticsearch integration is
+                // excluded from compilation.
+                // When Elasticsearch support is migrated, replace this with the appropriate
+                // Elasticsearch 8.x exception.
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
                 LOGGER.error(errMsg, e);
