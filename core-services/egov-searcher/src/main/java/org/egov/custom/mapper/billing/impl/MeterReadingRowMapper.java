@@ -4,11 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -140,27 +141,33 @@ public class MeterReadingRowMapper implements ResultSetExtractor<List<Map<String
             reading.put("lastReadingDate", rs.getObject("lastreadingdate"));
             reading.put("currentReadingDate", rs.getObject("currentreadingdate"));
 
-            // Maintain uniqueness using id
-            Map<String, Map<String, Object>> meterReadingMap =
-                    (Map<String, Map<String, Object>>) connection.computeIfAbsent(
-                            "meterReadingsMap",
-                            k -> new HashMap<>()
-                    );
+            List<Map<String, Object>> meterReadings =
+                    (List<Map<String, Object>>) connection.get("meterReadings");
 
-            meterReadingMap.put((String) reading.get("id"), reading);
+            // Add only if no record exists, or replace if current record is newer
+            Optional<Map<String, Object>> existing = meterReadings.stream()
+                    .filter(r -> Objects.equals(r.get("id"), reading.get("id")))
+                    .findFirst();
 
-            // Convert to sorted list (descending currentReadingDate)
-            List<Map<String, Object>> sortedMeterReadings =
-                    new ArrayList<>(meterReadingMap.values());
+            if (existing.isPresent()) {
+                long existingDate = ((Number) existing.get().get("currentReadingDate")).longValue();
+                long newDate = ((Number) reading.get("currentReadingDate")).longValue();
 
-            sortedMeterReadings.sort(
+                if (newDate > existingDate) {
+                    meterReadings.remove(existing.get());
+                    meterReadings.add(reading);
+                }
+            } else {
+                meterReadings.add(reading);
+            }
+
+            // Sort latest reading first
+            meterReadings.sort(
                     Comparator.comparing(
                             r -> ((Number) r.get("currentReadingDate")).longValue(),
                             Comparator.reverseOrder()
                     )
             );
-
-            connection.put("meterReadings", sortedMeterReadings);
         }
 
         assignUserDetails(connectionMap, userIds);
