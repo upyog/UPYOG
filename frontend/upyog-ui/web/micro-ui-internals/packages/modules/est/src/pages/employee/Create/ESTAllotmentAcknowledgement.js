@@ -19,7 +19,12 @@ import { Link, useLocation } from "react-router-dom";
 import getESTAllotmentAcknowledgementData from "../../../utils/getESTAllotmentAcknowledgementData";
 import { ESTDocumnetPreview } from "../../../utils";
 import { fetchAllotmentDocumentPreviews } from "../../../utils/allotmentDocumentUtils";
-import { getEmployeeHomeFromModulePath, getCitizenHomeFromModulePath } from "../../../utils/estRoutes";
+import {
+  getEmployeeHomeFromModulePath,
+  getCitizenHomeFromModulePath,
+  getEmployeePaymentCollectPath,
+  getCitizenPaymentPath,
+} from "../../../utils/estRoutes";
 
 const rowContainerStyle = {
   padding: "4px 0px",
@@ -27,12 +32,13 @@ const rowContainerStyle = {
 };
 
 const BannerPicker = ({ t, isSuccess, data }) => {
-  const applicationNumber = data?.Allotments?.[0]?.assetNo || "";
+  const allotment = data?.Allotments?.[0];
+  const applicationNumber = allotment?.allotmentId || allotment?.assetNo || "";
   return (
     <Banner
       message={isSuccess ? t("EST_ALLOTED_SUCCESSFULL") : t("EST_APPLICATION_FAILED")}
       applicationNumber={applicationNumber}
-      info={isSuccess ? t("EST_APPLICATION_NO") : ""}
+      info={isSuccess ? t(allotment?.allotmentId ? "EST_ALLOTMENT_ID" : "EST_APPLICATION_NO") : ""}
       successful={isSuccess}
       style={{ width: "100%" }}
     />
@@ -106,6 +112,18 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
       ? getCitizenHomeFromModulePath(modulePath)
       : getEmployeeHomeFromModulePath(modulePath);
 
+  const assetNo =
+    ackData?.Allotments?.[0]?.assetNo ||
+    ackData?.Assets?.[0]?.estateNo ||
+    ackData?.Assets?.[0]?.assetNo ||
+    "";
+
+  const paymentPath = assetNo
+    ? user?.type === "CITIZEN"
+      ? getCitizenPaymentPath(assetNo)
+      : getEmployeePaymentCollectPath(assetNo)
+    : "";
+
   return (
     <Card>
       <BannerPicker t={t} isSuccess={isSuccess} data={ackData} />
@@ -129,6 +147,12 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
 
       {isSuccess && (
         <SubmitBar label={t("EST_ALLOTMENT_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />
+      )}
+
+      {isSuccess && paymentPath && (
+        <Link to={paymentPath}>
+          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+        </Link>
       )}
 
       <Link to={homePath}>

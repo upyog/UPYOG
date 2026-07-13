@@ -68,8 +68,10 @@ const extractEstateNo = (response) => {
     const asset0 = Array.isArray(assets) && assets.length ? assets[0] : {};
     return (
       asset0?.estateNo ||
+      asset0?.assetNo ||
       asset0?.applicationNo ||
       response?.estateNo ||
+      response?.assetNo ||
       ""
     );
   } catch {

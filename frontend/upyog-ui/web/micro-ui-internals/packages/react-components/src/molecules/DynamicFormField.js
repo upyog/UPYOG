@@ -15,7 +15,9 @@ const FieldLabel = ({ text, required, hasError, unit }) => (
   <CardLabel className={hasError ? styles["dynamic-form-field__label--error"] : undefined}>
     {text}
     {unit && <span className={styles["dynamic-form-field__unit"]}> {unit}</span>}
-    {required && <span className={styles["dynamic-form-field__required"]}> *</span>}
+    {required && (
+      <span className={`astericColor ${styles["dynamic-form-field__required"] || ""}`}> *</span>
+    )}
   </CardLabel>
 );
 

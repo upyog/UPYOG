@@ -29,7 +29,12 @@ const getESTAllotmentAcknowledgementData = async (
 
   return {
     heading: t("EST_ACKNOWLEDGEMENT"),
-    applicationNumber: pick(allotment.assetNo, asset.estateNo, asset.assetNo),
+    applicationNumber: pick(
+      allotment.allotmentId,
+      allotment.assetNo,
+      asset.estateNo,
+      asset.assetNo
+    ),
 
     tenantId: tenantInfo?.code,
     name: tenantInfo?.name,
