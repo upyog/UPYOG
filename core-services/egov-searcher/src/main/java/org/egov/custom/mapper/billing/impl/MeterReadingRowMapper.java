@@ -3,6 +3,8 @@ package org.egov.custom.mapper.billing.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -57,9 +59,13 @@ public class MeterReadingRowMapper implements ResultSetExtractor<List<Map<String
                 connection.put("applicationNo", rs.getString("applicationno"));
                 connection.put("usageCategory", rs.getString("usagecategory"));
 
+                connection.put("area", rs.getString("area"));
                 connection.put("zoneCode", rs.getString("zonecode"));
+                connection.put("zonename", rs.getString("zonename"));
                 connection.put("blockCode", rs.getString("blockcode"));
+                connection.put("blockname", rs.getString("blockname"));
                 connection.put("localityCode", rs.getString("localitycode"));
+                connection.put("localityname", rs.getString("localityname"));
                 connection.put("groups", rs.getString("groups"));
                 
                 // Address
@@ -134,8 +140,27 @@ public class MeterReadingRowMapper implements ResultSetExtractor<List<Map<String
             reading.put("lastReadingDate", rs.getObject("lastreadingdate"));
             reading.put("currentReadingDate", rs.getObject("currentreadingdate"));
 
-            ((List<Map<String, Object>>) connection.get("meterReadings"))
-                    .add(reading);
+            // Maintain uniqueness using id
+            Map<String, Map<String, Object>> meterReadingMap =
+                    (Map<String, Map<String, Object>>) connection.computeIfAbsent(
+                            "meterReadingsMap",
+                            k -> new HashMap<>()
+                    );
+
+            meterReadingMap.put((String) reading.get("id"), reading);
+
+            // Convert to sorted list (descending currentReadingDate)
+            List<Map<String, Object>> sortedMeterReadings =
+                    new ArrayList<>(meterReadingMap.values());
+
+            sortedMeterReadings.sort(
+                    Comparator.comparing(
+                            r -> ((Number) r.get("currentReadingDate")).longValue(),
+                            Comparator.reverseOrder()
+                    )
+            );
+
+            connection.put("meterReadings", sortedMeterReadings);
         }
 
         assignUserDetails(connectionMap, userIds);
