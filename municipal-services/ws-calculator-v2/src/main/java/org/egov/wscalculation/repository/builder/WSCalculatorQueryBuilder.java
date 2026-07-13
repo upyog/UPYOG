@@ -1107,6 +1107,23 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 		return query.toString();
 	}
 	
+	public String searchBillGenerationSchedulerTenantQuery(BillGenerationSearchCriteria criteria,
+			List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(billGenerationSchedulerSearchQuery);
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" tenantid= ? ");
+		preparedStatement.add(criteria.getTenantId());
+		
+		if (criteria.getStatus() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" status = ? ");
+			preparedStatement.add(criteria.getStatus());
+		}
+		
+		query.append(" ORDER BY createdtime DESC");
+		return query.toString();
+	}
+	
 	
 	public String buildGetConnectionsByStatusQuery(Map<String, Object> criteria, List<Object> preparedStmtList) {
 	    StringBuilder query = new StringBuilder(SEARCH_INITIATED_CONNECTION);

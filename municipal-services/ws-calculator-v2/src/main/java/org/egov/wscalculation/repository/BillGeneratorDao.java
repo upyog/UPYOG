@@ -73,7 +73,7 @@ public class BillGeneratorDao {
 	
 	public List<BillScheduler> getBillGenerationByTenant(BillGenerationSearchCriteria criteria) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.searchBillGenerationSchedulerQuerys(criteria, preparedStatement);
+		String query = queryBuilder.searchBillGenerationSchedulerTenantQuery(criteria, preparedStatement);
 		if (query == null)
 			return Collections.emptyList();
 		log.debug("Prepared Statement" + preparedStatement.toString());
