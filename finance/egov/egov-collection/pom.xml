@@ -336,6 +336,28 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <!-- Exclude Elasticsearch packages from Javadoc - incompatible with JDK17/Spring Data ES 5.x.
+                 Must use <executions> to override the inherited 'attach-javadocs' execution by id,
+                 because maven-javadoc-plugin 2.10.4 does not merge bare <configuration> blocks
+                 into inherited executions. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <failOnError>false</failOnError>
+                            <excludePackageNames>org.egov.collection.service.elasticsearch:org.egov.collection.service.dashboard:org.egov.collection.entity.es:org.egov.collection.utils.es</excludePackageNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
