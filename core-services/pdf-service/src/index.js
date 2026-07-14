@@ -69,7 +69,13 @@ console.log(`*******************************************`);
 
 var jp = require("jsonpath");
 //create binary
-pdfmake.vfs = pdfFonts.pdfMake.vfs;
+if (pdfFonts.pdfMake && pdfFonts.pdfMake.vfs) {
+  pdfmake.vfs = pdfFonts.pdfMake.vfs;
+} else if (pdfFonts.vfs) {
+  pdfmake.vfs = pdfFonts.vfs;
+} else {
+  pdfmake.vfs = pdfFonts;
+}
 var pdfMakePrinter = require("pdfmake/src/printer");
 
 let app = express();
