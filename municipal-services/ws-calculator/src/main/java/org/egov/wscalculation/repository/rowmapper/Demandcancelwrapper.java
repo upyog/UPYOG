@@ -23,6 +23,7 @@ public class Demandcancelwrapper implements ResultSetExtractor<List<Canceldemand
 			
 			waterDetails.setDemandid(rs.getString("id"));
 			waterDetails.setConsumercode(rs.getString("consumercode"));
+			waterDetails.setIsPaymentCompleted(rs.getBoolean("ispaymentcompleted"));
 			waterDetailList.add(waterDetails);
 		}
 		return waterDetailList;
