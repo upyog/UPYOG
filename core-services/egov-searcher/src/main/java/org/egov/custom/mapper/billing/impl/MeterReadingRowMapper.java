@@ -3,10 +3,13 @@ package org.egov.custom.mapper.billing.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,6 +43,7 @@ public class MeterReadingRowMapper implements ResultSetExtractor<List<Map<String
     public List<Map<String, Object>> extractData(ResultSet rs) throws SQLException {
 
         Map<String, Map<String, Object>> connectionMap = new LinkedHashMap<>();
+        Map<String, Map<String, Map<String, Object>>> readingIndexMap = new LinkedHashMap<>();
         Set<String> userIds = new HashSet<>();
 
         while (rs.next()) {
@@ -57,10 +61,15 @@ public class MeterReadingRowMapper implements ResultSetExtractor<List<Map<String
                 connection.put("applicationNo", rs.getString("applicationno"));
                 connection.put("usageCategory", rs.getString("usagecategory"));
 
+                connection.put("area", rs.getString("area"));
                 connection.put("zoneCode", rs.getString("zonecode"));
+                connection.put("zonename", rs.getString("zonename"));
                 connection.put("blockCode", rs.getString("blockcode"));
+                connection.put("blockname", rs.getString("blockname"));
                 connection.put("localityCode", rs.getString("localitycode"));
+                connection.put("localityname", rs.getString("localityname"));
                 connection.put("groups", rs.getString("groups"));
+                connection.put("landArea", rs.getString("landarea"));
                 
                 // Address
                 Map<String, Object> address = new LinkedHashMap<>();
@@ -122,10 +131,11 @@ public class MeterReadingRowMapper implements ResultSetExtractor<List<Map<String
                         new ArrayList<Map<String, Object>>());
 
                 connectionMap.put(connectionNo, connection);
+        		readingIndexMap.put(connectionNo, new LinkedHashMap<>());
             }
 
             Map<String, Object> reading = new LinkedHashMap<>();
-
+			String readingId = rs.getString("id");
             reading.put("id", rs.getString("id"));
             reading.put("billingPeriod", rs.getString("billingperiod"));
             reading.put("meterStatus", rs.getString("meterstatus"));
@@ -134,9 +144,34 @@ public class MeterReadingRowMapper implements ResultSetExtractor<List<Map<String
             reading.put("lastReadingDate", rs.getObject("lastreadingdate"));
             reading.put("currentReadingDate", rs.getObject("currentreadingdate"));
 
-            ((List<Map<String, Object>>) connection.get("meterReadings"))
-                    .add(reading);
-        }
+			List<Map<String, Object>> meterReadings = (List<Map<String, Object>>) connection.get("meterReadings");
+			Map<String, Map<String, Object>> readingIndex = readingIndexMap.get(connectionNo);
+
+			// O(1) duplicate check via HashMap instead of linear stream scan
+			Map<String, Object> existingReading = readingIndex.get(readingId);
+
+			if (existingReading != null) {
+				long existingDate = ((Number) existingReading.get("currentReadingDate")).longValue();
+				long newDate = ((Number) reading.get("currentReadingDate")).longValue();
+
+				if (newDate > existingDate) {
+					meterReadings.remove(existingReading);
+					meterReadings.add(reading);
+					readingIndex.put(readingId, reading);
+				}
+			} else {
+				meterReadings.add(reading);
+				readingIndex.put(readingId, reading);
+			}
+		}
+
+		// Sort once after all rows are processed (moved out of the loop)
+		Comparator<Map<String, Object>> byDateDesc = Comparator
+				.comparing(r -> ((Number) r.get("currentReadingDate")).longValue(), Comparator.reverseOrder());
+		for (Map<String, Object> connection : connectionMap.values()) {
+			List<Map<String, Object>> meterReadings = (List<Map<String, Object>>) connection.get("meterReadings");
+			meterReadings.sort(byDateDesc);
+		}
 
         assignUserDetails(connectionMap, userIds);
 
