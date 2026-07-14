@@ -54,14 +54,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.data.domain.Sort;
+import java.util.Optional;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -105,9 +106,9 @@ public class DepartmentServiceTest {
     }
 
     @Test
-    public void shouldGetDepartmentById()  {
+    public void shouldGetDepartmentById() {
         department.setId(1l);
-        when(departmentService.getDepartmentById(anyLong())).thenReturn(department);
+        when(departmentRepository.findById(1l)).thenReturn(java.util.Optional.of(department));
         Department expectedDepartment = departmentService.getDepartmentById(1l);
         verify(departmentRepository).findById(1l);
         assertEquals(expectedDepartment, department);

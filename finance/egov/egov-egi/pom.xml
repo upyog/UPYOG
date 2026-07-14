@@ -467,7 +467,9 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <excludePackageNames>org.egov.infra.elasticsearch.*:org.egov.infra.admin.master.repository.es:org.egov.infra.admin.master.entity.es:org.egov.infra.admin.master.service.es:org.egov.infra.config.elasticsearch</excludePackageNames>
+                    <doclint>none</doclint>
                     <failOnError>false</failOnError>
+                    <failOnWarnings>false</failOnWarnings>
                 </configuration>
             </plugin>
 
