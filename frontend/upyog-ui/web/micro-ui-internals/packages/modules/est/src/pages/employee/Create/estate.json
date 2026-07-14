@@ -1,0 +1,525 @@
+{
+    "tenantId": "pg",
+    "moduleName": "Estate",
+    "AssignAssetConfig": [
+      {
+        "head": "EST_COMMON_ALLOTMENT",
+        "body": [
+          {
+            "route": "info",
+            "component": "ESTAssignAstRequiredDoc",
+            "nextStep": "assign-assets",
+            "key": "Documents"
+          },
+          {
+            "key": "Allotments",
+            "route": "assign-assets",
+            "component": "ESTAssignAssets",
+            "nextStep": null,
+            "isPreview": false,
+            "withoutLabel": true,
+            "type": "component",
+            "hideInEmployee": false,
+            "isMandatory": true,
+            "sectionHeading": null,
+            "texts": {
+              "submitBarLabel": "COMMON_SAVE_NEXT",
+              "header": "EST_ASSIGN_PROPERTY_DETAILS"
+            },
+            "form": [
+              {
+                "order": 0,
+                "key": "EST_ASSET_NUMBER",
+                "field": {
+                  "code": "EST_ASSET_NUMBER",
+                  "name": "assetNo",
+                  "type": "text"
+                },
+                "validation": {
+                  "required": true,
+                  "disabled": true,
+                  "readOnly": true
+                }
+              },
+              {
+                "order": 1,
+                "key": "EST_ASSET_REFERENCE_NUMBER",
+                "field": {
+                  "code": "EST_ASSET_REFERENCE_NUMBER",
+                  "name": "assetRefNumber",
+                  "type": "text"
+                },
+                "validation": {
+                  "disabled": true,
+                  "readOnly": true,
+                  "required": false
+                }
+              },
+              {
+                "order": 2,
+                "key": "EST_BUILDING_NAME",
+                "field": {
+                  "code": "EST_BUILDING_NAME",
+                  "name": "buildingName",
+                  "type": "text"
+                },
+                "validation": {
+                  "disabled": true,
+                  "readOnly": true,
+                  "required": false
+                },
+                "excludeFromPayload": true
+              },
+              {
+                "order": 3,
+                "key": "EST_LOCALITY",
+                "field": {
+                  "code": "EST_LOCALITY",
+                  "name": "localityDisplay",
+                  "type": "text"
+                },
+                "validation": {
+                  "disabled": true,
+                  "readOnly": true,
+                  "required": false
+                },
+                "excludeFromPayload": true
+              },
+              {
+                "order": 4,
+                "key": "EST_TOTAL_AREA",
+                "field": {
+                  "code": "EST_TOTAL_AREA",
+                  "name": "totalFloorArea",
+                  "type": "text",
+                  "unit": "(In sq.ft)"
+                },
+                "validation": {
+                  "required": false,
+                  "disabled": true,
+                  "readOnly": false
+                },
+                "excludeFromPayload": true
+              },
+              {
+                "order": 5,
+                "key": "EST_FLOOR",
+                "field": {
+                  "code": "EST_FLOOR",
+                  "name": "buildingFloor",
+                  "type": "text"
+                },
+                "validation": {
+                  "required": false,
+                  "disabled": true,
+                  "readOnly": true 
+               },
+                "excludeFromPayload": true
+              },
+              {
+                "order": 6,
+                "key": "EST_RATE",
+                "field": {
+                  "code": "EST_RATE",
+                  "name": "assetRate",
+                  "type": "text",
+                  "unit": "(Per sq.ft)"
+                },
+                "validation": {
+                  "required": false,
+                  "disabled": true,
+                  "readOnly": false
+                },
+                "excludeFromPayload": true
+              },
+              {
+                "order": 7,
+                "key": "EST_PERSONAL_DETAILS_OF_ALLOTTEE",
+                "label": {
+                  "code": "EST_PERSONAL_DETAILS_OF_ALLOTTEE"
+                },
+                "type": "sectionHeader"
+              },
+              {
+                "order": 8,
+                "key": "EST_ALLOTMENT_TYPE",
+                "apiFieldName": "propertyType",
+                "field": {
+                  "code": "EST_ALLOTMENT_TYPE",
+                  "name": "allotmentType",
+                  "placeholder": "EST_SELECT_PROPERTY_TYPE",
+                  "type": "dropdown",
+                  "dataSource": {
+                    "type": "MDMS",
+                    "moduleName": "Estate",
+                    "masterName": "AllotmentType"
+                  }
+                },
+                "validation": {
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_ALLOTMENT_TYPE_REQUIRED"
+                }
+              },
+              {
+                "order": 9,
+                "key": "EST_ALLOTTEE_NAME",
+                "field": {
+                  "code": "EST_ALLOTTEE_NAME",
+                  "name": "alloteeName",
+                  "placeholder": "EST_ENTER_ALLOTTEE_NAME",
+                  "type": "text"
+                },
+                "validation": {
+                  "pattern": "^[a-zA-Z ]+$",
+                  "regex": {
+                    "pattern": "[^a-zA-Z ]",
+                    "flags": "g"
+                  },
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_ALLOTTEE_NAME"
+                }
+              },
+              {
+                "order": 10,
+                "key": "EST_PHONE_NUMBER",
+                "field": {
+                  "code": "EST_PHONE_NUMBER",
+                  "name": "phoneNumber",
+                  "placeholder": "EST_ENTER_PHONE_NUMBER",
+                  "type": "text"
+                },
+                "validation": {
+                  "maxLength": 10,
+                  "pattern": "^[0-9]{10}$",
+                  "regex": {
+                    "pattern": "\\D",
+                    "flags": "g"
+                  },
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_PHONE_NUMBER"
+                }
+              },
+              {
+                "order": 11,
+                "key": "EST_ALTERNATE_PHONE_NUMBER",
+                "field": {
+                  "code": "EST_ALTERNATE_PHONE_NUMBER",
+                  "name": "altPhoneNumber",
+                  "placeholder": "EST_ENTER_ALTERNATE_PHONE_NUMBER",
+                  "type": "text"
+                },
+                "validation": {
+                  "maxLength": 10,
+                  "pattern": "^[0-9]{10}$",
+                  "regex": {
+                    "pattern": "\\D",
+                    "flags": "g"
+                  },
+                  "required": false,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_ALTERNATE_PHONE_NUMBER"
+                }
+              },
+              {
+                "order": 12,
+                "key": "EST_EMAIL_ID",
+                "field": {
+                  "code": "EST_EMAIL_ID",
+                  "name": "emailId",
+                  "placeholder": "EST_ENTER_EMAIL_ID",
+                  "type": "text"
+                },
+                "validation": {
+                  "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2}$",
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_EMAIL_ID"
+                }
+              },
+              {
+                "order": 13,
+                "key": "EST_ALLOTMENT_INVOICE_DETAILS",
+                "label": {
+                  "code": "EST_ALLOTMENT_INVOICE_DETAILS"
+                },
+                "type": "sectionHeader"
+              },
+              {
+                "order": 14,
+                "key": "EST_AGREEMENT_START_DATE",
+                "field": {
+                  "code": "EST_AGREEMENT_START_DATE",
+                  "name": "agreementStartDate",
+                  "type": "date",
+                  "placeholder": "DD/MM/YY"
+                },
+                "validation": {
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_AGREEMENT_START_DATE"
+                }
+              },
+              {
+                "order": 15,
+                "key": "EST_AGREEMENT_END_DATE",
+                "field": {
+                  "code": "EST_AGREEMENT_END_DATE",
+                  "name": "agreementEndDate",
+                  "type": "date",
+                  "placeholder": "DD/MM/YY"
+                },
+                "validation": {
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_AGREEMENT_END_DATE"
+                }
+              },
+              {
+                "order": 16,
+                "key": "EST_DURATION",
+                "field": {
+                  "code": "EST_DURATION",
+                  "name": "duration",
+                  "placeholder": "EST_DURATION_AUTO_POPULATE",
+                  "type": "text",
+                  "unit": "In months",
+                  "computeFrom": [
+                    "startDate",
+                    "endDate"
+                  ],
+                  "computeFn": "calculateDuration"
+                },
+                "validation": {
+                  "required": false,
+                  "disabled": true,
+                  "readOnly": true
+                }
+              },
+              {
+                "order": 17,
+                "key": "EST_BILLING_CYCLE",
+                "field": {
+                  "code": "EST_BILLING_CYCLE",
+                  "name": "billingCycle",
+                  "type": "dropdown",
+                  "placeholder": "EST_SELECT_BILLING_CYCLE",
+                  "dataSource": {
+                    "type": "MDMS",
+                    "moduleName": "Estate",
+                    "masterName": "AllotmentBillingCycle"
+                  }
+                },
+                "validation": {
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_BILLING_CYCLE_REQUIRED"
+                }
+              },
+              {
+                "order": 18,
+                "key": "EST_RATE_PER_SQFT",
+                "field": {
+                  "code": "EST_RATE_PER_SQFT",
+                  "name": "rentRate",
+                  "type": "text",
+                  "placeholder": "EST_ENTER_RATE",
+                  "unit": "Per sq. ft."
+                },
+                "validation": {
+                  "maxLength": 12,
+                  "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                  "regex": {
+                    "pattern": "[^0-9.]",
+                    "flags": "g"
+                  },
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_AMOUNT"
+                }
+              },
+              {
+                "order": 19,
+                "key": "EST_MONTHLY_RENT_IN_INR",
+                "field": {
+                  "code": "EST_MONTHLY_RENT_IN_INR",
+                  "name": "monthlyRent",
+                  "placeholder": "EST_ENTER_MONTHLY_RENT",
+                  "type": "text",
+                  "unit": "In INR"
+                },
+                "validation": {
+                  "maxLength": 12,
+                  "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                  "regex": {
+                    "pattern": "[^0-9.]",
+                    "flags": "g"
+                  },
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_AMOUNT"
+                }
+              },
+              {
+                "order": 20,
+                "key": "EST_ADVANCE_PAYMENT_IN_INR",
+                "field": {
+                  "code": "EST_ADVANCE_PAYMENT_IN_INR",
+                  "name": "advancePayment",
+                  "placeholder": "EST_ENTER_ADVANCE_PAYMENT",
+                  "type": "text",
+                  "unit": "In INR"
+                },
+                "validation": {
+                  "maxLength": 12,
+                  "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                  "regex": {
+                    "pattern": "[^0-9.]",
+                    "flags": "g"
+                  },
+                  "required": true,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_AMOUNT"
+                }
+              },
+              {
+                "order": 21,
+                "key": "EST_ADVANCE_PAYMENT_DATE",
+                "field": {
+                  "code": "EST_ADVANCE_PAYMENT_DATE",
+                  "name": "advancePaymentDate",
+                  "type": "date",
+                  "placeholder": "DD/MM/YY"
+                },
+                "validation": {
+                  "required": false,
+                  "disabled": false,
+                  "readOnly": false
+                }
+              },
+              {
+                "order": 22,
+                "key": "EST_DOCUMENT_UPLOAD",
+                "label": {
+                  "code": "EST_DOCUMENT_UPLOAD"
+                },
+                "type": "sectionHeader"
+              },
+              {
+                "order": 23,
+                "key": "FILE_REFERENCE_NUMBER",
+                "field": {
+                  "code": "FILE_REFERENCE_NUMBER",
+                  "name": "eOfficeFileNo",
+                  "placeholder": "EST_ENTER_FILE_NO",
+                  "type": "text"
+                },
+                "validation": {
+                  "maxLength": 20,
+                  "pattern": "^[0-9]+$",
+                  "regex": {
+                    "pattern": "\\D",
+                    "flags": "g"
+                  },
+                  "required": false,
+                  "disabled": false,
+                  "readOnly": false
+                },
+                "messages": {
+                  "error": "EST_INVALID_FILE_NO"
+                }
+              },
+              {
+                "order": 24,
+                "key": "EST_CITIZEN_REQUEST_LETTER",
+                "field": {
+                  "code": "EST_CITIZEN_REQUEST_LETTER",
+                  "name": "citizenLetter",
+                  "type": "file",
+                  "accept": ".png,.jpg,.jpeg,.pdf"
+                },
+                "validation": {
+                  "required": false,
+                  "disabled": false,
+                  "readOnly": false
+                }
+              },
+              {
+                "order": 25,
+                "key": "EST_ALLOTMENT_LETTER",
+                "field": {
+                  "code": "EST_ALLOTMENT_LETTER",
+                  "name": "allotmentLetter",
+                  "type": "file",
+                  "accept": ".png,.jpg,.jpeg,.pdf"
+                },
+                "validation": {
+                  "required": false,
+                  "disabled": false,
+                  "readOnly": false
+                }
+              },
+              {
+                "order": 26,
+                "key": "EST_SIGNED_DEED",
+                "field": {
+                  "code": "EST_SIGNED_DEED",
+                  "name": "signedDeed",
+                  "type": "file",
+                  "accept": ".png,.jpg,.jpeg,.pdf"
+                },
+                "validation": {
+                  "required": false,
+                  "disabled": false,
+                  "readOnly": false
+                }
+              }
+            ],
+            "actionButton": {
+              "text": {
+                "create": "SUBMIT",
+                "edit": "UPDATE"
+              },
+              "variant": "contained",
+              "color": "primary"
+            }
+          }
+        ]
+      }
+    ]
+  }

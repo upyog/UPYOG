@@ -21,6 +21,7 @@ const DynamicFormStep = ({
   tenantId: tenantIdProp,
   wrapperClassName = "employeeCard",
   defaultHeaderCode = "COMMON_FORM",
+  onFieldSearch,
 }) => {
   const t = tProp || ((key) => key);
   const sessionData = formData ?? persistedData ?? {};
@@ -102,6 +103,7 @@ const DynamicFormStep = ({
           routeConfig.draftButton?.successMessage || draft?.successLabel || "CS_COMMON_SAVED"
         }
         onSaveDraft={onSaveDraft}
+        onFieldSearch={onFieldSearch}
       />
     </div>
   );

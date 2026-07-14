@@ -3,7 +3,7 @@
 // `ctx` = { fieldConfig, formData }
 // Field-level rules run per field. Cross-field rules run once against the whole formData.
 
-import { flattenFormConfig, resolveBillingCycleMultiplier, enrichDropdownSelection, toDate } from "./formUtils";
+import { flattenFormConfig, resolveBillingCycleMultiplier, enrichDropdownSelection, toDate, isFieldVisible } from "./formUtils";
 
 const isEmptyValue = (value, type) => {
   if (type === "dropdown") return !value || !value.code;
@@ -61,6 +61,7 @@ export function validateFields(formConfig, formData) {
   flattenFormConfig(formConfig).forEach((fieldConfig) => {
     const { field, validation = {} } = fieldConfig;
     if (!field) return;
+    if (!isFieldVisible(fieldConfig, formData)) return;
 
     const value = formData[field.name];
     const ctx = { fieldConfig, formData };
@@ -101,10 +102,8 @@ export function validateCrossField(crossFieldValidations = [], formData) {
 // ── computed-field helpers ──────────────────────────────────────────────
 // Accepts "yyyy-MM-dd" strings (live DatePicker edits), epoch millis
 // (prefill from a saved record), or Date objects.
-// Returns whole months as a string, or "" until both dates are valid.
-// NOTE: if the bound field's label says "In years", divide by 12 here or
-// register a separate calculateDurationYears in COMPUTE_REGISTRY — don't
-// let the label and the math disagree.
+// Returns whole months as a string (API stores int months), or "" until both
+// dates are valid. Use formatDurationDisplay() for the auto-populated UI text.
 export const calculateDuration = (startDate, endDate) => {
   const start = toDate(startDate);
   const end = toDate(endDate);
@@ -116,6 +115,21 @@ export const calculateDuration = (startDate, endDate) => {
   if (end.getDate() < start.getDate()) months -= 1; // don't count a partial month
 
   return months >= 0 ? String(months) : "";
+};
+
+/** UI label for duration months: years + months when total is more than 12. */
+export const formatDurationDisplay = (totalMonths) => {
+  if (totalMonths === null || totalMonths === undefined || totalMonths === "") return "";
+  const months = Number(totalMonths);
+  if (!Number.isFinite(months) || months < 0) return "";
+  if (months <= 12) return  `${months} ${months === 1 ? "month" : "months"}`;
+
+  const years = Math.floor(months / 12);
+  const rem = months % 12;
+  const parts = [];
+  if (years) parts.push(`${years} ${years === 1 ? "year" : "years"}`);
+  if (rem) parts.push(`${rem} ${rem === 1 ? "month" : "months"}`);
+  return parts.join(" ");
 };
 
 /** Matches billing DB column numeric(12,2) — values must be below 10^10 */

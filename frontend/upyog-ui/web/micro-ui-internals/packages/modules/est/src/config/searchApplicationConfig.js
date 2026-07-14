@@ -71,6 +71,9 @@
             type: "MDMS",
             moduleName: "ASSET",
             masterName: "assetParentCategory",
+            filter: {
+              assetClassification: "IMMOVABLE",
+            },
           },
         },
         validation: { required: false },

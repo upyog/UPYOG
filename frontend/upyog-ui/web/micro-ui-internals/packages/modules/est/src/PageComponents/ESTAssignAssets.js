@@ -65,7 +65,7 @@ const ESTAssignAssets = ({ onSelect, onDraftSave, onDraftClear, config, formData
               buildStepData: (flat) => ({ [PAYLOAD_KEY]: [{ ...flat }] }),
               onPersist: onDraftSave,
               onClear: onDraftClear,
-              label: "EST_ADD_AS_DRAFT",
+              label: "EST_SAVE_AS_DRAFT",
               successLabel: "EST_DRAFT_SAVED",
             }
           : undefined

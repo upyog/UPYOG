@@ -36,6 +36,7 @@ export const formatDate = (value) => {
 const monthsToReadable = (totalMonths) => {
   const months = Number(totalMonths);
   if (!Number.isFinite(months) || months <= 0) return "";
+  if (months <= 12) return `${months} ${months === 1 ? "month" : "months"}`;
   const y = Math.floor(months / 12);
   const m = months % 12;
   const parts = [];
@@ -86,6 +87,53 @@ const toFlatAssetForPayload = (assetData = {}) => ({
   department: assetData.department || "DEPT_2",
   refAssetNo: assetData.refAssetNo || assetData.refAsset || "",
 });
+
+/** Map a searched Asset API object onto NewRegistration form field names. */
+export const mapAssetToRegistrationPrefill = (asset = {}) => {
+  const flat = toFlatAssetForPayload(asset);
+  return {
+    buildingName: flat.buildingName || "",
+    buildingNo: flat.buildingNo || "",
+    buildingFloor: flat.buildingFloor || "",
+    buildingBlock: flat.buildingBlock || "",
+    totalFloorArea: flat.totalFloorArea ?? "",
+    dimensionLength: flat.dimensionLength ?? "",
+    dimensionWidth: flat.dimensionWidth ?? "",
+    rate: flat.rate ?? "",
+    assetRef: flat.refAssetNo || flat.assetRef || "",
+    assetType: flat.assetType || "",
+    serviceType: flat.serviceType || "",
+    serviceTypeName: flat.serviceTypeName || "",
+    city: flat.tenantId || flat.city || "",
+  };
+};
+
+/** Map Asset-services reference payload (applicationNo lookup) → registration form. */
+export const mapAssetReferenceToPrefill = (asset = {}) => {
+  const extra = asset.additionalDetails || {};
+  const address = asset.addressDetails || {};
+  const locality = address.locality || {};
+  const dims = String(extra.dimensions || "")
+    .split(/[xX×]/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return {
+    buildingName: address.buildingName || asset.assetName || asset.description || "",
+    buildingNo: extra.buildingSno || "",
+    buildingFloor: extra.floorNo || "",
+    buildingBlock: "",
+    totalFloorArea: extra.plotArea || "",
+    dimensionLength: dims[0] || "",
+    dimensionWidth: dims[1] || "",
+    rate: "",
+    assetRef: asset.assetBookRefNo || asset.applicationNo || "",
+    assetType: asset.assetType || asset.assetParentCategory || extra.assetParentCategory || "",
+    serviceType: locality.code || "",
+    serviceTypeName: locality.name || locality.label || address.city || "",
+    city: asset.tenantId || "",
+  };
+};
 
 const getAssetRouteConfig = (data = {}) => {
   const fromSession = data?.routeConfigs?.newRegistration;

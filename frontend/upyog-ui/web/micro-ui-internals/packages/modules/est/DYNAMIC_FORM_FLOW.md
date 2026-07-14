@@ -69,7 +69,8 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-  A["/create-asset/newRegistration<br/>DynamicFormStep"] --> B["/check<br/>ESTDynamicCheckPage<br/>→ DynamicCheckPage"]
+  A["/create-asset/newRegistration<br/>DynamicFormStep"] --> 
+  B["/check<br/>ESTDynamicCheckPage<br/>→ DynamicCheckPage"]
   B --> C["/acknowledgement"]
 ```
 

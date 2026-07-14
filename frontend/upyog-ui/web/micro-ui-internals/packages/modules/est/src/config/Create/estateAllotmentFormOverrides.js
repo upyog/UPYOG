@@ -17,7 +17,7 @@ const estateAllotmentFormOverrides = {
     edit: "EST_COMMMON_ASSIGN_ASSETS",
   },
   draftButton: {
-    label: "EST_ADD_AS_DRAFT",
+    label: "EST_SAVE_AS_DRAFT",
     successMessage: "EST_DRAFT_SAVED",
   },
   form: [
@@ -53,6 +53,7 @@ const estateAllotmentFormOverrides = {
         name: "duration",
         computeFrom: ["agreementStartDate", "agreementEndDate"],
         computeFn: "calculateDuration",
+        numeric: true,
       },
       validation: { required: false, disabled: true, readOnly: true },
     },

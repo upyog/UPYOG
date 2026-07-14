@@ -256,7 +256,28 @@ export const getFieldWatchNames = (fieldConfig) => {
   if (field.labelBy?.field) names.add(field.labelBy.field);
   (field.computeFrom || []).forEach((n) => names.add(n));
   if (field.prefillFrom) names.add(field.prefillFrom);
+  if (fieldConfig.visibleWhen?.field) names.add(fieldConfig.visibleWhen.field);
   return [...names];
+};
+
+/** Config-driven show/hide: visibleWhen: { field, equals } | { field, in: [...] } */
+export const isFieldVisible = (fieldConfig, formData = {}) => {
+  const rule = fieldConfig?.visibleWhen;
+  if (!rule?.field) return true;
+
+  const raw = formData[rule.field];
+  const current =
+    raw && typeof raw === "object" && raw.code != null
+      ? String(raw.code).trim().toUpperCase()
+      : String(raw ?? "").trim().toUpperCase();
+
+  if (rule.equals !== undefined) {
+    return current === String(rule.equals).trim().toUpperCase();
+  }
+  if (Array.isArray(rule.in)) {
+    return rule.in.map((v) => String(v).trim().toUpperCase()).includes(current);
+  }
+  return true;
 };
 
 /* ── prefill ────────────────────────────────────────────────────────── */

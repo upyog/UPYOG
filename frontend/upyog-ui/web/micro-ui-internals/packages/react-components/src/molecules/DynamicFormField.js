@@ -6,7 +6,8 @@ import {
   DatePicker,
   UploadFile,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import { toInputDate, resolveFieldLabelKey, getFieldWatchNames, optionCode, enrichDropdownSelection } from "../utilities/formUtils";
+import { toInputDate, resolveFieldLabelKey, getFieldWatchNames, optionCode, enrichDropdownSelection, isFieldVisible } from "../utilities/formUtils";
+import { formatDurationDisplay } from "../utilities/validators";
 import styles from "../styles/DynamicFormField.module.scss";
 
 /* ── shared sub-renderers ─────────────────────────────────────────────── */
@@ -26,6 +27,13 @@ const FieldError = ({ show, message }) =>
     <p className={styles["dynamic-form-field__error"]}>{message}</p>
   ) : null;
 
+const SearchIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+    <path d="M20 20l-3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+);
+
 const EMPTY_OPTIONS = [];
 
 const DynamicFormField = ({
@@ -36,16 +44,16 @@ const DynamicFormField = ({
   dropdownData = {},
   t,
   isDisabled = false,
-  onFileUpload, // (fieldName, file) => void — DynamicForm owns the filestore upload
+  onFileUpload,
+  onFieldSearch,
+  isFieldSearching = false,
+  searchPanel = null,
+  onSelectSearchResult,
+  onCreateNewFromSearch,
 }) => {
-  // Hooks must run unconditionally, so they sit ABOVE the type early-returns.
-  // For sectionHeader/group nodes `field` is undefined — the memos no-op.
   const { field, validation = {}, messages = {} } = fieldConfig;
   const { name, type, placeholder, unit } = field || {};
 
-  // Options resolved ONCE per dropdownData change — not on every keystroke.
-  // useDynamicMDMS keys dropdownData by field.name ("assetType"), with
-  // fieldConfig.key ("EST_ASSET_TYPE") kept as a legacy fallback.
   const options = useMemo(() => {
     if (type !== "dropdown" && type !== "radio") return EMPTY_OPTIONS;
 
@@ -82,6 +90,7 @@ const DynamicFormField = ({
   }
 
   if (fieldConfig.type === "group") {
+    if (!isFieldVisible(fieldConfig, formData)) return null;
     return (
       <div className={styles["dynamic-form-field__group"]}>
         <FieldLabel
@@ -100,6 +109,11 @@ const DynamicFormField = ({
               t={t}
               isDisabled={isDisabled}
               onFileUpload={onFileUpload}
+              onFieldSearch={onFieldSearch}
+              isFieldSearching={isFieldSearching}
+              searchPanel={searchPanel}
+              onSelectSearchResult={onSelectSearchResult}
+              onCreateNewFromSearch={onCreateNewFromSearch}
             />
           ))}
         </div>
@@ -108,11 +122,18 @@ const DynamicFormField = ({
   }
 
   if (!field) return null;
+  if (!isFieldVisible(fieldConfig, formData)) return null;
 
   const value = formData[name];
   const hasError = errors[name];
   const errorMsg = t(messages.error || "FIELD_REQUIRED");
   const labelKey = resolveFieldLabelKey(fieldConfig, formData);
+  const isDurationField = field.computeFn === "calculateDuration";
+  const durationMonths = isDurationField ? Number(value) : NaN;
+  const showDurationAsYears = isDurationField && Number.isFinite(durationMonths) && durationMonths > 12;
+  const textDisplayValue = isDurationField ? formatDurationDisplay(value) : value;
+  const textUnit = showDurationAsYears ? undefined : unit;
+  const useSearchCard = Boolean(field.searchCard || field.searchButton);
 
   if (type === "dropdown") {
     const isFieldDisabled = isDisabled || fieldConfig.key === "EST_CITY";
@@ -217,13 +238,102 @@ const DynamicFormField = ({
     );
   }
 
+  if (useSearchCard) {
+    const panelForField = searchPanel?.fieldName === name ? searchPanel : null;
+    return (
+      <>
+        <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} unit={textUnit} />
+        <div className="field" data-field-error={hasError ? "true" : undefined}>
+          <div className={styles["dynamic-form-field__lookup"]}>
+            <TextInput
+              placeholder={t(placeholder || "")}
+              value={value || ""}
+              onChange={(e) => {
+                let val = e.target.value;
+                if (sanitizeRegex) val = val.replace(sanitizeRegex, "");
+                if (validation.maxLength) val = val.slice(0, validation.maxLength);
+                onChange(name, val);
+              }}
+              disabled={isDisabled || validation.disabled}
+              readOnly={validation.readOnly}
+              errorStyle={hasError}
+            />
+            <button
+              type="button"
+              className={styles["dynamic-form-field__lookup-icon"]}
+              disabled={isDisabled || validation.disabled || isFieldSearching || !String(value || "").trim()}
+              onClick={() => onFieldSearch?.(name)}
+              aria-label={t("ES_COMMON_SEARCH")}
+            >
+              <SearchIcon />
+            </button>
+          </div>
+          <FieldError show={hasError} message={errorMsg} />
+
+          {panelForField?.status === "matches" && Array.isArray(panelForField.matches) && (
+            <div className={styles["dynamic-form-field__suggest-box"]}>
+              {panelForField.matches.map((match) => (
+                <button
+                  key={match.estateNo}
+                  type="button"
+                  className={styles["dynamic-form-field__suggest-item"]}
+                  onClick={() => onSelectSearchResult?.(name, match)}
+                >
+                  <span className={styles["dynamic-form-field__suggest-no"]}>
+                    {match.label || match.estateNo}
+                  </span>
+                  {match.subtitle ? (
+                    <span className={styles["dynamic-form-field__suggest-sub"]}>
+                      {match.subtitle}
+                    </span>
+                  ) : null}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {panelForField?.status === "found" && (
+            <div className={styles["dynamic-form-field__result-card"]}>
+              <div className={styles["dynamic-form-field__result-row"]}>
+                <span>{t(field.resultLabel || labelKey || "EST_ASSET_NUMBER")}</span>
+                <span>{panelForField.estateNo}</span>
+              </div>
+              <button
+                type="button"
+                className={styles["dynamic-form-field__select-button"]}
+                onClick={() => onSelectSearchResult?.(name)}
+              >
+                {t(field.selectLabel || "CS_COMMON_SELECT")}
+              </button>
+            </div>
+          )}
+
+          {panelForField?.status === "notFound" && (
+            <div className={styles["dynamic-form-field__not-found"]}>
+              <p className={styles["dynamic-form-field__not-found-text"]}>
+                {t(field.notFoundLabel || "EST_ASSET_NOT_FOUND")}
+              </p>
+              <button
+                type="button"
+                className={styles["dynamic-form-field__create-button"]}
+                onClick={() => onCreateNewFromSearch?.(name)}
+              >
+                {t(field.createNewLabel || "EST_CREATE_NEW_REGISTRATION")}
+              </button>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} unit={unit} />
+      <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} unit={textUnit} />
       <div className="field" data-field-error={hasError ? "true" : undefined}>
         <TextInput
           placeholder={t(placeholder || "")}
-          value={value || ""}
+          value={textDisplayValue || ""}
           onChange={(e) => {
             let val = e.target.value;
             if (sanitizeRegex) val = val.replace(sanitizeRegex, "");
@@ -259,7 +369,12 @@ const areEqual = (prev, next) => {
     prev.t !== next.t ||
     prev.isDisabled !== next.isDisabled ||
     prev.onChange !== next.onChange ||
-    prev.onFileUpload !== next.onFileUpload
+    prev.onFileUpload !== next.onFileUpload ||
+    prev.onFieldSearch !== next.onFieldSearch ||
+    prev.isFieldSearching !== next.isFieldSearching ||
+    prev.searchPanel !== next.searchPanel ||
+    prev.onSelectSearchResult !== next.onSelectSearchResult ||
+    prev.onCreateNewFromSearch !== next.onCreateNewFromSearch
   ) {
     return false;
   }
