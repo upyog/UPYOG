@@ -3,10 +3,13 @@ package org.egov.custom.mapper.billing.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,9 +60,13 @@ public class MeterReadingRowMapper implements ResultSetExtractor<List<Map<String
                 connection.put("applicationNo", rs.getString("applicationno"));
                 connection.put("usageCategory", rs.getString("usagecategory"));
 
+                connection.put("area", rs.getString("area"));
                 connection.put("zoneCode", rs.getString("zonecode"));
+                connection.put("zonename", rs.getString("zonename"));
                 connection.put("blockCode", rs.getString("blockcode"));
+                connection.put("blockname", rs.getString("blockname"));
                 connection.put("localityCode", rs.getString("localitycode"));
+                connection.put("localityname", rs.getString("localityname"));
                 connection.put("groups", rs.getString("groups"));
                 
                 // Address
@@ -134,8 +141,33 @@ public class MeterReadingRowMapper implements ResultSetExtractor<List<Map<String
             reading.put("lastReadingDate", rs.getObject("lastreadingdate"));
             reading.put("currentReadingDate", rs.getObject("currentreadingdate"));
 
-            ((List<Map<String, Object>>) connection.get("meterReadings"))
-                    .add(reading);
+            List<Map<String, Object>> meterReadings =
+                    (List<Map<String, Object>>) connection.get("meterReadings");
+
+            // Add only if no record exists, or replace if current record is newer
+            Optional<Map<String, Object>> existing = meterReadings.stream()
+                    .filter(r -> Objects.equals(r.get("id"), reading.get("id")))
+                    .findFirst();
+
+            if (existing.isPresent()) {
+                long existingDate = ((Number) existing.get().get("currentReadingDate")).longValue();
+                long newDate = ((Number) reading.get("currentReadingDate")).longValue();
+
+                if (newDate > existingDate) {
+                    meterReadings.remove(existing.get());
+                    meterReadings.add(reading);
+                }
+            } else {
+                meterReadings.add(reading);
+            }
+
+            // Sort latest reading first
+            meterReadings.sort(
+                    Comparator.comparing(
+                            r -> ((Number) r.get("currentReadingDate")).longValue(),
+                            Comparator.reverseOrder()
+                    )
+            );
         }
 
         assignUserDetails(connectionMap, userIds);
