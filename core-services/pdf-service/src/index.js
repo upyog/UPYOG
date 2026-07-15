@@ -12,8 +12,8 @@ import cors from "cors";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import asyncHandler from "express-async-handler";
-import * as pdfmake from "pdfmake/build/pdfmake";
-import * as pdfFonts from "pdfmake/build/vfs_fonts";
+const pdfmake = require("pdfmake/build/pdfmake");
+const pdfFonts = require("pdfmake/build/vfs_fonts");
 import get from "lodash/get";
 import set from "lodash/set";
 import {
@@ -69,7 +69,13 @@ console.log(`*******************************************`);
 
 var jp = require("jsonpath");
 //create binary
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+if (pdfFonts.pdfMake && pdfFonts.pdfMake.vfs) {
+  pdfmake.vfs = pdfFonts.pdfMake.vfs;
+} else if (pdfFonts.vfs) {
+  pdfmake.vfs = pdfFonts.vfs;
+} else {
+  pdfmake.vfs = pdfFonts;
+}
 var pdfMakePrinter = require("pdfmake/src/printer");
 
 let app = express();
