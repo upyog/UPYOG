@@ -14,6 +14,7 @@ import {
       import get from "lodash/get";
       import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
       import getTPAcknowledgementData from "../../utils/getTPAcknowledgementData";
+      import { DiginpinMapPopup } from "@nudmcdgnpm/upyog-ui-module-gis";
       /**
        * `TPApplicationDetails` is a React component that fetches and displays detailed information for a specific Mobile Toilet (MT) service application.
        * It fetches data for the booking using the `useMobileToiletSearchAPI` hook and displays the details in sections such as:
@@ -33,6 +34,8 @@ import {
         const { acknowledgementIds, tenantId } = useParams();
         const [showOptions, setShowOptions] = useState(false);
         const [showToast, setShowToast] = useState(null);
+        // Holds the lat and lng to pass into the popup; its presence also controls modal visibility
+        const [digipinMapData, setDigipinGeoJson] = useState(null);
         const { data: storeData } = Digit.Hooks.useStore.getInitData();
         const { tenants } = storeData || {};
       
@@ -125,6 +128,10 @@ import {
         const acknowldgementDataAPI = await getTPAcknowledgementData({ ...applications }, tenantInfo, t);
         Digit.Utils.pdf.generate(acknowldgementDataAPI);
       };
+    // handleOpenDigipinMap function to set the digipin coordinates and show the map popup
+      const handleOpenDigipinMap = () => {
+        setDigipinGeoJson({ lat: parseFloat(tp_details?.latitude), lng: parseFloat(tp_details?.longitude) });
+      };
       
         return (
           <React.Fragment>
@@ -167,7 +174,33 @@ import {
                   <Row className="border-none" label={t("REASON_FOR_PRUNING")} text={t(tp_details?.reasonForPruning) || t("CS_NA")} />
                   <Row className="border-none" label={t("LATITUDE_GEOTAG")} text={tp_details?.latitude || t("CS_NA")} />
                   <Row className="border-none" label={t("LONGITUDE_GEOTAG")} text={tp_details?.longitude || t("CS_NA")} />
+                  <Row
+                    className="border-none"
+                    label={t("DIGIPIN")}
+                    text={
+                      <div className="wt-auto-74">
+                        <span>{tp_details?.additionalDetails?.digipin || t("CS_NA")}</span>
+                        {tp_details?.additionalDetails?.digipin && tp_details?.latitude && tp_details?.longitude && (
+                          <button
+                            className="wt-auto-75"
+                            onClick={() => handleOpenDigipinMap()}
+                          >
+                            {t("CS_VIEW_ON_MAP")}
+                          </button>
+                        )}
+                      </div>
+                    }
+                  />
                 </StatusTable>
+
+                {digipinMapData && (
+                  <DiginpinMapPopup
+                    lat={digipinMapData.lat}
+                    lng={digipinMapData.lng}
+                    digipin={tp_details?.additionalDetails?.digipin}
+                    onClose={() => { setDigipinGeoJson(null); }}
+                  />
+                )}
       
                 <WFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
                 {showToast && <Toast error={showToast.key} label={t(showToast.label)} onClose={() => {

@@ -15,7 +15,7 @@ import {
   DeleteIcon,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { values } from "lodash";
-import React, { Fragment, useState, useEffect} from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import BPADocuments from "./BPADocuments";
@@ -40,7 +40,8 @@ import ViewBreakup from "./ViewBreakup";
 import ArrearSummary from "../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary";
 // import ViewAssetOnMap from "./ViewAssetOnMap";
 // import MarkPropertyMap from "../../../asset/src/pageComponents/MarkPropertyMap";
-import { MarkOnMap, ViewOnMap } from "@nudmcdgnpm/upyog-ui-module-gis";
+import { MarkOnMap, ViewOnMap, DiginpinMapPopup } from "@nudmcdgnpm/upyog-ui-module-gis";
+import { GeoLocationWithDigipin } from "@nudmcdgnpm/digit-ui-react-components";
 
 // Helper function to convert "lat,lng" string to {lat:..., lng:...} object
 const coordinateFormatter = (locationString) => {
@@ -97,6 +98,9 @@ function ApplicationDetailsContent({
   const [showMap, setShowMap] = useState(false);
   const [area, setArea] = useState(null);
 
+  // Holds the lat, lng, and digipin to pass into the popup; its presence also controls modal visibility
+  const [digipinMapData, setDigipinMapData] = useState(null);
+
   const handleOpenMap = (geometry) => {
     setSelectedLocation(geometry);
     setShowMapModal(true);
@@ -105,6 +109,16 @@ function ApplicationDetailsContent({
   const handleCloseMap = () => {
     setShowMapModal(false);
     setSelectedLocation(null);
+  };
+
+  // Opens the digipin map modal; parses lat/lng strings to floats for Leaflet
+  const handleOpenDigipinMap = (lat, lng, digipin) => {
+    setDigipinMapData({ digipin, lat: parseFloat(lat), lng: parseFloat(lng) });
+  };
+
+  // Closes the digipin map modal and clears its data
+  const handleCloseDigipinMap = () => {
+    setDigipinMapData(null);
   };
 
   const [fetchBillData, updatefetchBillData] = useState({});
@@ -181,7 +195,7 @@ function ApplicationDetailsContent({
         name: checkpoint?.assignes?.[0]?.name,
         mobileNumber:
           applicationData?.processInstance?.assignes?.[0]?.uuid === checkpoint?.assignes?.[0]?.uuid &&
-          applicationData?.processInstance?.assignes?.[0]?.mobileNumber
+            applicationData?.processInstance?.assignes?.[0]?.mobileNumber
             ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber
             : checkpoint?.assignes?.[0]?.mobileNumber,
         comment: t(checkpoint && checkpoint?.comment),
@@ -334,7 +348,7 @@ function ApplicationDetailsContent({
       ) : null}
 
       {applicationDetails?.applicationDetails?.map((detail, index) => (
-        <React.Fragment key={index}>
+        <React.Fragment key={detail.title || index}>
           <div style={getMainDivStyles()}>
             {index === 0 && !detail.asSectionHeader ? (
               <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
@@ -423,6 +437,41 @@ function ApplicationDetailsContent({
               {detail?.title &&
                 !detail?.title.includes("NOC") &&
                 detail?.values?.map((value, index) => {
+                  // New row type: renders a digipin display with an optional map popup button
+                  if (value?.showDigipin) {
+                    // Narrow the input width on employee view to avoid overflow
+                    const isEmployee = Digit.SessionStorage.get("user_type") === "employee";
+                    return (
+                      <Row
+                        key={t(value.title)}
+                        label={t(value.title)}
+                        text={
+                          <div className="application-details-digipin-wrapper">
+                            {/* Read-only digipin display with optional Mappls link */}
+                            <GeoLocationWithDigipin
+                              t={t}
+                              viewOnly
+                              digipin={value.digipin}
+                              showMapLink={value.showMapLink}
+                              inputStyle={{ marginTop: 0, width: isEmployee ? "50%" : "100%" }}
+                            />
+                            {/* Show "View on Map" button only when all required location data is present */}
+                            {value.digipinMapPopup && value.digipinLat && value.digipinLng && value.digipin && (
+                              <button
+                                className="application-details-map-btn"
+                                onClick={() => handleOpenDigipinMap(value.digipinLat, value.digipinLng, value.digipin)}
+                              >
+                                {t("CS_VIEW_ON_MAP")}
+                              </button>
+                            )}
+                          </div>
+                        }
+                        last={index === detail?.values?.length - 1}
+                        className="border-none"
+                        rowContainerStyle={getRowStyles()}
+                      />
+                    );
+                  }
                   if (value?.isViewOnMap) {
                     return (
                       <Row
@@ -433,39 +482,39 @@ function ApplicationDetailsContent({
                             {/* Show the original value */}
                             <span>{getTextValue(value)}</span>
                             {isAssetModule && (
-                           applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry ? (
-                              <button
-                                style={{
-                                  backgroundColor: "#a82227",
-                                  color: "white",
-                                  border: "none",
-                                  borderRadius: "4px",
-                                  padding: "4px 10px",
-                                  cursor: "pointer",
-                                  fontSize: "0.85rem",
-                                }}
-                                onClick={() =>
-                                  handleOpenMap(applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry)
-                                }
-                              >
-                                {t("View on Map")}
-                              </button>
-                            ) : (
-                              <button
-                                style={{
-                                  backgroundColor: "#a82227",
-                                  color: "white",
-                                  border: "none",
-                                  borderRadius: "4px",
-                                  padding: "4px 10px",
-                                  cursor: "pointer",
-                                  fontSize: "0.85rem",
-                                }}
-                                onClick={() => setShowMap(true)}
-                              >
-                                {t("Mark on Map")}
-                              </button>
-                            )
+                              applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry ? (
+                                <button
+                                  style={{
+                                    backgroundColor: "#a82227",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "4px",
+                                    padding: "4px 10px",
+                                    cursor: "pointer",
+                                    fontSize: "0.85rem",
+                                  }}
+                                  onClick={() =>
+                                    handleOpenMap(applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry)
+                                  }
+                                >
+                                  {t("View on Map")}
+                                </button>
+                              ) : (
+                                <button
+                                  style={{
+                                    backgroundColor: "#a82227",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "4px",
+                                    padding: "4px 10px",
+                                    cursor: "pointer",
+                                    fontSize: "0.85rem",
+                                  }}
+                                  onClick={() => setShowMap(true)}
+                                >
+                                  {t("Mark on Map")}
+                                </button>
+                              )
                             )}
                           </div>
                         }
@@ -524,7 +573,7 @@ function ApplicationDetailsContent({
                     );
                   }
                   return (
-                    <div>
+                    <div key={value.title || index}>
                       {window.location.href.includes("modify") ? (
                         <Row
                           className="border-none"
@@ -670,14 +719,13 @@ function ApplicationDetailsContent({
                           }
 
                           return (
-                            <React.Fragment key={index}>
+                            <React.Fragment key={checkpoint.id || checkpoint.performedAction || index}>
                               <CheckPoint
                                 keyValue={index}
                                 isCompleted={index === 0}
                                 info={checkpoint.comment}
                                 label={t(
-                                  `${timelineStatusPrefix}${
-                                    checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
+                                  `${timelineStatusPrefix}${checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
                                   }${timelineStatusPostfix}`
                                 )}
                                 customChild={getTimelineCaptions(checkpoint, index, workflowDetails?.data?.timeline)}
@@ -694,7 +742,7 @@ function ApplicationDetailsContent({
             </Fragment>
           )}
 
-           {isAssetModule && showMapModal && (
+          {isAssetModule && showMapModal && (
             <ViewOnMap
               closeModal={handleCloseMap}
               location={selectedLocation} // pass lat/lng or ID
@@ -711,6 +759,15 @@ function ApplicationDetailsContent({
               }}
               closeModal={() => setShowMap(false)}
               location={coordinateFormatter(applicationDetailsofAsset?.applicationData?.applicationData?.location)}
+            />
+          )}
+          {/* Render the Leaflet map modal when a digipin row's "View on Map" button is clicked */}
+          {digipinMapData && (
+            <DiginpinMapPopup
+              lat={digipinMapData.lat}
+              lng={digipinMapData.lng}
+              digipin={digipinMapData.digipin}
+              onClose={handleCloseDigipinMap}
             />
           )}
         </React.Fragment>

@@ -348,6 +348,7 @@ eSign:{
     create: "/tp-services/tree-pruning/v1/_create",
     update: "/tp-services/tree-pruning/v1/_update",
     search: "/tp-services/tree-pruning/v1/_search",
+    generateDigipin: "/requester-services-dx/digipin/v1/_generate",
   },
 
   vendor: {

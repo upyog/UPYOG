@@ -229,6 +229,7 @@ import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
 
 import CitizenConsentForm from "./atoms/CitizenConsentForm";
+import GeoLocationWithDigipin from "./atoms/GeoLocationWithDigipin";
 import AddressDetails from "./molecules/AddressDetails";
 import ApplicantDetails from "./molecules/ApplicantDetails";
 import Stepper from "./customComponents/Stepper";
@@ -475,7 +476,6 @@ export {
   ApplicantDetails,
   Stepper,
   Timeline,
-  SuccessSvg
-
-  
+  SuccessSvg,
+  GeoLocationWithDigipin
 };

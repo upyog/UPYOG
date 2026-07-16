@@ -14,7 +14,7 @@ import {
   LinkButton,
   Toast
 } from "@nudmcdgnpm/digit-ui-react-components";
-import { useParams,  } from "react-router-dom";
+import { useParams, } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import get from "lodash/get";
@@ -40,6 +40,23 @@ const ApplicationDetails = () => {
   const stateCode = Digit.ULBService.getStateId();
   const [showToast, setShowToast] = useState(null);
   const [showWaringToast, setShowWaringToast] = useState(null);
+
+  // Display a success toast when the user lands here after editing and resubmitting
+  // an application. The session flag is removed on cleanup to prevent the toast
+  // from appearing again on subsequent visits.
+  useEffect(() => {
+    const redirectedFromEdit = sessionStorage.getItem("redirectedfromEDIT");
+    if (redirectedFromEdit === "true") {
+      setShowToast({
+        key: "success",
+        message: "WS_APPLICATION_SUBMITTED_SUCCESSFULLY_LABEL"
+      });
+    }
+    return () => {
+      sessionStorage.removeItem("redirectedfromEDIT");
+    };
+  }, []);
+
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = {};
   const navigate = Digit.Hooks.useCustomNavigate();
@@ -73,7 +90,7 @@ const ApplicationDetails = () => {
     return item.code == "WS.ONE_TIME_FEE";
   });
   let commonPayInfo = "";
-  if (index > -1) commonPayInfo = commonPayDetails[index];else commonPayInfo = commonPayDetails && commonPayDetails.filter(item => item.code === "DEFAULT");
+  if (index > -1) commonPayInfo = commonPayDetails[index]; else commonPayInfo = commonPayDetails && commonPayDetails.filter(item => item.code === "DEFAULT");
   const receiptKey = commonPayInfo?.receiptKey || "consolidatedreceipt";
   const {
     isLoading: isPrivacyLoading,
@@ -96,7 +113,7 @@ const ApplicationDetails = () => {
       uuid: applicationDetails?.applicationData?.connectionHolders?.uuid || applicationDetails?.propertyDetails?.owners?.[0]?.uuid,
       fieldName: "mobileNumber",
       model: "User"
-    })) return true;else return false;
+    })) return true; else return false;
   }
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
     tenantId: tenantId,
@@ -197,7 +214,7 @@ const ApplicationDetails = () => {
       let isFieldInspector = false;
       editApplicationUserRole.every((role, index) => {
         isFieldInspector = ifUserRoleExists(role);
-        if (isFieldInspector) return false;else return true;
+        if (isFieldInspector) return false; else return true;
       });
       if (isFieldInspector && appStatus === mdmsApplicationStatus) {
         pathName = `/upyog-ui/employee/ws/edit-application-by-config?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
@@ -233,7 +250,7 @@ const ApplicationDetails = () => {
       let isFieldInspector = false;
       editApplicationUserRole.every((role, index) => {
         isFieldInspector = ifUserRoleExists(role);
-        if (isFieldInspector) return false;else return true;
+        if (isFieldInspector) return false; else return true;
       });
       if (isFieldInspector && appStatus === mdmsApplicationStatus) {
         pathName = `/upyog-ui/employee/ws/edit-application-by-config?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
@@ -442,7 +459,7 @@ const ApplicationDetails = () => {
       break;
     case "PENDING_FOR_CONNECTION_ACTIVATION":
     case "CONNECTION_ACTIVATED":
-      if (applicationDetails?.applicationData?.applicationType?.includes("NEW_") && reciept_data?.Payments?.length > 0) dowloadOptions = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject, appFeeDownloadReceipt];else dowloadOptions = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
+      if (applicationDetails?.applicationData?.applicationType?.includes("NEW_") && reciept_data?.Payments?.length > 0) dowloadOptions = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject, appFeeDownloadReceipt]; else dowloadOptions = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
       break;
     case "REJECTED":
       dowloadOptions = [applicationDownloadObject];
@@ -459,24 +476,24 @@ const ApplicationDetails = () => {
     return a.order - b.order;
   });
   return <Fragment>
-      <div className={"employee-main-application-details"}>
-        <div className={"employee-application-details ws-auto-299"}>
-          <Header styles={{
+    <div className={"employee-main-application-details"}>
+      <div className={"employee-application-details ws-auto-299"}>
+        <Header styles={{
           marginLeft: "0px",
           paddingTop: "10px",
           fontSize: "32px"
         }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-          <div className="ws-auto-300">
+        <div className="ws-auto-300">
           <div className="ws-auto-301">
-          {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />}
+            {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />}
           </div>
           <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="ws-auto-302"></LinkButton>
-          </div>           
         </div>
-
-        <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading} isDataLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} id={"timeline"} workflowDetails={workflowDetails} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()} moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`} oldValue={res} isInfoLabel={checkforPrivacyenablement()} clearDataDetails={clearDataDetails} />
-        {showWaringToast && <Toast warning={showWaringToast?.isWarning} error={showWaringToast?.isWarning ? false : true} label={t(showWaringToast?.message)} onClose={closeWaringToast} isDleteBtn={true} className="ws-auto-303" />}
       </div>
-    </Fragment>;
+
+      <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading} isDataLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} id={"timeline"} workflowDetails={workflowDetails} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()} moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`} oldValue={res} isInfoLabel={checkforPrivacyenablement()} clearDataDetails={clearDataDetails} />
+      {showWaringToast && <Toast warning={showWaringToast?.isWarning} error={showWaringToast?.isWarning ? false : true} label={t(showWaringToast?.message)} onClose={closeWaringToast} isDleteBtn={true} className="ws-auto-303" />}
+    </div>
+  </Fragment>;
 };
 export default ApplicationDetails;

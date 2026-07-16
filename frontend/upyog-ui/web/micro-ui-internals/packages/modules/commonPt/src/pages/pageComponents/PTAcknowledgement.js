@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import {
   Banner,
   Card,
@@ -5,199 +6,283 @@ import {
   Loader,
   Row,
   StatusTable,
-  SubmitBar
+  SubmitBar,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+
 import {
   convertToPropertyLightWeight,
-  convertToUpdatePropertyLightWeight
+  convertToUpdatePropertyLightWeight,
 } from "../utils";
 
-const GetActionMessage = ({ isSuccess, isLoading }) => {
+const GetActionMessage = ({ isSuccess, isPending }) => {
   const { t } = useTranslation();
+
+  const isEdit = window.location.href.includes("edit-application");
+  const isEmployee = window.location.href.includes("employee");
+
   if (isSuccess) {
-    return !window.location.href.includes("edit-application")
-      ? (window.location.href.includes("employee")
+    return !isEdit
+      ? isEmployee
         ? t("CS_NEW_PROPERTY_APPLICATION_CREATED_SUCCESS")
-        : t("CS_NEW_PROPERTY_APPLICATION_SUBMITTED_SUCCESS"))
+        : t("CS_NEW_PROPERTY_APPLICATION_SUBMITTED_SUCCESS")
       : t("CS_PROPERTY_UPDATE_APPLICATION_SUCCESS");
-  } else if (isLoading) {
-    return !window.location.href.includes("edit-application")
+  }
+
+  if (isPending) {
+    return !isEdit
       ? t("CS_PROPERTY_APPLICATION_PENDING")
       : t("CS_PROPERTY_UPDATE_APPLICATION_PENDING");
-  } else {
-    return !window.location.href.includes("edit-application")
-      ? t("CS_PROPERTY_APPLICATION_FAILED")
-      : t("CS_PROPERTY_UPDATE_APPLICATION_FAILED");
   }
+
+  return !isEdit
+    ? t("CS_PROPERTY_APPLICATION_FAILED")
+    : t("CS_PROPERTY_UPDATE_APPLICATION_FAILED");
 };
 
 const rowContainerStyle = {
   padding: "4px 0px",
-  justifyContent: "space-between"
+  justifyContent: "space-between",
 };
 
-const BannerPicker = (props) => (
-  <Banner
-    message={GetActionMessage(props)}
-    applicationNumber={props.data?.Properties?.[0]?.acknowldgementNumber}
-    info={props.isSuccess ? props.t("PT_APPLICATION_NO") : ""}
-    successful={props.isSuccess}
-  />
-);
-
-const PTAcknowledgement = ({ onSuccess, onSelect, formData, redirectUrl, userType }) => {
+const BannerPicker = ({ data, isSuccess, isPending }) => {
   const { t } = useTranslation();
-  const location = useLocation();
-  const stateId = Digit.ULBService.getStateId();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const navigate = Digit.Hooks.useCustomNavigate();
-  const [localMutationSuccess, setLocalMutationSuccess] = React.useState(false);
-  const [localResponseData, setLocalResponseData] = React.useState(null);
 
-  // Create mutation with callbacks in config
-  const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, true, {
-    onSuccess: (responseData) => {
-      setLocalMutationSuccess(true);
-      setLocalResponseData(responseData); // Store response in state
-      if (onSuccess) onSuccess(responseData);
-    },
-    onError: (err) => {
-      setLocalMutationSuccess(false);
-      setLocalResponseData(null);
-    }
-  });
-  const calledRef = useRef(false);
-  let data = location?.state?.data;
+  return (
+    <Banner
+      message={GetActionMessage({
+        isSuccess,
+        isPending,
+      })}
+      applicationNumber={data?.Properties?.[0]?.acknowldgementNumber}
+      info={isSuccess ? t("PT_APPLICATION_NO") : ""}
+      successful={isSuccess}
+    />
+  );
+};
+
+const PTAcknowledgement = ({
+  data: propData,
+  onSuccess,
+  onSelect,
+  formData,
+  redirectUrl,
+  userType,
+}) => {
+  const { t } = useTranslation();
+
+  const location = useLocation();
+
+  const navigate = Digit.Hooks.useCustomNavigate();
+
+  const stateId = Digit.ULBService.getStateId();
+
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+
+  /**
+   * Support old + new data flow
+   */
+  let data = location?.state?.data || propData;
+  console.log("PT DATA", data);
+
   if (onSelect) {
     data = formData?.cptNewProperty?.property;
   }
 
   let createNUpdate = false;
-  let { data: mdmsConfig } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "PTWorkflow");
-  (mdmsConfig?.PropertyTax?.PTWorkfow || []).forEach((item) => {
-    if (item.enable && item.businessService.includes("WNS")) {
-      createNUpdate = true;
-    }
-  });
 
-  const mutationForUpdate = Digit.Hooks.pt.usePropertyAPI(
-    data?.locationDet?.city?.code || data?.locationDet?.cityCode?.code || tenantId,
-    false, // update
-    {
-      onSuccess: (responseData) => {
-        if (onSuccess) onSuccess(responseData);
-      },
-      onError: (err) => {
+  Digit.Hooks.pt
+    .useMDMS(stateId, "PropertyTax", "PTWorkflow")
+    .data?.PropertyTax?.PTWorkfow?.forEach((item) => {
+      if (item.enable && item.businessService.includes("WNS")) {
+        createNUpdate = true;
       }
-    }
+    });
+
+// Initialize mutation for creating a property (type=true)
+  const mutation = Digit.Hooks.pt.usePropertyAPI(
+    data?.locationDet?.city ? data.locationDet.city.code : tenantId,
+    true,
   );
 
-  // Run create mutation once on mount
+// Initialize mutation for updating a property (type=false)
+  const mutationForUpdate = Digit.Hooks.pt.usePropertyAPI(
+    data?.locationDet?.city ? data.locationDet.city.code : tenantId,
+    false,
+  );
+
+// Effect to create property on component mount
   useEffect(() => {
-    if (!calledRef.current && data && mutation.status === "idle") {
-      calledRef.current = true; // prevent second call
+    if (!data || Object.keys(data).length === 0) return;
 
-      const tenant =
-        userType === "employee"
-          ? tenantId
-          : data?.locationDet?.cityCode?.code || data?.locationDet?.city?.code;
-      data.tenantId = tenant;
+    const tenant =
+      userType === "employee" ? tenantId : data?.locationDet?.cityCode?.code;
 
-      const formdata = convertToPropertyLightWeight(data);
-      formdata.Property.tenantId = formdata?.Property?.tenantId || tenant;
-      if (mutation.isPending) return;
+    data.tenantId = tenant;
 
-      // Use mutate - callbacks are now in hook config
-      mutation.mutate(formdata);
-    }
-  }, [data, mutation.status, onSuccess, tenantId, userType]);
+    const formdata = convertToPropertyLightWeight(data);
 
-  // Optionally run update after create if workflow requires
+    formdata.Property.tenantId = formdata?.Property?.tenantId || tenant;
+
+    const timer = setTimeout(() => {
+      mutation.mutate(formdata, {
+        onSuccess,
+        onError: (error) => {
+          console.error("Property create failed", error);
+        },
+      });
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // useEffect(() => {
+
+  //   if (
+  //     !data ||
+  //     !data.owners ||
+  //     !data.locationDet
+  //   ) {
+  //     return;
+  //   }
+
+  //   const formdata =
+  //     convertToPropertyLightWeight(data);
+
+  //   mutation.mutate(
+  //     formdata,
+  //     {
+  //       onSuccess,
+  //       onError: (error) => {
+  //         console.error(
+  //           "PT Create Failed",
+  //           error
+  //         );
+  //       }
+  //     }
+  //   );
+
+  // }, [data]);
+
   useEffect(() => {
-    if (mutation.isSuccess && createNUpdate && mutationForUpdate.status === "idle") {
-      const tenant =
-        userType === "employee"
-          ? tenantId
-          : data?.locationDet?.city?.code || data?.locationDet?.cityCode?.code;
-      data.tenantId = tenant;
-
-      const formdata = convertToUpdatePropertyLightWeight(data);
-      formdata.Property.tenantId = formdata?.Property?.tenantId || tenant;
-
-      mutationForUpdate.mutate(formdata);
+    if (mutation.isSuccess && !createNUpdate) {
+      setTimeout(() => {
+        if (redirectUrl) {
+          navigate(
+            `${redirectUrl}?propertyId=${mutation.data.Properties[0].propertyId}&tenantId=${mutation.data.Properties[0].tenantId}`,
+            {
+              state: {
+                ...location?.state?.prevState,
+              },
+            },
+          );
+        }
+      }, 3000);
     }
-  }, [mutation.isSuccess, createNUpdate, mutationForUpdate.status, data, tenantId, userType, onSuccess]);
+  }, [mutation.isSuccess]);
 
+  useEffect(() => {
+    if (mutation.isSuccess && createNUpdate) {
+      try {
+        const tenant =
+          userType === "employee" ? tenantId : data?.locationDet?.city?.code;
+
+        data.tenantId = tenant;
+
+        const formdata = convertToUpdatePropertyLightWeight(data);
+
+        formdata.Property.tenantId = formdata.Property.tenantId || tenant;
+
+        mutationForUpdate.mutate(formdata, {
+          onSuccess,
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [mutation.isSuccess]);
+
+// Handler for proceeding after acknowledgement, storing data in session storage
   const onNext = () => {
-    const data = localMutationSuccess ? localResponseData : mutation.data;
-    if (onSelect && (mutation.isSuccess || localMutationSuccess) && data) {
-      sessionStorage.setItem("Digit_OBPS_PT", JSON.stringify(data?.Properties[0]));
-      sessionStorage.setItem("Digit_FSM_PT", JSON.stringify(data?.Properties[0]));
-      onSelect("cpt", { details: data?.Properties[0] });
+    if (onSelect && mutation.isSuccess) {
+      sessionStorage.setItem(
+        "Digit_OBPS_PT",
+        JSON.stringify(mutation.data.Properties[0]),
+      );
+
+      sessionStorage.setItem(
+        "Digit_FSM_PT",
+        JSON.stringify(mutation.data.Properties[0]),
+      );
+
+      onSelect("cpt", {
+        details: mutation.data.Properties[0],
+      });
     }
   };
 
-  // Use localResponseData when localMutationSuccess is true, otherwise use mutation.data
-  const responseData = localMutationSuccess ? localResponseData : mutation.data;
+  if (mutation.isPending || mutation.status === "idle") {
+    return <Loader />;
+  }
 
-  // Check local success FIRST before showing loader
-  if ((mutation.isSuccess || localMutationSuccess) && responseData) {
-    return (
-      <Card>
-        <BannerPicker t={t} data={responseData} isSuccess={true} isLoading={false} />
+// Render card with status and navigation actions
+  return (
+    <Card>
+      <BannerPicker
+        data={mutation.data}
+        isSuccess={mutation.isSuccess}
+        isPending={mutation.isPending}
+      />
+
+      {mutation.isSuccess ? (
         <CardText>
           {window.location.href.includes("employee")
             ? t("CS_CREATE_PROPERTY_SUCCESS_EMP_RESPONSE")
             : t("CS_CREATE_PROPERTY_SUCCESS_CITIZEN_RESPONSE")}
         </CardText>
-        <StatusTable>
+      ) : (
+        <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE")}</CardText>
+      )}
+
+      <StatusTable>
+        {mutation.isSuccess && (
           <Row
             rowContainerStyle={rowContainerStyle}
             last
             label={t("PT_COMMON_TABLE_COL_PT_ID")}
-            text={responseData?.Properties[0]?.propertyId}
-            textStyle={{ whiteSpace: "pre", width: "200%" }}
+            text={mutation.data.Properties[0].propertyId}
+            textStyle={{
+              whiteSpace: "pre",
+              width: "200%",
+            }}
           />
-        </StatusTable>
-        {window.location.href.includes("/citizen/") &&
-          (onSelect ? (
-            <SubmitBar label={t("CS_COMMON_PROCEED")} onSubmit={onNext} />
-          ) : (
-            <SubmitBar
-              label={t("CS_COMMON_PROCEED")}
-              onSubmit={() => {
-                if (redirectUrl) {
-                  const prop = responseData?.Properties[0];
-                  navigate(
-                    `${redirectUrl}?propertyId=${prop?.propertyId}&tenantId=${prop?.tenantId}`,
-                    { ...location?.state?.prevState }
-                  );
-                }
-              }}
-            />
-          ))}
-      </Card>
-    );
-  }
+        )}
+      </StatusTable>
 
-  // Show loader only if not successful and still pending
-  if (mutation.isIdle || mutation.isLoading || mutation.isPending) {
-    return <Loader />;
-  }
-
-  if (mutation.isError) {
-    return (
-      <Card>
-        <BannerPicker t={t} data={mutation.data} isSuccess={false} isLoading={false} />
-        <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE")}</CardText>
-      </Card>
-    );
-  }
-
-  return null;
+      {mutation.isSuccess &&
+        window.location.href.includes("/citizen/") &&
+        (onSelect ? (
+          <SubmitBar label={t("CS_COMMON_PROCEED")} onSubmit={onNext} />
+        ) : (
+          <SubmitBar
+            label={t("CS_COMMON_PROCEED")}
+            onSubmit={() => {
+              if (redirectUrl) {
+                navigate(
+                  `${redirectUrl}?propertyId=${mutation.data.Properties[0].propertyId}&tenantId=${mutation.data.Properties[0].tenantId}`,
+                  {
+                    state: {
+                      ...location?.state?.prevState,
+                    },
+                  },
+                );
+              }
+            }}
+          />
+        ))}
+    </Card>
+  );
 };
 
 export default PTAcknowledgement;

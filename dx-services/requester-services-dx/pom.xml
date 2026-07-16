@@ -108,7 +108,7 @@
       <artifactId>mdms-client</artifactId>
       <version>0.0.2-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!-- <dependency>
         <groupId>com.emudhra</groupId>
         <artifactId>common</artifactId>
         <version>1.0.0</version>
@@ -132,7 +132,7 @@
         <groupId>com.ashu</groupId>
         <artifactId>esign</artifactId>
         <version>1.0.0</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
@@ -177,7 +177,7 @@
               <goal>repackage</goal>
             </goals>
             <configuration>
-              <excludeArtifactIds>lombok</excludeArtifactIds>
+             <excludeArtifactIds>lombok</excludeArtifactIds>
             </configuration>
           </execution>
         </executions>
