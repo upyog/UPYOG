@@ -1,5 +1,6 @@
 package org.egov.garbageservice.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.tracer.annotations.CustomSafeHtml;
@@ -76,29 +77,43 @@ public class GarbageAccount {
 
 	@CustomSafeHtml
 	private String status;
-	
+
+	// new payload field — maps to status after enrichment
+	@CustomSafeHtml
+	private String applicationStatus;
+
 	private GrbgApplication grbgApplication;
-	
+
 	@CustomSafeHtml
 	private String grbgApplicationNumber;
-	
+
 	private GrbgOldDetails grbgOldDetails;
 
 //	private GrbgCommercialDetails grbgCommercialDetails;
-	
-//	private List<GrbgDocument> documents;
+
+	private List<GrbgDocument> documents = new ArrayList<>();
+
+	// new nested payload objects — mapped to flat fields in GarbageAccountService.mapNewPayloadToFlatFields()
+	private GarbageSpecification garbageSpecification;
+
+	private PropertyLocation propertyLocation;
+
+	private WorkflowRequest workflow;
+
+	// applicant person details from the new payload; persisted into additionalDetail during enrichment
+	private List<ApplicantDetail> applicantDetails = new ArrayList<>();
 
 	private AuditDetails auditDetails;
 	
 //	private List<GarbageBill> garbageBills;
 
-	private List<GrbgCollectionUnit> grbgCollectionUnits;
+	private List<GrbgCollectionUnit> grbgCollectionUnits = new ArrayList<>();
 
-	private List<GrbgAddress> addresses;
+	private List<GrbgAddress> addresses = new ArrayList<>();
 
     private JsonNode additionalDetail = null;
 
-	private List<GarbageAccount> childGarbageAccounts;
+	private List<GarbageAccount> childGarbageAccounts = new ArrayList<>();
 	
 	@CustomSafeHtml
 	private String parentAccount;

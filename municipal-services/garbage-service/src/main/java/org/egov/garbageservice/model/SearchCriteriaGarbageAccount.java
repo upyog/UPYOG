@@ -75,7 +75,7 @@ public class SearchCriteriaGarbageAccount {
     private Boolean isUserUuidNull;
     
     private Boolean isMonthlyBilling;
-    
+
 	@Builder.Default
 	private Boolean isPayNow = false;
 
@@ -91,16 +91,17 @@ public class SearchCriteriaGarbageAccount {
 	
 	public SearchCriteriaGarbageAccount copy() {
 		return SearchCriteriaGarbageAccount.builder().id(copyList(this.id)).garbageId(copyList(this.garbageId))
-				.propertyId(copyList(this.propertyId)).uuid(copyList(this.uuid)).type(copyList(this.type))
-				.name(copyList(this.name)).mobileNumber(copyList(this.mobileNumber)).createdBy(copyList(this.createdBy))
-				.applicationNumber(copyList(this.applicationNumber)).tenantId(this.tenantId)
-				.status(copyList(this.status)).statusList(copyList(this.statusList)).isOwner(this.isOwner)
+				.propertyId(copyList(this.propertyId)).uuid(copyList(this.uuid)).user_uuid(copyList(this.user_uuid))
+				.type(copyList(this.type)).name(copyList(this.name)).mobileNumber(copyList(this.mobileNumber))
+				.createdBy(copyList(this.createdBy)).applicationNumber(copyList(this.applicationNumber))
+				.tenantId(this.tenantId).status(copyList(this.status)).statusList(copyList(this.statusList)).isOwner(this.isOwner)
 				.parentAccount(this.parentAccount).orderBy(this.orderBy).startId(this.startId).endId(this.endId)
 				.isActiveSubAccount(this.isActiveSubAccount).isActiveAccount(this.isActiveAccount)
 				.isSchedulerCall(this.isSchedulerCall).offset(this.offset).limit(this.limit)
 				.channels(copyList(this.channels)).wardNames(copyList(this.wardNames))
 				.oldGarbageIds(copyList(this.oldGarbageIds)).unitTypes(copyList(this.unitTypes))
-				.unitCategories(copyList(this.unitCategories))
+				.unitCategories(copyList(this.unitCategories)).isPayNow(this.isPayNow)
+				.isMonthlyBilling(this.isMonthlyBilling).userType(this.userType)
 				.isUserUuidNull(this.isUserUuidNull).build();
 	}
 

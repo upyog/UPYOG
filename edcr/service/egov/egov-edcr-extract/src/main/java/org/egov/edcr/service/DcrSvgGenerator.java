@@ -81,6 +81,7 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
    public static final String PROPERTY_SINGLE_PDF = "egov.singlePdfUsingKabeja";
    public static final double DEFAULT_MARGIN_PERCENT = 0.0;
    public final static String SUPPORTED_SVG_VERSION = "1.1"; // we say we produce version 1.1 to fool svgo
+   private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger(DcrSvgGenerator.class);
    private boolean overflow = true;
    private boolean useLimits = false;
    private int boundsRule = PROPERTY_DOCUMENT_BOUNDS_RULE_MODELSPACE;
@@ -830,37 +831,46 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
            }
 
            try {
-               SVGSAXGenerator gen = this.manager.getSVGGenerator(type);
+               try {
+                   SVGSAXGenerator gen = this.manager.getSVGGenerator(type);
 
-               Iterator i = list.iterator();
+                   Iterator i = list.iterator();
 
-               while (i.hasNext()) {
-                   DXFEntity entity = (DXFEntity) i.next();
-                   if (isTextType) {
-                       // Drop aggressive text lineweight/thickness before Kabeja serializes to SVG paths.
-                       entity.setLineWeight(-1);
-                       if (entity instanceof DXFText) {
-                           ((DXFText) entity).setThickness(0d);
-                       } else if (entity instanceof DXFMText) {
-                           ((DXFMText) entity).setThickness(0d);
-                       }
+                   while (i.hasNext()) {
+                       DXFEntity entity = (DXFEntity) i.next();
+                       try {
+                           if (isTextType) {
+                               // Drop aggressive text lineweight/thickness before Kabeja serializes to SVG paths.
+                               entity.setLineWeight(-1);
+                               if (entity instanceof DXFText) {
+                                   ((DXFText) entity).setThickness(0d);
+                               } else if (entity instanceof DXFMText) {
+                                   ((DXFMText) entity).setThickness(0d);
+                               }
+                           }
+                           boolean v = entity.isVisibile();
+                           entity.setVisibile(!layer.isFrozen());
+
+                           if (!onModelspace) {
+                               entity.setVisibile(layer.isVisible());
+                           }
+
+                           if ((onModelspace && entity.isModelSpace()) ||
+                                   (!onModelspace && !entity.isModelSpace())) {
+                               gen.toSAX(handler, context, entity, null);
+                           }
+
+                           //restore back the flag
+                           entity.setVisibile(v);
+                        } catch (Throwable t) {
+                            // Catch and log rendering errors for individual entities (e.g., bad MLines) to prevent crashes
+                            LOG.error("Failed to generate SVG for entity " + entity.getID() + " of type " + type, t);
+                        }
                    }
-                   boolean v = entity.isVisibile();
-                   entity.setVisibile(!layer.isFrozen());
-
-                   if (!onModelspace) {
-                       entity.setVisibile(layer.isVisible());
-                   }
-
-                   if ((onModelspace && entity.isModelSpace()) ||
-                           (!onModelspace && !entity.isModelSpace())) {
-                       gen.toSAX(handler, context, entity, null);
-                   }
-
-                   //restore back the flag
-                   entity.setVisibile(v);
+               } catch (SVGGenerationException e) {
+                   e.printStackTrace();
                }
-           } catch (SVGGenerationException e) {
+           } catch (Exception e) {
                e.printStackTrace();
            }
            /*

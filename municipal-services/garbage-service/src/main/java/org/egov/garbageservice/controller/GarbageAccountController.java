@@ -21,6 +21,7 @@ import org.egov.garbageservice.model.PayNowRequest;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.common.contract.request.RequestInfo;
 
+import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.garbageservice.model.TotalCountRequest;
 import org.egov.garbageservice.service.GarbageAccountService;
@@ -33,14 +34,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.request.Role;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.tracer.model.CustomException;
 
 
@@ -85,7 +80,7 @@ public class GarbageAccountController {
 	@Operation(summary = "Search garbage accounts")
 	@PostMapping("/_search")
 	public ResponseEntity<GarbageAccountResponse> search(
-			@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest,@RequestParam(name = "IsIndex", required = false, defaultValue = "false") Boolean IsIndex) {
+			@RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest, @RequestParam(name = "IsIndex", required = false, defaultValue = "false") Boolean IsIndex) {
 	
 			return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest,IsIndex));
 	}

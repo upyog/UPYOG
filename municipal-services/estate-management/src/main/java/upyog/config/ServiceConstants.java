@@ -38,6 +38,27 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+    public static final String EST_BOOKING_FEE   = "EST_BOOKING_FEE";
+    public static final String EST_PENALTY_FEE   = "EST_PENALTY_FEE";
+
+    // Payment types
+    public static final String PAYMENT_TYPE_MONTHLY_RENT = "MONTHLY_RENT";
+    public static final String PAYMENT_TYPE_PARTIAL = "PARTIAL";
+    public static final String PAYMENT_TYPE_FULL = "FULL";
+
+    // Status
+    public static final String STATUS_PENDING  = "PENDING";
+    public static final String STATUS_PAID     = "PAID";
+    public static final String STATUS_SYSTEM   = "system";
+
+    // MDMS keys
+    public static final String MDMS_RES               = "MdmsRes";
+    public static final String MDMS_MODULE_ESTATE      = "Estate";
+    public static final String MDMS_MASTER_PENALTY     = "Penalty";
+    public static final String MDMS_PENALTY_RATE_KEY   = "rate";
+
+    // Error codes
+    public static final String PARSING_ERROR_CODE = "PARSING ERROR";
 
     public static final class EstateConstants {
         public static final String INVALID_TENANT = "INVALID TENANT";

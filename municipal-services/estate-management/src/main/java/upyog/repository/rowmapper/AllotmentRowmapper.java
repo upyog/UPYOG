@@ -60,6 +60,7 @@ public class AllotmentRowmapper implements ResultSetExtractor<List<Allotment>> {
                 allotment.setCitizenRequestLetter(rs.getString("citizen_request_letter"));
                 allotment.setAllotmentLetter(rs.getString("allotment_letter"));
                 allotment.setSignedDeed(rs.getString("signed_deed"));
+                allotment.setBillingCycle(rs.getString("billing_cycle"));
 
 
                 AuditDetails auditDetails = AuditDetails.builder()

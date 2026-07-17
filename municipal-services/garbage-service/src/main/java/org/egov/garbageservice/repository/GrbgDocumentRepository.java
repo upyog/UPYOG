@@ -19,20 +19,20 @@ public class GrbgDocumentRepository {
     public void create(GrbgDocument grbgDocument) {
         jdbcTemplate.update(queryBuilder.CREATE_QUERY,
                 grbgDocument.getUuid(),
-                grbgDocument.getDocRefId(),
-                grbgDocument.getDocName(),
-                grbgDocument.getDocType(),
-                grbgDocument.getDocCategory(),
-                grbgDocument.getTblRefUuid());
+                grbgDocument.getDocumentUid(),
+                grbgDocument.getFileStoreId(),
+                grbgDocument.getDocumentType(),
+                grbgDocument.getTblRefUuid(),
+                grbgDocument.getGarbageId());
     }
 
     public void update(GrbgDocument grbgDocument) {
         jdbcTemplate.update(queryBuilder.UPDATE_QUERY,
-                grbgDocument.getDocRefId(),
-                grbgDocument.getDocName(),
-                grbgDocument.getDocType(),
-                grbgDocument.getDocCategory(),
+                grbgDocument.getDocumentUid(),
+                grbgDocument.getFileStoreId(),
+                grbgDocument.getDocumentType(),
                 grbgDocument.getTblRefUuid(),
+                grbgDocument.getGarbageId(),
                 grbgDocument.getUuid());
     }
 }

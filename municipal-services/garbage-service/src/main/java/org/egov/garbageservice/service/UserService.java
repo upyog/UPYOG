@@ -171,7 +171,7 @@ public class UserService {
 	    UserDetailResponse userDetailResponse = userExists(owner, requestInfo);
 	    List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
 
-	    if (existingUsersFromService.isEmpty()) {
+	    if (CollectionUtils.isEmpty(existingUsersFromService)) {
 	        // Create new user if not found
 	        owner.setUserName(UUID.randomUUID().toString());
 //	    	owner.setName(garbageAccount.getName());
@@ -190,11 +190,13 @@ public class UserService {
 	}
 
 	private OwnerInfo createOwnerInfoFromAccount(GarbageAccount garbageAccount) {
-	    return OwnerInfo.builder()
-	            .mobileNumber(garbageAccount.getMobileNumber())
-	            .name(garbageAccount.getName())
-	            .tenantId(garbageAccount.getTenantId())
-	            .build();
+		String tenantId = garbageAccount.getTenantId();
+	
+		return OwnerInfo.builder()
+				.mobileNumber(garbageAccount.getMobileNumber())
+				.name(garbageAccount.getName())
+				.tenantId(tenantId)
+				.build();
 	}
 
 	private void updateOrCreateUser(List<OwnerInfo> existingUsersFromService, RequestInfo requestInfo, Role role, OwnerInfo owner) {
@@ -253,13 +255,17 @@ public class UserService {
 	}
 
 	private UserDetailResponse userExists(OwnerInfo owner, RequestInfo requestInfo) {
-
+		// If mobile number is not present, return an empty response to avoid invalid search
+		if (StringUtils.isEmpty(owner.getMobileNumber())) {
+			return new UserDetailResponse();
+		}
+	
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
 		userSearchRequest.setUserType(owner.getType());
 		//userSearchRequest.setName(owner.getName());
 		
-
+	
 		StringBuilder uri = new StringBuilder(grbgConfig.getUserServiceHostUrl())
 				.append(grbgConfig.getUserSearchEndpoint());
 		return userCall(userSearchRequest, uri);

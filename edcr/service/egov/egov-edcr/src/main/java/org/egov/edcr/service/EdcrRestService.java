@@ -68,6 +68,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -114,6 +115,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -163,6 +167,9 @@ public class EdcrRestService {
 
     @Autowired
     private EdcrApplicationDetailService applicationDetailService;
+
+    @Autowired
+    private EdcrPdfDetailService edcrPdfDetailService; // Service to fetch scrutiny PDF details from the database
 
     @Autowired
     private EnvironmentSettings environmentSettings;
@@ -263,7 +270,19 @@ public class EdcrRestService {
             restTemplate = new RestTemplate();
             StringBuilder uri = new StringBuilder(indexerHost).append(egovIndexerUrl);
             LOG.info("URL created: " + uri.toString());
-            restTemplate.postForObject(uri.toString(), data, Object.class, topicName);
+
+            // Explicitly set Content-Type and Accept headers to application/json
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // Wrap the payload data and the headers in an HttpEntity
+            HttpEntity<Object> entity = new HttpEntity<>(data, headers);
+
+            // Make the call using the HttpEntity.
+            // This forces Spring to serialize 'data' as JSON.
+            restTemplate.postForObject(uri.toString(), entity, Object.class, topicName);
+
+//            restTemplate.postForObject(uri.toString(), data, Object.class, topicName);
             LOG.info("Data pushed in topic->edcr-create-application.\n Data pushed=> \n" + data);
         } catch (RestClientException e) {
             LOG.error("ERROR occurred while trying to push the data to indexer : ", e);
@@ -517,26 +536,40 @@ public class EdcrRestService {
         } catch (Exception e) {
             LOG.log(Level.ERROR, e);
         }
+        try {
+            for (EdcrPdfDetail planPdf : edcrApplnDtl.getEdcrPdfDetails()) {
+                if (planPdf.getConvertedPdf() != null) {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Generating planPdf URL. Resolved tenantId: " + tenantId
+                                + ", ThreadLocal tenantId: " + ApplicationThreadLocals.getTenantID()
+                                + ", FileStoreId: " + planPdf.getConvertedPdf().getFileStoreId());
+                    }
+                    String downloadURL = format(getFileDownloadUrl(
+                            planPdf.getConvertedPdf().getFileStoreId(),
+                            tenantId));
+                    LOG.info("Generated download URL for layer " + planPdf.getLayer() + ": " + downloadURL);
+                    planPdfs.add(planPdf.getLayer().concat(" - ").concat(downloadURL));
 
-        for (EdcrPdfDetail planPdf : edcrApplnDtl.getEdcrPdfDetails()) {
-            if (planPdf.getConvertedPdf() != null) {
-                String downloadURL = format(getFileDownloadUrl(
-                        planPdf.getConvertedPdf().getFileStoreId(),
-                        ApplicationThreadLocals.getTenantID()));
-                planPdfs.add(planPdf.getLayer().concat(" - ").concat(downloadURL));
-
+                }
             }
+
+            LOG.info("Plan PDFs list size: " + planPdfs.size() + "Planpdfs : " + planPdfs);
+
+            edcrDetail.setPlanPdfs(planPdfs);
+            edcrDetail.setTenantId(edcrRequest.getTenantId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        edcrDetail.setPlanPdfs(planPdfs);
-        edcrDetail.setTenantId(edcrRequest.getTenantId());
-
         if (StringUtils.isNotBlank(edcrRequest.getComparisonEdcrNumber()))
             edcrDetail.setComparisonEdcrNumber(edcrRequest.getComparisonEdcrNumber());
 
         if (!edcrApplnDtl.getStatus().equalsIgnoreCase("Accepted"))
             edcrDetail.setStatus(edcrApplnDtl.getStatus());
-
+        try {
+            LOG.info("edcrDetail object from setEdcrResponse: " + objectMapper.writeValueAsString(edcrDetail));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return edcrDetail;
     }
 
@@ -622,13 +655,23 @@ public class EdcrRestService {
 
         for (EdcrPdfDetail planPdf : edcrApplnDtl.getEdcrPdfDetails()) {
             if (planPdf.getConvertedPdf() != null) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Generating planPdf URL. Resolved tenantId: " + tenantId
+                            + ", ThreadLocal tenantId: " + ApplicationThreadLocals.getTenantID()
+                            + ", FileStoreId: " + planPdf.getConvertedPdf().getFileStoreId());
+                }
                 String downloadURL = format(getFileDownloadUrl(
                         planPdf.getConvertedPdf().getFileStoreId(),
-                        ApplicationThreadLocals.getTenantID()));
+                        tenantId));
+                LOG.info("Generated download URL for layer " + planPdf.getLayer() + ": " + downloadURL);
+
                 planPdfs.add(planPdf.getLayer().concat(" - ").concat(downloadURL));
-                for (org.egov.common.entity.edcr.EdcrPdfDetail pdf : edcrDetail.getPlanDetail().getEdcrPdfDetails()) {
-                    if (planPdf.getLayer().equalsIgnoreCase(pdf.getLayer()))
-                        pdf.setDownloadURL(downloadURL);
+                // Add null safety checks to prevent NPEs if the planDetail or its PDF list is empty
+                if (edcrDetail.getPlanDetail() != null && edcrDetail.getPlanDetail().getEdcrPdfDetails() != null) {
+                    for (org.egov.common.entity.edcr.EdcrPdfDetail pdf : edcrDetail.getPlanDetail().getEdcrPdfDetails()) {
+                        if (planPdf.getLayer().equalsIgnoreCase(pdf.getLayer()))
+                            pdf.setDownloadURL(downloadURL);
+                    }
                 }
             }
         }
@@ -717,6 +760,29 @@ public class EdcrRestService {
 
         if (!String.valueOf(applnDtls[3]).equalsIgnoreCase("Accepted"))
             edcrDetail.setStatus(String.valueOf(applnDtls[3]));
+
+        // Retrieve and populate plan PDF details for the cross-tenant response
+        List<String> planPdfs = new ArrayList<>();
+        if (applnDtls.length > 15 && applnDtls[15] != null) {
+            Long applicationDetailId = Long.valueOf(String.valueOf(applnDtls[15]));
+            List<EdcrPdfDetail> pdfDetails = edcrPdfDetailService.findByDcrApplicationId(applicationDetailId);
+            for (EdcrPdfDetail planPdf : pdfDetails) {
+                if (planPdf.getConvertedPdf() != null) {
+                    // Generate download URL using the application's actual tenantId
+                    String downloadURL = format(getFileDownloadUrl(
+                            planPdf.getConvertedPdf().getFileStoreId(),
+                            tenantId));
+                    planPdfs.add(planPdf.getLayer().concat(" - ").concat(downloadURL));
+                    if (edcrDetail.getPlanDetail() != null && edcrDetail.getPlanDetail().getEdcrPdfDetails() != null) {
+                        for (org.egov.common.entity.edcr.EdcrPdfDetail pdf : edcrDetail.getPlanDetail().getEdcrPdfDetails()) {
+                            if (planPdf.getLayer().equalsIgnoreCase(pdf.getLayer()))
+                                pdf.setDownloadURL(downloadURL);
+                        }
+                    }
+                }
+            }
+        }
+        edcrDetail.setPlanPdfs(planPdfs);
 
         return edcrDetail;
     }
@@ -831,6 +897,43 @@ public class EdcrRestService {
 
         if (!String.valueOf(applnDtls[3]).equalsIgnoreCase("Accepted"))
             edcrDetail.setStatus(String.valueOf(applnDtls[3]));
+
+        try {
+            // Retrieve and populate plan PDF details for the cross-tenant BPA response
+            List<String> planPdfs = new ArrayList<>();
+            LOG.info("--applicationDetails for planpdfs: " + Arrays.toString(applnDtls));
+            LOG.info("applicationDetails length: " + applnDtls.length + ", Index 15 value: " + (applnDtls.length > 15 ? applnDtls[15] : "N/A"));
+            if (applnDtls.length > 15 && applnDtls[15] != null) {
+                Long applicationDetailId = Long.valueOf(String.valueOf(applnDtls[15]));
+                List<EdcrPdfDetail> pdfDetails = edcrPdfDetailService.findByDcrApplicationId(applicationDetailId);
+                LOG.info("Fetched " + pdfDetails.size() + " plan PDFs for applicationDetailId: " + applicationDetailId);
+                for (EdcrPdfDetail planPdf : pdfDetails) {
+                    LOG.info("Processing planPdf: " + planPdf.getLayer() + ", ConvertedPdf: " + objectMapper.writeValueAsString(planPdf.getConvertedPdf()));
+                    if (planPdf.getConvertedPdf() != null) {
+                        LOG.info("Generating cross-tenant planPdf URL. Resolved tenantId: " + tenantId
+                                + ", ThreadLocal tenantId: " + ApplicationThreadLocals.getTenantID()
+                                + ", FileStoreId: " + planPdf.getConvertedPdf().getFileStoreId());
+
+                        // Generate download URL using the application's actual tenantId
+                        String downloadURL = format(getFileDownloadUrl(
+                                planPdf.getConvertedPdf().getFileStoreId(),
+                                tenantId));
+                        LOG.info("Generated cross-tenant download URL for " + planPdf.getLayer() + ": " + downloadURL);
+                        planPdfs.add(planPdf.getLayer().concat(" - ").concat(downloadURL));
+                    } else {
+                        LOG.info("No converted PDF found for planPdf: " + planPdf.getLayer());
+                    }
+                }
+            } else {
+                LOG.info("No plan PDFs found for applicationDetailId: " + (applnDtls.length > 15 ? applnDtls[15] : "N/A"));
+            }
+            LOG.info("Setting planPDFs for cross-tenant response: " + planPdfs);
+            edcrDetail.setPlanPdfs(planPdfs);
+
+            LOG.info("Final edcrDetail object for cross-tenant response: " + objectMapper.writeValueAsString(edcrDetail));
+        } catch (Exception e) {
+            LOG.error("Error occurred while fetching plan PDFs for cross-tenant response", e);
+        }
 
         return edcrDetail;
     }
@@ -1028,6 +1131,7 @@ public class EdcrRestService {
         if (edcrRequest.getLimit() != null)
             offset = edcrRequest.getOffset();
 
+        LOG.info("Fetching EDCR BPA applications with tenantId: " + edcrRequest.getTenantId() + ", stateCity.getCode(): " + stateCity.getCode());
         if (edcrRequest != null && edcrRequest.getTenantId().equalsIgnoreCase(stateCity.getCode())) {
             final Map<String, String> params = new ConcurrentHashMap<>();
 
@@ -1139,7 +1243,7 @@ public class EdcrRestService {
             Map.Entry<String, String> value = tenantItr.next();
             queryStr.append("(select '")
                     .append(value.getKey())
-                    .append("' as tenantId,appln.transactionNumber,dtl.dcrNumber,dtl.status,appln.applicantName,dxf.fileStoreId as dxfFileId,scrudxf.fileStoreId as scrutinizedDxfFileId,rofile.fileStoreId as reportOutputId,pdfile.fileStoreId as planDetailFileStore,appln.applicationDate,appln.applicationNumber,appln.applicationType,appln.serviceType,appln.planPermitNumber,appln.permitApplicationDate from ")
+                    .append("' as tenantId,appln.transactionNumber,dtl.dcrNumber,dtl.status,appln.applicantName,dxf.fileStoreId as dxfFileId,scrudxf.fileStoreId as scrutinizedDxfFileId,rofile.fileStoreId as reportOutputId,pdfile.fileStoreId as planDetailFileStore,appln.applicationDate,appln.applicationNumber,appln.applicationType,appln.serviceType,appln.planPermitNumber,appln.permitApplicationDate,dtl.id as applicationDetailId from ")
                     .append(value.getKey())
                     .append(".edcr_application appln, ")
                     .append(value.getKey())

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const useSessionStorage = (key, initialValue) => {
   const [storedValue, setStoredValue] = useState(() => {
@@ -27,6 +27,7 @@ const useSessionStorage = (key, initialValue) => {
       setStoredValue(valueToStore);
       Digit.SessionStorage.set(key, valueToStore);
     } catch (err) {
+      // ignore
     }
   };
   // Prevent resetting the state and writing to sessionStorage if the value is

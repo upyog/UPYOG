@@ -127,7 +127,10 @@ CREATE TABLE eg_grbg_collection_unit (
     isvariablecalculation   BOOLEAN DEFAULT FALSE,
     isbulkgeneration        BOOLEAN DEFAULT FALSE,
     no_of_units             INTEGER DEFAULT 0,
-    ismonthlybilling        BOOLEAN DEFAULT TRUE
+    ismonthlybilling        BOOLEAN DEFAULT TRUE,
+    owner_type              VARCHAR(60),
+    is_inheritance          BOOLEAN,
+    special_category        VARCHAR(100)
 );
 
 
@@ -153,11 +156,15 @@ ALTER TABLE eg_grbg_collection_staff
 
 CREATE TABLE eg_grbg_document (
     uuid            VARCHAR(225) PRIMARY KEY,
+    garbage_id      INT8,
     doc_ref_id      VARCHAR(225),
     doc_name        VARCHAR(100),
     doc_type        VARCHAR(100),
     doc_category    VARCHAR(100),
-    tbl_ref_uuid    VARCHAR(225)
+    tbl_ref_uuid    VARCHAR(225),
+    file_store_id   VARCHAR(225),
+    document_uid    VARCHAR(225),
+    document_type   VARCHAR(225)
 );
 
 

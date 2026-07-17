@@ -62,8 +62,12 @@ import org.egov.garbageservice.model.GrbgBillFailure;
 import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.GrbgBillTrackerRequest;
 import org.egov.garbageservice.model.GrbgBillTrackerSearchCriteria;
+import org.egov.garbageservice.model.GarbageSpecification;
 import org.egov.garbageservice.model.GrbgCollectionUnit;
+import org.egov.garbageservice.model.GrbgDocument;
+import org.egov.garbageservice.model.GrbgOldDetails;
 import org.egov.garbageservice.model.PayNowRequest;
+import org.egov.garbageservice.model.PropertyLocation;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.garbageservice.model.TotalCountRequest;
@@ -80,6 +84,8 @@ import org.egov.garbageservice.repository.GrbgCollectionUnitRepository;
 import org.egov.garbageservice.repository.GrbgCommercialDetailsRepository;
 import org.egov.garbageservice.repository.GrbgDocumentRepository;
 import org.egov.garbageservice.repository.GrbgOldDetailsRepository;
+import org.egov.garbageservice.repository.IdGenRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.GrbgUtils;
 import org.egov.garbageservice.util.RequestInfoWrapper;
@@ -179,10 +185,27 @@ public class GarbageAccountService {
 	@Lazy
 	private GarbageAccountSchedulerService garbageAccountSchedulerService;
 
+	@Autowired
+	private IdGenRepository idGenRepository;
+
+	// idgen format name and pattern — configured in application.properties, registered in egov-idgen MDMS
+	@Value("${egov.idgen.garbageservice.applicationNum.name}")
+	private String idgenName;
+
+	@Value("${egov.idgen.garbageservice.applicationNum.format}")
+	private String idgenFormat;
+
 	public GarbageAccountResponse create(GarbageAccountRequest createGarbageRequest) {
 
 		RequestInfo info = createGarbageRequest.getRequestInfo();
 		List<GarbageAccount> garbageAccounts = new ArrayList<>();
+
+		// payload may omit these flags; @Builder.Default leaves them null on JSON deserialization,
+		// so default them here to avoid NPE when unboxed (e.g. !getCreateChildAccountOnly()).
+		if (createGarbageRequest.getCreateChildAccountOnly() == null)
+			createGarbageRequest.setCreateChildAccountOnly(false);
+		if (createGarbageRequest.getFromMigration() == null)
+			createGarbageRequest.setFromMigration(false);
 
 		List<String> propertyIds = createGarbageRequest.getGarbageAccounts().stream()
 				.map(account -> account.getPropertyId()).collect(Collectors.toList());
@@ -232,14 +255,14 @@ public class GarbageAccountService {
 				createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
 
 					// create garbage account
-//					garbageAccounts.add(garbageAccountRepository.create(garbageAccount));
+					garbageAccounts.add(garbageAccountRepository.create(garbageAccount));
 					
 					//call to save garbage account topic
-					producer.push(applicationPropertiesAndConstant.getSaveGarbageAccountTopic(), request);
-					garbageAccounts.add(garbageAccount);
+					// producer.push(applicationPropertiesAndConstant.getSaveGarbageAccountTopic(), request);
+					// garbageAccounts.add(garbageAccount);
 					
 					// create garbage objects
-//					createGarbageAccountObjects(garbageAccount);
+					createGarbageAccountObjects(garbageAccount);
 
 				});
 			}
@@ -273,15 +296,95 @@ public class GarbageAccountService {
 		createGarbageUnit(garbageAccount);
 
 		// enrich garbage document
-//				enrichCreateGarbageDocuments(garbageAccount);
+		 enrichCreateGarbageDocuments(garbageAccount);
 
 		// create garbage documents
-//				createGarbageDocuments(garbageAccount);
+		createGarbageDocuments(garbageAccount);
+	}
+
+	// translates new nested payload structure (garbageSpecification, propertyLocation, workflow)
+	// into flat fields that the rest of the service layer expects
+	private void mapNewPayloadToFlatFields(GarbageAccount garbageAccount) {
+		if (garbageAccount.getGarbageSpecification() != null) {
+			GarbageSpecification spec = garbageAccount.getGarbageSpecification();
+			garbageAccount.setName(spec.getName());
+			garbageAccount.setMobileNumber(spec.getPhoneNumber());
+			garbageAccount.setEmailId(spec.getEmail());
+			garbageAccount.setGender(spec.getGender());
+			if (garbageAccount.getGrbgOldDetails() == null)
+				garbageAccount.setGrbgOldDetails(new GrbgOldDetails());
+			garbageAccount.getGrbgOldDetails().setOldGarbageId(spec.getOldGarbageId());
+
+			// payload no longer sends grbgCollectionUnits; build one from garbageSpecification.
+			// builder() is used so @Builder.Default flags (isbplunit, ismonthlybilling, ...) are applied.
+			if (CollectionUtils.isEmpty(garbageAccount.getGrbgCollectionUnits())) {
+				garbageAccount.setGrbgCollectionUnits(
+						new ArrayList<>(Collections.singletonList(GrbgCollectionUnit.builder().build())));
+			}
+			GrbgCollectionUnit unit = garbageAccount.getGrbgCollectionUnits().get(0);
+			unit.setCategory(spec.getCategory());
+			unit.setSubCategory(spec.getSubCategory());
+			unit.setSubCategoryType(spec.getSubCategoryType());
+			unit.setIsvariablecalculation(spec.getIsvariablecalculation());
+			unit.setIsbulkgeneration(spec.getIsbulkgeneration());
+			unit.setNo_of_units(spec.getNo_of_units());
+			unit.setUnitType(spec.getTypeOfCollection());
+			unit.setOwnerType(spec.getPropertyOwnerType());
+			unit.setIsInheritance(spec.getIsInheritance());
+			unit.setSpecialCategory(spec.getSpecialCategory());
+		}
+		if (garbageAccount.getPropertyLocation() != null) {
+			PropertyLocation loc = garbageAccount.getPropertyLocation();
+			garbageAccount.setPropertyId(loc.getPropertyId());
+
+			// payload no longer sends the addresses block; build a GrbgAddress from
+			// propertyLocation. Property-specific fields that have no column on GrbgAddress
+			// (houseNo, houseName, streetName, landmark, locality) are kept in additionalDetail.
+			if (CollectionUtils.isEmpty(garbageAccount.getAddresses())) {
+				ObjectNode addressAdditionalDetail = objectMapper.createObjectNode();
+				addressAdditionalDetail.put("houseNo", loc.getHouseNo());
+				addressAdditionalDetail.put("houseName", loc.getHouseName());
+				addressAdditionalDetail.put("streetName", loc.getStreetName());
+				addressAdditionalDetail.put("landmark", loc.getLandmark());
+				addressAdditionalDetail.put("locality", loc.getLocality());
+
+				GrbgAddress address = GrbgAddress.builder()
+						.address1(loc.getAddressline1())
+						.address2(loc.getAddressline2())
+						.city(loc.getCity())
+						.pincode(loc.getPincode())
+						.isActive(true)
+						.additionalDetail(addressAdditionalDetail)
+						.build();
+				garbageAccount.setAddresses(new ArrayList<>(Collections.singletonList(address)));
+			}
+		}
+		if (garbageAccount.getWorkflow() != null) {
+			garbageAccount.setWorkflowAction(garbageAccount.getWorkflow().getAction());
+		}
+		if (garbageAccount.getApplicationStatus() != null) {
+			garbageAccount.setStatus(garbageAccount.getApplicationStatus());
+		}
+
+		// persist applicantDetails into additionalDetail (JSONB) so the new payload's
+		// applicant block is saved with the account (no dedicated table for it).
+		if (!CollectionUtils.isEmpty(garbageAccount.getApplicantDetails())) {
+			ObjectNode additionalDetail = (garbageAccount.getAdditionalDetail() != null
+					&& garbageAccount.getAdditionalDetail().isObject())
+							? (ObjectNode) garbageAccount.getAdditionalDetail()
+							: objectMapper.createObjectNode();
+			additionalDetail.set("applicantDetails", objectMapper.valueToTree(garbageAccount.getApplicantDetails()));
+			garbageAccount.setAdditionalDetail(additionalDetail);
+		}
 	}
 
 	private void validateAndEnrichCreateGarbageAccount(GarbageAccountRequest createGarbageRequest,
 			GarbageAccount garbageAccount, List<GarbageAccount> existingAccounts) {
 		List<GarbageAccount> parentAccount = new ArrayList<>();
+
+		// map nested payload fields to flat fields before validation and enrichment
+		mapNewPayloadToFlatFields(garbageAccount);
+
 		if (!createGarbageRequest.getCreateChildAccountOnly()) {
 			// validate create garbage account
 			validateGarbageAccount(garbageAccount, existingAccounts);
@@ -300,6 +403,9 @@ public class GarbageAccountService {
 
 			// enrich garbage unit
 			enrichCreateGarbageUnit(garbageAccount);
+
+			// enrich garbage document
+			enrichCreateGarbageDocuments(garbageAccount);
 		} else {
 			parentAccount = garbageAccountRepository.searchGarbageAccount(SearchCriteriaGarbageAccount.builder()
 					.garbageId(Collections.singletonList(garbageAccount.getGarbageId()))
@@ -478,9 +584,8 @@ public class GarbageAccountService {
 		if (!CollectionUtils.isEmpty(garbageAccount.getAddresses())) {
 			garbageAccount.getAddresses().stream().forEach(address -> {
 
-				// validate address
-				if (StringUtils.isEmpty(address.getAddress1()) || null == address.getAdditionalDetail()
-						|| null == address.getAdditionalDetail().get("district")) {
+				// validate address — district/ulb/ward dropped from new payload, only address1 required
+				if (StringUtils.isEmpty(address.getAddress1())) {
 					throw new CustomException("MISSING_ADDRESS_DETAILS", "Provide mendatory details of address.");
 				}
 
@@ -494,31 +599,30 @@ public class GarbageAccountService {
 		}
 	}
 
-//	private void createGarbageDocuments(GarbageAccount garbageAccount) {
-//
-//		garbageAccount.getDocuments().stream().forEach(doc -> {
-//			grbgDocumentRepository.create(doc);
-//		});
-//
-//	}
+	private void createGarbageDocuments(GarbageAccount garbageAccount) {
+		if (!CollectionUtils.isEmpty(garbageAccount.getDocuments())) {
+			garbageAccount.getDocuments().stream().forEach(doc -> {
+				grbgDocumentRepository.create(doc);
+			});
+		}
+	}
 
-//	private void enrichCreateGarbageDocuments(GarbageAccount garbageAccount) {
-//
-//		garbageAccount.getDocuments().stream().forEach(doc -> {
-//			doc.setUuid(UUID.randomUUID().toString());
-//			if (StringUtils.equalsIgnoreCase(doc.getDocCategory(), GrbgConstants.DOCUMENT_ACCOUNT)) {
-//				doc.setTblRefUuid(garbageAccount.getUuid());
-//			}
-//		});
-//
-//	}
+	private void enrichCreateGarbageDocuments(GarbageAccount garbageAccount) {
+		if (!CollectionUtils.isEmpty(garbageAccount.getDocuments())) {
+			garbageAccount.getDocuments().stream().forEach(doc -> {
+				doc.setUuid(UUID.randomUUID().toString());
+				doc.setTblRefUuid(garbageAccount.getUuid());
+				doc.setGarbageId(garbageAccount.getGarbageId());
+			});
+		}
+	}
 
 	private void enrichCreateGarbageApplication(GarbageAccount garbageAccount, RequestInfo requestInfo) {
 
-		// get application number format
-		String applicationNumber = GrbgConstants.generateApplicationNumberFormat(String.valueOf(garbageAccount.getId()),
-				garbageAccount.getAddresses().get(0).getUlbName(),
-				garbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText());
+		// call egov-idgen to generate a platform-standard unique application number
+		List<String> applicationNumbers = idGenRepository.getIdList(
+				requestInfo, garbageAccount.getTenantId(), idgenName, idgenFormat, 1);
+		String applicationNumber = applicationNumbers.get(0);
 
 		GrbgApplication grbgApplication = GrbgApplication.builder().uuid(UUID.randomUUID().toString())
 				.applicationNo(applicationNumber).status(GrbgConstants.STATUS_INITIATED)
@@ -760,7 +864,8 @@ public class GarbageAccountService {
 		if (!updateGarbageRequest.getFromMigration()) {
 			// generate certificate and upload
 
-			createAndUploadPDF(garbageAccountRequest, updateGarbageRequest.getRequestInfo());
+			// TODO: Uncomment once pdf-service is running
+			// createAndUploadPDF(garbageAccountRequest, updateGarbageRequest.getRequestInfo());
 
 			// generate demand and fetch bill
 			generateDemandAndBill(garbageAccountRequest);
@@ -864,7 +969,8 @@ public class GarbageAccountService {
 			for (GarbageAccount GarbageAccount : GarbageAccounts) {
 				if (StringUtils.equalsIgnoreCase(GarbageAccount.getWorkflowAction(),
 						GrbgConstants.WORKFLOW_ACTION_APPROVE)) {
-					saveGrbCertificate(GarbageAccount, requestInfo);
+					// TODO: Uncomment once pdf-service is running
+					// saveGrbCertificate(GarbageAccount, requestInfo);
 				}
 			}
 		}
@@ -935,10 +1041,6 @@ public class GarbageAccountService {
 		grbObject.put("ownerName", GarbageAccount.getName());// owner Name
 		grbObject.put("address",
 				GarbageAccount.getAddresses().get(0).getAddress1().concat(", ")
-						.concat(GarbageAccount.getAddresses().get(0).getWardName()).concat(", ")
-						.concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat(" (")
-						.concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(") ")
-						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
 						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
 		// Applicant
 		// Name
@@ -1457,7 +1559,11 @@ public class GarbageAccountService {
 	public GarbageAccountResponse searchGarbageAccounts(
 			SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest, Boolean isIndex) {
 
-		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setUserType(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType());
+		// FIX: Ensure searchCriteriaGarbageAccount is not null to prevent NPE
+        if (searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount() == null) {
+            searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(new SearchCriteriaGarbageAccount());
+        }
+//		searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setUserType(searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType());
 		// validate search criteria
 		validateAndEnrichSearchGarbageAccount(searchCriteriaGarbageAccountRequest);
 
@@ -1859,7 +1965,7 @@ private RequestInfo buildPublicRequestInfo(String tenantId) {
 							.concat(account.getAddresses().get(0).getUlbName().concat(", "))
 							.concat(account.getAddresses().get(0).getWardName().concat(", "))
 							.concat(account.getAddresses().get(0).getAdditionalDetail().get("district").asText()));
-			
+
 			userDetails.put("OwnerName", account.getAdditionalDetail().get("propertyOwnerName").asText());
 			userDetails.put("ApplicantName", account.getAdditionalDetail().get("applicantName").asText());
 			userDetails.put("ApplicantEmail", account.getAdditionalDetail().get("applicantEmail").asText());
@@ -2363,7 +2469,9 @@ public GarbageAccountActionResponse openSearchPayPreview(
 		PDFRequest pdfRequest = pdfRequestGenerator.generatePdfRequestForBill(requestInfoWrapper, grbAccount, bill,
 				grbgTaxCalculatorTracker);
 
-		return reportService.createNoSavePDF(pdfRequest);
+		// TODO: Uncomment once pdf-service is running
+		// return reportService.createNoSavePDF(pdfRequest);
+		return null;
 
 	}
 
@@ -2440,7 +2548,8 @@ public GarbageAccountActionResponse openSearchPayPreview(
 		if (!updateGarbageRequest.getFromMigration()) {
 			// generate certificate and upload
 
-			createAndUploadPDF(garbageAccountRequest, updateGarbageRequest.getRequestInfo());
+			// TODO: Uncomment once pdf-service is running
+			// createAndUploadPDF(garbageAccountRequest, updateGarbageRequest.getRequestInfo());
 
 			// generate demand and fetch bill
 			// generateDemandAndBill(garbageAccountRequest);

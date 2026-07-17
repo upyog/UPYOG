@@ -15,9 +15,9 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
@@ -51,11 +51,11 @@ import org.w3c.dom.Document;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+// import okhttp3.MediaType;
+// import okhttp3.MultipartBody;
+// import okhttp3.OkHttpClient;
+// import okhttp3.Request;
+// import okhttp3.RequestBody;
 
 
 //esgin functionality is not working , pwc will provide the solution for this. So commenting this class for now.

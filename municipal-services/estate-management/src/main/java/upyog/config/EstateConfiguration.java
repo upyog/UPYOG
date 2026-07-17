@@ -98,6 +98,14 @@ public class EstateConfiguration {
     @Value("${save-estate-management-allotment-topic}")
     private String estateAllotmentSaveTopic;
 
+    // save monthly rent payment topic
+    @Value("${save-monthly-rent-payment}")
+    private String monthlyRentPaymentSaveTopic;
+
+    // save scheduler log topic
+    @Value("${save-scheduler-log-topic}")
+    private String schedulerLogTopic;
+
 
     // EST Business Service Config
     @Value("${est.module.name}")
@@ -123,4 +131,8 @@ public class EstateConfiguration {
 
     @Value("${egov.demand.update.endpoint}")
     private String demandUpdateEndpoint;
+
+    // Demand Search Endpoint
+    @Value("${egov.demand.search.endpoint}")
+    private String demandSearchEndpoint;
 }

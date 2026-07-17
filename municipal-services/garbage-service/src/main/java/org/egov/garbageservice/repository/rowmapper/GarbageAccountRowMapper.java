@@ -9,12 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.garbageservice.model.AuditDetails;
-import org.egov.garbageservice.model.GarbageAccount;
-import org.egov.garbageservice.model.GrbgAddress;
-import org.egov.garbageservice.model.GrbgApplication;
-import org.egov.garbageservice.model.GrbgCollectionUnit;
-import org.egov.garbageservice.model.GrbgOldDetails;
+import org.egov.garbageservice.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -72,7 +67,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .parentAccount(rs.getString("parent_account"))
                         .isActive(rs.getBoolean("is_active"))
                         .subAccountCount(rs.getLong("sub_account_count"))
-//                        .documents(new ArrayList<>())
+                        .documents(new ArrayList<>())
 //                        .garbageBills(new ArrayList<>())
                         .childGarbageAccounts(new ArrayList<>())
                         .grbgCollectionUnits(new ArrayList<>())
@@ -140,14 +135,14 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 //            }
 
             
-//            if (null != rs.getString("doc_uuid")) {
-//                String docUuid = rs.getString("doc_uuid");
-//                GrbgDocument garbageDocument = findDocumentByUuid(garbageAccount.getDocuments(), docUuid);
-//                if (null == garbageDocument) {
-//                	GrbgDocument garbageDocument1 = populateGarbageDocument(rs, "doc_");
-//                    garbageAccount.getDocuments().add(garbageDocument1);
-//                }
-//            }
+            if (null != rs.getString("doc_uuid")) {
+                String docUuid = rs.getString("doc_uuid");
+                GrbgDocument garbageDocument = findDocumentByUuid(garbageAccount.getDocuments(), docUuid);
+                if (null == garbageDocument) {
+                	GrbgDocument garbageDocument1 = populateGarbageDocument(rs, "doc_");
+                    garbageAccount.getDocuments().add(garbageDocument1);
+                }
+            }
 
             if (hasColumn(rs, "sub_acc_id") && StringUtils.isEmpty(garbageAccount.getParentAccount())
             		&& null != rs.getString("sub_acc_id")
@@ -281,6 +276,9 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
     	        .isvariablecalculation(rs.getBoolean(prefix+"isvariablecalculation"))
     	        .no_of_units(rs.getInt(prefix+"no_of_units"))
     	        .ismonthlybilling(rs.getBoolean(prefix+"is_monthly_billing"))
+				.ownerType(rs.getString(prefix+"owner_type"))
+				.isInheritance(rs.getBoolean(prefix+"is_inheritance"))
+				.specialCategory(rs.getString(prefix+"special_Category"))
     			.build();
 		return grbgCollectionUnit;
 	}
@@ -322,28 +320,27 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 		return jsonNode;
 	}
 
-//	private GrbgDocument populateGarbageDocument(ResultSet rs, String prefix) throws SQLException {
-//		
-//    	GrbgDocument garbageDocument = GrbgDocument.builder()
-//    			.uuid(rs.getString(prefix+"uuid"))
-//    			.docRefId(rs.getString(prefix+"doc_ref_id"))
-//    			.docName(rs.getString(prefix+"doc_name"))
-//    			.docType(rs.getString(prefix+"doc_type"))
-//    			.docCategory(rs.getString(prefix+"doc_category"))
-//    			.tblRefUuid(rs.getString(prefix+"tbl_ref_uuid"))
-//    			.build();
-//		return garbageDocument;
-//	}
+	private GrbgDocument populateGarbageDocument(ResultSet rs, String prefix) throws SQLException {
 
-//	private GrbgDocument findDocumentByUuid(List<GrbgDocument> documents, String docUuid) {
-//    	if (!CollectionUtils.isEmpty(documents)) {
-//            return documents.stream()
-//                    .filter(doc -> StringUtils.equals(doc.getUuid(), docUuid))
-//                    .findFirst()
-//                    .orElse(null);
-//        }
-//        return null;
-//	}
+    	GrbgDocument garbageDocument = GrbgDocument.builder()
+    			.uuid(rs.getString(prefix+"uuid"))
+				.garbageId(rs.getLong(prefix+"garbage_id"))
+				.documentUid(rs.getString(prefix+"document_uid"))
+				.documentType(rs.getString(prefix+"document_type"))
+				.fileStoreId(rs.getString(prefix+"file_store_id"))
+    			.build();
+		return garbageDocument;
+	}
+
+	private GrbgDocument findDocumentByUuid(List<GrbgDocument> documents, String docUuid) {
+    	if (!CollectionUtils.isEmpty(documents)) {
+            return documents.stream()
+                    .filter(doc -> StringUtils.equals(doc.getUuid(), docUuid))
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
+	}
 
 //	private GrbgCommercialDetails populateGrbgCommercialDetails(ResultSet rs, String prefix) throws SQLException {
 //		GrbgCommercialDetails grbgCommercialDetails = GrbgCommercialDetails.builder()
@@ -392,7 +389,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                 .businessService(rs.getString(prefix + "business_service"))
                 .approvalDate(rs.getLong(prefix + "approval_date"))
                 .channel(rs.getString(prefix + "channel"))
-//                .documents(new ArrayList<>())
+                .documents(new ArrayList<>())
 //                .garbageBills(new ArrayList<>())
                 .grbgCollectionUnits(new ArrayList<>())
                 .addresses(new ArrayList<>())

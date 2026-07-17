@@ -33,8 +33,6 @@ public class EstateServiceImpl implements EstateService {
     private AssetService assetService;
     @Autowired
     private DemandService demandService;
-    @Autowired
-    private MdmsUtil mdmsUtil;
     /**
      * Creates a new asset in the estate management system.
      *
@@ -153,8 +151,7 @@ public class EstateServiceImpl implements EstateService {
         enrichmentService.enrichAllotmentRequest(request);
         
         // Create demand for the allotment
-        Object mdmsData = mdmsUtil.mDMSCall(request.getRequestInfo(), allotment.getTenantId());
-        demandService.createDemand(request, mdmsData, true);
+        demandService.createDemand(request, true);
         
         estateRepository.save(estateConfiguration.getEstateAllotmentSaveTopic(), request);
 

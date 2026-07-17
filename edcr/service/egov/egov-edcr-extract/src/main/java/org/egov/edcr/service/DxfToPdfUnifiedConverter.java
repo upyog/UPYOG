@@ -88,6 +88,10 @@ public class DxfToPdfUnifiedConverter {
      * Reads DXF_TO_PDF_ENGINE from Digit DCR app config. Any value other than ASPOSE (case-insensitive) means Kabeja,
      * including when the setting is missing.
      */
+    public boolean isAsposeEngine() {
+        return resolveEngine() == Engine.ASPOSE;
+    }
+
     private Engine resolveEngine() {
         List<AppConfigValues> vals = appConfigValueService.getConfigValuesByModuleAndKey(
                 DcrConstants.APPLICATION_MODULE_TYPE, DcrConstants.DXF_TO_PDF_ENGINE);
@@ -176,6 +180,9 @@ public class DxfToPdfUnifiedConverter {
             LOG.error("Pdf convertion failed for {} - {} due to {}", fileName, layerName, ep.getMessage());
             ep.printStackTrace();
             edcrPdfDetail.setFailureReasons(ep.getMessage());
+            if (fileOut.exists()) {
+                fileOut.delete();
+            }
         }
         return null;
     }

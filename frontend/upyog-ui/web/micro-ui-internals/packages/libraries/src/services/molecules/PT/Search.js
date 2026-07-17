@@ -204,7 +204,7 @@ export const PTSearch = {
         asSectionHeader: true,
         values: [
           { title: "PT_PROPERTY_ADDRESS_PINCODE", value: response?.address?.pincode },
-          { title: "DIGIPIN", value: response?.additionalDetails?.digipin || t("CS_NA"), showDigipin: true, showMapLink: true, digipin: response?.additionalDetails?.digipin },
+          { title: "DIGIPIN", value: response?.additionalDetails?.digipin || t("CS_NA"), showDigipin: true, showMapLink: true, digipinMapPopup: true, digipinLat: response?.address?.geoLocation?.latitude, digipinLng: response?.address?.geoLocation?.longitude, digipin: response?.additionalDetails?.digipin },
           { title: "PT_PROPERTY_ADDRESS_CITY", value: response?.address?.city },
           {
             title: "PT_PROPERTY_ADDRESS_MOHALLA",

@@ -47,12 +47,6 @@ public class PetController {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
-    /*
-	    TEST 
-		TODO: Remove this comment after testing
-	
-	*/
-	
 	/**
 	 * Handles the creation of new pet registration applications.
 	 *

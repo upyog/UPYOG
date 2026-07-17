@@ -1,5 +1,6 @@
 package upyog.web.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -33,8 +34,10 @@ public class Allotment {
     @Size(max = 100, message = "Email ID must be less than or equal to 100 characters")
     private String emailId;
     @NotBlank
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate agreementStartDate;
     @NotBlank
+    @JsonFormat(shape = JsonFormat.Shape.STRING,  pattern = "dd-MM-yyyy")
     private LocalDate agreementEndDate;
     @NotBlank
     private Integer duration;
@@ -45,7 +48,11 @@ public class Allotment {
     @NotBlank
     private BigDecimal advancePayment;
     @NotBlank
+    @JsonFormat(shape = JsonFormat.Shape.STRING,  pattern = "dd-MM-yyyy")
     private LocalDate advancePaymentDate;
+    @NotBlank
+    @JsonFormat(shape = JsonFormat.Shape.STRING,  pattern = "dd-MM-yyyy")
+    private LocalDate allotmentDate;
     @NotBlank
     private String eofficeFileNo;
     @NotBlank
@@ -59,5 +66,11 @@ public class Allotment {
     @NotBlank
     private String signedDeed;
 
+    private Object additionalDetails;
+
     private AuditDetails auditDetails;
+
+    // MONTHLY , QUARTERLY, YEARLY
+    @NotBlank
+    private String billingCycle;
 }

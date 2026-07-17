@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS ug_em_asset_details (
     tenant_id VARCHAR(100) NOT NULL,
     building_name VARCHAR(200),
     building_no VARCHAR(100),
-    ref_asset_no VARCHAR(64), -- Asset no from asset service module; null for new assets
+    ref_asset_no VARCHAR(64),
     floor INT,
     locality_code VARCHAR(100),
     locality VARCHAR(100),
@@ -41,6 +41,13 @@ CREATE TABLE IF NOT EXISTS ug_em_allotment_details (
     mobile_number VARCHAR(15),
     alternate_contact_no VARCHAR(15),
     email_id VARCHAR(100),
+
+    asset_reference_no VARCHAR(100),
+    property_type VARCHAR(100),
+    citizen_request_letter VARCHAR(100),
+    allotment_letter VARCHAR(100),
+    signed_deed VARCHAR(100),
+
     agreement_start_date DATE,
     agreement_end_date DATE,
     duration INT,
@@ -49,12 +56,17 @@ CREATE TABLE IF NOT EXISTS ug_em_allotment_details (
     advance_payment NUMERIC,
     allotment_date DATE,
     advance_payment_date DATE,
+
+    billing_cycle VARCHAR(20) DEFAULT 'MONTHLY'
+        CHECK (billing_cycle IN ('MONTHLY', 'QUARTERLY', 'YEARLY')),
+
     eoffice_file_no VARCHAR(100),
     additional_details JSONB,
     createdby VARCHAR(64),
     lastmodifiedby VARCHAR(64),
     createdtime BIGINT,
     lastmodifiedtime BIGINT,
+
     CONSTRAINT fk_allotment_estate FOREIGN KEY (estate_no)
         REFERENCES ug_em_asset_details (estate_no)
         ON UPDATE NO ACTION
@@ -101,5 +113,5 @@ CREATE TABLE IF NOT EXISTS ug_em_monthly_rent_payment (
         ON DELETE NO ACTION
 );
 
--- Sequence: asset ID
+-- Sequence: Asset ID
 CREATE SEQUENCE IF NOT EXISTS seq_estate_management_asset_id;

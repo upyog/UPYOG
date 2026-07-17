@@ -35,8 +35,10 @@
     "micro-ui-internals/packages/modules/ndc",
     "micro-ui-internals/packages/modules/challanGeneration",
     "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/modules/ads"
-  ],  
+    "micro-ui-internals/packages/modules/ads",
+    "micro-ui-internals/packages/modules/gc",
+    "micro-ui-internals/packages/css"
+  ],
   "engines": {
     "node": ">=22"
   },
@@ -50,6 +52,7 @@
     "@nudmcdgnpm/upyog-ui-module-est": "1.0.3",
     "@nudmcdgnpm/upyog-ui-module-gis": "1.1.0",
     "@nudmcdgnpm/upyog-ui-module-ndc": "1.1.3",
+    "@nudmcdgnpm/upyog-ui-module-gc": "1.0.0",
     "@tanstack/react-query": "^5.0.0",
     "@upyog/digit-ui-libraries": "3.10.0",
     "@upyog/digit-ui-module-bills": "3.10.0",

@@ -64,6 +64,7 @@ import { ASSETV2Components, ASSETV2Links, ASSETV2Module } from "@nudmcdgnpm/upyo
 import { GISComponents, GISLinks, GISModule } from "@nudmcdgnpm/upyog-ui-module-gis";
 import { ESTComponents, ESTLinks, ESTModule } from "@nudmcdgnpm/upyog-ui-module-est";
 import { initNDCComponents, NDCReducers } from "@nudmcdgnpm/upyog-ui-module-ndc";
+import { GCModule, GCComponents } from "@nudmcdgnpm/upyog-ui-module-gc";
 
 // import "leaflet/dist/leaflet.css";
 // import "leaflet-draw/dist/leaflet.draw.css";
@@ -109,7 +110,8 @@ const enabledModules = [
   "ASSETV2",
    "EST",
   "GIS",
-  "NDC"
+  "NDC",
+  "GC"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -158,6 +160,8 @@ window.Digit.ComponentRegistryService.setupRegistry({
     ESTModule,
     ESTLinks,
     ...ESTComponents,
+    ...GCComponents,
+    GCModule,
 });
 
 initPGRComponents();

@@ -32,4 +32,13 @@ public class GrbgDocument {
     private String docCategory;
     @CustomSafeHtml
     private String tblRefUuid;
+
+    // new payload fields matching frontend document structure
+    @CustomSafeHtml
+    private String documentType;
+    @CustomSafeHtml
+    private String fileStoreId;
+    @CustomSafeHtml
+    private String documentUid;
+    private Long garbageId;
 }

@@ -1,0 +1,933 @@
+serviceMaps:
+  serviceName: garbage-services
+  mappings:
+    - version: 1.0
+      description: Persists garbage account
+      fromTopic: save-grbg-account
+      isTransaction: true
+      queryMaps:
+
+        - query: >
+            INSERT INTO eg_grbg_account
+            (
+              id,
+              uuid,
+              garbage_id,
+              property_id,
+              type,
+              name,
+              mobile_number,
+              gender,
+              email_id,
+              is_owner,
+              user_uuid,
+              declaration_uuid,
+              status,
+              additional_detail,
+              created_by,
+              created_date,
+              last_modified_by,
+              last_modified_date,
+              tenant_id,
+              parent_account,
+              business_service,
+              approval_date,
+              is_active,
+              channel
+            )
+            VALUES
+            (
+              ?,?,?,?,?,?,?,?,?,?,
+              ?,?,?,?::JSONB,?,?,?,?,?,
+              ?,?,?,?,?
+            );
+
+          basePath: $.garbageAccounts.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.id
+
+            - jsonPath: $.garbageAccounts.*.uuid
+
+            - jsonPath: $.garbageAccounts.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.propertyId
+
+            - jsonPath: $.garbageAccounts.*.type
+
+            - jsonPath: $.garbageAccounts.*.name
+
+            - jsonPath: $.garbageAccounts.*.mobileNumber
+
+            - jsonPath: $.garbageAccounts.*.gender
+
+            - jsonPath: $.garbageAccounts.*.emailId
+
+            - jsonPath: $.garbageAccounts.*.isOwner
+
+            - jsonPath: $.garbageAccounts.*.userUuid
+
+            - jsonPath: $.garbageAccounts.*.declarationUuid
+
+            - jsonPath: $.garbageAccounts.*.status
+
+            - jsonPath: $.garbageAccounts.*.additionalDetail
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.garbageAccounts.*.auditDetails.createdBy
+
+            - jsonPath: $.garbageAccounts.*.auditDetails.createdDate
+
+            - jsonPath: $.garbageAccounts.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.garbageAccounts.*.auditDetails.lastModifiedDate
+
+            - jsonPath: $.garbageAccounts.*.tenantId
+
+            - jsonPath: $.garbageAccounts.*.parentAccount
+
+            - jsonPath: $.garbageAccounts.*.businessService
+
+            - jsonPath: $.garbageAccounts.*.approvalDate
+
+            - jsonPath: $.garbageAccounts.*.isActive
+
+            - jsonPath: $.garbageAccounts.*.channel
+
+        - query: >
+            INSERT INTO eg_grbg_application
+            (
+              uuid,
+              application_no,
+              status,
+              garbage_id
+            )
+            VALUES
+            (
+              ?, ?, ?, ?
+            );
+
+          basePath: $.garbageAccounts.*.grbgApplication
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.grbgApplication.uuid
+
+            - jsonPath: $.garbageAccounts.*.grbgApplication.applicationNo
+
+            - jsonPath: $.garbageAccounts.*.grbgApplication.status
+
+            - jsonPath: $.garbageAccounts.*.grbgApplication.garbageId
+
+        - query: >
+            INSERT INTO eg_grbg_address
+            (
+              uuid,
+              garbage_id,
+              address_type,
+              address1,
+              address2,
+              city,
+              state,
+              pincode,
+              is_active,
+              zone,
+              ulb_name,
+              ulb_type,
+              ward_name,
+              additional_detail
+            )
+            VALUES
+            (
+              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::JSONB
+            );
+
+          basePath: $.garbageAccounts.*.addresses.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.uuid
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.addressType
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.address1
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.address2
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.city
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.state
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.pincode
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.isActive
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.zone
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.ulbName
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.ulbType
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.wardName
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.additionalDetail
+              type: JSON
+              dbType: JSONB
+
+        - query: >
+            INSERT INTO eg_grbg_document
+            (
+              uuid,
+              garbage_id
+              document_uid,
+              file_store_id,
+              document_type
+            )
+            VALUES
+            (
+              ?, ?, ?, ?, ?
+            );
+
+          basePath: $.garbageAccounts.*.documents.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.documents.*.uuid
+            
+            - jsonPath: $.garbageAccounts.*.grbgOldDetails.garbageId
+            
+            - jsonPath: $.garbageAccounts.*.documents.*.documentUid
+
+            - jsonPath: $.garbageAccounts.*.documents.*.fileStoreId
+
+            - jsonPath: $.garbageAccounts.*.documents.*.documentType
+
+
+        - query: >
+            INSERT INTO eg_grbg_old_details
+            (
+              uuid,
+              garbage_id,
+              old_garbage_id
+            )
+            VALUES
+            (
+              ?, ?, ?
+            );
+
+          basePath: $.garbageAccounts.*.grbgOldDetails
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.grbgOldDetails.uuid
+
+            - jsonPath: $.garbageAccounts.*.grbgOldDetails.garbageId
+
+            - jsonPath: $.garbageAccounts.*.grbgOldDetails.oldGarbageId
+
+        - query: >
+            INSERT INTO eg_grbg_collection_unit
+            (
+              uuid,
+              unit_name,
+              unit_ward,
+              ulb_name,
+              type_of_ulb,
+              is_active,
+              garbage_id,
+              unit_type,
+              category,
+              sub_category,
+              sub_category_type,
+              isbplunit,
+              isvariablecalculation,
+              isbulkgeneration,
+              no_of_units,
+              ismonthlybilling,
+              owner_type,
+              is_inheritance,
+              special_Category
+            )
+            VALUES
+            (
+              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            );
+
+          basePath: $.garbageAccounts.*.grbgCollectionUnits.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.uuid
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.unitName
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.unitWard
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.ulbName
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.typeOfUlb
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.isActive
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.unitType
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.category
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.subCategory
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.subCategoryType
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.isbplunit
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.isvariablecalculation
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.isbulkgeneration
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.no_of_units
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.ismonthlybilling
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.ownerType
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.isInheritance
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.specialCategory
+
+        - query: >
+            INSERT INTO eg_grbg_account
+            (
+              id,
+              uuid,
+              garbage_id,
+              property_id,
+              type,
+              name,
+              mobile_number,
+              gender,
+              email_id,
+              is_owner,
+              user_uuid,
+              declaration_uuid,
+              status,
+              additional_detail,
+              created_by,
+              created_date,
+              last_modified_by,
+              last_modified_date,
+              tenant_id,
+              parent_account,
+              business_service,
+              approval_date,
+              is_active,
+              channel
+            )
+            VALUES
+            (
+              ?,?,?,?,?,?,?,?,?,?,
+              ?,?,?,?::JSONB,?,?,?,?,?,
+              ?,?,?,?,?
+            );
+
+          basePath: $.garbageAccounts.*.childGarbageAccounts.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.id
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.uuid
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.propertyId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.type
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.name
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.mobileNumber
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.gender
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.emailId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.isOwner
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.userUuid
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.declarationUuid
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.status
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.additionalDetail
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.auditDetails.createdBy
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.auditDetails.createdDate
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.auditDetails.lastModifiedDate
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.tenantId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.parentAccount
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.businessService
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.approvalDate
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.isActive
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.channel
+
+        - query: >
+            INSERT INTO eg_grbg_application
+            (
+              uuid,
+              application_no,
+              status,
+              garbage_id
+            )
+            VALUES
+            (
+              ?, ?, ?, ?
+            );
+
+          basePath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.uuid
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.applicationNo
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.status
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.garbageId
+
+        - query: >
+            INSERT INTO eg_grbg_address
+            (
+              uuid,
+              garbage_id,
+              address_type,
+              address1,
+              address2,
+              city,
+              state,
+              pincode,
+              is_active,
+              zone,
+              ulb_name,
+              ulb_type,
+              ward_name,
+              additional_detail
+            )
+            VALUES
+            (
+              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::JSONB
+            );
+
+          basePath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.uuid
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.addressType
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.address1
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.address2
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.city
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.state
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.pincode
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.isActive
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.zone
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.ulbName
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.ulbType
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.wardName
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.addresses.*.additionalDetail
+              type: JSON
+              dbType: JSONB
+
+        - query: >
+            INSERT INTO eg_grbg_collection_unit
+            (
+              uuid,
+              unit_name,
+              unit_ward,
+              ulb_name,
+              type_of_ulb,
+              is_active,
+              garbage_id,
+              unit_type,
+              category,
+              sub_category,
+              sub_category_type,
+              isbplunit,
+              isvariablecalculation,
+              isbulkgeneration,
+              no_of_units,
+              ismonthlybilling
+            )
+            VALUES
+            (
+              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            );
+
+          basePath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.uuid
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.unitName
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.unitWard
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.ulbName
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.typeOfUlb
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.isActive
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.unitType
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.category
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.subCategory
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.subCategoryType
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.isbplunit
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.isvariablecalculation
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.isbulkgeneration
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.no_of_units
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.ismonthlybilling
+
+    - version: 1.0
+      description: Updates garbage account
+      fromTopic: update-grbg-account
+      isTransaction: true
+      queryMaps:
+
+        - query: >
+            UPDATE eg_grbg_account
+            SET
+              garbage_id = ?,
+              uuid = ?,
+              property_id = ?,
+              type = ?,
+              name = ?,
+              mobile_number = ?,
+              is_owner = ?,
+              user_uuid = ?,
+              declaration_uuid = ?,
+              status = ?,
+              gender = ?,
+              email_id = ?,
+              additional_detail = ?::JSONB,
+              last_modified_by = ?,
+              last_modified_date = ?,
+              tenant_id = ?,
+              business_service = ?,
+              approval_date = ?,
+              channel = ?
+            WHERE id = ?;
+
+          basePath: $.garbageAccounts.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.uuid
+
+            - jsonPath: $.garbageAccounts.*.propertyId
+
+            - jsonPath: $.garbageAccounts.*.type
+
+            - jsonPath: $.garbageAccounts.*.name
+
+            - jsonPath: $.garbageAccounts.*.mobileNumber
+
+            - jsonPath: $.garbageAccounts.*.isOwner
+
+            - jsonPath: $.garbageAccounts.*.userUuid
+
+            - jsonPath: $.garbageAccounts.*.declarationUuid
+
+            - jsonPath: $.garbageAccounts.*.status
+
+            - jsonPath: $.garbageAccounts.*.gender
+
+            - jsonPath: $.garbageAccounts.*.emailId
+
+            - jsonPath: $.garbageAccounts.*.additionalDetail
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.garbageAccounts.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.garbageAccounts.*.auditDetails.lastModifiedDate
+
+            - jsonPath: $.garbageAccounts.*.tenantId
+
+            - jsonPath: $.garbageAccounts.*.businessService
+
+            - jsonPath: $.garbageAccounts.*.approvalDate
+
+            - jsonPath: $.garbageAccounts.*.channel
+
+            - jsonPath: $.garbageAccounts.*.id
+
+        - query: >
+            INSERT INTO eg_grbg_account_audit
+            (
+              auditid,
+              grbg_application_no,
+              status,
+              type,
+              grbg_account_details,
+              auditcreatedtime
+            )
+            VALUES
+            (
+              (select nextval('seq_eg_grbg_account_audit')),
+              ?,
+              ?,
+              ?,
+              ?::JSONB,
+              (SELECT extract(epoch from now()))
+            );
+
+          basePath: $.garbageAccounts.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.grbgApplication.applicationNo
+
+            - jsonPath: $.garbageAccounts.*.status
+
+            - jsonPath: $.garbageAccounts.*.type
+
+            - jsonPath: $.garbageAccounts.*
+              type: JSON
+              dbType: JSONB
+
+        - query: >
+            UPDATE eg_grbg_application
+            SET
+              application_no = ?,
+              status = ?,
+              garbage_id = ?
+            WHERE uuid = ?;
+
+          basePath: $.garbageAccounts.*.grbgApplication
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.grbgApplication.applicationNo
+
+            - jsonPath: $.garbageAccounts.*.grbgApplication.status
+
+            - jsonPath: $.garbageAccounts.*.grbgApplication.garbageId
+
+            - jsonPath: $.garbageAccounts.*.grbgApplication.uuid
+
+        - query: >
+            UPDATE eg_grbg_old_details
+            SET
+              garbage_id = ?,
+              old_garbage_id = ?
+            WHERE uuid = ?;
+
+          basePath: $.garbageAccounts.*.grbgOldDetails
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.grbgOldDetails.garbageId
+
+            - jsonPath: $.garbageAccounts.*.grbgOldDetails.oldGarbageId
+
+            - jsonPath: $.garbageAccounts.*.grbgOldDetails.uuid
+
+        - query: >
+            UPDATE eg_grbg_collection_unit
+            SET
+              unit_name = ?,
+              unit_ward = ?,
+              ulb_name = ?,
+              type_of_ulb = ?,
+              garbage_id = ?,
+              unit_type = ?,
+              category = ?,
+              sub_category = ?,
+              sub_category_type = ?,
+              is_active = ?,
+              isbplunit = ?,
+              isbulkgeneration = ?,
+              isvariablecalculation = ?,
+              no_of_units = ?,
+              ismonthlybilling = ?
+            WHERE uuid = ?;
+
+          basePath: $.garbageAccounts.*.grbgCollectionUnits.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.unitName
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.unitWard
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.ulbName
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.typeOfUlb
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.unitType
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.category
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.subCategory
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.subCategoryType
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.isActive
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.isbplunit
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.isbulkgeneration
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.isvariablecalculation
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.no_of_units
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.ismonthlybilling
+
+            - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.uuid
+
+        - query: >
+            UPDATE eg_grbg_address
+            SET
+              address_type = ?,
+              address1 = ?,
+              address2 = ?,
+              city = ?,
+              state = ?,
+              pincode = ?,
+              is_active = ?,
+              zone = ?,
+              ulb_name = ?,
+              ulb_type = ?,
+              ward_name = ?,
+              garbage_id = ?,
+              additional_detail = ?::JSONB
+            WHERE uuid = ?;
+
+          basePath: $.garbageAccounts.*.addresses.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.addressType
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.address1
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.address2
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.city
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.state
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.pincode
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.isActive
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.zone
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.ulbName
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.ulbType
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.wardName
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.additionalDetail
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.garbageAccounts.*.addresses.*.uuid
+
+        - query: >
+            UPDATE eg_grbg_account
+            SET
+              garbage_id = ?,
+              uuid = ?,
+              property_id = ?,
+              type = ?,
+              name = ?,
+              mobile_number = ?,
+              is_owner = ?,
+              user_uuid = ?,
+              declaration_uuid = ?,
+              status = ?,
+              gender = ?,
+              email_id = ?,
+              additional_detail = ?::JSONB,
+              last_modified_by = ?,
+              last_modified_date = ?,
+              tenant_id = ?,
+              business_service = ?,
+              approval_date = ?,
+              channel = ?
+            WHERE id = ?;
+
+          basePath: $.garbageAccounts.*.childGarbageAccounts.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.uuid
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.propertyId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.type
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.name
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.mobileNumber
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.isOwner
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.userUuid
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.declarationUuid
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.status
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.gender
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.emailId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.additionalDetail
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.auditDetails.lastModifiedDate
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.tenantId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.businessService
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.approvalDate
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.channel
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.id
+
+        - query: >
+            UPDATE eg_grbg_application
+            SET
+              application_no = ?,
+              status = ?,
+              garbage_id = ?
+            WHERE uuid = ?;
+
+          basePath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.applicationNo
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.status
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.garbageId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.uuid
+
+        - query: >
+            UPDATE eg_grbg_collection_unit
+            SET
+              unit_name = ?,
+              unit_ward = ?,
+              ulb_name = ?,
+              type_of_ulb = ?,
+              garbage_id = ?,
+              unit_type = ?,
+              category = ?,
+              sub_category = ?,
+              sub_category_type = ?,
+              is_active = ?,
+              isbplunit = ?,
+              isbulkgeneration = ?,
+              isvariablecalculation = ?,
+              no_of_units = ?,
+              ismonthlybilling = ?
+            WHERE uuid = ?;
+
+          basePath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*
+
+          jsonMaps:
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.unitName
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.unitWard
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.ulbName
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.typeOfUlb
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.garbageId
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.unitType
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.category
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.subCategory
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.subCategoryType
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.isActive
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.isbplunit
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.isbulkgeneration
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.isvariablecalculation
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.no_of_units
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.ismonthlybilling
+
+            - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.uuid

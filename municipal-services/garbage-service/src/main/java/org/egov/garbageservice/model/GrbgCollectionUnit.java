@@ -29,6 +29,8 @@ public class GrbgCollectionUnit {
     @CustomSafeHtml
     private String ulbName;
     @CustomSafeHtml
+    private String ownerType;
+    @CustomSafeHtml
     private String typeOfUlb;
     private Long garbageId;
     @CustomSafeHtml
@@ -50,5 +52,9 @@ public class GrbgCollectionUnit {
     private Boolean isbulkgeneration = false;
     @Builder.Default
     private Integer no_of_units = 0;
+    @CustomSafeHtml
+    private Boolean isInheritance;
+    @CustomSafeHtml
+    private String specialCategory;
 
 }
