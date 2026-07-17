@@ -1,0 +1,95 @@
+package org.upyog.adapter.validator;
+
+import org.springframework.stereotype.Component;
+import org.upyog.adapter.exception.ValidationException;
+import org.upyog.adapter.model.DashboardData;
+import org.upyog.adapter.model.DashboardPayload;
+
+/**
+ * Cross-module validator that enforces mandatory field rules on every
+ * {@link DashboardPayload} before it is handed to the
+ * {@link org.upyog.adapter.loader.Loader}.
+ *
+ * <p>This validator runs for <em>all</em> modules and checks fields that are
+ * common across the entire adapter pipeline (non-null payload, non-empty data
+ * list, and the presence of each contextual field on the first data record).
+ * Module-specific metric validation is handled separately by the relevant
+ * {@link ModuleValidator} implementation.
+ *
+ * <h3>Validation rules (in order)</h3>
+ * <ol>
+ *   <li>The {@code payload} itself must not be {@code null}.</li>
+ *   <li>{@link DashboardPayload#getData()} must not be {@code null} or empty.</li>
+ *   <li>The first {@link DashboardData} element must have a non-null
+ *       and non-empty {@code module} field.</li>
+ *   <li>The first element must have a non-null and non-empty {@code state} field.</li>
+ *   <li>The first element must have a non-null {@code metrics} map.</li>
+ *   <li>The first element must have a non-null and non-empty {@code ward} field.</li>
+ *   <li>The first element must have a non-null and non-empty {@code region} field.</li>
+ *   <li>The first element must have a non-null and non-empty {@code ulb} field.</li>
+ * </ol>
+ *
+ * @see ModuleValidator
+ * @see org.upyog.adapter.pt.validation.impl.PTValidator
+ * @see ValidationException
+ */
+@Component
+public class CommonValidator {
+
+    /**
+     * Validates common mandatory fields on the first record of {@code payload}.
+     *
+     * <p>Fails fast: throws on the first validation failure encountered.
+     * All checks apply only to the first element of the data list; callers
+     * that supply multi-record payloads should be aware that records after
+     * index 0 are not validated here.
+     *
+     * @param payload the transformed dashboard payload to validate;
+     *                must not be {@code null}
+     * @throws ValidationException if any of the following are true:
+     *         <ul>
+     *           <li>{@code payload} is {@code null}</li>
+     *           <li>{@code payload.getData()} is {@code null} or empty</li>
+     *           <li>{@code module}, {@code state}, {@code ward},
+     *               {@code region}, or {@code ulb} of the first data record
+     *               is {@code null}</li>
+     *           <li>{@code metrics} of the first data record is {@code null}</li>
+     *         </ul>
+     */
+    public void validate(DashboardPayload payload) {
+
+        if (payload == null) {
+            throw new ValidationException("Payload cannot be null");
+        }
+
+        if (payload.getData() == null || payload.getData().isEmpty()) {
+            throw new ValidationException("Data cannot be empty");
+        }
+
+        DashboardData data = payload.getData().get(0);
+
+        if (data.getModule() == null || data.getModule().trim().isEmpty()) {
+            throw new ValidationException("Module is mandatory");
+        }
+
+        if (data.getState() == null || data.getState().trim().isEmpty()) {
+            throw new ValidationException("State is mandatory");
+        }
+
+        if (data.getMetrics() == null) {
+            throw new ValidationException("Metrics cannot be null");
+        }
+
+        if (data.getWard() == null || data.getWard().trim().isEmpty()) {
+            throw new ValidationException("Ward cannot be null");
+        }
+
+        if (data.getRegion() == null || data.getRegion().trim().isEmpty()) {
+            throw new ValidationException("Region cannot be null");
+        }
+
+        if (data.getUlb() == null || data.getUlb().trim().isEmpty()) {
+            throw new ValidationException("ULB cannot be null");
+        }
+    }
+}

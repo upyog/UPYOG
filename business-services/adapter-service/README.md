@@ -9,8 +9,8 @@ This service transforms property-tax data from upstream sources into the payload
 - Authenticates outbound calls using OAuth and user-context lookups.
 
 ## Main components
-- `src/main/java/org/upyog/as/core/extractor/impl/UttarakhandPTExtractor.java` extracts raw records.
-- `src/main/java/org/upyog/as/core/transformer/impl/UttarakhandPTTransformer.java` builds the module payload.
+- `src/main/java/org/upyog/as/core/extractor/impl/GenericExtractor.java` executes YAML-defined datasets.
+- `src/main/java/org/upyog/as/core/transformer/impl/PTTransformer.java` builds the module payload.
 - `src/main/java/org/upyog/as/common/CommonLoader.java` sends the payload to the ingest endpoint.
 - `src/main/java/org/upyog/as/service/OAuthTokenService.java` manages authentication.
 

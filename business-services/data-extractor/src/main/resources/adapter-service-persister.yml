@@ -1,0 +1,152 @@
+serviceMaps:
+  serviceName: adapter-service
+  mappings:
+
+  # ============================================================
+  # 1. INSERT into ingestion_detail  (daily push records)
+  #    Topic: save-adapter-ingestion-detail
+  #    Payload key: DailyIngestionData (list wrapped under "dailyIngestionData")
+  # ============================================================
+  - version: 1.0
+    name: save-ingestion-detail
+    description: Persists daily ingestion records into the ingestion_detail table
+    fromTopic: save-adapter-ingestion-detail
+    isTransaction: true
+    queryMaps:
+
+    - query: >
+        INSERT INTO ingestion_detail (
+          module_ingestion_id,
+          tenant_id,
+          ulb_name,
+          module_name,
+          push_date,
+          user_id,
+          request_data,
+          response_data,
+          ingestion_status,
+          created_by,
+          created_time,
+          last_modified_by,
+          last_modified_time
+        ) VALUES (?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?);
+
+      basePath: dailyIngestionData.*
+      jsonMaps:
+
+      - jsonPath: $.dailyIngestionData.*.moduleIngestionId
+
+      - jsonPath: $.dailyIngestionData.*.tenantId
+
+      - jsonPath: $.dailyIngestionData.*.ulbName
+
+      - jsonPath: $.dailyIngestionData.*.moduleName
+
+      - jsonPath: $.dailyIngestionData.*.pushDate
+
+      - jsonPath: $.dailyIngestionData.*.userId
+
+      - jsonPath: $.dailyIngestionData.*.requestData
+
+      - jsonPath: $.dailyIngestionData.*.responseData
+
+      - jsonPath: $.dailyIngestionData.*.ingestionStatus
+
+      - jsonPath: $.dailyIngestionData.*.createdBy
+
+      - jsonPath: $.dailyIngestionData.*.createdTime
+
+      - jsonPath: $.dailyIngestionData.*.lastModifiedBy
+
+      - jsonPath: $.dailyIngestionData.*.lastModifiedTime
+
+  # ============================================================
+  # 2. INSERT into legacy_data_ingestion_detail  (legacy push records)
+  #    Topic: save-adapter-module-ingestion-detail
+  #    Payload key: legacyIngestionData (list)
+  # ============================================================
+  - version: 1.0
+    name: save-legacy-ingestion-detail
+    description: Persists legacy ingestion records into the legacy_data_ingestion_detail table
+    fromTopic: save-adapter-module-ingestion-detail
+    isTransaction: true
+    queryMaps:
+
+    - query: >
+        INSERT INTO legacy_data_ingestion_detail (
+          module_ingestion_id,
+          tenant_id,
+          ulb_name,
+          module_name,
+          push_month,
+          user_id,
+          request_data,
+          response_data,
+          ingestion_status,
+          created_by,
+          created_time,
+          last_modified_by,
+          last_modified_time
+        ) VALUES (?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?);
+
+      basePath: legacyIngestionData.*
+      jsonMaps:
+
+      - jsonPath: $.legacyIngestionData.*.moduleIngestionId
+
+      - jsonPath: $.legacyIngestionData.*.tenantId
+
+      - jsonPath: $.legacyIngestionData.*.ulbName
+
+      - jsonPath: $.legacyIngestionData.*.moduleName
+
+      - jsonPath: $.legacyIngestionData.*.pushMonth
+
+      - jsonPath: $.legacyIngestionData.*.userId
+
+      - jsonPath: $.legacyIngestionData.*.requestData
+
+      - jsonPath: $.legacyIngestionData.*.responseData
+
+      - jsonPath: $.legacyIngestionData.*.ingestionStatus
+
+      - jsonPath: $.legacyIngestionData.*.createdBy
+
+      - jsonPath: $.legacyIngestionData.*.createdTime
+
+      - jsonPath: $.legacyIngestionData.*.lastModifiedBy
+
+      - jsonPath: $.legacyIngestionData.*.lastModifiedTime
+
+  # ============================================================
+  # 3. UPDATE legacy_data_ingestion_detail  (status update after re-push)
+  #    Topic: update-adapter-module-ingestion-detail
+  #    Payload key: legacyIngestionData (list)
+  # ============================================================
+  - version: 1.0
+    name: update-legacy-ingestion-detail
+    description: Updates ingestion status and response for an existing legacy record
+    fromTopic: update-adapter-module-ingestion-detail
+    isTransaction: true
+    queryMaps:
+
+    - query: >
+        UPDATE legacy_data_ingestion_detail SET
+          response_data       = ?::jsonb,
+          ingestion_status    = ?,
+          last_modified_by    = ?,
+          last_modified_time  = ?
+        WHERE module_ingestion_id = ?;
+
+      basePath: legacyIngestionData.*
+      jsonMaps:
+
+      - jsonPath: $.legacyIngestionData.*.responseData
+
+      - jsonPath: $.legacyIngestionData.*.ingestionStatus
+
+      - jsonPath: $.legacyIngestionData.*.lastModifiedBy
+
+      - jsonPath: $.legacyIngestionData.*.lastModifiedTime
+
+      - jsonPath: $.legacyIngestionData.*.moduleIngestionId
