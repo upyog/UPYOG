@@ -7,6 +7,43 @@ import DateRangeFilter from "../components/DateRangeFilter";
 import {format} from "date-fns";
 import ApplicationTable from "../components/inbox/ApplicationTable";
 
+/**
+ * VenueSearch Component
+ *
+ * This component is responsible for searching venue availability, displaying
+ * available booking slots, allowing users to select one or more consecutive
+ * slots, and initiating the Community Hall Booking flow.
+ *
+ * ---------------------------------------------------------------------------
+ * Component Update Date: 16-Jul-2026
+ * ---------------------------------------------------------------------------
+ *
+ * Issue:
+ * Previously, when a user searched for a date range (e.g. 17-Jul to 19-Jul)
+ * but selected only a subset of dates (e.g. only 17-Jul), the original search
+ * date range was being carried throughout the booking flow. As a result:
+ *
+ * - TimerValues was validating the entire searched date range instead of the
+ *   selected booking dates.
+ * - CHBCitizenDetails received the original search dates.
+ * - The final booking payload sent bookingStartDate and bookingEndDate based
+ *   on the search filters instead of the user's actual selected dates.
+ *
+ * Root Cause:
+ * Updating the shared `searchData` state during booking triggered the
+ * `useEffect([searchData])`, which re-fetched slot availability and cleared
+ * `bookingSlotDetails`, resulting in incorrect booking data.
+ *
+ * Fix Implemented:
+ * - Preserved the original `searchData` as the search filter state.
+ * - Created an `updatedSearchData` object at booking time using only the
+ *   selected booking dates.
+ * - Passed the updated search data through the booking flow via the modal
+ *   instead of mutating the original search state.
+ * - Updated `goNext()` to accept a searchData parameter so subsequent screens
+ *   (Citizen Details, TimerValues, Booking Payload, etc.) receive the selected
+ *   booking dates rather than the searched date range.
+ */
 
 const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
     const { control } = useForm();
@@ -21,7 +58,7 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
     const [existingDataSet, setExistingDataSet] = useState("");
     const [slots, setSlots] = useState(formData?.slotlist?.slots ||"")
     const [isExistingPopupRequired,setIsExistingPopupRequired] = useState(true);
-    const [showModal,setShowModal] = useState(false)
+    const [showModal,setShowModal] = useState(null);
     const [showToast, setShowToast] = useState(null);
     const [showTable, setShowTable] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
@@ -129,10 +166,10 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
     });
   };
 
-  const goNext = () => {
+  const goNext = (searchDataToUse = searchData) => {
       let allVenueDetails = formData.slotlist;
       let venueDetails;
-        venueDetails = { ...allVenueDetails, bookingSlotDetails, venueTypes, venueName, venueCode, bookingDate,searchData,existingDataSet };
+        venueDetails = { ...allVenueDetails, bookingSlotDetails, venueTypes, venueName, venueCode, bookingDate,searchData: searchDataToUse,existingDataSet };
         onSelect(config.key, venueDetails, false);
     };
 
@@ -142,45 +179,76 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
       }
     }, [bookingSlotDetails, venueTypes, venueName, venueCode, bookingDate, searchData]);
 
-    const handleBookClick = () => {
+   const handleBookClick = () => {
+    if (bookingSlotDetails.length > 0) {
+      // Sort selected slots
+      const sortedSlots = [...bookingSlotDetails].sort(
+        (a, b) => a.slotId - b.slotId
+      );
 
-      if (bookingSlotDetails.length > 0) {
-        // Sort the bookingSlotDetails by slotId to check for consecutive IDs
-        const sortedSlots = [...bookingSlotDetails].sort((a, b) => a.slotId - b.slotId);
-
-        // Check if the slotId is consecutive
-        let isConsecutive = true;
-        for (let i = 1; i < sortedSlots.length; i++) {
-          if (sortedSlots[i].slotId !== sortedSlots[i - 1].slotId + 1) {
-            isConsecutive = false;
-            break;
-          }
-        }
-
-        if (isConsecutive) {
-          // Proceed with the booking
-          if (isExistingPopupRequired) {
-            setShowModal(true);  // Show modal if required
-          } else {
-            goNext();  // Continue if no popup is needed
-          }
-        } else {
-          // Show toast if the slot IDs are not consecutive
-          setShowToast({ error: true, label: t("CHB_SELECT_CONSECUTIVE_SLOT") });
-        }
-      } else {
-        // If no slots are selected, show a toast message to select at least one slot
-        if (!isCheckboxSelected) {
-          setShowToast({ error: true, label: t("CHB_SELECT_AT_LEAST_ONE_SLOT") });
-        } else {
-          if (isExistingPopupRequired) {
-            setShowModal(true);  // Show modal when button is clicked
-          } else {
-            goNext();  // Proceed to next step if no popup is needed
-          }
+      // Check consecutive slots
+      let isConsecutive = true;
+      for (let i = 1; i < sortedSlots.length; i++) {
+        if (sortedSlots[i].slotId !== sortedSlots[i - 1].slotId + 1) {
+          isConsecutive = false;
+          break;
         }
       }
-    };
+
+      if (isConsecutive) {
+        // Selected booking dates
+        const selectedDates = sortedSlots
+          .map((slot) => slot.bookingDate)
+          .sort(
+            (a, b) =>
+              new Date(a.split("-").reverse().join("-")) -
+              new Date(b.split("-").reverse().join("-"))
+          );
+
+        // Build updated search data (NO state update)
+        const updatedSearchData = {
+          ...searchData,
+          bookingStartDate: format(
+            new Date(selectedDates[0].split("-").reverse().join("-")),
+            "yyyy-MM-dd"
+          ),
+          bookingEndDate: format(
+            new Date(
+              selectedDates[selectedDates.length - 1]
+                .split("-")
+                .reverse()
+                .join("-")
+            ),
+            "yyyy-MM-dd"
+          ),
+        };
+
+        if (isExistingPopupRequired) {
+          setShowModal(updatedSearchData);
+        } else {
+          goNext(updatedSearchData);
+        }
+      } else {
+        setShowToast({
+          error: true,
+          label: t("CHB_SELECT_CONSECUTIVE_SLOT"),
+        });
+      }
+    } else {
+      if (!isCheckboxSelected) {
+        setShowToast({
+          error: true,
+          label: t("CHB_SELECT_AT_LEAST_ONE_SLOT"),
+        });
+      } else {
+        if (isExistingPopupRequired) {
+          setShowModal(searchData);
+        } else {
+          goNext(searchData);
+        }
+      }
+    }
+  };
 
 
   const handleSearch = () => {
@@ -413,14 +481,14 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
             {showModal && (
                 <BookingPopup
                 t={t}
-                closeModal={() => setShowModal(false)}  // Close modal when "BACK" is clicked
-                actionCancelOnSubmit={() => setShowModal(false)}  // Close modal when "BACK" is clicked
+                closeModal={() => setShowModal(null)}  // Close modal when "BACK" is clicked
+                actionCancelOnSubmit={() => setShowModal(null)}  // Close modal when "BACK" is clicked
                 onSubmit={() => {
-                    goNext();  // Ensure action is called only when submitting
-                    setShowModal(false);  // Close modal after action
+                    goNext(showModal);  // Ensure action is called only when submitting
+                    setShowModal(null);  // Close modal after action
                 }}
                 setExistingDataSet={setExistingDataSet}
-                searchData={searchData}
+                searchData={showModal}
                 tenantId={tenantId}
                 />
             )}
