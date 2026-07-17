@@ -687,7 +687,7 @@ const RequestInfo = {
       readOnly: true
     }
   },
-  required: ["apiId", "ver", "msgId", "action"]
+  required: ["apiId", "msgId"]
 };
 
 const FireNOCRequest = {

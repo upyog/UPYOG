@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   version: 1.0.0
-  title: eGov Fire NOC module.
+  title: UPYOG Fire NOC module.
   description: |
     APIs for Fire NOC module. This modules handles Below functionality.
       1. Apply Fire NOC.
