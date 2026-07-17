@@ -65,6 +65,12 @@
  </div>
  
  <div class="input-area" id="input-area-container">
+ <button id="attach-btn" class="icon-button attach-btn" title="Upload Document" disabled style="padding: 10px; cursor: pointer; color: #555;">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+     <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"></path>
+   </svg>
+ </button>
+ <input type="file" id="global-file-input" style="display:none" accept="image/*,application/pdf">
  <input type="text" id="text-input" placeholder="Please login..." disabled autocomplete="off">
  <div class="input-actions">
  <button class="icon-button voice-button start" id="session-toggle-btn" title="Tap to speak" disabled></button>
@@ -222,10 +228,36 @@
     conversationSessionId = sessionId;
     console.log("Memory active for session:", conversationSessionId);
     
-    document.getElementById("text-input").disabled = false;
-    document.getElementById("text-input").placeholder = "Ask anything about UPYOG services...";
-    document.getElementById("session-toggle-btn").disabled = false;
-    document.getElementById("send-text-btn").disabled = false;
+    const textInput = document.getElementById('text-input');
+    const sendBtn = document.getElementById('send-text-btn');
+    const sessionToggleBtn = document.getElementById('session-toggle-btn');
+    const attachBtn = document.getElementById('attach-btn');
+    const globalFileInput = document.getElementById('global-file-input');
+    
+    attachBtn.addEventListener('click', () => {
+        globalFileInput.click();
+    });
+    
+    globalFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64Data = evt.target.result;
+                sendQuery('', file.name, base64Data, "Uploaded document: " + file.name);
+            };
+            reader.readAsDataURL(file);
+            globalFileInput.value = "";
+        }
+    });
+
+    if (textInput) {
+      textInput.disabled = false;
+      textInput.placeholder = "Ask anything about UPYOG services...";
+    }
+    if (sendBtn) sendBtn.disabled = false;
+    if (sessionToggleBtn) sessionToggleBtn.disabled = false;
+    if (attachBtn) attachBtn.disabled = false;
     document.getElementById("logout-btn").style.display = "inline-block";
     
     // Automatically send greeting message on successful activation
@@ -423,6 +455,52 @@
  hint.className = 'choice-hint'; hint.textContent = HINT_MESSAGES.speakChoice;
  wrapper.appendChild(hint);
  }
+  
+  if (inputType === 'checkbox' && options && options.length > 0) {
+  const checkContainer = document.createElement('div');
+  checkContainer.className = 'choice-dropdown-wrapper';
+  checkContainer.style.display = 'flex';
+  checkContainer.style.flexDirection = 'column';
+  checkContainer.style.gap = '8px';
+  checkContainer.style.alignItems = 'flex-start';
+  checkContainer.style.background = 'rgba(255, 255, 255, 0.7)';
+  checkContainer.style.padding = '12px';
+  checkContainer.style.borderRadius = '16px';
+  checkContainer.style.marginTop = '8px';
+  
+  options.forEach(opt => {
+      const label = document.createElement('label');
+      label.style.display = 'flex';
+      label.style.alignItems = 'center';
+      label.style.gap = '8px';
+      label.style.cursor = 'pointer';
+      
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.value = opt;
+      
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(opt));
+      checkContainer.appendChild(label);
+  });
+  
+  const confirmBtn = document.createElement('button');
+  confirmBtn.textContent = 'Submit';
+  confirmBtn.className = 'choice-confirm-btn';
+  confirmBtn.style.marginTop = '10px';
+  confirmBtn.style.alignSelf = 'center';
+  
+  confirmBtn.onclick = function() {
+      const selected = Array.from(checkContainer.querySelectorAll('input:checked')).map(cb => cb.value);
+      if (selected.length === 0) return;
+      checkContainer.querySelectorAll('input').forEach(cb => cb.disabled = true);
+      confirmBtn.disabled = true;
+      sendQuery(selected.join(', '));
+  };
+  
+  checkContainer.appendChild(confirmBtn);
+  wrapper.appendChild(checkContainer);
+  }
  if (inputType === 'number') {
  const hint = document.createElement('div');
  hint.className = 'number-hint'; hint.textContent = HINT_MESSAGES.speakDigits;
@@ -524,7 +602,131 @@
  fileContainer.appendChild(confirmBtn);
  wrapper.appendChild(fileContainer);
  }
- if (inputType === 'text') showTextInputBar(field);
+  if (inputType === 'slot_table' && options && options.length > 0) {
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'ui-table-wrapper';
+    const table = document.createElement('table');
+    table.className = 'ui-table';
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Select</th>
+          <th>Ad Type</th>
+          <th>Face Area</th>
+          <th>Night Light</th>
+          <th>Booking Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    `;
+    const tbody = table.querySelector('tbody');
+    options.forEach(opt => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="checkbox" value='${JSON.stringify(opt)}' class="slot-checkbox"></td>
+        <td>${opt.type || ''}</td>
+        <td>${opt.area || ''}</td>
+        <td>${opt.light || ''}</td>
+        <td>${opt.date || ''}</td>
+        <td><span class="status-badge available">${opt.status || 'Available'}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'ui-table-actions';
+    const addBtn = document.createElement('button');
+    addBtn.className = 'ui-button primary';
+    addBtn.textContent = 'Add to Cart';
+    addBtn.onclick = () => {
+      const selected = Array.from(table.querySelectorAll('.slot-checkbox:checked')).map(cb => JSON.parse(cb.value));
+      if (selected.length === 0) return;
+      table.querySelectorAll('input').forEach(cb => cb.disabled = true);
+      addBtn.disabled = true;
+      sendQuery(JSON.stringify(selected), null, null, `Selected ${selected.length} slot(s)`);
+    };
+    tableContainer.appendChild(table);
+    btnContainer.appendChild(addBtn);
+    tableContainer.appendChild(btnContainer);
+    wrapper.appendChild(tableContainer);
+  }
+
+  if (inputType === 'booking_history' && options && options.length > 0) {
+    const listContainer = document.createElement('div');
+    listContainer.className = 'ui-card-list';
+    options.forEach(opt => {
+      const card = document.createElement('div');
+      card.className = 'ui-card';
+      card.innerHTML = `
+        <div class="ui-card-header">
+          <strong>Booking No.</strong>
+          <span>${opt.bookingNo || ''}</span>
+        </div>
+        <div class="ui-card-body">
+          <div class="ui-card-row">
+            <span class="label">Applicant Name</span>
+            <span class="value">${(opt.applicantDetail && opt.applicantDetail.applicantName) || opt.name || ''}</span>
+          </div>
+          <div class="ui-card-row">
+            <span class="label">Booking Date</span>
+            <span class="value">${opt.bookingDate || ''}</span>
+          </div>
+          <div class="ui-card-row">
+            <span class="label">Status</span>
+            <span class="value">${opt.status || ''}</span>
+          </div>
+        </div>
+      `;
+      listContainer.appendChild(card);
+    });
+    wrapper.appendChild(listContainer);
+  }
+
+  if (inputType === 'applicant_form' && options) {
+    const formContainer = document.createElement('div');
+    formContainer.className = 'ui-applicant-form';
+    formContainer.innerHTML = `
+      <div class="ui-cart-summary">
+        <h3>Cart Details</h3>
+        <div class="cart-total">Total Booking Amount: <span>${options.cartAmount || '0'} INR</span></div>
+      </div>
+      <div class="ui-form-body">
+        <h3>Applicant Personal Details</h3>
+        <div class="ui-form-group">
+          <label>Applicant Name <span class="required">*</span></label>
+          <input type="text" id="app-name" placeholder="Enter full name">
+        </div>
+        <div class="ui-form-group">
+          <label>Mobile Number <span class="required">*</span></label>
+          <input type="text" id="app-mobile" placeholder="+91" value="${localStorage.getItem('upyog_redis_phone') || ''}">
+        </div>
+        <div class="ui-form-group">
+          <label>Email ID <span class="required">*</span></label>
+          <input type="email" id="app-email" placeholder="example@gmail.com">
+        </div>
+        <button class="ui-button primary w-100" id="app-submit">Next</button>
+      </div>
+    `;
+    wrapper.appendChild(formContainer);
+    setTimeout(() => {
+      const submitBtn = formContainer.querySelector('#app-submit');
+      submitBtn.onclick = () => {
+        const name = formContainer.querySelector('#app-name').value;
+        const mobile = formContainer.querySelector('#app-mobile').value;
+        const email = formContainer.querySelector('#app-email').value;
+        if (!name || !mobile || !email) {
+          alert('Please fill all required fields');
+          return;
+        }
+        formContainer.querySelectorAll('input').forEach(i => i.disabled = true);
+        submitBtn.disabled = true;
+        sendQuery(JSON.stringify({name, mobile, email}), null, null, "Submitted applicant details");
+      };
+    }, 100);
+  }
+
+  if (inputType === 'text') showTextInputBar(field);
  chatContainer.appendChild(wrapper);
  chatContainer.scrollTop = chatContainer.scrollHeight;
  }
@@ -656,17 +858,17 @@
 
  function clearInterimDisplay() { if (interimDisplay) { interimDisplay.classList.remove('show'); interimText.innerText = ''; } }
 
- async function sendQuery(transcript, file_name = null, file_data = null) {
- if ((!transcript.trim() && !file_name) || !conversationSessionId) return;
- setState(States.PROCESSING);
- clearInterimDisplay();
- if (currentFetch) { currentFetch.abort(); currentFetch = null; }
- if (file_name) {
- addUserMessage(`[Uploaded Document: ${file_name}]`);
- } else {
- addUserMessage(transcript);
- }
- currentFetch = new AbortController();
+ async function sendQuery(transcript, file_name = null, file_data = null, display_text = null) {
+  if ((!transcript.trim() && !file_name) || !conversationSessionId) return;
+  setState(States.PROCESSING);
+  clearInterimDisplay();
+  if (currentFetch) { currentFetch.abort(); currentFetch = null; }
+  if (file_name) {
+  addUserMessage(`[Uploaded Document: ${file_name}]`);
+  } else {
+  addUserMessage(display_text || transcript);
+  }
+  currentFetch = new AbortController();
 
  try {
  const response = await fetch(`${API_URL}/chat`, {

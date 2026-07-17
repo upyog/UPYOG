@@ -887,4 +887,176 @@ header h1 span.logo-icon {
  transition: all 0.2s ease;
  }
  .logout-btn:hover { background: #ef4444; color: white; border-color: #ef4444; }
- 
+
+/* UI COMPONENTS: Slot Table */
+.ui-table-wrapper {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 12px;
+  border: 1px solid rgba(255,255,255,0.8);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+  overflow-x: auto;
+}
+.ui-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+.ui-table th {
+  background: rgba(0,0,0,0.03);
+  padding: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid rgba(0,0,0,0.05);
+}
+.ui-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  color: var(--text-secondary);
+}
+.ui-table tr:hover {
+  background: rgba(255,255,255,0.5);
+}
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.status-badge.available {
+  background: #dcfce7;
+  color: #166534;
+}
+.ui-table-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+.ui-button {
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.ui-button.primary {
+  background: linear-gradient(135deg, #ea580c, #f59e0b);
+  color: white;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
+}
+.ui-button.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(234, 88, 12, 0.3);
+}
+.ui-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.w-100 { width: 100%; }
+
+/* UI COMPONENTS: Card List */
+.ui-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+.ui-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.8);
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+  transition: transform 0.2s ease;
+}
+.ui-card:hover {
+  transform: translateY(-2px);
+}
+.ui-card-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+.ui-card-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.ui-card-row .label { color: var(--text-muted); }
+.ui-card-row .value { color: var(--text-primary); font-weight: 500; }
+
+/* UI COMPONENTS: Applicant Form */
+.ui-applicant-form {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.8);
+  overflow: hidden;
+  margin-top: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+}
+.ui-cart-summary {
+  background: rgba(234, 88, 12, 0.05);
+  padding: 16px;
+  border-bottom: 1px solid rgba(234, 88, 12, 0.1);
+}
+.ui-cart-summary h3 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  color: #ea580c;
+}
+.cart-total {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.cart-total span {
+  font-weight: 600;
+  color: #ea580c;
+  font-size: 16px;
+}
+.ui-form-body {
+  padding: 20px;
+}
+.ui-form-body h3 {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+.ui-form-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+.ui-form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.ui-form-group .required { color: #ef4444; }
+.ui-form-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.8);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+.ui-form-group input:focus {
+  border-color: #ea580c;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+} 

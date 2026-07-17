@@ -24,7 +24,7 @@ import json
 import re
 from database import get_any_user_profile_name, save_user_profile_name
 
-adv_sessions = {}
+
 
 try:
     from groq import Groq
@@ -592,24 +592,11 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
     # --- LOAD USER'S LONG-TERM MEMORY (BOOKINGS) ---
     long_term_bookings_str = ""
     if phone_anchor != "default":
-        try:
-            from database import get_long_term_memory
-            bookings = get_long_term_memory(phone_anchor)
-            if bookings:
-                long_term_bookings_str = "\n\nUSER'S PAST ADVERTISEMENT BOOKINGS (LONG-TERM MEMORY):\n"
-                for i, b in enumerate(bookings, 1):
-                    long_term_bookings_str += (
-                        f"{i}. Booking ID: {b.get('bookingNo') or b.get('applicationNo')}, "
-                        f"Type: {b.get('addType')}, Location: {b.get('location')}, "
-                        f"Face Area: {b.get('faceArea')}, Dates: {b.get('bookingStartDate')} to {b.get('bookingEndDate')}, "
-                        f"Night Light: {b.get('nightLight')}, Pincode: {b.get('pincode')}, Locality: {b.get('locality')}, "
-                        f"Street: {b.get('streetName')}\n"
-                    )
-        except Exception as e:
-            logger.error(f"Error loading long term memory for RAG context: {e}")
+        long_term_bookings_str = ""
     
     # --- LOAD USER'S PERSISTENT CHAT HISTORY (LONG-TERM REDIS MEMORY) ---
     long_term_chat_str = ""
+    qdrant_summary_str = ""
     if phone_anchor != "default":
         try:
             from database import get_chat_history
@@ -619,8 +606,16 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
                 for msg in redis_chat[-15:]:
                     role_label = "User" if msg.get("role") == "user" else "Assistant"
                     long_term_chat_str += f"{role_label}: {msg.get('content')}\n"
+                    
+            from memory_manager import MemoryManager
+            query_emb = model.encode([query])[0].tolist()
+            past_summaries = MemoryManager.search_long_term_memory(phone_anchor, query_emb, limit=3)
+            if past_summaries:
+                qdrant_summary_str = "\n\nUSER'S PAST CHAT HISTORY (SUMMARIES FROM QDRANT):\n"
+                for s in past_summaries:
+                    qdrant_summary_str += f"- [{s.get('date_str')}] {s.get('content')}\n"
         except Exception as e:
-            logger.error(f"Error loading chat history for RAG context: {e}")
+            logger.error(f"Error loading chat history or summaries for RAG context: {e}")
     
     profile_details_str = "NO ACTIVE CITIZEN PROFILE FOUND."
     profile_name = "User"
@@ -641,6 +636,8 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
 
     if long_term_bookings_str:
         profile_details_str += long_term_bookings_str
+    if qdrant_summary_str:
+        profile_details_str += qdrant_summary_str
     if long_term_chat_str:
         profile_details_str += long_term_chat_str
 
@@ -776,7 +773,7 @@ def retrieve_document(query, user_lang, history, session_id="default"):
     # The old FAISS hard gate is removed - LLM will answer from general knowledge if no context
     return get_rag_response(query, history, user_lang, search_lang=user_lang, session_id=session_id)
 
-def retrieve_document_stream(query, user_lang, history):
+def retrieve_document_stream(query, user_lang, history, phone_anchor="default"):
     """Streaming version - yields chunks for SSE."""
     global stop_generation
     stop_generation.clear()
@@ -823,13 +820,24 @@ def retrieve_document_stream(query, user_lang, history):
         if frs_context:
             context_str += "\nTechnical Specs:\n" + "\n".join([c['text'] for c in frs_context])
 
+        qdrant_summary_str = ""
+        if phone_anchor != "default":
+            try:
+                from memory_manager import MemoryManager
+                query_emb = model.encode([query_for_search])[0].tolist()
+                past_summaries = MemoryManager.search_long_term_memory(phone_anchor, query_emb, limit=3)
+                if past_summaries:
+                    qdrant_summary_str = "\nPAST CHAT SUMMARIES FROM QDRANT:\n" + "\n".join([f"- [{s.get('date_str')}] {s.get('content')}" for s in past_summaries])
+            except Exception as e:
+                logger.error(f"Error fetching Qdrant summaries in stream: {e}")
+
         system_instr = (
             f"You are the UPYOG AI Concierge. CURRENT OUTPUT LANGUAGE: {'HINDI (DEVANAGARI)' if user_lang == 'hi' else 'ENGLISH'}.\n"
             f"{lang_instruction}\n\n"
             "STRICT GROUNDING RULES:\n"
             "1. USE ONLY THE PROVIDED CONTEXT. Do not use outside knowledge.\n"
             "2. Max 2-3 sentences.\n\n"
-            f"CONTEXT PROVIDED:\n{context_str if context_str else 'NO CONTEXT. ASK FOR CLARIFICATION.'}"
+            f"CONTEXT PROVIDED:\n{context_str if context_str else 'NO CONTEXT. ASK FOR CLARIFICATION.'}\n{qdrant_summary_str}"
         )
 
         messages = [
@@ -873,44 +881,139 @@ def retrieve_document_stream(query, user_lang, history):
         yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
 
 
+# ==========================================
+# DYNAMIC PLUGIN LOADER & ROUTER
+# ==========================================
+import glob
+import importlib
+from langchain_core.messages import HumanMessage
+from typing import Dict, Any
+
+workflows = {}
+
+def load_plugins():
+    workflow_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "workflow")
+    logger.info(f"Scanning for plugins in {workflow_dir}")
+    
+    for file_path in glob.glob(os.path.join(workflow_dir, "*.py")):
+        module_name = os.path.basename(file_path)[:-3]
+        if module_name in ["__init__", "base_state"] or module_name.startswith("."):
+            continue
+            
+        try:
+            module = importlib.import_module(f"workflow.{module_name}")
+            graph_var_name = f"{module_name}_graph"
+            if hasattr(module, graph_var_name):
+                workflows[module_name] = getattr(module, graph_var_name)
+                logger.info(f"Successfully registered workflow plugin: {module_name}")
+        except Exception as e:
+            logger.error(f"Failed to load plugin '{module_name}': {e}")
+
+def process_user_message(user_input: str, phone_number: str, session_id: str) -> Dict[str, Any]:
+    intent = "adv_booking" # Fallback if called directly
+    if intent not in workflows:
+        return {"response": f"Service '{intent}' unavailable.", "status": "error"}
+        
+    target_graph = workflows[intent]
+    config = {"configurable": {"thread_id": phone_number}}
+    
+    events = target_graph.stream(
+        {"messages": [HumanMessage(content=user_input)], "phone_number": phone_number, "session_id": session_id, "active_service": intent},
+        config,
+        stream_mode="values"
+    )
+    
+    final_message = None
+    for event in events:
+        messages = event.get("messages", [])
+        if messages:
+            final_message = messages[-1]
+            
+    response_text = final_message.content if hasattr(final_message, "content") else str(final_message)
+    
+    import ast
+    input_type = "text"
+    options = []
+    
+    # Parse <ui-dropdown>, <ui-button>, <ui-checkbox-group> options=[...] />
+    choice_match = re.search(r'<ui-(dropdown|button|checkbox-group) options=\[([^\]]*)\]\s*/>', response_text)
+    if choice_match:
+        tag_type = choice_match.group(1)
+        input_type = "choice" if tag_type in ["dropdown", "button"] else "checkbox"
+        raw_options = choice_match.group(2)
+        try:
+            options = ast.literal_eval(f"[{raw_options}]")
+        except:
+            options = [opt.strip().strip('\'"') for opt in raw_options.split(',')]
+        response_text = re.sub(r'<ui-(dropdown|button|checkbox-group)[^>]+>', '', response_text).strip()
+        
+    # Parse <ui-calendar ... />
+    if re.search(r'<ui-calendar[^>]*>', response_text):
+        input_type = "date"
+        response_text = re.sub(r'<ui-calendar[^>]*>', '', response_text).strip()
+        
+    # Parse <ui-file ... />
+    if re.search(r'<ui-file[^>]*>', response_text):
+        input_type = "file"
+        response_text = re.sub(r'<ui-file[^>]*>', '', response_text).strip()
+        
+    # Parse <ui-slot-table data=[...] />  — handles nested JSON objects
+    slot_tag_match = re.search(r'<ui-slot-table data=(\[.*?\])\s*/>', response_text, re.DOTALL)
+    if slot_tag_match:
+        input_type = "slot_table"
+        try:
+            import json
+            options = json.loads(slot_tag_match.group(1))
+        except:
+            pass
+        response_text = re.sub(r'<ui-slot-table[^>]*>', '', response_text).strip()
+        
+
+    # Parse <ui-applicant-form cartAmount="..." />
+    form_match = re.search(r'<ui-applicant-form cartAmount="([^"]*)"\s*/>', response_text)
+    if form_match:
+        input_type = "applicant_form"
+        options = {"cartAmount": form_match.group(1)}
+        response_text = re.sub(r'<ui-applicant-form[^>]*>', '', response_text).strip()
+        
+    # Parse <ui-booking-history data=[...] />
+    history_match = re.search(r'<ui-booking-history data=(\[.*?\])\s*/>', response_text, re.DOTALL)
+    if history_match:
+        input_type = "booking_history"
+        try:
+            import json
+            options = json.loads(history_match.group(1))
+        except:
+            pass
+        response_text = re.sub(r'<ui-booking-history[^>]*>', '', response_text).strip()
+    
+    return {
+        "response": response_text,
+        "input_type": input_type,
+        "options": options,
+        "status": "done"
+    }
+
 ### --- Added Proxy Function for Ad Agent --- ###
 def handle_adv_turn(session_id, user_input, auth_token=None, workflow="booking", reset=False, file_name=None, file_data=None):
     """
-    Proxy conversation directly to Agent Service.
+    Proxy conversation directly to Local LangGraph Agent.
     CRITICAL: Extract phone_number from session_id before sending to agent.
-    This ensures each phone number has separate Redis memory.
+    This ensures each phone number has separate MemorySaver memory.
     """
-    if not auth_token:
-        load_dotenv(override=True)
-        auth_token = os.environ.get("PORTAL_AUTH_TOKEN")
-
-    url = "http://127.0.0.1:8080/adv_agent"
-   
     # Extract phone number from session_id 
     phone_number = extract_phone_from_session(session_id)
-   
-    payload = {
-        "message": user_input,
-        "phone_number": phone_number,
-        "session_id": session_id,
-        "token": auth_token,
-        "workflow": workflow,
-        "reset": reset,
-        "file_name": file_name,
-        "file_data": file_data
-    }
-   
-    logger.info(f"[AdAgent] Calling with phone: {phone_number}, workflow: {workflow}")
-   
+    
+    logger.info(f"[AdAgent] Calling local dynamic plugin engine with phone: {phone_number}")
+    
     try:
-        res = requests.post(url, json=payload, timeout=10)
-        result = res.json()
+        result = process_user_message(user_input, phone_number, session_id)
         logger.info(f"[AdAgent] Response status: {result.get('status')}")
         return result
     except Exception as e:
-        logger.error(f"[AdAgent] Error connecting to Ad Agent: {e}")
+        logger.error(f"[AdAgent] Error running LangGraph: {e}")
         return {
-            "response": "Advertisement Agent service is offline. Please check port 8080.",
+            "response": "Advertisement Agent encountered a local error.",
             "status": "error"
         }
 
@@ -990,6 +1093,7 @@ def chat():
                 uuid = cached_info.get("uuid") if cached_info else None
                 is_valid, user_info = verify_user_auth(token, phone_anchor)
                 if is_valid:
+                    user_info["_auth_token"] = token
                     save_user_profile_info(phone_anchor, user_info)
                     cached_info = user_info
                     
@@ -1019,6 +1123,16 @@ def chat():
                         "mode": "blocked",
                         "audio": audio
                     })
+
+        if file_name and file_data and token:
+            from mcp_tools import upload_to_filestore
+            file_store_id = upload_to_filestore(file_name, file_data, token)
+            if file_store_id:
+                user_input = json.dumps({"document": file_store_id})
+                file_name = None
+
+        if file_name and not user_input:
+            user_input = json.dumps({"document": file_name})
 
         if not user_input and not file_name:
             return jsonify({"response": "", "lang": "en", "audio": ""})
@@ -1053,297 +1167,58 @@ def chat():
             return jsonify({"response": msg, "lang": user_language,
                            "audio": audio_output, "mode": "blocked"})
 
-        # GATE 1: Check if grievance flow is active for this session
-        grievance_session = get_grievance_session(session_id)
-        if grievance_session.get("active") and grievance_session.get("collecting"):
-            result = handle_grievance_turn(session_id, user_input, user_language, auth_token=token, user_info=cached_info)
-            audio_output = text_to_speech(result["message"], result["lang"])
-            return jsonify({
-                "response": result["message"],
-                "lang": result["lang"],
-                "mode": "grievance_collecting",
-                "grievance_type": result.get("type"),
-                "audio": audio_output,
-                "input_type": result.get("input_type", "text"),
-                "options": result.get("options", []),
-                "field": result.get("field", "")
-            })
-           
-        # GATE 1B: Check if booking flow is active for this session
-        booking_session = get_booking_session(session_id)
-        if booking_session.get("active"):
-            result = handle_booking_turn(session_id, user_input, user_language)
-            audio_output = text_to_speech(result["message"], result["lang"])
-            return jsonify({
-                "response": result["message"],
-                "lang": result["lang"],
-                "mode": "booking_active",
-                "audio": audio_output
-            })
-
-
-        ### --- MODIFICATION [START]: Added Gate 1C for Advertisement Agent Flow --- ###
-        adv_offer = adv_sessions.get(session_id, {})
-       
-        # If user was offered ad booking in the previous turn, wait for their yes/no
-        if adv_offer.get("offer_pending"):
-            user_input_clean = user_input.strip().lower()
-            if user_input_clean in ["yes", "y", "haan", "ok", "sure", "please"]:
-                adv_offer["active"] = True
-                adv_offer["offer_pending"] = False
-                user_input = "" # Blank input triggers the first prompt in the agent
-            elif user_input_clean in ["no", "n", "cancel", "nahi"]:
-                adv_sessions[session_id] = {"active": False, "offer_pending": False}
-                audio_output = text_to_speech("विज्ञापन बुकिंग रद्द कर दी गई है।", user_language)
-                return jsonify({"response": "Advertisement booking cancelled.", "lang": user_language, "mode": "faq", "audio": audio_output})
-
-        # Pay Now Interceptor
-        if "pay now" in user_input.lower() or "make payment" in user_input.lower() or "pay for my booking" in user_input.lower() or "payment is pending" in user_input.lower():
-            phone = extract_phone_from_session(session_id)
-            if phone != "default":
-                from database import get_long_term_memory
-                long_term_data = get_long_term_memory(phone)
-                if long_term_data:
-                    pending_booking = None
-                    for b in reversed(long_term_data):
-                        if b.get("status") != "PAID":
-                            pending_booking = b
-                            break
-                    if pending_booking:
-                        # Activate agent session
-                        adv_sessions[session_id] = {"active": True, "offer_pending": False}
-                        # Create short-term memory draft for PAYMENT_METHOD
-                        from database import save_short_term_memory
-                        draft_state = {
-                            "active": True,
-                            "step": "PAYMENT_METHOD",
-                            "data": pending_booking
-                        }
-                        save_short_term_memory(phone, draft_state)
-                        # Call agent to trigger payment prompt
-                        token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
-                        agent_res = handle_adv_turn(session_id, "", auth_token=token)
-                        audio = text_to_speech(agent_res["response"], user_language)
-                        return jsonify({
-                            "response": agent_res["response"],
-                            "lang": user_language,
-                            "mode": "adv_active",
-                            "audio": audio,
-                            "input_type": agent_res.get("input_type", "text"),
-                            "options": agent_res.get("options", []),
-                            "show_button": agent_res.get("show_button")
-                        })
-
-        # Check if Ad session is actively running
-       
-        if adv_sessions.get(session_id, {}).get("active"):
-            phone = extract_phone_from_session(session_id)
-            logger.info(f"[AdAgent] Phone: {phone}, Session: {session_id}")
-            token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
-            agent_res = handle_adv_turn(session_id, user_input, auth_token=token, file_name=file_name, file_data=file_data)
-           
-            # If the agent signals completion, close the loop so normal chat resumes
-            if agent_res.get("status") == "completed":
-                adv_sessions[session_id]["active"] = False
-               
-            audio = text_to_speech(agent_res["response"], user_language)
-            return jsonify({
-                "response": agent_res["response"],
-                "lang": user_language,
-                "mode": "adv_active",
-                "audio": audio,
-                "input_type": agent_res.get("input_type", "text"),
-                "options": agent_res.get("options", []),
-                "show_button": agent_res.get("show_button"),
-                "redirect_url": agent_res.get("redirect_url")
-            })
-        ### --- MODIFICATION [END] --- ###
-
-
         # ===== INTENT CLASSIFICATION FLOW =====
         # Run intent classifier FIRST - before any FAISS filtering
+        intent_data = classify_intent(user_input, history, user_language)
+        intent = intent_data['intent']
+        logger.info(f"INTENT: {intent}, SERVICE: {intent_data.get('service')}, EMOTION: {intent_data.get('emotion')}")
 
-        # Check if we have an active grievance offer pending
-        g_offer = grievance_sessions.get(session_id, {})
-
-        if g_offer.get("offer_pending"):
-            # PATH B: Bot already offered grievance, waiting for confirmation
-            intent = classify_intent(user_input, history, user_language)
-
-            if intent["intent"] == "grievance_confirm":
-                # User said YES - start grievance collection
-                grievance_sessions[session_id] = {
-                    "active": True,
-                    "collecting": True,
-                    "step": "START",
-                    "data": {},
-                    "offer_pending": False,
-                    "auth_token": None,
-                    "user_info": None,
-                    "categories": {},
-                    "localities": []
-                }
-                result = handle_grievance_turn(session_id, "", user_language, auth_token=token, user_info=cached_info)
-                audio_output = text_to_speech(result["message"], result["lang"])
+        # Check if dynamic plugin workflow should handle this
+        phone = extract_phone_from_session(session_id)
+        if phone != "default":
+            config = {"configurable": {"thread_id": phone}}
+            active_plugin = None
+            
+            # Check if there's an active session in any plugin
+            for wf_name, graph in workflows.items():
+                state = graph.get_state(config)
+                if state and state.values.get("messages"):
+                    draft = state.values.get("draft_booking", {})
+                    if draft:
+                        active_plugin = wf_name
+                        break
+                    
+            # Map ML intents to plugin names
+            plugin_intent = None
+            ui_lower = user_input.lower()
+            if intent in ["adv_candidate", "adv_confirm", "adv_status_candidate", "booking_candidate", "booking_confirm"]:
+                plugin_intent = "adv_booking"
+                
+            # HARD INTERCEPT FOR PAST BOOKINGS
+            if "adv-" in ui_lower or (any(w in ui_lower for w in ["my", "show", "find", "latest", "detail"]) and "booking" in ui_lower) or "details" in ui_lower:
+                plugin_intent = "adv_booking"
+                
+            # Break out of stickiness if user explicitly asks for profile or summary or cancel
+            if any(w in ui_lower for w in ["profile", "who am i", "my name", "summary", "previous chat", "context"]):
+                active_plugin = None
+                plugin_intent = None
+            
+            if active_plugin or (plugin_intent and plugin_intent in workflows):
+                target_wf = active_plugin or plugin_intent
+                logger.info(f"Routing to dynamic plugin: {target_wf}")
+                token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
+                agent_res = handle_adv_turn(session_id, user_input, auth_token=token, workflow=target_wf)
+                audio = text_to_speech(agent_res.get("response", ""), user_language)
                 return jsonify({
-                    "response": result["message"],
+                    "response": agent_res.get("response", ""),
                     "lang": user_language,
-                    "mode": "grievance_collecting",
-                    "step": "START",
-                    "audio": audio_output,
-                    "input_type": result.get("input_type", "text"),
-                    "options": result.get("options", []),
-                    "field": result.get("field", "")
+                    "mode": "agent_active",
+                    "audio": audio,
+                    "input_type": agent_res.get("input_type", "text"),
+                    "options": agent_res.get("options", []),
+                    "show_button": agent_res.get("show_button"),
+                    "redirect_url": agent_res.get("redirect_url")
                 })
-
-            elif intent["intent"] == "grievance_cancel":
-                # User said NO - clear offer, continue normally
-                grievance_sessions[session_id] = {"active": False, "offer_pending": False}
-                response_text = retrieve_document(user_input, user_language, history, session_id=session_id)
-                response_text = re.sub(r'\bUpyog\b', 'UPYOG', response_text, flags=re.IGNORECASE)
-                audio_output = text_to_speech(response_text, user_language)
-                return jsonify({
-                    "response": response_text,
-                    "lang": user_language,
-                    "detected_script": detected_script,
-                    "mode": "faq",
-                    "audio": audio_output
-                })
-
-            else:
-                # User asked something else - drop offer, answer their question
-                grievance_sessions[session_id] = {"active": False, "offer_pending": False}
-                # Fall through to PATH C
-
-        # Check if we have an active booking offer pending
-        b_offer = get_booking_session(session_id)
-
-        if b_offer.get("offer_pending"):
-            user_input_clean = user_input.strip().lower().rstrip('.!?')
-            is_yes = user_input_clean in ["yes", "y", "yeah", "yes please", "sure", "ok", "okay"]
-            is_no = user_input_clean in ["no", "n", "no thanks", "nope", "not now", "cancel"]
-
-            if is_yes:
-                intent = {"intent": "booking_confirm"}
-            elif is_no:
-                intent = {"intent": "booking_cancel"}
-            else:
-                intent = classify_intent(user_input, history, user_language)
-
-            if intent["intent"] == "booking_confirm":
-                # User said YES - start booking workflow in Agent Service
-                b_offer["active"] = True
-                b_offer["offer_pending"] = False
-                result = handle_booking_turn(session_id, "I want to start booking a community hall.", user_language)
-                audio_output = text_to_speech(result["message"], result["lang"])
-                return jsonify({
-                    "response": result["message"],
-                    "lang": user_language,
-                    "mode": "booking_active",
-                    "audio": audio_output
-                })
-
-            elif intent["intent"] == "booking_cancel":
-                # User said NO - clear offer, continue normally
-                b_offer["active"] = False
-                b_offer["offer_pending"] = False
-                msg = "बुकिंग प्रक्रिया रद्द कर दी गई है।" if user_language == 'hi' else "Booking process has been cancelled."
-                audio_output = text_to_speech(msg, user_language)
-                return jsonify({
-                    "response": msg,
-                    "lang": user_language,
-                    "mode": "faq",
-                    "audio": audio_output
-                })
-
-            else:
-                b_offer["offer_pending"] = False
-                # Fall through to PATH C
-
-        # PATH C: Normal flow - classify intent first
-        intent = classify_intent(user_input, history, user_language)
-        logger.info(f"INTENT: {intent['intent']}, SERVICE: {intent.get('service')}, EMOTION: {intent.get('emotion')}")
-
-
-        ### --- MODIFICATION [START]: Added check for Advertisement Intent & Status Checks --- ###
-        if intent["intent"] == "adv_candidate" and not adv_sessions.get(session_id, {}).get("active"):
-            # Start the session active directly!
-            adv_sessions[session_id] = {"active": True, "offer_pending": False}
-            token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
-            agent_res = handle_adv_turn(session_id, "", auth_token=token, reset=True)
-            audio = text_to_speech(agent_res["response"], user_language)
-            return jsonify({
-                "response": agent_res["response"],
-                "lang": user_language,
-                "mode": "adv_active",
-                "audio": audio,
-                "input_type": agent_res.get("input_type", "text"),
-                "options": agent_res.get("options", []),
-                "show_button": agent_res.get("show_button"),
-                "redirect_url": agent_res.get("redirect_url")
-            })
-
-        if intent["intent"] == "adv_status_candidate":
-            token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
-            # Send directly to the agent's status workflow
-            agent_res = handle_adv_turn(
-                session_id,
-                user_input,
-                auth_token=token,
-                workflow="status"
-            )
-            audio = text_to_speech(agent_res["response"], user_language)
-            return jsonify({
-                "response": agent_res["response"],
-                "lang": user_language,
-                "mode": "adv_status",
-                "audio": audio,
-                "input_type": agent_res.get("input_type", "text"),
-                "options": agent_res.get("options", []),
-                "show_button": agent_res.get("show_button"),
-                "redirect_url": agent_res.get("redirect_url")
-            })
-        ### --- MODIFICATION [END] --- ###
-
-
-        if intent["intent"] == "grievance_candidate":
-            # User has a problem - OFFER grievance (don't auto-start)
-            grievance_sessions[session_id] = {
-                "active": False,
-                "offer_pending": True,
-                "pending_service": intent.get("service"),
-                "pending_emotion": intent.get("emotion", "neutral")
-            }
-            offer_message = build_grievance_offer(
-                service=intent.get("service"),
-                emotion=intent.get("emotion", "neutral"),
-                lang=user_language
-            )
-            audio_output = text_to_speech(offer_message, user_language)
-            return jsonify({
-                "response": offer_message,
-                "lang": user_language,
-                "mode": "grievance_offered",
-                "detected_emotion": intent.get("emotion"),
-                "audio": audio_output
-            })
-           
-        elif intent["intent"] == "booking_candidate":
-            # User wants to book - OFFER booking (don't auto-start)
-            booking_session = get_booking_session(session_id)
-            booking_session["offer_pending"] = True
-            offer_message = (
-                "मुझे लगता है कि आप कम्युनिटी हॉल बुक करना चाहते हैं। क्या आप बुकिंग प्रक्रिया शुरू करना चाहेंगे? (हाँ/नहीं)"
-                if user_language == 'hi'
-                else "It seems you want to book a community hall. Would you like to start the booking process? (yes/no)"
-            )
-            audio_output = text_to_speech(offer_message, user_language)
-            return jsonify({
-                "response": offer_message,
-                "lang": user_language,
-                "mode": "booking_offered",
-                "audio": audio_output
-            })
 
         # PATH D: Normal RAG flow (intent is "faq")
         # Apply domain filter AFTER intent classification
@@ -1401,6 +1276,55 @@ def chat():
         logger.error(f"Chat Error: {e}")
         return jsonify({"error": str(e)}), 500
 
+import threading
+
+def summarize_and_store_memory(phone_anchor, messages_to_summarize):
+    """Summarizes a block of old messages and stores them in Qdrant."""
+    global groq_client, model
+    try:
+        from memory_manager import MemoryManager
+        
+        # Format messages for LLM
+        convo_text = ""
+        for msg in messages_to_summarize:
+            role = "User" if msg.get("role") == "user" else "Assistant"
+            convo_text += f"{role}: {msg.get('content')}\n"
+            
+        if not groq_client:
+            from groq import Groq
+            groq_client = Groq(api_key=GROQ_API_KEY)
+            
+        prompt = f"""You are an AI memory summarization assistant.
+Please summarize the following conversation chunk into 2 concise sentences. Focus on the core intent, entities, and any factual details discussed.
+
+Conversation:
+{convo_text}
+
+Summary:"""
+
+        response = groq_client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model="llama-3.1-8b-instant",
+            max_tokens=150,
+            temperature=0.3
+        )
+        summary_text = response.choices[0].message.content.strip()
+        
+        # Generate embedding
+        embedding = model.encode([summary_text])[0].tolist()
+        
+        # Save to Qdrant
+        success = MemoryManager.save_long_term_interaction(
+            phone_number=phone_anchor,
+            role="system_summary",
+            content=summary_text,
+            embedding=embedding
+        )
+        if success:
+            logger.info(f"Successfully summarized and stored memory for {phone_anchor}")
+    except Exception as e:
+        logger.error(f"Error in summarize_and_store_memory: {e}")
+
 @app.after_request
 def log_chat_to_redis(response):
     # Only intercept chat endpoints
@@ -1416,7 +1340,7 @@ def log_chat_to_redis(response):
             # Fallback label for file uploads
             file_name = req_data.get("file_name")
             if not user_input and file_name:
-                user_input = f"[Uploaded Document: {file_name}]"
+                user_input = json.dumps({"document": file_name})
                 
             res_data = response.get_json(silent=True) or {}
             response_text = res_data.get("response", "").strip()
@@ -1430,7 +1354,17 @@ def log_chat_to_redis(response):
                     if not redis_chat or redis_chat[-1].get("content") != response_text or redis_chat[-2].get("content") != user_input:
                         redis_chat.append({"role": "user", "content": user_input})
                         redis_chat.append({"role": "assistant", "content": response_text})
-                        save_chat_history(phone_anchor, redis_chat[-100:])
+                        
+                        # --- SLIDING WINDOW SUMMARIZATION ---
+                        if len(redis_chat) >= 20: # 10 turns
+                            messages_to_summarize = redis_chat[:10] # Take oldest 10
+                            redis_chat = redis_chat[10:] # Keep newest 10
+                            
+                            # Run summarization asynchronously to avoid blocking the HTTP response
+                            threading.Thread(target=summarize_and_store_memory, args=(phone_anchor, messages_to_summarize)).start()
+                            logger.info(f"Summarization Triggered for {phone_anchor}. Truncating Redis chat.")
+                            
+                        save_chat_history(phone_anchor, redis_chat)
     except Exception as e:
         logger.error(f"Error logging chat to Redis after_request: {e}")
         
@@ -1469,7 +1403,7 @@ def stream():
         user_language, detected_script = detect_language_per_turn(user_input)
         logger.info(f"Stream language detection: '{user_input}' -> {user_language} (script: {detected_script})")
 
-        return Response(retrieve_document_stream(user_input, user_language, history), mimetype='text/event-stream')
+        return Response(retrieve_document_stream(user_input, user_language, history, phone_anchor=phone_anchor), mimetype='text/event-stream')
 
     except Exception as e:
         logger.error(f"Stream Error: {e}")
@@ -1603,7 +1537,7 @@ def api_verify_otp():
     otp = req_data.get("otp")
     if not mobile or not otp:
         return jsonify({"error": "Mobile and OTP are required"}), 400
-    
+
     # 1. Verify OTP
     verify_res = verify_otp_upyog(mobile, otp)
     if "access_token" not in verify_res:
@@ -1873,6 +1807,20 @@ def verify_otp(mobile, otp):
 
 def fetch_categories(auth_token):
     """Fetch grievance categories from MDMS."""
+    if auth_token == "mock_access_token_9999999999":
+        return {
+            "Water and Sewerage": [
+                {"name": "Water Line Leakage", "code": "WaterLeakage"},
+                {"name": "Sewerage Overflow", "code": "SewerageOverflow"}
+            ],
+            "Property Tax": [
+                {"name": "Incorrect Assessment", "code": "PropertyTaxIncorrect"}
+            ],
+            "Waste Management": [
+                {"name": "Garbage Bin Overflow", "code": "GarbageOverflow"},
+                {"name": "Street Cleaning", "code": "StreetCleaning"}
+            ]
+        }
     url = f"{GRIEVANCE_API_BASE}/mdms-v2/v1/_search?tenantId={GRIEVANCE_MDMS_TENANT}"
     payload = {
         "MdmsCriteria": {
@@ -1898,6 +1846,12 @@ def fetch_categories(auth_token):
 
 def fetch_localities(auth_token):
     """Fetch localities for the tenant."""
+    if auth_token == "mock_access_token_9999999999":
+        return [
+            {"name": "Main Market Sector 1", "code": "Sector1"},
+            {"name": "Green Park Colony", "code": "GreenPark"},
+            {"name": "Gandhi Nagar", "code": "GandhiNagar"}
+        ]
     url = f"{GRIEVANCE_API_BASE}/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality&tenantId={GRIEVANCE_TENANT_ID}"
     payload = {
         "RequestInfo": {"apiId": "Rainmaker", "authToken": auth_token, "msgId": "1|en_IN", "plainAccessRequest": {}}
@@ -1915,6 +1869,12 @@ def fetch_localities(auth_token):
 
 def create_grievance(auth_token, user_info, grievance_data):
     """Create grievance via PGR API."""
+    if auth_token == "mock_access_token_9999999999":
+        return {
+            "success": True,
+            "ticket_number": "VR-2026-MOCK-9999",
+            "raw": {"ServiceWrappers": [{"service": {"serviceRequestId": "VR-2026-MOCK-9999"}}]}
+        }
     url = f"{GRIEVANCE_API_BASE}/pgr-services/v2/request/_create?tenantId={GRIEVANCE_TENANT_ID}"
 
     citizen_block = {
@@ -2452,7 +2412,10 @@ def build_confirmation(session, lang):
     return {"type": "confirm", "message": summary_hi if lang == 'hi' else summary_en, "lang": lang}
 
 if __name__ == "__main__":
+    from memory_manager import init_collections
     try:
+        init_collections()
+        load_plugins()
         logger.info("Starting UPYOG Voice Assistant v2 on port 8090...")
         app.run(host='0.0.0.0', port=8090)
     except Exception as e:
