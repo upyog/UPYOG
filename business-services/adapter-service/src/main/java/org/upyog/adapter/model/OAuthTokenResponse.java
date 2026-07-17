@@ -34,6 +34,11 @@ import lombok.Data;
  * @see OAuthTokenService
  * @see UserInfo
  */
+/**
+ * Class representing the OAuthTokenResponse class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OAuthTokenResponse {

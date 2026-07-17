@@ -30,6 +30,11 @@ import lombok.Data;
  * @see org.upyog.adapter.loader.Loader
  * @see org.upyog.adapter.loader.impl.HttpLoader
  */
+/**
+ * Class representing the IngestionResult class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 @Builder
 public class IngestionResult {

@@ -63,6 +63,11 @@ import org.upyog.adapter.model.UserSearchResponse;
  * @see UserInfo
  * @see UserSearchResponse
  */
+/**
+ * Class representing the OAuthTokenService class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Service
 public class OAuthTokenService {
 

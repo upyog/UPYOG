@@ -35,6 +35,11 @@ import org.springframework.stereotype.Service;
  * @see org.upyog.adapter.entity.DailyIngestionData
  * @see org.upyog.adapter.entity.LegacyIngestionData
  */
+/**
+ * Class representing the AdapterProducer class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Service
 @Slf4j
 public class AdapterProducer {

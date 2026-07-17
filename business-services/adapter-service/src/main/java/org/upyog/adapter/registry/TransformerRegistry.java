@@ -34,6 +34,11 @@ import org.upyog.adapter.transformer.ModuleTransformer;
  * @see Module
  * @see org.upyog.adapter.validator.ValidatorRegistry
  */
+/**
+ * Class representing the TransformerRegistry class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Component
 public class TransformerRegistry {
 

@@ -27,6 +27,11 @@ import lombok.Data;
  * @see RequestInfo
  * @see Roles
  */
+/**
+ * Class representing the UserInfo class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 public class UserInfo {
 

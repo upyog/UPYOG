@@ -22,6 +22,11 @@ import lombok.Data;
  * @see UserInfo
  * @see RequestInfo
  */
+/**
+ * Class representing the Roles class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 public class Roles {
 

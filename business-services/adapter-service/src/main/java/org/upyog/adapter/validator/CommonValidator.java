@@ -33,6 +33,11 @@ import org.upyog.adapter.model.DashboardPayload;
  * @see org.upyog.adapter.pt.validation.impl.PTValidator
  * @see ValidationException
  */
+/**
+ * Class representing the CommonValidator class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Component
 public class CommonValidator {
 

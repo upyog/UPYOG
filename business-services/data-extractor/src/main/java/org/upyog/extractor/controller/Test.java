@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.upyog.adapter.model.IngestionResult;
 import org.upyog.extractor.service.DailyIngestionService;
 
+/**
+ * Class representing the Test class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @RestController
 @RequestMapping("/api/v1/test")
 public class Test {

@@ -68,6 +68,11 @@ import lombok.extern.slf4j.Slf4j;
  * @see AdapterProducer
  * @see KafkaTopics#SAVE_INGESTION_DETAIL
  */
+/**
+ * Class representing the HttpLoader class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Slf4j
 @Component
 public class HttpLoader implements Loader {
@@ -228,10 +233,10 @@ public class HttpLoader implements Loader {
 	 * that a Kafka failure never interrupts the main ingestion flow.</strong>
 	 *
 	 * @param data the original {@link DashboardPayload} passed to {@link #load};
-	 * used to extract context fields @param requestJson the JSON string that was
-	 * sent (or attempted to be sent) to the national dashboard endpoint @param
-	 * responseOrError the response body on success, or the exception message on
-	 * failure @param status {@code "SUCCESS"} or {@code "FAILURE"}
+	 * used to extract context fields
+	 * @param requestJson the JSON string that was sent (or attempted to be sent) to the national dashboard endpoint
+	 * @param responseOrError the response body on success, or the exception message on failure
+	 * @param status {@code "SUCCESS"} or {@code "FAILURE"}
 	 */
 	private void pushIngestionRecord(DashboardPayload data, String requestJson, String responseOrError, String status) {
 		try {

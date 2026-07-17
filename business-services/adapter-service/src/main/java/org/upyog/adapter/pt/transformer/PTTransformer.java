@@ -38,6 +38,11 @@ import org.upyog.adapter.transformer.ModuleTransformer;
  * @see org.upyog.adapter.registry.TransformerRegistry
  * @see org.upyog.adapter.pt.validation.impl.PTValidator
  */
+/**
+ * Class representing the PTTransformer class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Component
 public class PTTransformer implements ModuleTransformer<List<DashboardData>> {
 

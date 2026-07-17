@@ -55,6 +55,11 @@ import lombok.NoArgsConstructor;
  * @see org.upyog.adapter.common.constants.KafkaTopics#SAVE_LEGACY_INGESTION_DETAIL
  * @see org.upyog.adapter.common.constants.KafkaTopics#UPDATE_LEGACY_INGESTION_DETAIL
  */
+/**
+ * Class representing the LegacyIngestionData class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 @Builder
 @NoArgsConstructor

@@ -35,6 +35,11 @@ import lombok.Data;
  * @see UserInfo
  * @see org.upyog.adapter.loader.impl.HttpLoader
  */
+/**
+ * Class representing the RequestInfo class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 @Builder
 public class RequestInfo {

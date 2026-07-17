@@ -34,6 +34,11 @@ import lombok.NoArgsConstructor;
  * @see DashboardPayload
  * @see NationalDashboardIngestRequest
  */
+/**
+ * Class representing the DashboardData class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 @Builder
 @NoArgsConstructor

@@ -46,6 +46,11 @@ import org.upyog.adapter.validator.ModuleValidator;
  * @see org.upyog.adapter.validator.ValidatorRegistry
  * @see org.upyog.adapter.validator.CommonValidator
  */
+/**
+ * Class representing the PTValidator class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Component
 public class PTValidator implements ModuleValidator {
 

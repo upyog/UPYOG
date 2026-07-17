@@ -41,6 +41,11 @@ import lombok.Data;
  * @see org.upyog.adapter.common.constants.Module
  * @see org.upyog.adapter.transformer.ModuleTransformer
  */
+/**
+ * Class representing the AdapterRequest class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 @Builder
 public class AdapterRequest {

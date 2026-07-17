@@ -39,6 +39,11 @@ import lombok.Data;
  * @see UserInfo
  * @see org.upyog.adapter.service.OAuthTokenService
  */
+/**
+ * Class representing the UserSearchResponse class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserSearchResponse {

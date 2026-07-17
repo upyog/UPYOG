@@ -40,6 +40,11 @@ import org.upyog.adapter.common.constants.Module;
  * @see ModuleValidator
  * @see org.upyog.adapter.registry.TransformerRegistry
  */
+/**
+ * Class representing the ValidatorRegistry class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Component
 public class ValidatorRegistry {
 

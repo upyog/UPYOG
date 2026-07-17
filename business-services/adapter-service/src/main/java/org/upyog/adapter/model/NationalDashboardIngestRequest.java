@@ -16,34 +16,20 @@ import lombok.Data;
  * {@code RequestInfo} block for authentication and an upper-case {@code Data}
  * array carrying the module metric records.
  *
- * <h3>Wire format (abbreviated)</h3>
- * <pre>{@code
- * {
- *   "RequestInfo": {
- *     "apiId": "Rainmaker",
- *     "authToken": "<bearer-token>",
- *     "userInfo": { ... },
- *     "msgId": "1720000000000|en_IN"
- *   },
- *   "Data": [
- *     {
- *       "date": "2024-01-15",
- *       "module": "PT",
- *       "ulb": "pb.amritsar",
- *       "metrics": { ... }
- *     }
- *   ]
- * }
- * }</pre>
- *
  * <h3>Field naming</h3>
  * Both fields use {@code @JsonProperty} to produce the upper-case JSON keys
  * ({@code "RequestInfo"}, {@code "Data"}) required by the API, while keeping
- * the Java field names following standard camelCase conventions.
+ * the Java field names following standard camelCase conventions (lowercase first letter)
+ * to avoid Jackson duplicate key serialization bugs.
  *
  * @see RequestInfo
  * @see DashboardData
  * @see org.upyog.adapter.loader.impl.HttpLoader
+ */
+/**
+ * Class representing the NationalDashboardIngestRequest class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
 @Data
 @Builder
@@ -74,4 +60,3 @@ public class NationalDashboardIngestRequest {
     @JsonProperty("Data")
     private List<DashboardData> data;
 }
-

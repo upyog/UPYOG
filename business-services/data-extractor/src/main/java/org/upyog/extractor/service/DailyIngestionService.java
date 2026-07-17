@@ -20,6 +20,17 @@ import org.upyog.adapter.model.DashboardData;
 import org.upyog.adapter.model.IngestionResult;
 import org.upyog.extractor.repository.PTQueryRegistry;
 
+/**
+ * Service class that manages Property Tax (PT) daily metrics extraction and ingestion.
+ * 
+ * <p>Uses {@link NamedParameterJdbcTemplate} to execute combined, optimized SQL queries
+ * from {@link PTQueryRegistry} and invokes {@link AdapterClient} to execute the national dashboard pipeline.
+ */
+/**
+ * Class representing the DailyIngestionService class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Service
 public class DailyIngestionService {
 
@@ -32,15 +43,13 @@ public class DailyIngestionService {
 	/**
 	 * Fetches raw PT data, runs it through the transformer pipeline, and pushes it
 	 * to the ingestion target.
+	 * 
+	 * @return IngestionResult representing success or failure status and response payload
 	 */
 	public IngestionResult ingestDailyPTData() {
-		// 1. Fetch data from your database (simulated with your builder template)
 		DashboardData rawPTData = fetchPTDataFromDatabase();
 
 		try {
-			// 2. Execute the adapter client.
-			// We pass the single DashboardData object to match PTTransformer's expected
-			// type!
 			AdapterRequest adapterRequest = AdapterRequest.builder()
 					.module(org.upyog.adapter.common.constants.Module.PT).rawData(List.of(rawPTData)).build();
 
@@ -61,10 +70,16 @@ public class DailyIngestionService {
 	 */
 	private DashboardData fetchPTDataFromDatabase() {
 		// Real logic: return fetchPTDataFromDatabase(LocalDate.now().minusDays(1));
-		// Temporarily querying active test date 25-06-2025 to fetch rich metrics
+		// Temporarily querying active test date 30-06-2026 to fetch rich metrics
 		return fetchPTDataFromDatabase(LocalDate.of(2026, 6, 30));
 	}
 
+	/**
+	 * Queries the database for all 16 metrics for the specified target date.
+	 * 
+	 * @param targetDate the date to extract metrics for
+	 * @return a populated DashboardData instance containing PT metrics
+	 */
 	public DashboardData fetchPTDataFromDatabase(LocalDate targetDate) {
 		String dateStr = targetDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		long startTime = targetDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();

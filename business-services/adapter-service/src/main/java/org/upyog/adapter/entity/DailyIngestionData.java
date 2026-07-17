@@ -50,6 +50,11 @@ import lombok.NoArgsConstructor;
  * @see org.upyog.adapter.loader.impl.HttpLoader
  * @see org.upyog.adapter.producer.AdapterProducer
  */
+/**
+ * Class representing the DailyIngestionData class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Data
 @Builder
 @NoArgsConstructor

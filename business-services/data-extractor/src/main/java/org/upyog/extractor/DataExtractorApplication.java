@@ -21,6 +21,11 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
+/**
+ * Class representing the DataExtractorApplication class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @SpringBootApplication(scanBasePackages = { "org.upyog.extractor", "org.upyog.adapter" })
 @Import({ TracerConfiguration.class })
 @EnableScheduling  // <-- Crucial! Enable scheduling detection here

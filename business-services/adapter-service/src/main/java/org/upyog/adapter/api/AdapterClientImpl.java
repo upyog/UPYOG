@@ -43,6 +43,11 @@ import lombok.RequiredArgsConstructor;
  * @see CommonValidator
  * @see Loader
  */
+/**
+ * Class representing the AdapterClientImpl class.
+ * 
+ * <p>Contributes to the core Property Tax metrics ingestion pipeline.
+ */
 @Component
 @RequiredArgsConstructor
 public class AdapterClientImpl implements AdapterClient {
