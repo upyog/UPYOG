@@ -95,7 +95,7 @@ const DynamicFormStep = ({
         resetBaseline={resetBaseline}
         tenantId={tenantId}
         t={t}
-        showCancel={Boolean(draft?.onClear)}
+        showCancel
         onCancel={() => draft?.onClear?.(routeConfig.key)}
         showDraftButton={Boolean(draft?.onPersist)}
         draftLabel={routeConfig.draftButton?.label || draft?.label || "CS_COMMON_SAVE_DRAFT"}

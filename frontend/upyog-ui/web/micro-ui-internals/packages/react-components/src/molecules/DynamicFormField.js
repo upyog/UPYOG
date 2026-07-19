@@ -6,7 +6,14 @@ import {
   DatePicker,
   UploadFile,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import { toInputDate, resolveFieldLabelKey, getFieldWatchNames, optionCode, enrichDropdownSelection, isFieldVisible } from "../utilities/formUtils";
+import {
+  toInputDate,
+  resolveFieldLabelKey,
+  getFieldWatchNames,
+  optionCode,
+  enrichDropdownSelection,
+  isFieldVisible,
+} from "../utilities/formUtils";
 import { formatDurationDisplay } from "../utilities/validators";
 import styles from "../styles/DynamicFormField.module.scss";
 
@@ -138,6 +145,12 @@ const DynamicFormField = ({
   if (type === "dropdown") {
     const isFieldDisabled = isDisabled || fieldConfig.key === "EST_CITY";
     const tSafe = (key) => (key ? t(key) || key : "");
+    // Prefer the option object from the current list (stable reference by code).
+    // String codes / stale objects otherwise leave Dropdown selectedVal blank.
+    const selectedCode = optionCode(value);
+    const selected =
+      (selectedCode && options.find((o) => optionCode(o) === selectedCode)) ||
+      (value && typeof value === "object" ? value : null);
 
     return (
       <>
@@ -145,7 +158,7 @@ const DynamicFormField = ({
         <div className="field" data-field-error={hasError ? "true" : undefined}>
           <Dropdown
             placeholder={tSafe(placeholder || "")}
-            selected={value || null}
+            selected={selected}
             option={options}
             optionKey="i18nKey"
             select={(val) => onChange(name, enrichDropdownSelection(val, options))}

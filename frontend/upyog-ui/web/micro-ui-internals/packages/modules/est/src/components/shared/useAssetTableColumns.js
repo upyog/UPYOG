@@ -33,7 +33,7 @@ const editButtonStyle = (isMobile) => ({
  * @param {string}  options.modulePath - base module path for absolute links
  * @param {function} options.navigate
  * @param {"link"|"navigate"} options.estateNoLink - how to render estate number
- * @param {function} options.onEstateNoClick - if set, estate number opens assign/edit flow
+ * @param {function} options.onEstateNoClick - if set, estate number click handler (e.g. summary page)
  * @param {boolean} options.showAssetRef
  * @param {boolean} options.showAllotmentStatus
  * @param {"none"|"allot"|"allot-edit"} options.actions

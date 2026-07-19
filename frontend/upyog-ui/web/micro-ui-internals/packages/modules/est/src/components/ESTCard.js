@@ -29,17 +29,17 @@ const ESTCard = () => {
       label: t("EST_CREATE_ASSET"),
       link: getCreateAssetPath(modulePath),
       onClick: () => navigate(getCreateAssetPath(modulePath)),
-    },
-    {
-      label: t("EST_MANAGE_PROPERTIES"),
-      link: `${estModulePath}/manage-properties`,
-      onClick: () => navigate(`${estModulePath}/manage-properties`),
-    },
-    {
-      label: t("EST_ACTIONS"),
-      link: `${estModulePath}/actions`,
-      onClick: () => navigate(`${estModulePath}/actions`),
-    },
+    }
+    // {
+    //   label: t("EST_MANAGE_PROPERTIES"),
+    //   link: `${estModulePath}/manage-properties`,
+    //   onClick: () => navigate(`${estModulePath}/manage-properties`),
+    // },
+    // {
+    //   label: t("EST_ACTIONS"),
+    //   link: `${estModulePath}/actions`,
+    //   onClick: () => navigate(`${estModulePath}/actions`),
+    // },
   ];
 
   const propsForModuleCard = {

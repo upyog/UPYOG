@@ -30,11 +30,13 @@ export const resolveAllotmentAckContext = (application = {}) => {
     AssignAssetsData,
   } = application;
 
+  // Prefer session assetData (registered asset), then Assets[0] from ack merge.
   const asset =
+    (assetData && Object.keys(assetData).length ? assetData : null) ||
     Assets[0] ||
-    assetData ||
     assetData?.Assetdata ||
     Assetdata ||
+    AssignAssetsData?.asset ||
     application?.asset ||
     {};
 
@@ -105,6 +107,7 @@ const resolveAckFieldValue = (
 
 /**
  * Build PDF `details` sections from routeConfig.form (MDMS + local overrides).
+ * First untitled block becomes "registered asset details" (EST_ASSET_DETAILS).
  */
 export const buildAckDetailsFromRouteConfig = ({
   routeConfig,
@@ -116,7 +119,7 @@ export const buildAckDetailsFromRouteConfig = ({
 }) => {
   const { sections } = buildSummarySections(routeConfig?.form || []);
 
-  return sections
+  const fromConfig = sections
     .map((section, index) => {
       const headerCode =
         section.headerCode || (index === 0 ? defaultAssetSectionCode : null);
@@ -148,4 +151,48 @@ export const buildAckDetailsFromRouteConfig = ({
       };
     })
     .filter(Boolean);
+
+  if (fromConfig.length) return fromConfig;
+
+  // Fallback when routeConfig was not stored on ack state — still show register details.
+  const fallbackPairs = [
+    ["EST_ASSET_NUMBER", extraData.assetNo || formValues.assetNo],
+    ["EST_ASSET_REFERENCE_NUMBER", extraData.assetRefNumber || formValues.assetRefNumber],
+    ["EST_BUILDING_NAME", extraData.buildingName || formValues.buildingName],
+    ["EST_LOCALITY", extraData.localityDisplay || formValues.localityDisplay],
+    ["EST_TOTAL_AREA", extraData.totalFloorArea || formValues.totalFloorArea],
+    ["EST_FLOOR", extraData.buildingFloor || formValues.buildingFloor],
+    ["EST_RATE", extraData.assetRate || formValues.assetRate || formValues.rentRate],
+    ["EST_ALLOTTEE_NAME", formValues.alloteeName || formValues.allotteeName],
+    ["EST_PHONE_NUMBER", formValues.mobileNo || formValues.phoneNumber],
+    ["EST_EMAIL_ID", formValues.emailId || formValues.email],
+    ["EST_AGREEMENT_START_DATE", formValues.agreementStartDate],
+    ["EST_AGREEMENT_END_DATE", formValues.agreementEndDate],
+    ["EST_DURATION", formValues.duration],
+    ["EST_BILLING_CYCLE", formValues.billingCycle],
+    ["EST_MONTHLY_RENT_IN_INR", formValues.monthlyRent],
+    ["EST_ADVANCE_PAYMENT_IN_INR", formValues.advancePayment],
+  ];
+
+  const values = filterEmpty(
+    fallbackPairs
+      .map(([titleKey, raw]) => {
+        if (raw === undefined || raw === null || raw === "") return null;
+        let value = raw;
+        if (titleKey.includes("DATE")) value = formatDateFn(raw) || raw;
+        if (titleKey === "EST_DURATION") {
+          value = formatDurationWithMonths({ duration: raw }) || raw;
+        }
+        if (typeof value === "object") {
+          value = t(value.i18nKey || value.name || value.code || "");
+        }
+        if (!value || isEmptyAckValue(value, t)) return null;
+        return { title: t(titleKey), value: String(value) };
+      })
+      .filter(Boolean)
+  );
+
+  return values.length
+    ? [{ title: t(defaultAssetSectionCode), asSectionHeader: true, values }]
+    : [];
 };

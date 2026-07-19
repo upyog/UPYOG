@@ -60,11 +60,24 @@ const useEstWizard = ({
 
   const onCheckSuccess = useCallback(
     (response) => {
+      // Build ack payload from session BEFORE clearing — PDF needs routeConfigs + form values.
+      // Never let ack-builder failures flip a successful API (e.g. 201) into a failure banner.
+      let ackState = { data: response, isSuccess: true };
+      try {
+        if (buildSuccessAckState) {
+          ackState = buildSuccessAckState(response, params);
+          if (!ackState || typeof ackState !== "object") {
+            ackState = { data: response, isSuccess: true };
+          }
+          ackState = { ...ackState, isSuccess: true };
+        }
+      } catch (err) {
+        console.error("EST ack state build failed after successful submit:", err);
+        ackState = { data: response, isSuccess: true, ackBuildError: String(err?.message || err) };
+      }
+
       clearParams();
       if (invalidateQueryKey) queryClient.invalidateQueries(invalidateQueryKey);
-      const ackState = buildSuccessAckState
-        ? buildSuccessAckState(response, params)
-        : { data: response, isSuccess: true };
       navigate(`${getBasePath()}/acknowledgement`, { state: ackState });
     },
     [clearParams, queryClient, invalidateQueryKey, buildSuccessAckState, params, navigate, getBasePath]
@@ -72,11 +85,37 @@ const useEstWizard = ({
 
   const onCheckError = useCallback(
     (error) => {
+      // HTTP 2xx that still rejected (rare) — treat as success if body has allotment/asset data.
+      const status = error?.response?.status;
+      const body = error?.response?.data;
+      if (status >= 200 && status < 300) {
+        console.warn("EST submit treated error with 2xx status as success", status, error);
+        const ackState = buildSuccessAckState
+          ? (() => {
+              try {
+                return { ...buildSuccessAckState(body, params), isSuccess: true };
+              } catch {
+                return { data: body, isSuccess: true };
+              }
+            })()
+          : { data: body, isSuccess: true };
+        clearParams();
+        navigate(`${getBasePath()}/acknowledgement`, { state: ackState });
+        return;
+      }
+
       navigate(`${getBasePath()}/acknowledgement`, {
-        state: { data: null, isSuccess: false, error },
+        state: {
+          data: null,
+          isSuccess: false,
+          error: {
+            message: error?.message || "EST_APPLICATION_FAILED",
+            status,
+          },
+        },
       });
     },
-    [navigate, getBasePath]
+    [navigate, getBasePath, buildSuccessAckState, params, clearParams]
   );
 
   const isReady = !isLoading && mdmsData && config.length > 0;

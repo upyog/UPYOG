@@ -7,11 +7,10 @@ import {
   useIsMobile,
   useClientPagination,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import { getCreateAssetPath } from "../utils/estRoutes";
+import { getApplicationDetailsPath, getCreateAssetPath } from "../utils/estRoutes";
 import {
   fetchAllottedAssetNos,
   getAssetIdentity,
-  hasExistingAllotment,
 } from "../utils/allotmentFormUtils";
 import { resolveSearchApplicationConfig } from "../utils/estMdmsUtils";
 import AssetTable from "./shared/AssetTable";
@@ -97,19 +96,23 @@ const ESTSearchApplication = ({
     [sessionParams, navigateToAssignFlow]
   );
 
-  const handleAssetAction = useCallback(
+  // Asset number → application / asset summary page (not the allot flow).
+  const handleEstateNoClick = useCallback(
     (asset) => {
-      if (hasExistingAllotment(asset, allottedAssetNos)) return;
-      handleAllotAsset(asset);
+      const estateNo = asset?.estateNo || asset?.assetNo;
+      if (!estateNo) return;
+      navigate(getApplicationDetailsPath(modulePath, estateNo), {
+        state: { applicationData: asset },
+      });
     },
-    [allottedAssetNos, handleAllotAsset]
+    [navigate, modulePath]
   );
 
   const columns = useAssetTableColumns({
     isMobile,
     modulePath,
     navigate,
-    onEstateNoClick: handleAssetAction,
+    onEstateNoClick: handleEstateNoClick,
     showAssetRef: config.table.showAssetRef,
     actions: config.table.actions,
     onAllot: handleAllotAsset,

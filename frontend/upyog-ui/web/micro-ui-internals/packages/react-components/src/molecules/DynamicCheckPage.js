@@ -55,6 +55,8 @@ const DynamicCheckPage = ({
   declarationCode = "EST_FINAL_DECLARATION_MESSAGE",
   submitLabelCode = "EST_COMMON_SUBMIT",
   isSubmitting = false,
+  /** Read-only summary (application details) — hide edit / declaration / submit */
+  viewOnly = false,
 }) => {
   const [agree, setAgree] = useState(false);
   const [previewDocs, setPreviewDocs] = useState([]);
@@ -158,7 +160,7 @@ const DynamicCheckPage = ({
                 label={t(resolveFieldLabelKey(fc, formValues))}
                 text={resolveValue(fc)}
                 actionButton={
-                  sIdx === 0 && fIdx === 0 && editRoute
+                  !viewOnly && sIdx === 0 && fIdx === 0 && editRoute
                     ? <ActionButton jumpTo={editRoute} editNavigationState={editNavigationState} />
                     : undefined
                 }
@@ -202,21 +204,25 @@ const DynamicCheckPage = ({
         </>
       )}
 
-      <div className={styles["dynamic-check-page__declaration"]}>
-        <CheckBox
-          label={t(declarationCode)}
-          onChange={() => setAgree(!agree)}
-          value={agree}
-        />
-      </div>
+      {!viewOnly && (
+        <>
+          <div className={styles["dynamic-check-page__declaration"]}>
+            <CheckBox
+              label={t(declarationCode)}
+              onChange={() => setAgree(!agree)}
+              value={agree}
+            />
+          </div>
 
-      <div className={styles["dynamic-check-page__submit"]}>
-        <SubmitBar
-          label={t(submitLabelCode)}
-          onSubmit={onSubmit}
-          disabled={!agree || isSubmitting}
-        />
-      </div>
+          <div className={styles["dynamic-check-page__submit"]}>
+            <SubmitBar
+              label={t(submitLabelCode)}
+              onSubmit={onSubmit}
+              disabled={!agree || isSubmitting}
+            />
+          </div>
+        </>
+      )}
     </Card>
   );
 };

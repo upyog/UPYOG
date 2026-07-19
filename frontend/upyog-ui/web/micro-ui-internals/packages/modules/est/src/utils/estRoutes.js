@@ -14,6 +14,10 @@ export const getEmployeeHomeFromModulePath = (modulePath = "") =>
 export const getCitizenHomeFromModulePath = (modulePath = "") =>
   modulePath.replace(/\/est\/?$/, "") || "/upyog-ui/citizen";
 
+/** Employee asset / application summary page. */
+export const getApplicationDetailsPath = (modulePath = "", estateNo = "") =>
+  `${getEstModulePath(modulePath)}/application-details/${encodeURIComponent(estateNo)}`;
+
 export const getCitizenPaymentPath = (estateNo) =>
   `/upyog-ui/citizen/payment/my-bills/est-services/${estateNo}`;
 

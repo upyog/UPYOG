@@ -45,12 +45,27 @@ const BannerPicker = ({ t, isSuccess, data }) => {
   );
 };
 
+const readAckState = (locationState) => {
+  if (locationState && (locationState.isSuccess != null || locationState.data)) {
+    return locationState;
+  }
+  // Recover when hard navigation dropped router state (non-serializable ack payload).
+  try {
+    const raw = sessionStorage.getItem("__digit_nav_state__");
+    if (!raw) return locationState || {};
+    sessionStorage.removeItem("__digit_nav_state__");
+    return JSON.parse(raw) || {};
+  } catch {
+    return locationState || {};
+  }
+};
+
 const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const { path: modulePath } = Digit.Hooks.useModuleBasePath();
 
-  const { data: ackData, isSuccess = false, error } = location?.state || {};
+  const { data: ackData, isSuccess = false, error } = readAckState(location?.state);
 
   const user = Digit?.UserService?.getUser?.()?.info || {};
   const initResponse = Digit?.Hooks?.useStore?.getInitData?.() || {};
@@ -99,8 +114,14 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
     try {
       const allotment = ackData?.Allotments?.[0];
       if (!allotment) return;
-      const tenantInfo = tenants.find((tn) => tn.code === allotment.tenantId) || {};
+      const tenantInfo =
+        tenants.find((tn) => tn.code === allotment.tenantId) ||
+        tenants.find((tn) => tn.code === Digit.ULBService.getCurrentTenantId()) ||
+        {};
       const pdfData = await getESTAllotmentAcknowledgementData(ackData, tenantInfo, t);
+      // Terms & conditions are appended inside Digit.Utils.pdf.generate from
+      // localization keys TERMS_AND_CONDITIONS_OF_LICENSE / TERMS_AND_CONDITIONS1..14
+      // (libraries/src/utils/pdf.js) — not from EST form/MDMS.
       Digit.Utils.pdf.generate(pdfData);
     } catch (err) {
       console.error("PDF generation error:", err);

@@ -20,14 +20,36 @@ const useCustomNavigate = () => {
     try {
       if (navigate) {
         navigate(to, options);
-      } else if (typeof to === "string") {
-        // Fallback if router context is unavailable
+        return;
+      }
+      if (typeof to === "string") {
+        // Fallback if router context is unavailable (state cannot be preserved).
+        if (options?.state) {
+          try {
+            sessionStorage.setItem(
+              "__digit_nav_state__",
+              JSON.stringify(options.state)
+            );
+          } catch (_) {
+            /* ignore quota / clone errors */
+          }
+        }
         window.location.href = to;
       }
     } catch (error) {
       console.error("Navigation error:", error);
-      // Fallback for navigation failures
+      // Hard navigation drops router state — stash it so acknowledgement can recover.
       if (typeof to === "string") {
+        if (options?.state) {
+          try {
+            sessionStorage.setItem(
+              "__digit_nav_state__",
+              JSON.stringify(options.state)
+            );
+          } catch (_) {
+            /* ignore */
+          }
+        }
         window.location.href = to;
       }
     }

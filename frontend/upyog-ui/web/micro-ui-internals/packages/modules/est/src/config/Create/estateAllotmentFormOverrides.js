@@ -5,6 +5,7 @@
 const estateAllotmentFormOverrides = {
   key: "Allotments",
   payloadKey: "Allotments",
+  apiId: "Rainmaker",
   uploadModule: "ESTATE",
   dateFormat: "dd-MM-yyyy",
   staticFields: (tenantId, flatData) => ({
@@ -97,6 +98,25 @@ const estateAllotmentFormOverrides = {
         },
         computeFrom: ["rentRate", "totalFloorArea", "billingCycle"],
         computeFn: "calculateRentByBillingCycle",
+        numeric: true,
+      },
+      validation: {
+        maxLength: 12,
+        maxAmount: 9999999999.99,
+        pattern: "^[0-9]+(\\.[0-9]{1,2})?$",
+        required: true,
+        disabled: true,
+        readOnly: true,
+      },
+      messages: { error: "EST_INVALID_AMOUNT" },
+    },
+    {
+      key: "EST_ADVANCE_PAYMENT_IN_INR",
+      field: {
+        name: "advancePayment",
+        // Auto-fill from calculated rent; keep field disabled for user edits.
+        computeFrom: ["monthlyRent"],
+        computeFn: "copyValue",
         numeric: true,
       },
       validation: {

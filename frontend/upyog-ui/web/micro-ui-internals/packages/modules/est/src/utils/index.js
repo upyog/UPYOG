@@ -7,8 +7,9 @@ import { mergeRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";
 import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
 import { extractFileStoreId } from "./allotmentDocumentUtils";
 import { normalizeAllotmentFlatData } from "./allotmentFormUtils";
-import { buildDynamicAssetPayload } from "./assetPayloadUtils";
+import { buildDynamicAssetPayload, getEstateRequestInfo } from "./assetPayloadUtils";
 import estateFormConfig from "../config/estateFormConfig";
+import estateAllotmentFormOverrides from "../config/Create/estateAllotmentFormOverrides";
 
 const parseESTDate = (value) => {
   if (value === null || value === undefined || value === "") return null;
@@ -171,55 +172,108 @@ const estPayloadData = (data) => {
   };
 };
 
+/** History state must be structured-cloneable — strip File/Date/circular junk. */
+const toPlainJson = (value) => {
+  try {
+    return JSON.parse(
+      JSON.stringify(value, (_key, v) => {
+        if (typeof File !== "undefined" && v instanceof File) return undefined;
+        if (typeof Blob !== "undefined" && v instanceof Blob) return undefined;
+        if (v instanceof Date) return v.toISOString();
+        return v;
+      })
+    );
+  } catch (e) {
+    console.warn("EST_ACK: failed to serialize ack payload", e);
+    return {};
+  }
+};
+
 export const buildAllotmentAcknowledgementData = (sessionData, apiResponse) => {
-  const responseAllotment = apiResponse?.Allotments?.[0] || {};
+  const responseAllotment =
+    apiResponse?.Allotments?.[0] ||
+    apiResponse?.allotments?.[0] ||
+    {};
   const sessionAllotment = sessionData?.Allotments?.Allotments?.[0] || {};
+  const sessionAsset =
+    extractAssetDataFromSession(sessionData) ||
+    sessionData?.assetData ||
+    {};
+
+  // Prefer session form values for ack merge — do not rebuild a full create payload
+  // (that can throw and turn a successful 201 into a failure acknowledgement).
   let payloadAllotment = {};
   try {
-    payloadAllotment = createAllotmentData(sessionData)?.Allotments?.[0] || {};
+    const routeConfig = sessionData?.routeConfigs?.Allotments;
+    if (routeConfig?.form?.length) {
+      payloadAllotment =
+        createAllotmentData(sessionData, routeConfig)?.Allotments?.[0] || {};
+    }
   } catch (e) {
     console.error("EST_ACK: failed reading payload for merge", e);
   }
 
-  let assets = [];
-  try {
-    assets = estPayloadData(sessionData)?.Assets || [];
-  } catch (e) {
-    console.error("EST_ACK: estPayloadData threw during merge", e);
-  }
+  const assets =
+    sessionAsset && Object.keys(sessionAsset).length ? [sessionAsset] : [];
 
-  return {
-    Allotments: [
-      {
-        ...responseAllotment,
-        agreementStartDate:
-          payloadAllotment.agreementStartDate ?? responseAllotment.agreementStartDate,
-        agreementEndDate:
-          payloadAllotment.agreementEndDate ?? responseAllotment.agreementEndDate,
-        advancePaymentDate:
-          payloadAllotment.advancePaymentDate ?? responseAllotment.advancePaymentDate,
-        citizenRequestLetter:
-          payloadAllotment.citizenRequestLetter ??
-          extractFileStoreId(sessionAllotment.citizenLetter) ??
-          responseAllotment.citizenRequestLetter,
-        allotmentLetter:
-          payloadAllotment.allotmentLetter ??
-          extractFileStoreId(sessionAllotment.allotmentLetter) ??
-          responseAllotment.allotmentLetter,
-        signedDeed:
-          payloadAllotment.signedDeed ??
-          extractFileStoreId(sessionAllotment.signedDeed) ??
-          responseAllotment.signedDeed,
-        eofficeFileNo:
-          payloadAllotment.eofficeFileNo ?? responseAllotment.eofficeFileNo,
-      },
-    ],
-    Assets: assets,
+  const mergedAllotment = {
+    ...sessionAllotment,
+    ...payloadAllotment,
+    ...responseAllotment,
+    agreementStartDate:
+      payloadAllotment.agreementStartDate ??
+      sessionAllotment.agreementStartDate ??
+      responseAllotment.agreementStartDate,
+    agreementEndDate:
+      payloadAllotment.agreementEndDate ??
+      sessionAllotment.agreementEndDate ??
+      responseAllotment.agreementEndDate,
+    advancePaymentDate:
+      payloadAllotment.advancePaymentDate ??
+      sessionAllotment.advancePaymentDate ??
+      responseAllotment.advancePaymentDate,
+    citizenRequestLetter:
+      payloadAllotment.citizenRequestLetter ??
+      extractFileStoreId(sessionAllotment.citizenLetter) ??
+      responseAllotment.citizenRequestLetter,
+    allotmentLetter:
+      payloadAllotment.allotmentLetter ??
+      extractFileStoreId(sessionAllotment.allotmentLetter) ??
+      responseAllotment.allotmentLetter,
+    signedDeed:
+      payloadAllotment.signedDeed ??
+      extractFileStoreId(sessionAllotment.signedDeed) ??
+      responseAllotment.signedDeed,
+    eofficeFileNo:
+      payloadAllotment.eofficeFileNo ??
+      sessionAllotment.eOfficeFileNo ??
+      sessionAllotment.eofficeFileNo ??
+      responseAllotment.eofficeFileNo,
+    allotmentId:
+      responseAllotment.allotmentId ||
+      sessionAllotment.allotmentId ||
+      payloadAllotment.allotmentId ||
+      "",
+    assetNo:
+      responseAllotment.assetNo ||
+      sessionAllotment.assetNo ||
+      payloadAllotment.assetNo ||
+      sessionAsset.estateNo ||
+      "",
   };
+
+  return toPlainJson({
+    Allotments: [mergedAllotment],
+    Assets: assets,
+    assetData: sessionAsset,
+    // Required so PDF sections/labels match the check page (MDMS form + overrides).
+    routeConfigs: sessionData?.routeConfigs || {},
+    ResponseInfo: apiResponse?.ResponseInfo || apiResponse?.responseInfo || null,
+  });
 };
 
 export const createAllotmentData = (data, routeConfig) => {
-  const user = Digit.UserService.getUser().info;
+  const user = Digit?.UserService?.getUser?.()?.info || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const activeRouteConfig = routeConfig || data?.routeConfigs?.Allotments;
 
@@ -254,14 +308,26 @@ export const createAllotmentData = (data, routeConfig) => {
 
   const isEdit = Boolean(allotmentData?.allotmentId);
   const existingAudit = allotmentData?.auditDetails;
+  const apiId =
+    activeRouteConfig?.apiId ||
+    estateAllotmentFormOverrides.apiId ||
+    estateFormConfig.apiId ||
+    "Rainmaker";
 
   return {
+    RequestInfo: getEstateRequestInfo({
+      apiId,
+      msgId: `${Date.now()}|en_IN`,
+      action: isEdit ? "update" : "create",
+      plainAccessRequest: {},
+    }),
     Allotments: [
       {
         ...built,
         allotmentId: allotmentData?.allotmentId || "",
         userUuid: allotmentData?.userUuid || user?.uuid || "",
         billingCycle: built.billingCycle || "MONTHLY",
+        tenantId: built.tenantId || tenantId,
         auditDetails: isEdit && existingAudit?.createdTime
           ? {
               createdBy: existingAudit.createdBy || user?.uuid || "",

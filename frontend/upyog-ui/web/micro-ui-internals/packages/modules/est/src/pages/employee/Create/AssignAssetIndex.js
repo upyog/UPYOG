@@ -38,10 +38,24 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
     terminalSegments: ["check", "acknowledgement", "info", "assign-assets"],
     multiStepNavigation: false,
     invalidateQueryKey: "EST_ASSIGN_ASSETS",
-    buildSuccessAckState: (response, sessionParams) => ({
-      data: buildAllotmentAcknowledgementData(sessionParams, response),
-      isSuccess: true,
-    }),
+    buildSuccessAckState: (response, sessionParams) => {
+      try {
+        return {
+          data: buildAllotmentAcknowledgementData(sessionParams, response),
+          isSuccess: true,
+        };
+      } catch (err) {
+        console.error("EST assign ack build failed:", err);
+        return {
+          data: {
+            Allotments: response?.Allotments || [],
+            Assets: sessionParams?.assetData ? [sessionParams.assetData] : [],
+            assetData: sessionParams?.assetData || {},
+          },
+          isSuccess: true,
+        };
+      }
+    },
   });
 
   useEffect(() => {
@@ -145,8 +159,7 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
               <Component
                 config={routeObj}
                 onSelect={handleSelect}
-                onDraftSave={handleDraftSave}
-                onDraftClear={handleDraftClear}
+                // Draft save hidden for now — re-enable by passing onDraftSave / onDraftClear.
                 t={t}
                 formData={params}
                 userType={user}

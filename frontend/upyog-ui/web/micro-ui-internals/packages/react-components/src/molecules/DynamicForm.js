@@ -24,6 +24,9 @@ const searchFormHandleSubmit = (onValid) => (e) => {
 const COMPUTE_REGISTRY = {
   calculateDuration,
   calculateRentByBillingCycle,
+  /** Copy a single upstream field value (e.g. advancePayment ← monthlyRent). */
+  copyValue: (value) =>
+    value === undefined || value === null || value === "" ? "" : value,
 };
 
 const DynamicForm = ({
@@ -38,7 +41,7 @@ const DynamicForm = ({
   tenantId = "",
   persistedData = {},
   t = (k) => k,
-  showCancel = false,
+  showCancel = true,
   cancelLabel = "CS_COMMON_CANCEL",
   onCancel,
   resetBaseline,
@@ -583,9 +586,20 @@ const DynamicForm = ({
 
   const clearLabel = cancelLabel || routeConfig.actionButton?.text?.clear || "ES_COMMON_CLEAR_ALL";
 
-  if (isLoading) return <Loader />;
+  // Only block the first paint. Remounting the form on later MDMS/locality
+  // refetches wipes in-progress dropdown selections (search filters, etc.).
+  if (isLoading && !hasSyncedRef.current) return <Loader />;
 
-  const showRegistrationDetails =
+  // Local NewRegistration gates fields/actions behind Existing Asset / New Building.
+  // MDMS Estate.Config has no such gate — always show the ActionBar in that case.
+  const usesRegistrationGate = flatFields.some(
+    (fc) =>
+      fc?.field?.name === "assetRegistrationType" ||
+      fc?.visibleWhen?.field === "showRegistrationDetails" ||
+      fc?.visibleWhen?.field === "assetRegistrationType"
+  );
+  const showActionBar =
+    !usesRegistrationGate ||
     String(formData.showRegistrationDetails || "").toUpperCase() === "YES" ||
     String(formData.assetRegistrationType || "").toUpperCase() === "NEW_BUILDING";
 
@@ -665,7 +679,7 @@ const DynamicForm = ({
 
       {stackedSearchActions}
 
-      {!isDisabled && !isSearchMode && showRegistrationDetails && (
+      {!isDisabled && !isSearchMode && showActionBar && (
         <ActionBar className={styles["dynamic-form-action"]}>
           {showCancel && (
             <ButtonSelector

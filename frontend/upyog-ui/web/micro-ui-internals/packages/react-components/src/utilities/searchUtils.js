@@ -64,6 +64,15 @@ export const buildSearchPayload = (formData = {}, dropdownValues = {}, fields = 
   return payload;
 };
 
+/** Normalize dropdown objects / plain values to an API filter code string. */
+const toFilterCode = (val) => {
+  if (val === undefined || val === null || val === "") return "";
+  if (typeof val === "object") {
+    return String(val.code ?? val.value ?? "").trim();
+  }
+  return String(val).trim();
+};
+
 /** Map DynamicForm flat payload → search API filters using apiFieldName/submitKey. */
 export const mapFormToSearchFilters = (flat = {}, formConfig = []) => {
   const result = {};
@@ -71,9 +80,9 @@ export const mapFormToSearchFilters = (flat = {}, formConfig = []) => {
     const name = fc?.field?.name;
     if (!name) return;
     const key = fc.apiFieldName || fc.submitKey || name;
-    const val = flat[name];
-    if (val === undefined || val === null || val === "") return;
-    result[key] = val;
+    const code = toFilterCode(flat[name]);
+    if (!code) return;
+    result[key] = code;
   });
   return result;
 };

@@ -9,13 +9,28 @@ export { toDropdownOption, resolveOption };
 
 /**
  * Generic RequestInfo builder. Pass apiId explicitly per module.
+ * Includes the DIGIT fields backends commonly echo in ResponseInfo.
  */
-export const getRequestInfo = (apiId, extra = {}) => ({
-  apiId,
-  authToken: Digit?.UserService?.getUser()?.access_token || "",
-  userInfo: Digit?.UserService?.getUser()?.info || {},
-  ...extra,
-});
+export const getRequestInfo = (apiId = "Rainmaker", extra = {}) => {
+  const ts = Date.now();
+  const lang =
+    (typeof Digit?.StoreData?.getCurrentLanguage === "function"
+      ? Digit.StoreData.getCurrentLanguage()
+      : null) || "en_IN";
+
+  return {
+    apiId: apiId || "Rainmaker",
+    ver: "1.0",
+    ts,
+    action: "create",
+    did: "1",
+    key: "",
+    msgId: `${ts}|${lang}`,
+    authToken: Digit?.UserService?.getUser()?.access_token || "",
+    userInfo: Digit?.UserService?.getUser()?.info || {},
+    ...extra,
+  };
+};
 
 /**
  * Format a form date value for API submission.

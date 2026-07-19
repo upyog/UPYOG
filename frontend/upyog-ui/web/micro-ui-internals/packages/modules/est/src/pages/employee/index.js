@@ -42,6 +42,7 @@ const EmployeeApp = ({ path, userType }) => {
       { path: employeeHome, content: t("ES_COMMON_HOME"), show: true },
       { path: `${path}/inbox`, content: t("INBOX"), show: location.pathname.includes("est/inbox") },
       { path: `${path}/search-applications`, content: t("ES_COMMON_APPLICATION_SEARCH"), show: location.pathname.includes("est/search-applications") },
+      { path: `${path}/application-details`, content: t("EST_APPLICATION_DETAILS"), show: location.pathname.includes("est/application-details") },
       { path: `${path}/create-asset`, content: t("EST_CREATE_ASSET"), show: location.pathname.includes("est/create-asset") },
       { path: `${path}/manage-properties-table`, content: t("EST_MANAGE_PROPERTY"), show: location.pathname.includes("est/manage-properties-table") },
       { path: `${path}/actions`, content: t("EST_ACTION"), show: location.pathname.includes("est/actions") },

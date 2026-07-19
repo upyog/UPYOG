@@ -30,7 +30,12 @@ const useDynamicCheckSubmit = ({
     mutation.mutate(payload, {
       onSuccess: (response) => {
         setIsSubmitting(false);
-        onSubmit?.(response);
+        try {
+          onSubmit?.(response);
+        } catch (err) {
+          // API already succeeded — log only; onCheckSuccess itself must not throw.
+          console.error(`${logTag}: onSubmit failed after successful mutation`, err);
+        }
       },
       onError: (error) => {
         console.error(`${logTag} error:`, error?.response?.data || error);

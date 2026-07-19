@@ -28,6 +28,7 @@ const getESTAllotmentAcknowledgementData = async (
   });
 
   return {
+    t,
     heading: t("EST_ACKNOWLEDGEMENT"),
     applicationNumber: pick(
       allotment.allotmentId,
@@ -37,10 +38,12 @@ const getESTAllotmentAcknowledgementData = async (
     ),
 
     tenantId: tenantInfo?.code,
-    name: tenantInfo?.name,
-    email: tenantInfo?.emailId,
-    phoneNumber: tenantInfo?.contactNumber,
+    name: tenantInfo?.name || t(tenantInfo?.i18nKey) || tenantInfo?.code || "",
+    email: tenantInfo?.emailId || "",
+    phoneNumber: tenantInfo?.contactNumber || "",
 
+    // `details` = register/asset rows + allottee/invoice rows from routeConfig.form
+    // (same MDMS assignAssetConfig used on the check page). Empty values are omitted.
     details,
 
     Assets: [asset],

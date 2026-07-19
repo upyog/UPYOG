@@ -107,6 +107,8 @@ export const normalizeAllotmentFlatData = (flatData = {}, assetData = {}, routeC
 
   if (monthlyRent) {
     merged.monthlyRent = monthlyRent;
+    // Advance payment mirrors calculated rent (field is disabled on the form).
+    merged.advancePayment = monthlyRent;
   }
 
   return merged;

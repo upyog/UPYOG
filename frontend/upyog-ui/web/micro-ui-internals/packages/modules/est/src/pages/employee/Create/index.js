@@ -24,7 +24,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import useEstWizard from "../../../utils/useEstWizard";
 
-import { Config } from "../../../config/Create/NewRegistration";
+//import { Config } from "../../../config/Create/NewRegistration";
 
 
 const ESTRegCreate = () => {
@@ -32,27 +32,27 @@ const ESTRegCreate = () => {
   const queryClient = useQueryClient();
 
   const { t } = useTranslation();
-  const isLoading = false; // Placeholder for MDMS loading state, replace with actual loading logic if needed
+ // const isLoading = false; // Placeholder for MDMS loading state, replace with actual loading logic if needed
 
-  const initialConfig = useMemo(() => Config, []);
+//   const initialConfig = useMemo(() => Config, []);
 
-console.log("Config", initialConfig);
+// console.log("Config", initialConfig);
 
-  // const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
+  const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
 
-  //   Digit.ULBService.getStateId(),
+    Digit.ULBService.getStateId(),
 
-  //   "Estate",
+    "Estate",
 
-  //   [{ name: "Config" }],
+    [{ name: "Config" }],
 
-  //   {
+    {
 
-  //     select: (data) => data?.["Estate"]?.["Config"],
+      select: (data) => data?.["Estate"]?.["Config"],
 
-  //   }
+    }
 
-  // );
+  );
 
 
 
