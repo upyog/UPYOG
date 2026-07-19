@@ -6,7 +6,6 @@ import ESTCard from "./components/ESTCard";
 import EmployeeApp from "./pages/employee";
 import MyApplications from "./pages/citizen/MyApplications";
 import { ESTPaymentHistory } from "./pages/citizen/PaymentHistory";
-import ESTManageProperties from "./PageComponents/ESTManageProperties";
 import NewRegistration from "./PageComponents/ESTNEWRegistration";
 import ESTDynamicCheckPage from "./pages/employee/Create/ESTDynamicCheckPage";
 import ESTRegCreate from "./pages/employee/Create";
@@ -15,17 +14,12 @@ import ESTAllotmentAcknowledgement from "./pages/employee/Create/ESTAllotmentAck
 import ESTAssignAssetCreate from "./pages/employee/Create/AssignAssetIndex";
 import ESTAssignAstRequiredDoc from "./PageComponents/ESTAssignAstRequiredDoc";
 import ESTAssignAssets from "./PageComponents/ESTAssignAssets";
-import ESTDesktopInbox from "./components/ESTDesktopInbox";
-import { TableConfig } from "./config/Create/inbox-table-config";
-import InboxFilter from "./components/inbox/NewInboxFilter";
 import ESTApplicationDetails from "./pages/citizen/ESTApplicationDetails";
-
 
 const componentsToRegister = {
   MyApplications,
   ESTPaymentHistory,
   NewRegistration,
-  ESTManageProperties,
   ESTRegCreate,
   ESTDynamicCheckPage,
   ESTAcknowledgement,
@@ -33,8 +27,6 @@ const componentsToRegister = {
   ESTAssignAssetCreate,
   ESTAssignAstRequiredDoc,
   ESTAssignAssets,
-  ESTDesktopInbox,
-  TableConfig,
   ESTApplicationDetails,
 };
 
@@ -87,8 +79,6 @@ export const ESTLinks = () => {
 
 export const ESTComponents = {
   ESTModule,
-  ESTLinks, 
+  ESTLinks,
   ESTCard,
-  EST_INBOX_FILTER: (props) => <InboxFilter {...props} />,
-  ESTInboxTableConfig: TableConfig
 };
