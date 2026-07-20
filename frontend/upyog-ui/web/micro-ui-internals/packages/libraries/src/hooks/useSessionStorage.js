@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useRef, useState } from "react";
 
 const useSessionStorage = (key, initialValue) => {
   const initialValueRef = useRef(initialValue);

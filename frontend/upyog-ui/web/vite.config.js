@@ -297,6 +297,15 @@ export default defineConfig(({ mode }) => {
       exclude: /node_modules/,
     },
 
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // upyog-css still uses legacy @import; silence until migrated to @use.
+          silenceDeprecations: ["import"],
+        },
+      },
+    },
+
     server: {
       port: 3000,
       proxy,

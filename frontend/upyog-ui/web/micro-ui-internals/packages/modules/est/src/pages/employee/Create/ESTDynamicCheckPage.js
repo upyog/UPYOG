@@ -41,14 +41,14 @@ const ESTDynamicCheckPage = ({
   const allotMutation = Digit.Hooks.estate.useESTAssetsAllotment(tenantId);
   const mutation = isRegistration ? createMutation : allotMutation;
 
-  const sessionRouteConfig = useMergedRouteConfig(
+  const routeConfig = useMergedRouteConfig(
     config,
     stepKey,
     value,
     isAllotment ? estateAllotmentFormOverrides : estateFormConfig
   );
 
-  const routeConfig = sessionRouteConfig;
+  //const routeConfig = sessionRouteConfig;
 
   const flatAsset = useMemo(() => {
     if (!isRegistration) return {};
