@@ -48,8 +48,6 @@ const ESTDynamicCheckPage = ({
     isAllotment ? estateAllotmentFormOverrides : estateFormConfig
   );
 
-  //const routeConfig = sessionRouteConfig;
-
   const flatAsset = useMemo(() => {
     if (!isRegistration) return {};
     const payloadKey = routeConfig?.payloadKey || "Assets";
