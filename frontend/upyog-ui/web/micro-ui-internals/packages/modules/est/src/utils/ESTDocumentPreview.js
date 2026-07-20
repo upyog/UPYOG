@@ -9,6 +9,7 @@ import {
   extractUrlFromFilefetchResponse,
   resolveFilePreviewUrl,
 } from "@nudmcdgnpm/digit-ui-react-components";
+import styles from "../styles/ESTDocumentPreview.module.scss";
 
 const LargePdfSvg = ({ size = 48 }) => (
   <svg
@@ -18,7 +19,7 @@ const LargePdfSvg = ({ size = 48 }) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden
-    style={{ flexShrink: 0 }}
+    className={styles.pdfIcon}
   >
     <rect width="24" height="24" rx="4" fill="#D32F2F" />
     <text
@@ -78,50 +79,17 @@ const DocThumbnail = ({
   };
 
   return (
-    <a
-      href="#"
-      role="button"
-      onClick={handleClick}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 16,
-        textDecoration: "none",
-        marginBottom: 16,
-        width: "100%",
-        padding: "8px 0",
-        cursor: "pointer",
-      }}
-    >
-      <div style={{ flex: 1, minWidth: 160 }}>
-        <div style={{ fontWeight: 700, color: "#111", fontSize: "14px" }}>{label}</div>
-        {displayRef ? (
-          <div style={{ fontSize: "12px", color: "#666", marginTop: 4, wordBreak: "break-all" }}>
-            {displayRef}
-          </div>
-        ) : null}
+    <a href="#" role="button" onClick={handleClick} className={styles.docThumbnail}>
+      <div className={styles.meta}>
+        <div className={styles.label}>{label}</div>
+        {displayRef ? <div className={styles.reference}>{displayRef}</div> : null}
       </div>
 
-      <div
-        style={{
-          width: thumbSize,
-          height: thumbSize,
-          border: "1px solid #E0E0E0",
-          borderRadius: 6,
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#FAFAFA",
-          flexShrink: 0,
-        }}
-      >
+      <div className={styles.thumb} style={{ width: thumbSize, height: thumbSize }}>
         <LargePdfSvg size={Math.min(thumbSize, 48)} />
       </div>
 
-      <span style={{ color: "#0B5FFF", fontWeight: 500, fontSize: "14px" }}>
-        Click to preview
-      </span>
+      <span className={styles.previewHint}>Click to preview</span>
     </a>
   );
 };
@@ -144,31 +112,17 @@ function DocLink({
   };
 
   return (
-    <a
-      href="#"
-      role="button"
-      onClick={handleClick}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        textDecoration: "none",
-        marginBottom: 12,
-        width: "100%",
-        cursor: "pointer",
-      }}
-    >
-      <div style={{ minWidth: labelWidth, ...titleStyles }}>
-        <div style={{ fontWeight: 700, color: "#111" }}>{label}</div>
-        {displayRef ? (
-          <div style={{ fontSize: "12px", color: "#666", marginTop: 4, wordBreak: "break-all" }}>
-            {displayRef}
-          </div>
-        ) : null}
+    <a href="#" role="button" onClick={handleClick} className={styles.docLink}>
+      <div
+        className={styles.meta}
+        style={{ ["--est-doc-label-width"]: `${labelWidth}px`, ...titleStyles }}
+      >
+        <div className={styles.label}>{label}</div>
+        {displayRef ? <div className={styles.reference}>{displayRef}</div> : null}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div className={styles.action}>
         <LargePdfSvg size={pdfSize} />
-        <div style={{ color: "#0B5FFF", fontWeight: 500 }}>Click to View File</div>
+        <div className={styles.viewHint}>Click to View File</div>
       </div>
     </a>
   );
@@ -200,8 +154,15 @@ export function ESTDocumnetPreview({
     }))
   );
 
+  const rootClass = [
+    styles.estDocumentPreview,
+    useThumbnails ? styles["estDocumentPreview--withThumbnails"] : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div style={{ marginTop: 8, padding: useThumbnails ? "0 16px 12px" : 0 }}>
+    <div className={rootClass}>
       {flattened.length > 0 ? (
         flattened.map((val, idx) => (
           <div key={`est-link-${idx}`}>
@@ -227,20 +188,13 @@ export function ESTDocumnetPreview({
               />
             )}
             {isHrLine && idx !== flattened.length - 1 ? (
-              <hr
-                style={{
-                  border: 0,
-                  height: 1,
-                  backgroundColor: "#E5E5E5",
-                  margin: "8px 0 12px",
-                }}
-              />
+              <hr className={styles.divider} />
             ) : null}
           </div>
         ))
       ) : (
         !window.location.href.includes("citizen") && (
-          <div style={{ color: "#666" }}>{t("EST_NO_DOCUMENTS_UPLOADED_LABEL")}</div>
+          <div className={styles.emptyState}>{t("EST_NO_DOCUMENTS_UPLOADED_LABEL")}</div>
         )
       )}
     </div>
