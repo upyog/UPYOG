@@ -7,6 +7,7 @@ import {
   Loader,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useMemo } from "react";
+import styles from "../styles/ESTAssignAstRequiredDoc.module.scss";
 
 const FALLBACK_DOCUMENTS = [
   { name: "Citizen Request Letter (Accepted PDF)" },
@@ -48,26 +49,28 @@ const ESTAssignAstRequiredDoc = ({ t, onSelect, config }) => {
   }
 
   return (
-    <Card>
-      <CardHeader>{t(config?.sectionHeading || "MODULE_EST")}</CardHeader>
+    <div className={styles.estAssignAstRequiredDoc}>
+      <Card>
+        <CardHeader>{t(config?.sectionHeading || "MODULE_EST")}</CardHeader>
 
-      <div>
-        <CardSubHeader>{t(config?.documentsHeading || "EST_REQUIRED_DOCUMENTS")}</CardSubHeader>
+        <div>
+          <CardSubHeader>{t(config?.documentsHeading || "EST_REQUIRED_DOCUMENTS")}</CardSubHeader>
 
-        <div style={{ marginTop: "16px" }}>
-          {documents.map((doc, index) => (
-            <CardText key={doc.code || doc.i18nKey || index} className="primaryColor">
-              {doc.order ?? index + 1}. {t(doc.i18nKey || doc.name || doc.label || "")}
-              {doc.acceptedFormat ? ` (${doc.acceptedFormat})` : ""}
-            </CardText>
-          ))}
+          <div className={styles.documentList}>
+            {documents.map((doc, index) => (
+              <CardText key={doc.code || doc.i18nKey || index} className="primaryColor">
+                {doc.order ?? index + 1}. {t(doc.i18nKey || doc.name || doc.label || "")}
+                {doc.acceptedFormat ? ` (${doc.acceptedFormat})` : ""}
+              </CardText>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <span style={{ marginTop: "24px", display: "block" }}>
-        <SubmitBar label={t("COMMON_NEXT")} onSubmit={goNext} />
-      </span>
-    </Card>
+        <span className={styles.submitBarWrap}>
+          <SubmitBar label={t("COMMON_NEXT")} onSubmit={goNext} />
+        </span>
+      </Card>
+    </div>
   );
 };
 
