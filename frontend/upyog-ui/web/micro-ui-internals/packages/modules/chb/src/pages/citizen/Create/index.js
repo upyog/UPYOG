@@ -113,16 +113,16 @@ const CHBCreate = ({ parentRoute }) => {
   };
 
 
-  if(params && Object.keys(params).length>0 && window.location.href.includes("/searchhall") && sessionStorage.getItem("docReqScreenByBack") !== "true")
+  if(params && Object.keys(params).length>0 && window.location.href.includes("/searchvenue") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
       queryClient.invalidateQueries("CHB_CREATE");
     }
 
     const handleSubmit = () => {
-      console.log("params", params)
+
     let formdata = CHBDataConvert(params);; 
-    formdata.hallsBookingApplication.tenantId = tenantId;
+    formdata.venueBookingApplication.tenantId = tenantId;
     mutation.mutate(formdata, {
       onSuccess: () => {
         clearParams();
@@ -162,7 +162,7 @@ const CHBCreate = ({ parentRoute }) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
   
-  config.indexRoute = "searchhall";
+  config.indexRoute = "searchvenue";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("CHBCheckPage");
   const CHBAcknowledgement = Digit?.ComponentRegistryService?.getComponent("CHBAcknowledgement");

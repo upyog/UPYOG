@@ -74,7 +74,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ICityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.rest.support.MultiReadRequestWrapper;
@@ -100,7 +100,7 @@ public class ApplicationTenantResolverFilter implements Filter {
     private TenantUtils tenantUtils;
 
     @Autowired
-    private CityService cityService;
+    private ICityService cityService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
 
@@ -108,7 +108,7 @@ public class ApplicationTenantResolverFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        MultiReadRequestWrapper customRequest = new MultiReadRequestWrapper(req);
+        MultiReadRequestWrapper customRequest = new MultiReadRequestWrapper(req); 
         HttpSession session = customRequest.getSession();
         LOG.info("Request URL-->" + customRequest.getRequestURL());
         LOG.info("Request URI-->" + customRequest.getRequestURI());
@@ -142,7 +142,8 @@ public class ApplicationTenantResolverFilter implements Filter {
         String requestURL = new StringBuilder().append(ApplicationThreadLocals.getDomainURL())
                 .append(customRequest.getRequestURI()).toString();
         if (requestURL.contains(tenants.get("state"))
-                && (requestURL.contains("/edcr/") && (requestURL.contains("/rest/")
+                &&
+                (requestURL.contains("/edcr/") && (requestURL.contains("/rest/")
                         || requestURL.contains("/oauth/")))) {
 
             LOG.debug("All tenants from config" + tenants);

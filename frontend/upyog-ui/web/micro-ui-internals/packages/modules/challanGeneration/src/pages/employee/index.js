@@ -50,7 +50,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   return (
     <React.Fragment>
       <div className="ground-container">
-        <p className="breadcrumb employee-main-application-details" style={{ marginLeft: mobileView ? "2vw" : "revert" }}>
+        <p className={`breadcrumb employee-main-application-details ${mobileView ? 'cg-breadcrumb-mobile-margin' : ''}`}>
           <Link to="/upyog-ui/employee" className="challan-link-href">{t("ES_COMMON_HOME")}</Link>{" "}
           / <span>{t("CHALLAN_MODULE")}</span>
         </p>

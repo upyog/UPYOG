@@ -100,6 +100,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>egov-commons</artifactId>
+            <version>3.0.2-COE-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- HIBERNATE END -->
     </dependencies>
     <build>

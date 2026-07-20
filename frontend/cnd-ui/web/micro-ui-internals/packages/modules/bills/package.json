@@ -1,0 +1,21 @@
+{
+  "name": "@upyog/digit-ui-module-bills",
+  "version": "3.10.0",
+  "description": "BILLS",
+  "license": "MIT",
+  "main": "src/Module.js",
+  "source": "src/Module.js",
+
+  "peerDependencies": {
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "@tanstack/react-query": "^5.0.0",
+    "react-router-dom": "^6.23.0",
+    "react-i18next": "14`.0.0"
+  },
+
+  "dependencies": {
+    "@nudmcdgnpm/digit-ui-react-components": "4.0.0",
+    "react-hook-form": "^7.51.0"
+  }
+}

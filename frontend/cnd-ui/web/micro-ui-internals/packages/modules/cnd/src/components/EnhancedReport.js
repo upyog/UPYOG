@@ -7,15 +7,15 @@ const getSearchParamsObj = (field, data, key, t) => {
   let obj = {}
   if (data[key] === undefined || data[key] === '' || field === undefined || data[key] === t('ALL'))
     return
-  
+
   switch (field?.type) {
     case "string":
-      if(data[key] === undefined || data[key] === "")
+      if (data[key] === undefined || data[key] === "")
         return
       obj["name"] = key
       obj["input"] = data[key];
-      return obj 
-      
+      return obj
+
     case "singlevaluelist":
       var defaultValueObj = field.defaultValue
       var isLoc = field.localisationRequired;
@@ -30,8 +30,8 @@ const getSearchParamsObj = (field, data, key, t) => {
       return obj
 
     case "multivaluelist":
-      if(data?.[key]?.[0]?.name === "All")
-       return 
+      if (data?.[key]?.[0]?.name === "All")
+        return
       var defaultValueObj = field.defaultValue
       var isLoc = field.localisationRequired;
       var input
@@ -43,7 +43,7 @@ const getSearchParamsObj = (field, data, key, t) => {
       obj["name"] = key
       obj["input"] = input;
       return obj
-      
+
     case "epoch":
       obj["name"] = key
       if (key === "fromDate")
@@ -51,7 +51,7 @@ const getSearchParamsObj = (field, data, key, t) => {
       else
         obj["input"] = new Date(data?.toDate).getTime();
       return obj
-      
+
     default:
       return
   }
@@ -66,21 +66,18 @@ const EnhancedReport = (props) => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState([]);
   const [searchData, setSearchData] = useState({});
-  
+
   // Get tenant ID from session or default
   const tenantId = Digit.ULBService.getCurrentTenantId() || "as";
   // Fetch report metadata
-  const { isLoading: SearchFormIsLoading, data: SearchFormUIData, error: metaError } = 
+  const { isLoading: SearchFormIsLoading, data: SearchFormUIData, error: metaError } =
     Digit.Hooks.reports.useReportMeta.fetchMetaData(moduleName, reportName, tenantId);
 
   // Fetch report data
-  const { isLoading: isLoadingReportsData, data: ReportsData, error: dataError } = 
+  const { isLoading: isLoadingReportsData, data: ReportsData, error: dataError } =
     Digit.Hooks.reports.useReportMeta.fetchReportData(moduleName, reportName, tenantId, filter, {
       enabled: isFormSubmitted
     });
-
-    console.log("SearchFormUIData", SearchFormUIData, "");
-
   const SearchApplication = Digit.ComponentRegistryService.getComponent("ReportSearchApplication");
 
   const processedReportsData = useMemo(() => {
@@ -101,10 +98,10 @@ const EnhancedReport = (props) => {
   }, [ReportsData]);
 
   const onSubmit = (data) => {
-    setSearchData(data);   
+    setSearchData(data);
     const reportData = SearchFormUIData?.reportDetails?.searchParams || [];
     let searchParams = [];
-    
+
     Object.keys(data).forEach((key) => {
       const field = reportData.find(field => field.name === key);
       const obj = getSearchParamsObj(field, data, key, t);
@@ -153,7 +150,7 @@ const EnhancedReport = (props) => {
   }
 
   return SearchApplication ? (
-    <div style={{ margin: "8px" }}>
+    <div className="cnd-enhanced-report-container">
       <style>{`
         .report-scroll-container {
           width: 100%;

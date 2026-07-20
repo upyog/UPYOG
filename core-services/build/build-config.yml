@@ -96,8 +96,7 @@ config:
     build:
       - work-dir: "egov-notification-mail"
         image-name: "egov-notification-mail"
-        dockerfile: "build/maven/Dockerfile"
-     
+        dockerfile: "build/maven/Dockerfile"     
 
   - name: "builds/core-services/egov-notification-sms"
     build:
@@ -118,7 +117,6 @@ config:
       - work-dir: "egov-persister"
         image-name: "egov-persister"
         dockerfile: "build/maven/Dockerfile"
-
 
   - name: "builds/core-services/egov-searcher"
     build:

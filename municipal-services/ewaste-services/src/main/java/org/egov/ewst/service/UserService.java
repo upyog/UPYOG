@@ -1,15 +1,15 @@
 package org.egov.ewst.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -24,7 +24,6 @@ import org.egov.ewst.models.user.UserDetailResponse;
 import org.egov.ewst.models.user.UserSearchRequest;
 import org.egov.ewst.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -35,11 +34,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class UserService {
 
-	@Autowired
-	private ObjectMapper mapper;
+	private static final String CITIZEN = "CITIZEN";
+	private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+	private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
+	private final ObjectMapper mapper;
+	private final ServiceRequestRepository serviceRequestRepository;
 
 	@Value("${egov.user.host}")
 	private String userHost;
@@ -55,6 +55,11 @@ public class UserService {
 
 	@Value("${egov.user.update.path}")
 	private String userUpdateEndpoint;
+
+	public UserService(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+		this.mapper = mapper;
+		this.serviceRequestRepository = serviceRequestRepository;
+	}
 
 	/**
 	 * Creates user of the users of ewaste if it is not created already
@@ -98,16 +103,14 @@ public class UserService {
 	 * 
 	 */
 	private UserDetailResponse updateExistingUser(EwasteApplication ewasteApplication, RequestInfo requestInfo,
-			Role role, User userFromRequest, User UserFromSearch) {
+			Role role, User userFromRequest, User userFromSearch) {
 
-		UserDetailResponse userDetailResponse;
-
-		userFromRequest.setId(UserFromSearch.getId());
-		userFromRequest.setUuid(UserFromSearch.getUuid());
+		userFromRequest.setId(userFromSearch.getId());
+		userFromRequest.setUuid(userFromSearch.getUuid());
 		addUserDefaultFields(ewasteApplication.getTenantId(), role, userFromRequest);
 
 		StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userUpdateEndpoint);
-		userDetailResponse = userCall(new CreateUserRequest(requestInfo, userFromRequest), uri);
+		UserDetailResponse userDetailResponse = userCall(new CreateUserRequest(requestInfo, userFromRequest), uri);
 		if (userDetailResponse.getUser().get(0).getUuid() == null) {
 			throw new CustomException("INVALID USER RESPONSE", "The user updated has uuid as null");
 		}
@@ -115,12 +118,11 @@ public class UserService {
 	}
 
 	private UserDetailResponse createUser(RequestInfo requestInfo, User user) {
-		UserDetailResponse userDetailResponse;
 		StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userCreateEndpoint);
 
 		CreateUserRequest userRequest = CreateUserRequest.builder().requestInfo(requestInfo).user(user).build();
 
-		userDetailResponse = userCall(userRequest, uri);
+		UserDetailResponse userDetailResponse = userCall(userRequest, uri);
 
 		if (ObjectUtils.isEmpty(userDetailResponse)) {
 
@@ -143,7 +145,7 @@ public class UserService {
 		user.setActive(true);
 		user.setTenantId(tenantId);
 		user.setRoles(Collections.singletonList(role));
-		user.setType("CITIZEN");
+		user.setType(CITIZEN);
 		user.setCreatedDate(null);
 		user.setCreatedBy(null);
 		user.setLastModifiedDate(null);
@@ -152,7 +154,7 @@ public class UserService {
 
 	private Role getCitizenRole() {
 
-		return Role.builder().code("CITIZEN").name("Citizen").build();
+		return Role.builder().code(CITIZEN).name("Citizen").build();
 	}
 
 	/**
@@ -176,37 +178,16 @@ public class UserService {
 	}
 
 	/**
-	 * Sets userName for the user as mobileNumber if mobileNumber already assigned
-	 * last 10 digits of currentTime is assigned as userName
-	 * 
-	 * @param user               user whose username has to be assigned
-	 * @param listOfMobileNumber list of unique mobileNumbers in the
-	 *                           Ewaste Request
-	 */
-	private void setUserName(User user, Set<String> listOfMobileNumber) {
-
-		if (listOfMobileNumber.contains(user.getMobileNumber())) {
-			user.setUserName(user.getMobileNumber());
-			// Once mobileNumber is set as userName it is removed from the list
-			listOfMobileNumber.remove(user.getMobileNumber());
-		} else {
-			String username = UUID.randomUUID().toString();
-			user.setUserName(username);
-		}
-	}
-
-	/**
 	 * Returns user using user search based on ewaste ApplicationCriteria(user
 	 * name,mobileNumber,userName)
 	 * 
-	 * @param userSearchRequest
-	 * @return serDetailResponse containing the user if present and the responseInfo
+	 * @param userSearchRequest user search criteria
+	 * @return UserDetailResponse containing the user if present and the responseInfo
 	 */
 	public UserDetailResponse getUser(UserSearchRequest userSearchRequest) {
 
 		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
-		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
-		return userDetailResponse;
+		return userCall(userSearchRequest, uri);
 	}
 
 	/**
@@ -230,13 +211,11 @@ public class UserService {
 			if (response.isPresent()) {
 				LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response.get();
 				parseResponse(responseMap, dobFormat);
-				UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
-				return userDetailResponse;
+				return mapper.convertValue(responseMap, UserDetailResponse.class);
 			} else {
 				return new UserDetailResponse();
 			}
 		}
-		// Which Exception to throw?
 		catch (IllegalArgumentException e) {
 			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
 		}
@@ -260,12 +239,12 @@ public class UserService {
 			users.forEach(map -> {
 
 				map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
-				if ((String) map.get("lastModifiedDate") != null)
-					map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+				if ((String) map.get(LAST_MODIFIED_DATE) != null)
+					map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
 				if ((String) map.get("dob") != null)
 					map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
-				if ((String) map.get("pwdExpiryDate") != null)
-					map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+				if ((String) map.get(PWD_EXPIRY_DATE) != null)
+					map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
 			});
 		}
 	}
@@ -278,14 +257,18 @@ public class UserService {
 	 * @return Long value of date
 	 */
 	private Long dateTolong(String date, String format) {
-		SimpleDateFormat f = new SimpleDateFormat(format);
-		Date d = null;
-		try {
-			d = f.parse(date);
-		} catch (ParseException e) {
-			e.printStackTrace();
+		if (date == null) {
+			return null;
 		}
-		return d.getTime();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+		try {
+			if (format.contains("HH")) {
+				return LocalDateTime.parse(date, formatter).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+			}
+			return LocalDate.parse(date, formatter).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		} catch (DateTimeParseException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -294,6 +277,7 @@ public class UserService {
 	 * @param user               user in the ewaste detail whose user is created
 	 * @param userDetailResponse userDetailResponse from the user Service
 	 *                           corresponding to the given user
+	 * @param requestInfo        request information from the ewaste request
 	 */
 	private void setuserFields(User user, UserDetailResponse userDetailResponse, RequestInfo requestInfo) {
 
@@ -308,46 +292,16 @@ public class UserService {
 	}
 
 	/**
-	 * Updates user if present else creates new user
+	 * Provides a user search request with basic mandatory parameters
 	 * 
-	 * @param request Ewaste Request received from update
-	 */
-
-	/**
-	 * provides a user search request with basic mandatory parameters
-	 * 
-	 * @param tenantId
-	 * @param requestInfo
-	 * @return
+	 * @param tenantId    tenant identifier for the search
+	 * @param requestInfo request metadata for the user service call
+	 * @return configured user search request
 	 */
 	public UserSearchRequest getBaseUserSearchRequest(String tenantId, RequestInfo requestInfo) {
 
-		return UserSearchRequest.builder().requestInfo(requestInfo).userType("CITIZEN").tenantId(tenantId).active(true)
+		return UserSearchRequest.builder().requestInfo(requestInfo).userType(CITIZEN).tenantId(tenantId).active(true)
 				.build();
-	}
-
-	private UserDetailResponse searchByUserName(String userName, String tenantId) {
-		UserSearchRequest userSearchRequest = new UserSearchRequest();
-		userSearchRequest.setUserType("CITIZEN");
-		userSearchRequest.setUserName(userName);
-		userSearchRequest.setTenantId(tenantId);
-		return getUser(userSearchRequest);
-	}
-
-	private String getStateLevelTenant(String tenantId) {
-		return tenantId.split("\\.")[0];
-	}
-
-	private UserDetailResponse searchedSingleUserExists(User user, RequestInfo requestInfo) {
-
-		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(user.getTenantId(), requestInfo);
-		userSearchRequest.setUserType(user.getType());
-		Set<String> uuids = new HashSet<String>();
-		uuids.add(user.getUuid());
-		userSearchRequest.setUuid(uuids);
-
-		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
-		return userCall(userSearchRequest, uri);
 	}
 
 }

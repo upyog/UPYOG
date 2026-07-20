@@ -9,15 +9,12 @@ import { useQueryClient } from "@tanstack/react-query";
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
   return t(`${isEmployee ? "E" : "C"}S_MAINTENANCE_RESPONSE_${action ? action : "MAINTENANCE"}_${type}${isSuccess ? "" : "_ERROR"}`);
 };
-
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
   return GetMessage("ACTION", action, isSuccess, isEmployee, t);
 };
-
 const GetLabel = (action, isSuccess, isEmployee, t) => {
   return GetMessage("LABEL", action, isSuccess, isEmployee, t);
 };
-
 const DisplayText = (action, isSuccess, isEmployee, t) => {
   return GetMessage("DISPLAY", action, isSuccess, isEmployee, t);
 };
@@ -70,5 +67,4 @@ const Maintenance = (props) => {
     </div>
   );
 };
-
 export default Maintenance;

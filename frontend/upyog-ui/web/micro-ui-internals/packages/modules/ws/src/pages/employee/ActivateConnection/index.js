@@ -7,7 +7,7 @@ import { newConfig as newConfigLocal } from "../../../config/wsActivationConfig"
 import { stringReplaceAll, convertDateToEpochNew, convertEpochToDates } from "../../../utils";
 import * as func from "../../../utils";
 import _ from "lodash";
-
+import "../../../css/ws-inline-auto.css";
 const ActivateConnection = () => {
     const { t } = useTranslation();
     const location = useLocation();
@@ -226,30 +226,19 @@ const ActivateConnection = () => {
             });
         }
     }
-    };
-
-
-    if (isEnableLoader || isLoading || isappdetailsLoading) { //updatingApplication || 
-        return <Loader />;
-    }
-
-    return (
-        <React.Fragment>
-            <div style={{ marginLeft: "15px" }}>
+  };
+  if (isEnableLoader || isLoading || isappdetailsLoading) {
+    //updatingApplication || 
+    return <Loader />;
+  }
+  return <React.Fragment>
+            <div className="ws-auto-256">
                 <Header>{t(config.head)}</Header>
             </div>
-            <FormComposer
-                config={config.body}
-                userType={"employee"}
-                defaultValues={defaultValues}
-                onSubmit={onSubmit}
-                label={t("WF_EMPLOYEE_NEWSW1_ACTIVATE_CONNECTION")}
-                onFormValueChange={onFormValueChange}
-                // isDisabled={!canSubmit}
-            ></FormComposer>
+            <FormComposer config={config.body} userType={"employee"} defaultValues={defaultValues} onSubmit={onSubmit} label={t("WF_EMPLOYEE_NEWSW1_ACTIVATE_CONNECTION")} onFormValueChange={onFormValueChange}
+    // isDisabled={!canSubmit}
+    ></FormComposer>
             {showToast && <Toast error={showToast.key} label={t(showToast?.message)} warning={showToast?.warning} onClose={closeToast} />}
-        </React.Fragment>
-    );
+        </React.Fragment>;
 };
-
 export default ActivateConnection;

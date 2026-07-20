@@ -194,7 +194,7 @@ const getActs = (offenceType, offenceActData) =>
         <CardHeader divider={true}>{t("CREATE_CHALLAN")}</CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardLabel>{t("CHALLAN_OFFENDER_DETAILS")}</CardLabel>
-          <div style={{ width: "100%" }}>
+          <div className="cg-width-100">
             <div>
               <CardLabel>
                 {`${t("NOC_APPLICANT_MOBILE_NO_LABEL")}`} <span className="requiredField">*</span>

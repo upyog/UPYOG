@@ -53,8 +53,8 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import javax.validation.constraints.NotBlank;
+import org.egov.infra.validation.SanitizeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -88,47 +88,47 @@ public class CityPreferences extends AbstractAuditable {
     private FileStoreMapper municipalityLogo;
 
     @NotNull
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 75)
     private String municipalityName;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 20)
     private String municipalityContactNo;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 200)
     private String municipalityAddress;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 50)
     private String municipalityContactEmail;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 100)
     private String municipalityGisLocation;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 20)
     private String municipalityCallCenterNo;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 100)
     private String municipalityFacebookLink;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 100)
     private String municipalityTwitterLink;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 64)
     private String recaptchaPK;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 64)
     private String recaptchaPub;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotBlank
     @Length(max = 50)
     private String googleApiKey;

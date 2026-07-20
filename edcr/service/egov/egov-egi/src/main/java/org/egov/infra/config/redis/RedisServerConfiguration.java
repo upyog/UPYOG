@@ -81,11 +81,11 @@ public class RedisServerConfiguration {
     @Value("#{'${redis.sentinel.hosts}'.split(',')}")
     private List<String> sentinelHosts;
 
-    @Bean
-    @Conditional(RedisServerConfigCondition.class)
-    public static EmbeddedRedisServer redisServer() {
-        return new EmbeddedRedisServer();
-    }
+//    @Bean
+//    @Conditional(RedisServerConfigCondition.class)
+//    public static EmbeddedRedisServer redisServer() {
+//        return new EmbeddedRedisServer();
+//    }
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {

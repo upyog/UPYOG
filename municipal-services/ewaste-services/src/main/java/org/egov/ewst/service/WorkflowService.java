@@ -20,7 +20,6 @@ import org.egov.ewst.models.workflow.State;
 import org.egov.ewst.repository.ServiceRequestRepository;
 import org.egov.ewst.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -34,29 +33,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class WorkflowService {
 
-	@Autowired
-	private EwasteConfiguration configs;
+	private final EwasteConfiguration configs;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final ObjectMapper mapper;
 
-	@Autowired
-	private ServiceRequestRepository restRepo;
-
-	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
-	ServiceRequestRepository serviceRequestRepository;
+	public WorkflowService(EwasteConfiguration configs, ServiceRequestRepository serviceRequestRepository,
+			ObjectMapper mapper) {
+		this.configs = configs;
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.mapper = mapper;
+	}
 
 	public void updateWorkflowStatus(EwasteRegistrationRequest ewasteRegistrationRequest) {
 
 		ProcessInstance processInstance = getProcessInstanceForEwaste(
-				ewasteRegistrationRequest.getEwasteApplication().get(0), ewasteRegistrationRequest.getRequestInfo());
+				ewasteRegistrationRequest.getEwasteApplication().get(0));
 		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(ewasteRegistrationRequest.getRequestInfo(),
 				Collections.singletonList(processInstance));
 		callWorkFlow(workflowRequest);
 
 	}
 
-	private ProcessInstance getProcessInstanceForEwaste(EwasteApplication application, RequestInfo requestInfo) {
+	private ProcessInstance getProcessInstanceForEwaste(EwasteApplication application) {
 		Workflow workflow = application.getWorkflow();
 
 		ProcessInstance processInstance = new ProcessInstance();
@@ -94,10 +92,12 @@ public class WorkflowService {
 	 */
 	public State callWorkFlow(ProcessInstanceRequest workflowReq) {
 
-		ProcessInstanceResponse response = null;
 		StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
 		Optional<Object> optional = serviceRequestRepository.fetchResult(url, workflowReq);
-		response = mapper.convertValue(optional.get(), ProcessInstanceResponse.class);
+		if (optional.isEmpty()) {
+			throw new CustomException("WORKFLOW_ERROR", "Empty response from workflow service");
+		}
+		ProcessInstanceResponse response = mapper.convertValue(optional.get(), ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();
 	}
 
@@ -112,8 +112,11 @@ public class WorkflowService {
 
 		StringBuilder url = getSearchURLWithParams(tenantId, businessService);
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-		Optional<Object> result = restRepo.fetchResult(url, requestInfoWrapper);
-		BusinessServiceResponse response = null;
+		Optional<Object> result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
+		if (result.isEmpty()) {
+			throw new CustomException("WORKFLOW_ERROR", "Empty response from workflow business service search");
+		}
+		BusinessServiceResponse response;
 		try {
 			response = mapper.convertValue(result.get(), BusinessServiceResponse.class);
 		} catch (IllegalArgumentException e) {
@@ -156,7 +159,7 @@ public class WorkflowService {
 			if (state.getState() != null && state.getState().equalsIgnoreCase(stateCode))
 				return state.getIsStateUpdatable();
 		}
-		return null;
+		return Boolean.FALSE;
 	}
 
 	/**
@@ -178,7 +181,7 @@ public class WorkflowService {
 	/**
 	 * Fetches the workflow object for the given assessment
 	 * 
-	 * @return
+	 * @return current workflow state for the business id
 	 */
 	public State getCurrentState(RequestInfo requestInfo, String tenantId, String businessId) {
 
@@ -186,11 +189,13 @@ public class WorkflowService {
 
 		StringBuilder url = getWorkflowSearchURLWithParams(tenantId, businessId);
 
-		Optional<Object> res = restRepo.fetchResult(url, requestInfoWrapper);
+		Optional<Object> res = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
 		ProcessInstanceResponse response = null;
 
 		try {
-			response = mapper.convertValue(res.get(), ProcessInstanceResponse.class);
+			if (res.isPresent()) {
+				response = mapper.convertValue(res.get(), ProcessInstanceResponse.class);
+			}
 		} catch (Exception e) {
 			throw new CustomException("PARSING_ERROR", "Failed to parse workflow search response");
 		}

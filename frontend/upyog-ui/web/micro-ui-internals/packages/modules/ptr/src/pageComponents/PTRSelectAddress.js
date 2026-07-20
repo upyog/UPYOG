@@ -165,24 +165,6 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
         isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || (!(pathname.includes("revised") || pathname.includes("renew")) && !locality) || !addressline1 }
       >
         <div>
-          <style>
-        {`
-        .select-wrap .options-card {
-        width: 100% !important;
-        -webkit-box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
-        box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
-        position: absolute;
-        z-index: 20;
-        margin-top: 4px;
-        --bg-opacity: 1;
-        background-color: #fff;
-        background-color: rgba(255, 255, 255, var(--bg-opacity));
-        overflow: scroll;
-        max-height: 250px; 
-        min-height:50px;
-         } `
-        }
-      </style>
           <CardLabel>{`${t("PTR_PROPERTY_NO")}`}</CardLabel>
             <div className="field-container">
             <TextInput
@@ -332,6 +314,18 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
                 option={allCities}
                 optionKey="i18nKey"
                 t={t}
+                optionCardStyles={{
+                  width: "100%",
+                  boxShadow:
+                    "0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2)",
+                  position: "absolute",
+                  zIndex: 20,
+                  marginTop: "4px",
+                  backgroundColor: "rgba(255, 255, 255, 1)",
+                  overflow: "scroll",
+                  maxHeight: "250px",
+                  minHeight: "50px",
+                }}
                 placeholder={"Select"}
               />
             )}
@@ -348,7 +342,18 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
                 selected={locality}
                 select={setLocality}
                 option={structuredLocality}
-                optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
+                optionCardStyles={{
+                  width: "100%",
+                  boxShadow:
+                    "0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2)",
+                  position: "absolute",
+                  zIndex: 20,
+                  marginTop: "4px",
+                  backgroundColor: "rgba(255, 255, 255, 1)",
+                  overflow: "scroll",
+                  maxHeight: "250px",
+                  minHeight: "50px",
+                }}
                 optionKey="i18nKey"
                 t={t}
                 placeholder={"Select"}

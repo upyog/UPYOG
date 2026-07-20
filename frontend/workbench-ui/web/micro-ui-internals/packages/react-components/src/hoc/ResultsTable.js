@@ -42,41 +42,57 @@ const ResultsTable = ({ tableContainerClass, config, data,isLoading,isFetching,f
 
     const {state,dispatch} = useContext(InboxContext)
     
-    const tableColumns = useMemo(() => {
-        //test if accessor can take jsonPath value only and then check sort and global search work properly
-        return config?.columns?.map(column => {
-            
-            if(column?.svg) {
-                // const icon = Digit.ComponentRegistryService.getComponent(column.svg);
-                return {
-                    Header: t(column?.label) || t("ES_COMMON_NA"),
-                    accessor:column.jsonPath,
-                    Cell: ({ value, col, row }) => {
-                        return <div className='cursorPointer' style={{marginLeft:"1rem"}} onClick={()=>additionalConfig?.resultsTable?.onClickSvg(row)}> <EditIcon /></div>
-                    }
-                }
-            }
+   const tableColumns = useMemo(() => {
+    // check if any of the rows have id or actionid in data, if yes then show id column
+    const hasId = searchResult?.some(row => row?.data?.id || row?.data?.actionid);
+    
+    // Id column
+    const idColumn = {
+        Header: t("WBH_ID") || "Id",
+        accessor: "id",
+        Cell: ({ row }) => {
+            const idValue = row?.original?.data?.id || row?.original?.data?.actionid;
+            return idValue ? String(idValue) : " ";
+        }
+    };
 
-         if (column.additionalCustomization){
-                return {
-                    Header: t(column?.label) || t("ES_COMMON_NA"),
-                    accessor:column.jsonPath,
-                    headerAlign: column?.headerAlign,
-                    Cell: ({ value, col, row }) => {
-                        return  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.original,column?.label,column, value,t, searchResult);
-                    }
+    const existingColumns = config?.columns?.map(column => {
+        
+        if(column?.svg) {
+            return {
+                Header: t(column?.label) || t("ES_COMMON_NA"),
+                accessor:column.jsonPath,
+                Cell: ({ value, col, row }) => {
+                    return <div className='cursorPointer' style={{marginLeft:"1rem"}} onClick={()=>additionalConfig?.resultsTable?.onClickSvg(row)}> <EditIcon /></div>
                 }
             }
+        }
+
+        if (column.additionalCustomization){
             return {
                 Header: t(column?.label) || t("ES_COMMON_NA"),
                 accessor: column.jsonPath,
                 headerAlign: column?.headerAlign,
                 Cell: ({ value, col, row }) => {
-                    return String(value ? column.translate? t(column.prefix?`${column.prefix}${value}`:value) : value : column?.dontShowNA ? " " : t("ES_COMMON_NA"));
+                    return Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.original, column?.label, column, value, t, searchResult);
                 }
             }
-        })
-    }, [config, searchResult])
+        }
+
+        return {
+            Header: t(column?.label) || t("ES_COMMON_NA"),
+            accessor: column.jsonPath,
+            headerAlign: column?.headerAlign,
+            Cell: ({ value, col, row }) => {
+                return String(value ? column.translate ? t(column.prefix?`${column.prefix}${value}`:value) : value : column?.dontShowNA ? " " : t("ES_COMMON_NA"));
+            }
+        }
+    });
+
+    return hasId ? [idColumn, ...existingColumns] : existingColumns;
+
+}, [config, searchResult])
+
 
     const {
         register,

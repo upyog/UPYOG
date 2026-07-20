@@ -4,18 +4,16 @@ import { useTranslation } from "react-i18next";
 import ApplicationTable from "./ApplicationTable";
 
 // Close button component
-const Close = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+
+const Close = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
     <path d="M0 0h24v24H0V0z" fill="none" />
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-  </svg>
-);
-
-const CloseBtn = ({ onClick }) => (
-  <div className="icon-bg-secondary" onClick={onClick}>
+  </svg>;
+const CloseBtn = ({
+  onClick
+}) => <div className="icon-bg-secondary" onClick={onClick}>
     <Close />
-  </div>
-);
+  </div>;
 
 /**
  * ADSCartAndCancellationPolicyDetails Component
@@ -28,58 +26,69 @@ const CloseBtn = ({ onClick }) => (
 const ADSCartAndCancellationPolicyDetails = () => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
   const [showViewCart, setShowViewCart] = useState(false);
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const [params, setParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const [showdemandEstimation, setShowDemandEstimation] = useState(false);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
-
-  const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS("pg", "Advertisement", [{ name: "AdvServices" }], {
-    select: (data) => data?.["Advertisement"]?.["AdvServices"] || [],
+  const {
+    data: cancelpolicyData
+  } = Digit.Hooks.useCustomMDMS("pg", "Advertisement", [{
+    name: "AdvServices"
+  }], {
+    select: data => data?.["Advertisement"]?.["AdvServices"] || []
   });
-  const handleDelete = (index) => {
+  const handleDelete = index => {
     // Make a shallow copy of the current params state to ensure immutability
-    const updatedParams = { ...params };
-  
+    const updatedParams = {
+      ...params
+    };
+
     // Check if adslist exists and if cartDetails is an array
     if (updatedParams?.adslist?.cartDetails) {
       // Create a new array with the item at the given index removed
       updatedParams.adslist.cartDetails = updatedParams.adslist.cartDetails.filter((_, idx) => idx !== index);
     }
-  
+
     // Update the state with the modified params
     setParams(updatedParams);
   };
-  const columns = [
-    {
-      Header: () => <div style={{ paddingLeft: "50px" }}>{t("S_NO")}</div>, // Use a function to render header with padding
-      accessor: "sNo",
-      Cell: ({ row }) => (
-        <div style={{ paddingLeft: "50px" }}>
+  const columns = [{
+    Header: () => <div className="ads-auto-3">{t("S_NO")}</div>,
+    // Use a function to render header with padding
+    accessor: "sNo",
+    Cell: ({
+      row
+    }) => <div className="ads-auto-4">
           {row.index + 1} {/* Display the row index + 1 for S.No */}
         </div>
-      ),
-    },
-    { Header: t("ADD_TYPE"), accessor: "addType" },
-    { Header: t("FACE_AREA"), accessor: "faceArea" },
-    {
-      Header: t("ADS_NIGHT_LIGHT"),
-      accessor: "nightLight",
-      Cell: ({ value }) => (
-        <div>{value ? t("Yes") : t("No")}</div>
-      ),
-    },
-    { Header: t("BOOKING_DATE"), accessor: "bookingDate" },
-    {
-      Header: t("DELETE_KEY"),
-      accessor: "delete",
-      Cell: ({ row }) => (
-        <button onClick={() => handleDelete(row.index)}>
-          <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} />
+  }, {
+    Header: t("ADD_TYPE"),
+    accessor: "addType"
+  }, {
+    Header: t("FACE_AREA"),
+    accessor: "faceArea"
+  }, {
+    Header: t("ADS_NIGHT_LIGHT"),
+    accessor: "nightLight",
+    Cell: ({
+      value
+    }) => <div>{value ? t("Yes") : t("No")}</div>
+  }, {
+    Header: t("BOOKING_DATE"),
+    accessor: "bookingDate"
+  }, {
+    Header: t("DELETE_KEY"),
+    accessor: "delete",
+    Cell: ({
+      row
+    }) => <button onClick={() => handleDelete(row.index)}>
+          <DeleteIcon className="delete ads-auto-5" fill="#a82227" />
         </button>
-      ),
-    },
-    // { Header: t("TOTAL_PRICE"), accessor: "price" },
+  }
+  // { Header: t("TOTAL_PRICE"), accessor: "price" },
   ];
   let cartDetails = params?.adslist?.cartDetails?.map((details) => {
     return { 
@@ -91,12 +100,11 @@ const ADSCartAndCancellationPolicyDetails = () => {
       bookingFromTime: "06:00",
       bookingToTime: "05:59",
       status: "BOOKING_CREATED"
-    }; });
-
+    };
+  });
   let formdata = {
-    tenantId:tenantId,
-    cartDetails:cartDetails,
-    
+    tenantId: tenantId,
+    cartDetails: cartDetails
   };
   let mutation = Digit.Hooks.ads.useADSDemandEstimation();
 
@@ -108,73 +116,37 @@ const ADSCartAndCancellationPolicyDetails = () => {
   }, [showdemandEstimation]);
 
   const handleCartClick = () => {
-    setShowViewCart((prev) => !prev);
+    setShowViewCart(prev => !prev);
   };
   const handlePriceBreakupClick = () => {
     setShowPriceBreakup(!showPriceBreakup);
   };
-
-
   const handleCancellationPolicyClick = () => {
-    setShowCancellationPolicy((prev) => !prev);
+    setShowCancellationPolicy(prev => !prev);
   };
-
-  const renderCancellationPolicy = (policy) => {
-    return (
-      <ol style={{ paddingLeft: "20px" }}>
-        {policy
-          .split("\n")
-          .filter((line) => line.trim() !== "")
-          .map((line, index) => (
-            <li key={index} style={{ marginBottom: "10px" }}>
+  const renderCancellationPolicy = policy => {
+    return <ol className="ads-auto-6">
+        {policy.split("\n").filter(line => line.trim() !== "").map((line, index) => <li key={index} className="ads-auto-7">
               <CardLabelDesc>{line.trim()}</CardLabelDesc>
-            </li>
-          ))}
-      </ol>
-    );
+            </li>)}
+      </ol>;
   };
-  const calculateTotalAmount = (CalculationType) => {
+  const calculateTotalAmount = CalculationType => {
     return CalculationType.reduce((total, item) => total + item.taxAmount, 0);
   };
 
   // Sample total booking amount
   const totalBookingAmount = mutation.data?.demands[0] && mutation.data?.demands[0]?.additionalDetails; // Replace with actual amount
 
-  return (
-    <div>
-      <CardSubHeader style={{ color: "#a82227" }}>Cart Details</CardSubHeader>
+  return <div>
+      <CardSubHeader className="ads-auto-8">Cart Details</CardSubHeader>
 
-      <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+      <div className="ads-auto-9">
         <div>
-          <div
-            onClick={handleCartClick}
-            style={{
-              cursor: "pointer",
-              color: "#a82227",
-              fontSize: "20px",
-              textDecoration: "none",
-              marginBottom: "10px", // Space below "View Cart"
-            }}
-          >
-            <div className="container" style={{
-              width:"1px",
-            }}>            <div style={{
-              width:"20px",
-                position:"relative"
-            }}>
-              <div style={{
-                  position:"absolute",
-                  top:"-4px",
-                  right:"-93px",
-                  // backgroundColor: "#FFFFFF",
-                  color: "#008000",
-                  padding:"5px",
-                  borderRadius: "30px",
-                  width:"30px",
-                  height:"30px",
-                  textAlign:"center"
-              }}>
-              <div> {params?.adslist?.cartDetails?.length}</div>
+          <div onClick={handleCartClick} className="ads-auto-10">
+            <div class="container" className="ads-auto-11">            <div className="ads-auto-12">
+              <div className="ads-auto-13">
+              <div> {params?.adslist?.cartDetails.length}</div>
 
               </div>
             </div>
@@ -183,20 +155,11 @@ const ADSCartAndCancellationPolicyDetails = () => {
             
           </div>
            
-                  <div
-            onClick={handleCancellationPolicyClick}
-            style={{
-              cursor: "pointer",
-              color: "#a82227",
-              fontSize: "20px",
-              textDecoration: "none",
-              marginBottom: "10px", // Space below "Terms and Conditions"
-            }}
-          >
+                  <div onClick={handleCancellationPolicyClick} className="ads-auto-14">
             Terms and Conditions
           </div>
         </div>
-        <div  onClick={handlePriceBreakupClick} style={{ cursor: "pointer", fontSize: "20px", color: "#a82227" }}>
+        <div onClick={handlePriceBreakupClick} className="ads-auto-15">
           Total Booking Amount: <strong>{totalBookingAmount} INR</strong>
         </div>
       </div>
@@ -275,42 +238,34 @@ const ADSCartAndCancellationPolicyDetails = () => {
             <div>
               <CardLabelDesc style={{ marginBottom: '15px' }}>Estimate Price Details</CardLabelDesc>
               <ul>
-                {mutation.data?.demands[0]?.demandDetails && mutation.data?.demands[0]?.demandDetails.map((demands, index) => (
-                  <li key={index} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                {mutation.data?.demands[0]?.demandDetails && mutation.data?.demands[0]?.demandDetails.map((demands, index) => <li key={index} className="ads-auto-23">
                     <CardText>{t(`${demands.taxHeadMasterCode}`)}</CardText>
                     <CardText>Rs {demands.taxAmount}</CardText>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
               <hr />
-              <div style={{ fontWeight: 'bold', marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+              <div className="ads-auto-24">
                 <CardLabelDesc>Total</CardLabelDesc>
                 <CardLabelDesc>Rs {mutation.data?.demands[0]?.demandDetails && calculateTotalAmount(mutation.data?.demands[0]?.demandDetails)}</CardLabelDesc>
               </div>
-            </div>
-          }
-          actionCancelLabel={null}  // Hide Cancel button
-          actionCancelOnSubmit={null}  // No action for Cancel
-          actionSaveLabel={null}  // Hide Save button
-          actionSaveOnSubmit={null}  // No action for Save
-          actionSingleLabel={null}  // Hide Submit button
-          actionSingleSubmit={null}  // No action for Submit
-          error={null}
-          setError={() => {}}
-          formId="modalForm"
-          isDisabled={false}
-          hideSubmit={true}  // Ensure submit is hidden
-          style={{}}
-          // popupModuleMianStyles={{ padding: "10px" }}
-          headerBarMainStyle={{position: "sticky",top: 0, backgroundColor: "#f5f5f5" }}
-          isOBPSFlow={false}
-          popupModuleActionBarStyles={{ display: 'none' }}  // Hide Action Bar
-          isOpen={showPriceBreakup}  // Pass isOpen prop
-          onClose={handlePriceBreakupClick}  // Pass onClose prop
-        />
-      )}
-    </div>
-  );
+            </div>} actionCancelLabel={null} // Hide Cancel button
+    actionCancelOnSubmit={null} // No action for Cancel
+    actionSaveLabel={null} // Hide Save button
+    actionSaveOnSubmit={null} // No action for Save
+    actionSingleLabel={null} // Hide Submit button
+    actionSingleSubmit={null} // No action for Submit
+    error={null} setError={() => {}} formId="modalForm" isDisabled={false} hideSubmit={true} // Ensure submit is hidden
+    // popupModuleMianStyles={{ padding: "10px" }}
+    headerBarMainStyle={{
+      position: "sticky",
+      top: 0,
+      backgroundColor: "#f5f5f5"
+    }} isOBPSFlow={false} popupModuleActionBarStyles={{
+      display: 'none'
+    }} // Hide Action Bar
+    isOpen={showPriceBreakup} // Pass isOpen prop
+    onClose={handlePriceBreakupClick} // Pass onClose prop
+    className="ads-auto-20" />)}
+    </div>;
 };
-
 export default ADSCartAndCancellationPolicyDetails;

@@ -7,28 +7,17 @@ import getPTAcknowledgementData from "../getPTAcknowledgementData";
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
   return t(`${isEmployee ? "E" : "C"}S_PT_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
 };
-
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
   return GetMessage("ACTION", action, isSuccess, isEmployee, t);
 };
-
 const GetLabel = (action, isSuccess, isEmployee, t) => {
   return GetMessage("LABEL", action, isSuccess, isEmployee, t);
 };
-
 const DisplayText = (action, isSuccess, isEmployee, t) => {
   return GetMessage("DISPLAY", action, isSuccess, isEmployee, t);
 };
-
-const BannerPicker = (props) => {
-  return (
-    <Banner
-      message={GetActionMessage(props?.data?.Properties?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
-      applicationNumber={props?.data?.Properties?.[0]?.acknowldgementNumber}
-      info={GetLabel(props.data?.Properties?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
-      successful={props.isSuccess}
-    />
-  );
+const BannerPicker = props => {
+  return <Banner message={GetActionMessage(props?.data?.Properties?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)} applicationNumber={props?.data?.Properties?.[0]?.acknowldgementNumber} info={GetLabel(props.data?.Properties?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)} successful={props.isSuccess} />;
 };
 
 const Response = (props) => {
@@ -45,7 +34,6 @@ const Response = (props) => {
     setShowToast(null);
     setError(null);
   };
-
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
@@ -83,9 +71,7 @@ const Response = (props) => {
   if (!state) {
     return <Loader />;
   }
-
-  return (
-    <div>
+  return <div>
       <Card>
         <BannerPicker
           t={t}
@@ -99,7 +85,7 @@ const Response = (props) => {
           {DisplayText(action, isSuccess, props.parentRoute.includes("employee"), t)}
         </CardText>
         {isSuccess && (
-          <SubmitBar style={{ overflow: "hidden" }} label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
+          <SubmitBar className="pt-auto-103" label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
         )}
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}
@@ -108,8 +94,6 @@ const Response = (props) => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>
-    </div>
-  );
+    </div>;
 };
-
 export default Response;

@@ -24,7 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.egov.echallan.web.models.workflow.Workflow;
-import org.egov.echallan.Validation.SanitizeHtml;
+import org.egov.echallan.validation.SanitizeHtml;
 
 import jakarta.validation.Valid;
 import java.math.BigDecimal;

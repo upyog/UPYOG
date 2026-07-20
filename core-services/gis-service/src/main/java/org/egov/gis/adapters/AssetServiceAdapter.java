@@ -1,12 +1,13 @@
 package org.egov.gis.adapters;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.gis.config.GisConfiguration;
 import org.egov.gis.interfaces.MunicipalServiceAdapter;
 import org.egov.gis.models.Entity;
 import org.egov.gis.models.GisRequest;
 import org.egov.gis.repository.ServiceRequestRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -17,13 +18,19 @@ import java.util.*;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class AssetServiceAdapter implements MunicipalServiceAdapter {
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private static final String TENANT_ID = "tenantId";
+    private static final String STATUS = "status";
+    private static final String POINT_GEOMETRY = "pointGeometry";
+    private static final String ASSET_CATEGORY = "assetCategory";
+    private static final String ASSET_PARENT_CATEGORY = "assetParentCategory";
+    private static final String DEPARTMENT = "department";
+    private static final String GEOMETRY = "geometry";
 
-    @Autowired
-    private GisConfiguration config;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final GisConfiguration config;
 
     @Override
     public String getBusinessService() {
@@ -37,46 +44,58 @@ public class AssetServiceAdapter implements MunicipalServiceAdapter {
 
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(getServiceEndpoint())
-                    .queryParam("tenantId", request.getTenantId())
+                    .queryParam(TENANT_ID, request.getTenantId())
                     .queryParam("isInterServiceCall", true);
 
-            if (request.getSearchCriteria() != null && !request.getSearchCriteria().isEmpty()) {
-                for (Map.Entry<String, Object> entry : request.getSearchCriteria().entrySet()) {
-                    if (entry.getValue() != null && !"tenantId".equals(entry.getKey())) {
-                        builder.queryParam(entry.getKey(), entry.getValue());
-                    }
-                }
-            } else {
-                builder.queryParam("status", "APPROVED");
-                if (request.getFromDate() != null) {
-                    builder.queryParam("fromDate", request.getFromDate().toString());
-                }
-                if (request.getToDate() != null) {
-                    builder.queryParam("toDate", request.getToDate().toString());
-                }
-            }
+            applyQueryParameters(builder, request, "APPROVED");
 
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("RequestInfo", request.getRequestInfo());
 
-            StringBuilder uri = new StringBuilder(builder.toUriString());
-            Optional<Object> responseOptional = serviceRequestRepository.fetchResult(uri, requestBody);
+            return fetchEntitiesFromService(builder, requestBody, request.getTenantId());
 
-            if (responseOptional.isPresent()) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> response = (Map<String, Object>) responseOptional.get();
-                List<Entity> entities = transformResponseToEntities(response);
-                log.info("Successfully fetched {} asset entities", entities.size());
-                return entities;
-            }
-
-            log.warn("Empty response from Asset Service for tenant: {}", request.getTenantId());
-            return new ArrayList<>();
-
+        } catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error fetching asset entities for tenant: {}", request.getTenantId(), e);
-            throw new RuntimeException("Failed to fetch asset entities", e);
+            throw new CustomException("ASSET_FETCH_FAILED", "Failed to fetch asset entities: " + e.getMessage());
         }
+    }
+
+    private void applyQueryParameters(UriComponentsBuilder builder, GisRequest request, String defaultStatus) {
+        if (request.getSearchCriteria() != null && !request.getSearchCriteria().isEmpty()) {
+            for (Map.Entry<String, Object> entry : request.getSearchCriteria().entrySet()) {
+                if (entry.getValue() != null && !TENANT_ID.equals(entry.getKey())) {
+                    builder.queryParam(entry.getKey(), entry.getValue());
+                }
+            }
+            return;
+        }
+
+        builder.queryParam(STATUS, defaultStatus);
+        if (request.getFromDate() != null) {
+            builder.queryParam("fromDate", request.getFromDate().toString());
+        }
+        if (request.getToDate() != null) {
+            builder.queryParam("toDate", request.getToDate().toString());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Entity> fetchEntitiesFromService(UriComponentsBuilder builder,
+            Map<String, Object> requestBody, String tenantId) {
+        StringBuilder uri = new StringBuilder(builder.toUriString());
+        Optional<Object> responseOptional = serviceRequestRepository.fetchResult(uri, requestBody);
+
+        if (responseOptional.isEmpty()) {
+            log.warn("Empty response from Asset Service for tenant: {}", tenantId);
+            return new ArrayList<>();
+        }
+
+        Map<String, Object> response = (Map<String, Object>) responseOptional.get();
+        List<Entity> entities = transformResponseToEntities(response);
+        log.info("Successfully fetched {} asset entities", entities.size());
+        return entities;
     }
 
     @SuppressWarnings("unchecked")
@@ -99,7 +118,7 @@ public class AssetServiceAdapter implements MunicipalServiceAdapter {
     @Override
     @SuppressWarnings("unchecked")
     public Map<String, Object> extractPointGeometry(Entity entity) {
-        return (Map<String, Object>) entity.getAttributes().get("pointGeometry");
+        return (Map<String, Object>) entity.getAttributes().get(POINT_GEOMETRY);
     }
 
     @Override
@@ -118,11 +137,11 @@ public class AssetServiceAdapter implements MunicipalServiceAdapter {
     public Entity transformToGenericEntity(Map<String, Object> municipalResponse) {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("assetName", getStringValue(municipalResponse, "assetName"));
-        attributes.put("assetCategory", getStringValue(municipalResponse, "assetCategory"));
+        attributes.put(ASSET_CATEGORY, getStringValue(municipalResponse, ASSET_CATEGORY));
         attributes.put("assetSubCategory", getStringValue(municipalResponse, "assetSubCategory"));
-        attributes.put("assetParentCategory", getStringValue(municipalResponse, "assetParentCategory"));
+        attributes.put(ASSET_PARENT_CATEGORY, getStringValue(municipalResponse, ASSET_PARENT_CATEGORY));
         attributes.put("assetClassification", getStringValue(municipalResponse, "assetClassification"));
-        attributes.put("department", getStringValue(municipalResponse, "department"));
+        attributes.put(DEPARTMENT, getStringValue(municipalResponse, DEPARTMENT));
         attributes.put("purchaseCost", municipalResponse.get("purchaseCost"));
         attributes.put("acquisitionCost", municipalResponse.get("acquisitionCost"));
         attributes.put("bookValue", municipalResponse.get("bookValue"));
@@ -134,8 +153,8 @@ public class AssetServiceAdapter implements MunicipalServiceAdapter {
         return Entity.builder()
                 .id(getStringValue(municipalResponse, "id"))
                 .applicationNumber(getStringValue(municipalResponse, "applicationNo"))
-                .tenantId(getStringValue(municipalResponse, "tenantId"))
-                .status(getStringValue(municipalResponse, "status"))
+                .tenantId(getStringValue(municipalResponse, TENANT_ID))
+                .status(getStringValue(municipalResponse, STATUS))
                 .businessService("ASSET")
                 .createdTime(getLongValue(municipalResponse, "createdTime"))
                 .lastModifiedTime(getLongValue(municipalResponse, "lastModifiedTime"))
@@ -150,10 +169,10 @@ public class AssetServiceAdapter implements MunicipalServiceAdapter {
     @Override
     public Map<String, String> getSearchCriteriaMapping() {
         Map<String, String> mapping = new HashMap<>();
-        mapping.put("assetCategory", "assetCategory");
-        mapping.put("assetParentCategory", "assetParentCategory");
-        mapping.put("department", "department");
-        mapping.put("status", "status");
+        mapping.put(ASSET_CATEGORY, ASSET_CATEGORY);
+        mapping.put(ASSET_PARENT_CATEGORY, ASSET_PARENT_CATEGORY);
+        mapping.put(DEPARTMENT, DEPARTMENT);
+        mapping.put(STATUS, STATUS);
         return mapping;
     }
 
@@ -165,54 +184,88 @@ public class AssetServiceAdapter implements MunicipalServiceAdapter {
     @SuppressWarnings("unchecked")
     private void extractGeometryData(Map<String, Object> municipalResponse, Map<String, Object> attributes) {
         String assetId = getStringValue(municipalResponse, "applicationNo");
-        
-        Map<String, Object> additionalDetails = (Map<String, Object>) municipalResponse.get("additionalDetails");
-        if (additionalDetails != null && additionalDetails.containsKey("geometry")) {
-            Map<String, Object> geometryWrapper = (Map<String, Object>) additionalDetails.get("geometry");
-            if (geometryWrapper != null && geometryWrapper.containsKey("geometry")) {
-                Map<String, Object> geometry = (Map<String, Object>) geometryWrapper.get("geometry");
-                if (geometry != null && "Polygon".equals(geometry.get("type"))) {
-                    attributes.put("polygonGeometry", geometry);
-                    log.debug("Extracted polygon geometry for asset: {}", assetId);
-                }
-            }
+
+        extractPolygonFromAdditionalDetails(municipalResponse, attributes, assetId);
+
+        if (extractPointFromAddressDetails(municipalResponse, attributes, assetId)) {
+            return;
         }
 
+        extractPointFromLocation(municipalResponse, attributes, assetId);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void extractPolygonFromAdditionalDetails(Map<String, Object> municipalResponse,
+            Map<String, Object> attributes, String assetId) {
+        Map<String, Object> additionalDetails = (Map<String, Object>) municipalResponse.get("additionalDetails");
+        if (additionalDetails == null || !additionalDetails.containsKey(GEOMETRY)) {
+            return;
+        }
+
+        Map<String, Object> geometryWrapper = (Map<String, Object>) additionalDetails.get(GEOMETRY);
+        if (geometryWrapper == null || !geometryWrapper.containsKey(GEOMETRY)) {
+            return;
+        }
+
+        Map<String, Object> geometry = (Map<String, Object>) geometryWrapper.get(GEOMETRY);
+        if (geometry == null || !"Polygon".equals(geometry.get("type"))) {
+            return;
+        }
+
+        attributes.put("polygonGeometry", geometry);
+        log.debug("Extracted polygon geometry for asset: {}", assetId);
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean extractPointFromAddressDetails(Map<String, Object> municipalResponse,
+            Map<String, Object> attributes, String assetId) {
         Map<String, Object> addressDetails = (Map<String, Object>) municipalResponse.get("addressDetails");
-        if (addressDetails != null) {
-            Double lat = getDoubleValue(addressDetails, "latitude");
-            Double lon = getDoubleValue(addressDetails, "longitude");
-            
-            if (lat != null && lon != null && lat != 0.0 && lon != 0.0) {
-                Map<String, Object> pointGeometry = new HashMap<>();
-                pointGeometry.put("type", "Point");
-                pointGeometry.put("coordinates", Arrays.asList(lon, lat));
-                attributes.put("pointGeometry", pointGeometry);
-                log.debug("Extracted point geometry for asset: {} at [{}, {}]", assetId, lon, lat);
+        if (addressDetails == null) {
+            return false;
+        }
+
+        Double lat = getDoubleValue(addressDetails, "latitude");
+        Double lon = getDoubleValue(addressDetails, "longitude");
+        if (lat == null || lon == null || lat == 0.0 || lon == 0.0) {
+            return false;
+        }
+
+        putPointGeometry(attributes, lon, lat);
+        log.debug("Extracted point geometry for asset: {} at [{}, {}]", assetId, lon, lat);
+        return true;
+    }
+
+    private void extractPointFromLocation(Map<String, Object> municipalResponse,
+            Map<String, Object> attributes, String assetId) {
+        String location = getStringValue(municipalResponse, "location");
+        if (location == null || !location.contains(",")) {
+            return;
+        }
+
+        try {
+            String[] parts = location.split(",");
+            if (parts.length != 2) {
                 return;
             }
-        }
-        
-        String location = getStringValue(municipalResponse, "location");
-        if (location != null && location.contains(",")) {
-            try {
-                String[] parts = location.split(",");
-                if (parts.length == 2) {
-                    Double lat = Double.parseDouble(parts[0].trim());
-                    Double lon = Double.parseDouble(parts[1].trim());
-                    
-                    if (lat != 0.0 && lon != 0.0) {
-                        Map<String, Object> pointGeometry = new HashMap<>();
-                        pointGeometry.put("type", "Point");
-                        pointGeometry.put("coordinates", Arrays.asList(lon, lat));
-                        attributes.put("pointGeometry", pointGeometry);
-                        log.debug("Extracted point geometry from location for asset: {} at [{}, {}]", assetId, lon, lat);
-                    }
-                }
-            } catch (NumberFormatException e) {
-                log.warn("Invalid location format for asset: {}, location: {}", assetId, location);
+
+            Double lat = Double.parseDouble(parts[0].trim());
+            Double lon = Double.parseDouble(parts[1].trim());
+            if (lat == 0.0 || lon == 0.0) {
+                return;
             }
+
+            putPointGeometry(attributes, lon, lat);
+            log.debug("Extracted point geometry from location for asset: {} at [{}, {}]", assetId, lon, lat);
+        } catch (NumberFormatException e) {
+            log.warn("Invalid location format for asset: {}, location: {}", assetId, location);
         }
+    }
+
+    private void putPointGeometry(Map<String, Object> attributes, Double lon, Double lat) {
+        Map<String, Object> pointGeometry = new HashMap<>();
+        pointGeometry.put("type", "Point");
+        pointGeometry.put("coordinates", Arrays.asList(lon, lat));
+        attributes.put(POINT_GEOMETRY, pointGeometry);
     }
     
     private Double getDoubleValue(Map<String, Object> map, String key) {
@@ -220,11 +273,11 @@ public class AssetServiceAdapter implements MunicipalServiceAdapter {
         if (value == null) {
             return null;
         }
-        if (value instanceof Double) {
-            return (Double) value;
+        if (value instanceof Double doubleValue) {
+            return doubleValue;
         }
-        if (value instanceof Number) {
-            return ((Number) value).doubleValue();
+        if (value instanceof Number number) {
+            return number.doubleValue();
         }
         try {
             return Double.parseDouble(value.toString());
@@ -241,8 +294,8 @@ public class AssetServiceAdapter implements MunicipalServiceAdapter {
 
     private Long getLongValue(Map<String, Object> map, String key) {
         Object value = map.get(key);
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
+        if (value instanceof Number number) {
+            return number.longValue();
         }
         return null;
     }

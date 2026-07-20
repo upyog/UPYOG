@@ -47,8 +47,8 @@ const MyApplications = ({ view }) => {
               <KeyNote keyValue={t("TL_LOCALIZATION_OWNER_NAME")} note={t(ownerNames)} />
               <KeyNote keyValue={t("TL_HOME_SEARCH_RESULTS_APP_STATUS_LABEL")} note={t(application?.TL_HOME_SEARCH_RESULTS_APP_STATUS_LABEL)} />
 
-              <div className="action-button-myapplication">
-                <div style={{ marginBottom: "8px" }}>
+                <div className="action-button-myapplication">
+                <div className="ndc-margin-bottom-8">
                   <Link to={`/upyog-ui/citizen/ndc/search/application-overview/${application?.Applications?.applicationNo}`}>
                     <SubmitBar label={t("CS_VIEW_DETAILS")} />
                   </Link>
@@ -71,11 +71,11 @@ const MyApplications = ({ view }) => {
 
       {/* Pagination Controls */}
       {applicationsList.length > itemsPerPage && (
-        <div className="ndc-application-overview-custom" >
+          <div className="ndc-application-overview-custom" >
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((prev) => prev - 1)}
-            style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
+            className={currentPage === 1 ? 'ndc-cursor-not-allowed' : 'ndc-cursor-pointer'}
           >
             &#8592; Prev
           </button>
@@ -87,7 +87,7 @@ const MyApplications = ({ view }) => {
           <button
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((prev) => prev + 1)}
-            style={{ cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+            className={currentPage === totalPages ? 'ndc-cursor-not-allowed' : 'ndc-cursor-pointer'}
           >
             Next &#8594;
           </button>
@@ -96,7 +96,7 @@ const MyApplications = ({ view }) => {
 
       <p className="ndc-application-list">
         {t("PTR_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}{" "}
-        <span className="link" style={{ display: "block" }}>
+        <span className="link ndc-block-display">
           <Link to="/upyog-ui/citizen/ndc/new-application">{t("NDC_COMMON_CLICK_HERE_TO_REGISTER_NEW_APPLICATION")}</Link>
         </span>
       </p>

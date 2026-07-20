@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 
 import org.egov.encryption.config.EncryptionConfiguration;
 import org.egov.tracer.config.TracerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,12 +25,16 @@ import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
 
-
+/**
+ * Spring Boot entry point for the Community Hall Booking municipal service.
+ * <p>
+ * Enables scheduling with ShedLock-backed distributed locks, imports tracer/encryption configuration,
+ * and registers shared JSON/JDBC beans used across the module.
+ */
 @Import({
 		TracerConfiguration.class , EncryptionConfiguration.class })
 @SpringBootApplication
-@ComponentScan(basePackages = { "org.upyog.chb"})
-//@EnableFeignClients
+@ComponentScan(basePackages = { "org.upyog.chb" })
 @EnableTransactionManagement
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "PT30M")
@@ -40,32 +43,29 @@ public class CommunityHallBookingApplication {
 	@Value("${app.timezone}")
 	private String timeZone;
 
-	//TODO: is devtools disable required on prod
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
     	System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(CommunityHallBookingApplication.class, args);
     }
-    
-	/*
-	 * @Bean public RedisTemplate<String, CommunityHallSlotAvailabilityDetail>
-	 * redisTemplate(RedisConnectionFactory connectionFactory) {
-	 * RedisTemplate<String, CommunityHallSlotAvailabilityDetail> template = new
-	 * RedisTemplate<>(); template.setConnectionFactory(connectionFactory);
-	 * template.setKeySerializer(new StringRedisSerializer());
-	 * template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer()); //
-	 * Add some specific configuration here. Key serializers, etc. return template;
-	 * }
+
+	/**
+	 * Shared {@link ObjectMapper} configured for API deserialization and timezone-aware timestamps.
+	 *
+	 * @return mapper that ignores unknown JSON properties and uses the configured application timezone
 	 */
-    
-	
 	@Bean
 	public ObjectMapper objectMapper() {
 		return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.setTimeZone(TimeZone.getTimeZone(timeZone))//.registerModule(new JavaTimeModule())
-				//Added to resolve parsing issue of String to Local date in NotificationConsumer
+				.setTimeZone(TimeZone.getTimeZone(timeZone))
 				.findAndRegisterModules();
 	}
 
+	/**
+	 * Registers the HTTP message converter that uses the module {@link ObjectMapper}.
+	 *
+	 * @param objectMapper shared JSON mapper bean
+	 * @return Jackson converter for Spring MVC responses
+	 */
 	@Bean
 	public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
 		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
@@ -95,7 +95,4 @@ public class CommunityHallBookingApplication {
 				.build()
 		);
 	}
-	 
-    
-
 }

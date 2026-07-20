@@ -210,7 +210,7 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 
 		String adminToken = this.microserviceUtils.generateAdminToken(tenantid);
 		session.setAttribute(MS_USER_TOKEN, userToken);
-		CustomUserDetails user = this.microserviceUtils.getUserDetails(userToken, adminToken);
+		CustomUserDetails user = this.microserviceUtils.getUserDetails(userToken, adminToken, tenantid);
 		if (null == user || user.getId() == null)
 			throw new NotAuthorizedException("Invalid Token");
 		session.setAttribute(MS_TENANTID_KEY, user.getTenantId());

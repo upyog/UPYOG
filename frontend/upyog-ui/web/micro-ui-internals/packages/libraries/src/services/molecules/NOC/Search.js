@@ -2,6 +2,7 @@ import React from "react";
 import { NOCService } from "../../elements/NOC";
 import { OBPSService } from "../../elements/OBPS";
 import { Link } from "react-router-dom";
+import "./Search.css";
 
 export const NOCSearch = {
   all: async (tenantId, filters = {}) => {

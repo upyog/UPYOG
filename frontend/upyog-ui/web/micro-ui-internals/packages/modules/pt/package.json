@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "axios": "0.21.1",
-    "@nudmcdgnpm/digit-ui-react-components": "4.0.0",
+    "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
     "@nudmcdgnpm/digit-ui-module-reports": "1.0.0",
     "lodash.merge": "^4.6.2",
     "react-hook-form": "^7.51.0"

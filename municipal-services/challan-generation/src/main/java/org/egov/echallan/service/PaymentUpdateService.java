@@ -1,11 +1,10 @@
 package org.egov.echallan.service;
 
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.echallan.config.ChallanConfiguration;
-import org.egov.echallan.enums.ChallanStatusEnum;
 import org.egov.echallan.model.AuditDetails;
 import org.egov.echallan.model.Challan;
 import org.egov.echallan.model.Challan.StatusEnum;
@@ -25,38 +24,39 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
- 
+
 
 @Service
 @Slf4j
 public class PaymentUpdateService {
-	
-	@Autowired
-	private ObjectMapper mapper; 
-	
-	@Autowired
-	private ChallanService challanService;
-	
-	@Autowired
-	private Producer producer;
-	
-	@Autowired
-	private ChallanConfiguration config;
-	
-	@Autowired
-	 private CommonUtils commUtils;
 
-	@Autowired(required = false)
-	private WorkflowIntegrator workflowIntegrator;
-	
-	public void process(HashMap<String, Object> record) {
+	private final ObjectMapper mapper;
+	private final ChallanService challanService;
+	private final Producer producer;
+	private final ChallanConfiguration config;
+	private final CommonUtils commUtils;
+	private final WorkflowIntegrator workflowIntegrator;
+
+	@Autowired
+	public PaymentUpdateService(ObjectMapper mapper, ChallanService challanService, Producer producer,
+			ChallanConfiguration config, CommonUtils commUtils,
+			@Autowired(required = false) WorkflowIntegrator workflowIntegrator) {
+		this.mapper = mapper;
+		this.challanService = challanService;
+		this.producer = producer;
+		this.config = config;
+		this.commUtils = commUtils;
+		this.workflowIntegrator = workflowIntegrator;
+	}
+
+	public void process(Map<String, Object> messagePayload) {
 
 		try {
-			log.info("Process for object"+ record);
-			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+			log.info("Process for object"+ messagePayload);
+			PaymentRequest paymentRequest = mapper.convertValue(messagePayload, PaymentRequest.class);
 			RequestInfo requestInfo = paymentRequest.getRequestInfo();
 			//Update the echallan only when the payment is fully done.
-			if( paymentRequest.getPayment().getTotalAmountPaid().compareTo(paymentRequest.getPayment().getTotalDue())!=0) 
+			if( paymentRequest.getPayment().getTotalAmountPaid().compareTo(paymentRequest.getPayment().getTotalDue())!=0)
 				return;
 			List<PaymentDetail> paymentDetails = paymentRequest.getPayment().getPaymentDetails();
 			for (PaymentDetail paymentDetail : paymentDetails) {
@@ -80,7 +80,6 @@ public class PaymentUpdateService {
 								challan.getWorkflow().getAction());
 
 						challan.setApplicationStatus(StatusEnum.PAID);
-						String status = String.valueOf(ChallanStatusEnum.CHALLAN_GENERATED);
 						challan.setChallanStatus(nextStatus);
 						challan.setReceiptNumber(paymentDetail.getReceiptNumber());
 					}

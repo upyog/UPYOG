@@ -43,44 +43,58 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
 
+  const isCancelled = application?.bookingStatus === "CANCELLED";
+
+  const { data: recieptData } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId || application?.tenantId,
+      businessService: "chb-services",
+      consumerCodes: application?.bookingNo,
+      isEmployee: false,
+    },
+    { enabled: !!(isCancelled && application?.bookingNo) }
+  );
+
+  const payment = recieptData?.Payments?.[0];
+  const isOnlinePayment = payment?.paymentMode === "ONLINE";
+  const originalTxnId = payment?.transactionNumber;
+
+  // Use the same refund API as detail pages for accurate pipeline status (INITIATED, SUCCESS, etc.)
+  // bookingNo is included in params purely as a query-key discriminator so each card
+  // in the list has a unique React Query cache entry (prevents shared-key collisions).
+  const { data: refundData } = Digit.Hooks.useCustomAPIHook(
+    "/pg-service/refund/v1/_search",
+    {
+      originalTxnId: originalTxnId || "",
+      tenantId: payment?.tenantId || tenantId || application?.tenantId,
+      bookingNo: application?.bookingNo,
+    },
+    {},
+    {},
+    {
+      enabled: !!(isCancelled && isOnlinePayment && originalTxnId),
+    }
+  );
+
+  const refund = refundData?.Refund?.[0] || refundData?.Refunds?.[0] || refundData?.[0];
+  // Show exact refund pipeline status from the API (INITIATED, SUCCESS, etc.)
+  const refundStatus = refund?.status || refund?.refundStatus || null;
+
   const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
     tenantId: application?.tenantId,
     filters: {
       bookingId:application?.bookingId,
-      communityHallCode: application?.communityHallCode,
+      venueCode: application?.venueCode,
       bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
       bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-      hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
-      isTimerRequired:true
+      unitCode: application?.bookingSlotDetails?.[0]?.unitCode,
+      isTimerRequired:true,
+      fromTime:application?.bookingSlotDetails?.[0]?.bookingFromTime,
+      toTime:application?.bookingSlotDetails?.[0]?.bookingToTime
     },
     enabled: false, // Disable automatic refetch
   });
-  /*
-  const [timeRemaining, setTimeRemaining] = useState(application?.timerValue);
-  // Initialize time remaining on mount or when application changes
-  useEffect(() => {
-    setTimeRemaining(application?.timerValue || 0);
-  }, [application?.timerValue]);
-  
-  // Timer logic
-  useEffect(() => {
-    if (timeRemaining <= 0) return;
-  
-    const interval = setInterval(() => {
-      setTimeRemaining((prevTime) => Math.max(prevTime - 1, 0));
-    }, 1000);
-  
-    return () => clearInterval(interval); // Cleanup interval
-  }, [timeRemaining]);
-  
-  // Format seconds into "minutes:seconds" format
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
-  };
-
-  */
+ 
   const getBookingDateRange = (bookingSlotDetails) => {
     if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
       return t("CS_NA");
@@ -94,30 +108,35 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
       return startDate && endDate ? `${startDate}  -  ${endDate}` : t("CS_NA");
     }
   };
+
+  
   const handleMakePayment = async () => {
     try {
     const result = await refetch();
     let SlotSearchData={
       tenantId: application?.tenantId,
       bookingId:application?.bookingId,
-      communityHallCode: application?.communityHallCode,
+      venueCode: application?.venueCode,
       bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
       bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-      hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
-      isTimerRequired:true
+      unitCode: application?.bookingSlotDetails?.[0]?.unitCode,
+      isTimerRequired:true,
+      fromTime:application?.bookingSlotDetails?.[0]?.bookingFromTime,
+      toTime:application?.bookingSlotDetails?.[0]?.bookingToTime
 
     }
     const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
       (slot) => slot.slotStaus === "BOOKED"
     );
 
+
     if (isSlotBooked) {
       setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
     } else {
-      navigate({
-        pathname: `/upyog-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,
-        state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data.timerValue ,SlotSearchData:SlotSearchData },
-      });
+      navigate(`/upyog-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,
+        {
+        state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data?.timerValue ,SlotSearchData:application },
+    });
     }
   } catch (error) {
     setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
@@ -132,23 +151,40 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
       return () => clearTimeout(timer); // Clear timer on cleanup
     }
   }, [showToast]);
+
   return (
     <Card>
-       {/* <div style={{ display: "flex", justifyContent: "space-between" }}> */}
-       <KeyNote keyValue={t("CHB_BOOKING_NO")} note={application?.bookingNo} />
-            {/* { timeRemaining>0 && (<CardSubHeader 
-              style={{ 
-                textAlign: 'right', 
-                fontSize: "24px"
-              }}
-            >
-              {t("CS_TIME_REMAINING")}: <span className="astericColor">{formatTime(timeRemaining)}</span>
-            </CardSubHeader>)}
-        </div> */}
+
+      <KeyNote keyValue={t("CHB_BOOKING_NO")} note={application?.bookingNo} />
       <KeyNote keyValue={t("CHB_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />
-      <KeyNote keyValue={t("CHB_COMMUNITY_HALL_NAME")} note={t(`${application?.communityHallCode}`)} />
+      <KeyNote keyValue={t("CHB_VENUE_NAME")} note={t(`${application?.venueCode}`)} />
       <KeyNote keyValue={t("CHB_BOOKING_DATE")} note={getBookingDateRange(application?.bookingSlotDetails)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
+      {isCancelled && (
+        <KeyNote
+          keyValue={t("CHB_REFUND_STATUS") || "Refund Status"}
+          note={
+            <span
+              style={{
+                fontWeight: "600",
+                color: (refundStatus?.toUpperCase() === "SUCCESS" || refundStatus?.toUpperCase() === "SUCCESSFUL" || refundStatus?.toUpperCase() === "COMPLETED" || refundStatus?.toUpperCase() === "REFUNDED")
+                  ? "#155724"
+                  : (refundStatus?.toUpperCase() === "INITIATED" || refundStatus?.toUpperCase() === "IN_PROGRESS" || refundStatus?.toUpperCase() === "INPROGRESS")
+                  ? "#856404"
+                  : refundStatus
+                  ? "#383D41"
+                  : "#6C757D",
+              }}
+            >
+              {refundStatus
+                ? refundStatus
+                : isOnlinePayment
+                ? t("CHB_REFUND_NOT_INITIATED") || t("CHB_REFUND_NOT_INITIATED")
+                : t("CHB_OFFLINE_PAYMENT_NO_REFUND") || t("CHB_OFFLINE_PAYMENT_NO_REFUND")}
+            </span>
+          }
+        />
+      )}
       <div>
         <Link to={`/upyog-ui/citizen/chb/application/${application?.bookingNo}/${application?.tenantId}`}>
           <SubmitBar label={buttonLabel} />

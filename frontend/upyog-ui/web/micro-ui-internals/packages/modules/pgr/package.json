@@ -14,7 +14,7 @@
     "react-redux": "^9.0.0"
   },
   "dependencies": { 
-    "@nudmcdgnpm/digit-ui-react-components": "4.0.0",
+    "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
     "lodash.merge": "^4.6.2",
     "react-hook-form": "^7.51.0",
     "redux": "4.1.2",

@@ -15,7 +15,7 @@ public class AllotmentQueryBuilder {
             "alternate_contact_no, email_id, agreement_start_date, agreement_end_date, " +
             "duration, rate, monthly_rent, advance_payment, allotment_date, " +
             "advance_payment_date, eoffice_file_no, asset_reference_no, property_type, " +
-            "citizen_request_letter, allotment_letter, signed_deed, " +
+            "citizen_request_letter, allotment_letter, signed_deed, billing_cycle, " +
             "createdby, lastmodifiedby, createdtime, lastmodifiedtime " +
             "FROM ug_em_allotment_details";
     

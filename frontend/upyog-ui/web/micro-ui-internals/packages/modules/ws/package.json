@@ -13,7 +13,7 @@
     "react-router-dom": "^6.23.0"
   },
   "dependencies": {
-    "@nudmcdgnpm/digit-ui-react-components": "4.0.0",
+    "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
     "@nudmcdgnpm/digit-ui-module-reports": "1.0.0",
     "react-hook-form": "^7.51.0",
     "xlsx": "0.17.5"

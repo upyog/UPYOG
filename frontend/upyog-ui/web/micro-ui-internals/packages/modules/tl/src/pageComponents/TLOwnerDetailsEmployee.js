@@ -24,16 +24,15 @@ const createOwnerDetails = () => ({
   instituionName: "",
   fatherOrHusbandName: "",
   relationship: "",
-  emailId: "",  
+  emailId: "",
   permanentAddress: "",
   ownerType: "",
   gender: "",
-  subOwnerShipCategory:"",
+  subOwnerShipCategory: "",
   correspondenceAddress: "",
-  key: Date.now(),
+  key: Date.now()
 });
-
-const OwnerForm = (_props) => {
+const OwnerForm = _props => {
   const {
     owner,
     index,
@@ -55,23 +54,36 @@ const OwnerForm = (_props) => {
     isSameAsPropertyOwner,
     previousLicenseDetails,
     setPreviousLicenseDetails,
-    genderTypeData,
+    genderTypeData
   } = _props;
-
-  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
+  const {
+    control,
+    formState: localFormState,
+    watch,
+    setError: setLocalError,
+    clearErrors: clearLocalErrors,
+    setValue,
+    trigger
+  } = useForm();
   const formValue = watch();
-  const { errors } = localFormState;
+  const {
+    errors
+  } = localFormState;
   const stateId = Digit.ULBService.getStateId();
   const [part, setPart] = useState({});
-  const { ownershipCategory: { code: keyToSearchOwnershipSubtype } = {} } = formData;
-  const { data: institutionOwnershipTypeOptions } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "common-masters", "TradeOwnershipSubType", {
-    keyToSearchOwnershipSubtype : keyToSearchOwnershipSubtype ? keyToSearchOwnershipSubtype.split(".")[0]:undefined,
+  const {
+    ownershipCategory: {
+      code: keyToSearchOwnershipSubtype
+    } = {}
+  } = formData;
+  const {
+    data: institutionOwnershipTypeOptions
+  } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "common-masters", "TradeOwnershipSubType", {
+    keyToSearchOwnershipSubtype: keyToSearchOwnershipSubtype ? keyToSearchOwnershipSubtype.split(".")[0] : undefined
   });
-
   const typeOfOwner = useMemo(() => {
     if (formData?.ownershipCategory?.code?.includes("SINGLEOWNER")) return "SINGLEOWNER";
-    if (formData?.ownershipCategory?.code?.includes("INSTITUTIONAL")) return "INSTITUTIONAL";
-    else return "MULTIOWNER";
+    if (formData?.ownershipCategory?.code?.includes("INSTITUTIONAL")) return "INSTITUTIONAL";else return "MULTIOWNER";
   }, [formData?.ownershipCategory]);
 
   const ownerTypesMenu = useMemo(
@@ -100,7 +112,6 @@ const OwnerForm = (_props) => {
   useEffect(() => {
     trigger();
   }, []);
-
   useEffect(() => {
     if ((window.location.href.includes("tl/renew-application-details") || isSameAsPropertyOwner == true || isSameAsPropertyOwner === "true") && formData?.cpt?.details) {
       if (typeOfOwner === "INSTITUTIONAL") {
@@ -125,66 +136,63 @@ const OwnerForm = (_props) => {
   }, [formData?.cpt?.details?.propertyId, formData?.cptId?.Id, formData, owner, isSameAsPropertyOwner]);
 
   useEffect(() => {
-    if (!(_.isEqual(formValue, part))) {
-      setPart({...formValue});
-
-      Object.keys(formValue)?.map((data) => {
+    if (!_.isEqual(formValue, part)) {
+      setPart({
+        ...formValue
+      });
+      Object.keys(formValue)?.map(data => {
         if (data != "key" && formValue[data] != undefined && formValue[data] != "" && formValue[data] != null && !isErrors) {
           setIsErrors(true);
         }
       });
-      setOwners((prev) =>
-        prev?.map((o) => {
-          return o.key && o.key === owner.key ? { ...o, ...formValue } : { ...o };
-        })
-      );
+      setOwners(prev => prev?.map(o => {
+        return o.key && o.key === owner.key ? {
+          ...o,
+          ...formValue
+        } : {
+          ...o
+        };
+      }));
       trigger();
     }
   }, [formValue]);
-
   useEffect(() => {
     if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
-      setError(config.key, { type: errors });
+      setError(config.key, {
+        type: errors
+      });
     } else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
       clearErrors(config.key);
     }
   }, [errors]);
-
-  const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
+  const errorStyle = {
+    width: "70%",
+    marginLeft: "30%",
+    fontSize: "12px",
+    marginTop: "-21px"
+  };
   let isMulitpleOwners = false;
   if (formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS") isMulitpleOwners = true;
-
-  return (
-    <React.Fragment>
+  return <React.Fragment>
       {/* <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false} forcedError={t(errors)}> */}
-        <div style={{ marginBottom: "16px" }}>
-          <div
-            style={
-              typeOfOwner === "MULTIOWNER"
-                ? { border: "1px solid #D6D5D4", padding: "16px", marginTop: "8px", borderRadius: "4px", background: "#FAFAFA" }
-                : {}
-            }
-          >
-            {allOwners?.length > 1 ? (
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <div onClick={() => removeOwner(owner)} style={{ padding: "5px", cursor: "pointer", textAlign: "right" }}>
+        <div className="tl-auto-97">
+          <div style={typeOfOwner === "MULTIOWNER" ? {
+        border: "1px solid #D6D5D4",
+        padding: "16px",
+        marginTop: "8px",
+        borderRadius: "4px",
+        background: "#FAFAFA"
+      } : {}}>
+            {allOwners?.length > 1 ? <div className="tl-auto-98">
+                <div onClick={() => removeOwner(owner)} className="tl-auto-99">
                   <span>
-                    <svg
-                      style={{ float: "right", position: "relative", bottom: "5px" }}
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-auto-100">
                       <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill="#494848" />
                     </svg>
                   </span>
                 </div>
-              </div>
-            ) : null}
-            {typeOfOwner === "INSTITUTIONAL" && (
-              <React.Fragment>
+              </div> : null}
+            {typeOfOwner === "INSTITUTIONAL" && <React.Fragment>
                 <LabelFieldPair>
                   <CardLabel>{`${t("TL_INSTITUTION_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
@@ -395,11 +403,11 @@ const OwnerForm = (_props) => {
                 </LabelFieldPair>
                 <CardLabelError style={errorStyle}>{localFormState.touchedFields?.emailId ? errors?.emailId?.message : ""}</CardLabelError>
               </React.Fragment>
-            )}
+            }
             {typeOfOwner !== "INSTITUTIONAL" && (
               <React.Fragment>
                 <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${ t("TL_OWNER_S_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+                  <CardLabel className="card-label-smaller">{`${t("TL_OWNER_S_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
                     <Controller
                       control={control}
@@ -434,7 +442,7 @@ const OwnerForm = (_props) => {
                 <CardLabelError style={errorStyle}>{localFormState.touchedFields?.name ? errors?.name?.message : ""}</CardLabelError>
                 {/* <LabelFieldPair>
                   <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}</CardLabel>
-                </LabelFieldPair> */}
+                 </LabelFieldPair> */}
                 <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{`${t("TL_OWNER_S_MOBILE_NUM_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field">
@@ -644,57 +652,61 @@ const OwnerForm = (_props) => {
             </div>
         </div>
       {/* </FormStep> */}
-    </React.Fragment>
-  );
+    </React.Fragment>;
 };
-
-const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
-  const { t } = useTranslation();
-  const { pathname } = useLocation();
+const TLOwnerDetailsEmployee = ({
+  config,
+  onSelect,
+  userType,
+  formData,
+  setError,
+  formState,
+  clearErrors
+}) => {
+  const {
+    t
+  } = useTranslation();
+  const {
+    pathname
+  } = useLocation();
   const isEditScreen = pathname.includes("/modify-application/");
   let isSameAsPropertyOwner = formData?.ownershipCategory?.isSameAsPropertyOwner;
-  const [owners, setOwners] = useState((formData?.owners || [createOwnerDetails()] ));
-  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+  const [owners, setOwners] = useState(formData?.owners || [createOwnerDetails()]);
+  const [focusIndex, setFocusIndex] = useState({
+    index: -1,
+    type: ""
+  });
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [isErrors, setIsErrors] = useState(false);
   const [previousLicenseDetails, setPreviousLicenseDetails] = useState(formData?.tradedetils1 || []);
-
-  const { data: mdmsData, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
-    "UsageCategory",
-    "OccupancyType",
-    "Floor",
-    "OwnerType",
-    "OwnerShipCategory",
-    "Documents",
-    "SubOwnerShipCategory",
-    "OwnerShipCategory",
-  ]);
-
-  const { data: genderTypeData } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "common-masters", ["GenderType"]);
-
+  const {
+    data: mdmsData,
+    isLoading
+  } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", ["UsageCategory", "OccupancyType", "Floor", "OwnerType", "OwnerShipCategory", "Documents", "SubOwnerShipCategory", "OwnerShipCategory"]);
+  const {
+    data: genderTypeData
+  } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "common-masters", ["GenderType"]);
   const addNewOwner = () => {
     const newOwner = createOwnerDetails();
-    setOwners((prev) => [...prev, newOwner]);
+    setOwners(prev => [...prev, newOwner]);
   };
-
-  const removeOwner = (owner) => {
-    setOwners((prev) => prev.filter((o) => o.key != owner.key));
+  const removeOwner = owner => {
+    setOwners(prev => prev.filter(o => o.key != owner.key));
   };
-
   useEffect(() => {
-    if(formData?.ownershipCategory?.code?.includes("INSTITUTIONAL") && owners.length == 1 && formData?.tradedetils1 && !owners?.[0]?.subOwnerShipCategory)
-    {
-      setOwners([{...owners[0],subOwnerShipCategory:formData?.ownershipCategory}])
+    if (formData?.ownershipCategory?.code?.includes("INSTITUTIONAL") && owners.length == 1 && formData?.tradedetils1 && !owners?.[0]?.subOwnerShipCategory) {
+      setOwners([{
+        ...owners[0],
+        subOwnerShipCategory: formData?.ownershipCategory
+      }]);
     }
-  },[owners])
-
+  }, [owners]);
   useEffect(() => {
-    if((formData?.ownershipCategory?.isSameAsPropertyOwner == true || formData?.ownershipCategory?.isSameAsPropertyOwner === "true") && JSON.parse(sessionStorage.getItem("ownersFromProperty")) && !(_.isEqual(owners,JSON.parse(sessionStorage.getItem("ownersFromProperty")))) )
-    {
+    if ((formData?.ownershipCategory?.isSameAsPropertyOwner == true || formData?.ownershipCategory?.isSameAsPropertyOwner === "true") && JSON.parse(sessionStorage.getItem("ownersFromProperty")) && !_.isEqual(owners, JSON.parse(sessionStorage.getItem("ownersFromProperty")))) {
       setOwners([...JSON.parse(sessionStorage.getItem("ownersFromProperty"))]);
     }
-  },[formData, formData?.cpt?.details?.propertyId])
+  }, [formData, formData?.cpt?.details?.propertyId]);
   useEffect(() => {
     if (formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS") {
       if (owners.length > 1) {
@@ -702,52 +714,50 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
         clearErrors("mulipleOwnerError");
       } else if (owners.length === 1) {
         // Only one owner, set the error
-        setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+        setError("mulipleOwnerError", {
+          type: "owner_missing",
+          message: `TL_ERROR_MULTIPLE_OWNER`
+        });
       }
     } else {
       // Not a multiple owner case, clear any errors
       clearErrors("mulipleOwnerError");
     }
-  
+
     // Map the owners data and trigger onSelect
-    const data = owners?.map((e) => {
+    const data = owners?.map(e => {
       return e;
     });
     onSelect(config?.key, data);
   }, [owners, clearErrors, setError, onSelect]);
-  
-
   useEffect(() => {
     onSelect("tradedetils1", previousLicenseDetails);
   }, [previousLicenseDetails]);
-
   useEffect(() => {
     if (window.location.href.includes("tl/new-application")) {
       setOwners([createOwnerDetails()]);
-      console.log("ownersowners",owners)
-      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length < 2)
-      {
-        setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+      console.log("ownersowners", owners);
+      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length < 2) {
+        setError("mulipleOwnerError", {
+          type: "owner_missing",
+          message: `TL_ERROR_MULTIPLE_OWNER`
+        });
       }
-        
     }
   }, [formData?.ownershipCategory?.code]);
-
   let isRenewal = window.location.href.includes("tl/renew-application-details");
   if (window.location.href.includes("tl/edit-application-details")) isRenewal = true;
-
   useEffect(() => {
-    if (formData?.tradeUnits?.length > 0 && !isRenewal ) {
+    if (formData?.tradeUnits?.length > 0 && !isRenewal) {
       let flag = true;
-      owners?.map((data) => {
-        Object.keys(data)?.map((dta) => {
+      owners?.map(data => {
+        Object.keys(data)?.map(dta => {
           if (dta != "key" && data[dta]) flag = false;
         });
       });
-      formData?.tradeUnits?.map((data) => {
-        Object.keys(data)?.map((dta) => {
-          if (dta != "key" && data[dta] != undefined && data[data] != "" && data[data] != null) {
-          } else {
+      formData?.tradeUnits?.map(data => {
+        Object.keys(data)?.map(dta => {
+          if (dta != "key" && data[dta] != undefined && data[data] != "" && data[data] != null) {} else {
             if (flag) setOwners([createOwnerDetails()]);
             flag = false;
           }
@@ -755,7 +765,6 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
       });
     }
   }, [formData?.tradeUnits?.[0]?.tradeCategory?.code]);
-
   const commonProps = {
     focusIndex,
     allOwners: owners,
@@ -775,28 +784,19 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
     isSameAsPropertyOwner,
     previousLicenseDetails,
     setPreviousLicenseDetails,
-    genderTypeData,
+    genderTypeData
   };
-
   if (isEditScreen) {
     return <React.Fragment />;
   }
-
-  return (
-    <React.Fragment>
-      {owners?.map((owner, index) => (
-        <OwnerForm key={owner.key} index={index} owner={owner} {...commonProps} />
-      ))}
-      {formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS" ? (
-        <div>
-          <LinkButton label={t("TL_NEW_OWNER_DETAILS_ADD_OWN")} onClick={addNewOwner} style={{ color: "#a82227", width: "fit-content" }} />
-          <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-24px" }}>
+  return <React.Fragment>
+      {owners?.map((owner, index) => <OwnerForm key={owner.key} index={index} owner={owner} {...commonProps} />)}
+      {formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS" ? <div>
+          <LinkButton label={t("TL_NEW_OWNER_DETAILS_ADD_OWN")} onClick={addNewOwner} className="tl-auto-101" />
+          <CardLabelError className="tl-auto-102">
             {t(formState.errors?.mulipleOwnerError?.message || "")}
           </CardLabelError>
-        </div>
-      ) : null}
-    </React.Fragment>
-  );
+        </div> : null}
+    </React.Fragment>;
 };
-
 export default TLOwnerDetailsEmployee;

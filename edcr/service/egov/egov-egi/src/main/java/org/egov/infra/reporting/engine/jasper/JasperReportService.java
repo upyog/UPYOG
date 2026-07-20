@@ -1,51 +1,3 @@
-/*
- *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
- *
- *     Copyright (C) 2017  eGovernments Foundation
- *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
- *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
- *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces,
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *            derived works should carry eGovernments Foundation logo on the top right corner.
- *
- *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines,
- *            please contact contact@egovernments.org
- *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
- *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
- *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- *
- */
-
 package org.egov.infra.reporting.engine.jasper;
 
 import static org.egov.infra.reporting.engine.ReportFormat.CSV;
@@ -79,10 +31,10 @@ import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.JasperReportsContext;
 import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.HtmlExporter;
@@ -92,7 +44,6 @@ import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.query.JRHibernateQueryExecuterFactory;
-import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.Exporter;
 import net.sf.jasperreports.export.ExporterConfiguration;
 import net.sf.jasperreports.export.ExporterOutput;
@@ -109,9 +60,29 @@ import net.sf.jasperreports.export.SimpleXlsExporterConfiguration;
 
 public class JasperReportService extends AbstractReportService<JasperReport> {
 
+	 static {
+            /*
+                Configure Jasper to use JRThreadSubreportRunnerFactory for executing
+                subreports, which helps handle subreport processing efficiently.
+            */
+	        System.setProperty(
+	            "net.sf.jasperreports.subreport.runner.factory",
+	            "net.sf.jasperreports.engine.fill.JRThreadSubreportRunnerFactory"
+	        );
+            /*
+                Specify the custom jasperreports.properties file so JasperReports
+                loads application-specific report configuration (fonts, export settings,
+                performance-related properties, etc.) during report generation.
+            */
+	        System.setProperty(
+	            DefaultJasperReportsContext.PROPERTIES_FILE,
+	            "config/jasperreports.properties"
+	        );
+	    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JasperReportService.class);
 
-    private static final String TEMPLATE_EXTENSION = ".jasper";
+    private static final String TEMPLATE_EXTENSION = ".jrxml";
     private static final String JASPER_PROPERTIES_FILE = "config/jasperreports.properties";
     private static final String EXCEPTION_IN_REPORT_CREATION = "Error occurred while generating report.";
     private static final String PRINT_PDF_JAVASCRIPT = "this.print()";
@@ -119,9 +90,13 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /*
+    The report compiling logic is changed to compile the report template every time instead of caching it.
+    This is done to ensure that any changes made to the report template are reflected in the generated report without requiring a restart of the application.
+    The caching logic has been removed from the constructor and the createReportFromSql, createReportFromJavaBean, and createReportFromHql methods.
+     */
     public JasperReportService(int templateCacheMinSize, int templateCacheMaxSize) {
-        super(templateCacheMinSize, templateCacheMaxSize);
-        System.setProperty(DefaultJasperReportsContext.PROPERTIES_FILE, JASPER_PROPERTIES_FILE);
+    	super(0, 0);
     }
 
     @Override
@@ -129,23 +104,38 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
         return TEMPLATE_EXTENSION;
     }
 
+    /*
+    Generates a Jasper report using the supplied JRXML template and database connection. The template is compiled, populated with data
+    by executing its SQL queries, exported to the requested format,and returned as a ReportOutput.
+    */
     @Override
     protected ReportOutput createReportFromSql(ReportRequest reportInput, Connection connection) {
         try {
-            JasperPrint jasperPrint = JasperFillManager.fillReport(getTemplate(reportInput.getReportTemplate()),
-                    reportInput.getReportParams(), connection);
+
+            InputStream is = getClass().getClassLoader()
+                    .getResourceAsStream(reportInput.getReportTemplate());
+
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(
+                    jasperReport,
+                    reportInput.getReportParams(),
+                    connection
+            );
+
             return new ReportOutput(exportReport(reportInput, jasperPrint), reportInput);
-        } catch (JRException | IOException e) {
+
+        } catch (Exception e) {
             LOGGER.error(EXCEPTION_IN_REPORT_CREATION, e);
         }
         return null;
     }
-
     @Override
     protected ReportOutput createReportFromJavaBean(ReportRequest reportInput) {
         try {
             Object reportData = reportInput.getReportInputData();
             JRDataSource dataSource;
+
             if (reportData == null) {
                 dataSource = new JREmptyDataSource();
             } else if (reportData.getClass().isArray()) {
@@ -155,29 +145,55 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
             } else {
                 dataSource = new JRBeanArrayDataSource(new Object[]{reportData}, false);
             }
-            JasperPrint jasperPrint = JasperFillManager.fillReport(getTemplate(reportInput.getReportTemplate()),
-                    reportInput.getReportParams(), dataSource);
+
+
+            InputStream is = getClass().getClassLoader()
+                    .getResourceAsStream(reportInput.getReportTemplate());
+
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(
+                    jasperReport,
+                    reportInput.getReportParams(),
+                    dataSource
+            );
+
             return new ReportOutput(exportReport(reportInput, jasperPrint), reportInput);
-        } catch (JRException | IOException e) {
+
+        } catch (Exception e) {
             LOGGER.error(EXCEPTION_IN_REPORT_CREATION, e);
         }
         return null;
-
     }
-
     @Override
     protected ReportOutput createReportFromHql(ReportRequest reportInput) {
         try {
+
             Map<String, Object> reportParams = reportInput.getReportParams();
             if (reportParams == null) {
                 reportParams = new HashMap<>();
             }
-            reportParams.put(JRHibernateQueryExecuterFactory.PARAMETER_HIBERNATE_SESSION, entityManager.unwrap(Session.class));
-            JasperReportsContext jrc = DefaultJasperReportsContext.getInstance();
-            jrc.setValue(JRHibernateQueryExecuterFactory.PROPERTY_HIBERNATE_FIELD_MAPPING_DESCRIPTIONS, false);
-            JasperPrint jasperPrint = JasperFillManager.getInstance(jrc).fill(getTemplate(reportInput.getReportTemplate()), reportParams);
+
+            reportParams.put(
+                    JRHibernateQueryExecuterFactory.PARAMETER_HIBERNATE_SESSION,
+                    entityManager.unwrap(Session.class)
+            );
+
+            InputStream is = getClass().getClassLoader()
+                    .getResourceAsStream(reportInput.getReportTemplate());
+
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+
+            // Here JREmptyDataSource is provided as data is passed with the use of hibernate session in reportparams.put function.
+            JasperPrint jasperPrint = JasperFillManager.fillReport(
+                    jasperReport,
+                    reportParams,
+                    new JREmptyDataSource()
+            );
+
             return new ReportOutput(exportReport(reportInput, jasperPrint), reportInput);
-        } catch (JRException | IOException e) {
+
+        } catch (Exception e) {
             LOGGER.error(EXCEPTION_IN_REPORT_CREATION, e);
         }
         return null;
@@ -186,13 +202,12 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
     @Override
     protected JasperReport loadTemplate(InputStream templateInputStream) {
         try {
-            return (JasperReport) JRLoader.loadObject(templateInputStream);
+            return JasperCompileManager.compileReport(templateInputStream);
         } catch (JRException e) {
             LOGGER.error(EXCEPTION_IN_REPORT_CREATION, e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
-
     private byte[] exportReport(ReportRequest reportInput, JasperPrint jasperPrint) throws JRException, IOException {
         try (ByteArrayOutputStream reportOutputStream = new ByteArrayOutputStream()) {
             Exporter exporter = getExporter(reportInput, jasperPrint, reportOutputStream);

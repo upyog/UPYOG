@@ -51,16 +51,12 @@ import React, { useCallback, useMemo } from "react"
                 return (
                   <div>
                     <span className="link">
-                    {user.type === "CITIZEN" && (
-                      <Link to={`${APPLICATION_PATH}/citizen/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
+                    {user.type === "CITIZEN" && <Link to={`${APPLICATION_PATH}/citizen/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
                         {row.original["bookingNo"]}
-                      </Link>
-                    )}
-                     {user.type === "EMPLOYEE" && (
-                      <Link to={`${APPLICATION_PATH}/employee/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
+                      </Link>}
+                     {user.type === "EMPLOYEE" && <Link to={`${APPLICATION_PATH}/employee/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
                         {row.original["bookingNo"]}
-                      </Link>
-                    )}
+                      </Link>}
                     </span>
                   </div>
                 );
@@ -156,16 +152,14 @@ import React, { useCallback, useMemo } from "react"
 
       return <React.Fragment>
                   
-                  <div style={{ padding: user?.type === "CITIZEN" ? "0 24px 0 24px" : ""}}>
+                  <div style={{
+      padding: user?.type === "CITIZEN" ? "0 24px 0 24px" : ""
+    }}>
                   <Header>{t("WT_SEARCH_BOOKINGS")}</Header>
-                  { user?.type === "EMPLOYEE" && (
-                  <Card className={"card-search-heading"}>
-                      <span style={{color:"#505A5F"}}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
-                  </Card>
-                  )}
-                  { user?.type === "CITIZEN" && (
-                      <span style={{color:"#505A5F", marginBottom:"10px"}}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
-                  )}
+                  {user?.type === "EMPLOYEE" && <Card className={"card-search-heading"}>
+                      <span className="wt-auto-5">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
+                  </Card>}
+                  {user?.type === "CITIZEN" && <span className="wt-auto-6">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>}
 
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
@@ -279,42 +273,23 @@ import React, { useCallback, useMemo } from "react"
                       }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField>
               </SearchForm>
-              {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
-                  {
-                  t(data.display)
-                      .split("\\n")
-                      .map((text, index) => (
-                      <p key={index} style={{ textAlign: "center" }}>
+              {!isLoading && data?.display ? <Card className="wt-auto-8">
+                  {t(data.display).split("\\n").map((text, index) => <p key={index} className="wt-auto-9">
                           {text}
-                      </p>
-                      ))
-                  }
-              </Card>
-              :(!isLoading && data !== ""? <Table
-                  t={t}
-                  data={data}
-                  totalRecords={count}
-                  columns={columns}
-                  getCellProps={(cellInfo) => {
-                  return {
-                      style: {
-                      minWidth: cellInfo.column.Header === t("WT_INBOX_APPLICATION_NO") ? "240px" : "",
-                      padding: "20px 18px",
-                      fontSize: "16px"
-                    },
-                  };
-                  }}
-                  onPageSizeChange={onPageSizeChange}
-                  currentPage={getValues("offset")/getValues("limit")}
-                  onNextPage={nextPage}
-                  onPrevPage={previousPage}
-                  pageSizeLimit={getValues("limit")}
-                  onSort={onSort}
-                  disableSort={false}
-                  sortParams={[{id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false}]}
-              />: data !== "" || isLoading && <Loader/>)}
+                      </p>)}
+              </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+        return {
+          style: {
+            minWidth: cellInfo.column.Header === t("WT_INBOX_APPLICATION_NO") ? "240px" : "",
+            padding: "20px 18px",
+            fontSize: "16px"
+          }
+        };
+      }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
+        id: getValues("sortBy"),
+        desc: getValues("sortOrder") === "DESC" ? true : false
+      }]} /> : data !== "" || isLoading && <Loader />}
               </div>
-          </React.Fragment>
-  }
-
-  export default WTSearchApplication;
+          </React.Fragment>;
+};
+export default WTSearchApplication;

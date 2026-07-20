@@ -19,7 +19,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.echallan.config.ChallanConfiguration;
 import org.egov.echallan.repository.ServiceRequestRepository;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -49,126 +48,90 @@ public class NotificationUtil {
 	private static final String CREATE_CODE = "echallan.create.sms";
 	private static final String UPDATE_CODE = "echallan.update.sms";
 	private static final String CANCEL_CODE = "echallan.cancel.sms";
-	private ChallanConfiguration config;
+	private static final String AMOUNT_PLACEHOLDER = "<amount>";
+	private static final String ULB_PLACEHOLDER = "{ULB}";
 
-	private ServiceRequestRepository serviceRequestRepository;
+	private final ChallanConfiguration config;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final RestTemplate restTemplate;
+	private final Producer producer;
+	private final ObjectMapper mapper;
 
-	private RestTemplate restTemplate;
-
-	private Producer producer;
-
-	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
 	public NotificationUtil(ChallanConfiguration config, ServiceRequestRepository serviceRequestRepository,
-			RestTemplate restTemplate, Producer producer) {
+			RestTemplate restTemplate, Producer producer, ObjectMapper mapper) {
 		this.config = config;
 		this.serviceRequestRepository = serviceRequestRepository;
 		this.restTemplate = restTemplate;
-		this.producer=producer;
+		this.producer = producer;
+		this.mapper = mapper;
 	}
 
-/*
-	public HashMap<String, String> getCustomizedMsg(RequestInfo requestInfo, Challan echallan ) {
-		HashMap<String, String> msgDetail  = fetchContentFromLocalization(requestInfo,echallan.getTenantId(),MODULE,CREATE_CODE);
-		msgDetail.put(MSG_KEY, getCreateMsg(requestInfo,echallan,msgDetail.get(MSG_KEY)));
-		return msgDetail;
-	}
-	
-	
-	public HashMap<String, String> getCustomizedMsgForUpdate(RequestInfo requestInfo, Challan echallan ) {
-		HashMap<String, String> msgDetail  =  fetchContentFromLocalization(requestInfo,echallan.getTenantId(),MODULE,UPDATE_CODE);
-		msgDetail.put(MSG_KEY, getCreateMsg(requestInfo,echallan,msgDetail.get(MSG_KEY)));
-		return msgDetail;
-	}
-	
-	public HashMap<String, String> getCustomizedMsgForCancel(RequestInfo requestInfo, Challan echallan ) {
-		HashMap<String, String> msgDetail  =  fetchContentFromLocalization(requestInfo,echallan.getTenantId(),MODULE,CANCEL_CODE);
-		msgDetail.put(MSG_KEY, getCancelMsg(requestInfo,echallan,msgDetail.get(MSG_KEY)));
-		return msgDetail;
-	}
+	private String getReplacedMsg(RequestInfo requestInfo, Challan challan, String message) {
+		message = replaceAmountPlaceholder(requestInfo, challan, message);
+		message = message.replace("{User}", challan.getCitizen().getName());
+		message = message.replace("<challanno>", challan.getChallanNo());
+		message = replaceUlbPlaceholder(challan, message);
 
-	private String getCancelMsg(RequestInfo requestInfo,Challan echallan, String message) {
-		 HashMap<String, String> businessMsg  =  fetchContentFromLocalization(requestInfo,echallan.getTenantId(),MODULE,formatCodes(echallan.getBusinessService()));
-		 message = message.replace("<citizen>",echallan.getCitizen().getName());
-	     message = message.replace("<challanno>", echallan.getChallanNo());
-	     message = message.replace("<service>", businessMsg.get(MSG_KEY));
-	     return message;
-	}
-	*/
-	private String getReplacedMsg(RequestInfo requestInfo,Challan challan, String message) {
-		if (challan.getApplicationStatus() != Challan.StatusEnum.CANCELLED) {
-			try {
-				String billDetails = getBillDetails(requestInfo, challan);
-				if (billDetails != null && !billDetails.isEmpty()) {
-					Object obj = JsonPath.parse(billDetails).read(BILL_AMOUNT_JSONPATH);
-					if (obj != null) {
-						BigDecimal amountToBePaid = new BigDecimal(obj.toString());
-						message = message.replace("<amount>", amountToBePaid.toString());
-						log.info("Replaced Amount");
-					} else {
-						// Fallback to challan amount if bill amount not available
-						if (challan.getChallanAmount() != null) {
-							message = message.replace("<amount>", challan.getChallanAmount().toString());
-						}
-					}
-				} else {
-					// Fallback to challan amount if bill details not available
-					if (challan.getChallanAmount() != null) {
-						message = message.replace("<amount>", challan.getChallanAmount().toString());
-					}
-				}
-			} catch (Exception e) {
-				log.warn("Failed to get bill amount for challan {}, using challan amount: {}", 
-					challan.getChallanNo(), e.getMessage());
-				// Fallback to challan amount
-				if (challan.getChallanAmount() != null) {
-					message = message.replace("<amount>", challan.getChallanAmount().toString());
-				}
-			}
-		}
-
-		message = message.replace("{User}",challan.getCitizen().getName());
-        message = message.replace("<challanno>", challan.getChallanNo());
-		if(message.contains("{ULB}")) {
-			String[] tenantParts = challan.getTenantId().split("\\.");
-			if(tenantParts.length > 1) {
-				message = message.replace("{ULB}", capitalize(tenantParts[1]));
-			} else {
-				message = message.replace("{ULB}", capitalize(challan.getTenantId()));
-			}
-		}
-
-		// Handle businessService - it may or may not contain a dot
-		String businessServiceStr = challan.getBusinessService();
-		String service = "";
-		if(businessServiceStr != null) {
-			String[] businessServiceParts = businessServiceStr.split("\\.");
-			String serviceName = businessServiceParts.length > 1 ? businessServiceParts[1] : businessServiceParts[0];
-			String[] split_array = capitalize(serviceName).split("_");
-			service = String.join(" ", split_array);
-		}
-
-        String UIHost = config.getUiAppHost();
-		String paymentPath = config.getPayLinkSMS();
-		paymentPath = paymentPath.replace("$consumercode",challan.getChallanNo());
-		paymentPath = paymentPath.replace("$tenantId",challan.getTenantId());
-		paymentPath = paymentPath.replace("$businessservice",challan.getBusinessService());
-		//String finalPath = UIHost + paymentPath;
-		/*
-		 * if(message.contains("{Link}")) message =
-		 * message.replace("{Link}",getShortenedUrl(finalPath));
-		 */
+		String service = buildServiceName(challan.getBusinessService());
 		String result = truncateAndSplitString(service, 33);
 		message = message.replace("<service>", result);
 		String newLink = "https://mseva.lgpunjab.gov.in/citizen";
 		String updatedMessage = message.replace("<Link>", newLink);
 
-        log.info("update"+updatedMessage);
-		log.info("Final msg after all rep: "+updatedMessage);
-        return updatedMessage;
-    }
+		log.info("update{}", updatedMessage);
+		log.info("Final msg after all rep: {}", updatedMessage);
+		return updatedMessage;
+	}
+
+	private String replaceAmountPlaceholder(RequestInfo requestInfo, Challan challan, String message) {
+		if (challan.getApplicationStatus() == Challan.StatusEnum.CANCELLED) {
+			return message;
+		}
+		try {
+			String billDetails = getBillDetails(requestInfo, challan);
+			if (billDetails != null && !billDetails.isEmpty()) {
+				Object obj = JsonPath.parse(billDetails).read(BILL_AMOUNT_JSONPATH);
+				if (obj != null) {
+					message = message.replace(AMOUNT_PLACEHOLDER, new BigDecimal(obj.toString()).toString());
+					log.info("Replaced Amount");
+					return message;
+				}
+			}
+		} catch (Exception e) {
+			log.warn("Failed to get bill amount for challan {}, using challan amount: {}",
+					challan.getChallanNo(), e.getMessage());
+		}
+		return replaceAmountFromChallan(challan, message);
+	}
+
+	private String replaceAmountFromChallan(Challan challan, String message) {
+		if (challan.getChallanAmount() != null) {
+			return message.replace(AMOUNT_PLACEHOLDER, challan.getChallanAmount().toString());
+		}
+		return message;
+	}
+
+	private String replaceUlbPlaceholder(Challan challan, String message) {
+		if (!message.contains(ULB_PLACEHOLDER)) {
+			return message;
+		}
+		String[] tenantParts = challan.getTenantId().split("\\.");
+		if (tenantParts.length > 1) {
+			return message.replace(ULB_PLACEHOLDER, capitalize(tenantParts[1]));
+		}
+		return message.replace(ULB_PLACEHOLDER, capitalize(challan.getTenantId()));
+	}
+
+	private String buildServiceName(String businessServiceStr) {
+		if (businessServiceStr == null) {
+			return "";
+		}
+		String[] businessServiceParts = businessServiceStr.split("\\.");
+		String serviceName = businessServiceParts.length > 1 ? businessServiceParts[1] : businessServiceParts[0];
+		String[] splitArray = capitalize(serviceName).split("_");
+		return String.join(" ", splitArray);
+	}
+
 	public static String truncateAndSplitString(String inputString, int truncateLength) {
         if (inputString.length() <= truncateLength) {
             return inputString;
@@ -184,44 +147,34 @@ public class NotificationUtil {
         return truncatedString.substring(0, splitPosition);
     }
 
-	private String getPaymentMsg(RequestInfo requestInfo,Challan challan, String message) {
-		ChallanRequest challanRequest = new ChallanRequest(requestInfo,challan);
-		message = message.replace("{User}",challan.getCitizen().getName());
+	private String getPaymentMsg(RequestInfo requestInfo, Challan challan, String message) {
+		ChallanRequest challanRequest = new ChallanRequest(requestInfo, challan);
+		message = message.replace("{User}", challan.getCitizen().getName());
 		message = message.replace("{challanno}", challan.getChallanNo());
 
-        PaymentResponse paymentResponse = getPaymentObject(challanRequest);
+		PaymentResponse paymentResponse = getPaymentObject(challanRequest);
 
-		message = message.replace("{Payment_Amount}",paymentResponse.getPayments().get(0).getTotalAmountPaid().toString());
-		message = message.replace("{Payment_Mode}",paymentResponse.getPayments().get(0).getPaymentMode().toLowerCase());
-		message = message.replace("{Payment_No}",paymentResponse.getPayments().get(0).getPaymentDetails().get(0).getReceiptNumber());
-		message = message.replace("{challanno}",paymentResponse.getPayments().get(0).getPaymentMode());
+		message = message.replace("{Payment_Amount}", paymentResponse.getPayments().get(0).getTotalAmountPaid().toString());
+		message = message.replace("{Payment_Mode}", paymentResponse.getPayments().get(0).getPaymentMode().toLowerCase());
+		message = message.replace("{Payment_No}", paymentResponse.getPayments().get(0).getPaymentDetails().get(0).getReceiptNumber());
+		message = message.replace("{challanno}", paymentResponse.getPayments().get(0).getPaymentMode());
 
-		if(message.contains("{Online_Receipt_Link}"))
-			message = message.replace("{Online_Receipt_Link}", getRecepitDownloadLink(challanRequest,paymentResponse,challanRequest.getChallan().getCitizen().getMobileNumber()));
+		if (message.contains("{Online_Receipt_Link}")) {
+			message = message.replace("{Online_Receipt_Link}",
+					getRecepitDownloadLink(challanRequest, paymentResponse, challanRequest.getChallan().getCitizen().getMobileNumber()));
+		}
 
-	    if(message.contains("{ULB}"))
-			message = message.replace("{ULB}", capitalize(challan.getTenantId().split("\\.")[1]));
+		if (message.contains(ULB_PLACEHOLDER)) {
+			message = message.replace(ULB_PLACEHOLDER, capitalize(challan.getTenantId().split("\\.")[1]));
+		}
 
 		return message;
 	}
 
-	private String formatCodes(String code) {
-		String regexForSpecialCharacters = "[$&+,:;=?@#|'<>.^*()%!-]";
-		code = code.replaceAll(regexForSpecialCharacters, "_");
-		code = code.replaceAll(" ", "_");
-
-		return BUSINESSSERVICELOCALIZATION_CODE_PREFIX + code.toUpperCase();
-	}
-
-	
 	private String getBillDetails(RequestInfo requestInfo, Challan challan) {
-
-		LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getBillUri(challan),
-				new RequestInfoWrapper(requestInfo));
-		
-		String jsonString = new JSONObject(responseMap).toString();
-
-		return jsonString;
+		LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(
+				getBillUri(challan), new RequestInfoWrapper(requestInfo));
+		return new JSONObject(responseMap).toString();
 	}
 	
 	public String getShortenedUrl(String url){
@@ -230,11 +183,11 @@ public class NotificationUtil {
 		StringBuilder builder = new StringBuilder(config.getUrlShortnerHost());
 		builder.append(config.getUrlShortnerEndpoint());
 		String res = restTemplate.postForObject(builder.toString(), body, String.class);
-		if(StringUtils.isEmpty(res)){
-			log.error("URL_SHORTENING_ERROR","Unable to shorten url: "+url); ;
+		if (StringUtils.isEmpty(res)) {
+			log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
 			return url;
 		}
-		else return res;
+		return res;
 	}
 
 	/**
@@ -249,11 +202,11 @@ public class NotificationUtil {
 	private String getMessageTemplate(String notificationCode, String localizationMessage) {
 		String path = "$..messages[?(@.code==\"{}\")].message";
 		path = path.replace("{}", notificationCode);
-		System.out.println("notificationCode=="+notificationCode);
+		log.debug("notificationCode=={}", notificationCode);
 		String message = null;
 		try {
 			Object messageObj = JsonPath.parse(localizationMessage).read(path);
-			if (messageObj != null && messageObj instanceof ArrayList) {
+			if (messageObj instanceof ArrayList) {
 				@SuppressWarnings("unchecked")
 				ArrayList<String> messageList = (ArrayList<String>) messageObj;
 				if (!messageList.isEmpty()) {
@@ -263,7 +216,7 @@ public class NotificationUtil {
 		} catch (Exception e) {
 			log.warn("Fetching from localization failed", e);
 		}
-		log.info("Final msg: "+message);
+		log.info("Final msg: {}", message);
 		return message;
 	}
 
@@ -276,12 +229,14 @@ public class NotificationUtil {
 	 */
 	public StringBuilder getUri(String tenantId, RequestInfo requestInfo) {
 
-		if (config.getIsLocalizationStateLevel())
+		if (config.getIsLocalizationStateLevel()) {
 			tenantId = tenantId.split("\\.")[0];
+		}
 		
 		String locale = NOTIFICATION_LOCALE;
-		if (!StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("|").length >= 2)
+		if (!StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("|").length >= 2) {
 			locale = requestInfo.getMsgId().split("\\|")[1];
+		}
 
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getLocalizationHost()).append(config.getLocalizationContextPath())
@@ -308,8 +263,9 @@ public class NotificationUtil {
 		List<String> masterData = new ArrayList<>();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
-		if(StringUtils.isEmpty(tenantId))
+		if (StringUtils.isEmpty(tenantId)) {
 			return masterData;
+		}
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId.split("\\.")[0]);
 
 		Filter masterDataFilter = filter(
@@ -319,8 +275,8 @@ public class NotificationUtil {
 		try {
 			Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
 			masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]", masterDataFilter);
-		}catch(Exception e) {
-			log.error("Exception while fetching workflow states to ignore: ",e);
+		} catch (Exception e) {
+			log.error("Exception while fetching workflow states to ignore: ", e);
 		}
 		return masterData;
 	}
@@ -357,11 +313,12 @@ public class NotificationUtil {
 	public void sendEmail(List<EmailRequest> emailRequestList) {
 
 		if (config.getIsEmailNotificationEnabled()) {
-			if (CollectionUtils.isEmpty(emailRequestList))
+			if (CollectionUtils.isEmpty(emailRequestList)) {
 				log.debug("Messages from localization couldn't be fetched!");
+			}
 			for (EmailRequest emailRequest : emailRequestList) {
 				producer.push(config.getEmailNotifTopic(), emailRequest);
-				log.debug("Email Request -> "+emailRequest.getEmail().toString());
+				log.debug("Email Request -> {}", emailRequest.getEmail().toString());
 				log.debug("EMAIL notification sent!");
 			}
 		}
@@ -375,11 +332,12 @@ public class NotificationUtil {
 	 */
 	public void sendSMS(List<SMSRequest> smsRequestList, boolean isSMSEnabled) {
 		if (isSMSEnabled) {
-			if (CollectionUtils.isEmpty(smsRequestList))
+			if (CollectionUtils.isEmpty(smsRequestList)) {
 				log.debug("Messages from localization couldn't be fetched!");
+			}
 			for (SMSRequest smsRequest : smsRequestList) {
 				producer.push(config.getSmsNotifTopic(), smsRequest);
-				log.debug("MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
+				log.debug("MobileNumber: {} Messages: {}", smsRequest.getMobileNumber(), smsRequest.getMessage());
 			}
 		}
 	}
@@ -407,26 +365,23 @@ public class NotificationUtil {
 		userSearchRequest.put("RequestInfo", requestInfo);
 		userSearchRequest.put("tenantId", tenantId);
 		userSearchRequest.put("userType", "CITIZEN");
-		for(String mobileNo: mobileNumbers) {
+		for (String mobileNo : mobileNumbers) {
 			userSearchRequest.put("userName", mobileNo);
 			try {
 				Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-				if(null != user) {
-					if(JsonPath.read(user, "$.user[0].emailId")!=null) {
-						String email = JsonPath.read(user, "$.user[0].emailId");
-						if(email!=null && !StringUtils.isEmpty(email) )
-							mapOfPhnoAndEmailIds.put(mobileNo, email);
+				if (user == null) {
+					log.error("Service returned null while fetching user for username - {}", mobileNo);
+				} else {
+					String email = JsonPath.read(user, "$.user[0].emailId");
+					if (!StringUtils.isEmpty(email)) {
+						mapOfPhnoAndEmailIds.put(mobileNo, email);
+					} else {
+						log.error("Service returned null while fetching email for username - {}", mobileNo);
 					}
-					else {
-						log.error("Service returned null while fetching email for username - "+mobileNo);
-					}
-				}else {
-					log.error("Service returned null while fetching user for username - "+mobileNo);
 				}
-			}catch(Exception e) {
-				log.error("Exception while fetching user for username - "+mobileNo);
-				log.error("Exception trace: ",e);
-				continue;
+			} catch (Exception e) {
+				log.error("Exception while fetching user for username - {}", mobileNo);
+				log.error("Exception trace: ", e);
 			}
 		}
 		return mapOfPhnoAndEmailIds;
@@ -441,13 +396,11 @@ public class NotificationUtil {
 	 *            The requestInfo of the request
 	 * @return Localization messages for the module
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public String getLocalizationMessages(String tenantId, RequestInfo requestInfo) {
-
-		LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo),
-				requestInfo);
-		String jsonString = new JSONObject(responseMap).toString();
-		return jsonString;
+		LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(
+				getUri(tenantId, requestInfo), requestInfo);
+		return new JSONObject(responseMap).toString();
 	}
 
 	/**
@@ -459,33 +412,19 @@ public class NotificationUtil {
 	 *            The message code for localization
 	 * @return customized message based on echallan and code
 	 */
-	@SuppressWarnings("unchecked")
 	public String getCustomizedMsg(RequestInfo requestInfo, Challan challan, String messageCode) {
 		String localizationMessages = getLocalizationMessages(challan.getTenantId(), requestInfo);
-		String message = null, messageTemplate;
+		String messageTemplate = getMessageTemplate(messageCode, localizationMessages);
 
-		if(messageCode.equals(CREATE_CODE) || messageCode.equals(CREATE_CODE_INAPP))
-		{
-			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
-			message  = getReplacedMsg(requestInfo,challan,messageTemplate);
+		if (messageCode.equals(CREATE_CODE) || messageCode.equals(CREATE_CODE_INAPP)
+				|| messageCode.equals(UPDATE_CODE) || messageCode.equals(UPDATE_CODE_INAPP)
+				|| messageCode.equals(CANCEL_CODE) || messageCode.equals(CANCEL_CODE_INAPP)) {
+			return getReplacedMsg(requestInfo, challan, messageTemplate);
 		}
-		else if(messageCode.equals(UPDATE_CODE) || messageCode.equals(UPDATE_CODE_INAPP))
-		{
-			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
-			message  = getReplacedMsg(requestInfo,challan,messageTemplate);
+		if (messageCode.equals(PAYMENT_CODE) || messageCode.equals(PAYMENT_CODE_INAPP)) {
+			return getPaymentMsg(requestInfo, challan, messageTemplate);
 		}
-		else if(messageCode.equals(CANCEL_CODE) || messageCode.equals(CANCEL_CODE_INAPP))
-		{
-			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
-			message  = getReplacedMsg(requestInfo,challan,messageTemplate);
-		}
-		else if(messageCode.equals(PAYMENT_CODE) || messageCode.equals(PAYMENT_CODE_INAPP))
-		{
-			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
-			message  = getPaymentMsg(requestInfo,challan,messageTemplate);
-		}
-
-		return message;
+		return null;
 	}
 
 	/**
@@ -497,36 +436,19 @@ public class NotificationUtil {
 	 *            The message code for localization
 	 * @return customized message based on bpa
 	 */
-	@SuppressWarnings("unchecked")
 	public String getEmailCustomizedMsg(RequestInfo requestInfo, Challan challan, String messageCode) {
 		String localizationMessages = getLocalizationMessages(challan.getTenantId(), requestInfo);
-		String message = null, messageTemplate;
+		String messageTemplate = getMessageTemplate(messageCode, localizationMessages);
 
-		if(messageCode.equals(CREATE_CODE_EMAIL))
-		{
-			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
-			message  = getReplacedMsg(requestInfo,challan,messageTemplate);
+		if (messageCode.equals(CREATE_CODE_EMAIL) || messageCode.equals(UPDATE_CODE_EMAIL)
+				|| messageCode.equals(CANCEL_CODE_EMAIL)) {
+			return getReplacedMsg(requestInfo, challan, messageTemplate);
 		}
-		else if(messageCode.equals(UPDATE_CODE_EMAIL))
-		{
-			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
-			message  = getReplacedMsg(requestInfo,challan,messageTemplate);
+		if (messageCode.equals(PAYMENT_CODE_EMAIL)) {
+			return getPaymentMsg(requestInfo, challan, messageTemplate);
 		}
-		else if(messageCode.equals(CANCEL_CODE_EMAIL))
-		{
-			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
-			message  = getReplacedMsg(requestInfo,challan,messageTemplate);
-		}
-		else if(messageCode.equals(PAYMENT_CODE_EMAIL))
-		{
-			messageTemplate = getMessageTemplate(messageCode, localizationMessages);
-			message  = getPaymentMsg(requestInfo,challan,messageTemplate);
-		}
-
-		return message;
+		return null;
 	}
-
-	
 
 	public String getRecepitDownloadLink(ChallanRequest challanRequest, PaymentResponse paymentResponse, String mobileno) {
 
@@ -545,18 +467,15 @@ public class NotificationUtil {
 	}
 
 	public PaymentResponse getPaymentObject(ChallanRequest challanRequest){
-		String consumerCode,service;
+		String consumerCode = challanRequest.getChallan().getChallanNo();
+		String service = challanRequest.getChallan().getBusinessService();
 
-		consumerCode = challanRequest.getChallan().getChallanNo();
-		service = challanRequest.getChallan().getBusinessService();
-
-		StringBuilder URL = getcollectionURL();
-		URL.append(service).append("/_search").append("?").append("consumerCodes=").append(consumerCode)
+		StringBuilder collectionUrl = getcollectionURL();
+		collectionUrl.append(service).append("/_search").append("?").append("consumerCodes=").append(consumerCode)
 				.append("&").append("tenantId=").append(challanRequest.getChallan().getTenantId());
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(challanRequest.getRequestInfo()).build();
-		Object response = serviceRequestRepository.fetchResult(URL,requestInfoWrapper);
-		PaymentResponse paymentResponse = mapper.convertValue(response, PaymentResponse.class);
-		return paymentResponse;
+		Object response = serviceRequestRepository.fetchResult(collectionUrl, requestInfoWrapper);
+		return mapper.convertValue(response, PaymentResponse.class);
 	}
 
 	public StringBuilder getcollectionURL() {

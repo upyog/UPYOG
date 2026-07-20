@@ -1,0 +1,266 @@
+/* ══════════════════════════════════════════════════════
+   MODULE LIST MODAL
+══════════════════════════════════════════════════════ */
+
+/* Backdrop */
+.module-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal box */
+.module-modal {
+  background: #fff;
+  border-radius: 8px;
+  width: 420px;
+  max-width: 95vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.module-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.module-modal__title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #0B0C0C;
+}
+
+.module-modal__subtitle {
+  font-size: 12px;
+  color: #6E7882;
+  margin-top: 2px;
+}
+
+.module-modal__close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #6E7882;
+  line-height: 1;
+  padding: 4px;
+}
+
+.module-modal__close-btn:hover {
+  color: #0B0C0C;
+}
+
+/* ── Search bar ─────────────────────────────────────── */
+.module-modal__search-wrap {
+  padding: 10px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.module-modal__search-inner {
+  position: relative;
+}
+
+.module-modal__search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.module-modal__search-input {
+  width: 100%;
+  padding: 8px 32px 8px 32px;
+  border: 1px solid #d6d5d4;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+  color: #0B0C0C;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.module-modal__search-input:focus {
+  border-color: #e07b39;
+}
+
+.module-modal__search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+}
+
+.module-modal__search-clear:hover {
+  color: #0B0C0C;
+}
+
+/* ── List ───────────────────────────────────────────── */
+.module-modal__list {
+  overflow-y: auto;
+  padding: 8px 12px;
+  flex: 1;
+}
+
+.module-modal__empty {
+  text-align: center;
+  padding: 40px 0;
+  color: #6E7882;
+  font-size: 14px;
+}
+
+.module-modal__loading {
+  text-align: center;
+  padding: 40px 0;
+  color: #6E7882;
+  font-size: 14px;
+}
+
+.module-modal__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  border: 1px solid #f0f0f0;
+}
+
+.module-modal__item-badge {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #FFF3E0;
+  color: #e07b39;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.module-modal__item-name {
+  font-size: 14px;
+  color: #0B0C0C;
+  font-weight: 500;
+}
+
+/* ── Pagination Footer ──────────────────────────────── */
+.module-modal__footer {
+  padding: 10px 20px;
+  border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.module-modal__page-info {
+  font-size: 12px;
+  color: #6E7882;
+  white-space: nowrap;
+}
+
+.module-modal__page-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.module-modal__page-ellipsis {
+  font-size: 13px;
+  color: #aaa;
+  padding: 0 2px;
+}
+
+/* ── Pagination Button ──────────────────────────────── */
+.pagination-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid #d6d5d4;
+  border-radius: 4px;
+  background: #fff;
+  color: #0B0C0C;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.pagination-btn.active {
+  border-color: #e07b39;
+  background: #e07b39;
+  color: #fff;
+  font-weight: 600;
+}
+
+.pagination-btn:disabled,
+.pagination-btn.disabled {
+  border-color: #f0f0f0;
+  background: #f9f9f9;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+/* ── Info Icon Wrapper ──────────────────────────────── */
+.info-icon-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Info Icon ──────────────────────────────────────── */
+.info-icon {
+  cursor: pointer;
+  border: 1px solid #d6d5d4;
+  background: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+/* ── Info Icon Tooltip ──────────────────────────────── */
+.info-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: #333;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  z-index: 1000;
+  pointer-events: none;
+}

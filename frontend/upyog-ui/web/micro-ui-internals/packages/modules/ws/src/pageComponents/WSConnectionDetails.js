@@ -12,63 +12,75 @@ const createConnectionDetails = () => ({
 
   water: true,
   sewerage: false,
-
   proposedPipeSize: "",
   proposedTaps: "",
-
-
   proposedToilets: "",
   proposedWaterClosets: ""
 });
-
-
-const WSConnectionDetails = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
-
-
-  const { t } = useTranslation();
-  const { pathname } = useLocation();
+const WSConnectionDetails = ({
+  config,
+  onSelect,
+  userType,
+  formData,
+  setError,
+  formState,
+  clearErrors
+}) => {
+  const {
+    t
+  } = useTranslation();
+  const {
+    pathname
+  } = useLocation();
   const [connectionDetails, setConnectionDetails] = useState(formData?.ConnectionDetails ? [formData?.ConnectionDetails?.[0]] : [createConnectionDetails()]);
-  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+  const [focusIndex, setFocusIndex] = useState({
+    index: -1,
+    type: ""
+  });
   const stateCode = Digit.ULBService.getStateId();
   const [isErrors, setIsErrors] = useState(false);
-  const [waterSewarageSelection, setWaterSewarageSelection] = useState({ water: true, sewerage: false });
-
+  const [waterSewarageSelection, setWaterSewarageSelection] = useState({
+    water: true,
+    sewerage: false
+  });
   const [pipeSizeList, setPipesizeList] = useState([]);
-
-  const { isWSServicesCalculationLoading, data: wsServicesCalculationData } = Digit.Hooks.ws.useMDMS(stateCode, "ws-services-calculation", ["PipeSize"]);
-
-
+  const {
+    isWSServicesCalculationLoading,
+    data: wsServicesCalculationData
+  } = Digit.Hooks.ws.useMDMS(stateCode, "ws-services-calculation", ["PipeSize"]);
   useEffect(() => {
-    const data = connectionDetails.map((e) => {
+    const data = connectionDetails.map(e => {
       return e;
     });
     onSelect(config?.key, data);
   }, [connectionDetails]);
-
-
   useEffect(() => {
     const list = wsServicesCalculationData?.["ws-services-calculation"]?.PipeSize || [];
     list?.forEach(data => data.i18nKey = data.size);
     setPipesizeList(list);
   }, [wsServicesCalculationData]);
-
   useEffect(() => {
     if (userType === "employee") {
-      onSelect(config.key, { ...formData[config.key], ...connectionDetails });
+      onSelect(config.key, {
+        ...formData[config.key],
+        ...connectionDetails
+      });
     }
-    if (connectionDetails?.[0]?.water) setWaterSewarageSelection({ water: true, sewerage: false })
-
-    if (connectionDetails?.[0]?.sewerage) setWaterSewarageSelection({ water: false, sewerage: true })
+    if (connectionDetails?.[0]?.water) setWaterSewarageSelection({
+      water: true,
+      sewerage: false
+    });
+    if (connectionDetails?.[0]?.sewerage) setWaterSewarageSelection({
+      water: false,
+      sewerage: true
+    });
   }, [connectionDetails]);
-
   useEffect(() => {
     if (!formData?.ConnectionDetails) {
       setConnectionDetails([createConnectionDetails()]);
     }
   }, [formData?.ConnectionDetails]);
-
-  if (isWSServicesCalculationLoading) return <Loader />
-
+  if (isWSServicesCalculationLoading) return <Loader />;
   const commonProps = {
     focusIndex,
     connectionDetails,
@@ -102,8 +114,7 @@ const WSConnectionDetails = ({ config, onSelect, userType, formData, setError, f
     </React.Fragment>
   );
 };
-
-const ConnectionDetails = (_props) => {
+const ConnectionDetails = _props => {
   const {
     connectionDetail,
     focusIndex,
@@ -123,25 +134,33 @@ const ConnectionDetails = (_props) => {
     waterSewarageSelection,
     formData
   } = _props;
-
-  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
+  const {
+    control,
+    formState: localFormState,
+    watch,
+    setError: setLocalError,
+    clearErrors: clearLocalErrors,
+    setValue,
+    trigger,
+    getValues
+  } = useForm();
   const formValue = watch();
-  const { errors } = localFormState;
-
+  const {
+    errors
+  } = localFormState;
   useEffect(() => {
     trigger();
   }, []);
-
   useEffect(() => {
     if (Object.entries(formValue).length > 0) {
       const keys = Object.keys(formValue);
       const part = {};
-      keys.forEach((key) => (part[key] = connectionDetail[key]));
+      keys.forEach(key => part[key] = connectionDetail[key]);
       if (!_.isEqual(formValue, part)) {
         let isErrorsFound = true;
         Object.keys(formValue).map(data => {
           if (!formValue[data] && isErrorsFound) {
-            isErrorsFound = false
+            isErrorsFound = false;
             setIsErrors(false);
           }
         });
@@ -155,48 +174,66 @@ const ConnectionDetails = (_props) => {
       }
     }
   }, [formValue, connectionDetails]);
-
   useEffect(() => {
     let isClear = true;
     Object.keys(connectionDetails?.[0])?.map(data => {
-      if (!connectionDetails[0][data] && connectionDetails[0][data] != false && isClear) isClear = false
-    })
+      if (!connectionDetails[0][data] && connectionDetails[0][data] != false && isClear) isClear = false;
+    });
     if (isClear && Object.keys(connectionDetails?.[0])?.length > 1) {
       clearErrors("ConnectionDetails");
     }
-
     if (!connectionDetails?.[0]?.sewerage) {
-      clearErrors(config.key, { type: "proposedToilets" })
-      clearErrors(config.key, { type: "proposedWaterClosets" })
+      clearErrors(config.key, {
+        type: "proposedToilets"
+      });
+      clearErrors(config.key, {
+        type: "proposedWaterClosets"
+      });
     }
-
     if (!connectionDetails?.[0]?.water) {
-      clearErrors(config.key, { type: "proposedPipeSize" })
-      clearErrors(config.key, { type: "proposedTaps" })
+      clearErrors(config.key, {
+        type: "proposedPipeSize"
+      });
+      clearErrors(config.key, {
+        type: "proposedTaps"
+      });
     }
     trigger();
   }, [connectionDetails, waterSewarageSelection, formData?.DocumentsRequired?.documents]);
-
-
   useEffect(() => {
     if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
-      setError(config.key, { type: errors });
-    }
-    else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
+      setError(config.key, {
+        type: errors
+      });
+    } else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
       clearErrors(config.key);
     }
   }, [errors]);
-
-  const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
+  const errorStyle = {
+    width: "70%",
+    marginLeft: "30%",
+    fontSize: "12px",
+    marginTop: "-21px"
+  };
   const isMobile = window.Digit.Utils.browser.isMobile();
-  const isEmployee = window.location.href.includes("/employee")
-  const titleStyle = isMobile ? { marginBottom: "40px", color: "#505A5F", fontWeight: "700", fontSize: "16px"}  :{marginTop: "-40px", marginBottom: "40px", color: "#505A5F", fontWeight: "700", fontSize: "16px"}
-  return (
-    <div >
+  const isEmployee = window.location.href.includes("/employee");
+  const titleStyle = isMobile ? {
+    marginBottom: "40px",
+    color: "#505A5F",
+    fontWeight: "700",
+    fontSize: "16px"
+  } : {
+    marginTop: "-40px",
+    marginBottom: "40px",
+    color: "#505A5F",
+    fontWeight: "700",
+    fontSize: "16px"
+  };
+  return <div>
       {/* {window.location.href.includes("/ws/new") ?  <div style={titleStyle}>{t("WS_CONNECTION_DETAILS_HEADER_SUB_TEXT_LABEL")}</div> : null} */}
-      <div style={{ marginBottom: "16px" }}>
-        <CardLabel style={{fontWeight: "700"}}>{`${t("WS_APPLY_FOR")}`}<span className="check-page-link-button"> *</span></CardLabel>
-        <div style={{ display: "flex", gap: "0 3rem" }}>
+      <div className="ws-auto-43">
+        <CardLabel className="ws-auto-44">{`${t("WS_APPLY_FOR")}`}<span className="check-page-link-button"> *</span></CardLabel>
+        <div className="ws-auto-45">
           <Controller
             control={control}
             name="water"
@@ -215,7 +252,7 @@ const ConnectionDetails = (_props) => {
                   }
                 }}
                 checked={connectionDetail?.water}
-                style={{ paddingBottom: "10px", paddingTop: "3px" }}
+                className="ws-auto-46"
                 onBlur={field.onBlur}
               />
             )}
@@ -239,17 +276,22 @@ const ConnectionDetails = (_props) => {
                   }
                 }}
                 checked={connectionDetail?.sewerage}
-                style={{ paddingBottom: "10px", paddingTop: "3px" }}
+               className="ws-auto-47"
                 onBlur={field.onBlur}
               />
             )}
           />
 
         </div>
-        {connectionDetail?.water && (
-          <div>
+        {connectionDetail?.water && <div>
             <LabelFieldPair>
-              <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_NO_OF_PROPOSED_TAPS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+              <CardLabel style={isMobile && isEmployee ? {
+            fontWeight: "700",
+            width: "100%"
+          } : {
+            marginTop: "-5px",
+            fontWeight: "700"
+          }} className="card-label-smaller">{`${t("WS_NO_OF_PROPOSED_TAPS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className="field">
                 <Controller
                   control={control}
@@ -303,11 +345,17 @@ errorStyle={(localFormState.touchedFields.proposedPipeSize && errors?.proposedPi
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touchedFields.proposedPipeSize ? errors?.proposedPipeSize?.message : ""}</CardLabelError>
           </div>
-        )}
+        }
         {connectionDetail?.sewerage && (
           <div>
             <LabelFieldPair>
-              <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_PROPOSED_WATER_CLOSETS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+              <CardLabel style={isMobile && isEmployee ? {
+            fontWeight: "700",
+            width: "100%"
+          } : {
+            marginTop: "-5px",
+            fontWeight: "700"
+          }} className="card-label-smaller">{`${t("WS_PROPOSED_WATER_CLOSETS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className="field">
                 <Controller
                   control={control}
@@ -335,7 +383,13 @@ errorStyle={(localFormState.touchedFields.proposedPipeSize && errors?.proposedPi
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>{localFormState.touchedFields.proposedWaterClosets ? errors?.proposedWaterClosets?.message : ""}</CardLabelError>
             <LabelFieldPair>
-              <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_PROPOSED_WATER_TOILETS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+              <CardLabel style={isMobile && isEmployee ? {
+            fontWeight: "700",
+            width: "100%"
+          } : {
+            marginTop: "-5px",
+            fontWeight: "700"
+          }} className="card-label-smaller">{`${t("WS_PROPOSED_WATER_TOILETS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className="field">
                 <Controller
                   control={control}
@@ -365,9 +419,6 @@ errorStyle={(localFormState.touchedFields.proposedPipeSize && errors?.proposedPi
           </div>
         )}
       </div>
-    </div>
-  );
+    </div>;
 };
-
-
 export default WSConnectionDetails;

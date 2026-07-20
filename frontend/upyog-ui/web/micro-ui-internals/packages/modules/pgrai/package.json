@@ -14,7 +14,7 @@
   },
   "dependencies": {
    "@upyog/digit-ui-libraries": "3.10.0",
-   "@nudmcdgnpm/digit-ui-react-components": "4.0.0",
+   "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
     "lodash.merge": "^4.6.2",

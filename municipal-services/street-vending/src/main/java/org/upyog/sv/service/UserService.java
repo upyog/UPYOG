@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.StreetVendingConstants;
@@ -25,14 +24,19 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserService {
 
-	@Autowired
-	private ObjectMapper mapper;
+	private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+	private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
+	private final ObjectMapper mapper;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final StreetVendingConfiguration config;
 
-	@Autowired
-	private StreetVendingConfiguration config;
+	public UserService(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository,
+			StreetVendingConfiguration config) {
+		this.mapper = mapper;
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.config = config;
+	}
 
 	/**
 	 * Fetches UUIDs of CITIZEN based on the phone number.
@@ -55,8 +59,6 @@ public class UserService {
 
 			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
 			log.info("User fetched in fetUserUUID method of CHB notfication consumer" + user.toString());
-//			if (null != user) {
-//				String uuid = JsonPath.read(user, "$.user[0].uuid");
 			if (user != null) {
 				String uuid = JsonPath.read(user, "$.user[0].uuid");
 				mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
@@ -74,14 +76,12 @@ public class UserService {
 	 * Returns user using user search based on ApplicationCriteria(user
 	 * name,mobileNumber,userName)
 	 * 
-	 * @param userSearchRequest
-	 * @return serDetailResponse containing the user if present and the responseInfo
+	 * @param userSearchRequest user search request
+	 * @return UserDetailResponse containing the user if present and the responseInfo
 	 */
 	public UserDetailResponse getUser(UserSearchRequest userSearchRequest) {
-
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
-		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
-		return userDetailResponse;
+		return userCall(userSearchRequest, uri);
 	}
 
 	/**
@@ -146,12 +146,12 @@ public class UserService {
 			users.forEach(map -> {
 
 				map.put("createdDate", StreetVendingUtil.dateTolong((String) map.get("createdDate"), format1));
-				if ((String) map.get("lastModifiedDate") != null)
-					map.put("lastModifiedDate", StreetVendingUtil.dateTolong((String) map.get("lastModifiedDate"), format1));
+				if ((String) map.get(LAST_MODIFIED_DATE) != null)
+					map.put(LAST_MODIFIED_DATE, StreetVendingUtil.dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
 				if ((String) map.get("dob") != null)
 					map.put("dob", StreetVendingUtil.dateTolong((String) map.get("dob"), dobFormat));
-				if ((String) map.get("pwdExpiryDate") != null)
-					map.put("pwdExpiryDate", StreetVendingUtil.dateTolong((String) map.get("pwdExpiryDate"), format1));
+				if ((String) map.get(PWD_EXPIRY_DATE) != null)
+					map.put(PWD_EXPIRY_DATE, StreetVendingUtil.dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
 			});
 		}
 	}
@@ -159,9 +159,9 @@ public class UserService {
 	/**
 	 * provides a user search request with basic mandatory parameters
 	 * 
-	 * @param tenantId
-	 * @param requestInfo
-	 * @return
+	 * @param tenantId tenant id
+	 * @param requestInfo request info
+	 * @return user search request
 	 */
 	public UserSearchRequest getBaseUserSearchRequest(String tenantId, RequestInfo requestInfo) {
 

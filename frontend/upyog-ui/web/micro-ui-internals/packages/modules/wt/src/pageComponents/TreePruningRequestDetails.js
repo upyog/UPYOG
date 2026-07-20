@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, TextInput, UploadFile, Dropdown, LocationIcon } from "@nudmcdgnpm/digit-ui-react-components";
-import { getDigiPin } from "../../../../libraries/src/utils/digipin";
+import { FormStep, CardLabel, UploadFile, Dropdown, GeoLocationWithDigipin } from "@nudmcdgnpm/digit-ui-react-components";
+import { TPService } from "../../../../libraries/src/services/elements/TP";
 
 const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const user = Digit.UserService.getUser().info;
   const [reasonOfPruning, setReasonOfPruning] = useState(formData?.treePruningRequestDetails?.reasonOfPruning || "");
+  const [geoTagLocation, setGeoTagLocation] = useState(formData?.treePruningRequestDetails?.geoTagLocation || "");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [geoTagLocation, setGeoTagLocation] = useState(formData?.treePruningRequestDetails?.geoTagLocation || "");
   const [digipin, setDigipin] = useState(formData?.treePruningRequestDetails?.digipin || "");
   const [supportingDocumentFile, setSupportingDocumentFile] = useState(formData?.treePruningRequestDetails?.supportingDocumentFile || "");
   const [isUploading, setIsUploading] = useState(false);
@@ -19,179 +19,117 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
     select: (data) => {
       const formattedData = data?.["Request-Service"]?.["ReasonPruningType"];
       return formattedData;
-    },
+    }
   });
- 
   const goNext = () => {
     let treePruningRequestDetails = formData.treePruningRequestDetails;
-    let Service = { ...treePruningRequestDetails, reasonOfPruning, geoTagLocation, supportingDocumentFile,latitude, longitude };
+    let Service = {
+      ...treePruningRequestDetails,
+      reasonOfPruning,
+      geoTagLocation,
+      supportingDocumentFile,
+      latitude,
+      longitude,
+      digipin
+    };
     onSelect(config.key, Service, false);
   };
-
   useEffect(() => {
     if (userType === "citizen") {
       goNext();
     }
   }, [reasonOfPruning, geoTagLocation, supportingDocumentFile, isUploading]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target ? e.target : { name: e.name, value: e };
+  const handleInputChange = e => {
+    const {
+      name,
+      value
+    } = e.target ? e.target : {
+      name: e.name,
+      value: e
+    };
     if (name === "reasonOfPruning") {
       setReasonOfPruning(value);
-    } else if (name === "geoTagLocation" || name === "location") {
-      setGeoTagLocation(value);
+      // Removed the "geoTagLocation" / "location" branch — geo state is now managed by handleGeoChange
     } else if (name === "supportingDocumentFile") {
       setSupportingDocumentFile(value);
     }
   };
-
   const handleFileUpload = (e, setFileStoreId) => {
     const file = e.target.files[0];
     if (file.size >= 5242880) {
-      setError("supportingDocument", { message: t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED") }); // Set error for supportingDocument
+      setError("supportingDocument", {
+        message: t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED")
+      }); // Set error for supportingDocument
       setFileStoreId(null); // Clear previous successful upload
     } else {
       setIsUploading(true);
       //setError("supportingDocument", { message: "" }); // Clear any previous errors
-      Digit.UploadServices.Filestorage("TP", file, Digit.ULBService.getStateId())
-        .then((response) => {
-          if (response?.data?.files?.length > 0) {
-
-            setFileStoreId(response.data.files[0].fileStoreId);
-          } else {
-            setError("supportingDocument", { message: t("CS_FILE_UPLOAD_ERROR") });
-          }
-        })
-        .catch(() => setError("supportingDocument", { message: t("CS_FILE_UPLOAD_ERROR") }))
-        .finally(() => setIsUploading(false));
+      Digit.UploadServices.Filestorage("TP", file, Digit.ULBService.getStateId()).then(response => {
+        if (response?.data?.files?.length > 0) {
+          setFileStoreId(response.data.files[0].fileStoreId);
+        } else {
+          setError("supportingDocument", {
+            message: t("CS_FILE_UPLOAD_ERROR")
+          });
+        }
+      }).catch(() => setError("supportingDocument", {
+        message: t("CS_FILE_UPLOAD_ERROR")
+      })).finally(() => setIsUploading(false));
     }
   };
-  // Fetch user's current location (latitude & longitude), update state, and generate Digipin
-  const fetchCurrentLocation = () => {
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setGeoTagLocation(`${latitude}, ${longitude}`); 
-        setLatitude(latitude);
-        setLongitude(longitude);
-        try {
-          const pin = getDigiPin(latitude, longitude);
-          setDigipin(pin);
-        } catch (error) {
-          console.error("Error generating Digipin:", error);
-        }
-      },
-      (error) => {
-        console.error("Error getting location:", error);
-        alert("Unable to retrieve your location. Please check your browser settings.");
-      }
-    );
-  } else {
-    alert("Geolocation is not supported by your browser.");
-  }
-};
+  // Replaces the old inline fetchCurrentLocation + manual setters; receives all geo fields from GeoLocationWithDigipin
+  const handleGeoChange = ({ geoTagLocation, latitude, longitude, digipin }) => {
+    setGeoTagLocation(geoTagLocation);
+    setLatitude(latitude);
+    setLongitude(longitude);
+    setDigipin(digipin);
+  };
 
-  const LoadingSpinner = () => (
-    <div className="loading-spinner"
-    />
-  );
-  return (
-    <FormStep config={config} onSelect={goNext} t={t} isDisabled={!reasonOfPruning || !supportingDocumentFile}>
+  // Passed as onFetchDigipin prop; delegates digipin generation to the backend instead of the old local utility
+  const handleFetchDigipin = async (latitude, longitude) => {
+    const res = await TPService.generateDigipin(latitude, longitude);
+    return res?.digipin || "";
+  };
+  const LoadingSpinner = () => <div className="loading-spinner" />;
+  return <FormStep config={config} onSelect={goNext} t={t} isDisabled={!reasonOfPruning || !supportingDocumentFile}>
       <div>
         {/* Reason Dropdown */}
         <CardLabel>
           {t("REASON_FOR_PRUNING")} <span className="check-page-link-button">*</span>
         </CardLabel>
-        <Dropdown
-          className="form-field"
-          selected={reasonOfPruning}
-          placeholder={"Select Reason"}
-          select={setReasonOfPruning}
-          option={ReasonOfPruningType}
-          style={inputStyles}
-          optionKey="code"
+        <Dropdown className="form-field" selected={reasonOfPruning} placeholder={"Select Reason"} select={setReasonOfPruning} option={ReasonOfPruningType} style={inputStyles} optionKey="code" t={t} />
+        <CardLabel>{t("LOCATION_GEOTAG")}</CardLabel>
+        {/* Replaced manual TextInput + LocationIcon + DigipinDisplay block with the reusable GeoLocationWithDigipin component */}
+        <GeoLocationWithDigipin
           t={t}
+          value={geoTagLocation}
+          onChange={handleGeoChange}
+          onFetchDigipin={handleFetchDigipin}
+          // Slightly wider on employee view (60%) vs the old 53%
+          inputStyle={{ width: user.type === "EMPLOYEE" ? "60%" : "100%" }}
+          showDigipin
+          showMapLink
         />
-        <CardLabel>
-          {t("LOCATION_GEOTAG")}
-        </CardLabel>
-        <div style={{ display: "flex", alignItems: "stretch", gap: "8px", width: user.type === "EMPLOYEE" ? "53%" : "100%" }}>
-          <TextInput
-            t={t}
-            type={"text"}
-            isMandatory={false}
-            optionKey="i18nKey"
-            name={"geoTagLocation"}
-            value={geoTagLocation} 
-            placeholder={"Select Location"}
-            onChange={handleInputChange}
-            max={new Date().toISOString().split("T")[0]}
-            style={{ flex: 1 }}
-            rules={{
-              required: t("dddddddd"),
-              validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("hhhhhhh")),
-            }}
-            className="location-input"
-          />
-          <div className="butt-icon"
-                    onClick={() => {
-                      fetchCurrentLocation("geoTagLocation");
-                    }} style={{ 
-            cursor: "pointer",
-            width: "25px",
-            marginBottom: "8px"
-          }}>
-            <LocationIcon className="fill-path-primary-main"/>
-          </div>
-        </div>
-        {digipin && (
-          <div style={{ 
-            marginTop: "10px", 
-            marginBottom: "16px",
-            padding: "12px 16px",
-            backgroundColor: "#f0f0f0",
-            borderRadius: "8px",
-            border: "1px solid #d4d4d4",
-            width: user.type === "EMPLOYEE" ? "50%" : "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}>
-            <div>
-              <strong>Digipin:</strong> {digipin}
-            </div>
-          </div>
-        )}
 
         {/* Upload Site Photograph */}
         <CardLabel>
           {t("UPLOAD_THE_SITE_PHOTOGRAPH")} <span className="check-page-link-button">*</span>
         </CardLabel>
-        <div style={{ marginBottom: "16px", ...inputStyles }}>
-          <UploadFile
-            id="supportingDocument"
-            onUpload={(e) => handleFileUpload(e, setSupportingDocumentFile)}
-            onDelete={() => {
-              setSupportingDocumentFile(null);
-             
-            }}
-            message={isUploading ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{
+        marginBottom: "16px",
+        ...inputStyles
+      }}>
+          <UploadFile id="supportingDocument" onUpload={e => handleFileUpload(e, setSupportingDocumentFile)} onDelete={() => {
+          setSupportingDocumentFile(null);
+        }} message={isUploading ? <div className="wt-auto-30">
                 <LoadingSpinner />
                 <span>Uploading...</span>
-              </div>
-            ) : supportingDocumentFile ? "1 File Uploaded" : "No File Uploaded"}           
-            textStyles={{ width: "100%" }}
-            accept="image/*, .pdf, .png, .jpeg, .jpg"
-            buttonType="button"
-            error={uploadError || !supportingDocumentFile}
-          />
+              </div> : supportingDocumentFile ? "1 File Uploaded" : "No File Uploaded"} textStyles={{
+          width: "100%"
+        }} accept="image/*, .pdf, .png, .jpeg, .jpg" buttonType="button" error={uploadError || !supportingDocumentFile} />
         </div>
         {/* GeoTag Location with Icon */}
       </div>
-    </FormStep>
-  );
+    </FormStep>;
 };
-
 export default TreePruningRequestDetails;

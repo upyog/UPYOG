@@ -1,18 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  Card,
-  CardSubHeader,
   CardLabel,
-  LabelFieldPair,
-  StatusTable,
   ActionBar,
   SubmitBar,
   Menu,
-  CardSectionHeader,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import { useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setNDCStep } from "../redux/actions/NDCFormActions";
 import { useTranslation } from "react-i18next";
 import NDCDocument from "../components/NDCDocument";
 import Timeline from "../components/NDCTimeline";
@@ -21,12 +13,8 @@ import Timeline from "../components/NDCTimeline";
 // It displays all the details entered by the user in the previous steps and allows them to review before submission.
 //  It also provides an option to go back and edit the details if needed. The user can also take actions based on the workflow state of the application.
 const NDCSummary = ({ formData, goNext, onGoBack }) => {
-  const { pathname: url } = useLocation();
   const { t } = useTranslation();
-  const navigate = Digit.Hooks.useCustomNavigate();
   const menuRef = useRef();
-  const dispatch = useDispatch();
-  const mutateScreen = url.includes("/property-mutate/");
   let user = Digit.UserService.getUser();
 
   let docs = formData?.DocummentDetails?.documents?.documents;
@@ -87,8 +75,6 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
 
   function onActionSelect(action) {
     goNext(action);
-    // setShowModal(true);
-    // setSelectedAction(action);
   }
 
   const documentCardStyle = {

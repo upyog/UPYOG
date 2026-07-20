@@ -58,7 +58,9 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
         "classpath:config/application-config.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-override.properties"},
+        ignoreResourceNotFound = true
+)
 public class PropertySourceConfiguration {
 
     @Bean

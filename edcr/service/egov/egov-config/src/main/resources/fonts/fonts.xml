@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    JasperReports font extension configuration.
+
+    This file defines the font family mappings used by JasperReports while
+    generating reports in different output formats such as PDF.
+
+    The Arial font family is mapped to the corresponding TrueType font file
+    available in the application's classpath. For PDF exports, JasperReports
+    uses the built-in Helvetica font and does not embed the font in the
+    generated document.
+
+    This configuration ensures consistent font rendering across report
+    templates and export formats.
+-->
+<fontFamilies>
+    <fontFamily name="Arial">
+        <normal>fonts/Arial.ttf</normal>
+        <bold>fonts/Arial.ttf</bold>
+        <italic>fonts/Arial.ttf</italic>
+        <boldItalic>fonts/Arial.ttf</boldItalic>
+        <pdfFontName>Helvetica</pdfFontName>
+        <pdfEncoding>UTF-8</pdfEncoding>
+        <isPdfEmbedded>false</isPdfEmbedded>
+    </fontFamily>
+</fontFamilies>

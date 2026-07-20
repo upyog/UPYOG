@@ -50,7 +50,7 @@ public class UserSearchResponse extends User{
     private String gender;
 
     @NotNull
-    @Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")
+    @Pattern(regexp = "^\\d{10}$", message = "MobileNumber should be 10 digit number")
     @JsonProperty("mobileNumber")
     private String mobileNumber;
 
@@ -66,7 +66,7 @@ public class UserSearchResponse extends User{
     @JsonProperty("pan")
     private String pan;
 
-    @Pattern(regexp = "^[0-9]{12}$", message = "AdharNumber should be 12 digit number")
+    @Pattern(regexp = "^\\d{12}$", message = "AdharNumber should be 12 digit number")
     @JsonProperty("aadhaarNumber")
     private String aadhaarNumber;
 

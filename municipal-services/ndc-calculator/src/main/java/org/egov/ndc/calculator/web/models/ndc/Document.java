@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
 
-import org.egov.ndc.calculator.Validation.SanitizeHtml;
+import org.egov.ndc.calculator.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

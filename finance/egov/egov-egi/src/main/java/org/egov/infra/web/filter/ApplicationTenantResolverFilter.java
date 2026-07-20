@@ -51,7 +51,6 @@ package org.egov.infra.web.filter;
 import org.apache.log4j.Logger;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.config.security.repository.ApplicationSecurityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.Filter;
@@ -61,13 +60,23 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static org.egov.infra.utils.ApplicationConstant.MS_TENANTID_KEY;
 import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
 import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
 
+/*
+ * Tenant resolution is now based on the logged-in user's tenant ID instead of the request URL.
+ * The tenant ID is retrieved from the session and mapped to the corresponding schema.
+ * Example: "pg.citya" -> "citya".
+ * If no tenant ID is available, the default schema is used as fallback.
+ * This enables a single common URL for all ULBs and removes subdomain dependency.
+ */
+
 public class ApplicationTenantResolverFilter implements Filter {
-	private static final Logger LOGGER = Logger.getLogger(ApplicationTenantResolverFilter.class);
+    private static final Logger LOGGER = Logger.getLogger(ApplicationTenantResolverFilter.class);
 
     @Autowired
     private EnvironmentSettings environmentSettings;
@@ -75,17 +84,61 @@ public class ApplicationTenantResolverFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-    	
-        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
+
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpSession session = httpRequest.getSession(false);
+
+        String domainURL = extractRequestDomainURL(httpRequest, false);
         String domainName = extractRequestedDomainName(domainURL);
-        ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
-        LOGGER.info(" *** Schema name  :"+environmentSettings.schemaName(domainName) );
-        LOGGER.info(" *** domainName  :"+domainName);
-        LOGGER.info(" *** domainURL  :"+domainURL);
+
+        // Get tenant ID from user session (set during authentication)
+        String userTenantId = null;
+        String schemaName = null;
+
+        if (session != null) {
+            userTenantId = (String) session.getAttribute(MS_TENANTID_KEY);
+            LOGGER.info(" *** User Tenant ID from session: " + userTenantId);
+        }
+        // Determine schema based on user's tenant ID
+        if (userTenantId != null && !userTenantId.isEmpty()) {
+            // Extract city code from tenant ID (e.g., "pg.citya" -> "citya")
+            String cityCode = extractCityCodeFromTenantId(userTenantId);
+            schemaName = cityCode; // Use city code directly as schema name
+            LOGGER.info(" *** Schema resolved from user tenant: " + schemaName);
+        } else {
+            // Fallback to default schema for unauthenticated requests
+            schemaName = environmentSettings.defaultSchemaName();
+            LOGGER.info(" *** Using default schema (no user session): " + schemaName);
+        }
+
+        // Set tenant context in ThreadLocal
+        ApplicationThreadLocals.setTenantID(schemaName);
         ApplicationThreadLocals.setCollectionVersion(environmentSettings.collectionVersion());
         ApplicationThreadLocals.setDomainName(domainName);
         ApplicationThreadLocals.setDomainURL(domainURL);
+
+        LOGGER.info(" *** Schema name: " + schemaName);
+        LOGGER.info(" *** User Tenant ID: " + userTenantId);
+        LOGGER.info(" *** domainName: " + domainName);
+        LOGGER.info(" *** domainURL: " + domainURL);
+
         chain.doFilter(request, response);
+    }
+
+    /**
+     * Extract city code from tenant ID
+     * Example: "pg.citya" -> "citya"
+     * Example: "citya" -> "citya"
+     */
+    private String extractCityCodeFromTenantId(String tenantId) {
+        if (tenantId == null || tenantId.isEmpty()) {
+            return null;
+        }
+        String[] parts = tenantId.split("\\.");
+        if (parts.length > 1) {
+            return parts[parts.length - 1]; // Return "citya" from "pg.citya"
+        }
+        return tenantId;
     }
 
     @Override
@@ -97,5 +150,4 @@ public class ApplicationTenantResolverFilter implements Filter {
     public void destroy() {
         //Nothing to be cleaned up
     }
-
 }

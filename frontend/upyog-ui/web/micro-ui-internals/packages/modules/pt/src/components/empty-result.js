@@ -10,19 +10,13 @@ const EmptyResultInbox = (props) => {
   const addNewProprty = () => {
     navigate("/upyog-ui/employee/pt/new-application");
   };
-
-  return (
-    <React.Fragment>
-      {props.data ? (
-        <React.Fragment>
-          <div style={{ textAlign: "center", marginTop: "50px", marginBottom: "24px" }}>{t("PT_NO_MATCHING_PROPERTY_FOUND")}</div>
-          <div style={{ textAlign: "center" }}>
+  return <React.Fragment>
+      {props.data ? <React.Fragment>
+          <div className="pt-auto-15">{t("PT_NO_MATCHING_PROPERTY_FOUND")}</div>
+          <div className="pt-auto-16">
             <SubmitBar onSubmit={addNewProprty} label={t("PT_ADD_NEW_PROPERTY_BUTTON")} />
           </div>
-        </React.Fragment>
-      ) : null}
-    </React.Fragment>
-  );
+        </React.Fragment> : null}
+    </React.Fragment>;
 };
-
 export default EmptyResultInbox;

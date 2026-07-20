@@ -8,18 +8,17 @@ import _ from "lodash";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 
-
-const createConnectionDetails = (service) => (service == "WATER" ? {
-    connectionType: "",
-    noOfTaps: "",
-    waterSource: "",
-    pipeSize: "",
-    waterSubSource: "",
-    sourceSubData: ""
+const createConnectionDetails = service => service == "WATER" ? {
+  connectionType: "",
+  noOfTaps: "",
+  waterSource: "",
+  pipeSize: "",
+  waterSubSource: "",
+  sourceSubData: ""
 } : {
     noOfWaterClosets: "",
     noOfToilets: ""
-});
+  };
 
 
 const WSActivationConnectionDetails = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
@@ -235,21 +234,22 @@ const ConnectionDetails = (_props) => {
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
     return (
         <div >
-            <div style={{ marginBottom: "16px" }}>
+            <div className="ws-auto-32">
                 <div>
-                    { !window.location.href.includes("by-config") && !window.location.href.includes("ws/modify-application") ?
-                        <LabelFieldPair>
-                            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_ACK_COMMON_APP_NO_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+                    {!window.location.href.includes("by-config") && !window.location.href.includes("ws/modify-application") ? <LabelFieldPair>
+                            <CardLabel style={isMobile && isEmployee ? {
+            fontWeight: "700",
+            width: "100%"
+          } : {
+            marginTop: "-5px",
+            fontWeight: "700"
+          }} className="card-label-smaller">{`${t("WS_ACK_COMMON_APP_NO_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                             <div className="field">
-                                <TextInput 
-                                    disabled={true} 
-                                    value={filters?.applicationNumber}>
+                                <TextInput disabled={true} value={filters?.applicationNumber}>
                                 </TextInput>
                             </div>
                             
-                        </LabelFieldPair>
-                    : null 
-                    }
+                        </LabelFieldPair> : null}
                     {filters?.service === "WATER" ? <div>
                         <LabelFieldPair>
                             <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_SERV_DETAIL_CONN_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
@@ -365,7 +365,13 @@ const ConnectionDetails = (_props) => {
                         </LabelFieldPair>
                         <CardLabelError style={errorStyle}>{localFormState.touchedFields.pipeSize ? errors?.pipeSize?.message : ""}</CardLabelError>
                         <LabelFieldPair>
-                            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_SERV_DETAIL_NO_OF_TAPS")}`}<span className="check-page-link-button"> *</span></CardLabel>
+                            <CardLabel style={isMobile && isEmployee ? {
+              fontWeight: "700",
+              width: "100%"
+            } : {
+              marginTop: "-5px",
+              fontWeight: "700"
+            }} className="card-label-smaller">{`${t("WS_SERV_DETAIL_NO_OF_TAPS")}`}<span className="check-page-link-button"> *</span></CardLabel>
                             <div className="field">
                                 <Controller
                                     control={control}
@@ -395,7 +401,13 @@ const ConnectionDetails = (_props) => {
                     </div>
                         : <div>
                             <LabelFieldPair>
-                                <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_NUMBER_WATER_CLOSETS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+                                <CardLabel style={isMobile && isEmployee ? {
+              fontWeight: "700",
+              width: "100%"
+            } : {
+              marginTop: "-5px",
+              fontWeight: "700"
+            }} className="card-label-smaller">{`${t("WS_NUMBER_WATER_CLOSETS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                                 <div className="field">
                                     <Controller
                                         control={control}
@@ -423,7 +435,13 @@ const ConnectionDetails = (_props) => {
                             </LabelFieldPair>
                             <CardLabelError style={errorStyle}>{localFormState.touchedFields.noOfWaterClosets ? errors?.noOfWaterClosets?.message : ""}</CardLabelError>
                             <LabelFieldPair>
-                                <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_SERV_DETAIL_NO_OF_TOILETS")}`}<span className="check-page-link-button"> *</span></CardLabel>
+                                <CardLabel style={isMobile && isEmployee ? {
+              fontWeight: "700",
+              width: "100%"
+            } : {
+              marginTop: "-5px",
+              fontWeight: "700"
+            }} className="card-label-smaller">{`${t("WS_SERV_DETAIL_NO_OF_TOILETS")}`}<span className="check-page-link-button"> *</span></CardLabel>
                                 <div className="field">
                                     <Controller
                                         control={control}
@@ -453,9 +471,6 @@ const ConnectionDetails = (_props) => {
                         </div>}
                 </div>
             </div>
-        </div>
-    );
+        </div>);
 };
-
-
 export default WSActivationConnectionDetails;

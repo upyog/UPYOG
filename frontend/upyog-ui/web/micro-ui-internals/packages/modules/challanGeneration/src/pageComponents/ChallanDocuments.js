@@ -77,13 +77,9 @@ const ChallanDocuments = ({
           })}
           {error && <Toast isDleteBtn={true} label={error} onClose={() => setError(null)} error />}
           <ActionBar>
-            <button
-              onClick={onSkip}
-              className="btn-secondary"
-              style={{ marginRight: "8px" }}
-            >
-              {t("COMMON_SKIP")}
-            </button>
+              <button onClick={onSkip} className="btn-secondary cg-btn-margin-right">
+                {t("COMMON_SKIP")}
+              </button>
             <button
               onClick={handleSubmit}
               className="btn-primary"
@@ -279,17 +275,16 @@ function PTRSelectDocument({ t, document: doc, setDocuments, setError, documents
         <CardLabel className="challan-card-label" >
           {t(doc?.code)} <span className="requiredField"> {doc?.required && " *"}</span>
         </CardLabel>
-        <div className="field" style={{ width: "100%" }}>
+        <div className="field cg-field-width-100">
           <UploadFile
+            className="cg-upload-file"
             onUpload={selectfile}
             onDelete={() => {
               setUploadedFile(null);
             }}
             id={id}
             message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
-            textStyles={{ width: "100%" }}
-            inputStyles={{ width: "280px" }}
-            accept=".pdf, .jpeg, .jpg, .png" //  to accept document of all kind
+            accept=".pdf, .jpeg, .jpg, .png"
             buttonType="button"
             error={!uploadedFile}
           />

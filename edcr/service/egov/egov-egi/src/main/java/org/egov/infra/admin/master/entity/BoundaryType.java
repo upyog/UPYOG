@@ -53,8 +53,8 @@ import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import javax.validation.constraints.NotBlank;
+import org.egov.infra.validation.SanitizeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -84,12 +84,12 @@ public class BoundaryType extends AbstractAuditable {
     private Long id;
 
     @NotBlank
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     @NotBlank
     @Length(max = 25)
-    @SafeHtml
+    @SanitizeHtml
     private String code;
 
     @ManyToOne
@@ -102,8 +102,7 @@ public class BoundaryType extends AbstractAuditable {
     private BoundaryType parent;
 
     private Long hierarchy;
-
-    @SafeHtml
+    @SanitizeHtml
     private String localName;
 
     @Transient

@@ -4,7 +4,6 @@ package org.egov.echallancalculation.service;
 import java.util.*;
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.echallancalculation.config.ChallanConfiguration;
 import org.egov.echallancalculation.model.Amount;
@@ -14,40 +13,31 @@ import org.egov.echallancalculation.web.models.calculation.Calculation;
 import org.egov.echallancalculation.web.models.calculation.CalculationReq;
 import org.egov.echallancalculation.web.models.calculation.CalulationCriteria;
 import org.egov.echallancalculation.web.models.demand.TaxHeadEstimate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CalculationService {
 
-	
-	@Autowired
-	private DemandService demandService;
-	
-	@Autowired
-	private CalculationUtils utils;
+	private static final String CHALLAN_FINE_TAX_HEAD = "CH.CHALLAN_FINE";
 
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@Autowired
-	private ChallanConfiguration config;
-
-	@Autowired
-	private RestTemplate restTemplate;
+	private final DemandService demandService;
+	private final CalculationUtils utils;
+	private final ChallanConfiguration config;
+	private final RestTemplate restTemplate;
 
 	/**
 	 * Get CalculationReq and Calculate the Tax Head on challan
 	 */
 	public List<Calculation> getCalculation(CalculationReq request) {
 		
-		List<Calculation> calculations = new ArrayList<Calculation>();
-		calculations = getCalculation(request.getRequestInfo(),request.getCalulationCriteria());
+		List<Calculation> calculations = getCalculation(request.getRequestInfo(),request.getCalulationCriteria());
 		for(CalulationCriteria criteria : request.getCalulationCriteria()){
 			String applicationStatus = criteria.getChallan().getApplicationStatus();
 			if(applicationStatus.equalsIgnoreCase("CANCELLED"))
@@ -61,130 +51,157 @@ public class CalculationService {
 	public List<Calculation> getCalculation(RequestInfo requestInfo, List<CalulationCriteria> criterias){
 	      List<Calculation> calculations = new LinkedList<>();
 	      for(CalulationCriteria criteria : criterias) {
-	          Challan challan = criteria.getChallan();
-	          if (criteria.getChallan()==null && criteria.getChallanNo() != null) {
-	              challan = utils.getChallan(requestInfo, criteria.getChallanNo(), criteria.getTenantId());
-	              criteria.setChallan(challan);
-	          }
-	          
-	          List<TaxHeadEstimate> estimates = new LinkedList<>();
-	          
-	          // Calculate amount based on challanAmount (user-entered), amount array (MDMS values), and MDMS rate (fetched)
-	          // Demand will be generated with the highest value among these three sources
-	          BigDecimal finalAmount = BigDecimal.ZERO;
-	          String taxHeadCode = "CH.CHALLAN_FINE"; // Default tax head code
-	          
-	          // Get user-entered challan amount
-	          BigDecimal challanAmount = BigDecimal.ZERO;
-	          if (challan.getChallanAmount() != null && !challan.getChallanAmount().isEmpty()) {
-	              try {
-	                  challanAmount = new BigDecimal(challan.getChallanAmount());
-	              } catch (NumberFormatException e) {
-	                  log.warn("Invalid challanAmount format: {}", challan.getChallanAmount());
-	              }
-	          }
-	          
-	          // Get maximum amount from amount array (contains MDMS values)
-	          BigDecimal amountArrayMax = BigDecimal.ZERO;
-	          String amountArrayTaxHeadCode = null;
-	          List<Amount> amountList = challan.getAmount();
-	          if (amountList != null && !amountList.isEmpty()) {
-	              for (Amount amountItem : amountList) {
-	                  if (amountItem.getAmount() != null) {
-	                      int comparison = amountItem.getAmount().compareTo(amountArrayMax);
-	                      if (comparison > 0) {
-	                          // Found a new maximum, update both amount and taxHeadCode
-	                          amountArrayMax = amountItem.getAmount();
-	                          if (amountItem.getTaxHeadCode() != null && !amountItem.getTaxHeadCode().isEmpty()) {
-	                              amountArrayTaxHeadCode = amountItem.getTaxHeadCode();
-	                          }
-	                      } else if (comparison == 0 && amountArrayTaxHeadCode == null) {
-	                          // Same maximum value, use taxHeadCode if we don't have one yet
-	                          if (amountItem.getTaxHeadCode() != null && !amountItem.getTaxHeadCode().isEmpty()) {
-	                              amountArrayTaxHeadCode = amountItem.getTaxHeadCode();
-	                          }
-	                      }
-	                  }
-	              }
-	          }
-	          
-          // Get MDMS rate by fetching from MDMS service (if offence type is available)
-          BigDecimal mdmsRate = BigDecimal.ZERO;
-          String offenceTypeId = null;
-          
-          // Try to get offence type ID from offenceTypeName first, then from offenceType field
-          if (challan.getOffenceTypeName() != null && !challan.getOffenceTypeName().isEmpty()) {
-              offenceTypeId = utils.mapOffenceTypeNameToId(requestInfo, challan.getTenantId(), challan.getOffenceTypeName());
-          } else if (challan.getOffenceType() != null && !challan.getOffenceType().isEmpty()) {
-              offenceTypeId = challan.getOffenceType();
-          }
-          
-          if (offenceTypeId != null) {
-              mdmsRate = utils.getRateFromMDMS(requestInfo, challan.getTenantId(), offenceTypeId);
-              // Fetch tax head code from OffenceType master
-              if (challan.getOffenceTypeName() != null && !challan.getOffenceTypeName().isEmpty()) {
-                  String mdmsTaxHeadCode = utils.getTaxHeadCodeFromOffenceTypeName(requestInfo, challan.getTenantId(), challan.getOffenceTypeName());
-                  if (mdmsTaxHeadCode != null && !mdmsTaxHeadCode.isEmpty()) {
-                      taxHeadCode = mdmsTaxHeadCode;
-                  }
-              }
-          }
-	          
-	          // Compare all three values and use the highest
-	          // Sources: 1) challanAmount (user-entered), 2) amountArrayMax (MDMS from array), 3) mdmsRate (MDMS fetched)
-	          // Priority: challanAmount > amountArrayMax > mdmsRate (if values are equal, prefer in this order)
-	          BigDecimal maxAmount = challanAmount.max(amountArrayMax).max(mdmsRate);
-	          
-	          // Determine which source has the highest value to set appropriate taxHeadCode
-	          if (maxAmount.compareTo(BigDecimal.ZERO) > 0) {
-	              // Check which value is the maximum, with priority order
-	              if (challanAmount.compareTo(maxAmount) >= 0 && challanAmount.compareTo(BigDecimal.ZERO) > 0) {
-	                  // challanAmount is the highest (or equal to max)
-	                  finalAmount = challanAmount;
-	                  // Use MDMS taxHeadCode or default
-	              } else if (amountArrayMax.compareTo(maxAmount) >= 0 && amountArrayMax.compareTo(BigDecimal.ZERO) > 0) {
-	                  // amount array has the highest value (or equal to max, and challanAmount is not higher)
-	                  finalAmount = amountArrayMax;
-	                  if (amountArrayTaxHeadCode != null && !amountArrayTaxHeadCode.isEmpty()) {
-	                      taxHeadCode = amountArrayTaxHeadCode;
-	                  }
-	              } else if (mdmsRate.compareTo(maxAmount) >= 0 && mdmsRate.compareTo(BigDecimal.ZERO) > 0) {
-	                  // MDMS rate is the highest (or equal to max, and others are not higher)
-	                  finalAmount = mdmsRate;
-	              } else {
-	                  // Use the max amount (shouldn't reach here, but safety check)
-	                  finalAmount = maxAmount;
-	              }
-	              
-	              TaxHeadEstimate estimate = new TaxHeadEstimate();
-	              estimate.setEstimateAmount(finalAmount);
-	              estimate.setTaxHeadCode(taxHeadCode);
-	              estimates.add(estimate);
-	              
-	              log.info("Demand calculation - challanAmount: {}, amountArrayMax: {}, mdmsRate: {}, finalAmount: {}", 
-	                      challanAmount, amountArrayMax, mdmsRate, finalAmount);
-	          } else {
-	              // Fallback: if all are zero, use amount list as-is (preserve original behavior)
-	              if (amountList != null && !amountList.isEmpty()) {
-	                  for(Amount amountItem : amountList) {
-	                      TaxHeadEstimate estimate = new TaxHeadEstimate();
-	                      estimate.setEstimateAmount(amountItem.getAmount());
-	                      estimate.setTaxHeadCode(amountItem.getTaxHeadCode() != null ? amountItem.getTaxHeadCode() : taxHeadCode);
-	                      estimates.add(estimate);
-	                  }
-	              }
-	          }
-	          
+	          Challan challan = resolveChallan(requestInfo, criteria);
+	          List<TaxHeadEstimate> estimates = buildTaxHeadEstimates(requestInfo, challan);
+
 	          Calculation calculation = new Calculation();
 	          calculation.setChallan(criteria.getChallan());
 	          calculation.setTenantId(criteria.getTenantId());
 	          calculation.setTaxHeadEstimates(estimates);
 
 	          calculations.add(calculation);
-
 	      }
 	      return calculations;
 	  }
+
+	private Challan resolveChallan(RequestInfo requestInfo, CalulationCriteria criteria) {
+		Challan challan = criteria.getChallan();
+		if (criteria.getChallan() == null && criteria.getChallanNo() != null) {
+			challan = utils.getChallan(requestInfo, criteria.getChallanNo(), criteria.getTenantId());
+			criteria.setChallan(challan);
+		}
+		return challan;
+	}
+
+	private List<TaxHeadEstimate> buildTaxHeadEstimates(RequestInfo requestInfo, Challan challan) {
+		List<TaxHeadEstimate> estimates = new LinkedList<>();
+		String taxHeadCode = CHALLAN_FINE_TAX_HEAD;
+
+		BigDecimal challanAmount = parseChallanAmount(challan);
+		AmountArraySummary amountArraySummary = findMaxFromAmountArray(challan.getAmount());
+		MdmsRateSummary mdmsSummary = resolveMdmsRateAndTaxHead(requestInfo, challan, taxHeadCode);
+		taxHeadCode = mdmsSummary.taxHeadCode();
+
+		BigDecimal maxAmount = challanAmount.max(amountArraySummary.maxAmount()).max(mdmsSummary.rate());
+
+		if (maxAmount.compareTo(BigDecimal.ZERO) > 0) {
+			AmountSelection selection = selectFinalAmount(challanAmount, amountArraySummary, mdmsSummary, maxAmount, taxHeadCode);
+			TaxHeadEstimate estimate = new TaxHeadEstimate();
+			estimate.setEstimateAmount(selection.amount());
+			estimate.setTaxHeadCode(selection.taxHeadCode());
+			estimates.add(estimate);
+
+			log.info("Demand calculation - challanAmount: {}, amountArrayMax: {}, mdmsRate: {}, finalAmount: {}",
+					challanAmount, amountArraySummary.maxAmount(), mdmsSummary.rate(), selection.amount());
+			return estimates;
+		}
+
+		addFallbackEstimatesFromAmountList(challan.getAmount(), taxHeadCode, estimates);
+		return estimates;
+	}
+
+	private BigDecimal parseChallanAmount(Challan challan) {
+		if (challan.getChallanAmount() == null || challan.getChallanAmount().isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		try {
+			return new BigDecimal(challan.getChallanAmount());
+		} catch (NumberFormatException e) {
+			log.warn("Invalid challanAmount format: {}", challan.getChallanAmount());
+			return BigDecimal.ZERO;
+		}
+	}
+
+	private AmountArraySummary findMaxFromAmountArray(List<Amount> amountList) {
+		BigDecimal amountArrayMax = BigDecimal.ZERO;
+		String amountArrayTaxHeadCode = null;
+
+		if (amountList == null || amountList.isEmpty()) {
+			return new AmountArraySummary(amountArrayMax, amountArrayTaxHeadCode);
+		}
+
+		for (Amount amountItem : amountList) {
+			if (amountItem.getAmount() == null) {
+				continue;
+			}
+			int comparison = amountItem.getAmount().compareTo(amountArrayMax);
+			if (comparison > 0) {
+				amountArrayMax = amountItem.getAmount();
+				if (hasTaxHeadCode(amountItem)) {
+					amountArrayTaxHeadCode = amountItem.getTaxHeadCode();
+				}
+			} else if (comparison == 0 && amountArrayTaxHeadCode == null && hasTaxHeadCode(amountItem)) {
+				amountArrayTaxHeadCode = amountItem.getTaxHeadCode();
+			}
+		}
+		return new AmountArraySummary(amountArrayMax, amountArrayTaxHeadCode);
+	}
+
+	private boolean hasTaxHeadCode(Amount amountItem) {
+		return amountItem.getTaxHeadCode() != null && !amountItem.getTaxHeadCode().isEmpty();
+	}
+
+	private MdmsRateSummary resolveMdmsRateAndTaxHead(RequestInfo requestInfo, Challan challan, String defaultTaxHeadCode) {
+		String offenceTypeId = resolveOffenceTypeId(requestInfo, challan);
+		if (offenceTypeId == null) {
+			return new MdmsRateSummary(BigDecimal.ZERO, defaultTaxHeadCode);
+		}
+
+		BigDecimal mdmsRate = utils.getRateFromMDMS(requestInfo, challan.getTenantId(), offenceTypeId);
+		String taxHeadCode = defaultTaxHeadCode;
+		if (challan.getOffenceTypeName() != null && !challan.getOffenceTypeName().isEmpty()) {
+			String mdmsTaxHeadCode = utils.getTaxHeadCodeFromOffenceTypeName(
+					requestInfo, challan.getTenantId(), challan.getOffenceTypeName());
+			if (mdmsTaxHeadCode != null && !mdmsTaxHeadCode.isEmpty()) {
+				taxHeadCode = mdmsTaxHeadCode;
+			}
+		}
+		return new MdmsRateSummary(mdmsRate, taxHeadCode);
+	}
+
+	private String resolveOffenceTypeId(RequestInfo requestInfo, Challan challan) {
+		if (challan.getOffenceTypeName() != null && !challan.getOffenceTypeName().isEmpty()) {
+			return utils.mapOffenceTypeNameToId(requestInfo, challan.getTenantId(), challan.getOffenceTypeName());
+		}
+		if (challan.getOffenceType() != null && !challan.getOffenceType().isEmpty()) {
+			return challan.getOffenceType();
+		}
+		return null;
+	}
+
+	private AmountSelection selectFinalAmount(BigDecimal challanAmount, AmountArraySummary amountArraySummary,
+			MdmsRateSummary mdmsSummary, BigDecimal maxAmount, String taxHeadCode) {
+		if (challanAmount.compareTo(maxAmount) >= 0 && challanAmount.compareTo(BigDecimal.ZERO) > 0) {
+			return new AmountSelection(challanAmount, taxHeadCode);
+		}
+		if (amountArraySummary.maxAmount().compareTo(maxAmount) >= 0
+				&& amountArraySummary.maxAmount().compareTo(BigDecimal.ZERO) > 0) {
+			String selectedTaxHead = amountArraySummary.taxHeadCode() != null && !amountArraySummary.taxHeadCode().isEmpty()
+					? amountArraySummary.taxHeadCode() : taxHeadCode;
+			return new AmountSelection(amountArraySummary.maxAmount(), selectedTaxHead);
+		}
+		if (mdmsSummary.rate().compareTo(maxAmount) >= 0 && mdmsSummary.rate().compareTo(BigDecimal.ZERO) > 0) {
+			return new AmountSelection(mdmsSummary.rate(), taxHeadCode);
+		}
+		return new AmountSelection(maxAmount, taxHeadCode);
+	}
+
+	private void addFallbackEstimatesFromAmountList(List<Amount> amountList, String taxHeadCode,
+			List<TaxHeadEstimate> estimates) {
+		if (amountList == null || amountList.isEmpty()) {
+			return;
+		}
+		for (Amount amountItem : amountList) {
+			TaxHeadEstimate estimate = new TaxHeadEstimate();
+			estimate.setEstimateAmount(amountItem.getAmount());
+			estimate.setTaxHeadCode(amountItem.getTaxHeadCode() != null ? amountItem.getTaxHeadCode() : taxHeadCode);
+			estimates.add(estimate);
+		}
+	}
+
+	private record AmountArraySummary(BigDecimal maxAmount, String taxHeadCode) {}
+	private record MdmsRateSummary(BigDecimal rate, String taxHeadCode) {}
+	private record AmountSelection(BigDecimal amount, String taxHeadCode) {}
 
 	/**
 	 * Test method to demonstrate dynamic calculation with provided payload
@@ -210,7 +227,7 @@ public class CalculationService {
 		
 		// Dynamically fetch MDMS rate
 		BigDecimal mdmsRate = BigDecimal.ZERO;
-		String taxHeadCode = "CH.CHALLAN_FINE";
+		String taxHeadCode = CHALLAN_FINE_TAX_HEAD;
 		if (offenceTypeId != null) {
 			mdmsRate = utils.getRateFromMDMS(requestInfo, tenantId, offenceTypeId);
 			log.info("MDMS rate for {}: {}", offenceTypeId, mdmsRate);
@@ -245,7 +262,7 @@ public class CalculationService {
 		String offenceTypeId = utils.mapOffenceTypeNameToId(requestInfo, tenantId, offenceTypeName);
 		BigDecimal userAmount = new BigDecimal(challanAmount);
 		BigDecimal mdmsRate = BigDecimal.ZERO;
-		String taxHeadCode = "CH.CHALLAN_FINE";
+		String taxHeadCode = CHALLAN_FINE_TAX_HEAD;
 		
 		if (offenceTypeId != null) {
 			mdmsRate = utils.getRateFromMDMS(requestInfo, tenantId, offenceTypeId);
@@ -257,7 +274,7 @@ public class CalculationService {
 		
 		// Simulate round-off calculation
 		BigDecimal decimalValue = finalAmount.remainder(BigDecimal.ONE);
-		BigDecimal roundOff = BigDecimal.ZERO;
+		BigDecimal roundOff;
 		
 		if (decimalValue.compareTo(new BigDecimal("0.5")) >= 0) {
 			roundOff = BigDecimal.ONE.subtract(decimalValue);
@@ -378,13 +395,11 @@ public class CalculationService {
 		String roundOffTaxHead = businessService + "_ROUNDOFF";
 		
 		for(org.egov.echallancalculation.web.models.demand.DemandDetail detail : demand.getDemandDetails()) {
-			if(detail.getTaxHeadMasterCode() != null && detail.getTaxAmount() != null) {
-				// Skip round-off tax head in main estimates (it's added separately)
-				if(!detail.getTaxHeadMasterCode().equalsIgnoreCase(roundOffTaxHead)) {
-					String taxHeadCode = detail.getTaxHeadMasterCode();
-					BigDecimal currentAmount = taxHeadAmountMap.getOrDefault(taxHeadCode, BigDecimal.ZERO);
-					taxHeadAmountMap.put(taxHeadCode, currentAmount.add(detail.getTaxAmount()));
-				}
+			if(detail.getTaxHeadMasterCode() != null && detail.getTaxAmount() != null
+					&& !detail.getTaxHeadMasterCode().equalsIgnoreCase(roundOffTaxHead)) {
+				String taxHeadCode = detail.getTaxHeadMasterCode();
+				BigDecimal currentAmount = taxHeadAmountMap.getOrDefault(taxHeadCode, BigDecimal.ZERO);
+				taxHeadAmountMap.put(taxHeadCode, currentAmount.add(detail.getTaxAmount()));
 			}
 		}
 		

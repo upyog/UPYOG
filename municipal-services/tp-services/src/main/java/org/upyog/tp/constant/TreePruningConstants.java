@@ -1,6 +1,9 @@
 package org.upyog.tp.constant;
 
 public class TreePruningConstants {
+
+    private TreePruningConstants() {
+    }
     public static final String TP_BOOKING_CREATED = "Your Tree Pruning booking created successfully";
 
     public static final String TP_BOOKING_DETAIL_FOUND = "Your Tree Pruning booking searched successfully";

@@ -1,481 +1,0 @@
-INFO:__main__:FAQ data loaded from /Users/nisheetagrawal/Desktop/demo/upyog-voice-v2/UpyogFAQ.csv
-INFO:sentence_transformers.SentenceTransformer:Load pretrained SentenceTransformer: all-mpnet-base-v2
-INFO:__main__:Starting UPYOG Voice Assistant v2 on port 8090...
- * Serving Flask app 'app'
- * Debug mode: off
-INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:8090
- * Running on http://192.168.1.65:8090
-INFO:werkzeug:[33mPress CTRL+C to quit[0m
-INFO:sentence_transformers.SentenceTransformer:Use pytorch device: cpu
-Batches:   0%|          | 0/8 [00:00<?, ?it/s]Batches:  12%|█▎        | 1/8 [00:00<00:02,  3.23it/s]Batches:  25%|██▌       | 2/8 [00:00<00:01,  4.06it/s]Batches:  38%|███▊      | 3/8 [00:00<00:01,  4.52it/s]Batches:  50%|█████     | 4/8 [00:00<00:00,  5.02it/s]Batches:  62%|██████▎   | 5/8 [00:01<00:00,  5.36it/s]Batches:  75%|███████▌  | 6/8 [00:01<00:00,  5.68it/s]Batches:  88%|████████▊ | 7/8 [00:01<00:00,  5.67it/s]Batches: 100%|██████████| 8/8 [00:01<00:00,  4.18it/s]Batches: 100%|██████████| 8/8 [00:01<00:00,  4.60it/s]
-INFO:__main__:Embeddings generated successfully.
-INFO:__main__:FAQ FAISS index initialized.
-INFO:__main__:FRS Knowledge Base loaded with 230 specifications.
-INFO:__main__:All resources loaded successfully.
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:23:00] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:23:01] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:26:45] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:26:46] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:39:25] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:39:25] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:39:26] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  2.91it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  2.90it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:39:36] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:41:52] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:41:52] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: what is upyog
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  4.80it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  4.80it/s]
-INFO:__main__:FAISS context found: 5 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:__main__:Intent: faq but fallback offered grievance
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:08] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:08] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:__main__:Stop signal received - aborting generation
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:09] "POST /stop HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:15] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-INFO:__main__:Translating from hi to en
-━━━ REQUEST ━━━
-Query: upyog Kya Hota Hai
-Lang: hi | Script: roman_hindi | SearchLang: hi
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  4.81it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  4.80it/s]
-INFO:__main__:FAISS context found: 5 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: hi
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:31] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:Stop signal received - aborting generation
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:31] "POST /stop HTTP/1.1" 200 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: property tax, EMOTION: neutral
-INFO:__main__:Translating from hi to en
-━━━ REQUEST ━━━
-Query: हाउ टू फिल प्रॉपर्टी टैक्स
-Lang: hi | Script: devanagari | SearchLang: hi
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.23it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.23it/s]
-INFO:__main__:FAISS context found: 5 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: hi
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:46] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:Stop signal received - aborting generation
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:48] "POST /stop HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:51] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:42:51] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: grievance_candidate, SERVICE: None, EMOTION: neutral
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:43:29] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:43:29] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:43:34] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:OTP sent: {'ResponseInfo': None, 'Errors': [{'code': 'CustomException', 'message': 'You are not authorized to access this resource', 'description': 'You are not authorized to access this resource', 'params': None}]}
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:43:44] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:OTP verify result keys: dict_keys(['access_token', 'token_type', 'refresh_token', 'expires_in', 'scope', 'ResponseInfo', 'UserRequest'])
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:43:49] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:43:55] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:43:55] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: grievance_candidate, SERVICE: None, EMOTION: frustrated
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:44:22] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:44:22] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:45:01] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: I want to file a griviance
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: yes
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: 9999999999
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-[NORMALIZE] mobile: '9999999999' → '9999999999'
-━━━ REQUEST ━━━
-Query: 123456
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-[NORMALIZE] otp: '123456' → '123456'
-━━━ REQUEST ━━━
-Query: i want to file a complaint
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.83it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.83it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:46:25] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:46:25] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: grievance_candidate, SERVICE: water supply, EMOTION: frustrated
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:46:38] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:49:12] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:49:12] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: no water
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.60it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.59it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:49:16] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:49:16] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: grievance_candidate, SERVICE: water supply, EMOTION: frustrated
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:49:30] "POST /chat HTTP/1.1" 200 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:49:41] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:49:49] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:49:56] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:OTP sent: {'ResponseInfo': None, 'Errors': [{'code': 'CustomException', 'message': 'You are not authorized to access this resource', 'description': 'You are not authorized to access this resource', 'params': None}]}
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:50:07] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:OTP verify result keys: dict_keys(['access_token', 'token_type', 'refresh_token', 'expires_in', 'scope', 'ResponseInfo', 'UserRequest'])
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:50:13] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:50:19] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:50:22] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:50:36] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:50:51] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: i have no water
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: yes
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: 99999999
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-[NORMALIZE] mobile: '99999999' → '99999999'
-━━━ REQUEST ━━━
-Query: 99999999
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-[NORMALIZE] mobile: '99999999' → '99999999'
-━━━ REQUEST ━━━
-Query: 9999999999
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-[NORMALIZE] mobile: '9999999999' → '9999999999'
-━━━ REQUEST ━━━
-Query: 123456
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-[NORMALIZE] otp: '123456' → '123456'
-━━━ REQUEST ━━━
-Query: OpenDefecation
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: Open Defecation
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: open
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  6.37it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  6.36it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:51:01] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:51:01] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:52:42] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:59:39] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:59:40] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.93it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.92it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:59:44] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:59:44] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 14:59:48] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:01:13] "GET / HTTP/1.1" 200 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.09it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.08it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:01:17] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:01:17] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:01:28] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:01:29] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  9.24it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  9.23it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:01:33] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:01:33] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:05:43] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:05:43] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.82it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.82it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:05:49] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:05:49] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:10:15] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:10:15] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.53it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.52it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:10:21] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:10:21] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:15:47] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:15:48] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.87it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.87it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:15:52] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:15:52] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:19:38] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:19:38] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  4.10it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  4.09it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:19:43] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:19:43] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:22:49] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:22:49] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.88it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.87it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:22:53] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:22:53] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: property tax, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: what is property tax
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 14.52it/s]
-INFO:__main__:FAISS context found: 5 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:23:09] "POST /chat HTTP/1.1" 200 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: property tax, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: how do I feel my property tax  how to fill property tax
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.09it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.08it/s]
-INFO:__main__:FAISS context found: 5 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:23:33] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:23:48] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: what is property tax
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  6.07it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  6.06it/s]
-INFO:__main__:FAISS context found: 5 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:24:12] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:25:45] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.15it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.15it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:25:53] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:25:53] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:26:01] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:26:24] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:26:24] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: trade license, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: what is trade licence
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.31it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  5.31it/s]
-INFO:__main__:FAISS context found: 5 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:26:38] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:26:38] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:__main__:Stop signal received - aborting generation
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:26:38] "POST /stop HTTP/1.1" 200 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: trade_license, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: what is trade licence
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 10.62it/s]
-INFO:__main__:FAISS context found: 5 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:26:51] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:Stop signal received - aborting generation
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:26:53] "POST /stop HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:26:58] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: grievance_candidate, SERVICE: None, EMOTION: neutral
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:43:49] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:45:37] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:45:37] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:45:48] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: register complaint
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.87it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  3.86it/s]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:45:57] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:45:57] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: what is property tax
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  6.34it/s]Batches: 100%|██████████| 1/1 [00:00<00:00,  6.34it/s]
-INFO:__main__:FAISS context found: 5 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:46:23] "POST /chat HTTP/1.1" 200 -
-INFO:__main__:Stop signal received - aborting generation
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 15:46:24] "POST /stop HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [21/May/2026 17:05:20] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [22/May/2026 10:11:44] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [22/May/2026 10:11:44] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:INTENT: faq, SERVICE: None, EMOTION: neutral
-━━━ REQUEST ━━━
-Query: hi
-Lang: en | Script: english | SearchLang: en
-━━━━━━━━━━━━━━
-Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:01<00:00,  1.83s/it]Batches: 100%|██████████| 1/1 [00:01<00:00,  1.83s/it]
-INFO:__main__:FAISS context found: 2 chunks
-INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:__main__:Generating TTS for language: en
-INFO:werkzeug:127.0.0.1 - - [22/May/2026 10:12:30] "POST /chat HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [22/May/2026 10:12:30] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [22/May/2026 10:12:38] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
-INFO:werkzeug:127.0.0.1 - - [22/May/2026 10:47:29] "GET / HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [22/May/2026 10:47:29] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -

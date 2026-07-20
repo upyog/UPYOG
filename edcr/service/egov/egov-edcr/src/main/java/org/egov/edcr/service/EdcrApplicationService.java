@@ -37,7 +37,7 @@ import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.entity.SearchBuildingPlanScrutinyForm;
 import org.egov.edcr.repository.EdcrApplicationDetailRepository;
 import org.egov.edcr.repository.EdcrApplicationRepository;
-import org.egov.edcr.service.es.EdcrIndexService;
+//import org.egov.edcr.service.es.EdcrIndexService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -89,8 +89,8 @@ public class EdcrApplicationService {
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
 
-    @Autowired
-    private EdcrIndexService edcrIndexService;
+//    @Autowired
+//    private EdcrIndexService edcrIndexService;
 
     @Autowired
     private EdcrApplicationDetailService edcrApplicationDetailService;
@@ -110,10 +110,10 @@ public class EdcrApplicationService {
 
         edcrApplicationRepository.save(edcrApplication);
 
-        edcrIndexService.updateIndexes(edcrApplication, NEW_SCRTNY);
+     //   edcrIndexService.updateIndexes(edcrApplication, NEW_SCRTNY);
 
         callDcrProcess(edcrApplication, NEW_SCRTNY);
-        edcrIndexService.updateIndexes(edcrApplication, NEW_SCRTNY);
+     //   edcrIndexService.updateIndexes(edcrApplication, NEW_SCRTNY);
 
         return edcrApplication;
     }
@@ -126,7 +126,7 @@ public class EdcrApplicationService {
         EdcrApplication applicationRes = edcrApplicationRepository.save(edcrApplication);
         edcrApplication.getEdcrApplicationDetails().get(0).setPlan(unsavedPlanDetail);
 
-        edcrIndexService.updateIndexes(edcrApplication, RESUBMIT_SCRTNY);
+       // edcrIndexService.updateIndexes(edcrApplication, RESUBMIT_SCRTNY);
 
         callDcrProcess(edcrApplication, RESUBMIT_SCRTNY);
 
@@ -169,11 +169,11 @@ public class EdcrApplicationService {
     }
 
     public List<EdcrApplication> findAll() {
-        return edcrApplicationRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    	return edcrApplicationRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public EdcrApplication findOne(Long id) {
-        return edcrApplicationRepository.findOne(id);
+        return edcrApplicationRepository.findById(id).orElse(null);
     }
 
     public EdcrApplication findByApplicationNo(String appNo) {
@@ -205,14 +205,14 @@ public class EdcrApplicationService {
     }
 
     public List<EdcrApplication> getEdcrApplications() {
-        Pageable pageable = new PageRequest(0, 25, Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(0, 25, Sort.Direction.DESC, "id");
         Page<EdcrApplication> edcrApplications = edcrApplicationRepository.findAll(pageable);
         return edcrApplications.getContent();
     }
 
     @ReadOnly
     public Page<SearchBuildingPlanScrutinyForm> planScrutinyPagedSearch(SearchBuildingPlanScrutinyForm searchRequest) {
-        final Pageable pageable = new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+        final Pageable pageable = PageRequest.of(searchRequest.pageNumber(), searchRequest.pageSize(),
                 searchRequest.orderDir(), searchRequest.orderBy());
         List<SearchBuildingPlanScrutinyForm> searchResults = new ArrayList<>();
         Page<EdcrApplicationDetail> dcrApplications = edcrApplicationDetailRepository
@@ -432,7 +432,7 @@ public class EdcrApplicationService {
         edcrApplicationRepository.save(edcrApplication);
         edcrApplication.getEdcrApplicationDetails().get(0).setComparisonDcrNumber(comparisonDcrNo);
         callDcrProcess(edcrApplication, NEW_SCRTNY);
-        edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
+       // edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
         return edcrApplication;
     }
 }

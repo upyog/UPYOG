@@ -1,12 +1,10 @@
 package org.upyog.tp.web.controllers;
 import org.egov.common.contract.response.Error;
 import org.egov.common.contract.response.ErrorResponse;
-import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +13,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.net.UnknownHostException;
-import java.util.List;
 
 /**
  * GlobalExceptionHandler class for handling exceptions across the request-service application.
@@ -84,9 +81,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<ErrorResponse> handleHttpClientErrorException(HttpClientErrorException ex) {
         ErrorResponse response = new ErrorResponse();
+        int statusCode = ex.getStatusCode().value();
         Error error = Error.builder()
-                .code(ex.getRawStatusCode())
-                .message("Client error from external service: " + ex.getRawStatusCode() + " BAD_REQUEST")
+                .code(statusCode)
+                .message("Client error from external service: " + statusCode + " BAD_REQUEST")
                 .build();
         response.setError(error);
         return new ResponseEntity<>(response, ex.getStatusCode());
@@ -101,9 +99,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpServerErrorException.class)
     public ResponseEntity<ErrorResponse> handleHttpServerErrorException(HttpServerErrorException ex) {
         ErrorResponse response = new ErrorResponse();
+        int statusCode = ex.getStatusCode().value();
         Error error = Error.builder()
-                .code(ex.getRawStatusCode())
-                .message("Server error from external service: " + ex.getRawStatusCode() + " INTERNAL_SERVER_ERROR")
+                .code(statusCode)
+                .message("Server error from external service: " + statusCode + " INTERNAL_SERVER_ERROR")
                 .build();
         response.setError(error);
         return new ResponseEntity<>(response, ex.getStatusCode());
@@ -134,10 +133,16 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({UnknownHostException.class, RuntimeException.class})
     public ResponseEntity<ErrorResponse> handleUnknownHostException(Exception ex) {
-        if (ex instanceof UnknownHostException || (ex instanceof RuntimeException && ex.getCause() instanceof UnknownHostException)) {
-            UnknownHostException unknownHostEx = (ex instanceof UnknownHostException) ?
-                    (UnknownHostException) ex :
-                    (UnknownHostException) ex.getCause();
+        if (ex instanceof UnknownHostException unknownHostEx) {
+            ErrorResponse response = new ErrorResponse();
+            Error error = Error.builder()
+                    .code(503)
+                    .message("Service unavailable: Unknown host - " + unknownHostEx.getMessage())
+                    .build();
+            response.setError(error);
+            return new ResponseEntity<>(response, HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        if (ex instanceof RuntimeException && ex.getCause() instanceof UnknownHostException unknownHostEx) {
             ErrorResponse response = new ErrorResponse();
             Error error = Error.builder()
                     .code(503)

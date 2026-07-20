@@ -33,25 +33,15 @@ const GetActionMessage = (props) => {
     return t("MT_APPLICATION_FAILED");
   };
 
-
 //style object to pass inside row container which shows the application ID and status of application of banner image
 const rowContainerStyle = {
   padding: "4px 0px",
-  justifyContent: "space-between",
+  justifyContent: "space-between"
 };
+const BannerPicker = props => {
+  console.log("BannerPicker", props);
 
-const BannerPicker = (props) => {
-  console.log("BannerPicker",props);
-
-  return (
-    <Banner
-      message={GetActionMessage(props)}
-      applicationNumber={props?.data?.mobileToiletBookingDetail?.bookingNo}
-      info={props?.isSuccess ? props.t("MT_BOOKING_NO") : ""}
-      successful={props?.isSuccess}
-      style={{width: "100%"}}
-    />
-  );
+  return <Banner message={GetActionMessage(props)} applicationNumber={props?.data?.mobileToiletBookingDetail?.bookingNo} info={props?.isSuccess ? props.t("MT_BOOKING_NO") : ""} successful={props?.isSuccess} className="wt-auto-41" />;
 };
 
 const MTAcknowledgement = () => {
@@ -132,13 +122,9 @@ const MTAcknowledgement = () => {
       {user?.type==="CITIZEN"?
       <Link to={`${APPLICATION_PATH}/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>
-      :
-      <Link to={`${APPLICATION_PATH}/employee`}>
+      </Link> : <Link to={`${APPLICATION_PATH}/employee`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>}
-    </Card>
-  );
+    </Card>);
 };
-
 export default MTAcknowledgement;

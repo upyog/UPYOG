@@ -18,16 +18,16 @@ import org.upyog.adv.web.models.BookingDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
+@SuppressWarnings("java:S2638")
 @Component
 @Slf4j
 public class BookingDetailRowmapper implements ResultSetExtractor<List<BookingDetail>> {
 
 	@Override
 	public List<BookingDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
-		//TODO: Remove this map
 		log.info("Fetched booking details sizhgvghjyh : " + rs);
 		Map<String, BookingDetail> bookingDetailMap = new LinkedHashMap<>();
-		List<BookingDetail> bookingDetails = new ArrayList<BookingDetail>();
+		List<BookingDetail> bookingDetails = new ArrayList<>();
 		while (rs.next()) {
 			String bookingId = rs.getString("booking_id");
 			String bookingNo = rs.getString("booking_no");
@@ -37,7 +37,6 @@ public class BookingDetailRowmapper implements ResultSetExtractor<List<BookingDe
 				currentBooking = BookingDetail.builder().bookingId(bookingId).bookingNo(bookingNo)
 						.applicationDate(rs.getLong("application_date"))
 						.tenantId(tenantId)
-						//TODO : check payment_date
 						.bookingStatus(rs.getString("booking_status"))
 						.paymentDate(rs.getLong("payment_date"))
 						.receiptNo(rs.getString("receipt_no"))
@@ -51,7 +50,7 @@ public class BookingDetailRowmapper implements ResultSetExtractor<List<BookingDe
 				currentBooking = bookingDetailMap.get(bookingId);
 			}
 
-			if (bookingDetailMap.values().size() == 0) {
+			if (bookingDetailMap.isEmpty()) {
 				return bookingDetails;
 			}
 
@@ -64,29 +63,24 @@ public class BookingDetailRowmapper implements ResultSetExtractor<List<BookingDe
 
 	}
 
-	
 	private ApplicantDetail addApplicantDetail(ResultSet rs) throws SQLException {
-		
-		ApplicantDetail applicantDetail = ApplicantDetail.builder().applicantDetailId(rs.getString("applicant_detail_id"))
+		return ApplicantDetail.builder().applicantDetailId(rs.getString("applicant_detail_id"))
 				.bookingId(rs.getString("booking_id"))
 				.applicantName(rs.getString("applicant_name"))
 				.applicantMobileNo(rs.getString("applicant_mobile_no"))
 				.applicantAlternateMobileNo(rs.getString("applicant_alternate_mobile_no"))
 				.applicantEmailId(rs.getString("applicant_email_id"))
 				.auditDetails(BookingUtil.getAuditDetails(rs)).build();
-		
-		return applicantDetail;
-		
 	}
-	
+
     private Address addApplicantAddress(ResultSet rs) throws SQLException {
-		
+
 		/**
-		 * address_id, applicant_detail_id, door_no, house_no, address_line_1, 
-	landmark, city, pincode, street_name, locality_code
+		 * address_id, applicant_detail_id, door_no, house_no, address_line_1,
+		landmark, city, pincode, street_name, locality_code
 		 */
-		
-		Address address = Address.builder()
+
+		return Address.builder()
 				.addressId(rs.getString("address_id"))
 				.applicantDetailId(rs.getString("applicant_detail_id"))
 				.doorNo(rs.getString("door_no"))
@@ -101,9 +95,6 @@ public class BookingDetailRowmapper implements ResultSetExtractor<List<BookingDe
 				.locality(rs.getString("locality"))
 				.localityCode(rs.getString("locality_code"))
 				.build();
-		
-		return address;
-		
 	}
 
 }

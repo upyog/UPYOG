@@ -69,13 +69,13 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
             .filter(doc => doc?.additionalDetails?.fileName?.includes(".jpg"))
             .map(doc => doc?.fileStoreId)
         );
-         const thumbnails = fileStoreIds ? await getThumbnails(fileStoreIds, tenantId) : null;
+         const thumbnails = fileStoreIds && fileStoreIds.length > 0 ? await getThumbnails(fileStoreIds, tenantId) : null;
          
         setImagesToShowBelowComplaintDetails(thumbnails);
       }
     };
     fetchThumbnails();
-  }, [preApprovedResponse]);
+  }, [preApprovedResponse?.data]);
 
   const clearForm = () => {
     setIsPlanApproved(null);

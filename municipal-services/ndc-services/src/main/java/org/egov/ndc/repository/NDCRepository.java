@@ -6,35 +6,26 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.ndc.config.NDCConfiguration;
-import org.egov.ndc.producer.Producer;
 import org.egov.ndc.repository.builder.NdcQueryBuilder;
 import org.egov.ndc.repository.rowmapper.NdcRowMapper;
 import org.egov.ndc.web.model.ndc.Application;
 import org.egov.ndc.web.model.ndc.NdcApplicationSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Slf4j
 public class NDCRepository {
-	
-	@Autowired
-	private Producer producer;
-	
-	@Autowired
-	private NDCConfiguration config;	
 
-	@Autowired
-	private NdcQueryBuilder queryBuilder;
+	private final NdcQueryBuilder queryBuilder;
+	private final JdbcTemplate jdbcTemplate;
+	private final NdcRowMapper rowMapper;
 
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-
-	@Autowired
-	private NdcRowMapper rowMapper;
-
+	public NDCRepository(NdcQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, NdcRowMapper rowMapper) {
+		this.queryBuilder = queryBuilder;
+		this.jdbcTemplate = jdbcTemplate;
+		this.rowMapper = rowMapper;
+	}
 
 	public Set<String> getExistingUuids(String tableName, List<String> uuids) {
 		String sql = queryBuilder.getExistingUuids(tableName, uuids);
@@ -42,8 +33,8 @@ public class NDCRepository {
 	}
 
 	public boolean checkApplicationExists(String uuid) {
-		String sql = queryBuilder.checkApplicationExists(uuid);
-		String query = jdbcTemplate.queryForObject(sql, new Object[]{uuid}, String.class);
+		String sql = queryBuilder.checkApplicationExists();
+		String query = jdbcTemplate.queryForObject(sql, String.class, uuid);
 		return query != null;
 	}
 
@@ -53,7 +44,8 @@ public class NDCRepository {
 		log.info("UUID Query: {}", uuidQuery);
 		log.info("UUID Params: {}", uuidStmtList);
 
-		List<String> paginatedUuids = jdbcTemplate.query(uuidQuery, uuidStmtList.toArray(), (rs, rowNum) -> rs.getString("uuid"));
+		List<String> paginatedUuids = jdbcTemplate.query(uuidQuery, (rs, rowNum) -> rs.getString("uuid"),
+				uuidStmtList.toArray());
 
 		if (paginatedUuids.isEmpty()) {
 			return new ArrayList<>();
@@ -64,7 +56,7 @@ public class NDCRepository {
 		log.info("Detail Query: {}", detailQuery);
 		log.info("Detail Params: {}", detailStmtList);
 
-		return jdbcTemplate.query(detailQuery, detailStmtList.toArray(), rowMapper);
+		return jdbcTemplate.query(detailQuery, rowMapper, detailStmtList.toArray());
 	}
 
 }

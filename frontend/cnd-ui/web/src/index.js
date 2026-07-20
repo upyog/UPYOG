@@ -1,42 +1,45 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
-// import "@upyog/cnd-ui-css/dist/index.css";
+// import "@upyog/digit-ui-css/dist/index.css";
 import "./index.css";
 import App from './App';
+// import { TLCustomisations } from './Customisations/tl/TLCustomisation';
 
+// import "leaflet/dist/leaflet.css";
+// import "leaflet-draw/dist/leaflet.draw.css";
 
 initLibraries();
-
 
 // window.Digit.Customizations = { PGR: {} ,TL:TLCustomisations};
 
 const user = window.Digit.SessionStorage.get("User");
 
 if (!user || !user.access_token || !user.info) {
+  // login detection
 
   const parseValue = (value) => {
     try {
-      return JSON.parse(value)
+      return JSON.parse(value);
     } catch (e) {
-      return value
+      return value;
     }
-  }
+  };
 
   const getFromStorage = (key) => {
     const value = window.localStorage.getItem(key);
     return value && value !== "undefined" ? parseValue(value) : null;
-  }
+  };
 
-  const token = getFromStorage("token")
+  const token = getFromStorage("token");
 
-  const citizenToken = getFromStorage("Citizen.token")
-  const citizenInfo = getFromStorage("Citizen.user-info")
-  const citizenTenantId = getFromStorage("Citizen.tenant-id")
+  const citizenToken = getFromStorage("Citizen.token");
+  const citizenInfo = getFromStorage("Citizen.user-info");
+  const citizenTenantId = getFromStorage("Citizen.tenant-id");
 
-  const employeeToken = getFromStorage("Employee.token")
-  const employeeInfo = getFromStorage("Employee.user-info")
-  const employeeTenantId = getFromStorage("Employee.tenant-id")
+  const employeeToken = getFromStorage("Employee.token");
+  const employeeInfo = getFromStorage("Employee.user-info");
+  const employeeTenantId = getFromStorage("Employee.tenant-id");
 
   const userType = token === citizenToken ? "citizen" : "employee";
   window.Digit.SessionStorage.set("user_type", userType);
@@ -49,13 +52,13 @@ if (!user || !user.access_token || !user.info) {
   window.Digit.SessionStorage.set("User", userDetails);
   window.Digit.SessionStorage.set("Citizen.tenantId", citizenTenantId);
   window.Digit.SessionStorage.set("Employee.tenantId", employeeTenantId);
-  // end
 }
 
-ReactDOM.render(
+// ✅ React 18+ root API
+const root = createRoot(document.getElementById('root'));
+
+root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
-

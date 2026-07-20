@@ -37,7 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Test class for GlobalExceptionHandler.
  * Tests various exception handling scenarios.
  */
-public class GlobalExceptionHandlerTest {
+@SuppressWarnings("java:S2187")
+class GlobalExceptionHandlerTest {
 
     private MockMvc mockMvc;
 
@@ -50,8 +51,8 @@ public class GlobalExceptionHandlerTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
+    void setup() {
+        MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(requestServiceController)
                 .setControllerAdvice(globalExceptionHandler)
                 .build();
@@ -62,6 +63,7 @@ public class GlobalExceptionHandlerTest {
      * Test for handling HttpMessageNotReadableException (invalid JSON).
      */
 //     @Test
+    @SuppressWarnings("java:S1874")
     public void testHandleJsonParseException() throws Exception {
         // Create a request with invalid JSON
         String invalidJson = "{ invalid json }";

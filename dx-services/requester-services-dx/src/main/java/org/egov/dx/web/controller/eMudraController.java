@@ -45,13 +45,13 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.dx.service.eSignService;
+//import org.egov.dx.service.eSignService; esgin functionality is not working , pwc will fix this
 import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.RequestInfoWrapper;
 import org.egov.dx.web.models.ResponseInfoFactory;
@@ -70,78 +70,78 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 
 
-@RestController
-@RequestMapping("/eSign")
-public class eMudraController {
-	
-	
-	@Autowired
-	ResponseInfoFactory responseInfoFactory;
-	
-	@Autowired
-	eSignService esignService;
-	
-	@Autowired
-	Configurations configurations;
-	
-    @RequestMapping("/process")
-    public ResponseEntity<String> processPDF(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) throws URISyntaxException {
-        try {
-			Transaction transaction=new Transaction();
-        	if(requestInfoWrapper.getTransaction()==null) {
-        		transaction.setConsumerCode(requestInfoWrapper.getConsumerCode());
-        		transaction.setModule(requestInfoWrapper.getModule());
-        		transaction.setFileStoreId(requestInfoWrapper.getFileStoreId());
-           		transaction.setPdfUrl(requestInfoWrapper.getPdfUrl());
-        		transaction.setTenantId(requestInfoWrapper.getTenantId());
-        		transaction.setRedirectUrl(requestInfoWrapper.getRedirectUrl());
-        		requestInfoWrapper.setTransaction(transaction);
-
-        	}
-            String responseUrl = esignService.processPDF(requestInfoWrapper);
-            return new ResponseEntity<>(responseUrl, HttpStatus.OK);
-        } catch (IOException e) {
-            return new ResponseEntity<>("Error processing PDF: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    @RequestMapping("/redirect")
-    public ResponseEntity<Object> getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        try {
-           String ff = esignService.getEsignedPDF( request, response);
-
-            HttpHeaders httpHeaders = new HttpHeaders();
+//@RestController
+//@RequestMapping("/eSign")
+//public class eMudraController {
+//
+//
+//	@Autowired
+//	ResponseInfoFactory responseInfoFactory;
+//
+//	@Autowired
+//	eSignService esignService;
+//
+//	@Autowired
+//	Configurations configurations;
+//
+//    @RequestMapping("/process")
+//    public ResponseEntity<String> processPDF(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) throws URISyntaxException {
+//        try {
+//			Transaction transaction=new Transaction();
+//        	if(requestInfoWrapper.getTransaction()==null) {
+//        		transaction.setConsumerCode(requestInfoWrapper.getConsumerCode());
+//        		transaction.setModule(requestInfoWrapper.getModule());
+//        		transaction.setFileStoreId(requestInfoWrapper.getFileStoreId());
+//           		transaction.setPdfUrl(requestInfoWrapper.getPdfUrl());
+//        		transaction.setTenantId(requestInfoWrapper.getTenantId());
+//        		transaction.setRedirectUrl(requestInfoWrapper.getRedirectUrl());
+//        		requestInfoWrapper.setTransaction(transaction);
+//
+//        	}
+//            String responseUrl = esignService.processPDF(requestInfoWrapper);
+//            return new ResponseEntity<>(responseUrl, HttpStatus.OK);
+//        } catch (IOException e) {
+//            return new ResponseEntity<>("Error processing PDF: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//    @RequestMapping("/redirect")
+//    public ResponseEntity<Object> getEsignedPDF(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+//        try {
+//           String ff = esignService.getEsignedPDF( request, response);
+//
+//            HttpHeaders httpHeaders = new HttpHeaders();
 //            httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=report.pdf");
 //            httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
-            StringBuilder redirectURL = new StringBuilder();
-            redirectURL.append(configurations.getUIURL()+"?filestore="+ff);
-            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
-                    .queryParams(null).build().encode().toUri());
-            return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
-
-                   
-        } catch (IOException e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }  
-    
-    
-    @RequestMapping(value = "/filestoreId/v1/_search", method = RequestMethod.POST)
-    public ResponseEntity<TransactionResponse> searchSignedFilestore(@RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam Map<String, String> params) {
-
-    	Transaction transaction=new Transaction();
-    	if(requestInfoWrapper.getTransaction()==null) {
-    		transaction.setConsumerCode(requestInfoWrapper.getConsumerCode());
-    		transaction.setModule(requestInfoWrapper.getModule());
-			requestInfoWrapper.setTransaction(transaction);
-    	}
-		List<Transaction> transactions = esignService.getSignedFilestore(requestInfoWrapper.getRequestInfo(), requestInfoWrapper.getTransaction());
-		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), null);
-
-		TransactionResponse response = new TransactionResponse(responseInfo, transactions);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-
-    }
-}
-
-    
+//            StringBuilder redirectURL = new StringBuilder();
+//            redirectURL.append(configurations.getUIURL()+"?filestore="+ff);
+//            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
+//                    .queryParams(null).build().encode().toUri());
+//            return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
+//
+//
+//        } catch (IOException e) {
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
+//
+//    @RequestMapping(value = "/filestoreId/v1/_search", method = RequestMethod.POST)
+//    public ResponseEntity<TransactionResponse> searchSignedFilestore(@RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam Map<String, String> params) {
+//
+//    	Transaction transaction=new Transaction();
+//    	if(requestInfoWrapper.getTransaction()==null) {
+//    		transaction.setConsumerCode(requestInfoWrapper.getConsumerCode());
+//    		transaction.setModule(requestInfoWrapper.getModule());
+//			requestInfoWrapper.setTransaction(transaction);
+//    	}
+//		List<Transaction> transactions = esignService.getSignedFilestore(requestInfoWrapper.getRequestInfo(), requestInfoWrapper.getTransaction());
+//		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), null);
+//
+//		TransactionResponse response = new TransactionResponse(responseInfo, transactions);
+//
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//
+//    }
+//}
+//
+//

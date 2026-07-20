@@ -100,8 +100,8 @@ const inboxSearchFields = {
       roles: [],
     },
     {
-      label: "CHB_COMMUNITY_HALL_NAME",
-      name: "communityHallCode",
+      label: "CHB_VENUE_TYPE_LABEL",
+      name: "venueType",
       type: "Dropdown",
       roles: [],
     },

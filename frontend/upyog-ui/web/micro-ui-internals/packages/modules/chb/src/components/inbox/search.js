@@ -41,18 +41,19 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
     defaultValues: isInboxPage ? searchParams : { locality: null, city: null, ...searchParams },
   });
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  // const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
-  const { data: hallList } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
+
+  const { data: venueLists } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "Venues" }],
     {
       select: (data) => {
-        const formattedData = data?.["CHB"]?.["CommunityHalls"]
+        const formattedData = data?.["CHB"]?.["Venues"]
         return formattedData;
       },
     });
-  let HallName = [];
-  hallList && hallList.map((slot) => {
-    HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`});
-  });
+
+  let venues = [];
+    venueLists && venueLists.map((venue) => {
+        venues.push({i18nKey: `${venue.code}`, code: `${venue.code}`, value: `${venue.name}`, timeSlots: venue.timeSlot, parentMasterType:venue.parentMasterType});
+    });
   
 
   const form = watch();
@@ -145,7 +146,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         <Controller
                           render={({ field }) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} options={HallName} t={t}/>;
+                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} options={venues} t={t}/>;
                           }}
                           name={input.name}
                           control={control}

@@ -11,7 +11,6 @@ import org.egov.ewst.web.contracts.IdGenerationResponse;
 import org.egov.ewst.web.contracts.IdRequest;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
@@ -26,8 +25,11 @@ public class IdGenRepository {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
-	@Autowired
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
+
+	public IdGenRepository(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 
 	/**
 	 * Generates a list of unique IDs using the ID generation service.

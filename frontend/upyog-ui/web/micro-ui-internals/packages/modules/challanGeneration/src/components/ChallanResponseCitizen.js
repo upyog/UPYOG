@@ -137,8 +137,8 @@ const ChallanResponseCitizen = (props) => {
           applicationNumber={ndcCode}
           info={nocData?.applicationStatus == "REJECTED" ? "" : t(`CHALLAN_NUMBER`)}
           successful={nocData?.applicationStatus == "REJECTED" ? false : true}
-          style={{ padding: "10px" }}
-          headerStyles={{ fontSize: "32px", wordBreak: "break-word" }}
+          className="cg-banner-padding"
+          headerClassName="cg-banner-header"
         />
 
         <div className="primary-label-btn d-grid" onClick={chbPermissionLoading ? undefined : printChallanNotice}>

@@ -27,113 +27,98 @@ const createConnectionHolderDetails = () => ({
   documentId: "",
   documentType: "",
   file: "",
-  emailId:""
+  emailId: ""
 });
-
-const WSConnectionHolderDetails = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
-  const { t } = useTranslation();
-  const { pathname } = useLocation();
+const WSConnectionHolderDetails = ({
+  config,
+  onSelect,
+  userType,
+  formData,
+  setError,
+  formState,
+  clearErrors
+}) => {
+  const {
+    t
+  } = useTranslation();
+  const {
+    pathname
+  } = useLocation();
   const filters = func.getQueryStringParams(location.search);
-  const [connectionHolderDetails, setConnectionHolderDetails] = useState(
-    formData?.ConnectionHolderDetails ? [{ ...formData?.ConnectionHolderDetails?.[0] }] : [createConnectionHolderDetails()]
-  );
-  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+  const [connectionHolderDetails, setConnectionHolderDetails] = useState(formData?.ConnectionHolderDetails ? [{
+    ...formData?.ConnectionHolderDetails?.[0]
+  }] : [createConnectionHolderDetails()]);
+  const [focusIndex, setFocusIndex] = useState({
+    index: -1,
+    type: ""
+  });
   const stateId = Digit.ULBService.getStateId();
   const [isErrors, setIsErrors] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(formData?.[config.key]?.fileStoreId || null);
   const [file, setFile] = useState(null);
-
-  const { isLoading, data: genderTypeData } = Digit.Hooks.obps.useMDMS(stateId, "common-masters", ["GenderType"]);
-
+  const {
+    isLoading,
+    data: genderTypeData
+  } = Digit.Hooks.obps.useMDMS(stateId, "common-masters", ["GenderType"]);
   let menu = [];
-  genderTypeData &&
-    genderTypeData["common-masters"].GenderType.filter((data) => data.active).map((genderDetails) => {
-      menu.push({ i18nKey: `COMMON_GENDER_${genderDetails.code}`, code: `${genderDetails.code}`, value: `${genderDetails.code}` });
+  genderTypeData && genderTypeData["common-masters"].GenderType.filter(data => data.active).map(genderDetails => {
+    menu.push({
+      i18nKey: `COMMON_GENDER_${genderDetails.code}`,
+      code: `${genderDetails.code}`,
+      value: `${genderDetails.code}`
     });
-
+  });
   let dropdownData = [];
-  const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
+  const {
+    data: Documentsob = {}
+  } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
   const docs = Documentsob?.PropertyTax?.Documents;
-  const specialProofIdentity = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("SPECIALCATEGORYPROOF"));
+  const specialProofIdentity = Array.isArray(docs) && docs.filter(doc => doc.code.includes("SPECIALCATEGORYPROOF"));
   if (specialProofIdentity.length > 0) {
     dropdownData = specialProofIdentity[0]?.dropdownData;
-    dropdownData.forEach((data) => {
+    dropdownData.forEach(data => {
       data.i18nKey = stringReplaceAll(data.code, ".", "_");
     });
-    dropdownData = dropdownData?.filter((dropdown) => dropdown.parentValue.includes(connectionHolderDetails?.[0]?.ownerType));
+    dropdownData = dropdownData?.filter(dropdown => dropdown.parentValue.includes(connectionHolderDetails?.[0]?.ownerType));
     if (dropdownData.length == 1 && dropdownValue != dropdownData[0]) {
       setTypeOfDropdownValue(dropdownData[0]);
     }
   }
-
-  const GuardianOptions = [
-    { name: "HUSBAND", code: "HUSBAND", i18nKey: "COMMON_MASTERS_OWNERTYPE_HUSBAND" },
-    { name: "Father", code: "FATHER", i18nKey: "COMMON_MASTERS_OWNERTYPE_FATHER" },
-  ];
-
-  const { data: Menu, isLoading: isSpecialcategoryLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "OwnerType");
+  const GuardianOptions = [{
+    name: "HUSBAND",
+    code: "HUSBAND",
+    i18nKey: "COMMON_MASTERS_OWNERTYPE_HUSBAND"
+  }, {
+    name: "Father",
+    code: "FATHER",
+    i18nKey: "COMMON_MASTERS_OWNERTYPE_FATHER"
+  }];
+  const {
+    data: Menu,
+    isLoading: isSpecialcategoryLoading
+  } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "OwnerType");
   Menu ? Menu.sort((a, b) => a.name.localeCompare(b.name)) : "";
-
   useEffect(() => {
-    const data = connectionHolderDetails.map((e) => {
+    const data = connectionHolderDetails.map((e, index) => {
+      if (!e.key) e.key = Date.now() + index;
       return e;
     });
     onSelect(config?.key, data);
   }, [connectionHolderDetails]);
-
   useEffect(() => {
     if (userType === "employee") {
       //onSelect(config.key, { ...formData[config.key], ...connectionHolderDetails });
-      onSelect(config.key, [{ ...formData[config.key]?.[0], ...connectionHolderDetails?.[0] }]);
+      onSelect(config.key, [{
+        ...formData[config.key]?.[0],
+        ...connectionHolderDetails?.[0]
+      }]);
     }
   }, [connectionHolderDetails]);
-
   function ispagereloadingenabled(eyeclick) {
-    if (
-      (window.location.href.includes("edit") || window.location.href.includes("modify")) &&
-      formData?.ConnectionHolderDetails &&
-      Object.values(formData?.ConnectionHolderDetails?.[0])?.length > 1
-    ) {
-      if (
-        eyeclick === "gender" &&
-        connectionHolderDetails?.[0]?.gender?.code &&
-        formData?.ConnectionHolderDetails?.[0]?.gender?.code !== connectionHolderDetails?.[0]?.gender?.code
-      )
-        return true;
-      else if (
-        eyeclick === "connectionHoldersMobileNumber" &&
-        connectionHolderDetails?.[0]?.mobileNumber &&
-        formData?.ConnectionHolderDetails?.[0]?.mobileNumber !== connectionHolderDetails?.[0]?.mobileNumber
-      )
-        return true;
-      else if (
-        eyeclick === "fatherOrHusbandName" &&
-        connectionHolderDetails?.[0]?.guardian &&
-        formData?.ConnectionHolderDetails?.[0]?.guardian !== connectionHolderDetails?.[0]?.guardian
-      )
-        return true;
-      else if (
-        eyeclick === "relationship" &&
-        connectionHolderDetails?.[0]?.relationship?.code &&
-        formData?.ConnectionHolderDetails?.[0]?.relationship?.code !== connectionHolderDetails?.[0]?.relationship?.code
-      )
-        return true;
-      else if (
-        eyeclick === "correspondenceAddress" &&
-        connectionHolderDetails?.[0]?.address &&
-        formData?.ConnectionHolderDetails?.[0]?.address !== connectionHolderDetails?.[0]?.address
-      )
-        return true;
-      else if (
-        eyeclick === "ownerType" &&
-        connectionHolderDetails?.[0]?.ownerType?.code &&
-        formData?.ConnectionHolderDetails?.[0]?.ownerType?.code !== connectionHolderDetails?.[0]?.ownerType?.code
-      )
-        return true;
-      else return false;
+    if ((window.location.href.includes("edit") || window.location.href.includes("modify")) && formData?.ConnectionHolderDetails && Object.values(formData?.ConnectionHolderDetails?.[0])?.length > 1) {
+      if (eyeclick === "gender" && connectionHolderDetails?.[0]?.gender?.code && formData?.ConnectionHolderDetails?.[0]?.gender?.code !== connectionHolderDetails?.[0]?.gender?.code) return true;else if (eyeclick === "connectionHoldersMobileNumber" && connectionHolderDetails?.[0]?.mobileNumber && formData?.ConnectionHolderDetails?.[0]?.mobileNumber !== connectionHolderDetails?.[0]?.mobileNumber) return true;else if (eyeclick === "fatherOrHusbandName" && connectionHolderDetails?.[0]?.guardian && formData?.ConnectionHolderDetails?.[0]?.guardian !== connectionHolderDetails?.[0]?.guardian) return true;else if (eyeclick === "relationship" && connectionHolderDetails?.[0]?.relationship?.code && formData?.ConnectionHolderDetails?.[0]?.relationship?.code !== connectionHolderDetails?.[0]?.relationship?.code) return true;else if (eyeclick === "correspondenceAddress" && connectionHolderDetails?.[0]?.address && formData?.ConnectionHolderDetails?.[0]?.address !== connectionHolderDetails?.[0]?.address) return true;else if (eyeclick === "ownerType" && connectionHolderDetails?.[0]?.ownerType?.code && formData?.ConnectionHolderDetails?.[0]?.ownerType?.code !== connectionHolderDetails?.[0]?.ownerType?.code) return true;else return false;
     } else return false;
   }
-
   useEffect(() => {
     let eyeclick = sessionStorage.getItem("eyeIconClicked");
     if (ispagereloadingenabled(eyeclick)) {
@@ -141,13 +126,11 @@ const WSConnectionHolderDetails = ({ config, onSelect, userType, formData, setEr
       window.location.reload();
     }
   }, [formData?.ConnectionHolderDetails?.[0], connectionHolderDetails, formData]);
-
   useEffect(() => {
     if (!formData?.ConnectionHolderDetails) {
       setConnectionHolderDetails([createConnectionHolderDetails()]);
     }
   }, [formData?.ConnectionHolderDetails]);
-
   const commonProps = {
     focusIndex,
     setFocusIndex,
@@ -169,19 +152,13 @@ const WSConnectionHolderDetails = ({ config, onSelect, userType, formData, setEr
     setFile,
     dropdownData,
     GuardianOptions,
-    Menu,
+    Menu
   };
-
-  return (
-    <React.Fragment>
-      {connectionHolderDetails.map((connectionHolderDetail, index) => (
-        <ConnectionDetails key={connectionHolderDetail.key} index={index} connectionHolderDetail={connectionHolderDetail} {...commonProps} />
-      ))}
-    </React.Fragment>
-  );
+  return <React.Fragment>
+      {connectionHolderDetails.map((connectionHolderDetail, index) => <ConnectionDetails key={connectionHolderDetail?.key || `ws-connection-holder-detail-${index}`} index={index} connectionHolderDetail={connectionHolderDetail} {...commonProps} />)}
+    </React.Fragment>;
 };
-
-const ConnectionDetails = (_props) => {
+const ConnectionDetails = _props => {
   const {
     connectionHolderDetail,
     focusIndex,
@@ -198,9 +175,8 @@ const ConnectionDetails = (_props) => {
     setConnectionHolderDetails,
     menu,
     GuardianOptions,
-    Menu,
+    Menu
   } = _props;
-
   const {
     control,
     formState: localFormState,
@@ -209,7 +185,7 @@ const ConnectionDetails = (_props) => {
     clearErrors: clearLocalErrors,
     setValue,
     trigger,
-    getValues,
+    getValues
   } = useForm();
   // const formValue = watch();
   const [name, setName] = useState(connectionHolderDetail?.name);
@@ -222,123 +198,131 @@ const ConnectionDetails = (_props) => {
   const [sameAsOwnerDetails, setSameAsOwnerDetails] = useState(connectionHolderDetail?.sameAsOwnerDetails);
   const [uuid, setuuid] = useState(connectionHolderDetail?.uuid);
   const [emailId, setEmailId] = useState(connectionHolderDetail?.emailId);
-  const formValue = { name, gender, mobileNumber, guardian, relationship, ownerType, sameAsOwnerDetails, address, uuid, emailId };
-  const { errors } = localFormState;
+  const formValue = {
+    name,
+    gender,
+    mobileNumber,
+    guardian,
+    relationship,
+    ownerType,
+    sameAsOwnerDetails,
+    address,
+    uuid,
+    emailId
+  };
+  const {
+    errors
+  } = localFormState;
+  localFormState.touched = localFormState.touchedFields || localFormState.touched || {};
   const isMobile = window.Digit.Utils.browser.isMobile();
-  const isEmployee = window.location.href.includes("/employee")
-
-  const { isLoading, data: privacyData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "DataSecurity", [{ name: "SecurityPolicy" }], {
-    select: (data) => data?.DataSecurity?.SecurityPolicy?.find((elem) => elem?.model == "User") || {},
+  const isEmployee = window.location.href.includes("/employee");
+  const {
+    isLoading,
+    data: privacyData
+  } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "DataSecurity", [{
+    name: "SecurityPolicy"
+  }], {
+    select: data => data?.DataSecurity?.SecurityPolicy?.find(elem => elem?.model == "User") || {}
   });
-
   useEffect(() => {
     trigger();
   }, []);
-
   useEffect(() => {
-    if ((Object.entries(formValue).length > 0 && formValue?.name) || formValue?.uuid) {
+    if (Object.entries(formValue).length > 0 && formValue?.name || formValue?.uuid) {
       const keys = Object.keys(formValue);
       const part = {};
-      keys.forEach((key) => (part[key] = connectionHolderDetail[key]));
+      keys.forEach(key => part[key] = connectionHolderDetail[key]);
       if (!_.isEqual(formValue, part)) {
         let isErrorsFound = true;
-        Object.keys(formValue).map((data) => {
+        Object.keys(formValue).map(data => {
           if (!formValue[data] && isErrorsFound) {
             isErrorsFound = false;
             setIsErrors(false);
           }
         });
         if (isErrorsFound) setIsErrors(true);
-        let ob = [{ ...formValue }];
+        let ob = [{
+          ...formValue
+        }];
         setConnectionHolderDetails(ob);
         trigger();
       }
     }
   }, [formValue]);
-
   useEffect(() => {
     let isClear = true;
-    Object.keys(connectionHolderDetails?.[0])?.map((data) => {
+    Object.keys(connectionHolderDetails?.[0])?.map(data => {
       if (!connectionHolderDetails[0][data] && connectionHolderDetails[0][data] != false && isClear) isClear = false;
     });
-    if (connectionHolderDetails?.[0]?.sameAsOwnerDetails || (isClear && Object.keys(connectionHolderDetails?.[0])?.length > 1)) {
+    if (connectionHolderDetails?.[0]?.sameAsOwnerDetails || isClear && Object.keys(connectionHolderDetails?.[0])?.length > 1) {
       clearErrors("ConnectionHolderDetails");
     } else {
       trigger();
     }
   }, [connectionHolderDetails]);
-
   useEffect(() => {
     if (sameAsOwnerDetails) {
       clearErrors("ConnectionHolderDetails");
     } else {
       trigger();
     }
-  }, [sameAsOwnerDetails])
-  
+  }, [sameAsOwnerDetails]);
   useEffect(() => {
     if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
-      setError(config.key, { type: errors });
+      setError(config.key, {
+        type: errors
+      });
     } else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
       clearErrors(config.key);
     }
-  }, [errors]); 
-  const validateEmail=(value)=>{
-    const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
-    const errors=sessionStorage.getItem("FORMSTATE_ERRORS");
-    let formStateErros=typeof errors=== "string" ? JSON.parse(errors):{};
-    if(emailPattern.test(value)){
-      
+  }, [errors]);
+  const validateEmail = value => {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+    const errors = sessionStorage.getItem("FORMSTATE_ERRORS");
+    let formStateErros = typeof errors === "string" ? JSON.parse(errors) : {};
+    if (emailPattern.test(value)) {
       clearErrors("emailId");
-      
-      if(formStateErros["ConnectionHolderDetails"] && formStateErros["ConnectionHolderDetails"]?.type && formStateErros["ConnectionHolderDetails"]?.type?.emailId){
+      if (formStateErros["ConnectionHolderDetails"] && formStateErros["ConnectionHolderDetails"]?.type && formStateErros["ConnectionHolderDetails"]?.type?.emailId) {
         delete formStateErros["ConnectionHolderDetails"].type.emailId;
       }
-        if(Object.keys(formStateErros["ConnectionHolderDetails"].type).length===0){
-          delete formStateErros["ConnectionHolderDetails"].type;
-        }
-        if(Object.keys(formStateErros["ConnectionHolderDetails"]).length===0){
-          delete formStateErros["ConnectionHolderDetails"];
-        }
-        sessionStorage.setItem("FORMSTATE_ERRORS", JSON.stringify(formStateErros));
-      
-      return true;
-      
-      
-    }
-    else{
-      
-      setError("emailId",{
-        type:"manual",
-        message:"email id error"
-        
-        
-      });
-      
-      if(!formStateErros["ConnectionHolderDetails"]){
-        formStateErros["ConnectionHolderDetails"]={type:{}};
+      if (Object.keys(formStateErros["ConnectionHolderDetails"].type).length === 0) {
+        delete formStateErros["ConnectionHolderDetails"].type;
       }
-        if(!formStateErros["ConnectionHolderDetails"].type){
-          formStateErros["ConnectionHolderDetails"].type={};
-        }
-        formStateErros["ConnectionHolderDetails"].type.emailId={
-          message:"please enter a valid emailId"
-        }
-        sessionStorage.setItem("FORMSTATE_ERRORS", JSON.stringify(formStateErros));
-      
+      if (Object.keys(formStateErros["ConnectionHolderDetails"]).length === 0) {
+        delete formStateErros["ConnectionHolderDetails"];
+      }
+      sessionStorage.setItem("FORMSTATE_ERRORS", JSON.stringify(formStateErros));
+      return true;
+    } else {
+      setError("emailId", {
+        type: "manual",
+        message: "email id error"
+      });
+      if (!formStateErros["ConnectionHolderDetails"]) {
+        formStateErros["ConnectionHolderDetails"] = {
+          type: {}
+        };
+      }
+      if (!formStateErros["ConnectionHolderDetails"].type) {
+        formStateErros["ConnectionHolderDetails"].type = {};
+      }
+      formStateErros["ConnectionHolderDetails"].type.emailId = {
+        message: "please enter a valid emailId"
+      };
+      sessionStorage.setItem("FORMSTATE_ERRORS", JSON.stringify(formStateErros));
       return false;
-
-      
     }
-  }
-
-  const checkifPrivacyValid = () => {
-    if (window.location.href.includes("edit") || window.location.href.includes("modify")) return true;
-    else return false;
   };
-  const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
-  return (
-    <div>
+  const checkifPrivacyValid = () => {
+    if (window.location.href.includes("edit") || window.location.href.includes("modify")) return true;else return false;
+  };
+  const errorStyle = {
+    width: "70%",
+    marginLeft: "30%",
+    fontSize: "12px",
+    marginTop: "-21px"
+  };
+  return <div>
       <div className="field">
         <Controller
           control={control}
@@ -357,17 +341,22 @@ const ConnectionDetails = (_props) => {
                 setFocusIndex({ index: connectionHolderDetail?.key, type: "sameAsOwnerDetails" });
               }}
               checked={sameAsOwnerDetails}
-              style={{ paddingBottom: "10px", paddingTop: "3px" }}
+             className="ws-auto-55"
               onBlur={field.onBlur}
             />
           )}
         />
       </div>
 
-      {!sameAsOwnerDetails ? (
-        <div>
+      {!sameAsOwnerDetails ? <div>
           <LabelFieldPair>
-            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_OWN_DETAIL_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
+            <CardLabel style={isMobile && isEmployee ? {
+          fontWeight: "700",
+          width: "100%"
+        } : {
+          marginTop: "-5px",
+          fontWeight: "700"
+        }} className="card-label-smaller">{`${t("WS_OWN_DETAIL_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -435,9 +424,13 @@ const ConnectionDetails = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.name ? errors?.name?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
-              "WS_CONN_HOLDER_OWN_DETAIL_GENDER_LABEL"
-            )}`}<span className="check-page-link-button"> *</span></CardLabel>
+            <CardLabel style={isMobile && isEmployee ? {
+          fontWeight: "700",
+          width: "100%"
+        } : {
+          marginTop: "-5px",
+          fontWeight: "700"
+        }} className="card-label-smaller">{`${t("WS_CONN_HOLDER_OWN_DETAIL_GENDER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -503,9 +496,13 @@ const ConnectionDetails = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.gender ? errors?.gender?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700"}} className="card-label-smaller">{`${t(
-              "CORE_COMMON_MOBILE_NUMBER"
-            )}`}<span className="check-page-link-button"> *</span></CardLabel>
+            <CardLabel style={isMobile && isEmployee ? {
+          fontWeight: "700",
+          width: "100%"
+        } : {
+          marginTop: "-5px",
+          fontWeight: "700"
+        }} className="card-label-smaller">{`${t("CORE_COMMON_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -584,9 +581,13 @@ const ConnectionDetails = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.mobileNumber ? errors?.mobileNumber?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
-              "WS_OWN_DETAIL_GUARDIAN_LABEL"
-            )}`}<span className="check-page-link-button"> *</span></CardLabel>
+            <CardLabel style={isMobile && isEmployee ? {
+          fontWeight: "700",
+          width: "100%"
+        } : {
+          marginTop: "-5px",
+          fontWeight: "700"
+        }} className="card-label-smaller">{`${t("WS_OWN_DETAIL_GUARDIAN_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -658,9 +659,13 @@ const ConnectionDetails = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.guardian ? errors?.guardian?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
-              "WS_CONN_HOLDER_OWN_DETAIL_RELATION_LABEL"
-            )}`}<span className="check-page-link-button"> *</span></CardLabel>
+            <CardLabel style={isMobile && isEmployee ? {
+          fontWeight: "700",
+          width: "100%"
+        } : {
+          marginTop: "-5px",
+          fontWeight: "700"
+        }} className="card-label-smaller">{`${t("WS_CONN_HOLDER_OWN_DETAIL_RELATION_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -727,9 +732,13 @@ const ConnectionDetails = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.relationship ? errors?.relationship?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
-              "WS_CORRESPONDANCE_ADDRESS_LABEL"
-            )}`}<span className="check-page-link-button"> *</span></CardLabel>
+            <CardLabel style={isMobile && isEmployee ? {
+          fontWeight: "700",
+          width: "100%"
+        } : {
+          marginTop: "-5px",
+          fontWeight: "700"
+        }} className="card-label-smaller">{`${t("WS_CORRESPONDANCE_ADDRESS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -801,9 +810,13 @@ const ConnectionDetails = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.address ? errors?.address?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t(
-              "WS_OWNER_SPECIAL_CATEGORY"
-            )}`}<span className="check-page-link-button"> *</span></CardLabel>
+            <CardLabel style={isMobile && isEmployee ? {
+          fontWeight: "700",
+          width: "100%"
+        } : {
+          marginTop: "-5px",
+          fontWeight: "700"
+        }} className="card-label-smaller">{`${t("WS_OWNER_SPECIAL_CATEGORY")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -870,7 +883,13 @@ const ConnectionDetails = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.ownerType ? errors?.ownerType?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_EMAIL_ID")}`}</CardLabel>
+            <CardLabel style={isMobile && isEmployee ? {
+          fontWeight: "700",
+          width: "100%"
+        } : {
+          marginTop: "-5px",
+          fontWeight: "700"
+        }} className="card-label-smaller">{`${t("WS_EMAIL_ID")}`}</CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -936,10 +955,8 @@ const ConnectionDetails = (_props) => {
               />
             </div>
           </LabelFieldPair> 
-          <CardLabelError style={errorStyle}>{localFormState.touched.emailId && errors?.emailId?.message ? errors?.emailId?.message:"" }</CardLabelError>       
-        </div>
-      ) : null}
-    </div>
-  );
+          <CardLabelError style={errorStyle}>{localFormState.touched.emailId && errors?.emailId?.message ? errors?.emailId?.message : ""}</CardLabelError>       
+        </div> : null}
+    </div>;
 };
 export default WSConnectionHolderDetails;

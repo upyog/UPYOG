@@ -21,12 +21,9 @@ import org.egov.ndc.web.model.ndc.*;
 import org.egov.ndc.web.model.workflow.SearchCriteria;
 import org.egov.ndc.workflow.WorkflowIntegrator;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,174 +32,196 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NDCService {
 
-	@Autowired
-	NDCUtil ndcUtil;
+	private static final String LOG_REQUEST = "Request: {}";
 
-	@Autowired
-	UserService userService;
+	private final NDCUtil ndcUtil;
+	private final UserService userService;
+	private final WorkflowIntegrator workflowIntegrator;
+	private final NDCConfiguration ndcConfiguration;
+	private final NDCRepository ndcRepository;
+	private final ObjectMapper mapper;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final NDCConfiguration config;
+	private final Producer producer;
+	private final EnrichmentService enrichmentService;
 
-	@Autowired
-	CalculationService calculationService;
-
-	@Autowired
-	private WorkflowIntegrator workflowIntegrator;
-
-	@Autowired
-	private NDCConfiguration ndcConfiguration;
-
-	@Autowired
-	private NDCRepository ndcRepository;
-
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	@Autowired
-	private NDCConfiguration config;
-
-	@Autowired
-	private Producer producer;
-
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-
-	@Autowired
-	private MDMSService mdmsService;
-
-	@Autowired
-	private  EnrichmentService enrichmentService;
+	public NDCService(NDCUtil ndcUtil, UserService userService,
+			WorkflowIntegrator workflowIntegrator, NDCConfiguration ndcConfiguration, NDCRepository ndcRepository,
+			ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Producer producer,
+			EnrichmentService enrichmentService) {
+		this.ndcUtil = ndcUtil;
+		this.userService = userService;
+		this.workflowIntegrator = workflowIntegrator;
+		this.ndcConfiguration = ndcConfiguration;
+		this.ndcRepository = ndcRepository;
+		this.mapper = mapper;
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.config = ndcConfiguration;
+		this.producer = producer;
+		this.enrichmentService = enrichmentService;
+	}
 
 	public NdcApplicationRequest createNdcApplication(boolean skipWorkFlow, NdcApplicationRequest ndcApplicationRequest) {
-
 		String userUuidFromRequestInfo = ndcApplicationRequest.getRequestInfo().getUserInfo().getUuid();
 		for (Application application : ndcApplicationRequest.getApplications()) {
-
-			List<String> idList = ndcUtil.getIdList(ndcApplicationRequest.getRequestInfo(), application.getTenantId(), "ndc.applicationid", "NDC-[cy:yyyy-MM-dd]-[SEQ_EGOV_COMMON]", 1);
-			log.info(idList.toString());
-			application.setUuid(UUID.randomUUID().toString());
-			application.setApplicationNo(idList.get(0));
-			String applicationId = application.getUuid();
-			application.setAuditDetails(AuditDetails.builder().createdBy(userUuidFromRequestInfo)
-					.createdTime(System.currentTimeMillis())
-					.lastModifiedBy(userUuidFromRequestInfo)
-					.lastModifiedTime(System.currentTimeMillis()).build());
-
-			if (application.getActive() == null) application.setActive(true);
-
-			List<NdcDetailsRequest> ndcDetails = application.getNdcDetails();
-			if (ndcDetails != null) {
-				for (NdcDetailsRequest details : ndcDetails) {
-					details.setUuid(UUID.randomUUID().toString());
-					details.setApplicationId(applicationId);
-				}
-			}
-
-			List<DocumentRequest> documents = application.getDocuments();
-			if (documents != null) {
-				for (DocumentRequest document : documents) {
-					if (document.getDocumentAttachment() == null)
-						throw new CustomException("DOCUMENT_ATTACHMENT_NULL", "Document attachment is null");
-					if (document.getUuid() == null)
-						throw new CustomException("DOCUMENT_UUID_NULL", "Document uuid is null");
-					document.setApplicationId(applicationId);
-					document.setCreatedby(userUuidFromRequestInfo);
-					document.setLastmodifiedby(userUuidFromRequestInfo);
-					document.setCreatedtime(System.currentTimeMillis());
-					document.setLastmodifiedtime(System.currentTimeMillis());
-				}
-			}
-			userService.createUser(ndcApplicationRequest.getRequestInfo(),application);
-			NdcApplicationRequest ndcApplicationRequest1 = NdcApplicationRequest.builder().requestInfo(ndcApplicationRequest.getRequestInfo()).applications(Collections.singletonList(application)).build();
-			if(!skipWorkFlow) {
-				workflowIntegrator.callWorkFlow(ndcApplicationRequest1, NDCConstants.NDC_BUSINESS_SERVICE);
-			}
+			initializeNewApplication(ndcApplicationRequest.getRequestInfo(), application, userUuidFromRequestInfo);
+			enrichNewApplicationDetails(application);
+			enrichNewApplicationDocuments(application, userUuidFromRequestInfo);
+			userService.createUser(ndcApplicationRequest.getRequestInfo(), application);
+			triggerWorkflowIfRequired(skipWorkFlow, ndcApplicationRequest, application);
 		}
-		
 
-		log.info("Request: {}", ndcApplicationRequest);
-
-
-
+		log.info(LOG_REQUEST, ndcApplicationRequest);
 		producer.push(config.getSaveTopic(), ndcApplicationRequest);
-
 		return ndcApplicationRequest;
 	}
 
-	public NdcApplicationRequest updateNdcApplication(boolean skipWorkFlow,NdcApplicationRequest ndcApplicationRequest) {
+	private void initializeNewApplication(RequestInfo requestInfo, Application application, String userUuidFromRequestInfo) {
+		List<String> idList = ndcUtil.getIdList(requestInfo, application.getTenantId(), "ndc.applicationid",
+				"NDC-[cy:yyyy-MM-dd]-[SEQ_EGOV_COMMON]", 1);
+		log.info(idList.toString());
+		application.setUuid(UUID.randomUUID().toString());
+		application.setApplicationNo(idList.get(0));
+		application.setAuditDetails(AuditDetails.builder().createdBy(userUuidFromRequestInfo)
+				.createdTime(System.currentTimeMillis())
+				.lastModifiedBy(userUuidFromRequestInfo)
+				.lastModifiedTime(System.currentTimeMillis()).build());
+		if (application.getActive() == null) {
+			application.setActive(true);
+		}
+	}
+
+	private void enrichNewApplicationDetails(Application application) {
+		List<NdcDetailsRequest> ndcDetails = application.getNdcDetails();
+		if (ndcDetails == null) {
+			return;
+		}
+		String applicationId = application.getUuid();
+		for (NdcDetailsRequest details : ndcDetails) {
+			details.setUuid(UUID.randomUUID().toString());
+			details.setApplicationId(applicationId);
+		}
+	}
+
+	private void enrichNewApplicationDocuments(Application application, String userUuidFromRequestInfo) {
+		List<DocumentRequest> documents = application.getDocuments();
+		if (documents == null) {
+			return;
+		}
+		String applicationId = application.getUuid();
+		for (DocumentRequest document : documents) {
+			if (document.getDocumentAttachment() == null) {
+				throw new CustomException("DOCUMENT_ATTACHMENT_NULL", "Document attachment is null");
+			}
+			if (document.getUuid() == null) {
+				throw new CustomException("DOCUMENT_UUID_NULL", "Document uuid is null");
+			}
+			document.setApplicationId(applicationId);
+			document.setCreatedby(userUuidFromRequestInfo);
+			document.setLastmodifiedby(userUuidFromRequestInfo);
+			document.setCreatedtime(System.currentTimeMillis());
+			document.setLastmodifiedtime(System.currentTimeMillis());
+		}
+	}
+
+	private void triggerWorkflowIfRequired(boolean skipWorkFlow, NdcApplicationRequest ndcApplicationRequest,
+			Application application) {
+		if (skipWorkFlow) {
+			return;
+		}
+		NdcApplicationRequest workflowRequest = NdcApplicationRequest.builder()
+				.requestInfo(ndcApplicationRequest.getRequestInfo())
+				.applications(Collections.singletonList(application))
+				.build();
+		workflowIntegrator.callWorkFlow(workflowRequest, NDCConstants.NDC_BUSINESS_SERVICE);
+	}
+
+	public NdcApplicationRequest updateNdcApplication(boolean skipWorkFlow, NdcApplicationRequest ndcApplicationRequest) {
 		RequestInfo requestInfo = ndcApplicationRequest.getRequestInfo();
-		log.info("Request: {}", ndcApplicationRequest);
-		log.info("Request: {}", ndcApplicationRequest.getRequestInfo());
+		log.info(LOG_REQUEST, ndcApplicationRequest);
+		log.info(LOG_REQUEST, ndcApplicationRequest.getRequestInfo());
 		String userUuidFromRequestInfo = requestInfo.getUserInfo().getUuid();
 		List<Application> applications = ndcApplicationRequest.getApplications();
 		if (applications == null || applications.isEmpty()) {
 			throw new CustomException("APPLICATIONS_EMPTY", "No applications found in request.");
 		}
 		for (Application application : applications) {
-
-            if (ObjectUtils.isEmpty(application.getUuid())) {
-                throw new CustomException("APPLICANT_UUID_NULL", "Applicant details or uuid is null");
-            }
-            if (!ndcRepository.checkApplicationExists(application.getUuid())) {
-                throw new CustomException("APPLICANT_NOT_FOUND", "Applicant details or uuid is not found.");
-            }
-
-            AuditDetails auditDetails = application.getAuditDetails();
-            auditDetails.setLastModifiedBy(userUuidFromRequestInfo);
-            auditDetails.setLastModifiedTime(System.currentTimeMillis());
-			application.setAuditDetails(auditDetails);
-
-            List<NdcDetailsRequest> ndcDetails = application.getNdcDetails();
-            if (ndcDetails != null) {
-                Set<String> existingDetailUuids = getExistingUuids("eg_ndc_details", ndcDetails.stream().map(NdcDetailsRequest::getUuid).collect(Collectors.toList()));
-                for (NdcDetailsRequest details : ndcDetails) {
-                    if (details.getUuid() == null || !existingDetailUuids.contains(details.getUuid())) {
-                        details.setUuid(UUID.randomUUID().toString());
-                        details.setApplicationId(application.getUuid());
-                    }
-                }
-            }
-
-            List<DocumentRequest> documents = application.getDocuments();
-            if (documents != null) {
-                Set<String> existingDocumentUuids = getExistingUuids("eg_ndc_documents", documents.stream().map(DocumentRequest::getUuid).collect(Collectors.toList()));
-                for (DocumentRequest document : documents) {
-                    if (document.getUuid() == null) {
-                        throw new CustomException("DOCUMENT_ID_ERR", "Please provide a valid document id.");
-                    }
-                    if (!existingDocumentUuids.contains(document.getUuid())) {
-                        document.setUuid(document.getUuid());
-                        document.setApplicationId(application.getUuid());
-                        document.setCreatedby(userUuidFromRequestInfo);
-                        document.setCreatedtime(System.currentTimeMillis());
-                    }
-                    document.setLastmodifiedby(userUuidFromRequestInfo);
-                    document.setLastmodifiedtime(System.currentTimeMillis());
-                }
-            }
-
-			List<OwnerInfo> owners = application.getOwners();
-			if (owners != null) {
-				userService.createUser(requestInfo,application);
-			}
-
-			NdcApplicationRequest requestTobeUpdated = NdcApplicationRequest.builder().requestInfo(requestInfo).applications(Collections.singletonList(application)).build();
-			log.info("ndc request with current applications :", requestTobeUpdated);
-			if (!skipWorkFlow) {
-                workflowIntegrator.callWorkFlow(requestTobeUpdated, NDCConstants.NDC_BUSINESS_SERVICE);
-            }
-            if (application.getWorkflow().getAction().equalsIgnoreCase("APPLY")) {
-                getCalculation(requestTobeUpdated);
-            }
-        }
-			producer.push(config.getUpdateTopic(), ndcApplicationRequest);
-
-			return ndcApplicationRequest;
+			validateAndUpdateApplication(application, userUuidFromRequestInfo, requestInfo, skipWorkFlow);
 		}
+		producer.push(config.getUpdateTopic(), ndcApplicationRequest);
+		return ndcApplicationRequest;
+	}
+
+	private void validateAndUpdateApplication(Application application, String userUuidFromRequestInfo,
+			RequestInfo requestInfo, boolean skipWorkFlow) {
+		if (ObjectUtils.isEmpty(application.getUuid())) {
+			throw new CustomException("APPLICANT_UUID_NULL", "Applicant details or uuid is null");
+		}
+		if (!ndcRepository.checkApplicationExists(application.getUuid())) {
+			throw new CustomException("APPLICANT_NOT_FOUND", "Applicant details or uuid is not found.");
+		}
+
+		AuditDetails auditDetails = application.getAuditDetails();
+		auditDetails.setLastModifiedBy(userUuidFromRequestInfo);
+		auditDetails.setLastModifiedTime(System.currentTimeMillis());
+		application.setAuditDetails(auditDetails);
+
+		updateApplicationDetails(application);
+		updateApplicationDocuments(application, userUuidFromRequestInfo);
+
+		if (application.getOwners() != null) {
+			userService.createUser(requestInfo, application);
+		}
+
+		NdcApplicationRequest requestTobeUpdated = NdcApplicationRequest.builder()
+				.requestInfo(requestInfo)
+				.applications(Collections.singletonList(application))
+				.build();
+		log.info("ndc request with current applications :", requestTobeUpdated);
+		if (!skipWorkFlow) {
+			workflowIntegrator.callWorkFlow(requestTobeUpdated, NDCConstants.NDC_BUSINESS_SERVICE);
+		}
+		if (application.getWorkflow().getAction().equalsIgnoreCase("APPLY")) {
+			getCalculation(requestTobeUpdated);
+		}
+	}
+
+	private void updateApplicationDetails(Application application) {
+		List<NdcDetailsRequest> ndcDetails = application.getNdcDetails();
+		if (ndcDetails == null) {
+			return;
+		}
+		Set<String> existingDetailUuids = getExistingUuids("eg_ndc_details",
+				ndcDetails.stream().map(NdcDetailsRequest::getUuid).toList());
+		for (NdcDetailsRequest details : ndcDetails) {
+			if (details.getUuid() == null || !existingDetailUuids.contains(details.getUuid())) {
+				details.setUuid(UUID.randomUUID().toString());
+				details.setApplicationId(application.getUuid());
+			}
+		}
+	}
+
+	private void updateApplicationDocuments(Application application, String userUuidFromRequestInfo) {
+		List<DocumentRequest> documents = application.getDocuments();
+		if (documents == null) {
+			return;
+		}
+		Set<String> existingDocumentUuids = getExistingUuids("eg_ndc_documents",
+				documents.stream().map(DocumentRequest::getUuid).toList());
+		for (DocumentRequest document : documents) {
+			if (document.getUuid() == null) {
+				throw new CustomException("DOCUMENT_ID_ERR", "Please provide a valid document id.");
+			}
+			if (!existingDocumentUuids.contains(document.getUuid())) {
+				document.setUuid(document.getUuid());
+				document.setApplicationId(application.getUuid());
+				document.setCreatedby(userUuidFromRequestInfo);
+				document.setCreatedtime(System.currentTimeMillis());
+			}
+			document.setLastmodifiedby(userUuidFromRequestInfo);
+			document.setLastmodifiedtime(System.currentTimeMillis());
+		}
+	}
 
 	public NdcApplicationRequest deleteNdcApplication(NdcDeleteRequest ndcDeleteRequest) {
 
@@ -248,19 +267,10 @@ public class NDCService {
 			criteria.setCreatedBy(requestInfo.getUserInfo().getUuid());
 			criteria.setMobileNumber(requestInfo.getUserInfo().getMobileNumber());
 		}
-		List<Application> whenMobileNumberGiven=new ArrayList<>();
 		if (criteria.getMobileNumber() != null || criteria.getName() != null) {
-			whenMobileNumberGiven = getApplicationsWhenMobileNumberGiven(criteria, requestInfo);
-//			if (whenMobileNumberGiven != null) return whenMobileNumberGiven;
+			getApplicationsWhenMobileNumberGiven(criteria, requestInfo);
 		}
 		List<Application> applications = getApplicationsWithOwnerInfo(criteria, requestInfo);
-		// Use a LinkedHashSet to preserve insertion order
-//		Set<Application> mergedSet = new LinkedHashSet<>();
-//		if(whenMobileNumberGiven!=null)
-//			mergedSet.addAll(whenMobileNumberGiven);
-//		mergedSet.addAll(applications);
-
-//		List<Application> mergedList = new ArrayList<>(mergedSet);
 
 		SearchCriteria searchCriteria = new SearchCriteria();
 		searchCriteria.setTenantId(criteria.getTenantId());
@@ -268,15 +278,12 @@ public class NDCService {
 		return applications;
 	}
 
-	private List<Application> getApplicationsWhenMobileNumberGiven(NdcApplicationSearchCriteria criteria, RequestInfo requestInfo) {
+	private void getApplicationsWhenMobileNumberGiven(NdcApplicationSearchCriteria criteria, RequestInfo requestInfo) {
 		UserResponse userDetailResponse = userService.getUser(criteria, requestInfo);
 		if (userDetailResponse.getUser().isEmpty()) {
-			return Collections.emptyList();
+			return;
 		}
-		else {
-			criteria.setOwnerIds(userDetailResponse.getUser().stream().map(OwnerInfo::getUuid).collect(Collectors.toSet()));
-		}
-		return null;
+		criteria.setOwnerIds(userDetailResponse.getUser().stream().map(OwnerInfo::getUuid).collect(Collectors.toSet()));
 	}
 
 	public List<Application> getApplicationsWithOwnerInfo(NdcApplicationSearchCriteria criteria, RequestInfo requestInfo) {

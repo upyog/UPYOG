@@ -24,30 +24,25 @@ const RequiredDocuments = ({path}) => {
 	return <>
 		<div ref={fullPageRef}>
 			<div className="options">
-				<Header >{t("ES_COMMON_WS_DOCUMENTS_REQUIRED")}</Header>
-				<div className="mrsm" style={{marginRight:"35px"}} onClick={handlePrint}>
+				<Header>{t("ES_COMMON_WS_DOCUMENTS_REQUIRED")}</Header>
+				<div className="mrsm ws-auto-324" onClick={handlePrint}>
 				<DownloadIcon className="mrsm" />
 				{t(`ES_WS_REQUIRED_DOCS_DOWNLOAD`)}
 				</div>
 			</div>
-			<Card style={{ position: "relative" }} className={"employeeCard-override"}>
-				{BillAmendmentMDMSLoading ? <Loader /> : 
-					BillAmendmentMDMS?.map( e => {
-						return <>
+			<Card className={"employeeCard-override ws-auto-325"}>
+				{BillAmendmentMDMSLoading ? <Loader /> : BillAmendmentMDMS?.map(e => {
+          return <>
 							<CardHeader>{t(e.code).replaceAll("_", " ")}</CardHeader>
 							<CardLabel>{t(`WS_DOCS_REQ_INFO`)}</CardLabel>
-							{e.allowedDocuments.allowedDocs.map((e, i) => 
-								<CardLabelDesc>{i+1}. {t(`${e.documentType}`)}</CardLabelDesc>
-							)}
-						</>
-					})
-				}
+							{e.allowedDocuments.allowedDocs.map((e, i) => <CardLabelDesc>{i + 1}. {t(`${e.documentType}`)}</CardLabelDesc>)}
+						</>;
+        })}
 			</Card>
 		</div>
 		<ActionBar>
 			<SubmitBar label={t("WS_COMMON_BUTTON_APPLY")} onSubmit={() => redirectToBillAmdmentPage()} />
 		</ActionBar>
-	</>
-}
-
-export default RequiredDocuments
+	</>;
+};
+export default RequiredDocuments;

@@ -91,7 +91,8 @@ export const searchApiResponse = async (request, next = {}) => {
     let userSearchResponse = await searchByMobileNumber(
       queryObj.mobileNumber,
       envVariables.EGOV_DEFAULT_STATE_ID,
-      header
+      header,
+      request.body.RequestInfo // added requestInfo so that, it gets the user info and authtoken
     );
 
     //console.log("User Search Response-> " + userSearchResponse);

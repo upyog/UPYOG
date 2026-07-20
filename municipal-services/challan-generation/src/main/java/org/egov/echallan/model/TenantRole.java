@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.egov.common.contract.request.Role;
-import org.egov.echallan.Validation.SanitizeHtml;
+import org.egov.echallan.validation.SanitizeHtml;
 
 /**
  * User role carries the tenant related role information for the user. A user can have multiple roles per tenant based on the need of the tenant. A user may also have multiple roles for multiple tenants.

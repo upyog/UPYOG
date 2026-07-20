@@ -1,0 +1,2 @@
+ALTER TABLE egf_budgetitem
+ADD COLUMN IF NOT EXISTS not_applicable BOOLEAN NOT NULL DEFAULT false;

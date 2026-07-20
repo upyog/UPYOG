@@ -2,6 +2,8 @@ package org.egov.pg.service.gateways.axis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+
+import org.egov.pg.models.Refund;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
@@ -319,5 +321,17 @@ public class AxisGateway implements Gateway {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public Refund initiateRefund(Refund refundTxn) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Refund fetchRefundStatus(Refund refundRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -406,6 +406,14 @@ const vendorAccess = () => {
   return VENDOR_ACCESS?.length > 0;
 };
 
+const gcAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const gcRoles = ["GC_CEMP","GC_EMPLOYEE", "GC_CITIZEN"];
+  const GC_ACCESS = userRoles?.filter((role) => gcRoles?.includes(role));
+  return GC_ACCESS?.length > 0;
+}
+
 export default {
   pdf: PDFUtil,
   downloadReceipt,
@@ -456,5 +464,6 @@ export default {
   tpAccess,
   vendorAccess,
   gisAccess,
+  gcAccess,
   ...privacy,
 };

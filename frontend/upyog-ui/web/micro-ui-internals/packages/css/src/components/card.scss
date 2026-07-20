@@ -162,7 +162,7 @@
   }
 
   header {
-    @apply font-rc font-medium text-legend text-white leading-10;
+    @apply font-rc text-legend text-white;
   }
 }
 
@@ -175,8 +175,7 @@
   }
 
   header {
-    @apply font-rc font-medium text-legend text-white leading-10;
-    line-height: 2rem !important;
+    @apply font-rc text-legend text-white;
   }
 }
 

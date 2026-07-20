@@ -115,14 +115,14 @@ public class SearchCriteria {
 	private Boolean	isSkipLevelSearch = false;
 
 	public boolean isEmpty() {
-		return (StringUtils.isEmpty(this.tenantId) && StringUtils.isEmpty(this.mobileNumber)
-				&& StringUtils.isEmpty(this.propertyId) && CollectionUtils.isEmpty(this.ids)
-				&& StringUtils.isEmpty(this.oldConnectionNumber) && StringUtils.isEmpty(this.connectionNumber)
-				&& StringUtils.isEmpty(this.status) && StringUtils.isEmpty(this.applicationNumber)
-				&& StringUtils.isEmpty(this.applicationStatus) && StringUtils.isEmpty(this.fromDate)
-				&& StringUtils.isEmpty(this.toDate) && StringUtils.isEmpty(this.applicationType)
-				&& StringUtils.isEmpty(this.doorNo) && StringUtils.isEmpty(this.ownerName))
-				&& StringUtils.isEmpty(this.assignee);
+		return (!StringUtils.hasText(this.tenantId) && !StringUtils.hasText(this.mobileNumber)
+				&& !StringUtils.hasText(this.propertyId) && CollectionUtils.isEmpty(this.ids)
+				&& !StringUtils.hasText(this.oldConnectionNumber) && CollectionUtils.isEmpty(this.connectionNumber)
+				&& !StringUtils.hasText(this.status) && CollectionUtils.isEmpty(this.applicationNumber)
+				&& CollectionUtils.isEmpty(this.applicationStatus) && this.fromDate == null
+				&& this.toDate == null && !StringUtils.hasText(this.applicationType)
+				&& !StringUtils.hasText(this.doorNo) && !StringUtils.hasText(this.ownerName))
+				&& !StringUtils.hasText(this.assignee);
 	}
 
 	public boolean tenantIdOnly() {

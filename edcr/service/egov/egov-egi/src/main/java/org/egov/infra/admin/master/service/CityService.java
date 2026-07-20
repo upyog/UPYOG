@@ -67,6 +67,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.utils.FileStoreUtils;
@@ -77,15 +79,20 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Service("cityService")
 @Transactional(readOnly = true)
-public class CityService {
-
+public class CityService implements ICityService
+{
     private static final String CITY_DATA_CACHE_KEY = "%s-city-pref";
     private static final String CITY_LOGO_CACHE_KEY = "%s-city-logo";
     private static final String CITY_LOGO_HASH_KEY = "city-logo";
 
     private final CityRepository cityRepository;
+    public CityService() {
+        this.cityRepository = null;
+    }
+
+    private static final Logger LOG = LogManager.getLogger(CityService.class);
 
     @Autowired
     private TenantUtils tenantUtils;
@@ -183,11 +190,53 @@ public class CityService {
         return format(CITY_LOGO_URL, tenants.get(getTenantID()));
     }
 
+    /**
+     * Retrieves the configured city logo as a byte array.
+     *
+     * <p>
+     * This method first attempts to fetch the city logo from the cache using
+     * the configured cache key. If the logo is not available in the cache or
+     * the cached content is empty, the logo is fetched from the file store
+     * service and then stored in the cache for future access.
+     * </p>
+     *
+     * <p>
+     * If the city logo configuration is missing (either file store ID or city
+     * code is unavailable), the method logs the issue and returns an empty
+     * byte array.
+     * </p>
+     *
+     * <p>
+     * The returned byte array is typically used for embedding the city logo
+     * in reports, PDFs, or other generated documents.
+     * </p>
+     *
+     * @return the city logo as a byte array; returns an empty byte array if
+     *         the logo configuration is unavailable or the logo cannot be fetched
+     */
     public byte[] getCityLogoAsBytes() {
         byte[] cityLogo = (byte[]) cityLogoCache.get(cityLogoCacheKey(), CITY_LOGO_HASH_KEY);
+/*
         if (cityLogo == null || cityLogo.length < 1) {
             cityLogo = fileStoreUtils.fileAsByteArray(getCityLogoFileStoreId(), getCityCode());
             cityLogoCache.put(cityLogoCacheKey(), CITY_LOGO_HASH_KEY, cityLogo);
+        }
+*/
+        if (cityLogo == null || cityLogo.length < 1) {
+
+            String fileStoreId = getCityLogoFileStoreId();
+            String cityCode = getCityCode();
+
+            if (fileStoreId == null || cityCode == null) {
+                LOG.info("City logo not configured. fileStoreId=" + fileStoreId + ", cityCode=" + cityCode);
+                return new byte[0]; // or return default image
+            }
+
+            cityLogo = fileStoreUtils.fileAsByteArray(fileStoreId, cityCode);
+
+            if (cityLogo != null) {
+                cityLogoCache.put(cityLogoCacheKey(), CITY_LOGO_HASH_KEY, cityLogo);
+            }
         }
         return cityLogo;
     }

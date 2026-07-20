@@ -15,7 +15,9 @@ import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFEntity;
 import org.kabeja.dxf.DXFLayer;
 import org.kabeja.dxf.DXFLineType;
+import org.kabeja.dxf.DXFMText;
 import org.kabeja.dxf.DXFStyle;
+import org.kabeja.dxf.DXFText;
 import org.kabeja.dxf.DXFVariable;
 import org.kabeja.dxf.objects.DXFDictionary;
 import org.kabeja.dxf.objects.DXFLayout;
@@ -31,7 +33,11 @@ import org.kabeja.xml.AbstractSAXGenerator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-
+/**
+ * Extends Kabeja's AbstractSAXGenerator and streams a DXF document out as SVG SAX events.
+ * EDCR adds an optional mode for one full-drawing PDF: when the generator map contains PROPERTY_SINGLE_PDF (set from
+ * DxfToPdfUnifiedConverter), extra tuning runs. Legacy multi-sheet runs never pass that key.
+ */
 public class DcrSvgGenerator extends AbstractSAXGenerator {
    public final static String PROPERTY_MARGIN = "margin";
    public final static String PROPERTY_STROKE_WIDTH = "stroke-width";
@@ -67,8 +73,15 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
    public final static String PROPERTY_WIDTH = "width";
    public final static String PROPERTY_HEIGHT = "height";
    public final static String PROPERTY_OVERFLOW = "svg-overflow";
+   /**
+    * Map key DxfToPdfUnifiedConverter sets only when EdcrPdfDetail.getKabejaSinglePageDXFToPdf() is true.
+    * Pass the string "true" as the value. setupProperties copies intent into the shared context as the Boolean
+    * egov.singlePdfUsingKabeja so DcrSvgStyleGenerator can pick the direct Single PDF font path.
+    */
+   public static final String PROPERTY_SINGLE_PDF = "egov.singlePdfUsingKabeja";
    public static final double DEFAULT_MARGIN_PERCENT = 0.0;
    public final static String SUPPORTED_SVG_VERSION = "1.1"; // we say we produce version 1.1 to fool svgo
+   private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger(DcrSvgGenerator.class);
    private boolean overflow = true;
    private boolean useLimits = false;
    private int boundsRule = PROPERTY_DOCUMENT_BOUNDS_RULE_MODELSPACE;
@@ -76,6 +89,11 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
    private String marginSettings;
    private String outputStyleName = DXFConstants.LAYOUT_DEFAULT_NAME;
    protected SVGSAXGeneratorManager manager;
+   /**
+    * When true: extra SVG/CSS and per-entity handling for one full-drawing PDF (setupProperties, getBounds, layerToSAX,
+    * singlePdfConfigurations). When false: same behaviour as the original Kabeja-only path for legacy multi-sheet PDFs.
+    */
+   private boolean singlePdfMode;
 
    protected void generate() throws SAXException {
        this.setupProperties();
@@ -161,6 +179,18 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
 
        if (this.manager == null) {
            this.manager = new SVGSAXGeneratorManager();
+       }
+
+       /**
+        * Copy single-PDF intent into Kabeja's shared context map so DcrSvgStyleGenerator.toSAX can branch without
+        * changing Kabeja's public APIs.
+        */
+       String singlePdf = this.properties.containsKey(PROPERTY_SINGLE_PDF)
+               ? String.valueOf(this.properties.get(PROPERTY_SINGLE_PDF)).trim()
+               : "";
+       this.singlePdfMode = "true".equalsIgnoreCase(singlePdf);
+       if (this.singlePdfMode) {
+           this.context.put("egov.singlePdfUsingKabeja", Boolean.TRUE);
        }
 
        this.context.put(SVGContext.SVGSAXGENERATOR_MANAGER, manager);
@@ -268,6 +298,14 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
            }
 
            SVGUtils.startElement(this.handler, SVGConstants.SVG_ROOT, attr);
+
+           /*
+            * Inject global CSS for text nodes so dimension labels inherit fill/stroke suitable for legible glyphs
+            * (layer groups often set stroke-only drawing style which makes plain text unreadable).
+            */
+           if (this.singlePdfMode) {
+                singlePdfConfigurations();
+           }
 
            // the blocks as symbol in the defs-section of SVG
            attr = new AttributesImpl();
@@ -380,6 +418,46 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
        }
 
        SVGUtils.endElement(handler, SVGConstants.SVG_GROUP);
+   }
+
+    /*
+     * Adds SVG style configuration for single PDF generation.
+     *
+     * This method injects a CSS <style> block into the generated SVG output
+     * before it is converted into PDF.
+     *
+     * Applied CSS rules:
+     * - Removes stroke/border rendering from text elements.
+     * - Forces text fill color to use the current drawing color.
+     * - Normalizes font weight to avoid bold rendering issues.
+     *
+     * Affects:
+     * - <text> elements
+     * - <tspan> elements
+     *
+     * This configuration helps:
+     * - improve text readability in generated PDFs
+     * - avoid incorrect text outlines/strokes
+     * - maintain consistent font rendering across PDF viewers
+     *
+     * The generated CSS:
+     * text,tspan{
+     *     stroke:none !important;
+     *     fill:currentColor !important;
+     *     font-weight:normal;
+     * }
+     *
+     * Throws:
+     * SAXException - if an error occurs while writing SVG SAX events.
+     */
+   public void singlePdfConfigurations() throws SAXException {
+       AttributesImpl styleAttr = new AttributesImpl();
+       SVGUtils.addAttribute(styleAttr, "type", "text/css");
+       SVGUtils.startElement(handler, "style", styleAttr);
+       String css = "text,tspan{stroke:none !important;fill:currentColor !important;font-weight:normal;}";
+       char[] cssChars = css.toCharArray();
+       handler.characters(cssChars, 0, cssChars.length);
+       SVGUtils.endElement(handler, "style");
    }
 
    /**
@@ -547,6 +625,14 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
            }
        }
 
+       // Single DXF to PDF mode only
+       if (this.singlePdfMode) {
+           Bounds headerBounds = getHeaderModelSpaceBounds();
+           if (isSaneBounds(headerBounds) && isLikelyOutlierBounds(bounds, headerBounds)) {
+               bounds = headerBounds;
+           }
+       }
+
        // set a margin
        double[] margin = this.getMargin(bounds);
        bounds.setMinimumX(bounds.getMinimumX() - margin[3]);
@@ -555,6 +641,100 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
        bounds.setMaximumY(bounds.getMaximumY() + margin[0]);
 
        return bounds;
+   }
+
+    /**
+     * Retrieves the model space bounds from the DXF header information.
+     *
+     * <p>The method first checks for the presence of EXTMIN and EXTMAX
+     * header variables, which represent the actual extents of the drawing
+     * in model space.</p>
+     *
+     * <p>If EXTMIN and EXTMAX are not available, the method falls back to
+     * LIMMIN and LIMMAX, which represent the configured drawing limits.</p>
+     *
+     * <p>The extracted bounds are used during DXF processing for:</p>
+     * <ul>
+     *     <li>Determining drawing dimensions</li>
+     *     <li>Scaling and fitting content into PDF pages</li>
+     *     <li>Viewport calculations</li>
+     *     <li>Rendering and layout validation</li>
+     * </ul>
+     *
+     * <p>DXF coordinate group codes used:</p>
+     * <ul>
+     *     <li>"10" - X coordinate</li>
+     *     <li>"20" - Y coordinate</li>
+     * </ul>
+     *
+     * @return a {@link Bounds} object containing the minimum and maximum
+     *         X/Y coordinates extracted from the DXF header
+     */
+    private Bounds getHeaderModelSpaceBounds() {
+       Bounds headerBounds = new Bounds();
+       if (this.doc.getDXFHeader().hasVariable(DXFConstants.HEADER_VARIABLE_EXTMIN)
+               && this.doc.getDXFHeader().hasVariable(DXFConstants.HEADER_VARIABLE_EXTMAX)) {
+           DXFVariable min = this.doc.getDXFHeader().getVariable(DXFConstants.HEADER_VARIABLE_EXTMIN);
+           DXFVariable max = this.doc.getDXFHeader().getVariable(DXFConstants.HEADER_VARIABLE_EXTMAX);
+           headerBounds.setMinimumX(min.getDoubleValue("10"));
+           headerBounds.setMinimumY(min.getDoubleValue("20"));
+           headerBounds.setMaximumX(max.getDoubleValue("10"));
+           headerBounds.setMaximumY(max.getDoubleValue("20"));
+       } else if (this.doc.getDXFHeader().hasVariable(DXFConstants.HEADER_VARIABLE_LIMMIN)
+               && this.doc.getDXFHeader().hasVariable(DXFConstants.HEADER_VARIABLE_LIMMAX)) {
+           DXFVariable min = this.doc.getDXFHeader().getVariable(DXFConstants.HEADER_VARIABLE_LIMMIN);
+           DXFVariable max = this.doc.getDXFHeader().getVariable(DXFConstants.HEADER_VARIABLE_LIMMAX);
+           headerBounds.setMinimumX(min.getDoubleValue("10"));
+           headerBounds.setMinimumY(min.getDoubleValue("20"));
+           headerBounds.setMaximumX(max.getDoubleValue("10"));
+           headerBounds.setMaximumY(max.getDoubleValue("20"));
+       }
+       return headerBounds;
+   }
+
+   /**
+    * True when bounds exist, are valid, and have positive width and height.
+    */
+   private static boolean isSaneBounds(Bounds b) {
+       return b != null && b.isValid() && b.getWidth() > 0 && b.getHeight() > 0;
+   }
+
+    /**
+     * Determines whether the computed drawing bounds are likely abnormal
+     * when compared against the bounds defined in the DXF header.
+     *
+     * <p>The method validates both computed and header bounds before
+     * calculating their respective areas.</p>
+     *
+     * <p>If the computed bounds area is significantly larger than the
+     * header bounds area (greater than 1000 times), the bounds are
+     * treated as suspicious or outliers.</p>
+     *
+     * <p>This validation helps detect malformed or corrupted DXF entities
+     * that may produce extremely large coordinates and cause issues during
+     * DXF to PDF rendering, such as:</p>
+     * <ul>
+     *     <li>Incorrect scaling</li>
+     *     <li>Oversized page generation</li>
+     *     <li>Rendering failures</li>
+     *     <li>Memory/performance problems</li>
+     * </ul>
+     *
+     * @param computedBounds the bounds calculated from DXF entities
+     * @param headerBounds the bounds extracted from the DXF header
+     * @return {@code true} if the computed bounds appear to be abnormal
+     *         outliers compared to the header bounds; otherwise {@code false}
+     */
+   private static boolean isLikelyOutlierBounds(Bounds computedBounds, Bounds headerBounds) {
+       if (!isSaneBounds(computedBounds) || !isSaneBounds(headerBounds)) {
+           return false;
+       }
+       double computedArea = computedBounds.getWidth() * computedBounds.getHeight();
+       double headerArea = headerBounds.getWidth() * headerBounds.getHeight();
+       if (headerArea <= 0) {
+           return false;
+       }
+       return computedArea / headerArea > 1000d;
    }
 
    public void setSVGSAXGeneratorManager(SVGSAXGeneratorManager manager) {
@@ -617,30 +797,88 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
            String type = (String) types.next();
            ArrayList list = (ArrayList) layer.getDXFEntities(type);
 
+           /*
+            * In single PDF conversion mode, explicitly wrap TEXT and MTEXT entities
+            * inside a dedicated SVG group with controlled styling.
+
+            * Why this is required:
+            * During full DXF-to-single-PDF rendering, text entities may inherit unwanted
+            * stroke/fill styles from parent SVG groups or previously rendered entities.
+            * This can cause:
+            *   - bold or distorted text rendering
+            *   - outlined characters
+            *   - invisible text
+            *   - inconsistent font appearance in generated PDFs
+            *
+            * To avoid this, a separate SVG <g> element is created with:
+            *   - fill        = currentColor  -> render text using active drawing color
+            *   - stroke      = none          -> disable text outlines
+            *   - stroke-width= 0             -> prevent accidental stroke rendering
+            *   - font-weight = normal        -> normalize font weight rendering
+            *
+            * This styling isolation ensures consistent and readable text rendering
+            * when converting the complete DXF drawing into a single PDF.
+            */
+           boolean isTextType = this.singlePdfMode
+                   && (DXFConstants.ENTITY_TYPE_TEXT.equals(type) || DXFConstants.ENTITY_TYPE_MTEXT.equals(type));
+           if (isTextType) {
+               AttributesImpl textAttr = new AttributesImpl();
+               SVGUtils.addAttribute(textAttr, SVGConstants.SVG_ATTRIBUTE_FILL, "currentColor");
+               SVGUtils.addAttribute(textAttr, SVGConstants.SVG_ATTRIBUTE_STROKE, "none");
+               SVGUtils.addAttribute(textAttr, SVGConstants.SVG_ATTRIBUTE_STROKE_WITDH, "0");
+               SVGUtils.addAttribute(textAttr, "font-weight", "normal");
+               SVGUtils.startElement(handler, SVGConstants.SVG_GROUP, textAttr);
+           }
+
            try {
-               SVGSAXGenerator gen = this.manager.getSVGGenerator(type);
+               try {
+                   SVGSAXGenerator gen = this.manager.getSVGGenerator(type);
 
-               Iterator i = list.iterator();
+                   Iterator i = list.iterator();
 
-               while (i.hasNext()) {
-                   DXFEntity entity = (DXFEntity) i.next();
-                   boolean v = entity.isVisibile();
-                   entity.setVisibile(!layer.isFrozen());
+                   while (i.hasNext()) {
+                       DXFEntity entity = (DXFEntity) i.next();
+                       try {
+                           if (isTextType) {
+                               // Drop aggressive text lineweight/thickness before Kabeja serializes to SVG paths.
+                               entity.setLineWeight(-1);
+                               if (entity instanceof DXFText) {
+                                   ((DXFText) entity).setThickness(0d);
+                               } else if (entity instanceof DXFMText) {
+                                   ((DXFMText) entity).setThickness(0d);
+                               }
+                           }
+                           boolean v = entity.isVisibile();
+                           entity.setVisibile(!layer.isFrozen());
 
-                   if (!onModelspace) {
-                       entity.setVisibile(layer.isVisible());
+                           if (!onModelspace) {
+                               entity.setVisibile(layer.isVisible());
+                           }
+
+                           if ((onModelspace && entity.isModelSpace()) ||
+                                   (!onModelspace && !entity.isModelSpace())) {
+                               gen.toSAX(handler, context, entity, null);
+                           }
+
+                           //restore back the flag
+                           entity.setVisibile(v);
+                        } catch (Throwable t) {
+                            // Catch and log rendering errors for individual entities (e.g., bad MLines) to prevent crashes
+                            LOG.error("Failed to generate SVG for entity " + entity.getID() + " of type " + type, t);
+                        }
                    }
-
-                   if ((onModelspace && entity.isModelSpace()) ||
-                           (!onModelspace && !entity.isModelSpace())) {
-                       gen.toSAX(handler, context, entity, null);
-                   }
-
-                   //restore back the flag
-                   entity.setVisibile(v);
+               } catch (SVGGenerationException e) {
+                   e.printStackTrace();
                }
-           } catch (SVGGenerationException e) {
+           } catch (Exception e) {
                e.printStackTrace();
+           }
+           /*
+              Close the SVG group wrapper created for text-based entities
+              after completing text element rendering.
+            */
+           if (isTextType) {
+               SVGUtils.endElement(handler, SVGConstants.SVG_GROUP);
            }
        }
 

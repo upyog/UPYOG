@@ -9,28 +9,42 @@ import org.egov.echallancalculation.model.ChallanResponse;
 import org.egov.echallancalculation.model.RequestInfoWrapper;
 import org.egov.echallancalculation.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CalculationUtils {
 
+    private static final String TENANT_ID_PARAM = "tenantId=";
+    private static final String REQUEST_INFO = "RequestInfo";
+    private static final String TENANT_ID = "tenantId";
+    private static final String MODULE_NAME = "moduleName";
+    private static final String MODULE_CHALLAN = "Challan";
+    private static final String MASTER_NAME = "masterName";
+    private static final String MASTER_SUB_CATEGORY = "SubCategory";
+    private static final String MASTER_OFFENCE_TYPE = "OffenceType";
+    private static final String FILTER = "filter";
+    private static final String FILTER_NAME_PREFIX = "[?(@.name=='";
+    private static final String FILTER_OFFENCE_TYPE_PREFIX = "[?(@.offenceTypeId=='";
+    private static final String MASTER_DETAILS = "masterDetails";
+    private static final String MODULE_DETAILS = "moduleDetails";
+    private static final String MDMS_CRITERIA = "MdmsCriteria";
+    private static final String MDMS_RES = "MdmsRes";
+    private static final String DEFAULT_TAX_HEAD_CODE = "CH.CHALLAN_FINE";
+    private static final String MODULE_BILLING_SERVICE = "BillingService";
+    private static final String MASTER_TAX_HEAD = "TaxHeadMaster";
+    private static final String FILTER_CODE_PREFIX = "[?(@.code=='";
 
-    @Autowired
-    private ChallanConfiguration config;
-
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private ObjectMapper mapper;
+    private final ChallanConfiguration config;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final ObjectMapper mapper;
 
 
     /**
@@ -42,7 +56,7 @@ public class CalculationUtils {
       url.append(config.getChallanContextPath());
       url.append(config.getChallansearchEndPoint());
       url.append("?");
-      url.append("tenantId=");
+      url.append(TENANT_ID_PARAM);
       url.append("{1}");
       url.append("&");
       url.append("applicationNumber=");
@@ -59,7 +73,7 @@ public class CalculationUtils {
         StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getDemandSearchEndpoint());
         url.append("?");
-        url.append("tenantId=");
+        url.append(TENANT_ID_PARAM);
         url.append("{1}");
         url.append("&");
         url.append("businessService=");
@@ -79,7 +93,7 @@ public class CalculationUtils {
         StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getFetchBillEndpoint());
         url.append("?");
-        url.append("tenantId=");
+        url.append(TENANT_ID_PARAM);
         url.append("{1}");
         url.append("&");
         url.append("consumerCode=");
@@ -91,7 +105,7 @@ public class CalculationUtils {
         return url.toString();
     }
 
-    public AuditDetails getAuditDetails(String by, Boolean isCreate) {
+    public AuditDetails getAuditDetails(String by, boolean isCreate) {
         Long time = System.currentTimeMillis();
         if(isCreate)
             return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
@@ -103,8 +117,8 @@ public class CalculationUtils {
         String url = getChallanSearchURL();
         url = url.replace("{1}",tenantId).replace("{2}",challanNo);
 
-        Object result =serviceRequestRepository.fetchResult(new StringBuilder(url),RequestInfoWrapper.builder().
-                requestInfo(requestInfo).build());
+        Object result = serviceRequestRepository.fetchResult(new StringBuilder(url),RequestInfoWrapper.builder().
+                requestInfo(requestInfo).build()).orElse(null);
 
         ChallanResponse response =null;
         try {
@@ -136,31 +150,16 @@ public class CalculationUtils {
         uri.append(config.getMdmsHost());
         uri.append(config.getMdmsEndPoint());
 
-        Map<String, Object> request = new HashMap<>();
-        request.put("RequestInfo", requestInfo);
-        
-        Map<String, Object> mdmsCriteria = new HashMap<>();
-        mdmsCriteria.put("tenantId", tenantId);
-        
-        Map<String, Object> moduleDetail = new HashMap<>();
-        moduleDetail.put("moduleName", "Challan");
-        
-        Map<String, Object> masterDetail = new HashMap<>();
-        masterDetail.put("masterName", "SubCategory");
-        masterDetail.put("filter", "[?(@.name=='" + offenceSubCategoryName + "')]");
-        
-        moduleDetail.put("masterDetails", Arrays.asList(masterDetail));
-        mdmsCriteria.put("moduleDetails", Arrays.asList(moduleDetail));
-        
-        request.put("MdmsCriteria", mdmsCriteria);
+        Map<String, Object> request = buildMdmsRequest(requestInfo, tenantId, MASTER_SUB_CATEGORY,
+                FILTER_NAME_PREFIX + offenceSubCategoryName + "')]");
 
-        Object result = serviceRequestRepository.fetchResult(uri, request);
+        Object result = serviceRequestRepository.fetchResult(uri, request).orElse(null);
         
         try {
             Map<String, Object> response = mapper.convertValue(result, Map.class);
-            Map<String, Object> mdmsRes = (Map<String, Object>) response.get("MdmsRes");
-            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get("Challan");
-            List<Map<String, Object>> subCategories = (List<Map<String, Object>>) challan.get("SubCategory");
+            Map<String, Object> mdmsRes = (Map<String, Object>) response.get(MDMS_RES);
+            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get(MODULE_CHALLAN);
+            List<Map<String, Object>> subCategories = (List<Map<String, Object>>) challan.get(MASTER_SUB_CATEGORY);
             
             if (!CollectionUtils.isEmpty(subCategories)) {
                 Map<String, Object> subCategory = subCategories.get(0);
@@ -192,31 +191,16 @@ public class CalculationUtils {
         uri.append(config.getMdmsHost());
         uri.append(config.getMdmsEndPoint());
 
-        Map<String, Object> request = new HashMap<>();
-        request.put("RequestInfo", requestInfo);
-        
-        Map<String, Object> mdmsCriteria = new HashMap<>();
-        mdmsCriteria.put("tenantId", tenantId);
-        
-        Map<String, Object> moduleDetail = new HashMap<>();
-        moduleDetail.put("moduleName", "Challan");
-        
-        Map<String, Object> masterDetail = new HashMap<>();
-        masterDetail.put("masterName", "OffenceType");
-        masterDetail.put("filter", "[?(@.name=='" + offenceTypeName + "')]");
-        
-        moduleDetail.put("masterDetails", Arrays.asList(masterDetail));
-        mdmsCriteria.put("moduleDetails", Arrays.asList(moduleDetail));
-        
-        request.put("MdmsCriteria", mdmsCriteria);
+        Map<String, Object> request = buildMdmsRequest(requestInfo, tenantId, MASTER_OFFENCE_TYPE,
+                FILTER_NAME_PREFIX + offenceTypeName + "')]");
 
-        Object result = serviceRequestRepository.fetchResult(uri, request);
+        Object result = serviceRequestRepository.fetchResult(uri, request).orElse(null);
         
         try {
             Map<String, Object> response = mapper.convertValue(result, Map.class);
-            Map<String, Object> mdmsRes = (Map<String, Object>) response.get("MdmsRes");
-            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get("Challan");
-            List<Map<String, Object>> offenceTypes = (List<Map<String, Object>>) challan.get("OffenceType");
+            Map<String, Object> mdmsRes = (Map<String, Object>) response.get(MDMS_RES);
+            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get(MODULE_CHALLAN);
+            List<Map<String, Object>> offenceTypes = (List<Map<String, Object>>) challan.get(MASTER_OFFENCE_TYPE);
             
             if (!CollectionUtils.isEmpty(offenceTypes)) {
                 Map<String, Object> offenceType = offenceTypes.get(0);
@@ -244,36 +228,22 @@ public class CalculationUtils {
         uri.append(config.getMdmsHost());
         uri.append(config.getMdmsEndPoint());
 
-        Map<String, Object> request = new HashMap<>();
-        request.put("RequestInfo", requestInfo);
-        
-        Map<String, Object> mdmsCriteria = new HashMap<>();
-        mdmsCriteria.put("tenantId", tenantId);
-        Map<String, Object> moduleDetail = new HashMap<>();
-        moduleDetail.put("moduleName", "Challan");
-        
-        Map<String, Object> masterDetail = new HashMap<>();
-        masterDetail.put("masterName", "Rates");
-        masterDetail.put("filter", "[?(@.offenceTypeId=='" + offenceTypeId + "')]");
-        
-        moduleDetail.put("masterDetails", Arrays.asList(masterDetail));
-        mdmsCriteria.put("moduleDetails", Arrays.asList(moduleDetail));
-        
-        request.put("MdmsCriteria", mdmsCriteria);
+        Map<String, Object> request = buildMdmsRequest(requestInfo, tenantId, "Rates",
+                FILTER_OFFENCE_TYPE_PREFIX + offenceTypeId + "')]");
 
-        Object result = serviceRequestRepository.fetchResult(uri, request);
+        Object result = serviceRequestRepository.fetchResult(uri, request).orElse(null);
         
         try {
             Map<String, Object> response = mapper.convertValue(result, Map.class);
-            Map<String, Object> mdmsRes = (Map<String, Object>) response.get("MdmsRes");
-            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get("Challan");
+            Map<String, Object> mdmsRes = (Map<String, Object>) response.get(MDMS_RES);
+            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get(MODULE_CHALLAN);
             List<Map<String, Object>> rates = (List<Map<String, Object>>) challan.get("Rates");
             
             if (!CollectionUtils.isEmpty(rates)) {
                 Map<String, Object> rate = rates.get(0);
                 Object amount = rate.get("amount");
-                if (amount instanceof Number) {
-                    return BigDecimal.valueOf(((Number) amount).doubleValue());
+                if (amount instanceof Number number) {
+                    return BigDecimal.valueOf(number.doubleValue());
                 }
             }
         } catch (Exception e) {
@@ -292,37 +262,23 @@ public class CalculationUtils {
      */
     public String getTaxHeadCodeFromOffenceTypeName(RequestInfo requestInfo, String tenantId, String offenceTypeName) {
         if (offenceTypeName == null || offenceTypeName.isEmpty()) {
-            return "CH.CHALLAN_FINE"; // Default fallback
+            return DEFAULT_TAX_HEAD_CODE;
         }
         
         StringBuilder uri = new StringBuilder();
         uri.append(config.getMdmsHost());
         uri.append(config.getMdmsEndPoint());
 
-        Map<String, Object> request = new HashMap<>();
-        request.put("RequestInfo", requestInfo);
-        
-        Map<String, Object> mdmsCriteria = new HashMap<>();
-        mdmsCriteria.put("tenantId", tenantId);
-        Map<String, Object> moduleDetail = new HashMap<>();
-        moduleDetail.put("moduleName", "Challan");
-        
-        Map<String, Object> masterDetail = new HashMap<>();
-        masterDetail.put("masterName", "OffenceType");
-        masterDetail.put("filter", "[?(@.name=='" + offenceTypeName + "')]");
-        
-        moduleDetail.put("masterDetails", Arrays.asList(masterDetail));
-        mdmsCriteria.put("moduleDetails", Arrays.asList(moduleDetail));
-        
-        request.put("MdmsCriteria", mdmsCriteria);
+        Map<String, Object> request = buildMdmsRequest(requestInfo, tenantId, MASTER_OFFENCE_TYPE,
+                FILTER_NAME_PREFIX + offenceTypeName + "')]");
 
-        Object result = serviceRequestRepository.fetchResult(uri, request);
+        Object result = serviceRequestRepository.fetchResult(uri, request).orElse(null);
         
         try {
             Map<String, Object> response = mapper.convertValue(result, Map.class);
-            Map<String, Object> mdmsRes = (Map<String, Object>) response.get("MdmsRes");
-            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get("Challan");
-            List<Map<String, Object>> offenceTypes = (List<Map<String, Object>>) challan.get("OffenceType");
+            Map<String, Object> mdmsRes = (Map<String, Object>) response.get(MDMS_RES);
+            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get(MODULE_CHALLAN);
+            List<Map<String, Object>> offenceTypes = (List<Map<String, Object>>) challan.get(MASTER_OFFENCE_TYPE);
             
             if (!CollectionUtils.isEmpty(offenceTypes)) {
                 Map<String, Object> offenceType = offenceTypes.get(0);
@@ -337,7 +293,7 @@ public class CalculationUtils {
         }
         
         log.warn("No tax head code found in MDMS for offence type: {}, using default", offenceTypeName);
-        return "CH.CHALLAN_FINE"; // Default fallback
+        return DEFAULT_TAX_HEAD_CODE;
     }
 
     /**
@@ -353,29 +309,29 @@ public class CalculationUtils {
         uri.append(config.getMdmsEndPoint());
 
         Map<String, Object> request = new HashMap<>();
-        request.put("RequestInfo", requestInfo);
+        request.put(REQUEST_INFO, requestInfo);
         
         Map<String, Object> mdmsCriteria = new HashMap<>();
-        mdmsCriteria.put("tenantId", tenantId);
+        mdmsCriteria.put(TENANT_ID, tenantId);
         Map<String, Object> moduleDetail2 = new HashMap<>();
-        moduleDetail2.put("moduleName", "BillingService");
+        moduleDetail2.put(MODULE_NAME, MODULE_BILLING_SERVICE);
         
         Map<String, Object> masterDetail2 = new HashMap<>();
-        masterDetail2.put("masterName", "TaxHeadMaster");
-        masterDetail2.put("filter", "[?(@.code=='" + categoryCode + "')]");
+        masterDetail2.put(MASTER_NAME, MASTER_TAX_HEAD);
+        masterDetail2.put(FILTER, FILTER_CODE_PREFIX + categoryCode + "')]");
         
-        moduleDetail2.put("masterDetails", Arrays.asList(masterDetail2));
-        mdmsCriteria.put("moduleDetails", Arrays.asList(moduleDetail2));
+        moduleDetail2.put(MASTER_DETAILS, Arrays.asList(masterDetail2));
+        mdmsCriteria.put(MODULE_DETAILS, Arrays.asList(moduleDetail2));
         
-        request.put("MdmsCriteria", mdmsCriteria);
+        request.put(MDMS_CRITERIA, mdmsCriteria);
 
-        Object result = serviceRequestRepository.fetchResult(uri, request);
+        Object result = serviceRequestRepository.fetchResult(uri, request).orElse(null);
         
         try {
             Map<String, Object> response = mapper.convertValue(result, Map.class);
-            Map<String, Object> mdmsRes = (Map<String, Object>) response.get("MdmsRes");
-            Map<String, Object> billingService = (Map<String, Object>) mdmsRes.get("BillingService");
-            List<Map<String, Object>> taxHeadMasters = (List<Map<String, Object>>) billingService.get("TaxHeadMaster");
+            Map<String, Object> mdmsRes = (Map<String, Object>) response.get(MDMS_RES);
+            Map<String, Object> billingService = (Map<String, Object>) mdmsRes.get(MODULE_BILLING_SERVICE);
+            List<Map<String, Object>> taxHeadMasters = (List<Map<String, Object>>) billingService.get(MASTER_TAX_HEAD);
             
             if (!CollectionUtils.isEmpty(taxHeadMasters)) {
                 Map<String, Object> taxHeadMaster = taxHeadMasters.get(0);
@@ -385,7 +341,7 @@ public class CalculationUtils {
             throw new CustomException("MDMS_ERROR", "Failed to fetch tax head code from MDMS for category: " + categoryCode);
         }
         
-        return categoryCode; // Fallback to category code if not found
+        return categoryCode;
     }
 
     /**
@@ -399,30 +355,15 @@ public class CalculationUtils {
         uri.append(config.getMdmsHost());
         uri.append(config.getMdmsEndPoint());
 
-        Map<String, Object> request = new HashMap<>();
-        request.put("RequestInfo", requestInfo);
-        
-        Map<String, Object> mdmsCriteria = new HashMap<>();
-        mdmsCriteria.put("tenantId", tenantId);
-        
-        Map<String, Object> moduleDetail = new HashMap<>();
-        moduleDetail.put("moduleName", "Challan");
-        
-        Map<String, Object> masterDetail = new HashMap<>();
-        masterDetail.put("masterName", "SubCategory");
-        
-        moduleDetail.put("masterDetails", Arrays.asList(masterDetail));
-        mdmsCriteria.put("moduleDetails", Arrays.asList(moduleDetail));
-        
-        request.put("MdmsCriteria", mdmsCriteria);
+        Map<String, Object> request = buildMdmsRequest(requestInfo, tenantId, MASTER_SUB_CATEGORY, null);
 
-        Object result = serviceRequestRepository.fetchResult(uri, request);
+        Object result = serviceRequestRepository.fetchResult(uri, request).orElse(null);
         
         try {
             Map<String, Object> response = mapper.convertValue(result, Map.class);
-            Map<String, Object> mdmsRes = (Map<String, Object>) response.get("MdmsRes");
-            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get("Challan");
-            List<Map<String, Object>> subCategories = (List<Map<String, Object>>) challan.get("SubCategory");
+            Map<String, Object> mdmsRes = (Map<String, Object>) response.get(MDMS_RES);
+            Map<String, Object> challan = (Map<String, Object>) mdmsRes.get(MODULE_CHALLAN);
+            List<Map<String, Object>> subCategories = (List<Map<String, Object>>) challan.get(MASTER_SUB_CATEGORY);
             
             log.info("Fetched {} subcategories from MDMS", subCategories != null ? subCategories.size() : 0);
             return subCategories != null ? subCategories : new ArrayList<>();
@@ -430,6 +371,30 @@ public class CalculationUtils {
             log.error("Error fetching all subcategories from MDMS", e);
             return new ArrayList<>();
         }
+    }
+
+    private Map<String, Object> buildMdmsRequest(RequestInfo requestInfo, String tenantId,
+            String masterName, String filter) {
+        Map<String, Object> request = new HashMap<>();
+        request.put(REQUEST_INFO, requestInfo);
+
+        Map<String, Object> mdmsCriteria = new HashMap<>();
+        mdmsCriteria.put(TENANT_ID, tenantId);
+
+        Map<String, Object> moduleDetail = new HashMap<>();
+        moduleDetail.put(MODULE_NAME, MODULE_CHALLAN);
+
+        Map<String, Object> masterDetail = new HashMap<>();
+        masterDetail.put(MASTER_NAME, masterName);
+        if (filter != null) {
+            masterDetail.put(FILTER, filter);
+        }
+
+        moduleDetail.put(MASTER_DETAILS, Arrays.asList(masterDetail));
+        mdmsCriteria.put(MODULE_DETAILS, Arrays.asList(moduleDetail));
+
+        request.put(MDMS_CRITERIA, mdmsCriteria);
+        return request;
     }
 
 }

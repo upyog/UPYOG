@@ -31,7 +31,7 @@ public class CommunityHallDemandEstimationCriteria {
 	private String tenantId;
 
 	@NotBlank
-	private String communityHallCode;
+	private String venueCode;
 
 	@NotNull                                             
 	@Valid                                               

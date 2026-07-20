@@ -64,7 +64,7 @@ const ServiceCategory = ({
 
   return (
     <div className="status-container">
-      <div className="filter-label" style={{ fontWeight: "normal" }}>
+      <div className="filter-label cg-font-normal">
         {t("CHALLAN_OFFENCE_TYPE")}
       </div>
       <MultiSelectDropdown
@@ -87,7 +87,6 @@ const ServiceCategory = ({
         }}
         optionsKey="i18nKey"
         t={t}
-        ServerStyle={{ width: "100%", overflowY: "scroll", overflowX: "hidden" }}
       />
       <div className="tag-container">
         {selectedCategory?.map((value, index) => (

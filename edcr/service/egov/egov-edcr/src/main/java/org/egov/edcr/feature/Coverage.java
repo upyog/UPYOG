@@ -1,51 +1,3 @@
-/*
- * UPYOG  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
- *
- *  Copyright (C) <2019>  eGovernments Foundation
- *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
- *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
- *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
- *      Further, all user interfaces, including but not limited to citizen facing interfaces,
- *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *         derived works should carry eGovernments Foundation logo on the top right corner.
- *
- *      For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *      For any further queries on attribution, including queries on brand guidelines,
- *         please contact contact@egovernments.org
- *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
- *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
- *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- */
-
-
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
@@ -82,7 +34,7 @@ public class Coverage extends FeatureProcess {
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 	
-	 @Autowired
+	@Autowired
 	MDMSCacheManager cache;
 
 
@@ -256,7 +208,7 @@ public class Coverage extends FeatureProcess {
 		// defined range.
 		// If a matching rule is found, proceed with its processing.
 
-		List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.COVERAGE.getValue(), true);
+			List<Object> rules = cache.getFeatureRules(pl, FeatureEnum.COVERAGE.getValue(), true);
 
 		Optional<CoverageRequirement> matchedRule = rules.stream()
 		    .filter(CoverageRequirement.class::isInstance)
@@ -366,7 +318,6 @@ public class Coverage extends FeatureProcess {
 	}
 	
 	private Map<String, String> createCoverageDetails(String occupancy, BigDecimal coverage, BigDecimal upperLimit, Plan pl) {
-	    String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
 	    String actualResult = getLocaleMessage(COVERAGE_RULE_ACTUAL_KEY, coverage.toString());
 	    String expectedResult = getLocaleMessage(COVERAGE_RULE_EXPECTED_KEY, upperLimit.toString());
 	    boolean isCompliant = coverage.compareTo(upperLimit) <= 0 || isResidentialOrCommercial(occupancy);
@@ -378,6 +329,12 @@ public class Coverage extends FeatureProcess {
 		detail.setProvided(actualResult);
 		detail.setStatus(isCompliant ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 		if (!isResidentialOrCommercial(occupancy)) {
+			/*
+			Description is not applicable for Residential and Commercial occupancies.　
+			Earlier, coverage.description was fetched for all cases,　
+			which was unnecessary and could cause issues if message key is missing.
+			*/
+			String desc = getLocaleMessage(RULE_DESCRIPTION_KEY, upperLimit.toString());
 			detail.setDescription(desc);
 		}
 		Map<String, String> details = mapReportDetails(detail);
@@ -385,7 +342,12 @@ public class Coverage extends FeatureProcess {
 	}
 
 	private boolean isResidentialOrCommercial(String occupancy) {
-	    return RESIDENTIAL.equalsIgnoreCase(occupancy) || COMMERCIAL.equalsIgnoreCase(occupancy);
+		// Making occupancy check null-safe - Prevents NullPointerException when occupancy is null,Handles extra spaces using trim(), Uses case-insensitive comparison for consistency
+	    if (occupancy == null) {
+	        return false;
+	    }
+	    String normalizedOccupancy = occupancy.trim();
+	    return RESIDENTIAL.equalsIgnoreCase(normalizedOccupancy) || COMMERCIAL.equalsIgnoreCase(normalizedOccupancy);
 	}
 
 

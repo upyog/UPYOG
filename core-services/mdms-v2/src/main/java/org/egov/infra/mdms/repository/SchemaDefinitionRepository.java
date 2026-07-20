@@ -13,6 +13,12 @@ public interface SchemaDefinitionRepository {
 
     public void update(SchemaDefinitionRequest schemaDefinitionRequest);
 
+    void delete(String tenantId, String code);
+
     public List<SchemaDefinition> search(SchemaDefCriteria schemaDefCriteria);
+
+    public Integer getTotalMastersCount(String tenantId);
+
+    
 
 }

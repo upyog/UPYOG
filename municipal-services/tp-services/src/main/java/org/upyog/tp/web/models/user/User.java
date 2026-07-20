@@ -89,7 +89,7 @@ public class User   {
         private String pan;
 
         @SanitizeHtml
-        @Pattern(regexp = "^[0-9]{12}$", message = "AdharNumber should be 12 digit number")
+        @Pattern(regexp = "^\\d{12}$", message = "AdharNumber should be 12 digit number")
         @JsonProperty("aadhaarNumber")
         private String aadhaarNumber;
 

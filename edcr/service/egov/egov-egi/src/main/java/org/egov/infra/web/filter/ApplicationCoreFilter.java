@@ -62,7 +62,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Resource;
+//import javax.annotation.Resource;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -74,7 +74,7 @@ import javax.servlet.http.HttpSession;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
-import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ICityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -88,7 +88,7 @@ import org.springframework.security.core.userdetails.User;
 public class ApplicationCoreFilter implements Filter {
 
     @Autowired
-    private CityService cityService;
+    private ICityService cityService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -96,8 +96,8 @@ public class ApplicationCoreFilter implements Filter {
     @Value("${cdn.domain.url}")
     private String cdnURL;
 
-    @Resource(name = "cities")
-    private transient List<String> cities;
+//    @Resource(name = "cities")
+//    private transient List<String> cities;
 
     @Value("${client.id}")
     private String clientId;

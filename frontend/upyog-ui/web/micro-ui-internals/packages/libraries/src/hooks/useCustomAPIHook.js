@@ -26,7 +26,7 @@ const useCustomAPIHook = (url, params, body, plainAccessRequest, options = {}) =
     isLoading,
     data,
     revalidate: () => {
-      data && client.invalidateQueries({ queryKey: ["CUSTOM", { ...params, ...body, ...plainAccessRequest }] });
+      data && client.invalidateQueries(["CUSTOM", { ...params, ...body, ...plainAccessRequest }]);
     },
   };
 };

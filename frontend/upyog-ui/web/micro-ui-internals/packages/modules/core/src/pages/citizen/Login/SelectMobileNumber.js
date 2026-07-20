@@ -36,7 +36,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
     return (
     <span>
       {isCCFEnabled?.checkBoxLabels?.map((data, index) => {
-        return <span>
+        return <span key={data?.linkId || index}>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
           {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#a82227", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
@@ -133,7 +133,18 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         />
       </div>)}
       <div className="col col-md-4  text-md-center p-0" style={{width:"40%", marginTop:"5px"}}>
-             <button className="digilocker-btn"type="submit" onClick={(e)=>setShowToast(true)   }><img src="https://meripehchaan.gov.in/assets/img/icon/digi.png" class="mr-2" style={{"width":"12%"}}></img>Register/Login with DigiLocker</button>
+        <button
+          className="digilocker-btn"
+          type="button"
+          onClick={(e) => setShowToast(true)}
+        >
+          <img
+          src="https://meripehchaan.gov.in/assets/img/icon/digi.png"
+          className="mr-2"
+          style={{ width: "12%" }}
+          />
+          {t("CORE_COMMON_DGILOCKER_REGISTER")}
+        </button>
      { showToast &&   <Modal
       headerBarMain={<Heading label={t("Consent")} />}
       headerBarEnd={<CloseBtn onClick={closeModal} />}

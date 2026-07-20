@@ -3,7 +3,6 @@ package org.egov.echallan.repository;
 import java.util.Map;
 
 import org.egov.tracer.model.ServiceCallException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -17,12 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServiceRequestRepository {
 
-	@Autowired
-	private RestTemplate restTemplate;
-	
-	@Autowired
-	private ObjectMapper mapper;
-	
+	private final RestTemplate restTemplate;
+
+	private final ObjectMapper mapper;
+
+	public ServiceRequestRepository(RestTemplate restTemplate, ObjectMapper mapper) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+	}
+
 	public Object fetchResult(StringBuilder uri, Object request) {
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		Object response = null;

@@ -21,22 +21,24 @@ const StakeholderRegistration = () => {
   let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
 
   const goNext = (skipStep) => {
-    const currentPath = pathname.split("/").pop();
-    const { nextStep } = config.find((routeObj) => routeObj.route === currentPath);
-    let redirectWithHistory = navigate;
-    if (nextStep === null) {
-      return redirectWithHistory(`/check`);
-    }
-    redirectWithHistory(`/${nextStep}`);
-
+  const currentPath = pathname.split("/").pop();
+  const { nextStep } = config.find((routeObj) => routeObj.route === currentPath);
+  /* navigate needs full path, not just "/nextStep" which would resolve to root */
+  const base = pathname.substring(0, pathname.lastIndexOf("/"));
+  
+  if (nextStep === null) {
+    navigate(`${base}/check`);
+  } else {
+    navigate(`${base}/${nextStep}`);
   }
+};
 
   const onSuccess = () => {
     clearParams();
-    queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+    queryClient.invalidateQueries({ queryKey: ["PT_CREATE_PROPERTY"] });
   };
   const createApplication = async () => {
-    navigate(`/acknowledgement`);
+    navigate(`acknowledgement`);
   };
 
   const handleSelect = (key, data, skipStep, isFromCreateApi) => {
@@ -73,15 +75,15 @@ const StakeholderRegistration = () => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route
-            path={`/${routeObj.route}`}
+            path={routeObj.route}
             key={index}
             element={<Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} />}
           />
         );
       })}
-      <Route path={`/check`} element={<CheckPage onSubmit={createApplication} value={params} />} />
-      <Route path={`/acknowledgement`} element={<StakeholderAcknowledgement data={params} onSuccess={onSuccess} />} />
-      <Route path="*" element={<Navigate to={`/${config.indexRoute}`} replace />} />
+      <Route path="check" element={<CheckPage onSubmit={createApplication} value={params} />} />
+      <Route path="acknowledgement" element={<StakeholderAcknowledgement data={params} onSuccess={onSuccess} />} />
+      <Route path="*" element={<Navigate to={config.indexRoute} replace />} />
     </Routes>
   );
 };

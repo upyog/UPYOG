@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
@@ -15,87 +14,39 @@ import org.upyog.chb.repository.DemandRepository;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
-import org.upyog.chb.web.models.CommunityHallBookingDetail;
-import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.VenueBookingDetail;
+import org.upyog.chb.web.models.VenueBookingRequest;
+import org.upyog.chb.web.models.BookingSlotDetail;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationCriteria;
 import org.upyog.chb.web.models.billing.Demand;
 import org.upyog.chb.web.models.billing.DemandDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * This service class handles operations related to demand generation and management
- * in the Community Hall Booking module.
- * 
- * Purpose:
- * - To generate and manage demands for community hall bookings.
- * - To calculate charges, taxes, and other financial details for bookings.
- * - To interact with the billing service for creating and retrieving demands.
- * 
- * Dependencies:
- * - CommunityHallBookingConfiguration: Provides configuration properties for demand operations.
- * - CalculationService: Handles the calculation of charges and taxes for bookings.
- * - DemandRepository: Interacts with the billing service to manage demands.
- * - CommunityHallBookingValidator: Validates demand-related requests and criteria.
- * - CommunityHallBookingUtil: Utility class for common operations related to bookings.
- * - MdmsUtil: Fetches and processes master data from MDMS for demand generation.
- * 
- * Features:
- * - Generates demands for bookings based on estimation criteria.
- * - Calculates demand details, including tax and charge breakdowns.
- * - Validates demand requests and ensures compliance with business rules.
- * - Logs important operations and errors for debugging and monitoring purposes.
- * 
- * Methods:
- * 1. generateDemand:
- *    - Generates a new demand for a booking based on the provided criteria.
- *    - Interacts with the billing service to create the demand.
- * 
- * 2. validateDemandRequest:
- *    - Validates the demand request to ensure it meets the required criteria.
- * 
- * 3. calculateDemandDetails:
- *    - Calculates the demand details, including charges and taxes, for a booking.
- * 
- * Usage:
- * - This class is automatically managed by Spring and injected wherever demand-related
- *   operations are required.
- * - It ensures consistent and reusable logic for managing demands in the module.
- */
 @Service
 @Slf4j
 public class DemandService {
 
-	@Autowired
-	private CommunityHallBookingConfiguration config;
-	
-	@Autowired
-	private CalculationService calculationService;
+	private final CommunityHallBookingConfiguration config;
+	private final CalculationService calculationService;
+	private final DemandRepository demandRepository;
+	private final CommunityHallBookingValidator bookingValidator;
+	private final MdmsUtil mdmsUtil;
 
-	@Autowired
-	private DemandRepository demandRepository;
-	
-	@Autowired
-	private CommunityHallBookingValidator bookingValidator;
+	public DemandService(CommunityHallBookingConfiguration config, CalculationService calculationService,
+			DemandRepository demandRepository, CommunityHallBookingValidator bookingValidator, MdmsUtil mdmsUtil) {
+		this.config = config;
+		this.calculationService = calculationService;
+		this.demandRepository = demandRepository;
+		this.bookingValidator = bookingValidator;
+		this.mdmsUtil = mdmsUtil;
+	}
 
-	@Autowired
-	private MdmsUtil mdmsUtil;
-	
-	
-	/**
-	 * 1. Fetch tax heads from mdms tax-heads.json
-	 * 2. Map amount to tax heads from CalculateType.json
-	 * 3. Create Demand for particular tax heads 
-	 * 4. Bill will be automatically generated when fetch bill api is called after demand is created by this API
-	 * @param bookingRequest
-	 * @return
-	 */
-
-	public List<Demand> createDemand(CommunityHallBookingRequest bookingRequest, Object mdmsData, boolean generateDemand) {
-		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
-		String consumerCode = bookingRequest.getHallsBookingApplication().getBookingNo();
+	public List<Demand> createDemand(VenueBookingRequest bookingRequest, boolean generateDemand) {
+		String tenantId = bookingRequest.getVenueBookingApplication().getTenantId();
+		String consumerCode = bookingRequest.getVenueBookingApplication().getBookingNo();
 		
-		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+		VenueBookingDetail bookingDetail = bookingRequest.getVenueBookingApplication();
 		User user =bookingRequest.getRequestInfo().getUserInfo();
 		
 		User owner = User.builder().name(user.getName()).emailId(user.getEmailId())
@@ -135,26 +86,20 @@ public class DemandService {
 			throw new CustomException(CommunityHallBookingConstants.INVALID_TENANT, "Please provide valid tenant id for booking creation");
 		}
 		
-		String tenantId = estimationCriteria.getTenantId().split("\\.")[0];
+		String tenantId = estimationCriteria.getTenantId();
 		
-		CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().tenantId(tenantId)
+		VenueBookingDetail bookingDetail = VenueBookingDetail.builder().tenantId(tenantId)
 				.bookingSlotDetails(estimationCriteria.getBookingSlotDetails())
-				.communityHallCode(estimationCriteria.getCommunityHallCode()).build();
-		CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder().hallsBookingApplication(bookingDetail)
+				.venueCode(estimationCriteria.getVenueCode()).build();
+		VenueBookingRequest bookingRequest = VenueBookingRequest.builder().venueBookingApplication(bookingDetail)
 				.requestInfo(estimationCriteria.getRequestInfo()).build();
-		Object mdmsData = mdmsUtil.mDMSCall(bookingRequest.getRequestInfo(), tenantId);
-		List<Demand> demands = createDemand(bookingRequest, mdmsData, false);
-		return demands;
+		mdmsUtil.mDMSCall(bookingRequest.getRequestInfo(), tenantId);
+		return createDemand(bookingRequest, false);
 	}
 	
-	private LocalDate getMaxBookingDate(CommunityHallBookingDetail bookingDetail) {
-		
-		return bookingDetail.getBookingSlotDetails().stream().map(detail -> detail.getBookingDate())
-				.max( LocalDate :: compareTo)
-		        .get();
+	private LocalDate getMaxBookingDate(VenueBookingDetail bookingDetail) {
+		return bookingDetail.getBookingSlotDetails().stream().map(BookingSlotDetail::getBookingDate)
+				.max(LocalDate::compareTo)
+		        .orElseThrow(() -> new CustomException("INVALID_BOOKING_DATE", "Booking date is not valid."));
 	}
-	
-	
-	
-
 }

@@ -21,7 +21,7 @@ const Timeline = ({ currentStep = 1, flow = "" }) => {
   getAction(flow);
   
   return (
-    <div className="timeline-container" style={isMobile ? {} : { maxWidth: "960px", minWidth: "640px", marginRight: "auto" }}>
+    <div className={`timeline-container ${isMobile ? '' : 'ndc-row-container'}`}>
       {actions.map((action, index, arr) => (
         <div className="timeline-checkpoint" key={index}>
           <div className="timeline-content">

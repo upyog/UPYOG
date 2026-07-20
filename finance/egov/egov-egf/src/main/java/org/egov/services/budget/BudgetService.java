@@ -394,11 +394,11 @@ public class BudgetService extends PersistenceService<Budget, Long> {
         return getByName(budgetName);
     }
 
-	public List<Budget> getBudgetsForUploadReport() {
-		return findAllBy(
-				new StringBuilder("select distinct b from Budget b where b.name like '%RE%' and b.materializedPath")
-						.append(" in (select distinct substring(bd.materializedPath,  1 , 1)")
-						.append(" from BudgetDetail bd where bd.status.code = 'Created')").toString());
+    public List<Budget> getBudgetsForUploadReport() {
+        return findAllBy(
+                new StringBuilder("select distinct b from Budget b where b.name like '%RE%' and b.materializedPath")
+                        .append(" in (select distinct substring(bd.materializedPath, 1, locate('.', bd.materializedPath)-1)")
+                        .append(" from BudgetDetail bd where bd.status.code = 'Created')").toString());
 	}
 
 	@Transactional

@@ -45,7 +45,6 @@ const BookingPopup = ({ t, closeModal, onSubmit, setExistingDataSet }) => {
   }, [handleSubmit]);
 
   const handleExistingBookingSubmit = () => {
-    console.log("Existing booking selected, closing modal and navigating");
     onSubmit();
   };
 
@@ -59,17 +58,9 @@ const BookingPopup = ({ t, closeModal, onSubmit, setExistingDataSet }) => {
         hideSubmit={true}
         formId="modal-action"
       >
-         <Card style={{ boxShadow: "none" }}>
+        <Card className="cnd-booking-popup-card">
           {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} />}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "20px",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
+          <div className="cnd-booking-popup-submit-wrapper">
             {!showExistingBookingDetails && <SubmitBar label={t("USE_EXISTING_DETAILS")} onSubmit={handleExistingDetailsClick} />}
             {!showExistingBookingDetails && <SubmitBar label={t("FILL_NEW_DETAILS")} onSubmit={setData} />}
           </div>

@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "../common/queryClientTemplate";
+import { queryTemplate } from "../common/queryTemplate";
 import { PaymentService } from "../services/elements/Payment";
 
 export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...filters }, config = {}) => {
@@ -9,22 +10,22 @@ export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...fi
   if (!params["mobileNumber"]) delete params["mobileNumber"];
 
 
-  const { isLoading, error, isError, data, status } = useQuery(
-    ["citizenBillsForBuisnessService", businessService, { ...params }],
-    () => Digit.PaymentService.fetchBill(tenantId, { ...params }),
-    {
+  const { isLoading, error, isError, data, status } = queryTemplate({
+    queryKey: ["citizenBillsForBuisnessService", businessService, { ...params }],
+    queryFn: () => Digit.PaymentService.fetchBill(tenantId, { ...params }),
+    config: {
       refetchOnMount: true,
       retry: false,
       ...config,
     }
-  );
+  });
   return {
     isLoading,
     error,
     isError,
     data,
     status,
-    revalidate: () => queryClient.invalidateQueries(["citizenBillsForBuisnessService", businessService]),
+    revalidate: () => queryClient.invalidateQueries({ queryKey: ["citizenBillsForBuisnessService", businessService] }),
   };
 };
 
@@ -33,23 +34,23 @@ export const useFetchBillsForBuissnessService = ({ tenantId, businessService, ..
   // let isPTAccessDone = sessionStorage.getItem("IsPTAccessDone");
   const params = { businessService, ...filters };
   const _tenantId = tenantId || Digit.UserService.getUser()?.info?.tenantId;
-  const { isLoading, error, isError, data, status } = useQuery(
-    ["billsForBuisnessService", businessService, { ...filters }, config, /*isPTAccessDone*/ false],
-    () => Digit.PaymentService.fetchBill(_tenantId, params),
-    {
+  const { isLoading, error, isError, data, status } = queryTemplate({
+    queryKey: ["billsForBuisnessService", businessService, { ...filters }, config, /*isPTAccessDone*/ false],
+    queryFn: () => Digit.PaymentService.fetchBill(_tenantId, params),
+    config: {
       retry: (count, err) => {
         return false;
       },
       ...config,
     }
-  );
+  });
   return {
     isLoading,
     error,
     isError,
     data,
     status,
-    revalidate: () => queryClient.invalidateQueries(["billsForBuisnessService", businessService]),
+    revalidate: () => queryClient.invalidateQueries({ queryKey: ["billsForBuisnessService", businessService] }),
   };
 };
 
@@ -67,11 +68,15 @@ export const useFetchPayment = ({ tenantId, consumerCode, businessService }, con
     else return failureCount < 3;
   };
 
-  const queryData = useQuery(["paymentFetchDetails", tenantId, consumerCode, businessService], () => fetchBill(), { retry, ...config });
+  const queryData = queryTemplate({
+    queryKey: ["paymentFetchDetails", tenantId, consumerCode, businessService],
+    queryFn: () => fetchBill(),
+    config: { retry, ...config }
+  });
 
   return {
     ...queryData,
-    revalidate: () => queryClient.invalidateQueries(["paymentFetchDetails", tenantId, consumerCode, businessService]),
+    revalidate: () => queryClient.invalidateQueries({ queryKey: ["paymentFetchDetails", tenantId, consumerCode, businessService] }),
   };
 };
 
@@ -84,49 +89,60 @@ export const usePaymentUpdate = ({ egId }, businessService, config) => {
     return { payments, applicationNo: transaction.Transaction[0].consumerCode, txnStatus: transaction.Transaction[0].txnStatus };
   };
 
-  return useQuery(["paymentUpdate", egId], () => getPaymentData(egId), config);
+  return queryTemplate({
+    queryKey: ["paymentUpdate", egId],
+    queryFn: () => getPaymentData(egId),
+    config
+  });
 };
 
 
 export const useDemandSearch = ({ consumerCode, businessService, tenantId }, config = {}) => {
   if (!tenantId) tenantId = Digit.ULBService.getCurrentTenantId();
   const queryFn = () => Digit.PaymentService.demandSearch(tenantId, consumerCode, businessService);
-  const queryData = useQuery(["demand_search", { consumerCode, businessService, tenantId }], queryFn, { refetchOnMount: "always", ...config });
+  const queryData = queryTemplate({
+    queryKey: ["demand_search", { consumerCode, businessService, tenantId }],
+    queryFn,
+    config: { refetchOnMount: "always", ...config }
+  });
   return queryData;
 };
 
 export const useAssetQrCode = ({ tenantId, ...params }, config = {}) => {     
-  return useQuery(
-    ["assets_Reciept_Search", { tenantId, params },config],
-    () => Digit.PaymentService.useAssetQrCodeService(tenantId, params),
-    {
+  return queryTemplate({
+    queryKey: ["assets_Reciept_Search", { tenantId, params },config],
+    queryFn: () => Digit.PaymentService.useAssetQrCodeService(tenantId, params),
+    config: {
       refetchOnMount: false,
       ...config,
     }
-  );
+  });
 };
 
 export const useRecieptSearch = ({ tenantId, businessService, ...params }, config = {}) => {
-  return useQuery(
-    ["reciept_search", { tenantId, businessService, params },config],
-    () => Digit.PaymentService.recieptSearch(tenantId, businessService, params),
-    {
+  return queryTemplate({
+    queryKey: ["reciept_search", { tenantId, businessService, params },config],
+    queryFn: () => Digit.PaymentService.recieptSearch(tenantId, businessService, params),
+    config: {
       refetchOnMount: false,
       ...config,
     }
-  );
+  });
 };
 export const useRecieptSearchNew = ({ tenantId, ...params }, config = {}) => {
-  return useQuery(
-    ["obps_Reciept_Search", { tenantId, params },config],
-    () => Digit.PaymentService.recieptSearchNew(tenantId, params),
-    {
+  return queryTemplate({
+    queryKey: ["obps_Reciept_Search", { tenantId, params },config],
+    queryFn: () => Digit.PaymentService.recieptSearchNew(tenantId, params),
+    config: {
       refetchOnMount: false,
       ...config,
     }
-  );
+  });
 };
 
 export const useBulkPdfDetails = ({ filters }) => {
-  return useQuery(["BULK_PDF_DETAILS", filters], async () => await PaymentService.getBulkPdfRecordsDetails(filters));
+  return queryTemplate({
+    queryKey: ["BULK_PDF_DETAILS", filters],
+    queryFn: async () => await PaymentService.getBulkPdfRecordsDetails(filters)
+  });
 };

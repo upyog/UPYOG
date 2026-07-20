@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@SuppressWarnings("java:S2638")
 public class AssetLimitedDateRowMapper implements ResultSetExtractor<List<Asset>> {
 
     private final ObjectMapper objectMapper;

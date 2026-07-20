@@ -10,12 +10,11 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
   const navigate = Digit.Hooks.useCustomNavigate();
   const [result,setResult]=  useState([])
   const [showToast, setShowToast] = useState(null);
-  const replaceUnderscore = (str) => {
+  const replaceUnderscore = str => {
     str = str.replace(/_/g, " ");
     return str;
   };
-
-  const convertEpochToDate = (dateEpoch) => {
+  const convertEpochToDate = dateEpoch => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
       return "NA";
     }
@@ -58,8 +57,8 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
       limit: 10,
       sortBy: "commencementDate",
       sortOrder: "DESC",
-      searchType: "CONNECTION",
-    },
+      searchType: "CONNECTION"
+    }
   });
 
   // Removed v6 useEffect register calls - use defaultValues in useForm instead
@@ -86,7 +85,6 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
     setValue("limit", Number(e.target.value));
     handleSubmit(handleSearchSubmit)();
   }
-
   function nextPage() {
     setValue("offset", getValues("offset") + getValues("limit"));
     handleSubmit(handleSearchSubmit)();
@@ -96,182 +94,154 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
     handleSubmit(handleSearchSubmit)();
   }
   const isMobile = window.Digit.Utils.browser.isMobile();
-
   if (isMobile) {
     return <MobileSearchWater {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit: handleSearchSubmit, isClearSearch, onClearSearch: handleClearSearch }} />;
   }
   //need to get from workflow
-  const GetCell = (value) => <span className="cell-text">{value}</span>;
-  const columns = useMemo(
-    () => [
-      {
-        Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
-        disableSortBy: true,
-        accessor: "connectionNo",
-        Cell: ({ row }) => {
-          return (
-            <div>
-              {row.original["connectionNo"] ? (
-                <span className={"link"}>
-                  <Link
-                    to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
-                      row.original?.["service"]
-                      }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
-                  >
+  const GetCell = value => <span className="cell-text">{value}</span>;
+  const columns = useMemo(() => [{
+    Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
+    disableSortBy: true,
+    accessor: "connectionNo",
+    Cell: ({
+      row
+    }) => {
+      return <div>
+              {row.original["connectionNo"] ? <span className={"link"}>
+                  <Link to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${row.original?.["service"]}&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}>
                     {row.original["connectionNo"] || "NA"}
                   </Link>
-                </span>
-              ) : (
-                <span>{t("NA")}</span>
-              )}
-            </div>
-          );
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_SERVICE_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["service"]}`));
-        },
-      },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_OWN_NAME_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") ? row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") : `${row.original?.["ownerNames"] || "NA"}`);
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_STATUS_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["status"]?.toUpperCase()}`));
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_AMT_DUE_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          if(row?.original?.["due"] <= 0)
-          {
-            return GetCell(`${row.original?.["due"]}`);
-          }
-          else {
-            return GetCell(`${row.original?.["due"] || "NA"}`);
-          }
-          
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_ADDRESS"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.["address"] || "NA"}`);
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_DUE_DATE_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const status = row.original?.["status"]?.toUpperCase() || "";
-          const dueDate = row.original?.dueDate === "NA" ? t("WS_NA") : convertEpochToDate(row.original?.dueDate);
-          return GetCell(status === "INACTIVE" ? t("WS_NA") : t(`${dueDate}`));
-        },
-      },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const amount = row.original?.due;
-
-          if (amount || amount == 0) {
-            return GetCell(getActionItem(row.original?.status, row));
-          } else {
-            return GetCell(t(`${"WS_NA"}`));
-          }
-        },
-      },
-    ],
-    [t, tenantId]
-  );
-  const columns2 = useMemo(
-    () => [
-      {
-        Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
-        disableSortBy: true,
-        accessor: "connectionNo",
-        Cell: ({ row }) => {
-          return (
-            <div>
-              {row.original["connectionNo"] ? (
-                <span className={"link"}>
-                  <Link
-                    to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
-                      row.original?.["service"]
-                      }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
-                  >
+                </span> : <span>{t("NA")}</span>}
+            </div>;
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_SERVICE_LABEL"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      return GetCell(t(`WS_${row.original?.["service"]}`));
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_OWN_NAME_LABEL"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      return GetCell(row?.original?.connectionHolders?.map(owner => owner?.name).join(",") ? row?.original?.connectionHolders?.map(owner => owner?.name).join(",") : `${row.original?.["ownerNames"] || "NA"}`);
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_STATUS_LABEL"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      return GetCell(t(`WS_${row.original?.["status"]?.toUpperCase()}`));
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_AMT_DUE_LABEL"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      if (row?.original?.["due"] <= 0) {
+        return GetCell(`${row.original?.["due"]}`);
+      } else {
+        return GetCell(`${row.original?.["due"] || "NA"}`);
+      }
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_ADDRESS"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      return GetCell(`${row.original?.["address"] || "NA"}`);
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_DUE_DATE_LABEL"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      const status = row.original?.["status"]?.toUpperCase() || "";
+      const dueDate = row.original?.dueDate === "NA" ? t("WS_NA") : convertEpochToDate(row.original?.dueDate);
+      return GetCell(status === "INACTIVE" ? t("WS_NA") : t(`${dueDate}`));
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      const amount = row.original?.due;
+      if (amount || amount == 0) {
+        return GetCell(getActionItem(row.original?.status, row));
+      } else {
+        return GetCell(t(`${"WS_NA"}`));
+      }
+    }
+  }], [t, tenantId]);
+  const columns2 = useMemo(() => [{
+    Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
+    disableSortBy: true,
+    accessor: "connectionNo",
+    Cell: ({
+      row
+    }) => {
+      return <div>
+              {row.original["connectionNo"] ? <span className={"link"}>
+                  <Link to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${row.original?.["service"]}&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}>
                     {row.original["connectionNo"] || "NA"}
                   </Link>
-                </span>
-              ) : (
-                <span>{t("NA")}</span>
-              )}
-            </div>
-          );
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_applicationNo_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return (<div>{row.original["applicationNo"]}</div>);
-        },
-      },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_propertyId_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["propertyId"]?.toUpperCase()}`));
-        },
-      },
-  
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(generateDemand1(row))
-            //return (<div style={{cursor :"pointer", color :"#a82227"}}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
-          } 
-      },
-    ],
-    [t, tenantId]
-  );
-
-  const generateDemand1 = (row) => {
-    return (
-        <div>
+                </span> : <span>{t("NA")}</span>}
+            </div>;
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_applicationNo_LABEL"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      return <div>{row.original["applicationNo"]}</div>;
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_propertyId_LABEL"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      return GetCell(t(`WS_${row.original?.["propertyId"]?.toUpperCase()}`));
+    }
+  }, {
+    Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
+    disableSortBy: true,
+    Cell: ({
+      row
+    }) => {
+      return GetCell(generateDemand1(row));
+      //return (<div>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
+    }
+  }], [t, tenantId]);
+  const generateDemand1 = row => {
+    return <div>
             <span className="link">
-                <button onClick={() => { generateDemand(row) }}>
+                <button onClick={() => {
+          generateDemand(row);
+        }}>
                     {t(`${"WS_COMMON_COLLECT_DEMAND"}`)}{" "}
                 </button>
             </span>
-        </div>
-    )
-};
-  const generateDemand = async (row) => {
+        </div>;
+  };
+  const generateDemand = async row => {
     const payload = {
       "BulkBillCriteria": {
         "tenantId": "pg.citya",
         "consumerCode": row.original["connectionNo"]
       }
-    }
-    let data = await Digit.WSService.WSSewsearchDemandGen(payload, window.location.href.includes("ws/sewerage/search-demand") ? "sw" : "ws")
-
+    };
+    let data = await Digit.WSService.WSSewsearchDemandGen(payload, window.location.href.includes("ws/sewerage/search-demand") ? "sw" : "ws");
     setShowToast({
       label: `${data}`
   })
@@ -281,126 +251,80 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
   }
   const getActionItem = (status, row) => {
     const userInfo = Digit.UserService.getUser();
-    const userRoles = userInfo.info.roles.map((roleData) => roleData.code);
-    const isUserAllowedToAddMeterReading = userRoles.filter(role => (role === "WS_CEMP" || role === "SW_CEMP")).length > 0
-    if(!isUserAllowedToAddMeterReading) return null
+    const userRoles = userInfo.info.roles.map(roleData => roleData.code);
+    const isUserAllowedToAddMeterReading = userRoles.filter(role => role === "WS_CEMP" || role === "SW_CEMP").length > 0;
+    if (!isUserAllowedToAddMeterReading) return null;
     switch (status) {
       case "Active":
-        return (
-          <div>
+        return <div>
             <span className="link">
-              {row.original?.service === "WATER" ? (
-                <Link
-                  to={{
-                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
-                      row.original?.["connectionNo"]
-                    )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}&workflow=WS&ISWSCON`,
-                  }}
-                >
+              {row.original?.service === "WATER" ? <Link to={{
+              pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}&workflow=WS&ISWSCON`
+            }}>
                   {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link>
-              ) : (
-                <Link
-                  to={{
-                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
-                      row.original?.["connectionNo"]
-                    )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=SW&ISWSCON`,
-                  }}
-                >
+                </Link> : <Link to={{
+              pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=SW&ISWSCON`
+            }}>
                   {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link>
-              )}
+                </Link>}
             </span>
-          </div>
-        );
+          </div>;
     }
   };
-
-  return (
-    <>
-      <Header styles={{ fontSize: "32px" }}>
+  return <>
+      <Header styles={{
+      fontSize: "32px"
+    }}>
         {window.location.href.includes("water") ? t("WS_WATER_SEARCH_CONNECTION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_CONNECTION_SUB_HEADER")}
       </Header>
-      {window.location.href.includes("search-demand")?"":<SearchForm className="ws-custom-wrapper" onSubmit={handleSearchSubmit} handleSubmit={handleSubmit}>
-        <SearchFields {...{ register, control, reset, tenantId, t, onSubmit: handleSearchSubmit, onClearSearch: handleClearSearch}} />
+      {window.location.href.includes("search-demand") ? "" : <SearchForm className="ws-custom-wrapper" onSubmit={handleSearchSubmit} handleSubmit={handleSubmit}>
+        <SearchFields {...{
+        register,
+        control,
+        reset,
+        tenantId,
+        t
+     , onSubmit: handleSearchSubmit, onClearSearch: handleClearSearch}} />
       </SearchForm>}
-      { isLoading ? <Loader /> : null } 
-      {isClearSearch ? null : data?.display && !resultOk ? (
-        <Card style={{ marginTop: 20 }}>
-          {t(data?.display)
-            .split("\\n")
-            .map((text, index) => (
-              <p key={index} style={{ textAlign: "center" }}>
+      {isLoading ? <Loader /> : null} 
+      {isClearSearch ? null : data?.display && !resultOk ? <Card className="ws-auto-27">
+          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-28">
                 {text}
-              </p>
-            ))}
+              </p>)}
         </Card>
-        // <></>
-      ) : resultOk && !isClearSearch ? (
-        <Table
-          t={t}
-          data={data}
-          totalRecords={count}
-          columns={columns}
-          getCellProps={(cellInfo) => {
-            return {
-              style: {
-                minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-                padding: "20px 18px",
-                fontSize: "16px",
-              },
-            };
-          }}
-          onPageSizeChange={onPageSizeChange}
-          currentPage={getValues("offset") / getValues("limit")}
-          onNextPage={nextPage}
-          onPrevPage={previousPage}
-          pageSizeLimit={getValues("limit")}
-          onSort={onSort}
-          disableSort={false}
-          sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-        />
-      ) : null}
+    // <></>
+    : resultOk && !isClearSearch ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+      return {
+        style: {
+          minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+          padding: "20px 18px",
+          fontSize: "16px"
+        }
+      };
+    }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
+      id: getValues("sortBy"),
+      desc: getValues("sortOrder") === "DESC" ? true : false
+    }]} /> : null}
       
-      {window.location.href.includes("search-demand")? result?.length > 0 ? <Table
-      t={t}
-      data={result}
-      totalRecords={count}
-      columns={columns2}
-      getCellProps={(cellInfo) => {
-        return {
-          style: {
-            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-            padding: "20px 18px",
-            fontSize: "16px",
-          },
-        };
-      }}
-      onPageSizeChange={onPageSizeChange}
-      currentPage={getValues("offset") / getValues("limit")}
-      onNextPage={nextPage}
-      onPrevPage={previousPage}
-      pageSizeLimit={getValues("limit")}
-      onSort={onSort}
-      disableSort={false}
-      sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-    />:<Card style={{ marginTop: 20 }}>
-          {
-            <p  style={{ textAlign: "center" }}>
+      {window.location.href.includes("search-demand") ? result?.length > 0 ? <Table t={t} data={result} totalRecords={count} columns={columns2} getCellProps={cellInfo => {
+      return {
+        style: {
+          minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+          padding: "20px 18px",
+          fontSize: "16px"
+        }
+      };
+    }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
+      id: getValues("sortBy"),
+      desc: getValues("sortOrder") === "DESC" ? true : false
+    }]} /> : <Card className="ws-auto-29">
+          {<p className="ws-auto-30">
               No Data Found
-            </p>
-          }
-  </Card>:""}
-  {showToast?.label && (
-        <Toast
-          label={showToast?.label}
-          onClose={(w) => {
-            setShowToast((x) => null);
-          }}
-        />
-      )}
-    </>
-  );
+            </p>}
+  </Card> : ""}
+  {showToast?.label && <Toast label={showToast?.label} onClose={w => {
+      setShowToast(x => null);
+    }} />}
+    </>;
 };
-
 export default SearchWaterConnection;

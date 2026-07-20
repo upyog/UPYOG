@@ -8,7 +8,6 @@ import Timeline from "../components/NDCTimeline";
 
 const SelectNDCDocuments = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
   {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const checkFormData = useSelector((state) => state.ndc.NDCForm.formData || {});
   const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
@@ -78,7 +77,6 @@ const SelectNDCDocuments = ({ t, config, onSelect, userType, formData, setError:
 
 function SelectDocument({ t, document: doc, setDocuments, setError, documents, setFormError, config, formState }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const [getLoader, setLoader] = useState(false);
 
   const [file, setFile] = useState(null);

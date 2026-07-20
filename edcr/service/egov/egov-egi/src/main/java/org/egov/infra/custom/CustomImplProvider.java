@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ICityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class CustomImplProvider {
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
-    private CityService cityService;
+    private ICityService cityService;
 
     @Deprecated()
     public Map<String, String> getCityDetails() {

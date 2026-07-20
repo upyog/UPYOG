@@ -3,19 +3,24 @@ import React, { useEffect } from "react";
 import { cardBodyStyle, stringReplaceAll } from "../utils";
 //import { map } from "lodash-es";
 
-const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
+const PropertyTax = ({
+  t,
+  config,
+  onSelect,
+  userType,
+  formData
+}) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   sessionStorage.removeItem("docReqScreenByBack");
-
   const docType = config?.isMutation ? ["MutationDocuments"] : "Documents";
-
-  const { isLoading, data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", docType);
-
+  const {
+    isLoading,
+    data: Documentsob = {}
+  } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", docType);
   let docs = Documentsob?.PropertyTax?.[config?.isMutation ? docType[0] : docType];
-  if (!config?.isMutation) docs = docs?.filter((doc) => doc["digit-citizen"]);
+  if (!config?.isMutation) docs = docs?.filter(doc => doc["digit-citizen"]);
   function onSave() {}
-
   function goNext() {
     onSelect();
   }
@@ -23,8 +28,7 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
   function generateCodeVerifier(length) {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
     let codeVerifier = "";
     for (let i = 0; i < length; i++) {
       const randomIndex = Math.floor(Math.random() * characters.length);
@@ -38,11 +42,9 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
     return window.crypto.subtle.digest("SHA-256", data);
   }
   function base64UrlEncode(buffer) {
-    const padding = "=".repeat((4 - (buffer.length % 4)) % 4);
+    const padding = "=".repeat((4 - buffer.length % 4) % 4);
     const base64 = btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
-    return (
-      base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "") + padding
-    );
+    return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "") + padding;
   }
   async function generateCodeChallenge(codeVerifier) {
     const hashedBuffer = await sha256(codeVerifier);
@@ -95,36 +97,29 @@ function setItemWithExpiry(key, value, expiryMinutes) {
   const now = new Date();
   const expiryTime = now.getTime() + (expiryMinutes * 60 * 1000); // Convert minutes to milliseconds
 
-  const item = {
-    value: value,
-    expiry: expiryTime
-  };
-
-  sessionStorage.setItem(key, JSON.stringify(item));
-}
-
-// Function to get data from sessionStorage, checking for expiration
-function getItemWithExpiry(key) {
-  const itemString = sessionStorage.getItem(key);
-
-  if (!itemString) {
-    return null;
+    const item = {
+      value: value,
+      expiry: expiryTime
+    };
+    sessionStorage.setItem(key, JSON.stringify(item));
   }
 
-  const item = JSON.parse(itemString);
-  const now = new Date();
-
-  if (now.getTime() > item.expiry) {
-    // Item has expired, remove it
-    sessionStorage.removeItem(key);
-    return null;
+  // Function to get data from sessionStorage, checking for expiration
+  function getItemWithExpiry(key) {
+    const itemString = sessionStorage.getItem(key);
+    if (!itemString) {
+      return null;
+    }
+    const item = JSON.parse(itemString);
+    const now = new Date();
+    if (now.getTime() > item.expiry) {
+      // Item has expired, remove it
+      sessionStorage.removeItem(key);
+      return null;
+    }
+    return item.value;
   }
-
-  return item.value;
-}
-
-  return (
-    <React.Fragment>
+  return <React.Fragment>
       <Card>
         <CardHeader>{!config.isMutation ? t("PT_DOC_REQ_SCREEN_HEADER") : t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP")}</CardHeader>
         <div>
@@ -135,43 +130,37 @@ function getItemWithExpiry(key) {
           <CardText className={"primaryColor"}>{t("PT_DOC_REQ_SCREEN_LABEL_TEXT")}</CardText>
           <div>
             {isLoading && <Loader />}
-            {Array.isArray(docs)
-              ? config?.isMutation ?
-                  docs.map(({ code, dropdownData }, index) => (
-                    <div key={index}>
+            {Array.isArray(docs) ? config?.isMutation ? docs.map(({
+            code,
+            dropdownData
+          }, index) => <div key={index}>
                       <CardSubHeader>
                         {index + 1}. {t(code)}
                       </CardSubHeader>
                       <CardText className={"primaryColor"}>
-                        {dropdownData.map((dropdownData) => (
-                          t(dropdownData?.code)
-                        )).join(', ')}
+                        {dropdownData.map(dropdownData => t(dropdownData?.code)).join(', ')}
                       </CardText>
                       {/* <CardText>{t(`${code.split('.')[0]}.${code.split('.')[1]}.${code.split('.')[1]}_DESCRIPTION`)}</CardText> */}
-                    </div>
-                  )) :
-                  docs.map(({ code, dropdownData }, index) => (
-                    <div key={index}>
+                    </div>) : docs.map(({
+            code,
+            dropdownData
+          }, index) => <div key={index}>
                       <CardSubHeader>
                         {index + 1}. {t("PROPERTYTAX_" + stringReplaceAll(code, ".", "_") + "_HEADING")}
                       </CardSubHeader>
-                      {dropdownData.map((dropdownData) => (
-                        <CardText className={"primaryColor"}>{t("PROPERTYTAX_" + stringReplaceAll(dropdownData?.code, ".", "_") + "_LABEL")}</CardText>
-                      ))}
-                    </div>
-                  ))
-              : null}
+                      {dropdownData.map(dropdownData => <CardText className={"primaryColor"}>{t("PROPERTYTAX_" + stringReplaceAll(dropdownData?.code, ".", "_") + "_LABEL")}</CardText>)}
+                    </div>) : null}
           </div>
         </div>
         <span>
           <SubmitBar label={t("PT_COMMON_NEXT")} onSubmit={onSelect} />
         </span>
-        <span style={{marginTop:"10px"}}>
-          <SubmitBar label={t("PT_DIGILOCKER_CONSENT")} onSubmit={(e) => {onConcent(e)}} />
+        <span className="pt-auto-74">
+          <SubmitBar label={t("PT_DIGILOCKER_CONSENT")} onSubmit={e => {
+          onConcent(e);
+        }} />
         </span>
       </Card>
-    </React.Fragment>
-  );
+    </React.Fragment>;
 };
-
 export default PropertyTax;

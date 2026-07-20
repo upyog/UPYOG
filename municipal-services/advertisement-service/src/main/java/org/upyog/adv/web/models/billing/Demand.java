@@ -1,17 +1,15 @@
 package org.upyog.adv.web.models.billing;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
+import java.util.List;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
 
 
 import org.egov.common.contract.request.User;
 import org.upyog.adv.web.models.AuditDetails;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -108,9 +106,5 @@ public class Demand {
 	@JsonProperty("status")
 	private StatusEnum status;
 
-//    public Demand addDemandDetailsItem(DemandDetail demandDetailsItem) {
-//        this.demandDetails.add(demandDetailsItem);
-//        return this;
-//    }
 
 }

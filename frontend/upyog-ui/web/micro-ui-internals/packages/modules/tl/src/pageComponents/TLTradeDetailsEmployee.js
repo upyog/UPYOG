@@ -12,13 +12,13 @@ const defaultFinancialYear = () => {
   const splitData = data.split("-")[0];
   const year = splitData.slice(2, 4);
   let monthNo = Number(data.split("-")[1]);
-  const currentFinancialYear = monthNo < 4?`${Number(splitData)-1}-${Number(year)}`:`${Number(splitData)}-${Number(year) + 1}`;
-  return { 
-    code: currentFinancialYear, 
-    i18nKey: `FY${currentFinancialYear}`, 
-    id: currentFinancialYear?.split('-')[0] 
-  }
-}
+  const currentFinancialYear = monthNo < 4 ? `${Number(splitData) - 1}-${Number(year)}` : `${Number(splitData)}-${Number(year) + 1}`;
+  return {
+    code: currentFinancialYear,
+    i18nKey: `FY${currentFinancialYear}`,
+    id: currentFinancialYear?.split('-')[0]
+  };
+};
 const createTradeDetailsDetails = () => ({
   financialYear: defaultFinancialYear(),
   licenseType: "",
@@ -30,53 +30,67 @@ const createTradeDetailsDetails = () => ({
   noOfEmployees: "",
   key: Date.now()
 });
-
-const TLTradeDetailsEmployee = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
-  const { t } = useTranslation();
-  const { pathname } = useLocation();
+const TLTradeDetailsEmployee = ({
+  config,
+  onSelect,
+  userType,
+  formData,
+  setError,
+  formState,
+  clearErrors
+}) => {
+  const {
+    t
+  } = useTranslation();
+  const {
+    pathname
+  } = useLocation();
   const isEditScreen = pathname.includes("/modify-application/");
   const [tradedetils, setTradedetils] = useState(formData?.tradedetils || [createTradeDetailsDetails()]);
   const [previousLicenseDetails, setPreviousLicenseDetails] = useState(formData?.tradedetils1 || []);
   const [structureSubTypeOptions, setStructureSubTypeOptions] = useState([]);
   const [owners, setOwners] = useState(formData?.owners || [createTradeDetailsDetails()]);
-  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+  const [focusIndex, setFocusIndex] = useState({
+    index: -1,
+    type: ""
+  });
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [isErrors, setIsErrors] = useState(false);
   const [licenseTypeList, setLicenseTypeList] = useState([]);
   const [licenseTypeValue, setLicenseTypeValue] = useState([]);
-
-  const { isLoading : menuLoading, data: Menu = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "common-masters", "StructureType");
-
-  const { data: FinaceMenu = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", ["FinancialYear"]);
-
-  const { data: billingSlabData } = Digit.Hooks.tl.useTradeLicenseBillingslab({ tenantId, filters: {} });
-
+  const {
+    isLoading: menuLoading,
+    data: Menu = {}
+  } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "common-masters", "StructureType");
+  const {
+    data: FinaceMenu = {}
+  } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", ["FinancialYear"]);
+  const {
+    data: billingSlabData
+  } = Digit.Hooks.tl.useTradeLicenseBillingslab({
+    tenantId,
+    filters: {}
+  });
   const addNewOwner = () => {
     const newOwner = createTradeDetailsDetails();
-    setOwners((prev) => [...prev, newOwner]);
+    setOwners(prev => [...prev, newOwner]);
   };
-
-  const removeOwner = (owner) => {
-    setOwners((prev) => prev.filter((o) => o.key != owner.key));
+  const removeOwner = owner => {
+    setOwners(prev => prev.filter(o => o.key != owner.key));
   };
-
   useEffect(() => {
-    const data = tradedetils?.map((e) => {
+    const data = tradedetils?.map(e => {
       return e;
     });
     onSelect(config?.key, data);
   }, [tradedetils]);
-
   useEffect(() => {
     onSelect("tradedetils1", previousLicenseDetails);
   }, [previousLicenseDetails]);
-
   useEffect(() => {
     setOwners([createTradeDetailsDetails()]);
   }, [formData?.tradedetils?.[0]?.key]);
-
-
   const commonProps = {
     focusIndex,
     allOwners: tradedetils,
@@ -97,29 +111,22 @@ const TLTradeDetailsEmployee = ({ config, onSelect, userType, formData, setError
     setIsErrors,
     isErrors,
     billingSlabData,
-    licenseTypeList, 
+    licenseTypeList,
     setLicenseTypeList,
-    previousLicenseDetails, 
+    previousLicenseDetails,
     setPreviousLicenseDetails,
     licenseTypeValue,
     setLicenseTypeValue,
     menuLoading
   };
-
   if (isEditScreen) {
     return <React.Fragment />;
   }
-
-  return (
-    <React.Fragment>
-      {tradedetils?.map((tradedetail, index) => (
-        <OwnerForm1 key={tradedetail.key} index={index} tradedetail={tradedetail} {...commonProps} />
-      ))}
-    </React.Fragment>
-  );
+  return <React.Fragment>
+      {tradedetils?.map((tradedetail, index) => <OwnerForm1 key={tradedetail.key} index={index} tradedetail={tradedetail} {...commonProps} />)}
+    </React.Fragment>;
 };
-
-const OwnerForm1 = (_props) => {
+const OwnerForm1 = _props => {
   const {
     tradedetail,
     index,
@@ -142,90 +149,108 @@ const OwnerForm1 = (_props) => {
     setIsErrors,
     isErrors,
     billingSlabData,
-    licenseTypeList, 
+    licenseTypeList,
     setLicenseTypeList,
-    previousLicenseDetails, 
+    previousLicenseDetails,
     setPreviousLicenseDetails,
     licenseTypeValue,
     setLicenseTypeValue,
     menuLoading
   } = _props;
-
-  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
+  const {
+    control,
+    formState: localFormState,
+    watch,
+    setError: setLocalError,
+    clearErrors: clearLocalErrors,
+    setValue,
+    trigger,
+    getValues
+  } = useForm();
   const formValue = watch();
-  const { errors } = localFormState;
-
+  const {
+    errors
+  } = localFormState;
   useEffect(() => {
     if (billingSlabData && billingSlabData?.billingSlab && billingSlabData?.billingSlab?.length > 0) {
-        const processedData =
-            billingSlabData.billingSlab &&
-            billingSlabData.billingSlab.reduce(
-                (acc, item) => {
-                    let accessory = { active: true };
-                    let tradeType = { active: true };
-                    if (item.accessoryCategory && item.tradeType === null) {
-                        accessory.code = item.accessoryCategory;
-                        accessory.uom = item.uom;
-                        accessory.rate = item.rate;
-                        item.rate && item.rate > 0 && acc.accessories.push(accessory);
-                    } else if (item.accessoryCategory === null && item.tradeType) {
-                        tradeType.code = item.tradeType;
-                        tradeType.uom = item.uom;
-                        tradeType.structureType = item.structureType;
-                        tradeType.licenseType = item.licenseType;
-                        tradeType.rate = item.rate;
-                        !isUndefined(item.rate) &&
-                            item.rate !== null &&
-                            acc.tradeTypeData.push(tradeType);
-                    }
-                    return acc;
-                },
-                { accessories: [], tradeTypeData: [] }
-            );
-        let licenseTypes = getUniqueItemsFromArray(
-            processedData.tradeTypeData,
-            "licenseType"
-        );
-        licenseTypes = licenseTypes?.map(item => {
-            return { code: item.licenseType, active: true };
-        });
-        if (licenseTypes && licenseTypes.length > 0) {
-          licenseTypes?.forEach(data => {
-            data.i18nKey = `TRADELICENSE_LICENSETYPE_${data.code}`
-          })
+      const processedData = billingSlabData.billingSlab && billingSlabData.billingSlab.reduce((acc, item) => {
+        let accessory = {
+          active: true
         };
-        
-        let licenseTypeValue = [];
-        if (licenseTypes && licenseTypes.length > 0) {
-          licenseTypes?.map(data =>{
-            if(data.code == "PERMANENT") licenseTypeValue.push(data);
-          });
+        let tradeType = {
+          active: true
+        };
+        if (item.accessoryCategory && item.tradeType === null) {
+          accessory.code = item.accessoryCategory;
+          accessory.uom = item.uom;
+          accessory.rate = item.rate;
+          item.rate && item.rate > 0 && acc.accessories.push(accessory);
+        } else if (item.accessoryCategory === null && item.tradeType) {
+          tradeType.code = item.tradeType;
+          tradeType.uom = item.uom;
+          tradeType.structureType = item.structureType;
+          tradeType.licenseType = item.licenseType;
+          tradeType.rate = item.rate;
+          !isUndefined(item.rate) && item.rate !== null && acc.tradeTypeData.push(tradeType);
         }
-        setLicenseTypeValue(licenseTypeValue[0]);
-        setLicenseTypeList(licenseTypes);
+        return acc;
+      }, {
+        accessories: [],
+        tradeTypeData: []
+      });
+      let licenseTypes = getUniqueItemsFromArray(processedData.tradeTypeData, "licenseType");
+      licenseTypes = licenseTypes?.map(item => {
+        return {
+          code: item.licenseType,
+          active: true
+        };
+      });
+      if (licenseTypes && licenseTypes.length > 0) {
+        licenseTypes?.forEach(data => {
+          data.i18nKey = `TRADELICENSE_LICENSETYPE_${data.code}`;
+        });
+      }
+      ;
+      let licenseTypeValue = [];
+      if (licenseTypes && licenseTypes.length > 0) {
+        licenseTypes?.map(data => {
+          if (data.code == "PERMANENT") licenseTypeValue.push(data);
+        });
+      }
+      setLicenseTypeValue(licenseTypeValue[0]);
+      setLicenseTypeList(licenseTypes);
     }
-}, [billingSlabData]);
-
-
-
+  }, [billingSlabData]);
   let financialYearOptions = [];
-  FinaceMenu && FinaceMenu["egf-master"] &&
-    FinaceMenu["egf-master"].FinancialYear?.map(data => { if (data.module == "TL") financialYearOptions.push({ code: data.name, i18nKey: `FY${data.name}`, id: data.name.split('-')[0] }) });
-    
-  if (financialYearOptions && financialYearOptions.length > 0) { financialYearOptions.sort(function (a, b) { return Number(a.id) - Number(b.id);});}
-
+  FinaceMenu && FinaceMenu["egf-master"] && FinaceMenu["egf-master"].FinancialYear?.map(data => {
+    if (data.module == "TL") financialYearOptions.push({
+      code: data.name,
+      i18nKey: `FY${data.name}`,
+      id: data.name.split('-')[0]
+    });
+  });
+  if (financialYearOptions && financialYearOptions.length > 0) {
+    financialYearOptions.sort(function (a, b) {
+      return Number(a.id) - Number(b.id);
+    });
+  }
   let structureTypeOptions = [];
   // let structureSubTypeOptions = [];
   // let optionsOfStructureType = []
-  structureTypeOptions = Menu && Menu["common-masters"] &&
-    Menu["common-masters"].StructureType?.map((e) => {
-      let code = e?.code.split('.')[0];
-      return ({ i18nKey: t(`COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(code?.toUpperCase(), ".", "_")}`), label: code, ...e })
-    }) || [];
-
+  structureTypeOptions = Menu && Menu["common-masters"] && Menu["common-masters"].StructureType?.map(e => {
+    let code = e?.code.split('.')[0];
+    return {
+      i18nKey: t(`COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(code?.toUpperCase(), ".", "_")}`),
+      label: code,
+      ...e
+    };
+  }) || [];
   let selectedStructureTypeOptions = [];
   if (structureTypeOptions && structureTypeOptions.length > 0) {
-    var flags = [], output = [], l = structureTypeOptions.length, i;
+    var flags = [],
+      output = [],
+      l = structureTypeOptions.length,
+      i;
     for (i = 0; i < l; i++) {
       if (flags[structureTypeOptions[i].label]) continue;
       flags[structureTypeOptions[i].label] = true;
@@ -235,7 +260,6 @@ const OwnerForm1 = (_props) => {
       });
     }
   }
-
   let isRenewal = window.location.href.includes("renew-application-details");
   if (window.location.href.includes("edit-application-details")) isRenewal = true;
   let isFieldsDisabled = false;
@@ -249,26 +273,24 @@ const OwnerForm1 = (_props) => {
         if (selectedOption === data?.code?.split('.')[0]) {
           structureSubTypeOption.push({
             code: data?.code,
-            i18nKey: t(`COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(data?.code?.toUpperCase(), ".", "_")}`),
-          })
+            i18nKey: t(`COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(data?.code?.toUpperCase(), ".", "_")}`)
+          });
         }
       });
       // setValue("structureSubType", "");
       setStructureSubTypeOptions(structureSubTypeOption);
     }
-}, [tradedetail?.structureType, !menuLoading]);
-
+  }, [tradedetail?.structureType, !menuLoading]);
 
   //const isIndividualTypeOwner = useMemo(() => formData?.ownershipCategory?.code.includes("INDIVIDUAL"), [formData?.ownershipCategory?.code]);
 
   useEffect(() => {
     trigger();
   }, []);
-
   useEffect(() => {
     const keys = Object.keys(formValue);
     const part = {};
-    keys?.forEach((key) => (part[key] = tradedetail[key]));
+    keys?.forEach(key => part[key] = tradedetail[key]);
     let _ownerType = {};
     if (!_.isEqual(formValue, part)) {
       Object.keys(formValue)?.map(data => {
@@ -276,28 +298,35 @@ const OwnerForm1 = (_props) => {
           setIsErrors(true);
         }
       });
-      setTradedetils((prev) => prev?.map((o) => {
-        return (o.key && o.key === tradedetail.key ? { ...o, ...formValue, ..._ownerType } : { ...o })
+      setTradedetils(prev => prev?.map(o => {
+        return o.key && o.key === tradedetail.key ? {
+          ...o,
+          ...formValue,
+          ..._ownerType
+        } : {
+          ...o
+        };
       }));
       trigger();
     }
   }, [formValue]);
-
-
-
   useEffect(() => {
     if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
-      setError(config.key, { type: errors });
-    }
-    else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
+      setError(config.key, {
+        type: errors
+      });
+    } else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
       clearErrors(config.key);
     }
   }, [errors]);
-
-  const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
-  return (
-    <React.Fragment>
-      <div style={{ marginBottom: "16px" }}>
+  const errorStyle = {
+    width: "70%",
+    marginLeft: "30%",
+    fontSize: "12px",
+    marginTop: "-21px"
+  };
+  return <React.Fragment>
+      <div className="tl-auto-127">
         <div>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_FINANCIAL_YEAR_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
@@ -535,8 +564,6 @@ const OwnerForm1 = (_props) => {
           <CardLabelError style={errorStyle}>{localFormState.touchedFields.noOfEmployees ? errors?.noOfEmployees?.message : ""}</CardLabelError>
         </div>
       </div>
-    </React.Fragment>
-  );
+    </React.Fragment>;
 };
-
 export default TLTradeDetailsEmployee;

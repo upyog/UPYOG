@@ -92,7 +92,7 @@ const ApplicationDetails = () => {
 
   return (
     <div>
-      {/* <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+      {/* <div className={"employee-application-details"}>
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("AST_APPLICATION_DETAILS")}</Header>
         {dowloadOptions && dowloadOptions.length > 0 && (
           <MultiLink

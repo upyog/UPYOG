@@ -6,292 +6,294 @@ import _ from "lodash";
 import { useLocation } from "react-router-dom";
 import { getUniqueItemsFromArray, commonTransform, stringReplaceAll, getPattern } from "../utils";
 import isUndefined from "lodash/isUndefined";
-import {sortDropdownNames} from "../utils/index";
+import { sortDropdownNames } from "../utils/index";
 
 const createAccessoriesDetails = () => ({
-    accessoryCategory: "",
-    count: "",
-    uom: "",
-    uomValue: "",
-    key: Date.now(),
+  accessoryCategory: "",
+  count: "",
+  uom: "",
+  uomValue: "",
+  key: Date.now()
 });
-
-
-const TLAccessoriesEmployee = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
-    const { t } = useTranslation();
-    const { pathname } = useLocation();
-    const isEditScreen = pathname.includes("/modify-application/");
-    const [accessoriesList, setAccessoriesList] = useState(formData?.accessories || [createAccessoriesDetails()]);
-    const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
-    const tenantId = Digit.ULBService.getCurrentTenantId();
-    const [accessories, SetAccessories] = useState([]);
-    const [isErrors, setIsErrors] = useState(false);
-    const [flag, setFlag] = useState(true);
-    const [uomvalues, setUomvalues] = useState("");
-    const [enableUOM, setenableUOM] = useState(false);
-    let isRenewal = window.location.href.includes("renew-application-details");
-    if(window.location.href.includes("edit-application-details")) isRenewal = true;
-
-
-    const { data: billingSlabData } = Digit.Hooks.tl.useTradeLicenseBillingslab({ tenantId, filters: {} }, {
-        select: (data) => {
-        return data?.billingSlab.filter((e) => e.accessoryCategory && e.applicationType === "NEW" && e.uom);
-    }});
-
-    const addAccessories = () => {
-        const newAccessor = createAccessoriesDetails();
-        setAccessoriesList((prev) => [...prev, newAccessor]);
-    };
-
-    const removeAccessor = (accessor) => {
-        setAccessoriesList((prev) => prev.filter((o) => o.key != accessor.key));
-    };
-
-    useEffect(() => {
-        const data = accessoriesList?.map((e) => {
-            return e;
-        });
-        onSelect(config?.key, data);
-    }, [accessoriesList]);
-
-    useEffect(() => {
-        if (formData?.accessories?.length > 0 && !isRenewal) {
-          let flag = true;
-          accessoriesList?.map(data => {
-            Object.keys(data)?.map(dta => {
-              if(dta != "key" &&  data[dta]) flag = false;
-            });
-          });
-          formData?.accessories?.map(data => {
-            Object.keys(data)?.map(dta => {
-              if (dta != "key" && data[dta] != undefined && data[data] != "" && data[data] != null) {
-    
-              } else {
-                formData.accessories[0].count = 1;
-                if (flag) setAccessoriesList(formData?.accessories);
-                formData.accessories[0].count = "";
-                setAccessoriesList(formData?.accessories);
-                flag = false;
-              }
-            });
-          })
-        }
-    
-      }, [formData?.accessories?.[0]?.accessoryCategory?.code]);
-
-    const commonProps = {
-        focusIndex,
-        allAccessoriesList: accessoriesList,
-        setFocusIndex,
-        removeAccessor,
-        formData,
-        formState,
-        setAccessoriesList,
-        // mdmsData,
-        t,
-        setError,
-        clearErrors,
-        config,
-        accessories,
-        setIsErrors,
-        isErrors,
-        SetAccessories,
-        accessoriesList,
-        billingSlabData,
-        setUomvalues,
-        uomvalues,
-        isRenewal,
-        enableUOM,
-        setenableUOM
-    };
-
-
-
-    return (
-        <React.Fragment>
-            {accessoriesList?.map((accessor, index) => (
-                <AccessoriersForm key={accessor.key} index={index} accessor={accessor} {...commonProps} />
-            ))}
-            <LinkButton label={`${t("TL_NEW_TRADE_DETAILS_NEW_ACCESSORIES")}`} onClick={addAccessories} style={{ color: "#a82227", width: "fit-content" }} />
-
-        </React.Fragment>
-    );
-};
-
-const AccessoriersForm = (_props) => {
-    const {
-        accessor,
-        index,
-        focusIndex,
-        allAccessoriesList,
-        setFocusIndex,
-        removeAccessor,
-        setAccessoriesList,
-        t,
-        // mdmsData,
-        formData,
-        config,
-        setError,
-        clearErrors,
-        formState,
-        accessories,
-        setIsErrors,
-        isErrors,
-        SetAccessories,
-        accessoriesList,
-        billingSlabData,
-        setUomvalues,
-        uomvalues,
-        isRenewal,
-        enableUOM,
-        setenableUOM
-    } = _props;
-
-    const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
-    const formValue = watch();
-    const { errors } = localFormState;
-
-    const isIndividualTypeOwner = useMemo(() => formData?.ownershipCategory?.code?.includes("INDIVIDUAL"), [formData?.ownershipCategory?.code]);
-
-    useEffect(() => {
-        trigger();
-    }, []);
-
-    useEffect(() => {
-        trigger();
-    }, [accessor?.accessoryCategory?.uom, formData?.accessories]);
-
-    useEffect(() => {
-        if (billingSlabData &&  billingSlabData?.length > 0) {
-            const processedData =
-                billingSlabData &&
-                billingSlabData.reduce(
-                    (acc, item) => {
-                        let accessory = { active: true };
-                        let tradeType = { active: true };
-                        if (item.accessoryCategory && item.tradeType === null) {
-                            accessory.code = item.accessoryCategory;
-                            accessory.uom = item.uom;
-                            accessory.rate = item.rate;
-                            accessory.fromUom = item.fromUom;
-                            accessory.toUom = item.toUom;
-                            item.rate && item.rate > 0 && acc.accessories.push(accessory);
-                        } else if (item.accessoryCategory === null && item.tradeType) {
-                            tradeType.code = item.tradeType;
-                            tradeType.uom = item.uom;
-                            tradeType.structureType = item.structureType;
-                            tradeType.licenseType = item.licenseType;
-                            tradeType.rate = item.rate;
-                            tradeType.fromUom = item.fromUom;
-                            tradeType.toUom = item.toUom;
-                            !isUndefined(item.rate) &&
-                                item.rate !== null &&
-                                acc.tradeTypeData.push(tradeType);
-                        }
-                        return acc;
-                    },
-                    { accessories: [], tradeTypeData: [] }
-                );
-
-
-            const accessories = getUniqueItemsFromArray(
-                processedData.accessories,
-                "code"
-            );
-            let structureTypes = getUniqueItemsFromArray(
-                processedData.tradeTypeData,
-                "structureType"
-            );
-            structureTypes = commonTransform(
-                {
-                    StructureType: structureTypes?.map(item => {
-                        return { code: item.structureType, active: true };
-                    })
-                },
-                "StructureType"
-            );
-            let licenseTypes = getUniqueItemsFromArray(
-                processedData.tradeTypeData,
-                "licenseType"
-            );
-            licenseTypes = licenseTypes?.map(item => {
-                return { code: item.licenseType, active: true };
-            });
-
-            accessories?.forEach(data => {
-                data.i18nKey = t(`TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(data?.code?.toUpperCase(), "-", "_")}`);
-            });
-
-            // sessionStorage.setItem("TLlicenseTypes", JSON.stringify(licenseTypes));
-            SetAccessories(accessories);
-        }
-    }, [billingSlabData]);
-
-
-
-    useEffect(() => {
-        const keys = Object.keys(formValue);
-        if (!formValue?.accessoryCategory?.uom) {
-            formValue.uomValue = "";
-        }
-        const part = {};
-        keys?.forEach((key) => (part[key] = accessor[key]));
-
-        let _ownerType = isIndividualTypeOwner ? {} : { ownerType: { code: "NONE" } };
-
-        if (!_.isEqual(formValue, part)) {
-            Object.keys(formValue)?.map(data => {
-                if (data != "key" && formValue[data] != undefined && formValue[data] != "" && formValue[data] != null && !isErrors) {
-                  setIsErrors(true); 
-                }
-              });
-
-            setAccessoriesList((prev) => prev?.map((o) => {
-                return (o.key && o.key === accessor.key ? { ...o, ...formValue, ..._ownerType } : { ...o })
-            }));
-            trigger();
-        }
-    }, [formValue]);
-
-    useEffect(() => {
-        if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
-            setError(config.key, { type: errors });
-        }
-        else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
-            clearErrors(config.key);
-        }
-    }, [errors]);
-
-    function checkRangeForUomValue(e, fromUom, toUom){
-        if(Number.isInteger(fromUom)){
-            if(!(e && parseFloat(e) >= fromUom)){
-            return false;
-            }
-           }
-        if(Number.isInteger(toUom)){
-           if(!(e && parseFloat(e) <= toUom)){
-             return false
-             }
-           }
-        return true
+const TLAccessoriesEmployee = ({
+  config,
+  onSelect,
+  userType,
+  formData,
+  setError,
+  formState,
+  clearErrors
+}) => {
+  const {
+    t
+  } = useTranslation();
+  const {
+    pathname
+  } = useLocation();
+  const isEditScreen = pathname.includes("/modify-application/");
+  const [accessoriesList, setAccessoriesList] = useState(formData?.accessories || [createAccessoriesDetails()]);
+  const [focusIndex, setFocusIndex] = useState({
+    index: -1,
+    type: ""
+  });
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const [accessories, SetAccessories] = useState([]);
+  const [isErrors, setIsErrors] = useState(false);
+  const [flag, setFlag] = useState(true);
+  const [uomvalues, setUomvalues] = useState("");
+  const [enableUOM, setenableUOM] = useState(false);
+  let isRenewal = window.location.href.includes("renew-application-details");
+  if (window.location.href.includes("edit-application-details")) isRenewal = true;
+  const {
+    data: billingSlabData
+  } = Digit.Hooks.tl.useTradeLicenseBillingslab({
+    tenantId,
+    filters: {}
+  }, {
+    select: data => {
+      return data?.billingSlab.filter(e => e.accessoryCategory && e.applicationType === "NEW" && e.uom);
     }
+  });
+  const addAccessories = () => {
+    const newAccessor = createAccessoriesDetails();
+    setAccessoriesList(prev => [...prev, newAccessor]);
+  };
+  const removeAccessor = accessor => {
+    setAccessoriesList(prev => prev.filter(o => o.key != accessor.key));
+  };
+  useEffect(() => {
+    const data = accessoriesList?.map(e => {
+      return e;
+    });
+    onSelect(config?.key, data);
+  }, [accessoriesList]);
+  useEffect(() => {
+    if (formData?.accessories?.length > 0 && !isRenewal) {
+      let flag = true;
+      accessoriesList?.map(data => {
+        Object.keys(data)?.map(dta => {
+          if (dta != "key" && data[dta]) flag = false;
+        });
+      });
+      formData?.accessories?.map(data => {
+        Object.keys(data)?.map(dta => {
+          if (dta != "key" && data[dta] != undefined && data[data] != "" && data[data] != null) {} else {
+            formData.accessories[0].count = 1;
+            if (flag) setAccessoriesList(formData?.accessories);
+            formData.accessories[0].count = "";
+            setAccessoriesList(formData?.accessories);
+            flag = false;
+          }
+        });
+      });
+    }
+  }, [formData?.accessories?.[0]?.accessoryCategory?.code]);
+  const commonProps = {
+    focusIndex,
+    allAccessoriesList: accessoriesList,
+    setFocusIndex,
+    removeAccessor,
+    formData,
+    formState,
+    setAccessoriesList,
+    // mdmsData,
+    t,
+    setError,
+    clearErrors,
+    config,
+    accessories,
+    setIsErrors,
+    isErrors,
+    SetAccessories,
+    accessoriesList,
+    billingSlabData,
+    setUomvalues,
+    uomvalues,
+    isRenewal,
+    enableUOM,
+    setenableUOM
+  };
+  return <React.Fragment>
+            {accessoriesList?.map((accessor, index) => <AccessoriersForm key={accessor.key} index={index} accessor={accessor} {...commonProps} />)}
+            <LinkButton label={`${t("TL_NEW_TRADE_DETAILS_NEW_ACCESSORIES")}`} onClick={addAccessories} className="tl-auto-80" />
 
-    const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
-    return (
-        <React.Fragment>
-            <div style={{ marginBottom: "16px" }}>
-                <div style={{ border: "1px solid #D6D5D4", padding: "16px", marginTop: "8px", background: "#FAFAFA" }}>
-                    {allAccessoriesList?.length > 1 ? (
-                        <div style={{display: "flex", justifyContent: "flex-end"}}>
-                            <div onClick={() => removeAccessor(accessor)} style={{ padding: "5px", cursor: "pointer", textAlign: "right" }}>
+        </React.Fragment>;
+};
+const AccessoriersForm = _props => {
+  const {
+    accessor,
+    index,
+    focusIndex,
+    allAccessoriesList,
+    setFocusIndex,
+    removeAccessor,
+    setAccessoriesList,
+    t,
+    // mdmsData,
+    formData,
+    config,
+    setError,
+    clearErrors,
+    formState,
+    accessories,
+    setIsErrors,
+    isErrors,
+    SetAccessories,
+    accessoriesList,
+    billingSlabData,
+    setUomvalues,
+    uomvalues,
+    isRenewal,
+    enableUOM,
+    setenableUOM
+  } = _props;
+  const {
+    control,
+    formState: localFormState,
+    watch,
+    setError: setLocalError,
+    clearErrors: clearLocalErrors,
+    setValue,
+    trigger,
+    getValues
+  } = useForm();
+  const formValue = watch();
+  const {
+    errors
+  } = localFormState;
+  const isIndividualTypeOwner = useMemo(() => formData?.ownershipCategory?.code?.includes("INDIVIDUAL"), [formData?.ownershipCategory?.code]);
+  useEffect(() => {
+    trigger();
+  }, []);
+  useEffect(() => {
+    trigger();
+  }, [accessor?.accessoryCategory?.uom, formData?.accessories]);
+  useEffect(() => {
+    if (billingSlabData && billingSlabData?.length > 0) {
+      const processedData = billingSlabData && billingSlabData.reduce((acc, item) => {
+        let accessory = {
+          active: true
+        };
+        let tradeType = {
+          active: true
+        };
+        if (item.accessoryCategory && item.tradeType === null) {
+          accessory.code = item.accessoryCategory;
+          accessory.uom = item.uom;
+          accessory.rate = item.rate;
+          accessory.fromUom = item.fromUom;
+          accessory.toUom = item.toUom;
+          item.rate && item.rate > 0 && acc.accessories.push(accessory);
+        } else if (item.accessoryCategory === null && item.tradeType) {
+          tradeType.code = item.tradeType;
+          tradeType.uom = item.uom;
+          tradeType.structureType = item.structureType;
+          tradeType.licenseType = item.licenseType;
+          tradeType.rate = item.rate;
+          tradeType.fromUom = item.fromUom;
+          tradeType.toUom = item.toUom;
+          !isUndefined(item.rate) && item.rate !== null && acc.tradeTypeData.push(tradeType);
+        }
+        return acc;
+      }, {
+        accessories: [],
+        tradeTypeData: []
+      });
+      const accessories = getUniqueItemsFromArray(processedData.accessories, "code");
+      let structureTypes = getUniqueItemsFromArray(processedData.tradeTypeData, "structureType");
+      structureTypes = commonTransform({
+        StructureType: structureTypes?.map(item => {
+          return {
+            code: item.structureType,
+            active: true
+          };
+        })
+      }, "StructureType");
+      let licenseTypes = getUniqueItemsFromArray(processedData.tradeTypeData, "licenseType");
+      licenseTypes = licenseTypes?.map(item => {
+        return {
+          code: item.licenseType,
+          active: true
+        };
+      });
+      accessories?.forEach(data => {
+        data.i18nKey = t(`TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(data?.code?.toUpperCase(), "-", "_")}`);
+      });
+
+      // sessionStorage.setItem("TLlicenseTypes", JSON.stringify(licenseTypes));
+      SetAccessories(accessories);
+    }
+  }, [billingSlabData]);
+  useEffect(() => {
+    const keys = Object.keys(formValue);
+    if (!formValue?.accessoryCategory?.uom) {
+      formValue.uomValue = "";
+    }
+    const part = {};
+    keys?.forEach(key => part[key] = accessor[key]);
+    let _ownerType = isIndividualTypeOwner ? {} : {
+      ownerType: {
+        code: "NONE"
+      }
+    };
+    if (!_.isEqual(formValue, part)) {
+      Object.keys(formValue)?.map(data => {
+        if (data != "key" && formValue[data] != undefined && formValue[data] != "" && formValue[data] != null && !isErrors) {
+          setIsErrors(true);
+        }
+      });
+      setAccessoriesList(prev => prev?.map(o => {
+        return o.key && o.key === accessor.key ? {
+          ...o,
+          ...formValue,
+          ..._ownerType
+        } : {
+          ...o
+        };
+      }));
+      trigger();
+    }
+  }, [formValue]);
+  useEffect(() => {
+    if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
+      setError(config.key, {
+        type: errors
+      });
+    } else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
+      clearErrors(config.key);
+    }
+  }, [errors]);
+  function checkRangeForUomValue(e, fromUom, toUom) {
+    if (Number.isInteger(fromUom)) {
+      if (!(e && parseFloat(e) >= fromUom)) {
+        return false;
+      }
+    }
+    if (Number.isInteger(toUom)) {
+      if (!(e && parseFloat(e) <= toUom)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  const errorStyle = {
+    width: "70%",
+    marginLeft: "30%",
+    fontSize: "12px",
+    marginTop: "-21px"
+  };
+  return <React.Fragment>
+            <div className="tl-auto-81">
+                <div className="tl-auto-82">
+                    {allAccessoriesList?.length > 1 ? <div className="tl-auto-83">
+                            <div onClick={() => removeAccessor(accessor)} className="tl-auto-84">
                                 <span>
-                                    <svg style={{ float: "right", position: "relative", bottom: "5px" }} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-auto-85">
                                         <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill="#494848" />
                                     </svg>
                                 </span>
                             </div>
-                        </div>
-                    ) : null}
+                        </div> : null}
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_ACC_LABEL")} `}</CardLabel>
                         <Controller
@@ -323,7 +325,7 @@ const AccessoriersForm = (_props) => {
                     </LabelFieldPair>
                     {/* <CardLabelError style={errorStyle}>{localFormState.touched.accessoryCategory ? errors?.name?.message : ""}</CardLabelError> */}
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_UOM_UOM_PLACEHOLDER")}`}{getValues("uom") ? <span className="check-page-link-button"> *</span>:""}</CardLabel>
+                        <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_UOM_UOM_PLACEHOLDER")}`}{getValues("uom") ? <span className="check-page-link-button"> *</span> : ""}</CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -342,7 +344,7 @@ const AccessoriersForm = (_props) => {
                                         }}
                                         disable={true}
                                         onBlur={field.onBlur}
-                                        style={{ background: "#FAFAFA" }}
+                                        className="tl-auto-86" 
                                     />
                                 )}
                             />
@@ -350,7 +352,7 @@ const AccessoriersForm = (_props) => {
                     </LabelFieldPair>
                     {/* <CardLabelError style={errorStyle}>{localFormState.touched.uom ? errors?.uom?.message : ""}</CardLabelError> */}
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}{accessor?.accessoryCategory?.uom ?  <span className="check-page-link-button"> *</span>:""}</CardLabel>
+                        <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}{accessor?.accessoryCategory?.uom ? <span className="check-page-link-button"> *</span> : ""}</CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -370,7 +372,7 @@ const AccessoriersForm = (_props) => {
                                        // disable={/*getValues("uomValue")?!(accessor?.accessoryCategory?.uom) || accessor?.id:*/!(accessor?.accessoryCategory?.uom) }
                                         disable={isRenewal ? !enableUOM : false}
                                         onBlur={field.onBlur}
-                                        style={{ background: "#FAFAFA" }}
+                                       className="tl-auto-87"
                                     />
                                 )}
                             />
@@ -378,7 +380,7 @@ const AccessoriersForm = (_props) => {
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touchedFields?.uomValue ? errors?.uomValue?.message : ""}</CardLabelError>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{`${t("TL_ACCESSORY_COUNT_LABEL")}`}{accessor?.accessoryCategory?.code ?   <span className="check-page-link-button"> *</span>:""}</CardLabel>
+                        <CardLabel className="card-label-smaller">{`${t("TL_ACCESSORY_COUNT_LABEL")}`}{accessor?.accessoryCategory?.code ? <span className="check-page-link-button"> *</span> : ""}</CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -398,7 +400,7 @@ const AccessoriersForm = (_props) => {
                                         onBlur={field.onBlur}
                                         disable={isRenewal ? !enableUOM : false}
                                         //disable={accessor?.id}
-                                        style={{ background: "#FAFAFA" }}
+                                       className="tl-auto-88"
                                     />
                                 )}
                             />
@@ -407,8 +409,6 @@ const AccessoriersForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touchedFields?.count ? errors?.count?.message : ""}</CardLabelError>
                 </div>
             </div>
-        </React.Fragment>
-    );
+        </React.Fragment>;
 };
-
 export default TLAccessoriesEmployee;

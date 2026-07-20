@@ -1,0 +1,38 @@
+curl --location 'localhost:8055/mdms-v2/v2/_create/ws-services-masters.schedulerBillingPeriod' \
+--header 'Content-Type: application/json' \
+--header 'Content-Type: application/json' \
+--data '{
+  "RequestInfo": {
+    "apiId": "asset-services",
+    "ver": null,
+    "ts": null,
+    "action": null,
+    "did": null,
+    "key": null,
+    "msgId": "search with from and to values",
+    "authToken": "{{authToken}}",
+    "correlationId": null,
+    "userInfo": {
+      "id": "1",
+      "userName": null,
+      "name": null,
+      "type": null,
+      "mobileNumber": null,
+      "emailId": null,
+      "roles": null,
+      "uuid": "40dceade-992d-4a8f-8243-19dda76a4171"
+    }
+  },
+  "Mdms": {
+    "tenantId": "pg",
+    "schemaCode": "ws-services-masters.schedulerBillingPeriod",
+    "data": {
+      "active": true,
+      "connectionType": "Non Metered",
+      "billingCycle": "quarterly",
+      "taxPeriodFrom": 1609459200000,
+      "taxPeriodTo": 1617215399000
+    },
+    "isActive": true
+  }
+}'

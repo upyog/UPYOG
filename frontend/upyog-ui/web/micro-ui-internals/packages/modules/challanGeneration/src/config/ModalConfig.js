@@ -21,11 +21,10 @@ export const ModalConfig = ({ t, action, setAmount, getChallanData, selectFile, 
           {
             label: `${t("FEE_WAIVER_AMOUNT")} *`,
             populators: (
-              <div style={{ marginBottom: "20px" }}>
+              <div className="cg-margin-bottom-20">
                 <input
-                  className="employee-card-input focus-visible"
+                  className="employee-card-input focus-visible cg-input-fullwidth"
                   type="number"
-                  style={{ marginBottom: 0, width: "100%" }}
                   onChange={(e) => setAmount(e.target.value)}
                   onWheel={(e) => e.target.blur()}
                   onKeyDown={(e) => {
@@ -34,9 +33,9 @@ export const ModalConfig = ({ t, action, setAmount, getChallanData, selectFile, 
                     }
                   }}
                 />
-                <span style={{ color: "green" }}>
-                  <span style={{ color: " red", paddingRight: " 3px" }}>Note:</span>Please enter amount less than{" "}
-                  <span style={{ fontWeight: "bolder", color: "green" }}> {finalAmount}</span>{" "}
+                <span className="cg-note">
+                  <span className="cg-note-red">Note:</span>Please enter amount less than{" "}
+                  <span className="cg-note-strong"> {finalAmount}</span>{" "}
                 </span>
               </div>
             ),

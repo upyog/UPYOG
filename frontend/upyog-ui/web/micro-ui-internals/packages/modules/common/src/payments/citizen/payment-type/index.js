@@ -22,6 +22,7 @@ import $ from "jquery";
 import { makePayment } from "./payGov";
 import TimerServices from "../timer-Services/timerServices";
 import { timerEnabledForBusinessService } from "../bills/routes/bill-details/utils";
+import { startHdfcPayment } from "./hdfcCollectNow";
 
 export const SelectPaymentType = (props) => {
   const { state: rawState } = useLocation();
@@ -95,7 +96,7 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
-      if (d?.paymentType == "AXIS") {
+      if (d?.paymentType == "AXIS"|| d?.paymentType === "ICICI") {
         window.location = redirectUrl;
       }
       else if (d?.paymentType == "NTTDATA") {
@@ -109,6 +110,13 @@ export const SelectPaymentType = (props) => {
           "returnUrl": redirect[1]
         }
         let atom = new AtomPaynetz(options, 'uat');
+      } else if (d?.paymentType === "RAZORPAY") {
+        try {
+          startHdfcPayment(data);
+        } catch (e) {
+          console.log("Error in HDFC Payment Redirect ", e);
+          setShowToast({ key: true, label: "CS_PAYMENT_INIT_FAILED" });
+        }
       }
       else {
         // new payment gatewayfor UPYOG pay
@@ -213,7 +221,7 @@ export const SelectPaymentType = (props) => {
                 fontSize: "24px"
               }}
             >
-          <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData  } />
+          <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData } />
             </CardSubHeader>
           )}
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>

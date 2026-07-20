@@ -75,6 +75,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   }
 
   const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRCreatePet");
+  const EnhancedReport = Digit?.ComponentRegistryService?.getComponent("EnhancedReport");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
   const isRes = window.location.href.includes("ptr/response");
   const isNewRegistration = window.location.href.includes("new-application") || window.location.href.includes("modify-application") || window.location.href.includes("ptr/application-details");
@@ -123,6 +124,8 @@ const EmployeeApp = ({ path, url, userType }) => {
             }
           />
           <Route path= "petservice/my-applications/*" element={<PrivateRoute><SearchApp /></PrivateRoute>} />
+          <Route path="PetReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-pet" reportName="PetReport" /></PrivateRoute>} />
+          
         </Routes>
       </div>
     </React.Fragment>

@@ -43,7 +43,12 @@
 	<artifactId>egov-egi</artifactId>
 
 	<dependencies>
-
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>2.3.3</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.egov.edcr</groupId>
 			<artifactId>egov-config</artifactId>
@@ -58,20 +63,25 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
-
+<dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+    <version>3.9.0</version>
+</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-envers</artifactId>
+			 <version>${spring-data-jpa-envers-version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.hibernate</groupId>-->
+<!--			<artifactId>hibernate-entitymanager</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-envers</artifactId>
@@ -81,7 +91,7 @@
 			<artifactId>hibernate-infinispan</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 		<dependency>
@@ -95,7 +105,7 @@
 		</dependency>
 
 		<!-- STRUTS2 DEPENDENCIES START -->
-		<dependency>
+		<!--<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-core</artifactId>
 		</dependency>
@@ -118,7 +128,7 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-		</dependency>
+		</dependency> -->
 		<!-- STRUTS2 DEPENDENCIES END -->
 
 		<!-- JSON START -->
@@ -130,6 +140,7 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-hibernate5</artifactId>
 		</dependency>
+		
 		<!-- JSON END -->
 
 		<!-- SECURITY START -->
@@ -149,22 +160,22 @@
 			<groupId>org.owasp.antisamy</groupId>
 			<artifactId>antisamy</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>xerces</groupId>-->
+<!--			<artifactId>xercesImpl</artifactId>-->
+<!--		</dependency>-->
 
 		<!-- SECURITY END -->
 
 		<!-- QUARTZ START -->
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz-jobs</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.quartz-scheduler</groupId>-->
+<!--			<artifactId>quartz</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.quartz-scheduler</groupId>-->
+<!--			<artifactId>quartz-jobs</artifactId>-->
+<!--		</dependency>-->
 		<!-- QUARTZ END -->
 
 		<!-- DISPLAYTAG START -->
@@ -190,65 +201,50 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-functions</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports-javaflow</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-javaflow</groupId>
-			<artifactId>commons-javaflow</artifactId>
+			
+        
+    
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>ar.com.fdvs</groupId>
-			<artifactId>DynamicJasper</artifactId>
-			<version>5.0.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>jasperreports</artifactId>
-					<groupId>net.sf.jasperreports</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>tomcat</groupId>
 			<artifactId>jasper-compiler-jdt</artifactId>
-			<version>5.5.23</version>
-		</dependency>
+			<version>5.5.23</version> 
+		</dependency> -->
 		<!-- REPORTS END -->
 
 		<!-- COMMONS START -->
 		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-configuration2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-email</artifactId>
+			<artifactId>commons-lang3</artifactId>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.apache.commons</groupId>-->
+<!--			<artifactId>commons-email2-javax</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-dbcp2</artifactId>
 		</dependency>
 		<!-- COMMONS END -->
 
@@ -258,9 +254,14 @@
 
 		<!-- GIS START -->
 
+<!--		<dependency>-->
+<!--			<groupId>org.opengis</groupId>-->
+<!--			<artifactId>geoapi</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
-			<groupId>org.opengis</groupId>
-			<artifactId>geoapi</artifactId>
+			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+			<artifactId>owasp-java-html-sanitizer</artifactId>
+			<version>20240325.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
@@ -283,30 +284,37 @@
 			<artifactId>gt-shapefile</artifactId>
 		</dependency>
 		<dependency>
+			
 			<groupId>org.geotools</groupId>
-			<artifactId>gt-shapefile-renderer</artifactId>
+			<artifactId>gt-render</artifactId>
+		</dependency>
+		
+<!--		<dependency>-->
+<!--			<groupId>javax.media</groupId>-->
+<!--			<artifactId>jai_core</artifactId>-->
+<!--			<classifier>alpha</classifier>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>net.java.dev.jsr-275</groupId>-->
+<!--			<artifactId>jsr-275</artifactId>-->
+<!--		</dependency>-->
+		<dependency>
+			<groupId>org.locationtech.jts</groupId>
+			<artifactId>jts-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.media</groupId>
-			<artifactId>jai_core</artifactId>
-			<classifier>alpha</classifier>
+			<groupId>javax.measure</groupId>
+			<artifactId>unit-api</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>net.java.dev.jsr-275</groupId>
-			<artifactId>jsr-275</artifactId>
+			<groupId>tech.units</groupId>
+			<artifactId>indriya</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.vividsolutions</groupId>
-			<artifactId>jts</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>units</groupId>
-			<artifactId>units</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>java3d</groupId>
-			<artifactId>vecmath</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>javax.vecmath</groupId>-->
+<!--			<artifactId>vecmath</artifactId>-->
+<!--		</dependency>-->
 
 		<!-- <dependency>
 			<groupId>org.apache.logging.log4j</groupId>

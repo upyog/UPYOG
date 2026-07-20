@@ -18,18 +18,18 @@ public class CommunityHallDetailsMapper implements CommonDetailsMapper {
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
 		// Access the first element of the HallApplication array
 		
-		JsonNode HallApplication = json.path(COMMUNITY_HALL_APPLICATIONS).isArray()
+		JsonNode hallApplication = json.path(COMMUNITY_HALL_APPLICATIONS).isArray()
 				&& json.path(COMMUNITY_HALL_APPLICATIONS).size() > 0 ? json.path(COMMUNITY_HALL_APPLICATIONS).get(0) : null;
 
-		if (HallApplication == null) {
+		if (hallApplication == null) {
 			return CommonDetails.builder().applicationNumber(NA).fromDate(NA).toDate(NA).address(NA).name(NA).mobileNumber(NA)
 					.status(NA).build();
 		}
 
 		
 		// Extract the application number and status
-		String applicationNumber = HallApplication.path("bookingNo").asText(NA);
-		String status = HallApplication.path("bookingStatus").asText(NA);
+		String applicationNumber = hallApplication.path("bookingNo").asText(NA);
+		String status = hallApplication.path("bookingStatus").asText(NA);
 		String moduleName = "chb-services";
 		if (!"BOOKED".equalsIgnoreCase(status)) {
 	        // If not BOOKED, set status as Pending and other details as N/A
@@ -49,7 +49,7 @@ public class CommunityHallDetailsMapper implements CommonDetailsMapper {
 		String toDate = NA;
 		String location = NA;
 		
-		JsonNode bookingSlotDetails = HallApplication.path("bookingSlotDetails");
+		JsonNode bookingSlotDetails = hallApplication.path("bookingSlotDetails");
 
 		if (bookingSlotDetails.isArray() && bookingSlotDetails.size() > 0) {
 			fromDate = bookingSlotDetails.get(0).path("bookingDate").asText(NA);
@@ -58,7 +58,7 @@ public class CommunityHallDetailsMapper implements CommonDetailsMapper {
 		}
 		
 		// Extract name and mobile number from applicantDetail
-        JsonNode applicantDetail = HallApplication.path("applicantDetail");
+        JsonNode applicantDetail = hallApplication.path("applicantDetail");
         String ownerName = applicantDetail.path("applicantName").asText(NA);
         String ownerMobileNumber = CommonDetailUtil.maskMobileNumber(applicantDetail.path("applicantMobileNo").asText(NA));
 

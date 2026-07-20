@@ -1,4 +1,4 @@
-import { Loader,PDFSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, PDFSvg } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { pdfDownloadLink } from "../utils";
@@ -33,29 +33,23 @@ function ADSDocument({ value = {}, Code, index,showFileName= false }) {
   if (isLoading) {
     return <Loader />;
   }
-
-  return (
-    <div>
+  return <div>
       <React.Fragment>
-        <div >
+        <div>
           {documents?.map((document, index) => {
-            let documentLink = pdfDownloadLink(data.pdfFiles, document.fileStoreId);
-            return (
-              <a target="_" href={documentLink} style={{ minWidth: "160px", display: "flex", alignItems: "center" }} key={document?.fileStoreId || index}>
+          let documentLink = pdfDownloadLink(data.pdfFiles, document.fileStoreId);
+          return <a target="_" href={documentLink} key={document?.fileStoreId || index} className="ads-auto-56">
               {/* Text first */}
-              <p style={{ marginRight: "8px", margin: "5px", color:"blue", fontWeight: "bold" }}>
-                {t("ADS_" + (Code?.split('.').slice(0, 4).join('_')))}
+              <p className="ads-auto-57">
+                {t("ADS_" + Code?.split('.').slice(0, 4).join('_'))}
               </p>
       
               {/* Icon second */}
-              <PDFSvg /* width={85} height={100} style={{ background: "#f6f6f6", padding: "8px" }} */ />
-            </a>
-            );
-          })}
+              <PDFSvg /* width={85} height={100} */ />
+            </a>;
+        })}
         </div>
       </React.Fragment>
-    </div>
-  );
+    </div>;
 }
-
 export default ADSDocument;

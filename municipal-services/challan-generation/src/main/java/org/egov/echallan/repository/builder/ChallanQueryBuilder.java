@@ -4,19 +4,19 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.egov.echallan.config.ChallanConfiguration;
 import org.egov.echallan.model.SearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Slf4j
 @Component
 public class ChallanQueryBuilder {
 
-    private ChallanConfiguration config;
+    private final ChallanConfiguration config;
 
-    @Autowired
     public ChallanQueryBuilder(ChallanConfiguration config) {
         this.config = config;
     }
@@ -45,134 +45,147 @@ public class ChallanQueryBuilder {
             +INNER_JOIN_STRING
             +"eg_challanAddress chaladdr ON chaladdr.challanid = echallan.id";
 
-      private final String paginationWrapper = "SELECT * FROM " +
-              "(SELECT *, DENSE_RANK() OVER (ORDER BY challan_createdTime DESC , challan_id) offset_ FROM " +
-              "({})" +
-              " result) result_offset " +
-              "WHERE offset_ > ? AND offset_ <= ?";
+    private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY challan_createdTime DESC , challan_id) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
 
       public static final String FILESTOREID_UPDATE_SQL = "UPDATE eg_challan SET filestoreid=? WHERE id=?";
-      
+
       public static final String CANCEL_RECEIPT_UPDATE_SQL = "UPDATE eg_challan SET applicationStatus='ACTIVE' WHERE challanNo=? and businessService=?";
       public static final String CHALLAN_COUNT_QUERY = "SELECT applicationstatus, count(*)  FROM eg_challan WHERE tenantid ";
-    
+
       public static final String TOTAL_COLLECTION_QUERY = "SELECT sum(amountpaid) FROM egbs_billdetail_v1 INNER JOIN egcl_paymentdetail ON egbs_billdetail_v1.billid=egcl_paymentdetail.billid and egcl_paymentdetail.tenantid=egbs_billdetail_v1.tenantid INNER JOIN eg_challan ON consumercode=challanno  and egbs_billdetail_v1.tenantid=eg_challan.tenantid WHERE egbs_billdetail_v1.tenantid=? AND eg_challan.applicationstatus='PAID' AND egcl_paymentdetail.createdtime>? ";
-    
+
       public static final String TOTAL_SERVICES_QUERY = "SELECT count(distinct(businessservice)) FROM eg_challan WHERE tenantid=? AND createdtime>? ";
 
 
     public String getChallanSearchQuery(SearchCriteria criteria, List<Object> preparedStmtList, boolean isCountQuery) {
-        StringBuilder builder;
+        StringBuilder builder = new StringBuilder(isCountQuery ? COUNT_QUERY : QUERY);
+        appendSearchClauses(criteria, preparedStmtList, builder);
+        return buildSearchQueryResult(builder, preparedStmtList, criteria, isCountQuery);
+    }
 
-        if(isCountQuery)
-        {
-            builder = new StringBuilder(COUNT_QUERY);
+    private void appendSearchClauses(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
+        addBusinessServiceClause(criteria, preparedStmtList, builder);
+        addTenantIdClause(criteria, preparedStmtList, builder);
+        addIdsClause(criteria, preparedStmtList, builder);
+        addAccountIdClause(criteria, preparedStmtList, builder);
+        addOwnerIdsClause(criteria, preparedStmtList, builder);
+        addChallanNoClause(criteria, preparedStmtList, builder);
+        addStatusClause(criteria, preparedStmtList, builder);
+        addReceiptNumberClause(criteria, preparedStmtList, builder);
+        addOffenceTypeNameClause(criteria, preparedStmtList, builder);
+        addOffenceCategoryNameClause(criteria, preparedStmtList, builder);
+        addOffenceSubCategoryNameClause(criteria, preparedStmtList, builder);
+        addChallanStatusClause(criteria, preparedStmtList, builder);
+    }
+
+    private String buildSearchQueryResult(StringBuilder builder, List<Object> preparedStmtList,
+                                          SearchCriteria criteria, boolean isCountQuery) {
+        if (isCountQuery) {
+            return builder.toString();
         }
-        else
-        {
-            builder = new StringBuilder(QUERY);
-        }
+        builder.append(" ORDER BY echallan.createdTime DESC, echallan.id DESC");
+        return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+    }
 
-        addBusinessServiceClause(criteria,preparedStmtList,builder);
-
-        // Tenant ID - always add if present
+    private void addTenantIdClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         if (criteria.getTenantId() != null) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.tenantid=? ");
             preparedStmtList.add(criteria.getTenantId());
         }
+    }
 
-        // IDs search
+    private void addIdsClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         List<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
+    }
 
-        // Account ID search - optional, doesn't restrict other searches
+    private void addAccountIdClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         if(criteria.getAccountId() != null && !criteria.getAccountId().trim().isEmpty()) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.accountid = ? ");
             preparedStmtList.add(criteria.getAccountId());
         }
+    }
 
-        // User IDs search (for mobile number search) - optional, doesn't restrict other searches
+    private void addOwnerIdsClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         List<String> ownerIds = criteria.getUserIds();
         if (!CollectionUtils.isEmpty(ownerIds)) {
             addClauseIfRequired(preparedStmtList, builder);
             if(criteria.getAccountId() != null && !criteria.getAccountId().trim().isEmpty()) {
-                // Both accountId and ownerIds present - use OR condition
                 builder.append(" OR echallan.accountid IN (").append(createQuery(ownerIds)).append(")");
             } else {
-                // Only ownerIds present
                 builder.append(" echallan.accountid IN (").append(createQuery(ownerIds)).append(")");
             }
             addToPreparedStatement(preparedStmtList, ownerIds);
         }
+    }
 
-        // Challan No search - should work with all other criteria
+    private void addChallanNoClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         if (criteria.getChallanNo() != null && !criteria.getChallanNo().trim().isEmpty()) {
             List<String> challanNos = Arrays.asList(criteria.getChallanNo().split(","));
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.challanno IN (").append(createQuery(challanNos)).append(")");
             addToPreparedStatement(preparedStmtList, challanNos);
         }
+    }
 
-        // Status search
+    private void addStatusClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         if (criteria.getStatus() != null && !criteria.getStatus().trim().isEmpty()) {
             List<String> status = Arrays.asList(criteria.getStatus().split(","));
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.applicationstatus IN (").append(createQuery(status)).append(")");
             addToPreparedStatement(preparedStmtList, status);
         }
+    }
 
-        // Receipt Number search
+    private void addReceiptNumberClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         if (criteria.getReceiptNumber() != null && !criteria.getReceiptNumber().trim().isEmpty()) {
             List<String> receiptNumbers = Arrays.asList(criteria.getReceiptNumber().split(","));
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.receiptnumber IN (").append(createQuery(receiptNumbers)).append(")");
             addToPreparedStatement(preparedStmtList, receiptNumbers);
         }
+    }
 
-        // Offence Type Name search
+    private void addOffenceTypeNameClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         if (criteria.getOffenceTypeName() != null && !criteria.getOffenceTypeName().trim().isEmpty()) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.offence_type_name ILIKE ? ");
             preparedStmtList.add("%" + criteria.getOffenceTypeName().trim() + "%");
         }
+    }
 
-        // Offence Category Name search
+    private void addOffenceCategoryNameClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         if (criteria.getOffenceCategoryName() != null && !criteria.getOffenceCategoryName().trim().isEmpty()) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.offence_category_name ILIKE ? ");
             preparedStmtList.add("%" + criteria.getOffenceCategoryName().trim() + "%");
         }
+    }
 
-        // Offence SubCategory Name search
+    private void addOffenceSubCategoryNameClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         if (criteria.getOffenceSubCategoryName() != null && !criteria.getOffenceSubCategoryName().trim().isEmpty()) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.offence_subcategory_name ILIKE ? ");
             preparedStmtList.add("%" + criteria.getOffenceSubCategoryName().trim() + "%");
         }
+    }
 
-        // Challan Status search
+    private void addChallanStatusClause(SearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
         if (criteria.getChallanStatus() != null) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" echallan.challanStatus = ? ");
             preparedStmtList.add(criteria.getChallanStatus().name());
         }
-
-        if(isCountQuery)
-        {
-            return builder.toString();
-        }
-        else
-        {
-            builder.append(" ORDER BY echallan.createdTime DESC, echallan.id DESC");
-            return addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
-        }
-
     }
 
     private void addBusinessServiceClause(SearchCriteria criteria,List<Object> preparedStmtList,StringBuilder builder){
@@ -194,9 +207,9 @@ public class ChallanQueryBuilder {
         return builder.toString();
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList,List<String> ids)
+    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids)
     {
-        ids.forEach(id ->{ preparedStmtList.add(id);});
+        ids.forEach(preparedStmtList::add);
     }
 
 
@@ -204,7 +217,7 @@ public class ChallanQueryBuilder {
                                       SearchCriteria criteria){
         int limit = config.getDefaultLimit();
         int offset = config.getDefaultOffset();
-        String finalQuery = paginationWrapper.replace("{}",query);
+        String finalQuery = PAGINATION_WRAPPER.replace("{}",query);
 
         if(criteria.getLimit()!=null && criteria.getLimit()<=config.getMaxSearchLimit())
             limit = criteria.getLimit();
@@ -246,49 +259,33 @@ public class ChallanQueryBuilder {
 
 
 	public String getTotalCollectionQuery(String tenantId, List<Object> preparedStmtListTotalCollection) {
-		
+
 		StringBuilder query = new StringBuilder("");
 		query.append(TOTAL_COLLECTION_QUERY);
-		
+
 		preparedStmtListTotalCollection.add(tenantId);
-		
-		// In order to get data of last 12 months, the months variables is pre-configured in application properties
-    	int months = Integer.valueOf(config.getNumberOfMonths()) ;
+		preparedStmtListTotalCollection.add(getTimestampMonthsAgo());
 
-    	Calendar calendar = Calendar.getInstance();
-
-    	// To subtract 12 months from current time, we are adding -12 to the calendar instance, as subtract function is not in-built
-    	calendar.add(Calendar.MONTH, -1*months);
-
-    	// Converting the timestamp to milliseconds and adding it to prepared statement list
-    	preparedStmtListTotalCollection.add(calendar.getTimeInMillis());
-		
 		return query.toString();
 	}
 
 
 	public String getTotalServicesQuery(String tenantId, List<Object> preparedStmtListTotalServices) {
-		
+
 		StringBuilder query = new StringBuilder("");
 		query.append(TOTAL_SERVICES_QUERY);
-		
+
 		preparedStmtListTotalServices.add(tenantId);
-		
-		// In order to get data of last 12 months, the months variables is pre-configured in application properties
-    	int months = Integer.valueOf(config.getNumberOfMonths()) ;
+		preparedStmtListTotalServices.add(getTimestampMonthsAgo());
 
-    	Calendar calendar = Calendar.getInstance();
-
-    	// To subtract 12 months from current time, we are adding -12 to the calendar instance, as subtract function is not in-built
-    	calendar.add(Calendar.MONTH, -1*months);
-
-    	// Converting the timestamp to milliseconds and adding it to prepared statement list
-    	preparedStmtListTotalServices.add(calendar.getTimeInMillis());
-		
 		return query.toString();
-		
+
 	}
 
+	private long getTimestampMonthsAgo() {
+		int months = Integer.parseInt(config.getNumberOfMonths());
+		return Instant.now().minus(months, ChronoUnit.MONTHS).toEpochMilli();
+	}
 
 
 

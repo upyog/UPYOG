@@ -6,7 +6,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.ndc.config.NDCConfiguration;
 import org.egov.ndc.repository.IdGenRepository;
 import org.egov.ndc.util.NDCConstants;
-import org.egov.ndc.util.NDCUtil;
 import org.egov.ndc.web.model.*;
 import org.egov.ndc.web.model.idgen.IdResponse;
 import org.egov.ndc.web.model.ndc.Application;
@@ -18,7 +17,6 @@ import org.egov.ndc.web.model.workflow.SearchCriteria;
 import org.egov.ndc.web.model.workflow.State;
 import org.egov.ndc.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -29,18 +27,16 @@ import java.util.stream.Collectors;
 @Service
 public class EnrichmentService {
 
-	@Autowired
-	private NDCConfiguration config;
+	private final NDCConfiguration config;
+	private final IdGenRepository idGenRepository;
+	private final WorkflowService workflowService;
 
-	@Autowired
-	private NDCUtil ndcUtil;
-
-	@Autowired
-	private IdGenRepository idGenRepository;
-
-	@Autowired
-	private WorkflowService workflowService;
-
+	public EnrichmentService(NDCConfiguration config, IdGenRepository idGenRepository,
+			WorkflowService workflowService) {
+		this.config = config;
+		this.idGenRepository = idGenRepository;
+		this.workflowService = workflowService;
+	}
 
 	/**
 	 * called on success of the workflow action. setting the staus based on

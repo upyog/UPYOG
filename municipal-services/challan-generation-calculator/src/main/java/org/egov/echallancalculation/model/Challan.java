@@ -12,14 +12,9 @@
 
 package org.egov.echallancalculation.model;
 
-import java.util.Objects;
-
-import org.egov.common.contract.response.ResponseInfo;
 import org.egov.echallancalculation.web.models.calculation.Calculation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +22,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -124,9 +124,16 @@
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-			<id>javaxt.com</id>
-			<url>https://www.javaxt.com/maven</url>
-		</repository>
+            <id>javaxt.com</id>
+            <name>UPYOG Nexus Public</name>
+            <url>https://upyog-nexus.niua.org/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <pluginRepositories>

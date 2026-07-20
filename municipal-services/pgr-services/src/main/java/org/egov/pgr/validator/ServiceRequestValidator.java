@@ -41,6 +41,19 @@ public class ServiceRequestValidator {
      */
     public void validateCreate(ServiceRequest request, Object mdmsData){
         Map<String,String> errorMap = new HashMap<>();
+        if (request.getService() == null) {
+            errorMap.put("SERVICE_MISSING", "Service object is mandatory");
+        } else {
+            if (request.getService().getServiceCode() == null || request.getService().getServiceCode().trim().isEmpty()) {
+                errorMap.put("SERVICE_CODE_MISSING", "serviceCode is mandatory");
+            }
+            if (request.getService().getPriority() == null) {
+                errorMap.put("PRIORITY_MISSING", "priority is mandatory");
+            }
+            if (request.getService().getAddress() == null) {
+                errorMap.put("ADDRESS_MISSING", "address is mandatory");
+            }
+        }
         validateUserData(request,errorMap);
         validateSource(request.getService().getSource());
         validateMDMS(request, mdmsData);

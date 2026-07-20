@@ -5,7 +5,6 @@ import { Link, useLocation } from "react-router-dom";
 import { APPLICATION_PATH } from "../../../utils";
 import getWTAcknowledgementData from "../../../utils/getWTAcknowledgementData";
 
-
 /* This component, WTAcknowledgement, is responsible for displaying the acknowledgement 
  of a service request submission. It utilizes the Digit UI library components for 
  rendering the UI elements. 
@@ -34,11 +33,10 @@ const GetActionMessage = (props) => {
   return t("WT_APPLICATION_FAILED");
 };
 
-
 //style object to pass inside row container which shows the application ID and status of application of banner image
 const rowContainerStyle = {
   padding: "4px 0px",
-  justifyContent: "space-between",
+  justifyContent: "space-between"
 };
 
 const BannerPicker = (props) => {
@@ -48,7 +46,7 @@ const BannerPicker = (props) => {
       applicationNumber={props?.data?.waterTankerBookingDetail?.bookingNo}
       info={props?.isSuccess ? props.t("WT_BOOKING_NO") : ""}
       successful={props?.isSuccess}
-      style={{ width: "100%" }}
+     className="wt-auto-43"
     />
   );
 };
@@ -136,5 +134,4 @@ const WTAcknowledgement = () => {
     </Card>
   );
 };
-
 export default WTAcknowledgement;

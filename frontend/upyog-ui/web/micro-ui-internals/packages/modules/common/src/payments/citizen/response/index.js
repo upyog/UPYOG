@@ -423,7 +423,7 @@ const WrapPaymentComponent = (props) => {
         permissionLetterFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
     }
@@ -579,7 +579,7 @@ const WrapPaymentComponent = (props) => {
           paymentReceiptFilestoreId: response?.filestoreIds[0]
         };
         await mutation.mutateAsync({
-          hallsBookingApplication: updatedApplication
+          venueBookingApplication: updatedApplication
         });
         fileStoreId = response?.filestoreIds[0];
       }

@@ -163,14 +163,6 @@ config:
       - work-dir: "core-services/egov-localization/src/main/resources/db"
         image-name: "egov-localization-db"
 
-  - name: "builds/upyog/core-services/egov-location"
-    build:
-      - work-dir: "core-services/egov-location"
-        image-name: "egov-location"
-        dockerfile: "build/maven/Dockerfile"
-      - work-dir: "core-services/egov-location/src/main/resources/db"
-        image-name: "egov-location-db"
-
   - name: "builds/upyog/core-services/egov-mdms-service"
     build:
       - work-dir: "core-services/egov-mdms-service"
@@ -306,15 +298,7 @@ config:
       - work-dir: "core-services/internal-gateway"
         image-name: "internal-gateway"
         dockerfile: "build/maven/Dockerfile"
-        
-  - name: "builds/upyog/core-services/egov-user-event"
-    build:
-      - work-dir: "core-services/egov-user-event"
-        image-name: "egov-user-event"
-        dockerfile: "build/maven/Dockerfile"
-      - work-dir: "core-services/egov-user-event/src/main/resources/db"
-        image-name: "egov-user-event-db"
-        dockerfile: "build/maven/Dockerfile"       
+      
 
   - name: "builds/upyog/core-services/pdf-service"
     build:
@@ -865,7 +849,7 @@ config:
     build:
       - work-dir: dx-services/requester-services-dx
         image-name: requester-services-dx
-        dockerfile: build/maven/Dockerfile
+        dockerfile: dx-services/requester-services-dx/Dockerfile
 
   - name: "builds/upyog/utilities/apply-workflow"
     build:
@@ -873,7 +857,7 @@ config:
         image-name: "apply-workflow"
         dockerfile: "build/maven/Dockerfile"
         
-  - name: "builds/upyog/municipal-services/adv-services"
+  - name: "builds/upyog/municipal-services/advertisement-services"
     build:
       - work-dir: "municipal-services/advertisement-service"
         image-name: "adv-services"
@@ -930,12 +914,6 @@ config:
         dockerfile: "build/maven/Dockerfile"  
       - work-dir: "municipal-services/asset-calculator/src/main/resources/db"
         image-name: "asset-calculator-db" 
-
-  - name: builds/upyog/frontend/cnd-ui
-    build:
-      - work-dir: frontend/cnd-ui/
-        dockerfile: frontend/cnd-ui/web/docker/Dockerfile
-        image-name: cnd-ui 
   
   - name: "builds/upyog/municipal-services/cnd-service"
     build:
@@ -950,8 +928,6 @@ config:
       - work-dir: 'municipal-services/cnd-calculator'
         image-name: 'cnd-calculator'
         dockerfile: 'build/maven/Dockerfile'
-      - work-dir: "municipal-services/cnd-calculator/src/main/resources/db"
-        image-name: "cnd-calculate-db"
         
   - name: 'builds/upyog/municipal-services/pgr-ai-services'
     build:
@@ -959,7 +935,7 @@ config:
         image-name: 'pgr-ai-services'
         dockerfile: 'build/maven/Dockerfile'
       - work-dir: "municipal-services/pgr-ai-services/src/main/resources/db"
-        image-name: "pgr-ai-services-db"
+        image-name: "pgr-ai-services-db"      
 
   - name: "builds/upyog/municipal-services/tp-services"
     build:
@@ -1032,3 +1008,11 @@ config:
       - work-dir: "upyog-voice-bot"
         image-name: "upyog-voice-bot"
         dockerfile: "upyog-voice-bot/Dockerfile"
+
+  - name: "builds/upyog/municipal-services/garbage-service"
+    build:
+      - work-dir: "municipal-services/garbage-service"
+        image-name: "garbage-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/garbage-service/src/main/resources/db"
+        image-name: "garbage-service-db"

@@ -18,4 +18,6 @@ public class NdcConstants extends CommonConstants {
 
     public static final String OWNERS = "owners";
 
+    public static final String APPLICATION_STATUS = "applicationStatus";
+
 }

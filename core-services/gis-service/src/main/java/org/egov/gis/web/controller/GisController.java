@@ -1,10 +1,10 @@
 package org.egov.gis.web.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.gis.models.GisRequest;
 import org.egov.gis.models.GisResponse;
 import org.egov.gis.service.GisService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/gis/v1")
 @Slf4j
+@RequiredArgsConstructor
 public class GisController {
 
-    @Autowired
-    private GisService gisService;
+    private final GisService gisService;
 
     /**
      * Get entities with point geometry

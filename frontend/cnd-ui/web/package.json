@@ -1,49 +1,48 @@
 {
   "name": "cnd-ui",
-  "version": "1.0.0",
+  "version": "1.7.2",
   "private": true,
   "homepage": "/cnd-ui",
   "workspaces": [
+    "micro-ui-internals/packages/css",
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
-    "micro-ui-internals/packages/modules/cnd"
+    "micro-ui-internals/packages/modules/cnd",
+    "micro-ui-internals/packages/modules/bills",
+    "micro-ui-internals/packages/modules/reports"
   ],
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   },
   "dependencies": {
-    "@nudmcdgnpm/cnd-css": "1.0.0",
+    "@nudmcdgnpm/cnd-css": "1.1.0",
     "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
-    "@upyog/digit-ui-module-bills": "1.8.0",
-    "@upyog/digit-ui-module-common": "1.8.12",
-    "@upyog/digit-ui-module-core": "1.8.2",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.14",
-    "@nudmcdgnpm/upyog-ui-module-cnd":"1.0.1",
-    "babel-loader": "8.1.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-router-dom": "5.3.0",
-    "react-scripts": "4.0.1",
-    "web-vitals": "1.1.2",
-     "terser-brunch": "4.1.0"
+    "@upyog/digit-ui-module-bills": "3.10.0",
+    "@upyog/digit-ui-module-common": "3.10.0",
+    "@upyog/digit-ui-module-core": "3.10.0",
+    "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
+    "@nudmcdgnpm/upyog-ui-module-cnd": "1.0.1",
+    "qrcode": "^1.5.4",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-router-dom": "^6.23.0",
+    "react-i18next": "14.0.0",
+    "i18next": "^23.16.0",
+    "i18next-react-postprocessor": "^3.0.7",
+    "@tanstack/react-query": "^5.0.0",
+    "react-redux": "^9.0.0",
+    "web-vitals": "^3.5.0"
   },
   "devDependencies": {
-    "http-proxy-middleware": "1.3.1"
-   
-  },
-  
-  "resolutions":  {
-    "**/babel-loader": "8.2.2",
-    "**/@babel/core": "7.14.0",
-    "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
-     "minimatch": "^3.1.2",
-    "glob":"7.2.3"
+    "vite": "^6.4.1",
+    "@vitejs/plugin-react": "^4.4.0",
+    "vite-plugin-commonjs": "^0.10.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false SKIP_PREFLIGHT_CHECK=true react-scripts build",
+    "start": "vite --config vite.config.js",
+    "build": "vite build",
+    "preview": "vite preview",
     "build:prepare": "./build.sh"
   },
   "eslintConfig": {
@@ -53,7 +52,7 @@
   },
   "browserslist": [
     ">0.2%",
-   "not dead",
-   "not op_mini all"
- ]
+    "not dead",
+    "not op_mini all"
+  ]
 }

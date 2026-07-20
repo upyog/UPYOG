@@ -42,17 +42,17 @@ public class MDMSValidator {
 	public Map<String, Object> getAttributeValues(Object mdmsData) {
 
 		List<String> modulepaths = Arrays.asList(CalculatorConstants.FSM_JSONPATH_CODE);
-		final Map<String, Object> mdmsResMap = new HashMap<>();
+		final Map<String, Object> attributeValues = new HashMap<>();
 		modulepaths.forEach(modulepath -> {
 			try {
-				mdmsResMap.putAll(JsonPath.read(mdmsData, modulepath));
+				attributeValues.putAll(JsonPath.read(mdmsData, modulepath));
 			} catch (Exception e) {
 				log.error("Error while fetvhing MDMS data", e);
 				throw new CustomException(CalculatorConstants.INVALID_TENANT_ID_MDMS_KEY,
 						CalculatorConstants.INVALID_TENANT_ID_MDMS_MSG);
 			}
 		});
-		return mdmsResMap;
+		return attributeValues;
 	}
 	
 	/**

@@ -7,12 +7,11 @@ import _ from "lodash";
 import { newConfig as newConfigLocal } from "../../../config/wsCreateConfig";
 import { convertApplicationData, convertEditApplicationDetails } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
-
+import "../../../css/ws-inline-auto.css";
 const convertEditApplicationDetails1 = (data, appData, serviceType) => {
   data?.cpt?.details?.owners?.forEach(owner => {
-    if (owner?.permanentAddress) owner.correspondenceAddress = owner?.permanentAddress
+    if (owner?.permanentAddress) owner.correspondenceAddress = owner?.permanentAddress;
   });
-
   let payload = {
     ...appData.applicationData,
     proposedTaps: data?.ConnectionDetails?.[0]?.proposedTaps && Number(data?.ConnectionDetails?.[0]?.proposedTaps),
@@ -72,8 +71,7 @@ const convertEditApplicationDetails1 = (data, appData, serviceType) => {
         noOfToilets: data?.connectionDetails?.[0]?.noOfToilets || appData?.noOfToilets || "",
       },
     tenantId: data?.cpt?.details?.tenantId
-  }
-
+  };
   if (data?.plumberDetails?.[0]?.detailsProvidedBy?.code || appData?.detailsProvidedBy) {
     payload.additionalDetails.detailsProvidedBy = data?.plumberDetails?.[0]?.detailsProvidedBy?.code || appData?.detailsProvidedBy;
     payload.additionalDetails.initialMeterReading = null;
@@ -81,7 +79,6 @@ const convertEditApplicationDetails1 = (data, appData, serviceType) => {
   if (data?.cpt?.details?.address?.locality?.code) {
     payload.additionalDetails.locality = data?.cpt?.details?.address?.locality?.code;
   }
-
   if (data?.plumberDetails?.[0]?.detailsProvidedBy?.code == "ULB") {
     payload.plumberInfo = [
       {
@@ -93,10 +90,7 @@ const convertEditApplicationDetails1 = (data, appData, serviceType) => {
   }
 
   return payload;
-}
-
-
-
+};
 const WSEditApplicationByConfig = () => {
   const { t } = useTranslation();
   let { state } = useLocation();
@@ -106,20 +100,23 @@ const WSEditApplicationByConfig = () => {
   const [canSubmit, setSubmitValve] = useState(false);
   const [showToast, setShowToast] = useState(null);
   const [appData, setAppData] = useState({});
-  const [config, setConfig] = useState({ head: "", body: [] });
+  const [config, setConfig] = useState({
+    head: "",
+    body: []
+  });
   const [enabledLoader, setEnabledLoader] = useState(true);
   const [isAppDetailsPage, setIsAppDetailsPage] = useState(false);
-
   let tenantId = Digit.ULBService.getCurrentTenantId();
   tenantId = tenantId || Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
 
   const applicationNumber = filters?.applicationNumber;
   const editApplicationDetails = JSON.parse(sessionStorage.getItem("WS_EDIT_APPLICATION_DETAILS"));
   const serviceType = filters?.service || editApplicationDetails?.applicationData?.serviceType;
-
   const stateId = Digit.ULBService.getStateId();
-  let { data: newConfig, isLoading: isConfigLoading } = Digit.Hooks.ws.useWSConfigMDMS.WSCreateConfig(stateId, {});
-
+  let {
+    data: newConfig,
+    isLoading: isConfigLoading
+  } = Digit.Hooks.ws.useWSConfigMDMS.WSCreateConfig(stateId, {});
   let details = cloneDeep(state?.data?.applicationDetails);
 
   const shouldFetchDetails =
@@ -149,7 +146,6 @@ const WSEditApplicationByConfig = () => {
     details = applicationDetails;
   }
   const [propertyId, setPropertyId] = useState(new URLSearchParams(useLocation().search).get("propertyId"));
-
   const [sessionFormData, setSessionFormData, clearSessionFormData] = Digit.Hooks.useSessionStorage("PT_CREATE_EMP_WS_NEW_FORM", {});
   const [sessionAhocFormData, setSessionAdhocFormData, clearSessionAdhocFormData] = Digit.Hooks.useSessionStorage("ADHOC_ADD_REBATE_DATA", {});
 
@@ -161,10 +157,12 @@ const WSEditApplicationByConfig = () => {
   useEffect(() => {
     if (!isConfigLoading) {
       // const config = newConfigLocal.find((conf) => conf.hideInCitizen && conf.isEditByConfig);
-      const config = newConfig.find((conf) => conf.hideInCitizen && conf.isEditByConfig);
+      const config = newConfig.find(conf => conf.hideInCitizen && conf.isEditByConfig);
       config.head = "WS_APP_FOR_WATER_AND_SEWERAGE_EDIT_LABEL";
       let bodyDetails = [];
-      config?.body?.forEach(data => { if (data?.isEditByConfigConnection) bodyDetails.push(data); })
+      config?.body?.forEach(data => {
+        if (data?.isEditByConfigConnection) bodyDetails.push(data);
+      });
       config.body = bodyDetails;
       setConfig(config);
     }
@@ -211,7 +209,6 @@ const WSEditApplicationByConfig = () => {
       cpt: { details: propertyDetails?.Properties?.[0] },
     }));
   }, [propertyDetails]);
-
   useEffect(() => {
     if (isError) {
       setEnabledLoader(false);
@@ -231,22 +228,23 @@ const WSEditApplicationByConfig = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (isAppDetailsPage) window.location.href = `${window.location.origin}/upyog-ui/employee/ws/application-details?applicationNumber=${sessionFormData?.ConnectionDetails?.[0]?.applicationNo}&service=${sessionFormData?.ConnectionDetails?.[0]?.serviceName?.toUpperCase()}`
+      if (isAppDetailsPage) window.location.href = `${window.location.origin}/upyog-ui/employee/ws/application-details?applicationNumber=${sessionFormData?.ConnectionDetails?.[0]?.applicationNo}&service=${sessionFormData?.ConnectionDetails?.[0]?.serviceName?.toUpperCase()}`;
     }, 5000);
     return () => clearTimeout(timer);
   }, [isAppDetailsPage]);
-
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
     data: updateResponse,
     error: updateError,
-    mutate,
+    mutate
   } = Digit.Hooks.ws.useWSApplicationActions(serviceType);
-
   const onFormValueChange = (setValue, formData, formState) => {
     if (!_.isEqual(sessionFormData, formData)) {
-      setSessionFormData({ ...sessionFormData, ...formData });
+      setSessionFormData({
+        ...sessionFormData,
+        ...formData
+      });
     }
     if (Object.keys(formState.errors).length > 0 && Object.keys(formState.errors).length == 1 && formState.errors["owners"] && Object.values(formState.errors["owners"].type).filter((ob) => ob.type === "required").length == 0 && !formData?.cpt?.details?.propertyId) setSubmitValve(true);
     else if (formData.ConnectionDetails?.[0]?.water && (formData.roadCuttingDetails?.[0]?.roadType?.code == ""
@@ -307,8 +305,6 @@ const WSEditApplicationByConfig = () => {
 
     window.location.assign(`${window.location.origin}${redirectUrl}`);
   };
-
-
   const closeToast = () => {
     setShowToast(null);
   };
@@ -330,19 +326,10 @@ const WSEditApplicationByConfig = () => {
       <div style={{ marginLeft: "15px" }}>
         <Header>{t(config.head)}</Header>
       </div>
-      <FormComposer
-        config={config.body}
-        userType={"employee"}
-        onFormValueChange={onFormValueChange}
-        // isDisabled={!canSubmit}
-        label={t("CS_COMMON_SUBMIT")}
-        onSubmit={onSubmit}
-        defaultValues={sessionFormData}
-        appData={appData}
-      ></FormComposer>
+      <FormComposer config={config.body} userType={"employee"} onFormValueChange={onFormValueChange}
+    // isDisabled={!canSubmit}
+    label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} defaultValues={sessionFormData} appData={appData}></FormComposer>
       {showToast && <Toast error={showToast.key} label={t(showToast?.message)} warning={showToast?.warning} onClose={closeToast} />}
-    </React.Fragment>
-  );
+    </React.Fragment>);
 };
-
 export default WSEditApplicationByConfig;

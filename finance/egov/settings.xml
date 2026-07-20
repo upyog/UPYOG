@@ -55,7 +55,7 @@
         <mirror>
             <id>nexus</id>
             <mirrorOf>central</mirrorOf>
-			<url>http://nexus-repo.digit.org/nexus/content/groups/public/</url>
+			<url>https://nexus-repo.digit.org/nexus/content/groups/public/</url>
         </mirror>
     </mirrors>
 	<servers>
@@ -64,6 +64,11 @@
             <username>${nexus.user}</username>
             <password>${nexus.password}</password>
         </server>
+        <server>
+            <id>upyog-nexus.niua.org</id>
+            <username>${nexus.user}</username>
+            <password>${nexus.password}</password>
+    </server>
     </servers>
     <pluginGroups>
         <pluginGroup>com.versioneye</pluginGroup>

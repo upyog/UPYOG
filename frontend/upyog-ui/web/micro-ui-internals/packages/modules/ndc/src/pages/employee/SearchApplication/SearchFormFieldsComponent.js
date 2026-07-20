@@ -76,7 +76,7 @@ const SearchFormFieldsComponent = (props) => {
       <SearchField className="submit">
         <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
         <p
-          style={{ marginTop: "24px" }}
+          className="ndc-margin-top-24"
           onClick={() => {
             setValue("applicationNo", null);
             setValue("sourceRefId", null);

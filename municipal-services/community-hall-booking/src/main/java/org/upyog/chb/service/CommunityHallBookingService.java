@@ -6,11 +6,11 @@ import jakarta.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.chb.enums.BookingStatusEnum;
-import org.upyog.chb.web.models.CommunityHallBookingDetail;
-import org.upyog.chb.web.models.CommunityHallBookingRequest;
-import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
-import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
-import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.VenueBookingDetail;
+import org.upyog.chb.web.models.VenueBookingRequest;
+import org.upyog.chb.web.models.VenueBookingSearchCriteria;
+import org.upyog.chb.web.models.VenueSlotAvailabilityResponse;
+import org.upyog.chb.web.models.VenueSlotSearchCriteria;
 
 import digit.models.coremodels.PaymentDetail;
 import lombok.NonNull;
@@ -54,24 +54,83 @@ import lombok.NonNull;
  */
 public interface CommunityHallBookingService {
 
-	CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);
+/**
+	 * Creates a new community hall booking with the provided request payload.
+	 *
+	 * <p>
+	 * This method handles validation, enrichment, and persistence of the booking.
+	 * If a timer hold was active prior to booking creation, it also reconciles the
+	 * final booking id with any existing timer rows.
+	 * </p>
+	 *
+	 * @param communityHallsBookingRequest booking request containing booking details and request metadata
+	 * @return created booking detail
+	 */
+	VenueBookingDetail createBooking(@Valid VenueBookingRequest communityHallsBookingRequest);
 	
-	CommunityHallBookingDetail createInitBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);	
-	
-	List<CommunityHallBookingDetail> getBookingDetails(CommunityHallBookingSearchCriteria bookingSearchCriteria, RequestInfo info);
-
-	CommunityHallBookingDetail updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest, PaymentDetail paymentDetail, BookingStatusEnum bookingStatusEnum);
-
-	CommunityHallSlotAvailabilityResponse getCommunityHallSlotAvailability(CommunityHallSlotSearchCriteria criteria, RequestInfo info);
-
-	Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria, @NonNull RequestInfo requestInfo);
+	/**
+	 * Creates an initial booking during the early booking flow.
+	 *
+	 * @param communityHallsBookingRequest initial booking request payload
+	 * @return created booking detail with initial state
+	 */
+	VenueBookingDetail createInitBooking(@Valid VenueBookingRequest communityHallsBookingRequest);	
 
 	/**
-	 * We are updating booking status synchronously for updating booking status on payment success 
-	 * Deleting the timer entry here after successful update of booking
-	 * @param deleteBookingTimer 
+	 * Retrieves booking details matching the provided search criteria.
+	 *
+	 * @param bookingSearchCriteria criteria used to filter bookings
+	 * @param info                  request metadata and user details
+	 * @return matching booking details
 	 */
-	void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest,
+	List<VenueBookingDetail> getBookingDetails(VenueBookingSearchCriteria bookingSearchCriteria, RequestInfo info);
+
+	/**
+	 * Updates an existing booking based on the provided request and payment details.
+	 *
+	 * @param communityHallsBookingRequest booking request containing updated data
+	 * @param paymentDetail               payment information associated with the booking update
+	 * @param bookingStatusEnum           target booking status
+	 * @return updated booking detail
+	 */
+	VenueBookingDetail updateBooking(@Valid VenueBookingRequest communityHallsBookingRequest, PaymentDetail paymentDetail, BookingStatusEnum bookingStatusEnum);
+
+	/**
+	 * Gets community hall slot availability for the requested criteria.
+	 *
+	 * <p>
+	 * This method evaluates existing bookings, active timer holds, and availability
+	 * rules to return slot details and a possible payment timer value for the
+	 * current request.
+	 * </p>
+	 *
+	 * @param criteria slot search criteria containing hall codes, dates, and timer flags
+	 * @param info     request metadata and authenticated user details
+	 * @return response with available slots, booking statuses, and timer information
+	 */
+	VenueSlotAvailabilityResponse getCommunityHallSlotAvailability(VenueSlotSearchCriteria criteria, RequestInfo info);
+
+	/**
+	 * Returns the number of bookings matching the provided search criteria.
+	 *
+	 * @param criteria    booking search criteria
+	 * @param requestInfo request metadata and user details
+	 * @return count of matching bookings
+	 */
+	Integer getBookingCount(@Valid VenueBookingSearchCriteria criteria, @NonNull RequestInfo requestInfo);
+
+	/**
+	 * 
+	 * Updates booking status synchronously and optionally deletes the associated
+	 * timer entry.
+	 *
+	 * @param communityHallsBookingRequest booking request to update
+	 * @param paymentDetail                optional payment details for the update
+	 * @param status                       booking status to set
+	 * @param deleteBookingTimer           whether to delete the timer entry after
+	 *                                     update
+	 */
+	void updateBookingSynchronously(VenueBookingRequest communityHallsBookingRequest,
 			PaymentDetail paymentDetail, BookingStatusEnum status, boolean deleteBookingTimer);
 	
 }

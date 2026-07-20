@@ -1,0 +1,2 @@
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, isnotleaf, identifier) VALUES (nextval('seq_fund'), 'CF', 'Grants from Central Goverment', 0, NULL, 't', 'f', NULL);
+INSERT INTO fund (id, code, name, llevel, parentid, isactive, isnotleaf, identifier) VALUES (nextval('seq_fund'), 'SF', 'Grants from State Goverment', 0, NULL, 't', 'f', NULL);

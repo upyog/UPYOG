@@ -4,18 +4,13 @@ import {
   LabelFieldPair,
   Dropdown,
   TextInput,
-  LinkButton,
   CardLabelError,
-  MobileNumber,
-  DatePicker,
   Loader,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
-import { useLocation } from "react-router-dom";
-import isUndefined from "lodash/isUndefined";
 import Timeline from "../components/NDCTimeline";
 
 // This component is responsible for rendering the dropdown to select the reason for NDC application. 

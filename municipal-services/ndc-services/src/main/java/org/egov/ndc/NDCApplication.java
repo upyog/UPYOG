@@ -42,7 +42,6 @@ package org.egov.ndc;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.context.annotation.Import;
 /*remove this exclude FlywayAutoConfiguration if you add flywayscripts
 it has been disabled temporarily*/

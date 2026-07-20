@@ -26,7 +26,7 @@ public class Action {
   private String currentState;
 
   @JsonProperty("action")
-  private String action;
+  private String actionCode;
 
   @JsonProperty("nextState")
   private String nextState;

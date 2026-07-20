@@ -1,4 +1,4 @@
-import React, {Fragment} from "react"
+import React, { Fragment } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
 
@@ -121,25 +121,24 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                 </SearchField>
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-                    <p style={{marginTop:"10px"}}
-                     onClick={() => {
-                        reset({ 
-                            acknowledgementIds: "", 
-                            fromDate: "", 
-                            toDate: "",
-                            propertyIds: "",
-                            mobileNumber:"",
-                            status: "",
-                            creationReason: "",
-                            offset: 0,
-                            limit: 10,
-                            sortBy: "commencementDate",
-                            sortOrder: "DESC"
-                        });
-                        setShowToast(null);
-                        previousPage();
-                    }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
+                    <p onClick={() => {
+        reset({
+          acknowledgementIds: "",
+          fromDate: "",
+          toDate: "",
+          propertyIds: "",
+          mobileNumber: "",
+          status: "",
+          creationReason: "",
+          offset: 0,
+          limit: 10,
+          sortBy: "commencementDate",
+          sortOrder: "DESC"
+        });
+        setShowToast(null);
+        previousPage();
+      }} className="pt-auto-11">{t(`ES_COMMON_CLEAR_ALL`)}</p>
                 </SearchField>
-    </>
-}
-export default SearchFields
+    </>;
+};
+export default SearchFields;

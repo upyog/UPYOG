@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 /**
  * This class implements the ResultSetExtractor interface to map rows from a database ResultSet
- * to a list of AdvertisementDraftDetail objects. It focuses on extracting only the draft ID
- * from each row in the ResultSet and populating it into AdvertisementDraftDetail objects.
+ * to a list of AdvertisementSlotAvailabilityDetail objects for slot availability queries.
  */
+@SuppressWarnings("java:S2638")
 @Component
 public class AdvertisementSlotAvailabilityRowMapper implements ResultSetExtractor<List<AdvertisementSlotAvailabilityDetail>> {
 
@@ -21,13 +21,13 @@ public class AdvertisementSlotAvailabilityRowMapper implements ResultSetExtracto
 	public List<AdvertisementSlotAvailabilityDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		List<AdvertisementSlotAvailabilityDetail> availabiltityDetails = new ArrayList<>();
 		while (rs.next()) {
-		
+
 			AdvertisementSlotAvailabilityDetail availabiltityDetail = AdvertisementSlotAvailabilityDetail.builder()
 					.bookingDate(rs.getString("booking_date"))
 					.addType(rs.getString("add_type"))
 					.faceArea(rs.getString("face_area"))
 					.location(rs.getString("location"))
-					.nightLight(rs.getBoolean("night_light")) 
+					.nightLight(rs.getBoolean("night_light"))
 					.slotStaus(rs.getString("status"))
 					.tenantId(rs.getString("tenant_id"))
 					.build();

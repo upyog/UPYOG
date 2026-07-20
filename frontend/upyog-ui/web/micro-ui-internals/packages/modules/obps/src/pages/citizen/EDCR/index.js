@@ -83,7 +83,7 @@ const CreateEDCR = ({ parentRoute }) => {
 
   const onSuccess = () => {
     sessionStorage.removeItem("CurrentFinancialYear");
-    queryClient.invalidateQueries("TL_CREATE_TRADE");
+    queryClient.invalidateQueries({ queryKey: ["TL_CREATE_TRADE"] });
   };
   newConfig = newConfig?.EdcrConfig ? newConfig?.EdcrConfig : newConfigEDCR;
   newConfig.forEach((obj) => {
@@ -119,7 +119,7 @@ const CreateEDCR = ({ parentRoute }) => {
           />
         );
       })}
-      <Route path={`/acknowledgement`} element={<EDCRAcknowledgement data={params} onSuccess={onSuccess} />} />
+      <Route path="acknowledgement" element={<EDCRAcknowledgement data={params} onSuccess={onSuccess} />} />
     </Routes>
   );
 };

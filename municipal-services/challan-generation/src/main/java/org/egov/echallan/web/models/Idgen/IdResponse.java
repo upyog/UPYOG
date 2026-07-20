@@ -1,4 +1,4 @@
-package org.egov.echallan.web.models.Idgen;
+package org.egov.echallan.web.models.idgen;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

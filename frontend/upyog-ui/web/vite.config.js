@@ -171,6 +171,7 @@ import { apiPaths } from "./setupProxy";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const isProd = mode === "production";
@@ -249,6 +250,7 @@ export default defineConfig(({ mode }) => {
   const sharedPackages = [
     path.join(packagesRoot, "libraries"),
     path.join(packagesRoot, "react-components"),
+    path.join(packagesRoot, "css"),
   ];
 
   sharedPackages.filter(pkgDir => fs.existsSync(pkgDir)).forEach(register);
@@ -267,7 +269,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      react(),
+      react()
     ],
 
     root: __dirname,
@@ -285,7 +287,8 @@ export default defineConfig(({ mode }) => {
 
     resolve: {
       alias: moduleAliases,
-      dedupe: ["react", "react-dom", "@tanstack/react-query", "react-router-dom", "i18next", "react-i18next"],
+      preserveSymlinks: true,
+      dedupe: ["react", "react-dom", "@tanstack/react-query", "react-router-dom", "i18next", "react-i18next", "@nudmcdgnpm/digit-ui-react-components"],
     },
 
     esbuild: {
@@ -326,6 +329,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+
 
     optimizeDeps: {
       include: ["react", "react-dom", "react-router-dom", "@tanstack/react-query", "i18next", "react-i18next"],

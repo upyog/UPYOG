@@ -51,8 +51,8 @@ package org.egov.infra.admin.master.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import javax.validation.constraints.NotBlank;
+import org.egov.infra.validation.SanitizeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -77,11 +77,11 @@ public class Role extends AbstractAuditable {
     private Long id;
 
     @NotBlank
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 32)
     private String name;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 150)
     private String description;
 

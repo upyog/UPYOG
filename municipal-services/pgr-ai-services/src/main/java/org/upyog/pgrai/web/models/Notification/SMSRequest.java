@@ -1,4 +1,4 @@
-package org.upyog.pgrai.web.models.Notification;
+package org.upyog.pgrai.web.models.notification;
 
 import lombok.*;
 

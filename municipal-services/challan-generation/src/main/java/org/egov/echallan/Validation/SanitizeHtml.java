@@ -1,4 +1,4 @@
-package org.egov.echallan.Validation;
+package org.egov.echallan.validation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

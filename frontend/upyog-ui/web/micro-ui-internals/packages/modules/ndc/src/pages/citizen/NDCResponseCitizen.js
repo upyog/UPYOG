@@ -35,13 +35,12 @@ const NDCResponseCitizen = (props) => {
     <div>
       <Card>
         <Banner
-          // message={t(`NDC_${stringReplaceAll(nocData?.nocType, ".", "_")}_${stringReplaceAll(nocData?.applicationStatus, ".", "_")}_HEADER`)}
           message={"NDC Application Submitted Successfully"}
           applicationNumber={ndcCode}
           info={nocData?.applicationStatus == "REJECTED" ? "" : t(`NDC_APPROVAL_NUMBER`)}
           successful={nocData?.applicationStatus == "REJECTED" ? false : true}
-          style={{ padding: "10px" }}
-          headerStyles={{ fontSize: "32px", wordBreak: "break-word" }}
+          className="ndc-banner-padding"
+          headerClassName="ndc-banner-header"
         />
         {/* {nocData?.applicationStatus !== "REJECTED" ? (
           <CardText>

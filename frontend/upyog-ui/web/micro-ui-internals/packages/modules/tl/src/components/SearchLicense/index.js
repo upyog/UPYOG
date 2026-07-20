@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from "react"
+import React, { useCallback, useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, Header, SearchField, Dropdown, Table, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
@@ -73,78 +73,59 @@ const SearchLicense = ({tenantId, t, onSubmit, data, count }) => {
                     {row.original["licenseNumber"]}
                   </a>
                 </span>
-              </div>
-            );
-          },
-        },
-        {
-          Header: t("TL_LOCALIZATION_TRADE_NAME"),
-          disableSortBy: true,
-          accessor: (row) => GetCell(row.tradeName || ""),
-        },
-        {
-            Header: t("ES_APPLICATION_SEARCH_ISSUED_DATE"),
-            disableSortBy: true,
-            accessor: (row) => GetCell(row.issuedDate? convertEpochToDateDMY(row.issuedDate) : ""),
-        },
-        {
-            Header: t("ES_APPLICATION_SEARCH_VALID_TO"),
-            disableSortBy: true,
-            accessor: (row) => GetCell(row.validTo? convertEpochToDateDMY(row.validTo) : ""),
-        },
-        {
-            Header: t("TL_HOME_SEARCH_RESULTS__LOCALITY"),
-            disableSortBy: true,
-            // accessor: (row) => GetCell(row.tradeLicenseDetail.address.locality.name || ""),
-            accessor: (row) => GetCell( t(`${stringReplaceAll(row.tenantId?.toUpperCase(), ".", "_")}_REVENUE_${row.tradeLicenseDetail.address.locality.code}`) || ""),
-        },
-        {
-          Header: t("TL_COMMON_TABLE_COL_STATUS"),
-          accessor: (row) =>GetCell(t( row?.workflowCode&&row?.status&&`WF_${row?.workflowCode?.toUpperCase()}_${row.status}`|| "NA") ),
-          disableSortBy: true,
-        }
-      ]), [] )
-
-    return <React.Fragment>
+              </div>);
+    }
+  }, {
+    Header: t("TL_LOCALIZATION_TRADE_NAME"),
+    disableSortBy: true,
+    accessor: row => GetCell(row.tradeName || "")
+  }, {
+    Header: t("ES_APPLICATION_SEARCH_ISSUED_DATE"),
+    disableSortBy: true,
+    accessor: row => GetCell(row.issuedDate ? convertEpochToDateDMY(row.issuedDate) : "")
+  }, {
+    Header: t("ES_APPLICATION_SEARCH_VALID_TO"),
+    disableSortBy: true,
+    accessor: row => GetCell(row.validTo ? convertEpochToDateDMY(row.validTo) : "")
+  }, {
+    Header: t("TL_HOME_SEARCH_RESULTS__LOCALITY"),
+    disableSortBy: true,
+    // accessor: (row) => GetCell(row.tradeLicenseDetail.address.locality.name || ""),
+    accessor: row => GetCell(t(`${stringReplaceAll(row.tenantId?.toUpperCase(), ".", "_")}_REVENUE_${row.tradeLicenseDetail.address.locality.code}`) || "")
+  }, {
+    Header: t("TL_COMMON_TABLE_COL_STATUS"),
+    accessor: row => GetCell(t(row?.workflowCode && row?.status && `WF_${row?.workflowCode?.toUpperCase()}_${row.status}` || "NA")),
+    disableSortBy: true
+    }
+  ]), []);
+  return <React.Fragment>
         <Header>{t("TL_SEARCH_LICENSE")}</Header>
         <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
-          <SearchFields {...{register, control, reset, tenantId, t, previousPage}} />
+          <SearchFields {...{
+        register,
+        control,
+        reset,
+        tenantId,
+        t,
+        previousPage
+      }} />
         </SearchForm>
-        {data?.display ?<Card style={{ marginTop: 20 }}>
-            {
-            t(data.display)
-                .split("\\n")
-                ?.map((text, index) => (
-                <p key={index} style={{ textAlign: "center" }}>
+        {data?.display ? <Card className="tl-auto-7">
+            {t(data.display).split("\\n")?.map((text, index) => <p key={index} className="tl-auto-8">
                     {text}
-                </p>
-                ))
-            }
-        </Card>
-        : data !== "" && <Table
-            t={t}
-            data={data} 
-            totalRecords={count}
-            columns={columns}
-            getCellProps={(cellInfo) => {
-            return {
-                style: {
-                minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-                padding: "20px 18px",
-                fontSize: "16px"
-            },
-            };
-            }}
-            onPageSizeChange={onPageSizeChange}
-            currentPage={getValues("offset")/getValues("limit")}
-            onNextPage={nextPage}
-            onPrevPage={previousPage}
-            pageSizeLimit={getValues("limit")}
-            onSort={onSort}
-            disableSort={false}
-            sortParams={[{id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false}]}
-        />}
-        </React.Fragment>
-}
-
-export default SearchLicense
+                </p>)}
+        </Card> : data !== "" && <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+      return {
+        style: {
+          minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+          padding: "20px 18px",
+          fontSize: "16px"
+        }
+      };
+    }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
+      id: getValues("sortBy"),
+      desc: getValues("sortOrder") === "DESC" ? true : false
+    }]} />}
+        </React.Fragment>;
+};
+export default SearchLicense;

@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@upyog/digit-ui-libraries": "3.10.0",
-    "@nudmcdgnpm/digit-ui-react-components": "4.0.0",
+    "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
     "@nudmcdgnpm/upyog-ui-module-gis": "1.1.0",
     "exifr": "^7.1.3",
     "jspdf": "^2.5.1",

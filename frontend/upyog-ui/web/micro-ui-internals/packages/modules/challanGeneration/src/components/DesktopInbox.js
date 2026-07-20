@@ -104,14 +104,14 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, statutes, ...prop
   ];
 
   let result;
-  if (data?.length === 0) {
+    if (data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="cg-card-margin-top">
         {/* TODO Change localization key */}
         {t("CS_MYAPPLICATIONS_NO_APPLICATION")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="cg-text-center">
               {text}
             </p>
           ))}
@@ -147,7 +147,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, statutes, ...prop
   }
 
   return (
-    <div className="inbox-container" style={{ overflow: "auto" }}>
+    <div className="inbox-container cg-inbox-container-overflow">
       {!props.isSearch && (
         <div className="filters-container">
           <InboxLinks parentRoute={props.parentRoute} businessService={props.businessService} />
@@ -162,7 +162,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, statutes, ...prop
           </div>
         </div>
       )}
-      <div style={{ flex: 1 }}>
+      <div className="cg-flex-1">
         <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
@@ -171,7 +171,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, statutes, ...prop
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         />
-        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className={`result ${!props?.isSearch ? "cg-result-margin-left" : ""} cg-flex-1`}>
           {result}
         </div>
       </div>

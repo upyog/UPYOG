@@ -57,13 +57,14 @@ const CloseBtn = (props) => {
  * Returns:
  * - A modal component with a heading, agreement checkbox, and action buttons for canceling or confirming the booking cancellation.
  */
-const CHBCancelBooking = ({ t, closeModal, actionCancelLabel, actionCancelOnSubmit, actionSaveLabel, actionSaveOnSubmit,onSubmit }) => {
+const CHBCancelBooking = ({ t, closeModal, actionCancelLabel, actionCancelOnSubmit, actionSaveLabel, actionSaveOnSubmit, onSubmit, paymentMode }) => {
     const [agree, setAgree] = useState(false);
     const setdeclarationhandler = () => {
       setAgree(!agree);
     };
 
-    const {handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm();
+    const isOnline = paymentMode === "ONLINE";
 
     return (
         <Modal
@@ -78,6 +79,24 @@ const CHBCancelBooking = ({ t, closeModal, actionCancelLabel, actionCancelOnSubm
         >
             <Card style={{ boxShadow: "none" }}>
                 <form onSubmit={handleSubmit(onSubmit)}>
+                {isOnline && (
+                    <div style={{ marginBottom: "20px" }}>
+                        <p style={{ color: "#505A5F", fontSize: "16px", marginBottom: "12px", lineHeight: "1.5" }}>
+                            {t("CHB_ONLINE_PAYMENT_CANCEL_MSG", "Refund will be initiated to your account since the payment was done online. Cancellation charges may apply as per policy.")}
+                        </p>
+                        <div style={{ marginBottom: "16px" }}>
+                            <label style={{ fontSize: "16px", fontWeight: "bold", display: "block", marginBottom: "8px" }}>
+                                {t("CHB_CANCEL_REASON_LABEL", "Why do you want to cancel?")} <span className="check-page-link-button">*</span>
+                            </label>
+                            <TextArea
+                                name="cancelReason"
+                                inputRef={register({ required: true })}
+                                placeholder={t("CHB_CANCEL_REASON_PLACEHOLDER", "Enter reason for cancellation")}
+                                style={{ width: "100%", minHeight: "80px" }}
+                            />
+                        </div>
+                    </div>
+                )}
                 <CheckBox
                     label={t("CHB_CONFIRM_CANCEL_BOOKING")}
                     onChange={setdeclarationhandler}

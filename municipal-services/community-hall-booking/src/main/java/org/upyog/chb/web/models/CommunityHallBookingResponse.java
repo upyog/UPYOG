@@ -34,13 +34,13 @@ public class CommunityHallBookingResponse   {
 	
 	@JsonProperty("hallsBookingApplication")
 	@Valid
-	private List<CommunityHallBookingDetail> hallsBookingApplication; 
+	private List<VenueBookingDetail> venueBookingApplication; 
 	
-	public void addNewHallsBookingApplication(CommunityHallBookingDetail bookingDetail) {
-		if(this.hallsBookingApplication == null) {
-			this.hallsBookingApplication = new ArrayList<CommunityHallBookingDetail>();
+	public void addNewHallsBookingApplication(VenueBookingDetail bookingDetail) {
+		if(this.venueBookingApplication == null) {
+			this.venueBookingApplication = new ArrayList<VenueBookingDetail>();
 		}
-		this.hallsBookingApplication.add(bookingDetail);
+		this.venueBookingApplication.add(bookingDetail);
 	}
 	
 	private Integer count;

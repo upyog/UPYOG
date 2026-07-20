@@ -217,7 +217,7 @@ export const filterFunctions = {
     const workflowFilters = {};
 
 
-    const { bookingNo, mobileNumber,communityHallCode, limit, offset, sortBy, sortOrder, total, services } = filtersArg || {};
+    const { bookingNo, mobileNumber,venueType, limit, offset, sortBy, sortOrder, total, services } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -228,8 +228,8 @@ export const filterFunctions = {
     if(bookingNo) {   
       searchFilters.bookingNo = bookingNo;
     }
-    if(communityHallCode){
-      searchFilters.communityHallCode = communityHallCode.code;
+    if(venueType){
+      searchFilters.venueType = venueType.code;
     }
 
     if (services) {

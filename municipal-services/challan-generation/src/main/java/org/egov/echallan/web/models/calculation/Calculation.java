@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import org.egov.echallan.model.Challan;
-import org.egov.echallan.Validation.SanitizeHtml;
+import org.egov.echallan.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.constraints.NotNull;

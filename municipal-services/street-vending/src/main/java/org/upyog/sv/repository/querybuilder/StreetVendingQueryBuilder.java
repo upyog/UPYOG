@@ -57,17 +57,26 @@ public class StreetVendingQueryBuilder {
 			+ "LEFT JOIN eg_sv_operation_time_detail opTime ON sv.application_id = opTime.application_id "
 	        + "LEFT JOIN eg_sv_beneficiary_schemes_detail scheme ON sv.application_id = scheme.application_id ";
 
-	private final String ORDERBY_CREATEDTIME = " ORDER BY sv.createdtime DESC ";
+	private static final String ORDER_BY_CREATED_TIME = " ORDER BY sv.createdtime DESC ";
 
-	private static final String applicationsCount = "SELECT count(sv.application_id) "
+	private static final String APPLICATIONS_COUNT = "SELECT count(sv.application_id) "
 			+ " FROM eg_sv_street_vending_detail sv "
 			+ " join eg_sv_vendor_detail vendor on sv.application_id = vendor.application_id  \n";
 
 	public String getStreetVendingSearchQuery(StreetVendingSearchCriteria criteria, List<Object> preparedStmtList) {
+		StringBuilder query = buildBaseQuery(criteria);
+		appendSearchFilters(criteria, query, preparedStmtList);
 
-		StringBuilder query;
 		if (!criteria.isCountCall()) {
-			query = new StringBuilder(BASE_SV_QUERY);
+			query.append(ORDER_BY_CREATED_TIME);
+		}
+
+		return query.toString();
+	}
+
+	private StringBuilder buildBaseQuery(StreetVendingSearchCriteria criteria) {
+		if (!criteria.isCountCall()) {
+			StringBuilder query = new StringBuilder(BASE_SV_QUERY);
 			query.append(VENDOR_SELECT_QUERY);
 			query.append(ADDRESS_SELECT_QUERY);
 			query.append(DOCUMENT_SELECT_QUERY);
@@ -75,92 +84,147 @@ public class StreetVendingQueryBuilder {
 			query.append(OPERATION_TIME_SELECT_QUERY);
 			query.append(BENEFICIARY_SCHEME_SELECT_QUERY);
 			query.append(FROM_TABLES);
-		} else {
-			query = new StringBuilder(applicationsCount);
+			return query;
 		}
+		return new StringBuilder(APPLICATIONS_COUNT);
+	}
 
+	private void appendSearchFilters(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
+		appendTenantIdFilter(criteria, query, preparedStmtList);
+		appendStatusFilter(criteria, query, preparedStmtList);
+		appendApplicationNumberFilter(criteria, query, preparedStmtList);
+		appendApplicationNumbersFilter(criteria, query, preparedStmtList);
+		appendFromDateFilter(criteria, query, preparedStmtList);
+		appendToDateFilter(criteria, query, preparedStmtList);
+		appendCreatedByFilter(criteria, query, preparedStmtList);
+		appendMobileNumberFilter(criteria, query, preparedStmtList);
+		appendVendingTypeFilter(criteria, query, preparedStmtList);
+		appendVendingZoneFilter(criteria, query, preparedStmtList);
+		appendCreatedByFilter(criteria, query, preparedStmtList);
+		appendValidityDateFilter(criteria, query, preparedStmtList);
+		appendVendorPaymentFrequencyFilter(criteria, query, preparedStmtList);
+		appendCertificateNoFilter(criteria, query, preparedStmtList);
+	}
+
+	private void appendTenantIdFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.tenant_id LIKE ? ");
 			preparedStmtList.add("%" + criteria.getTenantId() + "%");
 		}
+	}
+
+	private void appendStatusFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getStatus())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.application_status = ? ");
 			preparedStmtList.add(criteria.getStatus());
 		}
+	}
+
+	private void appendApplicationNumberFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getApplicationNumber())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.application_no = ? ");
 			preparedStmtList.add(criteria.getApplicationNumber());
 		}
+	}
 
+	private void appendApplicationNumbersFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getApplicationNumbers())) {
 			List<String> applicationNumbers = criteria.getApplicationNumbers();
-			addClauseIfRequired(query,preparedStmtList);
+			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.application_no IN (")
 					.append(createQuery(applicationNumbers))
 					.append(")");
 			addToPreparedStatement(preparedStmtList, applicationNumbers);
 		}
+	}
+
+	private void appendFromDateFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getFromDate())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.application_date >= CAST(? AS bigint) ");
 			preparedStmtList.add(criteria.getFromDate());
 		}
+	}
+
+	private void appendToDateFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getToDate())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.application_date <= CAST(? AS bigint) ");
 			preparedStmtList.add(criteria.getToDate());
 		}
+	}
+
+	private void appendCreatedByFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getCreatedBy())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.createdby = ? ");
 			preparedStmtList.add(criteria.getToDate());
 		}
+	}
+
+	private void appendMobileNumberFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getMobileNumber())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" vendor.mobile_no = ? ");
 			preparedStmtList.add(criteria.getMobileNumber());
 		}
+	}
+
+	private void appendVendingTypeFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getVendingType())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.vending_activity = ? ");
 			preparedStmtList.add(criteria.getVendingType());
 		}
+	}
+
+	private void appendVendingZoneFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getVendingZone())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.vending_zone = ? ");
 			preparedStmtList.add(criteria.getVendingZone());
 		}
-		if (!ObjectUtils.isEmpty(criteria.getCreatedBy())) {
-			addClauseIfRequired(query, preparedStmtList);
-			query.append(" sv.createdby = ? ");
-			preparedStmtList.add(criteria.getToDate());
-		}
+	}
+
+	private void appendValidityDateFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getValidityDate())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.validity_date <= ? ");
 			preparedStmtList.add(criteria.getValidityDate());
 		}
-		
+	}
+
+	private void appendVendorPaymentFrequencyFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getVendorPaymentFrequency())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.vendor_payment_frequency <= ? ");
 			preparedStmtList.add(criteria.getVendorPaymentFrequency());
 		}
-		
+	}
+
+	private void appendCertificateNoFilter(StreetVendingSearchCriteria criteria, StringBuilder query,
+			List<Object> preparedStmtList) {
 		if (!ObjectUtils.isEmpty(criteria.getCertificateNo())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.certificate_no <= ? ");
 			preparedStmtList.add(criteria.getCertificateNo());
 		}
-		
-		if (!criteria.isCountCall()) {
-			query.append(ORDERBY_CREATEDTIME);
-		}
-
-		return query.toString();
 	}
 
 	private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {

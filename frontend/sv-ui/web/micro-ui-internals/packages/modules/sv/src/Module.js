@@ -26,8 +26,7 @@ import Caption from "./components/Caption";
 import ViewTimeline from "./components/ViewTimeline";
 import SVSpecialCategory from "./pageComponents/SVSpecialCategory";
 import RenewPopup from "./components/RenewPopup";
-// import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";  this module is not upgraded to latest node version and react version and it is giving error while importing, so commenting out the import and usage of this module for now, will be added once the module is upgraded to latest versions 
-
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
 
 
 const componentsToRegister = {
@@ -50,8 +49,8 @@ const componentsToRegister = {
    ViewTimeline,
    SVSpecialCategory,
    RenewPopup,
-  //  ReportSearchApplication,
-  //  EnhancedReport
+  EnhancedReport,
+  ReportSearchApplication
   };
   
   // function to register the component as per standard 

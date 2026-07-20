@@ -15,10 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -73,9 +70,14 @@ public class RedirectController {
     	{
     		txnId=returnURL.split(PgConstants.PG_TXN_IN_LABEL+"=")[1];
     	}
-    	
 
 
+
+        // additional looger for ICICI posts txnId as 'merchantTxnNo' in formData, not as eg_pg_txnid
+        if (txnId == null && formData.get("merchantTxnNo") != null) {
+            txnId = formData.get("merchantTxnNo").get(0);
+            log.info("txnId resolved from ICICI merchantTxnNo: " + txnId);
+        }
         log.info("returnUrl in redirect::::"+returnURL);
         log.info("txn Id"+txnId);
         log.info("originalreturnurl::::"+originalReturnUrlParam);
@@ -133,6 +135,26 @@ public class RedirectController {
             log.info("NTTDATA redirect before making Call::::"+redirectURL);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
+        }
+        else if (gateway != null && gateway.equalsIgnoreCase("ICICI")) {
+            if (returnURL != null) {
+                // Append eg_pg_txnid so frontend SuccessfulPayment component can call _update API to verify transaction status
+                if (txnId != null && !returnURL.contains("eg_pg_txnid")) {
+                    returnURL = returnURL + (returnURL.contains("?") ? "&" : "?") + "eg_pg_txnid=" + txnId;
+                }
+                log.info("returnUrl in ICICI redirect::::" + returnURL);
+                redirectURL.append(returnURL);
+            } else {
+                log.info("returnUrl is null in ICICI redirect, using default::::" + defaultURL);
+                redirectURL.append(defaultURL);
+            }
+            formData.remove(returnUrlKey);
+            formData.remove("secureHash");
+            formData.remove("merchantId");
+            formData.remove("merchantTxnNo");
+
+            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
+                    .build().encode().toUri());
         }else {
             // Use returnURL if available, otherwise fall back to formData, then defaultURL
             String fallbackUrl = returnURL != null ? returnURL :

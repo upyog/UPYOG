@@ -374,6 +374,13 @@ import useNDCDoc from "./ndc/useNDCDoc";
 
 import useModuleBasePath from "./useModuleBasePath";
 import useCustomNavigate from "./useCustomNavigate";
+
+import useGCCreateAPI from "./gc/useGCCreateAPI";
+import useGCSearch from "./gc/useGCSearch";
+import useTenantsGC from "./gc/useTenants";
+import useGCDocumentSearch from "./gc/useGCDocumentSearch";
+import useGCApplicationAction from "./gc/useGCApplicationAction";
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -754,6 +761,14 @@ const ndc = {
   useNDCDoc
 };
 
+const gc = {
+  useGCCreateAPI,
+  useGCSearch,
+  useTenants: useTenantsGC,
+  useGCDocumentSearch,
+  useGCApplicationAction,
+}
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -828,6 +843,7 @@ const Hooks = {
   cm,
   wt,
   vendor,
+  gc,
   estate,
   useEnabledMDMS,
   useSelectedMDMS,

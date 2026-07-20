@@ -34,7 +34,7 @@ const App = ({ path }) => {
   const NewBuildingPermit = Digit?.ComponentRegistryService?.getComponent("ObpsNewBuildingPermit");
   const OCBuildingPermit = Digit?.ComponentRegistryService?.getComponent("ObpsOCBuildingPermit");
   const StakeholderRegistration = Digit?.ComponentRegistryService?.getComponent("ObpsStakeholderRegistration");
-  const PreApprovedPlan=Digit?.ComponentRegistryService?.getComponent("ObpsPreApprovedPlan")
+  const PreApprovedPlan = Digit?.ComponentRegistryService?.getComponent("ObpsPreApprovedPlan")
   const EdcrInbox = Digit?.ComponentRegistryService?.getComponent("ObpsEdcrInbox");
   const BpaApplicationDetail = Digit?.ComponentRegistryService?.getComponent("ObpsCitizenBpaApplicationDetail");
   const BPASendToArchitect = Digit?.ComponentRegistryService?.getComponent("ObpsBPASendToArchitect");
@@ -45,29 +45,29 @@ const App = ({ path }) => {
   return (
     <React.Fragment>
       <div className="ws-citizen-wrapper">
-       {!location.pathname.includes("response") && !location.pathname.includes("openlink/stakeholder") && !location.pathname.includes("/acknowledgement") && !isDocScreenAfterEdcr && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
-      <Routes>
-        <Route path="/home" element={<PrivateRoute><BPACitizenHomeScreen /></PrivateRoute>} />
-        <Route path="/search/application" element={<PrivateRoute><Search parentRoute={path} /></PrivateRoute>} />
-        <Route path="/search/obps-application" element={<PrivateRoute><Search parentRoute={path} /></PrivateRoute>} />
-        <Route path="/edcrscrutiny/apply/*" element={<PrivateRoute><CreateEDCR /></PrivateRoute>} />
-        <Route path="/edcrscrutiny/oc-apply/*" element={<PrivateRoute><CreateOCEDCR /></PrivateRoute>} />
-        <Route path="/bpa/:applicationType/:serviceType/*" element={<PrivateRoute><NewBuildingPermit /></PrivateRoute>} />
-        <Route path="/ocbpa/:applicationType/:serviceType/*" element={<PrivateRoute><OCBuildingPermit /></PrivateRoute>} />
-        <Route path="/stakeholder/apply/*" element={<PrivateRoute><StakeholderRegistration /></PrivateRoute>} />
-        <Route path="/preApprovedPlan/*" element={<PrivateRoute><PreApprovedPlan /></PrivateRoute>} />
-        <Route path="/openlink/stakeholder/apply/*" element={<StakeholderRegistration />} />
-        <Route path="/my-applications" element={<PrivateRoute><MyApplication /></PrivateRoute>} />
-        <Route path="/bpa/inbox" element={<PrivateRoute><Inbox parentRoute={path} /></PrivateRoute>} />
-        <Route path="/edcr/inbox" element={<PrivateRoute><EdcrInbox parentRoute={path} /></PrivateRoute>} />
-        <Route path="/stakeholder/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
-        <Route path="/bpa/:id" element={<PrivateRoute><BpaApplicationDetail /></PrivateRoute>} />
-        <Route path="/editApplication/bpa/:tenantId/:applicationNo" element={<PrivateRoute><BPASendToArchitect /></PrivateRoute>} />
-        <Route path="/editApplication/ocbpa/:tenantId/:applicationNo" element={<PrivateRoute><OCSendToArchitect /></PrivateRoute>} />
-        <Route path="/sendbacktocitizen/bpa/:tenantId/:applicationNo" element={<PrivateRoute><BPASendBackToCitizen /></PrivateRoute>} />
-        <Route path="/sendbacktocitizen/ocbpa/:tenantId/:applicationNo" element={<PrivateRoute><OCSendBackToCitizen /></PrivateRoute>} />
-        <Route path="/response" element={<PrivateRoute><OBPSResponse /></PrivateRoute>} />
-      </Routes>
+        {!location.pathname.includes("response") && !location.pathname.includes("openlink/stakeholder") && !location.pathname.includes("/acknowledgement") && !isDocScreenAfterEdcr && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
+        <Routes>
+          <Route path="/home" element={<PrivateRoute><BPACitizenHomeScreen /></PrivateRoute>} />
+          <Route path="/search/application" element={<PrivateRoute><Search parentRoute={path} /></PrivateRoute>} />
+          <Route path="/search/obps-application" element={<PrivateRoute><Search parentRoute={path} /></PrivateRoute>} />
+          <Route path="/edcrscrutiny/apply/*" element={<PrivateRoute><CreateEDCR /></PrivateRoute>} />
+          <Route path="/edcrscrutiny/oc-apply/*" element={<PrivateRoute><CreateOCEDCR /></PrivateRoute>} />
+          <Route path="/bpa/:applicationType/:serviceType/*" element={<PrivateRoute><NewBuildingPermit /></PrivateRoute>} />
+          <Route path="/ocbpa/:applicationType/:serviceType/*" element={<PrivateRoute><OCBuildingPermit /></PrivateRoute>} />
+          <Route path="/stakeholder/apply/*" element={<PrivateRoute><StakeholderRegistration /></PrivateRoute>} />
+          <Route path="/preApprovedPlan/*" element={<PrivateRoute><PreApprovedPlan /></PrivateRoute>} />
+          <Route path="/openlink/stakeholder/apply/*" element={<StakeholderRegistration />} />
+          <Route path="/my-applications" element={<PrivateRoute><MyApplication /></PrivateRoute>} />
+          <Route path="/bpa/inbox" element={<PrivateRoute><Inbox parentRoute={path} /></PrivateRoute>} />
+          <Route path="/edcr/inbox" element={<PrivateRoute><EdcrInbox parentRoute={path} /></PrivateRoute>} />
+          <Route path="/stakeholder/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
+          <Route path="/bpa/:id" element={<PrivateRoute><BpaApplicationDetail /></PrivateRoute>} />
+          <Route path="/editApplication/bpa/:tenantId/:applicationNo/*" element={<PrivateRoute><BPASendToArchitect /></PrivateRoute>} />
+          <Route path="/editApplication/ocbpa/:tenantId/:applicationNo/*" element={<PrivateRoute><OCSendToArchitect /></PrivateRoute>} />
+          <Route path="/sendbacktocitizen/bpa/:tenantId/:applicationNo/*" element={<PrivateRoute><BPASendBackToCitizen /></PrivateRoute>} />
+          <Route path="/sendbacktocitizen/ocbpa/:tenantId/:applicationNo/*" element={<PrivateRoute><OCSendBackToCitizen /></PrivateRoute>} />
+          <Route path="/response" element={<PrivateRoute><OBPSResponse /></PrivateRoute>} />
+        </Routes>
       </div>
     </React.Fragment>
   );

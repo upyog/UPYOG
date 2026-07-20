@@ -8,13 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
-import org.egov.ndc.config.NDCConfiguration;
 import org.egov.ndc.repository.ServiceRequestRepository;
 import org.egov.ndc.web.model.*;
 import org.egov.ndc.web.model.ndc.Application;
 import org.egov.ndc.web.model.ndc.NdcApplicationSearchCriteria;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -24,6 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 @Slf4j
 public class UserService {
+
+	private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+	private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 
 	@Value("${egov.user.host}")
 	private String userHost;
@@ -40,14 +41,13 @@ public class UserService {
 	@Value("${egov.user.update.path}")
 	private String userUpdateEndpoint;
 
-	@Autowired
-	private NDCConfiguration config;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final ObjectMapper mapper;
 
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	@Autowired
-	private ObjectMapper mapper;
+	public UserService(ServiceRequestRepository serviceRequestRepository, ObjectMapper mapper) {
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.mapper = mapper;
+	}
 
 	/**
 	 * Call search in user service based on ownerids from criteria
@@ -61,8 +61,7 @@ public class UserService {
 	public UserResponse getUser(NdcApplicationSearchCriteria criteria, RequestInfo requestInfo) {
 		UserSearchRequest userSearchRequest = getUserSearchRequest(criteria, requestInfo);
 		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
-		UserResponse userDetailResponse = userCall(userSearchRequest, uri);
-		return userDetailResponse;
+		return userCall(userSearchRequest, uri);
 	}
 
 	/**
@@ -81,7 +80,6 @@ public class UserService {
 		userSearchRequest.setActive(true);
 		userSearchRequest.setMobileNumber(criteria.getMobileNumber());
 		userSearchRequest.setName(criteria.getName());
-		/* userSearchRequest.setUserType("CITIZEN"); */
 		Set<String> userIds = criteria.getOwnerIds();
 		if (!CollectionUtils.isEmpty(criteria.getOwnerIds()))
 			userSearchRequest.setUuid( new ArrayList<>(userIds));
@@ -108,8 +106,7 @@ public class UserService {
 		try {
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap, dobFormat);
-			UserResponse userDetailResponse = mapper.convertValue(responseMap, UserResponse.class);
-			return userDetailResponse;
+			return mapper.convertValue(responseMap, UserResponse.class);
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
 		}
@@ -129,12 +126,12 @@ public class UserService {
 		if (users != null) {
 			users.forEach(map -> {
 				map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
-				if ((String) map.get("lastModifiedDate") != null)
-					map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+				if ((String) map.get(LAST_MODIFIED_DATE) != null)
+					map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
 				if ((String) map.get("dob") != null)
 					map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
-				if ((String) map.get("pwdExpiryDate") != null)
-					map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+				if ((String) map.get(PWD_EXPIRY_DATE) != null)
+					map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
 			});
 		}
 	}
@@ -156,6 +153,9 @@ public class UserService {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		if (d == null) {
+			return null;
+		}
 		return d.getTime();
 	}
 
@@ -176,9 +176,8 @@ public class UserService {
 							OwnerInfo existingUser = existingUserResponse.getUser().get(0);
 							log.info("User already exists with UUID: " + existingUser.getUuid());
 							owner.setUuid(existingUser.getUuid());
-							setOwnerFields(owner, existingUserResponse, requestInfo);
+							setOwnerFields(owner, existingUserResponse);
 						} else {
-//						  UserResponse userResponse = userExists(owner,requestInfo);
 							StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userCreateEndpoint);
 							setUserName(owner);
 							UserResponse userResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);
@@ -186,7 +185,7 @@ public class UserService {
 								throw new CustomException("INVALID USER RESPONSE", "The user created has uuid as null");
 							}
 							log.info("owner created --> " + userResponse.getUser().get(0).getUuid());
-							setOwnerFields(owner, userResponse, requestInfo);
+							setOwnerFields(owner, userResponse);
 						}
 					} else {
 						UserResponse userResponse = userExists(owner, requestInfo);
@@ -198,7 +197,7 @@ public class UserService {
 						ownerInfo.addUserWithoutAuditDetail(owner);
 						addNonUpdatableFields(ownerInfo, userResponse.getUser().get(0));
 						userResponse = userCall(new CreateUserRequest(requestInfo, ownerInfo), uri);
-						setOwnerFields(owner, userResponse, requestInfo);
+						setOwnerFields(owner, userResponse);
 					}
 				});
 
@@ -237,7 +236,7 @@ public class UserService {
 
 	}
 
-	private void setOwnerFields(OwnerInfo owner, UserResponse userResponse,RequestInfo requestInfo){
+	private void setOwnerFields(OwnerInfo owner, UserResponse userResponse){
 		owner.setUuid(userResponse.getUser().get(0).getUuid());
 		owner.setId(userResponse.getUser().get(0).getId());
 		owner.setUserName((userResponse.getUser().get(0).getMobileNumber()));

@@ -1,0 +1,22 @@
+{
+    "name": "@nudmcdgnpm/digit-ui-module-reports",
+    "version": "1.0.0",
+    "description": "REPORTS",
+    "license": "MIT",
+    "main": "src/Module.js",
+    "source": "src/Module.js",
+
+    "peerDependencies": {
+        "react": "19.2.0",
+        "react-dom": "19.2.0",
+        "@tanstack/react-query": "^5.0.0",
+        "react-i18next": "14.0.0",
+        "react-router-dom": "^6.23.0"
+    },
+
+    "dependencies": {
+        "@nudmcdgnpm/digit-ui-react-components": "4.0.0",
+        "react-hook-form": "^7.51.0",
+        "rooks": "^4.4.0"
+    }
+}

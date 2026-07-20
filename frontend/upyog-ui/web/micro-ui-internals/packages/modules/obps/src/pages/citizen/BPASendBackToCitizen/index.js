@@ -45,21 +45,24 @@ const BPASendBackToCitizen = ({ parentRoute }) => {
 
   const editApplication = window.location.href.includes("editApplication");
 
-  useEffect(async () => {
-    let isAlready = sessionStorage.getItem("BPA_IS_ALREADY_WENT_OFF_DETAILS");
-    isAlready = isAlready ? JSON.parse(isAlready) : true;
-    if (!isAlready && !isNocLoading && !isBpaSearchLoading && !isLoading) {
-      application = bpaData ? bpaData[0] : {};
-      if (bpaData && application && edcrDetails && mdmsData && nocdata) {
-        application = bpaData[0];
-        if (editApplication) {
-          application.isEditApplication = true;
+  useEffect(() => {
+    async function load() {
+      let isAlready = sessionStorage.getItem("BPA_IS_ALREADY_WENT_OFF_DETAILS");
+      isAlready = isAlready ? JSON.parse(isAlready) : true;
+      if (!isAlready && !isNocLoading && !isBpaSearchLoading && !isLoading) {
+        application = bpaData ? bpaData[0] : {};
+        if (bpaData && application && edcrDetails && mdmsData && nocdata) {
+          application = bpaData[0];
+          if (editApplication) {
+            application.isEditApplication = true;
+          }
+          sessionStorage.setItem("bpaInitialObject", JSON.stringify({ ...application }));
+          let bpaEditDetails = await getBPAEditDetails(application, edcrDetails, mdmsData, nocdata, t);
+          setParams({ ...params, ...bpaEditDetails });
         }
-        sessionStorage.setItem("bpaInitialObject", JSON.stringify({ ...application }));
-        let bpaEditDetails = await getBPAEditDetails(application, edcrDetails, mdmsData, nocdata, t);
-        setParams({ ...params, ...bpaEditDetails });
       }
     }
+    load();
   }, [bpaData, edcrDetails, mdmsData, nocdata]);
 
 
@@ -75,7 +78,7 @@ const BPASendBackToCitizen = ({ parentRoute }) => {
   }
 
   const onSuccess = () => {
-    queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+    queryClient.invalidateQueries({ queryKey: ["PT_CREATE_PROPERTY"] });
   };
   const createApplication = async () => {
     navigate(`${basePath}/acknowledgement`);
@@ -115,14 +118,14 @@ const BPASendBackToCitizen = ({ parentRoute }) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route
-            path={`${basePath}/${routeObj.route}`}
+            path={routeObj.route}
             key={index}
             element={<Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} />}
           />
         );
       })}
-      <Route path={`${basePath}/check`} element={<CheckPage onSubmit={createApplication} value={params} />} />
-      <Route path={`${basePath}/acknowledgement`} element={<OBPSAcknowledgement data={params} onSuccess={onSuccess} />} />
+      <Route path="check" element={<CheckPage onSubmit={createApplication} value={params} />} />
+      <Route path="acknowledgement" element={<OBPSAcknowledgement data={params} onSuccess={onSuccess} />} />
       <Route path="*" element={<Navigate to={`${basePath}/${config.indexRoute}`} replace />} />
     </Routes>
   );

@@ -1,7 +1,6 @@
-import { AppContainer, BackButton, PrivateRoute, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { Route, Switch, useRouteMatch, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { Route, Routes } from "react-router-dom";
 import Inbox from "./Inbox";
 import SearchApp from "./SearchApp";
 import { cndStyles } from "../../utils/cndStyles";
@@ -10,8 +9,7 @@ import { cndStyles } from "../../utils/cndStyles";
  * Contains routes for every page there is to redirect in the employee side
  * Contains breadcrumbs for each page
  */
-const EmployeeApp = () => {
-  const { path, url, ...match } = useRouteMatch();
+const EmployeeApp = ({ path, url }) => {
 
   const inboxInitialState = {
     searchParams: {
@@ -31,35 +29,35 @@ const EmployeeApp = () => {
 
   return (
     <span className={"cnd-citizen"} style={cndStyles.wasteQuantityCitizen}>
-      <Switch>
-        <AppContainer>
-          <BackButton style={cndStyles.backButton}>Back</BackButton>
-          <PrivateRoute
-            path={`${path}/inbox`}
-            component={() => (
-              <Inbox
-                useNewInboxAPI={true}
-                parentRoute={path}
-                businessService="cnd"
-                filterComponent="CND_INBOX_FILTERS"
-                initialStates={inboxInitialState}
-                isInbox={true}
-              />
-            )}
+      <AppContainer>
+        <BackButton style={cndStyles.backButton}>Back</BackButton>
+        <Routes>
+          <Route
+            path="inbox"
+            element={
+              <PrivateRoute>
+                <Inbox
+                  useNewInboxAPI={true}
+                  parentRoute={path}
+                  businessService="cnd"
+                  filterComponent="CND_INBOX_FILTERS"
+                  initialStates={inboxInitialState}
+                  isInbox={true}
+                />
+              </PrivateRoute>
+            }
           />
-          <PrivateRoute path={`${path}/apply`} component={CndCreate} />
-          <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/cnd-service/edit/:id`} component={() => <EditCreate parentUrl={url} />} />
-          <PrivateRoute path={`${path}/edit-response`} component={(props) => <EditResponse {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/my-request`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/cnd-service/facility-centre/:id`} component={() => <FacilityCentreCreationDetails parentUrl={url} />} />
-          <PrivateRoute path={`${path}/facility-response`} component={(props) => <FacilitySubmissionResponse {...props} parentRoute={path} />} />
-
-          <PrivateRoute path={`${path}/CNDApplicationReport`} component={(props) => <EnhancedReport {...props} parentRoute={path} moduleName="rainmaker-CND" reportName="CNDApplicationReport" />} />
-
-        </AppContainer>
-      </Switch>
+          <Route path="apply/*" element={<PrivateRoute><CndCreate /></PrivateRoute>} />
+          <Route path="application-details/:id" element={<PrivateRoute><ApplicationDetails parentRoute={path} /></PrivateRoute>} />
+          <Route path="applicationsearch/application-details/:id" element={<PrivateRoute><ApplicationDetails parentRoute={path} /></PrivateRoute>} />
+          <Route path="cnd-service/edit/:id" element={<PrivateRoute><EditCreate parentUrl={url} /></PrivateRoute>} />
+          <Route path="edit-response" element={<PrivateRoute><EditResponse parentRoute={path} /></PrivateRoute>} />
+          <Route path="my-request" element={<PrivateRoute><SearchApp parentRoute={path} /></PrivateRoute>} />
+          <Route path="cnd-service/facility-centre/:id" element={<PrivateRoute><FacilityCentreCreationDetails parentUrl={url} /></PrivateRoute>} />
+          <Route path="facility-response" element={<PrivateRoute><FacilitySubmissionResponse parentRoute={path} /></PrivateRoute>} />
+          <Route path="CNDApplicationReport" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-CND" reportName="CNDApplicationReport" /></PrivateRoute>} />
+        </Routes>
+      </AppContainer>
     </span>
   );
 };

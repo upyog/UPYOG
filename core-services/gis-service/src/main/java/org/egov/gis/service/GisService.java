@@ -1,14 +1,13 @@
 package org.egov.gis.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.gis.interfaces.MunicipalServiceAdapter;
 import org.egov.gis.models.Entity;
 import org.egov.gis.models.GisRequest;
 import org.egov.gis.models.GisResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +16,10 @@ import java.util.Map;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class GisService {
 
-    @Autowired
-    private ServiceRegistry serviceRegistry;
+    private final ServiceRegistry serviceRegistry;
 
     /**
      * Fetches entities with point geometry

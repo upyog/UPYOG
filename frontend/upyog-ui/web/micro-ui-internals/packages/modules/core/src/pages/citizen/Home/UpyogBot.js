@@ -1,5 +1,5 @@
 // React core and useState hook for managing chatbot open/close state
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 // Chatbot launcher logo image
 import logo from "./logo.png";
 // CSS keyframe animations and inline style objects for the chatbot UI
@@ -18,15 +18,45 @@ import { animations, styles } from "./UpyogBotStyles";
  */
 
 function UpyogBot() {
-  // Controls whether the chatbot popup is visible
+  /* Controls whether the chatbot popup is visible */
   const [isOpen, setIsOpen] = useState(false);
 
-  // Toggles the chatbot open/closed on launcher button click
+  /*
+   * Ref to access the iframe DOM element directly.
+   * Required to call postMessage on the iframe's contentWindow.
+   */
+  const iframeRef = useRef(null);
+
+  /*
+   * Called automatically by the browser when the iframe finishes loading.
+   * Reads the currently logged-in user's session from niautt's UserService
+   * and sends it into the iframe via postMessage.
+   * The chatbot (index.html) listens for this message and stores the RequestInfo
+   * to attach it to every /chat API request — following the standard niautt API contract.
+   */
+  const handleIframeLoad = () => {
+    const user = Digit.UserService.getUser();
+    iframeRef.current?.contentWindow?.postMessage(
+      {
+        /* type is used by index.html to identify this message */
+        type: "INIT_DATA",
+        RequestInfo: {
+          apiId: "Rainmaker",          /* standard niautt API identifier */
+          authToken: user?.access_token || "",   /* logged-in user's auth token */
+          userInfo: user?.info || {},            /* user details (id, name, roles, tenantId etc.) */
+          plainAccessRequest: {},                /* required by niautt API contract */
+        },
+      },
+      "*" /* target origin — restrict to specific domain in production if needed */
+    );
+  };
+
+  /* Toggles the chatbot open/closed on launcher button click */
   const toggleChatbot = () => {
     setIsOpen(!isOpen);
   };
 
-  // Closes the chatbot popup when the close button is clicked
+  /* Closes the chatbot popup when the close button is clicked */
   const handleChatbotClose = () => {
     setIsOpen(false);
   };
@@ -94,11 +124,16 @@ function UpyogBot() {
 
           {/*
            * Embedded UPYOG voice assistant.
-           * `allow="microphone"` grants the iframe permission to access
-           * the user's microphone for speech-to-text interaction.
+           * ref    → gives access to iframe DOM so postMessage can be called on it.
+           * src    → voice bot URL from UpyogBotService (/upyog-voice-bot).
+           * onLoad → triggers handleIframeLoad once the chatbot page is fully loaded,
+           *          which sends the user's RequestInfo into the iframe via postMessage.
+           * allow  → grants microphone permission for speech-to-text.
            */}
           <iframe
+            ref={iframeRef}
             src={Digit.UpyogBotService.url()}
+            onLoad={handleIframeLoad}
             title="UPYOG Chatbot"
             style={styles.iframe}
             allow="microphone"

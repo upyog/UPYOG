@@ -108,9 +108,7 @@ public class WorkflowIntegrator {
 		JSONObject workFlowRequest = new JSONObject();
 		workFlowRequest.put(REQUESTINFOKEY, ndcRequest.getRequestInfo());
 		workFlowRequest.put(WORKFLOWREQUESTARRAYKEY, array);
-		System.out.println("===========================");
-		System.out.println(workFlowRequest);
-		System.out.println("==============================");
+		log.debug("Workflow request payload: {}", workFlowRequest);
 		String response = null;
 		try {
 			response = rest.postForObject(config.getWfHost().concat(config.getWfTransitionPath()), workFlowRequest,

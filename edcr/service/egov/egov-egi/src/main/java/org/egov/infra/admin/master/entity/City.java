@@ -49,7 +49,6 @@
 package org.egov.infra.admin.master.entity;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.infra.admin.master.entity.City.QUERY_CITY_BY_URL;
 import static org.egov.infra.admin.master.entity.City.SEQ_CITY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CAPTCHA_PRIV_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CAPTCHA_PUB_KEY;
@@ -85,7 +84,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -98,13 +96,12 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import javax.validation.constraints.NotBlank;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Entity
 @Unique(fields = "domainURL", enableDfltMsg = true)
 @Table(name = "eg_city")
-@NamedQuery(name = QUERY_CITY_BY_URL, query = "Select cw FROM City cw WHERE cw.domainURL=:domainURL")
 @SequenceGenerator(name = SEQ_CITY, sequenceName = SEQ_CITY, allocationSize = 1)
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class City extends AbstractAuditable {
@@ -116,36 +113,36 @@ public class City extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_CITY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotBlank
     private String name;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotBlank
     private String localName;
 
     private boolean active;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotBlank
     private String domainURL;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotBlank
     private String code;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotBlank
     private String districtCode;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotBlank
     private String districtName;
 
-    @SafeHtml
+    @SanitizeHtml
     private String regionName;
 
-    @SafeHtml
+    @SanitizeHtml
     private String grade;
 
     private Float longitude;

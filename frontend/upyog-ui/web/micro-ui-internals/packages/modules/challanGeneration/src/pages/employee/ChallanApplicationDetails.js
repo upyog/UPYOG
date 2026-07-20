@@ -42,7 +42,7 @@ const getTimelineCaptions = (checkpoint, index, arr, t) => {
       {comment?.length > 0 && (
         <div className="TLComments">
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p style={{ overflowX: "scroll" }}>{comment}</p>
+          <p className="cg-overflow-x-scroll">{comment}</p>
         </div>
       )}
 
@@ -56,7 +56,7 @@ const getTimelineCaptions = (checkpoint, index, arr, t) => {
         </div>
       )}
 
-      <div style={{ marginTop: "8px" }}>
+      <div className="cg-margin-top-8">
         {caption.date && <p>{caption.date}</p>}
         {caption.name && <p>{caption.name}</p>}
         {caption.source && <p>{t("ES_COMMON_FILED_VIA_" + caption?.source?.toUpperCase())}</p>}

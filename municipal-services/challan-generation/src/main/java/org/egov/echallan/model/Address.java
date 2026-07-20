@@ -15,7 +15,7 @@ package org.egov.echallan.model;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
-import org.egov.echallan.Validation.SanitizeHtml;
+import org.egov.echallan.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
