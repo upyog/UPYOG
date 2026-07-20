@@ -124,6 +124,11 @@ public class DcrSvgStyleGenerator {
 
         SVGUtils.addAttribute(attr, "font-family", fontFamily);
         SVGUtils.addAttribute(attr, "font-face", "Regular");
+        /*
+           FIX: Add units-per-em parameter. SVG font face definitions need a units-per-em value
+           to render correctly in SVG-to-PDF engines (like Kabeja's built-in Batik PDF Transcoder).
+         */
+        SVGUtils.addAttribute(attr, "units-per-em", "2048");
         SVGUtils.startElement(handler, "font-face", attr);
         attr = new AttributesImpl();
         SVGUtils.startElement(handler, "font-face-src", attr);
@@ -240,6 +245,11 @@ public class DcrSvgStyleGenerator {
             SVGUtils.addAttribute(attr, "font-family", family);
             SVGUtils.addAttribute(attr, "font-style", "normal");
             SVGUtils.addAttribute(attr, "font-weight", "normal");
+            /*
+               FIX: Add units-per-em parameter. SVG font face definitions need a units-per-em value
+               to render correctly in SVG-to-PDF engines (like Kabeja's built-in Batik PDF Transcoder).
+             */
+            SVGUtils.addAttribute(attr, "units-per-em", "2048");
             SVGUtils.startElement(handler, "font-face", attr);
             attr = new AttributesImpl();
             SVGUtils.startElement(handler, "font-face-src", attr);
@@ -354,6 +364,14 @@ public class DcrSvgStyleGenerator {
             return "";
         }
         String value = fontRef.trim();
+        /*
+           FIX: Remove vertical font prefix '@' (e.g. '@Arial Unicode MS').
+           CAD programs prefix vertical font styles with '@', which causes text to render rotated
+           sideways or incorrectly encoded in the final PDF.
+         */
+        if (value.startsWith("@")) {
+            value = value.substring(1).trim();
+        }
         int slash = Math.max(value.lastIndexOf('/'), value.lastIndexOf('\\'));
         if (slash >= 0 && slash < value.length() - 1) {
             value = value.substring(slash + 1);
