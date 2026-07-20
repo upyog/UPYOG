@@ -406,16 +406,39 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
 
        Iterator i = block.getDXFEntitiesIterator();
 
-       while (i.hasNext()) {
-           DXFEntity entity = (DXFEntity) i.next();
+        while (i.hasNext()) {
+            DXFEntity entity = (DXFEntity) i.next();
 
-           try {
-               SVGSAXGenerator gen = manager.getSVGGenerator(entity.getType());
-               gen.toSAX(handler, this.context, entity, transformContext);
-           } catch (SVGGenerationException e) {
-               e.printStackTrace();
-           }
-       }
+            if (this.singlePdfMode) {
+                String type = entity.getType();
+                /*
+                  FIX: Strip styling values from text objects to prevent Kabeja rendering anomalies.
+                  1. Reset lineweight to -1 to prevent thick, unreadable texts.
+                  2. Set thickness to 0 to prevent 3D extrusion rendering errors in 2D PDF output.
+                  3. Reset Aligned (3) and Fit (5) text alignments to standard Left (0) alignment if they
+                     have malformed/zeroed alignment points, avoiding vertical/horizontal text stretching.
+                 */
+                if (org.kabeja.dxf.DXFConstants.ENTITY_TYPE_TEXT.equals(type) || org.kabeja.dxf.DXFConstants.ENTITY_TYPE_MTEXT.equals(type)) {
+                    entity.setLineWeight(-1);
+                    if (entity instanceof org.kabeja.dxf.DXFText) {
+                        org.kabeja.dxf.DXFText text = (org.kabeja.dxf.DXFText) entity;
+                        text.setThickness(0d);
+                        if (text.getAlign() == 3 || text.getAlign() == 5) {
+                            text.setAlign(0);
+                        }
+                    } else if (entity instanceof org.kabeja.dxf.DXFMText) {
+                        ((org.kabeja.dxf.DXFMText) entity).setThickness(0d);
+                    }
+                }
+            }
+
+            try {
+                SVGSAXGenerator gen = manager.getSVGGenerator(entity.getType());
+                gen.toSAX(handler, this.context, entity, transformContext);
+            } catch (SVGGenerationException e) {
+                e.printStackTrace();
+            }
+        }
 
        SVGUtils.endElement(handler, SVGConstants.SVG_GROUP);
    }
@@ -842,10 +865,18 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
                            if (isTextType) {
                                // Drop aggressive text lineweight/thickness before Kabeja serializes to SVG paths.
                                entity.setLineWeight(-1);
-                               if (entity instanceof DXFText) {
-                                   ((DXFText) entity).setThickness(0d);
-                               } else if (entity instanceof DXFMText) {
-                                   ((DXFMText) entity).setThickness(0d);
+                                if (entity instanceof DXFText) {
+                                    DXFText text = (DXFText) entity;
+                                    text.setThickness(0d);
+                                    /*
+                                      Kabeja dynamically scales text bounds for Aligned (3) and Fit (5) alignments.
+                                      If the DXF alignment point is malformed (e.g. 0,0), it stretches the text massively across the page.
+                                     */
+                                    if (text.getAlign() == 3 || text.getAlign() == 5) {
+                                        text.setAlign(0);
+                                    }
+                                } else if (entity instanceof org.kabeja.dxf.DXFMText) {
+                                   ((org.kabeja.dxf.DXFMText) entity).setThickness(0d);
                                }
                            }
                            boolean v = entity.isVisibile();
@@ -863,8 +894,15 @@ public class DcrSvgGenerator extends AbstractSAXGenerator {
                            //restore back the flag
                            entity.setVisibile(v);
                         } catch (Throwable t) {
-                            // Catch and log rendering errors for individual entities (e.g., bad MLines) to prevent crashes
-                            LOG.error("Failed to generate SVG for entity " + entity.getID() + " of type " + type, t);
+                           /*
+                               FIX: Gracefully handle parsing failures for individual entities (e.g., malformed MLINE elements)
+                               to prevent the entire PDF generation from crashing.
+                            */
+                             if (t instanceof ArrayIndexOutOfBoundsException && "MLINE".equals(type)) {
+                                 LOG.warn("Skipping malformed MLINE entity {} due to Kabeja parsing error: {}", entity.getID(), t.getMessage());
+                             } else {
+                                 LOG.warn("Failed to generate SVG for entity {} of type {}: {}", entity.getID(), type, t.getMessage());
+                             }
                         }
                    }
                } catch (SVGGenerationException e) {
