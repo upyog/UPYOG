@@ -69,9 +69,12 @@ const extractAssetDataFromSession = (data = {}) =>
   data?.Assetdata ||
   {};
 
+const toFormTextValue = (value) =>
+  value === undefined || value === null || value === "" ? "" : String(value);
+
 const toFlatAssetForPayload = (assetData = {}) => ({
   ...assetData,
-  buildingFloor: assetData.buildingFloor ?? assetData.floor ?? "",
+  buildingFloor: toFormTextValue(assetData.buildingFloor ?? assetData.floor),
   buildingName: assetData.buildingName || assetData.assetName || "",
   serviceType:
     assetData.localityCode ||
@@ -95,7 +98,7 @@ export const mapAssetToRegistrationPrefill = (asset = {}) => {
   return {
     buildingName: flat.buildingName || "",
     buildingNo: flat.buildingNo || "",
-    buildingFloor: flat.buildingFloor || "",
+    buildingFloor: toFormTextValue(flat.buildingFloor ?? flat.floor),
     buildingBlock: flat.buildingBlock || "",
     totalFloorArea: flat.totalFloorArea ?? "",
     dimensionLength: flat.dimensionLength ?? "",
@@ -106,6 +109,43 @@ export const mapAssetToRegistrationPrefill = (asset = {}) => {
     serviceType: flat.serviceType || "",
     serviceTypeName: flat.serviceTypeName || "",
     city: flat.tenantId || flat.city || "",
+  };
+};
+
+const buildAssetSearchCriteria = (tenantId, criteria = {}) => ({
+  AssetSearchCriteria: {
+    tenantId,
+    ...criteria,
+  },
+});
+
+/** Search estate assets by reference asset no, then estate no (exact match API). */
+export const searchExistingEstateAssets = async (assetNumber, tenantId) => {
+  const query = String(assetNumber || "").trim();
+  if (!query || !tenantId) return [];
+
+  const runSearch = async (criteria) => {
+    const response = await Digit.ESTService.assetSearch({
+      tenantId,
+      filters: buildAssetSearchCriteria(tenantId, criteria),
+    });
+    return Array.isArray(response?.Assets) ? response.Assets : [];
+  };
+
+  const byRef = await runSearch({ refAssetNo: query });
+  if (byRef.length) return byRef;
+
+  return runSearch({ estateNo: query });
+};
+
+/** Shape API asset rows for DynamicForm existing-asset lookup UI. */
+export const mapAssetSearchToRegistrationMatch = (asset = {}) => {
+  const label = asset.refAssetNo || asset.estateNo || "";
+  return {
+    estateNo: label,
+    label,
+    subtitle: asset.buildingName || asset.assetName || "",
+    prefill: mapAssetToRegistrationPrefill(asset),
   };
 };
 

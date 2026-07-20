@@ -50,12 +50,7 @@ const ESTCard = () => {
   };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        padding: isMobile ? "10px" : "20px",
-      }}
-    >
+    <div style={{ width: "100%" }}>
       <EmployeeModuleCard {...propsForModuleCard} />
     </div>
   );

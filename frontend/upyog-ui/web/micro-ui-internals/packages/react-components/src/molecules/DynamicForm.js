@@ -376,9 +376,13 @@ const DynamicForm = ({
     [onFieldSearch, formData, t]
   );
 
-  // Live typeahead for asset application-no lookup while user types.
+  // Optional live typeahead — off by default; estate asset search uses exact match on Enter/button.
   useEffect(() => {
     if (String(formData.assetRegistrationType || "").toUpperCase() !== "EXISTING_ASSET") {
+      return undefined;
+    }
+    const searchField = flatFields.find((fc) => fc?.field?.name === "searchEstateNo");
+    if (searchField?.field?.searchTypeahead !== true) {
       return undefined;
     }
     if (suppressSuggestRef.current) {
@@ -396,7 +400,12 @@ const DynamicForm = ({
       handleFieldSearch("searchEstateNo", query);
     }, 250);
     return () => clearTimeout(timer);
-  }, [formData.searchEstateNo, formData.assetRegistrationType, handleFieldSearch]);
+  }, [
+    formData.searchEstateNo,
+    formData.assetRegistrationType,
+    handleFieldSearch,
+    flatFields,
+  ]);
 
   const handleSelectSearchResult = useCallback(
     (fieldName, match) => {

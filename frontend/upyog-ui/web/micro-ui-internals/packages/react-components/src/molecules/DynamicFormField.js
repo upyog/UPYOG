@@ -267,6 +267,12 @@ const DynamicFormField = ({
                 if (validation.maxLength) val = val.slice(0, validation.maxLength);
                 onChange(name, val);
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  onFieldSearch?.(name);
+                }
+              }}
               disabled={isDisabled || validation.disabled}
               readOnly={validation.readOnly}
               errorStyle={hasError}

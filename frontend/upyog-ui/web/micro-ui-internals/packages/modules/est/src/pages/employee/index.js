@@ -1,4 +1,4 @@
-import { PrivateRoute, BreadCrumb, AppContainer } from "@nudmcdgnpm/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb, AppContainer, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route, useLocation } from "react-router-dom";
@@ -6,6 +6,7 @@ import { ESTLinks } from "../../Module";
 import SearchApp from "./SearchApp";
 import ESTRegCreate from "./Create";
 import ESTAssignAssetCreate from "./Create/AssignAssetIndex";
+import layoutStyles from "../../styles/estEmployeeLayout.module.scss";
 
 const EmployeeApp = ({ path }) => {
   const { t } = useTranslation();
@@ -44,20 +45,34 @@ const EmployeeApp = ({ path }) => {
     },
   ];
 
+  const hideNav =
+    location.pathname.includes("/acknowledgement") ||
+    location.pathname.includes("/response");
+
   return (
     <AppContainer>
-      <div className="ground-container" style={{ padding: isMobile ? "10px" : "20px" }}>
-        <div style={{ marginLeft: isMobile ? "0" : "-4px", display: "flex", alignItems: "center" }}>
-          <BreadCrumb
-            style={
-              isMobile
-                ? { display: "flex", fontSize: "12px", padding: "5px" }
-                : { margin: "0 0 4px", color: "#000000" }
-            }
-            spanStyle={{ maxWidth: "min-content" }}
-            crumbs={crumbs}
-          />
-        </div>
+      <div className={layoutStyles.estEmployeeLayout}>
+        {!hideNav ? (
+          <div
+            style={{
+              marginLeft: isMobile ? "0" : "-4px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <BackButton location={location} />
+            <span style={{ margin: "0 5px 16px", display: "inline-block" }}>|</span>
+            <BreadCrumb
+              style={
+                isMobile
+                  ? { display: "flex", fontSize: "12px", padding: "5px" }
+                  : { margin: "0 0 4px", color: "#000000" }
+              }
+              spanStyle={{ maxWidth: "min-content" }}
+              crumbs={crumbs}
+            />
+          </div>
+        ) : null}
         <Routes>
           <Route path="/*" element={<PrivateRoute><ESTLinks /></PrivateRoute>} />
           <Route path="search-applications/*" element={<PrivateRoute><SearchApp parentRoute={path} /></PrivateRoute>} />

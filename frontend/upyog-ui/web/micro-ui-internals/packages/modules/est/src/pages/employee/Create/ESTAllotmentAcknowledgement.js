@@ -171,7 +171,7 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
       )}
 
       {isSuccess && paymentPath && (
-        <Link to={paymentPath}>
+        <Link style={{marginLeft: "10px"}}  to={paymentPath}>
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
         </Link>
       )}

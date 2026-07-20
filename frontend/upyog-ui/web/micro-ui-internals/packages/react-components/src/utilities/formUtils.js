@@ -336,14 +336,21 @@ export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = 
       return;
     }
 
-    const raw = rawAsset[name];
+    const raw =
+      rawAsset[name] ??
+      (item.apiFieldName ? rawAsset[item.apiFieldName] : undefined);
     const isEmpty = raw === undefined || raw === null || raw === "";
     if (isEmpty && field.prefillFrom) {
       const fromVal = rawAsset[field.prefillFrom];
       result[name] = fromVal !== undefined && fromVal !== null ? fromVal : "";
       return;
     }
-    result[name] = raw ?? "";
+    result[name] =
+      raw === undefined || raw === null
+        ? ""
+        : typeof raw === "number"
+          ? String(raw)
+          : raw;
   });
 
   return result;

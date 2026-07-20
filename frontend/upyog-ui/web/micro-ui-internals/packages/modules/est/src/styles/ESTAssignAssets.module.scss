@@ -1,4 +1,11 @@
 .estAssignAssets {
+  margin-top: 0;
+
+  :global(header.h1) {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
   :global(.action-bar-wrap) {
     button {
       margin-left: 10px;

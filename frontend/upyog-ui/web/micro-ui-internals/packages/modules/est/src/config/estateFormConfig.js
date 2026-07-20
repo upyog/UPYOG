@@ -71,10 +71,19 @@ const estateComputedFields = [
 //   apiFieldName: "floor",
 // }
 
+const estateFormFieldOverrides = [
+  {
+    key: "EST_BUILDING_FLOOR",
+    field: { name: "buildingFloor", type: "text", numeric: true },
+    apiFieldName: "floor",
+  },
+];
+
 export default {
   crossFieldValidations: estateCrossFieldValidations,
   payloadKey: "Assets",
   apiId: "Rainmaker",
+  form: estateFormFieldOverrides,
   staticFields: (tenantId, flatData) => estateStaticFields(flatData),
   computedFields: estateComputedFields,
   editPayloadExtras: (editData) => ({ estateNo: editData.estateNo }),

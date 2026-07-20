@@ -1,8 +1,12 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { DynamicFormStep } from "@nudmcdgnpm/digit-ui-react-components";
 import estateFormConfig from "../config/estateFormConfig";
-import { findAssetsByApplicationPrefix } from "../config/Create/assetReference";
-import { mapAssetReferenceToPrefill } from "../utils";
+import { patchRegistrationFormFields } from "../config/Create/registrationFormOverrides";
+import layoutStyles from "../styles/estEmployeeLayout.module.scss";
+import {
+  mapAssetSearchToRegistrationMatch,
+  searchExistingEstateAssets,
+} from "../utils";
 
 const NewRegistration = ({
   onSelect,
@@ -12,30 +16,52 @@ const NewRegistration = ({
   editData,
   t,
 }) => {
-  const handleFieldSearch = useCallback(async (fieldName, formData) => {
-    if (fieldName !== "searchEstateNo") return null;
+  const tenantId = Digit.ULBService.getCurrentTenantId();
 
-    const applicationNo = String(formData?.searchEstateNo || "").trim();
-    if (!applicationNo) return { error: "EST_ASSET_NUMBER_REQUIRED" };
+  const enhancedConfig = useMemo(
+    () => ({
+      ...config,
+      form: patchRegistrationFormFields(config?.form),
+    }),
+    [config]
+  );
 
-    const assets = findAssetsByApplicationPrefix(applicationNo);
-    if (!assets.length) {
-      return { notFound: true, estateNo: applicationNo };
-    }
+  const handleFieldSearch = useCallback(
+    async (fieldName, formData) => {
+      if (fieldName !== "searchEstateNo") return null;
 
-    return {
-      matches: assets.map((asset) => ({
-        estateNo: asset.applicationNo,
-        label: asset.applicationNo,
-        subtitle: asset.assetName || asset.description || "",
-        prefill: mapAssetReferenceToPrefill(asset),
-      })),
-    };
-  }, []);
+      const assetNumber = String(formData?.searchEstateNo || "").trim();
+      if (!assetNumber) return { error: "EST_ASSET_NUMBER_REQUIRED" };
+
+      try {
+        const assets = await searchExistingEstateAssets(assetNumber, tenantId);
+        if (!assets.length) {
+          return { notFound: true, estateNo: assetNumber };
+        }
+
+        if (assets.length === 1) {
+          const match = mapAssetSearchToRegistrationMatch(assets[0]);
+          return {
+            found: true,
+            estateNo: match.estateNo || assetNumber,
+            prefill: match.prefill,
+          };
+        }
+
+        return {
+          matches: assets.map(mapAssetSearchToRegistrationMatch),
+        };
+      } catch (err) {
+        console.error("Existing asset search failed:", err);
+        return { error: "CS_SOMETHING_WENT_WRONG" };
+      }
+    },
+    [tenantId]
+  );
 
   return (
     <DynamicFormStep
-      config={config}
+      config={enhancedConfig}
       localOverrides={estateFormConfig}
       onSelect={onSelect}
       persistedData={persistedData}
@@ -43,6 +69,7 @@ const NewRegistration = ({
       editData={editData}
       t={t}
       defaultHeaderCode="EST_COMMON_NEW_REGISTRATION"
+      wrapperClassName={`employeeCard ${layoutStyles.estFormStep}`}
       onFieldSearch={handleFieldSearch}
     />
   );
