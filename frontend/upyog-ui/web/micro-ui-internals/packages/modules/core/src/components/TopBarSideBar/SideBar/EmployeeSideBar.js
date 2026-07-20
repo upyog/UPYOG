@@ -4,12 +4,23 @@ import { Loader, SearchIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import NavItem from "./NavItem";
 import _, { findIndex } from "lodash";
+import FinanceEmployeeSideBar from "./FinanceEmployeeSideBar";
 
 const EmployeeSideBar = () => {
   const sidebarRef = useRef(null);
   const { isLoading, data } = Digit.Hooks.useAccessControl();
   const [search, setSearch] = useState("");
   const { t } = useTranslation();
+
+  const stateId = Digit.ULBService.getStateId();
+  const { isLoading: isMdmsLoading, data: mdmsData } = Digit.Hooks.useCustomMDMS(
+    stateId,
+    "common-masters",
+    [{ name: "microUiModuleEnable" }]
+  );
+
+  const microUiModuleEnable = mdmsData?.["common-masters"]?.["microUiModuleEnable"] || [];
+  const isFinanceEnabled = microUiModuleEnable.find(elem => elem?.code?.toLowerCase() === "finance")?.enabled === true;
 
   // added  !sidebarRef.current as a safety check ensure sidebarRef.current is not null.  Removed loader as useEffect now either need nothing in return or cleanup function
   useEffect(() => {
@@ -19,6 +30,20 @@ const EmployeeSideBar = () => {
     sidebarRef.current.style.cursor = "pointer";
     collapseNav();
   }, [isLoading]);
+
+  // Conditional returns are only allowed AFTER all Hook calls
+  if (isMdmsLoading) {
+    return <Loader />;
+  }
+
+  /**
+   * EmployeeSideBar handles the sidebar navigation menu for employee users.
+   * It queries MDMS config at the top. If the Finance module is enabled (isFinanceEnabled === true),
+   * it redirects rendering to the custom component FinanceEmployeeSideBar.js
+  */
+  if (isFinanceEnabled) {
+    return <FinanceEmployeeSideBar microUiModuleEnable={microUiModuleEnable} isFinanceEnabled={isFinanceEnabled} />;
+  }
 
   const expandNav = () => {
     sidebarRef.current.style.width = "260px";

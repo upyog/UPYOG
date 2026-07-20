@@ -65,6 +65,8 @@ import { GISComponents, GISLinks, GISModule } from "@nudmcdgnpm/upyog-ui-module-
 import { ESTComponents, ESTLinks, ESTModule } from "@nudmcdgnpm/upyog-ui-module-est";
 import { initNDCComponents, NDCReducers } from "@nudmcdgnpm/upyog-ui-module-ndc";
 import { GCModule, GCComponents } from "@nudmcdgnpm/upyog-ui-module-gc";
+import { FinanceModule, FinanceComponents } from "@nudmcdgnpm/upyog-ui-module-finance";
+
 
 // import "leaflet/dist/leaflet.css";
 // import "leaflet-draw/dist/leaflet.draw.css";
@@ -111,7 +113,8 @@ const enabledModules = [
    "EST",
   "GIS",
   "NDC",
-  "GC"
+  "GC",
+  "Finance"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -162,6 +165,8 @@ window.Digit.ComponentRegistryService.setupRegistry({
     ...ESTComponents,
     ...GCComponents,
     GCModule,
+    FinanceModule,
+    ...FinanceComponents,
 });
 
 initPGRComponents();
