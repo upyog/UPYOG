@@ -86,7 +86,7 @@ public class OAuthTokenService {
     private RestTemplate restTemplate;
 
     /** Base URL of the eGov OAuth token endpoint (e.g. {@code https://host}). */
-    @Value("${egov.user.oauth.host}")
+    @Value("${egov.user.host}")
     private String oauthHost;
 
     /** Path and query string appended to {@link #oauthHost} to form the token URL. */
@@ -115,11 +115,7 @@ public class OAuthTokenService {
     /** User type (e.g. {@code "EMPLOYEE"}). */
     @Value("${adapter.system.user.type}")
     private String userType;
-
-    /** Base URL of the eGov user search endpoint. */
-    @Value("${egov.user.host}")
-    private String userHost;
-
+    
     /** Path appended to {@link #userHost} to form the user-search URL. */
     @Value("${egov.user.search.path:/user/_search}")
     private String userSearchPath;
@@ -331,14 +327,15 @@ public class OAuthTokenService {
                         "authToken", cachedToken.getAccessToken()),
                 "tenantId", tenantId,
                 "userType", userType,
-                "username", username);
+                "userName", username);
+        
+        log.info("request to get the userInfo : {}", requestBody);
 
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-        String url = userHost + userSearchPath;
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+        String url = oauthHost + userSearchPath;
 
         try {
-            ResponseEntity<UserSearchResponse> response = restTemplate.postForEntity(
-                    url, request, UserSearchResponse.class);
+            ResponseEntity<UserSearchResponse> response = restTemplate.postForEntity(url, requestEntity, UserSearchResponse.class);
             UserSearchResponse body = response.getBody();
 
             if (body != null && body.getUser() != null && !body.getUser().isEmpty()) {

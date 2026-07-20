@@ -26,7 +26,7 @@ class AdapterClientSimpleTest {
 		ModuleTransformer<Object> transformer = Mockito.mock(ModuleTransformer.class);
 
 		// 1. Build a dummy payload so downstream components have configuration context
-		DashboardData dataForPayload = DashboardData.builder().date("15-07-2026").module("PT").ulb("pg.citya")
+		DashboardData dataForPayload = DashboardData.builder().date("15-07-2026").module("PT").ward("Block 4").ulb("pg.citya").region("Test")
 				.state("PG").metrics(new LinkedHashMap<>()).build();
 
 		DashboardPayload dummyPayload = DashboardPayload.builder().data(Collections.singletonList(dataForPayload))
@@ -56,7 +56,7 @@ class AdapterClientSimpleTest {
 		metrics.put("assessments", 48);
 		metrics.put("todaysTotalApplications", 145);
 
-		DashboardData data = DashboardData.builder().date("15-07-2026").module("PT").ulb("pg.citya").state("PG")
+		DashboardData data = DashboardData.builder().date("15-07-2026").module("PT").ward("Block 4").ulb("pg.citya").region("Test").state("PG")
 				.metrics(metrics).build();
 
 		return AdapterRequest.builder().module(Module.PT).rawData(List.of(data)).build();

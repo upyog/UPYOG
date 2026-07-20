@@ -90,13 +90,6 @@ public class DailyIngestionData {
     private String tenantId;
 
     /**
-     * Human-readable name of the Urban Local Body (ULB) whose data
-     * was ingested.  Derived from {@link org.upyog.adapter.model.DashboardData#getUlb()}.
-     * Maps to {@code ingestion_detail.ulb_name}.
-     */
-    private String ulbName;
-
-    /**
      * Short code identifying the DIGIT module that was ingested
      * (e.g. {@code PT}, {@code TL}, {@code FSM}).
      * Derived from {@link org.upyog.adapter.model.DashboardData#getModule()}.
@@ -111,14 +104,6 @@ public class DailyIngestionData {
      * Maps to {@code ingestion_detail.push_date}.
      */
     private String pushDate;
-
-    /**
-     * Identifier of the system or human user that triggered the ingestion.
-     * May be {@code null} when the push originates from a scheduled job and
-     * no user context is available at the {@code HttpLoader} level.
-     * Maps to {@code ingestion_detail.user_id}.
-     */
-    private String userId;
 
     /**
      * Full JSON string of the {@link org.upyog.adapter.model.NationalDashboardIngestRequest}

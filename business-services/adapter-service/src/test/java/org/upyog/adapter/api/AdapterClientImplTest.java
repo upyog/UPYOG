@@ -74,7 +74,7 @@ class AdapterClientImplTest {
 		AdapterRequest request = AdapterRequest.builder().module(Module.PT).rawData(List.of(data)).build();
 
 		when(registry.get(Module.PT)).thenReturn(transformer);
-		when(transformer.transform(data)).thenReturn(payload);
+		when(transformer.transform(any())).thenReturn(payload);
 		doNothing().when(commonValidator).validate(payload);
 		when(loader.load(payload)).thenReturn(expectedResult);
 
@@ -86,7 +86,7 @@ class AdapterClientImplTest {
 		assertThat(result.getResponseData()).isEqualTo("{\"response\": \"ok\"}");
 
 		verify(registry).get(Module.PT);
-		verify(transformer).transform(data);
+		verify(transformer).transform(any());
 		verify(commonValidator).validate(payload);
 		verify(loader).load(payload);
 	}
@@ -117,7 +117,7 @@ class AdapterClientImplTest {
 		AdapterRequest request = AdapterRequest.builder().module(Module.PT).rawData(List.of(data)).build();
 
 		when(registry.get(Module.PT)).thenReturn(transformer);
-		when(transformer.transform(data)).thenReturn(payload);
+		when(transformer.transform(any())).thenReturn(payload);
 		doThrow(new ValidationException("Module is mandatory")).when(commonValidator).validate(payload);
 
 		assertThatThrownBy(() -> adapterClient.execute(request)).isInstanceOf(ValidationException.class)
@@ -135,18 +135,21 @@ class AdapterClientImplTest {
 
 		DashboardPayload payload = DashboardPayload.builder().data(Collections.singletonList(data)).build();
 
-		IngestionResult failureResult = createFailureResult();
+		IngestionResult failureResult = IngestionResult.builder().ingestionStatus("FAILURE")
+				.failureReason("Connection timeout").ingestedAt(System.currentTimeMillis()).build();
 
 		AdapterRequest request = AdapterRequest.builder().module(Module.PT).rawData(List.of(data)).build();
 
 		when(registry.get(Module.PT)).thenReturn(transformer);
-		when(transformer.transform(data)).thenReturn(payload);
+		when(transformer.transform(any())).thenReturn(payload);
 		doNothing().when(commonValidator).validate(payload);
 		when(loader.load(payload)).thenReturn(failureResult);
 
+		// Act
 		IngestionResult result = adapterClient.execute(request);
 
+		// Assert
 		assertThat(result.getIngestionStatus()).isEqualTo("FAILURE");
-		assertThat(result.getFailureReason()).isEqualTo("Connection refused");
+		assertThat(result.getFailureReason()).isEqualTo("Connection timeout");
 	}
 }

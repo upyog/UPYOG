@@ -77,10 +77,8 @@ CREATE TABLE IF NOT EXISTS ingestion_detail (
     module_ingestion_id         VARCHAR(64)     NOT NULL,
     module_detail_id            VARCHAR(64),
     tenant_id                   VARCHAR(64),
-    ulb_name                    VARCHAR(256),
     module_name                 VARCHAR(64),
     push_date                   DATE,
-    user_id                     VARCHAR(64),
     request_data                JSONB,
     response_data               JSONB,
     ingestion_status            VARCHAR(32),
@@ -112,14 +110,10 @@ COMMENT ON COLUMN ingestion_detail.module_detail_id IS
     'Foreign key referencing ingestion_module_detail.detail_id.';
 COMMENT ON COLUMN ingestion_detail.tenant_id IS
     'DIGIT tenant identifier for the ULB whose data was pushed.';
-COMMENT ON COLUMN ingestion_detail.ulb_name IS
-    'Name of the Urban Local Body whose data was ingested.';
 COMMENT ON COLUMN ingestion_detail.module_name IS
     'Short code identifying the DIGIT module (e.g. PT, TL, FSM).';
 COMMENT ON COLUMN ingestion_detail.push_date IS
     'Calendar date for which the module data was pushed.';
-COMMENT ON COLUMN ingestion_detail.user_id IS
-    'Identifier of the user or system that triggered the ingestion.';
 COMMENT ON COLUMN ingestion_detail.request_data IS
     'Full JSON of the NationalDashboardIngestRequest sent to the dashboard.';
 COMMENT ON COLUMN ingestion_detail.response_data IS

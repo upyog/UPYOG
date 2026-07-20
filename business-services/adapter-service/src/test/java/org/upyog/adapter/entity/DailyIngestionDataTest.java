@@ -19,10 +19,8 @@ class DailyIngestionDataTest {
                 .moduleIngestionId("uuid-123")
                 .moduleDetailId("detail-456")
                 .tenantId("pb.amritsar")
-                .ulbName("Amritsar")
                 .moduleName("PT")
                 .pushDate("2024-01-15")
-                .userId("user-1")
                 .requestData("{\"key\": \"value\"}")
                 .responseData("{\"status\": \"ok\"}")
                 .ingestionStatus("SUCCESS")
@@ -35,10 +33,8 @@ class DailyIngestionDataTest {
         assertThat(data.getModuleIngestionId()).isEqualTo("uuid-123");
         assertThat(data.getModuleDetailId()).isEqualTo("detail-456");
         assertThat(data.getTenantId()).isEqualTo("pb.amritsar");
-        assertThat(data.getUlbName()).isEqualTo("Amritsar");
         assertThat(data.getModuleName()).isEqualTo("PT");
         assertThat(data.getPushDate()).isEqualTo("2024-01-15");
-        assertThat(data.getUserId()).isEqualTo("user-1");
         assertThat(data.getRequestData()).isEqualTo("{\"key\": \"value\"}");
         assertThat(data.getResponseData()).isEqualTo("{\"status\": \"ok\"}");
         assertThat(data.getIngestionStatus()).isEqualTo("SUCCESS");

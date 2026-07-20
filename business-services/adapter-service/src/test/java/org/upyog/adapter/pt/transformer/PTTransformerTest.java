@@ -23,10 +23,10 @@ class PTTransformerTest {
 	}
 
 	@Test
-	@DisplayName("transform returns null (not yet implemented)")
-	void transform_returnsNull() {
+	@DisplayName("transform returns valid DashboardPayload")
+	void transform_returnsPayload() {
 		DashboardData data = DashboardData.builder().module("PT").ulb("pb.amritsar").build();
 
-		assertThat(transformer.transform(List.of(data))).isNull();
+		assertThat(transformer.transform(List.of(data))).isNotNull();
 	}
 }

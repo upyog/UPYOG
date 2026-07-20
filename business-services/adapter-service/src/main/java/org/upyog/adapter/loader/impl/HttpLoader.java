@@ -177,9 +177,10 @@ public class HttpLoader implements Loader {
 			requestJson = objectMapper.writeValueAsString(payload);
 			log.info("HttpLoader | request payload: {}", requestJson);
 
-			HttpEntity<NationalDashboardIngestRequest> requestEntity = new HttpEntity<>(payload, headers);
+			HttpEntity<String> requestEntity = new HttpEntity<>(requestJson, headers);
 
 			log.info("HttpLoader | posting to: {}", dashboardIngestUrl);
+
 
 			ResponseEntity<String> response = restTemplate.postForEntity(dashboardIngestUrl, requestEntity,
 					String.class);
@@ -190,23 +191,28 @@ public class HttpLoader implements Loader {
 			IngestionResult result = IngestionResult.builder().ingestionStatus(status).responseData(responseJson)
 					.ingestedAt(System.currentTimeMillis()).build();
 
-//			pushIngestionRecord(data, requestJson, responseJson, status);
+			pushIngestionRecord(data, requestJson, responseJson, status);
 
 			return result;
 
 		} catch (Exception e) {
 			log.error("HttpLoader | ingestion failed", e);
 
-			pushIngestionRecord(data, requestJson, e.getMessage(), status);
+			String responseOrError = e.getMessage();
+			if (e instanceof org.springframework.web.client.HttpStatusCodeException httpEx) {
+				String body = httpEx.getResponseBodyAsString();
+				if (body != null && !body.isBlank()) {
+					responseOrError = body;
+				}
+			}
+
+			pushIngestionRecord(data, requestJson, responseOrError, status);
 
 			return IngestionResult.builder().ingestionStatus(status).failureReason(e.getMessage())
 					.ingestedAt(System.currentTimeMillis()).build();
 		}
 	}
 
-	// =========================================================================
-	// Private helpers
-	// =========================================================================
 
 	/**
 	 * Builds a {@link DailyIngestionData} audit record from the current call's
@@ -250,10 +256,9 @@ public class HttpLoader implements Loader {
 					// moduleDetailId is set by the calling service layer that owns the
 					// module_ingestion_detail FK; leave blank here so callers can enrich it.
 					.moduleDetailId(null).tenantId(first != null ? first.getUlb() : null)
-					.ulbName(first != null ? first.getUlb() : null).moduleName(first != null ? first.getModule() : null)
-					.pushDate(first != null ? first.getDate() : null).userId(null) // populated by the calling service
-																					// if available
-					.requestData(requestJson).responseData(responseOrError).ingestionStatus(status).createdBy("SYSTEM")
+					.moduleName(first != null ? first.getModule() : null)
+					.pushDate(first != null ? first.getDate() : null)
+					.requestData(toJsonString(requestJson)).responseData(toJsonString(responseOrError)).ingestionStatus(status).createdBy("SYSTEM")
 					.createdTime(now).lastModifiedBy("SYSTEM").lastModifiedTime(now).build();
 
 			Map<String, Object> kafkaMessage = new HashMap<>();
@@ -264,6 +269,24 @@ public class HttpLoader implements Loader {
 		} catch (Exception ex) {
 			// Kafka failure must never break the main ingestion flow.
 			log.error("HttpLoader | failed to push ingestion record to Kafka", ex);
+		}
+	}
+
+	private String toJsonString(String input) {
+		if (input == null || input.isBlank()) {
+			return "{}";
+		}
+		try {
+			com.fasterxml.jackson.databind.JsonNode node = objectMapper.readTree(input);
+			if (node != null && (node.isObject() || node.isArray())) {
+				return input;
+			}
+		} catch (Exception ignored) {
+		}
+		try {
+			return objectMapper.writeValueAsString(Map.of("error", input));
+		} catch (Exception ex) {
+			return "{\"error\":\"" + input.replace("\"", "\\\"").replace("\n", " ") + "\"}";
 		}
 	}
 

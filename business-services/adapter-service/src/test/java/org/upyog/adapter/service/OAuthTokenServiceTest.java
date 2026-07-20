@@ -248,7 +248,6 @@ class OAuthTokenServiceTest {
         setField(svc, "password", "testPass");
         setField(svc, "tenantId", "pg");
         setField(svc, "userType", "EMPLOYEE");
-        setField(svc, "userHost", "http://localhost:8080");
         setField(svc, "userSearchPath", "/user/_search");
         return svc;
     }
