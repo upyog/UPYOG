@@ -17,14 +17,21 @@ class ModuleTest {
     }
 
     @Test
-    @DisplayName("Module has exactly one constant")
-    void module_hasExactlyOneConstant() {
-        assertThat(Module.values()).hasSize(1);
+    @DisplayName("Module contains PGR constant")
+    void module_containsPGR() {
+        assertThat(Module.valueOf("PGR")).isEqualTo(Module.PGR);
     }
 
     @Test
-    @DisplayName("PT constant name is PT")
-    void pt_name() {
+    @DisplayName("Module has expected number of constants")
+    void module_hasExpectedConstants() {
+        assertThat(Module.values()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("PT and PGR constant names")
+    void enum_names() {
         assertThat(Module.PT.name()).isEqualTo("PT");
+        assertThat(Module.PGR.name()).isEqualTo("PGR");
     }
 }

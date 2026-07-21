@@ -44,5 +44,17 @@ public enum Module {
      * {@code transactions}, {@code todaysCollection}, and several application
      * count/SLA fields.
      */
-    PT
+    PT,
+
+    /**
+     * Public Grievance Redressal module.
+     *
+     * <p>Handled by:
+     * <ul>
+     *   <li>Extractor:   {@link org.upyog.adapter.pgr.extractor.PgrModuleExtractor}</li>
+     *   <li>Transformer: {@link org.upyog.adapter.pgr.transformer.PGRTransformer}</li>
+     *   <li>Validator:   {@link org.upyog.adapter.pgr.validation.impl.PGRValidator}</li>
+     * </ul>
+     */
+    PGR
 }
