@@ -1,3 +1,7 @@
+/**
+ * DynamicObjectRenderer — recursively renders a plain JS object/array as labeled rows.
+ * Useful for debug/preview of nested form or API payloads without a fixed schema.
+ */
 import React from "react";
 import styles from '../styles/dynamicObjectRenderer.module.scss';
 

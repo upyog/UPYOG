@@ -1,3 +1,7 @@
+/**
+ * estWizardUtils.js
+ * Pure helpers for EST MDMS wizards — step flattening, base-path derivation, and goNext.
+ */
 /** Steps that are unreachable — wizard uses /check instead. */
 const SKIP_COMPONENTS = new Set(["ReviewDetails"]);
 

@@ -1,3 +1,8 @@
+/**
+ * useEstWizard.js
+ * Shared MDMS wizard router state for EST flows (session, steps, goNext, check success).
+ * Used by create-asset and assign-assets employee wizards.
+ */
 import { useCallback, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { mergeSessionStepWithRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";

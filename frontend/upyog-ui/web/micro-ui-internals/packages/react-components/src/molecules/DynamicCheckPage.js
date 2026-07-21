@@ -1,3 +1,7 @@
+/**
+ * DynamicCheckPage — config-driven review/summary page before submit.
+ * Shares the same routeConfig.form schema as DynamicForm so summary rows stay in sync.
+ */
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Card,
@@ -21,8 +25,6 @@ import {
   resolveSummaryFieldValue,
 } from "../utilities/checkPageUtils";
 import styles from "../styles/dynamicCheckPage.module.scss";
-
-/* Config-driven summary page — shares routeConfig.form with DynamicForm. */
 
 const ActionButton = ({ jumpTo, editNavigationState }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
