@@ -11,6 +11,8 @@ const CitizenApp = () => {
       <AppContainer>
         <BackButton>Back</BackButton>
         <Routes>
+          {/* Same summary page as employee portal */}
+          <Route path="application-details/:assetNo" element={<PrivateRoute><ESTApplicationDetails /></PrivateRoute>} />
           <Route path="application/:assetNo/:tenantId" element={<PrivateRoute><ESTApplicationDetails /></PrivateRoute>} />
           <Route path="my-applications/*" element={<PrivateRoute><ESTMyApplications /></PrivateRoute>} />
           <Route path="payment-history/*" element={<PrivateRoute><ESTPaymentHistory /></PrivateRoute>} />

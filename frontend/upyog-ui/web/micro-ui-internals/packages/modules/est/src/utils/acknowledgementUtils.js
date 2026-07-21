@@ -62,6 +62,8 @@ export const buildAllotmentAckExtraData = (asset = {}, allotment = {}, t = (k) =
 export const buildAllotmentAckFormValues = (allotment = {}, asset = {}, routeConfig = {}) => {
   const base = {
     ...allotment,
+    // Form field is allotmentType; API/persister key is propertyType (apiFieldName).
+    allotmentType: allotment.allotmentType ?? allotment.propertyType,
     mobileNo: allotment.mobileNo ?? allotment.phoneNumber,
     alternateMobileNo: allotment.alternateMobileNo ?? allotment.altPhoneNumber,
     emailId: allotment.emailId ?? allotment.email,

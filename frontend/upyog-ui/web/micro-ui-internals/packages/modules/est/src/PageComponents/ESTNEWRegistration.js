@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { DynamicFormStep } from "@nudmcdgnpm/digit-ui-react-components";
 import estateFormConfig from "../config/estateFormConfig";
-import { patchRegistrationFormFields } from "../config/Create/registrationFormOverrides";
+//import { patchRegistrationFormFields } from "../config/Create/registrationFormOverrides";
 import layoutStyles from "../styles/estEmployeeLayout.module.scss";
 import {
   mapAssetSearchToRegistrationMatch,
@@ -18,13 +18,13 @@ const NewRegistration = ({
 }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  const enhancedConfig = useMemo(
-    () => ({
-      ...config,
-      form: patchRegistrationFormFields(config?.form),
-    }),
-    [config]
-  );
+  // const enhancedConfig = useMemo(
+  //   () => ({
+  //     ...config,
+  //    // form: patchRegistrationFormFields(config?.form),
+  //   }),
+  //   [config]
+  // );
 
   const handleFieldSearch = useCallback(
     async (fieldName, formData) => {
@@ -61,7 +61,7 @@ const NewRegistration = ({
 
   return (
     <DynamicFormStep
-      config={enhancedConfig}
+      config={config}
       localOverrides={estateFormConfig}
       onSelect={onSelect}
       persistedData={persistedData}

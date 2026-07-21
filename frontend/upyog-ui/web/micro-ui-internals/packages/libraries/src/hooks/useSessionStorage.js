@@ -1,14 +1,12 @@
-import { useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 const useSessionStorage = (key, initialValue) => {
-  const initialValueRef = useRef(initialValue);
-
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const data = Digit.SessionStorage.get(key);
-      return data ? data : initialValueRef.current;
+      return data ? data : initialValue;
     } catch (err) {
-      return initialValueRef.current;
+      return initialValue;
     }
   });
 
