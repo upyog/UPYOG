@@ -316,6 +316,11 @@ eSign:{
   noc: {
     nocSearch: "/noc-services/v1/noc/_search",
   },
+  firenoc: {
+    create: "/firenoc-services/v1/_create",
+    update: "/firenoc-services/v1/_update",
+    search: "/firenoc-services/v1/_search",
+  },
   reports: {
     reportSearch: "/report/",
   },
