@@ -365,7 +365,6 @@ import useESTApplicationSearch from "./estate/useESTApplicationSearch";
 import useTenantsEST from "./estate/useTenants";
 import useESTAllotAsset from "./estate/useESTAllotAsset";
 import useESTAssetsAllotment from "./estate/useESTAssetsAllotment";
-import useESTAllotmentUpdate from "./estate/useESTAllotmentUpdate";
 import useESTBillSearch from "./estate/useESTBillSearch";
 import { useNDCSearchApplication, useNDCSearchApplicationEmployee } from "./ndc/useNDCSearchApplication";
 import useNDCDocumentSearch from "./ndc/useNDCDocumentSearch";
@@ -749,7 +748,6 @@ const estate = {
   useESTApplicationSearch,
   useESTAllotAsset,
   useESTAssetsAllotment,
-  useESTAllotmentUpdate,
   useESTBillSearch,
   useTenants: useTenantsEST
 };
