@@ -212,9 +212,10 @@
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
         <jakarta-validation-version>3.0.2</jakarta-validation-version>
         <jakarta-servlet-api-version>6.0.0.Final</jakarta-servlet-api-version>
-
-        <jakarta-servlet-jstl-version>1.2.6-RC1</jakarta-servlet-jstl-version>
-
+        <!-- Upgraded from org.apache.taglibs:taglibs-standard-* 1.2.6-RC1 (javax.* namespace, JSTL 1.2)
+             to org.glassfish.web:jakarta.servlet.jsp.jstl 2.0.0 (jakarta.* namespace, JSTL 2.0)
+             Required for Jakarta EE 9+ / JDK 17. Single JAR replaces compat + spec + impl. -->
+        <jakarta-jstl-version>2.0.0</jakarta-jstl-version>
         <jakarta-servlet-jsp-version>1.0.1.Final</jakarta-servlet-jsp-version>
         <jakarta-jms-version>1.0.1.Final</jakarta-jms-version>
         <jakarta-mail-version>1.5.6</jakarta-mail-version>
@@ -262,25 +263,23 @@
         <itext-version>2.1.7</itext-version>
         <commons-javaflow-version>20060411</commons-javaflow-version>
         <jexcelapi-version>2.6.12</jexcelapi-version>
-        <commons-beanutils-version>1.9.3</commons-beanutils-version>
-        <commons-config-version>1.10</commons-config-version>
+        <commons-beanutils-version>1.9.4</commons-beanutils-version>
+        <commons-config-version>2.13.0</commons-config-version>
         <commons-lang-version>2.6</commons-lang-version>
-        <commons-lang3-version>3.6</commons-lang3-version>
+        <commons-lang3-version>3.20.0</commons-lang3-version>
         <commons-email-version>1.5</commons-email-version>
         <commons-collections-version>3.2.2</commons-collections-version>
-        <commons-collections4-version>4.1</commons-collections4-version>
-        <commons-codec-version>1.11</commons-codec-version>
-        <commons-dbcp-version>1.4</commons-dbcp-version>
-        <commons-io-version>2.6</commons-io-version>
-        <commons-fileupload-version>1.3.3</commons-fileupload-version>
+        <commons-collections4-version>4.5.0</commons-collections4-version>
+        <commons-codec-version>1.22.0</commons-codec-version>
+        <commons-dbcp-version>2.14.0</commons-dbcp-version>
+        <commons-io-version>2.22.0</commons-io-version>
+        <commons-fileupload-version>1.6.0</commons-fileupload-version>
         <commons.text.version>1.1</commons.text.version>
-        <commons.compress.version>1.16.1</commons.compress.version>
-        <httpclient-version>4.5.3</httpclient-version>
-        <sitemesh-version>2.4.2</sitemesh-version>
-
-
+        <commons.compress.version>1.28.0</commons.compress.version>
+        <httpclient-version>4.5.14</httpclient-version>
+        <sitemesh-version>2.5.0</sitemesh-version>
         <ehcache-web-version>2.0.4</ehcache-web-version>
-        <joda-time-version>2.9.9</joda-time-version>
+        <joda-time-version>2.12.7</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
         <jsoup-version>1.17.2</jsoup-version>
         <jython-version>2.7.1b3</jython-version>
@@ -306,12 +305,26 @@
         <log4j2-version>2.26.0</log4j2-version>
 
 
-        <google-guava-version>23.2-jre</google-guava-version>
+<!--        <google-guava-version>23.2-jre</google-guava-version>-->
         <google.zxing.version>3.3.0</google.zxing.version>
+<!--        <jsoup-version>1.17.2</jsoup-version>-->
+        <jython-version>2.7.3</jython-version>
+        <flyway-core-version>7.11.1</flyway-core-version>
+        <junit-version>4.12</junit-version>
+        <mockito-core-version>5.23.0</mockito-core-version>
+        <springockito-version>1.0.9</springockito-version>
+        <easymock-version>3.5</easymock-version>
+        <easymockclassextension-version>3.2</easymockclassextension-version>
+        <hamcrest-all-version>1.3</hamcrest-all-version>
+        <slf4j-version>1.7.25</slf4j-version>
+        <log4j-version>2.17.1</log4j-version>
+        <log4j2-version>2.17.1</log4j2-version>
+        <google-guava-version>33.4.8-jre</google-guava-version>
+        <google.zxing.version>3.5.3</google.zxing.version>
         <recaptcha.version>0.0.8</recaptcha.version>
         <!-- <jcaptcha.version>2.0-alpha-1</jcaptcha.version> -->
         <jakartat.core.version>1.7.8</jakartat.core.version>
-        <pdfbox.version>2.0.4</pdfbox.version>
+        <pdfbox.version>2.0.24</pdfbox.version>
         <bouncycastle.version>1.84</bouncycastle.version>
         <!-- Plugin dependency versions-->
         <mvn.javadoc.plugin.version>3.11.2</mvn.javadoc.plugin.version>
@@ -429,44 +442,14 @@
                 <version>6.0.0</version>
                 <scope>provided</scope>
             </dependency>
-
-
-
-
-
-
-
-
-
-
-
-
-
+            <!-- JSTL 2.0 implementation for Jakarta EE 9+ / JDK 17
+                 Replaces all three taglibs-standard-compat/spec/impl artifacts -->
             <dependency>
-                <groupId>org.apache.taglibs</groupId>
-                <artifactId>taglibs-standard-compat</artifactId>
-                <version>${jakarta-servlet-jstl-version}</version>
+                <groupId>org.glassfish.web</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+                <version>${jakarta-jstl-version}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>org.apache.taglibs</groupId>
-                <artifactId>taglibs-standard-spec</artifactId>
-                <version>${jakarta-servlet-jstl-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.taglibs</groupId>
-                <artifactId>taglibs-standard-impl</artifactId>
-                <version>${jakarta-servlet-jstl-version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-
-
-
-
-
-
             <dependency>
                 <groupId>jakarta.servlet.jsp</groupId>
                 <artifactId>jakarta.servlet.jsp-api</artifactId> <!-- Fixed: correct artifact ID for JSP API -->
@@ -530,22 +513,12 @@
             </dependency>
             <!-- STRUTS2 DEPENDENCIES END -->
 
-
-
-
             <!-- JSON START -->
-
-
-
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
                 <artifactId>json-simple</artifactId>
                 <version>${json-simple-version}</version>
             </dependency>
-
-
-
-
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -561,11 +534,6 @@
                 <artifactId>jackson-annotations</artifactId>
                 <version>${jackson-annotations-version}</version>
             </dependency>
-
-
-
-
-
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-joda</artifactId>
@@ -591,9 +559,6 @@
                 <artifactId>jackson-datatype-jdk8</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
-
-
-
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-smile</artifactId>
@@ -610,19 +575,12 @@
                 <version>${jackson-version}</version>
             </dependency>
 
-
-
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson-version}</version>
             </dependency>
-
-
             <!-- JSON END -->
-
-
-
             <!-- Orika -->
             <dependency>
                 <groupId>ma.glasnost.orika</groupId>
@@ -757,12 +715,6 @@
             </dependency>
             <!-- SECURITY END -->
 
-
-
-
-
-
-
             <!-- EMBEDDED REDIS STARTS -->
 <!--            <dependency>-->
 <!--                <groupId>com.orange.redis-embedded</groupId>-->
@@ -777,14 +729,6 @@
                 <version>${embedded-redis-version}</version>
             </dependency>
             <!-- EMBEDDED REDIS ENDS -->
-
-
-
-
-
-
-
-
 
             <!-- QUARTZ START -->
             <dependency>
@@ -854,11 +798,6 @@
                 <version>${openpdf-version}</version>
             </dependency>
             <!-- DISPLAYTAG END -->
-            <!-- DISPLAYTAG END -->
-
-
-
-
 
             <!-- VIEWS RELATED START -->
 <!--            <dependency>-->
@@ -896,16 +835,6 @@
                 <version>${apache-tiles-version}</version>
             </dependency>
             <!-- VIEWS RELATED END -->
-            <!-- VIEWS RELATED END -->
-
-
-
-
-
-
-
-
-
 
             <!-- REPORTS START -->
 
@@ -966,15 +895,6 @@
             </dependency>
             <!-- REPORTS END -->
 
-
-
-
-
-
-
-
-
-
             <!-- COMMONS START -->
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -982,8 +902,8 @@
                 <version>${commons-beanutils-version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-configuration2</artifactId>
                 <version>${commons-config-version}</version>
             </dependency>
             <dependency>
@@ -1028,8 +948,8 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>commons-dbcp</groupId>
-                <artifactId>commons-dbcp</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
                 <version>${commons-dbcp-version}</version>
             </dependency>
             <dependency>
@@ -1096,16 +1016,17 @@
                 <artifactId>joda-time-jsptags</artifactId>
                 <version>${joda-time-jsptag-version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>${jsoup-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>
-                <artifactId>recaptcha4j</artifactId>
-                <version>${recaptcha.version}</version>
-            </dependency>
+<!--            Removed unused Jsoup dependency as HTML sanitization and XSS protection are handled by OWASP AntiSamy and ESAPI.-->
+<!--            <dependency>-->
+<!--                <groupId>org.jsoup</groupId>-->
+<!--                <artifactId>jsoup</artifactId>-->
+<!--                <version>${jsoup-version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>-->
+<!--                <artifactId>recaptcha4j</artifactId>-->
+<!--                <version>${recaptcha.version}</version>-->
+<!--            </dependency>-->
             <!-- <dependency>
                 <groupId>com.octo.captcha</groupId>
                 <artifactId>jcaptcha</artifactId>
@@ -1167,33 +1088,9 @@
             <dependency>
                 <groupId>net.coobird</groupId>
                 <artifactId>thumbnailator</artifactId>
-                <version>0.4.8</version>
+                <version>0.4.20</version>
             </dependency>
             <!-- IMAGE PROCESSING API END -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             <!-- TESTING START -->
             <dependency>
@@ -1202,11 +1099,6 @@
                 <version>${junit-version}</version>
                 <scope>test</scope>
             </dependency>
-
-
-
-
-
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
@@ -1270,37 +1162,6 @@
 <!--            </dependency>-->
             <!-- TESTING END -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             <!-- LOGGING START -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -1336,17 +1197,6 @@
                 <version>${log4j2-version}</version>
             </dependency>
             <!-- LOGGING END -->
-
-
-
-
-
-
-
-
-
-
-
 
             <!-- DATABASE START -->
             <dependency>
@@ -1444,12 +1294,6 @@
 
             <!-- GIS END -->
 
-
-
-
-
-
-
         </dependencies>
 
     </dependencyManagement>
@@ -1461,16 +1305,8 @@
 <!--            <artifactId>jboss-servlet-api_3.1_spec</artifactId>-->
 <!--        </dependency>-->
         <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-compat</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-impl</artifactId>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.jboss.spec.jakarta.servlet.jsp</groupId>-->
@@ -1657,10 +1493,10 @@
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>
-            <artifactId>recaptcha4j</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>-->
+<!--            <artifactId>recaptcha4j</artifactId>-->
+<!--        </dependency>-->
         <!-- <dependency>
             <groupId>com.octo.captcha</groupId>
             <artifactId>jcaptcha</artifactId>
