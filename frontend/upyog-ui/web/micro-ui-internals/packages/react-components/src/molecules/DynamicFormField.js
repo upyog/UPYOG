@@ -317,7 +317,7 @@ const DynamicFormField = ({
           {panelForField?.status === "found" && (
             <div className="dynamic-form-field__result-card">
               <div className="dynamic-form-field__result-row">
-                <span>{t(field.resultLabel || labelKey || "EST_ASSET_NUMBER")}</span>
+                <span>{t(field.resultLabel || labelKey || "CS_COMMON_ASSET_NUMBER")}</span>
                 <span>{panelForField.estateNo}</span>
               </div>
               <button
@@ -333,14 +333,14 @@ const DynamicFormField = ({
           {panelForField?.status === "notFound" && (
             <div className="dynamic-form-field__not-found">
               <p className="dynamic-form-field__not-found-text">
-                {t(field.notFoundLabel || "EST_ASSET_NOT_FOUND")}
+                {t(field.notFoundLabel || "CS_COMMON_NOT_FOUND")}
               </p>
               <button
                 type="button"
                 className="dynamic-form-field__create-button"
                 onClick={() => onCreateNewFromSearch?.(name)}
               >
-                {t(field.createNewLabel || "EST_CREATE_NEW_REGISTRATION")}
+                {t(field.createNewLabel || "CS_COMMON_CREATE_NEW")}
               </button>
             </div>
           )}

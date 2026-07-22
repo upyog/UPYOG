@@ -115,6 +115,7 @@ const ESTDynamicCheckPage = ({
       isSubmitting={isSubmitting}
       summaryHeaderCode={summaryHeaderCode}
       defaultSectionHeaderCode={defaultSectionHeaderCode}
+      declarationCode="EST_FINAL_DECLARATION_MESSAGE"
       t={t}
       formatDate={formatCheckPageDate}
       checkNA={checkForNA}

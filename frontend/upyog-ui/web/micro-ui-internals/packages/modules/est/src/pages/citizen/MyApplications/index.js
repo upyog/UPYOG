@@ -1,156 +1,202 @@
-import React, { useState, useEffect } from "react";
-import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@nudmcdgnpm/digit-ui-react-components";
-import { Link } from "react-router-dom";
+/**
+ * Citizen My Applications — card list with inline search (matches niuatt layout).
+ * Results are sorted newest-first by created date.
+ */
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Header,
+  Loader,
+  TextInput,
+  Dropdown,
+  SubmitBar,
+  CardLabel,
+  Card,
+} from "@nudmcdgnpm/digit-ui-react-components";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import EstateApplication from "./est-application";
+import styles from "../../../styles/ESTMyApplications.module.scss";
+
+const PAGE_SIZE = 50;
+
+const getCreatedTime = (application = {}) =>
+  application?.auditDetails?.createdTime ||
+  application?.auditDetails?.createdtime ||
+  application?.createdTime ||
+  0;
+
+/** Newest applications first (same order as allotment search on backend). */
+const sortApplicationsByDate = (applications = []) =>
+  [...applications].sort((a, b) => getCreatedTime(b) - getCreatedTime(a));
 
 export const ESTMyApplications = () => {
   const { t } = useTranslation();
-  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const user = Digit.UserService.getUser().info;
+  const location = useLocation();
+  const tenantId =
+    Digit.ULBService.getCitizenCurrentTenant(true) ||
+    Digit.ULBService.getCurrentTenantId();
+  const user = Digit.UserService.getUser()?.info;
+  const mobileNumber = user?.mobileNumber;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState({ Assets: [] });
+  const [searchFilters, setSearchFilters] = useState({});
+  const [hasSearched, setHasSearched] = useState(false);
 
-  let filter = window.location.href.split("/").pop();
-  let t1;
-  let off;
-  if (!isNaN(parseInt(filter))) {
-    off = filter;
-    t1 = parseInt(filter) + 50;
-  } else {
-    t1 = 4;
-  }
-
-  const fetchAllotments = async (searchFilters = {}) => {
-    setIsLoading(true);
-    try {
-      const response = await Digit.ESTService.assetSearch({
-        tenantId,
-        filters: {
-          AssetSearchCriteria: {
-            tenantId,
-            mobileNumber: user?.mobileNumber,
-            ...(searchFilters.estateNo && { estateNo: searchFilters.estateNo }),
-            ...(searchFilters.assetStatus && { assetStatus: searchFilters.assetStatus })
-          }
-        }
-      });
-      setData(response || { Assets: [] });
-    } catch (error) {
-      console.error("Error fetching assets:", error);
-      setData({ Assets: [] });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const pathOffset = useMemo(() => {
+    const segment = location.pathname.split("/").pop();
+    const parsed = parseInt(segment, 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }, [location.pathname]);
 
   useEffect(() => {
-    fetchAllotments();
+    setHasSearched(true);
+    setSearchFilters({});
   }, []);
 
-  const handleSearch = () => {
+  const { isLoading, isSuccess, data } = Digit.Hooks.estate.useESTAssetSearch({
+    tenantId,
+    filters: {
+      AssetSearchCriteria: {
+        tenantId,
+        mobileNumber,
+        ...(searchFilters.estateNo && { estateNo: searchFilters.estateNo }),
+        ...(searchFilters.assetStatus && { assetStatus: searchFilters.assetStatus }),
+      },
+    },
+    config: {
+      enabled: Boolean(hasSearched && tenantId && mobileNumber),
+    },
+  });
+
+  const sortedApplications = useMemo(
+    () => sortApplicationsByDate(data?.Assets || []),
+    [data]
+  );
+
+  const visibleApplications = useMemo(
+    () => sortedApplications.slice(pathOffset, pathOffset + PAGE_SIZE),
+    [sortedApplications, pathOffset]
+  );
+
+  const handleSearch = useCallback(() => {
     const trimmedSearchTerm = searchTerm.trim();
-    const searchFilters = {
+    setHasSearched(true);
+    setSearchFilters({
       estateNo: trimmedSearchTerm || undefined,
       assetStatus: status?.code || undefined,
-    };
+    });
+  }, [searchTerm, status]);
 
-    fetchAllotments(searchFilters);
-  };
+  const handleClear = useCallback(() => {
+    setSearchTerm("");
+    setStatus(null);
+    setHasSearched(true);
+    setSearchFilters({});
+  }, []);
+
+  const { data: assetStatusMdms = [] } = Digit.Hooks.useEnabledMDMS(
+    Digit.ULBService.getStateId(),
+    "Estate",
+    [{ name: "AssetStatus" }],
+    {
+      select: (mdms) => mdms?.Estate?.AssetStatus || [],
+    }
+  );
+
+  const statusOptions = useMemo(
+    () =>
+      assetStatusMdms.map((item) => ({
+        code: item.code,
+        name: t(item.name) || item.name || item.code,
+      })),
+    [assetStatusMdms, t]
+  );
 
   if (isLoading) {
     return <Loader />;
   }
 
-  const statusOptions = [
-    { code: "ACTIVE", value: t("EST_ACTIVE") },
-    { code: "PENDING", value: t("EST_PENDING") },
-    { code: "EXPIRED", value: t("EST_EXPIRED") },
-  ];
-
-  const filteredApplications = data?.Assets || [];
+  const totalCount = sortedApplications.length;
+  const nextOffset = pathOffset + PAGE_SIZE;
+  const hasMore = totalCount > nextOffset;
 
   return (
-    <React.Fragment>
-      <Header>{`${t("EST_MY_APPLICATIONS")} (${filteredApplications.length})`}</Header>
+    <>
+      <Header>{`${t("EST_MY_APPLICATIONS")} (${totalCount})`}</Header>
+
       <Card>
-        <div style={{ marginLeft: "16px" }}>
-          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+        <div className={styles["est-myapps__container"]}>
+          <div className={styles["est-myapps__search-row"]}>
+            <div className={styles["est-myapps__field-col"]}>
+              <div className={styles["est-myapps__field-inner"]}>
                 <CardLabel>{t("EST_ASSET_NUMBER")}</CardLabel>
                 <TextInput
-                  placeholder={t("Enter Asset Number")}
+                  placeholder={t("EST_ENTER_ASSET_NUMBER")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ width: "100%", padding: "8px", height: "150%" }}
+                  className={styles["est-myapps__text-input"]}
                 />
               </div>
             </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+            <div className={styles["est-myapps__field-col"]}>
+              <div className={styles["est-myapps__field-inner"]}>
                 <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
                 <Dropdown
-                  className="form-field"
+                  className={`form-field ${styles["est-myapps__dropdown"]}`}
                   selected={status}
                   select={setStatus}
                   option={statusOptions}
-                  placeholder={t("Select Status")}
-                  optionKey="value"
-                  style={{ width: "100%" }}
+                  placeholder={t("EST_SELECT_STATUS")}
+                  optionKey="name"
                   t={t}
                 />
               </div>
             </div>
             <div>
-              <div style={{ marginTop: "17%" }}>
+              <div className={styles["est-myapps__search-btn-wrap"]}>
                 <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
                 <p
-                  className="link"
-                  style={{ marginLeft: "30%", marginTop: "10px", display: "block" }}
-                  onClick={() => {
-                    setSearchTerm(""); 
-                    setStatus(null);
-                    fetchAllotments();
-                  }}
+                  className={`link ${styles["est-myapps__clear-link"]}`}
+                  onClick={handleClear}
                 >
-                  {t(`ES_COMMON_CLEAR_ALL`)}
+                  {t("ES_COMMON_CLEAR_ALL")}
                 </p>
               </div>
             </div>
           </div>
         </div>
       </Card>
+
       <div>
-        {filteredApplications.length > 0 &&
-          filteredApplications.map((application, index) => (
-            <div key={application.assetId || index}>
-              <EstateApplication 
-                application={application} 
-                tenantId={tenantId} 
+        {isSuccess &&
+          visibleApplications.map((application, index) => (
+            <div key={application.assetId || application.estateNo || index}>
+              <EstateApplication
+                application={application}
+                tenantId={tenantId}
                 buttonLabel={t("EST_SUMMARY")}
               />
             </div>
           ))}
-        {filteredApplications.length === 0 && !isLoading && (
-          <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("EST_NO_APPLICATION_FOUND_MSG")}</p>
+
+        {isSuccess && totalCount === 0 && (
+          <p className={styles["est-myapps__msg"]}>{t("EST_NO_APPLICATION_FOUND_MSG")}</p>
         )}
 
-        {filteredApplications.length !== 0 && data?.count > t1 && (
+        {totalCount > 0 && hasMore && (
           <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+            <p className={styles["est-myapps__msg"]}>
               <span className="link">
-                <Link to={`${modulePath}/my-applications/${t1}`}>{t("EST_LOAD_MORE_MSG")}</Link>
+                <Link to={`/upyog-ui/citizen/est/my-applications/${nextOffset}`}>
+                  {t("EST_LOAD_MORE_MSG")}
+                </Link>
               </span>
             </p>
           </div>
         )}
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

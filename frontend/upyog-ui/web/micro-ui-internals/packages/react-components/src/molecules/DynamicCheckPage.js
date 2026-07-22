@@ -48,13 +48,15 @@ const DynamicCheckPage = ({
   editNavigationState,
   onSubmit,
   summaryHeaderCode,
-  defaultSectionHeaderCode = "EST_ASSET_DETAILS",
+  defaultSectionHeaderCode = "CS_COMMON_DETAILS",
   t = (k) => k,
   formatDate = formatCheckPageDate,
   checkNA = defaultCheckNA,
   DocumentPreview,
-  declarationCode = "EST_FINAL_DECLARATION_MESSAGE",
-  submitLabelCode = "EST_COMMON_SUBMIT",
+  declarationCode = "CS_COMMON_DECLARATION_MESSAGE",
+  submitLabelCode = "CS_COMMON_SUBMIT",
+  documentPreviewCode = "CS_COMMON_DOCUMENT_PREVIEW",
+  noDocumentsCode = "CS_COMMON_NO_DOCUMENTS_UPLOADED",
   isSubmitting = false,
   /** Read-only summary (application details) — hide edit / declaration / submit */
   viewOnly = false,
@@ -146,7 +148,7 @@ const DynamicCheckPage = ({
   return (
     <Card>
       <CardHeader>
-        {t(summaryHeaderCode || routeConfig?.texts?.header || "EST_ASSIGN_ASSETS_SUMMARY")}
+        {t(summaryHeaderCode || routeConfig?.texts?.header || "CS_COMMON_SUMMARY")}
       </CardHeader>
 
       {sections.map((section, sIdx) => (
@@ -173,7 +175,7 @@ const DynamicCheckPage = ({
 
       {(fileFields.length > 0 || uploadedFiles.length > 0) && (
         <>
-          <CardSubHeader>{t("EST_DOCUMENT_PREVIEW")}</CardSubHeader>
+          <CardSubHeader>{t(documentPreviewCode)}</CardSubHeader>
           {loadingDocs ? (
             <div className="dynamic-check-page__loading">{t("CS_LOADING")}</div>
           ) : previewDocs.length > 0 && DocumentPreview ? (
@@ -199,7 +201,7 @@ const DynamicCheckPage = ({
             </div>
           ) : (
             <div className="dynamic-check-page__empty-docs">
-              {t("EST_NO_DOCUMENTS_UPLOADED_LABEL")}
+              {t(noDocumentsCode)}
             </div>
           )}
         </>

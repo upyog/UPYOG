@@ -49,8 +49,8 @@ const DynamicForm = ({
   onCancel,
   resetBaseline,
   showDraftButton = false,
-  draftLabel = "EST_SAVE_AS_DRAFT",
-  draftSuccessLabel = "EST_DRAFT_SAVED",
+  draftLabel = "CS_COMMON_SAVE_DRAFT",
+  draftSuccessLabel = "CS_COMMON_SAVED",
   onSaveDraft,
   onPersistDraft,
   /** Optional async search for fields with field.searchButton — returns { prefill } | { error } */
@@ -429,7 +429,7 @@ const DynamicForm = ({
         searchEstateNo: selected.estateNo || formData[fieldName],
         showRegistrationDetails: "YES",
       });
-      setToast({ message: t("EST_ASSET_FOUND"), error: false });
+      setToast({ message: t("CS_COMMON_RECORD_FOUND"), error: false });
     },
     [searchPanel, applyPrefill, formData, t]
   );
@@ -538,7 +538,7 @@ const DynamicForm = ({
         },
         onError: (error) => {
           setIsSubmitting(false);
-          setToast({ message: t("EST_UPDATE_FAILED"), error: true });
+          setToast({ message: t("CS_COMMON_UPDATE_FAILED"), error: true });
           console.error("Update failed:", error);
           onSubmit && onSubmit({ payload, error, isEditMode: true });
         },
