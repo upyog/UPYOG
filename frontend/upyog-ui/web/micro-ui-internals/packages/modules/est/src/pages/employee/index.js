@@ -26,7 +26,9 @@ const EmployeeApp = ({ path }) => {
     {
       path: `${path}/search-applications`,
       content: t("ES_COMMON_APPLICATION_SEARCH"),
-      show: location.pathname.includes("est/search-applications"),
+      show:
+        location.pathname.includes("est/search-applications") ||
+        location.pathname.includes("est/application-details"),
     },
     {
       path: `${path}/application-details`,

@@ -516,7 +516,7 @@ const DynamicForm = ({
 
     if (isSearchMode) {
       const filters = mapFormToSearchFilters(formVal, routeConfig.form);
-      onSubmit?.({ payload: { ...filters, offset: 0 }, isSearch: true });
+      onSubmit?.({ payload: { ...filters, offset: 0 }, formValues: formVal, isSearch: true });
       return;
     }
 
