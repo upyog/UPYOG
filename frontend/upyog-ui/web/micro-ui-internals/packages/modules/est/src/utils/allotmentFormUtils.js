@@ -1,5 +1,6 @@
 /**
- * Allotment form helpers for assign-assets flow.
+ * allotmentFormUtils.js
+ * Allotment form helpers for assign-assets (status checks, rent recompute, prefill).
  */
 import {
   calculateRentByBillingCycle,

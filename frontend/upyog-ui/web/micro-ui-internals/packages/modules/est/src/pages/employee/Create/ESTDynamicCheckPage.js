@@ -1,3 +1,8 @@
+/**
+ * ESTDynamicCheckPage.js
+ * Unified EST check page — wraps DynamicCheckPage for registration and allotment wizards.
+ * Pass flow="registration" | flow="allotment" (see estCheckPageConfig.js).
+ */
 import React, { useCallback, useMemo } from "react";
 import {
   DynamicCheckPage,

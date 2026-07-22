@@ -1,3 +1,7 @@
+/**
+ * DynamicFormField — single-field renderer for DynamicForm (text, date, dropdown, upload, etc.).
+ * Visibility, labels, and options come from the MDMS / routeConfig field definition.
+ */
 import React, { useMemo } from "react";
 import {
   CardLabel,

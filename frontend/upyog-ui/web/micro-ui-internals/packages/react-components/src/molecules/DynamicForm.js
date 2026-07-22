@@ -1,3 +1,7 @@
+/**
+ * DynamicForm — config-driven form engine used by MDMS wizard steps and search pages.
+ * Renders fields from routeConfig.form, runs validators/computeFns, and builds payloads.
+ */
 import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { SubmitBar, Toast, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import ActionBar from "../atoms/ActionBar";

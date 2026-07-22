@@ -269,14 +269,20 @@ export const resolveSummaryFieldValue = (
   fieldConfig,
   { formValues = {}, extraData = {}, formatDate = formatCheckPageDate, checkNA = defaultCheckNA, t = (k) => k } = {}
 ) => {
-  const { field, options = [] } = fieldConfig;
+  const { field, options = [], apiFieldName } = fieldConfig;
   if (!field) return t("NA");
 
   const formVal = formValues[field.name];
+  const apiAliasVal = apiFieldName ? formValues[apiFieldName] : undefined;
   const raw =
-    formVal !== undefined && formVal !== null && formVal !== ""
+    (formVal !== undefined && formVal !== null && formVal !== ""
       ? formVal
-      : extraData[field.name];
+      : undefined) ??
+    (apiAliasVal !== undefined && apiAliasVal !== null && apiAliasVal !== ""
+      ? apiAliasVal
+      : undefined) ??
+    extraData[field.name] ??
+    (apiFieldName ? extraData[apiFieldName] : undefined);
 
   if (raw === undefined || raw === null || raw === "") return t("NA");
 
@@ -286,9 +292,9 @@ export const resolveSummaryFieldValue = (
 
     case "dropdown":
     case "radio": {
-      if (typeof raw === "object") return t(raw.i18nKey || raw.code || "NA");
-      const opt = options.find((o) => o.code === raw);
-      return opt ? t(opt.i18nKey || opt.code) : checkNA(raw);
+      if (typeof raw === "object") return t(raw.i18nKey || raw.name || raw.code || "NA");
+      const opt = options.find((o) => String(o.code) === String(raw));
+      return opt ? t(opt.i18nKey || opt.name || opt.code) : checkNA(raw);
     }
 
     default: {
