@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link PgrModuleExtractor}.
@@ -54,6 +54,9 @@ class PgrModuleExtractorTest {
 		setField("region", "City A");
 		setField("state", "PG");
 		setField("dbTenantId", "pg.citya");
+		setField("dbMaxAttempts", 3);
+		setField("dbBaseDelayMs", 1L);
+		setField("dbMaxDelayMs", 2L);
 	}
 
 	private void setField(String fieldName, Object val) throws Exception {
@@ -118,5 +121,48 @@ class PgrModuleExtractorTest {
 		assertThat(metrics.get("uniqueCitizens")).isEqualTo(22);
 		assertThat((List<?>) metrics.get("slaAchievement")).hasSize(1);
 		assertThat((List<?>) metrics.get("todaysComplaints")).hasSize(4);
+	}
+
+	@Test
+	@DisplayName("extractData retries on transient DB failures and succeeds eventually")
+	void extractData_retriesOnDbFailure_succeedsEventually() {
+		SchemaMappingConfig.ModuleQueries queries = new SchemaMappingConfig.ModuleQueries();
+		queries.setCombinedMetricsQuery("SELECT 1");
+
+		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
+
+		Map<String, Object> mockDbResult = new HashMap<>();
+		mockDbResult.put("uniquecitizens", 5);
+
+		// Fail on first attempt, succeed on second
+		when(namedParameterJdbcTemplate.queryForMap(any(), anyMap()))
+				.thenThrow(new RuntimeException("Transient lock conflict"))
+				.thenReturn(mockDbResult);
+
+		LocalDate testDate = LocalDate.of(2022, 6, 1);
+		DashboardData data = extractor.extractData(testDate);
+
+		assertThat(data).isNotNull();
+		assertThat(data.getMetrics().get("uniqueCitizens")).isEqualTo(5);
+		verify(namedParameterJdbcTemplate, times(2)).queryForMap(any(), anyMap());
+	}
+
+	@Test
+	@DisplayName("extractData retries up to maxAttempts and falls back on persistent DB failures")
+	void extractData_allDbAttemptsFail_fallsBackToEmptyDefaults() {
+		SchemaMappingConfig.ModuleQueries queries = new SchemaMappingConfig.ModuleQueries();
+		queries.setCombinedMetricsQuery("SELECT 1");
+
+		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
+
+		when(namedParameterJdbcTemplate.queryForMap(any(), anyMap()))
+				.thenThrow(new RuntimeException("Persistent DB disconnect"));
+
+		LocalDate testDate = LocalDate.of(2022, 6, 1);
+		DashboardData data = extractor.extractData(testDate);
+
+		assertThat(data).isNotNull();
+		assertThat(data.getMetrics().get("uniqueCitizens")).isEqualTo(0); // empty default
+		verify(namedParameterJdbcTemplate, times(3)).queryForMap(any(), anyMap());
 	}
 }

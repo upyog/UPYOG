@@ -117,6 +117,23 @@ class DailyIngestionServiceTest {
         verify(summaryRepository).saveOrUpdateLastSuccessfulDate("pg", "PT", targetDate);
     }
 
+    @Test
+    @DisplayName("Catch-up ingestion returns SKIPPED status when already up-to-date")
+    void catchUp_returnsSkippedWhenAlreadyUpToDate() throws Exception {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+
+        when(schemaMappingConfig.getEnabledModules()).thenReturn(List.of(Module.PT));
+        when(extractorRegistry.get(Module.PT)).thenReturn(extractor);
+        when(summaryRepository.findLastSuccessfulDate("pg", "PT")).thenReturn(Optional.of(yesterday));
+
+        List<IngestionResult> results = service.ingestDailyData();
+
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).getIngestionStatus()).isEqualTo("SKIPPED");
+        assertThat(results.get(0).getFailureReason()).contains("already up-to-date");
+        verify(adapterClient, never()).execute(any());
+    }
+
     private static void setField(Object target, String fieldName, Object value) throws Exception {
         Field field = target.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);

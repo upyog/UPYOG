@@ -58,6 +58,9 @@ class HttpLoaderTest {
         setField(loader, "producer", producer);
         setField(loader, "gson", gson);
         setField(loader, "objectMapper", objectMapper);
+        setField(loader, "maxAttempts", 3);
+        setField(loader, "baseDelayMs", 1L);
+        setField(loader, "maxDelayMs", 2L);
         loader.dashboardIngestUrl = "http://localhost:8080/national-dashboard/metric/_ingest";
     }
 
@@ -139,6 +142,62 @@ class HttpLoaderTest {
         assertThat(result.getIngestionStatus()).isEqualTo("FAILURE");
         assertThat(result.getFailureReason()).isEqualTo("OAuth failed");
         verify(restTemplate, never()).postForEntity(anyString(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Load retries on transient HTTP failures and succeeds eventually")
+    void load_retrySucceedsEventually_returnsSuccessWithRetryHistory() throws Exception {
+        when(oAuthTokenService.getToken()).thenReturn("test-token");
+        when(oAuthTokenService.getUserInfo()).thenReturn(new UserInfo());
+
+        // Fail first attempt, succeed on second
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(String.class)))
+                .thenThrow(new RuntimeException("Transient Connection Timeout"))
+                .thenReturn(ResponseEntity.ok("{\"status\": \"ok\"}"));
+
+        DashboardPayload payload = createValidPayload();
+        IngestionResult result = loader.load(payload);
+
+        assertThat(result.getIngestionStatus()).isEqualTo("SUCCESS");
+        assertThat(result.getResponseData()).isEqualTo("{\"status\": \"ok\"}");
+        assertThat(result.getDate()).isEqualTo("2024-01-15");
+        assertThat(result.getRetryHistory()).hasSize(2);
+        
+        assertThat(result.getRetryHistory().get(0).getAttemptNumber()).isEqualTo(1);
+        assertThat(result.getRetryHistory().get(0).getStatus()).isEqualTo("FAILURE");
+        assertThat(result.getRetryHistory().get(0).getFailureReason()).isEqualTo("Transient Connection Timeout");
+
+        assertThat(result.getRetryHistory().get(1).getAttemptNumber()).isEqualTo(2);
+        assertThat(result.getRetryHistory().get(1).getStatus()).isEqualTo("SUCCESS");
+        assertThat(result.getRetryHistory().get(1).getFailureReason()).isNull();
+
+        verify(restTemplate, times(2)).postForEntity(anyString(), any(HttpEntity.class), eq(String.class));
+    }
+
+    @Test
+    @DisplayName("Load retries up to maxAttempts and returns last failure when all fail")
+    void load_allAttemptsFail_returnsFailureWithRetryHistory() throws Exception {
+        when(oAuthTokenService.getToken()).thenReturn("test-token");
+        when(oAuthTokenService.getUserInfo()).thenReturn(new UserInfo());
+
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(String.class)))
+                .thenThrow(new RuntimeException("Connection Timeout"));
+
+        DashboardPayload payload = createValidPayload();
+        IngestionResult result = loader.load(payload);
+
+        assertThat(result.getIngestionStatus()).isEqualTo("FAILURE");
+        assertThat(result.getFailureReason()).isEqualTo("Connection Timeout");
+        assertThat(result.getDate()).isEqualTo("2024-01-15");
+        assertThat(result.getRetryHistory()).hasSize(3);
+
+        for (int i = 0; i < 3; i++) {
+            assertThat(result.getRetryHistory().get(i).getAttemptNumber()).isEqualTo(i + 1);
+            assertThat(result.getRetryHistory().get(i).getStatus()).isEqualTo("FAILURE");
+            assertThat(result.getRetryHistory().get(i).getFailureReason()).isEqualTo("Connection Timeout");
+        }
+
+        verify(restTemplate, times(3)).postForEntity(anyString(), any(HttpEntity.class), eq(String.class));
     }
 
     @Test

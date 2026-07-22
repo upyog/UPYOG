@@ -54,6 +54,15 @@ public class PgrModuleExtractor implements ModuleExtractor {
 	@org.springframework.beans.factory.annotation.Value("${adapter.metric.ulb:pg.citya}")
 	private String dbTenantId;
 
+	@org.springframework.beans.factory.annotation.Value("${adapter.db-retry.max-attempts:3}")
+	private int dbMaxAttempts;
+
+	@org.springframework.beans.factory.annotation.Value("${adapter.db-retry.base-delay-ms:1000}")
+	private long dbBaseDelayMs;
+
+	@org.springframework.beans.factory.annotation.Value("${adapter.db-retry.max-delay-ms:5000}")
+	private long dbMaxDelayMs;
+
 	@Override
 	public Module getModule() {
 		return Module.PGR;
@@ -90,7 +99,7 @@ public class PgrModuleExtractor implements ModuleExtractor {
 		SchemaMappingConfig.ModuleQueries pgrQueries = schemaMappingConfig.getQueriesForModule(Module.PGR);
 		if (pgrQueries != null && pgrQueries.getCombinedMetricsQuery() != null && namedParameterJdbcTemplate != null) {
 			try {
-				Map<String, Object> combinedResult = namedParameterJdbcTemplate.queryForMap(pgrQueries.getCombinedMetricsQuery(), params);
+				Map<String, Object> combinedResult = executeQueryWithRetry(pgrQueries.getCombinedMetricsQuery(), params);
 				uniqueCitizens = getIntegerValue(combinedResult.get("uniquecitizens"));
 				slaAchievementBuckets = parseJsonBuckets(combinedResult.get("slaachievementjson"));
 				completionRateBuckets = parseJsonBuckets(combinedResult.get("completionratejson"));
@@ -161,5 +170,39 @@ public class PgrModuleExtractor implements ModuleExtractor {
 		} catch (Exception e) {
 			return List.of();
 		}
+	}
+
+	private Map<String, Object> executeQueryWithRetry(String query, Map<String, Object> params) {
+		int attempt = 0;
+		while (true) {
+			attempt++;
+			try {
+				return namedParameterJdbcTemplate.queryForMap(query, params);
+			} catch (Exception e) {
+				if (attempt >= dbMaxAttempts) {
+					log.error("PgrModuleExtractor | DB query failed after {} attempts.", attempt, e);
+					throw e;
+				}
+				long backoff = calculateDbBackoffWithJitter(attempt);
+				log.warn("PgrModuleExtractor | DB query failed (attempt {}/{}). Retrying in {} ms. Error: {}", 
+						attempt, dbMaxAttempts, backoff, e.getMessage());
+				try {
+					Thread.sleep(backoff);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					throw new RuntimeException("DB query retry interrupted", ie);
+				}
+			}
+		}
+	}
+
+	private long calculateDbBackoffWithJitter(int attempt) {
+		int power = Math.min(attempt - 1, 30);
+		long expDelay = dbBaseDelayMs * (1L << power);
+		if (expDelay < 0) {
+			expDelay = dbMaxDelayMs;
+		}
+		long currentMaxDelay = Math.min(dbMaxDelayMs, expDelay);
+		return java.util.concurrent.ThreadLocalRandom.current().nextLong(0, currentMaxDelay + 1);
 	}
 }

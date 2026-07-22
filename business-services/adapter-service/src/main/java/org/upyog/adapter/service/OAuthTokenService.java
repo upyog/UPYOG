@@ -120,6 +120,15 @@ public class OAuthTokenService {
     @Value("${egov.user.search.path:/user/_search}")
     private String userSearchPath;
 
+    @Value("${adapter.oauth-retry.max-attempts:3}")
+    private int maxAttempts;
+
+    @Value("${adapter.oauth-retry.base-delay-ms:1000}")
+    private long baseDelayMs;
+
+    @Value("${adapter.oauth-retry.max-delay-ms:5000}")
+    private long maxDelayMs;
+
     /** Lock used to serialize token refresh and user-info fetch operations. */
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -273,29 +282,52 @@ public class OAuthTokenService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
         String url = oauthHost + oauthPath;
 
-        ResponseEntity<OAuthTokenResponse> responseEntity;
-        try {
-            responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, OAuthTokenResponse.class);
-        } catch (Exception e) {
-            log.error("OAuth token request to {} failed: {}", url, e.getMessage());
-            throw new IllegalStateException("Failed to reach OAuth endpoint " + url, e);
-        }
+        int attempt = 0;
+        while (true) {
+            attempt++;
+            try {
+                ResponseEntity<OAuthTokenResponse> responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, OAuthTokenResponse.class);
+                OAuthTokenResponse response = responseEntity.getBody();
+                if (response == null || response.getAccessToken() == null) {
+                    log.error("OAuth response missing access_token. Raw response: {}", response);
+                    throw new IllegalStateException(
+                            "Failed to obtain OAuth token from " + url + " — no access_token in response");
+                }
+                if (response.getUserRequest() == null) {
+                    log.info("OAuth token response did not include userInfo (expected for employee-type logins) — "
+                            + "will fetch it separately via the user search endpoint.");
+                }
 
-        OAuthTokenResponse response = responseEntity.getBody();
-        if (response == null || response.getAccessToken() == null) {
-            log.error("OAuth response missing access_token. Raw response: {}", response);
-            throw new IllegalStateException(
-                    "Failed to obtain OAuth token from " + url + " — no access_token in response");
-        }
-        if (response.getUserRequest() == null) {
-            log.info("OAuth token response did not include userInfo (expected for employee-type logins) — "
-                    + "will fetch it separately via the user search endpoint.");
-        }
+                this.cachedToken = response;
+                this.expiresAt = Instant.now()
+                        .plusSeconds(Math.max(response.getExpiresIn() - EXPIRY_SAFETY_BUFFER_SECONDS, 0));
+                log.info("OAuth token refreshed. Expires at {}", this.expiresAt);
+                return;
+            } catch (Exception e) {
+                if (e instanceof org.springframework.web.client.HttpStatusCodeException httpEx && httpEx.getStatusCode().is4xxClientError()) {
+                    log.error("OAuth token request to {} failed with client error status {}: {}", url, httpEx.getStatusCode(), e.getMessage());
+                    throw new IllegalStateException("Failed to obtain OAuth token due to client error", e);
+                }
 
-        this.cachedToken = response;
-        this.expiresAt = Instant.now()
-                .plusSeconds(Math.max(response.getExpiresIn() - EXPIRY_SAFETY_BUFFER_SECONDS, 0));
-        log.info("OAuth token refreshed. Expires at {}", this.expiresAt);
+                if (attempt >= maxAttempts) {
+                    log.error("OAuth token request to {} failed after {} attempts.", url, attempt, e);
+                    if (e instanceof IllegalStateException) {
+                        throw (IllegalStateException) e;
+                    }
+                    throw new IllegalStateException("Failed to reach OAuth endpoint " + url + " after maximum attempts", e);
+                }
+
+                long backoff = calculateBackoffWithJitter(attempt);
+                log.warn("OAuth token request failed (attempt {}/{}). Retrying in {} ms. Error: {}",
+                        attempt, maxAttempts, backoff, e.getMessage());
+                try {
+                    Thread.sleep(backoff);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException("OAuth token refresh retry interrupted", ie);
+                }
+            }
+        }
     }
 
     /**
@@ -334,21 +366,54 @@ public class OAuthTokenService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
         String url = oauthHost + userSearchPath;
 
-        try {
-            ResponseEntity<UserSearchResponse> response = restTemplate.postForEntity(url, requestEntity, UserSearchResponse.class);
-            UserSearchResponse body = response.getBody();
+        int attempt = 0;
+        while (true) {
+            attempt++;
+            try {
+                ResponseEntity<UserSearchResponse> response = restTemplate.postForEntity(url, requestEntity, UserSearchResponse.class);
+                UserSearchResponse body = response.getBody();
 
-            if (body != null && body.getUser() != null && !body.getUser().isEmpty()) {
-                this.cachedUserInfo = body.getUser().get(0);
-                log.info("Fetched userInfo for [{}]: uuid={}", username, cachedUserInfo.getUuid());
-            } else {
-                log.error("User search at {} returned no user for username [{}] tenant [{}]. "
-                        + "Confirm the correct endpoint/payload shape with the team.", url, username, tenantId);
+                if (body != null && body.getUser() != null && !body.getUser().isEmpty()) {
+                    this.cachedUserInfo = body.getUser().get(0);
+                    log.info("Fetched userInfo for [{}]: uuid={}", username, cachedUserInfo.getUuid());
+                    return;
+                } else {
+                    log.error("User search at {} returned no user for username [{}] tenant [{}]. "
+                            + "Confirm the correct endpoint/payload shape with the team.", url, username, tenantId);
+                    return;
+                }
+            } catch (Exception e) {
+                if (e instanceof org.springframework.web.client.HttpStatusCodeException httpEx && httpEx.getStatusCode().is4xxClientError()) {
+                    log.error("User search request to {} failed with client error status {}: {}", url, httpEx.getStatusCode(), e.getMessage());
+                    break;
+                }
+
+                if (attempt >= maxAttempts) {
+                    log.error("User search request to {} failed after {} attempts: {}", url, attempt, e.getMessage());
+                    break;
+                }
+
+                long backoff = calculateBackoffWithJitter(attempt);
+                log.warn("User search request failed (attempt {}/{}). Retrying in {} ms. Error: {}",
+                        attempt, maxAttempts, backoff, e.getMessage());
+                try {
+                    Thread.sleep(backoff);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    log.error("User search retry interrupted", ie);
+                    break;
+                }
             }
-        } catch (Exception e) {
-            log.error("User search request to {} failed: {}. "
-                    + "userInfo will remain null — requests requiring it will likely fail server-side.",
-                    url, e.getMessage());
         }
+    }
+
+    private long calculateBackoffWithJitter(int attempt) {
+        int power = Math.min(attempt - 1, 30);
+        long expDelay = baseDelayMs * (1L << power);
+        if (expDelay < 0) {
+            expDelay = maxDelayMs;
+        }
+        long currentMaxDelay = Math.min(maxDelayMs, expDelay);
+        return java.util.concurrent.ThreadLocalRandom.current().nextLong(0, currentMaxDelay + 1);
     }
 }

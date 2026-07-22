@@ -1,5 +1,6 @@
 package org.upyog.adapter.model;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -73,4 +74,14 @@ public class IngestionResult {
      * (or failure) completed.
      */
     private long ingestedAt;
+
+    /**
+     * Target date of the ingestion (e.g. "2026-07-22").
+     */
+    private String date;
+
+    /**
+     * History of retry attempts before reaching the terminal status.
+     */
+    private List<RetryAttempt> retryHistory;
 }

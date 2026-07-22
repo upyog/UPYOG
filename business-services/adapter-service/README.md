@@ -30,6 +30,11 @@ A standalone Spring Boot microservice responsible for automated daily metrics ex
 6. **Kafka Audit Logging**:
    * Publishes detailed ingestion payloads and execution statuses to Kafka topics (`save-adapter-ingestion-detail`) for complete auditability.
 
+7. **Transient Failure Resilience & Jittered Backoff Retries**:
+   * Automatically retries transient errors on database queries (PGR & PT extractors), OAuth authentication/user search, and HTTP data ingestion pushes.
+   * Employs exponential backoff with full jitter to avoid thundering herd problems on external systems and database connections.
+   * Captures detailed retry attempt history (`RetryAttempt`) containing attempt numbers, status, failure reasons, and timestamps inside the `IngestionResult` model.
+
 ---
 
 ## Database Schema & ER Diagram
@@ -131,7 +136,38 @@ Triggers metric extraction and ingestion for all enabled modules across missing 
       "ingestionStatus": "SUCCESS",
       "responseData": "{\"ResponseInfo\":{\"apiId\":\"Rainmaker\",\"ver\":null,\"ts\":null,\"resMsgId\":\"uief87324\",\"msgId\":\"1784523332613|en_IN\",\"status\":null},\"responseHash\":[1231527387]}",
       "failureReason": null,
-      "ingestedAt": 1784532600000
+      "ingestedAt": 1784532600000,
+      "date": "2026-07-22",
+      "retryHistory": [
+        {
+          "attemptNumber": 1,
+          "status": "FAILURE",
+          "failureReason": "Connection timeout",
+          "timestamp": 1784532598000
+        },
+        {
+          "attemptNumber": 2,
+          "status": "SUCCESS",
+          "failureReason": null,
+          "timestamp": 1784532600000
+        }
+      ]
+    }
+  ]
+  ```
+
+  If a module is already up-to-date up to yesterday, the service returns a status of `SKIPPED` instead of pushing duplicate data.
+  
+  **Sample skipped response:**
+  ```json
+  [
+    {
+      "ingestionStatus": "SKIPPED",
+      "responseData": null,
+      "failureReason": "Module PT is already up-to-date up to yesterday (2026-07-21)",
+      "ingestedAt": 1784532600000,
+      "date": "2026-07-21",
+      "retryHistory": null
     }
   ]
   ```
@@ -279,6 +315,25 @@ legacy.ingestion.cron=0 0 2 1 * ?
 
 # Default lookback window in months when using N-month lookback trigger
 legacy.ingestion.default-months=5
+```
+
+### Step 8: Resilience & Retry Configurations (`application.properties`)
+The service comes pre-configured with reasonable defaults for retry behaviors. Customize them to tweak failure recovery limits:
+```properties
+# Database connection query retry parameters
+adapter.db-retry.max-attempts=3
+adapter.db-retry.base-delay-ms=1000
+adapter.db-retry.max-delay-ms=5000
+
+# OAuth endpoint token/search retry parameters
+adapter.oauth-retry.max-attempts=3
+adapter.oauth-retry.base-delay-ms=1000
+adapter.oauth-retry.max-delay-ms=5000
+
+# National Dashboard ingestion HTTP pushing retry parameters
+adapter.retry.max-attempts=3
+adapter.retry.base-delay-ms=1000
+adapter.retry.max-delay-ms=5000
 ```
 
 ---

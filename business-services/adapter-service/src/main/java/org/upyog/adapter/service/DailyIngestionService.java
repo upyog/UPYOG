@@ -88,6 +88,12 @@ public class DailyIngestionService {
 			if (startDate.isAfter(yesterday)) {
 				log.info("DailyIngestionService | Module {} is already up-to-date up to yesterday ({}). Skipping.",
 						module, yesterday);
+				allResults.add(IngestionResult.builder()
+						.ingestionStatus("SKIPPED")
+						.date(yesterday.toString())
+						.failureReason("Module " + module.name() + " is already up-to-date up to yesterday (" + yesterday + ")")
+						.ingestedAt(System.currentTimeMillis())
+						.build());
 				continue;
 			}
 
@@ -152,6 +158,9 @@ public class DailyIngestionService {
 			AdapterRequest request = AdapterRequest.builder().module(module).rawData(List.of(rawData)).build();
 
 			IngestionResult result = adapterClient.execute(request);
+			if (result != null && result.getDate() == null) {
+				result.setDate(date.toString());
+			}
 			log.info("DailyIngestionService | Ingestion status for module {} on date {}: {}",
 					module, date, result.getIngestionStatus());
 			return result;
@@ -161,6 +170,7 @@ public class DailyIngestionService {
 					.ingestionStatus("FAILURE")
 					.failureReason(e.getMessage())
 					.ingestedAt(System.currentTimeMillis())
+					.date(date.toString())
 					.build();
 		}
 	}

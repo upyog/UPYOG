@@ -22,6 +22,8 @@ import org.upyog.adapter.model.DashboardData;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Property Tax (PT) implementation of {@link ModuleExtractor}.
  * 
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Encapsulates database metric extraction queries for PT module using
  * {@link SchemaMappingConfig}.
  */
+@Slf4j
 @Component
 public class PtModuleExtractor implements ModuleExtractor {
 
@@ -56,6 +59,15 @@ public class PtModuleExtractor implements ModuleExtractor {
 	@org.springframework.beans.factory.annotation.Value("${adapter.metric.ulb:pg.citya}")
 	private String dbTenantId;
 
+	@org.springframework.beans.factory.annotation.Value("${adapter.db-retry.max-attempts:3}")
+	private int dbMaxAttempts;
+
+	@org.springframework.beans.factory.annotation.Value("${adapter.db-retry.base-delay-ms:1000}")
+	private long dbBaseDelayMs;
+
+	@org.springframework.beans.factory.annotation.Value("${adapter.db-retry.max-delay-ms:5000}")
+	private long dbMaxDelayMs;
+
 	@Override
 	public Module getModule() {
 		return Module.PT;
@@ -78,7 +90,7 @@ public class PtModuleExtractor implements ModuleExtractor {
 		Map<String, Object> metrics = new LinkedHashMap<>();
 
 		// DB CALL 1: Combined scalars + JSON arrays query
-		Map<String, Object> combinedResult = namedParameterJdbcTemplate.queryForMap(ptQueries.getCombinedMetricsQuery(),
+		Map<String, Object> combinedResult = executeQueryWithRetry(ptQueries.getCombinedMetricsQuery(),
 				params);
 
 		metrics.put("assessments", getIntegerValue(combinedResult.get("assessments")));
@@ -104,8 +116,7 @@ public class PtModuleExtractor implements ModuleExtractor {
 
 
 		// DB CALL 2: Payment and tax account breakdown query
-		List<Map<String, Object>> collectionRows = namedParameterJdbcTemplate
-				.queryForList(ptQueries.getCollectionMetricsQuery(), params);
+		List<Map<String, Object>> collectionRows = executeQueryListWithRetry(ptQueries.getCollectionMetricsQuery(), params);
 
 		Map<String, Double> propTaxMap = new HashMap<>();
 		Map<String, Double> cessMap = new HashMap<>();
@@ -242,5 +253,63 @@ public class PtModuleExtractor implements ModuleExtractor {
 			}
 		}
 		return buckets;
+	}
+
+	private Map<String, Object> executeQueryWithRetry(String query, Map<String, Object> params) {
+		int attempt = 0;
+		while (true) {
+			attempt++;
+			try {
+				return namedParameterJdbcTemplate.queryForMap(query, params);
+			} catch (Exception e) {
+				if (attempt >= dbMaxAttempts) {
+					log.error("PtModuleExtractor | DB query failed after {} attempts.", attempt, e);
+					throw e;
+				}
+				long backoff = calculateDbBackoffWithJitter(attempt);
+				log.warn("PtModuleExtractor | DB query failed (attempt {}/{}). Retrying in {} ms. Error: {}", 
+						attempt, dbMaxAttempts, backoff, e.getMessage());
+				try {
+					Thread.sleep(backoff);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					throw new RuntimeException("DB query retry interrupted", ie);
+				}
+			}
+		}
+	}
+
+	private List<Map<String, Object>> executeQueryListWithRetry(String query, Map<String, Object> params) {
+		int attempt = 0;
+		while (true) {
+			attempt++;
+			try {
+				return namedParameterJdbcTemplate.queryForList(query, params);
+			} catch (Exception e) {
+				if (attempt >= dbMaxAttempts) {
+					log.error("PtModuleExtractor | DB query list failed after {} attempts.", attempt, e);
+					throw e;
+				}
+				long backoff = calculateDbBackoffWithJitter(attempt);
+				log.warn("PtModuleExtractor | DB query list failed (attempt {}/{}). Retrying in {} ms. Error: {}", 
+						attempt, dbMaxAttempts, backoff, e.getMessage());
+				try {
+					Thread.sleep(backoff);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					throw new RuntimeException("DB query list retry interrupted", ie);
+				}
+			}
+		}
+	}
+
+	private long calculateDbBackoffWithJitter(int attempt) {
+		int power = Math.min(attempt - 1, 30);
+		long expDelay = dbBaseDelayMs * (1L << power);
+		if (expDelay < 0) {
+			expDelay = dbMaxDelayMs;
+		}
+		long currentMaxDelay = Math.min(dbMaxDelayMs, expDelay);
+		return java.util.concurrent.ThreadLocalRandom.current().nextLong(0, currentMaxDelay + 1);
 	}
 }

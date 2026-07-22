@@ -1,9 +1,12 @@
 package org.upyog.adapter.loader.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.upyog.adapter.model.RetryAttempt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -107,6 +110,15 @@ public class HttpLoader implements Loader {
 	@Value("${national.dashboard.ingest.url}")
 	public String dashboardIngestUrl;
 
+	@Value("${adapter.retry.max-attempts:3}")
+	private int maxAttempts;
+
+	@Value("${adapter.retry.base-delay-ms:1000}")
+	private long baseDelayMs;
+
+	@Value("${adapter.retry.max-delay-ms:5000}")
+	private long maxDelayMs;
+
 	/**
 	 * Gson instance used for debug-level serialization of complex objects (e.g.
 	 * {@link UserInfo}) before logging. Jackson's {@link ObjectMapper} is preferred
@@ -163,54 +175,115 @@ public class HttpLoader implements Loader {
 	 */
 	@Override
 	public IngestionResult load(DashboardPayload data) {
-
 		String requestJson = "";
 		String responseJson = "";
 		String status = "FAILURE";
+		String failureReason = null;
+		List<RetryAttempt> retryHistory = new ArrayList<>();
 
-		try {
-			NationalDashboardIngestRequest payload = buildRequest(data);
+		DashboardData first = (data.getData() != null && !data.getData().isEmpty()) ? data.getData().get(0) : null;
+		String dateStr = first != null ? first.getDate() : null;
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
+		int attempt = 0;
+		while (true) {
+			attempt++;
+			try {
+				NationalDashboardIngestRequest payload = buildRequest(data);
 
-			requestJson = objectMapper.writeValueAsString(payload);
-			log.info("HttpLoader | request payload: {}", requestJson);
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
 
-			HttpEntity<String> requestEntity = new HttpEntity<>(requestJson, headers);
+				requestJson = objectMapper.writeValueAsString(payload);
+				log.info("HttpLoader | attempt {} request payload: {}", attempt, requestJson);
 
-			log.info("HttpLoader | posting to: {}", dashboardIngestUrl);
+				HttpEntity<String> requestEntity = new HttpEntity<>(requestJson, headers);
 
+				log.info("HttpLoader | attempt {} posting to: {}", attempt, dashboardIngestUrl);
 
-			ResponseEntity<String> response = restTemplate.postForEntity(dashboardIngestUrl, requestEntity,
-					String.class);
-			System.out.println("Response of ingest API : " + response);
-			responseJson = response.getBody();
-			status = "SUCCESS";
+				ResponseEntity<String> response = restTemplate.postForEntity(dashboardIngestUrl, requestEntity,
+						String.class);
+				System.out.println("Response of ingest API : " + response);
+				responseJson = response.getBody();
+				status = "SUCCESS";
 
-			IngestionResult result = IngestionResult.builder().ingestionStatus(status).responseData(responseJson)
-					.ingestedAt(System.currentTimeMillis()).build();
+				retryHistory.add(RetryAttempt.builder()
+						.attemptNumber(attempt)
+						.status("SUCCESS")
+						.timestamp(System.currentTimeMillis())
+						.build());
 
-			pushIngestionRecord(data, requestJson, responseJson, status);
+				IngestionResult result = IngestionResult.builder()
+						.ingestionStatus(status)
+						.responseData(responseJson)
+						.date(dateStr)
+						.ingestedAt(System.currentTimeMillis())
+						.retryHistory(retryHistory)
+						.build();
 
-			return result;
+				pushIngestionRecord(data, requestJson, responseJson, status);
 
-		} catch (Exception e) {
-			log.error("HttpLoader | ingestion failed", e);
+				return result;
 
-			String responseOrError = e.getMessage();
-			if (e instanceof org.springframework.web.client.HttpStatusCodeException httpEx) {
-				String body = httpEx.getResponseBodyAsString();
-				if (body != null && !body.isBlank()) {
-					responseOrError = body;
+			} catch (Exception e) {
+				log.error("HttpLoader | attempt {} ingestion failed", attempt, e);
+
+				String responseOrError = e.getMessage();
+				if (e instanceof org.springframework.web.client.HttpStatusCodeException httpEx) {
+					String body = httpEx.getResponseBodyAsString();
+					if (body != null && !body.isBlank()) {
+						responseOrError = body;
+					}
+				}
+				failureReason = e.getMessage();
+
+				retryHistory.add(RetryAttempt.builder()
+						.attemptNumber(attempt)
+						.status("FAILURE")
+						.failureReason(failureReason)
+						.timestamp(System.currentTimeMillis())
+						.build());
+
+				if (attempt >= maxAttempts) {
+					log.error("HttpLoader | All {} ingestion attempts failed.", maxAttempts);
+					pushIngestionRecord(data, requestJson, responseOrError, status);
+					return IngestionResult.builder()
+							.ingestionStatus(status)
+							.failureReason(failureReason)
+							.date(dateStr)
+							.ingestedAt(System.currentTimeMillis())
+							.retryHistory(retryHistory)
+							.build();
+				}
+
+				long backoff = calculateBackoffWithJitter(attempt);
+				log.warn("HttpLoader | Attempt {}/{} failed. Retrying in {} ms. Error: {}", 
+						attempt, maxAttempts, backoff, failureReason);
+				try {
+					Thread.sleep(backoff);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					log.error("HttpLoader | Ingestion retry loop interrupted", ie);
+					pushIngestionRecord(data, requestJson, responseOrError, status);
+					return IngestionResult.builder()
+							.ingestionStatus(status)
+							.failureReason("Interrupted: " + ie.getMessage())
+							.date(dateStr)
+							.ingestedAt(System.currentTimeMillis())
+							.retryHistory(retryHistory)
+							.build();
 				}
 			}
-
-			pushIngestionRecord(data, requestJson, responseOrError, status);
-
-			return IngestionResult.builder().ingestionStatus(status).failureReason(e.getMessage())
-					.ingestedAt(System.currentTimeMillis()).build();
 		}
+	}
+
+	private long calculateBackoffWithJitter(int attempt) {
+		int power = Math.min(attempt - 1, 30);
+		long expDelay = baseDelayMs * (1L << power);
+		if (expDelay < 0) {
+			expDelay = maxDelayMs;
+		}
+		long currentMaxDelay = Math.min(maxDelayMs, expDelay);
+		return java.util.concurrent.ThreadLocalRandom.current().nextLong(0, currentMaxDelay + 1);
 	}
 
 

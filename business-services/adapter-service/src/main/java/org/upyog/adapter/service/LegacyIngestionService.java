@@ -171,6 +171,9 @@ public class LegacyIngestionService {
             } catch (Exception ignored) {}
 
             result = adapterClient.execute(request);
+            if (result != null && result.getDate() == null) {
+                result.setDate(date.toString());
+            }
             log.info("LegacyIngestionService | Ingested module {} date {}: status {}", module, date, result.getIngestionStatus());
 
             responseJson = result.getResponseData() != null ? sanitizeJson(result.getResponseData()) : sanitizeJson(result.getFailureReason());
@@ -182,6 +185,7 @@ public class LegacyIngestionService {
                     .ingestionStatus("FAILURE")
                     .failureReason(e.getMessage())
                     .ingestedAt(now)
+                    .date(date.toString())
                     .build();
         }
 

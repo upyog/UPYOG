@@ -238,6 +238,56 @@ class OAuthTokenServiceTest {
                 .isInstanceOf(Exception.class);
     }
 
+    @Test
+    @DisplayName("getToken retries on transient failures and succeeds eventually")
+    void getToken_retriesOnTransientFailureAndSucceeds() throws Exception {
+        service = createServiceWithMocks();
+        OAuthTokenResponse tokenResponse = createTokenResponse("retry-token", 3600L);
+        ResponseEntity<OAuthTokenResponse> responseEntity = new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+
+        // Fail first attempt, succeed on second
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(OAuthTokenResponse.class)))
+                .thenThrow(new RuntimeException("Transient connection timeout"))
+                .thenReturn(responseEntity);
+
+        String token = service.getToken();
+        assertThat(token).isEqualTo("retry-token");
+        verify(restTemplate, times(2)).exchange(anyString(), eq(HttpMethod.POST), any(), eq(OAuthTokenResponse.class));
+    }
+
+    @Test
+    @DisplayName("getToken retries up to maxAttempts and throws Exception when all attempts fail")
+    void getToken_allAttemptsFail_throwsException() throws Exception {
+        service = createServiceWithMocks();
+
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(OAuthTokenResponse.class)))
+                .thenThrow(new RuntimeException("Transient 503 Server Error"));
+
+        assertThatThrownBy(() -> service.getToken())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("after maximum attempts");
+
+        verify(restTemplate, times(3)).exchange(anyString(), eq(HttpMethod.POST), any(), eq(OAuthTokenResponse.class));
+    }
+
+    @Test
+    @DisplayName("getToken does not retry on 4xx client errors and fast-fails")
+    void getToken_clientError_throwsImmediateException() throws Exception {
+        service = createServiceWithMocks();
+
+        org.springframework.web.client.HttpClientErrorException clientEx = 
+                new org.springframework.web.client.HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(OAuthTokenResponse.class)))
+                .thenThrow(clientEx);
+
+        assertThatThrownBy(() -> service.getToken())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("client error");
+
+        verify(restTemplate, times(1)).exchange(anyString(), eq(HttpMethod.POST), any(), eq(OAuthTokenResponse.class));
+    }
+
     private OAuthTokenService createServiceWithMocks() throws Exception {
         OAuthTokenService svc = new OAuthTokenService();
         setField(svc, "restTemplate", restTemplate);
@@ -249,6 +299,9 @@ class OAuthTokenServiceTest {
         setField(svc, "tenantId", "pg");
         setField(svc, "userType", "EMPLOYEE");
         setField(svc, "userSearchPath", "/user/_search");
+        setField(svc, "maxAttempts", 3);
+        setField(svc, "baseDelayMs", 1L);
+        setField(svc, "maxDelayMs", 2L);
         return svc;
     }
 
