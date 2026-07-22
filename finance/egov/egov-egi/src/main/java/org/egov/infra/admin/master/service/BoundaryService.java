@@ -48,9 +48,10 @@
 
 package org.egov.infra.admin.master.service;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import org.geotools.feature.FeatureIterator;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 import javassist.tools.rmi.ObjectNotFoundException;
 
@@ -60,14 +61,13 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.StringUtils;
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
+import org.geotools.api.data.DataStore;
+import org.geotools.api.data.DataStoreFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -277,10 +277,9 @@ public class BoundaryService {
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
                 final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore
                         .getFeatureSource(dataStore.getTypeNames()[0]).getFeatures();
-                final Iterator<SimpleFeature> iterator = collection.iterator();
                 final Point point = JTSFactoryFinder.getGeometryFactory(null)
                         .createPoint(new Coordinate(longitude, latitude));
-                try {
+                try (FeatureIterator<SimpleFeature> iterator = collection.features()) {
                     while (iterator.hasNext()) {
                         final SimpleFeature feature = iterator.next();
                         final Geometry geom = (Geometry) feature.getDefaultGeometry();
@@ -288,8 +287,6 @@ public class BoundaryService {
                             return getBoundaryByNumberAndType((Long) feature.getAttribute("bndrynum"), (String) feature.getAttribute("bndrytype"));
                         }
                     }
-                } finally {
-                    collection.close(iterator);
                 }
             }
 

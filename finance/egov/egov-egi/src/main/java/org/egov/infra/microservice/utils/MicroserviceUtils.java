@@ -113,7 +113,8 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.jfree.util.Log;
-import org.json.simple.JSONArray;
+//import org.json.simple.JSONArray;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -469,7 +470,7 @@ public class MicroserviceUtils {
         return null;
     }
 
-    public JSONArray getFinanceMdmsByModuleNameAndMasterDetails(String moduleName, String name, FilterRequest filter) {
+    public List<Object> getFinanceMdmsByModuleNameAndMasterDetails(String moduleName, String name, FilterRequest filter) {
         String mdmsUrl = appConfigManager.getEgovMdmsSerHost() + this.mdmsSearchUrl;
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setAuthToken(getUserToken());
@@ -511,7 +512,7 @@ public class MicroserviceUtils {
         mdmsrequest.setMdmsCriteria(mdmscriteria);
         try {
             MdmsResponse response = restTemplate.postForObject(mdmsUrl, mdmsrequest, MdmsResponse.class);
-            Map<String, JSONArray> mdmsmap = response.getMdmsRes().get(moduleName);
+            Map<String, List<Object>> mdmsmap = response.getMdmsRes().get(moduleName);
             if (null != mdmsmap && mdmsmap.size() > 0) {
                 return mdmsmap.get(name);
             }

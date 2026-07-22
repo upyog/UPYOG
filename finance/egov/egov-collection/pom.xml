@@ -184,7 +184,7 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-hibernate5</artifactId>
+            <artifactId>jackson-datatype-hibernate6</artifactId>
         </dependency>
         <!-- JSON END -->
 
@@ -229,13 +229,17 @@
         <!-- QUARTZ END -->
 
         <!-- DISPLAYTAG START -->
+<!--        <dependency>-->
+<!--            <groupId>displaytag</groupId>-->
+<!--            <artifactId>displaytag</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>displaytag</groupId>-->
+<!--            <artifactId>displaytag-export-poi</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>displaytag</groupId>
+            <groupId>com.github.hazendaz</groupId>
             <artifactId>displaytag</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>displaytag</groupId>
-            <artifactId>displaytag-export-poi</artifactId>
         </dependency>
         <!-- DISPLAYTAG END -->
 

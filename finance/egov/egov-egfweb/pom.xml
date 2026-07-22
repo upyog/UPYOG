@@ -73,12 +73,23 @@
         </dependency>
 
         <!-- VIEWS RELATED END -->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.tiles</groupId>-->
+<!--            <artifactId>tiles-core</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.tiles</groupId>-->
+<!--            <artifactId>tiles-jsp</artifactId>-->
+<!--        </dependency>-->
+
+
+        <!-- NEW -->
         <dependency>
-            <groupId>org.apache.tiles</groupId>
+            <groupId>com.github.tntim96.apache.tiles</groupId>
             <artifactId>tiles-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.tiles</groupId>
+            <groupId>com.github.tntim96.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
         </dependency>
         <dependency>

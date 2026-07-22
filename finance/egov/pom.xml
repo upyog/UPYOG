@@ -106,6 +106,36 @@
         </snapshotRepository>
     </distributionManagement>
 
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>nexus-repo.digit.org</id>-->
+<!--            <name>eGov Public Repository Group</name>-->
+<!--            <url>https://upyog-nexus.niua.org/nexus/content/groups/public/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--                <updatePolicy>always</updatePolicy>-->
+<!--            </snapshots>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>JBoss Repository</id>-->
+<!--            <url>https://repository.jboss.org/nexus/content/groups/public/</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>jakartat.com</id>-->
+<!--            <name>UPYOG Nexus Public</name>-->
+<!--            <url>https://upyog-nexus.niua.org/nexus/content/groups/public</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+
     <repositories>
         <repository>
             <id>nexus-repo.digit.org</id>
@@ -134,7 +164,21 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <!-- 👇 NAYA ADD KARO -->
+        <repository>
+            <id>osgeo</id>
+            <name>OSGeo Release Repository</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
+
+
 
     <pluginRepositories>
         <pluginRepository>
@@ -168,13 +212,15 @@
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
         <jakarta-validation-version>3.0.2</jakarta-validation-version>
         <jakarta-servlet-api-version>6.0.0.Final</jakarta-servlet-api-version>
+
         <jakarta-servlet-jstl-version>1.2.6-RC1</jakarta-servlet-jstl-version>
+
         <jakarta-servlet-jsp-version>1.0.1.Final</jakarta-servlet-jsp-version>
         <jakarta-jms-version>1.0.1.Final</jakarta-jms-version>
         <jakarta-mail-version>1.5.6</jakarta-mail-version>
         <jakarta-el-version>3.0.1-b08</jakarta-el-version>
         <xerces-version>2.12.2</xerces-version>
-        <postgres-version>42.7.1</postgres-version>
+        <postgres-version>42.7.13</postgres-version>
 
         <!-- Other application dependency versions -->
         <struts2-version>7.1.1</struts2-version>
@@ -188,17 +234,29 @@
         <spring-security-oauth2-version>2.2.0.RELEASE</spring-security-oauth2-version>
         <spring-data-elasticsearch>5.2.12</spring-data-elasticsearch>
         <elastic-search-version>2.4.6</elastic-search-version>
-        <apache-tiles-version>3.0.7</apache-tiles-version>
-        <embedded-redis-version>0.6</embedded-redis-version>
-        <quartz-version>2.3.0</quartz-version>
+        <embedded-redis-version>0.7.3</embedded-redis-version>
+        <quartz-version>2.5.2</quartz-version>
+        <mchange-commons-version>0.5.0</mchange-commons-version>
         <jasper-report-version>6.1.0</jasper-report-version>
         <json-simple-version>1.1.1</json-simple-version>
-        <jackson-version>2.15.4</jackson-version>
-        <orika-core.version>1.5.2</orika-core.version>
-        <gson-version>2.8.2</gson-version>
+
+        <jackson-version>2.21.5</jackson-version>
+        <jackson-annotations-version>2.21</jackson-annotations-version>
+        <jackson-joda-version>2.16.1</jackson-joda-version>
+
+        <orika-core.version>1.5.4</orika-core.version>
+        <gson-version>2.14.0</gson-version>
         <antisamy-version>1.7.8</antisamy-version>
         <jasypt-version>1.9.6</jasypt-version>
-        <display-tag-version>1.2</display-tag-version>
+
+
+        <display-tag-version>3.7.0</display-tag-version>
+        <apache-tiles-version>3.1.0.0</apache-tiles-version>
+        <openpdf-version>1.3.30</openpdf-version>
+
+        <geotools.version>34.4</geotools.version>
+
+
         <jfreechart-version>1.0.19</jfreechart-version>
         <groovy-all-version>2.4.12</groovy-all-version>
         <itext-version>2.1.7</itext-version>
@@ -219,21 +277,35 @@
         <commons.compress.version>1.16.1</commons.compress.version>
         <httpclient-version>4.5.3</httpclient-version>
         <sitemesh-version>2.4.2</sitemesh-version>
+
+
         <ehcache-web-version>2.0.4</ehcache-web-version>
         <joda-time-version>2.9.9</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
         <jsoup-version>1.17.2</jsoup-version>
         <jython-version>2.7.1b3</jython-version>
-        <flyway-core-version>7.11.1</flyway-core-version>
-        <junit-version>4.12</junit-version>
+        <flyway-core-version>13.0.0</flyway-core-version>
+
+
+
+        <junit-version>4.13.2</junit-version>
         <mockito-core-version>5.23.0</mockito-core-version>
-        <springockito-version>1.0.9</springockito-version>
-        <easymock-version>3.5</easymock-version>
-        <easymockclassextension-version>3.2</easymockclassextension-version>
-        <hamcrest-all-version>1.3</hamcrest-all-version>
-        <slf4j-version>1.7.25</slf4j-version>
-        <log4j-version>2.17.1</log4j-version>
-        <log4j2-version>2.17.1</log4j2-version>
+        <!--		Removed(springockito) because new version of mockito-core does all the work of this library-->
+<!--        <springockito-version>1.0.9</springockito-version>-->
+        <easymock-version>5.2.0</easymock-version>
+        <!--		Removed (easymockclassextension) because no latest version available & version class mocking in in-built in Easymock new version-->
+<!--        <easymockclassextension-version>3.2</easymockclassextension-version>-->
+<!--        Not getting used anywhere in the codebase-->
+<!--        <hamcrest-all-version>1.3</hamcrest-all-version>-->
+
+
+        <slf4j-version>2.0.18</slf4j-version>
+<!--        Dependency not getting used -->
+<!--        <log4j-version>2.17.1</log4j-version>-->
+
+        <log4j2-version>2.26.0</log4j2-version>
+
+
         <google-guava-version>23.2-jre</google-guava-version>
         <google.zxing.version>3.3.0</google.zxing.version>
         <recaptcha.version>0.0.8</recaptcha.version>
@@ -344,11 +416,7 @@
                 <version>${jakarta-validation-version}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-hibernate5</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
+
             <!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId>
                 <version>4.0.0.GA</version> </dependency> <dependency> <groupId>org.jadira.usertype</groupId>
                 <artifactId>usertype.spi</artifactId> <version>4.0.0.GA</version> </dependency> -->
@@ -361,6 +429,19 @@
                 <version>6.0.0</version>
                 <scope>provided</scope>
             </dependency>
+
+
+
+
+
+
+
+
+
+
+
+
+
             <dependency>
                 <groupId>org.apache.taglibs</groupId>
                 <artifactId>taglibs-standard-compat</artifactId>
@@ -379,6 +460,13 @@
                 <version>${jakarta-servlet-jstl-version}</version>
                 <scope>provided</scope>
             </dependency>
+
+
+
+
+
+
+
             <dependency>
                 <groupId>jakarta.servlet.jsp</groupId>
                 <artifactId>jakarta.servlet.jsp-api</artifactId> <!-- Fixed: correct artifact ID for JSP API -->
@@ -442,12 +530,22 @@
             </dependency>
             <!-- STRUTS2 DEPENDENCIES END -->
 
+
+
+
             <!-- JSON START -->
+
+
+
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
                 <artifactId>json-simple</artifactId>
                 <version>${json-simple-version}</version>
             </dependency>
+
+
+
+
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -461,18 +559,41 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson-version}</version>
+                <version>${jackson-annotations-version}</version>
             </dependency>
+
+
+
+
+
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-joda</artifactId>
+                <version>${jackson-joda-version}</version>
+            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.fasterxml.jackson.datatype</groupId>-->
+<!--                <artifactId>jackson-datatype-hibernate</artifactId>-->
+<!--                <version>${jackson-version}</version>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-hibernate6</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-hibernate</artifactId>
+                <artifactId>jackson-datatype-jaxrs</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+
+
+
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-smile</artifactId>
@@ -488,23 +609,20 @@
                 <artifactId>jackson-dataformat-yaml</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jaxrs</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jdk8</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
+
+
 
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson-version}</version>
             </dependency>
+
+
             <!-- JSON END -->
+
+
+
             <!-- Orika -->
             <dependency>
                 <groupId>ma.glasnost.orika</groupId>
@@ -639,13 +757,34 @@
             </dependency>
             <!-- SECURITY END -->
 
+
+
+
+
+
+
             <!-- EMBEDDED REDIS STARTS -->
+<!--            <dependency>-->
+<!--                <groupId>com.orange.redis-embedded</groupId>-->
+<!--                <artifactId>embedded-redis</artifactId>-->
+<!--                <version>${embedded-redis-version}</version>-->
+<!--            </dependency>-->
+
+
             <dependency>
-                <groupId>com.orange.redis-embedded</groupId>
+                <groupId>it.ozimov</groupId>
                 <artifactId>embedded-redis</artifactId>
                 <version>${embedded-redis-version}</version>
             </dependency>
             <!-- EMBEDDED REDIS ENDS -->
+
+
+
+
+
+
+
+
 
             <!-- QUARTZ START -->
             <dependency>
@@ -658,38 +797,90 @@
                 <artifactId>quartz-jobs</artifactId>
                 <version>${quartz-version}</version>
             </dependency>
+
+<!--      mchange-commons-java (a separate utility library that c3p0 depends on). It's not part of Quartz itself; Quartz just pulled it in transitively via c3p0 before, and stopped doing so at compile scope after 2.4.0+-->
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>mchange-commons-java</artifactId>
+                <version>${mchange-commons-version}</version>
+            </dependency>
             <!-- QUARTZ END -->
+
+
+
+
+
+
+
+
+            <!-- DISPLAYTAG START -->
+<!--            <dependency>-->
+<!--                <groupId>displaytag</groupId>-->
+<!--                <artifactId>displaytag</artifactId>-->
+<!--                <version>${display-tag-version}</version>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.slf4j</groupId>-->
+<!--                        <artifactId>slf4j-log4j12</artifactId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.slf4j</groupId>-->
+<!--                        <artifactId>jcl104-over-slf4j</artifactId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.apache.poi</groupId>-->
+<!--                        <artifactId>poi</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>displaytag</groupId>-->
+<!--                <artifactId>displaytag-export-poi</artifactId>-->
+<!--                <version>${display-tag-version}</version>-->
+<!--            </dependency>-->
+
+
 
             <!-- DISPLAYTAG START -->
             <dependency>
-                <groupId>displaytag</groupId>
+                <groupId>com.github.hazendaz</groupId>
                 <artifactId>displaytag</artifactId>
                 <version>${display-tag-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>jcl104-over-slf4j</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.poi</groupId>
-                        <artifactId>poi</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
+
             <dependency>
-                <groupId>displaytag</groupId>
-                <artifactId>displaytag-export-poi</artifactId>
-                <version>${display-tag-version}</version>
+                <groupId>com.github.librepdf</groupId>
+                <artifactId>openpdf</artifactId>
+                <version>${openpdf-version}</version>
             </dependency>
             <!-- DISPLAYTAG END -->
+            <!-- DISPLAYTAG END -->
 
-            <!-- VIEWS RELATED END -->
+
+
+
+
+            <!-- VIEWS RELATED START -->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tiles</groupId>-->
+<!--                <artifactId>tiles-core</artifactId>-->
+<!--                <version>${apache-tiles-version}</version>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>commons-beanutils</groupId>-->
+<!--                        <artifactId>commons-beanutils</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tiles</groupId>-->
+<!--                <artifactId>tiles-jsp</artifactId>-->
+<!--                <version>${apache-tiles-version}</version>-->
+<!--            </dependency>-->
+
+
             <dependency>
-                <groupId>org.apache.tiles</groupId>
+                <groupId>com.github.tntim96.apache.tiles</groupId>
                 <artifactId>tiles-core</artifactId>
                 <version>${apache-tiles-version}</version>
                 <exclusions>
@@ -700,11 +891,21 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.apache.tiles</groupId>
+                <groupId>com.github.tntim96.apache.tiles</groupId>
                 <artifactId>tiles-jsp</artifactId>
                 <version>${apache-tiles-version}</version>
             </dependency>
             <!-- VIEWS RELATED END -->
+            <!-- VIEWS RELATED END -->
+
+
+
+
+
+
+
+
+
 
             <!-- REPORTS START -->
 
@@ -764,6 +965,15 @@
                 <version>${jexcelapi-version}</version>
             </dependency>
             <!-- REPORTS END -->
+
+
+
+
+
+
+
+
+
 
             <!-- COMMONS START -->
             <dependency>
@@ -961,6 +1171,30 @@
             </dependency>
             <!-- IMAGE PROCESSING API END -->
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             <!-- TESTING START -->
             <dependency>
                 <groupId>junit</groupId>
@@ -968,24 +1202,42 @@
                 <version>${junit-version}</version>
                 <scope>test</scope>
             </dependency>
+
+
+
+
+
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito-core-version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.kubek2k</groupId>
-                <artifactId>springockito</artifactId>
-                <version>${springockito-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.kubek2k</groupId>
-                <artifactId>springockito-annotations</artifactId>
-                <version>${springockito-version}</version>
-                <scope>test</scope>
-            </dependency>
+
+
+
+
+
+<!--            <dependency>-->
+<!--                <groupId>org.kubek2k</groupId>-->
+<!--                <artifactId>springockito</artifactId>-->
+<!--                <version>${springockito-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
+
+
+<!--            we will review this later again effected files - EISAbstractSpringIntegrationTest.java-->
+<!--            <dependency>-->
+<!--                <groupId>org.kubek2k</groupId>-->
+<!--                <artifactId>springockito-annotations</artifactId>-->
+<!--                <version>${springockito-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
+
+
+
+
+
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
@@ -993,18 +1245,61 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymockclassextension</artifactId>
-                <version>${easymockclassextension-version}</version>
+                <groupId>org.objenesis</groupId>
+                <artifactId>objenesis</artifactId>
+                <version>3.4</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>${hamcrest-all-version}</version>
-                <scope>test</scope>
-            </dependency>
+
+
+
+<!--            <dependency>-->
+<!--                <groupId>org.easymock</groupId>-->
+<!--                <artifactId>easymockclassextension</artifactId>-->
+<!--                <version>${easymockclassextension-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
+
+
+
+<!--            <dependency>-->
+<!--                <groupId>org.hamcrest</groupId>-->
+<!--                <artifactId>hamcrest-all</artifactId>-->
+<!--                <version>${hamcrest-all-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
             <!-- TESTING END -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <!-- LOGGING START -->
             <dependency>
@@ -1012,17 +1307,19 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-nop</artifactId>
-                <version>${slf4j-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j-version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.slf4j</groupId>-->
+<!--                <artifactId>slf4j-nop</artifactId>-->
+<!--                <version>${slf4j-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.slf4j</groupId>-->
+<!--                <artifactId>jcl-over-slf4j</artifactId>-->
+<!--                <version>${slf4j-version}</version>-->
+<!--            </dependency>-->
+
+
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-1.2-api</artifactId>
@@ -1040,6 +1337,17 @@
             </dependency>
             <!-- LOGGING END -->
 
+
+
+
+
+
+
+
+
+
+
+
             <!-- DATABASE START -->
             <dependency>
                 <groupId>org.postgresql</groupId>
@@ -1053,73 +1361,94 @@
                 <version>${flyway-core-version}</version>
             </dependency>
 
+            <!-- REQUIRED for Flyway 10+ to talk to PostgreSQL -->
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-database-postgresql</artifactId>
+                <version>${flyway-core-version}</version>
+            </dependency>
+
             <!-- DATABASE END -->
+
+
+
+
+
+
+
 
             <!-- GIS START -->
 
-            <dependency>
-                <groupId>org.opengis</groupId>
-                <artifactId>geoapi</artifactId>
-                <version>2.2-M1</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.opengis</groupId>-->
+<!--                <artifactId>geoapi</artifactId>-->
+<!--                <version>2.2-M1</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-main</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
+
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-api</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-metadata</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-referencing</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-shapefile</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-shapefile-renderer</artifactId>
-                <version>2.5.4</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.geotools</groupId>-->
+<!--                <artifactId>gt-shapefile-renderer</artifactId>-->
+<!--                <version>${geotools.version}</version>-->
+<!--            </dependency>-->
 <!--            <dependency>-->
 <!--                <groupId>jakarta.media</groupId>-->
 <!--                <artifactId>jai_core</artifactId>-->
 <!--                <version>1.1.3-alpha</version>-->
 <!--                <classifier>alpha</classifier>-->
 <!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>net.java.dev.jsr-275</groupId>-->
+<!--                <artifactId>jsr-275</artifactId>-->
+<!--                <version>1.0-beta-2</version>-->
+<!--            </dependency>-->
             <dependency>
-                <groupId>net.java.dev.jsr-275</groupId>
-                <artifactId>jsr-275</artifactId>
-                <version>1.0-beta-2</version>
+                <groupId>org.locationtech.jts</groupId>
+                <artifactId>jts-core</artifactId>
+                <version>1.20.0</version>
             </dependency>
-            <dependency>
-                <groupId>com.vividsolutions</groupId>
-                <artifactId>jts</artifactId>
-                <version>1.6</version>
-            </dependency>
-            <dependency>
-                <groupId>units</groupId>
-                <artifactId>units</artifactId>
-                <version>0.01</version>
-            </dependency>
-            <dependency>
-                <groupId>java3d</groupId>
-                <artifactId>vecmath</artifactId>
-                <version>1.3.1</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>units</groupId>-->
+<!--                <artifactId>units</artifactId>-->
+<!--                <version>0.01</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>java3d</groupId>-->
+<!--                <artifactId>vecmath</artifactId>-->
+<!--                <version>1.3.1</version>-->
+<!--            </dependency>-->
 
             <!-- GIS END -->
+
+
+
+
+
+
 
         </dependencies>
 
@@ -1257,7 +1586,7 @@
 
         <!-- EMBEDDED REDIS SERVER START -->
         <dependency>
-            <groupId>com.orange.redis-embedded</groupId>
+            <groupId>it.ozimov</groupId>
             <artifactId>embedded-redis</artifactId>
         </dependency>
         <!-- EMBEDDED REDIS SERVER END -->
@@ -1376,39 +1705,39 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.kubek2k</groupId>
-            <artifactId>springockito</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kubek2k</groupId>
-            <artifactId>springockito-annotations</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.kubek2k</groupId>-->
+<!--            <artifactId>springockito</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.kubek2k</groupId>-->
+<!--            <artifactId>springockito-annotations</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymockclassextension</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.easymock</groupId>-->
+<!--            <artifactId>easymockclassextension</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.hamcrest</groupId>-->
+<!--            <artifactId>hamcrest-all</artifactId>-->
+<!--        </dependency>-->
 
         <!-- TESTING END -->
 
         <!-- LOGGING END -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.slf4j</groupId>-->
+<!--            <artifactId>slf4j-nop</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>

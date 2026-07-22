@@ -139,7 +139,7 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-hibernate5</artifactId>
+            <artifactId>jackson-datatype-hibernate6</artifactId>
         </dependency>
         <!-- JSON END -->
 
@@ -190,16 +190,28 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz-jobs</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>mchange-commons-java</artifactId>
+        </dependency>
         <!-- QUARTZ END -->
 
         <!-- DISPLAYTAG START -->
+<!--        <dependency>-->
+<!--            <groupId>displaytag</groupId>-->
+<!--            <artifactId>displaytag</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>displaytag</groupId>-->
+<!--            <artifactId>displaytag-export-poi</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>displaytag</groupId>
+            <groupId>com.github.hazendaz</groupId>
             <artifactId>displaytag</artifactId>
         </dependency>
         <dependency>
-            <groupId>displaytag</groupId>
-            <artifactId>displaytag-export-poi</artifactId>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
         </dependency>
         <!-- DISPLAYTAG END -->
 
@@ -251,10 +263,10 @@
 
         <!-- GIS START -->
 
-        <dependency>
-            <groupId>org.opengis</groupId>
-            <artifactId>geoapi</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.opengis</groupId>-->
+<!--            <artifactId>geoapi</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
@@ -275,31 +287,37 @@
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-shapefile-renderer</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.geotools</groupId>-->
+<!--            <artifactId>gt-shapefile-renderer</artifactId>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>jakarta.media</groupId>-->
 <!--            <artifactId>jai_core</artifactId>-->
 <!--            <classifier>alpha</classifier>-->
 <!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>net.java.dev.jsr-275</groupId>-->
+<!--            <artifactId>jsr-275</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.vividsolutions</groupId>-->
+<!--            <artifactId>jts</artifactId>-->
+<!--        </dependency>-->
+<!--        used this instead of vividsolutions-->
         <dependency>
-            <groupId>net.java.dev.jsr-275</groupId>
-            <artifactId>jsr-275</artifactId>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.vividsolutions</groupId>
-            <artifactId>jts</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>units</groupId>
-            <artifactId>units</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>java3d</groupId>
-            <artifactId>vecmath</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>units</groupId>-->
+<!--            <artifactId>units</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>java3d</groupId>-->
+<!--            <artifactId>vecmath</artifactId>-->
+<!--        </dependency>-->
+
 
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
@@ -355,6 +373,11 @@
 <!--            <artifactId>lombok</artifactId>-->
 <!--            <version>1.18.8</version>-->
 <!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.geotools</groupId>-->
+<!--            <artifactId>gt-shapefile-renderer</artifactId>-->
 <!--        </dependency>-->
 
 

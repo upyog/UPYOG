@@ -56,6 +56,7 @@ import org.displaytag.model.Row;
 import org.displaytag.model.RowIterator;
 import org.displaytag.model.TableModel;
 
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -171,7 +172,7 @@ public class EGovExcelView extends BaseExportView {
 	}
 	
 	@Override
-	public void doExport(Writer out) throws IOException {
+	public void doExport(Writer out, String characterEncoding) throws IOException, JspException {
 	        try {
 		        final String DOCUMENT_START = getDocumentStart();
 		        final String DOCUMENT_END = getDocumentEnd();
