@@ -3,7 +3,6 @@
  * Useful for debug/preview of nested form or API payloads without a fixed schema.
  */
 import React from "react";
-import styles from '../styles/dynamicObjectRenderer.module.scss';
 
 function toLabel(key) {
   return key
@@ -14,9 +13,9 @@ function toLabel(key) {
 
 function FieldRow({ label, value }) {
   return (
-    <div className={styles['dynamicObjectRenderer__field-row']}>
-      <span className={styles['dynamicObjectRenderer__field-label']}>{toLabel(label)}</span>
-      <span className={styles['dynamicObjectRenderer__field-value']}>{String(value ?? "")}</span>
+    <div className="dynamicObjectRenderer__field-row">
+      <span className="dynamicObjectRenderer__field-label">{toLabel(label)}</span>
+      <span className="dynamicObjectRenderer__field-value">{String(value ?? "")}</span>
     </div>
   );
 }
@@ -30,16 +29,16 @@ function ObjectFields({ obj }) {
 
         if (Array.isArray(value)) {
           return (
-            <div key={key} className={styles['dynamicObjectRenderer__section']}>
-              <div className={styles['dynamicObjectRenderer__section-title']}>{toLabel(key)}</div>
+            <div key={key} className="dynamicObjectRenderer__section">
+              <div className="dynamicObjectRenderer__section-title">{toLabel(key)}</div>
               {value.map((item, i) => (
                 <div key={i}>
                   {value.length > 1 && (
-                    <div className={styles['dynamicObjectRenderer__array-label']}>
+                    <div className="dynamicObjectRenderer__array-label">
                       Item {i + 1} of {value.length}
                     </div>
                   )}
-                  <div className={styles['dynamicObjectRenderer__card']}>
+                  <div className="dynamicObjectRenderer__card">
                     {typeof item === "object" && item !== null
                       ? <ObjectFields obj={item} />
                       : <span>{String(item)}</span>
@@ -53,9 +52,9 @@ function ObjectFields({ obj }) {
 
         if (typeof value === "object" && value !== null) {
           return (
-            <div key={key} className={styles['dynamicObjectRenderer__section']}>
-              <div className={styles['dynamicObjectRenderer__section-title']}>{toLabel(key)}</div>
-              <div className={styles['dynamicObjectRenderer__card']}>
+            <div key={key} className="dynamicObjectRenderer__section">
+              <div className="dynamicObjectRenderer__section-title">{toLabel(key)}</div>
+              <div className="dynamicObjectRenderer__card">
                 <ObjectFields obj={value} />
               </div>
             </div>
@@ -74,9 +73,9 @@ const DynamicObjectRenderer = ({ data }) => {
   const items = Array.isArray(data) ? data : [data];
 
   return (
-    <div className={styles['dynamicObjectRenderer']}>
+    <div className="dynamicObjectRenderer">
       {items.map((item, i) => (
-        <div key={i} className={styles['dynamicObjectRenderer__card']}>
+        <div key={i} className="dynamicObjectRenderer__card">
           <ObjectFields obj={item} />
         </div>
       ))}

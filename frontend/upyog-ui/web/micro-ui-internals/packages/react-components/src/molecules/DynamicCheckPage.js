@@ -24,7 +24,6 @@ import {
   resolveFieldLabelKey,
   resolveSummaryFieldValue,
 } from "../utilities/checkPageUtils";
-import styles from "../styles/dynamicCheckPage.module.scss";
 
 const ActionButton = ({ jumpTo, editNavigationState }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
@@ -33,7 +32,7 @@ const ActionButton = ({ jumpTo, editNavigationState }) => {
       label={<EditIcon />}
       onClick={() =>
         navigate(jumpTo, {
-          state: editNavigationState || window.history.state?.usr || {},
+          state: editNavigationState || {},
         })
       }
     />
@@ -176,9 +175,9 @@ const DynamicCheckPage = ({
         <>
           <CardSubHeader>{t("EST_DOCUMENT_PREVIEW")}</CardSubHeader>
           {loadingDocs ? (
-            <div className={styles["dynamic-check-page__loading"]}>{t("CS_LOADING")}</div>
+            <div className="dynamic-check-page__loading">{t("CS_LOADING")}</div>
           ) : previewDocs.length > 0 && DocumentPreview ? (
-            <div className={styles["dynamic-check-page__preview"]}>
+            <div className="dynamic-check-page__preview">
               <DocumentPreview
                 documents={previewDocs}
                 pdfSize={48}
@@ -188,18 +187,18 @@ const DynamicCheckPage = ({
               />
             </div>
           ) : uploadedFiles.length > 0 ? (
-            <div className={styles["dynamic-check-page__file-list"]}>
+            <div className="dynamic-check-page__file-list">
               {uploadedFiles.map((file) => (
-                <div key={file.id} className={styles["dynamic-check-page__file-item"]}>
-                  <div className={styles["dynamic-check-page__file-label"]}>{file.label}</div>
-                  <div className={styles["dynamic-check-page__file-ref"]}>
+                <div key={file.id} className="dynamic-check-page__file-item">
+                  <div className="dynamic-check-page__file-label">{file.label}</div>
+                  <div className="dynamic-check-page__file-ref">
                     {file.fileName || file.reference}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className={styles["dynamic-check-page__empty-docs"]}>
+            <div className="dynamic-check-page__empty-docs">
               {t("EST_NO_DOCUMENTS_UPLOADED_LABEL")}
             </div>
           )}
@@ -208,7 +207,7 @@ const DynamicCheckPage = ({
 
       {!viewOnly && (
         <>
-          <div className={styles["dynamic-check-page__declaration"]}>
+          <div className="dynamic-check-page__declaration">
             <CheckBox
               label={t(declarationCode)}
               onChange={() => setAgree(!agree)}
@@ -216,7 +215,7 @@ const DynamicCheckPage = ({
             />
           </div>
 
-          <div className={styles["dynamic-check-page__submit"]}>
+          <div className="dynamic-check-page__submit">
             <SubmitBar
               label={t(submitLabelCode)}
               onSubmit={onSubmit}

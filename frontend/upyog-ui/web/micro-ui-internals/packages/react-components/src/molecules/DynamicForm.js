@@ -12,7 +12,6 @@ import { sortByOrder, buildPayload, scrollToFirstError, buildInitialData, flatte
 import useDynamicMDMS from "../utilities/useDynamicMDMS";
 import { mapFormToSearchFilters } from "../utilities/searchUtils";
 import { SearchField, SearchForm } from "./SearchForm";
-import styles from "../styles/dynamicForm.module.scss";
 
 /** RHF-compatible wrapper so SearchForm can submit without react-hook-form. */
 const searchFormHandleSubmit = (onValid) => (e) => {
@@ -638,20 +637,20 @@ const DynamicForm = ({
   const searchActions = !isDisabled && isSearchMode && (
     <SearchField className="submit">
       <SubmitBar label={t(buttonLabel)} submit />
-      <p className={styles["dynamic-form-search-clear"]} onClick={handleCancel}>
+      <p className="dynamic-form-search-clear" onClick={handleCancel}>
         {t(clearLabel)}
       </p>
     </SearchField>
   );
 
   const stackedSearchActions = !isDisabled && isSearchMode && !isInlineSearch && (
-    <div className={styles["dynamic-form-search-actions"]}>
+    <div className="dynamic-form-search-actions">
       <SubmitBar
         label={t(buttonLabel)}
         onSubmit={goNext}
-        className={styles["dynamic-form-search-submit"]}
+        className="dynamic-form-search-submit"
       />
-      <p className={styles["dynamic-form-search-clear"]} onClick={handleCancel}>
+      <p className="dynamic-form-search-clear" onClick={handleCancel}>
         {t(clearLabel)}
       </p>
     </div>
@@ -672,7 +671,7 @@ const DynamicForm = ({
         </SearchForm>
 
         {crossFieldMessages.map((msg, i) => (
-          <p key={i} className={styles["dynamic-form-error"]}>{t(msg)}</p>
+          <p key={i} className="dynamic-form-error">{t(msg)}</p>
         ))}
 
         {toast && (
@@ -683,23 +682,23 @@ const DynamicForm = ({
   }
 
   return (
-    <div className={styles["dynamic-form-container"]}>
+    <div className="dynamic-form-container">
       {fieldNodes}
 
       {crossFieldMessages.map((msg, i) => (
-        <p key={i} className={styles["dynamic-form-error"]}>{t(msg)}</p>
+        <p key={i} className="dynamic-form-error">{t(msg)}</p>
       ))}
 
       {stackedSearchActions}
 
       {!isDisabled && !isSearchMode && showActionBar && (
-        <ActionBar className={styles["dynamic-form-action"]}>
+        <ActionBar className="dynamic-form-action">
           {showCancel && (
             <ButtonSelector
               theme="border"
               label={t(cancelLabel)}
               onSubmit={handleCancel}
-              className={styles["dynamic-form-margin-right"]}
+              className="dynamic-form-margin-right"
             />
           )}
           {showDraftButton && (
@@ -707,14 +706,14 @@ const DynamicForm = ({
               theme="border"
               label={t(draftLabel)}
               onSubmit={handleSaveDraft}
-              className={styles["dynamic-form-margin-right"]}
+              className="dynamic-form-margin-right"
             />
           )}
           <SubmitBar
             label={t(buttonLabel)}
             onSubmit={goNext}
             disabled={isSubmitting}
-            className={showCancel || showDraftButton ? styles["dynamic-form-submit-flex"] : undefined}
+            className={showCancel || showDraftButton ? "dynamic-form-submit-flex" : undefined}
           />
         </ActionBar>
       )}

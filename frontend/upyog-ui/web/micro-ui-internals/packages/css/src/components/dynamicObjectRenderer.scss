@@ -1,10 +1,8 @@
+/* DynamicObjectRenderer — nested object/array preview styles. */
 .dynamicObjectRenderer {
   font-family: sans-serif;
   padding: 1.5rem;
   color: #111;
-  max-width: 600px;
-  border: 1px solid red;
-  background-color: yellow;
 
   &__section {
     margin-bottom: 1.5rem;
@@ -26,18 +24,21 @@
   }
 
   &__card {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 8px;
+    border-bottom-width: 1px;
+    border-color: #d6d5d4;
+    border-color: rgba(214, 213, 212, 1);
+    padding-bottom: 8px;
   }
 
   &__field-row {
+    margin-bottom: 8px;
     display: flex;
-    gap: 12px;
-    padding: 6px 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom-width: 1px;
+    --tw-border-opacity: 1;
+    border-color: #d6d5d4;
+    border-color: rgba(214, 213, 212, var(--tw-border-opacity, 1));
+    padding-bottom: 8px;
 
     &:last-child {
       border-bottom: none;
@@ -45,15 +46,16 @@
   }
 
   &__field-label {
-    font-size: 13px;
-    color: #888;
-    min-width: 120px;
-    flex-shrink: 0;
+    width: 40%;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 24px;
   }
 
   &__field-value {
-    font-size: 14px;
-    font-weight: 500;
-    color: #111;
+    width: 50%;
+    font-size: 18px;
+    line-height: 24px;
+    word-break: break-all;
   }
 }

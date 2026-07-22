@@ -19,23 +19,22 @@ import {
   isFieldVisible,
 } from "../utilities/formUtils";
 import { formatDurationDisplay } from "../utilities/validators";
-import styles from "../styles/DynamicFormField.module.scss";
 
 /* ── shared sub-renderers ─────────────────────────────────────────────── */
 
 const FieldLabel = ({ text, required, hasError, unit }) => (
-  <CardLabel className={hasError ? styles["dynamic-form-field__label--error"] : undefined}>
+  <CardLabel className={hasError ? "dynamic-form-field__label--error" : undefined}>
     {text}
-    {unit && <span className={styles["dynamic-form-field__unit"]}> {unit}</span>}
+    {unit && <span className="dynamic-form-field__unit"> {unit}</span>}
     {required && (
-      <span className={`astericColor ${styles["dynamic-form-field__required"] || ""}`}> *</span>
+      <span className="astericColor dynamic-form-field__required"> *</span>
     )}
   </CardLabel>
 );
 
 const FieldError = ({ show, message }) =>
   show ? (
-    <p className={styles["dynamic-form-field__error"]}>{message}</p>
+    <p className="dynamic-form-field__error">{message}</p>
   ) : null;
 
 const SearchIcon = () => (
@@ -94,7 +93,7 @@ const DynamicFormField = ({
 
   if (fieldConfig.type === "sectionHeader") {
     return (
-      <h2 className={styles["dynamic-form-field__section-header"]}>
+      <h2 className="dynamic-form-field__section-header">
         {t(fieldConfig.label?.code || fieldConfig.key)}
       </h2>
     );
@@ -103,12 +102,12 @@ const DynamicFormField = ({
   if (fieldConfig.type === "group") {
     if (!isFieldVisible(fieldConfig, formData)) return null;
     return (
-      <div className={styles["dynamic-form-field__group"]}>
+      <div className="dynamic-form-field__group">
         <FieldLabel
           text={t(fieldConfig.label?.code || fieldConfig.key)}
           unit={fieldConfig.label?.unit}
         />
-        <div className={styles["dynamic-form-field__group-row"]}>
+        <div className="dynamic-form-field__group-row">
           {(fieldConfig.children || []).map((child) => (
             <DynamicFormField
               key={child.key}
@@ -182,14 +181,14 @@ const DynamicFormField = ({
       <>
         <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} />
         <div
-          className={`field ${styles["dynamic-form-field__radio-group"]}`}
+          className="field dynamic-form-field__radio-group"
           data-field-error={hasError ? "true" : undefined}
         >
           {options.map((opt) => (
             <label
               key={opt.code}
-              className={`${styles["dynamic-form-field__radio-label"]}${
-                radioDisabled ? ` ${styles["dynamic-form-field__radio-label--disabled"]}` : ""
+              className={`dynamic-form-field__radio-label${
+                radioDisabled ? ` dynamic-form-field__radio-label--disabled` : ""
               }`}
             >
               <input
@@ -199,7 +198,7 @@ const DynamicFormField = ({
                 checked={value === opt.code}
                 disabled={radioDisabled}
                 onChange={() => onChange(name, opt.code)}
-                className={styles["dynamic-form-field__radio-input"]}
+                className="dynamic-form-field__radio-input"
               />
               {t(opt.i18nKey || opt.label || opt.name || opt.code)}
             </label>
@@ -261,7 +260,7 @@ const DynamicFormField = ({
       <>
         <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} unit={textUnit} />
         <div className="field" data-field-error={hasError ? "true" : undefined}>
-          <div className={styles["dynamic-form-field__lookup"]}>
+          <div className="dynamic-form-field__lookup">
             <TextInput
               placeholder={t(placeholder || "")}
               value={value || ""}
@@ -283,7 +282,7 @@ const DynamicFormField = ({
             />
             <button
               type="button"
-              className={styles["dynamic-form-field__lookup-icon"]}
+              className="dynamic-form-field__lookup-icon"
               disabled={isDisabled || validation.disabled || isFieldSearching || !String(value || "").trim()}
               onClick={() => onFieldSearch?.(name)}
               aria-label={t("ES_COMMON_SEARCH")}
@@ -294,19 +293,19 @@ const DynamicFormField = ({
           <FieldError show={hasError} message={errorMsg} />
 
           {panelForField?.status === "matches" && Array.isArray(panelForField.matches) && (
-            <div className={styles["dynamic-form-field__suggest-box"]}>
+            <div className="dynamic-form-field__suggest-box">
               {panelForField.matches.map((match) => (
                 <button
                   key={match.estateNo}
                   type="button"
-                  className={styles["dynamic-form-field__suggest-item"]}
+                  className="dynamic-form-field__suggest-item"
                   onClick={() => onSelectSearchResult?.(name, match)}
                 >
-                  <span className={styles["dynamic-form-field__suggest-no"]}>
+                  <span className="dynamic-form-field__suggest-no">
                     {match.label || match.estateNo}
                   </span>
                   {match.subtitle ? (
-                    <span className={styles["dynamic-form-field__suggest-sub"]}>
+                    <span className="dynamic-form-field__suggest-sub">
                       {match.subtitle}
                     </span>
                   ) : null}
@@ -316,14 +315,14 @@ const DynamicFormField = ({
           )}
 
           {panelForField?.status === "found" && (
-            <div className={styles["dynamic-form-field__result-card"]}>
-              <div className={styles["dynamic-form-field__result-row"]}>
+            <div className="dynamic-form-field__result-card">
+              <div className="dynamic-form-field__result-row">
                 <span>{t(field.resultLabel || labelKey || "EST_ASSET_NUMBER")}</span>
                 <span>{panelForField.estateNo}</span>
               </div>
               <button
                 type="button"
-                className={styles["dynamic-form-field__select-button"]}
+                className="dynamic-form-field__select-button"
                 onClick={() => onSelectSearchResult?.(name)}
               >
                 {t(field.selectLabel || "CS_COMMON_SELECT")}
@@ -332,13 +331,13 @@ const DynamicFormField = ({
           )}
 
           {panelForField?.status === "notFound" && (
-            <div className={styles["dynamic-form-field__not-found"]}>
-              <p className={styles["dynamic-form-field__not-found-text"]}>
+            <div className="dynamic-form-field__not-found">
+              <p className="dynamic-form-field__not-found-text">
                 {t(field.notFoundLabel || "EST_ASSET_NOT_FOUND")}
               </p>
               <button
                 type="button"
-                className={styles["dynamic-form-field__create-button"]}
+                className="dynamic-form-field__create-button"
                 onClick={() => onCreateNewFromSearch?.(name)}
               >
                 {t(field.createNewLabel || "EST_CREATE_NEW_REGISTRATION")}
