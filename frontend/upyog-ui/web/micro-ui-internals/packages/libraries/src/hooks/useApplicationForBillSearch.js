@@ -75,8 +75,8 @@ const refObj = (tenantId, filters) => {
       label: "PTR_UNIQUE_APPLICATION_NUMBER",
     },
     est: {
-      searchFn: () => estApplications(null, { ...filters, estateNo: consumerCodes }),
-      key: "estateNo", //assetId or estateNo
+      searchFn: () => estApplications(null, { ...filters, allotmentNo: consumerCodes }),
+      key: "allotmentNo", 
       label: "EST_UNIQUE_APPLICATION_NUMBER",
     },
 
