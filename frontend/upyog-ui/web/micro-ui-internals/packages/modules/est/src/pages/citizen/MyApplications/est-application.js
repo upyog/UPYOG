@@ -1,13 +1,19 @@
 /**
  * EstateApplication card — citizen My Applications list item.
  * Shows key notes and actions: view summary / make payment.
- * Next payment due date is read from the backend (duePaymentDate).
- * fetchBill runs only when the user clicks EST_MAKE_PAYMENT.
+ * Next payment due date comes from the allotment schedule (no bill prefetch).
+ 
  */
 import React, { useEffect, useMemo, useState } from "react";
-import { Card, Row, StatusTable, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { getApplicationDetailsPath, getCitizenPaymentPath } from "../../../utils/estRoutes";
+import {
+  formatPaymentDueDate,
+  getBillAmountDue,
+  getScheduledNextDueDate,
+  isPaymentDueTodayOrPast,
+} from "../../../utils/paymentDueUtils";
 import styles from "../../../styles/ESTMyApplications.module.scss";
 
 const EST_BUSINESS_SERVICE = "est-services";
@@ -21,15 +27,6 @@ const toAllotmentTypeCode = (value) => {
   return String(value).trim().toUpperCase();
 };
 
-const getBillAmountDue = (billData) => {
-  const bill = billData?.Bill?.[0];
-  if (!bill) return 0;
-  const total = Number(bill.totalAmount);
-  if (Number.isFinite(total)) return total;
-  const details = bill.billDetails || [];
-  return details.reduce((sum, d) => sum + (Number(d?.amount) || 0), 0);
-};
-
 const isNoDemandError = (err) => {
   const code =
     err?.response?.data?.Errors?.[0]?.code ||
@@ -41,57 +38,6 @@ const isNoDemandError = (err) => {
     String(code).includes("NO_DEMAND")
   );
 };
-
-/** Parse backend due date (dd-MM-yyyy, dd/MM/yyyy, ISO, or epoch ms/s). */
-const parseBackendDueDate = (value) => {
-  if (value === null || value === undefined || value === "") return null;
-  if (value instanceof Date) {
-    return Number.isNaN(value.getTime()) ? null : value;
-  }
-  if (typeof value === "number" || /^\d+$/.test(String(value).trim())) {
-    let num = Number(value);
-    if (String(Math.trunc(num)).length === 10) num *= 1000;
-    const d = new Date(num);
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-  const raw = String(value).trim();
-  const dmy = raw.match(/^(\d{2})[/-](\d{2})[/-](\d{4})$/);
-  if (dmy) return new Date(+dmy[3], +dmy[2] - 1, +dmy[1]);
-  const d = new Date(raw);
-  return Number.isNaN(d.getTime()) ? null : d;
-};
-
-const formatBackendDueDate = (value) => {
-  if (value === null || value === undefined || value === "") return "";
-  // Already a display string from backend (dd-MM-yyyy / dd/MM/yyyy).
-  if (typeof value === "string" && /^\d{2}[/-]\d{2}[/-]\d{4}$/.test(value.trim())) {
-    return value.trim().replace(/-/g, "/");
-  }
-  const d = parseBackendDueDate(value);
-  if (!d) return "";
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  return `${dd}/${mm}/${d.getFullYear()}`;
-};
-
-const isPaymentDueTodayOrPast = (value) => {
-  const due = parseBackendDueDate(value);
-  if (!due) return false;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  due.setHours(0, 0, 0, 0);
-  return today >= due;
-};
-
-/** Resolve next payment due date from backend payload (no client calculation). */
-const getBackendDuePaymentDate = (application, allotment) =>
-  application?.duePaymentDate ??
-  application?.nextPaymentDueDate ??
-  application?.rentPaymentDetails?.duePaymentDate ??
-  allotment?.duePaymentDate ??
-  allotment?.nextPaymentDueDate ??
-  allotment?.rentPaymentDetails?.duePaymentDate ??
-  null;
 
 const EstateApplication = ({ application, tenantId }) => {
   const { t } = useTranslation();
@@ -146,18 +92,29 @@ const EstateApplication = ({ application, tenantId }) => {
     return t(`EST_BILLING_CYCLE_${code}`);
   }, [allotment, application, t]);
 
-  const duePaymentDate = getBackendDuePaymentDate(application, allotment);
-  const nextPaymentDueLabel = formatBackendDueDate(duePaymentDate) || "N/A";
+  // Schedule-based due date only — no fetchBill on list load.
+  const nextPaymentDueDate = useMemo(
+    () =>
+      getScheduledNextDueDate(allotment || {}, [], {
+        strictlyAfterToday: false,
+      }),
+    [allotment]
+  );
 
-  // Show Make Payment when backend due date is today/past (bill checked on click).
+  const nextPaymentDueLabel = useMemo(() => {
+    const formatted = formatPaymentDueDate(nextPaymentDueDate);
+    return formatted || "N/A";
+  }, [nextPaymentDueDate]);
+
+  // Show Make Payment when schedule says due today/past (bill checked on click).
   const showMakePayment = useMemo(() => {
     if (!canMakePayment) return false;
-    if (duePaymentDate && !isPaymentDueTodayOrPast(duePaymentDate)) {
+    if (nextPaymentDueDate && !isPaymentDueTodayOrPast(nextPaymentDueDate)) {
       return false;
     }
-    // No due date from backend yet → still allow click; fetchBill decides.
+    // No schedule date yet → still allow click; fetchBill decides if anything is due.
     return true;
-  }, [canMakePayment, duePaymentDate]);
+  }, [canMakePayment, nextPaymentDueDate]);
 
   const handleViewSummary = () => {
     navigate(getApplicationDetailsPath(modulePath, estateNo), {
@@ -200,33 +157,25 @@ const EstateApplication = ({ application, tenantId }) => {
 
   return (
     <Card className={styles["est-myapps__card"]}>
-      <StatusTable>
-        <Row className="border-none" label={t("EST_ASSET_ID")} text={application?.assetId || "N/A"} />
-        <Row className="border-none" label={t("EST_ESTATE_NUMBER")} text={estateNo || "N/A"} />
-        <Row
-          className="border-none"
-          label={t("EST_BUILDING_NAME")}
-          text={application?.buildingName || application?.assetName || "N/A"}
-        />
-        <Row className="border-none" label={t("EST_ALLOTMENT_TYPE")} text={allotmentTypeLabel} />
-        <Row className="border-none" label={t("EST_BILLING_CYCLE")} text={billingCycleLabel} />
-        <Row className="border-none" label={t("EST_RATE")} text={`₹${application?.rate || 0}`} />
-        <Row className="border-none" label={t("EST_ASSET_STATUS")} text={application?.assetStatus || "N/A"} />
-        <Row
-          className="border-none"
-          label={t("EST_CREATED_DATE")}
-          text={
-            application?.auditDetails?.createdTime
-              ? new Date(application.auditDetails.createdTime).toLocaleDateString("en-GB")
-              : "N/A"
-          }
-        />
-        <Row
-          className="border-none"
-          label={t("EST_NEXT_PAYMENT_DUE_DATE")}
-          text={nextPaymentDueLabel}
-        />
-      </StatusTable>
+      <KeyNote keyValue={t("EST_ASSET_ID")} note={application?.assetId || "N/A"} />
+      <KeyNote keyValue={t("EST_ESTATE_NUMBER")} note={estateNo || "N/A"} />
+      <KeyNote keyValue={t("EST_BUILDING_NAME")} note={application?.buildingName || application?.assetName || "N/A"} />
+      <KeyNote keyValue={t("EST_ALLOTMENT_TYPE")} note={allotmentTypeLabel} />
+      <KeyNote keyValue={t("EST_BILLING_CYCLE")} note={billingCycleLabel} />
+      <KeyNote keyValue={t("EST_RATE")} note={`₹${application?.rate || 0}`} />
+      <KeyNote keyValue={t("EST_ASSET_STATUS")} note={application?.assetStatus || "N/A"} />
+      <KeyNote
+        keyValue={t("EST_CREATED_DATE")}
+        note={
+          application?.auditDetails?.createdTime
+            ? new Date(application.auditDetails.createdTime).toLocaleDateString("en-GB")
+            : "N/A"
+        }
+      />
+      <KeyNote
+        keyValue={t("EST_NEXT_PAYMENT_DUE_DATE")}
+        note={nextPaymentDueLabel}
+      />
 
       <div className={styles["est-myapps__actions"]}>
         <SubmitBar
