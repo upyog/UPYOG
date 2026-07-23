@@ -1,0 +1,87 @@
+.est-payhist {
+  &__page {
+    padding: 0 0 24px;
+  }
+
+  &__search-card {
+    margin-bottom: 8px;
+  }
+
+  &__search-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  &__field-col {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  &__field-inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__text-input {
+    width: 100%;
+    padding: 8px;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 120px;
+    padding-bottom: 2px;
+  }
+
+  &__clear-link {
+    margin: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 14px;
+    color: #0b0c0c;
+  }
+
+  &__msg {
+    margin: 16px 0 0;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  &__card {
+    margin-top: 16px;
+  }
+
+  &__amount {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  &__table-wrap {
+    margin-top: 16px;
+    overflow-x: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .est-payhist {
+    &__search-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__actions {
+      width: 100%;
+    }
+  }
+}

@@ -1,27 +1,23 @@
 /**
  * useDynamicMDMS
  *
- * Generic dropdown/radio data hook for config-driven forms (DynamicForm).
- * Reads the form config, finds every dropdown AND radio field, and resolves
- * options by the field's `dataSource`:
+ * Thin adapter for config-driven DynamicForm dropdowns.
+ * Does NOT reimplement MDMS / locality / city fetching — it wires form
+ * `dataSource` config to existing Digit hooks/services:
  *
- *   1. dataSource.type === "MDMS" → batched into ONE egov-mdms-service
- *      _search call at STATE level, grouped by moduleName.
- *      Optional dataSource.filter (e.g. { assetClassification: "IMMOVABLE" })
- *      narrows options after fetch.
- *   2. moduleName "egov-location" / masterName "TenantBoundary" → LOCALITY,
- *      fetched from CITY-tenant MDMS boundary-data
- *      (e.g. pg.citya → data/pg/citya/egov-location/boundary-data.json)
- *      and flattened to leaf Locality nodes.
- *   3. dataSource.defaultValueSource === "tenantId" → CITY: single option,
- *      the current tenant.
+ *   1. dataSource.type === "MDMS"
+ *      → Digit.Hooks.useSelectedMDMS(...).getMultipleTypesWithFilter
+ *        (same path as Digit.Hooks.useCustomMDMS / useEnabledMDMS)
+ *   2. egov-location / TenantBoundary
+ *      → Digit.Hooks.useBoundaryLocalities (LocationService + LocalityService)
+ *   3. dataSource.defaultValueSource === "tenantId"
+ *      → Digit.Hooks.useTenants (initData tenants) filtered to current tenant
  *
- * Returns { dropdownData, isLoading } where dropdownData is keyed by
- * field.name ("assetType", "serviceType", "city").
+ * Returns { dropdownData, isLoading } keyed by field.name.
  */
 
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { flattenFormConfig } from "./formUtils";
 
 /* ── helpers ──────────────────────────────────────────────────────────── */
@@ -59,57 +55,8 @@ const toOptions = (list, fieldCode, filter) =>
     }));
 
 /**
- * Walk City → Zone → Ward/Block → Locality tree from MDMS TenantBoundary
- * and collect leaf locality nodes (label === "Locality").
- */
-const flattenBoundaryNodes = (nodes, out = []) => {
-  const list = Array.isArray(nodes) ? nodes : nodes ? [nodes] : [];
-  list.forEach((node) => {
-    if (!node || typeof node !== "object") return;
-    const kids = node.children;
-    const label = String(node.label || "").toLowerCase();
-    if (label === "locality" && node.code) {
-      out.push(node);
-    }
-    if (Array.isArray(kids) && kids.length) {
-      flattenBoundaryNodes(kids, out);
-    }
-  });
-  return out;
-};
-
-const localityI18nKey = (cityTenantId, hierarchyCode, localityCode) =>
-  `${String(cityTenantId || "")
-    .replace(/\./g, "_")
-    .toUpperCase()}_${String(hierarchyCode || "REVENUE").toUpperCase()}_${localityCode}`;
-
-const extractLocalitiesFromMdms = (mdmsRes, cityTenantId) => {
-  const boundaries = mdmsRes?.["egov-location"]?.TenantBoundary;
-  if (!Array.isArray(boundaries) || !boundaries.length) return [];
-
-  const revenue =
-    boundaries.find(
-      (tb) => String(tb?.hierarchyType?.code || "").toUpperCase() === "REVENUE"
-    ) || boundaries[0];
-
-  const hierarchyCode = revenue?.hierarchyType?.code || "REVENUE";
-  const root = revenue?.boundary;
-  const leaves = flattenBoundaryNodes(root);
-
-  return leaves.map((loc) => ({
-    ...loc,
-    code: loc.code,
-    name: loc.name || loc.localname || loc.code,
-    i18nKey:
-      loc.i18nkey ||
-      loc.i18nKey ||
-      localityI18nKey(cityTenantId, hierarchyCode, loc.code),
-  }));
-};
-
-/**
- * Tenant ids are case-sensitive for MDMS / location APIs (pg.citya ≠ PG.CITYA).
- * Do NOT use optionCode() here — that uppercases values for form matching.
+ * Tenant ids are case-sensitive for location APIs (pg.citya ≠ PG.CITYA).
+ * Do NOT uppercase — MDMS / boundary lookup depends on exact casing.
  */
 const resolveCityTenantId = (cityValue, fallbackTenantId) => {
   let fromCity = "";
@@ -120,6 +67,15 @@ const resolveCityTenantId = (cityValue, fallbackTenantId) => {
   }
   return String(fromCity || fallbackTenantId || "").trim();
 };
+
+const normalizeLocalityOptions = (list = []) =>
+  (Array.isArray(list) ? list : []).map((loc) => ({
+    ...loc,
+    code: loc.code,
+    name: loc.name || loc.localname || loc.code,
+    // useBoundaryLocalities may set lowercase i18nkey (already translated via t)
+    i18nKey: loc.i18nKey || loc.i18nkey || loc.name || loc.localname || loc.code,
+  }));
 
 /* ── hook ─────────────────────────────────────────────────────────────── */
 
@@ -142,7 +98,7 @@ const useDynamicMDMS = (form = [], stateId, tenantId, t, options = {}) => {
     return { mdmsFields: mdms, localityFields: locality, cityFields: city };
   }, [form]);
 
-  /* 1 ─ State-level MDMS masters (AssetType, etc.) */
+  /* 1 ─ State-level MDMS masters via existing Digit MDMS hooks/services */
   const moduleDetails = useMemo(() => {
     const byModule = {};
     mdmsFields.forEach(({ dataSource: { moduleName, masterName } }) => {
@@ -154,81 +110,62 @@ const useDynamicMDMS = (form = [], stateId, tenantId, t, options = {}) => {
     }));
   }, [mdmsFields]);
 
-  const mdmsService = Digit?.MDMSService || Digit?.MdmsService;
-
-  const {
-    data: mdmsRes,
-    isLoading: isMdmsLoading,
-    isError: isMdmsError,
-    error: mdmsError,
-  } = useQuery({
-    queryKey: ["DYNAMIC_FORM_MDMS", stateId, JSON.stringify(moduleDetails)],
-    queryFn: () => mdmsService.call(stateId, { moduleDetails }),
-    enabled: !!stateId && moduleDetails.length > 0 && !!mdmsService,
-    staleTime: Infinity,
-    select: (data) => data?.MdmsRes || data,
-  });
-
-  if (isMdmsError) {
-    // eslint-disable-next-line no-console
-    console.error("useDynamicMDMS: MDMS fetch failed", mdmsError);
-  }
-
-  /* 2 ─ City-tenant localities (pg.citya boundary-data → leaf Locality nodes)
-   * Prefer location API (flat Locality list), fall back to MDMS TenantBoundary tree. */
-  const {
-    data: cityLocalities = [],
-    isLoading: isBoundaryLoading,
-    isError: isBoundaryError,
-    error: boundaryError,
-  } = useQuery({
-    queryKey: ["DYNAMIC_FORM_TENANT_BOUNDARY", cityTenantId],
-    queryFn: async () => {
-      const LocationService = Digit?.LocationService;
-      const LocalityService = Digit?.LocalityService;
-
-      if (LocationService?.getRevenueLocalities && LocalityService?.get) {
-        try {
-          const response = await LocationService.getRevenueLocalities(cityTenantId);
-          const tenantBoundary = response?.TenantBoundary?.[0];
-          if (Array.isArray(tenantBoundary?.boundary) && tenantBoundary.boundary.length) {
-            return LocalityService.get(tenantBoundary).map((loc) => ({
-              ...loc,
-              code: loc.code,
-              name: loc.name || loc.localname || loc.code,
-              i18nKey: loc.name || loc.localname || loc.i18nkey || loc.code,
-            }));
-          }
-        } catch (err) {
-          // eslint-disable-next-line no-console
-          console.warn("useDynamicMDMS: location localities failed, trying MDMS", err);
+  // Same queryKey + service path as Digit.Hooks.useCustomMDMS / useEnabledMDMS.
+  const mdmsQueries = useQueries({
+    queries: moduleDetails.map(({ moduleName, masterDetails }) => ({
+      queryKey: [stateId, moduleName, masterDetails],
+      queryFn: () => {
+        // Prefer useSelectedMDMS (V1/V2) — same as useEnabledMDMS.
+        const selected = Digit?.Hooks?.useSelectedMDMS?.(moduleName);
+        if (selected?.getMultipleTypesWithFilter) {
+          return selected.getMultipleTypesWithFilter(stateId, moduleName, masterDetails);
         }
-      }
-
-      if (!mdmsService?.call) return [];
-      const data = await mdmsService.call(cityTenantId, {
-        moduleDetails: [
-          {
-            moduleName: "egov-location",
-            masterDetails: [{ name: "TenantBoundary" }],
-          },
-        ],
-      });
-      return extractLocalitiesFromMdms(data?.MdmsRes || data, cityTenantId).map((loc) => ({
-        ...loc,
-        i18nKey: loc.name || loc.localname || loc.i18nKey || loc.code,
-      }));
-    },
-    enabled: localityFields.length > 0 && !!cityTenantId,
-    staleTime: Infinity,
+        const mdmsService = Digit?.MDMSService || Digit?.MdmsService;
+        return mdmsService.getMultipleTypesWithFilter(stateId, moduleName, masterDetails);
+      },
+      enabled: !!stateId && masterDetails.length > 0,
+      staleTime: Infinity,
+    })),
   });
 
-  if (isBoundaryError) {
-    // eslint-disable-next-line no-console
-    console.error("useDynamicMDMS: locality fetch failed", boundaryError);
-  }
+  const isMdmsLoading = mdmsQueries.some((q) => q.isLoading);
+  // Stable scalar so useMemo deps don't change length across module counts.
+  const mdmsDataVersion = mdmsQueries.map((q) => q.dataUpdatedAt ?? 0).join("|");
 
-  /* 3 ─ Assemble dropdownData keyed by field name. */
+  const mdmsRes = useMemo(() => {
+    const merged = {};
+    moduleDetails.forEach(({ moduleName }, index) => {
+      const data = mdmsQueries[index]?.data;
+      if (!data) return;
+      // useCustomMDMS returns MdmsRes (module-keyed) or the module slice.
+      if (data[moduleName]) {
+        merged[moduleName] = { ...(merged[moduleName] || {}), ...data[moduleName] };
+      } else {
+        merged[moduleName] = { ...(merged[moduleName] || {}), ...data };
+      }
+    });
+    return merged;
+    // mdmsQueries is read inside; mdmsDataVersion tracks when query data changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moduleDetails, mdmsDataVersion]);
+
+  /* 2 ─ Localities via existing Digit.Hooks.useBoundaryLocalities */
+  const {
+    data: boundaryLocalities,
+    isLoading: isBoundaryLoading,
+  } = Digit.Hooks.useBoundaryLocalities(
+    cityTenantId,
+    "revenue",
+    {
+      enabled: localityFields.length > 0 && !!cityTenantId,
+    },
+    t
+  );
+
+  /* 3 ─ Cities via existing Digit.Hooks.useTenants */
+  const { data: tenants = [], isLoading: isTenantsLoading } = Digit.Hooks.useTenants();
+
+  /* 4 ─ Assemble dropdownData keyed by field name */
   const dropdownData = useMemo(() => {
     const result = {};
 
@@ -238,19 +175,28 @@ const useDynamicMDMS = (form = [], stateId, tenantId, t, options = {}) => {
     });
 
     localityFields.forEach((f) => {
-      result[f.name] = cityTenantId && Array.isArray(cityLocalities) ? cityLocalities : [];
+      result[f.name] =
+        cityTenantId && Array.isArray(boundaryLocalities)
+          ? normalizeLocalityOptions(boundaryLocalities)
+          : [];
     });
 
     cityFields.forEach((f) => {
-      result[f.name] = tenantId
-        ? [
-            {
-              code: tenantId,
-              name: t ? t(tenantI18nKey(tenantId)) : tenantId,
-              i18nKey: tenantI18nKey(tenantId),
-            },
-          ]
-        : [];
+      if (!tenantId) {
+        result[f.name] = [];
+        return;
+      }
+      const fromTenants = (Array.isArray(tenants) ? tenants : []).find(
+        (item) => String(item?.code || "").toLowerCase() === String(tenantId).toLowerCase()
+      );
+      result[f.name] = [
+        {
+          ...(fromTenants || {}),
+          code: tenantId,
+          name: fromTenants?.name || (t ? t(tenantI18nKey(tenantId)) : tenantId),
+          i18nKey: fromTenants?.i18nKey || tenantI18nKey(tenantId),
+        },
+      ];
     });
 
     return result;
@@ -259,7 +205,8 @@ const useDynamicMDMS = (form = [], stateId, tenantId, t, options = {}) => {
     localityFields,
     cityFields,
     mdmsRes,
-    cityLocalities,
+    boundaryLocalities,
+    tenants,
     tenantId,
     cityTenantId,
     t,
@@ -269,7 +216,8 @@ const useDynamicMDMS = (form = [], stateId, tenantId, t, options = {}) => {
     dropdownData,
     isLoading:
       (moduleDetails.length > 0 && isMdmsLoading) ||
-      (localityFields.length > 0 && !!cityTenantId && isBoundaryLoading),
+      (localityFields.length > 0 && !!cityTenantId && isBoundaryLoading) ||
+      (cityFields.length > 0 && isTenantsLoading),
     cityTenantId,
   };
 };
