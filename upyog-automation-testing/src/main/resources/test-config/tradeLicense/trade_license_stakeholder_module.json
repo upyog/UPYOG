@@ -1,0 +1,20 @@
+{
+  "moduleName": "TRADE_LICENSE",
+
+  "citizen": {
+    "mobile": "7906413996",
+    "otp": "123456",
+    "city": "City A"
+  },
+
+  "employee": {
+    "username": "TLEMP",
+    "password": "eGov@123",
+    "city": "City A"
+  },
+
+  "vendor": {
+    "mobile": "",
+    "otp": ""
+  }
+}

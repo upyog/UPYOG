@@ -53,8 +53,8 @@
       "stepName": "Enter Application Number",
       "locatorStrategy": "XPATH",
       "locatorValue": "(//input[@type='text'])[3]",
-      "action": "TYPE",
-      "inputValue": "${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
     {
@@ -102,7 +102,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "comments",
       "action": "TYPE",
-      "inputValue": "Assigned",
+      "inputValue": "${comment.assign}",
       "dynamicSleep": 500
     },
     {
@@ -134,7 +134,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "(//input[@type='tel'])[1]",
       "action": "TYPE",
-      "inputValue": "10",
+      "inputValue": "${product.quantity}",
       "dynamicSleep": 1000
     },
 
@@ -208,7 +208,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "payerName",
       "action": "TYPE",
-      "inputValue": "Arpit Rao",
+      "inputValue": "${applicant.name}",
       "dynamicSleep": 500
     },
     {
@@ -216,7 +216,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "payerMobile",
       "action": "TYPE",
-      "inputValue": "9999999999",
+      "inputValue": "${mobile.number}",
       "dynamicSleep": 500
     },
     {
@@ -224,16 +224,8 @@
       "locatorStrategy": "NAME",
       "locatorValue": "instrumentNumber",
       "action": "TYPE",
-      "inputValue": "GEN123456",
+      "inputValue": "${receipt.number}",
       "dynamicSleep": 500
-    },
-    {
-      "stepName": "Receipt Date",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//input[@type='date']",
-      "action": "SET_DATE_TODAY",
-      "inputValue": null,
-      "dynamicSleep": 1000
     },
     {
       "stepName": "Collect Payment",
@@ -276,12 +268,20 @@
       "dynamicSleep": 2000
     },
     {
-      "stepName": "Open Third Application",
+      "stepName": "Open Application",
       "locatorStrategy": "XPATH",
       "locatorValue": "//table//a[1]",
       "action": "CLICK_JS",
       "inputValue": null,
       "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Take Action Assign Vendor",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[.//header[normalize-space()='TAKE ACTION']]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
     },
     {
       "stepName": "Assign Vendor",
@@ -300,6 +300,14 @@
       "dynamicSleep": 2000
     },
     {
+      "stepName": "Take Action Assign Vendor",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[.//header[normalize-space()='TAKE ACTION']]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
       "stepName": "Assign Vendor Again",
       "locatorStrategy": "XPATH",
       "locatorValue": "//p[normalize-space()='Assign Vendor']",
@@ -312,7 +320,7 @@
       "locatorStrategy": "CSS",
       "locatorValue": "div.select svg.cp",
       "action": "SELECT_DROPDOWN_BY_INDEX",
-      "inputValue": "0:0",
+      "inputValue": "0:1",
       "dynamicSleep": 1000
     },
     {
@@ -320,7 +328,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//input[@type='date']",
       "action": "SET_DATE_TODAY",
-      "inputValue": null,
+      "inputValue": "0",
       "dynamicSleep": 1000
     },
     {
@@ -328,7 +336,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "comments",
       "action": "TYPE",
-      "inputValue": "Assigned",
+      "inputValue": "${comment.assign}",
       "dynamicSleep": 500
     },
     {

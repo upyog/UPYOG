@@ -77,7 +77,7 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//input[contains(@name,'pincode')]",
       "action":"TYPE",
-      "inputValue":"143001",
+      "inputValue":"${address.pincode}",
       "dynamicSleep": 1000
     },
 
@@ -115,7 +115,7 @@
       "locatorStrategy":"CSS",
       "locatorValue":"textarea.card-textarea",
       "action":"TYPE",
-      "inputValue":"Park is dirty, needs cleaning",
+      "inputValue":"${address.landmark}",
       "dynamicSleep": 1000
     },
     {
@@ -147,7 +147,7 @@
       "locatorStrategy":"CSS",
       "locatorValue":"textarea.card-textarea",
       "action":"TYPE",
-      "inputValue":"The park is dirty and needs to be cleaned soon."
+      "inputValue":"${pgr.description}"
     },
     {
       "stepName": "Additional Details Next",
@@ -156,7 +156,14 @@
       "action": "CLICK_JS",
       "inputValue": null,
       "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Complaint No.') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
     }
-
   ]
 }
