@@ -48,45 +48,9 @@ export const mergeAllotmentPrefill = (
   return merged;
 };
 
-export const isAssetAllotted = (asset = {}) => {
-  const allotmentStatus = String(asset?.assetAllotmentStatus || "").toUpperCase();
-  if (
-    allotmentStatus &&
-    allotmentStatus !== "INITIATED" &&
-    allotmentStatus !== "AVAILABLE"
-  ) {
-    return true;
-  }
-  return String(asset?.assetStatus || "").toLowerCase() === "allotted";
-};
-
-export const hasExistingAllotment = (asset = {}, allottedAssetNos = null) => {
-  const estateNo = asset?.estateNo;
-  if (estateNo && allottedAssetNos?.has?.(estateNo)) return true;
-  return isAssetAllotted(asset);
-};
-
-export const fetchAllottedAssetNos = async (assets = [], tenantId) => {
-  if (!tenantId || !Array.isArray(assets) || assets.length === 0) {
-    return new Set();
-  }
-
-  try {
-    const response = await Digit.ESTService.allotmentSearch({
-      tenantId,
-      filters: { tenantId },
-    });
-    const searchNos = new Set(assets.map((asset) => asset.estateNo).filter(Boolean));
-    return new Set(
-      (response?.Allotments || [])
-        .map((allotment) => allotment.assetNo)
-        .filter((assetNo) => searchNos.has(assetNo))
-    );
-  } catch (error) {
-    console.error("Error fetching allotted asset numbers:", error);
-    return new Set();
-  }
-};
+/** Allot Asset is allowed only when backend status is PENDING_FOR_ALLOTMENT. */
+export const isPendingForAllotment = (asset = {}) =>
+  String(asset?.assetAllotmentStatus || "").toUpperCase() === "PENDING_FOR_ALLOTMENT";
 
 export const normalizeAllotmentFlatData = (flatData = {}, assetData = {}, routeConfig = {}) => {
   const merged = {

@@ -1,5 +1,6 @@
 /**
- * Citizen EST Payment History — config-driven filters + result cards.
+ * Citizen EST Payment History — same layout as My Applications
+ * (search card + StatusTable result cards).
  * Data: allotments (billing) + assets (building name) + collection receipts.
  */
 import React, { useCallback, useMemo, useState } from "react";
@@ -11,13 +12,12 @@ import {
   Card,
   CardLabel,
   DatePicker,
-  KeyNote,
-  Table,
-  useIsMobile,
+  Row,
+  StatusTable,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import LOCAL_PAYMENT_HISTORY_CONFIG from "../../config/paymentHistoryConfig";
-import styles from "../../styles/ESTPaymentHistory.module.scss";
+import styles from "../../styles/ESTMyApplications.module.scss";
 
 const formatDate = (value) => {
   if (!value && value !== 0) return "N/A";
@@ -90,7 +90,6 @@ const resolvePaymentHistoryConfig = (mdmsData) => {
 
 export const ESTPaymentHistory = () => {
   const { t } = useTranslation();
-  const isMobile = useIsMobile();
   const tenantId =
     Digit.ULBService.getCitizenCurrentTenant(true) ||
     Digit.ULBService.getCurrentTenantId();
@@ -202,31 +201,29 @@ export const ESTPaymentHistory = () => {
 
   const paymentData = useMemo(() => {
     const payments = receiptResponse?.Payments || [];
-    return payments
-      .map((payment) => {
-        const detail = payment?.paymentDetails?.[0] || {};
-        const consumerCode =
-          detail?.bill?.consumerCode || payment?.consumerCode || "";
-        const allotment = allotmentByAssetNo[consumerCode] || {};
-        const asset = assetByEstateNo[consumerCode] || {};
+    return payments.map((payment) => {
+      const detail = payment?.paymentDetails?.[0] || {};
+      const consumerCode =
+        detail?.bill?.consumerCode || payment?.consumerCode || "";
+      const allotment = allotmentByAssetNo[consumerCode] || {};
+      const asset = assetByEstateNo[consumerCode] || {};
 
-        return {
-          receiptNumber: detail?.receiptNumber || "N/A",
-          receiptDate: detail?.receiptDate,
-          receiptDateLabel: formatDate(detail?.receiptDate),
-          assetNo: consumerCode || "N/A",
-          buildingName:
-            asset?.buildingName ||
-            asset?.assetName ||
-            allotment?.buildingName ||
-            allotment?.assetName ||
-            "N/A",
-          billingCycle: toBillingCycleLabel(allotment?.billingCycle, t),
-          amountPaid: payment?.totalAmountPaid ?? detail?.totalAmountPaid ?? 0,
-          paymentMode: payment?.paymentMode || "N/A",
-        };
-      })
-      .sort((a, b) => Number(b.receiptDate || 0) - Number(a.receiptDate || 0));
+      return {
+        receiptNumber: detail?.receiptNumber || "N/A",
+        receiptDate: detail?.receiptDate,
+        receiptDateLabel: formatDate(detail?.receiptDate),
+        assetNo: consumerCode || "N/A",
+        buildingName:
+          asset?.buildingName ||
+          asset?.assetName ||
+          allotment?.buildingName ||
+          allotment?.assetName ||
+          "N/A",
+        billingCycle: toBillingCycleLabel(allotment?.billingCycle, t),
+        amountPaid: payment?.totalAmountPaid ?? detail?.totalAmountPaid ?? 0,
+        paymentMode: payment?.paymentMode || "N/A",
+      };
+    });
   }, [receiptResponse, allotmentByAssetNo, assetByEstateNo, t]);
 
   const filteredData = useMemo(() => {
@@ -252,19 +249,6 @@ export const ESTPaymentHistory = () => {
     });
   }, [paymentData, appliedFilters]);
 
-  const tableColumns = useMemo(
-    () =>
-      resultFields.map((field) => ({
-        Header: t(field.key),
-        accessor: field.accessor,
-        Cell:
-          field.format === "currency"
-            ? ({ row }) => formatFieldValue(row.original, field)
-            : undefined,
-      })),
-    [resultFields, t]
-  );
-
   const handleFilterChange = useCallback((name, value) => {
     setDraftFilters((prev) => ({ ...prev, [name]: value }));
   }, []);
@@ -282,100 +266,80 @@ export const ESTPaymentHistory = () => {
   const isLoading = isAllotmentsLoading || isAssetsLoading || isReceiptsLoading;
   if (isLoading) return <Loader />;
 
-  const useCards = config.resultMode === "cards" || isMobile;
-
   return (
-    <div className={styles["est-payhist__page"]}>
+    <>
       <Header>{`${t(config.header)} (${filteredData.length})`}</Header>
 
-      <Card className={styles["est-payhist__search-card"]}>
-        <div className={styles["est-payhist__search-row"]}>
-          {filters.map((field) => (
-            <div key={field.name} className={styles["est-payhist__field-col"]}>
-              <div className={styles["est-payhist__field-inner"]}>
-                <CardLabel>{t(field.key)}</CardLabel>
-                {field.type === "date" ? (
-                  <DatePicker
-                    date={draftFilters[field.name] || ""}
-                    onChange={(value) => handleFilterChange(field.name, value)}
-                  />
-                ) : (
-                  <TextInput
-                    placeholder={t(field.placeholder || field.key)}
-                    value={draftFilters[field.name] || ""}
-                    onChange={(e) =>
-                      handleFilterChange(field.name, e.target.value)
-                    }
-                    className={styles["est-payhist__text-input"]}
-                  />
-                )}
+      <Card>
+        <div className={styles["est-myapps__container"]}>
+          <div className={styles["est-myapps__search-row"]}>
+            {filters.map((field) => (
+              <div key={field.name} className={styles["est-myapps__field-col"]}>
+                <div className={styles["est-myapps__field-inner"]}>
+                  <CardLabel>{t(field.key)}</CardLabel>
+                  {field.type === "date" ? (
+                    <DatePicker
+                      date={draftFilters[field.name] || ""}
+                      onChange={(value) => handleFilterChange(field.name, value)}
+                    />
+                  ) : (
+                    <TextInput
+                      placeholder={t(field.placeholder || field.key)}
+                      value={draftFilters[field.name] || ""}
+                      onChange={(e) =>
+                        handleFilterChange(field.name, e.target.value)
+                      }
+                      className={styles["est-myapps__text-input"]}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+
+            <div>
+              <div className={styles["est-myapps__search-btn-wrap"]}>
+                <SubmitBar
+                  label={t(config.actionButton?.search || "ES_COMMON_SEARCH")}
+                  onSubmit={handleSearch}
+                />
+                <p
+                  className={`link ${styles["est-myapps__clear-link"]}`}
+                  onClick={handleClear}
+                >
+                  {t(config.actionButton?.clear || "ES_COMMON_CLEAR_ALL")}
+                </p>
               </div>
             </div>
-          ))}
-
-          <div className={styles["est-payhist__actions"]}>
-            <SubmitBar
-              label={t(config.actionButton?.search || "ES_COMMON_SEARCH")}
-              onSubmit={handleSearch}
-            />
-            <p
-              className={styles["est-payhist__clear-link"]}
-              onClick={handleClear}
-            >
-              {t(config.actionButton?.clear || "ES_COMMON_CLEAR_ALL")}
-            </p>
           </div>
         </div>
       </Card>
 
-      {filteredData.length === 0 ? (
-        <p className={styles["est-payhist__msg"]}>
-          {t(config.emptyState?.message || "EST_NO_APPLICATION_FOUND_MSG")}
-        </p>
-      ) : useCards ? (
-        <div className={styles["est-payhist__list"]}>
-          {filteredData.map((row, index) => (
-            <Card
-              key={`${row.receiptNumber}-${row.assetNo}-${index}`}
-              className={styles["est-payhist__card"]}
-            >
+      <div>
+        {filteredData.map((row, index) => (
+          <Card
+            key={`${row.receiptNumber}-${row.assetNo}-${index}`}
+            className={styles["est-myapps__card"]}
+          >
+            <StatusTable>
               {resultFields.map((field) => (
-                <KeyNote
+                <Row
                   key={field.key}
-                  keyValue={t(field.key)}
-                  note={formatFieldValue(row, field)}
-                  noteStyle={
-                    field.emphasize || field.format === "currency"
-                      ? { fontSize: "22px", fontWeight: "700" }
-                      : undefined
-                  }
+                  className="border-none"
+                  label={t(field.key)}
+                  text={formatFieldValue(row, field)}
                 />
               ))}
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className={styles["est-payhist__table-wrap"]}>
-          <Table
-            t={t}
-            data={filteredData}
-            columns={tableColumns}
-            getCellProps={() => ({
-              style: {
-                minWidth: "120px",
-                padding: "12px 8px",
-                textAlign: "center",
-              },
-            })}
-            disableSort={false}
-            onSort={() => {}}
-            manualPagination={false}
-            isPaginationRequired={false}
-            totalRecords={filteredData.length}
-          />
-        </div>
-      )}
-    </div>
+            </StatusTable>
+          </Card>
+        ))}
+
+        {filteredData.length === 0 ? (
+          <p className={styles["est-myapps__msg"]}>
+            {t(config.emptyState?.message || "EST_NO_APPLICATION_FOUND_MSG")}
+          </p>
+        ) : null}
+      </div>
+    </>
   );
 };
 

@@ -9,10 +9,7 @@ import {
   useClientPagination,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { getApplicationDetailsPath, getCreateAssetPath } from "../utils/estRoutes";
-import {
-  fetchAllottedAssetNos,
-  getAssetIdentity,
-} from "../utils/allotmentFormUtils";
+import { getAssetIdentity } from "../utils/allotmentFormUtils";
 import { resolveSearchApplicationConfig } from "../utils/estMdmsUtils";
 import AssetTable from "./shared/AssetTable";
 import useAssetTableColumns from "./shared/useAssetTableColumns";
@@ -75,7 +72,6 @@ const ESTSearchApplication = ({
   const isMobile = useIsMobile();
   const [isCleared, setIsCleared] = useState(false);
   const [formResetKey, setFormResetKey] = useState(0);
-  const [allottedAssetNos, setAllottedAssetNos] = useState(new Set());
   const [sessionParams] = Digit.Hooks.useSessionStorage(config.sessionKey, {});
 
   const resultMode = config.resultMode || "table";
@@ -103,21 +99,6 @@ const ESTSearchApplication = ({
     count,
     isCleared,
   });
-
-  useEffect(() => {
-    if (resultMode !== "table" || !Array.isArray(data) || data.length === 0 || isCleared) {
-      setAllottedAssetNos(new Set());
-      return;
-    }
-
-    let cancelled = false;
-    fetchAllottedAssetNos(data, tenantId).then((allotted) => {
-      if (!cancelled) setAllottedAssetNos(allotted);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [data, tenantId, isCleared, resultMode]);
 
   const navigateToAssignFlow = useCallback(
     (asset, { allotmentForm, targetStep = "info", resetSession = false } = {}) => {
@@ -166,7 +147,6 @@ const ESTSearchApplication = ({
     showAssetRef: config.table?.showAssetRef,
     actions: config.table?.actions,
     onAllot: handleAllotAsset,
-    allottedAssetNos,
   });
 
   const handleSearch = useCallback(

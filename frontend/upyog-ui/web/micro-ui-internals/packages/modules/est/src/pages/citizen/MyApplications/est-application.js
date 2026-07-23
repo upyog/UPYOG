@@ -1,30 +1,40 @@
 /**
  * EstateApplication card — citizen My Applications list item.
  * Shows key notes and actions: view summary / make payment.
- * Next payment due date comes from the allotment schedule (no bill prefetch).
- 
+ * EST_NEXT_PAYMENT_DUE_DATE uses backend `dueDate` from asset/allotment search.
+ * fetchBill runs only when the user clicks EST_MAKE_PAYMENT.
  */
 import React, { useEffect, useMemo, useState } from "react";
-import { Card, KeyNote, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, Row, StatusTable, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { getApplicationDetailsPath, getCitizenPaymentPath } from "../../../utils/estRoutes";
-import {
-  formatPaymentDueDate,
-  getBillAmountDue,
-  getScheduledNextDueDate,
-  isPaymentDueTodayOrPast,
-} from "../../../utils/paymentDueUtils";
 import styles from "../../../styles/ESTMyApplications.module.scss";
 
 const EST_BUSINESS_SERVICE = "est-services";
 
 /** Normalize allotmentType / propertyType from API (string or { code }). */
-const toAllotmentTypeCode = (value) => {
+const toCode = (value) => {
   if (value === undefined || value === null || value === "") return "";
   if (typeof value === "object") {
     return String(value.code || value.name || "").trim().toUpperCase();
   }
   return String(value).trim().toUpperCase();
+};
+
+const translateOrCode = (t, prefix, code) => {
+  if (!code) return "N/A";
+  const key = `${prefix}_${code}`;
+  const translated = t(key);
+  return translated && translated !== key ? translated : code;
+};
+
+const getBillAmountDue = (billData) => {
+  const bill = billData?.Bill?.[0];
+  if (!bill) return 0;
+  const total = Number(bill.totalAmount);
+  if (Number.isFinite(total)) return total;
+  const details = bill.billDetails || [];
+  return details.reduce((sum, d) => sum + (Number(d?.amount) || 0), 0);
 };
 
 const isNoDemandError = (err) => {
@@ -39,7 +49,70 @@ const isNoDemandError = (err) => {
   );
 };
 
-const EstateApplication = ({ application, tenantId }) => {
+/**
+ * Backend `dueDate` comes on allotment search (Allotments[].dueDate),
+ * e.g. "23-08-2026". Asset search does not include it.
+ */
+const getDueDate = (application, allotment) =>
+  allotment?.dueDate ??
+  application?.dueDate ??
+  allotment?.additionalDetails?.dueDate ??
+  application?.additionalDetails?.dueDate ??
+  null;
+
+/** Parse backend dueDate (dd-MM-yyyy, ISO, epoch, or Jackson [y,m,d] array). */
+const parseDueDate = (value) => {
+  if (value === null || value === undefined || value === "") return null;
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+  // Jackson LocalDate without @JsonFormat → [year, month, day]
+  if (Array.isArray(value) && value.length >= 3) {
+    const [y, m, d] = value.map(Number);
+    if (![y, m, d].every(Number.isFinite)) return null;
+    const date = new Date(y, m - 1, d);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  if (typeof value === "object") {
+    const y = Number(value.year ?? value.Year);
+    const m = Number(value.monthValue ?? value.month ?? value.Month);
+    const d = Number(value.dayOfMonth ?? value.day ?? value.Day);
+    if ([y, m, d].every(Number.isFinite)) {
+      const date = new Date(y, m - 1, d);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+  }
+  if (typeof value === "number" || /^\d+$/.test(String(value).trim())) {
+    let num = Number(value);
+    if (String(Math.trunc(num)).length === 10) num *= 1000;
+    const date = new Date(num);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  const raw = String(value).trim();
+  const dmy = raw.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+  if (dmy) return new Date(+dmy[3], +dmy[2] - 1, +dmy[1]);
+  const ymd = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (ymd) return new Date(+ymd[1], +ymd[2] - 1, +ymd[3]);
+  const date = new Date(raw);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const formatDueDate = (value) => {
+  if (value === null || value === undefined || value === "") return "";
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (/^\d{1,2}[/-]\d{1,2}[/-]\d{4}$/.test(trimmed)) {
+      return trimmed.replace(/-/g, "/");
+    }
+  }
+  const date = parseDueDate(value);
+  if (!date) return typeof value === "string" ? value.trim() : "";
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${date.getFullYear()}`;
+};
+
+const EstateApplication = ({ application, allotment: allotmentProp = null, tenantId }) => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
   const { path: modulePath } = Digit.Hooks.useModuleBasePath();
@@ -55,9 +128,8 @@ const EstateApplication = ({ application, tenantId }) => {
 
   const estateNo = application?.estateNo || application?.assetNo;
   const billTenantId = tenantId || application?.tenantId;
-  const canMakePayment = Boolean(billTenantId && estateNo);
 
-  // Same allotment lookup as ESTApplicationDetails (by assetNo = estate number).
+  // Always load allotment by estate number (source of propertyType + billingCycle).
   const { data: allotmentData } = Digit.Hooks.estate.useESTApplicationSearch({
     filters: {
       tenantId: billTenantId,
@@ -68,53 +140,55 @@ const EstateApplication = ({ application, tenantId }) => {
     },
   });
 
-  const allotment = allotmentData?.Allotments?.[0] || null;
+  const fetchedAllotment =
+    allotmentData?.Allotments?.[0] || allotmentData?.allotments?.[0] || null;
 
+  // Prefer fetched allotment when it has identity/type fields from allotment search.
+  const allotment = useMemo(() => {
+    const hasFields = (row) =>
+      Boolean(
+        row &&
+          (row.allotmentNo ||
+            row.allotmentId ||
+            row.propertyType ||
+            row.allotmentType ||
+            row.billingCycle)
+      );
+    if (hasFields(fetchedAllotment)) return fetchedAllotment;
+    if (hasFields(allotmentProp)) return allotmentProp;
+    return fetchedAllotment || allotmentProp || null;
+  }, [fetchedAllotment, allotmentProp]);
+
+  // Allotment type = RENT | LEASE from allotment.propertyType (required; default RENT).
+  // Do not use asset.assetAllotmentType (that can be DONATED / acquisition type).
   const allotmentTypeLabel = useMemo(() => {
-    const code = toAllotmentTypeCode(
+    const raw = toCode(
       allotment?.allotmentType ??
         allotment?.propertyType ??
         application?.allotmentType ??
         application?.propertyType
     );
-    if (code !== "RENT" && code !== "LEASE") return "N/A";
-    return t(`EST_ALLOTMENT_TYPE_${code}`);
+    const code = raw === "RENT" || raw === "LEASE" ? raw : "RENT";
+    return translateOrCode(t, "EST_ALLOTMENT_TYPE", code);
   }, [allotment, application, t]);
 
+  // API: allotment.billingCycle (MONTHLY | QUARTERLY | YEARLY). Default MONTHLY when not set.
   const billingCycleLabel = useMemo(() => {
-    const raw =
-      allotment?.billingCycle ?? application?.billingCycle ?? "";
-    const code =
-      typeof raw === "object"
-        ? String(raw.code || raw.name || "").trim().toUpperCase()
-        : String(raw).trim().toUpperCase();
-    if (!code) return "N/A";
-    return t(`EST_BILLING_CYCLE_${code}`);
+    const code = toCode(allotment?.billingCycle ?? application?.billingCycle) || "MONTHLY";
+    return translateOrCode(t, "EST_BILLING_CYCLE", code);
   }, [allotment, application, t]);
 
-  // Schedule-based due date only — no fetchBill on list load.
-  const nextPaymentDueDate = useMemo(
-    () =>
-      getScheduledNextDueDate(allotment || {}, [], {
-        strictlyAfterToday: false,
-      }),
-    [allotment]
+  const nextPaymentDueLabel = formatDueDate(getDueDate(application, allotment)) || "N/A";
+
+  // allotmentNo from allotment/_search — also used as billing consumerCode.
+  const allotmentNo = String(allotment?.allotmentNo || "").trim();
+  const hasAllotment = Boolean(
+    String(allotment?.allotmentNo || allotment?.allotmentId || "").trim()
   );
 
-  const nextPaymentDueLabel = useMemo(() => {
-    const formatted = formatPaymentDueDate(nextPaymentDueDate);
-    return formatted || "N/A";
-  }, [nextPaymentDueDate]);
-
-  // Show Make Payment when schedule says due today/past (bill checked on click).
-  const showMakePayment = useMemo(() => {
-    if (!canMakePayment) return false;
-    if (nextPaymentDueDate && !isPaymentDueTodayOrPast(nextPaymentDueDate)) {
-      return false;
-    }
-    // No schedule date yet → still allow click; fetchBill decides if anything is due.
-    return true;
-  }, [canMakePayment, nextPaymentDueDate]);
+  // Make Payment requires allotmentNo (billing consumerCode).
+  const canMakePayment = Boolean(billTenantId && allotmentNo);
+  const showMakePayment = canMakePayment;
 
   const handleViewSummary = () => {
     navigate(getApplicationDetailsPath(modulePath, estateNo), {
@@ -130,7 +204,7 @@ const EstateApplication = ({ application, tenantId }) => {
 
     try {
       const billData = await Digit.PaymentService.fetchBill(billTenantId, {
-        consumerCode: estateNo,
+        consumerCode: allotmentNo,
         businessService: EST_BUSINESS_SERVICE,
       });
       const amountDue = getBillAmountDue(billData);
@@ -141,7 +215,7 @@ const EstateApplication = ({ application, tenantId }) => {
       }
 
       navigate({
-        pathname: getCitizenPaymentPath(estateNo),
+        pathname: getCitizenPaymentPath(allotmentNo),
         state: { tenantId: billTenantId },
       });
     } catch (err) {
@@ -157,25 +231,54 @@ const EstateApplication = ({ application, tenantId }) => {
 
   return (
     <Card className={styles["est-myapps__card"]}>
-      <KeyNote keyValue={t("EST_ASSET_ID")} note={application?.assetId || "N/A"} />
-      <KeyNote keyValue={t("EST_ESTATE_NUMBER")} note={estateNo || "N/A"} />
-      <KeyNote keyValue={t("EST_BUILDING_NAME")} note={application?.buildingName || application?.assetName || "N/A"} />
-      <KeyNote keyValue={t("EST_ALLOTMENT_TYPE")} note={allotmentTypeLabel} />
-      <KeyNote keyValue={t("EST_BILLING_CYCLE")} note={billingCycleLabel} />
-      <KeyNote keyValue={t("EST_RATE")} note={`₹${application?.rate || 0}`} />
-      <KeyNote keyValue={t("EST_ASSET_STATUS")} note={application?.assetStatus || "N/A"} />
-      <KeyNote
-        keyValue={t("EST_CREATED_DATE")}
-        note={
-          application?.auditDetails?.createdTime
-            ? new Date(application.auditDetails.createdTime).toLocaleDateString("en-GB")
-            : "N/A"
-        }
-      />
-      <KeyNote
-        keyValue={t("EST_NEXT_PAYMENT_DUE_DATE")}
-        note={nextPaymentDueLabel}
-      />
+      <StatusTable>
+        <Row
+          className="border-none"
+          label={t("EST_ALLOTMENT_ID")}
+          text={allotmentNo || "N/A"}
+        />
+        <Row className="border-none" label={t("EST_ESTATE_NUMBER")} text={estateNo || "N/A"} />
+        <Row
+          className="border-none"
+          label={t("EST_BUILDING_NAME")}
+          text={application?.buildingName || application?.assetName || "N/A"}
+        />
+        {!hasAllotment ? (
+          <Row
+            className="border-none"
+            label={(() => {
+              const key = "EST_ALLOTMENT";
+              const translated = t(key);
+              return translated && translated !== key ? translated : "Allotment";
+            })()}
+            text={(() => {
+              const key = "EST_PENDING_FOR_ALLOTMENT";
+              const translated = t(key);
+              return translated && translated !== key
+                ? translated
+                : "Pending for allotment";
+            })()}
+          />
+        ) : null}
+        <Row className="border-none" label={t("EST_ALLOTMENT_TYPE")} text={allotmentTypeLabel} />
+        <Row className="border-none" label={t("EST_BILLING_CYCLE")} text={billingCycleLabel} />
+        <Row className="border-none" label={t("EST_RATE")} text={`₹${application?.rate || 0}`} />
+        <Row className="border-none" label={t("EST_ASSET_STATUS")} text={application?.assetStatus || "N/A"} />
+        <Row
+          className="border-none"
+          label={t("EST_CREATED_DATE")}
+          text={
+            application?.auditDetails?.createdTime
+              ? new Date(application.auditDetails.createdTime).toLocaleDateString("en-GB")
+              : "N/A"
+          }
+        />
+        <Row
+          className="border-none"
+          label={t("EST_NEXT_PAYMENT_DUE_DATE")}
+          text={nextPaymentDueLabel}
+        />
+      </StatusTable>
 
       <div className={styles["est-myapps__actions"]}>
         <SubmitBar

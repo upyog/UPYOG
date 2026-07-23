@@ -1,6 +1,6 @@
 /**
  * Citizen My Applications — card list with inline search (matches niuatt layout).
- * Results are sorted newest-first by created date.
+ * List order comes from the backend (no client-side re-sort).
  */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -18,16 +18,6 @@ import EstateApplication from "./est-application";
 import styles from "../../../styles/ESTMyApplications.module.scss";
 
 const PAGE_SIZE = 50;
-
-const getCreatedTime = (application = {}) =>
-  application?.auditDetails?.createdTime ||
-  application?.auditDetails?.createdtime ||
-  application?.createdTime ||
-  0;
-
-/** Newest applications first (same order as allotment search on backend). */
-const sortApplicationsByDate = (applications = []) =>
-  [...applications].sort((a, b) => getCreatedTime(b) - getCreatedTime(a));
 
 export const ESTMyApplications = () => {
   const { t } = useTranslation();
@@ -69,14 +59,28 @@ export const ESTMyApplications = () => {
     },
   });
 
-  const sortedApplications = useMemo(
-    () => sortApplicationsByDate(data?.Assets || []),
-    [data]
-  );
+  // One allotment search for the tenant — cards read propertyType / billingCycle from this map.
+  const { data: allotmentResponse } = Digit.Hooks.estate.useESTApplicationSearch({
+    filters: { tenantId },
+    config: {
+      enabled: Boolean(hasSearched && tenantId && mobileNumber),
+    },
+  });
+
+  const allotmentByAssetNo = useMemo(() => {
+    const map = {};
+    (allotmentResponse?.Allotments || allotmentResponse?.allotments || []).forEach((item) => {
+      const key = item?.assetNo || item?.estateNo;
+      if (key && !map[key]) map[key] = item;
+    });
+    return map;
+  }, [allotmentResponse]);
+
+  const applications = useMemo(() => data?.Assets || [], [data]);
 
   const visibleApplications = useMemo(
-    () => sortedApplications.slice(pathOffset, pathOffset + PAGE_SIZE),
-    [sortedApplications, pathOffset]
+    () => applications.slice(pathOffset, pathOffset + PAGE_SIZE),
+    [applications, pathOffset]
   );
 
   const handleSearch = useCallback(() => {
@@ -117,7 +121,7 @@ export const ESTMyApplications = () => {
     return <Loader />;
   }
 
-  const totalCount = sortedApplications.length;
+  const totalCount = applications.length;
   const nextOffset = pathOffset + PAGE_SIZE;
   const hasMore = totalCount > nextOffset;
 
@@ -174,6 +178,11 @@ export const ESTMyApplications = () => {
             <div key={application.assetId || application.estateNo || index}>
               <EstateApplication
                 application={application}
+                allotment={
+                  allotmentByAssetNo[application?.estateNo] ||
+                  allotmentByAssetNo[application?.assetNo] ||
+                  null
+                }
                 tenantId={tenantId}
                 buttonLabel={t("EST_SUMMARY")}
               />

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { AssetCell, formatDimensions } from "./assetTableUtils";
-import { isAssetAllotted, hasExistingAllotment } from "../../utils/allotmentFormUtils";
+import { isPendingForAllotment } from "../../utils/allotmentFormUtils";
 
 const allotButtonStyle = (isMobile, isDisabled) => ({
   backgroundColor: isDisabled ? "#ccc" : "#007bff",
@@ -39,7 +39,6 @@ const editButtonStyle = (isMobile) => ({
  * @param {"none"|"allot"|"allot-edit"} options.actions
  * @param {function} options.onAllot
  * @param {function} options.onEdit
- * @param {Set<string>} options.allottedAssetNos - estate numbers with saved allotments
  */
 const useAssetTableColumns = ({
   isMobile,
@@ -52,7 +51,6 @@ const useAssetTableColumns = ({
   onAllot,
   onEdit,
   onEstateNoClick,
-  allottedAssetNos = null,
 }) => {
   return useMemo(() => {
     const columns = [
@@ -146,7 +144,9 @@ const useAssetTableColumns = ({
       {
         Header: "Status",
         disableSortBy: true,
-        Cell: ({ row }) => <AssetCell value={row.original.assetStatus} />,
+        Cell: ({ row }) => (
+          <AssetCell value={row.original.assetAllotmentStatus || "N/A"} />
+        ),
       }
     );
 
@@ -155,7 +155,7 @@ const useAssetTableColumns = ({
         Header: "Allotment Status",
         disableSortBy: true,
         Cell: ({ row }) => (
-          <AssetCell value={row.original.assetAllotmentStatus || "Available"} />
+          <AssetCell value={row.original.assetAllotmentStatus || "N/A"} />
         ),
       });
     }
@@ -165,15 +165,16 @@ const useAssetTableColumns = ({
         Header: "Action",
         disableSortBy: true,
         Cell: ({ row }) => {
-          const allotted = hasExistingAllotment(row.original, allottedAssetNos);
+          // Enable Allot only when assetAllotmentStatus is PENDING_FOR_ALLOTMENT.
+          const canAllot = isPendingForAllotment(row.original);
           const showEdit = actions === "allot-edit";
 
           if (actions === "allot") {
             return (
               <button
-                onClick={() => !allotted && onAllot?.(row.original)}
-                style={allotButtonStyle(isMobile, allotted)}
-                disabled={allotted}
+                onClick={() => canAllot && onAllot?.(row.original)}
+                style={allotButtonStyle(isMobile, !canAllot)}
+                disabled={!canAllot}
               >
                 Allot Asset
               </button>
@@ -190,9 +191,9 @@ const useAssetTableColumns = ({
               }}
             >
               <button
-                onClick={() => !allotted && onAllot?.(row.original)}
-                style={allotButtonStyle(isMobile, allotted)}
-                disabled={allotted}
+                onClick={() => canAllot && onAllot?.(row.original)}
+                style={allotButtonStyle(isMobile, !canAllot)}
+                disabled={!canAllot}
               >
                 Allot Asset
               </button>
@@ -222,7 +223,6 @@ const useAssetTableColumns = ({
     onAllot,
     onEdit,
     onEstateNoClick,
-    allottedAssetNos,
   ]);
 };
 

@@ -9,13 +9,6 @@ export const formatDimensions = (length, width) => {
   return null;
 };
 
-export const sortAssetsByEstateNo = (assets = []) =>
-  [...assets].sort((a, b) => {
-    const numA = parseInt(String(a.estateNo).split("-").pop(), 10) || 0;
-    const numB = parseInt(String(b.estateNo).split("-").pop(), 10) || 0;
-    return numA - numB;
-  });
-
 export const getAssetTableCellProps = (isMobile) => ({
   style: {
     minWidth: isMobile ? "70px" : "100px",
