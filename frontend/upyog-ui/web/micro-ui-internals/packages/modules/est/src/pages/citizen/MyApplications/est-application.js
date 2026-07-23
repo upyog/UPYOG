@@ -147,8 +147,7 @@ const EstateApplication = ({ application, tenantId }) => {
     <Card className={styles["est-myapps__card"]}>
       <KeyNote keyValue={t("EST_ASSET_ID")} note={application?.assetId || "N/A"} />
       <KeyNote keyValue={t("EST_ESTATE_NUMBER")} note={estateNo || "N/A"} />
-      <KeyNote keyValue={t("EST_ASSET_NAME")} note={application?.assetName || "N/A"} />
-      <KeyNote keyValue={t("EST_BUILDING_NAME")} note={application?.buildingName || "N/A"} />
+      <KeyNote keyValue={t("EST_BUILDING_NAME")} note={application?.buildingName || application?.assetName || "N/A"} />
       <KeyNote keyValue={t("EST_ALLOTMENT_TYPE")} note={allotmentTypeLabel} />
       <KeyNote keyValue={t("EST_BILLING_CYCLE")} note={billingCycleLabel} />
       <KeyNote keyValue={t("EST_RATE")} note={`₹${application?.rate || 0}`} />
