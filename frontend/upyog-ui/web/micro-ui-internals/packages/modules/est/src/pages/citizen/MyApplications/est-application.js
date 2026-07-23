@@ -1,7 +1,8 @@
 /**
  * EstateApplication card — citizen My Applications list item.
  * Shows key notes and actions: view summary / make payment.
- * Make Payment is shown only when fetchBill returns a due amount > 0.
+ * Next payment due date is shown from bill expiry (fallback: allotment schedule).
+ * Make Payment appears only when amount > 0 AND today is on/after that due date.
  * Allotment type (RENT/LEASE) is loaded via allotmentSearch by assetNo
  * — same source as application-details.
  */
@@ -9,18 +10,15 @@ import React, { useMemo } from "react";
 import { Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { getApplicationDetailsPath, getCitizenPaymentPath } from "../../../utils/estRoutes";
+import {
+  formatPaymentDueDate,
+  getBillAmountDue,
+  getNextPaymentDueDate,
+  isPaymentDueTodayOrPast,
+} from "../../../utils/paymentDueUtils";
 import styles from "../../../styles/ESTMyApplications.module.scss";
 
 const EST_BUSINESS_SERVICE = "est-services";
-
-const getBillAmountDue = (billData) => {
-  const bill = billData?.Bill?.[0];
-  if (!bill) return 0;
-  const total = Number(bill.totalAmount);
-  if (Number.isFinite(total)) return total;
-  const details = bill.billDetails || [];
-  return details.reduce((sum, d) => sum + (Number(d?.amount) || 0), 0);
-};
 
 /** Normalize allotmentType / propertyType from API (string or { code }). */
 const toAllotmentTypeCode = (value) => {
@@ -64,6 +62,17 @@ const EstateApplication = ({ application, tenantId }) => {
     return t(`EST_ALLOTMENT_TYPE_${code}`);
   }, [allotment, application, t]);
 
+  const billingCycleLabel = useMemo(() => {
+    const raw =
+      allotment?.billingCycle ?? application?.billingCycle ?? "";
+    const code =
+      typeof raw === "object"
+        ? String(raw.code || raw.name || "").trim().toUpperCase()
+        : String(raw).trim().toUpperCase();
+    if (!code) return "N/A";
+    return t(`EST_BILLING_CYCLE_${code}`);
+  }, [allotment, application, t]);
+
   const {
     data: billData,
     isLoading: isBillLoading,
@@ -82,13 +91,44 @@ const EstateApplication = ({ application, tenantId }) => {
     }
   );
 
+  const billAmountDue = useMemo(() => getBillAmountDue(billData), [billData]);
+
+  const nextPaymentDueDate = useMemo(
+    () =>
+      getNextPaymentDueDate({
+        billData,
+        allotment,
+        amountDue: billAmountDue,
+      }),
+    [billData, allotment, billAmountDue]
+  );
+
+  const nextPaymentDueLabel = useMemo(() => {
+    const formatted = formatPaymentDueDate(nextPaymentDueDate);
+    return formatted || "N/A";
+  }, [nextPaymentDueDate]);
+
   const showMakePayment = useMemo(() => {
     if (!canFetchBill) return false;
     if ((isBillLoading || isBillFetching) && !billData) return false;
     if (isBillError) return false;
     if (!isBillSuccess && !billData) return false;
-    return getBillAmountDue(billData) > 0;
-  }, [canFetchBill, isBillLoading, isBillFetching, isBillError, isBillSuccess, billData]);
+    if (billAmountDue <= 0) return false;
+    // Amount due, but only expose the button on/after the current due date.
+    if (nextPaymentDueDate && !isPaymentDueTodayOrPast(nextPaymentDueDate)) {
+      return false;
+    }
+    return true;
+  }, [
+    canFetchBill,
+    isBillLoading,
+    isBillFetching,
+    isBillError,
+    isBillSuccess,
+    billData,
+    billAmountDue,
+    nextPaymentDueDate,
+  ]);
 
   const handleViewSummary = () => {
     navigate(getApplicationDetailsPath(modulePath, estateNo), {
@@ -110,6 +150,7 @@ const EstateApplication = ({ application, tenantId }) => {
       <KeyNote keyValue={t("EST_ASSET_NAME")} note={application?.assetName || "N/A"} />
       <KeyNote keyValue={t("EST_BUILDING_NAME")} note={application?.buildingName || "N/A"} />
       <KeyNote keyValue={t("EST_ALLOTMENT_TYPE")} note={allotmentTypeLabel} />
+      <KeyNote keyValue={t("EST_BILLING_CYCLE")} note={billingCycleLabel} />
       <KeyNote keyValue={t("EST_RATE")} note={`₹${application?.rate || 0}`} />
       <KeyNote keyValue={t("EST_ASSET_STATUS")} note={application?.assetStatus || "N/A"} />
       <KeyNote
@@ -119,6 +160,10 @@ const EstateApplication = ({ application, tenantId }) => {
             ? new Date(application.auditDetails.createdTime).toLocaleDateString("en-GB")
             : "N/A"
         }
+      />
+      <KeyNote
+        keyValue={t("EST_NEXT_PAYMENT_DUE_DATE")}
+        note={nextPaymentDueLabel}
       />
 
       <div className={styles["est-myapps__actions"]}>

@@ -54,7 +54,9 @@
     margin-top: 16px;
   }
 
+  // Match the two-button row width even when Make Payment is hidden.
   &__action-btn {
     flex: 1;
+    max-width: calc(50% - 6px);
   }
 }
