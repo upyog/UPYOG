@@ -5489,6 +5489,14 @@
                   "headers": []
                 },
                 {
+                  "id": "fsmTodaysCollection",
+                  "name": "NATIONAL_DSS_TOTAL_COLLECTION_FSM",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
                   "id": "slaComplainceFSM",
                   "name": "NATIONAL_DSS_SLA_COMPLAINCE_FSM",
                   "code": "",
@@ -9731,6 +9739,28 @@
                 "filter": "",
                 "headers": []
               }]
+            },
+            {
+              "id": 1111,
+              "name": "NURT_NO_OF_TRANSACTION_CUMULATIVE",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "cumulativenooftransaction",
+                  "name": "NURT_NO_OF_TRANSACTION_CUMULATIVE",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
             }
           ]
         },
@@ -10070,10 +10100,39 @@
                   "headers": []
                 }
               ]
+            },
+            {
+              "id": 209,
+              "name": "DSS_PET_REGISTRATION",
+              "vizType": "module",
+              "moduleLevel": "PTR",
+              "ref": {
+                "url": "national-ptr",
+                "logoUrl": "",
+                "type": "internal"
+              },
+              "label": "",
+              "charts": [
+                {
+                  "id": "ptrTotalCollection",
+                  "name": "NATIONAL_DSS_TOTAL_COLLECTION_PTR",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrTotalPetRegistration",
+                  "name": "NATIONAL_DSS_TOTAL_REGISTRATION_PTR",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
             }
           ]
         }
-
       ]
     },
 
@@ -11052,24 +11111,24 @@
       ]
     },
     {
-      "name": "DSS_FINANCE_DASHBOARD",
+      "name": "NURT_FINANCE_DASHBOARD",
       "id": "national-finance",
       "isActive": "",
       "style": "linear",
       "visualizations": [
         {
           "row": 1,
-          "name": "DSS_FINANCE",
+          "name": "NURT_FINANCE",
           "vizArray": [
             {
               "id": 411,
-              "name": "DSS_FINANCE_OVERVIEW",
+              "name": "NURT_FINANCE_OVERVIEW",
               "dimensions": {
                 "height": 350,
                 "width": 5
               },
               "vizType": "metric-collection",
-              "label": "DSS_FINANCE_OVERVIEW",
+              "label": "NURT_FINANCE_OVERVIEW",
               "noUnit": true,
               "isCollapsible": false,
               "charts": [
@@ -11083,7 +11142,7 @@
                 },
                 {
                   "id": "financeTotalIncome",
-                  "name": "DSS_FINANCE_TOTAL_INCOME",
+                  "name": "NURT_FINANCE_TOTAL_INCOME",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -11091,7 +11150,7 @@
                 },
                 {
                   "id": "financeTotalExpenditure",
-                  "name": "DSS_FINANCE_TOTAL_EXPENDITURE",
+                  "name": "NURT_FINANCE_TOTAL_EXPENDITURE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -11099,7 +11158,7 @@
                 },
                 {
                   "id": "financeTotalBillCreated",
-                  "name": "DSS_FINANCE_TOTAL_BILL_CREATED",
+                  "name": "NURT_FINANCE_TOTAL_BILL_CREATED",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -11107,7 +11166,7 @@
                 },
                 {
                   "id": "financeNumberOfBillsPaid",
-                  "name": "DSS_FINANCE_TOTAL_BILL_PAYEMENTS_DONE",
+                  "name": "NURT_FINANCE_TOTAL_BILL_PAYEMENTS_DONE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -11440,7 +11499,7 @@
           "vizArray": [
             {
               "id": 213,
-              "name": "DSS_SV_LICENSE_BY_AGE_GROUP",
+              "name": "NURT_SV_LICENSE_BY_AGE_GROUP",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11450,7 +11509,7 @@
               "charts": [
                 {
                   "id": "svLicenseByAgeGroup",
-                  "name": "DSS_SV_LICENSE_BY_AGE_GROUP",
+                  "name": "NURT_SV_LICENSE_BY_AGE_GROUP",
                   "code": "",
                   "chartType": "horizontalBar",
                   "filter": "",
@@ -11460,7 +11519,7 @@
             },
             {
               "id": 214,
-              "name": "DSS_SV_REVENUE_COLLECTED_TARGETED_ACHIEVEMNET",
+              "name": "NURT_SV_REVENUE_COLLECTED_TARGETED_ACHIEVEMNET",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11471,7 +11530,7 @@
               "charts": [
                 {
                   "id": "svallCollection",
-                  "name": "DSS_SV_REVENUE_COLLECTED_TARGETED_ACHIEVEMNET",
+                  "name": "NURT_SV_REVENUE_COLLECTED_TARGETED_ACHIEVEMNET",
                   "code": "",
                   "chartType": "donut",
                   "filter": "",
@@ -11487,7 +11546,7 @@
           "vizArray": [
             {
               "id": 215,
-              "name": "DSS_SV_FIXED_SPOTS",
+              "name": "NURT_SV_FIXED_SPOTS",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11498,7 +11557,7 @@
               "charts": [
                 {
                   "id": "svFixedSpotsOverview",
-                  "name": "DSS_SV_FIXED_SPOTS",
+                  "name": "NURT_SV_FIXED_SPOTS",
                   "code": "",
                   "chartType": "donut",
                   "filter": "",
@@ -11508,7 +11567,7 @@
             },
             {
               "id": 216,
-              "name": "DSS_SV_REGISTRATION_BY_VENDING_TYPE",
+              "name": "NURT_SV_REGISTRATION_BY_VENDING_TYPE",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11518,7 +11577,7 @@
               "charts": [
                 {
                   "id": "svRegistrationByVendingType",
-                  "name": "DSS_SV_REGISTRATION_BY_VENDING_TYPE",
+                  "name": "NURT_SV_REGISTRATION_BY_VENDING_TYPE",
                   "code": "",
                   "chartType": "donut",
                   "filter": "",
@@ -11528,7 +11587,7 @@
             },
             {
               "id": 217,
-              "name": "DSS_SV_LICENSE_BY_GENDER",
+              "name": "NURT_SV_LICENSE_BY_GENDER",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11538,7 +11597,192 @@
               "charts": [
                 {
                   "id": "svLicenseByGender",
-                  "name": "DSS_SV_LICENSE_BY_GENDER",
+                  "name": "NURT_SV_LICENSE_BY_GENDER",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "NSS_PTR_DASHBOARD",
+      "id": "national-ptr",
+      "isActive": "",
+      "style": "linear",
+      "visualizations": [
+        {
+          "row": 1,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 211,
+              "name": "NSS_NATIONAL_WS_OVERVIEW",
+              "dimensions": {
+                "height": 350,
+                "width": 5
+              },
+              "vizType": "metric-collection",
+              "noUnit": true,
+              "isCollapsible": false,
+              "label": "NSS_OVERVIEW",
+              "charts": [
+                {
+                  "id": "ptrTotalCollection",
+                  "name": "NSS_PTR_TOTAL_COLLECTION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrPreviousYearRevenue",
+                  "name": "NSS_PTR_PREVIOUS_YEAR_REVENUE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrCurrentFYCollection",
+                  "name": "NSS_PTR_CURRENT_FY_COLLECTION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrRevenueTargetAchievement",
+                  "name": "NSS_PTR_REVENUE_TARGET_ACHIEVEMENT",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrTotalPetRegistrations",
+                  "name": "NSS_PTR_TOTAL_REGISTRATION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrTotalApprovedPetRegistration",
+                  "name": "NSS_PTR_TOTAL_APPROVED",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrRenewalRate",
+                  "name": "NSS_PTR_RENEWAL_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrTotalEstimatedUnregisterPet",
+                  "name": "NSS_PTR_TOTAL_UNREGISTER_PET",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrComplaintSLA",
+                  "name": "NSS_PTR_TOTAL_COMPLAINTS_ADDRESSED",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrVaccinationPercentage",
+                  "name": "NSS_PTR_TOTAL_VACCINATED_PET",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrRabiesFreeCertifiedPet",
+                  "name": "NSS_PTR_TOTAL_RABIES_FREE_PET_CERTIFIED",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 212,
+              "name": "Total Cumulative Collection",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "ptrTotalCollectionForLines",
+                  "name": "Monthly",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "row": 3,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 216,
+              "name": "NATIONAL_PTR_REGISTRATION_MODE",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "ptrRegistrationCompleted",
+                  "name": "NATIONAL_PTR_REGISTRATION_MODE",
+                  "code": "",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 217,
+              "name": "NATIONAL_PTR_TRANSACTIONS_BY_PAYMENT_CHANNEL",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "ptrTransactionsByPaymentChannel",
+                  "name": "NATIONAL_PTR_TRANSACTIONS_BY_PAYMENT_CHANNEL",
+                  "code": "",
                   "chartType": "donut",
                   "filter": "",
                   "headers": []

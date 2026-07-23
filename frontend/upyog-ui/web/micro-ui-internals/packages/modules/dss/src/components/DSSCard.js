@@ -16,6 +16,7 @@ const nationalScreenURLs = {
   faqs: {key:"national-faqs",stateKey:"national-faqs",label:"DSS_FAQS",active:false,nActive:true,others:true},
   finance: {key:"national-finance",stateKey:"finance",label:"DSS_FINANCE",active:true,nActive:false},
   sv: {key:"national-sv",stateKey:"streetVending",label:"DSS_STREET_VENDING",active:true,nActive:false},
+  ptr: {key:"national-ptr",stateKey:"petRegistration",label:"DSS_PET_REGISTRATION",active:true,nActive:false},
   about: {key:"national-about",stateKey:"national-about",label:"DSS_ABOUT_DASHBOARD",active:false,nActive:true,others:true},
 };
 

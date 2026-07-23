@@ -107,6 +107,10 @@
         {
           "name": "National Street Vending",
           "id": "national-sv"
+        },
+        {
+          "name": "National Pet Registration",
+          "id": "national-ptr"
         }
       ]
     },
@@ -155,6 +159,9 @@
         },
         {
           "id": "ulb-finance"
+        },
+        {
+          "id": "ulb-ptr"
         }
       ]
     }
