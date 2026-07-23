@@ -148,7 +148,7 @@ export const findFieldConfig = (formConfig = [], fieldName) =>
 const mergeFormField = (local, mdms) => {
   const mergedField = { ...local.field, ...mdms.field };
   // Local bindings for compute/label/prefill must survive MDMS field overrides.
-  ["name", "computeFrom", "computeFn", "labelBy", "prefillFrom", "dataSource", "numeric"].forEach((key) => {
+  ["name", "computeFrom", "computeFn", "labelBy", "prefillFrom", "dataSource", "numeric", "unit", "defaultValue"].forEach((key) => {
     if (local.field?.[key] != null) mergedField[key] = local.field[key];
   });
 
@@ -160,7 +160,7 @@ const mergeFormField = (local, mdms) => {
     validation: { ...(mdms.validation || {}), ...(local.validation || {}) },
     messages: { ...(mdms.messages || {}), ...(local.messages || {}) },
   };
-  ["apiFieldName", "submitKey", "excludeFromPayload"].forEach((key) => {
+  ["apiFieldName", "submitKey", "excludeFromPayload", "hidden"].forEach((key) => {
     if (local[key] != null) merged[key] = local[key];
   });
   if (Array.isArray(mdms.options) && mdms.options.length > 0) {
@@ -260,8 +260,10 @@ export const getFieldWatchNames = (fieldConfig) => {
   return [...names];
 };
 
-/** Config-driven show/hide: visibleWhen: { field, equals } | { field, in: [...] } */
+/** Config-driven show/hide: hidden | visibleWhen: { field, equals } | { field, in: [...] } */
 export const isFieldVisible = (fieldConfig, formData = {}) => {
+  if (fieldConfig?.hidden === true) return false;
+
   const rule = fieldConfig?.visibleWhen;
   if (!rule?.field) return true;
 
@@ -299,7 +301,7 @@ export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = 
         result[name] = dropdownData[name]?.[0] || toDropdownOption(tenantId, tenantId);
         return;
       }
-      const rawVal = rawAsset[name];
+      const rawVal = rawAsset[name] ?? field.defaultValue;
       const rawNameHint = rawAsset[`${name}Name`];
       const staticOptions = item.options || [];
       const options =
@@ -343,6 +345,15 @@ export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = 
     if (isEmpty && field.prefillFrom) {
       const fromVal = rawAsset[field.prefillFrom];
       result[name] = fromVal !== undefined && fromVal !== null ? fromVal : "";
+      return;
+    }
+    if (isEmpty && field.defaultValue !== undefined && field.defaultValue !== null) {
+      // "today" → local yyyy-MM-dd via toInputDate (avoids UTC day-shift).
+      if (field.defaultValue === "today" && type === "date") {
+        result[name] = toInputDate(new Date());
+        return;
+      }
+      result[name] = field.defaultValue;
       return;
     }
     result[name] =

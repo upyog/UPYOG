@@ -112,6 +112,8 @@ const estateAllotmentFormOverrides = {
           moduleName: "Estate",
           masterName: "BillingCycle",
         },
+        // Applied by buildInitialData when the field is empty.
+        defaultValue: "MONTHLY",
       },
       options: [],
       validation: { required: true, disabled: false },
@@ -160,6 +162,14 @@ const estateAllotmentFormOverrides = {
         readOnly: true,
       },
       messages: { error: "EST_INVALID_AMOUNT" },
+    },
+    {
+      key: "EST_ADVANCE_PAYMENT_DATE",
+      field: {
+        name: "advancePaymentDate",
+        // buildInitialData resolves "today" → local yyyy-MM-dd via toInputDate.
+        defaultValue: "today",
+      },
     },
     {
       key: "EST_ADVANCE_PAYMENT_IN_INR",
