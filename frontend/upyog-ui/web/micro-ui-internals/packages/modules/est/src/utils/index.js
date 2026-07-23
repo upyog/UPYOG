@@ -3,11 +3,10 @@
  * Document preview: ./ESTDocumentPreview.js (re-exported below).
  */
 
-import { mergeRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";
 import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
 import { extractFileStoreId } from "./allotmentDocumentUtils";
 import { normalizeAllotmentFlatData } from "./allotmentFormUtils";
-import { buildDynamicAssetPayload, getEstateRequestInfo } from "./assetPayloadUtils";
+import { getEstateRequestInfo } from "./assetPayloadUtils";
 import estateFormConfig from "../config/estateFormConfig";
 import estateAllotmentFormOverrides from "../config/Create/estateAllotmentFormOverrides";
 
@@ -146,69 +145,6 @@ export const mapAssetSearchToRegistrationMatch = (asset = {}) => {
     label,
     subtitle: asset.buildingName || asset.assetName || "",
     prefill: mapAssetToRegistrationPrefill(asset),
-  };
-};
-
-/** Map Asset-services reference payload (applicationNo lookup) → registration form. */
-export const mapAssetReferenceToPrefill = (asset = {}) => {
-  const extra = asset.additionalDetails || {};
-  const address = asset.addressDetails || {};
-  const locality = address.locality || {};
-  const dims = String(extra.dimensions || "")
-    .split(/[xX×]/)
-    .map((part) => part.trim())
-    .filter(Boolean);
-
-  return {
-    buildingName: address.buildingName || asset.assetName || asset.description || "",
-    buildingNo: extra.buildingSno || "",
-    buildingFloor: extra.floorNo || "",
-    buildingBlock: "",
-    totalFloorArea: extra.plotArea || "",
-    dimensionLength: dims[0] || "",
-    dimensionWidth: dims[1] || "",
-    rate: "",
-    assetRef: asset.assetBookRefNo || asset.applicationNo || "",
-    assetType: asset.assetType || asset.assetParentCategory || extra.assetParentCategory || "",
-    serviceType: locality.code || "",
-    serviceTypeName: locality.name || locality.label || address.city || "",
-    city: asset.tenantId || "",
-  };
-};
-
-const getAssetRouteConfig = (data = {}) => {
-  const fromSession = data?.routeConfigs?.newRegistration;
-  if (fromSession?.form?.length) {
-    return mergeRouteConfig(fromSession, estateFormConfig);
-  }
-  return estateFormConfig;
-};
-
-const estPayloadData = (data) => {
-  const user = Digit.UserService.getUser().info;
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const assetData = extractAssetDataFromSession(data);
-  const flatAsset = toFlatAssetForPayload(assetData);
-  const routeConfig = getAssetRouteConfig(data);
-  const assetPayload = buildDynamicAssetPayload(routeConfig, flatAsset, tenantId);
-
-  return {
-    Assets: [
-      {
-        ...assetPayload,
-        assetId: assetData.assetId || crypto.randomUUID(),
-        estateNo: assetData.estateNo || "",
-        refAssetNo: flatAsset.refAssetNo || "",
-        billingCycle: assetData.billingCycle || "MONTHLY",
-        additionalDetails: assetData.additionalDetails || {},
-        auditDetails: {
-          createdBy: user?.uuid || "",
-          lastModifiedBy: user?.uuid || "",
-          createdTime: Date.now(),
-          lastModifiedTime: Date.now(),
-        },
-      },
-    ],
   };
 };
 

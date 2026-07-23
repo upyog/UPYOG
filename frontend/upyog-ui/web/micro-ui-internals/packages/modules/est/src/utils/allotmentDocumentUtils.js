@@ -3,7 +3,10 @@
  */
 import {
   extractUrlFromFilefetchResponse,
+  extractFileStoreId,
 } from "@nudmcdgnpm/digit-ui-react-components";
+
+export { extractFileStoreId };
 
 export const ALLOTMENT_DOCUMENT_FIELDS = [
   {
@@ -22,15 +25,6 @@ export const ALLOTMENT_DOCUMENT_FIELDS = [
     apiName: "signedDeed",
   },
 ];
-
-export const extractFileStoreId = (value) => {
-  if (value === null || value === undefined || value === "") return null;
-  if (typeof value === "string") return value;
-  if (typeof value === "object") {
-    return value.filestoreId || value.fileStoreId || value.documentuuid || null;
-  }
-  return null;
-};
 
 /** Collect fileStoreIds + i18n labels from allotment (API or form field names). */
 export const collectAllotmentDocumentEntries = (allotment = {}) =>

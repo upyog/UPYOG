@@ -32,7 +32,7 @@ const estateStaticFields = (flatData) => ({
   assetAllotmentStatus: "INITIATED",
   assetName: flatData?.buildingName || "",
   description: "",
-  // Old estPayloadData sent "DEPT_2"; sending "" can trip backend validation
+  // Old create payload sent "DEPT_2"; sending "" can trip backend validation
   // on required department.
   department: flatData?.department || "DEPT_2",
   estateNo: "",

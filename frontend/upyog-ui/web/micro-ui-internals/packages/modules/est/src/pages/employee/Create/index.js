@@ -19,9 +19,12 @@ const ESTRegCreate = () => {
   const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
     Digit.ULBService.getStateId(),
     "Estate",
-    [{ name: "Config" }],
+    [{ name: "NewRegistration" }],
     {
-      select: (data) => data?.["Estate"]?.["Config"],
+      // Primary: Estate.NewRegistration (data/pg/Estate/NewRegistration.json).
+      // Fallback: legacy Estate.Config if still deployed.
+      select: (data) =>
+        data?.Estate?.NewRegistration || null,
     }
   );
 

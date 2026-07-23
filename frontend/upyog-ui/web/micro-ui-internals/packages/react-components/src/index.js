@@ -239,8 +239,6 @@ import Stepper from "./customComponents/Stepper";
 import Timeline from "./molecules/Timeline";
 
 import DynamicForm from "./molecules/DynamicForm"
-export { buildApiPayload, toDropdownOption, resolveOption, getRequestInfo, formatDateForApi } from "./utilities/payloadUtils";
-export { calculateRentByBillingCycle, MAX_TAX_AMOUNT } from "./utilities/validators";
 export {
   flattenFormConfig,
   findFieldConfig,
@@ -248,6 +246,8 @@ export {
   resolveFieldLabelKey,
   resolveBillingCycleMultiplier,
   normalizeBillingCycleCode,
+  optionCode,
+  sortByOrder,
   rehydrateBillingCycleOption,
   enrichDropdownSelection,
   toDate,
@@ -272,6 +272,8 @@ export {
   resolveFilePreviewUrl,
   extractUrlFromFilefetchResponse,
 } from "./utilities/checkPageUtils";
+export { buildApiPayload, toDropdownOption, resolveOption, getRequestInfo, formatDateForApi, extractFileStoreId } from "./utilities/payloadUtils";
+export { calculateRentByBillingCycle, MAX_TAX_AMOUNT } from "./utilities/validators";
 export {
   DEFAULT_SEARCH_PAGINATION,
   paginateArray,

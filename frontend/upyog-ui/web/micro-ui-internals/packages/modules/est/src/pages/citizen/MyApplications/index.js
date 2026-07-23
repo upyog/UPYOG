@@ -1,5 +1,6 @@
 /**
  * Citizen My Applications — card list with inline search (matches niuatt layout).
+ * Filters / labels come from MDMS Estate.CitizenMyApplicationsConfig.
  * List order comes from the backend (no client-side re-sort).
  */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -11,13 +12,13 @@ import {
   SubmitBar,
   CardLabel,
   Card,
+  sortByOrder,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import EstateApplication from "./est-application";
+import { resolveCitizenMyApplicationsConfig } from "../../../utils/estMdmsUtils";
 import styles from "../../../styles/ESTMyApplications.module.scss";
-
-const PAGE_SIZE = 50;
 
 export const ESTMyApplications = () => {
   const { t } = useTranslation();
@@ -25,8 +26,28 @@ export const ESTMyApplications = () => {
   const tenantId =
     Digit.ULBService.getCitizenCurrentTenant(true) ||
     Digit.ULBService.getCurrentTenantId();
+  const stateId = Digit.ULBService.getStateId();
   const user = Digit.UserService.getUser()?.info;
   const mobileNumber = user?.mobileNumber;
+
+  const { data: mdmsMyApps } = Digit.Hooks.useEnabledMDMS(
+    stateId,
+    "Estate",
+    [{ name: "CitizenMyApplicationsConfig" }],
+    {
+      select: (mdms) => mdms?.Estate?.CitizenMyApplicationsConfig || null,
+    }
+  );
+
+  const config = useMemo(
+    () => resolveCitizenMyApplicationsConfig(mdmsMyApps),
+    [mdmsMyApps]
+  );
+
+  const filters = useMemo(() => sortByOrder(config.filters), [config.filters]);
+  const pageSize = config.paginationDefaults?.limit || 50;
+  const estateNoFilter = filters.find((f) => f.name === "estateNo");
+  const statusFilter = filters.find((f) => f.name === "assetStatus");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
@@ -40,9 +61,11 @@ export const ESTMyApplications = () => {
   }, [location.pathname]);
 
   useEffect(() => {
-    setHasSearched(true);
-    setSearchFilters({});
-  }, []);
+    if (config.autoSearch) {
+      setHasSearched(true);
+      setSearchFilters({});
+    }
+  }, [config.autoSearch]);
 
   const { isLoading, isSuccess, data } = Digit.Hooks.estate.useESTAssetSearch({
     tenantId,
@@ -79,8 +102,8 @@ export const ESTMyApplications = () => {
   const applications = useMemo(() => data?.Assets || [], [data]);
 
   const visibleApplications = useMemo(
-    () => applications.slice(pathOffset, pathOffset + PAGE_SIZE),
-    [applications, pathOffset]
+    () => applications.slice(pathOffset, pathOffset + pageSize),
+    [applications, pathOffset, pageSize]
   );
 
   const handleSearch = useCallback(() => {
@@ -99,12 +122,17 @@ export const ESTMyApplications = () => {
     setSearchFilters({});
   }, []);
 
+  const statusMasterName =
+    statusFilter?.dataSource?.masterName || "AssetStatus";
+  const statusModuleName =
+    statusFilter?.dataSource?.moduleName || "Estate";
+
   const { data: assetStatusMdms = [] } = Digit.Hooks.useEnabledMDMS(
-    Digit.ULBService.getStateId(),
-    "Estate",
-    [{ name: "AssetStatus" }],
+    stateId,
+    statusModuleName,
+    [{ name: statusMasterName }],
     {
-      select: (mdms) => mdms?.Estate?.AssetStatus || [],
+      select: (mdms) => mdms?.[statusModuleName]?.[statusMasterName] || [],
     }
   );
 
@@ -122,49 +150,56 @@ export const ESTMyApplications = () => {
   }
 
   const totalCount = applications.length;
-  const nextOffset = pathOffset + PAGE_SIZE;
+  const nextOffset = pathOffset + pageSize;
   const hasMore = totalCount > nextOffset;
 
   return (
     <>
-      <Header>{`${t("EST_MY_APPLICATIONS")} (${totalCount})`}</Header>
+      <Header>{`${t(config.header)} (${totalCount})`}</Header>
 
       <Card>
         <div className={styles["est-myapps__container"]}>
           <div className={styles["est-myapps__search-row"]}>
-            <div className={styles["est-myapps__field-col"]}>
-              <div className={styles["est-myapps__field-inner"]}>
-                <CardLabel>{t("EST_ASSET_NUMBER")}</CardLabel>
-                <TextInput
-                  placeholder={t("EST_ENTER_ASSET_NUMBER")}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={styles["est-myapps__text-input"]}
-                />
+            {estateNoFilter ? (
+              <div className={styles["est-myapps__field-col"]}>
+                <div className={styles["est-myapps__field-inner"]}>
+                  <CardLabel>{t(estateNoFilter.key)}</CardLabel>
+                  <TextInput
+                    placeholder={t(estateNoFilter.placeholder || estateNoFilter.key)}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className={styles["est-myapps__text-input"]}
+                  />
+                </div>
               </div>
-            </div>
-            <div className={styles["est-myapps__field-col"]}>
-              <div className={styles["est-myapps__field-inner"]}>
-                <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
-                <Dropdown
-                  className={`form-field ${styles["est-myapps__dropdown"]}`}
-                  selected={status}
-                  select={setStatus}
-                  option={statusOptions}
-                  placeholder={t("EST_SELECT_STATUS")}
-                  optionKey="name"
-                  t={t}
-                />
+            ) : null}
+            {statusFilter ? (
+              <div className={styles["est-myapps__field-col"]}>
+                <div className={styles["est-myapps__field-inner"]}>
+                  <CardLabel>{t(statusFilter.key)}</CardLabel>
+                  <Dropdown
+                    className={`form-field ${styles["est-myapps__dropdown"]}`}
+                    selected={status}
+                    select={setStatus}
+                    option={statusOptions}
+                    placeholder={t(statusFilter.placeholder || statusFilter.key)}
+                    optionKey="name"
+                    t={t}
+                  />
+                </div>
               </div>
-            </div>
+            ) : null}
             <div>
               <div className={styles["est-myapps__search-btn-wrap"]}>
-                <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+                <SubmitBar
+                  label={t(config.actionButton?.search || "ES_COMMON_SEARCH")}
+                  onSubmit={handleSearch}
+                />
                 <p
                   className={`link ${styles["est-myapps__clear-link"]}`}
                   onClick={handleClear}
                 >
-                  {t("ES_COMMON_CLEAR_ALL")}
+                  {t(config.actionButton?.clear || "ES_COMMON_CLEAR_ALL")}
                 </p>
               </div>
             </div>
@@ -190,7 +225,9 @@ export const ESTMyApplications = () => {
           ))}
 
         {isSuccess && totalCount === 0 && (
-          <p className={styles["est-myapps__msg"]}>{t("EST_NO_APPLICATION_FOUND_MSG")}</p>
+          <p className={styles["est-myapps__msg"]}>
+            {t(config.emptyState?.message || "EST_NO_APPLICATION_FOUND_MSG")}
+          </p>
         )}
 
         {totalCount > 0 && hasMore && (

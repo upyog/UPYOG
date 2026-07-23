@@ -2,6 +2,7 @@
  * Citizen EST Payment History — same layout as My Applications
  * (search card + StatusTable result cards).
  * Data: allotments (billing) + assets (building name) + collection receipts.
+ * Receipt consumerCodes use allotmentNo (same as Make Payment billing key).
  */
 import React, { useCallback, useMemo, useState } from "react";
 import {
@@ -14,17 +15,15 @@ import {
   DatePicker,
   Row,
   StatusTable,
+  sortByOrder,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import LOCAL_PAYMENT_HISTORY_CONFIG from "../../config/paymentHistoryConfig";
+import { resolvePaymentHistoryConfig } from "../../utils/estMdmsUtils";
+import {
+  formatReceiptDate,
+  toBillingCycleLabel,
+} from "../../utils/estDisplayUtils";
 import styles from "../../styles/ESTMyApplications.module.scss";
-
-const formatDate = (value) => {
-  if (!value && value !== 0) return "N/A";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "N/A";
-  return date.toLocaleDateString("en-GB");
-};
 
 const toStartOfDay = (value) => {
   if (!value) return null;
@@ -41,51 +40,11 @@ const toEndOfDay = (value) => {
   return date;
 };
 
-const toBillingCycleLabel = (value, t) => {
-  const code =
-    typeof value === "object"
-      ? String(value?.code || value?.name || "").trim().toUpperCase()
-      : String(value || "").trim().toUpperCase();
-  return code ? t(`EST_BILLING_CYCLE_${code}`) : "N/A";
-};
-
-const sortByOrder = (items = []) =>
-  [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-
 const formatFieldValue = (row, field) => {
   const raw = row?.[field.accessor];
   if (raw === undefined || raw === null || raw === "") return "N/A";
   if (field.format === "currency") return `₹${raw}`;
   return raw;
-};
-
-const resolvePaymentHistoryConfig = (mdmsData) => {
-  const entry = Array.isArray(mdmsData)
-    ? mdmsData[0]
-    : Array.isArray(mdmsData?.body)
-      ? mdmsData.body[0]
-      : mdmsData;
-  if (!entry || typeof entry !== "object") return LOCAL_PAYMENT_HISTORY_CONFIG;
-  return {
-    ...LOCAL_PAYMENT_HISTORY_CONFIG,
-    ...entry,
-    emptyState: {
-      ...LOCAL_PAYMENT_HISTORY_CONFIG.emptyState,
-      ...(entry.emptyState || {}),
-    },
-    filters:
-      Array.isArray(entry.filters) && entry.filters.length > 0
-        ? entry.filters
-        : LOCAL_PAYMENT_HISTORY_CONFIG.filters,
-    resultFields:
-      Array.isArray(entry.resultFields) && entry.resultFields.length > 0
-        ? entry.resultFields
-        : LOCAL_PAYMENT_HISTORY_CONFIG.resultFields,
-    actionButton: {
-      ...LOCAL_PAYMENT_HISTORY_CONFIG.actionButton,
-      ...(entry.actionButton || {}),
-    },
-  };
 };
 
 export const ESTPaymentHistory = () => {
@@ -157,11 +116,28 @@ export const ESTPaymentHistory = () => {
   const allotments = allotmentResponse?.Allotments || [];
   const assets = assetResponse?.Assets || [];
 
-  const assetNos = useMemo(
-    () => [...new Set(allotments.map((item) => item?.assetNo).filter(Boolean))],
+  // Billing consumerCodes are allotmentNo (same key as Make Payment / fetchBill).
+  const consumerCodes = useMemo(
+    () =>
+      [
+        ...new Set(
+          allotments
+            .map((item) => String(item?.allotmentNo || "").trim())
+            .filter(Boolean)
+        ),
+      ].join(","),
     [allotments]
   );
-  const consumerCodes = useMemo(() => assetNos.join(","), [assetNos]);
+
+  const allotmentByConsumerCode = useMemo(
+    () =>
+      allotments.reduce((acc, item) => {
+        const key = String(item?.allotmentNo || "").trim();
+        if (key && !acc[key]) acc[key] = item;
+        return acc;
+      }, {}),
+    [allotments]
+  );
 
   const allotmentByAssetNo = useMemo(
     () =>
@@ -205,14 +181,19 @@ export const ESTPaymentHistory = () => {
       const detail = payment?.paymentDetails?.[0] || {};
       const consumerCode =
         detail?.bill?.consumerCode || payment?.consumerCode || "";
-      const allotment = allotmentByAssetNo[consumerCode] || {};
-      const asset = assetByEstateNo[consumerCode] || {};
+      const allotment =
+        allotmentByConsumerCode[consumerCode] ||
+        allotmentByAssetNo[consumerCode] ||
+        {};
+      const assetKey = allotment?.assetNo || consumerCode;
+      const asset = assetByEstateNo[assetKey] || {};
 
       return {
         receiptNumber: detail?.receiptNumber || "N/A",
         receiptDate: detail?.receiptDate,
-        receiptDateLabel: formatDate(detail?.receiptDate),
-        assetNo: consumerCode || "N/A",
+        receiptDateLabel: formatReceiptDate(detail?.receiptDate),
+        assetNo: allotment?.assetNo || consumerCode || "N/A",
+        allotmentNo: allotment?.allotmentNo || consumerCode || "N/A",
         buildingName:
           asset?.buildingName ||
           asset?.assetName ||
@@ -224,7 +205,13 @@ export const ESTPaymentHistory = () => {
         paymentMode: payment?.paymentMode || "N/A",
       };
     });
-  }, [receiptResponse, allotmentByAssetNo, assetByEstateNo, t]);
+  }, [
+    receiptResponse,
+    allotmentByConsumerCode,
+    allotmentByAssetNo,
+    assetByEstateNo,
+    t,
+  ]);
 
   const filteredData = useMemo(() => {
     const normalizedSearch = String(appliedFilters.assetNo || "")
@@ -237,6 +224,9 @@ export const ESTPaymentHistory = () => {
       const matchesAssetNo =
         !normalizedSearch ||
         String(item.assetNo || "").toLowerCase().includes(normalizedSearch) ||
+        String(item.allotmentNo || "")
+          .toLowerCase()
+          .includes(normalizedSearch) ||
         String(item.buildingName || "")
           .toLowerCase()
           .includes(normalizedSearch);
@@ -317,7 +307,7 @@ export const ESTPaymentHistory = () => {
       <div>
         {filteredData.map((row, index) => (
           <Card
-            key={`${row.receiptNumber}-${row.assetNo}-${index}`}
+            key={`${row.receiptNumber}-${row.allotmentNo}-${index}`}
             className={styles["est-myapps__card"]}
           >
             <StatusTable>

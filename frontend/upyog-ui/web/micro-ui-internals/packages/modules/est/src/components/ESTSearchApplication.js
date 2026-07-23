@@ -34,8 +34,8 @@ const toSearchFormEditData = (filters = {}, formConfig = []) => {
 /**
  * Shared EST search page (employee + citizen).
  *
- * MDMS drives search fields via `mdmsMasterName` (default: searchApplicationConfig).
- * Local fallback lives in resolveSearchApplicationConfig (searchApplicationConfig.js).
+ * MDMS drives search fields via `mdmsMasterName` (default: SearchApplicationConfig).
+ * Offline fallback lives in resolveSearchApplicationConfig.
  * Pass `renderResultItem` + resultMode "cards" for citizen card lists.
  * Pass `initialSearchFilters` / `initialFormValues` to restore after navigating away.
  */
@@ -49,7 +49,7 @@ const ESTSearchApplication = ({
   initialSearchFilters = {},
   initialFormValues = {},
   config: configOverride,
-  mdmsMasterName = "searchApplicationConfig",
+  mdmsMasterName = "SearchApplicationConfig",
   renderResultItem,
   headerCount,
 }) => {
@@ -58,7 +58,10 @@ const ESTSearchApplication = ({
     "Estate",
     [{ name: mdmsMasterName }],
     {
-      select: (mdms) => mdms?.Estate?.[mdmsMasterName],
+      select: (mdms) =>
+        mdms?.Estate?.[mdmsMasterName] ||
+        mdms?.Estate?.searchApplicationConfig ||
+        null,
     }
   );
 
