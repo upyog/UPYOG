@@ -26,7 +26,7 @@ public class LoadGeneratorController {
      * Returns jobId immediately. Execution runs in background.
      */
     @PostMapping("/create")
-    public ResponseEntity<LoadGeneratorResponse> create(@Valid @RequestBody LoadRequest request) {
+    public ResponseEntity<LoadGeneratorResponse> create(@RequestBody LoadRequest request) {
         log.info("Load generation request received: module={}, tenantId={}, count={}",
                 request.getModule(), request.getTenantId(), request.getCount());
 
