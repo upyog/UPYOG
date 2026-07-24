@@ -998,13 +998,13 @@ public class BPARepository {
 		);
 	}
 
-	private static final String PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT = "SELECT ept.last_modified_time AS dateOfSubmission, " +
-			"ela.occupancy AS karyType, ela.address AS sthapnaPata," +
-			"ept.tenant_id AS ulb, (ept.tenant_id || '_' || ebb.applicationno) AS proposalNo," +
-			"ept.name AS ownerName,  ept.mobile_number AS ownerPhoneNumber," +
-			"ela.builtUpArea AS constructionArea, --fd.amount AS estimatedCess, " +
-			"ept.gateway_txn_id AS transactionId," +
-			"fd.amount AS cessAmount, ept.last_modified_time AS transactionDate, ept.txn_status AS status," +
+	private static final String PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT = "SELECT ept.last_modified_time AS date_Of_Submission, " +
+			"ela.occupancy AS karyType, ela.address AS sthapna_Pata," +
+			"ept.tenant_id AS ulb, (ept.tenant_id || '_' || ebb.applicationno) AS proposal_No," +
+			"ept.name AS ownerName,  ept.mobile_number AS owner_Phone_Number," +
+			"ela.builtUpArea AS constructionArea, --fd.amount AS estimated_Cess, " +
+			"ept.gateway_txn_id AS transaction_Id," +
+			"fd.amount AS cessAmount, ept.last_modified_time AS transaction_Date, ept.txn_status AS status," +
 			"(ebbd.txn_response #>> '{}')::jsonb ->> 'bank_ref_no' AS transactionRefNo," +
 			"ept.txn_id AS receiptNo, fd.amount AS bankAmount, ept.tenant_id AS ulbCode, ept.tenant_id AS ulbName" +
 			"FROM EG_PG_TRANSACTIONS ept " +
