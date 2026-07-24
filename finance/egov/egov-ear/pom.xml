@@ -141,10 +141,10 @@
             <groupId>opensymphony</groupId>
             <artifactId>sitemesh</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-web</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>net.sf.ehcache</groupId>-->
+<!--            <artifactId>ehcache-web</artifactId>-->
+<!--        </dependency>-->
         <!-- MISC END -->
 
 
