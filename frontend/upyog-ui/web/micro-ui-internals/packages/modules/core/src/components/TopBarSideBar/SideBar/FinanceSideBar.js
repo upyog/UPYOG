@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 const getRoutePath = (navUrl) => {
   if (!navUrl) return "";
@@ -75,6 +75,7 @@ const getMinOrderNumber = (node) => {
  */
 const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1 }) => {
   const { t, i18n } = useTranslation();
+  const { pathname } = useLocation();
   const currentNode = getNodeByPath(configEmployeeSideBar1, activePath);
   if (!currentNode) return null;
 
@@ -145,13 +146,14 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1 }) =
               </div>
             );
           } else {
+            const targetPath = getRoutePath(nodeValue.navigationURL);
+            const isActive = pathname === targetPath;
             return (
               <Link
                 key={key}
-                to={getRoutePath(nodeValue.navigationURL)}
-                className="sidebar-link"
+                to={targetPath}
+                className={`sidebar-link ${isActive ? "active" : ""}`}
                 title={displayLabel}
-                style={{ textDecoration: "none", padding: "20px", color: "white", display: "flex", justifyContent: "flex-start", alignItems: "center", width: "max-content", minWidth: "100%" }}
               >
                 <div className="actions">
                   {leftIcon}
