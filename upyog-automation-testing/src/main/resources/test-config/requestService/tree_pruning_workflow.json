@@ -1,0 +1,24 @@
+{
+  "moduleName": "TREE_PRUNING",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "TREE_PRUNING"
+    },
+
+    {
+      "name": "Employee Flow",
+      "type": "EMPLOYEE",
+      "module": "TREE_PRUNING",
+      "role": "WTCEMP"
+    },
+    {
+      "name": "Vendor Flow",
+      "type": "VENDOR",
+      "module": "TREE_PRUNING"
+    }
+  ]
+}

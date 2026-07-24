@@ -16,6 +16,7 @@ import java.time.LocalDate;
 public class RentPaymentDetails {
     private String id;
     private String allotmentId;
+    private String allotmentNo;
     private BigDecimal rent;
     private String paymentType;
     private BigDecimal penaltyAmount;

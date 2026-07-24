@@ -2,6 +2,7 @@ package org.upyog.Automation.Utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.upyog.Automation.Reports.ReportManager;
 
 import java.util.List;
 
@@ -26,10 +27,23 @@ public class ModuleWrapper {
 
         for (ModuleTask module : modules) {
 
-            runModule(
-                    module.getModuleName(),
-                    module.getModuleLogic()
-            );
+            try {
+
+                runModule(
+                        module.getModuleName(),
+                        module.getModuleLogic()
+                );
+
+            } catch (Exception e) {
+
+                logger.error(
+                        "Skipping failed module and continuing: {}",
+                        module.getModuleName(),
+                        e
+                );
+
+                // Continue with next module
+            }
         }
     }
 
@@ -38,6 +52,11 @@ public class ModuleWrapper {
     // ==============================
     private static void runModule(String moduleName,
                                   Runnable moduleLogic) {
+
+        logger.info(
+                "MODULE WRAPPER TEST = "
+                        + ReportManager.getTest()
+        );
 
         logger.info("============================");
         logger.info("STARTING: {}", moduleName);
@@ -51,10 +70,19 @@ public class ModuleWrapper {
 
             logger.info("PASSED: {}", moduleName);
 
+            ReportManager.logStep(
+                    "PASSED : " + moduleName
+            );
+
         } catch (Exception e) {
 
             logger.error("FAILED: " + moduleName, e);
-            //logger.error("Reason: {}", e.getMessage());
+
+            ReportManager.logStep(
+                    "FAILED : " + moduleName
+            );
+
+            throw e;
 
         } finally {
 

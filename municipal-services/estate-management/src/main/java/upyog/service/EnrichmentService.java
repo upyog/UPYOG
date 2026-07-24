@@ -7,11 +7,11 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import upyog.config.EstateConfiguration;
+import upyog.config.ServiceConstants;
+import upyog.util.BillingPeriodUtil;
 import upyog.util.EstateUtil;
 import upyog.util.IdGenUtil;
-import upyog.web.models.AllotmentRequest;
-import upyog.web.models.Asset;
-import upyog.web.models.AssetRequest;
+import upyog.web.models.*;
 
 import java.util.List;
 
@@ -78,6 +78,7 @@ public class EnrichmentService {
         
         // Set default status
         asset.setAssetStatus("active");
+        asset.setAssetAllotmentStatus(ServiceConstants.STATUS_PENDING_FOR_ALLOTMENT);
         
         // Set audit details
         String userUuid = assetRequest.getRequestInfo().getUserInfo().getUuid();
@@ -105,6 +106,37 @@ public class EnrichmentService {
             String allotmentId = EstateUtil.getRandomUUID();
             allotment.setAllotmentId(allotmentId);
             log.info("Generated Allotment ID: {}", allotmentId);
+            
+            // Generate allotment number from ID Gen service
+            List<String> allotmentNumbers = getIdList(
+                    request.getRequestInfo(),
+                    allotment.getTenantId(),
+                    estateConfiguration.getEstateAllotmentNoName(),
+                    estateConfiguration.getEstateAllotmentNoFormat(),
+                    1
+            );
+            String allotmentNo = allotmentNumbers.get(0);
+            allotment.setAllotmentNo(allotmentNo);
+            log.info("Generated Allotment Number: {}", allotmentNo);
+            
+            // Set default status to PENDING_FOR_PAYMENT
+            allotment.setStatus(ServiceConstants.STATUS_PENDING_FOR_PAYMENT);
+
+            // Calculate and set initial due date based on agreement start date and billing cycle
+            if (allotment.getDueDate() == null) {
+                try {
+                    BillingCycle billingCycle = BillingCycle.valueOf(allotment.getBillingCycle().toUpperCase(java.util.Locale.ROOT));
+                    BillingPeriod billingPeriod = BillingPeriodUtil.getBillingPeriod(
+                            allotment.getAgreementStartDate(),
+                            billingCycle,
+                            allotment.getAgreementEndDate()
+                    );
+                    allotment.setDueDate(billingPeriod.getPeriodTo());
+                    log.info("Calculated initial due date: {}", allotment.getDueDate());
+                } catch (Exception e) {
+                    log.error("Failed to calculate initial due date for allotment: {}", e.getMessage());
+                }
+            }
             
             // Set audit details
             allotment.setAuditDetails(EstateUtil.getAuditDetails(userUuid, true));

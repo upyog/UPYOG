@@ -206,7 +206,7 @@ public class CommonEmployeeTest extends BaseTest {
                 case "ASSET_MANAGEMENT_SYSTEM_VERIFIER":
 
                     ModuleWrapper.execute(
-                            "ASSET_MANAGEMENT_SYSTEM_VERIFIER",
+                            "ASSET_MANAGEMENT_SYSTEM",
                             () -> assetVerifier.assetEmployeeVerifier(
                                     driver,
                                     wait,
@@ -219,7 +219,7 @@ public class CommonEmployeeTest extends BaseTest {
                 case "ASSET_MANAGEMENT_SYSTEM_APPROVER":
 
                     ModuleWrapper.execute(
-                            "ASSET_MANAGEMENT_SYSTEM_APPROVER",
+                            "ASSET_MANAGEMENT_SYSTEM",
                             () -> assetApprover.assetEmployeeApprover(
                                     driver,
                                     wait,

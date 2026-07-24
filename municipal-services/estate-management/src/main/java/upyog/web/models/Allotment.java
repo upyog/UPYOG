@@ -73,4 +73,11 @@ public class Allotment {
     // MONTHLY , QUARTERLY, YEARLY
     @NotBlank
     private String billingCycle;
+
+    private String allotmentNo;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate dueDate;
+
+    private String status;
 }

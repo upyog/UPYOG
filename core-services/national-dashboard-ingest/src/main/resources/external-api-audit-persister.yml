@@ -1,0 +1,66 @@
+serviceMaps:
+  serviceName: National Dashboard Integration Audit
+  mappings:
+    - version: 1.0
+      name: external-api-request-initiated
+      description: Persists external api request audit records
+      fromTopic: external-api-request-initiated
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO ug_external_api_message_detail(id, correlation_id, tenant_id, external_api_name, direction, request_time, status, retry_count, created_time, last_modified_time) VALUES (cast(? as uuid), ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: apiRequestEvent
+          jsonMaps:
+            - jsonPath: $.apiRequestEvent.id
+            - jsonPath: $.apiRequestEvent.correlationId
+            - jsonPath: $.apiRequestEvent.tenantId
+            - jsonPath: $.apiRequestEvent.externalApiName
+            - jsonPath: $.apiRequestEvent.direction
+            - jsonPath: $.apiRequestEvent.requestTime
+            - jsonPath: $.apiRequestEvent.status
+            - jsonPath: $.apiRequestEvent.retryCount
+            - jsonPath: $.apiRequestEvent.createdTime
+            - jsonPath: $.apiRequestEvent.lastModifiedTime
+        - query: INSERT INTO ug_external_api_message_raw_detail(id, correlation_id, request_payload, payload_size_bytes, created_time, last_modified_time) VALUES (cast(? as uuid), ?, cast(? as jsonb), ?, ?, ?);
+          basePath: apiRequestEvent
+          jsonMaps:
+            - jsonPath: $.apiRequestEvent.rawDetailId
+            - jsonPath: $.apiRequestEvent.correlationId
+            - jsonPath: $.apiRequestEvent.requestPayload
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.apiRequestEvent.payloadSizeBytes
+            - jsonPath: $.apiRequestEvent.createdTime
+            - jsonPath: $.apiRequestEvent.lastModifiedTime
+    - version: 1.0
+      name: external-api-response-received
+      description: Updates external api audit records with response details
+      fromTopic: external-api-response-received
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE ug_external_api_message_detail SET status = ?, http_status_code = ?, response_time = ?, duration_ms = ?, last_modified_time = ? WHERE correlation_id = ?;
+          basePath: apiResponseEvent
+          jsonMaps:
+            - jsonPath: $.apiResponseEvent.status
+            - jsonPath: $.apiResponseEvent.httpStatusCode
+            - jsonPath: $.apiResponseEvent.responseTime
+            - jsonPath: $.apiResponseEvent.durationMs
+            - jsonPath: $.apiResponseEvent.lastModifiedTime
+            - jsonPath: $.apiResponseEvent.correlationId
+        - query: UPDATE ug_external_api_message_raw_detail SET response_payload = cast(? as jsonb), payload_size_bytes = ?, last_modified_time = ? WHERE correlation_id = ?;
+          basePath: apiResponseEvent
+          jsonMaps:
+            - jsonPath: $.apiResponseEvent.responsePayload
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.apiResponseEvent.payloadSizeBytes
+            - jsonPath: $.apiResponseEvent.lastModifiedTime
+            - jsonPath: $.apiResponseEvent.correlationId
+        - query: INSERT INTO ug_external_api_error_detail(id, correlation_id, error_code, error_type, error_message, created_time) VALUES (cast(? as uuid), ?, ?, ?, ?, ?);
+          basePath: apiResponseEvent.errorDetails
+          jsonMaps:
+            - jsonPath: $.apiResponseEvent.errorDetails.id
+            - jsonPath: $.apiResponseEvent.errorDetails.correlationId
+            - jsonPath: $.apiResponseEvent.errorDetails.errorCode
+            - jsonPath: $.apiResponseEvent.errorDetails.errorType
+            - jsonPath: $.apiResponseEvent.errorDetails.errorMessage
+            - jsonPath: $.apiResponseEvent.errorDetails.createdTime

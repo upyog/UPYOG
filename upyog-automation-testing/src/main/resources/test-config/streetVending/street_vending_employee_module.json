@@ -59,8 +59,8 @@
       "stepName":"Enter Application Number",
       "locatorStrategy":"CSS",
       "locatorValue":"input.employee-card-input",
-      "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
 
@@ -113,7 +113,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Forward",
+      "inputValue":"${comment.forward}",
       "dynamicSleep": 2000
     },
 
@@ -157,7 +157,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Forward 2",
+      "inputValue":"${comment.forward}",
       "dynamicSleep": 2000
     },
 
@@ -192,7 +192,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Approved",
+      "inputValue":"${comment.approve}",
       "dynamicSleep": 2000
     },
 
@@ -227,7 +227,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"payerMobile",
       "action":"TYPE",
-      "inputValue":"9999999999",
+      "inputValue":"${mobile.number}",
       "dynamicSleep": 2000
     },
 
