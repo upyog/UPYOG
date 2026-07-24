@@ -5,7 +5,6 @@
  */
 import React, { useState, useEffect } from "react";
 import { FormStep, RadioButtons, TextInput, CardLabel, CardLabelError, Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import Timeline from "../components/NocTimeline";
 
 const getCategoryCode = (docType) => {
   if (docType.startsWith("OWNER")) {
@@ -202,7 +201,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
+      {window.location.href.includes("/citizen") ? null : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!nocType} forcedError={error}>
         <RadioButtons
           t={t}

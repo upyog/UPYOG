@@ -16,9 +16,8 @@ import {
   CardHeader,
   Toast,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import Timeline from "../components/NocTimeline";
 import GIS from "./GIS";
-
+import { CurrentLocationIcon, ChooseLocationIcon } from "../utils";
 const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
 
@@ -595,7 +594,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
-      <Timeline currentStep={2} />
+
       <FormStep
         config={config}
         onSelect={goNext}
@@ -919,9 +918,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
               label={
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                   <span>{t("NOC_CURRENT_LOCATION")}</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" fill="#FE7A51" />
-                  </svg>
+                  <CurrentLocationIcon />
                 </div>
               }
               onClick={fetchCurrentLocation}
@@ -931,9 +928,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
               label={
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                   <span>{t("NOC_CHOOSE_LOCATION")}</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#FE7A51" />
-                  </svg>
+                  <ChooseLocationIcon />
                 </div>
               }
               onClick={() => setIsOpen(true)}

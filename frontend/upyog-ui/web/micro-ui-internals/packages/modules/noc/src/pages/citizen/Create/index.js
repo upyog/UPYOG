@@ -8,17 +8,10 @@ import { useTranslation } from "react-i18next";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { newConfig as newConfigNOC } from "../../../config/config";
 import { convertToFireNOCPayload } from "../../../utils";
-import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, Timeline } from "@nudmcdgnpm/digit-ui-react-components";
 
-const CheckPage = (props) => {
-  const Component = Digit?.ComponentRegistryService?.getComponent("NOCCheckPage") || (() => <div>NOCCheckPage Placeholder</div>);
-  return <Component {...props} />;
-};
-
-const NocAcknowledgement = (props) => {
-  const Component = Digit?.ComponentRegistryService?.getComponent("NOCAcknowledgement") || (() => <div>NOCAcknowledgement Placeholder</div>);
-  return <Component {...props} />;
-};
+import CheckPageLocal from "./CheckPage";
+import NOCAcknowledgementLocal from "./NOCAcknowledgement";
 
 const CreateNoc = ({ parentRoute }) => {
   const { t } = useTranslation();
@@ -29,6 +22,9 @@ const CreateNoc = ({ parentRoute }) => {
   const tenantId = params?.property?.location?.property?.city?.code || params?.location?.city?.code || Digit.ULBService.getCurrentTenantId();
   const createMutation = Digit.Hooks.noc.useFireNOCAPI(tenantId, true);
   const updateMutation = Digit.Hooks.noc.useFireNOCAPI(tenantId, false);
+
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent("NOCCheckPage") || CheckPageLocal;
+  const NocAcknowledgement = Digit?.ComponentRegistryService?.getComponent("NOCAcknowledgement") || NOCAcknowledgementLocal;
 
   let config = [];
   let { data: newConfig, isLoading } = Digit.Hooks.noc?.useMDMS?.getFormConfig
@@ -121,12 +117,15 @@ const CreateNoc = ({ parentRoute }) => {
   config.indexRoute = "document-required";
 
   return (
-    <Routes>
+    <React.Fragment>
+      <Timeline config={config} />
+      <Routes>
       {config?.map((routeObj, index) => {
         const { component, texts, inputs, key, isSkipEnabled, isMandatory } = routeObj;
         const Component = typeof component === "string"
-          ? (Digit.ComponentRegistryService.getComponent(component) || (() => <div>{component} Placeholder</div>))
+          ? Digit.ComponentRegistryService.getComponent(component)
           : component;
+        if (!Component) return null;
         return (
           <Route
             path={`${routeObj.route}`}
@@ -147,6 +146,7 @@ const CreateNoc = ({ parentRoute }) => {
       <Route path={`acknowledgement`} element={<NocAcknowledgement data={params} clearParams={clearParams} />} />
       <Route path="*" element={<Navigate to={`${config.indexRoute}`} />} />
     </Routes>
+    </React.Fragment>
   );
 };
 

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { FormStep, RadioButtons, Loader } from "@nudmcdgnpm/digit-ui-react-components";
-import Timeline from "../components/NocTimeline";
 
 const NocOwnerShipDetails = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
@@ -36,7 +35,7 @@ const NocOwnerShipDetails = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
-      <Timeline currentStep={2} />
+
       <FormStep
         t={t}
         config={config}

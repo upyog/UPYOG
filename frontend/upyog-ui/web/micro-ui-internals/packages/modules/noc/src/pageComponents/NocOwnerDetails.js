@@ -16,7 +16,6 @@ import {
   CardLabelError,
   Toast,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import Timeline from "../components/NocTimeline";
 
 const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
@@ -459,7 +458,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
-      <Timeline currentStep={3} />
+
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false}>
         <CardLabel>{t("NOC_APPLICANT_TYPE_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
         <Dropdown
