@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import FinanceSubMenu from "./FinanceSubMenu";
 import FinanceSideBar from "./FinanceSideBar";
 import { Loader, SearchIcon } from "@nudmcdgnpm/digit-ui-react-components";
@@ -15,7 +16,10 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
   const sidebarRef = useRef(null);
   const { isLoading, data } = Digit.Hooks.useAccessControl();
   const [search, setSearch] = useState("");
-  const [activePath, setActivePath] = useState("");
+  const location = useLocation();
+  const [activePath, setActivePath] = useState(
+    location.pathname.includes("/finance") ? "Finance" : ""
+  );
   const { t } = useTranslation();
 
   // added  !sidebarRef.current as a safety check ensure sidebarRef.current is not null.  Removed loader as useEffect now either need nothing in return or cleanup function
@@ -26,6 +30,54 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
     sidebarRef.current.style.cursor = "pointer";
     collapseNav();
   }, [isLoading]);
+
+  /*
+   * Helper to find and set the active sidebar path on page reload.
+   * It maps the current browser URL to the correct menu category.
+   */
+  const getActivePathFromUrl = (actions, pathname) => {
+    if (!pathname || !actions || actions.length === 0) return "Finance";
+    
+    // Regex matching any standard application path prefixes to extract standard service routes
+    const prefixRegex = /^\/(upyog-ui\/employee\/finance|employee\/finance|upyog-ui\/employee|employee|finance)\//i;
+    let cleanPath = pathname.replace(prefixRegex, "");
+    if (cleanPath.startsWith("/")) cleanPath = cleanPath.substring(1);
+
+    const matchedAction = actions.find(action => {
+      if (!action.navigationURL) return false;
+      let nav = action.navigationURL.replace(prefixRegex, "");
+      if (nav.startsWith("/")) nav = nav.substring(1);
+      
+      return nav && cleanPath && (nav.toLowerCase() === cleanPath.toLowerCase() || cleanPath.toLowerCase().includes(nav.toLowerCase()));
+    });
+
+    if (matchedAction && matchedAction.path) {
+      let itemPath = matchedAction.path;
+      if (itemPath.startsWith("EGF")) {
+        itemPath = itemPath.replace("EGF", "Finance");
+      } else if (!itemPath.startsWith("Finance")) {
+        itemPath = "Finance." + itemPath;
+      }
+      const parts = itemPath.split(".");
+      if (parts.length > 1) {
+        parts.pop();
+        return parts.join(".");
+      }
+      return itemPath;
+    }
+    return "Finance";
+  };
+
+  useEffect(() => {
+    if (isLoading || !data?.actions) return;
+    
+    if (location.pathname.includes("/finance")) {
+      const resolvedPath = getActivePathFromUrl(data.actions, location.pathname);
+      setActivePath(resolvedPath);
+    } else {
+      setActivePath("");
+    }
+  }, [isLoading, data, location.pathname]);
 
   const expandNav = () => {
     sidebarRef.current.style.width = "260px";
