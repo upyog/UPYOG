@@ -47,10 +47,13 @@ serviceMaps:
       fromTopic: save-allotment-details
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ug_em_allotment_details(allotment_id, estate_no, tenant_id, asset_reference_no, property_type, citizen_request_letter, allotment_letter, signed_deed, user_uuid, allotee_name, mobile_number, alternate_contact_no, email_id, agreement_start_date, agreement_end_date, duration, rate, monthly_rent, advance_payment, allotment_date, advance_payment_date, eoffice_file_no, additional_details, billing_cycle, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ug_em_allotment_details(allotment_id, allotment_no, due_date, status, estate_no, tenant_id, asset_reference_no, property_type, citizen_request_letter, allotment_letter, signed_deed, user_uuid, allotee_name, mobile_number, alternate_contact_no, email_id, agreement_start_date, agreement_end_date, duration, rate, monthly_rent, advance_payment, allotment_date, advance_payment_date, eoffice_file_no, additional_details, billing_cycle, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?, ?, ?, ?);
           basePath: Allotments.*
           jsonMaps:
             - jsonPath: $.Allotments.*.allotmentId
+            - jsonPath: $.Allotments.*.allotmentNo
+            - jsonPath: $.Allotments.*.dueDate
+            - jsonPath: $.Allotments.*.status
             - jsonPath: $.Allotments.*.assetNo
             - jsonPath: $.Allotments.*.tenantId
             - jsonPath: $.Allotments.*.assetReferenceNo
@@ -103,11 +106,12 @@ serviceMaps:
       fromTopic: save-monthly-rent-payment
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ug_em_monthly_rent_payment(id, allotment_id, rent, payment_type, penalty_amount, previous_month, payment_date, last_date_of_payment, due_payment_date, payment_status, due_payment, validity_days, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ug_em_monthly_rent_payment(id, allotment_id, allotment_no, rent, payment_type, penalty_amount, previous_month, payment_date, last_date_of_payment, due_payment_date, payment_status, due_payment, validity_days, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?, ?, ?, ?);
           basePath: rentPaymentDetails
           jsonMaps:
             - jsonPath: $.rentPaymentDetails.id
             - jsonPath: $.rentPaymentDetails.allotmentId
+            - jsonPath: $.rentPaymentDetails.allotmentNo
             - jsonPath: $.rentPaymentDetails.rent
             - jsonPath: $.rentPaymentDetails.paymentType
             - jsonPath: $.rentPaymentDetails.penaltyAmount
@@ -145,3 +149,54 @@ serviceMaps:
             - jsonPath: $.schedulerLog.createdTime
             - jsonPath: $.schedulerLog.lastModifiedBy
             - jsonPath: $.schedulerLog.lastModifiedTime
+
+    - version: 1.0
+      description: Update asset details in ug_em_asset_details table
+      fromTopic: update-asset-details
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE ug_em_asset_details SET building_name = ?, building_no = ?, ref_asset_no = ?, floor = ?, locality_code = ?, locality = ?, total_floor_area = ?, dimension_length = ?, dimension_width = ?, rent_rate = ?, name = ?, description = ?, classification = ?, parent_category = ?, category = ?, subcategory = ?, department = ?, asset_type = ?, asset_status = ?, asset_allotment_type = ?, asset_allotment_status = ?, additional_details = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE asset_id = ?;
+          basePath: Assets.*
+          jsonMaps:
+            - jsonPath: $.Assets.*.buildingName
+            - jsonPath: $.Assets.*.buildingNo
+            - jsonPath: $.Assets.*.refAssetNo
+            - jsonPath: $.Assets.*.floor
+            - jsonPath: $.Assets.*.localityCode
+            - jsonPath: $.Assets.*.locality
+            - jsonPath: $.Assets.*.totalFloorArea
+            - jsonPath: $.Assets.*.dimensionLength
+            - jsonPath: $.Assets.*.dimensionWidth
+            - jsonPath: $.Assets.*.rate
+            - jsonPath: $.Assets.*.assetName
+            - jsonPath: $.Assets.*.description
+            - jsonPath: $.Assets.*.assetClassification
+            - jsonPath: $.Assets.*.assetParentCategory
+            - jsonPath: $.Assets.*.assetCategory
+            - jsonPath: $.Assets.*.assetSubCategory
+            - jsonPath: $.Assets.*.department
+            - jsonPath: $.Assets.*.assetType
+            - jsonPath: $.Assets.*.assetStatus
+            - jsonPath: $.Assets.*.assetAllotmentType
+            - jsonPath: $.Assets.*.assetAllotmentStatus
+            - jsonPath: $.Assets.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.Assets.*.auditDetails.lastModifiedBy
+            - jsonPath: $.Assets.*.auditDetails.lastModifiedTime
+            - jsonPath: $.Assets.*.assetId
+
+    - version: 1.0
+      description: Update allotment details in ug_em_allotment_details table
+      fromTopic: update-allotment-details
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE ug_em_allotment_details SET due_date = TO_DATE(?, 'DD-MM-YYYY'), allotment_no = ?, status = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE allotment_id = ?;
+          basePath: Allotments.*
+          jsonMaps:
+            - jsonPath: $.Allotments.*.dueDate
+            - jsonPath: $.Allotments.*.allotmentNo
+            - jsonPath: $.Allotments.*.status
+            - jsonPath: $.Allotments.*.auditDetails.lastModifiedBy
+            - jsonPath: $.Allotments.*.auditDetails.lastModifiedTime
+            - jsonPath: $.Allotments.*.allotmentId

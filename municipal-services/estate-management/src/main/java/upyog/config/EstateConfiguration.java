@@ -88,6 +88,11 @@ public class EstateConfiguration {
     @Value("${idgen.estate.management.asset.id.format}")
     private String estateAssetIdFormat;
 
+    @Value("${idgen.estate.management.allotment.no.name}")
+    private String estateAllotmentNoName;
+    @Value("${idgen.estate.management.allotment.no.format}")
+    private String estateAllotmentNoFormat;
+
     @Value("${save-estate-management-asset-topic}")
     private String estateAssetSaveTopic;
 
@@ -97,6 +102,10 @@ public class EstateConfiguration {
     // save allotment topic
     @Value("${save-estate-management-allotment-topic}")
     private String estateAllotmentSaveTopic;
+
+    // update allotment topic
+    @Value("${update-estate-management-allotment-topic}")
+    private String estateAllotmentUpdateTopic;
 
     // save monthly rent payment topic
     @Value("${save-monthly-rent-payment}")

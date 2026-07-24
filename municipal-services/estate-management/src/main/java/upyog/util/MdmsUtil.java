@@ -1,6 +1,7 @@
 package upyog.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.tracer.model.CustomException;
 import upyog.client.MdmsClient;
 import upyog.config.EstateConfiguration;
 import upyog.repository.ServiceRequestRepository;

@@ -16,10 +16,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -28,54 +25,55 @@ public class AllotmentRowmapper implements ResultSetExtractor<List<Allotment>> {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Extracts database query result rows directly into an ArrayList of allotments.
+     */
     @Override
     public List<Allotment> extractData(ResultSet rs) throws SQLException {
-        Map<String, Allotment> allotmentMap = new HashMap<>();
+        List<Allotment> allotments = new ArrayList<>();
         
         while (rs.next()) {
-            String allotmentId = rs.getString("allotment_id");
-            Allotment allotment = allotmentMap.get(allotmentId);
+            Allotment allotment = new Allotment();
             
-            if (allotment == null) {
-                allotment = new Allotment();
-                
-                allotment.setAllotmentId(allotmentId);
-                allotment.setAssetNo(rs.getString("estate_no"));
-                allotment.setTenantId(rs.getString("tenant_id"));
-                allotment.setUserUuid(rs.getString("user_uuid"));
-                allotment.setAlloteeName(rs.getString("allotee_name"));
-                allotment.setMobileNo(rs.getString("mobile_number"));
-                allotment.setAlternateMobileNo(rs.getString("alternate_contact_no"));
-                allotment.setEmailId(rs.getString("email_id"));
-                allotment.setAgreementStartDate(getLocalDate(rs, "agreement_start_date"));
-                allotment.setAgreementEndDate(getLocalDate(rs, "agreement_end_date"));
-                allotment.setAdvancePaymentDate(getLocalDate(rs, "advance_payment_date"));
-                allotment.setDuration(rs.getInt("duration"));
-                allotment.setRentRate(getBigDecimal(rs, "rate"));
-                allotment.setMonthlyRent(getBigDecimal(rs, "monthly_rent"));
-                allotment.setAdvancePayment(getBigDecimal(rs, "advance_payment"));
-                allotment.setEofficeFileNo(rs.getString("eoffice_file_no"));
-                allotment.setAssetReferenceNo(rs.getString("asset_reference_no"));
-                allotment.setPropertyType(rs.getString("property_type"));
-                allotment.setCitizenRequestLetter(rs.getString("citizen_request_letter"));
-                allotment.setAllotmentLetter(rs.getString("allotment_letter"));
-                allotment.setSignedDeed(rs.getString("signed_deed"));
-                allotment.setBillingCycle(rs.getString("billing_cycle"));
+            allotment.setAllotmentId(rs.getString("allotment_id"));
+            allotment.setAllotmentNo(rs.getString("allotment_no"));
+            allotment.setDueDate(getLocalDate(rs, "due_date"));
+            allotment.setAssetNo(rs.getString("estate_no"));
+            allotment.setTenantId(rs.getString("tenant_id"));
+            allotment.setUserUuid(rs.getString("user_uuid"));
+            allotment.setAlloteeName(rs.getString("allotee_name"));
+            allotment.setMobileNo(rs.getString("mobile_number"));
+            allotment.setAlternateMobileNo(rs.getString("alternate_contact_no"));
+            allotment.setEmailId(rs.getString("email_id"));
+            allotment.setAgreementStartDate(getLocalDate(rs, "agreement_start_date"));
+            allotment.setAgreementEndDate(getLocalDate(rs, "agreement_end_date"));
+            allotment.setAdvancePaymentDate(getLocalDate(rs, "advance_payment_date"));
+            allotment.setDuration(rs.getInt("duration"));
+            allotment.setRentRate(getBigDecimal(rs, "rate"));
+            allotment.setMonthlyRent(getBigDecimal(rs, "monthly_rent"));
+            allotment.setAdvancePayment(getBigDecimal(rs, "advance_payment"));
+            allotment.setEofficeFileNo(rs.getString("eoffice_file_no"));
+            allotment.setAssetReferenceNo(rs.getString("asset_reference_no"));
+            allotment.setPropertyType(rs.getString("property_type"));
+            allotment.setCitizenRequestLetter(rs.getString("citizen_request_letter"));
+            allotment.setAllotmentLetter(rs.getString("allotment_letter"));
+            allotment.setSignedDeed(rs.getString("signed_deed"));
+            allotment.setBillingCycle(rs.getString("billing_cycle"));
+            allotment.setStatus(rs.getString("status"));
 
 
-                AuditDetails auditDetails = AuditDetails.builder()
-                        .createdBy(rs.getString("createdby"))
-                        .createdTime(rs.getLong("createdtime"))
-                        .lastModifiedBy(rs.getString("lastmodifiedby"))
-                        .lastModifiedTime(rs.getLong("lastmodifiedtime"))
-                        .build();
-                allotment.setAuditDetails(auditDetails);
-                
-                allotmentMap.put(allotmentId, allotment);
-            }
+            AuditDetails auditDetails = AuditDetails.builder()
+                    .createdBy(rs.getString("createdby"))
+                    .createdTime(rs.getLong("createdtime"))
+                    .lastModifiedBy(rs.getString("lastmodifiedby"))
+                    .lastModifiedTime(rs.getLong("lastmodifiedtime"))
+                    .build();
+            allotment.setAuditDetails(auditDetails);
+            
+            allotments.add(allotment);
         }
         
-        return new ArrayList<>(allotmentMap.values());
+        return allotments;
     }
     
     /**
