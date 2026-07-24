@@ -999,22 +999,22 @@ public class BPARepository {
 	}
 
 	private static final String PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT = "SELECT ept.last_modified_time AS date_Of_Submission, " +
-			"ela.occupancy AS karyType, ela.address AS sthapna_Pata," +
-			"ept.tenant_id AS ulb, (ept.tenant_id || '_' || ebb.applicationno) AS proposal_No," +
-			"ept.name AS ownerName,  ept.mobile_number AS owner_Phone_Number," +
-			"ela.builtUpArea AS constructionArea, --fd.amount AS estimated_Cess, " +
-			"ept.gateway_txn_id AS transaction_Id," +
-			"fd.amount AS cessAmount, ept.last_modified_time AS transaction_Date, ept.txn_status AS status," +
-			"(ebbd.txn_response #>> '{}')::jsonb ->> 'bank_ref_no' AS transactionRefNo," +
-			"ept.txn_id AS receiptNo, fd.amount AS bankAmount, ept.tenant_id AS ulbCode, ept.tenant_id AS ulbName" +
-			"FROM EG_PG_TRANSACTIONS ept " +
-			"JOIN EG_PG_TRANSACTIONS_DUMP ebbd ON ept.txn_id = ebbd.txn_id" +
-			"JOIN EG_BPA_BUILDINGPLAN ebb ON ept.consumer_code = ebb.applicationno" +
-			"JOIN EG_LAND_ADDRESS ela ON ela.landinfoid = ebb.landid" +
-			"JOIN FEE_DETAILS fd ON fd.bill_id = ept.bill_id AND UPPER(fd.charges_type_name) LIKE '%LAB%' AND UPPER(fd.feetype) LIKE '%POST%'" +
-			"WHERE ept.last_modified_time >= ?" +
-			"AND ept.last_modified_time <= ?" +
-			"AND ebb.tenantid !='cg.citya'";
+			"	ela.occupancy AS karyType, ela.address AS sthapna_Pata," +
+			"	ept.tenant_id AS ulb, (ept.tenant_id || '_' || ebb.applicationno) AS proposal_No," +
+			"	ept.name AS ownerName,  ept.mobile_number AS owner_Phone_Number," +
+			"	ela.builtUpArea AS constructionArea, --fd.amount AS estimated_Cess, " +
+			"	ept.gateway_txn_id AS transaction_Id," +
+			"	fd.amount AS cessAmount, ept.last_modified_time AS transaction_Date, ept.txn_status AS status," +
+			"	(ebbd.txn_response #>> '{}')::jsonb ->> 'bank_ref_no' AS transactionRefNo," +
+			"	ept.txn_id AS receiptNo, fd.amount AS bankAmount, ept.tenant_id AS ulbCode, ept.tenant_id AS ulbName" +
+			"	FROM EG_PG_TRANSACTIONS ept " +
+			"	JOIN EG_PG_TRANSACTIONS_DUMP ebbd ON ept.txn_id = ebbd.txn_id" +
+			"	JOIN EG_BPA_BUILDINGPLAN ebb ON ept.consumer_code = ebb.applicationno" +
+			"	JOIN EG_LAND_ADDRESS ela ON ela.landinfoid = ebb.landid" +
+			"	JOIN FEE_DETAILS fd ON fd.bill_id = ept.bill_id AND UPPER(fd.charges_type_name) LIKE '%LAB%' AND UPPER(fd.feetype) LIKE '%POST%'" +
+			"	WHERE ept.last_modified_time >= ?" +
+			"	AND ept.last_modified_time <= ?" +
+			"	AND ebb.tenantid !='cg.citya'";
 
 
 	public List<LabourDepartmentDetails> getLabourDepartmentDetails(LocalDate inputDate) {
