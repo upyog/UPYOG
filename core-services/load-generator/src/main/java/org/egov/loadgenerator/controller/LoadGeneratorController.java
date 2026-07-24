@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
 @RequiredArgsConstructor
 @Slf4j
 public class LoadGeneratorController {
@@ -49,11 +48,12 @@ public class LoadGeneratorController {
     @GetMapping("/status/{jobId}")
     public ResponseEntity<LoadGeneratorResponse> getStatus(@PathVariable String jobId) {
         return loadGeneratorService.getStatus(jobId)
-                .map(status -> ResponseEntity.ok(LoadGeneratorResponse.builder()
+        .map(status -> ResponseEntity.ok(
+                LoadGeneratorResponse.builder()
                         .jobId(jobId)
                         .status(status)
                         .build()))
-                .orElse(ResponseEntity.notFound().build());
+        .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
