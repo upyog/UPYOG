@@ -1,9 +1,9 @@
 package org.egov.loadgenerator.util;
-
 import com.github.javafaker.Faker;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.ThreadLocalRandom;
 
-import java.util.Random;
+
 import java.util.UUID;
 
 /**
@@ -13,8 +13,8 @@ import java.util.UUID;
 @Component
 public class FakeDataUtil {
 
-    private static final Faker faker = new Faker();
-    private static final Random random = new Random();
+    private static final ThreadLocal<Faker> faker =
+        ThreadLocal.withInitial(Faker::new);
 
     // Supported mobile number prefixes
     private static final String[] MOBILE_PREFIXES = {
@@ -25,62 +25,62 @@ public class FakeDataUtil {
      * Generates a random 10-digit mobile number.
      */
     public String randomMobile() {
-        return MOBILE_PREFIXES[random.nextInt(MOBILE_PREFIXES.length)]
-                + String.format("%08d", random.nextInt(100000000));
+        return MOBILE_PREFIXES[ThreadLocalRandom.current().nextInt(MOBILE_PREFIXES.length)]
+                + String.format("%08d", ThreadLocalRandom.current().nextInt(100000000));
     }
 
     /** Returns a random full name. */
     public String randomName() {
-        return faker.name().fullName();
+        return faker.get().name().fullName();
     }
 
     /** Returns a random first name. */
     public String randomFirstName() {
-        return faker.name().firstName();
+        return faker.get().name().firstName();
     }
 
     /** Returns a random last name. */
     public String randomLastName() {
-        return faker.name().lastName();
+        return faker.get().name().lastName();
     }
 
     /** Returns a random email address. */
     public String randomEmail() {
-        return faker.internet().emailAddress();
+        return faker.get().internet().emailAddress();
     }
 
     /** Returns a random street address. */
     public String randomAddress() {
-        return faker.address().streetAddress();
+        return faker.get().address().streetAddress();
     }
 
     /** Returns a random city name. */
     public String randomCity() {
-        return faker.address().city();
+        return faker.get().address().city();
     }
 
     /** Generates a random 6-digit Indian PIN code. */
     public String randomPincode() {
-        return String.format("%06d", 100000 + random.nextInt(900000));
+        return String.format("%06d", 100000 + ThreadLocalRandom.current().nextInt(900000));
     }
 
     /** Returns a random building or door number. */
     public String randomDoorNo() {
-        return faker.address().buildingNumber();
+        return faker.get().address().buildingNumber();
     }
 
     /**
      * Generates a random latitude within India's approximate bounds.
      */
     public double randomLatitude() {
-        return 8.0 + (random.nextDouble() * 29.0);
+        return 8.0 + (ThreadLocalRandom.current().nextDouble() * 29.0);
     }
 
     /**
      * Generates a random longitude within India's approximate bounds.
      */
     public double randomLongitude() {
-        return 68.0 + (random.nextDouble() * 29.0);
+        return 68.0 + (ThreadLocalRandom.current().nextDouble() * 29.0);
     }
 
     /** Generates a random UUID. */
@@ -97,13 +97,13 @@ public class FakeDataUtil {
      * Generates a random integer between the given bounds.
      */
     public int randomInt(int min, int max) {
-        return min + random.nextInt(max - min);
+        return min + ThreadLocalRandom.current().nextInt(max - min);
     }
 
     /**
      * Returns a random element from the given array.
      */
     public <T> T randomFrom(T[] array) {
-        return array[random.nextInt(array.length)];
+        return array[ThreadLocalRandom.current().nextInt(array.length)];
     }
 }
