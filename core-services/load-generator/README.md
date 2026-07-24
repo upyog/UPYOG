@@ -73,7 +73,7 @@ Sample Request
 ```json
 {
   "module": "PT",
-  "tenantId": "pb.amritsar",
+  "tenantId": "pg.citya",
   "count": 100
 }
 ```
