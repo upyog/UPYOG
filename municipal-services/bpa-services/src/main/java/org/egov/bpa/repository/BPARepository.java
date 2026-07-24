@@ -1012,8 +1012,8 @@ public class BPARepository {
 			"JOIN EG_BPA_BUILDINGPLAN ebb ON ept.consumer_code = ebb.applicationno" +
 			"JOIN EG_LAND_ADDRESS ela ON ela.landinfoid = ebb.landid" +
 			"JOIN FEE_DETAILS fd ON fd.bill_id = ept.bill_id AND UPPER(fd.charges_type_name) LIKE '%LAB%' AND UPPER(fd.feetype) LIKE '%POST%'" +
-			"WHERE ept.last_modified_time >= 1783555200000" +
-			"AND ept.last_modified_time <= 1783641600000" +
+			"WHERE ept.last_modified_time >= ?" +
+			"AND ept.last_modified_time <= ?" +
 			"AND ebb.tenantid !='cg.citya'";
 
 
