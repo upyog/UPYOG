@@ -4,6 +4,9 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, AppContainer, BreadCrumb } from "@upyog/workbench-ui-react-components";
 import LocalisationSearch from "./LocalisationSearch";
 import ApplyWorkflow from "./ApplyWorkflow";
+import ThemeCustomizeForm from "./ThemeCustomizeForm";
+import OnBoardingContent from "./OnBoardingContent";
+import OnBoardingLogin from "./OnBoardingLogin";
 import MDMSSearch from "./MDMSSearch";
 import MDMSAdd from "./MDMSAdd";
 import MDMSAddV2 from "./MDMSAddV2";
@@ -58,6 +61,17 @@ const WorkbenchBreadCrumb = ({ location, defaultPath }) => {
       content: t(`${Digit.Utils.workbench.getMDMSLabel(pathVar, "", "")}`),
       show: Digit.Utils.workbench.getMDMSLabel(pathVar, "", "", ["mdms-search-v2", "localisation-search"]) ? true : false,
     },
+    {
+      path: `/${window?.contextPath}/employee/workbench/configuration`,
+      content: t(`WBH_MANAGE_MASTER_DATA`),
+      show: pathVar.includes("mdms-") ? true : false,
+      // query:`moduleName=${moduleName}&masterName=${masterName}`
+    },
+    {
+      path: `/${window?.contextPath}/employee/workbench/theme-configuration`,
+      content: t(`WBH_THEME_CONFIGURATION`),
+      show: pathVar.includes("theme-configuration") ? true : false,
+    }
 
   ];
   return <BreadCrumb className="workbench-bredcrumb" crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
@@ -106,52 +120,64 @@ const App = ({ path }) => {
       <WorkbenchBreadCrumb location={location} defaultPath={path} />
       <AppContainer className="workbench">
         <Routes>
-          <Route 
-            path="sample" 
-            element={<PrivateRoute><div>Sample Screen loaded</div></PrivateRoute>} 
+          <Route
+            path="sample"
+            element={<PrivateRoute><div>Sample Screen loaded</div></PrivateRoute>}
           />
-          <Route 
-            path="localisation-search" 
-            element={<PrivateRoute><LocalisationSearch /></PrivateRoute>} 
+          <Route
+            path="localisation-search"
+            element={<PrivateRoute><LocalisationSearch /></PrivateRoute>}
           />
-          <Route 
-            path="mdms-search" 
-            element={<PrivateRoute><MDMSSearch /></PrivateRoute>} 
+          <Route
+            path="mdms-search"
+            element={<PrivateRoute><MDMSSearch /></PrivateRoute>}
           />
-          <Route 
-            path="mdms-add" 
-            element={<PrivateRoute><MDMSAdd FormSession={MDMSCreateSession} parentRoute={path} /></PrivateRoute>} 
+          <Route
+            path="mdms-add"
+            element={<PrivateRoute><MDMSAdd FormSession={MDMSCreateSession} parentRoute={path} /></PrivateRoute>}
           />
-          <Route 
-            path="mdms-add-v2" 
-            element={<PrivateRoute><MDMSAddV2 parentRoute={path} /></PrivateRoute>} 
+          <Route
+            path="mdms-add-v2"
+            element={<PrivateRoute><MDMSAddV2 parentRoute={path} /></PrivateRoute>}
           />
-          <Route 
-            path="mdms-view" 
-            element={<PrivateRoute><MDMSView parentRoute={path} /></PrivateRoute>} 
+          <Route
+            path="mdms-view"
+            element={<PrivateRoute><MDMSView parentRoute={path} /></PrivateRoute>}
           />
-          <Route 
-            path="mdms-edit" 
-            element={<PrivateRoute><MDMSEdit parentRoute={path} /></PrivateRoute>} 
+          <Route
+            path="mdms-edit"
+            element={<PrivateRoute><MDMSEdit parentRoute={path} /></PrivateRoute>}
           />
-          <Route 
-            path="manage-master-data" 
-            element={<PrivateRoute><MDMSManageMaster parentRoute={path} /></PrivateRoute>} 
+          <Route
+            path="manage-master-data"
+            element={<PrivateRoute><MDMSManageMaster parentRoute={path} /></PrivateRoute>}
           />
-          <Route 
-            path="mdms-search-v2" 
-            element={<PrivateRoute><MDMSSearchv2 parentRoute={path} /></PrivateRoute>} 
+          <Route
+            path="mdms-search-v2"
+            element={<PrivateRoute><MDMSSearchv2 parentRoute={path} /></PrivateRoute>}
           />
-          <Route 
-            path="localisation-add" 
-            element={<PrivateRoute><LocalisationAdd parentRoute={path} /></PrivateRoute>} 
+          <Route
+            path="localisation-add"
+            element={<PrivateRoute><LocalisationAdd parentRoute={path} /></PrivateRoute>}
           />
-          <Route 
-            path="apply-workflow" 
-            element={<PrivateRoute><ApplyWorkflow parentRoute={path} /></PrivateRoute>} 
+          <Route
+            path="apply-workflow"
+            element={<PrivateRoute><ApplyWorkflow parentRoute={path} /></PrivateRoute>}
+          />
+          <Route
+            path="theme-configuration"
+            element={<PrivateRoute><ThemeCustomizeForm parentRoute={path} /></PrivateRoute>}
+          />
+          <Route
+            path="onboarding-common-content"
+            element={<PrivateRoute><OnBoardingContent parentRoute={path} /></PrivateRoute>}
+          />
+          <Route
+            path="onboarding-login-configuration"
+            element={<PrivateRoute><OnBoardingLogin parentRoute={path} /></PrivateRoute>}
           />
         </Routes>
-        </AppContainer>
+      </AppContainer>
     </React.Fragment>
   );
 };

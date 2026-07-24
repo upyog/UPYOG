@@ -32,6 +32,11 @@ const WorkbenchCard = () => {
       label: t("ACTION_TEST_APPLY_WORKFLOW"),
       link: `/${window?.contextPath}/employee/workbench/apply-workflow`,
       roles: ROLES.WORKFLOW,
+    },
+    {
+      label: t("ACTION_TEST_CONFIGURATION"),
+      link: `/${window?.contextPath}/employee/workbench/theme-configuration`, 
+      roles: ROLES.MDMS,
     }
   ];
 

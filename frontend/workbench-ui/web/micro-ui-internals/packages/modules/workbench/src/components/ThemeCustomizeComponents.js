@@ -1,0 +1,715 @@
+import React, { useState, useEffect } from "react";
+
+// ─── Section Header ───────────────────────────────────────────────────────────
+export function SectionHeader({ number, title }) {
+  return (
+    <div style={{
+      fontSize: 14,
+      fontWeight: 800,
+      color: "#3D2364",
+      margin: "24px 0 12px",
+      display: "flex",
+      alignItems: "center",
+      letterSpacing: "0.5px"
+    }}>
+      <span style={{
+        background: "linear-gradient(135deg, #6A4A91 0%, #3E285F 100%)",
+        color: "#fff",
+        width: 22,
+        height: 22,
+        borderRadius: 6,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 11,
+        fontWeight: 700,
+        marginRight: 10,
+        boxShadow: "0 2px 6px rgba(106, 74, 145, 0.2)",
+      }}>{number}</span>
+      {title.toUpperCase()}
+    </div>
+  );
+}
+
+// ─── Card Components ──────────────────────────────────────────────────────────
+export function Card({ children, style }) {
+  return (
+    <div className="theme-card" style={style}>
+      {children}
+    </div>
+  );
+}
+
+export function CardTitle({ icon, title, description, rightElement }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, gap: 14 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{
+          width: 44, height: 44, borderRadius: 10, background: "#F0EBF8",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 20, flexShrink: 0,
+        }}>
+          {icon}
+        </div>
+        <div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "#21182C" }}>{title}</div>
+          {description && <div style={{ fontSize: 12, color: "#7E7892", marginTop: 2 }}>{description}</div>}
+        </div>
+      </div>
+      {rightElement && <div>{rightElement}</div>}
+    </div>
+  );
+}
+
+// ─── Layout Grid / Flex Wrapper ───────────────────────────────────────────────
+export function FieldsRow({ children, style, grid = true }) {
+  if (!grid) {
+    return (
+      <div style={{ display: "flex", gap: 24, flexWrap: "wrap", width: "100%", ...style }}>
+        {children}
+      </div>
+    );
+  }
+  return (
+    <div className="fields-grid" style={style}>
+      {children}
+    </div>
+  );
+}
+
+// ─── Form Inputs ──────────────────────────────────────────────────────────────
+export function ColorField({ label, value, onChange }) {
+  const [copied, setCopied] = React.useState(false);
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(value).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%" }}>
+      <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>
+      <div className="input-container">
+        <div style={{
+          width: 28, height: 28, borderRadius: 6, background: value,
+          border: "1px solid #D6CDE4", flexShrink: 0, position: "relative", overflow: "hidden",
+        }}>
+          <input
+            type="color" value={value} onChange={(e) => onChange(e.target.value)}
+            style={{ opacity: 0, position: "absolute", inset: 0, width: "100%", height: "100%", cursor: "pointer" }}
+          />
+        </div>
+        <input
+          type="text" value={value} onChange={(e) => onChange(e.target.value)}
+          maxLength={7}
+          style={{ flex: 1, border: "none", outline: "none", fontSize: 13, fontWeight: 500, color: "#21182C", background: "transparent" }}
+        />
+        <button
+          onClick={handleCopy}
+          title="Copy"
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            color: copied ? "#2ECC71" : "#A69CC6",
+            fontSize: 15,
+            lineHeight: 1,
+            fontWeight: copied ? "bold" : "normal",
+            transition: "color 0.2s ease, transform 0.2s ease",
+            transform: copied ? "scale(1.2)" : "scale(1)"
+          }}
+        >
+          {copied ? "✓" : "⧉"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function NumberField({ label, value, unit, onChange, style }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, ...style }}>
+      {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
+      <div className="input-container" style={{ width: 100 }}>
+        <input
+          type="number" value={parseInt(value) || 0}
+          onChange={(e) => onChange(e.target.value + (unit || ""))}
+          style={{ flex: 1, border: "none", outline: "none", fontSize: 13, fontWeight: 500, color: "#21182C", background: "transparent", minWidth: 0 }}
+        />
+        {unit && <span style={{ fontSize: 12, color: "#A69CC6" }}>{unit}</span>}
+      </div>
+    </div>
+  );
+}
+
+export function TextField({ label, value, onChange, placeholder, type = "text", style }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%", ...style }}>
+      {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
+      {type === "textarea" ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className="textarea-input-field"
+        />
+      ) : (
+        <input
+          type="text" value={value} onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className="text-input-field"
+        />
+      )}
+    </div>
+  );
+}
+
+export function CheckboxField({ label, checked, onChange, style }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%", ...style }}>
+      {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
+      <label className="checkbox-label" style={{ marginTop: 8 }}>
+        <input
+          type="checkbox"
+          checked={!!checked}
+          onChange={(e) => onChange(e.target.checked)}
+          className="checkbox-input"
+        />
+        <span style={{ fontSize: 13, fontWeight: 500, color: "#21182C" }}>Active / Show</span>
+      </label>
+    </div>
+  );
+}
+
+export function SelectField({ label, value, options = [], onChange, style }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%", ...style }}>
+      {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="select-input"
+      >
+        {options.map((opt) => {
+          const val = typeof opt === "object" ? opt.value : opt;
+          const labelText = typeof opt === "object" ? opt.label : opt;
+          return (
+            <option key={val} value={val}>
+              {labelText}
+            </option>
+          );
+        })}
+      </select>
+    </div>
+  );
+}
+
+export function UploadBox({ label, value = {}, onChange }) {
+  const { src = "", alt = "" } = value || {};
+
+  const getDirectImageUrl = (url) => {
+    if (!url) return "";
+    const fileDMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
+    const openIdMatch = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/i);
+    const lhMatch = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/i);
+    const fileId = (fileDMatch && fileDMatch[1]) || (openIdMatch && openIdMatch[1]) || (lhMatch && lhMatch[1]);
+    if (fileId) {
+      return `https://lh3.googleusercontent.com/d/${fileId}=s0`;
+    }
+    return url;
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        onChange?.({ src: event.target.result, alt });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUrlChange = (e) => {
+    const rawVal = e.target.value;
+    const resolvedUrl = getDirectImageUrl(rawVal);
+    onChange?.({ src: resolvedUrl, alt });
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", padding: 12, background: "#FDFDFD", border: "1px solid #EDE8F5", borderRadius: 10, boxSizing: "border-box" }}>
+      <span style={{ fontSize: 13, fontWeight: 700, color: "#3D2364" }}>{label}</span>
+      
+      <div style={{
+        height: 60,
+        borderRadius: 8,
+        background: "#FAF9FC",
+        border: "1.5px dashed #E8E1F0",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        padding: 4
+      }}>
+        {src ? (
+          <img src={getDirectImageUrl(src)} alt={alt || "Logo preview"} style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain" }} />
+        ) : (
+          <span style={{ fontSize: 11, color: "#A69CC6" }}>No image preview</span>
+        )}
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <span style={{ fontSize: 11, color: "#584F74" }}>Logo URL</span>
+        <input
+          type="text"
+          value={src}
+          onChange={handleUrlChange}
+          placeholder="https://..."
+          className="text-input-field"
+          style={{ height: 36, padding: "6px 10px", fontSize: 12 }}
+        />
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <span style={{ fontSize: 11, color: "#584F74" }}>Alt Text</span>
+        <input
+          type="text"
+          value={alt}
+          onChange={(e) => onChange?.({ src, alt: e.target.value })}
+          placeholder="Image description"
+          className="text-input-field"
+          style={{ height: 36, padding: "6px 10px", fontSize: 12 }}
+        />
+      </div>
+
+      <label className="upload-box-label" style={{ padding: "8px 12px", fontSize: 12, gap: 6 }}>
+        <span>📎</span> Upload File
+        <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
+      </label>
+    </div>
+  );
+}
+
+export function SubmitButton({ label = "SUBMIT CHANGES", onClick, style }) {
+  return (
+    <button onClick={onClick} className="submit-btn" style={style}>
+      {label}
+    </button>
+  );
+}
+
+export function ShadowField({ label, value, onChange }) {
+  const parseShadow = (str) => {
+    let color = "rgba(0, 0, 0, 0.1)";
+    let rest = str || "";
+    
+    const rgbaMatch = rest.match(/rgba\([^\)]+\)/i);
+    const rgbMatch = rest.match(/rgb\([^\)]+\)/i);
+    const hexMatch = rest.match(/#[0-9a-fA-F]+/);
+    
+    if (rgbaMatch) {
+      color = rgbaMatch[0];
+      rest = rest.replace(color, "");
+    } else if (rgbMatch) {
+      color = rgbMatch[0];
+      rest = rest.replace(color, "");
+    } else if (hexMatch) {
+      color = hexMatch[0];
+      rest = rest.replace(color, "");
+    }
+    
+    const parts = rest.trim().split(/\s+/).filter(Boolean);
+    const nums = parts.map(p => parseInt(p) || 0);
+    
+    return {
+      hOffset: nums[0] || 0,
+      vOffset: nums[1] || 0,
+      blur: nums[2] || 0,
+      spread: nums[3] || 0,
+      color: color.trim()
+    };
+  };
+
+  const shadowData = parseShadow(value);
+
+  const parseColor = (colStr) => {
+    let hex = "#000000";
+    let opacity = 1;
+    const lower = colStr.toLowerCase().trim();
+    
+    if (lower.startsWith("#")) {
+      hex = lower;
+      opacity = 1;
+    } else if (lower.startsWith("rgba")) {
+      const match = lower.match(/rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d\.]+)\s*\)/i);
+      if (match) {
+        const r = parseInt(match[1]).toString(16).padStart(2, "0");
+        const g = parseInt(match[2]).toString(16).padStart(2, "0");
+        const b = parseInt(match[3]).toString(16).padStart(2, "0");
+        hex = `#${r}${g}${b}`;
+        opacity = parseFloat(match[4]);
+      }
+    } else if (lower.startsWith("rgb")) {
+      const match = lower.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i);
+      if (match) {
+        const r = parseInt(match[1]).toString(16).padStart(2, "0");
+        const g = parseInt(match[2]).toString(16).padStart(2, "0");
+        const b = parseInt(match[3]).toString(16).padStart(2, "0");
+        hex = `#${r}${g}${b}`;
+        opacity = 1;
+      }
+    }
+    return { hex, opacity };
+  };
+
+  const colorData = parseColor(shadowData.color);
+
+  const [localHex, setLocalHex] = useState(colorData.hex);
+
+  useEffect(() => {
+    setLocalHex(colorData.hex);
+  }, [colorData.hex]);
+
+  const updateShadow = (updatedFields) => {
+    const finalData = { ...shadowData, ...updatedFields };
+    let finalColor = finalData.color;
+    if (updatedFields.hex !== undefined || updatedFields.opacity !== undefined) {
+      const hex = updatedFields.hex !== undefined ? updatedFields.hex : colorData.hex;
+      const opacity = updatedFields.opacity !== undefined ? updatedFields.opacity : colorData.opacity;
+      const r = parseInt(hex.slice(1, 3), 16) || 0;
+      const g = parseInt(hex.slice(3, 5), 16) || 0;
+      const b = parseInt(hex.slice(5, 7), 16) || 0;
+      finalColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+    
+    const assembled = `${finalData.hOffset}px ${finalData.vOffset}px ${finalData.blur}px ${finalData.spread}px ${finalColor}`;
+    onChange(assembled);
+  };
+
+  const handleHexChange = (val) => {
+    setLocalHex(val);
+    if (/^#[0-9a-fA-F]{3}$|^#[0-9a-fA-F]{6}$/.test(val)) {
+      updateShadow({ hex: val });
+    }
+  };
+
+  const r = parseInt(colorData.hex.slice(1, 3), 16) || 0;
+  const g = parseInt(colorData.hex.slice(3, 5), 16) || 0;
+  const b = parseInt(colorData.hex.slice(5, 7), 16) || 0;
+  const rgbaColor = `rgba(${r}, ${g}, ${b}, ${colorData.opacity})`;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", paddingBottom: 10 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="text-input-field"
+        />
+      </div>
+      
+      <div style={{
+        background: "#F9F6FD",
+        border: "1px solid #E8E1F0",
+        borderRadius: 8,
+        padding: "12px 16px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 12,
+      }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#6A4A91", letterSpacing: 0.5 }}>
+          SHADOW PICKER & BUILDER
+        </div>
+        
+        <div className="two-col-grid" style={{ gap: 12 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span style={{ fontSize: 11, color: "#584F74" }}>Horizontal Offset: {shadowData.hOffset}px</span>
+            <input
+              type="range" min="-50" max="50"
+              value={shadowData.hOffset}
+              onChange={(e) => updateShadow({ hOffset: parseInt(e.target.value) })}
+              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span style={{ fontSize: 11, color: "#584F74" }}>Vertical Offset: {shadowData.vOffset}px</span>
+            <input
+              type="range" min="-50" max="50"
+              value={shadowData.vOffset}
+              onChange={(e) => updateShadow({ vOffset: parseInt(e.target.value) })}
+              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+            />
+          </div>
+        </div>
+
+        <div className="two-col-grid" style={{ gap: 12 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span style={{ fontSize: 11, color: "#584F74" }}>Blur Radius: {shadowData.blur}px</span>
+            <input
+              type="range" min="0" max="100"
+              value={shadowData.blur}
+              onChange={(e) => updateShadow({ blur: parseInt(e.target.value) })}
+              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span style={{ fontSize: 11, color: "#584F74" }}>Spread Radius: {shadowData.spread}px</span>
+            <input
+              type="range" min="-30" max="30"
+              value={shadowData.spread}
+              onChange={(e) => updateShadow({ spread: parseInt(e.target.value) })}
+              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+            />
+          </div>
+        </div>
+
+        <div className="two-col-grid" style={{ gap: 12, alignItems: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span style={{ fontSize: 11, color: "#584F74" }}>Color Hex</span>
+            <div className="input-container" style={{ height: 38, padding: "4px 8px" }}>
+              <div style={{
+                width: 20, height: 20, borderRadius: 4, background: rgbaColor,
+                border: "1px solid #D6CDE4", position: "relative", overflow: "hidden", flexShrink: 0
+              }}>
+                <input
+                  type="color" value={colorData.hex}
+                  onChange={(e) => {
+                    handleHexChange(e.target.value);
+                  }}
+                  style={{ opacity: 0, position: "absolute", inset: 0, cursor: "pointer" }}
+                />
+              </div>
+              <input
+                type="text"
+                value={localHex}
+                onChange={(e) => handleHexChange(e.target.value)}
+                style={{ border: "none", outline: "none", fontSize: 12, color: "#21182C", width: "100%", padding: 0, height: "auto" }}
+              />
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span style={{ fontSize: 11, color: "#584F74" }}>Opacity: {Math.round(colorData.opacity * 100)}%</span>
+            <input
+              type="range" min="0" max="1" step="0.01"
+              value={colorData.opacity}
+              onChange={(e) => updateShadow({ opacity: parseFloat(e.target.value) })}
+              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function GradientField({ label, value, onChange }) {
+  const parseGradient = (str) => {
+    const defaultVal = { angle: 90, stops: [{ color: "#6A4A91", position: 0 }, { color: "#3E285F", position: 100 }] };
+    if (!str || !str.includes("linear-gradient")) return defaultVal;
+    
+    const match = str.match(/linear-gradient\((.+)\)/i);
+    if (!match) return defaultVal;
+    
+    const inner = match[1];
+    
+    const splitColorStops = (str) => {
+      const stops = [];
+      let current = "";
+      let depth = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (char === "(") depth++;
+        if (char === ")") depth--;
+        if (char === "," && depth === 0) {
+          stops.push(current.trim());
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      if (current.trim()) stops.push(current.trim());
+      return stops;
+    };
+    
+    const rawParts = splitColorStops(inner);
+    if (rawParts.length < 2) return defaultVal;
+    
+    let angle = 90;
+    let stopsStartIdx = 0;
+    
+    const firstPart = rawParts[0].trim();
+    if (firstPart.includes("deg")) {
+      angle = parseInt(firstPart) || 90;
+      stopsStartIdx = 1;
+    } else if (firstPart.startsWith("to ")) {
+      const dirMap = {
+        "to right": 90,
+        "to left": 270,
+        "to bottom": 180,
+        "to top": 0,
+        "to bottom right": 135,
+        "to top right": 45,
+        "to bottom left": 225,
+        "to top left": 315
+      };
+      angle = dirMap[firstPart] || 90;
+      stopsStartIdx = 1;
+    }
+    
+    const stops = [];
+    for (let i = stopsStartIdx; i < rawParts.length; i++) {
+      const part = rawParts[i].trim();
+      const lastSpaceIdx = part.lastIndexOf(" ");
+      if (lastSpaceIdx === -1) {
+        stops.push({ color: part, position: Math.round(((i - stopsStartIdx) / (rawParts.length - 1 - stopsStartIdx)) * 100) });
+      } else {
+        const color = part.substring(0, lastSpaceIdx).trim();
+        const posStr = part.substring(lastSpaceIdx).trim();
+        const position = parseInt(posStr) || 0;
+        stops.push({ color, position });
+      }
+    }
+    
+    return { angle, stops };
+  };
+
+  const gradientData = parseGradient(value);
+
+  const toHex = (col) => {
+    if (col.startsWith("#")) return col;
+    if (col.startsWith("rgba") || col.startsWith("rgb")) {
+      const match = col.match(/\d+/g);
+      if (match && match.length >= 3) {
+        const r = parseInt(match[0]).toString(16).padStart(2, "0");
+        const g = parseInt(match[1]).toString(16).padStart(2, "0");
+        const b = parseInt(match[2]).toString(16).padStart(2, "0");
+        return `#${r}${g}${b}`;
+      }
+    }
+    return "#000000";
+  };
+
+  const updateGradient = (angle, stops) => {
+    const stopsStr = stops
+      .sort((a, b) => a.position - b.position)
+      .map(s => `${s.color} ${s.position}%`)
+      .join(", ");
+    const assembled = `linear-gradient(${angle}deg, ${stopsStr})`;
+    onChange(assembled);
+  };
+
+  const handleAddStop = () => {
+    const newStops = [...gradientData.stops, { color: "#ffffff", position: 50 }];
+    updateGradient(gradientData.angle, newStops);
+  };
+
+  const handleRemoveStop = (idx) => {
+    if (gradientData.stops.length <= 2) return;
+    const newStops = gradientData.stops.filter((_, i) => i !== idx);
+    updateGradient(gradientData.angle, newStops);
+  };
+
+  const handleStopChange = (idx, fields) => {
+    const newStops = gradientData.stops.map((stop, i) => {
+      if (i === idx) return { ...stop, ...fields };
+      return stop;
+    });
+    updateGradient(gradientData.angle, newStops);
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", paddingBottom: 10 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
+        <div style={{ height: 44, borderRadius: 8, background: value, border: "1.5px solid #EDE8F5", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.06)" }} />
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="text-input-field"
+        />
+      </div>
+
+      <div style={{
+        background: "#F9F6FD",
+        border: "1px solid #E8E1F0",
+        borderRadius: 8,
+        padding: "12px 16px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 12,
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#6A4A91", letterSpacing: 0.5 }}>
+            GRADIENT PICKER & BUILDER
+          </div>
+          <button
+            onClick={handleAddStop}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#6A4A91",
+              fontWeight: 700,
+              fontSize: 10,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 2
+            }}
+          >
+            ⊕ Add Stop
+          </button>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <span style={{ fontSize: 11, color: "#584F74" }}>Gradient Angle: {gradientData.angle}°</span>
+          <input
+            type="range" min="0" max="360"
+            value={gradientData.angle}
+            onChange={(e) => updateGradient(parseInt(e.target.value), gradientData.stops)}
+            style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+          />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {gradientData.stops.map((stop, idx) => (
+            <div key={idx} style={{ display: "flex", alignItems: "center", gap: 12, padding: "6px 10px", background: "#ffffff", border: "1px solid #E8E1F0", borderRadius: 6 }}>
+              <div style={{
+                width: 20, height: 20, borderRadius: "50%", background: stop.color,
+                border: "1px solid #D6CDE4", position: "relative", overflow: "hidden", flexShrink: 0
+              }}>
+                <input
+                  type="color" value={toHex(stop.color)}
+                  onChange={(e) => handleStopChange(idx, { color: e.target.value })}
+                  style={{ opacity: 0, position: "absolute", inset: 0, cursor: "pointer" }}
+                />
+              </div>
+              
+              <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
+                <input
+                  type="range" min="0" max="100"
+                  value={stop.position}
+                  onChange={(e) => handleStopChange(idx, { position: parseInt(e.target.value) })}
+                  style={{ flex: 1, accentColor: "#6A4A91", height: 4, cursor: "pointer" }}
+                />
+                <span style={{ fontSize: 11, color: "#584F74", minWidth: 28, textAlign: "right" }}>{stop.position}%</span>
+              </div>
+
+              {gradientData.stops.length > 2 && (
+                <button
+                  onClick={() => handleRemoveStop(idx)}
+                  style={{ background: "none", border: "none", color: "#D85A5A", cursor: "pointer", fontSize: 12, padding: 0 }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
