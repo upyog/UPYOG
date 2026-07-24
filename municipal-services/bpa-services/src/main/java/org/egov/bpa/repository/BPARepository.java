@@ -998,33 +998,23 @@ public class BPARepository {
 		);
 	}
 
-	private static final String PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT = "SELECT" +
-			"        TO_CHAR(TO_TIMESTAMP(ept.last_modified_time / 1000), 'DD-MM-YYYY HH24:MI:SS') AS date_of_submission, " +
-			"        ela.occupancy AS kary_type," +
-			"        ela.address AS sthapna_pata," +
-			"        ept.tenant_id AS ulb, " +
-			"        (ept.tenant_id || '_' || ebb.applicationno) AS proposal_no," +
-			"        ela.builtUpArea AS construction_area, " +
-			"        fd.amount AS estimated_cess," +
-			"        ept.gateway_txn_id AS transaction_id," +
-			"        fd.amount AS cess_amount, " +
-			"        TO_CHAR(TO_TIMESTAMP(ept.last_modified_time / 1000), 'DD-MM-YYYY HH24:MI:SS') AS transaction_date, " +
-			"        ept.txn_status AS status," +
-			"        (ebbd.txn_response::jsonb) ->> 'bank_ref_no' AS transaction_ref_no," +
-			"        ept.txn_id AS receipt_no, " +
-			"        fd.amount AS bank_amount, " +
-			"        ept.tenant_id AS ulb_code, " +
-			"        ept.tenant_id AS ulb_name" +
-			"    FROM EG_PG_TRANSACTIONS ept" +
-			"    JOIN EG_PG_TRANSACTIONS_DUMP ebbd ON ept.txn_id = ebbd.txn_id" +
-			"    JOIN EG_BPA_BUILDINGPLAN ebb ON ept.consumer_code = ebb.applicationno" +
-			"    JOIN EG_LAND_ADDRESS ela ON ela.landinfoid = ebb.landid" +
-			"    JOIN FEE_DETAILS fd ON fd.bill_id = ept.bill_id " +
-			"        AND UPPER(fd.charges_type_name) LIKE '%LAB%' " +
-			"        AND UPPER(fd.feetype) LIKE '%POST%'" +
-			"    WHERE ept.last_modified_time >= ? " +
-			"      AND ept.last_modified_time < ? " +
-			"      AND ebb.tenantid != 'cg.citya'";
+	private static final String PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT = "SELECT ept.last_modified_time AS dateOfSubmission, " +
+			"ela.occupancy AS karyType, ela.address AS sthapnaPata," +
+			"ept.tenant_id AS ulb, (ept.tenant_id || '_' || ebb.applicationno) AS proposalNo," +
+			"ept.name AS ownerName,  ept.mobile_number AS ownerPhoneNumber," +
+			"ela.builtUpArea AS constructionArea, --fd.amount AS estimatedCess, " +
+			"ept.gateway_txn_id AS transactionId," +
+			"fd.amount AS cessAmount, ept.last_modified_time AS transactionDate, ept.txn_status AS status," +
+			"(ebbd.txn_response #>> '{}')::jsonb ->> 'bank_ref_no' AS transactionRefNo," +
+			"ept.txn_id AS receiptNo, fd.amount AS bankAmount, ept.tenant_id AS ulbCode, ept.tenant_id AS ulbName" +
+			"FROM EG_PG_TRANSACTIONS ept " +
+			"JOIN EG_PG_TRANSACTIONS_DUMP ebbd ON ept.txn_id = ebbd.txn_id" +
+			"JOIN EG_BPA_BUILDINGPLAN ebb ON ept.consumer_code = ebb.applicationno" +
+			"JOIN EG_LAND_ADDRESS ela ON ela.landinfoid = ebb.landid" +
+			"JOIN FEE_DETAILS fd ON fd.bill_id = ept.bill_id AND UPPER(fd.charges_type_name) LIKE '%LAB%' AND UPPER(fd.feetype) LIKE '%POST%'" +
+			"WHERE ept.last_modified_time >= ?" +
+			"AND ept.last_modified_time <= ?" +
+			"AND ebb.tenantid !='cg.citya'";
 
 
 	public List<LabourDepartmentDetails> getLabourDepartmentDetails(LocalDate inputDate) {
