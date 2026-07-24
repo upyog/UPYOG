@@ -37,7 +37,6 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/ads",
     "micro-ui-internals/packages/modules/gc",
-    "micro-ui-internals/packages/css",
     "micro-ui-internals/packages/modules/finance"
   ],
   "engines": {

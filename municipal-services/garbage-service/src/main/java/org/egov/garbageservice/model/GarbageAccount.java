@@ -129,6 +129,4 @@ public class GarbageAccount {
 	
 	@CustomSafeHtml
 	private String channel;
-
-	
 }

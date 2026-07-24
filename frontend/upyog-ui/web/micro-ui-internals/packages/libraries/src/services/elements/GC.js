@@ -13,9 +13,10 @@ export const GCServices = {
       params: { tenantId },
       auth: true,
     }),
-  search: ({ tenantId, filters, auth }) => {
-    Request({
+  search: async ({ tenantId, filters, auth, data }) => {
+    return await Request({
       url: Urls.gc.search,
+      data: data || {},
       useCache: false,
       setTimeParam: false,
       method: "POST",
@@ -23,7 +24,6 @@ export const GCServices = {
       userService: auth === false ? auth : true,
       params: { tenantId, ...filters },
     });
-    return res;
   },
   update: (details, tenantId) =>
     Request({

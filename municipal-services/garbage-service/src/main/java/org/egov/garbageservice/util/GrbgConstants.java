@@ -18,7 +18,7 @@ public class GrbgConstants {
 
 	public static final String MDMS_MODULE_NAME_FEE_STRUCTURE = "Garbage";
 
-	public static final String MDMS_MASTER_NAME_FEE_STRUCTURE = "FeeStructure";
+	public static final String MDMS_MASTER_NAME_FEE_STRUCTURE = "CalculationType";
 
 	public static final String STATE_LEVEL_TENANT_ID = "hp";
 
