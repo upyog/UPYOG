@@ -21,7 +21,7 @@ import java.util.UUID;
 public class LoadGeneratorService {
 
     private final ModuleGeneratorRegistry registry;
-    private final LoadExecutor loadExecutor;
+    private final LoadGeneratorWorker loadGeneratorWorker;
     private final JobStatusRepository jobStatusRepository;
 
     /**
@@ -46,18 +46,9 @@ public class LoadGeneratorService {
         jobStatusRepository.save(jobStatus);
 
         // Fire and forget — runs in loadGeneratorExecutor thread pool
-        runAsync(generator, request, jobStatus);
+        loadGeneratorWorker.runAsync(generator, request, jobStatus);
 
         return jobStatus;
-    }
-
-    @Async("loadGeneratorExecutor")
-    public void runAsync(ModuleGenerator generator, LoadRequest request, JobStatus jobStatus) {
-        try {
-            loadExecutor.execute(generator, request.getTenantId(), request.getCount(), jobStatus);
-        } finally {
-            jobStatusRepository.update(jobStatus);
-        }
     }
 
     public Optional<JobStatus> getStatus(String jobId) {
