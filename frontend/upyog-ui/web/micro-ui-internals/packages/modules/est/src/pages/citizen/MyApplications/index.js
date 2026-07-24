@@ -1,7 +1,8 @@
 /**
- * Citizen My Applications — card list with inline search (matches niuatt layout).
- * Filters / labels come from MDMS Estate.CitizenMyApplicationsConfig.
- * List order comes from the backend (no client-side re-sort).
+ * Citizen My Applications — card list with inline search.
+ * Data source: allotment _search only.
+ * Page load / empty search → { tenantId } so all allotments from API show.
+ * Status filter: Paid | Pending for payment (client-side on Allotments[].status).
  */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -18,6 +19,10 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import EstateApplication from "./est-application";
 import { resolveCitizenMyApplicationsConfig } from "../../../utils/estMdmsUtils";
+import {
+  getAllotmentPaymentStatus,
+  normalizeCitizenPaymentStatus,
+} from "../../../utils/estDisplayUtils";
 import styles from "../../../styles/ESTMyApplications.module.scss";
 
 export const ESTMyApplications = () => {
@@ -27,8 +32,6 @@ export const ESTMyApplications = () => {
     Digit.ULBService.getCitizenCurrentTenant(true) ||
     Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const user = Digit.UserService.getUser()?.info;
-  const mobileNumber = user?.mobileNumber;
 
   const { data: mdmsMyApps } = Digit.Hooks.useEnabledMDMS(
     stateId,
@@ -46,8 +49,16 @@ export const ESTMyApplications = () => {
 
   const filters = useMemo(() => sortByOrder(config.filters), [config.filters]);
   const pageSize = config.paginationDefaults?.limit || 50;
-  const estateNoFilter = filters.find((f) => f.name === "estateNo");
-  const statusFilter = filters.find((f) => f.name === "assetStatus");
+  const allotmentNoFilter = filters.find(
+    (f) => f.name === "allotmentNo" || f.name === "estateNo"
+  );
+  const statusFilter = filters.find(
+    (f) =>
+      f.name === "paymentStatus" ||
+      f.name === "assetAllotmentStatus" ||
+      f.name === "assetStatus" ||
+      f.name === "status"
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
@@ -61,57 +72,73 @@ export const ESTMyApplications = () => {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (config.autoSearch) {
-      setHasSearched(true);
-      setSearchFilters({});
-    }
-  }, [config.autoSearch]);
+    setHasSearched(true);
+    setSearchFilters({});
+  }, []);
 
-  const { isLoading, isSuccess, data } = Digit.Hooks.estate.useESTAssetSearch({
-    tenantId,
-    filters: {
-      AssetSearchCriteria: {
-        tenantId,
-        mobileNumber,
-        ...(searchFilters.estateNo && { estateNo: searchFilters.estateNo }),
-        ...(searchFilters.assetStatus && { assetStatus: searchFilters.assetStatus }),
-      },
-    },
-    config: {
-      enabled: Boolean(hasSearched && tenantId && mobileNumber),
-    },
-  });
-
-  // One allotment search for the tenant — cards read propertyType / billingCycle from this map.
-  const { data: allotmentResponse } = Digit.Hooks.estate.useESTApplicationSearch({
-    filters: { tenantId },
-    config: {
-      enabled: Boolean(hasSearched && tenantId && mobileNumber),
-    },
-  });
-
-  const allotmentByAssetNo = useMemo(() => {
-    const map = {};
-    (allotmentResponse?.Allotments || allotmentResponse?.allotments || []).forEach((item) => {
-      const key = item?.assetNo || item?.estateNo;
-      if (key && !map[key]) map[key] = item;
-    });
-    return map;
-  }, [allotmentResponse]);
-
-  const applications = useMemo(() => data?.Assets || [], [data]);
-
-  const visibleApplications = useMemo(
-    () => applications.slice(pathOffset, pathOffset + pageSize),
-    [applications, pathOffset, pageSize]
+  // Allotment _search with tenantId only — allotmentNo / status filtered client-side.
+  const allotmentSearchFilters = useMemo(
+    () => ({ tenantId }),
+    [tenantId]
   );
+
+  const { isLoading, isSuccess, data, isFetching } =
+    Digit.Hooks.estate.useESTApplicationSearch({
+      filters: allotmentSearchFilters,
+      config: {
+        enabled: Boolean(hasSearched && tenantId),
+        structuralSharing: false,
+      },
+    });
+
+  const applications = useMemo(() => {
+    const list = data?.Allotments || data?.allotments || [];
+    const paymentFilter = String(searchFilters.paymentStatus || "").toUpperCase();
+    const allotmentNoFilterValue = String(searchFilters.allotmentNo || "")
+      .trim()
+      .toUpperCase();
+    let rows = Array.isArray(list) ? [...list] : [];
+
+    if (allotmentNoFilterValue) {
+      rows = rows.filter((item) => {
+        const no = String(
+          item?.allotmentNo ?? item?.additionalDetails?.allotmentNo ?? ""
+        )
+          .trim()
+          .toUpperCase();
+        return no.includes(allotmentNoFilterValue);
+      });
+    }
+
+    // Empty status → show every matching allotment.
+    if (!paymentFilter) return rows;
+
+    return rows.filter((item) => {
+      const rowPayment = normalizeCitizenPaymentStatus(
+        getAllotmentPaymentStatus(item, item)
+      );
+      return rowPayment === paymentFilter;
+    });
+  }, [data, searchFilters.paymentStatus, searchFilters.allotmentNo]);
+
+  const visibleApplications = useMemo(() => {
+    if (!pathOffset) return applications;
+    return applications.slice(pathOffset, pathOffset + pageSize);
+  }, [applications, pathOffset, pageSize]);
 
   const handleSearch = useCallback(() => {
     const trimmedSearchTerm = searchTerm.trim();
+    const paymentStatus = status?.code || undefined;
     setHasSearched(true);
+
+    if (!trimmedSearchTerm && !paymentStatus) {
+      setSearchFilters({});
+      return;
+    }
+
     setSearchFilters({
-      estateNo: trimmedSearchTerm || undefined,
-      assetStatus: status?.code || undefined,
+      allotmentNo: trimmedSearchTerm || undefined,
+      paymentStatus,
     });
   }, [searchTerm, status]);
 
@@ -123,11 +150,11 @@ export const ESTMyApplications = () => {
   }, []);
 
   const statusMasterName =
-    statusFilter?.dataSource?.masterName || "AssetStatus";
+    statusFilter?.dataSource?.masterName || "PaymentStatus";
   const statusModuleName =
     statusFilter?.dataSource?.moduleName || "Estate";
 
-  const { data: assetStatusMdms = [] } = Digit.Hooks.useEnabledMDMS(
+  const { data: paymentStatusMdms = [] } = Digit.Hooks.useEnabledMDMS(
     stateId,
     statusModuleName,
     [{ name: statusMasterName }],
@@ -136,22 +163,38 @@ export const ESTMyApplications = () => {
     }
   );
 
-  const statusOptions = useMemo(
-    () =>
-      assetStatusMdms.map((item) => ({
-        code: item.code,
-        name: t(item.name) || item.name || item.code,
-      })),
-    [assetStatusMdms, t]
-  );
+  const statusOptions = useMemo(() => {
+    const wanted = ["PAID", "PENDING_FOR_PAYMENT"];
+    const byCode = {};
+    paymentStatusMdms.forEach((item) => {
+      const code = String(item.code || "").toUpperCase();
+      if (wanted.includes(code)) {
+        byCode[code] = {
+          code,
+          name: t(item.i18nKey || item.name) || item.name || code,
+        };
+      }
+    });
+    return wanted.map(
+      (code) =>
+        byCode[code] || {
+          code,
+          name:
+            code === "PAID"
+              ? t("EST_PAYMENT_STATUS_PAID") || "Paid"
+              : t("EST_PAYMENT_STATUS_PENDING_FOR_PAYMENT") ||
+                "Pending for payment",
+        }
+    );
+  }, [paymentStatusMdms, t]);
 
-  if (isLoading) {
+  if (isLoading || (isFetching && !data)) {
     return <Loader />;
   }
 
   const totalCount = applications.length;
   const nextOffset = pathOffset + pageSize;
-  const hasMore = totalCount > nextOffset;
+  const hasMore = pathOffset > 0 && totalCount > nextOffset;
 
   return (
     <>
@@ -160,12 +203,14 @@ export const ESTMyApplications = () => {
       <Card>
         <div className={styles["est-myapps__container"]}>
           <div className={styles["est-myapps__search-row"]}>
-            {estateNoFilter ? (
+            {allotmentNoFilter ? (
               <div className={styles["est-myapps__field-col"]}>
                 <div className={styles["est-myapps__field-inner"]}>
-                  <CardLabel>{t(estateNoFilter.key)}</CardLabel>
+                  <CardLabel>{t(allotmentNoFilter.key)}</CardLabel>
                   <TextInput
-                    placeholder={t(estateNoFilter.placeholder || estateNoFilter.key)}
+                    placeholder={t(
+                      allotmentNoFilter.placeholder || allotmentNoFilter.key
+                    )}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={styles["est-myapps__text-input"]}
@@ -209,15 +254,13 @@ export const ESTMyApplications = () => {
 
       <div>
         {isSuccess &&
-          visibleApplications.map((application, index) => (
-            <div key={application.assetId || application.estateNo || index}>
+          visibleApplications.map((allotment, index) => (
+            <div
+              key={`${allotment.allotmentId || allotment.allotmentNo || allotment.assetNo || "row"}-${index}`}
+            >
               <EstateApplication
-                application={application}
-                allotment={
-                  allotmentByAssetNo[application?.estateNo] ||
-                  allotmentByAssetNo[application?.assetNo] ||
-                  null
-                }
+                application={allotment}
+                allotment={allotment}
                 tenantId={tenantId}
                 buttonLabel={t("EST_SUMMARY")}
               />

@@ -13,23 +13,54 @@ import { checkForNA, ESTDocumnetPreview } from "../../utils";
 import { buildAllotmentAckFormValues } from "../../utils/acknowledgementUtils";
 import { buildAllotmentAssetDisplay } from "../../utils/estMdmsUtils";
 
+const getAllotmentNo = (item = {}) =>
+  String(
+    item?.allotmentNo ?? item?.additionalDetails?.allotmentNo ?? ""
+  ).trim();
+
+const ALLOTMENT_NUMBER_FIELD = {
+  order: -1,
+  key: "EST_ALLOTMENT_NUMBER",
+  field: {
+    code: "EST_ALLOTMENT_NUMBER",
+    name: "allotmentNo",
+    type: "text",
+  },
+  validation: {
+    required: false,
+    disabled: true,
+    readOnly: true,
+  },
+  excludeFromPayload: true,
+};
+
 /**
- * Application / asset summary — same config-driven layout as the check page (view-only).
+ * Application / allotment summary — same config-driven layout as the check page (view-only).
+ * Citizen View Summary uses allotmentNo in the URL:
+ *   /upyog-ui/citizen/est/application-details/EST-AL-1013-000008
+ * Employee links may still pass estateNo / assetNo.
  */
 const ESTApplicationDetails = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const { assetNo, tenantId: tenantIdParam } = useParams();
-  const decodedAssetNo = decodeURIComponent(assetNo || "");
+  const decodedId = decodeURIComponent(assetNo || "");
 
-  const passedData = location?.state?.applicationData || null;
+  const passedAllotment =
+    location?.state?.allotmentData ||
+    (location?.state?.applicationData?.allotmentNo
+      ? location.state.applicationData
+      : null);
+  const passedAsset = location?.state?.applicationData || null;
+
   const tenantId =
     tenantIdParam ||
-    passedData?.tenantId ||
+    passedAllotment?.tenantId ||
+    passedAsset?.tenantId ||
     Digit.ULBService.getCurrentTenantId();
 
-  const [asset, setAsset] = useState(passedData || null);
-  const [allotment, setAllotment] = useState(null);
+  const [asset, setAsset] = useState(null);
+  const [allotment, setAllotment] = useState(passedAllotment || null);
   const [isLoading, setIsLoading] = useState(true);
 
   const { data: assignAssetMdms, isLoading: mdmsLoading } = Digit.Hooks.useEnabledMDMS(
@@ -47,45 +78,97 @@ const ESTApplicationDetails = () => {
     const load = async () => {
       setIsLoading(true);
       try {
-        let nextAsset = passedData;
-        if (!nextAsset?.estateNo && decodedAssetNo) {
-          const assetRes = await Digit.ESTService.assetSearch({
-            tenantId,
-            filters: {
-              AssetSearchCriteria: {
+        let nextAllotment = null;
+        let nextAsset = null;
+
+        // 1) Prefer allotment matched by allotmentNo (citizen View Summary URL).
+        if (decodedId) {
+          const passedMatches =
+            passedAllotment && getAllotmentNo(passedAllotment) === decodedId
+              ? passedAllotment
+              : null;
+
+          if (passedMatches) {
+            nextAllotment = passedMatches;
+          } else {
+            try {
+              const allotRes = await Digit.ESTService.allotmentSearch({
                 tenantId,
-                estateNo: decodedAssetNo,
-              },
-            },
-          });
-          nextAsset = assetRes?.Assets?.[0] || null;
+                filters: { tenantId },
+              });
+              const list = allotRes?.Allotments || allotRes?.allotments || [];
+              nextAllotment =
+                list.find((item) => getAllotmentNo(item) === decodedId) || null;
+            } catch (err) {
+              console.warn("EST application details: allotment search failed", err);
+            }
+          }
         }
 
-        let nextAllotment = null;
-        if (decodedAssetNo) {
+        // 2) Legacy: treat URL id as estateNo / assetNo when no allotment matched.
+        const estateNo =
+          nextAllotment?.assetNo ||
+          nextAllotment?.estateNo ||
+          (!nextAllotment ? decodedId : "") ||
+          passedAsset?.estateNo ||
+          passedAsset?.assetNo ||
+          "";
+
+        if (estateNo) {
+          try {
+            const assetRes = await Digit.ESTService.assetSearch({
+              tenantId,
+              filters: {
+                AssetSearchCriteria: {
+                  tenantId,
+                  estateNo,
+                },
+              },
+            });
+            nextAsset = assetRes?.Assets?.[0] || null;
+          } catch (err) {
+            console.warn("EST application details: asset search failed", err);
+          }
+        }
+
+        // If we only had estateNo in the URL, also try allotment by assetNo.
+        if (!nextAllotment && estateNo) {
           try {
             const allotRes = await Digit.ESTService.allotmentSearch({
               tenantId,
               filters: {
                 tenantId,
-                assetNo: decodedAssetNo,
+                assetNo: estateNo,
               },
             });
             nextAllotment = allotRes?.Allotments?.[0] || null;
           } catch (err) {
-            console.warn("EST application details: allotment search failed", err);
+            console.warn("EST application details: allotment-by-asset search failed", err);
           }
         }
 
+        if (!nextAsset && passedAsset?.estateNo) {
+          nextAsset = passedAsset;
+        }
+
+        // Ensure allotmentNo is set from URL when API row is missing it.
+        if (
+          nextAllotment &&
+          !getAllotmentNo(nextAllotment) &&
+          /^EST-AL-/i.test(decodedId)
+        ) {
+          nextAllotment = { ...nextAllotment, allotmentNo: decodedId };
+        }
+
         if (mounted) {
-          setAsset(nextAsset);
           setAllotment(nextAllotment);
+          setAsset(nextAsset);
         }
       } catch (err) {
         console.error("EST application details load failed:", err);
         if (mounted) {
-          setAsset(passedData || null);
-          setAllotment(null);
+          setAllotment(passedAllotment || null);
+          setAsset(passedAsset || null);
         }
       } finally {
         if (mounted) setIsLoading(false);
@@ -96,14 +179,22 @@ const ESTApplicationDetails = () => {
     return () => {
       mounted = false;
     };
-  }, [decodedAssetNo, tenantId, passedData]);
+  }, [decodedId, tenantId, passedAllotment, passedAsset]);
 
   const routeConfig = useMemo(() => {
     const steps = Array.isArray(assignAssetMdms) ? assignAssetMdms : [];
     const body = steps[0]?.body || [];
     const mdmsStep =
       body.find((s) => s.key === "Allotments" || s.route === "assign-assets") || {};
-    return mergeRouteConfig(mdmsStep, estateAllotmentFormOverrides);
+    const merged = mergeRouteConfig(mdmsStep, estateAllotmentFormOverrides);
+    const form = Array.isArray(merged.form) ? [...merged.form] : [];
+    const hasAllotmentNo = form.some(
+      (f) => f.key === "EST_ALLOTMENT_NUMBER" || f.field?.name === "allotmentNo"
+    );
+    if (!hasAllotmentNo) {
+      form.unshift(ALLOTMENT_NUMBER_FIELD);
+    }
+    return { ...merged, form };
   }, [assignAssetMdms]);
 
   const flow = EST_CHECK_FLOWS.allotment;
@@ -114,16 +205,22 @@ const ESTApplicationDetails = () => {
       asset || {},
       routeConfig
     );
+    if (!formValues.allotmentNo && /^EST-AL-/i.test(decodedId)) {
+      formValues.allotmentNo = decodedId;
+    }
     return {
       Allotments: { Allotments: [formValues] },
       assetData: asset || {},
     };
-  }, [allotment, asset, routeConfig]);
+  }, [allotment, asset, routeConfig, decodedId]);
 
-  const extraData = useMemo(
-    () => buildAllotmentAssetDisplay(asset || {}, allotment || {}, t),
-    [asset, allotment, t]
-  );
+  const extraData = useMemo(() => {
+    const display = buildAllotmentAssetDisplay(asset || {}, allotment || {}, t);
+    if (!display.allotmentNo && /^EST-AL-/i.test(decodedId)) {
+      display.allotmentNo = decodedId;
+    }
+    return display;
+  }, [asset, allotment, t, decodedId]);
 
   if (isLoading || mdmsLoading) return <Loader />;
 

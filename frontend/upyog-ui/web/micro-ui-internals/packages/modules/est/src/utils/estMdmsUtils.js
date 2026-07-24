@@ -102,21 +102,21 @@ const LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG = {
   filters: [
     {
       order: 1,
-      key: "EST_ASSET_NUMBER",
-      name: "estateNo",
+      key: "EST_ALLOTMENT_NUMBER",
+      name: "allotmentNo",
       type: "text",
-      placeholder: "EST_ENTER_ASSET_NUMBER",
+      placeholder: "EST_ENTER_ALLOTMENT_NUMBER",
     },
     {
       order: 2,
       key: "PT_COMMON_TABLE_COL_STATUS_LABEL",
-      name: "assetStatus",
+      name: "paymentStatus",
       type: "dropdown",
       placeholder: "EST_SELECT_STATUS",
       dataSource: {
         type: "MDMS",
         moduleName: "Estate",
-        masterName: "AssetStatus",
+        masterName: "PaymentStatus",
       },
     },
   ],
@@ -249,6 +249,10 @@ const pickValue = (...values) =>
 
 /** Shared asset summary fields for assign-assets form, check page, and ack PDF. */
 export const buildAllotmentAssetDisplay = (asset = {}, allotment = {}, t = (k) => k) => ({
+  allotmentNo: pickValue(
+    allotment.allotmentNo,
+    allotment.additionalDetails?.allotmentNo
+  ),
   assetNo: pickValue(allotment.assetNo, asset.estateNo, asset.assetNo),
   assetRefNumber: pickValue(
     allotment.assetReferenceNo,

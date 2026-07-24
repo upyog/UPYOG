@@ -1,8 +1,8 @@
 /**
  * EstateApplication card — citizen My Applications list item.
- * Shows key notes and actions: view summary / make payment.
- * Allotment (allotmentNo, dueDate, billingCycle) comes from parent list search.
- * fetchBill runs only when the user clicks EST_MAKE_PAYMENT (consumerCode = allotmentNo).
+ * Row data comes from allotment _search (application === allotment).
+ * EST_MAKE_PAYMENT is hidden when Allotments[].status is PAID.
+ * fetchBill runs only on EST_MAKE_PAYMENT (consumerCode = allotmentNo).
  */
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -18,19 +18,17 @@ import { getApplicationDetailsPath, getCitizenPaymentPath } from "../../../utils
 import {
   formatEstDueDate,
   getAllotmentDueDate,
+  getAllotmentPaymentStatus,
   getBillAmountDue,
+  isAllotmentPaymentPaid,
   isNoDemandError,
+  normalizeCitizenPaymentStatus,
   toBillingCycleLabel,
   translateOrCode,
 } from "../../../utils/estDisplayUtils";
 import styles from "../../../styles/ESTMyApplications.module.scss";
 
 const EST_BUSINESS_SERVICE = "est-services";
-
-const labelWithFallback = (t, key, fallback) => {
-  const translated = t(key);
-  return translated && translated !== key ? translated : fallback;
-};
 
 const EstateApplication = ({ application, allotment = null, tenantId }) => {
   const { t } = useTranslation();
@@ -40,50 +38,56 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [showToast, setShowToast] = useState(null);
 
+  // Prefer explicit allotment prop; parent may pass the same object as application.
+  const row = allotment || application || {};
+
   useEffect(() => {
     if (!showToast) return undefined;
     const timer = setTimeout(() => setShowToast(null), 3000);
     return () => clearTimeout(timer);
   }, [showToast]);
 
-  const estateNo = application?.estateNo || application?.assetNo;
-  const billTenantId = tenantId || application?.tenantId;
+  const estateNo = row?.assetNo || row?.estateNo || application?.estateNo;
+  const billTenantId = tenantId || row?.tenantId;
 
-  // Allotment type = RENT | LEASE from allotment.propertyType (required; default RENT).
-  // Do not use asset.assetAllotmentType (that can be DONATED / acquisition type).
   const allotmentTypeLabel = useMemo(() => {
-    const raw = optionCode(
-      allotment?.allotmentType ??
-        allotment?.propertyType ??
-        application?.allotmentType ??
-        application?.propertyType
-    );
+    const raw = optionCode(row?.allotmentType ?? row?.propertyType);
     const code = raw === "RENT" || raw === "LEASE" ? raw : "RENT";
     return translateOrCode(t, "EST_ALLOTMENT_TYPE", code);
-  }, [allotment, application, t]);
+  }, [row, t]);
 
   const billingCycleLabel = useMemo(
-    () =>
-      toBillingCycleLabel(
-        allotment?.billingCycle ?? application?.billingCycle ?? "MONTHLY",
-        t
-      ),
-    [allotment, application, t]
+    () => toBillingCycleLabel(row?.billingCycle ?? "MONTHLY", t),
+    [row, t]
   );
 
   const nextPaymentDueLabel =
-    formatEstDueDate(getAllotmentDueDate(application, allotment)) || "N/A";
+    formatEstDueDate(getAllotmentDueDate(application, row)) || "N/A";
 
-  // allotmentNo from allotment/_search — also used as billing consumerCode.
-  const allotmentNo = String(allotment?.allotmentNo || "").trim();
-  const hasAllotment = Boolean(
-    String(allotment?.allotmentNo || allotment?.allotmentId || "").trim()
+  // Display + billing key must be allotmentNo (never allotmentId UUID).
+  const allotmentNo = String(
+    row?.allotmentNo ??
+      application?.allotmentNo ??
+      row?.additionalDetails?.allotmentNo ??
+      application?.additionalDetails?.allotmentNo ??
+      ""
+  ).trim();
+  const paymentStatusCode = normalizeCitizenPaymentStatus(
+    getAllotmentPaymentStatus(row, application)
   );
-  const canMakePayment = Boolean(billTenantId && allotmentNo);
+  const isPaid = isAllotmentPaymentPaid(row, application);
+
+  const rateValue =
+    row?.rentRate ?? row?.rate ?? application?.rentRate ?? application?.rate ?? 0;
+  const monthlyRentValue =
+    row?.monthlyRent ?? application?.monthlyRent ?? 0;
+
+  const canMakePayment = Boolean(billTenantId && allotmentNo && !isPaid);
 
   const handleViewSummary = () => {
-    navigate(getApplicationDetailsPath(modulePath, estateNo), {
-      state: { applicationData: application },
+    if (!allotmentNo) return;
+    navigate(getApplicationDetailsPath(modulePath, allotmentNo), {
+      state: { applicationData: row, allotmentData: row },
     });
   };
 
@@ -125,36 +129,34 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
       <StatusTable>
         <Row
           className="border-none"
-          label={t("EST_ALLOTMENT_ID")}
+          label={t("EST_ALLOTMENT_NUMBER")}
           text={allotmentNo || "N/A"}
         />
         <Row className="border-none" label={t("EST_ESTATE_NUMBER")} text={estateNo || "N/A"} />
         <Row
           className="border-none"
           label={t("EST_BUILDING_NAME")}
-          text={application?.buildingName || application?.assetName || "N/A"}
+          text={row?.buildingName || row?.assetName || "N/A"}
         />
-        {!hasAllotment ? (
-          <Row
-            className="border-none"
-            label={labelWithFallback(t, "EST_ALLOTMENT", "Allotment")}
-            text={labelWithFallback(
-              t,
-              "EST_PENDING_FOR_ALLOTMENT",
-              "Pending for allotment"
-            )}
-          />
-        ) : null}
         <Row className="border-none" label={t("EST_ALLOTMENT_TYPE")} text={allotmentTypeLabel} />
         <Row className="border-none" label={t("EST_BILLING_CYCLE")} text={billingCycleLabel} />
-        <Row className="border-none" label={t("EST_RATE")} text={`₹${application?.rate || 0}`} />
-        <Row className="border-none" label={t("EST_ASSET_STATUS")} text={application?.assetStatus || "N/A"} />
+        <Row className="border-none" label={t("EST_RATE")} text={`₹${rateValue || 0}`} />
+        <Row
+          className="border-none"
+          label={t("EST_MONTHLY_RENT_IN_INR")}
+          text={`₹${monthlyRentValue || 0}`}
+        />
+        <Row
+          className="border-none"
+          label={t("EST_ASSET_STATUS")}
+          text={translateOrCode(t, "EST_PAYMENT_STATUS", paymentStatusCode)}
+        />
         <Row
           className="border-none"
           label={t("EST_CREATED_DATE")}
           text={
-            application?.auditDetails?.createdTime
-              ? new Date(application.auditDetails.createdTime).toLocaleDateString("en-GB")
+            row?.auditDetails?.createdTime
+              ? new Date(row.auditDetails.createdTime).toLocaleDateString("en-GB")
               : "N/A"
           }
         />

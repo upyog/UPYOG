@@ -62,6 +62,8 @@ export const buildAllotmentAckExtraData = (asset = {}, allotment = {}, t = (k) =
 export const buildAllotmentAckFormValues = (allotment = {}, asset = {}, routeConfig = {}) => {
   const base = {
     ...allotment,
+    allotmentNo:
+      allotment.allotmentNo ?? allotment.additionalDetails?.allotmentNo ?? "",
     // Form field is allotmentType; API/persister key is propertyType (apiFieldName).
     allotmentType: allotment.allotmentType ?? allotment.propertyType,
     mobileNo: allotment.mobileNo ?? allotment.phoneNumber,
@@ -158,6 +160,7 @@ export const buildAckDetailsFromRouteConfig = ({
 
   // Fallback when routeConfig was not stored on ack state — still show register details.
   const fallbackPairs = [
+    ["EST_ALLOTMENT_NUMBER", extraData.allotmentNo || formValues.allotmentNo],
     ["EST_ASSET_NUMBER", extraData.assetNo || formValues.assetNo],
     ["EST_ASSET_REFERENCE_NUMBER", extraData.assetRefNumber || formValues.assetRefNumber],
     ["EST_BUILDING_NAME", extraData.buildingName || formValues.buildingName],

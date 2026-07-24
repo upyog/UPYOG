@@ -101,3 +101,50 @@ export const isNoDemandError = (err) => {
     String(code).includes("NO_DEMAND")
   );
 };
+
+/**
+ * Payment status from allotment _search (`Allotments[]`).
+ * Primary field is `status` (PAID | PENDING_FOR_PAYMENT); also accept aliases.
+ */
+export const getAllotmentPaymentStatus = (allotment, application) => {
+  const candidates = [
+    allotment?.status,
+    allotment?.paymentStatus,
+    allotment?.rentPaymentDetails?.paymentStatus,
+    allotment?.rentPaymentDetails?.status,
+    allotment?.additionalDetails?.paymentStatus,
+    allotment?.additionalDetails?.status,
+    application?.status,
+    application?.paymentStatus,
+    application?.rentPaymentDetails?.paymentStatus,
+    application?.rentPaymentDetails?.status,
+    application?.additionalDetails?.paymentStatus,
+    application?.additionalDetails?.status,
+  ];
+  const paymentCodes = new Set(["PAID", "PENDING_FOR_PAYMENT", "DEPOSITED"]);
+  let fallback = "";
+  for (const candidate of candidates) {
+    const code = optionCode(candidate);
+    if (!code) continue;
+    if (paymentCodes.has(code)) return code;
+    if (!fallback) fallback = code;
+  }
+  return fallback;
+};
+
+/**
+ * Normalize API payment codes to citizen filter codes:
+ * PAID → PAID; anything else / missing → PENDING_FOR_PAYMENT.
+ */
+export const normalizeCitizenPaymentStatus = (status) => {
+  const code = String(status || "")
+    .toUpperCase()
+    .replace(/\s+/g, "_");
+  if (code === "PAID" || code === "DEPOSITED") return "PAID";
+  return "PENDING_FOR_PAYMENT";
+};
+
+/** True when Allotments[].status is PAID — Make Payment must be hidden. */
+export const isAllotmentPaymentPaid = (allotment, application) =>
+  normalizeCitizenPaymentStatus(getAllotmentPaymentStatus(allotment, application)) ===
+  "PAID";
