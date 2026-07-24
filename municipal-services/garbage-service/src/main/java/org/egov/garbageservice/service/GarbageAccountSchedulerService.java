@@ -68,6 +68,7 @@ import org.egov.garbageservice.contract.bill.BillDetail;
 import org.egov.garbageservice.contract.bill.BillAccountDetail;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.egov.garbageservice.model.BillIdRequest;
+import org.egov.garbageservice.repository.DemandRepository;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -89,6 +90,15 @@ public class GarbageAccountSchedulerService {
 
 	@Autowired
 	private DemandService demandService;
+	
+	@Autowired
+	private DemandRepository demandRepository;
+	
+	@Autowired
+	private org.egov.garbageservice.contract.bill.DemandRepository billDemandRepository;
+
+	@Autowired
+	private org.egov.garbageservice.util.MdmsUtil mdmsUtil;
 	
 	@Autowired
 	private UserService userService ;
@@ -185,10 +195,13 @@ public class GarbageAccountSchedulerService {
 					
 					if (Boolean.TRUE.equals(generateBillRequest.getIsRebate())) {
 						rebatePercentage =
-					            mdmsService.fetchGarbageRebateRate(
-					                    generateBillRequest.getRequestInfo(),
-					                    garbageAccount.getTenantId()
-					            );
+								mdmsUtil.getRebateRate(
+										generateBillRequest.getRequestInfo(),
+										garbageAccount.getTenantId(),
+										!CollectionUtils.isEmpty(garbageAccount.getGrbgCollectionUnits())
+												? garbageAccount.getGrbgCollectionUnits().get(0).getSpecialCategory()
+												: null
+								);
 						
 						if (rebatePercentage.compareTo(BigDecimal.ZERO) > 0) {
 						    rebateAmount = billAmount
@@ -492,55 +505,18 @@ public class GarbageAccountSchedulerService {
 		try {
 			if(!checkUuidNumber(garbageAccount))
 				return null;
-			List<Demand> savedDemands = new ArrayList<>();
 			
 			// generate demand
-			Map<String, Object> additionalDetails = (Map<String, Object>) generateBillRequest.getAdditionalDetail();
-
-			// if null, initialize
-			if (additionalDetails == null) {
-			    additionalDetails = new HashMap<>();
-			}
-			
-//			Map<String, Object> additionalDetails = new HashMap<>();
-		    additionalDetails.put("name", garbageAccount.getName());
-		    additionalDetails.put("mobileNumber", garbageAccount.getMobileNumber());
-		    additionalDetails.put("ward", garbageAccount.getAddresses().get(0).getWardName());
-		    additionalDetails.put("category", garbageAccount.getGrbgCollectionUnits().get(0).getCategory());
-		    additionalDetails.put("SubCategoryType", garbageAccount.getGrbgCollectionUnits().get(0).getSubCategoryType());
-		    additionalDetails.put("application_no", garbageAccount.getGrbgApplicationNumber());
-		    additionalDetails.put("bulkType","MULTI_MONTH".equals(Type) ? "MONTH_RANGE" : "SINGLE_MONTH");
-		    additionalDetails.put("BILLING_PERIOD",generateBillRequest.getFromDate() + " - " + generateBillRequest.getToDate());
-		    additionalDetails.put("type", Type);
-		    additionalDetails.put("oldGarbageId", 
-		    	    garbageAccount.getGrbgOldDetails() != null 
-		    	        ? garbageAccount.getGrbgOldDetails().getOldGarbageId() 
-		    	        : null
-		    	);
-		    if (Boolean.TRUE.equals(generateBillRequest.getIsMultiMonth())) {
-		        additionalDetails.put("MONTH_COUNT", numberOfMonths);
-		    } else {
-		    	if (generateBillRequest.getMonths() != null) {
-		    	    additionalDetails.put("MONTHS", generateBillRequest.getMonths());
-		    	}
-		    }
-			generateBillRequest.setAdditionalDetail(additionalDetails);
-			String service = Type.equals("ON-DEMAND")?"GB_BULK":"GB";
-			savedDemands = demandService.generateDemand(generateBillRequest.getRequestInfo(), garbageAccount,service, billAmount, generateBillRequest);
-
-			if (CollectionUtils.isEmpty(savedDemands)) {
-				throw new CustomException("INVALID_CONSUMERCODE",
-						"Bill not generated due to no Demand found for the given consumerCode");
-			}
+			LocalDate billingDate = Instant.ofEpochMilli(generateBillRequest.getToDate().getTime())
+											 .atZone(ZoneId.systemDefault())
+											 .toLocalDate();
+			demandService.generateDemand(generateBillRequest.getRequestInfo(), garbageAccount, billingDate);
 
 			// fetch/create bill
-			demandId.set(savedDemands.get(0).getId());
 			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(garbageAccount.getTenantId())
-					.businessService(service)
-					.consumerCode(savedDemands.get(0).getConsumerCode())
-//					.demandId(savedDemands.get(0).getId())
+					.businessService(garbageAccount.getBusinessService())
+					.consumerCode(garbageAccount.getGrbgApplicationNumber())
 					.mobileNumber(garbageAccount.getMobileNumber())
-//					.email(garbageAccount.getEmailId())
 					.build();
 			BillResponse billResponse = billService.generateBill(generateBillRequest.getRequestInfo(), billCriteria);
 
@@ -663,72 +639,74 @@ public class GarbageAccountSchedulerService {
 		}
 	}
 	
-	public void processGarbagePenalty(RequestInfo requestInfo) {
-	
-	    List<GrbgBillTracker> trackers = garbageAccountService.fetchExpiredUnpaidBills(requestInfo);
-	
-	    for (GrbgBillTracker tracker : trackers) {
-	        try {
-	            log.info("Processing tracker for consumerCode {}", tracker.getGrbgApplicationId());
-	
-	            // fetch tenantId and ULB from tracker
-	            String tenantId = tracker.getTenantId();
-	
-	            log.info(tenantId); //hp.Shimla
-	
-	            BigDecimal penaltyRate = mdmsService.fetchGarbagePenaltyRate(requestInfo, tenantId);
-	            
-	            log.info("[Penalty] Penalty rate resolved = {}", penaltyRate);
-	
-	            if (penaltyRate.compareTo(BigDecimal.ZERO) <= 0) {
-	                continue;
-	            }
-	
-	            String service =
-	                    "MULTI_MONTH".equals(tracker.getType()) ? "GB_BULK" : "GB";
-	
-	            Demand demand = demandService.searchDemand(
-	                tracker.getTenantId(),
-	                Collections.singleton(tracker.getGrbgApplicationId()),
-	                requestInfo,
-	                service
-	            ).get(0);
-	
-	            BigDecimal baseAmount = demand.getDemandDetails().stream()
-	                .filter(d -> GrbgConstants.BILLING_TAX_HEAD_MASTER_CODE.equals(d.getTaxHeadMasterCode()))
-	                .map(DemandDetail::getTaxAmount)
-	                .reduce(BigDecimal.ZERO, BigDecimal::add);
+	 public void processGarbagePenalty(RequestInfo requestInfo) {
 
-	            Long expiry = tracker.getExpiryDate();
-	            if (expiry == null || expiry >= System.currentTimeMillis()) {
-	                continue; 
-	            }
-	
-	            LocalDate expiryDate = Instant.ofEpochMilli(expiry)
-	                                          .atZone(ZoneId.systemDefault())
-	                                          .toLocalDate();
-	
-	            long monthsOverdue = ChronoUnit.MONTHS.between(expiryDate, LocalDate.now());
-	            if (monthsOverdue <= 0) monthsOverdue = 1;
-	
-	            BigDecimal penalty = baseAmount
-	                    .multiply(penaltyRate)
-	                    .divide(BigDecimal.valueOf(100))
-	                    .multiply(BigDecimal.valueOf(monthsOverdue))
-	                    .setScale(2, RoundingMode.HALF_UP);
-	            
-	            if (tracker.getGrbgBillWithoutPenalty() == null) {
-	                tracker.setGrbgBillWithoutPenalty(baseAmount);
-	            }
-	            
-	            garbageAccountService.applyPenalty(tracker, demand, penalty, requestInfo);
-	            log.info("Base={}, Rate={}, Months={}", baseAmount, penaltyRate, monthsOverdue);
-	
-	        } catch (Exception e) {
-	            log.error("Penalty failed for consumerCode {}", tracker.getGrbgApplicationId(), e);
-	        }
-	    }
-	}
+	     List<GrbgBillTracker> trackers = garbageAccountService.fetchExpiredUnpaidBills(requestInfo);
+
+	     for (GrbgBillTracker tracker : trackers) {
+	         try {
+	             log.info("Processing tracker for consumerCode {}", tracker.getGrbgApplicationId());
+
+	             // fetch tenantId and ULB from tracker
+	             String tenantId = tracker.getTenantId();
+
+	             log.info(tenantId); //hp.Shimla
+
+	             BigDecimal penaltyRate = mdmsService.fetchGarbagePenaltyRate(requestInfo, tenantId);
+
+	             log.info("[Penalty] Penalty rate resolved = {}", penaltyRate);
+
+	             if (penaltyRate.compareTo(BigDecimal.ZERO) <= 0) {
+	                 continue;
+	             }
+
+	             String service =
+	                     "MULTI_MONTH".equals(tracker.getType()) ? "GB_BULK" : "GB";
+
+	             List<Demand> demands = demandRepository.searchDemand(
+	                 requestInfo,
+	                 tracker.getTenantId(),
+	                 tracker.getGrbgApplicationId(),
+	                 service
+	             );
+	 			if(CollectionUtils.isEmpty(demands))
+	 				continue;
+
+	             BigDecimal baseAmount = demands.get(0).getDemandDetails().stream()
+	                 .filter(d -> GrbgConstants.BILLING_TAX_HEAD_MASTER_CODE.equals(d.getTaxHeadMasterCode()))
+	                 .map(DemandDetail::getTaxAmount)
+	                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	             Long expiry = tracker.getExpiryDate();
+	             if (expiry == null || expiry >= System.currentTimeMillis()) {
+	                 continue;
+	             }
+
+	             LocalDate expiryDate = Instant.ofEpochMilli(expiry)
+	                                           .atZone(ZoneId.systemDefault())
+	                                           .toLocalDate();
+
+	             long monthsOverdue = ChronoUnit.MONTHS.between(expiryDate, LocalDate.now());
+	             if (monthsOverdue <= 0) monthsOverdue = 1;
+
+	             BigDecimal penalty = baseAmount
+	                     .multiply(penaltyRate)
+	                     .divide(BigDecimal.valueOf(100))
+	                     .multiply(BigDecimal.valueOf(monthsOverdue))
+	                     .setScale(2, RoundingMode.HALF_UP);
+
+	             if (tracker.getGrbgBillWithoutPenalty() == null) {
+	                 tracker.setGrbgBillWithoutPenalty(baseAmount);
+	             }
+
+	             garbageAccountService.applyPenalty(tracker, demands.get(0), penalty, requestInfo);
+	             log.info("Base={}, Rate={}, Months={}", baseAmount, penaltyRate, monthsOverdue);
+
+	         } catch (Exception e) {
+	             log.error("Penalty failed for consumerCode {}", tracker.getGrbgApplicationId(), e);
+	         }
+	     }
+	 }
 	
 	public List<GrbgBillTracker> fetchRebateEligibleTrackers() {
 
@@ -763,10 +741,10 @@ public class GarbageAccountSchedulerService {
 	
 	            BigDecimal originalAmount = tracker.getGarbageBillWithoutRebate();
 	
-	            List<Demand> demands = demandService.searchDemand(
-	                    tracker.getTenantId(),
-	                    Collections.singleton(tracker.getGrbgApplicationId()),
+	            List<Demand> demands = demandRepository.searchDemand(
 	                    requestInfo,
+	                    tracker.getTenantId(),
+	                    tracker.getGrbgApplicationId(),
 	                    service
 	            );
 	
@@ -787,7 +765,7 @@ public class GarbageAccountSchedulerService {
 	                }
 	            }
 	
-	            demandService.updateDemand(
+	            billDemandRepository.updateDemand(
 	                    requestInfo,
 	                    Collections.singletonList(demand)
 	            );

@@ -271,7 +271,7 @@ public class GarbageBillService {
 
 		Bill bill = billResponse.getBill().get(0);
 
-		demandService.cancelDemand(bill.getTenantId(), Collections.singleton(tracker.getDemandId()), cancleBillRequest.getRequestInfo(), bill.getBusinessService());
+		// demandService.cancelDemand(bill.getTenantId(), Collections.singleton(tracker.getDemandId()), cancleBillRequest.getRequestInfo());
 
 		Map<String, Object> additionalDetails = null;
 		if (bill.getAdditionalDetails() != null && !bill.getAdditionalDetails().isNull() && !bill.getAdditionalDetails().isEmpty()) {
