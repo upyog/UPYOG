@@ -1001,7 +1001,6 @@ public class BPARepository {
 	private static final String PAYMENT_DETAILS_FOR_LABOUR_DEPARTMENT = "SELECT ept.last_modified_time AS date_Of_Submission, " +
 			"	ela.occupancy AS karyType, ela.address AS sthapna_Pata," +
 			"	ept.tenant_id AS ulb, (ept.tenant_id || '_' || ebb.applicationno) AS proposal_No," +
-			"	ept.name AS ownerName,  ept.mobile_number AS owner_Phone_Number," +
 			"	ela.builtUpArea AS constructionArea, --fd.amount AS estimated_Cess, " +
 			"	ept.gateway_txn_id AS transaction_Id," +
 			"	fd.amount AS cessAmount, ept.last_modified_time AS transaction_Date, ept.txn_status AS status," +
