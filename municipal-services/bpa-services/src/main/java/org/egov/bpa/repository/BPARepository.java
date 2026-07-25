@@ -1024,7 +1024,7 @@ public class BPARepository {
 		try {
 			LocalDate previousDay = inputDate.minusDays(1);
 
-			ZoneId zoneId = ZoneId.of("Asia/Kolkata");
+			ZoneId zoneId = ZoneId.of("UTC");
 
 			long startOfPreviousDayMs = previousDay.atStartOfDay(zoneId)
 					.toInstant()
