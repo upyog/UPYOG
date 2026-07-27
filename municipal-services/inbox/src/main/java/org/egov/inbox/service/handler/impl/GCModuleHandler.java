@@ -13,8 +13,15 @@ import java.util.List;
 import static org.egov.inbox.util.GarbageConstants.*;
 
 /**
- * GCModuleHandler is responsible for handling the inbox operations
- * specific to the "Garbage Service" module.
+ * Handler implementation for the Garbage Collection module inbox.
+ *
+ * <p>This handler is responsible for:
+ * <ul>
+ *     <li>Identifying whether the requested module is Garbage Collection.</li>
+ *     <li>Fetching application IDs based on the inbox search criteria.</li>
+ *     <li>Fetching the total application count for pagination.</li>
+ *     <li>Providing module-specific search parameter configuration.</li>
+ * </ul>
  */
 @Slf4j
 @Service
