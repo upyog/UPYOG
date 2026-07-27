@@ -8,8 +8,6 @@ public interface EstateService {
 
     AllotmentResponse createAllotment(AllotmentRequest request);
 
-    AllotmentResponse updateAllotment(AllotmentRequest request);
-
     AllotmentResponse searchAllotments(AllotmentSearchCriteria criteria);
 
     AssetResponse searchAssets(AssetSearchRequest searchRequest);
