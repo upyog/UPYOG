@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 const CommonRedirect = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const tenantId = Digit.ULBService.getCurrentTenantId() || Digit.ULBService.getStateId();
+  const tenantId = Digit.ULBService.getStateId();
 
   useEffect(() => {
     const fetchAndOpenPdf = async () => {
