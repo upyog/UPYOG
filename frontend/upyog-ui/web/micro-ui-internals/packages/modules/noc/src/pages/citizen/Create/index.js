@@ -23,8 +23,8 @@ const CreateNoc = ({ parentRoute }) => {
   const createMutation = Digit.Hooks.noc.useFireNOCAPI(tenantId, true);
   const updateMutation = Digit.Hooks.noc.useFireNOCAPI(tenantId, false);
 
-  const CheckPage = Digit?.ComponentRegistryService?.getComponent("NOCCheckPage") || CheckPageLocal;
-  const NocAcknowledgement = Digit?.ComponentRegistryService?.getComponent("NOCAcknowledgement") || NOCAcknowledgementLocal;
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent("NOCCheckPage");
+  const NocAcknowledgement = Digit?.ComponentRegistryService?.getComponent("NOCAcknowledgement");
 
   let config = [];
   let { data: newConfig, isLoading } = Digit.Hooks.noc?.useMDMS?.getFormConfig

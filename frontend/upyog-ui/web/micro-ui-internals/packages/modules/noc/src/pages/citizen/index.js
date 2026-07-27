@@ -13,7 +13,6 @@ const App = () => {
   const MyApplications = Digit?.ComponentRegistryService?.getComponent("NOCMyApplications") || (() => <div>NOCMyApplications Placeholder</div>);
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("NOCApplicationDetails") || (() => <div>NOCApplicationDetails Placeholder</div>);
   const CitizenHome = Digit?.ComponentRegistryService?.getComponent("NOCCitizenHome") || (() => <div>NOCCitizenHome Placeholder</div>);
-  console.log("path", path);
 
   const isAcknowledgementPage = location.pathname.includes("/acknowledgement");
   const isNewApplication = location.pathname.includes("noc/new-application");

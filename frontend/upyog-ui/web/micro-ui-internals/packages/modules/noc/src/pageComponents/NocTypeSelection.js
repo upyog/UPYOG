@@ -201,7 +201,6 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? null : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!nocType} forcedError={error}>
         <RadioButtons
           t={t}
