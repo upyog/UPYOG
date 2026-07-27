@@ -71,6 +71,8 @@ const estateComputedFields = [
 //   apiFieldName: "floor",
 // }
 
+// Keeping the current naming for now.
+//TODO: this will move into MDMS. For now we need a local config merge to add numeric: true on buildingFloor, since MDMS doesn’t include that flag yet.
 const estateFormFieldOverrides = [
   {
     key: "EST_BUILDING_FLOOR",

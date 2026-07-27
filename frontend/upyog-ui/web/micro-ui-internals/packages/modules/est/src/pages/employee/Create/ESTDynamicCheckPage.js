@@ -32,7 +32,7 @@ const ESTDynamicCheckPage = ({
 }) => {
   const flowConfig = EST_CHECK_FLOWS[flow];
   const stepKey = flowConfig?.stepKey || "newRegistration";
-  const logTag = flowConfig?.logTag || "EST_CHECK";
+  const errorLogPrefix = flowConfig?.errorLogPrefix || "EST_CHECK";
   const summaryHeaderCode = flowConfig?.summaryHeaderCode || "EST_REGISTRATION_SUMMARY";
   const defaultSectionHeaderCode = flowConfig?.defaultSectionHeaderCode || "EST_ASSET_DETAILS";
   const isRegistration = flow === "registration";
@@ -86,7 +86,8 @@ const ESTDynamicCheckPage = ({
     mutation,
     onSubmit,
     onError,
-    logTag,
+    // useDynamicCheckSubmit still accepts `logTag` — value is the flow error-log prefix
+    logTag: errorLogPrefix,
   });
 
   const editRoute = isRegistration

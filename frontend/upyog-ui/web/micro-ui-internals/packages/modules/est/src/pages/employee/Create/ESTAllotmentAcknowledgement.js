@@ -33,12 +33,21 @@ const rowContainerStyle = {
 
 const BannerPicker = ({ t, isSuccess, data }) => {
   const allotment = data?.Allotments?.[0];
-  const applicationNumber = allotment?.allotmentId || allotment?.assetNo || "";
+  // Display allotmentNo from create API (never allotmentId UUID).
+  const applicationNumber =
+    allotment?.allotmentNo ||
+    allotment?.additionalDetails?.allotmentNo ||
+    allotment?.assetNo ||
+    "";
   return (
     <Banner
       message={isSuccess ? t("EST_ALLOTED_SUCCESSFULL") : t("EST_APPLICATION_FAILED")}
       applicationNumber={applicationNumber}
-      info={isSuccess ? t(allotment?.allotmentId ? "EST_ALLOTMENT_ID" : "EST_APPLICATION_NO") : ""}
+      info={
+        isSuccess
+          ? t(applicationNumber ? "EST_ALLOTMENT_NUMBER" : "EST_APPLICATION_NO")
+          : ""
+      }
       successful={isSuccess}
       style={{ width: "100%" }}
     />
