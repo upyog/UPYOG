@@ -1,6 +1,6 @@
 # Adapter Metrics Extractor Service
 
-This is the main executable Spring Boot service in the metrics ingestion pipeline. It interacts with the database to extract raw application and collection data, maps them to type-safe DTOs, and invokes the `adapter-engine` pipeline to ingest them to the National Dashboard.
+This is the main executable Spring Boot service in the metrics ingestion pipeline. It interacts with the database to extract raw application and collection data, maps them to type-safe DTOs, and invokes the `dashboard-data-engine` pipeline to ingest them to the National Dashboard.
 
 ## Responsibilities
 - **DB Configuration & Schedulers**: Defines database connection configs, schemas, and ShedLock schedulers.
@@ -10,7 +10,7 @@ This is the main executable Spring Boot service in the metrics ingestion pipelin
 
 ## Directory Structure
 ```
-adapter-extractor
+dashboard-data-extractor
  ├── src/main/java/org/upyog/adapter/
  │    ├── pt/            # PT database constants, mappers, and extractors
  │    ├── controller/    # REST endpoints
@@ -21,9 +21,9 @@ adapter-extractor
 ```
 
 ## Prerequisite
-Make sure you compile and install the `adapter-engine` library first:
+Make sure you compile and install the `dashboard-data-engine` library first:
 ```bash
-cd ../adapter-engine
+cd ../dashboard-data-engine
 mvn clean install
 ```
 

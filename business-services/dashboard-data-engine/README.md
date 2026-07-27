@@ -1,6 +1,6 @@
 # Adapter Engine Library
 
-This library contains the core logic for translating, validating, and loading metrics to the National Dashboard. It is packaged as a standard Maven JAR dependency to be consumed by other service modules (such as `adapter-extractor`).
+This library contains the core logic for translating, validating, and loading metrics to the National Dashboard. It is packaged as a standard Maven JAR dependency to be consumed by other service modules (such as `dashboard-data-extractor`).
 
 ## Responsibilities
 - **Transformation**: Maps raw DTO payloads to specific target metrics classes (e.g. `PTMetric`).
@@ -9,7 +9,7 @@ This library contains the core logic for translating, validating, and loading me
 
 ## Directory Structure
 ```
-adapter-engine
+dashboard-data-engine
  ├── src/main/java/org/upyog/adapter/
  │    ├── api/           # Client executables
  │    ├── entity/        # Ingestion audit POJOs

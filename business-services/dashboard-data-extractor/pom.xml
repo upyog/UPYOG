@@ -11,10 +11,10 @@
 	</parent>
 
 	<groupId>org.upyog</groupId>
-	<artifactId>adapter-extractor</artifactId>
+	<artifactId>dashboard-data-extractor</artifactId>
 	<version>2.0.0</version>
 	<packaging>jar</packaging>
-	<name>adapter-extractor</name>
+	<name>dashboard-data-extractor</name>
 	<description>Service responsible for extracting, mapping, and orchestrating dashboard metrics extraction</description>
 
 	<properties>
@@ -97,7 +97,7 @@
 		<!-- Module Dependency -->
 		<dependency>
 			<groupId>org.upyog</groupId>
-			<artifactId>adapter-engine</artifactId>
+			<artifactId>dashboard-data-engine</artifactId>
 			<version>2.0.0</version>
 		</dependency>
 
