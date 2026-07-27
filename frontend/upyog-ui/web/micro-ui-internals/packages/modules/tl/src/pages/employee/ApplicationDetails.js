@@ -263,7 +263,7 @@ const ApplicationDetails = () => {
       pdfUrl: file,
       tenantId: "pg.citya",
       module: "TL",
-      redirectUrl: "",
+      redirectUrl: "https://upyog-test.niua.org/requester-services-dx/eSign/redirect?module=TL",
       "fileStoreId": id,
       "consumerCode": res?.Licenses?.[0]?.licenseNumber
     };
@@ -323,6 +323,7 @@ const ApplicationDetails = () => {
           window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
         }
         setIsDisplayDownloadMenu(false);
+        await fetchDigiLockerDocuments(receiptFile[TLcertificatefile.filestoreIds[0]], TLcertificatefile.filestoreIds[0], res);
       }
     } catch (err) {
       console.error("Certificate download failed completely", err);
@@ -345,19 +346,19 @@ const ApplicationDetails = () => {
     onClick: handleDownloadPdf
   }];
   return <div className={"employee-main-application-details"}>
-      <div className={"employee-application-details tl-auto-169"}>
-        <Header>{applicationDetails?.applicationData?.workflowCode == "NewTL" && applicationDetails?.applicationData?.status !== "APPROVED" ? t("TL_TRADE_APPLICATION_DETAILS_LABEL") : t("TL_TRADE_LICENSE_DETAILS_LABEL")}</Header>
-        <div className="tl-auto-170">
-         
+    <div className={"employee-application-details tl-auto-169"}>
+      <Header>{applicationDetails?.applicationData?.workflowCode == "NewTL" && applicationDetails?.applicationData?.status !== "APPROVED" ? t("TL_TRADE_APPLICATION_DETAILS_LABEL") : t("TL_TRADE_LICENSE_DETAILS_LABEL")}</Header>
+      <div className="tl-auto-170">
+
         <div className="tl-auto-171">
-        <MultiLink className="multilinkWrapper" onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)} displayOptions={isDisplayDownloadMenu} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} optionStyle={{
+          <MultiLink className="multilinkWrapper" onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)} displayOptions={isDisplayDownloadMenu} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} optionStyle={{
             padding: "10px"
           }} />
         </div>
         <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="tl-auto-172"></LinkButton>
-        </div>        
       </div>
-      <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading} isDataLoading={isLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} id={"timeline"} workflowDetails={workflowDetails} businessService={businessService} moduleCode="TL" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={"WF_NEWTL_"} />
-    </div>;
+    </div>
+    <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading} isDataLoading={isLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} id={"timeline"} workflowDetails={workflowDetails} businessService={businessService} moduleCode="TL" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={"WF_NEWTL_"} />
+  </div>;
 };
 export default ApplicationDetails;

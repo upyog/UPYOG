@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Switch, useLocation, Link } from "react-router-dom";
 import { PrivateRoute, BreadCrumb } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import CommonRedirect from "../../pageComponents/CommonRedirect"
 import Inbox from "./Inbox";
 // import NewApplication from "./NewApplication";
 // import Search from "./Search";
@@ -21,7 +22,7 @@ const TLBreadCrumb = ({ location }) => {
   const isNewApplication = location?.pathname?.includes("tl/new-application");
   const isResponse = location?.pathname?.includes("tl/response");
   const isMobile = window.Digit.Utils.browser.isMobile();
-  const CommonRedirect = Digit?.ComponentRegistryService?.getComponent('CommonRedirect')
+  //const CommonRedirect = 
   const [search, setSearch] = useState(false);
 
   const locationsForTLEmployee = window.location.href;
@@ -89,50 +90,50 @@ const TLBreadCrumb = ({ location }) => {
       path: "/upyog-ui/employee/tl/search/application",
       content: t("ES_COMMON_SEARCH_APPLICATION"),
       show: isApplicationSearch ||
-      breadCrumbUrls.includes("home/search") || 
-      breadCrumbUrls.includes("inbox/search")
+        breadCrumbUrls.includes("home/search") ||
+        breadCrumbUrls.includes("inbox/search")
     },
     {
       path: "/upyog-ui/employee/tl/search/license",
       content: t("TL_SEARCH_TRADE_HEADER"),
-      show: isLicenceSearch || 
-      breadCrumbUrls.includes("home/license") || 
-      breadCrumbUrls.includes("inbox/license")
+      show: isLicenceSearch ||
+        breadCrumbUrls.includes("home/license") ||
+        breadCrumbUrls.includes("inbox/license")
     },
     {
       path: sessionStorage.getItem("applicationNumber") ? `/upyog-ui/employee/tl/application-details/${sessionStorage.getItem("applicationNumber")}` : "",
       content: t("TL_DETAILS_HEADER_LABEL"),
       show: isApplicationDetails ||
-      breadCrumbUrls.includes("inbox/appDetails") || 
-      breadCrumbUrls.includes("home/license/appDetails") || 
-      breadCrumbUrls.includes("inbox/license/appDetails") || 
-      breadCrumbUrls.includes("home/search/appDetails") || 
-      breadCrumbUrls.includes("inbox/search/appDetails")
+        breadCrumbUrls.includes("inbox/appDetails") ||
+        breadCrumbUrls.includes("home/license/appDetails") ||
+        breadCrumbUrls.includes("inbox/license/appDetails") ||
+        breadCrumbUrls.includes("home/search/appDetails") ||
+        breadCrumbUrls.includes("inbox/search/appDetails")
     },
     {
       path: "/upyog-ui/employee/tl/new-application",
       content: t("TL_HOME_SEARCH_RESULTS_NEW_APP_BUTTON"),
-      show: isNewApplication || 
-      breadCrumbUrls.includes("home/newApp") || 
-      breadCrumbUrls.includes("inbox/newApp")
+      show: isNewApplication ||
+        breadCrumbUrls.includes("home/newApp") ||
+        breadCrumbUrls.includes("inbox/newApp")
     },
     {
       content: t("ES_TITLE_RENEW_TRADE_LICESE_APPLICATION"),
-      show: isRenewalApplication  ||
-      breadCrumbUrls.includes("inbox/appDetails/renew") || 
-      breadCrumbUrls.includes("home/license/appDetails/renew") || 
-      breadCrumbUrls.includes("inbox/license/appDetails/renew") || 
-      breadCrumbUrls.includes("home/search/appDetails/renew") || 
-      breadCrumbUrls.includes("inbox/search/appDetails/renew")
+      show: isRenewalApplication ||
+        breadCrumbUrls.includes("inbox/appDetails/renew") ||
+        breadCrumbUrls.includes("home/license/appDetails/renew") ||
+        breadCrumbUrls.includes("inbox/license/appDetails/renew") ||
+        breadCrumbUrls.includes("home/search/appDetails/renew") ||
+        breadCrumbUrls.includes("inbox/search/appDetails/renew")
     },
     {
       content: t("ES_TITLE_RE_NEW_TRADE_LICESE_APPLICATION"),
-      show: isEditApplication || 
-      breadCrumbUrls.includes("inbox/appDetails/edit") || 
-      breadCrumbUrls.includes("home/license/appDetails/edit") || 
-      breadCrumbUrls.includes("inbox/license/appDetails/edit") || 
-      breadCrumbUrls.includes("home/search/appDetails/edit") || 
-      breadCrumbUrls.includes("inbox/search/appDetails/edit")
+      show: isEditApplication ||
+        breadCrumbUrls.includes("inbox/appDetails/edit") ||
+        breadCrumbUrls.includes("home/license/appDetails/edit") ||
+        breadCrumbUrls.includes("inbox/license/appDetails/edit") ||
+        breadCrumbUrls.includes("home/search/appDetails/edit") ||
+        breadCrumbUrls.includes("inbox/search/appDetails/edit")
     },
     {
       path: "/upyog-ui/employee/tl/inbox",
@@ -141,7 +142,7 @@ const TLBreadCrumb = ({ location }) => {
     }
   ];
 
-  return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
+  return <BreadCrumb style={isMobile ? { display: "flex" } : {}} spanStyle={{ maxWidth: "min-content" }} crumbs={crumbs} />;
 };
 
 
@@ -160,8 +161,8 @@ const EmployeeApp = ({ path, url, userType }) => {
   return (
     <Switch>
       <React.Fragment>
-      <div className="ground-container" style={locationCheck ? {width: "100%", marginLeft: "0px"} : {marginLeft: "0px"}}>
-          <div style={locationCheck ? {marginLeft: "15px"} : {}}>
+        <div className="ground-container" style={locationCheck ? { width: "100%", marginLeft: "0px" } : { marginLeft: "0px" }}>
+          <div style={locationCheck ? { marginLeft: "15px" } : {}}>
             <TLBreadCrumb location={location} />
           </div>
           {/* <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : !locationCheck ? "revert": "15px" }}>
@@ -188,14 +189,14 @@ const EmployeeApp = ({ path, url, userType }) => {
               <Inbox parentRoute={path} businessService="TL" filterComponent="TL_INBOX_FILTER" initialStates={{}} isInbox={true} />
             )}
           />
-            <PrivateRoute path={`${path}/common/:filestore`} component={() => <CommonRedirect parentUrl={url} />} />
+          <PrivateRoute path={[`${path}/common`, `${path}/common/:filestore`]} component={() => <CommonRedirect parentUrl={url} />} />
           <PrivateRoute path={`${path}/new-application`} component={() => <NewApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/renew-application-details/:id`} component={(props) => <ReNewApplication {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/edit-application-details/:id`} component={(props) => <ReNewApplication {...props} header={t("TL_ACTION_RESUBMIT")} parentRoute={path} />} />
           <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/search/:variant`} component={(props) => <Search {...props} parentRoute={path} />} />
-          
+
         </div>
       </React.Fragment>
     </Switch>
