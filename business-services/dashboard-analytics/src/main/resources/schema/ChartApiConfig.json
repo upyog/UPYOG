@@ -24933,6 +24933,307 @@
     ],
     "insight": {},
     "_comment": "PTR Transactions by Payment Channel"
+  },
+  "ewTotalWasteCollection": {
+    "chartName": "NATIONAL_DSS_TOTAL_WASTE_COLLECTION_EWASTE",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Total Waste Collection\":{\"sum\":{\"field\":\"totalWasteCollected\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Waste Collection"
+    ]
+  },
+  "ewTotalApplicationReceived": {
+    "chartName": "NATIONAL_DSS_TOTAL_APPLICATION_RECEIVED_EWASTE",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Total Application Received\":{\"sum\":{\"field\":\"totalApplicationReceived\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Application Received"
+    ]
+  },
+  "ewTotalWasteCollectionMetric": {
+    "chartName": "NATIONAL_TOTAL_WASTE_COLLECTION_EW",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Total Waste Collection\":{\"sum\":{\"field\":\"totalWasteCollected\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Waste Collection"
+    ]
+  },
+  "ewasteCollectionCentrePerUrbanArea": {
+    "chartName": "NSS_EW_WASTE_COLLECTION_CENTRE",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Collection Centres\":{\"sum\":{\"field\":\"totalWasteCollectionCentres\"}},\"Total Urban Areas\":{\"sum\":{\"field\":\"totalUrbanAreas\"}}}},\"Total Collection Centres\":{\"sum_bucket\":{\"buckets_path\":\"Test.Total Collection Centres\"}},\"Total Urban Areas\":{\"sum_bucket\":{\"buckets_path\":\"Test.Total Urban Areas\"}},\"Collection Centres per Urban Area\":{\"bucket_script\":{\"buckets_path\":{\"centres\":\"Total Collection Centres\",\"urban\":\"Total Urban Areas\"},\"script\":\"params.urban>0 ? params.centres/params.urban : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Collection Centres per Urban Area"
+    ]
+  },
+  "ewWasteCollectionCategorization": {
+    "chartName": "NSS_WASTE_COLLECTION_CATEGORIZATION_EW",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "indexName": "ewaste-national-dashboard",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "dateRefField": "date",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"wasteCollection\":{\"terms\":{\"field\":\"wasteCollection.keyword\",\"size\":10},\"aggs\":{\"Waste Categorization\":{\"sum\":{\"field\":\"wasteCategorizationForWasteCollection\"}}}}}}}}"
+      }
+    ],
+    "chartType": "pie",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "wasteCollection"
+    ]
+  },
+  "ewTotalCollectionCenters": {
+    "chartName": "NATIONAL_DSS_TOTAL_COLLECTION_CENTERS_EWASTE",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Total Collection Centers\":{\"sum\":{\"field\":\"totalWasteCollectionCentres\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Collection Centers"
+    ],
+    "_comment": "Total operational waste collection centers"
+  },
+  "ewTotalUrbanAreas": {
+    "chartName": "NATIONAL_DSS_TOTAL_URBAN_AREAS_EWASTE",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Total Urban Areas\":{\"sum\":{\"field\":\"totalUrbanAreas\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Urban Areas"
+    ],
+    "_comment": "Total urban areas covered"
+  },
+  "ewResidentialWastePercentage": {
+    "chartName": "NSS_RESIDENTIAL_WASTE_CATEGORIZATION",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Residential Waste\":{\"filter\":{\"term\":{\"wasteCollection.keyword\":\"Residential\"}},\"aggs\":{\"Residential Value\":{\"sum\":{\"field\":\"wasteCategorizationForWasteCollection\"}}}},\"Total Waste\":{\"sum\":{\"field\":\"totalWasteCollected\"}}}},\"Residential Waste\":{\"sum_bucket\":{\"buckets_path\":\"Test>Residential Waste>Residential Value\"}},\"Total Waste\":{\"sum_bucket\":{\"buckets_path\":\"Test>Total Waste\"}},\"Residential Waste Percentage\":{\"bucket_script\":{\"buckets_path\":{\"res\":\"Residential Waste\",\"total\":\"Total Waste\"},\"script\":\"params.total>0 ? params.res*100/params.total : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Residential Waste Percentage"
+    ]
+  },
+  "ewCommercialWastePercentage": {
+    "chartName": "NSS_COMMERCIAL_WASTE_CATEGORIZATION",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Commercial Waste\":{\"filter\":{\"term\":{\"wasteCollection.keyword\":\"Commercial\"}},\"aggs\":{\"Commercial Value\":{\"sum\":{\"field\":\"wasteCategorizationForWasteCollection\"}}}},\"Total Waste\":{\"sum\":{\"field\":\"totalWasteCollected\"}}}},\"Commercial Waste\":{\"sum_bucket\":{\"buckets_path\":\"Test>Commercial Waste>Commercial Value\"}},\"Total Waste\":{\"sum_bucket\":{\"buckets_path\":\"Test>Total Waste\"}},\"Commercial Waste Percentage\":{\"bucket_script\":{\"buckets_path\":{\"com\":\"Commercial Waste\",\"total\":\"Total Waste\"},\"script\":\"params.total>0 ? params.com*100/params.total : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Commercial Waste Percentage"
+    ]
+  },
+  "vendorsEmpanelledPercentage": {
+    "chartName": "NSS_VENDORS_EMPANELLED_PERCENTAGE",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Active Vendors\":{\"sum\":{\"field\":\"totalActiveVendors\"}},\"Total Vendors Empaneled\":{\"sum\":{\"field\":\"totalVendorsEmpaneled\"}}}},\"Total Active Vendors\":{\"sum_bucket\":{\"buckets_path\":\"Test>Total Active Vendors\"}},\"Total Vendors Empaneled\":{\"sum_bucket\":{\"buckets_path\":\"Test>Total Vendors Empaneled\"}},\"Vendor Empanelment Percentage\":{\"bucket_script\":{\"buckets_path\":{\"active\":\"Total Active Vendors\",\"total\":\"Total Vendors Empaneled\"},\"script\":\"params.total>0 ? params.active*100/params.total : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Vendor Empanelment Percentage"
+    ]
+  },
+  "applicationResolutionPercentage": {
+    "chartName": "NSS_APPLICATION_RESOLUTION_PERCENTAGE",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Applications Closed\":{\"sum\":{\"field\":\"totalApplicationResolved\"}},\"Applications Received\":{\"sum\":{\"field\":\"totalApplicationReceived\"}}}},\"Applications Closed\":{\"sum_bucket\":{\"buckets_path\":\"Test>Applications Closed\"}},\"Applications Received\":{\"sum_bucket\":{\"buckets_path\":\"Test>Applications Received\"}},\"Application Resolution Percentage\":{\"bucket_script\":{\"buckets_path\":{\"closed\":\"Applications Closed\",\"received\":\"Applications Received\"},\"script\":\"params.received>0 ? params.closed*100/params.received : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Application Resolution Percentage"
+    ]
+  },
+  "processingEfficiency": {
+    "chartName": "NSS_PROCESSING_EFFICIENCY",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Processed Waste\":{\"sum\":{\"field\":\"totalWasteProcessed\"}},\"Collected Waste\":{\"sum\":{\"field\":\"totalWasteCollected\"}}}},\"Processed Waste\":{\"sum_bucket\":{\"buckets_path\":\"Test>Processed Waste\"}},\"Collected Waste\":{\"sum_bucket\":{\"buckets_path\":\"Test>Collected Waste\"}},\"Processing Efficiency\":{\"bucket_script\":{\"buckets_path\":{\"processed\":\"Processed Waste\",\"collected\":\"Collected Waste\"},\"script\":\"params.collected>0 ? params.processed*100/params.collected : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Processing Efficiency"
+    ]
+  },
+  "yearWiseCollectionGrowth": {
+    "chartName": "NSS_YEARWISE_COLLECTION_GROWTH",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Current Collection\":{\"sum\":{\"field\":\"currentFYCollection\"}},\"Previous Collection\":{\"sum\":{\"field\":\"previousYearCollection\"}}}},\"Current Collection\":{\"sum_bucket\":{\"buckets_path\":\"Test>Current Collection\"}},\"Previous Collection\":{\"sum_bucket\":{\"buckets_path\":\"Test>Previous Collection\"}},\"Collection Growth\":{\"bucket_script\":{\"buckets_path\":{\"current\":\"Current Collection\",\"previous\":\"Previous Collection\"},\"script\":\"params.previous>0 ? ((params.current-params.previous)/params.previous)*100 : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Collection Growth"
+    ]
+  },
+  "wasteProcessingPercentage": {
+    "chartName": "NSS_WASTE_PROCESSING_PERCENTAGE",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Processed Waste\":{\"sum\":{\"field\":\"totalWasteProcessed\"}},\"Generated Waste\":{\"sum\":{\"field\":\"estimateWasteGeneration\"}}}},\"Processed Waste\":{\"sum_bucket\":{\"buckets_path\":\"Test>Processed Waste\"}},\"Generated Waste\":{\"sum_bucket\":{\"buckets_path\":\"Test>Generated Waste\"}},\"Waste Processing Percentage\":{\"bucket_script\":{\"buckets_path\":{\"processed\":\"Processed Waste\",\"generated\":\"Generated Waste\"},\"script\":\"params.generated>0 ? params.processed*100/params.generated : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Waste Processing Percentage"
+    ]
+  },
+  "applicationResolutionRate": {
+    "chartName": "NSS_APPLICATION_RESOLUTION_RATE",
+    "queries": [
+      {
+        "module": "EWASTE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ewaste-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Applications Closed\":{\"sum\":{\"field\":\"totalApplicationResolved\"}},\"Applications Received\":{\"sum\":{\"field\":\"totalApplicationReceived\"}}}},\"Applications Closed\":{\"sum_bucket\":{\"buckets_path\":\"Test>Applications Closed\"}},\"Applications Received\":{\"sum_bucket\":{\"buckets_path\":\"Test>Applications Received\"}},\"Application Resolution Rate\":{\"bucket_script\":{\"buckets_path\":{\"closed\":\"Applications Closed\",\"received\":\"Applications Received\"},\"script\":\"params.received>0 ? params.closed*100/params.received : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Application Resolution Rate"
+    ]
   }
-
 }

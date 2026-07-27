@@ -54,6 +54,7 @@ const colors = [
   { dark: "rgba(183, 165, 69, 0.85)", light: "rgba(222, 188, 11, 0.24)", defaultColor: "rgba(244, 119, 56, 1)" },
   { dark: "rgba(183, 165, 69, 0.85)", light: "rgba(222, 188, 11, 0.24)", defaultColor: "rgba(244, 119, 56, 1)" },
   { dark: "rgba(172, 58, 86, 0.85)", light: "rgb(240, 154, 175)", defaultColor: "rgba(244, 119, 56, 1)" },
+  { dark: "rgba(33, 173, 40, 0.85)", light: "rgba(152, 234, 160, 0.77)", defaultColor: "rgba(244, 119, 56, 1)" },
 ];
 
 const Chart = ({ data, moduleLevel, overview = false }) => {

@@ -10043,7 +10043,7 @@
             },
             {
               "id": 207,
-              "name": "DSS_STREET_VENDING",
+              "name": "NURT_STREET_VENDING",
               "vizType": "module",
               "moduleLevel": "SV",
               "ref": {
@@ -10103,7 +10103,7 @@
             },
             {
               "id": 209,
-              "name": "DSS_PET_REGISTRATION",
+              "name": "NURT_PTR",
               "vizType": "module",
               "moduleLevel": "PTR",
               "ref": {
@@ -10124,6 +10124,36 @@
                 {
                   "id": "ptrTotalPetRegistration",
                   "name": "NATIONAL_DSS_TOTAL_REGISTRATION_PTR",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 210,
+              "name": "NURT_EWASTE",
+              "vizType": "module",
+              "moduleLevel": "EWASTE",
+              "ref": {
+                "url": "national-ewaste",
+                "logoUrl": "",
+                "type": "internal"
+              },
+              "label": "",
+              "charts": [
+                {
+                  "id": "ewTotalWasteCollection",
+                  "name": "NATIONAL_DSS_TOTAL_WASTE_COLLECTION_EWASTE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewTotalApplicationReceived",
+                  "name": "NATIONAL_DSS_TOTAL_APPLICATION_RECEIVED_EWASTE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -11782,6 +11812,142 @@
                 {
                   "id": "ptrTransactionsByPaymentChannel",
                   "name": "NATIONAL_PTR_TRANSACTIONS_BY_PAYMENT_CHANNEL",
+                  "code": "",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NSS_EW_DASHBOARD",
+      "id": "national-ewaste",
+      "isActive": "",
+      "style": "linear",
+      "visualizations": [
+        {
+          "row": 1,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 211,
+              "name": "NSS_NATIONAL_WS_OVERVIEW",
+              "dimensions": {
+                "height": 350,
+                "width": 5
+              },
+              "vizType": "metric-collection",
+              "noUnit": true,
+              "isCollapsible": false,
+              "label": "NSS_OVERVIEW",
+              "charts": [
+                {
+                  "id": "ewTotalWasteCollectionMetric",
+                  "name": "NSS_TOTAL_WASTE_COLLECTION_EW",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewasteCollectionCentrePerUrbanArea",
+                  "name": "NSS_EW_WASTE_COLLECTION_CENTRE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewTotalCollectionCenters",
+                  "name": "NSS_TOTAL_COLLECTION_CENTERS_EWASTE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewTotalUrbanAreas",
+                  "name": "NSS_TOTAL_URBAN_AREAS_EWASTE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewResidentialWastePercentage",
+                  "name": "NSS_RESIDENTIAL_WASTE_CATEGORIZATION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewCommercialWastePercentage",
+                  "name": "NSS_COMMERIAL_WASTE_CATEGORIZATION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "applicationResolutionPercentage",
+                  "name": "NSS_APPLICATION_RESOLUTION_PERCENTAGE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "processingEfficiency",
+                  "name": "NSS_PROCESSING_EFFICIENCY",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "yearWiseCollectionGrowth",
+                  "name": "NSS_YEARWISE_COLLECTION_GROWTH",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "wasteProcessingPercentage",
+                  "name": "NSS_WASTE_PROCESSING_PERCENTAGE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "applicationResolutionRate",
+                  "name": "NSS_APPLICATION_RESOLUTION_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 212,
+              "name": "NATIONAL_WASTE_CATEGORIZATION",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "ewWasteCollectionCategorization",
+                  "name": "NSS_WASTE_CATEGORIZATION",
                   "code": "",
                   "chartType": "donut",
                   "filter": "",

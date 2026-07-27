@@ -468,7 +468,7 @@ public class IngestValidator {
         */
 
         // Check if module is one of the specific modules that require usage category validation
-        Set<String> validModules = new HashSet<>(Arrays.asList("COMMON", "PGR", "TL", "OBPS", "MCOLLECT", "SV","FINANCE", "PTR"));
+        Set<String> validModules = new HashSet<>(Arrays.asList("COMMON", "PGR", "TL", "OBPS", "MCOLLECT", "SV","FINANCE", "PTR", "EWASTE"));
         String module = ingestData.getModule();
         log.info("Processing usage type for module: {}", module);
         
@@ -547,7 +547,7 @@ public class IngestValidator {
 
 
             // Define module groups for payment channel handling
-            Set<String> moduleWithoutPayment = new HashSet<>(Arrays.asList("COMMON", "PGR"));
+            Set<String> moduleWithoutPayment = new HashSet<>(Arrays.asList("COMMON", "PGR", "EWASTE"));
             Set<String> moduleWithPayment = new HashSet<>(Arrays.asList("PT", "FIRENOC", "TL", "FSM", "WS", "OBPS", "SV","FINANCE", "PTR"));
 
             String module = ingestData.getModule();

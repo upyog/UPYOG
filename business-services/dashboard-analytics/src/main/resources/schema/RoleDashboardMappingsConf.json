@@ -111,6 +111,10 @@
         {
           "name": "National Pet Registration",
           "id": "national-ptr"
+        },
+        {
+          "name": "National EWASTE",
+          "id": "national-ewaste"
         }
       ]
     },
@@ -162,6 +166,9 @@
         },
         {
           "id": "ulb-ptr"
+        },
+        {
+          "id": "ulb-ewaste"
         }
       ]
     }
