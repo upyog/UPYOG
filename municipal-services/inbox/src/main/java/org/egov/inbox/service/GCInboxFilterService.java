@@ -40,6 +40,19 @@ public class GCInboxFilterService {
     @Autowired
     private InboxConfiguration config;
 
+    /**
+     * Fetches Garbage Collection application numbers from the searcher service
+     * based on the provided inbox search criteria.
+     *
+     * <p>Builds the search request, invokes the searcher API, and extracts
+     * the matching application numbers from the response.
+     *
+     * @param criteria the inbox search criteria
+     * @param StatusIdNameMap mapping of workflow status IDs to status names
+     * @param requestInfo the request information
+     * @return a list of matching application numbers; returns an empty list if
+     *         no applications are found or an error occurs
+     */
     public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria,
             HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         List<String> applicationNumbers = new ArrayList<>();
@@ -107,6 +120,19 @@ public class GCInboxFilterService {
         return applicationNumbers;
     }
 
+    /**
+     * Fetches the total count of Garbage Collection applications matching the
+     * provided inbox search criteria.
+     *
+     * <p>Builds the search request, invokes the searcher count API, and extracts
+     * the total number of matching applications from the response.
+     *
+     * @param criteria the inbox search criteria
+     * @param StatusIdNameMap mapping of workflow status IDs to status names
+     * @param requestInfo the request information
+     * @return the total number of matching applications; returns {@code 0} if
+     *         no records are found or an error occurs
+     */
     public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria,
             HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         Integer totalCount = 0;
