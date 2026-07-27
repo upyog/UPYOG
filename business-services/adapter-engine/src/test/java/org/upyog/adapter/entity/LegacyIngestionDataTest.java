@@ -1,5 +1,7 @@
 package org.upyog.adapter.entity;
 
+import org.upyog.adapter.util.CommonUtils;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +15,7 @@ class LegacyIngestionDataTest {
     @Test
     @DisplayName("Builder creates LegacyIngestionData with all fields")
     void builder_createsFullEntity() {
-        long now = System.currentTimeMillis();
+        long now = CommonUtils.getCurrentEpochMillis();
 
         LegacyIngestionData data = LegacyIngestionData.builder()
                 .moduleIngestionId("uuid-123")

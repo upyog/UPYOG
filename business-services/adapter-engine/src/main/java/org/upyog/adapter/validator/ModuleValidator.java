@@ -7,14 +7,14 @@ import org.upyog.adapter.common.constants.Module;
 /**
  * Strategy interface for module-specific metric validation.
  *
- * <p>Implementations of this interface validate the {@code metrics} map of a
+ * <p>Implementations of this interface validate the {@code metrics} dataMap of a
  * {@link org.upyog.adapter.model.DashboardData} record for a specific DIGIT module,
  * ensuring that all KPIs required by that module are present before the payload
  * is sent to the National Dashboard endpoint.
  *
  * <p>Module validators complement {@link CommonValidator}: the common validator
  * checks structural fields (module, state, ULB, etc.) while module validators
- * check the contents of the metrics map, which differs per module.
+ * check the contents of the metrics dataMap, which differs per module.
  *
  * <h3>Registration</h3>
  * Implementations must:
@@ -22,7 +22,7 @@ import org.upyog.adapter.common.constants.Module;
  *   <li>Be annotated with {@code @Component} so Spring discovers them at startup.</li>
  *   <li>Return a unique, non-{@code null} {@link Module} value from
  *       {@link #getModule()} so {@link ValidatorRegistry} can build the
- *       module-to-validator map without conflicts.</li>
+ *       module-to-validator dataMap without conflicts.</li>
  * </ol>
  *
  * <h3>Adding a new module validator</h3>
@@ -56,7 +56,7 @@ public interface ModuleValidator {
     Module getModule();
 
     /**
-     * Validates the module-specific metrics map extracted from a
+     * Validates the module-specific metrics dataMap extracted from a
      * {@link org.upyog.adapter.model.DashboardData} record.
      *
      * <p>Implementations should iterate over all metrics keys that are mandatory
@@ -68,7 +68,7 @@ public interface ModuleValidator {
      * {@link CommonValidator#validate} has confirmed that {@code metrics} is
      * non-null.
      *
-     * @param metrics the metrics map from
+     * @param metrics the metrics dataMap from
      *                {@link org.upyog.adapter.model.DashboardData#getMetrics()};
      *                never {@code null} at this point in the pipeline
      * @throws org.upyog.adapter.exception.ValidationException if any mandatory

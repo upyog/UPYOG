@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Configuration bean binding multi-module SQL query templates and state-enabled modules.
  *
- * <p>Loads individual query config files (e.g., {@code pt-schema-mapping.yml}) dynamically
+ * <p>Loads individual query config files (exception.g., {@code pt-schema-mapping.yml}) dynamically
  * at startup according to the modules enabled in {@code application.properties}.
  */
 @Slf4j
@@ -69,9 +69,9 @@ public class SchemaMappingConfig {
                 ModuleQueries queries = yamlMapper.readValue(is, ModuleQueries.class);
                 mappings.put(module, queries);
                 log.info("SchemaMappingConfig | Successfully loaded schema mapping for module {}", module);
-            } catch (IOException e) {
-                log.error("SchemaMappingConfig | Failed to parse schema mapping file {} for module {}", fileName, module, e);
-                throw new IllegalStateException("Failed to parse schema mapping file: " + fileName, e);
+            } catch (IOException exception) {
+                log.error("SchemaMappingConfig | Failed to parse schema mapping file {} for module {}", fileName, module, exception);
+                throw new IllegalStateException("Failed to parse schema mapping file: " + fileName, exception);
             }
         }
     }

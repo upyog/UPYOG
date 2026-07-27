@@ -27,8 +27,8 @@ import lombok.NoArgsConstructor;
  * {@link NationalDashboardIngestRequest}.
  *
  * <h3>Contents</h3>
- * Each element in the {@code data} list represents one ULB-date-module snapshot.
- * For a single ULB the list typically has one element; for batch ingestion it
+ * Each element in the {@code data} dataList represents one ULB-date-module snapshot.
+ * For a single ULB the dataList typically has one element; for batch ingestion it
  * may contain multiple elements.
  *
  * @see DashboardData
@@ -48,7 +48,7 @@ import lombok.NoArgsConstructor;
 public class DashboardPayload {
 
     /**
-     * The list of module metric records to be ingested.
+     * The dataList of module metric records to be ingested.
      *
      * <p>Serialized as the JSON key {@code "Data"} (upper-case) to satisfy the
      * National Dashboard API contract.
@@ -56,7 +56,7 @@ public class DashboardPayload {
      * <p>Must not be {@code null} or empty — validated by
      * {@link org.upyog.adapter.validator.CommonValidator#validate(DashboardPayload)}.
      * Each element must contain valid contextual fields and a non-{@code null}
-     * metrics map.
+     * metrics dataMap.
      */
     @JsonProperty("Data")
     private List<DashboardData> data;

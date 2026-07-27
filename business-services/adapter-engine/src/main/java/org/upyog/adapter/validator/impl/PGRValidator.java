@@ -10,7 +10,7 @@ import org.upyog.adapter.validator.ModuleValidator;
 /**
  * Public Grievance Redressal (PGR) module-specific implementation of {@link ModuleValidator}.
  *
- * <p>Validates that all mandatory PGR metric keys are present in the metrics map.
+ * <p>Validates that all mandatory PGR metric keys are present in the metrics dataMap.
  */
 @Component
 public class PGRValidator implements ModuleValidator {

@@ -29,7 +29,7 @@ public class IngestionTestController {
      * Option to pass a date parameter to execute extraction, transformation, and ingestion for a specific date.
      * 
      * @param date optional target date (YYYY-MM-DD) for single-date ingestion
-     * @return ResponseEntity containing list of IngestionResult payloads and HTTP 200 OK
+     * @return ResponseEntity containing dataList of IngestionResult payloads and HTTP 200 OK
      */
     @GetMapping
     public ResponseEntity<List<IngestionResult>> pushData(

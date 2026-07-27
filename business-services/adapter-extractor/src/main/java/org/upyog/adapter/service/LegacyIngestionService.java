@@ -1,5 +1,7 @@
 package org.upyog.adapter.service;
 
+import org.upyog.adapter.util.CommonUtils;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -128,7 +130,7 @@ public class LegacyIngestionService {
 				summaryRepository.saveOrUpdateLastAttemptedDate(tenantId, module.name(), date);
 
 				// Run ingestion
-				long now = System.currentTimeMillis();
+				long now = CommonUtils.getCurrentEpochMillis();
 				Object rawData = null;
 				IngestionResult result = null;
 				String requestJson = "{}";
@@ -155,10 +157,10 @@ public class LegacyIngestionService {
 					responseJson = result.getResponseData() != null ? sanitizeJson(result.getResponseData())
 							: sanitizeJson(result.getFailureReason());
 
-				} catch (Exception e) {
-					log.error("LegacyIngestionService | Ingestion error for legacy module {} date {}", module, date, e);
-					responseJson = sanitizeJson(e.getMessage());
-					result = IngestionResult.builder().ingestionStatus("FAILURE").failureReason(e.getMessage())
+				} catch (Exception exception) {
+					log.error("LegacyIngestionService | Ingestion error for legacy module {} date {}", module, date, exception);
+					responseJson = sanitizeJson(exception.getMessage());
+					result = IngestionResult.builder().ingestionStatus("FAILURE").failureReason(exception.getMessage())
 							.ingestedAt(now).moduleName(module.name()).date(date.toString()).build();
 				}
 
@@ -239,7 +241,7 @@ public class LegacyIngestionService {
 		}
 		try {
 			return objectMapper.writeValueAsString(java.util.Map.of("error", input));
-		} catch (Exception ex) {
+		} catch (Exception exception) {
 			return "{\"error\":\"" + input.replace("\"", "\\\"").replace("\n", " ") + "\"}";
 		}
 	}

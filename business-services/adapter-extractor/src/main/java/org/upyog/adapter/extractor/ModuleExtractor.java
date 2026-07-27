@@ -8,7 +8,7 @@ import org.upyog.adapter.model.DashboardData;
 /**
  * Strategy interface defining data extraction rules for a specific UPYOG business module.
  * 
- * <p>Implementations (e.g. {@code PtModuleExtractor}, {@code TlModuleExtractor}) encapsulate
+ * <p>Implementations (exception.g. {@code PtModuleExtractor}, {@code TlModuleExtractor}) encapsulate
  * database metrics collection and SQL query execution for their target business module.
  */
 public interface ModuleExtractor<T> {

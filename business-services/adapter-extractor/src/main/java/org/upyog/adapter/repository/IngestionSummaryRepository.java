@@ -34,14 +34,14 @@ public class IngestionSummaryRepository {
 	private IngestionSummaryQueryBuilder queryBuilder;
 	
 	@Autowired
-	private org.upyog.adapter.producer.AdapterProducer producer;
+	private org.upyog.adapter.service.IngestionPersistenceService persistenceService;
 
 	/**
 	 * Retrieves the last successfully ingested date for the specified tenant and
 	 * module.
 	 *
-	 * @param tenantId   DIGIT tenant ID (e.g. "pg.citya" or "pg")
-	 * @param moduleName module short code (e.g. "PT")
+	 * @param tenantId   DIGIT tenant ID (exception.g. "pg.citya" or "pg")
+	 * @param moduleName module short code (exception.g. "PT")
 	 * @return Optional containing the last successful date, or empty if no entry
 	 *         exists
 	 */
@@ -54,9 +54,9 @@ public class IngestionSummaryRepository {
 					.filter(date -> !date.equals(LocalDate.EPOCH)) // Ignores 1970-01-01
 					.findFirst();
 
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			log.error("IngestionSummaryRepository | Failed to query last successful date for tenant {} module {}",
-					tenantId, moduleName, e);
+					tenantId, moduleName, exception);
 		}
 		return Optional.empty();
 	}
@@ -86,73 +86,20 @@ public class IngestionSummaryRepository {
 					result.add(d.toLocalDate());
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			log.error(
 					"IngestionSummaryRepository | Failed to query successfully ingested dates for tenant {} module {} range [{} to {}]",
-					tenantId, moduleName, startDate, endDate, e);
+					tenantId, moduleName, startDate, endDate, exception);
 		}
 		return result;
 	}
 
 	public void saveOrUpdateLastSuccessfulDate(String tenantId, String moduleName, LocalDate successfulDate) {
-		try {
-			long now = System.currentTimeMillis();
-			String id = UUID.randomUUID().toString();
-			
-			org.upyog.adapter.entity.IngestionModuleSummary summary = org.upyog.adapter.entity.IngestionModuleSummary.builder()
-			    .id(id)
-			    .tenantId(tenantId)
-			    .moduleName(moduleName)
-			    .lastSuccessfulDate(successfulDate.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")))
-			    .lastAttemptedDate(successfulDate.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")))
-			    .createdBy("SYSTEM")
-			    .createdTime(now)
-			    .lastModifiedBy("SYSTEM")
-			    .lastModifiedTime(now)
-			    .build();
-
-			java.util.Map<String, Object> msg = new java.util.HashMap<>();
-			msg.put("ingestionModuleSummary", java.util.Collections.singletonList(summary));
-			producer.push(org.upyog.adapter.common.constants.KafkaTopics.UPDATE_ADAPTER_MODULE_SUMMARY, msg);
-
-			log.info("IngestionSummaryRepository | Pushed update for ingestion_module_summary last_successful_date to {} for tenant {} module {}",
-					successfulDate, tenantId, moduleName);
-
-		} catch (Exception e) {
-			log.error(
-					"IngestionSummaryRepository | Failed to update last successful date to {} for tenant {} module {}",
-					successfulDate, tenantId, moduleName, e);
-		}
+		persistenceService.saveOrUpdateLastSuccessfulDate(tenantId, moduleName, successfulDate);
 	}
 
 	public void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, LocalDate attemptedDate) {
-		try {
-			long now = System.currentTimeMillis();
-			String id = UUID.randomUUID().toString();
-			LocalDate fallbackSuccessDate = LocalDate.of(1970, 1, 1);
-
-			org.upyog.adapter.entity.IngestionModuleSummary summary = org.upyog.adapter.entity.IngestionModuleSummary.builder()
-			    .id(id)
-			    .tenantId(tenantId)
-			    .moduleName(moduleName)
-			    .lastSuccessfulDate(fallbackSuccessDate.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")))
-			    .lastAttemptedDate(attemptedDate.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")))
-			    .createdBy("SYSTEM")
-			    .createdTime(now)
-			    .lastModifiedBy("SYSTEM")
-			    .lastModifiedTime(now)
-			    .build();
-
-			java.util.Map<String, Object> msg = new java.util.HashMap<>();
-			msg.put("ingestionModuleSummary", java.util.Collections.singletonList(summary));
-			producer.push(org.upyog.adapter.common.constants.KafkaTopics.UPDATE_ADAPTER_MODULE_SUMMARY, msg);
-
-			log.info("IngestionSummaryRepository | Pushed update for ingestion_module_summary last_attempted_date to {} for tenant {} module {}",
-					attemptedDate, tenantId, moduleName);
-		} catch (Exception e) {
-			log.error("IngestionSummaryRepository | Failed to update last attempted date to {} for tenant {} module {}",
-					attemptedDate, tenantId, moduleName, e);
-		}
+		persistenceService.saveOrUpdateLastAttemptedDate(tenantId, moduleName, attemptedDate);
 	}
 
 	public Set<LocalDate> findRegisteredLegacyJobDates(String tenantId, String moduleName) {
@@ -165,40 +112,15 @@ public class IngestionSummaryRepository {
 					dates.add(d.toLocalDate());
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			log.error("IngestionSummaryRepository | Failed to query legacy job dates for tenant {} module {}", tenantId,
-					moduleName, e);
+					moduleName, exception);
 		}
 		return dates;
 	}
 
 	public void createLegacyJob(String tenantId, String moduleName, LocalDate date) {
-		try {
-			long now = System.currentTimeMillis();
-			String jobId = UUID.randomUUID().toString();
-			
-			org.upyog.adapter.entity.LegacyIngestionData legacyData = org.upyog.adapter.entity.LegacyIngestionData.builder()
-			    .moduleIngestionId(jobId)
-			    .tenantId(tenantId)
-			    .moduleName(moduleName)
-			    .pushDate(date.format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")))
-			    .ingestionStatus("NOT_STARTED")
-			    .createdBy("SYSTEM")
-			    .createdTime(now)
-			    .lastModifiedBy("SYSTEM")
-			    .lastModifiedTime(now)
-			    .build();
-			    
-			java.util.Map<String, Object> msg = new java.util.HashMap<>();
-			msg.put("legacyIngestionData", java.util.Collections.singletonList(legacyData));
-			producer.push(org.upyog.adapter.common.constants.KafkaTopics.SAVE_LEGACY_INGESTION_DETAIL, msg);
-
-			log.debug("IngestionSummaryRepository | Pushed legacy job for tenant {} module {} date {}", tenantId,
-					moduleName, date);
-		} catch (Exception e) {
-			log.error("IngestionSummaryRepository | Failed to push legacy job for tenant {} module {} date {}",
-					tenantId, moduleName, date, e);
-		}
+		persistenceService.createLegacyJob(tenantId, moduleName, date);
 	}
 
 	public static class LegacyJob {
@@ -225,31 +147,14 @@ public class IngestionSummaryRepository {
 					(rs, rowNum) -> new LegacyJob(rs.getString("module_ingestion_id"),
 							rs.getDate("push_date").toLocalDate()),
 					tenantId, moduleName, limit);
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			log.error("IngestionSummaryRepository | Failed to fetch pending/failed legacy jobs for tenant {} module {}",
-					tenantId, moduleName, e);
+					tenantId, moduleName, exception);
 			return List.of();
 		}
 	}
 
 	public void updateLegacyJobStatus(String jobId, String status, String requestData, String responseData) {
-		try {
-			long now = System.currentTimeMillis();
-			org.upyog.adapter.entity.LegacyIngestionData legacyData = org.upyog.adapter.entity.LegacyIngestionData.builder()
-			    .moduleIngestionId(jobId)
-			    .responseData(responseData)
-			    .ingestionStatus(status)
-			    .lastModifiedBy("SYSTEM")
-			    .lastModifiedTime(now)
-			    .build();
-			    
-			java.util.Map<String, Object> msg = new java.util.HashMap<>();
-			msg.put("legacyIngestionData", java.util.Collections.singletonList(legacyData));
-			producer.push(org.upyog.adapter.common.constants.KafkaTopics.UPDATE_LEGACY_INGESTION_DETAIL, msg);
-
-			log.info("IngestionSummaryRepository | Pushed update legacy job {} to status {}", jobId, status);
-		} catch (Exception e) {
-			log.error("IngestionSummaryRepository | Failed to push update legacy job {} to status {}", jobId, status, e);
-		}
+		persistenceService.updateLegacyJobStatus(jobId, status, requestData, responseData);
 	}
 }

@@ -26,8 +26,8 @@ class OAuthTokenResponseTest {
         OAuthTokenResponse response = mapper.readValue(json, OAuthTokenResponse.class);
 
         assertThat(response.getAccessToken()).isEqualTo("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9");
-        assertThat(response.getToken_type()).isEqualTo("bearer");
-        assertThat(response.getRefresh_token()).isEqualTo("refresh-xyz");
+        assertThat(response.getTokenType()).isEqualTo("bearer");
+        assertThat(response.getRefreshToken()).isEqualTo("refresh-xyz");
         assertThat(response.getExpiresIn()).isEqualTo(3599L);
         assertThat(response.getScope()).isEqualTo("read");
     }

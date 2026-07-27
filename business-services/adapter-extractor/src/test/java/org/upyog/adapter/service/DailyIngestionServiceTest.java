@@ -1,5 +1,7 @@
 package org.upyog.adapter.service;
 
+import org.upyog.adapter.util.TestUtils;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -64,8 +66,8 @@ class DailyIngestionServiceTest {
         lenient().when(adapterProperties.getDefaultStartDateStr()).thenReturn(LocalDate.now().minusDays(2).toString());
         lenient().when(adapterProperties.getDailyCatchUpLimitDays()).thenReturn(7);
 
-        setField(service, "tenantId", "pg");
-        setField(service, "defaultStartDateStr", LocalDate.now().minusDays(2).toString());
+        TestUtils.setField(service, "tenantId", "pg");
+        TestUtils.setField(service, "defaultStartDateStr", LocalDate.now().minusDays(2).toString());
     }
 
     @Test
@@ -164,9 +166,5 @@ class DailyIngestionServiceTest {
         verify(adapterClient, never()).execute(any());
     }
 
-    private static void setField(Object target, String fieldName, Object value) throws Exception {
-        Field field = target.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(target, value);
-    }
+    
 }

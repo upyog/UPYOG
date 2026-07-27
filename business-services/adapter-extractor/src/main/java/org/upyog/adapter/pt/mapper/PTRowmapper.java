@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 import org.upyog.adapter.pt.dto.PTCollectionDTO;
-import org.upyog.adapter.pt.dto.PTCombinedDTO;
+import org.upyog.adapter.pt.dto.PTAggregatedData;
 import org.upyog.adapter.pt.constants.PTDatabaseConstants;
 
 /**
@@ -17,10 +17,10 @@ public final class PTRowmapper {
         // Prevent instantiation
     }
 
-    public static final RowMapper<PTCombinedDTO> COMBINED_ROW_MAPPER = new RowMapper<PTCombinedDTO>() {
+    public static final RowMapper<PTAggregatedData> COMBINED_ROW_MAPPER = new RowMapper<PTAggregatedData>() {
         @Override
-        public PTCombinedDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return PTCombinedDTO.builder()
+        public PTAggregatedData mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return PTAggregatedData.builder()
                 .assessments(getNullableInt(rs, PTDatabaseConstants.ASSESSMENTS))
                 .todaysTotalApplications(getNullableInt(rs, PTDatabaseConstants.TODAYS_TOTAL_APPLICATIONS))
                 .todaysClosedApplications(getNullableInt(rs, PTDatabaseConstants.TODAYS_CLOSED_APPLICATIONS))

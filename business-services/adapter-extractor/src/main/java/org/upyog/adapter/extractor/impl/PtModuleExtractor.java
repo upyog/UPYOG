@@ -13,7 +13,7 @@ import org.upyog.adapter.common.constants.Module;
 import org.upyog.adapter.config.SchemaMappingConfig;
 import org.upyog.adapter.extractor.ModuleExtractor;
 import org.upyog.adapter.pt.dto.PTCollectionDTO;
-import org.upyog.adapter.pt.dto.PTCombinedDTO;
+import org.upyog.adapter.pt.dto.PTAggregatedData;
 import org.upyog.adapter.pt.dto.PTDTO;
 import org.upyog.adapter.pt.mapper.PTRowmapper;
 
@@ -77,7 +77,7 @@ public class PtModuleExtractor implements ModuleExtractor<PTDTO> {
 		}
 
 		// DB CALL 1: Combined scalars + JSON arrays query
-		PTCombinedDTO combinedResult = executeQueryWithRetry(ptQueries.getCombinedMetricsQuery(), params);
+		PTAggregatedData combinedResult = executeQueryWithRetry(ptQueries.getCombinedMetricsQuery(), params);
 
 		// DB CALL 2: Payment and tax account breakdown query
 		List<PTCollectionDTO> collectionRows = executeQueryListWithRetry(ptQueries.getCollectionMetricsQuery(), params);
@@ -94,20 +94,20 @@ public class PtModuleExtractor implements ModuleExtractor<PTDTO> {
 				.build();
 	}
 
-	private PTCombinedDTO executeQueryWithRetry(String query, Map<String, Object> params) {
+	private PTAggregatedData executeQueryWithRetry(String query, Map<String, Object> params) {
 		int attempt = 0;
 		while (true) {
 			attempt++;
 			try {
 				return namedParameterJdbcTemplate.queryForObject(query, params, PTRowmapper.COMBINED_ROW_MAPPER);
-			} catch (Exception e) {
+			} catch (Exception exception) {
 				if (attempt >= dbMaxAttempts) {
-					log.error("PtModuleExtractor | DB query failed after {} attempts.", attempt, e);
-					throw e;
+					log.error("PtModuleExtractor | DB query failed after {} attempts.", attempt, exception);
+					throw exception;
 				}
 				long backoff = calculateDbBackoffWithJitter(attempt);
 				log.warn("PtModuleExtractor | DB query failed (attempt {}/{}). Retrying in {} ms. Error: {}", 
-						attempt, dbMaxAttempts, backoff, e.getMessage());
+						attempt, dbMaxAttempts, backoff, exception.getMessage());
 				try {
 					Thread.sleep(backoff);
 				} catch (InterruptedException ie) {
@@ -124,19 +124,19 @@ public class PtModuleExtractor implements ModuleExtractor<PTDTO> {
 			attempt++;
 			try {
 				return namedParameterJdbcTemplate.query(query, params, PTRowmapper.COLLECTION_ROW_MAPPER);
-			} catch (Exception e) {
+			} catch (Exception exception) {
 				if (attempt >= dbMaxAttempts) {
-					log.error("PtModuleExtractor | DB query list failed after {} attempts.", attempt, e);
-					throw e;
+					log.error("PtModuleExtractor | DB query dataList failed after {} attempts.", attempt, exception);
+					throw exception;
 				}
 				long backoff = calculateDbBackoffWithJitter(attempt);
-				log.warn("PtModuleExtractor | DB query list failed (attempt {}/{}). Retrying in {} ms. Error: {}", 
-						attempt, dbMaxAttempts, backoff, e.getMessage());
+				log.warn("PtModuleExtractor | DB query dataList failed (attempt {}/{}). Retrying in {} ms. Error: {}", 
+						attempt, dbMaxAttempts, backoff, exception.getMessage());
 				try {
 					Thread.sleep(backoff);
 				} catch (InterruptedException ie) {
 					Thread.currentThread().interrupt();
-					throw new RuntimeException("DB query list retry interrupted", ie);
+					throw new RuntimeException("DB query dataList retry interrupted", ie);
 				}
 			}
 		}

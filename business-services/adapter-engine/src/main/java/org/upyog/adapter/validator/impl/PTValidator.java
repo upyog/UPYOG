@@ -11,14 +11,14 @@ import org.upyog.adapter.validator.ModuleValidator;
 /**
  * Property Tax (PT) module-specific implementation of {@link ModuleValidator}.
  *
- * <p>Validates that all mandatory PT metric keys are present in the metrics map
+ * <p>Validates that all mandatory PT metric keys are present in the metrics dataMap
  * of a transformed {@link org.upyog.adapter.model.DashboardData} record.
  * This validator runs <em>after</em> the common cross-module validation performed
  * by {@link org.upyog.adapter.validator.CommonValidator}, providing an additional
  * layer of PT-specific checks.
  *
  * <h3>Mandatory PT metrics</h3>
- * The following keys must all be present in the metrics map:
+ * The following keys must all be present in the metrics dataMap:
  * <ul>
  *   <li>{@code assessments} — total number of property assessments</li>
  *   <li>{@code todaysTotalApplications} — applications received today</li>
@@ -73,10 +73,10 @@ public class PTValidator implements ModuleValidator {
      *
      * <p>Each key is checked with {@link #validateRequired(Map, String)}.  If any
      * key is absent a {@link ValidationException} is thrown immediately, stopping
-     * validation for subsequent keys.  Callers that want a full list of missing
+     * validation for subsequent keys.  Callers that want a full dataList of missing
      * fields should consider collecting errors rather than failing fast.
      *
-     * @param metrics the metrics map from
+     * @param metrics the metrics dataMap from
      *                {@link org.upyog.adapter.model.DashboardData#getMetrics()};
      *                must not be {@code null} (enforced by
      *                {@link org.upyog.adapter.validator.CommonValidator})
@@ -105,14 +105,14 @@ public class PTValidator implements ModuleValidator {
     }
 
     /**
-     * Asserts that {@code key} is present in the {@code metrics} map.
+     * Asserts that {@code key} is present in the {@code metrics} dataMap.
      *
      * <p>Uses {@link Map#containsKey(Object)} so that a key mapped to a
      * {@code null} value is considered present.  If the key is absent a
      * {@link ValidationException} is thrown with a message in the format:
      * {@code "<key> is mandatory for PT module."}.
      *
-     * @param metrics the map to inspect; must not be {@code null}
+     * @param metrics the dataMap to inspect; must not be {@code null}
      * @param key     the metric key to verify; must not be {@code null}
      * @throws ValidationException if {@code metrics} does not contain {@code key}
      */

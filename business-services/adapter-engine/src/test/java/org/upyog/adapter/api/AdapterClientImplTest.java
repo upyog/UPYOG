@@ -1,5 +1,7 @@
 package org.upyog.adapter.api;
 
+import org.upyog.adapter.util.CommonUtils;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.upyog.adapter.common.constants.Module;
 import org.upyog.adapter.exception.ValidationException;
-import org.upyog.adapter.loader.Loader;
+import org.upyog.adapter.loader.DashboardDataLoader;
 import org.upyog.adapter.model.AdapterRequest;
 import org.upyog.adapter.model.DashboardData;
 import org.upyog.adapter.model.DashboardPayload;
@@ -37,7 +39,7 @@ class AdapterClientImplTest {
 	private TransformerRegistry registry;
 
 	@Mock
-	private Loader loader;
+	private DashboardDataLoader loader;
 
 	@Mock
 	private CommonValidator commonValidator;
@@ -50,12 +52,12 @@ class AdapterClientImplTest {
 
 	private static IngestionResult createSuccessResult() {
 		return IngestionResult.builder().ingestionStatus("SUCCESS").responseData("{\"response\": \"ok\"}")
-				.ingestedAt(System.currentTimeMillis()).build();
+				.ingestedAt(CommonUtils.getCurrentEpochMillis()).build();
 	}
 
 	private static IngestionResult createFailureResult() {
 		return IngestionResult.builder().ingestionStatus("FAILURE").failureReason("Connection refused")
-				.ingestedAt(System.currentTimeMillis()).build();
+				.ingestedAt(CommonUtils.getCurrentEpochMillis()).build();
 	}
 
 	@Test
@@ -136,7 +138,7 @@ class AdapterClientImplTest {
 		DashboardPayload payload = DashboardPayload.builder().data(Collections.singletonList(data)).build();
 
 		IngestionResult failureResult = IngestionResult.builder().ingestionStatus("FAILURE")
-				.failureReason("Connection timeout").ingestedAt(System.currentTimeMillis()).build();
+				.failureReason("Connection timeout").ingestedAt(CommonUtils.getCurrentEpochMillis()).build();
 
 		AdapterRequest request = AdapterRequest.builder().module(Module.PT).rawData(List.of(data)).build();
 

@@ -11,7 +11,7 @@ package org.upyog.adapter.exception;
  *       absent or empty in the transformed {@link org.upyog.adapter.model.DashboardPayload}.</li>
  *   <li>{@link org.upyog.adapter.validator.ModuleValidator} implementations
  *       (e.g. {@link org.upyog.adapter.pt.validation.impl.PTValidator}) — when
- *       a required module-specific metric key is missing from the metrics map.</li>
+ *       a required module-specific metric key is missing from the metrics dataMap.</li>
  * </ul>
  *
  * <p>Callers at the API layer should catch this exception and translate it to an

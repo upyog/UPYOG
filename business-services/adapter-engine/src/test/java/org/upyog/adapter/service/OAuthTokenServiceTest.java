@@ -1,5 +1,7 @@
 package org.upyog.adapter.service;
 
+import org.upyog.adapter.util.TestUtils;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -278,7 +280,7 @@ class OAuthTokenServiceTest {
 
     private OAuthTokenService createServiceWithMocks() throws Exception {
         OAuthTokenService svc = new OAuthTokenService();
-        setField(svc, "userFeignClient", userFeignClient);
+        TestUtils.setField(svc, "userFeignClient", userFeignClient);
         
         AdapterProperties mockProps = mock(AdapterProperties.class);
         lenient().when(mockProps.getOauthHost()).thenReturn("http://localhost:8080");
@@ -293,22 +295,18 @@ class OAuthTokenServiceTest {
         lenient().when(mockProps.getOauthBaseDelayMs()).thenReturn(1L);
         lenient().when(mockProps.getOauthMaxDelayMs()).thenReturn(2L);
         
-        setField(svc, "adapterProperties", mockProps);
+        TestUtils.setField(svc, "adapterProperties", mockProps);
         return svc;
     }
 
     private OAuthTokenResponse createTokenResponse(String accessToken, long expiresIn) {
         OAuthTokenResponse response = new OAuthTokenResponse();
-        response.setAccess_token(accessToken);
-        response.setExpires_in(expiresIn);
-        response.setToken_type("bearer");
+        response.setAccessToken(accessToken);
+        response.setExpiresIn(expiresIn);
+        response.setTokenType("bearer");
         response.setScope("read");
         return response;
     }
 
-    private static void setField(Object target, String fieldName, Object value) throws Exception {
-        Field field = target.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(target, value);
-    }
+    
 }

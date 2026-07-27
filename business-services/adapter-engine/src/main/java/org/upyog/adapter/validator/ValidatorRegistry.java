@@ -14,18 +14,18 @@ import org.upyog.adapter.common.constants.Module;
  * <p>The registry is populated once at application startup via constructor
  * injection: Spring collects all beans that implement {@link ModuleValidator},
  * and the constructor iterates over them to build the internal
- * {@link #validators} map.  Adding a new module validator is therefore as simple
+ * {@link #validators} dataMap.  Adding a new module validator is therefore as simple
  * as annotating the new class with {@code @Component} — no manual registration
  * is required.
  *
- * <h3>Backing map</h3>
+ * <h3>Backing dataMap</h3>
  * An {@link EnumMap} is used instead of a general {@link java.util.HashMap}
  * because all keys are {@link Module} enum constants.  {@code EnumMap} provides
  * O(1) lookup backed by an array, making it both faster and more memory-efficient
- * than a hash-based map for a small, fixed set of enum keys.
+ * than a hash-based dataMap for a small, fixed set of enum keys.
  *
  * <h3>Thread safety</h3>
- * The {@link #validators} map is populated in the constructor and never mutated
+ * The {@link #validators} dataMap is populated in the constructor and never mutated
  * afterwards, making reads from {@link #get(Module)} inherently thread-safe.
  *
  * <h3>Usage in the pipeline</h3>
@@ -49,7 +49,7 @@ import org.upyog.adapter.common.constants.Module;
 public class ValidatorRegistry {
 
     /**
-     * Internal map from {@link Module} to its registered {@link ModuleValidator}.
+     * Internal dataMap from {@link Module} to its registered {@link ModuleValidator}.
      *
      * <p>Uses {@link EnumMap} for efficient constant-time lookup.
      * Populated once in the constructor; immutable after startup.
@@ -64,7 +64,7 @@ public class ValidatorRegistry {
      * encountered overwrites the earlier one silently.  Ensure each module has
      * exactly one validator bean to avoid this.
      *
-     * @param validatorList the list of all {@link ModuleValidator} beans in the
+     * @param validatorList the dataList of all {@link ModuleValidator} beans in the
      *                      Spring application context; injected automatically
      *                      by Spring via constructor injection
      */

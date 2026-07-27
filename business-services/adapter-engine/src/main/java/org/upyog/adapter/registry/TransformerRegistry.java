@@ -15,7 +15,7 @@ import org.upyog.adapter.transformer.ModuleTransformer;
  * <p>The registry is populated once at application startup via constructor
  * injection: Spring collects all beans that implement {@link ModuleTransformer},
  * and the constructor iterates over them to build the internal
- * {@link #registry} map.  This means adding a new module transformer is as
+ * {@link #registry} dataMap.  This means adding a new module transformer is as
  * simple as annotating the new class with {@code @Component} — no manual
  * registration or factory changes are required.
  *
@@ -26,7 +26,7 @@ import org.upyog.adapter.transformer.ModuleTransformer;
  * }</pre>
  *
  * <h3>Thread safety</h3>
- * The {@link #registry} map is populated in the constructor and never mutated
+ * The {@link #registry} dataMap is populated in the constructor and never mutated
  * afterwards, making reads from {@link #get(Module)} inherently thread-safe
  * without synchronization.
  *
@@ -43,7 +43,7 @@ import org.upyog.adapter.transformer.ModuleTransformer;
 public class TransformerRegistry {
 
     /**
-     * Internal map from {@link Module} to its registered {@link ModuleTransformer}.
+     * Internal dataMap from {@link Module} to its registered {@link ModuleTransformer}.
      *
      * <p>Populated once during construction; never mutated after startup.
      */
@@ -57,7 +57,7 @@ public class TransformerRegistry {
      * encountered overwrites the earlier one.  To avoid silent overwrites,
      * ensure each module has exactly one transformer bean.
      *
-     * @param transformers the list of all {@link ModuleTransformer} beans in the
+     * @param transformers the dataList of all {@link ModuleTransformer} beans in the
      *                     Spring application context; injected automatically
      *                     by Spring via constructor injection
      */

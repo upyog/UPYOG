@@ -12,7 +12,7 @@ import org.upyog.adapter.extractor.ModuleExtractor;
 /**
  * Registry mapping each business {@link Module} to its corresponding {@link ModuleExtractor}.
  * 
- * <p>Uses Spring constructor list injection to auto-discover all available {@link ModuleExtractor}
+ * <p>Uses Spring constructor dataList injection to auto-discover all available {@link ModuleExtractor}
  * beans at application startup. Adding a new module extractor requires zero manual registration.
  */
 @Component
@@ -23,7 +23,7 @@ public class ExtractorRegistry {
     /**
      * Constructs the ExtractorRegistry by discovering all {@link ModuleExtractor} Spring components.
      * 
-     * @param extractorList list of all ModuleExtractor components discovered by Spring
+     * @param extractorList dataList of all ModuleExtractor components discovered by Spring
      */
     @Autowired
     public ExtractorRegistry(List<ModuleExtractor<?>> extractorList) {

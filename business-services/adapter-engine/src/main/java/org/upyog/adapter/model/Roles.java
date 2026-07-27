@@ -6,7 +6,7 @@ import lombok.Data;
  * Represents a single DIGIT role assigned to a {@link UserInfo}.
  *
  * <p>Roles control what actions a user is authorized to perform within a
- * given tenant.  Each {@link UserInfo} object can carry a list of
+ * given tenant.  Each {@link UserInfo} object can carry a dataList of
  * {@code Roles}, scoped to a specific tenant identified by {@link #tenantId}.
  *
  * <p>In the adapter-service, {@code Roles} objects are deserialized as part of

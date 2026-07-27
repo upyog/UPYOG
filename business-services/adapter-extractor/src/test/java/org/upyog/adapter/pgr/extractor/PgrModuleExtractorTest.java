@@ -1,5 +1,7 @@
 package org.upyog.adapter.pgr.extractor;
 
+import org.upyog.adapter.util.TestUtils;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -68,11 +70,7 @@ class PgrModuleExtractorTest {
 		extractor.init();
 	}
 
-	private void setField(String fieldName, Object val) throws Exception {
-		java.lang.reflect.Field field = PgrModuleExtractor.class.getDeclaredField(fieldName);
-		field.setAccessible(true);
-		field.set(extractor, val);
-	}
+	
 
 	@Test
 	@DisplayName("getModule returns Module.PGR")

@@ -19,7 +19,7 @@ import org.upyog.adapter.model.DashboardPayload;
  *       Spring discovers them at startup.</li>
  *   <li>Return a unique, non-{@code null} {@link Module} value from
  *       {@link #getModule()} so {@link org.upyog.adapter.registry.TransformerRegistry}
- *       can build the module-to-transformer map without conflicts.</li>
+ *       can build the module-to-transformer dataMap without conflicts.</li>
  * </ol>
  *
  * <h3>Type parameter</h3>

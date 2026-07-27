@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
  *   <li><strong>Contextual fields</strong> ({@link #date}, {@link #module},
  *       {@link #ward}, {@link #ulb}, {@link #region}, {@link #state}) — identify
  *       <em>where</em> and <em>when</em> the metrics apply.</li>
- *   <li><strong>Metrics map</strong> ({@link #metrics}) — contains the
+ *   <li><strong>Metrics dataMap</strong> ({@link #metrics}) — contains the
  *       module-specific KPI values as a flexible key-value store so that new
  *       metrics can be added without changing the model class.</li>
  * </ul>
@@ -96,7 +96,7 @@ public class DashboardData {
     private String state;
 
     /**
-     * Module-specific KPI metrics as a flexible key-value map.
+     * Module-specific KPI metrics as a flexible key-value dataMap.
      *
      * <p>Each key is a metric name and the value is typically a numeric figure
      * (integer or decimal) though the type is kept as {@link Object} to remain

@@ -1,5 +1,7 @@
 package org.upyog.adapter.service;
 
+import org.upyog.adapter.util.TestUtils;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -56,7 +58,7 @@ class LegacyIngestionServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        setField(legacyService, "tenantId", "pg");
+        TestUtils.setField(legacyService, "tenantId", "pg");
     }
 
     @Test
@@ -124,9 +126,5 @@ class LegacyIngestionServiceTest {
         verify(summaryRepository, never()).saveOrUpdateLastSuccessfulDate(any(), any(), any());
     }
 
-    private static void setField(Object target, String fieldName, Object value) throws Exception {
-        Field field = target.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(target, value);
-    }
+    
 }

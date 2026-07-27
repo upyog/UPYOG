@@ -3,16 +3,14 @@ package org.upyog.adapter.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.lenient;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,24 +27,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.upyog.adapter.api.AdapterClientImpl;
 import org.upyog.adapter.common.constants.Module;
-import org.upyog.adapter.config.SchemaMappingConfig;
 import org.upyog.adapter.config.AdapterProperties;
+import org.upyog.adapter.config.SchemaMappingConfig;
 import org.upyog.adapter.controller.IngestionTestController;
-import org.upyog.adapter.loader.impl.HttpLoader;
+import org.upyog.adapter.extractor.impl.PtModuleExtractor;
+import org.upyog.adapter.loader.impl.DashboardDataLoaderImpl;
 import org.upyog.adapter.model.IngestionResult;
 import org.upyog.adapter.producer.AdapterProducer;
-import org.upyog.adapter.extractor.impl.PtModuleExtractor;
-import org.upyog.adapter.transformer.impl.PTTransformer;
+import org.upyog.adapter.pt.dto.PTAggregatedData;
+import org.upyog.adapter.pt.dto.PTCollectionDTO;
+import org.upyog.adapter.pt.mapper.PTRowmapper;
 import org.upyog.adapter.registry.ExtractorRegistry;
 import org.upyog.adapter.registry.TransformerRegistry;
 import org.upyog.adapter.repository.IngestionSummaryRepository;
+import org.upyog.adapter.service.AuditService;
 import org.upyog.adapter.service.DailyIngestionService;
 import org.upyog.adapter.service.OAuthTokenService;
+import org.upyog.adapter.transformer.impl.PTTransformer;
+import org.upyog.adapter.util.TestUtils;
 import org.upyog.adapter.validator.CommonValidator;
-import org.upyog.adapter.pt.dto.PTCollectionDTO;
-import org.upyog.adapter.pt.dto.PTCombinedDTO;
-import org.upyog.adapter.pt.dto.PTDTO;
-import org.upyog.adapter.pt.mapper.PTRowmapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,6 +78,9 @@ class DateIngestionFlowIntegrationTest {
     private AdapterProducer producer;
 
     @Mock
+    private AuditService auditService;
+
+    @Mock
     private IngestionSummaryRepository summaryRepository;
 
     private SchemaMappingConfig schemaMappingConfig;
@@ -87,7 +89,7 @@ class DateIngestionFlowIntegrationTest {
     private PTTransformer ptTransformer;
     private TransformerRegistry transformerRegistry;
     private CommonValidator commonValidator;
-    private HttpLoader httpLoader;
+    private DashboardDataLoaderImpl httpLoader;
     private AdapterClientImpl adapterClient;
     private DailyIngestionService dailyIngestionService;
     private IngestionTestController ingestionTestController;
@@ -113,19 +115,19 @@ class DateIngestionFlowIntegrationTest {
 
         // 2. Setup Extractor
         ptExtractor = new PtModuleExtractor();
-        setField(ptExtractor, "namedParameterJdbcTemplate", namedParameterJdbcTemplate);
-        setField(ptExtractor, "schemaMappingConfig", schemaMappingConfig);
-        setField(ptExtractor, "ulb", "pg.citya");
-        setField(ptExtractor, "ward", "Block 4");
-        setField(ptExtractor, "region", "Test");
-        setField(ptExtractor, "state", "Punjab");
-        setField(ptExtractor, "dbTenantId", "pg");
+        TestUtils.setField(ptExtractor, "namedParameterJdbcTemplate", namedParameterJdbcTemplate);
+        TestUtils.setField(ptExtractor, "schemaMappingConfig", schemaMappingConfig);
+        TestUtils.setField(ptExtractor, "ulb", "pg.citya");
+        TestUtils.setField(ptExtractor, "ward", "Block 4");
+        TestUtils.setField(ptExtractor, "region", "Test");
+        TestUtils.setField(ptExtractor, "state", "Punjab");
+        TestUtils.setField(ptExtractor, "dbTenantId", "pg");
 
         extractorRegistry = new ExtractorRegistry(List.of(ptExtractor));
 
         // 3. Setup Transformer
         ptTransformer = new PTTransformer();
-        setField(ptTransformer, "objectMapper", objectMapper);
+        TestUtils.setField(ptTransformer, "objectMapper", objectMapper);
         transformerRegistry = new TransformerRegistry(List.of(ptTransformer));
 
         // 4. Setup CommonValidator
@@ -147,32 +149,32 @@ class DateIngestionFlowIntegrationTest {
         lenient().when(adapterProperties.getPtInterestHeads()).thenReturn(List.of("PT_TIME_INTEREST"));
         lenient().when(adapterProperties.getPtDigitalPaymentModes()).thenReturn(List.of("ONLINE", "CARD"));
 
-        setField(ptTransformer, "adapterProperties", adapterProperties);
+        TestUtils.setField(ptTransformer, "adapterProperties", adapterProperties);
 
-        httpLoader = new HttpLoader();
-        setField(httpLoader, "dashboardFeignClient", dashboardFeignClient);
-        setField(httpLoader, "oAuthTokenService", oAuthTokenService);
-        setField(httpLoader, "producer", producer);
-        setField(httpLoader, "gson", new Gson());
-        setField(httpLoader, "objectMapper", objectMapper);
-        setField(httpLoader, "adapterProperties", adapterProperties);
+        httpLoader = new DashboardDataLoaderImpl();
+        TestUtils.setField(httpLoader, "dashboardFeignClient", dashboardFeignClient);
+        TestUtils.setField(httpLoader, "oAuthTokenService", oAuthTokenService);
+        TestUtils.setField(httpLoader, "auditService", auditService);
+        TestUtils.setField(httpLoader, "gson", new Gson());
+        TestUtils.setField(httpLoader, "objectMapper", objectMapper);
+        TestUtils.setField(httpLoader, "adapterProperties", adapterProperties);
 
         // 6. Setup AdapterClientImpl
         adapterClient = new AdapterClientImpl(transformerRegistry, httpLoader, commonValidator);
 
         // 7. Setup DailyIngestionService
         dailyIngestionService = new DailyIngestionService();
-        setField(dailyIngestionService, "adapterClient", adapterClient);
-        setField(dailyIngestionService, "extractorRegistry", extractorRegistry);
-        setField(dailyIngestionService, "schemaMappingConfig", schemaMappingConfig);
-        setField(dailyIngestionService, "summaryRepository", summaryRepository);
-        setField(dailyIngestionService, "tenantId", "pg");
-        setField(dailyIngestionService, "defaultStartDateStr", "2026-06-01");
-        setField(dailyIngestionService, "adapterProperties", adapterProperties);
+        TestUtils.setField(dailyIngestionService, "adapterClient", adapterClient);
+        TestUtils.setField(dailyIngestionService, "extractorRegistry", extractorRegistry);
+        TestUtils.setField(dailyIngestionService, "schemaMappingConfig", schemaMappingConfig);
+        TestUtils.setField(dailyIngestionService, "summaryRepository", summaryRepository);
+        TestUtils.setField(dailyIngestionService, "tenantId", "pg");
+        TestUtils.setField(dailyIngestionService, "defaultStartDateStr", "2026-06-01");
+        TestUtils.setField(dailyIngestionService, "adapterProperties", adapterProperties);
 
         // 8. Setup Controller
         ingestionTestController = new IngestionTestController();
-        setField(ingestionTestController, "service", dailyIngestionService);
+        TestUtils.setField(ingestionTestController, "service", dailyIngestionService);
     }
 
     @Test
@@ -182,7 +184,7 @@ class DateIngestionFlowIntegrationTest {
         LocalDate targetDate = LocalDate.of(2026, 7, 15);
 
         // 1. Mock DB query responses for the extraction phase
-        PTCombinedDTO combinedMetricsResult = PTCombinedDTO.builder()
+        PTAggregatedData combinedMetricsResult = PTAggregatedData.builder()
                 .assessments(50)
                 .todaysTotalApplications(120)
                 .todaysClosedApplications(90)
@@ -259,7 +261,7 @@ class DateIngestionFlowIntegrationTest {
         assertThat(metricsNode.get("todaysTotalApplications").asInt()).isEqualTo(120);
 
         // Verify Kafka audit record push
-        verify(producer).push(eq("save-adapter-ingestion-detail"), any(Map.class));
+        verify(auditService).pushIngestionRecord(any(org.upyog.adapter.model.DashboardPayload.class), any(String.class), any(String.class), eq("SUCCESS"));
     }
 
     @Test
@@ -267,7 +269,7 @@ class DateIngestionFlowIntegrationTest {
     void testCompleteIngestionFlow_ViaRestController() throws Exception {
         LocalDate targetDate = LocalDate.of(2026, 7, 20);
 
-        PTCombinedDTO combinedMetricsResult = PTCombinedDTO.builder()
+        PTAggregatedData combinedMetricsResult = PTAggregatedData.builder()
                 .assessments(10)
                 .todaysTotalApplications(25)
                 .build();
@@ -294,7 +296,7 @@ class DateIngestionFlowIntegrationTest {
     void testCompleteIngestionFlow_ApiFailure_DoesNotUpdateTracker() throws Exception {
         LocalDate targetDate = LocalDate.of(2026, 7, 18);
 
-        when(namedParameterJdbcTemplate.queryForObject(any(String.class), Mockito.<Map<String, ?>>any(), any(org.springframework.jdbc.core.RowMapper.class))).thenReturn(new PTCombinedDTO());
+        when(namedParameterJdbcTemplate.queryForObject(any(String.class), Mockito.<Map<String, ?>>any(), any(org.springframework.jdbc.core.RowMapper.class))).thenReturn(new PTAggregatedData());
         when(namedParameterJdbcTemplate.query(any(String.class), Mockito.<Map<String, ?>>any(), any(org.springframework.jdbc.core.RowMapper.class))).thenReturn(Collections.emptyList());
         when(oAuthTokenService.getToken()).thenReturn("token-123");
 
@@ -313,9 +315,5 @@ class DateIngestionFlowIntegrationTest {
         verify(summaryRepository, Mockito.never()).saveOrUpdateLastSuccessfulDate(any(), any(), any());
     }
 
-    private static void setField(Object target, String fieldName, Object value) throws Exception {
-        Field field = target.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(target, value);
-    }
+    
 }

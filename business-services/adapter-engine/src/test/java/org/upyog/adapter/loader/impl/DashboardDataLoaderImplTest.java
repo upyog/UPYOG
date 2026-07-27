@@ -1,5 +1,7 @@
 package org.upyog.adapter.loader.impl;
 
+import org.upyog.adapter.util.TestUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.upyog.adapter.common.constants.KafkaTopics;
 import org.upyog.adapter.config.AdapterProperties;
@@ -15,6 +18,7 @@ import org.upyog.adapter.model.DashboardPayload;
 import org.upyog.adapter.model.IngestionResult;
 import org.upyog.adapter.model.UserInfo;
 import org.upyog.adapter.producer.AdapterProducer;
+import org.upyog.adapter.service.AuditService;
 import org.upyog.adapter.service.OAuthTokenService;
 
 import java.util.Collections;
@@ -26,10 +30,10 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link HttpLoader}.
+ * Unit tests for {@link DashboardDataLoaderImpl}.
  */
 @ExtendWith(MockitoExtension.class)
-class HttpLoaderTest {
+class DashboardDataLoaderImplTest {
 
     @Mock
     private org.upyog.adapter.client.DashboardFeignClient dashboardFeignClient;
@@ -41,29 +45,34 @@ class HttpLoaderTest {
     private AdapterProducer producer;
 
     @Mock
+    private AuditService auditService;
+
+    @Mock
     private AdapterProperties adapterProperties;
+
+    @InjectMocks
+    private DashboardDataLoaderImpl loader;
 
     private final Gson gson = new Gson();
 
     private ObjectMapper objectMapper;
 
-    private HttpLoader loader;
-
     @BeforeEach
     void setUp() throws Exception {
         objectMapper = new ObjectMapper();
-        loader = new HttpLoader();
-        setField(loader, "dashboardFeignClient", dashboardFeignClient);
-        setField(loader, "oAuthTokenService", oAuthTokenService);
-        setField(loader, "producer", producer);
-        setField(loader, "gson", gson);
-        setField(loader, "objectMapper", objectMapper);
-        setField(loader, "adapterProperties", adapterProperties);
+        loader = new DashboardDataLoaderImpl();
+        TestUtils.setField(loader, "dashboardFeignClient", dashboardFeignClient);
+        TestUtils.setField(loader, "oAuthTokenService", oAuthTokenService);
+        TestUtils.setField(loader, "auditService", auditService);
+        TestUtils.setField(loader, "gson", gson);
+        TestUtils.setField(loader, "objectMapper", objectMapper);
+        TestUtils.setField(loader, "adapterProperties", adapterProperties);
 
         lenient().when(adapterProperties.getDashboardIngestUrl()).thenReturn("http://localhost:8080/national-dashboard/metric/_ingest");
         lenient().when(adapterProperties.getIngestMaxAttempts()).thenReturn(3);
         lenient().when(adapterProperties.getIngestBaseDelayMs()).thenReturn(1L);
         lenient().when(adapterProperties.getIngestMaxDelayMs()).thenReturn(2L);
+        lenient().when(adapterProperties.isIngestRetryEnabled()).thenReturn(true);
     }
 
     @Test
@@ -86,7 +95,7 @@ class HttpLoaderTest {
         assertThat(result.getFailureReason()).isNull();
         assertThat(result.getIngestedAt()).isGreaterThan(0);
 
-        verify(producer).push(eq(KafkaTopics.SAVE_INGESTION_DETAIL), any(Map.class));
+        verify(auditService).pushIngestionRecord(eq(payload), anyString(), eq("{\"status\": \"ok\"}"), eq("SUCCESS"));
     }
 
     @Test
@@ -105,7 +114,7 @@ class HttpLoaderTest {
 
         assertThat(result.getIngestionStatus()).isEqualTo("FAILURE");
         assertThat(result.getFailureReason()).isEqualTo("Connection refused");
-        verify(producer).push(anyString(), any(Map.class));
+        verify(auditService).pushIngestionRecord(any(DashboardPayload.class), anyString(), anyString(), eq("FAILURE"));
     }
 
     @Test
@@ -119,8 +128,8 @@ class HttpLoaderTest {
                 anyString()))
                 .thenReturn("{\"status\": \"ok\"}");
 
-        doThrow(new RuntimeException("Kafka unavailable"))
-                .when(producer).push(anyString(), any());
+        doThrow(new RuntimeException("Audit unavailable"))
+                .when(auditService).pushIngestionRecord(any(), any(), any(), any());
 
         DashboardPayload payload = createValidPayload();
         IngestionResult result = loader.load(payload);
@@ -198,10 +207,10 @@ class HttpLoaderTest {
     }
 
     @Test
-    @DisplayName("HttpLoader implements Loader interface and has adapterProperties field")
+    @DisplayName("DashboardDataLoaderImpl implements DashboardDataLoader interface and has adapterProperties field")
     void loader_structure() throws Exception {
-        assertThat(loader).isInstanceOf(org.upyog.adapter.loader.Loader.class);
-        assertThat(HttpLoader.class.getDeclaredField("adapterProperties")).isNotNull();
+        assertThat(loader).isInstanceOf(org.upyog.adapter.loader.DashboardDataLoader.class);
+        assertThat(DashboardDataLoaderImpl.class.getDeclaredField("adapterProperties")).isNotNull();
     }
 
     private static DashboardPayload createValidPayload() {
@@ -223,9 +232,5 @@ class HttpLoaderTest {
                 .build();
     }
 
-    private static void setField(Object target, String fieldName, Object value) throws Exception {
-        java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(target, value);
-    }
+    
 }

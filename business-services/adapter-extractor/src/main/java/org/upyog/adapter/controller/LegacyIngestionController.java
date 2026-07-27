@@ -34,9 +34,9 @@ public class LegacyIngestionController {
      * Retrieves the status of legacy jobs.
      *
      * @param tenantId DIGIT tenant ID
-     * @param moduleName module short code (e.g. "PT")
+     * @param moduleName module short code (exception.g. "PT")
      * @param limit maximum number of pending/failed jobs to return
-     * @return ResponseEntity with a map containing pending/failed jobs and registered dates
+     * @return ResponseEntity with a dataMap containing pending/failed jobs and registered dates
      */
     @org.springframework.web.bind.annotation.GetMapping("/jobs/status")
     public ResponseEntity<java.util.Map<String, Object>> getLegacyJobsStatus(
@@ -56,7 +56,7 @@ public class LegacyIngestionController {
      *
      * @param startDate start date (YYYY-MM-DD); defaults to 5 months ago if null
      * @param endDate end date (YYYY-MM-DD); defaults to yesterday if null
-     * @param module optional module name filter (e.g. "PT")
+     * @param module optional module name filter (exception.g. "PT")
      * @return ResponseEntity with LegacyIngestionResponse
      */
     @PostMapping("/ingest")
@@ -84,7 +84,7 @@ public class LegacyIngestionController {
      * Triggers bulk historical ingestion for the last N months up to yesterday.
      *
      * @param months number of months to look back (default: 5)
-     * @param module optional module name filter (e.g. "PT")
+     * @param module optional module name filter (exception.g. "PT")
      * @return ResponseEntity with LegacyIngestionResponse
      */
     @PostMapping("/ingest/last-months")
@@ -106,7 +106,7 @@ public class LegacyIngestionController {
         }
         try {
             return Module.valueOf(moduleStr.trim().toUpperCase());
-        } catch (Exception e) {
+        } catch (Exception exception) {
             log.warn("LegacyIngestionController | Unknown module name '{}'. Will process all enabled modules.", moduleStr);
             return null;
         }

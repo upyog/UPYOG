@@ -128,4 +128,8 @@ public class AdapterProperties {
     // Daily catch-up limit
     @Value("${adapter.daily.catch-up-limit-days}")
     private int dailyCatchUpLimitDays;
+
+    // Toggle for persister vs direct JDBC
+    @Value("${adapter.persister.enabled:true}")
+    private boolean persisterEnabled;
 }

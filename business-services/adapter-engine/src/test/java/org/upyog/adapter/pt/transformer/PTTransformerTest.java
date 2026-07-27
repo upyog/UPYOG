@@ -9,7 +9,7 @@ import org.upyog.adapter.common.constants.Module;
 import org.upyog.adapter.model.DashboardData;
 import org.upyog.adapter.model.DashboardPayload;
 import org.upyog.adapter.pt.dto.PTCollectionDTO;
-import org.upyog.adapter.pt.dto.PTCombinedDTO;
+import org.upyog.adapter.pt.dto.PTAggregatedData;
 import org.upyog.adapter.pt.dto.PTDTO;
 
 import org.upyog.adapter.config.AdapterProperties;
@@ -63,7 +63,7 @@ class PTTransformerTest {
 				.date("15-07-2026")
 				.module("PT")
 				.ulb("pg.citya")
-				.combinedMetrics(PTCombinedDTO.builder()
+				.combinedMetrics(PTAggregatedData.builder()
 						.assessments(50)
 						.todaysTotalApplications(120)
 						.propertiesRegisteredJson("[{\"name\":\"2025-26\",\"value\":1500}]")

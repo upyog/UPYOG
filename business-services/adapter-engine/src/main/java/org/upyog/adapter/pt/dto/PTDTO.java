@@ -20,6 +20,6 @@ public class PTDTO {
     private String ulb;
     private String region;
     private String state;
-    private PTCombinedDTO combinedMetrics;
+    private PTAggregatedData combinedMetrics;
     private List<PTCollectionDTO> collectionMetrics;
 }

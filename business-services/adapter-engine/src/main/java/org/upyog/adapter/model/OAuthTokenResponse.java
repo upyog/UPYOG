@@ -1,6 +1,7 @@
 package org.upyog.adapter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
@@ -52,14 +53,16 @@ public class OAuthTokenResponse {
      *
      * <p>JSON field: {@code access_token}.
      */
-    private String access_token;
+    @JsonProperty("access_token")
+    private String accessToken;
 
     /**
      * Token type returned by the OAuth server; typically {@code "bearer"}.
      *
      * <p>JSON field: {@code token_type}.
      */
-    private String token_type;
+    @JsonProperty("token_type")
+    private String tokenType;
 
     /**
      * Refresh token that can be used to obtain a new access token without
@@ -69,7 +72,8 @@ public class OAuthTokenResponse {
      *
      * <p>JSON field: {@code refresh_token}.
      */
-    private String refresh_token;
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 
     /**
      * Lifetime of the access token in seconds from the time it was issued.
@@ -80,7 +84,8 @@ public class OAuthTokenResponse {
      *
      * <p>JSON field: {@code expires_in}.
      */
-    private long expires_in;
+    @JsonProperty("expires_in")
+    private long expiresIn;
 
     /**
      * OAuth2 scope granted for this token (e.g. {@code "read"}).
@@ -99,43 +104,6 @@ public class OAuthTokenResponse {
      *
      * <p>JSON field: {@code UserRequest} (upper-case U, as returned by the server).
      */
-    private UserInfo UserRequest;
-
-    /**
-     * Returns the OAuth2 bearer token string.
-     *
-     * <p>Convenience method that mirrors the snake_case JSON field name
-     * ({@code access_token}) with a proper camelCase accessor that can be used
-     * alongside Lombok-generated methods.
-     *
-     * @return the access token string; {@code null} if the response was incomplete
-     */
-    public String getAccessToken() {
-        return access_token;
-    }
-
-    /**
-     * Returns the token lifetime in seconds.
-     *
-     * <p>Convenience method that mirrors the snake_case JSON field name
-     * ({@code expires_in}) with a proper camelCase accessor.
-     *
-     * @return the number of seconds until this token expires
-     */
-    public long getExpiresIn() {
-        return expires_in;
-    }
-
-    /**
-     * Returns the user profile embedded in the token response.
-     *
-     * <p>Provides access to the {@code UserRequest} field using a camelCase
-     * accessor name consistent with Java conventions.
-     *
-     * @return the {@link UserInfo} from the token response, or {@code null}
-     *         if the server did not include it
-     */
-    public UserInfo getUserRequest() {
-        return UserRequest;
-    }
+    @JsonProperty("UserRequest")
+    private UserInfo userRequest;
 }

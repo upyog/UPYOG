@@ -1,5 +1,7 @@
 package org.upyog.adapter.loader;
 
+import org.upyog.adapter.util.CommonUtils;
+
 import org.upyog.adapter.model.DashboardPayload;
 import org.upyog.adapter.model.IngestionResult;
 
@@ -30,7 +32,7 @@ import org.upyog.adapter.model.IngestionResult;
  * @see DashboardPayload
  * @see IngestionResult
  */
-public interface Loader {
+public interface DashboardDataLoader {
 
     /**
      * Pushes the normalized {@code data} payload to the configured downstream
@@ -42,7 +44,7 @@ public interface Loader {
      * to perform real I/O.
      *
      * @param data the fully validated, normalized dashboard payload to push;
-     *             must not be {@code null}; the {@code Data} list should contain
+     *             must not be {@code null}; the {@code Data} dataList should contain
      *             at least one {@link org.upyog.adapter.model.DashboardData} entry
      * @return an {@link IngestionResult} describing the outcome:
      *         <ul>
@@ -57,7 +59,7 @@ public interface Loader {
         return IngestionResult.builder()
                 .ingestionStatus("SUCCESS")
                 .responseData("")
-                .ingestedAt(System.currentTimeMillis())
+                .ingestedAt(CommonUtils.getCurrentEpochMillis())
                 .build();
     }
 }

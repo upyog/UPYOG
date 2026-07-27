@@ -13,14 +13,14 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for the {@link Loader} interface default implementation.
+ * Unit tests for the {@link DashboardDataLoader} interface default implementation.
  */
-class LoaderTest {
+class DashboardDataLoaderTest {
 
     @Test
     @DisplayName("Default load returns SUCCESS with empty response")
     void defaultLoad_returnsSuccess() {
-        Loader loader = new Loader() {
+        DashboardDataLoader loader = new DashboardDataLoader() {
             // Uses the default implementation
         };
 
@@ -47,7 +47,7 @@ class LoaderTest {
     @Test
     @DisplayName("Default load returns current timestamp")
     void defaultLoad_returnsCurrentTimestamp() {
-        Loader loader = new Loader() {
+        DashboardDataLoader loader = new DashboardDataLoader() {
             // Uses the default implementation
         };
 

@@ -1,5 +1,7 @@
 package org.upyog.adapter.service;
 
+import org.upyog.adapter.util.CommonUtils;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +103,7 @@ public class DailyIngestionService {
 						.date(yesterday.toString())
 						.moduleName(module.name())
 						.failureReason("Module " + module.name() + " is already up-to-date up to yesterday (" + yesterday + ")")
-						.ingestedAt(System.currentTimeMillis())
+						.ingestedAt(CommonUtils.getCurrentEpochMillis())
 						.build());
 				continue;
 			}
@@ -116,7 +118,7 @@ public class DailyIngestionService {
 						.date(yesterday.toString())
 						.moduleName(module.name())
 						.failureReason("Catch-up gap of " + daysToIngest + " days exceeds max limit of " + catchUpLimit + " days. Use legacy migration endpoint.")
-						.ingestedAt(System.currentTimeMillis())
+						.ingestedAt(CommonUtils.getCurrentEpochMillis())
 						.build());
 				continue;
 			}
@@ -193,13 +195,13 @@ public class DailyIngestionService {
 			log.info("DailyIngestionService | Ingestion status for module {} on date {}: {}",
 					module, date, result.getIngestionStatus());
 			return result;
-		} catch (Exception e) {
-			log.error("DailyIngestionService | Ingestion failed for module {} on date {}", module, date, e);
+		} catch (Exception exception) {
+			log.error("DailyIngestionService | Ingestion failed for module {} on date {}", module, date, exception);
 			return IngestionResult.builder()
 					.ingestionStatus("FAILURE")
 					.moduleName(module.name())
-					.failureReason(e.getMessage())
-					.ingestedAt(System.currentTimeMillis())
+					.failureReason(exception.getMessage())
+					.ingestedAt(CommonUtils.getCurrentEpochMillis())
 					.date(date.toString())
 					.build();
 		}
@@ -210,8 +212,8 @@ public class DailyIngestionService {
 			if (defaultStartDateStr != null && !defaultStartDateStr.isBlank()) {
 				return LocalDate.parse(defaultStartDateStr.trim());
 			}
-		} catch (Exception e) {
-			log.warn("DailyIngestionService | Failed to parse defaultStartDateStr '{}'. Falling back to yesterday.", defaultStartDateStr, e);
+		} catch (Exception exception) {
+			log.warn("DailyIngestionService | Failed to parse defaultStartDateStr '{}'. Falling back to yesterday.", defaultStartDateStr, exception);
 		}
 		return LocalDate.now().minusDays(1);
 	}

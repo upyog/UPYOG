@@ -1,5 +1,7 @@
 package org.upyog.adapter.model;
 
+import org.upyog.adapter.util.CommonUtils;
+
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -69,7 +71,7 @@ public class IngestionResult {
     /**
      * Unix epoch timestamp in milliseconds at which the loader returned this result.
      *
-     * <p>Set via {@code System.currentTimeMillis()} immediately before the result
+     * <p>Set via {@code CommonUtils.getCurrentEpochMillis()} immediately before the result
      * is built and returned, giving an approximate timestamp of when the HTTP call
      * (or failure) completed.
      */

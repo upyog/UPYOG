@@ -12,7 +12,7 @@ import org.upyog.adapter.model.DashboardPayload;
  *
  * <p>This validator runs for <em>all</em> modules and checks fields that are
  * common across the entire adapter pipeline (non-null payload, non-empty data
- * list, and the presence of each contextual field on the first data record).
+ * dataList, and the presence of each contextual field on the first data record).
  * Module-specific metric validation is handled separately by the relevant
  * {@link ModuleValidator} implementation.
  *
@@ -23,7 +23,7 @@ import org.upyog.adapter.model.DashboardPayload;
  *   <li>The first {@link DashboardData} element must have a non-null
  *       and non-empty {@code module} field.</li>
  *   <li>The first element must have a non-null and non-empty {@code state} field.</li>
- *   <li>The first element must have a non-null {@code metrics} map.</li>
+ *   <li>The first element must have a non-null {@code metrics} dataMap.</li>
  *   <li>The first element must have a non-null and non-empty {@code ward} field.</li>
  *   <li>The first element must have a non-null and non-empty {@code region} field.</li>
  *   <li>The first element must have a non-null and non-empty {@code ulb} field.</li>
@@ -45,7 +45,7 @@ public class CommonValidator {
      * Validates common mandatory fields on the first record of {@code payload}.
      *
      * <p>Fails fast: throws on the first validation failure encountered.
-     * All checks apply only to the first element of the data list; callers
+     * All checks apply only to the first element of the data dataList; callers
      * that supply multi-record payloads should be aware that records after
      * index 0 are not validated here.
      *

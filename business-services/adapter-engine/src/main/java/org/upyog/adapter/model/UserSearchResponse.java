@@ -51,9 +51,9 @@ public class UserSearchResponse {
     /**
      * List of users returned by the search.
      *
-     * <p>For a username-based search the list typically contains exactly one
+     * <p>For a username-based search the dataList typically contains exactly one
      * element.  {@link org.upyog.adapter.service.OAuthTokenService} treats the
-     * first element as the system user profile and logs a warning if the list
+     * first element as the system user profile and logs a warning if the dataList
      * is empty or {@code null}.
      *
      * <p>May be {@code null} if the server returns a response body without the

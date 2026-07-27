@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.upyog.adapter.model.OAuthTokenResponse;
 import org.upyog.adapter.model.UserInfo;
 import org.upyog.adapter.model.UserSearchResponse;
+import org.upyog.adapter.util.RetryUtil;
 import org.upyog.adapter.config.AdapterProperties;
 
 /**
@@ -49,7 +50,7 @@ import org.upyog.adapter.config.AdapterProperties;
  *
  * <h3>Configuration properties</h3>
  * <pre>
- * egov.user.oauth.host               — base URL of the OAuth endpoint (e.g. https://host)
+ * egov.user.oauth.host               — base URL of the OAuth endpoint (exception.g. https://host)
  * egov.user.oauth.path               — path + query string for the token endpoint
  * egov.user.oauth.basic.auth         — Base64-encoded "Basic ..." header value
  * adapter.system.user.username       — login username of the system user
@@ -260,23 +261,23 @@ public class OAuthTokenService {
                         .plusSeconds(Math.max(response.getExpiresIn() - EXPIRY_SAFETY_BUFFER_SECONDS, 0));
                 log.info("OAuth token refreshed. Expires at {}", this.expiresAt);
                 return;
-            } catch (Exception e) {
-                if (e instanceof feign.FeignException feignEx && feignEx.status() >= 400 && feignEx.status() < 500) {
-                    log.error("OAuth token request to {} failed with client error status {}: {}", url, feignEx.status(), e.getMessage());
-                    throw new IllegalStateException("Failed to obtain OAuth token due to client error", e);
+            } catch (Exception exception) {
+                if (exception instanceof feign.FeignException feignEx && feignEx.status() >= 400 && feignEx.status() < 500) {
+                    log.error("OAuth token request to {} failed with client error status {}: {}", url, feignEx.status(), exception.getMessage());
+                    throw new IllegalStateException("Failed to obtain OAuth token due to client error", exception);
                 }
 
                 if (attempt >= adapterProperties.getOauthMaxAttempts()) {
-                    log.error("OAuth token request to {} failed after {} attempts.", url, attempt, e);
-                    if (e instanceof IllegalStateException) {
-                        throw (IllegalStateException) e;
+                    log.error("OAuth token request to {} failed after {} attempts.", url, attempt, exception);
+                    if (exception instanceof IllegalStateException) {
+                        throw (IllegalStateException) exception;
                     }
-                    throw new IllegalStateException("Failed to reach OAuth endpoint " + url + " after maximum attempts", e);
+                    throw new IllegalStateException("Failed to reach OAuth endpoint " + url + " after maximum attempts", exception);
                 }
 
-                long backoff = calculateBackoffWithJitter(attempt);
+                long backoff = RetryUtil.calculateBackoffWithJitter(attempt, adapterProperties.getOauthBaseDelayMs(), adapterProperties.getOauthMaxDelayMs());
                 log.warn("OAuth token request failed (attempt {}/{}). Retrying in {} ms. Error: {}",
-                        attempt, adapterProperties.getOauthMaxAttempts(), backoff, e.getMessage());
+                        attempt, adapterProperties.getOauthMaxAttempts(), backoff, exception.getMessage());
                 try {
                     Thread.sleep(backoff);
                 } catch (InterruptedException ie) {
@@ -337,20 +338,20 @@ public class OAuthTokenService {
                             + "Confirm the correct endpoint/payload shape with the team.", url, adapterProperties.getUsername(), adapterProperties.getTenantId());
                     return;
                 }
-            } catch (Exception e) {
-                if (e instanceof feign.FeignException feignEx && feignEx.status() >= 400 && feignEx.status() < 500) {
-                    log.error("User search request to {} failed with client error status {}: {}", url, feignEx.status(), e.getMessage());
+            } catch (Exception exception) {
+                if (exception instanceof feign.FeignException feignEx && feignEx.status() >= 400 && feignEx.status() < 500) {
+                    log.error("User search request to {} failed with client error status {}: {}", url, feignEx.status(), exception.getMessage());
                     break;
                 }
 
                 if (attempt >= adapterProperties.getOauthMaxAttempts()) {
-                    log.error("User search request to {} failed after {} attempts: {}", url, attempt, e.getMessage());
+                    log.error("User search request to {} failed after {} attempts: {}", url, attempt, exception.getMessage());
                     break;
                 }
 
-                long backoff = calculateBackoffWithJitter(attempt);
+                long backoff = RetryUtil.calculateBackoffWithJitter(attempt, adapterProperties.getOauthBaseDelayMs(), adapterProperties.getOauthMaxDelayMs());
                 log.warn("User search request failed (attempt {}/{}). Retrying in {} ms. Error: {}",
-                        attempt, adapterProperties.getOauthMaxAttempts(), backoff, e.getMessage());
+                        attempt, adapterProperties.getOauthMaxAttempts(), backoff, exception.getMessage());
                 try {
                     Thread.sleep(backoff);
                 } catch (InterruptedException ie) {
@@ -362,13 +363,4 @@ public class OAuthTokenService {
         }
     }
 
-    private long calculateBackoffWithJitter(int attempt) {
-        int power = Math.min(attempt - 1, 30);
-        long expDelay = adapterProperties.getOauthBaseDelayMs() * (1L << power);
-        if (expDelay < 0) {
-            expDelay = adapterProperties.getOauthMaxDelayMs();
-        }
-        long currentMaxDelay = Math.min(adapterProperties.getOauthMaxDelayMs(), expDelay);
-        return java.util.concurrent.ThreadLocalRandom.current().nextLong(0, currentMaxDelay + 1);
-    }
 }

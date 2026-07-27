@@ -28,6 +28,9 @@ class IngestionSummaryRepositoryTest {
     @Mock
     private JdbcTemplate jdbcTemplate;
 
+    @Mock
+    private org.upyog.adapter.service.IngestionPersistenceService persistenceService;
+
     @InjectMocks
     private IngestionSummaryRepository repository;
 
@@ -62,42 +65,20 @@ class IngestionSummaryRepositoryTest {
     }
 
     @Test
-    @DisplayName("saveOrUpdateLastSuccessfulDate calls jdbcTemplate update")
-    void saveOrUpdateLastSuccessfulDate_executesUpdate() {
+    @DisplayName("saveOrUpdateLastSuccessfulDate pushes to Kafka topic")
+    void saveOrUpdateLastSuccessfulDate_pushesToKafka() {
         LocalDate targetDate = LocalDate.of(2026, 7, 1);
         repository.saveOrUpdateLastSuccessfulDate("pg", "PT", targetDate);
 
-        verify(jdbcTemplate).update(
-                any(String.class),
-                any(String.class),
-                eq("pg"),
-                eq("PT"),
-                eq(Date.valueOf(targetDate)),
-                eq(Date.valueOf(targetDate)),
-                eq("SYSTEM"),
-                any(Long.class),
-                eq("SYSTEM"),
-                any(Long.class)
-        );
+        verify(persistenceService).saveOrUpdateLastSuccessfulDate(eq("pg"), eq("PT"), eq(targetDate));
     }
 
     @Test
-    @DisplayName("saveOrUpdateLastAttemptedDate calls jdbcTemplate update")
-    void saveOrUpdateLastAttemptedDate_executesUpdate() {
+    @DisplayName("saveOrUpdateLastAttemptedDate pushes to Kafka topic")
+    void saveOrUpdateLastAttemptedDate_pushesToKafka() {
         LocalDate targetDate = LocalDate.of(2026, 7, 1);
         repository.saveOrUpdateLastAttemptedDate("pg", "PT", targetDate);
 
-        verify(jdbcTemplate).update(
-                any(String.class),
-                any(String.class),
-                eq("pg"),
-                eq("PT"),
-                eq(Date.valueOf(LocalDate.of(1970, 1, 1))),
-                eq(Date.valueOf(targetDate)),
-                eq("SYSTEM"),
-                any(Long.class),
-                eq("SYSTEM"),
-                any(Long.class)
-        );
+        verify(persistenceService).saveOrUpdateLastAttemptedDate(eq("pg"), eq("PT"), eq(targetDate));
     }
 }

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PTCombinedDTO {
+public class PTAggregatedData {
     private Integer assessments;
     private Integer todaysTotalApplications;
     private Integer todaysClosedApplications;

@@ -1,7 +1,7 @@
 package org.upyog.adapter.api;
 
 import org.springframework.stereotype.Component;
-import org.upyog.adapter.loader.Loader;
+import org.upyog.adapter.loader.DashboardDataLoader;
 import org.upyog.adapter.model.AdapterRequest;
 import org.upyog.adapter.model.DashboardPayload;
 import org.upyog.adapter.model.IngestionResult;
@@ -62,9 +62,9 @@ public class AdapterClientImpl implements AdapterClient {
     /**
      * Loader responsible for sending the transformed payload to the downstream
      * endpoint and publishing the audit record to Kafka.
-     * The active implementation is {@link org.upyog.adapter.loader.impl.HttpLoader}.
+     * The active implementation is {@link org.upyog.adapter.loader.impl.DashboardDataLoaderImpl}.
      */
-    private final Loader loader;
+    private final DashboardDataLoader loader;
 
     /**
      * Validator that enforces mandatory cross-module fields on every payload

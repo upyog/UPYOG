@@ -14,7 +14,7 @@ import org.upyog.adapter.common.constants.Module;
 import org.upyog.adapter.model.DashboardData;
 import org.upyog.adapter.model.DashboardPayload;
 import org.upyog.adapter.pt.dto.PTCollectionDTO;
-import org.upyog.adapter.pt.dto.PTCombinedDTO;
+import org.upyog.adapter.pt.dto.PTAggregatedData;
 import org.upyog.adapter.pt.dto.PTDTO;
 import org.upyog.adapter.pt.model.PTMetric;
 import org.upyog.adapter.transformer.ModuleTransformer;
@@ -45,11 +45,11 @@ public class PTTransformer implements ModuleTransformer<PTDTO> {
 
 	@Override
 	public DashboardPayload transform(PTDTO rawData) {
-		PTCombinedDTO combined = rawData.getCombinedMetrics();
+		PTAggregatedData combined = rawData.getCombinedMetrics();
 		List<PTCollectionDTO> collectionRows = rawData.getCollectionMetrics();
 
 		if (combined == null) {
-			combined = new PTCombinedDTO();
+			combined = new PTAggregatedData();
 		}
 		if (collectionRows == null) {
 			collectionRows = List.of();
@@ -184,7 +184,7 @@ public class PTTransformer implements ModuleTransformer<PTDTO> {
 		}
 		try {
 			return objectMapper.readValue(jsonStr, new TypeReference<List<Map<String, Object>>>() {});
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			return List.of();
 		}
 	}
@@ -197,9 +197,9 @@ public class PTTransformer implements ModuleTransformer<PTDTO> {
 		}
 		for (Map<String, Object> item : parsed) {
 			String name = (String) item.get("name");
-			Object val = item.get("value");
-			if (name != null && val != null) {
-				bucketMap.put(name, val);
+			Object value = item.get("value");
+			if (name != null && value != null) {
+				bucketMap.put(name, value);
 			}
 		}
 		List<Map<String, Object>> buckets = new ArrayList<>();
@@ -213,13 +213,13 @@ public class PTTransformer implements ModuleTransformer<PTDTO> {
 		List<Map<String, Object>> buckets = new ArrayList<>();
 		for (String name : expectedNames) {
 			Number num = dataMap.get(name);
-			double val = num != null ? num.doubleValue() : 0.0;
-			buckets.add(Map.of("name", name, "value", (val == (long) val) ? (long) val : val));
+			double value = num != null ? num.doubleValue() : 0.0;
+			buckets.add(Map.of("name", name, "value", (value == (long) value) ? (long) value : value));
 		}
 		for (Map.Entry<String, ? extends Number> entry : dataMap.entrySet()) {
 			if (!java.util.Arrays.asList(expectedNames).contains(entry.getKey())) {
-				double val = entry.getValue().doubleValue();
-				buckets.add(Map.of("name", entry.getKey(), "value", (val == (long) val) ? (long) val : val));
+				double value = entry.getValue().doubleValue();
+				buckets.add(Map.of("name", entry.getKey(), "value", (value == (long) value) ? (long) value : value));
 			}
 		}
 		return buckets;

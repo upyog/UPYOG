@@ -116,8 +116,8 @@ public class PgrModuleExtractor implements ModuleExtractor {
 				reassignRequestedBuckets = parseJsonBuckets(combinedResult.get("todaysreassignrequestedcomplaintsjson"));
 				closedBuckets = parseJsonBuckets(combinedResult.get("todaysclosedcomplaintsjson"));
 				resolvedBuckets = parseJsonBuckets(combinedResult.get("todaysresolvedcomplaintsjson"));
-			} catch (Exception e) {
-				log.warn("PgrModuleExtractor | Exception during DB metrics extraction, utilizing empty defaults: {}", e.getMessage());
+			} catch (Exception exception) {
+				log.warn("PgrModuleExtractor | Exception during DB metrics extraction, utilizing empty defaults: {}", exception.getMessage());
 			}
 		}
 
@@ -154,20 +154,20 @@ public class PgrModuleExtractor implements ModuleExtractor {
 				.build();
 	}
 
-	private Integer getIntegerValue(Object obj) {
-		if (obj instanceof Number) {
-			return ((Number) obj).intValue();
+	private Integer getIntegerValue(Object object) {
+		if (object instanceof Number) {
+			return ((Number) object).intValue();
 		}
 		return 0;
 	}
 
-	private List<Map<String, Object>> parseJsonBuckets(Object obj) {
-		if (obj == null) return List.of();
-		String jsonStr = obj.toString();
+	private List<Map<String, Object>> parseJsonBuckets(Object object) {
+		if (object == null) return List.of();
+		String jsonStr = object.toString();
 		if (jsonStr.isBlank() || "[]".equals(jsonStr)) return List.of();
 		try {
 			return objectMapper.readValue(jsonStr, new TypeReference<List<Map<String, Object>>>() {});
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			return List.of();
 		}
 	}
@@ -178,14 +178,14 @@ public class PgrModuleExtractor implements ModuleExtractor {
 			attempt++;
 			try {
 				return namedParameterJdbcTemplate.queryForMap(query, params);
-			} catch (Exception e) {
+			} catch (Exception exception) {
 				if (attempt >= dbMaxAttempts) {
-					log.error("PgrModuleExtractor | DB query failed after {} attempts.", attempt, e);
-					throw e;
+					log.error("PgrModuleExtractor | DB query failed after {} attempts.", attempt, exception);
+					throw exception;
 				}
 				long backoff = calculateDbBackoffWithJitter(attempt);
 				log.warn("PgrModuleExtractor | DB query failed (attempt {}/{}). Retrying in {} ms. Error: {}", 
-						attempt, dbMaxAttempts, backoff, e.getMessage());
+						attempt, dbMaxAttempts, backoff, exception.getMessage());
 				try {
 					Thread.sleep(backoff);
 				} catch (InterruptedException ie) {
