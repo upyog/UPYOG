@@ -133,6 +133,11 @@ public class DailyIngestionData {
     private String ingestionStatus;
 
     /**
+     * Optional code representing the specific type of failure, if applicable.
+     */
+    private String exceptionCode;
+
+    /**
      * Identity of the process or user that created this record.
      * Defaults to {@code "SYSTEM"} when the record originates from a
      * scheduled background job.

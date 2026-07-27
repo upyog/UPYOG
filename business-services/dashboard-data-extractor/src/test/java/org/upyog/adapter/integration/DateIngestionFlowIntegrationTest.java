@@ -1,5 +1,8 @@
 package org.upyog.adapter.integration;
 
+import org.upyog.adapter.client.DashboardFeignClient;
+import org.upyog.adapter.model.DashboardPayload;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -69,7 +72,7 @@ class DateIngestionFlowIntegrationTest {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Mock
-    private org.upyog.adapter.client.DashboardFeignClient dashboardFeignClient;
+    private DashboardFeignClient dashboardFeignClient;
 
     @Mock
     private OAuthTokenService oAuthTokenService;
@@ -261,7 +264,7 @@ class DateIngestionFlowIntegrationTest {
         assertThat(metricsNode.get("todaysTotalApplications").asInt()).isEqualTo(120);
 
         // Verify Kafka audit record push
-        verify(auditService).pushIngestionRecord(any(org.upyog.adapter.model.DashboardPayload.class), any(String.class), any(String.class), eq("SUCCESS"));
+        verify(auditService).pushIngestionRecord(any(DashboardPayload.class), any(String.class), any(String.class), eq("SUCCESS"));
     }
 
     @Test

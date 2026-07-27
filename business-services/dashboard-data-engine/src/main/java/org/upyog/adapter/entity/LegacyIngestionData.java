@@ -147,6 +147,11 @@ public class LegacyIngestionData {
     private String ingestionStatus;
 
     /**
+     * Optional code representing the specific type of failure, if applicable.
+     */
+    private String exceptionCode;
+
+    /**
      * Identity of the process or user that created this record.
      * Defaults to {@code "SYSTEM"} for scheduler-originated records.
      * Maps to {@code legacy_data_ingestion_detail.created_by}.

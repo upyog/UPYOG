@@ -1,5 +1,7 @@
 package org.upyog.adapter.service.impl;
 
+import org.mockito.ArgumentMatchers;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -91,6 +93,7 @@ class JdbcIngestionPersistenceServiceImplTest {
                 eq("PT"),
                 eq(Date.valueOf(targetDate)),
                 eq("NOT_STARTED"),
+                ArgumentMatchers.isNull(),
                 eq("SYSTEM"),
                 any(Long.class),
                 eq("SYSTEM"),

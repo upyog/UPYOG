@@ -1,5 +1,8 @@
 package org.upyog.adapter.loader.impl;
 
+import org.upyog.adapter.client.DashboardFeignClient;
+import org.upyog.adapter.loader.DashboardDataLoader;
+
 import org.upyog.adapter.util.TestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +39,7 @@ import static org.mockito.Mockito.*;
 class DashboardDataLoaderImplTest {
 
     @Mock
-    private org.upyog.adapter.client.DashboardFeignClient dashboardFeignClient;
+    private DashboardFeignClient dashboardFeignClient;
 
     @Mock
     private OAuthTokenService oAuthTokenService;
@@ -209,7 +212,7 @@ class DashboardDataLoaderImplTest {
     @Test
     @DisplayName("DashboardDataLoaderImpl implements DashboardDataLoader interface and has adapterProperties field")
     void loader_structure() throws Exception {
-        assertThat(loader).isInstanceOf(org.upyog.adapter.loader.DashboardDataLoader.class);
+        assertThat(loader).isInstanceOf(DashboardDataLoader.class);
         assertThat(DashboardDataLoaderImpl.class.getDeclaredField("adapterProperties")).isNotNull();
     }
 

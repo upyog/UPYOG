@@ -1,5 +1,7 @@
 package org.upyog.adapter.service.impl;
 
+import org.upyog.adapter.model.ErrorLogDTO;
+
 
 import org.upyog.adapter.util.CommonUtils;
 
@@ -52,7 +54,7 @@ public class KafkaAuditServiceImpl implements AuditService {
             producer.push(KafkaTopics.SAVE_INGESTION_DETAIL, kafkaMessage);
 
             if ("FAILURE".equals(status)) {
-                org.upyog.adapter.model.ErrorLogDTO errorLog = org.upyog.adapter.model.ErrorLogDTO.builder()
+                ErrorLogDTO errorLog = ErrorLogDTO.builder()
                         .id(CommonUtils.generateUUID())
                         .tenantId(first != null ? first.getUlb() : null)
                         .moduleName(first != null ? first.getModule() : null)

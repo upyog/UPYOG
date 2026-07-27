@@ -1,5 +1,7 @@
 package org.upyog.adapter.extractor.impl;
 
+import org.upyog.adapter.config.AdapterProperties;
+
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -34,7 +36,7 @@ public class PtModuleExtractor implements ModuleExtractor<PTDTO> {
 	private SchemaMappingConfig schemaMappingConfig;
 
 	@Autowired
-	private org.upyog.adapter.config.AdapterProperties adapterProperties;
+	private AdapterProperties adapterProperties;
 
 	private String ulb;
 	private String ward;

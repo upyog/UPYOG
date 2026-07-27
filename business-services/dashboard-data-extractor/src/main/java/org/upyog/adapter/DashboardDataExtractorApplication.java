@@ -17,7 +17,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableScheduling
 @EnableFeignClients(basePackages = { "org.upyog.adapter" })
 @ComponentScan(basePackages = { "org.upyog.adapter", "org.egov.tracer" })
-public class AdapterServiceApplication {
+public class DashboardDataExtractorApplication {
 
 	/**
 	 * Main method to launch the Adapter Service Spring Boot microservice.
@@ -25,6 +25,6 @@ public class AdapterServiceApplication {
 	 * @param args command-line arguments
 	 */
 	public static void main(String[] args) {
-		SpringApplication.run(AdapterServiceApplication.class, args);
+		SpringApplication.run(DashboardDataExtractorApplication.class, args);
 	}
 }

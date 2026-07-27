@@ -1,5 +1,7 @@
 package org.upyog.adapter.service;
 
+import org.upyog.adapter.producer.AdapterProducer;
+
 import org.upyog.adapter.util.CommonUtils;
 
 import java.time.LocalDate;
@@ -50,7 +52,7 @@ public class LegacyIngestionService {
 	private IngestionSummaryRepository summaryRepository;
 
 	@Autowired
-	private org.upyog.adapter.producer.AdapterProducer producer;
+	private AdapterProducer producer;
 
 	@Autowired
 	private com.fasterxml.jackson.databind.ObjectMapper objectMapper;

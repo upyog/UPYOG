@@ -23,11 +23,12 @@ serviceMaps:
           request_data,
           response_data,
           ingestion_status,
+          exception_code,
           created_by,
           created_time,
           last_modified_by,
           last_modified_time
-        ) VALUES (?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?, ?);
 
       basePath: dailyIngestionData.*
       jsonMaps:
@@ -45,6 +46,8 @@ serviceMaps:
       - jsonPath: $.dailyIngestionData.*.responseData
 
       - jsonPath: $.dailyIngestionData.*.ingestionStatus
+
+      - jsonPath: $.dailyIngestionData.*.exceptionCode
 
       - jsonPath: $.dailyIngestionData.*.createdBy
 
@@ -77,11 +80,12 @@ serviceMaps:
           request_data,
           response_data,
           ingestion_status,
+          exception_code,
           created_by,
           created_time,
           last_modified_by,
           last_modified_time
-        ) VALUES (?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?, ?);
 
       basePath: legacyIngestionData.*
       jsonMaps:
@@ -103,6 +107,8 @@ serviceMaps:
       - jsonPath: $.legacyIngestionData.*.responseData
 
       - jsonPath: $.legacyIngestionData.*.ingestionStatus
+
+      - jsonPath: $.legacyIngestionData.*.exceptionCode
 
       - jsonPath: $.legacyIngestionData.*.createdBy
 

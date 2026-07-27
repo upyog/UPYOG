@@ -1,7 +1,10 @@
 package org.upyog.adapter.service.impl;
 
+import org.upyog.adapter.model.ErrorLogDTO;
+
 
 import org.upyog.adapter.util.CommonUtils;
+import org.upyog.adapter.repository.querybuilder.AuditQueryBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -21,6 +24,9 @@ import org.upyog.adapter.util.JsonUtil;
 public class JdbcAuditServiceImpl implements AuditService {
 
     private static final Logger log = LoggerFactory.getLogger(JdbcAuditServiceImpl.class);
+
+    @Autowired
+    private AuditQueryBuilder queryBuilder;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -43,17 +49,14 @@ public class JdbcAuditServiceImpl implements AuditService {
                     .ingestionStatus(status).createdBy("SYSTEM")
                     .createdTime(now).lastModifiedBy("SYSTEM").lastModifiedTime(now).build();
 
-            String sqlDetail = "INSERT INTO ingestion_detail (" +
-                    "module_ingestion_id, tenant_id, module_name, push_date, request_data, " +
-                    "response_data, ingestion_status, created_by, created_time, last_modified_by, last_modified_time) " +
-                    "VALUES (?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?)";
+            String sqlDetail = queryBuilder.getInsertIngestionDetailQuery();
             jdbcTemplate.update(sqlDetail,
                     record.getModuleIngestionId(), record.getTenantId(), record.getModuleName(), record.getPushDate(),
-                    record.getRequestData(), record.getResponseData(), record.getIngestionStatus(),
+                    record.getRequestData(), record.getResponseData(), record.getIngestionStatus(), record.getExceptionCode(),
                     record.getCreatedBy(), record.getCreatedTime(), record.getLastModifiedBy(), record.getLastModifiedTime());
 
             if ("FAILURE".equals(status)) {
-                org.upyog.adapter.model.ErrorLogDTO errorLog = org.upyog.adapter.model.ErrorLogDTO.builder()
+                ErrorLogDTO errorLog = ErrorLogDTO.builder()
                         .id(CommonUtils.generateUUID())
                         .tenantId(first != null ? first.getUlb() : null)
                         .moduleName(first != null ? first.getModule() : null)
@@ -63,9 +66,7 @@ public class JdbcAuditServiceImpl implements AuditService {
                         .createdBy("SYSTEM")
                         .build();
 
-                String sqlError = "INSERT INTO adapter_ingestion_error_log (" +
-                        "id, tenant_id, module_name, error_date, issue_description, created_time, created_by) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                String sqlError = queryBuilder.getInsertAdapterIngestionErrorLogQuery();
                 jdbcTemplate.update(sqlError,
                         errorLog.getId(), errorLog.getTenantId(), errorLog.getModuleName(), errorLog.getErrorDate(),
                         errorLog.getIssueDescription(), errorLog.getCreatedTime(), errorLog.getCreatedBy());

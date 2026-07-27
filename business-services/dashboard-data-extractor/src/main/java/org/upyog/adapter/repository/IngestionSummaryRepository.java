@@ -1,5 +1,7 @@
 package org.upyog.adapter.repository;
 
+import org.upyog.adapter.service.IngestionPersistenceService;
+
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -34,7 +36,7 @@ public class IngestionSummaryRepository {
 	private IngestionSummaryQueryBuilder queryBuilder;
 	
 	@Autowired
-	private org.upyog.adapter.service.IngestionPersistenceService persistenceService;
+	private IngestionPersistenceService persistenceService;
 
 	/**
 	 * Retrieves the last successfully ingested date for the specified tenant and

@@ -1,5 +1,10 @@
 package org.upyog.adapter.api;
 
+import org.upyog.adapter.client.DashboardFeignClient;
+import org.upyog.adapter.client.UserFeignClient;
+import org.upyog.adapter.config.AdapterProperties;
+import org.upyog.adapter.service.AuditService;
+
 import org.upyog.adapter.util.TestUtils;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,9 +27,9 @@ class AdapterClientSimpleTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        org.upyog.adapter.client.UserFeignClient userFeignClient = Mockito.mock(org.upyog.adapter.client.UserFeignClient.class);
-        org.upyog.adapter.client.DashboardFeignClient dashboardFeignClient = Mockito.mock(org.upyog.adapter.client.DashboardFeignClient.class);
-        org.upyog.adapter.service.AuditService auditService = Mockito.mock(org.upyog.adapter.service.AuditService.class);
+        UserFeignClient userFeignClient = Mockito.mock(UserFeignClient.class);
+        DashboardFeignClient dashboardFeignClient = Mockito.mock(DashboardFeignClient.class);
+        AuditService auditService = Mockito.mock(AuditService.class);
         ModuleTransformer<Object> transformer = Mockito.mock(ModuleTransformer.class);
 
         // 1. Build a dummy payload so downstream components have configuration context
@@ -38,7 +43,7 @@ class AdapterClientSimpleTest {
         Mockito.when(transformer.getModule()).thenReturn(Module.PT);
         Mockito.when(transformer.transform(Mockito.any())).thenReturn(dummyPayload);
 
-        org.upyog.adapter.config.AdapterProperties adapterProperties = Mockito.mock(org.upyog.adapter.config.AdapterProperties.class);
+        AdapterProperties adapterProperties = Mockito.mock(AdapterProperties.class);
         Mockito.lenient().when(adapterProperties.getIngestMaxAttempts()).thenReturn(3);
         Mockito.lenient().when(adapterProperties.getOauthMaxAttempts()).thenReturn(3);
 

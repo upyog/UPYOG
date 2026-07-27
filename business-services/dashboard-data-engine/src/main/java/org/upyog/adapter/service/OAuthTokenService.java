@@ -1,5 +1,7 @@
 package org.upyog.adapter.service;
 
+import org.upyog.adapter.client.UserFeignClient;
+
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
@@ -85,7 +87,7 @@ public class OAuthTokenService {
 
     /** HTTP client used for both the token and user-search requests. */
     @Autowired
-    private org.upyog.adapter.client.UserFeignClient userFeignClient;
+    private UserFeignClient userFeignClient;
 
     @Autowired
     private AdapterProperties adapterProperties;

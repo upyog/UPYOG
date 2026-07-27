@@ -1,5 +1,8 @@
 package org.upyog.adapter.loader.impl;
 
+import org.upyog.adapter.client.DashboardFeignClient;
+import org.upyog.adapter.config.AdapterProperties;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +81,7 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 	 * Injected as a Spring-managed singleton; thread-safe by default.
 	 */
 	@Autowired
-	private org.upyog.adapter.client.DashboardFeignClient dashboardFeignClient;
+	private DashboardFeignClient dashboardFeignClient;
 
 	/**
 	 * Service that provides a valid OAuth2 bearer token and the corresponding
@@ -91,7 +94,7 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 	private OAuthTokenService oAuthTokenService;
 
 	@Autowired
-	private org.upyog.adapter.config.AdapterProperties adapterProperties;
+	private AdapterProperties adapterProperties;
 
 	/**
 	 * Gson instance used for debug-level serialization of complex objects (e.g.

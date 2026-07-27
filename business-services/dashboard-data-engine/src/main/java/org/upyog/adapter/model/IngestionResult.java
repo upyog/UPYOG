@@ -69,6 +69,11 @@ public class IngestionResult {
     private String failureReason;
 
     /**
+     * Optional exception code providing a structured identifier for the error.
+     */
+    private String exceptionCode;
+
+    /**
      * Unix epoch timestamp in milliseconds at which the loader returned this result.
      *
      * <p>Set via {@code CommonUtils.getCurrentEpochMillis()} immediately before the result

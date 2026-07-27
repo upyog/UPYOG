@@ -16,7 +16,7 @@ public class IngestionSummaryQueryBuilder {
     public String getUpsertLastSuccessfulDateQuery() {
         return "INSERT INTO ingestion_module_summary (" +
                "   id, tenant_id, module_name, last_successful_date, last_attempted_date, created_by, created_time, last_modified_by, last_modified_time" +
-               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                "ON CONFLICT (tenant_id, module_name) " +
                "DO UPDATE SET last_successful_date = EXCLUDED.last_successful_date, " +
                "              last_attempted_date = EXCLUDED.last_attempted_date, " +
@@ -27,7 +27,7 @@ public class IngestionSummaryQueryBuilder {
     public String getUpsertLastAttemptedDateQuery() {
         return "INSERT INTO ingestion_module_summary (" +
                "   id, tenant_id, module_name, last_successful_date, last_attempted_date, created_by, created_time, last_modified_by, last_modified_time" +
-               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                "ON CONFLICT (tenant_id, module_name) " +
                "DO UPDATE SET last_attempted_date = EXCLUDED.last_attempted_date, " +
                "              last_modified_by = EXCLUDED.last_modified_by, " +
@@ -53,8 +53,8 @@ public class IngestionSummaryQueryBuilder {
 
     public String getInsertLegacyJobQuery() {
         return "INSERT INTO legacy_data_ingestion_detail (" +
-               "   module_ingestion_id, tenant_id, module_name, push_date, ingestion_status, created_by, created_time, last_modified_by, last_modified_time" +
-               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+               "   module_ingestion_id, tenant_id, module_name, push_date, ingestion_status, exception_code, created_by, created_time, last_modified_by, last_modified_time" +
+               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
 
     public String getSelectPendingOrFailedLegacyJobsQuery() {

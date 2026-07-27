@@ -77,7 +77,7 @@ public class JdbcIngestionPersistenceServiceImpl implements IngestionPersistence
             
             jdbcTemplate.update(queryBuilder.getInsertLegacyJobQuery(),
                     jobId, tenantId, moduleName, 
-                    Date.valueOf(date), "NOT_STARTED", 
+                    Date.valueOf(date), "NOT_STARTED", null,
                     "SYSTEM", now, "SYSTEM", now);
 
             log.debug("JdbcIngestionPersistenceServiceImpl | Inserted legacy job for tenant {} module {} date {}", tenantId, moduleName, date);

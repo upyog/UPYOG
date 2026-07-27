@@ -1,5 +1,7 @@
 package org.upyog.adapter.controller;
 
+import org.upyog.adapter.repository.IngestionSummaryRepository;
+
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,7 @@ public class LegacyIngestionController {
     private LegacyIngestionService legacyIngestionService;
     
     @Autowired
-    private org.upyog.adapter.repository.IngestionSummaryRepository summaryRepository;
+    private IngestionSummaryRepository summaryRepository;
 
     /**
      * Retrieves the status of legacy jobs.

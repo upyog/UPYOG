@@ -1,5 +1,8 @@
 package org.upyog.adapter.repository;
 
+import org.upyog.adapter.repository.querybuilder.IngestionSummaryQueryBuilder;
+import org.upyog.adapter.service.IngestionPersistenceService;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,7 +32,7 @@ class IngestionSummaryRepositoryTest {
     private JdbcTemplate jdbcTemplate;
 
     @Mock
-    private org.upyog.adapter.service.IngestionPersistenceService persistenceService;
+    private IngestionPersistenceService persistenceService;
 
     @InjectMocks
     private IngestionSummaryRepository repository;
@@ -38,7 +41,7 @@ class IngestionSummaryRepositoryTest {
     void setUp() throws Exception {
         java.lang.reflect.Field field = IngestionSummaryRepository.class.getDeclaredField("queryBuilder");
         field.setAccessible(true);
-        field.set(repository, new org.upyog.adapter.repository.querybuilder.IngestionSummaryQueryBuilder());
+        field.set(repository, new IngestionSummaryQueryBuilder());
     }
 
     @Test
