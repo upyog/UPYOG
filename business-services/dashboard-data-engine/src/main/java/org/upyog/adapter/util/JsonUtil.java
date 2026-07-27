@@ -34,7 +34,7 @@ public final class JsonUtil {
         try {
             return objectMapper.writeValueAsString(Map.of("error", input));
         } catch (Exception exception) {
-            return "{\"error\":\"" + input.replace("\"", "\\\"").replace("\n", " ") + "\"}";
+            throw new RuntimeException("Failed to format input as JSON: " + exception.getMessage(), exception);
         }
     }
 }
