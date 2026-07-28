@@ -28,26 +28,26 @@ public class DashboardProperties {
     private String userSearchPath;
 
     // System User settings
-    @Value("${adapter.system.user.username}")
+    @Value("${dashboard-data.system.user.username}")
     private String username;
 
-    @Value("${adapter.system.user.password}")
+    @Value("${dashboard-data.system.user.password}")
     private String password;
 
-    @Value("${adapter.system.user.tenantId}")
+    @Value("${dashboard-data.system.user.tenantId}")
     private String tenantId;
 
-    @Value("${adapter.system.user.type}")
+    @Value("${dashboard-data.system.user.type}")
     private String userType;
 
     // OAuth retry config
-    @Value("${adapter.oauth-retry.max-attempts}")
+    @Value("${dashboard-data.oauth-retry.max-attempts}")
     private int oauthMaxAttempts;
 
-    @Value("${adapter.oauth-retry.base-delay-ms}")
+    @Value("${dashboard-data.oauth-retry.base-delay-ms}")
     private long oauthBaseDelayMs;
 
-    @Value("${adapter.oauth-retry.max-delay-ms}")
+    @Value("${dashboard-data.oauth-retry.max-delay-ms}")
     private long oauthMaxDelayMs;
 
     // Ingest API settings
@@ -55,20 +55,20 @@ public class DashboardProperties {
     private String dashboardIngestUrl;
 
     // HTTP Ingestion retry config
-    @Value("${adapter.retry.enabled:false}")
+    @Value("${dashboard-data.retry.enabled:false}")
     private boolean ingestRetryEnabled;
 
-    @Value("${adapter.retry.max-attempts}")
+    @Value("${dashboard-data.retry.max-attempts}")
     private int ingestMaxAttempts;
 
-    @Value("${adapter.retry.base-delay-ms}")
+    @Value("${dashboard-data.retry.base-delay-ms}")
     private long ingestBaseDelayMs;
 
-    @Value("${adapter.retry.max-delay-ms}")
+    @Value("${dashboard-data.retry.max-delay-ms}")
     private long ingestMaxDelayMs;
 
     // Ingestion date configs
-    @Value("${adapter.ingestion.default-start-date}")
+    @Value("${dashboard-data.ingestion.default-start-date}")
     private String defaultStartDateStr;
 
     // Legacy migration config
@@ -79,57 +79,57 @@ public class DashboardProperties {
     private int legacyDefaultMonths;
 
     // State-specific usage categories for Property Tax (PT) module
-    @Value("${adapter.pt.usage-categories}")
+    @Value("${dashboard-data.pt.usage-categories}")
     private java.util.List<String> ptUsageCategories;
 
     // State-specific Tax Heads mappings
-    @Value("${adapter.pt.tax-heads.tax}")
+    @Value("${dashboard-data.pt.tax-heads.tax}")
     private java.util.List<String> ptTaxHeads;
 
-    @Value("${adapter.pt.tax-heads.cess}")
+    @Value("${dashboard-data.pt.tax-heads.cess}")
     private java.util.List<String> ptCessHeads;
 
-    @Value("${adapter.pt.tax-heads.rebate}")
+    @Value("${dashboard-data.pt.tax-heads.rebate}")
     private java.util.List<String> ptRebateHeads;
 
-    @Value("${adapter.pt.tax-heads.penalty}")
+    @Value("${dashboard-data.pt.tax-heads.penalty}")
     private java.util.List<String> ptPenaltyHeads;
 
-    @Value("${adapter.pt.tax-heads.interest}")
+    @Value("${dashboard-data.pt.tax-heads.interest}")
     private java.util.List<String> ptInterestHeads;
 
     // State-specific digital payment modes
-    @Value("${adapter.pt.digital-payment-modes}")
+    @Value("${dashboard-data.pt.digital-payment-modes}")
     private java.util.List<String> ptDigitalPaymentModes;
 
     // Metric Location Context
-    @Value("${adapter.metric.ulb}")
+    @Value("${dashboard-data.metric.ulb}")
     private String metricUlb;
 
-    @Value("${adapter.metric.ward}")
+    @Value("${dashboard-data.metric.ward}")
     private String metricWard;
 
-    @Value("${adapter.metric.region}")
+    @Value("${dashboard-data.metric.region}")
     private String metricRegion;
 
-    @Value("${adapter.metric.state}")
+    @Value("${dashboard-data.metric.state}")
     private String metricState;
 
     // DB Retry configuration
-    @Value("${adapter.db-retry.max-attempts}")
+    @Value("${dashboard-data.db-retry.max-attempts}")
     private int dbMaxAttempts;
 
-    @Value("${adapter.db-retry.base-delay-ms}")
+    @Value("${dashboard-data.db-retry.base-delay-ms}")
     private long dbBaseDelayMs;
 
-    @Value("${adapter.db-retry.max-delay-ms}")
+    @Value("${dashboard-data.db-retry.max-delay-ms}")
     private long dbMaxDelayMs;
 
     // Daily catch-up limit
-    @Value("${adapter.daily.catch-up-limit-days}")
+    @Value("${dashboard-data.daily.catch-up-limit-days}")
     private int dailyCatchUpLimitDays;
 
     // Toggle for persister vs direct JDBC
-    @Value("${adapter.persister.enabled:true}")
+    @Value("${dashboard-data.persister.enabled:true}")
     private boolean persisterEnabled;
 }
