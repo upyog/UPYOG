@@ -25235,5 +25235,45 @@
     "aggregationPaths": [
       "Application Resolution Rate"
     ]
+  },
+  "ecTotalChallanGenerated": {
+    "chartName": "NATIONAL_TOTAL_CHALLAN_GENERATED_EC",
+    "queries": [
+      {
+        "module": "ECHALLAN",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "echallan-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Total Challan Generated\":{\"sum\":{\"field\":\"totalChallanGenerated\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Challan Generated"
+    ]
+  },
+  "ecTotalCollection": {
+    "chartName": "NATIONAL_TOTAL_COLLECTION_EC",
+    "queries": [
+      {
+        "module": "ECHALLAN",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "echallan-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Total Collection\":{\"sum\":{\"field\":\"totalCollections\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "amount",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Collection"
+    ]
   }
 }

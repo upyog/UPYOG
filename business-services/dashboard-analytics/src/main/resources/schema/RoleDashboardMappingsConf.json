@@ -115,6 +115,10 @@
         {
           "name": "National EWASTE",
           "id": "national-ewaste"
+        },
+        {
+          "name": "National ECHALLAN",
+          "id": "national-echallan"
         }
       ]
     },
@@ -169,6 +173,9 @@
         },
         {
           "id": "ulb-ewaste"
+        },
+        {
+          "id": "ulb-challan"
         }
       ]
     }
