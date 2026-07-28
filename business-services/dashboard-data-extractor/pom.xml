@@ -54,7 +54,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>org.upyog.adapter.AdapterServiceApplication</mainClass>
+					<mainClass>org.upyog.dashboard.AdapterServiceApplication</mainClass>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>

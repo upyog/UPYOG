@@ -4,13 +4,13 @@ serviceMaps:
 
   # ============================================================
   # 1. INSERT into ingestion_detail  (daily push records)
-  #    Topic: save-adapter-ingestion-detail
+  #    Topic: save-dashboard-ingestion-detail
   #    Payload key: DailyIngestionData (list wrapped under "dailyIngestionData")
   # ============================================================
   - version: 1.0
     name: save-ingestion-detail
     description: Persists daily ingestion records into the ingestion_detail table
-    fromTopic: save-adapter-ingestion-detail
+    fromTopic: save-dashboard-ingestion-detail
     isTransaction: true
     queryMaps:
 
@@ -186,13 +186,13 @@ serviceMaps:
 
   # ============================================================
   # 5. UPSERT into ingestion_module_summary
-  #    Topic: update-adapter-module-summary
+  #    Topic: update-dashboard-module-summary
   #    Payload key: ingestionModuleSummary (list)
   # ============================================================
   - version: 1.0
-    name: update-adapter-module-summary
+    name: update-dashboard-module-summary
     description: Upserts last attempted and successful dates into ingestion_module_summary
-    fromTopic: update-adapter-module-summary
+    fromTopic: update-dashboard-module-summary
     isTransaction: true
     queryMaps:
 
