@@ -64,6 +64,22 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
   const nextPaymentDueLabel =
     formatEstDueDate(getAllotmentDueDate(application, row)) || "N/A";
 
+  const agreementStartDate =
+    formatEstDueDate(
+      row?.agreementStartDate ??
+        application?.agreementStartDate ??
+        row?.additionalDetails?.agreementStartDate ??
+        application?.additionalDetails?.agreementStartDate
+    ) || "N/A";
+
+  const agreementEndDate =
+    formatEstDueDate(
+      row?.agreementEndDate ??
+        application?.agreementEndDate ??
+        row?.additionalDetails?.agreementEndDate ??
+        application?.additionalDetails?.agreementEndDate
+    ) || "N/A";
+
   // Display + billing key must be allotmentNo (never allotmentId UUID).
   const allotmentNo = String(
     row?.allotmentNo ??
@@ -132,15 +148,9 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
           label={t("EST_ALLOTMENT_NUMBER")}
           text={allotmentNo || "N/A"}
         />
-        <Row className="border-none" label={t("EST_ESTATE_NUMBER")} text={estateNo || "N/A"} />
-        <Row
-          className="border-none"
-          label={t("EST_BUILDING_NAME")}
-          text={row?.buildingName || row?.assetName || "N/A"}
-        />
         <Row className="border-none" label={t("EST_ALLOTMENT_TYPE")} text={allotmentTypeLabel} />
+        <Row className="border-none" label={t("EST_ALLOTTEE_NAME")} text={row?.alloteeName || "N/A"} />
         <Row className="border-none" label={t("EST_BILLING_CYCLE")} text={billingCycleLabel} />
-        <Row className="border-none" label={t("EST_RATE")} text={`₹${rateValue || 0}`} />
         <Row
           className="border-none"
           label={t("EST_MONTHLY_RENT_IN_INR")}
@@ -153,12 +163,13 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
         />
         <Row
           className="border-none"
-          label={t("EST_CREATED_DATE")}
-          text={
-            row?.auditDetails?.createdTime
-              ? new Date(row.auditDetails.createdTime).toLocaleDateString("en-GB")
-              : "N/A"
-          }
+          label={t("EST_AGREEMENT_START_DATE")}
+          text={agreementStartDate}
+        />
+        <Row
+          className="border-none"
+          label={t("EST_AGREEMENT_END_DATE")}
+          text={agreementEndDate}
         />
         <Row
           className="border-none"
