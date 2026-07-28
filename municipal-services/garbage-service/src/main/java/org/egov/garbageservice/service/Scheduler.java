@@ -11,9 +11,12 @@ import org.egov.garbageservice.util.ServiceConstants;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,39 +46,72 @@ public class Scheduler {
                 .build();
 
         List<GarbageAccount> garbageAccounts =
-                garbageAccountRepository.search(criteria);
+                garbageAccountRepository.searchV2(criteria);
 
         if (garbageAccounts.isEmpty()) {
             return "No approved garbage accounts found";
         }
 
+        List<GarbageAccount> activeGarbageAccounts =
+                garbageAccounts.stream()
+                        .filter(a -> isBillingDue(a, billingDate))
+                        .collect(Collectors.toList());
+
+        if (activeGarbageAccounts.isEmpty()) {
+            return "No active Garbage Accounts found";
+        }
+
         int generated = 0;
 
-        for (GarbageAccount account : garbageAccounts) {
+        for (GarbageAccount account : activeGarbageAccounts) {
             try {
+
                 demandService.generateDemand(
                         requestInfo,
                         account,
                         billingDate);
+
                 generated++;
+
                 log.info(
-                        "Demand generated for garbage account {}",
+                        "Demand generated for {}",
                         account.getGrbgApplicationNumber());
 
             } catch (Exception e) {
 
                 log.error(
-                        "Failed for garbage account {}: {}",
+                        "Failed for {}",
                         account.getGrbgApplicationNumber(),
-                        e.getMessage(),
                         e);
             }
         }
-
         String result = "Generated: " + generated;
 
         log.info("Scheduler done — {}", result);
 
         return result;
+    }
+
+    private boolean isBillingDue(GarbageAccount account, LocalDate schedulerDate) {
+
+        Long approvalTimestamp = account.getApprovalDate();
+
+        if (approvalTimestamp == null) {
+            return false;
+        }
+
+        LocalDate approvalDate = Instant.ofEpochMilli(approvalTimestamp)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        if (schedulerDate.isBefore(approvalDate)) {
+            return false;
+        }
+
+        int billingDay = Math.min(
+                approvalDate.getDayOfMonth(),
+                schedulerDate.lengthOfMonth());
+
+        return schedulerDate.getDayOfMonth() == billingDay;
     }
 }

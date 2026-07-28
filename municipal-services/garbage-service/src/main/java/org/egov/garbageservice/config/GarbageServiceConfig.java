@@ -35,6 +35,14 @@ public class GarbageServiceConfig {
     @Value("${kafka.topics.scheduler.log}")
     private String schedulerLogTopic;
 
+    // save monthly rent payment topic
+    @Value("${save-monthly-rent-payment}")
+    private String monthlyRentPaymentSaveTopic;
+
+    // update allotment topic
+    @Value("${update-garbage-account-topic}")
+    private String garbageAccountUpdateTopic;
+
     @Value("${egov.mdms.host}")
     private String mdmsHost;
 
