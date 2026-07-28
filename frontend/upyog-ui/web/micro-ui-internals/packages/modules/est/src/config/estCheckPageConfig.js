@@ -5,6 +5,7 @@
  * - errorLogPrefix: prefix for console.error on submit failures (create vs allot)
  * - summaryHeaderCode / defaultSectionHeaderCode: i18n keys for the check page UI
  */
+//TODO - will see feasibility to club with the new registration and allotment config later on.
 export const EST_CHECK_FLOWS = {
   registration: {
     stepKey: "newRegistration",
