@@ -83,6 +83,6 @@ public class FeatureService {
     }
 
     public Long getNumberOfFeatureByRoleAction(Role role, Action action) {
-        return this.featureRepository.countByRolesInAndActionsIn(role, action);
+        return this.featureRepository.countByRolesContainingAndActionsContaining(role, action);
     }
 }

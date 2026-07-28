@@ -147,7 +147,7 @@ public class BudgetingGroupService {
 		if ((budgetGroup.getMajorCode() != null) && (budgetGroup.getId() == null))
 			bg = budgetGroupRepository.findByMajorCode_Id(budgetGroup.getMajorCode().getId());
 		else if ((budgetGroup.getMajorCode() != null) && (budgetGroup.getId() != null))
-			bg = budgetGroupRepository.findByMajorCode_IdAndIdNotIn(budgetGroup.getMajorCode().getId(),
+			bg = budgetGroupRepository.findByMajorCode_IdAndIdNot(budgetGroup.getMajorCode().getId(),
 					budgetGroup.getId());
 		if (bg != null)
 			validationMessage = messageSource.getMessage("budgetgroup.invalid.majorcode", new String[] { bg.getName() },
@@ -158,7 +158,7 @@ public class BudgetingGroupService {
 					budgetGroup.getMaxCode().getGlcode(), budgetGroup.getMinCode().getGlcode());
 		else if ((budgetGroup.getMinCode() != null) && (budgetGroup.getMaxCode() != null)
 				&& (budgetGroup.getId() != null))
-			bgCode = budgetGroupRepository.findByMinCodeGlcodeLessThanEqualAndMaxCodeGlcodeGreaterThanEqualAndIdNotIn(
+			bgCode = budgetGroupRepository.findByMinCodeGlcodeLessThanEqualAndMaxCodeGlcodeGreaterThanEqualAndIdNot(
 					budgetGroup.getMinCode().getGlcode(), budgetGroup.getMinCode().getGlcode(), budgetGroup.getId());
 		else
 			bgCode = Collections.emptyList();

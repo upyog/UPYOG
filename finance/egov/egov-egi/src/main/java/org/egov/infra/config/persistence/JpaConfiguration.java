@@ -118,6 +118,7 @@ public class JpaConfiguration {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
         entityManagerFactory.setPersistenceUnitName("EgovPersistenceUnit");
+        entityManagerFactory.setEntityManagerFactoryInterface(EntityManagerFactory.class);
         entityManagerFactory.setPackagesToScan("org.egov.**.entity");
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
