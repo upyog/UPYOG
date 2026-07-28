@@ -114,9 +114,10 @@ public class DemandService {
             rentalFeeAmount =
                     previousUnpaid.add(currentAmount.getPayableAmount());
 
+            BigDecimal penaltyRate = mdmsUtil.getPenaltyRate(requestInfo, garbageAccount.getTenantId());
             penaltyAmount =
                     previousUnpaid
-                            .multiply(config.getPenaltyRate())
+                            .multiply(penaltyRate)
                             .setScale(2, RoundingMode.HALF_UP);
 
             finalAmount =

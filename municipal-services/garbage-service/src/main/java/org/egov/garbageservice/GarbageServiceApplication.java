@@ -24,13 +24,13 @@ import org.springframework.web.client.RestTemplate;
 @EnableKafka
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "PT30M")
-public class HpGarbageServiceApplication {
+public class GarbageServiceApplication {
 	
 	@Value("${app.timezone}")
     private String timeZone;
 
 	public static void main(String[] args) {
-		SpringApplication.run(HpGarbageServiceApplication.class, args);
+		SpringApplication.run(GarbageServiceApplication.class, args);
 	}
 	
 	@Bean
