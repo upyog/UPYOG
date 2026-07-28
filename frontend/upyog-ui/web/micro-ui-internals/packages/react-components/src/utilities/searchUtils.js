@@ -1,8 +1,27 @@
-// searchUtils.js
-// Shared helpers for config-driven employee search pages.
+/**
+ * searchUtils.js
+ *
+ * Shared helpers for config-driven employee search pages that reuse
+ * DynamicForm (mode="search") or standalone search field configs.
+ *
+ * Exports
+ * -------
+ * - DEFAULT_SEARCH_PAGINATION — default offset/limit/sort for search forms
+ * - paginateArray             — client-side slice of a full result list
+ * - toSearchDropdownOptions   — normalize MDMS / locality rows for Dropdown
+ * - buildSearchPayload        — RHF form + dropdown selections → API payload
+ * - mapFormToSearchFilters    — DynamicForm flat payload → filter map
+ *
+ * @see DynamicForm (mode="search")
+ * @see useClientPagination
+ */
 
 import { flattenFormConfig } from "./formUtils";
 
+/**
+ * Default pagination / sort values for employee search forms (RHF defaults).
+ * @type {{ offset: number, limit: number, sortBy: string, sortOrder: string }}
+ */
 export const DEFAULT_SEARCH_PAGINATION = {
   offset: 0,
   limit: 10,
@@ -10,7 +29,14 @@ export const DEFAULT_SEARCH_PAGINATION = {
   sortOrder: "DESC",
 };
 
-/** Client-side slice for APIs that return the full result set. */
+/**
+ * Client-side slice for APIs that return the full result set.
+ *
+ * @param {array}  [list]   Full result array.
+ * @param {number} [offset] Start index.
+ * @param {number} [limit]  Page size.
+ * @returns {array}
+ */
 export const paginateArray = (list = [], offset = 0, limit = 10) => {
   if (!Array.isArray(list)) return [];
   return list.slice(offset, offset + limit);
@@ -18,7 +44,12 @@ export const paginateArray = (list = [], offset = 0, limit = 10) => {
 
 /**
  * Normalize MDMS / locality rows into Dropdown options.
- *   { code, name } → { code, name, i18nKey, label }
+ * Default map: { code, name } → { code, name, i18nKey, label }.
+ * Pass mapItem to customize per module.
+ *
+ * @param {array}    [list]    Raw master / locality rows.
+ * @param {Function} [mapItem] Optional (item) => option | null.
+ * @returns {object[]}
  */
 export const toSearchDropdownOptions = (list = [], mapItem) =>
   (Array.isArray(list) ? list : [])
@@ -43,6 +74,11 @@ export const toSearchDropdownOptions = (list = [], mapItem) =>
  * Field config shape (dropdown):
  *   { name, type: "dropdown", submitKey: "localityCode" }
  * Text fields pass through via formData[name].
+ *
+ * @param {object} [formData]        RHF (and other) field values.
+ * @param {object} [dropdownValues]  Map of field.name → selected option object.
+ * @param {array}  [fields]          Field descriptors with type / submitKey.
+ * @returns {object} API-ready filter payload.
  */
 export const buildSearchPayload = (formData = {}, dropdownValues = {}, fields = []) => {
   const payload = { ...formData };
@@ -64,7 +100,12 @@ export const buildSearchPayload = (formData = {}, dropdownValues = {}, fields = 
   return payload;
 };
 
-/** Normalize dropdown objects / plain values to an API filter code string. */
+/**
+ * Normalize dropdown objects / plain values to an API filter code string.
+ *
+ * @param {*} val - Option object, string, or empty.
+ * @returns {string}
+ */
 const toFilterCode = (val) => {
   if (val === undefined || val === null || val === "") return "";
   if (typeof val === "object") {
@@ -73,7 +114,14 @@ const toFilterCode = (val) => {
   return String(val).trim();
 };
 
-/** Map DynamicForm flat payload → search API filters using apiFieldName/submitKey. */
+/**
+ * Map DynamicForm flat payload → search API filters using apiFieldName/submitKey.
+ * Used by DynamicForm goNext when mode === "search".
+ *
+ * @param {object} [flat]       Flattened form values from buildPayload.
+ * @param {array}  [formConfig] routeConfig.form (groups supported via flatten).
+ * @returns {object} Filter map keyed by apiFieldName | submitKey | field.name.
+ */
 export const mapFormToSearchFilters = (flat = {}, formConfig = []) => {
   const result = {};
   flattenFormConfig(formConfig).forEach((fc) => {

@@ -1,19 +1,81 @@
-// checkPageUtils.js
-// Shared helpers for DynamicCheckPage and module-specific check wrappers.
-// Works with the same routeConfig.form that DynamicForm / DynamicFormField use.
+/**
+ * checkPageUtils.js
+ *
+ * Shared helpers for DynamicCheckPage and module-specific check/summary wrappers.
+ * Works with the same `routeConfig.form` metadata that DynamicForm / DynamicFormField
+ * use, and bridges wizard session data into human-readable summary sections.
+ *
+ * Responsibilities
+ * ----------------
+ * 1. Normalize empty summary values and flexible date inputs for check-page display.
+ * 2. Resolve and merge MDMS wizard route configs with module-local overrides.
+ * 3. Persist and retrieve routeConfig snapshots in wizard session data so check
+ *    pages reuse the exact form metadata the user saw on each step.
+ * 4. Extract flat form values from wizard onSelect payloads.
+ * 5. Flatten form configs into ordered summary sections and collect file fields.
+ * 6. Resolve file-store preview URLs and map uploaded files to summary entries.
+ * 7. Resolve per-field display text on the check page (dropdowns, dates, units).
+ *
+ * Exports
+ * -------
+ * Re-exported from formUtils:
+ *   - resolveFieldLabelKey
+ *
+ * Summary / display:
+ *   - defaultCheckNA
+ *   - parseFlexibleDate
+ *   - formatCheckPageDate
+ *   - resolveSummaryFieldValue
+ *
+ * Route config:
+ *   - resolveRouteConfigFromSteps
+ *   - mergeRouteConfig
+ *   - ROUTE_CONFIG_SESSION_KEY
+ *   - ROUTE_CONFIG_STEP_MARKER
+ *   - stripRouteConfigMarker
+ *   - attachRouteConfigToStepData
+ *   - mergeSessionStepWithRouteConfig
+ *   - resolveActiveRouteConfig
+ *
+ * Wizard session / form values:
+ *   - extractWizardFormValues
+ *   - flattenForSummary
+ *   - buildSummarySections
+ *
+ * File preview:
+ *   - resolveFilePreviewUrl
+ *   - extractUrlFromFilefetchResponse
+ *   - collectFormFileEntries
+ *
+ * @see DynamicCheckPage
+ * @see DynamicFormStep
+ * @see mergeRouteConfig
+ */
 
 import { sortByOrder, resolveFieldLabelKey, mergeFormFieldConfigs } from "./formUtils";
 import { extractFileStoreId } from "./payloadUtils";
 
 export { resolveFieldLabelKey };
 
-/** Summary fallback when a value is empty. */
+/**
+ * Return a fallback string when a summary value is empty.
+ * Treats `undefined`, `null`, and `""` as empty; all other values pass through.
+ *
+ * @param {*}    value    Raw field or summary value.
+ * @param {string} [fallback="NA"] Text shown when value is empty.
+ * @returns {*} The original value, or `fallback` when empty.
+ */
 export const defaultCheckNA = (value, fallback = "NA") =>
   value === undefined || value === null || value === "" ? fallback : value;
 
 /**
- * Parse epoch (ms/s), DD-MM-YYYY, ISO, or Date into a Date (or null).
- * Shared by summary pages and any module that needs flexible date display.
+ * Parse a flexible date input into a native `Date` (or `null` when invalid).
+ * Supports epoch milliseconds/seconds, DD-MM-YYYY strings, ISO strings, and
+ * existing `Date` instances. Shared by summary pages and any module that
+ * needs tolerant date display.
+ *
+ * @param {*} value - Epoch number/string, DD-MM-YYYY, ISO date string, or Date.
+ * @returns {Date|null} Parsed date, or `null` when input is empty or invalid.
  */
 export const parseFlexibleDate = (value) => {
   if (value === null || value === undefined || value === "") return null;
@@ -36,7 +98,16 @@ export const parseFlexibleDate = (value) => {
   return isNaN(d.getTime()) ? null : d;
 };
 
-/** Format any supported date value for check-page display. */
+/**
+ * Format any supported date value for check-page display using `toLocaleDateString`.
+ * Delegates parsing to `parseFlexibleDate`; returns a fallback when parsing fails.
+ *
+ * @param {*} value - Date input accepted by `parseFlexibleDate`.
+ * @param {object} [options]
+ * @param {string} [options.fallback="N/A"] Text when the date cannot be parsed.
+ * @param {string} [options.locale="en-IN"] BCP 47 locale passed to `toLocaleDateString`.
+ * @returns {string} Localized date string or the fallback text.
+ */
 export const formatCheckPageDate = (value, { fallback = "N/A", locale = "en-IN" } = {}) => {
   const d = parseFlexibleDate(value);
   if (!d) return fallback;
@@ -44,8 +115,13 @@ export const formatCheckPageDate = (value, { fallback = "N/A", locale = "en-IN" 
 };
 
 /**
- * Find a wizard step from an MDMS config array (or config.body).
- * Falls back to the first step that has a non-empty form.
+ * Find a wizard step object from an MDMS config array (or `config.body`).
+ * Matches by `stepKey` first; otherwise falls back to the first step that
+ * has a non-empty `form` array.
+ *
+ * @param {Array|object} config  MDMS wizard config array or wrapper with `body`.
+ * @param {string}       stepKey Step key to match against `step.key`.
+ * @returns {object} Matched step config, or `{}` when none is found.
  */
 export const resolveRouteConfigFromSteps = (config, stepKey) => {
   const steps = Array.isArray(config) ? config : config?.body || [];
@@ -56,6 +132,7 @@ export const resolveRouteConfigFromSteps = (config, stepKey) => {
   );
 };
 
+/** MDMS route keys overridden by module-local behavior config (always wins when present). */
 const LOCAL_ROUTE_BEHAVIOR_KEYS = [
   "staticFields",
   "computedFields",
@@ -65,6 +142,7 @@ const LOCAL_ROUTE_BEHAVIOR_KEYS = [
   "editPayloadExtras",
 ];
 
+/** MDMS route keys filled from module-local config only when MDMS value is null/undefined. */
 const LOCAL_ROUTE_FALLBACK_KEYS = [
   "payloadKey",
   "key",
@@ -75,7 +153,18 @@ const LOCAL_ROUTE_FALLBACK_KEYS = [
   "searchFormClassName",
 ];
 
-/** Merge MDMS route config with module-local behavior overrides (compute, payload, validation). */
+/**
+ * Merge an MDMS route config with module-local behavior overrides.
+ * Behavior keys (staticFields, computedFields, etc.) always override MDMS;
+ * fallback keys (payloadKey, pageHeading, etc.) apply only when MDMS is absent.
+ * When either side defines `form`, field configs are deep-merged via
+ * `mergeFormFieldConfigs` (local first, then MDMS).
+ *
+ * @param {object} [mdmsRouteConfig={}] Route/step config from MDMS.
+ * @param {object} [localFormConfig={}] Module-local overrides from the wizard step.
+ * @returns {object} Merged routeConfig consumed by DynamicForm and check pages.
+ * @see mergeFormFieldConfigs
+ */
 export const mergeRouteConfig = (mdmsRouteConfig = {}, localFormConfig = {}) => {
   const merged = { ...mdmsRouteConfig };
 
@@ -99,28 +188,51 @@ export const mergeRouteConfig = (mdmsRouteConfig = {}, localFormConfig = {}) => 
   return merged;
 };
 
-/** Session key where each wizard step's resolved routeConfig is stored. */
+/** Session object key where each wizard step's resolved routeConfig snapshot is stored. */
 export const ROUTE_CONFIG_SESSION_KEY = "routeConfigs";
 
-/** Marker attached to step data when a form page passes its routeConfig upstream. */
+/** Property name attached to step data when a form page passes its routeConfig upstream. */
 export const ROUTE_CONFIG_STEP_MARKER = "__routeConfig";
 
-/** Remove the routeConfig marker from step payload before persisting form values. */
+/**
+ * Remove the routeConfig marker from step payload before persisting form values.
+ * Strips `ROUTE_CONFIG_STEP_MARKER` so only user-entered field data remains
+ * in wizard session storage.
+ *
+ * @param {object} [stepData={}] Step payload that may include `__routeConfig`.
+ * @returns {object} Step data without the routeConfig marker; non-objects pass through.
+ */
 export const stripRouteConfigMarker = (stepData = {}) => {
   if (!stepData || typeof stepData !== "object") return stepData;
   const { [ROUTE_CONFIG_STEP_MARKER]: _removed, ...rest } = stepData;
   return rest;
 };
 
-/** Attach the active routeConfig so the wizard parent can store it in session. */
+/**
+ * Attach the active routeConfig onto step data so the wizard parent can store
+ * it in session under `ROUTE_CONFIG_SESSION_KEY`.
+ *
+ * @param {object} stepData    Step payload from DynamicForm onSelect.
+ * @param {object} routeConfig Merged route config for this wizard step.
+ * @returns {object} Step data with `__routeConfig` set, or unchanged when routeConfig is falsy.
+ */
 export const attachRouteConfigToStepData = (stepData = {}, routeConfig) => {
   if (!routeConfig) return stepData;
   return { ...stepData, [ROUTE_CONFIG_STEP_MARKER]: routeConfig };
 };
 
 /**
- * Persist form step values + routeConfig snapshot from the form page.
+ * Persist form step values and an optional routeConfig snapshot from the form page.
+ * Cleans the routeConfig marker from step data, stores field values under `stepKey`,
+ * and merges any routeConfig into `session[ROUTE_CONFIG_SESSION_KEY][stepKey]`.
  * Call from parent handleSelect so check pages reuse the same config.
+ *
+ * @param {object} prevSession Previous wizard session object.
+ * @param {string} stepKey    Wizard step key.
+ * @param {object} stepData   Step payload from onSelect (may include `__routeConfig`).
+ * @returns {object} Updated session with cleaned step values and optional routeConfig snapshot.
+ * @see attachRouteConfigToStepData
+ * @see stripRouteConfigMarker
  */
 export const mergeSessionStepWithRouteConfig = (prevSession = {}, stepKey, stepData) => {
   const routeConfig = stepData?.[ROUTE_CONFIG_STEP_MARKER];
@@ -141,16 +253,32 @@ export const mergeSessionStepWithRouteConfig = (prevSession = {}, stepKey, stepD
 };
 
 /**
- * Route config for check/submit: prefer session snapshot from form step,
- * fall back to MDMS wizard steps when session has no snapshot yet.
+ * Resolve the active route config for a check/submit page.
+ * Prefers the session snapshot saved when the user completed the form step;
+ * falls back to MDMS wizard steps when no snapshot exists yet.
+ *
+ * @param {object} sessionValue Wizard session (includes `routeConfigs` when set).
+ * @param {Array|object} mdmsSteps MDMS wizard step list or config wrapper.
+ * @param {string} stepKey Wizard step key.
+ * @returns {object} Resolved routeConfig for summary rendering and payload building.
+ * @see resolveRouteConfigFromSteps
  */
 export const resolveActiveRouteConfig = (sessionValue, mdmsSteps, stepKey) =>
   sessionValue?.[ROUTE_CONFIG_SESSION_KEY]?.[stepKey] ||
   resolveRouteConfigFromSteps(mdmsSteps, stepKey);
 
 /**
- * Read flat form values saved by DynamicForm's onSelect:
- *   onSelect(stepKey, { [payloadKey]: [formVal] })
+ * Read flat form values saved by DynamicForm's onSelect callback:
+ *   `onSelect(stepKey, { [payloadKey]: [formVal] })`
+ * Unwraps the first array element when present; tries alternate payload keys
+ * when the primary key is missing.
+ *
+ * @param {object} [value={}] Full wizard session or parent value object.
+ * @param {string} stepKey    Wizard step key.
+ * @param {string} payloadKey Primary payload property on step data.
+ * @param {object} [options]
+ * @param {string[]} [options.alternatePayloadKeys=[]] Fallback keys to try on step data.
+ * @returns {object} Flat form field map for the step, or `{}` when nothing is saved.
  */
 export const extractWizardFormValues = (
   value = {},
@@ -174,7 +302,15 @@ export const extractWizardFormValues = (
   return saved || {};
 };
 
-/** Flatten form config for summary rendering (groups expanded, ordered). */
+/**
+ * Flatten a form config array for summary rendering.
+ * Sorts top-level entries by order, expands `group` children (also sorted),
+ * and returns a single ordered list of field configs.
+ *
+ * @param {Array} [formConfig=[]] Route config `form` array from MDMS or merged config.
+ * @returns {Array} Ordered flat list of field config objects.
+ * @see sortByOrder
+ */
 export const flattenForSummary = (formConfig = []) =>
   sortByOrder(formConfig).reduce((acc, fc) => {
     if (fc.type === "group") {
@@ -185,7 +321,13 @@ export const flattenForSummary = (formConfig = []) =>
 
 /**
  * Split a form config into summary sections and file fields.
- * sectionHeader entries start a new section; file fields are collected separately.
+ * `sectionHeader` entries start a new section; fields with `hideInSummary`
+ * are skipped; `file` fields are collected separately for preview/download UI.
+ *
+ * @param {Array} [formConfig=[]] Route config `form` array.
+ * @returns {{ sections: Array<{ headerCode: string|null, fields: Array }>, fileFields: Array }}
+ *   `sections` — grouped non-file fields; `fileFields` — file-type field configs.
+ * @see flattenForSummary
  */
 export const buildSummarySections = (formConfig = []) => {
   const sections = [];
@@ -213,7 +355,14 @@ export const buildSummarySections = (formConfig = []) => {
   return { sections, fileFields };
 };
 
-/** Pick the full document URL (not small/medium thumbnail) from filestore response. */
+/**
+ * Pick the full document preview URL from a file-store response string.
+ * Uses `Digit.Utils.getFileUrl` when available; otherwise takes the first
+ * comma-separated URL segment (avoids small/medium thumbnail variants).
+ *
+ * @param {string} [rawUrl=""] Raw URL or comma-separated URL list from filestore.
+ * @returns {string} Resolved preview URL, or `""` when input is empty.
+ */
 export const resolveFilePreviewUrl = (rawUrl = "") => {
   if (!rawUrl) return "";
   if (typeof rawUrl === "string" && Digit?.Utils?.getFileUrl) {
@@ -222,7 +371,17 @@ export const resolveFilePreviewUrl = (rawUrl = "") => {
   return typeof rawUrl === "string" ? rawUrl.split(",")[0] || "" : "";
 };
 
-/** Resolve preview URL from Filefetch response for a given fileStoreId. */
+/**
+ * Resolve a preview URL from a Filefetch API response for a given fileStoreId.
+ * Looks up by id in `response.data[fileStoreId]`, then in `response.data.fileStoreIds`,
+ * and finally falls back to the entry at `index`.
+ *
+ * @param {object} response   Filefetch hook/API response (`{ data: ... }`).
+ * @param {string} fileStoreId Target file store id.
+ * @param {number} [index=0] Fallback index into `data.fileStoreIds` when id match fails.
+ * @returns {string} Resolved preview URL, or `""` when not found.
+ * @see resolveFilePreviewUrl
+ */
 export const extractUrlFromFilefetchResponse = (response, fileStoreId, index = 0) => {
   const data = response?.data;
   if (!data) return "";
@@ -241,7 +400,19 @@ export const extractUrlFromFilefetchResponse = (response, fileStoreId, index = 0
   return "";
 };
 
-/** Collect uploaded file references from form values for check-page preview. */
+/**
+ * Collect uploaded file references from form values for check-page preview.
+ * Maps each file field config to `{ id, label, fileName, reference }` when a
+ * fileStoreId can be extracted from the saved value.
+ *
+ * @param {Array}    fileFields File field configs from `buildSummarySections`.
+ * @param {object}   formValues Flat form values for the step.
+ * @param {Function} [t=(k) => k] i18n translator for field labels.
+ * @returns {Array<{ id: string, label: string, fileName: string|null, reference: string }>}
+ *   Non-null entries only (fields without an upload are omitted).
+ * @see extractFileStoreId
+ * @see resolveFieldLabelKey
+ */
 export const collectFormFileEntries = (fileFields = [], formValues = {}, t = (k) => k) =>
   fileFields
     .map((fc) => {
@@ -262,8 +433,21 @@ export const collectFormFileEntries = (fileFields = [], formValues = {}, t = (k)
     .filter(Boolean);
 
 /**
- * Resolve one field's display text on the check page.
- * Mirrors DynamicFormField value shapes (dropdown/radio objects, dates, units).
+ * Resolve one field's display text on the check/summary page.
+ * Mirrors DynamicFormField value shapes: dropdown/radio objects and option
+ * lookups, date formatting, default text with optional units, and `apiFieldName`
+ * / `extraData` fallbacks when the primary form value is empty.
+ *
+ * @param {object} fieldConfig Form field config entry from routeConfig.form.
+ * @param {object} [options]
+ * @param {object}   [options.formValues={}] Flat form values for the step.
+ * @param {object}   [options.extraData={}] Supplemental values (e.g. computed fields).
+ * @param {Function} [options.formatDate=formatCheckPageDate] Date formatter.
+ * @param {Function} [options.checkNA=defaultCheckNA] Empty-value fallback helper.
+ * @param {Function} [options.t=(k) => k] i18n translator.
+ * @returns {string} Localized display string for the field.
+ * @see formatCheckPageDate
+ * @see defaultCheckNA
  */
 export const resolveSummaryFieldValue = (
   fieldConfig,

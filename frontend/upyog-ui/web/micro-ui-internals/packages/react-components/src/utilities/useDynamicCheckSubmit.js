@@ -1,8 +1,36 @@
+/**
+ * useDynamicCheckSubmit.js
+ *
+ * Shared submit handler for config-driven check pages (e.g. DynamicCheckPage
+ * wrappers). Validates that routeConfig.form exists (optional), builds the API
+ * payload via a caller-supplied buildPayload, and runs a react-query mutation.
+ *
+ * @param {object}   options
+ * @param {object}   options.routeConfig       Merged MDMS + local route config.
+ * @param {Function} options.buildPayload      () => API payload object.
+ * @param {object}   options.mutation          react-query mutation with .mutate.
+ * @param {Function} [options.onSubmit]        Called with mutation response on success.
+ * @param {Function} [options.onError]         Called on validation or mutation error.
+ * @param {boolean}  [options.validateForm=true] Refuse submit when form config is empty.
+ * @param {string}   [options.logTag]          Prefix for console.error messages.
+ * @returns {{ isSubmitting: boolean, handleSubmit: Function }}
+ *
+ * @example
+ *   const { isSubmitting, handleSubmit } = useDynamicCheckSubmit({
+ *     routeConfig,
+ *     buildPayload: () => buildApiPayload(routeConfig, formValues, tenantId),
+ *     mutation: createMutation,
+ *     onSubmit: goToAcknowledgement,
+ *   });
+ */
+
 import { useCallback, useState } from "react";
 
 /**
- * Shared submit handler for config-driven check pages.
- * Validates routeConfig.form, builds payload, and runs a react-query mutation.
+ * Wires declaration/submit UX to a mutation with loading and error handling.
+ *
+ * @param {object} options — see file-level docs.
+ * @returns {{ isSubmitting: boolean, handleSubmit: Function }}
  */
 const useDynamicCheckSubmit = ({
   routeConfig,
@@ -13,8 +41,14 @@ const useDynamicCheckSubmit = ({
   validateForm = true,
   logTag = "DYNAMIC_CHECK",
 }) => {
+  /** True while mutation.mutate is in flight (guards double-submit). */
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /**
+   * Final check-page submit.
+   * Optionally refuses empty routeConfig.form, builds payload, then mutates.
+   * onSubmit errors after a successful API call are logged only (mutation already succeeded).
+   */
   const handleSubmit = useCallback(() => {
     if (isSubmitting) return;
 
