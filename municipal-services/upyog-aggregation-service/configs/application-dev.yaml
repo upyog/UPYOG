@@ -1,0 +1,112 @@
+# =============================================================================
+# UPYOG Aggregation Service - Development Environment Configuration
+# =============================================================================
+
+server:
+  port: 8090
+  readTimeout: 30s
+  writeTimeout: 30s
+  idleTimeout: 120s
+  shutdownTimeout: 15s
+  maxRequestBodyMB: 5
+  enableCompression: true
+
+redis:
+  host: redis-headless.dev
+  port: 6379
+  password: ""
+  db: 0
+  poolSize: 20
+  minIdleConns: 5
+  dialTimeout: 5s
+  readTimeout: 3s
+  writeTimeout: 3s
+  enabled: true
+
+auth:
+  enabled: true
+  jwksUrl: "https://keycloak.dev.upyog.org/auth/realms/upyog/protocol/openid-connect/certs"
+  issuer: "https://keycloak.dev.upyog.org/auth/realms/upyog"
+  audience: "upyog-client"
+  tokenExpLeeway: 60
+  publicPaths:
+    - /health
+    - /readiness
+    - /liveness
+    - /metrics
+
+observability:
+  metrics:
+    enabled: true
+    path: /metrics
+    namespace: upyog
+    subsystem: aggregation
+  tracing:
+    enabled: true
+    endpoint: "jaeger-collector.observability:4317"
+    serviceName: upyog-aggregation-service
+    samplingRate: 0.5
+
+providers:
+  defaultTimeout: 10s
+  maxRetries: 2
+  cacheTTL: 5m
+  custom:
+    quick-summary:
+      timeout: 15s
+      cacheTTL: 2m
+      retries: 3
+    notifications:
+      timeout: 5s
+      cacheTTL: 1m
+      retries: 1
+
+rateLimit:
+  enabled: true
+  requestsPerSecond: 100
+  burst: 200
+
+backend:
+  services:
+    inbox:
+      baseUrl: "http://inbox-service.dev:8080"
+      timeout: 10s
+      maxConns: 50
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    billing:
+      baseUrl: "http://billing-service.dev:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    property:
+      baseUrl: "http://property-services.dev:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    workflow:
+      baseUrl: "http://egov-workflow.dev:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    tl-services:
+      baseUrl: "http://tl-services.dev:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    user-event:
+      baseUrl: "http://egov-user-event.dev:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    advertisement:
+      baseUrl: "http://advertisement-service.dev:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s

@@ -15,7 +15,20 @@ export const PaymentService = {
         return d;
       })
       .catch((err) => {
-        if (err?.response?.data?.Errors?.[0]?.code === "EG_BS_BILL_NO_DEMANDS_FOUND") return { Bill: [] };
+        const errorCode =
+          err?.response?.data?.Errors?.[0]?.code ||
+          err?.Errors?.[0]?.code ||
+          "";
+        const status = err?.response?.status;
+        // No active demand / client bill errors → treat as no amount due.
+        if (
+          status === 400 ||
+          errorCode === "EG_BS_BILL_NO_DEMANDS_FOUND" ||
+          errorCode === "EMPTY_DEMANDS" ||
+          String(errorCode).includes("NO_DEMAND")
+        ) {
+          return { Bill: [] };
+        }
         else throw err;
       }),
   searchBill: (tenantId, filters = {}) =>
