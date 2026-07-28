@@ -105,7 +105,10 @@ export const useFetchPayment = ({ tenantId, consumerCode, businessService }, con
   };
 
   const retry = (failureCount, error) => {
-    if (error?.response?.data?.Errors?.[0]?.code === "EG_BS_BILL_NO_DEMANDS_FOUND") return false;
+    const code = error?.response?.data?.Errors?.[0]?.code || "";
+    if (code === "EG_BS_BILL_NO_DEMANDS_FOUND" || code === "EMPTY_DEMANDS" || String(code).includes("NO_DEMAND")) {
+      return false;
+    }
     else return failureCount < 3;
   };
 
