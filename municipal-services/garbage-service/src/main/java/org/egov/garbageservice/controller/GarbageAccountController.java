@@ -13,20 +13,13 @@ import jakarta.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.garbageservice.model.GarbageAccountActionRequest;
-import org.egov.garbageservice.model.GarbageAccountActionResponse;
-import org.egov.garbageservice.model.GarbageAccountRequest;
-import org.egov.garbageservice.model.GarbageAccountResponse;
-import org.egov.garbageservice.model.PayNowRequest;
+import org.egov.garbageservice.model.*;
+import org.egov.garbageservice.service.Scheduler;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.common.contract.request.RequestInfo;
 
-import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
-import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
-import org.egov.garbageservice.model.TotalCountRequest;
 import org.egov.garbageservice.service.GarbageAccountService;
 import org.egov.garbageservice.util.RequestInfoWrapper;
-import org.egov.garbageservice.model.GenrateArrearRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -64,6 +57,10 @@ public class GarbageAccountController {
 
 	@Autowired
 	private GarbageAccountService service;
+
+	@Autowired
+	private Scheduler scheduler;
+
 
 	@Operation(summary = "Create garbage account")
 	@PostMapping("/_create")
@@ -205,5 +202,12 @@ public class GarbageAccountController {
 	public ResponseEntity<Map<String, Object>> createArear(
 			@Valid @RequestBody GenrateArrearRequest genrateArrearRequest) {
 		return ResponseEntity.ok(service.generateArrear(genrateArrearRequest));
+	}
+
+	@PostMapping("/scheduler/v1/_trigger")
+	public ResponseEntity<String> triggerScheduler(@RequestBody SchedulerRequest request) {
+		log.info("Manual scheduler trigger requested for billingDate: {}", request.getBillingDate());
+		String result = scheduler.triggerManually(request.getRequestInfo(), request.getBillingDate());
+		return ResponseEntity.ok(result);
 	}
 }

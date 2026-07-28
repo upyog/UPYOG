@@ -185,7 +185,6 @@ const GCApplicationDetails = () => {
   }
 
   // ---------- Additional Details ----------
-  /* This piece of code is not yet in but we can use it in future, If we have to add any additional details 
   let additionalDetails = appData?.additionalDetails || appData?.additionalDetail || {};
   if (typeof additionalDetails === "string") {
     try {
@@ -193,7 +192,7 @@ const GCApplicationDetails = () => {
     } catch (e) {
       additionalDetails = {};
     }
-  }*/
+  }
 
   // ---------- Applicant / Owner Details ----------
   const rawOwners =

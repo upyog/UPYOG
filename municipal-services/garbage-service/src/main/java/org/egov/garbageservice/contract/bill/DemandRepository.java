@@ -10,7 +10,7 @@ import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.egov.garbageservice.util.RestCallRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * - Parsing failures throw {@link CustomException} with PARSING ERROR.
  * - searchId reuses the search endpoint URL with consumerCode replaced by demandId.
  */
-@Repository
+@Service("billDemandRepository")
 public class DemandRepository {
 
 

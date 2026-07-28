@@ -80,13 +80,13 @@ public class MetricIngestController {
     }
 
     private String resolveTenantId(IngestRequest ingestRequest) {
+    	if (ingestRequest.getIngestData() != null && !ingestRequest.getIngestData().isEmpty()) {
+    		return ingestRequest.getIngestData().get(0).getUlb();
+    	}
         if (ingestRequest.getRequestInfo() != null
                 && ingestRequest.getRequestInfo().getUserInfo() != null
                 && ingestRequest.getRequestInfo().getUserInfo().getTenantId() != null) {
             return ingestRequest.getRequestInfo().getUserInfo().getTenantId();
-        }
-        if (ingestRequest.getIngestData() != null && !ingestRequest.getIngestData().isEmpty()) {
-            return ingestRequest.getIngestData().get(0).getUlb();
         }
         return null;
     }
