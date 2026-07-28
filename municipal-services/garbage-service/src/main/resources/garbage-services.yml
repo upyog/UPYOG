@@ -931,3 +931,45 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.ismonthlybilling
 
             - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgCollectionUnits.*.uuid
+
+    - version: 1.0
+      description: Persist monthly rent payment details into ug_em_monthly_rent_payment table
+      fromTopic: save-monthly-rent-payment
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO ug_grbg_monthly_rent_payment(id, application_no, rent, penalty_amount, previous_month, payment_date, last_date_of_payment, due_payment_date, payment_status, due_payment, validity_days, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?, ?, ?, ?);
+          basePath: garbagePaymentDetails
+          jsonMaps:
+            - jsonPath: $.garbagePaymentDetails.id
+            - jsonPath: $.garbagePaymentDetails.applicationNo
+            - jsonPath: $.garbagePaymentDetails.rent
+            - jsonPath: $.garbagePaymentDetails.penaltyAmount
+            - jsonPath: $.garbagePaymentDetails.previousMonth
+            - jsonPath: $.garbagePaymentDetails.paymentDate
+            - jsonPath: $.garbagePaymentDetails.lastDateOfPayment
+            - jsonPath: $.garbagePaymentDetails.duePaymentDate
+            - jsonPath: $.garbagePaymentDetails.paymentStatus
+            - jsonPath: $.garbagePaymentDetails.duePayment
+            - jsonPath: $.garbagePaymentDetails.validityDays
+            - jsonPath: $.garbagePaymentDetails.createdBy
+            - jsonPath: $.garbagePaymentDetails.lastModifiedBy
+            - jsonPath: $.garbagePaymentDetails.createdTime
+            - jsonPath: $.garbagePaymentDetails.lastModifiedTime
+
+
+    - version: 1.0
+      description: Update garbage account details
+      fromTopic: update-garbage-account
+
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE eg_garbage_account SET due_date = TO_DATE(?, 'DD-MM-YYYY'), application_id = ?, allotment_no = ?, status = ?, lastmodifiedby = ?, lastmodifiedtime = ?, uuid = ?;
+          basePath: garbageAccounts.*
+          jsonMaps:
+            - jsonPath: $.garbageAccounts.*.dueDate
+            - jsonPath: $.garbageAccounts.*.application_id
+            - jsonPath: $.garbageAccounts.*.application_no
+            - jsonPath: $.garbageAccounts.*.status
+            - jsonPath: $.garbageAccounts.*.auditDetails.lastModifiedBy
+            - jsonPath: $.garbageAccounts.*.auditDetails.lastModifiedTime
+            - jsonPath: $.garbageAccounts.*.uuid

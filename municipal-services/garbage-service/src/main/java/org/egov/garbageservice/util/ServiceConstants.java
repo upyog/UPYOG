@@ -11,4 +11,5 @@ public class ServiceConstants {
     public static final String STATUS_PENDING = "PENDING";
     public static final String STATUS_SYSTEM = "system";
     public static final String STATUS_APPROVED = "APPROVED";
+    public static final String STATUS_PAID = "PAID";
 }
