@@ -86,14 +86,21 @@
         </dependency>
 
         <!-- MISC START -->
+<!--        <dependency>-->
+<!--            <groupId>opensymphony</groupId>-->
+<!--            <artifactId>sitemesh</artifactId>-->
+<!--        </dependency>-->
+
+        <!-- Jakarta transformed SiteMesh 2.5.0 -->
         <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>sitemesh</artifactId>
+            <groupId>org.egov.test</groupId>
+            <artifactId>sitemesh-jakarta-test</artifactId>
+            <classifier>jakarta</classifier>
         </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-web</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>net.sf.ehcache</groupId>-->
+<!--            <artifactId>ehcache-web</artifactId>-->
+<!--        </dependency>-->
         <!-- MISC END -->
         <!-- VIEWS RELATED END -->
 <!--        <dependency>-->

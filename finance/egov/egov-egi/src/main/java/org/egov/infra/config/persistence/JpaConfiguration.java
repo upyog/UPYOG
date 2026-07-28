@@ -122,7 +122,8 @@ public class JpaConfiguration {
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
-        entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
+//        entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
+        entityManagerFactory.setSharedCacheMode(SharedCacheMode.NONE);
         ClasspathScanningPersistenceUnitPostProcessor hbmScanner = new ClasspathScanningPersistenceUnitPostProcessor("org.egov");
         hbmScanner.setMappingFileNamePattern("**/*hbm.xml");
         entityManagerFactory.setPersistenceUnitPostProcessors(hbmScanner);
