@@ -44,14 +44,16 @@
       "stepName":"Open New Pet Registration",
       "locatorStrategy":"XPATH",
       "locatorValue":"//a[contains(@href,'petservice/new-application')]",
-      "action":"CLICK_JS"
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     },
 
     {
       "stepName":"Click Next",
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[contains(.,'Next')]",
-      "action":"CLICK_JS"
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     },
 
 
@@ -62,7 +64,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"applicantName",
       "action":"TYPE",
-      "inputValue":"Ramesh Kumar"
+      "inputValue": "${applicant.name}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -70,7 +73,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"mobileNumber",
       "action":"TYPE",
-      "inputValue":"8893445543"
+      "inputValue": "${mobile.number}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -78,7 +82,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"fatherName",
       "action":"TYPE",
-      "inputValue":"Amit Kumar"
+      "inputValue":"${applicant.guardian}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -86,14 +91,16 @@
       "locatorStrategy":"NAME",
       "locatorValue":"emailId",
       "action":"TYPE",
-      "inputValue":"ramesh@gmail.com"
+      "inputValue": "${applicant.email}",
+      "dynamicSleep": 2000
     },
 
     {
       "stepName":"Owner Details Next",
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[contains(.,'Next')]",
-      "action":"CLICK_JS"
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     },
 
 
@@ -104,7 +111,8 @@
       "locatorStrategy":"CSS",
       "locatorValue":"div.select",
       "action":"SELECT_DROPDOWN_BY_INDEX",
-      "inputValue":"0:0"
+      "inputValue":"0:0",
+      "dynamicSleep": 2000
     },
 
     {
@@ -112,7 +120,8 @@
       "locatorStrategy":"CSS",
       "locatorValue":"div.select",
       "action":"SELECT_DROPDOWN_BY_INDEX",
-      "inputValue":"1:0"
+      "inputValue":"1:0",
+      "dynamicSleep": 2000
     },
 
     {
@@ -120,7 +129,8 @@
       "locatorStrategy":"CSS",
       "locatorValue":"div.select",
       "action":"SELECT_DROPDOWN_BY_INDEX",
-      "inputValue":"2:0"
+      "inputValue":"2:0",
+      "dynamicSleep": 2000
     },
 
     {
@@ -128,14 +138,16 @@
       "locatorStrategy":"CSS",
       "locatorValue":"div.select",
       "action":"SELECT_DROPDOWN_BY_INDEX",
-      "inputValue":"3:0"
+      "inputValue":"3:0",
+      "dynamicSleep": 2000
     },
 
     {
       "stepName":"Birth Adoption Radio",
       "locatorStrategy":"NAME",
       "locatorValue":"selectBirthAdoption",
-      "action":"CLICK_FIRST_RADIO"
+      "action":"CLICK_FIRST_RADIO",
+      "dynamicSleep": 2000
     },
 
     {
@@ -143,7 +155,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"birthDate",
       "action":"TYPE",
-      "inputValue":"20-05-2025"
+      "inputValue":"${pet.birth.date}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -151,7 +164,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"petName",
       "action":"TYPE",
-      "inputValue":"Cherry"
+      "inputValue":"${pet.name}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -159,7 +173,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"identificationMark",
       "action":"TYPE",
-      "inputValue":"Black"
+      "inputValue":"${pet.identification}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -167,7 +182,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"petAge",
       "action":"TYPE",
-      "inputValue":"5"
+      "inputValue":"${pet.age}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -175,7 +191,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"doctorName",
       "action":"TYPE",
-      "inputValue":"Doctor Test"
+      "inputValue":"${doctor.name}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -183,7 +200,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"clinicName",
       "action":"TYPE",
-      "inputValue":"Clinic Test"
+      "inputValue":"${clinic.name}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -191,7 +209,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"lastVaccineDate",
       "action":"TYPE",
-      "inputValue":"20-05-2025"
+      "inputValue":"${vaccination.date}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -199,14 +218,16 @@
       "locatorStrategy":"NAME",
       "locatorValue":"vaccinationNumber",
       "action":"TYPE",
-      "inputValue":"34545645"
+      "inputValue":"${vaccination.number}",
+      "dynamicSleep": 2000
     },
 
     {
       "stepName":"Pet Details Next",
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[contains(.,'Next')]",
-      "action":"CLICK_JS"
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     },
 
 
@@ -217,7 +238,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"propertyId",
       "action":"TYPE",
-      "inputValue":"435345"
+      "inputValue":"${property.id}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -225,7 +247,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"buildingName",
       "action":"TYPE",
-      "inputValue":"Building Test"
+      "inputValue":"${house.name}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -233,7 +256,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"doorNo",
       "action":"TYPE",
-      "inputValue":"4534"
+      "inputValue":"${house.number}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -241,7 +265,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"street",
       "action":"TYPE",
-      "inputValue":"Lajpat"
+      "inputValue":"${street.name}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -249,14 +274,16 @@
       "locatorStrategy":"NAME",
       "locatorValue":"gisCode",
       "action":"TYPE",
-      "inputValue":"2343453"
+      "inputValue":"${gis.code}",
+      "dynamicSleep": 2000
     },
 
     {
       "stepName":"Property Details Next",
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[contains(.,'Next')]",
-      "action":"CLICK_JS"
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     },
 
 
@@ -267,7 +294,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"houseNo",
       "action":"TYPE",
-      "inputValue":"2342"
+      "inputValue":"${house.number}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -275,7 +303,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"houseName",
       "action":"TYPE",
-      "inputValue":"My House"
+      "inputValue":"${house.name}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -283,7 +312,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"streetName",
       "action":"TYPE",
-      "inputValue":"Main Street"
+      "inputValue":"Main Street",
+      "dynamicSleep": 2000
     },
 
     {
@@ -291,7 +321,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"addressline1",
       "action":"TYPE",
-      "inputValue":"123 Main Street"
+      "inputValue":"${address.line1}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -299,7 +330,8 @@
       "locatorStrategy":"NAME",
       "locatorValue":"addressline2",
       "action":"TYPE",
-      "inputValue":"Near Park"
+      "inputValue":"${address.line2}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -307,14 +339,16 @@
       "locatorStrategy":"NAME",
       "locatorValue":"landmark",
       "action":"TYPE",
-      "inputValue":"Opp Mall"
+      "inputValue":"${address.landmark}",
+      "dynamicSleep": 2000
     },
 
     {
       "stepName":"Address Details Next",
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[contains(.,'Next')]",
-      "action":"CLICK_JS"
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     },
 
 
@@ -325,7 +359,8 @@
       "locatorStrategy":"CSS",
       "locatorValue":"input[type='file']",
       "action":"UPLOAD_FILE_BY_INDEX",
-      "inputValue":"0:${document.identity.proof}"
+      "inputValue":"0:${document.identity.proof}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -333,7 +368,8 @@
       "locatorStrategy":"CSS",
       "locatorValue":"input[type='file']",
       "action":"UPLOAD_FILE_BY_INDEX",
-      "inputValue":"1:${document.owner.proof}"
+      "inputValue":"1:${document.owner.proof}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -341,7 +377,8 @@
       "locatorStrategy":"CSS",
       "locatorValue":"input[type='file']",
       "action":"UPLOAD_FILE_BY_INDEX",
-      "inputValue":"2:${document.vaccination.cert}"
+      "inputValue":"2:${document.vaccination.cert}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -349,7 +386,8 @@
       "locatorStrategy":"CSS",
       "locatorValue":"input[type='file']",
       "action":"UPLOAD_FILE_BY_INDEX",
-      "inputValue":"3:${document.fitness.cert}"
+      "inputValue":"3:${document.fitness.cert}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -357,14 +395,16 @@
       "locatorStrategy":"ID",
       "locatorValue":"upload",
       "action":"UPLOAD_FILE",
-      "inputValue":"${document.pet.photo}"
+      "inputValue":"${document.pet.photo}",
+      "dynamicSleep": 2000
     },
 
     {
       "stepName":"Documents Next",
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[contains(.,'Next')]",
-      "action":"CLICK_JS"
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     },
 
 
@@ -374,21 +414,24 @@
       "stepName":"Accept Declaration",
       "locatorStrategy":"CSS",
       "locatorValue":"input[type='checkbox']",
-      "action":"CHECK_LAST_CHECKBOX"
+      "action":"CHECK_LAST_CHECKBOX",
+      "dynamicSleep": 2000
     },
 
     {
       "stepName":"Submit Application",
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[contains(.,'Submit')]",
-      "action":"CLICK_JS"
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     },
 
     {
       "stepName":"Go Home",
       "locatorStrategy":"XPATH",
       "locatorValue":"//a[contains(@href,'employee')]",
-      "action":"CLICK_JS"
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     }
 
   ]

@@ -58,7 +58,7 @@ public class SearchApplication {
             
         } catch (Exception e) {
             logger.info("Exception in Pet Application Search: " + e.getMessage());
-            e.printStackTrace();
+
         } finally {
             if (driver != null) {
                 driver.quit();

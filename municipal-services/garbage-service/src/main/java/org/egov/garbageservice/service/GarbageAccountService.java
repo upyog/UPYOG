@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.egov.garbageservice.model.GenrateArrearRequest;
-import org.egov.garbageservice.contract.bill.DemandRepository;
+import org.egov.garbageservice.repository.DemandRepository;
 import org.egov.garbageservice.model.ApplicationBillDTO;
 import org.egov.garbageservice.model.ApplicationDetails;
 
@@ -1115,16 +1115,8 @@ public class GarbageAccountService {
 			if (StringUtils.equalsIgnoreCase(GrbgConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT,
 					account.getWorkflowAction())) {
 
-				List<Demand> savedDemands = new ArrayList<>();
-				// generate demand
-				BigDecimal taxAmount = new BigDecimal("100.00");
-				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account,
-						account.getBusinessService(), taxAmount, null);
-
-				if (CollectionUtils.isEmpty(savedDemands)) {
-					throw new CustomException("INVALID_CONSUMERCODE",
-							"Bill not generated due to no Demand found for the given consumerCode");
-				}
+				demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account,
+						java.time.LocalDate.now());
 
 				// fetch/create bill
 				GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(account.getTenantId())
@@ -2667,12 +2659,9 @@ public GarbageAccountActionResponse openSearchPayPreview(
 				demand.setFixedBillExpiryDate(cal.getTimeInMillis());
 				demand.setPayer(User.builder().uuid(garbageAccount.getUserUuid()).build());
 
-				List<Demand> savedDemands = demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(),
+				demandRepository.saveDemand(genrateArrearRequest.getRequestInfo(),
 						createArearDemand(demand, garbageAccount));
-				if (CollectionUtils.isEmpty(savedDemands)) {
-					throw new CustomException("INVALID_CONSUMERCODE",
-							"Bill not generated due to no Demand found for the given consumerCode");
-				}
+				
 				GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
 						.tenantId(garbageAccount.getTenantId()).businessService("GB")
 						.consumerCode(garbageAccount.getGrbgApplicationNumber()).build();
@@ -2690,7 +2679,6 @@ public GarbageAccountActionResponse openSearchPayPreview(
 					GrbgBillTrackerRequest grbgBillTrackerRequest = enrichGrbgBillTrackerCreateRequest(garbageAccount,
 							generateBillRequest, demand.getMinimumAmountPayable(), billResponse.getBill().get(0),
 							calculationBreakdown);
-					grbgBillTrackerRequest.getGrbgBillTracker().setDemandId(savedDemands.get(0).getId());
 					
 					AuditDetails audit = grbgUtils.buildCreateAuditDetails(genrateArrearRequest.getRequestInfo());
 
@@ -2813,11 +2801,12 @@ public GarbageAccountActionResponse openSearchPayPreview(
 		        tracker.setGrbgBillWithoutPenalty(tracker.getGrbgBillAmount());
 		    }
 		
-		    demandService.addPenaltyTaxHead(
-		        demand,
-		        GrbgConstants.GARBAGE_PENALTY_TAX_HEAD,
-		        penalty
-		    );
+		    demand.getDemandDetails().add(DemandDetail.builder()
+		        .taxHeadMasterCode(GrbgConstants.GARBAGE_PENALTY_TAX_HEAD)
+		        .taxAmount(penalty)
+		        .collectionAmount(BigDecimal.ZERO)
+		        .tenantId(demand.getTenantId())
+		        .build());
 
 		    if (demand.getMinimumAmountPayable() == null
 		            || demand.getMinimumAmountPayable().compareTo(BigDecimal.ZERO) == 0) {
@@ -2832,7 +2821,7 @@ public GarbageAccountActionResponse openSearchPayPreview(
 		        demand.getMinimumAmountPayable().add(penalty)
 		    );
 		
-		    demandService.updateDemand(
+		    demandRepository.updateDemand(
 		        requestInfo,
 		        Collections.singletonList(demand)
 		    );

@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import upyog.config.EstateConfiguration;
 import upyog.config.ServiceConstants;
 import upyog.repository.EstateRepository;
-import upyog.web.models.RentPaymentDetails;
+import upyog.web.models.*;
+import java.util.List;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -54,14 +56,30 @@ public class PaymentUpdateService {
             String tenantId = paymentRequest.getPayment().getTenantId();
             String userUuid = paymentRequest.getRequestInfo().getUserInfo() != null
                     ? paymentRequest.getRequestInfo().getUserInfo().getUuid() : ServiceConstants.STATUS_SYSTEM;
-            long now = System.currentTimeMillis();
+            long now = Instant.now().toEpochMilli();
             LocalDate today = LocalDate.now();
 
             log.info("Processing payment for consumerCode: {}, amount: {}", consumerCode, paidAmount);
 
+            // Fetch the allotment using allotmentNo (consumerCode)
+            AllotmentSearchCriteria allotmentSearchCriteria = new AllotmentSearchCriteria();
+            allotmentSearchCriteria.setAllotmentNo(consumerCode);
+            allotmentSearchCriteria.setTenantId(tenantId);
+            List<Allotment> allotments = estateRepository.searchAllotments(allotmentSearchCriteria);
+            
+            String allotmentId = consumerCode;
+            String estateNo = null;
+            if (allotments != null && !allotments.isEmpty()) {
+                allotmentId = allotments.get(0).getAllotmentId();
+                estateNo = allotments.get(0).getAssetNo();
+            } else {
+                log.error("Allotment not found for allotmentNo: {}", consumerCode);
+            }
+
             RentPaymentDetails rentPaymentDetails = RentPaymentDetails.builder()
                     .id(UUID.randomUUID().toString())
-                    .allotmentId(consumerCode)
+                    .allotmentId(allotmentId)
+                    .allotmentNo(consumerCode)
                     .rent(paidAmount)
                     .paymentType(ServiceConstants.PAYMENT_TYPE_MONTHLY_RENT)
                     .penaltyAmount(BigDecimal.ZERO)
@@ -80,6 +98,28 @@ public class PaymentUpdateService {
 
             estateRepository.save(config.getMonthlyRentPaymentSaveTopic(), Map.of("rentPaymentDetails", rentPaymentDetails));
             log.info("RentPaymentDetails saved to ug_em_monthly_rent_payment for consumerCode: {}", consumerCode);
+
+            // Update allotment status to PAID
+            try {
+                if (allotments != null && !allotments.isEmpty()) {
+                    Allotment allotment = allotments.get(0);
+                    allotment.setStatus(ServiceConstants.STATUS_PAID);
+                    
+                    // Update last modified audit details
+                    if (allotment.getAuditDetails() != null) {
+                        allotment.getAuditDetails().setLastModifiedBy(userUuid);
+                        allotment.getAuditDetails().setLastModifiedTime(now);
+                    } else {
+                        allotment.setAuditDetails(upyog.util.EstateUtil.getAuditDetails(userUuid, false));
+                    }
+                    
+                    AllotmentRequest allotmentRequest = new AllotmentRequest(paymentRequest.getRequestInfo(), List.of(allotment));
+                    estateRepository.save(config.getEstateAllotmentUpdateTopic(), allotmentRequest);
+                    log.info("Updated Allotment status to PAID for allotmentNo: {}", consumerCode);
+                }
+            } catch (Exception e) {
+                log.error("Failed to update allotment status on payment: {}", e.getMessage(), e);
+            }
 
         } catch (Exception e) {
             log.error("Error processing payment update for estate: {}", e.getMessage(), e);

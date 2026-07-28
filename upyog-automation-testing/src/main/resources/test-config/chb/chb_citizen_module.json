@@ -22,33 +22,48 @@
       "dynamicSleep": 2000
     },
     {
-      "stepName": "Select Hall",
+      "stepName": "Select Venue Type",
       "locatorStrategy": "CSS",
       "locatorValue": "div.select svg.cp",
       "action": "SELECT_DROPDOWN_BY_INDEX",
       "inputValue": "0:0",
-      "dynamicSleep": 1000
-    },
-    {
-      "stepName": "Open Calendar",
-      "locatorStrategy": "CSS",
-      "locatorValue": "svg.calendar-icon",
-      "action": "CLICK",
       "dynamicSleep": 2000
     },
     {
-      "stepName": "Select Three Days",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//*[contains(text(),'Three Days')]",
-      "action": "CLICK",
-      "dynamicSleep": 1000
-    },
-    {
-      "stepName": "Select Booking Type",
+      "stepName": "Select Venue Name",
       "locatorStrategy": "CSS",
       "locatorValue": "div.select svg.cp",
       "action": "SELECT_DROPDOWN_BY_INDEX",
       "inputValue": "1:0",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Select Venue Codes *",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "2:0",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Open Calendar",
+      "locatorStrategy": "CSS",
+      "locatorValue": "svg.date-range-calendar-icon",
+      "action": "CLICK",
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Select Booking Dates",
+      "action": "SELECT_DATE_RANGE",
+      "inputValue": "1",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Venue Slots",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "3:0",
       "dynamicSleep": 1000
     },
     {
@@ -91,7 +106,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "applicantName",
       "action": "TYPE",
-      "inputValue": "Arpit Rao",
+      "inputValue": "${applicant.name}",
       "dynamicSleep": 500
     },
     {
@@ -99,7 +114,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "emailId",
       "action": "TYPE",
-      "inputValue": "arpit@gmail.com",
+      "inputValue": "${applicant.email}",
       "dynamicSleep": 500
     },
     {
@@ -107,7 +122,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "mobileNumber",
       "action": "TYPE",
-      "inputValue": "9999999999",
+      "inputValue": "${mobile.number}",
       "dynamicSleep": 500
     },
     {
@@ -138,7 +153,7 @@
       "locatorStrategy": "CSS",
       "locatorValue": "textarea.card-textarea",
       "action": "TYPE",
-      "inputValue": "Community Meeting",
+      "inputValue": "${purpose.description}",
       "dynamicSleep": 500
     },
     {
@@ -153,7 +168,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "pincode",
       "action": "TYPE",
-      "inputValue": "143001",
+      "inputValue": "${address.pincode}",
       "dynamicSleep": 500
     },
     {
@@ -161,7 +176,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "streetName",
       "action": "TYPE",
-      "inputValue": "Test Street",
+      "inputValue": "${street.name}",
       "dynamicSleep": 500
     },
     {
@@ -169,7 +184,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "houseNo",
       "action": "TYPE",
-      "inputValue": "420",
+      "inputValue": "${house.number}",
       "dynamicSleep": 500
     },
     {
@@ -177,7 +192,7 @@
       "locatorStrategy": "CSS",
       "locatorValue": "textarea.card-textarea",
       "action": "TYPE",
-      "inputValue": "Test Land Registration",
+      "inputValue": "${address.landmark}",
       "dynamicSleep": 500
     },
     {
@@ -192,7 +207,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "accountNumber",
       "action": "TYPE",
-      "inputValue": "1168977476837687",
+      "inputValue": "${account.number}",
       "dynamicSleep": 500
     },
     {
@@ -200,7 +215,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "confirmAccountNumber",
       "action": "TYPE",
-      "inputValue": "1168977476837687",
+      "inputValue": "${account.number}",
       "dynamicSleep": 500
     },
     {
@@ -208,7 +223,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "ifscCode",
       "action": "TYPE",
-      "inputValue": "ICIC0000001",
+      "inputValue": "${ifsc.code}",
       "dynamicSleep": 500
     },
     {
@@ -216,7 +231,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "accountHolderName",
       "action": "TYPE",
-      "inputValue": "Arpit Rao",
+      "inputValue": "${applicant.name}",
       "dynamicSleep": 500
     },
     {
@@ -286,20 +301,29 @@
       "locatorStrategy": "CSS",
       "locatorValue": "input[type='checkbox']",
       "action": "CHECK_LAST_CHECKBOX",
-      "dynamicSleep": 500
+      "dynamicSleep": 2000
     },
     {
       "stepName": "Submit Application",
       "locatorStrategy": "XPATH",
       "locatorValue": "//button[.//header[text()='Submit']]",
       "action": "CLICK_JS",
-      "dynamicSleep": 5000
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Booking No.') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
     },
     {
       "stepName": "Click Make Payment",
       "locatorStrategy": "XPATH",
       "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'make payment')]",
       "action": "CLICK_JS",
+      "inputValue": null,
       "dynamicSleep": 2000
     },
     {
@@ -307,57 +331,64 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'proceed to pay')]",
       "action": "CLICK_JS",
-      "dynamicSleep": 2000
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Select ICICI",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//label[normalize-space()='ICICI']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
     },
     {
       "stepName": "Click UPYOG Pay",
       "locatorStrategy": "XPATH",
       "locatorValue": "//button[contains(@class,'submit-bar') and .//header[normalize-space()='Pay']]",
       "action": "CLICK_JS",
+      "inputValue": null,
       "dynamicSleep": 4000
     },
     {
-      "stepName": "Switch Payment Window",
-      "locatorStrategy": "TAGNAME",
-      "locatorValue": "body",
-      "action": "SWITCH_WINDOW",
-      "dynamicSleep": 2000
+      "stepName": "Open Cards Section",
+      "locatorStrategy": "ID",
+      "locatorValue": "nbAccordionBtn",
+      "action": "CLICK",
+      "dynamicSleep": 1000
     },
     {
-      "stepName": "Click Net Banking",
+      "stepName": "Select Test Bank",
       "locatorStrategy": "XPATH",
-      "locatorValue": "//*[contains(text(),'Net Banking')]",
+      "locatorValue": "//input[@type='radio' and @value='Test Bank']",
       "action": "CLICK_JS",
-      "dynamicSleep": 2000
+      "dynamicSleep": 1000
     },
     {
-      "stepName": "Select ICICI",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//*[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'icici')]",
-      "action": "CLICK_JS",
-      "dynamicSleep": 2000
-    },
-    {
-      "stepName": "Click Gateway Pay",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'pay')]",
-      "action": "CLICK_JS",
-      "dynamicSleep": 2000
-    },
-    {
-      "stepName": "Click Success",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//button[contains(.,'Success')]",
-      "action": "CLICK_JS",
+      "stepName": "Click Pay Now",
+      "locatorStrategy": "ID",
+      "locatorValue": "paytBtn1",
+      "action": "CLICK",
       "dynamicSleep": 3000
     },
     {
-      "stepName": "Switch Back To UPYOG",
-      "locatorStrategy": "TAGNAME",
-      "locatorValue": "body",
-      "action": "SWITCH_WINDOW",
-      "dynamicSleep": 2000
+      "stepName": "Enter OTP",
+      "locatorStrategy": "ID",
+      "locatorValue": "otp",
+      "action": "TYPE",
+      "inputValue": "123456",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Verify OTP",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@onclick='cardsubmit()']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Accept Transaction Alert",
+      "action": "ACCEPT_ALERT",
+      "dynamicSleep": 1000
     }
-
   ]
 }

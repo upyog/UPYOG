@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.Automation.Common.CommonEmployeeTest;
+import org.upyog.Automation.Reports.ReportManager;
 import org.upyog.Automation.Utils.WorkflowDataStore;
 
 @Service
@@ -23,6 +24,23 @@ public class EmployeeTestService {
             String password,
             String applicationNumber) {
 
+        logger.info(
+                "Report Test Object = {}",
+                ReportManager.getTest()
+        );
+
+        boolean standaloneRun = false;
+
+        if (!ReportManager.hasActiveTest()) {
+
+            ReportManager.startTest(
+                    moduleName,
+                    moduleName
+            );
+
+            standaloneRun = true;
+        }
+
         WorkflowDataStore.put("selected.url", baseUrl);
         WorkflowDataStore.put("selected.username", username);
         WorkflowDataStore.put("selected.password", password);
@@ -37,21 +55,37 @@ public class EmployeeTestService {
         logger.info("Selected ENV: {}", env);
         logger.info("Starting {} employee test", moduleName);
 
-        new Thread(() -> {
-            try {
-                commonEmployeeTest.runEmployeeTest(
-                        baseUrl,
-                        moduleName,
-                        username,
-                        password,
-                        applicationNumber
-                );
-            } catch (Exception e) {
-                logger.error("Error in employee test: {}", e.getMessage());
-                e.printStackTrace();
-            }
-        }).start();
+        try {
 
-        return moduleName + " employee test started successfully.";
+            commonEmployeeTest.runEmployeeTest(
+                    baseUrl,
+                    moduleName,
+                    username,
+                    password,
+                    applicationNumber
+            );
+
+        } catch (Exception e) {
+
+            logger.error(
+                    "Error in employee test",
+                    e
+            );
+
+            throw new RuntimeException(
+                    "Employee Test Failed : "
+                            + moduleName,
+                    e
+            );
+
+        } finally {
+
+            if (standaloneRun) {
+                ReportManager.flush();
+            }
+        }
+
+        return moduleName
+                + " employee test completed successfully.";
     }
 }

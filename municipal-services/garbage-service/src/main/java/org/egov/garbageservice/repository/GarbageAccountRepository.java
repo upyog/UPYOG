@@ -739,4 +739,12 @@ public class GarbageAccountRepository {
             queryString.append(" OR ");
         return true;
     }
+
+	public List<GarbageAccount> searchV2(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
+		return searchGarbageAccount(searchCriteriaGarbageAccount, null);
+	}
+
+    public List<GarbageAccount> search(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
+        return searchV2(searchCriteriaGarbageAccount);
+    }
 }

@@ -54,8 +54,8 @@
       "stepName":"Enter Booking Number",
       "locatorStrategy":"XPATH",
       "locatorValue":"//h4[contains(text(),'Booking No.')]/following::input[1]",
-      "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep":1000
     },
 
@@ -96,7 +96,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Approved",
+      "inputValue":"${comment.approve}",
       "dynamicSleep": 1000
     },
 
@@ -133,7 +133,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"payerMobile",
       "action":"TYPE",
-      "inputValue":"9999999999",
+      "inputValue":"${mobile.number}",
       "dynamicSleep": 1000
     },
 
@@ -142,7 +142,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"instrumentNumber",
       "action":"TYPE",
-      "inputValue":"GEN123456",
+      "inputValue":"${receipt.number}",
       "dynamicSleep": 1000
     },
 
@@ -227,40 +227,51 @@
       "dynamicSleep": 3000
     },
     {
+      "stepName": "Cancel Popup",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'selector-button-border')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Take Action Assign Vendor",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Click Assign Vendor",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Assign Vendor']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
       "stepName":"Click Vendor Input",
       "locatorStrategy":"XPATH",
       "locatorValue":"//input[contains(@class,'employee-select-wrap')]",
       "action":"CLICK_JS",
       "dynamicSleep":1000
     },
-
-
-
-    {
-      "stepName":"Type Vendor",
-      "locatorStrategy":"XPATH",
-      "locatorValue":"//input[contains(@class,'employee-select-wrap')]",
-      "action":"TYPE",
-      "inputValue":"atul vendor",
-      "dynamicSleep":1500
-    },
-    {
-      "stepName":"Select First Vendor",
-      "locatorStrategy":"XPATH",
-      "locatorValue":"(//div[contains(@class,'option')])[1]",
-      "action":"CLICK_JS",
-      "dynamicSleep":1000
-    },
-
     {
       "stepName":"Assign Comment",
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Assigned",
+      "inputValue":"${comment.assign}",
       "dynamicSleep": 3000
     },
-
+    {
+      "stepName":"Select First Vendor",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:14",
+      "dynamicSleep": 2000
+    },
     {
       "stepName":"Assign Vendor Submit",
       "locatorStrategy":"XPATH",

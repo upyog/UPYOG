@@ -265,20 +265,20 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           ></Row>
           </div>
           ):null}
-          {data?.planReport ? (
-            <div>
-            <Row
-            className="border-none"
-            label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
-            text={<ActionButton label={t("Uploaded Plan.pdf")}  jumpTo={planLink}/>}
-          ></Row>
-            <Row
-            className="border-none"
-            label={t("BPA_SCRUNTINY_REPORT_OUTPUT")}
-            text={<ActionButton label={t("BPA_SCRUTINY_REPORT_PDF")} jumpTo={data?.planReport} />}
-          ></Row>
-          </div>
-          ):null}
+          {planLink &&
+              <Row
+                className="border-none"
+                label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
+                text={<ActionButton label={t("Uploaded Plan.pdf")} jumpTo={planLink} />}
+              ></Row>
+          }
+          {data?.planReport != "" ? (
+              <Row
+                className="border-none"
+                label={t("BPA_SCRUNTINY_REPORT_OUTPUT")}
+                text={<ActionButton label={t("BPA_SCRUTINY_REPORT_PDF")} jumpTo={data?.planReport} />}
+              ></Row>
+          ) : null}
           
         </StatusTable>
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />

@@ -64,8 +64,8 @@
       "stepName":"Enter Grievance ID",
       "locatorStrategy":"NAME",
       "locatorValue":"serviceRequestId",
-      "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}"
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO"
     },
 
     {
@@ -109,7 +109,7 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//textarea[@name='comment']",
       "action":"TYPE",
-      "inputValue":"Assigned",
+      "inputValue":"${comment.assign}",
       "dynamicSleep": 3000
     },
 
@@ -146,7 +146,7 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//textarea[@name='comment']",
       "action":"TYPE",
-      "inputValue":"Resolved",
+      "inputValue":"${comment.resolve}",
       "dynamicSleep": 3000
     },
 
