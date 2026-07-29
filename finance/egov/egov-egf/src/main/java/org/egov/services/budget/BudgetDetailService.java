@@ -2793,7 +2793,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<BudgetDetail> getNotApprovedBudgetDetails(final Long budgetId) {
-        return budgetDetailRepository.findByBudgetIdInAndStatusIdNotIn(budgetId,
+        return budgetDetailRepository.findByBudgetIdAndStatusIdNot(budgetId,
                 getBudgetDetailStatus(FinancialConstants.WORKFLOW_STATE_APPROVED).getId());
 
     }

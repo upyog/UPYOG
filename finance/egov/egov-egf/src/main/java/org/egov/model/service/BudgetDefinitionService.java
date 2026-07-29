@@ -223,14 +223,14 @@ public class BudgetDefinitionService {
 	}
 
 	public Long getApproved(final Long financialYearId) {
-		return budgetDefinitionRepository.countByIdNotInAndStatusIdInAndFinancialYearIdIsAndIsbereIs(
+		return budgetDefinitionRepository.countByIdNotInAndStatusIdAndFinancialYearIdIsAndIsbereIs(
 				budgetDefinitionRepository.findParentBudget(), getBudgetApprovedStatus().getId(), financialYearId, RE);
 
 	}
 
 	public Long getVerified(final Long financialYearId) {
 		final List<Long> bb = budgetDetailService.getBudgetIdList();
-		return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIsAndIsbereIsAndIdIn(
+		return budgetDefinitionRepository.countByStatusIdAndFinancialYearIdIsAndIsbereIsAndIdIn(
 				getBudgetStatus("Created").getId(), financialYearId, RE, bb);
 
 	}
@@ -247,7 +247,7 @@ public class BudgetDefinitionService {
 
 	public Long getNotApprovedBudgetCount(final Long financialYearId) {
 		final List<Long> bb = budgetDefinitionRepository.findParentBudget();
-		return budgetDefinitionRepository.countByStatusIdNotInAndFinancialYearIdIsAndIsbereIsAndIdNotIn(
+		return budgetDefinitionRepository.countByStatusIdNotAndFinancialYearIdIsAndIsbereIsAndIdNotIn(
 				getBudgetStatus("Approved").getId(), financialYearId, RE, bb);
 	}
 

@@ -71,10 +71,15 @@ public interface BudgetDetailRepository extends JpaRepository<BudgetDetail, java
 
     List<BudgetDetail> findByBudgetIdAndStatusId(Long budgetId, Integer status);
 
-    List<BudgetDetail> findByBudgetIdInAndStatusIdNotIn(Long budgetId, Integer status);
+    List<BudgetDetail> findByBudgetIdAndStatusIdNot(Long budgetId, Integer status);
 
-    @Query("from BudgetDetail where uniqueNo=:uniqueNo and budget in (select id from Budget where referenceBudget.id=:budgetId)")
-    BudgetDetail findByReferenceBudget(@Param("uniqueNo") String uniqueNo, @Param("budgetId") Long budgetId);
+//    @Query("from BudgetDetail where uniqueNo=:uniqueNo and budget.id in (select id from Budget where referenceBudget.id=:budgetId)")
+//    BudgetDetail findByReferenceBudget(@Param("uniqueNo") String uniqueNo, @Param("budgetId") Long budgetId);
+
+
+    @Query("from BudgetDetail bd where bd.uniqueNo = :uniqueNo and bd.budget.referenceBudget.id = :budgetId")
+    BudgetDetail findByReferenceBudget(@Param("uniqueNo") String uniqueNo,
+                                       @Param("budgetId") Long budgetId);
 
     @Query("SELECT MAX(bd.lastModifiedDate) FROM BudgetDetail bd WHERE bd.budget.id IN (" +
        "SELECT b.id FROM Budget b WHERE b.materializedPath LIKE CONCAT(:path, '.%'))")

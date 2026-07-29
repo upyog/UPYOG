@@ -714,7 +714,7 @@
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>${xerces-version}</version>
-                <scope>provided</scope>
+<!--                <scope>provided</scope>-->
             </dependency>
 <!--            <dependency>-->
 <!--                <groupId>org.jasypt</groupId>-->
