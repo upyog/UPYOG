@@ -12,7 +12,35 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Property Tax (PT) payload generator.
+ * Module-specific payload generator for the Property Tax (PT) module.
+ *
+ * <p>This implementation generates randomized Property Tax creation
+ * requests for load testing purposes. It constructs complete PT
+ * payloads including property details, owner information, address,
+ * RequestInfo, workflow metadata, and other mandatory attributes
+ * required by the PT Create API.
+ *
+ * <p>Randomized values are generated using {@link FakeDataUtil},
+ * allowing large volumes of realistic test data to be produced
+ * without relying on static datasets.
+ *
+ * <h3>Responsibilities</h3>
+ * <ul>
+ *   <li>Generate Property Tax request payloads.</li>
+ *   <li>Build RequestInfo with authentication and user details.</li>
+ *   <li>Provide Property Tax Create, Search, and Update API endpoints.</li>
+ *   <li>Populate mandatory property, ownership, and workflow information.</li>
+ * </ul>
+ *
+ * <h3>Implementation Notes</h3>
+ * <p>The generated payloads conform to the Property Tax API contract and
+ * are intended exclusively for automated load testing. Each request uses
+ * randomized values to minimize duplicate data and simulate realistic
+ * production-like traffic patterns.
+ *
+ * @see ModuleGenerator
+ * @see FakeDataUtil
+ * @see LoadGeneratorConfig
  */
 @Component
 @RequiredArgsConstructor
@@ -28,34 +56,64 @@ private static final String[] PROPERTY_TYPES = {
     private static final String[] USAGE_TYPES = {"RESIDENTIAL"};
     // Supported ownership categories
     private static final String[] OWNERSHIP_TYPES = {"INDIVIDUAL.SINGLEOWNER", "INDIVIDUAL.MULTIPLEOWNERS"};
-
+    
+ /**
+ * Returns the module identifier supported by this generator.
+ *
+ * @return the Property Tax (PT) module name
+ */
     @Override
     public String getModuleName() {
         return "PT";
     }
-
+/**
+ * Returns the Property Tax Create API endpoint.
+ *
+ * @return the fully qualified PT Create API URL
+ */
     @Override
-    /** Returns the PT create API endpoint. */
     public String getCreateApiUrl() {
         return config.getPtHost() + config.getPtCreateEndpoint();
     }
-    
+ /**
+ * Returns the Property Tax Update API endpoint used for
+ * executing workflow transitions.
+ *
+ * @return the fully qualified PT Update API URL
+ */
     @Override
-/** Returns the PT workflow update API endpoint. */
 public String getUpdateApiUrl() {
     return config.getPtHost() + config.getPtUpdateEndpoint();
 
     
 }
+ /**
+ * Returns the Property Tax Search API endpoint.
+ *
+ * @return the fully qualified PT Search API URL
+ */
 @Override
-/** Returns the PT search API endpoint. */
 public String getSearchApiUrl() {
     return config.getPtHost() + config.getPtSearchEndpoint();
 }
+
+
+/**
+ * Builds a randomized Property Tax create request payload.
+ *
+ * <p>The generated payload includes RequestInfo, property details,
+ * owner information, address, construction details, units, and
+ * all mandatory attributes required by the Property Tax Create API.
+ * Randomized values are generated using {@link FakeDataUtil} to
+ * simulate realistic load generation scenarios.
+ *
+ * @param tenantId the target tenant identifier
+ * @param index the sequential request number
+ * @return a fully populated Property Tax request payload
+ */
     @Override
-    /** Builds a randomized PT create request payload. */
     public Object buildPayload(String tenantId, int index) {
-    // Build RequestInfo
+
     Map<String, Object> requestInfo = buildRequestInfo(tenantId);
         // Build property address
         Map<String, Object> address = new HashMap<>();
@@ -130,7 +188,16 @@ unit.put("constructionDetail", constructionDetail);
 
         return payload;
     }
-    /** Builds RequestInfo required by PT APIs. */
+ /**
+ * Builds the RequestInfo section required by the Property Tax APIs.
+ *
+ * <p>The generated RequestInfo contains authentication details,
+ * system user information, workflow roles, timestamps, and request
+ * metadata required for successful invocation of Property Tax APIs.
+ *
+ * @param tenantId the target tenant identifier
+ * @return a populated RequestInfo map
+ */
     private Map<String, Object> buildRequestInfo(String tenantId) {
         // Configure system user information
         Map<String, Object> userInfo = new HashMap<>();
