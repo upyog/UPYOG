@@ -49,7 +49,7 @@ const colors = [
   { dark: "rgba(239, 124, 91, 0.85)", light: "rgba(255, 114, 69, 0.24)", defaultColor: "rgba(244, 119, 56, 1)" },
   { dark: "rgba(81, 210, 198, 0.85)", light: "rgba(83, 255, 234, 0.14)", defaultColor: "rgba(244, 119, 56, 1)" },
   { dark: "rgba(183, 165, 69, 0.85)", light: "rgba(222, 188, 11, 0.24)", defaultColor: "rgba(244, 119, 56, 1)" },
-  { dark: "rgba(110, 132, 89, 1)", light: "rgba(222, 219, 36, 0.67)", defaultColor: "rgba(244, 119, 56, 1)" },
+  { dark: "rgba(110, 132, 89, 1)", light: "rgba(159, 255, 83, 0.24)", defaultColor: "rgba(244, 119, 56, 1)" },
   { dark: "rgba(120, 120, 120, 0.85)", light: "rgb(120,120,120,0.35)", defaultColor: "rgba(244, 119, 56, 1)" },
   { dark: "rgba(183, 165, 69, 0.85)", light: "rgba(222, 188, 11, 0.24)", defaultColor: "rgba(244, 119, 56, 1)" },
   { dark: "rgba(183, 165, 69, 0.85)", light: "rgba(222, 188, 11, 0.24)", defaultColor: "rgba(244, 119, 56, 1)" },
