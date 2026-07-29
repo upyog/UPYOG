@@ -25307,5 +25307,213 @@
     "aggregationPaths": [
       "Total Collection"
     ]
+  },
+  "advTotalApplicationReceived": {
+    "chartName": "NATIONAL_TOTAL_APPLICATION_RECEIVED_ADV",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Total Applications Received\":{\"sum\":{\"field\":\"totalApplicationsReceived\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Applications Received"
+    ]
+  },
+  "advTotalApplicationApproved" : {
+    "chartName": "NATIONAL_TOTAL_APPLICATION_APPROVED_ADV",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Total Applications Approved\":{\"sum\":{\"field\":\"totalApplicationApproved\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Applications Approved"
+    ]
+  },
+  "advPreviousYearRevenue": {
+    "chartName": "NATIONAL_PREVIOUS_YEAR_REVENUE_ADV",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Previous Year Revenue\":{\"sum\":{\"field\":\"previousYearRevenue\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "amount",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Previous Year Revenue"
+    ]
+  },
+  "advFyCollectionTillDate": {
+    "chartName": "NATIONAL_CURRENT_FY_COLLECTION_ADV",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Current FY Collection\":{\"sum\":{\"field\":\"currentFYCollection\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "amount",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Current FY Collection"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "advRevenueTarget": {
+    "chartName": "NATIONAL_REVENUE_TARGET_ADV",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Current_FY\":{\"sum\":{\"field\":\"currentFYCollection\"}},\"Previous_Year\":{\"sum\":{\"field\":\"previousYearRevenue\"}}}},\"Current FY Collection\":{\"sum_bucket\":{\"buckets_path\":\"Test.Current_FY\"}},\"Previous Year Revenue\":{\"sum_bucket\":{\"buckets_path\":\"Test.Previous_Year\"}},\"Revenue Target\":{\"bucket_script\":{\"buckets_path\":{\"fy\":\"Current FY Collection\",\"prev\":\"Previous Year Revenue\"},\"script\":\"params.prev>0 ? (params.fy/params.prev)*100 : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Revenue Target"
+    ]
+  },
+  "advPreviousYearRevenueTillDate": {
+    "chartName": "NATIONAL_PREVIOUS_YEAR_REVENUE_TILL_DATE_ADV",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Previous Year Revenue\":{\"sum\":{\"field\":\"previousYearRevenue\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "amount",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Previous Year Revenue"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "advLastIngestionDate": {
+    "chartName": "NATIONAL_LAST_INGESTION_DATE_ADV",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Last Updated\":{\"max\":{\"field\":\"date\"}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "date",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Last Updated"
+    ]
+  },
+  "advRejectionRate": {
+    "chartName": "NATIONAL_REJECTION_RATE_ADV",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Rejected\":{\"sum\":{\"field\":\"totalApplicationsRejected\"}},\"Received\":{\"sum\":{\"field\":\"totalApplicationsReceived\"}}}},\"Rejected Applications\":{\"sum_bucket\":{\"buckets_path\":\"Test.Rejected\"}},\"Received Applications\":{\"sum_bucket\":{\"buckets_path\":\"Test.Received\"}},\"Rejection Rate\":{\"bucket_script\":{\"buckets_path\":{\"rej\":\"Rejected Applications\",\"rec\":\"Received Applications\"},\"script\":\"params.rec>0 ? (params.rej/params.rec)*100 : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Rejection Rate"
+    ]
+  },
+  "advPendency": {
+    "chartName": "NATIONAL_PENDENCY_ADV",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Received\":{\"sum\":{\"field\":\"totalApplicationsReceived\"}},\"Approved\":{\"sum\":{\"field\":\"totalApplicationApproved\"}}}},\"Applications Received\":{\"sum_bucket\":{\"buckets_path\":\"Test.Received\"}},\"Applications Approved\":{\"sum_bucket\":{\"buckets_path\":\"Test.Approved\"}},\"Pendency\":{\"bucket_script\":{\"buckets_path\":{\"rec\":\"Applications Received\",\"app\":\"Applications Approved\"},\"script\":\"params.rec>0 ? ((params.rec-params.app)/params.rec)*100 : 0\"}}}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Pendency"
+    ]
+  },
+  "advTransactionCategory": {
+    "chartName": "NATIONAL_DSS_ADV_PAYMENT_CATEGORIZATION",
+    "queries": [
+      {
+        "module": "ADV",
+        "indexName": "adv-national-dashboard",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "dateRefField": "date",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"paymentChannelType\":{\"terms\":{\"field\":\"paymentChannelType.keyword\",\"size\":10},\"aggs\":{\"Total Transactions\":{\"sum\":{\"field\":\"transactionsForPaymentChannelType\"}}}}}}}}"
+      }
+    ],
+    "chartType": "pie",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "paymentChannelType"
+    ],
+    "insight": {},
+    "_comment": "ADV Transactions by Payment Channel"
   }
 }

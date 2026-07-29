@@ -10160,6 +10160,36 @@
                   "headers": []
                 }
               ]
+            },
+            {
+              "id": 211,
+              "name": "NURT_ADV",
+              "vizType": "module",
+              "moduleLevel": "ADV",
+              "ref": {
+                "url": "national-adv",
+                "logoUrl": "",
+                "type": "internal"
+              },
+              "label": "",
+              "charts": [
+                {
+                  "id": "advTotalApplicationReceived",
+                  "name": "NATIONAL_TOTAL_APPLICATION_RECEIVED_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advTotalApplicationApproved",
+                  "name": "NATIONAL_TOTAL_APPLICATION_APPROVED_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
             }
           ]
         }
@@ -11948,6 +11978,110 @@
                 {
                   "id": "ewWasteCollectionCategorization",
                   "name": "NSS_WASTE_CATEGORIZATION",
+                  "code": "",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NSS_ADV_DASHBOARD",
+      "id": "national-adv",
+      "isActive": "",
+      "style": "linear",
+      "visualizations": [
+        {
+          "row": 1,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 211,
+              "name": "NSS_NATIONAL_WS_OVERVIEW",
+              "dimensions": {
+                "height": 350,
+                "width": 5
+              },
+              "vizType": "metric-collection",
+              "noUnit": true,
+              "isCollapsible": false,
+              "label": "NSS_OVERVIEW",
+              "charts": [
+                {
+                  "id": "advPreviousYearRevenue",
+                  "name": "NATIONAL_PREVIOUS_YEAR_REVENUE_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advFyCollectionTillDate",
+                  "name": "NSS_ADV_FY_COLLECTION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": {"title": "TODAY"},
+                  "headers": []
+                },
+                {
+                  "id": "advRevenueTarget",
+                  "name": "NSS_REVENUE_TARGET_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advPreviousYearRevenueTillDate",
+                  "name": "NSS_PREV_YEAR_COLLECTION_TILLDATE_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": {"title": "TODAY"},
+                  "headers": []
+                },
+                {
+                  "id": "advLastIngestionDate",
+                  "name": "NSS_LAST_INGESTION_DATE_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advRejectionRate",
+                  "name": "NSS_REJECTION_RATE_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advPendency",
+                  "name": "NSS_ADV_PENDENCY",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 212,
+              "name": "NATIONAL_PAYMENT_CATEGORIZATION",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "advTransactionCategory",
+                  "name": "NSS_ADV_PAYMENT_CATEGORIZATION",
                   "code": "",
                   "chartType": "donut",
                   "filter": "",

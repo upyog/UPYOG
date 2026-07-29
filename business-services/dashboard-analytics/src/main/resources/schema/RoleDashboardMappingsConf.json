@@ -119,6 +119,10 @@
         {
           "name": "National ECHALLAN",
           "id": "national-echallan"
+        },
+        {
+          "name": "National Advertisement",
+          "id": "national-adv"
         }
       ]
     },
@@ -176,6 +180,9 @@
         },
         {
           "id": "ulb-challan"
+        },
+        {
+          "id": "ulb-adv"
         }
       ]
     }
