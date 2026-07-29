@@ -1,3 +1,7 @@
+/**
+ * Allows the applicant to select the ownership category type (e.g. Individual, Institutional, Joint)
+ * dynamically loaded from MDMS common-masters.OwnerShipCategory.
+ */
 import React, { useState } from "react";
 import { FormStep, RadioButtons, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
@@ -23,8 +27,10 @@ const NocOwnerShipDetails = ({ t, config, onSelect, userType, formData }) => {
     }
   );
 
+  /** Skips the ownership category selection step. */
   const onSkip = () => onSelect();
 
+  /** Submits the selected ownership category option to wizard onSelect callback. */
   function goNext() {
     onSelect(config.key, ownershipCategory);
   }

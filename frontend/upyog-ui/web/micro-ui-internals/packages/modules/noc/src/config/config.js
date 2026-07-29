@@ -1,3 +1,9 @@
+/**
+ * Configuration file for NOC (No Objection Certificate) application flow.
+ * Defines the step-by-step form workflow for citizen application creation,
+ * including step routes, page components, routing sequence (nextStep),
+ * form data keys, localization text keys, and timeline step indicators.
+ */
 export const newConfig = [
   {
     head: "NOC_APPLICATION_DETAILS",

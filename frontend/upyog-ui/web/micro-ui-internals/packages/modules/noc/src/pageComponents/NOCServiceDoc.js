@@ -1,7 +1,14 @@
+/**
+ * Fetches required document definitions from MDMS (FireNoc.Documents) and displays
+ * the mandatory documents and acceptable file formats (PDF, JPG, PNG) to the applicant.
+ */
 import { Card, CardHeader, CardSubHeader, CardText, SubmitBar, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { stringReplaceAll } from "../utils";
 
+/**
+ * Renders the NOC Service required document checklist and accepted file types card.
+ */
 const NOCServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   sessionStorage.removeItem("docReqScreenByBack");
   const stateId = Digit.ULBService.getStateId();

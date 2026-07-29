@@ -1,5 +1,4 @@
-/* 
- * NOC Owner Details Component (Step 3 of the Citizen wizard flow)
+/** 
  * Collects owner details (name, gender, mobile number, DOB, father/husband relationship).
  * Supports both single/multiple individual owners and institutional private/government categories.
  */
@@ -267,6 +266,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     { code: "HUSBAND", i18nKey: "NOC_APPLICANT_RELATIONSHIP_HUSBAND_RADIOBUTTON", label: t("NOC_APPLICANT_RELATIONSHIP_HUSBAND_RADIOBUTTON") },
   ];
 
+  /** Handles major ownership category dropdown selection change. */
   const handleMajorCategoryChange = (val) => {
     setSelectedMajorCategory(val);
     setSelectedSubCategory(null);
@@ -274,6 +274,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     setError(null);
   };
 
+  /** Handles sub ownership category selection and re-initializes owner state structure. */
   const handleSubCategoryChange = (val) => {
     setSelectedSubCategory(val);
     let ownerTypeType = "SINGLEOWNER";
@@ -288,6 +289,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
   const [fieldErrors, setFieldErrors] = useState({});
 
+  /** Performs real-time regex & age validation on owner input fields. */
   const validateFieldRealTime = (index, key, value) => {
     let errorMsg = null;
     if (value) {
@@ -335,6 +337,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     });
   };
 
+  /** Updates text input field in owner reducer and triggers real-time field validation. */
   function handleTextInputField(index, e, key) {
     const val = e.target.value;
     dispatch({
@@ -348,6 +351,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     validateFieldRealTime(index, key, val);
   }
 
+  /** Updates dropdown/radio selector input in owner reducer and triggers validation. */
   function handleSelectorInput(index, value, key) {
     dispatch({
       type: "EDIT_CURRENT_OWNER_PROPERTY",
@@ -361,6 +365,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     validateFieldRealTime(index, key, val);
   }
 
+  /** Validates applicant date of birth to ensure minimum age requirement of 18 years. */
   const validateAge = (dobString) => {
     if (!dobString) return false;
     const dob = new Date(dobString);
@@ -373,6 +378,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     return age >= 18;
   };
 
+  /** Validates mandatory owner inputs, format rules, and 18+ age checks. */
   function validateForm(ownersData) {
     if (!selectedSubCategory) {
       setError("NOC_ERROR_SELECT_OWNERSHIP_CATEGORY");
@@ -426,8 +432,10 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     return true;
   }
 
+  /** Skips owner details form step. */
   const onSkip = () => onSelect();
 
+  /** Validates form and passes owner details object to wizard onSelect callback. */
   function goNext() {
     if (!selectedSubCategory) {
       setError("NOC_ERROR_SELECT_OWNERSHIP_CATEGORY");

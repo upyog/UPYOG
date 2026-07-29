@@ -1,6 +1,5 @@
-/* 
- * NOC Document Details Component (Step 4 of the Citizen wizard flow)
- * Handles uploading required verification documents (Identity, Address Proof, and Building Plans).
+/** 
+ * NOC Document Details Component handles uploading required verification documents (Identity, Address Proof, and Building Plans).
  * Performs validation checks to ensure all mandatory files are uploaded before proceeding.
  */
 import React, { useEffect, useState } from "react";
@@ -30,6 +29,7 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
     }
   }, [config]);
 
+  /** Handles uploading selected document file to filestorage after size validation. */
   const selectFile = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -60,6 +60,7 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
     }
   };
 
+  /** Clears uploaded file reference and resets upload state. */
   const deleteFile = () => {
     setFileStoreId(null);
     setFileName(null);
@@ -67,6 +68,7 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
     onChange(null, null, selectedDropdown);
   };
 
+  /** Updates document subtype dropdown selection. */
   const handleDropdownChange = (val) => {
     setSelectedDropdown(val);
     onChange(fileStoreId, fileName, val);
@@ -161,6 +163,7 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
       }
     });
 
+  /** Updates or removes document metadata in local state list upon upload/delete. */
   const handleDocumentChange = (docCode, fileStoreId, fileName, selectedDropdown, buildingName = null) => {
     setDocuments((prev) => {
       const filtered = prev.filter(
@@ -185,6 +188,7 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
     });
   };
 
+  /** Validates that mandatory verification documents are uploaded before submission. */
   const validateForm = () => {
     for (const configItem of ownerDocConfigs) {
       const match = documents.find((d) => d.categoryCode === configItem.code);
@@ -197,12 +201,14 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
     return true;
   };
 
+  /** Validates mandatory document requirements and proceeds to next wizard step. */
   const goNext = () => {
     if (validateForm()) {
       onSelect(config.key, { documents });
     }
   };
 
+  /** Skips document details step in application wizard. */
   const onSkip = () => onSelect();
 
   if (isLoading) {

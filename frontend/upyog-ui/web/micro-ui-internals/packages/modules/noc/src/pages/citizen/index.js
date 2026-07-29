@@ -1,3 +1,8 @@
+/**
+ * Main entry point and sub-router for the NOC Citizen module.
+ * Handles sub-routing for Citizen Home, New NOC Application creation flow, My Applications listing,
+ * Application Details view, and conditional back navigation.
+ */
 import { AppContainer, BackButton, PrivateRoute, ArrowLeft } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";

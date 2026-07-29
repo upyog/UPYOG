@@ -1,5 +1,4 @@
-/* 
- * NOC Property Details Component (Step 2 of the Citizen wizard flow)
+/** 
  * Renders forms to collect building occupancy specs (no. of buildings, NBC codes, built-up area, height)
  * and location coordinates (via GIS integration, nearest fire station lookup, and Property ID matching).
  */
@@ -292,6 +291,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
+  /** Handles updating single vs multiple building radio selection. */
   const handleNoOfBuildingsSelect = (value) => {
     setNoOfBuildings(value.code);
     if (value.code === "SINGLE" && formState.length > 1) {
@@ -299,6 +299,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
+  /** Adds a new building details entry block to form state. */
   const handleAddBuilding = () => {
     setFormState([
       ...formState,
@@ -317,12 +318,14 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     ]);
   };
 
+  /** Removes a building details entry block by index. */
   const handleRemoveBuilding = (index) => {
     if (formState.length > 1) {
       setFormState(formState.filter((_, i) => i !== index));
     }
   };
 
+  /** Updates building parameters (name, usage type, subusage type) in form state. */
   const handleEditBuildingProperty = (index, key, value) => {
     setFormState((prevState) =>
       prevState.map((b, idx) => {
@@ -383,6 +386,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
+  /** Updates UOM specifications (floors, basements, area, height) for a building. */
   const handleEditBuildingUom = (index, uomCode, value) => {
     setFormState((prevState) =>
       prevState.map((b, idx) => {
@@ -400,7 +404,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     );
   };
 
-  // Validations
+  /** Validates mandatory building occupancy and area parameters before submission. */
   const validatePropertyForm = (stateData) => {
     if (Object.keys(bldgErrors).length > 0) {
       setError("NOC_ERROR_INVALID_BUILDING_NAME");

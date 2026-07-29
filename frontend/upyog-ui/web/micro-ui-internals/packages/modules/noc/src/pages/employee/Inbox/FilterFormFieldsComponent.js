@@ -1,3 +1,7 @@
+/**
+ * Renders the filter form controls for employee NOC Inbox.
+ * Includes radio buttons and dropdowns for assignee, business service, locality, and application workflow status.
+ */
 import React, { Fragment, useMemo } from "react"
 import { FilterFormField, Loader, RadioButtons, Localities, RemoveableTag, Dropdown, CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useWatch } from "react-hook-form";

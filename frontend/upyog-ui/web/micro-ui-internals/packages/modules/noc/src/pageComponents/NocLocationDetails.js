@@ -1,3 +1,7 @@
+/**
+ * Collects building location parameters including City, Locality, Plot No, Building Name,
+ * Street, Pincode, Fire Station selection, GIS geo-coordinates, and optional Property ID lookup.
+ */
 import React, { useEffect, useState, useMemo } from "react";
 import {
   FormStep,
@@ -164,6 +168,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
     return true;
   };
 
+  /** Validates location form parameters and submits data to wizard onSelect callback. */
   const goNext = () => {
     if (validateForm()) {
       onSelect(config.key, {
@@ -181,8 +186,10 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
+  /** Skips location details form step. */
   const onSkip = () => onSelect();
 
+  /** Receives selected geo-coordinates, pincode, and place from GIS picker modal. */
   function onSave(geo, pin, place) {
     if (geo) {
       setLatitude(geo.latitude || "");
@@ -194,6 +201,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
     setIsOpen(false);
   }
 
+  /** Closes GIS location picker modal. */
   const handleRemove = () => {
     setIsOpen(false);
   };
