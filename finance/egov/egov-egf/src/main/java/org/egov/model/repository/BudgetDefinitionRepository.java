@@ -100,7 +100,7 @@ public interface BudgetDefinitionRepository extends JpaRepository<Budget, java.l
 
     Long countByIdNotInAndFinancialYearIdIsAndIsbereIs(List<Long> budgetId, Long financialYearId, String bere);
 
-    @Query("select distinct bg.parent.id from Budget bg, Budget bd where  bg.parent=bd.id and (bg.parent is not null)")
+    @Query("select distinct bg.parent.id from Budget bg where bg.parent is not null")
     List<Long> findParentBudget();
 
     Budget findByReferenceBudgetId(final Long budgetId);
@@ -108,7 +108,7 @@ public interface BudgetDefinitionRepository extends JpaRepository<Budget, java.l
     Long countByStatusIdNotInAndFinancialYearIdIsAndIsbereIsAndIdNotIn(Integer statusId, Long financialYearId, String bere,
             List<Long> budgetId);
 
-    @Query("select count(b) from Budget b  where b.materializedPath like :path||'%' and b.status.code not in ('Approved')")
+    @Query("select count(b) from Budget b  where b.materializedPath like concat(:path,'%') and b.status.code not in ('Approved')")
     Long countNotApprovedBudgetByMaterializedPath(@Param("path") String path);
 
     Budget findByMaterializedPath(final String path);

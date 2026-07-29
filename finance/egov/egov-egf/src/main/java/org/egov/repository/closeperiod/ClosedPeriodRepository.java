@@ -68,7 +68,7 @@ public interface ClosedPeriodRepository extends JpaRepository<ClosedPeriod, Long
 			@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
 			@Param("startingDate2") Date startingDate2, @Param("endingDate2") Date endingDate2);
 
-	@Query("select distinct cp.financialYear from ClosedPeriod cp where cp.closeType='SOFTCLOSE')")
+	@Query("select distinct cp.financialYear from ClosedPeriod cp where cp.closeType='SOFTCLOSE'")
 	List<CFinancialYear> getAllSoftClosedPeriods();
 
 }
