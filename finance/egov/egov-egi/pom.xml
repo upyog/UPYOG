@@ -497,7 +497,7 @@
                     <excludes>
                         <exclude>**/elasticsearch/**/*.java</exclude>
                         <!--                        <exclude>**/RestServiceAuthFilter.java</exclude>-->
-                        <exclude>**/SpringMultipartParser.java</exclude>
+<!--                        <exclude>**/SpringMultipartParser.java</exclude>-->
                         <!--                        <exclude>**/CacheControlInterceptor.java</exclude>-->
                     </excludes>
                 </configuration>

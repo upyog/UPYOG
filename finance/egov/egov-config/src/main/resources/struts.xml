@@ -116,7 +116,7 @@
 				<interceptor-ref name="staticParams" />
 				<interceptor-ref name="actionMappingParams" />
 				<interceptor-ref name="egov-trim" />
-				<interceptor-ref name="fileUpload" />
+				<interceptor-ref name="actionFileUpload" />
 				<interceptor-ref name="params"/>
 				<interceptor-ref name="conversionError" />
 				<interceptor-ref name="validation">

@@ -132,17 +132,59 @@ public class SpringMultipartParser implements MultiPartRequest {
         return contentTypes;
     }
 
+//    @Override
+//    public UploadedFile[] getFile(String fieldName) {
+//        List<File> files = multiFileMap.get(fieldName);
+//        UploadedFile[] uploadedFiles = null;
+//        if (files != null) {
+//            uploadedFiles = new UploadedFile[files.size()];
+//            int size = 0;
+//            for (File file : files) {
+//                uploadedFiles[size++] = new StrutsUploadedFile(file);
+//            }
+//        }
+//        return uploadedFiles;
+//    }
+
+
+
     @Override
     public UploadedFile[] getFile(String fieldName) {
         List<File> files = multiFileMap.get(fieldName);
-        UploadedFile[] uploadedFiles = null;
-        if (files != null) {
-            uploadedFiles = new UploadedFile[files.size()];
-            int size = 0;
-            for (File file : files) {
-                uploadedFiles[size++] = new StrutsUploadedFile(file);
-            }
+        List<MultipartFile> multipartFiles = multipartMap.get(fieldName);
+
+        if (files == null) {
+            return null;
         }
+
+        UploadedFile[] uploadedFiles = new UploadedFile[files.size()];
+
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);
+
+            MultipartFile multipartFile =
+                    multipartFiles != null && i < multipartFiles.size()
+                            ? multipartFiles.get(i)
+                            : null;
+
+            String originalName =
+                    multipartFile != null
+                            ? multipartFile.getOriginalFilename()
+                            : file.getName();
+
+            String contentType =
+                    multipartFile != null
+                            ? multipartFile.getContentType()
+                            : null;
+
+            uploadedFiles[i] = StrutsUploadedFile.Builder
+                    .create(file)
+                    .withOriginalName(originalName)
+                    .withContentType(contentType)
+                    .withInputName(fieldName)
+                    .build();
+        }
+
         return uploadedFiles;
     }
 
