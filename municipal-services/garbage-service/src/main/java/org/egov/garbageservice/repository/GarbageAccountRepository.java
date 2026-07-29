@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
-
+import org.egov.garbageservice.producer.Producer;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgCollectionUnit;
@@ -40,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 @Slf4j
 public class GarbageAccountRepository {
+	private final Producer producer;
 	
 	@Autowired
 	GarbageAccountRowMapper garbageAccountRowMapper;
@@ -145,7 +145,8 @@ public class GarbageAccountRepository {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
 
-    public GarbageAccountRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
+    public GarbageAccountRepository(Producer producer, NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
+        this.producer = producer;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -744,7 +745,9 @@ public class GarbageAccountRepository {
 		return searchGarbageAccount(searchCriteriaGarbageAccount, null);
 	}
 
-    public List<GarbageAccount> search(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
-        return searchV2(searchCriteriaGarbageAccount);
-    }
+	public void save(String topic, Object value) {
+		log.info("Saving data to Kafka topic: {}", topic);
+		log.info("Value to be saved: {}", value);
+		producer.push(topic, value);
+	}
 }

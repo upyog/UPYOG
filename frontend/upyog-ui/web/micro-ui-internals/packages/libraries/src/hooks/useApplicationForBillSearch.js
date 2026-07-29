@@ -9,6 +9,8 @@ import { WTService } from "../services/elements/WT";
 import { MTService } from "../services/elements/MT";
 import { TPService } from "../services/elements/TP";
 import {NDCService} from "../services/elements/NDC";
+import {ESTService} from "../services/elements/EST";
+
 
 const fsmApplications = async (tenantId, filters) => {
   return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
@@ -16,6 +18,10 @@ const fsmApplications = async (tenantId, filters) => {
 
 const ptrApplications = async (tenantId, filters) => {
   return (await PTRService.search({ tenantId, filters })).PetRegistrationApplications;
+};
+
+const estApplications = async (tenantId, filters) => {  
+  return (await ESTService.search({ tenantId, filters })).ESTApplications; //applicationsForBillDetails
 };
 
 const ptApplications = async (tenantId, filters) => {
@@ -68,6 +74,12 @@ const refObj = (tenantId, filters) => {
       key: "applicationNumber",
       label: "PTR_UNIQUE_APPLICATION_NUMBER",
     },
+    est: {
+      searchFn: () => estApplications(null, { ...filters, allotmentNo: consumerCodes }),
+      key: "allotmentNo", 
+      label: "EST_UNIQUE_APPLICATION_NUMBER",
+    },
+
     fsm: {
       searchFn: () => fsmApplications(tenantId, filters),
       key: "applicationNo",
@@ -171,8 +183,10 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   if (window.location.href.includes("ndc-services")) {
     _key = "ndc"
   }
+  if (window.location.href.includes("est-services")) {
+    _key = "est"
+  }
   
-
   /* key from application ie being used as consumer code in bill */
   const { searchFn, key, label } = refObj(tenantId, filters)[_key];
   const applications = queryTemplate({ queryKey: ["applicationsForBillDetails", { tenantId, businessService, filters, searchFn }], queryFn: searchFn, config });

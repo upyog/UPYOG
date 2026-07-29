@@ -189,6 +189,10 @@ const UploadFile = (props) => {
 
   useEffect(() => handleChange(), [props.message]);
 
+  useEffect(() => {
+    if (props.file?.name) setHasFile(true);
+  }, [props.file]);
+
   const showHint = props?.showHint || false;
 
   return (

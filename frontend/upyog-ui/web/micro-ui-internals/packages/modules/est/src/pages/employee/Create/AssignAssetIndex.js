@@ -1,98 +1,190 @@
-import React, { useEffect } from "react";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "@tanstack/react-query";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { Config } from "../../../config/Create/AssignAssetConfig";
+import { buildAllotmentAcknowledgementData } from "../../../utils";
+import { getAssetIdentity } from "../../../utils/allotmentFormUtils";
+import useEstWizard from "../../../utils/useEstWizard";
 
 const ESTAssignAssetCreate = ({ parentRoute }) => {
   const location = useLocation();
-  const assetData = location.state?.assetData || {};
-  const queryClient = useQueryClient();
-  const match = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
-  const { pathname } = useLocation();
-  const navigate = Digit.Hooks.useCustomNavigate();
-  const stateId = Digit.ULBService.getStateId();
-  let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EST_ASSIGN_ASSETS", {});
+  const appliedNavRef = useRef(null);
 
-  useEffect(() => {
-    if (assetData && Object.keys(params).length === 0) {
-      setParams({ assetData });
+  const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
+    Digit.ULBService.getStateId(),
+    "Estate",
+    [{ name: "assignAssetConfig" }],
+    {
+      select: (data) => data?.Estate?.assignAssetConfig,
     }
-  }, [assetData]);
+  );
 
-  const goNext = (skipStep, index, isAddMultiple, key) => {
-    console.log("goNext called with:", { skipStep, index, isAddMultiple, key });
-    let currentPath = pathname.split("/").pop();
-    let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
-
-    let redirectWithHistory = (to, state) => navigate(to, state != null ? { state } : undefined);
-    if (skipStep) {
-      redirectWithHistory = (to, state) => navigate(to, state != null ? { replace: true, state } : { replace: true });
-    }
-
-    if (isAddMultiple) {
-      nextStep = key;
-    }
-
-    if (nextStep === null) {
-      return redirectWithHistory(`check`);
-    }
-
-    let nextPage = `${nextStep}`;
-    redirectWithHistory(nextPage);
-  };
-
-  function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
-    console.log("handleSelect called with:", { key, data, skipStep, index, isAddMultiple });
-    if (key === "Documents") {
-      setParams({ ...params, assetData, [key]: data });
-    } else {
-      setParams({ ...params, [key]: data });
-    }
-    goNext(skipStep, index, isAddMultiple, key);
-  }
-
-  const handleSkip = () => {};
-  const handleMultiple = () => {};
-
-  const onSuccess = () => {
-    clearParams();
-    queryClient.invalidateQueries("EST_ASSIGN_ASSETS");
-  };
-
-  const estcreate = async () => {
-    console.log("Final params before acknowlgement:", params);
-    navigate(`acknowledgement`);
-  };
-
-  let commonFields = Config;
-  commonFields.forEach((obj) => {
-    config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
+  const {
+    config,
+    params,
+    setParams,
+    match,
+    handleSelect,
+    onAckSuccess,
+    onCheckSuccess: estcreate,
+    onCheckError: estcreateError,
+    isReady,
+  } = useEstWizard({
+    mdmsData: initialConfig,
+    isLoading,
+    indexRoute: "info",
+    sessionKey: "EST_ASSIGN_ASSETS",
+    terminalSegments: ["check", "acknowledgement", "info", "assign-assets"],
+    multiStepNavigation: false,
+    invalidateQueryKey: "EST_ASSIGN_ASSETS",
+    buildSuccessAckState: (response, sessionParams) => {
+      try {
+        return {
+          data: buildAllotmentAcknowledgementData(sessionParams, response),
+          isSuccess: true,
+        };
+      } catch (err) {
+        console.error("EST assign ack build failed:", err);
+        return {
+          data: {
+            Allotments: response?.Allotments || [],
+            Assets: sessionParams?.assetData ? [sessionParams.assetData] : [],
+            assetData: sessionParams?.assetData || {},
+          },
+          isSuccess: true,
+        };
+      }
+    },
   });
 
-  config.indexRoute = "info";
+  useEffect(() => {
+    const incoming = location.state?.assetData;
+    const allotmentData = location.state?.allotmentData;
+    const resetSession = location.state?.resetSession;
 
-  const ESTAssignAssetsCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTAssignAssetsCheckPage");
-  const ESTAllotmentAcknowledgement = Digit?.ComponentRegistryService?.getComponent("ESTAllotmentAcknowledgement");
+    if (!incoming && !allotmentData) return;
+
+    const navKey = [
+      getAssetIdentity(incoming),
+      allotmentData?.allotmentId || "",
+      Boolean(resetSession),
+    ].join("|");
+
+    if (appliedNavRef.current === navKey) return;
+    appliedNavRef.current = navKey;
+
+    setParams((prev) => {
+      const sameAsset =
+        getAssetIdentity(prev?.assetData) === getAssetIdentity(incoming);
+
+      if (resetSession || !sameAsset) {
+        const next = { assetData: incoming };
+        if (allotmentData) {
+          next.Allotments = { Allotments: [allotmentData] };
+          if (allotmentData.allotmentId) {
+            next.allotmentId = allotmentData.allotmentId;
+          }
+        }
+        return next;
+      }
+
+      const hasDraft = Boolean(prev?.Allotments?.Allotments?.[0]);
+
+      if (allotmentData && hasDraft) {
+        return {
+          ...prev,
+          assetData: incoming,
+        };
+      }
+
+      if (allotmentData) {
+        return {
+          ...prev,
+          assetData: incoming,
+          Allotments: { Allotments: [allotmentData] },
+          ...(allotmentData.allotmentId
+            ? { allotmentId: allotmentData.allotmentId }
+            : {}),
+        };
+      }
+
+      return prev?.assetData ? prev : { ...prev, assetData: incoming };
+    });
+  }, [location.state, setParams]);
+
+  const handleDraftSave = useCallback(
+    (key, data) => {
+      setParams((prev) => ({
+        ...prev,
+        [key]: data,
+      }));
+    },
+    [setParams]
+  );
+
+  const handleDraftClear = useCallback(
+    (key) => {
+      setParams((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    },
+    [setParams]
+  );
+
+  const ESTDynamicCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTDynamicCheckPage");
+  const ESTAllotmentAcknowledgement =
+    Digit?.ComponentRegistryService?.getComponent("ESTAllotmentAcknowledgement");
+
+  if (!isReady) {
+    return <Loader />;
+  }
 
   return (
     <Routes>
       {config.map((routeObj, index) => {
-        const { component, texts, inputs, key } = routeObj;
-        const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
+        const { component } = routeObj;
+        const Component =
+          typeof component === "string"
+            ? Digit.ComponentRegistryService.getComponent(component)
+            : component;
         const user = Digit.UserService.getUser().info.type;
         return (
           <Route
             path={`${routeObj.route}/*`}
             key={index}
-            element={<Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} />}
+            element={
+              <Component
+                config={routeObj}
+                onSelect={handleSelect}
+                // Draft save hidden for now — re-enable by passing onDraftSave / onDraftClear.
+                t={t}
+                formData={params}
+                userType={user}
+                parentRoute={match?.pathnameBase || parentRoute}
+              />
+            }
           />
         );
       })}
-      <Route path="check/*" element={<ESTAssignAssetsCheckPage onSubmit={estcreate} value={params} />} />
-      <Route path="acknowledgement/*" element={<ESTAllotmentAcknowledgement data={params} onSuccess={onSuccess} />} />
+      <Route
+        path="check/*"
+        element={
+          <ESTDynamicCheckPage
+            flow="allotment"
+            onSubmit={estcreate}
+            onError={estcreateError}
+            value={params}
+            config={config}
+          />
+        }
+      />
+      <Route
+        path="acknowledgement/*"
+        element={<ESTAllotmentAcknowledgement onSuccess={onAckSuccess} />}
+      />
       <Route path="/*" element={<Navigate to={config.indexRoute} replace />} />
     </Routes>
   );
