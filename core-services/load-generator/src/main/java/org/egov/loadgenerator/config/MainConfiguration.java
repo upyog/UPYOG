@@ -11,12 +11,24 @@ import reactor.netty.http.client.HttpClient;
 import java.time.Duration;
 import java.util.concurrent.Executor;
 
+/**
+ * Spring configuration for Load Generator infrastructure beans.
+ *
+ * <p>Configures the asynchronous task executor and the WebClient
+ * used for executing concurrent API requests.</p>
+ */
 @Configuration
 public class MainConfiguration {
 
     @Autowired
     private LoadGeneratorConfig config;
 
+    /**
+ * Creates the thread pool executor used for asynchronous
+ * load generation tasks.
+ *
+ * @return configured task executor
+ */
     @Bean(name = "loadGeneratorExecutor")
     public Executor loadGeneratorExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -29,7 +41,12 @@ public class MainConfiguration {
         executor.initialize();
         return executor;
     }
-
+/**
+ * Creates a WebClient with the configured response timeout
+ * for communicating with eGov services.
+ *
+ * @return configured WebClient instance
+ */
     @Bean
     public WebClient webClient() {
         HttpClient httpClient = HttpClient.create()
