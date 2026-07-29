@@ -24708,6 +24708,38 @@
     },
     "_comment": "PTR current FY collection"
   },
+  "ptrCurrentFYCollectionDate": {
+    "chartName": "NATIONAL_DSS_CURRENT_FY_COLLECTION_PTR",
+    "queries": [
+      {
+        "module": "PTR",
+        "dateRefField": "",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "ptr-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{\"must\":[{\"exists\":{\"field\":\"currentFYCollection\"}}],\"must_not\":[{\"match\":{\"currentFYCollection\":0}}]}},\"aggs\":{\"Current FY Collection\":{\"sum\":{\"field\":\"currentFYCollection\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "Amount",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "TodaysCollection": true,
+    "aggregationPaths": [
+      "Current FY Collection"
+    ],
+    "insight": {
+      "chartResponseMap": "ptrCurrentFYCollection",
+      "action": "differenceOfNumbers",
+      "upwardIndicator": "positive",
+      "downwardIndicator": "negative",
+      "textMessage": "$indicator$value% than last $insightInterval",
+      "colorCode": "#228B22",
+      "insightInterval": "year",
+      "isRoundOff": true
+    },
+    "_comment": "PTR Current FY Collection Till Date"
+  },
   "ptrTotalPetRegistrations": {
     "chartName": "NATIONAL_DSS_TOTAL_REGISTRATION_PTR",
     "queries": [

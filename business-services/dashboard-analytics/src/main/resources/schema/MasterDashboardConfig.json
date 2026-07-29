@@ -11678,11 +11678,11 @@
                   "headers": []
                 },
                 {
-                  "id": "ptrCurrentFYCollection",
+                  "id": "ptrCurrentFYCollectionDate",
                   "name": "NSS_PTR_CURRENT_FY_COLLECTION",
                   "code": "",
                   "chartType": "metric",
-                  "filter": "",
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
