@@ -11,11 +11,42 @@ import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
 
 /**
- * Configuration class for the Load Generator application.
+ * Central configuration component for the Load Generator application.
  *
- * <p>Loads application properties including thread pool configuration,
- * retry settings, WebClient timeout, module endpoints, authentication
- * details, and initializes the default application timezone.</p>
+ * <p>This class exposes all configurable application properties required by
+ * the load generation framework. It acts as a single source of truth for
+ * runtime configuration including thread pool settings, retry policies,
+ * WebClient timeouts, module-specific service endpoints, authentication
+ * credentials, and application-wide timezone initialization.
+ *
+ * <p>Configuration values are injected from the application's external
+ * configuration (for example {@code application.yml} or environment
+ * variables) using Spring's {@link Value} annotation. Centralizing these
+ * properties allows the load generator to remain environment-independent
+ * while making deployment-specific values configurable without code changes.
+ *
+ * <h3>Configuration Categories</h3>
+ * <ul>
+ *   <li>Application initialization (timezone)</li>
+ *   <li>Thread pool and batch processing configuration</li>
+ *   <li>Retry policy for failed requests</li>
+ *   <li>HTTP client timeout configuration</li>
+ *   <li>Module-specific API endpoints (PT, TL, PGR, WS, SW, SV, Asset)</li>
+ *   <li>Internal authentication and system user credentials</li>
+ * </ul>
+ *
+ * <h3>Lifecycle</h3>
+ * <p>After all configuration properties have been injected by Spring,
+ * {@link #initialize()} is invoked automatically to configure the default
+ * JVM timezone for the application. This ensures all date and time
+ * operations use a consistent timezone across request generation,
+ * logging, and downstream service interactions.
+ *
+ * <h3>Thread Safety</h3>
+ * <p>This component is managed as a singleton Spring bean and serves as a
+ * read-only configuration holder after application startup.
+ *
+ * @see TracerConfiguration
  */
 @Component
 @Data
@@ -25,10 +56,15 @@ public class LoadGeneratorConfig {
 
     @Value("${app.timezone}")
     private String timeZone;
-
- /**
- * Initializes the default JVM timezone using the configured application timezone.
- */
+    
+    /**
+     * Initializes the application's default JVM timezone.
+     *
+     * <p>This method is executed automatically after Spring injects all
+     * configuration properties. The configured timezone is applied as the
+     * JVM default so that all date and time operations use a consistent
+     * timezone throughout the application.
+     */
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
