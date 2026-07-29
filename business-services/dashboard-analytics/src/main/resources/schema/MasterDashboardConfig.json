@@ -12090,6 +12090,34 @@
               ]
             }
           ]
+        },
+        {
+          "row": 2,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 213,
+              "name": "Total Cumulative Collection",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "advTotalCollectionForLines",
+                  "name": "Monthly",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
         }
       ]
     }

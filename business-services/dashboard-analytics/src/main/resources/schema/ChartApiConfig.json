@@ -25515,5 +25515,29 @@
     ],
     "insight": {},
     "_comment": "ADV Transactions by Payment Channel"
+  },
+  "advTotalCollectionForLines": {
+    "chartName": "NATIONAL_DSS_TOTAL_COLLECTION_ADV_FOR_LINES",
+    "queries": [
+      {
+        "module": "ADV",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
+        "indexName": "adv-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Collections\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\"},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"currentFYCollection\"}}}}}}"
+      }
+    ],
+    "chartType": "line",
+    "valueType": "amount",
+    "action": "",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "aggregationPaths": [
+      "Collections"
+    ],
+    "isCumulative": true,
+    "interval": "month",
+    "insight": {},
+    "_comment": "ADV Total Cumulative Collection over months"
   }
 }
