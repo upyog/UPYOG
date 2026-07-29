@@ -12,6 +12,27 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository responsible for persisting and retrieving
+ * {@link JobStatus} information from the database.
+ *
+ * <p>This repository performs CRUD operations for load generation
+ * jobs using Spring's {@link JdbcTemplate}. It maintains execution
+ * statistics, job progress, and performance metrics required for
+ * monitoring load generation activities.
+ *
+ * <h3>Responsibilities</h3>
+ * <ul>
+ *   <li>Persist newly created load generation jobs.</li>
+ *   <li>Update job execution statistics.</li>
+ *   <li>Retrieve job details by job identifier.</li>
+ *   <li>Retrieve recently executed jobs.</li>
+ *   <li>Delete job records for a specific module and tenant.</li>
+ * </ul>
+ *
+ * @see JobStatus
+ * @see JdbcTemplate
+ */
 @Repository
 @RequiredArgsConstructor
 @Slf4j
@@ -37,6 +58,11 @@ public class JobStatusRepository {
     private static final String DELETE_BY_MODULE_TENANT =
             "DELETE FROM eg_load_generator_jobs WHERE module=? AND tenant_id=?";
 
+    /**
+     * Persists a new load generation job in the database.
+     *
+     * @param job the job status to be saved
+     */
     public void save(JobStatus job) {
         jdbcTemplate.update(INSERT_SQL,
                 job.getJobId(), job.getModule(), job.getTenantId(),
@@ -45,6 +71,11 @@ public class JobStatusRepository {
                 job.getThroughputPerSec(), job.getAvgResponseTimeMs(), job.getErrorSummary());
     }
 
+    /**
+     * Updates the execution status and metrics of an existing job.
+     *
+     * @param job the updated job status
+     */
     public void update(JobStatus job) {
         jdbcTemplate.update(UPDATE_SQL,
                 job.getSuccessCount(), job.getFailureCount(), job.getStatus(),
@@ -52,20 +83,51 @@ public class JobStatusRepository {
                 job.getErrorSummary(), job.getJobId());
     }
 
+    /**
+     * Retrieves a load generation job by its unique identifier.
+     *
+     * @param jobId the unique job identifier
+     * @return an {@link Optional} containing the job if found;
+     *         otherwise an empty Optional
+     */
     public Optional<JobStatus> findById(String jobId) {
         List<JobStatus> results = jdbcTemplate.query(SELECT_BY_ID, new JobStatusRowMapper(), jobId);
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
 
+    /**
+     * Retrieves the most recently executed load generation jobs.
+     *
+     * @return a list of recent job status records
+     */
     public List<JobStatus> findAll() {
         return jdbcTemplate.query(SELECT_ALL, new JobStatusRowMapper());
     }
 
+    /**
+     * Deletes all job records for the specified module and tenant.
+     *
+     * @param module the module name
+     * @param tenantId the tenant identifier
+     * @return the number of records deleted
+     */
     public int deleteByModuleAndTenant(String module, String tenantId) {
         return jdbcTemplate.update(DELETE_BY_MODULE_TENANT, module.toUpperCase(), tenantId);
     }
 
+    /**
+     * Maps database rows to {@link JobStatus} objects.
+     */
     private static class JobStatusRowMapper implements RowMapper<JobStatus> {
+
+        /**
+         * Converts the current database row into a {@link JobStatus} instance.
+         *
+         * @param rs the result set positioned at the current row
+         * @param rowNum the current row number
+         * @return the mapped JobStatus object
+         * @throws SQLException if a database access error occurs
+         */
         @Override
         public JobStatus mapRow(ResultSet rs, int rowNum) throws SQLException {
             return JobStatus.builder()
