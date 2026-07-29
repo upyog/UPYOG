@@ -1,3 +1,8 @@
+/**
+ * Displays detailed information for a specific NOC application by application ID.
+ * Fetches application data using useNOCDetails hook, renders status details in a table,
+ * and provides a payment action button if payment is pending.
+ */
 import { Card, Header, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";

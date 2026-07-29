@@ -1,6 +1,5 @@
-/* 
- * NOC Document Details Component (Step 4 of the Citizen wizard flow)
- * Handles uploading required verification documents (Identity, Address Proof, and Building Plans).
+/** 
+ * NOC Document Details Component handles uploading required verification documents (Identity, Address Proof, and Building Plans).
  * Performs validation checks to ensure all mandatory files are uploaded before proceeding.
  */
 import React, { useEffect, useState } from "react";
@@ -14,7 +13,6 @@ import {
   CardHeader,
   Toast,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import Timeline from "../components/NocTimeline";
 
 const DocumentRow = ({ t, config, initialDoc, onChange }) => {
   const stateId = Digit.ULBService.getStateId();
@@ -31,6 +29,7 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
     }
   }, [config]);
 
+  /** Handles uploading selected document file to filestorage after size validation. */
   const selectFile = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -61,6 +60,7 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
     }
   };
 
+  /** Clears uploaded file reference and resets upload state. */
   const deleteFile = () => {
     setFileStoreId(null);
     setFileName(null);
@@ -68,6 +68,7 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
     onChange(null, null, selectedDropdown);
   };
 
+  /** Updates document subtype dropdown selection. */
   const handleDropdownChange = (val) => {
     setSelectedDropdown(val);
     onChange(fileStoreId, fileName, val);
@@ -83,9 +84,12 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
         <Dropdown
           style={{ marginBottom: "10px" }}
           selected={selectedDropdown}
-          option={config.dropdownData}
+          option={config.dropdownData?.map(opt => ({
+            ...opt,
+            i18nKey: opt.code?.replaceAll(".", "_")
+          }))}
           select={handleDropdownChange}
-          optionKey="label"
+          optionKey="i18nKey"
           t={t}
         />
       )}
@@ -126,29 +130,40 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
 
   const buildings = formData?.property?.buildings || [];
 
-  const ownerDocConfigs = [
-    {
-      code: "OWNER.IDENTITYPROOF",
-      name: "Identity Proof",
-      required: true
-    },
-    {
-      code: "OWNER.ADDRESSPROOF",
-      name: "Address Proof",
-      required: true
-    }
-  ];
+  const stateId = Digit.ULBService.getStateId();
+  const { isLoading, data: mdmsData } = Digit.Hooks.useCustomMDMS(stateId, "FireNoc", [{ name: "Documents" }]);
 
-  const buildingDocConfigs = [
-    { code: "BUILDING.BUILDING_PLAN.SITE_PLAN", name: t("NOC_SITE_PLAN", "Site Plan"), required: false },
-    { code: "BUILDING.BUILDING_PLAN.GROUND_FLOOR_PLAN", name: t("NOC_GROUND_FLOOR_PLAN", "Ground Floor Plan"), required: false },
-    { code: "BUILDING.BUILDING_PLAN.SECTION_PLAN", name: t("NOC_SECTION_PLAN", "Section Plan"), required: false },
-    { code: "BUILDING.BUILDING_PLAN.ELEVATION_PLAN", name: t("NOC_ELEVATION_PLAN", "Elevation Plan"), required: false },
-    { code: "BUILDING.BUILDING_PLAN.BUILTUP_AREA_STATEMENT", name: t("NOC_BUILT_UP_AREA_STATEMENT", "Built-up Area Statement"), required: false },
-    { code: "BUILDING.FIRE_FIGHTING_PLAN", name: t("NOC_FIRE_FIGHTING_PLAN", "Fire-Fighting Plan"), required: false },
-    { code: "BUILDING.BUILDING_PLAN.OWNERS_CHECKLIST", name: t("NOC_NBC_CHECKLIST", "NBC Checklist"), required: false }
-  ];
+  const mdmsDocs = mdmsData?.FireNoc?.Documents || [];
 
+  const ownerDocConfigs = mdmsDocs
+    .filter((doc) => doc.documentType === "OWNER")
+    .map((doc) => ({
+      ...doc,
+      name: doc.name || doc.code,
+    }));
+
+  const buildingDocConfigs = [];
+  mdmsDocs
+    .filter((doc) => doc.documentType === "BUILDING")
+    .forEach((doc) => {
+      if (doc.hasMultipleRows && doc.options) {
+        doc.options.forEach((option) => {
+          buildingDocConfigs.push({
+            ...option,
+            name: option.name || option.code,
+            hasDropdown: option.hasDropdown || false,
+            dropdownData: option.dropdownData || [],
+          });
+        });
+      } else {
+        buildingDocConfigs.push({
+          ...doc,
+          name: doc.name || doc.code,
+        });
+      }
+    });
+
+  /** Updates or removes document metadata in local state list upon upload/delete. */
   const handleDocumentChange = (docCode, fileStoreId, fileName, selectedDropdown, buildingName = null) => {
     setDocuments((prev) => {
       const filtered = prev.filter(
@@ -173,6 +188,7 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
     });
   };
 
+  /** Validates that mandatory verification documents are uploaded before submission. */
   const validateForm = () => {
     for (const configItem of ownerDocConfigs) {
       const match = documents.find((d) => d.categoryCode === configItem.code);
@@ -185,13 +201,19 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
     return true;
   };
 
+  /** Validates mandatory document requirements and proceeds to next wizard step. */
   const goNext = () => {
     if (validateForm()) {
       onSelect(config.key, { documents });
     }
   };
 
+  /** Skips document details step in application wizard. */
   const onSkip = () => onSelect();
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   if (userType === "employee") {
     return (
@@ -244,7 +266,7 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
-      <Timeline currentStep={4} />
+
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} forcedError={null}>
         <div style={{ marginBottom: "20px" }}>
           <CardHeader>{t("NOC_OWNER_DOCUMENTS_HEADER")}</CardHeader>

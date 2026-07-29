@@ -1,6 +1,5 @@
-/* 
- * Fire NOC Application Acknowledgement Page (NOCAcknowledgement.js)
- * Displays application submission status (success banner, application number, and download receipts/options).
+/** 
+ * Displays NOC application submission status (success banner, application number, and download receipts/acknowledgement options).
  * Clears intermediate form wizard state from session storage upon successful backend payload creation.
  */
 import { Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
@@ -54,6 +53,11 @@ const NOCAcknowledgement = ({ data, onSuccess, onUpdateSuccess, clearParams }) =
     if (hasSubmitted.current) return;
     hasSubmitted.current = true;
 
+    /**
+     * Executes 2-stage asynchronous application submission (INITIATE followed by APPLY for new applications,
+     * or direct APPLY for existing applications). Manages loading states, React Query cache invalidation,
+     * session storage state clearance, and error handling.
+     */
     const submitApplication = async () => {
       try {
         setSubmissionState({ isLoading: true, isSuccess: false, isError: false, application: null, error: null });
