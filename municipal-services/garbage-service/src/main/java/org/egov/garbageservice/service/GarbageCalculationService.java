@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.garbageservice.model.AmountCalculationResult;
 import org.egov.garbageservice.util.MdmsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,7 @@ public class GarbageCalculationService {
     @Autowired
     private MdmsUtil mdmsUtil;
 
-    public BigDecimal calculateAmount(GarbageAccount garbageAccount,
-                                      LocalDate periodFrom,
-                                      LocalDate periodTo) {
+    public AmountCalculationResult calculateAmount(GarbageAccount garbageAccount) {
 
         RequestInfo requestInfo = new RequestInfo(); // This should be properly populated
         Object mdmsResponse = mdmsService.fetchGarbageFeeFromMdms(requestInfo,
@@ -41,6 +40,11 @@ public class GarbageCalculationService {
         BigDecimal rebateRate = mdmsUtil.getRebateRate(requestInfo, garbageAccount.getTenantId(), garbageAccount.getGrbgCollectionUnits().get(0).getSpecialCategory());
         BigDecimal rebateAmount = monthlyAmount.multiply(rebateRate);
 
-        return monthlyAmount.subtract(rebateAmount);
+        BigDecimal payableAmount = monthlyAmount.subtract(rebateAmount);
+
+        return new AmountCalculationResult(
+                monthlyAmount,
+                rebateAmount,
+                payableAmount);
     }
 }

@@ -1,8 +1,10 @@
 package org.egov.garbageservice.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.egov.tracer.annotations.CustomSafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -126,6 +128,11 @@ public class GarbageAccount {
 	
 	@CustomSafeHtml
 	private String businessService;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private LocalDate dueDate;
+
+	private Long applicationId = null;
 	
 	@CustomSafeHtml
 	private String channel;

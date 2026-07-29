@@ -80,4 +80,6 @@ public class Allotment {
     private LocalDate dueDate;
 
     private String status;
+
+    private Asset asset;
 }

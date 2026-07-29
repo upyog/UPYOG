@@ -14,6 +14,7 @@ import org.egov.common.contract.request.User;
 import org.egov.garbageservice.config.GarbageServiceConfig;
 import org.egov.garbageservice.contract.bill.Demand;
 import org.egov.garbageservice.contract.bill.DemandDetail;
+import org.egov.garbageservice.model.AmountCalculationResult;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.SchedulerLog;
 import org.egov.garbageservice.producer.Producer;
@@ -52,8 +53,8 @@ public class DemandService {
                                GarbageAccount garbageAccount,
                                LocalDate billingDate) {
 
-        LocalDate periodFrom = billingDate.withDayOfMonth(1);
-        LocalDate periodTo = billingDate.withDayOfMonth(billingDate.lengthOfMonth());
+        LocalDate periodFrom = billingDate;
+        LocalDate periodTo = billingDate.plusMonths(1).minusDays(1);
 
         List<Demand> existingDemands =
                 demandRepository.searchAllDemands(
@@ -77,18 +78,15 @@ public class DemandService {
             return;
         }
 
-        BigDecimal currentAmount =
-                calculationService.calculateAmount(
-                        garbageAccount,
-                        periodFrom,
-                        periodTo);
+        AmountCalculationResult currentAmount =
+                calculationService.calculateAmount(garbageAccount);
 
         log.info(
                 "Generating demand for garbage account {}, period {} to {}, amount {}",
                 garbageAccount.getGrbgApplicationNumber(),
                 periodFrom,
                 periodTo,
-                currentAmount
+                currentAmount.getPayableAmount()
         );
 
         List<Demand> unpaidDemands =
@@ -114,19 +112,20 @@ public class DemandService {
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             rentalFeeAmount =
-                    previousUnpaid.add(currentAmount);
+                    previousUnpaid.add(currentAmount.getPayableAmount());
 
+            BigDecimal penaltyRate = mdmsUtil.getPenaltyRate(requestInfo, garbageAccount.getTenantId());
             penaltyAmount =
                     previousUnpaid
-                            .multiply(config.getPenaltyRate())
+                            .multiply(penaltyRate)
                             .setScale(2, RoundingMode.HALF_UP);
 
             finalAmount =
                     rentalFeeAmount.add(penaltyAmount);
 
-            unpaidDemands.forEach(d ->
-                    d.getDemandDetails().forEach(dd ->
-                            dd.setTaxAmount(BigDecimal.ZERO)));
+//            unpaidDemands.forEach(d ->
+//                    d.getDemandDetails().forEach(dd ->
+//                            dd.setTaxAmount(BigDecimal.ZERO)));
 
             demandsToUpdate = unpaidDemands;
 
@@ -139,13 +138,13 @@ public class DemandService {
             );
 
         } else {
-            rentalFeeAmount = currentAmount;
-            finalAmount = currentAmount;
+            rentalFeeAmount = currentAmount.getTotalAmount();
+            finalAmount = currentAmount.getPayableAmount();
         }
 
-        BigDecimal rebateRate = mdmsUtil.getRebateRate(requestInfo, garbageAccount.getTenantId(), garbageAccount.getGrbgCollectionUnits().get(0).getSpecialCategory());
-        BigDecimal rebateAmount = rentalFeeAmount.multiply(rebateRate).setScale(2, RoundingMode.HALF_UP);
-        finalAmount = finalAmount.subtract(rebateAmount);
+//        BigDecimal rebateRate = mdmsUtil.getRebateRate(requestInfo, garbageAccount.getTenantId(), garbageAccount.getGrbgCollectionUnits().get(0).getSpecialCategory());
+//        BigDecimal rebateAmount = rentalFeeAmount.multiply(rebateRate).setScale(2, RoundingMode.FLOOR);
+//        finalAmount = finalAmount.subtract(rebateAmount);
 
         User payer = User.builder()
                 .name(garbageAccount.getName())
@@ -160,7 +159,7 @@ public class DemandService {
         demandDetails.add(
                 DemandDetail.builder()
                         .taxHeadMasterCode(ServiceConstants.GRBG_TAX_HEAD_CODE)
-                        .taxAmount(rentalFeeAmount)
+                        .taxAmount(currentAmount.getTotalAmount())
                         .collectionAmount(BigDecimal.ZERO)
                         .tenantId(garbageAccount.getTenantId())
                         .build()
@@ -178,11 +177,11 @@ public class DemandService {
             );
         }
 
-        if (rebateAmount.compareTo(BigDecimal.ZERO) > 0) {
+        if (currentAmount.getRebateAmount().compareTo(BigDecimal.ZERO) > 0) {
             demandDetails.add(
                     DemandDetail.builder()
                             .taxHeadMasterCode(ServiceConstants.GRBG_REBATE_FEE)
-                            .taxAmount(rebateAmount.negate())
+                            .taxAmount(currentAmount.getRebateAmount().negate())
                             .collectionAmount(BigDecimal.ZERO)
                             .tenantId(garbageAccount.getTenantId())
                             .build()
@@ -220,7 +219,7 @@ public class DemandService {
         SchedulerLog schedulerLog =
                 SchedulerLog.builder()
                         .id(UUID.randomUUID().toString())
-                        .garbageAccountId(String.valueOf(garbageAccount.getId()))
+                        .garbageAccountId(garbageAccount.getGrbgApplicationNumber())
                         .tenantId(garbageAccount.getTenantId())
                         .billingDate(billingDate)
                         .billingPeriodFrom(convertToTimestamp(periodFrom))
