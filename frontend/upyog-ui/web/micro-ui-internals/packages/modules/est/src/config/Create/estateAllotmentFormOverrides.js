@@ -26,6 +26,23 @@
  * If a change is purely structural (add/rename a field, reorder, change label
  * or dropdown master) → edit MDMS. If it's behavior/compute/validation → here.
  */
+
+const parseAdditionalDetails = (raw) => {
+  if (!raw) return {};
+  if (typeof raw === "object" && !Array.isArray(raw)) return raw;
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+        ? parsed
+        : {};
+    } catch (e) {
+      return {};
+    }
+  }
+  return {};
+};
+
 const estateAllotmentFormOverrides = {
   // Wizard step key + API envelope key: payload is sent as { Allotments: [...] }.
   key: "Allotments",
@@ -39,12 +56,22 @@ const estateAllotmentFormOverrides = {
 
   // Keys that aren't user-editable form fields but must be in the payload.
   // Built from already-collected form values (the selected asset) at submit time.
-  staticFields: (tenantId, flatData) => ({
-    assetNo: flatData?.assetNo || "",
-    assetReferenceNo: flatData?.assetRefNumber || "",
-    // New allotments always start in INITIATED; status transitions happen server-side.
-    allotmentStatus: "INITIATED",
-  }),
+  staticFields: (tenantId, flatData) => {
+    const existingDetails = parseAdditionalDetails(flatData?.additionalDetails);
+    const fileReferenceNumber = String(flatData?.fileReferenceNumber || "").trim();
+    // Drop legacy uppercase key when rewriting additionalDetails.
+    const { FILE_REFERENCE_NUMBER: _legacy, ...restDetails } = existingDetails;
+    return {
+      assetNo: flatData?.assetNo || "",
+      // New allotments always start in INITIATED; status transitions happen server-side.
+      allotmentStatus: "INITIATED",
+      // Persist only as additionalDetails.fileReferenceNumber.
+      additionalDetails: {
+        ...restDetails,
+        ...(fileReferenceNumber ? { fileReferenceNumber } : {}),
+      },
+    };
+  },
 
   // Page title shown for create vs edit modes of the step.
   pageHeading: {
@@ -60,6 +87,17 @@ const estateAllotmentFormOverrides = {
   // Per-field overrides. Each entry is matched to the MDMS field by `key`;
   // MDMS supplies everything not restated here (label, placeholder, order…).
   form: [
+    {
+      key: "EST_ASSET_REFERENCE_NUMBER",
+      // Hide from assign-assets form and check/summary (asset number is enough).
+      hidden: true,
+    },
+    {
+      // Persist via additionalDetails.fileReferenceNumber (staticFields), not top-level.
+      key: "FILE_REFERENCE_NUMBER",
+      excludeFromPayload: true,
+      field: { name: "fileReferenceNumber" },
+    },
     {
       key: "EST_ALLOTMENT_TYPE",
       // Form field is `allotmentType`, but the API/persister key is `propertyType`.

@@ -7,6 +7,7 @@ import { buildDynamicAllotmentPayload } from "./allotmentPayloadUtils";
 import { extractFileStoreId } from "./allotmentDocumentUtils";
 import { normalizeAllotmentFlatData } from "./allotmentFormUtils";
 import { getEstateRequestInfo } from "./assetPayloadUtils";
+import { parseAdditionalDetails } from "./estMdmsUtils";
 import estateFormConfig from "../config/estateFormConfig";
 import estateAllotmentFormOverrides from "../config/Create/estateAllotmentFormOverrides";
 
@@ -95,6 +96,7 @@ const toFlatAssetForPayload = (assetData = {}) => ({
 export const mapAssetToRegistrationPrefill = (asset = {}) => {
   const flat = toFlatAssetForPayload(asset);
   return {
+    estateNo: flat.estateNo || "",
     buildingName: flat.buildingName || "",
     buildingNo: flat.buildingNo || "",
     buildingFloor: toFormTextValue(flat.buildingFloor ?? flat.floor),
@@ -222,9 +224,34 @@ export const buildAllotmentAcknowledgementData = (sessionData, apiResponse) => {
       responseAllotment.signedDeed,
     eofficeFileNo:
       payloadAllotment.eofficeFileNo ??
-      sessionAllotment.eOfficeFileNo ??
       sessionAllotment.eofficeFileNo ??
       responseAllotment.eofficeFileNo,
+    additionalDetails: (() => {
+      const merged = {
+        ...parseAdditionalDetails(responseAllotment.additionalDetails),
+        ...parseAdditionalDetails(sessionAllotment.additionalDetails),
+        ...parseAdditionalDetails(payloadAllotment.additionalDetails),
+      };
+      const fileReferenceNumber =
+        merged.fileReferenceNumber ||
+        sessionAllotment.fileReferenceNumber ||
+        merged.FILE_REFERENCE_NUMBER ||
+        "";
+      const { FILE_REFERENCE_NUMBER: _legacy, ...rest } = merged;
+      return {
+        ...rest,
+        ...(fileReferenceNumber ? { fileReferenceNumber } : {}),
+      };
+    })(),
+    fileReferenceNumber:
+      parseAdditionalDetails(payloadAllotment.additionalDetails)
+        .fileReferenceNumber ||
+      sessionAllotment.fileReferenceNumber ||
+      parseAdditionalDetails(responseAllotment.additionalDetails)
+        .fileReferenceNumber ||
+      parseAdditionalDetails(responseAllotment.additionalDetails)
+        .FILE_REFERENCE_NUMBER ||
+      "",
     allotmentId:
       responseAllotment.allotmentId ||
       sessionAllotment.allotmentId ||

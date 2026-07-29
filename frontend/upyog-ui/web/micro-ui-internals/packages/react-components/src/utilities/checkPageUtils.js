@@ -321,8 +321,9 @@ export const flattenForSummary = (formConfig = []) =>
 
 /**
  * Split a form config into summary sections and file fields.
- * `sectionHeader` entries start a new section; fields with `hideInSummary`
- * are skipped; `file` fields are collected separately for preview/download UI.
+ * `sectionHeader` entries start a new section; fields with `hidden`
+ * (or legacy `hideInSummary`) are skipped; `file` fields are collected
+ * separately for preview/download UI.
  *
  * @param {Array} [formConfig=[]] Route config `form` array.
  * @returns {{ sections: Array<{ headerCode: string|null, fields: Array }>, fileFields: Array }}
@@ -335,7 +336,7 @@ export const buildSummarySections = (formConfig = []) => {
   let current = { headerCode: null, fields: [] };
 
   flattenForSummary(formConfig).forEach((fc) => {
-    if (fc.hideInSummary) return;
+    if (fc.hidden === true || fc.hideInSummary === true) return;
 
     if (fc.type === "sectionHeader") {
       if (current.fields.length) sections.push(current);
@@ -426,8 +427,11 @@ export const collectFormFileEntries = (fileFields = [], formValues = {}, t = (k)
       return {
         id,
         label: t(resolveFieldLabelKey(fc, formValues)),
-        fileName: typeof raw === "object" ? raw.fileName || null : null,
-        reference: id,
+        fileName:
+          typeof raw === "object" && raw.fileName && raw.fileName !== id
+            ? raw.fileName
+            : null,
+        reference: null,
       };
     })
     .filter(Boolean);
@@ -458,6 +462,10 @@ export const resolveSummaryFieldValue = (
 
   const formVal = formValues[field.name];
   const apiAliasVal = apiFieldName ? formValues[apiFieldName] : undefined;
+  const prefillKey = field.prefillFrom;
+  const prefillVal = prefillKey
+    ? formValues[prefillKey] ?? extraData[prefillKey]
+    : undefined;
   const raw =
     (formVal !== undefined && formVal !== null && formVal !== ""
       ? formVal
@@ -465,8 +473,20 @@ export const resolveSummaryFieldValue = (
     (apiAliasVal !== undefined && apiAliasVal !== null && apiAliasVal !== ""
       ? apiAliasVal
       : undefined) ??
-    extraData[field.name] ??
-    (apiFieldName ? extraData[apiFieldName] : undefined);
+    (extraData[field.name] !== undefined &&
+    extraData[field.name] !== null &&
+    extraData[field.name] !== ""
+      ? extraData[field.name]
+      : undefined) ??
+    (apiFieldName &&
+    extraData[apiFieldName] !== undefined &&
+    extraData[apiFieldName] !== null &&
+    extraData[apiFieldName] !== ""
+      ? extraData[apiFieldName]
+      : undefined) ??
+    (prefillVal !== undefined && prefillVal !== null && prefillVal !== ""
+      ? prefillVal
+      : undefined);
 
   if (raw === undefined || raw === null || raw === "") return t("NA");
 
