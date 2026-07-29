@@ -1,31 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
+import { Modal, ThemePreviewIcon } from "@upyog/workbench-ui-react-components";
 
 // ─── Section Header ───────────────────────────────────────────────────────────
 export function SectionHeader({ number, title }) {
   return (
-    <div style={{
-      fontSize: 14,
-      fontWeight: 800,
-      color: "#3D2364",
-      margin: "24px 0 12px",
-      display: "flex",
-      alignItems: "center",
-      letterSpacing: "0.5px"
-    }}>
-      <span style={{
-        background: "linear-gradient(135deg, #6A4A91 0%, #3E285F 100%)",
-        color: "#fff",
-        width: 22,
-        height: 22,
-        borderRadius: 6,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 11,
-        fontWeight: 700,
-        marginRight: 10,
-        boxShadow: "0 2px 6px rgba(106, 74, 145, 0.2)",
-      }}>{number}</span>
+    <div className="theme-section-header">
+      <span className="theme-section-header-badge">{number}</span>
       {title.toUpperCase()}
     </div>
   );
@@ -42,21 +24,17 @@ export function Card({ children, style }) {
 
 export function CardTitle({ icon, title, description, rightElement }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, gap: 14 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: 10, background: "#F0EBF8",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 20, flexShrink: 0,
-        }}>
+    <div className="theme-card-title-row">
+      <div className="theme-card-title-left">
+        <div className="theme-card-title-icon-container">
           {icon}
         </div>
-        <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: "#21182C" }}>{title}</div>
-          {description && <div style={{ fontSize: 12, color: "#7E7892", marginTop: 2 }}>{description}</div>}
+        <div className="theme-card-title-text-container">
+          <div className="theme-card-title-text">{title}</div>
+          {description && <div className="theme-card-title-description">{description}</div>}
         </div>
       </div>
-      {rightElement && <div>{rightElement}</div>}
+      {rightElement && <div className="theme-card-title-right">{rightElement}</div>}
     </div>
   );
 }
@@ -65,7 +43,7 @@ export function CardTitle({ icon, title, description, rightElement }) {
 export function FieldsRow({ children, style, grid = true }) {
   if (!grid) {
     return (
-      <div style={{ display: "flex", gap: 24, flexWrap: "wrap", width: "100%", ...style }}>
+      <div className="fields-row-flex" style={style}>
         {children}
       </div>
     );
@@ -87,38 +65,28 @@ export function ColorField({ label, value, onChange }) {
     });
   };
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%" }}>
-      <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>
+    <div className="field-col">
+      <span className="field-label-text">{label}</span>
       <div className="input-container">
-        <div style={{
-          width: 28, height: 28, borderRadius: 6, background: value,
-          border: "1px solid #D6CDE4", flexShrink: 0, position: "relative", overflow: "hidden",
-        }}>
+        <div className="color-picker-preview-box" style={{ background: value }}>
           <input
-            type="color" value={value} onChange={(e) => onChange(e.target.value)}
-            style={{ opacity: 0, position: "absolute", inset: 0, width: "100%", height: "100%", cursor: "pointer" }}
+            type="color"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="color-input-element"
           />
         </div>
         <input
-          type="text" value={value} onChange={(e) => onChange(e.target.value)}
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
           maxLength={7}
-          style={{ flex: 1, border: "none", outline: "none", fontSize: 13, fontWeight: 500, color: "#21182C", background: "transparent" }}
+          className="color-hex-text-input"
         />
         <button
           onClick={handleCopy}
           title="Copy"
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 0,
-            color: copied ? "#2ECC71" : "#A69CC6",
-            fontSize: 15,
-            lineHeight: 1,
-            fontWeight: copied ? "bold" : "normal",
-            transition: "color 0.2s ease, transform 0.2s ease",
-            transform: copied ? "scale(1.2)" : "scale(1)"
-          }}
+          className={`color-copy-btn ${copied ? "copied" : ""}`}
         >
           {copied ? "✓" : "⧉"}
         </button>
@@ -129,15 +97,16 @@ export function ColorField({ label, value, onChange }) {
 
 export function NumberField({ label, value, unit, onChange, style }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6, ...style }}>
-      {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
-      <div className="input-container" style={{ width: 100 }}>
+    <div className="field-col" style={style}>
+      {label && <span className="field-label-text">{label}</span>}
+      <div className="input-container number-field-width">
         <input
-          type="number" value={parseInt(value) || 0}
+          type="number"
+          value={parseInt(value) || 0}
           onChange={(e) => onChange(e.target.value + (unit || ""))}
-          style={{ flex: 1, border: "none", outline: "none", fontSize: 13, fontWeight: 500, color: "#21182C", background: "transparent", minWidth: 0 }}
+          className="number-field-input"
         />
-        {unit && <span style={{ fontSize: 12, color: "#A69CC6" }}>{unit}</span>}
+        {unit && <span className="number-field-unit">{unit}</span>}
       </div>
     </div>
   );
@@ -145,8 +114,8 @@ export function NumberField({ label, value, unit, onChange, style }) {
 
 export function TextField({ label, value, onChange, placeholder, type = "text", style }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%", ...style }}>
-      {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
+    <div className="field-col" style={style}>
+      {label && <span className="field-label-text">{label}</span>}
       {type === "textarea" ? (
         <textarea
           value={value}
@@ -156,7 +125,9 @@ export function TextField({ label, value, onChange, placeholder, type = "text", 
         />
       ) : (
         <input
-          type="text" value={value} onChange={(e) => onChange(e.target.value)}
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="text-input-field"
         />
@@ -167,16 +138,16 @@ export function TextField({ label, value, onChange, placeholder, type = "text", 
 
 export function CheckboxField({ label, checked, onChange, style }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%", ...style }}>
-      {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
-      <label className="checkbox-label" style={{ marginTop: 8 }}>
+    <div className="field-col" style={style}>
+      {label && <span className="field-label-text">{label}</span>}
+      <label className="checkbox-wrapper">
         <input
           type="checkbox"
           checked={!!checked}
           onChange={(e) => onChange(e.target.checked)}
           className="checkbox-input"
         />
-        <span style={{ fontSize: 13, fontWeight: 500, color: "#21182C" }}>Active / Show</span>
+        <span className="checkbox-text">Active / Show</span>
       </label>
     </div>
   );
@@ -184,8 +155,8 @@ export function CheckboxField({ label, checked, onChange, style }) {
 
 export function SelectField({ label, value, options = [], onChange, style }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6, width: "100%", ...style }}>
-      {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
+    <div className="field-col" style={style}>
+      {label && <span className="field-label-text">{label}</span>}
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -238,52 +209,40 @@ export function UploadBox({ label, value = {}, onChange }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", padding: 12, background: "#FDFDFD", border: "1px solid #EDE8F5", borderRadius: 10, boxSizing: "border-box" }}>
-      <span style={{ fontSize: 13, fontWeight: 700, color: "#3D2364" }}>{label}</span>
-      
-      <div style={{
-        height: 60,
-        borderRadius: 8,
-        background: "#FAF9FC",
-        border: "1.5px dashed #E8E1F0",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-        padding: 4
-      }}>
+    <div className="upload-box-wrapper">
+      <span className="upload-box-header">{label}</span>
+
+      <div className="upload-box-preview-frame">
         {src ? (
-          <img src={getDirectImageUrl(src)} alt={alt || "Logo preview"} style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain" }} />
+          <img src={getDirectImageUrl(src)} alt={alt || "Logo preview"} className="upload-box-preview-img" />
         ) : (
-          <span style={{ fontSize: 11, color: "#A69CC6" }}>No image preview</span>
+          <span className="upload-box-placeholder">No image preview</span>
         )}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <span style={{ fontSize: 11, color: "#584F74" }}>Logo URL</span>
+      <div className="upload-box-field-wrapper">
+        <span className="upload-box-field-title">Logo URL</span>
         <input
           type="text"
           value={src}
           onChange={handleUrlChange}
           placeholder="https://..."
-          className="text-input-field"
-          style={{ height: 36, padding: "6px 10px", fontSize: 12 }}
+          className="text-input-field upload-box-input-height"
         />
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <span style={{ fontSize: 11, color: "#584F74" }}>Alt Text</span>
+      <div className="upload-box-field-wrapper">
+        <span className="upload-box-field-title">Alt Text</span>
         <input
           type="text"
           value={alt}
           onChange={(e) => onChange?.({ src, alt: e.target.value })}
           placeholder="Image description"
-          className="text-input-field"
-          style={{ height: 36, padding: "6px 10px", fontSize: 12 }}
+          className="text-input-field upload-box-input-height"
         />
       </div>
 
-      <label className="upload-box-label" style={{ padding: "8px 12px", fontSize: 12, gap: 6 }}>
+      <label className="upload-box-label upload-box-input-height">
         <span>📎</span> Upload File
         <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
       </label>
@@ -303,11 +262,11 @@ export function ShadowField({ label, value, onChange }) {
   const parseShadow = (str) => {
     let color = "rgba(0, 0, 0, 0.1)";
     let rest = str || "";
-    
+
     const rgbaMatch = rest.match(/rgba\([^\)]+\)/i);
     const rgbMatch = rest.match(/rgb\([^\)]+\)/i);
     const hexMatch = rest.match(/#[0-9a-fA-F]+/);
-    
+
     if (rgbaMatch) {
       color = rgbaMatch[0];
       rest = rest.replace(color, "");
@@ -318,10 +277,10 @@ export function ShadowField({ label, value, onChange }) {
       color = hexMatch[0];
       rest = rest.replace(color, "");
     }
-    
+
     const parts = rest.trim().split(/\s+/).filter(Boolean);
     const nums = parts.map(p => parseInt(p) || 0);
-    
+
     return {
       hOffset: nums[0] || 0,
       vOffset: nums[1] || 0,
@@ -337,7 +296,7 @@ export function ShadowField({ label, value, onChange }) {
     let hex = "#000000";
     let opacity = 1;
     const lower = colStr.toLowerCase().trim();
-    
+
     if (lower.startsWith("#")) {
       hex = lower;
       opacity = 1;
@@ -382,7 +341,7 @@ export function ShadowField({ label, value, onChange }) {
       const b = parseInt(hex.slice(5, 7), 16) || 0;
       finalColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
-    
+
     const assembled = `${finalData.hOffset}px ${finalData.vOffset}px ${finalData.blur}px ${finalData.spread}px ${finalColor}`;
     onChange(assembled);
   };
@@ -400,9 +359,9 @@ export function ShadowField({ label, value, onChange }) {
   const rgbaColor = `rgba(${r}, ${g}, ${b}, ${colorData.opacity})`;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", paddingBottom: 10 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>
+    <div className="picker-section-wrapper">
+      <div className="field-col">
+        <span className="field-label-text">{label}</span>
         <input
           type="text"
           value={value}
@@ -410,93 +369,81 @@ export function ShadowField({ label, value, onChange }) {
           className="text-input-field"
         />
       </div>
-      
-      <div style={{
-        background: "#F9F6FD",
-        border: "1px solid #E8E1F0",
-        borderRadius: 8,
-        padding: "12px 16px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-      }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: "#6A4A91", letterSpacing: 0.5 }}>
+
+      <div className="builder-frame-container">
+        <div className="builder-title-text">
           SHADOW PICKER & BUILDER
         </div>
-        
+
         <div className="two-col-grid" style={{ gap: 12 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ fontSize: 11, color: "#584F74" }}>Horizontal Offset: {shadowData.hOffset}px</span>
+          <div className="field-col" style={{ gap: 4 }}>
+            <span className="builder-slider-label">Horizontal Offset: {shadowData.hOffset}px</span>
             <input
               type="range" min="-50" max="50"
               value={shadowData.hOffset}
               onChange={(e) => updateShadow({ hOffset: parseInt(e.target.value) })}
-              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+              className="builder-slider-range"
             />
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ fontSize: 11, color: "#584F74" }}>Vertical Offset: {shadowData.vOffset}px</span>
+          <div className="field-col" style={{ gap: 4 }}>
+            <span className="builder-slider-label">Vertical Offset: {shadowData.vOffset}px</span>
             <input
               type="range" min="-50" max="50"
               value={shadowData.vOffset}
               onChange={(e) => updateShadow({ vOffset: parseInt(e.target.value) })}
-              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+              className="builder-slider-range"
             />
           </div>
         </div>
 
         <div className="two-col-grid" style={{ gap: 12 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ fontSize: 11, color: "#584F74" }}>Blur Radius: {shadowData.blur}px</span>
+          <div className="field-col" style={{ gap: 4 }}>
+            <span className="builder-slider-label">Blur Radius: {shadowData.blur}px</span>
             <input
               type="range" min="0" max="100"
               value={shadowData.blur}
               onChange={(e) => updateShadow({ blur: parseInt(e.target.value) })}
-              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+              className="builder-slider-range"
             />
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ fontSize: 11, color: "#584F74" }}>Spread Radius: {shadowData.spread}px</span>
+          <div className="field-col" style={{ gap: 4 }}>
+            <span className="builder-slider-label">Spread Radius: {shadowData.spread}px</span>
             <input
               type="range" min="-30" max="30"
               value={shadowData.spread}
               onChange={(e) => updateShadow({ spread: parseInt(e.target.value) })}
-              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+              className="builder-slider-range"
             />
           </div>
         </div>
 
         <div className="two-col-grid" style={{ gap: 12, alignItems: "center" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ fontSize: 11, color: "#584F74" }}>Color Hex</span>
-            <div className="input-container" style={{ height: 38, padding: "4px 8px" }}>
-              <div style={{
-                width: 20, height: 20, borderRadius: 4, background: rgbaColor,
-                border: "1px solid #D6CDE4", position: "relative", overflow: "hidden", flexShrink: 0
-              }}>
+          <div className="field-col" style={{ gap: 4 }}>
+            <span className="builder-slider-label">Color Hex</span>
+            <div className="input-container builder-hex-input-wrapper">
+              <div className="builder-mini-color-box" style={{ background: rgbaColor }}>
                 <input
-                  type="color" value={colorData.hex}
-                  onChange={(e) => {
-                    handleHexChange(e.target.value);
-                  }}
-                  style={{ opacity: 0, position: "absolute", inset: 0, cursor: "pointer" }}
+                  type="color"
+                  value={colorData.hex}
+                  onChange={(e) => handleHexChange(e.target.value)}
+                  className="builder-invisible-color-input"
                 />
               </div>
               <input
                 type="text"
                 value={localHex}
                 onChange={(e) => handleHexChange(e.target.value)}
-                style={{ border: "none", outline: "none", fontSize: 12, color: "#21182C", width: "100%", padding: 0, height: "auto" }}
+                className="builder-hex-text-input"
               />
             </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ fontSize: 11, color: "#584F74" }}>Opacity: {Math.round(colorData.opacity * 100)}%</span>
+          <div className="field-col" style={{ gap: 4 }}>
+            <span className="builder-slider-label">Opacity: {Math.round(colorData.opacity * 100)}%</span>
             <input
               type="range" min="0" max="1" step="0.01"
               value={colorData.opacity}
               onChange={(e) => updateShadow({ opacity: parseFloat(e.target.value) })}
-              style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+              className="builder-slider-range"
             />
           </div>
         </div>
@@ -509,12 +456,12 @@ export function GradientField({ label, value, onChange }) {
   const parseGradient = (str) => {
     const defaultVal = { angle: 90, stops: [{ color: "#6A4A91", position: 0 }, { color: "#3E285F", position: 100 }] };
     if (!str || !str.includes("linear-gradient")) return defaultVal;
-    
+
     const match = str.match(/linear-gradient\((.+)\)/i);
     if (!match) return defaultVal;
-    
+
     const inner = match[1];
-    
+
     const splitColorStops = (str) => {
       const stops = [];
       let current = "";
@@ -533,13 +480,13 @@ export function GradientField({ label, value, onChange }) {
       if (current.trim()) stops.push(current.trim());
       return stops;
     };
-    
+
     const rawParts = splitColorStops(inner);
     if (rawParts.length < 2) return defaultVal;
-    
+
     let angle = 90;
     let stopsStartIdx = 0;
-    
+
     const firstPart = rawParts[0].trim();
     if (firstPart.includes("deg")) {
       angle = parseInt(firstPart) || 90;
@@ -558,7 +505,7 @@ export function GradientField({ label, value, onChange }) {
       angle = dirMap[firstPart] || 90;
       stopsStartIdx = 1;
     }
-    
+
     const stops = [];
     for (let i = stopsStartIdx; i < rawParts.length; i++) {
       const part = rawParts[i].trim();
@@ -572,7 +519,7 @@ export function GradientField({ label, value, onChange }) {
         stops.push({ color, position });
       }
     }
-    
+
     return { angle, stops };
   };
 
@@ -621,10 +568,10 @@ export function GradientField({ label, value, onChange }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", paddingBottom: 10 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        {label && <span style={{ fontSize: 12, color: "#584F74" }}>{label}</span>}
-        <div style={{ height: 44, borderRadius: 8, background: value, border: "1.5px solid #EDE8F5", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.06)" }} />
+    <div className="picker-section-wrapper">
+      <div className="field-col">
+        {label && <span className="field-label-text">{label}</span>}
+        <div className="gradient-preview-bar" style={{ background: value }} />
         <input
           type="text"
           value={value}
@@ -633,75 +580,55 @@ export function GradientField({ label, value, onChange }) {
         />
       </div>
 
-      <div style={{
-        background: "#F9F6FD",
-        border: "1px solid #E8E1F0",
-        borderRadius: 8,
-        padding: "12px 16px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-      }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: "#6A4A91", letterSpacing: 0.5 }}>
+      <div className="builder-frame-container">
+        <div className="builder-title-row">
+          <div className="builder-title-text">
             GRADIENT PICKER & BUILDER
           </div>
           <button
             onClick={handleAddStop}
-            style={{
-              background: "none",
-              border: "none",
-              color: "#6A4A91",
-              fontWeight: 700,
-              fontSize: 10,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 2
-            }}
+            className="gradient-stop-add-btn"
           >
-            ⊕ Add Stop
+            <span>⊕</span> Add Stop
           </button>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <span style={{ fontSize: 11, color: "#584F74" }}>Gradient Angle: {gradientData.angle}°</span>
+        <div className="field-col" style={{ gap: 4 }}>
+          <span className="builder-slider-label">Gradient Angle: {gradientData.angle}°</span>
           <input
             type="range" min="0" max="360"
             value={gradientData.angle}
             onChange={(e) => updateGradient(parseInt(e.target.value), gradientData.stops)}
-            style={{ accentColor: "#6A4A91", height: 6, borderRadius: 3, cursor: "pointer" }}
+            className="builder-slider-range"
           />
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <div className="field-col" style={{ gap: 10 }}>
           {gradientData.stops.map((stop, idx) => (
-            <div key={idx} style={{ display: "flex", alignItems: "center", gap: 12, padding: "6px 10px", background: "#ffffff", border: "1px solid #E8E1F0", borderRadius: 6 }}>
-              <div style={{
-                width: 20, height: 20, borderRadius: "50%", background: stop.color,
-                border: "1px solid #D6CDE4", position: "relative", overflow: "hidden", flexShrink: 0
-              }}>
+            <div key={idx} className="gradient-stop-row">
+              <div className="gradient-stop-circle" style={{ background: stop.color }}>
                 <input
-                  type="color" value={toHex(stop.color)}
+                  type="color"
+                  value={toHex(stop.color)}
                   onChange={(e) => handleStopChange(idx, { color: e.target.value })}
-                  style={{ opacity: 0, position: "absolute", inset: 0, cursor: "pointer" }}
+                  className="builder-invisible-color-input"
                 />
               </div>
-              
+
               <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
                 <input
                   type="range" min="0" max="100"
                   value={stop.position}
                   onChange={(e) => handleStopChange(idx, { position: parseInt(e.target.value) })}
-                  style={{ flex: 1, accentColor: "#6A4A91", height: 4, cursor: "pointer" }}
+                  className="gradient-stop-slider"
                 />
-                <span style={{ fontSize: 11, color: "#584F74", minWidth: 28, textAlign: "right" }}>{stop.position}%</span>
+                <span className="builder-slider-label" style={{ minWidth: 28, textAlign: "right" }}>{stop.position}%</span>
               </div>
 
               {gradientData.stops.length > 2 && (
                 <button
                   onClick={() => handleRemoveStop(idx)}
-                  style={{ background: "none", border: "none", color: "#D85A5A", cursor: "pointer", fontSize: 12, padding: 0 }}
+                  className="gradient-stop-remove-btn"
                 >
                   ✕
                 </button>
@@ -711,5 +638,63 @@ export function GradientField({ label, value, onChange }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── Reusable Submit Confirmation Modal ──────────────────────────────────────
+export function SubmitConfirmModal({ isOpen, onClose, onConfirm }) {
+  const { t } = useTranslation();
+  if (!isOpen) return null;
+  return (
+    <Modal
+      headerBarMain={t("Confirm Changes")}
+      actionCancelLabel={t("Cancel")}
+      actionCancelOnSubmit={onClose}
+      actionSaveLabel={t("Confirm")}
+      actionSaveOnSubmit={onConfirm}
+    >
+      <div className="confirm-modal-content">
+        {t("Are you sure you want to apply and submit these theme configuration changes?")}
+      </div>
+    </Modal>
+  );
+}
+
+// ─── Reusable Preview Button ──────────────────────────────────────────────────
+export function PreviewButton({ targetUrl, hasUnsavedChanges }) {
+  const { t } = useTranslation();
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  const handlePreviewClick = () => {
+    if (hasUnsavedChanges) {
+      setShowWarningModal(true);
+    } else {
+      window.open(targetUrl, "_blank");
+    }
+  };
+
+  return (
+    <>
+      <button
+        onClick={handlePreviewClick}
+        className="preview-btn"
+        title={t("Preview changes in a new tab")}
+      >
+        <ThemePreviewIcon fill="#6A4A91" /> {t("Preview")}
+      </button>
+
+      {showWarningModal && (
+        <Modal
+          headerBarMain={t("Unsubmitted Changes")}
+          actionCancelLabel={t("Close")}
+          actionCancelOnSubmit={() => setShowWarningModal(false)}
+          hideSubmit={true}
+        >
+          <div className="confirm-modal-content">
+            {t("You have unsubmitted changes. Please click 'SUBMIT CHANGES' to save your work before previewing.")}
+          </div>
+        </Modal>
+      )}
+    </>
   );
 }

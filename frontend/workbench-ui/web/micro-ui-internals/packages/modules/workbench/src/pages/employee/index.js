@@ -4,8 +4,11 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, AppContainer, BreadCrumb } from "@upyog/workbench-ui-react-components";
 import LocalisationSearch from "./LocalisationSearch";
 import ApplyWorkflow from "./ApplyWorkflow";
+// Added theme configuration component
 import ThemeCustomizeForm from "./ThemeCustomizeForm";
+// Added onboarding content component
 import OnBoardingContent from "./OnBoardingContent";
+// Added onboarding login component
 import OnBoardingLogin from "./OnBoardingLogin";
 import MDMSSearch from "./MDMSSearch";
 import MDMSAdd from "./MDMSAdd";
@@ -68,9 +71,22 @@ const WorkbenchBreadCrumb = ({ location, defaultPath }) => {
       // query:`moduleName=${moduleName}&masterName=${masterName}`
     },
     {
+      // theme configuration breadcrumb
       path: `/${window?.contextPath}/employee/workbench/theme-configuration`,
       content: t(`WBH_THEME_CONFIGURATION`),
       show: pathVar.includes("theme-configuration") ? true : false,
+    },
+    {
+      // Onboarding Content Configuration
+      path: `/${window?.contextPath}/employee/workbench/onboarding-common-content`,
+      content: t(`WBH_ONBOARDING_CONTENT_CONFIG`),
+      show: pathVar.includes("onboarding-common-content") ? true : false,
+    },
+    {
+      // Onboarding Login Configuration
+      path: `/${window?.contextPath}/employee/workbench/onboarding-login-configuration`,
+      content: t(`WBH_ONBOARDING_LOGIN_CONFIG`),
+      show: pathVar.includes("onboarding-login-configuration") ? true : false,
     }
 
   ];
@@ -164,14 +180,17 @@ const App = ({ path }) => {
             path="apply-workflow"
             element={<PrivateRoute><ApplyWorkflow parentRoute={path} /></PrivateRoute>}
           />
+          {/* Theme configuration route */}
           <Route
             path="theme-configuration"
             element={<PrivateRoute><ThemeCustomizeForm parentRoute={path} /></PrivateRoute>}
           />
+          {/* Onboarding content route */}
           <Route
             path="onboarding-common-content"
             element={<PrivateRoute><OnBoardingContent parentRoute={path} /></PrivateRoute>}
           />
+          {/* Onboarding login route */}
           <Route
             path="onboarding-login-configuration"
             element={<PrivateRoute><OnBoardingLogin parentRoute={path} /></PrivateRoute>}

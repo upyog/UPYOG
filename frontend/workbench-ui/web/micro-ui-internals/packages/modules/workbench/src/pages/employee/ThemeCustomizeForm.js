@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Toast } from "@upyog/workbench-ui-react-components";
-import { ThemeConfig } from "../../configs/ThemeConfig";
 import {
   SectionHeader,
   Card,
@@ -12,80 +11,48 @@ import {
   TextField,
   ShadowField,
   GradientField,
-  UploadBox
+  UploadBox,
+  SubmitConfirmModal,
+  PreviewButton
 } from "../../components/ThemeCustomizeComponents";
 
-// ─── Utility ─────────────────────────────────────────────────────────────────
-function deepSet(obj, path, value) {
-  const next = JSON.parse(JSON.stringify(obj));
-  const keys = path.split(".");
-  let ref = next;
-  for (let i = 0; i < keys.length - 1; i++) ref = ref[keys[i]];
-  ref[keys[keys.length - 1]] = value;
-  return next;
-}
+import { deepSet, formatLabel, getLabel, getCardIcon, groupMeta, getInitialThemeConfig, submitThemeConfig } from "../../utils";
 
-function formatLabel(key) {
-  return key
-    .replace(/([A-Z])/g, " $1")
-    .replace(/[_-]/g, " ")
-    .replace(/^\w/, (c) => c.toUpperCase())
-    .replace(/\s+/g, " ")
-    .trim();
-}
+// ─── Main Component ───────────────────────────────────────────────────────────
 
-const labelOverrides = {
-  "brand.primary": "Default Color",
-  "divider.primary": "Input Color",
-};
-
-function getLabel(groupKey, colorKey) {
-  const path = `${groupKey}.${colorKey}`;
-  if (labelOverrides[path]) {
-    return labelOverrides[path];
-  }
-  return `${formatLabel(colorKey)} Color`;
-}
-
-const groupMeta = {
-  text: { icon: "≡", title: "Text Colors", description: "Color used for text and content" },
-  brand: { icon: "✦", title: "Brand Colors", description: "Brand identity and primary colors" },
-  common: { icon: "◑", title: "Common Color", description: "Common used for text and content" },
-  background: { icon: "⊡", title: "Background Color", description: "Backgrounds for layout and components" },
-  border: { icon: "▭", title: "Border Colors", description: "Borders and outlines" },
-  divider: { icon: "—", title: "Divider", description: "Borders and outlines" },
-};
-
-// ─── Main ─────────────────────────────────────────────────────────────────────
+/**
+ * Main form view that handles custom application styling preset edits.
+ * Loads drafts from localStorage, processes field inputs dynamically,
+ * and sends updates to a backend API endpoint.
+ */
 function ThemeCustomizeForm() {
   const { t } = useTranslation();
-  
-  const getInitialConfig = () => {
-    const saved = localStorage.getItem("UPYOG_THEME_CONFIG");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse saved theme config:", e);
-      }
-    }
-    return ThemeConfig[0] || {};
-  };
 
-  const [config, setConfig] = useState(getInitialConfig());
+  const [config, setConfig] = useState(getInitialThemeConfig());
+  const [lastSavedConfig, setLastSavedConfig] = useState(getInitialThemeConfig());
   const [toast, setToast] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  const hasUnsavedChanges = JSON.stringify(config) !== JSON.stringify(lastSavedConfig);
+
+  /**
+   * Updates configuration values dynamically at the given dot-notation path.
+   * Caches edits to localStorage on-the-fly for real-time draft persistence.
+   * 
+   * @param {string} path - Dot-notation path to modify.
+   * @param {*} value - New value to save.
+   */
   const set = (path, value) => {
     const firstKey = path.split(".")[0];
     const finalPath = ["theme", "common", "pages"].includes(firstKey) ? path : `theme.${path}`;
     setConfig((prev) => {
       const next = deepSet(prev, finalPath, value);
-      // Automatically save drafts to localStorage so the UI stays updated during layout edit
       localStorage.setItem("UPYOG_THEME_CONFIG", JSON.stringify(next));
       return next;
     });
   };
 
+  // Group theme settings keys based on substring matches for loop categorizations.
   const themeKeys = Object.keys(config.theme || {});
   const colorGroupKeys = themeKeys.filter(k => k.toLowerCase().includes("color"));
   const shadowKeys = themeKeys.filter(k => k.toLowerCase().includes("shadow"));
@@ -94,6 +61,7 @@ function ThemeCustomizeForm() {
   const gradientKeys = themeKeys.filter(k => k.toLowerCase().includes("gradient"));
   const typographyKeys = themeKeys.filter(k => k.toLowerCase().includes("typography") || k.toLowerCase().includes("font"));
 
+  // Track standard section keys to identify any custom or additional group entries.
   const handledKeys = [
     ...colorGroupKeys,
     ...shadowKeys,
@@ -105,46 +73,36 @@ function ThemeCustomizeForm() {
   const otherThemeKeys = themeKeys.filter(k => !handledKeys.includes(k));
   const configKeys = Object.keys(config || {}).filter(k => k === "common");
 
+  /**
+   * Handles configuration submission.
+   * Persists changes locally and hits a dummy POST API to log changes.
+   */
   const handleSubmit = async () => {
-    console.log("Config Submitted:", JSON.stringify(config, null, 2));
-    localStorage.setItem("UPYOG_THEME_CONFIG", JSON.stringify(config));
-
+    setShowConfirmModal(false);
     try {
-      const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: "Theme Config Update",
-          body: config,
-          userId: 1,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Dummy API Response:", data);
-        setToast({ label: "Configuration updated and submitted successfully!", error: false });
-      } else {
-        throw new Error("API responded with error status");
-      }
+      await submitThemeConfig(config);
+      setLastSavedConfig(config);
+      setToast({ label: t("Configuration updated and submitted successfully!"), error: false });
     } catch (err) {
       console.error("API submission failed:", err);
-      setToast({ label: "Failed to submit configuration to the API.", error: true });
+      setToast({ label: t("Failed to submit configuration to the API."), error: true });
     }
     setTimeout(() => setToast(null), 3000);
   };
+
   return (
-    <div style={{ padding: "24px 32px", fontFamily: "Inter, system-ui, sans-serif" }}>
+    <div className="theme-form-container">
 
       {/* Page Title */}
-      <div style={{ fontSize: 22, fontWeight: 700, color: "#21182C", marginBottom: 4 }}>
-        {t("Customize Theme")}
+      <div className="theme-header-row">
+        <div className="theme-form-title">
+          {t("Customize Theme")}
+        </div>
+        <PreviewButton targetUrl={`/${window?.contextPath}/employee`} hasUnsavedChanges={hasUnsavedChanges} />
       </div>
 
-      {/* ── 1. Colors Theme ─────────────────────────────────────── */}
-      <SectionHeader number={1} title="Colors Theme" />
+      {/* ── 1. Colors Theme Section ─────────────────────────────────── */}
+      <SectionHeader number={1} title={t("Colors Theme")} />
 
       {colorGroupKeys.map((sectionKey) => {
         const colorsVal = config.theme[sectionKey];
@@ -154,13 +112,13 @@ function ThemeCustomizeForm() {
           <div key={sectionKey}>
             {/* Text Colors */}
             {colorsVal.text && (
-              <Card style={{ marginBottom: 16 }}>
-                <CardTitle icon="≡" title="Text Colors" description="Color used for text and content" />
+              <Card className="theme-card-margin">
+                <CardTitle icon={groupMeta.text.icon} title={t(groupMeta.text.title)} description={t(groupMeta.text.description)} />
                 <FieldsRow>
                   {Object.entries(colorsVal.text).map(([colorKey, colorVal]) => (
                     <ColorField
                       key={colorKey}
-                      label={getLabel("text", colorKey)}
+                      label={t(getLabel("text", colorKey))}
                       value={colorVal}
                       onChange={(v) => set(`${sectionKey}.text.${colorKey}`, v)}
                     />
@@ -169,16 +127,16 @@ function ThemeCustomizeForm() {
               </Card>
             )}
 
-            {/* Brand + Common */}
-            <div className="section-row-grid" style={{ marginBottom: 16 }}>
+            {/* Brand + Common Colors (Side-by-side row) */}
+            <div className="section-row-grid theme-card-margin">
               {colorsVal.brand && (
                 <Card>
-                  <CardTitle icon="✦" title="Brand Colors" description="Brand identity and primary colors" />
+                  <CardTitle icon={groupMeta.brand.icon} title={t(groupMeta.brand.title)} description={t(groupMeta.brand.description)} />
                   <FieldsRow>
                     {Object.entries(colorsVal.brand).map(([colorKey, colorVal]) => (
                       <ColorField
                         key={colorKey}
-                        label={getLabel("brand", colorKey)}
+                        label={t(getLabel("brand", colorKey))}
                         value={colorVal}
                         onChange={(v) => set(`${sectionKey}.brand.${colorKey}`, v)}
                       />
@@ -188,12 +146,12 @@ function ThemeCustomizeForm() {
               )}
               {colorsVal.common && (
                 <Card>
-                  <CardTitle icon="◑" title="Common Color" description="Common used for text and content" />
+                  <CardTitle icon={groupMeta.common.icon} title={t(groupMeta.common.title)} description={t(groupMeta.common.description)} />
                   <FieldsRow>
                     {Object.entries(colorsVal.common).map(([colorKey, colorVal]) => (
                       <ColorField
                         key={colorKey}
-                        label={getLabel("common", colorKey)}
+                        label={t(getLabel("common", colorKey))}
                         value={colorVal}
                         onChange={(v) => set(`${sectionKey}.common.${colorKey}`, v)}
                       />
@@ -203,15 +161,15 @@ function ThemeCustomizeForm() {
               )}
             </div>
 
-            {/* Background */}
+            {/* Background Colors */}
             {colorsVal.background && (
-              <Card style={{ marginBottom: 16 }}>
-                <CardTitle icon="⊡" title="Background Color" description="Backgrounds for layout and components" />
+              <Card className="theme-card-margin">
+                <CardTitle icon={groupMeta.background.icon} title={t(groupMeta.background.title)} description={t(groupMeta.background.description)} />
                 <FieldsRow>
                   {Object.entries(colorsVal.background).map(([colorKey, colorVal]) => (
                     <ColorField
                       key={colorKey}
-                      label={getLabel("background", colorKey)}
+                      label={t(getLabel("background", colorKey))}
                       value={colorVal}
                       onChange={(v) => set(`${sectionKey}.background.${colorKey}`, v)}
                     />
@@ -220,16 +178,16 @@ function ThemeCustomizeForm() {
               </Card>
             )}
 
-            {/* Border + Divider */}
-            <div className="section-row-grid" style={{ marginBottom: 16 }}>
+            {/* Border + Divider Colors (Side-by-side row) */}
+            <div className="section-row-grid theme-card-margin">
               {colorsVal.border && (
                 <Card>
-                  <CardTitle icon="▭" title="Border Colors" description="Borders and outlines" />
+                  <CardTitle icon={groupMeta.border.icon} title={t(groupMeta.border.title)} description={t(groupMeta.border.description)} />
                   <FieldsRow>
                     {Object.entries(colorsVal.border).map(([colorKey, colorVal]) => (
                       <ColorField
                         key={colorKey}
-                        label={getLabel("border", colorKey)}
+                        label={t(getLabel("border", colorKey))}
                         value={colorVal}
                         onChange={(v) => set(`${sectionKey}.border.${colorKey}`, v)}
                       />
@@ -239,12 +197,12 @@ function ThemeCustomizeForm() {
               )}
               {colorsVal.divider && (
                 <Card>
-                  <CardTitle icon="—" title="Divider" description="Borders and outlines" />
+                  <CardTitle icon={groupMeta.divider.icon} title={t(groupMeta.divider.title)} description={t(groupMeta.divider.description)} />
                   <FieldsRow>
                     {Object.entries(colorsVal.divider).map(([colorKey, colorVal]) => (
                       <ColorField
                         key={colorKey}
-                        label={getLabel("divider", colorKey)}
+                        label={t(getLabel("divider", colorKey))}
                         value={colorVal}
                         onChange={(v) => set(`${sectionKey}.divider.${colorKey}`, v)}
                       />
@@ -254,25 +212,25 @@ function ThemeCustomizeForm() {
               )}
             </div>
 
-            {/* Dynamic/Additional Color Groups */}
-            <div className="section-row-grid" style={{ marginBottom: 16 }}>
+            {/* Dynamic/Additional Custom Color Groups */}
+            <div className="section-row-grid theme-card-margin">
               {Object.entries(colorsVal || {}).map(([groupKey, groupVal]) => {
                 const knownGroups = ["text", "brand", "common", "background", "border", "divider"];
                 if (!knownGroups.includes(groupKey) && typeof groupVal === "object" && groupVal !== null) {
-                  const meta = groupMeta[groupKey] || {
-                    icon: "🎨",
+                  const meta = {
+                    icon: getCardIcon("gradients"),
                     title: `${formatLabel(groupKey)} Colors`,
                     description: `Custom colors for ${formatLabel(groupKey)}`,
                   };
 
                   return (
-                    <Card key={groupKey} style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-                      <CardTitle icon={meta.icon} title={meta.title} description={meta.description} />
-                      <FieldsRow style={{ marginTop: "auto" }}>
+                    <Card key={groupKey} className="theme-flex-card">
+                      <CardTitle icon={meta.icon} title={t(meta.title)} description={t(meta.description)} />
+                      <FieldsRow className="fields-row-auto-margin">
                         {Object.entries(groupVal).map(([colorKey, colorVal]) => (
                           <ColorField
                             key={colorKey}
-                            label={`${formatLabel(colorKey)} Color`}
+                            label={t(`${formatLabel(colorKey)} Color`)}
                             value={colorVal}
                             onChange={(v) => set(`${sectionKey}.${groupKey}.${colorKey}`, v)}
                           />
@@ -288,22 +246,23 @@ function ThemeCustomizeForm() {
         );
       })}
 
-      {/* ── 2. Shadows + 3. Border Radius ── same row ─────────── */}
+      {/* ── 2. Shadows + 3. Border Radius Sections ─────────────────── */}
       <div className="section-row-grid">
+        {/* Shadows (Full Card Width) */}
         <div>
-          <SectionHeader number={2} title="Shadows" />
+          <SectionHeader number={2} title={t("Shadows")} />
           {shadowKeys.map((sectionKey) => {
             const shadowsVal = config.theme[sectionKey];
             if (typeof shadowsVal !== "object" || shadowsVal === null) return null;
 
             return (
-              <Card key={sectionKey} style={{ marginBottom: 16 }}>
-                <CardTitle icon="◑" title={formatLabel(sectionKey)} description="Default and outlines" />
-                <div style={{ display: "flex", flexDirection: "column", gap: 16, width: "100%" }}>
+              <Card key={sectionKey} className="theme-card-margin">
+                <CardTitle icon={getCardIcon("shadows")} title={t(formatLabel(sectionKey))} description={t("Default and outlines")} />
+                <div className="full-width-col">
                   {Object.entries(shadowsVal).map(([key, val]) => (
                     <ShadowField
                       key={key}
-                      label={key === "default" ? "Default Shadow" : formatLabel(key)}
+                      label={key === "default" ? t("Default Shadow") : t(formatLabel(key))}
                       value={val}
                       onChange={(v) => set(`${sectionKey}.${key}`, v)}
                     />
@@ -313,22 +272,24 @@ function ThemeCustomizeForm() {
             );
           })}
         </div>
+
+        {/* Border Radius */}
         <div>
-          <SectionHeader number={3} title="Border Radius" />
+          <SectionHeader number={3} title={t("Border Radius")} />
           {radiusKeys.map((sectionKey) => {
             const radiusVal = config.theme[sectionKey];
             if (typeof radiusVal !== "object" || radiusVal === null) return null;
 
             return (
-              <Card key={sectionKey} style={{ marginBottom: 16 }}>
-                <CardTitle icon="▢" title={formatLabel(sectionKey)} description="Default and outlines" />
+              <Card key={sectionKey} className="theme-card-margin">
+                <CardTitle icon={getCardIcon("borderRadius")} title={t(formatLabel(sectionKey))} description={t("Default and outlines")} />
                 <FieldsRow grid={false}>
                   {Object.entries(radiusVal).map(([key, val]) => {
                     const labelMap = { sm: "Small", md: "Medium" };
                     return (
                       <NumberField
                         key={key}
-                        label={labelMap[key] || formatLabel(key)}
+                        label={t(labelMap[key] || formatLabel(key))}
                         value={val}
                         unit="px"
                         onChange={(v) => set(`${sectionKey}.${key}`, v)}
@@ -342,28 +303,28 @@ function ThemeCustomizeForm() {
         </div>
       </div>
 
-      {/* ── 4. Layout ───────────────────────────────────────────── */}
-      <SectionHeader number={4} title="Layout" />
+      {/* ── 4. Layout Section ───────────────────────────────────────── */}
+      <SectionHeader number={4} title={t("Layout")} />
       {layoutKeys.map((sectionKey) => {
         const layoutVal = config.theme[sectionKey];
         if (typeof layoutVal !== "object" || layoutVal === null) return null;
 
         return (
-          <div key={sectionKey} className="section-row-grid" style={{ marginBottom: 16 }}>
+          <div key={sectionKey} className="section-row-grid theme-card-margin">
             {Object.entries(layoutVal).map(([subKey, subVal]) => {
               if (typeof subVal === "object" && subVal !== null) {
                 const layoutMeta = {
-                  sidebar: { icon: "⊟", title: "Sidebar", description: "Layout and sidebar" },
-                  header: { icon: "▬", title: "Header", description: "Layout and Header" },
+                  sidebar: { icon: getCardIcon("sidebar"), title: "Sidebar", description: "Layout and sidebar" },
+                  header: { icon: getCardIcon("header"), title: "Header", description: "Layout and Header" },
                 };
                 const meta = layoutMeta[subKey] || {
-                  icon: "📋",
+                  icon: getCardIcon("sidebar"),
                   title: formatLabel(subKey),
                   description: `Layout settings for ${formatLabel(subKey)}`,
                 };
                 return (
                   <Card key={subKey}>
-                    <CardTitle icon={meta.icon} title={meta.title} description={meta.description} />
+                    <CardTitle icon={meta.icon} title={t(meta.title)} description={t(meta.description)} />
                     <FieldsRow grid={false}>
                       {Object.entries(subVal).map(([fieldKey, fieldVal]) => {
                         const labelMap = {
@@ -374,7 +335,7 @@ function ThemeCustomizeForm() {
                         return (
                           <NumberField
                             key={fieldKey}
-                            label={labelMap[fieldKey] || formatLabel(fieldKey)}
+                            label={t(labelMap[fieldKey] || formatLabel(fieldKey))}
                             value={fieldVal}
                             unit="px"
                             onChange={(v) => set(`${sectionKey}.${subKey}.${fieldKey}`, v)}
@@ -391,8 +352,8 @@ function ThemeCustomizeForm() {
         );
       })}
 
-      {/* ── 5. Gradients ────────────────────────────────────────── */}
-      <SectionHeader number={5} title="Gradients" />
+      {/* ── 5. Gradients Section ────────────────────────────────────── */}
+      <SectionHeader number={5} title={t("Gradients")} />
       {gradientKeys.map((sectionKey) => {
         const gradientVal = config.theme[sectionKey];
         if (typeof gradientVal !== "object" || gradientVal === null) return null;
@@ -400,9 +361,9 @@ function ThemeCustomizeForm() {
         return Object.entries(gradientVal).map(([subKey, subVal]) => {
           if (typeof subVal === "object" && subVal !== null) {
             return (
-              <Card key={subKey} style={{ marginBottom: 16 }}>
-                <CardTitle icon="🎨" title={formatLabel(subKey)} description={`Gradients ${subKey}`} />
-                <div className="section-row-grid" style={{ gap: 24 }}>
+              <Card key={subKey} className="theme-card-margin">
+                <CardTitle icon={getCardIcon("gradients")} title={t(formatLabel(subKey))} description={t("Gradients " + subKey)} />
+                <div className="section-row-grid">
                   {Object.entries(subVal).map(([fieldKey, fieldVal]) => {
                     const labelMap = {
                       primary: `${formatLabel(subKey)} Primary`,
@@ -411,7 +372,7 @@ function ThemeCustomizeForm() {
                     return (
                       <GradientField
                         key={fieldKey}
-                        label={labelMap[fieldKey] || formatLabel(fieldKey)}
+                        label={t(labelMap[fieldKey] || formatLabel(fieldKey))}
                         value={fieldVal}
                         onChange={(v) => set(`${sectionKey}.${subKey}.${fieldKey}`, v)}
                       />
@@ -425,43 +386,42 @@ function ThemeCustomizeForm() {
         });
       })}
 
-      {/* ── 6. Typography ───────────────────────────────────────── */}
-      <SectionHeader number={6} title="Typography" />
+      {/* ── 6. Typography Section ───────────────────────────────────── */}
+      <SectionHeader number={6} title={t("Typography")} />
       {typographyKeys.map((sectionKey) => {
         const typographyVal = config.theme[sectionKey];
         if (typeof typographyVal !== "object" || typographyVal === null) return null;
 
         return (
-          <Card key={sectionKey} style={{ marginBottom: 16 }}>
-            <CardTitle icon="T" title="Button" description="Decide its button" />
-            <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 280 }}>
+          <Card key={sectionKey} className="theme-card-margin">
+            <CardTitle icon={getCardIcon("typography")} title={t("Button")} description={t("Decide its button")} />
+            <div className="full-width-col">
               {Object.entries(typographyVal).map(([key, val]) => {
                 if (key === "fontFamily") {
                   return (
-                    <div key={key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                      <span style={{ fontSize: 12, color: "#584F74" }}>Font Family</span>
-                      <select
-                        value={val.split(",")[0].replace(/"/g, "").trim()}
-                        onChange={(e) => set(`${sectionKey}.fontFamily`, `"${e.target.value}", system-ui, -apple-system, BlinkMacSystemFont, sans-serif`)}
-                        style={{
-                          border: "1.5px solid #E8E1F0", borderRadius: 8, padding: "10px 14px",
-                          fontSize: 13, color: "#21182C", outline: "none", background: "#fff", height: 48,
-                        }}
-                      >
-                        {["Inter", "Roboto", "Open Sans", "Lato", "Poppins", "Nunito", "Montserrat"].map((f) => (
-                          <option key={f} value={f}>{f}</option>
-                        ))}
-                      </select>
-                      <span style={{ fontSize: 11, color: "#A69CC6", marginTop: 2, wordBreak: "break-all" }}>
-                        {val}
-                      </span>
+                    <div key={key} className="font-family-group">
+                      <span className="font-family-label">{t("Font Family")}</span>
+                      <div className="font-family-row">
+                        <select
+                          value={val.split(",")[0].replace(/"/g, "").trim()}
+                          onChange={(e) => set(`${sectionKey}.fontFamily`, `"${e.target.value}", system-ui, -apple-system, BlinkMacSystemFont, sans-serif`)}
+                          className="font-family-select"
+                        >
+                          {["Inter", "Roboto", "Open Sans", "Lato", "Poppins", "Nunito", "Montserrat"].map((f) => (
+                            <option key={f} value={f}>{f}</option>
+                          ))}
+                        </select>
+                        <span className="font-family-preview">
+                          {val.replace(/"/g, "")}
+                        </span>
+                      </div>
                     </div>
                   );
                 } else {
                   return (
                     <TextField
                       key={key}
-                      label={formatLabel(key)}
+                      label={t(formatLabel(key))}
                       value={val}
                       onChange={(v) => set(`${sectionKey}.${key}`, v)}
                     />
@@ -473,22 +433,22 @@ function ThemeCustomizeForm() {
         );
       })}
 
-      {/* ── Other Settings ─────────────────────────────────────── */}
-      {otherThemeKeys.length > 0 && <SectionHeader number="+" title="Other Settings" />}
+      {/* ── Other Settings Section ─────────────────────────────────── */}
+      {otherThemeKeys.length > 0 && <SectionHeader number="+" title={t("Other Settings")} />}
       {otherThemeKeys.map((sectionKey) => {
         const val = config.theme[sectionKey];
         if (typeof val !== "object" || val === null) return null;
 
         return (
-          <Card key={sectionKey} style={{ marginBottom: 16 }}>
-            <CardTitle icon="⚙️" title={formatLabel(sectionKey)} description={`Theme settings for ${formatLabel(sectionKey)}`} />
+          <Card key={sectionKey} className="theme-card-margin">
+            <CardTitle title={t(formatLabel(sectionKey))} description={t("Theme settings for " + formatLabel(sectionKey))} />
             <FieldsRow>
               {Object.entries(val).map(([key, fieldVal]) => {
                 if (typeof fieldVal === "number") {
                   return (
                     <NumberField
                       key={key}
-                      label={formatLabel(key)}
+                      label={t(formatLabel(key))}
                       value={fieldVal}
                       onChange={(v) => set(`${sectionKey}.${key}`, v)}
                     />
@@ -497,7 +457,7 @@ function ThemeCustomizeForm() {
                 return (
                   <TextField
                     key={key}
-                    label={formatLabel(key)}
+                    label={t(formatLabel(key))}
                     value={fieldVal}
                     onChange={(v) => set(`${sectionKey}.${key}`, v)}
                   />
@@ -508,9 +468,9 @@ function ThemeCustomizeForm() {
         );
       })}
 
-      {/* ── 7. Common ───────────────────────────────────────────── */}
-      <SectionHeader number={7} title="Common" />
-      <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 16 }}>
+      {/* ── 7. Common Assets Section ────────────────────────────────── */}
+      <SectionHeader number={7} title={t("Common")} />
+      <div className="full-width-col theme-card-margin">
         {configKeys.map((rootKey) => {
           const rootVal = config[rootKey];
           if (typeof rootVal !== "object" || rootVal === null) return null;
@@ -522,17 +482,17 @@ function ThemeCustomizeForm() {
               if (typeof assetGroupVal !== "object" || assetGroupVal === null) return null;
 
               return (
-                <Card key={`${rootKey}-${subKey}-${assetGroupKey}`} style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                <Card key={`${rootKey}-${subKey}-${assetGroupKey}`} className="theme-flex-card">
                   <CardTitle
-                    icon="🏷"
-                    title={`${formatLabel(subKey)} ${formatLabel(assetGroupKey)}`}
-                    description={`${formatLabel(subKey)} ${formatLabel(assetGroupKey)} for all screens`}
+                    icon={getCardIcon("logo")}
+                    title={t(`${formatLabel(subKey)} ${formatLabel(assetGroupKey)}`)}
+                    description={t(`${formatLabel(subKey)} ${formatLabel(assetGroupKey)} for all screens`)}
                   />
-                  <div className="upload-grid-row" style={{ display: "grid", gridTemplateColumns: `repeat(${Object.keys(assetGroupVal).length}, 1fr)`, gap: 16, marginTop: "auto" }}>
+                  <div className="upload-grid-row" style={{ gridTemplateColumns: `repeat(${Object.keys(assetGroupVal).length}, 1fr)` }}>
                     {Object.entries(assetGroupVal).map(([logoKey, logoVal]) => (
                       <UploadBox
                         key={logoKey}
-                        label={formatLabel(logoKey)}
+                        label={t(formatLabel(logoKey))}
                         value={logoVal}
                         onChange={(v) => set(`${rootKey}.${subKey}.${assetGroupKey}.${logoKey}`, v)}
                       />
@@ -545,15 +505,22 @@ function ThemeCustomizeForm() {
         })}
       </div>
 
-      {/* ── Submit ──────────────────────────────────────────────── */}
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 28, paddingBottom: 40 }}>
+      {/* ── Submit Action ───────────────────────────────────────────── */}
+      <div className="submit-container">
         <button
-          onClick={handleSubmit}
+          onClick={() => setShowConfirmModal(true)}
           className="submit-btn"
+          disabled={!hasUnsavedChanges}
         >
-          SUBMIT CHANGES
+          {t("SUBMIT CHANGES")}
         </button>
       </div>
+
+      <SubmitConfirmModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleSubmit}
+      />
 
       {toast && <Toast label={toast.label} error={toast.error} onClose={() => setToast(null)} />}
     </div>

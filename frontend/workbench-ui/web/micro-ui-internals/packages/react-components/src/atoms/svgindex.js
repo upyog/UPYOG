@@ -1792,8 +1792,111 @@ const AttentionListIcon =({ className = "", fill = "none", style = {} })=>(
 <path d="M21.3333 3.00065H15.76C15.2 1.45398 13.7333 0.333984 12 0.333984C10.2667 0.333984 8.8 1.45398 8.24 3.00065H2.66667C1.2 3.00065 0 4.20065 0 5.66732V24.334C0 25.8007 1.2 27.0007 2.66667 27.0007H21.3333C22.8 27.0007 24 25.8007 24 24.334V5.66732C24 4.20065 22.8 3.00065 21.3333 3.00065ZM12 3.00065C12.7333 3.00065 13.3333 3.60065 13.3333 4.33398C13.3333 5.06732 12.7333 5.66732 12 5.66732C11.2667 5.66732 10.6667 5.06732 10.6667 4.33398C10.6667 3.60065 11.2667 3.00065 12 3.00065ZM12.6667 21.6673H5.33333V19.0007H12.6667V21.6673ZM18.6667 16.334H5.33333V13.6673H18.6667V16.334ZM18.6667 11.0007H5.33333V8.33398H18.6667V11.0007Z" fill="#F47738"/>
 </svg>
 )
-
 const ExpenditureIcon = BillsIcon;
+
+const ThemeTextIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <line x1="4" y1="6" x2="20" y2="6"></line>
+    <line x1="4" y1="12" x2="20" y2="12"></line>
+    <line x1="4" y1="18" x2="14" y2="18"></line>
+  </svg>
+);
+
+const ThemeBrandIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2v20M2 12h20M12 2C12 7.5 16.5 12 22 12c-5.5 0-10 4.5-10 10 0-5.5-4.5-10-10-10 5.5 0 10-4.5 10-10z"></path>
+  </svg>
+);
+
+const ThemeCommonIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M12 2v20a10 10 0 0 0 0-20z" fill={fill}></path>
+  </svg>
+);
+
+const ThemeBackgroundIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+    <rect x="7" y="7" width="10" height="10" rx="1" fill={fill} opacity="0.3"></rect>
+  </svg>
+);
+
+const ThemeBorderIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" strokeDasharray="4 2"></rect>
+    <rect x="6" y="6" width="12" height="12" rx="1" stroke={fill} strokeOpacity="0.5"></rect>
+  </svg>
+);
+
+const ThemeDividerIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <line x1="2" y1="12" x2="22" y2="12" strokeDasharray="4 4"></line>
+  </svg>
+);
+
+const ThemeShadowsIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="10" r="6" fill={fill} fillOpacity="0.1"></circle>
+    <ellipse cx="12" cy="18" rx="8" ry="2" fill={fill} fillOpacity="0.4" stroke="none"></ellipse>
+  </svg>
+);
+
+const ThemeRadiusIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 20V8a4 4 0 0 1 4-4h12"></path>
+    <rect x="12" y="12" width="8" height="8" rx="2"></rect>
+  </svg>
+);
+
+const ThemeSidebarIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+    <line x1="9" y1="3" x2="9" y2="21"></line>
+    <line x1="9" y1="9" x2="21" y2="9"></line>
+  </svg>
+);
+
+const ThemeHeaderIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+    <line x1="3" y1="8" x2="21" y2="8"></line>
+  </svg>
+);
+
+const ThemeGradientsIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor={fill} stopOpacity="0.8"></stop>
+        <stop offset="100%" stopColor={fill} stopOpacity="0.1"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="3" y="3" width="18" height="18" rx="2" fill="url(#grad)"></rect>
+  </svg>
+);
+
+const ThemeTypographyIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <polyline points="4 7 4 4 20 4 20 7"></polyline>
+    <line x1="12" y1="4" x2="12" y2="20"></line>
+    <line x1="9" y1="20" x2="15" y2="20"></line>
+  </svg>
+);
+
+const ThemeLogoIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+    <line x1="7" y1="7" x2="7.01" y2="7" strokeWidth="4"></line>
+  </svg>
+);
+
+const ThemePreviewIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>
+);
 
 export {
   AnnouncementIcon,
@@ -1949,5 +2052,19 @@ export {
   UploadIcon,
   FileIcon,
   DeleteIconv2,
-  InfoIconOutline
+  InfoIconOutline,
+  ThemeTextIcon,
+  ThemeBrandIcon,
+  ThemeCommonIcon,
+  ThemeBackgroundIcon,
+  ThemeBorderIcon,
+  ThemeDividerIcon,
+  ThemeShadowsIcon,
+  ThemeRadiusIcon,
+  ThemeSidebarIcon,
+  ThemeHeaderIcon,
+  ThemeGradientsIcon,
+  ThemeTypographyIcon,
+  ThemeLogoIcon,
+  ThemePreviewIcon
 };

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Toast } from "@upyog/workbench-ui-react-components";
-import { ThemeConfig } from "../../configs/ThemeConfig";
+import { Toast, DeleteIconv2 } from "@upyog/workbench-ui-react-components";
 import {
   Card,
   CardTitle,
@@ -10,43 +9,46 @@ import {
   TextField,
   CheckboxField,
   SelectField,
-  SubmitButton
+  SubmitConfirmModal,
+  PreviewButton
 } from "../../components/ThemeCustomizeComponents";
 
-// ─── Utility ─────────────────────────────────────────────────────────────────
-function deepSet(obj, path, value) {
-  const next = JSON.parse(JSON.stringify(obj));
-  const keys = path.split(".");
-  let ref = next;
-  for (let i = 0; i < keys.length - 1; i++) {
-    ref = ref[keys[i]];
-  }
-  ref[keys[keys.length - 1]] = value;
-  return next;
-}
+import { deepSet, getCardIcon, getInitialThemeConfig, submitThemeConfig } from "../../utils";
 
+/**
+ * OnBoardingContent Component
+ * Renders settings to configure background, card layouts, titles, subtitles,
+ * and key features list for the user onboarding screens.
+ * 
+ * DESIGN PRINCIPLES:
+ * 1. ZERO Inline Styles - uses precompiled utility classes inside ThemeConfiguration.scss.
+ * 2. Fully Localized - wraps all visible text outputs in the React useTranslation t() helper.
+ * 3. DRY Code - relies on shared layout widgets and unified ThemeUtils helpers.
+ */
 function OnBoardingContent() {
+  // Localization helper hook
   const { t } = useTranslation();
 
-  const getInitialConfig = () => {
-    const saved = localStorage.getItem("UPYOG_THEME_CONFIG");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse saved theme config:", e);
-      }
-    }
-    return ThemeConfig[0] || {};
-  };
-
-  const [config, setConfig] = useState(getInitialConfig());
+  // State initialization using reusable ThemeUtils configuration fetcher
+  const [config, setConfig] = useState(getInitialThemeConfig());
+  const [lastSavedConfig, setLastSavedConfig] = useState(getInitialThemeConfig());
   const [toast, setToast] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  const hasUnsavedChanges = JSON.stringify(config) !== JSON.stringify(lastSavedConfig);
+
+  // Destructuring child pathways from the core configuration JSON
   const onboarding = config.pages?.onboarding || {};
   const content = onboarding.content || {};
   const common = onboarding.common || {};
 
+  /**
+   * Updates configuration values dynamically at the given dot-notation path.
+   * Caches edits to localStorage on-the-fly for real-time draft persistence.
+   * 
+   * @param {string} path - Dot-notation path to modify.
+   * @param {*} value - New value to save.
+   */
   const set = (path, value) => {
     setConfig((prev) => {
       const next = deepSet(prev, path, value);
@@ -55,102 +57,101 @@ function OnBoardingContent() {
     });
   };
 
+  /**
+   * Adds a new empty feature item to the dynamic onboarding features array.
+   * Modifies content.features pathway on the state object.
+   */
   const handleAddFeature = () => {
     const currentFeatures = content.features ? [...content.features] : [];
     const newFeatures = [...currentFeatures, { icon: "", title: "", description: "" }];
     set("pages.onboarding.content.features", newFeatures);
   };
 
+  /**
+   * Removes a feature item at the specified index from the dynamic features array.
+   * 
+   * @param {number} index - Index of the item to delete.
+   */
   const handleRemoveFeature = (index) => {
     const currentFeatures = content.features ? [...content.features] : [];
     const newFeatures = currentFeatures.filter((_, idx) => idx !== index);
     set("pages.onboarding.content.features", newFeatures);
   };
 
+  /**
+   * Handles configuration submission, closing modal and calling shared submitThemeConfig helper.
+   * Emits toast feedback upon successful response or caught errors.
+   */
   const handleSubmit = async () => {
-    console.log("Config Submitted from OnBoardingContent:", JSON.stringify(config, null, 2));
-    localStorage.setItem("UPYOG_THEME_CONFIG", JSON.stringify(config));
-
+    setShowConfirmModal(false);
     try {
-      const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: "Theme Config Update",
-          body: config,
-          userId: 1,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Dummy API Response:", data);
-        setToast({ label: "Configuration updated and submitted successfully!", error: false });
-      } else {
-        throw new Error("API responded with error status");
-      }
+      await submitThemeConfig(config);
+      setLastSavedConfig(config);
+      setToast({ label: t("Configuration updated and submitted successfully!"), error: false });
     } catch (err) {
       console.error("API submission failed:", err);
-      setToast({ label: "Failed to submit configuration to the API.", error: true });
+      setToast({ label: t("Failed to submit configuration to the API."), error: true });
     }
     setTimeout(() => setToast(null), 3000);
   };
 
   return (
-    <div style={{ padding: "24px 32px", fontFamily: "Inter, system-ui, sans-serif" }}>
+    <div className="theme-form-container">
 
       {/* Page Title */}
-      <div style={{ fontSize: 22, fontWeight: 700, color: "#21182C", marginBottom: 24 }}>
-        {t("Onboarding - Common Content")}
+      <div className="theme-header-row">
+        <div className="theme-form-title">
+          {t("Onboarding - Common Content")}
+        </div>
+        <PreviewButton targetUrl={`/${window?.contextPath}/employee/user/language-selection`} hasUnsavedChanges={hasUnsavedChanges} />
       </div>
 
-      {/* ── 1. Background Configuration ──────────────────────────────── */}
+      {/* ── 1. Background Configuration ── */}
+      {/* Allows users to change background color and responsive image URLs for mobile, tablet, laptop, and desktop views */}
       {content.background?.root && (
-        <Card style={{ marginBottom: 20 }}>
+        <Card className="theme-card-margin">
           <CardTitle
-            icon="🖼️"
-            title="Background Configuration"
-            description="Root and responsive image settings"
+            icon={getCardIcon("background")}
+            title={t("Background Configuration")}
+            description={t("Root and responsive image settings")}
           />
-          <div className="two-col-grid" style={{ marginBottom: 16 }}>
+          <div className="two-col-grid theme-card-margin">
             <ColorField
-              label="Root Background Color"
+              label={t("Root Background Color")}
               value={content.background.root.backgroundColor}
               onChange={(v) => set("pages.onboarding.content.background.root.backgroundColor", v)}
             />
             <CheckboxField
-              label="Show Color"
+              label={t("Show Color")}
               checked={content.background.root.showColor}
               onChange={(v) => set("pages.onboarding.content.background.root.showColor", v)}
             />
           </div>
-          
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#21182C", margin: "16px 0 8px" }}>
-            Responsive Images
+
+          <div className="section-sub-title">
+            {t("Responsive Images")}
           </div>
           <FieldsRow>
             <TextField
-              label="MOBILE IMAGE URL"
+              label={t("MOBILE IMAGE URL")}
               value={content.background.root.responsive?.mobile?.image || ""}
               onChange={(v) => set("pages.onboarding.content.background.root.responsive.mobile.image", v)}
               placeholder="https://..."
             />
             <TextField
-              label="TABLET IMAGE URL"
+              label={t("TABLET IMAGE URL")}
               value={content.background.root.responsive?.tablet?.image || ""}
               onChange={(v) => set("pages.onboarding.content.background.root.responsive.tablet.image", v)}
               placeholder="https://..."
             />
             <TextField
-              label="LAPTOP IMAGE URL"
+              label={t("LAPTOP IMAGE URL")}
               value={content.background.root.responsive?.laptop?.image || ""}
               onChange={(v) => set("pages.onboarding.content.background.root.responsive.laptop.image", v)}
               placeholder="https://..."
             />
             <TextField
-              label="DESKTOP IMAGE URL"
+              label={t("DESKTOP IMAGE URL")}
               value={content.background.root.responsive?.desktop?.image || ""}
               onChange={(v) => set("pages.onboarding.content.background.root.responsive.desktop.image", v)}
               placeholder="https://..."
@@ -159,64 +160,65 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── 2. Card Configuration ─────────────────────────────────── */}
+      {/* ── 2. Card Configuration ── */}
+      {/* Settings to customize onboarding card panel border styles, backgrounds, shadows, and device-responsive graphics */}
       {content.background?.sections?.left?.card && (
-        <Card style={{ marginBottom: 20 }}>
+        <Card className="theme-card-margin">
           <CardTitle
-            icon="🎴"
-            title="Card Configuration"
-            description="Card styling and responsive image settings"
+            icon={getCardIcon("common")}
+            title={t("Card Configuration")}
+            description={t("Card styling and responsive image settings")}
           />
-          <div className="two-col-grid" style={{ marginBottom: 16 }}>
+          <div className="two-col-grid theme-card-margin">
             <ColorField
-              label="Background Color"
+              label={t("Background Color")}
               value={content.background.sections.left.card.backgroundColor}
               onChange={(v) => set("pages.onboarding.content.background.sections.left.card.backgroundColor", v)}
             />
             <CheckboxField
-              label="Show Color"
+              label={t("Show Color")}
               checked={content.background.sections.left.card.showColor}
               onChange={(v) => set("pages.onboarding.content.background.sections.left.card.showColor", v)}
             />
           </div>
-          <div className="two-col-grid" style={{ marginBottom: 16 }}>
+          <div className="two-col-grid theme-card-margin">
             <SelectField
-              label="Shadow Style"
+              label={t("Shadow Style")}
               value={content.background.sections.left.card.shadow}
               options={["default", "none", "sm", "md", "lg"]}
               onChange={(v) => set("pages.onboarding.content.background.sections.left.card.shadow", v)}
             />
             <CheckboxField
-              label="Show Shadow"
+              label={t("Show Shadow")}
               checked={content.background.sections.left.card.showShadow}
               onChange={(v) => set("pages.onboarding.content.background.sections.left.card.showShadow", v)}
             />
           </div>
 
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#21182C", margin: "16px 0 8px" }}>
-            Responsive Images
+          <div className="section-sub-title">
+            {t("Responsive Images")}
           </div>
           <FieldsRow>
             <TextField
-              label="MOBILE IMAGE URL"
+              label={t("MOBILE IMAGE URL")}
               value={content.background.sections.left.card.responsive?.mobile?.image || ""}
               onChange={(v) => set("pages.onboarding.content.background.sections.left.card.responsive.mobile.image", v)}
               placeholder="https://..."
             />
             <TextField
-              label="TABLET IMAGE URL"
+              label={t("TABLET IMAGE URL")}
               value={content.background.sections.left.card.responsive?.tablet?.image || ""}
               onChange={(v) => set("pages.onboarding.content.background.sections.left.card.responsive.tablet.image", v)}
               placeholder="https://..."
             />
             <TextField
-              label="LAPTOP IMAGE URL"
+              label={t("LAPTOP IMAGE URL")}
               value={content.background.sections.left.card.responsive?.laptop?.image || ""}
               onChange={(v) => set("pages.onboarding.content.background.sections.left.card.responsive.laptop.image", v)}
               placeholder="https://..."
             />
             <TextField
-              label="DESKTOP IMAGE URL"
+              label={t("DESKTOP IMAGE URL")}
               value={content.background.sections.left.card.responsive?.desktop?.image || ""}
               onChange={(v) => set("pages.onboarding.content.background.sections.left.card.responsive.desktop.image", v)}
               placeholder="https://..."
@@ -225,34 +227,35 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── 3. Brand Settings ─────────────────────────────────────── */}
+      {/* ── 3. Brand Settings ── */}
+      {/* Configures core marketing title strings and primary/secondary subtitle descriptions */}
       {content.brand && (
-        <Card style={{ marginBottom: 20 }}>
+        <Card className="theme-card-margin">
           <CardTitle
-            icon="🏷️"
-            title="Brand Settings"
-            description="Titles and subtitles for the onboarding flow"
+            icon={getCardIcon("logo")}
+            title={t("Brand Settings")}
+            description={t("Titles and subtitles for the onboarding flow")}
           />
-          <div className="two-col-grid" style={{ marginBottom: 16 }}>
+          <div className="two-col-grid theme-card-margin">
             <TextField
-              label="Default Title"
+              label={t("Default Title")}
               value={content.brand.title?.default || ""}
               onChange={(v) => set("pages.onboarding.content.brand.title.default", v)}
             />
             <TextField
-              label="Highlight Title"
+              label={t("Highlight Title")}
               value={content.brand.title?.highlight || ""}
               onChange={(v) => set("pages.onboarding.content.brand.title.highlight", v)}
             />
           </div>
           <div className="two-col-grid">
             <TextField
-              label="Primary Subtitle"
+              label={t("Primary Subtitle")}
               value={content.brand.subtitle?.primary || ""}
               onChange={(v) => set("pages.onboarding.content.brand.subtitle.primary", v)}
             />
             <TextField
-              label="Secondary Subtitle"
+              label={t("Secondary Subtitle")}
               value={content.brand.subtitle?.secondary || ""}
               onChange={(v) => set("pages.onboarding.content.brand.subtitle.secondary", v)}
             />
@@ -260,79 +263,55 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── 4. Features List ──────────────────────────────────────── */}
+      {/* ── 4. Features List ── */}
+      {/* Allows developers to dynamically add, edit, or remove key application feature items shown on the onboarding slide decks */}
       {content.features && (
-        <Card style={{ marginBottom: 20 }}>
+        <Card className="theme-card-margin">
           <CardTitle
-            icon="📋"
-            title="Features List"
-            description="Dynamic list of key features"
+            icon={getCardIcon("sidebar")}
+            title={t("Features List")}
+            description={t("Dynamic list of key features")}
             rightElement={
               <button
                 onClick={handleAddFeature}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "#6A4A91",
-                  fontWeight: 700,
-                  fontSize: 13,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 4
-                }}
+                className="add-feature-btn"
               >
-                <span style={{ fontSize: 16 }}>⊕</span> Add Feature
+                <span>⊕</span> {t("Add Feature")}
               </button>
             }
           />
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="full-width-col">
             {content.features.map((feature, idx) => (
               <div
                 key={idx}
-                style={{
-                  display: "flex",
-                  alignItems: "flex-end",
-                  gap: 16,
-                  padding: "16px 20px",
-                  background: "#FAF9FC",
-                  border: "1.5px solid #EDE8F5",
-                  borderRadius: 10
-                }}
+                className="feature-box-row"
               >
                 <div className="feature-row-grid">
                   <TextField
-                    label="ICON URL"
+                    label={t("ICON URL")}
                     value={feature.icon || ""}
                     onChange={(v) => set(`pages.onboarding.content.features.${idx}.icon`, v)}
                     placeholder="https://..."
                   />
                   <TextField
-                    label="SHORT TITLE"
+                    label={t("SHORT TITLE")}
                     value={feature.title || ""}
                     onChange={(v) => set(`pages.onboarding.content.features.${idx}.title`, v)}
-                    placeholder="Title"
+                    placeholder={t("Title")}
                   />
                   <TextField
-                    label="DESCRIPTION"
+                    label={t("DESCRIPTION")}
                     value={feature.description || ""}
                     onChange={(v) => set(`pages.onboarding.content.features.${idx}.description`, v)}
-                    placeholder="Description"
+                    placeholder={t("Description")}
                   />
                 </div>
                 <button
                   onClick={() => handleRemoveFeature(idx)}
-                  title="Remove Feature"
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "#D85A5A",
-                    fontSize: 18,
-                    padding: "0 0 10px 0"
-                  }}
+                  title={t("Remove Feature")}
+                  className="remove-feature-btn"
                 >
-                  🗑️
+                  <DeleteIconv2 fill="#D85A5A" />
                 </button>
               </div>
             ))}
@@ -340,22 +319,23 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── 5. Common Secure Info ─────────────────────────────────── */}
+      {/* ── 5. Common Secure Info ── */}
+      {/* Configures badges and text describing trust/security measures below fields */}
       {common.secureInfo && (
-        <Card style={{ marginBottom: 20 }}>
+        <Card className="theme-card-margin">
           <CardTitle
-            icon="🛡️"
-            title="Common Secure Info"
-            description="Security badges and trust text"
+            icon={getCardIcon("brand")}
+            title={t("Common Secure Info")}
+            description={t("Security badges and trust text")}
           />
           <div className="two-col-grid">
             <TextField
-              label="Secure Icon URL"
+              label={t("Secure Icon URL")}
               value={common.secureInfo.icon || ""}
               onChange={(v) => set("pages.onboarding.common.secureInfo.icon", v)}
             />
             <TextField
-              label="Secure Text"
+              label={t("Secure Text")}
               value={common.secureInfo.text || ""}
               onChange={(v) => set("pages.onboarding.common.secureInfo.text", v)}
             />
@@ -363,11 +343,25 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── Submit Button ─────────────────────────────────────────── */}
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 28, paddingBottom: 40 }}>
-        <SubmitButton onClick={handleSubmit} label="SUBMIT CHANGES" />
+      {/* ── Submit Button ── */}
+      <div className="submit-container">
+        <button
+          onClick={() => setShowConfirmModal(true)}
+          className="submit-btn"
+          disabled={!hasUnsavedChanges}
+        >
+          {t("SUBMIT CHANGES")}
+        </button>
       </div>
 
+      {/* Reusable confirmation modal component to verify changes before writing back to storage */}
+      <SubmitConfirmModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleSubmit}
+      />
+
+      {/* Success and error feedback toast notification */}
       {toast && <Toast label={toast.label} error={toast.error} onClose={() => setToast(null)} />}
     </div>
   );

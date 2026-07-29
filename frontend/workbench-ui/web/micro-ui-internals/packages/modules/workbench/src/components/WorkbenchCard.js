@@ -3,9 +3,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 const ROLES = {
-  LOCALISATION: ["EMPLOYEE", "SUPERUSER","EMPLOYEE_COMMON","LOC_ADMIN"],
+  LOCALISATION: ["EMPLOYEE", "SUPERUSER", "EMPLOYEE_COMMON", "LOC_ADMIN"],
   MDMS: ["MDMS_ADMIN", "EMPLOYEE", "SUPERUSER"],
-  WORKFLOW: ["MDMS_ADMIN","EMPLOYEE", "SUPERUSER","EMPLOYEE_COMMON","LOC_ADMIN"]
+  WORKFLOW: ["MDMS_ADMIN", "EMPLOYEE", "SUPERUSER", "EMPLOYEE_COMMON", "LOC_ADMIN"]
 };
 
 // Mukta Overrriding the Works Home screen card
@@ -34,8 +34,18 @@ const WorkbenchCard = () => {
       roles: ROLES.WORKFLOW,
     },
     {
-      label: t("ACTION_TEST_CONFIGURATION"),
-      link: `/${window?.contextPath}/employee/workbench/theme-configuration`, 
+      label: t("WBH_THEME_CONFIGURATION"), // Theme Configuration 
+      link: `/${window?.contextPath}/employee/workbench/theme-configuration`,
+      roles: ROLES.MDMS,
+    },
+    {
+      label: t("WBH_ONBOARDING_CONTENT_CONFIG"), // Onboarding Content Configuration
+      link: `/${window?.contextPath}/employee/workbench/onboarding-common-content`,
+      roles: ROLES.MDMS,
+    },
+    {
+      label: t("WBH_ONBOARDING_LOGIN_CONFIG"), // Onboarding Login Configuration
+      link: `/${window?.contextPath}/employee/workbench/onboarding-login-configuration`,
       roles: ROLES.MDMS,
     }
   ];

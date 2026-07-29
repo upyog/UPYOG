@@ -55,6 +55,10 @@ export const ThemeConfig = [{
     },
     "typography": {
       "fontFamily": "\"Inter\", system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+    },
+    "borderWidth": {
+      "sm": "1px ",
+      "lg": "2px"
     }
   },
   "common": {
