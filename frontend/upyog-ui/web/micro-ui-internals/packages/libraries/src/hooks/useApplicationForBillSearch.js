@@ -9,6 +9,8 @@ import { WTService } from "../services/elements/WT";
 import { MTService } from "../services/elements/MT";
 import { TPService } from "../services/elements/TP";
 import {NDCService} from "../services/elements/NDC";
+import { TLService } from "../services/elements/TL";
+import { NOCService } from "../services/elements/NOC";
 import {ESTService} from "../services/elements/EST";
 
 
@@ -57,6 +59,9 @@ const tpBookings = async (tenantId, filters) => {
 };
 const ndcApplications = async (tenantId, filters) => {
   return (await NDCService.search({ tenantId, filters })).Applications;
+};
+const nocApplications = async (tenantId, filters) => {
+  return (await NOCService.search(tenantId, filters)).FireNOCs;
 };
 
 const refObj = (tenantId, filters) => {
@@ -144,6 +149,11 @@ const refObj = (tenantId, filters) => {
       searchFn: () => ndcApplications(null, { ...filters, applicationNo: consumerCodes }),
       key: "applicationNo",
       label: "NDC_APPLICATION_NO",
+    },
+    firenoc: {
+      searchFn: () => nocApplications(tenantId, { ...filters, applicationNumber: consumerCodes }),
+      key: "applicationNumber",
+      label: "NOC_APPLICATION_NO",
     }
   };
 };
@@ -185,6 +195,9 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   }
   if (window.location.href.includes("est-services")) {
     _key = "est"
+  }
+  if (window.location.href.includes("noc") || window.location.href.includes("firenoc")) {
+    _key = "noc";
   }
   
   /* key from application ie being used as consumer code in bill */

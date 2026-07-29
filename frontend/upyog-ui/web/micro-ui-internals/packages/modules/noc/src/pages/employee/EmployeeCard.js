@@ -1,3 +1,7 @@
+/**
+ * Renders the NOC Employee Home Card component on the Employee Dashboard.
+ * Displays application KPIs (Total, Nearing SLA) and quick links for Inbox and Search Application.
+ */
 import React, { useMemo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard } from "@nudmcdgnpm/digit-ui-react-components";

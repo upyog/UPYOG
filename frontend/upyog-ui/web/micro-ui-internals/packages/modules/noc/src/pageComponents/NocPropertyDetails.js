@@ -1,5 +1,4 @@
-/* 
- * NOC Property Details Component (Step 2 of the Citizen wizard flow)
+/** 
  * Renders forms to collect building occupancy specs (no. of buildings, NBC codes, built-up area, height)
  * and location coordinates (via GIS integration, nearest fire station lookup, and Property ID matching).
  */
@@ -16,9 +15,8 @@ import {
   CardHeader,
   Toast,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import Timeline from "../components/NocTimeline";
 import GIS from "./GIS";
-
+import { CurrentLocationIcon, ChooseLocationIcon } from "../utils";
 const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
 
@@ -293,6 +291,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
+  /** Handles updating single vs multiple building radio selection. */
   const handleNoOfBuildingsSelect = (value) => {
     setNoOfBuildings(value.code);
     if (value.code === "SINGLE" && formState.length > 1) {
@@ -300,6 +299,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
+  /** Adds a new building details entry block to form state. */
   const handleAddBuilding = () => {
     setFormState([
       ...formState,
@@ -318,12 +318,14 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     ]);
   };
 
+  /** Removes a building details entry block by index. */
   const handleRemoveBuilding = (index) => {
     if (formState.length > 1) {
       setFormState(formState.filter((_, i) => i !== index));
     }
   };
 
+  /** Updates building parameters (name, usage type, subusage type) in form state. */
   const handleEditBuildingProperty = (index, key, value) => {
     setFormState((prevState) =>
       prevState.map((b, idx) => {
@@ -384,6 +386,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
+  /** Updates UOM specifications (floors, basements, area, height) for a building. */
   const handleEditBuildingUom = (index, uomCode, value) => {
     setFormState((prevState) =>
       prevState.map((b, idx) => {
@@ -401,7 +404,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     );
   };
 
-  // Validations
+  /** Validates mandatory building occupancy and area parameters before submission. */
   const validatePropertyForm = (stateData) => {
     if (Object.keys(bldgErrors).length > 0) {
       setError("NOC_ERROR_INVALID_BUILDING_NAME");
@@ -595,7 +598,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
-      <Timeline currentStep={2} />
+
       <FormStep
         config={config}
         onSelect={goNext}
@@ -919,9 +922,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
               label={
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                   <span>{t("NOC_CURRENT_LOCATION")}</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" fill="#FE7A51" />
-                  </svg>
+                  <CurrentLocationIcon />
                 </div>
               }
               onClick={fetchCurrentLocation}
@@ -931,9 +932,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
               label={
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                   <span>{t("NOC_CHOOSE_LOCATION")}</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#FE7A51" />
-                  </svg>
+                  <ChooseLocationIcon />
                 </div>
               }
               onClick={() => setIsOpen(true)}

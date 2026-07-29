@@ -19,7 +19,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import Timeline from "../../../components/NocTimeline";
+
 import { convertToFireNOCPayload } from "../../../utils";
 
 const CheckPage = ({ onSubmit, value }) => {
@@ -73,7 +73,7 @@ const CheckPage = ({ onSubmit, value }) => {
   const totalAmount = bill?.totalAmount;
   return (
     <React.Fragment>
-      <Timeline currentStep={5} />
+
       <Header styles={{ fontSize: "32px" }}>{t("NOC_SUMMARY_HEADER")}</Header>
 
       <Card style={{ marginBottom: "20px", padding: "24px" }}>

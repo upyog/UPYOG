@@ -1,3 +1,7 @@
+/**
+ * Displays the list of NOC applications created by the logged-in citizen with search, status overview,
+ * and pagination support.
+ */
 import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
