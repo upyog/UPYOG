@@ -10,6 +10,13 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
 
+/**
+ * Configuration class for the Load Generator application.
+ *
+ * <p>Loads application properties including thread pool configuration,
+ * retry settings, WebClient timeout, module endpoints, authentication
+ * details, and initializes the default application timezone.</p>
+ */
 @Component
 @Data
 @NoArgsConstructor
@@ -19,6 +26,9 @@ public class LoadGeneratorConfig {
     @Value("${app.timezone}")
     private String timeZone;
 
+ /**
+ * Initializes the default JVM timezone using the configured application timezone.
+ */
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
