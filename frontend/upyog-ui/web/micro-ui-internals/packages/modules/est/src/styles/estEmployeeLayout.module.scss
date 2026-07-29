@@ -1,0 +1,15 @@
+/* EST employee pages — align content to top like other modules (asset, ads). */
+.estEmployeeLayout {
+  :global(.employeeCard) {
+    margin-top: 0;
+
+    > :global(header.h1) {
+      margin-left: 0;
+      margin-top: 0;
+    }
+  }
+}
+
+.estFormStep {
+  composes: estEmployeeLayout;
+}

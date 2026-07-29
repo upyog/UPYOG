@@ -1,143 +1,138 @@
-import React, { Children, Fragment } from "react";
+/**
+ * ESTRegCreate Component
+ *
+ * Handles the estate registration process: form navigation, MDMS config
+ * fetching, and rendering the multi-step application routes.
+ */
+
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { Config } from "../../../config/Create/config";
+import { Navigate, Route, Routes } from "react-router-dom";
+import useEstWizard from "../../../utils/useEstWizard";
 
-/**
- * ESTRegCreate
- * -------------
- * Main container component responsible for:
- * - Rendering multi-step EST registration form
- * - Handling navigation between steps
- * - Managing form data in session storage
- * - Rendering check & acknowledgement screens
- */
-const ESTRegCreate = ({ parentRoute }) => {
+const ESTRegCreate = () => {
   const queryClient = useQueryClient();
-  const match = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
-  const { pathname } = useLocation();
-  const navigate = Digit.Hooks.useCustomNavigate();
-  const stateId = Digit.ULBService.getStateId();
-  let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EST_NEW_REGISTRATION_CREATES", {});
 
-  /**
-   * goNext
-   * -------
-   * Handles navigation logic between form steps.
-   */
-  const goNext = (skipStep, index, isAddMultiple, key) => {
-    let currentPath = pathname.split("/").pop(),
-      lastchar = currentPath.charAt(currentPath.length - 1),
-      isMultiple = false,
-      nextPage;
-
-    if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
-      if (currentPath == "-1" || currentPath == "-2") {
-        currentPath = pathname.slice(0, -3);
-        currentPath = currentPath.split("/").pop();
-        isMultiple = true;
-      } else {
-        currentPath = pathname.slice(0, -2);
-        currentPath = currentPath.split("/").pop();
-        isMultiple = true;
-      }
-    } else {
-      isMultiple = false;
+  const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
+    Digit.ULBService.getStateId(),
+    "Estate",
+    [{ name: "NewRegistration" }],
+    {
+      // Primary: Estate.NewRegistration (data/pg/Estate/NewRegistration.json).
+      // Fallback: legacy Estate.Config if still deployed.
+      select: (data) =>
+        data?.Estate?.NewRegistration || null,
     }
+  );
 
-    if (!isNaN(lastchar)) {
-      isMultiple = true;
-    }
-
-    let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
-
-    let redirectWithHistory = (to, state) => navigate(to, state != null ? { state } : undefined);
-    if (skipStep) {
-      redirectWithHistory = (to, state) => navigate(to, state != null ? { replace: true, state } : { replace: true });
-    }
-
-    if (isAddMultiple) {
-      nextStep = key;
-    }
-
-    if (nextStep === null) {
-      return redirectWithHistory(`check`);
-    }
-
-    if (!isNaN(nextStep.split("/").pop())) {
-      nextPage = `${nextStep}`;
-    } else {
-      nextPage = isMultiple && nextStep !== "map" ? `${nextStep}/${index}` : `${nextStep}`;
-    }
-
-    redirectWithHistory(nextPage);
-  };
-
-  /**
-   * Clear old form data when user enters the first screen again,
-   * unless user navigated using browser back button
-   */
-  if (params && Object.keys(params).length > 0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true") {
-    clearParams();
-    queryClient.invalidateQueries("EST_NEW_REGISTRATION_CREATES");
-  }
-
-  const estcreate = async () => {
-    navigate(`acknowledgement`);
-  };
-
-  /**
-   * handleSelect
-   * ------------
-   * Saves form data into session storage
-   */
-  function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
-    setParams({ ...params, [key]: data });
-    goNext(skipStep, index, isAddMultiple, key);
-  }
-
-  const handleSkip = () => {};
-  const handleMultiple = () => {};
-
-  /**
-   * onSuccess
-   * ----------
-   * Called after successful submission
-   */
-  const onSuccess = () => {
-    clearParams();
-    queryClient.invalidateQueries("EST_NEW_REGISTRATION_CREATES");
-  };
-
-  let commonFields = Config;
-  commonFields.forEach((obj) => {
-    config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
+  const {
+    config,
+    params,
+    clearParams,
+    location,
+    match,
+    handleSelect,
+    onAckSuccess,
+    onCheckSuccess: estcreate,
+    onCheckError: estcreateError,
+    isReady,
+  } = useEstWizard({
+    mdmsData: initialConfig,
+    isLoading,
+    indexRoute: "newRegistration",
+    sessionKey: "EST_NEW_REGISTRATION_CREATES",
+    terminalSegments: ["check", "acknowledgement", "newRegistration"],
+    multiStepNavigation: true,
+    invalidateQueryKey: "EST_NEW_REGISTRATION_CREATES",
   });
 
-  config.indexRoute = "newRegistration";
+  const { pathname } = location;
+  const routerEditData = location?.state?.editData;
 
-  const ESTRegCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTRegCheckPage");
+  const effectiveParams = useMemo(() => {
+    return routerEditData && Object.keys(routerEditData).length > 0
+      ? { ...params, newRegistration: { Assets: [routerEditData] } }
+      : params;
+  }, [routerEditData, params]);
+
+  useEffect(() => {
+    sessionStorage.setItem(
+      "applicationType",
+      pathname.includes("new-application")
+        ? "EST_NEWAPPLICATION"
+        : "EST_RENEWAPPLICATION"
+    );
+  }, [pathname]);
+
+  useEffect(() => {
+    if (
+      params &&
+      Object.keys(params).length > 0 &&
+      window.location.href.includes("/info") &&
+      sessionStorage.getItem("docReqScreenByBack") !== "true"
+    ) {
+      clearParams();
+      queryClient.invalidateQueries("EST_NEW_REGISTRATION_CREATES");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  if (!isReady) {
+    return <Loader />;
+  }
+
+  const ESTDynamicCheckPage = Digit?.ComponentRegistryService?.getComponent("ESTDynamicCheckPage");
   const ESTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("ESTAcknowledgement");
 
   return (
     <Routes>
       {config.map((routeObj, index) => {
-        const { component, texts, inputs, key } = routeObj;
-        const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
+        const { component } = routeObj;
+        const Component =
+          typeof component === "string"
+            ? Digit.ComponentRegistryService.getComponent(component)
+            : component;
         const user = Digit.UserService.getUser().info.type;
+
         return (
           <Route
             path={`${routeObj.route}/*`}
             key={index}
-            element={<Component config={routeObj} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} parentRoute={match.pathnameBase} />}
+            element={
+              <Component
+                config={routeObj}
+                onSelect={handleSelect}
+                t={t}
+                persistedData={effectiveParams}
+                userType={user}
+                parentRoute={match?.pathnameBase}
+              />
+            }
           />
         );
       })}
-      <Route path="check/*" element={<ESTRegCheckPage onSubmit={estcreate} value={params} />} />
-      <Route path="acknowledgement/*" element={<ESTAcknowledgement data={params} onSuccess={onSuccess} />} />
+
+      <Route
+        path="check/*"
+        element={
+          <ESTDynamicCheckPage
+            flow="registration"
+            onSubmit={estcreate}
+            onError={estcreateError}
+            value={params}
+            config={config}
+          />
+        }
+      />
+
+      <Route
+        path="acknowledgement/*"
+        element={<ESTAcknowledgement onSuccess={onAckSuccess} />}
+      />
+
       <Route path="/*" element={<Navigate to={config.indexRoute} replace />} />
     </Routes>
   );

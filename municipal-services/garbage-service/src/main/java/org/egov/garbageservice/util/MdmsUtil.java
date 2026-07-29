@@ -26,29 +26,18 @@ public class MdmsUtil {
     private final GarbageServiceConfig config;
 
     private static final String MDMS_REBATE_MASTER_NAME = "Rebate";
+    private static final String MDMS_PENALTY_MASTER_NAME = "Penalty";
     private static final String MDMS_GARBAGE_MODULE_NAME = "Garbage";
     private static final String MDMS_REBATE_FILTER = "$.[?(@.serviceType=='GC_REBATE_FEE' && @.code=='{1}')].rate";
+    private static final String MDMS_PENALTY_FILTER = "$.[?(@.serviceType=='GC_RENTAL_FEE' && @.feeType=='GC_PENALTY_FEE')].rate";
 
     public BigDecimal getRebateRate(RequestInfo requestInfo, String tenantId, String specialCategory) {
         if (specialCategory == null || specialCategory.isEmpty()) {
             return BigDecimal.ZERO;
         }
 
-        String stateLevelTenantId = tenantId.contains(".") ? tenantId.split("\\.")[0] : tenantId;
-
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, stateLevelTenantId);
-        StringBuilder url = new StringBuilder(config.getMdmsHost()).append(config.getMdmsSearchEndpoint());
-        Optional<Object> resultOptional = serviceRequestRepository.fetchResult(url, mdmsCriteriaReq);
-
-        if (resultOptional.isEmpty()) {
-            log.warn("[MDMS][Rebate] Empty response from MDMS for tenantId={}", tenantId);
-            return BigDecimal.ZERO;
-        }
-
-        Object result = resultOptional.get();
-
         try {
-            List<Map<String, Object>> rebateList = JsonPath.read(result, "$.MdmsRes.Garbage.Rebate");
+            List<Map<String, Object>> rebateList = JsonPath.read(getMdmsResponse(requestInfo, tenantId), "$.MdmsRes.Garbage.Rebate");
             String filter = MDMS_REBATE_FILTER.replace("{1}", specialCategory);
             List<Integer> rates = JsonPath.read(rebateList, filter);
             if (rates.isEmpty()) {
@@ -60,11 +49,43 @@ public class MdmsUtil {
             return BigDecimal.ZERO;
         }
     }
+
+    public BigDecimal getPenaltyRate(RequestInfo requestInfo, String tenantId) {
+        try {
+            List<Map<String, Object>> penaltyList = JsonPath.read(getMdmsResponse(requestInfo, tenantId), "$.MdmsRes.Garbage.Penalty");
+            List<Integer> penalty = JsonPath.read(penaltyList, MDMS_PENALTY_FILTER);
+            if (penalty.isEmpty()) {
+                return BigDecimal.ZERO;
+            }
+            return BigDecimal.valueOf(penalty.get(0)).divide(BigDecimal.valueOf(100));
+        } catch (Exception e) {
+            log.error("Error while fetching penalty rate from MDMS", e);
+            return BigDecimal.ZERO;
+        }
+    }
+
+
+    public Object getMdmsResponse(RequestInfo requestInfo, String tenantId) {
+        String stateLevelTenantId = tenantId.contains(".") ? tenantId.split("\\.")[0] : tenantId;
+        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, stateLevelTenantId);
+        StringBuilder url = new StringBuilder(config.getMdmsHost()).append(config.getMdmsSearchEndpoint());
+        Optional<Object> resultOptional = serviceRequestRepository.fetchResult(url, mdmsCriteriaReq);
+
+        if (resultOptional.isEmpty()) {
+            log.warn("[MDMS] Empty response from MDMS for tenantId={}", tenantId);
+            return null;
+        }
+
+        return resultOptional.get();
+    }
+
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId) {
-        MasterDetail masterDetail = new MasterDetail();
-        masterDetail.setName(MDMS_REBATE_MASTER_NAME);
+        MasterDetail masterDetail1 = new MasterDetail();
+        MasterDetail masterDetail2 = new MasterDetail();
+        masterDetail1.setName(MDMS_REBATE_MASTER_NAME);
+        masterDetail2.setName(MDMS_PENALTY_MASTER_NAME);
         ModuleDetail moduleDetail = new ModuleDetail();
-        moduleDetail.setMasterDetails(List.of(masterDetail));
+        moduleDetail.setMasterDetails(List.of(masterDetail1, masterDetail2));
         moduleDetail.setModuleName(MDMS_GARBAGE_MODULE_NAME);
         MdmsCriteria mdmsCriteria = new MdmsCriteria();
         mdmsCriteria.setTenantId(tenantId);

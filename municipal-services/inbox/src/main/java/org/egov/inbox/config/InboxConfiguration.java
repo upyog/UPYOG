@@ -157,4 +157,13 @@ public class InboxConfiguration {
 
 	@Value("${egov.searcher.tp.search.desc.path}")
 	private String tpInboxSearcherDescEndpoint;
+
+	@Value("${egov.searcher.gc.search.path}")
+	private String gcInboxSearcherEndpoint;
+
+	@Value("${egov.searcher.gc.search.desc.path}")
+	private String gcInboxSearcherDescEndpoint;
+
+	@Value("${egov.searcher.gc.count.path}")
+	private String gcInboxSearcherCountEndpoint;
 }

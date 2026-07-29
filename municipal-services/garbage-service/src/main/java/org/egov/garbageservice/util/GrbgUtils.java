@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -65,6 +65,20 @@ public class GrbgUtils {
 		auditDetails.setLastModifiedDate(System.currentTimeMillis());
 
 		return auditDetails;
+	}
+
+	public static Long getCurrentTimestamp() {
+		return Instant.now().toEpochMilli();
+	}
+
+	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
+		Long time = getCurrentTimestamp();
+		if (isCreate)
+			// TODO: check if we can set lastupdated details to empty
+			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
+					.build();
+		else
+			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
 
 }

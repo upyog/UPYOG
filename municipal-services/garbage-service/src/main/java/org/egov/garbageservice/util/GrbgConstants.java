@@ -140,7 +140,7 @@ public class GrbgConstants {
 	@Value("${workflow.valid.action.search.path}")
     private String workflowValidActionSearchPath;
 
-	@Value("${egov.bill.context.host}")
+	@Value("${egov.billing.host}")
 	public String billHost;
 
 	@Value("${egov.bill.endpoint.fetch}")
