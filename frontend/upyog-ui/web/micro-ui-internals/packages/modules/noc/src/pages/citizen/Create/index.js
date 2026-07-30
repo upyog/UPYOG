@@ -1,24 +1,16 @@
-/* 
- * Citizen Application Flow Container (Create/index.js)
- * Manages the citizen wizard lifecycle, routing through the configured steps, 
- * persisting state in Session Storage, and executing backend API mutations for Fire NOC.
+/** 
+ * Manages the NOC citizen application creation lifecycle, routing through configured steps,
+ * persisting form state in session storage, and handling step navigation to check page and acknowledgement.
  */
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { newConfig as newConfigNOC } from "../../../config/config";
 import { convertToFireNOCPayload } from "../../../utils";
-import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, Timeline } from "@nudmcdgnpm/digit-ui-react-components";
 
-const CheckPage = (props) => {
-  const Component = Digit?.ComponentRegistryService?.getComponent("NOCCheckPage") || (() => <div>NOCCheckPage Placeholder</div>);
-  return <Component {...props} />;
-};
-
-const NocAcknowledgement = (props) => {
-  const Component = Digit?.ComponentRegistryService?.getComponent("NOCAcknowledgement") || (() => <div>NOCAcknowledgement Placeholder</div>);
-  return <Component {...props} />;
-};
+import CheckPageLocal from "./CheckPage";
+import NOCAcknowledgementLocal from "./NOCAcknowledgement";
 
 const CreateNoc = ({ parentRoute }) => {
   const { t } = useTranslation();
@@ -29,6 +21,9 @@ const CreateNoc = ({ parentRoute }) => {
   const tenantId = params?.property?.location?.property?.city?.code || params?.location?.city?.code || Digit.ULBService.getCurrentTenantId();
   const createMutation = Digit.Hooks.noc.useFireNOCAPI(tenantId, true);
   const updateMutation = Digit.Hooks.noc.useFireNOCAPI(tenantId, false);
+
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent("NOCCheckPage");
+  const NocAcknowledgement = Digit?.ComponentRegistryService?.getComponent("NOCAcknowledgement");
 
   let config = [];
   let { data: newConfig, isLoading } = Digit.Hooks.noc?.useMDMS?.getFormConfig
@@ -51,6 +46,11 @@ const CreateNoc = ({ parentRoute }) => {
     redirectWithHistory(nextPage);
   };
 
+  /**
+   * Handles step form updates and handles step submission.
+   * On owner step submission, executes backend API mutation (INITIATE action via create or update)
+   * to persist initial application state, assign application numbers, and navigate to the next step.
+   */
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "formData") {
       setParams({ ...data });
@@ -121,12 +121,15 @@ const CreateNoc = ({ parentRoute }) => {
   config.indexRoute = "document-required";
 
   return (
-    <Routes>
+    <React.Fragment>
+      <Timeline config={config} />
+      <Routes>
       {config?.map((routeObj, index) => {
         const { component, texts, inputs, key, isSkipEnabled, isMandatory } = routeObj;
         const Component = typeof component === "string"
-          ? (Digit.ComponentRegistryService.getComponent(component) || (() => <div>{component} Placeholder</div>))
+          ? Digit.ComponentRegistryService.getComponent(component)
           : component;
+        if (!Component) return null;
         return (
           <Route
             path={`${routeObj.route}`}
@@ -147,6 +150,7 @@ const CreateNoc = ({ parentRoute }) => {
       <Route path={`acknowledgement`} element={<NocAcknowledgement data={params} clearParams={clearParams} />} />
       <Route path="*" element={<Navigate to={`${config.indexRoute}`} />} />
     </Routes>
+    </React.Fragment>
   );
 };
 

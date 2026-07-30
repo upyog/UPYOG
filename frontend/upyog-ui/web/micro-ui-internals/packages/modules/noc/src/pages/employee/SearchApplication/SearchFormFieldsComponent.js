@@ -1,3 +1,7 @@
+/**
+ * Renders form fields for searching NOC applications.
+ * Includes inputs for Application No, Source Ref ID, NOC Type, Mobile Number (with validation), NOC No, and clear/submit actions.
+ */
 import React, { Fragment } from "react";
 import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";

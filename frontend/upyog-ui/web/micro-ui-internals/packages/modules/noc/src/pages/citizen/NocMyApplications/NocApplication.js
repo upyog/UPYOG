@@ -1,3 +1,7 @@
+/**
+ * Renders an application card displaying key NOC details (building name, application number, owner, status)
+ * along with action buttons to view application details or complete pending payments.
+ */
 import { Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";

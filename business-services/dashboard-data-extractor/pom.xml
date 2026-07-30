@@ -12,7 +12,7 @@
 
 	<groupId>org.upyog</groupId>
 	<artifactId>dashboard-data-extractor</artifactId>
-	<version>2.0.0</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<name>dashboard-data-extractor</name>
 	<description>Service responsible for extracting, mapping, and orchestrating dashboard metrics extraction</description>
@@ -54,7 +54,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>org.upyog.dashboard.AdapterServiceApplication</mainClass>
+					<mainClass>org.upyog.dashboard.DashboardDataExtractorApplication</mainClass>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -98,7 +98,7 @@
 		<dependency>
 			<groupId>org.upyog</groupId>
 			<artifactId>dashboard-data-engine</artifactId>
-			<version>2.0.0</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- JDBC & Database -->
@@ -154,6 +154,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.egov.services</groupId>
+			<artifactId>tracer</artifactId>
+			<version>2.9.0-SNAPSHOT</version>
+		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>

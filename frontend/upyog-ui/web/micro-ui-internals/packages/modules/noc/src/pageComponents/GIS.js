@@ -1,3 +1,7 @@
+/**
+ * Displays a popup card using LocationSearchCard to allow users to search, pin,
+and select geographical location details (latitude, longitude, pincode, place name) for an NOC application.
+ */
 import React, { useState } from "react";
 import { LocationSearchCard } from "@nudmcdgnpm/digit-ui-react-components";
 
@@ -12,10 +16,12 @@ const GIS = ({ t, onSelect, formData = {}, handleRemove, onSave }) => {
   const [placeName, setPlaceName] = useState("");
   let Webview = !Digit.Utils.browser.isMobile();
 
+  /** Handles skipping GIS location selection and closing modal popup. */
   const onSkip = () => {
     if (handleRemove) handleRemove();
   };
 
+  /** Updates pincode, geo-coordinates (latitude/longitude), and place name when location is updated. */
   const onChange = (code, location, place) => {
     setPincodeServicability(null);
     setPincode(code || "");
