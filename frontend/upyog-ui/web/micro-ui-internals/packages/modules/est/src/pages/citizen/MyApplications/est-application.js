@@ -26,6 +26,7 @@ import {
   toBillingCycleLabel,
   translateOrCode,
 } from "../../../utils/estDisplayUtils";
+import { getAllotmentNo } from "../../../utils/estMdmsUtils";
 import styles from "../../../styles/ESTMyApplications.module.scss";
 
 const EST_BUSINESS_SERVICE = "est-services";
@@ -38,7 +39,6 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [showToast, setShowToast] = useState(null);
 
-  // Prefer explicit allotment prop; parent may pass the same object as application.
   const row = allotment || application || {};
 
   useEffect(() => {
@@ -47,8 +47,8 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
     return () => clearTimeout(timer);
   }, [showToast]);
 
-  const estateNo = row?.assetNo || row?.estateNo || application?.estateNo;
   const billTenantId = tenantId || row?.tenantId;
+  const allotmentNo = getAllotmentNo(row);
 
   const allotmentTypeLabel = useMemo(() => {
     const raw = optionCode(row?.allotmentType ?? row?.propertyType);
@@ -62,42 +62,20 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
   );
 
   const nextPaymentDueLabel =
-    formatEstDueDate(getAllotmentDueDate(application, row)) || "N/A";
-
+    formatEstDueDate(getAllotmentDueDate(row, row)) || "N/A";
   const agreementStartDate =
     formatEstDueDate(
-      row?.agreementStartDate ??
-        application?.agreementStartDate ??
-        row?.additionalDetails?.agreementStartDate ??
-        application?.additionalDetails?.agreementStartDate
+      row?.agreementStartDate ?? row?.additionalDetails?.agreementStartDate
     ) || "N/A";
-
   const agreementEndDate =
     formatEstDueDate(
-      row?.agreementEndDate ??
-        application?.agreementEndDate ??
-        row?.additionalDetails?.agreementEndDate ??
-        application?.additionalDetails?.agreementEndDate
+      row?.agreementEndDate ?? row?.additionalDetails?.agreementEndDate
     ) || "N/A";
 
-  // Display + billing key must be allotmentNo (never allotmentId UUID).
-  const allotmentNo = String(
-    row?.allotmentNo ??
-      application?.allotmentNo ??
-      row?.additionalDetails?.allotmentNo ??
-      application?.additionalDetails?.allotmentNo ??
-      ""
-  ).trim();
   const paymentStatusCode = normalizeCitizenPaymentStatus(
-    getAllotmentPaymentStatus(row, application)
+    getAllotmentPaymentStatus(row, row)
   );
-  const isPaid = isAllotmentPaymentPaid(row, application);
-
-  const rateValue =
-    row?.rentRate ?? row?.rate ?? application?.rentRate ?? application?.rate ?? 0;
-  const monthlyRentValue =
-    row?.monthlyRent ?? application?.monthlyRent ?? 0;
-
+  const isPaid = isAllotmentPaymentPaid(row, row);
   const canMakePayment = Boolean(billTenantId && allotmentNo && !isPaid);
 
   const handleViewSummary = () => {
@@ -118,9 +96,7 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
         consumerCode: allotmentNo,
         businessService: EST_BUSINESS_SERVICE,
       });
-      const amountDue = getBillAmountDue(billData);
-
-      if (amountDue <= 0) {
+      if (getBillAmountDue(billData) <= 0) {
         setShowToast({ error: true, label: t("CS_BILL_NOT_FOUND") });
         return;
       }
@@ -130,11 +106,10 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
         state: { tenantId: billTenantId },
       });
     } catch (err) {
-      if (isNoDemandError(err)) {
-        setShowToast({ error: true, label: t("CS_BILL_NOT_FOUND") });
-        return;
-      }
-      setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
+      setShowToast({
+        error: true,
+        label: t(isNoDemandError(err) ? "CS_BILL_NOT_FOUND" : "CS_SOMETHING_WENT_WRONG"),
+      });
     } finally {
       setIsPaymentLoading(false);
     }
@@ -154,7 +129,7 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
         <Row
           className="border-none"
           label={t("EST_MONTHLY_RENT_IN_INR")}
-          text={`₹${monthlyRentValue || 0}`}
+          text={`₹${row?.monthlyRent || 0}`}
         />
         <Row
           className="border-none"
