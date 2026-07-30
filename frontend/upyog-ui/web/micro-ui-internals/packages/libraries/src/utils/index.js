@@ -409,7 +409,7 @@ const vendorAccess = () => {
 const gcAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const gcRoles = ["GC_CEMP","GC_EMPLOYEE", "GC_CITIZEN"];
+  const gcRoles = ["GC_APPROVER","GC_VERIFIER"];
   const GC_ACCESS = userRoles?.filter((role) => gcRoles?.includes(role));
   return GC_ACCESS?.length > 0;
 }

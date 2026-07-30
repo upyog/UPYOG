@@ -10,6 +10,22 @@ import {
 import i18next from "i18next";
 
 
+/**
+ * GCSpecifications Component
+ * 
+ * Renders the garbage specification details step in the GC application wizard.
+ * Collects information about collection type, property owner/tenant status, 
+ * applicant details (name, phone, gender, email), waste category/subcategory,
+ * and additional billing configuration (fixed/variable calculation, units).
+ * Supports inheritance flag when an old garbage ID is provided.
+ * 
+ * Props:
+ * - `t`: i18n translation function
+ * - `config`: Step configuration from the wizard config
+ * - `onSelect`: Callback when the form is submitted
+ * - `formData`: Current accumulated form data
+ * - `renewApplication`: Existing application for pre-filling during edit
+ */
 const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) => {
 
     const convertToObject = (params) => ({ i18nKey: params, code: params, value: params });

@@ -321,8 +321,9 @@ export const flattenForSummary = (formConfig = []) =>
 
 /**
  * Split a form config into summary sections and file fields.
- * `sectionHeader` entries start a new section; fields with `hideInSummary`
- * are skipped; `file` fields are collected separately for preview/download UI.
+ * `sectionHeader` entries start a new section; fields with `hidden`
+ * (or legacy `hideInSummary`) are skipped; `file` fields are collected
+ * separately for preview/download UI.
  *
  * @param {Array} [formConfig=[]] Route config `form` array.
  * @returns {{ sections: Array<{ headerCode: string|null, fields: Array }>, fileFields: Array }}
@@ -335,7 +336,7 @@ export const buildSummarySections = (formConfig = []) => {
   let current = { headerCode: null, fields: [] };
 
   flattenForSummary(formConfig).forEach((fc) => {
-    if (fc.hideInSummary) return;
+    if (fc.hidden || fc.hideInSummary) return;
 
     if (fc.type === "sectionHeader") {
       if (current.fields.length) sections.push(current);
@@ -402,13 +403,13 @@ export const extractUrlFromFilefetchResponse = (response, fileStoreId, index = 0
 
 /**
  * Collect uploaded file references from form values for check-page preview.
- * Maps each file field config to `{ id, label, fileName, reference }` when a
- * fileStoreId can be extracted from the saved value.
+ * Maps each file field config to `{ id, label, fileName }` when a fileStoreId
+ * can be extracted. `id` is for Filefetch/preview only — not shown as label text.
  *
  * @param {Array}    fileFields File field configs from `buildSummarySections`.
  * @param {object}   formValues Flat form values for the step.
  * @param {Function} [t=(k) => k] i18n translator for field labels.
- * @returns {Array<{ id: string, label: string, fileName: string|null, reference: string }>}
+ * @returns {Array<{ id: string, label: string, fileName: string|null }>}
  *   Non-null entries only (fields without an upload are omitted).
  * @see extractFileStoreId
  * @see resolveFieldLabelKey
@@ -426,8 +427,11 @@ export const collectFormFileEntries = (fileFields = [], formValues = {}, t = (k)
       return {
         id,
         label: t(resolveFieldLabelKey(fc, formValues)),
-        fileName: typeof raw === "object" ? raw.fileName || null : null,
-        reference: id,
+        // Show uploaded name only when it is a real name (not the fileStoreId).
+        fileName:
+          typeof raw === "object" && raw.fileName && raw.fileName !== id
+            ? raw.fileName
+            : null,
       };
     })
     .filter(Boolean);
@@ -458,6 +462,10 @@ export const resolveSummaryFieldValue = (
 
   const formVal = formValues[field.name];
   const apiAliasVal = apiFieldName ? formValues[apiFieldName] : undefined;
+  const prefillKey = field.prefillFrom;
+  const prefillVal = prefillKey
+    ? formValues[prefillKey] ?? extraData[prefillKey]
+    : undefined;
   const raw =
     (formVal !== undefined && formVal !== null && formVal !== ""
       ? formVal
@@ -465,8 +473,20 @@ export const resolveSummaryFieldValue = (
     (apiAliasVal !== undefined && apiAliasVal !== null && apiAliasVal !== ""
       ? apiAliasVal
       : undefined) ??
-    extraData[field.name] ??
-    (apiFieldName ? extraData[apiFieldName] : undefined);
+    (extraData[field.name] !== undefined &&
+    extraData[field.name] !== null &&
+    extraData[field.name] !== ""
+      ? extraData[field.name]
+      : undefined) ??
+    (apiFieldName &&
+    extraData[apiFieldName] !== undefined &&
+    extraData[apiFieldName] !== null &&
+    extraData[apiFieldName] !== ""
+      ? extraData[apiFieldName]
+      : undefined) ??
+    (prefillVal !== undefined && prefillVal !== null && prefillVal !== ""
+      ? prefillVal
+      : undefined);
 
   if (raw === undefined || raw === null || raw === "") return t("NA");
 

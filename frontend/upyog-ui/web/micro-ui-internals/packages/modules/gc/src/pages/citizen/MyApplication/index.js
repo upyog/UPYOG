@@ -4,6 +4,16 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import GCApplication from "./gc-application";
 
+/**
+ * GCMyApplications Component
+ * 
+ * Renders the "My Applications" page for citizens, displaying a list of GC applications
+ * associated with the user's mobile number. Provides search/filter functionality by
+ * application number and status. Supports load-more pagination.
+ * 
+ * Uses `useGCSearch` hook to fetch applications and applies local client-side filtering
+ * for accurate search results.
+ */
 export const GCMyApplications = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();

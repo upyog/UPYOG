@@ -1,14 +1,12 @@
 package org.egov.garbageservice.model;
 
-import java.util.List;
-import java.util.Set;
-
-import org.egov.tracer.annotations.CustomSafeHtml;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.tracer.annotations.CustomSafeHtml;
+
+import java.util.Set;
 
 @Data
 @Builder
@@ -20,30 +18,30 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GrbgBillTrackerSearchCriteria {
 
-	@CustomSafeHtml
-	private String tenantId;
-	
-	private Set<String> type;
-	
-	@CustomSafeHtml
-	private String month;
-	
-	@CustomSafeHtml
-	private String year;
-	
-	private Set<String> status;
+    @CustomSafeHtml
+    private String tenantId;
 
-	private Set<String> tenantIds;
+    private Set<String> type;
 
-	private Set<String> uuids;
+    @CustomSafeHtml
+    private String month;
 
-	private Set<String> grbgApplicationIds;
+    @CustomSafeHtml
+    private String year;
 
-	private Set<String> billIds;
-	
-	private Set<String> demandIds;
-	
-	private Integer limit;
+    private Set<String> status;
+
+    private Set<String> tenantIds;
+
+    private Set<String> uuids;
+
+    private Set<String> grbgApplicationIds;
+
+    private Set<String> billIds;
+
+    private Set<String> demandIds;
+
+    private Integer limit;
 
 
 }

@@ -68,11 +68,8 @@ const DocThumbnail = ({
   url,
   thumbSize = 72,
   fileStoreId,
-  reference,
   fileName,
 }) => {
-  const displayRef = fileName || reference || fileStoreId;
-
   const handleClick = (e) => {
     e.preventDefault();
     openFilePreview(fileStoreId, url);
@@ -82,7 +79,7 @@ const DocThumbnail = ({
     <a href="#" role="button" onClick={handleClick} className={styles.docThumbnail}>
       <div className={styles.meta}>
         <div className={styles.label}>{label}</div>
-        {displayRef ? <div className={styles.reference}>{displayRef}</div> : null}
+        {fileName ? <div className={styles.reference}>{fileName}</div> : null}
       </div>
 
       <div className={styles.thumb} style={{ width: thumbSize, height: thumbSize }}>
@@ -101,11 +98,8 @@ function DocLink({
   pdfSize = 48,
   labelWidth = 220,
   fileStoreId,
-  reference,
   fileName,
 }) {
-  const displayRef = fileName || reference || fileStoreId;
-
   const handleClick = (e) => {
     e.preventDefault();
     openFilePreview(fileStoreId, url);
@@ -118,7 +112,7 @@ function DocLink({
         style={{ ["--est-doc-label-width"]: `${labelWidth}px`, ...titleStyles }}
       >
         <div className={styles.label}>{label}</div>
-        {displayRef ? <div className={styles.reference}>{displayRef}</div> : null}
+        {fileName ? <div className={styles.reference}>{fileName}</div> : null}
       </div>
       <div className={styles.action}>
         <LargePdfSvg size={pdfSize} />
@@ -144,14 +138,22 @@ export function ESTDocumnetPreview({
   const { t } = useTranslation();
 
   const flattened = (documents || []).flatMap((group) =>
-    (group.values || []).map((v) => ({
-      url: v.url,
-      title: t(v.title || v.documentType || "DOCUMENT"),
-      documentType: v.documentType,
-      fileStoreId: v.fileStoreId || v.documentType,
-      reference: v.reference || v.fileStoreId || v.documentType,
-      fileName: v.fileName,
-    }))
+    (group.values || []).map((v) => {
+      const fileStoreId = v.fileStoreId || v.documentType;
+      const rawName = v.fileName || null;
+      // Never treat fileStoreId / reference as a display name.
+      const fileName =
+        rawName && rawName !== fileStoreId && rawName !== v.reference
+          ? rawName
+          : null;
+      return {
+        url: v.url,
+        title: t(v.title || "DOCUMENT"),
+        documentType: v.documentType,
+        fileStoreId,
+        fileName,
+      };
+    })
   );
 
   const rootClass = [
@@ -172,7 +174,6 @@ export function ESTDocumnetPreview({
                 url={val.url}
                 thumbSize={thumbSize}
                 fileStoreId={val.fileStoreId}
-                reference={val.reference}
                 fileName={val.fileName}
               />
             ) : (
@@ -183,7 +184,6 @@ export function ESTDocumnetPreview({
                 pdfSize={pdfSize}
                 labelWidth={labelWidth}
                 fileStoreId={val.fileStoreId}
-                reference={val.reference}
                 fileName={val.fileName}
               />
             )}

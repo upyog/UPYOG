@@ -18,8 +18,8 @@ export const getCitizenHomeFromModulePath = (modulePath = "") =>
 export const getApplicationDetailsPath = (modulePath = "", applicationNo = "") =>
   `${getEstModulePath(modulePath)}/application-details/${encodeURIComponent(applicationNo)}`;
 
-export const getCitizenPaymentPath = (estateNo) =>
-  `/upyog-ui/citizen/payment/my-bills/est-services/${estateNo}`;
+export const getCitizenPaymentPath = (allotmentNo) =>
+  `/upyog-ui/citizen/payment/my-bills/est-services/${allotmentNo}`;
 
-export const getEmployeePaymentCollectPath = (estateNo) =>
-  `/upyog-ui/employee/payment/collect/est-services/${estateNo}`;
+export const getEmployeePaymentCollectPath = (allotmentNo) =>
+  `/upyog-ui/employee/payment/collect/est-services/${allotmentNo}`;

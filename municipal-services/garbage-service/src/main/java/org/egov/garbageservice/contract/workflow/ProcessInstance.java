@@ -1,26 +1,13 @@
 package org.egov.garbageservice.contract.workflow;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//import jakarta.validation.Valid;
-//import jakarta.validation.constraints.NotNull;
-//import jakarta.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.egov.common.contract.request.User;
 import org.egov.garbageservice.model.AuditDetails;
 import org.egov.tracer.annotations.CustomSafeHtml;
-import org.springframework.validation.annotation.Validated;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,119 +32,132 @@ import lombok.ToString;
  * - businesssServiceSla field name has an extra s — matches workflow API contract.
  * - Data-only model; {@link WorkflowService#callWf} posts transitions to the workflow engine.
  */
-public class ProcessInstance   {
+public class ProcessInstance {
 
-//        @Size(max=64)
-        @JsonProperty("id")
-        @CustomSafeHtml
-        private String id = null;
+    @JsonProperty("id")
+    @CustomSafeHtml
+    private String id = null;
 
-//        @NotNull
-//        @Size(max=128)
-        @JsonProperty("tenantId")
-        @CustomSafeHtml
-        private String tenantId = null;
+    //        @NotNull
+    @JsonProperty("tenantId")
+    @CustomSafeHtml
+    private String tenantId = null;
 
-//        @NotNull
-//        @Size(max=128)
-        @JsonProperty("businessService")
-        @CustomSafeHtml
-        private String businessService = null;
+    //        @NotNull
+    @JsonProperty("businessService")
+    @CustomSafeHtml
+    private String businessService = null;
 
-//        @NotNull
-//        @Size(max=128)
-        @JsonProperty("businessId")
-        @CustomSafeHtml
-        private String businessId = null;
+    //        @NotNull
+    @JsonProperty("businessId")
+    @CustomSafeHtml
+    private String businessId = null;
 
-//        @NotNull
-//        @Size(max=128)
-        @JsonProperty("action")
-        @CustomSafeHtml
-        private String action = null;
+    //        @NotNull
+    @JsonProperty("action")
+    @CustomSafeHtml
+    private String action = null;
 
-//        @NotNull
-//        @Size(max=64)
-        @JsonProperty("moduleName")
-        @CustomSafeHtml
-        private String moduleName = null;
+    //        @NotNull
+    @JsonProperty("moduleName")
+    @CustomSafeHtml
+    private String moduleName = null;
 
-        @JsonProperty("state")
-        private State state = null;
+    @JsonProperty("state")
+    private State state = null;
 
-//        @Size(max=1024)
-        @JsonProperty("comment")
-        @CustomSafeHtml
-        private String comment = null;
+    @JsonProperty("comment")
+    @CustomSafeHtml
+    private String comment = null;
 
-        @JsonProperty("documents")
+    @JsonProperty("documents")
 //        @Valid
-		private List<Document> documents = null;
+    private List<Document> documents = null;
 
-        @JsonProperty("assigner")
-        private User assigner = null;
+    @JsonProperty("assigner")
+    private User assigner = null;
 
-        @JsonProperty("assignes")
-        private List<User> assignes = null;
+    @JsonProperty("assignes")
+    private List<User> assignes = null;
 
-        @JsonProperty("nextActions")
+    @JsonProperty("nextActions")
 //        @Valid
-        private List<Action> nextActions = null;
+    private List<Action> nextActions = null;
 
-        @JsonProperty("stateSla")
-        private Long stateSla = 0L;
+    @JsonProperty("stateSla")
+    private Long stateSla = 0L;
 
-        @JsonProperty("businesssServiceSla")
-        private Long businesssServiceSla = null;
+    @JsonProperty("businesssServiceSla")
+    private Long businesssServiceSla = null;
 
-        @JsonProperty("previousStatus")
-//        @Size(max=128)
-        @CustomSafeHtml
-        private String previousStatus = null;
+    @JsonProperty("previousStatus")
+    @CustomSafeHtml
+    private String previousStatus = null;
 
-        @JsonProperty("entity")
-        private Object entity = null;
+    @JsonProperty("entity")
+    private Object entity = null;
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
-        @JsonProperty("rating")
-        private Integer rating = null;
+    @JsonProperty("rating")
+    private Integer rating = null;
 
-        @JsonProperty("escalated")
-        private Boolean escalated = false;
+    @JsonProperty("escalated")
+    private Boolean escalated = false;
 
-        @JsonProperty("role")
-        @CustomSafeHtml
-        private String role = null;
+    @JsonProperty("role")
+    @CustomSafeHtml
+    private String role = null;
 
-        public ProcessInstance addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
+    /**
+     * Appends a document to the process instance.
+     *
+     * @param documentsItem the document to append
+     * @return this ProcessInstance instance for chaining
+     */
+
+    public ProcessInstance addDocumentsItem(Document documentsItem) {
+        if (this.documents == null) {
             this.documents = new ArrayList<>();
-            }
-            if(!this.documents.contains(documentsItem))
-                this.documents.add(documentsItem);
+        }
+        if (!this.documents.contains(documentsItem))
+            this.documents.add(documentsItem);
 
         return this;
-        }
+    }
 
-        public ProcessInstance addNextActionsItem(Action nextActionsItem) {
-            if (this.nextActions == null) {
+    /**
+     * Appends a next available action to this state transition.
+     *
+     * @param nextActionsItem the action to append
+     * @return this ProcessInstance instance for chaining
+     */
+
+    public ProcessInstance addNextActionsItem(Action nextActionsItem) {
+        if (this.nextActions == null) {
             this.nextActions = new ArrayList<>();
-            }
-            this.nextActions.add(nextActionsItem);
-            return this;
         }
+        this.nextActions.add(nextActionsItem);
+        return this;
+    }
 
-        public ProcessInstance addUsersItem(User usersItem) {
-                if (this.assignes == null) {
-                        this.assignes = new ArrayList<>();
-                }
-                if(!this.assignes.contains(usersItem))
-                        this.assignes.add(usersItem);
+    /**
+     * Appends an assignee user to this process instance.
+     *
+     * @param usersItem the user to append
+     * @return this ProcessInstance instance for chaining
+     */
 
-                return this;
+    public ProcessInstance addUsersItem(User usersItem) {
+        if (this.assignes == null) {
+            this.assignes = new ArrayList<>();
         }
+        if (!this.assignes.contains(usersItem))
+            this.assignes.add(usersItem);
+
+        return this;
+    }
 
 }
 

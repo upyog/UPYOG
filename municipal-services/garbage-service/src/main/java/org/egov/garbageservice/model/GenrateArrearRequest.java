@@ -1,22 +1,18 @@
-
 package org.egov.garbageservice.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Builder.Default;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.garbageservice.contract.bill.Demand;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Builder.Default;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Request to generate arrear demands for garbage accounts via billing service.
@@ -28,13 +24,13 @@ import lombok.Builder.Default;
 @Builder
 public class GenrateArrearRequest {
 
-	@NotNull
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo;
-	
-	@Valid
-	@NotNull
-	@Default
-	@JsonProperty("Demands")
-	private List<Demand> demands = new ArrayList<>();
+    @NotNull
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
+
+    @Valid
+    @NotNull
+    @Default
+    @JsonProperty("Demands")
+    private List<Demand> demands = new ArrayList<>();
 }

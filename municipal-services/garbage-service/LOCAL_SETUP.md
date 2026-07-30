@@ -7,15 +7,16 @@ How to run `garbage-service` locally with all its dependencies. The service runs
 
 ## 1. Prerequisites (install once)
 
-| Tool | Version |
-|------|---------|
-| JDK | 17 |
-| Maven | 3.8+ |
-| PostgreSQL | 12+ (running locally) |
-| Apache Kafka | 3.x (running locally) |
-| kubectl | configured with access to the dev cluster (for port-forwarding shared services) |
+| Tool         | Version                                                                         |
+|--------------|---------------------------------------------------------------------------------|
+| JDK          | 17                                                                              |
+| Maven        | 3.8+                                                                            |
+| PostgreSQL   | 12+ (running locally)                                                           |
+| Apache Kafka | 3.x (running locally)                                                           |
+| kubectl      | configured with access to the dev cluster (for port-forwarding shared services) |
 
 Verify:
+
 ```bash
 java -version      # should be 17
 mvn -version
@@ -29,6 +30,7 @@ kubectl get pods -n egov   # confirm cluster access (adjust namespace)
 The service connects to **PostgreSQL** and **Kafka** at startup (Flyway runs DB migrations on boot).
 
 ### PostgreSQL
+
 - URL: `jdbc:postgresql://localhost:5432/postgres`
 - user / pass: `postgres` / `postgres`
 
@@ -38,6 +40,7 @@ docker run -d --name pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:14
 ```
 
 ### Kafka
+
 - Bootstrap server: `localhost:9092`
 
 ```bash
@@ -84,17 +87,17 @@ kubectl port-forward -n egov svc/notification-sms 1237:8080
 
 ### Port reference (from `application.properties`)
 
-| Service | Local port | Property |
-|---------|-----------|----------|
-| egov-workflow-v2 | 8280 | `workflow.context.path` |
-| egov-user-service | 8081 | `egov.user.host` |
-| egov-enc-service | 1234 | `egov.enc.host` |
-| egov-mdms-service | 8094 | `egov.mdms.host` |
-| mdms-v2 | 9080 | `mdms.v2.host` |
-| billing-service | 8086 | `egov.bill.context.host` |
-| pdf-service | 7275 | `egov.report.host` |
-| egov-url-shortening | 8093 | `egov.url.shortning.host` |
-| notification-sms | 1237 | `egov.sms.host` |
+| Service                     | Local port            | Property                                         |
+|-----------------------------|-----------------------|--------------------------------------------------|
+| egov-workflow-v2            | 8280                  | `workflow.context.path`                          |
+| egov-user-service           | 8081                  | `egov.user.host`                                 |
+| egov-enc-service            | 1234                  | `egov.enc.host`                                  |
+| egov-mdms-service           | 8094                  | `egov.mdms.host`                                 |
+| mdms-v2                     | 9080                  | `mdms.v2.host`                                   |
+| billing-service             | 8086                  | `egov.bill.context.host`                         |
+| pdf-service                 | 7275                  | `egov.report.host`                               |
+| egov-url-shortening         | 8093                  | `egov.url.shortning.host`                        |
+| notification-sms            | 1237                  | `egov.sms.host`                                  |
 | hpud-dms-service (Alfresco) | `192.168.29.220:8095` | `egov.alfresco.host` — external IP, may need VPN |
 
 > **Minimum to run `_create`:** workflow-v2, user-service, enc-service, mdms. The rest are
@@ -133,8 +136,8 @@ Location: `core-services/egov-persister`
    mvn spring-boot:run
    ```
    Persister listens on port **8082** (`/common-persist`) and consumes:
-   - `save-grbg-account`
-   - `update-grbg-account`
+    - `save-grbg-account`
+    - `update-grbg-account`
 
 ---
 

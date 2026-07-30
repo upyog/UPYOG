@@ -1,159 +1,209 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, Table, Card, Loader, TextInput, SubmitBar, SearchForm, SearchField } from "@nudmcdgnpm/digit-ui-react-components";
-import { Link } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
+import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 
-// Employee Inbox Component for Garbage Collection
-const Inbox = () => {
-  const { t } = useTranslation();
+import GCDesktopInbox from "../../components/GCDesktopInbox";
+import MobileInbox from "../../components/MobileInbox";
+
+/**
+ * Inbox Component
+ * 
+ * This component is responsible for rendering the inbox page for employees in the GC module.
+ * It displays a list of applications or tasks, with options for filtering, sorting, and pagination.
+ * 
+ * Props:
+ * - `useNewInboxAPI`: Boolean indicating whether to use the new inbox API.
+ * - `parentRoute`: The base route for the inbox page.
+ * - `moduleCode`: The module code for the inbox (default is "GC").
+ * - `initialStates`: Object containing initial states for the inbox, including:
+ *    - `pageOffset`: Initial page offset for pagination.
+ *    - `pageSize`: Initial page size for pagination.
+ *    - `sortParams`: Initial sorting parameters.
+ *    - `searchParams`: Initial search parameters.
+ * - `filterComponent`: Custom filter component to be displayed in the inbox.
+ * - `isInbox`: Boolean indicating whether the component is used as an inbox.
+ * - `rawWfHandler`: Custom handler for raw workflow data.
+ * - `rawSearchHandler`: Custom handler for raw search data.
+ * - `combineResponse`: Function to combine workflow and search responses.
+ * - `wfConfig`: Configuration object for workflow-related settings.
+ * - `searchConfig`: Configuration object for search-related settings.
+ * - `middlewaresWf`: Middleware functions for workflow processing.
+ * - `middlewareSearch`: Middleware functions for search processing.
+ * - `EmptyResultInboxComp`: Component to display when the inbox has no results.
+ * 
+ * State Variables:
+ * - `enableSearch`: State to enable or disable the search functionality.
+ * - `TableConfig`: Configuration for the inbox table, fetched from the Digit Component Registry Service.
+ * - `pageOffset`: Current page offset for pagination.
+ * - `pageSize`: Current page size for pagination.
+ * - `sortParams`: Current sorting parameters for the inbox.
+ * - `searchParams`: Current search parameters for the inbox.
+ * 
+ * Variables:
+ * - `tenantId`: The current tenant ID fetched using the Digit ULB Service.
+ * - `isMobile`: Boolean indicating whether the application is being accessed on a mobile device.
+ * - `paginationParams`: Object containing pagination parameters for the inbox.
+ * 
+ * Logic:
+ * - Initializes state variables using the `initialStates` prop.
+ * - Determines whether the application is being accessed on a mobile device.
+ * - Configures the inbox table and pagination settings based on the module and tenant.
+ * 
+ * Returns:
+ * - A desktop or mobile inbox component based on the device type, with filtering, sorting, and pagination functionality.
+ */
+/**
+ * Inbox Component (Employee)
+ * 
+ * Renders the employee inbox page for the GC module, displaying a list of applications
+ * or tasks with options for filtering, sorting, and pagination.
+ * 
+ * Features:
+ * - Fetches inbox data using `useNewInboxGeneral` hook
+ * - Supports both desktop (`GCDesktopInbox`) and mobile (`MobileInbox`) views
+ * - Configurable filtering via `filterComponent` and search parameters
+ * - Pagination with page size change, next/previous page navigation
+ * - Sorting by creation date (ascending/descending)
+ * - Handles filter changes, search, and state resets
+ * 
+ * Props: (see JSDoc above function definition for full list)
+ */
+const Inbox = ({
+  useNewInboxAPI,
+  parentRoute,
+  moduleCode = "GC",
+  initialStates = {},
+  filterComponent,
+  isInbox,
+  rawWfHandler,
+  rawSearchHandler,
+  combineResponse,
+  wfConfig,
+  searchConfig,
+  middlewaresWf,
+  middlewareSearch,
+  EmptyResultInboxComp,
+}) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [appliedSearch, setAppliedSearch] = useState("");
-  const [pageOffset, setPageOffset] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
 
-  const { control, handleSubmit, reset } = useForm({
-    defaultValues: { applicationNo: "" }
-  });
+  const { t } = useTranslation();
+  const [enableSarch, setEnableSearch] = useState(() => (isInbox ? {} : { enabled: false }));
+  const [TableConfig, setTableConfig] = useState(() => Digit.ComponentRegistryService?.getComponent("GCInboxTableConfig"));
+  const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
+  const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
+  const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: true }]);
+  const [searchParams, setSearchParams] = useState(initialStates.searchParams || {});
 
-  const { isLoading, data } = Digit.Hooks.gc.useGCSearch({
+  let isMobile = window.Digit.Utils.browser.isMobile();
+  let paginationParams = isMobile
+    ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
+    : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
+
+  const { isFetching, isLoading: hookLoading, searchResponseKey, data, searchFields, ...rest } = Digit.Hooks.useNewInboxGeneral({
     tenantId,
-    // Request a larger limit so we can paginate locally
-    filters: { limit: 10, offset: 0 }
+    ModuleCode: moduleCode,
+    businessService: "garbage-service",
+    filters: { ...searchParams, ...paginationParams, sortParams },
   });
 
-  let applications = data?.garbageAccounts || data?.GarbageApplications || data?.data || [];
 
-  if (appliedSearch) {
-    applications = applications.filter((app) => {
-      const appNo = app?.grbgApplication?.applicationNo || app?.applicationNo || app?.grbgApplicationNumber || "";
-      return appNo.toLowerCase().includes(appliedSearch.toLowerCase());
-    });
-  }
+     
 
-  const totalRecords = applications.length;
-  const paginatedApplications = applications.slice(pageOffset, pageOffset + pageSize);
 
-  const tableData = React.useMemo(() => paginatedApplications, [paginatedApplications]);
 
-  const columns = React.useMemo(() => {
-    return [
-      {
-        Header: t("GC_APPLICATION_NUMBER_LABEL"),
-        accessor: "applicationNo",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const appNo = row.original?.grbgApplication?.applicationNo || row.original?.applicationNo;
-          return (
-            <span className="link">
-              <Link to={`/upyog-ui/employee/gc/application-details/${encodeURIComponent(appNo)}`}>
-                {appNo || t("CS_NA")}
-              </Link>
-            </span>
-          );
-        },
-      },
-      {
-        Header: t("GC_APPLICANT_NAME"),
-        accessor: "name",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const owners = row.original?.applicantDetails || [];
-          const name = owners?.map(o => o?.name || o?.applicantName)?.join(", ") || row.original?.name || row.original?.garbageSpecification?.name;
-          return <span className="cell-text">{name || t("CS_NA")}</span>;
-        }
-      },
-      {
-        Header: t("GC_MOBILE_NUMBER"),
-        accessor: "mobileNumber",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const owners = row.original?.applicantDetails || [];
-          const mobile = owners?.map(o => o?.mobileNumber)?.join(", ") || row.original?.mobileNumber || row.original?.garbageSpecification?.phoneNumber;
-          return <span className="cell-text">{mobile || t("CS_NA")}</span>;
-        }
-      },
-      {
-        Header: t("GC_APPLICATION_STATUS_LABEL"),
-        accessor: "status",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const status = row.original?.applicationStatus || row.original?.status || row.original?.grbgApplication?.status;
-          return <span className="cell-text">{status ? t(`GC_STATUS_${status}`) : t("CS_NA")}</span>;
-        }
-      }
-    ];
-  }, [t]);
-
-  const onSubmit = (formData) => {
-    setAppliedSearch(formData?.applicationNo?.trim() || "");
+  useEffect(() => {
     setPageOffset(0);
+  }, [searchParams]);
+
+  const fetchNextPage = () => {
+    setPageOffset((prevState) => prevState + pageSize);
   };
 
-  const clearSearch = () => {
-    reset({ applicationNo: "" });
-    setAppliedSearch("");
-    setPageOffset(0);
+  const fetchPrevPage = () => {
+    setPageOffset((prevState) => prevState - pageSize);
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  const handleFilterChange = (filterParam) => {
+    let keys_to_delete = filterParam.delete;
+    let _new = { ...searchParams, ...filterParam };
+    if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
+    delete filterParam.delete;
+    setSearchParams({ ..._new });
+    setEnableSearch({ enabled: true });
+  };
 
-  return (
-    <React.Fragment>
-      <Header>{t("ES_COMMON_INBOX")}</Header>
-      <div className="inbox-search-wrapper">
-        <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
-          <SearchField>
-            <label>{t("GC_APPLICATION_NUMBER_LABEL")}</label>
-            <Controller 
-              control={control} 
-              name="applicationNo" 
-              render={({ field }) => (
-                <TextInput 
-                  t={t}
-                  name={field.name} 
-                  value={field.value} 
-                  onChange={field.onChange} 
-                  onBlur={field.onBlur} 
-                  inputRef={field.ref} 
-                />
-              )} 
-            />
-          </SearchField>
-          <SearchField className="submit">
-            <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-            <p className="link" style={{ marginTop: "10px", cursor: "pointer" }} onClick={clearSearch}>
-              {t("ES_COMMON_CLEAR_ALL")}
-            </p>
-          </SearchField>
-        </SearchForm>
-      </div>
-      
-      <div style={{ marginTop: "24px" }}>
-        {paginatedApplications.length > 0 ? (
-          <Table 
-            t={t} 
-            data={tableData} 
-            columns={columns} 
-            getCellProps={(cellInfo) => ({ style: { minWidth: "150px", padding: "20px 18px", fontSize: "16px" } })} 
+  const GetTableConfig = () => (typeof TableConfig === "function" ? TableConfig(t)["GC"] : {});
+
+  const handleSort = useCallback((args) => {
+    if (args.length === 0) return;
+    setSortParams(args);
+  }, []);
+
+  const handlePageSizeChange = (e) => {
+    setPageSize(Number(e.target.value));
+  };
+
+
+const inboxData = data;
+
+
+  if (data) {
+    if (isMobile) {
+      return (
+        <MobileInbox
+          data={inboxData}
+          isLoading={hookLoading}
+          isSearch={!isInbox}
+          searchFields={searchFields}
+          onFilterChange={handleFilterChange}
+          onSearch={handleFilterChange}
+          onSort={handleSort}
+          parentRoute={parentRoute}
+          searchParams={searchParams}
+          sortParams={sortParams}
+          linkPrefix={`${parentRoute}/application-details/`}
+          tableConfig={rest?.tableConfig ? rest?.tableConfig : GetTableConfig()}
+          filterComponent={filterComponent}
+          EmptyResultInboxComp={EmptyResultInboxComp}
+          useNewInboxAPI={useNewInboxAPI}
+        />
+      );
+    } else {
+      return (
+        <div>
+          {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
+         
+          
+          <GCDesktopInbox
+            moduleCode={moduleCode}
+            data={inboxData}
+            
+            tableConfig={rest?.tableConfig ? rest?.tableConfig : GetTableConfig()}
+            isLoading={hookLoading}
+            defaultSearchParams={initialStates.searchParams}
+            isSearch={!isInbox}
+            onFilterChange={handleFilterChange}
+            searchFields={searchFields}
+            onSearch={handleFilterChange}
+            onSort={handleSort}
+            onNextPage={fetchNextPage}
+            onPrevPage={fetchPrevPage}
             currentPage={Math.floor(pageOffset / pageSize)}
-            onNextPage={() => setPageOffset(pageOffset + pageSize)}
-            onPrevPage={() => setPageOffset(pageOffset - pageSize)}
             pageSizeLimit={pageSize}
-            onPageSizeChange={(e) => { setPageSize(Number(e.target.value)); setPageOffset(0); }}
-            totalRecords={totalRecords}
-            disableSort={true}
+            disableSort={false}
+            onPageSizeChange={handlePageSizeChange}
+            parentRoute={parentRoute}
+            searchParams={searchParams}
+            sortParams={sortParams}
+            totalRecords={Number(data?.[0]?.totalCount)}
+            filterComponent={filterComponent}
+            EmptyResultInboxComp={EmptyResultInboxComp}
+            useNewInboxAPI={useNewInboxAPI}
           />
-        ) : (
-          <Card style={{ marginTop: 20 }}>
-            <div style={{ textAlign: "center", padding: "20px" }}>{t("GC_NO_APPLICATION_FOUND_MSG")}</div>
-          </Card>
-        )}
-      </div>
-    </React.Fragment>
-  );
+        </div>
+      );
+    }
+  }
 };
 
 export default Inbox;

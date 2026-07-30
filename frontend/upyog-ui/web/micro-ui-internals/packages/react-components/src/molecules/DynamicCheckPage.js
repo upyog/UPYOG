@@ -331,9 +331,9 @@ const DynamicCheckPage = ({
               {uploadedFiles.map((file) => (
                 <div key={file.id} className="dynamic-check-page__file-item">
                   <div className="dynamic-check-page__file-label">{file.label}</div>
-                  <div className="dynamic-check-page__file-ref">
-                    {file.fileName || file.reference}
-                  </div>
+                  {file.fileName && file.fileName !== file.id ? (
+                    <div className="dynamic-check-page__file-ref">{file.fileName}</div>
+                  ) : null}
                 </div>
               ))}
             </div>

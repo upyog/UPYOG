@@ -60,9 +60,9 @@ const readAckState = (locationState) => {
   }
   // Recover when hard navigation dropped router state (non-serializable ack payload).
   try {
-    const raw = sessionStorage.getItem("__digit_nav_state__");
+    const raw = sessionStorage.getItem("__upyog_nav_state__");
     if (!raw) return locationState || {};
-    sessionStorage.removeItem("__digit_nav_state__");
+    sessionStorage.removeItem("__upyog_nav_state__");
     return JSON.parse(raw) || {};
   } catch {
     return locationState || {};
@@ -142,16 +142,14 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
       ? getCitizenHomeFromModulePath(modulePath)
       : getEmployeeHomeFromModulePath(modulePath);
 
-  const assetNo =
-    ackData?.Allotments?.[0]?.assetNo ||
-    ackData?.Assets?.[0]?.estateNo ||
-    ackData?.Assets?.[0]?.assetNo ||
+  const allotmentNo =
+    ackData?.Allotments?.[0]?.allotmentNo ||
     "";
 
-  const paymentPath = assetNo
+  const paymentPath = allotmentNo
     ? user?.type === "CITIZEN"
-      ? getCitizenPaymentPath(assetNo)
-      : getEmployeePaymentCollectPath(assetNo)
+      ? getCitizenPaymentPath(allotmentNo)
+      : getEmployeePaymentCollectPath(allotmentNo)
     : "";
 
   return (

@@ -1,14 +1,8 @@
 package org.egov.garbageservice.model.contract;
 
-import org.egov.common.contract.request.RequestInfo;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.egov.common.contract.request.RequestInfo;
 
 /**
  * Request body for creating a citizen or owner user through the eGov user service.
@@ -22,10 +16,10 @@ import lombok.Setter;
 @Setter
 public class CreateUserRequest {
 
-	@JsonProperty("requestInfo")
-	private RequestInfo requestInfo;
+    @JsonProperty("requestInfo")
+    private RequestInfo requestInfo;
 
-	@JsonProperty("user")
-	private OwnerInfo user;
+    @JsonProperty("user")
+    private OwnerInfo user;
 
 }
