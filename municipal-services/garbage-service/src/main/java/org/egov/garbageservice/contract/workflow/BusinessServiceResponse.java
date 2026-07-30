@@ -1,17 +1,9 @@
 package org.egov.garbageservice.contract.workflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
+import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 
-//import jakarta.validation.Valid;
-//import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +35,13 @@ public class BusinessServiceResponse {
     private List<BusinessService> businessServices;
 
 
+    /**
+     * Appends a business service to the response list.
+     *
+     * @param businessServiceItem the business service to append
+     * @return this BusinessServiceResponse instance for chaining
+     */
+
     public BusinessServiceResponse addBusinessServiceItem(BusinessService businessServiceItem) {
         if (this.businessServices == null) {
             this.businessServices = new ArrayList<>();
@@ -50,7 +49,6 @@ public class BusinessServiceResponse {
         this.businessServices.add(businessServiceItem);
         return this;
     }
-
 
 
 }

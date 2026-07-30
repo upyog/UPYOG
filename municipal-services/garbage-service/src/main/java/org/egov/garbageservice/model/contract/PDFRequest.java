@@ -1,21 +1,12 @@
 package org.egov.garbageservice.model.contract;
 
-import java.util.Map;
-
-import jakarta.validation.constraints.NotEmpty;
-
-import org.egov.tracer.annotations.CustomSafeHtml;
-import org.egov.common.contract.request.RequestInfo;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import java.util.Map;
 
 @Getter
 @Data
@@ -31,22 +22,22 @@ import lombok.ToString;
 @ToString
 public class PDFRequest {
 
-	private RequestInfo RequestInfo;
+    private RequestInfo RequestInfo;
 
-	@NotEmpty
-	@CustomSafeHtml
-	private String key;
+    @NotEmpty
+    @CustomSafeHtml
+    private String key;
 
-	@NotEmpty
-	@CustomSafeHtml
-	private String tenantId;
+    @NotEmpty
+    @CustomSafeHtml
+    private String tenantId;
 
-	@JsonProperty("data")
-	private Map data;
+    @JsonProperty("data")
+    private Map data;
 
-	@CustomSafeHtml
-	private String htmlTemplateContent;
+    @CustomSafeHtml
+    private String htmlTemplateContent;
 
-	@Builder.Default
-	private Boolean isHeaderFooterSkip = false;
+    @Builder.Default
+    private Boolean isHeaderFooterSkip = false;
 }

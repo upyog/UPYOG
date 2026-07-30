@@ -1,11 +1,12 @@
 package org.egov.garbageservice.contract.bill;
 
-import java.util.List;
-import org.egov.common.contract.request.RequestInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.egov.common.contract.request.RequestInfo;
+
+import java.util.List;
 
 @Getter
 @Setter

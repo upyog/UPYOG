@@ -9,12 +9,16 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * Encapsulates payment transaction details for a garbage service bill, including transaction ID, payment mode, and amount paid.
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class GarbagePaymentDetails {
     private String id;
+    private Long applicationId;
     private String applicationNo;
     private BigDecimal penaltyAmount;
     private BigDecimal rent;

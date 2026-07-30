@@ -1,26 +1,15 @@
 package org.egov.garbageservice.contract.bill;
 
-//import jakarta.validation.Valid;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.garbageservice.model.AuditDetails;
-import org.egov.tracer.annotations.CustomSafeHtml;
-import org.springframework.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.*;
+import org.egov.garbageservice.model.AuditDetails;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -52,154 +41,163 @@ import lombok.ToString;
 public class Bill {
     // TODO some of the fields are mandatory in yml, lets discuss billdetail and billaccountdetail also for more clarity
 
-	  @JsonProperty("id")
-	  @CustomSafeHtml
-	  private String id = null;
+    @JsonProperty("id")
+    @CustomSafeHtml
+    private String id = null;
 
-	  @JsonProperty("mobileNumber")
-	  @CustomSafeHtml
-	  private String mobileNumber = null;
+    @JsonProperty("mobileNumber")
+    @CustomSafeHtml
+    private String mobileNumber = null;
 
-	  @JsonProperty("paidBy")
-	  @CustomSafeHtml
-	  private String paidBy = null;
+    @JsonProperty("paidBy")
+    @CustomSafeHtml
+    private String paidBy = null;
 
-	  @JsonProperty("payerName")
-	  @CustomSafeHtml
-	  private String payerName = null;
+    @JsonProperty("payerName")
+    @CustomSafeHtml
+    private String payerName = null;
 
-	  @JsonProperty("payerAddress")
-	  @CustomSafeHtml
-	  private String payerAddress = null;
+    @JsonProperty("payerAddress")
+    @CustomSafeHtml
+    private String payerAddress = null;
 
-	  @JsonProperty("payerEmail")
-	  @CustomSafeHtml
-	  private String payerEmail = null;
+    @JsonProperty("payerEmail")
+    @CustomSafeHtml
+    private String payerEmail = null;
 
-	  @JsonProperty("payerId")
-	  @CustomSafeHtml
-	  private String payerId = null;
+    @JsonProperty("payerId")
+    @CustomSafeHtml
+    private String payerId = null;
 
-	  @JsonProperty("status")
-	  private StatusEnum status = null;
+    @JsonProperty("status")
+    private StatusEnum status = null;
 
-	  @JsonProperty("reasonForCancellation")
- 	  @CustomSafeHtml
- 	  private String reasonForCancellation = null;
+    @JsonProperty("reasonForCancellation")
+    @CustomSafeHtml
+    private String reasonForCancellation = null;
 
-	  @JsonProperty("isCancelled")
-	  private Boolean isCancelled = null;
+    @JsonProperty("isCancelled")
+    private Boolean isCancelled = null;
 
-	  @JsonProperty("additionalDetails")
-	  private JsonNode additionalDetails = null;
+    @JsonProperty("additionalDetails")
+    private JsonNode additionalDetails = null;
 
-	  @JsonProperty("billDetails")
+    @JsonProperty("billDetails")
 //	  @Valid
-	  private List<BillDetail> billDetails = null;
+    private List<BillDetail> billDetails = null;
 
-	  @JsonProperty("tenantId")
-	  @CustomSafeHtml
-	  private String tenantId = null;
+    @JsonProperty("tenantId")
+    @CustomSafeHtml
+    private String tenantId = null;
 
-	  @JsonProperty("auditDetails")
-	  private AuditDetails auditDetails = null;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
-	  @JsonProperty("collectionModesNotAllowed")
-	  private List<String> collectionModesNotAllowed = null;
+    @JsonProperty("collectionModesNotAllowed")
+    private List<String> collectionModesNotAllowed = null;
 
-	  @JsonProperty("partPaymentAllowed")
-	  private Boolean partPaymentAllowed = null;
+    @JsonProperty("partPaymentAllowed")
+    private Boolean partPaymentAllowed = null;
 
-	  @JsonProperty("isAdvanceAllowed")
-	  private Boolean isAdvanceAllowed;
+    @JsonProperty("isAdvanceAllowed")
+    private Boolean isAdvanceAllowed;
 
-	  @JsonProperty("minimumAmountToBePaid")
-	  private BigDecimal minimumAmountToBePaid = null;
+    @JsonProperty("minimumAmountToBePaid")
+    private BigDecimal minimumAmountToBePaid = null;
 
-	  @JsonProperty("businessService")
-	  @CustomSafeHtml
-	  private String businessService = null;
+    @JsonProperty("businessService")
+    @CustomSafeHtml
+    private String businessService = null;
 
-	  @JsonProperty("totalAmount")
-	  private BigDecimal totalAmount = null;
+    @JsonProperty("totalAmount")
+    private BigDecimal totalAmount = null;
 
-	  @JsonProperty("consumerCode")
-	  @CustomSafeHtml
-	  private String consumerCode = null;
+    @JsonProperty("consumerCode")
+    @CustomSafeHtml
+    private String consumerCode = null;
 
-	  @JsonProperty("billNumber")
-	  @CustomSafeHtml
-	  private String billNumber = null;
+    @JsonProperty("billNumber")
+    @CustomSafeHtml
+    private String billNumber = null;
 
-	  @JsonProperty("billDate")
-	  private Long billDate = null;
+    @JsonProperty("billDate")
+    private Long billDate = null;
 
-	  @JsonProperty("amountPaid")
-	  private BigDecimal amountPaid;
-
-
-
-	public enum StatusEnum {
-		ACTIVE("ACTIVE"),
-
-		CANCELLED("CANCELLED"),
-
-		PAID("PAID"),
-
-		PARTIALLY_PAID("PARTIALLY_PAID"),
-
-		PAYMENT_CANCELLED("PAYMENT_CANCELLED"),
-
-		EXPIRED("EXPIRED");
-
-	  private String value;
-
-	  StatusEnum(String value) {
-	  this.value = value;
-	}
+    @JsonProperty("amountPaid")
+    private BigDecimal amountPaid;
 
 
-	@Override
-	@JsonValue
-	public String toString() {
-		return String.valueOf(value);
-	}
+    public enum StatusEnum {
+        ACTIVE("ACTIVE"),
 
-	public static boolean contains(String test) {
-		for (StatusEnum val : StatusEnum.values()) {
-			if (val.name().equalsIgnoreCase(test)) {
-				return true;
-			}
-		}
-		return false;
-	}
+        CANCELLED("CANCELLED"),
 
-	@JsonCreator
-	public static StatusEnum fromValue(String text) {
-		for (StatusEnum b : StatusEnum.values()) {
-			if (String.valueOf(b.value).equals(text)) {
-				return b;
-			}
-		}
-		return null;
-	}
+        PAID("PAID"),
 
-  }
+        PARTIALLY_PAID("PARTIALLY_PAID"),
 
-	public Boolean addBillDetail(BillDetail billDetail) {
+        PAYMENT_CANCELLED("PAYMENT_CANCELLED"),
 
-		if (CollectionUtils.isEmpty(billDetails)) {
+        EXPIRED("EXPIRED");
 
-			billDetails = new ArrayList<>();
-			return billDetails.add(billDetail);
-		} else {
+        private String value;
 
-			if (!billDetails.contains(billDetail))
-				return billDetails.add(billDetail);
-			else
-				return false;
-		}
-	}
+        /**
+         * Constructs the enum with the specified string value.
+         *
+         * @param value the string representation of the bill status
+         */
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        /**
+         * Checks if the given string represents a valid bill status.
+         *
+         * @param test the string to validate against known statuses
+         * @return true if the string matches a known status, false otherwise
+         */
+
+        public static boolean contains(String test) {
+            for (StatusEnum val : StatusEnum.values()) {
+                if (val.name().equalsIgnoreCase(test)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Resolves a string value to its corresponding {@link StatusEnum} constant during JSON deserialization.
+         *
+         * @param text the string value representing the status
+         * @return the matching {@link StatusEnum}, or null if no match is found
+         */
+
+        @JsonCreator
+        public static StatusEnum fromValue(String text) {
+            for (StatusEnum b : StatusEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Returns the string representation of the bill status.
+         *
+         * @return the status value as a string
+         */
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+    }
 
 
 }

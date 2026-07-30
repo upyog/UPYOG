@@ -1,24 +1,13 @@
 package org.egov.garbageservice.contract.bill;
 
-//import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.garbageservice.model.AuditDetails;
-import org.egov.tracer.annotations.CustomSafeHtml;
-import org.springframework.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.*;
+import org.egov.garbageservice.model.AuditDetails;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Setter
 @Getter
@@ -49,100 +38,84 @@ import lombok.ToString;
  */
 public class BillDetail {
 
-	@JsonProperty("id")
-	@CustomSafeHtml
-	private String id = null;
+    @JsonProperty("id")
+    @CustomSafeHtml
+    private String id = null;
 
-	@JsonProperty("tenantId")
-	@CustomSafeHtml
-	private String tenantId = null;
+    @JsonProperty("tenantId")
+    @CustomSafeHtml
+    private String tenantId = null;
 
-	@JsonProperty("demandId")
-	@CustomSafeHtml
-	private String demandId = null;
+    @JsonProperty("demandId")
+    @CustomSafeHtml
+    private String demandId = null;
 
-	@JsonProperty("billId")
-	@CustomSafeHtml
-	private String billId = null;
+    @JsonProperty("billId")
+    @CustomSafeHtml
+    private String billId = null;
 
-	@JsonProperty("amount")
+    @JsonProperty("amount")
 //	@NotNull
-	private BigDecimal amount = null;
+    private BigDecimal amount = null;
 
-	@JsonProperty("amountPaid")
-	private BigDecimal amountPaid = null;
+    @JsonProperty("amountPaid")
+    private BigDecimal amountPaid = null;
 
-//	@NotNull
-	@JsonProperty("fromPeriod")
-	private Long fromPeriod = null;
+    //	@NotNull
+    @JsonProperty("fromPeriod")
+    private Long fromPeriod = null;
 
-//	@NotNull
-	@JsonProperty("toPeriod")
-	private Long toPeriod = null;
+    //	@NotNull
+    @JsonProperty("toPeriod")
+    private Long toPeriod = null;
 
-	@JsonProperty("additionalDetails")
-	private JsonNode additionalDetails = null;
+    @JsonProperty("additionalDetails")
+    private JsonNode additionalDetails = null;
 
-	@JsonProperty("channel")
-	@CustomSafeHtml
-	private String channel = null;
+    @JsonProperty("channel")
+    @CustomSafeHtml
+    private String channel = null;
 
-	@JsonProperty("voucherHeader")
-	@CustomSafeHtml
-	private String voucherHeader = null;
+    @JsonProperty("voucherHeader")
+    @CustomSafeHtml
+    private String voucherHeader = null;
 
-	@JsonProperty("boundary")
-	@CustomSafeHtml
-	private String boundary = null;
+    @JsonProperty("boundary")
+    @CustomSafeHtml
+    private String boundary = null;
 
-	@JsonProperty("manualReceiptNumber")
-	@CustomSafeHtml
-	private String manualReceiptNumber = null;
+    @JsonProperty("manualReceiptNumber")
+    @CustomSafeHtml
+    private String manualReceiptNumber = null;
 
-	@JsonProperty("manualReceiptDate")
-	private Long manualReceiptDate = null;
-
-
-	@JsonProperty("billAccountDetails")
-	private List<BillAccountDetail> billAccountDetails = null;
-
-//	@NotNull
-	@JsonProperty("collectionType")
-	@CustomSafeHtml
-	private String collectionType = null;
-
-	@JsonProperty("auditDetails")
-	private AuditDetails auditDetails = null;
+    @JsonProperty("manualReceiptDate")
+    private Long manualReceiptDate = null;
 
 
-	@CustomSafeHtml
-	private String billDescription;
+    @JsonProperty("billAccountDetails")
+    private List<BillAccountDetail> billAccountDetails = null;
 
-//	@NotNull
-	@JsonProperty("expiryDate")
-	private Long expiryDate;
+    //	@NotNull
+    @JsonProperty("collectionType")
+    @CustomSafeHtml
+    private String collectionType = null;
 
-	@CustomSafeHtml
-	private String displayMessage;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
-	private Boolean callBackForApportioning;
+    @CustomSafeHtml
+    private String billDescription;
 
-	@CustomSafeHtml
-	private String cancellationRemarks;
+    //	@NotNull
+    @JsonProperty("expiryDate")
+    private Long expiryDate;
 
-	public Boolean addBillAccountDetail(BillAccountDetail billAccountDetail) {
+    @CustomSafeHtml
+    private String displayMessage;
 
-		if (CollectionUtils.isEmpty(billAccountDetails)) {
+    private Boolean callBackForApportioning;
 
-			billAccountDetails = new ArrayList<>();
-			return billAccountDetails.add(billAccountDetail);
-		} else {
-
-			if (!billAccountDetails.contains(billAccountDetail))
-				return billAccountDetails.add(billAccountDetail);
-			else
-				return false;
-		}
-	}
+    @CustomSafeHtml
+    private String cancellationRemarks;
 
 }

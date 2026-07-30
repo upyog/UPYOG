@@ -1,21 +1,19 @@
 package org.egov.garbageservice.model;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.egov.garbageservice.enums.GuardianRelation;
-import org.egov.garbageservice.enums.UserType;
-import org.egov.tracer.annotations.CustomSafeHtml;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.egov.garbageservice.enums.GuardianRelation;
+import org.egov.garbageservice.enums.UserType;
+import org.egov.tracer.annotations.CustomSafeHtml;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -98,6 +96,10 @@ public class UserSearchResponseContent {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date pwdExpiryDate;
 
+    /**
+     * Constructs a new instance with the specified attributes.
+     */
+
     public UserSearchResponseContent(UserV2 userV2) {
 
         this.id = userV2.getId();
@@ -131,10 +133,14 @@ public class UserSearchResponseContent {
         this.relationship = userV2.getGuardianRelation();
         this.uuid = userV2.getUuid();
         this.addresses = userV2.getAddresses();
-        this.alternatemobilenumber=userV2.getAlternateMobileNumber();
+        this.alternatemobilenumber = userV2.getAlternateMobileNumber();
         mapPermanentAddress(userV2);
         mapCorrespondenceAddress(userV2);
     }
+
+    /**
+     * Executes the mapCorrespondenceAddress operation.
+     */
 
     private void mapCorrespondenceAddress(UserV2 userV2) {
         if (userV2.getCorrespondenceAddress() != null) {
@@ -144,6 +150,10 @@ public class UserSearchResponseContent {
         }
     }
 
+    /**
+     * Executes the mapPermanentAddress operation.
+     */
+
     private void mapPermanentAddress(UserV2 userV2) {
         if (userV2.getPermanentAddress() != null) {
             this.permanentAddress = userV2.getPermanentAddress().getAddress();
@@ -152,6 +162,10 @@ public class UserSearchResponseContent {
         }
     }
 
+
+    /**
+     * Executes the convertDomainRolesToContract operation.
+     */
 
     private Set<RoleRequest> convertDomainRolesToContract(Set<RoleV2> roleEntities) {
         if (roleEntities == null) return new HashSet<>();

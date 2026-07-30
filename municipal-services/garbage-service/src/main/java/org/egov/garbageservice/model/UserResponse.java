@@ -1,17 +1,11 @@
 package org.egov.garbageservice.model;
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,10 +18,10 @@ import lombok.Setter;
 @Builder
 public class UserResponse {
 
-	@JsonProperty("responseInfo")
-	ResponseInfo responseInfo;
+    @JsonProperty("responseInfo")
+    ResponseInfo responseInfo;
 
-	@JsonProperty("user")
-	List<User> user;
+    @JsonProperty("user")
+    List<User> user;
 
 }

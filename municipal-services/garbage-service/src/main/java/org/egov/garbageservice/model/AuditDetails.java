@@ -1,13 +1,11 @@
 package org.egov.garbageservice.model;
 
-import org.egov.tracer.annotations.CustomSafeHtml;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
 /**
  * Common audit block for who created or last modified a garbage domain record and when.
@@ -20,17 +18,17 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuditDetails {
 
-	@CustomSafeHtml
-	private String createdBy;
+    @CustomSafeHtml
+    private String createdBy;
 
-	private Long createdDate;
+    private Long createdDate;
 
-	@CustomSafeHtml
-	private String lastModifiedBy;
+    @CustomSafeHtml
+    private String lastModifiedBy;
 
-	private Long lastModifiedDate;
-	
-	private Long createdTime;
-	
-	private Long lastModifiedTime;
+    private Long lastModifiedDate;
+
+    private Long createdTime;
+
+    private Long lastModifiedTime;
 }

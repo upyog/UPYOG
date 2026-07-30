@@ -1,11 +1,11 @@
 package org.egov.garbageservice.model;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @AllArgsConstructor
 @Data
@@ -17,13 +17,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GarbageBillSearchCriteria {
 
-	private List<Long> ids;
+    private List<Long> ids;
 
-	private List<String> billRefNos;
+    private List<String> billRefNos;
 
-	private List<Long> garbageIds;
+    private List<Long> garbageIds;
 
-	private List<String> paymentIds;
+    private List<String> paymentIds;
 
-	private List<String> paymentStatus;
+    private List<String> paymentStatus;
 }

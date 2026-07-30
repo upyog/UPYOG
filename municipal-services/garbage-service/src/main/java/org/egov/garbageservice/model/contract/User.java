@@ -1,25 +1,18 @@
 package org.egov.garbageservice.model.contract;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
+import lombok.*;
 import org.egov.tracer.annotations.CustomSafeHtml;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.validation.annotation.Validated;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Base user profile contract aligned with the eGov user service schema.
@@ -35,197 +28,209 @@ import lombok.ToString;
 @ToString
 public class User {
 
-	@JsonProperty("id")
-	private Long id;
+    @JsonProperty("id")
+    private Long id;
 
-	@Size(max = 64)
-	@CustomSafeHtml
-	@JsonProperty("uuid")
-	private String uuid;
+    @Size(max = 64)
+    @CustomSafeHtml
+    @JsonProperty("uuid")
+    private String uuid;
 
-	@Size(max = 64)
-	@CustomSafeHtml
-	@JsonProperty("userName")
-	private String userName;
+    @Size(max = 64)
+    @CustomSafeHtml
+    @JsonProperty("userName")
+    private String userName;
 
-	@Size(max = 64)
-	@CustomSafeHtml
-	@JsonProperty("password")
-	private String password;
+    @Size(max = 64)
+    @CustomSafeHtml
+    @JsonProperty("password")
+    private String password;
 
-	@CustomSafeHtml
-	@JsonProperty("salutation")
-	private String salutation;
+    @CustomSafeHtml
+    @JsonProperty("salutation")
+    private String salutation;
 
-	@NotNull
-	@Size(max = 100)
-	@Pattern(regexp = "^[^\\$\"'<>?\\\\~`!@#$%^()+={}\\[\\]*,:;\"']*$", message = "Invalid name. Only alphabets and special characters -, ', `, .")
-	@JsonProperty("name")
-	private String name;
+    @NotNull
+    @Size(max = 100)
+    @Pattern(regexp = "^[^\\$\"'<>?\\\\~`!@#$%^()+={}\\[\\]*,:;\"']*$", message = "Invalid name. Only alphabets and special characters -, ', `, .")
+    @JsonProperty("name")
+    private String name;
 
-	@CustomSafeHtml
-	@JsonProperty("gender")
-	private String gender;
+    @CustomSafeHtml
+    @JsonProperty("gender")
+    private String gender;
 
-	@Pattern(regexp = "(^[6-9][0-9]{9}$)", message = "Invalid mobile number, should start with 6-9 and contain ten digits of 0-9")
-	@NotNull
-	@CustomSafeHtml
-	@JsonProperty("mobileNumber")
-	private String mobileNumber;
+    @Pattern(regexp = "(^[6-9][0-9]{9}$)", message = "Invalid mobile number, should start with 6-9 and contain ten digits of 0-9")
+    @NotNull
+    @CustomSafeHtml
+    @JsonProperty("mobileNumber")
+    private String mobileNumber;
 
-	@Size(max = 128)
-	@CustomSafeHtml
-	@JsonProperty("emailId")
-	private String emailId;
+    @Size(max = 128)
+    @CustomSafeHtml
+    @JsonProperty("emailId")
+    private String emailId;
 
-	@Size(max = 50)
-	@CustomSafeHtml
-	@JsonProperty("altContactNumber")
-	private String altContactNumber;
+    @Size(max = 50)
+    @CustomSafeHtml
+    @JsonProperty("altContactNumber")
+    private String altContactNumber;
 
-	@Size(max = 10)
-	@CustomSafeHtml
-	@JsonProperty("pan")
-	private String pan;
+    @Size(max = 10)
+    @CustomSafeHtml
+    @JsonProperty("pan")
+    private String pan;
 
-	@Pattern(regexp = "^[0-9]{12}$", message = "AdharNumber should be 12 digit number")
-	@CustomSafeHtml
-	@JsonProperty("aadhaarNumber")
-	private String aadhaarNumber;
+    @Pattern(regexp = "^[0-9]{12}$", message = "AdharNumber should be 12 digit number")
+    @CustomSafeHtml
+    @JsonProperty("aadhaarNumber")
+    private String aadhaarNumber;
 
-	@Size(max = 300)
-	@CustomSafeHtml
-	@JsonProperty("permanentAddress")
-	private String permanentAddress;
+    @Size(max = 300)
+    @CustomSafeHtml
+    @JsonProperty("permanentAddress")
+    private String permanentAddress;
 
-	@Size(max = 300)
-	@CustomSafeHtml
-	@JsonProperty("permanentCity")
-	private String permanentCity;
+    @Size(max = 300)
+    @CustomSafeHtml
+    @JsonProperty("permanentCity")
+    private String permanentCity;
 
-	@Size(max = 10)
-	@CustomSafeHtml
-	@JsonProperty("permanentPinCode")
-	private String permanentPincode;
+    @Size(max = 10)
+    @CustomSafeHtml
+    @JsonProperty("permanentPinCode")
+    private String permanentPincode;
 
-	@Size(max = 300)
-	@CustomSafeHtml
-	@JsonProperty("correspondenceCity")
-	private String correspondenceCity;
+    @Size(max = 300)
+    @CustomSafeHtml
+    @JsonProperty("correspondenceCity")
+    private String correspondenceCity;
 
-	@Size(max = 10)
-	@CustomSafeHtml
-	@JsonProperty("correspondencePinCode")
-	private String correspondencePincode;
+    @Size(max = 10)
+    @CustomSafeHtml
+    @JsonProperty("correspondencePinCode")
+    private String correspondencePincode;
 
-	@Size(max = 300)
-	@CustomSafeHtml
-	@JsonProperty("correspondenceAddress")
-	private String correspondenceAddress;
+    @Size(max = 300)
+    @CustomSafeHtml
+    @JsonProperty("correspondenceAddress")
+    private String correspondenceAddress;
 
-	@JsonProperty("active")
-	private Boolean active;
+    @JsonProperty("active")
+    private Boolean active;
 
-	@JsonProperty("dob")
-	private Long dob;
+    @JsonProperty("dob")
+    private Long dob;
 
-	@JsonProperty("pwdExpiryDate")
-	private Long pwdExpiryDate;
+    @JsonProperty("pwdExpiryDate")
+    private Long pwdExpiryDate;
 
-	@Size(max = 16)
-	@CustomSafeHtml
-	@JsonProperty("locale")
-	private String locale;
+    @Size(max = 16)
+    @CustomSafeHtml
+    @JsonProperty("locale")
+    private String locale;
 
-	@Size(max = 50)
-	@CustomSafeHtml
-	@JsonProperty("type")
-	private String type;
+    @Size(max = 50)
+    @CustomSafeHtml
+    @JsonProperty("type")
+    private String type;
 
-	@Size(max = 36)
-	@CustomSafeHtml
-	@JsonProperty("signature")
-	private String signature;
+    @Size(max = 36)
+    @CustomSafeHtml
+    @JsonProperty("signature")
+    private String signature;
 
-	@JsonProperty("accountLocked")
-	private Boolean accountLocked;
+    @JsonProperty("accountLocked")
+    private Boolean accountLocked;
 
-	@JsonProperty("roles")
-	@Valid
-	private List<Role> roles;
+    @JsonProperty("roles")
+    @Valid
+    private List<Role> roles;
 
-	@Size(max = 100)
-	@CustomSafeHtml
-	@JsonProperty("fatherOrHusbandName")
-	private String fatherOrHusbandName;
+    @Size(max = 100)
+    @CustomSafeHtml
+    @JsonProperty("fatherOrHusbandName")
+    private String fatherOrHusbandName;
 
-	@Size(max = 32)
-	@CustomSafeHtml
-	@JsonProperty("bloodGroup")
-	private String bloodGroup;
+    @Size(max = 32)
+    @CustomSafeHtml
+    @JsonProperty("bloodGroup")
+    private String bloodGroup;
 
-	@Size(max = 300)
-	@CustomSafeHtml
-	@JsonProperty("identificationMark")
-	private String identificationMark;
+    @Size(max = 300)
+    @CustomSafeHtml
+    @JsonProperty("identificationMark")
+    private String identificationMark;
 
-	@Size(max = 36)
-	@CustomSafeHtml
-	@JsonProperty("photo")
-	private String photo;
+    @Size(max = 36)
+    @CustomSafeHtml
+    @JsonProperty("photo")
+    private String photo;
 
-	@Size(max = 64)
-	@DiffIgnore
-	@CustomSafeHtml
-	@JsonProperty("createdBy")
-	private String createdBy;
+    @Size(max = 64)
+    @DiffIgnore
+    @CustomSafeHtml
+    @JsonProperty("createdBy")
+    private String createdBy;
 
-	@DiffIgnore
-	@JsonProperty("createdDate")
-	private Long createdDate;
+    @DiffIgnore
+    @JsonProperty("createdDate")
+    private Long createdDate;
 
-	@Size(max = 64)
-	@DiffIgnore
-	@CustomSafeHtml
-	@JsonProperty("lastModifiedBy")
-	private String lastModifiedBy;
+    @Size(max = 64)
+    @DiffIgnore
+    @CustomSafeHtml
+    @JsonProperty("lastModifiedBy")
+    private String lastModifiedBy;
 
-	@DiffIgnore
-	@JsonProperty("lastModifiedDate")
-	private Long lastModifiedDate;
+    @DiffIgnore
+    @JsonProperty("lastModifiedDate")
+    private Long lastModifiedDate;
 
-	@Size(max = 256)
-	@CustomSafeHtml
-	@JsonProperty("tenantId")
-	private String tenantId;
+    @Size(max = 256)
+    @CustomSafeHtml
+    @JsonProperty("tenantId")
+    private String tenantId;
 
-	@Size(max = 50)
-	@CustomSafeHtml
-	@JsonProperty("alternatemobilenumber")
-	private String alternatemobilenumber;
+    @Size(max = 50)
+    @CustomSafeHtml
+    @JsonProperty("alternatemobilenumber")
+    private String alternatemobilenumber;
 
-	public User addRolesItem(Role rolesItem) {
-		if (this.roles == null) {
-			this.roles = new ArrayList<>();
-		}
-		this.roles.add(rolesItem);
-		return this;
-	}
+    /**
+     * Executes the addRolesItem operation.
+     */
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		User user = (User) o;
-		return Objects.equals(uuid, user.uuid) && Objects.equals(name, user.name)
-				&& Objects.equals(mobileNumber, user.mobileNumber);
-	}
+    public User addRolesItem(Role rolesItem) {
+        if (this.roles == null) {
+            this.roles = new ArrayList<>();
+        }
+        this.roles.add(rolesItem);
+        return this;
+    }
 
-	@Override
-	public int hashCode() {
+    /**
+     * Executes the equals operation.
+     */
 
-		return Objects.hash(uuid, name, mobileNumber);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        User user = (User) o;
+        return Objects.equals(uuid, user.uuid) && Objects.equals(name, user.name)
+                && Objects.equals(mobileNumber, user.mobileNumber);
+    }
+
+    /**
+     * Executes the hashCode operation.
+     */
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(uuid, name, mobileNumber);
+    }
 }
