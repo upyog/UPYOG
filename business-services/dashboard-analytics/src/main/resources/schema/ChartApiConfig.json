@@ -25670,7 +25670,7 @@
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "finance-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Income\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"totalRevenueCollected\"}}}},\"Expenditure\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"totalCurrentExpenditure\"}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Revenue\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"totalRevenueCollected\"}}}},\"Expenditure\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"totalCurrentExpenditure\"}}}}}}"
       }
     ],
     "chartType": "line",
@@ -25679,7 +25679,7 @@
     "drillChart": "none",
     "documentType": "_doc",
     "aggregationPaths": [
-      "Income",
+      "Revenue",
       "Expenditure"
     ],
     "isCumulative": false,
