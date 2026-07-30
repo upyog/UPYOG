@@ -37,7 +37,6 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/ads",
     "micro-ui-internals/packages/modules/gc",
-    "micro-ui-internals/packages/css",
     "micro-ui-internals/packages/modules/finance"
   ],
   "engines": {
@@ -47,7 +46,7 @@
     "@nudmcdgnpm/digit-ui-module-challangeneration": "1.0.3",
     "@nudmcdgnpm/digit-ui-module-reports": "1.0.0",
     "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
-    "@nudmcdgnpm/upyog-css": "3.1.0",
+    "@nudmcdgnpm/upyog-css": "3.2.0",
     "@nudmcdgnpm/upyog-ui-module-ads": "3.11.1",
     "@nudmcdgnpm/upyog-ui-module-asset-v2": "1.0.1",
     "@nudmcdgnpm/upyog-ui-module-est": "1.0.3",
@@ -100,6 +99,7 @@
     "postcss-preset-env": "^11.3.2",
     "postcss-scss": "^4.0.9",
     "tailwindcss": "3.4.17",
+    "sass-embedded":"1.100.0",
     "vite": "^6.4.1",
     "vite-plugin-commonjs": "^0.10.4"
   },
