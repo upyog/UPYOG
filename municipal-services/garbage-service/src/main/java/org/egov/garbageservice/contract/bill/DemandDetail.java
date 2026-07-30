@@ -1,26 +1,24 @@
 package org.egov.garbageservice.contract.bill;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
-
 import org.egov.garbageservice.model.AuditDetails;
 import org.egov.tracer.annotations.CustomSafeHtml;
 
+import java.math.BigDecimal;
+
 /**
  * Contract model for one tax-head line on a {@link Demand}.
- *
+ * <p>
  * Behavior:
  * - Stores taxHeadMasterCode, taxAmount, and collectionAmount for a single levy.
  * - Links to parent demand via demandId and tenantId; includes audit and additionalDetails.
  * - Serialized as part of {@link Demand#getDemandDetails()} in demand create/update/search payloads.
- *
+ * <p>
  * Notes:
  * - Data-only model; tax computation happens upstream in garbage charge calculation services.
  * - collectionAmount defaults to zero when not set.
@@ -30,36 +28,36 @@ import org.egov.tracer.annotations.CustomSafeHtml;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DemandDetail   {
-	
-        @JsonProperty("id")
-        @CustomSafeHtml
-        private String id;
-        
-        @JsonProperty("demandId")
-        @CustomSafeHtml
-        private String demandId;
+public class DemandDetail {
 
-        @JsonProperty("taxHeadMasterCode")
-        @CustomSafeHtml
-        private String taxHeadMasterCode;
+    @JsonProperty("id")
+    @CustomSafeHtml
+    private String id;
 
-        @JsonProperty("taxAmount")
-        private BigDecimal taxAmount;
+    @JsonProperty("demandId")
+    @CustomSafeHtml
+    private String demandId;
 
-        @Default
-        @JsonProperty("collectionAmount")
-        private BigDecimal collectionAmount = BigDecimal.ZERO;
+    @JsonProperty("taxHeadMasterCode")
+    @CustomSafeHtml
+    private String taxHeadMasterCode;
 
-        @JsonProperty("additionalDetails")
-        private Object additionalDetails;
+    @JsonProperty("taxAmount")
+    private BigDecimal taxAmount;
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails;
+    @Default
+    @JsonProperty("collectionAmount")
+    private BigDecimal collectionAmount = BigDecimal.ZERO;
 
-        @JsonProperty("tenantId")
-        @CustomSafeHtml
-        private String tenantId;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;
+
+    @JsonProperty("tenantId")
+    @CustomSafeHtml
+    private String tenantId;
 
 
 }

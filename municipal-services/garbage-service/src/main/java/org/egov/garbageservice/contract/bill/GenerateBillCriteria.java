@@ -1,15 +1,7 @@
 package org.egov.garbageservice.contract.bill;
 
-//import jakarta.validation.constraints.Email;
-//import jakarta.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
+import lombok.*;
 import org.egov.tracer.annotations.CustomSafeHtml;
 
 @Setter
@@ -34,21 +26,21 @@ import org.egov.tracer.annotations.CustomSafeHtml;
  */
 public class GenerateBillCriteria {
 
-//    @NotNull
+    //    @NotNull
     @CustomSafeHtml
     private String tenantId;
 
     @CustomSafeHtml
     private String demandId;
 
-//    @NotNull
+    //    @NotNull
     @CustomSafeHtml
     private String consumerCode;
 
     @CustomSafeHtml
     private String businessService;
 
-//    @Email
+    //    @Email
     @CustomSafeHtml
     private String email;
 

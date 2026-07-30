@@ -1,8 +1,9 @@
 package org.egov.garbageservice.model;
-import org.egov.tracer.annotations.CustomSafeHtml;
+
 import lombok.Data;
+import org.egov.tracer.annotations.CustomSafeHtml;
+
 import java.util.List;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Lightweight DTO for open-search pay preview listing applications with bill summary.

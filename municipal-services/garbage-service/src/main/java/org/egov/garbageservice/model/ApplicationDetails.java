@@ -1,13 +1,11 @@
 package org.egov.garbageservice.model;
 
-import java.util.Map;
-import java.util.List;
-
-import org.egov.tracer.annotations.CustomSafeHtml;
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import org.egov.tracer.annotations.CustomSafeHtml;
+
+import java.util.Map;
 
 /**
  * Summary of one garbage application for fee preview and pay flows.

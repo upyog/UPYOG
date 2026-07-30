@@ -1,35 +1,31 @@
 package org.egov.garbageservice.contract.bill;
 
-//import jakarta.validation.Valid;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.common.contract.request.User;
-import org.egov.garbageservice.model.AuditDetails;
-import org.egov.tracer.annotations.CustomSafeHtml;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.User;
+import org.egov.garbageservice.model.AuditDetails;
+import org.egov.tracer.annotations.CustomSafeHtml;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Contract model for a revenue demand (assessment) before or alongside bill generation.
- *
+ * <p>
  * Behavior:
  * - Identifies the consumer (consumerCode, tenantId, businessService) and tax period
- *   (taxPeriodFrom, taxPeriodTo).
+ * (taxPeriodFrom, taxPeriodTo).
  * - Holds payer {@link org.egov.common.contract.request.User}, status via {@link StatusEnum},
- *   and a list of {@link DemandDetail} tax-head amounts.
+ * and a list of {@link DemandDetail} tax-head amounts.
  * - Supports bill expiry hints (fixedBillExpiryDate, billExpiryTime) and minimumAmountPayable.
- * - {@link #addDemandDetailsItem(DemandDetail)} appends a tax-head line to demandDetails.
  * - Maps to/from JSON for demand create, update, and search APIs.
- *
+ * <p>
  * Notes:
  * - Used with {@link DemandRepository} when garbage-service creates or updates demands on billing service.
  * - Data-only model; demand calculation logic lives in garbage-service business services.
@@ -39,7 +35,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Demand   {
+public class Demand {
 
     @JsonProperty("id")
     @CustomSafeHtml
@@ -61,7 +57,7 @@ public class Demand   {
     @CustomSafeHtml
     private String businessService;
 
-//    @Valid
+    //    @Valid
     @JsonProperty("payer")
     private User payer;
 
@@ -78,7 +74,7 @@ public class Demand   {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
-    
+
     @JsonProperty("fixedBillExpiryDate")
     private Long fixedBillExpiryDate;
 
@@ -92,6 +88,9 @@ public class Demand   {
     @JsonProperty("minimumAmountPayable")
     private BigDecimal minimumAmountPayable = BigDecimal.ZERO;
 
+    @JsonProperty("status")
+    private StatusEnum status;
+
     /**
      * Gets or Sets status
      */
@@ -102,23 +101,28 @@ public class Demand   {
         CANCELLED("CANCELLED"),
 
         ADJUSTED("ADJUSTED"),
-    	
-    	EXPIRED("EXPIRED"),
-    	
-    	PAID("PAID");
+
+        EXPIRED("EXPIRED"),
+
+        PAID("PAID");
 
         private String value;
 
+        /**
+         * Constructs the StatusEnum with the specified string value.
+         *
+         * @param value the string representation of the demand status
+         */
         StatusEnum(String value) {
             this.value = value;
         }
 
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-
+        /**
+         * Resolves a string value to its corresponding {@link StatusEnum} constant during JSON deserialization.
+         *
+         * @param text the string value representing the status
+         * @return the matching {@link StatusEnum}, or null if no match is found
+         */
         @JsonCreator
         public static StatusEnum fromValue(String text) {
             for (StatusEnum b : StatusEnum.values()) {
@@ -128,15 +132,17 @@ public class Demand   {
             }
             return null;
         }
-    }
 
-    @JsonProperty("status")
-    private StatusEnum status;
-
-
-    public Demand addDemandDetailsItem(DemandDetail demandDetailsItem) {
-        this.demandDetails.add(demandDetailsItem);
-        return this;
+        /**
+         * Returns the string representation of the demand status.
+         *
+         * @return the status value as a string
+         */
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 
 }

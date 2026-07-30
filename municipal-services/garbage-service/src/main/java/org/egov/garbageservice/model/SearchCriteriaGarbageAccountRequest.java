@@ -1,13 +1,11 @@
 package org.egov.garbageservice.model;
 
-import org.egov.common.contract.request.RequestInfo;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.RequestInfo;
 
 /**
  * Request body combining RequestInfo with SearchCriteriaGarbageAccount for account search APIs.
@@ -19,14 +17,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SearchCriteriaGarbageAccountRequest {
 
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo;
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
-	private SearchCriteriaGarbageAccount searchCriteriaGarbageAccount;
+    private SearchCriteriaGarbageAccount searchCriteriaGarbageAccount;
 
-	@Builder.Default
-	private Boolean isSchedulerCall = false;
-	
-	private Boolean isUserUuidNull;
+    @Builder.Default
+    private Boolean isSchedulerCall = false;
+
+    private Boolean isUserUuidNull;
 
 }

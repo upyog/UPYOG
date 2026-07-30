@@ -1,8 +1,7 @@
 package org.egov.garbageservice.model;
 
-import org.egov.tracer.annotations.CustomSafeHtml;
-
 import lombok.*;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
 import java.util.Date;
 
@@ -31,6 +30,12 @@ public class RoleV2 {
     private Date lastModifiedDate;
     @CustomSafeHtml
     private String tenantId;
+
+    /**
+     * Gets the citizenRole.
+     *
+     * @return the current citizenRole
+     */
 
     public static RoleV2 getCitizenRole() {
         return RoleV2.builder().code(CITIZEN).build();

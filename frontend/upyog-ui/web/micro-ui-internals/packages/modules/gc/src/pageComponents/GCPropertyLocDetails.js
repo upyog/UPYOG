@@ -3,6 +3,21 @@ import { FormStep, TextInput, CardLabel, Dropdown, TextArea, SearchIcon, Toast }
 import { useLocation, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 
+/**
+ * GCPropertyLocDetails Component
+ * 
+ * Renders the property location details step in the GC application wizard.
+ * Collects address information including house number, street name, city, locality, 
+ * pincode, landmark, and property ID. Supports property ID search to auto-fill 
+ * address details from an existing property.
+ * 
+ * Props:
+ * - `t`: i18n translation function
+ * - `config`: Step configuration from the wizard config
+ * - `onSelect`: Callback when the form is submitted with collected data
+ * - `formData`: Current accumulated form data from previous steps
+ * - `renewApplication`: Existing application data for pre-filling during edit flow
+ */
 const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication }) => {
 
   const convertToObject = (params) => {

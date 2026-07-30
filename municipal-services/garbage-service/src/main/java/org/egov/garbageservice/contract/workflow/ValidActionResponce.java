@@ -1,18 +1,16 @@
 package org.egov.garbageservice.contract.workflow;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.common.contract.response.ResponseInfo;
-import org.egov.tracer.annotations.CustomSafeHtml;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.tracer.annotations.CustomSafeHtml;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Validated
 @NoArgsConstructor
@@ -34,26 +32,26 @@ import lombok.NoArgsConstructor;
  */
 @Data
 public class ValidActionResponce {
-	@JsonProperty("ResponseInfo")
-	private ResponseInfo responseInfo;
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo;
 
-	@JsonProperty("nextValidAction")
-	@Builder.Default
-	private List<Action> nextValidAction = new ArrayList<>();
+    @JsonProperty("nextValidAction")
+    @Builder.Default
+    private List<Action> nextValidAction = new ArrayList<>();
 
-	@JsonProperty("action")
-	@Builder.Default
-	private List<String> action = new ArrayList<>();
+    @JsonProperty("action")
+    @Builder.Default
+    private List<String> action = new ArrayList<>();
 
-	@JsonProperty("isUpdatable")
-	@Builder.Default
-	private Boolean isUpdatable = false;
+    @JsonProperty("isUpdatable")
+    @Builder.Default
+    private Boolean isUpdatable = false;
 
-	@JsonProperty("businessService")
-	@CustomSafeHtml
-	private String businessService;
+    @JsonProperty("businessService")
+    @CustomSafeHtml
+    private String businessService;
 
-	@JsonProperty("moduleName")
-	@CustomSafeHtml
-	private String moduleName;
+    @JsonProperty("moduleName")
+    @CustomSafeHtml
+    private String moduleName;
 }
