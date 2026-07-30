@@ -12,6 +12,20 @@ import GCSearchApplication from "../../components/SearchApplication";
  * 
  * @returns {JSX.Element} The search interface with the results and error handling.
  */
+/**
+ * SearchApp Component
+ * 
+ * Handles the search functionality for Garbage Collection applications in the employee view.
+ * Collects search filters (application number, date range, status, mobile number),
+ * submits them to the API, and performs local client-side filtering as a fallback
+ * to ensure accurate results.
+ * 
+ * Features:
+ * - Validates that at least one search parameter is provided
+ * - Requires both from-date and to-date if date filtering is used
+ * - Performs local filtering on application number, mobile, status, and date range
+ * - Handles loading, success, and error states with toast notifications
+ */
 const SearchApp = () => {
     const { t } = useTranslation();
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -52,7 +66,7 @@ const SearchApp = () => {
             setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
         } else {
             // Request large limit to ensure local filtering can search all records if backend ignores parameters
-            setPayload({ ...newPayload, limit: 10000, offset: 0 });
+            setPayload({ ...newPayload, limit: 10, offset: 0 });
             setPageConfig({ limit: limit || 10, offset: offset || 0 });
         }
     }
@@ -74,7 +88,7 @@ const SearchApp = () => {
     };
 
     // DO NOT pass the payload to the API directly to prevent it from wrongly filtering and returning 0 results
-    const apiFilters = payload && Object.keys(payload).length > 0 ? { limit: 10000, offset: 0 } : {};
+    const apiFilters = payload && Object.keys(payload).length > 0 ? { limit: 10, offset: 0 } : {};
     const { isLoading, isSuccess, isError, error, data } = Digit.Hooks.gc.useGCSearch({ tenantId, filters: apiFilters }, config);
 
     let searchResult = data?.garbageAccounts || data?.GarbageApplications || data?.data || [];

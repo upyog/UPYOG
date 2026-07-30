@@ -18,6 +18,8 @@ import EmployeeApp from "./pages/employee";
 import Inbox from "./pages/employee/Inbox";
 import SearchApp from "./pages/employee/SearchApp";
 import CreateApplication from "./pages/employee/Create";
+import { TableConfig } from "./config/inbox-table-config";
+import InboxFilter from "./components/inbox/NewInboxFilter";
 
 const componentsToRegister = {
   GCCreate,
@@ -43,8 +45,24 @@ const addComponentsToRegistry = () => {
   });
 };
 
+/**
+ * GC Module Registration and Module Component
+ * 
+ * This is the entry point for the GC (Garbage Collection) module.
+ * It registers all GC-specific components into the Digit Component Registry Service,
+ * ensuring they can be dynamically loaded and rendered across the application.
+ * 
+ * The `GCModule` component:
+ * - Initializes the module store with localization and MDMS data
+ * - Registers all GC components (Create, Card, Application Details, Inbox, Search, etc.)
+ * - Determines the user type (employee/citizen) and renders the appropriate app layout
+ * - Fetches employee-specific localization for the current tenant
+ * 
+ * The `GCComponents` object exposes key components and configuration for external use,
+ * including the GCCard, inbox filter, and table config.
+ */
 export const GCModule = ({ stateCode, userType, tenants }) => {
-  const { path } = Digit.Hooks.useModuleBasePath();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
   const moduleCode = "GC";
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });
@@ -65,7 +83,7 @@ export const GCModule = ({ stateCode, userType, tenants }) => {
   }, [isEmployee]);
 
   if (isEmployee) {
-    return <EmployeeApp path={path} userType={userType} />;
+    return <EmployeeApp path={path} url={url} userType={userType} />;
   }
   return <CitizenApp />;
 };
@@ -73,5 +91,7 @@ export const GCModule = ({ stateCode, userType, tenants }) => {
 
 export const GCComponents = {
   GCCard,
-  GCModule
+  GCModule,
+  GC_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  GCInboxTableConfig: TableConfig,
 };

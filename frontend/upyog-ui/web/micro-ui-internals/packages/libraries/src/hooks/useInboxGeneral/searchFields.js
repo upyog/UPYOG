@@ -183,6 +183,27 @@ const inboxSearchFields = {
           maxLength: "",
         },
       },
+    ],
+    GC: [
+      {
+        label: "GC_APPLICATION_NUMBER_LABEL",
+        name: "applicationNumber",
+        roles: [],
+      },
+      {
+        label: "GC_MOBILE_NUMBER",
+        name: "moblieNumber",
+        type: "mobileNumber",
+        maxLength: 10,
+        minLength: 0,
+        roles: [],
+        pattern: "^$|[6-9][0-9]{9}",
+        errorMessages: {
+          pattern: "",
+          minLength: "",
+          maxLength: "",
+        },
+      },
     ]
 };
 

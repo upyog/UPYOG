@@ -13,6 +13,7 @@ import { MTService } from "../../services/elements/MT";
 import { WTService } from "../../services/elements/WT";
 import { TPService } from "../../services/elements/TP";
 import { PGRAIService } from "../../services/elements/PGRAI";
+import { GCServices } from "../../services/elements/GC"
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -88,6 +89,15 @@ const inboxConfig = (tenantId, filters) => ({
       fetchFilters: filterFunctions.TP,
       _searchFn: () => TPService.search({ tenantId, filters }),
     },
+
+  GC: {
+    services: ["garbage-service"],
+    searchResponseKey: "garbageCollectionBookingDetail",
+    businessIdsParamForSearch: "applicationNumber",
+    businessIdAliasForSearch: "applicationNumber",
+    fetchFilters: filterFunctions.GC,
+    _searchFn: () => GCServices.search({ tenantId, filters}),
+  },
     /**
  * PGRAI Workflow Module Configuration
  *
@@ -126,7 +136,7 @@ const callMiddlewares = async (data, middlewares) => {
 const useNewInboxGeneral = ({ tenantId, ModuleCode, filters, middleware = [], config = {} }) => {
   const client = useQueryClient();
   const { t } = useTranslation();
-  const { fetchFilters, searchResponseKey, businessIdAliasForSearch, businessIdsParamForSearch } = inboxConfig()[ModuleCode];
+  const { fetchFilters, searchResponseKey, businessIdAliasForSearch, businessIdsParamForSearch } = inboxConfig(tenantId, filters)[ModuleCode];
   let { workflowFilters, searchFilters, limit, offset, sortBy, sortOrder,isDraftApplication } = fetchFilters(filters);
 
   const query = queryTemplate({
