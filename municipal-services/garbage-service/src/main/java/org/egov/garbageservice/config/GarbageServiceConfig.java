@@ -32,7 +32,7 @@ public class GarbageServiceConfig {
     @Value("${workflow.business.search}")
     public String workflowBusinessServiceSearchPath;
 
-    @Value("${egov.bill.context.host}")
+    @Value("${egov.billing.host}")
     public String billHost;
 
     @Value("${egov.bill.endpoint.fetch}")
