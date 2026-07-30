@@ -11209,7 +11209,7 @@
                   "headers": []
                 },
                 {
-                  "id": "financeTotalExpenditure",
+                  "id": "financeTotalExpenditures",
                   "name": "NURT_FINANCE_TOTAL_EXPENDITURE",
                   "code": "",
                   "chartType": "metric",
