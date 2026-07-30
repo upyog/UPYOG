@@ -1,3 +1,19 @@
+/**
+ * commonConfig
+ * 
+ * Defines the step-by-step wizard configuration for the GC (Garbage Collection) 
+ * application creation flow. Each step includes:
+ * - `route`: URL path segment for navigation
+ * - `component`: Component identifier registered in the Digit registry
+ * - `key`: Form data key for storing step-specific data
+ * - `nextStep`: Route of the next step (null for last step)
+ * - `texts`: Display labels and timeline step indicators
+ * - `timeLine`: Array with current step position and action label
+ * - `hideInEmployee`: Boolean to hide this step in employee view
+ * - `isMandatory`: Boolean indicating if the step is required
+ * 
+ * The flow consists of: Owner Details -> Property Location -> Specifications -> Special Category -> Documents
+ */
 export const commonConfig =
     [
         {
