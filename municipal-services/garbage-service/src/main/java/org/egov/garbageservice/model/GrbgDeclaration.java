@@ -1,11 +1,10 @@
 package org.egov.garbageservice.model;
 
-import org.egov.tracer.annotations.CustomSafeHtml;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
 @AllArgsConstructor
 @Data

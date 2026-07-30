@@ -7,6 +7,9 @@ import org.egov.common.contract.request.RequestInfo;
 
 import java.time.LocalDate;
 
+/**
+ * Request payload for triggering background scheduler routines manually or programmatically.
+ */
 @Data
 public class SchedulerRequest {
     @JsonProperty("RequestInfo")

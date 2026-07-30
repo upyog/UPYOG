@@ -23,6 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Kafka consumer service responsible for intercepting external payment events and updating
+ * the internal state of garbage accounts accordingly.
+ *
+ * <p>When a payment is made on a garbage account, this service handles parsing the payment payload,
+ * updating the local {@code STATUS_PAID} state, generating audit logs, and persisting the resulting
+ * transaction details to the database via Kafka topics.
+ */
 @Service
 @Slf4j
 public class PaymentUpdateService {
@@ -41,7 +49,7 @@ public class PaymentUpdateService {
      * creates rent payment entries for Estate Management payments.
      *
      * @param record payment event payload
-     * @param topic kafka topic name
+     * @param topic  kafka topic name
      * @throws JsonProcessingException if payment payload conversion fails
      */
     public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
@@ -69,19 +77,20 @@ public class PaymentUpdateService {
             searchCriteria.setApplicationNumber(consumerCodes);
             searchCriteria.setTenantId(tenantId);
             List<GarbageAccount> garbageAccounts = garbageAccountRepository.searchV2(searchCriteria);
-            
+
             String garbageApplicationNo = consumerCode;
-//            String estateNo = null;
             if (garbageAccounts != null && !garbageAccounts.isEmpty()) {
                 garbageApplicationNo = garbageAccounts.get(0).getGrbgApplicationNumber();
-//                estateNo = garbageAccounts.get(0).getAssetNo();
             } else {
                 log.error("GarbageAccount not found for consumerCode: {}", consumerCode);
             }
 
+            Long garbageApplicationId = garbageAccounts.get(0).getId();
+
             GarbagePaymentDetails garbagePaymentDetails = GarbagePaymentDetails.builder()
                     .id(UUID.randomUUID().toString())
-                    .applicationNo(consumerCode)
+                    .applicationId(garbageApplicationId)
+                    .applicationNo(garbageApplicationNo)
                     .penaltyAmount(BigDecimal.ZERO)
                     .rent(paidAmount)
                     .previousMonth(today.minusMonths(1).withDayOfMonth(1))
@@ -115,7 +124,7 @@ public class PaymentUpdateService {
                     }
 
                     GarbageAccountRequest garbageAccountRequest = new GarbageAccountRequest(paymentRequest.getRequestInfo(), List.of(garbageAccount), false, false);
-                    garbageAccountRepository.save(config.getGarbageAccountUpdateTopic(), garbageAccountRequest);
+                    garbageAccountRepository.save(config.getUpdateGarbageAccountTopic(), garbageAccountRequest);
                     log.info("Updated Garbage Application status to PAID for Application No: {}", consumerCode);
                 }
             } catch (Exception e) {

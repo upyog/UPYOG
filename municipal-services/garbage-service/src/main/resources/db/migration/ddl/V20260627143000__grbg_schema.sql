@@ -37,7 +37,8 @@ CREATE TABLE eg_grbg_account (
     sub_account_count   INT8 DEFAULT 0,
     business_service    VARCHAR(256),
     approval_date       INT8 DEFAULT NULL,
-    channel             VARCHAR(256)
+    channel             VARCHAR(256),
+    due_date            DATE
 );
 
 ALTER TABLE eg_grbg_account ADD CONSTRAINT pk_id_eg_grbg_account PRIMARY KEY (id);

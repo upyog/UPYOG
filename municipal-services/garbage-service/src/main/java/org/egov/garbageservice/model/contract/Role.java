@@ -1,14 +1,9 @@
 package org.egov.garbageservice.model.contract;
 
-import jakarta.validation.constraints.NotNull;
-
-import org.egov.tracer.annotations.CustomSafeHtml;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
 
 /**
@@ -16,47 +11,47 @@ import lombok.NoArgsConstructor;
  * Holds human-readable name, system code, and description; attached to User and TenantRole lists.
  * Unknown JSON properties are ignored to stay compatible with user-service API changes.
  */
+@Getter
+@Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Role {
-	
-	@NotNull
-	@CustomSafeHtml
-	private String name ;
-	
-	@CustomSafeHtml
-	private String code ;
 
-	@CustomSafeHtml
-	private String description ;
-		
-	public Role(final String name) {
-	    this.name = name;
-	}
+    /**
+     * -- GETTER --
+     * Gets the name.
+     *
+     * @return the current name
+     */
+    @NotNull
+    @CustomSafeHtml
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    /**
+     * -- GETTER --
+     * Gets the code.
+     *
+     * @return the current code
+     */
+    @CustomSafeHtml
+    private String code;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * -- GETTER --
+     * Gets the description.
+     *
+     * @return the current description
+     */
+    @CustomSafeHtml
+    private String description;
 
-	public String getCode() {
-		return code;
-	}
+    /**
+     * Constructs a new instance with the specified attributes.
+     */
 
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public Role(final String name) {
+        this.name = name;
+    }
 }

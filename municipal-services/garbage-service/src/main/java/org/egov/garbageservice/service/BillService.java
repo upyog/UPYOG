@@ -1,21 +1,13 @@
 package org.egov.garbageservice.service;
 
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.garbageservice.contract.bill.Bill;
-import org.egov.garbageservice.contract.bill.BillRepository;
-import org.egov.garbageservice.contract.bill.BillResponse;
-import org.egov.garbageservice.contract.bill.BillSearchCriteria;
-import org.egov.garbageservice.contract.bill.GenerateBillCriteria;
-import org.egov.garbageservice.contract.bill.UpdateBillCriteria;
+import org.egov.garbageservice.contract.bill.*;
 import org.egov.garbageservice.util.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.egov.garbageservice.model.BillV2;
 
-import lombok.extern.slf4j.Slf4j; 
+import java.util.List;
 
 /**
  * Facade over BillRepository for collection-service bill fetch, search, update, and cancel.
@@ -25,45 +17,68 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BillService {
 
-	@Autowired
-	private BillRepository billRepository;
+    @Autowired
+    private BillRepository billRepository;
 
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
-	
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
 
-    BillResponse generateBill(RequestInfo requestInfo,GenerateBillCriteria billCriteria){
 
+    /**
+     * Delegates to the billing microservice to generate a fresh bill payload.
+     *
+     * <p>This operation fetches the latest calculated demand against a specific garbage
+     * account and packages it into a unified bill structure.
+     *
+     * @param requestInfo  the contextual information for the API request
+     * @param billCriteria the search criteria used to target specific billing data
+     * @return a {@link BillResponse} containing the generated bill details
+     */
+
+    BillResponse generateBill(RequestInfo requestInfo, GenerateBillCriteria billCriteria) {
         BillResponse billResponse = billRepository.fetchBill(billCriteria, requestInfo);
-        
-         return billResponse;
+        return billResponse;
     }
 
-	/**
-	 * Searches the bills from DB for given criteria and enriches them with TaxAndPayments array
-	 * 
-	 * @param billCriteria
-	 * @param requestInfo
-	 * @return
-	 */
-	public BillResponse searchBill(BillSearchCriteria billSearchCriteria, RequestInfo requestInfo) {
+    /**
+     * Searches the bills from DB for given criteria and enriches them with TaxAndPayments array
+     *
+     * @param requestInfo
+     * @return
+     */
+    public BillResponse searchBill(BillSearchCriteria billSearchCriteria, RequestInfo requestInfo) {
+        List<Bill> bills = billRepository.searchBill(billSearchCriteria, requestInfo);
+        return BillResponse.builder().resposneInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+                .bill(bills).build();
+    }
 
-		List<Bill> bills = billRepository.searchBill(billSearchCriteria, requestInfo);
+    /**
+     * Issues a cancellation request to the billing microservice.
+     *
+     * <p>Used in scenarios where a demand needs to be invalidated, such as administrative
+     * reversals or error corrections on a garbage account.
+     *
+     * @param updateBillCriteria the criteria defining which bills to cancel
+     * @param requestInfo        the contextual information for the API request
+     */
 
-		return BillResponse.builder().resposneInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
-				.bill(bills).build();
-	}
-	
-	public void cancelBill(UpdateBillCriteria updateBillCriteria, RequestInfo requestInfo) {
+    public void cancelBill(UpdateBillCriteria updateBillCriteria, RequestInfo requestInfo) {
+        billRepository.cancelBill(updateBillCriteria, requestInfo);
+    }
 
-		 billRepository.cancelBill(updateBillCriteria, requestInfo);
-//		return BillResponse.builder().resposneInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
-//				.bill(bills).build();
-	}
-	
-	public void updateBill(RequestInfo requestInfo, List<Bill> bills) {
-	    billRepository.updateBill(requestInfo, bills);
-	}
-	
-	
+    /**
+     * Updates an existing bill record through the billing repository.
+     *
+     * <p>This ensures that any modifications to the underlying demands (such as partial
+     * payments or applied penalties) are properly reflected in the billing subsystem.
+     *
+     * @param requestInfo the contextual information for the API request
+     * @param bills       the updated {@link Bill} list to be saved
+     */
+
+    public void updateBill(RequestInfo requestInfo, List<Bill> bills) {
+        billRepository.updateBill(requestInfo, bills);
+    }
+
+
 }

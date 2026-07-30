@@ -12,12 +12,12 @@ import java.util.List;
 
 /**
  * Wrapper for the billing/collection service response when fetching or updating bills.
- *
+ * <p>
  * Behavior:
  * - Carries standard eGov {@link org.egov.common.contract.response.ResponseInfo} metadata.
  * - Holds a list of {@link Bill} objects returned by fetch, search, or update bill APIs.
  * - Deserialized from REST JSON via Jackson in {@link BillRepository}.
- *
+ * <p>
  * Notes:
  * - JSON property for response info is spelled {@code ResposneInfo} (legacy typo in contract).
  * - Bill list key in JSON is {@code Bill}; must match the remote API for parsing to succeed.
@@ -28,10 +28,10 @@ import java.util.List;
 @Builder
 public class BillResponse {
 
-	@JsonProperty("ResposneInfo")
-	private ResponseInfo resposneInfo = null;
+    @JsonProperty("ResposneInfo")
+    private ResponseInfo resposneInfo = null;
 
-	@JsonProperty("Bill")
-	private List<Bill> bill = new ArrayList<>();
+    @JsonProperty("Bill")
+    private List<Bill> bill = new ArrayList<>();
 
 }
