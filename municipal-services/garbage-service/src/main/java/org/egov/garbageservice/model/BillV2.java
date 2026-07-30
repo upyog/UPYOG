@@ -1,12 +1,13 @@
 package org.egov.garbageservice.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.egov.garbageservice.contract.bill.BillDetail;
-import org.egov.tracer.annotations.CustomSafeHtml;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.egov.garbageservice.contract.bill.BillDetail;
+import org.egov.tracer.annotations.CustomSafeHtml;
+
 import java.util.List;
 
 @Data
@@ -20,7 +21,7 @@ import java.util.List;
 public class BillV2 {
 
     @CustomSafeHtml
-    private String id;               
+    private String id;
     @CustomSafeHtml
     private String tenantId;
     @CustomSafeHtml

@@ -1,26 +1,11 @@
 package org.egov.garbageservice.contract.workflow;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.egov.garbageservice.model.AuditDetails;
 import org.egov.tracer.annotations.CustomSafeHtml;
 
-//import jakarta.validation.Valid;
-//import jakarta.validation.constraints.NotNull;
-//import jakarta.validation.constraints.Size;
-
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,7 +13,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-@EqualsAndHashCode(of = {"tenantId","currentState","action"})
+@EqualsAndHashCode(of = {"tenantId", "currentState", "action"})
 /**
  * Contract model for one allowed workflow transition from a {@link State}.
  *
@@ -44,54 +29,39 @@ import lombok.ToString;
  * - active flag indicates whether the transition is currently enabled in the definition.
  * - Data-only model; transition execution is done via {@link WorkflowService#callWf}.
  */
-public class Action   {
+public class Action {
 
-//        @Size(max=256)
-        @JsonProperty("uuid")
-        @CustomSafeHtml
-        private String uuid;
+    @JsonProperty("uuid")
+    @CustomSafeHtml
+    private String uuid;
 
-//        @Size(max=256)
-        @JsonProperty("tenantId")
-        @CustomSafeHtml
-        private String tenantId;
+    @JsonProperty("tenantId")
+    @CustomSafeHtml
+    private String tenantId;
 
-//        @Size(max=256)
-        @JsonProperty("currentState")
-        @CustomSafeHtml
-        private String currentState;
+    @JsonProperty("currentState")
+    @CustomSafeHtml
+    private String currentState;
 
-//        @NotNull
-//        @Size(max=256)
-        @JsonProperty("action")
-        @CustomSafeHtml
-        private String action;
+    //        @NotNull
+    @JsonProperty("action")
+    @CustomSafeHtml
+    private String action;
 
-//        @NotNull
-//        @Size(max=256)
-        @JsonProperty("nextState")
-        @CustomSafeHtml
-        private String nextState;
+    //        @NotNull
+    @JsonProperty("nextState")
+    @CustomSafeHtml
+    private String nextState;
 
-//        @NotNull
-//        @Size(max=1024)
-        @JsonProperty("roles")
+    //        @NotNull
+    @JsonProperty("roles")
 //        @Valid
-        private List<String> roles;
+    private List<String> roles;
 
-        private AuditDetails auditDetails;
+    private AuditDetails auditDetails;
 
-        @JsonProperty("active")
-        private Boolean active;
-
-
-        public Action addRolesItem(String rolesItem) {
-            if (this.roles == null) {
-            this.roles = new ArrayList<>();
-            }
-        this.roles.add(rolesItem);
-        return this;
-        }
+    @JsonProperty("active")
+    private Boolean active;
 
 }
 

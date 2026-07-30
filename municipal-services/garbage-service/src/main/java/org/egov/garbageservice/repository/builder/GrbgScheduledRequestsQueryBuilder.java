@@ -2,17 +2,19 @@ package org.egov.garbageservice.repository.builder;
 
 import org.springframework.stereotype.Component;
 
-/** Holds SQL query constants for CRUD operations on scheduled garbage request records. */
+/**
+ * Holds SQL query constants for CRUD operations on scheduled garbage request records.
+ */
 @Component
 public class GrbgScheduledRequestsQueryBuilder {
 
     public static final String CREATE_QUERY = "INSERT INTO eg_grbg_scheduled_requests " +
-                                              "(uuid, garbage_id, type, start_date, end_date, is_active) " +
-                                              "VALUES (?, ?, ?, ?, ?, ?)";
+            "(uuid, garbage_id, type, start_date, end_date, is_active) " +
+            "VALUES (?, ?, ?, ?, ?, ?)";
 
     public static final String UPDATE_QUERY = "UPDATE eg_grbg_scheduled_requests " +
-                                              "SET garbage_id = ?, type = ?, start_date = ?, end_date = ?, is_active = ? " +
-                                              "WHERE uuid = ?";
+            "SET garbage_id = ?, type = ?, start_date = ?, end_date = ?, is_active = ? " +
+            "WHERE uuid = ?";
 
     public static final String SELECT_ALL_QUERY = "SELECT * FROM eg_grbg_scheduled_requests";
 
