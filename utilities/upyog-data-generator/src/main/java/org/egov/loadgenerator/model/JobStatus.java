@@ -1,17 +1,13 @@
+package org.egov.loadgenerator.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * Represents the execution status and runtime metrics of a load generation job.
- *
- * <p>This model maintains information about the progress, performance,
- * and outcome of a load generation request. It is used for tracking job
- * execution and reporting status through the Load Generator APIs.
- *
- * <h3>Responsibilities</h3>
- * <ul>
- *   <li>Store job execution metadata.</li>
- *   <li>Track success and failure statistics.</li>
- *   <li>Capture execution timing and performance metrics.</li>
- *   <li>Provide error information for failed executions.</li>
- * </ul>
  */
 @Getter
 @Setter
