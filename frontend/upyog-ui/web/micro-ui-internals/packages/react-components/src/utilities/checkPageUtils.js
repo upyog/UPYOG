@@ -336,7 +336,7 @@ export const buildSummarySections = (formConfig = []) => {
   let current = { headerCode: null, fields: [] };
 
   flattenForSummary(formConfig).forEach((fc) => {
-    if (fc.hidden === true || fc.hideInSummary === true) return;
+    if (fc.hidden || fc.hideInSummary) return;
 
     if (fc.type === "sectionHeader") {
       if (current.fields.length) sections.push(current);
@@ -403,13 +403,13 @@ export const extractUrlFromFilefetchResponse = (response, fileStoreId, index = 0
 
 /**
  * Collect uploaded file references from form values for check-page preview.
- * Maps each file field config to `{ id, label, fileName, reference }` when a
- * fileStoreId can be extracted from the saved value.
+ * Maps each file field config to `{ id, label, fileName }` when a fileStoreId
+ * can be extracted. `id` is for Filefetch/preview only — not shown as label text.
  *
  * @param {Array}    fileFields File field configs from `buildSummarySections`.
  * @param {object}   formValues Flat form values for the step.
  * @param {Function} [t=(k) => k] i18n translator for field labels.
- * @returns {Array<{ id: string, label: string, fileName: string|null, reference: string }>}
+ * @returns {Array<{ id: string, label: string, fileName: string|null }>}
  *   Non-null entries only (fields without an upload are omitted).
  * @see extractFileStoreId
  * @see resolveFieldLabelKey
@@ -427,11 +427,11 @@ export const collectFormFileEntries = (fileFields = [], formValues = {}, t = (k)
       return {
         id,
         label: t(resolveFieldLabelKey(fc, formValues)),
+        // Show uploaded name only when it is a real name (not the fileStoreId).
         fileName:
           typeof raw === "object" && raw.fileName && raw.fileName !== id
             ? raw.fileName
             : null,
-        reference: null,
       };
     })
     .filter(Boolean);
