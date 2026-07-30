@@ -11,8 +11,12 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import estateAllotmentFormOverrides from "../config/Create/estateAllotmentFormOverrides";
 import { normalizeAllotmentFlatData } from "./allotmentFormUtils";
-import { filterEmpty, formatDate, formatDurationWithMonths, pick, checkForNA } from "./index";
-import { buildAllotmentAssetDisplay, resolveLocalityDisplay } from "./estMdmsUtils";
+import { filterEmpty, formatDate, formatDurationWithMonths, checkForNA } from "./index";
+import {
+  buildAllotmentAssetDisplay,
+  getFileReferenceNumber,
+  resolveAllotmentAsset,
+} from "./estMdmsUtils";
 
 const isEmptyAckValue = (value, t) => {
   if (value === undefined || value === null || value === "") return true;
@@ -60,26 +64,58 @@ export const buildAllotmentAckExtraData = (asset = {}, allotment = {}, t = (k) =
 
 /** Normalize API/session allotment into form field names used by routeConfig. */
 export const buildAllotmentAckFormValues = (allotment = {}, asset = {}, routeConfig = {}) => {
+  const toFileValue = (raw) => {
+    if (raw === undefined || raw === null || raw === "") return undefined;
+    if (typeof raw === "object") return raw;
+    const id = String(raw);
+    return { filestoreId: id, fileStoreId: id };
+  };
+
+  const display = buildAllotmentAssetDisplay(asset, allotment);
+  const resolvedAsset = resolveAllotmentAsset(asset, allotment);
+  const displayFields = Object.fromEntries(
+    Object.entries(display).filter(([, v]) => v !== undefined && v !== null && v !== "")
+  );
+
   const base = {
     ...allotment,
-    allotmentNo:
-      allotment.allotmentNo ?? allotment.additionalDetails?.allotmentNo ?? "",
-    // Form field is allotmentType; API/persister key is propertyType (apiFieldName).
+    ...displayFields,
     allotmentType: allotment.allotmentType ?? allotment.propertyType,
     mobileNo: allotment.mobileNo ?? allotment.phoneNumber,
     alternateMobileNo: allotment.alternateMobileNo ?? allotment.altPhoneNumber,
     emailId: allotment.emailId ?? allotment.email,
     rentRate: allotment.rentRate ?? allotment.rate,
-    assetNo: allotment.assetNo ?? asset.estateNo ?? asset.assetNo,
-    eOfficeFileNo: allotment.eofficeFileNo ?? allotment.eOfficeFileNo,
-    buildingName: allotment.buildingName ?? asset.buildingName,
-    totalFloorArea: allotment.totalFloorArea ?? asset.totalFloorArea,
-    buildingFloor: allotment.buildingFloor ?? asset.buildingFloor ?? asset.floor,
-    assetRate: allotment.rentRate ?? allotment.rate ?? asset.rate,
-    localityDisplay: allotment.localityDisplay ?? resolveLocalityDisplay(asset),
+    // Flatten nested Allotments[].asset into form field names used by MDMS.
+    buildingName:
+      display.buildingName ||
+      resolvedAsset.buildingName ||
+      resolvedAsset.assetName ||
+      "",
+    locality:
+      display.locality ||
+      display.localityDisplay ||
+      "",
+    localityDisplay: display.localityDisplay || display.locality || "",
+    totalFloorArea:
+      display.totalFloorArea ?? resolvedAsset.totalFloorArea ?? "",
+    buildingFloor: display.buildingFloor ?? display.floor ?? "",
+    floor: display.floor ?? display.buildingFloor ?? "",
+    assetRate: display.assetRate ?? allotment.rentRate ?? resolvedAsset.rate ?? "",
+    assetRefNumber: display.assetRefNumber || "",
+    // fileReferenceNumber lives in additionalDetails — expose as form field only.
+    fileReferenceNumber: getFileReferenceNumber(allotment, resolvedAsset),
+    citizenLetter: toFileValue(
+      allotment.citizenLetter ?? allotment.citizenRequestLetter
+    ),
+    allotmentLetter: toFileValue(allotment.allotmentLetter),
+    signedDeed: toFileValue(allotment.signedDeed),
   };
+  delete base.eofficeFileNo;
+  delete base.eOfficeFileNo;
+  delete base.asset;
+  delete base.Asset;
 
-  const normalized = normalizeAllotmentFlatData(base, asset, routeConfig);
+  const normalized = normalizeAllotmentFlatData(base, resolvedAsset, routeConfig);
   normalized.billingCycle = rehydrateBillingCycleOption(normalized, routeConfig);
   return normalized;
 };
@@ -162,7 +198,7 @@ export const buildAckDetailsFromRouteConfig = ({
   const fallbackPairs = [
     ["EST_ALLOTMENT_NUMBER", extraData.allotmentNo || formValues.allotmentNo],
     ["EST_ASSET_NUMBER", extraData.assetNo || formValues.assetNo],
-    ["EST_ASSET_REFERENCE_NUMBER", extraData.assetRefNumber || formValues.assetRefNumber],
+    ["FILE_REFERENCE_NUMBER", extraData.fileReferenceNumber || formValues.fileReferenceNumber],
     ["EST_BUILDING_NAME", extraData.buildingName || formValues.buildingName],
     ["EST_LOCALITY", extraData.localityDisplay || formValues.localityDisplay],
     ["EST_TOTAL_AREA", extraData.totalFloorArea || formValues.totalFloorArea],

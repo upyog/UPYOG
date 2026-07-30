@@ -247,22 +247,98 @@ export const resolveLocalityDisplay = (asset, t = (k) => k) => {
 const pickValue = (...values) =>
   values.find((v) => v !== null && v !== undefined && v !== "");
 
+/** Parse additionalDetails whether API returns object or JSON string. */
+export const parseAdditionalDetails = (raw) => {
+  if (!raw) return {};
+  if (typeof raw === "object" && !Array.isArray(raw)) return raw;
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+        ? parsed
+        : {};
+    } catch (e) {
+      return {};
+    }
+  }
+  return {};
+};
+
+/**
+ * fileReferenceNumber lives in Allotment.additionalDetails (not eofficeFileNo).
+ * UI form field name is always fileReferenceNumber.
+ */
+export const getFileReferenceNumber = (allotment = {}, asset = {}) => {
+  const allotmentDetails = parseAdditionalDetails(allotment.additionalDetails);
+  const assetDetails = parseAdditionalDetails(asset.additionalDetails);
+  return (
+    pickValue(
+      allotmentDetails.fileReferenceNumber,
+      allotment.fileReferenceNumber,
+      // Legacy uppercase key — read-only fallback for older records.
+      allotmentDetails.FILE_REFERENCE_NUMBER,
+      assetDetails.fileReferenceNumber,
+      assetDetails.FILE_REFERENCE_NUMBER
+    ) || ""
+  );
+};
+
+export const getAllotmentNo = (item = {}) =>
+  String(item?.allotmentNo ?? item?.additionalDetails?.allotmentNo ?? "").trim();
+
+/** Prefer explicit asset; fall back to nested Allotments[].asset from _search. */
+export const resolveAllotmentAsset = (asset = {}, allotment = {}) => {
+  if (asset && Object.keys(asset).length > 0) return asset;
+  return allotment?.asset || allotment?.Asset || {};
+};
+
 /** Shared asset summary fields for assign-assets form, check page, and ack PDF. */
-export const buildAllotmentAssetDisplay = (asset = {}, allotment = {}, t = (k) => k) => ({
-  allotmentNo: pickValue(
-    allotment.allotmentNo,
-    allotment.additionalDetails?.allotmentNo
-  ),
-  assetNo: pickValue(allotment.assetNo, asset.estateNo, asset.assetNo),
-  assetRefNumber: pickValue(
+export const buildAllotmentAssetDisplay = (asset = {}, allotment = {}, t = (k) => k) => {
+  const resolvedAsset = resolveAllotmentAsset(asset, allotment);
+  const localityLabel = resolveLocalityDisplay(resolvedAsset, t);
+  const floor = pickValue(
+    allotment.buildingFloor,
+    resolvedAsset.buildingFloor,
+    resolvedAsset.floor
+  );
+  // Prefer Asset.refAssetNo from asset/_search (employee application-details).
+  const assetRefNumber = pickValue(
+    resolvedAsset.refAssetNo,
+    resolvedAsset.assetRef,
     allotment.assetReferenceNo,
-    allotment.assetRefNumber,
-    asset.refAssetNo,
-    asset.assetRef
-  ),
-  buildingName: pickValue(allotment.buildingName, asset.buildingName),
-  localityDisplay: resolveLocalityDisplay(asset, t),
-  totalFloorArea: pickValue(allotment.totalFloorArea, asset.totalFloorArea),
-  buildingFloor: pickValue(allotment.buildingFloor, asset.buildingFloor, asset.floor),
-  assetRate: pickValue(allotment.rentRate, allotment.rate, asset.rate),
-});
+    allotment.assetRefNumber
+  );
+  const fileReferenceNumber = getFileReferenceNumber(allotment, resolvedAsset);
+
+  return {
+    allotmentNo: pickValue(
+      allotment.allotmentNo,
+      allotment.additionalDetails?.allotmentNo
+    ),
+    assetNo: pickValue(
+      allotment.assetNo,
+      resolvedAsset.estateNo,
+      resolvedAsset.assetNo
+    ),
+    assetRefNumber,
+    // Aliases used by MDMS / registration / allotment form field names.
+    assetReferenceNo: assetRefNumber,
+    refAssetNo: assetRefNumber,
+    assetRef: assetRefNumber,
+    buildingName: pickValue(
+      allotment.buildingName,
+      resolvedAsset.buildingName,
+      resolvedAsset.assetName
+    ),
+    localityDisplay: localityLabel,
+    locality: localityLabel || resolvedAsset.locality || "",
+    totalFloorArea: pickValue(
+      allotment.totalFloorArea,
+      resolvedAsset.totalFloorArea
+    ),
+    buildingFloor: floor,
+    floor,
+    assetRate: pickValue(allotment.rentRate, allotment.rate, resolvedAsset.rate),
+    fileReferenceNumber,
+  };
+};

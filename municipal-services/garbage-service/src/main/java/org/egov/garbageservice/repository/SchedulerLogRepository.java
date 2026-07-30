@@ -1,11 +1,17 @@
 package org.egov.garbageservice.repository;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.egov.garbageservice.model.SchedulerLog;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Repository component for SchedulerLog database interactions.
+ *
+ * <p>Provides data access, query building, and persistence operations for the garbage service domain.
+ */
 @Repository
 public class SchedulerLogRepository {
 
@@ -13,9 +19,36 @@ public class SchedulerLogRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    /**
+     * Persists a new entity record into the database.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Validates the incoming request payload and audit details.</li>
+     *   <li>Constructs the parameterized SQL insert query for entity persistence.</li>
+     *   <li>Executes the database insert using {@link org.springframework.jdbc.core.JdbcTemplate}.</li>
+     *   <li>Returns the created entity instance with populated audit metadata.</li>
+     * </ol>
+     *
+     */
+
     public SchedulerLogRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
+
+    /**
+     * Persists a new entity record into the database.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Validates the incoming request payload and audit details.</li>
+     *   <li>Constructs the parameterized SQL insert query for entity persistence.</li>
+     *   <li>Executes the database insert using {@link org.springframework.jdbc.core.JdbcTemplate}.</li>
+     *   <li>Returns the created entity instance with populated audit metadata.</li>
+     * </ol>
+     *
+     * @param schedulerLog the schedulerLog parameter for this operation
+     */
 
     public void save(SchedulerLog schedulerLog) {
         Map<String, Object> params = new HashMap<>();

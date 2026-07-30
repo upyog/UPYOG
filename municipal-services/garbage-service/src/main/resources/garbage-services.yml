@@ -197,9 +197,9 @@ serviceMaps:
           jsonMaps:
 
             - jsonPath: $.garbageAccounts.*.documents.*.uuid
-            
+
             - jsonPath: $.garbageAccounts.*.grbgOldDetails.garbageId
-            
+
             - jsonPath: $.garbageAccounts.*.documents.*.documentUid
 
             - jsonPath: $.garbageAccounts.*.documents.*.fileStoreId
@@ -558,7 +558,8 @@ serviceMaps:
               tenant_id = ?,
               business_service = ?,
               approval_date = ?,
-              channel = ?
+              channel = ?,
+              due_date = TO_DATE(?, 'DD-MM-YYYY')
             WHERE id = ?;
 
           basePath: $.garbageAccounts.*
@@ -604,6 +605,8 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.approvalDate
 
             - jsonPath: $.garbageAccounts.*.channel
+
+            - jsonPath: $.garbageAccounts.*.dueDate
 
             - jsonPath: $.garbageAccounts.*.id
 
@@ -956,20 +959,96 @@ serviceMaps:
             - jsonPath: $.garbagePaymentDetails.createdTime
             - jsonPath: $.garbagePaymentDetails.lastModifiedTime
 
-
     - version: 1.0
-      description: Update garbage account details
-      fromTopic: update-garbage-account
-
+      description: Persist shedlock details
+      fromTopic: save-shedlock
       isTransaction: true
       queryMaps:
-        - query: UPDATE eg_garbage_account SET due_date = TO_DATE(?, 'DD-MM-YYYY'), application_id = ?, allotment_no = ?, status = ?, lastmodifiedby = ?, lastmodifiedtime = ?, uuid = ?;
-          basePath: garbageAccounts.*
+
+        - query: >
+            INSERT INTO shedlock
+            (
+              name,
+              lock_until,
+              locked_at,
+              locked_by
+            )
+            VALUES
+            (
+              ?, ?, ?, ?
+            );
+
+          basePath: $.shedlock
+
           jsonMaps:
-            - jsonPath: $.garbageAccounts.*.dueDate
-            - jsonPath: $.garbageAccounts.*.application_id
-            - jsonPath: $.garbageAccounts.*.application_no
-            - jsonPath: $.garbageAccounts.*.status
-            - jsonPath: $.garbageAccounts.*.auditDetails.lastModifiedBy
-            - jsonPath: $.garbageAccounts.*.auditDetails.lastModifiedTime
-            - jsonPath: $.garbageAccounts.*.uuid
+
+            - jsonPath: $.shedlock.name
+
+            - jsonPath: $.shedlock.lockUntil
+
+            - jsonPath: $.shedlock.lockedAt
+
+            - jsonPath: $.shedlock.lockedBy
+              
+              
+    - version: 1.0
+      description: Persist garbage scheduler log
+      fromTopic: save-grbg-scheduler-log
+      isTransaction: true
+      queryMaps:
+
+        - query: >
+            INSERT INTO eg_grbg_scheduler_log
+            (
+              id,
+              garbage_account_id,
+              tenant_id,
+              billing_date,
+              billing_period_from,
+              billing_period_to,
+              amount,
+              penalty_amount,
+              payment_type,
+              status,
+              created_by,
+              created_time,
+              last_modified_by,
+              last_modified_time
+            )
+            VALUES
+            (
+              ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'),
+              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            );
+
+          basePath: $.schedulerLog
+
+          jsonMaps:
+
+            - jsonPath: $.schedulerLog.id
+
+            - jsonPath: $.schedulerLog.garbageAccountId
+
+            - jsonPath: $.schedulerLog.tenantId
+
+            - jsonPath: $.schedulerLog.billingDate
+
+            - jsonPath: $.schedulerLog.billingPeriodFrom
+
+            - jsonPath: $.schedulerLog.billingPeriodTo
+
+            - jsonPath: $.schedulerLog.amount
+
+            - jsonPath: $.schedulerLog.penaltyAmount
+
+            - jsonPath: $.schedulerLog.paymentType
+
+            - jsonPath: $.schedulerLog.status
+
+            - jsonPath: $.schedulerLog.createdBy
+
+            - jsonPath: $.schedulerLog.createdTime
+
+            - jsonPath: $.schedulerLog.lastModifiedBy
+
+            - jsonPath: $.schedulerLog.lastModifiedTime

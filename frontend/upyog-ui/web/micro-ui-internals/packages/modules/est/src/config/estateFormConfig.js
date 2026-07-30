@@ -97,7 +97,7 @@ const estateStaticFields = (flatData) => ({
   // Old create payload sent "DEPT_2"; sending "" can trip backend validation
   // on required department.
   department: flatData?.department || "DEPT_2",
-  estateNo: "",
+  estateNo: flatData?.estateNo || flatData?.searchEstateNo || "",
 });
 
 /**
@@ -157,6 +157,10 @@ const estateComputedFields = [
  * @type {Array<object>}
  */
 const estateFormFieldOverrides = [
+  {
+    key: "EST_ASSET_NUMBER",
+    field: { name: "searchEstateNo", prefillFrom: "estateNo" },
+  },
   {
     key: "EST_BUILDING_FLOOR",
     field: { name: "buildingFloor", type: "text", numeric: true },

@@ -36,6 +36,15 @@ const BannerPicker = (props) => {
  * success or failure messages. The component handles the mutation of 
  * GC data and manages loading states effectively.
  */
+/**
+ * GCAcknowledgement Component
+ * 
+ * Displays the acknowledgment/receipt after a GC application is submitted or updated.
+ * Shows a success or failure banner with the application number. Provides navigation
+ * back to the home page and a "Make Payment" button for successful applications.
+ * 
+ * Handles both citizen and employee user types with appropriate navigation paths.
+ */
 const GCAcknowledgement = () => {
   const { t } = useTranslation();
   const { state } = useLocation();
@@ -89,9 +98,6 @@ const GCAcknowledgement = () => {
         {isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{ whiteSpace: "pre", width: "60%" }} />}
       </StatusTable>
       
-      {isSuccess && (
-        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />
-      )}
 
       {user?.type === "CITIZEN" ? (
         <Link to={`/upyog-ui/citizen`}>

@@ -5,6 +5,17 @@ import { useTranslation } from "react-i18next";
 // Garbage Collection Application Component
 // This component displays the details of an application and provides options to view the summary or make a payment.
 
+/**
+ * GCApplication Component
+ * 
+ * Displays a summary card for a single GC application in the citizen's "My Applications" list.
+ * Shows application number, applicant name, and status. Provides buttons to view details
+ * and optionally make a payment if the application status is PENDING_FOR_PAYMENT.
+ * 
+ * Props:
+ * - `application`: The application object containing applicant details, status, etc.
+ * - `tenantId`: Current tenant ID for payment navigation
+ */
 const GCApplication = ({ application, tenantId }) => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
@@ -23,9 +34,7 @@ const GCApplication = ({ application, tenantId }) => {
   };
 
   const handleMakePayment = () => {
-    navigate({
-      pathname: `/upyog-ui/citizen/payment/collect/gc-services/${encodeURIComponent(appNo)}/${tenantId}?tenantId=${tenantId}`,
-    });
+     navigate(`/upyog-ui/citizen/payment/my-bills/${"garbage-service"}/${appNo}`);
   };
 
   return (
@@ -37,7 +46,7 @@ const GCApplication = ({ application, tenantId }) => {
       <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
         <SubmitBar label={t("CS_VIEW_DETAILS")} onSubmit={handleViewSummary} style={{ flex: 1 }} />
         
-        {appStatus === "PENDINGPAYMENT" && (
+        {appStatus === "PENDING_FOR_PAYMENT" && (
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} style={{ flex: 1 }} />
         )}
       </div>

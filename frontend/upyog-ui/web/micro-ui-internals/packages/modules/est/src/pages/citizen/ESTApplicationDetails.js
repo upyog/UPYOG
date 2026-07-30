@@ -11,7 +11,10 @@ import estateAllotmentFormOverrides from "../../config/Create/estateAllotmentFor
 import { EST_CHECK_FLOWS } from "../../config/estCheckPageConfig";
 import { checkForNA, ESTDocumnetPreview } from "../../utils";
 import { buildAllotmentAckFormValues } from "../../utils/acknowledgementUtils";
-import { buildAllotmentAssetDisplay } from "../../utils/estMdmsUtils";
+import {
+  buildAllotmentAssetDisplay,
+  resolveAllotmentAsset,
+} from "../../utils/estMdmsUtils";
 
 const getAllotmentNo = (item = {}) =>
   String(
@@ -57,6 +60,7 @@ const ESTApplicationDetails = () => {
     tenantIdParam ||
     passedAllotment?.tenantId ||
     passedAsset?.tenantId ||
+    Digit.ULBService.getCitizenCurrentTenant?.(true) ||
     Digit.ULBService.getCurrentTenantId();
 
   const [asset, setAsset] = useState(null);
@@ -80,84 +84,137 @@ const ESTApplicationDetails = () => {
       try {
         let nextAllotment = null;
         let nextAsset = null;
+        const isAllotmentNo = /^EST-AL-/i.test(decodedId);
+        const passedMatches =
+          passedAllotment &&
+          (getAllotmentNo(passedAllotment) === decodedId ||
+            !getAllotmentNo(passedAllotment))
+            ? passedAllotment
+            : null;
 
-        // 1) Prefer allotment matched by allotmentNo (citizen View Summary URL).
-        if (decodedId) {
-          const passedMatches =
-            passedAllotment && getAllotmentNo(passedAllotment) === decodedId
-              ? passedAllotment
-              : null;
-
-          if (passedMatches) {
-            nextAllotment = passedMatches;
-          } else {
-            try {
-              const allotRes = await Digit.ESTService.allotmentSearch({
-                tenantId,
-                filters: { tenantId },
-              });
-              const list = allotRes?.Allotments || allotRes?.allotments || [];
-              nextAllotment =
-                list.find((item) => getAllotmentNo(item) === decodedId) || null;
-            } catch (err) {
-              console.warn("EST application details: allotment search failed", err);
-            }
-          }
-        }
-
-        // 2) Legacy: treat URL id as estateNo / assetNo when no allotment matched.
-        const estateNo =
-          nextAllotment?.assetNo ||
-          nextAllotment?.estateNo ||
-          (!nextAllotment ? decodedId : "") ||
-          passedAsset?.estateNo ||
-          passedAsset?.assetNo ||
-          "";
-
-        if (estateNo) {
-          try {
-            const assetRes = await Digit.ESTService.assetSearch({
-              tenantId,
-              filters: {
-                AssetSearchCriteria: {
-                  tenantId,
-                  estateNo,
-                },
-              },
-            });
-            nextAsset = assetRes?.Assets?.[0] || null;
-          } catch (err) {
-            console.warn("EST application details: asset search failed", err);
-          }
-        }
-
-        // If we only had estateNo in the URL, also try allotment by assetNo.
-        if (!nextAllotment && estateNo) {
+        // Citizen View Summary: always search by allotmentNo
+        // POST /estate-management/estate/allotment/v1/_search
+        // body: { AllotmentSearchCriteria: { tenantId, allotmentNo } }
+        if (decodedId && isAllotmentNo) {
           try {
             const allotRes = await Digit.ESTService.allotmentSearch({
               tenantId,
               filters: {
                 tenantId,
-                assetNo: estateNo,
+                allotmentNo: decodedId,
               },
             });
-            nextAllotment = allotRes?.Allotments?.[0] || null;
+            const list = allotRes?.Allotments || allotRes?.allotments || [];
+            const fromApi =
+              list.find((item) => getAllotmentNo(item) === decodedId) ||
+              (passedMatches
+                ? list.find(
+                    (item) =>
+                      (item?.allotmentId &&
+                        item.allotmentId === passedMatches.allotmentId) ||
+                      (item?.assetNo &&
+                        item.assetNo ===
+                          (passedMatches.assetNo || passedMatches.estateNo))
+                  )
+                : null) ||
+              (list.length === 1 ? list[0] : null);
+
+            // Prefer API row; keep list-card fields as fallback (e.g. allotmentNo).
+            if (fromApi) {
+              nextAllotment = {
+                ...(passedMatches || {}),
+                ...fromApi,
+                allotmentNo:
+                  getAllotmentNo(fromApi) ||
+                  getAllotmentNo(passedMatches) ||
+                  decodedId,
+              };
+              // Allotment _search embeds asset — never call asset/_search here.
+              nextAsset =
+                fromApi.asset ||
+                fromApi.Asset ||
+                passedMatches?.asset ||
+                passedMatches?.Asset ||
+                null;
+            }
           } catch (err) {
-            console.warn("EST application details: allotment-by-asset search failed", err);
+            console.warn("EST application details: allotment search failed", err);
+          }
+
+          if (!nextAllotment && passedMatches) {
+            nextAllotment = {
+              ...passedMatches,
+              allotmentNo: getAllotmentNo(passedMatches) || decodedId,
+            };
+            nextAsset =
+              passedMatches.asset || passedMatches.Asset || null;
+          }
+        } else if (decodedId) {
+          // Legacy employee flow: URL id is estateNo / assetNo.
+          const estateNo =
+            passedAsset?.estateNo ||
+            passedAsset?.assetNo ||
+            decodedId ||
+            "";
+
+          if (estateNo) {
+            try {
+              const assetRes = await Digit.ESTService.assetSearch({
+                tenantId,
+                filters: {
+                  AssetSearchCriteria: {
+                    tenantId,
+                    estateNo,
+                  },
+                },
+              });
+              nextAsset = assetRes?.Assets?.[0] || null;
+            } catch (err) {
+              console.warn("EST application details: asset search failed", err);
+            }
+          }
+
+          if (!nextAllotment && estateNo) {
+            try {
+              const allotRes = await Digit.ESTService.allotmentSearch({
+                tenantId,
+                filters: {
+                  tenantId,
+                  assetNo: estateNo,
+                },
+              });
+              nextAllotment = allotRes?.Allotments?.[0] || null;
+            } catch (err) {
+              console.warn("EST application details: allotment-by-asset search failed", err);
+            }
+          }
+
+          // Prefer asset/_search; fall back to navigation state. Keep refAssetNo.
+          if (!nextAsset && passedAsset) {
+            nextAsset = passedAsset;
+          } else if (
+            nextAsset &&
+            !nextAsset.refAssetNo &&
+            (passedAsset?.refAssetNo || passedAsset?.assetRef)
+          ) {
+            nextAsset = {
+              ...nextAsset,
+              refAssetNo: passedAsset.refAssetNo || passedAsset.assetRef,
+            };
           }
         }
 
-        if (!nextAsset && passedAsset?.estateNo) {
-          nextAsset = passedAsset;
+        if (nextAllotment && !getAllotmentNo(nextAllotment) && isAllotmentNo) {
+          nextAllotment = { ...nextAllotment, allotmentNo: decodedId };
         }
 
-        // Ensure allotmentNo is set from URL when API row is missing it.
-        if (
-          nextAllotment &&
-          !getAllotmentNo(nextAllotment) &&
-          /^EST-AL-/i.test(decodedId)
-        ) {
-          nextAllotment = { ...nextAllotment, allotmentNo: decodedId };
+        // Allotment _search embeds asset on the row — use it (no asset/_search).
+        if (!nextAsset && nextAllotment) {
+          nextAsset =
+            nextAllotment.asset ||
+            nextAllotment.Asset ||
+            passedMatches?.asset ||
+            null;
         }
 
         if (mounted) {
@@ -200,9 +257,10 @@ const ESTApplicationDetails = () => {
   const flow = EST_CHECK_FLOWS.allotment;
 
   const sessionValue = useMemo(() => {
+    const resolvedAsset = resolveAllotmentAsset(asset, allotment || {});
     const formValues = buildAllotmentAckFormValues(
       allotment || {},
-      asset || {},
+      resolvedAsset,
       routeConfig
     );
     if (!formValues.allotmentNo && /^EST-AL-/i.test(decodedId)) {
@@ -210,12 +268,13 @@ const ESTApplicationDetails = () => {
     }
     return {
       Allotments: { Allotments: [formValues] },
-      assetData: asset || {},
+      assetData: resolvedAsset,
     };
   }, [allotment, asset, routeConfig, decodedId]);
 
   const extraData = useMemo(() => {
-    const display = buildAllotmentAssetDisplay(asset || {}, allotment || {}, t);
+    const resolvedAsset = resolveAllotmentAsset(asset, allotment || {});
+    const display = buildAllotmentAssetDisplay(resolvedAsset, allotment || {}, t);
     if (!display.allotmentNo && /^EST-AL-/i.test(decodedId)) {
       display.allotmentNo = decodedId;
     }

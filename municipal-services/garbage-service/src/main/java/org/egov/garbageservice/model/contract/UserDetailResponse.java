@@ -1,14 +1,12 @@
 package org.egov.garbageservice.model.contract;
 
-import java.util.List;
-
-import org.egov.common.contract.response.ResponseInfo;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.response.ResponseInfo;
+
+import java.util.List;
 
 /**
  * Response wrapper returned from user service search or create APIs.
@@ -19,9 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class UserDetailResponse {
-	@JsonProperty("responseInfo")
-	ResponseInfo responseInfo;
+    @JsonProperty("responseInfo")
+    ResponseInfo responseInfo;
 
-	@JsonProperty("user")
-	List<OwnerInfo> user;
+    @JsonProperty("user")
+    List<OwnerInfo> user;
 }
