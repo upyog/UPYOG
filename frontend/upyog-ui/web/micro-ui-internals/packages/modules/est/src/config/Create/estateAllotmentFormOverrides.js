@@ -27,21 +27,7 @@
  * or dropdown master) → edit MDMS. If it's behavior/compute/validation → here.
  */
 
-const parseAdditionalDetails = (raw) => {
-  if (!raw) return {};
-  if (typeof raw === "object" && !Array.isArray(raw)) return raw;
-  if (typeof raw === "string") {
-    try {
-      const parsed = JSON.parse(raw);
-      return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-        ? parsed
-        : {};
-    } catch (e) {
-      return {};
-    }
-  }
-  return {};
-};
+import { parseAdditionalDetails } from "../../utils/estMdmsUtils";
 
 const estateAllotmentFormOverrides = {
   // Wizard step key + API envelope key: payload is sent as { Allotments: [...] }.
