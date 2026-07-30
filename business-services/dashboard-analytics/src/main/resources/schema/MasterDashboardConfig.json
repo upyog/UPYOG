@@ -10084,16 +10084,16 @@
               "label": "",
               "charts": [
                 {
-                  "id": "financeTotalBillsGenerated",
-                  "name": "DSS_FINANCE_TOTAL_BILLS_GENERATED",
+                  "id": "financeTotalRevenueCollected",
+                  "name": "FINANCE_TOTAL_REVENUE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeTotalPayments",
-                  "name": "DSS_FINANCE_TOTAL_PAYMENTS",
+                  "id": "financeTotalExpenditures",
+                  "name": "FINANCE_TOTAL_EXPENDITURE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -11193,16 +11193,16 @@
               "isCollapsible": false,
               "charts": [
                 {
-                  "id": "financeTotalRegisteredULBs",
-                  "name": "Total Registered ULB's",
+                  "id": "financePreviousYearRevenueCollected",
+                  "name": "NSS_FIN_PREV_YEAR_REVENUE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeTotalIncome",
-                  "name": "NURT_FINANCE_TOTAL_INCOME",
+                  "id": "financePreviousYearExpenditure",
+                  "name": "NSS_FIN_PREV_YEAR_EXPENDITURE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -11217,16 +11217,40 @@
                   "headers": []
                 },
                 {
-                  "id": "financeTotalBillCreated",
-                  "name": "NURT_FINANCE_TOTAL_BILL_CREATED",
+                  "id": "financeOutstandingDebt",
+                  "name": "NURT_FINANCE_OUTSTANDING_DEBT",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeNumberOfBillsPaid",
-                  "name": "NURT_FINANCE_TOTAL_BILL_PAYEMENTS_DONE",
+                  "id": "financeAuditCompletionRate",
+                  "name": "NURT_AUDIT_COMPLTE_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financePendingBills",
+                  "name": "NURT_FINANCE_PENDING_BILLS",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeFundBalance",
+                  "name": "NURT_FINANCE_FUND_BALANCE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeRevenueToExpenditureRatio",
+                  "name": "FINANCE_REVENUE_TO_EXPENDITURE_RATIO",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -11236,7 +11260,7 @@
             },
             {
               "id": 412,
-              "name": "Total Cumulative Collection",
+              "name": "Total Cumulative Collection VS Expenditure",
               "dimensions": {
                 "height": 350,
                 "width": 7
@@ -11248,6 +11272,34 @@
               "charts": [
                 {
                   "id": "financeIncomeExpenditureForLines",
+                  "name": "Monthly",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "row": 2,
+          "name": "NURT_FINANCE",
+          "vizArray": [
+            {
+              "id": 213,
+              "name": "Total Cumulative Collection",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "financeTotalCollectionForLines",
                   "name": "Monthly",
                   "code": "",
                   "chartType": "line",
