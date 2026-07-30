@@ -2,19 +2,42 @@
 
 import { CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
 
-// Returns true to hide the back button if a match is found; otherwise, returns false.
+/**
+ * Determines if the back button should be hidden based on the current URL
+ * matching screen paths in the config array.
+ * 
+ * @param {Array} config - Array of objects with `screenPath` keys to check against the current URL
+ * @returns {boolean} - Returns true to hide the back button if a match is found; otherwise, false
+ */
 export const shouldHideBackButton = (config = []) => {
     return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0;
 };
 
+/**
+ * Checks if a value is not null, undefined, or empty string.
+ * @param {string} value - The value to check
+ * @returns {boolean} - True if the value is not null/undefined/empty
+ */
 export const checkForNotNull = (value = "") => {
     return value && value !== null && value !== undefined && value !== "";
 };
 
+/**
+ * Returns the value if not null/undefined/empty, otherwise returns "NA".
+ * @param {string} value - The value to check
+ * @returns {string} - The original value or "NA"
+ */
 export const checkForNA = (value = "") => {
     return checkForNotNull(value) ? value : "NA";
 };
 
+/**
+ * Replaces all occurrences of a substring in a string.
+ * @param {string} str - The original string
+ * @param {string} searcher - The substring to search for
+ * @param {string} replaceWith - The replacement string
+ * @returns {string} - The modified string with all occurrences replaced
+ */
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
     if (searcher === "") return str;
 
@@ -25,6 +48,14 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
     return str;
 };
 
+/**
+ * Extracts the original file download URL from a document object.
+ * Filters out thumbnail variants (large, medium, small) to get the full-size link.
+ * @param {object} documents - Object mapping fileStoreId to comma-separated URLs
+ * @param {string} fileStoreId - The file store ID to look up
+ * @param {string} format - Optional format filter
+ * @returns {string} - The full-size file download URL
+ */
 export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
     let downloadLink = documents[fileStoreId] || "";
     let differentFormats = downloadLink?.split(",") || [];

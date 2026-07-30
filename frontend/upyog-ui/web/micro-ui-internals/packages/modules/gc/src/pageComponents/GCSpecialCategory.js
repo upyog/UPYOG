@@ -3,6 +3,21 @@ import { RadioButtons, LabelFieldPair, CardLabel, Dropdown, Loader, FormStep } f
 import { useLocation } from "react-router-dom";
 
 
+/**
+ * GCSpecialCategory Component
+ * 
+ * Renders a step in the GC wizard for selecting a special category (e.g., senior citizen, 
+ * disability, etc.). Fetches available categories from MDMS and displays them as radio buttons
+ * for citizens or dropdown for employees. Supports read-only mode during edit flows.
+ * 
+ * Props:
+ * - `t`: i18n translation function
+ * - `config`: Step configuration from the wizard config
+ * - `onSelect`: Callback when the category is selected
+ * - `userType`: "citizen" or "employee" to adjust field layout
+ * - `formData`: Current accumulated form data
+ * - `renewApplication`: Existing application data for pre-filling during edit
+ */
 const GCSpecialCategory = ({ t, config, onSelect, userType, formData, renewApplication }) => {
 
 

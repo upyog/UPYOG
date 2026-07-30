@@ -4,6 +4,16 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 
+/**
+ * ApplicationDetails Component
+ * 
+ * Renders the employee view of the GC application details page.
+ * Fetches application data using `useGCSearch`, shapes it for the shared
+ * `ApplicationDetailsTemplate`, and renders workflow actions for employee processing.
+ * 
+ * Extracts applicant details, address, garbage collection unit information from
+ * the API response and formats them into section-based detail cards.
+ */
 const ApplicationDetails = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -66,7 +76,7 @@ const ApplicationDetails = () => {
   const appData = application;
 
   const appNo = appData?.grbgApplication?.applicationNo || appData?.grbgApplicationNumber || t("CS_NA");
-  const appStatus = appData?.grbgApplication?.status || appData?.status || t("CS_NA");
+  const appStatus = appData?.status || t("CS_NA");
 
   const applicant = appData?.additionalDetail?.applicantDetails?.[0] || {};
   const ownerNames = applicant?.name || applicant?.applicantName || appData?.name || t("CS_NA");
