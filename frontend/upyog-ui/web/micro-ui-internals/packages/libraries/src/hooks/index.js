@@ -215,6 +215,8 @@ import useUpdateSurvey from "./surveys/useSurveyUpdate";
 import useNOCDetails from "./noc/useNOCDetails";
 import useNOCInbox from "./noc/useInbox";
 import useNOCSearchApplication from "./noc/useSearchApplications";
+import useFireNOCSearch from "./noc/useFireNOCSearch";
+import useFireNOCAPI from "./noc/useFireNOCAPI";
 
 import WSSearchMdmsTypes from "./ws/WSSearchMdmsTypes";
 import usewsTenants from "./ws/useTenants";
@@ -600,6 +602,8 @@ const noc = {
   useNOCApplicationActions,
   useInbox: useNOCInbox,
   useNOCSearchApplication,
+  useFireNOCSearch,
+  useFireNOCAPI,
 };
 
 const challangeneration = {

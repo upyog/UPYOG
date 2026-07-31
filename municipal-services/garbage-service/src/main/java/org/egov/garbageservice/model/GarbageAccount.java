@@ -1,18 +1,14 @@
 package org.egov.garbageservice.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.tracer.annotations.CustomSafeHtml;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.*;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Data
@@ -24,111 +20,109 @@ import lombok.NoArgsConstructor;
  * Links property, applicant details, workflow action, nested application/commercial data, bills, and child accounts.
  * Persisted and returned by GarbageAccountService on create, update, search, and status transitions.
  */
-@EqualsAndHashCode(exclude = {"id","uuid","garbageId","propertyId","isOnlyWorkflowCall","workflowAction","workflowComment","grbgApplication","grbgCommercialDetails","auditDetails","garbageBills","childGarbageAccounts"})
+@EqualsAndHashCode(exclude = {"id", "uuid", "garbageId", "propertyId", "isOnlyWorkflowCall", "workflowAction", "workflowComment", "grbgApplication", "grbgCommercialDetails", "auditDetails", "garbageBills", "childGarbageAccounts"})
 public class GarbageAccount {
 
-	private Long id;
-	
-	@CustomSafeHtml
-	private String uuid;
+    private Long id;
 
-	@CustomSafeHtml
-	private String tenantId;
+    @CustomSafeHtml
+    private String uuid;
 
-	private Long garbageId;
+    @CustomSafeHtml
+    private String tenantId;
 
-	@CustomSafeHtml
-	private String propertyId;
+    private Long garbageId;
 
-	@CustomSafeHtml
-	private String type;
+    @CustomSafeHtml
+    private String propertyId;
 
-	@CustomSafeHtml
-	private String name;
+    @CustomSafeHtml
+    private String type;
 
-	@CustomSafeHtml
-	private String mobileNumber;
+    @CustomSafeHtml
+    private String name;
 
-	@CustomSafeHtml
-	private String gender;
+    @CustomSafeHtml
+    private String mobileNumber;
 
-	@CustomSafeHtml
-	private String emailId;
+    @CustomSafeHtml
+    private String gender;
 
-	private Boolean isOwner; 
-	
-	@CustomSafeHtml
-	private String userUuid;
+    @CustomSafeHtml
+    private String emailId;
 
-	@CustomSafeHtml
-	private String created_by;
+    private Boolean isOwner;
 
-	@CustomSafeHtml
-	private String declarationUuid;
+    @CustomSafeHtml
+    private String userUuid;
 
-	@CustomSafeHtml
-	private String workflowAction;
+    @CustomSafeHtml
+    private String created_by;
 
-	@CustomSafeHtml
-	private String workflowComment;
-	
-	@Builder.Default
-	private Boolean isOnlyWorkflowCall = false;
+    @CustomSafeHtml
+    private String declarationUuid;
 
-	@CustomSafeHtml
-	private String status;
+    @CustomSafeHtml
+    private String workflowAction;
 
-	// new payload field — maps to status after enrichment
-	@CustomSafeHtml
-	private String applicationStatus;
+    @CustomSafeHtml
+    private String workflowComment;
 
-	private GrbgApplication grbgApplication;
+    @Builder.Default
+    private Boolean isOnlyWorkflowCall = false;
 
-	@CustomSafeHtml
-	private String grbgApplicationNumber;
+    @CustomSafeHtml
+    private String status;
 
-	private GrbgOldDetails grbgOldDetails;
+    // new payload field — maps to status after enrichment
+    @CustomSafeHtml
+    private String applicationStatus;
 
-//	private GrbgCommercialDetails grbgCommercialDetails;
+    private GrbgApplication grbgApplication;
 
-	private List<GrbgDocument> documents = new ArrayList<>();
+    @CustomSafeHtml
+    private String grbgApplicationNumber;
 
-	// new nested payload objects — mapped to flat fields in GarbageAccountService.mapNewPayloadToFlatFields()
-	private GarbageSpecification garbageSpecification;
+    private GrbgOldDetails grbgOldDetails;
 
-	private PropertyLocation propertyLocation;
 
-	private WorkflowRequest workflow;
+    private List<GrbgDocument> documents = new ArrayList<>();
 
-	// applicant person details from the new payload; persisted into additionalDetail during enrichment
-	private List<ApplicantDetail> applicantDetails = new ArrayList<>();
+    private GarbageSpecification garbageSpecification;
 
-	private AuditDetails auditDetails;
-	
-//	private List<GarbageBill> garbageBills;
+    private PropertyLocation propertyLocation;
 
-	private List<GrbgCollectionUnit> grbgCollectionUnits = new ArrayList<>();
+    private WorkflowRequest workflow;
 
-	private List<GrbgAddress> addresses = new ArrayList<>();
+    // applicant person details from the new payload; persisted into additionalDetail during enrichment
+    private List<ApplicantDetail> applicantDetails = new ArrayList<>();
+
+    private AuditDetails auditDetails;
+
+
+    private List<GrbgCollectionUnit> grbgCollectionUnits = new ArrayList<>();
+
+    private List<GrbgAddress> addresses = new ArrayList<>();
 
     private JsonNode additionalDetail = null;
 
-	private List<GarbageAccount> childGarbageAccounts = new ArrayList<>();
-	
-	@CustomSafeHtml
-	private String parentAccount;
-	
-	private Boolean isActive = false;
-	
-	private Long subAccountCount;
-	
-	private Long approvalDate;
-	
-	@CustomSafeHtml
-	private String businessService;
-	
-	@CustomSafeHtml
-	private String channel;
+    private List<GarbageAccount> childGarbageAccounts = new ArrayList<>();
 
-	
+    @CustomSafeHtml
+    private String parentAccount;
+
+    private Boolean isActive = false;
+
+    private Long subAccountCount;
+
+    private Long approvalDate;
+
+    @CustomSafeHtml
+    private String businessService;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate dueDate;
+
+    @CustomSafeHtml
+    private String channel;
 }

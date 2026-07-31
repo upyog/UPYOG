@@ -66,7 +66,7 @@ public class DemandService {
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
 		if(!generateDemand) {
-			BigDecimal totalAmount = demandDetails.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+			BigDecimal totalAmount = demandDetails.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add).abs();
 			demand.setAdditionalDetails(totalAmount);
 			return demands;
 		}

@@ -1,16 +1,9 @@
 package org.egov.garbageservice.contract.workflow;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.egov.garbageservice.model.AuditDetails;
 import org.egov.tracer.annotations.CustomSafeHtml;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Setter
@@ -31,35 +24,30 @@ import lombok.Setter;
  * - Used when workflow states require docUploadRequired on {@link State}.
  * - equals/hashCode is based on id only.
  */
-public class Document   {
+public class Document {
 
-//        @Size(max=64)
-        @JsonProperty("id")
-        @CustomSafeHtml
-        private String id = null;
+    @JsonProperty("id")
+    @CustomSafeHtml
+    private String id = null;
 
-//        @Size(max=64)
-        @JsonProperty("tenantId")
-        @CustomSafeHtml
-        private String tenantId = null;
+    @JsonProperty("tenantId")
+    @CustomSafeHtml
+    private String tenantId = null;
 
-//        @Size(max=64)
-        @JsonProperty("documentType")
-        @CustomSafeHtml
-        private String documentType = null;
+    @JsonProperty("documentType")
+    @CustomSafeHtml
+    private String documentType = null;
 
-//        @Size(max=64)
-        @JsonProperty("fileStoreId")
-        @CustomSafeHtml
-        private String fileStoreId = null;
+    @JsonProperty("fileStoreId")
+    @CustomSafeHtml
+    private String fileStoreId = null;
 
-//        @Size(max=64)
-        @JsonProperty("documentUid")
-        @CustomSafeHtml
-        private String documentUid = null;
+    @JsonProperty("documentUid")
+    @CustomSafeHtml
+    private String documentUid = null;
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 
 
 }

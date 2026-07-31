@@ -638,17 +638,22 @@ const RequestInfo = {
       description: "unique API ID",
       maxLength: 128
     },
+    /*
+    * Below fields are not required in Micro-Ui Request Info.
+    * But if someone running the service in Mono-Ui setup, then they can Un-Comment It.
+
+
     ver: {
       type: "string",
       description:
         "API version - for HTTP based request this will be same as used in path",
       maxLength: 32
     },
-    // ts: {
-    //   type: "integer",
-    //   // format: "int64",
-    //   description: "time in epoch"
-    // },
+    ts: {
+      type: "integer",
+      // format: "int64",
+      description: "time in epoch"
+    },
     action: {
       type: "string",
       description:
@@ -666,6 +671,7 @@ const RequestInfo = {
         "API key (API key provided to the caller in case of server to server communication)",
       maxLength: 256
     },
+    */
     msgId: {
       type: "string",
       description: "Unique request message id from the caller",

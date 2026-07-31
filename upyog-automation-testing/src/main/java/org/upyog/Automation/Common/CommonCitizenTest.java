@@ -129,9 +129,7 @@ public class CommonCitizenTest extends BaseTest {
 
                     break;
 
-
                 case "PET_REGISTRATION":
-
                     ModuleWrapper.execute(
                             "PET_REGISTRATION",
                             () -> petCreateApplication.petApptest(
@@ -312,7 +310,7 @@ public class CommonCitizenTest extends BaseTest {
                 case "DESLUDGING_SERVICE_PAYMENT":
 
                     ModuleWrapper.execute(
-                            "DESLUDGING",
+                            "DESLUDGING_SERVICE",
                             () -> desludgingCitizenPayment.desludgingPaymentReg(
                                     driver,
                                     wait,
@@ -325,7 +323,7 @@ public class CommonCitizenTest extends BaseTest {
                 case "DESLUDGING_SERVICE_PAYMENT2":
 
                     ModuleWrapper.execute(
-                            "DESLUDGING",
+                            "DESLUDGING_SERVICE",
                             () -> desludgingCitizenPayment2.desludgingPayment2Reg(
                                     driver,
                                     wait,
@@ -388,13 +386,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "STREET_VENDING":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "STREET_VENDING",
                                 () -> svCreateApplication.svCreateReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -403,13 +402,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "TRADE_LICENSE":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "TRADE_LICENSE",
                                 () -> tradeLicenseCreate.tradeLicenceCitizenReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -418,12 +418,10 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "PET_REGISTRATION":
 
-                        ModuleWrapper.execute(
-                                "PET_REGISTRATION",
-                                () -> petCreateApplication.petApptest(
-                                        driver,
-                                        wait,
-                                        js
+                        modules.add(
+                                new ModuleTask(
+                                        "PET_REGISTRATION",
+                                        () -> petCreateApplication.petApptest(driver, wait, js)
                                 )
                         );
 
@@ -433,13 +431,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "ADVERTISEMENT":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "ADVERTISEMENT",
                                 () -> advBookingCreate.advBookingReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -449,13 +448,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "TREE_PRUNING":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "TREE_PRUNING",
                                 () -> treePruningCitizen.treePruningCreate(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -464,13 +464,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "WATER_TANKER":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "WATER_TANKER",
                                 () -> waterTankerCitizen.waterTankerCreate(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -479,13 +480,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "MOBILE_TOILET":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "MOBILE_TOILET",
                                 () -> mobileToiletCitizen.mobileToiletCreate(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -494,13 +496,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "PROPERTY_TAX":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "PROPERTY_TAX",
                                 () -> propertyTaxCreate.newPropertyReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -509,13 +512,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "PUBLIC_GRIEVANCE_REDRESSAL":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "PUBLIC_GRIEVANCE_REDRESSAL",
                                 () -> pgrCreate.pgrReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -523,13 +527,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM",
                                 () -> obpasCreate.obpasReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -538,26 +543,28 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC",
                                 () -> obpasOCCreate.obpasOCReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
 
                     case "EWASTE_MANAGEMENT_SYSTEM":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "EWASTE_MANAGEMENT_SYSTEM",
                                 () -> eWasteCreate.eWasteReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -565,13 +572,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "COMMUNITY_HALL_BOOKING":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "COMMUNITY_HALL_BOOKING",
                                 () -> chbCreate.chbReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -579,13 +587,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "CONSTRUCTION_AND_DEMOLITION":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "CONSTRUCTION_AND_DEMOLITION",
                                 () -> cndRequest.cndReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -593,39 +602,42 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "DESLUDGING_SERVICE":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "DESLUDGING_SERVICE",
                                 () -> desludgingCreate.desludgingReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
 
                     case "DESLUDGING_SERVICE_PAYMENT":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "DESLUDGING_SERVICE_PAYMENT",
                                 () -> desludgingCitizenPayment.desludgingPaymentReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
 
                     case "DESLUDGING_SERVICE_PAYMENT2":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "DESLUDGING_SERVICE_PAYMENT2",
                                 () -> desludgingCitizenPayment2.desludgingPayment2Reg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;
@@ -634,13 +646,14 @@ public class CommonCitizenTest extends BaseTest {
 
                     case "WATER_AND_SEWERAGE":
 
-                        ModuleWrapper.execute(
+                        modules.add(
+                                new ModuleTask(
                                 "WATER_AND_SEWERAGE",
                                 () -> wAndSCreate.wandSReg(
                                         driver,
                                         wait,
                                         js
-                                )
+                                ))
                         );
 
                         break;

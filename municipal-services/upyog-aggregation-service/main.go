@@ -1,0 +1,159 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"go.uber.org/zap"
+
+	"github.com/upyog/upyog-aggregation-service/api"
+	"github.com/upyog/upyog-aggregation-service/internal/aggregation/engine"
+	"github.com/upyog/upyog-aggregation-service/internal/aggregation/executor"
+	"github.com/upyog/upyog-aggregation-service/internal/aggregation/registry"
+	"github.com/upyog/upyog-aggregation-service/internal/auth"
+	"github.com/upyog/upyog-aggregation-service/internal/cache"
+	"github.com/upyog/upyog-aggregation-service/internal/clients"
+	"github.com/upyog/upyog-aggregation-service/internal/config"
+	"github.com/upyog/upyog-aggregation-service/internal/metrics"
+	"github.com/upyog/upyog-aggregation-service/internal/providers"
+	"github.com/upyog/upyog-aggregation-service/internal/tracing"
+	"github.com/upyog/upyog-aggregation-service/internal/validator"
+	"github.com/upyog/upyog-aggregation-service/pkg/logger"
+)
+
+func main() {
+	log := logger.New(os.Getenv("APP_ENV"))
+	defer func() { _ = log.Sync() }()
+
+	cfg, err := config.Load("./configs")
+	if err != nil {
+		log.Fatal("failed to load config", zap.Error(err))
+	}
+
+	// Tracing.
+	tp, err := tracing.Init(
+		context.Background(),
+		cfg.Observability.Tracing.ServiceName,
+		cfg.Observability.Tracing.Endpoint,
+		cfg.Observability.Tracing.SamplingRate,
+	)
+	if err != nil {
+		log.Fatal("failed to init tracing", zap.Error(err))
+	}
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_ = tp.Shutdown(ctx)
+	}()
+
+	// Metrics.
+	m := metrics.New(
+		cfg.Observability.Metrics.Namespace,
+		cfg.Observability.Metrics.Subsystem,
+	)
+
+	// Cache.
+	var c *cache.Cache
+	if cfg.Redis.Enabled {
+		c, err = cache.NewCache(cfg.Redis, cache.DefaultCacheConfig(), log, m)
+		if err != nil {
+			log.Warn("redis unavailable, cache disabled", zap.Error(err))
+		}
+	}
+
+	// Validator.
+	validator.Setup()
+
+	// Registry + providers.
+	reg := registry.NewRegistry()
+	defaultClient := clients.NewClient(clients.ClientConfig{
+		ServiceName: "upyog-backend",
+		BaseURL:     "",
+		Timeout:     cfg.Providers.DefaultTimeout,
+	}, log, m)
+
+	draftEndpoint := cfg.Backend.Services["draft"]
+	draftClient := clients.NewClient(clients.ClientConfig{
+		ServiceName:      "upyog-draft-service",
+		BaseURL:          draftEndpoint.BaseURL,
+		Timeout:          draftEndpoint.Timeout,
+		MaxConns:         draftEndpoint.MaxConns,
+		CircuitThreshold: draftEndpoint.CircuitThreshold,
+		CircuitTimeout:   draftEndpoint.CircuitTimeout,
+	}, log, m)
+
+	cacheTTL := cfg.Providers.CacheTTL
+	reg.Register(providers.NewQuickSummaryProvider(defaultClient, draftClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewRecentApplicationsProvider(defaultClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewNotificationsProvider(defaultClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewDraftApplicationsProvider(draftClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewDueRenewalsProvider(defaultClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewUpcomingEventsProvider(defaultClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewAdvertisementBannersProvider(defaultClient, c, log, m, cacheTTL))
+
+	// Build per-provider timeout map.
+	providerTimeouts := make(map[string]time.Duration, len(cfg.Providers.Custom))
+	for name, custom := range cfg.Providers.Custom {
+		if custom.Timeout > 0 {
+			providerTimeouts[name] = custom.Timeout
+		}
+	}
+
+	exec := executor.NewExecutor(reg, log, m, cfg.Providers.DefaultTimeout, providerTimeouts)
+	eng := engine.NewEngine(exec, reg, log, m)
+
+	// Auth.
+	jwtValidator := auth.NewJWTValidator(cfg.Auth.Issuer, cfg.Auth.Audience, cfg.Auth.TokenExpLeeway)
+	authorizer := auth.NewAuthorizer()
+
+	// Router.
+	router := api.SetupRouter(api.RouterConfig{
+		Engine:       eng,
+		Logger:       log,
+		Metrics:      m,
+		JWTValidator: jwtValidator,
+		Authorizer:   authorizer,
+		Config:       cfg,
+		Cache:        c,
+	})
+
+	srv := &http.Server{
+		Addr:         fmt.Sprintf(":%d", cfg.Server.Port),
+		Handler:      router,
+		ReadTimeout:  cfg.Server.ReadTimeout,
+		WriteTimeout: cfg.Server.WriteTimeout,
+		IdleTimeout:  cfg.Server.IdleTimeout,
+	}
+
+	// Start server.
+	go func() {
+		log.Info("starting server", zap.Int("port", cfg.Server.Port))
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatal("server error", zap.Error(err))
+		}
+	}()
+
+	// Graceful shutdown.
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Info("shutting down server")
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Error("server forced to shutdown", zap.Error(err))
+	}
+
+	if c != nil {
+		_ = c.Close()
+	}
+
+	log.Info("server stopped")
+}

@@ -3,6 +3,7 @@ package upyog.repository.builder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import upyog.web.models.AssetSearchCriteria;
+import upyog.util.EstateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,10 @@ public class AssetQueryBuilder {
             query.append(String.join(" AND ", conditions));
         }
         
-        return query.toString();
+        // Add order by clause
+        query.append(" ORDER BY createdtime DESC");
+        
+        return EstateUtil.addPaginationWrapper(query.toString(), preparedStmtList, criteria.getLimit(), criteria.getOffset());
     }
     
     /**
@@ -83,6 +87,7 @@ public class AssetQueryBuilder {
         query.append(" WHERE ref_asset_no = ? AND tenant_id = ?");
         preparedStmtList.add(refAssetNo);
         preparedStmtList.add(tenantId);
+        query.append(" ORDER BY createdtime DESC");
         return query.toString();
     }
 }

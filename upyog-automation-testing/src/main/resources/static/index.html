@@ -128,8 +128,44 @@
     box-sizing: border-box;
     border-radius: 0;
 }
+  #moduleSearch1 {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    outline: none;
+    margin: 0;
+    box-sizing: border-box;
+    border-radius: 0;
+}
+#moduleSearch2 {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    outline: none;
+    margin: 0;
+    box-sizing: border-box;
+    border-radius: 0;
+}
 
        #moduleOptions label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: normal;
+}
+ #moduleOptions1 label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: normal;
+}
+#moduleOptions2 label {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -142,45 +178,214 @@
     width: 18px;
     height: 18px;
 }
+#moduleOptions1 input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+#moduleOptions2 input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
 
         #moduleOptions label:hover {
             background: #f5f5f5;
         }
+        #moduleOptions1 label:hover {
+            background: #f5f5f5;
+        }
+         #moduleOptions2 label:hover {
+            background: #f5f5f5;
+        }
+
+
+      .spinner {
+    display: none;
+    width:18px;
+    height:18px;
+    border:3px solid #ddd;
+    border-top:3px solid #0d6efd;
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+        #reportTableContainer {
+    margin-top: 20px;
+}
+
+#reportTableContainer table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#reportTableContainer th,
+#reportTableContainer td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+#reportTableContainer th {
+    background-color: #0d6efd;
+    color: white;
+    font-weight: 600;
+}
+
+#reportTableContainer tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+#reportTableContainer tr:hover {
+    background-color: #eef5ff;
+}
     </style>
 </head>
 <body>
     <div class="container">
         <h1>UPYOG Automation Testing Portal</h1>
-        
+
         <div class="tabs">
-            <div class="tab active" onclick="switchTab('citizen')">Citizen Testing</div>
-            <div class="tab" onclick="switchTab('employee')">Employee Testing</div>
-            <div class="tab" onclick="switchTab('vendor')">Vendor Testing</div>
+            <div class="tab active" onclick="switchTab('module', event)">Module Testing</div>
+            <div class="tab" onclick="switchTab('citizen', event)">Citizen Testing</div>
+            <div class="tab" onclick="switchTab('employee', event)">Employee Testing</div>
+            <div class="tab" onclick="switchTab('vendor', event)">Vendor Testing</div>
+            <div class="tab" onclick="switchTab('report', event)">Test Reports</div>
         </div>
 
+        <!-- Module Testing Form -->
+         <div id="module" class="tab-content active">
+            <h2>Full Module Testing</h2>
+                <form id="moduleForm">
+                    <div class="form-group">
+                        <label>Base URL *</label>
+                        <select name="baseUrl" required>
+                            <option value="">Select Base URL</option>
+                            <option value="https://upyog-test.niua.org/upyog-ui/citizen/login">Upyog Test Citizen</option>
+                            <option value="https://upyog.niua.org/upyog-ui/citizen/login">Upyog Citizen</option>
+                            <option value="https://niuatt.niua.in/upyog-ui/citizen/login">Niuatt Citizen</option>
+                            <option value="http://localhost:8080/upyog-ui/citizen/login">Local Host Citizen</option>
+                            <option value="https://upyog.niua.org/cnd-ui/citizen/login">Upyog CnD Citizen</option>
+                            <option value="https://niuatt.niua.in/cnd-ui/citizen/login">Niuatt CnD Citizen</option>
+                            <option value="https://upyog.niua.org/sv-ui/citizen/login">Upyog SV Citizen</option>
+                            <option value="https://niuatt.niua.in/sv-ui/citizen/login">Niuatt SV Citizen</option>
+                            <option value="https://upyog.niua.org/upyog-ui/employee/login">Upyog Employee</option>
+                            <option value="https://niuatt.niua.in/upyog-ui/employee/login">Niuatt Employee</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Module Name *</label>
+
+                        <div class="multi-select-container">
+                            <div class="multi-select-box"
+                                 onclick="toggleDropdownById('moduleDropdown1', event)">
+                                <span id="selectedModulesText1">Select Modules</span>
+                                <span>▼</span>
+                            </div>
+
+                            <div id="moduleDropdown1" class="multi-select-dropdown">
+                                <input
+                                        type="text"
+                                        id="moduleSearch1"
+                                        placeholder="Search modules..."
+                                        onkeyup="filterModules()"
+                                />
+                                <div id="moduleOptions1">
+
+                                    <label><input type="checkbox" name="moduleTestingModules" value="STREET_VENDING"> Street Vending</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="PET_REGISTRATION"> Pet Registration</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="TRADE_LICENSE"> Trade License</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="PROPERTY_TAX"> Property Tax</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="EWASTE_MANAGEMENT_SYSTEM"> E-Waste</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"> OBPAS</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="PUBLIC_GRIEVANCE_REDRESSAL"> PGR</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="ADVERTISEMENT"> Advertisement</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="TREE_PRUNING"> Tree Pruning</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="WATER_TANKER"> Water Tanker</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="MOBILE_TOILET"> Mobile Toilet</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="COMMUNITY_HALL_BOOKING"> Community Hall</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="CONSTRUCTION_AND_DEMOLITION"> Construction & Demolition</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="DESLUDGING_SERVICE"> Desludging</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="WATER_AND_SEWERAGE"> Water & Sewerage</label>
+                                    <label><input type="checkbox" name="moduleTestingModules" value="ASSET_MANAGEMENT_SYSTEM"> Asset Management</label>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" id="runBtn">Run Test</button>
+                    <div id="testStatus"
+                         style="display:none;margin-top:15px;padding:12px;border-radius:6px;background:#eef6ff;border-left:4px solid #0d6efd;">
+
+                        <div style="display:flex;align-items:center;gap:10px;">
+
+                            <div class="spinner" id="statusSpinner"></div>
+
+                            <div>
+                                <div id="statusText"
+                                     style="font-weight:bold;color:#0d6efd;">
+                                    Test Started...
+                                </div>
+
+                                <div id="statusSubText"
+                                     style="font-size:13px;color:#666;margin-top:3px;">
+                                    Running automation. Please don't refresh this page.
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+                <div id="moduleResult" class="result"></div>
+            <div id="moduleReportButtons"
+                 style="display:none; margin-top:15px;">
+                <div id="reportListContainer" style="margin-top:15px;"></div>
+
+                <button type="button"
+                        onclick="viewLatestReport('reportListContainer')">
+                    📄 View Report
+                </button>
+
+                <button type="button"
+                        onclick="downloadLatestReport()">
+                    ⬇ Download Report
+                </button>
+
+            </div>
+
+            </div>
+
         <!-- Citizen Testing Form -->
-        <div id="citizen" class="tab-content active">
+        <div id="citizen" class="tab-content">
             <h2>Citizen Application Testing</h2>
             <form id="citizenForm">
                 <div class="form-group">
                     <label>Base URL *</label>
                     <select name="baseUrl" required>
                         <option value="">Select Base URL</option>
-                        <option value="https://upyog-test.niua.org/upyog-ui/citizen/login">upyog-test.niua.org/upyog-ui/citizen/login</option>
-                        <option value="https://upyog.niua.org/upyog-ui/citizen/login">upyog.niua.org/upyog-ui/citizen/login</option>
-                        <option value="https://niuatt.niua.in/upyog-ui/citizen/login">niuatt.niua.in/upyog-ui/citizen/login</option>
-                        <option value="http://localhost:8080/upyog-ui/citizen/login">localhost:8080/upyog-ui/citizen/login</option>
-                        <option value="https://upyog.niua.org/cnd-ui/citizen/login">upyog.niua.org/cnd-ui/citizen/login</option>
-                        <option value="https://niuatt.niua.in/cnd-ui/citizen/login">niuatt.niua.in/cnd-ui/citizen/login</option>
-                        <option value="https://upyog.niua.org/sv-ui/citizen/login">upyog.niua.org/sv-ui/citizen/login</option>
-                        <option value="https://niuatt.niua.in/sv-ui/citizen/login">niuatt.niua.in/sv-ui/citizen/login</option>
+                        <option value="https://upyog-test.niua.org/upyog-ui/citizen/login">Upyog Test Citizen</option>
+                        <option value="https://upyog.niua.org/upyog-ui/citizen/login">Upyog Citizen</option>
+                        <option value="https://niuatt.niua.in/upyog-ui/citizen/login">Niuatt Citizen</option>
+                        <option value="http://localhost:8080/upyog-ui/citizen/login">Local Host Citizen</option>
+                        <option value="https://upyog.niua.org/cnd-ui/citizen/login">Upyog CnD Citizen</option>
+                        <option value="https://niuatt.niua.in/cnd-ui/citizen/login">Niuatt CnD Citizen</option>
+                        <option value="https://upyog.niua.org/sv-ui/citizen/login">Upyog SV Citizen</option>
+                        <option value="https://niuatt.niua.in/sv-ui/citizen/login">Niuatt SV Citizen</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Module Name *</label>
 
                     <div class="multi-select-container">
-                        <div class="multi-select-box" onclick="toggleDropdown(event)">
+                        <div class="multi-select-box"
+                             onclick="toggleDropdownById('moduleDropdown', event)">
                             <span id="selectedModulesText">Select Modules</span>
                             <span>▼</span>
                         </div>
@@ -249,6 +454,24 @@
                 <button type="submit">Run Test</button>
             </form>
             <div id="citizenResult" class="result"></div>
+            <div id="citizenReportButtons"
+                 style="display:none; margin-top:15px;">
+                <div id="citizenReportListContainer"
+                     style="margin-top:15px;">
+
+
+                <button type="button"
+                        onclick="viewLatestReport('citizenReportListContainer')">
+                    📄 View Report
+                </button>
+
+                <button type="button"
+                        onclick="downloadLatestReport()">
+                    ⬇ Download Report
+                </button>
+
+            </div>
+            </div>
         </div>
 
         <!-- Employee Testing Form -->
@@ -259,14 +482,14 @@
                     <label>Base URL *</label>
                     <select name="baseUrl" required>
                         <option value="">Select Base URL</option>
-                        <option value="https://upyog-test.niua.org/upyog-ui/employee/login">upyog-test.niua.org/upyog-ui/employee/login</option>
-                        <option value="https://upyog.niua.org/upyog-ui/employee/login">upyog.niua.org/upyog-ui/employee/login</option>
-                        <option value="https://niuatt.niua.in/upyog-ui/employee/login">niuatt.niua.in/upyog-ui/employee/login</option>
-                        <option value="http://localhost:8080/upyog-ui/employee/login">localhost:8080/upyog-ui/employee/login</option>
-                        <option value="https://upyog.niua.org/cnd-ui/employee/login">upyog.niua.org/cnd-ui/employee/login</option>
-                        <option value="https://niuatt.niua.in/cnd-ui/employee/login">niuatt.niua.in/cnd-ui/employee/login</option>
-                        <option value="https://upyog.niua.org/sv-ui/employee/login">upyog.niua.org/sv-ui/employee/login</option>
-                        <option value="https://niuatt.niua.in/sv-ui/employee/login">niuatt.niua.in/sv-ui/employee/login</option>
+                        <option value="https://upyog-test.niua.org/upyog-ui/employee/login">Upyog Test Employee</option>
+                        <option value="https://upyog.niua.org/upyog-ui/employee/login">Upyog Employee</option>
+                        <option value="https://niuatt.niua.in/upyog-ui/employee/login">Niuatt Employee</option>
+                        <option value="http://localhost:8080/upyog-ui/employee/login">Local Host Employee</option>
+                        <option value="https://upyog.niua.org/cnd-ui/employee/login">Upyog CnD Employee</option>
+                        <option value="https://niuatt.niua.in/cnd-ui/employee/login">Niuatt CnD Employee</option>
+                        <option value="https://upyog.niua.org/sv-ui/employee/login">Upyog SV Employee</option>
+                        <option value="https://niuatt.niua.in/sv-ui/employee/login">Niuatt SV Employee</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -317,6 +540,24 @@
                 <button type="submit">Run Test</button>
             </form>
             <div id="employeeResult" class="result"></div>
+            <div id="employeeReportButtons"
+                 style="display:none; margin-top:15px;">
+                <div id="employeeReportListContainer"
+                     style="margin-top:15px;">
+
+
+                <button type="button"
+                        onclick="viewLatestReport('employeeReportListContainer')">
+                    📄 View Report
+                </button>
+
+                <button type="button"
+                        onclick="downloadLatestReport()">
+                    ⬇ Download Report
+                </button>
+
+            </div>
+        </div>
         </div>
 
         <!-- Vendor Testing Form -->
@@ -327,14 +568,14 @@
                     <label>Base URL *</label>
                     <select name="baseUrl" required>
                         <option value="">Select Base URL</option>
-                        <option value="https://upyog-test.niua.org/upyog-ui/citizen/login">upyog-test.niua.org/upyog-ui/citizen/login</option>
-                        <option value="https://upyog.niua.org/upyog-ui/citizen/login">upyog.niua.org/upyog-ui/citizen/login</option>
-                        <option value="https://niuatt.niua.in/upyog-ui/citizen/login">niuatt.niua.in/upyog-ui/citizen/login</option>
-                        <option value="http://localhost:8080/upyog-ui/citizen/login">localhost:8080/upyog-ui/citizen/login</option>
-                        <option value="https://upyog.niua.org/cnd-ui/citizen/login">upyog.niua.org/cnd-ui/citizen/login</option>
-                        <option value="https://niuatt.niua.in/cnd-ui/citizen/login">niuatt.niua.in/cnd-ui/citizen/login</option>
-                        <option value="https://upyog.niua.org/sv-ui/citizen/login">upyog.niua.org/sv-ui/citizen/login</option>
-                        <option value="https://niuatt.niua.in/sv-ui/citizen/login">niuatt.niua.in/sv-ui/citizen/login</option>
+                        <option value="https://upyog-test.niua.org/upyog-ui/citizen/login">Upyog Test Citizen</option>
+                        <option value="https://upyog.niua.org/upyog-ui/citizen/login">Upyog Citizen</option>
+                        <option value="https://niuatt.niua.in/upyog-ui/citizen/login">Niuatt Citizen</option>
+                        <option value="http://localhost:8080/upyog-ui/citizen/login">Local Host Citizen</option>
+                        <option value="https://upyog.niua.org/cnd-ui/citizen/login">Upyog CnD Citizen</option>
+                        <option value="https://niuatt.niua.in/cnd-ui/citizen/login">Niuatt CnD Citizen</option>
+                        <option value="https://upyog.niua.org/sv-ui/citizen/login">Upyog SV Citizen</option>
+                        <option value="https://niuatt.niua.in/sv-ui/citizen/login">Niuatt SV Citizen</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -342,8 +583,8 @@
                     <select name="moduleName" required>
 
 
-                        <option value="WATER_TANKER_VENDOR">Water Tanker Vendor</option>
-                        <option value="MOBILE_TOILET_VENDOR">Mobile Toilet Vendor</option>
+                        <option value="WATER_TANKER">Water Tanker Vendor</option>
+                        <option value="MOBILE_TOILET">Mobile Toilet Vendor</option>
                         <option value="CONSTRUCTION_AND_DEMOLITION">Construction and Demolition Vendor</option>
 
 
@@ -386,16 +627,284 @@
                 <button type="submit">Run Test</button>
             </form>
             <div id="vendorResult" class="result"></div>
-        </div>
+
+    <div id="vendorReportButtons"
+         style="display:none; margin-top:15px;">
+        <div id="vendorReportListContainer"
+             style="margin-top:15px;">
+
+
+        <button type="button"
+                onclick="viewLatestReport('vendorReportListContainer')">
+            📄 View Report
+        </button>
+
+        <button type="button"
+                onclick="downloadLatestReport()">
+            ⬇ Download Report
+        </button>
+
+          </div>
+       </div>
     </div>
 
+        <!-- Module Testing Report -->
+        <div id="report" class="tab-content">
+            <h2>Module Testing Reports</h2>
+            <form id="reportForm">
+                <div class="form-group">
+                    <label>Module Name *</label>
+
+                    <div class="multi-select-container">
+                        <div class="multi-select-box"
+                             onclick="toggleDropdownById('moduleDropdown2', event)">
+                            <span id="selectedModulesReport">Select Modules</span>
+                            <span>▼</span>
+                        </div>
+
+                        <div id="moduleDropdown2" class="multi-select-dropdown">
+                            <input
+                                    type="text"
+                                    id="moduleSearch2"
+                                    placeholder="Search modules..."
+                                    onkeyup="filterReportModules()"
+                            />
+                            <div id="moduleOptions2">
+
+                                <label><input type="checkbox" name="reportModules" value="STREET_VENDING"> Street Vending</label>
+                                <label><input type="checkbox" name="reportModules" value="PET_REGISTRATION"> Pet Registration</label>
+                                <label><input type="checkbox" name="reportModules" value="TRADE_LICENSE"> Trade License</label>
+                                <label><input type="checkbox" name="reportModules" value="PROPERTY_TAX"> Property Tax</label>
+                                <label><input type="checkbox" name="reportModules" value="EWASTE_MANAGEMENT_SYSTEM"> E-Waste</label>
+                                <label><input type="checkbox" name="reportModules" value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"> OBPAS</label>
+                                <label><input type="checkbox" name="reportModules" value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC"> OBPAS OC</label>
+                                <label><input type="checkbox" name="reportModules" value="PUBLIC_GRIEVANCE_REDRESSAL"> PGR</label>
+                                <label><input type="checkbox" name="reportModules" value="ADVERTISEMENT"> Advertisement</label>
+                                <label><input type="checkbox" name="reportModules" value="TREE_PRUNING"> Tree Pruning</label>
+                                <label><input type="checkbox" name="reportModules" value="WATER_TANKER"> Water Tanker</label>
+                                <label><input type="checkbox" name="reportModules" value="MOBILE_TOILET"> Mobile Toilet</label>
+                                <label><input type="checkbox" name="reportModules" value="COMMUNITY_HALL_BOOKING"> Community Hall</label>
+                                <label><input type="checkbox" name="reportModules" value="CONSTRUCTION_AND_DEMOLITION"> Construction & Demolition</label>
+                                <label><input type="checkbox" name="reportModules" value="DESLUDGING_SERVICE"> Desludging</label>
+                                <label><input type="checkbox" name="reportModules" value="WATER_AND_SEWERAGE"> Water & Sewerage</label>
+                                <label><input type="checkbox" name="reportModules" value="ASSET_MANAGEMENT_SYSTEM"> Asset Management</label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top:20px;">
+
+                        <button type="button"
+                                class="btn btn-primary"
+                                onclick="loadReports()">
+                            📋 Load Reports
+                        </button>
+
+                    </div>
+                </div>
+            </form>
+            <div id="reportTableContainer" style="margin-top:20px; display:none;">
+
+                <table class="table table-bordered table-striped">
+
+                    <thead>
+                    <tr>
+
+                        <th>Module</th>
+
+                        <th>Date</th>
+
+                        <th>Time</th>
+
+                        <th>Status</th>
+
+                        <th>View</th>
+
+                        <th>Download</th>
+
+                    </tr>
+                    </thead>
+
+                    <tbody id="reportTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+    </div>
     <script>
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById(tab).classList.add('active');
-        }
+        function switchTab(tab, e) {
+
+    document.querySelectorAll('.tab')
+        .forEach(t => t.classList.remove('active'));
+
+    document.querySelectorAll('.tab-content')
+        .forEach(c => c.classList.remove('active'));
+
+    e.target.classList.add('active');
+
+    document.getElementById(tab)
+        .classList.add('active');
+}
+
+         // =========================
+         // MODULE FORM SUBMIT
+         // =========================
+
+        document.getElementById('moduleForm').addEventListener('submit', async (e) => {
+
+    e.preventDefault();
+
+    const runBtn = document.getElementById("runBtn");
+    const statusDiv = document.getElementById("testStatus");
+    const statusSpinner = document.getElementById("statusSpinner");
+    const statusText = document.getElementById("statusText");
+    const statusSubText = document.getElementById("statusSubText");
+
+    // Start Status
+    runBtn.disabled = true;
+    runBtn.innerHTML = "⏳ Running...";
+
+    statusDiv.style.display = "block";
+    statusSpinner.style.display = "block";
+
+    statusText.innerHTML = "⏳ Test Started...";
+    statusSubText.innerHTML =
+        "Running automation. Please don't refresh this page.";
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+
+    const selectedModules =
+        Array.from(
+            document.querySelectorAll(
+                '#moduleOptions1 input[name="moduleTestingModules"]:checked'
+            )
+        ).map(cb => cb.value);
+
+    data.moduleName = selectedModules.join(",");
+
+    try {
+
+        const response = await fetch('/api/module/run', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+       const result =
+    await response.json();
+
+       let html = "<h3>Execution Summary</h3>";
+
+let pass = 0;
+let fail = 0;
+
+result.forEach(r => {
+
+    if (r.status === "PASS") {
+        pass++;
+    } else {
+        fail++;
+    }
+
+    const moduleName = r.module
+        .replaceAll("_", " ")
+        .toLowerCase()
+        .replace(/\b\w/g, c => c.toUpperCase());
+
+  html += `
+<div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:10px 0;
+    padding:10px 15px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    background:#fafafa;
+">
+
+    <strong>${moduleName}</strong>
+
+    <span style="
+        padding:5px 12px;
+        border-radius:20px;
+        font-weight:bold;
+        color:white;
+        background:${r.status === "PASS" ? "#28a745" : "#dc3545"};
+    ">
+        ${r.status}
+    </span>
+
+</div>
+    `;
+});
+
+html += `
+<hr>
+
+<div style="display:flex; gap:15px; margin-top:15px;">
+
+    <div style="padding:10px 18px; background:#e9ecef; border-radius:8px;">
+        <strong>Total:</strong> ${result.length}
+    </div>
+
+    <div style="padding:10px 18px; background:#d4edda; color:#155724; border-radius:8px;">
+        <strong>Passed:</strong> ${pass}
+    </div>
+
+    <div style="padding:10px 18px; background:#f8d7da; color:#721c24; border-radius:8px;">
+        <strong>Failed:</strong> ${fail}
+    </div>
+
+</div>
+`;
+
+document.getElementById("moduleResult").innerHTML = html;
+document.getElementById("moduleReportButtons").style.display = "block";
+if (fail > 0) {
+
+    statusText.innerHTML =
+        "❌ Test Failed";
+
+    statusSubText.innerHTML =
+        `${fail} module(s) failed. Please check the report for details.`;
+
+} else {
+
+    statusText.innerHTML =
+        "✅ Test Completed Successfully";
+
+    statusSubText.innerHTML =
+        "Automation completed successfully. Report is ready to view or download.";
+
+}
+
+    } catch (error) {
+
+        // Failure
+
+        statusText.innerHTML =
+            "❌ Test Failed";
+
+        statusSubText.innerHTML =
+            error.message;
+
+    } finally {
+
+    statusSpinner.style.display = "none";
+
+    runBtn.disabled = false;
+    runBtn.innerHTML = "Run Test";
+}
+
+});
 
          // =========================
          // CITIZEN FORM SUBMIT
@@ -408,7 +917,7 @@
 const selectedModules =
     Array.from(
         document.querySelectorAll(
-            'input[name="modules"]:checked'
+            '#moduleOptions input[name="modules"]:checked'
         )
     ).map(cb => cb.value);
 
@@ -416,15 +925,18 @@ const data = Object.fromEntries(formData);
 
 // Send comma-separated values to backend
 data.moduleName = selectedModules.join(",");
-            
+
             const resultDiv = document.getElementById('citizenResult');
             resultDiv.style.display = 'block';
             resultDiv.className = 'result';
             resultDiv.textContent = 'Running test...';
+            document.getElementById(
+    "citizenReportButtons"
+).style.display = "block";
 
             try {
                 window.open('http://65.0.8.57:8000', '_blank');
-                
+
                 const response = await fetch('/api/test/citizen', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -447,11 +959,14 @@ data.moduleName = selectedModules.join(",");
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
-            
+
             const resultDiv = document.getElementById('employeeResult');
             resultDiv.style.display = 'block';
             resultDiv.className = 'result';
             resultDiv.textContent = 'Running test...';
+            document.getElementById(
+    "employeeReportButtons"
+).style.display = "block";
 
             try {
                 window.open('http://65.0.8.57:8080', '_blank');
@@ -483,6 +998,9 @@ data.moduleName = selectedModules.join(",");
            resultDiv.style.display = 'block';
            resultDiv.className = 'result';
            resultDiv.textContent = 'Running test...';
+           document.getElementById(
+    "vendorReportButtons"
+).style.display = "block";
 
 
            try {
@@ -501,10 +1019,11 @@ data.moduleName = selectedModules.join(",");
            }
        });
        // =========================
-// AUTO-FILL LOGIC + MULTI-SELECT DROPDOWN
-// =========================
+       // AUTO-FILL LOGIC + MULTI-SELECT DROPDOWN
+       // =========================
 
 // Employee/Vendor dropdown autofill
+
 document.querySelectorAll("select[name='moduleName']").forEach(select => {
     select.addEventListener("change", function () {
 
@@ -538,6 +1057,11 @@ document.querySelectorAll("select[name='moduleName']").forEach(select => {
 });
 
 // Citizen multi-select dropdown
+
+function toggleDropdownById(dropdownId, event) {
+    event.stopPropagation();
+    document.getElementById(dropdownId).classList.toggle("show");
+}
 function toggleDropdown(event) {
     event.stopPropagation();
     document.getElementById("moduleDropdown").classList.toggle("show");
@@ -554,12 +1078,39 @@ function filterModules() {
             : "none";
     });
 }
+function filterReportModules() {
+
+    const search = document
+        .getElementById("moduleSearch2")
+        .value
+        .toLowerCase();
+
+    const labels = document.querySelectorAll(
+        "#moduleOptions2 label"
+    );
+
+    labels.forEach(label => {
+
+        const text = label.textContent.toLowerCase();
+
+        label.style.display =
+            text.includes(search)
+                ? "flex"
+                : "none";
+    });
+}
 
 document.querySelectorAll("input[name='modules']").forEach(cb => {
+
+    cb.addEventListener("click", function(e) {
+        e.stopPropagation();
+    });
+
     cb.addEventListener("change", function () {
         updateSelectedModules();
         autoFillCitizenFields(this);
     });
+
 });
 
 function updateSelectedModules() {
@@ -571,6 +1122,143 @@ function updateSelectedModules() {
         selected.length > 0
             ? selected.join(", ")
             : "Select Modules";
+}
+document.querySelectorAll(
+    "input[name='moduleTestingModules']"
+).forEach(cb => {
+
+    cb.addEventListener("change", function () {
+        updateSelectedModulesModule();
+    });
+
+});
+
+document.querySelectorAll(
+    '#moduleOptions2 input[name="reportModules"]'
+).forEach(cb => {
+    cb.addEventListener("change", updateSelectedReportModules);
+});
+
+function updateSelectedModulesModule() {
+
+    const selected = Array.from(
+        document.querySelectorAll(
+            "input[name='moduleTestingModules']:checked"
+        )
+    ).map(cb => cb.parentElement.textContent.trim());
+
+    document.getElementById("selectedModulesText1").textContent =
+        selected.length > 0
+            ? selected.join(", ")
+            : "Select Modules";
+}
+
+function updateSelectedReportModules() {
+
+   const checked = document.querySelectorAll(
+    '#moduleOptions2 input[name="reportModules"]:checked'
+);
+
+    const text = document.getElementById("selectedModulesReport");
+
+    if (checked.length === 0) {
+        text.innerHTML = "Select Modules";
+        return;
+    }
+
+    text.innerHTML = Array.from(checked)
+        .map(c => c.parentElement.textContent.trim())
+        .join(", ");
+}
+
+async function loadReports() {
+
+    const selectedModules = Array.from(
+        document.querySelectorAll(
+            '#moduleOptions2 input[name="reportModules"]:checked'
+        )
+    ).map(cb => cb.value);
+
+    if (selectedModules.length === 0) {
+        alert("Please select at least one module.");
+        return;
+    }
+
+    const tbody = document.getElementById("reportTableBody");
+    tbody.innerHTML = "";
+
+   const responses = await Promise.all(
+
+    selectedModules.map(async module => {
+
+        const response =
+            await fetch(`/api/report/module/${module}`);
+
+        const reports =
+            await response.json();
+
+        return reports.map(r => ({
+            ...r,
+            module
+        }));
+
+    })
+
+);
+
+const allReports = responses.flat();
+
+    allReports.sort((a, b) => {
+
+        const d1 = new Date(`${a.date} ${a.time}`);
+        const d2 = new Date(`${b.date} ${b.time}`);
+
+        return d2 - d1;
+
+    });
+
+    allReports.forEach(report => {
+
+tbody.innerHTML += `
+<tr style="
+    background:${report.status === "PASS"
+        ? "#d4edda"
+        : "#f8d7da"};
+">
+
+    <td>${report.module}</td>
+
+    <td>${report.date}</td>
+
+    <td>${report.time}</td>
+
+    <td>
+        <b style="
+            color:${report.status === "PASS"
+                ? "green"
+                : "red"};
+        ">
+            ${report.status}
+        </b>
+    </td>
+
+    <td>
+        <a href="/api/report/view/${report.fileName}" target="_blank">
+            👁 View
+        </a>
+    </td>
+
+    <td>
+        <a href="/api/report/download/${report.fileName}">
+            ⬇ Download
+        </a>
+    </td>
+
+</tr>
+`;
+});
+document.getElementById("reportTableContainer").style.display = "block";
+
 }
 
 function autoFillCitizenFields(moduleCheckbox) {
@@ -615,12 +1303,54 @@ function autoFillCitizenFields(moduleCheckbox) {
 
 // Outside click close
 document.addEventListener("click", function(e) {
-    const dropdown = document.querySelector(".multi-select-container");
 
-    if (dropdown && !dropdown.contains(e.target)) {
-        document.getElementById("moduleDropdown").classList.remove("show");
+    const dropdown =
+        document.getElementById("moduleDropdown");
+
+    const container =
+        document.querySelector(".multi-select-container");
+
+    if (
+        dropdown &&
+        container &&
+        !container.contains(e.target)
+    ) {
+        dropdown.classList.remove("show");
     }
 });
+
+        // Result Output
+
+     async function viewLatestReport(containerId) {
+
+    const response = await fetch('/api/report/list');
+
+    const reports = await response.json();
+
+    let html = "";
+
+    reports.forEach(report => {
+
+        html += `
+            <div>
+                <a href="/api/report/view/${report}"
+                   target="_blank">
+                    ${report}
+                </a>
+            </div>
+        `;
+    });
+
+    document.getElementById(containerId).innerHTML = html;
+}
+
+function downloadLatestReport() {
+
+    window.open(
+        '/api/report/download',
+        '_blank'
+    );
+}
     </script>
 </body>
 </html>

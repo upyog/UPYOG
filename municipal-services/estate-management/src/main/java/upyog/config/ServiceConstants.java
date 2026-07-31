@@ -50,6 +50,9 @@ public class ServiceConstants {
     public static final String STATUS_PENDING  = "PENDING";
     public static final String STATUS_PAID     = "PAID";
     public static final String STATUS_SYSTEM   = "system";
+    public static final String STATUS_PENDING_FOR_PAYMENT = "PENDING_FOR_PAYMENT";
+    public static final String STATUS_PENDING_FOR_ALLOTMENT = "PENDING_FOR_ALLOTMENT";
+    public static final String STATUS_ALLOTTED = "ALLOTTED";
 
     // MDMS keys
     public static final String MDMS_RES               = "MdmsRes";

@@ -1,19 +1,11 @@
 package org.egov.garbageservice.model.contract;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
-
-import org.egov.tracer.annotations.CustomSafeHtml;
-
+import lombok.*;
 import org.egov.garbageservice.enums.Status;
 import org.egov.garbageservice.model.AuditDetails;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import org.egov.tracer.annotations.CustomSafeHtml;
 
 /**
  * Uploaded document metadata linked to an OwnerInfo or property record.
@@ -24,30 +16,30 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@EqualsAndHashCode(of = { "fileStoreId", "documentUid", "id" })
+@EqualsAndHashCode(of = {"fileStoreId", "documentUid", "id"})
 public class Document {
 
-	@JsonProperty("id")
-	@CustomSafeHtml
-	private String id;
+    @JsonProperty("id")
+    @CustomSafeHtml
+    private String id;
 
-	@JsonProperty("documentType")
-	@NotNull
-	@CustomSafeHtml
-	private String documentType;
+    @JsonProperty("documentType")
+    @NotNull
+    @CustomSafeHtml
+    private String documentType;
 
-	@JsonProperty("fileStoreId")
-	@NotNull
-	@CustomSafeHtml
-	private String fileStoreId;
+    @JsonProperty("fileStoreId")
+    @NotNull
+    @CustomSafeHtml
+    private String fileStoreId;
 
-	@JsonProperty("documentUid")
-	@CustomSafeHtml
-	private String documentUid;
+    @JsonProperty("documentUid")
+    @CustomSafeHtml
+    private String documentUid;
 
-	@JsonProperty("auditDetails")
-	private AuditDetails auditDetails;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;
 
-	@JsonProperty("status")
-	private Status status;
+    @JsonProperty("status")
+    private Status status;
 }

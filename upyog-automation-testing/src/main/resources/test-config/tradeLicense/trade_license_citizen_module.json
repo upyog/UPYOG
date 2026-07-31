@@ -37,7 +37,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"TradeName",
       "action":"TYPE",
-      "inputValue":"Institute",
+      "inputValue":"${trade.name}",
       "dynamicSleep": 2000
     },
 
@@ -131,7 +131,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"UomValue",
       "action":"TYPE",
-      "inputValue":"7",
+      "inputValue":"${uom.value}",
       "dynamicSleep": 2000
     },
 
@@ -164,7 +164,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"TradeGSTNumber",
       "action":"TYPE",
-      "inputValue":"10SEIJI3622O0Z4",
+      "inputValue":"${gst.number}",
       "dynamicSleep": 2000
     },
 
@@ -173,7 +173,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"OperationalSqFtArea",
       "action":"TYPE",
-      "inputValue":"454",
+      "inputValue":"${plot.area}",
       "dynamicSleep": 2000
     },
 
@@ -182,7 +182,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"NumberOfEmployees",
       "action":"TYPE",
-      "inputValue":"10",
+      "inputValue":"${random.number}",
       "dynamicSleep": 2000
     },
 
@@ -225,7 +225,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"totLandArea",
       "action":"TYPE",
-      "inputValue":"345",
+      "inputValue":"${land.area}",
       "dynamicSleep": 2000
     },
 
@@ -234,7 +234,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"totConstructionArea",
       "action":"TYPE",
-      "inputValue":"87",
+      "inputValue":"${construction.area}",
       "dynamicSleep": 2000
     },
 
@@ -270,7 +270,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"houseDoorNo",
       "action":"TYPE",
-      "inputValue":"445",
+      "inputValue":"${house.number}",
       "dynamicSleep": 2000
     },
 
@@ -279,7 +279,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"buildingColonyName",
       "action":"TYPE",
-      "inputValue":"church street",
+      "inputValue":"${house.name}",
       "dynamicSleep": 2000
     },
 
@@ -288,7 +288,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"landmarkName",
       "action":"TYPE",
-      "inputValue":"circle point",
+      "inputValue":"${address.landmark}",
       "dynamicSleep": 2000
     },
 
@@ -306,7 +306,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"mobileNumber0",
       "action":"TYPE",
-      "inputValue":"9999999999",
+      "inputValue":"${mobile.number}",
       "dynamicSleep": 2000
     },
 
@@ -315,7 +315,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"name0",
       "action":"TYPE",
-      "inputValue":"Arpit Rao",
+      "inputValue": "${applicant.name}",
       "dynamicSleep": 2000
     },
 
@@ -332,7 +332,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"fatherOrHusbandName0",
       "action":"TYPE",
-      "inputValue":"father",
+      "inputValue":"${applicant.guardian}",
       "dynamicSleep": 2000
     },
 
@@ -358,7 +358,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"address0",
       "action":"TYPE",
-      "inputValue":"owner address",
+      "inputValue":"${address.owner}",
       "dynamicSleep": 2000
     },
     {
@@ -376,7 +376,6 @@
       "action":"CLICK_JS",
       "dynamicSleep": 2000
     },
-
     {
       "stepName":"Property Proceed",
       "locatorStrategy":"CSS",
@@ -412,7 +411,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"institutionName",
       "action":"TYPE",
-      "inputValue":"ijijhvhgcy",
+      "inputValue":"${trade1.name}",
       "dynamicSleep": 2000
     },
     {
@@ -428,7 +427,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"name",
       "action":"TYPE",
-      "inputValue":"Ajay",
+      "inputValue":"${applicant.name}",
       "dynamicSleep": 2000
     },
     {
@@ -436,7 +435,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"mobilenumber",
       "action":"TYPE",
-      "inputValue":"8474857362",
+      "inputValue":"${mobile.number}",
       "dynamicSleep": 2000
     },
     {
@@ -511,6 +510,14 @@
       "locatorValue":"//button[@class='submit-bar ' and @type='button'][.//header[text()='Submit Application']]",
       "action":"CLICK_JS",
       "dynamicSleep": 5000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Reference No') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
     }
   ]
 }

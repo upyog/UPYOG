@@ -1,23 +1,12 @@
 package org.egov.garbageservice.contract.workflow;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.egov.garbageservice.model.AuditDetails;
 import org.egov.tracer.annotations.CustomSafeHtml;
-import org.springframework.validation.annotation.Validated;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,7 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-@EqualsAndHashCode(of = {"tenantId","businessServiceId","state"})
+@EqualsAndHashCode(of = {"tenantId", "businessServiceId", "state"})
 /**
  * Contract model for one node in a workflow {@link BusinessService} state machine.
  *
@@ -40,56 +29,63 @@ import lombok.ToString;
  * - applicationStatus is what garbage-service maps to garbage account status after workflow transition.
  * - Field names must align with the workflow service API schema.
  */
-public class State   {
+public class State {
 
-        @JsonProperty("uuid")
-        @CustomSafeHtml
-        private String uuid;
+    @JsonProperty("uuid")
+    @CustomSafeHtml
+    private String uuid;
 
-        @JsonProperty("tenantId")
-        @CustomSafeHtml
-        private String tenantId;
+    @JsonProperty("tenantId")
+    @CustomSafeHtml
+    private String tenantId;
 
-        @JsonProperty("businessServiceId")
-        @CustomSafeHtml
-        private String businessServiceId;
+    @JsonProperty("businessServiceId")
+    @CustomSafeHtml
+    private String businessServiceId;
 
-        @JsonProperty("sla")
-        private Long sla;
+    @JsonProperty("sla")
+    private Long sla;
 
-        @JsonProperty("state")
-        @CustomSafeHtml
-        private String state;
+    @JsonProperty("state")
+    @CustomSafeHtml
+    private String state;
 
-        @JsonProperty("applicationStatus")
-        @CustomSafeHtml
-        private String applicationStatus;
+    @JsonProperty("applicationStatus")
+    @CustomSafeHtml
+    private String applicationStatus;
 
-        @JsonProperty("docUploadRequired")
-        private Boolean docUploadRequired;
+    @JsonProperty("docUploadRequired")
+    private Boolean docUploadRequired;
 
-        @JsonProperty("isStartState")
-        private Boolean isStartState;
+    @JsonProperty("isStartState")
+    private Boolean isStartState;
 
-        @JsonProperty("isTerminateState")
-        private Boolean isTerminateState;
+    @JsonProperty("isTerminateState")
+    private Boolean isTerminateState;
 
-        @JsonProperty("isStateUpdatable")
-        private Boolean isStateUpdatable;
+    @JsonProperty("isStateUpdatable")
+    private Boolean isStateUpdatable;
 
-        @JsonProperty("actions")
-        private List<Action> actions;
+    @JsonProperty("actions")
+    private List<Action> actions;
 
-        private AuditDetails auditDetails;
+    private AuditDetails auditDetails;
 
 
-        public State addActionsItem(Action actionsItem) {
-            if (this.actions == null) {
+    /**
+     * Appends an action to the list of permissible actions for this state.
+     *
+     * @param actionsItem the action to append
+     * @return this State instance for chaining
+     */
+
+    public State addActionsItem(Action actionsItem) {
+        if (this.actions == null) {
             this.actions = new ArrayList<>();
-            }
+        }
         this.actions.add(actionsItem);
         return this;
-        }
+    }
 
 }
 

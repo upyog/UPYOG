@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 const getRoutePath = (navUrl) => {
   if (!navUrl) return "";
@@ -75,6 +75,7 @@ const getMinOrderNumber = (node) => {
  */
 const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1 }) => {
   const { t, i18n } = useTranslation();
+  const { pathname } = useLocation();
   const currentNode = getNodeByPath(configEmployeeSideBar1, activePath);
   if (!currentNode) return null;
 
@@ -88,7 +89,7 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1 }) =
   return (
     <React.Fragment>
       <div className="submenu-container" style={{ display: "flex", alignItems: "center", padding: "20px", color: "white", borderBottom: "1px solid rgba(255,255,255,0.1)", marginBottom: "10px" }}>
-        <div onClick={handleBack} style={{ cursor: "pointer", marginRight: "10px", display: "flex", alignItems: "center" }}>
+        <div onClick={handleBack} style={{ cursor: "pointer", marginRight: "20px", display: "flex", alignItems: "center" }}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="white">
             <path d="M0 0h24v24H0z" fill="none" />
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
@@ -131,11 +132,12 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1 }) =
                 key={key}
                 onClick={() => setActivePath(`${activePath}.${key}`)}
                 className="sidebar-link"
+                title={displayLabel}
                 style={{ cursor: "pointer", padding: "20px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", width: "max-content", minWidth: "100%" }}
               >
                 <div className="actions">
                   {leftIcon}
-                  <span style={{ fontSize: "14px", whiteSpace: "nowrap", paddingRight: "10px" }}>{displayLabel}</span>
+                  <span title={displayLabel} style={{ fontSize: "14px", whiteSpace: "nowrap", paddingRight: "10px" }}>{displayLabel}</span>
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="white" style={{ flexShrink: 0 }}>
                   <path d="M0 0h24v24H0z" fill="none" />
@@ -144,16 +146,18 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1 }) =
               </div>
             );
           } else {
+            const targetPath = getRoutePath(nodeValue.navigationURL);
+            const isActive = pathname === targetPath;
             return (
               <Link
                 key={key}
-                to={getRoutePath(nodeValue.navigationURL)}
-                className="sidebar-link"
-                style={{ textDecoration: "none", padding: "20px", color: "white", display: "flex", justifyContent: "flex-start", alignItems: "center", width: "max-content", minWidth: "100%" }}
+                to={targetPath}
+                className={`sidebar-link ${isActive ? "active" : ""}`}
+                title={displayLabel}
               >
                 <div className="actions">
                   {leftIcon}
-                  <span style={{ fontSize: "14px", whiteSpace: "nowrap" }}>{displayLabel}</span>
+                  <span title={displayLabel} style={{ fontSize: "14px", whiteSpace: "nowrap" }}>{displayLabel}</span>
                 </div>
               </Link>
             );

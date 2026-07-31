@@ -30,4 +30,8 @@ public class WorkflowDataStore {
 
         store.clear();
     }
+
+    public static void remove(String key) {
+        store.remove(key);
+    }
 }

@@ -1,0 +1,118 @@
+# =============================================================================
+# UPYOG Aggregation Service - Local Development Configuration
+# =============================================================================
+
+server:
+  port: 8090
+  readTimeout: 30s
+  writeTimeout: 30s
+  idleTimeout: 120s
+  shutdownTimeout: 15s
+  maxRequestBodyMB: 5
+  enableCompression: true
+
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
+  poolSize: 10
+  minIdleConns: 3
+  dialTimeout: 5s
+  readTimeout: 3s
+  writeTimeout: 3s
+  enabled: true
+
+auth:
+  enabled: false
+  jwksUrl: "http://localhost:8443/auth/realms/upyog/protocol/openid-connect/certs"
+  issuer: "http://localhost:8443/auth/realms/upyog"
+  audience: "upyog-client"
+  tokenExpLeeway: 60
+  publicPaths:
+    - /health
+    - /readiness
+    - /liveness
+    - /metrics
+
+observability:
+  metrics:
+    enabled: true
+    path: /metrics
+    namespace: upyog
+    subsystem: aggregation
+  tracing:
+    enabled: false
+    endpoint: "localhost:4317"
+    serviceName: upyog-aggregation-service
+    samplingRate: 1.0
+
+providers:
+  defaultTimeout: 10s
+  maxRetries: 2
+  cacheTTL: 5m
+  custom:
+    quick-summary:
+      timeout: 15s
+      cacheTTL: 2m
+      retries: 3
+    notifications:
+      timeout: 5s
+      cacheTTL: 1m
+      retries: 1
+
+rateLimit:
+  enabled: false
+  requestsPerSecond: 100
+  burst: 200
+
+backend:
+  services:
+    inbox:
+      baseUrl: "http://localhost:8081"
+      timeout: 10s
+      maxConns: 50
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    billing:
+      baseUrl: "http://localhost:8082"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    property:
+      baseUrl: "http://localhost:8083"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    workflow:
+      baseUrl: "http://localhost:8084"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    tl-services:
+      baseUrl: "http://localhost:8085"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    user-event:
+      baseUrl: "http://localhost:8086"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    advertisement:
+      baseUrl: "http://localhost:8087"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    draft:
+      baseUrl: "http://localhost:8095"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s

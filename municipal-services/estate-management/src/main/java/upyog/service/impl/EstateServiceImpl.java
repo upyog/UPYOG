@@ -150,8 +150,52 @@ public class EstateServiceImpl implements EstateService {
 
         enrichmentService.enrichAllotmentRequest(request);
         
+        if (allotment.getAssetNo() == null || allotment.getAssetNo().trim().isEmpty()) {
+            throw new CustomException(
+                    ServiceConstants.EstateConstants.INVALID_REQUEST,
+                    "Asset Number (estateNo) is required for allotment creation"
+            );
+        }
+
+        // Validate asset existence in database
+        List<Asset> assets;
+        try {
+            AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
+            assetSearchCriteria.setEstateNo(allotment.getAssetNo());
+            assetSearchCriteria.setTenantId(allotment.getTenantId());
+            assets = estateRepository.searchAssets(assetSearchCriteria);
+        } catch (Exception e) {
+            log.error("Failed to query asset details: {}", e.getMessage(), e);
+            throw new CustomException(
+                    "ASSET_SEARCH_FAILED",
+                    "Failed to verify asset existence: " + e.getMessage()
+            );
+        }
+
+        if (assets == null || assets.isEmpty()) {
+            throw new CustomException(
+                    ServiceConstants.EstateConstants.INVALID_REQUEST,
+                    "No asset found with estateNo: " + allotment.getAssetNo()
+            );
+        }
+
         // Create demand for the allotment
         demandService.createDemand(request, true);
+
+        // Update corresponding asset allotment status to ALLOTTED
+        Asset asset = assets.get(0);
+        asset.setAssetAllotmentStatus(ServiceConstants.STATUS_ALLOTTED);
+        AssetRequest assetRequest = new AssetRequest(request.getRequestInfo(), List.of(asset));
+        try {
+            estateRepository.save(estateConfiguration.getEstateAssetUpdateTopic(), assetRequest);
+            log.info("Updated Asset allotment status to ALLOTTED for estateNo: {}", allotment.getAssetNo());
+        } catch (Exception e) {
+            log.error("Failed to update asset allotment status on allotment creation: {}", e.getMessage(), e);
+            throw new CustomException(
+                    "ASSET_UPDATE_FAILED",
+                    "Failed to update asset allotment status: " + e.getMessage()
+            );
+        }
         
         estateRepository.save(estateConfiguration.getEstateAllotmentSaveTopic(), request);
 
@@ -173,6 +217,23 @@ public class EstateServiceImpl implements EstateService {
         log.info("Searching allotments with criteria: {}", criteria);
 
         List<Allotment> allotments = estateRepository.searchAllotments(criteria);
+
+        /*
+           If allotmentNo is provided in criteria, enrich each allotment with its corresponding asset details
+         */
+        if (allotments != null && !allotments.isEmpty() && criteria.getAllotmentNo() != null && !criteria.getAllotmentNo().trim().isEmpty()) {
+            for (Allotment allotment : allotments) {
+                if (allotment.getAssetNo() != null && !allotment.getAssetNo().trim().isEmpty()) {
+                    AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
+                    assetSearchCriteria.setEstateNo(allotment.getAssetNo());
+                    assetSearchCriteria.setTenantId(allotment.getTenantId());
+                    List<Asset> assets = estateRepository.searchAssets(assetSearchCriteria);
+                    if (assets != null && !assets.isEmpty()) {
+                        allotment.setAsset(assets.get(0));
+                    }
+                }
+            }
+        }
 
         AllotmentResponse response = new AllotmentResponse();
         response.setAllotments(allotments);
