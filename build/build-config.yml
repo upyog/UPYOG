@@ -1040,3 +1040,11 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/egov-user-event/src/main/resources/db"
         image-name: "egov-user-event-db"
+
+  - name: "builds/upyog/core-services/upyog-draft-service"
+    build:
+      - work-dir: "core-services/upyog-draft-service"
+        image-name: "upyog-draft-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/upyog-draft-service/src/main/resources/db"
+        image-name: "upyog-draft-service-db"
