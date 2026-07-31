@@ -24,6 +24,8 @@ import (
 
 const quickSummaryProviderName = "quick-summary"
 
+const draftCountPath = "/upyog-draft-service/draft/v1/_count"
+
 // QuickSummaryData holds the aggregated counts returned by the
 // quick-summary provider.
 type QuickSummaryData struct {
@@ -41,11 +43,13 @@ type QuickSummaryData struct {
 // services concurrently and returns a single merged response.
 type QuickSummaryProvider struct {
 	BaseProvider
+	draftClient *clients.Client
 }
 
 // NewQuickSummaryProvider creates a new QuickSummaryProvider.
 func NewQuickSummaryProvider(
 	client *clients.Client,
+	draftClient *clients.Client,
 	c *cache.Cache,
 	log *logger.Logger,
 	m *metrics.Metrics,
@@ -53,6 +57,7 @@ func NewQuickSummaryProvider(
 ) *QuickSummaryProvider {
 	return &QuickSummaryProvider{
 		BaseProvider: NewBaseProvider(quickSummaryProviderName, client, c, log, m, ttl),
+		draftClient:  draftClient,
 	}
 }
 
@@ -121,7 +126,7 @@ func (p *QuickSummaryProvider) Execute(
 	})
 
 	g.Go(func() error {
-		count, fetchErr := p.fetchCount(gCtx, "/inbox/v2/_count?status=DRAFT", headers)
+		count, fetchErr := p.fetchDraftCount(gCtx, aggReq.TenantID, common.UserID(ctx), headers)
 		if fetchErr != nil {
 			p.Log.WithContext(gCtx).Warn("failed to fetch drafts count", zap.Error(fetchErr))
 			return nil
@@ -163,6 +168,50 @@ func (p *QuickSummaryProvider) fetchCount(ctx context.Context, path string, head
 	var cr countResponse
 	if err := json.Unmarshal(resp.Body, &cr); err != nil {
 		return 0, fmt.Errorf("unmarshal count from %s: %w", path, err)
+	}
+	return cr.Count, nil
+}
+
+type draftCountBody struct {
+	RequestInfo struct {
+		UserInfo struct {
+			UUID string `json:"uuid"`
+		} `json:"userInfo"`
+	} `json:"RequestInfo"`
+	Criteria struct {
+		TenantID string `json:"tenantId"`
+		UserUUID string `json:"userUuid"`
+		Status   string `json:"status"`
+	} `json:"DraftSearchCriteria"`
+}
+
+func (p *QuickSummaryProvider) fetchDraftCount(
+	ctx context.Context,
+	tenantID, userUUID string,
+	headers map[string]string,
+) (int, error) {
+	client := p.draftClient
+	if client == nil {
+		client = p.Client
+	}
+
+	body := draftCountBody{}
+	body.RequestInfo.UserInfo.UUID = userUUID
+	body.Criteria.TenantID = tenantID
+	body.Criteria.UserUUID = userUUID
+	body.Criteria.Status = "ACTIVE"
+
+	resp, err := client.Post(ctx, draftCountPath, body, headers)
+	if err != nil {
+		return 0, fmt.Errorf("POST %s: %w", draftCountPath, err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return 0, fmt.Errorf("POST %s returned status %d", draftCountPath, resp.StatusCode)
+	}
+
+	var cr countResponse
+	if err := json.Unmarshal(resp.Body, &cr); err != nil {
+		return 0, fmt.Errorf("unmarshal count from %s: %w", draftCountPath, err)
 	}
 	return cr.Count, nil
 }
