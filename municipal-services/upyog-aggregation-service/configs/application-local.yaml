@@ -110,3 +110,9 @@ backend:
       maxConns: 30
       circuitThreshold: 5
       circuitTimeout: 30s
+    draft:
+      baseUrl: "http://localhost:8095"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
