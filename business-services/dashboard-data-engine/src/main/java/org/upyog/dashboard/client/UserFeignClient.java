@@ -9,7 +9,7 @@ import org.upyog.dashboard.model.UserSearchResponse;
 import java.util.Map;
 import java.net.URI;
 
-@FeignClient(name = "user-feign-client")
+@FeignClient(name = "user-feign-client", url = "${egov.user.host}")
 public interface UserFeignClient {
 
     @PostMapping(consumes = "application/x-www-form-urlencoded")

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The eGov Load Generator is a generic framework designed to perform concurrent API load testing across eGov modules. It enables configurable load generation, workflow execution, and performance monitoring without requiring module-specific changes to the core engine.
+The upyog-data-generator is a generic framework designed to perform concurrent API load testing across eGov modules. It enables configurable load generation, workflow execution, and performance monitoring without requiring module-specific changes to the core engine.
 
 The framework currently supports the Property Tax (PT) workflow and is designed to be easily extensible for additional modules.
 
@@ -60,7 +60,7 @@ load.generator.webclient.timeout.seconds=120
 
 ## REST APIs
 
-### Start Load Generation
+### Start upyog-data-generator
 
 **POST**
 

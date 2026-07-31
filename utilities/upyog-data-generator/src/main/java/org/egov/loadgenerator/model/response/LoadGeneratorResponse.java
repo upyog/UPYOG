@@ -1,3 +1,12 @@
+package org.egov.loadgenerator.model.response;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.egov.loadgenerator.model.JobStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 /**
  * Represents the response returned by the Load Generator APIs.
  *
