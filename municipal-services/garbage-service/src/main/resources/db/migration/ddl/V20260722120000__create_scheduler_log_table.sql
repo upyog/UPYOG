@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS eg_grbg_scheduler_log (
+CREATE TABLE IF NOT EXISTS ug_grbg_scheduler_log (
     id                  VARCHAR(64) PRIMARY KEY,
     garbage_account_id  VARCHAR(64) NOT NULL,
     tenant_id           VARCHAR(100) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS eg_grbg_scheduler_log (
 );
 
 CREATE INDEX IF NOT EXISTS idx_grbg_scheduler_account
-ON eg_grbg_scheduler_log(garbage_account_id);
+ON ug_grbg_scheduler_log(garbage_account_id);
 
 CREATE INDEX IF NOT EXISTS idx_grbg_scheduler_period
-ON eg_grbg_scheduler_log(billing_period_from, billing_period_to);
+ON ug_grbg_scheduler_log(billing_period_from, billing_period_to);

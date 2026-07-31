@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS ug_grbg_monthly_rent_payment (
     createdtime BIGINT,
     lastmodifiedtime BIGINT,
     CONSTRAINT fk_payment_application FOREIGN KEY (application_id)
-    REFERENCES eg_grbg_account (id)
+    REFERENCES ug_grbg_account (id)
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     );
