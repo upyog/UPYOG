@@ -237,6 +237,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
                     " from EgfAccountcodePurpose purpose where purpose.id=" + purposeId + "");
             if (query.list().isEmpty())
                 throw new ApplicationException("Purpose ID provided is not defined in the system");
+            // LTS Migration Fix: Changed lowercase 'purposeid' to camelCase 'purposeId' to comply with Hibernate 6 strict HQL case sensitivity
             query = getSession()
                     .createQuery(
                             " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId))) AND classification=4 AND isActiveForPosting=true ");

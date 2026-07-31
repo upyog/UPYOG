@@ -183,7 +183,7 @@ public class CancelBillAction extends BaseFormAction {
 		addDropdownData("fundList",
 				persistenceService.findAllBy("from Fund where isactive=true and isnotleaf=false order by name"));
 		// Important - Remove the like part of the query below to generalize the
-		// bill cancellation screen
+		// LTS Migration Fix: Updated unlabelled '?' to numbered positional parameters '?1', '?2', '?3' for Hibernate 6 HQL compliance
 		addDropdownData("expenditureList", persistenceService.findAllBy(
 				"select distinct bill.expendituretype from EgBillregister bill where bill.expendituretype=?1 or bill.expendituretype=?2 or bill.expendituretype=?3 order by bill.expendituretype", 
 				FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS, FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE));

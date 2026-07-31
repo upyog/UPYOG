@@ -105,6 +105,7 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
     public String getCurrYearFiscalId() {
         Date dt = new Date();
         String result = "";
+        // LTS Migration Fix: Use parameter binding (:currentDate) with Date object to prevent Hibernate 6 Date vs String comparison SemanticException
         Query query = getCurrentSession().createQuery(
                 "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :currentDate and cfinancialyear.endingDate >= :currentDate");
         query.setParameter("currentDate", dt);

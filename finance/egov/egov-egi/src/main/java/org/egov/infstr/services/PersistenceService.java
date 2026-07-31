@@ -189,6 +189,8 @@ public class PersistenceService<T, ID extends Serializable> {
 	}
 
 	private TypedQuery<T> getQueryWithParams(final String query, final Object... params) {
+		// LTS Migration Fix: Auto-normalize legacy unlabelled '?' parameters into numbered '?1', '?2'
+		// to prevent ParameterLabelException in Hibernate 6 HQL parser
 		String finalQuery = query;
 		boolean hasPositionalParams = false;
 		if (query != null && query.contains("?")) {

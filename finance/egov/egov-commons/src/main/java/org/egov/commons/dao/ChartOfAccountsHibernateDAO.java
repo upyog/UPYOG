@@ -633,6 +633,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
 
     public List<CChartOfAccounts> getAccountCodesListForBankEntries() {
 
+        // LTS Migration Fix: Use cd.glCodeId.id in subquery so Long id is compared with Long id instead of Entity
         return getCurrentSession()
                 .createQuery(
                         "select acc from CChartOfAccounts acc where acc.isActiveForPosting=true and (acc.glcode like '1%' or acc.glcode like '2%') and acc.id not in (select cd.glCodeId.id from CChartOfAccountDetail cd) order by acc.glcode")

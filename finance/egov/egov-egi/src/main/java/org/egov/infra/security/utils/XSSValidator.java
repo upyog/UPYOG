@@ -83,6 +83,8 @@ public final class XSSValidator {
     }
 
     private static Policy getPolicy(String name) throws PolicyException {
+        // LTS Migration Fix: Use getResourceAsStream & Policy.getInstance(InputStream) instead of URL
+        // to support WildFly 40 VFS (vfs:/content/...) protocol without MalformedURLException
         try (InputStream is = XSSValidator.class.getResourceAsStream(name)) {
             return Policy.getInstance(is);
         } catch (Exception e) {

@@ -92,10 +92,13 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     @Override
     public void releaseConnection(Object tenantId, Connection connection) throws SQLException {
         try {
+            // LTS Migration Fix: Verify connection is non-null and active before attempting setSchema
             if (connection != null && !connection.isClosed()) {
                 connection.setSchema((String) tenantId);
             }
         } catch (Throwable t) {
+            // LTS Migration Fix: Catch Throwable to handle JCA wrapper exceptions (e.g. IJ031070 STATUS_COMMITTED)
+            // when connections are already released/committed by WildFly 40 IronJacamar pool
             LOG.debug("Could not switch schema upon release connection: {}", t.getMessage());
         }
         if (connection != null) {
