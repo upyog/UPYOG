@@ -25710,6 +25710,328 @@
     "interval": "month",
     "intervalColumn": "date",
     "insight": {}
+  },
+  "chbTotalActiveVenue": {
+    "chartName": "NSS_TOTAL_ACTIVE_VENUE_CHB",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Active Venue\":{\"sum\":{\"field\":\"totalActiveVenueAvailable\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Active Venue"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "chbTotalApplicationReceived": {
+    "chartName": "NSS_TOTAL_APPLICATION_CHB",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Applications\":{\"sum\":{\"field\":\"totalApplicationReceived\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Total Applications"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "chbApprovedBooking": {
+    "chartName": "NSS_CHB_APPROVED_BOOKING",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Approved Bookings"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "chbRejectedBooking": {
+    "chartName": "NSS_CHB_REJECTED_BOOKING",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Rejected\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Rejected\"}},\"aggs\":{\"Rejected Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Rejected Bookings"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "chbCancelledBooking": {
+    "chartName": "NSS_CHB_CANCELLED_BOOKING",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Cancelled\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Cancelled\"}},\"aggs\":{\"Cancelled Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Cancelled Bookings"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "chbApprovalRate": {
+    "chartName": "NSS_CHB_APPROVAL_RATE",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Total Applications\":{\"sum\":{\"field\":\"totalApplicationReceived\"}},\"Approval Rate\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"applications\":\"Total Applications\"},\"script\":\"params.applications > 0 ? (params.approved / params.applications) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Approval Rate"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": false,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "chbRejectionRate": {
+    "chartName": "NSS_CHB_REJECTION_RATE",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Rejected\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Rejected\"}},\"aggs\":{\"Rejected Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Total Applications\":{\"sum\":{\"field\":\"totalApplicationReceived\"}},\"Rejection Rate\":{\"bucket_script\":{\"buckets_path\":{\"rejected\":\"Rejected>Rejected Bookings\",\"applications\":\"Total Applications\"},\"script\":\"params.applications > 0 ? (params.rejected / params.applications) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Rejection Rate"
+    ],
+    "isRoundOff": true,
+    "TodaysCollection": false,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "chbCancellationRate": {
+    "chartName": "NSS_CHB_CANCELLATION_RATE",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Cancelled\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Cancelled\"}},\"aggs\":{\"Cancelled Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Cancellation Rate\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"cancelled\":\"Cancelled>Cancelled Bookings\"},\"script\":\"params.approved > 0 ? (params.cancelled / params.approved) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Cancellation Rate"
+    ],
+    "isRoundOff": true,
+    "TodaysCollection": false,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "chbAverageRevenuePerBooking": {
+    "chartName": "NSS_CHB_AVERAGE_REVENUE_PER_BOOKING",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Total Collections\":{\"sum\":{\"field\":\"totalCollections\"}},\"Average Revenue Per Booking\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"collections\":\"Total Collections\"},\"script\":\"params.approved > 0 ? params.collections / params.approved : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Average Revenue Per Booking"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": false,
+    "postAggregationTheory": "TodaysCollection",
+    "_comment": "Total Collections / Approved Bookings"
+  },
+  "chbNoShowrate": {
+    "chartName": "NSS_CHB_NO_SHOW_RATE",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"No Show Bookings\":{\"sum\":{\"field\":\"noShowBookings\"}},\"No-show Rate\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"noshow\":\"No Show Bookings\"},\"script\":\"params.approved > 0 ? (params.noshow / params.approved) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "No-show Rate"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": false,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "chbBookingMode": {
+    "chartName": "NSS_CHB_BOOKING_MODES",
+    "queries": [
+      {
+        "module": "CHB",
+        "indexName": "chb-national-dashboard",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "dateRefField": "date",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"Booking Mode\":{\"terms\":{\"field\":\"bookingMode.keyword\",\"size\":10},\"aggs\":{\"Total Bookings\":{\"sum\":{\"field\":\"bookingTypeForBookingMode\"}}}}}}}}"
+      }
+    ],
+    "chartType": "pie",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Booking Mode"
+    ],
+    "insight": {},
+    "_comment": "Booking Mode Distribution"
+  },
+  "chbPeakBookingMonth": {
+    "chartName": "NSS_CHB_PEAK_BOOKING_MONTH",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Bookings\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\"},\"aggs\":{\"Approved Bookings\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}}}}}}"
+      }
+    ],
+    "chartType": "line",
+    "valueType": "number",
+    "action": "",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "aggregationPaths": [
+      "Bookings"
+    ],
+    "isCumulative": false,
+    "interval": "month",
+    "insight": {},
+    "_comment": "Monthly Approved Bookings"
+  },
+  "chbTotalCollections": {
+    "chartName": "NSS_CHB_TOTAL_COLLECTIONS",
+    "queries": [
+      {
+        "module": "CHB",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "chb-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Collections\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\"},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"totalCollections\"}}}}}}"
+      }
+    ],
+    "chartType": "line",
+    "valueType": "amount",
+    "action": "",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "aggregationPaths": [
+      "Collections"
+    ],
+    "isCumulative": true,
+    "interval": "month",
+    "insight": {},
+    "_comment": "Monthly CHB Collection"
+  },
+  "chbBookingStatus": {
+    "chartName": "NSS_CHB_BOOKING_STATUS",
+    "queries": [
+      {
+        "module": "CHB",
+        "indexName": "chb-national-dashboard",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "dateRefField": "date",
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"Booking Status\":{\"terms\":{\"field\":\"bookingStatus.keyword\",\"size\":10},\"aggs\":{\"Total Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}}}}}}"
+      }
+    ],
+    "chartType": "pie",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Booking Status"
+    ],
+    "insight": {},
+    "_comment": "Booking Status Distribution (Approved, Rejected, Cancelled)"
   }
-
 }

@@ -79,6 +79,8 @@ Desludging Service</div>
         <div  style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer"}}className="dashBoard" onClick = {(e)=>handClick(e,"national-ewaste")}>E-Waste Management</div>
         <div  style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer"}}className="dashBoard" onClick = {(e)=>handClick(e,"national-echallan")}>E-Challan</div>
         <div  style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer"}}className="dashBoard" onClick = {(e)=>handClick(e,"national-adv")}>Advertisement</div>
+        <div  style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer"}}className="dashBoard" onClick = {(e)=>handClick(e,"national-chb")}>Venue Bookings</div>
+
 
 
 
