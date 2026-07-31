@@ -21,7 +21,7 @@ Read top to bottom. Think of it like a **form wizard**: fill → review → subm
 
 Fields are **not hardcoded in React**.
 
-1. **MDMS** (`Estate.Config` / `assignAssetConfig`) describes fields (name, type, validation, dropdown source).
+1. **MDMS** (`Estate.Config` / `AssignAssetConfig`) describes fields (name, type, validation, dropdown source).
 2. **Local overrides** (e.g. `estateFormConfig.js`) add EST-only rules (payload, computed fields).
 3. Components **read that config** and render the UI.
 
