@@ -1,16 +1,14 @@
 package org.egov.garbageservice.model;
 
-import java.util.List;
-
-import org.egov.common.contract.response.ResponseInfo;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.response.ResponseInfo;
+
+import java.util.List;
 
 /**
  * Response for calculate-fee and workflow-actions API calls on garbage accounts.
@@ -22,9 +20,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GarbageAccountActionResponse {
-	
-	@JsonProperty("ResponseInfo")
-	private ResponseInfo responseInfo;
 
-	private List<GarbageAccountDetail> applicationDetails;
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo;
+
+    private List<GarbageAccountDetail> applicationDetails;
 }

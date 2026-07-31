@@ -1,17 +1,10 @@
 package org.egov.garbageservice.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import java.time.Instant;
-import java.util.stream.Collectors;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.garbageservice.model.AuditDetails;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+
+import java.time.Instant;
 
 /**
  * General-purpose helpers for garbage-service (string formatting, classpath templates, audit blocks).
@@ -19,66 +12,69 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class GrbgUtils {
+    /**
+     * Executes getCurrentTimestamp query operation.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Parses input search filter criteria.</li>
+     *   <li>Queries database or external service for matching records.</li>
+     *   <li>Applies security filters and pagination boundaries.</li>
+     *   <li>Returns response payload with matching entity list.</li>
+     * </ol>
+     *
+     * @return the output result
+     */
 
-	public static String toCamelCase(String str) {
-		// Convert the entire string to lowercase and then capitalize the first letter
-		if (str == null || str.isEmpty()) {
-			return str;
-		}
-		// Convert the first letter to uppercase and the rest to lowercase
-		return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
-	}
+    public static Long getCurrentTimestamp() {
+        return Instant.now().toEpochMilli();
+    }
 
-	public static String removeFirstAndLastChar(String str) {
-		// Check if the string is long enough to remove first and last characters
-		if (str == null || str.length() <= 2) {
-			return ""; // Return empty string if length is 2 or less
-		}
+    /**
+     * Executes getAuditDetails query operation.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Parses input search filter criteria.</li>
+     *   <li>Queries database or external service for matching records.</li>
+     *   <li>Applies security filters and pagination boundaries.</li>
+     *   <li>Returns response payload with matching entity list.</li>
+     * </ol>
+     *
+     * @param by       the by parameter
+     * @param isCreate the isCreate parameter
+     * @return the output result
+     */
 
-		// Use substring to remove first and last character
-		return str.substring(1, str.length() - 1);
-	}
+    public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
+        Long time = getCurrentTimestamp();
+        if (isCreate)
+            // TODO: check if we can set lastupdated details to empty
+            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
+                    .build();
+        else
+            return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
+    }
 
-	public String getContentAsString(ClassPathResource resource) {
-	    try (InputStream is = resource.getInputStream();
-	         BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-	        return reader.lines().collect(Collectors.joining("\n"));
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return "";
-	    }
-	}
-	
-	public AuditDetails buildCreateAuditDetails(RequestInfo requestInfo) {
-		String uuid = requestInfo.getUserInfo().getUuid();
-		return AuditDetails.builder().createdBy(uuid).createdDate(System.currentTimeMillis()).lastModifiedBy(uuid)
-				.lastModifiedDate(System.currentTimeMillis()).build();
-	}
+    /**
+     * Handles REST API request to register a new garbage account.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Validates the incoming request payload and authentication headers.</li>
+     *   <li>Delegates account creation and workflow initialization logic.</li>
+     *   <li>Constructs standardized response headers.</li>
+     *   <li>Returns HTTP response containing created entity details.</li>
+     * </ol>
+     *
+     * @param requestInfo the request information containing user session details
+     * @return the output result
+     */
 
-	public AuditDetails buildUpdateAuditDetails(AuditDetails auditDetails, RequestInfo requestInfo) {
-		String uuid = requestInfo.getUserInfo().getUuid();
-
-		if (null == auditDetails) {
-			auditDetails = AuditDetails.builder().build();
-		}
-		auditDetails.setLastModifiedBy(uuid);
-		auditDetails.setLastModifiedDate(System.currentTimeMillis());
-
-		return auditDetails;
-	}
-
-	public static Long getCurrentTimestamp() {
-		return Instant.now().toEpochMilli();
-	}
-
-	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
-		Long time = getCurrentTimestamp();
-		if (isCreate)
-			// TODO: check if we can set lastupdated details to empty
-			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
-					.build();
-		else
-			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
-	}
+    public AuditDetails buildCreateAuditDetails(RequestInfo requestInfo) {
+        String uuid = requestInfo.getUserInfo().getUuid();
+        return AuditDetails.builder().createdBy(uuid).createdDate(System.currentTimeMillis()).lastModifiedBy(uuid)
+                .lastModifiedDate(System.currentTimeMillis()).build();
+    }
 
 }

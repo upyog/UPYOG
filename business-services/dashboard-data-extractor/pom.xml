@@ -54,7 +54,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>org.upyog.dashboard.AdapterServiceApplication</mainClass>
+					<mainClass>org.upyog.dashboard.DashboardDataExtractorApplication</mainClass>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -98,7 +98,7 @@
 		<dependency>
 			<groupId>org.upyog</groupId>
 			<artifactId>dashboard-data-engine</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
 
 		<!-- JDBC & Database -->

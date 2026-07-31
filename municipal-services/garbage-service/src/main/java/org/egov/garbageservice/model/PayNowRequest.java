@@ -1,14 +1,9 @@
 package org.egov.garbageservice.model;
 
-import java.util.List;
-
+import lombok.*;
 import org.egov.tracer.annotations.CustomSafeHtml;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,26 +16,26 @@ import lombok.Setter;
 @Builder
 public class PayNowRequest {
 
-	@CustomSafeHtml
-	private String userUuid;
+    @CustomSafeHtml
+    private String userUuid;
 
-	private List<String> garbageApplicationNumbers;
+    private List<String> garbageApplicationNumbers;
 
-	private List<String> garbageUuid;
+    private List<String> garbageUuid;
 
-	private List<String> billStatus;
+    private List<String> billStatus;
 
-	@CustomSafeHtml
-	private String month;
+    @CustomSafeHtml
+    private String month;
 
-	@CustomSafeHtml
-	private String year;
+    @CustomSafeHtml
+    private String year;
 
-	private List<String> propertyIds;
-	
-	private List<Long> garbageIds;
+    private List<String> propertyIds;
 
-	@Builder.Default
-	private Boolean isEmptyBillFilter = false;
+    private List<Long> garbageIds;
+
+    @Builder.Default
+    private Boolean isEmptyBillFilter = false;
 
 }

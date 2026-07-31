@@ -1,8 +1,8 @@
 package org.egov.garbageservice.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import digit.models.coremodels.IdGenerationRequest;
+import digit.models.coremodels.IdGenerationResponse;
+import digit.models.coremodels.IdRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
-import digit.models.coremodels.IdGenerationRequest;
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Calls egov-idgen service to generate unique, platform-standard IDs.
@@ -33,11 +32,11 @@ public class IdGenRepository {
     /**
      * Generates {@code count} unique IDs for the given tenant using the idgen service.
      *
-     * @param requestInfo  caller's RequestInfo (passed through to idgen)
-     * @param tenantId     tenant for which the ID is generated
-     * @param idName       format name registered in MDMS (e.g. "garbage.application.num")
-     * @param idFormat     format pattern  (e.g. "GB/[CITY.CODE]/[SEQ_GRBG_APPLICATION_NUM]")
-     * @param count        number of IDs to generate in one call
+     * @param requestInfo caller's RequestInfo (passed through to idgen)
+     * @param tenantId    tenant for which the ID is generated
+     * @param idName      format name registered in MDMS (e.g. "garbage.application.num")
+     * @param idFormat    format pattern  (e.g. "GB/[CITY.CODE]/[SEQ_GRBG_APPLICATION_NUM]")
+     * @param count       number of IDs to generate in one call
      * @return list of generated ID strings, size == count
      */
     public List<String> getIdList(RequestInfo requestInfo, String tenantId,

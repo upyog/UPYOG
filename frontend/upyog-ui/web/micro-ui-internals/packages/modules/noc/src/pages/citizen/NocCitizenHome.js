@@ -1,3 +1,8 @@
+/**
+ * Renders the Fire NOC Citizen module landing homepage.
+ * Clears draft session storage on mount and displays module action links (Apply for NOC, My Applications)
+ * alongside a feature card and banner image.
+ */
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +26,7 @@ const NocCitizenHome = () => {
     Digit.SessionStorage.del("NOC_CREATE_APPLICATION");
     Digit.SessionStorage.del("NOC_SUCCESSFUL_APPLICATION");
   }, []);
-  
+
   const getPrefix = () => {
     return window.location.pathname.includes("upyog-ui") ? "/upyog-ui" : "/digit-ui";
   };

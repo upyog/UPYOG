@@ -9,30 +9,11 @@ export const NOCService = {
       method: "POST",
       auth: true,
       userService: true,
+      setTimeParam: false,
       params: { tenantId, ...filters },
     }),
-  create: (data, tenantId) => {
-    const ts = new Date().getTime();
-    const customRequestInfo = {
-      apiId: "Mihy",
-      ver: ".01",
-      action: "",
-      did: "1",
-      key: "",
-      msgId: `${ts}|${Digit.StoreData.getCurrentLanguage()}`,
-      authToken: Digit.UserService.getUser()?.access_token || null,
-      userInfo: Digit.UserService.getUser()?.info,
-      requesterId: ""
-    };
-    Object.defineProperty(data, "RequestInfo", {
-      get: () => customRequestInfo,
-      set: (val) => {
-        Object.assign(customRequestInfo, val);
-      },
-      configurable: true,
-      enumerable: true
-    });
-    return Request({
+  create: (data, tenantId) =>
+    Request({
       url: Urls.firenoc.create,
       useCache: false,
       method: "POST",
@@ -40,29 +21,9 @@ export const NOCService = {
       params: { tenantId },
       auth: true,
       userService: true,
-    });
-  },
-  update: (data, tenantId) => {
-    const ts = new Date().getTime();
-    const customRequestInfo = {
-      apiId: "Rainmaker",
-      ver: ".01",
-      action: data?.FireNOCs?.[0]?.fireNOCDetails?.action || "APPLY",
-      did: "1",
-      key: "",
-      msgId: `${ts}|${Digit.StoreData.getCurrentLanguage()}`,
-      authToken: Digit.UserService.getUser()?.access_token || null,
-      userInfo: Digit.UserService.getUser()?.info
-    };
-    Object.defineProperty(data, "RequestInfo", {
-      get: () => customRequestInfo,
-      set: (val) => {
-        Object.assign(customRequestInfo, val);
-      },
-      configurable: true,
-      enumerable: true
-    });
-    return Request({
+    }),
+  update: (data, tenantId) =>
+    Request({
       url: Urls.firenoc.update,
       useCache: false,
       method: "POST",
@@ -70,8 +31,7 @@ export const NOCService = {
       params: { tenantId },
       auth: true,
       userService: true,
-    });
-  },
+    }),
   search: (tenantId, filters = {}) =>
     Request({
       url: Urls.firenoc.search,
@@ -80,5 +40,6 @@ export const NOCService = {
       params: { tenantId, ...filters },
       auth: true,
       userService: true,
+      setTimeParam: false,
     }),
 }

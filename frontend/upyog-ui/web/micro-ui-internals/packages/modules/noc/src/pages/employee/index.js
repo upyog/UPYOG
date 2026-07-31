@@ -1,3 +1,7 @@
+/**
+ * Main sub-router and navigation controller for the NOC Employee module.
+ * Renders breadcrumb navigation and handles routes for Inbox, Application Overview, Search, and Response pages.
+ */
 import { BreadCrumb, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";

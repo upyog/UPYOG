@@ -1,11 +1,9 @@
-/* 
- * NOC Type Selection Page Component (Step 1 of the Citizen wizard flow)
+/** 
  * Allows users to choose between a "New Application" or a "Renewal / Provisional NOC" type.
  * Offers real-time search capabilities via provisional number integration to pull existing application data.
  */
 import React, { useState, useEffect } from "react";
 import { FormStep, RadioButtons, TextInput, CardLabel, CardLabelError, Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import Timeline from "../components/NocTimeline";
 
 const getCategoryCode = (docType) => {
   if (docType.startsWith("OWNER")) {
@@ -46,11 +44,13 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
     { i18nKey: "NOC_TYPE_PROVISIONAL_RADIOBUTTON", code: "PROVISIONAL" },
   ];
 
+  /** Updates NOC application type selection (New vs Provisional). */
   const selectNocType = (value) => {
     setNocType(value);
     setError(null);
   };
 
+  /** Converts epoch timestamp to date string (YYYY-MM-DD). */
   const convertEpochToDateString = (epoch) => {
     if (!epoch) return "";
     const d = new Date(epoch);
@@ -60,6 +60,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
     return `${year}-${month}-${day}`;
   };
 
+  /** Searches existing Fire NOC records by provisional NOC number and pre-populates application form. */
   const handleSearchProvisional = async () => {
     /* Validates empty input and sets search error to trigger warning toast */
     if (!provisionalNocNumber) {
@@ -187,6 +188,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
+  /** Validates required provisional NOC number if NEW application is selected and proceeds in wizard. */
   const goNext = () => {
     if (nocType.code === "NEW" && !provisionalNocNumber) {
       setError(t("NOC_PROVISIONAL_FIRE_NOC_NO_REQUIRED"));
@@ -198,11 +200,11 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
     });
   };
 
+  /** Skips NOC type selection step. */
   const onSkip = () => onSelect();
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!nocType} forcedError={error}>
         <RadioButtons
           t={t}

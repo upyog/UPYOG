@@ -13,6 +13,19 @@ import GCAcknowledgement from "../citizen/Create/GCAcknowledgement";
  * Renders the exact same Step-by-Step wizard from the citizen side,
  * formatted and routed for the Employee dashboard.
  */
+/**
+ * CreateApplication Component
+ * 
+ * Renders the exact same step-by-step wizard from the citizen side,
+ * formatted and routed for the Employee dashboard. Reuses the citizen config
+ * and check/acknowledgement pages but injects `userType="employee"` to adjust
+ * field layout widths (50% instead of 86%).
+ * 
+ * Handles employee-specific payload transformations including:
+ * - Unwrapping nested garbageAccount objects
+ * - Setting tenantId on the account and property location
+ * - Adding workflow action "APPLY" on submission
+ */
 const CreateApplication = () => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();

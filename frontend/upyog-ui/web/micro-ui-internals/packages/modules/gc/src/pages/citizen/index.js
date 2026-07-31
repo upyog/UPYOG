@@ -13,6 +13,18 @@ const shouldHideBack = () => {
   return hideBackPaths.some((p) => path.includes(p));
 };
 
+/**
+ * CitizenApp Component
+ * 
+ * Defines the routing structure for the GC citizen-facing pages.
+ * Sets up routes for:
+ * - `new-registration`: GC application creation wizard (multi-step form)
+ * - `my-applications`: List of citizen's GC applications with search/filter
+ * - `application-details`: Detailed view of a single application
+ * - `edit`: Edit flow for applications in editable status
+ * 
+ * Handles back button visibility based on current route.
+ */
 const App = () => {
   const location = useLocation();
   return (

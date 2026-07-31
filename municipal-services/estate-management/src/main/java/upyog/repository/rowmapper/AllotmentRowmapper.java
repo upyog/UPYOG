@@ -60,6 +60,7 @@ public class AllotmentRowmapper implements ResultSetExtractor<List<Allotment>> {
             allotment.setSignedDeed(rs.getString("signed_deed"));
             allotment.setBillingCycle(rs.getString("billing_cycle"));
             allotment.setStatus(rs.getString("status"));
+            allotment.setAdditionalDetails(getAdditionalDetails(rs, "additional_details"));
 
 
             AuditDetails auditDetails = AuditDetails.builder()
@@ -93,10 +94,8 @@ public class AllotmentRowmapper implements ResultSetExtractor<List<Allotment>> {
     }
     
     /**
-     * Helper method to parse additional details from JSONB
-     * This method is kept for future use when additional_details column is added to allotment table
+     * Helper method to parse additional details from JSONB.
      */
-    @SuppressWarnings("unused")
     private Object getAdditionalDetails(ResultSet rs, String columnName) throws SQLException {
         try {
             PGobject pgObject = (PGobject) rs.getObject(columnName);

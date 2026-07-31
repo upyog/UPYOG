@@ -1,35 +1,54 @@
 package org.egov.garbageservice.util;
 
 import com.jayway.jsonpath.JsonPath;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.garbageservice.config.GarbageServiceConfig;
+import org.egov.garbageservice.repository.ServiceRequestRepository;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.springframework.stereotype.Component;
-import org.egov.garbageservice.config.GarbageServiceConfig;
-import org.egov.garbageservice.repository.ServiceRequestRepository;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+/**
+ * Utility component for building MDMS request criteria and fetching master configuration data (rates, penalties, rebates).
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class MdmsUtil {
-
-    private final ServiceRequestRepository serviceRequestRepository;
-    private final GarbageServiceConfig config;
 
     private static final String MDMS_REBATE_MASTER_NAME = "Rebate";
     private static final String MDMS_PENALTY_MASTER_NAME = "Penalty";
     private static final String MDMS_GARBAGE_MODULE_NAME = "Garbage";
     private static final String MDMS_REBATE_FILTER = "$.[?(@.serviceType=='GC_REBATE_FEE' && @.code=='{1}')].rate";
     private static final String MDMS_PENALTY_FILTER = "$.[?(@.serviceType=='GC_RENTAL_FEE' && @.feeType=='GC_PENALTY_FEE')].rate";
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final GarbageServiceConfig config;
+
+    /**
+     * Executes getRebateRate query operation.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Parses input search filter criteria.</li>
+     *   <li>Queries database or external service for matching records.</li>
+     *   <li>Applies security filters and pagination boundaries.</li>
+     *   <li>Returns response payload with matching entity list.</li>
+     * </ol>
+     *
+     * @param requestInfo     the request information containing user session details
+     * @param tenantId        the tenant ID string
+     * @param specialCategory the specialCategory parameter
+     * @return the output result
+     */
 
     public BigDecimal getRebateRate(RequestInfo requestInfo, String tenantId, String specialCategory) {
         if (specialCategory == null || specialCategory.isEmpty()) {
@@ -50,6 +69,22 @@ public class MdmsUtil {
         }
     }
 
+    /**
+     * Executes getPenaltyRate query operation.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Parses input search filter criteria.</li>
+     *   <li>Queries database or external service for matching records.</li>
+     *   <li>Applies security filters and pagination boundaries.</li>
+     *   <li>Returns response payload with matching entity list.</li>
+     * </ol>
+     *
+     * @param requestInfo the request information containing user session details
+     * @param tenantId    the tenant ID string
+     * @return the output result
+     */
+
     public BigDecimal getPenaltyRate(RequestInfo requestInfo, String tenantId) {
         try {
             List<Map<String, Object>> penaltyList = JsonPath.read(getMdmsResponse(requestInfo, tenantId), "$.MdmsRes.Garbage.Penalty");
@@ -65,6 +100,22 @@ public class MdmsUtil {
     }
 
 
+    /**
+     * Executes getMdmsResponse query operation.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Parses input search filter criteria.</li>
+     *   <li>Queries database or external service for matching records.</li>
+     *   <li>Applies security filters and pagination boundaries.</li>
+     *   <li>Returns response payload with matching entity list.</li>
+     * </ol>
+     *
+     * @param requestInfo the request information containing user session details
+     * @param tenantId    the tenant ID string
+     * @return the output result
+     */
+
     public Object getMdmsResponse(RequestInfo requestInfo, String tenantId) {
         String stateLevelTenantId = tenantId.contains(".") ? tenantId.split("\\.")[0] : tenantId;
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, stateLevelTenantId);
@@ -78,6 +129,22 @@ public class MdmsUtil {
 
         return resultOptional.get();
     }
+
+    /**
+     * Executes getMdmsRequest query operation.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Parses input search filter criteria.</li>
+     *   <li>Queries database or external service for matching records.</li>
+     *   <li>Applies security filters and pagination boundaries.</li>
+     *   <li>Returns response payload with matching entity list.</li>
+     * </ol>
+     *
+     * @param requestInfo the request information containing user session details
+     * @param tenantId    the tenant ID string
+     * @return the output result
+     */
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId) {
         MasterDetail masterDetail1 = new MasterDetail();

@@ -8,6 +8,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 // This component displays detailed information about a specific GC application,
 // including applicant details, property location, garbage specifications, and payment status.
 
+/**
+ * GCApplicationDetails Component (Citizen)
+ * 
+ * Displays detailed information about a specific GC application for citizens,
+ * including applicant details, property location, garbage specifications, and payment status.
+ * 
+ * Features:
+ * - Fetches application and workflow details by application number from URL params
+ * - Handles payment: fetches bill data and provides "Make Payment" button when pending
+ * - Supports edit flow: shows "Edit Application" button when status is EDIT_APPLICATION
+ * - Displays all details in organized sections with StatusTable rows
+ * - Handles multiple data formats from the API (nested garbageAccount, flat structure, etc.)
+ */
 const GCApplicationDetails = () => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();

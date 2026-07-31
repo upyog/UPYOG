@@ -1,15 +1,13 @@
 package org.egov.garbageservice.model;
 
-import java.util.List;
-
-import org.egov.common.contract.request.RequestInfo;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.RequestInfo;
+
+import java.util.List;
 
 /**
  * API request wrapper for creating or updating one or more garbage accounts.
@@ -21,15 +19,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GarbageAccountRequest {
 
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo;
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
-	private List<GarbageAccount> garbageAccounts;
+    private List<GarbageAccount> garbageAccounts;
 
-	@Builder.Default
-	private Boolean fromMigration = false;
+    @Builder.Default
+    private Boolean fromMigration = false;
 
-	@Builder.Default
-	private Boolean createChildAccountOnly = false;
+    @Builder.Default
+    private Boolean createChildAccountOnly = false;
 
 }

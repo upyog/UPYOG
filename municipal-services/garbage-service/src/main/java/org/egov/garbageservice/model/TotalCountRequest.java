@@ -1,14 +1,9 @@
 package org.egov.garbageservice.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.annotations.CustomSafeHtml;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Setter
@@ -20,11 +15,11 @@ import lombok.Setter;
  */
 @Builder
 public class TotalCountRequest {
-	
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo;
-	
-	@CustomSafeHtml
-	private String tenantId;
+
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
+
+    @CustomSafeHtml
+    private String tenantId;
 
 }
