@@ -88,6 +88,11 @@
  * @param {Function} [t]                   i18n translator; defaults to identity.
  * @param {boolean}  [showCancel=true]     Show Cancel / Clear in wizard ActionBar.
  * @param {string}   [cancelLabel]         i18n key for cancel (default CS_COMMON_CANCEL).
+ * @param {boolean}  [confirmCancel=true]  Show confirmation Modal before wizard Cancel reset.
+ * @param {string}   [cancelConfirmHeading] Modal heading i18n key (default CS_COMMON_CANCEL).
+ * @param {string}   [cancelConfirmMessage] Modal body i18n key (default CS_WANT_TO_CANCEL).
+ * @param {string}   [cancelConfirmYesLabel] Confirm button i18n key (default CS_COMMON_YES).
+ * @param {string}   [cancelConfirmNoLabel] Dismiss button i18n key (default CS_COMMON_NO).
  * @param {Function} [onCancel]            Extra callback after form reset on cancel.
  * @param {object}   [resetBaseline]       Preferred reset source on cancel; falls back to rawAsset.
  * @param {boolean}  [showDraftButton]     Show explicit Save Draft button.
@@ -111,12 +116,29 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from "react"
 import { SubmitBar, Toast, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import ActionBar from "../atoms/ActionBar";
 import ButtonSelector from "../atoms/ButtonSelector";
+import CardText from "../atoms/CardText";
+import Modal from "../hoc/Modal";
 import DynamicFormField from "./DynamicFormField";
 import { validateFields, validateCrossField, calculateDuration, calculateRentByBillingCycle } from "../utilities/validators";
 import { sortByOrder, buildPayload, scrollToFirstError, buildInitialData, flattenFormConfig, findFieldConfig, enrichDropdownSelection, optionCode } from "../utilities/formUtils";
 import useDynamicMDMS from "../utilities/useDynamicMDMS";
 import { mapFormToSearchFilters } from "../utilities/searchUtils";
 import { SearchField, SearchForm } from "./SearchForm";
+
+const CancelPopupHeading = ({ label }) => <h1 className="heading-m">{label}</h1>;
+
+const CancelPopupCloseIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+  </svg>
+);
+
+const CancelPopupCloseBtn = ({ onClick }) => (
+  <div className="icon-bg-secondary" onClick={onClick}>
+    <CancelPopupCloseIcon />
+  </div>
+);
 
 /**
  * Adapts SearchForm's react-hook-form-style handleSubmit API.
@@ -173,6 +195,11 @@ const DynamicForm = ({
   t = (k) => k,
   showCancel = true,
   cancelLabel = "CS_COMMON_CANCEL",
+  confirmCancel = true,
+  cancelConfirmHeading = "CS_COMMON_CANCEL",
+  cancelConfirmMessage = "CS_WANT_TO_CANCEL",
+  cancelConfirmYesLabel = "CS_COMMON_YES",
+  cancelConfirmNoLabel = "CS_COMMON_NO",
   onCancel,
   resetBaseline,
   showDraftButton = false,
@@ -248,6 +275,8 @@ const DynamicForm = ({
   const [searchPanel, setSearchPanel] = useState(null);
   /** After picking a suggestion, hide typeahead until the user types again. */
   const suppressSuggestRef = useRef(false);
+  /** Wizard Cancel confirmation modal (reuses shared Modal / confirmation_box). */
+  const [showCancelPopup, setShowCancelPopup] = useState(false);
 
   /**
    * Keeps locality MDMS bound to the city currently on the form.
@@ -831,6 +860,7 @@ const DynamicForm = ({
     setErrors({});
     setCrossFieldMessages([]);
     setSearchPanel(null);
+    setShowCancelPopup(false);
     onCancel?.();
   }, [
     routeConfig.form,
@@ -842,6 +872,20 @@ const DynamicForm = ({
     applyComputedFields,
     onCancel,
   ]);
+
+  /**
+   * Wizard Cancel click — show confirmation Modal first when confirmCancel is on;
+   * search Clear All still resets immediately via handleCancel.
+   */
+  const requestCancel = useCallback(() => {
+    if (confirmCancel && !isSearchMode) {
+      setShowCancelPopup(true);
+      return;
+    }
+    handleCancel();
+  }, [confirmCancel, isSearchMode, handleCancel]);
+
+  const dismissCancelPopup = useCallback(() => setShowCancelPopup(false), []);
 
   /**
    * Explicit Save Draft button handler.
@@ -967,7 +1011,7 @@ const DynamicForm = ({
             <ButtonSelector
               theme="border"
               label={t(cancelLabel)}
-              onSubmit={handleCancel}
+              onSubmit={requestCancel}
               className="dynamic-form-margin-right"
             />
           )}
@@ -990,6 +1034,22 @@ const DynamicForm = ({
 
       {toast && (
         <Toast label={toast.message} error={toast.error} onClose={() => setToast(null)} />
+      )}
+
+      {showCancelPopup && (
+        <Modal
+          headerBarMain={<CancelPopupHeading label={t(cancelConfirmHeading)} />}
+          headerBarEnd={<CancelPopupCloseBtn onClick={dismissCancelPopup} />}
+          actionCancelLabel={t(cancelConfirmNoLabel)}
+          actionCancelOnSubmit={dismissCancelPopup}
+          actionSaveLabel={t(cancelConfirmYesLabel)}
+          actionSaveOnSubmit={handleCancel}
+          formId="modal-action"
+        >
+          <div className="confirmation_box">
+            <CardText>{t(cancelConfirmMessage, "Do you want to cancel?")}</CardText>
+          </div>
+        </Modal>
       )}
     </div>
   );

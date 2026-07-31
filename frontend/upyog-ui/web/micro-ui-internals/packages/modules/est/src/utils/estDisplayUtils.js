@@ -16,7 +16,7 @@ export const toBillingCycleLabel = (value, t) => {
 };
 
 /** Backend dueDate from allotment search (Allotments[].dueDate). */
-export const getAllotmentDueDate = (application, allotment) =>
+export const getAllotmentDueDate = (application, allotment = application) =>
   allotment?.dueDate ??
   application?.dueDate ??
   allotment?.additionalDetails?.dueDate ??
@@ -106,7 +106,7 @@ export const isNoDemandError = (err) => {
  * Payment status from allotment _search (`Allotments[]`).
  * Primary field is `status` (PAID | PENDING_FOR_PAYMENT); also accept aliases.
  */
-export const getAllotmentPaymentStatus = (allotment, application) => {
+export const getAllotmentPaymentStatus = (allotment, application = allotment) => {
   const candidates = [
     allotment?.status,
     allotment?.paymentStatus,
@@ -145,6 +145,6 @@ export const normalizeCitizenPaymentStatus = (status) => {
 };
 
 /** True when Allotments[].status is PAID — Make Payment must be hidden. */
-export const isAllotmentPaymentPaid = (allotment, application) =>
+export const isAllotmentPaymentPaid = (allotment, application = allotment) =>
   normalizeCitizenPaymentStatus(getAllotmentPaymentStatus(allotment, application)) ===
   "PAID";

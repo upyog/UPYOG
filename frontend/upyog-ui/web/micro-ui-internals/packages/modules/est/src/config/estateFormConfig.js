@@ -162,6 +162,21 @@ const estateFormFieldOverrides = [
     field: { name: "searchEstateNo", prefillFrom: "estateNo" },
   },
   {
+    // Create-asset only deals with immovable estates — hide MOVABLE MDMS rows.
+    key: "EST_ASSET_TYPE",
+    field: {
+      name: "assetType",
+      dataSource: {
+        type: "MDMS",
+        moduleName: "ASSET",
+        masterName: "assetParentCategory",
+        filter: {
+          assetClassification: "IMMOVABLE",
+        },
+      },
+    },
+  },
+  {
     key: "EST_BUILDING_FLOOR",
     field: { name: "buildingFloor", type: "text", numeric: true },
     apiFieldName: "floor",
