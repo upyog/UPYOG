@@ -189,10 +189,35 @@ public class PersistenceService<T, ID extends Serializable> {
 	}
 
 	private TypedQuery<T> getQueryWithParams(final String query, final Object... params) {
-		final TypedQuery<T> q = entityManager.createQuery(query, this.type);
+		String finalQuery = query;
+		boolean hasPositionalParams = false;
+		if (query != null && query.contains("?")) {
+			hasPositionalParams = true;
+			StringBuilder sb = new StringBuilder();
+			int paramCounter = 1;
+			char[] chars = query.toCharArray();
+			for (int i = 0; i < chars.length; i++) {
+				if (chars[i] == '?') {
+					if (i + 1 < chars.length && Character.isDigit(chars[i + 1])) {
+						sb.append('?');
+					} else {
+						sb.append('?').append(paramCounter++);
+					}
+				} else {
+					sb.append(chars[i]);
+				}
+			}
+			finalQuery = sb.toString();
+		}
+
+		final TypedQuery<T> q = entityManager.createQuery(finalQuery, this.type);
 		int index = 0;
 		for (final Object param : params) {
-			q.setParameter(index, param);
+			if (param instanceof Collection) {
+				q.setParameter(String.valueOf("param_" + index), (Collection) param);
+			} else {
+				q.setParameter(hasPositionalParams ? (index + 1) : index, param);
+			}
 			index++;
 		}
 		return q;

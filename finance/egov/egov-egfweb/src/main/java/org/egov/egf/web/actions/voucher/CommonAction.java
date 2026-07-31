@@ -3275,11 +3275,11 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxGetAllCoaCodesExceptCashBank...");
 
         coaList = persistenceService
-                .findAllBy(new StringBuilder(" FROM CChartOfAccounts WHERE classification = 4 AND isactiveforposting = true AND parentid not in")
-                        .append(" (select id from CChartOfAccounts where purposeid in (SELECT id FROM AccountCodePurpose WHERE UPPER(NAME) = UPPER('Cash In Hand')")
-                        .append(" OR UPPER(NAME) = UPPER('Bank Codes') OR UPPER(NAME) = UPPER('Cheque In Hand'))) and id not in")
-                        .append(" (select id from CChartOfAccounts where purposeid in (SELECT id FROM AccountCodePurpose WHERE UPPER(NAME) = UPPER('Cash In Hand')")
-                        .append(" OR UPPER(NAME) = UPPER('Bank Codes') OR UPPER(NAME) = UPPER('Cheque In Hand'))) and glcode not like '471%' ORDER BY glcode ").toString());
+                .findAllBy(new StringBuilder(" FROM CChartOfAccounts WHERE classification = 4 AND isActiveForPosting = true AND parentId not in")
+                        .append(" (select id from CChartOfAccounts where purposeId in (SELECT id FROM EgfAccountcodePurpose WHERE UPPER(name) = UPPER('Cash In Hand')")
+                        .append(" OR UPPER(name) = UPPER('Bank Codes') OR UPPER(name) = UPPER('Cheque In Hand'))) and id not in")
+                        .append(" (select id from CChartOfAccounts where purposeId in (SELECT id FROM EgfAccountcodePurpose WHERE UPPER(name) = UPPER('Cash In Hand')")
+                        .append(" OR UPPER(name) = UPPER('Bank Codes') OR UPPER(name) = UPPER('Cheque In Hand'))) and glcode not like '471%' ORDER BY glcode ").toString());
 
         result = new StringBuffer();
         for (CChartOfAccounts cc : coaList) {

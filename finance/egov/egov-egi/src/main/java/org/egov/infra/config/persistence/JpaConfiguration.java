@@ -161,7 +161,7 @@ public class JpaConfiguration {
         properties.put(ORDER_INSERTS, true);
         properties.put(ORDER_UPDATES, true);
         properties.put(AUTOCOMMIT, false);
-        properties.put("hibernate.connection.release_mode", "after_statement");
+        properties.put("hibernate.connection.release_mode", "after_transaction");
         properties.put("jadira.usertype.autoRegisterUserTypes", true);
         properties.put("jadira.usertype.databaseZone", "jvm");
         properties.put("org.hibernate.envers.store_data_at_delete", true);

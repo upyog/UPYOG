@@ -239,22 +239,22 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
                 throw new ApplicationException("Purpose ID provided is not defined in the system");
             query = getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
             query.setParameter(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
             query.setParameter(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId) AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId) AND classification=4 AND isActiveForPosting=true ");
             query.setParameter(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
             query = getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE purposeid=:purposeId AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE purposeId=:purposeId AND classification=4 AND isActiveForPosting=true ");
             query.setParameter(PURPOSE_ID, purposeId);
             accountCodeList.addAll(query.list());
         } catch (final HibernateException e) {

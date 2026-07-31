@@ -228,8 +228,8 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         }
         query = getCurrentSession()
                 .createQuery(
-                        "from Accountdetailtype where id in (select cd.detailTypeId from "
-                                + "CChartOfAccountDetail  as cd,CChartOfAccounts as c where cd.glCodeId=c.id and c.glcode=:glCode) and name=:name");
+                        "from Accountdetailtype where id in (select cd.detailTypeId.id from "
+                                + "CChartOfAccountDetail as cd,CChartOfAccounts as c where cd.glCodeId.id=c.id and c.glcode=:glCode) and name=:name");
         query.setParameter("glCode", glCode);
         query.setParameter("name", name);
         return (Accountdetailtype) query.uniqueResult();
@@ -293,24 +293,24 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
             query = persistenceService
                     .getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
             query.setParameter("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
             query = persistenceService
                     .getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
             query.setParameter("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
             query = persistenceService
                     .getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId) AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId) AND classification=4 AND isActiveForPosting=true ");
             query.setParameter("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
             query = getCurrentSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE purposeid=:purposeId AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE purposeId=:purposeId AND classification=4 AND isActiveForPosting=true ");
             query.setParameter("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
         } catch (final ApplicationException e) {
@@ -328,7 +328,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
     public List<CChartOfAccounts> getNonControlCodeList() {
         return getCurrentSession()
                 .createQuery(
-                        " from CChartOfAccounts acc where acc.classification=4 and acc.isActiveForPosting=true and acc.id not in (select cd.glCodeId from CChartOfAccountDetail cd) ")
+                        " from CChartOfAccounts acc where acc.classification=4 and acc.isActiveForPosting=true and acc.id not in (select cd.glCodeId.id from CChartOfAccountDetail cd) ")
                 .list();
     }
 
@@ -336,25 +336,21 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
      * @description- This method returns a list of detail type object based on the glcode.
      * @param glCode - glcode supplied by the client.
      * @return List<Accountdetailtype> -list of Accountdetailtype object(s).
-     * @throws ApplicationException
      */
     @SuppressWarnings("unchecked")
     public List<Accountdetailtype> getAccountdetailtypeListByGLCode(final String glCode) {
-        if (StringUtils.isBlank(glCode)) {
-            throw new ApplicationRuntimeException("GL Code is empty ");
-        }
-        // checking if the glcode is exists in ChartOfAccounts table.
 
-        CChartOfAccounts cChartOfAccountsByGlCode = getCChartOfAccountsByGlCode(glCode);
-        if (cChartOfAccountsByGlCode == null) {
+        final Query checkCoa = persistenceService.getSession().createQuery("from CChartOfAccounts where glcode=:glCode");
+        checkCoa.setParameter("glCode", glCode);
+        if (checkCoa.list().isEmpty()) {
             throw new ApplicationRuntimeException("GL Code not found in Chart of Accounts");
         }
         try {
             Query query = persistenceService
                     .getSession()
                     .createQuery(
-                            "from Accountdetailtype where id in (select cd.detailTypeId "
-                                    + "from CChartOfAccountDetail  as cd,CChartOfAccounts as c where cd.glCodeId=c.id and c.glcode=:glCode)");
+                            "from Accountdetailtype where id in (select cd.detailTypeId.id "
+                                    + "from CChartOfAccountDetail as cd,CChartOfAccounts as c where cd.glCodeId.id=c.id and c.glcode=:glCode)");
             query.setParameter("glCode", glCode);
             query.setCacheable(true);
             return query.list().isEmpty() ? null : query.list();
@@ -639,7 +635,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
 
         return getCurrentSession()
                 .createQuery(
-                        "select acc from CChartOfAccounts acc where acc.isActiveForPosting=true and (acc.glcode like '1%' or acc.glcode like '2%') and acc.id not in (select cd.glCodeId from CChartOfAccountDetail cd) order by acc.glcode")
+                        "select acc from CChartOfAccounts acc where acc.isActiveForPosting=true and (acc.glcode like '1%' or acc.glcode like '2%') and acc.id not in (select cd.glCodeId.id from CChartOfAccountDetail cd) order by acc.glcode")
                 .setCacheable(true).list();
 
     }

@@ -92,11 +92,15 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     @Override
     public void releaseConnection(Object tenantId, Connection connection) throws SQLException {
         try {
-            connection.setSchema((String) tenantId);
-        } catch (SQLException e) {
-            LOG.warn("Error occurred while switching schema upon release connection", e);
+            if (connection != null && !connection.isClosed()) {
+                connection.setSchema((String) tenantId);
+            }
+        } catch (Throwable t) {
+            LOG.debug("Could not switch schema upon release connection: {}", t.getMessage());
         }
-        releaseAnyConnection(connection);
+        if (connection != null) {
+            releaseAnyConnection(connection);
+        }
     }
 
     @Override

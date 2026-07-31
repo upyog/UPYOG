@@ -104,13 +104,10 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
 
     public String getCurrYearFiscalId() {
         Date dt = new Date();
-
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-        String currentDate = formatter.format(dt);
         String result = "";
         Query query = getCurrentSession().createQuery(
-                "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"
-                        + currentDate + "' and cfinancialyear.endingDate >= '" + currentDate + "' ");
+                "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :currentDate and cfinancialyear.endingDate >= :currentDate");
+        query.setParameter("currentDate", dt);
         ArrayList list = (ArrayList) query.list();
         result = list.get(0).toString();
         return result;
@@ -118,14 +115,11 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
 
     public String getCurrYearStartDate() {
         Date dt = new Date();
-
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-        String currentDate = formatter.format(dt);
         logger.info("Obtained session");
         String result = "";
         Query query = getCurrentSession().createQuery(
-                "select cfinancialyear.startingDate from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"
-                        + currentDate + "' and cfinancialyear.endingDate >= '" + currentDate + "' ");
+                "select cfinancialyear.startingDate from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :currentDate and cfinancialyear.endingDate >= :currentDate");
+        query.setParameter("currentDate", dt);
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0) {
             if (list.get(0) == null)
@@ -139,18 +133,15 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
 
     public String getPrevYearFiscalId() {
         Date dt = new Date();
-
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(dt);
         int prevYear = calendar.get(Calendar.YEAR) - 1;
         calendar.set(Calendar.YEAR, prevYear);
-        String previousDate = formatter.format(calendar.getTime());
         logger.info("Obtained session");
         String result = "";
         Query query = getCurrentSession().createQuery(
-                "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"
-                        + previousDate + "' and cfinancialyear.endingDate >= '" + previousDate + "' ");
+                "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :previousDate and cfinancialyear.endingDate >= :previousDate");
+        query.setParameter("previousDate", calendar.getTime());
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0) {
             if (list.get(0) == null)
@@ -388,14 +379,12 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
 
     public String getCurrFinancialYearEndDate() {
         Date dt = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-        String currentDate = formatter.format(dt);
         logger.info("Fetching current financial year's ending date");
 
         String result = "";
         Query query = getCurrentSession().createQuery(
-                "select cfinancialyear.endingDate from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= '"
-                        + currentDate + "' and cfinancialyear.endingDate >= '" + currentDate + "' ");
+                "select cfinancialyear.endingDate from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :currentDate and cfinancialyear.endingDate >= :currentDate");
+        query.setParameter("currentDate", dt);
 
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0) {
