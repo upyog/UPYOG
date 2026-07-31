@@ -77,11 +77,21 @@ func main() {
 		Timeout:     cfg.Providers.DefaultTimeout,
 	}, log, m)
 
+	draftEndpoint := cfg.Backend.Services["draft"]
+	draftClient := clients.NewClient(clients.ClientConfig{
+		ServiceName:      "upyog-draft-service",
+		BaseURL:          draftEndpoint.BaseURL,
+		Timeout:          draftEndpoint.Timeout,
+		MaxConns:         draftEndpoint.MaxConns,
+		CircuitThreshold: draftEndpoint.CircuitThreshold,
+		CircuitTimeout:   draftEndpoint.CircuitTimeout,
+	}, log, m)
+
 	cacheTTL := cfg.Providers.CacheTTL
-	reg.Register(providers.NewQuickSummaryProvider(defaultClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewQuickSummaryProvider(defaultClient, draftClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewRecentApplicationsProvider(defaultClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewNotificationsProvider(defaultClient, c, log, m, cacheTTL))
-	reg.Register(providers.NewDraftApplicationsProvider(defaultClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewDraftApplicationsProvider(draftClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewDueRenewalsProvider(defaultClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewUpcomingEventsProvider(defaultClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewAdvertisementBannersProvider(defaultClient, c, log, m, cacheTTL))

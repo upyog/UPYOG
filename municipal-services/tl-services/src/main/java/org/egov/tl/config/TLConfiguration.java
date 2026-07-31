@@ -363,4 +363,13 @@ public class TLConfiguration {
 
     @Value("${egov.tl.calculator.billingSlab.endpoint}")
     private String billingSlabEndPoint;
+
+    @Value("${upyog.draft.service.enabled:true}")
+    private boolean draftServiceEnabled;
+
+    @Value("${upyog.draft.service.host:http://localhost:8095}")
+    private String draftServiceHost;
+
+    @Value("${upyog.draft.service.markSubmitted.path:/upyog-draft-service/draft/v1/_markSubmitted}")
+    private String draftServiceMarkSubmittedPath;
 }
