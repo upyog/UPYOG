@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { AssetCell, formatDimensions } from "./assetTableUtils";
 import { isPendingForAllotment } from "../../utils/allotmentFormUtils";
+//TODO : cleanup is planned
 
 const allotButtonStyle = (isMobile, isDisabled) => ({
   backgroundColor: isDisabled ? "#ccc" : "#007bff",
@@ -51,11 +52,12 @@ const useAssetTableColumns = ({
   onAllot,
   onEdit,
   onEstateNoClick,
+  t
 }) => {
   return useMemo(() => {
     const columns = [
       {
-        Header: "Asset Number",
+        Header: "Estate Number",
         accessor: "estateNo",
         disableSortBy: true,
         Cell: ({ row }) => {
@@ -145,7 +147,7 @@ const useAssetTableColumns = ({
         Header: "Status",
         disableSortBy: true,
         Cell: ({ row }) => (
-          <AssetCell value={row.original.assetAllotmentStatus || "N/A"} />
+          <AssetCell value={t(row.original.assetAllotmentStatus) || "N/A"} />
         ),
       }
     );

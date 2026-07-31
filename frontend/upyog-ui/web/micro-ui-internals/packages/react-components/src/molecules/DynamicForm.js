@@ -94,7 +94,8 @@
  * @param {string}   [cancelConfirmYesLabel] Confirm button i18n key (default CS_COMMON_YES).
  * @param {string}   [cancelConfirmNoLabel] Dismiss button i18n key (default CS_COMMON_NO).
  * @param {Function} [onCancel]            Extra callback after form reset on cancel.
- * @param {object}   [resetBaseline]       Preferred reset source on cancel; falls back to rawAsset.
+ * @param {object}   [resetBaseline]       Preferred reset source on cancel; use `{}` to clear all.
+ *                                         Cancel skips field defaultValue/prefillFrom.
  * @param {boolean}  [showDraftButton]     Show explicit Save Draft button.
  * @param {string}   [draftLabel]          Draft button i18n key.
  * @param {string}   [draftSuccessLabel]   Toast after draft save.
@@ -845,13 +846,23 @@ const DynamicForm = ({
   ]);
 
   /**
-   * Cancel / Clear All: rebuilds form from resetBaseline (preferred) or rawAsset,
-   * re-applies computed fields, clears errors / search panel, then calls onCancel.
+   * Cancel / Clear All: rebuilds form from resetBaseline (preferred) or rawAsset.
+   * Skips field.defaultValue / prefillFrom so cancel leaves editable fields blank
+   * (e.g. advancePaymentDate "today" is not re-applied).
+   * An explicit empty resetBaseline `{}` clears everything (does not fall back to rawAsset).
    */
   const handleCancel = useCallback(() => {
     const baselineSource =
-      resetBaseline && Object.keys(resetBaseline).length > 0 ? resetBaseline : rawAsset;
-    const resetData = buildInitialData(routeConfig.form, baselineSource, dropdownData, tenantId);
+      resetBaseline !== undefined && resetBaseline !== null
+        ? resetBaseline
+        : rawAsset;
+    const resetData = buildInitialData(
+      routeConfig.form,
+      baselineSource,
+      dropdownData,
+      tenantId,
+      { applyDefaults: false }
+    );
     const allComputeDeps = flatFields.flatMap((fc) => fc.field?.computeFrom || []);
     const next = allComputeDeps.length
       ? applyComputedFields({ ...resetData }, allComputeDeps)

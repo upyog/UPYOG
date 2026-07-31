@@ -241,6 +241,12 @@ const DynamicFormStep = ({
     config?.texts?.header ||
     defaultHeaderCode;
 
+  const translatedHeader = t(headerCode);
+  const headerText =
+    translatedHeader !== headerCode
+      ? translatedHeader
+      : routeConfig.pageHeading?.fallback || translatedHeader;
+
   /**
    * Clears draft for this step when the user hits Cancel in DynamicForm.
    * Invokes `draft.onClear(routeConfig.key)` when a draft API is wired;
@@ -252,7 +258,7 @@ const DynamicFormStep = ({
 
   return (
     <div className={wrapperClassName}>
-      <Header>{t(headerCode)}</Header>
+      <Header>{headerText}</Header>
       <DynamicForm
         routeConfig={routeConfig}
         onSubmit={handleSubmit}

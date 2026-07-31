@@ -48,7 +48,8 @@ const estateAllotmentFormOverrides = {
     // Drop legacy uppercase key when rewriting additionalDetails.
     const { FILE_REFERENCE_NUMBER: _legacy, ...restDetails } = existingDetails;
     return {
-      assetNo: flatData?.assetNo || "",
+      // Allotment API key is assetNo; value is the estate number from the form.
+      assetNo: flatData?.estateNo || flatData?.assetNo || "",
       // New allotments always start in INITIATED; status transitions happen server-side.
       allotmentStatus: "INITIATED",
       // Persist only as additionalDetails.fileReferenceNumber.
@@ -61,8 +62,9 @@ const estateAllotmentFormOverrides = {
 
   // Page title shown for create vs edit modes of the step.
   pageHeading: {
-    create: "EST_COMMMON_ASSIGN_ASSETS",
-    edit: "EST_COMMMON_ASSIGN_ASSETS",
+    create: "EST_ALLOT_ESTATE",
+    edit: "EST_ALLOT_ESTATE",
+    fallback: "Allot Estate",
   },
   // "Save as draft" button label + success toast for the assign-assets step.
   draftButton: {
@@ -74,8 +76,23 @@ const estateAllotmentFormOverrides = {
   // MDMS supplies everything not restated here (label, placeholder, order…).
   form: [
     {
+      // Label must stay Estate Number even if MDMS still ships EST_ASSET_NUMBER.
+      key: "EST_ESTATE_NUMBER",
+      field: { name: "estateNo" },
+      summaryLabel: "EST_ESTATE_NUMBER",
+      // Allotment API persists this value as assetNo.
+      apiFieldName: "assetNo",
+    },
+    {
+      // Compat: older AssignAssetConfig used EST_ASSET_NUMBER / assetNo.
+      key: "EST_ASSET_NUMBER",
+      field: { name: "estateNo" },
+      summaryLabel: "EST_ESTATE_NUMBER",
+      apiFieldName: "assetNo",
+    },
+    {
       key: "EST_ASSET_REFERENCE_NUMBER",
-      // Hide from assign-assets form and check/summary (asset number is enough).
+      // Hide from assign-assets form and check/summary (estate number is enough).
       hidden: true,
     },
     {
@@ -127,23 +144,6 @@ const estateAllotmentFormOverrides = {
       validation: { required: false, disabled: true, readOnly: true },
     },
     {
-      key: "EST_BILLING_CYCLE",
-      field: {
-        // Billing cycle options come from MDMS; each carries multiplier +
-        // rentLabelKey used by the monthly-rent field below.
-        dataSource: {
-          type: "MDMS",
-          moduleName: "Estate",
-          masterName: "BillingCycle",
-        },
-        // Applied by buildInitialData when the field is empty.
-        defaultValue: "MONTHLY",
-      },
-      options: [],
-      validation: { required: true, disabled: false },
-      messages: { error: "EST_BILLING_CYCLE_REQUIRED" },
-    },
-    {
       key: "EST_RATE_PER_SQFT",
       field: {
         name: "rentRate",
@@ -192,6 +192,7 @@ const estateAllotmentFormOverrides = {
       field: {
         name: "advancePaymentDate",
         // buildInitialData resolves "today" → local yyyy-MM-dd via toInputDate.
+        // minDate: "today" lives in MDMS AssignAssetConfig.
         defaultValue: "today",
       },
     },

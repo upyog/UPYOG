@@ -315,11 +315,15 @@ export const buildAllotmentAssetDisplay = (asset = {}, allotment = {}, t = (k) =
       allotment.allotmentNo,
       allotment.additionalDetails?.allotmentNo
     ),
-    assetNo: pickValue(
-      allotment.assetNo,
+    // Estate number (form EST_ESTATE_NUMBER) — distinct from asset-services assetNo.
+    estateNo: pickValue(
+      allotment.estateNo,
       resolvedAsset.estateNo,
-      resolvedAsset.assetNo
+      // Legacy allotments stored estate identity under assetNo.
+      allotment.assetNo
     ),
+    // Actual asset API number when present (not used as estate number label).
+    assetNo: pickValue(resolvedAsset.assetNo, allotment.assetNo),
     assetRefNumber,
     // Aliases used by MDMS / registration / allotment form field names.
     assetReferenceNo: assetRefNumber,

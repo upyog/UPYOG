@@ -97,7 +97,24 @@ const estateStaticFields = (flatData) => ({
   // Old create payload sent "DEPT_2"; sending "" can trip backend validation
   // on required department.
   department: flatData?.department || "DEPT_2",
-  estateNo: flatData?.estateNo || flatData?.searchEstateNo || "",
+  // Asset-module number (PG-1013-…) — from existing-asset search or explicit ref.
+  // Do not put this in estateNo; enrichment generates EST-… estate numbers.
+  refAssetNo: (() => {
+    const candidates = [
+      flatData?.refAssetNo,
+      flatData?.assetRef,
+      flatData?.searchEstateNo,
+    ].filter(Boolean);
+    // Prefer a PG-… asset ref when present; otherwise first non-empty candidate.
+    return candidates.find((v) => /^PG-/i.test(v)) || candidates[0] || "";
+  })(),
+  // Only pass through a real estate number (edits). Empty on create so
+  // EnrichmentService generates estateNo (EST-…). Never send PG-… here.
+  // todo: will create utility function to check if the estateNo is a PG-... number
+  estateNo: (() => {
+    const value = (flatData?.estateNo || "").trim();
+    return /^PG-/i.test(value) ? "" : value;
+  })(),
 });
 
 /**
@@ -158,8 +175,9 @@ const estateComputedFields = [
  */
 const estateFormFieldOverrides = [
   {
+    // Search field holds asset-module number (PG-…), not estateNo (EST-…).
     key: "EST_ASSET_NUMBER",
-    field: { name: "searchEstateNo", prefillFrom: "estateNo" },
+    field: { name: "searchEstateNo", prefillFrom: "assetRef" },
   },
   {
     // Create-asset only deals with immovable estates — hide MOVABLE MDMS rows.

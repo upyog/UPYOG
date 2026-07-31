@@ -42,7 +42,7 @@ const EmployeeApp = ({ path }) => {
     },
     {
       path: `${path}/assignassets`,
-      content: t("EST_ASSIGN_ASSETS"),
+      content: t("EST_ALLOT_ESTATE", "Allot Estate"),
       show: location.pathname.includes("est/assignassets"),
     },
   ];
