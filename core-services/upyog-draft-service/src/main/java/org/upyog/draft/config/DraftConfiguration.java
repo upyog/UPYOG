@@ -14,23 +14,17 @@ public class DraftConfiguration {
     @Value("${app.timezone}")
     private String timeZone;
 
-    @Value("${draft.active.ttl.days:90}")
+    @Value("${draft.active.ttl.days}")
     private int activeTtlDays;
 
-    @Value("${draft.submitted.retention.days:7}")
+    @Value("${draft.submitted.retention.days}")
     private int submittedRetentionDays;
 
-    @Value("${draft.discarded.retention.days:7}")
+    @Value("${draft.discarded.retention.days}")
     private int discardedRetentionDays;
 
-    @Value("${draft.orphan.reconciliation.enabled:true}")
+    @Value("${draft.orphan.reconciliation.enabled}")
     private boolean orphanReconciliationEnabled;
-
-    @Value("${tl.services.host:http://localhost:8079}")
-    private String tlServicesHost;
-
-    @Value("${tl.services.search.path:/tl-services/v1/_search}")
-    private String tlServicesSearchPath;
 
     @Value("${persister.save.draft.topic}")
     private String saveDraftTopic;
