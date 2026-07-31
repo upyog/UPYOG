@@ -1,5 +1,4 @@
 import { mergeRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";
-import LOCAL_PAYMENT_HISTORY_CONFIG from "../config/paymentHistoryConfig";
 
 /** Offline fallback when Estate.SearchApplicationConfig MDMS is empty. */
 const LOCAL_SEARCH_CONFIG = {
@@ -32,12 +31,12 @@ const LOCAL_SEARCH_CONFIG = {
     form: [
       {
         order: 1,
-        key: "EST_SEARCH_ASSET_NUMBER",
+        key: "EST_ESTATE_NUMBER",
         field: {
-          code: "EST_SEARCH_ASSET_NUMBER",
+          code: "EST_ESTATE_NUMBER",
           name: "estateNo",
           type: "text",
-          placeholder: "EST_SEARCH_ASSET_NUMBER",
+          placeholder: "EST_ENTER_ESTATE_NUMBER",
         },
         validation: { required: false },
       },
@@ -126,6 +125,81 @@ const LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG = {
   },
 };
 
+/** Offline fallback when Estate.PaymentHistoryConfig MDMS is empty. */
+const LOCAL_PAYMENT_HISTORY_CONFIG = {
+  header: "EST_PAYMENT_HISTORY",
+  emptyState: {
+    message: "EST_NO_APPLICATION_FOUND_MSG",
+  },
+  businessService: "est-services",
+  resultMode: "cards",
+  autoSearch: true,
+  filters: [
+    {
+      order: 1,
+      key: "EST_ASSET_NUMBER",
+      name: "assetNo",
+      type: "text",
+      placeholder: "EST_ENTER_ASSET_NUMBER",
+    },
+    {
+      order: 2,
+      key: "CS_COMMON_FROM_DATE",
+      name: "fromDate",
+      type: "date",
+    },
+    {
+      order: 3,
+      key: "CS_COMMON_TO_DATE",
+      name: "toDate",
+      type: "date",
+    },
+  ],
+  resultFields: [
+    {
+      order: 1,
+      key: "CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL",
+      accessor: "amountPaid",
+      format: "currency",
+      emphasize: true,
+    },
+    {
+      order: 2,
+      key: "EST_ESTATE_NUMBER",
+      accessor: "assetNo",
+    },
+    {
+      order: 3,
+      key: "EST_BUILDING_NAME",
+      accessor: "buildingName",
+    },
+    {
+      order: 4,
+      key: "EST_BILLING_CYCLE",
+      accessor: "billingCycle",
+    },
+    {
+      order: 5,
+      key: "PT_RECEIPT_DATE_LABEL",
+      accessor: "receiptDateLabel",
+    },
+    {
+      order: 6,
+      key: "PT_RECEIPT_NO_LABEL",
+      accessor: "receiptNumber",
+    },
+    {
+      order: 7,
+      key: "CS_COMMON_PAYMENT_MODE",
+      accessor: "paymentMode",
+    },
+  ],
+  actionButton: {
+    search: "ES_COMMON_SEARCH",
+    clear: "ES_COMMON_CLEAR_ALL",
+  },
+};
+
 export const pickFirstMdmsEntry = (data) => {
   if (!data) return null;
   if (Array.isArray(data)) return data[0] || null;
@@ -196,7 +270,7 @@ export const resolveCitizenMyApplicationsConfig = (mdmsData) => {
 
 /**
  * Build payment-history config from MDMS Estate.PaymentHistoryConfig,
- * falling back to local paymentHistoryConfig.js when MDMS is empty.
+ * falling back to local defaults when MDMS is empty.
  */
 export const resolvePaymentHistoryConfig = (mdmsData) => {
   const entry = pickFirstMdmsEntry(mdmsData);

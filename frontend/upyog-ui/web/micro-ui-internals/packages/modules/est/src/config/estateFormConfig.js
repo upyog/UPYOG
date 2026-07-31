@@ -1,29 +1,16 @@
 /**
  * estateFormConfig.js
  *
- * Local behavior overrides for the MDMS Estate.Config **registration** (new asset)
- * wizard step. Form field structure / labels / options come from MDMS; this file
- * supplies what MDMS does not yet own:
+ * Local behavior overrides for the MDMS Estate.NewRegistration wizard step.
+ * Form field structure / labels / options / numeric flags come from MDMS;
+ * this file supplies what MDMS cannot own:
  *
- *   - cross-field validation rules
+ *   - cross-field validation rules (JS functions)
  *   - API staticFields / computedFields for buildApiPayload
- *   - thin per-field overlays (e.g. numeric: true on buildingFloor)
  *   - payloadKey / apiId / editPayloadExtras for DynamicFormStep + submit
  *
- * Consumed as `localOverrides` (or equivalent) and merged onto the MDMS route
- * config via mergeRouteConfig / mergeFormFieldConfigs.
- *
- * Typical wiring
- * --------------
- *   import estateFormConfig from "../config/estateFormConfig";
- *   <DynamicFormStep config={mdmsStep} localOverrides={estateFormConfig} ... />
- *
- * Exports
- * -------
- * - estateCrossFieldValidations — named export; also under default.crossFieldValidations
- * - default object:
- *     crossFieldValidations, payloadKey, apiId, form,
- *     staticFields, computedFields, editPayloadExtras
+ * Consumed as `localOverrides` and merged onto the MDMS route config via
+ * mergeRouteConfig / mergeFormFieldConfigs.
  *
  * @see mergeRouteConfig
  * @see buildApiPayload
@@ -153,61 +140,15 @@ const estateComputedFields = [
 //   field: { name: "city", type: "dropdown" },
 //   validation: { required: true, disabled: true },
 // }
-//
-// Numeric fields (buildingFloor, totalFloorArea, dimensionLength,
-// dimensionWidth, rate) are no longer tracked in a separate NUMERIC_FIELDS
-// set by name — mark them directly on the field itself in the route config:
-//
-// {
-//   key: "EST_BUILDING_FLOOR",
-//   field: { name: "buildingFloor", type: "text", numeric: true },
-//   apiFieldName: "floor",
-// }
-
-/**
- * Per-field overlays merged onto MDMS Estate.Config form entries by
- * mergeFormFieldConfigs (matched by field.name / key).
- *
- * TODO: move into MDMS. Until then, local merge adds `numeric: true` on
- * buildingFloor (MDMS lacks that flag) and renames the API key to `floor`.
- *
- * @type {Array<object>}
- */
-const estateFormFieldOverrides = [
-  {
-    // Search field holds asset-module number (PG-…), not estateNo (EST-…).
-    key: "EST_ASSET_NUMBER",
-    field: { name: "searchEstateNo", prefillFrom: "assetRef" },
-  },
-  {
-    // Create-asset only deals with immovable estates — hide MOVABLE MDMS rows.
-    key: "EST_ASSET_TYPE",
-    field: {
-      name: "assetType",
-      dataSource: {
-        type: "MDMS",
-        moduleName: "ASSET",
-        masterName: "assetParentCategory",
-        filter: {
-          assetClassification: "IMMOVABLE",
-        },
-      },
-    },
-  },
-  {
-    key: "EST_BUILDING_FLOOR",
-    field: { name: "buildingFloor", type: "text", numeric: true },
-    apiFieldName: "floor",
-  },
-];
 
 /**
  * Default export — localOverrides shape for mergeRouteConfig.
  *
+ * Field structure lives in MDMS Estate.NewRegistration — no local form overlays.
+ *
  * @property {Array}    crossFieldValidations - Passed to DynamicForm validation.
  * @property {string}   payloadKey            - Wizard session / API array key ("Assets").
  * @property {string}   apiId                 - RequestInfo.apiId for Asset APIs.
- * @property {Array}    form                  - Field overlays (numeric, apiFieldName, …).
  * @property {Function} staticFields          - (tenantId, flatData) => static Asset keys.
  * @property {Array}    computedFields        - Derived locality / localityCode, etc.
  * @property {Function} editPayloadExtras     - (editData) => extras for edit mutate payload.
@@ -216,7 +157,6 @@ export default {
   crossFieldValidations: estateCrossFieldValidations,
   payloadKey: "Assets",
   apiId: "Rainmaker",
-  form: estateFormFieldOverrides,
   /**
    * buildApiPayload calls staticFields(tenantId, flatData).
    * tenantId is ignored here — estateStaticFields only needs flatData;
