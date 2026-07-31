@@ -20,6 +20,17 @@ Base path: `/upyog-draft-service/draft/v1`
 | `POST /_delete` | Discard draft |
 | `POST /_markSubmitted` | Mark draft submitted after real application create |
 
+## Swagger / OpenAPI
+
+After starting the service locally:
+
+| Resource | URL |
+|----------|-----|
+| Swagger UI | `http://localhost:8095/upyog-draft-service/swagger-ui.html` |
+| OpenAPI JSON | `http://localhost:8095/upyog-draft-service/v3/api-docs` |
+
+Uses **SpringDoc OpenAPI 2.3.0** (`springdoc-openapi-starter-webmvc-ui`), consistent with other Spring Boot 3.2 UPYOG services.
+
 ## TL UI auto-save
 
 Citizen TL forms should auto-save directly to this service (not via tl-services `_create`):

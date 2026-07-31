@@ -3,11 +3,11 @@ serviceMaps:
   mappings:
     - version: 1.0
       name: upyog-draft-service
-      description: Create draft application in eg_draft_detail
+      description: Create draft application in ug_draft_detail
       fromTopic: save-upyog-draft
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO eg_draft_detail(draft_id, tenant_id, user_uuid, business_service, module_entity_id, draft_data, completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ug_draft_detail(draft_id, tenant_id, user_uuid, business_service, module_entity_id, draft_data, completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?);
           basePath: Draft
           jsonMaps:
             - jsonPath: $.Draft.draftId
@@ -27,11 +27,11 @@ serviceMaps:
 
     - version: 1.0
       name: upyog-draft-service
-      description: Update draft application data in eg_draft_detail
+      description: Update draft application data in ug_draft_detail
       fromTopic: update-upyog-draft
       isTransaction: true
       queryMaps:
-        - query: UPDATE eg_draft_detail SET draft_data = ?::jsonb, completion_pct = ?, module_entity_id = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE draft_id = ? AND tenant_id = ? AND user_uuid = ?;
+        - query: UPDATE ug_draft_detail SET draft_data = ?::jsonb, completion_pct = ?, module_entity_id = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE draft_id = ? AND tenant_id = ? AND user_uuid = ?;
           basePath: Draft
           jsonMaps:
             - jsonPath: $.Draft.draftData
@@ -47,11 +47,11 @@ serviceMaps:
 
     - version: 1.0
       name: upyog-draft-service
-      description: Update draft status (submitted, discarded) in eg_draft_detail
+      description: Update draft status (submitted, discarded) in ug_draft_detail
       fromTopic: update-upyog-draft-status
       isTransaction: true
       queryMaps:
-        - query: UPDATE eg_draft_detail SET status = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE draft_id = ? AND tenant_id = ? AND user_uuid = ?;
+        - query: UPDATE ug_draft_detail SET status = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE draft_id = ? AND tenant_id = ? AND user_uuid = ?;
           basePath: Draft
           jsonMaps:
             - jsonPath: $.Draft.status
@@ -63,11 +63,11 @@ serviceMaps:
 
     - version: 1.0
       name: upyog-draft-service
-      description: Hard delete draft from eg_draft_detail (purge / cleanup)
+      description: Hard delete draft from ug_draft_detail (purge / cleanup)
       fromTopic: delete-upyog-draft
       isTransaction: true
       queryMaps:
-        - query: DELETE FROM eg_draft_detail WHERE draft_id = ?;
+        - query: DELETE FROM ug_draft_detail WHERE draft_id = ?;
           basePath: Draft
           jsonMaps:
             - jsonPath: $.Draft.draftId

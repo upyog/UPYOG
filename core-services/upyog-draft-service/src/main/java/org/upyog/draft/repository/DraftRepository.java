@@ -55,6 +55,13 @@ public class DraftRepository {
         return jdbcTemplate.query(query, rowMapper, params.toArray());
     }
 
+    public DraftDetail findByDraftId(String draftId, String tenantId, String userUuid) {
+        List<DraftDetail> results = jdbcTemplate.query(
+                "SELECT draft_id FROM ug_draft_detail WHERE draft_id = ? AND tenant_id = ? AND user_uuid = ?",
+                rowMapper, draftId, tenantId, userUuid);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
     public int count(DraftSearchCriteria criteria) {
         List<Object> params = new java.util.ArrayList<>();
         String query = queryBuilder.getCountQuery(criteria, params);

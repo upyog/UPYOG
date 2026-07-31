@@ -42,6 +42,18 @@ public class DraftService {
             draft.setCreatedTime(now);
             draft.setCreatedBy(userUuid);
             draft.setStatus(DraftConstants.STATUS_ACTIVE);
+        } else {
+            DraftDetail existing = draftRepository.findByDraftId(
+                    draft.getDraftId(), draft.getTenantId(), userUuid);
+            if (existing == null) {
+                throw new CustomException("DRAFT_NOT_FOUND",
+                        "Draft not found for update: " + draft.getDraftId());
+            }
+            draft.setCreatedBy(existing.getCreatedBy());
+            draft.setCreatedTime(existing.getCreatedTime());
+            if (StringUtils.isBlank(draft.getStatus())) {
+                draft.setStatus(existing.getStatus());
+            }
         }
 
         draft.setUserUuid(userUuid);
@@ -50,7 +62,7 @@ public class DraftService {
         if (draft.getCompletionPct() == null) {
             draft.setCompletionPct(BigDecimal.ZERO);
         }
-        if (StringUtils.isBlank(draft.getStatus())) {
+        if (isCreate && StringUtils.isBlank(draft.getStatus())) {
             draft.setStatus(DraftConstants.STATUS_ACTIVE);
         }
 
