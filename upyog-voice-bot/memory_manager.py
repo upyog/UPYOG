@@ -15,14 +15,19 @@ logger = logging.getLogger(__name__)
 # Global Short-Term Memory Checkpointer (RAM based, temporary during a chat)
 shared_memory = MemorySaver()
 
-# Initialize local filesystem Qdrant database for permanent storage
-client = QdrantClient(path="./qdrant_storage")
+# Initialize local filesystem Qdrant database with fallback for concurrent access
+try:
+    client = QdrantClient(path="./qdrant_storage")
+except Exception as e:
+    logger.warning(f"Could not open ./qdrant_storage ({e}), falling back to in-memory Qdrant client.")
+    client = QdrantClient(":memory:")
 
 LONG_TERM_MEMORY_COLLECTION = "long_term_chat_memory"
 KNOWLEDGE_BASE_COLLECTION = "upyog_knowledge_base"
+DRAFT_STATE_COLLECTION = "draft_states"
 VECTOR_SIZE = 768  # 768 dimensions used by the embedding model to mathematically represent sentences
 
-# Ensure collections exist
+# Creates missing Qdrant database collections on startup if they don't already exist
 def init_collections():
     try:
         collections = client.get_collections().collections
@@ -47,6 +52,20 @@ def init_collections():
                 collection_name=KNOWLEDGE_BASE_COLLECTION,
                 vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE),
             )
+            
+        if DRAFT_STATE_COLLECTION not in collection_names:
+            logger.info(f"Creating {DRAFT_STATE_COLLECTION} collection.")
+            # Drafts don't need semantic search, so we can use a dummy vector config
+            # but Qdrant requires vectors_config. We'll use size=1.
+            client.create_collection(
+                collection_name=DRAFT_STATE_COLLECTION,
+                vectors_config=VectorParams(size=1, distance=Distance.COSINE),
+            )
+            client.create_payload_index(
+                collection_name=DRAFT_STATE_COLLECTION,
+                field_name="phone_number",
+                field_schema="keyword"
+            )
     except Exception as e:
         logger.error(f"Error initializing Qdrant collections: {e}")
 
@@ -60,15 +79,10 @@ class MemoryManager:
     Instead of bloating a SQL database with chat history, we store JSON 
     payloads alongside vectors. 
     ====================================================================
-    """
+      """
     
-    @staticmethod
+    # Automatically deletes chat history older than 30 days to save space and keep the bot fast
     def _enforce_sliding_window(phone_number: str):
-        """
-        [GARBAGE COLLECTION: 30-DAY WINDOW]
-        Deletes records older than 30 days for a specific user to prevent database bloat.
-        Day 31 overwrites Day 1 conceptually. This keeps the AI's memory fresh and fast.
-        """
         cutoff_date = datetime.now() - timedelta(days=30)
         cutoff_timestamp = int(cutoff_date.timestamp())
         
@@ -94,10 +108,7 @@ class MemoryManager:
 
 
 
-    
-     # Saves a single conversation turn (or generated summary) into Qdrant permanently.
-    # Called when 20 messages are reached in short-term memory, converted to a 2-line summary.
-        
+    # Permanently saves a single chat message (or summary) into the Qdrant long-term database
     @staticmethod
     def save_long_term_interaction(phone_number: str, role: str, content: str, embedding: Optional[List[float]] = None):
         
@@ -133,9 +144,84 @@ class MemoryManager:
             logger.error(f"Error saving to long term memory: {e}")
             return False
 
+    # Saves a partially completed form (draft) into the database so the user can resume later
+    @staticmethod
+    def save_draft_state(phone_number: str, plugin_name: str, draft_data: dict) -> None:
+        try:
+            # Overwrite any existing draft for this phone number by deleting first
+            records, _ = client.scroll(
+                collection_name=DRAFT_STATE_COLLECTION,
+                scroll_filter=Filter(
+                    must=[FieldCondition(key="phone_number", match=MatchValue(value=phone_number))]
+                ),
+                limit=10
+            )
+            if records:
+                point_ids = [record.id for record in records]
+                client.delete(
+                    collection_name=DRAFT_STATE_COLLECTION,
+                    points_selector=point_ids
+                )
+            
+            point_id = str(uuid.uuid4())
+            payload = {
+                "phone_number": phone_number,
+                "plugin_name": plugin_name,
+                "draft_data": draft_data,
+                "timestamp": int(datetime.utcnow().timestamp())
+            }
+            
+            client.upsert(
+                collection_name=DRAFT_STATE_COLLECTION,
+                points=[PointStruct(id=point_id, vector=[0.0], payload=payload)]
+            )
+            logger.info(f"Saved {plugin_name} draft for {phone_number}")
+        except Exception as e:
+            logger.error(f"Error saving draft state: {e}")
+
+    # Deletes the user's saved draft form after it is successfully submitted or cancelled
+    @staticmethod
+    def delete_draft_state(phone_number: str) -> None:
+        try:
+            records, _ = client.scroll(
+                collection_name=DRAFT_STATE_COLLECTION,
+                scroll_filter=Filter(
+                    must=[FieldCondition(key="phone_number", match=MatchValue(value=phone_number))]
+                ),
+                limit=10
+            )
+            if records:
+                point_ids = [record.id for record in records]
+                client.delete(
+                    collection_name=DRAFT_STATE_COLLECTION,
+                    points_selector=point_ids
+                )
+                logger.info(f"Deleted {len(point_ids)} saved draft(s) for {phone_number}")
+        except Exception as e:
+            logger.error(f"Error deleting draft state: {e}")
+
+    # Retrieves the user's last saved form draft from the database to resume the flow
+    @staticmethod
+    def get_draft_state(phone_number: str) -> Optional[dict]:
+        try:
+            records = client.scroll(
+                collection_name=DRAFT_STATE_COLLECTION,
+                scroll_filter=Filter(
+                    must=[FieldCondition(key="phone_number", match=MatchValue(value=phone_number))]
+                ),
+                limit=1,
+                with_payload=True
+            )[0]
+            
+            if records:
+                return records[0].payload
+        except Exception as e:
+            logger.error(f"Error retrieving draft state for {phone_number}: {e}")
+        return None
+
+    # Fetches the last few messages of chat history so the AI remembers the immediate context
     @staticmethod
     def get_recent_history(phone_number: str, limit: int = 15) -> List[Dict[str, Any]]:
-        """Retrieves recent chat history for context."""
         try:
             results, _ = client.scroll(
                 collection_name=LONG_TERM_MEMORY_COLLECTION,
@@ -160,13 +246,7 @@ class MemoryManager:
             logger.error(f"Error retrieving recent history: {e}")
             return []
         
-      """
-        [AI MAGIC: SEMANTIC SEARCH]
-        Searches Qdrant for semantically relevant past interactions.
-        Unlike SQL exact-match (`WHERE text='hotel'`), this matches mathematically 
-        similar text (e.g. 'hotel ad' matches 'renew hotel ad').
-        Returns results with a Cosine Similarity score > 0.4.
-     """
+    # Uses AI similarity matching to find relevant past conversations mathematically
     @staticmethod
     def search_long_term_memory(phone_number: str, query_embedding: List[float], limit: int = 3) -> List[Dict[str, Any]]:
 
@@ -193,27 +273,16 @@ class MemoryManager:
             logger.error(f"Error searching long term memory: {e}")
             return []
 
+    # Saves a summary of a completed booking permanently in the chat history
     @staticmethod
     def save_booking_record(phone_number: str, booking_data: dict):
-        """
-        Saves a finalized booking record to long-term memory.
-        We serialize the booking as a string to store as 'content'.
-        """
         content = f"BOOKING RECORD: ID {booking_data.get('bookingNo')}, Type {booking_data.get('addType')}, Status {booking_data.get('status', 'BOOKING_CREATED')}"
         MemoryManager.save_long_term_interaction(phone_number, "system_record", content)
         # We can also keep storing it in Redis if needed for the exact JSON structure,
         # but this logs it chronologically in Qdrant.
 
 
-        """
-        [RAG KNOWLEDGE BASE QUERY]
-        Queries the UPYOG/NUDM knowledge base (e.g., official government rules and FAQs).
-        
-        CRITICAL: Uses a stricter threshold (0.7) to prevent the AI from "hallucinating" 
-        or guessing government policies. If the similarity is low, it means we don't 
-        have the official answer, and the bot should say "I don't know".
-        """
-
+    # Searches the official UPYOG knowledge base for correct answers to user questions
     @staticmethod
     def search_knowledge_base(embedding: List[float], limit: int = 3) -> str:
        

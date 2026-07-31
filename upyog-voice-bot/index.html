@@ -411,9 +411,15 @@
  const bubble = document.createElement('div');
  bubble.className = 'message bot';
  if (mode === 'grievance_collecting') bubble.classList.add('grievance-collecting');
- if (mode === 'grievance_offered') bubble.classList.add('grievance-offered');
- bubble.textContent = text;
- wrapper.appendChild(bubble);
+  let formatted = (text || '')
+    .replace(/### (.*?)\n/g, '<h3>$1</h3>')
+    .replace(/## (.*?)\n/g, '<h2>$1</h2>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n\n/g, '<br/><br/>')
+    .replace(/\n/g, '<br/>');
+  bubble.innerHTML = formatted;
+  wrapper.appendChild(bubble);
 
  if (inputType === 'choice' && options && options.length > 0) {
  if (options.length > 6) {
@@ -652,29 +658,38 @@
     wrapper.appendChild(tableContainer);
   }
 
-  if (inputType === 'booking_history' && options && options.length > 0) {
+  if ((inputType === 'booking_history' || inputType === 'complaint_history') && options && options.length > 0) {
     const listContainer = document.createElement('div');
     listContainer.className = 'ui-card-list';
     options.forEach(opt => {
       const card = document.createElement('div');
       card.className = 'ui-card';
+      const isComplaint = (inputType === 'complaint_history');
+      const idLabel = isComplaint ? "Complaint No." : "Booking No.";
+      const idVal = opt.serviceRequestId || opt.bookingNo || 'N/A';
+      const typeLabel = isComplaint ? "Complaint Type" : "Applicant Name";
+      const typeVal = opt.serviceCode || (opt.applicantDetail && opt.applicantDetail.applicantName) || opt.name || 'N/A';
+      const dateLabel = isComplaint ? "Date Registered" : "Booking Date";
+      const dateVal = opt.filed_on || opt.bookingDate || 'N/A';
+      const statusVal = opt.applicationStatus || opt.status || 'N/A';
+
       card.innerHTML = `
         <div class="ui-card-header">
-          <strong>Booking No.</strong>
-          <span>${opt.bookingNo || ''}</span>
+          <strong>${idLabel}</strong>
+          <span>${idVal}</span>
         </div>
         <div class="ui-card-body">
           <div class="ui-card-row">
-            <span class="label">Applicant Name</span>
-            <span class="value">${(opt.applicantDetail && opt.applicantDetail.applicantName) || opt.name || ''}</span>
+            <span class="label">${typeLabel}</span>
+            <span class="value">${typeVal}</span>
           </div>
           <div class="ui-card-row">
-            <span class="label">Booking Date</span>
-            <span class="value">${opt.bookingDate || ''}</span>
+            <span class="label">${dateLabel}</span>
+            <span class="value">${dateVal}</span>
           </div>
           <div class="ui-card-row">
             <span class="label">Status</span>
-            <span class="value">${opt.status || ''}</span>
+            <span class="value">${statusVal}</span>
           </div>
         </div>
       `;
@@ -844,7 +859,7 @@
  }
 
  function triggerBargeIn() {
- if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; currentAudio.src = ''; currentAudio = null; }
+ if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.currentTime = 0; currentAudio.src = ''; currentAudio = null; }
  if (currentFetch) { currentFetch.abort(); currentFetch = null; }
  fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
 
@@ -903,8 +918,22 @@
  lastDetectedLang = detectedLang;
  if (recognition) recognition.lang = detectedLang === 'hi' ? 'hi-IN' : 'en-IN';
 
-  addBotMessage(data.response, data.mode, data.input_type, data.options, data.field, data.min_date);
- if (data.audio) { playAudio(data.audio); } else { setState(States.LISTENING); onTurnComplete(); }
+  if (data.messages && Array.isArray(data.messages) && data.messages.length > 1) {
+    data.messages.forEach((msg, idx) => {
+      const isLast = (idx === data.messages.length - 1);
+      addBotMessage(
+        msg,
+        data.mode,
+        isLast ? data.input_type : 'text',
+        isLast ? data.options : [],
+        data.field,
+        data.min_date
+      );
+    });
+  } else {
+    addBotMessage(data.response, data.mode, data.input_type, data.options, data.field, data.min_date);
+  }
+  if (data.audio) { playAudio(data.audio); } else { setState(States.LISTENING); onTurnComplete(); }
 
  } catch (error) {
  if (error.name !== 'AbortError') addBotMessage('Sorry, connection failed.', null, null, null, null);
@@ -915,11 +944,11 @@
  async function playAudio(base64) {
  setState(States.SPEAKING);
  try {
- if (currentAudio) { currentAudio.pause(); currentAudio.src = ''; currentAudio.load(); currentAudio = null; }
+ if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.src = ''; currentAudio.load(); currentAudio = null; }
  audioPool.forEach(url => { try { URL.revokeObjectURL(url); } catch(e) {} });
  audioPool.length = 0;
 
- const mimeType = base64.startsWith('//O') || base64.startsWith('SUQz') ? 'audio/mp3' : 'audio/wav';
+ const mimeType = base64.startsWith('UklGR') ? 'audio/wav' : 'audio/mp3';
  const byteCharacters = atob(base64); const byteNumbers = new Array(byteCharacters.length);
  for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
  const byteArray = new Uint8Array(byteNumbers); const blob = new Blob([byteArray], { type: mimeType });
@@ -933,11 +962,13 @@
  URL.revokeObjectURL(url); currentAudio = null;
  setState(States.LISTENING); onTurnComplete();
  };
- audio.onerror = function onAudioError() {
+ audio.onerror = function onAudioError(e) {
  if (audioHandled) return; audioHandled = true;
  URL.revokeObjectURL(url); currentAudio = null;
+ let errCode = audio.error ? audio.error.code : 'unknown';
+ let errMsg = audio.error ? audio.error.message : 'no message';
  if (audio.currentTime > 0) { setState(States.LISTENING); onTurnComplete(); } 
- else { addBotMessage('Sorry, could not play audio.', null, null, null, null); setState(States.LISTENING); onTurnComplete(); }
+ else { addBotMessage('Sorry, could not play audio. Error: ' + errCode + ' - ' + errMsg, null, null, null, null); setState(States.LISTENING); onTurnComplete(); }
  };
  await currentAudio.play();
  } catch(e) { setState(States.LISTENING); onTurnComplete(); }
@@ -948,7 +979,7 @@
  sessionActive = false;
  sessionBtn.innerText = 'Start Session'; sessionBtn.classList.remove('end'); sessionBtn.classList.add('start');
  clearTimeout(silenceTimer); clearTimeout(forceTimer); destroyRecognition();
- if (currentAudio) { currentAudio.pause(); currentAudio.src = ''; currentAudio = null; }
+ if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.src = ''; currentAudio = null; }
  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
  setState(States.IDLE);
  } else {

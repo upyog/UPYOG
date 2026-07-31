@@ -1,8 +1,8 @@
-from typing import TypedDict, Annotated, Sequence, Dict, Any
+from typing import TypedDict, Annotated, Sequence, Dict, Any, List, Optional
 import operator
 from langchain_core.messages import BaseMessage
 
-class BaseAgentState(TypedDict):
+class BaseAgentState(TypedDict, total=False):
     """
     Universal state fields required by all service workflows.
     This acts as a universal "ID Card" that travels along with every message in the system.

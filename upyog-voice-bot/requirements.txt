@@ -12,3 +12,10 @@ openai-whisper
 edge-tts
 python-dotenv
 gunicorn
+langgraph
+langchain-core
+langchain-groq
+fastmcp
+qdrant-client
+pydantic
+pyyaml

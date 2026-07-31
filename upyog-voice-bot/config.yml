@@ -1,0 +1,227 @@
+# ============================================================
+# Services Registry
+# The bot reads this at runtime to build its greeting message.
+# Add, remove or rename entries here — no Python code changes needed.
+# "key" MUST match the LangGraph plugin filename (e.g. "grievance" -> workflow/grievance.py)
+# "key: faq" is always available (built-in RAG path, no plugin file needed)
+# ============================================================
+services:
+  - key: "adv_booking"
+    name: "Advertisement Booking"
+    description: "book hoarding, unipole, kiosk or banner advertisement space"
+    name_hi: "विज्ञापन बुकिंग"
+    description_hi: "होर्डिंग, यूनीपोल या बैनर विज्ञापन स्थान बुक करें"
+    keywords: ["ad", "ads", "adv", "booking", "advertisement", "hoarding", "unipole", "banner", "kiosk", "billboard"]
+    id_prefixes: ["ADV-", "ADV"]
+
+  - key: "grievance"
+    name: "Grievance / Complaint"
+    description: "file a civic grievance or complaint (water, roads, garbage, etc.)"
+    name_hi: "शिकायत दर्ज करें"
+    description_hi: "पानी, सड़क, कचरा जैसी नागरिक समस्या की शिकायत दर्ज करें"
+    keywords: ["pgr", "complaint", "complaints", "grievance", "shikayat", "complain", "ticket"]
+    id_prefixes: ["PG-PGR-", "PGR-", "PG-PGR"]
+
+  - key: "faq"
+    name: "General Questions"
+    description: "ask anything about UPYOG services — property tax, water connection, trade license, fire NOC"
+    name_hi: "सामान्य प्रश्न"
+    description_hi: "संपत्ति कर, जल कनेक्शन, व्यापार लाइसेंस के बारे में प्रश्न पूछें"
+
+upyog:
+  # Base URL of the UPYOG environment (switch between UAT / production here)
+  base_url: "https://niuatt.niua.in"
+
+  # ── TENANT CONFIGURATION ──────────────────────────────────
+  # UPYOG uses a hierarchical tenant structure.
+  # 1. State-level Tenant (e.g., "pg"): Used for Master Data (MDMS), Filestore (documents), and Auth (OTP).
+  # 2. City-level Tenant (e.g., "pg.citya"): Used for citizen forms (Advertisement Booking, Grievance creation).
+  
+  # City-level Tenant (used when submitting actual applications/forms)
+  tenant_id: "pg.citya"
+
+  # State-level Tenant (used for fetching configs, uploading files, and sending OTP)
+  state_tenant: "pg"
+
+  # ── OAuth / Authentication ──────────────────────────────
+  auth:
+    # OAuth endpoint path (appended to base_url)
+    token_path: "/user/oauth/token"
+
+    # Master system credentials (username/password come from .env as UPYOG_USERNAME / UPYOG_PASSWORD)
+    # tenant and grant type are not secret — kept here
+    tenant_id: "pg"
+    user_type: "CITIZEN"
+    scope: "read"
+    grant_type: "password"
+
+    # Token refresh buffer in seconds (refresh 10 min before expiry)
+    refresh_buffer_seconds: 600
+
+  # ── Fallback/Master User Profile ────────────────────────
+  # Used when a citizen is not logged in. Not a real user — test/system account.
+  master_user:
+    id: 893
+    uuid: "1d19970b-e1c7-46dd-a554-d2353a2c2965"
+    user_name: "9999999999"
+    name: "ABC"
+    mobile_number: "9999999999"
+    email: "abc@gmail.com"
+    locale: "en_IN"
+    type: "CITIZEN"
+    role_name: "Citizen"
+    role_code: "CITIZEN"
+    tenant_id: "pg"
+
+  # ── API Endpoint Paths ───────────────────────────────────
+  endpoints:
+    # Advertisement Booking
+    search_ads:       "/adv-services/booking/v1/_search"
+    slot_search:      "/adv-services/booking/v1/_slot-search"
+    create_booking:   "/adv-services/booking/v1/_create"
+    fetch_bill:       "/billing-service/bill/v2/_fetchbill"
+    mdms_search:      "/egov-mdms-service/v1/_search"
+    filestore_upload: "/filestore/v1/files"
+    send_otp:         "/user-otp/v1/_send"
+    user_search:      "/user/_search"
+
+    # Public Grievance Redressal (PGR)
+    pgr_create:       "/pgr-services/v2/request/_create"
+    pgr_search:       "/pgr-services/v2/request/_search"
+    pgr_mdms:         "/mdms-v2/v1/_search"
+    pgr_locality:     "/egov-location/location/v11/boundarys/_search"
+
+  # ── Search / Query Defaults ──────────────────────────────
+  search_defaults:
+    ads_limit: 4
+    ads_sort_order: "DESC"
+    ads_sort_by: "createdTime"
+    ads_offset: 0
+    bill_business_service: "adv-services"
+
+  # ── Booking Defaults ─────────────────────────────────────
+  booking_defaults:
+    booking_from_time: "06:00"
+    booking_to_time:   "05:59"
+    booking_status:    "BOOKING_CREATED"
+    default_pincode:   "110001"
+    default_city:      "City A"
+    default_city_code: "1013"
+    default_locality:  "Preet Nagar"
+    default_locality_code: "JLC478"
+    default_street:    "street"
+    default_house_no:  "1"
+    default_landmark:  "NA"
+
+  # ── MDMS Module Masters ──────────────────────────────────
+  mdms:
+    advertisement_module: "Advertisement"
+    advertisement_masters:
+      - "AdType"
+      - "Location"
+      - "FaceArea"
+      - "CalculationType"
+
+  # ── Document Types ───────────────────────────────────────
+  document_types:
+    sample:   "APPLICANT.ADVERTISEMENT.SAMPLE.DOC"
+    address:  "APPLICANT.ADDRESSPROOF.ELECTRICITYBILL"
+    identity: "APPLICANT.IDENTITYPROOF.AADHAAR"
+
+  # ── Filestore ────────────────────────────────────────────
+  # Configuration for uploading/downloading documents to UPYOG's central filestore.
+  filestore:
+    module:   "Advertisement"
+    # CRITICAL: Filestore operations MUST happen at the state level (pg), not the city level (pg.citya).
+    # If the wrong tenant is used, the file will be uploaded but will show as a broken link on the UI.
+    tenant:   "pg"
+
+  # ── Grievance (PGR) Settings ─────────────────────────────
+  grievance:
+    # MDMS config for fetching complaint categories
+    mdms_module:    "RAINMAKER-PGR"
+    mdms_master:    "ServiceDefs"
+
+    # Tenant used for PGR API calls
+    tenant_id:      "pg.citya"
+    state_tenant:   "pg"
+
+    # Location boundary query params (egov-location API)
+    hierarchy_type: "ADMIN"
+    boundary_type:  "Locality"
+
+    # Complaint creation defaults
+    priority:       "HIGH"
+    source:         "web"
+
+# ============================================================
+# Dynamic Form Schemas
+# ============================================================
+forms:
+  adv_booking:
+    name: "Advertisement Booking"
+    fields:
+      - id: "addType"
+        type: "dropdown"
+        label: "Advertisement Type"
+        mdms: ["Advertisement", "AdType"]
+      - id: "location"
+        type: "dropdown"
+        label: "Advertisement Location"
+        mdms: ["Advertisement", "Location"]
+      - id: "faceArea"
+        type: "dropdown"
+        label: "Face Area"
+        mdms: ["Advertisement", "FaceArea"]
+      - id: "start_date"
+        type: "date"
+        label: "From Date"
+      - id: "end_date"
+        type: "date"
+        label: "To Date"
+      - id: "nightLight"
+        type: "dropdown"
+        label: "Night Light Required"
+        mdms: ["Advertisement", "NightLight"]
+      - id: "selected_slots"
+        type: "slots"
+        label: "Selected Booking Slot"
+      - id: "applicant_details"
+        type: "hidden"
+        label: "Applicant Details"
+      - id: "address"
+        type: "text"
+        label: "Address"
+      - id: "doc_sample"
+        type: "file"
+        label: "Sample Document"
+      - id: "doc_address"
+        type: "file"
+        label: "Address Proof"
+      - id: "doc_identity"
+        type: "file"
+        label: "Identity Proof"
+
+  # ── Grievance / PGR Form ──────────────────────────────────────────────────────
+  grievance:
+    name: "Complaint Registration"
+    fields:
+      # Step 1: Main category (fetched live from RAINMAKER-PGR MDMS)
+      - id: "category"
+        type: "dropdown"
+        label: "Grievance Category"
+
+      # Step 2: Specific complaint type within the chosen category
+      - id: "sub_category"
+        type: "dropdown"
+        label: "Complaint Type"
+
+      # Step 3: Free-text problem description
+      - id: "description"
+        type: "text"
+        label: "Problem Description"
+
+      # Step 4: Area/locality (fetched live from egov-location API)
+      - id: "locality"
+        type: "dropdown"
+        label: "Your Area / Locality"
