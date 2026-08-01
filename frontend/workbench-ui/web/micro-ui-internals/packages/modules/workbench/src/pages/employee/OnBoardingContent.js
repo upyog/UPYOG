@@ -17,37 +17,41 @@ import { deepSet, getCardIcon, getInitialThemeConfig, submitThemeConfig } from "
 
 /**
  * OnBoardingContent Component
- * Renders settings to configure background, card layouts, titles, subtitles,
- * and key features list for the user onboarding screens.
+ * Renders the configuration form to manage the content displayed during the onboarding screens.
+ * Allows visual designers and developers to configure backgrounds, layout styling, onboarding card panels,
+ * brand titles, responsive images, dynamic features lists, and common security trust indicators.
  * 
  * DESIGN PRINCIPLES:
- * 1. ZERO Inline Styles - uses precompiled utility classes inside ThemeConfiguration.scss.
- * 2. Fully Localized - wraps all visible text outputs in the React useTranslation t() helper.
- * 3. DRY Code - relies on shared layout widgets and unified ThemeUtils helpers.
+ * 1. ZERO Inline Styles - uses precompiled class names mapping to style rules in ThemeConfiguration.css.
+ * 2. Full Localization - wraps all text labels and instructions in translation helper methods.
+ * 3. Unified abstractions - utilizes shared components from ThemeCustomizeComponents.
+ * 
+ * @returns {React.ReactNode} Onboarding settings page view.
  */
 function OnBoardingContent() {
-  // Localization helper hook
+  // Hook to handle application translations
   const { t } = useTranslation();
 
-  // State initialization using reusable ThemeUtils configuration fetcher
+  // State handles configuration drafts and API tracking
   const [config, setConfig] = useState(getInitialThemeConfig());
   const [lastSavedConfig, setLastSavedConfig] = useState(getInitialThemeConfig());
   const [toast, setToast] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  // Computes unsaved changes status to dynamically disable/enable action footer buttons
   const hasUnsavedChanges = JSON.stringify(config) !== JSON.stringify(lastSavedConfig);
 
-  // Destructuring child pathways from the core configuration JSON
+  // Extract nested onboarding layout config sections
   const onboarding = config.pages?.onboarding || {};
   const content = onboarding.content || {};
   const common = onboarding.common || {};
 
   /**
    * Updates configuration values dynamically at the given dot-notation path.
-   * Caches edits to localStorage on-the-fly for real-time draft persistence.
+   * Also caches draft updates to localStorage for real-time persistence.
    * 
-   * @param {string} path - Dot-notation path to modify.
-   * @param {*} value - New value to save.
+   * @param {string} path - Dot-notation destination path to set (e.g. "pages.onboarding.content.features").
+   * @param {*} value - The new value (object, array, string) to save.
    */
   const set = (path, value) => {
     setConfig((prev) => {
@@ -58,8 +62,7 @@ function OnBoardingContent() {
   };
 
   /**
-   * Adds a new empty feature item to the dynamic onboarding features array.
-   * Modifies content.features pathway on the state object.
+   * Appends a new blank feature item structure to the onboarding feature slider array.
    */
   const handleAddFeature = () => {
     const currentFeatures = content.features ? [...content.features] : [];
@@ -68,9 +71,9 @@ function OnBoardingContent() {
   };
 
   /**
-   * Removes a feature item at the specified index from the dynamic features array.
+   * Removes a specific onboarding feature item at the given index list.
    * 
-   * @param {number} index - Index of the item to delete.
+   * @param {number} index - Index index list location of feature item to remove.
    */
   const handleRemoveFeature = (index) => {
     const currentFeatures = content.features ? [...content.features] : [];
@@ -79,8 +82,8 @@ function OnBoardingContent() {
   };
 
   /**
-   * Handles configuration submission, closing modal and calling shared submitThemeConfig helper.
-   * Emits toast feedback upon successful response or caught errors.
+   * Submits current theme changes. Acknowledges confirm modal action,
+   * posts configurations to the service API, updates the saved checkpoint, and displays toast feedback.
    */
   const handleSubmit = async () => {
     setShowConfirmModal(false);
@@ -98,16 +101,16 @@ function OnBoardingContent() {
   return (
     <div className="theme-form-container">
 
-      {/* Page Title */}
+      {/* Page Title & Live Preview Trigger Actions */}
       <div className="theme-header-row">
         <div className="theme-form-title">
           {t("Onboarding - Common Content")}
         </div>
-        <PreviewButton targetUrl={`/${window?.contextPath}/employee/user/language-selection`} hasUnsavedChanges={hasUnsavedChanges} />
+        <PreviewButton targetUrl={`/${window?.contextPath}/employee/user/language-selection`} hasUnsavedChanges={hasUnsavedChanges} onSubmit={handleSubmit} />
       </div>
 
-      {/* ── 1. Background Configuration ── */}
-      {/* Allows users to change background color and responsive image URLs for mobile, tablet, laptop, and desktop views */}
+      {/* ── 1. Background Configuration Section ── */}
+      {/* Configure solid background colors and responsive graphics for mobile, tablet, laptop, and desktop views */}
       {content.background?.root && (
         <Card className="theme-card-margin">
           <CardTitle
@@ -160,8 +163,8 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── 2. Card Configuration ── */}
-      {/* Settings to customize onboarding card panel border styles, backgrounds, shadows, and device-responsive graphics */}
+      {/* ── 2. Onboarding Card Panel Styling Section ── */}
+      {/* Customize background color, card drop-shadow styles, and device-responsive graphics for card grids */}
       {content.background?.sections?.left?.card && (
         <Card className="theme-card-margin">
           <CardTitle
@@ -227,8 +230,8 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── 3. Brand Settings ── */}
-      {/* Configures core marketing title strings and primary/secondary subtitle descriptions */}
+      {/* ── 3. Brand Content Settings Section ── */}
+      {/* Configures major title headers, highlighted subtexts, and subtitle lines */}
       {content.brand && (
         <Card className="theme-card-margin">
           <CardTitle
@@ -263,8 +266,8 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── 4. Features List ── */}
-      {/* Allows developers to dynamically add, edit, or remove key application feature items shown on the onboarding slide decks */}
+      {/* ── 4. Key Features Configuration List Section ── */}
+      {/* Dynamic list rendering onboarding slide icons, heading strings, and descriptions */}
       {content.features && (
         <Card className="theme-card-margin">
           <CardTitle
@@ -319,8 +322,8 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── 5. Common Secure Info ── */}
-      {/* Configures badges and text describing trust/security measures below fields */}
+      {/* ── 5. Common Security Trust Banner Section ── */}
+      {/* Trust banners positioned at onboarding footers (displays badge icon URLs and security slogans) */}
       {common.secureInfo && (
         <Card className="theme-card-margin">
           <CardTitle
@@ -343,7 +346,7 @@ function OnBoardingContent() {
         </Card>
       )}
 
-      {/* ── Submit Button ── */}
+      {/* ── Submit Action Footer ── */}
       <div className="submit-container">
         <button
           onClick={() => setShowConfirmModal(true)}
@@ -354,14 +357,14 @@ function OnBoardingContent() {
         </button>
       </div>
 
-      {/* Reusable confirmation modal component to verify changes before writing back to storage */}
+      {/* Confirmation Modal to double-check configuration changes */}
       <SubmitConfirmModal
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         onConfirm={handleSubmit}
       />
 
-      {/* Success and error feedback toast notification */}
+      {/* State notification toasts */}
       {toast && <Toast label={toast.label} error={toast.error} onClose={() => setToast(null)} />}
     </div>
   );

@@ -10,6 +10,7 @@ import ThemeCustomizeForm from "./ThemeCustomizeForm";
 import OnBoardingContent from "./OnBoardingContent";
 // Added onboarding login component
 import OnBoardingLogin from "./OnBoardingLogin";
+import OnBoardingRegister from "./OnBoardingRegister";
 import MDMSSearch from "./MDMSSearch";
 import MDMSAdd from "./MDMSAdd";
 import MDMSAddV2 from "./MDMSAddV2";
@@ -87,6 +88,12 @@ const WorkbenchBreadCrumb = ({ location, defaultPath }) => {
       path: `/${window?.contextPath}/employee/workbench/onboarding-login-configuration`,
       content: t(`WBH_ONBOARDING_LOGIN_CONFIG`),
       show: pathVar.includes("onboarding-login-configuration") ? true : false,
+    },
+    {
+      // Onboarding Register Configuration
+      path: `/${window?.contextPath}/employee/workbench/onboarding-register-configuration`,
+      content: t(`WBH_ONBOARDING_REGISTER_CONFIG`),
+      show: pathVar.includes("onboarding-register-configuration") ? true : false,
     }
 
   ];
@@ -195,6 +202,13 @@ const App = ({ path }) => {
             path="onboarding-login-configuration"
             element={<PrivateRoute><OnBoardingLogin parentRoute={path} /></PrivateRoute>}
           />
+          {/* Onboarding Register route */}
+          <Route
+            path="onboarding-register-configuration"
+            element={<PrivateRoute><OnBoardingRegister parentRoute={path} /></PrivateRoute>}
+          />
+
+
         </Routes>
       </AppContainer>
     </React.Fragment>

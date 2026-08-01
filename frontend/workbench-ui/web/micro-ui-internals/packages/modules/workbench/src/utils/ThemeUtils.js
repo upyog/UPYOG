@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemeConfig } from "../configs/ThemeConfig";
+import { CitizenThemeConfig } from "../configs/CitizenThemeConfig";
 import {
   ThemeTextIcon,
   ThemeBrandIcon,
@@ -103,7 +103,7 @@ export function getInitialThemeConfig() {
       console.error("Failed to parse saved theme config:", e);
     }
   }
-  return ThemeConfig[0] || {};
+  return CitizenThemeConfig[0] || {};
 }
 
 /**

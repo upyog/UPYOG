@@ -102,7 +102,7 @@ function OnBoardingLogin() {
         <div className="theme-form-title">
           {t("Onboarding - Login Configuration")}
         </div>
-        <PreviewButton targetUrl={`/${window?.contextPath}/employee/user/login`} hasUnsavedChanges={hasUnsavedChanges} />
+        <PreviewButton targetUrl={`/${window?.contextPath}/employee/user/login`} hasUnsavedChanges={hasUnsavedChanges} onSubmit={handleSubmit} />
       </div>
 
       {/* ── 1. Login Page Header ── */}

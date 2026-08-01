@@ -3,7 +3,15 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { Modal, ThemePreviewIcon } from "@upyog/workbench-ui-react-components";
 
-// ─── Section Header ───────────────────────────────────────────────────────────
+/**
+ * SectionHeader Component
+ * Renders a standard block header with a circular sequence index indicator.
+ * Used for theme form dividers (e.g. "1. Colors Theme", "2. Shadows", etc.)
+ * 
+ * @param {Object} props
+ * @param {string|number} props.number - The sequence number displayed in the circular badge.
+ * @param {string} props.title - The title text of the section.
+ */
 export function SectionHeader({ number, title }) {
   return (
     <div className="theme-section-header">
@@ -13,7 +21,122 @@ export function SectionHeader({ number, title }) {
   );
 }
 
-// ─── Card Components ──────────────────────────────────────────────────────────
+/**
+ * PreviewDropdown Component
+ * Renders a dropdown action button allowing quick access to navigate between different configuration forms.
+ * Automatically handles outside click triggers to close the dropdown popover.
+ * 
+ * @returns {React.ReactNode}
+ */
+export function PreviewDropdown() {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const navigate = Digit.Hooks.useCustomNavigate();
+
+  const pages = [
+    { label: t("Customize Theme"), path: "/workbench/theme-configuration" },
+    { label: t("Onboarding Content"), path: "/workbench/onboarding-common-content" },
+    { label: t("Onboarding Login"), path: "/workbench/onboarding-login-configuration" }
+  ];
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest(".preview-dropdown-container")) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, [isOpen]);
+
+  const currentPath = location.pathname;
+
+  return (
+    <div className="preview-dropdown-container">
+      <button 
+        className="preview-btn-trigger"
+        onClick={() => setIsOpen(!isOpen)}
+        title={t("Preview configuration pages")}
+      >
+        <span>👁️</span> {t("Preview")}
+      </button>
+      {isOpen && (
+        <div className="preview-dropdown-menu">
+          {pages.map((page) => {
+            const isActive = currentPath.includes(page.path);
+            return (
+              <div 
+                key={page.path}
+                className={`preview-dropdown-item ${isActive ? "active" : ""}`}
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate(page.path);
+                }}
+              >
+                {page.label}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * ThemePageSelector Component
+ * A drop-down HTML select element to toggle edit views between the different customization files.
+ * Useful for navigating sections of configuration forms easily.
+ * 
+ * @returns {React.ReactNode}
+ */
+export function ThemePageSelector() {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = Digit.Hooks.useCustomNavigate();
+
+  const options = [
+    { label: t("Customize Theme"), path: "/workbench/theme-configuration" },
+    { label: t("Onboarding Content"), path: "/workbench/onboarding-common-content" },
+    { label: t("Onboarding Login"), path: "/workbench/onboarding-login-configuration" }
+  ];
+
+  const currentPath = location.pathname;
+  const currentVal = options.find(opt => currentPath.includes(opt.path))?.path || options[0].path;
+
+  const handleChange = (e) => {
+    const selectedPath = e.target.value;
+    navigate(selectedPath);
+  };
+
+  return (
+    <div className="theme-page-selector-container">
+      <span className="selector-label">{t("Preview Pages:")}</span>
+      <select
+        value={currentVal}
+        onChange={handleChange}
+        className="select-input theme-page-selector"
+      >
+        {options.map((opt) => (
+          <option key={opt.path} value={opt.path}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+/**
+ * Card Component
+ * A wrapper container with standard styling, padding, and layout shadows.
+ * 
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Embedded card content components.
+ * @param {Object} [props.style] - Inline style override properties.
+ */
 export function Card({ children, style }) {
   return (
     <div className="theme-card" style={style}>
@@ -22,6 +145,16 @@ export function Card({ children, style }) {
   );
 }
 
+/**
+ * CardTitle Component
+ * Card header block containing an icon, title, description, and optional right actions.
+ * 
+ * @param {Object} props
+ * @param {React.ReactNode} props.icon - Icon symbol or node displayed before the header.
+ * @param {string} props.title - Major card heading text.
+ * @param {string} [props.description] - Description text explaining card config fields.
+ * @param {React.ReactNode} [props.rightElement] - Optional widget element positioned on the right header margin.
+ */
 export function CardTitle({ icon, title, description, rightElement }) {
   return (
     <div className="theme-card-title-row">
@@ -39,7 +172,15 @@ export function CardTitle({ icon, title, description, rightElement }) {
   );
 }
 
-// ─── Layout Grid / Flex Wrapper ───────────────────────────────────────────────
+/**
+ * FieldsRow Component
+ * Layout wrapper handling standard multi-column grid alignment or flat horizontal flex layouts.
+ * 
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Input fields rendered side-by-side.
+ * @param {Object} [props.style] - Style override properties.
+ * @param {boolean} [props.grid=true] - If true, applies standard css grid. If false, renders as flexbox row.
+ */
 export function FieldsRow({ children, style, grid = true }) {
   if (!grid) {
     return (
@@ -55,15 +196,26 @@ export function FieldsRow({ children, style, grid = true }) {
   );
 }
 
-// ─── Form Inputs ──────────────────────────────────────────────────────────────
+/**
+ * ColorField Component
+ * Custom color picker widget that displays color hex strings alongside a clickable color indicator.
+ * Includes a "Copy" button to instantly copy the active hex code value to the clipboard.
+ * 
+ * @param {Object} props
+ * @param {string} props.label - Configuration field name.
+ * @param {string} props.value - Active color value hex code.
+ * @param {Function} props.onChange - Selection trigger callback.
+ */
 export function ColorField({ label, value, onChange }) {
   const [copied, setCopied] = React.useState(false);
+  
   const handleCopy = () => {
     navigator.clipboard?.writeText(value).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
   };
+
   return (
     <div className="field-col">
       <span className="field-label-text">{label}</span>
@@ -95,6 +247,17 @@ export function ColorField({ label, value, onChange }) {
   );
 }
 
+/**
+ * NumberField Component
+ * Standard number configuration input field supporting customizable value units (e.g. "px", "rem").
+ * 
+ * @param {Object} props
+ * @param {string} props.label - Configuration input field label name.
+ * @param {number|string} props.value - Field value.
+ * @param {string} [props.unit] - Target unit suffix appended on change.
+ * @param {Function} props.onChange - Field value change callback handler.
+ * @param {Object} [props.style] - Inline style override properties.
+ */
 export function NumberField({ label, value, unit, onChange, style }) {
   return (
     <div className="field-col" style={style}>
@@ -112,6 +275,18 @@ export function NumberField({ label, value, unit, onChange, style }) {
   );
 }
 
+/**
+ * TextField Component
+ * Standard text input field supporting either simple flat text inputs or multi-line textareas.
+ * 
+ * @param {Object} props
+ * @param {string} props.label - Label name for the text parameter.
+ * @param {string} props.value - Active configuration text value.
+ * @param {Function} props.onChange - Form update callback method.
+ * @param {string} [props.placeholder] - Hint text prompt when empty.
+ * @param {string} [props.type="text"] - Renders input type ("text" or "textarea").
+ * @param {Object} [props.style] - Style override configurations.
+ */
 export function TextField({ label, value, onChange, placeholder, type = "text", style }) {
   return (
     <div className="field-col" style={style}>
@@ -136,6 +311,16 @@ export function TextField({ label, value, onChange, placeholder, type = "text", 
   );
 }
 
+/**
+ * CheckboxField Component
+ * Form toggle input component displaying standard Active/Show checkboxes.
+ * 
+ * @param {Object} props
+ * @param {string} props.label - Checkbox setting heading text.
+ * @param {boolean} props.checked - Check state value parameter.
+ * @param {Function} props.onChange - Change toggle callback handler.
+ * @param {Object} [props.style] - Style customization definitions.
+ */
 export function CheckboxField({ label, checked, onChange, style }) {
   return (
     <div className="field-col" style={style}>
@@ -153,6 +338,17 @@ export function CheckboxField({ label, checked, onChange, style }) {
   );
 }
 
+/**
+ * SelectField Component
+ * Standard selector input displaying a dropdown of predefined choices.
+ * 
+ * @param {Object} props
+ * @param {string} props.label - Dropdown label title.
+ * @param {string} props.value - Active configuration select value.
+ * @param {Array<string|Object>} [props.options=[]] - List of choices (either strings or { label, value } objects).
+ * @param {Function} props.onChange - Dropdown selection update method.
+ * @param {Object} [props.style] - Style override declarations.
+ */
 export function SelectField({ label, value, options = [], onChange, style }) {
   return (
     <div className="field-col" style={style}>
@@ -176,9 +372,33 @@ export function SelectField({ label, value, options = [], onChange, style }) {
   );
 }
 
+/**
+ * UploadBox Component
+ * Image asset upload box that allows selecting files for uploading or using custom URLs.
+ * Integrates UPYOG's built-in FileStorage/FileFetch API endpoints to upload file instances
+ * asynchronously, retrieve direct URLs, and display visual thumbnails.
+ * Handles parsing/resolving shared Google Drive file URLs into standard direct links.
+ * 
+ * @param {Object} props
+ * @param {string} props.label - Section name of upload configuration target.
+ * @param {Object} [props.value={}] - Value object holding source asset parameters.
+ * @param {string} [props.value.src=""] - Target URL source link of the image.
+ * @param {string} [props.value.alt=""] - Alt description text.
+ * @param {Function} props.onChange - Value update method returning the new { src, alt } object.
+ */
 export function UploadBox({ label, value = {}, onChange }) {
   const { src = "", alt = "" } = value || {};
+  const { t } = useTranslation();
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
 
+  /**
+   * Helper utility method that automatically parses Google Drive sharing links
+   * and maps them to direct, embeddable user-content image rendering URLs.
+   * 
+   * @param {string} url - Source Google Drive path string.
+   * @returns {string} Fully resolved rendering URL.
+   */
   const getDirectImageUrl = (url) => {
     if (!url) return "";
     const fileDMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
@@ -191,17 +411,59 @@ export function UploadBox({ label, value = {}, onChange }) {
     return url;
   };
 
-  const handleFileChange = (e) => {
+  /**
+   * Handles local image selection, runs validation checks, uploads files to Filestorage,
+   * fetches download URLs, and updates configuration values.
+   * 
+   * @param {React.ChangeEvent<HTMLInputElement>} e - File input trigger event object.
+   */
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        onChange?.({ src: event.target.result, alt });
-      };
-      reader.readAsDataURL(file);
+      const allowedFileTypesRegex = /(.*?)(jpg|jpeg|png|image)$/i;
+      
+      // Limit file size to 5MB
+      if (file.size >= 5242880) {
+        setUploadError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+        return;
+      }
+      if (file?.type && !allowedFileTypesRegex.test(file?.type)) {
+        setUploadError(t("NOT_SUPPORTED_FILE_TYPE"));
+        return;
+      }
+
+      setIsUploading(true);
+      setUploadError(null);
+
+      try {
+        const stateId = Digit.ULBService.getStateId() || Digit.ULBService.getCurrentTenantId()?.split(".")[0];
+        const response = await Digit.UploadServices.Filestorage("workbench", file, stateId);
+        
+        if (response?.data?.files?.length > 0) {
+          const fileStoreId = response?.data?.files[0]?.fileStoreId;
+          const fetchRes = await Digit.UploadServices.Filefetch([fileStoreId], stateId);
+          const fileUrl = fetchRes?.data?.fileStoreIds?.[0]?.url;
+          
+          if (fileUrl) {
+            onChange?.({ src: fileUrl, alt });
+          } else {
+            setUploadError(t("CS_FILE_UPLOAD_ERROR"));
+          }
+        } else {
+          setUploadError(t("CS_FILE_UPLOAD_ERROR"));
+        }
+      } catch (err) {
+        console.error("File upload failed:", err);
+        setUploadError(t("CS_FILE_UPLOAD_ERROR"));
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
+  /**
+   * Updates preview thumbnail images on typing or editing the URL text fields.
+   */
   const handleUrlChange = (e) => {
     const rawVal = e.target.value;
     const resolvedUrl = getDirectImageUrl(rawVal);
@@ -213,7 +475,9 @@ export function UploadBox({ label, value = {}, onChange }) {
       <span className="upload-box-header">{label}</span>
 
       <div className="upload-box-preview-frame">
-        {src ? (
+        {isUploading ? (
+          <span className="upload-box-placeholder">{t("Uploading...")}</span>
+        ) : src ? (
           <img src={getDirectImageUrl(src)} alt={alt || "Logo preview"} className="upload-box-preview-img" />
         ) : (
           <span className="upload-box-placeholder">No image preview</span>
@@ -243,13 +507,28 @@ export function UploadBox({ label, value = {}, onChange }) {
       </div>
 
       <label className="upload-box-label upload-box-input-height">
-        <span>📎</span> Upload File
-        <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
+        <span>📎</span> {isUploading ? t("Uploading...") : t("Upload File")}
+        <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} disabled={isUploading} />
       </label>
+
+      {uploadError && (
+        <span style={{ fontSize: 11, color: "#D85A5A", marginTop: 4, textAlign: "center" }}>
+          {uploadError}
+        </span>
+      )}
     </div>
   );
 }
 
+/**
+ * SubmitButton Component
+ * Flat submit button displayed on action footers.
+ * 
+ * @param {Object} props
+ * @param {string} [props.label="SUBMIT CHANGES"] - Button text label.
+ * @param {Function} props.onClick - Button click handler method.
+ * @param {Object} [props.style] - Custom CSS override properties.
+ */
 export function SubmitButton({ label = "SUBMIT CHANGES", onClick, style }) {
   return (
     <button onClick={onClick} className="submit-btn" style={style}>
@@ -258,7 +537,26 @@ export function SubmitButton({ label = "SUBMIT CHANGES", onClick, style }) {
   );
 }
 
+/**
+ * ShadowField Component
+ * Rich design widget that parses CSS box-shadow strings (e.g. "1px 2px 5px rgba(0,0,0,0.15)")
+ * into granular vertical/horizontal offset sliders, spread/blur controls, and color pickers.
+ * Reassembles updated properties back into valid CSS declarations.
+ * 
+ * @param {Object} props
+ * @param {string} props.label - Configuration field name.
+ * @param {string} props.value - CSS box-shadow string.
+ * @param {Function} props.onChange - Value update callback method.
+ */
 export function ShadowField({ label, value, onChange }) {
+  
+  /**
+   * Helper utility method that parses raw CSS box-shadow strings.
+   * Extracts horizontal, vertical offsets, blur, spread radius metrics, and opacity colors.
+   * 
+   * @param {string} str - Raw box shadow value.
+   * @returns {Object} Extracted parameters object.
+   */
   const parseShadow = (str) => {
     let color = "rgba(0, 0, 0, 0.1)";
     let rest = str || "";
@@ -292,6 +590,12 @@ export function ShadowField({ label, value, onChange }) {
 
   const shadowData = parseShadow(value);
 
+  /**
+   * Helper method that splits colors into clean hex and alpha opacity properties.
+   * 
+   * @param {string} colStr - Color configuration string.
+   * @returns {Object} { hex, opacity } values.
+   */
   const parseColor = (colStr) => {
     let hex = "#000000";
     let opacity = 1;
@@ -323,13 +627,17 @@ export function ShadowField({ label, value, onChange }) {
   };
 
   const colorData = parseColor(shadowData.color);
-
   const [localHex, setLocalHex] = useState(colorData.hex);
 
   useEffect(() => {
     setLocalHex(colorData.hex);
   }, [colorData.hex]);
 
+  /**
+   * Updates state data and reassembles parameters into CSS box-shadow declarations.
+   * 
+   * @param {Object} updatedFields - Map of modified parameter fields.
+   */
   const updateShadow = (updatedFields) => {
     const finalData = { ...shadowData, ...updatedFields };
     let finalColor = finalData.color;
@@ -452,7 +760,26 @@ export function ShadowField({ label, value, onChange }) {
   );
 }
 
+/**
+ * GradientField Component
+ * Dynamic CSS gradient builder widget. Parses linear-gradient expressions into granular controls:
+ * - Angle slider control (0deg - 360deg).
+ * - Multi-stop timeline configuration (add stops, select hex codes, position slides, delete stops).
+ * Reassembles parameters into standard CSS `linear-gradient` strings.
+ * 
+ * @param {Object} props
+ * @param {string} [props.label] - Field label header text.
+ * @param {string} props.value - CSS linear-gradient value string.
+ * @param {Function} props.onChange - Selection trigger callback handler.
+ */
 export function GradientField({ label, value, onChange }) {
+  
+  /**
+   * Parses linear-gradient configuration values into structured angles and stops.
+   * 
+   * @param {string} str - Raw CSS gradient definition.
+   * @returns {Object} Gradient object { angle, stops }
+   */
   const parseGradient = (str) => {
     const defaultVal = { angle: 90, stops: [{ color: "#6A4A91", position: 0 }, { color: "#3E285F", position: 100 }] };
     if (!str || !str.includes("linear-gradient")) return defaultVal;
@@ -462,6 +789,9 @@ export function GradientField({ label, value, onChange }) {
 
     const inner = match[1];
 
+    /**
+     * Splits color stops taking nested parentheses (rgb/rgba colors) into consideration.
+     */
     const splitColorStops = (str) => {
       const stops = [];
       let current = "";
@@ -525,6 +855,9 @@ export function GradientField({ label, value, onChange }) {
 
   const gradientData = parseGradient(value);
 
+  /**
+   * Helper utility mapping parsed rgb/rgba strings to direct hex codes for HTML inputs.
+   */
   const toHex = (col) => {
     if (col.startsWith("#")) return col;
     if (col.startsWith("rgba") || col.startsWith("rgb")) {
@@ -539,6 +872,9 @@ export function GradientField({ label, value, onChange }) {
     return "#000000";
   };
 
+  /**
+   * Updates state data and updates configurations in dot-notation path.
+   */
   const updateGradient = (angle, stops) => {
     const stopsStr = stops
       .sort((a, b) => a.position - b.position)
@@ -641,7 +977,15 @@ export function GradientField({ label, value, onChange }) {
   );
 }
 
-// ─── Reusable Submit Confirmation Modal ──────────────────────────────────────
+/**
+ * SubmitConfirmModal Component
+ * Modal component displayed on the submit action footer to verify changes before saving.
+ * 
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Checks if modal displays.
+ * @param {Function} props.onClose - Action triggered on cancel closure.
+ * @param {Function} props.onConfirm - Action callback triggered on confirm updates submission.
+ */
 export function SubmitConfirmModal({ isOpen, onClose, onConfirm }) {
   const { t } = useTranslation();
   if (!isOpen) return null;
@@ -660,16 +1004,43 @@ export function SubmitConfirmModal({ isOpen, onClose, onConfirm }) {
   );
 }
 
-// ─── Reusable Preview Button ──────────────────────────────────────────────────
-export function PreviewButton({ targetUrl, hasUnsavedChanges }) {
+/**
+ * PreviewButton Component
+ * Eye-icon action button displayed on headers. Checks for unsaved modifications:
+ * - If changes are fully saved: opens the preview URL path in a new tab.
+ * - If unsaved configuration edits exist: displays a warning modal pop-up prompt
+ *   supporting a direct "Submit & Preview" action to submit changes on-the-fly.
+ * 
+ * @param {Object} props
+ * @param {string} props.targetUrl - Direct redirection URL path (e.g. "/employee").
+ * @param {boolean} props.hasUnsavedChanges - State flag indicating active form edits exist.
+ * @param {Function} props.onSubmit - Reusable submission method to save configurations.
+ */
+export function PreviewButton({ targetUrl, hasUnsavedChanges, onSubmit }) {
   const { t } = useTranslation();
   const [showWarningModal, setShowWarningModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handlePreviewClick = () => {
     if (hasUnsavedChanges) {
       setShowWarningModal(true);
     } else {
       window.open(targetUrl, "_blank");
+    }
+  };
+
+  const handleSaveAndPreview = async () => {
+    if (onSubmit) {
+      setIsSubmitting(true);
+      try {
+        await onSubmit();
+        window.open(targetUrl, "_blank");
+        setShowWarningModal(false);
+      } catch (err) {
+        console.error("Save & Preview failed:", err);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -688,10 +1059,12 @@ export function PreviewButton({ targetUrl, hasUnsavedChanges }) {
           headerBarMain={t("Unsubmitted Changes")}
           actionCancelLabel={t("Close")}
           actionCancelOnSubmit={() => setShowWarningModal(false)}
-          hideSubmit={true}
+          actionSaveLabel={isSubmitting ? t("Submitting...") : t("Submit & Preview")}
+          actionSaveOnSubmit={handleSaveAndPreview}
+          isDisabled={isSubmitting}
         >
           <div className="confirm-modal-content">
-            {t("You have unsubmitted changes. Please click 'SUBMIT CHANGES' to save your work before previewing.")}
+            {t("You have unsubmitted changes. Would you like to submit them and proceed to preview?")}
           </div>
         </Modal>
       )}

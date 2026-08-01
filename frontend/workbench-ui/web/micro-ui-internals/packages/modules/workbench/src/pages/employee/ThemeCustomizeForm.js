@@ -98,7 +98,7 @@ function ThemeCustomizeForm() {
         <div className="theme-form-title">
           {t("Customize Theme")}
         </div>
-        <PreviewButton targetUrl={`/${window?.contextPath}/employee`} hasUnsavedChanges={hasUnsavedChanges} />
+        <PreviewButton targetUrl={`/${window?.contextPath}/employee`} hasUnsavedChanges={hasUnsavedChanges} onSubmit={handleSubmit} />
       </div>
 
       {/* ── 1. Colors Theme Section ─────────────────────────────────── */}
@@ -132,16 +132,16 @@ function ThemeCustomizeForm() {
               {colorsVal.brand && (
                 <Card>
                   <CardTitle icon={groupMeta.brand.icon} title={t(groupMeta.brand.title)} description={t(groupMeta.brand.description)} />
-                  <FieldsRow>
+                  <div className="full-width-col">
                     {Object.entries(colorsVal.brand).map(([colorKey, colorVal]) => (
-                      <ColorField
+                      <GradientField
                         key={colorKey}
                         label={t(getLabel("brand", colorKey))}
                         value={colorVal}
                         onChange={(v) => set(`${sectionKey}.brand.${colorKey}`, v)}
                       />
                     ))}
-                  </FieldsRow>
+                  </div>
                 </Card>
               )}
               {colorsVal.common && (
@@ -433,8 +433,8 @@ function ThemeCustomizeForm() {
         );
       })}
 
-      {/* ── Other Settings Section ─────────────────────────────────── */}
-      {otherThemeKeys.length > 0 && <SectionHeader number="+" title={t("Other Settings")} />}
+      {/* ── Additional Settings Section ──────────────────────────────── */}
+      {otherThemeKeys.length > 0 && <SectionHeader number="+" title={t("Additional Settings")} />}
       {otherThemeKeys.map((sectionKey) => {
         const val = config.theme[sectionKey];
         if (typeof val !== "object" || val === null) return null;
