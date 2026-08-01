@@ -58,6 +58,12 @@ public class GCModuleHandler implements ModuleInboxHandler {
         }
         ctx.getCriteria().getModuleSearchCriteria().put(GC_APPLICATION_NUMBER_PARAM, ids);
         ctx.addBusinessKeys(ids);
+        ctx.getCriteria().getModuleSearchCriteria().remove(STATUS_PARAM);
+        if (ctx.getCriteria().getModuleSearchCriteria().containsKey(APPLICATION_STATUS)) {
+            ctx.getCriteria().getModuleSearchCriteria().put(
+                    STATUS_PARAM,
+                    ctx.getCriteria().getModuleSearchCriteria().get(APPLICATION_STATUS));
+        }
     }
 
     /**
@@ -89,6 +95,6 @@ public class GCModuleHandler implements ModuleInboxHandler {
      */
     @Override
     public List<String> paramsToRemove() {
-        return List.of(STATUS_PARAM, LOCALITY_PARAM, OFFSET_PARAM);
+        return List.of(APPLICATION_STATUS, LOCALITY_PARAM, OFFSET_PARAM);
     }
 }

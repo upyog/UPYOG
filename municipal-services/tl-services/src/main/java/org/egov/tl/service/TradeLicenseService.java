@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tl.config.TLConfiguration;
+import org.egov.tl.repository.DraftServiceClient;
 import org.egov.tl.repository.TLRepository;
 import org.egov.tl.service.notification.EditNotificationService;
 import org.egov.tl.util.TLConstants;
@@ -66,6 +67,8 @@ public class TradeLicenseService {
 
     private TLBatchService tlBatchService;
 
+    private DraftServiceClient draftServiceClient;
+
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
 
@@ -75,7 +78,7 @@ public class TradeLicenseService {
                                TLValidator tlValidator, TLWorkflowService TLWorkflowService,
                                CalculationService calculationService, TradeUtil util, DiffService diffService,
                                TLConfiguration config, EditNotificationService editNotificationService, WorkflowService workflowService,
-                               TradeUtil tradeUtil, TLBatchService tlBatchService) {
+                               TradeUtil tradeUtil, TLBatchService tlBatchService, DraftServiceClient draftServiceClient) {
         this.wfIntegrator = wfIntegrator;
         this.enrichmentService = enrichmentService;
         this.userService = userService;
@@ -91,6 +94,7 @@ public class TradeLicenseService {
         this.workflowService = workflowService;
         this.tradeUtil = tradeUtil;
         this.tlBatchService = tlBatchService;
+        this.draftServiceClient = draftServiceClient;
     }
 
 
@@ -136,7 +140,11 @@ public class TradeLicenseService {
                break;
        }
         repository.save(tradeLicenseRequest);
-       
+
+        draftServiceClient.markSubmitted(
+                tradeLicenseRequest.getRequestInfo(),
+                tradeLicenseRequest.getDraftId(),
+                tradeLicenseRequest.getLicenses().get(0).getTenantId());
 
         return tradeLicenseRequest.getLicenses();
 	}
