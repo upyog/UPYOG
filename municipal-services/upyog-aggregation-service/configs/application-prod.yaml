@@ -117,3 +117,9 @@ backend:
       maxConns: 100
       circuitThreshold: 10
       circuitTimeout: 60s
+    draft:
+      baseUrl: "http://upyog-draft-service:8080"
+      timeout: 8s
+      maxConns: 100
+      circuitThreshold: 10
+      circuitTimeout: 60s

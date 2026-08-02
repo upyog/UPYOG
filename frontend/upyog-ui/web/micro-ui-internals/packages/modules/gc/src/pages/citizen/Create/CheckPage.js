@@ -12,6 +12,18 @@ import {
 import { useTranslation } from "react-i18next";
 import { checkForNA } from "../../../utils";
 
+/**
+ * GCCheckPage Component
+ * 
+ * Renders the final review/summary step before submitting the GC application.
+ * Displays all collected data organized by section: Applicant Details, Property Location,
+ * Garbage Specifications, and Documents. Includes a declaration checkbox and submit button.
+ * 
+ * Props:
+ * - `onSubmit`: Callback when the submit button is clicked
+ * - `value`: Complete form data object with all step data
+ * - `renewApplication`: Existing application data for edit flow comparison
+ */
 const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
   
   const { t } = useTranslation();

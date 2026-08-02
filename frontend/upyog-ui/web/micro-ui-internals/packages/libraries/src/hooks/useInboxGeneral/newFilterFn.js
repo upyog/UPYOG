@@ -381,6 +381,39 @@ export const filterFunctions = {
     
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
+
+   GC: (filtersArg) => {
+
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+    const searchFilters = {};
+    const workflowFilters = {};
+
+
+    const { applicationNumber, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
+
+    if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+    if (mobileNumber) {
+      searchFilters.mobileNumber = mobileNumber;
+    }
+    if(applicationNumber) {   
+      searchFilters.applicationNumber = applicationNumber;
+    }
+    if (services) {
+      workflowFilters.businessService = services;
+    }
+    if(locality?.length) {
+      searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
+    }
+
+    searchFilters["isInboxSearch"] = true;
+    searchFilters["creationReason"] = [""];
+    workflowFilters["moduleName"] = "garbage-service";
+    
+    return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+  },
   /**
 
  * PGRAI Inbox Filter Builder

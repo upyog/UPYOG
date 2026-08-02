@@ -20,6 +20,16 @@ import { Link } from "react-router-dom";
  * `GCSearchApplication` component provides a search interface for Garbage Collection (GC) applications.
  * It allows users to search, filter, and sort application records based on parameters like application number,
  * applicant name, mobile number, status, and date range.
+ * 
+ * Props:
+ * - `tenantId`: Current tenant ID for data scoping
+ * - `isLoading`: Boolean indicating if the search results are loading
+ * - `t`: i18n translation function
+ * - `onSubmit`: Callback invoked with form data on search submission
+ * - `onClear`: Callback invoked when the clear button is clicked
+ * - `data`: Array of search result objects to display in the table
+ * - `count`: Total number of matching records (for pagination)
+ * - `setShowToast`: Function to display toast notifications for validation errors
  */
 const GCSearchApplication = ({ tenantId, isLoading, t, onSubmit, onClear, data, count, setShowToast }) => {
   const isMobile = window.Digit.Utils.browser.isMobile();

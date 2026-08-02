@@ -3,12 +3,19 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { pdfDownloadLink } from "../utils";
 
-/* 
-  GCDocuments Component
-
-  This component is used for uploading and displaying documents.
-  It fetches documents based on the provided type for Garbage Collection.
-*/
+/**
+ * GCDocuments Component
+ * 
+ * Renders document download links for the GC application summary/check page.
+ * Fetches the document file URL via `useGCDocumentSearch` hook and displays
+ * a clickable link with a PDF icon for each matched document.
+ * 
+ * Props:
+ * - `value`: The form data object containing document arrays
+ * - `Code`: The document type code to filter documents by (e.g., "APPLICANT_PHOTO")
+ * - `index`: Index for rendering multiple document entries
+ * - `showFileName`: Boolean to optionally display the file name
+ */
 
 function GCDocuments({ value = {}, Code, index, showFileName= false }) {
   const { t } = useTranslation();
