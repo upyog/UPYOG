@@ -62,6 +62,7 @@ const GCActionModal = ({ t, action, tenantId, closeModal, submitAction, applicat
     const isOnlyWorkflowCall=true;
     const workflow = {
       action: action?.action,
+      comment: data?.comments,
       comments: data?.comments,
       assignes: [],
       businessService,
