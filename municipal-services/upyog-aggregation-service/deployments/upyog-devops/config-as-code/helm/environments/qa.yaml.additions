@@ -1,0 +1,23 @@
+# =============================================================================
+# Additions for config-as-code/helm/environments/qa.yaml (niuatt environment)
+# in the UPYOG-DevOps-niuatt repository.
+#
+# This file is NOT applied automatically — merge the two blocks below into
+# the existing qa.yaml at the indicated locations.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1) Under cluster-configs -> configmaps -> egov-service-host -> data
+#    add this entry (keeps other services able to resolve this one by name):
+# -----------------------------------------------------------------------------
+#                upyog-aggregation-service: "http://upyog-aggregation-service:8080/"
+
+# -----------------------------------------------------------------------------
+# 2) As a new top-level block (e.g. next to the other municipal services
+#    such as adv-services / cnd-service), add:
+# -----------------------------------------------------------------------------
+upyog-aggregation-service:
+  replicas: "1"
+  memory_limits: "256Mi"
+  # APP_ENV profile baked into the image; "qa" is the niuatt profile.
+  app-env: "qa"

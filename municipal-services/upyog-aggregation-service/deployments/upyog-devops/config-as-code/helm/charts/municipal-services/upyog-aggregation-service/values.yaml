@@ -1,0 +1,83 @@
+# Common Labels
+labels:
+  app: "upyog-aggregation-service"
+  group: "rainmaker"
+
+# Ingress Configs
+# zuul: true puts the `zuul/route-path: upyog-aggregation-service` annotation
+# on the Kubernetes Service, which the gateway route-discovery job picks up to
+# create the /upyog-aggregation-service/** route. The gateway does NOT strip
+# the prefix — the service serves all routes under server.contextPath
+# (/upyog-aggregation-service), configured in its application-qa.yaml.
+ingress:
+  enabled: true
+  zuul: true
+  context: "upyog-aggregation-service"
+
+# Init Containers Configs
+# Go service with no database — no flyway migration container.
+initContainers:
+  dbMigration:
+    enabled: false
+
+# Container Configs
+image:
+  repository: "upyog-aggregation-service"
+replicas: "1"
+httpPort: 8080
+
+# Go binary — NOT java-spring: skips the Spring datasource/Kafka/Tomcat env
+# injection from the common chart.
+appType: ""
+tracing-enabled: false
+
+# APP_ENV selects configs/application-<env>.yaml baked into the image.
+# "qa" is the niuatt-cluster profile (in-cluster service URLs, gateway auth).
+app-env: "qa"
+
+healthChecks:
+  enabled: true
+  livenessProbePath: "/upyog-aggregation-service/liveness"
+  readinessProbePath: "/upyog-aggregation-service/readiness"
+
+# Prometheus scrape annotations on the Service (common chart _service.yaml).
+metrics:
+  path: "/upyog-aggregation-service/metrics"
+  port: 8080
+
+memory_limits: "256Mi"
+resources: |
+  requests:
+    memory: {{ .Values.memory_limits | quote }}
+  limits:
+    memory: {{ .Values.memory_limits | quote }}
+
+# Additional Container Envs
+# The image's application-qa.yaml already carries the full niuatt-cluster
+# configuration (redis.backbone, egov-namespace backend URLs, context path,
+# gateway-auth mode). The UPYOG_* variables below are explicit overrides of
+# the most deployment-sensitive keys so the environment file can retune them
+# without an image rebuild (Viper maps UPYOG_A_B_C onto config key a.b.c).
+env: |
+  - name: APP_ENV
+    value: {{ index .Values "app-env" | quote }}
+  - name: UPYOG_SERVER_CONTEXTPATH
+    value: "/{{ .Values.ingress.context }}"
+  - name: UPYOG_REDIS_HOST
+    value: "redis.backbone"
+  - name: UPYOG_REDIS_PORT
+    value: "6379"
+  - name: UPYOG_BACKEND_SERVICES_WORKFLOW_BASEURL
+    value: "http://egov-workflow-v2.egov:8080"
+  - name: UPYOG_BACKEND_SERVICES_INBOX_BASEURL
+    value: "http://inbox.egov:8080"
+  - name: UPYOG_BACKEND_SERVICES_BILLING_BASEURL
+    value: "http://billing-service.egov:8080"
+  - name: UPYOG_BACKEND_SERVICES_TL_SERVICES_BASEURL
+    value: "http://tl-services.egov:8080"
+  - name: UPYOG_BACKEND_SERVICES_USER_EVENT_BASEURL
+    value: "http://egov-user-event.egov:8080"
+  - name: UPYOG_BACKEND_SERVICES_ADVERTISEMENT_BASEURL
+    value: "http://adv-services.egov:8080"
+  - name: UPYOG_BACKEND_SERVICES_DRAFT_BASEURL
+    value: "http://upyog-draft-service.egov:8080"

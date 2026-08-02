@@ -911,6 +911,43 @@ POST https://niuatt.niua.in/user/oauth/token   (placeholder credentials)
 Once a valid niuatt user is supplied through the environment variables above, the same test
 prints the real application list for that tenant.
 
+## 2.13 Deployment — Helm charts per UPYOG DevOps standards (niuatt)
+
+Ready-to-copy deployment files live under `deployments/upyog-devops/`, mirroring the layout of
+the **UPYOG-DevOps-niuatt** repository (`config-as-code/helm/...`), in the same style as
+existing municipal-services charts such as `adv-services` and `cnd-service`:
+
+```
+deployments/upyog-devops/
+├─ README.md                                  ← copy instructions + deploy/smoke-test steps
+└─ config-as-code/helm/
+   ├─ charts/municipal-services/upyog-aggregation-service/
+   │  ├─ Chart.yaml                           ← depends on the shared `common` chart (0.0.5)
+   │  ├─ values.yaml                          ← the actual deployment definition
+   │  └─ templates/{deployment,service,ingress}.yaml   ← one-liners invoking common templates
+   └─ environments/qa.yaml.additions          ← two blocks to merge into environments/qa.yaml
+```
+
+The chart was **render-verified** against the real `common` library chart pulled from the
+devops repo (`helm dependency build` + `helm template` with niuatt-style globals) — it produces
+the expected Service, Deployment, and Ingress.
+
+How each UPYOG platform convention is satisfied, and what had to change in the service to be
+deployable behind the platform gateway:
+
+| Concern | How it works here |
+|---|---|
+| Gateway route | `ingress.zuul: true` + `context: upyog-aggregation-service` → the common chart annotates the Kubernetes Service with `zuul/route-path: upyog-aggregation-service`; the gateway's route-discovery job (`utilities/gateway-kubernetes-discovery`) converts that into `Path=/upyog-aggregation-service/** → http://upyog-aggregation-service.egov:8080/`. No manual route registration. |
+| Context path | The gateway does **not** strip the route prefix (DIGIT services all serve under their own context path). A new `server.contextPath` config key was added; the router mounts every route under it. The qa profile sets `/upyog-aggregation-service`; probes and Prometheus annotations use the prefixed paths. Local/dev keep the empty default (root paths). |
+| Authentication | Enforced by the gateway. DIGIT access tokens are opaque UUIDs — not JWTs — so in-service JWT validation is off in the qa profile. A new always-on `TokenPassthrough` middleware captures the bearer token into the request context (previously only the JWT-validating middleware did this), so downstream forwarding (`Authorization` header + `RequestInfo.authToken`) keeps working. Covered by an integration test. |
+| Go, not Java | `appType: ""` skips the common chart's Spring/Tomcat/Kafka env injection; no DB → `initContainers.dbMigration.enabled: false` and no `-db` image. |
+| Image build | An entry was added to the monorepo's `build/build-config.yml` (`builds/upyog/municipal-services/upyog-aggregation-service`) so standard UPYOG Jenkins CI builds/pushes the image. The service `Dockerfile`/`Makefile` build path was also fixed (`./cmd/server/` → `.`, where `main.go` actually lives). |
+| Environment config | `configs/application-qa.yaml` was rewritten as the niuatt-cluster profile: Redis `redis.backbone:6379`, backends `egov-workflow-v2.egov` / `inbox.egov` / `billing-service.egov` / `tl-services.egov` / `egov-user-event.egov` / `adv-services.egov` / `upyog-draft-service.egov`. The chart additionally pins the deployment-sensitive keys via `UPYOG_*` env vars (Viper maps `UPYOG_A_B_C` → config key `a.b.c`), so the environment file can retune without an image rebuild — this override mechanism was smoke-tested live. |
+
+Deployment steps and a post-deploy smoke test (health + authenticated aggregate call through
+`https://niuatt.niua.in/upyog-aggregation-service/...`) are in
+`deployments/upyog-devops/README.md`.
+
 ---
 
 *Document generated from the actual implementation on branch

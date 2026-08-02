@@ -1017,6 +1017,12 @@ config:
         image-name: "upyog-voice-bot"
         dockerfile: "upyog-voice-bot/Dockerfile"
 
+  - name: "builds/upyog/municipal-services/upyog-aggregation-service"
+    build:
+      - work-dir: "municipal-services/upyog-aggregation-service"
+        image-name: "upyog-aggregation-service"
+        dockerfile: "municipal-services/upyog-aggregation-service/Dockerfile"
+
   - name: "builds/upyog/municipal-services/garbage-service"
     build:
       - work-dir: "municipal-services/garbage-service"

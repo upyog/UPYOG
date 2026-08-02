@@ -100,6 +100,7 @@ type stackOptions struct {
 	workflowURL      string
 	inboxURL         string
 	providerTimeouts map[string]time.Duration
+	contextPath      string
 }
 
 // buildStack wires the full service exactly the way main.go does, but with
@@ -132,6 +133,7 @@ func buildStack(t *testing.T, opts stackOptions) http.Handler {
 
 	// Zero-value config: auth disabled, rate limiting disabled, compression off.
 	cfg := &config.Config{}
+	cfg.Server.ContextPath = opts.contextPath
 
 	return api.SetupRouter(api.RouterConfig{
 		Engine:       eng,
@@ -147,6 +149,12 @@ func buildStack(t *testing.T, opts stackOptions) http.Handler {
 // postAggregate sends a POST /api/v1/aggregate through the full router and
 // returns the recorder plus the decoded body.
 func postAggregate(t *testing.T, h http.Handler, body map[string]interface{}) (*httptest.ResponseRecorder, map[string]interface{}) {
+	return postAggregateAt(t, h, "/api/v1/aggregate", body)
+}
+
+// postAggregateAt is postAggregate with an explicit request path, for
+// exercising a non-empty server context path.
+func postAggregateAt(t *testing.T, h http.Handler, path string, body map[string]interface{}) (*httptest.ResponseRecorder, map[string]interface{}) {
 	t.Helper()
 
 	payload, err := json.Marshal(body)
@@ -154,16 +162,21 @@ func postAggregate(t *testing.T, h http.Handler, body map[string]interface{}) (*
 		t.Fatalf("marshal request: %v", err)
 	}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/aggregate", bytes.NewReader(payload))
+	req := httptest.NewRequest(http.MethodPost, path, bytes.NewReader(payload))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Tenant-Id", testTenantID)
+	// Simulate a gateway-fronted request: the caller's token arrives as a
+	// bearer header; with in-service auth disabled the TokenPassthrough
+	// middleware must still capture and forward it.
+	req.Header.Set("Authorization", "Bearer it-test-token")
 
 	rec := httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
 
+	// Non-JSON bodies (e.g. Gin's plain-text 404 page) are left undecoded.
 	var decoded map[string]interface{}
-	if len(rec.Body.Bytes()) > 0 {
-		if err := json.Unmarshal(rec.Body.Bytes(), &decoded); err != nil {
+	if raw := rec.Body.Bytes(); len(raw) > 0 && json.Valid(raw) {
+		if err := json.Unmarshal(raw, &decoded); err != nil {
 			t.Fatalf("decode response %q: %v", rec.Body.String(), err)
 		}
 	}
@@ -195,9 +208,11 @@ func aggregateRequestBody(requests ...map[string]interface{}) map[string]interfa
 
 func TestAggregate_EndToEnd_Success(t *testing.T) {
 	var workflowQuery url.Values
+	var workflowAuthHeader string
 
 	workflowSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		workflowQuery = r.URL.Query()
+		workflowAuthHeader = r.Header.Get("Authorization")
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(sampleWorkflowResponse))
 	}))
@@ -258,6 +273,11 @@ func TestAggregate_EndToEnd_Success(t *testing.T) {
 	if workflowQuery.Get("fromDate") == "" || workflowQuery.Get("limit") != "10" {
 		t.Errorf("workflow backend saw fromDate=%q limit=%q",
 			workflowQuery.Get("fromDate"), workflowQuery.Get("limit"))
+	}
+	// Gateway mode: auth is disabled in-service, yet the caller's bearer
+	// token must still be forwarded to the backend (TokenPassthrough).
+	if workflowAuthHeader != "Bearer it-test-token" {
+		t.Errorf("expected bearer token forwarded to workflow, got %q", workflowAuthHeader)
 	}
 
 	// recent-applications assertions.
@@ -381,6 +401,48 @@ func TestAggregate_EndToEnd_UnknownProvider(t *testing.T) {
 	}
 	if entry["errorCode"] != "PROVIDER_NOT_FOUND" {
 		t.Errorf("expected PROVIDER_NOT_FOUND, got %v", entry["errorCode"])
+	}
+}
+
+func TestAggregate_EndToEnd_ContextPath(t *testing.T) {
+	// Behind the UPYOG gateway, routes /upyog-aggregation-service/** reach
+	// the pod with the prefix intact; server.contextPath must serve them.
+	workflowSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(sampleWorkflowResponse))
+	}))
+	defer workflowSrv.Close()
+
+	h := buildStack(t, stackOptions{
+		workflowURL: workflowSrv.URL,
+		inboxURL:    workflowSrv.URL,
+		contextPath: "/upyog-aggregation-service",
+	})
+
+	// Health probe on the prefixed path.
+	healthReq := httptest.NewRequest(http.MethodGet, "/upyog-aggregation-service/health", nil)
+	healthRec := httptest.NewRecorder()
+	h.ServeHTTP(healthRec, healthReq)
+	if healthRec.Code != http.StatusOK {
+		t.Fatalf("expected 200 from prefixed health endpoint, got %d", healthRec.Code)
+	}
+
+	// Aggregate on the prefixed path.
+	rec, body := postAggregateAt(t, h, "/upyog-aggregation-service/api/v1/aggregate",
+		aggregateRequestBody(map[string]interface{}{"provider": "new-applications"}))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200 on prefixed aggregate path, got %d: %s", rec.Code, rec.Body.String())
+	}
+	entry := providerEntry(t, body, "new-applications")
+	if entry["status"] != "SUCCESS" {
+		t.Errorf("expected SUCCESS via context path, got %v", entry["status"])
+	}
+
+	// The unprefixed path must NOT be served when a context path is set.
+	rootRec, _ := postAggregateAt(t, h, "/api/v1/aggregate",
+		aggregateRequestBody(map[string]interface{}{"provider": "new-applications"}))
+	if rootRec.Code != http.StatusNotFound {
+		t.Errorf("expected 404 on unprefixed path with contextPath set, got %d", rootRec.Code)
 	}
 }
 
