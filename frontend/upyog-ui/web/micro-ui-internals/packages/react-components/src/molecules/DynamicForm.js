@@ -88,7 +88,7 @@
  * @param {Function} [t]                   i18n translator; defaults to identity.
  * @param {boolean}  [showCancel=true]     Show Cancel / Clear in wizard ActionBar.
  * @param {string}   [cancelLabel]         i18n key for cancel (default CS_COMMON_CANCEL).
- * @param {boolean}  [confirmCancel=true]  Show confirmation Modal before wizard Cancel reset.
+ * @param {boolean}  [confirmCancel=false] Show confirmation Modal before wizard Cancel reset (opt-in).
  * @param {string}   [cancelConfirmHeading] Modal heading i18n key (default CS_COMMON_CANCEL).
  * @param {string}   [cancelConfirmMessage] Modal body i18n key (default CS_WANT_TO_CANCEL).
  * @param {string}   [cancelConfirmYesLabel] Confirm button i18n key (default CS_COMMON_YES).
@@ -196,7 +196,7 @@ const DynamicForm = ({
   t = (k) => k,
   showCancel = true,
   cancelLabel = "CS_COMMON_CANCEL",
-  confirmCancel = true,
+  confirmCancel = false,
   cancelConfirmHeading = "CS_COMMON_CANCEL",
   cancelConfirmMessage = "CS_WANT_TO_CANCEL",
   cancelConfirmYesLabel = "CS_COMMON_YES",

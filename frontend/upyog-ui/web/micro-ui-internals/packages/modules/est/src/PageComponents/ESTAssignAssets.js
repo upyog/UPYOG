@@ -77,6 +77,7 @@ const ESTAssignAssets = ({ onSelect, onDraftSave, onDraftClear, config, formData
       t={t}
       wrapperClassName={`employeeCard ${styles.estAssignAssets}`}
       defaultHeaderCode="EST_ALLOT_ESTATE"
+      confirmCancel
       draft={
         onDraftSave
           ? {
