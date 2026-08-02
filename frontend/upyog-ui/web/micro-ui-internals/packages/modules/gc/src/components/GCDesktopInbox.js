@@ -99,7 +99,7 @@ const GCDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
                 searchParams={props.searchParams}
                 type="desktop"
                 useNewInboxAPI={useNewInboxAPI}
-                statusMap={useNewInboxAPI ? data?.[0].statusMap : null}
+                statusMap={useNewInboxAPI ? data?.[0]?.statusMap : null}
                 moduleCode={props.moduleCode}
               />
             }
