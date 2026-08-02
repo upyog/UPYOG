@@ -98,14 +98,14 @@ public class GarbageAccountRepository {
             + " tenant_id = :tenantId, business_service = :businessService, approval_date = :approvalDate , channel= :channel WHERE id = :id";
     private static final String COUNT_STATUS_BASED_QUERY = "SELECT COUNT(distinct grbg.id) as count, " +
             "COUNT(distinct case when grbg.status = 'INITIATED' then grbg.id end) as applicationInitiated, " +
-            "COUNT(distinct case when grbg.status = 'PENDINGFORVERIFICATION' then grbg.id end) as applicationPendingForVerification, " +
-            "COUNT(distinct case when grbg.status = 'PENDINGFORMODIFICATION' then grbg.id end) as applicationPendingForModification, " +
-            "COUNT(distinct case when grbg.status = 'PENDINGFORAPPROVAL' then grbg.id end) as applicationPendingForApproval, " +
+            "COUNT(distinct case when grbg.status = 'PENDING_FOR_VERIFICATION' then grbg.id end) as applicationPendingForVerification, " +
+            "COUNT(distinct case when grbg.status = 'EDIT_APPLICATION' then grbg.id end) as applicationPendingForModification, " +
+            "COUNT(distinct case when grbg.status = 'PENDING_FOR_APPROVAL' then grbg.id end) as applicationPendingForApproval, " +
             "COUNT(distinct case when grbg.status = 'APPROVED' then grbg.id end) as applicationApproved, " +
             "COUNT(distinct case when grbg.status = 'REJECTED' then grbg.id end) as applicationRejected, " +
-            "COUNT(distinct case when grbg.status = 'PENDINGFORPAYMENT' then grbg.id end) as applicationPendingPayment, " +
-            "COUNT(distinct case when grbg.status = 'CLOSED' then grbg.id end) as applicationClosed, " +
-            "COUNT(distinct case when grbg.status = 'TEMPERORYCLOSED' then grbg.id end) as applicationTemporaryClosed " +
+            "0 as applicationPendingPayment, " +
+            "0 as applicationClosed, " +
+            "0 as applicationTemporaryClosed " +
             "from ug_grbg_account as grbg";
     private static final String INSERT_ACCOUNT_AUDIT = "INSERT INTO ug_grbg_account_audit (auditid, grbg_application_no, status, type"
             + ", grbg_account_details, auditcreatedtime) VALUES ((select nextval('seq_ug_grbg_account_audit')), :grbgApplicationNo, :status"

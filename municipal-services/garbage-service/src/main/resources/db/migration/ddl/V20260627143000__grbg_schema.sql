@@ -158,3 +158,59 @@ CREATE INDEX index_ug_grbg_account_audit_grbg_application_no ON ug_grbg_account_
 CREATE INDEX index_ug_grbg_account_audit_grbg_application_no_status ON ug_grbg_account_audit USING btree (grbg_application_no, status);
 CREATE INDEX index_ug_grbg_account_audit_grbg_application_no_type ON ug_grbg_account_audit USING btree (grbg_application_no, type);
 CREATE INDEX index_ug_grbg_account_audit_grbg_application_no_status_type ON ug_grbg_account_audit USING btree (grbg_application_no, status, type);
+
+
+-- ============================================================
+-- TABLE: ug_grbg_scheduler_log
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS ug_grbg_scheduler_log (
+    id                  VARCHAR(64) PRIMARY KEY,
+    garbage_account_id  VARCHAR(64) NOT NULL,
+    tenant_id           VARCHAR(100) NOT NULL,
+    billing_date        DATE NOT NULL,
+    billing_period_from BIGINT NOT NULL,
+    billing_period_to   BIGINT NOT NULL,
+    amount              NUMERIC(12,2) NOT NULL,
+    penalty_amount      NUMERIC(12,2) NOT NULL DEFAULT 0,
+    payment_type        VARCHAR(20) NOT NULL,
+    status              VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    created_by          VARCHAR(64),
+    created_time        BIGINT,
+    last_modified_by    VARCHAR(64),
+    last_modified_time  BIGINT
+);
+
+CREATE INDEX IF NOT EXISTS idx_grbg_scheduler_account
+ON ug_grbg_scheduler_log(garbage_account_id);
+
+CREATE INDEX IF NOT EXISTS idx_grbg_scheduler_period
+ON ug_grbg_scheduler_log(billing_period_from, billing_period_to);
+
+
+-- ============================================================
+-- TABLE: ug_grbg_monthly_rent_payment
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS ug_grbg_monthly_rent_payment (
+    id VARCHAR(64) PRIMARY KEY,
+    application_id INT8,
+    application_no VARCHAR(64) NOT NULL,
+    rent NUMERIC,
+    penalty_amount NUMERIC,
+    previous_month DATE,
+    payment_date DATE,
+    last_date_of_payment DATE,
+    due_payment_date DATE,
+    payment_status VARCHAR(20),
+    due_payment NUMERIC,
+    validity_days INT,
+    createdby VARCHAR(64),
+    lastmodifiedby VARCHAR(64),
+    createdtime BIGINT,
+    lastmodifiedtime BIGINT,
+    CONSTRAINT fk_payment_application FOREIGN KEY (application_id)
+    REFERENCES ug_grbg_account (id)
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+);

@@ -55,7 +55,7 @@ spring.kafka.consumer.group-id=egov-grbg-services
 # Dependent Services
 egov.mdms.host=http://<mdms-host>
 workflow.context.path=http://<workflow-host>
-egov.bill.context.host=http://<billing-host>
+egov.billing.host=http://<billing-host>
 egov.user.host=http://<user-service-host>
 egov.enc.host=http://<enc-service-host>
 egov.sms.host=http://<sms-service-host>

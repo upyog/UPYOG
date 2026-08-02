@@ -258,6 +258,9 @@ public class DemandService {
         try {
             garbageAccount.setDueDate(periodTo);
             garbageAccount.setStatus(ServiceConstants.STATUS_PENDING_FOR_PAYMENT);
+            if (garbageAccount.getGrbgApplication() != null) {
+                garbageAccount.getGrbgApplication().setStatus(ServiceConstants.STATUS_PENDING_FOR_PAYMENT);
+            }
             String updaterUuid = requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : ServiceConstants.STATUS_SYSTEM;
             if (garbageAccount.getAuditDetails() != null) {
                 garbageAccount.getAuditDetails().setLastModifiedBy(updaterUuid);

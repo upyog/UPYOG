@@ -100,7 +100,16 @@ public class GarbageAccountController {
     @Operation(summary = "Search garbage accounts")
     @PostMapping("/_search")
     public ResponseEntity<GarbageAccountResponse> search(
-            @RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest, @RequestParam(name = "IsIndex", required = false, defaultValue = "false") Boolean IsIndex) {
+            @RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest,
+            @ModelAttribute SearchCriteriaGarbageAccount searchCriteriaGarbageAccount,
+            @RequestParam(name = "IsIndex", required = false, defaultValue = "false") Boolean IsIndex) {
+
+        if (searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount() == null) {
+            searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(searchCriteriaGarbageAccount);
+        } else if (service.isCriteriaEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount())
+                && !service.isCriteriaEmpty(searchCriteriaGarbageAccount)) {
+            searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(searchCriteriaGarbageAccount);
+        }
 
         return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest, IsIndex));
     }

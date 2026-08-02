@@ -114,6 +114,9 @@ public class PaymentUpdateService {
                 if (garbageAccounts != null && !garbageAccounts.isEmpty()) {
                     GarbageAccount garbageAccount = garbageAccounts.get(0);
                     garbageAccount.setStatus(ServiceConstants.STATUS_PAID);
+                    if (garbageAccount.getGrbgApplication() != null) {
+                        garbageAccount.getGrbgApplication().setStatus(ServiceConstants.STATUS_PAID);
+                    }
 
                     // Update last modified audit details
                     if (garbageAccount.getAuditDetails() != null) {

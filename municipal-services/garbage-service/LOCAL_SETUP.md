@@ -94,11 +94,9 @@ kubectl port-forward -n egov svc/notification-sms 1237:8080
 | egov-enc-service            | 1234                  | `egov.enc.host`                                  |
 | egov-mdms-service           | 8094                  | `egov.mdms.host`                                 |
 | mdms-v2                     | 9080                  | `mdms.v2.host`                                   |
-| billing-service             | 8086                  | `egov.bill.context.host`                         |
-| pdf-service                 | 7275                  | `egov.report.host`                               |
+| billing-service             | 8086                  | `egov.billing.host`                              |
 | egov-url-shortening         | 8093                  | `egov.url.shortning.host`                        |
 | notification-sms            | 1237                  | `egov.sms.host`                                  |
-| hpud-dms-service (Alfresco) | `192.168.29.220:8095` | `egov.alfresco.host` — external IP, may need VPN |
 
 > **Minimum to run `_create`:** workflow-v2, user-service, enc-service, mdms. The rest are
 > only hit by their specific APIs (billing, PDF, SMS, etc.).
