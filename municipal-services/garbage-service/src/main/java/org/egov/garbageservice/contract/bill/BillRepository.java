@@ -53,7 +53,7 @@ public class BillRepository {
      */
 
     public BillResponse fetchBill(GenerateBillCriteria billCriteria, RequestInfo requestInfo) {
-        String uri = garbageServiceConfig.getBillHost().concat(garbageServiceConfig.getFetchBillEndpoint());
+        String uri = garbageServiceConfig.getBillingHost().concat(garbageServiceConfig.getFetchBillEndpoint());
         uri = uri.concat("?consumerCode=").concat(billCriteria.getConsumerCode());
         uri = uri.concat("&tenantId=").concat(billCriteria.getTenantId());
         uri = uri.concat("&businessService=").concat(billCriteria.getBusinessService());
@@ -88,7 +88,7 @@ public class BillRepository {
 
     public List<Bill> searchBill(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
 
-        String uri = garbageServiceConfig.getBillHost().concat(garbageServiceConfig.getSearchBillEndpoint());
+        String uri = garbageServiceConfig.getBillingHost().concat(garbageServiceConfig.getSearchBillEndpoint());
         uri = uri.concat("?tenantId=").concat(billCriteria.getTenantId());
         if (null != billCriteria.getConsumerCode()) {
             uri = uri.concat("&service=").concat("GB");
@@ -120,7 +120,7 @@ public class BillRepository {
      */
 
     public void cancelBill(UpdateBillCriteria updateBillCriteria, RequestInfo requestInfo) {
-        String uri = garbageServiceConfig.getBillHost().concat(garbageServiceConfig.getCancleBillEndpoint());
+        String uri = garbageServiceConfig.getBillingHost().concat(garbageServiceConfig.getCancleBillEndpoint());
 
         try {
             restCallRepository.fetchResult(new StringBuilder(uri), UpdateBillRequest.builder()
@@ -139,7 +139,7 @@ public class BillRepository {
      */
 
     public List<Bill> updateBill(RequestInfo requestInfo, List<Bill> bills) {
-        StringBuilder url = new StringBuilder(garbageServiceConfig.getBillHost());
+        StringBuilder url = new StringBuilder(garbageServiceConfig.getBillingHost());
         url.append(garbageServiceConfig.getUpdateBillEndpoint());
         BillRequest request = new BillRequest(requestInfo, bills);
         Object result = restCallRepository.fetchResult(url, request);

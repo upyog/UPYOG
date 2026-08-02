@@ -8,7 +8,7 @@ serviceMaps:
       queryMaps:
 
         - query: >
-            INSERT INTO eg_grbg_account
+            INSERT INTO ug_grbg_account
             (
               id,
               uuid,
@@ -97,7 +97,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.channel
 
         - query: >
-            INSERT INTO eg_grbg_application
+            INSERT INTO ug_grbg_application
             (
               uuid,
               application_no,
@@ -122,7 +122,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.grbgApplication.garbageId
 
         - query: >
-            INSERT INTO eg_grbg_address
+            INSERT INTO ug_grbg_address
             (
               uuid,
               garbage_id,
@@ -179,7 +179,7 @@ serviceMaps:
               dbType: JSONB
 
         - query: >
-            INSERT INTO eg_grbg_document
+            INSERT INTO ug_grbg_document
             (
               uuid,
               garbage_id
@@ -208,7 +208,7 @@ serviceMaps:
 
 
         - query: >
-            INSERT INTO eg_grbg_old_details
+            INSERT INTO ug_grbg_old_details
             (
               uuid,
               garbage_id,
@@ -230,7 +230,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.grbgOldDetails.oldGarbageId
 
         - query: >
-            INSERT INTO eg_grbg_collection_unit
+            INSERT INTO ug_grbg_collection_unit
             (
               uuid,
               unit_name,
@@ -300,7 +300,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.specialCategory
 
         - query: >
-            INSERT INTO eg_grbg_account
+            INSERT INTO ug_grbg_account
             (
               id,
               uuid,
@@ -389,7 +389,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.channel
 
         - query: >
-            INSERT INTO eg_grbg_application
+            INSERT INTO ug_grbg_application
             (
               uuid,
               application_no,
@@ -414,7 +414,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.garbageId
 
         - query: >
-            INSERT INTO eg_grbg_address
+            INSERT INTO ug_grbg_address
             (
               uuid,
               garbage_id,
@@ -471,7 +471,7 @@ serviceMaps:
               dbType: JSONB
 
         - query: >
-            INSERT INTO eg_grbg_collection_unit
+            INSERT INTO ug_grbg_collection_unit
             (
               uuid,
               unit_name,
@@ -538,7 +538,7 @@ serviceMaps:
       queryMaps:
 
         - query: >
-            UPDATE eg_grbg_account
+            UPDATE ug_grbg_account
             SET
               garbage_id = ?,
               uuid = ?,
@@ -611,7 +611,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.id
 
         - query: >
-            INSERT INTO eg_grbg_account_audit
+            INSERT INTO ug_grbg_account_audit
             (
               auditid,
               grbg_application_no,
@@ -622,7 +622,7 @@ serviceMaps:
             )
             VALUES
             (
-              (select nextval('seq_eg_grbg_account_audit')),
+              (select nextval('seq_ug_grbg_account_audit')),
               ?,
               ?,
               ?,
@@ -645,7 +645,7 @@ serviceMaps:
               dbType: JSONB
 
         - query: >
-            UPDATE eg_grbg_application
+            UPDATE ug_grbg_application
             SET
               application_no = ?,
               status = ?,
@@ -665,7 +665,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.grbgApplication.uuid
 
         - query: >
-            UPDATE eg_grbg_old_details
+            UPDATE ug_grbg_old_details
             SET
               garbage_id = ?,
               old_garbage_id = ?
@@ -682,7 +682,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.grbgOldDetails.uuid
 
         - query: >
-            UPDATE eg_grbg_collection_unit
+            UPDATE ug_grbg_collection_unit
             SET
               unit_name = ?,
               unit_ward = ?,
@@ -738,7 +738,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.grbgCollectionUnits.*.uuid
 
         - query: >
-            UPDATE eg_grbg_address
+            UPDATE ug_grbg_address
             SET
               address_type = ?,
               address1 = ?,
@@ -790,7 +790,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.addresses.*.uuid
 
         - query: >
-            UPDATE eg_grbg_account
+            UPDATE ug_grbg_account
             SET
               garbage_id = ?,
               uuid = ?,
@@ -860,7 +860,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.id
 
         - query: >
-            UPDATE eg_grbg_application
+            UPDATE ug_grbg_application
             SET
               application_no = ?,
               status = ?,
@@ -880,7 +880,7 @@ serviceMaps:
             - jsonPath: $.garbageAccounts.*.childGarbageAccounts.*.grbgApplication.uuid
 
         - query: >
-            UPDATE eg_grbg_collection_unit
+            UPDATE ug_grbg_collection_unit
             SET
               unit_name = ?,
               unit_ward = ?,
@@ -998,7 +998,7 @@ serviceMaps:
       queryMaps:
 
         - query: >
-            INSERT INTO eg_grbg_scheduler_log
+            INSERT INTO ug_grbg_scheduler_log
             (
               id,
               garbage_account_id,

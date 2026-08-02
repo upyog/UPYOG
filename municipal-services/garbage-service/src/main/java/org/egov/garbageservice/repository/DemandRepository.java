@@ -51,12 +51,13 @@ public class DemandRepository {
      * @return the output result of type {@link List{@code <Demand>}}
      */
 
-    public List<Demand> searchAllDemands(RequestInfo requestInfo, String tenantId, String consumerCode, String businessService) {
+    public List<Demand> searchAllDemands(RequestInfo requestInfo, String tenantId, String consumerCode, String businessService, boolean unpaidOnly) {
         StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getDemandSearchEndpoint());
         url.append("?tenantId=").append(tenantId);
         url.append("&consumerCode=").append(consumerCode);
         url.append("&businessService=").append(businessService);
+        if(unpaidOnly){url.append("&isPaymentCompleted=false");}
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -72,29 +73,6 @@ public class DemandRepository {
             log.error("Error while fetching demands from url {}: {}", url, e.getMessage(), e);
             throw new ServiceCallException("Error while fetching demands: " + e.getMessage());
         }
-    }
-
-    /**
-     * Queries database for records matching the provided criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Constructs a dynamic SQL query based on active search criteria parameters.</li>
-     *   <li>Appends pagination boundaries (limit and offset) and sorting clauses.</li>
-     *   <li>Executes the SQL query via JdbcTemplate using custom row mapping.</li>
-     *   <li>Assembles and returns the resulting entity list.</li>
-     * </ol>
-     *
-     * @param requestInfo     the request information containing user session details
-     * @param tenantId        the tenant ID associated with the request
-     * @param consumerCode    the consumerCode parameter for this operation
-     * @param businessService the businessService parameter for this operation
-     * @return the output result of type {@link List{@code <Demand>}}
-     */
-
-    public List<Demand> searchDemand(RequestInfo requestInfo, String tenantId, String consumerCode, String businessService) {
-        // This is a placeholder. The actual implementation might be different based on the billing service API.
-        return searchAllDemands(requestInfo, tenantId, consumerCode, businessService);
     }
 
     /**

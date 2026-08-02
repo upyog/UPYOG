@@ -51,7 +51,7 @@ public class DemandRepository {
      * @return The list of demand created
      */
     public List<Demand> saveDemand(RequestInfo requestInfo, List<Demand> demands) {
-        StringBuilder url = new StringBuilder(config.getBillHost());
+        StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getDemandCreateEndpoint());
         DemandRequest request = new DemandRequest(requestInfo, demands);
         Object result = restCallRepository.fetchResult(url, request);
@@ -73,7 +73,7 @@ public class DemandRepository {
      * @return The list of demand updated
      */
     public List<Demand> updateDemand(RequestInfo requestInfo, List<Demand> demands) {
-        StringBuilder url = new StringBuilder(config.getBillHost());
+        StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getDemandUpdateEndpoint());
         DemandRequest request = new DemandRequest(requestInfo, demands);
         Object result = restCallRepository.fetchResult(url, request);
@@ -100,7 +100,7 @@ public class DemandRepository {
     public DemandResponse search(String tenantId, Set<String> consumerCodes, RequestInfoWrapper requestInfoWrapper,
                                  String businessService) {
 
-        String uri = config.getBillHost().concat(config.getDemandSearchEndpoint());
+        String uri = config.getBillingHost().concat(config.getDemandSearchEndpoint());
         uri = uri.replace("{1}", tenantId);
         uri = uri.replace("{2}", businessService);
         uri = uri.replace("{3}", StringUtils.join(consumerCodes, ','));
@@ -129,7 +129,7 @@ public class DemandRepository {
     public DemandResponse searchId(String tenantId, Set<String> demandIds, RequestInfoWrapper requestInfoWrapper,
                                    String businessService) {
 
-        String uri = config.getBillHost().concat(config.getDemandSearchEndpoint());
+        String uri = config.getBillingHost().concat(config.getDemandSearchEndpoint());
         uri = uri.replace("consumerCode", "demandId");
         uri = uri.replace("{1}", tenantId);
         uri = uri.replace("{2}", businessService);

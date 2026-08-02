@@ -90,7 +90,8 @@ public class DemandService {
                         requestInfo,
                         garbageAccount.getTenantId(),
                         garbageAccount.getGrbgApplicationNumber(),
-                        config.getBusinessService());
+                        config.getBusinessService(),
+                        false);
 
         boolean alreadyGenerated =
                 existingDemands.stream()
@@ -119,11 +120,12 @@ public class DemandService {
         );
 
         List<Demand> unpaidDemands =
-                demandRepository.searchDemand(
+                demandRepository.searchAllDemands(
                         requestInfo,
                         garbageAccount.getTenantId(),
                         garbageAccount.getGrbgApplicationNumber(),
-                        config.getBusinessService());
+                        config.getBusinessService(),
+                        true);
 
         BigDecimal rentalFeeAmount;
         BigDecimal penaltyAmount = BigDecimal.ZERO;
@@ -147,7 +149,7 @@ public class DemandService {
             penaltyAmount =
                     previousUnpaid
                             .multiply(penaltyRate)
-                            .setScale(2, RoundingMode.HALF_UP).abs();
+                            .setScale(2, RoundingMode.HALF_UP);
 
             finalAmount =
                     rentalFeeAmount.add(penaltyAmount);
@@ -180,7 +182,7 @@ public class DemandService {
         demandDetails.add(
                 DemandDetail.builder()
                         .taxHeadMasterCode(ServiceConstants.GRBG_TAX_HEAD_CODE)
-                        .taxAmount(currentAmount.getTotalAmount())
+                        .taxAmount(currentAmount.getTotalAmount().abs())
                         .collectionAmount(BigDecimal.ZERO)
                         .tenantId(garbageAccount.getTenantId())
                         .build()
@@ -191,7 +193,7 @@ public class DemandService {
             demandDetails.add(
                     DemandDetail.builder()
                             .taxHeadMasterCode(ServiceConstants.GRBG_PENALTY_FEE)
-                            .taxAmount(penaltyAmount)
+                            .taxAmount(penaltyAmount.abs())
                             .collectionAmount(BigDecimal.ZERO)
                             .tenantId(garbageAccount.getTenantId())
                             .build()
@@ -256,6 +258,9 @@ public class DemandService {
         try {
             garbageAccount.setDueDate(periodTo);
             garbageAccount.setStatus(ServiceConstants.STATUS_PENDING_FOR_PAYMENT);
+            if (garbageAccount.getGrbgApplication() != null) {
+                garbageAccount.getGrbgApplication().setStatus(ServiceConstants.STATUS_PENDING_FOR_PAYMENT);
+            }
             String updaterUuid = requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : ServiceConstants.STATUS_SYSTEM;
             if (garbageAccount.getAuditDetails() != null) {
                 garbageAccount.getAuditDetails().setLastModifiedBy(updaterUuid);
@@ -301,20 +306,6 @@ public class DemandService {
 
     public void updateDemand(RequestInfo requestInfo, List<Demand> demands) {
         billDemandRepository.updateDemand(requestInfo, demands);
-    }
-
-    /**
-     * Searches for demands associated with specific consumer codes.
-     *
-     * @param tenantId        the tenant ID for the search context
-     * @param consumerCodes   a {@link Set} of consumer codes (e.g., application numbers) to search for
-     * @param requestInfo     the contextual information for the API request
-     * @param businessService the business service identifying the type of demand
-     * @return a {@link List} of matching {@link Demand} objects
-     */
-
-    public List<Demand> searchDemand(String tenantId, Set<String> consumerCodes, RequestInfo requestInfo, String businessService) {
-        return demandRepository.searchDemand(requestInfo, tenantId, consumerCodes.iterator().next(), businessService);
     }
 
     /**
