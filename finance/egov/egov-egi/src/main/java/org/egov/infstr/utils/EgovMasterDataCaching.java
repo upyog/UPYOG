@@ -73,6 +73,7 @@ import org.egov.infra.exception.MicroServiceInvalidTokenException;
 import org.egov.infra.exception.MicroServiceNotAuthroizedException;
 import org.egov.infra.microservice.models.Department;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.query.Query;
@@ -514,6 +515,21 @@ public class EgovMasterDataCaching {
         final EntityManager em = getFreshEntityManager(createdFresh);
         try {
             list = em.createQuery(query).getResultList();
+            if (list != null) {
+                /*
+                 * LTS Migration Fix (Struts 7 / Infinispan Cache ByteBuddy Proxy Fix):
+                 * Master data objects fetched via short-lived EntityManagers were leaving un-initialized ByteBuddy proxies 
+                 * in Infinispan cache. When accessed in Struts 7 JSP tags, these detached proxies caused OGNL access errors or LazyInitializationExceptions.
+                 * Unproxying and initializing each entity before returning ensures fully materialized objects are cached and accessible across HTTP requests.
+                 */
+                for (int i = 0; i < list.size(); i++) {
+                    Object item = list.get(i);
+                    if (item != null) {
+                        Hibernate.initialize(item);
+                        list.set(i, Hibernate.unproxy(item));
+                    }
+                }
+            }
         } catch (final Exception e) {
             LOGGER.error("Error occurred in EgovMasterDataCaching queryByHibernate", e);
             throw new ApplicationRuntimeException("Error occurred in EgovMasterDataCaching queryByHibernate", e);

@@ -82,7 +82,12 @@ import org.apache.struts2.validator.annotations.Validations;
 		@Result(name = SubSchemeAction.VIEW, location = "subScheme-view.jsp") })
 public class SubSchemeAction extends BaseFormAction {
 	private static final String SUB_SCHEME_LIST = "subSchemeList";
-	private static final String FUND_QUERY = "from Fund where isActive=true order by name";
+	/*
+	 * LTS Migration Fix (Hibernate 6 Upgrade):
+	 * Changed field name from camelCase 'isActive=true' to lowercase 'isactive=true' in FUND_QUERY HQL.
+	 * The Fund entity maps database column 'isactive' to Java property 'isactive'.
+	 */
+	private static final String FUND_QUERY = "from Fund where isactive=true order by name";
 	private static final String FUND_LIST = "fundList";
 	private static final String DUPLICATE_SUBSCHEME = "duplicate.subscheme";
 	private static final String AN_ERROR_OCCURED_CONTACT_ADMINISTRATOR = "An error occured contact Administrator";
@@ -186,7 +191,13 @@ public class SubSchemeAction extends BaseFormAction {
 	@SkipValidation
 	@Action(value = "/masters/subScheme-beforeEdit")
 	public String beforeEdit() {
-		if (subScheme != null && subScheme.getIsactive())
+		/*
+		 * LTS Migration Fix (Java 17 Primitive Unboxing Fix):
+		 * Used Boolean.TRUE.equals(...) to evaluate subScheme.getIsactive().
+		 * In Java 17, evaluating if (subScheme.getIsactive()) when the wrapper Boolean is null throws 
+		 * java.lang.NullPointerException (Cannot invoke "java.lang.Boolean.booleanValue()").
+		 */
+		if (subScheme != null && Boolean.TRUE.equals(subScheme.getIsactive()))
 			isactive = true;
 		return NEW;
 	}

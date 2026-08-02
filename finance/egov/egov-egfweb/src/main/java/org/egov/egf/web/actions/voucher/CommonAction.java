@@ -328,8 +328,13 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Fund Id received is : " + fundId);
         if (null == fundId)
+            /*
+             * LTS Migration Fix (Hibernate 6 Upgrade):
+             * Changed field name from camelCase 'isActive=true' to lowercase 'isactive=true' in Scheme HQL.
+             * The Scheme entity maps database column 'isactive' to Java property 'isactive'.
+             */
             schemeList = getPersistenceService().findAllBy(
-                    " from Scheme where fund.id=? and isActive=true order by name", -1);
+                    " from Scheme where fund.id=? and isactive=true order by name", -1);
         else
             schemeList = getPersistenceService()
                     .findAllBy(" from Scheme where fund.id=? and isactive=true order by name", fundId);
@@ -371,7 +376,12 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme Id received is : " + schemeId);
         if (null != schemeId && schemeId != -1) {
-            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
+            /*
+             * LTS Migration Fix (Hibernate 6 Upgrade):
+             * Changed field name from camelCase 'isActive=true' to lowercase 'isactive=true' in SubScheme HQL.
+             * The SubScheme entity maps database column 'isactive' to Java property 'isactive'.
+             */
+            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isactive=true order by name",
                     schemeId);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Subscheme List size : " + subSchemes.size());
@@ -3347,8 +3357,13 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxGetAllFunctionName...");
 
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Changed field names from lowercase 'isactive' and 'isnotleaf' to camelCase 'isActive' and 'isNotLeaf' for CFunction HQL.
+         * The CFunction Java entity uses 'isActive' and 'isNotLeaf' property names.
+         */
         functionCodesList = persistenceService
-                .findAllBy("select f from CFunction f where  isactive = true AND isnotleaf=false order by name");
+                .findAllBy("select f from CFunction f where  isActive = true AND isNotLeaf=false order by name");
         // String
         // query="select code||'`-`'||name||'`~`'||id as \"code\" from function where isactive = true AND isnotleaf=false order by
         // name ";

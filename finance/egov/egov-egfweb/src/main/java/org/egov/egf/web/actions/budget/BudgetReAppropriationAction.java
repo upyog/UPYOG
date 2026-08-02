@@ -250,13 +250,23 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (shouldShowField(Constants.FUNCTION))
             dropdownData.put("functionList", masterDataCache.get("egi-function"));
         if (shouldShowField(Constants.SCHEME))
-            dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
+            /*
+             * LTS Migration Fix (Hibernate 6 Upgrade):
+             * Changed field name from camelCase 'isActive=true' to lowercase 'isactive=true' in Scheme HQL.
+             * The Scheme entity maps database column 'isactive' to Java property 'isactive'.
+             */
+            dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isactive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
             dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
                     .put("fundList",
-                            persistenceService.findAllBy("from Fund where isNotLeaf=false and isActive=true order by name"));
+                            /*
+                             * LTS Migration Fix (Hibernate 6 Upgrade):
+                             * Changed field names to lowercase 'isnotleaf=false and isactive=true' in Fund HQL.
+                             * The Fund entity maps database columns to Java properties 'isnotleaf' and 'isactive'.
+                             */
+                            persistenceService.findAllBy("from Fund where isnotleaf=false and isactive=true order by name"));
         if (shouldShowField(Constants.BOUNDARY))
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
         dropdownData.put("finYearList",

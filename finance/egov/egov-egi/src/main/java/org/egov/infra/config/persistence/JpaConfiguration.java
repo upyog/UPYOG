@@ -143,6 +143,14 @@ public class JpaConfiguration {
 
     private Map<String, Object> additionalProperties() {
         HashMap<String, Object> properties = new HashMap<>();
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Set default sequence allocation size to 1 and sequence optimizer to 'none' globally in Hibernate 6.
+         * In Hibernate 6, the default optimizer (pooled-lo with allocationSize=50) was generating negative primary key IDs 
+         * when inserting master entities (e.g. Scheme, SubScheme) because existing database sequences increment by 1.
+         */
+        properties.put("hibernate.id.optimizer.pooled.preferred", "none");
+        properties.put("hibernate.id.sequence.default_allocation_size", "1");
         properties.put("hibernate.validator.apply_to_ddl", false);
         properties.put("hibernate.validator.autoregister_listeners", false);
         properties.put("hibernate.temp.use_jdbc_metadata_defaults", false);

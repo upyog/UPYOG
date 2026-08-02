@@ -93,9 +93,14 @@ public class FunctionHibernateDAO implements FunctionDAO {
     }
 
     public List getAllActiveFunctions() {
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Changed field names from lowercase 'isactive' and 'isnotleaf' to camelCase 'isActive' and 'isNotLeaf'.
+         * In Hibernate 6, HQL query parser strictly validates entity field names against Java class properties.
+         * The CFunction Java entity uses 'isActive' and 'isNotLeaf' as getter/setter property names.
+         */
         return getCurrentSession()
-                .createQuery("from CFunction where isactive = true and isnotleaf=false order by name").list();
-
+                .createQuery("from CFunction where isActive = true and isNotLeaf=false order by name").list();
     }
 
     @Override

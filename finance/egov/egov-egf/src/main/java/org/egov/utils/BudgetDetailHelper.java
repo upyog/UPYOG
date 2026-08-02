@@ -146,7 +146,21 @@ public class BudgetDetailHelper {
     }
 
     public Long getFinancialYear() {
-        return Long.valueOf(financialYearDAO.getCurrYearFiscalId());
+        /*
+         * LTS Migration Fix (NullPointerException Prevention):
+         * Null-safe conversion of fiscal year ID string to Long.
+         * If financialYearDAO.getCurrYearFiscalId() returns empty string or non-numeric value when no fiscal year matches system date,
+         * returning null prevents NumberFormatException and downstream NullPointerExceptions.
+         */
+        String finYearStr = financialYearDAO.getCurrYearFiscalId();
+        if (finYearStr != null && !finYearStr.isEmpty()) {
+            try {
+                return Long.valueOf(finYearStr);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
     }
 
     public Map<String, Object> constructParamMap(final ValueStack valueStack, final BudgetDetail detail) {

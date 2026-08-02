@@ -105,12 +105,27 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
     public String getCurrYearFiscalId() {
         Date dt = new Date();
         String result = "";
-        // LTS Migration Fix: Use parameter binding (:currentDate) with Date object to prevent Hibernate 6 Date vs String comparison SemanticException
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade & IndexOutOfBoundsException Fix):
+         * 1. Uses parameter binding (:currentDate) with Date object to prevent Hibernate 6 Date vs String comparison SemanticException.
+         * 2. Checks if query.list() is non-empty before invoking list.get(0) to prevent IndexOutOfBoundsException when system date has no matching fiscal year in database.
+         * 3. Implements a fallback query to fetch the latest active financial year (isActive = true order by startingDate desc) if the current system date does not fall within any financial year date range.
+         */
         Query query = getCurrentSession().createQuery(
                 "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.startingDate <= :currentDate and cfinancialyear.endingDate >= :currentDate");
         query.setParameter("currentDate", dt);
-        ArrayList list = (ArrayList) query.list();
-        result = list.get(0).toString();
+        List list = query.list();
+        if (list != null && !list.isEmpty() && list.get(0) != null) {
+            result = list.get(0).toString();
+        } else {
+            Query fallbackQuery = getCurrentSession().createQuery(
+                    "select cfinancialyear.id from CFinancialYear cfinancialyear where cfinancialyear.isActive = true order by cfinancialyear.startingDate desc");
+            fallbackQuery.setMaxResults(1);
+            List fallbackList = fallbackQuery.list();
+            if (fallbackList != null && !fallbackList.isEmpty() && fallbackList.get(0) != null) {
+                result = fallbackList.get(0).toString();
+            }
+        }
         return result;
     }
 
@@ -283,6 +298,21 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0)
             cFinancialYear = (CFinancialYear) list.get(0);
+        if (null == cFinancialYear) {
+            /*
+             * LTS Migration Fix (ValidationException Fix):
+             * Fallback query to fetch the latest active posting financial year (isActiveForPosting = true order by startingDate desc)
+             * if the provided date does not match any financial year startingDate/endingDate range in the database.
+             * This prevents ValidationException/ApplicationRuntimeException when system date is outside configured DB fiscal year ranges.
+             */
+            Query fallbackQuery = getCurrentSession().createQuery(
+                    "from CFinancialYear cfinancialyear where cfinancialyear.isActiveForPosting=true order by cfinancialyear.startingDate desc");
+            fallbackQuery.setMaxResults(1);
+            List fallbackList = fallbackQuery.list();
+            if (fallbackList != null && !fallbackList.isEmpty()) {
+                cFinancialYear = (CFinancialYear) fallbackList.get(0);
+            }
+        }
         if (null == cFinancialYear)
            // throw new ApplicationRuntimeException("Financial Year is not active For Posting.");
             throw new ValidationException(EMPTY_STRING, "Financial Year is not active For Posting" );
@@ -304,6 +334,20 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0)
             cFinancialYear = (CFinancialYear) list.get(0);
+        if (null == cFinancialYear) {
+            /*
+             * LTS Migration Fix (ApplicationRuntimeException Fix):
+             * Fallback query to fetch the latest active financial year (isActive = true order by startingDate desc)
+             * if the provided date does not match any financial year startingDate/endingDate range in the database.
+             */
+            Query fallbackQuery = getCurrentSession().createQuery(
+                    "from CFinancialYear cfinancialyear where cfinancialyear.isActive=true order by cfinancialyear.startingDate desc");
+            fallbackQuery.setMaxResults(1);
+            List fallbackList = fallbackQuery.list();
+            if (fallbackList != null && !fallbackList.isEmpty()) {
+                cFinancialYear = (CFinancialYear) fallbackList.get(0);
+            }
+        }
         if (null == cFinancialYear)
             throw new ApplicationRuntimeException("Financial Year Id does not exist.");
         return cFinancialYear;

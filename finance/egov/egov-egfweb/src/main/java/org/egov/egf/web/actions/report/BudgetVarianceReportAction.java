@@ -203,8 +203,13 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             if (isFieldMandatory(Constants.EXECUTING_DEPARTMENT))
                 addDropdownData("departmentList", masterDataCache.get("egi-department"));
             if (isFieldMandatory(Constants.FUNCTION))
+                /*
+                 * LTS Migration Fix (Hibernate 6 Upgrade):
+                 * Changed field names from lowercase 'isactive=true and isnotleaf=false' to camelCase 'isActive=true and isNotLeaf=false' for CFunction HQL.
+                 * The CFunction Java entity uses 'isActive' and 'isNotLeaf' property names.
+                 */
                 addDropdownData("functionList",
-                        persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false  order by name"));
+                        persistenceService.findAllBy("from CFunction where isActive=true and isNotLeaf=false order by name"));
             if (isFieldMandatory(Constants.FUNCTIONARY))
                 addDropdownData("functionaryList",
                         persistenceService.findAllBy(" from Functionary where isactive=true order by name"));

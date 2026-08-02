@@ -151,8 +151,13 @@ public class OldEmployeeService implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<CFunction> getAllFunctions() {
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Changed field names from lowercase 'isactive' and 'isnotleaf' to camelCase 'isActive' and 'isNotLeaf' for CFunction HQL.
+         * The CFunction Java entity uses 'isActive' and 'isNotLeaf' property names.
+         */
         return getCurrentSession()
-                .createQuery("from CFunction where isactive = true AND isnotleaf=false order by upper(name)").list();
+                .createQuery("from CFunction where isActive = true AND isNotLeaf=false order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
@@ -162,8 +167,13 @@ public class OldEmployeeService implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<Fund> getAllFunds() {
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Changed field name from camelCase 'isNotLeaf' to lowercase 'isnotleaf' in Fund HQL.
+         * The Fund entity maps database column 'isnotleaf' to Java property 'isnotleaf'.
+         */
         return getCurrentSession()
-                .createQuery("from Fund where isactive = true and isNotLeaf!=true order by upper(name)").list();
+                .createQuery("from Fund where isactive = true and isnotleaf!=true order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")

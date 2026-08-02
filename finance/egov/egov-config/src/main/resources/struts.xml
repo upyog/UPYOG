@@ -63,6 +63,14 @@
 	<constant name="struts.i18n.reload" value="false" />
 	<constant name="struts.configuration.xml.reload" value="false" />
 	<constant name="struts.freemarker.beanwrapperCache" value="false" />
+	<!-- 
+		LTS Migration Fix (Struts 7 Security & OGNL Upgrade):
+		Configured struts.ognl.allowProxyMemberAccess=true and package allowlists.
+		Struts 7 restricts OGNL evaluation by default. Allowing proxy member access and adding org.egov and org.hibernate 
+		to the allowlist enables Struts UI tags to read model properties from entity objects and unproxied proxies without throwing security exceptions.
+	-->
+	<constant name="struts.ognl.allowProxyMemberAccess" value="true" />
+	<constant name="struts.allowlist.packageNames" value="org.egov,org.hibernate,java.lang,java.util" />
 	<!-- Performance Environment Setting Ends -->
 	<constant name="struts.convention.exclude.parentClassLoader" value="true" />
 	<constant name="struts.convention.action.fileProtocols" value="jar,vfsfile,vfszip,vfs,zip" />

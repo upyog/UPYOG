@@ -82,6 +82,7 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Order;
+import org.hibernate.Hibernate;
 import org.hibernate.query.Query;
 
 
@@ -168,8 +169,26 @@ public class PersistenceService<T, ID extends Serializable> {
 		return id == null ? null : getSession().get(this.type, id);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<T> findAllBy(final String query, final Object... params) {
-		return getQueryWithParams(query, params).getResultList();
+		final List<T> list = getQueryWithParams(query, params).getResultList();
+		if (list != null) {
+			/*
+			 * LTS Migration Fix (Struts 7 / Hibernate 6 ByteBuddy Proxy Compatibility):
+			 * In Hibernate 6 and Struts 7, ByteBuddy proxies ($HibernateProxy$) block OGNL reflection/property evaluation
+			 * in Struts dropdown tags (e.g. <s:select list="schemeList" listKey="id" listValue="name"/>).
+			 * Calling Hibernate.initialize() and Hibernate.unproxy() extracts the actual entity instance 
+			 * from the proxy wrapper so Struts 7 UI tags render dropdown options correctly without throwing OGNL security exceptions.
+			 */
+			for (int i = 0; i < list.size(); i++) {
+				T item = list.get(i);
+				if (item != null) {
+					Hibernate.initialize(item);
+					list.set(i, (T) Hibernate.unproxy(item));
+				}
+			}
+		}
+		return list;
 	}
 
 	/**

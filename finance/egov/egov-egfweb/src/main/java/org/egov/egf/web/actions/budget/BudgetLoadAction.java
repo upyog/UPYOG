@@ -272,7 +272,12 @@ public class BudgetLoadAction extends BaseFormAction {
                 LOGGER.debug("done findApprovedBudgetsForFY");
             dropdownData.put("financialYearList", persistenceService.findAllBy("from CFinancialYear where isActive=true order by finYearRange desc"));
             if (shouldShowField(Constants.FUND))
-                dropdownData.put("fundList",persistenceService.findAllBy("from Fund where isActive=true and isnotleaf=false ORDER BY name ASC "));
+                /*
+                 * LTS Migration Fix (Hibernate 6 Upgrade):
+                 * Changed field names to lowercase 'isactive=true and isnotleaf=false' for Fund HQL.
+                 * The Fund entity maps database columns to Java properties 'isactive' and 'isnotleaf'.
+                 */
+                dropdownData.put("fundList",persistenceService.findAllBy("from Fund where isactive=true and isnotleaf=false ORDER BY name ASC "));
             if (shouldShowField(Constants.EXECUTING_DEPARTMENT)) {
                 List<Department> departmentList = (List<Department>) masterDataCache.get("egi-department");
                 if (departmentList != null) {
@@ -284,7 +289,12 @@ public class BudgetLoadAction extends BaseFormAction {
                 dropdownData.put("executingDepartmentList", departmentList);
             }
             if (shouldShowField(Constants.FUNCTION))
-                dropdownData.put("functionList", persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false ORDER BY name ASC"));
+                /*
+                 * LTS Migration Fix (Hibernate 6 Upgrade):
+                 * Changed field names to camelCase 'isActive=true and isNotLeaf=false' for CFunction HQL.
+                 * The CFunction Java entity uses 'isActive' and 'isNotLeaf' property names.
+                 */
+                dropdownData.put("functionList", persistenceService.findAllBy("from CFunction where isActive=true and isNotLeaf=false ORDER BY name ASC"));
             // if (shouldShowField(Constants.FUNCTION))
             //     dropdownData.put("functionList", masterDataCache.get("egi-function"));
             System.out.println("shouldShowField(CHARTOFACCOUNTS): " + shouldShowField(Constants.CHARTOFACCOUNTS));
