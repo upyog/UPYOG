@@ -192,7 +192,7 @@ const inboxSearchFields = {
       },
       {
         label: "GC_MOBILE_NUMBER",
-        name: "moblieNumber",
+        name: "mobileNumber",
         type: "mobileNumber",
         maxLength: 10,
         minLength: 0,

@@ -3,6 +3,8 @@ import { FormStep, TextInput, CardLabel, Dropdown, TextArea, SearchIcon, Toast }
 import { useLocation, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 
+const PROPERTY_ID_PATTERN = /^[A-Z]{2}-PT-\d{4}-\d{6}$/;
+
 /**
  * GCPropertyLocDetails Component
  * 
@@ -65,7 +67,6 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
     structuredLocality.push({ i18nKey: local.i18nkey, code: local.code, label: local.label })
   })
 
-
   const setAddressPincode = (e) => {
     let value = e.target.value.replace(/\D/g, ""); // Only digits
 
@@ -81,7 +82,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
   };
 
   const setPropertyId = (e) => {
-    setpropertyId(e.target.value);
+    setpropertyId(e.target.value.toUpperCase());
   }
 
   const setApplicantStreetName = (e) => {
@@ -122,37 +123,61 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
     t,
     stateId,
     propertyId,
-    shouldFetchDetails // Only fetch when this is true
+    { enabled: shouldFetchDetails }
   );
   // Function to handle search icon click
   const handleSearchClick = () => {
-    if (propertyId) {
-      setShouldFetchDetails(true);
-    } else {
-      setShowToast({ error: true, label: t("PROPERTY_ID_REQUIRED") });
+    const formattedPropertyId = propertyId.trim().toUpperCase();
+
+    if (!PROPERTY_ID_PATTERN.test(formattedPropertyId)) {
+      setShowToast({ error: true, label: "GC_PROPERTY_ID_ERROR_MESSAGE" });
+      return;
     }
+
+    setpropertyId(formattedPropertyId);
+    setShouldFetchDetails(true);
   };
   // Effect to handle the fetched data
   useEffect(() => {
-    if (shouldFetchDetails) {
-      if (isLoading) {
-        setShowToast({ warning: true, label: t("GC_LOADING_DETAILS") });
-      } else if (isError) {
-        setShowToast({ error: true, label: t("GC_ERROR_FETCHING_DETAILS") });
-      } else if (applicationDetails) {
-        const streetNames = applicationDetails?.applicationData?.address?.street;
-        const houseNumber = applicationDetails?.applicationData?.address?.doorNo;
-        const pin = applicationDetails?.applicationData?.address?.pincode;
+    if (!shouldFetchDetails) return;
 
-        if (streetNames || houseNumber || pin) {
-          setHouseNo(houseNumber);
-          setStreetName(streetNames);
-          setPincode(pin);
-        }
-      }
-      setShouldFetchDetails(false);
+    if (isLoading) {
+      setShowToast({ warning: true, label: "GC_LOADING_DETAILS" });
+      return;
     }
-  }, [shouldFetchDetails, isLoading, isError, applicationDetails, error]);
+
+    if (isError) {
+      setShowToast({ error: true, label: "GC_ERROR_FETCHING_DETAILS" });
+      setShouldFetchDetails(false);
+      return;
+    }
+
+    const property = applicationDetails?.applicationData;
+    const propertyAddress = property?.address;
+    if (!propertyAddress) return;
+
+    const selectedCity = allCities?.find(
+      (cityOption) => cityOption?.code === property?.tenantId || cityOption?.code === propertyAddress?.tenantId
+    );
+    const selectedLocality = propertyAddress?.locality;
+
+    setpropertyId(property?.propertyId || propertyId);
+    setHouseNo(propertyAddress?.doorNo || "");
+    setStreetName(propertyAddress?.street || "");
+    setPincode(propertyAddress?.pincode || "");
+    setLandmark(propertyAddress?.landmark || "");
+    if (selectedCity) setCity(selectedCity);
+    if (selectedLocality) {
+      setLocality({
+        code: selectedLocality.code,
+        i18nKey: selectedLocality.i18nKey || selectedLocality.code,
+        label: selectedLocality.label || selectedLocality.name,
+        value: selectedLocality.code,
+      });
+    }
+
+    setShouldFetchDetails(false);
+  }, [shouldFetchDetails, isLoading, isError, applicationDetails]);
 
   const goNext = () => {
     let ownerStep = { pincode, city, locality, streetName, houseNo, landmark, houseName, addressline1, addressline2, propertyId };
@@ -203,7 +228,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
               ValidationRequired={true}
               {...(validation = {
                 isRequired: false,
-                pattern: "^[a-zA-Z0-9/-]*$",
+                pattern: "^[A-Z]{2}-PT-\\d{4}-\\d{6}$",
                 type: "text",
                 title: t("GC_PROPERTY_ID_ERROR_MESSAGE"),
               })}
@@ -278,7 +303,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
-              pattern: "^[a-zA-Z0-9 .,?!'\"-]+$",
+              pattern: "^[a-zA-Z0-9 .,?!'\"\\-]+$",
               type: "textarea",
               title: t("SV_LANDMARK_ERROR_MESSAGE"),
             })}

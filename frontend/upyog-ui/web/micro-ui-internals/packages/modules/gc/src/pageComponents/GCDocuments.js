@@ -58,7 +58,7 @@ function GCDocuments({ value = {}, Code, index, showFileName= false }) {
               <a target="_" href={documentLink} style={{ minWidth: "160px", display: "flex", alignItems: "center" }} key={document?.fileStoreId || idx}>
               {/* Text first */}
               <p style={{ marginRight: "8px", margin: "5px", color:"blue", fontWeight: "bold" }}>
-                {t("GC_" + (Code?.split('.').slice(0, 4).join('_')))}
+                {t("GC_" + (Code?.split('.').slice(0, 5).join('_')))}
               </p>
       
               {/* Icon second */}
