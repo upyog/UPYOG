@@ -832,6 +832,85 @@ This feature doubles as the template for every future integration:
 - **DIGIT POST-searches**: body = `RequestInfo` only; criteria = query string. Copy this
   provider when integrating any other DIGIT/eGov service (inbox v2, billing `_search`, etc.).
 
+## 2.12 Integration tests — full stack and live niuatt
+
+Beyond the provider unit tests, the change ships an integration suite under
+`test/integration/` (the Makefile's `make test-integration` target was already pointing there;
+the folder now exists). The files carry the build tag `//go:build integration`, so they are
+excluded from a plain `go test ./...` and run only when requested:
+
+```bash
+make test-integration
+# equivalent to:
+go test ./test/integration/... -tags=integration -v -count=1
+```
+
+> **Java analogy:** the build tag plays the role of the Maven failsafe plugin's `*IT.java`
+> split — unit tests always run, integration tests only in an explicit phase.
+
+### In-process full-stack tests (`stack_test.go`)
+
+These assemble the **entire service** exactly as `main.go` does — router with all middleware,
+handler, engine, executor, registry, real providers, real resilient HTTP clients — but point
+the backend base URLs at `httptest` mock servers (≈ `@SpringBootTest(webEnvironment=MOCK)` +
+WireMock). One subtlety: the Prometheus metrics object registers collectors into the
+process-global default registry, so the suite creates it exactly once via `sync.Once`.
+
+| Test | Scenario proven |
+|---|---|
+| `TestAggregate_EndToEnd_Success` | Two providers requested at once; both succeed; workflow mock receives the translated criteria (`tenantId`, `moduleName`, `fromDate`, `limit`); response mapping verified through the real HTTP round trip |
+| `TestAggregate_EndToEnd_PartialFailure` | Workflow backend returns 500 → `new-applications` comes back `FAILED` with an error code while `recent-applications` still succeeds; the aggregate call stays HTTP 200 |
+| `TestAggregate_EndToEnd_ProviderTimeout` | Workflow sleeps past a 200 ms per-provider budget → `TIMEOUT` / `PROVIDER_TIMEOUT` for that provider only; the fast provider is unaffected |
+| `TestAggregate_EndToEnd_UnknownProvider` | Requesting an unregistered provider yields `FAILED` / `PROVIDER_NOT_FOUND` inside a 200 response |
+| `TestAggregate_EndToEnd_ValidationError` | A non-UUID `requestId` is rejected with HTTP 400 before any provider runs |
+
+All five pass (`ok github.com/upyog/upyog-aggregation-service/test/integration`).
+
+### Live test against niuatt (`niuatt_live_test.go`)
+
+`TestNiuatt_Live_OAuthAndNewApplications` exercises the real NIUA test environment. It is
+**skipped automatically** unless credentials are present, so CI never depends on niuatt:
+
+| Env var | Required | Default | Meaning |
+|---|---|---|---|
+| `NIUATT_USERNAME` | yes | — | niuatt login |
+| `NIUATT_PASSWORD` | yes | — | niuatt password |
+| `NIUATT_TENANT_ID` | no | `pg.citya` | tenant to search |
+| `NIUATT_USER_TYPE` | no | `CITIZEN` | `CITIZEN` or `EMPLOYEE` |
+| `NIUATT_BASE_URL` | no | `https://niuatt.niua.in` | gateway base URL |
+
+The test performs the same two steps every UPYOG frontend performs:
+
+1. **OAuth password grant** against `POST /user/oauth/token` with the standard public client
+   (`Authorization: Basic ZWdvdi11c2VyLWNsaWVudDo=`, i.e. `egov-user-client:` with an empty
+   secret) and form fields `grant_type=password`, `username`, `password`, `tenantId`,
+   `userType`. The returned `access_token` is a DIGIT auth token.
+2. **Runs the actual `new-applications` provider** (not a copy — the same code that serves
+   production requests) against the live gateway, with the token placed in the request context
+   the same way the Authentication middleware would, then prints the full mapped JSON response
+   and asserts its shape.
+
+```bash
+NIUATT_USERNAME='<user>' NIUATT_PASSWORD='<password>' NIUATT_TENANT_ID='pg.citya' \
+  go test ./test/integration/... -tags=integration -run Niuatt -v -count=1
+```
+
+Connectivity to niuatt was verified from this change (without credentials): the workflow
+endpoint answers with the DIGIT authorization error, and the OAuth endpoint with the standard
+OAuth error — proving both services are reachable and the request format is understood:
+
+```
+POST https://niuatt.niua.in/egov-workflow-v2/egov-wf/process/_search?tenantId=pg.citya&…
+→ {"ResponseInfo":null,"Errors":[{"code":"CustomException",
+   "message":"You are not authorized to access this resource", …}]}
+
+POST https://niuatt.niua.in/user/oauth/token   (placeholder credentials)
+→ {"error_description":"Invalid username or password","error":"invalid_grant"}
+```
+
+Once a valid niuatt user is supplied through the environment variables above, the same test
+prints the real application list for that tenant.
+
 ---
 
 *Document generated from the actual implementation on branch
