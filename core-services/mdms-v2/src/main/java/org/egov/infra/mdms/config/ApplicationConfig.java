@@ -5,12 +5,14 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.springframework.context.annotation.Import;
 
 @Configuration
 @ToString
 @Setter
 @Getter
+@Import({MultiStateInstanceUtil.class})
 public class ApplicationConfig {
 
     @Value("${egov.mdms.schema.definition.save.topic}")
@@ -27,5 +29,11 @@ public class ApplicationConfig {
 
     @Value("${mdms.default.limit}")
     private Integer defaultLimit;
+
+    @Value("${egov.mdms.data.delete.topic}")
+    private String deleteMdmsDataTopicName;
+
+    @Value("${egov.mdms.schema.delete.topic}")
+    private String deleteSchemaTopicName;
 
 }

@@ -13,9 +13,7 @@ public interface MdmsDataRepository {
 
     public void update(MdmsRequest mdmsRequest);
 
-    void delete(String tenantId, String schemaCode);
-    
-    void insertAudit(Mdms mdms);
+    void delete(MdmsRequest mdmsRequest);
 
     public  List<Mdms> searchV2(MdmsCriteriaV2 mdmsCriteriaV2);
 

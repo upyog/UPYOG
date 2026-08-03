@@ -64,7 +64,8 @@ public class MdmsDataRepositoryImpl implements MdmsDataRepository {
         producer.push(applicationConfig.getUpdateMdmsDataTopicName(), mdmsRequest);
     }
 
-    @Override
+
+   @Override
 public Mdms getById(String tenantId, String id) {
 
     MdmsCriteriaV2 criteria = MdmsCriteriaV2.builder()
@@ -81,39 +82,18 @@ public Mdms getById(String tenantId, String id) {
     return mdmsList.get(0);
 }
 
-    @Override
-    public void delete(String tenantId, String schemaCode) {
-
-    String sql = "DELETE FROM eg_mdms_data WHERE tenantid = ? AND schemacode = ?";
-
-    int deletedRows = jdbcTemplate.update(sql, tenantId, schemaCode);
-
-    log.info("Deleted {} MDMS data record(s) for tenantId={}, schemaCode={}",
-            deletedRows, tenantId, schemaCode);
-    }
-
-    @Override
-public void insertAudit(Mdms mdms) {
-
-    String sql = "INSERT INTO eg_mdms_data_audit " +
-            "(id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime, operation) " +
-            "VALUES (?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?)";
-
-    jdbcTemplate.update(
-            sql,
-            mdms.getId(),
-            mdms.getTenantId(),
-            mdms.getUniqueIdentifier(),
-            mdms.getSchemaCode(),
-            mdms.getData().toString(),
-            mdms.getIsActive(),
-            mdms.getAuditDetails().getCreatedBy(),
-            mdms.getAuditDetails().getLastModifiedBy(),
-            mdms.getAuditDetails().getCreatedTime(),
-            mdms.getAuditDetails().getLastModifiedTime(),
-            "DELETE"
-    );
+/**
+ * Publishes MDMS delete request to Kafka.
+ * Persister is responsible for audit logging
+ * and deleting the master data.
+ */
+@Override
+public void delete(MdmsRequest mdmsRequest) {
+    producer.push(applicationConfig.getDeleteMdmsDataTopicName(), mdmsRequest);
 }
+    
+
+ 
     /**
      * @param mdmsCriteriaV2
      * @return

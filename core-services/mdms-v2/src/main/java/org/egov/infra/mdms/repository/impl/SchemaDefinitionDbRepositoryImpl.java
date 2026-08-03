@@ -5,6 +5,7 @@ import org.egov.infra.mdms.config.ApplicationConfig;
 import org.egov.infra.mdms.model.SchemaDefCriteria;
 import org.egov.infra.mdms.model.SchemaDefinition;
 import org.egov.infra.mdms.model.SchemaDefinitionRequest;
+import org.egov.infra.mdms.model.SchemaDeleteRequest;
 import org.egov.infra.mdms.producer.Producer;
 import org.egov.infra.mdms.repository.SchemaDefinitionRepository;
 import org.egov.infra.mdms.repository.querybuilder.SchemaDefinitionQueryBuilder;
@@ -39,38 +40,6 @@ public class SchemaDefinitionDbRepositoryImpl implements SchemaDefinitionReposit
         this.schemaDefinitionQueryBuilder = schemaDefinitionQueryBuilder;
     }
 
-    @Override
-public void insertAudit(SchemaDefinition schemaDefinition) {
-    System.out.println("DELETE audit method called");
-    try {
-        System.out.println("Inside Repository insertAudit");
-
-        String sql = "INSERT INTO eg_mdms_schema_definition_audit " +
-                "(id, tenantid, code, description, definition, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime, operation) " +
-                "VALUES (?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?)";
-
-        jdbcTemplate.update(
-                sql,
-                schemaDefinition.getId(),
-                schemaDefinition.getTenantId(),
-                schemaDefinition.getCode(),
-                schemaDefinition.getDescription(),
-                schemaDefinition.getDefinition().toString(),
-                schemaDefinition.getIsActive(),
-                schemaDefinition.getAuditDetails().getCreatedBy(),
-                schemaDefinition.getAuditDetails().getLastModifiedBy(),
-                schemaDefinition.getAuditDetails().getCreatedTime(),
-                schemaDefinition.getAuditDetails().getLastModifiedTime(),
-                "DELETE"
-        );
-        System.out.println("DELETE audit inserted");
-
-        System.out.println("Audit insert successful");
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
     /**
      * This method emits schema definition create request on kafka for async persistence
      * @param schemaDefinitionRequest
@@ -97,27 +66,20 @@ public void insertAudit(SchemaDefinition schemaDefinition) {
         return jdbcTemplate.query(query, preparedStatementList.toArray(), rowMapper);
     }
 
-    @Override
-    public void delete(String tenantId, String code) {
-
-    String sql =
-            "DELETE FROM eg_mdms_schema_definition WHERE tenantid = ? AND code = ?";
-
-    int deletedRows = jdbcTemplate.update(sql, tenantId, code);
-
-    log.info(
-            "Deleted {} schema definition(s) for tenantId={}, code={}",
-            deletedRows,
-            tenantId,
-            code
-    );
-}
 
     /**
      * Skeleton method for update as update API has not been implemented
      * @param schemaDefinitionRequest
      */
-    @Override
+    /**
+     * Publishes schema delete request to Kafka.
+     * Persister is responsible for audit logging
+     * and deleting the schema.
+     */
+    public void delete(SchemaDeleteRequest request) {
+        producer.push(applicationConfig.getDeleteSchemaTopicName(), request);
+    }
+
     public Integer getTotalMastersCount(String tenantId) {
 
     String query = "SELECT COUNT(DISTINCT split_part(code, '.', 1))\n"

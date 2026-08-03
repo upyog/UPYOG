@@ -56,7 +56,8 @@ public class MDMSServiceV2 {
 
         // Enrich incoming master data
         mdmsDataEnricher.enrichCreateRequest(mdmsRequest, schemaObject);
-        mdmsRequest.getMdms().setOperation("CREATE");
+
+        mdmsRequest.getMdms().setOperation(Operation.CREATE.name());
 
         // Emit MDMS create event to be listened by persister
         mdmsDataRepository.create(mdmsRequest);
@@ -106,9 +107,15 @@ public class MDMSServiceV2 {
         throw new RuntimeException("Master data not found");
     }
 
-    mdmsDataRepository.insertAudit(existing);
+    // Use state-level tenant for delete operation.
+    mdmsRequest.getMdms().setTenantId(tenantId);
 
-    mdmsDataRepository.delete(tenantId, schemaCode);
+    // Mark operation for audit tracking before publishing delete event.
+mdmsRequest.getMdms().setOperation(Operation.DELETE.name());
+
+// Publish delete request to Kafka.
+// Persister will handle audit insertion and record deletion.
+mdmsDataRepository.delete(mdmsRequest);
 
     return Arrays.asList(mdmsRequest.getMdms());
 }
@@ -146,7 +153,8 @@ mdmsRequest.getMdms().getAuditDetails()
 mdmsRequest.getMdms().getAuditDetails()
         .setCreatedTime(existing.getAuditDetails().getCreatedTime());
 
-        mdmsRequest.getMdms().setOperation("UPDATE");
+
+        mdmsRequest.getMdms().setOperation(Operation.UPDATE.name());
         // Emit MDMS update event to be listened by persister
         
         mdmsDataRepository.update(mdmsRequest);
