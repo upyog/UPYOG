@@ -5489,6 +5489,14 @@
                   "headers": []
                 },
                 {
+                  "id": "fsmTodaysCollection",
+                  "name": "NATIONAL_DSS_TOTAL_COLLECTION_FSM",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
                   "id": "slaComplainceFSM",
                   "name": "NATIONAL_DSS_SLA_COMPLAINCE_FSM",
                   "code": "",
@@ -9731,6 +9739,28 @@
                 "filter": "",
                 "headers": []
               }]
+            },
+            {
+              "id": 1111,
+              "name": "NURT_NO_OF_TRANSACTION_CUMULATIVE",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "cumulativenooftransaction",
+                  "name": "NURT_NO_OF_TRANSACTION_CUMULATIVE",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
             }
           ]
         },
@@ -10013,7 +10043,7 @@
             },
             {
               "id": 207,
-              "name": "DSS_STREET_VENDING",
+              "name": "NURT_STREET_VENDING",
               "vizType": "module",
               "moduleLevel": "SV",
               "ref": {
@@ -10054,16 +10084,136 @@
               "label": "",
               "charts": [
                 {
-                  "id": "financeTotalBillsGenerated",
-                  "name": "DSS_FINANCE_TOTAL_BILLS_GENERATED",
+                  "id": "financeTotalRevenueCollected",
+                  "name": "FINANCE_TOTAL_REVENUE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeTotalPayments",
-                  "name": "DSS_FINANCE_TOTAL_PAYMENTS",
+                  "id": "financeTotalExpenditures",
+                  "name": "FINANCE_TOTAL_EXPENDITURE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 209,
+              "name": "NURT_PTR",
+              "vizType": "module",
+              "moduleLevel": "PTR",
+              "ref": {
+                "url": "national-ptr",
+                "logoUrl": "",
+                "type": "internal"
+              },
+              "label": "",
+              "charts": [
+                {
+                  "id": "ptrTotalCollection",
+                  "name": "NATIONAL_DSS_TOTAL_COLLECTION_PTR",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrTotalPetRegistration",
+                  "name": "NATIONAL_DSS_TOTAL_REGISTRATION_PTR",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 210,
+              "name": "NURT_EWASTE",
+              "vizType": "module",
+              "moduleLevel": "EWASTE",
+              "ref": {
+                "url": "national-ewaste",
+                "logoUrl": "",
+                "type": "internal"
+              },
+              "label": "",
+              "charts": [
+                {
+                  "id": "ewTotalWasteCollection",
+                  "name": "NATIONAL_DSS_TOTAL_WASTE_COLLECTION_EWASTE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewTotalApplicationReceived",
+                  "name": "NATIONAL_DSS_TOTAL_APPLICATION_RECEIVED_EWASTE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 211,
+              "name": "NURT_ADV",
+              "vizType": "module",
+              "moduleLevel": "ADV",
+              "ref": {
+                "url": "national-adv",
+                "logoUrl": "",
+                "type": "internal"
+              },
+              "label": "",
+              "charts": [
+                {
+                  "id": "advTotalApplicationReceived",
+                  "name": "NATIONAL_TOTAL_APPLICATION_RECEIVED_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advTotalApplicationApproved",
+                  "name": "NATIONAL_TOTAL_APPLICATION_APPROVED_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 212,
+              "name": "NURT_VENUE",
+              "vizType": "module",
+              "moduleLevel": "CHB",
+              "ref": {
+                "url": "national-chb",
+                "logoUrl": "",
+                "type": "internal"
+              },
+              "label": "",
+              "charts": [
+                {
+                  "id": "chbTotalActiveVenue",
+                  "name": "NSS_TOTAL_ACTIVE_VENUE_CHB",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "chbTotalApplicationReceived",
+                  "name": "NSS_TOTAL_APPLICATION_CHB",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -10073,7 +10223,6 @@
             }
           ]
         }
-
       ]
     },
 
@@ -11052,62 +11201,86 @@
       ]
     },
     {
-      "name": "DSS_FINANCE_DASHBOARD",
+      "name": "NURT_FINANCE_DASHBOARD",
       "id": "national-finance",
       "isActive": "",
       "style": "linear",
       "visualizations": [
         {
           "row": 1,
-          "name": "DSS_FINANCE",
+          "name": "NURT_FINANCE",
           "vizArray": [
             {
               "id": 411,
-              "name": "DSS_FINANCE_OVERVIEW",
+              "name": "NURT_FINANCE_OVERVIEW",
               "dimensions": {
                 "height": 350,
                 "width": 5
               },
               "vizType": "metric-collection",
-              "label": "DSS_FINANCE_OVERVIEW",
+              "label": "NURT_FINANCE_OVERVIEW",
               "noUnit": true,
               "isCollapsible": false,
               "charts": [
                 {
-                  "id": "financeTotalRegisteredULBs",
-                  "name": "Total Registered ULB's",
+                  "id": "financePreviousYearRevenueCollected",
+                  "name": "NSS_FIN_PREV_YEAR_REVENUE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeTotalIncome",
-                  "name": "DSS_FINANCE_TOTAL_INCOME",
+                  "id": "financePreviousYearExpenditure",
+                  "name": "NSS_FIN_PREV_YEAR_EXPENDITURE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeTotalExpenditure",
-                  "name": "DSS_FINANCE_TOTAL_EXPENDITURE",
+                  "id": "financeTotalExpenditures",
+                  "name": "NURT_FINANCE_TOTAL_EXPENDITURE",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeTotalBillCreated",
-                  "name": "DSS_FINANCE_TOTAL_BILL_CREATED",
+                  "id": "financeOutstandingDebt",
+                  "name": "NURT_FINANCE_OUTSTANDING_DEBT",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeNumberOfBillsPaid",
-                  "name": "DSS_FINANCE_TOTAL_BILL_PAYEMENTS_DONE",
+                  "id": "financeAuditCompletionRate",
+                  "name": "NURT_AUDIT_COMPLTE_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financePendingBills",
+                  "name": "NURT_FINANCE_PENDING_BILLS",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeFundBalance",
+                  "name": "NURT_FINANCE_FUND_BALANCE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "financeRevenueToExpenditureRatio",
+                  "name": "FINANCE_REVENUE_TO_EXPENDITURE_RATIO",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
@@ -11117,7 +11290,7 @@
             },
             {
               "id": 412,
-              "name": "Total Cumulative Collection",
+              "name": "Total Cumulative Collection VS Expenditure",
               "dimensions": {
                 "height": 350,
                 "width": 7
@@ -11129,6 +11302,34 @@
               "charts": [
                 {
                   "id": "financeIncomeExpenditureForLines",
+                  "name": "Monthly",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "row": 2,
+          "name": "NURT_FINANCE",
+          "vizArray": [
+            {
+              "id": 213,
+              "name": "Total Cumulative Collection",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "financeTotalCollectionForLines",
                   "name": "Monthly",
                   "code": "",
                   "chartType": "line",
@@ -11440,7 +11641,7 @@
           "vizArray": [
             {
               "id": 213,
-              "name": "DSS_SV_LICENSE_BY_AGE_GROUP",
+              "name": "NURT_SV_LICENSE_BY_AGE_GROUP",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11450,7 +11651,7 @@
               "charts": [
                 {
                   "id": "svLicenseByAgeGroup",
-                  "name": "DSS_SV_LICENSE_BY_AGE_GROUP",
+                  "name": "NURT_SV_LICENSE_BY_AGE_GROUP",
                   "code": "",
                   "chartType": "horizontalBar",
                   "filter": "",
@@ -11460,7 +11661,7 @@
             },
             {
               "id": 214,
-              "name": "DSS_SV_REVENUE_COLLECTED_TARGETED_ACHIEVEMNET",
+              "name": "NURT_SV_REVENUE_COLLECTED_TARGETED_ACHIEVEMNET",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11471,7 +11672,7 @@
               "charts": [
                 {
                   "id": "svallCollection",
-                  "name": "DSS_SV_REVENUE_COLLECTED_TARGETED_ACHIEVEMNET",
+                  "name": "NURT_SV_REVENUE_COLLECTED_TARGETED_ACHIEVEMNET",
                   "code": "",
                   "chartType": "donut",
                   "filter": "",
@@ -11487,7 +11688,7 @@
           "vizArray": [
             {
               "id": 215,
-              "name": "DSS_SV_FIXED_SPOTS",
+              "name": "NURT_SV_FIXED_SPOTS",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11498,7 +11699,7 @@
               "charts": [
                 {
                   "id": "svFixedSpotsOverview",
-                  "name": "DSS_SV_FIXED_SPOTS",
+                  "name": "NURT_SV_FIXED_SPOTS",
                   "code": "",
                   "chartType": "donut",
                   "filter": "",
@@ -11508,7 +11709,7 @@
             },
             {
               "id": 216,
-              "name": "DSS_SV_REGISTRATION_BY_VENDING_TYPE",
+              "name": "NURT_SV_REGISTRATION_BY_VENDING_TYPE",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11518,7 +11719,7 @@
               "charts": [
                 {
                   "id": "svRegistrationByVendingType",
-                  "name": "DSS_SV_REGISTRATION_BY_VENDING_TYPE",
+                  "name": "NURT_SV_REGISTRATION_BY_VENDING_TYPE",
                   "code": "",
                   "chartType": "donut",
                   "filter": "",
@@ -11528,7 +11729,7 @@
             },
             {
               "id": 217,
-              "name": "DSS_SV_LICENSE_BY_GENDER",
+              "name": "NURT_SV_LICENSE_BY_GENDER",
               "dimensions": {
                 "height": 250,
                 "width": 4
@@ -11538,8 +11739,649 @@
               "charts": [
                 {
                   "id": "svLicenseByGender",
-                  "name": "DSS_SV_LICENSE_BY_GENDER",
+                  "name": "NURT_SV_LICENSE_BY_GENDER",
                   "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "NSS_PTR_DASHBOARD",
+      "id": "national-ptr",
+      "isActive": "",
+      "style": "linear",
+      "visualizations": [
+        {
+          "row": 1,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 211,
+              "name": "NSS_NATIONAL_WS_OVERVIEW",
+              "dimensions": {
+                "height": 350,
+                "width": 5
+              },
+              "vizType": "metric-collection",
+              "noUnit": true,
+              "isCollapsible": false,
+              "label": "NSS_OVERVIEW",
+              "charts": [
+                {
+                  "id": "ptrTotalCollection",
+                  "name": "NSS_PTR_TOTAL_COLLECTION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrPreviousYearRevenue",
+                  "name": "NSS_PTR_PREVIOUS_YEAR_REVENUE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrCurrentFYCollectionDate",
+                  "name": "NSS_PTR_CURRENT_FY_COLLECTION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": {"title": "TODAY"},
+                  "headers": []
+                },
+                {
+                  "id": "ptrRevenueTargetAchievement",
+                  "name": "NSS_PTR_REVENUE_TARGET_ACHIEVEMENT",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrTotalPetRegistrations",
+                  "name": "NSS_PTR_TOTAL_REGISTRATION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrTotalApprovedPetRegistration",
+                  "name": "NSS_PTR_TOTAL_APPROVED",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrRenewalRate",
+                  "name": "NSS_PTR_RENEWAL_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrTotalEstimatedUnregisterPet",
+                  "name": "NSS_PTR_TOTAL_UNREGISTER_PET",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrComplaintSLA",
+                  "name": "NSS_PTR_TOTAL_COMPLAINTS_ADDRESSED",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrVaccinationPercentage",
+                  "name": "NSS_PTR_TOTAL_VACCINATED_PET",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ptrRabiesFreeCertifiedPet",
+                  "name": "NSS_PTR_TOTAL_RABIES_FREE_PET_CERTIFIED",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 212,
+              "name": "Total Cumulative Collection",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "ptrTotalCollectionForLines",
+                  "name": "Monthly",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "row": 3,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 216,
+              "name": "NATIONAL_PTR_REGISTRATION_MODE",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "ptrRegistrationCompleted",
+                  "name": "NATIONAL_PTR_REGISTRATION_MODE",
+                  "code": "",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 217,
+              "name": "NATIONAL_PTR_TRANSACTIONS_BY_PAYMENT_CHANNEL",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "ptrTransactionsByPaymentChannel",
+                  "name": "NATIONAL_PTR_TRANSACTIONS_BY_PAYMENT_CHANNEL",
+                  "code": "",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NSS_EW_DASHBOARD",
+      "id": "national-ewaste",
+      "isActive": "",
+      "style": "linear",
+      "visualizations": [
+        {
+          "row": 1,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 211,
+              "name": "NSS_NATIONAL_WS_OVERVIEW",
+              "dimensions": {
+                "height": 350,
+                "width": 5
+              },
+              "vizType": "metric-collection",
+              "noUnit": true,
+              "isCollapsible": false,
+              "label": "NSS_OVERVIEW",
+              "charts": [
+                {
+                  "id": "ewTotalWasteCollectionMetric",
+                  "name": "NSS_TOTAL_WASTE_COLLECTION_EW",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewasteCollectionCentrePerUrbanArea",
+                  "name": "NSS_EW_WASTE_COLLECTION_CENTRE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewTotalCollectionCenters",
+                  "name": "NSS_TOTAL_COLLECTION_CENTERS_EWASTE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewTotalUrbanAreas",
+                  "name": "NSS_TOTAL_URBAN_AREAS_EWASTE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewResidentialWastePercentage",
+                  "name": "NSS_RESIDENTIAL_WASTE_CATEGORIZATION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "ewCommercialWastePercentage",
+                  "name": "NSS_COMMERIAL_WASTE_CATEGORIZATION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "applicationResolutionPercentage",
+                  "name": "NSS_APPLICATION_RESOLUTION_PERCENTAGE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "processingEfficiency",
+                  "name": "NSS_PROCESSING_EFFICIENCY",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "yearWiseCollectionGrowth",
+                  "name": "NSS_YEARWISE_COLLECTION_GROWTH",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "wasteProcessingPercentage",
+                  "name": "NSS_WASTE_PROCESSING_PERCENTAGE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "applicationResolutionRate",
+                  "name": "NSS_APPLICATION_RESOLUTION_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 212,
+              "name": "NATIONAL_WASTE_CATEGORIZATION",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "ewWasteCollectionCategorization",
+                  "name": "NSS_WASTE_CATEGORIZATION",
+                  "code": "",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NSS_ADV_DASHBOARD",
+      "id": "national-adv",
+      "isActive": "",
+      "style": "linear",
+      "visualizations": [
+        {
+          "row": 1,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 211,
+              "name": "NSS_NATIONAL_WS_OVERVIEW",
+              "dimensions": {
+                "height": 350,
+                "width": 5
+              },
+              "vizType": "metric-collection",
+              "noUnit": true,
+              "isCollapsible": false,
+              "label": "NSS_OVERVIEW",
+              "charts": [
+                {
+                  "id": "advPreviousYearRevenue",
+                  "name": "NATIONAL_PREVIOUS_YEAR_REVENUE_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advFyCollectionTillDate",
+                  "name": "NSS_ADV_FY_COLLECTION",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": {"title": "TODAY"},
+                  "headers": []
+                },
+                {
+                  "id": "advRevenueTarget",
+                  "name": "NSS_REVENUE_TARGET_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advPreviousYearRevenueTillDate",
+                  "name": "NSS_PREV_YEAR_COLLECTION_TILLDATE_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": {"title": "TODAY"},
+                  "headers": []
+                },
+                {
+                  "id": "advLastIngestionDate",
+                  "name": "NSS_LAST_INGESTION_DATE_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advRejectionRate",
+                  "name": "NSS_REJECTION_RATE_ADV",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "advPendency",
+                  "name": "NSS_ADV_PENDENCY",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 212,
+              "name": "NATIONAL_PAYMENT_CATEGORIZATION",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "advTransactionCategory",
+                  "name": "NSS_ADV_PAYMENT_CATEGORIZATION",
+                  "code": "",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "row": 2,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 213,
+              "name": "Total Cumulative Collection",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "advTotalCollectionForLines",
+                  "name": "Monthly",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NSS_CHB_DASHBOARD",
+      "id": "national-chb",
+      "isActive": "",
+      "style": "linear",
+      "visualizations": [
+        {
+          "row": 1,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 211,
+              "name": "NSS_NATIONAL_WS_OVERVIEW",
+              "dimensions": {
+                "height": 350,
+                "width": 5
+              },
+              "vizType": "metric-collection",
+              "noUnit": true,
+              "isCollapsible": false,
+              "label": "NSS_OVERVIEW",
+              "charts": [
+                {
+                  "id": "chbApprovedBooking",
+                  "name": "NSS_CHB_APPROVED_BOOKING",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "chbRejectedBooking",
+                  "name": "NSS_CHB_REJECTED_BOOKING",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "chbCancelledBooking",
+                  "name": "NSS_CHB_CANCELLED_BOOKING",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "chbApprovalRate",
+                  "name": "NSS_CHB_APPROVAL_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": {"title": "TODAY"},
+                  "headers": []
+                },
+                {
+                  "id": "chbRejectionRate",
+                  "name": "NSS_CHB_REJECTION_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "chbCancellationRate",
+                  "name": "NSS_CHB_CANCELLATION_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "chbAverageRevenuePerBooking",
+                  "name": "NSS_CHB_AVERAGE_REVENUE_PER_BOOKING",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                },
+                {
+                  "id": "chbNoShowrate",
+                  "name": "NSS_CHB_NO_SHOW_RATE",
+                  "code": "",
+                  "chartType": "metric",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 212,
+              "name": "Total Monthly Collection",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "chbTotalCollections",
+                  "name": "Monthly",
+                  "code": "",
+                  "chartType": "line",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "row": 2,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 213,
+              "name": "NSS_CHB_BOOKING_MODE",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "chbBookingMode",
+                  "name": "NSS_CHB_BOOKING_MODES",
+                  "code": "",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 214,
+              "name": "NSS_CHB_BOOKING_MODE",
+              "dimensions": {
+                "height": 250,
+                "width": 4
+              },
+              "vizType": "chart",
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "chbBookingStatus",
+                  "name": "NSS_CHB_BOOKING_STATUS",
+                  "code": "",
+                  "chartType": "donut",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "row": 3,
+          "name": "NSS_REVENUE",
+          "vizArray": [
+            {
+              "id": 215,
+              "name": "Venue Peak Booking Month",
+              "dimensions": {
+                "height": 350,
+                "width": 7
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "chbPeakBookingMonth",
+                  "name": "Monthly",
+                  "code": "",
+                  "chartType": "line",
                   "filter": "",
                   "headers": []
                 }
