@@ -206,7 +206,7 @@ function ApplicationDetailsContent({
       return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     } else {
       const caption = {
-        date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
+        date: checkpoint?.auditDetails?.lastModified || convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
         name: checkpoint?.assignes?.[0]?.name,
         wfComment: checkpoint?.wfComment,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,

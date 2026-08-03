@@ -390,7 +390,7 @@ export const filterFunctions = {
     const workflowFilters = {};
 
 
-    const { applicationNumber, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
+    const { applicationNumber, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus, services, locality } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -400,6 +400,12 @@ export const filterFunctions = {
     }
     if(applicationNumber) {   
       searchFilters.applicationNumber = applicationNumber;
+    }
+    if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
+      workflowFilters.status = applicationStatus.map((status) => status.uuid);
+      if (applicationStatus?.some((e) => e.nonActionableRole)) {
+        searchFilters.fetchNonActionableRecords = true;
+      }
     }
     if (services) {
       workflowFilters.businessService = services;
