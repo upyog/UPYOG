@@ -166,6 +166,8 @@ const GCApplicationDetails = () => {
     appData?.applicationStatus ||
     t("CS_NA");
 
+  const dueDate = appData?.dueDate || null;
+
   useEffect(() => {
     const fetchBillData = async () => {
       if (!isMountedRef.current) return;
@@ -333,6 +335,7 @@ const GCApplicationDetails = () => {
               label={t("GC_APPLICATION_STATUS_LABEL")}
               text={appStatus ? t(`GC_STATUS_${appStatus}`) : t("CS_NA")}
             />
+            {dueDate && <Row className="border-none" label={t("GC_DUE_DATE")} text={dueDate} />}
           </StatusTable>
 
           {/* Applicant Details */}

@@ -48,6 +48,7 @@ const GCApplication = ({ application, tenantId }) => {
       {category && <KeyNote keyValue={t("GC_CATEGORY")} note={t(category)} />}
       {typeOfCollection && <KeyNote keyValue={t("GC_TYPE_OF_COLLECTION")} note={t(typeOfCollection)} />}
       <KeyNote keyValue={t("GC_APPLICATION_STATUS_LABEL")} note={appStatus ? t(`GC_STATUS_${appStatus}`) : t("CS_NA")} />
+      {application?.dueDate && <KeyNote keyValue={t("GC_DUE_DATE")} note={application.dueDate} />}
       
       <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
         <SubmitBar label={t("CS_VIEW_DETAILS")} onSubmit={handleViewSummary} style={{ flex: 1 }} />

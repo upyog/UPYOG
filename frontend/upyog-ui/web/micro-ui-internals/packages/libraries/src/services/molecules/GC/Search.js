@@ -36,6 +36,7 @@ export const GCSearch = {
         values: [
           { title: "GC_APPLICATION_NUMBER_LABEL", value: appDetails?.applicationNo || t("CS_NA") },
           { title: "GC_APPLICATION_STATUS_LABEL", value: appDetails?.status ? t(`GC_STATUS_${appDetails.status}`) : t("CS_NA") },
+          ...(app?.dueDate ? [{ title: "GC_DUE_DATE", value: app.dueDate }] : []),
         ],
       },
       {

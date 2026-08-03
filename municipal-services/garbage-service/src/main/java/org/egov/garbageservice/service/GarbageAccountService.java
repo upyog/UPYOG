@@ -284,6 +284,12 @@ public class GarbageAccountService {
         }
         if (garbageAccount.getWorkflow() != null) {
             garbageAccount.setWorkflowAction(garbageAccount.getWorkflow().getAction());
+            if (!CollectionUtils.isEmpty(garbageAccount.getWorkflow().getDocuments())) {
+                if (garbageAccount.getDocuments() == null) {
+                    garbageAccount.setDocuments(new ArrayList<>());
+                }
+                garbageAccount.getDocuments().addAll(garbageAccount.getWorkflow().getDocuments());
+            }
         }
         if (garbageAccount.getApplicationStatus() != null) {
             garbageAccount.setStatus(garbageAccount.getApplicationStatus());
@@ -1179,6 +1185,16 @@ public class GarbageAccountService {
                 newGarbageAccount.setBusinessService(businessService);
 
                 if (!updateGarbageRequest.getCreateChildAccountOnly()) {
+                    List<Document> wfDocuments = null;
+                    if (!CollectionUtils.isEmpty(newGarbageAccount.getDocuments())) {
+                        wfDocuments = newGarbageAccount.getDocuments().stream()
+                                .map(doc -> Document.builder()
+                                        .documentType(doc.getDocumentType())
+                                        .fileStoreId(doc.getFileStoreId())
+                                        .documentUid(doc.getDocumentUid())
+                                        .build())
+                                .collect(Collectors.toList());
+                    }
                     ProcessInstance parentProcessInstance = ProcessInstance.builder()
                             .tenantId(newGarbageAccount.getTenantId()).businessService(businessService)
                             .moduleName(GrbgConstants.WORKFLOW_MODULE_NAME)
@@ -1186,7 +1202,9 @@ public class GarbageAccountService {
                             .action(null != newGarbageAccount.getWorkflowAction()
                                     ? newGarbageAccount.getWorkflowAction()
                                     : getStatusOrAction(newGarbageAccount.getStatus(), false))
-                            .comment(newGarbageAccount.getWorkflowComment()).build();
+                            .comment(newGarbageAccount.getWorkflowComment())
+                            .documents(wfDocuments)
+                            .build();
 
                     processInstances.add(parentProcessInstance);
                 }
