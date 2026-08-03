@@ -2,7 +2,6 @@ package org.egov.infra.mdms.service;
 
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.infra.mdms.config.ApplicationConfig;
 import org.egov.infra.mdms.model.*;
 import org.egov.infra.mdms.repository.SchemaDefinitionRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,16 +25,15 @@ public class SchemaDefinitionService {
     private ApplicationConfig applicationConfig;
     private SchemaDefinitionEnricher schemaDefinitionEnricher;
     private SchemaDefinitionValidator schemaDefinitionValidator;
-    private MultiStateInstanceUtil multiStateInstanceUtil;
 
     @Autowired
     public SchemaDefinitionService(SchemaDefinitionRepository schemaDefinitionRepository, ApplicationConfig applicationConfig,
-                                   SchemaDefinitionEnricher schemaDefinitionEnricher, SchemaDefinitionValidator schemaDefinitionValidator, MultiStateInstanceUtil multiStateInstanceUtil){
+                                   SchemaDefinitionEnricher schemaDefinitionEnricher, SchemaDefinitionValidator schemaDefinitionValidator){
         this.schemaDefinitionRepository = schemaDefinitionRepository;
         this.applicationConfig = applicationConfig;
         this.schemaDefinitionEnricher = schemaDefinitionEnricher;
         this.schemaDefinitionValidator = schemaDefinitionValidator;
-        this.multiStateInstanceUtil = multiStateInstanceUtil;
+        
     }
 
     /**
@@ -48,13 +45,15 @@ public class SchemaDefinitionService {
 
         // Set incoming tenantId as state level tenantId as schema is always created at state level
         String tenantId = schemaDefinitionRequest.getSchemaDefinition().getTenantId();
-        schemaDefinitionRequest.getSchemaDefinition().setTenantId(multiStateInstanceUtil.getStateLevelTenant(tenantId));
 
+        // Keep the tenant exactly as received
+        schemaDefinitionRequest.getSchemaDefinition().setTenantId(tenantId);
         // Validate schema create request
         schemaDefinitionValidator.validateCreateRequest(schemaDefinitionRequest);
 
         // Enrich schema create request
         schemaDefinitionEnricher.enrichCreateRequest(schemaDefinitionRequest);
+        schemaDefinitionRequest.getSchemaDefinition().setOperation("CREATE");
 
         // Invoke repository method to emit schema creation event
         schemaDefinitionRepository.create(schemaDefinitionRequest);
@@ -64,11 +63,21 @@ public class SchemaDefinitionService {
 
     public List<SchemaDefinition> delete(SchemaDeleteRequest request) {
 
-        String tenantId =
-                multiStateInstanceUtil.getStateLevelTenant(request.getTenantId());
+        String tenantId = request.getTenantId();
 
-        schemaDefinitionRepository.delete(tenantId, request.getCode());
+        SchemaDefCriteria criteria = SchemaDefCriteria.builder()
+        .tenantId(tenantId)
+        .codes(Arrays.asList(request.getCode()))
+        .build();
 
+List<SchemaDefinition> schemaDefinitions =
+        schemaDefinitionRepository.search(criteria);
+
+if (!schemaDefinitions.isEmpty()) {
+    schemaDefinitionRepository.insertAudit(schemaDefinitions.get(0));
+}
+
+schemaDefinitionRepository.delete(tenantId, request.getCode());
         return Arrays.asList(
                 SchemaDefinition.builder()
                         .tenantId(tenantId)
@@ -86,8 +95,9 @@ public class SchemaDefinitionService {
 
         // Set incoming tenantId as state level tenantId as schema is created at state level
         String tenantId = schemaDefSearchRequest.getSchemaDefCriteria().getTenantId();
-        schemaDefSearchRequest.getSchemaDefCriteria().setTenantId(multiStateInstanceUtil.getStateLevelTenant(tenantId));
 
+        // Keep the tenant exactly as received
+        schemaDefSearchRequest.getSchemaDefCriteria().setTenantId(tenantId);    
         // Fetch schema definitions based on the given criteria
        List<SchemaDefinition> schemaDefinitions =
                 schemaDefinitionRepository.search(schemaDefSearchRequest.getSchemaDefCriteria());

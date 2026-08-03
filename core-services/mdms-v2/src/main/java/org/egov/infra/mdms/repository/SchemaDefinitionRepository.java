@@ -15,6 +15,10 @@ public interface SchemaDefinitionRepository {
 
     void delete(String tenantId, String code);
 
+    void insertAudit(SchemaDefinition schemaDefinition);
+    
+    
+
     public List<SchemaDefinition> search(SchemaDefCriteria schemaDefCriteria);
 
     public Integer getTotalMastersCount(String tenantId);

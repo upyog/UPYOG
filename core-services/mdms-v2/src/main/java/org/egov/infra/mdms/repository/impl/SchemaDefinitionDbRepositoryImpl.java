@@ -39,7 +39,38 @@ public class SchemaDefinitionDbRepositoryImpl implements SchemaDefinitionReposit
         this.schemaDefinitionQueryBuilder = schemaDefinitionQueryBuilder;
     }
 
+    @Override
+public void insertAudit(SchemaDefinition schemaDefinition) {
+    System.out.println("DELETE audit method called");
+    try {
+        System.out.println("Inside Repository insertAudit");
 
+        String sql = "INSERT INTO eg_mdms_schema_definition_audit " +
+                "(id, tenantid, code, description, definition, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime, operation) " +
+                "VALUES (?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(
+                sql,
+                schemaDefinition.getId(),
+                schemaDefinition.getTenantId(),
+                schemaDefinition.getCode(),
+                schemaDefinition.getDescription(),
+                schemaDefinition.getDefinition().toString(),
+                schemaDefinition.getIsActive(),
+                schemaDefinition.getAuditDetails().getCreatedBy(),
+                schemaDefinition.getAuditDetails().getLastModifiedBy(),
+                schemaDefinition.getAuditDetails().getCreatedTime(),
+                schemaDefinition.getAuditDetails().getLastModifiedTime(),
+                "DELETE"
+        );
+        System.out.println("DELETE audit inserted");
+
+        System.out.println("Audit insert successful");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
     /**
      * This method emits schema definition create request on kafka for async persistence
      * @param schemaDefinitionRequest

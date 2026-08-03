@@ -56,6 +56,7 @@ public class MDMSServiceV2 {
 
         // Enrich incoming master data
         mdmsDataEnricher.enrichCreateRequest(mdmsRequest, schemaObject);
+        mdmsRequest.getMdms().setOperation("CREATE");
 
         // Emit MDMS create event to be listened by persister
         mdmsDataRepository.create(mdmsRequest);
@@ -91,15 +92,26 @@ public class MDMSServiceV2 {
         return masterDataList;
     }
 
+    
     public List<Mdms> delete(MdmsRequest mdmsRequest, String schemaCode) {
 
     String tenantId = multiStateInstanceUtil.getStateLevelTenant(
             mdmsRequest.getMdms().getTenantId());
 
+    Mdms existing = mdmsDataRepository.getById(
+            tenantId,
+            mdmsRequest.getMdms().getId());
+
+    if (existing == null) {
+        throw new RuntimeException("Master data not found");
+    }
+
+    mdmsDataRepository.insertAudit(existing);
+
     mdmsDataRepository.delete(tenantId, schemaCode);
 
     return Arrays.asList(mdmsRequest.getMdms());
-    }
+}
 
     /**
      * This method processes the requests that come for master data update.
@@ -116,8 +128,27 @@ public class MDMSServiceV2 {
 
         // Enrich master data update request
         mdmsDataEnricher.enrichUpdateRequest(mdmsRequest);
+        Mdms existing = mdmsDataRepository.getById(
+        mdmsRequest.getMdms().getTenantId(),
+        mdmsRequest.getMdms().getId());
 
+if (existing == null) {
+    throw new RuntimeException("Master data not found");
+}
+
+mdmsRequest.getMdms().setTenantId(existing.getTenantId());
+mdmsRequest.getMdms().setSchemaCode(existing.getSchemaCode());
+mdmsRequest.getMdms().setUniqueIdentifier(existing.getUniqueIdentifier());
+
+mdmsRequest.getMdms().getAuditDetails()
+        .setCreatedBy(existing.getAuditDetails().getCreatedBy());
+
+mdmsRequest.getMdms().getAuditDetails()
+        .setCreatedTime(existing.getAuditDetails().getCreatedTime());
+
+        mdmsRequest.getMdms().setOperation("UPDATE");
         // Emit MDMS update event to be listened by persister
+        
         mdmsDataRepository.update(mdmsRequest);
 
         return Arrays.asList(mdmsRequest.getMdms());

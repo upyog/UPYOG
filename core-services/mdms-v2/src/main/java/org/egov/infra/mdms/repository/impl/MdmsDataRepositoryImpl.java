@@ -65,6 +65,23 @@ public class MdmsDataRepositoryImpl implements MdmsDataRepository {
     }
 
     @Override
+public Mdms getById(String tenantId, String id) {
+
+    MdmsCriteriaV2 criteria = MdmsCriteriaV2.builder()
+            .tenantId(tenantId)
+            .ids(java.util.Collections.singleton(id))
+            .build();
+
+    List<Mdms> mdmsList = searchV2(criteria);
+
+    if (mdmsList == null || mdmsList.isEmpty()) {
+        return null;
+    }
+
+    return mdmsList.get(0);
+}
+
+    @Override
     public void delete(String tenantId, String schemaCode) {
 
     String sql = "DELETE FROM eg_mdms_data WHERE tenantid = ? AND schemacode = ?";
@@ -74,6 +91,29 @@ public class MdmsDataRepositoryImpl implements MdmsDataRepository {
     log.info("Deleted {} MDMS data record(s) for tenantId={}, schemaCode={}",
             deletedRows, tenantId, schemaCode);
     }
+
+    @Override
+public void insertAudit(Mdms mdms) {
+
+    String sql = "INSERT INTO eg_mdms_data_audit " +
+            "(id, tenantid, uniqueidentifier, schemacode, data, isactive, createdby, lastmodifiedby, createdtime, lastmodifiedtime, operation) " +
+            "VALUES (?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?)";
+
+    jdbcTemplate.update(
+            sql,
+            mdms.getId(),
+            mdms.getTenantId(),
+            mdms.getUniqueIdentifier(),
+            mdms.getSchemaCode(),
+            mdms.getData().toString(),
+            mdms.getIsActive(),
+            mdms.getAuditDetails().getCreatedBy(),
+            mdms.getAuditDetails().getLastModifiedBy(),
+            mdms.getAuditDetails().getCreatedTime(),
+            mdms.getAuditDetails().getLastModifiedTime(),
+            "DELETE"
+    );
+}
     /**
      * @param mdmsCriteriaV2
      * @return
