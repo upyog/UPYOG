@@ -3,6 +3,7 @@ import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from 
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import GCApplication from "./gc-application";
+import { getGCStatusOptions } from "../../../utils";
 
 /**
  * GCMyApplications Component
@@ -21,7 +22,7 @@ export const GCMyApplications = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
-  const [appliedFilters, setAppliedFilters] = useState({ mobileNumber: user?.mobileNumber });
+  const [filters, setFilters] = useState(null);
 
   let filter = window.location.href.split("/").pop();
   let t1;
@@ -33,57 +34,42 @@ export const GCMyApplications = () => {
     t1 = 4;
   }
 
-  // Adjust this hook name if your GC search API hook is named differently 
-  // (e.g., useGCSearchApplication or useGarbageSearch)
+  let initialFilters = !isNaN(parseInt(filter))
+    ? { mobileNumber: user?.mobileNumber, limit: "50", offset: off }
+    : { mobileNumber: user?.mobileNumber, limit: "4", offset: "0" };
 
-  const { isLoading, data } = Digit.Hooks.gc.useGCSearch({ 
+  useEffect(() => {
+    setFilters(initialFilters);
+  }, [filter]);
+
+  const { isLoading, data } = Digit.Hooks.gc.useGCSearch({
     tenantId,
-    filters: { ...appliedFilters, limit: t1 }
+    filters: filters || initialFilters,
   });
 
   const handleSearch = () => {
     const trimmedSearchTerm = searchTerm.trim();
-    setAppliedFilters({
-      mobileNumber: user?.mobileNumber,
-      ...(trimmedSearchTerm && { applicationNo: trimmedSearchTerm }),
-      ...(status?.code && { status: status.code, applicationStatus: status.code })
+    setFilters({
+      ...initialFilters,
+      ...(trimmedSearchTerm && { applicationNumber: trimmedSearchTerm }),
+      ...(status?.code && { status: status.code }),
     });
   };
 
   const clearAll = () => {
     setSearchTerm("");
     setStatus(null);
-    setAppliedFilters({ mobileNumber: user?.mobileNumber });
+    setFilters(initialFilters);
   };
 
   if (isLoading) {
     return <Loader />;
   }
 
-  const statusOptions = [
-    { code: "APPLICATION_CREATED", value: t("GC_STATUS_INITIATED") },
-    { code: "PENDINGPAYMENT", value: t("GC_STATUS_PENDINGPAYMENT") },
-    { code: "APPROVED", value: t("GC_STATUS_APPROVED") },
-    { code: "REJECTED", value: t("GC_STATUS_REJECTED") },
-  ];
+  const statusOptions = getGCStatusOptions(t);
 
   let filteredApplications = data?.garbageAccounts || data?.GarbageApplications || data?.data || [];
-
-  // Local filtering to ensure accurate results if backend search parameters are missing or exact-match only
-  if (appliedFilters?.applicationNo) {
-    filteredApplications = filteredApplications.filter((app) => {
-      const appNo = app?.grbgApplication?.applicationNo || app?.applicationNo || "";
-      return appNo.toLowerCase().includes(appliedFilters.applicationNo.toLowerCase());
-    });
-  }
-
-  const searchStatus = appliedFilters?.status || appliedFilters?.applicationStatus;
-  if (searchStatus) {
-    filteredApplications = filteredApplications.filter((app) => {
-      const appStatus = app?.applicationStatus || app?.status || app?.grbgApplication?.status || "";
-      return appStatus === searchStatus;
-    });
-  }
+  const totalCount = data?.applicationCount || data?.count || 0;
 
   return (
     <React.Fragment>
@@ -146,7 +132,7 @@ export const GCMyApplications = () => {
           <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("GC_NO_APPLICATION_FOUND_MSG")}</p>
         )}
 
-        {filteredApplications.length !== 0 && data?.count > t1 && (
+        {filteredApplications.length !== 0 && totalCount >= t1 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">

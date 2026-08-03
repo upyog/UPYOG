@@ -91,6 +91,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .businessService(rs.getString("business_service"))
                         .approvalDate(rs.getLong("approval_date"))
                         .channel(rs.getString("channel"))
+                        .dueDate(rs.getDate("due_date") != null ? rs.getDate("due_date").toLocalDate() : null)
                         .build();
 
                 accountsMap.put(accountId, garbageAccount);

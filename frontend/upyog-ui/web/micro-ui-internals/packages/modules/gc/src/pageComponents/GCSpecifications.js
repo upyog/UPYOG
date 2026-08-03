@@ -89,7 +89,7 @@ const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) =
     const [typeOfCollection, setTypeOfCollection] = useState(specsData.typeOfCollection || convertToObject(renewApplication?.grbgCollectionUnits?.[0]?.unitType) || "");
     const [propertyOwnerType, setPropertyOwnerType] = useState(specsData.propertyOwnerType || convertToObject(renewApplication?.grbgCollectionUnits?.[0]?.ownerType) || "");
     const [name, setName] = useState(specsData.name || renewApplication?.name || "");
-    const [phoneNumber, setPhoneNumber] = useState(specsData.phoneNumber || renewApplication?.mobileNumber || "");
+    const [phoneNumber, setPhoneNumber] = useState(specsData.phoneNumber || renewApplication?.mobileNumber || user?.mobileNumber || "");
     const [gender, setGender] = useState(specsData.gender || convertToObject(renewApplication?.gender) || "");
     const [email, setEmail] = useState(specsData.email || renewApplication?.emailId || "");
     const [category, setCategory] = useState(specsData.category || convertToObject(renewApplication?.grbgCollectionUnits?.[0]?.category) || "");

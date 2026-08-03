@@ -256,8 +256,8 @@ const jsPdfGenerator = async ({ breakPageLimit = null, tenantId, logo, name, ema
   else if (applicationNumber !== undefined && applicationNumber.split("-")[1] === "BP") {
     ack = "BPA-AckForm"
   }
-  else if (applicationNumber !== undefined && applicationNumber.split("-")[1] === "GC") {
-    ack = "GC-AckForm"
+  else if (applicationNumber !== undefined && applicationNumber.split("-")[0] === "GC") {
+    ack = "Garbage-AckForm"
   }
   else if (applicationNumber === undefined) {
     module = details[0]?.values[0]?.value

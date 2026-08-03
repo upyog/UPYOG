@@ -117,7 +117,7 @@ function GCSelectDocument({
     const [selectedDocument, setSelectedDocument] = useState(() => {
         if (filteredDocument && doc?.hasDropdown) {
             const childCode = filteredDocument.documentType.split('.').pop();
-            return dropDownData.find(e => e.code === childCode) || dropDownData[0] || { code: childCode };
+            return dropDownData.find(e => e.code?.split('.').pop() === childCode) || dropDownData[0] || {};
         } else if (doc?.hasDropdown && dropDownData.length > 0) {
             return dropDownData[0];
         }
@@ -139,7 +139,8 @@ function GCSelectDocument({
 
     useEffect(() => {
         if (selectedDocument?.code || (!doc?.hasDropdown && doc?.code)) {
-            const docCode = doc?.hasDropdown ? `${doc?.code}.${selectedDocument?.code}` : doc?.code;
+            const childCode = selectedDocument?.code?.split('.').pop();
+            const docCode = doc?.hasDropdown ? `${doc?.code}.${childCode}` : doc?.code;
             setDocuments((prev) => {
                 const filteredDocumentsByDocumentType = prev?.filter((item) => !item?.documentType?.startsWith(doc?.code));
 
