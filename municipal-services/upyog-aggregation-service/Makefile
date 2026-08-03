@@ -15,7 +15,7 @@ all: lint test build
 
 # Build the binary
 build:
-	$(GO) build $(GOFLAGS) $(LDFLAGS) -o bin/$(APP_NAME) ./cmd/server/
+	$(GO) build $(GOFLAGS) $(LDFLAGS) -o bin/$(APP_NAME) .
 
 # Run locally
 run: build
@@ -53,7 +53,7 @@ vet:
 
 # Generate Swagger docs (requires swag: go install github.com/swaggo/swag/cmd/swag@latest)
 swagger:
-	swag init -g cmd/server/main.go -o docs/swagger --parseDependency --parseInternal
+	swag init -g main.go -o docs/swagger --parseDependency --parseInternal
 
 # Tidy dependencies
 tidy:

@@ -51,6 +51,7 @@ func Load(configPath string) (*Config, error) {
 func setDefaults(v *viper.Viper) {
 	// Server defaults.
 	v.SetDefault("server.port", 8080)
+	v.SetDefault("server.contextPath", "")
 	v.SetDefault("server.readTimeout", 30*time.Second)
 	v.SetDefault("server.writeTimeout", 30*time.Second)
 	v.SetDefault("server.idleTimeout", 120*time.Second)
