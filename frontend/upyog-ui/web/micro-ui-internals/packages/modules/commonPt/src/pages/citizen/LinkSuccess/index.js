@@ -4,15 +4,15 @@ import {
   Row,
   StatusTable,
   SubmitBar,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 
 const PropertyLinkSuccess = ({ onSelect }) => {
   const { t } = useTranslation();
   const { propertyIds } = useParams();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const onSubmit = () => {
     if(onSelect) {
@@ -53,7 +53,7 @@ const PropertyLinkSuccess = ({ onSelect }) => {
             <SubmitBar
               submit={false}
               label={t("PT_PROPERTY_CREATE")}
-              onSubmit={() => history.push('/upyog-ui/citizen/commonPt/property/new-application')}
+              onSubmit={() => navigate('/upyog-ui/citizen/commonPt/property/new-application')}
             />
           }
         </Card>

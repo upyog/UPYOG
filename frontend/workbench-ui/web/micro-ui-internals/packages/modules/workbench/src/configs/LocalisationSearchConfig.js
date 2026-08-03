@@ -82,16 +82,7 @@ export const Config = {
             populators: { 
                 name: "codes",
             }
-          },
-          // {
-          //   label: "WBH_LOC_MESSAGE",
-          //   type: "text",
-          //   isMandatory: false,
-          //   disable: false,
-          //   populators: { 
-          //       name: "message",
-          //   }
-          // },
+          }
         ],
       },
       label: "",
@@ -121,8 +112,6 @@ export const Config = {
           },
           {
             label: "CS_COMMON_ACTION",
-            // jsonPath: "message",
-            // type:"action",
             svg:"EditIcon",
           },
         ],

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowForward } from "@upyog/digit-ui-react-components";
+import { ArrowForward } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const FAQComponent = props => {

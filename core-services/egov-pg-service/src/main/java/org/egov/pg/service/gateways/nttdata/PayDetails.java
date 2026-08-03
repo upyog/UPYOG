@@ -8,7 +8,7 @@ public class PayDetails {
 
 	
 	
-	//private List<ProdDetails> prodDetails;
+	private List<ProdDetails> prodDetails;
 	private String product;
 	private String amount;
 	private String	surchargeAmount;
@@ -19,7 +19,7 @@ public class PayDetails {
 	private String txnCurrency;
 	private String signature;
 	private String atomTxnId;
-	private String totalRefundAmount;
+	private Double totalRefundAmount;
 	private String txnInitDate;
 	private String txnCompleteDate;
 	public String getTxnInitDate() {
@@ -40,10 +40,10 @@ public class PayDetails {
 	public void setAtomTxnId(String atomTxnId) {
 		this.atomTxnId = atomTxnId;
 	}
-	public String getTotalRefundAmount() {
+	public Double getTotalRefundAmount() {
 		return totalRefundAmount;
 	}
-	public void setTotalRefundAmount(String totalRefundAmount) {
+	public void setTotalRefundAmount(Double totalRefundAmount) {
 		this.totalRefundAmount = totalRefundAmount;
 	}
 
@@ -97,7 +97,7 @@ public class PayDetails {
 	}
 	@Override
 	public String toString() {
-		return "PayDetails [product=" + product + ", amount=" + amount + ", surchargeAmount=" + surchargeAmount
+		return "PayDetails [prodFetails= "+ prodDetails+", product=" + product + ", amount=" + amount + ", surchargeAmount=" + surchargeAmount
 				+ ", totalAmount=" + totalAmount + ", custAccNo=" + custAccNo + ", custAccIfsc=" + custAccIfsc
 				+ ", clientCode=" + clientCode + ", txnCurrency=" + txnCurrency + ", signature=" + signature
 				+ ", atomTxnId=" + atomTxnId + ", totalRefundAmount=" + totalRefundAmount + ", txnInitDate="
@@ -107,6 +107,7 @@ public class PayDetails {
 				+ ", getAmount()=" + getAmount() + ", getSurchargeAmount()=" + getSurchargeAmount()
 				+ ", getTotalAmount()=" + getTotalAmount() + ", getCustAccNo()=" + getCustAccNo()
 				+ ", getCustAccIfsc()=" + getCustAccIfsc() + ", getClientCode()=" + getClientCode()
+				+", getProdDetails() = "+ getProdDetails()
 				+ ", getTxnCurrency()=" + getTxnCurrency() + ", getSignature()=" + getSignature() + ", getClass()="
 				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
 	}
@@ -115,6 +116,13 @@ public class PayDetails {
 	}
 	public void setProduct(String product) {
 		this.product = product;
+	}
+	
+	public List<ProdDetails> getProdDetails() {
+		return prodDetails;
+	}
+	public void setProdDetails(List<ProdDetails> prodDetails) {
+		this.prodDetails = prodDetails;
 	}
 
 }

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import ApplicationDetailsContent from "./components/ApplicationDetailsContent";
 import ApplicationDetailsToast from "./components/ApplicationDetailsToast";
 import ApplicationDetailsActionBar from "./components/ApplicationDetailsActionBar";
@@ -16,7 +16,7 @@ const ApplicationDetails = (props) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   let { id: applicationNumber } = useParams();
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
@@ -68,12 +68,23 @@ const ApplicationDetails = (props) => {
         setWarningPopUp(true);
       } else if (action?.redirectionUrll) {
         if (action?.redirectionUrll?.action === "ACTIVATE_CONNECTION") {
-          // window.location.assign(`${window.location.origin}digit-ui/employee/ws/${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
-
-          history.push(`${action?.redirectionUrll?.pathname}`, JSON.stringify({ data: action?.redirectionUrll?.state, url: `${location?.pathname}${location.search}` }));
+          navigate(
+            action?.redirectionUrll?.pathname,
+            {
+              state: {
+                data: action?.redirectionUrll?.state,
+                url: `${location?.pathname}${location.search}`,
+              },
+            }
+          );
         }
         else if (action?.redirectionUrll?.action === "RE-SUBMIT-APPLICATION"){
-          history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
+          navigate(
+            action?.redirectionUrll?.pathname,
+            {
+              state: action?.redirectionUrll?.state,
+            }
+          );
         }
         else {
           window.location.assign(`${window.location.origin}/upyog-ui/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
@@ -81,8 +92,7 @@ const ApplicationDetails = (props) => {
       } else if (!action?.redirectionUrl) {
         setShowModal(true);
       } else {
-        history.push({
-          pathname: action.redirectionUrl?.pathname,
+        navigate(action.redirectionUrl?.pathname, {
           state: { ...action.redirectionUrl?.state },
         });
       }
@@ -103,90 +113,97 @@ const ApplicationDetails = (props) => {
   };
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
-    if(data?.Property?.workflow?.comment?.length == 0 || data?.Licenses?.[0]?.comment?.length == 0 || data?.WaterConnection?.comment?.length == 0 || data?.SewerageConnection?.comment?.length == 0 || data?.BPA?.comment?.length == 0)
-    {
-     alert("Please fill in the comments before submitting")
+    // Check if comment field exists in workflow and validate it
+    // const workflow = data?.Property?.workflow || data?.Licenses?.[0]?.workflow || data?.WaterConnection?.workflow || data?.SewerageConnection?.workflow || data?.BPA?.workflow;
+    
+    // console.log('submitAction data:', data);
+    // console.log('workflow:', workflow);
+    // console.log('workflow.comment:', workflow?.comment);
+    // console.log('hasOwnProperty comment:', workflow?.hasOwnProperty('comment'));
+    
+    // if(workflow && workflow.hasOwnProperty('comment') && (!workflow.comment || workflow.comment?.trim()?.length === 0))
+    // {
+    //  alert("Please fill in the comments before submitting")
+    //  return;
+    // }
+    
+    setIsEnableLoader(true);
+    if (typeof data?.customFunctionToExecute === "function") {
+      data?.customFunctionToExecute({ ...data });
     }
-    else{
-      setIsEnableLoader(true);
-      if (typeof data?.customFunctionToExecute === "function") {
-        data?.customFunctionToExecute({ ...data });
-      }
-      if (nocData !== false && nocMutation) {
-        const nocPrmomises = nocData?.map((noc) => {
-          return nocMutation?.mutateAsync(noc);
-        });
-        try {
-          setIsEnableLoader(true);
-          const values = await Promise.all(nocPrmomises);
-          values &&
-            values.map((ob) => {
-              Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
-            });
-        } catch (err) {
-          setIsEnableLoader(false);
-          let errorValue = err?.response?.data?.Errors?.[0]?.code
-            ? t(err?.response?.data?.Errors?.[0]?.code)
-            : err?.response?.data?.Errors?.[0]?.message || err;
-          closeModal();
-          setShowToast({ key: "error", error: { message: errorValue } });
-          setTimeout(closeToast, 5000);
-          return;
-        }
-      }
-      sessionStorage.setItem("updateData",JSON.stringify(data))
-      if (mutate) {
+    if (nocData !== false && nocMutation) {
+      const nocPrmomises = nocData?.map((noc) => {
+        return nocMutation?.mutateAsync(noc);
+      });
+      try {
         setIsEnableLoader(true);
-        mutate(data, {
-          onError: (error, variables) => {
-            setIsEnableLoader(false);
-            setShowToast({ key: "error", error });
-            setTimeout(closeToast, 5000);
-          },
-          onSuccess: (data, variables) => {
-            sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
-            setIsEnableLoader(false);
-            if (isOBPS?.bpa) {
-             // data.selectedAction = selectedAction;
-              history.replace(`/upyog-ui/employee/obps/response`, { data: data });
-            }
-            if (isOBPS?.isStakeholder) {
-             // data.selectedAction = selectedAction;
-              history.push(`/upyog-ui/employee/obps/stakeholder-response`, { data: data });
-            }
-            if (isOBPS?.isNoc) {
-              history.push(`/upyog-ui/employee/noc/response`, { data: data });
-            }
-            if (data?.Amendments?.length > 0) {
-              //RAIN-6981 instead just show a toast here with appropriate message
-              //show toast here and return 
-              //history.push("/upyog-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
-  
-              if (variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")) {
-                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS") })
-              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")) {
-                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
-              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")) {
-                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
-              }
-              else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")) {
-                setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
-              }
-              return
-            }
-            setShowToast({ key: "success", action: selectedAction });
-            clearDataDetails && setTimeout(clearDataDetails, 3000);
-            setTimeout(closeToast, 5000);
-            queryClient.clear();
-            queryClient.refetchQueries("APPLICATION_SEARCH");
-            //push false status when reject
-  
-          },
-        });
+        const values = await Promise.all(nocPrmomises);
+        values &&
+          values.map((ob) => {
+            Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
+          });
+      } catch (err) {
+        setIsEnableLoader(false);
+        let errorValue = err?.response?.data?.Errors?.[0]?.code
+          ? t(err?.response?.data?.Errors?.[0]?.code)
+          : err?.response?.data?.Errors?.[0]?.message || err;
+        closeModal();
+        setShowToast({ key: "error", error: { message: errorValue } });
+        setTimeout(closeToast, 5000);
+        return;
       }
-      closeModal();
     }
-  
+    sessionStorage.setItem("updateData",JSON.stringify(data))
+    if (mutate) {
+      setIsEnableLoader(true);
+      mutate(data, {
+        onError: (error, variables) => {
+          setIsEnableLoader(false);
+          setShowToast({ key: "error", error });
+          setTimeout(closeToast, 5000);
+        },
+        onSuccess: (data, variables) => {
+          sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
+          setIsEnableLoader(false);
+          if (isOBPS?.bpa) {
+           // data.selectedAction = selectedAction;
+            navigate(`/upyog-ui/employee/obps/response`, { replace: true, state: { data: data } });
+          }
+          if (isOBPS?.isStakeholder) {
+           // data.selectedAction = selectedAction;
+            navigate(`/upyog-ui/employee/obps/stakeholder-response`, { state: { data: data } });
+          }
+          if (isOBPS?.isNoc) {
+            navigate(`/upyog-ui/employee/noc/response`, { state: { data: data } });
+          }
+          if (data?.Amendments?.length > 0) {
+            //RAIN-6981 instead just show a toast here with appropriate message
+            //show toast here and return 
+            //navigate("/upyog-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
+
+            if (variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")) {
+              setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS") })
+            } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")) {
+              setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
+            } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")) {
+              setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
+            }
+            else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")) {
+              setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
+            }
+            return
+          }
+          setShowToast({ key: "success", action: selectedAction });
+          clearDataDetails && setTimeout(clearDataDetails, 3000);
+          setTimeout(closeToast, 5000);
+          queryClient.clear();
+          queryClient.refetchQueries("APPLICATION_SEARCH");
+          //push false status when reject
+
+        },
+      });
+    }
+    closeModal();
   };
 
   if (isLoading || isEnableLoader) {

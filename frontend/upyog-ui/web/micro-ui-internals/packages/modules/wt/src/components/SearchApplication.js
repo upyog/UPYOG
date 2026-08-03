@@ -1,7 +1,7 @@
-  import React, { useCallback, useMemo, useEffect} from "react"
+import React, { useCallback, useMemo } from "react"
   import { useForm, Controller } from "react-hook-form";
-  import { TextInput, SubmitBar, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, Header } from "@upyog/digit-ui-react-components";
-  import { Link} from "react-router-dom";
+  import { TextInput, SubmitBar, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
+  import { Link } from "react-router-dom";
   import { APPLICATION_PATH} from "../utils";
 
   /**
@@ -22,23 +22,22 @@
  * @param {Function} props.setShowToast - Function to control toast messages.
  */
 
-  const WTSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast, moduleCode }) => {
+  const WTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, count, setShowToast, moduleCode }) => {
     
       const isMobile = window.Digit.Utils.browser.isMobile();
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
+              bookingNo: "",
+              status: undefined,
+              mobileNumber: "",
+              fromDate: "",
+              toDate: "",
               offset: 0,
               limit: !isMobile && 10,
               sortBy: "commencementDate",
-              sortOrder: "DESC",
+              sortOrder: "DESC"
           }
       })
-      useEffect(() => {
-        register("offset", 0)
-        register("limit", 10)
-        register("sortBy", "commencementDate")
-        register("sortOrder", "DESC")
-      },[register])
       const user = Digit.UserService.getUser().info;
       const GetCell = (value) => <span className="cell-text">{value}</span>;
     
@@ -52,16 +51,12 @@
                 return (
                   <div>
                     <span className="link">
-                    {user.type === "CITIZEN" && (
-                      <Link to={`${APPLICATION_PATH}/citizen/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
+                    {user.type === "CITIZEN" && <Link to={`${APPLICATION_PATH}/citizen/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
                         {row.original["bookingNo"]}
-                      </Link>
-                    )}
-                     {user.type === "EMPLOYEE" && (
-                      <Link to={`${APPLICATION_PATH}/employee/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
+                      </Link>}
+                     {user.type === "EMPLOYEE" && <Link to={`${APPLICATION_PATH}/employee/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
                         {row.original["bookingNo"]}
-                      </Link>
-                    )}
+                      </Link>}
                     </span>
                   </div>
                 );
@@ -94,10 +89,16 @@
             },
             
         ]), [] )
-        const statusOptions = [
+        const statusOptionForWaterTanker = [
           { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
           { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
           { i18nKey: "Tanker Delivered", code: "TANKER_DELIVERED", value: t("WT_TANKER_DELIVERED") },
+        ];
+
+        const statusOptionForMobileToilet = [
+          { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
+          { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
+          { i18nKey: "Mobile Toilet Delivered", code: "MOBILE_TOILET_DELIVERED", value: t("MT_MOBILE_TOILET_DELIVERED") },
         ];
 
         const statusOptionForTreePruning = [
@@ -151,33 +152,51 @@
 
       return <React.Fragment>
                   
-                  <div style={{ padding: user?.type === "CITIZEN" ? "0 24px 0 24px" : ""}}>
+                  <div style={{
+      padding: user?.type === "CITIZEN" ? "0 24px 0 24px" : ""
+    }}>
                   <Header>{t("WT_SEARCH_BOOKINGS")}</Header>
-                  { user?.type === "EMPLOYEE" && (
-                  <Card className={"card-search-heading"}>
-                      <span style={{color:"#505A5F"}}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
-                  </Card>
-                  )}
-                  { user?.type === "CITIZEN" && (
-                      <span style={{color:"#505A5F", marginBottom:"10px"}}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
-                  )}
+                  {user?.type === "EMPLOYEE" && <Card className={"card-search-heading"}>
+                      <span className="wt-auto-5">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
+                  </Card>}
+                  {user?.type === "CITIZEN" && <span className="wt-auto-6">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>}
 
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
                       <label>{t("WT_BOOKING_NO")}</label>
-                      <TextInput name="bookingNo" inputRef={register({})} />
+                      <Controller
+                        control={control}
+                        name="bookingNo"
+                        render={({ field }) => (
+                            <TextInput
+                                name={field.name}
+                                value={field.value}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                                inputRef={field.ref}
+                            />
+                        )}
+                    />
                   </SearchField>
                   <SearchField>
                       <label>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</label>
                       <Controller
                               control={control}
                               name="status"
-                              render={(props) => (
+                              render={({ field }) => (
                                   <Dropdown
-                                  selected={props.value}
-                                  select={props.onChange}
-                                  onBlur={props.onBlur}
-                                  option={moduleCode==="TP"? statusOptionForTreePruning : statusOptions}
+                                  selected={field.value}
+                                  select={field.onChange}
+                                  onBlur={field.onBlur}
+                                  option={
+                                    moduleCode === "TP"
+                                      ? statusOptionForTreePruning
+                                      : moduleCode === "WT"
+                                      ? statusOptionForWaterTanker
+                                      : moduleCode === "MT"
+                                      ? statusOptionForMobileToilet
+                                      : []
+                                  }
                                   optionKey="i18nKey"
                                   t={t}
                                   disable={false}
@@ -188,33 +207,39 @@
                   </SearchField>
                   <SearchField>
                   <label>{t("WT_MOBILE_NUMBER")}</label>
-                  <MobileNumber
-                      name="mobileNumber"
-                      inputRef={register({
-                      minLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      maxLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      pattern: {
-                      value: /[6789][0-9]{9}/,
-                      //type: "tel",
-                      message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                  })}
-                  type="number"
-                  componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-                  maxlength={10}
-                  />
+                  <Controller
+                    control={control}
+                    name="mobileNumber"
+                    rules={{
+                        minLength: {
+                            value: 10,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                        maxLength: {
+                            value: 10,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                        pattern: {
+                            value: /[6789][0-9]{9}/,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                    }}
+                    render={({ field }) => (
+                        <MobileNumber
+                            name={field.name}
+                            value={field.value}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            inputRef={field.ref}
+                        />
+                    )}
+                />
                   <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                   </SearchField> 
                   <SearchField>
                       <label>{t("FROM_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange}  max={new Date().toISOString().split('T')[0]}/>}
+                          render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange}  max={new Date().toISOString().split('T')[0]}/>}
                           name="fromDate"
                           control={control}
                           />
@@ -222,7 +247,7 @@
                   <SearchField>
                       <label>{t("TO_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
                           name="toDate"
                           control={control}
                           />
@@ -234,7 +259,6 @@
                       onClick={() => {
                           reset({ 
                               bookingNo: "", 
-                              communityHallCode: "",
                               fromDate: "", 
                               toDate: "",
                               mobileNumber:"",
@@ -245,46 +269,27 @@
                               sortOrder: "DESC"
                           });
                           setShowToast(null);
-                          previousPage();
+                          onClear();
                       }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField>
               </SearchForm>
-              {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
-                  {
-                  t(data.display)
-                      .split("\\n")
-                      .map((text, index) => (
-                      <p key={index} style={{ textAlign: "center" }}>
+              {!isLoading && data?.display ? <Card className="wt-auto-8">
+                  {t(data.display).split("\\n").map((text, index) => <p key={index} className="wt-auto-9">
                           {text}
-                      </p>
-                      ))
-                  }
-              </Card>
-              :(!isLoading && data !== ""? <Table
-                  t={t}
-                  data={data}
-                  totalRecords={count}
-                  columns={columns}
-                  getCellProps={(cellInfo) => {
-                  return {
-                      style: {
-                      minWidth: cellInfo.column.Header === t("WT_INBOX_APPLICATION_NO") ? "240px" : "",
-                      padding: "20px 18px",
-                      fontSize: "16px"
-                    },
-                  };
-                  }}
-                  onPageSizeChange={onPageSizeChange}
-                  currentPage={getValues("offset")/getValues("limit")}
-                  onNextPage={nextPage}
-                  onPrevPage={previousPage}
-                  pageSizeLimit={getValues("limit")}
-                  onSort={onSort}
-                  disableSort={false}
-                  sortParams={[{id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false}]}
-              />: data !== "" || isLoading && <Loader/>)}
+                      </p>)}
+              </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+        return {
+          style: {
+            minWidth: cellInfo.column.Header === t("WT_INBOX_APPLICATION_NO") ? "240px" : "",
+            padding: "20px 18px",
+            fontSize: "16px"
+          }
+        };
+      }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
+        id: getValues("sortBy"),
+        desc: getValues("sortOrder") === "DESC" ? true : false
+      }]} /> : data !== "" || isLoading && <Loader />}
               </div>
-          </React.Fragment>
-  }
-
-  export default WTSearchApplication;
+          </React.Fragment>;
+};
+export default WTSearchApplication;

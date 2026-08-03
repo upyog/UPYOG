@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "../../common/queryClientTemplate";
 import { FSMService } from "../../services/elements/FSM";
 import { PTService } from "../../services/elements/PT";
 import { CHBServices } from "../../services/elements/CHB";
 import { PTRService } from "../../services/elements/PTR";
-import { SVService } from "../../services/elements/SV";
 import { EwService } from "../../services/elements/EW";
 import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
@@ -13,6 +13,7 @@ import { MTService } from "../../services/elements/MT";
 import { WTService } from "../../services/elements/WT";
 import { TPService } from "../../services/elements/TP";
 import { PGRAIService } from "../../services/elements/PGRAI";
+import { GCServices } from "../../services/elements/GC"
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -46,14 +47,6 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "applicationNo",
     fetchFilters: filterFunctions.FSM,
     _searchFn: () => FSMService.search(tenantId, filters),
-  },
-  SV: {
-    services: ["street-vending"],
-    searchResponseKey: "SVDetails",
-    businessIdsParamForSearch: "applicationNo",
-    businessIdAliasForSearch: "applicationNo",
-    fetchFilters: filterFunctions.SV,
-    _searchFn: () => SVService.search({ tenantId, filters }),
   },
   EW: {
     services: ["ewst"],
@@ -96,6 +89,15 @@ const inboxConfig = (tenantId, filters) => ({
       fetchFilters: filterFunctions.TP,
       _searchFn: () => TPService.search({ tenantId, filters }),
     },
+
+  GC: {
+    services: ["garbage-service"],
+    searchResponseKey: "garbageCollectionBookingDetail",
+    businessIdsParamForSearch: "applicationNumber",
+    businessIdAliasForSearch: "applicationNumber",
+    fetchFilters: filterFunctions.GC,
+    _searchFn: () => GCServices.search({ tenantId, filters}),
+  },
     /**
  * PGRAI Workflow Module Configuration
  *
@@ -134,40 +136,31 @@ const callMiddlewares = async (data, middlewares) => {
 const useNewInboxGeneral = ({ tenantId, ModuleCode, filters, middleware = [], config = {} }) => {
   const client = useQueryClient();
   const { t } = useTranslation();
-  const { fetchFilters, searchResponseKey, businessIdAliasForSearch, businessIdsParamForSearch } = inboxConfig()[ModuleCode];
+  const { fetchFilters, searchResponseKey, businessIdAliasForSearch, businessIdsParamForSearch } = inboxConfig(tenantId, filters)[ModuleCode];
   let { workflowFilters, searchFilters, limit, offset, sortBy, sortOrder,isDraftApplication } = fetchFilters(filters);
 
-  const query = useQuery(
-    ["INBOX", workflowFilters, searchFilters, ModuleCode, limit, offset, sortBy, sortOrder],
-    () =>
+  const query = queryTemplate({
+    queryKey: ["INBOX", workflowFilters, searchFilters, ModuleCode, limit, offset, sortBy, sortOrder],
+    queryFn: () =>
       InboxGeneral.Search({
-        inbox: { tenantId, processSearchCriteria: workflowFilters, moduleSearchCriteria: { ...searchFilters, sortBy, sortOrder,isDraftApplication }, limit, offset },
+        inbox: { tenantId, processSearchCriteria: workflowFilters, moduleSearchCriteria: { ...searchFilters, sortBy, sortOrder, isDraftApplication }, limit, offset },
       }),
-    {
-      select: (data) => {
-        const { statusMap, totalCount } = data;
-        // client.setQueryData(`INBOX_STATUS_MAP_${ModuleCode}`, (oldStatusMap) => {
-        //   if (!oldStatusMap) return statusMap;
-        //   else return [...oldStatusMap.filter((e) => statusMap.some((f) => f.stateId === e.stateId))];
-        // });
-
-        client.setQueryData(`INBOX_STATUS_MAP_${ModuleCode}`, statusMap);
-
-        if (data.items.length) {
-          return data.items?.map((obj) => ({
-            searchData: obj.businessObject,
-            workflowData: obj.ProcessInstance,
-            statusMap,
-            totalCount,
-          }));
-        } else {
-          return [{ statusMap, totalCount, dataEmpty: true }];
-        }
-      },
-      retry: false,
-      ...config,
-    }
-  );
+    select: (data) => {
+      const { statusMap, totalCount } = data;
+      client.setQueryData(`INBOX_STATUS_MAP_${ModuleCode}`, statusMap);
+      if (data.items.length) {
+        return data.items?.map((obj) => ({
+          searchData: obj.businessObject,
+          workflowData: obj.ProcessInstance,
+          statusMap,
+          totalCount,
+        }));
+      } else {
+        return [{ statusMap, totalCount, dataEmpty: true }];
+      }
+    },
+    config: { retry: false, ...config },
+  });
 
   return {
     ...query,

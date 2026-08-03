@@ -50,7 +50,7 @@ package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.joda.time.DateTime;
 
 import javax.persistence.Entity;

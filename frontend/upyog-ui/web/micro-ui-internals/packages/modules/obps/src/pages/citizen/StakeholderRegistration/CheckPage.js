@@ -12,17 +12,17 @@ import {
   BackButton,
   EditIcon,
   CardText,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch } from "react-router-dom";
+
 import Timeline from "../../../components/Timeline";
 import OBPSDocument from "../../../pageComponents/OBPSDocuments";
 
 const CheckPage = ({ onSubmit, value }) => {
   const { t } = useTranslation();
-  const history = useHistory();
-  const match = useRouteMatch();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const match = Digit.Hooks.useModuleBasePath();
   let user = Digit.UserService.getUser();
   const tenantId = user && user?.info && user?.info?.permanentCity ? user?.info?.permanentCity : Digit.ULBService.getCurrentTenantId();
   const tenant = Digit.ULBService.getStateId();
@@ -50,7 +50,7 @@ const CheckPage = ({ onSubmit, value }) => {
   let routeLink = isopenlink ? `/upyog-ui/citizen/obps/openlink/stakeholder/apply` : `/upyog-ui/citizen/obps/stakeholder/apply`;
 
   function routeTo(jumpTo) {
-    history.push(jumpTo);
+    navigate(jumpTo);
   }
 
   return (

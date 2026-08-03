@@ -45,11 +45,11 @@ const CNDDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     result =
       (EmptyInboxComp && <EmptyInboxComp data={data} />) ||
       (data?.length === 0 || (useNewInboxAPI && data?.[0].dataEmpty) ? (
-        <Card style={cndStyles.clearButton}>
+        <Card className="cnd-desktop-inbox-clear-btn">
           {t("CS_MYAPPLICATIONS_NO_APPLICATION")
             .split("\\n")
             .map((text, index) => (
-              <p key={index} style={cndStyles.noInboxApplication}>
+              <p key={index} className="cnd-desktop-inbox-no-data-text">
                 {text}
               </p>
             ))}

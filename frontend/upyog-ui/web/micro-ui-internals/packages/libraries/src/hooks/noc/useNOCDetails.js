@@ -1,13 +1,37 @@
+import { queryTemplate } from "../../common/queryTemplate";
 import { NOCSearch } from "../../services/molecules/NOC/Search";
-import { useQuery } from "react-query";
 
-const useNOCDetails = (t, tenantId, applicationNumber, config = {}, userType) => {
-  let EditRenewalApplastModifiedTime = Digit.SessionStorage.get("EditRenewalApplastModifiedTime");
-  return useQuery(
-    ["APPLICATION_SEARCH", "NOC_SEARCH", applicationNumber, userType, EditRenewalApplastModifiedTime],
-    () => NOCSearch.applicationDetails(t, tenantId, applicationNumber, userType),
-    config
-  );
+const useNOCDetails = (
+  t,
+  tenantId,
+  applicationNumber,
+  config = {},
+  userType
+) => {
+  const EditRenewalApplastModifiedTime =
+    Digit.SessionStorage.get("EditRenewalApplastModifiedTime");
+
+  const queryKey = [
+    "NOC_APPLICATION_DETAIL",
+    tenantId,
+    applicationNumber,
+    userType,
+    EditRenewalApplastModifiedTime,
+  ];
+
+  const queryFn = () =>
+    NOCSearch.applicationDetails(
+      t,
+      tenantId,
+      applicationNumber,
+      userType
+    );
+
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    config,
+  });
 };
 
 export default useNOCDetails;

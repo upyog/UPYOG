@@ -57,10 +57,10 @@ pt_closed_applications = {'path': 'property-services/_search',
                  "field": "Data.tenantId.keyword",
                  "size":10000
                }},
-               "aggs": {{
-               "region": {{
+              "aggs": {{
+              "region": {{
                  "terms": {{
-                   "field": "Data.tenantData.city.districtName.keyword",
+                   "field": "Data.tenantData.city.name.keyword",
                    "size":10000
                  }},
                            "aggs": {{
@@ -130,7 +130,7 @@ pt_total_applications = {'path': 'property-services/_search',
               "aggs": {{
               "region": {{
                 "terms": {{
-                  "field": "Data.tenantData.city.districtName.keyword",
+                  "field": "Data.tenantData.city.name.keyword",
                   "size":10000
                 }},
                 "aggs": {{
@@ -237,7 +237,7 @@ pt_collection_transactions_by_usage = {'path': 'dss-collection_v2/_search',
                             "aggs": {{
                             "region": {{
                               "terms": {{
-                                "field": "dataObject.tenantData.city.districtName.keyword",
+                                "field": "dataObject.tenantData.city.name.keyword",
                                 "size":10000
                               }},
           
@@ -372,7 +372,7 @@ pt_collection_taxes = {'path': 'dss-collection_v2/_search',
             "aggs": {{
             "region": {{
               "terms": {{
-                "field": "dataObject.tenantData.city.districtName.keyword",
+                "field": "dataObject.tenantData.city.name.keyword",
                 "size":10000
               }},
                "aggs": {{
@@ -490,23 +490,20 @@ pt_collection_taxes = {'path': 'dss-collection_v2/_search',
                        }
 
 def extract_pt_collection_cess(metrics, region_bucket):
-    groupby_transactions = []
-    groupby_collections = []
-    collections =  []
-    transactions = []
+    groupby_cess = []
+    cess = []
 
     if region_bucket.get('byUsageType'):
         usage_buckets = region_bucket.get('byUsageType').get('buckets')
         for usage_bucket in usage_buckets:
             usage = usage_bucket.get('key')
-            transaction_value = usage_bucket.get('all_matching_docs').get('buckets').get('all').get('cess').get('value') if usage_bucket.get('all_matching_docs').get('buckets').get('all').get('cess').get('value')  else 0
-            groupby_transactions.append({ 'name' : usage.upper(), 'value' : transaction_value})
+            all_docs = usage_bucket.get('all_matching_docs', {}).get('buckets', {}).get('all', {})
+            cess_bucket = all_docs.get('cess')
+            cess_value = cess_bucket.get('value') if cess_bucket else 0
+            groupby_cess.append({'name': usage.upper(), 'value': cess_value})
 
-
-
-    collections.append({ 'groupBy': 'usageCategory', 'buckets' : groupby_collections})
-    metrics['transactions'] = transactions
-
+    cess.append({'groupBy': 'usageCategory', 'buckets': groupby_cess})
+    metrics['cess'] = cess
 
     return metrics
 
@@ -568,7 +565,7 @@ pt_collection_cess = {'path': 'dss-collection_v2/_search',
            "aggs": {{
            "region": {{
              "terms": {{
-               "field": "dataObject.tenantData.city.districtName.keyword",
+               "field": "dataObject.tenantData.city.name.keyword",
                "size":10000
              }},
             "aggs": {{
@@ -721,7 +718,7 @@ pt_assessed_properties = {'path':'property-services/_search',
              "aggs": {{
             "region": {{
                "terms": {{
-                 "field": "Data.tenantData.city.districtName.keyword",
+                 "field": "Data.tenantData.city.name.keyword",
                  "size":10000
              }},
              "aggs": {{

@@ -1,5 +1,5 @@
-import React, { useState, useEffect} from "react";
-import { Modal, AddressDetails } from "@upyog/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
+import { Modal, AddressDetails } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 
@@ -10,7 +10,8 @@ const Heading = ({t}) => <h1 className="heading-m">{t("FILL_ADDRESS_DETAILS")}</
  * Using the `AddressDetails` component to handle all address-related input fields such as pincode, city, locality, street name, house number, landmark, and address lines.
  * - Displaying success or error toasts based on the response.
  */
-const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
+// Trigger parent address refresh after successful address update/create
+const Address = ({ address, actionCancelOnSubmit, isEdit, refreshAddresses}) => {
   const { t } = useTranslation();
   const { data: allCities } = Digit.Hooks.useTenants();
   const { handleSubmit } = useForm();
@@ -65,6 +66,7 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
 
       const { responseInfo, address } = await Digit.UserService.createAddressV2(requestData, stateCode, userUuid);
       if (responseInfo?.status === "201") {
+        await refreshAddresses?.();
         actionCancelOnSubmit();
       }
     } catch (error) {
@@ -94,8 +96,17 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
         streetName: formData.streetName,
         landmark: formData.landmark,
         pinCode: formData.pincode,
-        city: formData.city?.city?.name,
-        locality: formData.locality?.i18nKey,
+
+        city:
+          typeof formData.city === "string"
+            ? formData.city
+            : formData.city?.city?.name || formData.city?.code,
+
+        locality:
+          typeof formData.locality === "string"
+            ? formData.locality
+            : formData.locality?.i18nKey || formData.locality?.code,
+
         addressType: formData.addressType?.code,
         type: formData.addressType?.code,
         id: address?.id,
@@ -106,6 +117,7 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
 
       const { responseInfo } = await Digit.UserService.updateAddressV2(requestUpdatedData, stateCode,);
       if (responseInfo?.status === "200") {
+        await refreshAddresses?.();
         actionCancelOnSubmit();
       }
     } catch (error) {

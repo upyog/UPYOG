@@ -11,7 +11,7 @@ import {
   Loader,
   Toast,
   Header
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { convertEpochToDateDMY } from "../../utils";
 import SearchFormFieldsComponent from "./SearchFormFieldsComponent";
 import useSearchApplicationTableConfig from "./useTableConfig";
@@ -67,10 +67,10 @@ const OBPSSearchApplication = ({ tenantId, t, onSubmit, data, error, searchData,
   });
 
   useEffect(() => {
-    register("offset", 0);
-    register("limit", 10);
-    register("sortBy", "commencementDate");
-    register("sortOrder", "DESC");
+    register("offset");
+    register("limit");
+    register("sortBy");
+    register("sortOrder");
   }, [register]);
 
   React.useEffect(() => {
@@ -164,7 +164,7 @@ const OBPSSearchApplication = ({ tenantId, t, onSubmit, data, error, searchData,
 
   const isMobile = window.Digit.Utils.browser.isMobile();
 
-  const searchFormFieldsComponentProps = { formState, Controller, register, control, t, reset, previousPage };
+  const searchFormFieldsComponentProps = { formState, Controller, register, control, t, reset, previousPage, setValue };
 
   const getRedirectionLink = (bService) => {
     const businessService = data?.[0]?.businessService == "BPAREG" ?  "BPAREG" : bService;

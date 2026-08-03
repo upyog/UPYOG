@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import SubMenu from "./SubMenu";
-import { Loader, SearchIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, SearchIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
 import NavItem from "./NavItem";
 import _, { findIndex } from "lodash";
@@ -12,7 +12,7 @@ const EmployeeSideBar = () => {
   const { t } = useTranslation();
   useEffect(() => {
     if (isLoading) {
-      return <Loader />;
+      return;
     }
     sidebarRef.current.style.cursor = "pointer";
     collapseNav();

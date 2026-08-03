@@ -1,9 +1,11 @@
 import { MdmsService } from "../services/elements/MDMS";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
   const usePaymentGateway = () => {
-    return useQuery("PAYMENT_GATEWAY", () => MdmsService.getPaymentGateway(tenantId, moduleCode, type), {
+    return useQuery({
+      queryKey: ["PAYMENT_GATEWAY"],
+      queryFn: () => MdmsService.getPaymentGateway(tenantId, moduleCode, type),
       select: (data) => {
             return data?.[moduleCode]?.[type].filter((e) => e.active).map(({ gateway }) => gateway);
           },
@@ -12,15 +14,27 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
   };
 
   const useReceiptKey = () => {
-    return useQuery("RECEIPT_KEY", () => MdmsService.getReceiptKey(tenantId, moduleCode, type), config);
+    return useQuery({
+      queryKey: ["RECEIPT_KEY"],
+      queryFn: () => MdmsService.getReceiptKey(tenantId, moduleCode, type),
+      ...config
+    });
   };
 
   const useBillsGenieKey = () => {
-    return useQuery("BILLS_GENIE_KEY", () => MdmsService.getBillsGenieKey(tenantId, moduleCode, type), config);
+    return useQuery({
+      queryKey: ["BILLS_GENIE_KEY"],
+      queryFn: () => MdmsService.getBillsGenieKey(tenantId, moduleCode, type),
+      ...config
+    });
   };
 
   const _default = () => {
-    return useQuery([tenantId, moduleCode, type], () => MdmsService.getMultipleTypes(tenantId, moduleCode, type), config);
+    return useQuery({
+      queryKey: [tenantId, moduleCode, type],
+      queryFn: () => MdmsService.getMultipleTypes(tenantId, moduleCode, type),
+      ...config
+    });
   };
 
   switch (type) {

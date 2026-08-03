@@ -19,7 +19,8 @@ app.disable('x-powered-by');
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
+// Updated template engine configuration from deprecated Jade to maintained Pug view engine.
+app.set("view engine", "pug");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -51,5 +52,7 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
-listenConsumer();
+listenConsumer().catch((err) => {
+  console.error("Failed to start Kafka consumer: " + err.message);
+});
 module.exports = app;

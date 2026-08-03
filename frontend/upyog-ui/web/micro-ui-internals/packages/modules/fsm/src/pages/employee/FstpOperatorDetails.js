@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import { useParams, useHistory, useLocation } from "react-router-dom";
+import { useParams, useLocation,  } from "react-router-dom";
 import TimePicker from "react-time-picker";
-import { Dropdown, Header, MultiUploadWrapper, RadioButtons, TextArea } from "@upyog/digit-ui-react-components";
+import { Dropdown, Header, MultiUploadWrapper, RadioButtons, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 import {
   Card,
   CardLabel,
@@ -16,9 +16,9 @@ import {
   Row,
   LabelFieldPair,
   Menu,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import CustomTimePicker from "../../components/CustomTimePicker";
 import ActionModal from "./ApplicationDetails/Modal/index";
 
@@ -38,13 +38,14 @@ const FstpOperatorDetails = () => {
   const stateId = Digit.ULBService.getStateId();
   let isMobile = window.Digit.Utils.browser.isMobile();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const allCities = Digit.Hooks.fsm.useTenants();
   const state = Digit.ULBService.getStateId();
   let { id: applicationNos } = useParams();
-  const isNew = history.location.pathname.includes("new") ? true : false;
+  const isNew = location.pathname.includes("new") ? true : false;
   const { data: urcConfig } = Digit.Hooks.fsm.useMDMS(tenantId, "FSM", "UrcConfig");
   const isUrcEnable = urcConfig && urcConfig.length > 0 && urcConfig[0].URCEnable;
   const [selectedCity, setSelectedCity] = useState(() => allCities.filter((city) => city?.code === tenantId)[0] || null);
@@ -116,7 +117,6 @@ const FstpOperatorDetails = () => {
   const [newLocality, setNewLocality] = useState(null);
   const [newDsoName, setNewDsoName] = useState(null);
   const [comments, setComments] = useState();
-  const location = useLocation();
   const [selectLocation, setSelectLocation] = useState(isNew ? inputs[0] : null);
   const [gramPanchayats, setGramPanchayats] = useState();
   const [selectedGp, setSelectedGp] = useState();
@@ -207,7 +207,7 @@ const FstpOperatorDetails = () => {
       case "DISPOSE":
       case "READY_FOR_DISPOSAL":
         setSelectedAction(null);
-        history.location.pathname.includes("new") ? handleCreate() : handleSubmit();
+        location.pathname.includes("new") ? handleCreate() : handleSubmit();
       default:
         setSelectedAction();
         break;
@@ -417,7 +417,7 @@ const FstpOperatorDetails = () => {
     setShowToast({ key: "success", action: `ES_FSM_DISPOSE_UPDATE_SUCCESS` });
     setTimeout(() => {
       closeToast();
-      history.push(`/upyog-ui/employee`);
+      navigate(`/upyog-ui/employee`);
     }, 5000);
   };
 
@@ -542,9 +542,9 @@ const FstpOperatorDetails = () => {
           {vehicleData?.map((row, index) => (
             <Row
               rowContainerStyle={
-                isMobile && history.location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
+                isMobile && location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
               }
-              textStyle={isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
+              textStyle={isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
               key={row.title}
               label={row.title}
               text={row.value || "N/A"}
@@ -555,7 +555,7 @@ const FstpOperatorDetails = () => {
           {isNew && isUrcEnable && (
             <div
               style={
-                !isMobile && history.location.pathname.includes("new-vehicle-entry")
+                !isMobile && location.pathname.includes("new-vehicle-entry")
                   ? {
                       display: "flex",
                       justifyContent: "space-between",
@@ -566,11 +566,11 @@ const FstpOperatorDetails = () => {
               }
             >
               <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
-              <div style={!isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "50%" } : {}}>
+              <div style={!isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "50%" } : {}}>
                 <RadioButtons
                   selectedOption={selectLocation}
                   onSelect={selectedValue}
-                  style={!isMobile && history.location.pathname.includes("new-vehicle-entry") ? { marginBottom: 0 } : {}}
+                  style={!isMobile && location.pathname.includes("new-vehicle-entry") ? { marginBottom: 0 } : {}}
                   innerStyles={{ marginLeft: "10px" }}
                   options={inputs}
                   optionsKey="i18nKey"
@@ -585,9 +585,9 @@ const FstpOperatorDetails = () => {
             <div>
               <Row
                 rowContainerStyle={
-                  isMobile && history.location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
+                  isMobile && location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
                 }
-                textStyle={isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
+                textStyle={isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
                 key={t("CS_GRAM_PANCHAYAT")}
                 label={`${t("CS_GRAM_PANCHAYAT")} * `}
                 text={
@@ -613,9 +613,9 @@ const FstpOperatorDetails = () => {
                 <div>
                   <Row
                     rowContainerStyle={
-                      isMobile && history.location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
+                      isMobile && location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
                     }
-                    textStyle={isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
+                    textStyle={isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
                     key={t("ES_INBOX_PLEASE_SPECIFY_GRAM_PANCHAYAT")}
                     label={`${t("ES_INBOX_PLEASE_SPECIFY_GRAM_PANCHAYAT")} * `}
                     text={
@@ -630,9 +630,9 @@ const FstpOperatorDetails = () => {
                   />
                   <Row
                     rowContainerStyle={
-                      isMobile && history.location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
+                      isMobile && location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
                     }
-                    textStyle={isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
+                    textStyle={isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
                     key={t("ES_INBOX_PLEASE_SPECIFY_VILLAGE")}
                     label={`${t("ES_INBOX_PLEASE_SPECIFY_VILLAGE")}`}
                     text={
@@ -650,9 +650,9 @@ const FstpOperatorDetails = () => {
               {selectedGp?.name !== "Other" && (
                 <Row
                   rowContainerStyle={
-                    isMobile && history.location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
+                    isMobile && location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
                   }
-                  textStyle={isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
+                  textStyle={isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
                   key={t("CS_VILLAGE_NAME")}
                   label={`${t("CS_VILLAGE_NAME")}`}
                   text={
@@ -684,9 +684,9 @@ const FstpOperatorDetails = () => {
               {selectedVillage?.code === "OTHER" && (
                 <Row
                   rowContainerStyle={
-                    isMobile && history.location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
+                    isMobile && location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
                   }
-                  textStyle={isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
+                  textStyle={isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
                   key={t("ES_INBOX_PLEASE_SPECIFY_VILLAGE")}
                   label={`${t("ES_INBOX_PLEASE_SPECIFY_VILLAGE")} * `}
                   text={
@@ -707,9 +707,9 @@ const FstpOperatorDetails = () => {
             <div>
               <Row
                 rowContainerStyle={
-                  isMobile && history.location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
+                  isMobile && location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
                 }
-                textStyle={isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
+                textStyle={isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
                 key={t("ES_INBOX_LOCALITY")}
                 label={`${t("ES_INBOX_LOCALITY")} * `}
                 text={
@@ -734,9 +734,9 @@ const FstpOperatorDetails = () => {
               {selectedLocality?.name === "Other" && (
                 <Row
                   rowContainerStyle={
-                    isMobile && history.location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
+                    isMobile && location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
                   }
-                  textStyle={isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
+                  textStyle={isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
                   key={t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")}
                   label={`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")} * `}
                   text={
@@ -756,9 +756,9 @@ const FstpOperatorDetails = () => {
             <div>
               <Row
                 rowContainerStyle={
-                  isMobile && history.location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
+                  isMobile && location.pathname.includes("new-vehicle-entry") ? { display: "block" } : { justifyContent: "space-between" }
                 }
-                textStyle={isMobile && history.location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
+                textStyle={isMobile && location.pathname.includes("new-vehicle-entry") ? { width: "100%" } : {}}
                 key={t("ES_INBOX_LOCALITY")}
                 label={`${t("ES_INBOX_LOCALITY")} * `}
                 text={

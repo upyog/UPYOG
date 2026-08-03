@@ -34,12 +34,12 @@ import { Link } from "react-router-dom";
 //               <span className="link" key={index}>
 //                 {link ? <Link to={link}>{label}</Link> : null}
 //                 {count ? (
-//                   <>
+//                   <Fragment>
 //                     {FsmHideCount ? null : <span className={"inbox-total"}>{count || "-"}</span>}
 //                     <Link to={link}>
 //                       <ArrowRightInbox />
 //                     </Link>
-//                   </>
+//                   </Fragment>
 //                 ) : null}
 //               </span>
 //             ))}
@@ -53,7 +53,12 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
   return (
     <div className={className ? "employeeCard card-home customEmployeeCard" : "employeeCard card-home customEmployeeCard"} style={className ? {} : styles}>
       <div className="employeeCustomCard" style={{ width: "100%", height: "85%", position: "relative" }}>
-        <span className="text-employee-card">{moduleName}</span>
+        <span
+          className="text-employee-card"
+          style={{ width: "calc(100% - 80px)", boxSizing: "border-box", lineHeight: "1.2" }}
+        >
+          {moduleName}
+        </span>
         <span className="logo-removeBorderRadiusLogo" style={{ position: "absolute", right: "10%", top: "10%" }}>{Icon}</span>
         <div className="employee-card-banner">
           <div className="body" style={{ margin: "0px", padding: "0px" }}>

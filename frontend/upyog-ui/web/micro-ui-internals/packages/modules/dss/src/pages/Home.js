@@ -10,7 +10,7 @@ import {
   Rating,
   ShareIcon,
   WhatsappIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { format } from "date-fns";
 import React, { useMemo, useRef, useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,8 +23,10 @@ import { Icon } from "../components/common/Icon";
 import MapChart from "../components/MapChart";
 import MapDrillChart from "../components/mapDrillDownTable";
 import NoData from "../components/NoData";
-import { ReactComponent as Arrow_Right } from "../images/Arrow_Right.svg";
-import { ReactComponent as Arrow_Right_White } from "../images/Arrow_Right_white.svg";
+// import { ReactComponent as Arrow_Right } from "../images/Arrow_Right.svg";
+// import { ReactComponent as Arrow_Right_White } from "../images/Arrow_Right_white.svg";
+const Arrow_Right = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0L6.59 1.41L12.17 7H0V9H12.17L6.59 14.59L8 16L16 8L8 0Z" fill="#a82227"/></svg>;
+const Arrow_Right_White = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0L6.59 1.41L12.17 7H0V9H12.17L6.59 14.59L8 16L16 8L8 0Z" fill="#ffffff"/></svg>;
 import { checkCurrentScreen } from "../components/DSSCard";
 import CustomAreaChart from "../components/CustomAreaChart"
 import LineChartWithData from "../components/LineChart";
@@ -345,7 +347,6 @@ const Home = ({ stateCode }) => {
   const handlePrint = () => Digit.Download.PDF(fullPageRef, t(dashboardConfig?.[0]?.name));
 
   const dashboardConfig = response?.responseData;
-  console.log("dashboardConfig",dashboardConfig)
   const shareOptions = navigator.share
     ? [
         {

@@ -1,0 +1,178 @@
+{
+  "RequestInfo": {
+    "apiId": "Rainmaker",
+    "action": "",
+    "did": 1,
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "requesterId": "",
+    "ts": 1513579888683,
+    "ver": ".01",
+    "authToken": "{{devAuth}}",
+    "userInfo": {
+      "id": 73,
+      "userName": null,
+      "name": null,
+      "type": "EMPLOYEE",
+      "mobileNumber": null,
+      "emailId": null,
+      "roles": [
+        {
+          "id": 2,
+          "name": "Customer Support Representative",
+          "code": null,
+          "tenantId": null
+        }
+      ],
+      "tenantId": null,
+      "uuid": "uuid"
+    }
+  },
+  "BusinessServices": [
+    {
+      "tenantId": "pg",
+      "businessService": "garbage-service",
+      "business": "garbage-service",
+      "businessServiceSla": 0,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "APPLY",
+              "nextState": "PENDING_FOR_VERIFICATION",
+              "roles": [
+                "CITIZEN",
+                "GC_CEMP"
+              ],
+              "active": true
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PENDING_FOR_VERIFICATION",
+          "applicationStatus": "PENDING_FOR_VERIFICATION",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "GC_VERIFIER"
+              ],
+              "active": true
+            },
+            {
+              "action": "VERIFY",
+              "nextState": "PENDING_FOR_APPROVAL",
+              "roles": [
+                "GC_VERIFIER"
+              ],
+              "active": true
+            },
+            {
+              "action": "RAISE_QUERY_TO_CITIZEN",
+              "nextState": "EDIT_APPLICATION",
+              "roles": [
+                "GC_VERIFIER"
+              ],
+              "active": true
+            },
+            {
+              "action": "APPROVE",
+              "nextState": "APPROVED",
+              "roles": [
+                "GC_APPROVER"
+              ],
+              "active": true
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PENDING_FOR_APPROVAL",
+          "applicationStatus": "PENDING_FOR_APPROVAL",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "GC_APPROVER"
+              ],
+              "active": true
+            },
+            {
+              "action": "APPROVE",
+              "nextState": "APPROVED",
+              "roles": [
+                "GC_APPROVER"
+              ],
+              "active": true
+            },
+            {
+              "action": "SEND_BACK_TO_VERIFIER",
+              "nextState": "PENDING_FOR_VERIFICATION",
+              "roles": [
+                "GC_APPROVER"
+              ],
+              "active": true
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "EDIT_APPLICATION",
+          "applicationStatus": "EDIT_APPLICATION",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "EDIT",
+              "nextState": "PENDING_FOR_VERIFICATION",
+              "roles": [
+                "CITIZEN"
+              ],
+              "active": true
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "APPROVED",
+          "applicationStatus": "APPROVED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        },
+        {
+          "sla": null,
+          "state": "REJECTED",
+          "applicationStatus": "REJECTED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPYOG AI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/upyog-voice-bot/assets/styles.css">
+</head>
+
+<body>
+    <div id="bg-layers"></div>
+
+    <!-- Top Status Pill (Shows when active) -->
+    <div class="status-pill" id="status-pill">
+        <div class="status-dot idle" id="status-dot"></div>
+        <span id="status-text">Ready</span>
+    </div>
+
+    <header>
+        <h1><span class="logo-icon" id="logo-icon"></span> UPYOG AI</h1>
+        
+        <div class="header-controls">
+            <div class="lang-toggle" id="lang-toggle"></div>
+            <button class="settings-toggle" id="settings-toggle"></button>
+        </div>
+    </header>
+
+    <div id="chat-container">
+        <!-- Hero / Welcome state -->
+        <div class="hero-container" id="hero-welcome">
+            <div class="hero-tagline">Speak. Ask. Solve.</div>
+            <div class="voice-orb"></div>
+            <h2 class="hero-title">Smart Voice Assistant</h2>
+            <p class="hero-subtitle">Talk naturally and get instant answers, help, and guidance for government services.</p>
+        </div>
+    </div>
+
+    <!-- Floating Input Container at Bottom -->
+    <div class="bottom-input-bar">
+        <div class="speech-preview-wrapper">
+            <div id="speech-preview">
+                <span class="speech-preview-icon" id="speech-preview-icon"></span>
+                <span id="speech-preview-text"></span>
+            </div>
+        </div>
+        
+        <div class="input-area" id="input-area-container">
+            <input type="text" id="text-input" placeholder="Ask anything about UPYOG services..." autocomplete="off">
+            <div class="input-actions">
+                <!-- Icons injected by assets/icons.js -->
+                <button class="icon-button voice-button start" id="session-toggle-btn" title="Tap to speak"></button>
+                <button id="send-text-btn" class="icon-button send-btn" title="Send message"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-panel" id="settings-panel">
+        <h3>Settings</h3>
+        <div class="settings-row">
+            <label>Barge-in Sensitivity: <span id="sensitivity-value">0.02</span></label>
+            <input type="range" id="barge-sensitivity" min="0.01" max="0.05" step="0.01" value="0.02">
+            <div class="settings-hint">Lower = more sensitive</div>
+        </div>
+        <div class="settings-row">
+            <label>Language Preference</label>
+            <select id="lang-preference"></select>
+        </div>
+    </div>
+
+    <script src="/upyog-voice-bot/assets/constants.js"></script>
+    <script src="/upyog-voice-bot/assets/icons.js"></script><script>
+        // ============== STATE ==============
+        // States, STATE_LABELS, CONFIG, BG_LAYERS, LANG_OPTIONS, LANG_PREFERENCES
+        // are defined in assets/constants.js (loaded before this script).
+
+        let currentState = States.IDLE;
+        let sessionActive = false;
+        let currentLang = 'auto';
+        let history = [];  // Conversation memory
+        let recognition = null;
+        let currentAudio = null;
+        let conversationSessionId = 'upyog_' + Math.random().toString(36).substr(2, 9);
+        let currentFetch = null;
+
+        // FIX B: Turn tracking for recognition recreation
+        let turnCount = 0;
+        let lastDetectedLang = 'en';
+        let currentTranscript = '';
+        let finalTranscript = '';
+        let silenceTimer = null;
+        let forceTimer = null;
+
+        // FIX C: Audio pool for cleanup
+        const audioPool = [];
+
+        // Barge-in monitoring
+        let analyser = null;
+        let micStream = null;
+        let bargeInThreshold = CONFIG.bargeInThreshold;
+        let voiceFrames = 0;
+
+        // DOM elements
+        const chatContainer = document.getElementById('chat-container');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        const sessionBtn = document.getElementById('session-toggle-btn');
+        const interimDisplay = document.getElementById('speech-preview');
+        const interimText = document.getElementById('speech-preview-text');
+        const settingsToggle = document.getElementById('settings-toggle');
+        const settingsPanel = document.getElementById('settings-panel');
+        const bargeSensitivity = document.getElementById('barge-sensitivity');
+        const sensitivityValue = document.getElementById('sensitivity-value');
+
+        // API URL
+        // Use dynamic URL for both local testing and Nginx proxy compatibility
+        let API_URL = window.location.origin;
+        if (window.location.pathname.includes('/upyog-voice-bot')) {
+            API_URL += '/upyog-voice-bot';
+        } else if (window.location.pathname.includes('/upyog-voice')) {
+            API_URL += '/upyog-voice';
+        }
+
+        // ===== NIAUTT AUTH INTEGRATION =====
+        // When this chatbot is embedded as an iframe inside niautt, the parent page
+        // (UpyogBot.js component) sends the logged-in user's RequestInfo via postMessage
+        // as soon as this page finishes loading. We store it here and attach it to
+        // every /chat request so the backend receives standard niautt-style auth context.
+
+        // Holds the RequestInfo received from the niautt parent page.
+        // Starts empty — gets populated when the postMessage arrives.
+        let NIAUTT_REQUEST_INFO = {};
+
+        // Listen for the postMessage sent by niautt's UpyogBot.js component (onLoad).
+        // type "INIT_DATA" identifies this as the niautt auth initialization message.
+        // Stores the full RequestInfo (authToken, userInfo, apiId, plainAccessRequest).
+        function handleNiuattMessage(event) {
+            if (event.origin !== CONFIG.niuattOrigin) return;
+            if (event.data?.type === "INIT_DATA") {
+                // Store the received RequestInfo for use in all subsequent /chat calls
+                NIAUTT_REQUEST_INFO = event.data.RequestInfo || {};
+            }
+        }
+        window.addEventListener("message", handleNiuattMessage);
+
+        // Helper that returns the stored RequestInfo with a fresh msgId timestamp.
+        // niautt requires a unique msgId on every API request (format: timestamp|locale).
+        const getRequestInfo = () => ({ ...NIAUTT_REQUEST_INFO, msgId: `${Date.now()}|en_IN` });
+
+        // ============== STATE MACHINE ==============
+        function setState(newState) {
+            currentState = newState;
+            
+            if (newState === States.SPEAKING) {
+                // Use wave animation for speaking
+                statusDot.className = 'status-dot speaking';
+                statusDot.innerHTML = ICONS.speakingWave;
+            } else {
+                statusDot.className = 'status-dot ' + newState.toLowerCase();
+                statusDot.innerHTML = '';
+            }
+
+            statusText.innerText = STATE_LABELS[newState];
+        }
+
+        // ============== HINGLISH DETECTION ==============
+        const HINDI_PATTERNS = [
+            /\b(kya|kaise|kahan|kab|kyun|kon|kitna|kitne)\b/i,
+            /\b(hai|hain|tha|the|thi|hoga|hogi|hoge)\b/i,
+            /\b(mujhe|aapko|humko|tumhe|unhe)\b/i,
+            /\b(batao|bataye|bataiye|samjhao|dikhao)\b/i,
+            /\b(nahi|nahin|mat|na)\b/i,
+            /\b(aur|ya|lekin|toh|ki|ke|ka|ko)\b/i,
+            /\b(please|plz)\s+(batao|karo|dijiye|karein)\b/i
+        ];
+
+        function detectHinglish(text) {
+            return HINDI_PATTERNS.some(p => p.test(text));
+        }
+
+        // ============== LANGUAGE TOGGLE ==============
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function handleLangBtnClick() {
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLang = btn.dataset.lang;
+            });
+        });
+
+        // ============== SETTINGS PANEL ==============
+        function toggleSettingsPanel() {
+            settingsPanel.classList.toggle('show');
+        }
+        settingsToggle.addEventListener('click', toggleSettingsPanel);
+
+        function updateBargeSensitivity(e) {
+            bargeInThreshold = parseFloat(e.target.value);
+            sensitivityValue.innerText = bargeInThreshold.toFixed(2);
+        }
+        bargeSensitivity.addEventListener('input', updateBargeSensitivity);
+
+        function syncLangPreference(e) {
+            currentLang = e.target.value;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === currentLang);
+            });
+        }
+        document.getElementById('lang-preference').addEventListener('change', syncLangPreference);
+
+        // ============== MESSAGE DISPLAY ==============
+        let textInputBarActive = false;
+
+        function showTextInputBar(field) {
+            const input = document.getElementById('text-input');
+            input.placeholder = FIELD_PLACEHOLDERS[field] || FIELD_PLACEHOLDERS.default;
+            setTimeout(() => input.focus(), 500);
+        }
+
+        function removeTextInputBar() {
+            const input = document.getElementById('text-input');
+            if (input) {
+                input.placeholder = 'Ask anything about UPYOG services...';
+            }
+        }
+
+        function addUserMessage(text) {
+            const hero = document.getElementById('hero-welcome');
+            if (hero) hero.classList.add('hidden');
+            
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'message-row user-row';
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message user';
+            msgDiv.innerText = text;
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'user-avatar';
+            avatarDiv.innerHTML = ICONS.avatar;
+            
+            rowDiv.appendChild(msgDiv);
+            rowDiv.appendChild(avatarDiv);
+            
+            chatContainer.appendChild(rowDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function addBotMessage(text, mode, inputType, options, field) {
+            const hero = document.getElementById('hero-welcome');
+            if (hero) hero.classList.add('hidden');
+
+            if (mode !== 'grievance_collecting') {
+                removeTextInputBar();
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-wrapper bot';
+
+            // Message bubble
+            const bubble = document.createElement('div');
+            bubble.className = 'message bot';
+            if (mode === 'grievance_collecting') {
+                bubble.classList.add('grievance-collecting');
+            }
+            if (mode === 'grievance_offered') {
+                bubble.classList.add('grievance-offered');
+            }
+            bubble.textContent = text;
+            wrapper.appendChild(bubble);
+
+            // CHOICE input — show pill buttons
+            if (inputType === 'choice' && options && options.length > 0) {
+                
+                // If more than 6 options, use a styled dropdown instead of buttons
+                if (options.length > 6) {
+                    const selectWrapper = document.createElement('div');
+                    selectWrapper.className = 'choice-dropdown-wrapper';
+
+                    const select = document.createElement('select');
+                    select.className = 'choice-select';
+
+                    const defaultOpt = document.createElement('option');
+                    defaultOpt.value = '';
+                    defaultOpt.textContent = '-- Select an option --';
+                    defaultOpt.disabled = true;
+                    defaultOpt.selected = true;
+                    select.appendChild(defaultOpt);
+
+                    options.forEach(opt => {
+                        const o = document.createElement('option');
+                        o.value = opt;
+                        o.textContent = opt;
+                        select.appendChild(o);
+                    });
+
+                    const confirmBtn = document.createElement('button');
+                    confirmBtn.textContent = 'Confirm';
+                    confirmBtn.className = 'choice-confirm-btn';
+
+                    confirmBtn.onclick = function handleConfirmSelection() {
+                        if (!select.value) return;
+                        const chosen = select.value;
+                        select.disabled = true;
+                        confirmBtn.disabled = true;
+                        sendQuery(chosen);
+                    };
+
+                    selectWrapper.appendChild(select);
+                    selectWrapper.appendChild(confirmBtn);
+                    wrapper.appendChild(selectWrapper);
+
+                } else {
+                    // 6 or fewer options — show pill buttons
+                    const btnContainer = document.createElement('div');
+                    btnContainer.className = 'choice-pill-container';
+
+                    options.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.textContent = opt;
+                        btn.className = 'choice-pill-btn';
+
+                        btn.onclick = function handleChoiceBtnClick() {
+                            // Disable all sibling buttons, highlight the chosen one
+                            btnContainer.querySelectorAll('button').forEach(b => { b.disabled = true; });
+                            btn.classList.add('selected');
+                            sendQuery(opt);
+                        };
+
+                        btnContainer.appendChild(btn);
+                    });
+
+                    wrapper.appendChild(btnContainer);
+                }
+
+                // Voice hint
+                const hint = document.createElement('div');
+                hint.className = 'choice-hint';
+                hint.textContent = HINT_MESSAGES.speakChoice;
+                wrapper.appendChild(hint);
+            }
+
+            // NUMBER input — show numeric keyboard shortcut hint
+            if (inputType === 'number') {
+                const hint = document.createElement('div');
+                hint.className = 'number-hint';
+                hint.textContent = HINT_MESSAGES.speakDigits;
+                wrapper.appendChild(hint);
+                
+                // Show the text input bar for number fields
+                showTextInputBar(field);
+            }
+
+            // TEXT input — show text input bar
+            if (inputType === 'text') {
+                showTextInputBar(field);
+            }
+
+            chatContainer.appendChild(wrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // ============== SPEECH RECOGNITION (FIX A & B) ==============
+
+        // FIX A: Destroy recognition object completely
+        function destroyRecognition() {
+            if (recognition) {
+                recognition.onstart = null;
+                recognition.onresult = null;
+                recognition.onspeechend = null;
+                recognition.onend = null;
+                recognition.onerror = null;
+                try { recognition.abort(); } catch(e) {}
+                recognition = null;
+            }
+        }
+
+        // FIX A: Create recognition with language parameter
+        function createRecognition(lang) {
+            destroyRecognition();
+
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) {
+                alert('Speech recognition not supported in this browser');
+                return null;
+            }
+
+            recognition = new SR();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+            recognition.lang = lang === 'hi' ? 'hi-IN' : 'en-IN';
+
+            recognition.onstart = function onRecognitionStart() {
+                setState(States.LISTENING);
+            };
+
+            recognition.onresult = handleResult;
+            recognition.onspeechend = handleSpeechEnd;
+
+            recognition.onend = function onRecognitionEnd() {
+                if (sessionActive && currentState === States.LISTENING) {
+                    setTimeout(() => {
+                        if (sessionActive && recognition) {
+                            try { recognition.start(); } catch(e) {
+                            }
+                        }
+                    }, 100);
+                }
+            };
+
+            recognition.onerror = function onRecognitionError(e) {
+                if (e.error === 'no-speech' || e.error === 'aborted') return;
+
+                setTimeout(() => {
+                    if (sessionActive) {
+                        createRecognition(lastDetectedLang);
+                        try { recognition.start(); } catch(e) {}
+                    }
+                }, 500);
+            };
+
+            return recognition;
+        }
+
+        function createAndStartRecognition() {
+            const lang = lastDetectedLang || 'en';
+            createRecognition(lang);
+            if (recognition) {
+                try {
+                    recognition.start();
+                } catch(e) {
+                    addBotMessage('Sorry, microphone could not start. Please try again.', null, null, null, null);
+                }
+            } else {
+                addBotMessage('Sorry, voice recognition is not supported on this browser.', null, null, null, null);
+            }
+        }
+
+        // FIX B: Handle result with silence timer
+        function handleResult(event) {
+            clearTimeout(silenceTimer);
+            clearTimeout(forceTimer);
+
+            let interim = '';
+            let newFinal = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    newFinal += transcript + ' ';
+                } else {
+                    interim += transcript;
+                }
+            }
+
+            if (newFinal) {
+                finalTranscript += newFinal;
+            }
+
+            // Show interim in UI so user sees what's being captured
+            const displayText = finalTranscript + interim;
+            if (displayText) {
+                interimText.innerText = displayText;
+                interimDisplay.classList.add('show');
+            }
+
+            // Set silence timer — send after 2.5s of no new speech
+            const textToSend = finalTranscript.trim() || interim.trim();
+            if (textToSend) {
+                silenceTimer = setTimeout(() => {
+                    attemptSend(textToSend);
+                }, CONFIG.silenceWaitMs);
+
+                // Also set a maximum wait timer
+                if (!forceTimer) {
+                    forceTimer = setTimeout(() => {
+                        if (textToSend) attemptSend(textToSend);
+                    }, CONFIG.forceSendMs);
+                }
+            }
+        }
+
+        // FIX B: Handle speech end - do NOT send immediately
+        function handleSpeechEnd() {
+            // The silence timer in handleResult will handle sending
+        }
+
+        // FIX B: Attempt send with word gate
+        function attemptSend(text) {
+            clearTimeout(silenceTimer);
+            clearTimeout(forceTimer);
+
+            const words = text.trim().split(/\s+/);
+
+            // Gate: don't send if too short (prevents partial captures)
+            if (words.length < CONFIG.minWordsToSend) {
+                return;
+            }
+
+            // Pause recognition while processing
+            try { recognition.stop(); } catch(e) {}
+
+            finalTranscript = '';
+            currentTranscript = '';
+
+            sendQuery(text.trim());
+        }
+
+        // FIX B & C: On turn complete - recreate recognition every 5 turns + cleanup
+        function onTurnComplete() {
+            turnCount++;
+            finalTranscript = '';
+            currentTranscript = '';
+            clearTimeout(silenceTimer);
+            clearTimeout(forceTimer);
+            silenceTimer = null;
+            forceTimer = null;
+
+            if (!sessionActive) return;
+
+            // Recreate every 5 turns to prevent browser engine degradation
+            if (turnCount % 5 === 0) {
+                destroyRecognition();
+                createRecognition(lastDetectedLang);
+            }
+
+            // Resume listening
+            if (recognition) {
+                try {
+                    recognition.start();
+                    setState(States.LISTENING);
+                } catch(e) {
+                    if (e.name === 'InvalidStateError') {
+                        // Already running — that's fine
+                        setState(States.LISTENING);
+                    } else {
+                        // Real error — recreate
+                        setTimeout(() => {
+                            if (sessionActive) {
+                                destroyRecognition();
+                                createRecognition(lastDetectedLang);
+                                recognition.start();
+                                setState(States.LISTENING);
+                            }
+                        }, 300);
+                    }
+                }
+            }
+        }
+
+        // ============== BARGE-IN MONITORING ==============
+        async function startBargeInMonitor() {
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const audioCtx = new AudioContext();
+                const source = audioCtx.createMediaStreamSource(micStream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 512;
+                source.connect(analyser);
+
+                const buffer = new Float32Array(analyser.fftSize);
+
+                function checkVolume() {
+                    if (!sessionActive) return;
+
+                    analyser.getFloatTimeDomainData(buffer);
+                    const rms = Math.sqrt(buffer.reduce((s, v) => s + v * v, 0) / buffer.length);
+
+                    // ONLY check for barge-in during SPEAKING state
+                    // Do NOT trigger during LISTENING or PROCESSING
+                    if (currentState === States.SPEAKING) {
+                        if (rms > bargeInThreshold) {
+                            voiceFrames++;
+                            if (voiceFrames > 8) {  // ~300ms of sustained voice
+                                triggerBargeIn();
+                                voiceFrames = 0;
+                                requestAnimationFrame(checkVolume);
+                                return;
+                            }
+                        } else {
+                            voiceFrames = 0;
+                        }
+                    } else {
+                        // Reset frame counter when not in SPEAKING state
+                        voiceFrames = 0;
+                    }
+
+                    requestAnimationFrame(checkVolume);
+                }
+                checkVolume();
+            } catch(e) {
+            }
+        }
+
+        function triggerBargeIn() {
+
+            // Step 1: Stop current audio immediately
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio.src = '';
+                currentAudio = null;
+            }
+
+            // Step 2: Abort any pending backend fetch
+            if (currentFetch) {
+                currentFetch.abort();
+                currentFetch = null;
+            }
+
+            // Step 3: Signal backend to stop TTS generation
+            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
+
+            // Step 4: Clear all transcript buffers
+            finalTranscript = '';
+            currentTranscript = '';
+
+            // Step 5: Clear all pending timers
+            clearTimeout(silenceTimer);
+            clearTimeout(forceTimer);
+            silenceTimer = null;
+            forceTimer = null;
+
+            // Step 6: Kill the current recognition instance completely
+            // (it is in a broken/zombie state after barge-in)
+            destroyRecognition();
+
+            // Step 7: Update state to LISTENING
+            setState('LISTENING');
+            clearInterimDisplay();
+
+            // Step 8: Recreate fresh recognition and start listening
+            // Small delay (300ms) lets the browser audio context settle
+            // after the abrupt audio stop — prevents echo/feedback capture
+            setTimeout(() => {
+                if (sessionActive) {
+                    createRecognition(lastDetectedLang);
+                    try {
+                        recognition.start();
+                    } catch(e) {
+                        // Try once more after another short delay
+                        setTimeout(() => {
+                            if (sessionActive) {
+                                createRecognition(lastDetectedLang);
+                                recognition.start();
+                            }
+                        }, 300);
+                    }
+                }
+            }, 300);
+        }
+
+        function clearInterimDisplay() {
+            if (interimDisplay) {
+                interimDisplay.classList.remove('show');
+                interimText.innerText = '';
+            }
+        }
+
+        // ============== SEND QUERY (FIX C: Memory management) ==============
+        async function sendQuery(transcript) {
+            if (!transcript.trim()) return;
+
+            setState(States.PROCESSING);
+            clearInterimDisplay();
+
+            // Abort any pending previous request
+            if (currentFetch) {
+                currentFetch.abort();
+                currentFetch = null;
+            }
+
+
+            // FIX C: Cap history to prevent growing payload
+            history.push({ role: 'user', content: transcript });
+            if (history.length > CONFIG.maxHistoryMemory) {
+                history.splice(0, history.length - CONFIG.maxHistoryMemory);
+            }
+            addUserMessage(transcript);
+
+            currentFetch = new AbortController();
+
+            try {
+                const response = await fetch(`${API_URL}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        RequestInfo: getRequestInfo(),
+                        query: transcript,
+                        session_id: conversationSessionId,
+                        history: history.slice(-CONFIG.historyToBackend)
+                    }),
+                    signal: currentFetch.signal
+                });
+
+                const data = await response.json();
+                currentFetch = null;
+
+                // Orange border on the input bar during grievance flow
+                const inputArea = document.querySelector('.input-area');
+                if (inputArea) {
+                    const isGrievance = data.mode === 'grievance' || data.mode === 'grievance_collecting' || data.mode === 'grievance_offered';
+                    inputArea.classList.toggle('input-area--grievance', isGrievance);
+                }
+
+                if (data.error) {
+                    addBotMessage('Sorry, an error occurred.', null, null, null, null);
+                    setState(States.LISTENING);
+                    onTurnComplete();
+                    return;
+                }
+
+                // Backend returns detected language - use for NEXT turn's speech recognition
+                const detectedLang = data.lang || 'en';
+                const detectedScript = data.detected_script || 'unknown';
+
+                // FIX B: Update lastDetectedLang for recognition recreation
+                lastDetectedLang = detectedLang;
+
+                // Update speech recognition language for next turn
+                if (recognition) {
+                    recognition.lang = detectedLang === 'hi' ? 'hi-IN' : 'en-IN';
+                }
+
+                // Add to history (with detected lang for TTS reference if needed)
+                history.push({ role: 'assistant', content: data.response, lang: detectedLang });
+                addBotMessage(data.response, data.mode, data.input_type, data.options, data.field);
+
+                // Play audio
+                if (data.audio) {
+                    playAudio(data.audio);
+                } else {
+                    setState(States.LISTENING);
+                    onTurnComplete();
+                }
+
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    addBotMessage('Sorry, connection failed.', null, null, null, null);
+                }
+                setState(States.LISTENING);
+                currentFetch = null;
+                onTurnComplete();
+            }
+        }
+
+        // ============== AUDIO PLAYBACK (FIX C: Blob URL cleanup) ==============
+        async function playAudio(base64) {
+            setState(States.SPEAKING);
+
+            try {
+                // FIX C: Stop and destroy previous audio completely
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.src = '';
+                    currentAudio.load();
+                    currentAudio = null;
+                }
+
+                // FIX C: Revoke old blob URLs to free memory
+                audioPool.forEach(url => {
+                    try { URL.revokeObjectURL(url); } catch(e) {}
+                });
+                audioPool.length = 0;
+
+                const mimeType = base64.startsWith('//O') || base64.startsWith('SUQz') ? 'audio/mp3' : 'audio/wav';
+
+                // FIX C: Use blob URL for better memory management
+                const byteCharacters = atob(base64);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                audioPool.push(url);
+
+                const audio = currentAudio = new Audio(url);
+
+                // Guard flag — browsers sometimes fire both onended and onerror
+                // for the same element. Only the first event should trigger cleanup.
+                let audioHandled = false;
+
+                audio.onended = function onAudioEnded() {
+                    if (audioHandled) return;
+                    audioHandled = true;
+                    URL.revokeObjectURL(url);
+                    currentAudio = null;
+                    setState(States.LISTENING);
+                    onTurnComplete();
+                };
+
+                audio.onerror = function onAudioError() {
+                    if (audioHandled) return;
+                    audioHandled = true;
+                    URL.revokeObjectURL(url);
+                    currentAudio = null;
+                    // If audio played for any time, treat as normal completion —
+                    // onerror can fire spuriously at the end of valid audio on some browsers.
+                    if (audio.currentTime > 0) {
+                        setState(States.LISTENING);
+                        onTurnComplete();
+                    } else {
+                        addBotMessage('Sorry, could not play audio. Please try again.', null, null, null, null);
+                        setState(States.LISTENING);
+                        onTurnComplete();
+                    }
+                };
+
+                await currentAudio.play();
+            } catch(e) {
+                addBotMessage('Sorry, could not play audio. Please try again.', null, null, null, null);
+                setState(States.LISTENING);
+                onTurnComplete();
+            }
+        }
+
+        // ============== SESSION MANAGEMENT ==============
+        async function handleSessionToggle() {
+            if (sessionActive) {
+                // End session
+                sessionActive = false;
+                sessionBtn.innerText = 'Start Session';
+                sessionBtn.classList.remove('end');
+                sessionBtn.classList.add('start');
+
+                clearTimeout(silenceTimer);
+                clearTimeout(forceTimer);
+
+                destroyRecognition();
+
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.src = '';
+                    currentAudio = null;
+                }
+
+                if (micStream) {
+                    micStream.getTracks().forEach(t => t.stop());
+                    micStream = null;
+                }
+
+                setState(States.IDLE);
+
+            } else {
+                // Start session
+                sessionActive = true;
+                sessionBtn.innerText = 'End Session';
+                sessionBtn.classList.remove('start');
+                sessionBtn.classList.add('end');
+
+                // Reset state
+                turnCount = 0;
+                finalTranscript = '';
+                currentTranscript = '';
+
+                try {
+                    // Start continuous listening
+                    createAndStartRecognition();
+                    startBargeInMonitor();
+                    setState(States.LISTENING);
+                } catch(e) {
+                    sessionActive = false;
+                    sessionBtn.innerText = 'Start Session';
+                    sessionBtn.classList.remove('end');
+                    sessionBtn.classList.add('start');
+                    alert('Could not start voice session. Please check microphone permissions.');
+                }
+            }
+        }
+        sessionBtn.addEventListener('click', handleSessionToggle);
+
+        // Keyboard shortcut
+        function handleKeydown(e) {
+            if (e.code === 'Space' && sessionActive) {
+                e.preventDefault();
+            }
+        }
+        document.addEventListener('keydown', handleKeydown);
+
+        // ============== TEXT INPUT HANDLING ==============
+        const textInput = document.getElementById('text-input');
+        const sendTextBtn = document.getElementById('send-text-btn');
+
+        function handleTextSubmit() {
+            const text = textInput.value.trim();
+            if (!text) return;
+
+            // Send the typed text (backend will detect language per-turn)
+            sendQuery(text);
+            textInput.value = '';
+        }
+
+        // Send on button click
+        sendTextBtn.addEventListener('click', handleTextSubmit);
+
+        // Send on Enter key
+        function handleTextInputKeypress(e) {
+            if (e.key === 'Enter') {
+                handleTextSubmit();
+            }
+        }
+        textInput.addEventListener('keypress', handleTextInputKeypress);
+
+    </script>
+</body>
+</html>

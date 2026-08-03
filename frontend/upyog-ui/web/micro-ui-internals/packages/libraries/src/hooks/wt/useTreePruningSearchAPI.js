@@ -1,5 +1,5 @@
-import { useQuery, useQueryClient } from "react-query";
-
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "../../common/queryClientTemplate";
 /**
  * Custom hook for executing an water Tanker search using React Query.
  * 
@@ -9,22 +9,16 @@ import { useQuery, useQueryClient } from "react-query";
  */
 const useTreePruningSearchAPI = ({ tenantId, filters, auth }, config = {}) => {
   const client = useQueryClient();
-
   const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
 
   const defaultSelect = (data) => {
-   
-    if(data.treePruningBookingDetails.length >0)  data.treePruningBookingDetails[0].bookingNo = data.treePruningBookingDetails[0].bookingNo || [];
+    if (data.treePruningBookingDetails.length > 0) data.treePruningBookingDetails[0].bookingNo = data.treePruningBookingDetails[0].bookingNo || [];
     return data;
   };
 
-  const { isLoading, error, data, isSuccess,refetch } = useQuery(["tp_search_list_cache_key", tenantId, filters, auth, config], () => Digit.TPService.search(args), {
-    
-    select: defaultSelect,
-    ...config,
-  });
+  const { isLoading, error, data, isSuccess, refetch } = queryTemplate({ queryKey: ["tp_search_list_cache_key", tenantId, filters, auth, config], queryFn: () => Digit.TPService.search(args), select: defaultSelect, config });
 
-  return { isLoading, error, data, isSuccess,refetch, revalidate: () => client.invalidateQueries([tenantId, filters, auth]) };
+  return { isLoading, error, data, isSuccess, refetch, revalidate: () => client.invalidateQueries({ queryKey: [tenantId, filters, auth] }) };
 };
 
 export default useTreePruningSearchAPI;

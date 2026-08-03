@@ -32,7 +32,16 @@ export const TPService = {
         method: "POST",
         params: {},
         auth: true,
-    })  
+      }),
+  generateDigipin: (latitude, longitude) =>
+    Request({
+      url: Urls.tp.generateDigipin,
+      data: { latitude, longitude },
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+    }),
 };
 
 

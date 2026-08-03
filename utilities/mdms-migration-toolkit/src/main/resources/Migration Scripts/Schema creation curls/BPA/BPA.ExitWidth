@@ -1,0 +1,202 @@
+curl --location 'http://localhost:8094/mdms-v2/schema/v1/_create' \
+--header 'Content-Type: application/json' \
+--data '{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "ver": ".01",
+        "ts": "",
+        "action": "_search",
+        "did": "1",
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "authToken": "d194d705-ddbc-451a-98d1-e380d71e39e8",
+        "userInfo": {
+            "id": 2038,
+            "uuid": "677300e7-2ff3-4216-a3dc-c2cbb0d63d31",
+            "userName": "MCS1",
+            "name": "Vishal",
+            "mobileNumber": "7895875858",
+            "emailId": "",
+            "locale": null,
+            "type": "EMPLOYEE",
+            "roles": [
+                {
+                    "name": "Employee",
+                    "code": "EMPLOYEE",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Universal Collection Employee",
+                    "code": "UC_EMP",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Super User",
+                    "code": "SUPERUSER",
+                    "tenantId": "pg.citya"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg.citya",
+            "permanentCity": null
+        }
+    },
+    "SchemaDefinition": {
+        "tenantId": "pg",
+        "code": "BPA.ExitWidth",
+        "description": null,
+        "definition": {
+            "type": "object",
+            "title": "Generated schema for Root",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "required": [
+                "id",
+                "occupancy",
+                "exitWidthOccupancyTypeHandlerVal",
+                "exitWidthNotOccupancyTypeHandlerVal",
+                "exitWidth_A_occupantLoadDivisonFactor",
+                "exitWidth_A_noOfDoors",
+                "exitWidth_A_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "exitWidth_A_SR_occupantLoadDivisonFactor",
+                "exitWidth_A_SR_noOfDoors",
+                "exitWidth_A_SR_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "exitWidth_B_occupantLoadDivisonFactor",
+                "exitWidth_B_noOfDoors",
+                "exitWidth_B_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "exitWidth_C_occupantLoadDivisonFactor",
+                "exitWidth_C_noOfDoors",
+                "exitWidth_C_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "exitWidth_D_occupantLoadDivisonFactor",
+                "exitWidth_D_noOfDoors",
+                "exitWidth_D_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "exitWidth_E_occupantLoadDivisonFactor",
+                "exitWidth_E_noOfDoors",
+                "exitWidth_E_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "exitWidth_F_occupantLoadDivisonFactor",
+                "exitWidth_F_noOfDoors",
+                "exitWidth_F_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "exitWidth_G_occupantLoadDivisonFactor",
+                "exitWidth_G_noOfDoors",
+                "exitWidth_G_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "exitWidth_H_occupantLoadDivisonFactor",
+                "exitWidth_H_noOfDoors",
+                "exitWidth_H_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "exitWidth_I_occupantLoadDivisonFactor",
+                "exitWidth_I_noOfDoors",
+                "exitWidth_I_noOfOccupantsPerUnitExitWidthOfStairWay",
+                "active"
+            ],
+            "x-unique": [
+                "exitWidthOccupancyTypeHandlerVal"
+            ],
+            "properties": {
+                "id": {
+                    "type": "number"
+                },
+                "active": {
+                    "type": "boolean"
+                },
+                "occupancy": {
+                    "type": "string"
+                },
+                "exitWidth_A_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidth_B_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidth_C_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidth_D_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidth_E_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidth_F_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidth_G_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidth_H_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidth_I_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidth_A_SR_noOfDoors": {
+                    "type": "string"
+                },
+                "exitWidthOccupancyTypeHandlerVal": {
+                    "type": "string"
+                },
+                "exitWidthNotOccupancyTypeHandlerVal": {
+                    "type": "string"
+                },
+                "exitWidth_A_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_B_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_C_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_D_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_E_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_F_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_G_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_H_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_I_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_A_SR_occupantLoadDivisonFactor": {
+                    "type": "string"
+                },
+                "exitWidth_A_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                },
+                "exitWidth_B_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                },
+                "exitWidth_C_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                },
+                "exitWidth_D_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                },
+                "exitWidth_E_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                },
+                "exitWidth_F_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                },
+                "exitWidth_G_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                },
+                "exitWidth_H_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                },
+                "exitWidth_I_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                },
+                "exitWidth_A_SR_noOfOccupantsPerUnitExitWidthOfStairWay": {
+                    "type": "string"
+                }
+            }
+        },
+        "isActive": true
+    }
+}'

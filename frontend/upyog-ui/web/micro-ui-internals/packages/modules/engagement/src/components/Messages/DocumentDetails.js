@@ -1,7 +1,8 @@
-import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from "@upyog/digit-ui-react-components";
-import React, { useState ,useEffect} from 'react'
+import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next';
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import Confirmation from '../Modal/Confirmation';
 import { format } from "date-fns";
 import { openUploadedDocument } from '../../utils';
@@ -13,7 +14,7 @@ const renderMultipleDocuments = (documents) => {
   return (
     <div style={{ display: 'flex', flexDirection: isMobile ? 'column':'row', gap: isMobile ? '40px' : '100px'}}>
       {documents.map(({ fileStoreId, fileName }) => (
-        <div className="documentDetails_pdf">
+        <div className="documentDetails_pdf" key={fileStoreId}>
           <div style={{ width: '100px' }} onClick={() => openUploadedDocument(fileStoreId, fileName)}>
             <GenericFileIcon />
             <span className="cell-text">{fileName?.split(10)}</span>
@@ -35,26 +36,18 @@ const DocumentDetails = () => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   const { id } = useParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const queryClient = useQueryClient();
+  const updateEventMutation = Digit.Hooks.events.useUpdateEvent();
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading, data } = Digit.Hooks.events.useEventDetails(tenantId, { ids: id }, {
-  });
-    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_HAPPENED", false);
-  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_ERROR_DATA", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_SUCCESS_DATA", false);
-
-  useEffect(() => {
-    setMutationHappened(false);
-    clearSuccessData();
-    clearError();
-  }, []);
+  const { isLoading, data } = Digit.Hooks.events.useEventDetails(tenantId, { ids: id });
 
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/upyog-ui/employee/engagement/messages/inbox/edit/${id}`)
+      navigate(`/upyog-ui/employee/engagement/messages/inbox/edit/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -72,14 +65,22 @@ const DocumentDetails = () => {
         },
       ],
     };
-    history.push("/upyog-ui/employee/engagement/messages/response?delete=true", details);
+    updateEventMutation.mutate(details, {
+      onSuccess: (responseData) => {
+        queryClient.clear();
+        navigate("/upyog-ui/employee/engagement/messages/response?delete=true", { state: { isSuccess: true, data: responseData } });
+      },
+      onError: (error) => {
+        navigate("/upyog-ui/employee/engagement/messages/response?delete=true", { state: { isSuccess: false, error } });
+      }
+    });
   };
 
   function onModalCancel() {
     setShowModal(false)
   }
 
-  if (isLoading) {
+  if (isLoading || updateEventMutation.isPending) {
     return <Loader />
   }
 

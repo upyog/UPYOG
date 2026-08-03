@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Main {
 
-    public static void main(String args[]) throws Exception {
+    /** {@code String[]} is standard Java convention; valid entrypoint on JDK 17. */
+    public static void main(String[] args) throws Exception {
         checkIfFilesExists();
 
         AppProperties appProperties = new AppProperties();

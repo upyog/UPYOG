@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo,Fragment  } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Dropdown, Loader,Header } from "@upyog/digit-ui-react-components";
-import { useRouteMatch, useHistory } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { Dropdown, Loader,Header } from "@nudmcdgnpm/digit-ui-react-components";
+
+import { useQueryClient } from "@tanstack/react-query";
 import { FormComposer } from "../../../components/FormComposer";
 import {updateComplaints} from "../../../redux/actions/index";
 
@@ -15,7 +15,7 @@ const EditForm = ({ applicationData, details ,complaintDetails}) => {
   complaintDetails.workflow.verificationDocuments= [];
   console.log("complaintDetails_inside_edit",complaintDetails)
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [canSubmit, setSubmitValve] = useState(true);
   const cities = Digit.Hooks.pgr.useTenants();
   const getCities = () => cities?.filter((e) => e.code === Digit.ULBService.getCurrentTenantId()) || [];

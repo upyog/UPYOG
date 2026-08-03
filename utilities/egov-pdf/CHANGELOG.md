@@ -1,6 +1,29 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 2.0.0 - 2026-05-08
+
+### Upgraded
+- Upgraded to Node.js 22
+- Replaced `kafka-node` with `kafkajs` v2.2.4 — kafka-node was unmaintained and incompatible with Node 22
+- Replaced `jade` with `pug` v3.0.2 — jade was renamed to pug, unmaintained and had security vulnerabilities
+- Upgraded `axios` from 0.19.2 to 1.7.0
+- Upgraded `uuid` from 3.3.3 to 9.0.0 — updated import style from `require('uuid/v4')` to `const { v4: uuidv4 } = require('uuid')`
+- Upgraded `express` from 4.16.1 to 4.18.2
+- Upgraded `http-errors` from 1.6.3 to 2.0.0
+- Upgraded `debug` from 2.6.9 to 4.3.4
+- Upgraded `morgan` from 1.9.1 to 1.10.0
+- Upgraded `pg` from 8.7.1 to 8.11.3
+- Upgraded `winston` from 3.2.1 to 3.11.0
+- Upgraded `cookie-parser` from 1.4.4 to 1.4.7
+
+### Added
+- `dotenv` v16.4.5 — environment variable management via `.env` file
+- `express-async-handler` v1.2.0 — async error propagation in Express routes
+- `nodemon` v3.0.2 (devDependency) — auto-restart during development
+- `eslint` v8.56.0 (devDependency) — static code analysis
+- `engines` field in package.json enforcing Node >=22
+
 ## 1.2.1 - 2023-09-13
 
 - Central Instance Library Integration

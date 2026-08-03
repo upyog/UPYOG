@@ -1,0 +1,587 @@
+/* components/ADSCancelBooking.js */
+.ads-auto-1 {
+  box-shadow: none;
+}
+
+.ads-auto-2 {
+  height: auto;
+}
+
+
+/* components/ADSCartAndCancellationPolicyDetails.js */
+.ads-auto-3 {
+  padding-left: 50px;
+}
+
+.ads-auto-4 {
+  padding-left: 50px;
+}
+
+.ads-auto-5 {
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.ads-auto-6 {
+  padding-left: 20px;
+}
+
+.ads-auto-7 {
+  margin-bottom: 10px;
+}
+
+.ads-auto-8 {
+  color: #a82227;
+}
+
+.ads-auto-9 {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ads-auto-10 {
+  cursor: pointer;
+  color: #a82227;
+  font-size: 20px;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+
+.ads-auto-11 {
+  width: 1px;
+}
+
+.ads-auto-12 {
+  width: 20px;
+  position: relative;
+}
+
+.ads-auto-13 {
+  position: absolute;
+  top: -4px;
+  right: -93px;
+  color: #008000;
+  padding: 5px;
+  border-radius: 30px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+}
+
+.ads-auto-14 {
+  cursor: pointer;
+  color: #a82227;
+  font-size: 20px;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+
+.ads-auto-15 {
+  cursor: pointer;
+  font-size: 20px;
+  color: #a82227;
+}
+
+.ads-auto-16 {
+
+}
+
+.ads-auto-17 {
+  color: #a82227;
+  margin: 25px;
+}
+
+.ads-auto-18 {
+  font-size: 20px;
+}
+
+.ads-auto-19 {
+  color: #a82227;
+  margin: 25px;
+}
+
+.ads-auto-20 {
+
+}
+
+.ads-auto-21 {
+  color: #a82227;
+  margin: 25px;
+}
+
+.ads-auto-22 {
+  margin-bottom: 15px;
+}
+
+.ads-auto-23 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ads-auto-24 {
+  font-weight: bold;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+
+/* components/ADSCartDetails.js */
+.ads-auto-25 {
+  padding-left: 50px;
+}
+
+.ads-auto-26 {
+  padding-left: 50px;
+}
+
+.ads-auto-27 {
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.ads-auto-28 {
+  color: #a82227;
+  margin: 25px;
+}
+
+.ads-auto-29 {
+  position: sticky;
+  bottom: 0px;
+  background-color: #fff;
+  padding: 15px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  z-index: 10px;
+}
+
+
+/* components/AdvertisementModuleCard.js */
+.ads-auto-30 {
+  border: 1px solid #ccc;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 30%;
+  margin: 10px auto;
+  min-width: 24%;
+}
+
+.ads-auto-31 {
+  width: 100%;
+  height: 200px;
+  position: relative;
+  padding: 10px;
+}
+
+.ads-auto-32 {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  min-width: 0;
+}
+
+.ads-auto-33 {
+  padding: 10px;
+}
+
+.ads-auto-34 {
+  margin: 0;
+  color: #a82227;
+}
+
+.ads-auto-35 {
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.ads-auto-36 {
+  margin-left: 5px;
+  color: #a82227;
+}
+
+.ads-auto-37 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ads-auto-38 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ads-auto-39 {
+  background-color: green;
+  color: white;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.ads-auto-40 {
+  background-color: #a82227;
+  color: white;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+
+/* components/BookingPopup.js */
+.ads-auto-41 {
+  box-shadow: none;
+}
+
+.ads-auto-42 {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* components/ExistingBookingDetails.js */
+.ads-auto-43 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* components/SearchApplication.js */
+.ads-auto-44 {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  z-index: 1000px;
+}
+
+.ads-auto-45 {
+  display: block;
+  padding: 8px;
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+
+.ads-auto-46 {
+  display: block;
+  padding: 8px;
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+
+.ads-auto-47 {
+  color: #505A5F;
+}
+
+.ads-auto-48 {
+  margin-top: 10px;
+}
+
+.ads-auto-49 {
+  margin-top: 20px;
+}
+
+.ads-auto-50 {
+  text-align: center;
+}
+
+
+/* pageComponents/ADSAddress.js */
+.ads-auto-51 {
+  position: relative;
+}
+
+.ads-auto-52 {
+  position: absolute;
+  right: 0px;
+}
+
+.ads-auto-53 {
+  width: 50%;
+}
+
+
+/* pageComponents/ADSCitizenDetails.js */
+.ads-auto-54 {
+  position: relative;
+}
+
+.ads-auto-55 {
+  position: absolute;
+  right: 0px;
+}
+
+
+/* pageComponents/ADSDocument.js */
+.ads-auto-56 {
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+}
+
+.ads-auto-57 {
+  margin-right: 8px;
+  margin: 5px;
+  color: blue;
+  font-weight: bold;
+}
+
+
+/* pageComponents/ADSDocumentDetails.js */
+.ads-auto-58 {
+  position: relative;
+}
+
+.ads-auto-59 {
+  position: absolute;
+  right: 0px;
+}
+
+.ads-auto-60 {
+  margin-bottom: 24px;
+}
+
+.ads-auto-61 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* pageComponents/ADSRequiredDoc.js */
+.ads-auto-62 {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+
+/* pageComponents/ADSearch.js */
+.ads-auto-63 {
+  padding-left: 50px;
+}
+
+.ads-auto-64 {
+  padding-left: 50px;
+}
+
+.ads-auto-65 {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.ads-auto-66 {
+  width: 1px;
+}
+
+.ads-auto-67 {
+  width: 1px;
+  position: relative;
+}
+
+.ads-auto-68 {
+  position: absolute;
+  right: 83px;
+  background-color: #FFFFFF;
+  color: #008000;
+  padding: 4px;
+  border-radius: 30px;
+  margin: 1px 0 1px 0;
+  width: 31px;
+  height: 30px;
+  text-align: center;
+  transform: translateX(100%);
+}
+
+.ads-auto-69 {
+  overflow-x: auto;
+}
+
+.ads-auto-70 {
+  width: 100%;
+  overflow-x: auto;
+}
+
+
+/* pages/citizen/ADSApplicationDetails.js */
+.ads-auto-71 {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.ads-auto-72 {
+  font-size: 24px;
+}
+
+.ads-auto-73 {
+  color: #a82227;
+}
+
+.ads-auto-74 {
+  color: green;
+}
+
+.ads-auto-75 {
+  font-size: 24px;
+}
+
+.ads-auto-76 {
+  font-size: 24px;
+}
+
+.ads-auto-77 {
+  font-size: 24px;
+}
+
+.ads-auto-78 {
+  font-size: 24px;
+}
+
+
+/* pages/citizen/ADSMyBookings/ads-application.js */
+.ads-auto-79 {
+  margin: 20px;
+}
+
+
+/* pages/citizen/ADSMyBookings/index.js */
+.ads-auto-80 {
+  margin-left: 16px;
+}
+
+.ads-auto-81 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.ads-auto-82 {
+  flex: 1px;
+}
+
+.ads-auto-83 {
+  display: flex;
+  flex-direction: column;
+}
+
+.ads-auto-84 {
+  width: 100%;
+  padding: 8px;
+  height: 150%;
+}
+
+.ads-auto-85 {
+  flex: 1px;
+}
+
+.ads-auto-86 {
+  display: flex;
+  flex-direction: column;
+}
+
+.ads-auto-87 {
+  width: 100%;
+}
+
+.ads-auto-88 {
+  margin-top: 17%;
+}
+
+.ads-auto-89 {
+  margin-left: 30%;
+  margin-top: 10px;
+  display: block;
+}
+
+.ads-auto-90 {
+  border-radius: 30px;
+  width: 20%;
+}
+
+.ads-auto-91 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.ads-auto-92 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/Create/ADSAcknowledgement.js */
+.ads-auto-93 {
+  width: 100%;
+}
+
+.ads-auto-94 {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+
+/* pages/citizen/Create/CheckPage.js */
+.ads-auto-95 {
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.ads-auto-96 {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ads-auto-97 {
+  font-size: 24px;
+}
+
+.ads-auto-98 {
+  font-size: 24px;
+}
+
+.ads-auto-99 {
+  font-size: 24px;
+}
+
+.ads-auto-100 {
+  font-size: 24px;
+}
+
+
+/* pages/citizen/index.js */
+.ads-auto-101 {
+  width: 100%;
+}
+
+
+/* pages/employee/ApplicationDetails.js */
+.ads-auto-102 {
+  margin-bottom: 15px;
+}
+
+.ads-auto-103 {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+
+.ads-auto-104 {
+  z-index: 10;
+  position: relative;
+}
+

@@ -1,13 +1,13 @@
 import React from "react";
-import { Header, ResponseComposer, Loader } from "@upyog/digit-ui-react-components";
+import { Header, ResponseComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import Axios from "axios";
-import { useHistory, Link } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const ChallanSearchResults = ({ template, header, actionButtonLabel }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { mobileNumber, challanNo, Servicecategory,tenantId } = Digit.Hooks.useQueryParams();
   const filters = {};
   if (mobileNumber) filters.mobileNumber = mobileNumber;
@@ -23,7 +23,7 @@ const ChallanSearchResults = ({ template, header, actionButtonLabel }) => {
 
 
   const onSubmit = (data) => {
- history.push(`/upyog-ui/citizen/payment/my-bills/${data?.businesService}/${data?.ChannelNo}?workflow=mcollect`);
+ navigate(`/upyog-ui/citizen/payment/my-bills/${data?.businesService}/${data?.ChannelNo}?workflow=mcollect`);
   };
 
   const payment = {};

@@ -1,7 +1,6 @@
-import { Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { CustomButton, Menu } from "@nudmcdgnpm/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { CustomButton, Menu, Dropdown } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { useLocation } from "react-router-dom";
 
 const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   if (searcher == "") return str;
@@ -15,7 +14,7 @@ const ChangeCity = (prop) => {
   const [dropDownData, setDropDownData] = useState(null);
   const [selectCityData, setSelectCityData] = useState([]);
   const [selectedCity, setSelectedCity] = useState([]); //selectedCities?.[0]?.value
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const isDropdown = prop.dropdown || false;
   let selectedCities = [];
 
@@ -29,10 +28,11 @@ const ChangeCity = (prop) => {
     Digit.SessionStorage.set("Employee.tenantId", city?.value);
     Digit.UserService.setUser(loggedInData);
     setDropDownData(city);
-    if (window.location.href.includes("/sv-ui/employee/")) {
+     if (window.location.href.includes("/sv-ui/employee/")) {
       const redirectPath = location.state?.from || "/sv-ui/employee";
-      history.replace(redirectPath);
+      navigate(redirectPath, { replace: true }); // ✅ v6
     }
+    
     window.location.reload();
   };
 

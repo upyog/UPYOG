@@ -1,10 +1,13 @@
-import request from "request";
+// Before: imported unused request, named { post } from axios (removed in 1.x), 
+//         used require() for form-data, missing .js extensions on local imports
+// Change: removed request and { post }, replaced require() with import, added .js extensions
+
 import fs from "fs";
-import get from "lodash/get";
-import axios, { post } from "axios";
-import logger from "../config/logger";
-var FormData = require("form-data");
-import envVariables from "../EnvironmentVariables";
+import get from "lodash.get";
+import axios from "axios";
+import FormData from "form-data";
+import logger from "../config/logger.js";
+import envVariables from "../EnvironmentVariables.js";
 
 let egovFileHost = envVariables.EGOV_FILESTORE_SERVICE_HOST;
 let externalHost = envVariables.EGOV_EXTERNAL_HOST;
@@ -13,7 +16,9 @@ let externalHost = envVariables.EGOV_EXTERNAL_HOST;
  *
  * @param {*} filename -name of localy stored temporary file
  * @param {*} tenantId - tenantID
+ * 
  */
+// Refactored variable declarations to use const, fixed malformed URL issue, and added robust error handling for filestore API failures.
 export const fileStoreAPICall = async function(filename, tenantId, fileData) {
    const url = `${egovFileHost}filestore/v1/files?tenantId=${tenantId}&module=pdfgen&tag=00040-2017-QR`;
 

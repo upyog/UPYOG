@@ -13,6 +13,8 @@ public interface MdmsDataRepository {
 
     public void update(MdmsRequest mdmsRequest);
 
+    void delete(String tenantId, String schemaCode);
+
     public  List<Mdms> searchV2(MdmsCriteriaV2 mdmsCriteriaV2);
 
     public Map<String, Map<String, JSONArray>> search(MdmsCriteria mdmsCriteria);

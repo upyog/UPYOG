@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, DocumentIcon, EventCalendar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, DocumentIcon, EventCalendar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 

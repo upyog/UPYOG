@@ -1,23 +1,29 @@
-import { useQuery, useQueryClient } from "react-query";
-/**
- * Custom hook to search and fetch specific documents for an application 
- * based on a document type code. It filters documents from the provided 
- * configuration, retrieves their fileStoreIds.
- */
+import { useQueryClient } from "@tanstack/react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
-const useADSDocumentSearch = ({ application }, config = {}, Code, index) => {
+const useADSDocumentSearch = ({ application }, config = {}, Code) => {
   const client = useQueryClient();
+
   const tenantId = application?.tenantId || Digit.ULBService.getCurrentTenantId();
   const tenant = Digit.ULBService.getStateId();
   const bookingId = application?.bookingId;
-  let newDocs = [];
+
   const documents = config?.value?.documents?.documents || config?.value;
-  documents?.filter(doc => doc?.documentType === Code).forEach((ob) => {
-    newDocs.push(ob);
-  });
-  const filesArray = newDocs.map((value) => value?.fileStoreId);
-  const { isLoading, error, data } = useQuery([`adsDocuments-${bookingId}`, filesArray], () => Digit.UploadServices.Filefetch(filesArray, tenant));
-  return { isLoading, error, data: { pdfFiles: data?.data }, revalidate: () => client.invalidateQueries([`chbDocuments-${bookingId}`, filesArray]) };
-  
+
+  const filteredDocs = documents?.filter((doc) => doc?.documentType === Code) || [];
+
+  const filesArray = filteredDocs.map((d) => d?.fileStoreId);
+
+  const queryKey = [ "ADS_DOCUMENTS", bookingId, JSON.stringify(filesArray) ];
+
+  const queryFn = () => Digit.UploadServices.Filefetch(filesArray, tenant);
+
+  const query = queryTemplate({ queryKey, queryFn, config });
+
+  return {
+    ...query,
+    data: { pdfFiles: query?.data?.data },
+    revalidate: () => client.invalidateQueries({ queryKey })};
 };
+
 export default useADSDocumentSearch;

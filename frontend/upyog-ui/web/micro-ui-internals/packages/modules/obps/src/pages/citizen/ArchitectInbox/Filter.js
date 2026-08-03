@@ -1,4 +1,4 @@
-import { ActionBar, ApplyFilterBar, CloseSvg, Dropdown, SubmitBar, FilterIcon, Loader, CheckBox, RadioButtons } from "@upyog/digit-ui-react-components";
+import { ActionBar, ApplyFilterBar, CloseSvg, Dropdown, SubmitBar, FilterIcon, Loader, CheckBox, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import React ,{useMemo, useState}from "react";
 import { useTranslation } from "react-i18next";
 import Status from "./Status";

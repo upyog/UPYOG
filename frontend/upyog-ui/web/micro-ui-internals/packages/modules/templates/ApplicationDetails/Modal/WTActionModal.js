@@ -1,6 +1,6 @@
-import { Loader, Modal, FormComposer } from "@upyog/digit-ui-react-components";
+import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+
 
 import { configWTApproverApplication } from "../config/WTApproverApplication";
 /*
@@ -104,7 +104,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectVehicle, setSelectVehicle] = useState(null);
   const [comment, setComment] = useState("");
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
 
   useEffect(() => {
@@ -194,7 +194,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             return; // Or handle as needed
         }
       
-        return history.push(`/upyog-ui/employee/payment/collect/${servicePath}/${applicationData.bookingNo}`);
+        return navigate(`/upyog-ui/employee/payment/collect/${servicePath}/${applicationData.bookingNo}`);
       }
       setConfig(
         configWTApproverApplication({

@@ -1,7 +1,6 @@
-import { CitizenHomeCard, PTIcon } from "@upyog/digit-ui-react-components";
+import { CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch } from "react-router-dom";
 
 import PTRCitizenPet from "./pageComponents/PTRCitizenPet";
 
@@ -22,7 +21,8 @@ import PTRCard from "./components/PTRCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import { TableConfig } from "./config/inbox-table-config";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
-import NewApplication from "./pages/employee/NewApplication";
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
+
 
 
 // Registering all components to be used in the module
@@ -30,7 +30,6 @@ const componentsToRegister = {
   PTRCheckPage,
   PTRAcknowledgement,
   PTRWFCaption,
-  PTRNewApplication: NewApplication,
   ApplicationDetails: ApplicationDetails,
   PTRMyApplications: PTRMyApplications,
   PTRApplicationDetails: PTRApplicationDetails,
@@ -41,6 +40,8 @@ const componentsToRegister = {
   PTRSelectProofIdentity,
   PTRServiceDoc,
   PTRWFApplicationTimeline,
+  EnhancedReport,
+  ReportSearchApplication
 };
 
 // function of component registry to add entries in the registry
@@ -52,7 +53,7 @@ const addComponentsToRegistry = () => {
 
 // Main module function to get to the routes file of citizen or employee module
 export const PTRModule = ({ stateCode, userType, tenants }) => {
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
   const moduleCode = "PTR";
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
@@ -62,17 +63,16 @@ export const PTRModule = ({ stateCode, userType, tenants }) => {
   
   Digit.SessionStorage.set("PTR_TENANTS", tenants);  // setting a value in a session storage object
 
-  // loads localization settings for an employee based on the current tenant and language when the component mounts
-  useEffect(
-    () =>
-      userType === "employee" &&
+// Fetch localization data if the user is an employee if the user type is employee, fetch localization data for the current tenant and language
+  useEffect(() => {
+    if (userType === "employee") {
       Digit.LocalizationService.getLocale({
         modules: [`rainmaker-${Digit.ULBService.getCurrentTenantId()}`],
         locale: Digit.StoreData.getCurrentLanguage(),
         tenantId: Digit.ULBService.getCurrentTenantId(),
-      }),
-    []
-  );
+      });
+    }
+  }, [userType]);
 
     // Displaying employee module if userType is 'employee', otherwise displaying citizen module
   if (userType === "employee") {

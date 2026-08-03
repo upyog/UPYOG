@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard,CHBIcon } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard,CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
 
 /*
  * This component renders the Advertisement module card for the employee interface.

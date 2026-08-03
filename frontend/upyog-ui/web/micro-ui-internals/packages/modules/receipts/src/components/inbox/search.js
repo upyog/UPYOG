@@ -1,4 +1,4 @@
-import { ActionBar, CloseSvg, DatePicker, Label, LinkLabel, MobileNumber, SubmitBar, TextInput } from "@upyog/digit-ui-react-components";
+import { ActionBar, CloseSvg, DatePicker, Label, LinkLabel, MobileNumber, SubmitBar, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -145,7 +145,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                     // disabled={!!Object.keys(formState.errors).length || Object.keys(form).every((key) => !form?.[key])}
                     submit
                   />
-                  <div style={{ width: "100%", textAlign: "right", width: "240px", textAlign: "right", marginLeft: "96px", marginTop: "8px" }}>
+                  <div style={{ width: "240px", textAlign: "right", marginLeft: "96px", marginTop: "8px" }}>
                     {clearAll()}
                   </div>
                 </div>

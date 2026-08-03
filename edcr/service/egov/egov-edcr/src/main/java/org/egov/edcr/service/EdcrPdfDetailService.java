@@ -31,7 +31,7 @@ public class EdcrPdfDetailService {
     }
 
     public void saveAll(List<org.egov.edcr.entity.EdcrPdfDetail> edcrPdfDetails) {
-        edcrPdfDetailRepository.save(edcrPdfDetails);
+        edcrPdfDetailRepository.saveAll(edcrPdfDetails);
     }
 
     public List<org.egov.edcr.entity.EdcrPdfDetail> findByDcrApplicationId(Long applicationDetailId) {

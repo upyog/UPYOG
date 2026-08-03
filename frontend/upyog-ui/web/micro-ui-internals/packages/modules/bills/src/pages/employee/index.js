@@ -1,7 +1,7 @@
-import { PrivateRoute,BreadCrumb } from "@upyog/digit-ui-react-components";
+import { PrivateRoute,BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Switch, useLocation } from "react-router-dom";
+import { Link, useLocation, Routes, Route } from "react-router-dom";
 import DownloadBillInbox from "./DownloadBill";
 
 import GroupBillInbox from "./GroupBill/index";
@@ -80,59 +80,69 @@ const EmployeeApp = ({ path, url, userType }) => {
   const BillInbox = Digit.ComponentRegistryService.getComponent("BillInbox");
 
   return (
-    <Switch>
-      <React.Fragment>
-        <div className="ground-container">
-          <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : "revert" }}>
-            <BILLSBreadCrumbs location={location} />
-          </p>
-          <PrivateRoute
-            path={`${path}/inbox`}
-            component={() => <SearchApp parentRoute={path} filterComponent="BILLS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />}
+    <React.Fragment>
+      <div className="ground-container">
+        <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : "revert" }}>
+          <BILLSBreadCrumbs location={location} />
+        </p>
+        <Routes>
+          <Route
+            path={`/inbox`}
+            element={
+              <PrivateRoute>
+                <SearchApp parentRoute={path} filterComponent="BILLS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />
+              </PrivateRoute>
+            }
           />
-          <PrivateRoute
-            path={`${path}/group-bill`}
-            component={() => <GroupBill parentRoute={path} filterComponent="BILLS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />}
+          <Route
+            path={`/group-bill`}
+            element={
+              <PrivateRoute>
+                <GroupBill parentRoute={path} filterComponent="BILLS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />
+              </PrivateRoute>
+            }
           />
-          <PrivateRoute
-            path={`${path}/group-billold`}
-            component={() => (
-              <GroupBillInbox
-                parentRoute={path}
-                filterComponent="BILLS_GROUP_FILTER"
-                initialStates={{}}
-                isInbox={true}
-                keys={generateServiceType?.["common-masters"]?.uiCommonPay}
-              />
-            )}
+          <Route
+            path={`/group-billold`}
+            element={
+              <PrivateRoute>
+                <GroupBillInbox
+                  parentRoute={path}
+                  filterComponent="BILLS_GROUP_FILTER"
+                  initialStates={{}}
+                  isInbox={true}
+                  keys={generateServiceType?.["common-masters"]?.uiCommonPay}
+                />
+              </PrivateRoute>
+            }
           />
-          <PrivateRoute
-            path={`${path}/download-bill-pdf`}
-            component={() => (
-              <DownloadBillInbox
-                parentRoute={path}
-                filterComponent="BILLS_GROUP_FILTER"
-                initialStates={{}}
-                isInbox={true}
-                keys={generateServiceType?.["common-masters"]?.uiCommonPay}
-              />
-            )}
+          <Route
+            path={`/download-bill-pdf`}
+            element={
+              <PrivateRoute>
+                <DownloadBillInbox
+                  parentRoute={path}
+                  filterComponent="BILLS_GROUP_FILTER"
+                  initialStates={{}}
+                  isInbox={true}
+                  keys={generateServiceType?.["common-masters"]?.uiCommonPay}
+                />
+              </PrivateRoute>
+            }
           />
-          <PrivateRoute
-            path={`${path}/cancel-bill`}
-            component={() => <CancelBill parentRoute={path} filterComponent="BILLS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />}
+          <Route
+            path={`/cancel-bill`}
+            element={
+              <PrivateRoute>
+                <CancelBill parentRoute={path} filterComponent="BILLS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />
+              </PrivateRoute>
+            }
           />
-          <PrivateRoute
-            path={`${path}/response-cancelBill`}
-            component={() => <ResponseCancelBill parentRoute={path} />}
-          />
-          <PrivateRoute
-            path={`${path}/bill-details`}
-            component={() => <BillDetailsv1 parentRoute={path} />}
-          />
-        </div>
-      </React.Fragment>
-    </Switch>
+          <Route path={`/response-cancelBill`} element={<PrivateRoute><ResponseCancelBill parentRoute={path} /></PrivateRoute>} />
+          <Route path={`/bill-details`} element={<PrivateRoute><BillDetailsv1 parentRoute={path} /></PrivateRoute>} />
+        </Routes>
+      </div>
+    </React.Fragment>
   );
 };
 

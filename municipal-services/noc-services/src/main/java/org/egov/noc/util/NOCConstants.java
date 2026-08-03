@@ -1,6 +1,11 @@
 package org.egov.noc.util;
 
+
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 public class NOCConstants {
@@ -80,5 +85,51 @@ public class NOCConstants {
 	public static final String PARSING_ERROR = "PARSING_ERROR";
 	
 	public static final String TENANTID_MDC_STRING = "TENANTID";
+
+	// AAI Integration Constants
+	public static final String AAI_INTEGRATION_ERROR = "AAI_INTEGRATION_ERROR";
+
+	public static final String APPLICATION_STATUS_INPROGRESS = "INPROGRESS";
+
+	public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
+
+	public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
+
+	public static final String CIVIL_AVIATION_NOC_TYPE = "CIVIL_AVIATION";
+
+	public static final String CIVIL_NOC_WORKFLOW_CODE = "CIVIL_AVIATION_SRV";
+
+	// AAI Document Type Constants
+	public static final String DOC_TYPE_UNDERTAKING1A = "NOC.UNDERTAKING1A";
+	public static final String DOC_TYPE_SITEELEVATION = "NOC.SITEELEVATION";
+	public static final String DOC_TYPE_SITECORDINATES = "NOC.SITECORDINATES";
+	public static final String DOC_TYPE_AUTHORIZATION = "NOC.AUTHORIZATION";
+	public static final String DOC_TYPE_PERMISSION = "NOC.PERMISSION";
+	public static final String DOC_TYPE_AAI_NOC_APPROVAL = "NOC.AAI_NOC_APPROVAL";
+
+	// AAI Status Constants
+	public static final String AAI_STATUS_ISSUED = "ISSUED";
+	public static final String AAI_STATUS_AUTOSETTLED = "AUTOSETTLED";
+	public static final String AAI_STATUS_APPROVED = "APPROVED";
+	public static final String AAI_STATUS_REJECTED = "REJECTED";
+	public static final String AAI_STATUS_VERIFICATIONREJECTED = "VERIFICATIONREJECTED";
+	public static final String AAI_STATUS_INPROCESS = "INPROCESS";
+
+	// Fire NOC Workflow Constants
+	public static final String FIRE_NOC_WORKFLOW_CODE = "FIRE_SAFETY_SRV";
+	public static final String FIRE_SAFETY_NOC_TYPE = "FIRE_SAFETY";
+
+	// Coordinate Constants
+	// Regex pattern for DMS format: "DD MM SS.SS"
+	public static final Pattern DMS_PATTERN = Pattern.compile("^\\d{2}\\s+\\d{2}\\s+\\d{1,2}(\\.\\d{1,2})?$");
+
+	// Unified list of all keys that might contain coordinates
+	public static final List<String> ALL_COORDINATE_KEYS = Arrays.asList(
+			"EAST", "WEST", "NORTH", "SOUTH", "CENTER"
+	);
+
+	// Coordinate field keys
+	public static final String KEY_LAT = "latitude";
+	public static final String KEY_LON = "longitude";
 
 }

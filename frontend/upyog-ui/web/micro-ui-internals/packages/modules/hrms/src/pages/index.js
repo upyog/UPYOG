@@ -1,7 +1,7 @@
-import { PrivateRoute } from "@upyog/digit-ui-react-components";
+import { PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Switch, useLocation } from "react-router-dom";
+import { Link, useLocation, Routes, Route } from "react-router-dom";
 
 const EmployeeApp = ({ path, url, userType }) => {
   const { t } = useTranslation();
@@ -20,28 +20,30 @@ const EmployeeApp = ({ path, url, userType }) => {
   const CreateEmployee = Digit?.ComponentRegistryService?.getComponent("HRCreateEmployee");
   const EditEmpolyee = Digit?.ComponentRegistryService?.getComponent("HREditEmpolyee");
   return (
-    <Switch>
-      <React.Fragment>
-        <div className="ground-container">
-          <p className="breadcrumb" style={{ marginLeft: mobileView ? "1vw" : "15px" }}>
-            <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
-              {t("HR_COMMON_BUTTON_HOME")}
-            </Link>{" "}
-            / <span>{location.pathname === "/upyog-ui/employee/hrms/inbox" ? t("HR_COMMON_HEADER") : t("HR_COMMON_HEADER")}</span>
-          </p>
-          <PrivateRoute
-            path={`${path}/inbox`}
-            component={() => (
-              <Inbox parentRoute={path} businessService="hrms" filterComponent="HRMS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />
-            )}
+    <React.Fragment>
+      <div className="ground-container">
+        <p className="breadcrumb" style={{ marginLeft: mobileView ? "1vw" : "15px" }}>
+          <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
+            {t("HR_COMMON_BUTTON_HOME")}
+          </Link>{" "}
+          / <span>{location.pathname === "/upyog-ui/employee/hrms/inbox" ? t("HR_COMMON_HEADER") : t("HR_COMMON_HEADER")}</span>
+        </p>
+        <Routes>
+          <Route
+            path={`/inbox`}
+            element={
+              <PrivateRoute>
+                <Inbox parentRoute={path} businessService="hrms" filterComponent="HRMS_INBOX_FILTER" initialStates={inboxInitialState} isInbox={true} />
+              </PrivateRoute>
+            }
           />
-          <PrivateRoute path={`${path}/create`} component={() => <CreateEmployee />} />
-          <PrivateRoute path={`${path}/response`} component={(props) => <HRMSResponse {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/details/:tenantId/:id`} component={() => <HRMSDetails />} />
-          <PrivateRoute path={`${path}/edit/:tenantId/:id`} component={() => <EditEmpolyee />} />
-        </div>
-      </React.Fragment>
-    </Switch>
+          <Route path={`create`} element={<PrivateRoute><CreateEmployee /></PrivateRoute>} />
+          <Route path={`response`} element={<PrivateRoute><HRMSResponse parentRoute={path} /></PrivateRoute>} />
+          <Route path={`details/:tenantId/:id`} element={<PrivateRoute><HRMSDetails /></PrivateRoute>} />
+          <Route path={`edit/:tenantId/:id`} element={<PrivateRoute><EditEmpolyee /></PrivateRoute>} />
+        </Routes>
+      </div>
+    </React.Fragment>
   );
 };
 

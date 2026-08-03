@@ -9,8 +9,8 @@ import {
   Menu,
   MobileNumber,
   TextArea,
-} from "@upyog/digit-ui-react-components";
-import { useLocation, useRouteMatch } from "react-router-dom";
+} from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/VENDORTimeline";
 
@@ -576,7 +576,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name={"VendorType"}
             defaultValue={VendorType}
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
                 selected={VendorType}
@@ -616,7 +616,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name={"VendorCategory"}
             defaultValue={VendorCategory}
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
                 selected={VendorCategory}
@@ -665,7 +665,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name={"Status"}
             defaultValue={Status}
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
                 selected={Status}

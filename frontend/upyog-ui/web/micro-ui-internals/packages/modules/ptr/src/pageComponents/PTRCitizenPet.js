@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/PTRTimeline";
 import { Controller, useForm } from "react-hook-form";
 import { convertEpochToDate } from "../utils";
@@ -216,7 +216,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
               name={"petType"}
               defaultValue={petType}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={petType}
@@ -234,7 +234,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
               name={"breedType"}
               defaultValue={breedType}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={breedType}
@@ -253,7 +253,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
               name={"petGender"}
               defaultValue={petGender}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={petGender}
@@ -272,7 +272,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
               name={"petColor"}
               defaultValue={petColor}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={petColor}

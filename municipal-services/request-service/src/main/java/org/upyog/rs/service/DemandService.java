@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.egov.common.contract.request.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
@@ -22,21 +21,20 @@ import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DemandService {
 
 
-	@Autowired
-	private CalculationService calculationService;
+	private final CalculationService calculationService;
 
-	@Autowired
-	private DemandRepository demandRepository;
+	private final DemandRepository demandRepository;
 
-	@Autowired
-	private RequestServiceConfiguration config;
+	private final RequestServiceConfiguration config;
 
 
 
@@ -67,7 +65,7 @@ public class DemandService {
 
 		User owner = buildUser(waterTankerBookingDetail.getApplicantDetail(), tenantId);
 		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, tenantId,immediateDeliveryFee);
-		Demand demand = buildDemand(tenantId, consumerCode, owner, demandDetails, amountPayable);
+		Demand demand = buildDemand(tenantId, consumerCode, owner, demandDetails);
 		log.info("Final demand generation object" + demand.toString());
 		return demandRepository.saveDemand(waterTankerRequest.getRequestInfo(), Collections.singletonList(demand));
 	}
@@ -142,8 +140,7 @@ public class DemandService {
 				.businessService(config.getMtModuleName()).additionalDetails(null).build();
 	}
 
-	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails,
-			BigDecimal amountPayable) {
+	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails) {
 		return Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner).tenantId(tenantId)
 				.taxPeriodFrom(RequestServiceUtil.getCurrentTimestamp()).taxPeriodTo(RequestServiceUtil.getFinancialYearEnd())
 				.consumerType(RequestServiceConstants.WATER_TANKER_SERVICE_NAME)

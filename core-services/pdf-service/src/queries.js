@@ -1,13 +1,16 @@
-const { Pool } = require('pg');
-import logger from "./config/logger";
-import producer from "./kafka/producer";
-import envVariables from "./EnvironmentVariables";
-import PDFMerger from 'pdf-merger-js';
-import { fileStoreAPICall, getFilestoreUrl } from "./utils/fileStoreAPICall";
-import fs, {
-  exists
-} from "fs";
+// Before: mixed require() and import, uuid v3 subpath import, missing .js extensions
+// Change: replaced require() with ESM imports, fixed uuid to v9 API, added .js extensions
 
+import { Pool } from 'pg';
+import logger from "./config/logger.js";
+import producer from "./kafka/producer.js";
+import envVariables from "./EnvironmentVariables.js";
+import PDFMerger from 'pdf-merger-js';
+import { fileStoreAPICall, getFilestoreUrl } from "./utils/fileStoreAPICall.js";
+import fs from "fs";
+import { v4 as uuidv4 } from "uuid";
+
+// PostgreSQL connection pool — reuses connections across requests for better performance
 const pool = new Pool({
   user: envVariables.DB_USER,
   host: envVariables.DB_HOST,
@@ -17,8 +20,13 @@ const pool = new Pool({
 })
 
 let createJobKafkaTopic = envVariables.KAFKA_CREATE_JOB_TOPIC;
-const uuidv4 = require("uuid/v4");
 
+/**
+ * Searches egov_pdf_gen table for already generated PDFs
+ * Supports search by jobid, entityid, tenantid and isconsolidated
+ * Returns the latest record per entityid (based on max endtime)
+ * Used by the _search API endpoint to avoid regenerating existing PDFs
+ */
 export const getFileStoreIds = (
   jobid,
   tenantId,
@@ -91,7 +99,13 @@ export const getFileStoreIds = (
   });
 };
 
-export const insertStoreIds = (
+/**
+ * Publishes generated PDF records to Kafka topic PDF_GEN_CREATE
+ * egov-persister service consumes this topic and saves the records to DB
+ * Called after all PDFs are uploaded to filestore successfully
+ * Triggers successCallback with jobid and filestoreIds on success
+ */
+export const insertStoreIds = async (
   dbInsertRecords,
   jobid,
   filestoreids,
@@ -104,24 +118,19 @@ export const insertStoreIds = (
   documentType,
   moduleName
 ) => {
-  var payloads = [];
   var endtime = new Date().getTime();
-  var id = uuidv4();
-  payloads.push({
-    topic: createJobKafkaTopic,
-    messages: JSON.stringify({ jobs: dbInsertRecords })
-  });
-  producer.send(payloads, function(err, data) {
-    if (err) {
-      logger.error(err.stack || err);
-      errorCallback({
-        message: `error while publishing to kafka: ${err.message}`
-      });
-    } else {
-      logger.info("jobid: " + jobid + ": published to kafka successfully");
-      successCallback({
-        message: "Success",
-        jobid: jobid,
+
+  // Before: kafka-node producer.send used callback style
+  // Change: kafkajs producer.send is async/await
+  try {
+    await producer.send({
+      topic: createJobKafkaTopic,
+      messages: [{ value: JSON.stringify({ jobs: dbInsertRecords }) }]
+    });
+    logger.info("jobid: " + jobid + ": published to kafka successfully");
+    successCallback({
+      message: "Success",
+        jobid,
         filestoreIds: filestoreids,
         tenantid: tenantId,
         starttime,
@@ -131,10 +140,20 @@ export const insertStoreIds = (
         documentType,
         moduleName
       });
+    } catch (err) {
+      logger.error(err.stack || err);
+      errorCallback({
+        message: `error while publishing to kafka: ${err.message}`
+      });
     }
-  });
-};
+  };
 
+/**
+ * Tracks progress of a bulk PDF generation job in egov_bulk_pdf_info table
+ * On first call: inserts a new record with status INPROGRESS
+ * On subsequent calls: increments recordscompleted count
+ * Called after each individual PDF is generated and saved to disk
+ */
 export async function insertRecords(bulkPdfJobId, totalPdfRecords, currentPdfRecords, userid, tenantId, locality, bussinessService, consumerCode, isConsolidated) {
   try {
     const result = await pool.query('select * from egov_bulk_pdf_info where jobid = $1', [bulkPdfJobId]);
@@ -158,6 +177,14 @@ export async function insertRecords(bulkPdfJobId, totalPdfRecords, currentPdfRec
   } 
 }
 
+/**
+ * Merges all individual PDF files into a single output.pdf once all records are completed
+ * Checks if recordscompleted >= totalrecords and all expected files are present on disk
+ * Uploads merged PDF to filestore, updates DB with filestoreid and status DONE
+ * Sends SMS notification with download link via Kafka
+ * Cleans up temp PDF files and folder after successful upload
+ * Skips merge if job status is CANCEL
+ */
 export async function mergePdf(bulkPdfJobId, tenantId, userid, numberOfFiles, mobileNumber){
 
   try {
@@ -179,7 +206,7 @@ export async function mergePdf(bulkPdfJobId, tenantId, userid, numberOfFiles, mo
           try {
             for (let i = 0; i < fileNames.length; i++){
               logger.info(baseFolder+fileNames[i]);
-              merger.add(baseFolder+fileNames[i]);            //merge all pages. parameter is the path to file and filename.
+              await merger.add(baseFolder+fileNames[i]);  //merge all pages. parameter is the path to file and filename.
             }
             await merger.save(baseFolder+'/output.pdf');        //save under given name and reset the internal document
           } catch (err) {
@@ -213,24 +240,19 @@ export async function mergePdf(bulkPdfJobId, tenantId, userid, numberOfFiles, mo
           }
         } catch (error) {
           logger.error(error.stack || error);
-          var errorPlayloads = [];
-          
-          errorPlayloads.push({
-            topic: envVariables.KAFKA_PDF_ERROR_TOPIC,
-            messages: error
-          });
-          producer.send(errorPlayloads, function(err, data) {
-            if (err) {
-              logger.error(err.stack || err);
-              errorCallback({
-                message: `error while publishing to kafka: ${err.message}`
-              });
+          try {
+            await producer.send({
+              topic: envVariables.KAFKA_PDF_ERROR_TOPIC,
+              messages: [{ value: JSON.stringify(error) }]
+            });
+          } catch (kafkaErr) {
+            logger.error("error while publishing to kafka: " + kafkaErr.message);
+            logger.error(kafkaErr.stack || kafkaErr);
             } 
-          });
-        }
-        
-
-      })();
+          }
+          
+        })();        
+      
     }
   } catch (err) {
     logger.error(err.stack || err);
@@ -238,30 +260,38 @@ export async function mergePdf(bulkPdfJobId, tenantId, userid, numberOfFiles, mo
   
 }
 
+/**
+ * Sends SMS notification to the user with a download link for the merged PDF
+ * Fetches the filestore URL, shortens it via URL shortening service
+ * Publishes SMS request to Kafka notification topic for egov-notification-sms service
+ */
 export async function sendNoitification(filestoreid, mobileNumber, tenantId){
   const topic = envVariables.KAFKA_TOPICS_NOTIFICATION;
   var pdfLink = await getFilestoreUrl(filestoreid, tenantId);
   let smsRequest = {};
   smsRequest['mobileNumber'] = mobileNumber;
   smsRequest['message'] = "Your download is ready. It will expire in 24 hours. Please click on the link below to download the pdf.\n"+pdfLink;
-  let payloads = [];
-  payloads.push({
-    topic,
-    messages: JSON.stringify(smsRequest)
-  });
+  
 
-  producer.send(payloads, function(err, data) {
-    if (!err) {
-      console.log(data);
-    } else {
-      console.log(err);
-    }
-  });
+  try {
+    await producer.send({
+      topic,
+      messages: [{ value: JSON.stringify(smsRequest) }]
+    });
+  } catch (err) {
+    logger.error(err);  
+}
 }
 
 
 
 
+/**
+ * Fetches bulk PDF job details from egov_bulk_pdf_info table
+ * Searches by jobId if provided, otherwise by uuid (userid)
+ * Supports pagination via limit and offset
+ * Returns job progress, filestoreid, status and other metadata
+ */
 export async function getBulkPdfRecordsDetails(userid, offset, limit, jobId){
   try {
     let data = [];
@@ -310,6 +340,12 @@ export async function getBulkPdfRecordsDetails(userid, offset, limit, jobId){
 
 }
 
+/**
+ * Cancels an in-progress bulk PDF job by setting status to CANCEL in DB
+ * Prevents cancellation if job is already completed (recordscompleted == totalrecords)
+ * mergePdf checks for CANCEL status and skips the merge if set
+ * Returns error map if job not found or already completed
+ */
 export async function cancelBulkPdfProcess(requestInfo, jobId, userid){
   let errorMap = [];
   try{
@@ -348,6 +384,11 @@ export async function cancelBulkPdfProcess(requestInfo, jobId, userid){
   
 }
 
+/**
+ * Same as getBulkPdfRecordsDetails but for defaulter notice PDF jobs
+ * Fetches records from egov_defaulter_notice_pdf_info table
+ * Searches by jobId if provided, otherwise by uuid (userid)
+ */
 export async function getDefaulterPdfRecordsDetails(userid, offset, limit, jobId){
   try {
     let data = [];
@@ -396,6 +437,11 @@ export async function getDefaulterPdfRecordsDetails(userid, offset, limit, jobId
 
 }
 
+/**
+ * Same as insertRecords but for defaulter notice PDF jobs
+ * Tracks progress in egov_defaulter_notice_pdf_info table
+ * Includes additional propertytype field specific to defaulter notices
+ */
 export async function insertRecordsForDN(bulkPdfJobId, totalPdfRecords, currentPdfRecords, userid, tenantId, locality,propertytype, bussinessService, consumerCode, isConsolidated) {
   try {
     const result = await pool.query('select * from egov_defaulter_notice_pdf_info where jobid = $1', [bulkPdfJobId]);
@@ -418,6 +464,11 @@ export async function insertRecordsForDN(bulkPdfJobId, totalPdfRecords, currentP
   } 
 }
 
+/**
+ * Same as mergePdf but for defaulter notice PDF jobs
+ * Merges PDFs, uploads to filestore, updates egov_defaulter_notice_pdf_info table
+ * Sends SMS notification and cleans up temp files after successful upload
+ */
 export async function mergePdfForDN(bulkPdfJobId, tenantId, userid, numberOfFiles, mobileNumber){
 
   try {
@@ -439,7 +490,7 @@ export async function mergePdfForDN(bulkPdfJobId, tenantId, userid, numberOfFile
           try {
             for (let i = 0; i < fileNames.length; i++){
               logger.info(baseFolder+fileNames[i]);
-              merger.add(baseFolder+fileNames[i]);            //merge all pages. parameter is the path to file and filename.
+              await merger.add(baseFolder+fileNames[i]);            //merge all pages. parameter is the path to file and filename.
             }
             await merger.save(baseFolder+'/output.pdf');        //save under given name and reset the internal document
           } catch (err) {
@@ -473,27 +524,20 @@ export async function mergePdfForDN(bulkPdfJobId, tenantId, userid, numberOfFile
           }
         } catch (error) {
           logger.error(error.stack || error);
-          var errorPlayloads = [];
-          
-          errorPlayloads.push({
-            topic: envVariables.KAFKA_PDF_ERROR_TOPIC,
-            messages: error
-          });
-          producer.send(errorPlayloads, function(err, data) {
-            if (err) {
-              logger.error(err.stack || err);
-              errorCallback({
-                message: `error while publishing to kafka: ${err.message}`
-              });
-            } 
-          });
+          try {
+  // Refactored Kafka error publishing to use async/await, simplified payload structure, and added try/catch handling for producer send failures.
+            await producer.send({
+              topic: envVariables.KAFKA_PDF_ERROR_TOPIC,
+              messages: [{ value: JSON.stringify(error) }]
+            });
+          } catch (kafkaErr) {
+            logger.error(kafkaErr.stack || kafkaErr);
+          }
         }
-        
 
       })();
     }
   } catch (err) {
     logger.error(err.stack || err);
   }
-  
 }

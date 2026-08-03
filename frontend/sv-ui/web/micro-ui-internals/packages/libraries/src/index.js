@@ -36,6 +36,7 @@ import BillServices from "./services/elements/Bill";
 import {CustomService} from "./services/elements/CustomService";  
 import { SVService } from "./services/elements/SV";
 import { EmployeeDashboardService } from "./services/elements/EMPDASHBOARD";
+import { ReportsService } from "./services/elements/Reports";
 
 
 
@@ -87,6 +88,7 @@ const initLibraries = () => {
   setupLibraries("AuditService",AuditService);
   setupLibraries("SVService", SVService);
   setupLibraries("EmployeeDashboardService", EmployeeDashboardService);
+  setupLibraries("ReportsService", ReportsService);
 
 
   return new Promise((resolve) => {

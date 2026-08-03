@@ -1,7 +1,7 @@
-import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from '@nudmcdgnpm/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useState ,useEffect} from 'react'
 import { useTranslation } from 'react-i18next';
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Confirmation from '../Modal/Confirmation';
 import { format } from "date-fns";
 import { openUploadedDocument } from '../../utils';
@@ -13,7 +13,7 @@ const renderMultipleDocuments = (documents) => {
   return (
     <div style={{ display: 'flex', flexDirection: isMobile ? 'column':'row', gap: isMobile ? '40px' : '100px'}}>
       {documents.map(({ fileStoreId, fileName }) => (
-        <div className="documentDetails_pdf">
+        <div className="documentDetails_pdf" key={fileStoreId}>
           <div style={{ width: '100px' }} onClick={() => openUploadedDocument(fileStoreId, fileName)}>
             <GenericFileIcon />
             <span className="cell-text">{fileName?.split(10)}</span>
@@ -35,7 +35,7 @@ const DocumentDetails = () => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   const { id } = useParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -54,7 +54,7 @@ const DocumentDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/sv-ui/employee/engagement/messages/inbox/edit/${id}`)
+      navigate(`/sv-ui/employee/engagement/messages/inbox/edit/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -72,7 +72,7 @@ const DocumentDetails = () => {
         },
       ],
     };
-    history.push("/sv-ui/employee/engagement/messages/response?delete=true", details);
+    navigate("/sv-ui/employee/engagement/messages/response?delete=true", details);
   };
 
   function onModalCancel() {

@@ -13,30 +13,34 @@ import {
   Toast,
   CardText,
   CardSubHeader,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
-import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import $ from "jquery";
 import { makePayment } from "./payGov";
 
 
 export const SelectPaymentType = (props) => {
-  const { state = {} } = useLocation();
+  const location = useLocation();
+  const { state = {}, pathname, search } = location;
+
   const userInfo = Digit.UserService.getUser();
   const [showToast, setShowToast] = useState(null);
-  const { tenantId: __tenantId, authorization, workflow: wrkflow , consumerCode : connectionNo } = Digit.Hooks.useQueryParams();
+  // const { tenantId: __tenantId, authorization, workflow: wrkflow , consumerCode : connectionNo } = Digit.Hooks.useQueryParams();
+  const { tenantId: __tenantId, authorization } = Digit.Hooks.useQueryParams();
+
   const paymentAmount = state?.paymentAmount;
   const { t } = useTranslation();
-  const history = useHistory();
-  const { pathname, search } = useLocation();
+  const navigate = Digit.Hooks.useCustomNavigate();
+ 
   // const menu = ["AXIS"];
   let { consumerCode, businessService } = useParams();
   const tenantId = state?.tenantId || __tenantId || Digit.ULBService.getCurrentTenantId();
   const propertyId = state?.propertyId;
   const stateTenant = Digit.ULBService.getStateId();
   const { control, handleSubmit } = useForm();
-  const [Time, setTime ] = useState(0);
+  // const [Time, setTime ] = useState(0);
   const { data: menu, isLoading } = Digit.Hooks.useCommonMDMS(stateTenant, "DIGIT-UI", "PaymentGateway");
   const { data: paymentdetails, isLoading: paymentLoading } = Digit.Hooks.useFetchPayment(
     { tenantId: tenantId, consumerCode: consumerCode, businessService },
@@ -202,7 +206,7 @@ export const SelectPaymentType = (props) => {
               name="paymentType"
               defaultValue={menu[0]}
               control={control}
-              render={(props) => <RadioButtons selectedOption={props.value} options={menu} onSelect={props.onChange} />}
+              render={({field}) => <RadioButtons selectedOption={field.value} options={menu} onSelect={field.onChange} />}
             />
           )}
           {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} /*disabled={timerEnabledForBusinessService(businessService)? Time ===0:null}*/ />}       

@@ -1,8 +1,8 @@
-import { Banner, Card, Loader, CardText, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
-import { useQueryClient } from "react-query";
+import { Banner, Card, Loader, CardText, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const getMessage = (mutation) => {
   if (mutation.isSuccess) return mutation.data?.Surveys?.[0]?.uuid;
@@ -32,7 +32,7 @@ const Acknowledgement = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   // const mutation = Digit.Hooks.survey.useSubmitResponse();
   let mutation =  Digit.Hooks.survey.useSubmitSurveyResponse();
-  const { state } = props.location;
+  const { state } = useLocation();
   const surveyTitlev1 = state?.AnswerEntity?.surveyTitle;
   
   useEffect(() => {
@@ -44,7 +44,7 @@ const Acknowledgement = (props) => {
     });
   }, []);
 
-  if (mutation.isLoading && !mutation.isIdle) {
+  if (mutation.isPending && !mutation.isIdle) {
     return <Loader />;
   }
   

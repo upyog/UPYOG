@@ -10,7 +10,7 @@ import {
   StatusTable,
   LinkButton,
   PDFSvg
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -162,12 +162,12 @@ function ApplicationDetailsContent({
             {detail?.isTable && (
               <table style={{ tableLayout: "fixed", width: "63%", borderCollapse: "collapse",border: "1px solid black" }}>
                 <tr style={{ textAlign: "centre" }}>
-                  {detail?.headers.map((header) => (
-                    <th style={{ padding: "10px", paddingLeft: "0px",  border: "1px solid black" }}>{t(header)}</th>
+                  {detail?.headers.map((header, hIdx) => (
+                    <th key={hIdx} style={{ padding: "10px", paddingLeft: "0px",  border: "1px solid black" }}>{t(header)}</th>
                   ))}
                 </tr>
                 {detail?.tableRows.map((row, index) => {
-                  return <tr>
+                  return <tr key={index}>
                   {row.map((element, idx) => (
                     Array.isArray(element) && element.length > 1 ? (
                       <td style={{ paddingTop: "20px", textAlign: "centre", border: "1px solid black", verticalAlign: "middle" }} key={idx}>
@@ -227,7 +227,7 @@ function ApplicationDetailsContent({
                     );
                   }
                   return (
-                    <div>
+                    <div key={t(value.title)}>
                         {(<Row
                           key={t(value.title)}
                           label={t(value.title)}

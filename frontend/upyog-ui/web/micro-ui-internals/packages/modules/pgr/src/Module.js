@@ -5,7 +5,7 @@ import getRootReducer from "./redux/reducers";
 import CitizenApp from "./pages/citizen";
 
 import EmployeeApp from "./EmployeeApp";
-import { ComplaintIcon, CitizenHomeCard, Loader } from "@upyog/digit-ui-react-components";
+import { ComplaintIcon, CitizenHomeCard, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { PGR_CITIZEN_CREATE_COMPLAINT } from "./constants/Citizen";
 import { useTranslation } from "react-i18next";
 import { LOCALE } from "./constants/Localization";
@@ -52,11 +52,11 @@ const PGRLinks = ({ matchPath }) => {
 
   const links = [
     {
-      link: `${matchPath}/create-complaint/complaint-type`,
+      link: `/create-complaint/complaint-type`,
       i18nKey: t("CS_COMMON_FILE_A_COMPLAINT"),
     },
     {
-      link: `${matchPath}/complaints`,
+      link: `/complaints`,
       i18nKey: t(LOCALE.MY_COMPLAINTS),
     },
   ];

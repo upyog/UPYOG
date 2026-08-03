@@ -1,10 +1,12 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../common/queryTemplate";
 import StoreData from "../services/molecules/StoreData";
 
 const useStore = {
   getInitData: () =>
-    useQuery(["STORE_DATA"], () => StoreData.getInitData(), {
-      staleTime: Infinity,
+    queryTemplate({
+      queryKey: ["STORE_DATA"],
+      queryFn: () => StoreData.getInitData(),
+      config: { staleTime: Infinity },
     }),
 };
 

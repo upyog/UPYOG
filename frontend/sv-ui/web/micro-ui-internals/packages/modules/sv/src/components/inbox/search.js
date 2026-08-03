@@ -11,7 +11,7 @@ import {
   MobileNumber,
   Dropdown,
   Localities,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 
 import { useTranslation } from "react-i18next";
 /**
@@ -131,8 +131,8 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                       <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
                       {!input.type ? (
                         <Controller
-                          render={(props) => {
-                            return <TextInput onChange={props.onChange} value={props.value} />;
+                          render={({ field }) => {
+                            return <TextInput onChange={field.onChange} value={field.value} />;
                           }}
                           name={input.name}
                           control={control}
@@ -140,9 +140,9 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         />
                       ) : (
                         <Controller
-                          render={(props) => {
+                          render={({ field }) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} />;
+                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} />;
                           }}
                           name={input.name}
                           control={control}

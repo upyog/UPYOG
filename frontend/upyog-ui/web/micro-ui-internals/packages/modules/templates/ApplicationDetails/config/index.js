@@ -16,6 +16,7 @@ import { configASSETApproverApplication } from "./ASSETApproverApplication";
 import { configCHBApproverApplication } from "./CHBApproverApplication";
 import { configEWApproverApplication } from "./EWApproverApplication";
 import { configSVApproverApplication } from "./SVApproverApplication";
+import { configGCApproverApplication } from "./GCApproverApplication";
 
 
 
@@ -37,6 +38,7 @@ export {
   configASSETApproverApplication,
   configCHBApproverApplication,
   configEWApproverApplication,
-  configSVApproverApplication
+  configSVApproverApplication,
+  configGCApproverApplication,
 
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, TextInput, TextArea,Dropdown } from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, TextInput, TextArea,Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 
 /* This page is developed for the Mobile Toilet Request Details page.
    It allows users to enter details such as the number of mobile toilets required, delivery dates, and special requests. */
@@ -15,9 +15,9 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const tenantId=Digit.ULBService.getStateId();
   const inputStyles = {width:user.type === "EMPLOYEE" ? "52%" : "100%"};
    // Fetch noOfMobileToilet data from MDMS
-   const { data: NoOfMobileToilet} = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "NoOfMobileToilet" }], {
+   const { data: NoOfMobileToilet} = Digit.Hooks.useCustomMDMS(tenantId, "Request-Service", [{ name: "NoOfMobileToilet" }], {
     select: (data) => {
-      const formattedData = data?.["request-service"]?.["NoOfMobileToilet"];
+      const formattedData = data?.["Request-Service"]?.["NoOfMobileToilet"];
       return formattedData;
     },
   });
@@ -151,7 +151,6 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
             placeholder="Special Request"
             value={specialRequest}
             onChange={SetSpecialRequest}
-            style={{ width: user.type === "EMPLOYEE" ? "51.6%" : null }}
           />
 
         </div>

@@ -1,14 +1,14 @@
-import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
 
 const ForgotPassword = ({ config: propsConfig, t }) => {
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
   const [user, setUser] = useState(null);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
   const getUserType = () => Digit.UserService.getType();
   let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
@@ -21,7 +21,7 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
     }
     Digit.UserService.setUser(user);
     const redirectPath = location.state?.from || "/upyog-ui/employee";
-    history.replace(redirectPath);
+    navigate(redirectPath, { replace: true });
   }, [user]);
 
   const closeToast = () => {
@@ -43,7 +43,7 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
     };
     try {
       await Digit.UserService.sendOtp(requestData, data.city.code);
-      history.push(`/upyog-ui/employee/user/change-password?mobile_number=${data.mobileNumber}&tenantId=${data.city.code}`);
+      navigate(`/upyog-ui/employee/user/change-password?mobile_number=${data.mobileNumber}&tenantId=${data.city.code}`);
     } catch (err) {
       setShowToast(err?.response?.data?.error?.fields?.[0]?.message || "Invalid login credentials!");
       setTimeout(closeToast, 5000);
@@ -51,7 +51,7 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
   };
 
   const navigateToLogin = () => {
-    history.replace("/upyog-ui/employee/login");
+    navigate("/upyog-ui/employee/login", { replace: true });
   };
 
   const [userId, city] = propsConfig.inputs;

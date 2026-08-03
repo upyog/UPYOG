@@ -35,7 +35,7 @@ const inboxSearchFields = {
     {
       label: "PTR_PET_TYPE",
       name: "petType",
-      // minLength: "10",
+      type: "dropdown",
       roles: [],
     },
     {
@@ -100,8 +100,8 @@ const inboxSearchFields = {
       roles: [],
     },
     {
-      label: "CHB_COMMUNITY_HALL_NAME",
-      name: "communityHallCode",
+      label: "CHB_VENUE_TYPE_LABEL",
+      name: "venueType",
       type: "Dropdown",
       roles: [],
     },
@@ -120,27 +120,7 @@ const inboxSearchFields = {
       },
     },
   ],
-    SV: [
-      {
-        label: "SV_APPLICATION_NUMBER",
-        name: "applicationNumber",
-        roles: [],
-      },
-      {
-        label: "SV_REGISTERED_MOB_NUMBER",
-        name: "mobileNumber",
-        type: "mobileNumber",
-        maxLength: 10,
-        minLength: 0,
-        roles: [],
-        pattern: "^$|[6-9][0-9]{9}",
-        errorMessages: {
-          pattern: "",
-          minLength: "",
-          maxLength: "",
-        },
-      }
-    ],
+   
     WT: [
       {
         label: "WT_BOOKING_NO",
@@ -191,6 +171,27 @@ const inboxSearchFields = {
       },
       {
         label: "TP_MOBILE_NUMBER",
+        name: "mobileNumber",
+        type: "mobileNumber",
+        maxLength: 10,
+        minLength: 0,
+        roles: [],
+        pattern: "^$|[6-9][0-9]{9}",
+        errorMessages: {
+          pattern: "",
+          minLength: "",
+          maxLength: "",
+        },
+      },
+    ],
+    GC: [
+      {
+        label: "GC_APPLICATION_NUMBER_LABEL",
+        name: "applicationNumber",
+        roles: [],
+      },
+      {
+        label: "GC_MOBILE_NUMBER",
         name: "mobileNumber",
         type: "mobileNumber",
         maxLength: 10,

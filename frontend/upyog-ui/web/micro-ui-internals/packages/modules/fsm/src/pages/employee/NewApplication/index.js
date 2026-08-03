@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Loader, Header } from "@upyog/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { FormComposer, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
+
 
 const isConventionalSpecticTank = (tankDimension) => tankDimension === "lbd";
 
@@ -28,7 +28,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   // const { data: vehicleMenu } = Digit.Hooks.fsm.useMDMS(state, "Vehicle", "VehicleType", { staleTime: Infinity });
   // const { data: channelMenu } = Digit.Hooks.fsm.useMDMS(tenantId, "FSM", "EmployeeApplicationChannel");
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const [canSubmit, setSubmitValve] = useState(false);
   // const [channel, setChannel] = useState(null);
@@ -194,12 +194,43 @@ export const NewApplication = ({ parentUrl, heading }) => {
       workflow: null,
     };
 
-    window.Digit.SessionStorage.set("propertyType", null);
-    window.Digit.SessionStorage.set("subType", null);
-    Digit.SessionStorage.set("city_property", null);
-    Digit.SessionStorage.set("selected_localities", null);
-    Digit.SessionStorage.set("locality_property", null);
-    history.push("/upyog-ui/employee/fsm/response", formData);
+    handleSubmit(formData);
+  };
+
+  const mutation = Digit.Hooks.fsm.useDesludging(tenantId);
+
+  const handleSubmit = (formData) => {
+    mutation.mutate(
+      formData,
+      {
+        onSuccess: (response) => {
+          window.Digit.SessionStorage.set("propertyType", null);
+          window.Digit.SessionStorage.set("subType", null);
+          Digit.SessionStorage.set("city_property", null);
+          Digit.SessionStorage.set("selected_localities", null);
+          Digit.SessionStorage.set("locality_property", null);
+          navigate("/upyog-ui/employee/fsm/response", { 
+            replace: true, 
+            state: { 
+              data: response,
+              isSuccess: true,
+              formData: formData
+            } 
+          });
+        },
+        onError: (error) => {
+          navigate("/upyog-ui/employee/fsm/response", { 
+            replace: true, 
+            state: { 
+              data: null,
+              isSuccess: false,
+              error: error,
+              formData: formData
+            } 
+          });
+        }
+      }
+    );
   };
 
   if (isLoading || isTripConfigLoading || isApplicantConfigLoading) {

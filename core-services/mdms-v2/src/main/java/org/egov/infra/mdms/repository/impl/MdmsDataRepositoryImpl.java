@@ -64,6 +64,16 @@ public class MdmsDataRepositoryImpl implements MdmsDataRepository {
         producer.push(applicationConfig.getUpdateMdmsDataTopicName(), mdmsRequest);
     }
 
+    @Override
+    public void delete(String tenantId, String schemaCode) {
+
+    String sql = "DELETE FROM eg_mdms_data WHERE tenantid = ? AND schemacode = ?";
+
+    int deletedRows = jdbcTemplate.update(sql, tenantId, schemaCode);
+
+    log.info("Deleted {} MDMS data record(s) for tenantId={}, schemaCode={}",
+            deletedRows, tenantId, schemaCode);
+    }
     /**
      * @param mdmsCriteriaV2
      * @return

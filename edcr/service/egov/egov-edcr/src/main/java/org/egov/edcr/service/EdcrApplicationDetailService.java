@@ -50,7 +50,7 @@ public class EdcrApplicationDetailService {
     }
 
     public void saveAll(List<EdcrApplicationDetail> edcrApplicationDetails) {
-        edcrApplicationDetailRepository.save(edcrApplicationDetails);
+        edcrApplicationDetailRepository.saveAll(edcrApplicationDetails);
     }
 
     public List<EdcrApplicationDetail> fingByDcrApplicationId(Long dcrApplicationId) {

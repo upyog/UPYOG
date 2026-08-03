@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { CardLabel, LabelFieldPair, LocationSearch } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, LocationSearch } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
 
 const SelectGeolocation = ({ onSelect, config, formData }) => {

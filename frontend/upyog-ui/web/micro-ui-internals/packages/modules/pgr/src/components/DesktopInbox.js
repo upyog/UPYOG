@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import ComplaintsLink from "./inbox/ComplaintLinks";
 import ComplaintTable from "./inbox/ComplaintTable";
 import Filter from "./inbox/Filter";
@@ -133,8 +133,8 @@ const DesktopInbox = ({
         </div>
       </div>
       <div style={{ flex: 1 }}>
-        <SearchComplaint onSearch={onSearch} type="desktop" />
-        <div style={{ marginTop: "24px", marginTop: "24px", marginLeft: "24px", flex: 1 }}>{result}</div>
+        <SearchComplaint onSearch={onSearch} type="desktop" searchParams={searchParams} />
+        <div style={{ marginTop: "24px", marginLeft: "24px", flex: 1 }}>{result}</div>
       </div>
     </div>
   );

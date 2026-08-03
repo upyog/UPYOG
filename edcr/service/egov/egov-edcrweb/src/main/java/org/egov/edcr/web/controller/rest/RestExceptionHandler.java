@@ -51,7 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +71,7 @@ public class RestExceptionHandler {
     @ResponseBody
     public ResponseEntity<?> getHandleError(HttpServletRequest request, HttpServletResponse response) {
     	String requestAttr = String.valueOf(request.getAttribute("javax.servlet.error.exception"));
-    	boolean isValid = Jsoup.isValid(requestAttr, Whitelist.basic());
+    	boolean isValid = Jsoup.isValid(requestAttr, Safelist.basic());
     	if (isValid)
     		return new ResponseEntity<>(requestAttr, HttpStatus.BAD_REQUEST);
     	else 
@@ -82,7 +82,7 @@ public class RestExceptionHandler {
     @ResponseBody
     public ResponseEntity<?> postHandleError(HttpServletRequest request, HttpServletResponse response) {
     	String requestAttr = String.valueOf(request.getAttribute("javax.servlet.error.exception"));
-    	boolean isValid = Jsoup.isValid(requestAttr, Whitelist.basic());
+    	boolean isValid = Jsoup.isValid(requestAttr, Safelist.basic());
     	if (isValid)
     		return new ResponseEntity<>(requestAttr, HttpStatus.BAD_REQUEST);
     	else 

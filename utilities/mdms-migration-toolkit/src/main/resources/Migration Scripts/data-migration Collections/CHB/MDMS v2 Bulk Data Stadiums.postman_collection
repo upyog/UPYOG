@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "auto-CHB.Stadiums",
+		"name": "MDMS v2 Bulk Data - CHB Stadiums",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data = [{\"venueId\": \"1\", \"venueName\": \"District Sports Stadium\", \"code\": \"DISTRICT_SPORTS_STADIUM\", \"geoLocation\": \"28.596320,77.121770\", \"address\": \"Sadar Bazar, Delhi Cantt\", \"contactDetails\": \"011-25692001\", \"type\": \"STADIUM\", \"capacity\": 5000, \"sportsAvailable\": [\"Cricket\", \"Football\", \"Athletics\"], \"facilities\": [\"Seating\", \"Floodlights\", \"Changing Rooms\", \"Parking\"], \"venueDescription\": \"Stadium venue details are available for booking. Please refer to the admin for specific guidelines.\", \"termsAndCondition\": \"Booking subject to availability and applicable stadium rules. No unauthorized activities permitted. Safety and conduct guidelines must be followed.\", \"active\": true, \"childMasterCode\": \"StadiumCode\"}, {\"venueId\": \"2\", \"venueName\": \"DAV Sports Ground\", \"code\": \"DAV_SPORTS_GROUND\", \"geoLocation\": \"28.595000,77.122000\", \"address\": \"Near DAV School\", \"contactDetails\": \"011-25692002\", \"type\": \"STADIUM\", \"capacity\": 1500, \"sportsAvailable\": [\"Football\", \"Kabaddi\"], \"facilities\": [\"Open Ground\", \"Seating\", \"Toilets\"], \"venueDescription\": \"Stadium venue details are available for booking. Please refer to the admin for specific guidelines.\", \"termsAndCondition\": \"Booking subject to availability and applicable stadium rules. No unauthorized activities permitted. Safety and conduct guidelines must be followed.\", \"active\": true, \"childMasterCode\": \"StadiumCode\"}];",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");",
+							"var items = pm.globals.get(\"i\");",
+							"if (items < data.length){",
+							"    pm.globals.set(\"i\", Number(items) + 1);",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");",
+							"}else{",
+							"    pm.globals.set(\"i\", 0);",
+							"    postman.setNextRequest(null)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null,\n            \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"\n        }\n    },\n    \"Mdms\": {\n        \"tenantId\": \"pg\",\n        \"schemaCode\": \"CHB.Stadiums\",\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8055/mdms-v2/v2/_create/CHB.Stadiums",
+					"host": [
+						"localhost"
+					],
+					"port": "8055",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"CHB.Stadiums"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

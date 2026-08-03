@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
+import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
-import { useHistory, Link, useLocation, useRouteMatch } from "react-router-dom";
+import { Link, useLocation,  } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 const TYPE_REGISTER = { type: "register" };
@@ -53,7 +53,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
   // const [params, setParams, ] = Digit.Hooks.useSessionStorage("PT_MUTATE_PROPERTY");
   const [lastPath, setLastPath, clearLastPath] = Digit.Hooks.useSessionStorage("PT_MUTATE_MULTIPLE_OWNERS_LAST_PATH", null);
 
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
   const searchParams = Digit.Hooks.useQueryParams();
   useEffect(() => {
     setOwners([]);
@@ -79,10 +79,10 @@ console.log("result",result)
     }
   );
 
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const proceedToPay = (data) => {
-    history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
+    navigate(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
 
   if (paymentDetails.isLoading || result.isLoading) {
@@ -103,7 +103,7 @@ console.log("result",result)
       if (Number(data.total_due) > 0) {
         setShowModal(data);
       } else onSelect(config.key, { data, property });
-    } else history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
+    } else navigate(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
 
 
@@ -118,8 +118,7 @@ console.log("result",result)
     }
   });
 
-  const arr = result?.data?.Properties?.filter((e) => e.status === "ACTIVE");
-console.log("arrarr",arr)
+  const arr = isMutation ? result?.data?.Properties?.filter((e) => e.status?.toUpperCase() === "ACTIVE") : result?.data?.Properties;
   const searchResults = arr?.map((property) => {
    
     let addr = property?.address || {};
@@ -181,10 +180,10 @@ console.log("arrarr",arr)
           redirectUrl = redirectToUrl+'?propertyId='+record.property_id+'&tenantId='+tenantId;
         } 
 
-        history.replace(`/upyog-ui/citizen/commonPt/property/citizen-otp`, { from: getFromLocation(location.state, searchParams), mobileNumber: record.owner_mobile, redirectBackTo: redirectUrl });
+        navigate(`/upyog-ui/citizen/commonPt/property/citizen-otp`, { replace: true, state: { from: getFromLocation(location.state, searchParams), mobileNumber: record.owner_mobile, redirectBackTo: redirectUrl } });
         return;
       } else {
-        history.push(`/upyog-ui/citizen/`, { from: getFromLocation(location.state, searchParams), data:data });
+        navigate(`/upyog-ui/citizen/`, { from: getFromLocation(location.state, searchParams), data:data });
       }
     }
   };

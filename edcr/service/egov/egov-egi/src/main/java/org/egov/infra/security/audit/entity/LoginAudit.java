@@ -50,8 +50,8 @@ package org.egov.infra.security.audit.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.egov.infra.admin.master.entity.User;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import javax.validation.constraints.NotBlank;
+import org.egov.infra.validation.SanitizeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -86,11 +86,11 @@ public class LoginAudit implements Serializable {
     @JoinColumn(name = "userid")
     private User user;
 
-    @SafeHtml
+@SanitizeHtml
     @NotBlank
     private String ipAddress;
 
-    @SafeHtml
+@SanitizeHtml
     @NotBlank
     private String userAgent;
 

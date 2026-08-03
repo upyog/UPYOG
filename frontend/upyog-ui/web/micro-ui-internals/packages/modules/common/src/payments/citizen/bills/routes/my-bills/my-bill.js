@@ -1,16 +1,16 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Card, KeyNote, SubmitBar } from "@upyog/digit-ui-react-components";
-import { Link, useHistory } from "react-router-dom";
+import { Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Link,  } from "react-router-dom";
 
 // import { getKeyNotesConfig } from "./keynotesConfig";
 
 const MyBill = ({ bill, currentPath, businessService, getKeyNotesConfig }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const onSubmit = () => {
-    history.push(`${currentPath}/${bill.consumerCode}`, { tenantId:bill?.tenantId });
+    navigate(`${currentPath}/${bill.consumerCode}`, { tenantId:bill?.tenantId });
   };
 
   return (

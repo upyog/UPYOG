@@ -18,11 +18,11 @@ import {
   CardText,
   AddIcon,
   Dropdown,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import ConfirmationBox from "../../../../components/Confirmation";
 
 const Heading = (props) => {
@@ -47,7 +47,7 @@ const VehicleDetails = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
   let { id: vehicleNumber } = useParams();
   const [displayMenu, setDisplayMenu] = useState(false);
@@ -117,9 +117,9 @@ const VehicleDetails = (props) => {
       case "DELETE_VENDOR":
         return setShowModal(true);
       case "EDIT":
-        return history.push("/upyog-ui/employee/fsm/registry/modify-vehicle/" + vehicleNumber);
+        return navigate("/upyog-ui/employee/fsm/registry/modify-vehicle/" + vehicleNumber);
       case "HOME":
-        return history.push("/upyog-ui/employee/fsm/registry?selectedTabs=VEHICLE");
+        return navigate("/upyog-ui/employee/fsm/registry?selectedTabs=VEHICLE");
       default:
         break;
     }
@@ -259,7 +259,7 @@ const VehicleDetails = (props) => {
         queryClient.invalidateQueries("FSM_VEICLES_SEARCH");
         setTimeout(() => {
           closeToast;
-          history.push(`/upyog-ui/employee/fsm/registry`);
+          navigate(`/upyog-ui/employee/fsm/registry`);
         }, 5000);
       },
     });

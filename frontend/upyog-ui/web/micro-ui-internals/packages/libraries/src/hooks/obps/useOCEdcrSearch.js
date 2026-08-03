@@ -1,29 +1,55 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { OBPSService } from "../../services/elements/OBPS";
 
-const useOCEdcrSearch = (tenantId, filters, config = {}, ocEdcrNumber) => {
-  return useQuery([tenantId, filters], async () => {
-    if (config?.enabled) {
-      const userInfo = Digit.UserService.getUser();
-      const bpaApprovalResponse = await OBPSService.BPASearch(tenantId, { ...filters });
-      const edcrNumber = bpaApprovalResponse?.BPA?.[0]?.edcrNumber;
-      tenantId = bpaApprovalResponse?.BPA?.[0]?.tenantId;
-      const edcrDetails = await OBPSService.scrutinyDetails(tenantId, { edcrNumber: edcrNumber });
-      const filter = { edcrNumber: ocEdcrNumber?.edcrNumber };
-      const bpaResponse = await OBPSService.BPASearch(tenantId, { ...filter });
-      const comparisionRep = {
-        ocdcrNumber: ocEdcrNumber?.edcrNumber,
-        edcrNumber: bpaApprovalResponse?.BPA?.[0]?.edcrNumber
-      }
-      const comparisionReport = await OBPSService.comparisionReport(tenantId, { ...comparisionRep })
+const useOCEdcrSearch = (
+  tenantId,
+  filters,
+  config = {},
+  ocEdcrNumber
+) => {
+  const enabled = config?.enabled;
+
+  return queryTemplate({
+    queryKey: [
+      "OBPS_OC_EDCR_SEARCH",
+      tenantId,
+      JSON.stringify(filters),
+      ocEdcrNumber?.edcrNumber,
+    ],
+    queryFn: async () => {
+      if (!enabled) return null;
+
+      const bpaApprovalResponse =
+        await OBPSService.BPASearch(tenantId, { ...filters });
+
+      const baseData = bpaApprovalResponse?.BPA?.[0] || {};
+      const newTenantId = baseData?.tenantId || tenantId;
+
+      const edcrDetails =
+        await OBPSService.scrutinyDetails(newTenantId, {
+          edcrNumber: baseData?.edcrNumber,
+        });
+
+      const bpaResponse =
+        await OBPSService.BPASearch(newTenantId, {
+          edcrNumber: ocEdcrNumber?.edcrNumber,
+        });
+
+      const comparisionReport =
+        await OBPSService.comparisionReport(newTenantId, {
+          ocdcrNumber: ocEdcrNumber?.edcrNumber,
+          edcrNumber: baseData?.edcrNumber,
+        });
+
       return {
         bpaApprovalResponse: bpaApprovalResponse?.BPA,
         edcrDetails: edcrDetails?.edcrDetail,
         bpaResponse: bpaResponse?.BPA,
-        comparisionReport: comparisionReport?.comparisonDetail
-      }
-    }
-  }, config)
-}
+        comparisionReport: comparisionReport?.comparisonDetail,
+      };
+    },
+    config: { enabled, ...config },
+  });
+};
 
 export default useOCEdcrSearch;

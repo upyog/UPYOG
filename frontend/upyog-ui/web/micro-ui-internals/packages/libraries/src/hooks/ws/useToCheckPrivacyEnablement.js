@@ -1,5 +1,4 @@
 import useCustomMDMS  from "../useCustomMDMS";
-import { useQuery, useQueryClient } from "react-query";
 import { WSService } from "../../services/elements/WS";
 import { checkPrivacy } from "../../utils/privacy";
 

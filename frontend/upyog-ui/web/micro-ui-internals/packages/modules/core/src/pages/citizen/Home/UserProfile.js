@@ -16,10 +16,10 @@ import {
   Row,
   EditIcon,
   LinkButton
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import UploadDrawer from "./ImageUpload/UploadDrawer";
 import { subYears, format, differenceInYears } from "date-fns";
 import Address from "./AddressDetails";
@@ -48,7 +48,7 @@ const defaultImage =
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
 
 const UserProfile = ({ stateCode, userType, cityDetails }) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { t } = useTranslation();
   const url = window.location.href;
   const stateId = Digit.ULBService.getStateId();
@@ -63,7 +63,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [dob, setDob] = useState(dateOfBirth);
   const [email, setEmail] = useState(userInfo?.emailId ? userInfo.emailId : "");
   const [gender, setGender] = useState(userDetails?.gender);
-  const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails.name);
+  const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails?.name);
   const [mobileNumber, setMobileNo] = useState(userInfo?.mobileNumber ? userInfo.mobileNumber : "");
   const [altMobileNumber, setAltMobileNo] = useState(userInfo?.altContactNumber ? userInfo.altContactNumber : "");
   const [profilePic, setProfilePic] = useState(userDetails?.photo ? userDetails?.photo : "");
@@ -653,7 +653,12 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   </button>
                 </div>
 
-                {showModal && <Address actionCancelOnSubmit={() => setShowModal(false)} />}
+                {showModal && (
+                  <Address
+                    refreshAddresses={userSearchNewV2}
+                    actionCancelOnSubmit={() => setShowModal(false)}
+                  />
+                )}
               </React.Fragment>
             ) : null
           ) : (
@@ -772,7 +777,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
               <LabelFieldPair>
                 <div>
-                  <a style={{ color: "#a82227", cursor: "default", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
+                  <a style={{ color: "#a82227", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
                     {t("CORE_COMMON_CHANGE_PASSWORD")}
                   </a>
                   {changepassword ? (
@@ -888,7 +893,12 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   <Address
                     isEdit={isEdit}
                     address={selectedAddress}
-                    actionCancelOnSubmit={() => setShowModal(false)}
+                    refreshAddresses={userSearchNewV2}
+                    actionCancelOnSubmit={() => {
+                      setShowModal(false);
+                      setSelectedAddress(null);
+                      setisEdit(false);
+                    }}
                   />
                 )}
              </React.Fragment>

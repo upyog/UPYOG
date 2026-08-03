@@ -17,7 +17,7 @@ const Switch = ({ onSelect, t }) => {
               className="radio-switch"
               name="unit"
               checked={label === value?.denomination}
-              onClick={() => onSelect({ denomination: label })}
+              onChange={() => onSelect({ denomination: label })}
             />
             <label className="cursorPointer" htmlFor={label}>{t(Digit.Utils.locale.getTransformedLocale(`ES_DSS_${label}`))}</label>
           </div>

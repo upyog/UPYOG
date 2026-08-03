@@ -1,4 +1,4 @@
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -101,7 +101,6 @@ const ReceiptsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
             },
           };
         }}
-        onPageSizeChange={props.onPageSizeChange}
         currentPage={props.currentPage}
         onNextPage={props.onNextPage}
         onPrevPage={props.onPrevPage}

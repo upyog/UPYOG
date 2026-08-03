@@ -13,22 +13,22 @@ import {
   PDFSvg,
   Toast,
   Loader
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch } from "react-router-dom";
+
 import Timeline from "../../../components/Timeline";
 import ActionModal from "../BpaApplicationDetail/Modal";
 import { convertToBPAObject, stringReplaceAll, convertEpochToDateDMY, getOrderDocuments } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
 import usePreApprovedSearch from "../../../../../../libraries/src/hooks/obps/usePreApprovedSearch";
 
 const CheckPage = ({ onSubmit, value }) => {
   const { t } = useTranslation();
-  const history = useHistory();
-  const match = useRouteMatch();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const match = Digit.Hooks.useModuleBasePath();
   let user = Digit.UserService.getUser(), BusinessService;
   const tenantId = user?.info?.permanentCity;
   const [selectedAction, setSelectedAction] = useState(null);
@@ -46,12 +46,12 @@ const CheckPage = ({ onSubmit, value }) => {
 
    // for application documents
    let improvedDoc = [];
-   PrevStateDocuments?.map(preDoc => { improvedDoc.push({...preDoc, module: "OBPS"}) });
-   documents?.documents?.map(appDoc => { improvedDoc.push({...appDoc, module: "OBPS"}) });
-  value?.documents?.map(appDoc => { improvedDoc.push({...appDoc, module: "OBPS"}) });
+   if (Array.isArray(PrevStateDocuments)) PrevStateDocuments.map(preDoc => { improvedDoc.push({...preDoc, module: "OBPS"}) });
+   if (Array.isArray(documents?.documents)) documents.documents.map(appDoc => { improvedDoc.push({...appDoc, module: "OBPS"}) });
+   if (Array.isArray(value?.documents)) value.documents.map(appDoc => { improvedDoc.push({...appDoc, module: "OBPS"}) });
    //for NOC documents 
-   PrevStateNocDocuments?.map(preNocDoc => { improvedDoc.push({...preNocDoc, module: "NOC"}) });
-   nocDocuments?.nocDocuments?.map(nocDoc => { improvedDoc.push({...nocDoc, module: "NOC"}) });
+   if (Array.isArray(PrevStateNocDocuments)) PrevStateNocDocuments.map(preNocDoc => { improvedDoc.push({...preNocDoc, module: "NOC"}) });
+   if (Array.isArray(nocDocuments?.nocDocuments)) nocDocuments.nocDocuments.map(nocDoc => { improvedDoc.push({...nocDoc, module: "NOC"}) });
 
    const { data: pdfDetails, isLoading:pdfLoading, error } = Digit.Hooks.useDocumentSearch( improvedDoc, { enabled: improvedDoc?.length > 0 ? true : false});
    
@@ -109,9 +109,9 @@ const { data: preApprovedResponse} = usePreApprovedSearch({drawingNo:value?.edcr
           setShowModal(false);
           setShowToast({ key: "success", action: selectedAction });
           setTimeout(closeToast, 5000);
-          queryClient.invalidateQueries("BPA_DETAILS_PAGE");
-          queryClient.invalidateQueries("workFlowDetails");
-          history.replace(`/upyog-ui/citizen/obps/sendbacktocitizen/ocbpa/${value?.tenantId}/${value?.applicationNo}/acknowledgement`, { data: value?.applicationNo });
+          queryClient.invalidateQueries({ queryKey: ["BPA_DETAILS_PAGE"] });
+          queryClient.invalidateQueries({ queryKey: ["workFlowDetails"] });
+          navigate(`/upyog-ui/citizen/obps/sendbacktocitizen/ocbpa/${value?.tenantId}/${value?.applicationNo}/acknowledgement`, { replace: true, state: { data: value?.applicationNo } });
         },
       }
     );

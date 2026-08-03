@@ -45,9 +45,16 @@ import org.upyog.chb.web.models.DocumentDetail;
 @Component
 public class DocumentDetailsRowMapper implements ResultSetExtractor<List<DocumentDetail>> {
 
+	/**
+	 * Maps uploaded document rows for the booking ids supplied in the query.
+	 *
+	 * @param rs JDBC result set positioned before the first row
+	 * @return uploaded document rows, never {@code null}
+	 */
 	@Override
+	@SuppressWarnings("java:S2638")
 	public List<DocumentDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
-		List<DocumentDetail> documentDetails = new ArrayList<DocumentDetail>();
+		List<DocumentDetail> documentDetails = new ArrayList<>();
 		while (rs.next()) {
 			/**
 			 * document_detail_id, booking_id, document_type, filestore_id, createdby,

@@ -1,6 +1,7 @@
-import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { stringReplaceAll } from "../utils";
+import { TimerValues } from "../components/TimerValues";
 
 /**
  * CHBRequiredDoc Component
@@ -36,7 +37,7 @@ import { stringReplaceAll } from "../utils";
  * Returns:
  * - A React fragment containing a card component that displays the required document details, upload restrictions, and additional information.
  */
-const CHBRequiredDoc = ({ t, config, onSelect, userType, formData }) => {
+const CHBRequiredDoc = ({ t, config, onSelect, userType, formData, value = formData.slotlist }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   sessionStorage.removeItem("docReqScreenByBack");
@@ -53,7 +54,12 @@ const CHBRequiredDoc = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       <Card>
-      <CardHeader>{t("MODULE_CHB")}</CardHeader>
+      <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+        <CardHeader>{t("MODULE_CHB")}</CardHeader>
+        <CardSubHeader>
+          <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />
+        </CardSubHeader>
+      </div>
         <div>
          <CardText className={"primaryColor"}>{t("CHB_DOC_REQ_SCREEN_SUB_HEADER")}</CardText>
           <CardText className={"primaryColor"}>{t("CHB_DOC_REQ_SCREEN_TEXT")}</CardText>

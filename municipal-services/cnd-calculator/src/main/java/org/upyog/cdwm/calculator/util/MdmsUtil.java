@@ -10,9 +10,7 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.upyog.cdwm.calculator.config.CalculatorConfig;
 import org.upyog.cdwm.calculator.repository.ServiceRequestRepository;
 import org.upyog.cdwm.calculator.web.models.CalculationType;
@@ -31,17 +29,18 @@ import net.minidev.json.JSONArray;
 @Component
 public class MdmsUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
-    
-    @Autowired
-    private CalculatorConfig config;
-    
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-    
-	@Autowired
-	private ObjectMapper mapper;
+    private final CalculatorConfig config;
+
+    private final ServiceRequestRepository serviceRequestRepository;
+
+	private final ObjectMapper mapper;
+
+	public MdmsUtil(CalculatorConfig config, ServiceRequestRepository serviceRequestRepository,
+			ObjectMapper mapper) {
+		this.config = config;
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.mapper = mapper;
+	}
 
 	/**
      * Fetches the list of CalculationType from MDMS based on the givens module name and tenant ID.
@@ -54,7 +53,7 @@ public class MdmsUtil {
 
 	public List<CalculationType> getCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
 
-		List<CalculationType> calculationTypes = new ArrayList<CalculationType>();
+		List<CalculationType> calculationTypes = new ArrayList<>();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsSearchEndpoint());
 

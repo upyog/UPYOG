@@ -1,0 +1,20 @@
+[Unit]
+Description=UPYOG Voice Assistant v2
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/upyog-voice-v2
+Environment=PATH=/home/ubuntu/upyog-voice-v2/venv/bin
+EnvironmentFile=/home/ubuntu/upyog-voice-v2/.env
+ExecStart=/home/ubuntu/upyog-voice-v2/venv/bin/python3 app.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=upyog-voice-v2
+
+[Install]
+WantedBy=multi-user.target

@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 // Sort function
 const alphabeticalSortFunctionForTenantsBasedOnName = (firstEl, secondEl) => {
@@ -40,4 +40,7 @@ const alphabeticalSortFunctionForTenantsBasedOnName = (firstEl, secondEl) => {
 };
 
 
-export const useTenants = () => useQuery(["ALL_TENANTS"], () => Digit.SessionStorage.get("initData").tenants.sort(alphabeticalSortFunctionForTenantsBasedOnName))
+export const useTenants = () => useQuery({
+  queryKey: ["ALL_TENANTS"],
+  queryFn: () => Digit.SessionStorage.get("initData").tenants.sort(alphabeticalSortFunctionForTenantsBasedOnName)
+})

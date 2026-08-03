@@ -1,31 +1,34 @@
-# Build Stage: Install dependencies, set environment, and build the React app
-# Production Stage: Copy built files to Nginx and serve the app
+# =============================================================
+# This is a multi-stage Dockerfile for the Street Vending UI app.
+#
+# Build Stage:
+#   - Uses Node.js 22 Alpine as the build environment.
+#   - Accepts WORK_DIR as a build argument to copy the source code.
+#   - Increases Node.js heap memory to avoid out-of-memory errors.
+#   - Runs install-deps.sh, yarn install, and yarn build to produce
+#     the production build output.
+#
+# Production Stage:
+#   - Copies the build output and custom nginx.conf from the build stage.
+#   - Custom nginx.conf handles routing and serving of the React app.
+# =============================================================
 
-FROM upyogio/alpine-node-builder-14:yarn AS build
+FROM node:22.0.0-alpine AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
-RUN yarn add @nudmcdgnpm/digit-ui-libraries
-RUN yarn add @upyog/digit-ui-module-core
-RUN yarn add @upyog/digit-ui-module-common
-RUN yarn add @upyog/digit-ui-module-engagement
-RUN yarn add @nudmcdgnpm/upyog-ui-module-sv
 
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=2560"
-ENV GENERATE_SOURCEMAP "true"
+ENV NODE_OPTIONS="--max-old-space-size=3100"
 
 COPY ${WORK_DIR} .
 RUN ls -lah
 
-#RUN node web/envs.js
 RUN cd web/ \
-    && node envs.js \
-    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(2560*2560))' \
-    &&  ./install-deps.sh \
+    && node -e 'const v8=require("v8"); console.log("Heap (MB):", v8.getHeapStatistics().heap_size_limit/(1024*1024))' \
     && yarn install \
     && yarn build 
-    
+
 
 FROM nginx:mainline-alpine
 ENV WORK_DIR=/var/web/sv-ui

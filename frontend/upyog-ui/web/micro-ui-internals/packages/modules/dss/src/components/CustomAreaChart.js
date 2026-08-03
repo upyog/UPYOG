@@ -1,4 +1,4 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { getDaysInMonth } from "date-fns";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -142,7 +142,7 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
 
     const plotValue = key ? plot?.[key] : plot?.value || 0;
     if (id === "fssmCapacityUtilization" || id === "fsmCapacityUtilization" ){
-      return Number(plotValue.toFixed(1));
+      return plotValue != null ? Number(plotValue.toFixed(1)) : 0;
     }
     if (key === "Reopened Complaints")
     {
@@ -159,13 +159,13 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
     }
     if(id =="totalApplication&ClosedApplicationOverview")
     {
-       return Number(plotValue.toFixed(1));
+       return plotValue != null ? Number(plotValue.toFixed(1)) : 0;
     }
     else if (plot?.symbol?.toLowerCase() === "amount") {
       const { denomination } = value;
       return getDenominatedValue(denomination, plotValue,plot);
     } else if (plot?.symbol?.toLowerCase() === "number") {
-      return Number(plotValue.toFixed(1));
+      return plotValue != null ? Number(plotValue.toFixed(1)) : 0;
     } 
     else {
       return plotValue;

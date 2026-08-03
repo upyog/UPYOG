@@ -1,0 +1,1 @@
+alter table  eg_ndc_applicants add column IF NOT EXISTS reason text;

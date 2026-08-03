@@ -20,7 +20,7 @@ const amountFormatter = (value, denomination, t) => {
 };
 
 export const formatter = (value, symbol, unit, commaSeparated = true, t, data,isDecimal,code) => {
-  console.log("formatter",value, symbol, unit,data)
+
   if (!value && value !== 0) return "";
   switch (symbol) {
     case "amount":

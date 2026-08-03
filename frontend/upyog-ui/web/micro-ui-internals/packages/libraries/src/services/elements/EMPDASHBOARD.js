@@ -12,5 +12,15 @@ export const EmployeeDashboardService = {
       userService: auth !== false,
       data: { tenantId, moduleName }
     }),
+
+  roleBaseSearch: ({tenantId, auth }) =>
+    Request({
+      url: Urls.employeeRoleBaseDashboardSearch,
+      useCache: false,
+      method: "POST",
+      auth: auth !== false,
+      userService: auth !== false,
+      data: { tenantId }
+    }),
     
 };

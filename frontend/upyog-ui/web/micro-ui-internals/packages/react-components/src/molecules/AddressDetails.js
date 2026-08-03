@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { CardLabel, TextInput,TextArea,Dropdown,FormStep } from "@upyog/digit-ui-react-components";  //imported all from our common library
+import { CardLabel, TextInput,TextArea,Dropdown,FormStep } from "../index";  //imported all from our common library
 import { useLocation } from "react-router-dom";
 
 
@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
  * all cities data is fetching from common Tenants hook and locality data is fetched in the same way.
  * 
  * Steps to Use it in your Module/Application  :-
- *    1. Import it in your Module.js file of your Application/Module from  @upyog/digit-ui-react-components library.
+ *    1. Import it in your Module.js file of your Application/Module from  @upyog/upyog-ui-react-components-lts library.
  *    2. Insert it inside your componet registry Function in the same Module.js file.
  *    3. Then simply In your Config.js file which is present in your comfig folder inside src, add the component name "AddressDetails" in components and key should be "address"
  * 
@@ -141,7 +141,6 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         validation={{
           isRequired: true,
           pattern: "^[a-zA-Z0-9 ,\\-]+$",
-          type: "text",
           title: t("HOUSE_NO_ERROR_MESSAGE"),
         }}
       />
@@ -162,7 +161,6 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         ValidationRequired={true}
         validation={{
           pattern: "^[a-zA-Z0-9 ,\\-]+$",
-          type: "text",
           title: t("STREET_NAME_ERROR_MESSAGE"),
         }}
       />
@@ -184,7 +182,6 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         {...(validation = {
           isRequired: false,
           pattern: "^[a-zA-Z,-/ ]*$",
-          type: "textarea",
           title: t("ADDRESS_ERROR_MESSAGE"),
         })}
       />
@@ -206,7 +203,6 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         {...(validation = {
           isRequired: false,
           pattern: "^[a-zA-Z,-/ ]*$",
-          type: "textarea",
           title: t("ADDRESS_ERROR_MESSAGE"),
         })}
       />
@@ -228,7 +224,6 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         validation={{
           isRequired: false,
           pattern: "^[a-zA-Z0-9 ]+$",
-          type: "textarea",
           title: t("LANDMARK_ERROR_MESSAGE"),
         }}
       />
@@ -239,7 +234,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         name={"city"}
         defaultValue={city}
         rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-        render={(props) => (
+        render={({field}) => (
           <Dropdown
             className="form-field"
             selected={city}
@@ -260,7 +255,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         name={"locality"}
         defaultValue={locality}
         rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-        render={(props) => (
+        render={({field}) => (
           <Dropdown
             className="form-field"
             selected={locality}
@@ -292,7 +287,6 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         validation={{
             required: true,
             pattern: "^[0-9]{6}$",
-            type: "number",
             title: t("SV_ADDRESS_PINCODE_INVALID"),
           }}
           maxLength={6}

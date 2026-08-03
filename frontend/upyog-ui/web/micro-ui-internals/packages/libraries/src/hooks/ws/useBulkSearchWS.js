@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { WSService } from "../../services/elements/WS";
 /*
  * Feature :: Privacy
@@ -8,13 +7,11 @@ import { WSService } from "../../services/elements/WS";
 
 const useBulkSearchWS = ({ tenantId,  filters, config = {}}) => {
   let responseWS = "";
-  responseWS=useQuery(
-      ["WS_WATER_SEARCH",tenantId, ...Object.keys(filters)?.map((e) => filters?.[e])],
-      async () => await WSService.WSMeterSearch({tenantId, filters }),
-      {
-        ...config,
-      }
-    )
+  responseWS=queryTemplate({
+      queryKey: ["WS_WATER_SEARCH",tenantId, ...Object.keys(filters)?.map((e) => filters?.[e])],
+      queryFn: async () => await WSService.WSMeterSearch({tenantId, filters }),
+      config,
+    })
     return responseWS?.data
 };
 

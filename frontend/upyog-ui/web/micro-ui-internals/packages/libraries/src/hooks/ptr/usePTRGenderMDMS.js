@@ -1,11 +1,10 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
 const usePTRGenderMDMS = (tenantId, moduleCode, type, config = {}) => {
   const usePTRGenders = () => {
-    return useQuery("PTR_GENDER_DETAILS", () => MdmsService.PTRGenderType(tenantId, moduleCode ,type), config);
+    return queryTemplate({ queryKey: ["PTR_GENDER_DETAILS"], queryFn: () => MdmsService.PTRGenderType(tenantId, moduleCode, type), config });
   };
-  
 
   switch (type) {
     case "GenderType":
@@ -14,7 +13,5 @@ const usePTRGenderMDMS = (tenantId, moduleCode, type, config = {}) => {
       return null;
   }
 };
-
-
 
 export default usePTRGenderMDMS;

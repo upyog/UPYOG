@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, Dropdown, LabelFieldPair, Localities, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelError, Dropdown, LabelFieldPair, Localities, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -87,18 +87,18 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
           rules={{
             required: t("REQUIRED_FIELD")
           }}
-          render={({value, onBlur, onChange}) => (
+          render={({ field }) => (
             <Dropdown
               className="form-field"
-              selected={value}
+              selected={field.value}
               disable={userType === "employee"}
               option={allCities.sort((a,b) => (a.name > b.name)? 1 : (b.name>a.name)? -1 : 0)}
               select={(value)=>{
-                onChange(value);
+                field.onChange(value);
                 setLocationDetails({...locationDetails, cityCode: value})
               }}
               optionKey="code"
-              onBlur={onBlur}
+              onBlur={field.onBlur}
               t={t}
             />
           )} />
@@ -113,20 +113,20 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
             defaultValue={ locationDetails?.locality}
             control={ control }
             rules={{required: t("REQUIRED_FIELD")}}
-            render={({value, onBlur, onChange}) => (
+            render={({ field }) => (
               <Localities
                 selectLocality={(value)=>{
-                  onChange(value);
+                  field.onChange(value);
                   setLocationDetails({...locationDetails, locality: value});
                 }}
                 tenantId={locationDetails?.cityCode?.code}
                 boundaryType="revenue"
                 keepNull={false}
                 optionCardStyles={{ height: "600px", overflow: "auto", zIndex: "10" }}
-                selected={value}
+                selected={field.value}
                 disable={!locationDetails?.cityCode?.code}
                 disableLoader={true}
-                onBlur={onBlur}
+                onBlur={field.onBlur}
               />
             )} />
         </div>
@@ -144,19 +144,19 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
               required: t("REQUIRED_FIELD"),
               validate: (value)=> /^([a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]){1,64}$/i.test(value) ? true: t("PT_HOUSE_DOOR_NO_ERROR_MESSAGE"),
             }}
-            render={({value, onBlur, onChange}) => (
+            render={({ field }) => (
               <TextInput
                 t={t}
                 type={"text"}
                 isMandatory={false}
                 optionKey="i18nKey"
                 name="houseDoorNo"
-                value={value}
+                value={field.value}
                 onChange={(ev)=>{
-                  onChange(ev.target.value);
+                  field.onChange(ev.target.value);
                   setLocationDetails({...locationDetails, houseDoorNo: ev.target.value})
                 }}
-                onBlur={onBlur}
+                onBlur={field.onBlur}
                 {...(validation = { pattern: "^([a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]){1,64}$", title: t("PT_HOUSE_DOOR_NO_ERROR_MESSAGE") })}
               />
             )} />
@@ -174,19 +174,19 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
             rules={{
               required: t("REQUIRED_FIELD"),
             }}
-            render={({value, onChange, onBlur}) => (
+            render={({ field }) => (
               <TextInput
                 t={t}
                 type={"text"}
                 isMandatory={false}
                 optionKey="i18nKey"
                 name="buildingColonyName"
-                value={value}
+                value={field.value}
                 onChange={(ev)=>{
-                  onChange(ev.target.value);
+                  field.onChange(ev.target.value);
                   setLocationDetails({...locationDetails, buildingColonyName: ev.target.value})
                 }}
-                onBlur={onBlur}
+                onBlur={field.onBlur}
               />
             )} />
         </div>
@@ -202,19 +202,19 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
             control={ control}
             rules={{
             }}
-            render={({value, onChange, onBlur}) => (
+            render={({ field }) => (
               <TextInput
                 t={t}
                 type={"text"}
                 isMandatory={false}
                 optionKey="i18nKey"
                 name="landmarkName"
-                value={value}
+                value={field.value}
                 onChange={(ev)=>{
-                  onChange(ev.target.value);
+                  field.onChange(ev.target.value);
                   setLocationDetails({...locationDetails, landmarkName: ev.target.value})
                 }}
-                onBlur={onBlur}
+                onBlur={field.onBlur}
               />
             )} />
         </div>

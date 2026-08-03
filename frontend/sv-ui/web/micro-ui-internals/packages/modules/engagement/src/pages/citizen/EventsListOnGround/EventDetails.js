@@ -1,22 +1,23 @@
-import { Clock, Header, Loader, MapMarker, OnGroundEventCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { Clock, Header, Loader, MapMarker, OnGroundEventCard } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Redirect, useHistory, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const EventDetails = () => {
   const { t } = useTranslation();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { id: EventId } = useParams();
 
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
 
   const { data: EventsData, isLoading: EventsDataLoading } = Digit.Hooks.useEvents({ tenantId, variant: "events" });
 
-  if (!Digit.UserService?.getUser()?.access_token) {
+   if (!Digit.UserService?.getUser()?.access_token) {
     localStorage.clear();
     sessionStorage.clear();
-    return <Redirect to={{ pathname: `/sv-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
+    navigate("/sv-ui/citizen/login", { state: { from: location.pathname + location.search }, replace: true });
+    return null;
   }
 
   function onGroundEventCardPropsForEventDetails(DataParamsInEvent) {

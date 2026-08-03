@@ -109,10 +109,6 @@ const Search = ({ path }) => {
     params,
     {enabled:paramerror===""}
   );
-<<<<<<< HEAD
-  //console.log("SSSSSSSSSSSSSS")
-=======
->>>>>>> master-LTS
   return (
     <Search
       t={t}

@@ -4,11 +4,9 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.batchtelemetry.config.AppProperties;
 import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.elasticsearch.spark.rdd.api.java.JavaEsSpark;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,8 @@ public class ElasticsearchConnector {
         appProperties = new AppProperties();
     }
 
-    public JavaPairRDD<String, Map<String, Object>> getTelemetryRecords(Long startTime, Long endTime) {
+    /** Spark 3 / elasticsearch-spark-30: configure ES-Hadoop + query window (used with shared {@link JavaSparkContext}). */
+    public SparkConf buildSparkConf(long startTime, long endTime) {
         SparkConf sparkConf = new SparkConf().setAppName("batch-telemetry").setMaster("local[*]");
         sparkConf.set("es.index.auto.create", "true");
         sparkConf.set("es.nodes.wan.only", appProperties.getEsNodesWANOnly());
@@ -39,13 +39,12 @@ public class ElasticsearchConnector {
         sparkConf.set("es.query", "{\"query\":{\"bool\":{\"must\":[{\"match_all\":{}},{\"match_phrase\":{\"edata" +
                 ".type\":{\"query\":\"page\"}}},{\"range\":{\"ets\":{\"gte\":" + startTime + ",\"lte\":" + endTime + "," +
                 "\"format\":\"epoch_millis\"}}}],\"must_not\":[]}}}");
+        return sparkConf;
+    }
 
-        SparkContext sparkContext = new SparkContext(sparkConf);
-
-        JavaPairRDD<String, Map<String, Object>> esRDD = JavaEsSpark.esRDD(JavaSparkContext.fromSparkContext(sparkContext),
-                appProperties.getInputTelemetryIndex());
-
-        return esRDD;
+    /** RDD read uses caller's context — required for Spark 3 lifecycle (see {@link org.egov.batchtelemetry.application.BatchApplication}). */
+    public JavaPairRDD<String, Map<String, Object>> getTelemetryRecords(JavaSparkContext jsc) {
+        return JavaEsSpark.esRDD(jsc, appProperties.getInputTelemetryIndex());
     }
 
     public List<String> getExistingUserIds()  {
@@ -86,37 +85,33 @@ public class ElasticsearchConnector {
     }
 
 
+    /** UTF-8 explicit I/O (clear on multi-JDK / Java 17 stacks). */
     private String executeQuery(URL url, String queryContent) {
-        String esResponse = null;
-
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
-
             connection.setDoOutput(true);
-            OutputStream connectionOutputStream =  connection.getOutputStream();
 
-            connectionOutputStream.write(queryContent.getBytes());
-
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-                while ((inputLine = in .readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in .close();
-                esResponse = response.toString();
-            } else {
-                log.info("Error in Elasticsearch Query");
+            try (OutputStream out = connection.getOutputStream()) {
+                out.write(queryContent.getBytes(StandardCharsets.UTF_8));
             }
 
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                try (BufferedReader in = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                    StringBuilder response = new StringBuilder();
+                    String inputLine;
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    return response.toString();
+                }
+            }
+            log.info("Error in Elasticsearch Query");
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-
-
-        return esResponse;
+        return null;
     }
 }

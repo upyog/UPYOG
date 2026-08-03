@@ -1,17 +1,21 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { FSMService } from "../../services/elements/FSM";
-
-const useDriverUpdate = (tenantId) => {
-  return useMutation((vendorData) => DriverUpdateActions(vendorData, tenantId));
-};
 
 const DriverUpdateActions = async (vendorData, tenantId) => {
   try {
-    const response = await FSMService.updateDriver(vendorData, tenantId);
-    return response;
+    return await FSMService.updateDriver(vendorData, tenantId);
   } catch (error) {
-    throw new Error(error?.response?.data?.Errors[0].message);
+    throw new Error(error?.response?.data?.Errors?.[0]?.message);
   }
+};
+
+const useDriverUpdate = (tenantId) => {
+  const mutationFn = (vendorData) =>
+    DriverUpdateActions(vendorData, tenantId);
+
+  return mutationTemplate({
+    mutationFn,
+  });
 };
 
 export default useDriverUpdate;

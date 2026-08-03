@@ -1,10 +1,8 @@
-import { Loader, InboxSearchComposer, FormComposerV2 } from "@egovernments/digit-ui-react-components";
+import { Loader, InboxSearchComposer, FormComposerV2 } from "@upyog/workbench-ui-react-components";
 import React from "react";
-import { useRouteMatch } from "react-router-dom";
 import { default as EmployeeApp } from "./pages/employee";
 
 export const UtilitiesModule = ({ stateCode, userType, tenants }) => {
-  const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const moduleCode = ["utilities", "common-masters", tenantId];
   const language = Digit.StoreData.getCurrentLanguage();
@@ -17,7 +15,7 @@ export const UtilitiesModule = ({ stateCode, userType, tenants }) => {
   if (isLoading) {
     return <Loader />;
   }
-  return <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} />;
+  return <EmployeeApp  stateCode={stateCode} userType={userType} tenants={tenants} />;
 };
 
 const componentsToRegister = {

@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { format, subMonths } from "date-fns";
 
 const useDynamicData = ({moduleCode ,tenantId, filters, t }) => {

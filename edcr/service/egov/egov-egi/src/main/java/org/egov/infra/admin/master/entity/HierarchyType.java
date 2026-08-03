@@ -53,8 +53,8 @@ import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import javax.validation.constraints.NotBlank;
+import org.egov.infra.validation.SanitizeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -80,16 +80,16 @@ public class HierarchyType extends AbstractAuditable {
 
     @NotBlank
     @Length(max = 128)
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     @NotBlank
     @Length(max = 25)
-    @SafeHtml
+    @SanitizeHtml
     private String code;
 
     @Length(max = 256)
-    @SafeHtml
+    @SanitizeHtml
     private String localName;
 
     @Override

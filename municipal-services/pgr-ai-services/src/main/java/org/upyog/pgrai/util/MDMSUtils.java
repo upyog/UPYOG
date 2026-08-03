@@ -49,8 +49,7 @@ public class MDMSUtils {
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getService().getTenantId();
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
-        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-        return result;
+        return serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
     }
 
     /**
@@ -69,9 +68,8 @@ public class MDMSUtils {
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
 
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+        return MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
-        return mdmsCriteriaReq;
     }
 
     /**

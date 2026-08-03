@@ -1,7 +1,7 @@
 import React, {Fragment} from "react"
 import { Controller, useWatch } from "react-hook-form"; // Importing form handling utilities from react-hook-form
  // Importing UI components from digit-ui-react-components library
-import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header, Menu } from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
  * Component: SearchFields
@@ -30,40 +30,56 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
     return <>
                 <SearchField>
                     <label>{t("PTR_APPLICATION_NO_LABEL")}</label>
-                    <TextInput name="applicationNumber" inputRef={register({})} />
+                    <TextInput name="applicationNumber" {...register("applicationNumber")} />
                 </SearchField>
+
+                <SearchField>
+                <label>{t("PTR_PET_TYPE")}</label>
+
+                <Controller
+                    control={control}
+                    name="petType"
+                    render={({ field }) => (
+                    <Dropdown
+                        selected={field.value}
+                        select={(e) => field.onChange(e?.code)}
+                        option={Menu || []}
+                        optionKey="i18nKey"
+                        t={t}
+                        placeholder={t("PTR_PET_TYPE")}
+                    />
+                    )}
+                />
+                </SearchField>
+
 
                 
                 <SearchField>
                 <label>{t("PTR_OWNER_MOBILE_NO")}</label>
-                <MobileNumber
+                <Controller
+                    control={control}
                     name="mobileNumber"
-                    inputRef={register({
-                    minLength: {
-                        value: 10,
-                        message: t("CORE_COMMON_MOBILE_ERROR"),
-                    },
-                    maxLength: {
-                        value: 10,
-                        message: t("CORE_COMMON_MOBILE_ERROR"),
-                    },
-                    pattern: {
-                    value: /[6789][0-9]{9}/,
-                    //type: "tel",
-                    message: t("CORE_COMMON_MOBILE_ERROR"),
-                    },
-                })}
-                type="number"
-                componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-                //maxlength={10}
+                    rules={{
+                        minLength: { value: 10, message: t("CORE_COMMON_MOBILE_ERROR") },
+                        maxLength: { value: 10, message: t("CORE_COMMON_MOBILE_ERROR") },
+                        pattern: { value: /[6789][0-9]{9}/, message: t("CORE_COMMON_MOBILE_ERROR") },
+                    }}
+                    render={({ field }) => (
+                        <MobileNumber
+                            value={field.value}
+                            onChange={field.onChange}
+                            type="number"
+                            componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
+                        />
+                    )}
                 />
-                 <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
+                <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                 </SearchField>
                 
                 <SearchField>
                     <label>{t("PTR_FROM_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                        render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
                         name="fromDate"
                         control={control}
                         />
@@ -71,7 +87,7 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                 <SearchField>
                     <label>{t("PTR_TO_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                        render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
                         name="toDate"
                         control={control}
                         />

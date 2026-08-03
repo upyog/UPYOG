@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, Card, KeyNote, LinkButton, Loader, MultiLink } from "@upyog/digit-ui-react-components";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { Header, Card, KeyNote, LinkButton, Loader, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation, useParams,  } from "react-router-dom";
 import getPDFData from "../../getPDFData";
 import { getVehicleType } from "../../utils";
 import { ApplicationTimeline } from "../../components/ApplicationTimeline";
@@ -9,7 +9,7 @@ import { ApplicationTimeline } from "../../components/ApplicationTimeline";
 const ApplicationDetails = () => {
   const { t } = useTranslation();
   const { id } = useParams();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { state: locState } = useLocation();
   const tenantId = locState?.tenantId || Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
@@ -34,7 +34,7 @@ const ApplicationDetails = () => {
   }
 
   if (application?.applicationDetails?.length === 0) {
-    history.goBack();
+    navigate(-1);
   }
 
   const handleDownloadPdf = async () => {

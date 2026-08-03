@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo } from "react"
-import { FilterFormField, Loader, RadioButtons, Localities, RemoveableTag, Dropdown, CheckBox, MultiSelectDropdown } from "@upyog/digit-ui-react-components";
+import { FilterFormField, Loader, RadioButtons, Localities, RemoveableTag, Dropdown, CheckBox, MultiSelectDropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import cloneDeep from "lodash/cloneDeep";
@@ -44,12 +44,12 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
     <Controller
       name="assignee"
       control={controlFilterForm}
-      render={(props) => {
+      render={({ field }) => {
       return <RadioButtons
         onSelect={(e) => {
-          props.onChange(e.code)
+          field.onChange(e.code)
         }}
-        selectedOption={availableOptions.filter((option) => option.code === props.value)[0]}
+        selectedOption={availableOptions.filter((option) => option.code === field.value)[0]}
         optionsKey="name"
         name="assignee"
         options={availableOptions}
@@ -61,27 +61,27 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
       <Controller
           name="locality"
           control={controlFilterForm}
-          render={(props) => {
-            const renderRemovableTokens = useMemo(()=>props?.value?.map((locality, index) => {
+          render={({ field }) => {
+            const renderRemovableTokens = useMemo(()=>field?.value?.map((locality, index) => {
               return (
                 <RemoveableTag
                 key={index}
                 text={locality.i18nkey}
                 onClick={() => {
-                  props.onChange(props?.value?.filter((loc) => loc.code !== locality.code))
+                  field.onChange(field?.value?.filter((loc) => loc.code !== locality.code))
                 }}
                 />
                 );
-              }),[props?.value])
+              }),[field?.value])
             return loadingLocalitiesForEmployeesCurrentTenant ? <Loader/> : <>
               <div className="filter-label sub-filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("ES_INBOX_LOCALITY")}</div>
               <MultiSelectDropdown
               options={localitiesForEmployeesCurrentTenant ? localitiesForEmployeesCurrentTenant : []}
               optionsKey="i18nkey"
-              props={props}
+              props={field}
               isPropsNeeded={true}
               onSelect={selectrole}
-              selected={props?.value}
+              selected={field?.value}
               defaultLabel={t("ES_BPA_ALL_SELECTED")}
               defaultUnit={t("BPA_SELECTED_TEXT")}
               />
@@ -97,16 +97,16 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
       <Controller
         name="applicationType"
         control={controlFilterForm}
-        render={(props) => {
+        render={({ field }) => {
           return loadingApplicationTypesOfBPA ? <Loader /> : <>
             <div className="filter-label sub-filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("BPA_SEARCH_APPLICATION_TYPE_LABEL")}</div>
             <RadioButtons
               onSelect={(e) => {
-                props.onChange(e.code);
+                field.onChange(e.code);
                 setFilterFormValue("applicationStatus", []);
                 setFilterFormValue("businessService", []);
               }}
-              selectedOption={applicationTypesOfBPA.filter((option) => option.code === props.value)[0]}
+              selectedOption={applicationTypesOfBPA.filter((option) => option.code === field.value)[0]}
               optionsKey="i18nKey"
               name="applicationType"
               options={applicationTypesOfBPA}
@@ -120,13 +120,13 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
       <Controller
           name="businessService"
           control={controlFilterForm}
-          render={(props) => {
+          render={({ field }) => {
             return <>
               <div className="filter-label sub-filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("ES_INBOX_RISK_TYPE")}</div>
               <RadioButtons
-                onSelect={(e) => {props.onChange(e.code);
+                onSelect={(e) => {field.onChange(e.code);
                 setFilterFormValue("applicationStatus",[])}}
-                selectedOption={availableBusinessServicesOptions.filter((option) => option.code === props.value)[0]}
+                selectedOption={availableBusinessServicesOptions.filter((option) => option.code === field.value)[0]}
                 optionsKey="i18nKey"
                 name="businessService"
                 options={availableBusinessServicesOptions}
@@ -141,9 +141,9 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
       <Controller
         name="applicationStatus"
         control={controlFilterForm}
-        render={(props) => {
+        render={({ field }) => {
           function changeItemCheckStatus(value){
-            props.onChange(value)
+            field.onChange(value)
           }
           const renderStatusCheckBoxes = useMemo(()=>statuses?.filter( e => {
               let value = cloneDeep(selectedBusinessService);
@@ -154,25 +154,21 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
             
           } )?.map( (status, index) => {
             return <CheckBox
-              //style={{marginTop: "10px"}}
               key={index}
               onChange={(e) => 
-                // e.target.checked ? changeItemCheckStatus([...props?.value, status?.statusid]) : changeItemCheckStatus(props?.value?.filter( id => id !== status?.statusid)) 
                 {
-                  if (e.target.checked && props?.value) {
-                    changeItemCheckStatus([...props?.value, status?.statusid])
+                  if (e.target.checked && field?.value) {
+                    changeItemCheckStatus([...field?.value, status?.statusid])
                   } else if (e.target.checked) {
                     changeItemCheckStatus([status?.statusid])
                   } else {
-                    changeItemCheckStatus(props?.value?.filter( id => id !== status?.statusid))
+                    changeItemCheckStatus(field?.value?.filter( id => id !== status?.statusid))
                   }
                 }
               }
-              checked={props?.value?.includes(status?.statusid)}
+              checked={field?.value?.includes(status?.statusid)}
               label={`${t(`WF_STATE_${status.businessservice}_${status.applicationstatus}`)} (${status.count})`}
-              //Hidden due to RAIN-5010 percieved as wrong count here
-              // (${status.count})`}
-            />}),[props.value, statuses, selectedBusinessService, selectedApplicationType])
+            />}),[field.value, statuses, selectedBusinessService, selectedApplicationType])
           return <>
             {isInboxLoading ? <Loader /> : <>{renderStatusCheckBoxes}</>}
           </>

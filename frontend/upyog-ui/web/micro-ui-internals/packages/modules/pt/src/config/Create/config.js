@@ -194,16 +194,12 @@ export const newConfig =[
                         "cardText": "",
                         "submitBarLabel": "PT_COMMONS_NEXT"
                     },
-                    
                     "nextStep": "PropertyStructureDetails",
-                    
-                    "withoutLabel": true
                     
                 },
                 {
                     "type": "component",
                     "route": "PropertyStructureDetails",
-                  
                     "component": "PropertyStructureDetails",
                     "key": "propertyStructureDetails",
                     "withoutLabel": true,
@@ -286,7 +282,7 @@ export const newConfig =[
               },
               "key": "units",
               "withoutLabel": true,
-              "nextStep": "map",
+              "nextStep": "pincode",
               "hideInEmployee": true
           },
           {
@@ -380,7 +376,7 @@ export const newConfig =[
                   "cardText": "PT_FLAT_DETAILS_DESC",
                   "submitBarLabel": "PT_COMMON_NEXT"
               },
-              "nextStep": "map",
+              "nextStep": "pincode",
               "key": "units",
               "withoutLabel": true,
               "hideInEmployee": true
@@ -429,7 +425,7 @@ export const newConfig =[
               "key": "units",
               "withoutLabel": true,
               "nextStep": {
-                  "PT_COMMON_NO": "map",
+                  "PT_COMMON_NO": "pincode",
                   "PT_COMMON_YES": "un-occupied-area"
               },
               "hideInEmployee": true
@@ -447,7 +443,7 @@ export const newConfig =[
               },
               "key": "units",
               "withoutLabel": true,
-              "nextStep": "map",
+              "nextStep": "pincode",
               "hideInEmployee": true
           }
       ]

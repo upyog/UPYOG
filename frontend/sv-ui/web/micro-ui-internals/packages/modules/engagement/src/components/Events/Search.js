@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import DropdownUlb from "./DropdownUlb";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";
 
@@ -20,10 +20,10 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
         return (
           <Controller
           rules={{ required: true }}
-            render={props => (
+            render={({field}) => (
               <DropdownUlb
-                onAssignmentChange={props.onChange}
-                value={props.value}
+                onAssignmentChange={field.onChange}
+                value={field.value}
                 ulb={userUlbs}
                 t={t}
               />
@@ -36,7 +36,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
       default:
         return (
           <Controller
-            render={(props) => <TextInput onChange={props.onChange} value={props.value} />}
+            render={({field}) => <TextInput onChange={field.onChange} value={field.value} />}
             name={input.name}
             control={control}
             defaultValue={null}

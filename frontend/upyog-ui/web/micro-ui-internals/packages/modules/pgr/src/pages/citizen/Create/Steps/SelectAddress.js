@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { CardLabel, Dropdown, FormStep, RadioButtons } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 
 const SelectAddress = ({ t, config, onSelect, value }) => {
   const allCities = Digit.Hooks.pgr.useTenants();
@@ -37,34 +37,34 @@ const SelectAddress = ({ t, config, onSelect, value }) => {
     const { locality_complaint } = value;
     return locality_complaint ? locality_complaint : null;
   });
-
-  useEffect(async () => {
-    if (selectedCity && fetchedLocalities) {
-      const { pincode } = value;
-      let __localityList = pincode ? fetchedLocalities.filter((city) => city["pincode"] == pincode) : fetchedLocalities;
-      await setLocalities(__localityList);
-      if (pttype == "PT") {
-        let filteredLocalities = __localityList.filter(locality => locality.code === localitynew);
-        if (filteredLocalities) {
-          setSelectedLocality(filteredLocalities[0])
+ 
+  useEffect(() => {
+   function fetchLocalities() {
+      if (selectedCity && fetchedLocalities) {
+        const { pincode } = value;
+        let __localityList = pincode ? fetchedLocalities.filter((city) => city["pincode"] == pincode) : fetchedLocalities;
+        if (pttype == "PT") {
+          let filteredLocalities = __localityList.filter(locality => locality.code === localitynew);
+          if (filteredLocalities) {
+            setSelectedLocality(filteredLocalities[0])
+          }
+        }
+        else {
+          setLocalities(__localityList);
         }
       }
-      else {
-        setLocalities(__localityList);
-      }
     }
+    fetchLocalities();
   }, [selectedCity, fetchedLocalities]);
 
   function selectCity(city) {
     setSelectedLocality(null);
     setLocalities(null);
     setSelectedCity(city);
-    // Digit.SessionStorage.set("city_complaint", city);
   }
 
   function selectLocality(locality) {
     setSelectedLocality(locality);
-    // Digit.SessionStorage.set("locality_complaint", locality);
   }
 
   function onSubmit() {

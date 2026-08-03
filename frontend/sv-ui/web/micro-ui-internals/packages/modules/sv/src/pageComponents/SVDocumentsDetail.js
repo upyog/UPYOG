@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import Timeline from "../components/Timeline";
 
 
@@ -254,8 +254,6 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData, editdata, previousDa
       workflow: {
         action: "APPLY",
         comments: "",
-        businessService: "street-vending",
-        moduleName: "sv-services",
         businessService: "street-vending",
         moduleName: "sv-services",
         varificationDocuments: [

@@ -56,7 +56,7 @@ public class OcComparisonDetailService {
     }
 
     public void saveAll(List<OcComparisonDetail> ocComparisonDetails) {
-        ocComparisonDetailRepository.save(ocComparisonDetails);
+        ocComparisonDetailRepository.saveAll(ocComparisonDetails);
     }
 
     public OcComparisonDetail findByDcrNumber(final String dcrNumber) {

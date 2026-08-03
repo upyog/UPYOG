@@ -1,8 +1,8 @@
 package org.upyog.cdwm.kafka.consumer;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
  * </p>
  * 
  * <p>
- * Expected message format is a {@code HashMap<String, Object>} representing the 
+ * Expected message format is a {@code Map<String, Object>} representing the 
  * serialized {@link org.upyog.cdwm.model.PaymentRequest}.
  * </p>
  *
@@ -34,23 +34,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PaymentUpdateConsumer {
 
-	@Autowired
-	private PaymentService paymentService;
+	private final PaymentService paymentService;
+
+	public PaymentUpdateConsumer(PaymentService paymentService) {
+		this.paymentService = paymentService;
+	}
 
 	 /**
      * Listens to the Kafka topic for payment receipt creation events and triggers the
      * payment processing logic.
      *
-     * @param record the received message from the Kafka topic, containing payment details.
+     * @param consumerRecord the received message from the Kafka topic, containing payment details.
      * @param topic the name of the topic from which the message was consumed.
      */
 	
 	@KafkaListener(topics = { "${kafka.topics.receipt.create}" })
-	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+	public void listen(final Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		log.info("CND Appplication Received to update workflow after PAY ");
 		try {
-			paymentService.process(record, topic);
+			paymentService.process(new HashMap<>(consumerRecord), topic);
 		} catch (JsonProcessingException e) {
 			log.error("JsonProcessingException occurred while processing payment record in CND consumer: {}", e.getMessage(), e);
 			

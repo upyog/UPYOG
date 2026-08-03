@@ -152,7 +152,7 @@ export const WorkflowService = {
           //   _nextActions.push({ action: "RE-SUBMIT", ...state, roles: state?.actions?.[0]?.roles })
           // }
           //CHECK WHEN EDIT ACTION TO BE SHOWN
-          return { ...state, nextActions: _nextActions, roles: state?.action, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
+          return { ...state, nextActions: _nextActions, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
         })?.[0];
 
 
@@ -245,7 +245,7 @@ export const WorkflowService = {
           if(state?.isStateUpdatable) {
             _nextActions.push({ action: "EDIT", ...state, roles: state?.actions?.[0]?.roles})
           }
-          return { ...state, nextActions: _nextActions, roles: state?.action, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
+          return { ...state, nextActions: _nextActions, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
         })?.[0];
 
       // HANDLING ACTION for NEW VEHICLE LOG FROM UI SIDE

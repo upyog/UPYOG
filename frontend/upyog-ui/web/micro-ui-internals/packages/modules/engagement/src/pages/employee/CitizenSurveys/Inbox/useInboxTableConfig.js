@@ -2,8 +2,8 @@ import React, { Fragment, useMemo } from "react"
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { InfoBannerIcon } from "@upyog/digit-ui-react-components";
-const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCount, table, dispatch, inboxStyles={} }) => {
+import { InfoBannerIcon } from "@nudmcdgnpm/digit-ui-react-components";
+const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCount, table, dispatch, inboxStyles = {} }) => {
     const GetCell = (value) => <span className="cell-text styled-cell">{value}</span>;
     const GetStatusCell = (value) => value?.toLowerCase() === "active" ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>
     const { t } = useTranslation()
@@ -16,7 +16,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
                 Cell: ({ row }) => {
                     return (
                         <div>
-                            <Link to={`${parentRoute}/surveys/inbox/details/${row.original["uuid"]}`}>
+                            <Link to={`details/${row.original["uuid"]}`}>
                                 <span className="link">{row.original["title"]}</span>
                             </Link>
                         </div>
@@ -39,26 +39,26 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
                 Cell: ({ row }) => row.original?.answersCount ? GetCell(Number(row.original?.answersCount)) : "-"
             },
             {
-                Header: <div>{t("EVENTS_STATUS_LABEL")}<div className="tooltip" style={{marginLeft:"5px"}}>
+                Header: <div>{t("EVENTS_STATUS_LABEL")}<div className="tooltip" style={{ marginLeft: "5px" }}>
                     <InfoBannerIcon fill="#0b0c0c" style />
                     <span className="tooltiptext" style={{
                         whiteSpace: "pre-wrap",
                         fontSize: "small",
-                        wordWrap:"break-word",
-                        width:"120px",
-                        marginLeft:"15px",
-                        marginBottom:"-260px"
+                        wordWrap: "break-word",
+                        width: "120px",
+                        marginLeft: "15px",
+                        marginBottom: "-260px"
                         //overflow:"auto"
                     }}>
                         {`${t(`SURVEY_STATUS_TOOLTIP`)}`}
                     </span>
                 </div></div>,
                 accessor: "status",
-                Cell: ({row}) => GetStatusCell(row.original?.status),
+                Cell: ({ row }) => GetStatusCell(row.original?.status),
             },
             {
                 Header: t("EVENTS_POSTEDBY_LABEL"),
-                accessor: (row) =>  row.additionalDetails.postedBy,
+                accessor: (row) => row.additionalDetails.postedBy,
             },
             {
                 Header: t("CS_SURVEY_RESULTS"),
@@ -66,12 +66,12 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
                 accessor: "results",
                 Cell: ({ row }) => {
                     return (
-                        <div style={{"display":"flex","justifyContent":"center"}}>
-                            <Link to={`${parentRoute}/surveys/inbox/results/${row.original["uuid"]}`}>
-                                <span  className="link"> 
+                        <div style={{ "display": "flex", "justifyContent": "center" }}>
+                            <Link to={`results/${row.original["uuid"]}`}>
+                                <span className="link">
                                     <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M5.5 18H0V6H5.5V18ZM12.75 0H7.25V18H12.75V0ZM20 8H14.5V18H20V8Z" fill="#a82227"/>
-                                    </svg> 
+                                        <path d="M5.5 18H0V6H5.5V18ZM12.75 0H7.25V18H12.75V0ZM20 8H14.5V18H20V8Z" fill="#a82227" />
+                                    </svg>
                                 </span>
                             </Link>
                         </div>
@@ -107,8 +107,8 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
         // searchQueryForTable,
         data: table,
         columns: tableColumnConfig,
-        noResultsMessage:"CS_NO_SURVEYS_FOUND",
-        inboxStyles:{...inboxStyles}
+        noResultsMessage: "CS_NO_SURVEYS_FOUND",
+        inboxStyles: { ...inboxStyles }
     }
 }
 

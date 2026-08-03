@@ -99,13 +99,8 @@
 @import "./pages/citizen/payment/payment-type.scss";
 @import "./pages/citizen/container.scss";
 @import "./pages/citizen/HomePageWrapper.scss";
-@import "./pages/citizen/CitizenEngagementNotificationWrapper.scss";
-@import "./pages/citizen/Events.scss";
-@import "./pages/citizen/DocumentList.scss";
-@import "./pages/citizen/SurveyList.scss";
 @import "./pages/citizen/updatePropertyNumber.scss";
 @import "./pages/citizen/citizenDocument.scss";
-@import "./pages/employee/surveys.scss";
 @import "./digitv2/index.scss";
 /* @import "./digitv2/typography.scss"; */
 @import "./components/inboxv2/index.scss";
@@ -640,7 +635,6 @@ input[type="number"] {
   .bill-citizen,
   .bills-citizen-wrapper,
   .payer-bills-citizen-wrapper,
-  .engagement-citizen-wrapper,
   .citizen-all-services-wrapper,
   .mcollect-citizen,
   .ws-citizen-wrapper,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FilterAction, Card, DetailsCard, PopUp, SearchAction } from "@upyog/digit-ui-react-components";
+import { FilterAction, Card, DetailsCard, PopUp, SearchAction } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import SearchComplaint from "./search";
 import Filter from "./NewInboxFilter";

@@ -1,4 +1,4 @@
-import { RadioButtons, SearchField } from "@upyog/digit-ui-react-components";
+import { RadioButtons, SearchField } from "@nudmcdgnpm/digit-ui-react-components";
 import { format } from "date-fns";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
@@ -45,12 +45,12 @@ const useInboxMobileCardsData = ({  table }) => {
         <Controller
           name="sortOrder"
           control={controlSortForm}
-          render={({ onChange, value }) => (
+          render={({ field }) => (
             <RadioButtons
               onSelect={(e) => {
-                onChange(e.code);
+                field.onChange(e.code);
               }}
-              selectedOption={sortOrderOptions.filter((option) => option.code === value)[0]}
+              selectedOption={sortOrderOptions.filter((option) => option.code === field.value)[0]}
               optionsKey="i18nKey"
               name="sortOrder"
               options={sortOrderOptions}

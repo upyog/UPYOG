@@ -1,58 +1,57 @@
+import sys
+from pathlib import Path
 
-from numpy import sinc
+# Ensure accelerator plugins and dags dir are importable when DAGs run from .../dags/
+_dag_dir = Path(__file__).resolve().parent
+_plugins_dir = _dag_dir.parent / "plugins"
+for _d in (_plugins_dir, _dag_dir):
+    if _d.is_dir() and str(_d) not in sys.path:
+        sys.path.insert(0, str(_d))
+
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-from airflow.operators.postgres_operator import PostgresOperator
-from airflow.utils.dates import days_ago
-from datetime import datetime, timedelta, timezone
-from datetime import date
-from hooks.elastic_hook import ElasticHook
-from airflow.operators.http_operator import SimpleHttpOperator
-import requests
+from airflow.operators.python import PythonOperator
+from airflow.utils import timezone as airflow_tz
+from airflow.models import Variable
 from airflow.hooks.base import BaseHook
+from datetime import datetime, timedelta
+from pytz import timezone
 import logging
 import json
-import urllib
+import uuid
+import requests
+from elasticsearch import Elasticsearch, helpers
+from hooks.elastic_hook import ElasticHook
 from queries.tl import *
 from queries.pgr import *
 from queries.ws import *
-from queries.ws_digit import *
 from queries.pt import *
 from queries.firenoc import *
 from queries.mcollect import *
 from queries.obps import *
 from queries.common import *
-from utils.utils import log
-from pytz import timezone
-from airflow.models import Variable
-from elasticsearch import Elasticsearch, helpers
-from csv import reader
-import uuid
-
 
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'retries': 3,
     'retry_delay': timedelta(seconds=10),
-    'start_date': datetime(2017, 1, 24)
-
+    'start_date': airflow_tz.utcnow() - timedelta(days=1),
 }
 
 module_map = {
-    'TL' : (tl_queries, empty_tl_payload),
-    'PGR' : (pgr_queries, empty_pgr_payload),
-    'WS' : (ws_queries, empty_ws_payload),
-    'WS_DIGIT' : (ws_digit_queries, empty_ws_digit_payload),
-    'PT' : (pt_queries, empty_pt_payload),
-    'FIRENOC' : (firenoc_queries, empty_firenoc_payload),
-    'MCOLLECT' : (mcollect_queries, empty_mcollect_payload),
-    'OBPS' : (obps_queries, empty_obps_payload),
-    'COMMON' : (common_queries,empty_common_payload)
+    # 'TL' : (tl_queries, empty_tl_payload),
+    # 'PGR' : (pgr_queries, empty_pgr_payload),
+    # 'WS' : (ws_queries, empty_ws_payload),
+    'PT' : (pt_queries, empty_pt_payload)
+    # 'FIRENOC' : (firenoc_queries, empty_firenoc_payload),
+    # 'MCOLLECT' : (mcollect_queries, empty_mcollect_payload),
+    # 'OBPS' : (obps_queries, empty_obps_payload),
+    # 'COMMON' : (common_queries,empty_common_payload)
 }
 
 
-dag = DAG('national_dashboard_template_manual', default_args=default_args, schedule_interval=None)
+# Manual trigger only; pass conf e.g. {"date": "06-02-2026"} when triggering.
+dag = DAG('national_dashboard_template_manual', default_args=default_args, schedule=None)
 log_endpoint = 'kibana/api/console/proxy'
 batch_size = 50
 
@@ -64,12 +63,30 @@ totalApplicationWithinSLA = 0
 
 
 
+def _get_run_date_str(kwargs):
+    """
+    Returns date string in DD-MM-YYYY.
+    Prefers dag_run.conf['date']; falls back to yesterday (Asia/Kolkata) if not provided.
+    """
+    dag_run = kwargs.get('dag_run')
+    conf = getattr(dag_run, "conf", None)
+    date = None
+    if conf and isinstance(conf, dict):
+        date = conf.get('date')
+    if not date:
+        localtz = timezone('Asia/Kolkata')
+        yesterday = (datetime.now(localtz) - timedelta(days=1)).strftime("%d-%m-%Y")
+        logging.info(f"No 'date' in dag_run.conf; defaulting to yesterday: {yesterday}")
+        date = yesterday
+    return date
+
+
 def dump_kibana(**kwargs):
     hook = ElasticHook('GET', 'es_conn')
     module = kwargs['module']
     module_config = module_map.get(module)
     queries = module_config[0]
-    date = kwargs['dag_run'].conf.get('date')
+    date = _get_run_date_str(kwargs)
     localtz = timezone('Asia/Kolkata')
     dt_aware = localtz.localize(datetime.strptime(date, "%d-%m-%Y"))
     start = int(dt_aware.timestamp() * 1000)
@@ -314,9 +331,10 @@ def load(**kwargs):
     payload = kwargs['ti'].xcom_pull(key='payload_{0}'.format(module))
     logging.info(payload)
     payload_obj = json.loads(payload)
-    logging.info("payload length {0} {1}".format(len(payload_obj),module))
+    logging.info("payload length {0} {1}".format(len(payload_obj), module))
     localtz = timezone('Asia/Kolkata')
-    dt_aware = localtz.localize(datetime.strptime(kwargs['dag_run'].conf.get('date'), "%d-%m-%Y"))
+    date = _get_run_date_str(kwargs)
+    dt_aware = localtz.localize(datetime.strptime(date, "%d-%m-%Y"))
     startdate = int(dt_aware.timestamp() * 1000)
     logging.info(startdate)
     if access_token and refresh_token:
@@ -330,206 +348,177 @@ def transform(**kwargs):
     return 'Post Transformed Data'
 
 
-extract_tl = PythonOperator(
-    task_id='elastic_search_extract_tl',
-    python_callable=dump_kibana,
-    provide_context=True,
-    do_xcom_push=True,
-    op_kwargs={ 'module' : 'TL'},
-    dag=dag)
-
-transform_tl = PythonOperator(
-    task_id='nudb_transform_tl',
-    python_callable=transform,
-    provide_context=True,
-    dag=dag)
-
-load_tl = PythonOperator(
-    task_id='nudb_ingest_load_tl',
-    python_callable=load,
-    provide_context=True,
-    op_kwargs={ 'module' : 'TL'},
-    dag=dag)
+# Disabled TL tasks (kept for reference)
+# extract_tl = PythonOperator(
+#     task_id='elastic_search_extract_tl',
+#     python_callable=dump_kibana,
+#     op_kwargs={ 'module' : 'TL'},
+#     dag=dag)
+#
+# transform_tl = PythonOperator(
+#     task_id='nudb_transform_tl',
+#     python_callable=transform,
+#     dag=dag)
+#
+# load_tl = PythonOperator(
+#     task_id='nudb_ingest_load_tl',
+#     python_callable=load,
+#     op_kwargs={ 'module' : 'TL'},
+#     dag=dag)
 
 
-extract_pgr = PythonOperator(
-    task_id='elastic_search_extract_pgr',
-    python_callable=dump_kibana,
-    provide_context=True,
-    do_xcom_push=True,
-    op_kwargs={ 'module' : 'PGR'},
-    dag=dag)
-
-transform_pgr = PythonOperator(
-    task_id='nudb_transform_pgr',
-    python_callable=transform,
-    provide_context=True,
-    dag=dag)
-
-load_pgr = PythonOperator(
-    task_id='nudb_ingest_load_pgr',
-    python_callable=load,
-    provide_context=True,
-    op_kwargs={ 'module' : 'PGR'},
-    dag=dag)
-
-extract_ws = PythonOperator(
-    task_id='elastic_search_extract_ws',
-    python_callable=dump_kibana,
-    provide_context=True,
-    do_xcom_push=True,
-    op_kwargs={ 'module' : 'WS'},
-    dag=dag)
-
-transform_ws = PythonOperator(
-    task_id='nudb_transform_ws',
-    python_callable=transform,
-    provide_context=True,
-    dag=dag)
-
-load_ws = PythonOperator(
-    task_id='nudb_ingest_load_ws',
-    python_callable=load,
-    provide_context=True,
-    op_kwargs={ 'module' : 'WS'},
-    dag=dag)
+# Disabled PGR tasks (kept for reference)
+# extract_pgr = PythonOperator(
+#     task_id='elastic_search_extract_pgr',
+#     python_callable=dump_kibana,
+#     op_kwargs={ 'module' : 'PGR'},
+#     dag=dag)
+#
+# transform_pgr = PythonOperator(
+#     task_id='nudb_transform_pgr',
+#     python_callable=transform,
+#     dag=dag)
+#
+# load_pgr = PythonOperator(
+#     task_id='nudb_ingest_load_pgr',
+#     python_callable=load,
+#     op_kwargs={ 'module' : 'PGR'},
+#     dag=dag)
+#
+# Disabled WS tasks (kept for reference)
+# extract_ws = PythonOperator(
+#     task_id='elastic_search_extract_ws',
+#     python_callable=dump_kibana,
+#     op_kwargs={ 'module' : 'WS'},
+#     dag=dag)
+#
+# transform_ws = PythonOperator(
+#     task_id='nudb_transform_ws',
+#     python_callable=transform,
+#     dag=dag)
+#
+# load_ws = PythonOperator(
+#     task_id='nudb_ingest_load_ws',
+#     python_callable=load,
+#     op_kwargs={ 'module' : 'WS'},
+#     dag=dag)
 
 
 extract_pt = PythonOperator(
     task_id='elastic_search_extract_pt',
     python_callable=dump_kibana,
-    provide_context=True,
-    do_xcom_push=True,
     op_kwargs={ 'module' : 'PT'},
     dag=dag)
 
 transform_pt = PythonOperator(
     task_id='nudb_transform_pt',
     python_callable=transform,
-    provide_context=True,
     dag=dag)
 
 load_pt = PythonOperator(
     task_id='nudb_ingest_load_pt',
     python_callable=load,
-    provide_context=True,
     op_kwargs={ 'module' : 'PT'},
     dag=dag)
 
-extract_firenoc = PythonOperator(
-    task_id='elastic_search_extract_firenoc',
-    python_callable=dump_kibana,
-    provide_context=True,
-    do_xcom_push=True,
-    op_kwargs={ 'module' : 'FIRENOC'},
-    dag=dag)
-
-transform_firenoc = PythonOperator(
-    task_id='nudb_transform_firenoc',
-    python_callable=transform,
-    provide_context=True,
-    dag=dag)
-
-load_firenoc = PythonOperator(
-    task_id='nudb_ingest_load_firenoc',
-    python_callable=load,
-    provide_context=True,
-    op_kwargs={ 'module' : 'FIRENOC'},
-    dag=dag)
-
-
-extract_mcollect = PythonOperator(
-    task_id='elastic_search_extract_mcollect',
-    python_callable=dump_kibana,
-    provide_context=True,
-    do_xcom_push=True,
-    op_kwargs={ 'module' : 'MCOLLECT'},
-    dag=dag)
-
-transform_mcollect = PythonOperator(
-    task_id='nudb_transform_mcollect',
-    python_callable=transform,
-    provide_context=True,
-    dag=dag)
-
-load_mcollect = PythonOperator(
-    task_id='nudb_ingest_load_mcollect',
-    python_callable=load,
-    provide_context=True,
-    op_kwargs={ 'module' : 'MCOLLECT'},
-    dag=dag)
-
-extract_common = PythonOperator(
-    task_id='elastic_search_extract_common',
-    python_callable=dump_kibana,
-    provide_context=True,
-    do_xcom_push=True,
-    op_kwargs={ 'module' : 'COMMON'},
-    dag=dag)
-
-transform_common = PythonOperator(
-    task_id='nudb_transform_common',
-    python_callable=transform,
-    provide_context=True,
-    dag=dag)
-
-load_common = PythonOperator(
-    task_id='nudb_ingest_load_common',
-    python_callable=load,
-    provide_context=True,
-    op_kwargs={ 'module' : 'COMMON'},
-    dag=dag)
+# Disabled FIRENOC tasks (kept for reference)
+# extract_firenoc = PythonOperator(
+#     task_id='elastic_search_extract_firenoc',
+#     python_callable=dump_kibana,
+#     op_kwargs={ 'module' : 'FIRENOC'},
+#     dag=dag)
+#
+# transform_firenoc = PythonOperator(
+#     task_id='nudb_transform_firenoc',
+#     python_callable=transform,
+#     dag=dag)
+#
+# load_firenoc = PythonOperator(
+#     task_id='nudb_ingest_load_firenoc',
+#     python_callable=load,
+#     op_kwargs={ 'module' : 'FIRENOC'},
+#     dag=dag)
+#
+# Disabled MCOLLECT tasks (kept for reference)
+# extract_mcollect = PythonOperator(
+#     task_id='elastic_search_extract_mcollect',
+#     python_callable=dump_kibana,
+#     op_kwargs={ 'module' : 'MCOLLECT'},
+#     dag=dag)
+#
+# transform_mcollect = PythonOperator(
+#     task_id='nudb_transform_mcollect',
+#     python_callable=transform,
+#     dag=dag)
+#
+# load_mcollect = PythonOperator(
+#     task_id='nudb_ingest_load_mcollect',
+#     python_callable=load,
+#     op_kwargs={ 'module' : 'MCOLLECT'},
+#     dag=dag)
+#
+# Disabled COMMON tasks (kept for reference)
+# extract_common = PythonOperator(
+#     task_id='elastic_search_extract_common',
+#     python_callable=dump_kibana,
+#     op_kwargs={ 'module' : 'COMMON'},
+#     dag=dag)
+#
+# transform_common = PythonOperator(
+#     task_id='nudb_transform_common',
+#     python_callable=transform,
+#     dag=dag)
+#
+# load_common = PythonOperator(
+#     task_id='nudb_ingest_load_common',
+#     python_callable=load,
+#     op_kwargs={ 'module' : 'COMMON'},
+#     dag=dag)
 
 # extract_ws_digit = PythonOperator(
 #     task_id='elastic_search_extract_ws_digit',
 #     python_callable=dump_kibana,
-#     provide_context=True,
-#     do_xcom_push=True,
+# #     do_xcom_push=True,
 #     op_kwargs={ 'module' : 'WS_DIGIT'},
 #     dag=dag)
 
 # transform_ws_digit = PythonOperator(
 #     task_id='nudb_transform_ws_digit',
 #     python_callable=transform,
-#     provide_context=True,
-#     dag=dag)
+# #     dag=dag)
 
 # load_ws_digit = PythonOperator(
 #     task_id='nudb_ingest_load_ws_digit',
 #     python_callable=load,
-#     provide_context=True,
-#     op_kwargs={ 'module' : 'WS_DIGIT'},
+# #     op_kwargs={ 'module' : 'WS_DIGIT'},
 #     dag=dag)
 
 # extract_obps = PythonOperator(
 #     task_id='elastic_search_extract_obps',
 #     python_callable=dump_kibana,
-#     provide_context=True,
-#     do_xcom_push=True,
+# #     do_xcom_push=True,
 #     op_kwargs={ 'module' : 'OBPS'},
 #     dag=dag)
 
 # transform_obps = PythonOperator(
 #     task_id='nudb_transform_obps',
 #     python_callable=transform,
-#     provide_context=True,
-#     dag=dag)
+# #     dag=dag)
 
 # load_obps = PythonOperator(
 #     task_id='nudb_ingest_load_obps',
+
+
+
+# extract_tl >> transform_tl >> load_tl
+# extract_pgr >> transform_pgr >> load_pgr
+# extract_ws >> transform_ws >> load_ws
 #     python_callable=load,
-#     provide_context=True,
-#     op_kwargs={ 'module' : 'OBPS'},
+# #     op_kwargs={ 'module' : 'OBPS'},
 #     dag=dag)
-
-
-
-extract_tl >> transform_tl >> load_tl
-extract_pgr >> transform_pgr >> load_pgr
-extract_ws >> transform_ws >> load_ws
 extract_pt >> transform_pt >> load_pt
-extract_firenoc >> transform_firenoc >> load_firenoc
-extract_mcollect >> transform_mcollect >> load_mcollect
-extract_common >> transform_common >> load_common
+# extract_firenoc >> transform_firenoc >> load_firenoc
+# extract_mcollect >> transform_mcollect >> load_mcollect
+# extract_common >> transform_common >> load_common
 #extract_ws_digit >> transform_ws_digit >> load_ws_digit
 #extract_obps >> transform_obps >> load_obps

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { TextArea, LabelFieldPair, CardLabel, TextInput } from "@upyog/digit-ui-react-components";
-import FormStep from "../../../../react-components/src/molecules/FormStep"
+import { TextArea, LabelFieldPair, CardLabel, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
+import {FormStep} from "@nudmcdgnpm/digit-ui-react-components"
 import Timeline from "../components/TLTimelineInFSM";
 const SelectPropertyID = ({ t, config, onSelect, formData, userType, setError: setFormError, clearErrors: clearFormErrors }) => {
 const [propertyID, setPropertyID] = useState(formData?.propertyID?.propertyID ||"");

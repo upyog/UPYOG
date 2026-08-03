@@ -29,11 +29,11 @@ import {
   Modal,
   LinkButton,
   SectionalDropdown,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import { Close } from "../../Icons";
 import { useTranslation } from "react-i18next";
-import { isError, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import StarRated from "../../components/timelineInstances/StarRated";
 
 /**
@@ -461,14 +461,14 @@ export const ComplaintDetails = (props) => {
         ) : (
           <StatusTable>
             {complaintDetails &&
-              Object.keys(complaintDetails?.details).map((k, i, arr) => (
+              Object.keys(complaintDetails?.details || {}).map((k, i, arr) => (
                 <Row
                   key={k}
                   label={t(k)}
                   text={
-                    Array.isArray(complaintDetails?.details[k])
+                    Array.isArray(complaintDetails?.details?.[k])
                       ? complaintDetails?.details[k].map((val) => (typeof val === "object" ? t(val?.code) : t(val)))
-                      : t(complaintDetails?.details[k]) || "N/A"
+                      : t(complaintDetails?.details?.[k]) || "N/A"
                   }
                   last={arr.length - 1 === i}
                 />

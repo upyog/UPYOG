@@ -1,9 +1,9 @@
 module.exports = {
-  future: {
-    removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true,
-  },
-  purge: { enabled: true, content: ["./example/index.html"] },
+  content: [
+    "./src/**/*.scss",
+    "./src/**/*.css",
+    "./example/index.html"
+  ],
   theme: {
     screens: {
       dt: "780px",
@@ -83,7 +83,7 @@ module.exports = {
       xl: "64px",
     },
     borderWidth: {
-      default: "1px",
+      DEFAULT: "1px",
       0: "0",
       2: "1px",
       4: "4px",

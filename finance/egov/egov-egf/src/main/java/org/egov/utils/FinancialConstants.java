@@ -50,6 +50,7 @@ package org.egov.utils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Map;
 
 import org.egov.infstr.utils.EGovConfig;
 
@@ -117,7 +118,21 @@ public interface FinancialConstants {
 	public static final String CONTRACTORBILL_PASSED_STATUS = "Passed";
 	public static final String CONTRACTORBILL_PAID_STATUS = "Paid";
 	public static final String CONTRACTORBILL_REJECTED_STATUS = "REJECTED";
-	
+
+
+	// Module name for budget register
+	public static final String BUDGET_MODULE = "BudgetRegister";
+
+	//Status for Budget Register
+	public static final String BUDGET_CREATED_NEW = "NEW";
+	public static final String BUDGET_CREATED_STATUS = "Created";
+	public static final String BUDGET_CANCELLED_STATUS = "CANCELLED";
+	public static final String BUDGET_APPROVED_STATUS = "APPROVED";
+	public static final String BUDGET_REJECTED_STATUS = "REJECTED";
+
+	public static final String BUDGET_FORWARDED_FROM_FMO = "FMO_FORWARDED";
+	public static final String BUDGET_FORWARDED_FROM_EO = "EO_FORWARDED";
+	public static final String BUDGET_REVERTED = "REVERTED";
 
 	// Status for Pension Bills
 	public static final String PENSIONBILL_CANCELLED_STATUS = "Cancelled";
@@ -355,13 +370,16 @@ public interface FinancialConstants {
 	public static final String BUTTONAPPROVE = "Approve";
 	public static final String BUTTONFORWARD = "Forward";
 	public static final String BUTTONREJECT = "Reject";
+	public static final String BUTTONREVERT = "Revert";
 	public static final String BUTTONSAVE = "Save";
 	public static final String BUTTONCANCEL = "Cancel";
 	public static final String BUTTONVERIFY = "Verify";
+	public static final String BUTTONFORWARD_TO_DMA = "Forward to DMA";
 
 	public static final String WORKFLOW_STATE_NEW = "NEW";
 	public static final String WORKFLOW_STATE_APPROVED = "Approved";
 	public static final String WORKFLOW_STATE_REJECTED = "Rejected";
+	public static final String WORKFLOW_STATE_REVERTED = "Reverted";
 	public static final String WORKFLOW_STATE_FORWARDED = "Forwarded";
 	public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
 	public static final String WORKFLOW_STATE_CREATED = "Created";
@@ -381,6 +399,7 @@ public interface FinancialConstants {
 	public static final String WORKFLOWTYPE_WORKS_BILL_DISPLAYNAME = "Works Bill";
 	public static final String WORKFLOWTYPE_SBILL_DISPLAYNAME = "Supplier Bill";
 	public static final String WORKFLOWTYPE_VOUCHER_DISPLAYNAME = "Voucher";
+	public static final String WORKFLOWTYPE_BUDGET_REGISTER_DISPLAYNAME = "Budget Register";
 
 	public static final String WORKFLOW_STATUS_CODE_REJECTED = "REJECTED";
 	public static final String KEY_DATAENTRYCUTOFFDATE = "DataEntryCutOffDate";

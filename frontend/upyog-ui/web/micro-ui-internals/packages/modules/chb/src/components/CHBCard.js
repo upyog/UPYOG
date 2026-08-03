@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard,CHBIcon } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard,CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
 
 /*
     CHBCard Component
@@ -72,7 +72,7 @@ const CHBCard = () => {
       {
         count: total?.totalCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/upyog-ui/employee/chb/searchHall/inbox`,
+        link: `/upyog-ui/employee/chb/inbox`,
       },
     ],
     links:links.filter(link=>!link?.role||CHB_CEMP),

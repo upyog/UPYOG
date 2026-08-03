@@ -25,12 +25,12 @@
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov ERP Releases Repository</name>
-			<url>https://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
+			<url>https://upyog-nexus.niua.org/nexus/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>repo.egovernments.org</id>
 			<name>eGov ERP Snapshots Repository</name>
-			<url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
+			<url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -38,7 +38,7 @@
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov Public Repository Group</name>
-			<url>https://nexus-repo.digit.org/nexus/content/groups/public/</url>
+			<url>https://upyog-nexus.niua.org/nexus/content/groups/public/</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -52,16 +52,16 @@
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
-	     <id>javaxt.com</id>
-	     <url>http://www.javaxt.com/maven</url>
-	   </repository>
+            <id>upyog-public</id>
+            <url>https://upyog-nexus.niua.org/nexus/content/groups/public/</url>
+        </repository>
 	</repositories>
 
     <pluginRepositories>
 		<pluginRepository>
 			<id>repo.egovernments.org</id>
 			<name>eGov Public Repository Group</name>
-			<url>https://nexus-repo.digit.org/nexus/content/groups/public/</url>
+			<url>https://upyog-nexus.niua.org/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -1313,6 +1313,7 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
         <!-- LOGGING END -->
 

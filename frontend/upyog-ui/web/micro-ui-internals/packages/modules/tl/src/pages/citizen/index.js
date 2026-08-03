@@ -1,6 +1,6 @@
-import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 // import TradeLicense from "../../pageComponents/TradeLicense";
 // import MyApplications from "../../pages/citizen/Applications/Application";
 // import ApplicationDetails from "../../pages/citizen/Applications/ApplicationDetails";
@@ -11,7 +11,7 @@ import { Route, Switch, useRouteMatch } from "react-router-dom";
 // import SearchTradeComponent from "./SearchTrade";
 
 const App = () => {
-  const { path, url, ...match } = useRouteMatch();
+  const { path } = Digit.Hooks.useModuleBasePath();
   let isSuccessScreen = window.location.href.includes("acknowledgement");
   let isCommonPTPropertyScreen = window.location.href.includes("/tl/tradelicence/new-application/property-details");
 
@@ -37,20 +37,24 @@ const App = () => {
 
   return (
     <span className={"tl-citizen"}>
-      <Switch>
-        <AppContainer>
-          {!(window.location.href.includes('/acknowledgement'))&&window.location.href.includes('tl/tradelicence')  &&<BackButton /* style={{ position: "fixed", top: "55px" }} */ isCommonPTPropertyScreen={isCommonPTPropertyScreen} isSuccessScreen={isSuccessScreen} getBackPageNumber={getBackPageNumber}>Back</BackButton>}
-          <PrivateRoute path={`${path}/tradelicence/new-application`} component={CreateTradeLicence} />
-          <PrivateRoute path={`${path}/tradelicence/edit-application/:id/:tenantId`} component={EditTrade} />
-          <PrivateRoute path={`${path}/tradelicence/renew-trade/:id/:tenantId`} component={RenewTrade} />
-          <PrivateRoute path={`${path}/tradelicence/my-application`} component={TLMyApplications} />
-          <PrivateRoute path={`${path}/tradelicence/my-bills`} component={() => <TLMyApplications view="bills" />} />
-          <PrivateRoute path={`${path}/tradelicence/tl-info`} component={TradeLicense} />
-          <PrivateRoute path={`${path}/tradelicence/application/:id/:tenantId`} component={ApplicationDetails} />
-          <PrivateRoute path={`${path}/tradelicence/renewal-list`} component={TLList} />
-          <PrivateRoute path={`${path}/tradelicence/trade-search`} component={SearchTradeComponent} />
+      <AppContainer>
+        {!(window.location.href.includes("/acknowledgement")) && window.location.href.includes("tl/tradelicence") && (
+          <BackButton isCommonPTPropertyScreen={isCommonPTPropertyScreen} isSuccessScreen={isSuccessScreen} getBackPageNumber={getBackPageNumber}>
+            Back
+          </BackButton>
+        )}
+        <Routes>
+          <Route path={`tradelicence/new-application/*`} element={<PrivateRoute><CreateTradeLicence path={path} /></PrivateRoute>} />
+          <Route path={`tradelicence/edit-application/:id/:tenantId/*`} element={<PrivateRoute><EditTrade /></PrivateRoute>} />
+          <Route path={`tradelicence/renew-trade/:id/:tenantId/*`} element={<PrivateRoute><RenewTrade /></PrivateRoute>} />
+          <Route path={`tradelicence/my-application`} element={<PrivateRoute><TLMyApplications /></PrivateRoute>} />
+          <Route path={`tradelicence/my-bills`} element={<PrivateRoute><TLMyApplications view="bills" /></PrivateRoute>} />
+          <Route path={`tradelicence/tl-info`} element={<PrivateRoute><TradeLicense /></PrivateRoute>} />
+          <Route path={`tradelicence/application/:id/:tenantId`} element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
+          <Route path={`tradelicence/renewal-list`} element={<PrivateRoute><TLList /></PrivateRoute>} />
+          <Route path={`tradelicence/trade-search`} element={<PrivateRoute><SearchTradeComponent /></PrivateRoute>} />
+        </Routes>
       </AppContainer>
-    </Switch>
     </span>
   );
 };

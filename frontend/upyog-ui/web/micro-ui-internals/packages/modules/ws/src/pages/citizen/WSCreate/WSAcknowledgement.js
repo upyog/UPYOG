@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -62,42 +62,42 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
   const stateId = Digit.ULBService.getStateId();
 
   useEffect(() => {
-    if(sessionStorage.getItem("isCreateEnabled") !== "true")
-    window.history.forward();
+    if (sessionStorage.getItem("isCreateEnabled") !== "true")
+      window.history.forward();
     else
-    sessionStorage.removeItem("isCreateEnabled");
-
-  })
-
-  useEffect(() => {
-    try {
-        let tenantId;
-     if(data?.serviceName?.code === "WATER" || data?.serviceName?.code === "BOTH"){
-        tenantId = data?.cpt?.details?.tenantId || tenantId;
-        let formdata = isEdit ? convertToEditWSUpdate(data) : convertToWSUpdate(data);
-       const formdataNew = {...formdata,disconnectRequest:false, reconnectRequest:false}
-        WSmutation.mutate(formdataNew, {
-          onSuccess,
-        })
-    }
-     
-    } catch (err) {
-    }
-  }, [data]);
+      sessionStorage.removeItem("isCreateEnabled");
+  }, []);
 
   useEffect(() => {
+    // Only fire once on mount — empty deps like PT/TL pattern
+    const timer = setTimeout(() => {
+      try {
+        if (data?.serviceName?.code === "WATER" || data?.serviceName?.code === "BOTH") {
+          let tenantId1 = data?.cpt?.details?.tenantId || tenantId;
+          let formdata = isEdit ? convertToEditWSUpdate(data) : convertToWSUpdate(data);
+          const formdataNew = { ...formdata, disconnectRequest: false, reconnectRequest: false };
+          if (!WSmutation.isPending && !WSmutation.isSuccess && !mutationHappened) {
+            WSmutation.mutate(formdataNew, { onSuccess });
+          }
+        }
+      } catch (err) {}
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
-    if(data?.serviceName?.code === "SEWERAGE" || (data?.serviceName?.code === "BOTH" && WSmutation.isSuccess))
-      {
-        let tenantId = data?.cpt?.details?.tenantId || tenantId;
+  useEffect(() => {
+    if (
+      (data?.serviceName?.code === "SEWERAGE" || (data?.serviceName?.code === "BOTH" && WSmutation.isSuccess)) &&
+      !SWmutation.isPending && !SWmutation.isSuccess
+    ) {
+      try {
+        let tenantId1 = data?.cpt?.details?.tenantId || tenantId;
         let formdata = isEdit ? convertToEditSWUpdate(data) : convertToSWUpdate(data);
-        const formdataNew = {...formdata,disconnectRequest:false, reconnectRequest:false}
-        SWmutation.mutate(formdataNew, {
-          onSuccess,
-        })
-      }
-    
-  },[data,WSmutation.isSuccess])
+        const formdataNew = { ...formdata, disconnectRequest: false, reconnectRequest: false };
+        SWmutation.mutate(formdataNew, { onSuccess });
+      } catch (err) {}
+    }
+  }, [WSmutation.isSuccess]);
 
   const handleDownloadPdfWater = () => {
     const WSmutationdata =  WSmutation?.data?.WaterConnection?.[0];
@@ -139,11 +139,11 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
     }
   };
 
-  return (data?.serviceName?.code === "WATER"? WSmutation.isLoading || WSmutation.isIdle : (data?.serviceName?.code === "SEWERAGE") ? SWmutation.isLoading || SWmutation.isIdle : (WSmutation.isLoading || WSmutation.isIdle || SWmutation.isLoading || SWmutation.isIdle)) ? (
+  return (data?.serviceName?.code === "WATER" ? WSmutation.isPending || WSmutation.isIdle : (data?.serviceName?.code === "SEWERAGE") ? SWmutation.isPending || SWmutation.isIdle : (WSmutation.isPending || WSmutation.isIdle || SWmutation.isPending || SWmutation.isIdle)) ? (
     <Loader />
   ) : (
     <Card>
-      <BannerPicker t={t} clearParams={clearParams} Waterdata={WSmutation.data } Seweragedata={SWmutation.data} isSuccess={data?.serviceName?.code === "WATER"? WSmutation.isSuccess : SWmutation.isSuccess} isLoading={data?.serviceName?.code === "WATER"? WSmutation.isLoading || WSmutation.isIdle : (data?.serviceName?.code === "SEWERAGE") ? SWmutation.isLoading || SWmutation.isIdle : (WSmutation.isLoading || WSmutation.isIdle || SWmutation.isLoading || SWmutation.isIdle)} />
+      <BannerPicker t={t} clearParams={clearParams} Waterdata={WSmutation.data} Seweragedata={SWmutation.data} isSuccess={data?.serviceName?.code === "WATER" ? WSmutation.isSuccess : SWmutation.isSuccess} isLoading={data?.serviceName?.code === "WATER" ? WSmutation.isPending || WSmutation.isIdle : (data?.serviceName?.code === "SEWERAGE") ? SWmutation.isPending || SWmutation.isIdle : (WSmutation.isPending || WSmutation.isIdle || SWmutation.isPending || SWmutation.isIdle)} />
       {(data?.serviceName?.code === "WATER"? WSmutation.isSuccess : SWmutation.isSuccess) && <CardText>{t("WS_FILE_RESPONSE")}</CardText>}
       {/* {(data?.serviceName?.code === "WATER"? WSmutation.isSuccess : SWmutation.isSuccess) && (
         <LinkButton
@@ -157,7 +157,7 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
               <span className="download-button">{t("TL_DOWNLOAD_ACK_FORM")}</span>
             </div>
           }
-          //style={{ width: "100px" }}
+          // width override removed
           onClick={handleDownloadPdf}
         />)} */}
       {/* {mutation2?.data?.Licenses[0]?.status === "PENDINGPAYMENT" && <Link to={{
@@ -177,7 +177,7 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
           <span className="download-button">{t("WS_PRINT_WATER_APPLICATION_LABEL")}</span>
         </div>
       }
-      //style={{ width: "100px" }}
+      // width override removed
       onClick={handleDownloadPdfWater}
     />}
       {(data?.serviceName?.code === "SEWERAGE" || data?.serviceName?.code === "BOTH") && SWmutation.isSuccess && <LinkButton
@@ -191,12 +191,10 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
           <span className="download-button">{t("WS_PRINT_SEWERAGE_APPLICATION_LABEL")}</span>
         </div>
       }
-      //style={{ width: "100px" }}
+      // width override removed
       onClick={handleDownloadPdfSewerage}
     />}
-      <Link to={{
-        pathname: `/upyog-ui/citizen`,
-      }}>
+      <Link to="/upyog-ui/citizen">
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
     </Card>

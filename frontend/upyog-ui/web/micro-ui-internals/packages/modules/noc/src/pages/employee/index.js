@@ -1,8 +1,12 @@
-import { BreadCrumb, PrivateRoute } from "@upyog/digit-ui-react-components";
+/**
+ * Main sub-router and navigation controller for the NOC Employee module.
+ * Renders breadcrumb navigation and handles routes for Inbox, Application Overview, Search, and Response pages.
+ */
+import { BreadCrumb, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import SearchApplication from "./SearchApplication";
-import { Switch, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Response from "./Response";
 
 const NOCBreadCrumbs = ({ location }) => {
@@ -51,13 +55,13 @@ const EmployeeApp = ({ path }) => {
       {!isResponse ? <div style={window.location.href.includes("application-overview") || isMobile ? { marginLeft: "10px" } : {}}>
         <NOCBreadCrumbs location={location} />
       </div> : null} 
-      <Switch>
-        <PrivateRoute path={`${path}/inbox/application-overview/:id`} component={ApplicationOverview} />
-        <PrivateRoute path={`${path}/search/application-overview/:id`} component={ApplicationOverview} />
-        <PrivateRoute path={`${path}/inbox`} component={(props) => <Inbox {...props} parentRoute={path} />} />
-        <PrivateRoute path={`${path}/search`} component={(props) => <SearchApplication {...props} parentRoute={path} />} />
-        <PrivateRoute path={`${path}/response`} component={Response} />
-      </Switch>
+      <Routes>
+        <Route path="inbox/application-overview/:id" element={<PrivateRoute><ApplicationOverview /></PrivateRoute>} />
+        <Route path="search/application-overview/:id" element={<PrivateRoute><ApplicationOverview /></PrivateRoute>} />
+        <Route path="inbox" element={<PrivateRoute><Inbox parentRoute={path} /></PrivateRoute>} />
+        <Route path="search" element={<PrivateRoute><SearchApplication parentRoute={path} /></PrivateRoute>} />
+        <Route path="response" element={<PrivateRoute><Response /></PrivateRoute>} />
+      </Routes>
     </Fragment>
   );
 };

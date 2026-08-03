@@ -1,8 +1,14 @@
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { Engagement } from "../../services/elements/Engagement";
-import { useMutation } from "react-query";
 
-const useCreateDocument = (filters, config) => {
-  return useMutation((filters) => Engagement.create(filters));
+/**
+ * Create engagement document.
+ */
+const useCreateDocument = () => {
+  const mutationFn = (filters) =>
+    Engagement.create(filters);
+
+  return mutationTemplate({ mutationFn });
 };
 
 export default useCreateDocument;

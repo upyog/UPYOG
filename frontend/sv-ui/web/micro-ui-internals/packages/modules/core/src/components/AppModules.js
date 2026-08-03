@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Route, Switch, useRouteMatch, Redirect, useLocation } from "react-router-dom";
+import { Route, Routes, Navigate, useLocation, useParams } from "react-router-dom";
 
 import { AppHome } from "./Home";
 import Login from "../pages/citizen/Login";
@@ -15,44 +15,60 @@ const getTenants = (codes, tenants) => {
 
 export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
   const ComponentProvider = Digit.Contexts.ComponentProvider;
-  const { path } = useRouteMatch();
+  
   const location = useLocation();
 
   const user = Digit.UserService.getUser();
 
   if (!user || !user?.access_token || !user?.info) {
-    return <Redirect to={{ pathname: "/sv-ui/employee/user/login", state: { from: location.pathname + location.search } }} />;
+    return <Navigate to="/sv-ui/employee/user/login" state={{ from: location.pathname + location.search }} replace />;
   }
 
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
     return Module ? (
-      <Route key={index} path={`${path}/${code.toLowerCase()}`}>
-        <Module stateCode={stateCode} moduleCode={code} userType={userType} tenants={getTenants(tenants, appTenants)} />
-      </Route>
-    ) :   <Route key={index} path={`${path}/${code.toLowerCase()}`}>
-    <Redirect to={{ pathname: "/sv-ui/employee/user/error?type=notfound", state: { from: location.pathname + location.search } }} />
-  </Route>;
+      <Route 
+        key={index} 
+        path={`${code.toLowerCase()}/*`}
+        element={
+          <Module 
+            stateCode={stateCode} 
+            moduleCode={code} 
+            userType={userType} 
+            tenants={getTenants(tenants, appTenants)} 
+          />
+        }
+      />
+    ) : (
+      <Route 
+        key={index} 
+        path={`${code.toLowerCase()}/*`}
+        element={
+          <Navigate 
+            to="/sv-ui/employee/user/error?type=notfound" 
+            state={{ from: location.pathname + location.search }} 
+            replace 
+          />
+        }
+      />
+    );
   });
 
   return (
     <div className="ground-container">
-      <Switch>
+      <Routes>
         {appRoutes}
-        <Route path={`${path}/login`}>
-          <Redirect to={{ pathname: "/sv-ui/employee/user/login", state: { from: location.pathname + location.search } }} />
-        </Route>
-        <Route path={`${path}/forgot-password`}>
-          <ForgotPassword />
-        </Route>
-        <Route path={`${path}/change-password`}>
-          <ChangePassword />
-        </Route>
-        <Route>
-          <AppHome userType={userType} modules={modules} />
-        </Route>
-        {/* <Route path={`${path}/user-profile`}> <UserProfile /></Route> */}
-      </Switch>
+        <Route path="login" element={
+            <Navigate 
+              to="/sv-ui/employee/user/login" 
+              state={{ from: location.pathname + location.search }} 
+              replace 
+            />
+          } />
+        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="change-password" element={<ChangePassword />} />
+        <Route path="*" element={<AppHome userType={userType} modules={modules} />} />
+      </Routes>
     </div>
   );
 };

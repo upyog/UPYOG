@@ -1,12 +1,10 @@
-import { Body, Loader } from "@egovernments/digit-ui-react-components";
+import { Body, Loader } from "@upyog/workbench-ui-react-components";
 import React from "react";
 import { getI18n } from "react-i18next";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import { DigitApp } from "./App";
-import SelectOtp from "./pages/citizen/Login/SelectOtp";
-
 import { useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundaries";
 import getStore from "./redux/store";
@@ -86,7 +84,7 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers ,d
                 /**
                  * Main Method to update the privacy object anywhere in the application
                  *
-                 * @author jagankumar-egov
+                 * @author NUMD Team
                  *
                  * Feature :: Privacy
                  *
@@ -107,12 +105,3 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers ,d
   );
 };
 
-const componentsToRegister = {
-  SelectOtp,
-};
-
-export const initCoreComponents = () => {
-  Object.entries(componentsToRegister).forEach(([key, value]) => {
-    Digit.ComponentRegistryService.setComponent(key, value);
-  });
-};

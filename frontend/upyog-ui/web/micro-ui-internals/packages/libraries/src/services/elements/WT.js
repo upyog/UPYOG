@@ -15,7 +15,7 @@ export const WTService = {
       params: {},
       auth: true,
     }),
-    update: (details, tenantId) =>
+  update: (details, tenantId) =>
       Request({
         url: Urls.wt.update,
         data: details,

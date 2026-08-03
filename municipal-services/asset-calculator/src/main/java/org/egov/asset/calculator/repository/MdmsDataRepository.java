@@ -1,13 +1,10 @@
 package org.egov.asset.calculator.repository;
 
-import org.egov.asset.calculator.utils.dto.DepreciationRateDTO;
 import org.egov.asset.calculator.web.models.contract.MdmsData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
 
 @Repository
 public interface MdmsDataRepository extends JpaRepository<MdmsData, String> {

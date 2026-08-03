@@ -55,7 +55,7 @@ export const TableConfig = (t) => ({
       {
         Header: t("EW_STATUS"), // Header for the "Status" column
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.searchData?.["requestStatus"]}`); // Render the request status
+          return GetCell(t(`${row.original?.searchData?.["requestStatus"]}`)); // Render the request status
         },
         mobileCell: (original) =>
           GetMobCell(t(`ES_EW_COMMON_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)), // Cell for mobile view with translated status

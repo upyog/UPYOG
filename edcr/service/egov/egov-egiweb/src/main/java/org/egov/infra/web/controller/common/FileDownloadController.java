@@ -48,11 +48,14 @@
 
 package org.egov.infra.web.controller.common;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.admin.master.service.ICityService;
 import org.egov.infra.utils.FileStoreUtils;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -61,11 +64,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 @Controller
 @RequestMapping("/downloadfile")
@@ -76,11 +74,11 @@ public class FileDownloadController {
     private FileStoreUtils fileStoreUtils;
 
     @Autowired
-    private CityService cityService;
+    private ICityService cityService;
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity download(@SafeHtml @RequestParam String fileStoreId, @SafeHtml @RequestParam String moduleName,
+    public ResponseEntity download( @SanitizeHtml@RequestParam String fileStoreId,  @SanitizeHtml @RequestParam String moduleName,
                                    @RequestParam(defaultValue = "false") boolean toSave) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, moduleName, toSave);
     }

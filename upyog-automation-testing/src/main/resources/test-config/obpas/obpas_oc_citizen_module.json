@@ -1,0 +1,632 @@
+{
+  "moduleName":"obpas_oc_create",
+  "description": "OBPAS OC full citizen architect flow with payment",
+
+  "baseUrl": "${selected.url}",
+
+  "instructions":[
+
+    {
+      "stepName": "Open OBPAS",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/citizen/obps-home']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Open Architect Login",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/citizen/obps/home']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"OC New Construction",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'OC Plan Scrutiny for new Construction')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Info Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS","dynamicSleep": 3000
+    },
+    {
+      "stepName":"Permit Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"permitNumber",
+      "action":"TYPE",
+      "inputValue":"${selected.permitNo}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Permit Date",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//input[@type='date']",
+      "action":"TYPE",
+      "inputValue":"${permit.date}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Search Permit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Proceed For OC",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Proceed for OC Scrutiny')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName": "Upload DXF",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[1]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.drawing.dxf}",
+      "dynamicSleep": 5000
+    },
+
+
+
+    {
+      "stepName":"Submit DXF",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[@type='submit']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Apply OC",
+      "locatorStrategy":"XPATH",
+      "locatorValue": "//a[contains(.,'Apply for OC for New Construction')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Info Next Again",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+
+    },
+
+
+
+    {
+      "stepName": "Basic Details Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+    {
+      "stepName": "Holding Number",
+      "locatorStrategy": "NAME",
+      "locatorValue": "holdingNumber",
+      "action": "TYPE",
+      "inputValue": "${holding.number}",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName": "Land Registration",
+      "locatorStrategy": "CSS",
+      "locatorValue": "textarea.card-textarea",
+      "action": "TYPE",
+      "inputValue": "${land.registration}",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName": "Plot Details Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+    {
+      "stepName": "Scrutiny Details Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+    {
+      "stepName": "Upload Identity Proof",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[1]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Upload Address Proof",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[2]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Land tax receipt",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[3]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Title deed of the property",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[4]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Layout approval copy",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[5]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Structural stability certificate",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[6]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Location sketch and village sketch",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[7]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Site Plan ",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[8]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName": "Document Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName": "Upload Airport NOC",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[1]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Upload Fire NOC",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[2]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName": "NOC Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName": "Summary Submit",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Send Application To Citizen')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+
+
+    {
+      "stepName": "Logout",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[contains(text(),'Logout')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Click Yes Logout",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'selector-button-primary')]//h2[contains(text(),'Yes, Logout')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName": "Open Citizen Login",
+      "locatorStrategy": "URL",
+      "locatorValue": "https://upyog.niua.org/upyog-ui/citizen/login",
+      "action": "OPEN_URL",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Enter Mobile Number",
+      "locatorStrategy": "NAME",
+      "locatorValue": "mobileNumber",
+      "action": "TYPE",
+      "inputValue": "${selected.mobile}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Accept Terms",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='checkbox'].form-field",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Click Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@type='submit']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter OTP",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input.input-otp",
+      "action": "TYPE_OTP",
+      "inputValue": "${selected.otp}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Submit OTP",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@type='submit']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Select City",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.radio-wrap.reverse-radio-selection-wrapper div",
+      "action": "SELECT_RADIO_BY_TEXT",
+      "inputValue": "${selected.city}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Continue",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Continue')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Open OBPAS",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/citizen/obps-home']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "View Applications By Citizen",
+      "locatorStrategy": "CSS",
+      "locatorValue": "a[href*='my-applications']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "View Details",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'VIEW DETAILS')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Agree Terms Checkbox",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='checkbox']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click TAKE ACTION",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[.//header[normalize-space()='Take action']]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Approve",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//p[normalize-space()='APPROVE']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Enter Approval Comments",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//textarea",
+      "action": "TYPE",
+      "inputValue": "${comment.approve}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Final Approve",
+      "locatorStrategy": "CSS",
+      "locatorValue": "button.selector-button-primary",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Logout",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[contains(text(),'Logout')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Click Yes Logout",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'selector-button-primary')]//h2[contains(text(),'Yes, Logout')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Open Architect Login Again",
+      "locatorStrategy": "URL",
+      "locatorValue": "https://upyog.niua.org/upyog-ui/citizen/login",
+      "action": "OPEN_URL",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Enter Architect Mobile",
+      "locatorStrategy": "NAME",
+      "locatorValue": "mobileNumber",
+      "action": "TYPE",
+      "inputValue": "${architect.mobile.number}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Accept Terms",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='checkbox'].form-field",
+      "action": "CLICK_JS",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Click Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@type='submit']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter OTP",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input.input-otp",
+      "action": "TYPE_OTP",
+      "inputValue": "${selected.otp}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Submit OTP",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@type='submit']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Select City",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.radio-wrap.reverse-radio-selection-wrapper div",
+      "action": "SELECT_RADIO_BY_TEXT",
+      "inputValue": "${selected.city}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Continue",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Continue')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Open OBPAS",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/citizen/obps-home']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Open Architect Login",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/citizen/obps/home']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Open OBPS Inbox",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/obps/bpa/inbox')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 8000
+    },
+    {
+      "stepName": "Open First Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//tbody/tr[1]//a)[1]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Agree Terms Checkbox",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='checkbox']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Submit Application",
+      "locatorStrategy": "CSS",
+      "locatorValue": "button.submit-bar",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Enter Approval Comments",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//textarea",
+      "action": "TYPE",
+      "inputValue": "${comment.approve}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Submit Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'selector-button-primary')]//h2[contains(text(),'Submit')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName": "Click Pay Button",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and contains(.,'PAY')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Click Make Payment",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'make payment')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Click Proceed To Pay",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'proceed to pay')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Select ICICI",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//label[normalize-space()='ICICI']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click UPYOG Pay",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[normalize-space()='Pay']]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 4000
+    },
+    {
+      "stepName": "Open Cards Section",
+      "locatorStrategy": "ID",
+      "locatorValue": "nbAccordionBtn",
+      "action": "CLICK",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Test Bank",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='radio' and @value='Test Bank']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Pay Now",
+      "locatorStrategy": "ID",
+      "locatorValue": "paytBtn1",
+      "action": "CLICK",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Enter OTP",
+      "locatorStrategy": "ID",
+      "locatorValue": "otp",
+      "action": "TYPE",
+      "inputValue": "123456",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Verify OTP",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@onclick='cardsubmit()']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Accept Transaction Alert",
+      "action": "ACCEPT_ALERT",
+      "dynamicSleep": 1000
+    }
+
+  ]
+}

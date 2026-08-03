@@ -1,5 +1,6 @@
-
 # sv-ui-module-core
+
+This module is the foundation of the SV-UI application. It handles app startup, routing setup, global providers, and renders the root React component.
 
 ## Install
 
@@ -7,54 +8,52 @@
 npm install --save @upyog/digit-ui-module-core
 ```
 
-## Limitation
+## Add as a dependency
 
-```bash
-This Package is more specific to SV's can be used across mission's
+In your `frontend/sv-ui/web/package.json`, add:
+
+```json
+"@upyog/digit-ui-module-core": "^1.8.2"
 ```
 
 ## Usage
 
-After adding the dependency make sure you have this dependency in
+Navigate to your `App.js`:
 
 ```bash
-frontend/sv-ui/web/package.json
-```
-
-```json
-"@upyog/digit-ui-module-core":"^1.5.0",
-```
-
-then navigate to App.js
-
-```bash
- frontend/sv-ui/web/src/App.js
+frontend/sv-ui/web/src/App.js
 ```
 
 ```jsx
-/** add this import **/
-
 import { StreetVendingUI } from "@upyog/digit-ui-module-core";
 
-
-/** inside render Function add  the import for the component **/
-
-  ReactDOM.render(<StreetVendingUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
-
+// Render the root app component with required props
+ReactDOM.render(
+  <StreetVendingUI
+    stateCode={stateCode}
+    enabledModules={enabledModules}
+    moduleReducers={moduleReducers}
+  />,
+  document.getElementById("root")
+);
 ```
 
+## Key Dependencies
 
+| Package | Version |
+|---|---|
+| react-router-dom | 6.28.0 |
+| react-redux | 7.2.8 |
+| redux | 4.1.2 |
+| react-i18next | ^14.0.0 |
+| @tanstack/react-query | ^5.0.0 |
+| react-google-recaptcha | ^3.1.0 |
+| react-tooltip | ^5.26.0 |
 
-### Changelog
+## Changelog
 
-```bash
-1.7.1 UPYOG Base version
-```
+See [CHANGELOG.md](./CHANGELOG.md)
 
-## Maintainer
+## Published from UPYOG Frontend
 
-- [Shivank-NIUA](https://github.com/ShivankShuklaa)
-
-
-### Published from UPYOG Frontend 
-UPYOG Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
+[UPYOG Frontend Repo](https://github.com/upyog/UPYOG/tree/develop)

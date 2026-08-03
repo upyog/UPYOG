@@ -1,5 +1,6 @@
 package org.egov.infra.mdms.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)    
 public class SchemaDefinition implements Serializable{
 
     @JsonProperty("id")
@@ -40,7 +42,7 @@ public class SchemaDefinition implements Serializable{
     private String code = null;
 
     @JsonProperty("description")
-
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     @Size(min = 2, max = 512)
     private String description = null;
 

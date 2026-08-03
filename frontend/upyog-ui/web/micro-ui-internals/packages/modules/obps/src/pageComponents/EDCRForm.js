@@ -1,6 +1,6 @@
-import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation,  } from "react-router-dom";
 import { getPattern, stringReplaceAll, sortDropdownNames  } from "../utils";
 
 const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
@@ -15,7 +15,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     const [error, setError] = useState(null);
     const [uploadMessage, setUploadMessage] = useState("");
     const [showToast, setShowToast] = useState(null);
-    const history = useHistory();
+    const navigate = Digit.Hooks.useCustomNavigate();
 
 
     let validation = { };
@@ -70,10 +70,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
             setUploadMessage("");
         }
         if (isShowToast) {
-            history.replace(
-                `/upyog-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`,
-                { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR"}
-              );
+            navigate(`/upyog-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`, { replace: true, state: { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR"} });
         }
     }, [uploadMessage, isShowToast, isSubmitBtnDisable]);
 

@@ -1,6 +1,6 @@
-import { CitizenInfoLabel, RadioButtons } from "@upyog/digit-ui-react-components";
+import { CitizenInfoLabel, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
-import  FormStep  from "../../../../react-components/src/molecules/FormStep";
+import  {FormStep}  from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 
 const PropertyBasementsDetails = ({ t, config, onSelect, userType, formData }) => {

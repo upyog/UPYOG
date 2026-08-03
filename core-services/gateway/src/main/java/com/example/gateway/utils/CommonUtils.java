@@ -92,7 +92,27 @@ public class CommonUtils {
 
             try {
                 ObjectNode requestBody = objectMapper.convertValue(body, ObjectNode.class);
-
+                /*
+                 * Removing RequestInfo before extracting tenantId because
+                 * if tenantId is not present in the actual payload after RequestInfo,
+                 * the gateway sets default hardcoded tenantId as "pg".
+                 *
+                 * Since RequestInfo also contains tenantId inside userInfo,
+                 * findValues("tenantId") was picking tenantIds from RequestInfo.
+                 *
+                 * Example:
+                 * 1. If request payload contains tenantId = "pg.citya",
+                 *    the request tenantId matches the user role tenantId
+                 *    and API authorization works correctly with 200 response.
+                 *
+                 * 2. If tenantId is not present in the actual payload,
+                 *    the gateway falls back to default tenantId "pg".
+                 *    During authorization, access-control validates
+                 *    role tenantId "pg.citya" against request tenantId "pg".
+                 *
+                 *    Since both tenantIds do not match,
+                 *    the API fails with 401 Unauthorized (no body).
+                 */
                 if (requestBody.has(REQUEST_INFO_FIELD_NAME_PASCAL_CASE))
                     requestBody.remove(REQUEST_INFO_FIELD_NAME_PASCAL_CASE);
 

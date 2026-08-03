@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from "react";
-import { Modal, Card,SubmitBar} from "@upyog/digit-ui-react-components";
+import { Modal, Card,SubmitBar} from "@nudmcdgnpm/digit-ui-react-components";
 import {useForm } from "react-hook-form";
 import { ExistingBookingDetails } from "./ExistingBookingDetails";
 
@@ -51,10 +51,10 @@ const CloseBtn = (props) => {
  * - A modal component with options to view existing booking details or submit a new booking request.
  * - Includes a close button to hide the modal.
  */
-const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) => {
+const BookingPopup = ({ t,tenantId,closeModal,onSubmit,setExistingDataSet,searchData }) => {
+
    
     const [showExistingBookingDetails, setShowExistingBookingDetails] = useState(false);
-    const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
     const handleExistingDetailsClick = () => {
         setShowExistingBookingDetails(true); // Show the BookingSearchDetails component
     };
@@ -62,25 +62,29 @@ const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) 
         return showExistingBookingDetails && <h1 className="heading-m">{props.t("CHB_MY_APPLICATION_HEADER")}</h1>;
     };
     const [isDataSet, setIsDataSet] = useState(false); // State to track if data has been set
-    // Define the slot_search hook to refetch data on search
-    //   const {refetch} = Digit.Hooks.chb.useChbSlotSearch({
-    //     tenantId:tenantId,
-    //     filters: {
-    //       communityHallCode:Searchdata.communityHallCode,
-    //       bookingStartDate:Searchdata.bookingStartDate,
-    //       bookingEndDate:Searchdata.bookingEndDate,
-    //       hallCode:Searchdata.hallCode,
-    //       isTimerRequired:true,
-    //     }
-    //   });
-    
-      const setchbData = () => {
-        // const result =refetch();
+    // Define the slot_search hook to lock the slots and start the booking timer.
+    const { refetch } = Digit.Hooks.chb.useChbSlotSearch({
+      tenantId:tenantId,
+      filters: {
+        bookingId:"",
+        venueCode:searchData.venueCode,
+        bookingStartDate:searchData.bookingStartDate,
+        bookingEndDate:searchData.bookingEndDate,
+        unitCode:searchData.unitCode,
+        isTimerRequired:true,
+        fromTime: searchData.fromTime,
+        toTime: searchData.toTime,
+      },
+      enabled:false,
+    });
+
+      const setchbData = async () => {
+        const result = await refetch();
         const newSessionData = {
           timervalue:{
-            // timervalue:result?.timerValue || 10
-            timervalue:1800
-          }
+            timervalue:result?.data?.timerValue || 0
+          },
+          draftId:result?.data?.draftId || ""
         };
         setExistingDataSet(newSessionData);
         setIsDataSet(true);  // Set the flag to true after data is set
@@ -105,7 +109,7 @@ const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) 
             formId="modal-action"
         >
             <Card style={{ boxShadow: "none" }}>
-            {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} Searchdata={Searchdata} setShowExistingBookingDetails={setShowExistingBookingDetails} />}
+            {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} Searchdata={searchData} setShowExistingBookingDetails={setShowExistingBookingDetails} />}
             <div style={{
                     display: 'flex',
                     justifyContent: 'center',

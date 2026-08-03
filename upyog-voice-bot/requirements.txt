@@ -1,0 +1,14 @@
+flask
+flask-cors
+sentence-transformers
+faiss-cpu
+numpy
+pandas
+requests
+langdetect
+scikit-learn
+groq
+openai-whisper
+edge-tts
+python-dotenv
+gunicorn

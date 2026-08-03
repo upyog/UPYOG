@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { WSService } from "../../services/elements/WS";
 import { PTService } from "../../services/elements/PT";
 /*
@@ -53,35 +52,35 @@ const useSearchWS = ({ tenantId, filters, config = {}, bussinessService, t, shor
   let consumercodes = [];
   let billData = "";
   if (bussinessService === "WS") {
-    responseWS = useQuery(
-      ["WS_WATER_SEARCH", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e]), bussinessService],
-      async () => await WSService.WSWatersearch({ tenantId, filters }),
+    responseWS = queryTemplate(
       {
-        ...config,
+        queryKey: ["WS_WATER_SEARCH", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e]), bussinessService],
+        queryFn: async () => await WSService.WSWatersearch({ tenantId, filters }),
+        config,
       }
     );
   } else if (bussinessService === "SW") {
-    responseSW = useQuery(
-      ["WS_SEW_SEARCH", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e]), bussinessService],
-      async () => await WSService.WSSewsearch({ tenantId, filters }),
+    responseSW = queryTemplate(
       {
-        ...config,
+        queryKey: ["WS_SEW_SEARCH", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e]), bussinessService],
+        queryFn: async () => await WSService.WSSewsearch({ tenantId, filters }),
+        config,
       }
     );
   } else {
-    responseWS = useQuery(
-      ["WS_WATER_SEARCH", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e]), bussinessService],
-      async () => await WSService.WSWatersearch({ tenantId, filters }),
+    responseWS = queryTemplate(
       {
-        ...config,
+        queryKey: ["WS_WATER_SEARCH", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e]), bussinessService],
+        queryFn: async () => await WSService.WSWatersearch({ tenantId, filters }),
+        config,
       }
     );
 
-    responseSW = useQuery(
-      ["WS_SEW_SEARCH", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e]), bussinessService],
-      async () => await WSService.WSSewsearch({ tenantId, filters }),
+    responseSW = queryTemplate(
       {
-        ...config,
+        queryKey: ["WS_SEW_SEARCH", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e]), bussinessService],
+        queryFn: async () => await WSService.WSSewsearch({ tenantId, filters }),
+        config,
       }
     );
   }
@@ -97,22 +96,26 @@ const useSearchWS = ({ tenantId, filters, config = {}, bussinessService, t, shor
   });
 
   let propertyfilter = { propertyIds: propertyids.substring(0, propertyids.length - 1) };
-  billData = useQuery(
-    ["BILL_SEARCH", tenantId, consumercodes.join(","), bussinessService],
-    async () =>
+  billData = queryTemplate(
+    {
+      queryKey: ["BILL_SEARCH", tenantId, consumercodes.join(","), bussinessService],
+      queryFn: async () =>
       await Digit.PaymentService.fetchBill(tenantId, {
         businessService: bussinessService,
         consumerCode: consumercodes.join(","),
       }),
-    { ...config, enabled: consumercodes.length > 0 }
+      config: { ...config, enabled: consumercodes.length > 0 },
+    }
   );
 
-  const properties = useQuery(
-    ["WSP_SEARCH", tenantId, propertyfilter, bussinessService],
-    async () => await PTService.search({ tenantId: tenantId, filters: propertyfilter, auth: true }),
+  const properties = queryTemplate(
     {
-      ...config,
-      enabled: !!(propertyids !== ""),
+      queryKey: ["WSP_SEARCH", tenantId, propertyfilter, bussinessService],
+      queryFn: async () => await PTService.search({ tenantId: tenantId, filters: propertyfilter, auth: true }),
+      config: {
+        ...config,
+        enabled: !!(propertyids !== ""),
+      },
     }
   );
 

@@ -1,10 +1,9 @@
-import { Banner, Card, Loader, CardText, ActionBar, SubmitBar,Menu } from "@upyog/digit-ui-react-components";
-import { useQueryClient } from "react-query";
-import React, { useEffect,useState } from "react";
+import { Banner, Card, Loader, CardText, ActionBar, SubmitBar, Menu } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link,useHistory } from "react-router-dom";
-const getMessage = (mutation) => {
-  if (mutation.isSuccess) return mutation.data?.ServiceDefinition?.[0]?.id;
+import { useLocation } from "react-router-dom";
+const getMessage = (isSuccess, data) => {
+  if (isSuccess) return data?.ServiceDefinition?.[0]?.id || data?.ServiceDefinition?.[0]?.code || "";
   return "";
 };
 
@@ -12,86 +11,59 @@ const BannerPicker = (props) => {
   const { t } = useTranslation();
   return (
     <Banner
-      message={props.mutation.isSuccess ? t(`SURVEY_FORM_CREATED`) : t("SURVEY_FORM_FAILURE")}
-      applicationNumber={getMessage(props.mutation)}
-      info={props.mutation.isSuccess ? t("SURVEY_FORM_ID") : ""}
-      successful={props.mutation.isSuccess}
+      message={props.isSuccess ? t(`SURVEY_FORM_CREATED`) : t("SURVEY_FORM_FAILURE")}
+      applicationNumber={getMessage(props.isSuccess, props.data)}
+      info={props.isSuccess ? t("SURVEY_FORM_ID") : ""}
+      successful={props.isSuccess}
     />
   );
 };
 
 const Acknowledgement = (props) => {
-  const queryClient = useQueryClient();
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.survey.useServeyCreateDef();
-  const { state } = props.location;
-  const history = useHistory();
-  const [isActionClicked,setIsActionClicked] = useState(false) 
-  useEffect(() => {
-    const onSuccess = () => {
-      queryClient.clear();
-      window.history.replaceState(null, 'CREATE_SURVEY_STATE')
-    };
-    if(!!state){
-      mutation.mutate(state, {
-        onSuccess,
-      })
-    };
-  }, []);
+  const { state } = useLocation();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const [isActionClicked, setIsActionClicked] = useState(false);
 
-  if (mutation.isLoading && !mutation.isIdle) {
-    return <Loader />;
-  }
+  const isSuccess = state?.isSuccess;
+  const data = state?.data;
 
+  const survey = data?.Surveys?.[0] || data?.ServiceDefinition?.[0] || data?.ServiceDefinition;
 
-  const survey = mutation.data?.Surveys?.[0];
- 
   const handleActionClick = () => {
     setIsActionClicked((prevState => {
-      return !prevState
-    }))
-  }
-  // const actionClickHandler = (option) => {
-  //   if(option === "Go Back to home") history.push("/upyog-ui/employee")
-  //   else if(option === "Create another survey") history.push("/upyog-ui/employee/engagement/surveys/create")
-  // }
+      return !prevState;
+    }));
+  };
 
-   const actionClickHandler = (option) => {
-    if(option === t("GO_BACK_TO_HOME")) history.push("/upyog-ui/employee")
-    else if(option === t("CREATE_ANOTHER_SURVEY")) history.push("/upyog-ui/employee/engagement/surveys/create")
-  }
+  const actionClickHandler = (option) => {
+    if (option === t("GO_BACK_TO_HOME")) navigate("/upyog-ui/employee");
+    else if (option === t("CREATE_ANOTHER_SURVEY")) navigate("/upyog-ui/employee/engagement/surveys/create");
+  };
+
   return (
     <Card>
       <BannerPicker
         t={t}
-        mutation={mutation}
+        isSuccess={isSuccess}
+        data={data}
       />
       <CardText>
-        {mutation.isSuccess 
+        {isSuccess
           ? t(`SURVEY_FORM_CREATION_MESSAGE`, {
-              surveyName: survey?.title,
-              fromDate: Digit.DateUtils.ConvertTimestampToDate(survey?.startDate),
-              toDate: Digit.DateUtils.ConvertTimestampToDate(survey?.endDate),
-            })
+            surveyName: survey?.title || survey?.additionalDetails?.title || survey?.code,
+            fromDate: Digit.DateUtils.ConvertTimestampToDate(survey?.startDate || survey?.additionalDetails?.startDate),
+            toDate: Digit.DateUtils.ConvertTimestampToDate(survey?.endDate || survey?.additionalDetails?.endDate),
+          })
           : null}
       </CardText>
-      
-       {/* <ActionBar>
-        <Link to={"/upyog-ui/employee"}>
-          <SubmitBar label="Action" />
-        </Link>
-      </ActionBar> */}
 
       <ActionBar>
         <button onClick={handleActionClick}>
           <SubmitBar label="Action" />
-          {/* {isActionClicked && <Menu options={["Go Back to home","Create another survey"]} onSelect={actionClickHandler}></Menu>} */}
-          {isActionClicked && <Menu options={[t("GO_BACK_TO_HOME"),t("CREATE_ANOTHER_SURVEY")]} onSelect={actionClickHandler}></Menu>}
+          {isActionClicked && <Menu options={[t("GO_BACK_TO_HOME"), t("CREATE_ANOTHER_SURVEY")]} onSelect={actionClickHandler}></Menu>}
         </button>
       </ActionBar>
-      
-
     </Card>
   );
 };

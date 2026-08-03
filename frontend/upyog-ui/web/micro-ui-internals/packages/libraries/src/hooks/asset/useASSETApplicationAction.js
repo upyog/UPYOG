@@ -1,12 +1,13 @@
-import { useMutation } from "react-query";
-
+import { mutationTemplate } from "../../common/mutationTemplate";
 import ApplicationUpdateActionsASSET from "../../services/molecules/ASSET/ApplicationUpdateActionsASSET";
 
 const useASSETApplicationAction = (tenantId) => {
+  const mutationFn = (applicationData) => ApplicationUpdateActionsASSET(applicationData, tenantId);
+
+  return mutationTemplate({mutationFn});
   
-  return useMutation((applicationData) =>{
-    console.log("applicationData in hook",applicationData);
-    ApplicationUpdateActionsASSET(applicationData, tenantId)} );
+  // return useMutation((applicationData) =>{
+  //   ApplicationUpdateActionsASSET(applicationData, tenantId)} );
 };
 
 

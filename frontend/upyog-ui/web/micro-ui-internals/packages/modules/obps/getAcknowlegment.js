@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardHeader } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
 
 const getMohallaLocale = (value = "", tenantId = "") => {
     let convertedValue = convertDotValues(tenantId);

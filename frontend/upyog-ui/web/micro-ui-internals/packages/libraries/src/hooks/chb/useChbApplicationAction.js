@@ -1,5 +1,5 @@
-import { useMutation } from "react-query";
-
+import { mutationTemplate } from "../../common/mutationTemplate";
+import ApplicationUpdateActionsCHB from "../../services/molecules/CHB/ApplicationUpdateActionsCHB";
 /**
  * useChbApplicationAction Hook
  * 
@@ -27,11 +27,13 @@ import { useMutation } from "react-query";
  *    const { mutate, isLoading, isError } = useChbApplicationAction(tenantId);
  *    mutate(applicationData);
  */
-import ApplicationUpdateActionsCHB from "../../services/molecules/CHB/ApplicationUpdateActionsCHB";
+
 
 const useChbApplicationAction = (tenantId) => {
-  
-  return useMutation((applicationData) => ApplicationUpdateActionsCHB(applicationData, tenantId));
+  const mutationFn = (applicationData) =>
+    ApplicationUpdateActionsCHB(applicationData, tenantId);
+
+  return mutationTemplate({ mutationFn });
 };
 
 export default useChbApplicationAction;

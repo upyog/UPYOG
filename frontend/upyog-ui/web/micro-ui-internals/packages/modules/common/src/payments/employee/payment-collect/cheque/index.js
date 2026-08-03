@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextInput, SearchIconSvg, DatePicker, CardLabelError } from "@upyog/digit-ui-react-components";
+import { TextInput, SearchIconSvg, DatePicker, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 export const useChequeDetails = (props, t) => {
   const config = [
@@ -28,12 +28,13 @@ export const useChequeDetails = (props, t) => {
 
 export const ChequeDetailsComponent = (props) => {
   const { t } = useTranslation();
-  const [instrumentDate, setChequeDate] = useState(props.chequeDetails.instrumentDate);
-  const [instrumentNumber, setChequeNo] = useState(props.chequeDetails.instrumentNumber);
-  const [ifscCode, setIfsc] = useState(props.chequeDetails.ifscCode);
+  const chequeDetails = props.chequeDetails || {};
+  const [instrumentDate, setChequeDate] = useState(chequeDetails.instrumentDate || "");
+  const [instrumentNumber, setChequeNo] = useState(chequeDetails.instrumentNumber || "");
+  const [ifscCode, setIfsc] = useState(chequeDetails.ifscCode || "");
   const [ifscCodeError, setIfscCodeError] = useState("");
-  const [bankName, setBankName] = useState(props.chequeDetails.bankName);
-  const [bankBranch, setBankBranch] = useState(props.chequeDetails.bankBranch?.replace("┬á", " "));
+  const [bankName, setBankName] = useState(chequeDetails.bankName || "");
+  const [bankBranch, setBankBranch] = useState(chequeDetails.bankBranch?.replace("┬á", " ") || "");
   useEffect(() => {
     if (props.onChange) {
       let errorObj = {};

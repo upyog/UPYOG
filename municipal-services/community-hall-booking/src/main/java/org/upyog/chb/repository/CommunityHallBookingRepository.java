@@ -6,11 +6,11 @@ import jakarta.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.chb.web.models.BookingPaymentTimerDetails;
-import org.upyog.chb.web.models.CommunityHallBookingDetail;
-import org.upyog.chb.web.models.CommunityHallBookingRequest;
-import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
-import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
-import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.VenueBookingDetail;
+import org.upyog.chb.web.models.VenueBookingRequest;
+import org.upyog.chb.web.models.VenueBookingSearchCriteria;
+import org.upyog.chb.web.models.VenueSlotAvailabilityDetail;
+import org.upyog.chb.web.models.VenueSlotSearchCriteria;
 
 import digit.models.coremodels.PaymentDetail;
 
@@ -53,26 +53,31 @@ import digit.models.coremodels.PaymentDetail;
  */
 public interface CommunityHallBookingRepository {
 
-	void saveCommunityHallBooking(CommunityHallBookingRequest bookingRequest);
+	void saveCommunityHallBooking(VenueBookingRequest bookingRequest);
 	
-	void saveCommunityHallBookingInit(CommunityHallBookingRequest bookingRequest);
+	void saveCommunityHallBookingInit(VenueBookingRequest bookingRequest);
 
-	List<CommunityHallBookingDetail> getBookingDetails(CommunityHallBookingSearchCriteria bookingSearchCriteria);
+	List<VenueBookingDetail> getBookingDetails(VenueBookingSearchCriteria bookingSearchCriteria);
 
-	void updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest);
+	void updateBooking(@Valid VenueBookingRequest communityHallsBookingRequest);
 
-	List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(
-			CommunityHallSlotSearchCriteria criteria);
+	List<VenueSlotAvailabilityDetail> getCommunityHallSlotAvailability(
+			VenueSlotSearchCriteria criteria);
 
-	Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria);
+	Integer getBookingCount(@Valid VenueBookingSearchCriteria criteria);
 
-	void createBookingTimer(CommunityHallSlotSearchCriteria criteria, RequestInfo requestInfo, boolean updateBookingStatus);
+	void createBookingTimer(VenueSlotSearchCriteria criteria, RequestInfo requestInfo, boolean updateBookingStatus);
+
+	void createBookingTimer(VenueSlotSearchCriteria criteria, RequestInfo requestInfo,
+			boolean updateBookingStatus, List<BookingPaymentTimerDetails> timerDetails);
 
 	void deleteBookingTimer(String bookingId, boolean updateBookingStatus);
 
 	void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status);
 
-	List<BookingPaymentTimerDetails> getBookingTimer(CommunityHallSlotSearchCriteria criteria);
+	void updateTimerBookingId(String bookingId, String bookingNo, String draftId);
+
+	List<BookingPaymentTimerDetails> getBookingTimer(VenueSlotSearchCriteria criteria);
 
 	/**
 	 * Updates the createdTime field for a given booking.
@@ -84,6 +89,6 @@ public interface CommunityHallBookingRepository {
 
 	List<BookingPaymentTimerDetails> getBookingTimer(List<String> bookingIds);
 
-	List<BookingPaymentTimerDetails> getBookingTimerByCreatedBy(RequestInfo info, CommunityHallSlotSearchCriteria criteria);
+	List<BookingPaymentTimerDetails> getBookingTimerByCreatedBy(RequestInfo info, VenueSlotSearchCriteria criteria);
 
 }

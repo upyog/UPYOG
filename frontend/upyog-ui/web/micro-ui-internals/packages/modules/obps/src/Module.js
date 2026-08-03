@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch } from "react-router-dom";
-import { Loader, CitizenHomeCard, OBPSIcon, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
+import { Loader, CitizenHomeCard, OBPSIcon, CitizenInfoLabel } from "@nudmcdgnpm/digit-ui-react-components";
 import CitizenApp from "./pages/citizen";
 import Inbox from "./pages/employee/Inbox";
 import stakeholderInbox from "./pages/employee/stakeholderInbox";
@@ -59,11 +58,13 @@ import BPAAcknowledgement from "./pages/citizen/NewBuildingPermit/OBPSAcknowledg
 import OCBPAAcknowledgement from "./pages/citizen/OCBuildingPermit/OBPSAcknowledgement";
 import OCSendBackAcknowledgement from "./pages/citizen/OCSendBackToCitizen/Acknowledgement";
 import StakeholderAcknowledgement from "./pages/citizen/StakeholderRegistration/StakeholderAcknowledgement";
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
+
  
 
 const OBPSModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["bpa", "bpareg", "common"]; //"bpa";
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 
@@ -86,11 +87,11 @@ const OBPSLinks = ({ matchPath, userType }) => {
   const links = [
     
     {
-      link: `${matchPath}/stakeholder/apply/stakeholder-docs-required`,
+      link: `/stakeholder/apply/stakeholder-docs-required`,
       i18nKey: t("BPA_CITIZEN_HOME_STAKEHOLDER_LOGIN_LABEL"),
     },
     {
-      link: `${matchPath}/home`,
+      link: `/home`,
       i18nKey: t("BPA_CITIZEN_HOME_ARCHITECT_LOGIN_LABEL"),
     },
   ];
@@ -156,7 +157,9 @@ const componentsToRegister = {
   ObpsOCSendBackToCitizen : OCSendBackToCitizen,
   ObpsEdcrInbox : EdcrInbox,
   ObpsEmpApplicationDetail : EmpApplicationDetail,
-  ObpsEmployeeBpaApplicationDetail : EmployeeBpaApplicationDetail
+  ObpsEmployeeBpaApplicationDetail : EmployeeBpaApplicationDetail,
+  EnhancedReport,
+  ReportSearchApplication
 }
 
 export const initOBPSComponents = () => {

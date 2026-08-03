@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { stringReplaceAll } from "../utils";
 import { TimerValues } from "../components/TimerValues";
@@ -8,28 +8,32 @@ import { TimerValues } from "../components/TimerValues";
    and it also shows upload restrictions and document requirements.
 */
 
-const ADSRequiredDoc = ({ t, config, onSelect, userType, formData,value=formData.adslist }) => {
+const ADSRequiredDoc = ({
+  t,
+  config,
+  onSelect,
+  userType,
+  formData,
+  value = formData.adslist
+}) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   sessionStorage.removeItem("docReqScreenByBack");
-  
-  const { isLoading, data:Documentsob = {} } = Digit.Hooks.ads.useADSDocumentsMDMS(stateId, "Advertisement", "Documents");
+  const {
+    isLoading,
+    data: Documentsob = {}
+  } = Digit.Hooks.ads.useADSDocumentsMDMS(stateId, "Advertisement", "Documents");
   let docs = Documentsob?.Advertisement?.Documents;
   function onSave() {}
   function goNext() {
     onSelect();
   }
-
-  return (
-    <React.Fragment>
+  return <React.Fragment>
       <Card>
-      <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+      <div className="ads-auto-62">
       <CardHeader>{t("MODULE_ADS")}</CardHeader>
       <CardSubHeader>
-        <TimerValues 
-        timerValues={value?.existingDataSet?.timervalue?.timervalue} 
-        SlotSearchData={value?.cartDetails} draftId={value?.existingDataSet?.draftId}
-      />
+        <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.cartDetails} draftId={value?.existingDataSet?.draftId} />
       </CardSubHeader>
       </div>
         <div>
@@ -45,12 +49,14 @@ const ADSRequiredDoc = ({ t, config, onSelect, userType, formData,value=formData
             {Array.isArray(docs)
               ? 
                 docs.map(({ code, dropdownData }, index) => ( 
-                    <div key={index}>
+                    <div key={code}>
                       <CardSubHeader>
                         {index + 1}. {t("ADS_" + stringReplaceAll(code, ".", "_"))}
                       </CardSubHeader>
                       {dropdownData.map((dropdownData, dropdownIndex) => (
-                        <CardText className={"primaryColor"}>
+                        <CardText 
+                        key={dropdownData?.code || dropdownIndex}
+                        className={"primaryColor"}>
                           {`${dropdownIndex + 1}`}. {t("ADS_" + stringReplaceAll(dropdownData?.code, ".", "_"))}
                         </CardText>
                       ))}
@@ -63,8 +69,6 @@ const ADSRequiredDoc = ({ t, config, onSelect, userType, formData,value=formData
           <SubmitBar label={t("ADS_COMMON_NEXT")} onSubmit={onSelect} />
         </span>
       </Card>
-    </React.Fragment>
-  );
+    </React.Fragment>;
 };
-
 export default ADSRequiredDoc;

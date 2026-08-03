@@ -1,8 +1,20 @@
+import { queryTemplate } from "../../common/queryTemplate";
 import { Search } from "../../services/molecules/FSM/Search";
-import { useQuery } from "react-query";
 
 const useSearch = (tenantId, filters, config = {}) => {
-  return useQuery(["FSM_CITIZEN_SEARCH", filters], () => Search.application(tenantId, filters), config);
+  const queryKey = [
+    "FSM_SEARCH",
+    tenantId,
+    JSON.stringify(filters),
+  ];
+
+  const queryFn = () => Search.application(tenantId, filters);
+
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    config,
+  });
 };
 
 export default useSearch;

@@ -1,12 +1,11 @@
-import React from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
 const useWSMDMSWS = {
   applicationTypes: (tenantId) =>
-    useQuery(
-      [tenantId, "WS_WS_SERVICES_MASTERS"],
-      () =>
+    queryTemplate({
+      queryKey: [tenantId, "WS_WS_SERVICES_MASTERS"],
+      queryFn: () =>
         MdmsService.getDataByCriteria(
           tenantId,
           {
@@ -26,14 +25,12 @@ const useWSMDMSWS = {
           },
           "ws-services-masters"
         ),
-      {
-        select: (data) =>
+      select: (data) =>
           data["ws-services-masters"].ApplicationType.map((type) => ({
             code: type.code,
             i18nKey: `WS_${type.code}`,
           })),
-      }
-    ),
+    }),
 };
 
 export default useWSMDMSWS;

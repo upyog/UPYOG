@@ -37,7 +37,8 @@ public class PaymentWorkflow {
     public enum PaymentAction {
         CANCEL("CANCEL"),
         DISHONOUR("DISHONOUR"),
-        REMIT("REMIT");
+        REMIT("REMIT"),
+    	REFUND("REFUND");
 
         private String value;
 

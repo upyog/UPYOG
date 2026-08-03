@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.upyog.pgrai.web.models.grievanceClient.Grievance;
-import org.upyog.pgrai.web.models.grievanceClient.GrievanceResponse;
+import org.upyog.pgrai.web.models.grievanceclient.Grievance;
+import org.upyog.pgrai.web.models.grievanceclient.GrievanceResponse;
 
 import java.util.Map;
 

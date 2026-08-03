@@ -1,0 +1,39 @@
+package org.upyog.Automation.Modules.DesludgingService;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import org.springframework.stereotype.Component;
+
+import org.upyog.Automation.engine.TestEngine;
+@Component
+
+public class DesludgingCitizenPayment2 {
+
+    public void desludgingPayment2Reg(
+            WebDriver driver,
+            WebDriverWait wait,
+            JavascriptExecutor js) {
+
+        try {
+
+            TestEngine engine =
+                    new TestEngine(
+                            driver,
+                            "config/dev.properties"
+                    );
+
+            engine.executeModule(
+                    "test-config/desludging/desludging_citizenPayment2_module.json"
+            );
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(
+                    "Desludging Citizen Payment Flow Failed",
+                    e
+            );
+        }
+    }
+}

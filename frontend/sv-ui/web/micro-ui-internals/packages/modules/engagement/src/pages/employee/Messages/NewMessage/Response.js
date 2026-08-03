@@ -1,7 +1,7 @@
-import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 const BannerPicker = (props) => {

@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-libraries
+npm install --save @upyog/workbench-ui-libraries
 ```
 
 ## Limitation
@@ -23,7 +23,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-libraries":"1.8.0",
+"@upyog/workbench-ui-libraries":"1.8.0",
 ```
 
 then navigate to App.js
@@ -37,7 +37,7 @@ then navigate to App.js
 
 ```jsx
 import React from "react";
-import initLibraries from "@egovernments/digit-ui-libraries";
+import initLibraries from "@upyog/workbench-ui-libraries";
 
 import defaultConfig from "./config";
 
@@ -62,15 +62,4 @@ export default App;
 ```
 
 ### Published from DIGIT Frontend 
-DIGIT Frontend Repo (https://github.com/egovernments/Digit-Frontend/tree/master)
-
-### Contributors
-
-[jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov] [anil-egov] [vamshikrishnakole-wtt-egov] 
-
-## License
-
-MIT © [jagankumar-egov](https://github.com/jagankumar-egov)
-
-
-![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
+UPYOG Frontend Repo (https://github.com/upyog)

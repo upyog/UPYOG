@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.rs.web.models.workflow.Document;
-import org.upyog.rs.web.models.workflow.State;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -69,6 +69,8 @@ export const updateConfiguration = ({ config, defaultConfig, detailsConfig, cust
   }
 };
 
+export const APPLICATION_PATH = "/upyog-ui";
+
 export const checkForEmployee = (roles) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser();

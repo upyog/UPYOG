@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.6.RELEASE</version>
+        <version>3.2.2</version>
         <relativePath/>
     </parent>
 
@@ -16,7 +16,7 @@
     <description>GIS Service for property data normalization and spatial operations</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -27,13 +27,9 @@
         <dependency>
             <groupId>org.egov.services</groupId>
             <artifactId>tracer</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.9.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.egov.services</groupId>
-            <artifactId>services-common</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -49,14 +45,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.9.2</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
         </dependency>
     </dependencies>
 
@@ -69,7 +60,7 @@
         <repository>
             <id>repo.egovernments.org.snapshots</id>
             <name>eGov ERP Snapshots Repository</name>
-            <url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
+           <url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
@@ -90,15 +81,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>17</source>
+                    <target>17</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.20</version>
+                            <version>1.18.32</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

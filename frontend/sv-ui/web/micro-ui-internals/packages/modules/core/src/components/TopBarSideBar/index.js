@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { EditPencilIcon, LogoutIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { EditPencilIcon, LogoutIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import TopBar from "./TopBar";
-import { useHistory } from "react-router-dom";
 import SideBar from "./SideBar";
 import LogoutDialog from "../Dialog/LogoutDialog";
 const TopBarSideBar = ({
@@ -20,7 +19,7 @@ const TopBarSideBar = ({
 }) => {
   const [isSidebarOpen, toggleSidebar] = useState(false);
   const [isSideBarScroll, setSideBarScrollTop] = useState(false);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showDialog, setShowDialog] = useState(false);
   const handleLogout = () => {
     toggleSidebar(false);
@@ -34,7 +33,7 @@ const TopBarSideBar = ({
     setShowDialog(false);
   }
   const userProfile = () => {
-    history.push("/sv-ui/employee/user/profile");
+    navigate("/sv-ui/employee/user/profile");
   };
   const userOptions = [
     { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },

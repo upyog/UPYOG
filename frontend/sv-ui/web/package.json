@@ -2,60 +2,44 @@
   "name": "sv-ui",
   "version": "1.0.0",
   "private": true,
-  "homepage": "/sv-ui",
   "workspaces": [
+    "micro-ui-internals/packages/modules/sv",
+    "micro-ui-internals/packages/css",
+    "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/libraries",
-    "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
+    "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/engagement",
-    "micro-ui-internals/packages/modules/sv"
+    "micro-ui-internals/packages/modules/reports"
+
   ],
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   },
   "dependencies": {
     "@nudmcdgnpm/cnd-css": "1.0.0",
     "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
-    "@upyog/digit-ui-module-bills": "1.8.0",
     "@upyog/digit-ui-module-common": "1.8.12",
     "@upyog/digit-ui-module-core": "1.8.2",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.14",
     "@upyog/digit-ui-module-engagement": "1.8.0",
-    "@nudmcdgnpm/upyog-ui-module-sv":"1.2.10",
-    "babel-loader": "8.1.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-router-dom": "5.3.0",
-    "react-scripts": "4.0.1",
-    "web-vitals": "1.1.2",
-     "terser-brunch": "4.1.0"
+    "@nudmcdgnpm/upyog-ui-react-components-lts": "1.0.0",
+    "@nudmcdgnpm/upyog-ui-module-sv": "1.3.0",
+
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "6.28.0"
   },
   "devDependencies": {
-    "http-proxy-middleware": "1.3.1"
-   
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.0"
   },
-  
-  "resolutions":  {
-    "**/babel-loader": "8.2.2",
-    "**/@babel/core": "7.14.0",
-    "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
-    "minimatch": "^3.1.2",
-    "glob":"7.2.3"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=true SKIP_PREFLIGHT_CHECK=true react-scripts build",
-    "build:prepare": "./build.sh"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
-  "browserslist": [
-    ">0.2%",
-   "not dead",
-   "not op_mini all"
- ]
+ "scripts": {
+    "start": "vite --config vite.config.js",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:prepare": "./build.sh",
+    "packages:build": "node scripts/package-builder.mjs",
+    "packages:publish": "node scripts/package-publisher.mjs",
+    "packages:release": "node scripts/package-builder.mjs && node scripts/package-publisher.mjs"
+  }
 }

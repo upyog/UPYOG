@@ -38,7 +38,7 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.upyog.pgrai.web.models.pgrV1;
+package org.upyog.pgrai.web.models.pgrv1;
 
 /**
  * Enum representing the type of user in the system.

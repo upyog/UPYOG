@@ -1,15 +1,13 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react"
-import { InboxComposer, DocumentIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { InboxComposer, DocumentIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
 import FilterFormFieldsComponent from "./FilterFieldsComponent";
 import SearchFormFieldsComponents from "./SearchFieldsComponents";
 import useInboxTableConfig from "./useInboxTableConfig";
 import useInboxMobileCardsData from "./useInboxMobileDataCard";
-// import { useHistory } from "react-router-dom";
 const Inbox = ({ parentRoute }) => {
 
   const { t } = useTranslation()
-  // const history = useHistory()
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const ulbs = Digit.SessionStorage.get("ENGAGEMENT_TENANTS");
   const userInfo = Digit.UserService.getUser().info;

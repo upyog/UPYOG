@@ -223,8 +223,6 @@ const formatData = (value, type, schema) => {
     case "EPOC":
       return formatDates(value, type);
     case "REVERT-EPOC":
-      return formatDates(typeof value == "string" && value?.endsWith?.("Z") ? value : parseInt(value), schema?.["ui:widget"]);
-    case "REVERT-EPOC":
       return new Date(typeof value == "string" && value?.endsWith?.("Z") ? value : parseInt(value)).toISOString();
     default:
       return value;

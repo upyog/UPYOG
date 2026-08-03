@@ -1,15 +1,25 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
-const useAssetparentSubType = (tenantId, moduleCode, type, config = {}) => {
-  const useAssetparentsubsub = () => {
-    return useQuery("AST_PARENT_SUB_TYPE", () => MdmsService.AST_PARENT(tenantId, moduleCode ,type), config);
-  };
-  
-  // Check if the type is "assetSubCategory" and return the query
-  return type === "assetSubCategory" ? useAssetparentsubsub() : null;
+const useAssetparentSubType = (
+  tenantId,
+  moduleCode,
+  type,
+  config = {}
+) => {
+  if (type !== "assetSubCategory") return null;
+
+  const queryKey = [
+    "ASSET_PARENT_SUB_TYPE",
+    tenantId,
+    moduleCode,
+    type,
+  ];
+
+  const queryFn = () =>
+    MdmsService.AST_PARENT(tenantId, moduleCode, type);
+
+  return queryTemplate({ queryKey, queryFn, config });
 };
-
-
 
 export default useAssetparentSubType;

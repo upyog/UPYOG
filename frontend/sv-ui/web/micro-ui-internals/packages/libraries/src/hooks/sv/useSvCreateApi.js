@@ -1,4 +1,4 @@
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { SVService } from "../../services/elements/SV";
 
 /**
@@ -7,11 +7,16 @@ import { SVService } from "../../services/elements/SV";
  that calls the SVService.create method with the provided data and tenantId.
 */
 
+// Updated: TanStack Query v5 requires useMutation to accept an object with mutationFn key instead of a direct function
 export const useSvCreateApi = (tenantId, type = true) => {
   if (type) {
-    return useMutation((data) => SVService.create(data, tenantId));
+    return useMutation({
+      mutationFn: (data) => SVService.create(data, tenantId)
+    });
   } else {
-    return useMutation((data) => SVService.update(data, tenantId));
+    return useMutation({
+      mutationFn: (data) => SVService.update(data, tenantId)
+    });
   }
 };
 

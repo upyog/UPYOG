@@ -10,10 +10,10 @@ import {
   StatusTable,
   SubmitBar,
   LinkLabel
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams,  } from "react-router-dom";
 import PropertyDocument from "../../../pageComponents/PropertyDocument";
 import { getCityLocale, getPropertyTypeLocale, stringReplaceAll } from "../../../utils";
 import ActionModal from "../../../../../templates/ApplicationDetails/Modal/index"
@@ -47,15 +47,15 @@ const [showModal,setshowModal] = useState(false)
   var isMobile = window.Digit.Utils.browser.isMobile();
   const [enableAudit, setEnableAudit] = useState(false);
 const moduleCode="PT"
-const history = useHistory();
+const navigate = Digit.Hooks.useCustomNavigate();
 const selectedAction =    {
   action: "ASSESS_PROPERTY",
   forcedName: "PT_ASSESS",
   showFinancialYearsModal: true,
   customFunctionToExecute: (data) => {
-    //const history = useHistory();
+    //const navigate = Digit.Hooks.useCustomNavigate();
     delete data.customFunctionToExecute;
-    history.replace({ pathname: `/upyog-ui/citizen/pt/assessment-details/${property.propertyId}`, state: { ...data } });
+    navigate(`/upyog-ui/citizen/pt/assessment-details/${property.propertyId}`, { replace: true, state: { ...data } });
   },
   tenantId: Digit.ULBService.getStateId(),
 }
@@ -171,9 +171,9 @@ const handleClick=()=>{
   flrno = units && units[0]?.floorNo;
   const ActionButton = ({ jumpTo, style }) => {
     const { t } = useTranslation();
-    const history = useHistory();
+    const navigate = Digit.Hooks.useCustomNavigate();
     function routeTo() {
-      history.push(jumpTo);
+      navigate(jumpTo);
     }
     return <LinkButton style={style} label={t("PT_OWNER_HISTORY")} className="check-page-link-button" onClick={routeTo} />;
   };
@@ -223,19 +223,19 @@ const handleClick=()=>{
       //       setIsEnableLoader(false);
       //       if (isOBPS?.bpa) {
       //         data.selectedAction = selectedAction;
-      //         history.replace(`/upyog-ui/employee/obps/response`, { data: data });
+      //         navigate(`/upyog-ui/employee/obps/response`, { replace: true, state: { data: data } });
       //       }
       //       if (isOBPS?.isStakeholder) {
       //         data.selectedAction = selectedAction;
-      //         history.push(`/upyog-ui/employee/obps/stakeholder-response`, { data: data });
+      //         navigate(`/upyog-ui/employee/obps/stakeholder-response`, { data: data });
       //       }
       //       if (isOBPS?.isNoc) {
-      //         history.push(`/upyog-ui/employee/noc/response`, { data: data });
+      //         navigate(`/upyog-ui/employee/noc/response`, { data: data });
       //       }
       //       if (data?.Amendments?.length > 0 ){
       //         //RAIN-6981 instead just show a toast here with appropriate message
       //       //show toast here and return 
-      //         //history.push("/upyog-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
+      //         //navigate("/upyog-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
               
       //         if(variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")){
       //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS")})
@@ -281,7 +281,7 @@ const handleClick=()=>{
   sessionStorage.setItem("localityCode", data.Properties[0].address.locality.code);
   sessionStorage.setItem("landmark", data.Properties[0].address.landmark); 
   sessionStorage.setItem("propertyid",data.Properties[0].propertyId)  ;
-  history.push(`/upyog-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`);
+  navigate(`/upyog-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`);
   }
   console.log("data78", data)
   return (
@@ -293,7 +293,7 @@ const handleClick=()=>{
             <Row className="border-none" label={t("PT_PROPERTY_PTUID")} text={`${property.propertyId || t("CS_NA")}`} /* textStyle={{ whiteSpace: "pre" }} */ />
             <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={`₹${t(getBillAmount(fetchBillData))}`} />
             <LinkLabel
-            onClick={() => history.push({ pathname: `/upyog-ui/citizen/pt/payment-details/${property?.propertyId}`})}
+            onClick={() => navigate({ pathname: `/upyog-ui/citizen/pt/payment-details/${property?.propertyId}`})}
             style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
           >
             {t("PT_VIEW_PAYMENT")}
@@ -334,7 +334,7 @@ const handleClick=()=>{
                   {(flrno !== unit?.floorNo ? (i = 1) : (i = i + 1)) && i === 1 && (
                     <CardSubHeader>{t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)}</CardSubHeader>
                   )}
-                  <div style={{ border: "groove", marginBottom:"10px" }}>
+                  <div className="pt-auto-122">
                     <CardSubHeader>
                       {t("ES_APPLICATION_DETAILS_UNIT")} {i}
                     </CardSubHeader>
@@ -427,24 +427,24 @@ const handleClick=()=>{
               </StatusTable>
             )}
           </div>
-          <div style={{display:"flex"}}>
+          <div className="pt-auto-124">
           {property?.status === "ACTIVE" && !enableAudit && (
-            <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>               
-            <button className="submit-bar" type="button" onClick={handleClickOnPtPgr} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>
+            <div  className="pt-auto-125">               
+            <button className="submit-bar pt-auto-126 " type="button" onClick={handleClickOnPtPgr} >{t("PT_PGR")}</button>
             </div>              
             )}
             {property?.status === "ACTIVE" && !enableAudit && (
-              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+              <div className="pt-auto-127">
                 <Link to={{ pathname: `/upyog-ui/citizen/pt/property/edit-application/action=UPDATE/${property.propertyId}` }}>
                   <SubmitBar label={t("PT_UPDATE_PROPERTY_BUTTON")} />
                 </Link>
               </div>
             )}
             {property?.status === "ACTIVE" && !enableAudit && (
-              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+              <div className="pt-auto-128">
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
-                  <button className="submit-bar" type="button" onClick={handleClick} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_SELF_ASSES_PROPERTY")}</button>
+                  <button className="submit-bar pt-auto-129" type="button" onClick={handleClick} >{t("PT_SELF_ASSES_PROPERTY")}</button>
                
               </div>
             )}

@@ -14,13 +14,12 @@ import {
   OBPSIcon,
   WSICon,
   CHBIcon
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import ChatBot from "./ChatBot";
 const Home = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
   const { data: { stateInfo, uiHomePage } = {}, isLoading } = Digit.Hooks.useStore.getInitData();
   let isMobile = window.Digit.Utils.browser.isMobile();
@@ -42,8 +41,8 @@ const Home = () => {
 
   if (!tenantId) {
     Digit.SessionStorage.get("locale") === null
-      ? history.push(`/sv-ui/citizen/select-language`)
-      : history.push(`/sv-ui/citizen/select-location`);
+      ? navigate(`/sv-ui/citizen/select-language`)
+      : navigate(`/sv-ui/citizen/select-location`);
   }
 
 
@@ -83,23 +82,23 @@ const Home = () => {
     header: t(citizenServicesObj?.headerLabel),
     sideOption: {
       name: t(citizenServicesObj?.sideOption?.name),
-      onClick: () => history.push(citizenServicesObj?.sideOption?.navigationUrl),
+      onClick: () => navigate(citizenServicesObj?.sideOption?.navigationUrl),
     },
     options: [
       {
         name: t(citizenServicesObj?.props?.[0]?.label),
         Icon: <ComplaintIcon />,
-        onClick: () => history.push(citizenServicesObj?.props?.[0]?.navigationUrl),
+        onClick: () => navigate(citizenServicesObj?.props?.[0]?.navigationUrl),
       },
       {
         name: t(citizenServicesObj?.props?.[1]?.label),
         Icon: <PTIcon className="fill-path-primary-main" />,
-        onClick: () => history.push(citizenServicesObj?.props?.[1]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
+        onClick: () => navigate(citizenServicesObj?.props?.[1]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
       {
         name: t(citizenServicesObj?.props?.[2]?.label),
         Icon: <CaseIcon className="fill-path-primary-main" />,
-        onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
+        onClick: () => navigate(citizenServicesObj?.props?.[2]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
@@ -108,28 +107,28 @@ const Home = () => {
     header: t(infoAndUpdatesObj?.headerLabel),
     sideOption: {
       name: t(infoAndUpdatesObj?.sideOption?.name),
-      onClick: () => history.push(infoAndUpdatesObj?.sideOption?.navigationUrl),
+      onClick: () => navigate(infoAndUpdatesObj?.sideOption?.navigationUrl),
     },
     options: [
       {
         name: t(infoAndUpdatesObj?.props?.[0]?.label),
         Icon: <HomeIcon />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[0]?.navigationUrl),
+        onClick: () => navigate(infoAndUpdatesObj?.props?.[0]?.navigationUrl),
       },
       {
         name: t(infoAndUpdatesObj?.props?.[1]?.label),
         Icon: <Calender />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[1]?.navigationUrl),
+        onClick: () => navigate(infoAndUpdatesObj?.props?.[1]?.navigationUrl),
       },
       {
         name: t(infoAndUpdatesObj?.props?.[2]?.label),
         Icon: <DocumentIcon />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[2]?.navigationUrl),
+        onClick: () => navigate(infoAndUpdatesObj?.props?.[2]?.navigationUrl),
       },
       {
         name: t(infoAndUpdatesObj?.props?.[3]?.label),
         Icon: <DocumentIcon />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[3]?.navigationUrl),
+        onClick: () => navigate(infoAndUpdatesObj?.props?.[3]?.navigationUrl),
       }
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
@@ -178,7 +177,7 @@ const Home = () => {
             <div className="WhatsNewSection">
               <div className="headSection">
                 <h2>{t(whatsNewSectionObj?.headerLabel)}</h2>
-                <p onClick={() => history.push(whatsNewSectionObj?.sideOption?.navigationUrl)}>{t(whatsNewSectionObj?.sideOption?.name)}</p>
+                <p onClick={() => navigate(whatsNewSectionObj?.sideOption?.navigationUrl)}>{t(whatsNewSectionObj?.sideOption?.name)}</p>
               </div>
               <WhatsNewCard {...EventsData?.[0]} />
             </div>

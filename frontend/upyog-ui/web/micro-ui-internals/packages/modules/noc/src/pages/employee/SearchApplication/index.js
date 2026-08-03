@@ -1,6 +1,10 @@
+/**
+ * Container page component for NOC Application Search.
+ * Invokes useNOCSearchApplication hook with search filter state and renders search input fields and result tables.
+ */
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CardHeader } from "@upyog/digit-ui-react-components";
+import { CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { businessServiceList } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
 
@@ -31,6 +35,10 @@ const Search = ({ path }) => {
     nocType: availableNocTypes[0]
   }
 
+  /**
+   * Processes and normalizes search form input values, filters out empty/null fields,
+   * updates filter state, and resets pagination offset.
+   */
   function onSubmit(__data, isFromClear = false) {
     let details = cloneDeep(__data);
     let __filters = defaultFilters;

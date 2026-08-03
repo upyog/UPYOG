@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { Card, DetailsCard, Loader, PopUp, SearchAction } from "@upyog/digit-ui-react-components";
-import { FilterAction } from "@upyog/digit-ui-react-components";
+import { Card, DetailsCard, Loader, PopUp, SearchAction } from "@nudmcdgnpm/digit-ui-react-components";
+import { FilterAction } from "@nudmcdgnpm/digit-ui-react-components";
 import Filter from "../InboxFilter";
 import SearchApplication from "./search";
 

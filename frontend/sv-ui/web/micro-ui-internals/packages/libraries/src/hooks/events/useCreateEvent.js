@@ -1,7 +1,10 @@
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 
 const useCreateEvent = () => {
-  return useMutation(eventData => Digit.EventsServices.Create(eventData))
+  // Updated: TanStack Query v5 requires useMutation to accept an object with mutationFn key instead of a direct function.
+  return useMutation({
+    mutationFn: (eventData) => Digit.EventsServices.Create(eventData)
+  })
 }
 
-export default useCreateEvent; 
+export default useCreateEvent;

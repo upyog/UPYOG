@@ -11,10 +11,9 @@ import {
   BackButton,
   Loader,
   DatePicker
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import UploadDrawer from "./ImageUpload/UploadDrawer";
 import { subYears, format, differenceInYears } from "date-fns";
 
@@ -42,7 +41,7 @@ const defaultImage =
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
 
 const UserProfile = ({ stateCode, userType, cityDetails }) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { t } = useTranslation();
   const url = window.location.href;
   const stateId = Digit.ULBService.getStateId();
@@ -609,7 +608,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
               <LabelFieldPair>
                 <div>
-                  <a style={{ color: "#a82227", cursor: "default", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
+                  <a style={{ color: "#a82227", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
                     {t("CORE_COMMON_CHANGE_PASSWORD")}
                   </a>
                   {changepassword ? (

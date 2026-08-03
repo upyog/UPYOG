@@ -1,4 +1,5 @@
-FROM openjdk:8
+# Runtime JRE 17 (aligned with pom.xml / Maven Enforcer Java 17).
+FROM eclipse-temurin:17-jre-alpine
 MAINTAINER Sivaprakash Ramasamy<sivaprakash.ramasamy@tarento.com>
  # INSTRUCTIONS ON HOW TO BUILD JAR:
 # Move to the location where pom.xml is exist in project and build project using below command

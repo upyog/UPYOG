@@ -1,7 +1,7 @@
-import { FormComposer, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { maintenanceConfig } from "../../../config/Create/maintenanceConfig";
 import { convertDateToEpoch } from "../../../utils";
@@ -11,11 +11,12 @@ const MaintenanceAssetApplication = () => {
   const { t } = useTranslation();
   const [canSubmit, setCanSubmit] = useState(false);
   const defaultValues = {};
-  const history = useHistory();
+  const queryClient = useQueryClient();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { id: applicationNo } = useParams();
   const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
+  const mutation = Digit.Hooks.asset.useMaintenanceAPI(tenantId);
 
-  const [_formData, setFormData, _clear] = Digit.Hooks.useSessionStorage("store-data", null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", {});
 
@@ -33,11 +34,40 @@ const MaintenanceAssetApplication = () => {
 
 
   const onFormValueChange = (setValue, formData, formState) => {
-    console.log('here ....', !Object.keys(formState.errors).length)
-    console.log('formData ....', formData)
-    console.log('formState ....', formState)
     setCanSubmit(!Object.keys(formState.errors).length); 
   };
+
+  const handleSubmit = (formData) => {
+    mutation.mutate(
+      {
+        AssetMaintenance: formData,
+      },
+      {
+        onSuccess: (response) => {
+          queryClient.clear();
+          navigate("/upyog-ui/employee/asset/assetservice/maintenance", { 
+            replace: true, 
+            state: { 
+              Assets: formData,
+              isSuccess: true,
+              response: response
+            } 
+          });
+        },
+        onError: (error) => {
+          navigate("/upyog-ui/employee/asset/assetservice/maintenance", { 
+            replace: true, 
+            state: { 
+              Assets: formData,
+              isSuccess: false,
+              error: error
+            } 
+          });
+        }
+      }
+    );
+  };
+
 
   const onSubmit = (data) => {
     
@@ -56,14 +86,14 @@ const MaintenanceAssetApplication = () => {
         costOfMaintenance :data?.maintenanceDetails?.[0]?.costOfMaintenance,
         description :data?.maintenanceDetails?.[0]?.description,
         vendor:data?.maintenanceDetails?.[0]?.vendor,
-        maintenanceCycle:data?.maintenanceDetails?.[0]?.maintenanceCycle.code,
+        maintenanceCycle:data?.maintenanceDetails?.[0]?.maintenanceCycle?.code,
         partsAddedOrReplaced:data?.maintenanceDetails?.[0]?.partsAddedOrReplaced,
         preConditionRemarks: data?.maintenanceDetails?.[0]?.preConditionRemarks,
         postConditionRemarks:data?.maintenanceDetails?.[0]?.postConditionRemarks,
         isAMCExpired: data?.maintenanceDetails?.[0]?.isAMCExpired,
         isWarrantyExpired: data?.maintenanceDetails?.[0]?.isWarrantyExpired,
-        isLifeOfAssetAffected:data?.maintenanceDetails?.[0]?.isLifeOfAssetAffected.code,
-        assetMaintenanceIncreasedYear:data?.maintenanceDetails?.[0]?.assetMaintenanceIncreasedYear.code,
+        isLifeOfAssetAffected:data?.maintenanceDetails?.[0]?.isLifeOfAssetAffected?.code,
+        assetMaintenanceIncreasedYear:data?.maintenanceDetails?.[0]?.assetMaintenanceIncreasedYear?.code,
         documents: [
             {
                 "documentType": "ASSET.MAINTENANCE.DOC3",
@@ -88,9 +118,7 @@ const MaintenanceAssetApplication = () => {
           lastModifiedTime: ""
       }
     };
-    
-    history.replace("/upyog-ui/employee/asset/assetservice/maintenance", { AssetMaintenance: formData,  applicationNo});
-
+    handleSubmit(formData);
   };
 
 const configs = maintenanceConfig;
@@ -98,7 +126,7 @@ const configs = maintenanceConfig;
   return (
     <FormComposer
       heading={t("AST_REPAIR_MAINTENANCE")}
-      isDisabled={!canSubmit}
+      // isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
       config={configs.map((config) => {
 

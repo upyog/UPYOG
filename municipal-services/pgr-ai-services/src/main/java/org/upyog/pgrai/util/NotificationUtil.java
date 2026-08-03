@@ -1,6 +1,7 @@
 package org.upyog.pgrai.util;
 
 import com.jayway.jsonpath.JsonPath;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -8,10 +9,9 @@ import org.egov.common.utils.MultiStateInstanceUtil;
 import org.upyog.pgrai.config.PGRConfiguration;
 import org.upyog.pgrai.producer.Producer;
 import org.upyog.pgrai.repository.ServiceRequestRepository;
-import org.upyog.pgrai.web.models.Notification.EventRequest;
-import org.upyog.pgrai.web.models.Notification.SMSRequest;
+import org.upyog.pgrai.web.models.notification.EventRequest;
+import org.upyog.pgrai.web.models.notification.SMSRequest;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -26,22 +26,20 @@ import static org.upyog.pgrai.util.PGRConstants.*;
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class NotificationUtil {
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private static final String LOCALIZATION_CODE_MESSAGE_PATH = "$..messages[?(@.code==\"{}\")].message";
 
-    @Autowired
-    private PGRConfiguration config;
+    private final ServiceRequestRepository serviceRequestRepository;
 
-    @Autowired
-    private Producer producer;
+    private final PGRConfiguration config;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final Producer producer;
 
-    @Autowired
-    private MultiStateInstanceUtil centralInstanceUtil;
+    private final RestTemplate restTemplate;
+
+    private final MultiStateInstanceUtil centralInstanceUtil;
 
     /**
      * Fetches localization messages for the given tenant, request info, and module.
@@ -52,8 +50,7 @@ public class NotificationUtil {
      * @return The localization messages as a JSON string.
      */
     public String getLocalizationMessages(String tenantId, RequestInfo requestInfo, String module) {
-        @SuppressWarnings("rawtypes")
-        LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, module), requestInfo);
+        LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, module), requestInfo);
         return new JSONObject(responseMap).toString();
     }
 
@@ -93,12 +90,12 @@ public class NotificationUtil {
         notificationCode.append("PGR_").append(roles.toUpperCase()).append("_").append(action.toUpperCase())
                 .append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
 
-        String path = "$..messages[?(@.code==\"{}\")].message";
+        String path = LOCALIZATION_CODE_MESSAGE_PATH;
         path = path.replace("{}", notificationCode);
         String message = null;
         try {
             ArrayList<String> messageObj = JsonPath.parse(localizationMessage).read(path);
-            if (messageObj != null && messageObj.size() > 0) {
+            if (messageObj != null && !messageObj.isEmpty()) {
                 message = messageObj.get(0);
             }
         } catch (Exception e) {
@@ -119,12 +116,12 @@ public class NotificationUtil {
         StringBuilder notificationCode = new StringBuilder();
         notificationCode.append("PGR_").append("DEFAULT_").append(roles.toUpperCase()).append("_SMS_MESSAGE");
 
-        String path = "$..messages[?(@.code==\"{}\")].message";
+        String path = LOCALIZATION_CODE_MESSAGE_PATH;
         path = path.replace("{}", notificationCode);
         String message = null;
         try {
             ArrayList<String> messageObj = JsonPath.parse(localizationMessage).read(path);
-            if (messageObj != null && messageObj.size() > 0) {
+            if (messageObj != null && !messageObj.isEmpty()) {
                 message = messageObj.get(0);
             }
         } catch (Exception e) {
@@ -141,7 +138,7 @@ public class NotificationUtil {
      * @param smsRequestList The list of SMS requests to be sent.
      */
     public void sendSMS(String tenantId, List<SMSRequest> smsRequestList) {
-        if (config.getIsSMSEnabled()) {
+        if (Boolean.TRUE.equals(config.getIsSMSEnabled())) {
             if (CollectionUtils.isEmpty(smsRequestList)) {
                 log.info("Messages from localization couldn't be fetched!");
                 return;
@@ -191,12 +188,12 @@ public class NotificationUtil {
      * @return The customized message.
      */
     public String getCustomizedMsgForPlaceholder(String localizationMessage, String notificationCode) {
-        String path = "$..messages[?(@.code==\"{}\")].message";
+        String path = LOCALIZATION_CODE_MESSAGE_PATH;
         path = path.replace("{}", notificationCode);
         String message = null;
         try {
             ArrayList<String> messageObj = (ArrayList<String>) JsonPath.parse(localizationMessage).read(path);
-            if (messageObj != null && messageObj.size() > 0) {
+            if (messageObj != null && !messageObj.isEmpty()) {
                 message = messageObj.get(0);
             }
         } catch (Exception e) {

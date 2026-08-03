@@ -1,16 +1,12 @@
-import { useQuery, useMutation } from "react-query";
-
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { ASSETService } from "../../services/elements/ASSET"
 
 
 
 export const useEditUpdateAPI = (tenantId, type = true) => {
-  if (type) {
-    return useMutation((data) => ASSETService.update(data, tenantId));
-  } 
-  else {
-    return useMutation((data) => ASSETService.create(data, tenantId));
-  }
+  const mutationFn = (data) => ASSETService.update(data, tenantId)
+
+  return mutationTemplate({ mutationFn });
 };
 
 export default useEditUpdateAPI;

@@ -52,7 +52,7 @@ import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.AddressType;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import javax.persistence.*;
 
@@ -76,37 +76,37 @@ public abstract class Address extends AbstractPersistable<Long> {
     @JoinColumn(name = "userid")
     private User user;
 
-    @SafeHtml
+    @SanitizeHtml
     private String houseNoBldgApt;
 
-    @SafeHtml
+    @SanitizeHtml
     private String streetRoadLine;
 
-    @SafeHtml
+    @SanitizeHtml
     private String landmark;
 
-    @SafeHtml
+    @SanitizeHtml
     private String areaLocalitySector;
 
-    @SafeHtml
+    @SanitizeHtml
     private String cityTownVillage;
 
-    @SafeHtml
+    @SanitizeHtml
     private String district;
 
-    @SafeHtml
+    @SanitizeHtml
     private String subdistrict;
 
-    @SafeHtml
+    @SanitizeHtml
     private String postOffice;
 
-    @SafeHtml
+    @SanitizeHtml
     private String state;
 
-    @SafeHtml
+    @SanitizeHtml
     private String country;
 
-    @SafeHtml
+    @SanitizeHtml
     private String pinCode;
 
     @Enumerated(EnumType.STRING)

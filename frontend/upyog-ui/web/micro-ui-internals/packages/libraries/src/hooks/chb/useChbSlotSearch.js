@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
 /**
  * useChbSlotSearch Hook
@@ -26,21 +27,38 @@ import { useQuery, useQueryClient } from "react-query";
  *    - `refetch`: Function to manually refetch the data.
  *    - `revalidate`: Function to invalidate and refetch the query.
  */
-const useChbSlotSearch = ({ tenantId, filters, auth }, config = {}) => {
+const useChbSlotSearch = (
+  { tenantId, filters, auth },
+  config = {}
+) => {
   const client = useQueryClient();
 
-  const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
+  const args = tenantId
+    ? { tenantId, filters, auth }
+    : { filters, auth };
 
-  const { isLoading, error, data, isSuccess, refetch } = useQuery(
-    ["chbSearchList", tenantId, filters, auth, config],
-    () => Digit.CHBServices.slot_search(args),
-    {
-      ...config,
-      enabled: false, // Disable automatic query execution
-    }
-  );
+  const queryKey = [
+    "CHB_SLOT_SEARCH",
+    tenantId,
+    JSON.stringify(filters),
+    auth,
+  ];
 
-  return { isLoading, error, data, isSuccess, refetch, revalidate: () => client.invalidateQueries(["chbSearchList", tenantId, filters, auth]) };
+  const queryFn = () =>
+    Digit.CHBServices.slot_search(args);
+
+  const query = queryTemplate({
+    queryKey,
+    queryFn,
+    enabled: false,
+    config,
+  });
+
+  return {
+    ...query,
+    revalidate: () =>
+      client.invalidateQueries({ queryKey }),
+  };
 };
 
 export default useChbSlotSearch;

@@ -1,4 +1,5 @@
-FROM openjdk:8 AS build 
+# Build stage: JDK 17 + Maven (matches pom.xml --release 17).
+FROM maven:3.9-eclipse-temurin-17 AS build
 ARG WORK_DIR
 WORKDIR /app
 
@@ -13,8 +14,9 @@ COPY ${WORK_DIR}/src ./src
 RUN mvn -B -f /app/pom.xml package
 
 
+# Runtime: JRE 17 only (same Temurin line as batch service).
 # Create runtime image
-FROM egovio/8-openjdk-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 
 WORKDIR /opt/egov

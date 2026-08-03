@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from "react-router-dom";
+import * as DigitComponents from "@nudmcdgnpm/digit-ui-react-components";
 import {
   ArrowForward,
   ArrowVectorDown,
@@ -16,7 +17,7 @@ import {
   CollectionsBookmarIcons,
   FinanceChartIcon,
   CollectionIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import ReactTooltip from "react-tooltip";
 import { useTranslation } from 'react-i18next';
 
@@ -47,10 +48,10 @@ const NavItemHeader = props => {
     collections: <CollectionIcon />,
   };
   const leftIconArray = icon?.split?.(":")?.[1];
-  const leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
+  let leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
   const iconArr=item?.icon?.leftIcon?.split?.(":")|| item?.leftIcon?.split?.(":");
   if(iconArr?.[0]=='dynamic'){
-    var IconComp = require("@upyog/digit-ui-react-components")?.[iconArr?.[1]];
+    var IconComp = DigitComponents?.[iconArr?.[1]];
     leftIcon=IconComp?<IconComp/>:leftIcon;
   }
   const getModuleName = label?.replace(/[ -]/g, "_").toUpperCase();

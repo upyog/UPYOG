@@ -10,11 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.upyog.cdwm.calculator.config.CalculatorConfig;
 import org.upyog.cdwm.calculator.web.models.AuditDetails;
-import org.upyog.cdwm.calculator.web.models.CNDApplicationDetail.StatusEnum;
 import org.upyog.cdwm.calculator.web.models.ResponseInfo;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
@@ -24,24 +20,25 @@ import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
  * This includes timestamp generation, date parsing, UUID generation, 
  * and creating audit and response information.
  */
-@Component
 public class CalculationUtils {
 
-    @Autowired
-    private CalculatorConfig config;
+    private static final ZoneId SYSTEM_ZONE = ZoneId.systemDefault();
+
+    private CalculationUtils() {
+        // utility class
+    }
 
     /** Date format used for parsing strings to LocalDate */
-    public final static String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     /**
      * Creates a {@link ResponseInfo} object based on the provided {@link RequestInfo}.
      *
      * @param requestInfo The request information object.
      * @param resMsg The response message to be included.
-     * @param status The status of the response.
      * @return The created {@link ResponseInfo} object.
      */
-    public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
+    public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg) {
         final String apiId = requestInfo != null ? requestInfo.getApiId() : StringUtils.EMPTY;
         final String ver = requestInfo != null ? requestInfo.getVer() : StringUtils.EMPTY;
         Long ts = requestInfo != null ? requestInfo.getTs() : null;
@@ -71,7 +68,7 @@ public class CalculationUtils {
      * @return The current date as a {@link LocalDate}.
      */
     public static LocalDate getCurrentDate() {
-        return LocalDate.now();
+        return LocalDate.now(SYSTEM_ZONE);
     }
 
     /**
@@ -83,7 +80,7 @@ public class CalculationUtils {
      */
     public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = getCurrentTimestamp();
-        if (isCreate) {
+        if (Boolean.TRUE.equals(isCreate)) {
             return AuditDetails.builder()
                     .createdBy(by)
                     .lastModifiedBy(by)
@@ -125,7 +122,7 @@ public class CalculationUtils {
      * @return The resulting timestamp in milliseconds.
      */
     public static Long minusOneDay(LocalDate date) {
-        return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return date.atStartOfDay(SYSTEM_ZONE).toInstant().toEpochMilli();
     }
 
     /**
@@ -135,7 +132,7 @@ public class CalculationUtils {
      * @return The financial year-end timestamp in milliseconds.
      */
     public static long getFinancialYearEnd() {
-        YearMonth currentYearMonth = YearMonth.now();
+        YearMonth currentYearMonth = YearMonth.now(SYSTEM_ZONE);
         int year = currentYearMonth.getYear();
         int month = currentYearMonth.getMonthValue();
 
@@ -145,6 +142,6 @@ public class CalculationUtils {
         }
 
         LocalDateTime endOfYear = LocalDateTime.of(year + 1, Month.MARCH, 31, 23, 59, 59, 999000000);
-        return endOfYear.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return endOfYear.atZone(SYSTEM_ZONE).toInstant().toEpochMilli();
     }
 }

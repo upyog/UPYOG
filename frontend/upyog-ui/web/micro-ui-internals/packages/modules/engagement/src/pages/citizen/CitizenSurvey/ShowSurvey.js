@@ -1,6 +1,6 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import CitizenSurveyForm from "../../../components/Surveys/CitizenSurveyForm";
 import CitizenSurveyDisplayForm from "../../../components/Surveys/CitizenSurveyDisplayForm";
 

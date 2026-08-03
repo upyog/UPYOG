@@ -1,4 +1,4 @@
-package org.upyog.pgrai.web.models.Idgen;
+package org.upyog.pgrai.web.models.idgen;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

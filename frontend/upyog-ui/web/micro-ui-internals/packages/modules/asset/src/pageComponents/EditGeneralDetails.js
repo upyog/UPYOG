@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, CardCaption, LabelFieldPair, TextInput, Toast, Dropdown, TextArea } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelError, CardCaption, LabelFieldPair, TextInput, Toast, Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -16,67 +16,97 @@ const editAssetDetails = () => ({
   Assetdescription: "",
   Department: "",
   sourceOfFinance: "",
-  assetclassification: "",
   key: Date.now(),
 });
-
-const EditGeneralDetails = ({ config, onSelect, formData, setError, clearErrors }) => {
-  const { t } = useTranslation();
+const EditGeneralDetails = ({
+  config,
+  onSelect,
+  formData,
+  setError,
+  clearErrors
+}) => {
+  const {
+    t
+  } = useTranslation();
   const stateId = Digit.ULBService.getStateId();
   const [editAssignDetails, seteditAssignDetails] = useState(formData?.editAssignDetails || [editAssetDetails()]);
-  const { id: applicationNo } = useParams();
+  const {
+    id: applicationNo
+  } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
+  const {
+    data: applicationDetails
+  } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
   let comingDataFromAPI = applicationDetails?.applicationData?.applicationData;
-
-  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+  const [focusIndex, setFocusIndex] = useState({
+    index: -1,
+    type: ""
+  });
   useEffect(() => {
     onSelect(config?.key, editAssignDetails);
   }, [editAssignDetails]);
+  const {
+    data: Menu_Asset
+  } = Digit.Hooks.asset.useAssetClassification(stateId, "ASSET", "assetClassification"); // hook for asset classification Type
 
-  const { data: Menu_Asset } = Digit.Hooks.asset.useAssetClassification(stateId, "ASSET", "assetClassification"); // hook for asset classification Type
+  const {
+    data: Asset_Type
+  } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory");
+  const {
+    data: Asset_Sub_Type
+  } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetCategory"); // hooks for Asset Parent Category
 
-  const { data: Asset_Type } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory");
-
-  const { data: Asset_Sub_Type } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetCategory"); // hooks for Asset Parent Category
-
-  const { data: Asset_Parent_Sub_Type } = Digit.Hooks.asset.useAssetparentSubType(stateId, "ASSET", "assetSubCategory");
-
-  const { data: sourceofFinanceMDMS } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "SourceFinance" }], {
-    select: (data) => {
+  const {
+    data: Asset_Parent_Sub_Type
+  } = Digit.Hooks.asset.useAssetparentSubType(stateId, "ASSET", "assetSubCategory");
+  const {
+    data: sourceofFinanceMDMS
+  } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{
+    name: "SourceFinance"
+  }], {
+    select: data => {
       const formattedData = data?.["ASSET"]?.["SourceFinance"];
-      const activeData = formattedData?.filter((item) => item.active === true);
+      const activeData = formattedData?.filter(item => item.active === true);
       return activeData;
-    },
+    }
   }); // Note : used direct custom MDMS to get the Data ,Do not copy and paste without understanding the Context
 
   let sourcefinance = [];
-
-  sourceofFinanceMDMS &&
-    sourceofFinanceMDMS.map((finance) => {
-      sourcefinance.push({ i18nKey: `AST_${finance.code}`, code: `${finance.code}`, value: `${finance.name}` });
+  sourceofFinanceMDMS && sourceofFinanceMDMS.map(finance => {
+    sourcefinance.push({
+      i18nKey: `AST_${finance.code}`,
+      code: `${finance.code}`,
+      value: `${finance.name}`
     });
-
-  const { data: currentFinancialYear } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "FinancialYear" }], {
-    select: (data) => {
+  });
+  const {
+    data: currentFinancialYear
+  } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{
+    name: "FinancialYear"
+  }], {
+    select: data => {
       const formattedData = data?.["ASSET"]?.["FinancialYear"];
       return formattedData;
-    },
+    }
   });
-
   let financal = [];
-
-  currentFinancialYear &&
-    currentFinancialYear.map((financialyear) => {
-      financal.push({ i18nKey: `${financialyear.code}`, code: `${financialyear.code}`, value: `${financialyear.name}` });
+  currentFinancialYear && currentFinancialYear.map(financialyear => {
+    financal.push({
+      i18nKey: `${financialyear.code}`,
+      code: `${financialyear.code}`,
+      value: `${financialyear.name}`
     });
-
-  const { data: departmentName } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Department" }], {
-    select: (data) => {
+  });
+  const {
+    data: departmentName
+  } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "common-masters", [{
+    name: "Department"
+  }], {
+    select: data => {
       const formattedData = data?.["common-masters"]?.["Department"];
-      const activeData = formattedData?.filter((item) => item.active === true);
+      const activeData = formattedData?.filter(item => item.active === true);
       return activeData;
-    },
+    }
   });
   let departNamefromMDMS = [];
 
@@ -93,83 +123,90 @@ const EditGeneralDetails = ({ config, onSelect, formData, setError, clearErrors 
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["AssetType"];
       return formattedData;
-    },
+    }
   });
   let assetType = [];
-
-  assetTypeData &&
-    assetTypeData.map((assT) => {
-      assetType.push({ i18nKey: `${assT.code}`, code: `${assT.code}`, value: `${assT.name}` });
+  assetTypeData && assetTypeData.map(assT => {
+    assetType.push({
+      i18nKey: `${assT.code}`,
+      code: `${assT.code}`,
+      value: `${assT.name}`
     });
-  const { data: assetCurrentUsageData } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetUsage" }], {
-    select: (data) => {
+  });
+  const {
+    data: assetCurrentUsageData
+  } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{
+    name: "AssetUsage"
+  }], {
+    select: data => {
       const formattedData = data?.["ASSET"]?.["AssetUsage"];
       return formattedData;
-    },
+    }
   });
   let assetCurrentUsage = [];
-
-  assetCurrentUsageData &&
-    assetCurrentUsageData.map((assT) => {
-      assetCurrentUsage.push({ i18nKey: `${assT.code}`, code: `${assT.code}`, value: `${assT.name}` });
+  assetCurrentUsageData && assetCurrentUsageData.map(assT => {
+    assetCurrentUsage.push({
+      i18nKey: `${assT.code}`,
+      code: `${assT.code}`,
+      value: `${assT.name}`
     });
-
-  const { data: masterDropdown } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "ModeOfPossessionOrAcquisition" }], {
-    select: (data) => {
+  });
+  const {
+    data: masterDropdown
+  } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{
+    name: "ModeOfPossessionOrAcquisition"
+  }], {
+    select: data => {
       const formattedData = data?.["ASSET"]?.["ModeOfPossessionOrAcquisition"];
       return formattedData;
-    },
+    }
   });
   let modeOfAcquisition = [];
-
-  masterDropdown &&
-    masterDropdown.map((row) => {
-      modeOfAcquisition.push({ i18nKey: `${row.code}`, code: `${row.code}`, name: `${row.name}` });
+  masterDropdown && masterDropdown.map(row => {
+    modeOfAcquisition.push({
+      i18nKey: `${row.code}`,
+      code: `${row.code}`,
+      name: `${row.name}`
     });
-
+  });
   let menu_Asset = []; //variable name for assetCalssification
   let asset_type = []; //variable name for asset type
   let asset_sub_type = []; //variable name for asset sub  parent caregory
   let asset_parent_sub_category = [];
-
-  Menu_Asset &&
-    Menu_Asset.map((asset_mdms) => {
-      menu_Asset.push({ i18nKey: `${asset_mdms.name}`, code: `${asset_mdms.code}`, value: `${asset_mdms.name}` });
+  Menu_Asset && Menu_Asset.map(asset_mdms => {
+    menu_Asset.push({
+      i18nKey: `${asset_mdms.name}`,
+      code: `${asset_mdms.code}`,
+      value: `${asset_mdms.name}`
     });
-
-  Asset_Type &&
-    Asset_Type.map((asset_type_mdms) => {
-      if (asset_type_mdms.assetClassification == editAssignDetails?.[0]?.assetclassification?.code) {
-        asset_type.push({
-          i18nKey: `${asset_type_mdms.name}`,
-          code: `${asset_type_mdms.code}`,
-          value: `${asset_type_mdms.name}`,
-        });
-      }
-    });
-
-  Asset_Sub_Type &&
-    Asset_Sub_Type.map((asset_sub_type_mdms) => {
-      if (asset_sub_type_mdms.assetParentCategory == editAssignDetails?.[0]?.assettype?.code) {
-        asset_sub_type.push({
-          i18nKey: `${asset_sub_type_mdms.name}`,
-          code: `${asset_sub_type_mdms.code}`,
-          value: `${asset_sub_type_mdms.name}`,
-        });
-      }
-    });
-
-  Asset_Parent_Sub_Type &&
-    Asset_Parent_Sub_Type.map((asset_parent_mdms) => {
-      if (asset_parent_mdms.assetCategory == editAssignDetails?.[0]?.assetsubtype?.code) {
-        asset_parent_sub_category.push({
-          i18nKey: `${asset_parent_mdms.name}`,
-          code: `${asset_parent_mdms.code}`,
-          value: `${asset_parent_mdms.name}`,
-        });
-      }
-    });
-
+  });
+  Asset_Type && Asset_Type.map(asset_type_mdms => {
+    if (asset_type_mdms.assetClassification == editAssignDetails?.[0]?.assetclassification?.code) {
+      asset_type.push({
+        i18nKey: `${asset_type_mdms.name}`,
+        code: `${asset_type_mdms.code}`,
+        value: `${asset_type_mdms.name}`
+      });
+    }
+  });
+  Asset_Sub_Type && Asset_Sub_Type.map(asset_sub_type_mdms => {
+    if (asset_sub_type_mdms.assetParentCategory == editAssignDetails?.[0]?.assettype?.code) {
+      asset_sub_type.push({
+        i18nKey: `${asset_sub_type_mdms.name}`,
+        code: `${asset_sub_type_mdms.code}`,
+        value: `${asset_sub_type_mdms.name}`
+      });
+    }
+  });
+  Asset_Parent_Sub_Type && Asset_Parent_Sub_Type.map(asset_parent_mdms => {
+    if (asset_parent_mdms.assetCategory == editAssignDetails?.[0]?.assetsubtype?.code) {
+      asset_parent_sub_category.push({
+        i18nKey: `${asset_parent_mdms.name}`,
+        code: `${asset_parent_mdms.code}`,
+        value: `${asset_parent_mdms.name}`
+      });
+    }
+  });
   const commonProps = {
     focusIndex,
     allAssets: editAssignDetails,
@@ -190,26 +227,20 @@ const EditGeneralDetails = ({ config, onSelect, formData, setError, clearErrors 
     comingDataFromAPI,
     assetType,
     assetCurrentUsage,
-    modeOfAcquisition,
+    modeOfAcquisition
   };
-
-  return (
-    <React.Fragment>
-      {editAssignDetails.map((editAssignDetails, index) => (
-        <OwnerForm key={editAssignDetails.key} index={index} editAssignDetails={editAssignDetails} {...commonProps} />
-      ))}
-    </React.Fragment>
-  );
+  return <React.Fragment>
+      {editAssignDetails.map((editAssignDetails, index) => <OwnerForm key={editAssignDetails.key} index={index} editAssignDetails={editAssignDetails} {...commonProps} />)}
+    </React.Fragment>;
 };
-
-const convertTimestampToDate = (timestamp) => {
+const convertTimestampToDate = timestamp => {
   const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
-const OwnerForm = (_props) => {
+const OwnerForm = _props => {
   const {
     editAssignDetails,
     focusIndex,
@@ -229,50 +260,59 @@ const OwnerForm = (_props) => {
     assetType,
     comingDataFromAPI,
     assetCurrentUsage,
-    modeOfAcquisition,
+    modeOfAcquisition
   } = _props;
-
   const [showToast, setShowToast] = useState(null);
-  const { control, formState: localFormState, watch, trigger } = useForm();
+  const {
+    control,
+    formState: localFormState,
+    watch,
+    trigger
+  } = useForm();
   const formValue = watch();
-  const { errors } = localFormState;
+  const {
+    errors
+  } = localFormState;
   const [part, setPart] = React.useState({});
-
   let isEdit = true;
-
-  const convertToObject = (String) => (String ? { i18nKey: String, code: String, value: String } : null);
-
+  const convertToObject = String => String ? {
+    i18nKey: String,
+    code: String,
+    value: String
+  } : null;
   useEffect(() => {
     if (!_.isEqual(part, formValue)) {
-      setPart({ ...formValue });
-      seteditAssignDetails((prev) => prev.map((o) => (o.key === editAssignDetails.key ? { ...o, ...formValue } : o)));
+      setPart({
+        ...formValue
+      });
+      seteditAssignDetails(prev => prev.map(o => o.key === editAssignDetails.key ? {
+        ...o,
+        ...formValue
+      } : o));
       trigger();
     }
   }, [formValue]);
-
   useEffect(() => {
-    if (Object.keys(errors).length && !_.isEqual(localFormState.errors[config.key]?.type || {}, errors)) setError(config.key, { type: errors });
-    else if (!Object.keys(errors).length && localFormState.errors[config.key]) clearErrors(config.key);
+    if (Object.keys(errors).length && !_.isEqual(localFormState.errors[config.key]?.type || {}, errors)) setError(config.key, {
+      type: errors
+    });else if (!Object.keys(errors).length && localFormState.errors[config.key]) clearErrors(config.key);
   }, [errors]);
 
-  const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
-
-  return (
-    <React.Fragment>
-      <div style={{ marginBottom: "16px" }}>
-        <div style={{ border: "1px solid #E3E3E3", padding: "16px", marginTop: "8px" }}>
+  return <React.Fragment>
+      <div className="asset-auto-133">
+        <div className="asset-auto-134">
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_FINANCIAL_YEAR")}</CardLabel>
             <Controller
               control={control}
               name={"financialYear"}
               defaultValue={convertToObject(comingDataFromAPI?.financialYear)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
-                  select={props.onChange}
-                  onBlur={props.onBlur}
+                  selected={field.value}
+                  select={field.onChange}
+                  onBlur={field.onBlur}
                   disable={false}
                   option={financal}
                   optionKey="i18nKey"
@@ -281,19 +321,19 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.financialYear ? errors?.financialYear?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.financialYear ? errors?.financialYear?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_SOURCE_FINANCE")}</CardLabel>
             <Controller
               control={control}
               name={"sourceOfFinance"}
               defaultValue={convertToObject(comingDataFromAPI?.sourceOfFinance)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
-                  select={props.onChange}
-                  onBlur={props.onBlur}
+                  selected={field.value}
+                  select={field.onChange}
+                  onBlur={field.onBlur}
                   option={sourcefinance}
                   optionKey="i18nKey"
                   t={t}
@@ -301,19 +341,19 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.sourceOfFinance ? errors?.sourceOfFinance?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.sourceOfFinance ? errors?.sourceOfFinance?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_CATEGORY")}</CardLabel>
             <Controller
               control={control}
               name={"assetclassification"}
               defaultValue={convertToObject(comingDataFromAPI?.assetClassification)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
-                  select={props.onChange}
-                  onBlur={props.onBlur}
+                  selected={field.value}
+                  select={field.onChange}
+                  onBlur={field.onBlur}
                   disable={isEdit}
                   option={menu_Asset}
                   optionKey="i18nKey"
@@ -322,19 +362,19 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.assetclassification ? errors?.assetclassification?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.assetclassification ? errors?.assetclassification?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_PARENT_CATEGORY")}</CardLabel>
             <Controller
               control={control}
               name={"assettype"}
               defaultValue={convertToObject(comingDataFromAPI?.assetParentCategory)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
-                  select={props.onChange}
-                  onBlur={props.onBlur}
+                  selected={field.value}
+                  select={field.onChange}
+                  onBlur={field.onBlur}
                   disable={isEdit}
                   option={asset_type}
                   optionKey="i18nKey"
@@ -343,7 +383,7 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.assettype ? errors?.assettype?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.assettype ? errors?.assettype?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_SUB_CATEGORY")}</CardLabel>
@@ -351,12 +391,12 @@ const OwnerForm = (_props) => {
               control={control}
               name={"assetsubtype"}
               defaultValue={convertToObject(comingDataFromAPI?.assetCategory)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
-                  select={props.onChange}
-                  onBlur={props.onBlur}
+                  selected={field.value}
+                  select={field.onChange}
+                  onBlur={field.onBlur}
                   disable={false}
                   option={asset_sub_type}
                   optionKey="i18nKey"
@@ -365,7 +405,7 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.assetsubtype ? errors?.assetsubtype?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.assetsubtype ? errors?.assetsubtype?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_CATEGORY_SUB_CATEGORY")}</CardLabel>
@@ -373,12 +413,12 @@ const OwnerForm = (_props) => {
               control={control}
               name={"assetparentsubCategory"}
               defaultValue={convertToObject(comingDataFromAPI?.assetSubCategory)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
-                  select={props.onChange}
-                  onBlur={props.onBlur}
+                  selected={field.value}
+                  select={field.onChange}
+                  onBlur={field.onBlur}
                   disable={false}
                   option={asset_parent_sub_category}
                   optionKey="i18nKey"
@@ -387,8 +427,8 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>
-            {localFormState.touched.assetparentsubCategory ? errors?.assetparentsubCategory?.message : ""}
+          <CardLabelError className="error-message">
+            {localFormState?.touched?.assetparentsubCategory ? errors?.assetparentsubCategory?.message : ""}
           </CardLabelError>
 
           <LabelFieldPair>
@@ -402,25 +442,25 @@ const OwnerForm = (_props) => {
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                   validate: { pattern: (val) => (/^[a-zA-Z0-9/-\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "BookPagereference"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "BookPagereference" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.BookPagereference ? errors?.BookPagereference?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.BookPagereference ? errors?.BookPagereference?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_NAME")}</CardLabel>
@@ -435,25 +475,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "AssetName"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "AssetName" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.AssetName ? errors?.AssetName?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.AssetName ? errors?.AssetName?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("ASSET_DESCRIPTION")}</CardLabel>
@@ -468,25 +508,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextArea
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "Assetdescription"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "Assetdescription" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.Assetdescription ? errors?.Assetdescription?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.Assetdescription ? errors?.Assetdescription?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_DEPARTMENT")}</CardLabel>
@@ -494,13 +534,13 @@ const OwnerForm = (_props) => {
               control={control}
               name={"Department"}
               defaultValue={convertToObject("COMMON_MASTERS_DEPARTMENT_" + comingDataFromAPI?.department)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
+                  selected={field.value}
                   disable={false}
-                  select={props.onChange}
-                  onBlur={props.onBlur}
+                  select={field.onChange}
+                  onBlur={field.onBlur}
                   option={departNamefromMDMS}
                   optionKey="i18nKey"
                   t={t}
@@ -508,7 +548,7 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.Department ? errors?.Department?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.Department ? errors?.Department?.message : ""}</CardLabelError>
           <br />
           <CardCaption>Asset Common Details </CardCaption>
           <br />
@@ -519,12 +559,12 @@ const OwnerForm = (_props) => {
               control={control}
               name={"assetType"}
               defaultValue={convertToObject(comingDataFromAPI?.assetType)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
-                  select={props.onChange}
-                  onBlur={props.onBlur}
+                  selected={field.value}
+                  select={field.onChange}
+                  onBlur={field.onBlur}
                   disable={false}
                   option={assetType}
                   optionKey="i18nKey"
@@ -533,7 +573,7 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.assetType ? errors?.assetType?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.assetType ? errors?.assetType?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_USAGE")}</CardLabel>
@@ -541,12 +581,12 @@ const OwnerForm = (_props) => {
               control={control}
               name={"assetUsage"}
               defaultValue={convertToObject(comingDataFromAPI?.assetUsage)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
-                  select={props.onChange}
-                  onBlur={props.onBlur}
+                  selected={field.value}
+                  select={field.onChange}
+                  onBlur={field.onBlur}
                   disable={false}
                   option={assetCurrentUsage}
                   optionKey="i18nKey"
@@ -555,7 +595,7 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.assetUsage ? errors?.assetUsage?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.assetUsage ? errors?.assetUsage?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_MODE_OF_POSSESSION_OR_ACQUISITION")}</CardLabel>
@@ -563,13 +603,13 @@ const OwnerForm = (_props) => {
               control={control}
               name={"modeOfPossessionOrAcquisition"}
               defaultValue={convertToObject(comingDataFromAPI?.modeOfPossessionOrAcquisition)}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
-                  selected={props.value}
-                  select={props.onChange}
+                  selected={field.value}
+                  select={field.onChange}
                   disable={false}
-                  onBlur={props.onBlur}
+                  onBlur={field.onBlur}
                   option={modeOfAcquisition}
                   optionKey="i18nKey"
                   t={t}
@@ -577,8 +617,8 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>
-            {localFormState.touched.modeOfPossessionOrAcquisition ? errors?.modeOfPossessionOrAcquisition?.message : ""}
+          <CardLabelError className="error-message">
+            {localFormState?.touched?.modeOfPossessionOrAcquisition ? errors?.modeOfPossessionOrAcquisition?.message : ""}
           </CardLabelError>
 
           <LabelFieldPair>
@@ -594,26 +634,26 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     type={"date"}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "invoiceDate"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "invoiceDate" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.Assetdescription ? errors?.Assetdescription?.message : ""}</CardLabelError>
+          <CardLabelError className="error-message">{localFormState?.touched?.Assetdescription ? errors?.Assetdescription?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_INVOICE_NUMBER")}</CardLabel>
@@ -628,25 +668,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "invoiceNumber"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "invoiceNumber" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          {/* <CardLabelError style={errorStyle}>{localFormState.touched.invoiceNumber ? errors?.invoiceNumber?.message : ""}</CardLabelError> */}
+          {/* <CardLabelError className="error-message">{localFormState?.touched?.invoiceNumber ? errors?.invoiceNumber?.message : ""}</CardLabelError> */}
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_PURCHASE_DATE")}</CardLabel>
@@ -661,26 +701,26 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     type={"date"}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "purchaseDate"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "purchaseDate" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          {/* <CardLabelError style={errorStyle}>{localFormState.touched.purchaseDate ? errors?.purchaseDate?.message : ""}</CardLabelError> */}
+          {/* <CardLabelError className="error-message">{localFormState?.touched?.purchaseDate ? errors?.purchaseDate?.message : ""}</CardLabelError> */}
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_PURCHASE_ORDER")}</CardLabel>
@@ -695,25 +735,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "purchaseOrderNumber"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "purchaseOrderNumber" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          {/* <CardLabelError style={errorStyle}>{localFormState.touched.purchaseOrderNumber ? errors?.purchaseOrderNumber?.message : ""}</CardLabelError> */}
+          {/* <CardLabelError className="error-message">{localFormState?.touched?.purchaseOrderNumber ? errors?.purchaseOrderNumber?.message : ""}</CardLabelError> */}
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_LIFE")}</CardLabel>
@@ -728,19 +768,19 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "lifeOfAsset"}
                     onChange={(e) => {
                       if((e.target.value).length > 3) { alert('Maximum limit is 3 digits only!'); return false }
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "lifeOfAsset" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
@@ -761,25 +801,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "location"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "location" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          {/* <CardLabelError style={errorStyle}>{localFormState.touched.location ? errors?.location?.message : ""}</CardLabelError> */}
+          {/* <CardLabelError className="error-message">{localFormState?.touched?.location ? errors?.location?.message : ""}</CardLabelError> */}
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_PURCHASE_COST")}</CardLabel>
@@ -794,25 +834,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "purchaseCost"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "purchaseCost" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          {/* <CardLabelError style={errorStyle}>{localFormState.touched.purchaseCost ? errors?.purchaseCost?.message : ""}</CardLabelError> */}
+          {/* <CardLabelError className="error-message">{localFormState?.touched?.purchaseCost ? errors?.purchaseCost?.message : ""}</CardLabelError> */}
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_ACQUISITION_COST")}</CardLabel>
@@ -827,25 +867,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "acquisitionCost"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "acquisitionCost" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          {/* <CardLabelError style={errorStyle}>{localFormState.touched.acquisitionCost ? errors?.acquisitionCost?.message : ""}</CardLabelError> */}
+          {/* <CardLabelError className="error-message">{localFormState?.touched?.acquisitionCost ? errors?.acquisitionCost?.message : ""}</CardLabelError> */}
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_BOOK_VALUE")}</CardLabel>
@@ -860,37 +900,30 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "bookValue"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: editAssignDetails.key, type: "bookValue" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          {/* <CardLabelError style={errorStyle}>{localFormState.touched.bookValue ? errors?.bookValue?.message : ""}</CardLabelError> */}
+          {/* <CardLabelError className="error-message">{localFormState?.touched?.bookValue ? errors?.bookValue?.message : ""}</CardLabelError> */}
         </div>
       </div>
-      {showToast?.label && (
-        <Toast
-          label={showToast?.label}
-          onClose={(w) => {
-            setShowToast((x) => null);
-          }}
-        />
-      )}
-    </React.Fragment>
-  );
+      {showToast?.label && <Toast label={showToast?.label} onClose={w => {
+      setShowToast(x => null);
+    }} />}
+    </React.Fragment>;
 };
-
 export default EditGeneralDetails;

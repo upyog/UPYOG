@@ -1,17 +1,24 @@
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import BillDetails from "./bill-details/bill-details";
-import { BackButton } from "@nudmcdgnpm/digit-ui-react-components";
+import { BackButton } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 
 const BillRoutes = ({ paymentRules, businessService }) => {
-  const { url: currentPath, ...match } = useRouteMatch();
 
   return (
     <React.Fragment>
       <BackButton />
-      <Switch>
-        <Route path={`${currentPath}/:consumerCode`} component={() => <BillDetails {...{ paymentRules, businessService }} />} />
-      </Switch>
+       <Routes>
+        <Route
+          path=":consumerCode" 
+          element={
+            <BillDetails
+              paymentRules={paymentRules}
+              businessService={businessService}
+            />
+          } 
+        />
+      </Routes>
     </React.Fragment>
   );
 };

@@ -3,27 +3,17 @@ var router = express.Router();
 var producer = require("../producer").producer ;
 var url = require("url");
 var config = require("../config");
-const uuidv4 = require("uuid/v4");
+const { v4: uuidv4 } = require("uuid");
 var logger = require("../logger").logger;
 const { Pool } = require('pg');
 
 
-// const pool = new Pool({
-//   user: config.DB_USER,
-//   host: config.DB_HOST,
-//   database: config.DB_NAME,
-//   password: config.DB_PASSWORD,
-//   port: config.DB_PORT,
-// });
 const pool = new Pool({
   user: config.DB_USER,
   host: config.DB_HOST,
   database: config.DB_NAME,
   password: config.DB_PASSWORD,
   port: config.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false
-  }
 });
 var {
   search_property,
@@ -252,6 +242,7 @@ router.post(
         properties.Properties.length > 0
       ) {
         var propertyid = properties.Properties[0].propertyId;
+        // var propertyid = "PG-PT-1013-001069"; for hardcoding the propertyid during local running
         var bussinessService = "PT";
         var paymentresponse;
         try {
@@ -262,9 +253,23 @@ router.post(
             bussinessService
           );
         } catch (ex) {
-          
-          if (ex.response && ex.response.data) console.log(ex.response.data);
-          return renderError(res, `Failed to query payment for property`, 500);
+
+          console.log("OUTER ERROR:", ex);
+        
+          console.log("OUTER ERROR MESSAGE:", ex.message);
+        
+          if (ex.response) {
+            console.log(
+              "OUTER ERROR RESPONSE:",
+              JSON.stringify(ex.response.data, null, 2)
+            );
+          }
+        
+          return renderError(
+            res,
+            "Failed to query receipt details of the property",
+            500
+          );
         }
         var payments = paymentresponse.data;
         if (payments && payments.Payments && payments.Payments.length > 0) {
@@ -349,23 +354,19 @@ router.post(
       //create_defaulter_notice_pdf_pt(kafkaData);
 
       try {
-        var payloads = [];
-        var records=properties.length;
+   // Refactored Kafka publish flow from callback-based producer.send() to async/await with structured message format and centralized error handling.
+        var records = properties.length;
         logger.info("::Pushing data to kafka::");
-        payloads.push({
-          topic: config.KAFKA_BULK_PDF_TOPIC,
-          messages: JSON.stringify(kafkaData)
-        });
-        producer.send(payloads, function(err, data) {
-          if (err) {
-            logger.error(err.stack || err);
-            errorCallback({
-              message: `error while publishing to kafka: ${err.message}`
-            });
-          } else {
-            logger.info("jobid: " + jobid + ": published to kafka successfully");
-          }
-        });
+        try {
+          await producer.send({
+            topic: config.KAFKA_BULK_PDF_TOPIC,
+            messages: [{ value: JSON.stringify(kafkaData) }],
+          });
+          logger.info("jobid: " + jobid + ": published to kafka successfully");
+        } catch (err) {
+          logger.error(err.stack || err);
+          throw new Error(`error while publishing to kafka: ${err.message}`);
+        }
 
         try {
           const result = await pool.query('select * from egov_defaulter_notice_pdf_info where jobid = $1', [jobid]);

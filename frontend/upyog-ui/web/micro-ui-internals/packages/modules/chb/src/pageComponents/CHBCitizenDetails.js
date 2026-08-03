@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, MobileNumber, Card,CardSubHeader } from "@upyog/digit-ui-react-components";
-import { useLocation} from "react-router-dom";
+import { FormStep, TextInput, CardLabel, MobileNumber, Card,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
-// import { TimerValues } from "../components/TimerValues";
+import { TimerValues } from "../components/TimerValues";
 
 
 /**
@@ -40,7 +40,6 @@ import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 const CHBCitizenDetails
  = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
   const { pathname: url } = useLocation();
-
   let index =window.location.href.charAt(window.location.href.length - 1);
   
   let validation = {};
@@ -82,7 +81,7 @@ const CHBCitizenDetails
       ownerStep = { ...owner, applicantName,  mobileNumber,alternateNumber,emailId };
       onSelect(config.key, ownerStep, false,index);
     }
-    console.log(ownerStep);
+
   };
 
   const onSkip = () => onSelect();
@@ -123,10 +122,10 @@ const CHBCitizenDetails
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
-            {/* <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} /> */}
+            <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />
           </div>
         </CardSubHeader>
-        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails} SlotSearchData={value}/>
       </Card>
     <FormStep
       config={config}

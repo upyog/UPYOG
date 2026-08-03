@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
-import { RatingCard, CardLabelError } from "@upyog/digit-ui-react-components";
-import { useParams, Redirect, useHistory } from "react-router-dom";
+import { RatingCard, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
+import { useParams,  Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { updateComplaints } from "../../../redux/actions/index";
 
@@ -9,10 +9,10 @@ const SelectRating = ({ parentRoute }) => {
   const { t } = useTranslation();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   let tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || Digit.ULBService.getCurrentTenantId();
-  const complaintDetails = Digit.Hooks.pgr.useComplaintDetails({ tenantId: tenantId, id: id }).complaintDetails;
+  const complaintDetails = Digit.Hooks.pgr.useComplaintDetails({ tenantId: tenantId, id: id }).data;
   const updateComplaint = useCallback((complaintDetails) => dispatch(updateComplaints(complaintDetails)), [dispatch]);
   const [submitError, setError] = useState(false)
   
@@ -26,7 +26,7 @@ const SelectRating = ({ parentRoute }) => {
         verificationDocuments: [],
       };
       updateComplaint({ service: complaintDetails.service, workflow: complaintDetails.workflow });
-      history.push(`${parentRoute}/response`);
+      navigate(`${parentRoute}/response`);
     }
     else{
       setError(true)

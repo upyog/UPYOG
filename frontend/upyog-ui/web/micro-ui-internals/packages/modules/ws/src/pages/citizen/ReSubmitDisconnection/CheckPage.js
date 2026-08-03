@@ -1,18 +1,18 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader, Loader
-  } from "@upyog/digit-ui-react-components";
+  } from "@nudmcdgnpm/digit-ui-react-components";
   import React, { useState } from "react";
   import { useTranslation } from "react-i18next";
-  import { useHistory, useRouteMatch, Link } from "react-router-dom";
+  import { Link,  } from "react-router-dom";
   import DisconnectTimeline from "../../../components/DisconnectTimeline";
   import WSDocument from "../../../pageComponents/WSDocument";
 import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDisconnection,  } from "../../../utils";
   
   const CheckPage = () => {
     const { t } = useTranslation();
-    const history = useHistory();
-    const match = useRouteMatch();
+    const navigate = Digit.Hooks.useCustomNavigate();
+    const match = Digit.Hooks.useModuleBasePath();
     const value = Digit.SessionStorage.get("WS_DISCONNECTION");
     const [documents, setDocuments] = useState( value.WSDisconnectionForm.documents || []);
     let routeLink = `/upyog-ui/citizen/ws/resubmit-disconnect-application`;
@@ -55,7 +55,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDiscon
             },
             onSuccess: async (data, variables) => {
                 Digit.SessionStorage.set("WS_DISCONNECTION", { ...value?.applicationData, ...value?.WSDisconnectionForm , DisconnectionResponse: data?.WaterConnection?.[0]});
-                history.push(`/upyog-ui/citizen/ws/disconnect-acknowledge?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);
+                navigate(`/upyog-ui/citizen/ws/disconnect-acknowledge?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);
             },
           });
         }
@@ -71,7 +71,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDiscon
             },
             onSuccess: async (data, variables) => {
                 Digit.SessionStorage.set("WS_DISCONNECTION", {...value?.applicationData, ...value?.WSDisconnectionForm , DisconnectionResponse: data?.SewerageConnections?.[0]});
-                history.push(`/upyog-ui/citizen/ws/disconnect-acknowledge?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);
+                navigate(`/upyog-ui/citizen/ws/disconnect-acknowledge?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);
             },
           });
         }
@@ -81,53 +81,46 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDiscon
   if(isEnableLoader) {
     return <Loader/>
   }
-
-  return(
-    <React.Fragment>
-    <Header styles={{fontSize:"32px"}}>{t("WS_COMMON_SUMMARY")}</Header>
+  return <React.Fragment>
+    <Header styles={{
+      fontSize: "32px"
+    }}>{t("WS_COMMON_SUMMARY")}</Header>
     <DisconnectTimeline currentStep={3} />
   
-    <Card style={{paddingRight:"16px"}}>
-      <div style={{display: "inline"}}>
-      <CardHeader styles={{fontSize:"28px"}}>{t("WS_DISCONNECTION_APPLICATION_DETAILS")}</CardHeader>
-      <LinkButton
-        label={<EditIcon style={{ marginTop: "-20px", float: "right", position: "relative", bottom: "32px" }} />}
-        style={{ width: "100px", display:"inline" }}
-        onClick={() => routeTo(`${routeLink}/application-form`)}
-      />
+    <Card className="ws-auto-179">
+      <div className="ws-auto-180">
+      <CardHeader styles={{
+          fontSize: "28px"
+        }}>{t("WS_DISCONNECTION_APPLICATION_DETAILS")}</CardHeader>
+      <LinkButton label={<EditIcon className="ws-auto-182" />} onClick={() => routeTo(`${routeLink}/application-form`)} className="ws-auto-181" />
       </div>
       <StatusTable>
-        <Row className="border-none" label={t("WS_DISCONNECTION_CONSUMER_NUMBER")} text={value.connectionNo || value?.applicationData?.connectionNo}/>
-        <Row className="border-none" label={t("WS_DISCONNECTION_TYPE")} text={t(value.WSDisconnectionForm.type.value.i18nKey)}/>
-        <Row className="border-none" label={t("WS_DISCONNECTION_PROPOSED_DATE")} text={convertEpochToDate(convertDateToEpoch(value.WSDisconnectionForm.date))}/>
-        <Row className="border-none" label={t("WS_DISCONNECTION_REASON")} text={value.WSDisconnectionForm.reason.value}/>         
+        <Row className="border-none" label={t("WS_DISCONNECTION_CONSUMER_NUMBER")} text={value.connectionNo || value?.applicationData?.connectionNo} />
+        <Row className="border-none" label={t("WS_DISCONNECTION_TYPE")} text={t(value.WSDisconnectionForm.type.value.i18nKey)} />
+        <Row className="border-none" label={t("WS_DISCONNECTION_PROPOSED_DATE")} text={convertEpochToDate(convertDateToEpoch(value.WSDisconnectionForm.date))} />
+        <Row className="border-none" label={t("WS_DISCONNECTION_REASON")} text={value.WSDisconnectionForm.reason.value} />         
       </StatusTable>
     </Card>
  
-    <Card style={{paddingRight:"16px"}}>
-      <div style={{display: "inline"}}>
-        <CardHeader styles={{fontSize:"28px"}}>{t("WS_COMMON_DOCUMENT_DETAILS")}</CardHeader>
-          <LinkButton
-            label={<EditIcon style={{ marginTop: "-20px", float: "right", position: "relative", bottom: "32px" }} />}
-            style={{ width: "100px", display: "inline" }}
-            onClick={() => routeTo(`${routeLink}/documents-upload`)}
-          />
+    <Card className="ws-auto-183">
+      <div className="ws-auto-184">
+        <CardHeader styles={{
+          fontSize: "28px"
+        }}>{t("WS_COMMON_DOCUMENT_DETAILS")}</CardHeader>
+          <LinkButton label={<EditIcon className="ws-auto-186" />} onClick={() => routeTo(`${routeLink}/documents-upload`)} className="ws-auto-185" />
           </div>
-        {documents && documents?.map((doc, index) => (
-          <div key={`doc-${index}`}>
-         {<div><CardSectionHeader>{t(doc?.documentType?.split('.').slice(0,2).join('_'))}</CardSectionHeader>
+        {documents && documents?.map((doc, index) => <div key={`doc-${index}`}>
+         {<div><CardSectionHeader>{t(doc?.documentType?.split('.').slice(0, 2).join('_'))}</CardSectionHeader>
           <StatusTable>
-          {
-           <WSDocument value={{documents: value.WSDisconnectionForm}} Code={doc?.documentType} index={index} showFileName={true}/> }
-          {documents?.length != index+ 1 ? <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/> : null}
+          {<WSDocument value={{
+              documents: value.WSDisconnectionForm
+            }} Code={doc?.documentType} index={index} showFileName={true} />}
+          {documents?.length != index + 1 ? <hr className="ws-auto-187" /> : null}
           </StatusTable>
           </div>}
-          </div>
-        ))}
+          </div>)}
         <SubmitBar label={t("CS_COMMON_SUBMIT")} onSubmit={() => onSubmit(value?.WSDisconnectionForm)} />
       </Card>
-    </React.Fragment>
-    )
-  }
-  export default CheckPage;
-  
+    </React.Fragment>;
+};
+export default CheckPage;

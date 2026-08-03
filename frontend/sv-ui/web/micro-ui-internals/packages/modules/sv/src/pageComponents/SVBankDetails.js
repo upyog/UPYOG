@@ -1,5 +1,4 @@
 /**
- * @author - Shivank Shukla 
  * The SVBankDetails component is a form step that collects and validates user bank account details.
 
     Key Features:
@@ -21,7 +20,7 @@
  */
 
 import React, { useEffect, useState, useCallback } from "react";
-import { FormStep, TextInput, CardLabel, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import Timeline from "../components/Timeline";
 
 const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previousData }) => {
@@ -312,8 +311,6 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       workflow: {
         action: "APPLY",
         comments: "",
-        businessService: "street-vending",
-        moduleName: "sv-services",
         businessService: "street-vending",
         moduleName: "sv-services",
         varificationDocuments: [

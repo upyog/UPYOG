@@ -1,9 +1,9 @@
 import {
   BackButton, CardSubHeader, CardText, FormComposer, Toast
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
 import SelectOtp from "../../citizen/Login/SelectOtp";
@@ -11,7 +11,7 @@ import SelectOtp from "../../citizen/Login/SelectOtp";
 const ChangePasswordComponent = ({ config: propsConfig, t }) => {
   const [user, setUser] = useState(null);
   const { mobile_number: mobileNumber, tenantId } = Digit.Hooks.useQueryParams();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [otp, setOtp] = useState("");
   const [isOtpValid, setIsOtpValid] = useState(true);
   const [showToast, setShowToast] = useState(null);
@@ -26,7 +26,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
     }
     Digit.UserService.setUser(user);
     const redirectPath = location.state?.from || "/upyog-ui/employee";
-    history.replace(redirectPath);
+    navigate(redirectPath, { replace: true });
   }, [user]);
 
   const closeToast = () => {
@@ -73,7 +73,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
   };
 
   const navigateToLogin = () => {
-    history.replace("/upyog-ui/employee/user/login");
+    navigate("/upyog-ui/employee/user/login", { replace: true });
   };
 
   const [username, password, confirmPassword] = propsConfig.inputs;

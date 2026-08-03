@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "../../common/queryClientTemplate";
 
 const getOwnerForPayments = (propertyData,data) => {
   let newPayments = [];
@@ -16,12 +17,10 @@ const useMyPropertyPayments = ({ tenantId, filters, searchedFrom="" }, config = 
   const paymentargs = tenantId ? { tenantId, filters } : { filters };
 
 
-  const { isLoading, error, data } = useQuery(["paymentpropertySearchList", tenantId, filters], () => Digit.PTService.paymentsearch(paymentargs), {
-    ...config,
-    });
-  let updatedData = getOwnerForPayments(config?.propertyData,data);
+  const { isLoading, error, data } = queryTemplate({ queryKey: ["paymentpropertySearchList", tenantId, filters], queryFn: () => Digit.PTService.paymentsearch(paymentargs), config });
+  const updatedData = getOwnerForPayments(config?.propertyData, data);
 
-return { isLoading, error, data, revalidate: () => client.invalidateQueries(["paymentpropertySearchList", tenantId, filters]) };
+return { isLoading, error, data, revalidate: () => client.invalidateQueries({ queryKey: ["paymentpropertySearchList", tenantId, filters] }) };
 
 };
 

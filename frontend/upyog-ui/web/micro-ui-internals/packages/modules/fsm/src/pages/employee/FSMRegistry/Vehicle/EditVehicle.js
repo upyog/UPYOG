@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Loader, Toast, Header, InfoIcon } from "@upyog/digit-ui-react-components";
-import { useHistory, useParams } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { FormComposer, Loader, Toast, Header, InfoIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { useParams,  } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import VehicleConfig from "../../configs/VehicleConfig";
 
 const EditVehicle = ({ parentUrl, heading }) => {
@@ -70,7 +70,7 @@ const EditVehicle = ({ parentUrl, heading }) => {
   }, [vehicleData]);
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const Config = VehicleConfig(t, true);
 
@@ -143,7 +143,7 @@ const EditVehicle = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("DSO_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push(`/upyog-ui/employee/fsm/registry/vehicle-details/${dsoId}`);
+          navigate(`/upyog-ui/employee/fsm/registry/vehicle-details/${dsoId}`);
         }, 5000);
       },
     });

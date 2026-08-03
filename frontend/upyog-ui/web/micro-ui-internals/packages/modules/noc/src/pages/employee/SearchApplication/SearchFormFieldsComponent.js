@@ -1,5 +1,9 @@
+/**
+ * Renders form fields for searching NOC applications.
+ * Includes inputs for Application No, Source Ref ID, NOC Type, Mobile Number (with validation), NOC No, and clear/submit actions.
+ */
 import React, { Fragment } from "react";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber, CardHeader } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { businessServiceList } from "../../../utils";
@@ -27,19 +31,19 @@ const SearchFormFieldsComponent = (props) => {
     <>
       <SearchField>
         <label>{t("NOC_APP_NO_LABEL")}</label>
-        <TextInput name="applicationNo" inputRef={register({})} />
+        <TextInput name="applicationNo" {...register("applicationNo")} />
       </SearchField>
       <SearchField>
         <label>{t("NOC_SOURCE_MODULE_NUMBER")}</label>
-        <TextInput name="sourceRefId" inputRef={register({})} />
+        <TextInput name="sourceRefId" {...register("sourceRefId")} />
       </SearchField>
       <SearchField>
         <label>{t("NOC_TYPE_LABEL")}</label>
         <Controller
           control={control}
           name="nocType"
-          render={(props) => (
-            <Dropdown selected={nocTypeList?.length == 1 ? nocTypeList[0] : props.value} select={props.onChange} onBlur={props.onBlur} option={nocTypeList ? nocTypeList : []} optionKey="i18nKey" t={t} disable={nocTypeList?.length == 1 ? true : false}/>
+          render={({ field }) => (
+            <Dropdown selected={nocTypeList?.length == 1 ? nocTypeList[0] : field.value} select={field.onChange} onBlur={field.onBlur} option={nocTypeList ? nocTypeList : []} optionKey="i18nKey" t={t} disable={nocTypeList?.length == 1 ? true : false}/>
           )}
         />
       </SearchField>
@@ -47,7 +51,7 @@ const SearchFormFieldsComponent = (props) => {
         <label>{t("NOC_APP_MOBILE_NO_SEARCH_PARAM")}</label>
         <MobileNumber
           name="mobileNumber"
-          inputRef={register({
+          {...register("mobileNumber", {
             minLength: {
               value: 10,
               message: t("CORE_COMMON_MOBILE_ERROR"),
@@ -70,7 +74,7 @@ const SearchFormFieldsComponent = (props) => {
       </SearchField>
       <SearchField>
         <label>{t("NOC_NUMBER_LABEL")}</label>
-        <TextInput name="nocNo" inputRef={register({})} />
+        <TextInput name="nocNo" {...register("nocNo")} />
       </SearchField>
       {/* <SearchField></SearchField> */}
       <SearchField className="submit">

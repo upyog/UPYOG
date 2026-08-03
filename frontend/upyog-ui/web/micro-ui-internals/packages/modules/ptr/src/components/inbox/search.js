@@ -11,13 +11,14 @@ import {
   MobileNumber,
   Dropdown,
   Localities,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 
 const fieldComponents = {
   date: DatePicker,
   mobileNumber: MobileNumber,
+  dropdown: Dropdown
 //   Locality: (props) => (
 //     <Localities
 //       tenantId={Digit.ULBService.getCurrentTenantId()}
@@ -49,6 +50,18 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
     return isEmpty;
   };
 
+  const stateId = Digit.ULBService.getStateId();
+
+  const { data: Menu } = Digit.Hooks.useEnabledMDMS(stateId, "PetService", [{ name: "PetType" }], {
+    select: (data) => {
+      return data?.["PetService"]?.["PetType"]?.map((petone) => ({
+        i18nKey: `PTR_PET_${petone.code}`,
+        code: `${petone.code}`,
+        value: `${petone.name}`
+      }));
+    },
+  });
+
   const mobileView = innerWidth <= 640;
 
   // useEffect(() => {
@@ -73,11 +86,20 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   //   });
   // }, [form, formState, setError, clearErrors]);
 
+  
 
+  
   const onSubmitInput = (data) => {
     if (!data.mobileNumber) {
       delete data.mobileNumber;
     }
+
+    // Convert any dropdown object values to their code string
+    Object.keys(data).forEach((key) => {
+      if (data[key] && typeof data[key] === "object" && data[key].code) {
+        data[key] = data[key].code;
+      }
+    });
 
     data.delete = [];
 
@@ -128,18 +150,35 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display:"grid" }}>
+            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display: "grid" }}>
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
                   <div key={input.name} className="input-fields">
-                    {/* <span className={index === 0 ? "complaint-input" : "mobile-input"}> */}
                     <span className={"mobile-input"}>
                       <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
                       {!input.type ? (
                         <Controller
-                          render={(props) => {
-                            return <TextInput onChange={props.onChange} value={props.value} />;
+                          render={({ field }) => {
+                            return <TextInput onChange={field.onChange} value={field.value} />;
+                          }}
+                          name={input.name}
+                          control={control}
+                          defaultValue={""}
+                        />
+                      ) : input.type === "dropdown" ? (
+                        <Controller
+                          render={({ field }) => {
+                            return (
+                              <Dropdown
+                                selected={field.value}
+                                select={field.onChange}
+                                option={Menu || []}
+                                optionKey="i18nKey"
+                                t={t}
+                                placeholder={"Select"}
+                              />
+                            );
                           }}
                           name={input.name}
                           control={control}
@@ -147,9 +186,9 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         />
                       ) : (
                         <Controller
-                          render={(props) => {
+                          render={({ field }) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} />;
+                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} />;
                           }}
                           name={input.name}
                           control={control}
@@ -179,10 +218,9 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
-                    disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
+                    disabled={!!Object.keys(formState.errors).length}
                     submit
                   />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
                   {!isInboxPage && <div>{clearAll()}</div>}
                 </div>
               )}

@@ -30,8 +30,6 @@ public class PGRService {
 
     private WorkflowService workflowService;
 
-    private ServiceRequestValidator serviceRequestValidator;
-
     private ServiceRequestValidator validator;
 
     private Producer producer;
@@ -45,12 +43,11 @@ public class PGRService {
 
     @Autowired
     public PGRService(EnrichmentService enrichmentService, UserService userService, WorkflowService workflowService,
-                      ServiceRequestValidator serviceRequestValidator, ServiceRequestValidator validator, Producer producer,
+                      ServiceRequestValidator validator, Producer producer,
                       PGRConfiguration config, PGRRepository repository, MDMSUtils mdmsUtils) {
         this.enrichmentService = enrichmentService;
         this.userService = userService;
         this.workflowService = workflowService;
-        this.serviceRequestValidator = serviceRequestValidator;
         this.validator = validator;
         this.producer = producer;
         this.config = config;
@@ -98,7 +95,7 @@ public class PGRService {
         List<ServiceWrapper> serviceWrappers = repository.getServiceWrappers(criteria);
 
         if(CollectionUtils.isEmpty(serviceWrappers))
-            return new ArrayList<>();;
+            return new ArrayList<>();
 
         userService.enrichUsers(serviceWrappers,requestInfo,criteria.getTenantId());
         List<ServiceWrapper> enrichedServiceWrappers = workflowService.enrichWorkflow(requestInfo,serviceWrappers);
@@ -113,8 +110,8 @@ public class PGRService {
             }
         }
         List<ServiceWrapper> sortedServiceWrappers = new ArrayList<>();
-        for(Long createdTimeDesc : sortedWrappers.keySet()){
-            sortedServiceWrappers.addAll(sortedWrappers.get(createdTimeDesc));
+        for(Map.Entry<Long, List<ServiceWrapper>> entry : sortedWrappers.entrySet()){
+            sortedServiceWrappers.addAll(entry.getValue());
         }
         return sortedServiceWrappers;
     }
@@ -144,8 +141,7 @@ public class PGRService {
      */
     public Integer count(RequestInfo requestInfo, RequestSearchCriteria criteria){
         criteria.setIsPlainSearch(false);
-        Integer count = repository.getCount(criteria);
-        return count;
+        return repository.getCount(criteria);
     }
 
 
@@ -190,8 +186,8 @@ public class PGRService {
             }
         }
         List<ServiceWrapper> sortedServiceWrappers = new ArrayList<>();
-        for(Long createdTimeDesc : sortedWrappers.keySet()){
-            sortedServiceWrappers.addAll(sortedWrappers.get(createdTimeDesc));
+        for(Map.Entry<Long, List<ServiceWrapper>> entry : sortedWrappers.entrySet()){
+            sortedServiceWrappers.addAll(entry.getValue());
         }
         return sortedServiceWrappers;
     }
@@ -204,9 +200,7 @@ public class PGRService {
      */
 	public Map<String, Integer> getDynamicData(String tenantId) {
 		
-		Map<String,Integer> dynamicData = repository.fetchDynamicData(tenantId);
-
-		return dynamicData;
+		return repository.fetchDynamicData(tenantId);
 	}
 
     /**

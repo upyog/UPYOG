@@ -1,5 +1,5 @@
 import React from "react";
-import { LabelFieldPair, CardLabel, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 
 
 const DocumentName = ({ userType, t, setValue, onSelect, config, data, formData, register, errors, setError, clearErrors, formState, control }) => {

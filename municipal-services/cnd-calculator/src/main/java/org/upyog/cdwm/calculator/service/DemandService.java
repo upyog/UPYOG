@@ -7,14 +7,12 @@ import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.cdwm.calculator.config.CalculatorConfig;
 import org.upyog.cdwm.calculator.repository.DemandRepository;
 import org.upyog.cdwm.calculator.util.CalculationUtils;
 import org.upyog.cdwm.calculator.util.CalculatorConstants;
 import org.upyog.cdwm.calculator.web.models.CNDApplicationDetail;
-import org.upyog.cdwm.calculator.web.models.Calculation;
 import org.upyog.cdwm.calculator.web.models.CalulationCriteria;
 import org.upyog.cdwm.calculator.web.models.demand.Demand;
 import org.upyog.cdwm.calculator.web.models.demand.DemandDetail;
@@ -30,18 +28,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DemandService {
 
+	private final CalculationService calculationService;
 
-	@Autowired
-	private CalculationService calculationService;
+	private final DemandRepository demandRepository;
 
-	@Autowired
-	private DemandRepository demandRepository;
+	private final CNDService cndService;
 
-	@Autowired
-	private CNDService cndService;
-	
-	@Autowired
-	private CalculatorConfig config;
+	private final CalculatorConfig config;
+
+	public DemandService(CalculationService calculationService, DemandRepository demandRepository,
+			CNDService cndService, CalculatorConfig config) {
+		this.calculationService = calculationService;
+		this.demandRepository = demandRepository;
+		this.cndService = cndService;
+		this.config = config;
+	}
 
 	/**
      * Creates demand by fetching the ton price from MDMS.
@@ -56,36 +57,36 @@ public class DemandService {
 		if (criterias == null) {
 			throw new IllegalArgumentException("CND Request is Empty");
 		}
-	
-			List<Calculation> calculations = new LinkedList<>();
-			for (CalulationCriteria criteria : criterias) {
-				CNDApplicationDetail cndApplicationDetail = null;
-				if (criteria.getCndRequest().getApplicationNumber()!= null) {
-					cndApplicationDetail = cndService.getCNDApplication(requestInfo, criteria.getCndRequest().getTenantId(), criteria.getCndRequest().getApplicationNumber());
-					criteria.setCndRequest(cndApplicationDetail);
-				}		
-				
-		String consumerCode = cndApplicationDetail.getApplicationNumber();
-		BigDecimal amountPayable = calculationService.calculateFee(cndApplicationDetail, requestInfo);
-		log.info("Final amount payable after calculation : " + amountPayable);
-		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, cndApplicationDetail.getTenantId(), cndApplicationDetail);
-		Demand demand = buildDemand(cndApplicationDetail.getTenantId(), consumerCode, null, demandDetails, amountPayable, cndApplicationDetail);
-		log.info("Final demand generation object" + demand.toString());
-		return demandRepository.saveDemand(requestInfo, Collections.singletonList(demand));
-	}
-			return null;}
 
+		List<Demand> demands = new LinkedList<>();
+		for (CalulationCriteria criteria : criterias) {
+			CNDApplicationDetail cndApplicationDetail = null;
+			if (criteria.getCndRequest().getApplicationNumber() != null) {
+				cndApplicationDetail = cndService.getCNDApplication(requestInfo,
+						criteria.getCndRequest().getTenantId(), criteria.getCndRequest().getApplicationNumber());
+				criteria.setCndRequest(cndApplicationDetail);
+			}
+
+			String consumerCode = cndApplicationDetail.getApplicationNumber();
+			BigDecimal amountPayable = calculationService.calculateFee(cndApplicationDetail, requestInfo);
+			log.info("Final amount payable after calculation : " + amountPayable);
+			List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, cndApplicationDetail.getTenantId());
+			Demand demand = buildDemand(cndApplicationDetail.getTenantId(), consumerCode, null, demandDetails);
+			log.info("Final demand generation object" + demand.toString());
+			demands.addAll(demandRepository.saveDemand(requestInfo, Collections.singletonList(demand)));
+		}
+		return demands;
+	}
 
 	 /**
      * Builds demand details based on the calculated payable amount.
      * 
      * @param amountPayable The total payable amount for the demand.
      * @param tenantId      The tenant ID associated with the demand.
-     * @param cndApplicationDetail   The cndApplicationDetail for which the demand is being created.
      * @return A list of demand details.
      */
 	
-	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId, CNDApplicationDetail cndRequest) {
+	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId) {
 		return Collections.singletonList(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
 				.taxAmount(amountPayable).taxHeadMasterCode(CalculatorConstants.CND_CALCULATOR_TAX_MASTER_CODE)
 				.tenantId(tenantId).build());
@@ -98,13 +99,10 @@ public class DemandService {
      * @param consumerCode  The unique consumer code for the demand.
      * @param owner         The user who is responsible for the demand.
      * @param demandDetails The list of demand details.
-     * @param amountPayable The total amount payable for the demand.
-     * @param cndRequest    The associated CND request.
      * @return The constructed Demand object.
      */
 	
-	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails,
-			BigDecimal amountPayable, CNDApplicationDetail cndRequest) {
+	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails) {
 		return Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner).tenantId(tenantId)
 				.taxPeriodFrom(CalculationUtils.getCurrentTimestamp()).taxPeriodTo(CalculationUtils.getFinancialYearEnd())
 				.consumerType(config.getModuleName())

@@ -1,13 +1,13 @@
-import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { shouldHideBackButton } from "../../utils";
 import { useTranslation } from "react-i18next";
 
 const hideBackButtonConfig = [];
 
 const App = () => {
-  const { path, url, ...match } = useRouteMatch();
+  const { path, url, ...match } = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
   const PGRAICreate = Digit?.ComponentRegistryService?.getComponent("PGRAICreate");
   const PGRAIApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PGRAIMyApplications");
@@ -15,17 +15,15 @@ const App = () => {
 //  to show back button on top left of the page in order to go back to previous page
 //this has been added in order show my bookings page
   return (
-    <span className={"ads-citizen"}style={{width:"100%"}}>
-      <Switch>
-        <AppContainer>
-          {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
-         <PrivateRoute path={`${path}/fileGrievance`} component={PGRAICreate}/>
-         <PrivateRoute path={`${path}/myGrievance`} component={PGRAIApplicationDetails}></PrivateRoute>
-         <PrivateRoute path={`${path}/application/:acknowledgementIds/:tenantId`} component={PGRApplicationDetails}></PrivateRoute>
-
-
-        </AppContainer>
-      </Switch>
+    <span className={"ads-citizen"} style={{ width: "100%" }}>
+      <AppContainer>
+        {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
+        <Routes>
+          <Route path= "fileGrievance/*" element={<PrivateRoute><PGRAICreate /></PrivateRoute>} />
+          <Route path= "myGrievance/*" element={<PrivateRoute><PGRAIApplicationDetails /></PrivateRoute>} />
+          <Route path= "application/:acknowledgementIds/:tenantId" element={<PrivateRoute><PGRApplicationDetails /></PrivateRoute>} />
+        </Routes>
+      </AppContainer>
     </span>
   );
 };

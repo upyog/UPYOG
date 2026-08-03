@@ -6,9 +6,7 @@ import digit.models.coremodels.user.Role;
 import digit.models.coremodels.user.User;
 import digit.models.coremodels.user.enums.UserType;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
 import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.repository.ServiceRequestRepository;
 
@@ -19,17 +17,23 @@ import java.util.*;
 @Component
 public class UserUtil {
 
+	private static final String KEY_USER = "user";
+	private static final String KEY_CREATED_DATE = "createdDate";
+	private static final String KEY_LAST_MODIFIED_DATE = "lastModifiedDate";
+	private static final String KEY_DOB = "dob";
+	private static final String KEY_PWD_EXPIRY_DATE = "pwdExpiryDate";
+
 	private final ObjectMapper mapper;
 
 	private final ServiceRequestRepository serviceRequestRepository;
-	
-	@Autowired
-	private CNDConfiguration config;
 
-	@Autowired
-	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+	private final CNDConfiguration config;
+
+	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository,
+			CNDConfiguration config) {
 		this.mapper = mapper;
 		this.serviceRequestRepository = serviceRequestRepository;
+		this.config = config;
 	}
 
 	/**
@@ -47,10 +51,10 @@ public class UserUtil {
 		else if (uri.toString().contains(config.getUserV2CreateEndpoint()))
 			dobFormat = "dd/MM/yyyy";
 		try {
-			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> responseMap = (Map<String, Object>) serviceRequestRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap, dobFormat);
-			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
-			return userDetailResponse;
+			return mapper.convertValue(responseMap, UserDetailResponse.class);
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
 		}
@@ -59,21 +63,22 @@ public class UserUtil {
 	/**
 	 * Parses date formats to long for all users in responseMap
 	 * 
-	 * @param responeMap LinkedHashMap got from user api response
+	 * @param responeMap Map got from user api response
 	 */
 
-	public void parseResponse(LinkedHashMap responeMap, String dobFormat) {
-		List<LinkedHashMap> users = (List<LinkedHashMap>) responeMap.get("user");
+	public void parseResponse(Map<String, Object> responeMap, String dobFormat) {
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> users = (List<Map<String, Object>>) responeMap.get(KEY_USER);
 		String format1 = "dd-MM-yyyy HH:mm:ss";
 		if (users != null) {
 			users.forEach(map -> {
-				map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
-				if ((String) map.get("lastModifiedDate") != null)
-					map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
-				if ((String) map.get("dob") != null)
-					map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
-				if ((String) map.get("pwdExpiryDate") != null)
-					map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+				map.put(KEY_CREATED_DATE, dateTolong((String) map.get(KEY_CREATED_DATE), format1));
+				if ((String) map.get(KEY_LAST_MODIFIED_DATE) != null)
+					map.put(KEY_LAST_MODIFIED_DATE, dateTolong((String) map.get(KEY_LAST_MODIFIED_DATE), format1));
+				if ((String) map.get(KEY_DOB) != null)
+					map.put(KEY_DOB, dateTolong((String) map.get(KEY_DOB), dobFormat));
+				if ((String) map.get(KEY_PWD_EXPIRY_DATE) != null)
+					map.put(KEY_PWD_EXPIRY_DATE, dateTolong((String) map.get(KEY_PWD_EXPIRY_DATE), format1));
 			});
 		}
 	}
@@ -99,17 +104,15 @@ public class UserUtil {
 	/**
 	 * enriches the userInfo with statelevel tenantId and other fields
 	 * 
-	 * @param mobileNumber
 	 * @param tenantId
 	 * @param userInfo
 	 */
-	public void addUserDefaultFields(String mobileNumber, String tenantId, User userInfo) {
+	public void addUserDefaultFields(String tenantId, User userInfo) {
 		Role role = getCitizenRole(tenantId);
 		Set<Role> roleSet = new HashSet<>();
 		roleSet.add(role);
 		userInfo.setRoles(roleSet);
 		userInfo.setType(UserType.CITIZEN);
-		// userInfo.setUserName(mobileNumber);
 		userInfo.setTenantId(getStateLevelTenant(tenantId));
 		userInfo.setActive(true);
 	}

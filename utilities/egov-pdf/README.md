@@ -36,6 +36,17 @@ For any new pdf requirement one new endpoint with validations and logic for gett
 - TL renewal certificate
 - Consolidated receipt
 
+### Runtime Upgrade
+
+The service runtime has been upgraded from Node.js 14 to Node.js 22.
+
+Changes introduced:
+- Migrated base runtime to Node.js 22
+- Added dotenv-based environment loading
+- Updated package dependencies
+- Replaced callback-based Kafka producer flow with async/await based KafkaJS implementation
+
+
 #### Configurations
 
 **Steps/guidelines for adding support for new pdf:**
@@ -54,6 +65,18 @@ For any new pdf requirement one new endpoint with validations and logic for gett
 
 - Add access to endpoint in MDMS for suitable roles
 
+### Environment Configuration
+
+The service now supports environment variable loading using `dotenv`.
+
+Example:
+
+```env
+EGOV_HOST=https://niuatt.niua.in
+EGOV_PDF_HOST=http://localhost:8087
+EGOV_PAYMENTS_HOST=http://localhost:8090
+KAFKA_BROKER_HOST=localhost:9092
+
 ### API Details
 Currently below endpoints are in use for ‘CITIZEN' and 'EMPLOYEE’ roles
 
@@ -66,6 +89,13 @@ Currently below endpoints are in use for ‘CITIZEN' and 'EMPLOYEE’ roles
 |`/egov-pdf/download/TL/tlcertificate` | Tradelicense | `applicationNumber, tenantId` | yes |
 |`/egov-pdf/download/TL/tlreceipt` | Tradelicense | `applicationNumber, tenantId` | yes |
 |`/egov-pdf/download/PAYMENT/consolidatedreceipt` | Collection | `consumerCode, tenantId` | yes |
+
+## Build & Run
+
+### Install dependencies
+
+```bash
+yarn install
 
 ### Kafka Consumers
 

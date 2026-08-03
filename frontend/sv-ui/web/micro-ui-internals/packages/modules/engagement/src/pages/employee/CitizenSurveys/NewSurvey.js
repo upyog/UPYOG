@@ -1,7 +1,6 @@
-import { CloseSvg, FormComposer, Header, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { CloseSvg, FormComposer, Header, Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import CreateNewSurvey from "../../../components/Surveys/SurveyForms";
 
 export const answerTypeEnum = {
@@ -49,7 +48,7 @@ export const mapQuestions = (questions =[],initialData) =>{
 
 const NewSurveys = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
 
   const closeToast = () => {
@@ -127,7 +126,7 @@ const NewSurveys = () => {
         }
         else
         {
-          history.push("/sv-ui/employee/engagement/surveys/create-response", details)
+          navigate("/sv-ui/employee/engagement/surveys/create-response", details)
         }
       })
     }

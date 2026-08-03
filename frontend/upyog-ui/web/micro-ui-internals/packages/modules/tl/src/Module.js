@@ -1,7 +1,6 @@
-import { Header, CitizenHomeCard, CaseIcon, HomeLink } from "@upyog/digit-ui-react-components";
+import { Header, CitizenHomeCard, CaseIcon, HomeLink } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch } from "react-router-dom";
 import TradeLicense from "../src/pageComponents/TradeLicense";
 import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
 import TLSelectAddress from "./pageComponents/TLSelectAddress";
@@ -59,12 +58,13 @@ import RenewTrade from "./pages/citizen/Renewal/renewTrade";
 import SearchTradeComponent from "./pages/citizen/SearchTrade";
 import SelectTradeUnitsInitial from "./pageComponents/SelectTradeUnitsInitial";
 import TLTradeUnitsEmployeeInitial from "./pageComponents/TLTradeUnitsEmployeeInitial";
-import CommonRedirect from "./pageComponents/CommonRedirect"
+// import CommonRedirect from "./pageComponents/CommonRedirect"
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
 
 export const TLModule = ({ stateCode, userType, tenants }) => {
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
 
   const moduleCode = "TL";
   const language = Digit.StoreData.getCurrentLanguage();
@@ -88,15 +88,15 @@ export const TLLinks = ({ matchPath, userType }) => {
 
   const links = [
     {
-      link: `${matchPath}/tradelicence/new-application`,
+      link: `/tradelicence/new-application`,
       i18nKey: t("TL_CREATE_TRADE"),
     },
     {
-      link: `${matchPath}/tradelicence/renewal-list`,
+      link: `/tradelicence/renewal-list`,
       i18nKey: t("TL_RENEWAL_HEADER"),
     },
     {
-      link: `${matchPath}/tradelicence/my-application`,
+      link: `/tradelicence/my-application`,
       i18nKey: t("TL_MY_APPLICATIONS_HEADER"),
     },
   ];
@@ -162,7 +162,9 @@ const componentsToRegister = {
   SelectOtherTradeDetails,
   SelectTradeUnitsInitial,
   TLTradeUnitsEmployeeInitial,
-  CommonRedirect
+  // CommonRedirect,
+  EnhancedReport,
+  ReportSearchApplication
 };
 
 export const initTLComponents = () => {

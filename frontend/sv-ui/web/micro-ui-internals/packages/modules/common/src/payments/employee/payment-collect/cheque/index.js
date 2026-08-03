@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextInput, SearchIconSvg, DatePicker, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, SearchIconSvg, DatePicker, CardLabelError } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
 export const useChequeDetails = (props, t) => {
   const config = [

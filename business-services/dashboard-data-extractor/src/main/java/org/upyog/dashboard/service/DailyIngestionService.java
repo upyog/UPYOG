@@ -1,0 +1,220 @@
+package org.upyog.dashboard.service;
+
+import org.upyog.dashboard.util.CommonUtils;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.upyog.dashboard.api.DashboardClient;
+import org.upyog.dashboard.common.constants.Module;
+import org.upyog.dashboard.config.SchemaMappingConfig;
+import org.upyog.dashboard.extractor.ModuleExtractor;
+import org.upyog.dashboard.model.DashboardRequest;
+import org.upyog.dashboard.model.DashboardData;
+import org.upyog.dashboard.model.IngestionResult;
+import org.upyog.dashboard.registry.ExtractorRegistry;
+import org.upyog.dashboard.repository.IngestionSummaryRepository;
+import org.upyog.dashboard.config.DashboardProperties;
+import jakarta.annotation.PostConstruct;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * Service class that manages daily metrics extraction and ingestion for all
+ * state-enabled modules.
+ * 
+ * <p>
+ * Reads state-enabled modules from {@link SchemaMappingConfig#getEnabledModules()}
+ * and routes data extraction dynamically to registered {@link ModuleExtractor}
+ * implementations via {@link ExtractorRegistry}.
+ *
+ * <p>
+ * Uses {@link IngestionSummaryRepository} to check the last successfully ingested date
+ * for each module and performs catch-up ingestion for all missing dates up to yesterday
+ * (excluding the last successful date, including yesterday).
+ */
+@Slf4j
+@Service
+public class DailyIngestionService {
+
+	@Autowired
+	private DashboardClient dashboardClient;
+
+	@Autowired
+	private ExtractorRegistry extractorRegistry;
+
+	@Autowired
+	private SchemaMappingConfig schemaMappingConfig;
+
+	@Autowired
+	private IngestionSummaryRepository summaryRepository;
+
+	@Autowired
+	private DashboardProperties dashboardProperties;
+
+	private String tenantId;
+	private String defaultStartDateStr;
+
+	@PostConstruct
+	public void init() {
+		this.tenantId = dashboardProperties.getTenantId();
+		this.defaultStartDateStr = dashboardProperties.getDefaultStartDateStr();
+	}
+
+	/**
+	 * Automatically checks the last successfully ingested date per enabled module
+	 * and executes catch-up ingestion for all missing dates from (last_successful_date + 1)
+	 * up to yesterday (inclusive).
+	 * 
+	 * @return List of IngestionResult records for all processed dates
+	 */
+	public List<IngestionResult> ingestDailyData() {
+		List<IngestionResult> allResults = new ArrayList<>();
+		List<Module> enabledModules = schemaMappingConfig.getEnabledModules();
+
+		if (enabledModules.isEmpty()) {
+			log.warn("DailyIngestionService | No modules enabled under extractor.enabled-modules in schema-mapping.yml");
+			return allResults;
+		}
+
+		LocalDate yesterday = LocalDate.now().minusDays(1);
+		LocalDate defaultStartDate = parseDefaultStartDate();
+
+		for (Module module : enabledModules) {
+			ModuleExtractor<?> extractor = extractorRegistry.get(module);
+			if (extractor == null) {
+				log.error("DailyIngestionService | Enabled module {} has no registered ModuleExtractor bean", module);
+				continue;
+			}
+
+			Optional<LocalDate> lastSuccessOpt = summaryRepository.findLastSuccessfulDate(tenantId, module.name());
+			LocalDate startDate = lastSuccessOpt.map(date -> date.plusDays(1)).orElse(defaultStartDate);
+
+			if (startDate.isAfter(yesterday)) {
+				log.info("DailyIngestionService | Module {} is already up-to-date up to yesterday ({}). Skipping.",
+						module, yesterday);
+				allResults.add(IngestionResult.builder()
+						.ingestionStatus("SKIPPED")
+						.date(yesterday.toString())
+						.moduleName(module.name())
+						.failureReason("Module " + module.name() + " is already up-to-date up to yesterday (" + yesterday + ")")
+						.ingestedAt(CommonUtils.getCurrentEpochMillis())
+						.build());
+				continue;
+			}
+
+			long daysToIngest = java.time.temporal.ChronoUnit.DAYS.between(startDate, yesterday) + 1;
+			int catchUpLimit = dashboardProperties.getDailyCatchUpLimitDays();
+			if (daysToIngest > catchUpLimit) {
+				log.error("DailyIngestionService | Catch-up gap of {} days exceeds max limit of {} days for module {}. Please use legacy migration.",
+						daysToIngest, catchUpLimit, module);
+				allResults.add(IngestionResult.builder()
+						.ingestionStatus("FAILURE")
+						.date(yesterday.toString())
+						.moduleName(module.name())
+						.failureReason("Catch-up gap of " + daysToIngest + " days exceeds max limit of " + catchUpLimit + " days. Use legacy migration endpoint.")
+						.ingestedAt(CommonUtils.getCurrentEpochMillis())
+						.build());
+				continue;
+			}
+
+			log.info("DailyIngestionService | Catching up module {} for date range: {} to {}",
+					module, startDate, yesterday);
+
+			LocalDate currentDate = startDate;
+			while (!currentDate.isAfter(yesterday)) {
+				summaryRepository.saveOrUpdateLastAttemptedDate(tenantId, module.name(), currentDate);
+				IngestionResult result = ingestModuleForDate(module, extractor, currentDate);
+				allResults.add(result);
+
+				if ("SUCCESS".equalsIgnoreCase(result.getIngestionStatus())) {
+					summaryRepository.saveOrUpdateLastSuccessfulDate(tenantId, module.name(), currentDate);
+					currentDate = currentDate.plusDays(1);
+				} else {
+					log.warn("DailyIngestionService | Ingestion failed for module {} on date {}. Halting catch-up for subsequent dates.",
+							module, currentDate);
+					break;
+				}
+			}
+		}
+
+		return allResults;
+	}
+
+	/**
+	 * Single-date ingestion trigger (used for manual test endpoints or specific date backfills).
+	 * 
+	 * @param targetDate the date to extract metrics for
+	 * @return List of IngestionResult payloads for each enabled module
+	 */
+	public List<IngestionResult> ingestDailyData(LocalDate targetDate) {
+		List<IngestionResult> results = new ArrayList<>();
+		List<Module> enabledModules = schemaMappingConfig.getEnabledModules();
+
+		if (enabledModules.isEmpty()) {
+			log.warn("DailyIngestionService | No modules enabled under extractor.enabled-modules in schema-mapping.yml");
+			return results;
+		}
+
+		for (Module module : enabledModules) {
+			ModuleExtractor<?> extractor = extractorRegistry.get(module);
+			if (extractor == null) {
+				log.error("DailyIngestionService | Enabled module {} has no registered ModuleExtractor bean", module);
+				continue;
+			}
+
+			summaryRepository.saveOrUpdateLastAttemptedDate(tenantId, module.name(), targetDate);
+			IngestionResult result = ingestModuleForDate(module, extractor, targetDate);
+			results.add(result);
+
+			if ("SUCCESS".equalsIgnoreCase(result.getIngestionStatus())) {
+				summaryRepository.saveOrUpdateLastSuccessfulDate(tenantId, module.name(), targetDate);
+			}
+		}
+
+		return results;
+	}
+
+	private IngestionResult ingestModuleForDate(Module module, ModuleExtractor<?> extractor, LocalDate date) {
+		try {
+			Object rawData = extractor.extractData(date);
+			if (rawData instanceof DashboardData) {
+				rawData = List.of((DashboardData) rawData);
+			}
+			DashboardRequest request = DashboardRequest.builder().module(module).rawData(rawData).build();
+
+			IngestionResult result = dashboardClient.execute(request);
+			if (result != null && result.getDate() == null) {
+				result.setDate(date.toString());
+			}
+			log.info("DailyIngestionService | Ingestion status for module {} on date {}: {}",
+					module, date, result.getIngestionStatus());
+			return result;
+		} catch (Exception exception) {
+			log.error("DailyIngestionService | Ingestion failed for module {} on date {}", module, date, exception);
+			return IngestionResult.builder()
+					.ingestionStatus("FAILURE")
+					.moduleName(module.name())
+					.failureReason(exception.getMessage())
+					.ingestedAt(CommonUtils.getCurrentEpochMillis())
+					.date(date.toString())
+					.build();
+		}
+	}
+
+	private LocalDate parseDefaultStartDate() {
+		try {
+			if (defaultStartDateStr != null && !defaultStartDateStr.isBlank()) {
+				return LocalDate.parse(defaultStartDateStr.trim());
+			}
+		} catch (Exception exception) {
+			log.warn("DailyIngestionService | Failed to parse defaultStartDateStr '{}'. Falling back to yesterday.", defaultStartDateStr, exception);
+		}
+		return LocalDate.now().minusDays(1);
+	}
+}

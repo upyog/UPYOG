@@ -20,11 +20,11 @@ import {
   FirenocIcon,
   LoginIcon,
   CHBIcon
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import LogoutDialog from "../../Dialog/LogoutDialog";
 import ChangeCity from "../../ChangeCity";
 import { APPLICATION_PATH } from "../../../pages/citizen/Home/EDCR/utils";
@@ -98,7 +98,7 @@ const IconsObject = {
 };
 const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const location = useLocation();
   const { pathname } = location;
   const { data: storeData, isFetched } = Digit.Hooks.useStore.getInitData();
@@ -147,16 +147,16 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push(`${APPLICATION_PATH}/citizen/login`);
+    navigate(`${APPLICATION_PATH}/citizen/login`);
   };
   // Function to redirect the user to the EDCR scrutiny page
   const redirectToScrutinyPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
+    navigate(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
   };
   const showProfilePage = () => {
-    history.push(`${APPLICATION_PATH}/citizen/user/profile`);
+    navigate(`${APPLICATION_PATH}/citizen/user/profile`);
   };
   //const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
@@ -234,7 +234,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       },
     ];
   }
-  Object.keys(linkData)
+  Object.keys(linkData || {})
     ?.sort((x, y) => y.localeCompare(x))
     ?.map((key) => {
       if (linkData[key][0]?.sidebar === "digit-ui-links") {

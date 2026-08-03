@@ -1,7 +1,7 @@
-import { Dropdown } from "@upyog/digit-ui-react-components";
+import { Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { CustomButton, Menu } from "@upyog/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { CustomButton, Menu } from "@nudmcdgnpm/digit-ui-react-components";
+
 
 const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   if (searcher == "") return str;
@@ -15,7 +15,7 @@ const ChangeCity = (prop) => {
   const [dropDownData, setDropDownData] = useState(null);
   const [selectCityData, setSelectCityData] = useState([]);
   const [selectedCity, setSelectedCity] = useState([]); //selectedCities?.[0]?.value
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const isDropdown = prop.dropdown || false;
   let selectedCities = [];
 
@@ -31,7 +31,7 @@ const ChangeCity = (prop) => {
     setDropDownData(city);
     if (window.location.href.includes("/upyog-ui/employee/")) {
       const redirectPath = location.state?.from || "/upyog-ui/employee";
-      history.replace(redirectPath);
+      navigate(redirectPath, { replace: true });
     }
     window.location.reload();
   };

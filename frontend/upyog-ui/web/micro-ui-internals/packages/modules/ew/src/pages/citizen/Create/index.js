@@ -1,9 +1,10 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Route, useLocation,  Routes, Navigate } from "react-router-dom";
 import { citizenConfig } from "../../../config/Create/citizenconfig";
+import { EWDataConvert } from "../../../utils";
 
 /**
  * Main component for E-Waste creation workflow.
@@ -16,12 +17,14 @@ import { citizenConfig } from "../../../config/Create/citizenconfig";
 const EWCreate = ({ parentRoute }) => {
 
   const queryClient = useQueryClient();
-  const match = useRouteMatch();
+  const match = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+  const mutation = Digit.Hooks.ew.useEWCreateAPI(tenantId);
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EWASTE_CREATE", {});
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
 
@@ -59,20 +62,21 @@ const EWCreate = ({ parentRoute }) => {
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
 
 
-    let redirectWithHistory = history.push;
+    let redirectWithHistory = (to, state) => navigate(to, state != null ? { state } : undefined);
     if (skipStep) {
-      redirectWithHistory = history.replace;
+      redirectWithHistory = (to, state) => navigate(to, state != null ? { replace: true, state } : { replace: true });
     }
     if (isAddMultiple) {
       nextStep = key;
     }
     if (nextStep === null) {
-      return redirectWithHistory(`${match.path}/check`);
+      return redirectWithHistory(`check`);
     }
     if (!isNaN(nextStep.split("/").pop())) {
-      nextPage = `${match.path}/${nextStep}`;
-    } else {
-      nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
+      nextPage = `${nextStep}`;
+    }
+    else {
+      nextPage = isMultiple && nextStep !== "map" ? `${nextStep}/${index}` : `${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
@@ -88,6 +92,34 @@ const EWCreate = ({ parentRoute }) => {
    * @param {number} index Current step index
    * @param {boolean} isAddMultiple Whether adding multiple items
    */
+
+  const handleSubmit = () => {
+    const formdata = EWDataConvert(params);
+    formdata.EwasteApplication[0].tenantId = tenantId;
+    mutation.mutate(formdata, {
+      onSuccess: (response) => {
+        clearParams();
+        queryClient.invalidateQueries("EWASTE_CREATE");
+        navigate("acknowledgement", {
+          state: {
+            data: response,
+            isSuccess: true,
+          },
+        });
+      },
+  
+      onError: (error) => {
+        navigate("acknowledgement", {
+          state: {
+            data: null,
+            isSuccess: false,
+            error:error
+          },
+        });
+      },
+    });
+  };
+
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "owners") {
       let owners = params.owners || [];
@@ -134,31 +166,26 @@ const EWCreate = ({ parentRoute }) => {
     queryClient.invalidateQueries("EWASTE_CREATE");
   }
 
-  const ewasteCreate = async () => {
-    history.push(`${match.path}/acknowledgement`);
-  };
   return (
-    <Switch>
+    <Routes>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
-          </Route>
+          <Route
+            path={`${routeObj.route}`}
+            key={index}
+            element={
+              <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+            }
+          />
         );
       })}
 
-      <Route path={`${match.path}/check`}>
-        <CheckPage onSubmit={ewasteCreate} value={params} />
-      </Route>
-      <Route path={`${match.path}/acknowledgement`}>
-        <EWASTEAcknowledgement data={params} onSuccess={onSuccess} />
-      </Route>
-      <Route>
-        <Redirect to={`${match.path}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path={`check`} element={<CheckPage onSubmit={handleSubmit} value={params} />} />
+      <Route path={`acknowledgement`} element={<EWASTEAcknowledgement/>} />
+      <Route path="*" element={<Navigate to={`${config.indexRoute}`} replace />} />
+    </Routes>
   );
 };
 

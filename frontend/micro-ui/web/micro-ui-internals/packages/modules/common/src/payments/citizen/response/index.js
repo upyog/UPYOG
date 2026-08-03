@@ -884,8 +884,6 @@ console.log("business_service",business_service)
           {t("PTR_FEE_RECEIPT")}
         </div>
       ) : null}
-<<<<<<< HEAD
-=======
       {business_service == "pet-services" ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={petCertificate}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
@@ -895,7 +893,6 @@ console.log("business_service",business_service)
           {t("PTR_CERTIFICATE")}
         </div>
       ) : null}
->>>>>>> master-LTS
       {window.location.href.includes("mcollect") ?
          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={printReciept}>
          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
@@ -905,8 +902,6 @@ console.log("business_service",business_service)
          {t("CS_COMMON_PRINT_RECEIPT")}
        </div>
       :null}
-<<<<<<< HEAD
-=======
       {business_service == "request-service.water_tanker" && (
         <div style={{ display: "flex", justifyContent: "flex-start", width: "100%" }}>
           <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginTop:"15px" }} onClick={printWTReceipt}>
@@ -940,7 +935,6 @@ console.log("business_service",business_service)
           </div>
         </div>
       )}
->>>>>>> master-LTS
       {bpaData?.[0]?.businessService === "BPA_OC" && (bpaData?.[0]?.status==="APPROVED" || bpaData?.[0]?.status==="PENDING_SANC_FEE_PAYMENT") ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={e => getPermitOccupancyOrderSearch("occupancy-certificate")}>
           <DownloadPrefixIcon />

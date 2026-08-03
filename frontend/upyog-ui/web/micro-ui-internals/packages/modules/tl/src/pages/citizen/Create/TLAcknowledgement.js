@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -62,61 +62,52 @@ const TLAcknowledgement = ({ data, onSuccess, onUpdateSuccess }) => {
     const onSuccessedit = () => {
       setMutationHappened(true);
     };
-    try {
-      let tenantId1 = data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId;
-      data.tenantId = tenantId1;
-      if (!resubmit) {
-        let formdata = !isEdit ? convertToTrade(data) : convertToEditTrade(data, fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter(y => y.module === "TL") : []);
-        formdata.Licenses[0].tenantId = formdata?.Licenses[0]?.tenantId || tenantId1;
-        if(!isEdit)
-        {
-          mutation.mutate(formdata, {
-            onSuccess,
-          })
-        }
-        else{
-          if((fydata["egf-master"] && fydata["egf-master"].FinancialYear.length > 0 && isDirectRenewal))
-          {
-            mutation2.mutate(formdata, {
-              onUpdateSuccess,
-            })
+    // Use a small delay to ensure fydata is loaded before firing
+    // For new application fydata is not needed, for edit/renewal we wait
+    const timer = setTimeout(() => {
+      try {
+        let tenantId1 = data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId;
+        data.tenantId = tenantId1;
+        if (!resubmit) {
+          let formdata = !isEdit
+            ? convertToTrade(data)
+            : convertToEditTrade(data, fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter(y => y.module === "TL") : []);
+          formdata.Licenses[0].tenantId = formdata?.Licenses[0]?.tenantId || tenantId1;
+          if (!isEdit) {
+            if (!mutation.isPending && !mutation.isSuccess && !mutationHappened) {
+              mutation.mutate(formdata, { onSuccess });
+            }
+          } else {
+            if (fydata["egf-master"] && fydata["egf-master"].FinancialYear.length > 0 && isDirectRenewal) {
+              if (!mutation2.isPending && !mutation2.isSuccess && !mutationHappened) {
+                mutation2.mutate(formdata, { onUpdateSuccess });
+              }
+            } else {
+              if (!mutation1.isPending && !mutation1.isSuccess && !mutationHappened) {
+                mutation1.mutate(formdata, { onUpdateSuccess });
+              }
+            }
           }
-          else
-          {
-            mutation1.mutate(formdata, {
-              onUpdateSuccess,
-            })
+        } else {
+          let formdata = convertToResubmitTrade(data);
+          formdata.Licenses[0].tenantId = formdata?.Licenses[0]?.tenantId || tenantId1;
+          if (!mutation2.isPending && !mutation2.isSuccess && !mutationHappened) {
+            mutation2.mutate(formdata, { onSuccess: onSuccessedit });
           }
         }
-
-        // !isEdit ? mutation.mutate(formdata, {
-        //   onSuccess,
-        // }) : (fydata["egf-master"] && fydata["egf-master"].FinancialYear.length > 0 && isDirectRenewal ? mutation2.mutate(formdata, {
-        //   onSuccess,
-        // }) :mutation1.mutate(formdata, {
-        //   onSuccess,
-        // }));
-      } else {
-        let formdata = convertToResubmitTrade(data);
-        formdata.Licenses[0].tenantId = formdata?.Licenses[0]?.tenantId || tenantId1;
-        !mutation2.isLoading && !mutation2.isSuccess &&!mutationHappened && mutation2.mutate(formdata, {
-          onSuccessedit,
-        })
-
-      }
-    } catch (err) {
-    }
-  }, [fydata]);
+      } catch (err) {}
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
-    if (mutation.isSuccess || (mutation1.isSuccess && isEdit && !isDirectRenewal)) {
+    if ((mutation.isSuccess || (mutation1.isSuccess && isEdit && !isDirectRenewal)) && !mutation2.isPending && !mutation2.isSuccess) {
       try {
         let Licenses = !isEdit ? convertToUpdateTrade(mutation.data, data) : convertToUpdateTrade(mutation1.data, data);
         mutation2.mutate(Licenses, {
-          onSuccess : onUpdateSuccess,
+          onSuccess: onUpdateSuccess,
         });
-      }
-      catch (er) {
+      } catch (er) {
       }
     }
   }, [mutation.isSuccess, mutation1.isSuccess]);
@@ -130,22 +121,23 @@ const TLAcknowledgement = ({ data, onSuccess, onUpdateSuccess }) => {
     data.then((ress) => Digit.Utils.pdf.generate(ress));
   };
 
-  let enableLoader = !resubmit ? (!isEdit ? mutation.isIdle || mutation.isLoading : isDirectRenewal ? false : mutation1.isIdle || mutation1.isLoading):false;
-  if(enableLoader)
-  {return (<Loader />)}
-  else if( ((mutation?.isSuccess == false && mutation?.isIdle == false) || (mutation1?.isSuccess == false && mutation1?.isIdle == false )) && !isDirectRenewal && !resubmit)
-  {
-    return (
-    <Card>
-      <BannerPicker t={t} data={mutation.data || mutation1.data} isSuccess={mutation.isSuccess || mutation1.isSuccess} isLoading={(mutation?.isLoading || mutation1?.isLoading)} />
-      {<CardText>{t("TL_FILE_TRADE_FAILED_RESPONSE")}</CardText>}
-      <Link to={`/upyog-ui/citizen`}>
-        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>
-    </Card>)
+  let enableLoader = !resubmit ? (!isEdit ? mutation.isIdle || mutation.isPending : isDirectRenewal ? false : mutation1.isIdle || mutation1.isPending) : false;
+  if (enableLoader) {
+    return <Loader />;
   }
-  else if(mutation2.isLoading || mutation2.isIdle ){
-    return (<Loader />)
+  if (((mutation?.isSuccess == false && mutation?.isIdle == false) || (mutation1?.isSuccess == false && mutation1?.isIdle == false)) && !isDirectRenewal && !resubmit) {
+    return (
+      <Card>
+        <BannerPicker t={t} data={mutation.data || mutation1.data} isSuccess={mutation.isSuccess || mutation1.isSuccess} isLoading={(mutation?.isPending || mutation1?.isPending)} />
+        {<CardText>{t("TL_FILE_TRADE_FAILED_RESPONSE")}</CardText>}
+        <Link to={`/upyog-ui/citizen`}>
+          <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      </Card>
+    );
+  }
+  if (mutation2.isPending || mutation2.isIdle) {
+    return <Loader />;
   }
   else
   return(

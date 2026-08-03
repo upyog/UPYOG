@@ -50,9 +50,11 @@ package org.egov.infra.filestore.service.impl;
 import org.apache.commons.io.FileUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,14 +71,14 @@ import java.util.Set;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LocalDiskFileStoreServiceTest {
     private static Path tempFilePath = Paths.get(System.getProperty("user.home") + File.separator + "testtmpr");
     private LocalDiskFileStoreService diskFileService;
 
-    @AfterClass
+    @AfterAll
     public static void afterTest() throws IOException {
         Files.deleteIfExists(tempFilePath);
         Path storePath = Paths.get(System.getProperty("user.home") + File.separator + "testfilestore");
@@ -117,7 +119,7 @@ public class LocalDiskFileStoreServiceTest {
         return newFile;
     }
 
-    @Before
+    @BeforeEach
     public void beforeTest() throws IOException {
         if (!Files.exists(tempFilePath))
             Files.createDirectories(tempFilePath);
@@ -181,10 +183,13 @@ public class LocalDiskFileStoreServiceTest {
         deleteTempFiles(newFile, map);
     }
 
-    @Test(expected = ApplicationRuntimeException.class)
-    public final void testFetchFailNonExisting() throws IOException {
-        final FileStoreMapper map = new FileStoreMapper(UUID.randomUUID().toString(), "fileName");
-        diskFileService.fetch(map, "testmoduleNo");
+    @Test
+    void testFetchFailNonExisting() {
+        FileStoreMapper map = new FileStoreMapper(UUID.randomUUID().toString(), "fileName");
+
+        assertThrows(ApplicationRuntimeException.class, () -> {
+            diskFileService.fetch(map, "testmoduleNo");
+        });
     }
 
     @Test

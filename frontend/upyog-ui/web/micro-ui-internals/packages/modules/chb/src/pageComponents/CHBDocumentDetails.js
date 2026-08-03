@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@nudmcdgnpm/digit-ui-react-components";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 import Timeline from "../components/CHBTimeline";
-// import { TimerValues } from "../components/TimerValues";
+import { TimerValues } from "../components/TimerValues";
 
 
 /**
@@ -107,10 +107,10 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
-            {/* <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue}  SlotSearchData={value?.Searchdata}/> */}
+            <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />
           </div>
         </CardSubHeader>
-        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails} SlotSearchData={value}/>
       </Card>
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>

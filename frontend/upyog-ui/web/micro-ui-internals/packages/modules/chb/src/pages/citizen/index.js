@@ -1,6 +1,6 @@
-import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { shouldHideBackButton } from "../../utils";
 import { useTranslation } from "react-i18next";
 
@@ -44,7 +44,7 @@ const hideBackButtonConfig = [
  * - An `AppContainer` component that wraps the content and conditionally displays the back button.
  */
 const App = () => {
-  const { path, url, ...match } = useRouteMatch();
+  const { path, url, ...match } = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
   
 
@@ -54,17 +54,17 @@ const App = () => {
   const CHBMapView = Digit?.ComponentRegistryService?.getComponent("CHBMapView");
  
   return (
-    <span className={"chb-citizen"}style={{width:"100%"}}>
-      <Switch>
-        <AppContainer>
-          {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
-          <PrivateRoute path={`${path}/bookHall`} component={CHBCreate} />
-          <PrivateRoute path={`${path}/myBookings`} component={CHBMyApplications}></PrivateRoute>
-          <PrivateRoute path={`${path}/application/:acknowledgementIds/:tenantId`} component={CHBApplicationDetails}></PrivateRoute>
-          <PrivateRoute path={`${path}/map`} component={CHBMapView}></PrivateRoute>
-          {/* <PrivateRoute path={`${path}/bookHall/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />  */}
-        </AppContainer>
-      </Switch>
+    <span className={"chb-citizen"} style={{ width: "100%" }}>
+      <AppContainer>
+        {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
+        <Routes>
+          <Route path= "bookHall/*" element={<PrivateRoute><CHBCreate /></PrivateRoute>} />
+          <Route path= "myBookings/*" element={<PrivateRoute><CHBMyApplications /></PrivateRoute>} />
+          <Route path= "application/:acknowledgementIds/:tenantId" element={<PrivateRoute><CHBApplicationDetails /></PrivateRoute>} />
+          <Route path= "map/*" element={<PrivateRoute><CHBMapView /></PrivateRoute>} />
+          {/* <Route path= "bookHall/search/*" element={<PrivateRoute><Search t={t} parentRoute={path} /></PrivateRoute>} /> */}
+        </Routes>
+      </AppContainer>
     </span>
   );
 };

@@ -1,7 +1,8 @@
 import React, { Fragment, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Menu, ActionBar, SubmitBar, Modal, CardText } from "@upyog/digit-ui-react-components";
+import { useQueryClient } from "@tanstack/react-query";
+import { Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Menu, ActionBar, SubmitBar, Modal, CardText } from "@nudmcdgnpm/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { format } from "date-fns";
 
@@ -24,35 +25,44 @@ const CloseBtn = (props) => {
   );
 };
 
+const formatDateSafe = (dateVal, formatStr = 'dd/MM/yyyy') => {
+  if (!dateVal) return "NA";
+  const num = Number(dateVal);
+  const date = isNaN(num) ? new Date(dateVal) : new Date(num);
+  return isNaN(date.getTime()) ? "NA" : format(date, formatStr);
+};
+
 const DocumentDetails = ({ t, data, documents, paymentDetails }) => {
   return (
     <Fragment>
-      {data?.map((document, index) => (
-        <Fragment>
-          <div style={{maxWidth: "940px", padding: "8px", borderRadius: "4px", border: "1px solid #D6D5D4", background: "#FAFAFA", marginBottom: "32px"}}>
-            <div style={{fontSize: "16px", fontWeight: 700}}>{t(`BPA_${document?.documentType}`)}</div>
-            <a target="_" href={documents[document.fileStoreId]?.split(",")[0]}>
-              <PDFSvg />
-            </a>
-            <span> {decodeURIComponent( documents[document.fileStoreId].split(",")[0].split("?")[0].split("/").pop().slice(13))} </span>
-          </div>
-        </Fragment>
-      ))}
-      {/* <div>
-        <CardSectionHeader>{`${t("BPA_FEE_DETAILS_LABEL")}`}</CardSectionHeader>
-        <StatusTable>
-          <Row className="border-none"  key={`${t(`BPAREG_FEES`)}:`} label={`${t(`BPAREG_FEES`)}:`} text={paymentDetails?.Payments?.[0]?.totalAmountPaid} />
-          <Row className="border-none"  key={`${t(`BPA_STATUS_LABEL`)}:`} label={`${t(`PAID`)}:`} text={paymentDetails?.Payments?.[0]?.totalAmountPaid ? (t("WF_BPA_PAID")) : "NA"} textStyle={paymentDetails?.Payments?.[0]?.totalAmountPaid ? {color: "green"}: {}} />
-        </StatusTable>
-      </div> */}
+      {data?.map((document, index) => {
+        const docPath = documents?.[document?.fileStoreId];
+        const docUrl = docPath?.split(",")?.[0];
+        const docName = docUrl ? decodeURIComponent(docUrl.split("?")?.[0]?.split("/")?.pop()?.slice(13)) : "";
+        return (
+          <Fragment key={index}>
+            <div style={{maxWidth: "940px", padding: "8px", borderRadius: "4px", border: "1px solid #D6D5D4", background: "#FAFAFA", marginBottom: "32px"}}>
+              <div style={{fontSize: "16px", fontWeight: 700}}>{t(`BPA_${document?.documentType}`)}</div>
+              {docUrl && (
+                <a target="_" href={docUrl}>
+                  <PDFSvg />
+                </a>
+              )}
+              {docName && <span> {docName} </span>}
+            </div>
+          </Fragment>
+        );
+      })}
     </Fragment>
   );
-}
+};
 
 const MessageDetails = () => {
   const { id } = useParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const queryClient = useQueryClient();
+  const updateEventMutation = Digit.Hooks.events.useUpdateEvent();
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -67,8 +77,8 @@ const MessageDetails = () => {
           { title: "EVENTS_ULB_LABEL", value: data?.tenantId },
           { title: "EVENTS_NAME_LABEL", value: data?.name },
           { title: "PUBLIC_BRDCST_TITLE_LABEL", value: data?.description },
-          { title: "EVENTS_FROM_DATE_LABEL", value: format(new Date(data?.eventDetails?.fromDate), 'dd/MM/yyyy') },
-          { title: "EVENTS_TO_DATE_LABEL", value: format(new Date(data?.eventDetails?.toDate), 'dd/MM/yyyy') },
+          { title: "EVENTS_FROM_DATE_LABEL", value: formatDateSafe(data?.eventDetails?.fromDate) },
+          { title: "EVENTS_TO_DATE_LABEL", value: formatDateSafe(data?.eventDetails?.toDate) },
           { title: "CS_COMMON_DOCUMENTS", belowComponent: () => <DocumentDetails t={t} data={data?.eventDetails?.documents} documents={data?.uploadedFilesData?.data} /> }
         ]
       }]
@@ -83,7 +93,7 @@ const MessageDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/upyog-ui/employee/engagement/messages/inbox/edit/${id}`)
+      navigate(`/upyog-ui/employee/engagement/messages/inbox/edit/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -92,17 +102,33 @@ const MessageDetails = () => {
   }
 
   const handleDelete = () => {
-    const finalData = (({ uploadedFilesData, ...ogData }) => ogData)(data?.applicationData)
+    const eventObj = data?.applicationData || data;
+    if (!eventObj || Object.keys(eventObj).length === 0) {
+      return;
+    }
+    const { uploadedFilesData, ...ogData } = eventObj;
     const details = {
       events: [
         {
-          ...finalData,
+          ...ogData,
           status: "CANCELLED",
         },
       ],
     };
-    history.push("/upyog-ui/employee/engagement/messages/response?delete=true", details);
+    updateEventMutation.mutate(details, {
+      onSuccess: (responseData) => {
+        queryClient.clear();
+        navigate("/upyog-ui/employee/engagement/messages/response?delete=true", { state: { isSuccess: true, data: responseData } });
+      },
+      onError: (error) => {
+        navigate("/upyog-ui/employee/engagement/messages/response?delete=true", { state: { isSuccess: false, error } });
+      }
+    });
   };
+
+  if (isLoading || updateEventMutation.isPending) {
+    return <Loader />;
+  }
 
   return (
     <Fragment>
@@ -111,8 +137,8 @@ const MessageDetails = () => {
       </div>
       <ApplicationDetailsTemplate
         applicationDetails={data}
-        isLoading={isLoading}
-        isDataLoading={isLoading}
+        isLoading={isLoading || updateEventMutation.isPending}
+        isDataLoading={isLoading || updateEventMutation.isPending}
         // workflowDetails={workflowDetails}
         // businessService={
         //   workflowDetails?.data?.applicationBusinessService

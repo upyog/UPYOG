@@ -1,6 +1,6 @@
-import React, {Fragment} from "react"
+import React, { Fragment } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
 
 const SearchFields = ({register, control, reset, tenantId, t, formState, setShowToast, previousPage }) => {
 
@@ -36,17 +36,17 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
     return <>
          <SearchField>
                     <label>{t("PT_APPLICATION_NO_LABEL")}</label>
-                    <TextInput name="acknowledgementIds" inputRef={register({})} />
+                    <TextInput name="acknowledgementIds" {...register("acknowledgementIds")} />
                 </SearchField>
                 <SearchField>
                     <label>{t("PT_SEARCHPROPERTY_TABEL_PID")}</label>
-                    <TextInput name="propertyIds" inputRef={register({})} />
+                    <TextInput name="propertyIds" {...register("propertyIds")} />
                 </SearchField>
                 <SearchField>
                 <label>{t("PT_OWNER_MOBILE_NO")}</label>
                 <MobileNumber
                     name="mobileNumber"
-                    inputRef={register({
+                {...register("mobileNumber", {
                     minLength: {
                         value: 10,
                         message: t("CORE_COMMON_MOBILE_ERROR"),
@@ -72,11 +72,11 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                     <Controller
                             control={control}
                             name="creationReason"
-                            render={(props) => (
+                            render={({ field }) => (
                                 <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
                                 option={applicationTypes}
                                 optionKey="i18nKey"
                                 t={t}
@@ -90,11 +90,11 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                     <Controller
                             control={control}
                             name="status"
-                            render={(props) => (
+                            render={({ field }) => (
                                 <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
                                 option={applicationStatuses}
                                 optionKey="i18nKey"
                                 t={t}
@@ -106,7 +106,7 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                 <SearchField>
                     <label>{t("PT_FROM_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                        render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
                         name="fromDate"
                         control={control}
                         />
@@ -114,32 +114,31 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                 <SearchField>
                     <label>{t("PT_TO_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                        render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
                         name="toDate"
                         control={control}
                         />
                 </SearchField>
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-                    <p style={{marginTop:"10px"}}
-                     onClick={() => {
-                        reset({ 
-                            acknowledgementIds: "", 
-                            fromDate: "", 
-                            toDate: "",
-                            propertyIds: "",
-                            mobileNumber:"",
-                            status: "",
-                            creationReason: "",
-                            offset: 0,
-                            limit: 10,
-                            sortBy: "commencementDate",
-                            sortOrder: "DESC"
-                        });
-                        setShowToast(null);
-                        previousPage();
-                    }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
+                    <p onClick={() => {
+        reset({
+          acknowledgementIds: "",
+          fromDate: "",
+          toDate: "",
+          propertyIds: "",
+          mobileNumber: "",
+          status: "",
+          creationReason: "",
+          offset: 0,
+          limit: 10,
+          sortBy: "commencementDate",
+          sortOrder: "DESC"
+        });
+        setShowToast(null);
+        previousPage();
+      }} className="pt-auto-11">{t(`ES_COMMON_CLEAR_ALL`)}</p>
                 </SearchField>
-    </>
-}
-export default SearchFields
+    </>;
+};
+export default SearchFields;

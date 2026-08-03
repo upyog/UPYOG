@@ -166,7 +166,7 @@ public class RestServiceAuthFilter implements Filter {
 		if (adminToken == null)
 			throw new AuthorizationException("SI token generation failed");
 		session.setAttribute(MS_USER_TOKEN, userToken);
-		CustomUserDetails user = this.microserviceUtils.getUserDetails(userToken, adminToken);
+		CustomUserDetails user = this.microserviceUtils.getUserDetails(userToken, adminToken, tenantId);
 		session.setAttribute(MS_TENANTID_KEY, user.getTenantId());
 		LOGGER.info("userToken inside getUserDetails:" + userToken);
 		UserSearchResponse response = this.microserviceUtils.getUserInfo(userToken, user.getTenantId(), user.getUuid());

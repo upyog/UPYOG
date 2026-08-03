@@ -67,6 +67,7 @@ import useSearchAll from "./fsm/useSearchAll";
 import useVehicleSearch from "./fsm/useVehicleSearch";
 import useVehicleUpdate from "./fsm/useVehicleUpdate";
 import useVehicleTripCreate from "./fsm/useVehicleTripCreate";
+import { useChallanGenerationRecieptSearch } from "./challanGeneration/challanGeneration";
 import useFSMInbox from "./fsm/useInbox";
 import useApplicationUpdate from "./fsm/useApplicationUpdate";
 import useWorkflowData from "./fsm/useWorkflowData";
@@ -214,6 +215,8 @@ import useUpdateSurvey from "./surveys/useSurveyUpdate";
 import useNOCDetails from "./noc/useNOCDetails";
 import useNOCInbox from "./noc/useInbox";
 import useNOCSearchApplication from "./noc/useSearchApplications";
+import useFireNOCSearch from "./noc/useFireNOCSearch";
+import useFireNOCAPI from "./noc/useFireNOCAPI";
 
 import WSSearchMdmsTypes from "./ws/WSSearchMdmsTypes";
 import usewsTenants from "./ws/useTenants";
@@ -298,14 +301,8 @@ import useEditUpdateAPI from "./asset/useEditUpdateAPI";
 import useMaintenanceAPI from "./asset/useMaintenanceAPI";
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
-import useSVDoc from "./sv/useSVDoc";
-import useSvCreateApi from "./sv/useSvCreateApi";
-import useTenantsSV from "./sv/useTenants";
 import useADSSlotSearch from "./ads/useADSSlotSearch";
 import useADSSearch from "./ads/useADSSearch";
-import useSVApplicationDetail from "./sv/useSVApplicationDetail";
-import useSvSearchApplication from "./sv/useSvSearchApplication";
-import useSVApplicationAction from "./sv/useSVApplicationAction";
 import useADSApplicationDetail from "./ads/useADSApplicationDetail";
 import useChbCreateAPI from "./chb/useChbCreateAPI";
 import useADSCreateAPI from "./ads/useADSCreateAPI";
@@ -330,6 +327,16 @@ import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useADSDemandEstimation from "./ads/useADSDemandEstimation";
 import useCMSearch from "./cm/useCMSearch";
 
+import useChallanGenerationMDMS from "./challanGeneration/useChallanGenerationMDMS";
+import useChallanGenerationSearch from "./challanGeneration/useChallanGenerationSearch";
+import useChallanGenerationSearchBill from "./challanGeneration/useChallanGenerationSearchBill";
+import useChallanGenerationTenants from "./challanGeneration/useTenants";
+import useChallanGenerationCount from "./challanGeneration/useChallanGenerationCount";
+import useChallanGenerationCategory from "./challanGeneration/useChallanGenerationCategory";
+import useChallanGenerationCategoryTypes from "./challanGeneration/useChallanGenerationCategoryTypes";
+import useChallanGenerationTaxHeads from "./challanGeneration/useChallanGenerationTaxHeads";
+import useChallanGenerationFormConfig from "./challanGeneration/useChallanGenerationFormConfig";
+import useChallanInbox from "./challanGeneration/useInbox";
 
 import useTankerCreateAPI from "./wt/useTankerCreateAPI";
 import useTankerSearchAPI from "./wt/useTankerSearchAPI";
@@ -354,6 +361,23 @@ import useEnabledMDMS from "./useEnabledMDMS";
 import useSelectedMDMS from "./useSelectedMDMS";
 import useRouteSubscription from "./useRouteSubscription";
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
+import useESTCreateAPI from "./estate/useESTCreateAPI";
+import useESTAssetSearch from "./estate/useESTAssetSearch";
+import useESTApplicationSearch from "./estate/useESTApplicationSearch";
+import useESTAssetsAllotment from "./estate/useESTAssetsAllotment";
+import { useNDCSearchApplication, useNDCSearchApplicationEmployee } from "./ndc/useNDCSearchApplication";
+import useNDCDocumentSearch from "./ndc/useNDCDocumentSearch";
+import useNDCInbox from "./ndc/useInbox";
+import useNDCDoc from "./ndc/useNDCDoc";
+
+import useModuleBasePath from "./useModuleBasePath";
+import useCustomNavigate from "./useCustomNavigate";
+
+import useGCCreateAPI from "./gc/useGCCreateAPI";
+import useGCSearch from "./gc/useGCSearch";
+import useTenantsGC from "./gc/useTenants";
+import useGCDocumentSearch from "./gc/useGCDocumentSearch";
+import useGCApplicationAction from "./gc/useGCApplicationAction";
 
 const pgr = {
   useComplaintDetails,
@@ -373,7 +397,7 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
-const pgrAi={
+const pgrAi = {
   useCreate,
   useSearchPGRAI,
   useFilterEmployee,
@@ -405,7 +429,6 @@ const fsm = {
   usePaymentHistory,
   useVendorUpdate,
   useVehicleDetails,
-  useVehicleCreate,
   useVendorCreate,
   useVehicleCreate,
   useUpdateVehicle,
@@ -433,7 +456,7 @@ const ptr = {
   useMyPetPayments,
   useTenants: useTenantsPTR,
   usePetColors
- 
+
 };
 
 const pt = {
@@ -566,12 +589,12 @@ const survey = {
   useSubmitResponse: useSurveySubmitResponse,
   useShowResults: useSurveyShowResults,
   useSurveyInbox,
-  useServeyCreateDef:useServeyCreateDef,
-  useCfdefinitionsearch:useCfdefinitionsearch,
-  useSubmitSurveyResponse:useSubmitSurveyResponse,
-  useSelectedSurveySearch:useSelectedSurveySearch,
-  useCfdefinitionsearchresult:useCfdefinitionsearchresult,
-  useUpdateSurvey:useUpdateSurvey,
+  useServeyCreateDef: useServeyCreateDef,
+  useCfdefinitionsearch: useCfdefinitionsearch,
+  useSubmitSurveyResponse: useSubmitSurveyResponse,
+  useSelectedSurveySearch: useSelectedSurveySearch,
+  useCfdefinitionsearchresult: useCfdefinitionsearchresult,
+  useUpdateSurvey: useUpdateSurvey,
 };
 
 const noc = {
@@ -579,6 +602,22 @@ const noc = {
   useNOCApplicationActions,
   useInbox: useNOCInbox,
   useNOCSearchApplication,
+  useFireNOCSearch,
+  useFireNOCAPI,
+};
+
+const challangeneration = {
+  useChallanGenerationRecieptSearch,
+  useChallanGenerationMDMS,
+  useChallanGenerationSearch,
+  useChallanGenerationSearchBill,
+  useChallanGenerationTenants,
+  useChallanGenerationCount,
+  useChallanGenerationCategory,
+  useChallanGenerationCategoryTypes,
+  useChallanGenerationTaxHeads,
+  useChallanGenerationFormConfig,
+  useInbox: useChallanInbox,
 };
 
 const ws = {
@@ -643,14 +682,7 @@ const asset = {
   useEditUpdateAPI
 };
 
-const sv = {
-  useSVDoc,
-  useSvCreateApi,
-  useTenants:useTenantsSV,
-  useSvSearchApplication,
-  useSVApplicationDetail,
-  useSVApplicationAction
-}
+
 
 const ew = {
   useEWCreateAPI,
@@ -660,35 +692,35 @@ const ew = {
   useEWApplicationAction,
 };
 
-const chb={
+const chb = {
   useChbCreateAPI,
   useChbDocumentsMDMS,
   useChbDocumentSearch,
   useChbApplicationDetail,
   useChbSearch,
-  useTenants:useTenantsCHB,
+  useTenants: useTenantsCHB,
   useChbApplicationAction,
   useServiceSearchCHB,
   useChbSlotSearch,
   useDemandEstimation
 }
 // for using tenant for city and document and search 
-const ads={
-  useTenants:useTenantsADS,
+const ads = {
+  useTenants: useTenantsADS,
   useADSDocumentsMDMS,
   useADSDocumentSearch,
   useADSCreateAPI,
   useADSSlotSearch,
   useADSSearch,
   useADSDemandEstimation,
-  useADSApplicationDetail  
+  useADSApplicationDetail
 }
 
 const cm = {
   useCMSearch
 }
 
-const wt={
+const wt = {
   useTankerCreateAPI,
   useTankerSearchAPI,
   useWTApplicationAction,
@@ -704,12 +736,34 @@ const wt={
 };
 
 const vendor = {
-  useTenants:useTenantsVENDOR,
+  useTenants: useTenantsVENDOR,
   useEmpvendorCreate,
   useEmpvendorSearch,
   useVendorAdditionaldetailsAPI,
   useEmpvendorCommonSearch,
 };
+
+const estate = {
+  useESTCreateAPI,
+  useESTAssetSearch,
+  useESTApplicationSearch,
+  useESTAssetsAllotment,
+};
+const ndc = {
+  useInbox: useNDCInbox,
+  useSearchApplication: useNDCSearchApplication,
+  useSearchEmployeeApplication: useNDCSearchApplicationEmployee,
+  useNDCDocumentSearch,
+  useNDCDoc
+};
+
+const gc = {
+  useGCCreateAPI,
+  useGCSearch,
+  useTenants: useTenantsGC,
+  useGCDocumentSearch,
+  useGCApplicationAction,
+}
 
 const Hooks = {
   useSessionStorage,
@@ -743,7 +797,6 @@ const Hooks = {
   useStore,
   useDocumentSearch,
   useTenants,
-  useInbox: useTLInbox,
   useFeedBackSearch,
   useAccessControl,
   useBillSearch,
@@ -780,19 +833,25 @@ const Hooks = {
   useAudit,
   createTokenAPI,
   asset,
-  sv,
   chb,
   ads,
   ew,
   cm,
   wt,
   vendor,
+  gc,
+  estate,
   useEnabledMDMS,
   useSelectedMDMS,
   useRouteSubscription,
   useCustomBackNavigation,
+  challangeneration,
   pgrAi,
-  useInbox
+  useInbox,
+  ndc,
+  useCustomNavigate,
+  useModuleBasePath
 };
+
 
 export default Hooks;

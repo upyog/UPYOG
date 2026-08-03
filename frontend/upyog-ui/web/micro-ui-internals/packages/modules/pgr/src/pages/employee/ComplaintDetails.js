@@ -29,11 +29,11 @@ import {
   Modal,
   LinkButton,
   SectionalDropdown,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import { Close } from "../../Icons";
 import { useTranslation } from "react-i18next";
-import { isError, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import StarRated from "../../components/timelineInstances/StarRated";
 
 const MapView = (props) => {
@@ -221,7 +221,7 @@ export const ComplaintDetails = (props) => {
   // const [actionCalled, setActionCalled] = useState(false);
   const [toast, setToast] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading, complaintDetails, revalidate: revalidateComplaintDetails } = Digit.Hooks.pgr.useComplaintDetails({ tenantId, id });
+  const { isLoading, data:complaintDetails, refetch: revalidateComplaintDetails } = Digit.Hooks.pgr.useComplaintDetails({ tenantId, id });
   const workflowDetails = Digit.Hooks.useWorkflowDetails({ tenantId, id, moduleCode: "PGR", role: "EMPLOYEE" });
   const [imagesToShowBelowComplaintDetails, setImagesToShowBelowComplaintDetails] = useState([])
   

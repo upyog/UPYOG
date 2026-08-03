@@ -1,0 +1,147 @@
+serviceMaps:
+  serviceName: tree-pruning
+  mappings:
+    - version: 1.0
+      description: Persists tree pruning application detail
+      fromTopic: create-tree-pruning-booking-with-profile
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO public.upyog_rs_tree_pruning_booking_detail(booking_id, booking_no, tenant_id, applicant_uuid, reason_for_pruning, latitude, longitude, payment_date, application_date, booking_createdby, booking_status, address_detail_id, payment_receipt_filestore_id, mobile_number, locality_code, createdby, lastmodifiedby, createdtime, lastmodifiedtime, additional_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: treePruningBookingDetail
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.bookingId
+            - jsonPath: $.treePruningBookingDetail.bookingNo
+            - jsonPath: $.treePruningBookingDetail.tenantId
+            - jsonPath: $.treePruningBookingDetail.applicantUuid
+            - jsonPath: $.treePruningBookingDetail.reasonForPruning
+            - jsonPath: $.treePruningBookingDetail.latitude
+            - jsonPath: $.treePruningBookingDetail.longitude
+            - jsonPath: $.treePruningBookingDetail.paymentDate
+            - jsonPath: $.treePruningBookingDetail.applicationDate
+            - jsonPath: $.treePruningBookingDetail.bookingCreatedBy
+            - jsonPath: $.treePruningBookingDetail.bookingStatus
+            - jsonPath: $.treePruningBookingDetail.addressDetailId
+            - jsonPath: $.treePruningBookingDetail.paymentReceiptFilestoreId
+            - jsonPath: $.treePruningBookingDetail.mobileNumber
+            - jsonPath: $.treePruningBookingDetail.localityCode
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdTime
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedTime
+            - jsonPath: $.treePruningBookingDetail.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO public.upyog_rs_tree_pruning_booking_detail_audit SELECT *, CURRENT_TIMESTAMP FROM public.upyog_rs_tree_pruning_booking_detail WHERE booking_id = ?;
+          basePath: treePruningBookingDetail
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.bookingId
+
+        - query: INSERT INTO public.upyog_rs_tree_pruning_document_detail (document_detail_id, booking_id, document_type, filestore_id, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: treePruningBookingDetail.documentDetails.*
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.documentDetails.*.documentDetailId
+            - jsonPath: $.treePruningBookingDetail.documentDetails.*.bookingId
+            - jsonPath: $.treePruningBookingDetail.documentDetails.*.documentType
+            - jsonPath: $.treePruningBookingDetail.documentDetails.*.fileStoreId
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdTime
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedTime
+
+    - version: 1.0
+      description: Persists tree pruning application detail
+      fromTopic: create-tree-pruning-booking
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO public.upyog_rs_tree_pruning_booking_detail(booking_id, booking_no, tenant_id, applicant_uuid, reason_for_pruning, latitude, longitude, payment_date, application_date, booking_createdby, booking_status, address_detail_id, payment_receipt_filestore_id, mobile_number, locality_code, createdby, lastmodifiedby, createdtime, lastmodifiedtime, additional_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: treePruningBookingDetail
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.bookingId
+            - jsonPath: $.treePruningBookingDetail.bookingNo
+            - jsonPath: $.treePruningBookingDetail.tenantId
+            - jsonPath: $.treePruningBookingDetail.applicantUuid
+            - jsonPath: $.treePruningBookingDetail.reasonForPruning
+            - jsonPath: $.treePruningBookingDetail.latitude
+            - jsonPath: $.treePruningBookingDetail.longitude
+            - jsonPath: $.treePruningBookingDetail.paymentDate
+            - jsonPath: $.treePruningBookingDetail.applicationDate
+            - jsonPath: $.treePruningBookingDetail.bookingCreatedBy
+            - jsonPath: $.treePruningBookingDetail.bookingStatus
+            - jsonPath: $.treePruningBookingDetail.addressDetailId
+            - jsonPath: $.treePruningBookingDetail.paymentReceiptFilestoreId
+            - jsonPath: $.treePruningBookingDetail.mobileNumber
+            - jsonPath: $.treePruningBookingDetail.localityCode
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdTime
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedTime
+            - jsonPath: $.treePruningBookingDetail.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO public.upyog_rs_tree_pruning_applicant_details(applicant_id, booking_id, name, mobile_number, email_id, alternate_number, createdby, lastModifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: treePruningBookingDetail.applicantDetail
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.applicantDetail.applicantId
+            - jsonPath: $.treePruningBookingDetail.applicantDetail.bookingId
+            - jsonPath: $.treePruningBookingDetail.applicantDetail.name
+            - jsonPath: $.treePruningBookingDetail.applicantDetail.mobileNumber
+            - jsonPath: $.treePruningBookingDetail.applicantDetail.emailId
+            - jsonPath: $.treePruningBookingDetail.applicantDetail.alternateNumber
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdTime
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.upyog_rs_tree_pruning_address_details(address_id, applicant_id, house_no, address_line_1, address_line_2, street_name, landmark, city, city_code, locality, locality_code, pincode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: treePruningBookingDetail.address
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.address.addressId
+            - jsonPath: $.treePruningBookingDetail.address.applicantId
+            - jsonPath: $.treePruningBookingDetail.address.houseNo
+            - jsonPath: $.treePruningBookingDetail.address.addressLine1
+            - jsonPath: $.treePruningBookingDetail.address.addressLine2
+            - jsonPath: $.treePruningBookingDetail.address.streetName
+            - jsonPath: $.treePruningBookingDetail.address.landmark
+            - jsonPath: $.treePruningBookingDetail.address.city
+            - jsonPath: $.treePruningBookingDetail.address.cityCode
+            - jsonPath: $.treePruningBookingDetail.address.locality
+            - jsonPath: $.treePruningBookingDetail.address.localityCode
+            - jsonPath: $.treePruningBookingDetail.address.pincode
+
+        - query: INSERT INTO public.upyog_rs_tree_pruning_booking_detail_audit SELECT *, CURRENT_TIMESTAMP FROM public.upyog_rs_tree_pruning_booking_detail WHERE booking_id = ?;
+          basePath: treePruningBookingDetail
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.bookingId
+
+        - query: INSERT INTO public.upyog_rs_tree_pruning_document_detail (document_detail_id, booking_id, document_type, filestore_id, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: treePruningBookingDetail.documentDetails.*
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.documentDetails.*.documentDetailId
+            - jsonPath: $.treePruningBookingDetail.documentDetails.*.bookingId
+            - jsonPath: $.treePruningBookingDetail.documentDetails.*.documentType
+            - jsonPath: $.treePruningBookingDetail.documentDetails.*.fileStoreId
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.createdTime
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedTime
+
+    - version: 1.0
+      description: Update tree pruning application detail
+      fromTopic: update-tree-pruning-booking
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE public.upyog_rs_tree_pruning_booking_detail SET booking_status = ?, payment_receipt_filestore_id = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE booking_id = ?;
+          basePath: treePruningBookingDetail
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.bookingStatus
+            - jsonPath: $.treePruningBookingDetail.paymentReceiptFilestoreId
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedBy
+            - jsonPath: $.treePruningBookingDetail.auditDetails.lastModifiedTime
+            - jsonPath: $.treePruningBookingDetail.bookingId
+
+        - query: INSERT INTO public.upyog_rs_tree_pruning_booking_detail_audit SELECT *, CURRENT_TIMESTAMP FROM public.upyog_rs_tree_pruning_booking_detail WHERE booking_id = ?;
+          basePath: treePruningBookingDetail
+          jsonMaps:
+            - jsonPath: $.treePruningBookingDetail.bookingId

@@ -3,9 +3,9 @@
   "version": "1.8.1",
   "license": "MIT",
   "main": "dist/index.css",
-  "author": "Jagankumar <jagan.kumar@egov.org.in>",
+  "author": "NUDMCDG Team, NIUA",
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   },
   "cssConfig": {
     "prefix": ""
@@ -56,10 +56,10 @@
     "src/**/*.css"
   ],
   "keywords": [
-    "digit",
-    "egov",
-    "dpg",
-    "digit-ui",
+    "upyog",
+    "nudm",
+    "niua",
+    "workbench-ui",
     "css"
   ]
 }

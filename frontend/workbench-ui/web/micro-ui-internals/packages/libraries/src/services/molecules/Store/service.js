@@ -86,9 +86,7 @@ export const StoreService = {
       .reduce((unique, ele) => (unique.find((item) => item.code === ele.code) ? unique : [...unique, ele]), []);
     initData.tenants = MdmsRes?.tenant?.tenants
          .map((tenant) => ({ i18nKey: `TENANT_TENANTS_${tenant.code.replace(".", "_").toUpperCase()}`, ...tenant }));
-      // .filter((item) => !!moduleTenants.find((mt) => mt.code === item.code))
-      // .map((tenant) => ({ i18nKey: `TENANT_TENANTS_${tenant.code.replace(".", "_").toUpperCase()}`, ...tenant }));
-
+      
     await LocalizationService.getLocale({
       modules: [
         `rainmaker-common`,

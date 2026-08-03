@@ -1,12 +1,12 @@
-import { Banner, Card, CardText, ActionBar, SubmitBar, Loader, LinkButton } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, ActionBar, SubmitBar, Loader, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { stringReplaceAll, getBusinessServices } from "../../utils";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
 const OBPSResponse = (props) => {
-  const { state } = props.location;
+  const { state } = useLocation();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   let bpaData={}
@@ -19,7 +19,7 @@ const OBPSResponse = (props) => {
   }
   const [applicationData, setApplicationData] = useState({});
   const [isLoader, setIsLoader] = useState(true);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [isSanctionFee, setSanctionFee] = useState("");
   const [billData, setBillData] = useState(null);
 
@@ -29,19 +29,18 @@ const OBPSResponse = (props) => {
 
   let workflowDetails = Digit.Hooks.useWorkflowDetails({ tenantId: bpaData?.tenantId, id: bpaData?.applicationNo, moduleCode: "BPA" });
 
-  useEffect(async () => {
-    setIsLoader(true);
-    const bpaResponse = await Digit.OBPSService.BPASearch(tenantId, { applicationNo: bpaData?.applicationNo });
-    // let businessService = "BPA.LOW_RISK_PERMIT_FEE";
-    // if (bpaResponse?.BPA?.[0]?.businessService === "BPA") businessService = "BPA.NC_SAN_FEE";
-    // else if (bpaResponse?.BPA?.[0]?.businessService === "BPA_OC") businessService = "BPA.NC_OC_SAN_FEE";
-    let businessService = await getBusinessServices(bpaResponse?.BPA?.[0]?.businessService, bpaResponse?.BPA?.[0]?.status);
-
-    const fetchBill = await Digit.PaymentService.fetchBill(tenantId, { consumerCode: bpaResponse?.BPA?.[0]?.applicationNo, businessService: businessService });
-    if (bpaResponse?.BPA?.[0]?.status == "APPROVED" && fetchBill?.Bill[0] && fetchBill?.Bill[0]?.totalAmount != 0) setSanctionFee("_SAN_FEE");
-    setIsLoader(false);
-    setApplicationData(bpaResponse?.BPA?.[0]);
-    setBillData(fetchBill?.Bill)
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoader(true);
+      const bpaResponse = await Digit.OBPSService.BPASearch(tenantId, { applicationNo: bpaData?.applicationNo });
+      let businessService = await getBusinessServices(bpaResponse?.BPA?.[0]?.businessService, bpaResponse?.BPA?.[0]?.status);
+      const fetchBill = await Digit.PaymentService.fetchBill(tenantId, { consumerCode: bpaResponse?.BPA?.[0]?.applicationNo, businessService: businessService });
+      if (bpaResponse?.BPA?.[0]?.status == "APPROVED" && fetchBill?.Bill[0] && fetchBill?.Bill[0]?.totalAmount != 0) setSanctionFee("_SAN_FEE");
+      setIsLoader(false);
+      setApplicationData(bpaResponse?.BPA?.[0]);
+      setBillData(fetchBill?.Bill);
+    };
+    fetchData();
   }, [])
 
   const getHeaderMessage = () => {
@@ -59,7 +58,7 @@ const OBPSResponse = (props) => {
   };
 
   const onSubmit = () => {
-    history.push(`/upyog-ui/employee`);
+    navigate(`/upyog-ui/employee`);
   }
 
   const getApplicationNoLabel = () => {
@@ -67,11 +66,14 @@ const OBPSResponse = (props) => {
   }
 
   const getPaymentURL = (isCitizen) => {
-    if (isCitizen == true) return `/upyog-ui/citizen/payment/collect/${getBusinessServices(applicationData?.businessService, applicationData?.status)}/${applicationData?.applicationNo}/${applicationData?.tenantId}?tenantId=${applicationData?.tenantId}`;
+    if (isCitizen == true) return {
+      pathname: `/upyog-ui/citizen/payment/collect/${getBusinessServices(applicationData?.businessService, applicationData?.status)}/${applicationData?.applicationNo}`,
+      search: `?tenantId=${applicationData?.tenantId}`,
+    };
   }
 
   const getPaymentURLEmployee = () => {
-    history.push(`/upyog-ui/employee/payment/collect/${getBusinessServices(applicationData?.businessService, applicationData?.status)}/${applicationData?.applicationNo}/${applicationData?.tenantId}?tenantId=${applicationData?.tenantId}`);
+    navigate(`/upyog-ui/employee/payment/collect/${getBusinessServices(applicationData?.businessService, applicationData?.status)}/${applicationData?.applicationNo}?tenantId=${applicationData?.tenantId}`);
   }
 
   let isWorkflowLoading = true, isPayButtonEnable = false;
@@ -108,7 +110,7 @@ const OBPSResponse = (props) => {
               <div>
                 {(applicationData?.status == "PENDING_APPL_FEE" || applicationData?.status == "PENDING_FEE" || applicationData?.status == "PENDING_SANC_FEE_PAYMENT") && billData?.length > 0 && isPayButtonEnable ?
                   <div>
-                    <Link to={{ pathname: getPaymentURL(true) }}>
+                    <Link to={getPaymentURL(true)}>
                       <SubmitBar label={t("WF_BPA_PAY")} style={{ margin: "10px 0px 0px 0px" }} />
                     </Link>
                     <Link to={`/upyog-ui/citizen`} >

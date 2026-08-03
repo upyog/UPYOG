@@ -1,5 +1,4 @@
 /**
- * @author - Shivank - NIUA
  * This component is developed for all the utility functions which are used in the whole application
  * I have already added the comments for each function.
  */
@@ -53,7 +52,11 @@ export const formatTime = (time) => {
 // helper function to format date from DD-MM-YYYY to YYYY-MM-DD
 export const formatToInputDate = (dateStr) => {
   if (!dateStr) return "";
-  const [dd, mm, yyyy] = dateStr.split("-");
+  const parts = dateStr.split("-");
+  // Check if already in YYYY-MM-DD format (year is 4 digits)
+  if (parts[0].length === 4) return dateStr;
+  // Convert DD-MM-YYYY to YYYY-MM-DD
+  const [dd, mm, yyyy] = parts;
   return `${yyyy}-${mm}-${dd}`;
 };
 
@@ -393,8 +396,6 @@ export const svPayloadData = (data) =>{
       comments: "",
       businessService: "street-vending",
       moduleName: "sv-services",
-      businessService: "street-vending",
-      moduleName: "sv-services",
       varificationDocuments: [
         {
           additionalDetails: {},
@@ -631,8 +632,6 @@ export const svUpdatePayload = (data) =>{
       comments: "",
       businessService: "street-vending",
       moduleName: "sv-services",
-      businessService: "street-vending",
-      moduleName: "sv-services",
       varificationDocuments: [
         {
           additionalDetails: {},
@@ -665,8 +664,6 @@ export const demandPayloadData = (data) => {
         comments: "",
         businessService: "street-vending",
         moduleName: "sv-services",
-        businessService: "street-vending",
-        moduleName: "sv-services",
         varificationDocuments: [
           {
             additionalDetails: {},
@@ -696,7 +693,7 @@ export function SVDocumnetPreview({documents, titleStyles, isSendBackFlow = fals
   const SvPDFSvg = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="24" height="24" rx="4" fill="#D32F2F"/>
-      <text x="0" y="16" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">PDF</text>
+      <text x="0" y="16" fontFamily="Arial, sansSerif" fontSize="12" fontWeight="bold" fill="#FFFFFF">PDF</text>
     </svg>
   );
   
@@ -707,7 +704,7 @@ export function SVDocumnetPreview({documents, titleStyles, isSendBackFlow = fals
           <div className="documentWidth" style={{width:"50%"}}>
             <div>
               {document?.title!=="NONE" && document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
-                <a target="_" href={value?.url} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto", minWidth: "100px" }} key={index}>
+                <a target="_" href={value?.url} style={{ marginRight: "10px", maxWidth: "100px", height: "auto", minWidth: "100px" }} key={index}>
                   {/* Remove the centered SVG div from here */}
                   <div style={{ 
                     display: "flex", 

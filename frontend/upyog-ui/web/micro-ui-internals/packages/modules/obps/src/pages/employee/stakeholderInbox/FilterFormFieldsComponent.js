@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo } from "react"
-import { FilterFormField, Loader, RadioButtons, Localities, RemoveableTag, Dropdown, CheckBox } from "@upyog/digit-ui-react-components";
+import { FilterFormField, Loader, RadioButtons, Localities, RemoveableTag, Dropdown, CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -30,12 +30,12 @@ const FilterFormFieldsComponent = ({ statuses, isInboxLoading, registerRef, cont
       <Controller
         name="assignee"
         control={controlFilterForm}
-        render={(props) => {
+        render={({ field }) => {
           return <RadioButtons
             onSelect={(e) => {
-              props.onChange(e.code)
+              field.onChange(e.code)
             }}
-            selectedOption={availableOptions.filter((option) => option.code === props.value)[0]}
+            selectedOption={availableOptions.filter((option) => option.code === field.value)[0]}
             optionsKey="name"
             name="assignee"
             options={availableOptions}
@@ -47,15 +47,15 @@ const FilterFormFieldsComponent = ({ statuses, isInboxLoading, registerRef, cont
       <Controller
           name="businessService"
           control={controlFilterForm}
-          render={(props) => {
+          render={({ field }) => {
             return stakeholderServiceTypesLoading ? <Loader/> : <>
               <div className="filter-label sub-filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("BPA_LICENSE_TYPE")}</div>
                 <RadioButtons
                   onSelect={(e) => {
                     setFilterFormValue("applicationStatus",[]);
-                    props.onChange(e);
+                    field.onChange(e);
                   }}
-                  selectedOption={props.value}
+                  selectedOption={field.value}
                   optionsKey="i18nKey"
                   options={stakeholderServiceTypes}
                 />  
@@ -68,18 +68,18 @@ const FilterFormFieldsComponent = ({ statuses, isInboxLoading, registerRef, cont
       <Controller
         name="applicationStatus"
         control={controlFilterForm}
-        render={(props) => {
+        render={({ field }) => {
           function changeItemCheckStatus(value) {
-            props.onChange(value)
+            field.onChange(value)
           }
           const renderStatusCheckBoxes = useMemo(() => statuses?.filter(e => e.businessservice === selectedBusinessService.identifier)?.map((status, index) => {
             return <CheckBox
               key={index}
-              onChange={(e) => e.target.checked ? changeItemCheckStatus([...props.value, status?.statusid]) : changeItemCheckStatus(props.value?.filter(id => id !== status?.statusid))}
-              checked={props.value?.includes(status?.statusid)}
+              onChange={(e) => e.target.checked ? changeItemCheckStatus([...field.value, status?.statusid]) : changeItemCheckStatus(field.value?.filter(id => id !== status?.statusid))}
+              checked={field.value?.includes(status?.statusid)}
               label={`${t(`WF_${status.businessservice}_${status.applicationstatus}`)} (${status.count})`}
             />
-          }), [props.value, statuses, selectedBusinessService])
+          }), [field.value, statuses, selectedBusinessService])
           return <>
             {isInboxLoading ? <Loader /> : <>{renderStatusCheckBoxes}</>}
           </>

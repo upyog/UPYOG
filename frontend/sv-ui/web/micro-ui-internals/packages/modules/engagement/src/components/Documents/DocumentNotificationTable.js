@@ -1,5 +1,5 @@
 import React from "react";
-import { Table } from "@nudmcdgnpm/digit-ui-react-components";
+import { Table } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 
 const DocumentNotificationTable = ({
   t,

@@ -1,6 +1,5 @@
 import React, { useState,useEffect } from "react"
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@upyog/digit-ui-react-components";
-import { useForm, Controller } from "react-hook-form";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";
 import ADSSearchApplication from "../../components/SearchApplication";
@@ -21,25 +20,35 @@ const SearchApp = ({path}) => {
     function onSubmit (_data) {
         var fromDate=_data?.fromDate
         var toDate=_data?.toDate
-        //later needed
-        // var fromDate = new Date(_data?.fromDate)
-        // fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
-        // var toDate = new Date(_data?.toDate)
-        // toDate?.setSeconds(toDate?.getSeconds() + 86399 - 19800)
         const data = {
             ..._data,
             ...(_data.toDate ? {toDate:toDate} : {}),
             ...(_data.fromDate ? {fromDate:fromDate} : {})
         }
 
-        let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
-        if(Object.entries(payload).length>0 && (!payload.bookingNo && !payload.fromDate && !payload.status && !payload.applicantName && !payload.faceArea && !payload.toDate && !payload.mobileNumber))
+        // Filter out empty values and convert objects to codes
+        let payload = Object.keys(data).reduce((acc, key) => {
+            const value = data[key];
+            // Skip if value is empty, null, undefined, or just whitespace
+            if (!value || (typeof value === 'string' && !value.trim())) return acc;
+            // Convert object to code, otherwise use value as-is
+            return {...acc, [key]: typeof value === "object" ? value.code : value};
+        }, {});
+        
+        // Check if any actual search field is provided (excluding pagination fields)
+        const hasSearchFields = payload.bookingNo || payload.fromDate || payload.status || payload.applicantName || payload.faceArea || payload.toDate || payload.mobileNumber;
+        
+        if(!hasSearchFields)
         setShowToast({ warning: true, label: "ERR_PROVIDE_ONE_PARAMETERS" });
-        else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
+        else if((payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
         setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
         else
         setPayload(payload)
     }
+
+    const onClear = () => {
+        setPayload({});
+    };
     useEffect(() => {
       if (showToast) {
         const timer = setTimeout(() => {
@@ -60,7 +69,7 @@ const SearchApp = ({path}) => {
        config,
       );
     return <React.Fragment>
-        <ADSSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
+        <ADSSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} onClear={onClear} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
         {showToast && (
         <Toast
           error={showToast.error}

@@ -1,8 +1,11 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 import ApplicationUpdateActions from "../../services/molecules/OBPS/ApplicationUpdateActions";
 
 const useApplicationActions = (tenantId) => {
-  return useMutation((applicationData) => ApplicationUpdateActions(applicationData, tenantId));
+  return mutationTemplate({
+    mutationFn: (data) =>
+      ApplicationUpdateActions(data, tenantId),
+  });
 };
 
 export default useApplicationActions;

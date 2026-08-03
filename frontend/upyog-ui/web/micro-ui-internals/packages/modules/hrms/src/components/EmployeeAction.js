@@ -1,12 +1,12 @@
-import { FormComposer, Loader, Modal } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import set from "lodash/set";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+
 import { configEmployeeActiveApplication } from "./Modal/EmployeeActivation";
 import { configEmployeeApplication } from "./Modal/EmployeeAppliaction";
 
 const EmployeeAction = ({ t, action, tenantId, closeModal, submitAction, applicationData, billData }) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [config, setConfig] = useState({});
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -127,7 +127,7 @@ const EmployeeAction = ({ t, action, tenantId, closeModal, submitAction, applica
       set(Employees[0], 'deactivationDetails[0].remarks', data?.remarks);
 
       Employees[0].isActive = false;
-      history.replace("/upyog-ui/employee/hrms/response", { Employees, key: "UPDATE", action: "DEACTIVATION" });
+      navigate("/upyog-ui/employee/hrms/response", { replace: true, state: { Employees, key: "UPDATE", action: "DEACTIVATION" } });
     } else {
       if (file) {
         let documents = {
@@ -144,7 +144,7 @@ const EmployeeAction = ({ t, action, tenantId, closeModal, submitAction, applica
       set(Employees[0], 'reactivationDetails[0].remarks', data?.remarks);
       Employees[0].isActive = true;
 
-      history.replace("/upyog-ui/employee/hrms/response", { Employees, key: "UPDATE", action: "ACTIVATION" });
+      navigate("/upyog-ui/employee/hrms/response", { replace: true, state: { Employees, key: "UPDATE", action: "ACTIVATION" } });
     }
   }
 

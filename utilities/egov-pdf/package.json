@@ -3,21 +3,31 @@
   "version": "1.2.1",
   "private": true,
   "main": "index.js",
-  "scripts": {
-    "start": "node ./bin/www"
+  "engines": {
+    "node": ">=22"
   },
+  "scripts": {
+  "start": "node -r dotenv/config ./src/bin/www",
+  "dev": "nodemon -r dotenv/config ./src/bin/www"
+},
   "dependencies": {
-    "axios": "^0.19.2",
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
-    "kafka-node": "^5.0.0",
-    "morgan": "~1.9.1",
-    "uuid": "^3.3.3",
-    "winston": "^3.2.1",
-    "pg": "^8.7.1",
-    "lodash.get": "^4.4.2"
+    "axios": "^1.7.0",
+    "cookie-parser": "^1.4.7",
+    "debug": "^4.3.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "http-errors": "^2.0.0",
+    "kafkajs": "^2.2.4",
+    "lodash.get": "^4.4.2",
+    "morgan": "^1.10.0",
+    "pg": "^8.11.3",
+    "pug": "^3.0.2",
+    "uuid": "^9.0.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "nodemon": "^3.0.2"
   }
 }

@@ -1,7 +1,7 @@
-import { ActionBar, Card, CardSubHeader, DocumentSVG, Header, Loader, Menu, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionBar, Card, CardSubHeader, DocumentSVG, Header, Loader, Menu, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import ActionModal from "../components/Modal";
 import { convertEpochFormateToDate, pdfDownloadLink } from "../components/Utils";
 
@@ -13,7 +13,7 @@ const Details = () => {
   const { t } = useTranslation();
   const { id: employeeId } = useParams();
   const { tenantId: tenantId } = useParams()
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [displayMenu, setDisplayMenu] = useState(false);
   const isupdate = Digit.SessionStorage.get("isupdate");
   const { isLoading, isError, error, data, ...rest } = Digit.Hooks.hrms.useHRMSSearch({ codes: employeeId }, tenantId, null, isupdate);
@@ -52,7 +52,7 @@ const Details = () => {
       case "ACTIVATE_EMPLOYEE_HEAD":
         return setShowModal(true);
       case "COMMON_EDIT_EMPLOYEE_HEADER":
-        return history.push(`/upyog-ui/employee/hrms/edit/${tenantId}/${employeeId}`);
+        return navigate(`/upyog-ui/employee/hrms/edit/${tenantId}/${employeeId}`);
       default:
         break;
     }

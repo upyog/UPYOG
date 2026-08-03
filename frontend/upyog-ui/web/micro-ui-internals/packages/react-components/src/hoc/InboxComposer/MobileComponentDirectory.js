@@ -12,12 +12,12 @@ const MobilePopUpCloseButton = ({closeMobilePopupModal}) => <div className="Inbo
 </div>
 
 const MobileComponentDirectory = {
-    SearchFormComponent: ({registerSearchFormField, searchFormState, handleSearchFormSubmit, onResetSearchForm, SearchFormFields, closeMobilePopupModal, onSearchFormSubmit, t}) => <SearchForm onSubmit={({...props}) => {
+    SearchFormComponent: ({registerSearchFormField, searchFormState, controlSearchForm, handleSearchFormSubmit, onResetSearchForm, SearchFormFields, closeMobilePopupModal, onSearchFormSubmit, t}) => <SearchForm onSubmit={({...props}) => {
         closeMobilePopupModal()
         onSearchFormSubmit({...props})
     }} handleSubmit={handleSearchFormSubmit} id="search-form" className="rm-mb form-field-flex-one inboxPopupMobileWrapper" >
         <MobilePopUpCloseButton {...{closeMobilePopupModal}} />
-        <SearchFormFields registerRef={registerSearchFormField} searchFormState={searchFormState} />
+        <SearchFormFields registerRef={registerSearchFormField} searchFormState={searchFormState} controlSearchForm={controlSearchForm} />
         <ActionBar style={{maxWidth: "100%"}}>
         <SearchField className="submit">
             <SubmitBar label={t("ES_COMMON_SEARCH")} submit form="search-form" />

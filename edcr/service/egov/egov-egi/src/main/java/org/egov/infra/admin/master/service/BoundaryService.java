@@ -70,10 +70,10 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.StringUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
-import org.geotools.feature.FeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,9 +83,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.GeometryFactory;
 
 @Service
 @Transactional(readOnly = true)
@@ -120,7 +121,7 @@ public class BoundaryService {
     }
 
     public Boundary getBoundaryById(final Long id) {
-        return boundaryRepository.findOne(id);
+        return boundaryRepository.findById(id).orElse(null);
     }
 
     public List<Boundary> getAllBoundariesOrderByBoundaryNumAsc(BoundaryType boundaryType) {
@@ -132,7 +133,7 @@ public class BoundaryService {
     }
 
     public Page<Boundary> getPageOfBoundaries(BoundarySearchRequest searchRequest) {
-        Pageable pageable = new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+        Pageable pageable = PageRequest.of(searchRequest.pageNumber(), searchRequest.pageSize(),
                 searchRequest.orderDir(), searchRequest.orderBy());
         return boundaryRepository.findByBoundaryTypeId(searchRequest.getBoundaryTypeId(), pageable);
     }
@@ -265,11 +266,23 @@ public class BoundaryService {
                 map.put("url", Thread.currentThread().getContextClassLoader()
                         .getResource(String.format(GIS_SHAPE_FILE_LOCATION, ApplicationThreadLocals.getTenantID())));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
-                final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore
-                        .getFeatureSource(dataStore.getTypeNames()[0]).getFeatures();
-                final Iterator<SimpleFeature> iterator = collection.iterator();
-                final Point point = JTSFactoryFinder.getGeometryFactory(null)
-                        .createPoint(new Coordinate(longitude, latitude));
+                /*
+                   Updated for newer GeoTools API: replaced deprecated FeatureCollection usage
+                   with SimpleFeatureSource & SimpleFeatureCollection to fix type mismatch
+                   and ensure compatibility with org.locationtech.jts-based versions
+                */
+
+                /*
+                  final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore
+                          .getFeatureSource(dataStore.getTypeNames()[0]).getFeatures();
+                */
+                final SimpleFeatureCollection collection = dataStore
+                        .getFeatureSource(dataStore.getTypeNames()[0])
+                        .getFeatures();
+//                final Iterator<SimpleFeature> iterator = collection.iterate();
+                final SimpleFeatureIterator iterator = collection.features();
+                GeometryFactory geometryFactory = new GeometryFactory();
+                Point point = geometryFactory.createPoint(new Coordinate(longitude, latitude));
                 try {
                     while (iterator.hasNext()) {
                         final SimpleFeature feature = iterator.next();
@@ -279,7 +292,8 @@ public class BoundaryService {
                         }
                     }
                 } finally {
-                    collection.close(iterator);
+//                    collection.close(iterator);
+                    iterator.close();
                 }
             }
 

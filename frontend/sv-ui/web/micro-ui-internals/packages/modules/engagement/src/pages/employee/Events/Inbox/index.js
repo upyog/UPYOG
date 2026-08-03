@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
-import { Header } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import DesktopInbox from "../../../../components/Events/DesktopInbox";
 import MobileInbox from "../../../../components/Events/MobileInbox";
 
@@ -128,7 +128,6 @@ const Inbox = ({ tenants, parentRoute }) => {
         totalRecords={data?.totalCount}
         title={"EVENTS_EVENTS_HEADER"}
         iconName={"calender"}
-        links={links}
         currentPage={parseInt(pageOffset / pageSize)}
         onNextPage={fetchNextPage}
         onPrevPage={fetchPrevPage}

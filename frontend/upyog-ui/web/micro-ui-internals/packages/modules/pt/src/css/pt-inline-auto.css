@@ -1,0 +1,1039 @@
+.pt-desktop-inbox-result {
+  flex: 1;
+}
+
+.pt-desktop-inbox-result-inbox {
+  margin-left: 24px;
+}
+
+.pt-search-property-register-link {
+  display: flex;
+  justify-content: left;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  margin-top: -24px;
+}
+
+.pt-search-property-register-link-mobile {
+  justify-content: center;
+}
+
+/* components/DesktopInbox.js */
+.pt-auto-1 {
+  margin-top: 20px;
+}
+
+.pt-auto-2 {
+  text-align: center;
+}
+
+.pt-auto-3 {
+  flex: 1px;
+}
+
+
+/* components/MobileInbox.js */
+.pt-auto-4 {
+  padding: 0px;
+}
+
+
+/* components/MobileSearchApplication.js */
+.pt-auto-5 {
+  margin-top: 20px;
+}
+
+.pt-auto-6 {
+  text-align: center;
+}
+
+
+/* components/SearchApplication.js */
+.pt-auto-7 {
+  color: #505A5F;
+}
+
+.pt-auto-8 {
+  margin-top: 10px;
+}
+
+.pt-auto-9 {
+  margin-top: 20px;
+}
+
+.pt-auto-10 {
+  text-align: center;
+}
+
+
+/* components/SearchFields.js */
+.pt-auto-11 {
+  margin-top: 10px;
+}
+
+
+/* components/UlbAssesmentSearch.js */
+.pt-auto-12 {
+  margin-top: 10px;
+}
+
+.pt-auto-13 {
+  margin-top: 20px;
+}
+
+.pt-auto-14 {
+  text-align: center;
+}
+
+
+/* components/empty-result.js */
+.pt-auto-15 {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 24px;
+}
+
+.pt-auto-16 {
+  text-align: center;
+}
+
+
+/* components/inbox/ApplicationCard.js */
+.pt-auto-17 {
+  margin-top: 20px;
+}
+
+.pt-auto-18 {
+  text-align: center;
+}
+
+
+/* components/inbox/NewInboxFilter.js */
+.pt-auto-19 {
+  align-items: center;
+}
+
+.pt-auto-20 {
+  display: flex;
+  align-items: center;
+}
+
+.pt-auto-21 {
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+.pt-auto-22 {
+  border: 1px solid #e0e0e0;
+  padding: 6px;
+}
+
+.pt-auto-23 {
+  font-weight: normal;
+}
+
+.pt-auto-24 {
+  font-weight: normal;
+}
+
+
+/* components/inbox/Status.js */
+.pt-auto-25 {
+  font-weight: normal;
+}
+
+
+/* components/search/PropertySearchForm.js */
+.pt-auto-26 {
+  margin-top: -10px;
+  margin-bottom: -10px;
+}
+
+.pt-auto-27 {
+  color: #a82227;
+}
+
+
+/* components/search/PropertySearchResults.js */
+.pt-auto-28 {
+  text-decoration: none;
+}
+
+
+/* components/search/SearchDefaulter.js */
+.pt-auto-29 {
+  text-decoration: none;
+}
+
+.pt-auto-30 {
+  background: #fff4e5;
+  margin: 0px 0px 20px 0px !impportant;
+}
+
+.pt-auto-31 {
+  background: #00703c;
+  margin: 0px 0px 20px 0px !impportant;
+}
+
+.pt-auto-32 {
+  font-weight: 700;
+  color: white;
+}
+
+.pt-auto-33 {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.pt-auto-34 {
+  width: inherit;
+  margin-left: 10px;
+}
+
+.pt-auto-35 {
+  width: inherit;
+  margin-left: 10px;
+}
+
+
+/* pageComponents/Area.js */
+.pt-auto-36 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+
+/* pageComponents/Electricity.js */
+.pt-auto-37 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+
+/* pageComponents/Mutate/Comments.js */
+.pt-auto-38 {
+  font-weight: bold;
+}
+
+
+/* pageComponents/Mutate/IsMutationPending.js */
+.pt-auto-39 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pt-auto-40 {
+  width: 55%;
+}
+
+.pt-auto-41 {
+  padding-bottom: 10px;
+  padding-top: 3px;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 19px;
+  color: #0b0c0c;
+}
+
+.pt-auto-42 {
+  margin-bottom: 50px;
+}
+
+.pt-auto-43 {
+  font-weight: bold;
+}
+
+
+/* pageComponents/Mutate/PropertyMarketValue.js */
+.pt-auto-44 {
+  font-weight: bold;
+}
+
+
+/* pageComponents/Mutate/ReasonForTransfer.js */
+.pt-auto-45 {
+  font-weight: bold;
+}
+
+
+/* pageComponents/Mutate/RegistrationDocument.js */
+.pt-auto-46 {
+  font-weight: bold;
+}
+
+.pt-auto-47 {
+  font-weight: bold;
+}
+
+.pt-auto-48 {
+  font-weight: bold;
+}
+
+.pt-auto-49 {
+  margin-left: 30%;
+}
+
+.pt-auto-50 {
+  max-width: 540px;
+}
+
+
+/* pageComponents/Mutate/TransfererDetails.js */
+.pt-auto-51 {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.pt-auto-52 {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+
+/* pageComponents/Mutate/transferReasonDocument.js */
+.pt-auto-53 {
+  height: 20px;
+  width: 100%;
+  font-size: 20px;
+  color: red;
+  margin-top: 5px;
+}
+
+.pt-auto-54 {
+  disabled: true;
+  height: 20px;
+  width: 100%;
+}
+
+
+/* pageComponents/Mutate/underStateAquire.js */
+.pt-auto-55 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pt-auto-56 {
+  width: 55%;
+}
+
+.pt-auto-57 {
+  padding-bottom: 10px;
+  padding-top: 3px;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 19px;
+  color: #0b0c0c;
+}
+
+.pt-auto-58 {
+  font-weight: bold;
+}
+
+
+/* pageComponents/PTCitizenFeedbackPopUp.js */
+.pt-auto-59 {
+  margin: 0 auto;
+  top: 15%;
+  position: relative;
+}
+
+
+/* pageComponents/PTSelectPincode.js */
+.pt-auto-60 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+
+/* pageComponents/PTWFApplicationTimeline.js */
+.pt-auto-61 {
+  margin-top: 1em;
+  bottom: 0px;
+  width: 100%;
+  margin-bottom: 1.2em;
+}
+
+.pt-auto-62 {
+  margin-top: 1em;
+  bottom: 0px;
+  width: 100%;
+  margin-bottom: 1.2em;
+}
+
+.pt-auto-63 {
+  margin-top: 24px;
+}
+
+.pt-auto-64 {
+  margin-bottom: 16px;
+  margin-top: 32px;
+}
+
+
+/* pageComponents/PTWFCaption.js */
+.pt-auto-65 {
+  overflow-x: scroll;
+}
+
+
+/* pageComponents/Proof.js */
+.pt-auto-66 {
+  height: 20px;
+  width: 100%;
+  font-size: 20px;
+  color: red;
+  margin-top: 5px;
+}
+
+.pt-auto-67 {
+  disabled: true;
+  height: 20px;
+  width: 100%;
+}
+
+
+/* pageComponents/PropertyDocument.js */
+.pt-auto-68 {
+  margin-top: 19px;
+}
+
+.pt-auto-69 {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pt-auto-70 {
+  min-width: 160px;
+}
+
+.pt-auto-71 {
+  background: #f6f6f6;
+  padding: 8px;
+}
+
+.pt-auto-72 {
+  margin-top: 8px;
+}
+
+
+/* pageComponents/PropertyStructureDetails.js */
+.pt-auto-73 {
+  border: solid;
+  border-radius: 5px;
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+  border-color: #f3f3f3;
+  background: #FAFAFA;
+}
+
+
+/* pageComponents/PropertyTax.js */
+.pt-auto-74 {
+  margin-top: 10px;
+}
+
+
+/* pageComponents/PropertyType.js */
+.pt-auto-75 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+
+/* pageComponents/PropertyUsageType.js */
+.pt-auto-76 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+
+/* pageComponents/SelectDocuments.js */
+.pt-auto-77 {
+  margin-bottom: 24px;
+}
+
+.pt-auto-78 {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+
+/* pageComponents/SelectOwnerAddress.js */
+.pt-auto-79 {
+  padding-top: 10px;
+}
+
+
+/* pageComponents/SelectOwnerDetails.js */
+.pt-auto-80 {
+  color: red;
+}
+
+.pt-auto-81 {
+  color: red;
+}
+
+
+/* pageComponents/SelectOwnerShipDetails.js */
+.pt-auto-82 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+
+/* pageComponents/SelectPTUnits.js */
+.pt-auto-83 {
+  border: solid;
+  border-radius: 5px;
+  padding: 10px;
+  padding-top: 20px;
+  margin-top: 10px;
+  border-color: #f3f3f3;
+  background: #FAFAFA;
+}
+
+.pt-auto-84 {
+  width: 100px;
+  display: inline;
+}
+
+.pt-auto-85 {
+  float: right;
+  position: relative;
+}
+
+.pt-auto-86 {
+  background: #FAFAFA;
+}
+
+.pt-auto-87 {
+  background: #FAFAFA;
+}
+
+.pt-auto-88 {
+  justify-content: left;
+  display: flex;
+  padding-bottom: 15px;
+  color: #FF8C00;
+}
+
+.pt-auto-89 {
+  padding-top: 10px;
+}
+
+
+/* pageComponents/SelectProofIdentity.js */
+.pt-auto-90 {
+  height: 20px;
+  width: 100%;
+  font-size: 20px;
+  color: red;
+  margin-top: 5px;
+}
+
+.pt-auto-91 {
+  disabled: true;
+  height: 20px;
+  width: 100%;
+}
+
+
+/* pageComponents/SelectSpecialProofIdentity.js */
+.pt-auto-92 {
+  height: 20px;
+  width: 100%;
+  font-size: 20px;
+  color: red;
+  margin-top: 5px;
+}
+
+.pt-auto-93 {
+  disabled: true;
+  height: 20px;
+  width: 100%;
+}
+
+
+/* pageComponents/UID.js */
+.pt-auto-94 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+
+/* pageComponents/Units.js */
+.pt-auto-95 {
+  color: orange;
+  width: 175px;
+}
+
+.pt-auto-96 {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}
+
+.pt-auto-97 {
+  margin-bottom: 16px;
+}
+
+.pt-auto-98 {
+  color: #505A5F;
+}
+
+.pt-auto-99 {
+  border: 1px solid #E3E3E3;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.pt-auto-100 {
+  margin-bottom: 16px;
+  padding: 5px;
+  cursor: pointer;
+  text-align: right;
+}
+
+.pt-auto-101 {
+  float: right;
+  position: relative;
+  bottom: 5px;
+}
+
+.pt-auto-102 {
+  margin-top: 30px;
+}
+
+
+/* pages/Response.js */
+.pt-auto-103 {
+  overflow: hidden;
+}
+
+
+/* pages/citizen/Create/PTAcknowledgement.js */
+.pt-auto-104 {
+  width: 100%;
+}
+
+
+/* pages/citizen/Create/index.js */
+.pt-auto-105 {
+  width: 100%;
+}
+
+
+/* pages/citizen/Mutate/CheckPage.js */
+.pt-auto-106 {
+  padding-right: 16px;
+}
+
+.pt-auto-107 {
+  margin: none;
+}
+
+.pt-auto-108 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pt-auto-109 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pt-auto-110 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pt-auto-111 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pt-auto-112 {
+  margin-top: 0 important;
+}
+
+
+/* pages/citizen/MyPayments/index.js */
+.pt-auto-113 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/MyProperties/PropertyInvalidMobileNumber.js */
+.pt-auto-114 {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pt-auto-115 {
+  margin-left: 10px;
+}
+
+.pt-auto-116 {
+  margin-left: 10px;
+}
+
+
+/* pages/citizen/MyProperties/index.js */
+.pt-auto-117 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.pt-auto-118 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.pt-auto-119 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.pt-auto-120 {
+  display: block;
+}
+
+
+/* pages/citizen/MyProperties/my-properties.js */
+.pt-auto-121 {
+  margin-top: 10px;
+}
+
+
+/* pages/citizen/MyProperties/propertyInformation.js */
+.pt-auto-122 {
+  border: groove;
+  margin-bottom: 10px;
+}
+
+.pt-auto-123 {
+  margin-right: -10px;
+}
+
+.pt-auto-124 {
+  display: flex;
+}
+
+.pt-auto-125 {
+  margin-top: 1em;
+  bottom: 0px;
+  width: 100%;
+  margin-bottom: 1.2em;
+}
+
+.pt-auto-126 {
+  font-family: sans-serif;
+  color: white;
+  font-size: 19px;
+}
+
+.pt-auto-127 {
+  margin-top: 1em;
+  bottom: 0px;
+  width: 100%;
+  margin-bottom: 1.2em;
+}
+
+.pt-auto-128 {
+  margin-top: 1em;
+  bottom: 0px;
+  width: 100%;
+  margin-bottom: 1.2em;
+}
+
+.pt-auto-129 {
+  font-family: sans-serif;
+  color: white;
+  font-size: 19px;
+}
+
+
+/* pages/citizen/MyProperties/propertyOwnerHistory.js */
+.pt-auto-130 {
+  display: flex;
+}
+
+.pt-auto-131 {
+  margin-left: 0px;
+  top: 4px;
+}
+
+.pt-auto-132 {
+  padding: 10px;
+}
+
+
+/* pages/citizen/MyProperties/updateNumber.js */
+.pt-auto-133 {
+  margin-bottom: 8px;
+}
+
+.pt-auto-134 {
+  margin-top: -10px;
+}
+
+
+/* pages/citizen/PTMyApplications/index.js */
+.pt-auto-135 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.pt-auto-136 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.pt-auto-137 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.pt-auto-138 {
+  display: block;
+}
+
+
+/* pages/citizen/SearchProperty/searchProperty.js */
+.pt-auto-139 {
+  padding-left: 10px;
+  margin-bottom: -3px;
+}
+
+.pt-auto-140 {
+  width: 150px;
+  left: 230%;
+  font-size: 14px;
+}
+
+.pt-auto-141 {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  background-color: white;
+  max-width: 960px;
+}
+
+
+/* pages/citizen/SearchResults/searchResults.js */
+.pt-auto-142 {
+  height: 150px;
+}
+
+.pt-auto-143 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.pt-auto-144 {
+  margin-top: 16px;
+}
+
+.pt-auto-145 {
+  margin-left: 8px;
+}
+
+.pt-auto-146 {
+  margin-top: 14px;
+  width: 100%;
+}
+
+.pt-auto-147 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.pt-auto-148 {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/index.js */
+.pt-auto-149 {
+  width: 100%;
+}
+
+
+/* pages/employee/ApplicationDetails.js */
+.pt-auto-150 {
+  margin-bottom: 15px;
+}
+
+.pt-auto-151 {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+
+.pt-auto-152 {
+  z-index: 10;
+  position: relative;
+}
+
+.pt-auto-153 {
+  color: #A52A2A;
+}
+
+
+/* pages/employee/AssessmentDetails.js */
+.pt-auto-154 {
+  margin-top: 19px;
+}
+
+.pt-auto-155 {
+  margin-bottom: 8px;
+  color: #0B0C0C;
+  font-size: 24px;
+}
+
+.pt-auto-156 {
+  margin-bottom: 16px;
+  color: #0B0C0C;
+  font-size: 16px;
+  margin-top: revert;
+}
+
+.pt-auto-157 {
+  font-size: 16px;
+}
+
+.pt-auto-158 {
+  border: 1px solid #D6D5D4;
+  padding: 16px;
+  margin-top: 8px;
+  border-radius: 4px;
+  background: #FAFAFA;
+}
+
+
+/* pages/employee/MutationApplicatinDetails.js */
+.pt-auto-159 {
+  margin-right: auto;
+}
+
+.pt-auto-160 {
+  top: 90px;
+}
+
+
+/* pages/employee/PaymentDetails.js */
+.pt-auto-161 {
+  display: flex;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.pt-auto-162 {
+  white-space: pre;
+  width: 50%;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+
+/* pages/employee/PropertyDetails.js */
+.pt-auto-163 {
+  cursor: pointer;
+  display: inline-flex;
+  padding-left: 20px;
+}
+
+.pt-auto-164 {
+  display: inline;
+  margin-left: 25px;
+}
+
+
+/* pages/employee/PropertyMutation/docsRequired.js */
+.pt-auto-165 {
+  margin-top: 38px;
+  margin-bottom: 16px;
+}
+
+.pt-auto-166 {
+  font-weight: 700px;
+}
+
+.pt-auto-167 {
+  display: block;
+  margin-left: auto;
+}
+
+
+/* pages/employee/updateNumber.js */
+.pt-auto-168 {
+  margin-bottom: 2rem;
+}
+
+
+/* utils/PaymentDetails.js */
+.pt-auto-169 {
+  display: flex;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.pt-auto-170 {
+  white-space: pre;
+  width: 50%;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+
+/* utils/UploadFile.js */
+.pt-auto-171 {
+  font-weight: bold;
+}
+
+.pt-auto-172 {
+  width: 40%;
+  margin-top: 5px;
+}
+
+.pt-auto-173 {
+  width: 12%;
+}
+
+.pt-auto-174 {
+  color: red;
+}
+
+
+/* utils/svgindex.js */
+.pt-auto-175 {
+  display: inline-block;
+  margin: auto;
+}
+

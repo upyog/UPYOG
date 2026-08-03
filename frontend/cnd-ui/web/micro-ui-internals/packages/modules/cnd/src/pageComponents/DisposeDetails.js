@@ -3,7 +3,6 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { cndStyles } from "../utils/cndStyles";
 /**
  * DisposeDetails Component
  * 
@@ -98,8 +97,8 @@ const OwnerForm = (_props) => {
 
   return (
     <React.Fragment>
-      <div style={cndStyles.siteMediaPhotoEmployee}>
-        <div style={cndStyles.employeeSideContainer}>
+      <div className="cnd-dispose-details-site-media">
+        <div className="cnd-dispose-details-employee-container">
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("CND_DISPOSE_DATE")} <span className="astericColor">*</span></CardLabel>
             <div className="field">
@@ -129,7 +128,7 @@ const OwnerForm = (_props) => {
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={cndStyles.errorStyle}>{localFormState.touched.disposeDate ? errors?.disposeDate?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-dispose-details-error">{localFormState.touched.disposeDate ? errors?.disposeDate?.message : ""}</CardLabelError>
  
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("CND_DISPOSE_TYPE")} <span className="astericColor">*</span></CardLabel>
@@ -150,7 +149,7 @@ const OwnerForm = (_props) => {
               )}
             />
           </LabelFieldPair>
-          <CardLabelError style={cndStyles.errorStyle}>{localFormState.touched.disposeType ? errors?.disposeType?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-dispose-details-error">{localFormState.touched.disposeType ? errors?.disposeType?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("CND_DISPOSAL_SITE_NAME")} </CardLabel>
@@ -182,7 +181,7 @@ const OwnerForm = (_props) => {
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={cndStyles.errorStyle}>{localFormState.touched.disposalSiteName ? errors?.disposalSiteName?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-dispose-details-error">{localFormState.touched.disposalSiteName ? errors?.disposalSiteName?.message : ""}</CardLabelError>
 
           
         </div>

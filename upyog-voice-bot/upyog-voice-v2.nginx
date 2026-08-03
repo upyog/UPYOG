@@ -1,0 +1,28 @@
+server {
+    listen 443 ssl;
+    server_name 43.205.156.175;
+
+    ssl_certificate /etc/ssl/certs/upyog-voice.crt;
+    ssl_certificate_key /etc/ssl/private/upyog-voice.key;
+
+    # Proxy to Flask app
+    location /upyog-voice/ {
+        proxy_pass http://127.0.0.1:8090/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        
+        # Important for audio streaming
+        proxy_buffering off;
+        proxy_read_timeout 300s;
+        proxy_connect_timeout 300s;
+        
+        # Required for SSE (streaming)
+        proxy_set_header Cache-Control no-cache;
+    }
+}

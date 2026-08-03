@@ -61,9 +61,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PreDestroy;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -72,6 +69,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,12 +90,25 @@ public class EgovMasterDataCaching {
     @PersistenceContext
     private EntityManager entityManager;
 
+//    static {
+//        try {
+//            final Context context = new InitialContext();
+//            CACHE_MANAGER = (EmbeddedCacheManager) context.lookup("java:jboss/infinispan/container/master-data");
+//        } catch (final NamingException e) {
+//            throw new ApplicationRuntimeException("Error occurred while getting Cache Manager", e);
+//        }
+//    }
+/*
+ * WildFly 26 no longer exposes the legacy JNDI Infinispan container
+ * (java:jboss/infinispan/container/master-data) used in earlier versions.
+ * Creating a local DefaultCacheManager avoids deployment failures caused by
+ * missing JNDI resources while preserving in-memory caching functionality.
+ */
     static {
         try {
-            final Context context = new InitialContext();
-            CACHE_MANAGER = (EmbeddedCacheManager) context.lookup("java:jboss/infinispan/container/master-data");
-        } catch (final NamingException e) {
-            throw new ApplicationRuntimeException("Error occurred while getting Cache Manager", e);
+        	CACHE_MANAGER = new DefaultCacheManager(false);  // local instance
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

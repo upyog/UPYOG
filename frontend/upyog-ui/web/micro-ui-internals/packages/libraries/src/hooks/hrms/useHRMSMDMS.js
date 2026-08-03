@@ -1,25 +1,35 @@
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
-import { useQuery } from "react-query";
 
 const useHrmsMDMS = (tenantId, moduleCode, type, config = {}) => {
-  const useHrmsRolesandDesignations = () => {
-    return useQuery(["HRMS_EMP_RD", tenantId], () => MdmsService.getHrmsEmployeeRolesandDesignation(tenantId), config);
-  };
-  const useHrmsEmployeeTypes = () => {
-    return useQuery(["HRMS_EMP_TYPE", tenantId], () => MdmsService.getHrmsEmployeeTypes(tenantId, moduleCode, type), config);
-  };
-
-  const useHrmsEmployeeReasons = () => {
-    return useQuery(["HRMS_EMP_REASON", tenantId], () => MdmsService.getHrmsEmployeeReason(tenantId, moduleCode, type), config);
-  };
-
   switch (type) {
     case "HRMSRolesandDesignation":
-      return useHrmsRolesandDesignations();
+      return queryTemplate({
+        queryKey: ["HRMS_EMP_RD", tenantId],
+        queryFn: () =>
+          MdmsService.getHrmsEmployeeRolesandDesignation(tenantId),
+        config,
+      });
+
     case "EmployeeType":
-      return useHrmsEmployeeTypes();
+      return queryTemplate({
+        queryKey: ["HRMS_EMP_TYPE", tenantId],
+        queryFn: () =>
+          MdmsService.getHrmsEmployeeTypes(tenantId, moduleCode, type),
+        config,
+      });
+
     case "DeactivationReason":
-      return useHrmsEmployeeReasons();
+      return queryTemplate({
+        queryKey: ["HRMS_EMP_REASON", tenantId],
+        queryFn: () =>
+          MdmsService.getHrmsEmployeeReason(tenantId, moduleCode, type),
+        config,
+      });
+
+    default:
+      return null;
   }
 };
+
 export default useHrmsMDMS;

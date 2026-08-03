@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Loader, TypeSelectCard } from "@upyog/digit-ui-react-components";
-import { RadioOrSelect, RadioButtons, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
+import { Loader, TypeSelectCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { RadioOrSelect, RadioButtons, CitizenInfoLabel } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
-import FormStep from "../../../../react-components/src/molecules/FormStep"
+import {FormStep} from "@nudmcdgnpm/digit-ui-react-components"
 const SelectBuildingType = ({ t, config, onSelect, userType, formData }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();

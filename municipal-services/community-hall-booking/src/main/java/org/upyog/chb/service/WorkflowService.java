@@ -7,13 +7,12 @@ import java.util.List;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.repository.ServiceRequestRepository;
-import org.upyog.chb.web.models.CommunityHallBookingDetail;
-import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.VenueBookingDetail;
+import org.upyog.chb.web.models.VenueBookingRequest;
 import org.upyog.chb.web.models.workflow.BusinessService;
 import org.upyog.chb.web.models.workflow.BusinessServiceResponse;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
@@ -25,76 +24,40 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.RequestInfoWrapper;
 
-/**
- * This service class handles workflow-related operations for the Community Hall Booking module.
- * 
- * Purpose:
- * - To manage the lifecycle of bookings by interacting with the workflow service.
- * - To ensure that bookings adhere to the defined workflow states and transitions.
- * 
- * Dependencies:
- * - CommunityHallBookingConfiguration: Provides configuration properties for workflow operations.
- * - ServiceRequestRepository: Sends HTTP requests to the workflow service.
- * - ObjectMapper: Serializes and deserializes JSON objects for requests and responses.
- * 
- * Features:
- * - Initiates workflow instances for new bookings.
- * - Updates workflow instances based on booking status changes.
- * - Fetches and validates workflow configurations for the booking module.
- * - Logs workflow operations and errors for debugging and monitoring purposes.
- * 
- * Methods:
- * 1. initiateWorkflow:
- *    - Sends a request to the workflow service to initiate a new workflow instance.
- *    - Populates workflow-related fields in the booking request.
- * 
- * 2. updateWorkflow:
- *    - Updates an existing workflow instance based on booking status changes.
- *    - Ensures that the workflow state is consistent with the booking state.
- * 
- * 3. getBusinessService:
- *    - Fetches the workflow configuration (BusinessService) for the booking module.
- *    - Validates the workflow states and actions for the module.
- * 
- * Usage:
- * - This class is automatically managed by Spring and injected wherever workflow-related
- *   operations are required.
- * - It ensures consistent and reusable logic for managing workflows in the module.
- */
 @Service
 public class WorkflowService {
 
-	@Autowired
-	private CommunityHallBookingConfiguration configs;
+	private final CommunityHallBookingConfiguration configs;
+	private final ServiceRequestRepository restRepo;
+	private final ObjectMapper mapper;
 
-	@Autowired
-	private ServiceRequestRepository restRepo;
-
-	@Autowired
-	private ObjectMapper mapper;
+	public WorkflowService(CommunityHallBookingConfiguration configs, ServiceRequestRepository restRepo,
+			ObjectMapper mapper) {
+		this.configs = configs;
+		this.restRepo = restRepo;
+		this.mapper = mapper;
+	}
 
 	public State callWorkFlow(ProcessInstanceRequest workflowReq) {
 
-		ProcessInstanceResponse response = null;
+		ProcessInstanceResponse response;
 		StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
 		Object responseObject = restRepo.fetchResult(url, workflowReq);
 		response = mapper.convertValue(responseObject, ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();
 	}
 
-	public State updateWorkflow(CommunityHallBookingRequest bookingRequest) {
+	public State updateWorkflow(VenueBookingRequest bookingRequest) {
 
-		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+		VenueBookingDetail bookingDetail = bookingRequest.getVenueBookingApplication();
 
 		ProcessInstanceRequest workflowReq = getProcessInstanceForHallBooking(bookingDetail,
 				bookingRequest.getRequestInfo());
 
-		State state = callWorkFlow(workflowReq);
-
-		return state;
+		return callWorkFlow(workflowReq);
 	}
-// Create process instance request for workflow call
-	private ProcessInstanceRequest getProcessInstanceForHallBooking(CommunityHallBookingDetail bookingDetail,
+
+	private ProcessInstanceRequest getProcessInstanceForHallBooking(VenueBookingDetail bookingDetail,
 			RequestInfo requestInfo) {
 
 		ProcessInstance workflow = null != bookingDetail.getWorkflow() ? bookingDetail.getWorkflow()
@@ -121,25 +84,17 @@ public class WorkflowService {
 			processInstance.setAssignes(users);
 		}
 
-		// return processInstance;
 		return ProcessInstanceRequest.builder().requestInfo(requestInfo)
 				.processInstances(Arrays.asList(processInstance)).build();
 
 	}
 
-	/**
-	 * Get the workflow config for the given tenant
-	 * 
-	 * @param tenantId    The tenantId for which businessService is requested
-	 * @param requestInfo The RequestInfo object of the request
-	 * @return BusinessService for the the given tenantId
-	 */
 	public BusinessService getBusinessService(String tenantId, String businessService, RequestInfo requestInfo) {
 
 		StringBuilder url = getSearchURLWithParams(tenantId, businessService);
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 		Object responseObject = restRepo.fetchResult(url, requestInfoWrapper);
-		BusinessServiceResponse response = null;
+		BusinessServiceResponse response;
 		try {
 			response = mapper.convertValue(responseObject, BusinessServiceResponse.class);
 		} catch (IllegalArgumentException e) {
@@ -153,12 +108,6 @@ public class WorkflowService {
 		return response.getBusinessServices().get(0);
 	}
 
-	/**
-	 * Creates url for search based on given tenantId
-	 *
-	 * @param tenantId The tenantId for which url is generated
-	 * @return The search url
-	 */
 	private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
 
 		StringBuilder url = new StringBuilder(configs.getWfHost());
@@ -170,30 +119,17 @@ public class WorkflowService {
 		return url;
 	}
 
-	/**
-	 * Returns boolean value to specifying if the state is updatable
-	 * 
-	 * @param stateCode       The stateCode of the license
-	 * @param businessService The BusinessService of the application flow
-	 * @return State object to be fetched
-	 */
 	public Boolean isStateUpdatable(String stateCode, BusinessService businessService) {
 		for (State state : businessService.getStates()) {
 			if (state.getState() != null && state.getState().equalsIgnoreCase(stateCode))
 				return state.getIsStateUpdatable();
 		}
-		return null;
+		return Boolean.FALSE;
 	}
 
-	/**
-	 * Creates url for searching processInstance
-	 *
-	 * @return The search url
-	 */
 	private StringBuilder getWorkflowSearchURLWithParams(String tenantId, String businessId) {
 
 		StringBuilder url = new StringBuilder(configs.getWfHost());
-		// url.append(configs.getWfProcessInstanceSearchPath());
 		url.append("?tenantId=");
 		url.append(tenantId);
 		url.append("&businessIds=");
@@ -201,11 +137,6 @@ public class WorkflowService {
 		return url;
 	}
 
-	/**
-	 * Fetches the workflow object for the given assessment
-	 * 
-	 * @return
-	 */
 	public State getCurrentState(RequestInfo requestInfo, String tenantId, String businessId) {
 
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
@@ -213,7 +144,7 @@ public class WorkflowService {
 		StringBuilder url = getWorkflowSearchURLWithParams(tenantId, businessId);
 
 		Object responseObject = restRepo.fetchResult(url, requestInfoWrapper);
-		ProcessInstanceResponse response = null;
+		ProcessInstanceResponse response;
 
 		try {
 			response = mapper.convertValue(responseObject, ProcessInstanceResponse.class);

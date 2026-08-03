@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "auto-ws-services-masters.Documents",
+		"name": "MDMS v2 Bulk Data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data=[{\"code\": \"OWNER.IDENTITYPROOF\", \"documentType\": \"OWNER\", \"required\": true, \"active\": true, \"hasDropdown\": true, \"dropdownData\": [{\"code\": \"OWNER.IDENTITYPROOF.AADHAAR\", \"active\": true}, {\"code\": \"OWNER.IDENTITYPROOF.VOTERID\", \"active\": true}, {\"code\": \"OWNER.IDENTITYPROOF.DRIVING\", \"active\": true}, {\"code\": \"OWNER.IDENTITYPROOF.PAN\", \"active\": true}, {\"code\": \"OWNER.IDENTITYPROOF.PASSPORT\", \"active\": true}], \"description\": \"OWNER.ADDRESSPROOF.IDENTITYPROOF_DESCRIPTION\"}, {\"code\": \"OWNER.ADDRESSPROOF\", \"documentType\": \"OWNER\", \"required\": true, \"active\": true, \"hasDropdown\": true, \"dropdownData\": [{\"code\": \"OWNER.ADDRESSPROOF.ELECTRICITYBILL\", \"active\": true}, {\"code\": \"OWNER.ADDRESSPROOF.DL\", \"active\": true}, {\"code\": \"OWNER.ADDRESSPROOF.VOTERID\", \"active\": true}, {\"code\": \"OWNER.ADDRESSPROOF.AADHAAR\", \"active\": true}, {\"code\": \"OWNER.ADDRESSPROOF.PAN\", \"active\": true}, {\"code\": \"OWNER.ADDRESSPROOF.PASSPORT\", \"active\": true}], \"description\": \"OWNER.ADDRESSPROOF.ADDRESSPROOF_DESCRIPTION\"}, {\"code\": \"ELECTRICITY_BILL\", \"documentType\": \"ELECTRICITY_BILL\", \"active\": true, \"required\": true, \"hasDropdown\": true, \"dropdownData\": [{\"code\": \"ELECTRICITY_BILL\", \"active\": true}], \"description\": \"ELECTRICITY_BILL_DESCRIPTION\"}, {\"code\": \"PLUMBER_REPORT_DRAWING\", \"documentType\": \"PLUMBER_REPORT_DRAWING\", \"active\": true, \"required\": true, \"hasDropdown\": true, \"dropdownData\": [{\"code\": \"PLUMBER_REPORT_DRAWING\", \"active\": true}], \"description\": \"PLUMBER_REPORT_DRAWING_DESCRIPTION\"}, {\"code\": \"BUILDING_PLAN_OR_COMPLETION_CERTIFICATE\", \"documentType\": \"BUILDING_PLAN_OR_COMPLETION_CERTIFICATE\", \"active\": true, \"required\": false, \"hasDropdown\": true, \"dropdownData\": [{\"code\": \"BUILDING_PLAN_OR_COMPLETION_CERTIFICATE\", \"active\": true}], \"description\": \"BUILDING_PLAN_OR_COMPLETION_CERTIFICATE_DESCRIPTION\"}, {\"code\": \"PROPERTY_TAX_RECIEPT\", \"documentType\": \"PROPERTY_TAX_RECIEPT\", \"active\": true, \"required\": false, \"hasDropdown\": true, \"dropdownData\": [{\"code\": \"PROPERTY_TAX_RECIEPT\", \"active\": true}], \"description\": \"PROPERTY_TAX_RECIEPT_DESCRIPTION\"}]",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");\r",
+							"\r",
+							"var items = pm.globals.get(\"i\");\r",
+							"\r",
+							"if (items < data.length){\r",
+							"\r",
+							"    pm.globals.set(\"i\", Number(items) + 1);\r",
+							"\r",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
+							"}else{\r",
+							"    pm.globals.set(\"i\", 0);\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\": {\"apiId\": \"asset-services\", \"ver\": null, \"ts\": null, \"action\": null, \"did\": null, \"key\": null, \"msgId\": \"search with from and to values\", \"authToken\": \"{{authToken}}\", \"correlationId\": null, \"userInfo\": {\"id\": \"1\", \"userName\": null, \"name\": null, \"type\": null, \"mobileNumber\": null, \"emailId\": null, \"roles\": null, \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"}}, \"Mdms\": {\"tenantId\": \"pg\", \"schemaCode\": \"ws-services-masters.Documents\", \"data\": {{req}}, \"isActive\": true}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8055/mdms-v2/v2/_create/ws-services-masters.Documents",
+					"host": [
+						"localhost"
+					],
+					"port": "8055",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"ws-services-masters.Documents"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

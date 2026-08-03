@@ -81,4 +81,22 @@ public class SchemeService extends PersistenceService<Scheme, Integer> {
         final Query query = getSession().createQuery(" from Scheme where isactive = true");
         return query.list();
     }
+
+
+    /**
+     * Retrieves all active {@link Scheme} records that have a non-null state code.
+     *
+     * <p>Queries the {@code Scheme} entity for records where {@code isactive} is {@code true}
+     * and {@code stateCode} is not {@code null}. Typically used to populate scheme dropdowns
+     * or filter schemes eligible for state-level operations.</p>
+     *
+     * @return a {@link List} of active {@link Scheme} records with a non-null state code;
+     *         returns an empty list if no matching records are found
+     */
+
+
+    public List<Scheme> getBySchemeCode() {
+        final Query query = getSession().createQuery(" from Scheme where isactive = true and stateCode is not null");
+        return query.list();
+    }
 }

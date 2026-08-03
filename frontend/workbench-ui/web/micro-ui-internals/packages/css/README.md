@@ -70,11 +70,8 @@ frontend/micro-ui/web/public/index.html
 ```
 ## Contributors
 
-[jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov] [anil-egov] [vamshikrishnakole-wtt-egov] 
+[@NUDM Team] 
 
 ### Published from DIGIT Frontend 
 DIGIT Frontend Repo (https://github.com/egovernments/Digit-Frontend/tree/master)
 
-## License
-
-MIT © [jagankumar-egov](https://github.com/jagankumar-egov)

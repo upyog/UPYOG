@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Row, CardHeader, StatusTable } from "@upyog/digit-ui-react-components";
+import { Card, Row, CardHeader, StatusTable } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 const AssetsQRCode = ({ path }) => {
     var base_url = window.location.origin;

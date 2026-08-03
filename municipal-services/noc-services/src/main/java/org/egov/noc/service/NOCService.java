@@ -10,10 +10,7 @@ import org.egov.noc.repository.ServiceRequestRepository;
 import org.egov.noc.util.NOCConstants;
 import org.egov.noc.util.NOCUtil;
 import org.egov.noc.validator.NOCValidator;
-import org.egov.noc.web.model.Noc;
-import org.egov.noc.web.model.NocRequest;
-import org.egov.noc.web.model.NocSearchCriteria;
-import org.egov.noc.web.model.RequestInfoWrapper;
+import org.egov.noc.web.model.*;
 import org.egov.noc.web.model.bpa.BPA;
 import org.egov.noc.web.model.bpa.BPAResponse;
 import org.egov.noc.web.model.bpa.BPASearchCriteria;
@@ -29,7 +26,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import jakarta.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -296,5 +295,128 @@ public class NOCService {
                 criteria.setAccountId(uuids);*/
                 return nocRepository.getNocCount(criteria);
         }
-	
+
+	/**
+	 * Fetches newly created AAI NOC applications for given tenant
+	 * If tenantId is null, fetches from default tenant 'as'
+	 *
+	 * @param tenantId Tenant ID or null for default
+	 * @return List of NOC records in CREATED status
+	 */
+	public List<Noc> fetchNewAAINOCs(String tenantId) {
+		NocSearchCriteria criteria = new NocSearchCriteria();
+		String applicationStatuses = NOCConstants.APPLICATION_STATUS_INPROGRESS + "," + NOCConstants.AAI_STATUS_INPROCESS;
+		criteria.setApplicationStatus(applicationStatuses);
+		criteria.setNocType(NOCConstants.CIVIL_AVIATION_NOC_TYPE);
+		criteria.setTenantId(tenantId);
+		criteria.setLimit(config.getMaxSearchLimit());
+		criteria.setOffset(0);
+		return nocRepository.getNocData(criteria);
+	}
+
+	/**
+	 * Retrieves BPA details for each NOC by calling the BPA service.
+	 *
+	 * @param nocList            list of NOC applications
+	 * @param requestInfoWrapper request info for service call
+	 * @return list of BPA objects mapped from service responses
+	 */
+	public List<BPA> getBPADetails(List<Noc> nocList, RequestInfoWrapper requestInfoWrapper) {
+
+		List<BPA> bpaList = new ArrayList<>();
+
+		for (Noc noc : nocList) {
+
+			StringBuilder uri = new StringBuilder(config.getBpaHost());
+			uri.append(config.getBpaContextPath());
+			uri.append(config.getBpaSearchEndpoint());
+			uri.append("?tenantId=").append(noc.getTenantId());
+			uri.append("&applicationNo=").append(noc.getSourceRefId());
+
+			Object result = serviceRequestRepository.fetchResult(uri, requestInfoWrapper);
+			try {
+				BPAResponse bpaResponse = mapper.convertValue(result, BPAResponse.class);
+				List<BPA> bpa = bpaResponse.getBPA();
+				bpaList.addAll(bpa);
+			} catch (IllegalArgumentException e) {
+				throw new CustomException(NOCConstants.PARSING_ERROR, "Failed to parse response of BPA");
+			}
+		}
+		return bpaList;
+	}
+
+	/**
+	 *
+	 * Batch Fetch BPAs by mobile number
+	 * @param criteria
+	 * @param wrapper
+	 * @return List of BPA
+	 */
+	@SuppressWarnings("unchecked")
+	private List<BPA> fetchBpasByMobile(NocSearchCriteria criteria, RequestInfoWrapper wrapper) {
+		String uri = config.getBpaHost() + config.getBpaContextPath() + config.getBpaSearchEndpoint()
+				+ "?tenantId=" + criteria.getTenantId()
+				+ "&mobileNumber=" + criteria.getMobileNumber();
+
+		LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(new StringBuilder(uri), wrapper);
+		BPAResponse response = mapper.convertValue(responseMap, BPAResponse.class);
+		return response.getBPA();
+	}
+
+	/**
+	 * Batch fetch Owner Names from BPA (Fixes URI corruption)
+	 * @param bpaNos
+	 * @param tenantId
+	 * @param wrapper
+	 * @return Map of BPA No to Owner Name
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, String> fetchBpaOwnerMap(List<String> bpaNos, String tenantId, RequestInfoWrapper wrapper) {
+		if (CollectionUtils.isEmpty(bpaNos)) return Collections.emptyMap();
+
+		StringBuilder uri = new StringBuilder(config.getBpaHost())
+				.append(config.getBpaContextPath())
+				.append(config.getBpaSearchEndpoint())
+				.append("?tenantId=").append(tenantId)
+				.append("&applicationNo=").append(String.join(",", bpaNos));
+
+		try {
+			LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, wrapper);
+			BPAResponse response = mapper.convertValue(responseMap, BPAResponse.class);
+
+			return response.getBPA().stream().collect(Collectors.toMap(BPA::getApplicationNo,
+					bpa -> (bpa.getLandInfo() != null && !bpa.getLandInfo().getOwners().isEmpty())
+							? bpa.getLandInfo().getOwners().get(0).getName() : "NA",
+					(existing, replacement) -> existing));
+
+		} catch (Exception e) {
+			log.error("Error fetching BPA owner names", e);
+			return Collections.emptyMap();
+		}
+	}
+
+	/**
+	 * Batch fetch Workflow Assignees
+	 * @param nocNos
+	 * @param tenantId
+	 * @param wrapper
+	 * @return Map of NOC No to Assignee Name
+	 */
+	private Map<String, String> fetchWorkflowAssigneeMap(List<String> nocNos, String tenantId, RequestInfoWrapper wrapper) {
+		if (CollectionUtils.isEmpty(nocNos)) return Collections.emptyMap();
+
+		StringBuilder url = new StringBuilder(config.getWfHost())
+				.append(config.getWfProcessPath())
+				.append("?businessIds=").append(String.join(",", nocNos))
+				.append("&tenantId=").append(tenantId);
+
+		Object result = serviceRequestRepository.fetchResult(url, wrapper);
+		ProcessInstanceResponse response = mapper.convertValue(result, ProcessInstanceResponse.class);
+
+		return response.getProcessInstances().stream().collect(Collectors.toMap(
+				ProcessInstance::getBusinessId,
+				pi -> pi.getAssignee() != null ? pi.getAssignee().getName() : "NA",
+				(a, b) -> a
+		));
+	}
 }

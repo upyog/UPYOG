@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput ,CardLabelError} from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, LabelFieldPair, TextInput ,CardLabelError} from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -130,16 +130,16 @@ const setValueForm =(config,data)=>{
                   return /^[a-zA-Z ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
                 },
               }}
-              render={(_props) => (
+              render={({ field }) => (
                 <TextInput
                   id={input.name}
                   key={input.name}
-                  value={_props.value}
+                  value={field.value}
                   onChange={(e) => {
                     setFocusIndex({ index });
-                    _props.onChange(e.target.value);
+                    field.onChange(e.target.value);
                   }}
-                  onBlur={_props.onBlur}
+                  onBlur={field.onBlur}
                   disable={isRenewal}
                   autoFocus={focusIndex?.index == index}
                   {...input.validation}

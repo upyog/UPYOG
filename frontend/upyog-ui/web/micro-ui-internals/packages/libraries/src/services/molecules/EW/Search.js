@@ -6,6 +6,31 @@ import { EwService } from "../../elements/EW";
  */
 export const EWSearch = {
   /**
+   * Handles file upload with size validation and error handling
+   
+   */
+  uploadFile: async (file, tenantId, t) => {
+    if (!file) {
+      return { error: null, fileStoreId: null };
+    }
+    
+    if (file.size >= 5242880) {
+      return { error: t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"), fileStoreId: null };
+    }
+    
+    try {
+      const response = await Digit.UploadServices.Filestorage("EW", file, tenantId);
+      if (response?.data?.files?.length > 0) {
+        return { error: null, fileStoreId: response.data.files[0].fileStoreId };
+      } else {
+        return { error: t("CS_FILE_UPLOAD_ERROR"), fileStoreId: null };
+      }
+    } catch (err) {
+      return { error: t("CS_FILE_UPLOAD_ERROR"), fileStoreId: null };
+    }
+  },
+
+  /**
    * Fetches all E-Waste applications matching the given criteria
    * 
    * @param {string} tenantId Tenant/city identifier

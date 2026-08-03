@@ -4,7 +4,7 @@ import {
     TextInput,
     CardLabel,
     Toast
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }) => {

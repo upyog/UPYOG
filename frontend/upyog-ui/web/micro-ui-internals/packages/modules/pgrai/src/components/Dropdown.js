@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowDown } from "../../../../react-components/src/atoms/svgindex";
+import { ArrowDown } from "@nudmcdgnpm/digit-ui-react-components";
 
 // dropdown component for selecting options with a text input field 
 // rest file is same as Dropdown.js in react-components, just made it for styling purpose

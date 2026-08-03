@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { CheckBox } from "@upyog/digit-ui-react-components";
+import { CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
  * Renders a checkbox component for filtering applications by their status.

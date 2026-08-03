@@ -1,8 +1,11 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 import BPAREGApplicationUpdateActions from "../../services/molecules/OBPS/BPAREGApplicationUpdateActions";
 
 const useBPAREGApplicationActions = (tenantId) => {
-  return useMutation((applicationData) => BPAREGApplicationUpdateActions(applicationData, tenantId));
+  return mutationTemplate({
+    mutationFn: (data) =>
+      BPAREGApplicationUpdateActions(data, tenantId),
+  });
 };
 
 export default useBPAREGApplicationActions;

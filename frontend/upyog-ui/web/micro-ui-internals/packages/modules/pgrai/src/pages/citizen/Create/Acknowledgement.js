@@ -1,7 +1,7 @@
-import { Banner, Card, Loader, Row, StatusTable, SubmitBar,Toast } from "@upyog/digit-ui-react-components";
+import { Banner, Card, Loader, Row, StatusTable, SubmitBar,Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, {useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch,useHistory } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import { DataConvert } from "../../../utils";
 
 const GetActionMessage = (props) => {
@@ -43,9 +43,9 @@ const Acknowledgement = ({ data, onSuccess }) => {
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.pgrAi.useCreate(tenantId);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
+  const match = Digit.Hooks.useModuleBasePath();
   const { tenants } = storeData || {};
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const user = Digit.UserService.getUser().info;
   const [showToast, setShowToast] = useState(null);
 
@@ -68,7 +68,7 @@ useEffect(() => {
       return () => clearTimeout(timer); // Clear timer on cleanup
     }
   }, [showToast]);
-  return mutation.isLoading || mutation.isIdle ? (
+  return mutation.isPending || mutation.isIdle ? (
     <Loader />
   ) : (
     <Card>

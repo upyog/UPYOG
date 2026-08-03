@@ -1,19 +1,16 @@
-import { useState, useEffect } from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../common/queryTemplate";
 // import mergeConfig from "../../config/mergeConfig";
 import { StoreService } from "../services/molecules/Store/service";
 
 export const useStore = ({ stateCode, moduleCode, language }) => {
-  return useQuery(["store", stateCode, moduleCode, language], () => StoreService.defaultData(stateCode, moduleCode, language));
+  return queryTemplate({ queryKey: ["store", stateCode, moduleCode, language], queryFn: () => StoreService.defaultData(stateCode, moduleCode, language) });
 };
 
 export const useInitStore = (stateCode, enabledModules) => {
-  const { isLoading, error, isError, data } = useQuery(
-    ["initStore", stateCode, enabledModules],
-    () => StoreService.digitInitData(stateCode, enabledModules),
-    {
-      staleTime: Infinity,
-    }
-  );
+  const { isLoading, error, isError, data } = queryTemplate({
+    queryKey: ["initStore", stateCode, enabledModules],
+    queryFn: () => StoreService.digitInitData(stateCode, enabledModules),
+    config: { staleTime: Infinity },
+  });
   return { isLoading, error, isError, data };
 };

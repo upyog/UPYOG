@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Header } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import DesktopInbox from "../../../../components/Documents/DesktopInbox";
 import MobileInbox from "../../../../components/Documents/MobileInbox";
 
@@ -111,7 +111,6 @@ const Inbox = ({ tenants }) => {
                 totalRecords={response?.totalCount}
                 title={"DOCUMENTS_DOCUMENT_HEADER"}
                 iconName={"document"}
-                links={links}
                 currentPage={parseInt(searchParams.offset / searchParams.limit)}
                 onNextPage={fetchNextPage}
                 onPrevPage={fetchPrevPage}

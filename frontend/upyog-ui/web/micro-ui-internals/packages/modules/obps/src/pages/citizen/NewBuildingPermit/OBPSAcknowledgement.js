@@ -1,5 +1,5 @@
-import { Banner, Card, CardText, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
-import React, { useEffect } from "react";
+import { Banner, Card, CardText, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {convertToNocObject, convertToBPAObject, stringReplaceAll} from "../../../utils/index";
@@ -57,7 +57,8 @@ const BannerPicker = (props) => {
 
 const OBPSAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
-  //const isPropertyMutation = window.location.href.includes("property-mutation");
+  const [planLink, setPlanLink] = useState("");
+  const [mutationHappened, setMutationHappened] = React.useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.obps.useObpsAPI(
     data?.address?.city ? data.address?.city?.code : tenantId,
@@ -70,25 +71,45 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
    const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
   sessionStorage.removeItem("Digit_OBPS_PT")
+  
   useEffect(() => {
-    try {
-      let tenantid = data?.address?.city ? data.address?.city?.code : tenantId;
-      data.tenantId = tenantid;
-      let formdata ={};
-      data?.nocDocuments?.NocDetails.map((noc) => {
-        formdata = convertToNocObject(noc,data);
-        mutation.mutate(formdata, {
+    const timer = setTimeout(() => {
+      if (!mutation1.isPending && !mutation1.isSuccess && !mutationHappened) {
+        try {
+          setMutationHappened(true);
+          let tenantid = data?.address?.city ? data.address?.city?.code : tenantId;
+          data.tenantId = tenantid;
+          let formdata ={};
+          data?.nocDocuments?.NocDetails.map((noc) => {
+            formdata = convertToNocObject(noc,data);
+            mutation.mutate(formdata, {
+                onSuccess,
+              });
+          })
+          formdata = convertToBPAObject(data);
+          mutation1.mutate(formdata, {
             onSuccess,
           });
-      })
-      formdata = convertToBPAObject(data);
-      mutation1.mutate(formdata, {
-        onSuccess,
-      });
-      
-    } catch (err) {
-    }
+        } catch (err) {
+        }
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
+
+  const ActionButton = ({ label, jumpTo }) => {
+      const { t } = useTranslation();
+      const navigate = Digit.Hooks.useCustomNavigate();
+      function routeTo() {
+        location.href = jumpTo;
+      }
+      return <LinkButton label={t(label)} onClick={routeTo} />;
+  };
+
+  useEffect(() => {
+    setPlanLink(data?.data?.edcrDetails?.planPdfs?.[0].split(" - ")[1]);
+  }, [data?.data?.edcrDetails?.planPdfs?.[0]]);
+
   const handleDownloadPdf = async () => {
     const Property = data;
     const tenantInfo  = tenants.find((tenant) => tenant.code === Property.tenantId);
@@ -96,23 +117,27 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
     Digit.Utils.pdf.generate(acknowledgementData);
   };
 
-  return mutation1.isLoading || mutation1.isIdle ? (
+  return mutation1.isPending || mutation1.isIdle ? (
     <Loader />
   ) : (
     <Card>
-      <BannerPicker t={t} data={mutation1.data} isSuccess={mutation1.isSuccess} isLoading={mutation1.isIdle || mutation1.isLoading} />
+      <BannerPicker t={t} data={mutation1.data} isSuccess={mutation1.isSuccess} isLoading={mutation1.isIdle || mutation1.isPending} />
       {mutation1.isSuccess && <CardText>{getCardText(t,mutation1.data)}</CardText>}
       {!mutation1.isSuccess && <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE")}</CardText>}
-      <Link to={{
-        pathname: `/upyog-ui/citizen`,
-      }}>
+      <Link to="/upyog-ui/citizen">
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
+     
       {mutation1.isSuccess &&(
+        <>
         <div style={{marginTop:"10px"}}>
           <SubmitBar label={t("CS_COMMON_DOWNLOAD")} onSubmit={handleDownloadPdf}/>
         </div>
-      )}
+        <div>
+           <ActionButton label={t("CS_DXF_PDF_DOWNLOAD")}  jumpTo={planLink}/>
+        </div>
+        </>
+      )}  
     </Card>
   );
 };

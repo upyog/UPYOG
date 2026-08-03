@@ -62,6 +62,11 @@ public class RequestEnrichmentFilterHelper implements RewriteFunction<Map,Map> {
 
         // Add User_Info and Correlation Id in the header
         addRequestHeaders(exchange , body);
+
+        // Store request body for CustomAsyncFilter
+        if (body != null) {
+            exchange.getAttributes().put("ORIGINAL_REQUEST_BODY", body);  // Store original request body for CustomAsyncFilter to access in post-processing
+        }
         if(Objects.isNull(body)){
             return Mono.empty();
         }

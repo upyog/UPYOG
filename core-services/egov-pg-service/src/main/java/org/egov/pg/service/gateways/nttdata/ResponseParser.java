@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ResponseParser
 {
- @JsonProperty("payInstrument")
+  @JsonProperty("payInstruments")
   private List<PayInstrument> payInstrument;
 
   public List<PayInstrument> getPayInstrument()

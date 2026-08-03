@@ -1,0 +1,277 @@
+{
+  "moduleName": "desludging_citizen_module",
+
+  "description": "Desludging citizen workflow",
+
+  "baseUrl": "${selected.url}",
+
+  "instructions": [
+
+
+    {
+      "stepName": "Open Desludging module",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/citizen/fsm-home']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName": "Open new application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/citizen/fsm/new-application']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName": "Select Service Type",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:1",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Select Service Sub Type",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "1:0",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Search Property City",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:0",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Search Property Mobile",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[contains(@class,'employee-card-input')]",
+      "action": "TYPE",
+      "inputValue": "${mobile.number}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Click Search",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@type='submit']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName": "Select Property",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//button[normalize-space()='Select'])[1]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+
+    {
+      "stepName": "Select Property Type",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//label[normalize-space()='Residential']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+
+    {
+      "stepName": "Select Sub Property Type",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//label[normalize-space()='Independent house']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+
+    {
+      "stepName": "Skip map",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//span[contains(text(),'Skip and Continue')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Enter Pincode",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[contains(@name,'pincode')]",
+      "action": "TYPE",
+      "inputValue": "${address.pincode}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Pincode Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Property Address Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Provide Property Address Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Slum Area",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//*[contains(text(),'NO')]/preceding::input[@type='radio'][1]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Slum Area Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Provide Property address Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Provide Landmark Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Choose Pit type",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//label[normalize-space()='Conventional septic tank']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+
+    {
+      "stepName":"Road Width",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//input[@placeholder='Enter road width in meters']",
+      "action":"TYPE",
+      "inputValue":"${road.width}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Distance From The Pit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//input[@placeholder='Enter distance of pit from road']",
+      "action":"TYPE",
+      "inputValue":"${distance.pit}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Upload Pit Image",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='file']",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Submit",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[.//header[text()='Submit']]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Desludging Request Number ') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
+    }
+  ]
+}

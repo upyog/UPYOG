@@ -13,7 +13,7 @@ import {
   ActionBar,
   SubmitBar,
   LabelFieldPair,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 
@@ -21,7 +21,7 @@ export const FormComposer = forwardRef((props, ref) => {
 
   //TODO: @naveen @vamshi please migrate to HOC/FormComposer
   let setFormData = props.setFormData;
-  const { register, handleSubmit, errors, setValue } = useForm();
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
   const { t } = useTranslation();
   // const [isDisabled, setIsDisabled] = useState(false);
 
@@ -69,11 +69,11 @@ export const FormComposer = forwardRef((props, ref) => {
         return (
           <div className="field-container">
             {populators.componentInFront ? populators.componentInFront : null}
-            <TextInput className="field desktop-w-full" {...populators} inputRef={register(populators.validation)} />
+            <TextInput className="field desktop-w-full" {...populators} {...register(populators.name, populators.validation)} />
           </div>
         );
       case "textarea":
-        return <TextArea className="field desktop-w-full" name={populators.name || ""} {...populators} inputRef={register(populators.validation)} />;
+        return <TextArea className="field desktop-w-full" name={populators.name || ""} {...populators} {...register(populators.name || "", populators.validation)} />;
       case "custom":
         return <TaxForm register={register} {...populators} errors={errors} />;
       default:

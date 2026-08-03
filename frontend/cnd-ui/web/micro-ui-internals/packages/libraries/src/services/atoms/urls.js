@@ -67,6 +67,10 @@ const Urls = {
     cancelBill: "/billing-service/bill/v2/_cancelbill",
   },
 
+  reports: {
+    reportSearch: "/report/",
+  },
+
   cnd: {
     create:"/cnd-service/v1/_create",
     search: "/cnd-service/v1/_search",

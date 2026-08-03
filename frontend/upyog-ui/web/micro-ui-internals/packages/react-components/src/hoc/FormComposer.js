@@ -31,7 +31,7 @@ const FormComposer = (props) => {
     trigger,
     control,
     formState,
-    errors,
+    formState: { errors },
     setError,
     clearErrors,
     unregister,
@@ -79,27 +79,46 @@ const FormComposer = (props) => {
             {populators?.componentInFront ? (
               <span className={`component-in-front ${disable && "disabled"}`}>{populators.componentInFront}</span>
             ) : null}
-            <TextInput
-              className="field"
-              {...populators}
-              inputRef={register(populators.validation)}
-              isRequired={isMandatory}
-              type={type}
-              disable={disable}
-              watch={watch}
-            />
+            {(() => {
+              const { ref, ...rest } = register(populators.name, populators.validation);
+              return (
+                <TextInput
+                  className="field"
+                  {...populators}
+                  {...rest}
+                  inputRef={ref}
+                  isRequired={isMandatory}
+                  type={type}
+                  disable={disable}
+                  watch={watch}
+                />
+              );
+            })()}
           </div>
         );
       case "textarea":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
         return (
-          <TextArea className="field" name={populators?.name || ""} {...populators} inputRef={register(populators.validation)} disable={disable} />
-        );
+        <Controller
+          name={populators?.name || ""}
+          control={control}
+          defaultValue={populators?.defaultValue || ""}
+          rules={populators?.validation}
+          render={({ field }) => (
+            <TextArea
+              className="field"
+              {...populators}
+              {...field}
+              inputRef={field.ref}
+              disable={disable}
+            />
+          )}
+        />         );
       case "mobileNumber":
         return (
           <Controller
-          render={(props) => (
-            <MobileNumber className={populators?.className || "field"} onChange={props.onChange} value={props.value} disable={disable} />
+          render={({ field }) => (
+            <MobileNumber className={populators?.className || "field"} onChange={field.onChange} value={field.value} disable={disable} />
           )}
             defaultValue={populators.defaultValue}
             name={populators?.name}
@@ -109,7 +128,7 @@ const FormComposer = (props) => {
       case "custom":
         return (
           <Controller
-            render={(props) => populators.component({ ...props, setValue }, populators.customProps)}
+            render={({ field }) => populators.component({ ...field, setValue }, populators.customProps)}
             defaultValue={populators.defaultValue}
             name={populators?.name}
             control={control}
@@ -118,7 +137,7 @@ const FormComposer = (props) => {
       case "component":
         return (
           <Controller
-            render={(props) => (
+            render={({ field }) => (
               <Component
                 userType={"employee"}
                 t={t}
@@ -129,11 +148,11 @@ const FormComposer = (props) => {
                 formData={formData}
                 register={register}
                 errors={errors}
-                props={props}
+                props={field}
                 setError={setError}
                 clearErrors={clearErrors}
                 formState={formState}
-                onBlur={props.onBlur}
+                onBlur={field.onBlur}
               />
             )}
             name={config.key}
@@ -277,8 +296,8 @@ const FormComposer = (props) => {
                   </React.Fragment>
                 );
               return (
-                <Fragment>
-                  <LabelFieldPair key={index}>
+              <Fragment key={field?.populators?.name || field?.label || index}>
+                  <LabelFieldPair>
                     {!field.withoutLabel && (
                       <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}>
                         {t(field.label)}

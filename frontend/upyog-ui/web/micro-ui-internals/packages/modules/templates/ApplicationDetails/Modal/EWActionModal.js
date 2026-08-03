@@ -1,4 +1,4 @@
-import { Loader, Modal, FormComposer } from "@upyog/digit-ui-react-components";
+import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
 import { configEWApproverApplication} from "../config";

@@ -1,11 +1,11 @@
-import { FormComposer, Loader, Dropdown, Localities, Header, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader, Dropdown, Localities, Header, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch,useLocation } from "react-router-dom";
+import { useLocation, } from "react-router-dom";
 import { newConfig } from "../../config/Create/config";
 import _, { create, unset } from "lodash";
 
-const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) => {
+const CreatePropertyForm = ({ config, onSelect, value, userType, redirectUrl }) => {
   const [showToast, setShowToast] = useState(null);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenants = Digit.Hooks.pt.useTenants();
@@ -13,29 +13,27 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
   const location = useLocation();
 
   const [canSubmit, setCanSubmit] = useState(false);
-  const defaultValues = { ...value};
-  const history = useHistory();
-  const match = useRouteMatch();
-  sessionStorage.setItem("VisitedCommonPTSearch",true);
-  sessionStorage.setItem("VisitedLightCreate",true);
+  const defaultValues = { ...value };
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const match = Digit.Hooks.useModuleBasePath();
+  sessionStorage.setItem("VisitedCommonPTSearch", true);
+  sessionStorage.setItem("VisitedLightCreate", true);
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   let allCities = Digit.Hooks.pt.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
-  if(window.location.href.includes("obps"))
-  {
+  if (window.location.href.includes("obps")) {
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
   }
-  if(window.location.href.includes("fsm"))
-  {
+  if (window.location.href.includes("fsm")) {
     allCities = Digit.SessionStorage.get("FSM_TENANTS")
   }
   const [formValue, setFormValue] = useState("");
   const [cityCode, setCityCode] = useState("");
-  let enableSkip = userType=="employee"?false :config?.isSkipEnabled || sessionStorage.getItem("skipenabled");
+  let enableSkip = userType == "employee" ? false : config?.isSkipEnabled || sessionStorage.getItem("skipenabled");
   // delete
   // const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
+  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", {});
   const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
   useEffect(() => {
     setMutationHappened(false);
@@ -47,34 +45,36 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
   }
 
   const onSubmit = async () => {
-    if((formValue?.owners?.ownershipCategory?.includes("MULTIPLEOWNERS") || formValue?.owners?.[0]?.ownershipCategory?.code?.includes("MULTIPLEOWNERS")) && formValue?.owners?.length==1){
+    if ((formValue?.owners?.ownershipCategory?.includes("MULTIPLEOWNERS") || formValue?.owners?.[0]?.ownershipCategory?.code?.includes("MULTIPLEOWNERS")) && formValue?.owners?.length == 1) {
       setShowToast({ key: true, label: "PT_COMMON_ONE_MORE_OWNER_INFROMATION_REQUIRED" });
-    }else{
-
-    if(onSelect) {
-      onSelect('cptNewProperty', { property: formValue });
     } else {
-      if(userType === 'employee') {
-        history.push(`${match.path}/save-property?redirectToUrl=${redirectUrl}`, {
-          data: formValue,
-          prevState:{...location?.state}
-        });
+
+      if (onSelect) {
+        onSelect('cptNewProperty', { property: formValue });
       } else {
-        history.replace(`/upyog-ui/citizen/commonPt/property/citizen-otp`,
-          {
-            // from: getFromLocation(location.state, searchParams),
-            mobileNumber: formValue?.owners?.[0]?.mobileNumber,
-            redirectBackTo: '/upyog-ui/citizen/commonPt/property/new-application/save-property',
-            redirectData: formValue,
-          }
-        );
+        if (userType === 'employee') {
+          navigate(`save-property?redirectToUrl=${redirectUrl}`, {
+            state: {
+              data: formValue,
+              prevState: { ...location?.state }
+            }
+          });
+        } else {
+          navigate(`/upyog-ui/citizen/commonPt/property/citizen-otp`, {
+            replace: true, state: {
+              // from: getFromLocation(location.state, searchParams),
+              mobileNumber: formValue?.owners?.[0]?.mobileNumber,
+              redirectBackTo: '/upyog-ui/citizen/commonPt/property/new-application/save-property',
+              redirectData: formValue,
+            }
+          });
+        }
       }
     }
-  }
   };
 
   const onSkip = () => {
-    onSelect("isSkip",true);
+    onSelect("isSkip", true);
   }
 
   const onFormValueChange = (setValue, data, formState) => {
@@ -89,12 +89,15 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
       setFormValue(data);
     }
 
-    if(data.assemblyDet && data.locationDet && data.owners && !Object.keys(formState?.errors).length){
+    const hasRealErrors = (formState?.errors?.owners?.type && Object.keys(formState.errors.owners.type).length > 0) ||
+      (formState?.errors?.locationDet?.type && Object.keys(formState.errors.locationDet.type).length > 0);
+
+    if (data.assemblyDet && data.locationDet && data.owners && !hasRealErrors
+    ) {
       setCanSubmit(true);
-    }else{
+    } else {
       setCanSubmit(false);
     }
-
     // if (!locality) {
     //   setCanSubmit(false);
     //   return;
@@ -112,24 +115,24 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
 
   return (
     <React.Fragment>
-      <div style={{marginLeft: "12px"}}>
-        <Header styles={window.location.href.includes("citizen") ? {paddingLeft: "0px", marginLeft: "0px"} : {}}>{t(getHeaderLabel())}</Header>
+      <div style={{ marginLeft: "12px" }}>
+        <Header styles={window.location.href.includes("citizen") ? { paddingLeft: "0px", marginLeft: "0px" } : {}}>{t(getHeaderLabel())}</Header>
       </div>
-    <FormComposer
-      onSkip = {onSkip}
-      showSkip = {enableSkip}
-      skipStyle = {isMobile?{}:{textAlign:"right",marginRight:"55px"}}
-      sectionHeadStyle = {{marginBottom:"16px"}}
-      onSubmit={onSubmit}
-      noBoxShadow
-      inline
-      config={newConfig}
-      label={t('SUBMIT')}
-      isDisabled={!canSubmit}
-      defaultValues={defaultValues}
-      onFormValueChange={onFormValueChange}
-    />
-     {showToast && (
+      <FormComposer
+        onSkip={onSkip}
+        showSkip={enableSkip}
+        skipStyle={isMobile ? {} : { textAlign: "right", marginRight: "55px" }}
+        sectionHeadStyle={{ marginBottom: "16px" }}
+        onSubmit={onSubmit}
+        noBoxShadow
+        inline
+        config={newConfig}
+        label={t('SUBMIT')}
+        isDisabled={!canSubmit}
+        defaultValues={defaultValues}
+        onFormValueChange={onFormValueChange}
+      />
+      {showToast && (
         <Toast
           error={showToast.key}
           label={t(showToast.label)}

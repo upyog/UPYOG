@@ -91,6 +91,16 @@ public class MDMSServiceV2 {
         return masterDataList;
     }
 
+    public List<Mdms> delete(MdmsRequest mdmsRequest, String schemaCode) {
+
+    String tenantId = multiStateInstanceUtil.getStateLevelTenant(
+            mdmsRequest.getMdms().getTenantId());
+
+    mdmsDataRepository.delete(tenantId, schemaCode);
+
+    return Arrays.asList(mdmsRequest.getMdms());
+    }
+
     /**
      * This method processes the requests that come for master data update.
      * @param mdmsRequest

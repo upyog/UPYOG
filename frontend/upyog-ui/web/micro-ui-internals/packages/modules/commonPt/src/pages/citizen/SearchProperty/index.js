@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch, useRouteMatch, useLocation } from "react-router-dom";
+import { Route, useLocation, Routes } from "react-router-dom";
 import { config } from "./config";
 import SearchPropertyComponent from "./searchProperty";
 
 const SearchProperty = ({ onSelect }) => {
   const { t } = useTranslation();
-  const { path } = useRouteMatch();
+  const { path } = Digit.Hooks.useModuleBasePath();
   
   const search = useLocation().search;
   const redirectToUrl = new URLSearchParams(search).get('redirectToUrl');
@@ -25,11 +25,14 @@ const SearchProperty = ({ onSelect }) => {
   );
 
   return (
-    <Switch>
-      <Route path={`${path}`} exact>
-        <SearchPropertyComponent config={params[0]} onSelect={onSelect} redirectToUrl={redirectToUrl} />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route
+        path="*"
+        element={
+          <SearchPropertyComponent config={params[0]} onSelect={onSelect} redirectToUrl={redirectToUrl} />
+        }
+      />
+    </Routes>
   );
 };
 

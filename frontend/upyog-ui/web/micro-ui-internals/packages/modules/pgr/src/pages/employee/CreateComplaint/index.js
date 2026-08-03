@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Dropdown, Loader } from "@upyog/digit-ui-react-components";
-import { useRouteMatch, useHistory } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { Dropdown, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 import { FormComposer } from "../../../components/FormComposer";
 import { createComplaint } from "../../../redux/actions/index";
@@ -63,8 +63,8 @@ const [description, setDescription] = useState("")
 
   ]
   const dispatch = useDispatch();
-  const match = useRouteMatch();
-  const history = useHistory();
+  const match = Digit.Hooks.useModuleBasePath();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const serviceDefinitions = Digit.GetServiceDefinitions;
   const client = useQueryClient();
   useEffect(() => {
@@ -157,7 +157,7 @@ const [description, setDescription] = useState("")
     await dispatch(createComplaint(formData));
     await client.refetchQueries(["fetchInboxData"]);
     localStorage.removeItem("pgrProperty");
-    history.push(parentUrl + "/response");
+    navigate(parentUrl + "/response");
   };
 
   const handlePincode = (event) => {
@@ -375,7 +375,6 @@ const [description, setDescription] = useState("")
       })
       setSelectedLocality(b?.[0])
       setDescription(data?.propertyId)
-      console.log("pgrProperty",localities,data?.propertyId,data)
     }
    
   },[propertyId])

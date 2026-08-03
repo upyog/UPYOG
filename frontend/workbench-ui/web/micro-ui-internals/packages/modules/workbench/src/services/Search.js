@@ -38,7 +38,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
       {
         title: "PROJECT_ESTIMATED_COST",
         value: currentProject?.additionalDetails?.estimatedCostInRs
-          ? `₹ ${Digit.Utils.dss.formatterWithoutRound(currentProject?.additionalDetails?.estimatedCostInRs, "number")}`
+          ? `₹ ${Number(currentProject?.additionalDetails?.estimatedCostInRs).toLocaleString('en-IN')}`
           : "NA",
       },
     ],
@@ -66,14 +66,6 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
       },
     ],
   };
-
-  // const financialDetails = {
-  //     title: "WORKS_FINANCIAL_DETAILS",
-  //     asSectionHeader: false,
-  //     values: [
-  //         { title: "WORKS_HEAD_OF_ACCOUNTS", value: currentProject?.additionalDetails?.fund ? t(`COMMON_MASTERS_FUND_${currentProject?.additionalDetails?.fund}`) : "NA" },
-  //     ],
-  //   };
 
   let documentDetails = {
     title: "",

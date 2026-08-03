@@ -1,7 +1,6 @@
-import { FormComposer, Header } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormComposer, Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { convertDateToMaximumPossibleValue } from "../../../../utils";
 import { config } from "../../../../config/NewMessageConfig";
 
@@ -9,7 +8,7 @@ import { config } from "../../../../config/NewMessageConfig";
 
 const NewEvents = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_HAPPENED", false);
   const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_ERROR_DATA", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_SUCCESS_DATA", false);
@@ -38,7 +37,7 @@ const NewEvents = () => {
         }
       ]
     }
-    history.push("/sv-ui/employee/engagement/messages/response", details)
+    navigate("/sv-ui/employee/engagement/messages/response", details)
   }
 
   return (

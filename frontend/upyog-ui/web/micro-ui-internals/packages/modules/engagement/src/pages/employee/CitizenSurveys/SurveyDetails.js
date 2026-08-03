@@ -1,7 +1,8 @@
-import { Header, Modal, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { Header, Modal, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import EditSurveyForm from "../../../components/Surveys/EditSurveyForms";
 import { mapQuestions } from "./NewSurvey";
@@ -59,7 +60,9 @@ const SurveyDetails = ({ location, match }) => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   const { id } = useParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const queryClient = useQueryClient();
+  const updateMutation = Digit.Hooks.survey.useUpdateSurvey();
   const [showModal, setShowModal] = useState(false);
   const [isFormDisabled, setIsFormDisabled] = useState(true);
   const [isFormPartiallyEnabled, setFormPartiallyEnabled] = useState(false);
@@ -251,7 +254,15 @@ const SurveyDetails = ({ location, match }) => {
         }
         else
         {
-          history.push("/upyog-ui/employee/engagement/surveys/update-response", details);
+          updateMutation.mutate(details, {
+            onSuccess: (responseData) => {
+              queryClient.clear();
+              navigate("/upyog-ui/employee/engagement/surveys/update-response", { state: { isSuccess: true, data: responseData } });
+            },
+            onError: (error) => {
+              navigate("/upyog-ui/employee/engagement/surveys/update-response", { state: { isSuccess: false, error } });
+            }
+          });
         }
       })
     }
@@ -260,16 +271,7 @@ const SurveyDetails = ({ location, match }) => {
   };
 
   const handleDelete = () => {
-    // const details = {
-    //   SurveyEntity: { ...surveyData, tenantId: tenantId?.code ? tenantId?.code : tenantId },
-    // };
-    // history.push("/upyog-ui/employee/engagement/surveys/delete-response", details);
     const details = {
-      // SurveyEntity: { ...surveyData,
-      //   tenantId,
-      //   questions: surveyData.questions.map(filterQuestion), 
-      //   status: "INACTIVE", 
-      //    },
       ServiceDefinition: {
         tenantId: surveyData.tenantId.code,
         code: surveyData.code,
@@ -281,24 +283,23 @@ const SurveyDetails = ({ location, match }) => {
         },
         clientId: surveyData.clientId,
         id: surveyData.id
-        
       }
     };
-    history.push("/upyog-ui/employee/engagement/surveys/delete-response", details);
+    updateMutation.mutate(details, {
+      onSuccess: (responseData) => {
+        queryClient.clear();
+        navigate("/upyog-ui/employee/engagement/surveys/delete-response", { state: { isSuccess: true, data: responseData } });
+      },
+      onError: (error) => {
+        navigate("/upyog-ui/employee/engagement/surveys/delete-response", { state: { isSuccess: false, error } });
+      }
+    });
   };
 
   //if we don't send tenantId it violates the not null constraint in the backend...
   const handleMarkActive = (data) => {
     const { fromDate, toDate, fromTime, toTime } = data;
     const details = {
-      // SurveyEntity: {
-      //   ...surveyData,
-      //   status: "ACTIVE",
-      //   startDate: new Date(`${fromDate} ${fromTime}`).getTime(),
-      //   endDate: new Date(`${toDate} ${toTime}`).getTime(),
-      //   questions: surveyData.questions.map(filterQuestion),
-      //   tenantId,
-      // },
       ServiceDefinition: {
         tenantId: surveyData.tenantId.code,
         code: surveyData.code,
@@ -313,18 +314,20 @@ const SurveyDetails = ({ location, match }) => {
         clientId: surveyData.clientId,
         id: surveyData.id,
       }
-      
     };
-    history.push("/upyog-ui/employee/engagement/surveys/update-response", details);
+    updateMutation.mutate(details, {
+      onSuccess: (responseData) => {
+        queryClient.clear();
+        navigate("/upyog-ui/employee/engagement/surveys/update-response", { state: { isSuccess: true, data: responseData } });
+      },
+      onError: (error) => {
+        navigate("/upyog-ui/employee/engagement/surveys/update-response", { state: { isSuccess: false, error } });
+      }
+    });
   };
 
   const handleMarkInactive = () => {
     const details = {
-      // SurveyEntity: { ...surveyData,
-      //   tenantId,
-      //   questions: surveyData.questions.map(filterQuestion), 
-      //   status: "INACTIVE", 
-      //    },
       ServiceDefinition: {
         tenantId: surveyData.tenantId.code,
         code: surveyData.code,
@@ -333,15 +336,22 @@ const SurveyDetails = ({ location, match }) => {
         attributes: surveyData.attributes,
         additionalDetails: {
          ...surveyData.additionalDetails,
-         startDate:null,
-         endDate:null
-
+         startDate: null,
+         endDate: null
         },
         clientId: surveyData.clientId,
         id: surveyData.id,
       }
     };
-    history.push("/upyog-ui/employee/engagement/surveys/update-response", details);
+    updateMutation.mutate(details, {
+      onSuccess: (responseData) => {
+        queryClient.clear();
+        navigate("/upyog-ui/employee/engagement/surveys/update-response", { state: { isSuccess: true, data: responseData } });
+      },
+      onError: (error) => {
+        navigate("/upyog-ui/employee/engagement/surveys/update-response", { state: { isSuccess: false, error } });
+      }
+    });
   };
 
   const actionMenuOptions = useMemo(() => {
@@ -354,7 +364,7 @@ const SurveyDetails = ({ location, match }) => {
     return options;
   }, [isSurveyActive, surveyData?.status]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading || updateMutation.isPending) return <Loader />;
 
   return (
     <Fragment>

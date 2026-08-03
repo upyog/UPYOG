@@ -1,15 +1,18 @@
-import get from "lodash/get";
-import logger from "../config/logger";
+// Before: mixed require() and import, missing .js extensions on local imports
+// Change: replaced require() with ESM import, added .js extensions for Node 22 ESM compatibility
+
+import get from "lodash.get";
+import logger from "../config/logger.js";
 import axios from "axios";
-import envVariables from "../EnvironmentVariables";
+import envVariables from "../EnvironmentVariables.js";
 import {
   getLocalisationkey,
   findLocalisation,
   getDateInRequiredFormat,
   getValue
-} from "./commons";
+} from "./commons.js";
 
-var jp = require("jsonpath");
+import jp from "jsonpath";
 
 let externalHost = envVariables.EGOV_EXTERNAL_HOST;
 /**

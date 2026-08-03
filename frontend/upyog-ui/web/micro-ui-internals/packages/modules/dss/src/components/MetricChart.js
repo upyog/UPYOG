@@ -1,9 +1,8 @@
-import { DownwardArrow, UpwardArrow } from "@upyog/digit-ui-react-components";
-import Rating from "../../../../react-components/src/atoms/Rating"
+import { DownwardArrow, UpwardArrow } from "@nudmcdgnpm/digit-ui-react-components";
+import {Rating} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FilterContext from "./FilterContext";
-//import {ReactComponent as Arrow_Downward} from "../images/Arrow_Downward.svg";
 import { ArrowDownwardElement } from "./ArrowDownward";
 import { ArrowUpwardElement } from "./ArrowUpward";
 
@@ -12,7 +11,7 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
   const insight = data?.insight?.value?.replace(/[+-]/g, "")?.split("%");
   return (
     <div>
-      <p className="heading-m" style={{ textAlign: "right", paddingTop: "0px", whiteSpace: "nowrap" }}>
+      <div className="heading-m" style={{ textAlign: "right", paddingTop: "0px", whiteSpace: "nowrap" }}>
         {indexValuesWithStar?.includes(code) ? (
           <Rating toolTipText={t("COMMON_RATING_LABEL")} currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset", marginBottom:"unset" }} starStyles={{ width: "25px" }} />
         ) : data?.headerName.includes("AVG") ? (
@@ -36,7 +35,7 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
             code === "fsmtotalsludgetreated" || code === "totalSludgeTreated"? t(`DSS_KL`) : ""
           }`
         )}
-      </p>
+      </div>
       {/* {data?.insight && (
         <div
           style={{

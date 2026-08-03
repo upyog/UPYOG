@@ -1,4 +1,4 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../common/mutationTemplate";
 import ApplicationUpdateActionsCustom from "../services/elements/ApplicationUpdateActionsCustom";
 
 /**
@@ -11,7 +11,9 @@ import ApplicationUpdateActionsCustom from "../services/elements/ApplicationUpda
 
 
 const useUpdateCustom = ( url ) => {
-    return useMutation((applicationData) => ApplicationUpdateActionsCustom({url,body:applicationData}));
+    return mutationTemplate({
+        mutationFn: (applicationData) => ApplicationUpdateActionsCustom({url, body: applicationData})
+    });
 };
 
 export default useUpdateCustom;

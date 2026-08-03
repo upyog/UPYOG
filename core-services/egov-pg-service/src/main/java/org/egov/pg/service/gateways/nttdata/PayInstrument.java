@@ -19,6 +19,13 @@ public class PayInstrument {
 	private Extras extras;
 	private CustDetails custDetails;
 	public ResponseDetails responseDetails;
+	private RefundStatusDetails refundStatusDetails;
+	public RefundStatusDetails getRefundStatusDetails() {
+		return refundStatusDetails;
+	}
+	public void setRefundStatusDetails(RefundStatusDetails refundStatusDetails) {
+		this.refundStatusDetails = refundStatusDetails;
+	}
 	public ResponseDetails getResponseDetails() {
 		return responseDetails;
 	}
@@ -83,7 +90,7 @@ public class PayInstrument {
 				+ ", getResponseDetails()=" + getResponseDetails() + ", getHeadDetails()=" + getHeadDetails()
 				+ ", getMerchDetails()=" + getMerchDetails() + ", getPayDetails()=" + getPayDetails()
 				+ ", getResponseUrls()=" + getResponseUrls() + ", getPayModeSpecificData()=" + getPayModeSpecificData()
-				+ ", getExtras()=" + getExtras() + ", getCustDetails()=" + getCustDetails() + ", getSettlementDetails()=" + getSettlementDetails() + ", getClass()="
+				+ ", getExtras()=" + getExtras() + ",getRefundStatusDetails()= "+getRefundStatusDetails()+ ", getCustDetails()=" + getCustDetails() + ", getSettlementDetails()=" + getSettlementDetails() + ", getClass()="
 				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
 	}
 	

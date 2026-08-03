@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, Dropdown, FormStep, LabelFieldPair, RadioOrSelect } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelError, Dropdown, FormStep, LabelFieldPair, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -134,34 +134,34 @@ const VendorAddress = ({ t, config, onSelect, userType, formData, setError, clea
             name={"city"}
             defaultValue={cities?.length === 1 ? cities[0] : selectedCity}
             control={control}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
-                selected={props.value}
+                selected={field.value}
                 disable={isEditAddress ? isEditAddress : cities?.length === 1}
                 option={cities}
-                select={props.onChange}
+                select={field.onChange}
                 optionKey="code"
-                onBlur={props.onBlur}
+                onBlur={field.onBlur}
                 t={t}
               />
             )}
           />
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.city ? errors?.city?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields.city ? errors?.city?.message : ""}</CardLabelError>
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("VENDOR_LOCALITY") + " *"}</CardLabel>
           <Controller
             name="locality"
             defaultValue={null}
             control={control}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
-                selected={props.value}
+                selected={field.value}
                 option={localities}
-                select={props.onChange}
-                onBlur={props.onBlur}
+                select={field.onChange}
+                onBlur={field.onBlur}
                 optionKey="i18nkey"
                 t={t}
                 disable={isEditAddress ? isEditAddress : false}
@@ -169,7 +169,7 @@ const VendorAddress = ({ t, config, onSelect, userType, formData, setError, clea
             )}
           />
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.locality ? errors?.locality?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields.locality ? errors?.locality?.message : ""}</CardLabelError>
       </div>
     );
   }

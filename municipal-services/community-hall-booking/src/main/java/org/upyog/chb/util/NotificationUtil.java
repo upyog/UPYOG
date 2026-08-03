@@ -3,7 +3,6 @@ package org.upyog.chb.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
@@ -20,8 +18,7 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.kafka.producer.Producer;
 import org.upyog.chb.repository.ServiceRequestRepository;
-import org.upyog.chb.web.models.CommunityHallBookingDetail;
-import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.VenueBookingDetail;
 import org.upyog.chb.web.models.events.Action;
 import org.upyog.chb.web.models.events.ActionItem;
 import org.upyog.chb.web.models.events.EventRequest;
@@ -70,22 +67,24 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class NotificationUtil {
 
-	private ServiceRequestRepository serviceRequestRepository;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final CommunityHallBookingConfiguration config;
+	private final Producer producer;
 
-	private CommunityHallBookingConfiguration config;
-
-	private Producer producer;
-
-	private final String URL = "url";
+	private static final String URL_KEY = "url";
 	private static final String PAYMENT_LINK = "PAYMENT_LINK";
-
 	private static final String PERMISSION_LETTER_LINK = "PERMISSION_LETTER_LINK";
+	private static final String REQUEST_INFO_KEY = "RequestInfo";
+	private static final String TENANT_ID_KEY = "tenantId";
+	private static final String USER_TYPE_KEY = "userType";
+	private static final String USER_NAME_KEY = "userName";
+	private static final String CITIZEN_USER_TYPE = "CITIZEN";
+	private static final String JSON_PATH_USER_UUID = "$.user[0].uuid";
+	private static final String JSON_PATH_USER_EMAIL = "$.user[0].emailId";
 
-	
 	public static final String MESSAGE_TEXT = "MESSAGE_TEXT";
 	public static final String ACTION_LINK = "ACTION_LINK";
 
-	@Autowired
 	public NotificationUtil(ServiceRequestRepository serviceRequestRepository, CommunityHallBookingConfiguration config,
 			Producer producer) {
 		this.serviceRequestRepository = serviceRequestRepository;
@@ -124,11 +123,8 @@ public class NotificationUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public String getLocalizationMessages(String tenantId, RequestInfo requestInfo) {
-
-		LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo),
-				requestInfo);
-		String jsonString = new JSONObject(responseMap).toString();
-		return jsonString;
+		Map responseMap = (Map) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo), requestInfo);
+		return new JSONObject(responseMap).toString();
 	}
 
 	/**
@@ -139,7 +135,7 @@ public class NotificationUtil {
 	 */
 	private StringBuilder getUri(String tenantId, RequestInfo requestInfo) {
 
-		if (config.getIsLocalizationStateLevel())
+		if (Boolean.TRUE.equals(config.getIsLocalizationStateLevel()))
 			tenantId = tenantId.split("\\.")[0];
 
 		String locale = "en_IN";
@@ -160,11 +156,10 @@ public class NotificationUtil {
 	 * @param mobileNumberToOwnerName Map of mobileNumber to OwnerName
 	 * @return List of SMSRequest
 	 */
-	public List<SMSRequest> createSMSRequest(CommunityHallBookingRequest bookingRequest, String message,
+	public List<SMSRequest> createSMSRequest(String message,
 			Map<String, String> mobileNumberToOwnerName) {
 
 		List<SMSRequest> smsRequest = new LinkedList<>();
-	//	message  = "Dear Citizen, Your OTP to complete your UPYOG Registration is 12345.\\n\\nUPYOG" + "#1207167462318135756#1207167462307097438" ;
 		for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
 			smsRequest.add(new SMSRequest(entryset.getKey(), message));
 		}
@@ -206,88 +201,51 @@ public class NotificationUtil {
 	 * @param actionStatus
 	 * @return
 	 */
-	public Map<String, String> getCustomizedMsg(CommunityHallBookingDetail bookingDetail, String localizationMessage, String actionStatus, String eventType) {
-		String messageTemplate = null, link = null;
+	public Map<String, String> getCustomizedMsg(VenueBookingDetail bookingDetail, String localizationMessage,
+			String actionStatus, String eventType) {
 		String notificationEventType = actionStatus + "_" + eventType;
-		log.info(" booking status : " + bookingDetail.getBookingStatus());
-		log.info(" booking status ACTION_STATUS : " + actionStatus); 
-		log.info("notificationEventType  : " + notificationEventType);
-		
+		log.info(" booking status : {}", bookingDetail.getBookingStatus());
+		log.info(" booking status ACTION_STATUS : {}", actionStatus);
+		log.info("notificationEventType  : {}", notificationEventType);
+
 		BookingStatusEnum notificationType = BookingStatusEnum.valueOf(actionStatus);
+		String messageTemplate = switch (notificationType) {
+		case BOOKING_CREATED, BOOKED, CANCELLED, PAYMENT_FAILED ->
+			getMessageTemplate(notificationEventType, localizationMessage);
+		default -> "Localization message not available for  status : " + actionStatus;
+		};
 
-		switch (notificationType) {
-
-		case BOOKING_CREATED:
-			//Fetch message template from localization message for localization code
-			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
-			
-			//link = getActionLink(bookingDetail, actionStatus);
-			//Update placeholder in messages
-		//	message = populateDynamicValues(bookingDetail, messageTemplate);
-			//Shorten URL part of notification message
-		//	String shortUrl = getActionLink(bookingDetail, actionStatus);
-			//Update payment link placeholder in message
-		//	message = message.replace(CommunityHallBookingConstants.CHB_PAYMENT_LINK, shortUrl);
-			break;
-
-		case BOOKED:
-			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
-			//link = getActionLink(bookingDetail, actionStatus);
-			
-		//	message = populateDynamicValues(bookingDetail, messageTemplate);
-		//	String permissionLetterShortUrl = getActionLink(bookingDetail, actionStatus);
-		//	message = message.replace(CommunityHallBookingConstants.CHB_PERMISSION_LETTER_LINK, permissionLetterShortUrl);
-			break;
-
-		case CANCELLED:
-			// TODO: Implement
-			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
-		//	message = populateDynamicValues(bookingDetail, messageTemplate);
-			break;
-			
-		case PAYMENT_FAILED:
-			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
-			//link = getActionLink(bookingDetail, actionStatus);
-			break;
-			
-		default:
-			messageTemplate = "Localization message not available for  status : " + actionStatus;
-			break;
-			
-		}
-		
+		String link = null;
 		if (messageTemplate.contains(CommunityHallBookingConstants.NOTIFICATION_PAY_NOW)) {
-			   
-		    link = getPayUrl(bookingDetail, messageTemplate);
-		}		
-		
-		if (messageTemplate.contains(CommunityHallBookingConstants.NOTIFICATION_DOWNLOAD_RECEIPT)) {
-			   
-		    link = getReceiptDownloadLink(bookingDetail);
+			link = getPayUrl();
 		}
-		
-		Map<String, String> messageMap = new HashMap<String, String>();
+		if (messageTemplate.contains(CommunityHallBookingConstants.NOTIFICATION_DOWNLOAD_RECEIPT)) {
+			link = getReceiptDownloadLink(bookingDetail);
+		}
+
+		Map<String, String> messageMap = new HashMap<>();
 		messageMap.put(ACTION_LINK, link);
 		messageMap.put(MESSAGE_TEXT, messageTemplate);
-		
-		log.info("getCustomizedMsg messageTemplate : " + messageTemplate);
+
+		log.info("getCustomizedMsg messageTemplate : {}", messageTemplate);
 		return messageMap;
 	}
 	
-	public String getActionLink(CommunityHallBookingDetail bookingDetail, String action) {
+	public String getActionLink(VenueBookingDetail bookingDetail, String action) {
 		String link = null;
-		if(PAYMENT_LINK.equals(action)) {
-			//Payment Link
+		if (PAYMENT_LINK.equals(action)) {
 			link = config.getUiAppHost() + config.getPayLinkSMS().replace("$consumerCode", bookingDetail.getBookingNo())
-					.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
+					.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo())
+					.replace("$tenantId", bookingDetail.getTenantId())
 					.replace("$businessService", config.getBusinessServiceName());
-		} else if(PERMISSION_LETTER_LINK.toString().equals(action)) {
-			//Permission letter link
-			link = config.getUiAppHost() + config.getPermissionLetterLink().replace("$consumerCode", bookingDetail.getBookingNo())
-					.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo()).replace("$tenantId", bookingDetail.getTenantId())
+		} else if (PERMISSION_LETTER_LINK.equals(action)) {
+			link = config.getUiAppHost() + config.getPermissionLetterLink()
+					.replace("$consumerCode", bookingDetail.getBookingNo())
+					.replace("$mobile", bookingDetail.getApplicantDetail().getApplicantMobileNo())
+					.replace("$tenantId", bookingDetail.getTenantId())
 					.replace("$businessService", config.getBusinessServiceName());
 		}
-		if (null != link) {
+		if (link != null) {
 			link = getShortnerURL(link);
 		}
 		return link;
@@ -295,7 +253,7 @@ public class NotificationUtil {
 
 	private String getShortnerURL(String actualURL) {
 		net.minidev.json.JSONObject obj = new net.minidev.json.JSONObject();
-		obj.put(URL, actualURL);
+		obj.put(URL_KEY, actualURL);
 		String url = config.getUrlShortnerHost() + config.getShortenerEndpoint();
 
 		Object response = serviceRequestRepository.getShorteningURL(new StringBuilder(url), obj);
@@ -304,26 +262,15 @@ public class NotificationUtil {
 	
 	
 	/**
-	 * Generates a shortened payment URL for the citizen to make payment based on the application details.
+	 * Builds the shortened "Pay Now" URL for SMS/event notifications.
 	 * <p>
-	 * The final URL is built using a URL template from configuration (`payLinkTemplate`) and fills in dynamic values 
-	 * like business service name, application number, tenant ID, and mobile number. The constructed URL is then 
-	 * prefixed with the UI host and passed through a shortening service.
+	 * The link is composed from the configured UI host and pay-now template, then passed through the URL shortener.
+	 * CHB redirects citizens to the My Bookings page so the client can resolve the active payment timer before payment.
 	 *
-	 * @param cndApplicationDetail The application detail object containing applicant and application metadata.
-	 * @param message              The notification message (not used in this method, but kept for signature consistency).
-	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
-	 * We are redirecting the pay now link to myBookings page in CHB because in the normal flow we need timer value, 
-	 * and we get that timer value by hitting the make payment button
-	 * if timer value is not given then the proceed to pay button will be disabled
+	 * @return shortened payment URL, or the original URL when shortening is unavailable
 	 */
-	public String getPayUrl(CommunityHallBookingDetail bookingDetail, String message) {
+	public String getPayUrl() {
 	    String payLinkTemplate = config.getPayNowLink();
-	   /*  String actionLink = String.format(payLinkTemplate,
-	            config.getBusinessServiceName(),
-	            bookingDetail.getBookingNo()
-	            cndApplicationDetail.getTenantId()
-	            ); */
 	    String finalUrl = config.getUiAppHost() + payLinkTemplate;
 
 	    return getShortnerURL(finalUrl);
@@ -341,7 +288,7 @@ public class NotificationUtil {
 	 * @return a shortened URL string for downloading the receipt
 	 */
 	
-     public String getReceiptDownloadLink(CommunityHallBookingDetail bookingDetail) {
+     public String getReceiptDownloadLink(VenueBookingDetail bookingDetail) {
 		
 		String downloadReceiptLinkTemplate = config.getDownloadReceipt();
 	    String actionLink = String.format(downloadReceiptLinkTemplate,
@@ -419,80 +366,56 @@ public class NotificationUtil {
      */
     
 	public Map<String, String> fetchUserUUIDs(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
-
 		Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
-		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
 		for (String mobileNo : mobileNumbers) {
-			userSearchRequest.put("userName", mobileNo);
+			Map<String, Object> userSearchRequest = buildUserSearchRequest(requestInfo, tenantId, mobileNo);
 			try {
 				Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-				if (null != user) {
-					String uuid = JsonPath.read(user, "$.user[0].uuid");
+				if (user != null) {
+					String uuid = JsonPath.read(user, JSON_PATH_USER_UUID);
 					mapOfPhnoAndUUIDs.put(mobileNo, uuid);
 				} else {
-					log.error("Service returned null while fetching user for username - " + mobileNo);
+					log.error("Service returned null while fetching user for username - {}", mobileNo);
 				}
 			} catch (Exception e) {
-				log.error("Exception while fetching user for username - " + mobileNo);
+				log.error("Exception while fetching user for username - {}", mobileNo);
 				log.error("Exception trace: ", e);
-				continue;
 			}
 		}
 		return mapOfPhnoAndUUIDs;
 	}
-	
-	
-	/**
-	 * Fetches the email IDs of users based on their mobile numbers.
-	 * <p>
-	 * For each mobile number in the input set, this method constructs a user search request and
-	 * queries the user service to retrieve the corresponding email ID. The email IDs are extracted
-	 * from the JSON response using JsonPath and mapped to their respective mobile numbers.
-	 * </p>
-	 *
-	 * <p>
-	 * If an email ID is not found or an exception occurs during the fetch, appropriate logs are generated.
-	 * The method returns a map where keys are mobile numbers and values are the associated email IDs.
-	 * </p>
-	 *
-	 * @param mobileNumbers the set of mobile numbers for which email IDs need to be fetched
-	 * @param requestInfo   the {@link RequestInfo} object containing metadata for the service request
-	 * @param tenantId      the tenant ID used for scoping the user search
-	 * @return a map of mobile numbers to their corresponding email IDs
-	 */
-	
+
 	public Map<String, String> fetchUserEmailIds(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
 		Map<String, String> mapOfPhnoAndEmailIds = new HashMap<>();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
-		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
 		for (String mobileNo : mobileNumbers) {
-			userSearchRequest.put("userName", mobileNo);
+			Map<String, Object> userSearchRequest = buildUserSearchRequest(requestInfo, tenantId, mobileNo);
 			try {
 				Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-				if (null != user) {
-					if (JsonPath.read(user, "$.user[0].emailId") != null) {
-						String email = JsonPath.read(user, "$.user[0].emailId");
-						mapOfPhnoAndEmailIds.put(mobileNo, email);
-					}
-				} else {
-					log.error("Service returned null while fetching user for username - " + mobileNo);
+				if (user != null && JsonPath.read(user, JSON_PATH_USER_EMAIL) != null) {
+					String email = JsonPath.read(user, JSON_PATH_USER_EMAIL);
+					mapOfPhnoAndEmailIds.put(mobileNo, email);
+				} else if (user == null) {
+					log.error("Service returned null while fetching user for username - {}", mobileNo);
 				}
 			} catch (Exception e) {
-				log.error("Exception while fetching user for username - " + mobileNo);
+				log.error("Exception while fetching user for username - {}", mobileNo);
 				log.error("Exception trace: ", e);
-				continue;
 			}
 		}
 		return mapOfPhnoAndEmailIds;
+	}
+
+	private Map<String, Object> buildUserSearchRequest(RequestInfo requestInfo, String tenantId, String mobileNo) {
+		Map<String, Object> userSearchRequest = new HashMap<>();
+		userSearchRequest.put(REQUEST_INFO_KEY, requestInfo);
+		userSearchRequest.put(TENANT_ID_KEY, tenantId);
+		userSearchRequest.put(USER_TYPE_KEY, CITIZEN_USER_TYPE);
+		userSearchRequest.put(USER_NAME_KEY, mobileNo);
+		return userSearchRequest;
 	}
 	
 	/**
@@ -545,7 +468,7 @@ public class NotificationUtil {
 	 */
 	public void sendEmail(List<EmailRequest> emailRequestList) {
 
-		if (config.getIsEmailNotificationEnabled()) {
+		if (Boolean.TRUE.equals(config.getIsEmailNotificationEnabled())) {
 			if (CollectionUtils.isEmpty(emailRequestList))
 				log.info("Messages from localization couldn't be fetched!");
 			for (EmailRequest emailRequest : emailRequestList) {

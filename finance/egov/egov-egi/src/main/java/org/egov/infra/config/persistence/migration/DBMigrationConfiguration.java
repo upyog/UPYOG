@@ -51,6 +51,8 @@ package org.egov.infra.config.persistence.migration;
 
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,12 +65,15 @@ import org.springframework.core.env.MapPropertySource;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.String.format;
 
 @Configuration
 public class DBMigrationConfiguration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DBMigrationConfiguration.class);
 
     @Value("${dev.mode}")
     private boolean devMode;
@@ -127,14 +132,14 @@ public class DBMigrationConfiguration {
     }
 
     private void migrateDatabase(DataSource dataSource, String schema, String... locations) {
-    	// Use Flyway.configure() to create a Flyway instanceAdd commentMore actions
+        // Use Flyway.configure() to create a Flyway instanceAdd commentMore actions
         FluentConfiguration flywayConfig = Flyway.configure()
-            .dataSource(dataSource)
-            .locations(locations)
-            .schemas(schema)
-            .baselineOnMigrate(true)
-            .validateOnMigrate(validateOnMigrate)
-            .outOfOrder(true);
+                .dataSource(dataSource)
+                .locations(locations)
+                .schemas(schema)
+                .baselineOnMigrate(true)
+                .validateOnMigrate(validateOnMigrate)
+                .outOfOrder(true);
 
         Flyway flyway = flywayConfig.load();
 
@@ -147,13 +152,53 @@ public class DBMigrationConfiguration {
     @Bean(name = "tenants", autowire = Autowire.BY_NAME)
     public List<String> tenants() {
         List<String> tenants = new ArrayList<>();
+
+        String configuredSchemas = environment.getProperty("tenant.schemas");
+        if (configuredSchemas != null && !configuredSchemas.trim().isEmpty()) {
+            /*
+             * Earlier, tenant discovery depended on scanning all property
+             * sources for tenant.* entries such as tenant.citya.localhost=citya.
+             * That worked, but it tied migration to host-based mapping and
+             * required one property per city.
+             *
+             * The new tenant.schemas property makes the migration list explicit
+             * and predictable by accepting only the schema names that must be
+             * migrated at startup. eg: tenant.schemas=citya,cityb,cityc
+             * This keeps DB migration separate from host/domain mapping while
+             * preserving the old scan-based fallback for environments that
+             * still use the legacy format.
+             */
+
+            LOGGER.info("======== LOADING TENANT SCHEMAS FROM tenant.schemas ========");
+            Arrays.stream(configuredSchemas.split(","))
+                    .map(String::trim)
+                    .filter(schema -> !schema.isEmpty())
+                    .forEach(tenants::add);
+            LOGGER.info("Final tenants list: {}", tenants);
+            LOGGER.info("======== TENANT SCAN COMPLETE ========");
+            return tenants;
+        }
+
+        LOGGER.info("======== SCANNING PROPERTY SOURCES FOR TENANT KEYS ========");
+
         environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
-            if (propertySource instanceof MapPropertySource)
+            LOGGER.info("Scanning PropertySource: [{}] of type: [{}]",
+                    propertySource.getName(), propertySource.getClass().getName());
+
+            if (propertySource instanceof MapPropertySource) {
                 ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                    if (key.startsWith("tenant."))
+                    if (key.startsWith("tenant.")) {
+                        LOGGER.info("Found tenant key: [{}] = [{}] in PropertySource: [{}]",
+                                key, value, propertySource.getName());
                         tenants.add(value.toString());
+                    }
                 });
+            }
         });
+
+        LOGGER.info("Final tenants list: {}", tenants);
+        LOGGER.info("======== TENANT SCAN COMPLETE ========");
+
         return tenants;
     }
 

@@ -1,7 +1,7 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
-import React, { useEffect } from "react";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import getEwAcknowledgementData from "../../../utils/getEwAcknowledgementData";
 import { EWDataConvert } from "../../../utils";
 
@@ -59,30 +59,20 @@ const BannerPicker = (props) => {
  * @param {Function} props.onSuccess Callback function for successful submission
  * @returns {JSX.Element} Acknowledgement page with status and actions
  */
-const EWASTEAcknowledgement = ({ data, onSuccess }) => {
+const EWASTEAcknowledgement = () => {
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.ew.useEWCreateAPI(data?.address?.city?.code);
+  const {state} = useLocation();
+  const [errorToast, setErrorToast] = useState(null);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
 
-  useEffect(() => {
-    try {
-      data.tenantId = tenantId;
-      let formdata = EWDataConvert(data);
-      mutation.mutate(formdata, {
-        onSuccess,
-      });
-    } catch (err) {
-      console.error("Error submitting E-Waste application:", err);
-    }
-  }, []);
+  const application = state?.data;
 
   /**
    * Generates and downloads acknowledgement PDF
    */
   const handleDownloadPdf = async () => {
-    const { EwasteApplication = [] } = mutation.data;
+    const { EwasteApplication = [] } = state.data || {};
     let EW = (EwasteApplication && EwasteApplication[0]) || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === EW.tenantId);
     let tenantId = EW.tenantId || tenantId;
@@ -91,21 +81,30 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
     Digit.Utils.pdf.generateTable(data);
   };
 
-  return mutation.isLoading || mutation.isIdle ? (
+   const isLoading = !state;
+   const isSuccess = state?.isSuccess;
+ 
+   if (!state) {
+     return <Loader />;
+   }
+
+  return isLoading ? (
     <Loader />
-  ) : (
+  ) : 
+  (
     <Card>
-      <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
+      <BannerPicker t={t} data={application} isSuccess={isSuccess}  isLoading={isLoading}/>
       <StatusTable>
-        {mutation.isSuccess && (
+        {isSuccess && (
           <Row
             rowContainerStyle={rowContainerStyle}
-            last
+            last       
             textStyle={{ whiteSpace: "pre", width: "60%" }}
           />
         )}
       </StatusTable>
-      {mutation.isSuccess && <SubmitBar label={t("EWASTE_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
+      {isSuccess && <SubmitBar label={t("EWASTE_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
+      {errorToast && <Toast error label={errorToast} onClose={() => setErrorToast(null)} />}
       <Link to={`/upyog-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
