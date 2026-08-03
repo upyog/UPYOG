@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgCollectionUnit;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
-import org.egov.garbageservice.model.TotalCountRequest;
 import org.egov.garbageservice.producer.Producer;
 import org.egov.garbageservice.repository.rowmapper.GarbageAccountRowMapper;
 import org.egov.garbageservice.util.GrbgConstants;
@@ -30,18 +29,18 @@ import java.util.stream.Collectors;
 @Repository
 @Slf4j
 public class GarbageAccountRepository {
-    public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_hpudd_grbg_account')";
-    public static final String DELETE_QUERY = "UPDATE eg_grbg_account SET is_active = false WHERE garbage_id = ?";
-    public static final String SELECT_NEXT_GARBAGE_ID = "select nextval('seq_eg_grbg_account_id')";
+    public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_udd_grbg_account')";
+    public static final String DELETE_QUERY = "UPDATE ug_grbg_account SET is_active = false WHERE garbage_id = ?";
+    public static final String SELECT_NEXT_GARBAGE_ID = "select nextval('seq_ug_grbg_account_id')";
     public static final String REPLACE_STRING = "{replace}";
-    public static final String GET_APPROVER_FOR_TENANT = "select code from eg_hrms_employee ehe "
-            + "join eg_userrole_v1 eur on eur.user_id = ehe.id WHERE role_tenantid = ? AND role_code = 'GB_APPROVER'";
-    private static final String SELECT_GRBG_ACC = " SELECT acc.* FROM eg_grbg_account acc"
-            + " LEFT JOIN eg_grbg_old_details old_dtl ON old_dtl.garbage_id = acc.garbage_id"
-            + " JOIN eg_grbg_collection_unit unit ON unit.garbage_id = acc.garbage_id"
-            + " JOIN eg_grbg_address address ON address.garbage_id = acc.garbage_id"
-            + " JOIN eg_grbg_application app ON app.garbage_id = acc.garbage_id";
-    private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.* "
+    public static final String GET_APPROVER_FOR_TENANT = "select code from ug_hrms_employee ehe "
+            + "join ug_userrole_v1 eur on eur.user_id = ehe.id WHERE role_tenantid = ? AND role_code = 'GB_APPROVER'";
+    private static final String SELECT_GRBG_ACC = " SELECT acc.* FROM ug_grbg_account acc"
+            + " LEFT JOIN ug_grbg_old_details old_dtl ON old_dtl.garbage_id = acc.garbage_id"
+            + " JOIN ug_grbg_collection_unit unit ON unit.garbage_id = acc.garbage_id"
+            + " JOIN ug_grbg_address address ON address.garbage_id = acc.garbage_id"
+            + " JOIN ug_grbg_application app ON app.garbage_id = acc.garbage_id";
+    private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.*, acc.due_date as acc_due_date "
             + ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
             + ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
             + ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active,unit.isbplunit as unit_isbplunit,unit.isbulkgeneration as unit_isbulkgeneration,unit.isvariablecalculation as unit_isvariablecalculation,unit.no_of_units as unit_no_of_units,unit.ismonthlybilling as unit_is_monthly_billing, unit.owner_type as unit_owner_type, unit.is_inheritance as unit_is_inheritance, unit.special_Category as unit_special_Category"
@@ -59,17 +58,17 @@ public class GarbageAccountRepository {
             + ", sub_unit.uuid as sub_unit_uuid, sub_unit.unit_name as sub_unit_unit_name, sub_unit.unit_ward as sub_unit_unit_ward, sub_unit.ulb_name as sub_unit_ulb_name, sub_unit.type_of_ulb as sub_unit_type_of_ulb, sub_unit.garbage_id as sub_unit_garbage_id, sub_unit.unit_type as sub_unit_unit_type, sub_unit.category as sub_unit_category, sub_unit.sub_category as sub_unit_sub_category, sub_unit.sub_category_type as sub_unit_sub_category_type, sub_unit.is_active as sub_unit_is_active,sub_unit.isbplunit as sub_unit_isbplunit,sub_unit.isbulkgeneration as sub_unit_isbulkgeneration,sub_unit.isvariablecalculation as sub_unit_isvariablecalculation,sub_unit.no_of_units as sub_unit_no_of_units,sub_unit.ismonthlybilling as sub_unit_is_monthly_billing, sub_unit.owner_type as sub_unit_owner_type, sub_unit.is_inheritance as sub_unit_is_inheritance, sub_unit.special_Category as sub_unit_special_Category"
             + ", sub_doc.uuid as sub_doc_uuid, sub_doc.document_uid as sub_doc_document_uid, sub_doc.file_store_id as sub_doc_file_store_id, sub_doc.document_type as sub_doc_document_type, sub_doc.garbage_id as sub_doc_garbage_id"
             + " FROM filtered_acc as acc"
-            + " LEFT OUTER JOIN eg_grbg_application as app ON app.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_address as address ON address.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_document as doc ON doc.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_account sub_acc ON acc.uuid = sub_acc.parent_account"
-            + " LEFT OUTER JOIN eg_grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_old_details as sub_old_dtl ON sub_old_dtl.garbage_id = sub_acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_collection_unit as sub_unit ON sub_unit.garbage_id = sub_acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_address as sub_address ON sub_address.garbage_id = sub_acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_document as sub_doc ON sub_doc.garbage_id = sub_acc.garbage_id";
+            + " LEFT OUTER JOIN ug_grbg_application as app ON app.garbage_id = acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_address as address ON address.garbage_id = acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_document as doc ON doc.garbage_id = acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_account sub_acc ON acc.uuid = sub_acc.parent_account"
+            + " LEFT OUTER JOIN ug_grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_old_details as sub_old_dtl ON sub_old_dtl.garbage_id = sub_acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_collection_unit as sub_unit ON sub_unit.garbage_id = sub_acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_address as sub_address ON sub_address.garbage_id = sub_acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_document as sub_doc ON sub_doc.garbage_id = sub_acc.garbage_id";
     public static final String WITH_SUB_QUERY = " WITH filtered_acc AS ({replace}) "
             + SELECT_QUERY_ACCOUNT;
     private static final String SELECT_QUERY_ACCOUNT_INDEX = "SELECT acc.* "
@@ -79,37 +78,37 @@ public class GarbageAccountRepository {
             + ", app.uuid as app_uuid, app.application_no as app_application_no , app.status as app_status, app.garbage_id as app_garbage_id "
             + ", doc.uuid as doc_uuid, doc.document_uid as doc_document_uid, doc.file_store_id as doc_file_store_id, doc.document_type as doc_document_type, doc.document_type as doc_document_type"
             + " FROM filtered_acc as acc"
-            + " LEFT OUTER JOIN eg_grbg_application as app ON app.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_address as address ON address.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN eg_grbg_document as doc ON doc.garbage_id = acc.garbage_id";
+            + " LEFT OUTER JOIN ug_grbg_application as app ON app.garbage_id = acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_address as address ON address.garbage_id = acc.garbage_id"
+            + " LEFT OUTER JOIN ug_grbg_document as doc ON doc.garbage_id = acc.garbage_id";
     public static final String WITH_SUB_QUERY_INDEX = " WITH filtered_acc AS ({replace}) "
             + SELECT_QUERY_ACCOUNT_INDEX;
-    private static final String INSERT_ACCOUNT = "INSERT INTO eg_grbg_account (id, uuid, garbage_id, property_id, type, name"
+    private static final String INSERT_ACCOUNT = "INSERT INTO ug_grbg_account (id, uuid, garbage_id, property_id, type, name"
             + ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, "
             + "last_modified_by, last_modified_date, tenant_id, parent_account, business_service, approval_date, is_active, channel) "
             + "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :gender, :emailId, :isOwner, :userUuid, :declarationUuid, "
             + ":status, :additionalDetail :: JSONB, :createdBy, :createdDate, "
             + ":lastModifiedBy, :lastModifiedDate, :tenantId, :parentAccount, :businessService, :approvalDate, :isActive, :channel)";
-    private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE eg_grbg_account SET garbage_id = :garbageId, uuid =:uuid"
+    private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE ug_grbg_account SET garbage_id = :garbageId, uuid =:uuid"
             + ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
             + ", user_uuid = :userUuid, declaration_uuid = :declarationUuid, status = :status"
             + ", gender = :gender, email_id = :emailId, additional_detail = :additionalDetail :: JSONB, last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate,"
-            + " tenant_id = :tenantId, business_service = :businessService, approval_date = :approvalDate , channel= :channel WHERE id = :id";
+            + " tenant_id = :tenantId, business_service = :businessService, approval_date = :approvalDate , channel= :channel, due_date = :dueDate WHERE id = :id";
     private static final String COUNT_STATUS_BASED_QUERY = "SELECT COUNT(distinct grbg.id) as count, " +
             "COUNT(distinct case when grbg.status = 'INITIATED' then grbg.id end) as applicationInitiated, " +
-            "COUNT(distinct case when grbg.status = 'PENDINGFORVERIFICATION' then grbg.id end) as applicationPendingForVerification, " +
-            "COUNT(distinct case when grbg.status = 'PENDINGFORMODIFICATION' then grbg.id end) as applicationPendingForModification, " +
-            "COUNT(distinct case when grbg.status = 'PENDINGFORAPPROVAL' then grbg.id end) as applicationPendingForApproval, " +
+            "COUNT(distinct case when grbg.status = 'PENDING_FOR_VERIFICATION' then grbg.id end) as applicationPendingForVerification, " +
+            "COUNT(distinct case when grbg.status = 'EDIT_APPLICATION' then grbg.id end) as applicationPendingForModification, " +
+            "COUNT(distinct case when grbg.status = 'PENDING_FOR_APPROVAL' then grbg.id end) as applicationPendingForApproval, " +
             "COUNT(distinct case when grbg.status = 'APPROVED' then grbg.id end) as applicationApproved, " +
             "COUNT(distinct case when grbg.status = 'REJECTED' then grbg.id end) as applicationRejected, " +
-            "COUNT(distinct case when grbg.status = 'PENDINGFORPAYMENT' then grbg.id end) as applicationPendingPayment, " +
-            "COUNT(distinct case when grbg.status = 'CLOSED' then grbg.id end) as applicationClosed, " +
-            "COUNT(distinct case when grbg.status = 'TEMPERORYCLOSED' then grbg.id end) as applicationTemporaryClosed " +
-            "from eg_grbg_account as grbg";
-    private static final String INSERT_ACCOUNT_AUDIT = "INSERT INTO eg_grbg_account_audit (auditid, grbg_application_no, status, type"
-            + ", grbg_account_details, auditcreatedtime) VALUES ((select nextval('seq_eg_grbg_account_audit')), :grbgApplicationNo, :status"
+            "0 as applicationPendingPayment, " +
+            "0 as applicationClosed, " +
+            "0 as applicationTemporaryClosed " +
+            "from ug_grbg_account as grbg";
+    private static final String INSERT_ACCOUNT_AUDIT = "INSERT INTO ug_grbg_account_audit (auditid, grbg_application_no, status, type"
+            + ", grbg_account_details, auditcreatedtime) VALUES ((select nextval('seq_ug_grbg_account_audit')), :grbgApplicationNo, :status"
             + ", :type, :grbgAccountDetails, (SELECT extract(epoch from now())))";
     private final Producer producer;
     @Autowired
@@ -277,6 +276,7 @@ public class GarbageAccountRepository {
         accountInputs.put("businessService", newGarbageAccount.getBusinessService());
         accountInputs.put("channel", newGarbageAccount.getChannel());
         accountInputs.put("approvalDate", newGarbageAccount.getApprovalDate());
+        accountInputs.put("dueDate", newGarbageAccount.getDueDate());
 
         namedParameterJdbcTemplate.update(UPDATE_ACCOUNT_BY_ID, accountInputs);
 
@@ -874,48 +874,6 @@ public class GarbageAccountRepository {
 
     public void delete(GarbageAccount garbageAccount) {
         jdbcTemplate.update(DELETE_QUERY, garbageAccount.getGarbageId());
-    }
-
-    /**
-     * Queries database for records matching the provided criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Constructs a dynamic SQL query based on active search criteria parameters.</li>
-     *   <li>Appends pagination boundaries (limit and offset) and sorting clauses.</li>
-     *   <li>Executes the SQL query via JdbcTemplate using custom row mapping.</li>
-     *   <li>Assembles and returns the resulting entity list.</li>
-     * </ol>
-     *
-     * @param totalCountRequest the request payload containing entity details
-     * @return the output result of type {@link List{@code <Map{@code <String, Object>}>}}
-     */
-
-    public List<Map<String, Object>> getStatusCounts(TotalCountRequest totalCountRequest) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        StringBuilder builder = new StringBuilder();
-        builder.append(COUNT_STATUS_BASED_QUERY);
-        builder.append(" WHERE 1 = 1 ");
-        if (!StringUtils.isEmpty(totalCountRequest.getTenantId())) {
-            // Add "AND" clause if required
-            addAndClauseIfRequired(true, builder);
-
-            // Append tenant ID condition
-            builder.append(" grbg.tenant_id = ? ");
-            preparedStmtList.add(totalCountRequest.getTenantId());
-
-            // Add "AND" clause before the next condition
-            addAndClauseIfRequired(true, builder);
-
-            // Append status condition
-            builder.append(" grbg.is_active = ? ");
-            preparedStmtList.add(true); // Assuming status is a boolean 'true'
-        }
-
-        System.out.println(builder.toString());
-        return jdbcTemplate.queryForList(builder.toString(), preparedStmtList.toArray());
-
-
     }
 
     /**

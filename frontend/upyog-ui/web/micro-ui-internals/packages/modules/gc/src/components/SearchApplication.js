@@ -15,6 +15,7 @@ import {
   Header,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
+import { getGCStatusOptions } from "../utils";
 
 /**
  * `GCSearchApplication` component provides a search interface for Garbage Collection (GC) applications.
@@ -93,32 +94,7 @@ const GCSearchApplication = ({ tenantId, isLoading, t, onSubmit, onClear, data, 
     },
   ], [t]);
 
-  const statusOptions = [
-    {
-      i18nKey: t("GC_STATUS_INITIATED"),
-      code: "INITIATED",
-    },
-    {
-      i18nKey: t("GC_STATUS_PENDING_FOR_VERIFICATION"),
-      code: "PENDING_FOR_VERIFICATION",
-    },
-    {
-      i18nKey: t("GC_STATUS_PENDING_FOR_APPROVAL"),
-      code: "PENDING_FOR_APPROVAL",
-    },
-    {
-      i18nKey: t("GC_STATUS_EDIT_APPLICATION"),
-      code: "EDIT_APPLICATION",
-    },
-    {
-      i18nKey: t("GC_STATUS_APPROVED"),
-      code: "APPROVED",
-    },
-    {
-      i18nKey: t("GC_STATUS_REJECTED"),
-      code: "REJECTED",
-    },
-  ];
+  const statusOptions = getGCStatusOptions(t);
 
   const onSort = useCallback((args) => {
     if (args.length === 0) return;

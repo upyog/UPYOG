@@ -55,6 +55,9 @@ func SetupRouter(cfg RouterConfig) *gin.Engine {
 	// ── Context enrichment ────────────────────────────────────────────
 	r.Use(middleware.LocaleResolver())
 	r.Use(middleware.TenantResolver(cfg.Logger))
+	// Always capture the bearer token for downstream forwarding, even when
+	// in-service authentication is disabled (gateway-fronted deployments).
+	r.Use(middleware.TokenPassthrough())
 
 	// ── Authentication (conditional) ──────────────────────────────────
 	if cfg.Config.Auth.Enabled {
@@ -76,15 +79,21 @@ func SetupRouter(cfg RouterConfig) *gin.Engine {
 	// ── Audit trail ───────────────────────────────────────────────────
 	r.Use(middleware.Audit(cfg.Logger))
 
+	// All routes are mounted under the optional server.contextPath so the
+	// service can run behind the UPYOG API gateway, which routes
+	// /<context>/** to the pod without stripping the prefix. An empty
+	// context path (the default) serves everything at the root.
+	base := r.Group(cfg.Config.Server.ContextPath)
+
 	// ── Health & observability endpoints ───────────────────────────────
 	healthHandler := NewHealthHandler(cfg.Cache, "1.0.0")
-	r.GET("/health", healthHandler.Health)
-	r.GET("/readiness", healthHandler.Readiness)
-	r.GET("/liveness", healthHandler.Liveness)
-	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	base.GET("/health", healthHandler.Health)
+	base.GET("/readiness", healthHandler.Readiness)
+	base.GET("/liveness", healthHandler.Liveness)
+	base.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	// ── API v1 routes ─────────────────────────────────────────────────
-	v1 := r.Group("/api/v1")
+	v1 := base.Group("/api/v1")
 	{
 		aggregateHandler := NewAggregateHandler(cfg.Engine, cfg.Logger)
 		v1.POST("/aggregate", aggregateHandler.Handle)

@@ -2,15 +2,37 @@ import React, { useState } from "react";
 import {
   Card,
   CardHeader,
+  CardSectionHeader,
   CardSubHeader,
   CardText,
   CheckBox,
+  EditIcon,
+  LinkButton,
   Row,
   StatusTable,
   SubmitBar,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import { checkForNA } from "../../../utils";
+
+const ActionButton = ({ jumpTo }) => {
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const { pathname } = useLocation();
+
+  const routeTo = () => {
+    const wizardPath = pathname.replace(/\/check(?:\/.*)?$/, "");
+    navigate(`${wizardPath}/${jumpTo}`);
+  };
+
+  return (
+    <LinkButton
+      label={<EditIcon />}
+      className="check-page-link-button"
+      onClick={routeTo}
+    />
+  );
+};
 
 /**
  * GCCheckPage Component
@@ -67,12 +89,18 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       {/* Applicant Details */}
       {owners && owners.length > 0 && (
         <>
-          <CardSubHeader style={{ fontSize: "24px" }}>
-            {t("ES_APPLICANT_DETAILS")}
-          </CardSubHeader>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <CardSubHeader style={{ fontSize: "24px" }}>
+              {t("ES_APPLICANT_DETAILS")}
+            </CardSubHeader>
+            <ActionButton jumpTo="applicant-details" />
+          </div>
           {owners.map((owner, index) => (
             <StatusTable key={index}>
-              <Row label={t("GC_APPLICANT_NAME")} text={owner?.applicantName || owner?.name || t("CS_NA")} />
+              <Row
+                label={t("GC_APPLICANT_NAME")}
+                text={owner?.applicantName || owner?.name || t("CS_NA")}
+              />
               <Row label={t("GC_MOBILE_NUMBER")} text={owner?.mobileNumber || t("CS_NA")} />
               <Row label={t("GC_ALT_MOBILE_NUMBER")} text={`${t(checkForNA(owner?.alternateNumber))}`} />
               <Row label={t("GC_EMAIL")} text={owner?.emailId || owner?.email || t("CS_NA")} />
@@ -82,9 +110,12 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       )}
 
       {/* Property Location Details */}
-      <CardSubHeader style={{ fontSize: "24px" }}>
-        {t("GC_PROPERTY_LOCATION_DETAILS")}
-      </CardSubHeader>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <CardSubHeader style={{ fontSize: "24px" }}>
+          {t("GC_PROPERTY_LOCATION_DETAILS")}
+        </CardSubHeader>
+        <ActionButton jumpTo="garbage-propertyLocation" />
+      </div>
 
       <StatusTable>
         <Row
@@ -139,9 +170,12 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       </StatusTable>
 
       {/* Garbage Specifications */}
-      <CardSubHeader style={{ fontSize: "24px" }}>
-        {t("GC_GARBAGE_SPECIFICATIONS")}
-      </CardSubHeader>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <CardSubHeader style={{ fontSize: "24px" }}>
+          {t("GC_GARBAGE_SPECIFICATIONS")}
+        </CardSubHeader>
+        <ActionButton jumpTo="garbage-specifications" />
+      </div>
 
       <StatusTable>
         <Row
@@ -228,23 +262,25 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       </StatusTable>
 
       {/* Garbage Documents */}
-      <CardSubHeader style={{ fontSize: "24px" }}>
-        {t("GC_GARBAGE_DOCUMENTS")}
-      </CardSubHeader>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <CardSubHeader style={{ fontSize: "24px" }}>
+          {t("GC_GARBAGE_DOCUMENTS")}
+        </CardSubHeader>
+        <ActionButton jumpTo="garbage-documents" />
+      </div>
 
       <StatusTable>
-        {documents?.length > 0 ? (
-          documents.map((doc, index) => (
-            <Row
-              key={index}
-              label={t(`GC_${doc?.documentType?.replace(/\./g, "_")}`)}
-              text={<GCDocuments value={documents} Code={doc?.documentType} />}
-            />
-          ))
-        ) : (
-          <Row label={t("GC_GARBAGE_DOCUMENTS")} text={t("CS_NA")} />
-        )}
-      </StatusTable>
+        <Card className="chb-doc-card">
+          {documents.map((doc, index) => (
+            <div key={`doc-${index}`} className="chb-doc-item">
+              <div>
+                <CardSectionHeader>{t("GC_" + (doc?.documentType?.split('.').slice(0,2).join('_')))}</CardSectionHeader>
+                <GCDocuments value={documents} Code={doc?.documentType} index={index} />
+              </div>
+            </div>
+          ))}
+        </Card>
+        </StatusTable>
 
       <CheckBox
         label={t("GC_FINAL_DECLARATION_MESSAGE")}

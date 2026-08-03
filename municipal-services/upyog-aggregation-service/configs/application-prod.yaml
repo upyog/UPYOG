@@ -67,6 +67,10 @@ providers:
       timeout: 5s
       cacheTTL: 10m
       retries: 1
+    new-applications:
+      timeout: 6s
+      cacheTTL: 1m
+      retries: 2
 
 rateLimit:
   enabled: true

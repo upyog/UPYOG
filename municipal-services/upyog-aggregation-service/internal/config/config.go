@@ -19,7 +19,12 @@ type Config struct {
 
 // ServerConfig holds HTTP server settings.
 type ServerConfig struct {
-	Port              int           `mapstructure:"port"`
+	Port int `mapstructure:"port"`
+	// ContextPath is an optional base path all routes are served under
+	// (e.g. "/upyog-aggregation-service"). Required when running behind the
+	// UPYOG API gateway, which routes /<context>/** without stripping the
+	// prefix. Empty means routes are served at the root.
+	ContextPath       string        `mapstructure:"contextPath"`
 	ReadTimeout       time.Duration `mapstructure:"readTimeout"`
 	WriteTimeout      time.Duration `mapstructure:"writeTimeout"`
 	IdleTimeout       time.Duration `mapstructure:"idleTimeout"`

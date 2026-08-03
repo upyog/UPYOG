@@ -144,7 +144,30 @@ const Inbox = ({
   };
 
 
-const inboxData = data;
+  // The GC inbox API currently ignores `mobileNumber` in some deployments.
+  // Filter the returned business objects as a fallback so the inbox search
+  // still returns only applications belonging to the entered number.
+  const searchedMobileNumber = String(searchParams?.mobileNumber || "").replace(/\D/g, "");
+  const inboxData = searchedMobileNumber
+    ? data?.filter((entry) => {
+        const application = entry?.searchData || {};
+        const applicants = [
+          ...(Array.isArray(application?.applicantDetails) ? application.applicantDetails : []),
+          ...(Array.isArray(application?.additionalDetail?.applicantDetails) ? application.additionalDetail.applicantDetails : []),
+          ...(Array.isArray(application?.additionalDetails?.applicantDetails) ? application.additionalDetails.applicantDetails : []),
+        ];
+        const mobileNumbers = [
+          application?.mobileNumber,
+          application?.garbageSpecification?.phoneNumber,
+          application?.grbgCollectionUnits?.[0]?.phoneNumber,
+          ...applicants.map((applicant) => applicant?.mobileNumber),
+        ]
+          .filter(Boolean)
+          .map((mobileNumber) => String(mobileNumber).replace(/\D/g, ""));
+
+        return mobileNumbers.some((mobileNumber) => mobileNumber.includes(searchedMobileNumber));
+      })
+    : data;
 
 
   if (data) {
@@ -195,7 +218,7 @@ const inboxData = data;
             parentRoute={parentRoute}
             searchParams={searchParams}
             sortParams={sortParams}
-            totalRecords={Number(data?.[0]?.totalCount)}
+            totalRecords={searchedMobileNumber ? inboxData.length : Number(data?.[0]?.totalCount)}
             filterComponent={filterComponent}
             EmptyResultInboxComp={EmptyResultInboxComp}
             useNewInboxAPI={useNewInboxAPI}

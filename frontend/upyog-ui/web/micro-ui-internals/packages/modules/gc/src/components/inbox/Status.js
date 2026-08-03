@@ -35,7 +35,7 @@ const Status = ({ onAssignmentChange, searchParams, businessServices, statusMap 
   return userRoleStates?.filter((e) => !e.isTerminateState).length > 0 ? (
     <div className="status-container">
       <div className="filter-label" style={{ fontWeight: "normal" }}>
-        {t("ES_INBOX_STATUS")}
+        {t("PT_COMMON_TABLE_COL_STATUS_LABEL")}
       </div>
       {userRoleStates
         ?.filter((e) => !e.isTerminateState)
