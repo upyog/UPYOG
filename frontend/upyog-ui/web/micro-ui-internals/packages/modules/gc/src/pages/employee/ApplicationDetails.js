@@ -1,8 +1,9 @@
-import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, Loader, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
+import { downloadGCReceipt, downloadGCAcknowledgement } from "../../utils";
 
 /**
  * ApplicationDetails Component
@@ -28,20 +29,20 @@ const ApplicationDetails = () => {
 
 
 
-  const [showToast, setShowToast] = useState(null);
-  const user = Digit.UserService.getUser().info;
+  const [showOptions, setShowOptions] = useState(false);
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants } = storeData || {};
 
-  const searchCriteria = {
-    searchCriteriaGarbageAccount: {
-      applicationNumber: [applicationNo],
-    },
-  };
-  const { isLoading, data: gcData } = Digit.Hooks.gc.useGCSearch(
-    { tenantId, data: searchCriteria, filters: { applicationNumber: [applicationNo] } },
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    { tenantId, businessService: "garbage-service", consumerCodes: applicationNo, isEmployee: true },
+    { enabled: !!applicationNo }
+  );
+  const { isLoading, data: applicationDetails } = Digit.Hooks.gc.useGCApplicationDetail(
+    t, tenantId, applicationNo,
     { enabled: !!applicationNo, cacheTime: 0, staleTime: 0 }
   );
 
-  const application = gcData?.garbageAccounts?.[0] || gcData?.GarbageApplications?.[0] || gcData?.data?.[0];
+  const application = applicationDetails?.applicationData?.applicationData;
   const businessService = "garbage-service";
 
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
@@ -59,9 +60,19 @@ const ApplicationDetails = () => {
     mutate,
   } = Digit.Hooks.gc.useGCApplicationAction(tenantId);
 
+  const [showToast, setShowToast] = useState(null);
   const closeToast = () => setShowToast(null);
-  const clearDataDetails = () => setTimeout(() => window.location.reload(), 5000);
 
+  const getAcknowledgement = () => downloadGCAcknowledgement(application, tenants, t);
+
+  const downloadOptions = [];
+  downloadOptions.push({ label: t("GC_DOWNLOAD_ACKNOWLEDGEMENT"), onClick: getAcknowledgement });
+  if (reciept_data?.Payments?.length > 0 && !recieptDataLoading) {
+    downloadOptions.push({
+      label: t("GC_FEE_RECEIPT"),
+      onClick: () => downloadGCReceipt(reciept_data.Payments[0].tenantId, reciept_data.Payments),
+    });
+  }
   if (isLoading || workflowDetails?.isLoading) return <Loader />;;
 
   if (!application) {
@@ -72,88 +83,25 @@ const ApplicationDetails = () => {
     );
   }
 
-  // --- Data shaping ---
-  const appData = application;
-
-  const appNo = appData?.grbgApplication?.applicationNo || appData?.grbgApplicationNumber || t("CS_NA");
-  const appStatus = appData?.status || t("CS_NA");
-
-  const applicant = appData?.additionalDetail?.applicantDetails?.[0] || {};
-  const ownerNames = applicant?.name || applicant?.applicantName || appData?.name || t("CS_NA");
-  const mobileNumbers = applicant?.mobileNumber || appData?.mobileNumber || t("CS_NA");
-  const altMobileNumbers = applicant?.alternateNumber || t("CS_NA");
-  const emails = applicant?.emailId || t("CS_NA");
-
-  const address = appData?.addresses?.[0] || {};
-  const addressAdditional = address?.additionalDetail || {};
-  const propertyId = appData?.propertyId || t("CS_NA");
-  const pincode = address?.pincode || t("CS_NA");
-  const city = address?.city || t("CS_NA");
-  const locality = addressAdditional?.locality || t("CS_NA");
-  const street = addressAdditional?.streetName || t("CS_NA");
-  const houseNo = addressAdditional?.houseNo || t("CS_NA");
-  const buildingName = addressAdditional?.houseName || t("CS_NA");
-  const landmark = addressAdditional?.landmark || t("CS_NA");
-
-  const collectionUnit = appData?.grbgCollectionUnits?.[0] || {};
-  const typeOfCollection = collectionUnit?.unitType || t("CS_NA");
-  const category = collectionUnit?.category || t("CS_NA");
-  const subCategory = collectionUnit?.subCategory || t("CS_NA");
-  const subCategoryType = collectionUnit?.subCategoryType || t("CS_NA");
-  const noOfUnits = collectionUnit?.no_of_units ?? t("CS_NA");
-
-  const detailsArray = [
-    {
-      title: "GC_APPLICATION_SUMMARY",
-      asSectionHeader: true,
-      values: [
-        { title: "GC_APPLICATION_NUMBER_LABEL", value: appNo },
-        { title: "GC_APPLICATION_STATUS_LABEL", value: appStatus ? t(`GC_STATUS_${appStatus}`) : t("CS_NA") },
-      ],
-    },
-    {
-      title: "ES_APPLICANT_DETAILS",
-      asSectionHeader: true,
-      values: [
-        { title: "GC_APPLICANT_NAME", value: ownerNames },
-        { title: "GC_MOBILE_NUMBER", value: mobileNumbers },
-        { title: "GC_ALT_MOBILE_NUMBER", value: altMobileNumbers },
-        { title: "GC_EMAIL_ID", value: emails },
-      ],
-    },
-    {
-      title: "GC_PROPERTY_LOCATION_DETAILS",
-      asSectionHeader: true,
-      values: [
-        { title: "GC_PROPERTY_ID", value: propertyId },
-        { title: "GC_PINCODE", value: pincode },
-        { title: "GC_CITY", value: city },
-        { title: "GC_LOCALITY", value: locality },
-        { title: "GC_STREET_NAME", value: street },
-        { title: "GC_HOUSE_NO", value: houseNo },
-        { title: "GC_BUILDING_NAME", value: buildingName },
-        { title: "GC_LANDMARK", value: landmark },
-      ],
-    },
-    {
-      title: "GC_GARBAGE_SPECIFICATIONS",
-      asSectionHeader: true,
-      values: [
-        { title: "GC_TYPE_OF_COLLECTION", value: typeOfCollection },
-        { title: "GC_CATEGORY", value: category },
-        { title: "GC_SUB_CATEGORY", value: subCategory },
-        { title: "GC_SUB_CATEGORY_TYPE", value: subCategoryType },
-        { title: "GC_NO_OF_UNITS", value: String(noOfUnits) },
-      ],
-    },
-  ];
+  const detailsArray = applicationDetails?.applicationData?.applicationDetails || [];
+  const appNo = application?.grbgApplication?.applicationNo || application?.grbgApplicationNumber || t("CS_NA");
 
   return (
-    <div style={{ padding: user?.type === "CITIZEN" ? "0 15px" : "" }}>
+    <div>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-        <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>
-          {t("GC_APPLICATION_DETAILS")}
-        </Header>
+        <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("GC_APPLICATION_DETAILS")}</Header>
+        <div style={{ zIndex: "10", display: "flex", flexDirection: "row-reverse", alignItems: "center", marginTop: "-45px" }}>
+          {downloadOptions && downloadOptions.length > 0 && (
+            <MultiLink
+              className="multilinkWrapper employee-mulitlink-main-div"
+              onHeadClick={() => setShowOptions(!showOptions)}
+              displayOptions={showOptions}
+              options={downloadOptions}
+              downloadBtnClassName={"employee-download-btn-className"}
+              optionsClassName={"employee-options-btn-className"}
+            />
+          )}
+        </div>
       </div>
       <ApplicationDetailsTemplate
         id={applicationNo}
@@ -168,7 +116,6 @@ const ApplicationDetails = () => {
         showToast={showToast}
         setShowToast={setShowToast}
         closeToast={closeToast}
-        clearDataDetails={clearDataDetails}
         timelineStatusPrefix={""}
         forcedActionPrefix={"WF_EMPLOYEE_GC"}
         statusAttribute={"status"}

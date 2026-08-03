@@ -89,15 +89,17 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       {/* Applicant Details */}
       {owners && owners.length > 0 && (
         <>
-          <CardSubHeader style={{ fontSize: "24px" }}>
-            {t("ES_APPLICANT_DETAILS")}
-          </CardSubHeader>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <CardSubHeader style={{ fontSize: "24px" }}>
+              {t("ES_APPLICANT_DETAILS")}
+            </CardSubHeader>
+            <ActionButton jumpTo="applicant-details" />
+          </div>
           {owners.map((owner, index) => (
             <StatusTable key={index}>
               <Row
                 label={t("GC_APPLICANT_NAME")}
                 text={owner?.applicantName || owner?.name || t("CS_NA")}
-                actionButton={index === 0 && <ActionButton jumpTo="applicant-details" />}
               />
               <Row label={t("GC_MOBILE_NUMBER")} text={owner?.mobileNumber || t("CS_NA")} />
               <Row label={t("GC_ALT_MOBILE_NUMBER")} text={`${t(checkForNA(owner?.alternateNumber))}`} />
@@ -108,15 +110,17 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       )}
 
       {/* Property Location Details */}
-      <CardSubHeader style={{ fontSize: "24px" }}>
-        {t("GC_PROPERTY_LOCATION_DETAILS")}
-      </CardSubHeader>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <CardSubHeader style={{ fontSize: "24px" }}>
+          {t("GC_PROPERTY_LOCATION_DETAILS")}
+        </CardSubHeader>
+        <ActionButton jumpTo="garbage-propertyLocation" />
+      </div>
 
       <StatusTable>
         <Row
           label={t("GC_PROPERTY_ID")}
           text={location?.propertyId || t("CS_NA")}
-          actionButton={<ActionButton jumpTo="garbage-propertyLocation" />}
         />
 
         <Row
@@ -166,15 +170,17 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       </StatusTable>
 
       {/* Garbage Specifications */}
-      <CardSubHeader style={{ fontSize: "24px" }}>
-        {t("GC_GARBAGE_SPECIFICATIONS")}
-      </CardSubHeader>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <CardSubHeader style={{ fontSize: "24px" }}>
+          {t("GC_GARBAGE_SPECIFICATIONS")}
+        </CardSubHeader>
+        <ActionButton jumpTo="garbage-specifications" />
+      </div>
 
       <StatusTable>
         <Row
           label={t("GC_OLD_GARBAGE_ID")}
           text={specifications?.oldGarbageId || t("CS_NA")}
-          actionButton={<ActionButton jumpTo="garbage-specifications" />}
         />
 
         <Row
@@ -230,7 +236,6 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
         <Row
           label={t("GC_SPECIAL_CATEGORY")}
           text={specialCategory ? t(specialCategory?.i18nKey) : t("CS_NA")}
-          actionButton={<ActionButton jumpTo="garbage-special-category" />}
         />
 
         {specifications?.isAdditional && (

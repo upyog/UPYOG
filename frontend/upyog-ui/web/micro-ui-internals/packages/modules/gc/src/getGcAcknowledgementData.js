@@ -34,9 +34,12 @@ const getGcAcknowledgementData = async (application = {}, tenantInfo, t) => {
     account?.additionalDetails?.applicantDetails?.[0] ||
     account?.applicantDetails?.[0] ||
     {};
-  const address = account?.addresses?.[0] || account?.address || account?.propertyLocation || {};
+  const propertyLocation = account?.propertyLocation || {};
+  const address = account?.addresses?.[0] || account?.address || {};
   const addressDetails = address?.additionalDetail || address?.additionalDetails || {};
-  const collectionUnit = account?.grbgCollectionUnits?.[0] || account?.garbageSpecification || {};
+  const collectionUnit = account?.grbgCollectionUnits?.[0] || {};
+  const garbageSpec = account?.garbageSpecification || {};
+  const oldGarbageId = account?.grbgOldDetails?.oldGarbageId || garbageSpec?.oldGarbageId || collectionUnit?.oldGarbageId;
 
   return {
     t,
@@ -62,28 +65,33 @@ const getGcAcknowledgementData = async (application = {}, tenantInfo, t) => {
       {
         title: t("GC_PROPERTY_LOCATION_DETAILS"),
         values: [
-          { title: t("GC_PROPERTY_ID"), value: getValue(account?.propertyId || address?.propertyId, t) },
-          { title: t("GC_HOUSE_NO"), value: getValue(addressDetails?.houseNo || address?.houseNo, t) },
-          { title: t("GC_BUILDING_NAME"), value: getValue(addressDetails?.houseName || address?.houseName, t) },
-          { title: t("GC_STREET_NAME"), value: getValue(addressDetails?.streetName || address?.streetName, t) },
-          { title: t("GC_ADDRESS_LINE1"), value: getValue(address?.address1 || address?.addressLine1, t) },
-          { title: t("GC_ADDRESS_LINE2"), value: getValue(address?.address2 || address?.addressLine2, t) },
-          { title: t("GC_LANDMARK"), value: getValue(addressDetails?.landmark || address?.landmark, t) },
-          { title: t("GC_CITY"), value: getValue(address?.city, t) },
-          { title: t("GC_LOCALITY"), value: getValue(addressDetails?.locality || address?.locality, t) },
-          { title: t("GC_ADDRESS_PINCODE"), value: getValue(address?.pincode, t) },
+          { title: t("GC_PROPERTY_ID"), value: getValue(account?.propertyId || propertyLocation?.propertyId, t) },
+          { title: t("GC_HOUSE_NO"), value: getValue(propertyLocation?.houseNo || addressDetails?.houseNo, t) },
+          { title: t("GC_BUILDING_NAME"), value: getValue(propertyLocation?.houseName || addressDetails?.houseName, t) },
+          { title: t("GC_STREET_NAME"), value: getValue(propertyLocation?.streetName || addressDetails?.streetName, t) },
+          { title: t("GC_ADDRESS_LINE1"), value: getValue(address?.address1 || propertyLocation?.addressline1, t) },
+          { title: t("GC_ADDRESS_LINE2"), value: getValue(address?.address2 || propertyLocation?.addressline2, t) },
+          { title: t("GC_LANDMARK"), value: getValue(propertyLocation?.landmark || addressDetails?.landmark, t) },
+          { title: t("GC_CITY"), value: getValue(propertyLocation?.city || address?.city, t) },
+          { title: t("GC_LOCALITY"), value: getValue(propertyLocation?.locality || addressDetails?.locality, t) },
+          { title: t("GC_ADDRESS_PINCODE"), value: getValue(propertyLocation?.pincode || address?.pincode, t) },
         ],
       },
       {
         title: t("GC_GARBAGE_SPECIFICATIONS"),
         values: [
-          { title: t("GC_OLD_GARBAGE_ID"), value: getValue(collectionUnit?.oldGarbageId, t) },
-          { title: t("GC_TYPE_OF_COLLECTION"), value: getValue(collectionUnit?.unitType || collectionUnit?.typeOfCollection, t) },
-          { title: t("GC_OWNER_OR_TENANT"), value: getValue(collectionUnit?.ownerType || collectionUnit?.propertyOwnerType, t) },
-          { title: t("GC_CATEGORY"), value: getValue(collectionUnit?.category, t) },
-          { title: t("GC_SUB_CATEGORY"), value: getValue(collectionUnit?.subCategory, t) },
-          { title: t("GC_SUB_CATEGORY_TYPE"), value: getValue(collectionUnit?.subCategoryType, t) },
-          { title: t("GC_SPECIAL_CATEGORY"), value: getValue(collectionUnit?.specialCategory, t) },
+          { title: t("GC_OLD_GARBAGE_ID"), value: getValue(oldGarbageId, t) },
+          { title: t("GC_TYPE_OF_COLLECTION"), value: getValue(collectionUnit?.unitType || garbageSpec?.typeOfCollection, t) },
+          { title: t("GC_OWNER_OR_TENANT"), value: getValue(collectionUnit?.ownerType || garbageSpec?.propertyOwnerType, t) },
+          { title: t("GC_NAME"), value: getValue(garbageSpec?.name || account?.name, t) },
+          { title: t("GC_PHONE_NUMBER"), value: getValue(garbageSpec?.phoneNumber || account?.mobileNumber, t) },
+          { title: t("GC_GENDER"), value: getValue(garbageSpec?.gender || account?.gender, t) },
+          { title: t("GC_EMAIL"), value: getValue(garbageSpec?.email || account?.emailId, t) },
+          { title: t("GC_CATEGORY"), value: getValue(collectionUnit?.category || garbageSpec?.category, t) },
+          { title: t("GC_SUB_CATEGORY"), value: getValue(collectionUnit?.subCategory || garbageSpec?.subCategory, t) },
+          { title: t("GC_SUB_CATEGORY_TYPE"), value: getValue(collectionUnit?.subCategoryType || garbageSpec?.subCategoryType, t) },
+          { title: t("GC_SPECIAL_CATEGORY"), value: getValue(collectionUnit?.specialCategory || garbageSpec?.specialCategory, t) },
+          { title: t("GC_IS_INHERITANCE"), value: (collectionUnit?.isInheritance || garbageSpec?.isInheritance) ? t("YES") : t("NO") },
           { title: t("GC_NO_OF_UNITS"), value: getValue(collectionUnit?.no_of_units, t) },
         ],
       },

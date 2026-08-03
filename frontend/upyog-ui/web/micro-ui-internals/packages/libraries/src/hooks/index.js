@@ -375,6 +375,7 @@ import useCustomNavigate from "./useCustomNavigate";
 
 import useGCCreateAPI from "./gc/useGCCreateAPI";
 import useGCSearch from "./gc/useGCSearch";
+import useGCApplicationDetail from "./gc/useGCApplicationDetail";
 import useTenantsGC from "./gc/useTenants";
 import useGCDocumentSearch from "./gc/useGCDocumentSearch";
 import useGCApplicationAction from "./gc/useGCApplicationAction";
@@ -760,6 +761,7 @@ const ndc = {
 const gc = {
   useGCCreateAPI,
   useGCSearch,
+  useGCApplicationDetail,
   useTenants: useTenantsGC,
   useGCDocumentSearch,
   useGCApplicationAction,
