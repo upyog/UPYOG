@@ -16,7 +16,7 @@ export const buildDynamicAllotmentPayload = (routeConfig, flatAllotment = {}, te
   if (built.allotmentType != null) {
     built.allotmentType = built.propertyType;
   }
-  // Default billing cycle to MONTHLY when dropdown was left empty.
-  built.billingCycle = optionCode(built.billingCycle) || "MONTHLY";
+  // Persist code only; leave empty when unset (form requires selection).
+  built.billingCycle = optionCode(built.billingCycle);
   return built;
 };

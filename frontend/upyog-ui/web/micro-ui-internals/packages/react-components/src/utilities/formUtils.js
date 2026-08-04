@@ -285,7 +285,7 @@ export const findFieldConfig = (formConfig = [], fieldName) =>
 const mergeFormField = (local, mdms) => {
   const mergedField = { ...local.field, ...mdms.field };
   // Local bindings for compute/label/prefill must survive MDMS field overrides.
-  ["name", "computeFrom", "computeFn", "labelBy", "prefillFrom", "dataSource", "numeric", "unit", "defaultValue"].forEach((key) => {
+  ["name", "computeFrom", "computeFn", "labelBy", "prefillFrom", "dataSource", "numeric", "unit", "defaultValue", "minDate"].forEach((key) => {
     if (local.field?.[key] != null) mergedField[key] = local.field[key];
   });
 
@@ -297,7 +297,7 @@ const mergeFormField = (local, mdms) => {
     validation: { ...(mdms.validation || {}), ...(local.validation || {}) },
     messages: { ...(mdms.messages || {}), ...(local.messages || {}) },
   };
-  ["apiFieldName", "submitKey", "excludeFromPayload", "hidden"].forEach((key) => {
+  ["apiFieldName", "submitKey", "excludeFromPayload", "hidden", "summaryLabel"].forEach((key) => {
     if (local[key] != null) merged[key] = local[key];
   });
   if (Array.isArray(mdms.options) && mdms.options.length > 0) {
@@ -462,7 +462,8 @@ export const isFieldVisible = (fieldConfig, formData = {}) => {
  * @param {string} [tenantId]               Current tenant id (for tenantId dataSource fields).
  * @returns {object} Initial form values keyed by field.name.
  */
-export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = {}, tenantId) => {
+export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = {}, tenantId, options = {}) => {
+  const { applyDefaults = true } = options;
   const result = {};
 
   flattenFormConfig(formConfig).forEach((item) => {
@@ -477,12 +478,12 @@ export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = 
         result[name] = dropdownData[name]?.[0] || toDropdownOption(tenantId, tenantId);
         return;
       }
-      const rawVal = rawAsset[name] ?? field.defaultValue;
+      const rawVal = rawAsset[name] ?? (applyDefaults ? field.defaultValue : undefined);
       const rawNameHint = rawAsset[`${name}Name`];
       const staticOptions = item.options || [];
-      const options =
+      const optionsList =
         dropdownData[name] || dropdownData[item.key] || staticOptions;
-      result[name] = rawVal ? resolveOption(rawVal, rawNameHint, options) : null;
+      result[name] = rawVal ? resolveOption(rawVal, rawNameHint, optionsList) : null;
       return;
     }
 
@@ -518,12 +519,12 @@ export const buildInitialData = (formConfig = [], rawAsset = {}, dropdownData = 
       rawAsset[name] ??
       (item.apiFieldName ? rawAsset[item.apiFieldName] : undefined);
     const isEmpty = raw === undefined || raw === null || raw === "";
-    if (isEmpty && field.prefillFrom) {
+    if (applyDefaults && isEmpty && field.prefillFrom) {
       const fromVal = rawAsset[field.prefillFrom];
       result[name] = fromVal !== undefined && fromVal !== null ? fromVal : "";
       return;
     }
-    if (isEmpty && field.defaultValue !== undefined && field.defaultValue !== null) {
+    if (applyDefaults && isEmpty && field.defaultValue !== undefined && field.defaultValue !== null) {
       // "today" → local yyyy-MM-dd via toInputDate (avoids UTC day-shift).
       if (field.defaultValue === "today" && type === "date") {
         result[name] = toInputDate(new Date());
