@@ -21,11 +21,36 @@ Read top to bottom. Think of it like a **form wizard**: fill → review → subm
 
 Fields are **not hardcoded in React**.
 
-1. **MDMS** (`Estate.Config` / `AssignAssetConfig`) describes fields (name, type, validation, dropdown source).
-2. **Local overrides** (e.g. `estateFormConfig.js`) add EST-only rules (payload, computed fields).
+1. **MDMS** owns form **shape** (fields, order, labels, validation, dropdown `dataSource`, compute metadata).
+2. **Local overrides** add only what JSON cannot express (JS `staticFields`, `computedFields`, `crossFieldValidations`).
 3. Components **read that config** and render the UI.
 
 Same engine for **registration**, **assign assets**, and **search**.
+
+### MDMS masters (Estate module)
+
+Source of truth lives in MDMS data (e.g. `data/pg/Estate/`):
+
+| Master | Used for |
+|--------|----------|
+| `Estate.NewRegistration` | Create-asset wizard (gate fields, plot area, asset type, …) |
+| `Estate.AssignAssetConfig` | Allotment / assign-assets wizard |
+| `Estate.SearchApplicationConfig` | Employee search filters / table defaults |
+| `Estate.CitizenMyApplicationsConfig` | Citizen my-applications filters |
+| `Estate.PaymentHistoryConfig` | Citizen payment-history filters / columns |
+| Dropdown masters | `AllotmentType`, `AllotmentBillingCycle`, `AssetStatus`, `PaymentStatus`, … |
+
+MDMS PR / repo: `upyog-mdms-data-niuatt` — keep UI + MDMS PRs in sync when changing form structure.
+
+### Local overrides (thin)
+
+| File | Role |
+|------|------|
+| `config/estateFormConfig.js` | Registration: `staticFields`, `computedFields`, `crossFieldValidations` |
+| `config/Create/estateAllotmentFormOverrides.js` | Allotment: `staticFields`, `crossFieldValidations`, page/draft labels |
+| `utils/estMdmsUtils.js` | Offline **fallbacks** when MDMS search/citizen/payment configs are empty |
+
+Do **not** duplicate dropdown options or field structure in local JS when MDMS already has them.
 
 ---
 
@@ -34,8 +59,8 @@ Same engine for **registration**, **assign assets**, and **search**.
 ```mermaid
 flowchart TB
   subgraph CONFIG["Config (not React UI)"]
-    MDMS["MDMS Estate.Config<br/>field list"]
-    LOCAL["Local overrides<br/>estateFormConfig.js etc."]
+    MDMS["MDMS Estate.NewRegistration<br/>/ AssignAssetConfig"]
+    LOCAL["Local overrides<br/>JS behavior only"]
     MERGE["mergeRouteConfig()<br/>MDMS + local"]
     MDMS --> MERGE
     LOCAL --> MERGE
@@ -57,7 +82,7 @@ flowchart TB
   end
 
   MERGE --> STEP
-  FORM -->|"Save & Next<br/>saves session"| CHECK
+  FORM -->|"Save & Next left<br/>Cancel right"| CHECK
   CHECK -->|"Submit"| API["Estate API"]
 ```
 
@@ -74,10 +99,12 @@ flowchart LR
   B --> C["/acknowledgement"]
 ```
 
-- **NewRegistration** → `DynamicFormStep` + `estateFormConfig`
-- User fills building, city, locality, rates…
-- **Save & Next** → session stores values + `routeConfig`
-- **Check** → `ESTDynamicCheckPage` wraps `DynamicCheckPage` → shows summary → API create
+- MDMS: `Estate.NewRegistration` (includes existing-asset vs new-asset gate + `visibleWhen`)
+- Local: `estateFormConfig.js` (payload / cross-field only)
+- `ESTNEWRegistration.js` opts in `confirmCancel` and wires existing-asset search via `Digit.ASSETService.search`
+- **Save & Next** (left) → session stores values + `routeConfig`
+- **Cancel** (right) → optional confirm modal (EST opt-in)
+- **Check** → `ESTDynamicCheckPage` → summary → API create
 
 ### B) Assign assets (allotment)
 
@@ -89,8 +116,10 @@ flowchart LR
   CK --> ACK["/acknowledgement"]
 ```
 
-- Search uses **DynamicForm** with `mode="search"` (no wizard ActionBar).
-- Assign form uses **DynamicFormStep** + `estateAllotmentFormOverrides`.
+- Search uses **DynamicForm** with `mode="search"` (no wizard ActionBar); config from `SearchApplicationConfig`.
+- Assign form uses **DynamicFormStep** + MDMS `AssignAssetConfig` + thin `estateAllotmentFormOverrides`.
+- Dates use `minDate: "today"` from MDMS; `DynamicFormField` resolves that for DatePicker.
+- Identity: **estateNo** (EST-…) vs asset-services **applicationNo / refAssetNo** (PG-…) — never put PG-… into `estateNo` on create.
 
 ---
 
@@ -102,6 +131,7 @@ flowchart LR
 
 - Reads: `fieldConfig` (label, type, validation) + `formData` + `dropdownData`
 - Types: text, dropdown, date, file, radio, group, section header
+- Supports `minDate: "today"`, `computeFn` / `prefillFrom` / `labelBy`, `numeric`, `maxAmount`
 - On change → calls `onChange(name, value)` up to DynamicForm
 
 **Analogy:** One brick.
@@ -115,6 +145,15 @@ flowchart LR
 - Loads dropdown options (`useDynamicMDMS`: MDMS masters, localities, city)
 - Maps `routeConfig.form` → many `DynamicFormField`s
 - Validates → builds payload → **Save & Next** / **Search** / draft
+
+**Wizard ActionBar (default layout):**
+
+| Side | Buttons |
+|------|---------|
+| Left | Save & Next (+ Draft when enabled) |
+| Right | Cancel |
+
+**`confirmCancel`:** defaults to **`false`** (shared component opt-in). EST registration / assign steps pass `confirmCancel` so Cancel shows a confirmation modal. Cancel reset can skip re-applying `defaultValue` / `prefillFrom` when `resetBaseline` is set (`applyDefaults: false`).
 
 **Modes:**
 
@@ -133,7 +172,7 @@ flowchart LR
 
 1. `mergeRouteConfig(MDMS step, localOverrides)`
 2. Show **Header**
-3. Render **DynamicForm**
+3. Render **DynamicForm** (passes through `confirmCancel`, draft, `onFieldSearch`, …)
 4. On next → `onSelect(stepKey, data)` and attach `routeConfig` into session
 
 EST wrappers are thin:
@@ -156,6 +195,8 @@ EST wrappers are thin:
 
 EST wrapper: `ESTDynamicCheckPage.js` (picks registration vs allotment payload).
 
+Employee + citizen application details reuse the same summary pattern where possible.
+
 **Analogy:** Checkout / “please confirm” page.
 
 ---
@@ -175,16 +216,16 @@ EST wrapper: `ESTDynamicCheckPage.js` (picks registration vs allotment payload).
 ## Data flow (registration) — simplest path
 
 ```text
-MDMS Config
+MDMS Estate.NewRegistration
     +
-estateFormConfig.js
+estateFormConfig.js  (JS behavior only)
     ↓ merge
 routeConfig.form
     ↓
-DynamicFormStep
+DynamicFormStep  (confirmCancel opt-in)
     ↓
 DynamicForm  →  DynamicFormField (each row)
-    ↓  Save & Next
+    ↓  Save & Next (left) / Cancel (right)
 Session storage (wizard params)
     ↓
 DynamicCheckPage (summary)
@@ -201,12 +242,15 @@ Acknowledgement
 | What | Where |
 |------|--------|
 | Shared Dynamic* UI | `packages/react-components/src/molecules/` |
-| Merge / check helpers | `packages/react-components/src/utilities/checkPageUtils.js`, `formUtils.js`, `useDynamicMDMS.js` |
+| Merge / check helpers | `packages/react-components/src/utilities/checkPageUtils.js`, `formUtils.js`, `validators.js`, `useDynamicMDMS.js` |
 | EST registration step | `modules/est/src/PageComponents/ESTNEWRegistration.js` |
 | EST assign step | `modules/est/src/PageComponents/ESTAssignAssets.js` |
 | EST check wrapper | `modules/est/src/pages/employee/Create/ESTDynamicCheckPage.js` |
 | EST local form rules | `modules/est/src/config/estateFormConfig.js`, `Create/estateAllotmentFormOverrides.js` |
+| EST MDMS resolve / display helpers | `modules/est/src/utils/estMdmsUtils.js`, `utils/index.js` |
 | EST wizards | `modules/est/src/pages/employee/Create/index.js`, `AssignAssetIndex.js` |
+| DynamicForm ActionBar styles | `packages/css/src/components/dynamicForm.scss` |
+| MDMS Estate JSON | `upyog-mdms-data-niuatt` → `data/pg/Estate/` |
 
 ---
 
@@ -214,18 +258,22 @@ Acknowledgement
 
 | I want to… | Change… |
 |------------|---------|
-| Add/rename a field | MDMS `Estate.Config` (and local override if needed) |
-| Change payload / computed locality | `estateFormConfig.js` / allotment overrides |
+| Add/rename a field, labels, dropdown master, maxAmount, minDate | MDMS `Estate.NewRegistration` / `AssignAssetConfig` (etc.) |
+| Change payload / computed locality / cross-field JS rules | `estateFormConfig.js` / `estateAllotmentFormOverrides.js` |
 | Change how one control looks | `DynamicFormField.js` (shared — careful) |
-| Change Save & Next / draft / search bar | `DynamicForm.js` |
+| Change Save & Next / Cancel layout or draft / search bar | `DynamicForm.js` + `dynamicForm.scss` |
+| Opt in Cancel confirmation for a step | Pass `confirmCancel` on `DynamicFormStep` / `DynamicForm` |
 | Change review layout | `DynamicCheckPage.js` or EST check wrapper |
 | Change wizard steps / routes | EST Create pages + MDMS body routes |
+| Search / My Apps / Payment History UI config | MDMS `SearchApplicationConfig` / `CitizenMyApplicationsConfig` / `PaymentHistoryConfig` (grid polish may be a later phase) |
 
 ---
 
 ## Memory tip
 
 ```text
+MDMS (shape) + local JS (behavior)
+        ↓ merge
 Config  →  Step (page)  →  Form (state)  →  Field (one input)
                               ↓
                          Check (review)
