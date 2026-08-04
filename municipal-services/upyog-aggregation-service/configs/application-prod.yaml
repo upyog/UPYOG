@@ -7,6 +7,9 @@
 
 server:
   port: 8080
+  # The UPYOG API gateway routes /upyog-aggregation-service/** to this pod
+  # WITHOUT stripping the prefix, so all routes are served under it.
+  contextPath: /upyog-aggregation-service
   readTimeout: 30s
   writeTimeout: 30s
   idleTimeout: 120s
@@ -37,6 +40,10 @@ auth:
     - /readiness
     - /liveness
     - /metrics
+    - /upyog-aggregation-service/health
+    - /upyog-aggregation-service/readiness
+    - /upyog-aggregation-service/liveness
+    - /upyog-aggregation-service/metrics
 
 observability:
   metrics:
