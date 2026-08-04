@@ -14,9 +14,9 @@ const ESTAssignAssetCreate = ({ parentRoute }) => {
   const { data: initialConfig, isLoading } = Digit.Hooks.useEnabledMDMS(
     Digit.ULBService.getStateId(),
     "Estate",
-    [{ name: "assignAssetConfig" }],
+    [{ name: "AssignAssetConfig" }],
     {
-      select: (data) => data?.Estate?.assignAssetConfig,
+      select: (data) => data?.Estate?.AssignAssetConfig,
     }
   );
 

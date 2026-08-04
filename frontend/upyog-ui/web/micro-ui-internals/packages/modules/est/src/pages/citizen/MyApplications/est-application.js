@@ -62,7 +62,7 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
   );
 
   const nextPaymentDueLabel =
-    formatEstDueDate(getAllotmentDueDate(row, row)) || "N/A";
+    formatEstDueDate(getAllotmentDueDate(row)) || "N/A";
   const agreementStartDate =
     formatEstDueDate(
       row?.agreementStartDate ?? row?.additionalDetails?.agreementStartDate
@@ -73,9 +73,9 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
     ) || "N/A";
 
   const paymentStatusCode = normalizeCitizenPaymentStatus(
-    getAllotmentPaymentStatus(row, row)
+    getAllotmentPaymentStatus(row)
   );
-  const isPaid = isAllotmentPaymentPaid(row, row);
+  const isPaid = isAllotmentPaymentPaid(row);
   const canMakePayment = Boolean(billTenantId && allotmentNo && !isPaid);
 
   const handleViewSummary = () => {

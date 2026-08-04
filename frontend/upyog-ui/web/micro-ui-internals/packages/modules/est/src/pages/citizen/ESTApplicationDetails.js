@@ -70,9 +70,9 @@ const ESTApplicationDetails = () => {
   const { data: assignAssetMdms, isLoading: mdmsLoading } = Digit.Hooks.useEnabledMDMS(
     Digit.ULBService.getStateId(),
     "Estate",
-    [{ name: "assignAssetConfig" }],
+    [{ name: "AssignAssetConfig" }],
     {
-      select: (data) => data?.Estate?.assignAssetConfig,
+      select: (data) => data?.Estate?.AssignAssetConfig,
     }
   );
 

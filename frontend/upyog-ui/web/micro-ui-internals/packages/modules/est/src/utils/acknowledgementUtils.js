@@ -197,7 +197,7 @@ export const buildAckDetailsFromRouteConfig = ({
   // Fallback when routeConfig was not stored on ack state — still show register details.
   const fallbackPairs = [
     ["EST_ALLOTMENT_NUMBER", extraData.allotmentNo || formValues.allotmentNo],
-    ["EST_ASSET_NUMBER", extraData.assetNo || formValues.assetNo],
+    ["EST_ESTATE_NUMBER", extraData.estateNo || formValues.estateNo],
     ["FILE_REFERENCE_NUMBER", extraData.fileReferenceNumber || formValues.fileReferenceNumber],
     ["EST_BUILDING_NAME", extraData.buildingName || formValues.buildingName],
     ["EST_LOCALITY", extraData.localityDisplay || formValues.localityDisplay],
