@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Toast } from "@upyog/workbench-ui-react-components";
 import {
   SectionHeader,
   Card,
@@ -12,45 +11,37 @@ import {
   ShadowField,
   GradientField,
   UploadBox,
-  SubmitConfirmModal,
-  PreviewButton
+  ThemeEditorLayout
 } from "../../components/ThemeCustomizeComponents";
 
-import { deepSet, formatLabel, getLabel, getCardIcon, groupMeta, getInitialThemeConfig, submitThemeConfig } from "../../utils";
+import { formatLabel, getLabel, getCardIcon, groupMeta } from "../../utils";
+import { useThemeConfigEditor } from "../../hooks/useThemeConfigEditor";
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 /**
- * Main form view that handles custom application styling preset edits.
- * Loads drafts from localStorage, processes field inputs dynamically,
- * and sends updates to a backend API endpoint.
+ * ThemeCustomizeForm Component
+ * Renders the primary form to customize global theme presets (colors, shadows, radius, gradient stop configurations, etc.).
+ * 
+ * WHY REFACTORED:
+ * - Replaced duplicate state management with the shared `useThemeConfigEditor` custom hook.
+ * - Removed local layout wrappers, save footers, confirm modals, and toast boilerplates,
+ *   replacing them with the unified `ThemeEditorLayout` wrapper.
  */
 function ThemeCustomizeForm() {
   const { t } = useTranslation();
 
-  const [config, setConfig] = useState(getInitialThemeConfig());
-  const [lastSavedConfig, setLastSavedConfig] = useState(getInitialThemeConfig());
-  const [toast, setToast] = useState(null);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-
-  const hasUnsavedChanges = JSON.stringify(config) !== JSON.stringify(lastSavedConfig);
-
-  /**
-   * Updates configuration values dynamically at the given dot-notation path.
-   * Caches edits to localStorage on-the-fly for real-time draft persistence.
-   * 
-   * @param {string} path - Dot-notation path to modify.
-   * @param {*} value - New value to save.
-   */
-  const set = (path, value) => {
-    const firstKey = path.split(".")[0];
-    const finalPath = ["theme", "common", "pages"].includes(firstKey) ? path : `theme.${path}`;
-    setConfig((prev) => {
-      const next = deepSet(prev, finalPath, value);
-      localStorage.setItem("UPYOG_THEME_CONFIG", JSON.stringify(next));
-      return next;
-    });
-  };
+  // Loads centralized editor functions, active configurations, and dialog triggers
+  const {
+    config,
+    toast,
+    setToast,
+    showConfirmModal,
+    setShowConfirmModal,
+    hasUnsavedChanges,
+    set,
+    handleSubmit
+  } = useThemeConfigEditor();
 
   // Group theme settings keys based on substring matches for loop categorizations.
   const themeKeys = Object.keys(config.theme || {});
@@ -73,33 +64,17 @@ function ThemeCustomizeForm() {
   const otherThemeKeys = themeKeys.filter(k => !handledKeys.includes(k));
   const configKeys = Object.keys(config || {}).filter(k => k === "common");
 
-  /**
-   * Handles configuration submission.
-   * Persists changes locally and hits a dummy POST API to log changes.
-   */
-  const handleSubmit = async () => {
-    setShowConfirmModal(false);
-    try {
-      await submitThemeConfig(config);
-      setLastSavedConfig(config);
-      setToast({ label: t("Configuration updated and submitted successfully!"), error: false });
-    } catch (err) {
-      console.error("API submission failed:", err);
-      setToast({ label: t("Failed to submit configuration to the API."), error: true });
-    }
-    setTimeout(() => setToast(null), 3000);
-  };
-
   return (
-    <div className="theme-form-container">
-
-      {/* Page Title */}
-      <div className="theme-header-row">
-        <div className="theme-form-title">
-          {t("Customize Theme")}
-        </div>
-        <PreviewButton targetUrl={`/${window?.contextPath}/employee`} hasUnsavedChanges={hasUnsavedChanges} onSubmit={handleSubmit} />
-      </div>
+    <ThemeEditorLayout
+      title="Customize Theme"
+      previewUrl={`/${window?.contextPath}/employee`}
+      hasUnsavedChanges={hasUnsavedChanges}
+      onSubmit={handleSubmit}
+      showConfirmModal={showConfirmModal}
+      setShowConfirmModal={setShowConfirmModal}
+      toast={toast}
+      onCloseToast={() => setToast(null)}
+    >
 
       {/* ── 1. Colors Theme Section ─────────────────────────────────── */}
       <SectionHeader number={1} title={t("Colors Theme")} />
@@ -505,25 +480,7 @@ function ThemeCustomizeForm() {
         })}
       </div>
 
-      {/* ── Submit Action ───────────────────────────────────────────── */}
-      <div className="submit-container">
-        <button
-          onClick={() => setShowConfirmModal(true)}
-          className="submit-btn"
-          disabled={!hasUnsavedChanges}
-        >
-          {t("SUBMIT CHANGES")}
-        </button>
-      </div>
-
-      <SubmitConfirmModal
-        isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        onConfirm={handleSubmit}
-      />
-
-      {toast && <Toast label={toast.label} error={toast.error} onClose={() => setToast(null)} />}
-    </div>
+    </ThemeEditorLayout>
   );
 }
 

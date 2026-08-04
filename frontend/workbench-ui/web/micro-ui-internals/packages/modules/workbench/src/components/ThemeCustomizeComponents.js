@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { Modal, ThemePreviewIcon } from "@upyog/workbench-ui-react-components";
+import { Modal, ThemePreviewIcon, Toast, DeleteIconv2 } from "@upyog/workbench-ui-react-components";
 
 /**
  * SectionHeader Component
@@ -1069,5 +1069,232 @@ export function PreviewButton({ targetUrl, hasUnsavedChanges, onSubmit }) {
         </Modal>
       )}
     </>
+  );
+}
+
+/**
+ * ThemeEditorLayout Component
+ * 
+ * WHY THIS WAS ADDED:
+ * Collapses identical wrapper boilerplate (main layout shell, title row, preview buttons,
+ * save buttons, confirmation modals, and toast alerts) that previously existed on all
+ * customization form views.
+ */
+export function ThemeEditorLayout({
+  title,
+  previewUrl,
+  hasUnsavedChanges,
+  onSubmit,
+  showConfirmModal,
+  setShowConfirmModal,
+  toast,
+  onCloseToast,
+  children,
+  submitLabel
+}) {
+  const { t } = useTranslation();
+  return (
+    <div className="theme-form-container">
+      <div className="theme-header-row">
+        <div className="theme-form-title">
+          {t(title)}
+        </div>
+        <PreviewButton
+          targetUrl={previewUrl}
+          hasUnsavedChanges={hasUnsavedChanges}
+          onSubmit={onSubmit}
+        />
+      </div>
+
+      {children}
+
+      <div className="submit-container">
+        <button
+          onClick={() => setShowConfirmModal(true)}
+          className="submit-btn"
+          disabled={!hasUnsavedChanges}
+        >
+          {submitLabel || t("SUBMIT CHANGES")}
+        </button>
+      </div>
+
+      <SubmitConfirmModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={onSubmit}
+      />
+
+      {toast && <Toast label={toast.label} error={toast.error} onClose={onCloseToast} />}
+    </div>
+  );
+}
+
+/**
+ * ResponsiveImageQuartet Component
+ * 
+ * WHY THIS WAS ADDED:
+ * Content's background settings duplicated a 4-input row (mobile, tablet, laptop, desktop image URLs)
+ * twice: once for the root background and once for the card panel background.
+ * Encapsulating this into a single configuration block avoids repeating ~100 lines of markup.
+ */
+export function ResponsiveImageQuartet({ responsiveData, onChange, basePath }) {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="section-sub-title">
+        {t("Responsive Images")}
+      </div>
+      <FieldsRow>
+        <TextField
+          label={t("MOBILE IMAGE URL")}
+          value={responsiveData?.mobile?.image || ""}
+          onChange={(v) => onChange(`${basePath}.responsive.mobile.image`, v)}
+          placeholder="https://..."
+        />
+        <TextField
+          label={t("TABLET IMAGE URL")}
+          value={responsiveData?.tablet?.image || ""}
+          onChange={(v) => onChange(`${basePath}.responsive.tablet.image`, v)}
+          placeholder="https://..."
+        />
+        <TextField
+          label={t("LAPTOP IMAGE URL")}
+          value={responsiveData?.laptop?.image || ""}
+          onChange={(v) => onChange(`${basePath}.responsive.laptop.image`, v)}
+          placeholder="https://..."
+        />
+        <TextField
+          label={t("DESKTOP IMAGE URL")}
+          value={responsiveData?.desktop?.image || ""}
+          onChange={(v) => onChange(`${basePath}.responsive.desktop.image`, v)}
+          placeholder="https://..."
+        />
+      </FieldsRow>
+    </>
+  );
+}
+
+/**
+ * FieldSubsection Component
+ * 
+ * WHY THIS WAS ADDED:
+ * Standardizes sub-headers and dividing borders (border-bottom + purple titles).
+ * Previously, this markup used repeated, inline CSS declarations inside Login & Register forms.
+ * Using a dedicated component enforces visual consistency and DRY standards.
+ */
+export function FieldSubsection({ title, hasBorder = true, children }) {
+  const { t } = useTranslation();
+  return (
+    <div style={{ borderBottom: hasBorder ? "1.5px solid #EDE8F5" : "none", paddingBottom: hasBorder ? 20 : 0, marginBottom: 20 }}>
+      {title && (
+        <div style={{ fontSize: 13, fontWeight: 800, color: "#3D2364", marginBottom: 12 }}>
+          {t(title)}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+/**
+ * FeatureListEditor Component
+ * 
+ * WHY THIS WAS ADDED:
+ * Encapsulates the dynamic features-list list builder widget in OnBoardingContent.js,
+ * extracting the key, index, inputs, and deletion icon layout.
+ */
+export function FeatureListEditor({ features, onAdd, onRemove, onChange, basePath }) {
+  const { t } = useTranslation();
+  return (
+    <Card className="theme-card-margin">
+      <CardTitle
+        icon={getCardIcon("sidebar")}
+        title={t("Features List")}
+        description={t("Dynamic list of key features")}
+        rightElement={
+          <button onClick={onAdd} className="add-feature-btn">
+            <span>⊕</span> {t("Add Feature")}
+          </button>
+        }
+      />
+      <div className="full-width-col">
+        {features.map((feature, idx) => (
+          <div key={idx} className="feature-box-row">
+            <div className="feature-row-grid">
+              <TextField
+                label={t("ICON URL")}
+                value={feature.icon || ""}
+                onChange={(v) => onChange(`${basePath}.${idx}.icon`, v)}
+                placeholder="https://..."
+              />
+              <TextField
+                label={t("SHORT TITLE")}
+                value={feature.title || ""}
+                onChange={(v) => onChange(`${basePath}.${idx}.title`, v)}
+                placeholder={t("Title")}
+              />
+              <TextField
+                label={t("DESCRIPTION")}
+                value={feature.description || ""}
+                onChange={(v) => onChange(`${basePath}.${idx}.description`, v)}
+                placeholder={t("Description")}
+              />
+            </div>
+            <button
+              onClick={() => onRemove(idx)}
+              title={t("Remove Feature")}
+              className="remove-feature-btn"
+            >
+              <DeleteIconv2 fill="#D85A5A" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+/**
+ * SecondaryActionsEditor Component
+ * 
+ * WHY THIS WAS ADDED:
+ * Encapsulates the dynamic secondary actions layout editor widget in OnBoardingLogin.js.
+ */
+export function SecondaryActionsEditor({ actions, onAdd, onRemove, onChange, basePath }) {
+  const { t } = useTranslation();
+  return (
+    <div className="full-width-col">
+      <span className="section-sub-title" style={{ margin: "8px 0 4px" }}>{t("Secondary Actions")}</span>
+      {actions.map((action, idx) => (
+        <div key={idx} className="feature-box-row" style={{ padding: "12px 16px" }}>
+          <div className="secondary-action-grid">
+            <input
+              type="text"
+              value={action.icon || ""}
+              onChange={(e) => onChange(`${basePath}.${idx}.icon`, e.target.value)}
+              placeholder={t("Icon URL (https://...)")}
+              className="text-input-field"
+              style={{ height: 36, fontSize: 12 }}
+            />
+            <input
+              type="text"
+              value={action.label || ""}
+              onChange={(e) => onChange(`${basePath}.${idx}.label`, e.target.value)}
+              placeholder={t("Action Label")}
+              className="text-input-field"
+              style={{ height: 36, fontSize: 12 }}
+            />
+          </div>
+          <button
+            onClick={() => onRemove(idx)}
+            title={t("Remove Action")}
+            className="remove-feature-btn"
+            style={{ padding: 4 }}
+          >
+            <DeleteIconv2 fill="#D85A5A" />
+          </button>
+        </div>
+      ))}
+    </div>
   );
 }

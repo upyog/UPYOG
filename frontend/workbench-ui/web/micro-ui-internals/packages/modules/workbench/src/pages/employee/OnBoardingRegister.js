@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Toast } from "@upyog/workbench-ui-react-components";
 import {
   Card,
   CardTitle,
@@ -8,91 +7,56 @@ import {
   TextField,
   NumberField,
   CheckboxField,
-  SubmitConfirmModal,
-  PreviewButton
+  ThemeEditorLayout,
+  FieldSubsection
 } from "../../components/ThemeCustomizeComponents";
 
-import { deepSet, getCardIcon, getInitialThemeConfig, submitThemeConfig } from "../../utils";
+import { getCardIcon } from "../../utils";
+import { useThemeConfigEditor } from "../../hooks/useThemeConfigEditor";
 
 /**
  * OnBoardingRegister Component
  * Handles layout settings, fields definitions, validation patterns, and footer setups
  * for the user onboarding registration view.
  * 
- * DESIGN PRINCIPLES:
- * 1. ZERO Inline Styles - relies on precompiled utility classes in ThemeConfiguration.scss.
- * 2. Fully Localized - wraps all visible text outputs in the React useTranslation t() helper.
- * 3. DRY Code - utilizes shared components and central helper utilities.
+ * WHY REFACTORED:
+ * - Collapsed duplicate state, dirty-checking, and submit API actions under the centralized `useThemeConfigEditor` hook.
+ * - Eliminated boilerplate wrappers (main layouts, action footers, confirmations, toasts) by wrapping the page contents in `<ThemeEditorLayout>`.
+ * - Cleaned up repeated, inline styles for dividers and subheadings using the `<FieldSubsection>` component.
  */
 function OnBoardingRegister() {
-  // Localization helper hook
   const { t } = useTranslation();
 
-  // State initialization using reusable ThemeUtils configuration fetcher
-  const [config, setConfig] = useState(getInitialThemeConfig());
-  const [lastSavedConfig, setLastSavedConfig] = useState(getInitialThemeConfig());
-  const [toast, setToast] = useState(null);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  // Load refactored theme editor hook functions and properties
+  const {
+    config,
+    toast,
+    setToast,
+    showConfirmModal,
+    setShowConfirmModal,
+    hasUnsavedChanges,
+    set,
+    handleSubmit
+  } = useThemeConfigEditor();
 
-  // Unsaved changes detector (compares current config with last submitted baseline)
-  const hasUnsavedChanges = JSON.stringify(config) !== JSON.stringify(lastSavedConfig);
-
-  // Destructuring registration steps settings from configuration
   const onboarding = config.pages?.onboarding || {};
   const steps = onboarding.steps || {};
   const registerStep = steps.register || {};
   const fields = registerStep.fields || [];
   const footer = registerStep.footer || {};
 
-  /**
-   * Updates configuration values dynamically at the given dot-notation path.
-   * Caches edits to localStorage on-the-fly for real-time draft persistence.
-   * 
-   * @param {string} path - Dot-notation path to modify.
-   * @param {*} value - New value to save.
-   */
-  const set = (path, value) => {
-    setConfig((prev) => {
-      const next = deepSet(prev, path, value);
-      localStorage.setItem("UPYOG_THEME_CONFIG", JSON.stringify(next));
-      return next;
-    });
-  };
-
-  /**
-   * Handles configuration submission, closing modal and calling shared submitThemeConfig helper.
-   * Emits toast feedback upon successful response or caught errors.
-   */
-  const handleSubmit = async () => {
-    setShowConfirmModal(false);
-    try {
-      await submitThemeConfig(config);
-      setLastSavedConfig(config);
-      setToast({ label: t("Configuration updated and submitted successfully!"), error: false });
-    } catch (err) {
-      console.error("API submission failed:", err);
-      setToast({ label: t("Failed to submit configuration to the API."), error: true });
-    }
-    setTimeout(() => setToast(null), 3000);
-  };
-
   return (
-    <div className="theme-form-container">
-
-      {/* Page Title & Preview */}
-      <div className="theme-header-row">
-        <div className="theme-form-title">
-          {t("Onboarding - Register Configuration")}
-        </div>
-        <PreviewButton 
-          targetUrl={`/${window?.contextPath}/employee/user/language-selection`} 
-          hasUnsavedChanges={hasUnsavedChanges} 
-          onSubmit={handleSubmit}
-        />
-      </div>
-
+    <ThemeEditorLayout
+      title="Onboarding - Register Configuration"
+      previewUrl={`/${window?.contextPath}/employee/user/language-selection`}
+      hasUnsavedChanges={hasUnsavedChanges}
+      onSubmit={handleSubmit}
+      showConfirmModal={showConfirmModal}
+      setShowConfirmModal={setShowConfirmModal}
+      toast={toast}
+      onCloseToast={() => setToast(null)}
+    >
       {/* ── 1. Screen Header Settings ── */}
-      {/* Allows developers to customize onboarding welcome headers, page details, and textual sub-lines */}
       <Card className="theme-card-margin">
         <CardTitle
           icon={getCardIcon("text")}
@@ -115,7 +79,6 @@ function OnBoardingRegister() {
       </Card>
 
       {/* ── 2. Form Fields Configuration ── */}
-      {/* Configuration card to define fields properties (labels, validations, constraints, errors) for registration inputs */}
       <Card className="theme-card-margin">
         <CardTitle
           icon={getCardIcon("common")}
@@ -125,10 +88,7 @@ function OnBoardingRegister() {
 
         {/* Full Name Sub-Section */}
         {fields[0] && (
-          <div style={{ borderBottom: "1.5px solid #EDE8F5", paddingBottom: 20, marginBottom: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 800, color: "#3D2364", marginBottom: 12 }}>
-              {t("Full Name Field")}
-            </div>
+          <FieldSubsection title="Full Name Field">
             <div className="full-width-col">
               <FieldsRow>
                 <TextField
@@ -188,15 +148,12 @@ function OnBoardingRegister() {
                 />
               </FieldsRow>
             </div>
-          </div>
+          </FieldSubsection>
         )}
 
         {/* Date of Birth Sub-Section */}
         {fields[1] && (
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: "#3D2364", marginBottom: 12 }}>
-              {t("Date of Birth Field")}
-            </div>
+          <FieldSubsection title="Date of Birth Field" hasBorder={false}>
             <div className="full-width-col">
               <FieldsRow>
                 <TextField
@@ -256,12 +213,11 @@ function OnBoardingRegister() {
                 />
               </FieldsRow>
             </div>
-          </div>
+          </FieldSubsection>
         )}
       </Card>
 
       {/* ── 3. Footer Settings ── */}
-      {/* Configure action buttons and security seal elements */}
       <Card className="theme-card-margin">
         <CardTitle
           icon={getCardIcon("logo")}
@@ -284,28 +240,7 @@ function OnBoardingRegister() {
           />
         </div>
       </Card>
-
-      {/* ── Submit Button ── */}
-      <div className="submit-container">
-        <button
-          onClick={() => setShowConfirmModal(true)}
-          className="submit-btn"
-          disabled={!hasUnsavedChanges}
-        >
-          {t("SUBMIT CHANGES")}
-        </button>
-      </div>
-
-      {/* Reusable confirmation modal component to verify changes before writing back to storage */}
-      <SubmitConfirmModal
-        isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        onConfirm={handleSubmit}
-      />
-
-      {/* Success and error feedback toast notification */}
-      {toast && <Toast label={toast.label} error={toast.error} onClose={() => setToast(null)} />}
-    </div>
+    </ThemeEditorLayout>
   );
 }
 

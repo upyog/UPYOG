@@ -1,61 +1,50 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Toast, DeleteIconv2 } from "@upyog/workbench-ui-react-components";
 import {
   Card,
   CardTitle,
   FieldsRow,
   TextField,
   CheckboxField,
-  SubmitConfirmModal,
-  PreviewButton
+  ThemeEditorLayout,
+  FieldSubsection,
+  SecondaryActionsEditor
 } from "../../components/ThemeCustomizeComponents";
 
-import { deepSet, getCardIcon, getInitialThemeConfig, submitThemeConfig } from "../../utils";
+import { getCardIcon } from "../../utils";
+import { useThemeConfigEditor } from "../../hooks/useThemeConfigEditor";
 
 /**
  * OnBoardingLogin Component
  * Handles layout settings, fields definition, validations, actions, and separator setups
  * for the user onboarding login view.
  * 
- * DESIGN PRINCIPLES:
- * 1. ZERO Inline Styles - uses precompiled utility classes inside ThemeConfiguration.scss.
- * 2. Fully Localized - wraps all visible text outputs in the React useTranslation t() helper.
- * 3. DRY Code - relies on shared layout widgets and unified ThemeUtils helpers.
+ * WHY REFACTORED:
+ * - Centralized local drafts cache and submit API actions using the central `useThemeConfigEditor` custom hook.
+ * - Encapsulated form-level layout containers (page titles, previews, save footers, confirm dialogs, and alerts) into `<ThemeEditorLayout>`.
+ * - Eliminated CSS inline styling repetitions on sub-headers/borders by replacing them with the `<FieldSubsection>` component.
+ * - Extracted dynamic footer secondary actions rendering array list into the `<SecondaryActionsEditor>` component.
  */
 function OnBoardingLogin() {
-  // Localization helper hook
   const { t } = useTranslation();
 
-  // State initialization using reusable ThemeUtils configuration fetcher
-  const [config, setConfig] = useState(getInitialThemeConfig());
-  const [lastSavedConfig, setLastSavedConfig] = useState(getInitialThemeConfig());
-  const [toast, setToast] = useState(null);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  // Load refactored theme editor hook functions and properties
+  const {
+    config,
+    toast,
+    setToast,
+    showConfirmModal,
+    setShowConfirmModal,
+    hasUnsavedChanges,
+    set,
+    handleSubmit
+  } = useThemeConfigEditor();
 
-  const hasUnsavedChanges = JSON.stringify(config) !== JSON.stringify(lastSavedConfig);
-
-  // Destructuring steps settings from configuration
   const onboarding = config.pages?.onboarding || {};
   const steps = onboarding.steps || {};
   const loginStep = steps.login || {};
   const fields = loginStep.fields || [];
   const footer = loginStep.footer || {};
-
-  /**
-   * Updates configuration values dynamically at the given dot-notation path.
-   * Caches edits to localStorage on-the-fly for real-time draft persistence.
-   * 
-   * @param {string} path - Dot-notation path to modify.
-   * @param {*} value - New value to save.
-   */
-  const set = (path, value) => {
-    setConfig((prev) => {
-      const next = deepSet(prev, path, value);
-      localStorage.setItem("UPYOG_THEME_CONFIG", JSON.stringify(next));
-      return next;
-    });
-  };
 
   /**
    * Adds a new empty secondary action button configuration to the login footer actions list.
@@ -77,36 +66,18 @@ function OnBoardingLogin() {
     set("pages.onboarding.steps.login.footer.secondaryActions", newActions);
   };
 
-  /**
-   * Handles configuration submission, closing modal and calling shared submitThemeConfig helper.
-   * Emits toast feedback upon successful response or caught errors.
-   */
-  const handleSubmit = async () => {
-    setShowConfirmModal(false);
-    try {
-      await submitThemeConfig(config);
-      setLastSavedConfig(config);
-      setToast({ label: t("Configuration updated and submitted successfully!"), error: false });
-    } catch (err) {
-      console.error("API submission failed:", err);
-      setToast({ label: t("Failed to submit configuration to the API."), error: true });
-    }
-    setTimeout(() => setToast(null), 3000);
-  };
-
   return (
-    <div className="theme-form-container">
-
-      {/* Page Title */}
-      <div className="theme-header-row">
-        <div className="theme-form-title">
-          {t("Onboarding - Login Configuration")}
-        </div>
-        <PreviewButton targetUrl={`/${window?.contextPath}/employee/user/login`} hasUnsavedChanges={hasUnsavedChanges} onSubmit={handleSubmit} />
-      </div>
-
+    <ThemeEditorLayout
+      title="Onboarding - Login Configuration"
+      previewUrl={`/${window?.contextPath}/employee/user/login`}
+      hasUnsavedChanges={hasUnsavedChanges}
+      onSubmit={handleSubmit}
+      showConfirmModal={showConfirmModal}
+      setShowConfirmModal={setShowConfirmModal}
+      toast={toast}
+      onCloseToast={() => setToast(null)}
+    >
       {/* ── 1. Login Page Header ── */}
-      {/* Allows developers to customize onboarding welcome headers, page details, and textual sub-lines */}
       <Card className="theme-card-margin">
         <CardTitle
           icon={getCardIcon("text")}
@@ -129,7 +100,6 @@ function OnBoardingLogin() {
       </Card>
 
       {/* ── 2. Form Fields Configuration ── */}
-      {/* Configuration card to define fields properties (labels, regex validation models, errors, icons) for login inputs */}
       <Card className="theme-card-margin">
         <CardTitle
           icon={getCardIcon("common")}
@@ -139,10 +109,7 @@ function OnBoardingLogin() {
 
         {/* Language Selector Sub-Section */}
         {fields[0] && (
-          <div style={{ borderBottom: "1.5px solid #EDE8F5", paddingBottom: 20, marginBottom: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 800, color: "#3D2364", marginBottom: 12 }}>
-              {t("Language Selector")}
-            </div>
+          <FieldSubsection title="Language Selector">
             <FieldsRow>
               <TextField
                 label={t("LABEL")}
@@ -160,15 +127,12 @@ function OnBoardingLogin() {
                 onChange={(v) => set("pages.onboarding.steps.login.fields.0.validation.messages.required", v)}
               />
             </FieldsRow>
-          </div>
+          </FieldSubsection>
         )}
 
         {/* City Selector Sub-Section */}
         {fields[1] && (
-          <div style={{ borderBottom: "1.5px solid #EDE8F5", paddingBottom: 20, marginBottom: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 800, color: "#3D2364", marginBottom: 12 }}>
-              {t("City Selector")}
-            </div>
+          <FieldSubsection title="City Selector">
             <div className="full-width-col">
               <FieldsRow>
                 <TextField
@@ -195,15 +159,12 @@ function OnBoardingLogin() {
                 />
               </FieldsRow>
             </div>
-          </div>
+          </FieldSubsection>
         )}
 
         {/* Mobile Number Sub-Section */}
         {fields[2] && (
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: "#3D2364", marginBottom: 12 }}>
-              {t("Mobile Number")}
-            </div>
+          <FieldSubsection title="Mobile Number" hasBorder={false}>
             <div className="full-width-col">
               <FieldsRow>
                 <TextField
@@ -251,12 +212,11 @@ function OnBoardingLogin() {
                 />
               </FieldsRow>
             </div>
-          </div>
+          </FieldSubsection>
         )}
       </Card>
 
       {/* ── 3. Footer Settings ── */}
-      {/* Edit action button text strings, dynamic secondary targets, secure seal banners and border dividers */}
       <Card className="theme-card-margin">
         <CardTitle
           icon={getCardIcon("logo")}
@@ -279,39 +239,13 @@ function OnBoardingLogin() {
           />
 
           {footer.secondaryActions && footer.secondaryActions.length > 0 && (
-            <div className="full-width-col">
-              <span className="section-sub-title" style={{ margin: "8px 0 4px" }}>{t("Secondary Actions")}</span>
-              {footer.secondaryActions.map((action, idx) => (
-                <div key={idx} className="feature-box-row" style={{ padding: "12px 16px" }}>
-                  <div className="secondary-action-grid">
-                    <input
-                      type="text"
-                      value={action.icon || ""}
-                      onChange={(e) => set(`pages.onboarding.steps.login.footer.secondaryActions.${idx}.icon`, e.target.value)}
-                      placeholder={t("Icon URL (https://...)")}
-                      className="text-input-field"
-                      style={{ height: 36, fontSize: 12 }}
-                    />
-                    <input
-                      type="text"
-                      value={action.label || ""}
-                      onChange={(e) => set(`pages.onboarding.steps.login.footer.secondaryActions.${idx}.label`, e.target.value)}
-                      placeholder={t("Action Label")}
-                      className="text-input-field"
-                      style={{ height: 36, fontSize: 12 }}
-                    />
-                  </div>
-                  <button
-                    onClick={() => handleRemoveSecondaryAction(idx)}
-                    title={t("Remove Action")}
-                    className="remove-feature-btn"
-                    style={{ padding: 4 }}
-                  >
-                    <DeleteIconv2 fill="#D85A5A" />
-                  </button>
-                </div>
-              ))}
-            </div>
+            <SecondaryActionsEditor
+              actions={footer.secondaryActions}
+              onAdd={handleAddSecondaryAction}
+              onRemove={handleRemoveSecondaryAction}
+              onChange={set}
+              basePath="pages.onboarding.steps.login.footer.secondaryActions"
+            />
           )}
         </div>
 
@@ -328,28 +262,7 @@ function OnBoardingLogin() {
           />
         </div>
       </Card>
-
-      {/* ── Submit Button ── */}
-      <div className="submit-container">
-        <button
-          onClick={() => setShowConfirmModal(true)}
-          className="submit-btn"
-          disabled={!hasUnsavedChanges}
-        >
-          {t("SUBMIT CHANGES")}
-        </button>
-      </div>
-
-      {/* Reusable confirmation modal component to verify changes before writing back to storage */}
-      <SubmitConfirmModal
-        isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        onConfirm={handleSubmit}
-      />
-
-      {/* Success and error feedback toast notification */}
-      {toast && <Toast label={toast.label} error={toast.error} onClose={() => setToast(null)} />}
-    </div>
+    </ThemeEditorLayout>
   );
 }
 
