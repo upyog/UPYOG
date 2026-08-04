@@ -72,7 +72,7 @@ config:
     build:
       - work-dir: "business-services/dashboard-data-extractor"
         image-name: "dashboard-data-extractor"
-        dockerfile: "business-services/dashboard-data-extractor/DockerFile"
+        dockerfile: "build/maven/Dockerfile"
       - work-dir: "business-services/dashboard-data-extractor/src/main/resources/db"
         image-name: "dashboard-data-extractor-db"
 
