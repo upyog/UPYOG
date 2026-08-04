@@ -54,7 +54,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import static org.egov.infra.persistence.entity.Address.SEQ_ADDRESS;
 
