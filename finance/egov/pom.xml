@@ -1796,7 +1796,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${mvn.compiler.plugin.version}</version>
                 <configuration>
-                    <release>17</release>
+                    <source>17</source>
+                    <target>17</target>
                     <!--
                         Spring 6 Method Parameter Reflection Compiler Flag (-parameters):
                         In Spring 6 (Spring Framework 6.x), parameter name discovery via ASM bytecode reflection was removed.
