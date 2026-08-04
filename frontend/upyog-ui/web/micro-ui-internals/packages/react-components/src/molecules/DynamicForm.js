@@ -753,7 +753,7 @@ const DynamicForm = ({
 
   /**
    * Uploads a file via Digit.UploadServices.Filestorage and stores
-   * { filestoreId, documentuuid, documentType } on the field.
+   * { filestoreId, documentuuid, documentType, fileName } on the field.
    * Rejects files ≥ 5MB with a toast. Module defaults to "ESTATE";
    * override with routeConfig.uploadModule.
    *
@@ -776,7 +776,12 @@ const DynamicForm = ({
         );
         const id = response?.data?.files?.[0]?.fileStoreId;
         if (id) {
-          handleChange(fieldName, { filestoreId: id, documentuuid: id, documentType: fieldName });
+          handleChange(fieldName, {
+            filestoreId: id,
+            documentuuid: id,
+            documentType: fieldName,
+            fileName: file.name || "",
+          });
         }
       } catch (err) {
         console.error("File upload failed:", err?.response?.data || err);

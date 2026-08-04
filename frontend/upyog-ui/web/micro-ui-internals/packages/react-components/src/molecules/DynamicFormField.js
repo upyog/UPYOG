@@ -387,8 +387,8 @@ const DynamicFormField = ({
         : value?.filestoreId || value?.fileStoreId || value?.documentuuid;
     const hasUploaded = Boolean(fileRef);
     const uploadedLabel =
-      (typeof value === "object" && value?.fileName) ||
-      fileRef ||
+      (typeof value === "object" &&
+        (value?.fileName || value?.name || value?.filename)) ||
       t("CS_ACTION_FILEUPLOADED");
 
     return (
