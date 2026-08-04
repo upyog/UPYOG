@@ -6,6 +6,10 @@
     margin-top: 0;
   }
 
+  :global(.upload-file) {
+    margin-bottom: 10px;
+  }
+
   :global(.action-bar-wrap) {
     button {
       margin-left: 10px;

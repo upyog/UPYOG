@@ -57,4 +57,7 @@ public class SchemaDefinition implements Serializable{
     @Valid
     private AuditDetails auditDetails = null;
 
+    @JsonProperty("operation")
+    private String operation = null;
+
 }

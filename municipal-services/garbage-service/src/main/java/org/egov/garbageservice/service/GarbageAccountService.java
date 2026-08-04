@@ -1084,6 +1084,7 @@ public class GarbageAccountService {
                 accountTemp.setWorkflowComment(comment);
                 accountTemp.setStatus(status);
                 accountTemp.getGrbgApplication().setStatus(status);
+                accountTemp.setWorkflow(account.getWorkflow());
 
                 if (!CollectionUtils.isEmpty(accountTemp.getChildGarbageAccounts())) {
                     accountTemp.getChildGarbageAccounts().stream().forEach(child -> {
@@ -1186,8 +1187,9 @@ public class GarbageAccountService {
 
                 if (!updateGarbageRequest.getCreateChildAccountOnly()) {
                     List<Document> wfDocuments = null;
-                    if (!CollectionUtils.isEmpty(newGarbageAccount.getDocuments())) {
-                        wfDocuments = newGarbageAccount.getDocuments().stream()
+                    if (newGarbageAccount.getWorkflow() != null
+                            && !CollectionUtils.isEmpty(newGarbageAccount.getWorkflow().getDocuments())) {
+                        wfDocuments = newGarbageAccount.getWorkflow().getDocuments().stream()
                                 .map(doc -> Document.builder()
                                         .documentType(doc.getDocumentType())
                                         .fileStoreId(doc.getFileStoreId())

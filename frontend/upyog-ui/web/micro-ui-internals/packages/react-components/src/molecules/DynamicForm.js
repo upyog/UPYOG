@@ -278,6 +278,8 @@ const DynamicForm = ({
   const suppressSuggestRef = useRef(false);
   /** Wizard Cancel confirmation modal (reuses shared Modal / confirmation_box). */
   const [showCancelPopup, setShowCancelPopup] = useState(false);
+  /** Create-new redirect confirm — holds target path when open. */
+  const [createNewRedirectPath, setCreateNewRedirectPath] = useState(null);
 
   /**
    * Keeps locality MDMS bound to the city currently on the form.
@@ -696,32 +698,43 @@ const DynamicForm = ({
 
   /**
    * "Create new" from a not-found search panel.
-   * Resets the form to a blank NEW_BUILDING baseline with registration details shown.
+   * When the field defines createNewPath, opens a confirmation modal before navigate.
+   * Otherwise resets to a blank NEW_BUILDING baseline with registration details shown.
    */
-  const handleCreateNewFromSearch = useCallback(() => {
-    const blank = buildInitialData(routeConfig.form, {}, dropdownData, tenantId);
-    const allComputeDeps = flatFields.flatMap((fc) => fc.field?.computeFrom || []);
-    const cleared = {
-      ...blank,
-      assetRegistrationType: "NEW_BUILDING",
-      searchEstateNo: "",
-      showRegistrationDetails: "YES",
-    };
-    setFormData(
-      allComputeDeps.length
-        ? applyComputedFields(cleared, allComputeDeps)
-        : cleared
-    );
-    setErrors({});
-    setCrossFieldMessages([]);
-    setSearchPanel(null);
-  }, [
-    routeConfig.form,
-    dropdownData,
-    tenantId,
-    flatFields,
-    applyComputedFields,
-  ]);
+  const handleCreateNewFromSearch = useCallback(
+    (fieldName) => {
+      const createNewPath = flatFields.find((fc) => fc.field?.name === fieldName)
+        ?.field?.createNewPath;
+      if (createNewPath) {
+        setCreateNewRedirectPath(createNewPath);
+        return;
+      }
+
+      const blank = buildInitialData(routeConfig.form, {}, dropdownData, tenantId);
+      const allComputeDeps = flatFields.flatMap((fc) => fc.field?.computeFrom || []);
+      const cleared = {
+        ...blank,
+        assetRegistrationType: "NEW_BUILDING",
+        searchEstateNo: "",
+        showRegistrationDetails: "YES",
+      };
+      setFormData(
+        allComputeDeps.length
+          ? applyComputedFields(cleared, allComputeDeps)
+          : cleared
+      );
+      setErrors({});
+      setCrossFieldMessages([]);
+      setSearchPanel(null);
+    },
+    [
+      routeConfig.form,
+      dropdownData,
+      tenantId,
+      flatFields,
+      applyComputedFields,
+    ]
+  );
 
   /**
    * Debounced auto-draft: when onPersistDraft is set and no explicit draft button
@@ -1058,6 +1071,33 @@ const DynamicForm = ({
         >
           <div className="confirmation_box">
             <CardText>{t(cancelConfirmMessage, "Do you want to cancel?")}</CardText>
+          </div>
+        </Modal>
+      )}
+
+      {createNewRedirectPath && (
+        <Modal
+          headerBarMain={
+            <CancelPopupHeading label={t("EST_CREATE_NEW_REGISTRATION")} />
+          }
+          headerBarEnd={
+            <CancelPopupCloseBtn onClick={() => setCreateNewRedirectPath(null)} />
+          }
+          actionCancelLabel={t("CS_COMMON_CANCEL")}
+          actionCancelOnSubmit={() => setCreateNewRedirectPath(null)}
+          actionSaveLabel={t("CS_COMMON_OK")}
+          actionSaveOnSubmit={() => {
+            window.location.href = createNewRedirectPath;
+          }}
+          formId="modal-create-new-redirect"
+        >
+          <div className="confirmation_box">
+            <CardText>
+              {t(
+                "EST_CREATE_NEW_REGISTRATION_REDIRECT_INFO",
+                "You are being redirected to the Asset Management page. The asset will start appearing after approval."
+              )}
+            </CardText>
           </div>
         </Modal>
       )}

@@ -68,6 +68,16 @@
     input {
       padding-right: 44px !important;
     }
+
+    &--with-button {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+
+      input {
+        padding-right: 8px !important;
+      }
+    }
   }
 
   &__lookup-icon {
@@ -89,6 +99,28 @@
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+  }
+
+  &__lookup-btn {
+    flex-shrink: 0;
+    @apply h-10 bg-primary-main text-center outline-none;
+    box-shadow: inset 0px -2px 0px #0b0c0c;
+    padding: 0 20px;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:focus {
+      @apply outline-none;
     }
   }
 
