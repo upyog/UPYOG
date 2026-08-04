@@ -18,7 +18,7 @@
  * @see formUtils.isFieldVisible
  */
 
-import { flattenFormConfig, resolveBillingCycleMultiplier, enrichDropdownSelection, toDate, isFieldVisible } from "./formUtils";
+import { flattenFormConfig, resolveBillingCycleMultiplier, toDate, isFieldVisible, optionCode } from "./formUtils";
 
 /**
  * True when a field value is considered empty for required checks.
@@ -236,6 +236,7 @@ const formatRentAmount = (value) => {
  * Rent for the selected billing period = rate/sqft × plot area × cycle multiplier.
  * Used via field.computeFrom + field.computeFn in route config.
  * DynamicForm passes billingCycleOptions as a trailing arg.
+ * Returns "0" when billing cycle is not selected.
  *
  * @param {*}      rentRate
  * @param {*}      totalFloorArea
@@ -249,10 +250,13 @@ export const calculateRentByBillingCycle = (
   billingCycle,
   billingCycleOptions = []
 ) => {
+  // No billing cycle → rent (and advance payment via copyValue) stay at zero.
+  if (!optionCode(billingCycle)) return "0";
+
   const rate = toPositiveNumber(rentRate);
   const area = toPositiveNumber(totalFloorArea);
-  if (!rate || !area) return "";
+  if (!rate || !area) return "0";
 
   const multiplier = resolveBillingCycleMultiplier(billingCycle, billingCycleOptions);
-  return formatRentAmount(rate * area * multiplier);
+  return formatRentAmount(rate * area * multiplier) || "0";
 };

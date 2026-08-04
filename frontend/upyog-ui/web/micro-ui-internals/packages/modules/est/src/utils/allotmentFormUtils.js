@@ -8,6 +8,9 @@ import {
   rehydrateBillingCycleOption,
 } from "@nudmcdgnpm/digit-ui-react-components";
 
+// import { useTranslation } from "react-i18next";
+// const { t } = useTranslation();
+
 export const getAssetIdentity = (asset = {}) =>
   asset?.estateNo || asset?.assetId || asset?.refAssetNo || "";
 
@@ -47,10 +50,10 @@ export const mergeAllotmentPrefill = (
 
   return merged;
 };
-
+ 
 /** Allot Asset is allowed only when backend status is PENDING_FOR_ALLOTMENT. */
 export const isPendingForAllotment = (asset = {}) =>
-  String(asset?.assetAllotmentStatus || "").toUpperCase() === "PENDING_FOR_ALLOTMENT";
+  String(asset?.assetAllotmentStatus || "").toUpperCase() ===  "PENDING_FOR_ALLOTMENT";
 
 export const normalizeAllotmentFlatData = (flatData = {}, assetData = {}, routeConfig = {}) => {
   const merged = {
@@ -70,11 +73,9 @@ export const normalizeAllotmentFlatData = (flatData = {}, assetData = {}, routeC
     billingOptions
   );
 
-  if (monthlyRent) {
-    merged.monthlyRent = monthlyRent;
-    // Advance payment mirrors calculated rent (field is disabled on the form).
-    merged.advancePayment = monthlyRent;
-  }
+  // Always mirror rent into advance (including "0" when billing cycle is unset).
+  merged.monthlyRent = monthlyRent;
+  merged.advancePayment = monthlyRent;
 
   return merged;
 };

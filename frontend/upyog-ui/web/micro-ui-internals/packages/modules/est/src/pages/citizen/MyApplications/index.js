@@ -115,7 +115,7 @@ export const ESTMyApplications = () => {
 
     return rows.filter((item) => {
       const rowPayment = normalizeCitizenPaymentStatus(
-        getAllotmentPaymentStatus(item, item)
+        getAllotmentPaymentStatus(item)
       );
       return rowPayment === paymentFilter;
     });

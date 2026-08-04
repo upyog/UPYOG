@@ -69,83 +69,145 @@ const extractAssetDataFromSession = (data = {}) =>
   data?.Assetdata ||
   {};
 
-const toFormTextValue = (value) =>
-  value === undefined || value === null || value === "" ? "" : String(value);
+/** Numeric form fields (pattern ^[0-9]+$) — drop decimals / non-digits. */
+const toNumericFormText = (value) => {
+  if (value === undefined || value === null || value === "") return "";
+  const n = Number(value);
+  if (Number.isFinite(n)) return String(Math.trunc(n));
+  return String(value).replace(/[^\d]/g, "");
+};
 
-const toFlatAssetForPayload = (assetData = {}) => ({
-  ...assetData,
-  buildingFloor: toFormTextValue(assetData.buildingFloor ?? assetData.floor),
-  buildingName: assetData.buildingName || assetData.assetName || "",
-  serviceType:
-    assetData.localityCode ||
-    (typeof assetData.serviceType === "string"
-      ? assetData.serviceType
-      : assetData.serviceType?.code) ||
-    "",
-  serviceTypeName:
-    assetData.locality ||
-    assetData.localityName ||
-    assetData.serviceTypeName ||
-    "",
-  assetType: assetData.assetType || assetData.assetParentCategory || "",
-  department: assetData.department || "DEPT_2",
-  refAssetNo: assetData.refAssetNo || assetData.refAsset || "",
-});
+/** Asset-module reference numbers look like PG-1013-2026-B-001512. */
+const isAssetModuleRefNo = (value) =>
+  /^PG-/i.test(String(value || "").trim());
 
-/** Map a searched Asset API object onto NewRegistration form field names. */
+/**
+ * Resolve asset-services identity → estate Asset.refAssetNo (PG-…).
+ * Prefer applicationNo (canonical asset-services id); never use estateNo (EST-…).
+ */
+const resolveRefAssetNo = (asset = {}) => {
+  const candidates = [
+    asset.applicationNo,
+    asset.assetBookRefNo,
+    asset.refAssetNo,
+    asset.refAsset,
+  ];
+  const pgPrefixed = candidates.find(isAssetModuleRefNo);
+  if (pgPrefixed) return String(pgPrefixed).trim();
+  return String(pick(...candidates) || "").trim();
+};
+
+/**
+ * Map asset-services/_search row → NewRegistration form field names.
+ * Plot mapping: Total Plot Area ← dimensions, Length ← plinthArea,
+ * Width ← additionalDetails.plotArea.
+ *
+ * estateNo  → EST-… (estate-management; empty on new create)
+ * refAssetNo → PG-… (asset-services applicationNo / book ref)
+ */
 export const mapAssetToRegistrationPrefill = (asset = {}) => {
-  const flat = toFlatAssetForPayload(asset);
+  const additional = parseAdditionalDetails(asset.additionalDetails);
+  const address = asset.addressDetails || {};
+  const locality = address.locality || {};
+  const serviceTypeCode =
+    typeof asset.serviceType === "string"
+      ? asset.serviceType
+      : asset.serviceType?.code;
+  const refAssetNo = resolveRefAssetNo(asset);
+  // Keep only EST-… here; never promote a PG-… asset ref into estateNo.
+  const estateNoRaw = String(asset.estateNo || "").trim();
+  const estateNo =
+    estateNoRaw && !isAssetModuleRefNo(estateNoRaw) ? estateNoRaw : "";
+
   return {
-    estateNo: flat.estateNo || "",
-    buildingName: flat.buildingName || "",
-    buildingNo: flat.buildingNo || "",
-    buildingFloor: toFormTextValue(flat.buildingFloor ?? flat.floor),
-    buildingBlock: flat.buildingBlock || "",
-    totalFloorArea: flat.totalFloorArea ?? "",
-    dimensionLength: flat.dimensionLength ?? "",
-    dimensionWidth: flat.dimensionWidth ?? "",
-    rate: flat.rate ?? "",
-    assetRef: flat.refAssetNo || flat.assetRef || "",
-    assetType: flat.assetType || "",
-    serviceType: flat.serviceType || "",
-    serviceTypeName: flat.serviceTypeName || "",
-    city: flat.tenantId || flat.city || "",
+    estateNo,
+    buildingName:
+      pick(asset.buildingName, address.buildingName, asset.assetName) || "",
+    buildingNo:
+      pick(asset.buildingNo, additional.buildingSno, additional.buildingNo) ||
+      "",
+    buildingFloor: toNumericFormText(
+      pick(
+        asset.buildingFloor,
+        asset.floor,
+        additional.floorNo,
+        additional.floor
+      )
+    ),
+    buildingBlock:
+      pick(asset.buildingBlock, additional.buildingBlock, additional.block) ||
+      "",
+    totalFloorArea: toNumericFormText(
+      pick(asset.dimensions, additional.dimensions)
+    ),
+    dimensionLength: toNumericFormText(
+      pick(asset.plinthArea, additional.plinthArea)
+    ),
+    dimensionWidth: toNumericFormText(additional.plotArea),
+    rate: toNumericFormText(
+      pick(asset.rate, additional.rate, asset.purchaseCost)
+    ),
+    assetRef: refAssetNo,
+    refAssetNo,
+    assetType: pick(asset.assetType, asset.assetParentCategory) || "",
+    serviceType:
+      pick(asset.localityCode, serviceTypeCode, locality.code) || "",
+    serviceTypeName:
+      pick(
+        asset.locality,
+        asset.localityName,
+        asset.serviceTypeName,
+        locality.name
+      ) || "",
+    city: pick(asset.tenantId, asset.city) || "",
   };
 };
 
-const buildAssetSearchCriteria = (tenantId, criteria = {}) => ({
-  AssetSearchCriteria: {
-    tenantId,
-    ...criteria,
-  },
-});
-
-/** Search estate assets by reference asset no, then estate no (exact match API). */
+/**
+ * Search immovable assets for Existing Asset registration.
+ * Uses asset-services: POST /asset-services/v1/assets/_search
+ * (query params via Digit.ASSETService.search).
+ */
 export const searchExistingEstateAssets = async (assetNumber, tenantId) => {
   const query = String(assetNumber || "").trim();
   if (!query || !tenantId) return [];
 
-  const runSearch = async (criteria) => {
-    const response = await Digit.ESTService.assetSearch({
+  const runSearch = async (filters = {}) => {
+    const response = await Digit.ASSETService.search({
       tenantId,
-      filters: buildAssetSearchCriteria(tenantId, criteria),
+      filters: {
+        assetClassification: "IMMOVABLE",
+        ...filters,
+      },
     });
     return Array.isArray(response?.Assets) ? response.Assets : [];
   };
 
-  const byRef = await runSearch({ refAssetNo: query });
-  if (byRef.length) return byRef;
+  const byApplicationNo = await runSearch({ applicationNo: query });
+  if (byApplicationNo.length) return byApplicationNo;
 
-  return runSearch({ estateNo: query });
+  const queryLower = query.toLowerCase();
+  const byBookRef = await runSearch({ assetBookRefNo: query });
+  return byBookRef.filter(
+    (asset) =>
+      String(asset?.assetBookRefNo || "").toLowerCase() === queryLower
+  );
 };
 
 /** Shape API asset rows for DynamicForm existing-asset lookup UI. */
 export const mapAssetSearchToRegistrationMatch = (asset = {}) => {
-  const label = asset.refAssetNo || asset.estateNo || "";
+  // Search card shows the asset-module number the user looked up (not estateNo).
+  const label =
+    pick(
+      asset.applicationNo,
+      asset.assetBookRefNo,
+      asset.refAssetNo,
+      asset.estateNo
+    ) || "";
   return {
     estateNo: label,
     label,
-    subtitle: asset.buildingName || asset.assetName || "",
+    subtitle: pick(asset.buildingName, asset.assetName) || "",
     prefill: mapAssetToRegistrationPrefill(asset),
   };
 };
@@ -329,7 +391,7 @@ export const createAllotmentData = (data, routeConfig) => {
         ...built,
         allotmentId: allotmentData?.allotmentId || "",
         userUuid: allotmentData?.userUuid || user?.uuid || "",
-        billingCycle: built.billingCycle || "MONTHLY",
+        billingCycle: built.billingCycle,
         tenantId: built.tenantId || tenantId,
         auditDetails: isEdit && existingAudit?.createdTime
           ? {
