@@ -120,7 +120,7 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
       <StatusTable>
         <Row
           className="border-none"
-          label={t("EST_ALLOTMENT_NUMBER")}
+          label={t("EST_ESTATE_ALLOTMENT_NUMBER")}
           text={allotmentNo || "N/A"}
         />
         <Row className="border-none" label={t("EST_ALLOTMENT_TYPE")} text={allotmentTypeLabel} />
@@ -133,7 +133,7 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
         />
         <Row
           className="border-none"
-          label={t("EST_ASSET_STATUS")}
+          label={t("PT_COMMON_TABLE_COL_STATUS_LABEL")}
           text={translateOrCode(t, "EST_PAYMENT_STATUS", paymentStatusCode)}
         />
         <Row

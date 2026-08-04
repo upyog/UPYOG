@@ -206,11 +206,13 @@ export const ESTMyApplications = () => {
             {allotmentNoFilter ? (
               <div className={styles["est-myapps__field-col"]}>
                 <div className={styles["est-myapps__field-inner"]}>
-                  <CardLabel>{t(allotmentNoFilter.key)}</CardLabel>
+                  <CardLabel>
+                    {t(
+                      "EST_ALLOTMENT_NUMBER")}
+                  </CardLabel>
                   <TextInput
                     placeholder={t(
-                      allotmentNoFilter.placeholder || allotmentNoFilter.key
-                    )}
+                      "EST_ENTER_ALLOTMENT_NUMBER")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={styles["est-myapps__text-input"]}

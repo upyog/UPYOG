@@ -287,6 +287,8 @@ const DynamicFormField = ({
   const textUnit = showDurationAsYears ? undefined : unit;
   /** Lookup UI when MDMS marks the field with searchCard or searchButton. */
   const useSearchCard = Boolean(field.searchCard || field.searchButton);
+  /** Text Search button instead of magnifying-glass icon when searchButton is set. */
+  const showSearchTextButton = Boolean(field.searchButton);
 
   // ── dropdown ─────────────────────────────────────────────────────────
   if (type === "dropdown") {
@@ -414,7 +416,11 @@ const DynamicFormField = ({
       <>
         <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} unit={textUnit} />
         <div className="field" data-field-error={hasError ? "true" : undefined}>
-          <div className="dynamic-form-field__lookup">
+          <div
+            className={`dynamic-form-field__lookup${
+              showSearchTextButton ? " dynamic-form-field__lookup--with-button" : ""
+            }`}
+          >
             <TextInput
               placeholder={t(placeholder || "")}
               value={value || ""}
@@ -433,12 +439,23 @@ const DynamicFormField = ({
             />
             <button
               type="button"
-              className="dynamic-form-field__lookup-icon"
-              disabled={isDisabled || validation.disabled || isFieldSearching || !String(value || "").trim()}
+              className={
+                showSearchTextButton
+                  ? "dynamic-form-field__lookup-btn"
+                  : "dynamic-form-field__lookup-icon"
+              }
+              disabled={
+                isDisabled ||
+                validation.disabled ||
+                isFieldSearching ||
+                !String(value || "").trim()
+              }
               onClick={() => onFieldSearch?.(name)}
-              aria-label={t("ES_COMMON_SEARCH")}
+              aria-label={t(field.searchButtonLabel || "ES_COMMON_SEARCH")}
             >
-              <SearchIcon />
+              {showSearchTextButton
+                ? t(field.searchButtonLabel || "ES_COMMON_SEARCH")
+                : <SearchIcon />}
             </button>
           </div>
           <FieldError show={hasError} message={errorMsg} />

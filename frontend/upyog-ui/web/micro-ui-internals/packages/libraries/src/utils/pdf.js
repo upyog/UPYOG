@@ -256,6 +256,10 @@ const jsPdfGenerator = async ({ breakPageLimit = null, tenantId, logo, name, ema
   else if (applicationNumber !== undefined && applicationNumber.split("-")[1] === "BP") {
     ack = "BPA-AckForm"
   }
+  else if (applicationNumber !== undefined && applicationNumber.split("-")[0] === "EST") {
+    // Estate registration (EST-…) and allotment (EST-AL-…) acknowledgements
+    ack = "EST-AckForm"
+  }
   else if (applicationNumber !== undefined && applicationNumber.split("-")[0] === "GC") {
     ack = "Garbage-AckForm"
   }
