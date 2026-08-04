@@ -1,6 +1,8 @@
 import React from "react";
 import { Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import "../../../css/gc-inline-auto.css";
 
 // Garbage Collection Application Component
 // This component displays the details of an application and provides options to view the summary or make a payment.
@@ -31,12 +33,12 @@ const GCApplication = ({ application, tenantId }) => {
   const category = collectionUnit?.category;
   const typeOfCollection = collectionUnit?.unitType;
 
-  const handleViewSummary = () => {
-    navigate(`/upyog-ui/citizen/gc/application-details/${encodeURIComponent(appNo)}`);
+  const handleMakePayment = () => {
+    navigate(`/upyog-ui/citizen/payment/my-bills/garbage-service/${appNo}`);
   };
 
-  const handleMakePayment = () => {
-     navigate(`/upyog-ui/citizen/payment/my-bills/${"garbage-service"}/${appNo}`);
+  const handleEditApplication = () => {
+    navigate(`/upyog-ui/citizen/gc/edit/${appNo}`);
   };
 
   return (
@@ -50,11 +52,15 @@ const GCApplication = ({ application, tenantId }) => {
       <KeyNote keyValue={t("GC_APPLICATION_STATUS_LABEL")} note={appStatus ? t(`GC_STATUS_${appStatus}`) : t("CS_NA")} />
       {application?.dueDate && <KeyNote keyValue={t("GC_DUE_DATE")} note={application.dueDate} />}
       
-      <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
-        <SubmitBar label={t("CS_VIEW_DETAILS")} onSubmit={handleViewSummary} style={{ flex: 1 }} />
-        
+      <div className="gc-btn-row">
+        <Link to={`/upyog-ui/citizen/gc/application-details/${encodeURIComponent(appNo)}`}>
+          <SubmitBar label={t("CS_VIEW_DETAILS")} />
+        </Link>
         {appStatus === "PENDING_FOR_PAYMENT" && (
-          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} style={{ flex: 1 }} />
+          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />
+        )}
+        {appStatus === "EDIT_APPLICATION" && (
+          <SubmitBar label={t("GC_EDIT_APPLICATION")} onSubmit={handleEditApplication} />
         )}
       </div>
     </Card>
