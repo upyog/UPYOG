@@ -60,7 +60,7 @@ const ESTAssignAstRequiredDoc = ({ t, onSelect, config }) => {
             {documents.map((doc, index) => (
               <CardText key={doc.code || doc.i18nKey || index} className="primaryColor">
                 {doc.order ?? index + 1}. {t(doc.i18nKey || doc.name || doc.label || "")}
-                {doc.acceptedFormat ? ` (${doc.acceptedFormat})` : ""}
+                {/* {doc.acceptedFormat ? ` (${doc.acceptedFormat})` : ""} */}
               </CardText>
             ))}
           </div>

@@ -158,25 +158,25 @@ const LOCAL_PAYMENT_HISTORY_CONFIG = {
   resultFields: [
     {
       order: 1,
-      key: "CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL",
-      accessor: "amountPaid",
-      format: "currency",
-      emphasize: true,
-    },
-    {
-      order: 2,
       key: "EST_ESTATE_NUMBER",
       accessor: "assetNo",
     },
     {
-      order: 3,
+      order: 2,
       key: "EST_BUILDING_NAME",
       accessor: "buildingName",
     },
     {
-      order: 4,
+      order: 3,
       key: "EST_BILLING_CYCLE",
       accessor: "billingCycle",
+    },
+    {
+      order: 4,
+      key: "CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL",
+      accessor: "amountPaid",
+      format: "currency",
+      emphasize: true,
     },
     {
       order: 5,
