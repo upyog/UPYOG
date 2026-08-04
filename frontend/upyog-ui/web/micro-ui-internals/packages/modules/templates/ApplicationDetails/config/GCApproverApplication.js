@@ -1,7 +1,8 @@
 import { UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 
-export const configGCApproverApplication = ({ t, action, selectFile, uploadedFile, setUploadedFile }) => {
+export const configGCApproverApplication = ({ t, action, selectFile, uploadedFile, setUploadedFile, isUploading }) => {
+  const LoadingSpinner = () => <div className="loading-spinner" />;
   return {
     label: {
       heading: `GC_${action?.action}`,
@@ -26,7 +27,12 @@ export const configGCApproverApplication = ({ t, action, selectFile, uploadedFil
                 id={"workflow-doc"}
                 onUpload={selectFile}
                 onDelete={() => setUploadedFile(null)}
-                message={uploadedFile ? `1 ${t("CS_ACTION_FILEUPLOADED")}` : t("CS_ACTION_NO_FILEUPLOADED")}
+                message={isUploading ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <LoadingSpinner />
+                    <span>{t("CS_UPLOADING")}</span>
+                  </div>
+                ) : uploadedFile ? `1 ${t("CS_ACTION_FILEUPLOADED")}` : t("CS_ACTION_NO_FILEUPLOADED")}
               />
             ),
           },

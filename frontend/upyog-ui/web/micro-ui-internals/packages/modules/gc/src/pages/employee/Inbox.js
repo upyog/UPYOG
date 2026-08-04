@@ -141,6 +141,7 @@ const Inbox = ({
 
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
+    setPageOffset(0);
   };
 
 
@@ -170,7 +171,7 @@ const Inbox = ({
     : data;
 
 
-  if (data) {
+  if (rest?.data?.length !== null) {
     if (isMobile) {
       return (
         <MobileInbox
