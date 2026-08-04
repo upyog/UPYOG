@@ -43,15 +43,28 @@
   }
 
   &-action {
-    display: flex;
+    display: flex !important;
+    justify-content: space-between;
     align-items: center;
+    text-align: left;
     margin-top: 28px;
     padding-bottom: 24px;
-    gap: 0;
+    gap: 16px;
+
+    // Override global ActionBar `div { width: 100% }` so primary/cancel stay side by side.
+    > div {
+      width: auto;
+    }
+  }
+
+  &-action-primary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
 
   &-submit-flex {
-    margin-left: 15px;
+    margin-left: 0;
   }
 
   &-error {

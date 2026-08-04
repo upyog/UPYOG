@@ -38,7 +38,7 @@
  *
  * Modes
  * -----
- * - "wizard" (default): ActionBar with Cancel / Draft / Save & Next (or Update).
+ * - "wizard" (default): ActionBar with Save & Next (left) / Draft / Cancel (right).
  * - "search": SearchForm layout (inline row or stacked); no wizard ActionBar;
  *   submit maps values to search filters.
  *
@@ -1018,28 +1018,27 @@ const DynamicForm = ({
 
       {!isDisabled && !isSearchMode && showActionBar && (
         <ActionBar className="dynamic-form-action">
+          <div className="dynamic-form-action-primary">
+            <SubmitBar
+              label={t(buttonLabel)}
+              onSubmit={goNext}
+              disabled={isSubmitting}
+            />
+            {showDraftButton && (
+              <ButtonSelector
+                theme="border"
+                label={t(draftLabel)}
+                onSubmit={handleSaveDraft}
+              />
+            )}
+          </div>
           {showCancel && (
             <ButtonSelector
               theme="border"
               label={t(cancelLabel)}
               onSubmit={requestCancel}
-              className="dynamic-form-margin-right"
             />
           )}
-          {showDraftButton && (
-            <ButtonSelector
-              theme="border"
-              label={t(draftLabel)}
-              onSubmit={handleSaveDraft}
-              className="dynamic-form-margin-right"
-            />
-          )}
-          <SubmitBar
-            label={t(buttonLabel)}
-            onSubmit={goNext}
-            disabled={isSubmitting}
-            className={showCancel || showDraftButton ? "dynamic-form-submit-flex" : undefined}
-          />
         </ActionBar>
       )}
 
