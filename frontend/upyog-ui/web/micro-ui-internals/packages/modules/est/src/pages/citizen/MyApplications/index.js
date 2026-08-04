@@ -208,15 +208,11 @@ export const ESTMyApplications = () => {
                 <div className={styles["est-myapps__field-inner"]}>
                   <CardLabel>
                     {t(
-                      "EST_ESTATE_ALLOTMENT_NUMBER",
-                      "Estate Allotment Number"
-                    )}
+                      "EST_ALLOTMENT_NUMBER")}
                   </CardLabel>
                   <TextInput
                     placeholder={t(
-                      "EST_ENTER_ESTATE_ALLOTMENT_NUMBER",
-                      "Enter Estate Allotment Number"
-                    )}
+                      "EST_ENTER_ALLOTMENT_NUMBER")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={styles["est-myapps__text-input"]}
