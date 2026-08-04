@@ -62,6 +62,7 @@ const NewRegistration = ({
       defaultHeaderCode="EST_COMMON_NEW_REGISTRATION"
       wrapperClassName={`employeeCard ${layoutStyles.estFormStep}`}
       onFieldSearch={handleFieldSearch}
+      confirmCancel
     />
   );
 };

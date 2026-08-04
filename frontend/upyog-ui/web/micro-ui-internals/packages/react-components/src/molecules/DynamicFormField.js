@@ -87,6 +87,15 @@ import {
 } from "../utilities/formUtils";
 import { formatDurationDisplay } from "../utilities/validators";
 
+/** Resolve DatePicker `min` from field.minDate ("today" or yyyy-MM-dd). */
+const resolveFieldMinDate = (minDate) => {
+  if (minDate === "today") return toInputDate(new Date());
+  if (typeof minDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(minDate)) {
+    return minDate;
+  }
+  return undefined;
+};
+
 /* ── shared sub-renderers ─────────────────────────────────────────────── */
 
 /**
@@ -359,6 +368,7 @@ const DynamicFormField = ({
           <DatePicker
             date={toInputDate(value)}
             disable={isDisabled || validation.disabled}
+            min={resolveFieldMinDate(field.minDate)}
             onChange={(d) => onChange(name, d)}
           />
           <FieldError show={hasError} message={errorMsg} />

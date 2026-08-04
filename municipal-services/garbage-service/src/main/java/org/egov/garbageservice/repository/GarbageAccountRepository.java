@@ -40,7 +40,7 @@ public class GarbageAccountRepository {
             + " JOIN ug_grbg_collection_unit unit ON unit.garbage_id = acc.garbage_id"
             + " JOIN ug_grbg_address address ON address.garbage_id = acc.garbage_id"
             + " JOIN ug_grbg_application app ON app.garbage_id = acc.garbage_id";
-    private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.* "
+    private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.*, acc.due_date as acc_due_date "
             + ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
             + ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
             + ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active,unit.isbplunit as unit_isbplunit,unit.isbulkgeneration as unit_isbulkgeneration,unit.isvariablecalculation as unit_isvariablecalculation,unit.no_of_units as unit_no_of_units,unit.ismonthlybilling as unit_is_monthly_billing, unit.owner_type as unit_owner_type, unit.is_inheritance as unit_is_inheritance, unit.special_Category as unit_special_Category"
@@ -95,7 +95,7 @@ public class GarbageAccountRepository {
             + ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
             + ", user_uuid = :userUuid, declaration_uuid = :declarationUuid, status = :status"
             + ", gender = :gender, email_id = :emailId, additional_detail = :additionalDetail :: JSONB, last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate,"
-            + " tenant_id = :tenantId, business_service = :businessService, approval_date = :approvalDate , channel= :channel WHERE id = :id";
+            + " tenant_id = :tenantId, business_service = :businessService, approval_date = :approvalDate , channel= :channel, due_date = :dueDate WHERE id = :id";
     private static final String COUNT_STATUS_BASED_QUERY = "SELECT COUNT(distinct grbg.id) as count, " +
             "COUNT(distinct case when grbg.status = 'INITIATED' then grbg.id end) as applicationInitiated, " +
             "COUNT(distinct case when grbg.status = 'PENDING_FOR_VERIFICATION' then grbg.id end) as applicationPendingForVerification, " +
@@ -276,6 +276,7 @@ public class GarbageAccountRepository {
         accountInputs.put("businessService", newGarbageAccount.getBusinessService());
         accountInputs.put("channel", newGarbageAccount.getChannel());
         accountInputs.put("approvalDate", newGarbageAccount.getApprovalDate());
+        accountInputs.put("dueDate", newGarbageAccount.getDueDate());
 
         namedParameterJdbcTemplate.update(UPDATE_ACCOUNT_BY_ID, accountInputs);
 

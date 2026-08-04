@@ -64,6 +64,7 @@ func SetupRouter(cfg RouterConfig) *gin.Engine {
 		r.Use(middleware.Authentication(
 			cfg.JWTValidator,
 			cfg.Config.Auth.PublicPaths,
+			cfg.Config.Server.ContextPath,
 			cfg.Logger,
 		))
 	}

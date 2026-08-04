@@ -55,6 +55,11 @@ export const TableConfig = (t) => ({
         mobileCell: (original) => GetMobCell(original.searchData?.name || t("CS_NA")),
       },
       {
+        Header: t("GC_MOBILE_NUMBER"),
+        Cell: ({ row }) => GetCell(row.original.searchData?.mobileNumber || t("CS_NA")),
+        mobileCell: (original) => GetMobCell(original.searchData?.mobileNumber || t("CS_NA")),
+      },
+      {
         Header: t("ES_INBOX_LOCALITY"),
         Cell: ({ row }) => {
           const locality = row.original.searchData?.addresses?.[0]?.additionalDetail?.locality;

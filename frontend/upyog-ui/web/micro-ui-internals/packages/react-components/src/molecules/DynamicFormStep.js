@@ -62,6 +62,7 @@
  * @param {string}   [wrapperClassName]  Outer wrapper class (default "employeeCard").
  * @param {string}   [defaultHeaderCode] Fallback header i18n key (default "COMMON_FORM").
  * @param {Function} [onFieldSearch]     Optional field-level search handler for DynamicForm.
+ * @param {boolean}  [confirmCancel=false] Opt-in Cancel confirmation Modal (passed to DynamicForm).
  *
  * @see DynamicForm
  * @see mergeRouteConfig
@@ -95,6 +96,7 @@ const DynamicFormStep = ({
   wrapperClassName = "employeeCard",
   defaultHeaderCode = "COMMON_FORM",
   onFieldSearch,
+  confirmCancel = false,
 }) => {
   /**
    * i18n helper. Uses the `t` prop when provided; otherwise identity so missing
@@ -241,6 +243,12 @@ const DynamicFormStep = ({
     config?.texts?.header ||
     defaultHeaderCode;
 
+  const translatedHeader = t(headerCode);
+  const headerText =
+    translatedHeader !== headerCode
+      ? translatedHeader
+      : routeConfig.pageHeading?.fallback || translatedHeader;
+
   /**
    * Clears draft for this step when the user hits Cancel in DynamicForm.
    * Invokes `draft.onClear(routeConfig.key)` when a draft API is wired;
@@ -252,7 +260,7 @@ const DynamicFormStep = ({
 
   return (
     <div className={wrapperClassName}>
-      <Header>{t(headerCode)}</Header>
+      <Header>{headerText}</Header>
       <DynamicForm
         routeConfig={routeConfig}
         onSubmit={handleSubmit}
@@ -266,6 +274,7 @@ const DynamicFormStep = ({
         tenantId={tenantId}
         t={t}
         showCancel
+        confirmCancel={confirmCancel}
         onCancel={handleCancel}
         showDraftButton={Boolean(draft?.onPersist)}
         draftLabel={routeConfig.draftButton?.label || draft?.label || "CS_COMMON_SAVE_DRAFT"}

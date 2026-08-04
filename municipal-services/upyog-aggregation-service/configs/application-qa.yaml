@@ -43,6 +43,10 @@ auth:
   audience: ""
   tokenExpLeeway: 60
   publicPaths:
+    - /health
+    - /readiness
+    - /liveness
+    - /metrics
     - /upyog-aggregation-service/health
     - /upyog-aggregation-service/readiness
     - /upyog-aggregation-service/liveness

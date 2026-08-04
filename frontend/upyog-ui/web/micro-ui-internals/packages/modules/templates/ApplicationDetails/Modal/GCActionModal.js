@@ -59,6 +59,7 @@ const GCActionModal = ({ t, action, tenantId, closeModal, submitAction, applicat
 
   function submit(data) {
     const workflowAction=action?.action;
+    const workflowComment=data?.comments;
     const isOnlyWorkflowCall=true;
     const workflow = {
       action: action?.action,
@@ -82,6 +83,7 @@ const GCActionModal = ({ t, action, tenantId, closeModal, submitAction, applicat
         {
           ...applicationData,
           workflowAction,
+          workflowComment,
           isOnlyWorkflowCall,
           workflow,
         },

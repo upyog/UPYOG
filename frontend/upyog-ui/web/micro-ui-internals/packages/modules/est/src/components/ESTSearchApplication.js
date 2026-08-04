@@ -150,6 +150,7 @@ const ESTSearchApplication = ({
     showAssetRef: config.table?.showAssetRef,
     actions: config.table?.actions,
     onAllot: handleAllotAsset,
+    t
   });
 
   const handleSearch = useCallback(
