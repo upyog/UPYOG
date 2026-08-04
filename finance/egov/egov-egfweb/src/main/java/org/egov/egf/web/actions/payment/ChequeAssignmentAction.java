@@ -126,9 +126,11 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.StringType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -567,7 +569,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String getReceiptDetails() {
         Query query = null;
         query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ," +
                                 " redtl.remittedamt as receiptAmount,redtl.remittedamt as deductedAmount" +
                                 " FROM voucherheader vh,eg_remittance re,eg_remittance_detail redtl,generalledger gl" +
@@ -577,7 +579,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 .addScalar("voucherid").addScalar("voucherNumber")
                 .addScalar("receiptAmount").addScalar("deductedAmount")
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
-        query.setParameter("paymentId", paymentId, StringType.INSTANCE);
+        query.setParameter("paymentId", paymentId, StandardBasicTypes.STRING);
         viewReceiptDetailsList = query.list();
         totalDeductedAmount = BigDecimal.ZERO;
         for (final ChequeAssignment ch : viewReceiptDetailsList)

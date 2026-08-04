@@ -67,7 +67,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.ReceiptDetail;
@@ -139,7 +139,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({ @Result(name = BaseFormAction.NEW, location = "receipt-new.jsp"),
-		@Result(name = com.opensymphony.xwork2.Action.SUCCESS, location = "receipt-success.jsp"),
+		@Result(name = org.apache.struts2.action.Action.SUCCESS, location = "receipt-success.jsp"),
 		@Result(name = BaseFormAction.INDEX, location = "receipt-index.jsp"),
 		@Result(name = ReceiptAction.REDIRECT, location = "receipt-redirect.jsp"),
 		@Result(name = CollectionConstants.REPORT, location = "receipt-report.jsp") })

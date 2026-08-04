@@ -39,20 +39,20 @@
  */
 package org.egov.infra.microservice.models;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class BankAccountServiceMapping {
-    @SafeHtml
+    @SanitizeHtml
     private String businessDetails;
-    @SafeHtml
+    @SanitizeHtml
     private String businessDetailsName;
-    @SafeHtml
+    @SanitizeHtml
     private String bankAccount;
-    @SafeHtml
+    @SanitizeHtml
     private String bank;
-    @SafeHtml
+    @SanitizeHtml
     private String bankBranch;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     public String getBusinessDetails() {

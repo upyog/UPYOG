@@ -50,8 +50,8 @@
  */
 package org.egov.egf.web.actions.bill;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import org.apache.struts2.validator.annotations.RequiredFieldValidator;
+import org.apache.struts2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -94,8 +94,9 @@ import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
-import org.hibernate.type.StringType;
+import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -548,8 +549,8 @@ public class ContingentBillAction extends BaseBillAction {
 		StringBuilder statusQuery =  new StringBuilder();
         statusQuery = statusQuery.append("from EgwStatus where upper(moduletype)=upper(:contigencyBill) and upper(description) = upper(:contigencyBillCancel)");
         final Query query = persistenceService.getSession().createQuery(statusQuery.toString())
-                .setParameter("contigencyBill",FinancialConstants.CONTINGENCYBILL_FIN, StringType.INSTANCE)
-                .setParameter("contigencyBillCancel",FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS, StringType.INSTANCE);
+                .setParameter("contigencyBill",FinancialConstants.CONTINGENCYBILL_FIN, StandardBasicTypes.STRING)
+                .setParameter("contigencyBillCancel",FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS, StandardBasicTypes.STRING);
         final EgwStatus egwStatus = (EgwStatus) persistenceService.find(query.toString());
         cbill.setStatus(egwStatus);
         cbill.setBillstatus(FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
@@ -1215,8 +1216,8 @@ public class ContingentBillAction extends BaseBillAction {
         StringBuilder statusQuery = new StringBuilder();
         statusQuery = statusQuery.append("from EgwStatus where upper(moduletype)=upper(:moduletype) and upper(description)=:description");
         final Query query = persistenceService.getSession().createQuery(statusQuery.toString())
-                .setParameter("moduletype" , FinancialConstants.CONTINGENCYBILL_FIN, StringType.INSTANCE)
-                .setParameter("description" , FinancialConstants.CONTINGENCYBILL_CREATED_STATUS.toUpperCase(), StringType.INSTANCE);
+                .setParameter("moduletype" , FinancialConstants.CONTINGENCYBILL_FIN, StandardBasicTypes.STRING)
+                .setParameter("description" , FinancialConstants.CONTINGENCYBILL_CREATED_STATUS.toUpperCase(), StandardBasicTypes.STRING);
         final EgwStatus egwStatus = (EgwStatus) query.uniqueResult();
         bill.setStatus(egwStatus);
         bill.setBilltype("Final Bill");
@@ -1277,7 +1278,7 @@ public class ContingentBillAction extends BaseBillAction {
     	StringBuilder billNumQuery = new StringBuilder();
     	billNumQuery = billNumQuery.append("select billnumber from EgBillregister where upper(billnumber)=:billnumber");
         final Query query = persistenceService.getSession().createQuery(billNumQuery.toString())
-                .setParameter("billnumber" , billNumber.toUpperCase(), StringType.INSTANCE);
+                .setParameter("billnumber" , billNumber.toUpperCase(), StandardBasicTypes.STRING);
         final String billNum = (String) query.uniqueResult();
         
         if (null == billNum)

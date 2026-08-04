@@ -85,11 +85,11 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.StandardBasicTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -815,9 +815,9 @@ public class InstrumentService {
 						.append(" and ih in (select iih from InstrumentOtherDetails io inner join")
 						.append(" io.instrumentHeaderId as iih where io.instrumentStatusDate>=:startDate")
 						.append(" and io.instrumentStatusDate<=:endDate )").toString());
-		qry.setString("status", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
-		qry.setDate("startDate", reconcilationFromDate);
-		qry.setDate("endDate", reconcilationToDate);
+		qry.setParameter("status", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
+		qry.setParameter("startDate", reconcilationFromDate);
+		qry.setParameter("endDate", reconcilationToDate);
 		return qry.list();
 	}
 
@@ -840,9 +840,9 @@ public class InstrumentService {
 						.append(" and ih in (select iih from InstrumentOtherDetails io inner join")
 						.append(" io.instrumentHeaderId as iih where io.modifiedDate>=:startDate")
 						.append(" and io.modifiedDate<=:endDate ) order by iv.instrumentHeaderId desc").toString());
-		qry.setString("status", FinancialConstants.INSTRUMENT_DISHONORED_STATUS);
-		qry.setDate("startDate", dishonoredFromDate);
-		qry.setDate("endDate", dishonoredToDate);
+		qry.setParameter("status", FinancialConstants.INSTRUMENT_DISHONORED_STATUS);
+		qry.setParameter("startDate", dishonoredFromDate);
+		qry.setParameter("endDate", dishonoredToDate);
         return qry.list();
     }
 
@@ -1124,11 +1124,11 @@ public class InstrumentService {
 		if (fundId != 0) {
 			builderQuery.append(" and bankaccount.fundid=:fundId ");
 		}
-		SQLQuery createSQLQuery = persistenceService.getSession().createSQLQuery(builderQuery.toString());
+		NativeQuery createSQLQuery = persistenceService.getSession().createNativeQuery(builderQuery.toString());
 		createSQLQuery.setParameterList("type", new String[] { FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS,
 				FinancialConstants.TYPEOFACCOUNT_PAYMENTS });
 		if (fundId != 0) {
-			createSQLQuery.setInteger("fundId", fundId);
+			createSQLQuery.setParameter("fundId", fundId);
 		}
 		List list = createSQLQuery.list();
 		return list;
@@ -1146,12 +1146,12 @@ public class InstrumentService {
 			queryBuilder.append(" AND bankaccount.fundid=:fundId");
 		}
 
-		SQLQuery createSQLQuery = persistenceService.getSession().createSQLQuery(queryBuilder.toString());
+		NativeQuery createSQLQuery = persistenceService.getSession().createNativeQuery(queryBuilder.toString());
 		createSQLQuery.setParameterList("type", new String[] { FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS,
 				FinancialConstants.TYPEOFACCOUNT_PAYMENTS });
-		createSQLQuery.setInteger("branchId", branchId);
+		createSQLQuery.setParameter("branchId", branchId);
 		if (fundId != 0) {
-			createSQLQuery.setInteger("fundId", fundId);
+			createSQLQuery.setParameter("fundId", fundId);
 		}
 		List list = createSQLQuery.list();
         return list;
@@ -1170,34 +1170,34 @@ public class InstrumentService {
 						.append("where ih.id_status=:status and ih.ispaycheque=:payCheque and ba.id=ih.bankaccountid");
         EgwStatus status = getStatusId(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS);
         addWhereClause(model, queryBuilder);
-		SQLQuery createSQLQuery = persistenceService.getSession().createSQLQuery(queryBuilder.toString());
-		createSQLQuery.addScalar("id", IntegerType.INSTANCE).addScalar("bankBranch").addScalar("bankAccountNumber")
+		NativeQuery createSQLQuery = persistenceService.getSession().createNativeQuery(queryBuilder.toString());
+		createSQLQuery.addScalar("id", StandardBasicTypes.INTEGER).addScalar("bankBranch").addScalar("bankAccountNumber")
 				.addScalar("chequeDate").addScalar("chequeNumber").addScalar("payTo").addScalar("surrenderReason")
-				.addScalar("voucherNumber").addScalar("voucherDate").addScalar("voucherHeaderId", LongType.INSTANCE)
+				.addScalar("voucherNumber").addScalar("voucherDate").addScalar("voucherHeaderId", StandardBasicTypes.LONG)
 				.setResultTransformer(Transformers.aliasToBean(ChequeReportModel.class));
-		createSQLQuery.setInteger("status", status.getId());
-		createSQLQuery.setString("payCheque", "1");
+		createSQLQuery.setParameter("status", status.getId());
+		createSQLQuery.setParameter("payCheque", "1");
 		if (StringUtils.isNotBlank(model.getBankBranchId())) {
-			createSQLQuery.setInteger("bankId", Integer.parseInt(model.getBankBranchId().split("-")[0]));
-			createSQLQuery.setInteger("branchId", Integer.parseInt(model.getBankBranchId().split("-")[1]));
+			createSQLQuery.setParameter("bankId", Integer.parseInt(model.getBankBranchId().split("-")[0]));
+			createSQLQuery.setParameter("branchId", Integer.parseInt(model.getBankBranchId().split("-")[1]));
 		}
 		if (model.getBankAccountId() != 0) {
-			createSQLQuery.setInteger("bankAccountId", model.getBankAccountId());
+			createSQLQuery.setParameter("bankAccountId", model.getBankAccountId());
 		}
 		if (model.getFundId() != 0) {
-			createSQLQuery.setInteger("fundId", model.getFundId());
+			createSQLQuery.setParameter("fundId", model.getFundId());
 		}
 		if (model.getFromDate() != null) {
-			createSQLQuery.setDate("fromDate", model.getFromDate());
+			createSQLQuery.setParameter("fromDate", model.getFromDate());
 		}
 		if (model.getToDate() != null) {
-			createSQLQuery.setDate("toDate", model.getToDate());
+			createSQLQuery.setParameter("toDate", model.getToDate());
 		}
 		if (model.getSurrenderReason() != null) {
 			if (model.getSurrenderReason().equalsIgnoreCase("Surrender: cheque leaf to be re-used.|Y")) {
-				createSQLQuery.setString("surrenderReason", "Surrender: cheque leaf to be re-used.");
+				createSQLQuery.setParameter("surrenderReason", "Surrender: cheque leaf to be re-used.");
 			} else {
-				createSQLQuery.setString("surrenderReason", model.getSurrenderReason());
+				createSQLQuery.setParameter("surrenderReason", model.getSurrenderReason());
 			}
 		}
 		List<ChequeReportModel> list = createSQLQuery.list();

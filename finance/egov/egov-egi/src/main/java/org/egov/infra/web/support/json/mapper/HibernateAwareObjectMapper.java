@@ -49,13 +49,13 @@
 package org.egov.infra.web.support.json.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 
 public class HibernateAwareObjectMapper extends ObjectMapper {
 
     private static final long serialVersionUID = -634721091120261971L;
 
     public HibernateAwareObjectMapper() {
-        registerModule(new Hibernate5Module());
+        registerModule(new Hibernate6Module());
     }
 }

@@ -64,9 +64,13 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>
 	</context:component-scan>
 
-	<bean id="filterMultipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="maxUploadSize" value="20971520"/>
-		<property name="maxInMemorySize" value="1048576"/>
-	</bean>
+<!--	<bean id="filterMultipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
+<!--		<property name="maxUploadSize" value="20971520"/>-->
+<!--		<property name="maxInMemorySize" value="1048576"/>-->
+<!--	</bean>-->
+
+	<!-- Spring 6 / Jakarta Servlet multipart resolver -->
+	<bean id="filterMultipartResolver"
+	      class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
 
 </beans>

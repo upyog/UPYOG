@@ -137,7 +137,7 @@ import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -1619,7 +1619,7 @@ public class CreateVoucher {
         if (headerdetails.get(VoucherConstant.ORIGIONALVOUCHER) != null) {
             Long originalVId = Long.parseLong(headerdetails.get(VoucherConstant.ORIGIONALVOUCHER).toString());
             Query query = persistenceService.getSession().createQuery("from CVoucherHeader where id=:id");
-            query.setLong("id", originalVId);
+            query.setParameter("id", originalVId);
             if (query.list().size() == 0)
                 throw new ApplicationRuntimeException("Not a valid original voucherheader id");
             else
@@ -1919,7 +1919,7 @@ public class CreateVoucher {
 				throw new ApplicationRuntimeException("glcode is missing");
 			final Query querytds = persistenceService.getSession()
 					.createQuery("select t.id from Recovery t where t.chartofaccounts.glcode=:glcode");
-			querytds.setString("glcode", glcode);
+			querytds.setParameter("glcode", glcode);
 			querytds.setCacheable(true);
 			if (null != querytds.list() && querytds.list().size() > 0
 					&& null == subdetailDetailMap.get(VoucherConstant.TDSID)
@@ -1941,7 +1941,7 @@ public class CreateVoucher {
 					.createQuery("from CChartOfAccountDetail cd,CChartOfAccounts c where "
 							+ "cd.glCodeId = c.id and c.glcode=:glcode");
 
-			query.setString(VoucherConstant.GLCODE, glcode);
+			query.setParameter(VoucherConstant.GLCODE, glcode);
 			query.setCacheable(true);
 
 			if (null == query.list() || query.list().size() == 0)
@@ -1954,8 +1954,8 @@ public class CreateVoucher {
 				final Session session = persistenceService.getSession();
 				final Query qry = session.createQuery("from CChartOfAccountDetail cd,CChartOfAccounts c where "
 						+ "cd.glCodeId = c.id and c.glcode=:glcode and cd.detailTypeId.id=:detailTypeId");
-				qry.setString(VoucherConstant.GLCODE, glcode);
-				qry.setInteger("detailTypeId", Integer.valueOf(detailtypeid));
+				qry.setParameter(VoucherConstant.GLCODE, glcode);
+				qry.setParameter("detailTypeId", Integer.valueOf(detailtypeid));
 				qry.setCacheable(true);
 				if (null == qry.list() || qry.list().size() == 0)
 					throw new ApplicationRuntimeException(
@@ -1968,8 +1968,8 @@ public class CreateVoucher {
 				final Session session = persistenceService.getSession();
 				final Query qry = session.createQuery(
 						"from Accountdetailkey adk where adk.accountdetailtype.id=:detailtypeid and adk.detailkey=:detailkey");
-				qry.setInteger(VoucherConstant.DETAILTYPEID, Integer.valueOf(detailtypeid));
-				qry.setInteger("detailkey", Integer.valueOf(detailKeyId));
+				qry.setParameter(VoucherConstant.DETAILTYPEID, Integer.valueOf(detailtypeid));
+				qry.setParameter("detailkey", Integer.valueOf(detailKeyId));
 				qry.setCacheable(true);
 				if (null == qry.list() || qry.list().size() == 0)
 					throw new ApplicationRuntimeException("Subledger data is not valid for account code " + glcode);
@@ -2356,34 +2356,34 @@ public class CreateVoucher {
 			final String delQrr = "delete from generalledgerdetail where generalledgerid=?";
 			final String delgl = " delete from generalledger where voucherheaderid=?";
 			final String delvh = " delete from voucherdetail where voucherheaderid=?";
-			pstmt1 = persistenceService.getSession().createSQLQuery(glQry);
-			pstmt1.setFloat(0, vh.getId());
+			pstmt1 = persistenceService.getSession().createNativeQuery(glQry);
+			pstmt1.setParameter(0, vh.getId());
 
 			final List<Object[]> rs = pstmt1.list();
 			List<Object[]> rs1 = null;
 			boolean delete = false;
 			while (rs != null && rs.size() > 0) {
-				pstmt2 = persistenceService.getSession().createSQLQuery(glidQry);
-				pstmt2.setLong(0, Long.parseLong(rs.get(1).toString()));
+				pstmt2 = persistenceService.getSession().createNativeQuery(glidQry);
+				pstmt2.setParameter(0, Long.parseLong(rs.get(1).toString()));
 				rs1 = pstmt2.list();
 				while (rs1 != null && rs1.size() > 0) {
 					delete = true;
-					pstmt3 = persistenceService.getSession().createSQLQuery(delQry);
-					pstmt3.setLong(0, Long.parseLong(rs1.get(1).toString()));
+					pstmt3 = persistenceService.getSession().createNativeQuery(delQry);
+					pstmt3.setParameter(0, Long.parseLong(rs1.get(1).toString()));
 					pstmt3.executeUpdate();
 				}
 				if (delete) {
-					pstmt4 = persistenceService.getSession().createSQLQuery(delQrr);
-					pstmt4.setLong(0, Long.parseLong(rs1.get(1).toString()));
+					pstmt4 = persistenceService.getSession().createNativeQuery(delQrr);
+					pstmt4.setParameter(0, Long.parseLong(rs1.get(1).toString()));
 					pstmt4.executeUpdate();
 				}
 			}
-			pstmt1 = persistenceService.getSession().createSQLQuery(delgl);
-			pstmt1.setLong(0, vh.getId());
+			pstmt1 = persistenceService.getSession().createNativeQuery(delgl);
+			pstmt1.setParameter(0, vh.getId());
 			pstmt1.executeUpdate();
 
-			pstmt1 = persistenceService.getSession().createSQLQuery(delvh);
-			pstmt1.setLong(0, vh.getId());
+			pstmt1 = persistenceService.getSession().createNativeQuery(delvh);
+			pstmt1.setParameter(0, vh.getId());
 			pstmt1.executeUpdate();
 
 		} catch (final HibernateException e) {
@@ -2727,7 +2727,7 @@ public boolean isUniqueVN(String vcNum, final String vcDate) {
         // Query 1: Get financial year dates based on voucher date
         final String query1 = "SELECT startingDate, endingDate FROM financialYear " +
                               "WHERE startingDate <= ? AND endingDate >= ?";
-        pst = persistenceService.getSession().createSQLQuery(query1)
+        pst = persistenceService.getSession().createNativeQuery(query1)
                 .setParameter(0, voucherDate)
                 .setParameter(1, voucherDate);
         rs = pst.list();
@@ -2759,7 +2759,7 @@ public boolean isUniqueVN(String vcNum, final String vcDate) {
                               "AND voucherDate <= ? " +
                               "AND status != 4";
         
-        pst = persistenceService.getSession().createSQLQuery(query2)
+        pst = persistenceService.getSession().createNativeQuery(query2)
                 .setParameter(0, vcNum)
                 .setParameter(1, fyStartDate)
                 .setParameter(2, fyEndDate);
@@ -2853,7 +2853,7 @@ private Date parseVoucherDate(final String dateStr) throws ParseException {
 		CFiscalPeriod fiscalPeriod = null;
 		final String sql = "select id from fiscalperiod  where ? between startingdate and endingdate";
 		try {
-			final Query pst = persistenceService.getSession().createSQLQuery(sql).addEntity(CFiscalPeriod.class)
+			final Query pst = persistenceService.getSession().createNativeQuery(sql).addEntity(CFiscalPeriod.class)
 					.setParameter(0, formatter.parse(vDate));
 			final List<CFiscalPeriod> rset = pst.list();
 			fiscalPeriod = rset != null ? rset.get(0) : null;

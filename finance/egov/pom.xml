@@ -95,7 +95,7 @@
 
     <distributionManagement>
         <repository>
-            <id>http://nexus-repo.digit.org/nexus/content/groups/public/</id>
+            <id>egov-erp-releases</id>
             <name>eGov ERP Releases Repository</name>
             <url>https://upyog-nexus.niua.org/nexus/content/repositories/releases/</url>
         </repository>
@@ -105,6 +105,36 @@
             <url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>nexus-repo.digit.org</id>-->
+<!--            <name>eGov Public Repository Group</name>-->
+<!--            <url>https://upyog-nexus.niua.org/nexus/content/groups/public/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--                <updatePolicy>always</updatePolicy>-->
+<!--            </snapshots>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>JBoss Repository</id>-->
+<!--            <url>https://repository.jboss.org/nexus/content/groups/public/</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>jakartat.com</id>-->
+<!--            <name>UPYOG Nexus Public</name>-->
+<!--            <url>https://upyog-nexus.niua.org/nexus/content/groups/public</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--    </repositories>-->
 
     <repositories>
         <repository>
@@ -124,7 +154,7 @@
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>javaxt.com</id>
+            <id>jakartat.com</id>
             <name>UPYOG Nexus Public</name>
             <url>https://upyog-nexus.niua.org/nexus/content/groups/public</url>
             <releases>
@@ -134,7 +164,21 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <!-- 👇 NAYA ADD KARO -->
+        <repository>
+            <id>osgeo</id>
+            <name>OSGeo Release Repository</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
+
+
 
     <pluginRepositories>
         <pluginRepository>
@@ -163,95 +207,123 @@
         <db.password/>
         <disable.drop.db>true</disable.drop.db>
         <!-- Application server provided dependency versions -->
-        <hibernate-version>5.1.10.Final</hibernate-version>
+        <hibernate-version>6.4.4.Final</hibernate-version>
         <hibernate-search-version>5.5.8.Final</hibernate-search-version>
-        <hibernate-validator-version>5.3.5.Final</hibernate-validator-version>
-        <javax-validation-version>1.1.0.Final</javax-validation-version>
-        <javax-servlet-api-version>1.0.0.Final</javax-servlet-api-version>
-        <javax-servlet-jstl-version>1.2.6-RC1</javax-servlet-jstl-version>
-        <javax-servlet-jsp-version>1.0.1.Final</javax-servlet-jsp-version>
-        <javax-jms-version>1.0.1.Final</javax-jms-version>
-        <javax-mail-version>1.5.6</javax-mail-version>
-        <javax-el-version>3.0.1-b08</javax-el-version>
-        <xerces-version>2.11.0.SP5</xerces-version>
-        <postgres-version>42.7.1</postgres-version>
+        <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
+        <jakarta-validation-version>3.0.2</jakarta-validation-version>
+        <jakarta-servlet-api-version>6.0.0.Final</jakarta-servlet-api-version>
+        <!-- Upgraded from org.apache.taglibs:taglibs-standard-* 1.2.6-RC1 (javax.* namespace, JSTL 1.2)
+             to org.glassfish.web:jakarta.servlet.jsp.jstl 2.0.0 (jakarta.* namespace, JSTL 2.0)
+             Required for Jakarta EE 9+ / JDK 17. Single JAR replaces compat + spec + impl. -->
+        <jakarta-jstl-version>2.0.0</jakarta-jstl-version>
+        <jakarta-servlet-jsp-version>1.0.1.Final</jakarta-servlet-jsp-version>
+        <jakarta-jms-version>1.0.1.Final</jakarta-jms-version>
+        <jakarta-mail-version>1.5.6</jakarta-mail-version>
+        <jakarta-el-version>3.0.1-b08</jakarta-el-version>
+        <xerces-version>2.12.2</xerces-version>
+        <postgres-version>42.7.13</postgres-version>
 
         <!-- Other application dependency versions -->
-        <struts2-version>2.5.14.1</struts2-version>
-        <struts2-jquery-version>4.0.2</struts2-jquery-version>
+        <struts2-version>7.1.1</struts2-version>
+        <struts2-jquery-version>6.0.3</struts2-jquery-version>
         <xstream-version>1.4.10</xstream-version>
-        <spring-version>4.3.11.RELEASE</spring-version>
-        <spring-session-version>1.3.2.RELEASE</spring-session-version>
-        <spring-data-jpa-version>1.10.6.RELEASE</spring-data-jpa-version>
+        <spring-version>6.1.21</spring-version>
+        <spring-session-version>3.2.6</spring-session-version>
+        <spring-data-jpa-version>3.2.12</spring-data-jpa-version>
         <spring-data-jpa-envers-version>1.0.6.RELEASE</spring-data-jpa-envers-version>
-        <spring-security-version>4.2.3.RELEASE</spring-security-version>
+        <spring-security-version>6.2.4</spring-security-version>
         <spring-security-oauth2-version>2.2.0.RELEASE</spring-security-oauth2-version>
-        <spring-data-elasticsearch>2.0.6.RELEASE</spring-data-elasticsearch>
+        <spring-data-elasticsearch>5.2.12</spring-data-elasticsearch>
         <elastic-search-version>2.4.6</elastic-search-version>
-        <apache-tiles-version>3.0.7</apache-tiles-version>
-        <embedded-redis-version>0.6</embedded-redis-version>
-        <quartz-version>2.3.0</quartz-version>
+        <embedded-redis-version>0.7.3</embedded-redis-version>
+        <quartz-version>2.5.2</quartz-version>
+        <mchange-commons-version>0.5.0</mchange-commons-version>
         <jasper-report-version>6.1.0</jasper-report-version>
         <json-simple-version>1.1.1</json-simple-version>
-        <jackson-version>2.9.2</jackson-version>
-        <orika-core.version>1.5.2</orika-core.version>
-        <gson-version>2.8.2</gson-version>
-        <antisamy-version>1.5.7</antisamy-version>
-        <jasypt-version>1.9.2</jasypt-version>
-        <display-tag-version>1.2</display-tag-version>
+
+        <jackson-version>2.21.5</jackson-version>
+        <jackson-annotations-version>2.21</jackson-annotations-version>
+        <jackson-joda-version>2.16.1</jackson-joda-version>
+
+        <orika-core.version>1.5.4</orika-core.version>
+        <gson-version>2.14.0</gson-version>
+        <antisamy-version>1.7.8</antisamy-version>
+        <jasypt-version>1.9.6</jasypt-version>
+
+
+        <display-tag-version>3.7.0</display-tag-version>
+        <apache-tiles-version>3.1.0.0</apache-tiles-version>
+        <openpdf-version>1.3.30</openpdf-version>
+
+        <geotools.version>34.4</geotools.version>
+
+
         <jfreechart-version>1.0.19</jfreechart-version>
         <groovy-all-version>2.4.12</groovy-all-version>
         <itext-version>2.1.7</itext-version>
         <commons-javaflow-version>20060411</commons-javaflow-version>
         <jexcelapi-version>2.6.12</jexcelapi-version>
-        <commons-beanutils-version>1.9.3</commons-beanutils-version>
-        <commons-config-version>1.10</commons-config-version>
+        <commons-beanutils-version>1.9.4</commons-beanutils-version>
+        <commons-config-version>2.13.0</commons-config-version>
         <commons-lang-version>2.6</commons-lang-version>
-        <commons-lang3-version>3.6</commons-lang3-version>
+        <commons-lang3-version>3.20.0</commons-lang3-version>
         <commons-email-version>1.5</commons-email-version>
         <commons-collections-version>3.2.2</commons-collections-version>
-        <commons-collections4-version>4.1</commons-collections4-version>
-        <commons-codec-version>1.11</commons-codec-version>
-        <commons-dbcp-version>1.4</commons-dbcp-version>
-        <commons-io-version>2.6</commons-io-version>
-        <commons-fileupload-version>1.3.3</commons-fileupload-version>
-        <commons.text.version>1.1</commons.text.version>
-        <commons.compress.version>1.16.1</commons.compress.version>
-        <httpclient-version>4.5.3</httpclient-version>
-        <sitemesh-version>2.4.2</sitemesh-version>
-        <ehcache-web-version>2.0.4</ehcache-web-version>
-        <joda-time-version>2.9.9</joda-time-version>
+        <commons-collections4-version>4.5.0</commons-collections4-version>
+        <commons-codec-version>1.22.0</commons-codec-version>
+        <commons-dbcp-version>2.14.0</commons-dbcp-version>
+        <commons-io-version>2.22.0</commons-io-version>
+        <commons-fileupload-version>1.6.0</commons-fileupload-version>
+        <commons.text.version>1.15.0</commons.text.version>
+        <commons.compress.version>1.28.0</commons.compress.version>
+        <httpclient-version>4.5.14</httpclient-version>
+        <sitemesh-version>2.5.0</sitemesh-version>
+<!--        <ehcache-web-version>2.0.4</ehcache-web-version>-->
+        <joda-time-version>2.12.7</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
-        <jsoup-version>1.10.3</jsoup-version>
-        <jython-version>2.7.1b3</jython-version>
-        <flyway-core-version>7.11.1</flyway-core-version>
-        <junit-version>4.12</junit-version>
-        <mockito-all-version>1.10.19</mockito-all-version>
-        <springockito-version>1.0.9</springockito-version>
-        <easymock-version>3.5</easymock-version>
-        <easymockclassextension-version>3.2</easymockclassextension-version>
-        <hamcrest-all-version>1.3</hamcrest-all-version>
-        <slf4j-version>1.7.25</slf4j-version>
-        <log4j-version>1.2.17</log4j-version>
-        <google-guava-version>23.2-jre</google-guava-version>
-        <google.zxing.version>3.3.0</google.zxing.version>
+        <jsoup-version>1.17.2</jsoup-version>
+        <jython-version>2.7.3</jython-version>
+        <flyway-core-version>9.22.3</flyway-core-version>
+
+
+
+        <junit-version>4.13.2</junit-version>
+        <mockito-core-version>5.23.0</mockito-core-version>
+        <!--		Removed(springockito) because new version of mockito-core does all the work of this library-->
+<!--        <springockito-version>1.0.9</springockito-version>-->
+        <easymock-version>5.2.0</easymock-version>
+        <!--		Removed (easymockclassextension) because no latest version available & version class mocking in in-built in Easymock new version-->
+<!--        <easymockclassextension-version>3.2</easymockclassextension-version>-->
+<!--        Not getting used anywhere in the codebase-->
+<!--        <hamcrest-all-version>1.3</hamcrest-all-version>-->
+
+
+        <slf4j-version>2.0.18</slf4j-version>
+<!--        Dependency not getting used -->
+<!--        <log4j-version>2.17.1</log4j-version>-->
+
+        <log4j2-version>2.26.0</log4j2-version>
+
+
+        <google-guava-version>33.4.8-jre</google-guava-version>
+        <google.zxing.version>3.5.3</google.zxing.version>
         <recaptcha.version>0.0.8</recaptcha.version>
         <!-- <jcaptcha.version>2.0-alpha-1</jcaptcha.version> -->
-        <javaxt.core.version>1.7.8</javaxt.core.version>
-        <pdfbox.version>2.0.4</pdfbox.version>
-        <bouncycastle.version>1.60</bouncycastle.version>
+        <jakartat.core.version>1.7.8</jakartat.core.version>
+        <pdfbox.version>2.0.24</pdfbox.version>
+        <bouncycastle.version>1.84</bouncycastle.version>
         <!-- Plugin dependency versions-->
-        <mvn.javadoc.plugin.version>2.10.4</mvn.javadoc.plugin.version>
-        <mvn.release.plugin.version>2.5.3</mvn.release.plugin.version>
-        <mvn.jacoco.plugin.version>0.7.9</mvn.jacoco.plugin.version>
+        <mvn.javadoc.plugin.version>3.11.2</mvn.javadoc.plugin.version>
+        <mvn.release.plugin.version>3.1.1</mvn.release.plugin.version>
+        <mvn.jacoco.plugin.version>0.8.11</mvn.jacoco.plugin.version>
         <mvn.ear.plugin.version>2.10.1</mvn.ear.plugin.version>
-        <mvn.war.plugin.version>3.2.0</mvn.war.plugin.version>
-        <mvn.jar.plugin.version>3.0.2</mvn.jar.plugin.version>
-        <mvn.compiler.plugin.version>3.7.0</mvn.compiler.plugin.version>
-        <mvn.dependency.plugin.version>3.0.2</mvn.dependency.plugin.version>
+        <mvn.war.plugin.version>3.4.0</mvn.war.plugin.version>
+        <mvn.jar.plugin.version>3.4.1</mvn.jar.plugin.version>
+        <mvn.compiler.plugin.version>3.11.0</mvn.compiler.plugin.version>
+        <mvn.dependency.plugin.version>3.6.1</mvn.dependency.plugin.version>
         <mvn.resource.plugin.version>3.0.1</mvn.resource.plugin.version>
         <mvn.versioneye.plugin.version>3.11.4</mvn.versioneye.plugin.version>
-        <mvn.surefire.plugin.version>2.20.1</mvn.surefire.plugin.version>
+        <mvn.surefire.plugin.version>3.2.5</mvn.surefire.plugin.version>
         <mvn.eclipse.lifecycle.plugin.version>1.0.0</mvn.eclipse.lifecycle.plugin.version>
         <mvn.clean.plugin.version>3.0.0</mvn.clean.plugin.version>
     </properties>
@@ -270,6 +342,7 @@
         <module>egov-egfweb</module>
         <module>egov-collectionweb</module>
         <module>egov-ear</module>
+
        
     </modules>
 
@@ -288,42 +361,62 @@
             </dependency>
 
             <!-- HIBERNATE DEPENDENCIES START -->
+<!--            <dependency>-->
+<!--                <groupId>org.hibernate</groupId>-->
+<!--                <artifactId>hibernate-core</artifactId>-->
+<!--                <version>${hibernate-version}</version>-->
+<!--                <scope>provided</scope>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.hibernate</groupId>-->
+<!--                <artifactId>hibernate-entitymanager</artifactId>-->
+<!--                <version>${hibernate-version}</version>-->
+<!--                <scope>provided</scope>-->
+<!--            </dependency>-->
+
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${hibernate-version}</version>
-                <scope>provided</scope>
             </dependency>
+
+
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-envers</artifactId>
                 <version>${hibernate-version}</version>
+<!--                <scope>provided</scope>-->
+            </dependency>
+
+<!--            //this needs to be removed and should upload new compatible version of it to the upyog nexus repo -->
+<!--            <dependency>-->
+<!--                <groupId>org.hibernate.orm</groupId>-->
+<!--                <artifactId>hibernate-infinispan</artifactId>-->
+<!--                <version>${hibernate-version}</version>-->
+<!--                <scope>provided</scope>-->
+<!--            </dependency>-->
+<!--            in hibernate 6 for third party cache cache integration they have kept sepereated this so using this, initially it was bundled inside the hibernate-infinispan -->
+
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-hibernate-cache-v60</artifactId>
+                <version>14.0.21.Final</version>
                 <scope>provided</scope>
             </dependency>
+
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-infinispan</artifactId>
-                <version>${hibernate-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate-validator-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>${javax-validation-version}</version>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta-validation-version}</version>
                 <scope>provided</scope>
             </dependency>
+
             <!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId>
                 <version>4.0.0.GA</version> </dependency> <dependency> <groupId>org.jadira.usertype</groupId>
                 <artifactId>usertype.spi</artifactId> <version>4.0.0.GA</version> </dependency> -->
@@ -331,52 +424,47 @@
 
             <!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
             <dependency>
-                <groupId>org.jboss.spec.javax.servlet</groupId>
-                <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-                <version>${javax-servlet-api-version}</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>6.0.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- JSTL 2.0 implementation for Jakarta EE 9+ / JDK 17
+                 Replaces all three taglibs-standard-compat/spec/impl artifacts -->
+            <dependency>
+                <groupId>org.glassfish.web</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+                <version>${jakarta-jstl-version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+
+
+
+
+
+
+            <dependency>
+                <groupId>jakarta.servlet.jsp</groupId>
+                <artifactId>jakarta.servlet.jsp-api</artifactId> <!-- Fixed: correct artifact ID for JSP API -->
+                <version>3.1.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.taglibs</groupId>
-                <artifactId>taglibs-standard-compat</artifactId>
-                <version>${javax-servlet-jstl-version}</version>
-                <scope>provided</scope>
+                <groupId>jakarta.messaging</groupId>
+                <artifactId>jakarta.messaging-api</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.el</groupId>
+                <artifactId>jakarta.el-api</artifactId>
+                <version>5.0.0</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.taglibs</groupId>
-                <artifactId>taglibs-standard-spec</artifactId>
-                <version>${javax-servlet-jstl-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.taglibs</groupId>
-                <artifactId>taglibs-standard-impl</artifactId>
-                <version>${javax-servlet-jstl-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
-                <artifactId>jboss-jsp-api_2.3_spec</artifactId>
-                <version>${javax-servlet-jsp-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.spec.javax.jms</groupId>
-                <artifactId>jboss-jms-api_2.0_spec</artifactId>
-                <version>${javax-jms-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>javax.el</artifactId>
-                <version>${javax-el-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>javax.mail-api</artifactId>
-                <version>${javax-mail-version}</version>
-                <scope>provided</scope>
+                <groupId>jakarta.mail</groupId>
+                <artifactId>jakarta.mail-api</artifactId>
+                <version>2.1.3</version>
             </dependency>
             <!-- SERVLET SPEC JBOSS DEPENDENCIES END -->
 
@@ -419,12 +507,22 @@
             </dependency>
             <!-- STRUTS2 DEPENDENCIES END -->
 
+
+
+
             <!-- JSON START -->
+
+
+
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
                 <artifactId>json-simple</artifactId>
                 <version>${json-simple-version}</version>
             </dependency>
+
+
+
+
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -438,18 +536,41 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson-version}</version>
+                <version>${jackson-annotations-version}</version>
             </dependency>
+
+
+
+
+
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-joda</artifactId>
+                <version>${jackson-joda-version}</version>
+            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.fasterxml.jackson.datatype</groupId>-->
+<!--                <artifactId>jackson-datatype-hibernate</artifactId>-->
+<!--                <version>${jackson-version}</version>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-hibernate6</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-hibernate5</artifactId>
+                <artifactId>jackson-datatype-jaxrs</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+
+
+
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-smile</artifactId>
@@ -465,23 +586,20 @@
                 <artifactId>jackson-dataformat-yaml</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jaxrs</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jdk8</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
+
+
 
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson-version}</version>
             </dependency>
+
+
             <!-- JSON END -->
+
+
+
             <!-- Orika -->
             <dependency>
                 <groupId>ma.glasnost.orika</groupId>
@@ -504,6 +622,9 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+
+
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
@@ -515,11 +636,17 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.data</groupId>-->
+<!--                <artifactId>spring-data-envers</artifactId>-->
+<!--                <version>${spring-data-jpa-envers-version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-envers</artifactId>
-                <version>${spring-data-jpa-envers-version}</version>
+                <version>${spring-data-jpa-version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.springframework.session</groupId>
                 <artifactId>spring-session-data-redis</artifactId>
@@ -585,35 +712,56 @@
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>${xerces-version}</version>
-                <scope>provided</scope>
+<!--                <scope>provided</scope>-->
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.jasypt</groupId>-->
+<!--                <artifactId>jasypt</artifactId>-->
+<!--                <version>${jasypt-version}</version>-->
+<!--                <scope>compile</scope>-->
+<!--            </dependency>-->
             <dependency>
-                <groupId>org.jasypt</groupId>
-                <artifactId>jasypt</artifactId>
-                <version>${jasypt-version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jasypt</groupId>
-                <artifactId>jasypt-hibernate4</artifactId>
+                <groupId>com.github.phaneesh</groupId>
+                <artifactId>jasypt-hibernate6</artifactId>
                 <version>${jasypt-version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
+                <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- SECURITY END -->
 
+
+
+
+
+
+
             <!-- EMBEDDED REDIS STARTS -->
+<!--            <dependency>-->
+<!--                <groupId>com.orange.redis-embedded</groupId>-->
+<!--                <artifactId>embedded-redis</artifactId>-->
+<!--                <version>${embedded-redis-version}</version>-->
+<!--            </dependency>-->
+
+
             <dependency>
-                <groupId>com.orange.redis-embedded</groupId>
+                <groupId>it.ozimov</groupId>
                 <artifactId>embedded-redis</artifactId>
                 <version>${embedded-redis-version}</version>
             </dependency>
             <!-- EMBEDDED REDIS ENDS -->
+
+
+
+
+
+
+
+
 
             <!-- QUARTZ START -->
             <dependency>
@@ -626,38 +774,90 @@
                 <artifactId>quartz-jobs</artifactId>
                 <version>${quartz-version}</version>
             </dependency>
+
+<!--      mchange-commons-java (a separate utility library that c3p0 depends on). It's not part of Quartz itself; Quartz just pulled it in transitively via c3p0 before, and stopped doing so at compile scope after 2.4.0+-->
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>mchange-commons-java</artifactId>
+                <version>${mchange-commons-version}</version>
+            </dependency>
             <!-- QUARTZ END -->
+
+
+
+
+
+
+
+
+            <!-- DISPLAYTAG START -->
+<!--            <dependency>-->
+<!--                <groupId>displaytag</groupId>-->
+<!--                <artifactId>displaytag</artifactId>-->
+<!--                <version>${display-tag-version}</version>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.slf4j</groupId>-->
+<!--                        <artifactId>slf4j-log4j12</artifactId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.slf4j</groupId>-->
+<!--                        <artifactId>jcl104-over-slf4j</artifactId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.apache.poi</groupId>-->
+<!--                        <artifactId>poi</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>displaytag</groupId>-->
+<!--                <artifactId>displaytag-export-poi</artifactId>-->
+<!--                <version>${display-tag-version}</version>-->
+<!--            </dependency>-->
+
+
 
             <!-- DISPLAYTAG START -->
             <dependency>
-                <groupId>displaytag</groupId>
+                <groupId>com.github.hazendaz</groupId>
                 <artifactId>displaytag</artifactId>
                 <version>${display-tag-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>jcl104-over-slf4j</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.poi</groupId>
-                        <artifactId>poi</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
+
             <dependency>
-                <groupId>displaytag</groupId>
-                <artifactId>displaytag-export-poi</artifactId>
-                <version>${display-tag-version}</version>
+                <groupId>com.github.librepdf</groupId>
+                <artifactId>openpdf</artifactId>
+                <version>${openpdf-version}</version>
             </dependency>
             <!-- DISPLAYTAG END -->
+            <!-- DISPLAYTAG END -->
 
-            <!-- VIEWS RELATED END -->
+
+
+
+
+            <!-- VIEWS RELATED START -->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tiles</groupId>-->
+<!--                <artifactId>tiles-core</artifactId>-->
+<!--                <version>${apache-tiles-version}</version>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>commons-beanutils</groupId>-->
+<!--                        <artifactId>commons-beanutils</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tiles</groupId>-->
+<!--                <artifactId>tiles-jsp</artifactId>-->
+<!--                <version>${apache-tiles-version}</version>-->
+<!--            </dependency>-->
+
+
             <dependency>
-                <groupId>org.apache.tiles</groupId>
+                <groupId>com.github.tntim96.apache.tiles</groupId>
                 <artifactId>tiles-core</artifactId>
                 <version>${apache-tiles-version}</version>
                 <exclusions>
@@ -668,11 +868,21 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.apache.tiles</groupId>
+                <groupId>com.github.tntim96.apache.tiles</groupId>
                 <artifactId>tiles-jsp</artifactId>
                 <version>${apache-tiles-version}</version>
             </dependency>
             <!-- VIEWS RELATED END -->
+            <!-- VIEWS RELATED END -->
+
+
+
+
+
+
+
+
+
 
             <!-- REPORTS START -->
 
@@ -733,6 +943,15 @@
             </dependency>
             <!-- REPORTS END -->
 
+
+
+
+
+
+
+
+
+
             <!-- COMMONS START -->
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -740,8 +959,8 @@
                 <version>${commons-beanutils-version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-configuration2</artifactId>
                 <version>${commons-config-version}</version>
             </dependency>
             <dependency>
@@ -760,7 +979,7 @@
                 <version>${commons-email-version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>javax.activation</groupId>
+                        <groupId>jakarta.activation</groupId>
                         <artifactId>activation</artifactId>
                     </exclusion>
                 </exclusions>
@@ -786,8 +1005,8 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>commons-dbcp</groupId>
-                <artifactId>commons-dbcp</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
                 <version>${commons-dbcp-version}</version>
             </dependency>
             <dependency>
@@ -834,36 +1053,54 @@
                 <artifactId>httpclient</artifactId>
                 <version>${httpclient-version}</version>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>opensymphony</groupId>-->
+<!--                <artifactId>sitemesh</artifactId>-->
+<!--                <version>${sitemesh-version}</version>-->
+<!--            </dependency>-->
+
+            <!-- Jakarta transformed SiteMesh 2.5.0 fetched from UPYOG Nexus -->
             <dependency>
-                <groupId>opensymphony</groupId>
-                <artifactId>sitemesh</artifactId>
-                <version>${sitemesh-version}</version>
+                <groupId>org.egov</groupId>
+                <artifactId>sitemesh-jakarta</artifactId>
+                <version>2.5.0</version>
+                <classifier>jakarta</classifier>
             </dependency>
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-web</artifactId>
-                <version>${ehcache-web-version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>net.sf.ehcache</groupId>-->
+<!--                <artifactId>ehcache-web</artifactId>-->
+<!--                <version>${ehcache-web-version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time-version}</version>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>joda-time</groupId>-->
+<!--                <artifactId>joda-time-jsptags</artifactId>-->
+<!--                <version>${joda-time-jsptag-version}</version>-->
+<!--            </dependency>-->
+
+
+            <!-- Jakarta transformed Joda Time JSP Tags 1.1.1 fetched from UPYOG Nexus -->
             <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time-jsptags</artifactId>
-                <version>${joda-time-jsptag-version}</version>
+                <groupId>org.egov</groupId>
+                <artifactId>joda-jsptags-jakarta</artifactId>
+                <version>1.0.0</version>
+                <classifier>jakarta</classifier>
             </dependency>
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>${jsoup-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>
-                <artifactId>recaptcha4j</artifactId>
-                <version>${recaptcha.version}</version>
-            </dependency>
+<!--            Removed unused Jsoup dependency as HTML sanitization and XSS protection are handled by OWASP AntiSamy and ESAPI.-->
+<!--            <dependency>-->
+<!--                <groupId>org.jsoup</groupId>-->
+<!--                <artifactId>jsoup</artifactId>-->
+<!--                <version>${jsoup-version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>-->
+<!--                <artifactId>recaptcha4j</artifactId>-->
+<!--                <version>${recaptcha.version}</version>-->
+<!--            </dependency>-->
             <!-- <dependency>
                 <groupId>com.octo.captcha</groupId>
                 <artifactId>jcaptcha</artifactId>
@@ -891,9 +1128,9 @@
             </dependency>
 
             <dependency>
-                <groupId>javaxt</groupId>
-                <artifactId>javaxt-core</artifactId>
-                <version>${javaxt.core.version}</version>
+                <groupId>jakartat</groupId>
+                <artifactId>jakartat-core</artifactId>
+                <version>${jakartat.core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
@@ -925,9 +1162,33 @@
             <dependency>
                 <groupId>net.coobird</groupId>
                 <artifactId>thumbnailator</artifactId>
-                <version>0.4.8</version>
+                <version>0.4.20</version>
             </dependency>
             <!-- IMAGE PROCESSING API END -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <!-- TESTING START -->
             <dependency>
@@ -936,24 +1197,42 @@
                 <version>${junit-version}</version>
                 <scope>test</scope>
             </dependency>
+
+
+
+
+
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito-all-version}</version>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito-core-version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.kubek2k</groupId>
-                <artifactId>springockito</artifactId>
-                <version>${springockito-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.kubek2k</groupId>
-                <artifactId>springockito-annotations</artifactId>
-                <version>${springockito-version}</version>
-                <scope>test</scope>
-            </dependency>
+
+
+
+
+
+<!--            <dependency>-->
+<!--                <groupId>org.kubek2k</groupId>-->
+<!--                <artifactId>springockito</artifactId>-->
+<!--                <version>${springockito-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
+
+
+<!--            we will review this later again effected files - EISAbstractSpringIntegrationTest.java-->
+<!--            <dependency>-->
+<!--                <groupId>org.kubek2k</groupId>-->
+<!--                <artifactId>springockito-annotations</artifactId>-->
+<!--                <version>${springockito-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
+
+
+
+
+
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
@@ -961,18 +1240,61 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymockclassextension</artifactId>
-                <version>${easymockclassextension-version}</version>
+                <groupId>org.objenesis</groupId>
+                <artifactId>objenesis</artifactId>
+                <version>3.4</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>${hamcrest-all-version}</version>
-                <scope>test</scope>
-            </dependency>
+
+
+
+<!--            <dependency>-->
+<!--                <groupId>org.easymock</groupId>-->
+<!--                <artifactId>easymockclassextension</artifactId>-->
+<!--                <version>${easymockclassextension-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
+
+
+
+<!--            <dependency>-->
+<!--                <groupId>org.hamcrest</groupId>-->
+<!--                <artifactId>hamcrest-all</artifactId>-->
+<!--                <version>${hamcrest-all-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
             <!-- TESTING END -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <!-- LOGGING START -->
             <dependency>
@@ -980,23 +1302,46 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-version}</version>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.slf4j</groupId>-->
+<!--                <artifactId>slf4j-nop</artifactId>-->
+<!--                <version>${slf4j-version}</version>-->
+<!--                <scope>test</scope>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.slf4j</groupId>-->
+<!--                <artifactId>jcl-over-slf4j</artifactId>-->
+<!--                <version>${slf4j-version}</version>-->
+<!--            </dependency>-->
+
+
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-nop</artifactId>
-                <version>${slf4j-version}</version>
-                <scope>test</scope>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-1.2-api</artifactId>
+                <version>${log4j2-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j-version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j2-version}</version>
             </dependency>
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j-version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j2-version}</version>
             </dependency>
             <!-- LOGGING END -->
+
+
+
+
+
+
+
+
+
+
+
 
             <!-- DATABASE START -->
             <dependency>
@@ -1011,73 +1356,94 @@
                 <version>${flyway-core-version}</version>
             </dependency>
 
+            <!-- REQUIRED for Flyway 10+ to talk to PostgreSQL -->
+<!--            <dependency>-->
+<!--                <groupId>org.flywaydb</groupId>-->
+<!--                <artifactId>flyway-database-postgresql</artifactId>-->
+<!--                <version>${flyway-core-version}</version>-->
+<!--            </dependency>-->
+
             <!-- DATABASE END -->
+
+
+
+
+
+
+
 
             <!-- GIS START -->
 
-            <dependency>
-                <groupId>org.opengis</groupId>
-                <artifactId>geoapi</artifactId>
-                <version>2.2-M1</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.opengis</groupId>-->
+<!--                <artifactId>geoapi</artifactId>-->
+<!--                <version>2.2-M1</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-main</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
+
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-api</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-metadata</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-referencing</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-shapefile</artifactId>
-                <version>2.5.4</version>
+                <version>${geotools.version}</version>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.geotools</groupId>-->
+<!--                <artifactId>gt-shapefile-renderer</artifactId>-->
+<!--                <version>${geotools.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>jakarta.media</groupId>-->
+<!--                <artifactId>jai_core</artifactId>-->
+<!--                <version>1.1.3-alpha</version>-->
+<!--                <classifier>alpha</classifier>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>net.java.dev.jsr-275</groupId>-->
+<!--                <artifactId>jsr-275</artifactId>-->
+<!--                <version>1.0-beta-2</version>-->
+<!--            </dependency>-->
             <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-shapefile-renderer</artifactId>
-                <version>2.5.4</version>
+                <groupId>org.locationtech.jts</groupId>
+                <artifactId>jts-core</artifactId>
+                <version>1.20.0</version>
             </dependency>
-            <dependency>
-                <groupId>javax.media</groupId>
-                <artifactId>jai_core</artifactId>
-                <version>1.1.3-alpha</version>
-                <classifier>alpha</classifier>
-            </dependency>
-            <dependency>
-                <groupId>net.java.dev.jsr-275</groupId>
-                <artifactId>jsr-275</artifactId>
-                <version>1.0-beta-2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.vividsolutions</groupId>
-                <artifactId>jts</artifactId>
-                <version>1.6</version>
-            </dependency>
-            <dependency>
-                <groupId>units</groupId>
-                <artifactId>units</artifactId>
-                <version>0.01</version>
-            </dependency>
-            <dependency>
-                <groupId>java3d</groupId>
-                <artifactId>vecmath</artifactId>
-                <version>1.3.1</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>units</groupId>-->
+<!--                <artifactId>units</artifactId>-->
+<!--                <version>0.01</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>java3d</groupId>-->
+<!--                <artifactId>vecmath</artifactId>-->
+<!--                <version>1.3.1</version>-->
+<!--            </dependency>-->
 
             <!-- GIS END -->
+
+
+
+
+
+
 
         </dependencies>
 
@@ -1085,38 +1451,30 @@
 
     <dependencies>
         <!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
+<!--        <dependency>-->
+<!--            <groupId>org.jboss.spec.jakarta.servlet</groupId>-->
+<!--            <artifactId>jboss-servlet-api_3.1_spec</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-compat</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
-            <artifactId>jboss-jsp-api_2.3_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.jms</groupId>
-            <artifactId>jboss-jms-api_2.0_spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>javax.mail-api</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jboss.spec.jakarta.servlet.jsp</groupId>-->
+<!--            <artifactId>jboss-jsp-api_2.3_spec</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.jboss.spec.jakarta.jms</groupId>-->
+<!--            <artifactId>jboss-jms-api_2.0_spec</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.glassfish</groupId>-->
+<!--            <artifactId>jakarta.el</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>jakarta.mail</groupId>-->
+<!--            <artifactId>jakarta.mail-api</artifactId>-->
+<!--        </dependency>-->
         <!-- SERVLET SPEC JBOSS DEPENDENCIES END -->
 
         <!-- COMMONS START -->
@@ -1215,7 +1573,7 @@
 
         <!-- EMBEDDED REDIS SERVER START -->
         <dependency>
-            <groupId>com.orange.redis-embedded</groupId>
+            <groupId>it.ozimov</groupId>
             <artifactId>embedded-redis</artifactId>
         </dependency>
         <!-- EMBEDDED REDIS SERVER END -->
@@ -1232,7 +1590,7 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <dependency>
+         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <exclusions>
@@ -1254,9 +1612,15 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>joda-time</groupId>-->
+<!--            <artifactId>joda-time-jsptags</artifactId>-->
+<!--        </dependency>-->
+        <!-- Jakarta transformed Joda Time JSP Tags 1.1.1 fetched from UPYOG Nexus -->
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time-jsptags</artifactId>
+            <groupId>org.egov</groupId>
+            <artifactId>joda-jsptags-jakarta</artifactId>
+            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -1270,26 +1634,26 @@
         <!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId>
             </dependency> <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.spi</artifactId>
             </dependency> -->
-        <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt-hibernate4</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jasypt</groupId>-->
+<!--            <artifactId>jasypt</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.jasypt</groupId>-->
+<!--            <artifactId>jasypt-hibernate4</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
+            <artifactId>bcprov-jdk18on</artifactId>
         </dependency>
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>
-            <artifactId>recaptcha4j</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>-->
+<!--            <artifactId>recaptcha4j</artifactId>-->
+<!--        </dependency>-->
         <!-- <dependency>
             <groupId>com.octo.captcha</groupId>
             <artifactId>jcaptcha</artifactId>
@@ -1304,8 +1668,9 @@
         </dependency>
 
         <dependency>
-            <groupId>javaxt</groupId>
-            <artifactId>javaxt-core</artifactId>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
@@ -1331,44 +1696,52 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.kubek2k</groupId>
-            <artifactId>springockito</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kubek2k</groupId>
-            <artifactId>springockito-annotations</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.kubek2k</groupId>-->
+<!--            <artifactId>springockito</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.kubek2k</groupId>-->
+<!--            <artifactId>springockito-annotations</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymockclassextension</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.easymock</groupId>-->
+<!--            <artifactId>easymockclassextension</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.hamcrest</groupId>-->
+<!--            <artifactId>hamcrest-all</artifactId>-->
+<!--        </dependency>-->
 
         <!-- TESTING END -->
 
         <!-- LOGGING END -->
+<!--        <dependency>-->
+<!--            <groupId>org.slf4j</groupId>-->
+<!--            <artifactId>slf4j-nop</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
         </dependency>
         <!-- LOGGING END -->
 
@@ -1406,7 +1779,8 @@
 		<dependency>
     		<groupId>org.owasp.esapi</groupId>
     		<artifactId>esapi</artifactId>
-    		<version>2.2.3.1</version>
+    		<version>2.5.3.0</version>
+    		<classifier>jakarta</classifier>
 		</dependency>
     </dependencies>
 
@@ -1422,8 +1796,22 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${mvn.compiler.plugin.version}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <release>17</release>
+                    <!--
+                        Spring 6 Method Parameter Reflection Compiler Flag (-parameters):
+                        In Spring 6 (Spring Framework 6.x), parameter name discovery via ASM bytecode reflection was removed.
+                        Adding `<parameters>true</parameters>` instructs javac to compile with the `-parameters` flag,
+                        preserving Java method parameter names in the compiled bytecode for Spring MVC @RequestParam/@PathVariable resolution.
+                    -->
+                    <parameters>true</parameters>
+
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.30</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -1511,8 +1899,10 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <doclint>none</doclint>
                             <failOnError>false</failOnError>
+                            <failOnWarnings>false</failOnWarnings>
+                            <quiet>true</quiet>
                         </configuration>
                     </execution>
                 </executions>

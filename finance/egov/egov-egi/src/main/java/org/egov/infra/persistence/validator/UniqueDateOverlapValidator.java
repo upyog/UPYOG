@@ -51,17 +51,20 @@ package org.egov.infra.persistence.validator;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.UniqueDateOverlap;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import org.hibernate.Session;                                    // ✅ same rehta hai
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Date;
 
 import static org.egov.infra.utils.DateUtils.endOfDay;
@@ -94,32 +97,82 @@ public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDat
     }
 
     private boolean checkUnique(Object object) throws IllegalAccessException {
+
         Number id = (Number) FieldUtils.readField(object, uniqueDateOverlap.id(), true);
-        Criteria uniqueDateOverlapChecker = entityManager.unwrap(Session.class).createCriteria(object.getClass()).setReadOnly(true);
-        Conjunction uniqueCheck = Restrictions.conjunction();
+
+        // ✅ CriteriaBuilder setup
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object> cq = cb.createQuery(Object.class);
+        Root<?> root = cq.from(object.getClass());
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // ✅ uniqueFields loop — Conjunction
         for (String fieldName : uniqueDateOverlap.uniqueFields()) {
             Object fieldValue = FieldUtils.readField(object, fieldName, true);
-            if (fieldValue instanceof String)
-                uniqueCheck.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
-            else
-                uniqueCheck.add(Restrictions.eq(fieldName, fieldValue));
+            if (fieldValue instanceof String) {
+                // ✅ Restrictions.eq().ignoreCase() → cb.lower()
+                predicates.add(cb.equal(
+                        cb.lower(root.get(fieldName)),
+                        ((String) fieldValue).toLowerCase()
+                ));
+            } else {
+                predicates.add(cb.equal(root.get(fieldName), fieldValue));
+            }
         }
-        Date fromDate = startOfDay((Date) FieldUtils.readField(object, uniqueDateOverlap.fromField(), true));
-        Date toDate = endOfDay((Date) FieldUtils.readField(object, uniqueDateOverlap.toField(), true));
-        Conjunction checkFromDate = Restrictions.conjunction();
-        checkFromDate.add(Restrictions.le(uniqueDateOverlap.fromField(), fromDate));
-        checkFromDate.add(Restrictions.ge(uniqueDateOverlap.toField(), fromDate));
-        Conjunction checkToDate = Restrictions.conjunction();
-        checkToDate.add(Restrictions.le(uniqueDateOverlap.fromField(), toDate));
-        checkToDate.add(Restrictions.ge(uniqueDateOverlap.toField(), toDate));
-        Conjunction checkFromAndToDate = Restrictions.conjunction();
-        checkFromAndToDate.add(Restrictions.ge(uniqueDateOverlap.fromField(), fromDate));
-        checkFromAndToDate.add(Restrictions.le(uniqueDateOverlap.toField(), toDate));
-        Disjunction dateRangeChecker = Restrictions.disjunction();
-        dateRangeChecker.add(checkFromDate).add(checkToDate).add(checkFromAndToDate);
-        uniqueCheck.add(dateRangeChecker);
-        if (id != null)
-            uniqueCheck.add(Restrictions.ne(uniqueDateOverlap.id(), id));
-        return uniqueDateOverlapChecker.add(uniqueCheck).setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
+
+        // ✅ Date fields
+        Date fromDate = startOfDay((Date) FieldUtils.readField(object,
+                uniqueDateOverlap.fromField(), true));
+        Date toDate = endOfDay((Date) FieldUtils.readField(object,
+                uniqueDateOverlap.toField(), true));
+
+        String fromField = uniqueDateOverlap.fromField();
+        String toField   = uniqueDateOverlap.toField();
+
+        // ✅ checkFromDate — record ka fromDate, given fromDate ke andar hai
+        // Restrictions.le(fromField, fromDate) AND Restrictions.ge(toField, fromDate)
+        Predicate checkFromDate = cb.and(
+                cb.lessThanOrEqualTo(root.get(fromField), fromDate),
+                cb.greaterThanOrEqualTo(root.get(toField), fromDate)
+        );
+
+        // ✅ checkToDate — record ka toDate, given toDate ke andar hai
+        // Restrictions.le(fromField, toDate) AND Restrictions.ge(toField, toDate)
+        Predicate checkToDate = cb.and(
+                cb.lessThanOrEqualTo(root.get(fromField), toDate),
+                cb.greaterThanOrEqualTo(root.get(toField), toDate)
+        );
+
+        // ✅ checkFromAndToDate — given range, record ki range ko fully cover karta hai
+        // Restrictions.ge(fromField, fromDate) AND Restrictions.le(toField, toDate)
+        Predicate checkFromAndToDate = cb.and(
+                cb.greaterThanOrEqualTo(root.get(fromField), fromDate),
+                cb.lessThanOrEqualTo(root.get(toField), toDate)
+        );
+
+        // ✅ Disjunction — teen date range checks mein se koi bhi match ho
+        Predicate dateRangeChecker = cb.or(
+                checkFromDate,
+                checkToDate,
+                checkFromAndToDate
+        );
+
+        predicates.add(dateRangeChecker);
+
+        // ✅ Exclude current record
+        if (id != null) {
+            predicates.add(cb.notEqual(root.get(uniqueDateOverlap.id()), id));
+        }
+
+        // ✅ Projections.id() + setMaxResults(1) + uniqueResult()
+        cq.select(root.get(uniqueDateOverlap.id()))
+                .where(cb.and(predicates.toArray(new Predicate[0])));
+
+        List<Object> result = entityManager.createQuery(cq)
+                .setMaxResults(1)
+                .getResultList();
+
+        return result.isEmpty();
     }
 }

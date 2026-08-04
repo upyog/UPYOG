@@ -56,13 +56,14 @@ import org.displaytag.model.Row;
 import org.displaytag.model.RowIterator;
 import org.displaytag.model.TableModel;
 
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.regex.Pattern;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 
 public class EGovExcelView extends BaseExportView {
 
@@ -171,82 +172,86 @@ public class EGovExcelView extends BaseExportView {
 	}
 	
 	@Override
-	public void doExport(Writer out) throws IOException, JspException {
-	        final String DOCUMENT_START = getDocumentStart();
-	        final String DOCUMENT_END = getDocumentEnd();
-	        final String ROW_START = getRowStart();
-	        final String ROW_END = getRowEnd();
-	        final String CELL_START = getCellStart();
-	        final String CELL_END = getCellEnd();
-	        final boolean ALWAYS_APPEND_CELL_END = getAlwaysAppendCellEnd();
-	        final boolean ALWAYS_APPEND_ROW_END = getAlwaysAppendRowEnd();
+	public void doExport(Writer out, String characterEncoding) throws IOException, JspException {
+	        try {
+		        final String DOCUMENT_START = getDocumentStart();
+		        final String DOCUMENT_END = getDocumentEnd();
+		        final String ROW_START = getRowStart();
+		        final String ROW_END = getRowEnd();
+		        final String CELL_START = getCellStart();
+		        final String CELL_END = getCellEnd();
+		        final boolean ALWAYS_APPEND_CELL_END = getAlwaysAppendCellEnd();
+		        final boolean ALWAYS_APPEND_ROW_END = getAlwaysAppendRowEnd();
 
-	        // document start
-	        if(DOCUMENT_START != null && DOCUMENT_START.contains("\\n")){
-	            String[] strArr = DOCUMENT_START.split(Pattern.quote("\\n"));
-	            for(String str : strArr){
-	                write(out, str.trim());
-	                write(out, "\n");
-	            }
-	        }else{
-	            write(out, DOCUMENT_START);
+		        // document start
+		        if(DOCUMENT_START != null && DOCUMENT_START.contains("\\n")){
+		            String[] strArr = DOCUMENT_START.split(Pattern.quote("\\n"));
+		            for(String str : strArr){
+		                write(out, str.trim());
+		                write(out, "\n");
+		            }
+		        }else{
+		            write(out, DOCUMENT_START);
+		        }
+		        
+		        if (ROW_END != null)
+		        {
+		            out.write(ROW_END);
+		        }
+
+		        if (this.header)
+		        {
+		            write(out, doHeaders());
+		        }
+
+		        // get the correct iterator (full or partial list according to the exportFull field)
+		        RowIterator rowIterator = this.model.getRowIterator(this.exportFull);
+
+		        // iterator on rows
+		        while (rowIterator.hasNext())
+		        {
+		            Row row = rowIterator.next();
+
+		            if (this.model.getTableDecorator() != null)
+		            {
+
+		                String stringStartRow = this.model.getTableDecorator().startRow();
+		                write(out, stringStartRow);
+		            }
+
+		            // iterator on columns
+		            ColumnIterator columnIterator = row.getColumnIterator(this.model.getHeaderCellList());
+
+		            write(out, ROW_START);
+
+		            while (columnIterator.hasNext())
+		            {
+		                Column column = columnIterator.nextColumn();
+
+		                // Get the value to be displayed for the column
+		                String value = escapeColumnValue(column.getValue(this.decorated));
+
+		                write(out, CELL_START);
+
+		                write(out, value);
+
+		                if (ALWAYS_APPEND_CELL_END || columnIterator.hasNext())
+		                {
+		                    write(out, CELL_END);
+		                }
+
+		            }
+		            if (ALWAYS_APPEND_ROW_END || rowIterator.hasNext())
+		            {
+		                write(out, ROW_END);
+		            }
+		        }
+
+		        // document end
+		        write(out, DOCUMENT_END);
+	        } catch (Exception e) {
+	            throw new IOException("Error exporting to Excel", e);
 	        }
-	        
-	        if (ROW_END != null)
-	        {
-	            out.write(ROW_END);
-	        }
-
-	        if (this.header)
-	        {
-	            write(out, doHeaders());
-	        }
-
-	        // get the correct iterator (full or partial list according to the exportFull field)
-	        RowIterator rowIterator = this.model.getRowIterator(this.exportFull);
-
-	        // iterator on rows
-	        while (rowIterator.hasNext())
-	        {
-	            Row row = rowIterator.next();
-
-	            if (this.model.getTableDecorator() != null)
-	            {
-
-	                String stringStartRow = this.model.getTableDecorator().startRow();
-	                write(out, stringStartRow);
-	            }
-
-	            // iterator on columns
-	            ColumnIterator columnIterator = row.getColumnIterator(this.model.getHeaderCellList());
-
-	            write(out, ROW_START);
-
-	            while (columnIterator.hasNext())
-	            {
-	                Column column = columnIterator.nextColumn();
-
-	                // Get the value to be displayed for the column
-	                String value = escapeColumnValue(column.getValue(this.decorated));
-
-	                write(out, CELL_START);
-
-	                write(out, value);
-
-	                if (ALWAYS_APPEND_CELL_END || columnIterator.hasNext())
-	                {
-	                    write(out, CELL_END);
-	                }
-
-	            }
-	            if (ALWAYS_APPEND_ROW_END || rowIterator.hasNext())
-	            {
-	                write(out, ROW_END);
-	            }
-	        }
-
-	        // document end
-	        write(out, DOCUMENT_END);
 	}
 	
 	private void write(Writer out, String string) throws IOException

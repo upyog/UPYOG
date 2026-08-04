@@ -50,17 +50,12 @@ package org.egov.pims.commons.service;
 import org.egov.eis.entity.Assignment;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Date;
+import java.util.List;
 
 public class PositionService extends PersistenceService<Position, Integer> {  
 	
@@ -85,28 +80,21 @@ public class PositionService extends PersistenceService<Position, Integer> {
 	 * @param designationMasterId
 	 * @return
 	 */
-	public Criteria getVacantPositionCriteria(Date fromDate,Date toDate,Integer designationMasterId)
+	public List<Position> getVacantPositionCriteria(Date fromDate, Date toDate, Integer designationMasterId)
 	{
-		DetachedCriteria detachAssignmentPrd=DetachedCriteria.forClass(Assignment.class, "assignment");
-		detachAssignmentPrd.add(Restrictions.and(Restrictions.le("assignment.fromDate", fromDate),
-				Restrictions.or(Restrictions.ge("assignment.toDate", toDate), Restrictions.isNull("assignment.toDate")))).
-				setProjection(Projections.property("assignment.id"));
-		
-		DetachedCriteria detachAssignment=DetachedCriteria.forClass(Assignment.class, "assignment");
-		detachAssignment.add(Subqueries.propertyIn("assignment.id", detachAssignmentPrd));
-		detachAssignment.add(Restrictions.eq("assignment.isPrimary", 'Y'));
-		detachAssignment.setProjection(Projections.distinct(Projections.property("assignment.position.id")));
-		
-		Criteria criteria=getCurrentSession().createCriteria(Position.class, "position");
-		if(designationMasterId!=null && !designationMasterId.equals("0")) 
-		{
-			criteria.add(Restrictions.eq("position.deptDesig.designation.id", designationMasterId));
-		}
-			
-		criteria.add(Subqueries.propertyNotIn("position.id", detachAssignment));
-		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		criteria.addOrder(Order.asc("position.name"));
-		return criteria;
+		StringBuilder hql = new StringBuilder(
+			"select p from Position p where p.id not in (" +
+			"select distinct a.position.id from Assignment a where a.isPrimary = 'Y' " +
+			"and a.fromDate <= :fromDate and (a.toDate >= :toDate or a.toDate is null))");
+		if (designationMasterId != null && !designationMasterId.equals(0))
+			hql.append(" and p.deptDesig.designation.id = :desigId");
+		hql.append(" order by p.name asc");
+		org.hibernate.query.Query<Position> query = getCurrentSession().createQuery(hql.toString(), Position.class);
+		query.setParameter("fromDate", fromDate);
+		query.setParameter("toDate", toDate);
+		if (designationMasterId != null && !designationMasterId.equals(0))
+			query.setParameter("desigId", designationMasterId);
+		return query.getResultList();
 	}
 	
 

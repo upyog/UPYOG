@@ -78,9 +78,12 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
+
+import org.hibernate.query.Query;
+import jakarta.persistence.FlushModeType;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -156,7 +159,7 @@ public class BankAdviceReportAction extends BaseFormAction {
 	@Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         super.prepare();
         addDropdownData(
                 "bankList",
@@ -240,11 +243,11 @@ public class BankAdviceReportAction extends BaseFormAction {
 						.append(" AND gl.voucherheaderid =m.billvhid AND gl.id=gld.generalledgerid AND gl.debitamount!=0 ")
 						.append(" group by gld.detailtypeid ,gld.detailkeyid  ");
         
-        final Query WithNetPayableSubledgerQuery = persistenceService.getSession().createSQLQuery(query.toString());
-        WithNetPayableSubledgerQuery.setParameter("instHeaderId", instrumentHeader.getId(), LongType.INSTANCE);
+        final Query WithNetPayableSubledgerQuery = persistenceService.getSession().createNativeQuery(query.toString());
+        WithNetPayableSubledgerQuery.setParameter("instHeaderId", instrumentHeader.getId(), StandardBasicTypes.LONG);
 
         // Get without subledger one
-        final Query getDebitsideSubledgerQuery = persistenceService.getSession().createSQLQuery(withNoSubledgerQry.toString());
+        final Query getDebitsideSubledgerQuery = persistenceService.getSession().createNativeQuery(withNoSubledgerQry.toString());
         getDebitsideSubledgerQuery.setParameter("instHeaderId", instrumentHeader.getId());
 
         final List<Object[]> retList = WithNetPayableSubledgerQuery.list();

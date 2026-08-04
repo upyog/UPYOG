@@ -62,7 +62,7 @@ public class WorkFlowMatrixService {
     private WorkflowMatrixRepository workflowMatrixRepository;
 
     public WorkFlowMatrix getWorkFlowObjectbyId(Long matrixId) {
-        return workflowMatrixRepository.findOne(matrixId);
+        return workflowMatrixRepository.findById(matrixId).orElse(null);
     }
 
 }

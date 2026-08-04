@@ -57,8 +57,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Service("remittanceRecoveryService")
@@ -85,11 +85,11 @@ public class RecoveryService {
     }
 
     public List<Recovery> findAll() {
-        return recoveryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return recoveryRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public Recovery findOne(Long id) {
-        return recoveryRepository.findOne(id);
+        return recoveryRepository.findById(id).orElse(null);
     }
 
     public List<Recovery> search(Recovery recovery) {

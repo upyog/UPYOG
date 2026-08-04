@@ -51,15 +51,18 @@ package org.egov.infra.persistence.validator;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Session;                              // ✅ same rehta hai
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class UniqueCheckValidator implements ConstraintValidator<Unique, Object> {
 
@@ -94,17 +97,48 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
 
     }
 
-    private boolean checkUnique(final Object arg0, final Number id, final String fieldName) throws IllegalAccessException {
-        final Criteria criteria = entityManager.unwrap(Session.class)
-                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
-        final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
-        if (fieldValue instanceof String)
-            criteria.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
-        else
-            criteria.add(Restrictions.eq(fieldName, fieldValue));
-        if (id != null)
-            criteria.add(Restrictions.ne(unique.id(), id));
-        return criteria.setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
-    }
+    private boolean checkUnique(final Object arg0, final Number id, final String fieldName)
+            throws IllegalAccessException {
 
+        // ✅ CriteriaBuilder setup
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        // ✅ Dynamic class — superclass ya actual class
+        Class<?> targetClass = unique.isSuperclass()
+                ? arg0.getClass().getSuperclass()
+                : arg0.getClass();
+
+        CriteriaQuery<Object> cq = cb.createQuery(Object.class);
+        Root<?> root = cq.from(targetClass);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // ✅ fieldValue check — String ya other type
+        final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
+        if (fieldValue instanceof String) {
+            // ✅ Restrictions.eq().ignoreCase() → cb.lower()
+            predicates.add(cb.equal(
+                    cb.lower(root.get(fieldName)),
+                    ((String) fieldValue).toLowerCase()
+            ));
+        } else {
+            // ✅ Restrictions.eq() → cb.equal()
+            predicates.add(cb.equal(root.get(fieldName), fieldValue));
+        }
+
+        // ✅ Restrictions.ne() → cb.notEqual()
+        if (id != null) {
+            predicates.add(cb.notEqual(root.get(unique.id()), id));
+        }
+
+        // ✅ Projections.id() + setMaxResults(1) + uniqueResult() == null
+        cq.select(root.get(unique.id()))
+                .where(cb.and(predicates.toArray(new Predicate[0])));
+
+        List<Object> result = entityManager.createQuery(cq)
+                .setMaxResults(1)
+                .getResultList();
+
+        return result.isEmpty();  // ✅ uniqueResult() == null → isEmpty()
+    }
 }

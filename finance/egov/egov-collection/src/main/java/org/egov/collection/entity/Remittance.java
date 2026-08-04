@@ -54,7 +54,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.workflow.entity.StateAware;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -64,15 +64,15 @@ import java.util.Set;
 public class Remittance extends StateAware implements Auditable {
     private static final long serialVersionUID = 1L;
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String referenceNumber;
     private Date referenceDate;
     private CVoucherHeader voucherHeader;
     private CFunction function;
     private Fund fund;
-    @SafeHtml
+    @SanitizeHtml
     private String remarks;
-    @SafeHtml
+    @SanitizeHtml
     private String reasonForDelay;
     private EgwStatus status;
     private Set<RemittanceDetail> remittanceDetails = new LinkedHashSet<>();

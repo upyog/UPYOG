@@ -71,8 +71,8 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,8 +125,9 @@ public class ApplicationConfiguration {
         return r;
     }
 
-    @Bean(name = "cities", autowire = Autowire.BY_NAME)
+    @Bean(name = "cities")
     @DependsOn(value = "tenants")
+    @Autowired
     public List<String> cities() {
         final List<String> cities = new ArrayList<>(tenants);
         if (!environmentSettings.devMode())

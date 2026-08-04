@@ -73,10 +73,10 @@ public class WorkflowTypeService {
     }
 
     public List<WorkflowTypes> getAllWorkflowTypes() {
-        return workflowTypeRepository.findAll(new Sort(Sort.Direction.ASC, "type"));
+        return workflowTypeRepository.findAll(Sort.by(Sort.Direction.ASC, "type"));
     }
 
     public WorkflowTypes getWorkflowTypeById(Long id) {
-        return workflowTypeRepository.findOne(id);
+        return workflowTypeRepository.findById(id).orElse(null);
     }
 }

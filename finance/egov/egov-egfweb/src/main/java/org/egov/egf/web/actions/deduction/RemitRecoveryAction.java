@@ -136,10 +136,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.exility.common.TaskFailedException;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
-@Validation
 @Results({ @Result(name = RemitRecoveryAction.NEW, location = "remitRecovery-" + RemitRecoveryAction.NEW + ".jsp"),
         @Result(name = "messages", location = "remitRecovery-messages.jsp"),
         @Result(name = "view", location = "remitRecovery-view.jsp"),

@@ -53,9 +53,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+//import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisIndexedHttpSession;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
-import org.springframework.session.web.http.CookieHttpSessionStrategy;
+import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
@@ -63,7 +64,7 @@ import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_NAM
 import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_PATH;
 
 @Configuration
-@EnableRedisHttpSession
+@EnableRedisIndexedHttpSession
 public class RedisHttpSessionConfiguration {
 
 	@Value("${secure.cookie}")
@@ -79,10 +80,10 @@ public class RedisHttpSessionConfiguration {
     }
 
     @Bean
-    public CookieHttpSessionStrategy cookieHttpSessionStrategy(CookieSerializer cookieSerializer) {
-        CookieHttpSessionStrategy cookieHttpSession = new CookieHttpSessionStrategy();
-        cookieHttpSession.setCookieSerializer(cookieSerializer);
-        return cookieHttpSession;
+    public CookieHttpSessionIdResolver cookieHttpSessionIdResolver(CookieSerializer cookieSerializer) {
+        CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
+        resolver.setCookieSerializer(cookieSerializer);
+        return resolver;
     }
 
     @Bean

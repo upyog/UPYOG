@@ -69,9 +69,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
@@ -118,11 +118,13 @@ public class JpaConfiguration {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
         entityManagerFactory.setPersistenceUnitName("EgovPersistenceUnit");
+        entityManagerFactory.setEntityManagerFactoryInterface(EntityManagerFactory.class);
         entityManagerFactory.setPackagesToScan("org.egov.**.entity");
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
-        entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
+//        entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
+        entityManagerFactory.setSharedCacheMode(SharedCacheMode.NONE);
         ClasspathScanningPersistenceUnitPostProcessor hbmScanner = new ClasspathScanningPersistenceUnitPostProcessor("org.egov");
         hbmScanner.setMappingFileNamePattern("**/*hbm.xml");
         entityManagerFactory.setPersistenceUnitPostProcessors(hbmScanner);
@@ -141,6 +143,14 @@ public class JpaConfiguration {
 
     private Map<String, Object> additionalProperties() {
         HashMap<String, Object> properties = new HashMap<>();
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Set default sequence allocation size to 1 and sequence optimizer to 'none' globally in Hibernate 6.
+         * In Hibernate 6, the default optimizer (pooled-lo with allocationSize=50) was generating negative primary key IDs 
+         * when inserting master entities (e.g. Scheme, SubScheme) because existing database sequences increment by 1.
+         */
+        properties.put("hibernate.id.optimizer.pooled.preferred", "none");
+        properties.put("hibernate.id.sequence.default_allocation_size", "1");
         properties.put("hibernate.validator.apply_to_ddl", false);
         properties.put("hibernate.validator.autoregister_listeners", false);
         properties.put("hibernate.temp.use_jdbc_metadata_defaults", false);
@@ -153,20 +163,20 @@ public class JpaConfiguration {
         properties.put("hibernate.cache.infinispan.cachemanager", env.getProperty("hibernate.cache.infinispan.cachemanager"));
         properties.put(JTA_PLATFORM, env.getProperty(JTA_PLATFORM));
         properties.put(AUTO_CLOSE_SESSION, env.getProperty(AUTO_CLOSE_SESSION));
-        properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));
+        properties.put("hibernate.jdbc.use_streams_for_binary", env.getProperty("hibernate.jdbc.use_streams_for_binary"));
         properties.put(DEFAULT_BATCH_FETCH_SIZE, batchUpdateSize);
         properties.put(BATCH_VERSIONED_DATA, true);
         properties.put(ORDER_INSERTS, true);
         properties.put(ORDER_UPDATES, true);
         properties.put(AUTOCOMMIT, false);
-        properties.put(RELEASE_CONNECTIONS, "after_statement");
+        properties.put("hibernate.connection.release_mode", "after_transaction");
         properties.put("jadira.usertype.autoRegisterUserTypes", true);
         properties.put("jadira.usertype.databaseZone", "jvm");
         properties.put("org.hibernate.envers.store_data_at_delete", true);
 
         // Multitenancy Configuration
         if (multiTenancyEnabled) {
-            properties.put(MULTI_TENANT, env.getProperty(MULTI_TENANT));
+            properties.put("hibernate.multiTenancy", env.getProperty("hibernate.multiTenancy"));
             properties.put("hibernate.database.type", env.getProperty("jpa.database"));
             properties.put(MULTI_TENANT_CONNECTION_PROVIDER, multiTenantSchemaConnectionProvider());
             properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER, domainBasedSchemaTenantIdentifierResolver());

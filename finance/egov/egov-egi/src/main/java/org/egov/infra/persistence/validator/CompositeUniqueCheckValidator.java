@@ -51,16 +51,26 @@ package org.egov.infra.persistence.validator;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+
+
+
+import jakarta.persistence.EntityManager;
+
+
+
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class CompositeUniqueCheckValidator implements ConstraintValidator<CompositeUnique, Object> {
 
@@ -90,22 +100,58 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
 
     }
 
-    private boolean checkCompositeUniqueKey(final Object arg0, final Number id) throws IllegalAccessException {
-        final Criteria criteria = entityManager.unwrap(Session.class)
-                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
-        final Conjunction conjunction = Restrictions.conjunction();
+    private boolean checkCompositeUniqueKey(final Object arg0, final Number id)
+            throws IllegalAccessException {
+
+        // ✅ CriteriaBuilder setup
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        // ✅ Dynamic class — superclass ya actual class
+        Class<?> targetClass = unique.isSuperclass()
+                ? arg0.getClass().getSuperclass()
+                : arg0.getClass();
+
+        CriteriaQuery<Object> cq = cb.createQuery(Object.class);
+        Root<?> root = cq.from(targetClass);
+
+        // ✅ Conjunction — list of predicates
+        List<Predicate> predicates = new ArrayList<>();
+
         for (final String fieldName : unique.fields()) {
             final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
-            if (unique.checkForNull() && fieldValue == null)
-                conjunction.add(Restrictions.isNull(fieldName));
-            else if (fieldValue instanceof String)
-                conjunction.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
-            else
-                conjunction.add(Restrictions.eq(fieldName, fieldValue));
+
+            if (unique.checkForNull() && fieldValue == null) {
+                // ✅ Restrictions.isNull() → cb.isNull()
+                predicates.add(cb.isNull(root.get(fieldName)));
+
+            } else if (fieldValue instanceof String) {
+                // ✅ Restrictions.eq().ignoreCase() → cb.equal on lowercased values
+                predicates.add(cb.equal(
+                        cb.lower(root.get(fieldName)),
+                        ((String) fieldValue).toLowerCase()
+                ));
+
+            } else {
+                // ✅ Restrictions.eq() → cb.equal()
+                predicates.add(cb.equal(root.get(fieldName), fieldValue));
+            }
         }
-        if (id != null)
-            conjunction.add(Restrictions.ne(unique.id(), id));
-        return criteria.add(conjunction).setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
+
+        // ✅ Restrictions.ne(unique.id(), id) — exclude current record
+        if (id != null) {
+            predicates.add(cb.notEqual(root.get(unique.id()), id));
+        }
+
+        // ✅ Projections.id() → select id field
+        cq.select(root.get(unique.id()))
+                .where(cb.and(predicates.toArray(new Predicate[0])));
+
+        // ✅ setMaxResults(1).uniqueResult() → setMaxResults(1).getSingleResult()
+        List<Object> result = entityManager.createQuery(cq)
+                .setMaxResults(1)
+                .getResultList();
+
+        return result.isEmpty();  // ✅ null check → isEmpty()
     }
 
 }

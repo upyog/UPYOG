@@ -111,19 +111,19 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
-import org.hibernate.type.StringType;
+
+import org.hibernate.query.Query;
+import jakarta.persistence.FlushModeType;
+import org.hibernate.type.StandardBasicTypes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
-@Validation
 @Results({ @Result(name = "search", location = "payment-search.jsp"),
         @Result(name = "searchbills", location = "payment-searchbills.jsp"),
         @Result(name = "tnebSearch", location = "payment-tnebSearch.jsp"),
@@ -433,7 +433,7 @@ public class PaymentAction extends BasePaymentAction {
     @Action(value = "/payment/payment-search")
     public String search() throws ParseException {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting search...");
         // Get App config value
@@ -933,13 +933,13 @@ public class PaymentAction extends BasePaymentAction {
                 .append(" order by bill.billdate desc");
         
         final Query tnebBillQuery = getPersistenceService().getSession().createQuery(tnebBillSql.toString());
-        tnebBillQuery.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StringType.INSTANCE)
+        tnebBillQuery.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StandardBasicTypes.STRING)
                 .setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1));
         persistenceService.populateQueryWithParams(tnebBillQuery, sqlParams);
         contingentBillList = new Page(tnebBillQuery, 1, 500).getList();
 
         final Query tnebBillQuery1 = getPersistenceService().getSession().createQuery(tnebBillSql1.toString());
-        tnebBillQuery1.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StringType.INSTANCE)
+        tnebBillQuery1.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StandardBasicTypes.STRING)
                 .setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1));
         persistenceService.populateQueryWithParams(tnebBillQuery1, sqlParams);
         

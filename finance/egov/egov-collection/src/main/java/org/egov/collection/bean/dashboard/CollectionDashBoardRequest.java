@@ -50,27 +50,27 @@ package org.egov.collection.bean.dashboard;
 
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class CollectionDashBoardRequest {
 
-	@SafeHtml
+	@SanitizeHtml
     private String regionName;
-	@SafeHtml
+	@SanitizeHtml
     private String districtName;
-	@SafeHtml
+	@SanitizeHtml
     private String ulbGrade;
-	@SafeHtml
+	@SanitizeHtml
     private String ulbCode;
-	@SafeHtml
+	@SanitizeHtml
     private String fromDate;
-	@SafeHtml
+	@SanitizeHtml
     private String toDate;
-	@SafeHtml
+	@SanitizeHtml
     private String type;
     private List<String> includeServices;
     private List<String> excludeServices;
-    @SafeHtml
+    @SanitizeHtml
     private String revenueWard;
 
     public String getRegionName() {

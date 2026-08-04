@@ -59,13 +59,16 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;        // ✅ NEW
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;      // ✅ NEW
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.JedisShardInfo;
+
+// ✅ REMOVED — JedisShardInfo, JedisSharding, HostAndPort, DefaultJedisClientConfig
+//    not needed anymore — Spring Data Redis handles connection internally
 
 @Configuration
 public class RedisServerConfiguration {
@@ -102,20 +105,32 @@ public class RedisServerConfiguration {
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {
-        JedisConnectionFactory redisConnectionFactory;
+
+        // ✅ Build JedisClientConfiguration with pool config + timeout
+        JedisClientConfiguration clientConfig = JedisClientConfiguration.builder()
+                .connectTimeout(Duration.ofMillis(15000))   // ✅ replaces JedisShardInfo timeout
+                .readTimeout(Duration.ofMillis(15000))
+                .usePooling()
+                .poolConfig(redisPoolConfig())
+                .build();
+
         if (sentinelEnabled && !usingEmbeddedRedis) {
+            // ✅ Sentinel config — same as before
             RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration();
             sentinelConfig.master(sentinelMasterName);
             for (String host : sentinelHosts) {
                 String[] hostConfig = host.split(COLON);
                 sentinelConfig.sentinel(hostConfig[0].trim(), Integer.valueOf(hostConfig[1].trim()));
             }
-            redisConnectionFactory = new JedisConnectionFactory(sentinelConfig, redisPoolConfig());
+            return new JedisConnectionFactory(sentinelConfig, clientConfig);
+
         } else {
-            redisConnectionFactory = new JedisConnectionFactory(redisPoolConfig());
-            redisConnectionFactory.setShardInfo(new JedisShardInfo(redisHost, redisPort, 15000));
+            // ✅ Standalone config — replaces setShardInfo(new JedisShardInfo(host, port, timeout))
+            RedisStandaloneConfiguration standaloneConfig = new RedisStandaloneConfiguration();
+            standaloneConfig.setHostName(redisHost);
+            standaloneConfig.setPort(redisPort);
+            return new JedisConnectionFactory(standaloneConfig, clientConfig);
         }
-        return redisConnectionFactory;
     }
 
     @Bean
@@ -128,10 +143,10 @@ public class RedisServerConfiguration {
         poolConfig.setTestOnReturn(true);
         poolConfig.setTestWhileIdle(true);
         poolConfig.setBlockWhenExhausted(true);
-        poolConfig.setMaxWaitMillis(Duration.ofSeconds(20).toMillis());
-        poolConfig.setMinEvictableIdleTimeMillis(Duration.ofSeconds(60).toMillis());
-        poolConfig.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(30).toMillis());
-        poolConfig.setSoftMinEvictableIdleTimeMillis(Duration.ofMinutes(30).toMillis());
+        poolConfig.setMaxWait(Duration.ofSeconds(20));                          // ✅ setMaxWaitMillis → setMaxWait(Duration)
+        poolConfig.setMinEvictableIdleTime(Duration.ofSeconds(60));             // ✅ setMinEvictableIdleTimeMillis → setMinEvictableIdleTime(Duration)
+        poolConfig.setTimeBetweenEvictionRuns(Duration.ofSeconds(30));          // ✅ setTimeBetweenEvictionRunsMillis → setTimeBetweenEvictionRuns(Duration)
+        poolConfig.setSoftMinEvictableIdleTime(Duration.ofMinutes(30));         // ✅ setSoftMinEvictableIdleTimeMillis → setSoftMinEvictableIdleTime(Duration)
         poolConfig.setNumTestsPerEvictionRun(-1);
         return poolConfig;
     }

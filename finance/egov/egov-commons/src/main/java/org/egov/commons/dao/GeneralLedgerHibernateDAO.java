@@ -58,13 +58,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.egov.commons.CGeneralLedger;
 import org.egov.infra.exception.ApplicationException;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +106,7 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
     }
 
     public List<CGeneralLedger> findAll() {
-        return (List<CGeneralLedger>) getCurrentSession().createCriteria(CGeneralLedger.class).list();
+        return getCurrentSession().createQuery("from CGeneralLedger", CGeneralLedger.class).list();
     }
 
   
@@ -342,7 +342,7 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
     public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
         final Query qry = getCurrentSession().createQuery(
                 "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
-        qry.setString("voucherHeaderId", voucherHeaderId.toString());
+        qry.setParameter("voucherHeaderId", voucherHeaderId.toString());
         return qry.list();
     }
 
@@ -352,7 +352,7 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
         final Query qry = getCurrentSession().createQuery(
                 "select sum(gl.creditAmount) from CGeneralLedger gl where gl.voucherHeaderId.id = :voucherHeaderId "
                         + "and gl.glcodeId not in(select id from CChartOfAccounts where purposeId=28) ");
-        qry.setString("voucherHeaderId", voucherHeaderId.toString());
+        qry.setParameter("voucherHeaderId", voucherHeaderId.toString());
         if (qry.uniqueResult() != null) {
             return qry.uniqueResult().toString();
         } else {
@@ -423,19 +423,19 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
 
 			qry = getCurrentSession().createQuery(qryStr.toString());
 			if (!(functionId == null || functionId.equals(""))) {
-				qry.setString("functionId", functionId);
+				qry.setParameter("functionId", functionId);
 			}
 			if (!(schemeId == null || schemeId.equals("")) && (subSchemeId == null || subSchemeId.equals(""))) {
-				qry.setString("schemeId", schemeId);
+				qry.setParameter("schemeId", schemeId);
 			}
 			if (!(schemeId == null || schemeId.equals("")) && !(subSchemeId == null) || subSchemeId.equals("")) {
-				qry.setString("schemeId", schemeId);
-				qry.setString("subSchemeId", subSchemeId);
+				qry.setParameter("schemeId", schemeId);
+				qry.setParameter("subSchemeId", subSchemeId);
 			}
 			if (!(asOnDate == null || asOnDate.equals(""))) {
-				qry.setString("asOnDate", asOnDate);
+				qry.setParameter("asOnDate", asOnDate);
 			}
-			qry.setString("finYearID", finYearID);
+			qry.setParameter("finYearID", finYearID);
 			qry.setParameterList("glcodeList", glcodeList);
 
 			if (qry.uniqueResult() != null) {
@@ -459,12 +459,11 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
                 final String glCode = (String) i.next();
                 qry = getCurrentSession().createQuery(
                         "from CGeneralLedger gl where gl.glcode =:glCode order by gl.id desc");
-                qry.setString("glCode", glCode);
+                qry.setParameter("glCode", glCode);
                 if (qry.list() != null) {
-                    final Iterator iterator = qry.iterate();
-                    if (iterator.hasNext()) {
-                        CGeneralLedger ob;
-                        ob = (CGeneralLedger) iterator.next();
+                    final List<CGeneralLedger> iterList = qry.list();
+                    if (!iterList.isEmpty()) {
+                        CGeneralLedger ob = iterList.get(0);
 
                         final BigDecimal debitamount = BigDecimal.valueOf(ob.getDebitAmount());
                         final BigDecimal creditamount = BigDecimal.valueOf(ob.getCreditAmount());

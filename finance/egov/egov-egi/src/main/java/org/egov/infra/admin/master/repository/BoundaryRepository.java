@@ -59,7 +59,7 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -153,7 +153,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName,
             @Param("name") String name);
 
-    @Query("from Boundary BND where BND.active=true AND BND.parent.id=:parentId)")
+    @Query("from Boundary BND where BND.active=true AND BND.parent.id=:parentId")
     List<Boundary> findActiveImmediateChildrenWithOutParent(@Param("parentId") Long parentId);
 
     @Query("from Boundary BND where BND.parent is null")

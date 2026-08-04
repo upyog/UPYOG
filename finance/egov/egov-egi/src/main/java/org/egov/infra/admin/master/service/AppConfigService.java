@@ -84,8 +84,8 @@ public class AppConfigService {
     }
 
     public Page<AppConfig> getAllAppConfig(AppConfigSearchRequest searchRequest) {
-        Pageable pageable = new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
-                searchRequest.orderDir(), searchRequest.orderBy());
+        Pageable pageable = PageRequest.of(searchRequest.pageNumber(), searchRequest.pageSize(),
+                org.springframework.data.domain.Sort.by(searchRequest.orderDir(), searchRequest.orderBy()));
         return isBlank(searchRequest.getModuleName()) ? appConfigRepository.findAll(pageable) :
                 appConfigRepository.findByModuleName(searchRequest.getModuleName(), pageable);
     }

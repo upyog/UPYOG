@@ -79,7 +79,7 @@ public class StateService {
     }
 
     public State getStateById(final Long id) {
-        return stateRepository.findOne(id);
+        return stateRepository.findById(id).orElse(null);
     }
 
     public Date getMaxCreatedDateByPositionId(final Long posId) {

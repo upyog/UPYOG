@@ -92,10 +92,13 @@ import org.egov.model.recoveries.Recovery;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+
+import org.hibernate.query.Query;
+import jakarta.persistence.FlushModeType;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -181,7 +184,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         super.prepare();
 //        addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("departmentList",this.masterDataCache.get("egi-department"));
@@ -569,13 +572,13 @@ public class PendingTDSReportAction extends BaseFormAction {
                         .append("group by er.month,vh.name order by er.month,vh.name");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(qry);
-				Query sqlQuery = persistenceService.getSession().createSQLQuery(qry.toString());
-				sqlQuery.setParameter("glCode", recovery.getChartofaccounts().getId(), LongType.INSTANCE)
-						.setParameter("fundId", fund.getId(), LongType.INSTANCE)
+				Query sqlQuery = persistenceService.getSession().createNativeQuery(qry.toString());
+				sqlQuery.setParameter("glCode", recovery.getChartofaccounts().getId(), StandardBasicTypes.LONG)
+						.setParameter("fundId", fund.getId(), StandardBasicTypes.LONG)
 						.setParameter("date1", asOnDate)
 						.setParameter("date2",financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate());
 				if (!deptQuery.equals(""))
-					sqlQuery.setParameter("deptCode", department.getCode(), StringType.INSTANCE);
+					sqlQuery.setParameter("deptCode", department.getCode(), StandardBasicTypes.STRING);
 				result = sqlQuery.list();
                 
              // Query to get total deduction
@@ -586,9 +589,9 @@ public class PendingTDSReportAction extends BaseFormAction {
                 		.append("gl.id = ergl.glid  AND gl.voucherheaderid     =vh.id  AND er.fundid =f.id AND f.id =:fundId AND vh.status =0 AND ")
                 		.append("vh.voucherDate <= :date1 and vh.voucherDate >= :date2) ")
                 		.append("as temptable group by type,month");
-				Query sqlQuery2 = persistenceService.getSession().createSQLQuery(qryTolDeduction.toString());
-				sqlQuery2.setParameter("glCode", recovery.getChartofaccounts().getId(), LongType.INSTANCE)
-						.setParameter("fundId", fund.getId(), LongType.INSTANCE)
+				Query sqlQuery2 = persistenceService.getSession().createNativeQuery(qryTolDeduction.toString());
+				sqlQuery2.setParameter("glCode", recovery.getChartofaccounts().getId(), StandardBasicTypes.LONG)
+						.setParameter("fundId", fund.getId(), StandardBasicTypes.LONG)
 						.setParameter("date1", asOnDate)
 						.setParameter("date2",financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate());
                 resultTolDeduction = sqlQuery2.list();
@@ -603,13 +606,13 @@ public class PendingTDSReportAction extends BaseFormAction {
                         .append(" group by er.month,vh.name order by er.month,vh.name");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(qry);
-				Query sqlQuery = persistenceService.getSession().createSQLQuery(qry.toString());
-				sqlQuery.setParameter("glCode", recovery.getChartofaccounts().getId(), LongType.INSTANCE)
-						.setParameter("fundId", fund.getId(), LongType.INSTANCE)
+				Query sqlQuery = persistenceService.getSession().createNativeQuery(qry.toString());
+				sqlQuery.setParameter("glCode", recovery.getChartofaccounts().getId(), StandardBasicTypes.LONG)
+						.setParameter("fundId", fund.getId(), StandardBasicTypes.LONG)
 						.setParameter("date1", asOnDate).setParameter("date2",
 								financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate());
 				if (!deptQuery.equals(""))
-					sqlQuery.setParameter("deptCode", department.getCode(), StringType.INSTANCE);
+					sqlQuery.setParameter("deptCode", department.getCode(), StandardBasicTypes.STRING);
 			        if (detailKey != null && detailKey != -1)
 				        sqlQuery.setParameter("detailKey", detailKey);
 				result = sqlQuery.list();
@@ -624,13 +627,13 @@ public class PendingTDSReportAction extends BaseFormAction {
 								.append(deptQuery)
 								.append(partyNameQuery)
 								.append(") as temptable group by type,month");
-				Query sqlQuery2 = persistenceService.getSession().createSQLQuery(qryTolDeduction.toString());
-				sqlQuery2.setParameter("glCode", recovery.getChartofaccounts().getId(), LongType.INSTANCE)
-						.setParameter("fundId", fund.getId(), LongType.INSTANCE)
+				Query sqlQuery2 = persistenceService.getSession().createNativeQuery(qryTolDeduction.toString());
+				sqlQuery2.setParameter("glCode", recovery.getChartofaccounts().getId(), StandardBasicTypes.LONG)
+						.setParameter("fundId", fund.getId(), StandardBasicTypes.LONG)
 						.setParameter("date1", asOnDate)
 						.setParameter("date2",financialYearDAO.getFinancialYearByDate(asOnDate).getStartingDate());
 				if (!deptQuery.equals(""))
-				      sqlQuery2.setParameter("deptCode", department.getCode(), StringType.INSTANCE);
+				      sqlQuery2.setParameter("deptCode", department.getCode(), StandardBasicTypes.STRING);
 		                if (detailKey != null && detailKey != -1)
 		                      sqlQuery2.setParameter("detailKey", detailKey);
                 resultTolDeduction = sqlQuery2.list();

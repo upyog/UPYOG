@@ -81,28 +81,28 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.hibernate</groupId>-->
+<!--            <artifactId>hibernate-entitymanager</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-envers</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.hibernate</groupId>-->
+<!--            <artifactId>hibernate-infinispan</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-infinispan</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
         <dependency>
@@ -164,13 +164,17 @@
         <!-- QUARTZ END -->
 
         <!-- DISPLAYTAG START -->
+<!--        <dependency>-->
+<!--            <groupId>displaytag</groupId>-->
+<!--            <artifactId>displaytag</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>displaytag</groupId>-->
+<!--            <artifactId>displaytag-export-poi</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>displaytag</groupId>
+            <groupId>com.github.hazendaz</groupId>
             <artifactId>displaytag</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>displaytag</groupId>
-            <artifactId>displaytag-export-poi</artifactId>
         </dependency>
         <!-- DISPLAYTAG END -->
 
@@ -220,8 +224,8 @@
 
         <!-- COMMONS START -->
         <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -240,8 +244,8 @@
             <artifactId>commons-codec</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
         </dependency>
         <!-- COMMONS END -->
 
@@ -251,6 +255,28 @@
             <version>1.18.8</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Old JSP API needed at compile time: displaytag + struts2 were compiled against
+             javax.servlet.jsp.* - javac needs it to complete type analysis of those libs.
+             This is NOT used at runtime (provided scope). -->
+<!--        <dependency>-->
+<!--            <groupId>javax.servlet.jsp</groupId>-->
+<!--            <artifactId>javax.servlet.jsp-api</artifactId>-->
+<!--            <version>2.3.3</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+
+        <!-- JSP API needed at compile time for jakarta-based displaytag decorators
+     (ReplaceWrapper, LongAmountWrapper). Not used at runtime (provided scope). -->
+        <dependency>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
+
+
     </dependencies>
 
     <build>
@@ -272,6 +298,22 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/org/egov/egf/es/**/*.java</exclude>
+                        <exclude>**/org/egov/services/es/**/*.java</exclude>
+                        <exclude>**/es/dashboard/FinancialsDashboardService.java</exclude>
+                        <exclude>**/es/dashboard/RatioAnalysisDashboardService.java</exclude>
+                        <exclude>**/egf/es/config/ESSchedulerConfiguration.java</exclude>
+                    </excludes>
+                    <compilerArgs>
+                        <arg>-Xlint:-deprecation</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${mvn.jar.plugin.version}</version>
                 <executions>
@@ -281,6 +323,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <sourceFileExcludes>
+                        <exclude>**/es/dashboard/FinancialsDashboardService.java</exclude>
+                        <exclude>**/es/dashboard/RatioAnalysisDashboardService.java</exclude>
+                        <exclude>**/egf/es/config/ESSchedulerConfiguration.java</exclude>
+                    </sourceFileExcludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

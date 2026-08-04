@@ -78,10 +78,10 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     }
 
     @Override
-    public Connection getConnection(String tenantId) {
+    public Connection getConnection(Object tenantId) {
         try {
             Connection connection = getAnyConnection();
-            connection.setSchema(tenantId);
+            connection.setSchema((String) tenantId);
             return connection;
         } catch (SQLException e) {
             LOG.error("Error occurred while switching tenant schema upon getting connection", e);
@@ -90,13 +90,20 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     }
 
     @Override
-    public void releaseConnection(String tenantId, Connection connection) throws SQLException {
+    public void releaseConnection(Object tenantId, Connection connection) throws SQLException {
         try {
-            connection.setSchema(tenantId);
-        } catch (SQLException e) {
-            LOG.warn("Error occurred while switching schema upon release connection", e);
+            // LTS Migration Fix: Verify connection is non-null and active before attempting setSchema
+            if (connection != null && !connection.isClosed()) {
+                connection.setSchema((String) tenantId);
+            }
+        } catch (Throwable t) {
+            // LTS Migration Fix: Catch Throwable to handle JCA wrapper exceptions (e.g. IJ031070 STATUS_COMMITTED)
+            // when connections are already released/committed by WildFly 40 IronJacamar pool
+            LOG.debug("Could not switch schema upon release connection: {}", t.getMessage());
         }
-        releaseAnyConnection(connection);
+        if (connection != null) {
+            releaseAnyConnection(connection);
+        }
     }
 
     @Override

@@ -94,9 +94,17 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
     <head>
-		<spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+<%
+	org.springframework.web.context.WebApplicationContext _wac = org.springframework.web.context.support.WebApplicationContextUtils.getWebApplicationContext(application);
+	if (_wac != null && _wac.getEnvironment() != null) {
+		String _analyticsEnabled = _wac.getEnvironment().getProperty("analytics.enabled");
+		if (_analyticsEnabled != null) pageContext.setAttribute("analyticsEnabled", Boolean.valueOf(_analyticsEnabled));
+		String _analyticsConfig = _wac.getEnvironment().getProperty("analytics.config");
+		if (_analyticsConfig != null) pageContext.setAttribute("analyticsConfig", _analyticsConfig);
+	}
+%>
 		<c:if test="${analyticsEnabled}">
-			<spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+			${analyticsConfig}
 		</c:if>
         <%@ include file="/includes/meta.jsp" %>
         <meta name="_csrf" content="${_csrf.token}"/>

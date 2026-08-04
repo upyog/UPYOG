@@ -66,8 +66,6 @@ public interface AppConfigRepository extends JpaRepository<AppConfig, Long> {
     @EntityGraph(value = FETCH_WITH_VALUES, type = FETCH)
     AppConfig findByModuleNameAndKeyName(String moduleName, String keyName);
 
-    AppConfig findById(Long id);
-
     @EntityGraph(value = FETCH_WITH_VALUES, type = FETCH)
     AppConfig findByKeyName(final String keyName);
 

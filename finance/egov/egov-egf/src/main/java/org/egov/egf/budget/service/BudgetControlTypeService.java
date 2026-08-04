@@ -57,8 +57,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 
@@ -84,10 +84,10 @@ public class BudgetControlTypeService  {
 		return budgetControlTypeRepository.saveAndFlush(budgetCheckConfig);
 	} 
 	public List<BudgetControlType> findAll() {
-		return budgetControlTypeRepository.findAll(new Sort(Sort.Direction.ASC, "value"));
+		return budgetControlTypeRepository.findAll(Sort.by(Sort.Direction.ASC, "value"));
 	}
 	public BudgetControlType findOne(Long id){
-		return budgetControlTypeRepository.findOne(id);
+		return budgetControlTypeRepository.findById(id).orElse(null);
 	}
 	public List<BudgetControlType> search(BudgetControlType budgetCheckConfig){
 		return budgetControlTypeRepository.findAll();
