@@ -13,7 +13,9 @@ import (
 
 	"github.com/upyog/upyog-aggregation-service/internal/aggregation/executor"
 	"github.com/upyog/upyog-aggregation-service/internal/aggregation/registry"
+	"github.com/upyog/upyog-aggregation-service/internal/common"
 	"github.com/upyog/upyog-aggregation-service/internal/dto"
+	apperrors "github.com/upyog/upyog-aggregation-service/internal/errors"
 	"github.com/upyog/upyog-aggregation-service/internal/metrics"
 	"github.com/upyog/upyog-aggregation-service/pkg/logger"
 )
@@ -66,6 +68,20 @@ func (e *Engine) Aggregate(ctx context.Context, req dto.AggregateRequest) *dto.A
 		pr := provReq
 
 		g.Go(func() error {
+			defer func() {
+				if r := recover(); r != nil {
+					e.log.WithContext(gCtx).Error("provider goroutine panicked",
+						zap.String("provider", pr.Provider),
+						zap.Any("panic", r),
+						zap.Stack("stacktrace"),
+					)
+					results.Store(pr.Provider, &dto.ProviderResponse{
+						Status:    common.StatusFailed,
+						ErrorCode: string(apperrors.CodeInternal),
+						Message:   "provider panicked unexpectedly",
+					})
+				}
+			}()
 			resp := e.executor.Execute(gCtx, pr, req)
 			results.Store(pr.Provider, resp)
 			// Never return an error — individual failures are handled per-provider.
