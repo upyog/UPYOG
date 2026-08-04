@@ -46,12 +46,10 @@
  *
  */
 
+
 package org.egov.infra.persistence.utils;
 
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 public class Page<T> {
@@ -61,46 +59,13 @@ public class Page<T> {
     private final int pageNumber;
     private int recordTotal;
 
-    public Page(Query query, int pageNumber, int pageSize, int recordTotal) {
-        this(query, ++pageNumber, pageSize);
-        this.recordTotal = recordTotal;
-    }
-
-    public Page(Query query, int pageNumber, int pageSize) {
-        int currentPageNo = pageNumber;
-        if (pageNumber < 1) {
-            currentPageNo = 1;
-        }
-
-        this.pageNumber = currentPageNo;
-        if (pageSize > 0) {
-            query.setFirstResult((currentPageNo - 1) * pageSize);
-            query.setMaxResults(pageSize + 1);
-            this.pageSize = pageSize;
-        } else {
-            this.pageSize = -1;
-        }
-        this.results = query.list();
-    }
-
-    public Page(Criteria criteria, int pageNumber, int pageSize) {
-        int currentPageNo = pageNumber;
-        if (pageNumber < 1) {
-            currentPageNo = 1;
-        }
-
-        this.pageNumber = currentPageNo;
-
-        if (pageSize > 0) {
-            criteria.setFirstResult((currentPageNo - 1) * pageSize);
-            criteria.setMaxResults(pageSize + 1);
-            this.pageSize = pageSize;
-        } else {
-            this.pageSize = -1;
-        }
-        this.results = criteria.list();
-    }
-
+    /**
+     * Paginate using a Jakarta Persistence {@link TypedQuery}.
+     *
+     * <p>The {@code recordTotal} overload is required when the total count has
+     * already been fetched separately (e.g. via a count query), and it must be
+     * provided rather than derived from the result slice.</p>
+     */
     public Page(TypedQuery<T> query, int pageNumber, int pageSize, int recordTotal) {
         int currentPageNo = pageNumber;
         if (pageNumber < 1) {
@@ -144,3 +109,4 @@ public class Page<T> {
         return this.recordTotal;
     }
 }
+

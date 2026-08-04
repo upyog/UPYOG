@@ -47,20 +47,39 @@
  */
 package org.egov.edcr.security.oauth2.custom;
 
+import java.util.Map;
+
 import org.egov.infra.rest.support.CustomTokenEnhancer;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.stereotype.Component;
 
 /**
+ * Default no-op implementation of {@link CustomTokenEnhancer}.
  *
- * @author subhash
+ * <p>Override {@link #enhance(Map)} to inject extra claims into the issued JWT,
+ * for example:
+ * <pre>
+ *   claims.put("source", "egov-edcr");
+ *   claims.put("tenantId", tenantResolver.getCurrent());
+ * </pre>
  *
+ * <p>Replaces the old EOL pattern (spring-security-oauth2, removed in Spring Security 6):
+ * <pre>
+ *   OAuth2AccessToken enhance(OAuth2AccessToken token, OAuth2Authentication auth)
+ * </pre>
+ *
+ * @author subhash (migrated to Spring Security 6)
  */
+@Component
 public class DefaultCustomTokenEnhancer implements CustomTokenEnhancer {
 
     @Override
-    public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-        return accessToken;
+    public void enhance(Map<String, Object> claims) {
+        // TODO: Currently a no-op. Override this method (or replace this default
+        //       implementation) to add custom claims to the issued JWT token.
+        //       Example:
+        //         claims.put("source", "egov-edcr");
+        //         claims.put("tenantId", tenantResolver.getCurrent());
+        //       Then wire this bean into the OAuth2TokenCustomizer in
+        //       AuthorizationServerConfiguration so claims are applied at token issuance.
     }
-
 }
