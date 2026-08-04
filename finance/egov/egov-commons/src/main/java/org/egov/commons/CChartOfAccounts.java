@@ -101,32 +101,49 @@ public class CChartOfAccounts extends AbstractAuditable {
     @Length(max = 150)
     private String name;
 
+    /* 
+     * Hibernate 6 / Spring Boot 3 Migration Fix:
+     * Explicitly specifying @Column(name = "...") annotations for all camelCase field names.
+     * In Hibernate 6, the default implicit physical naming strategy automatically converts camelCase Java fields
+     * into underscore_separated SQL columns (e.g., parentId -> parent_id, purposeId -> purpose_id).
+     * Since existing PostgreSQL database schema uses uppercase non-underscored column names (PARENTID, PURPOSEID,
+     * ISACTIVEFORPOSTING, FUNCTIONREQD, etc.), these explicit annotations prevent "column parent_id does not exist" SQL errors.
+     */
+    @Column(name = "PURPOSEID")
     private Long purposeId;
 
     @SanitizeHtml
     @Column(name = "DESCRIPTION")
     private String desc;
 
+    @Column(name = "ISACTIVEFORPOSTING")
     private Boolean isActiveForPosting;
 
+    @Column(name = "PARENTID")
     private Long parentId;
 
     @Column(name = "SCHEDULEID")
     private Long schedule;
 
+    @Column(name = "OPERATION")
     private Character operation;
 
     @NotNull
+    @Column(name = "TYPE")
     private Character type;
 
+    @Column(name = "CLASSIFICATION")
     private Long classification;
 
+    @Column(name = "FUNCTIONREQD")
     private Boolean functionReqd;
 
+    @Column(name = "BUDGETCHECKREQ")
     private Boolean budgetCheckReq;
 
     @SanitizeHtml
     @Length(max = 255)
+    @Column(name = "MAJORCODE")
     private String majorCode;
 
     @Column(name = "CLASS")

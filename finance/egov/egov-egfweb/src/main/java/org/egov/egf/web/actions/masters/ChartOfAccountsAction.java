@@ -87,11 +87,16 @@ import org.hibernate.cache.CacheException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.CoaCache;
 import com.mchange.v1.cachedstore.CacheFlushException;
 
+// LTS Migration Fix (Spring 6 / JPA 3 Upgrade):
+// Added @Transactional to Action class so that operations like deleteAccountDetailType, saveCoaDetails
+// and manual .flush() have an active EntityManager transaction context.
+@Transactional
 @ParentPackage("egov")
 @Results({
     @Result(name = "detailed", location = "chartOfAccounts-detailed.jsp"),
@@ -311,11 +316,19 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     Integer.valueOf(row)));
     }
 
+    /*
+     * Spring 6 / JPA 3 / Hibernate 6 Migration Fix:
+     * Added early return check for null/empty accountDetailType list and replaced direct session.flush() 
+     * calls with transactional service.flush() invocations.
+     * When creating a new Chart of Accounts (e.g. Detailed Code), accountDetailType list is empty.
+     * Without the null/empty check, calling .flush() outside an active transaction threw:
+     * "jakarta.persistence.TransactionRequiredException: No EntityManager with actual transaction available for current thread".
+     */
     void deleteAccountDetailType(final List<Accountdetailtype> accountDetailType, final CChartOfAccounts accounts) {
         String accountDetail = "";
-        if (accounts.getChartOfAccountDetails() == null)
+        if (accounts.getChartOfAccountDetails() == null || accountDetailType == null || accountDetailType.isEmpty())
             return;
-        chartOfAccountsService.getSession().flush();
+        chartOfAccountsService.flush();
         //persistenceService.setType(CChartOfAccountDetail.class);
         try {
             for (final Accountdetailtype row : accountDetailType) {
@@ -326,7 +339,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     if (next == null || next.getDetailTypeId().getId().equals(row.getId())) {
                         iterator.remove();
                         chartOfAccountDetailService.delete(chartOfAccountDetailService.findById(next.getId(), false));
-                        persistenceService.getSession().flush();
+                        persistenceService.flush();
                     }
                 }
             }
@@ -432,7 +445,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
             }
         }
 
-        chartOfAccountsService.getSession().flush();
+        chartOfAccountsService.flush();
     }
 
     List<Accountdetailtype> getAccountDetailTypeToBeDeleted(final List<Accountdetailtype> accountDetailType,

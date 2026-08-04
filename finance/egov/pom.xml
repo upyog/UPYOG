@@ -338,8 +338,6 @@
         <module>egov-collection</module>
         <module>egov-commonsweb</module>
         <module>egov-eisweb</module>
-        <module>sitemesh-jakarta-test</module>
-        <module>joda-jsptags-jakarta</module>
         <module>egov-egiweb</module>
         <module>egov-egfweb</module>
         <module>egov-collectionweb</module>
@@ -1061,11 +1059,11 @@
 <!--                <version>${sitemesh-version}</version>-->
 <!--            </dependency>-->
 
-            <!-- Jakarta transformed SiteMesh 2.5.0 -->
+            <!-- Jakarta transformed SiteMesh 2.5.0 fetched from UPYOG Nexus -->
             <dependency>
-                <groupId>org.egov.test</groupId>
-                <artifactId>sitemesh-jakarta-test</artifactId>
-                <version>1.0.0</version>
+                <groupId>org.egov</groupId>
+                <artifactId>sitemesh-jakarta</artifactId>
+                <version>2.5.0</version>
                 <classifier>jakarta</classifier>
             </dependency>
 <!--            <dependency>-->
@@ -1085,9 +1083,9 @@
 <!--            </dependency>-->
 
 
-            <!-- Jakarta transformed Joda Time JSP Tags 1.1.1 -->
+            <!-- Jakarta transformed Joda Time JSP Tags 1.1.1 fetched from UPYOG Nexus -->
             <dependency>
-                <groupId>org.egov.test</groupId>
+                <groupId>org.egov</groupId>
                 <artifactId>joda-jsptags-jakarta</artifactId>
                 <version>1.0.0</version>
                 <classifier>jakarta</classifier>
@@ -1618,9 +1616,9 @@
 <!--            <groupId>joda-time</groupId>-->
 <!--            <artifactId>joda-time-jsptags</artifactId>-->
 <!--        </dependency>-->
-        <!-- Jakarta transformed Joda Time JSP Tags 1.1.1 -->
+        <!-- Jakarta transformed Joda Time JSP Tags 1.1.1 fetched from UPYOG Nexus -->
         <dependency>
-            <groupId>org.egov.test</groupId>
+            <groupId>org.egov</groupId>
             <artifactId>joda-jsptags-jakarta</artifactId>
             <classifier>jakarta</classifier>
         </dependency>
@@ -1799,6 +1797,13 @@
                 <version>${mvn.compiler.plugin.version}</version>
                 <configuration>
                     <release>17</release>
+                    <!--
+                        Spring 6 Method Parameter Reflection Compiler Flag (-parameters):
+                        In Spring 6 (Spring Framework 6.x), parameter name discovery via ASM bytecode reflection was removed.
+                        Adding `<parameters>true</parameters>` instructs javac to compile with the `-parameters` flag,
+                        preserving Java method parameter names in the compiled bytecode for Spring MVC @RequestParam/@PathVariable resolution.
+                    -->
+                    <parameters>true</parameters>
 
                     <annotationProcessorPaths>
                         <path>

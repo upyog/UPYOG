@@ -91,10 +91,10 @@
 <!--            <artifactId>sitemesh</artifactId>-->
 <!--        </dependency>-->
 
-        <!-- Jakarta transformed SiteMesh 2.5.0 -->
+        <!-- Jakarta transformed SiteMesh 2.5.0 fetched from UPYOG Nexus -->
         <dependency>
-            <groupId>org.egov.test</groupId>
-            <artifactId>sitemesh-jakarta-test</artifactId>
+            <groupId>org.egov</groupId>
+            <artifactId>sitemesh-jakarta</artifactId>
             <classifier>jakarta</classifier>
         </dependency>
 <!--        <dependency>-->

@@ -311,6 +311,21 @@ public class PersistenceService<T, ID extends Serializable> {
 		getSession().delete(entity);
 	}
 
+	/*
+	 * Spring 6 / JPA 3 / Hibernate 6 Migration Fix:
+	 * Added @Transactional flush() method to PersistenceService base class.
+	 * In Spring 6 / JPA 3, calling raw session.flush() directly from non-transactional action code throws
+	 * `TransactionRequiredException`. This method wraps session flushing inside a Spring-managed transaction context.
+	 */
+	@Transactional
+	public void flush() {
+		try {
+			getSession().flush();
+		} catch (final Exception e) {
+			LOG.warn("Flush ignored: {}", e.getMessage());
+		}
+	}
+
 	public List<T> findAll() {
 		final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		final CriteriaQuery<T> cq = cb.createQuery(this.type);

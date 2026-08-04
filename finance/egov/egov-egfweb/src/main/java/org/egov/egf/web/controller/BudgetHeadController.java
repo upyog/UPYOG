@@ -113,16 +113,16 @@ public class BudgetHeadController {
 	}
 
 
-	@GetMapping(value = "/ajaxBudgetHead", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/getbudgetheads", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<BudgetHead> findBudgetHead(@RequestParam @SanitizeHtml final String query) {
-		final List<BudgetHead> budgetHeads = budgetHeadService.findBudgetHeadByNameOrCode(query);
-		return budgetHeads;
+	public List<BudgetHead> findBudgetHead(@RequestParam("query") @SanitizeHtml final String query) {
+		return budgetHeadService.findBudgetHeadByNameOrCode(query);
+
 	}
 
-	@GetMapping(value = "/ajaxBudgetHead/{functionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/getfunctionbudgetheads/{functionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<BudgetHead> findFunctionBudgetHeads(@PathVariable("functionId") Long functionId, @RequestParam @SanitizeHtml final String query) {
+	public List<BudgetHead> findFunctionBudgetHeads(@PathVariable("functionId") Long functionId, @RequestParam("query") @SanitizeHtml final String query) {
 		final List<BudgetHead> budgetHeads = budgetHeadService.searchBudgetHeadsByFunctionNative(functionId, query);
 		return budgetHeads;
 	}

@@ -49,23 +49,76 @@
 package org.egov.infra.config.persistence.auditing;
 
 import org.egov.infra.config.persistence.auditing.listener.AuditableEntityListener;
-import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
+import org.hibernate.envers.RevisionNumber;
+import org.hibernate.envers.RevisionTimestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
 
+/*
+ * Hibernate 6 / Envers Audit Entity Migration Fix:
+ * 1. Sequence Mapping: Replaced DefaultRevisionEntity inheritance with explicit `@RevisionNumber` and `@RevisionTimestamp` fields.
+ *    Configured `@SequenceGenerator(name = "REVINFO_REV_SEQ", sequenceName = "revinfo_rev_seq", allocationSize = 1)`.
+ *    In Hibernate 6 Envers, DefaultRevisionEntity tries to locate a sequence named `revinfo_seq` or `hibernate_sequence`.
+ *    Existing PostgreSQL schema uses `revinfo_rev_seq`, causing `relation "revinfo_seq" does not exist` database errors.
+ * 2. Column Case Mapping: Mapped explicit column names `@Column(name = "id")`, `@Column(name = "timestamp")`,
+ *    `@Column(name = "userid")`, and `@Column(name = "ipaddress")` matching exact database schema columns.
+ */
 @Entity
 @Table(name = "REVINFO")
 @RevisionEntity(AuditableEntityListener.class)
-public class BaseRevisionEntity extends DefaultRevisionEntity {
+public class BaseRevisionEntity implements Serializable {
     private static final long serialVersionUID = -1956016149274910543L;
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "REVINFO_REV_SEQ")
+    @SequenceGenerator(name = "REVINFO_REV_SEQ", sequenceName = "revinfo_rev_seq", allocationSize = 1)
+    @RevisionNumber
+    private int id;
+
+    @RevisionTimestamp
+    @Column(name = "timestamp")
+    private long timestamp;
+
     @NotNull
+    @Column(name = "userid")
     private Long userId;
 
     @NotNull
+    @Column(name = "ipaddress")
     private String ipAddress;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(final int id) {
+        this.id = id;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(final long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    @Transient
+    public Date getRevisionDate() {
+        return new Date(timestamp);
+    }
 
     public Long getUserId() {
         return userId;

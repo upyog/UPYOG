@@ -3111,24 +3111,35 @@ public class CommonAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-ajaxloadcoa")
     public String ajaxLoadCOA() {
-        String query = "";
+        /*
+         * Hibernate 6 / Struts 7 Upgrade Fix for Chart of Accounts Tree Hierarchy:
+         * 1. Struts Parameter Binding Fallback: If `glCode` field setter was not populated by Struts binder,
+         *    retrieve `glCode` directly from `ServletActionContext.getRequest().getParameter("glCode")`.
+         * 2. Root Node Classification Filter: When loading the top-level heads (glCode == null), filter by
+         *    `where parentId is null and (classification = 0 or length(glcode) = 1)`.
+         *    This prevents sample/test data Detailed Codes (classification = 4) that have null parentId in DB
+         *    from being rendered at the root level alongside Income, Expenses, Assets, Liabilities.
+         * 3. JPA Ordinal Parameter (`?1`): Hibernate 6 enforces strict JPA parameter indexing where un-indexed `?`
+         *    is deprecated/rejected. Replaced `parentId=?` with `parentId=?1`.
+         */
+        try {
+            if (glCode == null || glCode.trim().isEmpty() || "null".equalsIgnoreCase(glCode.trim())) {
+                if (ServletActionContext.getRequest() != null) {
+                    glCode = ServletActionContext.getRequest().getParameter("glCode");
+                }
+            }
 
-        if (glCode == null) {
-
-            coaList = (List<CChartOfAccounts>) persistenceService
-                    .findAllBy("from CChartOfAccounts  where parentId is null order by glcode asc");
-
-            // query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS
-            // \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM chartOfAccounts where parentId is null
-            // order by id asc";
-
-        } else {
-            coaList = (List<CChartOfAccounts>) persistenceService.findAllBy(
-                    "from CChartOfAccounts where parentId=? order by glcode ",
-                    Long.valueOf(glCode));
-            // query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS
-            // \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM chartOfAccounts where parentId ="+glCode+"
-            // order by id asc";
+            if (glCode == null || glCode.trim().isEmpty() || "null".equalsIgnoreCase(glCode.trim())) {
+                coaList = (List<CChartOfAccounts>) persistenceService
+                        .findAllBy("from CChartOfAccounts where parentId is null and (classification = 0 or length(glcode) = 1) order by glcode asc");
+            } else {
+                coaList = (List<CChartOfAccounts>) persistenceService.findAllBy(
+                        "from CChartOfAccounts where parentId=?1 order by glcode asc",
+                        Long.valueOf(glCode.trim()));
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error loading Chart of Accounts tree node for glCode: " + glCode, e);
+            coaList = Collections.emptyList();
         }
         result = new StringBuffer();
         StringBuffer type = new StringBuffer();

@@ -195,16 +195,24 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
                 null, wfMatrixCriteria);
     }
 
+    /*
+     * Hibernate 6 JPA Criteria API Migration Fix for Workflow Matrix Queries:
+     * Reused the existing `Root<WorkFlowMatrix>` from `wfMatrixCriteria.getRoots().iterator().next()`
+     * instead of calling `wfMatrixCriteria.from(WorkFlowMatrix.class)` multiple times across helper methods.
+     * In JPA Criteria API, calling `.from(Entity.class)` on an existing CriteriaQuery creates a second FROM root clause
+     * (e.g. `FROM eg_wf_matrix w1, eg_wf_matrix w2`), which causes Hibernate 6 to throw:
+     * "java.lang.IllegalArgumentException: Criteria has multiple query roots".
+     */
     @Override
     public WorkFlowMatrix getWfMatrix(String type, String department, BigDecimal amountRule,
                                       String additionalRule, String currentState,
                                       String pendingActions, Date date) {
-        // ✅ FIXED — removed duplicate, only one 7-param version
         CriteriaBuilder cb = this.stateAwarePersistenceService.getSession().getCriteriaBuilder();
         CriteriaQuery<WorkFlowMatrix> wfMatrixCriteria = createWfMatrixAdditionalCriteria(
                 type, department, amountRule, additionalRule, currentState, pendingActions, null);
 
-        Root<WorkFlowMatrix> root = wfMatrixCriteria.from(WorkFlowMatrix.class);
+        @SuppressWarnings("unchecked")
+        Root<WorkFlowMatrix> root = (Root<WorkFlowMatrix>) (Root<?>) wfMatrixCriteria.getRoots().iterator().next();
         Date effectiveDate = date == null ? new Date() : date;
 
         // ✅ Criterion fromDateCriteria — Restrictions.le("fromDate", date)
@@ -236,7 +244,8 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         CriteriaQuery<WorkFlowMatrix> wfMatrixCriteria = createWfMatrixAdditionalCriteria(
                 type, department, amountRule, additionalRule, currentState, pendingActions, designation);
 
-        Root<WorkFlowMatrix> root = wfMatrixCriteria.from(WorkFlowMatrix.class);
+        @SuppressWarnings("unchecked")
+        Root<WorkFlowMatrix> root = (Root<WorkFlowMatrix>) (Root<?>) wfMatrixCriteria.getRoots().iterator().next();
         Date effectiveDate = date == null ? new Date() : date;
 
         // ✅ Date predicates
@@ -276,7 +285,8 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
             CriteriaBuilder cb = this.stateAwarePersistenceService.getSession().getCriteriaBuilder();
             CriteriaQuery<WorkFlowMatrix> defaultCq = commonWorkFlowMatrixCriteria(
                     type, additionalRule, currentState, pendingActions);
-            Root<WorkFlowMatrix> root = defaultCq.from(WorkFlowMatrix.class);
+            @SuppressWarnings("unchecked")
+            Root<WorkFlowMatrix> root = (Root<WorkFlowMatrix>) (Root<?>) defaultCq.getRoots().iterator().next();
 
             List<Predicate> predicates = new ArrayList<>(
                     Arrays.asList(defaultCq.getRestriction() != null
@@ -318,7 +328,8 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         CriteriaBuilder cb = this.stateAwarePersistenceService.getSession().getCriteriaBuilder();
         CriteriaQuery<WorkFlowMatrix> cq = commonWorkFlowMatrixCriteria(
                 type, additionalRule, currentState, pendingActions);
-        Root<WorkFlowMatrix> root = cq.from(WorkFlowMatrix.class);
+        @SuppressWarnings("unchecked")
+        Root<WorkFlowMatrix> root = (Root<WorkFlowMatrix>) (Root<?>) cq.getRoots().iterator().next();
 
         List<Predicate> predicates = new ArrayList<>(
                 Arrays.asList(cq.getRestriction() != null
@@ -363,7 +374,8 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         CriteriaBuilder cb = this.stateAwarePersistenceService.getSession().getCriteriaBuilder();
         CriteriaQuery<WorkFlowMatrix> cq = previousWorkFlowMatrixCriteria(
                 type, additionalRule, currentState, pendingActions);
-        Root<WorkFlowMatrix> root = cq.from(WorkFlowMatrix.class);
+        @SuppressWarnings("unchecked")
+        Root<WorkFlowMatrix> root = (Root<WorkFlowMatrix>) (Root<?>) cq.getRoots().iterator().next();
 
         List<Predicate> predicates = new ArrayList<>(
                 Arrays.asList(cq.getRestriction() != null

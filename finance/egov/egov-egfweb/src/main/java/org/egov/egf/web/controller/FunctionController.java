@@ -203,7 +203,7 @@ public class FunctionController {
 	 */
 	@GetMapping(value = "/getByNameOrCode", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<String> findFunctionNames(@RequestParam @SanitizeHtml final String query) {
+	public List<String> findFunctionNames(@RequestParam("query") @SanitizeHtml final String query) {
 //		final List<String> functionNames = new ArrayList<>();
 //		final List<CFunction> functions = functionService.findByNameLikeOrCodeLike(name);
 

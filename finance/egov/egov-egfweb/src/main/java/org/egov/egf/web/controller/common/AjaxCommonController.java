@@ -213,9 +213,17 @@ public class AjaxCommonController {
         return fundsourceService.getBySubSchemeId(Integer.parseInt(subSchemeId));
     }
 
+    /*
+     * Spring 6 Method Parameter Reflection Fix:
+     * Added explicit parameter names (`@RequestParam("name")`, `@RequestParam("glcode")`, `@RequestParam("accountDetailType")`, etc.)
+     * to all Spring MVC @GetMapping/@PostMapping controller methods.
+     * In Spring Framework 6.x, parameter name discovery via ASM bytecode reflection was removed.
+     * Without explicit name values in @RequestParam annotations, Spring 6 throws:
+     * "java.lang.IllegalArgumentException: Name for argument of type [java.lang.String] not specified".
+     */
     @GetMapping(value = "/ajaxfunctionnames", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<String> findFunctionNames(@RequestParam @SanitizeHtml final String name) {
+    public List<String> findFunctionNames(@RequestParam("name") @SanitizeHtml final String name) {
         final List<String> functionNames = new ArrayList<>();
         final List<CFunction> functions = functionService.findByNameLikeOrCodeLike(name);
         for (final CFunction function : functions)
@@ -228,8 +236,8 @@ public class AjaxCommonController {
     @SuppressWarnings("unchecked")
 	@GetMapping(value = "/getentitesbyaccountdetailtype", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<String> findEntitesByAccountDetailType(@RequestParam @SanitizeHtml final String name,
-            @RequestParam @SanitizeHtml final String accountDetailType) {
+    public List<String> findEntitesByAccountDetailType(@RequestParam("name") @SanitizeHtml final String name,
+            @RequestParam("accountDetailType") @SanitizeHtml final String accountDetailType) {
         final List<String> entityNames = new ArrayList<>();
         List<EntityType> entitiesList = new ArrayList<>();
         final Accountdetailtype detailType = accountdetailtypeService.findOne(Integer.parseInt(accountDetailType));
@@ -253,7 +261,7 @@ public class AjaxCommonController {
 
 	@GetMapping(value = "/getsupplierdebitcodes", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String findSupplierDebitAccountCodes(@RequestParam @SanitizeHtml final String glcode) {
+	public String findSupplierDebitAccountCodes(@RequestParam("glcode") @SanitizeHtml final String glcode) {
 		final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService.getSupplierDebitAccountCodes(glcode);
 		for (final CChartOfAccounts coa : chartOfAccounts)
 			coa.setIsSubLedger(!coa.getChartOfAccountDetails().isEmpty());
@@ -262,7 +270,7 @@ public class AjaxCommonController {
 
 	@GetMapping(value = "/getsuppliercreditcodes", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String findSupplierCreditAccountCodes(@RequestParam @SanitizeHtml final String glcode) {
+	public String findSupplierCreditAccountCodes(@RequestParam("glcode") @SanitizeHtml final String glcode) {
 		final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService.getSupplierCreditAccountCodes(glcode);
 		for (final CChartOfAccounts coa : chartOfAccounts)
 			coa.setIsSubLedger(!coa.getChartOfAccountDetails().isEmpty());
@@ -271,7 +279,7 @@ public class AjaxCommonController {
 
 	@GetMapping(value = "/getcontractordebitcodes", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String findContractorDebitAccountCodes(@RequestParam @SanitizeHtml final String glcode) {
+	public String findContractorDebitAccountCodes(@RequestParam("glcode") @SanitizeHtml final String glcode) {
 		final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService.getContractorDebitAccountCodes(glcode);
 		for (final CChartOfAccounts coa : chartOfAccounts)
 			coa.setIsSubLedger(!coa.getChartOfAccountDetails().isEmpty());
@@ -280,7 +288,7 @@ public class AjaxCommonController {
 
 	@GetMapping(value = "/getcontractorcreditcodes", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String findContractorCreditAccountCodes(@RequestParam @SanitizeHtml final String glcode) {
+	public String findContractorCreditAccountCodes(@RequestParam("glcode") @SanitizeHtml final String glcode) {
 		final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService.getContractorCreditAccountCodes(glcode);
 		for (final CChartOfAccounts coa : chartOfAccounts)
 			coa.setIsSubLedger(!coa.getChartOfAccountDetails().isEmpty());
@@ -289,8 +297,8 @@ public class AjaxCommonController {
 
 	@GetMapping(value = "/getaccountcodesforaccountdetailtype", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String findAccountCodesForAccountDetailType(@RequestParam @SanitizeHtml final String glcode,
-			@RequestParam @SanitizeHtml final String accountDetailType) {
+	public String findAccountCodesForAccountDetailType(@RequestParam("glcode") @SanitizeHtml final String glcode,
+			@RequestParam("accountDetailType") @SanitizeHtml final String accountDetailType) {
 		final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService
 				.getSubledgerAccountCodesForAccountDetailTypeAndNonSubledgers(Integer.parseInt(accountDetailType),
 						glcode);
@@ -328,7 +336,7 @@ public class AjaxCommonController {
 
 	@GetMapping(value = "/getallaccountcodes", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String findAllAccountCodes(@RequestParam @SanitizeHtml final String glcode) {
+	public String findAllAccountCodes(@RequestParam("glcode") @SanitizeHtml final String glcode) {
 		final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService.getAllAccountCodes(glcode);
 		for (final CChartOfAccounts coa : chartOfAccounts)
 			coa.setIsSubLedger(!coa.getChartOfAccountDetails().isEmpty());

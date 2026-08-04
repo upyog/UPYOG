@@ -66,9 +66,9 @@ public class SchemeRestController {
 
 
 
-    @GetMapping(value = "/ajaxSchemes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getByNameOrCode", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Scheme> findSchemesByNameOrCode(@RequestParam @SanitizeHtml final String query) {
+    public List<Scheme> findSchemesByNameOrCode(@RequestParam("query") @SanitizeHtml final String query) {
         final List<Scheme> schemes = schemeHibernateDAO.getSchemeByNameOrCode(query);
         return schemes;
     }

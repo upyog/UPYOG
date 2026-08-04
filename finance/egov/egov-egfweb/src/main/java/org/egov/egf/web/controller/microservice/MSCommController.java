@@ -64,19 +64,37 @@ public class MSCommController {
         return microserviceUtils.getDepartments();
     }
 
+	/*
+	 * Spring 6 / Hibernate 6 Migration Fix:
+	 * 1. Added null-safety check for `params` and `departmentRule` parameter.
+	 *    Calling `.trim()` directly on `params.get("departmentRule")` without null check threw a `NullPointerException`
+	 *    when departmentRule was missing/empty, returning HTTP 400 / 500 Bad Request ("json fail").
+	 * 2. Added null verification for `wfmatrix` and `microserviceUtils.getDesignations()` to prevent unhandled NPEs
+	 *    during workflow designation filtering.
+	 */
 	@GetMapping(value = "/designations")
 	@ResponseBody
-	public List<Designation> getDesignations(@RequestParam Map<String, String> params) {
+	public List<Designation> getDesignations(@RequestParam final Map<String, String> params) {
 		final List<String> workflowDesignations = new ArrayList<>();
-		if (!SELECT.equals(params.get("departmentRule").trim())) {
-			final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(params.get("type"),
-					params.get("departmentRule").trim(), null, params.get("additionalRule"), params.get("currentState"),
-					params.get("pendingAction"));
-			if (wfmatrix.getCurrentDesignation() != null) {
+		final String departmentRule = params != null ? params.get("departmentRule") : null;
+		if (departmentRule != null && !SELECT.equalsIgnoreCase(departmentRule.trim())) {
+			final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(
+					params.get("type"),
+					departmentRule.trim(),
+					null,
+					params.get("additionalRule"),
+					params.get("currentState"),
+					params.get("pendingAction")
+			);
+			if (wfmatrix != null && wfmatrix.getCurrentDesignation() != null) {
 				workflowDesignations.addAll(Arrays.asList(wfmatrix.getCurrentDesignation().split(",")));
 			}
-			return microserviceUtils.getDesignations().stream()
-					.filter(desig -> workflowDesignations.contains(desig.getName())).collect(Collectors.toList());
+			final List<Designation> allDesignations = microserviceUtils.getDesignations();
+			if (allDesignations != null) {
+				return allDesignations.stream()
+						.filter(desig -> desig != null && desig.getName() != null && workflowDesignations.contains(desig.getName()))
+						.collect(Collectors.toList());
+			}
 		}
 		return Collections.emptyList();
 	}
@@ -135,7 +153,7 @@ public class MSCommController {
 
     @GetMapping(value = "inbox/history", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public List<Inbox> showInboxHistory(@RequestParam Long stateId) {
+    public List<Inbox> showInboxHistory(@RequestParam("stateId") Long stateId) {
         return inboxRenderServiceDelegate.getWorkflowHistoryItems(stateId);
     }
 }
