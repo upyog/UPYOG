@@ -120,7 +120,7 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
       <StatusTable>
         <Row
           className="border-none"
-          label={t("EST_ALLOTMENT_NUMBER")}
+          label={t("EST_ESTATE_ALLOTMENT_NUMBER", "Estate Allotment Number")}
           text={allotmentNo || "N/A"}
         />
         <Row className="border-none" label={t("EST_ALLOTMENT_TYPE")} text={allotmentTypeLabel} />

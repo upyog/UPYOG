@@ -142,10 +142,27 @@ const estateComputedFields = [
 // }
 
 /**
+ * Local field overlays merged onto MDMS Estate.NewRegistration.
+ * Ensures createNewPath works even when remote MDMS is not yet refreshed.
+ */
+const estateFormFieldOverlays = [
+  {
+    key: "EST_ASSET_NUMBER",
+    field: {
+      name: "searchEstateNo",
+      createNewPath: "/upyog-ui/employee/asset/assetservice/new-assets/info",
+      searchButton: true,
+    },
+  },
+];
+
+/**
  * Default export — localOverrides shape for mergeRouteConfig.
  *
- * Field structure lives in MDMS Estate.NewRegistration — no local form overlays.
+ * Field structure lives in MDMS Estate.NewRegistration; overlays for UI-coupled
+ * behavior such as createNewPath.
  *
+ * @property {Array}    form                  - Field overlays (createNewPath).
  * @property {Array}    crossFieldValidations - Passed to DynamicForm validation.
  * @property {string}   payloadKey            - Wizard session / API array key ("Assets").
  * @property {string}   apiId                 - RequestInfo.apiId for Asset APIs.
@@ -154,6 +171,7 @@ const estateComputedFields = [
  * @property {Function} editPayloadExtras     - (editData) => extras for edit mutate payload.
  */
 export default {
+  form: estateFormFieldOverlays,
   crossFieldValidations: estateCrossFieldValidations,
   payloadKey: "Assets",
   apiId: "Rainmaker",

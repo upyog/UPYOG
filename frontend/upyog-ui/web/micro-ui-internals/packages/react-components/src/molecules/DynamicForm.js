@@ -1093,7 +1093,10 @@ const DynamicForm = ({
         >
           <div className="confirmation_box">
             <CardText>
-              {t("EST_CREATE_NEW_REGISTRATION_REDIRECT_INFO")}
+              {t(
+                "EST_CREATE_NEW_REGISTRATION_REDIRECT_INFO",
+                "You are being redirected to the Asset Management page. The asset will start appearing after approval."
+              )}
             </CardText>
           </div>
         </Modal>

@@ -101,10 +101,10 @@ const LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG = {
   filters: [
     {
       order: 1,
-      key: "EST_ALLOTMENT_NUMBER",
+      key: "EST_ESTATE_ALLOTMENT_NUMBER",
       name: "allotmentNo",
       type: "text",
-      placeholder: "EST_ENTER_ALLOTMENT_NUMBER",
+      placeholder: "EST_ENTER_ESTATE_ALLOTMENT_NUMBER",
     },
     {
       order: 2,
