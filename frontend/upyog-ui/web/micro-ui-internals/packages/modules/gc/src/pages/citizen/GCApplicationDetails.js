@@ -27,7 +27,7 @@ const GCApplicationDetails = () => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
   const params = useParams();
-  
+
   // Reconstruct application number from URL params
   let reconstructedAppNo = params.applicationNo;
   if (params["*"]) {
@@ -213,9 +213,7 @@ const GCApplicationDetails = () => {
   const docs = appData?.documents || [];
 
   const handleMakePayment = () => {
-    navigate({
-      pathname: `/upyog-ui/citizen/payment/collect/gc-services/${encodeURIComponent(appNo)}/${tenantId}?tenantId=${tenantId}`,
-    });
+     navigate(`/upyog-ui/citizen/payment/my-bills/${"garbage-service"}/${appNo}`);
   };
 
   if (isLoading || isWorkflowLoading) {
@@ -466,6 +464,12 @@ const GCApplicationDetails = () => {
               <TextArea value={comments} onChange={(e) => setComments(e.target.value)} />
             </Card>
           </Modal>
+        )}
+
+        {appStatus === "PENDING_FOR_PAYMENT" && (
+          <div style={{marginTop: "7px", paddingLeft: "8px"}}>
+          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} style={{ flex: 1 }} />
+          </div>
         )}
 
         {showToast && (
