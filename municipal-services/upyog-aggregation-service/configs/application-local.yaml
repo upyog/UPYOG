@@ -4,6 +4,10 @@
 
 server:
   port: 8090
+  # No API gateway in local development; contextPath is still set so the
+  # service behaviour matches deployed environments when testing locally
+  # behind a gateway-like reverse proxy.
+  contextPath: /upyog-aggregation-service
   readTimeout: 30s
   writeTimeout: 30s
   idleTimeout: 120s
@@ -34,6 +38,10 @@ auth:
     - /readiness
     - /liveness
     - /metrics
+    - /upyog-aggregation-service/health
+    - /upyog-aggregation-service/readiness
+    - /upyog-aggregation-service/liveness
+    - /upyog-aggregation-service/metrics
 
 observability:
   metrics:
@@ -60,6 +68,10 @@ providers:
       timeout: 5s
       cacheTTL: 1m
       retries: 1
+    new-applications:
+      timeout: 8s
+      cacheTTL: 1m
+      retries: 2
 
 rateLimit:
   enabled: false

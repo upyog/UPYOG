@@ -2,6 +2,7 @@ import { Banner, Card, LinkButton, Loader, Row, StatusTable, SubmitBar, Toast } 
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
+import getGcAcknowledgementData from "../../../getGcAcknowledgementData";
 
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
@@ -52,6 +53,8 @@ const GCAcknowledgement = () => {
   const navigate = Digit.Hooks.useCustomNavigate();
   const user = Digit.UserService.getUser().info;
   const [showToast, setShowToast] = useState(null);
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants = [] } = storeData || {};
  
   const handleMakePayment = async () => {
     try {
@@ -85,6 +88,17 @@ const GCAcknowledgement = () => {
   const isLoading = !state;
   const isSuccess = state?.isSuccess;
 
+  const handleDownloadPdf = async () => {
+    try {
+      const application = state?.data?.garbageAccounts?.[0];
+      const tenantInfo = tenants.find((tenant) => tenant.code === application?.tenantId);
+      const acknowledgementData = await getGcAcknowledgementData(application, tenantInfo, t);
+      Digit.Utils.pdf.generate(acknowledgementData);
+    } catch (error) {
+      setShowToast({ error: true, label: "CS_SOMETHING_WENT_WRONG" });
+    }
+  };
+
   if (!state) {
     return <Loader />;
   }
@@ -97,7 +111,8 @@ const GCAcknowledgement = () => {
       <StatusTable>
         {isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{ whiteSpace: "pre", width: "60%" }} />}
       </StatusTable>
-      
+
+      {isSuccess && <SubmitBar label={t("CS_COMMON_DOWNLOAD_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
 
       {user?.type === "CITIZEN" ? (
         <Link to={`/upyog-ui/citizen`}>

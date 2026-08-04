@@ -1,4 +1,4 @@
-import { Card, ShippingTruck } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -47,9 +47,9 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   const GetLogo = () => (
     <div className="header">
       <span className="logo">
-        <ShippingTruck />
+        <PTIcon />
       </span>{" "}
-      <span className="text">{t("GC_SERVICE")}</span>
+      <span className="text">{t("GC_MODULE_NAME")}</span>
     </div>
   );
 

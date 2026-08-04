@@ -1,4 +1,4 @@
-CREATE TABLE ug_draft_detail (
+CREATE TABLE IF NOT EXISTS ug_draft_detail (
     draft_id           VARCHAR(64)  PRIMARY KEY,
     tenant_id          VARCHAR(64)  NOT NULL,
     user_uuid          VARCHAR(64)  NOT NULL,

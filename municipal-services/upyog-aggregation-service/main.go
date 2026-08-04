@@ -87,6 +87,16 @@ func main() {
 		CircuitTimeout:   draftEndpoint.CircuitTimeout,
 	}, log, m)
 
+	workflowEndpoint := cfg.Backend.Services["workflow"]
+	workflowClient := clients.NewClient(clients.ClientConfig{
+		ServiceName:      "egov-workflow-v2",
+		BaseURL:          workflowEndpoint.BaseURL,
+		Timeout:          workflowEndpoint.Timeout,
+		MaxConns:         workflowEndpoint.MaxConns,
+		CircuitThreshold: workflowEndpoint.CircuitThreshold,
+		CircuitTimeout:   workflowEndpoint.CircuitTimeout,
+	}, log, m)
+
 	cacheTTL := cfg.Providers.CacheTTL
 	reg.Register(providers.NewQuickSummaryProvider(defaultClient, draftClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewRecentApplicationsProvider(defaultClient, c, log, m, cacheTTL))
@@ -95,6 +105,7 @@ func main() {
 	reg.Register(providers.NewDueRenewalsProvider(defaultClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewUpcomingEventsProvider(defaultClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewAdvertisementBannersProvider(defaultClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewNewApplicationsProvider(workflowClient, c, log, m, cacheTTL))
 
 	// Build per-provider timeout map.
 	providerTimeouts := make(map[string]time.Duration, len(cfg.Providers.Custom))

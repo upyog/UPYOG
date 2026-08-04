@@ -20,14 +20,16 @@ const GCApplication = ({ application, tenantId }) => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
 
-  const owners = application?.applicantDetails || [];
-  const ownerNames = owners
-    ?.map((owner) => owner?.name || owner?.applicantName)
-    ?.filter(Boolean)
-    ?.join(", ") || application?.name || application?.garbageSpecification?.name;
+  const name = application?.name;
+  const mobileNumber = application?.mobileNumber;
 
-  const appNo = application?.grbgApplication?.applicationNo || application?.applicationNo;
-  const appStatus = application?.applicationStatus || application?.status || application?.grbgApplication?.status;
+  const appNo = application?.grbgApplication?.applicationNo || application?.grbgApplicationNumber || application?.applicationNo;
+  const appStatus = application?.grbgApplication?.status || application?.applicationStatus || application?.status;
+
+  const propertyId = application?.propertyId;
+  const collectionUnit = application?.grbgCollectionUnits?.[0] || {};
+  const category = collectionUnit?.category;
+  const typeOfCollection = collectionUnit?.unitType;
 
   const handleViewSummary = () => {
     navigate(`/upyog-ui/citizen/gc/application-details/${encodeURIComponent(appNo)}`);
@@ -40,8 +42,13 @@ const GCApplication = ({ application, tenantId }) => {
   return (
     <Card style={{ marginTop: "16px" }}>
       <KeyNote keyValue={t("GC_APPLICATION_NUMBER_LABEL")} note={appNo || t("CS_NA")} />
-      <KeyNote keyValue={t("GC_APPLICANT_NAME")} note={ownerNames || t("CS_NA")} />
+      <KeyNote keyValue={t("GC_NAME")} note={name || t("CS_NA")} />
+      <KeyNote keyValue={t("GC_MOBILE_NUMBER")} note={mobileNumber || t("CS_NA")} />
+      {propertyId && <KeyNote keyValue={t("GC_PROPERTY_ID")} note={propertyId} />}
+      {category && <KeyNote keyValue={t("GC_CATEGORY")} note={t(category)} />}
+      {typeOfCollection && <KeyNote keyValue={t("GC_TYPE_OF_COLLECTION")} note={t(typeOfCollection)} />}
       <KeyNote keyValue={t("GC_APPLICATION_STATUS_LABEL")} note={appStatus ? t(`GC_STATUS_${appStatus}`) : t("CS_NA")} />
+      {application?.dueDate && <KeyNote keyValue={t("GC_DUE_DATE")} note={application.dueDate} />}
       
       <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
         <SubmitBar label={t("CS_VIEW_DETAILS")} onSubmit={handleViewSummary} style={{ flex: 1 }} />

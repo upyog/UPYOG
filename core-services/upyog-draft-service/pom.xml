@@ -22,6 +22,29 @@
         <lombok.version>1.18.30</lombok.version>
     </properties>
 
+    <repositories>
+		<repository>
+			<id>repo.egovernments.org</id>
+			<name>eGov ERP Releases Repository</name>
+			<url>https://upyog-nexus.niua.org/nexus/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>repo.egovernments.org.snapshots</id>
+			<name>eGov ERP Releases Repository</name>
+			<url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<id>repo.egovernments.org.public</id>
+			<name>eGov Public Repository Group</name>
+			<url>https://upyog-nexus.niua.org/nexus/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>repo.digit.org</id>
+			<name>eGov DIGIT Releases Repository</name>
+			<url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
