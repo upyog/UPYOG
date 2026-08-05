@@ -25,8 +25,8 @@ public class DraftRepository {
     private final DraftConfiguration configuration;
 
     public DraftRepository(JdbcTemplate jdbcTemplate, DraftQueryBuilder queryBuilder,
-                           DraftRowMapper rowMapper, Producer producer,
-                           DraftConfiguration configuration) {
+            DraftRowMapper rowMapper, Producer producer,
+            DraftConfiguration configuration) {
         this.jdbcTemplate = jdbcTemplate;
         this.queryBuilder = queryBuilder;
         this.rowMapper = rowMapper;
@@ -72,24 +72,24 @@ public class DraftRepository {
     public List<DraftDetail> findActiveDraftsOlderThan(long cutoffTime) {
         return jdbcTemplate.query(
                 "SELECT draft_id, tenant_id, user_uuid, business_service, module_entity_id, draft_data, "
-                        + "completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime "
-                        + "FROM eg_draft_detail WHERE status = ? AND lastmodifiedtime < ?",
+                + "completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime "
+                + "FROM ug_draft_detail WHERE status = ? AND lastmodifiedtime < ?",
                 rowMapper, DraftConstants.STATUS_ACTIVE, cutoffTime);
     }
 
     public List<DraftDetail> findSubmittedOrDiscardedOlderThan(String status, long cutoffTime) {
         return jdbcTemplate.query(
                 "SELECT draft_id, tenant_id, user_uuid, business_service, module_entity_id, draft_data, "
-                        + "completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime "
-                        + "FROM eg_draft_detail WHERE status = ? AND lastmodifiedtime < ?",
+                + "completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime "
+                + "FROM ug_draft_detail WHERE status = ? AND lastmodifiedtime < ?",
                 rowMapper, status, cutoffTime);
     }
 
     public List<DraftDetail> findActiveDraftsWithModuleEntity() {
         return jdbcTemplate.query(
                 "SELECT draft_id, tenant_id, user_uuid, business_service, module_entity_id, draft_data, "
-                        + "completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime "
-                        + "FROM eg_draft_detail WHERE status = ? AND module_entity_id IS NOT NULL",
+                + "completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime "
+                + "FROM ug_draft_detail WHERE status = ? AND module_entity_id IS NOT NULL",
                 rowMapper, DraftConstants.STATUS_ACTIVE);
     }
 }

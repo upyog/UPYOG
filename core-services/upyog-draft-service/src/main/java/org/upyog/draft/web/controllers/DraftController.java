@@ -29,7 +29,7 @@ public class DraftController {
 
     @PostMapping("/_save")
     @Operation(summary = "Save draft", description = "Create a new draft when draftId is absent, or update an existing draft. "
-            + "Update requires draftId to exist in eg_draft_detail for the authenticated user; otherwise DRAFT_NOT_FOUND is returned.")
+            + "Update requires draftId to exist in ug_draft_detail for the authenticated user; otherwise DRAFT_NOT_FOUND is returned.")
     public ResponseEntity<DraftResponse> save(@Valid @RequestBody DraftRequest request) {
         return new ResponseEntity<>(draftService.save(request), HttpStatus.OK);
     }
